@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top India Services</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="min-h-screen flex flex-col">
+        <h1 class="text-center text-2xl my-3 font-bold">Top India Services</h1>
+        <main class=" mx-auto w-full px-4 pb-10">
+            <!-- Main Content Area -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div class="flex flex-col gap-4">
+                    <!-- Jobs Section -->
+                    <div id="jobs-section" class="p-6">
+                        <div class="mb-4">
+                            <h3 class="text-lg font-semibold text-blue-800 flex items-center">
+                                <i class="fas fa-briefcase mr-3"></i>
+                                Jobs Section
+                            </h3>
+                        </div>
+                        <!-- Top 2 rows of buttons -->
+                        <div class="grid grid-cols-3 gap-4 mb-6" id="jobs-top-buttons">
+                            <!-- Top buttons will be populated here -->
+                        </div>
+                        <!-- Bottom layout: left 2 cols buttons, middle iframe, right 3 cols buttons -->
+                        <div class="grid grid-cols-5 gap-4 min-h-[600px]">
+                            <!-- Left buttons (20% width) -->
+                            <div class="col-span-1 grid grid-cols-1 gap-4" id="jobs-left-buttons">
+                                <!-- Left buttons will be populated here -->
+                            </div>
+                            <!-- Middle iframe (60% width) -->
+                            <div class="col-span-3">
+                                <iframe id="jobs-iframe" src="" width="100%" height="100%" frameborder="0" class="rounded-lg border-2 border-gray-200"></iframe>
+                            </div>
+                            <!-- Right buttons (20% width) -->
+                            <div class="col-span-1 grid grid-cols-1 gap-4" id="jobs-right-buttons">
+                                <!-- Right buttons will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Government Services Section -->
+                    <div id="government-services-section" class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 class="text-lg font-semibold text-green-800 flex items-center">
+                                    <i class="fas fa-gavel mr-3"></i>
+                                    Government Services
+                                </h3>
+                            </div>
+                            <button id="toggle-services" class="text-green-600 hover:text-green-800 transition duration-300">
+                                <i class="fas fa-chevron-up"></i>
+                            </button>
+                        </div>
+                        <div id="services-cards" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 overflow-y-auto">
+                            <!-- Government services will be populated here as cards -->
+                        </div>
+                    </div>
+
+                    <!-- Tools Section with Sidebar -->
+                    <div class="rounded-lg overflow-hidden">
+                        <div class="flex flex-col lg:flex-row min-h-[600px]">
+                            <!-- Sidebar for Tools -->
+                            <div class="w-full lg:w-1/3 xl:w-1/4 bg-gray-50 border-r border-gray-200">
+                                <!-- Tools Header -->
+                                <div class="p-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+                                    <h3 class="text-xl font-bold flex items-center">
+                                        <i class="fas fa-tools mr-3"></i>
+                                        Tools
+                                    </h3>
+                                    <p class="text-blue-100 text-sm mt-1">Select a tool to preview</p>
+                                </div>
+
+                                <!-- Tools Navigation -->
+                                <div class="p-4">
+                                    <!-- Main Categories -->
+                                    <div id="main-categories" class="space-y-2">
+                                        <button
+                                            class="category-button w-full text-left p-4 rounded-lg bg-white border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition duration-300 flex items-center"
+                                            data-category="image">
+                                            <i class="fas fa-image text-green-500 mr-3 text-lg"></i>
+                                            <div>
+                                                <div class="font-semibold text-gray-800">Image Tools</div>
+                                                <div class="text-sm text-gray-500">19 tools available</div>
+                                            </div>
+                                            <i class="fas fa-chevron-right ml-auto text-gray-400"></i>
+                                        </button>
+
+                                        <button
+                                            class="category-button w-full text-left p-4 rounded-lg bg-white border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition duration-300 flex items-center"
+                                            data-category="pdf">
+                                            <i class="fas fa-file-pdf text-blue-500 mr-3 text-lg"></i>
+                                            <div>
+                                                <div class="font-semibold text-gray-800">PDF Tools</div>
+                                                <div class="text-sm text-gray-500">13 tools available</div>
+                                            </div>
+                                            <i class="fas fa-chevron-right ml-auto text-gray-400"></i>
+                                        </button>
+
+                                        <button
+                                            class="category-button w-full text-left p-4 rounded-lg bg-white border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition duration-300 flex items-center"
+                                            data-category="video">
+                                            <i class="fas fa-video text-purple-500 mr-3 text-lg"></i>
+                                            <div>
+                                                <div class="font-semibold text-gray-800">Video/Audio Tools</div>
+                                                <div class="text-sm text-gray-500">5 tools available</div>
+                                            </div>
+                                            <i class="fas fa-chevron-right ml-auto text-gray-400"></i>
+                                        </button>
+                                    </div>
+
+                                    <!-- Sub Categories -->
+                                    <div id="sub-categories" class="hidden space-y-2">
+                                        <!-- Back Button -->
+                                        <button id="back-button"
+                                            class="w-full text-left p-3 rounded-lg bg-gray-200 hover:bg-gray-300 transition duration-300 flex items-center mb-4">
+                                            <i class="fas fa-arrow-left mr-3 text-gray-600"></i>
+                                            <span class="font-medium text-gray-700">Back to Categories</span>
+                                        </button>
+
+                                        <!-- Sub Category Title -->
+                                        <div class="mb-4">
+                                            <h4 id="sub-category-title"
+                                                class="text-lg font-semibold text-gray-800 flex items-center">
+                                                <i class="fas fa-list mr-2 text-blue-500"></i>
+                                                <span>Tools</span>
+                                            </h4>
+                                        </div>
+
+                                        <!-- Tools Cards -->
+                                        <div id="tools-cards" class="grid grid-cols-1 gap-3 max-h-96 overflow-y-auto">
+                                            <!-- Tools will be populated here as cards -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Main Content Area for Preview -->
+                            <div class="flex-1 flex flex-col">
+                                <!-- Iframe Container -->
+                                <div class="flex-1 p-6">
+                                    <div
+                                        class="bg-white rounded-lg shadow-inner border-2 border-gray-200 h-full min-h-[500px] relative overflow-hidden">
+                                        <iframe id="tool-iframe" src="" width="100%" height="100%" frameborder="0"
+                                            class="rounded-lg"></iframe>
+
+                                        <!-- Loading Overlay -->
+                                        <div id="loading-overlay"
+                                            class="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center hidden">
+                                            <div class="text-center">
+                                                <i class="fas fa-spinner fa-spin text-4xl text-blue-500 mb-4"></i>
+                                                <p class="text-gray-600 font-medium">Loading tool...</p>
+                                                <p class="text-gray-400 text-sm mt-2">Please wait while we load the tool</p>
+                                            </div>
+                                        </div>
+
+                                        <!-- Default State -->
+                                        <div id="default-state" class="absolute inset-0 flex items-center justify-center">
+                                            <div class="text-center text-gray-400">
+                                                <i class="fas fa-mouse-pointer text-6xl mb-4"></i>
+                                                <h4 class="text-xl font-semibold mb-2">Select a Tool</h4>
+                                                <p class="text-gray-500">Choose a tool from the sidebar to get started</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                        <!-- Service Details Modal -->
+                        <div id="service-modal" class="fixed inset-0 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+                            <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                                <div class="p-6">
+                                    <div class="flex justify-between items-center mb-6">
+                                        <h2 class="text-2xl font-bold text-gray-800">Service Request</h2>
+                                        <button id="close-modal" class="bg-gray-200 hover:bg-gray-300 rounded-full p-2 text-gray-600 hover:text-gray-800 transition duration-300">
+                                            <i class="fas fa-times text-xl"></i>
+                                        </button>
+                                    </div>
+                                    <div id="modal-service-content">
+                                        <!-- Service details will be populated here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    <script src="script.js"></script>
+</body>
+
+</html>`

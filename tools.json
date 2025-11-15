@@ -1,0 +1,509 @@
+{
+  "image": [
+    {
+      "name": "Photo Background Remove",
+      "url": "https://www.remove.bg/upload",
+      "icon": "fas fa-eraser"
+    },
+    {
+      "name": "Image Compress According Size in KB",
+      "url": "https://image.pi7.org/reduce-image-size-in-kb",
+      "icon": "fas fa-compress"
+    },
+    {
+      "name": "Image Resize According Size in KB & Pixel OR INCH OR centimeter",
+      "url": "https://miniimagesvideos.com/resize_image_online",
+      "icon": "fas fa-expand-arrows-alt"
+    },
+    {
+      "name": "Passport Size Photo",
+      "url": "https://image.pi7.org/passport-size-photo",
+      "icon": "fas fa-id-card"
+    },
+    {
+      "name": "Image to PDF",
+      "url": "https://image.pi7.org/image-to-pdf",
+      "icon": "fas fa-file-pdf"
+    },
+    {
+      "name": "Image Merge",
+      "url": "https://pinetools.com/merge-images",
+      "icon": "fas fa-object-group"
+    },
+    {
+      "name": "Image Converting JPG, JPEG, HEIC & PNG",
+      "url": "https://cloudconvert.com/",
+      "icon": "fas fa-exchange-alt"
+    },
+    {
+      "name": "Image to Word OR Excel OR Power Point",
+      "url": "https://www.imagetotext.info/jpg-to-word",
+      "icon": "fas fa-file-word"
+    },
+    {
+      "name": "Image to Excel",
+      "url": "https://www.imagetotext.info/jpg-to-excel",
+      "icon": "fas fa-file-excel"
+    },
+    {
+      "name": "Image to Power Point (PPT)",
+      "url": "https://smallpdf.com/blog/jpg-to-ppt-converter",
+      "icon": "fas fa-file-powerpoint"
+    },
+    {
+      "name": "Word OR Excel OR Power Point to JPG PNG PDF",
+      "url": "https://cloudconvert.com/document-converter",
+      "icon": "fas fa-file-alt"
+    },
+    {
+      "name": "Image to Text",
+      "url": "https://www.imagetotext.info/",
+      "icon": "fas fa-font"
+    },
+    {
+      "name": "Image Quality Increase",
+      "url": "https://www.cutout.pro/photo-enhancer-sharpener-upscaler",
+      "icon": "fas fa-magic"
+    },
+    {
+      "name": "Image to Add Watermark OR Signature",
+      "url": "https://image.pi7.org/watermark-image",
+      "icon": "fas fa-water"
+    },
+    {
+      "name": "Image Crop",
+      "url": "https://image.pi7.org/watermark-image",
+      "icon": "fas fa-crop"
+    },
+    {
+      "name": "6x4 Size Image",
+      "url": "https://image.pi7.org/resize-image-to-4x6",
+      "icon": "fas fa-arrows-alt"
+    },
+    {
+      "name": "Image to Video",
+      "url": "https://online-video-cutter.com/merge-videos",
+      "icon": "fas fa-video"
+    },
+    {
+      "name": "Text to Audio",
+      "url": "https://luvvoice.com/",
+      "icon": "fas fa-volume-up"
+    },
+    {
+      "name": "HEIC to PNG",
+      "url": "https://cloudconvert.com/heic-to-png",
+      "icon": "fas fa-exchange-alt"
+    }
+  ],
+  "pdf": [
+    {
+      "name": "PDF to JPG.JPEG.PNG",
+      "url": "https://www.sejda.com/pdf-to-jpg",
+      "icon": "fas fa-image"
+    },
+    {
+      "name": "PDF Merge",
+      "url": "https://pdf.pi7.org/merge-pdf",
+      "icon": "fas fa-object-group"
+    },
+    {
+      "name": "PDF to Word",
+      "url": "https://www.sejda.com/pdf-to-word",
+      "icon": "fas fa-file-word"
+    },
+    {
+      "name": "PDF to Excel",
+      "url": "https://tools.pdf24.org/en/pdf-to-excel",
+      "icon": "fas fa-file-excel"
+    },
+    {
+      "name": "PDF to PowerPoint",
+      "url": "https://tools.pdf24.org/en/pdf-to-powerpoint",
+      "icon": "fas fa-file-powerpoint"
+    },
+    {
+      "name": "PDF to Add Watermark OR Signature",
+      "url": "https://www.sejda.com/sign-pdf",
+      "icon": "fas fa-signature"
+    },
+    {
+      "name": "PDF Page Remove",
+      "url": "https://www.sejda.com/delete-pdf-pages",
+      "icon": "fas fa-trash"
+    },
+    {
+      "name": "PDF Add Page Number",
+      "url": "https://tools.pdf24.org/en/add-page-numbers",
+      "icon": "fas fa-list-ol"
+    },
+    {
+      "name": "PDF Rotate",
+      "url": "https://tools.pdf24.org/en/rotate-pdf-pages",
+      "icon": "fas fa-undo"
+    },
+    {
+      "name": "PDF Lock",
+      "url": "https://www.sejda.com/delete-pdf-pages",
+      "icon": "fas fa-lock"
+    },
+    {
+      "name": "Unlock PDF",
+      "url": "https://pdf.pi7.org/remove-pdf-password",
+      "icon": "fas fa-unlock"
+    },
+    {
+      "name": "PDF Crop",
+      "url": "https://pdf.pi7.org/crop-pdf",
+      "icon": "fas fa-crop"
+    },
+    {
+      "name": "PDF Compress According to Size in KB",
+      "url": "https://pdf.pi7.org/pdf-resize-in-kb",
+      "icon": "fas fa-compress"
+    }
+  ],
+  "video": [
+    {
+      "name": "YouTube Video Download",
+      "url": "https://vidfly.ai/youtube-video-downloader/",
+      "icon": "fab fa-youtube"
+    },
+    {
+      "name": "Audio Cutter",
+      "url": "https://mp3cut.net/",
+      "icon": "fas fa-cut"
+    },
+    {
+      "name": "Audio Merge",
+      "url": "https://audio-joiner.com/",
+      "icon": "fas fa-link"
+    },
+    {
+      "name": "Video Cutter",
+      "url": "https://online-video-cutter.com/",
+      "icon": "fas fa-scissors"
+    },
+    {
+      "name": "Video Merge",
+      "url": "https://online-video-cutter.com/merge-videos",
+      "icon": "fas fa-object-group"
+    }
+  ],
+  "jobs": [
+    {
+      "name": "Naukri.com",
+      "url": "https://www.naukri.com/",
+      "icon": "fas fa-briefcase",
+      "position": "top"
+    },
+    {
+      "name": "Indeed India",
+      "url": "https://in.indeed.com/",
+      "icon": "fas fa-search",
+      "position": "top"
+    },
+    {
+      "name": "LinkedIn Jobs",
+      "url": "https://www.linkedin.com/jobs/",
+      "icon": "fab fa-linkedin",
+      "position": "top"
+    },
+    {
+      "name": "Monster India",
+      "url": "https://www.monsterindia.com/",
+      "icon": "fas fa-dragon",
+      "position": "top"
+    },
+    {
+      "name": "TimesJobs",
+      "url": "https://www.timesjobs.com/",
+      "icon": "fas fa-clock",
+      "position": "top"
+    },
+    {
+      "name": "Shine.com",
+      "url": "https://www.shine.com/",
+      "icon": "fas fa-star",
+      "position": "top"
+    },
+    {
+      "name": "Resume Builder",
+      "url": "https://www.canva.com/resumes/",
+      "icon": "fas fa-file-alt",
+      "position": "left"
+    },
+    {
+      "name": "Job Interview Tips",
+      "url": "https://www.indeed.com/career-advice/interviewing/interview-tips",
+      "icon": "fas fa-comments",
+      "position": "left"
+    },
+    {
+      "name": "Skill Development",
+      "url": "https://www.coursera.org/",
+      "icon": "fas fa-graduation-cap",
+      "position": "right"
+    },
+    {
+      "name": "Freelancer.com",
+      "url": "https://www.freelancer.com/",
+      "icon": "fas fa-laptop",
+      "position": "right"
+    },
+    {
+      "name": "Upwork",
+      "url": "https://www.upwork.com/",
+      "icon": "fas fa-rocket",
+      "position": "right"
+    },
+    {
+      "name": "Fiverr",
+      "url": "https://www.fiverr.com/",
+      "icon": "fas fa-handshake",
+      "position": "right"
+    }
+  ],
+  "services": [
+    {
+      "name": "नया पैन कार्ड",
+      "service": "नया पैन कार्ड",
+      "icon": "fas fa-id-card"
+    },
+    {
+      "name": "खोया हुआ पैन कार्ड निकलवाएं",
+      "service": "खोया हुआ पैन कार्ड निकलवाएं",
+      "icon": "fas fa-search"
+    },
+    {
+      "name": "नया वोटर कार्ड",
+      "service": "नया वोटर कार्ड",
+      "icon": "fas fa-vote-yea"
+    },
+    {
+      "name": "पुराने वोटर कार्ड में करेक्शन",
+      "service": "पुराने वोटर कार्ड में करेक्शन",
+      "icon": "fas fa-edit"
+    },
+    {
+      "name": "खोया हुआ वोटर कार्ड निकलवाएं",
+      "service": "खोया हुआ वोटर कार्ड निकलवाएं",
+      "icon": "fas fa-search"
+    },
+    {
+      "name": "नया पासपोर्ट अप्लाई करें",
+      "service": "नया पासपोर्ट अप्लाई करें",
+      "icon": "fas fa-passport"
+    },
+    {
+      "name": "पुराने पासपोर्ट का रिन्यूअल",
+      "service": "पुराने पासपोर्ट का रिन्यूअल",
+      "icon": "fas fa-redo"
+    },
+    {
+      "name": "Domicile certificate निवास प्रमाण पत्र",
+      "service": "Domicile certificate निवास प्रमाण पत्र",
+      "icon": "fas fa-home"
+    },
+    {
+      "name": "SC Certificate (अनुसूचित जाति प्रमाण पत्र)",
+      "service": "SC Certificate (अनुसूचित जाति प्रमाण पत्र)",
+      "icon": "fas fa-certificate"
+    },
+    {
+      "name": "ST Certificate (अनुसूचित जनजाति प्रमाण पत्र)",
+      "service": "ST Certificate (अनुसूचित जनजाति प्रमाण पत्र)",
+      "icon": "fas fa-certificate"
+    },
+    {
+      "name": "OBC Certificate (अन्य पिछड़ा वर्ग प्रमाण पत्र)",
+      "service": "OBC Certificate (अन्य पिछड़ा वर्ग प्रमाण पत्र)",
+      "icon": "fas fa-certificate"
+    },
+    {
+      "name": "Income Certificate (आय प्रमाण पत्र)",
+      "service": "Income Certificate (आय प्रमाण पत्र)",
+      "icon": "fas fa-money-bill"
+    },
+    {
+      "name": "जन्म प्रमाण पत्र अप्लाई",
+      "service": "जन्म प्रमाण पत्र अप्लाई",
+      "icon": "fas fa-birthday-cake"
+    },
+    {
+      "name": "मृत्यु प्रमाण पत्र अप्लाई",
+      "service": "मृत्यु प्रमाण पत्र अप्लाई",
+      "icon": "fas fa-cross"
+    },
+    {
+      "name": "जन्म प्रमाण पत्र में नाम जोड़ें",
+      "service": "जन्म प्रमाण पत्र में नाम जोड़ें",
+      "icon": "fas fa-plus"
+    },
+    {
+      "name": "बुढ़ापा पेंशन (वृद्धावस्था)",
+      "service": "बुढ़ापा पेंशन (वृद्धावस्था)",
+      "icon": "fas fa-user-clock"
+    },
+    {
+      "name": "दिव्यांग पेंशन रिपोर्ट",
+      "service": "दिव्यांग पेंशन रिपोर्ट",
+      "icon": "fas fa-wheelchair"
+    },
+    {
+      "name": "विधवा पेंशन रिपोर्ट",
+      "service": "विधवा पेंशन रिपोर्ट",
+      "icon": "fas fa-female"
+    },
+    {
+      "name": "अविवाहित पेंशन रिपोर्ट",
+      "service": "अविवाहित पेंशन रिपोर्ट",
+      "icon": "fas fa-user"
+    },
+    {
+      "name": "राशन कार्ड",
+      "service": "राशन कार्ड",
+      "icon": "fas fa-utensils"
+    },
+    {
+      "name": "पारिवारिक पहचान",
+      "service": "पारिवारिक पहचान",
+      "icon": "fas fa-users"
+    },
+    {
+      "name": "रोजगार फॉर्म अप्लाई",
+      "service": "रोजगार फॉर्म अप्लाई",
+      "icon": "fas fa-briefcase"
+    },
+    {
+      "name": "ई-श्रम कार्ड अप्लाई",
+      "service": "ई-श्रम कार्ड अप्लाई",
+      "icon": "fas fa-id-badge"
+    },
+    {
+      "name": "बिजली बिल",
+      "service": "बिजली बिल",
+      "icon": "fas fa-bolt"
+    },
+    {
+      "name": "पीएफ एडवांस/पूर्ण आवेदन",
+      "service": "पीएफ एडवांस/पूर्ण आवेदन",
+      "icon": "fas fa-money-check"
+    },
+    {
+      "name": "अंबेडकर छात्रवृत्ति आवेदन",
+      "service": "अंबेडकर छात्रवृत्ति आवेदन",
+      "icon": "fas fa-graduation-cap"
+    },
+    {
+      "name": "हर घर गृहिणी योजना",
+      "service": "हर घर गृहिणी योजना",
+      "icon": "fas fa-home"
+    },
+    {
+      "name": "वाहन बीमा",
+      "service": "वाहन बीमा",
+      "icon": "fas fa-car"
+    },
+    {
+      "name": "पीएम विश्वकर्मा",
+      "service": "पीएम विश्वकर्मा",
+      "icon": "fas fa-tools"
+    },
+    {
+      "name": "सिबिल रिपोर्ट",
+      "service": "सिबिल रिपोर्ट",
+      "icon": "fas fa-chart-line"
+    },
+    {
+      "name": "सीवी(RESUME)",
+      "service": "सीवी(RESUME)",
+      "icon": "fas fa-file-alt"
+    },
+    {
+      "name": "वाहन कर(Tax)",
+      "service": "वाहन कर(Tax)",
+      "icon": "fas fa-calculator"
+    },
+    {
+      "name": "खेतों के लिए 75% सोलर सब्सिडी फॉर्म",
+      "service": "खेतों के लिए 75% सोलर सब्सिडी फॉर्म",
+      "icon": "fas fa-sun"
+    },
+    {
+      "name": "हरियाणा कौशल रोजगार पंजीकरण",
+      "service": "हरियाणा कौशल रोजगार पंजीकरण",
+      "icon": "fas fa-user-graduate"
+    },
+    {
+      "name": "कृषि यंत्रों पर सब्सिडी",
+      "service": "कृषि यंत्रों पर सब्सिडी",
+      "icon": "fas fa-tractor"
+    },
+    {
+      "name": "खाद-बीज की स्कीमें",
+      "service": "खाद-बीज की स्कीमें",
+      "icon": "fas fa-seedling"
+    },
+    {
+      "name": "पराली प्रबंधन हेतु ₹1200 प्रति एकड़ सहायता",
+      "service": "पराली प्रबंधन हेतु ₹1200 प्रति एकड़ सहायता",
+      "icon": "fas fa-leaf"
+    },
+    {
+      "name": "देशी कपास प्रोत्साहन राशि ₹4000",
+      "service": "देशी कपास प्रोत्साहन राशि ₹4000",
+      "icon": "fas fa-cotton-bureau"
+    },
+    {
+      "name": "बाजरा भावांतर स्कीम",
+      "service": "बाजरा भावांतर स्कीम",
+      "icon": "fas fa-wheat-awn"
+    },
+    {
+      "name": "DSR धान की स्कीम 4000 rs",
+      "service": "DSR धान की स्कीम 4000 rs",
+      "icon": "fas fa-wheat-awn"
+    },
+    {
+      "name": "बाजरा प्रोत्साहन राशि 3000 rs",
+      "service": "बाजरा प्रोत्साहन राशि 3000 rs",
+      "icon": "fas fa-wheat-awn"
+    },
+    {
+      "name": "सभी बैंक की STATEMNT निकलवाए",
+      "service": "सभी बैंक की STATEMNT निकलवाए",
+      "icon": "fas fa-university"
+    },
+    {
+      "name": "GADI से GADI DETAILS FIND",
+      "service": "GADI से GADI DETAILS FIND",
+      "icon": "fas fa-car"
+    },
+    {
+      "name": "आधार कार्ड में Mobile नंबर कोनसा link है ceck करे",
+      "service": "आधार कार्ड में Mobile नंबर कोनसा link है ceck करे",
+      "icon": "fas fa-mobile-alt"
+    },
+    {
+      "name": "पैन से आधार लिंक स्टेटस",
+      "service": "पैन से आधार लिंक स्टेटस",
+      "icon": "fas fa-link"
+    },
+    {
+      "name": "Police verification करवाये",
+      "service": "Police verification करवाये",
+      "icon": "fas fa-shield-alt"
+    },
+    {
+      "name": "खोये हुए आइटम की FIR करवाये",
+      "service": "खोये हुए आइटम की FIR करवाये",
+      "icon": "fas fa-search"
+    },
+    {
+      "name": "All Collage,ITI, All University और Polytechnic Admission फॉर्म भरवाए",
+      "service": "All Collage,ITI, All University और Polytechnic Admission फॉर्म भरवाए",
+      "icon": "fas fa-school"
+    }
+  ]
+}
