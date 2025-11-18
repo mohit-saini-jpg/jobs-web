@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Government Services - Top India Services</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="min-h-screen flex flex-col">
+        <!-- Header with Navigation -->
+        <header class="bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg">
+            <div class="container mx-auto px-4 py-4">
+                <div class="flex items-center justify-between">
+                    <h1 class="text-2xl font-bold flex items-center">
+                        <i class="fas fa-gavel mr-3"></i>
+                        Top India Services
+                    </h1>
+                    <nav class="flex gap-4">
+                        <a href="index.html" class="px-4 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg font-semibold transition duration-300">
+                            <i class="fas fa-briefcase mr-2"></i>Jobs
+                        </a>
+                        <a href="govt-services.html" class="px-4 py-2 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition duration-300">
+                            <i class="fas fa-gavel mr-2"></i>Government Services
+                        </a>
+                        <a href="tools.html" class="px-4 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg font-semibold transition duration-300">
+                            <i class="fas fa-tools mr-2"></i>Tools
+                        </a>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <main class="mx-auto w-full px-4 py-6">
+            <!-- Main Content Area -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div class="flex flex-col gap-4">
+                    <!-- Government Services Section -->
+                    <div id="government-services-section" class="p-6">
+                        <div class="mb-6">
+                            <h3 class="text-2xl font-semibold text-green-800 flex items-center">
+                                <i class="fas fa-gavel mr-3"></i>
+                                Government Services
+                            </h3>
+                            <p class="text-gray-600 mt-2">Apply for various government services and documents</p>
+                        </div>
+                        <div id="services-cards" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                            <!-- Government services will be populated here as cards -->
+                        </div>
+                    </div>
+
+                    <!-- Service Details Modal -->
+                    <div id="service-modal" class="fixed inset-0 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+                        <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                            <div class="p-6">
+                                <div class="flex justify-between items-center mb-6">
+                                    <h2 class="text-2xl font-bold text-gray-800">Service Request</h2>
+                                    <button id="close-modal" class="bg-gray-200 hover:bg-gray-300 rounded-full p-2 text-gray-600 hover:text-gray-800 transition duration-300">
+                                        <i class="fas fa-times text-xl"></i>
+                                    </button>
+                                </div>
+                                <div id="modal-service-content">
+                                    <!-- Service details will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

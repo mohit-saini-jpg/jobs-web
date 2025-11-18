@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
+  // Detect current page
+  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  
   // Load tools data from JSON file
   let toolsData;
   try {
@@ -7,16 +10,21 @@ document.addEventListener("DOMContentLoaded", async () => {
   } catch (error) {
     console.error('Error loading tools data:', error);
     // Fallback empty data
-    toolsData = { image: [], pdf: [], video: [], services: [] };
+    toolsData = { image: [], pdf: [], video: [], services: [], jobs: [] };
   }
+
+  // Get URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  const jobParam = urlParams.get('job');
+  const toolParam = urlParams.get('tool');
+
+  // Page-specific elements
   const mainCategories = document.getElementById("main-categories");
   const subCategories = document.getElementById("sub-categories");
   const backButton = document.getElementById("back-button");
   const subCategoryTitle = document.getElementById("sub-category-title");
   const toolsCards = document.getElementById("tools-cards");
   const servicesCards = document.getElementById("services-cards");
-  const governmentServicesSection = document.getElementById("government-services-section");
-  const toggleServicesBtn = document.getElementById("toggle-services");
   const toolIframe = document.getElementById("tool-iframe");
   const serviceModal = document.getElementById("service-modal");
   const modalServiceContent = document.getElementById("modal-service-content");
@@ -24,39 +32,40 @@ document.addEventListener("DOMContentLoaded", async () => {
   const loadingOverlay = document.getElementById("loading-overlay");
   const defaultState = document.getElementById("default-state");
 
-  // Load government services
-  loadGovernmentServices();
-
-  // Load jobs
-  loadJobs();
-
-  // Initially hide default state since we have government services
-  defaultState.classList.add("hidden");
-
-  // Toggle government services section
-  let servicesVisible = true;
-  toggleServicesBtn.addEventListener("click", () => {
-    servicesVisible = !servicesVisible;
-    if (servicesVisible) {
-      servicesCards.classList.remove("hidden");
-      toggleServicesBtn.innerHTML = '<i class="fas fa-chevron-up"></i>';
-    } else {
-      servicesCards.classList.add("hidden");
-      toggleServicesBtn.innerHTML = '<i class="fas fa-chevron-down"></i>';
+  // Load content based on current page
+  if (currentPage === 'index.html' || currentPage === '') {
+    // Jobs page
+    loadJobs();
+  } else if (currentPage === 'govt-services.html') {
+    // Government services page
+    loadGovernmentServices();
+    
+    // Close modal event listeners
+    if (closeModalBtn) {
+      closeModalBtn.addEventListener("click", () => {
+        serviceModal.classList.add("hidden");
+      });
     }
-  });
 
-  // Close modal event listener
-  closeModalBtn.addEventListener("click", () => {
-    serviceModal.classList.add("hidden");
-  });
-
-  // Close modal when clicking outside
-  serviceModal.addEventListener("click", (e) => {
-    if (e.target === serviceModal) {
-      serviceModal.classList.add("hidden");
+    // Close modal when clicking outside
+    if (serviceModal) {
+      serviceModal.addEventListener("click", (e) => {
+        if (e.target === serviceModal) {
+          serviceModal.classList.add("hidden");
+        }
+      });
     }
-  });
+  } else if (currentPage === 'tools.html') {
+    // Tools page
+    loadToolsSection();
+    
+    // Check if tool parameter is present and auto-load tool
+    if (toolParam) {
+      setTimeout(() => {
+        autoLoadTool(toolParam);
+      }, 500);
+    }
+  }
 
   // Category names mapping
   const categoryNames = {
@@ -72,21 +81,59 @@ document.addEventListener("DOMContentLoaded", async () => {
     video: "fas fa-video text-purple-500",
   };
 
-  // Handle category button clicks
-  document.querySelectorAll(".category-button").forEach((button) => {
-    button.addEventListener("click", () => {
-      const category = button.dataset.category;
-      showSubCategories(category);
-    });
-  });
+  // Function to load tools section (only on tools.html)
+  function loadToolsSection() {
+    if (!mainCategories || !backButton) return;
 
-  // Handle back button
-  backButton.addEventListener("click", () => {
-    showMainCategories();
-  });
+    // Handle category button clicks
+    document.querySelectorAll(".category-button").forEach((button) => {
+      button.addEventListener("click", () => {
+        const category = button.dataset.category;
+        showSubCategories(category);
+      });
+    });
+
+    // Handle back button
+    backButton.addEventListener("click", () => {
+      showMainCategories();
+    });
+  }
+
+  // Function to auto-load a tool based on URL parameter
+  function autoLoadTool(toolName) {
+    // Search for the tool in all categories
+    let foundTool = null;
+    let foundCategory = null;
+
+    for (const [category, tools] of Object.entries(toolsData)) {
+      if (category === 'services' || category === 'jobs') continue;
+      
+      const tool = tools.find(t => 
+        t.name.toLowerCase().replace(/\s+/g, '-') === toolName.toLowerCase() ||
+        t.name.toLowerCase() === toolName.toLowerCase().replace(/-/g, ' ')
+      );
+      
+      if (tool) {
+        foundTool = tool;
+        foundCategory = category;
+        break;
+      }
+    }
+
+    if (foundTool && foundCategory) {
+      // Show the sub-categories for this category
+      showSubCategories(foundCategory);
+      // Load the tool
+      setTimeout(() => {
+        loadTool(foundTool.url);
+      }, 100);
+    }
+  }
 
   // Function to load government services
   function loadGovernmentServices() {
+    if (!servicesCards) return;
+    
     const services = toolsData.services;
     servicesCards.innerHTML = "";
 
@@ -113,71 +160,68 @@ document.addEventListener("DOMContentLoaded", async () => {
   function loadJobs() {
     const jobs = toolsData.jobs;
     const topButtons = document.getElementById("jobs-top-buttons");
-    const leftButtons = document.getElementById("jobs-left-buttons");
-    const rightButtons = document.getElementById("jobs-right-buttons");
+    const otherButtons = document.getElementById("jobs-other-buttons");
+
+    if (!topButtons || !otherButtons) return;
 
     // Group jobs by position
     const topJobs = jobs.filter(job => job.position === 'top');
-    const leftJobs = jobs.filter(job => job.position === 'left');
-    const rightJobs = jobs.filter(job => job.position === 'right');
+    const otherJobs = jobs.filter(job => job.position !== 'top');
 
     // Top buttons
     topJobs.forEach(job => {
       const button = document.createElement("div");
-      button.className = "bg-white p-3 rounded-lg border border-blue-200 hover:bg-blue-50 hover:border-blue-300 transition duration-300 cursor-pointer flex items-center";
+      button.className = "bg-white p-4 rounded-lg border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 hover:shadow-lg transition duration-300 cursor-pointer flex items-center justify-center text-center";
       button.innerHTML = `
-        <i class="${job.icon} text-2xl mr-3 text-blue-600"></i>
-        <span class="font-semibold text-gray-800 text-sm">${job.name}</span>
+        <span class="font-semibold text-gray-800 text-base">${job.name}</span>
       `;
       button.addEventListener("click", () => {
-        loadJobsIframe(job.url);
+        openJobInNewPage(job);
       });
       topButtons.appendChild(button);
     });
 
-    // Left buttons
-    leftJobs.forEach(job => {
+    // Other buttons (left and right)
+    otherJobs.forEach(job => {
       const button = document.createElement("div");
-      button.className = "bg-white p-3 max-h-fit  rounded-lg border border-blue-200 hover:bg-blue-50 hover:border-blue-300 transition duration-300 cursor-pointer flex items-center";
+      button.className = "bg-white p-4 rounded-lg border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 hover:shadow-lg transition duration-300 cursor-pointer flex items-center justify-center text-center";
       button.innerHTML = `
-        <i class="${job.icon} text-xl mr-2 text-blue-600"></i>
-        <span class="font-semibold text-gray-800 text-xs">${job.name}</span>
+        <span class="font-semibold text-gray-800 text-base">${job.name}</span>
       `;
       button.addEventListener("click", () => {
-        loadJobsIframe(job.url);
+        openJobInNewPage(job);
       });
-      leftButtons.appendChild(button);
-    });
-
-    // Right buttons
-    rightJobs.forEach(job => {
-      const button = document.createElement("div");
-      button.className = "bg-white p-3 max-h-fit rounded-lg border border-blue-200 hover:bg-blue-50 hover:border-blue-300 transition duration-300 cursor-pointer flex items-center";
-      button.innerHTML = `
-        <i class="${job.icon} text-xl mr-2 text-blue-600"></i>
-        <span class="font-semibold text-gray-800 text-xs">${job.name}</span>
-      `;
-      button.addEventListener("click", () => {
-        loadJobsIframe(job.url);
-      });
-      rightButtons.appendChild(button);
+      otherButtons.appendChild(button);
     });
   }
 
-  // Function to load jobs iframe
-  function loadJobsIframe(url) {
-    const jobsIframe = document.getElementById("jobs-iframe");
-    jobsIframe.src = url;
+  // Function to open job in new page with URL params
+  function openJobInNewPage(job) {
+    const params = new URLSearchParams({
+      url: encodeURIComponent(job.url),
+      name: encodeURIComponent(job.name),
+      job: job.name.toLowerCase().replace(/\s+/g, '-')
+    });
+    window.location.href = `view.html?${params.toString()}`;
   }
 
   // Function to show main categories
   function showMainCategories() {
+    if (!mainCategories || !subCategories) return;
     mainCategories.classList.remove("hidden");
     subCategories.classList.add("hidden");
+    
+    // Clear URL parameters when going back to main categories
+    if (window.location.search) {
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, '', newUrl);
+    }
   }
 
   // Function to show sub categories
   function showSubCategories(category) {
+    if (!mainCategories || !subCategories) return;
+    
     mainCategories.classList.add("hidden");
     subCategories.classList.remove("hidden");
 
@@ -207,6 +251,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (tool.url) {
         // It's a tool with URL
         toolCard.addEventListener("click", () => {
+          const toolSlug = tool.name.toLowerCase().replace(/\s+/g, '-');
+          // Update URL with tool parameter
+          const newUrl = `${window.location.pathname}?tool=${toolSlug}`;
+          window.history.pushState({}, '', newUrl);
+          
           loadTool(tool.url);
         });
       }
@@ -217,6 +266,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Function to load tool in iframe
   function loadTool(url) {
+    if (!toolIframe || !defaultState || !loadingOverlay) return;
+    
     defaultState.classList.add("hidden");
     toolIframe.classList.remove("hidden");
     loadingOverlay.classList.remove("hidden");
