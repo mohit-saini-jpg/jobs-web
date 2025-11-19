@@ -32,6 +32,31 @@ document.addEventListener("DOMContentLoaded", async () => {
   const loadingOverlay = document.getElementById("loading-overlay");
   const defaultState = document.getElementById("default-state");
 
+  // Mobile menu elements
+  const mobileMenuToggle = document.getElementById("mobile-menu-toggle");
+  const mobileMenu = document.getElementById("mobile-menu");
+
+  // Mobile menu toggle
+  if (mobileMenuToggle && mobileMenu) {
+    mobileMenuToggle.addEventListener("click", () => {
+      mobileMenu.classList.toggle("hidden");
+    });
+
+    // Close mobile menu when clicking a link
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+      });
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!mobileMenu.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
+        mobileMenu.classList.add('hidden');
+      }
+    });
+  }
+
   // Load content based on current page
   if (currentPage === 'index.html' || currentPage === '') {
     // Jobs page
@@ -160,15 +185,19 @@ document.addEventListener("DOMContentLoaded", async () => {
   function loadJobs() {
     const jobs = toolsData.jobs;
     const topButtons = document.getElementById("jobs-top-buttons");
-    const otherButtons = document.getElementById("jobs-other-buttons");
+    const leftSection = document.getElementById("jobs-left-section");
+    const rightSection = document.getElementById("jobs-right-section");
+    const newsScroll = document.getElementById("news-scroll");
+    const jobsScroll = document.getElementById("jobs-scroll");
 
-    if (!topButtons || !otherButtons) return;
+    if (!topButtons || !leftSection || !rightSection || !newsScroll || !jobsScroll) return;
 
     // Group jobs by position
     const topJobs = jobs.filter(job => job.position === 'top');
-    const otherJobs = jobs.filter(job => job.position !== 'top');
+    const leftJobs = jobs.filter(job => job.position === 'left');
+    const rightJobs = jobs.filter(job => job.position === 'right');
 
-    // Top buttons
+    // Top buttons (2 rows of 3)
     topJobs.forEach(job => {
       const button = document.createElement("div");
       button.className = "bg-white p-4 rounded-lg border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 hover:shadow-lg transition duration-300 cursor-pointer flex items-center justify-center text-center";
@@ -181,17 +210,66 @@ document.addEventListener("DOMContentLoaded", async () => {
       topButtons.appendChild(button);
     });
 
-    // Other buttons (left and right)
-    otherJobs.forEach(job => {
+    // Left section
+    leftJobs.forEach(job => {
       const button = document.createElement("div");
-      button.className = "bg-white p-4 rounded-lg border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 hover:shadow-lg transition duration-300 cursor-pointer flex items-center justify-center text-center";
+      button.className = "bg-white p-2 rounded-lg border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 hover:shadow-lg transition duration-300 cursor-pointer flex flex-col items-center justify-center text-center mb-2";
       button.innerHTML = `
-        <span class="font-semibold text-gray-800 text-base">${job.name}</span>
+        <i class="${job.icon} text-xl mb-1 text-blue-600"></i>
+        <span class="font-semibold text-gray-800 text-xs">${job.name}</span>
       `;
       button.addEventListener("click", () => {
         openJobInNewPage(job);
       });
-      otherButtons.appendChild(button);
+      leftSection.appendChild(button);
+    });
+
+    // Right section
+    rightJobs.forEach(job => {
+      const button = document.createElement("div");
+      button.className = "bg-white p-2 rounded-lg border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 hover:shadow-lg transition duration-300 cursor-pointer flex flex-col items-center justify-center text-center mb-2";
+      button.innerHTML = `
+        <i class="${job.icon} text-xl mb-1 text-blue-600"></i>
+        <span class="font-semibold text-gray-800 text-xs">${job.name}</span>
+      `;
+      button.addEventListener("click", () => {
+        openJobInNewPage(job);
+      });
+      rightSection.appendChild(button);
+    });
+
+    // Sample news data
+    const newsItems = toolsData.news || [
+      { name: "New government job openings in IT sector", url: "https://www.naukri.com/it-jobs" },
+      { name: "Skill development programs launched for youth", url: "https://www.coursera.org/" }
+    ];
+
+    // Populate news scroll (duplicate for continuous scroll)
+    newsItems.concat(newsItems).forEach(news => {
+      const newsItem = document.createElement("div");
+      newsItem.className = "bg-blue-50 p-2 rounded border-l-4 border-blue-500 cursor-pointer hover:bg-blue-100 transition duration-300";
+      newsItem.innerHTML = `<p class="text-sm text-gray-700">${news.name}</p>`;
+      newsItem.addEventListener("click", () => {
+        openJobInNewPage(news);
+      });
+      newsScroll.appendChild(newsItem);
+    });
+
+    // Sample scrolling jobs data
+    const scrollingJobs = toolsData.scrolling_jobs || [
+      { name: "Software Engineer at Tech Corp - ₹8-12 LPA", url: "https://www.naukri.com/software-engineer-jobs" },
+      { name: "Data Analyst position open at Analytics Inc", url: "https://www.naukri.com/data-analyst-jobs" }
+    ];
+
+    // Populate jobs scroll (duplicate for continuous scroll)
+    scrollingJobs.concat(scrollingJobs).forEach(job => {
+      const jobItem = document.createElement("div");
+      jobItem.className = "bg-green-50 p-2 rounded border-l-4 border-green-500 cursor-pointer hover:bg-green-100 transition duration-300";
+      jobItem.innerHTML = `<p class="text-sm text-gray-700">${job.name}</p>`;
+      jobItem.addEventListener("click", () => {
+        openJobInNewPage(job);
+      });
+      jobsScroll.appendChild(jobItem);
     });
   }
 

@@ -16,7 +16,7 @@
 
     <div class="h-screen flex flex-col">
         <!-- Header with Back Button -->
-        <header class="bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg">
+        <header class="bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg relative">
             <div class="container mx-auto px-4 py-3">
                 <div class="flex items-center justify-between">
                     <button onclick="window.history.back()" class="px-4 py-2 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition duration-300 flex items-center">
@@ -26,7 +26,10 @@
                         <i class="fas fa-briefcase mr-3"></i>
                         Loading...
                     </h1>
-                    <nav class="flex gap-3">
+                    <button id="mobile-menu-toggle" class="lg:hidden text-white hover:bg-blue-700 p-2 rounded">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <nav class="hidden lg:flex gap-3">
                         <a href="index.html" class="px-3 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg font-semibold transition duration-300 text-sm">
                             <i class="fas fa-briefcase mr-1"></i>Jobs
                         </a>
@@ -37,6 +40,19 @@
                             <i class="fas fa-tools mr-1"></i>Tools
                         </a>
                     </nav>
+                    <div id="mobile-menu" class="hidden lg:hidden absolute top-full left-0 right-0 bg-blue-600 text-white shadow-lg z-50">
+                        <div class="flex flex-col p-4 space-y-2">
+                            <a href="index.html" class="px-4 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg font-semibold transition duration-300">
+                                <i class="fas fa-briefcase mr-2"></i>Jobs
+                            </a>
+                            <a href="govt-services.html" class="px-4 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg font-semibold transition duration-300">
+                                <i class="fas fa-gavel mr-2"></i>Services
+                            </a>
+                            <a href="tools.html" class="px-4 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg font-semibold transition duration-300">
+                                <i class="fas fa-tools mr-2"></i>Tools
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </header>

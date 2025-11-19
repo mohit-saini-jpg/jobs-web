@@ -264,6 +264,90 @@
       "position": "right"
     }
   ],
+  "news": [
+    {
+      "name": "New government job openings in IT sector",
+      "url": "https://www.naukri.com/it-jobs"
+    },
+    {
+      "name": "Skill development programs launched for youth",
+      "url": "https://www.coursera.org/"
+    },
+    {
+      "name": "Latest updates on pension schemes",
+      "url": "https://www.epfindia.gov.in/"
+    },
+    {
+      "name": "Digital literacy campaign reaches rural areas",
+      "url": "https://www.digitalindia.gov.in/"
+    },
+    {
+      "name": "New startup incubation centers announced",
+      "url": "https://www.startupindia.gov.in/"
+    },
+    {
+      "name": "Career guidance workshops scheduled",
+      "url": "https://www.indeed.com/career-advice"
+    },
+    {
+      "name": "Remote work opportunities increasing",
+      "url": "https://www.linkedin.com/jobs/remote-jobs"
+    },
+    {
+      "name": "Industry-specific training programs",
+      "url": "https://www.udemy.com/"
+    },
+    {
+      "name": "Job fair dates announced for major cities",
+      "url": "https://www.timesjobs.com/job-fairs"
+    },
+    {
+      "name": "Resume building tips for fresh graduates",
+      "url": "https://www.canva.com/resumes/"
+    }
+  ],
+  "scrolling_jobs": [
+    {
+      "name": "Software Engineer at Tech Corp - ₹8-12 LPA",
+      "url": "https://www.naukri.com/software-engineer-jobs"
+    },
+    {
+      "name": "Data Analyst position open at Analytics Inc",
+      "url": "https://www.naukri.com/data-analyst-jobs"
+    },
+    {
+      "name": "Marketing Manager role available",
+      "url": "https://www.naukri.com/marketing-manager-jobs"
+    },
+    {
+      "name": "HR Executive needed for growing company",
+      "url": "https://www.naukri.com/hr-executive-jobs"
+    },
+    {
+      "name": "Project Manager - Construction sector",
+      "url": "https://www.naukri.com/project-manager-jobs"
+    },
+    {
+      "name": "Graphic Designer - Creative agency",
+      "url": "https://www.naukri.com/graphic-designer-jobs"
+    },
+    {
+      "name": "Accountant - Finance department",
+      "url": "https://www.naukri.com/accountant-jobs"
+    },
+    {
+      "name": "Sales Representative - B2B sales",
+      "url": "https://www.naukri.com/sales-jobs"
+    },
+    {
+      "name": "Customer Support Specialist",
+      "url": "https://www.naukri.com/customer-support-jobs"
+    },
+    {
+      "name": "Content Writer - Digital marketing",
+      "url": "https://www.naukri.com/content-writer-jobs"
+    }
+  ],
   "services": [
     {
       "name": "नया पैन कार्ड",
