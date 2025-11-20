@@ -61,6 +61,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (currentPage === 'index.html' || currentPage === '') {
     // Jobs page
     loadJobs();
+    loadSocialLinks();
   } else if (currentPage === 'govt-services.html') {
     // Government services page
     loadGovernmentServices();
@@ -181,9 +182,31 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+  // Function to load social links
+  function loadSocialLinks() {
+    const socialLinks = toolsData.social_links || [];
+    const socialSection = document.getElementById("social-section");
+
+    if (!socialSection) return;
+
+    socialLinks.forEach(social => {
+      const button = document.createElement("a");
+      button.href = social.url;
+      button.target = "_blank";
+      button.className = `${social.color} text-white py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition duration-300 flex items-center justify-center font-bold text-lg`;
+      button.innerHTML = `
+        <i class="${social.icon} mr-2 text-2xl"></i>
+        ${social.name}
+      `;
+      socialSection.appendChild(button);
+    });
+  }
+
   // Function to load jobs
   function loadJobs() {
-    const jobs = toolsData.jobs;
+    const topJobs = toolsData.top_jobs || [];
+    const leftJobs = toolsData.left_jobs || [];
+    const rightJobs = toolsData.right_jobs || [];
     const topButtons = document.getElementById("jobs-top-buttons");
     const leftSection = document.getElementById("jobs-left-section");
     const rightSection = document.getElementById("jobs-right-section");
@@ -192,15 +215,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!topButtons || !leftSection || !rightSection || !newsScroll || !jobsScroll) return;
 
-    // Group jobs by position
-    const topJobs = jobs.filter(job => job.position === 'top');
-    const leftJobs = jobs.filter(job => job.position === 'left');
-    const rightJobs = jobs.filter(job => job.position === 'right');
-
     // Top buttons (2 rows of 3)
     topJobs.forEach(job => {
       const button = document.createElement("div");
-      button.className = "bg-white p-4 rounded-lg border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 hover:shadow-lg transition duration-300 cursor-pointer flex items-center justify-center text-center";
+      button.className = "bg-white p-1 rounded-lg border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 hover:shadow-lg transition duration-300 cursor-pointer flex items-center justify-center text-center";
       button.innerHTML = `
         <span class="font-semibold text-gray-800 text-base">${job.name}</span>
       `;
@@ -213,9 +231,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Left section
     leftJobs.forEach(job => {
       const button = document.createElement("div");
-      button.className = "bg-white p-2 rounded-lg border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 hover:shadow-lg transition duration-300 cursor-pointer flex flex-col items-center justify-center text-center mb-2";
+      button.className = "bg-white p-1 h-fit rounded-lg border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 hover:shadow-lg transition duration-300 cursor-pointer flex flex-col items-center justify-center text-center mb-2";
       button.innerHTML = `
-        <i class="${job.icon} text-xl mb-1 text-blue-600"></i>
         <span class="font-semibold text-gray-800 text-xs">${job.name}</span>
       `;
       button.addEventListener("click", () => {
@@ -227,9 +244,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Right section
     rightJobs.forEach(job => {
       const button = document.createElement("div");
-      button.className = "bg-white p-2 rounded-lg border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 hover:shadow-lg transition duration-300 cursor-pointer flex flex-col items-center justify-center text-center mb-2";
+      button.className = "bg-white p-1 h-fit rounded-lg border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 hover:shadow-lg transition duration-300 cursor-pointer flex flex-col items-center justify-center text-center mb-2";
       button.innerHTML = `
-        <i class="${job.icon} text-xl mb-1 text-blue-600"></i>
         <span class="font-semibold text-gray-800 text-xs">${job.name}</span>
       `;
       button.addEventListener("click", () => {

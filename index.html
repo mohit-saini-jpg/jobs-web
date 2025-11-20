@@ -12,9 +12,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @keyframes scroll {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-100%); }
+            0% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(-100%);
+            }
         }
+
         .animate-scroll {
             animation: scroll 20s linear infinite;
         }
@@ -36,25 +42,32 @@
                         <i class="fas fa-bars"></i>
                     </button>
                     <nav class="hidden lg:flex gap-4">
-                        <a href="index.html" class="px-4 py-2 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition duration-300">
+                        <a href="index.html"
+                            class="px-4 py-2 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition duration-300">
                             <i class="fas fa-briefcase mr-2"></i>Jobs
                         </a>
-                        <a href="govt-services.html" class="px-4 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg font-semibold transition duration-300">
+                        <a href="govt-services.html"
+                            class="px-4 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg font-semibold transition duration-300">
                             <i class="fas fa-gavel mr-2"></i>Government Services
                         </a>
-                        <a href="tools.html" class="px-4 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg font-semibold transition duration-300">
+                        <a href="tools.html"
+                            class="px-4 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg font-semibold transition duration-300">
                             <i class="fas fa-tools mr-2"></i>Tools
                         </a>
                     </nav>
-                    <div id="mobile-menu" class="hidden lg:hidden absolute top-full left-0 right-0 bg-blue-600 text-white shadow-lg z-50">
+                    <div id="mobile-menu"
+                        class="hidden lg:hidden absolute top-full left-0 right-0 bg-blue-600 text-white shadow-lg z-50">
                         <div class="flex flex-col p-4 space-y-2">
-                            <a href="index.html" class="px-4 py-2 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition duration-300">
+                            <a href="index.html"
+                                class="px-4 py-2 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition duration-300">
                                 <i class="fas fa-briefcase mr-2"></i>Jobs
                             </a>
-                            <a href="govt-services.html" class="px-4 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg font-semibold transition duration-300">
+                            <a href="govt-services.html"
+                                class="px-4 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg font-semibold transition duration-300">
                                 <i class="fas fa-gavel mr-2"></i>Government Services
                             </a>
-                            <a href="tools.html" class="px-4 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg font-semibold transition duration-300">
+                            <a href="tools.html"
+                                class="px-4 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg font-semibold transition duration-300">
                                 <i class="fas fa-tools mr-2"></i>Tools
                             </a>
                         </div>
@@ -62,6 +75,13 @@
                 </div>
             </div>
         </header>
+
+        <!-- social section  -->
+        <div class="container mx-auto px-4 py-4">
+            <div id="social-section" class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <!-- Social buttons will be populated here -->
+            </div>
+        </div>
 
         <main class="mx-auto w-full px-4 py-6">
             <!-- Main Content Area -->
@@ -77,21 +97,21 @@
                             <p class="text-gray-600 mt-2">Explore top job portals and career resources</p>
                         </div>
                         <!-- Top 2 rows of jobs -->
-                        <div class="grid grid-cols-3 gap-4 mb-6" id="jobs-top-buttons">
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-12 gap-4 mb-6" id="jobs-top-buttons">
                             <!-- Top jobs will be populated here -->
                         </div>
-                        
+
                         <!-- Bottom section with left, center, right -->
-                        <div class="flex gap-4 mt-6">
+                        <div class="flex flex-col lg:flex-row gap-4 mt-6">
                             <!-- Left section -->
-                            <div class="w-1/6" id="jobs-left-section">
+                            <div class="w-full lg:w-1/6 grid grid-cols-2 gap-1 h-fit" id="jobs-left-section">
                                 <!-- Left jobs will be populated here -->
                             </div>
-                            
+
                             <!-- Center section (75%) -->
-                            <div class="w-3/4 flex gap-4">
+                            <div class="w-full lg:w-3/4 flex flex-col md:flex-row gap-4">
                                 <!-- Latest News Box -->
-                                <div class="w-1/2 bg-white rounded-lg shadow-lg p-4">
+                                <div class="w-full md:w-1/2 bg-white rounded-lg shadow-lg p-4">
                                     <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
                                         <i class="fas fa-newspaper mr-2 text-blue-600"></i>
                                         Latest News
@@ -102,9 +122,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Jobs Box -->
-                                <div class="w-1/2 bg-white rounded-lg shadow-lg p-4">
+                                <div class="w-full md:w-1/2 bg-white rounded-lg shadow-lg p-4">
                                     <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
                                         <i class="fas fa-briefcase mr-2 text-green-600"></i>
                                         Latest Jobs
@@ -116,17 +136,17 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- Right section -->
-                            <div class="w-1/6" id="jobs-right-section">
+                            <div class="w-full lg:w-1/6 grid grid-cols-2 gap-1 h-fit" id="jobs-right-section">
                                 <!-- Right jobs will be populated here -->
                             </div>
                         </div>
                     </div>
                 </div>
-                </div>
             </div>
-        </main>
+    </div>
+    </main>
     <script src="script.js"></script>
 </body>
 

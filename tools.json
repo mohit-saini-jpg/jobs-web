@@ -190,78 +190,82 @@
       "icon": "fas fa-object-group"
     }
   ],
-  "jobs": [
+  "top_jobs": [
     {
       "name": "Naukri.com",
-      "url": "https://www.naukri.com/",
-      "icon": "fas fa-briefcase",
-      "position": "top"
+      "url": "https://www.naukri.com/"
     },
     {
       "name": "Indeed India",
-      "url": "https://in.indeed.com/",
-      "icon": "fas fa-search",
-      "position": "top"
+      "url": "https://in.indeed.com/"
     },
     {
       "name": "LinkedIn Jobs",
-      "url": "https://www.linkedin.com/jobs/",
-      "icon": "fab fa-linkedin",
-      "position": "top"
+      "url": "https://www.linkedin.com/jobs/"
     },
     {
       "name": "Monster India",
-      "url": "https://www.monsterindia.com/",
-      "icon": "fas fa-dragon",
-      "position": "top"
+      "url": "https://www.monsterindia.com/"
     },
     {
       "name": "TimesJobs",
-      "url": "https://www.timesjobs.com/",
-      "icon": "fas fa-clock",
-      "position": "top"
+      "url": "https://www.timesjobs.com/"
     },
     {
       "name": "Shine.com",
-      "url": "https://www.shine.com/",
-      "icon": "fas fa-star",
-      "position": "top"
+      "url": "https://www.shine.com/"
     },
     {
+      "name": "Naukri.com",
+      "url": "https://www.naukri.com/"
+    },
+    {
+      "name": "Indeed India",
+      "url": "https://in.indeed.com/"
+    },
+    {
+      "name": "LinkedIn Jobs",
+      "url": "https://www.linkedin.com/jobs/"
+    },
+    {
+      "name": "Monster India",
+      "url": "https://www.monsterindia.com/"
+    },
+    {
+      "name": "TimesJobs",
+      "url": "https://www.timesjobs.com/"
+    },
+    {
+      "name": "Shine.com",
+      "url": "https://www.shine.com/"
+    }
+  ],
+  "left_jobs": [
+    {
       "name": "Resume Builder",
-      "url": "https://www.canva.com/resumes/",
-      "icon": "fas fa-file-alt",
-      "position": "left"
+      "url": "https://www.canva.com/resumes/"
     },
     {
       "name": "Job Interview Tips",
-      "url": "https://www.indeed.com/career-advice/interviewing/interview-tips",
-      "icon": "fas fa-comments",
-      "position": "left"
-    },
+      "url": "https://www.indeed.com/career-advice/interviewing/interview-tips"
+    }
+  ],
+  "right_jobs": [
     {
       "name": "Skill Development",
-      "url": "https://www.coursera.org/",
-      "icon": "fas fa-graduation-cap",
-      "position": "right"
+      "url": "https://www.coursera.org/"
     },
     {
       "name": "Freelancer.com",
-      "url": "https://www.freelancer.com/",
-      "icon": "fas fa-laptop",
-      "position": "right"
+      "url": "https://www.freelancer.com/"
     },
     {
       "name": "Upwork",
-      "url": "https://www.upwork.com/",
-      "icon": "fas fa-rocket",
-      "position": "right"
+      "url": "https://www.upwork.com/"
     },
     {
       "name": "Fiverr",
-      "url": "https://www.fiverr.com/",
-      "icon": "fas fa-handshake",
-      "position": "right"
+      "url": "https://www.fiverr.com/"
     }
   ],
   "news": [
@@ -588,6 +592,38 @@
       "name": "All Collage,ITI, All University और Polytechnic Admission फॉर्म भरवाए",
       "service": "All Collage,ITI, All University और Polytechnic Admission फॉर्म भरवाए",
       "icon": "fas fa-school"
+    }
+  ],
+  "social_links": [
+    {
+      "name": "Instagram",
+      "url": "https://www.instagram.com/",
+      "icon": "fab fa-instagram",
+      "color": "bg-gradient-to-r from-pink-500 to-red-500"
+    },
+    {
+      "name": "Facebook",
+      "url": "https://www.facebook.com/",
+      "icon": "fab fa-facebook-f",
+      "color": "bg-blue-600"
+    },
+    {
+      "name": "YouTube",
+      "url": "https://www.youtube.com/",
+      "icon": "fab fa-youtube",
+      "color": "bg-red-600"
+    },
+    {
+      "name": "WhatsApp",
+      "url": "https://whatsapp.com/",
+      "icon": "fab fa-whatsapp",
+      "color": "bg-green-500"
+    },
+    {
+      "name": "Telegram",
+      "url": "https://telegram.org/",
+      "icon": "fab fa-telegram-plane",
+      "color": "bg-blue-400"
     }
   ]
 }
