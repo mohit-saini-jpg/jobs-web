@@ -1,0 +1,205 @@
+{
+  "top_jobs": [
+    {
+      "title": "Popular Job Sites"
+    },
+    {
+      "name": "Naukri.com",
+      "url": "https://www.naukri.com/"
+    },
+    {
+      "name": "Indeed India",
+      "url": "https://in.indeed.com/"
+    },
+    {
+      "name": "LinkedIn Jobs",
+      "url": "https://www.linkedin.com/jobs/"
+    },
+    {
+      "name": "Monster India",
+      "url": "https://www.monsterindia.com/"
+    },
+    {
+      "name": "TimesJobs",
+      "url": "https://www.timesjobs.com/"
+    },
+    {
+      "name": "Shine.com",
+      "url": "https://www.shine.com/"
+    },
+    {
+      "name": "Naukri.com",
+      "url": "https://www.naukri.com/"
+    },
+    {
+      "name": "Indeed India",
+      "url": "https://in.indeed.com/"
+    },
+    {
+      "name": "LinkedIn Jobs",
+      "url": "https://www.linkedin.com/jobs/"
+    },
+    {
+      "name": "Monster India",
+      "url": "https://www.monsterindia.com/"
+    },
+    {
+      "name": "TimesJobs",
+      "url": "https://www.timesjobs.com/"
+    },
+    {
+      "name": "Shine.com",
+      "url": "https://www.shine.com/"
+    }
+  ],
+  "left_jobs": [
+    {
+      "title": "Resume & Interview"
+    },
+    {
+      "name": "Resume Builder",
+      "url": "https://www.canva.com/resumes/"
+    },
+    {
+      "name": "Job Interview Tips",
+      "url": "https://www.indeed.com/career-advice/interviewing/interview-tips"
+    }
+  ],
+  "right_jobs": [
+    {
+      "title": "Freelancing & Skills"
+    },
+    {
+      "name": "Skill Development",
+      "url": "https://www.coursera.org/"
+    },
+    {
+      "name": "Freelancer.com",
+      "url": "https://www.freelancer.com/"
+    },
+    {
+      "name": "Upwork",
+      "url": "https://www.upwork.com/"
+    },
+    {
+      "name": "Fiverr",
+      "url": "https://www.fiverr.com/"
+    }
+  ],
+  "news": [
+    {
+      "name": "New government job openings in IT sector",
+      "url": "https://www.naukri.com/it-jobs"
+    },
+    {
+      "name": "Skill development programs launched for youth",
+      "url": "https://www.coursera.org/"
+    },
+    {
+      "name": "Latest updates on pension schemes",
+      "url": "https://www.epfindia.gov.in/"
+    },
+    {
+      "name": "Digital literacy campaign reaches rural areas",
+      "url": "https://www.digitalindia.gov.in/"
+    },
+    {
+      "name": "New startup incubation centers announced",
+      "url": "https://www.startupindia.gov.in/"
+    },
+    {
+      "name": "Career guidance workshops scheduled",
+      "url": "https://www.indeed.com/career-advice"
+    },
+    {
+      "name": "Remote work opportunities increasing",
+      "url": "https://www.linkedin.com/jobs/remote-jobs"
+    },
+    {
+      "name": "Industry-specific training programs",
+      "url": "https://www.udemy.com/"
+    },
+    {
+      "name": "Job fair dates announced for major cities",
+      "url": "https://www.timesjobs.com/job-fairs"
+    },
+    {
+      "name": "Resume building tips for fresh graduates",
+      "url": "https://www.canva.com/resumes/"
+    }
+  ],
+  "scrolling_jobs": [
+    {
+      "name": "Software Engineer at Tech Corp - ₹8-12 LPA",
+      "url": "https://www.naukri.com/software-engineer-jobs"
+    },
+    {
+      "name": "Data Analyst position open at Analytics Inc",
+      "url": "https://www.naukri.com/data-analyst-jobs"
+    },
+    {
+      "name": "Marketing Manager role available",
+      "url": "https://www.naukri.com/marketing-manager-jobs"
+    },
+    {
+      "name": "HR Executive needed for growing company",
+      "url": "https://www.naukri.com/hr-executive-jobs"
+    },
+    {
+      "name": "Project Manager - Construction sector",
+      "url": "https://www.naukri.com/project-manager-jobs"
+    },
+    {
+      "name": "Graphic Designer - Creative agency",
+      "url": "https://www.naukri.com/graphic-designer-jobs"
+    },
+    {
+      "name": "Accountant - Finance department",
+      "url": "https://www.naukri.com/accountant-jobs"
+    },
+    {
+      "name": "Sales Representative - B2B sales",
+      "url": "https://www.naukri.com/sales-jobs"
+    },
+    {
+      "name": "Customer Support Specialist",
+      "url": "https://www.naukri.com/customer-support-jobs"
+    },
+    {
+      "name": "Content Writer - Digital marketing",
+      "url": "https://www.naukri.com/content-writer-jobs"
+    }
+  ],
+  "social_links": [
+    {
+      "name": "Instagram",
+      "url": "https://www.instagram.com/",
+      "icon": "fab fa-instagram",
+      "color": "bg-gradient-to-r from-pink-500 to-red-500"
+    },
+    {
+      "name": "Facebook",
+      "url": "https://www.facebook.com/",
+      "icon": "fab fa-facebook-f",
+      "color": "bg-blue-600"
+    },
+    {
+      "name": "YouTube",
+      "url": "https://www.youtube.com/",
+      "icon": "fab fa-youtube",
+      "color": "bg-red-600"
+    },
+    {
+      "name": "WhatsApp",
+      "url": "https://whatsapp.com/",
+      "icon": "fab fa-whatsapp",
+      "color": "bg-green-500"
+    },
+    {
+      "name": "Telegram",
+      "url": "https://telegram.org/",
+      "icon": "fab fa-telegram-plane",
+      "color": "bg-blue-400"
+    }
+  ]
+}

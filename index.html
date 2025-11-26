@@ -10,21 +10,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @keyframes scroll {
-            0% {
-                transform: translateY(0);
-            }
-
-            100% {
-                transform: translateY(-100%);
-            }
-        }
-
-        .animate-scroll {
-            animation: scroll 20s linear infinite;
-        }
-    </style>
 </head>
 
 <body>
@@ -83,21 +68,14 @@
             </div>
         </div>
 
-        <main class="mx-auto w-full px-4 py-6">
+        <main class="mx-auto w-full px-4">
             <!-- Main Content Area -->
             <div class="bg-white rounded-lg shadow-lg overflow-hidden">
                 <div class="flex flex-col gap-4">
                     <!-- Jobs Section -->
-                    <div id="jobs-section" class="p-6">
-                        <div class="mb-4">
-                            <h3 class="text-2xl font-semibold text-blue-800 flex items-center">
-                                <i class="fas fa-briefcase mr-3"></i>
-                                Find Your Dream Job
-                            </h3>
-                            <p class="text-gray-600 mt-2">Explore top job portals and career resources</p>
-                        </div>
+                    <div id="jobs-section" class="px-6">
                         <!-- Top 2 rows of jobs -->
-                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-12 gap-4 mb-6" id="jobs-top-buttons">
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-12 gap-x-2 gap-y-1 mb-6" id="jobs-top-buttons">
                             <!-- Top jobs will be populated here -->
                         </div>
 
@@ -116,8 +94,8 @@
                                         <i class="fas fa-newspaper mr-2 text-blue-600"></i>
                                         Latest News
                                     </h4>
-                                    <div class="h-64 overflow-hidden relative">
-                                        <div id="news-scroll" class="space-y-3 animate-scroll">
+                                    <div class="relative">
+                                        <div id="news-scroll" class="space-y-3">
                                             <!-- News items will be populated here -->
                                         </div>
                                     </div>
@@ -129,8 +107,8 @@
                                         <i class="fas fa-briefcase mr-2 text-green-600"></i>
                                         Latest Jobs
                                     </h4>
-                                    <div class="h-64 overflow-hidden relative">
-                                        <div id="jobs-scroll" class="space-y-3 animate-scroll">
+                                    <div class="relative">
+                                        <div id="jobs-scroll" class="space-y-3">
                                             <!-- Jobs items will be populated here -->
                                         </div>
                                     </div>

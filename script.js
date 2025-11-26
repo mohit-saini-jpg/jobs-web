@@ -2,15 +2,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Detect current page
   const currentPage = window.location.pathname.split('/').pop() || 'index.html';
   
-  // Load tools data from JSON file
-  let toolsData;
+  // Load data from appropriate JSON file
+  let data;
+  const jsonFile = currentPage === 'index.html' || currentPage === '' ? 'jobs.json' : currentPage === 'tools.html' ? 'tools.json' : 'services.json';
   try {
-    const response = await fetch('tools.json');
-    toolsData = await response.json();
+    const response = await fetch(jsonFile);
+    data = await response.json();
   } catch (error) {
-    console.error('Error loading tools data:', error);
+    console.error('Error loading data:', error);
     // Fallback empty data
-    toolsData = { image: [], pdf: [], video: [], services: [], jobs: [] };
+    data = { image: [], pdf: [], video: [], services: [], top_jobs: [], left_jobs: [], right_jobs: [], news: [], scrolling_jobs: [], social_links: [] };
   }
 
   // Get URL parameters
@@ -131,8 +132,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     let foundTool = null;
     let foundCategory = null;
 
-    for (const [category, tools] of Object.entries(toolsData)) {
-      if (category === 'services' || category === 'jobs') continue;
+    for (const [category, tools] of Object.entries(data)) {
+      if (category === 'services' || category === 'top_jobs' || category === 'left_jobs' || category === 'right_jobs' || category === 'news' || category === 'scrolling_jobs' || category === 'social_links') continue;
       
       const tool = tools.find(t => 
         t.name.toLowerCase().replace(/\s+/g, '-') === toolName.toLowerCase() ||
@@ -160,7 +161,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   function loadGovernmentServices() {
     if (!servicesCards) return;
     
-    const services = toolsData.services;
+    const services = data.services;
     servicesCards.innerHTML = "";
 
     services.forEach((service) => {
@@ -175,7 +176,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       `;
 
       serviceCard.addEventListener("click", () => {
-        showServiceDetails(service.service);
+        showServiceDetails(service);
       });
 
       servicesCards.appendChild(serviceCard);
@@ -184,7 +185,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Function to load social links
   function loadSocialLinks() {
-    const socialLinks = toolsData.social_links || [];
+    const socialLinks = data.social_links || [];
     const socialSection = document.getElementById("social-section");
 
     if (!socialSection) return;
@@ -204,9 +205,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Function to load jobs
   function loadJobs() {
-    const topJobs = toolsData.top_jobs || [];
-    const leftJobs = toolsData.left_jobs || [];
-    const rightJobs = toolsData.right_jobs || [];
+    const topJobs = data.top_jobs || [];
+    const leftJobs = data.left_jobs || [];
+    const rightJobs = data.right_jobs || [];
     const topButtons = document.getElementById("jobs-top-buttons");
     const leftSection = document.getElementById("jobs-left-section");
     const rightSection = document.getElementById("jobs-right-section");
@@ -217,45 +218,72 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Top buttons (2 rows of 3)
     topJobs.forEach(job => {
-      const button = document.createElement("div");
-      button.className = "bg-white p-1 rounded-lg border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 hover:shadow-lg transition duration-300 cursor-pointer flex items-center justify-center text-center";
-      button.innerHTML = `
-        <span class="font-semibold text-gray-800 text-base">${job.name}</span>
-      `;
-      button.addEventListener("click", () => {
-        openJobInNewPage(job);
-      });
-      topButtons.appendChild(button);
+      if (job.title) {
+        // It's a title
+        const titleDiv = document.createElement("div");
+        titleDiv.className = "col-span-full text-left py-2";
+        titleDiv.innerHTML = `<h3 class="text-lg font-semibold text-blue-800">${job.title}</h3>`;
+        topButtons.appendChild(titleDiv);
+      } else {
+        // It's a button
+        const button = document.createElement("div");
+        button.className = "bg-white p-1 rounded-lg border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 hover:shadow-lg transition duration-300 cursor-pointer flex items-center justify-center text-center";
+        button.innerHTML = `
+          <span class="font-semibold text-gray-800 text-xs">${job.name}</span>
+        `;
+        button.addEventListener("click", () => {
+          openJobInNewPage(job);
+        });
+        topButtons.appendChild(button);
+      }
     });
 
     // Left section
     leftJobs.forEach(job => {
-      const button = document.createElement("div");
-      button.className = "bg-white p-1 h-fit rounded-lg border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 hover:shadow-lg transition duration-300 cursor-pointer flex flex-col items-center justify-center text-center mb-2";
-      button.innerHTML = `
-        <span class="font-semibold text-gray-800 text-xs">${job.name}</span>
-      `;
-      button.addEventListener("click", () => {
-        openJobInNewPage(job);
-      });
-      leftSection.appendChild(button);
+      if (job.title) {
+        // It's a title
+        const titleDiv = document.createElement("div");
+        titleDiv.className = "col-span-full text-left py-1";
+        titleDiv.innerHTML = `<h4 class="text-sm font-semibold text-blue-800">${job.title}</h4>`;
+        leftSection.appendChild(titleDiv);
+      } else {
+        // It's a button
+        const button = document.createElement("div");
+        button.className = "bg-white p-1 h-fit rounded-lg border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 hover:shadow-lg transition duration-300 cursor-pointer flex flex-col items-center justify-center text-center mb-2";
+        button.innerHTML = `
+          <span class="font-semibold text-gray-800 text-xs">${job.name}</span>
+        `;
+        button.addEventListener("click", () => {
+          openJobInNewPage(job);
+        });
+        leftSection.appendChild(button);
+      }
     });
 
     // Right section
     rightJobs.forEach(job => {
-      const button = document.createElement("div");
-      button.className = "bg-white p-1 h-fit rounded-lg border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 hover:shadow-lg transition duration-300 cursor-pointer flex flex-col items-center justify-center text-center mb-2";
-      button.innerHTML = `
-        <span class="font-semibold text-gray-800 text-xs">${job.name}</span>
-      `;
-      button.addEventListener("click", () => {
-        openJobInNewPage(job);
-      });
-      rightSection.appendChild(button);
+      if (job.title) {
+        // It's a title
+        const titleDiv = document.createElement("div");
+        titleDiv.className = "col-span-full text-left py-1";
+        titleDiv.innerHTML = `<h4 class="text-sm font-semibold text-blue-800">${job.title}</h4>`;
+        rightSection.appendChild(titleDiv);
+      } else {
+        // It's a button
+        const button = document.createElement("div");
+        button.className = "bg-white p-1 h-fit rounded-lg border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 hover:shadow-lg transition duration-300 cursor-pointer flex flex-col items-center justify-center text-center mb-2";
+        button.innerHTML = `
+          <span class="font-semibold text-gray-800 text-xs">${job.name}</span>
+        `;
+        button.addEventListener("click", () => {
+          openJobInNewPage(job);
+        });
+        rightSection.appendChild(button);
+      }
     });
 
     // Sample news data
-    const newsItems = toolsData.news || [
+    const newsItems = data.news || [
       { name: "New government job openings in IT sector", url: "https://www.naukri.com/it-jobs" },
       { name: "Skill development programs launched for youth", url: "https://www.coursera.org/" }
     ];
@@ -272,7 +300,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // Sample scrolling jobs data
-    const scrollingJobs = toolsData.scrolling_jobs || [
+    const scrollingJobs = data.scrolling_jobs || [
       { name: "Software Engineer at Tech Corp - ₹8-12 LPA", url: "https://www.naukri.com/software-engineer-jobs" },
       { name: "Data Analyst position open at Analytics Inc", url: "https://www.naukri.com/data-analyst-jobs" }
     ];
@@ -330,7 +358,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     toolsCards.innerHTML = "";
 
     // Add tools as cards
-    const tools = toolsData[category];
+    const tools = data[category];
     tools.forEach((tool) => {
       const toolCard = document.createElement("div");
       toolCard.className =
@@ -373,7 +401,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // Function to show service details in modal
-  function showServiceDetails(serviceName) {
+  function showServiceDetails(service) {
     modalServiceContent.innerHTML = `
       <div class="text-center mb-8">
         <h2 class="text-4xl font-bold text-gray-800 mb-4">
@@ -416,7 +444,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           Selected Service
         </h3>
         <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-          <p class="text-xl font-medium text-blue-800">${serviceName}</p>
+          <p class="text-xl font-medium text-blue-800">${service.name}</p>
         </div>
       </div>
 
@@ -444,7 +472,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     `;
 
     // Populate documents
-    populateDocuments(serviceName);
+    populateDocuments(service.documents);
 
     // Handle form submission
     const form = modalServiceContent.querySelector("#serviceForm");
@@ -455,7 +483,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const phone = form.querySelector("#phone").value;
 
       const params = new URLSearchParams({
-        service: serviceName,
+        service: service.name,
         name: name,
         phone: phone,
       });
@@ -470,57 +498,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // Function to populate documents based on service
-  function populateDocuments(serviceName) {
+  function populateDocuments(documents) {
     const documentsList = modalServiceContent.querySelector("#documentsList");
-    let documents = [];
-
-    if (serviceName.includes('पैन')) {
-      documents = [
-        'आधार कार्ड की फोटोकॉपी',
-        'पासपोर्ट साइज फोटो (2 कॉपी)',
-        'मोबाइल नंबर',
-        'ईमेल आईडी'
-      ];
-    } else if (serviceName.includes('वोटर')) {
-      documents = [
-        'आधार कार्ड',
-        'पासपोर्ट साइज फोटो',
-        'मोबाइल नंबर',
-        'ईमेल आईडी (वैकल्पिक)'
-      ];
-    } else if (serviceName.includes('पासपोर्ट')) {
-      documents = [
-        'आधार कार्ड',
-        'पैन कार्ड',
-        'जन्म प्रमाण पत्र',
-        '10वीं की मार्कशीट',
-        'पासपोर्ट साइज फोटो (6 कॉपी)',
-        'मोबाइल नंबर'
-      ];
-    } else if (serviceName.includes('प्रमाण पत्र') || serviceName.includes('Certificate')) {
-      documents = [
-        'आधार कार्ड',
-        'जन्म प्रमाण पत्र',
-        'कास्ट प्रमाण पत्र (यदि लागू)',
-        'पासपोर्ट साइज फोटो',
-        'मोबाइल नंबर'
-      ];
-    } else if (serviceName.includes('पेंशन')) {
-      documents = [
-        'आधार कार्ड',
-        'बैंक पासबुक',
-        'मोबाइल नंबर',
-        'फोटो'
-      ];
-    } else {
-      documents = [
-        'आधार कार्ड',
-        'पासपोर्ट साइज फोटो',
-        'मोबाइल नंबर',
-        'संबंधित दस्तावेज'
-      ];
-    }
-
     documents.forEach(doc => {
       const li = document.createElement('li');
       li.innerHTML = `<i class="fas fa-check-circle text-green-500 mr-2"></i>${doc}`;

@@ -1,0 +1,292 @@
+{
+  "services": [
+    {
+      "name": "नया पैन कार्ड",
+      "service": "नया पैन कार्ड",
+      "icon": "fas fa-id-card",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Date of Birth Proof"]
+    },
+    {
+      "name": "खोया हुआ पैन कार्ड निकलवाएं",
+      "service": "खोया हुआ पैन कार्ड निकलवाएं",
+      "icon": "fas fa-search",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Police Report"]
+    },
+    {
+      "name": "नया वोटर कार्ड",
+      "service": "नया वोटर कार्ड",
+      "icon": "fas fa-vote-yea",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Age Proof"]
+    },
+    {
+      "name": "पुराने वोटर कार्ड में करेक्शन",
+      "service": "पुराने वोटर कार्ड में करेक्शन",
+      "icon": "fas fa-edit",
+      "documents": ["Photo", "Old Voter ID", "Address Proof"]
+    },
+    {
+      "name": "खोया हुआ वोटर कार्ड निकलवाएं",
+      "service": "खोया हुआ वोटर कार्ड निकलवाएं",
+      "icon": "fas fa-search",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Police Report"]
+    },
+    {
+      "name": "नया पासपोर्ट अप्लाई करें",
+      "service": "नया पासपोर्ट अप्लाई करें",
+      "icon": "fas fa-passport",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Birth Certificate"]
+    },
+    {
+      "name": "पुराने पासपोर्ट का रिन्यूअल",
+      "service": "पुराने पासपोर्ट का रिन्यूअल",
+      "icon": "fas fa-redo",
+      "documents": ["Photo", "Old Passport", "Address Proof"]
+    },
+    {
+      "name": "Domicile certificate निवास प्रमाण पत्र",
+      "service": "Domicile certificate निवास प्रमाण पत्र",
+      "icon": "fas fa-home",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Birth Certificate"]
+    },
+    {
+      "name": "SC Certificate (अनुसूचित जाति प्रमाण पत्र)",
+      "service": "SC Certificate (अनुसूचित जाति प्रमाण पत्र)",
+      "icon": "fas fa-certificate",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Caste Certificate"]
+    },
+    {
+      "name": "ST Certificate (अनुसूचित जनजाति प्रमाण पत्र)",
+      "service": "ST Certificate (अनुसूचित जनजाति प्रमाण पत्र)",
+      "icon": "fas fa-certificate",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Caste Certificate"]
+    },
+    {
+      "name": "OBC Certificate (अन्य पिछड़ा वर्ग प्रमाण पत्र)",
+      "service": "OBC Certificate (अन्य पिछड़ा वर्ग प्रमाण पत्र)",
+      "icon": "fas fa-certificate",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Caste Certificate"]
+    },
+    {
+      "name": "Income Certificate (आय प्रमाण पत्र)",
+      "service": "Income Certificate (आय प्रमाण पत्र)",
+      "icon": "fas fa-money-bill",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Income Proof"]
+    },
+    {
+      "name": "जन्म प्रमाण पत्र अप्लाई",
+      "service": "जन्म प्रमाण पत्र अप्लाई",
+      "icon": "fas fa-birthday-cake",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Hospital Certificate"]
+    },
+    {
+      "name": "मृत्यु प्रमाण पत्र अप्लाई",
+      "service": "मृत्यु प्रमाण पत्र अप्लाई",
+      "icon": "fas fa-cross",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Hospital Certificate"]
+    },
+    {
+      "name": "जन्म प्रमाण पत्र में नाम जोड़ें",
+      "service": "जन्म प्रमाण पत्र में नाम जोड़ें",
+      "icon": "fas fa-plus",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Birth Certificate"]
+    },
+    {
+      "name": "बुढ़ापा पेंशन (वृद्धावस्था)",
+      "service": "बुढ़ापा पेंशन (वृद्धावस्था)",
+      "icon": "fas fa-user-clock",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Age Proof"]
+    },
+    {
+      "name": "दिव्यांग पेंशन रिपोर्ट",
+      "service": "दिव्यांग पेंशन रिपोर्ट",
+      "icon": "fas fa-wheelchair",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Disability Certificate"]
+    },
+    {
+      "name": "विधवा पेंशन रिपोर्ट",
+      "service": "विधवा पेंशन रिपोर्ट",
+      "icon": "fas fa-female",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Death Certificate"]
+    },
+    {
+      "name": "अविवाहित पेंशन रिपोर्ट",
+      "service": "अविवाहित पेंशन रिपोर्ट",
+      "icon": "fas fa-user",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Unmarried Certificate"]
+    },
+    {
+      "name": "राशन कार्ड",
+      "service": "राशन कार्ड",
+      "icon": "fas fa-utensils",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Income Proof"]
+    },
+    {
+      "name": "पारिवारिक पहचान",
+      "service": "पारिवारिक पहचान",
+      "icon": "fas fa-users",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Family Details"]
+    },
+    {
+      "name": "रोजगार फॉर्म अप्लाई",
+      "service": "रोजगार फॉर्म अप्लाई",
+      "icon": "fas fa-briefcase",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Qualification Certificates"]
+    },
+    {
+      "name": "ई-श्रम कार्ड अप्लाई",
+      "service": "ई-श्रम कार्ड अप्लाई",
+      "icon": "fas fa-id-badge",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Bank Details"]
+    },
+    {
+      "name": "बिजली बिल",
+      "service": "बिजली बिल",
+      "icon": "fas fa-bolt",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Property Documents"]
+    },
+    {
+      "name": "पीएफ एडवांस/पूर्ण आवेदन",
+      "service": "पीएफ एडवांस/पूर्ण आवेदन",
+      "icon": "fas fa-money-check",
+      "documents": ["Photo", "ID Proof", "Address Proof", "PF Account Details"]
+    },
+    {
+      "name": "अंबेडकर छात्रवृत्ति आवेदन",
+      "service": "अंबेडकर छात्रवृत्ति आवेदन",
+      "icon": "fas fa-graduation-cap",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Mark Sheets"]
+    },
+    {
+      "name": "हर घर गृहिणी योजना",
+      "service": "हर घर गृहिणी योजना",
+      "icon": "fas fa-home",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Income Proof"]
+    },
+    {
+      "name": "वाहन बीमा",
+      "service": "वाहन बीमा",
+      "icon": "fas fa-car",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Vehicle Documents"]
+    },
+    {
+      "name": "पीएम विश्वकर्मा",
+      "service": "पीएम विश्वकर्मा",
+      "icon": "fas fa-tools",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Skill Certificate"]
+    },
+    {
+      "name": "सिबिल रिपोर्ट",
+      "service": "सिबिल रिपोर्ट",
+      "icon": "fas fa-chart-line",
+      "documents": ["Photo", "ID Proof", "Address Proof", "PAN Card"]
+    },
+    {
+      "name": "सीवी(RESUME)",
+      "service": "सीवी(RESUME)",
+      "icon": "fas fa-file-alt",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Qualification Certificates"]
+    },
+    {
+      "name": "वाहन कर(Tax)",
+      "service": "वाहन कर(Tax)",
+      "icon": "fas fa-calculator",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Vehicle Documents"]
+    },
+    {
+      "name": "खेतों के लिए 75% सोलर सब्सिडी फॉर्म",
+      "service": "खेतों के लिए 75% सोलर सब्सिडी फॉर्म",
+      "icon": "fas fa-sun",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Land Documents"]
+    },
+    {
+      "name": "हरियाणा कौशल रोजगार पंजीकरण",
+      "service": "हरियाणा कौशल रोजगार पंजीकरण",
+      "icon": "fas fa-user-graduate",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Qualification Certificates"]
+    },
+    {
+      "name": "कृषि यंत्रों पर सब्सिडी",
+      "service": "कृषि यंत्रों पर सब्सिडी",
+      "icon": "fas fa-tractor",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Land Documents"]
+    },
+    {
+      "name": "खाद-बीज की स्कीमें",
+      "service": "खाद-बीज की स्कीमें",
+      "icon": "fas fa-seedling",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Land Documents"]
+    },
+    {
+      "name": "पराली प्रबंधन हेतु ₹1200 प्रति एकड़ सहायता",
+      "service": "पराली प्रबंधन हेतु ₹1200 प्रति एकड़ सहायता",
+      "icon": "fas fa-leaf",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Land Documents"]
+    },
+    {
+      "name": "देशी कपास प्रोत्साहन राशि ₹4000",
+      "service": "देशी कपास प्रोत्साहन राशि ₹4000",
+      "icon": "fas fa-cotton-bureau",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Land Documents"]
+    },
+    {
+      "name": "बाजरा भावांतर स्कीम",
+      "service": "बाजरा भावांतर स्कीम",
+      "icon": "fas fa-wheat-awn",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Land Documents"]
+    },
+    {
+      "name": "DSR धान की स्कीम 4000 rs",
+      "service": "DSR धान की स्कीम 4000 rs",
+      "icon": "fas fa-wheat-awn",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Land Documents"]
+    },
+    {
+      "name": "बाजरा प्रोत्साहन राशि 3000 rs",
+      "service": "बाजरा प्रोत्साहन राशि 3000 rs",
+      "icon": "fas fa-wheat-awn",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Land Documents"]
+    },
+    {
+      "name": "सभी बैंक की STATEMNT निकलवाए",
+      "service": "सभी बैंक की STATEMNT निकलवाए",
+      "icon": "fas fa-university",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Bank Details"]
+    },
+    {
+      "name": "GADI से GADI DETAILS FIND",
+      "service": "GADI से GADI DETAILS FIND",
+      "icon": "fas fa-car",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Vehicle Number"]
+    },
+    {
+      "name": "आधार कार्ड में Mobile नंबर कोनसा link है ceck करे",
+      "service": "आधार कार्ड में Mobile नंबर कोनसा link है ceck करे",
+      "icon": "fas fa-mobile-alt",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Aadhaar Card"]
+    },
+    {
+      "name": "पैन से आधार लिंक स्टेटस",
+      "service": "पैन से आधार लिंक स्टेटस",
+      "icon": "fas fa-link",
+      "documents": ["Photo", "ID Proof", "Address Proof", "PAN Card", "Aadhaar Card"]
+    },
+    {
+      "name": "Police verification करवाये",
+      "service": "Police verification करवाये",
+      "icon": "fas fa-shield-alt",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Purpose Document"]
+    },
+    {
+      "name": "खोये हुए आइटम की FIR करवाये",
+      "service": "खोये हुए आइटम की FIR करवाये",
+      "icon": "fas fa-search",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Item Description"]
+    },
+    {
+      "name": "All Collage,ITI, All University और Polytechnic Admission फॉर्म भरवाए",
+      "service": "All Collage,ITI, All University और Polytechnic Admission फॉर्म भरवाए",
+      "icon": "fas fa-school",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Mark Sheets"]
+    }
+  ]
+}
