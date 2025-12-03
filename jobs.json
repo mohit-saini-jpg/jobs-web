@@ -328,12 +328,25 @@
       "url": "https://www.gktoday.in/current-affairs/"
     },
     {
-      "title": "Latest khabar"
+      "title": "Latest Khabar"
     },
     {
-      "name": "Jobs khabar",
+      "name": "Jobs Khabar",
       "url": "https://www.jagran.com/news/job-news-hindi.html"
+    },
+    {
+      "name": "State Wise Khabar",
+      "url": "https://www.livehindustan.com/state"
+    },
+    {
+      "name": "India Khabar",
+      "url": "https://www.jagran.com/news/national-news-hindi.html"
+    },
+    {
+      "name": "International",
+      "url": "https://www.bhaskar.com/international/"
     }
+    
   ],
   "news": [
     {
