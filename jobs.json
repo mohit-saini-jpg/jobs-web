@@ -1,8 +1,9 @@
 {
   "top_jobs": [
-     {
-      "title": "State Wise Jobs "
-    },
+    {
+      "title": "State Wise Jobs ",
+      "color": "#60a5fa"
+     },
     {
       "name": "Haryana",
       "url": "https://www.freejobalert.com/haryana-government-jobs/"
@@ -88,7 +89,8 @@
       "url": "https://www.freejobalert.com/wb-government-jobs/"
     },
     {
-      "title": "Popular Job Sites"
+      "title": "Popular Job Sites",
+      "color": "#f59e0b"
     },
     {
       "name": "Latest JOB notifications",
@@ -222,7 +224,8 @@
   ],
   "left_jobs": [
     {
-      "title": "Study wise Jobs"
+      "title": "Study wise Jobs",
+      "color": "#34d399"
     },
     {
       "name": "8th government Pass",
@@ -281,7 +284,8 @@
       "url": "https://www.freejobalert.com/engineering-jobs/"
     },
     {
-      "title": "Admit card-Result-Answer Key-Syllabus"
+      "title": "Admit card-Result-Answer Key-Syllabus",
+      "color": "#fb7185"
     },
     {
       "name": "Admit Card Jobs",
@@ -327,7 +331,8 @@
   ],
   "right_jobs": [
     {
-      "title": "Admissions"
+      "title": "Admissions",
+      "color": "#60a5fa"
     },
     {
       "name": "Admission ALL Education",
@@ -370,14 +375,16 @@
       "url": "https://ignouking.com/"
     },
     {
-      "title": "Study Material & Top Courses"
+      "title": "Study Material & Top Courses",
+      "color": "#8b5cf6"
     },
     {
       "name": "Current Affairs",
       "url": "https://www.gktoday.in/current-affairs/"
     },
     {
-      "title": "Govt Scheme & Yojna"
+      "title": "Govt Scheme & Yojna",
+      "color": "#f97316"
     },
     {
       "name": "Kishan agri Yojna",
@@ -388,7 +395,8 @@
       "url": "https://sarkarinetwork.com/govt-scheme-and-id/"
     },
     {
-      "title": "Latest Khabar"
+      "title": "Latest Khabar",
+      "color": "#ef4444"
     },
     {
       "name": "Jobs Khabar",
@@ -501,25 +509,25 @@
       "name": "Instagram",
       "url": "https://www.instagram.com/",
       "icon": "fab fa-instagram",
-      "color": "bg-gradient-to-r from-pink-500 to-red-500"
+      "color": "bg-gradient-to-r from-pink-400 to-red-400"
     },
     {
       "name": "Facebook",
       "url": "https://www.facebook.com/",
       "icon": "fab fa-facebook-f",
-      "color": "bg-blue-600"
+      "color": "bg-blue-400"
     },
     {
       "name": "YouTube",
       "url": "https://www.youtube.com/",
       "icon": "fab fa-youtube",
-      "color": "bg-red-600"
+      "color": "bg-red-400"
     },
     {
       "name": "WhatsApp",
       "url": "https://whatsapp.com/",
       "icon": "fab fa-whatsapp",
-      "color": "bg-green-500"
+      "color": "bg-green-400"
     },
     {
       "name": "Telegram",

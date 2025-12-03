@@ -217,9 +217,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!topButtons || !leftSection || !rightSection || !newsScroll || !jobsScroll) return;
 
     // Top buttons (2 rows of 3)
+    // Support a `color` property on title entries. When a title has a color,
+    // subsequent job buttons will use a lighter version of that color as
+    // their background until the next title.
+    let currentTopColor = null;
     topJobs.forEach(job => {
       if (job.title) {
-        // It's a title
+        // It's a title — update current color if provided
+        if (job.color) currentTopColor = job.color;
+        else currentTopColor = null;
+
         const titleDiv = document.createElement("div");
         titleDiv.className = "col-span-full text-left py-2";
         titleDiv.innerHTML = `<h3 class="text-2xl font-bold text-blue-800">${job.title}</h3>`;
@@ -227,7 +234,31 @@ document.addEventListener("DOMContentLoaded", async () => {
       } else {
         // It's a button
         const button = document.createElement("div");
-        button.className = "bg-white p-1 rounded-lg border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 hover:shadow-lg transition duration-300 cursor-pointer flex items-center justify-center text-center";
+        button.className = "p-1 rounded-lg border-2 hover:shadow-lg transition duration-300 cursor-pointer flex items-center justify-center text-center";
+        button.style.backgroundColor = "#ffffff";
+        button.style.borderColor = "#bfdbfe"; // default blue-200
+
+        // If a current color is set on the last title, apply a lighter background
+        if (currentTopColor) {
+          // Try to compute a light variant for hex or rgb colors; otherwise, set as class
+          const light = getLightColor(currentTopColor, 0.75);
+          if (light) {
+            button.style.backgroundColor = light;
+            // set a slightly darker border
+            const border = getLightColor(currentTopColor, 0.45);
+            if (border) button.style.borderColor = border;
+            // choose readable text color
+            button.style.color = readableTextColor(currentTopColor);
+          } else {
+            // Fallback: treat provided value as a CSS class
+            button.classList.add(currentTopColor);
+          }
+        } else {
+          // Default styles when no color
+          button.classList.add('bg-white');
+          button.classList.add('border-blue-200');
+        }
+
         button.innerHTML = `
           <span class="font-bold text-gray-800 text-sm">${job.name}</span>
         `;
@@ -239,17 +270,37 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // Left section
+    let currentLeftColor = null;
     leftJobs.forEach(job => {
       if (job.title) {
-        // It's a title
+        if (job.color) currentLeftColor = job.color;
+        else currentLeftColor = null;
+
         const titleDiv = document.createElement("div");
         titleDiv.className = "col-span-full text-left py-1";
         titleDiv.innerHTML = `<h4 class="text-base font-bold text-blue-800">${job.title}</h4>`;
         leftSection.appendChild(titleDiv);
       } else {
-        // It's a button
         const button = document.createElement("div");
-        button.className = "bg-white p-1 h-fit rounded-lg border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 hover:shadow-lg transition duration-300 cursor-pointer flex flex-col items-center justify-center text-center mb-2";
+        button.className = "p-1 h-fit rounded-lg border-2 transition duration-300 cursor-pointer flex flex-col items-center justify-center text-center mb-2";
+        button.style.backgroundColor = "#ffffff";
+        button.style.borderColor = "#bfdbfe";
+
+        if (currentLeftColor) {
+          const light = getLightColor(currentLeftColor, 0.75);
+          if (light) {
+            button.style.backgroundColor = light;
+            const border = getLightColor(currentLeftColor, 0.45);
+            if (border) button.style.borderColor = border;
+            button.style.color = readableTextColor(currentLeftColor);
+          } else {
+            button.classList.add(currentLeftColor);
+          }
+        } else {
+          button.classList.add('bg-white');
+          button.classList.add('border-blue-200');
+        }
+
         button.innerHTML = `
           <span class="font-bold text-gray-800 text-sm">${job.name}</span>
         `;
@@ -261,17 +312,37 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // Right section
+    let currentRightColor = null;
     rightJobs.forEach(job => {
       if (job.title) {
-        // It's a title
+        if (job.color) currentRightColor = job.color;
+        else currentRightColor = null;
+
         const titleDiv = document.createElement("div");
         titleDiv.className = "col-span-full text-left py-1";
         titleDiv.innerHTML = `<h4 class="text-base font-bold text-blue-800">${job.title}</h4>`;
         rightSection.appendChild(titleDiv);
       } else {
-        // It's a button
         const button = document.createElement("div");
-        button.className = "bg-white p-1 h-fit rounded-lg border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 hover:shadow-lg transition duration-300 cursor-pointer flex flex-col items-center justify-center text-center mb-2";
+        button.className = "p-1 h-fit rounded-lg border-2 transition duration-300 cursor-pointer flex flex-col items-center justify-center text-center mb-2";
+        button.style.backgroundColor = "#ffffff";
+        button.style.borderColor = "#bfdbfe";
+
+        if (currentRightColor) {
+          const light = getLightColor(currentRightColor, 0.75);
+          if (light) {
+            button.style.backgroundColor = light;
+            const border = getLightColor(currentRightColor, 0.45);
+            if (border) button.style.borderColor = border;
+            button.style.color = readableTextColor(currentRightColor);
+          } else {
+            button.classList.add(currentRightColor);
+          }
+        } else {
+          button.classList.add('bg-white');
+          button.classList.add('border-blue-200');
+        }
+
         button.innerHTML = `
           <span class="font-bold text-gray-800 text-sm">${job.name}</span>
         `;
@@ -505,6 +576,71 @@ document.addEventListener("DOMContentLoaded", async () => {
       li.innerHTML = `<i class="fas fa-check-circle text-green-500 mr-2"></i>${doc}`;
       documentsList.appendChild(li);
     });
+  }
+
+  // Helper: convert hex color to RGB object
+  function hexToRgb(hex) {
+    if (!hex) return null;
+    hex = hex.replace('#', '').trim();
+    if (hex.length === 3) {
+      hex = hex.split('').map(c => c + c).join('');
+    }
+    if (!/^[0-9a-fA-F]{6}$/.test(hex)) return null;
+    const bigint = parseInt(hex, 16);
+    return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
+  }
+
+  // Helper: mix color towards white by `mix` fraction (0-1) and return hex string
+  function getLightColor(color, mix = 0.7) {
+    if (!color) return null;
+    color = color.trim();
+    // hex
+    if (color.startsWith('#')) {
+      const rgb = hexToRgb(color);
+      if (!rgb) return null;
+      const r = Math.round(rgb.r + (255 - rgb.r) * mix);
+      const g = Math.round(rgb.g + (255 - rgb.g) * mix);
+      const b = Math.round(rgb.b + (255 - rgb.b) * mix);
+      return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    // rgb(...) format
+    const rgbMatch = color.match(/rgb\s*\(\s*(\d{1,3})[,\s]+(\d{1,3})[,\s]+(\d{1,3})\s*\)/i);
+    if (rgbMatch) {
+      const r0 = parseInt(rgbMatch[1], 10);
+      const g0 = parseInt(rgbMatch[2], 10);
+      const b0 = parseInt(rgbMatch[3], 10);
+      const r = Math.round(r0 + (255 - r0) * mix);
+      const g = Math.round(g0 + (255 - g0) * mix);
+      const b = Math.round(b0 + (255 - b0) * mix);
+      return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    // Not recognized (could be a CSS class like 'bg-red-500')
+    return null;
+  }
+
+  // Helper: decide readable text color (dark or white) based on original color
+  function readableTextColor(color) {
+    if (!color) return '#111827'; // default dark gray
+    color = color.trim();
+    let r, g, b;
+    if (color.startsWith('#')) {
+      const rgb = hexToRgb(color);
+      if (!rgb) return '#111827';
+      r = rgb.r; g = rgb.g; b = rgb.b;
+    } else {
+      const m = color.match(/rgb\s*\(\s*(\d{1,3})[,\s]+(\d{1,3})[,\s]+(\d{1,3})\s*\)/i);
+      if (m) {
+        r = parseInt(m[1], 10); g = parseInt(m[2], 10); b = parseInt(m[3], 10);
+      } else {
+        return '#111827';
+      }
+    }
+
+    // Perceived luminance
+    const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+    return luminance > 180 ? '#111827' : '#ffffff';
   }
 
 });
