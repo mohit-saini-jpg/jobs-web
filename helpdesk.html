@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Helpdesk - Top India Services</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Google Font: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root{ --primary-500:#0ea5e9; --muted-bg:#f8fafc }
+        body{font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:var(--muted-bg); color:#0f172a}
+    </style>
+</head>
+
+<body>
+
+    <div class="min-h-screen flex flex-col">
+        <!-- Header with Navigation -->
+        <header class="bg-gradient-to-r from-sky-600 to-indigo-600 text-white shadow-sm relative">
+            <div class="container mx-auto max-w-6xl px-4 py-4">
+                <div class="flex items-center justify-between">
+                    <h1 class="text-2xl font-bold flex items-center">
+                        <i class="fas fa-headset mr-3"></i>
+                        Helpdesk
+                    </h1>
+                    <button id="mobile-menu-toggle" class="lg:hidden text-white hover:bg-blue-700 p-2 rounded">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <nav class="hidden lg:flex gap-3 items-center">
+                        <a href="index.html" class="px-3 py-2 bg-white text-sky-600 rounded-md font-semibold shadow-sm hover:shadow-md transition">
+                            <i class="fas fa-briefcase mr-2"></i>Jobs
+                        </a>
+                        <a href="govt-services.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
+                            <i class="fas fa-gavel mr-2"></i>Services
+                        </a>
+                        <a href="tools.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
+                            <i class="fas fa-tools mr-2"></i>Tools
+                        </a>
+                        <a href="helpdesk.html" class="px-3 py-2 bg-white text-sky-600 rounded-md font-semibold shadow-sm">
+                            <i class="fas fa-headset mr-2"></i>Helpdesk
+                        </a>
+                    </nav>
+                    <div id="header-links" class="hidden lg:flex gap-2"></div>
+                    <div id="mobile-menu" class="hidden lg:hidden absolute top-full left-0 right-0 bg-sky-600 text-white shadow-lg z-50">
+                        <div class="flex flex-col p-4 space-y-2">
+                            <a href="index.html" class="px-4 py-2 bg-white text-sky-600 rounded-md font-semibold hover:bg-white/90 transition">
+                                <i class="fas fa-briefcase mr-2"></i>Jobs
+                            </a>
+                            <a href="govt-services.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
+                                <i class="fas fa-gavel mr-2"></i>Services
+                            </a>
+                            <a href="tools.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
+                                <i class="fas fa-tools mr-2"></i>Tools
+                            </a>
+                            <a href="helpdesk.html" class="px-4 py-2 bg-white text-sky-600 rounded-md font-semibold hover:bg-white/90 transition">
+                                <i class="fas fa-headset mr-2"></i>Helpdesk
+                            </a>
+                            <div id="header-links-mobile" class="mt-2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="mx-auto w-full px-4 py-6">
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden max-w-4xl mx-auto">
+                <div class="p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2 flex items-center"><i class="fas fa-headset mr-3 text-blue-600"></i>Helpdesk / सहायता</h2>
+                    <p class="text-gray-600 mb-4">Yahan aap apni problem submit kar sakte hain. कृपया पूरा नाम, मोबाइल नंबर और संदेश भरें।</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="font-semibold mb-2">Instructions / निर्देश</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-1">
+                                <li>Naam: poora naam likhen (First + Last).</li>
+                                <li>Mobile: 10-digit mobile number dalein (WhatsApp number accha rahega).</li>
+                                <li>Message: apni problem ka concise varnan dein — kya chahiye aur kab tak.</li>
+                                <li>Submit karne ke baad hum aapko jald contact karenge.</li>
+                            </ul>
+                        </div>
+
+                        <form id="helpdesk-form" class="space-y-4 bg-gray-50 p-4 rounded">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Full Name</label>
+                                <input id="name" type="text" class="mt-1 block w-full border border-gray-300 rounded px-3 py-2" placeholder="Aapka poora naam" required>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Mobile Number</label>
+                                <input id="mobile" type="tel" class="mt-1 block w-full border border-gray-300 rounded px-3 py-2" placeholder="10-digit number" required>
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700">Message / संदेश</label>
+                                <textarea id="message" rows="4" class="mt-1 block w-full border border-gray-300 rounded px-3 py-2" placeholder="Apni request ya problem yahan likhen" required></textarea>
+                            </div>
+
+                            <div class="flex items-center justify-between">
+                                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700">Submit</button>
+                                <button type="button" id="clear-btn" class="px-3 py-2 bg-gray-200 rounded hover:bg-gray-300">Clear</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success Toast -->
+            <div id="success-toast" class="fixed bottom-6 right-6 bg-white border border-green-200 shadow px-4 py-3 rounded hidden">
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-check-circle text-green-500 text-2xl mt-0.5"></i>
+                    <div>
+                        <div class="font-semibold text-gray-800">Form Submitted</div>
+                        <div id="success-text" class="text-sm text-gray-600">Hamari team jald hi aapse sampark karegi.</div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        (function(){
+            const form = document.getElementById('helpdesk-form');
+            const nameInput = document.getElementById('name');
+            const mobileInput = document.getElementById('mobile');
+            const messageInput = document.getElementById('message');
+            const successToast = document.getElementById('success-toast');
+            const successText = document.getElementById('success-text');
+            const clearBtn = document.getElementById('clear-btn');
+
+            function validateMobile(num){
+                const digits = num.replace(/\D/g, '');
+                return digits.length === 10;
+            }
+
+            form.addEventListener('submit', function(e){
+                e.preventDefault();
+                const name = nameInput.value.trim();
+                const mobile = mobileInput.value.trim();
+                const message = messageInput.value.trim();
+
+                if(!name){
+                    alert('Please enter your name');
+                    nameInput.focus();
+                    return;
+                }
+                if(!validateMobile(mobile)){
+                    alert('Please enter a valid 10-digit mobile number');
+                    mobileInput.focus();
+                    return;
+                }
+                if(!message){
+                    alert('Please enter your message');
+                    messageInput.focus();
+                    return;
+                }
+
+                // Save to localStorage (simple placeholder for backend)
+                try{
+                    const key = 'helpdesk_submissions';
+                    const existing = JSON.parse(localStorage.getItem(key) || '[]');
+                    existing.push({name, mobile, message, createdAt: new Date().toISOString()});
+                    localStorage.setItem(key, JSON.stringify(existing));
+                }catch(err){
+                    console.warn('Could not save to localStorage', err);
+                }
+
+                // Show success toast
+                successText.textContent = 'Thanks ' + name + '. Hamari team jald contact karegi.';
+                successToast.classList.remove('hidden');
+                setTimeout(()=> successToast.classList.add('hidden'), 5000);
+
+                // Clear form
+                form.reset();
+            });
+
+            clearBtn.addEventListener('click', function(){
+                form.reset();
+            });
+        })();
+    </script>
+</body>
+
+</html>
