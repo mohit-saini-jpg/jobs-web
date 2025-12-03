@@ -161,23 +161,49 @@
                     return;
                 }
 
-                // Save to localStorage (simple placeholder for backend)
-                try{
-                    const key = 'helpdesk_submissions';
-                    const existing = JSON.parse(localStorage.getItem(key) || '[]');
-                    existing.push({name, mobile, message, createdAt: new Date().toISOString()});
-                    localStorage.setItem(key, JSON.stringify(existing));
-                }catch(err){
-                    console.warn('Could not save to localStorage', err);
-                }
+                // Prepare payload for webhook
+                const payload = {
+                    name: name,
+                    number: mobile,
+                    message: message
+                };
 
-                // Show success toast
-                successText.textContent = 'Thanks ' + name + '. Hamari team jald contact karegi.';
-                successToast.classList.remove('hidden');
-                setTimeout(()=> successToast.classList.add('hidden'), 5000);
+                // Send to Zapier webhook (POST JSON)
+                const webhookUrl = 'https://hooks.zapier.com/hooks/catch/25588118/ukx20lv/';
 
-                // Clear form
-                form.reset();
+                fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                }).then(async (res) => {
+                    if (res.ok) {
+                        // Optionally still save locally as fallback
+                        try{
+                            const key = 'helpdesk_submissions';
+                            const existing = JSON.parse(localStorage.getItem(key) || '[]');
+                            existing.push({name, mobile, message, createdAt: new Date().toISOString()});
+                            localStorage.setItem(key, JSON.stringify(existing));
+                        }catch(err){
+                            console.warn('Could not save to localStorage', err);
+                        }
+
+                        // Show success toast
+                        successText.textContent = 'Thanks ' + name + '. Hamari team jald contact karegi.';
+                        successToast.classList.remove('hidden');
+                        setTimeout(()=> successToast.classList.add('hidden'), 5000);
+
+                        // Clear form
+                        form.reset();
+                    } else {
+                        const text = await res.text().catch(()=> '');
+                        alert('Submission failed. Please try again later. ' + (text ? '\n' + text : ''));
+                    }
+                }).catch((err) => {
+                    console.error('Webhook POST failed', err);
+                    alert('Could not submit your request right now. Please check your connection and try again.');
+                });
             });
 
             clearBtn.addEventListener('click', function(){

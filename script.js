@@ -592,23 +592,50 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Populate documents
     populateDocuments(service.documents);
 
-    // Handle form submission
+    // Handle form submission: POST to Zapier webhook with JSON payload
     const form = modalServiceContent.querySelector("#serviceForm");
     form.addEventListener("submit", (e) => {
       e.preventDefault();
 
-      const name = form.querySelector("#name").value;
-      const phone = form.querySelector("#phone").value;
+      const name = form.querySelector("#name").value.trim();
+      const phone = form.querySelector("#phone").value.trim();
 
-      const params = new URLSearchParams({
-        service: service.name,
+      const payload = {
         name: name,
-        phone: phone,
-      });
+        number: phone,
+        service: service.name
+      };
 
-      // Close modal before redirecting
-      serviceModal.classList.add("hidden");
-      window.location.href = `service.html?${params.toString()}`;
+      const webhookUrl = 'https://hooks.zapier.com/hooks/catch/25588118/ukxtd3r/';
+
+      fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).then(async (res) => {
+        if (res.ok) {
+          // Save to localStorage as fallback
+          try{
+            const key = 'service_requests';
+            const existing = JSON.parse(localStorage.getItem(key) || '[]');
+            existing.push({service: service.name, name, phone, createdAt: new Date().toISOString()});
+            localStorage.setItem(key, JSON.stringify(existing));
+          }catch(err){
+            console.warn('Could not save service request to localStorage', err);
+          }
+
+          // Close modal and notify user
+          serviceModal.classList.add('hidden');
+          alert('Your request for "' + service.name + '" has been submitted. We will contact you soon.');
+          form.reset();
+        } else {
+          const text = await res.text().catch(()=> '');
+          alert('Submission failed. Please try again later.' + (text ? '\n' + text : ''));
+        }
+      }).catch((err) => {
+        console.error('Service request POST failed', err);
+        alert('Could not submit your request right now. Please check your connection and try again.');
+      });
     });
 
     // Show modal
