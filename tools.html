@@ -8,16 +8,22 @@
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Google Font: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root{ --primary-500:#0ea5e9; --muted-bg:#f8fafc }
+        body{font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:var(--muted-bg); color:#0f172a}
+    </style>
 </head>
 
 <body>
 
     <div class="min-h-screen flex flex-col">
         <!-- Header with Navigation -->
-        <header class="bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg relative">
-            <div class="container mx-auto px-4 py-4">
+        <header class="bg-gradient-to-r from-sky-600 to-indigo-600 text-white shadow-sm relative">
+            <div class="container mx-auto max-w-6xl px-4 py-4">
                 <div class="flex items-center justify-between">
                     <h1 class="text-2xl font-bold flex items-center">
                         <i class="fas fa-tools mr-3"></i>
@@ -26,27 +32,27 @@
                     <button id="mobile-menu-toggle" class="lg:hidden text-white hover:bg-blue-700 p-2 rounded">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <nav class="hidden lg:flex gap-4">
-                        <a href="index.html" class="px-4 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg font-semibold transition duration-300">
+                    <nav class="hidden lg:flex gap-3 items-center">
+                        <a href="index.html" class="px-3 py-2 bg-white text-sky-600 rounded-md font-semibold shadow-sm hover:shadow-md transition">
                             <i class="fas fa-briefcase mr-2"></i>Jobs
                         </a>
-                        <a href="govt-services.html" class="px-4 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg font-semibold transition duration-300">
-                            <i class="fas fa-gavel mr-2"></i>CSC Services
+                        <a href="govt-services.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
+                            <i class="fas fa-gavel mr-2"></i>Services
                         </a>
-                        <a href="tools.html" class="px-4 py-2 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition duration-300">
+                        <a href="tools.html" class="px-3 py-2 bg-white text-sky-600 rounded-md font-semibold shadow-sm">
                             <i class="fas fa-tools mr-2"></i>Tools
                         </a>
                     </nav>
                     <div id="header-links" class="hidden lg:flex gap-2"></div>
-                    <div id="mobile-menu" class="hidden lg:hidden absolute top-full left-0 right-0 bg-blue-600 text-white shadow-lg z-50">
+                    <div id="mobile-menu" class="hidden lg:hidden absolute top-full left-0 right-0 bg-sky-600 text-white shadow-lg z-50">
                         <div class="flex flex-col p-4 space-y-2">
-                            <a href="index.html" class="px-4 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg font-semibold transition duration-300">
+                            <a href="index.html" class="px-4 py-2 bg-white text-sky-600 rounded-md font-semibold hover:bg-white/90 transition">
                                 <i class="fas fa-briefcase mr-2"></i>Jobs
                             </a>
-                            <a href="govt-services.html" class="px-4 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg font-semibold transition duration-300">
-                                <i class="fas fa-gavel mr-2"></i>CSC Services
+                            <a href="govt-services.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
+                                <i class="fas fa-gavel mr-2"></i>Services
                             </a>
-                            <a href="tools.html" class="px-4 py-2 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition duration-300">
+                            <a href="tools.html" class="px-4 py-2 bg-white text-sky-600 rounded-md font-semibold">
                                 <i class="fas fa-tools mr-2"></i>Tools
                             </a>
                             <div id="header-links-mobile" class="mt-2"></div>
@@ -63,7 +69,7 @@
                     <!-- Sidebar for Tools -->
                     <div class="w-full lg:w-1/3 xl:w-1/4 bg-gray-50 border-r border-gray-200">
                         <!-- Tools Header -->
-                        <div class="p-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+                        <div class="p-6 bg-gradient-to-r from-sky-600 to-indigo-600 text-white">
                             <h3 class="text-xl font-bold flex items-center">
                                 <i class="fas fa-tools mr-3"></i>
                                 Tools
