@@ -1,0 +1,41 @@
+{
+  "header_links": [
+    {
+      "name": "AI Helpdesk",
+      "link": "https://gemini.google.com/",
+      "color": "bg-gray-600"
+    }
+  ],
+  "social_links": [
+    {
+      "name": "Instagram",
+      "url": "https://www.instagram.com/",
+      "icon": "fab fa-instagram",
+      "color": "bg-gradient-to-r from-pink-400 to-red-400"
+    },
+    {
+      "name": "Facebook",
+      "url": "https://www.facebook.com/",
+      "icon": "fab fa-facebook-f",
+      "color": "bg-blue-400"
+    },
+    {
+      "name": "YouTube",
+      "url": "https://www.youtube.com/",
+      "icon": "fab fa-youtube",
+      "color": "bg-red-400"
+    },
+    {
+      "name": "WhatsApp",
+      "url": "https://whatsapp.com/",
+      "icon": "fab fa-whatsapp",
+      "color": "bg-green-400"
+    },
+    {
+      "name": "Telegram",
+      "url": "https://telegram.org/",
+      "icon": "fab fa-telegram-plane",
+      "color": "bg-blue-400"
+    }
+  ]
+}

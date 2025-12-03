@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
   // Detect current page
   const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-  
+
   // Load data from appropriate JSON file
   let data;
   const jsonFile = currentPage === 'index.html' || currentPage === '' ? 'jobs.json' : currentPage === 'tools.html' ? 'tools.json' : 'services.json';
@@ -12,6 +12,49 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error('Error loading data:', error);
     // Fallback empty data
     data = { image: [], pdf: [], video: [], services: [], top_jobs: [], left_jobs: [], right_jobs: [], news: [], scrolling_jobs: [], social_links: [] };
+  }
+
+  // Load header links (separate JSON)
+  let headerData = null;
+  try {
+    const resp = await fetch('header_links.json');
+    headerData = await resp.json();
+  } catch (err) {
+    console.warn('No header_links.json found or failed to load', err);
+    headerData = { header_links: [], social_links: [] };
+  }
+
+  // Render header links (desktop + mobile)
+  function loadHeaderLinks(headerData) {
+    if (!headerData) return;
+    const desktopContainer = document.getElementById('header-links');
+    const mobileContainer = document.getElementById('header-links-mobile');
+
+    const links = headerData.header_links || [];
+    if (desktopContainer) {
+      links.forEach(l => {
+        const a = document.createElement('a');
+        a.href = l.link || l.url || '#';
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        const colorClass = l.color ? l.color : 'bg-gray-800';
+        a.className = `${colorClass} text-white px-4 py-2 rounded-lg font-semibold hover:opacity-90 transition duration-200 flex items-center`;
+        a.innerHTML = `${l.name}`;
+        desktopContainer.appendChild(a);
+      });
+    }
+
+    if (mobileContainer) {
+      links.forEach(l => {
+        const a = document.createElement('a');
+        a.href = l.link || l.url || '#';
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.className = `px-4 py-2 rounded-lg bg-white text-blue-600 font-semibold hover:bg-blue-50 transition duration-200 block`;
+        a.textContent = l.name;
+        mobileContainer.appendChild(a);
+      });
+    }
   }
 
   // Get URL parameters
@@ -58,6 +101,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+  // Render header links (if any)
+  loadHeaderLinks(headerData);
+
   // Load content based on current page
   if (currentPage === 'index.html' || currentPage === '') {
     // Jobs page
@@ -66,7 +112,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   } else if (currentPage === 'govt-services.html') {
     // Government services page
     loadGovernmentServices();
-    
+
     // Close modal event listeners
     if (closeModalBtn) {
       closeModalBtn.addEventListener("click", () => {
@@ -85,7 +131,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   } else if (currentPage === 'tools.html') {
     // Tools page
     loadToolsSection();
-    
+
     // Check if tool parameter is present and auto-load tool
     if (toolParam) {
       setTimeout(() => {
@@ -134,12 +180,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     for (const [category, tools] of Object.entries(data)) {
       if (category === 'services' || category === 'top_jobs' || category === 'left_jobs' || category === 'right_jobs' || category === 'news' || category === 'scrolling_jobs' || category === 'social_links') continue;
-      
-      const tool = tools.find(t => 
+
+      const tool = tools.find(t =>
         t.name.toLowerCase().replace(/\s+/g, '-') === toolName.toLowerCase() ||
         t.name.toLowerCase() === toolName.toLowerCase().replace(/-/g, ' ')
       );
-      
+
       if (tool) {
         foundTool = tool;
         foundCategory = category;
@@ -160,7 +206,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Function to load government services
   function loadGovernmentServices() {
     if (!servicesCards) return;
-    
+
     const services = data.services;
     servicesCards.innerHTML = "";
 
@@ -185,7 +231,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Function to load social links
   function loadSocialLinks() {
-    const socialLinks = data.social_links || [];
+    // Prefer social links from header_links.json (moved), fall back to jobs.json
+    const socialLinks = (headerData && headerData.social_links) ? headerData.social_links : (data.social_links || []);
     const socialSection = document.getElementById("social-section");
 
     if (!socialSection) return;
@@ -403,7 +450,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!mainCategories || !subCategories) return;
     mainCategories.classList.remove("hidden");
     subCategories.classList.add("hidden");
-    
+
     // Clear URL parameters when going back to main categories
     if (window.location.search) {
       const newUrl = window.location.pathname;
@@ -414,7 +461,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Function to show sub categories
   function showSubCategories(category) {
     if (!mainCategories || !subCategories) return;
-    
+
     mainCategories.classList.add("hidden");
     subCategories.classList.remove("hidden");
 
@@ -448,7 +495,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           // Update URL with tool parameter
           const newUrl = `${window.location.pathname}?tool=${toolSlug}`;
           window.history.pushState({}, '', newUrl);
-          
+
           loadTool(tool.url);
         });
       }
@@ -460,7 +507,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Function to load tool in iframe
   function loadTool(url) {
     if (!toolIframe || !defaultState || !loadingOverlay) return;
-    
+
     defaultState.classList.add("hidden");
     toolIframe.classList.remove("hidden");
     loadingOverlay.classList.remove("hidden");

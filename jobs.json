@@ -3,7 +3,7 @@
     {
       "title": "State Wise Jobs ",
       "color": "#60a5fa"
-     },
+    },
     {
       "name": "Haryana",
       "url": "https://www.freejobalert.com/haryana-government-jobs/"
@@ -80,11 +80,11 @@
       "name": "Uttarakhand Jobs",
       "url": "https://www.freejobalert.com/uttarakhand-government-jobs/"
     },
-     {
+    {
       "name": "Uttar Pradesh Jobs",
       "url": "https://www.freejobalert.com/up-government-jobs/"
     },
-     {
+    {
       "name": "West Bengal Jobs",
       "url": "https://www.freejobalert.com/wb-government-jobs/"
     },
@@ -160,67 +160,66 @@
       "name": "PSU Jobs",
       "url": "https://govtjobsalert.in/category/psu-jobs/"
     },
-     {
+    {
       "name": "HSSC Jobs",
       "url": "https://www.freejobalert.com/articles/hssc-recruitment-2025-apply-online-for-group-c-group-d-posts-apply-now-3010229"
     },
-     {
+    {
       "name": "SSC Jobs",
       "url": "https://www.freejobalert.com/ssc-recruitment/17522/"
     },
-     {
+    {
       "name": "Private Jos",
       "url": "https://formnotice.in/category/private-jobs/"
     },
-     {
+    {
       "name": "All DC rate Jobs",
       "url": "https://www.haryanadcratejob.com/"
     },
-     {
+    {
       "name": "Driver Govt Jobs",
       "url": "https://www.indgovtjobs.in/2015/10/Driver-Govt-Jobs.html"
     },
-     {
+    {
       "name": "All Defence Jobs",
       "url": "https://sarkarijobcity.in/defence-jobs/"
     },
-     {
+    {
       "name": "Law Jobs",
       "url": "https://www.indgovtjobs.in/2015/07/Law-LLB-Govt-Jobs.html"
     },
-     {
+    {
       "name": "Medical Jobs",
       "url": "https://allgovernmentjobs.in/medical-jobs"
     },
-     {
+    {
       "name": "Clerk/DEO Jobs",
       "url": "https://newfreejob.com/clerk-deo-job/"
     },
-     {
+    {
       "name": "PWD-Jobs",
       "url": "https://www.freejobalert.com/pwd-jobs/"
     },
-     {
+    {
       "name": "EX-serviceman-Jobs",
       "url": "https://www.freejobalert.com/ex-serviceman-jobs/"
     },
-     {
+    {
       "name": "Sports-Quota-Jobs",
       "url": "https://www.freejobalert.com/sports-quota-jobs/"
     },
-     {
+    {
       "name": "Part-Time-Jobs",
       "url": "https://www.freejobalert.com/part-time-jobs/"
     },
-     {
+    {
       "name": "Work-From-Home-Jobs",
       "url": "https://www.freejobalert.com/work-from-home-jobs/"
     },
-     {
+    {
       "name": "Anganwadi-Recruitment",
       "url": "https://www.freejobalert.com/anganwadi-recruitment/"
     }
-   
   ],
   "left_jobs": [
     {
@@ -291,31 +290,31 @@
       "name": "Admit Card Jobs",
       "url": "https://www.freejobalert.com/admit-card/"
     },
-     {
+    {
       "name": "Results Jobs",
       "url": "https://www.freejobalert.com/exam-results/"
     },
-     {
+    {
       "name": "Answer Key Jobs",
       "url": "https://www.freejobalert.com/answer-key/"
     },
-     {
+    {
       "name": "Syllabus Jobs",
       "url": "https://www.freejobalert.com/syllabus/"
     },
-     {
+    {
       "name": "Exam-calendar",
       "url": "https://quicksarkari.com/category/exam-calendar/"
     },
-     {
+    {
       "name": "Previous-papers",
       "url": "https://www.freejobalert.com/previous-papers/"
     },
-     {
+    {
       "name": "Moke Test",
       "url": "https://www.mockers.in/"
     },
-     {
+    {
       "name": "Exam-Pattern",
       "url": "https://www.freejobalert.com/exam-pattern/"
     },
@@ -327,7 +326,6 @@
       "name": "Interview-Results",
       "url": "https://www.freejobalert.com/interview-results/"
     }
-     
   ],
   "right_jobs": [
     {
@@ -418,7 +416,6 @@
       "name": "International",
       "url": "https://www.indiatv.in/world"
     }
-    
   ],
   "news": [
     {
@@ -502,38 +499,6 @@
     {
       "name": "Content Writer - Digital marketing",
       "url": "https://www.naukri.com/content-writer-jobs"
-    }
-  ],
-  "social_links": [
-    {
-      "name": "Instagram",
-      "url": "https://www.instagram.com/",
-      "icon": "fab fa-instagram",
-      "color": "bg-gradient-to-r from-pink-400 to-red-400"
-    },
-    {
-      "name": "Facebook",
-      "url": "https://www.facebook.com/",
-      "icon": "fab fa-facebook-f",
-      "color": "bg-blue-400"
-    },
-    {
-      "name": "YouTube",
-      "url": "https://www.youtube.com/",
-      "icon": "fab fa-youtube",
-      "color": "bg-red-400"
-    },
-    {
-      "name": "WhatsApp",
-      "url": "https://whatsapp.com/",
-      "icon": "fab fa-whatsapp",
-      "color": "bg-green-400"
-    },
-    {
-      "name": "Telegram",
-      "url": "https://telegram.org/",
-      "icon": "fab fa-telegram-plane",
-      "color": "bg-blue-400"
     }
   ]
 }
