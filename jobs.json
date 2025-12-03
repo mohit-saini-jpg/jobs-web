@@ -276,8 +276,12 @@
       "url": "https://www.freejobalert.com/syllabus/"
     },
      {
-      "name": "Exam date",
-      "url": "https://haryanajobs.in/govt-jobs-exam-date/"
+      "name": "Exam-calendar",
+      "url": "https://quicksarkari.com/category/exam-calendar/"
+    },
+     {
+      "name": "Previous-papers",
+      "url": "https://www.freejobalert.com/previous-papers/"
     }
      
   ],
@@ -312,7 +316,25 @@
     {
       "name": "Scholarship Updates",
       "url": "https://formnotice.in/category/scholarship/"
-    }
+    },
+    {
+      "name": "Education-News",
+      "url": "https://quicksarkari.com/category/education-news/"
+    },
+    {
+      "title": "Study Material & Top Courses"
+    },
+    {
+      "name": "Current Affairs",
+      "url": "https://www.gktoday.in/current-affairs/"
+    },
+    {
+      "title": "Latest khabar"
+    },
+    {
+      "name": "Jobs khabar",
+      "url": "https://www.jagran.com/news/job-news-hindi.html"
+    },
     
   ],
   "news": [
