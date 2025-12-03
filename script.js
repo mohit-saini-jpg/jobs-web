@@ -222,14 +222,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         // It's a title
         const titleDiv = document.createElement("div");
         titleDiv.className = "col-span-full text-left py-2";
-        titleDiv.innerHTML = `<h3 class="text-lg font-semibold text-blue-800">${job.title}</h3>`;
+        titleDiv.innerHTML = `<h3 class="text-2xl font-bold text-blue-800">${job.title}</h3>`;
         topButtons.appendChild(titleDiv);
       } else {
         // It's a button
         const button = document.createElement("div");
         button.className = "bg-white p-1 rounded-lg border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 hover:shadow-lg transition duration-300 cursor-pointer flex items-center justify-center text-center";
         button.innerHTML = `
-          <span class="font-semibold text-gray-800 text-xs">${job.name}</span>
+          <span class="font-bold text-gray-800 text-sm">${job.name}</span>
         `;
         button.addEventListener("click", () => {
           openJobInNewPage(job);
@@ -244,14 +244,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         // It's a title
         const titleDiv = document.createElement("div");
         titleDiv.className = "col-span-full text-left py-1";
-        titleDiv.innerHTML = `<h4 class="text-sm font-semibold text-blue-800">${job.title}</h4>`;
+        titleDiv.innerHTML = `<h4 class="text-base font-bold text-blue-800">${job.title}</h4>`;
         leftSection.appendChild(titleDiv);
       } else {
         // It's a button
         const button = document.createElement("div");
         button.className = "bg-white p-1 h-fit rounded-lg border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 hover:shadow-lg transition duration-300 cursor-pointer flex flex-col items-center justify-center text-center mb-2";
         button.innerHTML = `
-          <span class="font-semibold text-gray-800 text-xs">${job.name}</span>
+          <span class="font-bold text-gray-800 text-sm">${job.name}</span>
         `;
         button.addEventListener("click", () => {
           openJobInNewPage(job);
@@ -266,14 +266,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         // It's a title
         const titleDiv = document.createElement("div");
         titleDiv.className = "col-span-full text-left py-1";
-        titleDiv.innerHTML = `<h4 class="text-sm font-semibold text-blue-800">${job.title}</h4>`;
+        titleDiv.innerHTML = `<h4 class="text-base font-bold text-blue-800">${job.title}</h4>`;
         rightSection.appendChild(titleDiv);
       } else {
         // It's a button
         const button = document.createElement("div");
         button.className = "bg-white p-1 h-fit rounded-lg border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 hover:shadow-lg transition duration-300 cursor-pointer flex flex-col items-center justify-center text-center mb-2";
         button.innerHTML = `
-          <span class="font-semibold text-gray-800 text-xs">${job.name}</span>
+          <span class="font-bold text-gray-800 text-sm">${job.name}</span>
         `;
         button.addEventListener("click", () => {
           openJobInNewPage(job);
@@ -292,7 +292,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     newsItems.concat(newsItems).forEach(news => {
       const newsItem = document.createElement("div");
       newsItem.className = "bg-blue-50 p-2 rounded border-l-4 border-blue-500 cursor-pointer hover:bg-blue-100 transition duration-300";
-      newsItem.innerHTML = `<p class="text-sm text-gray-700">${news.name}</p>`;
+      newsItem.innerHTML = `<p class="text-base font-bold text-gray-700">${news.name}</p>`;
       newsItem.addEventListener("click", () => {
         openJobInNewPage(news);
       });
@@ -309,7 +309,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     scrollingJobs.concat(scrollingJobs).forEach(job => {
       const jobItem = document.createElement("div");
       jobItem.className = "bg-green-50 p-2 rounded border-l-4 border-green-500 cursor-pointer hover:bg-green-100 transition duration-300";
-      jobItem.innerHTML = `<p class="text-sm text-gray-700">${job.name}</p>`;
+      jobItem.innerHTML = `<p class="text-base font-bold text-gray-700">${job.name}</p>`;
       jobItem.addEventListener("click", () => {
         openJobInNewPage(job);
       });
