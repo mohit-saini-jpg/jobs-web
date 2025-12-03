@@ -28,10 +28,6 @@
       "url": "https://sarkarinetwork.com/offline-form/"
     },
     {
-      "name": "Haryana DC RATE latest jobs",
-      "url": "https://www.haryanadcratejob.com/haryana-latest-government-jobs/"
-    },
-    {
       "name": "Railway Jobs",
       "url": "https://www.freejobalert.com/railway-jobs/"
     },
@@ -86,12 +82,12 @@
      {
       "name": "All DC rate Jobs",
       "url": "https://www.haryanadcratejob.com/"
-    }
-    ,
+    } ,
      {
       "name": "Driver Govt Jobs",
       "url": "https://www.indgovtjobs.in/2015/10/Driver-Govt-Jobs.html"
     }
+   
   ],
   "left_jobs": [
     {
@@ -132,6 +128,22 @@
     {
       "name": "B.Com Govt Jobs",
       "url": "https://www.freejobalert.com/search-jobs/bcom-government-jobs/"
+    },
+     {
+      "name": "Admit Card Jobs",
+      "url": "https://www.freejobalert.com/admit-card/"
+    },
+     {
+      "name": "Results Jobs",
+      "url": "https://www.freejobalert.com/exam-results/"
+    },
+     {
+      "name": "Answer Key",
+      "url": "https://www.freejobalert.com/answer-key/"
+    },
+     {
+      "name": "Syllabus",
+      "url": "https://www.freejobalert.com/syllabus/"
     }
   ],
   "right_jobs": [
