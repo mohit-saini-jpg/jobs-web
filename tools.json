@@ -34,6 +34,20 @@
       "name": "Image Converting JPG, JPEG, HEIC & PNG",
       "url": "https://www.simpleimageresizer.com/image-converter",
       "icon": "fas fa-exchange-alt"
+    },{
+      "name": "Image to Word",
+      "url": "https://jpgtoexcel.com/jpg-to-word",
+      "icon": "fas fa-file-word"
+    },
+    {
+      "name": "Image to Excel",
+      "url": "https://pdfpro.com/pdf-to-excel",
+      "icon": "fas fa-file-excel"
+    },
+    {
+      "name": "Image to Power Point (PPT)",
+      "url": "https://www.pdfgear.com/pdf-to-pptx/",
+      "icon": "fas fa-file-powerpoint"
     },
     {
       "name": "DOC to JPG ",
@@ -108,16 +122,6 @@
       "icon": "fas fa-file-word"
     },
     {
-      "name": "PDF to Excel",
-      "url": "https://jpgtoexcel.com/pdf-to-excel",
-      "icon": "fas fa-file-excel"
-    },
-    {
-      "name": "PDF to PowerPoint",
-      "url": "https://tools.pdf24.org/en/pdf-to-powerpoint",
-      "icon": "fas fa-file-powerpoint"
-    },
-    {
       "name": "PDF to Add Watermark OR Signature",
       "url": "https://www.sejda.com/sign-pdf",
       "icon": "fas fa-signature"
@@ -152,18 +156,13 @@
       "url": "https://pdf.pi7.org/crop-pdf",
       "icon": "fas fa-crop"
     },{
-      "name": "Image to Word",
-      "url": "https://jpgtoexcel.com/jpg-to-word",
-      "icon": "fas fa-file-word"
-    },
-    {
-      "name": "Image to Excel",
-      "url": "https://pdfpro.com/pdf-to-excel",
+      "name": "PDF to Excel",
+      "url": "https://jpgtoexcel.com/pdf-to-excel",
       "icon": "fas fa-file-excel"
     },
     {
-      "name": "Image to Power Point (PPT)",
-      "url": "https://www.pdfgear.com/pdf-to-pptx/",
+      "name": "PDF to PowerPoint",
+      "url": "https://tools.pdf24.org/en/pdf-to-powerpoint",
       "icon": "fas fa-file-powerpoint"
     }
   ],
