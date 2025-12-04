@@ -36,21 +36,6 @@
       "icon": "fas fa-exchange-alt"
     },
     {
-      "name": "Image to Word",
-      "url": "https://jpgtoexcel.com/jpg-to-word",
-      "icon": "fas fa-file-word"
-    },
-    {
-      "name": "Image to Excel",
-      "url": "https://jpgtoexcel.com/",
-      "icon": "fas fa-file-excel"
-    },
-    {
-      "name": "Image to Power Point (PPT)",
-      "url": "https://www.magicslides.app/tools/image-to-ppt",
-      "icon": "fas fa-file-powerpoint"
-    },
-    {
       "name": "DOC to JPG ",
       "url": "https://imageresizer.com/jpg-to-doc",
       "icon": "fas fa-file-alt"
@@ -98,23 +83,33 @@
   ],
   "pdf": [
     {
-      "name": "PDF to JPG.JPEG.PNG",
-      "url": "https://www.sejda.com/pdf-to-jpg",
+      "name": "PDF to JPG",
+      "url": "https://pdf.pi7.org/pdf-to-jpg",
       "icon": "fas fa-image"
     },
     {
+      "name": "PDF Size According You in KB",
+      "url": "https://pdf.pi7.org/pdf-resize-in-kb",
+      "icon": "fas fa-compress"
+    },
+    {
       "name": "PDF Merge",
-      "url": "https://pdfpro.com/merge-pdf",
+      "url": "https://pdf.pi7.org/merge-pdf",
       "icon": "fas fa-object-group"
     },
     {
       "name": "PDF to Word",
-      "url": "https://www.freeconvert.com/pdf-to-doc",
+      "url": "https://pdf.pi7.org/pdf-to-word",
+      "icon": "fas fa-file-word"
+    },
+    {
+      "name": "PDF Crop",
+      "url": "https://pdf.pi7.org/crop-pdf",
       "icon": "fas fa-file-word"
     },
     {
       "name": "PDF to Excel",
-      "url": "https://tools.pdf24.org/en/pdf-to-excel",
+      "url": "https://jpgtoexcel.com/pdf-to-excel",
       "icon": "fas fa-file-excel"
     },
     {
@@ -129,22 +124,22 @@
     },
     {
       "name": "PDF Page Remove",
-      "url": "https://www.sejda.com/delete-pdf-pages",
+      "url": "https://pdf.pi7.org/remove-pdf-page",
       "icon": "fas fa-trash"
     },
     {
       "name": "PDF Add Page Number",
-      "url": "https://tools.pdf24.org/en/add-page-numbers",
+      "url": "https://pdf.pi7.org/add-page-number-to-pdf",
       "icon": "fas fa-list-ol"
     },
     {
       "name": "PDF Rotate",
-      "url": "https://tools.pdf24.org/en/rotate-pdf-pages",
+      "url": "https://pdf.pi7.org/rotate-pdf",
       "icon": "fas fa-undo"
     },
     {
       "name": "PDF Lock",
-      "url": "https://www.sejda.com/delete-pdf-pages",
+      "url": "https://pdfpro.com/password-protect-pdf",
       "icon": "fas fa-lock"
     },
     {
@@ -156,11 +151,20 @@
       "name": "PDF Crop",
       "url": "https://pdf.pi7.org/crop-pdf",
       "icon": "fas fa-crop"
+    },{
+      "name": "Image to Word",
+      "url": "https://jpgtoexcel.com/jpg-to-word",
+      "icon": "fas fa-file-word"
     },
     {
-      "name": "PDF Compress According to Size in KB",
-      "url": "https://pdf.pi7.org/pdf-resize-in-kb",
-      "icon": "fas fa-compress"
+      "name": "Image to Excel",
+      "url": "https://pdfpro.com/pdf-to-excel",
+      "icon": "fas fa-file-excel"
+    },
+    {
+      "name": "Image to Power Point (PPT)",
+      "url": "https://www.pdfgear.com/pdf-to-pptx/",
+      "icon": "fas fa-file-powerpoint"
     }
   ],
   "video": [
