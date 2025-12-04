@@ -184,22 +184,22 @@
     },
     {
       "name": "Audio Cutter",
-      "url": "https://mp3cut.net/",
+      "url": "https://clideo.com/cut-audio",
       "icon": "fas fa-cut"
     },
     {
       "name": "Audio Merge",
-      "url": "https://audio-joiner.com/",
+      "url": "https://clideo.com/merge-audio",
       "icon": "fas fa-link"
     },
     {
       "name": "Video Cutter",
-      "url": "https://online-video-cutter.com/",
+      "url": "https://clideo.com/editor/",
       "icon": "fas fa-scissors"
     },
     {
       "name": "Video Merge",
-      "url": "https://online-video-cutter.com/merge-videos",
+      "url": "https://clideo.com/editor/",
       "icon": "fas fa-object-group"
     }
   ]
