@@ -117,6 +117,11 @@
       "icon": "fas fa-object-group"
     },
     {
+      "name": "PDF Editor",
+      "url": "https://www.pdfgear.com/edit-pdf/",
+      "icon": "fas fa-object-group"
+    },
+    {
       "name": "PDF to Word",
       "url": "https://pdf.pi7.org/pdf-to-word",
       "icon": "fas fa-file-word"
@@ -128,7 +133,7 @@
     },
     {
       "name": "PDF to Add Watermark OR Signature",
-      "url": "https://apitemplate.io/pdf-tools/add-watermark-to-pdf/",
+      "url": "https://watermark-pdf.cocodoc.com/",
       "icon": "fas fa-signature"
     },
     {
