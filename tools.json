@@ -184,12 +184,17 @@
     },
     {
       "name": "Audio Cutter",
-      "url": "https://clideo.com/cut-audio",
+      "url": "https://audio-joiner.com/",
       "icon": "fas fa-cut"
     },
     {
       "name": "Audio Merge",
-      "url": "https://clideo.com/merge-audio",
+      "url": "https://audio-joiner.com/",
+      "icon": "fas fa-link"
+    },
+    {
+      "name": "Audio-to-Text",
+      "url": "https://any2text.com/audio-to-text",
       "icon": "fas fa-link"
     },
     {
