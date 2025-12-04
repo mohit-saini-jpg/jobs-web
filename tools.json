@@ -6,6 +6,31 @@
       "icon": "fas fa-eraser"
     },
     {
+      "name": "Passport Size Photo",
+      "url": "https://image.pi7.org/passport-size-photo",
+      "icon": "fas fa-id-card"
+    },
+    {
+      "name": "6x4 Size Image",
+      "url": "https://image.pi7.org/resize-image-to-4x6",
+      "icon": "fas fa-arrows-alt"
+    },
+    {
+      "name": "Image Quality Increase",
+      "url": "https://www.cutout.pro/photo-enhancer-sharpener-upscaler",
+      "icon": "fas fa-magic"
+    },
+    {
+      "name": "Image to PDF",
+      "url": "https://image.pi7.org/image-to-pdf",
+      "icon": "fas fa-file-pdf"
+    },
+    {
+      "name": "Image Crop",
+      "url": "https://image.pi7.org/crop-image",
+      "icon": "fas fa-crop"
+    },
+    {
       "name": "Image Compress According Size in KB",
       "url": "https://image.pi7.org/reduce-image-size-in-kb",
       "icon": "fas fa-compress"
@@ -16,16 +41,6 @@
       "icon": "fas fa-expand-arrows-alt"
     },
     {
-      "name": "Passport Size Photo",
-      "url": "https://image.pi7.org/passport-size-photo",
-      "icon": "fas fa-id-card"
-    },
-    {
-      "name": "Image to PDF",
-      "url": "https://image.pi7.org/image-to-pdf",
-      "icon": "fas fa-file-pdf"
-    },
-    {
       "name": "Image Merge",
       "url": "https://pinetools.com/merge-images",
       "icon": "fas fa-object-group"
@@ -34,7 +49,8 @@
       "name": "Image Converting JPG, JPEG, HEIC & PNG",
       "url": "https://www.simpleimageresizer.com/image-converter",
       "icon": "fas fa-exchange-alt"
-    },{
+    },
+    {
       "name": "Image to Word",
       "url": "https://jpgtoexcel.com/jpg-to-word",
       "icon": "fas fa-file-word"
@@ -60,24 +76,9 @@
       "icon": "fas fa-font"
     },
     {
-      "name": "Image Quality Increase",
-      "url": "https://www.cutout.pro/photo-enhancer-sharpener-upscaler",
-      "icon": "fas fa-magic"
-    },
-    {
       "name": "Image to Add Watermark OR Signature",
       "url": "https://watermarkimage.com/en",
       "icon": "fas fa-water"
-    },
-    {
-      "name": "Image Crop",
-      "url": "https://image.pi7.org/crop-image",
-      "icon": "fas fa-crop"
-    },
-    {
-      "name": "6x4 Size Image",
-      "url": "https://image.pi7.org/resize-image-to-4x6",
-      "icon": "fas fa-arrows-alt"
     },
     {
       "name": "Image to Video",
