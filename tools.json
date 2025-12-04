@@ -112,6 +112,11 @@
       "icon": "fas fa-object-group"
     },
     {
+      "name": "Page add In PDF",
+      "url": "https://www.pdfgear.com/add-pages-to-pdf/",
+      "icon": "fas fa-object-group"
+    },
+    {
       "name": "PDF to Word",
       "url": "https://pdf.pi7.org/pdf-to-word",
       "icon": "fas fa-file-word"
@@ -123,7 +128,7 @@
     },
     {
       "name": "PDF to Add Watermark OR Signature",
-      "url": "https://www.sejda.com/sign-pdf",
+      "url": "https://apitemplate.io/pdf-tools/add-watermark-to-pdf/",
       "icon": "fas fa-signature"
     },
     {
