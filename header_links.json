@@ -17,27 +17,23 @@
       "color": "bg-gradient-to-r from-pink-400 to-red-400"
     },
     {
-      "name": "Facebook",
-      "url": "https://www.facebook.com/",
-      "icon": "fab fa-facebook-f",
+      "name": "Results",
+      "url": "https://sarkariresult.com.im/sarkari-result/",
       "color": "bg-blue-400"
     },
     {
-      "name": "YouTube",
-      "url": "https://www.youtube.com/",
-      "icon": "fab fa-youtube",
+      "name": "Admit Card",
+      "url": "https://sarkariresult.com.im/admit-card/",
       "color": "bg-red-400"
     },
     {
-      "name": "WhatsApp",
-      "url": "https://whatsapp.com/",
-      "icon": "fab fa-whatsapp",
+      "name": "Admission",
+      "url": "https://sarkarijobrasta.com/admission/"
       "color": "bg-green-400"
     },
     {
-      "name": "Telegram",
-      "url": "https://telegram.org/",
-      "icon": "fab fa-telegram-plane",
+      "name": "Upcoming Jobs",
+      "url": "https://sarkarinetwork.com/upcoming/",
       "color": "bg-blue-400"
     }
   ]
