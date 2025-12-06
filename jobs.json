@@ -229,6 +229,10 @@
       "url": "https://www.indgovtjobs.in/2015/10/Driver-Govt-Jobs.html"
     },
     {
+      "name": "Driver(off-campus)",
+      "url": "https://www.freshersnow.com/off-campus-drives/"
+    },
+    {
       "name": "All Defence Jobs",
       "url": "https://sarkarijobcity.in/defence-jobs/"
     },
@@ -437,16 +441,16 @@
       "url": "https://www.freejobalert.com/new-edu-updates/"
     },
     {
-      "name": "Admission Samachar",
-      "url": "https://sarkarijobcity.in/admission/"
+      "name": "College-Admission Now",
+      "url": "https://www.collegeadmission.in/list/college-admission-information"
     },
     {
       "name": "Board Result",
       "url": "https://sarkariresult.com.im/category/board-result/"
     },
     {
-      "name": "University Updates",
-      "url": "https://newfreejob.com/all-university-updates/"
+      "name": "University Updates Now",
+      "url": "https://www.collegeadmission.in/list/university-admission-information"
     },
     {
       "name": "Scholarship Updates",
@@ -503,6 +507,10 @@
     {
       "title": "Latest Khabar",
       "color": "#ef4444"
+    },
+    {
+      "name": "Trending Khabar",
+      "url": "https://jobrasta.com/category/trending-news/"
     },
     {
       "name": "Jobs Khabar",
