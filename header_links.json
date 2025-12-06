@@ -12,23 +12,27 @@
   ],
   "social_links": [
     {
-      "name": "Latest JOB",
-      "url": "https://sarkariresult.com.im/sarkari-naukri/",
+      "name": "Instagram",
+      "url": "https://www.instagram.com/",
+      "icon": "fab fa-instagram",
       "color": "bg-gradient-to-r from-pink-400 to-red-400"
     },
     {
-      "name": "Results",
-      "url": "https://sarkariresult.com.im/sarkari-result/",
+      "name": "Facebook",
+      "url": "https://www.facebook.com/",
+      "icon": "fab fa-facebook-f",
       "color": "bg-blue-400"
     },
     {
-      "name": "Admit Card",
-      "url": "https://sarkariresult.com.im/admit-card/",
+      "name": "YouTube",
+      "url": "https://www.youtube.com/",
+      "icon": "fab fa-youtube",
       "color": "bg-red-400"
     },
     {
-      "name": "Admission",
-      "url": "https://sarkarijobrasta.com/admission/"
+      "name": "WhatsApp",
+      "url": "https://whatsapp.com/",
+      "icon": "fab fa-whatsapp",
       "color": "bg-green-400"
     },
     {
