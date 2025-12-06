@@ -35,6 +35,11 @@
       "name": "Upcoming",
       "url": "https://sarkarinetwork.com/upcoming/",
       "color": "bg-blue-400"
+    },
+    {
+      "name": "Jobs by Designation",
+      "url": "https://www.freshersnow.com/jobs-by-designation/",
+      "color": "bg-green-400"
     }
   ]
 }
