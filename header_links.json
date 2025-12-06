@@ -32,8 +32,9 @@
       "color": "bg-green-400"
     },
     {
-      "name": "Upcoming Jobs",
-      "url": "https://sarkarinetwork.com/upcoming/",
+      "name": "Telegram",
+      "url": "https://telegram.org/",
+      "icon": "fab fa-telegram-plane",
       "color": "bg-blue-400"
     }
   ]
