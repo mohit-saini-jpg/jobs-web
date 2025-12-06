@@ -181,6 +181,10 @@
       "url": "https://www.freshersnow.com/indian-air-force-jobs/"
     },
     {
+      "name": "All Defence Jobs",
+      "url": "https://sarkarijobcity.in/defence-jobs/"
+    },
+    {
       "name": "Technical Jobs",
       "url": "https://www.freejobalert.com/engineering-jobs/"
     },
@@ -214,7 +218,7 @@
     },
     {
       "name": "Post Office Jobs",
-      "url": "https://www.freshersnow.com/india-post-office-recruitment/"
+      "url": "https://sabhinaukri.com/post-office/"
     },
     {
       "name": "SSC Jobs",
@@ -230,19 +234,19 @@
     },
     {
       "name": "Driver Govt Jobs",
-      "url": "https://www.indgovtjobs.in/2015/10/Driver-Govt-Jobs.html"
+      "url": "https://sabhinaukri.com/post-wise/driver/"
     },
     {
       "name": "Driver(off-campus)",
       "url": "https://www.freshersnow.com/off-campus-drives/"
     },
     {
-      "name": "All Defence Jobs",
-      "url": "https://sarkarijobcity.in/defence-jobs/"
-    },
-    {
       "name": "Law Jobs",
       "url": "https://www.freejobalert.com/search-jobs/llb-government-jobs/"
+    },
+    {
+      "name": "Court Jobs",
+      "url": "https://sabhinaukri.com/court/"
     },
     {
       "name": "IT Jobs",
@@ -253,8 +257,8 @@
       "url": "https://www.freshersnow.com/mbbs-govt-jobs/"
     },
     {
-      "name": "Clerk/DEO Jobs",
-      "url": "https://newfreejob.com/clerk-deo-job/"
+      "name": "Clerk Jobs",
+      "url": "https://sabhinaukri.com/post-wise/clerk/"
     },
     {
       "name": "PWD-Jobs",
@@ -283,6 +287,26 @@
     {
       "name": "Anganwadi-Recruitment",
       "url": "https://www.freejobalert.com/anganwadi-recruitment/"
+    },
+    {
+      "name": "Peon Jobs",
+      "url": "https://sabhinaukri.com/post-wise/peon/"
+    },
+    {
+      "name": "Typist Jobs",
+      "url": "https://sabhinaukri.com/post-wise/typist/"
+    },
+    {
+      "name": "Forest Jobs",
+      "url": "https://sabhinaukri.com/forest/"
+    },
+    {
+      "name": "Airports Jobs",
+      "url": "https://sabhinaukri.com/organization/aai/"
+    },
+    {
+      "name": "Municipal Corporation Jobs",
+      "url": "https://sabhinaukri.com/municipal-corporation/"
     }
   ],
   "left_jobs": [
@@ -369,6 +393,10 @@
     {
       "name": "Engineering Jobs by Company",
       "url": "https://www.freshersnow.com/engineering-govt-jobs/"
+    },
+    {
+      "name": "Electrician Jobs",
+      "url": "https://sabhinaukri.com/post-wise/electrician/"
     },
     {
       "title": "Admit card-Result-Answer Key-Syllabus",
