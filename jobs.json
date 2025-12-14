@@ -149,19 +149,19 @@
       "url": "https://www.freshersnow.com/jobs-by-designation/"
     }, 
     {
-      "name": "State GovernmentJobs",
+      "name": "State Govt tJobs",
       "url": "https://www.freejobalert.com/state-government-jobs/"
     },
     {
-      "name": "Central Jobs",
+      "name": "Central Govt Jobs",
       "url": "https://sarkarinetwork.com/central-job/"
     },
     {
-      "name": "Female govt jobs India",
+      "name": "Female jobs India",
       "url": "https://www.indgovtjobs.in/2013/12/female-govt-jobs-2014-government-jobs.html"
     },
     {
-      "name": "Offline Form",
+      "name": "Offline Form Jobs",
       "url": "https://sarkarinetwork.com/offline-form/"
     },
     {
@@ -189,10 +189,6 @@
       "url": "https://sarkarijobcity.in/defence-jobs/"
     },
     {
-      "name": "Internships For Students",
-      "url": "https://www.freshersnow.com/internship-jobs/"
-    },
-    {
       "name": "Technical Jobs",
       "url": "https://www.freejobalert.com/engineering-jobs/"
     },
@@ -205,7 +201,7 @@
       "url": "https://sarkarijobcity.in/apprenticeship/"
     },
     {
-      "name": "No Exam Government Jobs",
+      "name": "No Exam Jobs",
       "url": "https://www.indgovtjobs.in/2024/11/No-Exam-Government-Jobs.html"
     },
     {
@@ -265,7 +261,7 @@
       "url": "https://sabhinaukri.com/post-wise/clerk/"
     },
     {
-      "name": "PWD-Jobs",
+      "name": "PWD Jobs",
       "url": "https://www.freejobalert.com/pwd-jobs/"
     },
     {
@@ -273,11 +269,11 @@
       "url": "https://www.freejobalert.com/ex-serviceman-jobs/"
     },
     {
-      "name": "Sports-Quota-Jobs",
+      "name": "Sports Quota Jobs",
       "url": "https://www.freejobalert.com/sports-quota-jobs/"
     },
     {
-      "name": "Part-Time-Jobs",
+      "name": "Part Time Jobs",
       "url": "https://www.freejobalert.com/part-time-jobs/"
     },
     {
@@ -285,11 +281,11 @@
       "url": "https://www.freshersnow.com/startup-jobs-india/"
     },
     {
-      "name": "Work-From-Home-Jobs",
+      "name": "Work From Home Jobs",
       "url": "https://www.freshersnow.com/category/work-from-home/"
     },
     {
-      "name": "Anganwadi-Recruitment",
+      "name": "Anganwadi Jobs",
       "url": "https://www.freejobalert.com/anganwadi-recruitment/"
     },
     {
@@ -347,7 +343,7 @@
       "url": "https://www.freejobalert.com/search-jobs/12th-pass-government-jobs/"
     },
     {
-      "name": "Diploma government Pass",
+      "name": "Diploma Pass Jobs",
       "url": "https://www.freejobalert.com/search-jobs/diploma-government-jobs/"
     },
     {
@@ -419,6 +415,10 @@
       "url": "https://sabhinaukri.com/post-wise/electrician/"
     },
     {
+      "name": "Internships For Students",
+      "url": "https://www.freshersnow.com/internship-jobs/"
+    }
+    {
       "title": "Admit card-Result-Answer Key-Syllabus",
       "color": "#fb7185"
     },
@@ -463,7 +463,7 @@
       "url": "https://www.freejobalert.com/exam-pattern/"
     },
     {
-      "name": "Selection Process",
+      "name": "Selection Process Jobs",
       "url": "https://www.freejobalert.com/selection-process/"
     },
     {
@@ -471,7 +471,7 @@
       "url": "https://www.freshersnow.com/tet-exams/"
     },
     {
-      "name": "Interview-Results",
+      "name": "Interview-Results jobs",
       "url": "https://www.freejobalert.com/interview-results/"
     }
   ],
@@ -481,8 +481,16 @@
       "color": "#60a5fa"
     },
     {
-      "name": "ALL Admission ALL",
+      "name": "ALL Admission",
       "url": "https://sarkariresult.com.im/admission/"
+    },
+    {
+      "name": "College Admission",
+      "url": "https://www.collegeadmission.in/list/college-admission-information"
+    },
+    {
+      "name": "University Admission",
+      "url": "https://www.collegeadmission.in/list/university-admission-information"
     },
     {
       "name": "10-12TH Board Results",
@@ -491,14 +499,6 @@
     {
       "name": "ALL Education Results",
       "url": "https://www.freejobalert.com/new-edu-updates/"
-    },
-    {
-      "name": "College-Admission",
-      "url": "https://www.collegeadmission.in/list/college-admission-information"
-    },
-    {
-      "name": "University Updates",
-      "url": "https://www.collegeadmission.in/list/university-admission-information"
     },
     {
       "name": "College/University Exam",
