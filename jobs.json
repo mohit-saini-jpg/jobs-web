@@ -434,9 +434,28 @@
       "name": "Answer Key Jobs",
       "url": "https://www.freejobalert.com/answer-key/"
     },
+     {
+      "name": "Previous-papers",
+      "url": "https://www.freejobalert.com/previous-papers/"
+    },{
+      "name": "Exam-calendar",
+      "url": "https://www.freejobalert.com/upcoming-notifications/21614/"
+    },
     {
       "name": "Syllabus Jobs",
       "url": "https://www.freejobalert.com/syllabus/"
+    },
+    {
+      "name": "Exam-Pattern",
+      "url": "https://www.freejobalert.com/exam-pattern/"
+    },
+     {
+      "name": "Selection Process Jobs",
+      "url": "https://www.freejobalert.com/selection-process/"
+    },
+     {
+      "name": "Moke Test",
+      "url": "https://www.mockers.in/"
     },
     {
       "name": "ALL Entrance Exam",
@@ -447,31 +466,11 @@
       "url": "https://exams.freshersnow.com/common-entrance-exams/"
     },
     {
-      "name": "Exam-calendar",
-      "url": "https://www.freejobalert.com/upcoming-notifications/21614/"
-    },
-    {
-      "name": "Previous-papers",
-      "url": "https://www.freejobalert.com/previous-papers/"
-    },
-    {
-      "name": "Moke Test",
-      "url": "https://www.mockers.in/"
-    },
-    {
-      "name": "Exam-Pattern",
-      "url": "https://www.freejobalert.com/exam-pattern/"
-    },
-    {
-      "name": "Selection Process Jobs",
-      "url": "https://www.freejobalert.com/selection-process/"
-    },
-    {
-      "name": "TET Exams – State Wise",
+      "name": "TET Exams State Wise",
       "url": "https://www.freshersnow.com/tet-exams/"
     },
     {
-      "name": "Interview-Results jobs",
+      "name": "Jobs Interview Results",
       "url": "https://www.freejobalert.com/interview-results/"
     }
   ],
