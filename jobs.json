@@ -136,19 +136,15 @@
       "name": "Latest JOBS",
       "url": "https://sarkariresult.com.im/sarkari-naukri/"
     },
-    {
-      "name": "Jobs Last Date Reminder",
-      "url": "https://www.freejobalert.com/last-date-reminder/"
-    },
-    {
+     {
       "name": "Upcoming Jobs",
       "url": "https://sarkarinetwork.com/upcoming/"
     },
     {
-      "name": "Jobs by Designation",
-      "url": "https://www.freshersnow.com/jobs-by-designation/"
-    }, 
-    {
+      "name": "Jobs Last Date Reminder",
+      "url": "https://www.freejobalert.com/last-date-reminder/"
+    },
+     {
       "name": "State Govt tJobs",
       "url": "https://www.freejobalert.com/state-government-jobs/"
     },
@@ -157,16 +153,20 @@
       "url": "https://sarkarinetwork.com/central-job/"
     },
     {
-      "name": "Female jobs India",
-      "url": "https://www.indgovtjobs.in/2013/12/female-govt-jobs-2014-government-jobs.html"
+      "name": "Jobs by Designation",
+      "url": "https://www.freshersnow.com/jobs-by-designation/"
+    },
+     {
+      "name": "Foreign jobs",
+      "url": "https://www.placementindia.com/international/"
     },
     {
       "name": "Offline Form Jobs",
       "url": "https://sarkarinetwork.com/offline-form/"
     },
     {
-      "name": "Foreign jobs",
-      "url": "https://www.placementindia.com/international/"
+      "name": "Female jobs India",
+      "url": "https://www.indgovtjobs.in/2013/12/female-govt-jobs-2014-government-jobs.html"
     },
     {
       "name": "Railway Jobs",
@@ -192,23 +192,7 @@
       "name": "Technical Jobs",
       "url": "https://www.freejobalert.com/engineering-jobs/"
     },
-    {
-      "name": "HKRN Jobs",
-      "url": "https://sarkariresult.com.im/hkrn-recruitment/"
-    },
-    {
-      "name": "Apprentice Jobs",
-      "url": "https://sarkarijobcity.in/apprenticeship/"
-    },
-    {
-      "name": "No Exam Jobs",
-      "url": "https://www.indgovtjobs.in/2024/11/No-Exam-Government-Jobs.html"
-    },
-    {
-      "name": "Teaching and Faculty Jobs",
-      "url": "https://www.freejobalert.com/teaching-faculty-jobs/"
-    },
-    {
+     {
       "name": "Police/Defence Job",
       "url": "https://www.freejobalert.com/police-defence-jobs/"
     },
@@ -216,29 +200,45 @@
       "name": "Bank Jobs",
       "url": "https://www.freejobalert.com/bank-jobs/"
     },
-    {
-      "name": "PSU Jobs",
-      "url": "https://govtjobsalert.in/category/psu-jobs/"
-    },
-    {
-      "name": "Post Office Jobs",
-      "url": "https://sabhinaukri.com/post-office/"
-    },
-    {
+     {
       "name": "SSC Jobs",
       "url": "https://www.freejobalert.com/ssc-recruitment/17522/"
     },
     {
-      "name": "Private Jos",
-      "url": "https://formnotice.in/category/private-jobs/"
+      "name": "HKRN Jobs",
+      "url": "https://sarkariresult.com.im/hkrn-recruitment/"
+    },
+      {
+      "name": "Peon Jobs",
+      "url": "https://sabhinaukri.com/post-wise/peon/"
+    },
+    {
+      "name": "Teaching and Faculty Jobs",
+      "url": "https://www.freejobalert.com/teaching-faculty-jobs/"
+    },
+    {
+      "name": "Clerk Jobs",
+      "url": "https://sabhinaukri.com/post-wise/clerk/"
+    },
+    {
+      "name": "Driver Jobs",
+      "url": "https://sabhinaukri.com/post-wise/driver/"
+    },
+    {
+      "name": "Anganwadi Jobs",
+      "url": "https://www.freejobalert.com/anganwadi-recruitment/"
     },
     {
       "name": "All DC rate Jobs",
       "url": "https://www.haryanadcratejob.com/"
     },
     {
-      "name": "Driver Jobs",
-      "url": "https://sabhinaukri.com/post-wise/driver/"
+      "name": "Post Office Jobs",
+      "url": "https://sabhinaukri.com/post-office/"
+    },
+    {
+      "name": "Airports Jobs",
+      "url": "https://sabhinaukri.com/organization/aai/"
     },
     {
       "name": "Law Jobs",
@@ -257,20 +257,20 @@
       "url": "https://www.freshersnow.com/mbbs-govt-jobs/"
     },
     {
-      "name": "Clerk Jobs",
-      "url": "https://sabhinaukri.com/post-wise/clerk/"
+      "name": "No Exam Jobs",
+      "url": "https://www.indgovtjobs.in/2024/11/No-Exam-Government-Jobs.html"
+    },
+      {
+      "name": "Private Jos",
+      "url": "https://formnotice.in/category/private-jobs/"
+    },
+    {
+      "name": "PSU Jobs",
+      "url": "https://govtjobsalert.in/category/psu-jobs/"
     },
     {
       "name": "PWD Jobs",
       "url": "https://www.freejobalert.com/pwd-jobs/"
-    },
-    {
-      "name": "EXserviceman Jobs",
-      "url": "https://www.freejobalert.com/ex-serviceman-jobs/"
-    },
-    {
-      "name": "Sports Quota Jobs",
-      "url": "https://www.freejobalert.com/sports-quota-jobs/"
     },
     {
       "name": "Part Time Jobs",
@@ -285,24 +285,8 @@
       "url": "https://www.freshersnow.com/category/work-from-home/"
     },
     {
-      "name": "Anganwadi Jobs",
-      "url": "https://www.freejobalert.com/anganwadi-recruitment/"
-    },
-    {
-      "name": "Peon Jobs",
-      "url": "https://sabhinaukri.com/post-wise/peon/"
-    },
-    {
       "name": "Typist Jobs",
       "url": "https://sabhinaukri.com/post-wise/typist/"
-    },
-    {
-      "name": "Forest Jobs",
-      "url": "https://sabhinaukri.com/forest/"
-    },
-    {
-      "name": "Airports Jobs",
-      "url": "https://sabhinaukri.com/organization/aai/"
     },
     {
       "name": "Municipal Corporation Jobs",
@@ -319,6 +303,22 @@
     {
       "name": "SEA Samudr Jobs",
       "url": "https://www.seajob.net/"
+    },
+    {
+      "name": "EXserviceman Jobs",
+      "url": "https://www.freejobalert.com/ex-serviceman-jobs/"
+    },
+    {
+      "name": "Sports Quota Jobs",
+      "url": "https://www.freejobalert.com/sports-quota-jobs/"
+    },
+    {
+      "name": "Forest Jobs",
+      "url": "https://sabhinaukri.com/forest/"
+    },
+    {
+      "name": "Apprentice Jobs",
+      "url": "https://sarkarijobcity.in/apprenticeship/"
     }
   ],
   "left_jobs": [
