@@ -241,7 +241,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const button = document.createElement("a");
       button.href = social.url;
       button.target = "_blank";
-      button.className = `${social.color} text-white py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition duration-300 flex items-center justify-center font-bold text-lg`;
+      button.className = `${social.color} text-white py-1 px-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 flex items-center justify-center font-bold text-lg`;
       button.innerHTML = `
         <i class="${social.icon} mr-2 text-2xl"></i>
         ${social.name}
@@ -260,6 +260,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const rightSection = document.getElementById("jobs-right-section");
     const newsScroll = document.getElementById("news-scroll");
     const jobsScroll = document.getElementById("jobs-scroll");
+    const newsScrollMobile = document.getElementById("news-scroll-mobile");
+    const jobsScrollMobile = document.getElementById("jobs-scroll-mobile");
 
     if (!topButtons || !leftSection || !rightSection || !newsScroll || !jobsScroll) return;
 
@@ -275,39 +277,27 @@ document.addEventListener("DOMContentLoaded", async () => {
         else currentTopColor = null;
 
         const titleDiv = document.createElement("div");
-        titleDiv.className = "col-span-full text-left py-2";
-        titleDiv.innerHTML = `<h3 class="text-2xl font-bold text-blue-800">${job.title}</h3>`;
+        titleDiv.className = "col-span-full text-left mt-4 py-1";
+        titleDiv.innerHTML = `<h3 class="text-2xl font-bold px-2 text-white">${job.title}</h3>`;
+        titleDiv.style.backgroundColor = currentTopColor ? getLightColor(currentTopColor, 0.05) : 'transparent';
         topButtons.appendChild(titleDiv);
       } else {
         // It's a button
         const button = document.createElement("div");
-        button.className = "p-1 rounded-lg border-2 hover:shadow-lg transition duration-300 cursor-pointer flex items-center justify-center text-center";
-        button.style.backgroundColor = "#ffffff";
-        button.style.borderColor = "#bfdbfe"; // default blue-200
+        button.className = "p-1 ps-2 border-1 hover:shadow-lg transition duration-300 cursor-pointer flex items-center";
 
         // If a current color is set on the last title, apply a lighter background
         if (currentTopColor) {
           // Try to compute a light variant for hex or rgb colors; otherwise, set as class
           const light = getLightColor(currentTopColor, 0.75);
           if (light) {
-            button.style.backgroundColor = light;
-            // set a slightly darker border
             const border = getLightColor(currentTopColor, 0.45);
             if (border) button.style.borderColor = border;
-            // choose readable text color
-            button.style.color = readableTextColor(currentTopColor);
-          } else {
-            // Fallback: treat provided value as a CSS class
-            button.classList.add(currentTopColor);
-          }
-        } else {
-          // Default styles when no color
-          button.classList.add('bg-white');
-          button.classList.add('border-blue-200');
+          } 
         }
 
         button.innerHTML = `
-          <span class="font-bold text-gray-800 text-sm">${job.name}</span>
+          <span class="font-bold text-gray-800 text-xs">${job.name}</span>
         `;
         button.addEventListener("click", () => {
           openJobInNewPage(job);
@@ -324,29 +314,21 @@ document.addEventListener("DOMContentLoaded", async () => {
         else currentLeftColor = null;
 
         const titleDiv = document.createElement("div");
-        titleDiv.className = "col-span-full text-left py-1";
-        titleDiv.innerHTML = `<h4 class="text-base font-bold text-blue-800">${job.title}</h4>`;
+        titleDiv.className = "col-span-full text-left py-1 mt-4";
+        titleDiv.innerHTML = `<h3 class="text-2xl font-bold px-2 text-white">${job.title}</h3>`;
+        titleDiv.style.backgroundColor = currentLeftColor ? getLightColor(currentLeftColor, 0.05) : 'transparent';
         leftSection.appendChild(titleDiv);
       } else {
         const button = document.createElement("div");
-        button.className = "p-1 h-fit rounded-lg border-2 transition duration-300 cursor-pointer flex flex-col items-center justify-center text-center mb-2";
-        button.style.backgroundColor = "#ffffff";
-        button.style.borderColor = "#bfdbfe";
+        button.className = "p-1 ps-2 border-1 hover:shadow-lg transition duration-300 cursor-pointer flex items-center";
 
         if (currentLeftColor) {
           const light = getLightColor(currentLeftColor, 0.75);
           if (light) {
-            button.style.backgroundColor = light;
             const border = getLightColor(currentLeftColor, 0.45);
             if (border) button.style.borderColor = border;
-            button.style.color = readableTextColor(currentLeftColor);
-          } else {
-            button.classList.add(currentLeftColor);
-          }
-        } else {
-          button.classList.add('bg-white');
-          button.classList.add('border-blue-200');
-        }
+          } 
+        } 
 
         button.innerHTML = `
           <span class="font-bold text-gray-800 text-sm">${job.name}</span>
@@ -366,28 +348,23 @@ document.addEventListener("DOMContentLoaded", async () => {
         else currentRightColor = null;
 
         const titleDiv = document.createElement("div");
-        titleDiv.className = "col-span-full text-left py-1";
-        titleDiv.innerHTML = `<h4 class="text-base font-bold text-blue-800">${job.title}</h4>`;
+        titleDiv.className = "col-span-full text-left py-1 mt-4";
+        titleDiv.innerHTML = `<h3 class="text-2xl font-bold px-2 text-white">${job.title}</h3>`;
+        titleDiv.style.backgroundColor = currentRightColor ? getLightColor(currentRightColor, 0.05) : 'transparent';
         rightSection.appendChild(titleDiv);
       } else {
         const button = document.createElement("div");
-        button.className = "p-1 h-fit rounded-lg border-2 transition duration-300 cursor-pointer flex flex-col items-center justify-center text-center mb-2";
+        button.className = "p-1 ps-2 border-1 hover:shadow-lg transition duration-300 cursor-pointer flex items-center";
         button.style.backgroundColor = "#ffffff";
         button.style.borderColor = "#bfdbfe";
 
         if (currentRightColor) {
           const light = getLightColor(currentRightColor, 0.75);
           if (light) {
-            button.style.backgroundColor = light;
             const border = getLightColor(currentRightColor, 0.45);
             if (border) button.style.borderColor = border;
             button.style.color = readableTextColor(currentRightColor);
-          } else {
-            button.classList.add(currentRightColor);
-          }
-        } else {
-          button.classList.add('bg-white');
-          button.classList.add('border-blue-200');
+          } 
         }
 
         button.innerHTML = `
@@ -415,6 +392,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         openJobInNewPage(news);
       });
       newsScroll.appendChild(newsItem);
+      if (newsScrollMobile) {
+        const mobileNewsItem = newsItem.cloneNode(true);
+        mobileNewsItem.addEventListener("click", () => {
+          openJobInNewPage(news);
+        });
+        newsScrollMobile.appendChild(mobileNewsItem);
+      }
     });
 
     // Sample scrolling jobs data
@@ -432,6 +416,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         openJobInNewPage(job);
       });
       jobsScroll.appendChild(jobItem);
+      if (jobsScrollMobile) {
+        const mobileJobItem = jobItem.cloneNode(true);
+        mobileJobItem.addEventListener("click", () => {
+          openJobInNewPage(job);
+        });
+        jobsScrollMobile.appendChild(mobileJobItem);
+      }
     });
   }
 

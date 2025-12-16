@@ -82,12 +82,12 @@
 
         <main class="mx-auto w-full px-4">
             <!-- Main Content Area -->
-            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div class="bg-white rounded-lg overflow-hidden">
                 <div class="flex flex-col gap-4">
                     <!-- Jobs Section -->
-                    <div id="jobs-section" class="px-6">
+                    <div id="jobs-section" class="">
                         <!-- Top 2 rows of jobs -->
-                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-12 gap-x-2 gap-y-1 mb-6"
+                        <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-12 mb-6"
                             id="jobs-top-buttons">
                             <!-- Top jobs will be populated here -->
                         </div>
@@ -95,12 +95,12 @@
                         <!-- Bottom section with left, center, right -->
                         <div class="flex flex-col lg:flex-row gap-4 mt-6">
                             <!-- Left section -->
-                            <div class="w-full lg:w-1/6 grid grid-cols-2 gap-1 h-fit" id="jobs-left-section">
+                            <div class="w-full lg:w-1/6 grid grid-cols-2 h-fit" id="jobs-left-section">
                                 <!-- Left jobs will be populated here -->
                             </div>
 
                             <!-- Center section (75%) -->
-                            <div class="w-full lg:w-3/4 flex flex-col md:flex-row gap-4">
+                            <div class="w-full lg:w-3/4 flex flex-col md:flex-row gap-4 hidden md:flex">
                                 <!-- Latest News Box -->
                                 <div class="w-full md:w-1/2 bg-white rounded-lg shadow-lg p-4">
                                     <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
@@ -129,9 +129,37 @@
                             </div>
 
                             <!-- Right section -->
-                            <div class="w-full lg:w-1/6 grid grid-cols-2 gap-1 h-fit" id="jobs-right-section">
+                            <div class="w-full lg:w-1/6 grid grid-cols-2 h-fit" id="jobs-right-section">
                                 <!-- Right jobs will be populated here -->
                             </div>
+                        </div>
+
+                        <div class="md:hidden">
+                              <!-- Latest News Box -->
+                                <div class="w-full md:w-1/2 bg-white rounded-lg shadow-lg p-4">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                                        <i class="fas fa-newspaper mr-2 text-blue-600"></i>
+                                        Latest News
+                                    </h4>
+                                    <div class="relative">
+                                        <div id="news-scroll-mobile" class="space-y-3">
+                                            <!-- News items will be populated here -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Jobs Box -->
+                                <div class="w-full md:w-1/2 bg-white rounded-lg shadow-lg p-4">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                                        <i class="fas fa-briefcase mr-2 text-green-600"></i>
+                                        Latest Jobs
+                                    </h4>
+                                    <div class="relative">
+                                        <div id="jobs-scroll-mobile" class="space-y-3">
+                                            <!-- Jobs items will be populated here -->
+                                        </div>
+                                    </div>
+                                </div>
                         </div>
                     </div>
                 </div>
