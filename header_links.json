@@ -3,11 +3,12 @@
     {
       "name": "AI Helpdesk",
       "link": "https://gemini.google.com/",
-      "color": "bg-gray-600"
+      "color": "bg-zinc-400"
     },
     {
       "name": "Resume/CV Maker",
       "url": "https://sarkariresulttools.net/resume-maker/"
+      "color": "bg-zinc-400"
     }
   ],
   "social_links": [
