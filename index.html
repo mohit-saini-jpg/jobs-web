@@ -20,6 +20,22 @@
         }
         html,body{height:100%;}
         body{font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:var(--muted-bg); color:#0f172a}
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fadeIn {
+            animation: fadeIn 0.3s ease-out forwards;
+            opacity: 0;
+        }
     </style>
 </head>
 
@@ -73,10 +89,10 @@
             </div>
         </header>
 
-        <!-- social section  -->
+        <!-- home section  -->
         <div class="container mx-auto px-4 py-4">
-            <div id="social-section" class="grid grid-cols-2 md:grid-cols-5 gap-4">
-                <!-- Social buttons will be populated here -->
+            <div id="home-section" class="flex flex-wrap gap-2">
+                <!-- Home buttons will be populated here -->
             </div>
         </div>
 
@@ -100,29 +116,81 @@
                             </div>
 
                             <!-- Center section (75%) -->
-                            <div class="w-full lg:w-3/4 flex flex-col md:flex-row gap-4 hidden md:flex">
-                                <!-- Latest News Box -->
-                                <div class="w-full md:w-1/2 bg-white rounded-lg shadow-lg p-4">
-                                    <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                                        <i class="fas fa-newspaper mr-2 text-blue-600"></i>
-                                        Latest News
-                                    </h4>
-                                    <div class="relative">
-                                        <div id="news-scroll" class="space-y-3">
-                                            <!-- News items will be populated here -->
+                            <div class="w-full lg:w-3/4 flex flex-col gap-4 hidden md:flex">
+                                <!-- First Row: Latest News & Latest Jobs -->
+                                <div class="flex flex-row gap-4">
+                                    <!-- Latest News Box -->
+                                    <div class="w-1/2 bg-white rounded-lg shadow-lg p-4">
+                                        <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                                            <i class="fas fa-newspaper mr-2 text-blue-600"></i>
+                                            Latest News
+                                        </h4>
+                                        <div class="relative">
+                                            <div id="news-scroll" class="space-y-2">
+                                                <!-- News items will be populated here (max 10) -->
+                                            </div>
+                                            <div class="mt-4">
+                                                <a href="view.html?type=news" class="block w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition duration-300">
+                                                    <i class="fas fa-arrow-right mr-2"></i>View More
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Jobs Box -->
+                                    <div class="w-1/2 bg-white rounded-lg shadow-lg p-4">
+                                        <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                                            <i class="fas fa-briefcase mr-2 text-green-600"></i>
+                                            Latest Jobs
+                                        </h4>
+                                        <div class="relative">
+                                            <div id="jobs-scroll" class="space-y-2">
+                                                <!-- Jobs items will be populated here (max 10) -->
+                                            </div>
+                                            <div class="mt-4">
+                                                <a href="view.html?type=jobs" class="block w-full text-center bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded transition duration-300">
+                                                    <i class="fas fa-arrow-right mr-2"></i>View More
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Jobs Box -->
-                                <div class="w-full md:w-1/2 bg-white rounded-lg shadow-lg p-4">
-                                    <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                                        <i class="fas fa-briefcase mr-2 text-green-600"></i>
-                                        Latest Jobs
-                                    </h4>
-                                    <div class="relative">
-                                        <div id="jobs-scroll" class="space-y-3">
-                                            <!-- Jobs items will be populated here -->
+                                <!-- Second Row: Latest Admit Card & Latest Results -->
+                                <div class="flex flex-row gap-4">
+                                    <!-- Latest Admit Card Box -->
+                                    <div class="w-1/2 bg-white rounded-lg shadow-lg p-4">
+                                        <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                                            <i class="fas fa-id-card mr-2 text-orange-600"></i>
+                                            Latest Admit Card
+                                        </h4>
+                                        <div class="relative">
+                                            <div id="admitcard-scroll" class="space-y-2">
+                                                <!-- Admit Card items will be populated here (max 10) -->
+                                            </div>
+                                            <div class="mt-4">
+                                                <a href="view.html?type=admitcard" class="block w-full text-center bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2 px-4 rounded transition duration-300">
+                                                    <i class="fas fa-arrow-right mr-2"></i>View More
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Latest Results Box -->
+                                    <div class="w-1/2 bg-white rounded-lg shadow-lg p-4">
+                                        <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                                            <i class="fas fa-trophy mr-2 text-purple-600"></i>
+                                            Latest Results
+                                        </h4>
+                                        <div class="relative">
+                                            <div id="results-scroll" class="space-y-2">
+                                                <!-- Results items will be populated here (max 10) -->
+                                            </div>
+                                            <div class="mt-4">
+                                                <a href="view.html?type=results" class="block w-full text-center bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded transition duration-300">
+                                                    <i class="fas fa-arrow-right mr-2"></i>View More
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -134,29 +202,75 @@
                             </div>
                         </div>
 
-                        <div class="md:hidden">
+                        <div class="md:hidden space-y-4">
                               <!-- Latest News Box -->
-                                <div class="w-full md:w-1/2 bg-white rounded-lg shadow-lg p-4">
+                                <div class="w-full bg-white rounded-lg shadow-lg p-4">
                                     <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
                                         <i class="fas fa-newspaper mr-2 text-blue-600"></i>
                                         Latest News
                                     </h4>
                                     <div class="relative">
-                                        <div id="news-scroll-mobile" class="space-y-3">
-                                            <!-- News items will be populated here -->
+                                        <div id="news-scroll-mobile" class="space-y-1">
+                                            <!-- News items will be populated here (max 10) -->
+                                        </div>
+                                        <div class="mt-4">
+                                            <a href="view.html?type=news" class="block w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition duration-300">
+                                                <i class="fas fa-arrow-right mr-2"></i>View More
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Jobs Box -->
-                                <div class="w-full md:w-1/2 bg-white rounded-lg shadow-lg p-4">
+                                <div class="w-full bg-white rounded-lg shadow-lg p-4">
                                     <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
                                         <i class="fas fa-briefcase mr-2 text-green-600"></i>
                                         Latest Jobs
                                     </h4>
                                     <div class="relative">
-                                        <div id="jobs-scroll-mobile" class="space-y-3">
-                                            <!-- Jobs items will be populated here -->
+                                        <div id="jobs-scroll-mobile" class="space-y-1">
+                                            <!-- Jobs items will be populated here (max 10) -->
+                                        </div>
+                                        <div class="mt-4">
+                                            <a href="view.html?type=jobs" class="block w-full text-center bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded transition duration-300">
+                                                <i class="fas fa-arrow-right mr-2"></i>View More
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Latest Admit Card Box -->
+                                <div class="w-full bg-white rounded-lg shadow-lg p-4">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                                        <i class="fas fa-id-card mr-2 text-orange-600"></i>
+                                        Latest Admit Card
+                                    </h4>
+                                    <div class="relative">
+                                        <div id="admitcard-scroll-mobile" class="space-y-1">
+                                            <!-- Admit Card items will be populated here (max 10) -->
+                                        </div>
+                                        <div class="mt-4">
+                                            <a href="view.html?type=admitcard" class="block w-full text-center bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2 px-4 rounded transition duration-300">
+                                                <i class="fas fa-arrow-right mr-2"></i>View More
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Latest Results Box -->
+                                <div class="w-full bg-white rounded-lg shadow-lg p-4">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                                        <i class="fas fa-trophy mr-2 text-purple-600"></i>
+                                        Latest Results
+                                    </h4>
+                                    <div class="relative">
+                                        <div id="results-scroll-mobile" class="space-y-1">
+                                            <!-- Results items will be populated here (max 10) -->
+                                        </div>
+                                        <div class="mt-4">
+                                            <a href="view.html?type=results" class="block w-full text-center bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded transition duration-300">
+                                                <i class="fas fa-arrow-right mr-2"></i>View More
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -166,6 +280,54 @@
             </div>
     </div>
     </main>
+
+    <!-- Footer -->
+    <footer class="bg-white text-gray-800 py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h3 class="text-xl font-bold">Top India Services</h3>
+                    <p class="text-gray-600 text-sm mt-1">Your gateway to government jobs and services</p>
+                </div>
+                <div class="flex flex-wrap gap-3" id="footer-social-links">
+                    <!-- Social links will be populated here -->
+                </div>
+            </div>
+            <div class="border-t border-gray-200 mt-6 pt-6 text-center text-gray-600 text-sm">
+                <p>&copy; 2025 Top India Services. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Float Button -->
+    <div id="whatsapp-float" class="fixed bottom-6 right-6 z-50">
+        <button id="whatsapp-btn" class="bg-green-500 hover:bg-green-600 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110">
+            <i class="fab fa-whatsapp text-4xl"></i>
+        </button>
+    </div>
+
+    <!-- WhatsApp Chat Popup -->
+    <div id="whatsapp-popup" class="hidden fixed bottom-24 right-6 z-50 w-80 md:w-96 bg-white rounded-lg shadow-2xl overflow-hidden">
+        <!-- Header -->
+        <div class="bg-green-500 text-white p-4 flex items-center justify-between">
+            <div class="flex items-center">
+                <i class="fab fa-whatsapp text-2xl mr-3"></i>
+                <div>
+                    <h3 class="font-bold text-lg">Top India Services</h3>
+                    <p class="text-xs text-green-100">Online</p>
+                </div>
+            </div>
+            <button id="close-whatsapp" class="text-white hover:text-green-100 transition">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Chat Messages -->
+        <div id="whatsapp-messages" class="bg-gray-50 p-4 space-y-3 max-h-96 overflow-y-auto">
+            <!-- Messages will be populated here -->
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 

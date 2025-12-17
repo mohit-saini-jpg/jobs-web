@@ -13,8 +13,16 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root{ --primary-500:#0ea5e9; --muted-bg:#f8fafc }
-        body{font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:var(--muted-bg); color:#0f172a}
+        :root {
+            --primary-500: #0ea5e9;
+            --muted-bg: #f8fafc
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+            background: var(--muted-bg);
+            color: #0f172a
+        }
     </style>
 </head>
 
@@ -29,41 +37,11 @@
                         <i class="fas fa-headset mr-3"></i>
                         Helpdesk
                     </h1>
-                    <button id="mobile-menu-toggle" class="lg:hidden text-white hover:bg-blue-700 p-2 rounded">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                    <nav class="hidden lg:flex gap-3 items-center">
-                        <a href="index.html" class="px-3 py-2 bg-white text-sky-600 rounded-md font-semibold shadow-sm hover:shadow-md transition">
-                            <i class="fas fa-briefcase mr-2"></i>Jobs
-                        </a>
-                        <a href="govt-services.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
-                            <i class="fas fa-gavel mr-2"></i>Services
-                        </a>
-                        <a href="tools.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
-                            <i class="fas fa-tools mr-2"></i>Tools
-                        </a>
-                        <a href="helpdesk.html" class="px-3 py-2 bg-white text-sky-600 rounded-md font-semibold shadow-sm">
-                            <i class="fas fa-headset mr-2"></i>Helpdesk
+                    <nav>
+                        <a href="index.html" class="text-white hover:underline flex items-center">
+                            <i class="fas fa-arrow-left mr-2"></i>Go back
                         </a>
                     </nav>
-                    <div id="header-links" class="hidden lg:flex gap-2"></div>
-                    <div id="mobile-menu" class="hidden lg:hidden absolute top-full left-0 right-0 bg-sky-600 text-white shadow-lg z-50">
-                        <div class="flex flex-col p-4 space-y-2">
-                            <a href="index.html" class="px-4 py-2 bg-white text-sky-600 rounded-md font-semibold hover:bg-white/90 transition">
-                                <i class="fas fa-briefcase mr-2"></i>Jobs
-                            </a>
-                            <a href="govt-services.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
-                                <i class="fas fa-gavel mr-2"></i>Services
-                            </a>
-                            <a href="tools.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
-                                <i class="fas fa-tools mr-2"></i>Tools
-                            </a>
-                            <a href="helpdesk.html" class="px-4 py-2 bg-white text-sky-600 rounded-md font-semibold hover:bg-white/90 transition">
-                                <i class="fas fa-headset mr-2"></i>Helpdesk
-                            </a>
-                            <div id="header-links-mobile" class="mt-2"></div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </header>
@@ -71,8 +49,10 @@
         <main class="mx-auto w-full px-4 py-6">
             <div class="bg-white rounded-lg shadow-lg overflow-hidden max-w-4xl mx-auto">
                 <div class="p-6">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-2 flex items-center"><i class="fas fa-headset mr-3 text-blue-600"></i>Helpdesk / सहायता</h2>
-                    <p class="text-gray-600 mb-4">Yahan aap apni problem submit kar sakte hain. कृपया पूरा नाम, मोबाइल नंबर और संदेश भरें।</p>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2 flex items-center"><i
+                            class="fas fa-headset mr-3 text-blue-600"></i>Helpdesk / सहायता</h2>
+                    <p class="text-gray-600 mb-4">Yahan aap apni problem submit kar sakte hain. कृपया पूरा नाम, मोबाइल
+                        नंबर और संदेश भरें।</p>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
@@ -88,22 +68,30 @@
                         <form id="helpdesk-form" class="space-y-4 bg-gray-50 p-4 rounded">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Full Name</label>
-                                <input id="name" type="text" class="mt-1 block w-full border border-gray-300 rounded px-3 py-2" placeholder="Aapka poora naam" required>
+                                <input id="name" type="text"
+                                    class="mt-1 block w-full border border-gray-300 rounded px-3 py-2"
+                                    placeholder="Aapka poora naam" required>
                             </div>
 
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Mobile Number</label>
-                                <input id="mobile" type="tel" class="mt-1 block w-full border border-gray-300 rounded px-3 py-2" placeholder="10-digit number" required>
+                                <input id="mobile" type="tel"
+                                    class="mt-1 block w-full border border-gray-300 rounded px-3 py-2"
+                                    placeholder="10-digit number" required>
                             </div>
 
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-medium text-gray-700">Message / संदेश</label>
-                                <textarea id="message" rows="4" class="mt-1 block w-full border border-gray-300 rounded px-3 py-2" placeholder="Apni request ya problem yahan likhen" required></textarea>
+                                <textarea id="message" rows="4"
+                                    class="mt-1 block w-full border border-gray-300 rounded px-3 py-2"
+                                    placeholder="Apni request ya problem yahan likhen" required></textarea>
                             </div>
 
                             <div class="flex items-center justify-between">
-                                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700">Submit</button>
-                                <button type="button" id="clear-btn" class="px-3 py-2 bg-gray-200 rounded hover:bg-gray-300">Clear</button>
+                                <button type="submit"
+                                    class="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700">Submit</button>
+                                <button type="button" id="clear-btn"
+                                    class="px-3 py-2 bg-gray-200 rounded hover:bg-gray-300">Clear</button>
                             </div>
                         </form>
                     </div>
@@ -111,12 +99,14 @@
             </div>
 
             <!-- Success Toast -->
-            <div id="success-toast" class="fixed bottom-6 right-6 bg-white border border-green-200 shadow px-4 py-3 rounded hidden">
+            <div id="success-toast"
+                class="fixed bottom-6 right-6 bg-white border border-green-200 shadow px-4 py-3 rounded hidden">
                 <div class="flex items-start gap-3">
                     <i class="fas fa-check-circle text-green-500 text-2xl mt-0.5"></i>
                     <div>
                         <div class="font-semibold text-gray-800">Form Submitted</div>
-                        <div id="success-text" class="text-sm text-gray-600">Hamari team jald hi aapse sampark karegi.</div>
+                        <div id="success-text" class="text-sm text-gray-600">Hamari team jald hi aapse sampark karegi.
+                        </div>
                     </div>
                 </div>
             </div>
@@ -124,91 +114,69 @@
         </main>
     </div>
 
+    <!-- Footer -->
+    <footer class="bg-white text-gray-800 py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h3 class="text-xl font-bold">Top India Services</h3>
+                    <p class="text-gray-600 text-sm mt-1">Your gateway to government jobs and services</p>
+                </div>
+                <div class="flex flex-wrap gap-3" id="footer-social-links">
+                    <!-- Social links will be populated here -->
+                </div>
+            </div>
+            <div class="border-t border-gray-200 mt-6 pt-6 text-center text-gray-600 text-sm">
+                <p>&copy; 2025 Top India Services. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
     <script>
-        (function(){
+        (function () {
             const form = document.getElementById('helpdesk-form');
-            const nameInput = document.getElementById('name');
-            const mobileInput = document.getElementById('mobile');
-            const messageInput = document.getElementById('message');
             const successToast = document.getElementById('success-toast');
             const successText = document.getElementById('success-text');
             const clearBtn = document.getElementById('clear-btn');
 
-            function validateMobile(num){
-                const digits = num.replace(/\D/g, '');
-                return digits.length === 10;
-            }
-
-            form.addEventListener('submit', function(e){
+            form.addEventListener('submit', function (e) {
                 e.preventDefault();
-                const name = nameInput.value.trim();
-                const mobile = mobileInput.value.trim();
-                const message = messageInput.value.trim();
 
-                if(!name){
-                    alert('Please enter your name');
-                    nameInput.focus();
-                    return;
-                }
-                if(!validateMobile(mobile)){
-                    alert('Please enter a valid 10-digit mobile number');
-                    mobileInput.focus();
-                    return;
-                }
-                if(!message){
-                    alert('Please enter your message');
-                    messageInput.focus();
+                const name = document.getElementById('name').value.trim();
+                const mobile = document.getElementById('mobile').value.trim();
+                const message = document.getElementById('message').value.trim();
+
+                if (!name || mobile.length !== 10 || !message) {
+                    alert('Please fill all fields correctly');
                     return;
                 }
 
-                // Prepare payload for webhook
                 const payload = {
-                    name: name,
+                    name,
                     number: mobile,
-                    message: message
+                    message
                 };
 
-                // Send to Zapier webhook (POST JSON)
                 const webhookUrl = 'https://hooks.zapier.com/hooks/catch/25588118/ukx20lv/';
 
+                // IMPORTANT: no-cors mode to avoid browser CORS block
                 fetch(webhookUrl, {
                     method: 'POST',
+                    mode: 'no-cors',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(payload)
-                }).then(async (res) => {
-                    if (res.ok) {
-                        // Optionally still save locally as fallback
-                        try{
-                            const key = 'helpdesk_submissions';
-                            const existing = JSON.parse(localStorage.getItem(key) || '[]');
-                            existing.push({name, mobile, message, createdAt: new Date().toISOString()});
-                            localStorage.setItem(key, JSON.stringify(existing));
-                        }catch(err){
-                            console.warn('Could not save to localStorage', err);
-                        }
-
-                        // Show success toast
-                        successText.textContent = 'Thanks ' + name + '. Hamari team jald contact karegi.';
-                        successToast.classList.remove('hidden');
-                        setTimeout(()=> successToast.classList.add('hidden'), 5000);
-
-                        // Clear form
-                        form.reset();
-                    } else {
-                        const text = await res.text().catch(()=> '');
-                        alert('Submission failed. Please try again later. ' + (text ? '\n' + text : ''));
-                    }
-                }).catch((err) => {
-                    console.error('Webhook POST failed', err);
-                    alert('Could not submit your request right now. Please check your connection and try again.');
                 });
-            });
 
-            clearBtn.addEventListener('click', function(){
+                // Fire-and-forget success UI
+                successText.textContent = 'Thanks ' + name + ', hum jald contact karenge.';
+                successToast.classList.remove('hidden');
+                setTimeout(() => successToast.classList.add('hidden'), 5000);
                 form.reset();
             });
+
+            clearBtn.addEventListener('click', () => form.reset());
         })();
     </script>
 </body>

@@ -10,7 +10,7 @@
       "url": "https://sarkariresulttools.net/resume-maker/"
     }
   ],
-  "social_links": [
+  "home_links": [
     {
       "name": "Latest Jobs",
       "url": "https://sarkariresult.com.cm/latest-jobs/",      
@@ -60,6 +60,26 @@
       "name": "Foreign jobs",
       "url": "https://www.placementindia.com/international/",
       "color": "bg-teal-400"
+    }
+  ],
+  "social_links": [
+    {
+      "name": "WhatsApp",
+      "url": "https://wa.me/919876543210",
+      "icon": "fab fa-whatsapp",
+      "color": "bg-green-600"
+    },
+    {
+      "name": "Instagram",
+      "url": "https://www.instagram.com/govtjobsindia",
+      "icon": "fab fa-instagram",
+      "color": "bg-pink-500"
+    },
+    {
+      "name": "Facebook",
+      "url": "https://www.facebook.com/governmentjobs",
+      "icon": "fab fa-facebook-f",
+      "color": "bg-blue-600"
     }
   ]
 }

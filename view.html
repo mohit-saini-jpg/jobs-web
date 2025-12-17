@@ -13,67 +13,44 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root{ --primary-500:#0ea5e9; --muted-bg:#f8fafc }
-        body{font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:var(--muted-bg); color:#0f172a}
+        :root {
+            --primary-500: #0ea5e9;
+            --muted-bg: #f8fafc
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+            background: var(--muted-bg);
+            color: #0f172a
+        }
     </style>
 </head>
 
-<body class="m-0 p-0 h-screen overflow-hidden">
+<body class="m-0 p-0 min-h-screen flex flex-col">
 
-    <div class="h-screen flex flex-col">
+    <div class="flex-1 flex flex-col">
         <!-- Header with Back Button -->
         <header class="bg-gradient-to-r from-sky-600 to-indigo-600 text-white shadow-sm relative">
             <div class="container mx-auto max-w-6xl px-4 py-3">
                 <div class="flex items-center justify-between">
-                    <button onclick="window.history.back()" class="px-4 py-2 bg-white text-sky-600 rounded-md font-semibold hover:bg-white/90 transition duration-200 flex items-center">
-                        <i class="fas fa-arrow-left mr-2"></i>Back
-                    </button>
                     <h1 id="page-title" class="text-xl font-bold flex items-center">
                         <i class="fas fa-briefcase mr-3"></i>
                         Loading...
                     </h1>
-                    <button id="mobile-menu-toggle" class="lg:hidden text-white hover:bg-blue-700 p-2 rounded">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                    <nav class="hidden lg:flex gap-3">
-                        <a href="index.html" class="px-3 py-2 bg-white text-sky-600 rounded-md font-semibold shadow-sm transition duration-200 text-sm">
-                            <i class="fas fa-briefcase mr-1"></i>Jobs
+
+                    <nav>
+                        <a href="index.html" class="text-white hover:underline flex items-center">
+                            <i class="fas fa-arrow-left mr-2"></i>Go back
                         </a>
-                        <a href="govt-services.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition duration-200 text-sm">
-                            <i class="fas fa-gavel mr-1"></i>Services
-                        </a>
-                        <a href="tools.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition duration-200 text-sm">
-                            <i class="fas fa-tools mr-1"></i>Tools
-                        </a>
-                        <a href="helpdesk.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition duration-200 text-sm">
-                            <i class="fas fa-headset mr-1"></i>Helpdesk
-                        </a>
-                        <div id="header-links" class="hidden lg:flex gap-2"></div>
                     </nav>
-                    <div id="mobile-menu" class="hidden lg:hidden absolute top-full left-0 right-0 bg-sky-600 text-white shadow-lg z-50">
-                        <div class="flex flex-col p-4 space-y-2">
-                            <a href="index.html" class="px-4 py-2 bg-white text-sky-600 rounded-md font-semibold hover:bg-white/90 transition">
-                                <i class="fas fa-briefcase mr-2"></i>Jobs
-                            </a>
-                            <a href="govt-services.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
-                                <i class="fas fa-gavel mr-2"></i>Services
-                            </a>
-                            <a href="tools.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
-                                <i class="fas fa-tools mr-2"></i>Tools
-                            </a>
-                            <a href="helpdesk.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
-                                <i class="fas fa-headset mr-2"></i>Helpdesk
-                            </a>
-                                <div id="header-links-mobile" class="mt-2"></div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </header>
 
         <!-- Full Screen Iframe -->
         <div class="flex-1">
-            <iframe id="content-iframe" src="" width="100%" height="100%" frameborder="0" class="w-full h-full"></iframe>
+            <iframe id="content-iframe" src="" width="100%" height="100%" style="min-height: 100vh;" frameborder="0"
+                class="w-full h-full"></iframe>
         </div>
 
         <!-- Loading Overlay -->
@@ -86,38 +63,147 @@
         </div>
     </div>
 
+    <!-- Footer -->
+    <footer class="bg-white text-gray-800 py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h3 class="text-xl font-bold">Top India Services</h3>
+                    <p class="text-gray-600 text-sm mt-1">Your gateway to government jobs and services</p>
+                </div>
+                <div class="flex flex-wrap gap-3" id="footer-social-links">
+                    <!-- Social links will be populated here -->
+                </div>
+            </div>
+            <div class="border-t border-gray-200 mt-6 pt-6 text-center text-gray-600 text-sm">
+                <p>&copy; 2025 Top India Services. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
     <script>
         // Get URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         const url = urlParams.get('url');
         const name = urlParams.get('name');
+        const type = urlParams.get('type');
 
-        if (url) {
-            const iframe = document.getElementById('content-iframe');
-            const titleElement = document.getElementById('page-title');
-            const loadingOverlay = document.getElementById('loading-overlay');
+        const iframe = document.getElementById('content-iframe');
+        const titleElement = document.getElementById('page-title');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const contentContainer = iframe.parentElement;
 
-            // Set title if name is provided
+        // If type is 'news', 'jobs', 'admitcard', or 'results', show a list instead of iframe
+        if (type === 'news' || type === 'jobs' || type === 'admitcard' || type === 'results') {
+            // Remove iframe and show list
+            iframe.style.display = 'none';
+            
+            // Set title based on type
+            const titles = {
+                news: '<i class="fas fa-newspaper mr-3"></i>Latest News - All Items',
+                jobs: '<i class="fas fa-briefcase mr-3"></i>Latest Jobs - All Items',
+                admitcard: '<i class="fas fa-id-card mr-3"></i>Latest Admit Card - All Items',
+                results: '<i class="fas fa-trophy mr-3"></i>Latest Results - All Items'
+            };
+            titleElement.innerHTML = titles[type];
+
+            // Create list container
+            const listContainer = document.createElement('div');
+            listContainer.className = 'p-6 max-w-6xl mx-auto';
+            
+            const listTitle = document.createElement('h2');
+            listTitle.className = 'text-3xl font-bold mb-6 text-gray-800';
+            const listTitles = {
+                news: '<i class="fas fa-newspaper mr-3 text-blue-600"></i>All Latest News',
+                jobs: '<i class="fas fa-briefcase mr-3 text-green-600"></i>All Latest Jobs',
+                admitcard: '<i class="fas fa-id-card mr-3 text-orange-600"></i>All Latest Admit Cards',
+                results: '<i class="fas fa-trophy mr-3 text-purple-600"></i>All Latest Results'
+            };
+            listTitle.innerHTML = listTitles[type];
+            listContainer.appendChild(listTitle);
+
+            const itemsGrid = document.createElement('div');
+            itemsGrid.className = 'space-y-4';
+            listContainer.appendChild(itemsGrid);
+
+            contentContainer.appendChild(listContainer);
+
+            // Load data from jobs.json
+            fetch('jobs.json')
+                .then(response => response.json())
+                .then(data => {
+                    const dataKeys = {
+                        news: 'news',
+                        jobs: 'scrolling_jobs',
+                        admitcard: 'admit_cards',
+                        results: 'results'
+                    };
+                    const items = data[dataKeys[type]] || [];
+                    
+                    if (items.length === 0) {
+                        itemsGrid.innerHTML = '<p class="text-gray-500 text-center py-8">No items found</p>';
+                        loadingOverlay.style.display = 'none';
+                        return;
+                    }
+
+                    items.forEach((item, index) => {
+                        const itemDiv = document.createElement('div');
+                        const colors = {
+                            news: { bg: 'bg-blue-50', border: 'border-blue-500', hover: 'hover:bg-blue-100' },
+                            jobs: { bg: 'bg-green-50', border: 'border-green-500', hover: 'hover:bg-green-100' },
+                            admitcard: { bg: 'bg-orange-50', border: 'border-orange-500', hover: 'hover:bg-orange-100' },
+                            results: { bg: 'bg-purple-50', border: 'border-purple-500', hover: 'hover:bg-purple-100' }
+                        };
+                        const color = colors[type];
+                        
+                        itemDiv.className = `${color.bg} p-4 rounded-lg border-l-4 ${color.border} cursor-pointer ${color.hover} hover:shadow-lg transition duration-300`;
+                        itemDiv.innerHTML = `
+                            <div class="flex items-start gap-3">
+                                <div class="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-white rounded-full font-bold text-gray-700 border-2 ${color.border}">
+                                    ${index + 1}
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-base font-semibold text-gray-800">${item.name}</p>
+                                </div>
+                                <i class="fas fa-arrow-right text-gray-400"></i>
+                            </div>
+                        `;
+                        
+                        itemDiv.addEventListener('click', () => {
+                            if (item.url) {
+                                window.open(item.url, '_blank');
+                            }
+                        });
+                        
+                        itemsGrid.appendChild(itemDiv);
+                    });
+
+                    loadingOverlay.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('Error loading data:', error);
+                    itemsGrid.innerHTML = '<p class="text-red-500 text-center py-8">Error loading items</p>';
+                    loadingOverlay.style.display = 'none';
+                });
+
+        } else if (url) {
+            // Original iframe behavior
             if (name) {
                 titleElement.textContent = decodeURIComponent(name);
             } else {
                 titleElement.textContent = 'Viewing Content';
             }
 
-            // Load the URL
             iframe.src = decodeURIComponent(url);
 
-            // Hide loading overlay when iframe loads
             iframe.onload = () => {
                 loadingOverlay.style.display = 'none';
             };
 
-            // Timeout fallback in case onload doesn't fire
             setTimeout(() => {
                 loadingOverlay.style.display = 'none';
             }, 3000);
         } else {
-            // If no URL parameter, redirect to home
             window.location.href = 'index.html';
         }
     </script>

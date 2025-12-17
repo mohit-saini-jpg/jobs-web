@@ -1,43 +1,59 @@
 document.addEventListener("DOMContentLoaded", async () => {
   // Detect current page
-  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  const currentPage = window.location.pathname.split("/").pop() || "index.html";
 
   // Load data from appropriate JSON file
   let data;
-  const jsonFile = currentPage === 'index.html' || currentPage === '' ? 'jobs.json' : currentPage === 'tools.html' ? 'tools.json' : 'services.json';
+  const jsonFile =
+    currentPage === "index.html" || currentPage === ""
+      ? "jobs.json"
+      : currentPage === "tools.html"
+      ? "tools.json"
+      : "services.json";
   try {
     const response = await fetch(jsonFile);
     data = await response.json();
   } catch (error) {
-    console.error('Error loading data:', error);
+    console.error("Error loading data:", error);
     // Fallback empty data
-    data = { image: [], pdf: [], video: [], services: [], top_jobs: [], left_jobs: [], right_jobs: [], news: [], scrolling_jobs: [], social_links: [] };
+    data = {
+      image: [],
+      pdf: [],
+      video: [],
+      services: [],
+      top_jobs: [],
+      left_jobs: [],
+      right_jobs: [],
+      news: [],
+      scrolling_jobs: [],
+      home_links: [],
+    };
   }
 
   // Load header links (separate JSON)
   let headerData = null;
   try {
-    const resp = await fetch('header_links.json');
+    const resp = await fetch("header_links.json");
     headerData = await resp.json();
   } catch (err) {
-    console.warn('No header_links.json found or failed to load', err);
-    headerData = { header_links: [], social_links: [] };
+    console.warn("No header_links.json found or failed to load", err);
+    headerData = { header_links: [], home_links: [] };
   }
 
   // Render header links (desktop + mobile)
   function loadHeaderLinks(headerData) {
     if (!headerData) return;
-    const desktopContainer = document.getElementById('header-links');
-    const mobileContainer = document.getElementById('header-links-mobile');
+    const desktopContainer = document.getElementById("header-links");
+    const mobileContainer = document.getElementById("header-links-mobile");
 
     const links = headerData.header_links || [];
     if (desktopContainer) {
-      links.forEach(l => {
-        const a = document.createElement('a');
-        a.href = l.link || l.url || '#';
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-        const colorClass = l.color ? l.color : 'bg-gray-800';
+      links.forEach((l) => {
+        const a = document.createElement("a");
+        a.href = l.link || l.url || "#";
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        const colorClass = l.color ? l.color : "bg-gray-800";
         a.className = `${colorClass} text-white px-4 py-2 rounded-lg font-semibold hover:opacity-90 transition duration-200 flex items-center`;
         a.innerHTML = `${l.name}`;
         desktopContainer.appendChild(a);
@@ -45,11 +61,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     if (mobileContainer) {
-      links.forEach(l => {
-        const a = document.createElement('a');
-        a.href = l.link || l.url || '#';
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
+      links.forEach((l) => {
+        const a = document.createElement("a");
+        a.href = l.link || l.url || "#";
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
         a.className = `px-4 py-2 rounded-lg bg-white text-blue-600 font-semibold hover:bg-blue-50 transition duration-200 block`;
         a.textContent = l.name;
         mobileContainer.appendChild(a);
@@ -59,8 +75,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Get URL parameters
   const urlParams = new URLSearchParams(window.location.search);
-  const jobParam = urlParams.get('job');
-  const toolParam = urlParams.get('tool');
+  const jobParam = urlParams.get("job");
+  const toolParam = urlParams.get("tool");
 
   // Page-specific elements
   const mainCategories = document.getElementById("main-categories");
@@ -87,16 +103,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // Close mobile menu when clicking a link
-    mobileMenu.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        mobileMenu.classList.add('hidden');
+    mobileMenu.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => {
+        mobileMenu.classList.add("hidden");
       });
     });
 
     // Close mobile menu when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!mobileMenu.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
-        mobileMenu.classList.add('hidden');
+    document.addEventListener("click", (e) => {
+      if (
+        !mobileMenu.contains(e.target) &&
+        !mobileMenuToggle.contains(e.target)
+      ) {
+        mobileMenu.classList.add("hidden");
       }
     });
   }
@@ -105,11 +124,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   loadHeaderLinks(headerData);
 
   // Load content based on current page
-  if (currentPage === 'index.html' || currentPage === '') {
+  if (currentPage === "index.html" || currentPage === "") {
     // Jobs page
     loadJobs();
-    loadSocialLinks();
-  } else if (currentPage === 'govt-services.html') {
+    loadHomeLinks();
+    loadFooterSocialLinks();
+    loadWhatsAppChat();
+  } else if (currentPage === "govt-services.html") {
     // Government services page
     loadGovernmentServices();
 
@@ -128,7 +149,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       });
     }
-  } else if (currentPage === 'tools.html') {
+  } else if (currentPage === "tools.html") {
     // Tools page
     loadToolsSection();
 
@@ -179,11 +200,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     let foundCategory = null;
 
     for (const [category, tools] of Object.entries(data)) {
-      if (category === 'services' || category === 'top_jobs' || category === 'left_jobs' || category === 'right_jobs' || category === 'news' || category === 'scrolling_jobs' || category === 'social_links') continue;
+      if (
+        category === "services" ||
+        category === "top_jobs" ||
+        category === "left_jobs" ||
+        category === "right_jobs" ||
+        category === "news" ||
+        category === "scrolling_jobs" ||
+        category === "home_links"
+      )
+        continue;
 
-      const tool = tools.find(t =>
-        t.name.toLowerCase().replace(/\s+/g, '-') === toolName.toLowerCase() ||
-        t.name.toLowerCase() === toolName.toLowerCase().replace(/-/g, ' ')
+      const tool = tools.find(
+        (t) =>
+          t.name.toLowerCase().replace(/\s+/g, "-") ===
+            toolName.toLowerCase() ||
+          t.name.toLowerCase() === toolName.toLowerCase().replace(/-/g, " ")
       );
 
       if (tool) {
@@ -229,24 +261,44 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Function to load social links
-  function loadSocialLinks() {
-    // Prefer social links from header_links.json (moved), fall back to jobs.json
-    const socialLinks = (headerData && headerData.social_links) ? headerData.social_links : (data.social_links || []);
-    const socialSection = document.getElementById("social-section");
+  // Function to load home links
+  function loadHomeLinks() {
+    // Prefer home links from header_links.json (moved), fall back to jobs.json
+    const homeLinks =
+      headerData && headerData.home_links
+        ? headerData.home_links
+        : data.home_links || [];
+    const homeSection = document.getElementById("home-section");
 
-    if (!socialSection) return;
+    if (!homeSection) return;
 
-    socialLinks.forEach(social => {
+    homeLinks.forEach((home) => {
       const button = document.createElement("a");
-      button.href = social.url;
+      button.href = home.url;
       button.target = "_blank";
-      button.className = `${social.color} text-white py-1 px-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 flex items-center justify-center font-bold text-lg`;
+      button.className = `${home.color} text-white w-fit py-1 px-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 flex items-center justify-center font-bold text-sm`;
       button.innerHTML = `
-        <i class="${social.icon} mr-2 text-2xl"></i>
-        ${social.name}
+        ${home.name}
       `;
-      socialSection.appendChild(button);
+      homeSection.appendChild(button);
+    });
+  }
+
+  // Function to load social links in footer
+  function loadFooterSocialLinks() {
+    const socialLinks = headerData && headerData.social_links ? headerData.social_links : [];
+    const footerSocialSection = document.getElementById("footer-social-links");
+
+    if (!footerSocialSection) return;
+
+    socialLinks.forEach((social) => {
+      const link = document.createElement("a");
+      link.href = social.url;
+      link.target = "_blank";
+      link.className = `${social.color} text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 flex items-center justify-center font-semibold`;
+      link.innerHTML = `<i class="${social.icon} mr-2"></i>${social.name}`;
+      link.title = social.name;
+      footerSocialSection.appendChild(link);
     });
   }
 
@@ -260,17 +312,28 @@ document.addEventListener("DOMContentLoaded", async () => {
     const rightSection = document.getElementById("jobs-right-section");
     const newsScroll = document.getElementById("news-scroll");
     const jobsScroll = document.getElementById("jobs-scroll");
+    const admitcardScroll = document.getElementById("admitcard-scroll");
+    const resultsScroll = document.getElementById("results-scroll");
     const newsScrollMobile = document.getElementById("news-scroll-mobile");
     const jobsScrollMobile = document.getElementById("jobs-scroll-mobile");
+    const admitcardScrollMobile = document.getElementById("admitcard-scroll-mobile");
+    const resultsScrollMobile = document.getElementById("results-scroll-mobile");
 
-    if (!topButtons || !leftSection || !rightSection || !newsScroll || !jobsScroll) return;
+    if (
+      !topButtons ||
+      !leftSection ||
+      !rightSection ||
+      !newsScroll ||
+      !jobsScroll
+    )
+      return;
 
     // Top buttons (2 rows of 3)
     // Support a `color` property on title entries. When a title has a color,
     // subsequent job buttons will use a lighter version of that color as
     // their background until the next title.
     let currentTopColor = null;
-    topJobs.forEach(job => {
+    topJobs.forEach((job) => {
       if (job.title) {
         // It's a title — update current color if provided
         if (job.color) currentTopColor = job.color;
@@ -279,12 +342,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         const titleDiv = document.createElement("div");
         titleDiv.className = "col-span-full text-left mt-4 py-1";
         titleDiv.innerHTML = `<h3 class="text-2xl font-bold px-2 text-white">${job.title}</h3>`;
-        titleDiv.style.backgroundColor = currentTopColor ? getLightColor(currentTopColor, 0.05) : 'transparent';
+        titleDiv.style.backgroundColor = currentTopColor
+          ? getLightColor(currentTopColor, 0.05)
+          : "transparent";
         topButtons.appendChild(titleDiv);
       } else {
         // It's a button
         const button = document.createElement("div");
-        button.className = "p-1 ps-2 border-1 hover:shadow-lg transition duration-300 cursor-pointer flex items-center";
+        button.className =
+          "p-1 ps-2 border-1 hover:shadow-lg transition duration-300 cursor-pointer flex items-center";
 
         // If a current color is set on the last title, apply a lighter background
         if (currentTopColor) {
@@ -293,7 +359,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           if (light) {
             const border = getLightColor(currentTopColor, 0.45);
             if (border) button.style.borderColor = border;
-          } 
+          }
         }
 
         button.innerHTML = `
@@ -308,7 +374,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Left section
     let currentLeftColor = null;
-    leftJobs.forEach(job => {
+    leftJobs.forEach((job) => {
       if (job.title) {
         if (job.color) currentLeftColor = job.color;
         else currentLeftColor = null;
@@ -316,19 +382,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         const titleDiv = document.createElement("div");
         titleDiv.className = "col-span-full text-left py-1 mt-4";
         titleDiv.innerHTML = `<h3 class="text-2xl font-bold px-2 text-white">${job.title}</h3>`;
-        titleDiv.style.backgroundColor = currentLeftColor ? getLightColor(currentLeftColor, 0.05) : 'transparent';
+        titleDiv.style.backgroundColor = currentLeftColor
+          ? getLightColor(currentLeftColor, 0.05)
+          : "transparent";
         leftSection.appendChild(titleDiv);
       } else {
         const button = document.createElement("div");
-        button.className = "p-1 ps-2 border-1 hover:shadow-lg transition duration-300 cursor-pointer flex items-center";
+        button.className =
+          "p-1 ps-2 border-1 hover:shadow-lg transition duration-300 cursor-pointer flex items-center";
 
         if (currentLeftColor) {
           const light = getLightColor(currentLeftColor, 0.75);
           if (light) {
             const border = getLightColor(currentLeftColor, 0.45);
             if (border) button.style.borderColor = border;
-          } 
-        } 
+          }
+        }
 
         button.innerHTML = `
           <span class="font-bold text-gray-800 text-sm">${job.name}</span>
@@ -342,7 +411,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Right section
     let currentRightColor = null;
-    rightJobs.forEach(job => {
+    rightJobs.forEach((job) => {
       if (job.title) {
         if (job.color) currentRightColor = job.color;
         else currentRightColor = null;
@@ -350,11 +419,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         const titleDiv = document.createElement("div");
         titleDiv.className = "col-span-full text-left py-1 mt-4";
         titleDiv.innerHTML = `<h3 class="text-2xl font-bold px-2 text-white">${job.title}</h3>`;
-        titleDiv.style.backgroundColor = currentRightColor ? getLightColor(currentRightColor, 0.05) : 'transparent';
+        titleDiv.style.backgroundColor = currentRightColor
+          ? getLightColor(currentRightColor, 0.05)
+          : "transparent";
         rightSection.appendChild(titleDiv);
       } else {
         const button = document.createElement("div");
-        button.className = "p-1 ps-2 border-1 hover:shadow-lg transition duration-300 cursor-pointer flex items-center";
+        button.className =
+          "p-1 ps-2 border-1 hover:shadow-lg transition duration-300 cursor-pointer flex items-center";
         button.style.backgroundColor = "#ffffff";
         button.style.borderColor = "#bfdbfe";
 
@@ -364,7 +436,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const border = getLightColor(currentRightColor, 0.45);
             if (border) button.style.borderColor = border;
             button.style.color = readableTextColor(currentRightColor);
-          } 
+          }
         }
 
         button.innerHTML = `
@@ -378,16 +450,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // Sample news data
-    const newsItems = data.news || [
-      { name: "New government job openings in IT sector", url: "https://www.naukri.com/it-jobs" },
-      { name: "Skill development programs launched for youth", url: "https://www.coursera.org/" }
-    ];
+    const newsItems = data.news || [];
 
-    // Populate news scroll (duplicate for continuous scroll)
-    newsItems.concat(newsItems).forEach(news => {
+    // Populate news scroll (show only first 10 items, no scrolling)
+    const newsToShow = newsItems.slice(0, 10);
+    newsToShow.forEach((news) => {
       const newsItem = document.createElement("div");
-      newsItem.className = "bg-blue-50 p-2 rounded border-l-4 border-blue-500 cursor-pointer hover:bg-blue-100 transition duration-300";
-      newsItem.innerHTML = `<p class="text-base font-bold text-gray-700">${news.name}</p>`;
+      newsItem.className =
+        "bg-blue-50 p-2 rounded border-l-4 border-blue-500 cursor-pointer hover:bg-blue-100 hover:shadow transition duration-300";
+      newsItem.innerHTML = `<p class="text-sm font-medium text-gray-700">${news.name}</p>`;
       newsItem.addEventListener("click", () => {
         openJobInNewPage(news);
       });
@@ -402,16 +473,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // Sample scrolling jobs data
-    const scrollingJobs = data.scrolling_jobs || [
-      { name: "Software Engineer at Tech Corp - ₹8-12 LPA", url: "https://www.naukri.com/software-engineer-jobs" },
-      { name: "Data Analyst position open at Analytics Inc", url: "https://www.naukri.com/data-analyst-jobs" }
-    ];
+    const scrollingJobs = data.scrolling_jobs || [];
 
-    // Populate jobs scroll (duplicate for continuous scroll)
-    scrollingJobs.concat(scrollingJobs).forEach(job => {
+    // Populate jobs scroll (show only first 10 items, no scrolling)
+    const jobsToShow = scrollingJobs.slice(0, 10);
+    jobsToShow.forEach((job) => {
       const jobItem = document.createElement("div");
-      jobItem.className = "bg-green-50 p-2 rounded border-l-4 border-green-500 cursor-pointer hover:bg-green-100 transition duration-300";
-      jobItem.innerHTML = `<p class="text-base font-bold text-gray-700">${job.name}</p>`;
+      jobItem.className =
+        "bg-green-50 p-2 rounded border-l-4 border-green-500 cursor-pointer hover:bg-green-100 hover:shadow transition duration-300";
+      jobItem.innerHTML = `<p class="text-sm font-medium text-gray-700">${job.name}</p>`;
       jobItem.addEventListener("click", () => {
         openJobInNewPage(job);
       });
@@ -424,6 +494,52 @@ document.addEventListener("DOMContentLoaded", async () => {
         jobsScrollMobile.appendChild(mobileJobItem);
       }
     });
+
+    // Admit card data
+    const admitCardItems = data.admit_cards || [];
+
+    // Populate admit card scroll (show only first 10 items, no scrolling)
+    const admitCardsToShow = admitCardItems.slice(0, 10);
+    admitCardsToShow.forEach((card) => {
+      const cardItem = document.createElement("div");
+      cardItem.className =
+        "bg-orange-50 p-2 rounded border-l-4 border-orange-500 cursor-pointer hover:bg-orange-100 hover:shadow transition duration-300";
+      cardItem.innerHTML = `<p class="text-sm font-medium text-gray-700">${card.name}</p>`;
+      cardItem.addEventListener("click", () => {
+        openJobInNewPage(card);
+      });
+      if (admitcardScroll) admitcardScroll.appendChild(cardItem);
+      if (admitcardScrollMobile) {
+        const mobileCardItem = cardItem.cloneNode(true);
+        mobileCardItem.addEventListener("click", () => {
+          openJobInNewPage(card);
+        });
+        admitcardScrollMobile.appendChild(mobileCardItem);
+      }
+    });
+
+    // Results data
+    const resultsItems = data.results || [];
+
+    // Populate results scroll (show only first 10 items, no scrolling)
+    const resultsToShow = resultsItems.slice(0, 10);
+    resultsToShow.forEach((result) => {
+      const resultItem = document.createElement("div");
+      resultItem.className =
+        "bg-purple-50 p-2 rounded border-l-4 border-purple-500 cursor-pointer hover:bg-purple-100 hover:shadow transition duration-300";
+      resultItem.innerHTML = `<p class="text-sm font-medium text-gray-700">${result.name}</p>`;
+      resultItem.addEventListener("click", () => {
+        openJobInNewPage(result);
+      });
+      if (resultsScroll) resultsScroll.appendChild(resultItem);
+      if (resultsScrollMobile) {
+        const mobileResultItem = resultItem.cloneNode(true);
+        mobileResultItem.addEventListener("click", () => {
+          openJobInNewPage(result);
+        });
+        resultsScrollMobile.appendChild(mobileResultItem);
+      }
+    });
   }
 
   // Function to open job in new page with URL params
@@ -431,7 +547,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const params = new URLSearchParams({
       url: encodeURIComponent(job.url),
       name: encodeURIComponent(job.name),
-      job: job.name.toLowerCase().replace(/\s+/g, '-')
+      job: job.name.toLowerCase().replace(/\s+/g, "-"),
     });
     window.location.href = `view.html?${params.toString()}`;
   }
@@ -445,7 +561,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Clear URL parameters when going back to main categories
     if (window.location.search) {
       const newUrl = window.location.pathname;
-      window.history.replaceState({}, '', newUrl);
+      window.history.replaceState({}, "", newUrl);
     }
   }
 
@@ -482,10 +598,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (tool.url) {
         // It's a tool with URL
         toolCard.addEventListener("click", () => {
-          const toolSlug = tool.name.toLowerCase().replace(/\s+/g, '-');
+          const toolSlug = tool.name.toLowerCase().replace(/\s+/g, "-");
           // Update URL with tool parameter
           const newUrl = `${window.location.pathname}?tool=${toolSlug}`;
-          window.history.pushState({}, '', newUrl);
+          window.history.pushState({}, "", newUrl);
 
           loadTool(tool.url);
         });
@@ -594,39 +710,63 @@ document.addEventListener("DOMContentLoaded", async () => {
       const payload = {
         name: name,
         number: phone,
-        service: service.name
+        service: service.name,
       };
 
-      const webhookUrl = 'https://hooks.zapier.com/hooks/catch/25588118/ukxtd3r/';
+      const webhookUrl =
+        "https://hooks.zapier.com/hooks/catch/25588118/ukxtd3r/";
 
+      // 🔥 CORS-safe Zapier call
       fetch(webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      }).then(async (res) => {
-        if (res.ok) {
-          // Save to localStorage as fallback
-          try{
-            const key = 'service_requests';
-            const existing = JSON.parse(localStorage.getItem(key) || '[]');
-            existing.push({service: service.name, name, phone, createdAt: new Date().toISOString()});
-            localStorage.setItem(key, JSON.stringify(existing));
-          }catch(err){
-            console.warn('Could not save service request to localStorage', err);
-          }
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      })
+        .then(async (res) => {
+          if (res.ok) {
+            // Save to localStorage as fallback
+            try {
+              const key = "service_requests";
+              const existing = JSON.parse(localStorage.getItem(key) || "[]");
+              existing.push({
+                service: service.name,
+                name,
+                phone,
+                createdAt: new Date().toISOString(),
+              });
+              localStorage.setItem(key, JSON.stringify(existing));
+            } catch (err) {
+              console.warn(
+                "Could not save service request to localStorage",
+                err
+              );
+            }
 
-          // Close modal and notify user
-          serviceModal.classList.add('hidden');
-          alert('Your request for "' + service.name + '" has been submitted. We will contact you soon.');
-          form.reset();
-        } else {
-          const text = await res.text().catch(()=> '');
-          alert('Submission failed. Please try again later.' + (text ? '\n' + text : ''));
-        }
-      }).catch((err) => {
-        console.error('Service request POST failed', err);
-        alert('Could not submit your request right now. Please check your connection and try again.');
-      });
+            // Close modal and notify user
+            serviceModal.classList.add("hidden");
+            alert(
+              'Your request for "' +
+                service.name +
+                '" has been submitted. We will contact you soon.'
+            );
+            form.reset();
+          } else {
+            const text = await res.text().catch(() => "");
+            alert(
+              "Submission failed. Please try again later." +
+                (text ? "\n" + text : "")
+            );
+          }
+        })
+        .catch((err) => {
+          console.error("Service request POST failed", err);
+          alert(
+            "Could not submit your request right now. Please check your connection and try again."
+          );
+        });
     });
 
     // Show modal
@@ -636,8 +776,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Function to populate documents based on service
   function populateDocuments(documents) {
     const documentsList = modalServiceContent.querySelector("#documentsList");
-    documents.forEach(doc => {
-      const li = document.createElement('li');
+    documents.forEach((doc) => {
+      const li = document.createElement("li");
       li.innerHTML = `<i class="fas fa-check-circle text-green-500 mr-2"></i>${doc}`;
       documentsList.appendChild(li);
     });
@@ -646,9 +786,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Helper: convert hex color to RGB object
   function hexToRgb(hex) {
     if (!hex) return null;
-    hex = hex.replace('#', '').trim();
+    hex = hex.replace("#", "").trim();
     if (hex.length === 3) {
-      hex = hex.split('').map(c => c + c).join('');
+      hex = hex
+        .split("")
+        .map((c) => c + c)
+        .join("");
     }
     if (!/^[0-9a-fA-F]{6}$/.test(hex)) return null;
     const bigint = parseInt(hex, 16);
@@ -660,7 +803,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!color) return null;
     color = color.trim();
     // hex
-    if (color.startsWith('#')) {
+    if (color.startsWith("#")) {
       const rgb = hexToRgb(color);
       if (!rgb) return null;
       const r = Math.round(rgb.r + (255 - rgb.r) * mix);
@@ -670,7 +813,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // rgb(...) format
-    const rgbMatch = color.match(/rgb\s*\(\s*(\d{1,3})[,\s]+(\d{1,3})[,\s]+(\d{1,3})\s*\)/i);
+    const rgbMatch = color.match(
+      /rgb\s*\(\s*(\d{1,3})[,\s]+(\d{1,3})[,\s]+(\d{1,3})\s*\)/i
+    );
     if (rgbMatch) {
       const r0 = parseInt(rgbMatch[1], 10);
       const g0 = parseInt(rgbMatch[2], 10);
@@ -687,25 +832,106 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Helper: decide readable text color (dark or white) based on original color
   function readableTextColor(color) {
-    if (!color) return '#111827'; // default dark gray
+    if (!color) return "#111827"; // default dark gray
     color = color.trim();
     let r, g, b;
-    if (color.startsWith('#')) {
+    if (color.startsWith("#")) {
       const rgb = hexToRgb(color);
-      if (!rgb) return '#111827';
-      r = rgb.r; g = rgb.g; b = rgb.b;
+      if (!rgb) return "#111827";
+      r = rgb.r;
+      g = rgb.g;
+      b = rgb.b;
     } else {
-      const m = color.match(/rgb\s*\(\s*(\d{1,3})[,\s]+(\d{1,3})[,\s]+(\d{1,3})\s*\)/i);
+      const m = color.match(
+        /rgb\s*\(\s*(\d{1,3})[,\s]+(\d{1,3})[,\s]+(\d{1,3})\s*\)/i
+      );
       if (m) {
-        r = parseInt(m[1], 10); g = parseInt(m[2], 10); b = parseInt(m[3], 10);
+        r = parseInt(m[1], 10);
+        g = parseInt(m[2], 10);
+        b = parseInt(m[3], 10);
       } else {
-        return '#111827';
+        return "#111827";
       }
     }
 
     // Perceived luminance
     const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
-    return luminance > 180 ? '#111827' : '#ffffff';
+    return luminance > 180 ? "#111827" : "#ffffff";
   }
 
+  // Function to load WhatsApp chat
+  async function loadWhatsAppChat() {
+    const whatsappBtn = document.getElementById("whatsapp-btn");
+    const whatsappPopup = document.getElementById("whatsapp-popup");
+    const closeWhatsapp = document.getElementById("close-whatsapp");
+    const messagesContainer = document.getElementById("whatsapp-messages");
+
+    if (!whatsappBtn || !whatsappPopup || !messagesContainer) return;
+
+    // Load WhatsApp messages from JSON
+    let whatsappData = [];
+    try {
+      const response = await fetch("whatsapp.json");
+      whatsappData = await response.json();
+    } catch (error) {
+      console.error("Error loading WhatsApp data:", error);
+      whatsappData = [
+        { message: "Welcome to Top India Services! 👋", link: null },
+        { message: "How can we help you today?", link: null }
+      ];
+    }
+
+    // Populate messages
+    whatsappData.forEach((item, index) => {
+      const messageDiv = document.createElement("div");
+      messageDiv.className = "flex justify-start animate-fadeIn";
+      messageDiv.style.animationDelay = `${index * 0.1}s`;
+
+      // Convert URLs and file paths to clickable links
+      let messageContent = item.message;
+      
+      // Convert \n to <br> for multiline support
+      messageContent = messageContent.replace(/\n/g, '<br>');
+      
+      // Detect and convert URLs (http, https)
+      messageContent = messageContent.replace(
+        /(https?:\/\/[^\s<]+)/gi,
+        '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-green-600 font-semibold hover:text-green-700 underline">$1</a>'
+      );
+      
+      // Detect and convert local file paths (.html files)
+      messageContent = messageContent.replace(
+        /([a-zA-Z0-9_-]+\.html[^\s<]*)/gi,
+        '<a href="$1" class="text-green-600 font-semibold hover:text-green-700 underline">$1</a>'
+      );
+
+      messageDiv.innerHTML = `
+        <div class="bg-white rounded-lg rounded-bl-none shadow p-3 max-w-[85%]">
+          <p class="text-gray-800 text-sm whatsapp-message">${messageContent}</p>
+        </div>
+      `;
+
+      messagesContainer.appendChild(messageDiv);
+    });
+
+    // Toggle popup
+    whatsappBtn.addEventListener("click", () => {
+      whatsappPopup.classList.toggle("hidden");
+    });
+
+    closeWhatsapp.addEventListener("click", () => {
+      whatsappPopup.classList.add("hidden");
+    });
+
+    // Close popup when clicking outside
+    document.addEventListener("click", (e) => {
+      if (
+        !whatsappPopup.contains(e.target) &&
+        !whatsappBtn.contains(e.target) &&
+        !whatsappPopup.classList.contains("hidden")
+      ) {
+        whatsappPopup.classList.add("hidden");
+      }
+    });
+  }
 });
