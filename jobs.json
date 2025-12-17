@@ -133,42 +133,6 @@
       "color": "#f59e0b"
     },
     {
-      "name": "Latest JOBS",
-      "url": "https://sarkariresult.com.im/sarkari-naukri/"
-    },
-     {
-      "name": "Upcoming Jobs",
-      "url": "https://sarkarinetwork.com/upcoming/"
-    },
-    {
-      "name": "Jobs Last Date Reminder",
-      "url": "https://www.freejobalert.com/last-date-reminder/"
-    },
-    {
-      "name": "State Govt tJobs",
-      "url": "https://www.freejobalert.com/state-government-jobs/"
-    },
-    {
-      "name": "Central Govt Jobs",
-      "url": "https://sarkarinetwork.com/central-job/"
-    },
-    {
-      "name": "Jobs by Designation",
-      "url": "https://www.freshersnow.com/jobs-by-designation/"
-    },
-    {
-      "name": "Foreign jobs",
-      "url": "https://www.placementindia.com/international/"
-    },
-    {
-      "name": "Offline Form Jobs",
-      "url": "https://sarkarinetwork.com/offline-form/"
-    },
-    {
-      "name": "Female jobs India",
-      "url": "https://www.indgovtjobs.in/2013/12/female-govt-jobs-2014-government-jobs.html"
-    },
-    {
       "name": "Railway Jobs",
       "url": "https://www.freejobalert.com/railway-jobs/"
     },
@@ -177,11 +141,11 @@
       "url": "https://www.freejobalert.com/ssc-recruitment/17522/"
     },
     {
-      "name": "Police/Defence Job",
+      "name": "Police Job",
       "url": "https://www.freejobalert.com/police-defence-jobs/"
     },
     {
-      "name": "Teaching and Faculty Jobs",
+      "name": "Teaching Jobs",
       "url": "https://www.freejobalert.com/teaching-faculty-jobs/"
     },
     {
@@ -189,24 +153,36 @@
       "url": "https://www.freejobalert.com/bank-jobs/"
     },
     {
-      "name": "UPSC Jobs",
-      "url": "https://govtjobsalert.in/category/upsc-jobs/"
-    },
-    {
-      "name": "Indian Army Jobs",
+      "name": "Army Jobs",
       "url": "https://www.indgovtjobs.in/2014/05/indian-army-jobs-recruitment.html"
     },
     {
-      "name": "Indian Navy Jobs",
+      "name": "Navy Jobs",
       "url": "https://www.freshersnow.com/indian-navy-jobs/"
     },
     {
-      "name": "Indian Air Force Jobs",
+      "name": "Air Force Jobs",
       "url": "https://www.freshersnow.com/indian-air-force-jobs/"
     },
     {
       "name": "All Defence Jobs",
       "url": "https://sarkarijobcity.in/defence-jobs/"
+    },
+    {
+      "name": "Foreign jobs",
+      "url": "https://www.placementindia.com/international/"
+    },
+    {
+      "name": "Offline Jobs",
+      "url": "https://sarkarinetwork.com/offline-form/"
+    },
+    {
+      "name": "Female jobs India",
+      "url": "https://www.indgovtjobs.in/2013/12/female-govt-jobs-2014-government-jobs.html"
+    },
+    {
+      "name": "UPSC Jobs",
+      "url": "https://govtjobsalert.in/category/upsc-jobs/"
     },
     {
       "name": "Technical Jobs",
@@ -233,7 +209,7 @@
       "url": "https://www.freejobalert.com/anganwadi-recruitment/"
     },
     {
-      "name": "All DC rate Jobs",
+      "name": "DC rate HR Jobs",
       "url": "https://www.haryanadcratejob.com/"
     },
     {
