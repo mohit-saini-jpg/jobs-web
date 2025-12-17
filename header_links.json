@@ -34,7 +34,7 @@
     {
       "name": "Upcoming Jobs",
       "url": "https://sarkarinetwork.com/upcoming/",
-      "color": "bg-blue-400"
+      "color": "bg-browns-400"
     },
     {
       "name": "Central Schemes",
@@ -45,6 +45,21 @@
       "name": "Jobs Last Date alert",
       "url": "https://www.freejobalert.com/last-date-reminder/",
       "color": "bg-green-400"
+    },
+    {
+      "name": "Female jobs all India",
+      "url": "https://www.indgovtjobs.in/2013/12/female-govt-jobs-2014-government-jobs.html",
+      "color": "bg-Pink-400"
+    },
+    {
+      "name": "Offline Jobs",
+      "url": "https://sarkarinetwork.com/offline-form/",
+      "color": "bg-purple-400"
+    },
+    {
+      "name": "Foreign jobs",
+      "url": "https://www.placementindia.com/international/",
+      "color": "bg-Pink-400"
     }
   ]
 }
