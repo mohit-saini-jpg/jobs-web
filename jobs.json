@@ -311,10 +311,6 @@
       "color": "#34d399"
     },
     {
-      "name": "Jobs By Qualification",
-      "url": "https://www.freshersnow.com/govt-jobs-by-qualification/"
-    },
-    {
       "name": "8th Pass Jobs",
       "url": "https://www.freejobalert.com/search-jobs/8th-pass-government-jobs/"
     },
@@ -375,7 +371,7 @@
       "url": "https://www.freejobalert.com/search-jobs/mba-pgdm-government-jobs/"
     },
     {
-      "name": "M-Tech-jobs",
+      "name": "M.Tech jobs",
       "url": "https://www.freshersnow.com/m-tech-jobs/"
     },
     {
@@ -460,6 +456,10 @@
     {
       "name": "Jobs Interview Results",
       "url": "https://www.freejobalert.com/interview-results/"
+    },
+    {
+      "name": "More Jobs By education",
+      "url": "https://www.freshersnow.com/govt-jobs-by-qualification/"
     }
   ],
   "right_jobs": [
