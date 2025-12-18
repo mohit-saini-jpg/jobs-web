@@ -12,6 +12,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --primary-500: #0ea5e9;
@@ -132,47 +134,89 @@
     </footer>
 
     <script>
+        // Load Supabase config and initialize
+        let helpdeskSupabase = null;
+        if (window.supabase) {
+            fetch('config.json')
+                .then(response => response.json())
+                .then(config => {
+                    helpdeskSupabase = window.supabase.createClient(config.supabase.url, config.supabase.anonKey);
+                })
+                .catch(error => {
+                    console.warn('Could not load Supabase config:', error);
+                });
+        }
+
         (function () {
             const form = document.getElementById('helpdesk-form');
             const successToast = document.getElementById('success-toast');
             const successText = document.getElementById('success-text');
             const clearBtn = document.getElementById('clear-btn');
 
-            form.addEventListener('submit', function (e) {
-                e.preventDefault();
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault(); // Make sure this is called first
 
-                const name = document.getElementById('name').value.trim();
-                const mobile = document.getElementById('mobile').value.trim();
-                const message = document.getElementById('message').value.trim();
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
 
-                if (!name || mobile.length !== 10 || !message) {
-                    alert('Please fill all fields correctly');
-                    return;
+                // Disable button to prevent double submission
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Submitting...';
+                submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+                try {
+                    // Wait for Supabase to be initialized if available
+                    if (!helpdeskSupabase && window.supabase) {
+                        // Wait a bit for initialization
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
+
+                    const name = document.getElementById('name').value.trim();
+                    const mobile = document.getElementById('mobile').value.trim();
+                    const message = document.getElementById('message').value.trim();
+
+                    if (!name || mobile.length !== 10 || !message) {
+                        alert('Please fill all fields correctly');
+                        return;
+                    }
+
+                    // Insert into Supabase if available
+                    if (helpdeskSupabase) {
+                        const { data, error } = await helpdeskSupabase
+                            .from('helpdesk_submissions')
+                            .insert([
+                                {
+                                    name: name,
+                                    mobile: mobile,
+                                    message: message,
+                                    created_at: new Date().toISOString()
+                                }
+                            ]);
+
+                        if (error) {
+                            console.error('Error submitting helpdesk request:', error);
+                            alert('Failed to submit your request. Please try again.');
+                            return;
+                        }
+                    } else {
+                        console.warn('Supabase not available, form will still work');
+                    }
+
+                    // Success UI - make sure this runs
+                    successText.textContent = 'Thanks ' + name + ', hum jald contact karenge.';
+                    successToast.classList.remove('hidden');
+                    setTimeout(() => successToast.classList.add('hidden'), 5000);
+                    form.reset();
+
+                } catch (err) {
+                    console.error('Error:', err);
+                    alert('Could not submit your request. Please check your connection and try again.');
+                } finally {
+                    // Re-enable button
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                    submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
                 }
-
-                const payload = {
-                    name,
-                    number: mobile,
-                    message
-                };
-
-                const webhookUrl = 'https://hooks.zapier.com/hooks/catch/25588118/ukx20lv/';
-
-                // IMPORTANT: no-cors mode to avoid browser CORS block
-                fetch(webhookUrl, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                // Fire-and-forget success UI
-                successText.textContent = 'Thanks ' + name + ', hum jald contact karenge.';
-                successToast.classList.remove('hidden');
-                setTimeout(() => successToast.classList.add('hidden'), 5000);
-                form.reset();
             });
 
             clearBtn.addEventListener('click', () => form.reset());

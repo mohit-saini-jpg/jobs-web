@@ -1,4 +1,16 @@
 document.addEventListener("DOMContentLoaded", async () => {
+  // Load Supabase config and initialize only if available
+  let supabase = null;
+  if (window.supabase) {
+    try {
+      const configResponse = await fetch('config.json');
+      const supabaseConfig = await configResponse.json();
+      supabase = window.supabase.createClient(supabaseConfig.supabase.url, supabaseConfig.supabase.anonKey);
+    } catch (error) {
+      console.warn('Could not load Supabase config:', error);
+    }
+  }
+
   // Detect current page
   const currentPage = window.location.pathname.split("/").pop() || "index.html";
 
@@ -273,13 +285,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!homeSection) return;
 
     homeLinks.forEach((home) => {
-      const button = document.createElement("a");
-      button.href = home.url;
-      button.target = "_blank";
-      button.className = `${home.color} text-white w-fit py-1 px-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 flex items-center justify-center font-bold text-sm`;
+      const button = document.createElement("div");
+      button.className = `${home.color} text-white w-fit py-1 px-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 flex items-center justify-center font-bold text-sm cursor-pointer`;
       button.innerHTML = `
         ${home.name}
       `;
+      button.addEventListener("click", () => {
+        openLink(home);
+      });
       homeSection.appendChild(button);
     });
   }
@@ -366,7 +379,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           <span class="font-bold text-gray-800 text-xs">${job.name}</span>
         `;
         button.addEventListener("click", () => {
-          openJobInNewPage(job);
+          openLink(job);
         });
         topButtons.appendChild(button);
       }
@@ -403,7 +416,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           <span class="font-bold text-gray-800 text-sm">${job.name}</span>
         `;
         button.addEventListener("click", () => {
-          openJobInNewPage(job);
+          openLink(job);
         });
         leftSection.appendChild(button);
       }
@@ -443,7 +456,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           <span class="font-bold text-gray-800 text-sm">${job.name}</span>
         `;
         button.addEventListener("click", () => {
-          openJobInNewPage(job);
+          openLink(job);
         });
         rightSection.appendChild(button);
       }
@@ -452,21 +465,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Sample news data
     const newsItems = data.news || [];
 
-    // Populate news scroll (show only first 10 items, no scrolling)
-    const newsToShow = newsItems.slice(0, 10);
+    // Populate news scroll (show all items)
+    const newsToShow = newsItems;
     newsToShow.forEach((news) => {
       const newsItem = document.createElement("div");
       newsItem.className =
         "bg-blue-50 p-2 rounded border-l-4 border-blue-500 cursor-pointer hover:bg-blue-100 hover:shadow transition duration-300";
       newsItem.innerHTML = `<p class="text-sm font-medium text-gray-700">${news.name}</p>`;
       newsItem.addEventListener("click", () => {
-        openJobInNewPage(news);
+        openLink(news);
       });
       newsScroll.appendChild(newsItem);
       if (newsScrollMobile) {
         const mobileNewsItem = newsItem.cloneNode(true);
         mobileNewsItem.addEventListener("click", () => {
-          openJobInNewPage(news);
+          openLink(news);
         });
         newsScrollMobile.appendChild(mobileNewsItem);
       }
@@ -475,21 +488,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Sample scrolling jobs data
     const scrollingJobs = data.scrolling_jobs || [];
 
-    // Populate jobs scroll (show only first 10 items, no scrolling)
-    const jobsToShow = scrollingJobs.slice(0, 10);
+    // Populate jobs scroll (show all items)
+    const jobsToShow = scrollingJobs;
     jobsToShow.forEach((job) => {
       const jobItem = document.createElement("div");
       jobItem.className =
         "bg-green-50 p-2 rounded border-l-4 border-green-500 cursor-pointer hover:bg-green-100 hover:shadow transition duration-300";
       jobItem.innerHTML = `<p class="text-sm font-medium text-gray-700">${job.name}</p>`;
       jobItem.addEventListener("click", () => {
-        openJobInNewPage(job);
+        openLink(job);
       });
       jobsScroll.appendChild(jobItem);
       if (jobsScrollMobile) {
         const mobileJobItem = jobItem.cloneNode(true);
         mobileJobItem.addEventListener("click", () => {
-          openJobInNewPage(job);
+          openLink(job);
         });
         jobsScrollMobile.appendChild(mobileJobItem);
       }
@@ -498,21 +511,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Admit card data
     const admitCardItems = data.admit_cards || [];
 
-    // Populate admit card scroll (show only first 10 items, no scrolling)
-    const admitCardsToShow = admitCardItems.slice(0, 10);
+    // Populate admit card scroll (show all items)
+    const admitCardsToShow = admitCardItems;
     admitCardsToShow.forEach((card) => {
       const cardItem = document.createElement("div");
       cardItem.className =
         "bg-orange-50 p-2 rounded border-l-4 border-orange-500 cursor-pointer hover:bg-orange-100 hover:shadow transition duration-300";
       cardItem.innerHTML = `<p class="text-sm font-medium text-gray-700">${card.name}</p>`;
       cardItem.addEventListener("click", () => {
-        openJobInNewPage(card);
+        openLink(card);
       });
       if (admitcardScroll) admitcardScroll.appendChild(cardItem);
       if (admitcardScrollMobile) {
         const mobileCardItem = cardItem.cloneNode(true);
         mobileCardItem.addEventListener("click", () => {
-          openJobInNewPage(card);
+          openLink(card);
         });
         admitcardScrollMobile.appendChild(mobileCardItem);
       }
@@ -521,35 +534,39 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Results data
     const resultsItems = data.results || [];
 
-    // Populate results scroll (show only first 10 items, no scrolling)
-    const resultsToShow = resultsItems.slice(0, 10);
+    // Populate results scroll (show all items)
+    const resultsToShow = resultsItems;
     resultsToShow.forEach((result) => {
       const resultItem = document.createElement("div");
       resultItem.className =
         "bg-purple-50 p-2 rounded border-l-4 border-purple-500 cursor-pointer hover:bg-purple-100 hover:shadow transition duration-300";
       resultItem.innerHTML = `<p class="text-sm font-medium text-gray-700">${result.name}</p>`;
       resultItem.addEventListener("click", () => {
-        openJobInNewPage(result);
+        openLink(result);
       });
       if (resultsScroll) resultsScroll.appendChild(resultItem);
       if (resultsScrollMobile) {
         const mobileResultItem = resultItem.cloneNode(true);
         mobileResultItem.addEventListener("click", () => {
-          openJobInNewPage(result);
+          openLink(result);
         });
         resultsScrollMobile.appendChild(mobileResultItem);
       }
     });
   }
 
-  // Function to open job in new page with URL params
-  function openJobInNewPage(job) {
-    const params = new URLSearchParams({
-      url: encodeURIComponent(job.url),
-      name: encodeURIComponent(job.name),
-      job: job.name.toLowerCase().replace(/\s+/g, "-"),
-    });
-    window.location.href = `view.html?${params.toString()}`;
+  // Function to open link - internal view or external
+  function openLink(link) {
+    if (link.external) {
+      window.open(link.url, '_blank');
+    } else {
+      const params = new URLSearchParams({
+        url: encodeURIComponent(link.url),
+        name: encodeURIComponent(link.name),
+        job: link.name.toLowerCase().replace(/\s+/g, "-"),
+      });
+      window.location.href = `view.html?${params.toString()}`;
+    }
   }
 
   // Function to show main categories
@@ -699,74 +716,83 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Populate documents
     populateDocuments(service.documents);
 
-    // Handle form submission: POST to Zapier webhook with JSON payload
+    // Handle form submission: POST to Supabase with JSON payload
     const form = modalServiceContent.querySelector("#serviceForm");
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
+
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+
+      // Disable button to prevent double submission
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Submitting...';
+      submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
 
       const name = form.querySelector("#name").value.trim();
       const phone = form.querySelector("#phone").value.trim();
 
-      const payload = {
-        name: name,
-        number: phone,
-        service: service.name,
-      };
-
-      const webhookUrl =
-        "https://hooks.zapier.com/hooks/catch/25588118/ukxtd3r/";
-
-      // 🔥 CORS-safe Zapier call
-      fetch(webhookUrl, {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      })
-        .then(async (res) => {
-          if (res.ok) {
-            // Save to localStorage as fallback
-            try {
-              const key = "service_requests";
-              const existing = JSON.parse(localStorage.getItem(key) || "[]");
-              existing.push({
+      try {
+        // Insert into Supabase if available
+        if (supabase) {
+          const { data, error } = await supabase
+            .from('service_requests')
+            .insert([
+              {
+                name: name,
+                phone: phone,
                 service: service.name,
-                name,
-                phone,
-                createdAt: new Date().toISOString(),
-              });
-              localStorage.setItem(key, JSON.stringify(existing));
-            } catch (err) {
-              console.warn(
-                "Could not save service request to localStorage",
-                err
-              );
-            }
+                created_at: new Date().toISOString()
+              }
+            ]);
 
-            // Close modal and notify user
-            serviceModal.classList.add("hidden");
-            alert(
-              'Your request for "' +
-                service.name +
-                '" has been submitted. We will contact you soon.'
-            );
-            form.reset();
-          } else {
-            const text = await res.text().catch(() => "");
-            alert(
-              "Submission failed. Please try again later." +
-                (text ? "\n" + text : "")
-            );
+          if (error) {
+            console.error('Error submitting service request:', error);
+            alert('Failed to submit your request. Please try again.');
+            return;
           }
-        })
-        .catch((err) => {
-          console.error("Service request POST failed", err);
-          alert(
-            "Could not submit your request right now. Please check your connection and try again."
+        } else {
+          console.warn('Supabase not available, saving to localStorage only');
+        }
+
+        // Save to localStorage as fallback
+        try {
+          const key = "service_requests";
+          const existing = JSON.parse(localStorage.getItem(key) || "[]");
+          existing.push({
+            service: service.name,
+            name,
+            phone,
+            createdAt: new Date().toISOString(),
+          });
+          localStorage.setItem(key, JSON.stringify(existing));
+        } catch (err) {
+          console.warn(
+            "Could not save service request to localStorage",
+            err
           );
-        });
+        }
+
+        // Close modal and notify user
+        serviceModal.classList.add("hidden");
+        alert(
+          'Your request for "' +
+            service.name +
+            '" has been submitted. We will contact you soon.'
+        );
+        form.reset();
+
+      } catch (err) {
+        console.error('Error:', err);
+        alert(
+          "Could not submit your request right now. Please check your connection and try again."
+        );
+      } finally {
+        // Re-enable button
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
     });
 
     // Show modal
@@ -905,9 +931,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         '<a href="$1" class="text-green-600 font-semibold hover:text-green-700 underline">$1</a>'
       );
 
+      let imageHtml = '';
+      if (item.image) {
+        imageHtml = `<img src="${item.image}" alt="WhatsApp Image" class="max-w-full rounded-lg mt-2 cursor-pointer" onclick="window.open('${item.image}', '_blank')">`;
+      }
+
       messageDiv.innerHTML = `
         <div class="bg-white rounded-lg rounded-bl-none shadow p-3 max-w-[85%]">
           <p class="text-gray-800 text-sm whatsapp-message">${messageContent}</p>
+          ${imageHtml}
         </div>
       `;
 
@@ -917,6 +949,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Toggle popup
     whatsappBtn.addEventListener("click", () => {
       whatsappPopup.classList.toggle("hidden");
+      // Scroll to bottom when popup opens
+      if (!whatsappPopup.classList.contains("hidden")) {
+        setTimeout(() => {
+          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }, 100);
+      }
     });
 
     closeWhatsapp.addEventListener("click", () => {
