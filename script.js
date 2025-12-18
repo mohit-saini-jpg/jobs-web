@@ -876,7 +876,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (error) {
       console.error("Error loading WhatsApp data:", error);
       whatsappData = [
-        { message: "Welcome to Top India Services! 👋", link: null },
+        { message: "Welcome to Top Sarkari Jobs! 👋", link: null },
         { message: "How can we help you today?", link: null }
       ];
     }
