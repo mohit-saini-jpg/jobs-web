@@ -5,130 +5,6 @@
       "color": "#60a5fa"
     },
     {
-      "name": "Haryana",
-      "url": "https://www.freejobalert.com/haryana-government-jobs/"
-    },
-    {
-      "name": "Punjab",
-      "url": "https://www.freejobalert.com/punjab-government-jobs/"
-    },
-    {
-      "name": "Rajasthan",
-      "url": "https://www.freejobalert.com/rajasthan-government-jobs/"
-    },
-    {
-      "name": "Delhi",
-      "url": "https://www.freejobalert.com/delhi-government-jobs/"
-    },
-    {
-      "name": "Chandigarh",
-      "url": "https://sarkarinetwork.com/chandigarh/"
-    },
-    {
-      "name": "Uttar Pradesh",
-      "url": "https://www.freejobalert.com/up-government-jobs/"
-    },
-    {
-      "name": "Maharashtra ",
-      "url": "https://www.freejobalert.com/maharashtra-government-jobs/"
-    },
-    {
-      "name": "West Bengal",
-      "url": "https://www.freejobalert.com/wb-government-jobs/"
-    },
-    {
-      "name": "Bihar",
-      "url": "https://www.biharjobportal.com/"
-    },
-    {
-      "name": "Tamilnadu",
-      "url": "https://www.freejobalert.com/tn-government-jobs/"
-    },
-    {
-      "name": "Gujarat",
-      "url": "https://www.freejobalert.com/gujarat-government-jobs/"
-    },
-    {
-      "name": "Madhya Pradesh",
-      "url": "https://www.freejobalert.com/mp-government-jobs/"
-    },
-    {
-      "name": "Andhra Pradesh",
-      "url": "https://www.freejobalert.com/ap-government-jobs/"
-    },
-    {
-      "name": "Assam",
-      "url": "https://www.freejobalert.com/assam-government-jobs/"
-    },
-    {
-      "name": "Chhattisgarh",
-      "url": "https://www.freejobalert.com/chhattisgarh-government-jobs/"
-    },
-    {
-      "name": "Himachal",
-      "url": "https://www.freejobalert.com/hp-government-jobs/"
-    },
-    {
-      "name": "Jharkhand",
-      "url": "https://www.freejobalert.com/jharkhand-government-jobs/"
-    },
-    {
-      "name": "Karnataka",
-      "url": "https://www.freejobalert.com/karnataka-government-jobs/"
-    },
-    {
-      "name": "Kerala",
-      "url": "https://www.freejobalert.com/kerala-government-jobs/"
-    },
-    {
-      "name": "Odisha",
-      "url": "https://www.freejobalert.com/odisha-government-jobs/"
-    },
-    {
-      "name": "Telangana",
-      "url": "https://www.freejobalert.com/telangana-government-jobs/"
-    },
-    {
-      "name": "Uttarakhand",
-      "url": "https://www.freejobalert.com/uttarakhand-government-jobs/"
-    },
-    {
-      "name": "Meghalaya",
-      "url": "freejobalert.com/meghalaya-government-jobs/"
-    },
-    {
-      "name": "Tripura",
-      "url": "https://www.freejobalert.com/tripura-government-jobs/"
-    },
-    {
-      "name": "Goa",
-      "url": "https://sarkarinetwork.com/goa/"
-    },
-    {
-      "name": "Nagaland",
-      "url": "https://sarkarinetwork.com/nagaland/"
-    },
-    {
-      "name": "Manipur",
-      "url": "https://sarkarinetwork.com/manipur/"
-    },
-    {
-      "name": "Arunachal-Pradesh",
-      "url": "https://sarkarinetwork.com/arunachal-pradesh/"
-    },
-    {
-      "name": "Mizoram",
-      "url": "https://sarkarinetwork.com/mizoram/"
-    },
-    {
-      "name": "Sikkim",
-      "url": "https://sarkarinetwork.com/sikkim/"
-    },
-    {
-      "name": "Jammu Kashmir",
-      "url": "https://www.freejobalert.com/jk-government-jobs/"
-    },
-    {
       "name": "More Jobs by Location",
       "url": "https://www.freejobalert.com/search-jobs/jobs-by-location/"
     },
@@ -288,13 +164,137 @@
       "name": "SEA Samudr Jobs",
       "url": "https://www.seajob.net/"
     },
-     {
+    {
       "name": "Work From Home Jobs",
       "url": "https://www.freshersnow.com/category/work-from-home/"
     },
     {
       "name": "More Jobs by Designation",
       "url": "https://www.freshersnow.com/jobs-by-designation/"
+    }
+    {
+      "name": "Haryana",
+      "url": "https://www.freejobalert.com/haryana-government-jobs/"
+    },
+    {
+      "name": "Punjab",
+      "url": "https://www.freejobalert.com/punjab-government-jobs/"
+    },
+    {
+      "name": "Rajasthan",
+      "url": "https://www.freejobalert.com/rajasthan-government-jobs/"
+    },
+    {
+      "name": "Delhi",
+      "url": "https://www.freejobalert.com/delhi-government-jobs/"
+    },
+    {
+      "name": "Chandigarh",
+      "url": "https://sarkarinetwork.com/chandigarh/"
+    },
+    {
+      "name": "Uttar Pradesh",
+      "url": "https://www.freejobalert.com/up-government-jobs/"
+    },
+    {
+      "name": "Maharashtra ",
+      "url": "https://www.freejobalert.com/maharashtra-government-jobs/"
+    },
+    {
+      "name": "West Bengal",
+      "url": "https://www.freejobalert.com/wb-government-jobs/"
+    },
+    {
+      "name": "Bihar",
+      "url": "https://www.biharjobportal.com/"
+    },
+    {
+      "name": "Tamilnadu",
+      "url": "https://www.freejobalert.com/tn-government-jobs/"
+    },
+    {
+      "name": "Gujarat",
+      "url": "https://www.freejobalert.com/gujarat-government-jobs/"
+    },
+    {
+      "name": "Madhya Pradesh",
+      "url": "https://www.freejobalert.com/mp-government-jobs/"
+    },
+    {
+      "name": "Andhra Pradesh",
+      "url": "https://www.freejobalert.com/ap-government-jobs/"
+    },
+    {
+      "name": "Assam",
+      "url": "https://www.freejobalert.com/assam-government-jobs/"
+    },
+    {
+      "name": "Chhattisgarh",
+      "url": "https://www.freejobalert.com/chhattisgarh-government-jobs/"
+    },
+    {
+      "name": "Himachal",
+      "url": "https://www.freejobalert.com/hp-government-jobs/"
+    },
+    {
+      "name": "Jharkhand",
+      "url": "https://www.freejobalert.com/jharkhand-government-jobs/"
+    },
+    {
+      "name": "Karnataka",
+      "url": "https://www.freejobalert.com/karnataka-government-jobs/"
+    },
+    {
+      "name": "Kerala",
+      "url": "https://www.freejobalert.com/kerala-government-jobs/"
+    },
+    {
+      "name": "Odisha",
+      "url": "https://www.freejobalert.com/odisha-government-jobs/"
+    },
+    {
+      "name": "Telangana",
+      "url": "https://www.freejobalert.com/telangana-government-jobs/"
+    },
+    {
+      "name": "Uttarakhand",
+      "url": "https://www.freejobalert.com/uttarakhand-government-jobs/"
+    },
+    {
+      "name": "Meghalaya",
+      "url": "freejobalert.com/meghalaya-government-jobs/"
+    },
+    {
+      "name": "Tripura",
+      "url": "https://www.freejobalert.com/tripura-government-jobs/"
+    },
+    {
+      "name": "Goa",
+      "url": "https://sarkarinetwork.com/goa/"
+    },
+    {
+      "name": "Nagaland",
+      "url": "https://sarkarinetwork.com/nagaland/"
+    },
+    {
+      "name": "Manipur",
+      "url": "https://sarkarinetwork.com/manipur/"
+    },
+    {
+      "name": "Arunachal-Pradesh",
+      "url": "https://sarkarinetwork.com/arunachal-pradesh/"
+    },
+    {
+      "name": "Mizoram",
+      "url": "https://sarkarinetwork.com/mizoram/"
+    },
+    {
+      "name": "Sikkim",
+      "url": "https://sarkarinetwork.com/sikkim/"
+    },
+    {
+      "name": "Jammu Kashmir",
+      "url": "https://www.freejobalert.com/jk-government-jobs/"
     }
   ],
   "left_jobs": [
