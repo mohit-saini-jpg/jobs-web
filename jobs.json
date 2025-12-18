@@ -1,10 +1,6 @@
 {
   "top_jobs": [
     {
-      "title": "State Wise Jobs ",
-      "color": "#60a5fa"
-    },
-    {
       "name": "More Jobs by Location",
       "url": "https://www.freejobalert.com/search-jobs/jobs-by-location/"
     },
@@ -171,7 +167,11 @@
     {
       "name": "More Jobs by Designation",
       "url": "https://www.freshersnow.com/jobs-by-designation/"
-    }
+    },
+    {
+      "title": "State Wise Jobs ",
+      "color": "#60a5fa"
+    },
     {
       "name": "Haryana",
       "url": "https://www.freejobalert.com/haryana-government-jobs/"
