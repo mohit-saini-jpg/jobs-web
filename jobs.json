@@ -1,10 +1,6 @@
 {
   "top_jobs": [
     {
-      "name": "More Jobs by Location",
-      "url": "https://www.freejobalert.com/search-jobs/jobs-by-location/"
-    },
-    {
       "title": "Popular Jobs Categories",
       "color": "#f59e0b"
     },
@@ -295,6 +291,10 @@
     {
       "name": "Jammu Kashmir",
       "url": "https://www.freejobalert.com/jk-government-jobs/"
+    },
+    {
+      "name": "More Jobs by Location",
+      "url": "https://www.freejobalert.com/search-jobs/jobs-by-location/"
     }
   ],
   "left_jobs": [
