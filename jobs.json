@@ -483,10 +483,12 @@
     {
       "name": "University Admission",
       "url": "https://www.collegeadmission.in/list/university-admission-information"
+"external": true
     },
     {
       "name": "College University Exam",
       "url": "https://www.collegeadmission.in/latest-updates/exam"
+"external": true
     },
     {
       "name": "ALL Education Results",
