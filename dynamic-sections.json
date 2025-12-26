@@ -1,0 +1,202 @@
+{
+  "sections": [
+    {
+      "id": "latest-jobs",
+      "title": "Latest Jobs",
+      "icon": "fas fa-briefcase",
+      "color": "#3b82f6",
+      "viewMoreType": "list",
+      "items": [
+        {
+          "name": "SSC GD Constable Recruitment 2026",
+          "url": "https://www.freejobalert.com/ssc-gd-constable-recruitment/"
+        },
+        {
+          "name": "Railway Group D Recruitment 2025",
+          "url": "https://www.freejobalert.com/railway-jobs/"
+        },
+        {
+          "name": "IBPS PO Recruitment 2025",
+          "url": "https://www.freejobalert.com/bank-jobs/"
+        },
+        {
+          "name": "Delhi Police Constable Recruitment",
+          "url": "https://www.freejobalert.com/police-defence-jobs/"
+        },
+        {
+          "name": "UPSC CDS Recruitment 2026",
+          "url": "https://govtjobsalert.in/category/upsc-jobs/"
+        },
+        {
+          "name": "Army Agniveer Recruitment 2025",
+          "url": "https://www.indgovtjobs.in/2014/05/indian-army-jobs-recruitment.html"
+        },
+        {
+          "name": "SSC CHSL Recruitment 2026",
+          "url": "https://www.freejobalert.com/ssc-recruitment/"
+        },
+        {
+          "name": "RRB NTPC Recruitment 2025",
+          "url": "https://www.freejobalert.com/railway-jobs/"
+        },
+        {
+          "name": "CISF Constable Recruitment 2026",
+          "url": "https://www.freejobalert.com/police-defence-jobs/"
+        },
+        {
+          "name": "Indian Navy MR Recruitment 2026",
+          "url": "https://www.freshersnow.com/indian-navy-jobs/"
+        }
+      ]
+    },
+    {
+      "id": "upcoming-jobs",
+      "title": "Upcoming Jobs",
+      "icon": "fas fa-clock",
+      "color": "#f59e0b",
+      "viewMoreType": "external",
+      "viewMoreUrl": "https://sarkarinetwork.com/upcoming/",
+      "items": [
+        {
+          "name": "UPSC IAS 2026 - Coming Soon",
+          "url": "https://govtjobsalert.in/category/upsc-jobs/"
+        },
+        {
+          "name": "RRB Group C Recruitment",
+          "url": "https://www.freejobalert.com/railway-jobs/"
+        },
+        {
+          "name": "IBPS Clerk 2026",
+          "url": "https://www.freejobalert.com/bank-jobs/"
+        },
+        {
+          "name": "SSC MTS 2026",
+          "url": "https://www.freejobalert.com/ssc-recruitment/"
+        },
+        {
+          "name": "Indian Air Force Group X/Y",
+          "url": "https://www.freshersnow.com/indian-air-force-jobs/"
+        },
+        {
+          "name": "BPSC Teacher Recruitment",
+          "url": "https://www.freejobalert.com/teaching-faculty-jobs/"
+        },
+        {
+          "name": "CRPF Constable Recruitment",
+          "url": "https://www.freejobalert.com/police-defence-jobs/"
+        },
+        {
+          "name": "BSF Head Constable 2026",
+          "url": "https://www.freejobalert.com/police-defence-jobs/"
+        },
+        {
+          "name": "UPSSSC PET 2026",
+          "url": "https://www.freejobalert.com/"
+        },
+        {
+          "name": "NEET PG 2026",
+          "url": "https://www.freejobalert.com/"
+        }
+      ]
+    },
+    {
+      "id": "admit-cards",
+      "title": "Latest Admit Card",
+      "icon": "fas fa-id-card",
+      "color": "#10b981",
+      "viewMoreType": "list",
+      "items": [
+        {
+          "name": "SSC CGL Tier-2 Admit Card 2025",
+          "url": "https://www.freejobalert.com/admit-card/"
+        },
+        {
+          "name": "EMRS Teaching Admit Card 2025",
+          "url": "https://www.freejobalert.com/admit-card/"
+        },
+        {
+          "name": "BSF Head Constable PET Admit Card",
+          "url": "https://www.freejobalert.com/admit-card/"
+        },
+        {
+          "name": "UPSC CAPF Admit Card 2025",
+          "url": "https://www.freejobalert.com/admit-card/"
+        },
+        {
+          "name": "Railway Group D Admit Card",
+          "url": "https://www.freejobalert.com/admit-card/"
+        },
+        {
+          "name": "IBPS RRB PO Admit Card",
+          "url": "https://www.freejobalert.com/admit-card/"
+        },
+        {
+          "name": "SSC GD Constable Admit Card",
+          "url": "https://www.freejobalert.com/admit-card/"
+        },
+        {
+          "name": "CTET Admit Card 2026",
+          "url": "https://www.freejobalert.com/admit-card/"
+        },
+        {
+          "name": "Delhi Police Constable Admit Card",
+          "url": "https://www.freejobalert.com/admit-card/"
+        },
+        {
+          "name": "Army Agniveer Admit Card",
+          "url": "https://www.freejobalert.com/admit-card/"
+        }
+      ]
+    },
+    {
+      "id": "results",
+      "title": "Latest Results",
+      "icon": "fas fa-trophy",
+      "color": "#8b5cf6",
+      "viewMoreType": "external",
+      "viewMoreUrl": "https://sarkariresult.com.cm/result/",
+      "items": [
+        {
+          "name": "SSC CGL Tier-1 Result 2025",
+          "url": "https://sarkariresult.com.cm/result/"
+        },
+        {
+          "name": "UPSC CSE Prelims Result 2025",
+          "url": "https://sarkariresult.com.cm/result/"
+        },
+        {
+          "name": "Railway Group D Result 2025",
+          "url": "https://sarkariresult.com.cm/result/"
+        },
+        {
+          "name": "IBPS PO Prelims Result 2025",
+          "url": "https://sarkariresult.com.cm/result/"
+        },
+        {
+          "name": "SSC CHSL Tier-1 Result 2025",
+          "url": "https://sarkariresult.com.cm/result/"
+        },
+        {
+          "name": "CTET December Result 2025",
+          "url": "https://sarkariresult.com.cm/result/"
+        },
+        {
+          "name": "UP Police Constable Result",
+          "url": "https://sarkariresult.com.cm/result/"
+        },
+        {
+          "name": "NEET UG Result 2025",
+          "url": "https://sarkariresult.com.cm/result/"
+        },
+        {
+          "name": "JEE Main Session 2 Result",
+          "url": "https://sarkariresult.com.cm/result/"
+        },
+        {
+          "name": "BSF Constable Result 2025",
+          "url": "https://sarkariresult.com.cm/result/"
+        }
+      ]
+    }
+  ]
+}

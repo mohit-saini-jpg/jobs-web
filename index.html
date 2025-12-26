@@ -2,6 +2,15 @@
 <html lang="en">
 
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C4VRD1C9QS"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-C4VRD1C9QS');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Top Sarkari Jobs - Latest Government Jobs in India 2025</title>
@@ -10,7 +19,7 @@
     <meta name="robots" content="index, follow">
     <meta name="author" content="Top Sarkari Jobs">
     <link rel="canonical" href="https://topsarkarijobs.com/">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/x-icon" href="image.ico">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -96,7 +105,7 @@
             <div class="container mx-auto max-w-6xl px-4 py-4">
                 <div class="flex items-center justify-between">
                     <h1 class="text-2xl font-bold flex items-center">
-                        <i class="fas fa-briefcase mr-3"></i>
+                        <img src="image.png" alt="Top Sarkari Jobs Logo" class="h-10 w-10 mr-3 rounded-full">
                         Top Sarkari Jobs
                     </h1>
                     <button id="mobile-menu-toggle" class="lg:hidden text-white hover:bg-blue-700 p-2 rounded">
@@ -166,82 +175,9 @@
 
                             <!-- Center section (75%) -->
                             <div class="w-full lg:w-3/4 flex flex-col gap-4 hidden md:flex">
-                                <!-- First Row: Latest News & Latest Jobs -->
-                                <div class="flex flex-row gap-4">
-                                    <!-- Latest Jobs Box -->
-                                    <div class="w-1/2 bg-white rounded-lg shadow-lg p-4">
-                                        <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                                            <i class="fas fa-briefcase mr-2 text-blue-600"></i>
-                                            Latest Jobs
-                                        </h4>
-                                        <div class="relative">
-                                            <div id="news-scroll" class="space-y-2">
-                                                <!-- News items will be populated here (max 10) -->
-                                            </div>
-                                            <div class="mt-4">
-                                                <a href="view.html?type=jobs" class="block w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition duration-300">
-                                                    <i class="fas fa-arrow-right mr-2"></i>View More
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Upcoming Jobs Box -->
-                                    <div class="w-1/2 bg-white rounded-lg shadow-lg p-4">
-                                        <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                                            <i class="fas fa-calendar-alt mr-2 text-green-600"></i>
-                                            Upcoming Jobs
-                                        </h4>
-                                        <div class="relative">
-                                            <div id="jobs-scroll" class="space-y-2">
-                                                <!-- Jobs items will be populated here (max 10) -->
-                                            </div>
-                                            <div class="mt-4">
-                                                <a href="view.html?type=upcoming" class="block w-full text-center bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded transition duration-300">
-                                                    <i class="fas fa-arrow-right mr-2"></i>View More
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Second Row: Latest Admit Card & Latest Results -->
-                                <div class="flex flex-row gap-4">
-                                    <!-- Latest Admit Card Box -->
-                                    <div class="w-1/2 bg-white rounded-lg shadow-lg p-4">
-                                        <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                                            <i class="fas fa-id-card mr-2 text-orange-600"></i>
-                                            Latest Admit Card
-                                        </h4>
-                                        <div class="relative">
-                                            <div id="admitcard-scroll" class="space-y-2">
-                                                <!-- Admit Card items will be populated here (max 10) -->
-                                            </div>
-                                            <div class="mt-4">
-                                                <a href="view.html?type=admitcard" class="block w-full text-center bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2 px-4 rounded transition duration-300">
-                                                    <i class="fas fa-arrow-right mr-2"></i>View More
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Latest Results Box -->
-                                    <div class="w-1/2 bg-white rounded-lg shadow-lg p-4">
-                                        <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                                            <i class="fas fa-trophy mr-2 text-purple-600"></i>
-                                            Latest Results
-                                        </h4>
-                                        <div class="relative">
-                                            <div id="results-scroll" class="space-y-2">
-                                                <!-- Results items will be populated here (max 10) -->
-                                            </div>
-                                            <div class="mt-4">
-                                                <a href="view.html?type=results" class="block w-full text-center bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded transition duration-300">
-                                                    <i class="fas fa-arrow-right mr-2"></i>View More
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <!-- Dynamic Sections Container (Desktop) -->
+                                <div id="dynamic-sections-desktop" class="flex flex-col gap-4">
+                                    <!-- Dynamic sections will be populated here -->
                                 </div>
                             </div>
 
@@ -251,78 +187,8 @@
                             </div>
                         </div>
 
-                        <div class="md:hidden space-y-4">
-                              <!-- Latest News Box -->
-                                <div class="w-full bg-white rounded-lg shadow-lg p-4">
-                                    <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                                        <i class="fas fa-newspaper mr-2 text-blue-600"></i>
-                                        Latest Jobs
-                                    </h4>
-                                    <div class="relative">
-                                        <div id="news-scroll-mobile" class="space-y-1">
-                                            <!-- News items will be populated here (max 10) -->
-                                        </div>
-                                        <div class="mt-4">
-                                            <a href="view.html?type=news" class="block w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition duration-300">
-                                                <i class="fas fa-arrow-right mr-2"></i>View More
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Jobs Box -->
-                                <div class="w-full bg-white rounded-lg shadow-lg p-4">
-                                    <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                                        <i class="fas fa-briefcase mr-2 text-green-600"></i>
-                                        Upcoming Jobs
-                                    </h4>
-                                    <div class="relative">
-                                        <div id="jobs-scroll-mobile" class="space-y-1">
-                                            <!-- Jobs items will be populated here (max 10) -->
-                                        </div>
-                                        <div class="mt-4">
-                                            <a href="view.html?type=jobs" class="block w-full text-center bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded transition duration-300">
-                                                <i class="fas fa-arrow-right mr-2"></i>View More
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Latest Admit Card Box -->
-                                <div class="w-full bg-white rounded-lg shadow-lg p-4">
-                                    <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                                        <i class="fas fa-id-card mr-2 text-orange-600"></i>
-                                        Latest Admit Card
-                                    </h4>
-                                    <div class="relative">
-                                        <div id="admitcard-scroll-mobile" class="space-y-1">
-                                            <!-- Admit Card items will be populated here (max 10) -->
-                                        </div>
-                                        <div class="mt-4">
-                                            <a href="view.html?type=admitcard" class="block w-full text-center bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2 px-4 rounded transition duration-300">
-                                                <i class="fas fa-arrow-right mr-2"></i>View More
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Latest Results Box -->
-                                <div class="w-full bg-white rounded-lg shadow-lg p-4">
-                                    <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                                        <i class="fas fa-trophy mr-2 text-purple-600"></i>
-                                        Latest Results
-                                    </h4>
-                                    <div class="relative">
-                                        <div id="results-scroll-mobile" class="space-y-1">
-                                            <!-- Results items will be populated here (max 10) -->
-                                        </div>
-                                        <div class="mt-4">
-                                            <a href="view.html?type=results" class="block w-full text-center bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded transition duration-300">
-                                                <i class="fas fa-arrow-right mr-2"></i>View More
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
+                        <div class="md:hidden space-y-4" id="dynamic-sections-mobile">
+                            <!-- Dynamic sections will be populated here for mobile -->
                         </div>
                     </div>
                 </div>

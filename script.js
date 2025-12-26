@@ -42,6 +42,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
   }
 
+  // Load dynamic sections data (for homepage)
+  let dynamicSections = null;
+  if (currentPage === "index.html" || currentPage === "") {
+    try {
+      const response = await fetch("dynamic-sections.json");
+      dynamicSections = await response.json();
+    } catch (error) {
+      console.error("Error loading dynamic sections:", error);
+      dynamicSections = { sections: [] };
+    }
+  }
+
   // Load header links (separate JSON)
   let headerData = null;
   try {
@@ -139,6 +151,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (currentPage === "index.html" || currentPage === "") {
     // Jobs page
     loadJobs();
+    loadDynamicSections(dynamicSections);
     loadHomeLinks();
     loadFooterSocialLinks();
     loadWhatsAppChat();
@@ -297,6 +310,155 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+  // Function to load dynamic sections (Latest Jobs, Upcoming Jobs, etc.)
+  function loadDynamicSections(dynamicSectionsData) {
+    if (!dynamicSectionsData || !dynamicSectionsData.sections) return;
+
+    const desktopContainer = document.getElementById("dynamic-sections-desktop");
+    const mobileContainer = document.getElementById("dynamic-sections-mobile");
+
+    if (!desktopContainer || !mobileContainer) return;
+
+    // Clear existing content
+    desktopContainer.innerHTML = "";
+    mobileContainer.innerHTML = "";
+
+    const sections = dynamicSectionsData.sections;
+
+    // Create rows of 2 sections each for desktop
+    for (let i = 0; i < sections.length; i += 2) {
+      const row = document.createElement("div");
+      row.className = "flex flex-row gap-4";
+
+      // First section in the row
+      const section1 = sections[i];
+      row.appendChild(createSectionBox(section1, false));
+
+      // Second section in the row (if exists)
+      if (i + 1 < sections.length) {
+        const section2 = sections[i + 1];
+        row.appendChild(createSectionBox(section2, false));
+      }
+
+      desktopContainer.appendChild(row);
+    }
+
+    // Create individual boxes for mobile
+    sections.forEach((section) => {
+      mobileContainer.appendChild(createSectionBox(section, true));
+    });
+  }
+
+  // Helper function to create a section box
+  function createSectionBox(section, isMobile) {
+    const box = document.createElement("div");
+    box.className = "w-full " + (isMobile ? "" : "lg:w-1/2") + " bg-white rounded-lg shadow-lg p-4";
+
+    // Extract color from hex string
+    const colorHex = section.color || "#3b82f6";
+    const colorName = getColorName(colorHex);
+
+    // Header
+    const header = document.createElement("h4");
+    header.className = `text-lg font-semibold text-gray-800 mb-4 flex items-center`;
+    header.innerHTML = `
+      <i class="${section.icon || 'fas fa-briefcase'} mr-2" style="color: ${colorHex}"></i>
+      ${section.title}
+    `;
+    box.appendChild(header);
+
+    // Content container
+    const contentWrapper = document.createElement("div");
+    contentWrapper.className = "relative";
+
+    // Items container
+    const itemsContainer = document.createElement("div");
+    itemsContainer.className = "space-y-2";
+
+    // Show max 10 items
+    const itemsToShow = section.items.slice(0, 10);
+    itemsToShow.forEach((item) => {
+      const itemDiv = document.createElement("div");
+      itemDiv.className = `bg-${colorName}-50 p-3 rounded border-l-4 border-${colorName}-500 cursor-pointer hover:bg-${colorName}-100 hover:shadow transition duration-300`;
+      itemDiv.style.backgroundColor = getLightColor(colorHex, 0.9);
+      itemDiv.style.borderLeftColor = colorHex;
+
+      let badgeHTML = "";
+      if (item.badge) {
+        badgeHTML = `<span class="${item.badgeColor || 'bg-blue-500'} text-white text-xs font-bold px-2 py-1 rounded ml-2">${item.badge}</span>`;
+      }
+
+      itemDiv.innerHTML = `
+        <div class="flex justify-between items-start">
+          <p class="text-sm font-medium text-gray-700 flex-1">${item.name}${badgeHTML}</p>
+        </div>
+        ${item.date ? `<p class="text-xs text-gray-500 mt-1">${item.date}</p>` : ""}
+      `;
+
+      itemDiv.addEventListener("click", () => {
+        openLink(item);
+      });
+
+      itemsContainer.appendChild(itemDiv);
+    });
+
+    contentWrapper.appendChild(itemsContainer);
+
+    // View More button
+    const viewMoreDiv = document.createElement("div");
+    viewMoreDiv.className = "mt-4";
+
+    const viewMoreBtn = document.createElement("a");
+    viewMoreBtn.className = `block w-full text-center bg-${colorName}-600 hover:bg-${colorName}-700 text-white font-semibold py-2 px-4 rounded transition duration-300`;
+    viewMoreBtn.style.backgroundColor = colorHex;
+    viewMoreBtn.style.color = "#ffffff";
+
+    viewMoreBtn.addEventListener("mouseenter", function () {
+      this.style.backgroundColor = getLightColor(colorHex, 0.3);
+    });
+    viewMoreBtn.addEventListener("mouseleave", function () {
+      this.style.backgroundColor = colorHex;
+    });
+
+    if (section.viewMoreType === "external" && section.viewMoreUrl) {
+      viewMoreBtn.href = `view.html?url=${encodeURIComponent(section.viewMoreUrl)}&name=${encodeURIComponent(section.title)}`;
+    } else {
+      viewMoreBtn.href = `view.html?section=${section.id}`;
+    }
+
+    viewMoreBtn.innerHTML = '<i class="fas fa-arrow-right mr-2"></i>View More';
+    viewMoreDiv.appendChild(viewMoreBtn);
+    contentWrapper.appendChild(viewMoreDiv);
+
+    box.appendChild(contentWrapper);
+    return box;
+  }
+
+  // Helper function to get color name from hex (approximation)
+  function getColorName(hex) {
+    const colorMap = {
+      "#3b82f6": "blue",
+      "#60a5fa": "blue",
+      "#2563eb": "blue",
+      "#f59e0b": "amber",
+      "#fbbf24": "yellow",
+      "#d97706": "orange",
+      "#10b981": "green",
+      "#34d399": "emerald",
+      "#059669": "green",
+      "#8b5cf6": "purple",
+      "#a78bfa": "purple",
+      "#7c3aed": "violet",
+      "#ef4444": "red",
+      "#f87171": "red",
+      "#dc2626": "red",
+      "#06b6d4": "cyan",
+      "#22d3ee": "cyan",
+      "#0891b2": "cyan",
+    };
+    return colorMap[hex.toLowerCase()] || "blue";
+  }
+
   // Function to load social links in footer
   function loadFooterSocialLinks() {
     const socialLinks = headerData && headerData.social_links ? headerData.social_links : [];
@@ -323,23 +485,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const topButtons = document.getElementById("jobs-top-buttons");
     const leftSection = document.getElementById("jobs-left-section");
     const rightSection = document.getElementById("jobs-right-section");
-    const newsScroll = document.getElementById("news-scroll");
-    const jobsScroll = document.getElementById("jobs-scroll");
-    const admitcardScroll = document.getElementById("admitcard-scroll");
-    const resultsScroll = document.getElementById("results-scroll");
-    const newsScrollMobile = document.getElementById("news-scroll-mobile");
-    const jobsScrollMobile = document.getElementById("jobs-scroll-mobile");
-    const admitcardScrollMobile = document.getElementById("admitcard-scroll-mobile");
-    const resultsScrollMobile = document.getElementById("results-scroll-mobile");
 
-    if (
-      !topButtons ||
-      !leftSection ||
-      !rightSection ||
-      !newsScroll ||
-      !jobsScroll
-    )
-      return;
+    if (!topButtons || !leftSection || !rightSection) return;
 
     // Top buttons (2 rows of 3)
     // Support a `color` property on title entries. When a title has a color,
@@ -459,98 +606,6 @@ document.addEventListener("DOMContentLoaded", async () => {
           openLink(job);
         });
         rightSection.appendChild(button);
-      }
-    });
-
-    // Sample news data
-    const newsItems = data.news || [];
-
-    // Populate news scroll (show all items)
-    const newsToShow = newsItems;
-    newsToShow.forEach((news) => {
-      const newsItem = document.createElement("div");
-      newsItem.className =
-        "bg-blue-50 p-2 rounded border-l-4 border-blue-500 cursor-pointer hover:bg-blue-100 hover:shadow transition duration-300";
-      newsItem.innerHTML = `<p class="text-sm font-medium text-gray-700">${news.name}</p>`;
-      newsItem.addEventListener("click", () => {
-        openLink(news);
-      });
-      newsScroll.appendChild(newsItem);
-      if (newsScrollMobile) {
-        const mobileNewsItem = newsItem.cloneNode(true);
-        mobileNewsItem.addEventListener("click", () => {
-          openLink(news);
-        });
-        newsScrollMobile.appendChild(mobileNewsItem);
-      }
-    });
-
-    // Sample scrolling jobs data
-    const scrollingJobs = data.scrolling_jobs || [];
-
-    // Populate jobs scroll (show all items)
-    const jobsToShow = scrollingJobs;
-    jobsToShow.forEach((job) => {
-      const jobItem = document.createElement("div");
-      jobItem.className =
-        "bg-green-50 p-2 rounded border-l-4 border-green-500 cursor-pointer hover:bg-green-100 hover:shadow transition duration-300";
-      jobItem.innerHTML = `<p class="text-sm font-medium text-gray-700">${job.name}</p>`;
-      jobItem.addEventListener("click", () => {
-        openLink(job);
-      });
-      jobsScroll.appendChild(jobItem);
-      if (jobsScrollMobile) {
-        const mobileJobItem = jobItem.cloneNode(true);
-        mobileJobItem.addEventListener("click", () => {
-          openLink(job);
-        });
-        jobsScrollMobile.appendChild(mobileJobItem);
-      }
-    });
-
-    // Admit card data
-    const admitCardItems = data.admit_cards || [];
-
-    // Populate admit card scroll (show all items)
-    const admitCardsToShow = admitCardItems;
-    admitCardsToShow.forEach((card) => {
-      const cardItem = document.createElement("div");
-      cardItem.className =
-        "bg-orange-50 p-2 rounded border-l-4 border-orange-500 cursor-pointer hover:bg-orange-100 hover:shadow transition duration-300";
-      cardItem.innerHTML = `<p class="text-sm font-medium text-gray-700">${card.name}</p>`;
-      cardItem.addEventListener("click", () => {
-        openLink(card);
-      });
-      if (admitcardScroll) admitcardScroll.appendChild(cardItem);
-      if (admitcardScrollMobile) {
-        const mobileCardItem = cardItem.cloneNode(true);
-        mobileCardItem.addEventListener("click", () => {
-          openLink(card);
-        });
-        admitcardScrollMobile.appendChild(mobileCardItem);
-      }
-    });
-
-    // Results data
-    const resultsItems = data.results || [];
-
-    // Populate results scroll (show all items)
-    const resultsToShow = resultsItems;
-    resultsToShow.forEach((result) => {
-      const resultItem = document.createElement("div");
-      resultItem.className =
-        "bg-purple-50 p-2 rounded border-l-4 border-purple-500 cursor-pointer hover:bg-purple-100 hover:shadow transition duration-300";
-      resultItem.innerHTML = `<p class="text-sm font-medium text-gray-700">${result.name}</p>`;
-      resultItem.addEventListener("click", () => {
-        openLink(result);
-      });
-      if (resultsScroll) resultsScroll.appendChild(resultItem);
-      if (resultsScrollMobile) {
-        const mobileResultItem = resultItem.cloneNode(true);
-        mobileResultItem.addEventListener("click", () => {
-          openLink(result);
-        });
-        resultsScrollMobile.appendChild(mobileResultItem);
       }
     });
   }
