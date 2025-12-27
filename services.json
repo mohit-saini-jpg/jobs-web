@@ -37,10 +37,10 @@
       "documents": ["Photo", "ID Proof", "Address Proof", "Birth Certificate"]
     },
     {
-      "name": "पुराने पासपोर्ट का रिन्यूअल",
-      "service": "पुराने पासपोर्ट का रिन्यूअल",
+      "name": "Farmer ID किसान ID ",
+      "service": "Farmer ID किसान ID",
       "icon": "fas fa-redo",
-      "documents": ["Photo", "Old Passport", "Address Proof"]
+      "documents": ["आधार कार्ड", "फॅमिली ID", "जमीन का कागज फर्द"]
     },
     {
       "name": "Domicile certificate निवास प्रमाण पत्र",
