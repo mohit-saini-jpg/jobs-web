@@ -16,7 +16,6 @@
       "name": "Latest Jobs",
       "url": "https://sarkariresult.com.cm/latest-jobs/",      
       "color": "bg-teal-400",
-      "external": true
     },
     {
       "name": "Results",
@@ -66,7 +65,8 @@
     {
       "name": "आपका आधार पैन से लिंक है या नहीं जाने",
       "url": "https://eportal.incometax.gov.in/iec/foservices/#/pre-login/link-aadhaar-status",
-      "color": "bg-teal-400"
+      "color": "bg-teal-400",
+      "external": true
     }
   ],
   "social_links": [
