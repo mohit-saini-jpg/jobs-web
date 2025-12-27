@@ -62,6 +62,11 @@
       "name": "Foreign jobs",
       "url": "https://www.placementindia.com/international/",
       "color": "bg-teal-400"
+    },
+    {
+      "name": "आपका आधार पैन से लिंक है या नहीं जाने",
+      "url": "https://eportal.incometax.gov.in/iec/foservices/#/pre-login/link-aadhaar-status",
+      "color": "bg-teal-400"
     }
   ],
   "social_links": [
