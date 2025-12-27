@@ -16,6 +16,7 @@
       "name": "Latest Jobs",
       "url": "https://sarkariresult.com.cm/latest-jobs/",      
       "color": "bg-teal-400",
+      "external": true
     },
     {
       "name": "Results",
