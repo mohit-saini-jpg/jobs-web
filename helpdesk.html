@@ -5,16 +5,20 @@
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-C4VRD1C9QS"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+        window.dataLayer = window.dataLayer || [];
 
-      gtag('config', 'G-C4VRD1C9QS');
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'G-C4VRD1C9QS');
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Helpdesk & Support - Top Sarkari Jobs</title>
-    <meta name="description" content="Contact Top Sarkari Jobs for any queries related to government jobs, results, or website issues. We are here to help.">
+    <meta name="description"
+        content="Contact Top Sarkari Jobs for any queries related to government jobs, results, or website issues. We are here to help.">
     <meta name="keywords" content="helpdesk, contact us, support, top sarkari jobs contact, query">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://topsarkarijobs.com/helpdesk.html">
@@ -24,7 +28,8 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://topsarkarijobs.com/helpdesk.html">
     <meta property="og:title" content="Helpdesk & Support - Top Sarkari Jobs">
-    <meta property="og:description" content="Contact Top Sarkari Jobs for any queries related to government jobs, results, or website issues.">
+    <meta property="og:description"
+        content="Contact Top Sarkari Jobs for any queries related to government jobs, results, or website issues.">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
@@ -73,16 +78,22 @@
                 <div class="p-6">
                     <h2 class="text-2xl font-bold text-gray-800 mb-2 flex items-center"><i
                             class="fas fa-headset mr-3 text-blue-600"></i>Helpdesk / सहायता</h2>
-                    <p class="text-gray-600 mb-4">Yahan aap apni problem submit kar sakte hain. कृपया पूरा नाम, मोबाइल
-                        नंबर और संदेश भरें।</p>
+                    <p class="text-gray-600 mb-1">आप अपनी समस्या यहाँ सबमिट कर सकते हैं।
+                        You can submit your problem here.</p>
+                    <p class="text-gray-600 mb-4">कृपया अपना पूरा नाम और केवल व्हाट्सएप मोबाइल नंबर डालें और सबमिट करें।
+                        Please enter your full name, and WhatsApp mobile number Only and submit.</p>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <h3 class="font-semibold mb-2">Instructions / निर्देश</h3>
                             <ul class="list-disc list-inside text-gray-600 space-y-1">
-                                <li>Naam: poora naam likhen (First + Last).</li>
-                                <li>Mobile: 10-digit mobile number dalein (WhatsApp number accha rahega).</li>
-                                <li>Submit karne ke baad hum aapko jald contact karenge.</li>
+                                <li>नाम: अपना पूरा नाम लिखें (First + Last)।</br>
+                                    Name: Write your full name (First + Last). 
+                                    </li>
+                                <li>मोबाइल: अपना 10 अंकों का मोबाइल नंबर डालें (सिर्फ़ WhatsApp नंबर)।</br>
+                                    Mobile: Enter your 10-digit mobile number (WhatsApp number only).</li>
+                                <li>फॉर्म सबमिट करने के बाद, हम जल्द ही आपसे संपर्क करेंगे।</br>
+                                    After you submit the form, we will contact you shortly.</li>
                             </ul>
                         </div>
 
@@ -202,16 +213,17 @@
 
                     // Insert into Supabase if available
                     if (helpdeskSupabase) {
-                        const { data, error } = await helpdeskSupabase
+                        const {
+                            data,
+                            error
+                        } = await helpdeskSupabase
                             .from('helpdesk_submissions')
-                            .insert([
-                                {
-                                    name: name,
-                                    mobile: mobile,
-                                    message: message,
-                                    created_at: new Date().toISOString()
-                                }
-                            ]);
+                            .insert([{
+                                name: name,
+                                mobile: mobile,
+                                message: message,
+                                created_at: new Date().toISOString()
+                            }]);
 
                         if (error) {
                             console.error('Error submitting helpdesk request:', error);

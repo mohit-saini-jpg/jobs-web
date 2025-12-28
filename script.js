@@ -991,10 +991,16 @@ document.addEventListener("DOMContentLoaded", async () => {
         imageHtml = `<img src="${item.image}" alt="WhatsApp Image" class="max-w-full rounded-lg mt-2 cursor-pointer" onclick="window.open('${item.image}', '_blank')">`;
       }
 
+      let videoHtml = '';
+      if (item.video) {
+        videoHtml = `<video controls class="max-w-full rounded-lg mt-2"><source src="${item.video}" type="video/mp4"></video>`;
+      }
+
       messageDiv.innerHTML = `
         <div class="bg-white rounded-lg rounded-bl-none shadow p-3 max-w-[85%]">
           <p class="text-gray-800 text-sm whatsapp-message">${messageContent}</p>
           ${imageHtml}
+          ${videoHtml}
         </div>
       `;
 
