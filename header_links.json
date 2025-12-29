@@ -21,7 +21,8 @@
     {
       "name": "Results",
       "url": "https://www.topsarkarijobs.com/view.html?section=results",
-      "color": "bg-teal-400"
+      "color": "bg-teal-400",
+      "external": true
     },
     {
       "name": "Admit Card",
@@ -36,7 +37,8 @@
     {
       "name": "Upcoming Jobs",
       "url": "https://www.topsarkarijobs.com/view.html?section=upcoming-jobs",
-      "color": "bg-teal-400"
+      "color": "bg-teal-400",
+      "external": true
     },
     {
       "name": "Central Jobs",
