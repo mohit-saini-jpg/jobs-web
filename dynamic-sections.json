@@ -242,12 +242,16 @@
       ]
     },
     {
-      "id": "admit-cards",
-      "title": "Latest Admit Card",
+      "id": "Admit cards & Exam Date",
+      "title": "Latest Admit Card &Exam Date",
       "icon": "fas fa-id-card",
       "color": "#10b981",
       "viewMoreType": "list",
       "items": [
+        {
+          "name": "Rajasthan REET Mains 2025 [7759 Posts] Exam Date",
+          "url": "https://sarkariresult.com.im/rajasthan-reet-mains-2025/"
+        },
         {
           "name": "RPSC Exam Calendar 2026 [Out] Download Link",
           "url": "https://sarkariresult.com.im/rpsc-exam-calendar-2026/"
