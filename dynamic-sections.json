@@ -1106,11 +1106,13 @@
         },
         {
           "name": "केन्द्रीयी  द्वारा दी जाने वाली कृषि योजनाएँ ",
-          "url": "https://www.govtschemes.in/hi/taxonomies/term/59"
+          "url": "https://www.govtschemes.in/hi/taxonomies/term/59",
+          "external": true
         },
         {
           "name": "राज्यों के द्वारा दी जाने वाली सरकारी योजनाएं",
-          "url": "https://www.govtschemes.in/hi/taxonomies/term/59"
+          "url": "https://www.govtschemes.in/hi/taxonomies/term/59",
+          "external": true
         }
         
       ]
