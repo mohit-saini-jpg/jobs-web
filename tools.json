@@ -6,9 +6,9 @@
       "icon": "fas fa-eraser"
     }, 
     {
-      "name": "Photo quality enhancer",
+      "name": "Image Quality Increase",
       "url": "https://picsart.com/ai-image-enhancer/",
-      "icon": "fas fa-eraser"
+      "icon": "fas fa-magic"
     },
     {
       "name": "Passport Size Photo",
@@ -29,11 +29,6 @@
       "name": "6x4 Size Image",
       "url": "https://image.pi7.org/resize-image-to-4x6",
       "icon": "fas fa-arrows-alt"
-    },
-    {
-      "name": "Image Quality Increase",
-      "url": "https://www.cutout.pro/photo-enhancer-sharpener-upscaler",
-      "icon": "fas fa-magic"
     },
     {
       "name": "Image to PDF",
