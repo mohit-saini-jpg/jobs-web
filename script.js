@@ -360,7 +360,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Header
     const header = document.createElement("h4");
-    header.className = `text-xl font-semibold text-white bg-${colorName}-500 p-2 rounded mb-2 flex items-center`;
+    header.className = `text-xl font-semibold text-white bg-[${colorHex}] p-2 rounded mb-2 flex items-center`;
     header.innerHTML = `
       <i class="${section.icon || 'fas fa-briefcase'} mr-2" style="color: white"></i>
       ${section.title}
@@ -432,21 +432,33 @@ document.addEventListener("DOMContentLoaded", async () => {
       "#3b82f6": "blue",
       "#60a5fa": "blue",
       "#2563eb": "blue",
+      "#34518A": "blue",
+      "#5D68D9": "indigo",
       "#f59e0b": "amber",
       "#fbbf24": "yellow",
       "#d97706": "orange",
+      "#f97316": "orange",
       "#10b981": "green",
       "#34d399": "emerald",
       "#059669": "green",
+      "#40825B": "green",
+      "#00FFA4": "green",
       "#8b5cf6": "purple",
       "#a78bfa": "purple",
       "#7c3aed": "violet",
       "#ef4444": "red",
       "#f87171": "red",
       "#dc2626": "red",
+      "#E31E53": "red",
+      "#913030": "red",
       "#06b6d4": "cyan",
       "#22d3ee": "cyan",
       "#0891b2": "cyan",
+      "#00E4FA": "cyan",
+      "#dc7ec7": "pink",
+      "#fb7185": "rose",
+      "#ac938e": "stone",
+      "#CAD64D": "lime",
     };
     return colorMap[hex.toLowerCase()] || "blue";
   }
