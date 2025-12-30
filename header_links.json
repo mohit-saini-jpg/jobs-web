@@ -76,6 +76,12 @@
       "url": "https://eportal.incometax.gov.in/iec/foservices/#/pre-login/link-aadhaar-status",
       "color": "bg-teal-400",
       "external": true
+    },
+    {
+      "name": "Lado Lakshmi Payment check",
+      "url": "https://pension.socialjusticehry.gov.in/Ben_Inf",
+      "color": "bg-teal-400",
+      "external": true
     }
   ],
   "social_links": [
