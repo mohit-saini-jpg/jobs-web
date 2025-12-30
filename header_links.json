@@ -14,7 +14,7 @@
   "home_links": [
     {
       "name": "Latest Jobs",
-      "url": "https://www.topsarkarijobs.com/view.html?section=latest-jobs",      
+      "url": "https://www.topsarkarijobs.com/view.html?section=latest%20jobs",      
       "color": "bg-teal-400",
       "external": true
     },
