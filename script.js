@@ -352,7 +352,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Helper function to create a section box
   function createSectionBox(section, isMobile) {
     const box = document.createElement("div");
-    box.className = "w-full " + (isMobile ? "" : "lg:w-1/2") + " bg-white rounded-lg shadow-lg p-4";
+    box.className = "w-full " + (isMobile ? "" : "lg:w-1/2") + " bg-white rounded-lg my-6";
 
     // Extract color from hex string
     const colorHex = section.color || "#3b82f6";
@@ -360,9 +360,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Header
     const header = document.createElement("h4");
-    header.className = `text-lg font-semibold text-gray-800 mb-4 flex items-center`;
+    header.className = `text-xl font-semibold text-white bg-${colorName}-500 p-2 rounded mb-2 flex items-center`;
     header.innerHTML = `
-      <i class="${section.icon || 'fas fa-briefcase'} mr-2" style="color: ${colorHex}"></i>
+      <i class="${section.icon || 'fas fa-briefcase'} mr-2" style="color: white"></i>
       ${section.title}
     `;
     box.appendChild(header);
@@ -406,27 +406,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // View More button
     const viewMoreDiv = document.createElement("div");
-    viewMoreDiv.className = "mt-4";
+    viewMoreDiv.className = "mt-2 py-4";
 
     const viewMoreBtn = document.createElement("a");
-    viewMoreBtn.className = `block w-full text-center bg-${colorName}-600 hover:bg-${colorName}-700 text-white font-semibold py-2 px-4 rounded transition duration-300`;
-    viewMoreBtn.style.backgroundColor = colorHex;
+    viewMoreBtn.className = `block w-fit mx-auto text-center bg-gray-700 hover:bg-gray-800 text-white font-semibold py-2 px-4 rounded transition duration-300`;
     viewMoreBtn.style.color = "#ffffff";
-
-    viewMoreBtn.addEventListener("mouseenter", function () {
-      this.style.backgroundColor = getLightColor(colorHex, 0.3);
-    });
-    viewMoreBtn.addEventListener("mouseleave", function () {
-      this.style.backgroundColor = colorHex;
-    });
-
+ 
     if (section.viewMoreType === "external" && section.viewMoreUrl) {
       viewMoreBtn.href = `view.html?url=${encodeURIComponent(section.viewMoreUrl)}&name=${encodeURIComponent(section.title)}`;
     } else {
       viewMoreBtn.href = `view.html?section=${section.id}`;
     }
 
-    viewMoreBtn.innerHTML = '<i class="fas fa-arrow-right mr-2"></i>View More';
+    viewMoreBtn.innerHTML = 'View More<i class="fas fa-arrow-right ml-2"></i>';
     viewMoreDiv.appendChild(viewMoreBtn);
     contentWrapper.appendChild(viewMoreDiv);
 
