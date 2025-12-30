@@ -244,7 +244,7 @@
       "name": "सभी बैंक की STATEMNT निकलवाए",
       "service": "सभी बैंक की STATEMNT निकलवाए",
       "icon": "fas fa-university",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Bank Details"]
+      "documents": ["पैन कार्ड नंबर", "आपके बैंक अकाउंट से जुड़ा फ़ोन नंबर", "उस बैंक का नाम जिसका स्टेटमेंट आप पाना चाहते हैं", "आपके फ़ोन नंबर पर एक OTP भेजा जाएगा"]
     },
     {
       "name": "GADI से GADI DETAILS FIND",
