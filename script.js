@@ -147,6 +147,20 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Render header links (if any)
   loadHeaderLinks(headerData);
 
+  // Category names mapping
+  const categoryNames = {
+    image: "Image Tools",
+    pdf: "PDF Tools",
+    video: "Video/Audio Tools",
+  };
+
+  // Category icons mapping
+  const categoryIcons = {
+    image: "fas fa-image text-green-500",
+    pdf: "fas fa-file-pdf text-blue-500",
+    video: "fas fa-video text-purple-500",
+  };
+
   // Load content based on current page
   if (currentPage === "index.html" || currentPage === "") {
     // Jobs page
@@ -177,44 +191,94 @@ document.addEventListener("DOMContentLoaded", async () => {
   } else if (currentPage === "tools.html") {
     // Tools page
     loadToolsSection();
-
-    // Check if tool parameter is present and auto-load tool
-    if (toolParam) {
-      setTimeout(() => {
-        autoLoadTool(toolParam);
-      }, 500);
-    }
   }
-
-  // Category names mapping
-  const categoryNames = {
-    image: "Image Tools",
-    pdf: "PDF Tools",
-    video: "Video/Audio Tools",
-  };
-
-  // Category icons mapping
-  const categoryIcons = {
-    image: "fas fa-image text-green-500",
-    pdf: "fas fa-file-pdf text-blue-500",
-    video: "fas fa-video text-purple-500",
-  };
 
   // Function to load tools section (only on tools.html)
   function loadToolsSection() {
-    if (!mainCategories || !backButton) return;
+    const categoriesView = document.getElementById("categories-view");
+    const toolsView = document.getElementById("tools-view");
+    const toolsGrid = document.getElementById("tools-grid");
+    const toolsTitle = document.getElementById("tools-title");
+    const backButton = document.getElementById("back-button");
+
+    if (!categoriesView || !toolsView) return;
+
+    // Get URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const category = urlParams.get('category');
+
+    if (category && data[category]) {
+      // Show tools for the category
+      showToolsForCategory(category, toolsView, toolsGrid, toolsTitle, backButton);
+    } else {
+      // Show categories
+      showCategories(categoriesView, toolsView);
+    }
 
     // Handle category button clicks
     document.querySelectorAll(".category-button").forEach((button) => {
       button.addEventListener("click", () => {
-        const category = button.dataset.category;
-        showSubCategories(category);
+        const cat = button.dataset.category;
+        window.location.href = `tools.html?category=${cat}`;
       });
     });
 
     // Handle back button
-    backButton.addEventListener("click", () => {
-      showMainCategories();
+    if (backButton) {
+      backButton.addEventListener("click", () => {
+        window.location.href = 'tools.html';
+      });
+    }
+  }
+
+  // Function to show categories view
+  function showCategories(categoriesView, toolsView) {
+    categoriesView.classList.remove("hidden");
+    toolsView.classList.add("hidden");
+  }
+
+  // Function to show tools for a category
+  function showToolsForCategory(category, toolsView, toolsGrid, toolsTitle, backButton) {
+    const categoriesView = document.getElementById("categories-view");
+    categoriesView.classList.add("hidden");
+    toolsView.classList.remove("hidden");
+
+    // Update title
+    const titleIcon = toolsTitle.querySelector("i");
+    const titleText = toolsTitle.querySelector("span");
+
+    titleIcon.className = categoryIcons[category];
+    titleText.textContent = categoryNames[category];
+
+    // Clear existing tools
+    toolsGrid.innerHTML = "";
+
+    // Add tools as cards
+    const tools = data[category];
+    tools.forEach((tool) => {
+      const toolCard = document.createElement("div");
+      toolCard.className =
+        "bg-white p-4 rounded-lg border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition duration-300 cursor-pointer";
+      toolCard.innerHTML = `
+        <div class="flex items-center mb-2">
+          <i class="${tool.icon} text-2xl mr-3 text-gray-600"></i>
+          <h4 class="font-semibold text-gray-800">${tool.name}</h4>
+        </div>
+        <p class="text-sm text-gray-500">Click to open tool</p>
+      `;
+
+      toolCard.addEventListener("click", () => {
+        if (tool.external) {
+          // Open in new tab
+          window.open(tool.url, '_blank');
+        } else {
+          // Open in view.html
+          const viewUrl = `view.html?url=${encodeURIComponent(tool.url)}&name=${encodeURIComponent(tool.name)}&type=tool`;
+          window.location.href = viewUrl;
+        }
+      });
+
+      toolsGrid.appendChild(toolCard);
     });
   }
 
@@ -628,78 +692,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // Function to show main categories
-  function showMainCategories() {
-    if (!mainCategories || !subCategories) return;
-    mainCategories.classList.remove("hidden");
-    subCategories.classList.add("hidden");
 
-    // Clear URL parameters when going back to main categories
-    if (window.location.search) {
-      const newUrl = window.location.pathname;
-      window.history.replaceState({}, "", newUrl);
-    }
-  }
-
-  // Function to show sub categories
-  function showSubCategories(category) {
-    if (!mainCategories || !subCategories) return;
-
-    mainCategories.classList.add("hidden");
-    subCategories.classList.remove("hidden");
-
-    // Update title
-    const titleIcon = document.querySelector("#sub-category-title i");
-    const titleText = document.querySelector("#sub-category-title span");
-
-    titleIcon.className = categoryIcons[category];
-    titleText.textContent = categoryNames[category];
-
-    // Clear existing tools
-    toolsCards.innerHTML = "";
-
-    // Add tools as cards
-    const tools = data[category];
-    tools.forEach((tool) => {
-      const toolCard = document.createElement("div");
-      toolCard.className =
-        "tool-card bg-white p-4 rounded-lg border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition duration-300 cursor-pointer";
-      toolCard.innerHTML = `
-        <div class="flex items-center mb-1">
-          <i class="${tool.icon} text-2xl mr-3 text-gray-600"></i>
-          <h4 class="font-semibold text-gray-800 text-sm">${tool.name}</h4>
-        </div>
-      `;
-
-      if (tool.url) {
-        // It's a tool with URL
-        toolCard.addEventListener("click", () => {
-          const toolSlug = tool.name.toLowerCase().replace(/\s+/g, "-");
-          // Update URL with tool parameter
-          const newUrl = `${window.location.pathname}?tool=${toolSlug}`;
-          window.history.pushState({}, "", newUrl);
-
-          loadTool(tool.url);
-        });
-      }
-
-      toolsCards.appendChild(toolCard);
-    });
-  }
-
-  // Function to load tool in iframe
-  function loadTool(url) {
-    if (!toolIframe || !defaultState || !loadingOverlay) return;
-
-    defaultState.classList.add("hidden");
-    toolIframe.classList.remove("hidden");
-    loadingOverlay.classList.remove("hidden");
-    toolIframe.src = url;
-
-    toolIframe.onload = () => {
-      loadingOverlay.classList.add("hidden");
-    };
-  }
 
   // Function to show service details in modal
   function showServiceDetails(service) {
