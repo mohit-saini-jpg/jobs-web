@@ -115,7 +115,8 @@
     },
     {
       "name": "University Jobs",
-      "url": "https://www.placementstore.com/university-jobs/"
+      "url": "https://www.placementstore.com/university-jobs/",
+      "external": true
     },
     {
       "name": "No Exam Jobs",
@@ -123,7 +124,8 @@
     },
     {
       "name": "Private Jos",
-      "url": "https://www.placementstore.com/private-job/"
+      "url": "https://www.placementstore.com/private-job/",
+      "external": true
     },
     {
       "name": "PSU Jobs",
