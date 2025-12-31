@@ -108,7 +108,8 @@
     {
       "name": "Text to qr-Code",
       "url": "https://www.websiteplanet.com/webtools/free-qr-code-generator/",
-      "icon": "fa-solid fa-qrcode"
+      "icon": "fa-solid fa-qrcode",
+      "external": true
     }
   ],
   "pdf": [
