@@ -104,6 +104,11 @@
       "name": "HEIC to PNG",
       "url": "https://www.simpleimageresizer.com/image-converter/heic-to-png",
       "icon": "fas fa-exchange-alt"
+    },
+    {
+      "name": "Text to qr-Code",
+      "url": "https://qrcode.tec-it.com/en",
+      "icon": "fa-solid fa-qrcode"
     }
   ],
   "pdf": [
