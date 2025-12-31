@@ -3,7 +3,8 @@
     {
       "name": "Photo Background Remove",
       "url": "https://www.photoroom.com/tools/background-remover",
-      "icon": "fas fa-eraser"
+      "icon": "fas fa-eraser",
+      "external": true
     }, 
     {
       "name": "Image Quality Increase",

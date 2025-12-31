@@ -203,6 +203,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!categoriesView || !toolsView) return;
 
+    // Update tool counts in category buttons
+    document.querySelectorAll(".category-button").forEach((button) => {
+      const category = button.dataset.category;
+      if (data[category] && Array.isArray(data[category])) {
+        const count = data[category].length;
+        const countElement = button.querySelector(".text-sm.text-gray-500");
+        if (countElement) {
+          countElement.textContent = `${count} tools available`;
+        }
+      }
+    });
+
+
     // Get URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     const category = urlParams.get('category');
@@ -971,18 +984,36 @@ document.addEventListener("DOMContentLoaded", async () => {
       // Convert \n to <br> for multiline support
       messageContent = messageContent.replace(/\n/g, '<br>');
       
-      // Detect and convert URLs (http, https)
+      // Detect and convert URLs (http, https) - handle both correct and malformed URLs
       messageContent = messageContent.replace(
-        /(https?:\/\/[^\s<]+)/gi,
-        '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-green-600 font-semibold hover:text-green-700 underline">$1</a>'
+        /(https?:\/\/[^\s<]+|https?\/\/[^\s<]+)/gi,
+        (match) => {
+          // Fix malformed URLs by adding colon if missing
+          let fixedUrl = match;
+          if (match.startsWith('https//')) {
+            fixedUrl = 'https://' + match.substring(7);
+          } else if (match.startsWith('http//')) {
+            fixedUrl = 'http://' + match.substring(6);
+          }
+          
+          // Check if it's a YouTube link
+          const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+          const youtubeMatch = fixedUrl.match(youtubeRegex);
+          console.log(fixedUrl);
+          
+          if (youtubeMatch) {
+            const videoId = youtubeMatch[1];
+            return `<div class="mt-2 mb-2">
+              <iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}" 
+                frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen class="rounded-lg"></iframe>
+            </div>`;
+          } else {
+            return `<a href="${fixedUrl}" target="_blank" rel="noopener noreferrer" class="text-green-600 font-semibold hover:text-green-700 underline">click here</a>`;
+          }
+        }
       );
       
-      // Detect and convert local file paths (.html files)
-      messageContent = messageContent.replace(
-        /([a-zA-Z0-9_-]+\.html[^\s<]*)/gi,
-        '<a href="$1" class="text-green-600 font-semibold hover:text-green-700 underline">$1</a>'
-      );
-
       let imageHtml = '';
       if (item.image) {
         imageHtml = `<img src="${item.image}" alt="WhatsApp Image" class="max-w-full rounded-lg mt-2 cursor-pointer" onclick="window.open('${item.image}', '_blank')">`;
@@ -990,7 +1021,26 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       let videoHtml = '';
       if (item.video) {
-        videoHtml = `<video controls class="max-w-full rounded-lg mt-2"><source src="${item.video}" type="video/mp4"></video>`;
+        // Fix malformed URLs by adding colon if missing
+        let fixedVideoUrl = item.video;
+        if (item.video.startsWith('https//')) {
+          fixedVideoUrl = 'https://' + item.video.substring(7);
+        } else if (item.video.startsWith('http//')) {
+          fixedVideoUrl = 'http://' + item.video.substring(6);
+        }
+        
+        // Check if it's a YouTube URL
+        const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+        const youtubeMatch = fixedVideoUrl.match(youtubeRegex);
+        
+        if (youtubeMatch) {
+          const videoId = youtubeMatch[1];
+          videoHtml = `<iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}" 
+            frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen class="max-w-full rounded-lg mt-2"></iframe>`;
+        } else {
+          videoHtml = `<video controls class="max-w-full rounded-lg mt-2"><source src="${fixedVideoUrl}" type="video/mp4"></video>`;
+        }
       }
 
       messageDiv.innerHTML = `
