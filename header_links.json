@@ -21,27 +21,32 @@
     {
       "name": "Results",
       "url": "https://www.topsarkarijobs.com/view.html?section=results",
-      "color": "bg-teal-400"
+      "color": "bg-teal-400",
+      "external": true
     },
     {
       "name": "Admit Card",
       "url": "https://www.topsarkarijobs.com/view.html?section=Latest%20Admit%20cards%20Exams%20Date",
-      "color": "bg-teal-400"
+      "color": "bg-teal-400",
+      "external": true
     },
     {
       "name": "Admission",
       "url": "https://sarkariresult.com.cm/admission/",
-      "color": "bg-teal-400"
+      "color": "bg-teal-400",
+      "external": true
     },
     {
       "name": "Upcoming Jobs",
       "url": "https://www.topsarkarijobs.com/view.html?section=upcoming-jobs",
-      "color": "bg-teal-400"
+      "color": "bg-teal-400",
+      "external": true
     },
     {
       "name": "Central Jobs",
       "url": "https://www.topsarkarijobs.com/view.html?section=Central%20jobs",
-      "color": "bg-teal-400"
+      "color": "bg-teal-400",
+      "external": true
     },
     {
       "name": "नौकरियां जिनकी अंतिम तिथि नजदीक है।",
