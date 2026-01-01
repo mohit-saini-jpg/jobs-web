@@ -1577,6 +1577,7 @@
         {
           "name": "Driving License All PDF Forms",
           "url": "https://haryanatransport.gov.in/en/allforms/Forms%20for%20issue%20of%20driving%20licences"
+          "external": true
         },
         {
           "name": "Solar Self Declaration PDF Form",
