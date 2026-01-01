@@ -419,11 +419,13 @@
     },
     {
       "name": "Admit Card Jobs",
-      "url": "https://www.topsarkarijobs.com/view.html?section=Latest%20Admit%20cards%20Exams%20Date"
+      "url": "https://www.topsarkarijobs.com/view.html?section=Latest%20Admit%20cards%20Exams%20Date",
+      "external": true
     },
     {
       "name": "Results Jobs",
-      "url": "https://www.topsarkarijobs.com/view.html?section=results"
+      "url": "https://www.topsarkarijobs.com/view.html?section=results",
+      "external": true
     },
     {
       "name": "Answer Key Jobs",
