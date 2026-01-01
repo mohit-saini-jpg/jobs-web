@@ -1498,8 +1498,13 @@
           "url": "https://ceoharyana.gov.in/WebCMS/Start/1939",
           "external": true
         }
+        {
+          "name": "आधार कार्ड नंबर से अपनी फॅमिली id नंबर निकले",
+          "url": "https://ceoharyana.gov.in/WebCMS/Start/1939",
+"external": true
+        },
       ]
-    },
+     },
     {
       "id": "Important",
       "title": "Important",
