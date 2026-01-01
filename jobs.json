@@ -555,6 +555,34 @@
 "external": true
     },
     {
+      "title": "Latest Khabar",
+      "color": "#ef4444"
+    },
+    {
+      "name": "Forms Khabar",
+      "url": "https://jobrasta.com/category/trending-news/"
+    },
+    {
+      "name": "Jobs Khabar",
+      "url": "https://www.jagran.com/news/job-news-hindi.html"
+    },
+    {
+      "name": "Employment-News",
+      "url": "https://www.freejobalert.com/employment-news/"
+    },
+    {
+      "name": "State Wise Khabar",
+      "url": "https://www.livehindustan.com/state"
+    },
+    {
+      "name": "India Khabar",
+      "url": "https://www.jagran.com/news/national-news-hindi.html"
+    },
+    {
+      "name": "International News",
+      "url": "https://www.jagran.com/world-news-hindi.html"
+    },
+    {
       "title": "📚 Study Material & Top Courses",
       "color": "#8b5cf6"
     },
