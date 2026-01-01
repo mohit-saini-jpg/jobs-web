@@ -1569,11 +1569,31 @@
       ]
      },
     {
-      "id": "Important",
-      "title": "Important",
+      "id": "Important CSC PDF",
+      "title": "ImportantCSC PDF",
       "icon": "fas fa-trophy",
       "color": "#00FFA4",
       "items": [
+        {
+          "name": "Driving License All PDF Forms",
+          "url": "https://haryanatransport.gov.in/en/allforms/Forms%20for%20issue%20of%20driving%20licences"
+        },
+        {
+          "name": "Solar Self Declaration PDF Form",
+          "url": "https://drive.google.com/file/d/1zxS1b5VyitxqTZ2Ubvx6VgTHwA29GE4R/view"
+        },
+        {
+          "name": "Dr B.R Ambedkar Awas Navinikaran Yojana PDF Form",
+          "url": "https://drive.google.com/file/d/1hJr05shlxJEA-RuKfOAk_4dfcuGkzdjU/view"
+        },
+        {
+          "name": "DHBVN New Connection Form",
+          "url": "https://sarkariresultshine.com/dhbvn-new-connection-form/"
+        },
+        {
+          "name": "DDHBVN CONSUMER COMPLAINT FORM",
+          "url": "https://drive.google.com/file/d/1s_TCVsbyiSpRmT2vuNHZbms2hYRXpRbY/view"
+        },
         {
           "name": "BSEB Sakshamta Pariksha 5th Phase Online Form 2026 Apply Online",
           "url": "https://sarkariresult.com.im/bseb-sakshamta-pariksha-5th-phase-online-form/"
