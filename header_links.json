@@ -90,6 +90,12 @@
       "url": "https://pension.socialjusticehry.gov.in/Ben_Inf",
       "color": "bg-teal-400",
       "external": true
+    },
+    {
+      "name": "आपके आधार कार्ड से कौन सा मोबाइल नंबर लिंक है",
+      "url": "https://myaadhaar.uidai.gov.in/check-aadhaar-validity",
+      "color": "bg-teal-400",
+      "external": true
     }
   ],
   "social_links": [
