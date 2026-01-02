@@ -1,8 +1,108 @@
 {
   "top_jobs": [
     {
-      "title": "⭐ Popular Jobs Categories",
+      "title": "🎓 Study wise Jobs",
       "color": "#60a5fa"
+    },
+    {
+      "name": "8th Pass Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/8th-pass-government-jobs/"
+    },
+    {
+      "name": "10th Pass Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/10th-pass-government-jobs/"
+    },
+    {
+      "name": "12th Pass Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/12th-pass-government-jobs/"
+    },
+    {
+      "name": "Diploma Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/diploma-government-jobs/"
+    },
+    {
+      "name": "ITI Pass Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/iti-government-jobs/"
+    },
+    {
+      "name": "Graduate Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/any-graduate-government-jobs/"
+    },
+    {
+      "name": "Post Graduate Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/any-post-graduate-government-jobs/"
+    },
+     {
+      "name": "B.A Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/bcom-government-jobs/"
+    },
+    {
+      "name": "B.Com Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/bcom-government-jobs/"
+    },
+    {
+      "name": "BSC Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/bsc-government-jobs/"
+    },
+    {
+      "name": "B.Tech/B.E Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/btech-be-government-jobs/"
+    },
+    {
+      "name": "MA Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/ma-government-jobs/"
+    },
+    {
+      "name": "M.COM Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/mcom-government-jobs/"
+    },
+    {
+      "name": "MSC Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/msc-government-jobs/"
+    },
+    {
+      "name": "MBA Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/mba-pgdm-government-jobs/"
+    },
+    {
+      "name": "M.Tech jobs",
+      "url": "https://www.freshersnow.com/m-tech-jobs/"
+    },
+    {
+      "name": "GNM/Nursing Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/gnm-government-jobs/"
+    },
+    {
+      "name": "MBBS Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/mbbs-government-jobs/"
+    },
+    {
+      "name": "MD/MS Govt Jobs",
+      "url": "https://www.freshersnow.com/md-govt-jobs/"
+    },
+    {
+      "name": "Ph.D Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/mphil-phd-government-jobs/"
+    },
+    {
+      "name": "Internships For Students",
+      "url": "https://www.freshersnow.com/internship-jobs/"
+    },
+    {
+      "name": "Engineering Jobs by State",
+      "url": "https://www.freejobalert.com/engineering-jobs/"
+    },
+    {
+      "name": "Engineering Jobs by Company",
+      "url": "https://www.freshersnow.com/engineering-govt-jobs/"
+    },
+    {
+      "name": "🔰 More Jobs By education",
+      "url": "https://www.freejobalert.com/search-jobs/jobs-by-education/"
+    },
+    {
+      "title": "⭐ Popular Jobs Categories",
+      "color": "#dc7ec7"
     },
     {
       "name": "Railway Jobs",
@@ -179,9 +279,11 @@
       "name": "🔰 More Jobs by Designation",
       "url": "https://www.freshersnow.com/jobs-by-designation/"
     },
+  ],
+  "left_jobs": [
     {
-      "title": "📍🗺️ State Wise Jobs ",
-      "color": "#dc7ec7"
+      "title": "📍🗺️ State Wise Jobs",
+      "color": "#34d399"
     },
     {
       "name": "Haryana",
@@ -310,108 +412,6 @@
     {
       "name": "🔰 More Jobs by Location",
       "url": "https://www.freejobalert.com/search-jobs/jobs-by-location/"
-    }
-  ],
-  "left_jobs": [
-    {
-      "title": "🎓 Study wise Jobs",
-      "color": "#34d399"
-    },
-    {
-      "name": "8th Pass Jobs",
-      "url": "https://www.freejobalert.com/search-jobs/8th-pass-government-jobs/"
-    },
-    {
-      "name": "10th Pass Jobs",
-      "url": "https://www.freejobalert.com/search-jobs/10th-pass-government-jobs/"
-    },
-    {
-      "name": "12th Pass Jobs",
-      "url": "https://www.freejobalert.com/search-jobs/12th-pass-government-jobs/"
-    },
-    {
-      "name": "Diploma Jobs",
-      "url": "https://www.freejobalert.com/search-jobs/diploma-government-jobs/"
-    },
-    {
-      "name": "ITI Pass Jobs",
-      "url": "https://www.freejobalert.com/search-jobs/iti-government-jobs/"
-    },
-    {
-      "name": "Graduate Jobs",
-      "url": "https://www.freejobalert.com/search-jobs/any-graduate-government-jobs/"
-    },
-    {
-      "name": "Post Graduate Jobs",
-      "url": "https://www.freejobalert.com/search-jobs/any-post-graduate-government-jobs/"
-    },
-     {
-      "name": "B.A Jobs",
-      "url": "https://www.freejobalert.com/search-jobs/bcom-government-jobs/"
-    },
-    {
-      "name": "B.Com Jobs",
-      "url": "https://www.freejobalert.com/search-jobs/bcom-government-jobs/"
-    },
-    {
-      "name": "BSC Jobs",
-      "url": "https://www.freejobalert.com/search-jobs/bsc-government-jobs/"
-    },
-    {
-      "name": "B.Tech/B.E Jobs",
-      "url": "https://www.freejobalert.com/search-jobs/btech-be-government-jobs/"
-    },
-    {
-      "name": "MA Jobs",
-      "url": "https://www.freejobalert.com/search-jobs/ma-government-jobs/"
-    },
-    {
-      "name": "M.COM Jobs",
-      "url": "https://www.freejobalert.com/search-jobs/mcom-government-jobs/"
-    },
-    {
-      "name": "MSC Jobs",
-      "url": "https://www.freejobalert.com/search-jobs/msc-government-jobs/"
-    },
-    {
-      "name": "MBA Jobs",
-      "url": "https://www.freejobalert.com/search-jobs/mba-pgdm-government-jobs/"
-    },
-    {
-      "name": "M.Tech jobs",
-      "url": "https://www.freshersnow.com/m-tech-jobs/"
-    },
-    {
-      "name": "GNM/Nursing Jobs",
-      "url": "https://www.freejobalert.com/search-jobs/gnm-government-jobs/"
-    },
-    {
-      "name": "MBBS Jobs",
-      "url": "https://www.freejobalert.com/search-jobs/mbbs-government-jobs/"
-    },
-    {
-      "name": "MD/MS Govt Jobs",
-      "url": "https://www.freshersnow.com/md-govt-jobs/"
-    },
-    {
-      "name": "Ph.D Jobs",
-      "url": "https://www.freejobalert.com/search-jobs/mphil-phd-government-jobs/"
-    },
-    {
-      "name": "Internships For Students",
-      "url": "https://www.freshersnow.com/internship-jobs/"
-    },
-    {
-      "name": "Engineering Jobs by State",
-      "url": "https://www.freejobalert.com/engineering-jobs/"
-    },
-    {
-      "name": "Engineering Jobs by Company",
-      "url": "https://www.freshersnow.com/engineering-govt-jobs/"
-    },
-    {
-      "name": "🔰 More Jobs By education",
-      "url": "https://www.freejobalert.com/search-jobs/jobs-by-education/"
     },
     {
       "title": "📢 Admit card-Result-Answer Key-Syllabus",
@@ -434,7 +434,8 @@
      {
       "name": "Previous-papers",
       "url": "https://www.freejobalert.com/previous-papers/"
-    },{
+    },
+    {
       "name": "Exam-calendar",
       "url": "https://haryanajobs.in/govt-jobs-exam-date/"
     },
