@@ -114,6 +114,11 @@
   ],
   "pdf": [
     {
+      "name": "PDF Brightness Increase",
+      "url": "https://konfuzio.com/tools/adjust-contrast",
+      "icon": "fas fa-image"
+    },
+    {
       "name": "PDF to JPG",
       "url": "https://pdf.pi7.org/pdf-to-jpg",
       "icon": "fas fa-image"
