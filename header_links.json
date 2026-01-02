@@ -98,6 +98,11 @@
       "url": "https://myaadhaar.uidai.gov.in/check-aadhaar-validity",
       "color": "bg-teal-400",
       "external": true
+    },
+    {
+          "name": "Solar Self Declaration PDF Form",
+          "url": "https://drive.google.com/file/d/1zxS1b5VyitxqTZ2Ubvx6VgTHwA29GE4R/view",
+          "external": true
     }
   ],
   "social_links": [
