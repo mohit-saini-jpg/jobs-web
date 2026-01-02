@@ -31,6 +31,12 @@
       "external": true
     },
     {
+      "name": "हरियाणा सोलर वाटर पंपिंग योजना सूची जारी",
+      "url": "https://drive.google.com/file/d/1zxS1b5VyitxqTZ2Ubvx6VgTHwA29GE4R/view",
+      "color": "bg-red-400",
+      "external": true
+    }
+    {
       "name": "Admission",
       "url": "https://sarkariresult.com.cm/admission/",
       "color": "bg-teal-400",
@@ -97,12 +103,6 @@
       "name": "आपके आधार कार्ड से कौन सा मोबाइल नंबर लिंक है",
       "url": "https://myaadhaar.uidai.gov.in/check-aadhaar-validity",
       "color": "bg-teal-400",
-      "external": true
-    },
-    {
-      "name": "हरियाणा सोलर वाटर पंपिंग योजना सूची जारी",
-      "url": "https://drive.google.com/file/d/1zxS1b5VyitxqTZ2Ubvx6VgTHwA29GE4R/view",
-      "color": "bg-red-400",
       "external": true
     }
   ],
