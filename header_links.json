@@ -51,7 +51,8 @@
     {
       "name": "नौकरियां जिनकी अंतिम तिथि नजदीक है।",
       "url": "https://www.topsarkarijobs.com/view.html?section=Jobs%20with%20Last%20date",
-      "color": "bg-teal-400"
+      "color": "bg-teal-400",
+      "external": true
     },
     {
       "name": "Female jobs all India",
