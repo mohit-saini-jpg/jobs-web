@@ -1906,6 +1906,11 @@
       "color": "#6527F5",
       "items": [
         {
+          "name": "हरियाणा रोडवेज की सभी बसों की Live Time Table देखें",
+          "url": "https://mis.hrtransport.org/timetable",
+          "external": true
+        },
+        {
           "name": "Ayushman Card Download",
           "url": "https://beneficiary.nha.gov.in/",
           "external": true
