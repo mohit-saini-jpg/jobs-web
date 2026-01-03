@@ -65,7 +65,7 @@
                         Helpdesk & Support
                     </h1>
                     <nav>
-                        <a href="index.html" class="text-white hover:underline flex items-center">
+                        <a href="#" onclick="goBack()" class="text-white hover:underline flex items-center">
                             <i class="fas fa-arrow-left mr-2"></i>Go back
                         </a>
                     </nav>
@@ -253,6 +253,15 @@
 
             clearBtn.addEventListener('click', () => form.reset());
         })();
+
+        // Function to handle back button
+        function goBack() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
     </script>
 </body>
 

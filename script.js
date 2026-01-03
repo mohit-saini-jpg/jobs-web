@@ -490,6 +490,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     viewMoreBtn.style.color = "#ffffff";
  
     if (section.viewMoreType === "external" && section.viewMoreUrl) {
+      viewMoreBtn.href = section.viewMoreUrl;
+      viewMoreBtn.target = "_blank";
+    } else if (section.viewMoreType === "internal" && section.viewMoreUrl) {
       viewMoreBtn.href = `view.html?url=${encodeURIComponent(section.viewMoreUrl)}&name=${encodeURIComponent(section.title)}`;
     } else {
       viewMoreBtn.href = `view.html?section=${section.id}`;
@@ -1080,4 +1083,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     });
   }
+
+  // Function to handle back button
+  window.goBack = function() {
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      window.location.href = 'index.html';
+    }
+  };
 });

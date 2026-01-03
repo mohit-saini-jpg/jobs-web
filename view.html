@@ -64,7 +64,7 @@
                     </h1>
 
                     <nav>
-                        <a href="index.html" class="text-white hover:underline flex items-center">
+                        <a href="#" onclick="goBack()" class="text-white hover:underline flex items-center">
                             <i class="fas fa-arrow-left mr-2"></i>Go back
                         </a>
                     </nav>
@@ -162,8 +162,11 @@
                             
                             itemDiv.addEventListener('click', () => {
                                 if (item.url) {
-                                    // Sab links apni website mein hi khulenge
-                                    window.location.href = `view.html?url=${encodeURIComponent(item.url)}&name=${encodeURIComponent(item.name)}`;
+                                    if (item.external) {
+                                        window.open(item.url, '_blank');
+                                    } else {
+                                        window.location.href = `view.html?url=${encodeURIComponent(item.url)}&name=${encodeURIComponent(item.name)}`;
+                                    }
                                 }
                             });
                             
@@ -252,6 +255,15 @@
                 '#06b6d4': 'cyan', '#22d3ee': 'cyan', '#0891b2': 'cyan',
             };
             return colorMap[hex?.toLowerCase()] || 'blue';
+        }
+
+        // Function to handle back button
+        function goBack() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = 'index.html';
+            }
         }
     </script>
 </body>
