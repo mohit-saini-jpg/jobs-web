@@ -109,10 +109,6 @@
       "url": "https://www.freejobalert.com/railway-jobs/"
     },
     {
-      "name": "SSC Jobs",
-      "url": "https://www.indgovtjobs.in/2013/10/ssc-recruitment-jobs.html"
-    },
-    {
       "name": "Police Job",
       "url": "https://www.freejobalert.com/police-defence-jobs/"
     },
@@ -123,6 +119,39 @@
     {
       "name": "Bank Jobs",
       "url": "https://www.freejobalert.com/bank-jobs/"
+    },
+    {
+      "name": "Anganwadi Jobs",
+      "url": "https://www.freejobalert.com/anganwadi-recruitment/"
+    },
+    {
+      "name": "SSC Jobs",
+      "url": "https://www.indgovtjobs.in/2013/10/ssc-recruitment-jobs.html"
+    },
+    {
+      "name": "DC rate HR Jobs",
+      "url": "https://www.haryanadcratejob.com/"
+    },
+    {
+      "name": "EXserviceman Jobs",
+      "url": "https://www.freejobalert.com/ex-serviceman-jobs/"
+    },
+    {
+      "name": "Sports Quota Jobs",
+      "url": "https://www.freejobalert.com/sports-quota-jobs/"
+    },
+    {
+      "name": "Medical Jobs",
+      "url": "https://www.freshersnow.com/mbbs-govt-jobs/"
+    },
+    {
+      "name": "Private Jos",
+      "url": "https://www.placementstore.com/private-job/",
+      "external": true
+    },
+    {
+      "name": "No Exam Jobs",
+      "url": "https://www.indgovtjobs.in/2024/11/No-Exam-Government-Jobs.html"
     },
     {
       "name": "Army Jobs",
@@ -162,20 +191,12 @@
       "url": "https://sabhinaukri.com/post-wise/driver/"
     },
     {
-      "name": "Anganwadi Jobs",
-      "url": "https://www.freejobalert.com/anganwadi-recruitment/"
-    },
-    {
       "name": "Forest Jobs",
       "url": "https://sabhinaukri.com/forest/"
     },
     {
       "name": "Typist Jobs",
       "url": "https://sabhinaukri.com/post-wise/typist/"
-    },
-    {
-      "name": "DC rate HR Jobs",
-      "url": "https://www.haryanadcratejob.com/"
     },
     {
       "name": "Post Office Jobs",
@@ -200,11 +221,7 @@
     {
       "name": "IT Jobs",
       "url": "https://www.freshersnow.com/it-jobs/"
-    },
-    {
-      "name": "Medical Jobs",
-      "url": "https://www.freshersnow.com/mbbs-govt-jobs/"
-    },
+    }
     {
       "name": "Agriculture Jobs",
       "url": "https://www.mysarkarinaukri.com/find/agriculture-jobs"
@@ -216,15 +233,6 @@
     {
       "name": "University Jobs",
       "url": "https://www.placementstore.com/university-jobs/",
-      "external": true
-    },
-    {
-      "name": "No Exam Jobs",
-      "url": "https://www.indgovtjobs.in/2024/11/No-Exam-Government-Jobs.html"
-    },
-    {
-      "name": "Private Jos",
-      "url": "https://www.placementstore.com/private-job/",
       "external": true
     },
     {
@@ -254,14 +262,6 @@
     {
       "name": "Data Entry Operator Jobs",
       "url": "https://sabhinaukri.com/post-wise/data-entry-operator/"
-    },
-    {
-      "name": "EXserviceman Jobs",
-      "url": "https://www.freejobalert.com/ex-serviceman-jobs/"
-    },
-    {
-      "name": "Sports Quota Jobs",
-      "url": "https://www.freejobalert.com/sports-quota-jobs/"
     },
     {
       "name": "SEA Samundar Jobs",
