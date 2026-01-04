@@ -22,7 +22,8 @@
       "name": "Join WhatsApp",
       "url": "https://whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T",
       "icon": "fab fa-whatsapp",
-      "color": "bg-green-600"
+      "color": "bg-green-600",
+      "external": true
     },
     {
       "name": "Latest Jobs",
