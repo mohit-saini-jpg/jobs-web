@@ -2398,6 +2398,11 @@
       "color": "#6527F5",
       "items": [
         {
+          "name": "खोया हुआ वोटर कार्ड खोजे",
+          "url": "https://electoralsearch.eci.gov.in/",
+          "external": true
+        },
+        {
           "name": "हरियाणा रोडवेज की सभी बसों की Live Time Table देखें",
           "url": "https://mis.hrtransport.org/timetable",
           "external": true
