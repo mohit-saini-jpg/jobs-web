@@ -111,6 +111,12 @@
       "url": "https://myaadhaar.uidai.gov.in/check-aadhaar-validity",
       "color": "bg-teal-400",
       "external": true
+    },
+    {
+      "name": "Part Time Govt Jobs",
+      "url": "https://www.mysarkarinaukri.com/find/part-time-jobs",
+      "color": "bg-teal-400",
+      "external": true
     }
   ],
   "social_links": [
