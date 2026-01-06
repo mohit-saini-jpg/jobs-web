@@ -37,12 +37,6 @@
       "documents": ["आधार कार्ड", "फॅमिली ID", "जमीन का कागज फर्द"]
     },
     {
-      "name": "Domicile certificate निवास प्रमाण पत्र",
-      "service": "Domicile certificate निवास प्रमाण पत्र",
-      "icon": "fas fa-home",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Birth Certificate"]
-    },
-    {
       "name": "SC Certificate (अनुसूचित जाति प्रमाण पत्र)",
       "service": "SC Certificate (अनुसूचित जाति प्रमाण पत्र)",
       "icon": "fas fa-certificate",
