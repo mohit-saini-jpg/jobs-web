@@ -134,9 +134,15 @@
     },
     {
       "name": "Instagram",
-      "url": "https://www.instagram.com/govtjobsindia",
+      "url": "https://www.instagram.com/topsarkarijobs?igsh=bTBsdjVpaTU3M2hn",
       "icon": "fab fa-instagram",
       "color": "bg-pink-500"
+    },
+    {
+      "name": "Facebook",
+      "url": "https://www.facebook.com/governmentjobs",
+      "icon": "fa-brands fa-youtube",
+      "color": "bg-red-600"
     },
     {
       "name": "Facebook",
