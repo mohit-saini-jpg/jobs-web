@@ -2757,6 +2757,11 @@
       "color": "#6527F5",
       "items": [
         {
+          "name": "पैन कार्ड ऑनलाइन स्टेटस चेक करें बना ह या नहीं",
+          "url": "https://eportal.incometax.gov.in/iec/foservices/#/pre-login/instant-e-pan/getNewEpan",
+          "external": true
+        },
+        {
           "name": "खोया हुआ वोटर कार्ड खोजे",
           "url": "https://electoralsearch.eci.gov.in/",
           "external": true
