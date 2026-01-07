@@ -2933,6 +2933,11 @@
       "color": "#6527F5",
       "items": [
         {
+          "name": " अपने आधार कार्ड पर कितने सिम हैं ऑनलाइन चेक करें",
+          "url": "https://tafcop.sancharsaathi.gov.in/telecomUser/",
+          "external": true
+        },
+        {
           "name": "पैन कार्ड ऑनलाइन स्टेटस चेक करें बना ह या नहीं",
           "url": "https://eportal.incometax.gov.in/iec/foservices/#/pre-login/instant-e-pan/getNewEpan",
           "external": true
