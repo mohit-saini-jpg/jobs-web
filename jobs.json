@@ -130,11 +130,13 @@
     },
     {
       "name": "Railway Jobs",
-      "url": "https://www.topsarkarijobs.com/view.html?section=Railway%20Jobs"
+      "url": "https://www.topsarkarijobs.com/view.html?section=Railway%20Jobs",
+      "external": true
     },
     {
       "name": "Police Job",
-      "url": "https://www.topsarkarijobs.com/view.html?section=Police%20Jobs"
+      "url": "https://www.topsarkarijobs.com/view.html?section=Police%20Jobs",
+      "external": true
     },
     {
       "name": "Teaching Jobs",
@@ -142,7 +144,8 @@
     },
     {
       "name": "Bank Jobs",
-      "url": "https://www.freejobalert.com/bank-jobs/"
+      "url": "https://www.freejobalert.com/bank-jobs/",
+      "external": true
     },
     {
       "name": "SSC Jobs",
