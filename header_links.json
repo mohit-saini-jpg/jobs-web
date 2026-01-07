@@ -19,13 +19,6 @@
   ],
   "home_links": [
     {
-      "name": "Join WhatsApp Now",
-      "url": "https://whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T",
-      "icon": "fab fa-whatsapp",
-      "color": "bg-green-600",
-      "external": true
-    },
-    {
       "name": "Latest Jobs",
       "url": "https://www.topsarkarijobs.com/view.html?section=latest%20jobs",      
       "color": "bg-teal-400",
@@ -128,6 +121,13 @@
       "name": "Haryana ITI Apprentice",
       "url": "https://www.apprenticeshipindia.gov.in/candidate-login",
       "color": "bg-pink-400",
+      "external": true
+    },
+    {
+      "name": "Join WhatsApp Now",
+      "url": "https://whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T",
+      "icon": "fab fa-whatsapp",
+      "color": "bg-green-600",
       "external": true
     }
   ],
