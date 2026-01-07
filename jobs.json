@@ -718,7 +718,8 @@
     },
     {
       "name": "More Tools...",
-      "url": "https://www.topsarkarijobs.com/tools.html"
+      "url": "https://www.topsarkarijobs.com/tools.html",
+     "external": true
     }
   ]
 }
