@@ -62,6 +62,12 @@
       "external": true
     },
     {
+      "name": "Offline Jobs",
+      "url": "https://www.topsarkarijobs.com/view.html?section=Offline%20jobs",
+      "color": "bg-teal-400",
+      "external": true
+    },
+    {
       "name": "नौकरियां जिनकी अंतिम तिथि नजदीक है।",
       "url": "https://www.topsarkarijobs.com/view.html?section=Jobs%20with%20Last%20date",
       "color": "bg-red-400",
@@ -71,12 +77,6 @@
       "name": "Female jobs all India",
       "url": "https://www.indgovtjobs.in/2013/12/female-govt-jobs-2014-government-jobs.html",
       "color": "bg-teal-400"
-    },
-    {
-      "name": "Offline Jobs",
-      "url": "https://www.topsarkarijobs.com/view.html?section=Offline%20jobs",
-      "color": "bg-teal-400",
-      "external": true
     },
     {
       "name": "Foreign jobs",
