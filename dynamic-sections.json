@@ -2717,6 +2717,11 @@
       "color": "#913030",
       "items": [
         {
+          "name": "किसान आईडी (Farmer I'd) कृषि प्रणाली से जुड़ी एक डिजिटल पहचानी",
+          "url": "https://hrfr.agristack.gov.in/farmer-registry-hr/#/FarmerSignupEkyc",
+          "external": true
+        },
+        {
           "name": "हरियाणा  मेरी फसल मेरा ब्यौरा पंजीकरण का पंजीकरण  Last Date : 31/01/2026",
           "url": "https://fasal.haryana.gov.in/home/login",
           "external": true
@@ -2737,10 +2742,6 @@
         {
           "name": "Haryana Tractor Subsidy Yojana 2026 ट्रैक्टर पर 3 लाख सब्सिडी",
           "url": "https://sarkariresultshine.com/haryana-tractor-subsidy-yojana-2026/"
-        },
-        {
-          "name": "Farmer ID कृषि प्रणाली से जुड़ी एक डिजिटल पहचानी",
-          "url": "https://www.sarkariresultcm.in/farmer-id/"
         },
         {
           "name": "Pradhan Mantri Kisan Samman Nidhi Online",
