@@ -146,15 +146,15 @@
     },
     {
       "name": "Youtube",
-      "url": "https://www.youtube.com/@Topsarkarijobs",
+      "url": "https://www.youtube.com/@Topsarkarijobs/shorts",
       "icon": "fa-brands fa-youtube",
       "color": "bg-red-600"
     },
     {
-      "name": "Facebook",
-      "url": "https://www.facebook.com/governmentjobs",
-      "icon": "fab fa-facebook-f",
-      "color": "bg-blue-600"
+      "name": "Snapchat",
+      "url": "https://www.snapchat.com/add/topsarkarijobs?share_id=4P4_sEzLRo8&locale=en-IN",
+      "icon": "fa-brands fa-snapchat",
+      "color": "bg-yellow-600"
     }
   ]
 }
