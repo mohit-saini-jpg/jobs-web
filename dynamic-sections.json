@@ -3295,6 +3295,134 @@
           "external": true
         }
       ]
+    },
+    {
+      "id": "TOP Headlines Today",
+      "title": "TOP Headlines Today",
+      "icon": "fas fa-trophy",
+      "color": "#FF4000",
+      "items": [
+        {
+          "name": " Latest Jobs",
+          "url": "https://www.topsarkarijobs.com/view.html?section=latest%20jobs",
+          "external": true
+        },
+        {
+          "name": "Upcoming Jobs",
+          "url": "https://www.topsarkarijobs.com/view.html?section=upcoming-jobs",
+          "external": true
+        },
+        {
+          "name": "Upcoming Jobs",
+          "url": "https://www.topsarkarijobs.com/view.html?section=upcoming-jobs",
+          "external": true
+        },
+        {
+          "name": "नौकरियां जिनकी अंतिम तिथि नजदीक है।",
+          "url": "https://www.topsarkarijobs.com/view.html?section=Jobs%20with%20Last%20date",
+          "external": true
+        },
+        {
+          "name": "10th Pass jobs",
+          "url": "https://www.topsarkarijobs.com/view.html?section=10th%20Pass%20jobs",
+          "external": true
+        },
+        {
+          "name": "12th Pass Jobs",
+          "url": "https://www.topsarkarijobs.com/view.html?section=12th%20Pass%20Jobs",
+          "external": true
+        },
+        {
+          "name": "ITI/Diploma jobs",
+          "url": "https://www.topsarkarijobs.com/view.html?section=ITI/Diploma%20jobs",
+          "external": true
+        },
+        {
+          "name": "Graduation jobs",
+          "url": "https://www.topsarkarijobs.com/view.html?section=Graduation%20jobs",
+          "external": true
+        },
+        {
+          "name": "Post Graduation jobs",
+          "url": "https://www.topsarkarijobs.com/view.html?section=Post%20Graduation%20jobs",
+          "external": true
+        },
+        {
+          "name": "Medical/Healthcare Jobs",
+          "url": "https://www.topsarkarijobs.com/view.html?section=Medical/%20Healthcare%20Jobs",
+          "external": true
+        },
+        {
+          "name": "B.tech M.tech jobs",
+          "url": "https://www.topsarkarijobs.com/view.html?section=B.tech%20M.tech%20jobs",
+          "external": true
+        },
+        {
+          "name": "Offline jobs",
+          "url": "https://www.topsarkarijobs.com/view.html?section=Offline%20jobs",
+          "external": true
+        },
+        {
+          "name": "Railway Jobs",
+          "url": "https://www.topsarkarijobs.com/view.html?section=Railway%20Jobs",
+          "external": true
+        },
+        {
+          "name": "Police Jobs",
+          "url": "https://www.topsarkarijobs.com/view.html?section=Police%20Jobs",
+          "external": true
+        },
+        {
+          "name": "Bank jobs",
+          "url": "https://www.topsarkarijobs.com/view.html?section=Bank%20jobs",
+          "external": true
+        },
+        {
+          "name": "ARMY Navy Air Force jobs",
+          "url": "https://www.topsarkarijobs.com/view.html?section=ARMY%20Navy%20Air%20Force%20jobs",
+          "external": true
+        },
+        {
+          "name": "Govt Scheme & Yojna",
+          "url": "https://www.topsarkarijobs.com/view.html?section=Govt%20Scheme%20Yojna",
+          "external": true
+        },
+        {
+          "name": "State jobs",
+          "url": "https://www.topsarkarijobs.com/view.html?section=State%20jobs",
+          "external": true
+        },
+        {
+          "name": "Central jobs",
+          "url": "https://www.topsarkarijobs.com/view.html?section=Central%20jobs",
+          "external": true
+        },
+        {
+          "name": "Admit cards & Exams Date",
+          "url": "https://www.topsarkarijobs.com/view.html?section=Latest%20Admit%20cards%20Exams%20Date",
+          "external": true
+        },
+        {
+          "name": "Latest Results",
+          "url": "https://www.topsarkarijobs.com/view.html?section=results",
+          "external": true
+        },
+        {
+          "name": "Admission/Education",
+          "url": "https://www.topsarkarijobs.com/view.html?section=Admission/Education",
+          "external": true
+        },
+        {
+          "name": "ImportantCSC PDF",
+          "url": "https://www.topsarkarijobs.com/view.html?section=Important%20CSC%20PDF",
+          "external": true
+        },
+        {
+          "name": "Important CSC link",
+          "url": "https://www.topsarkarijobs.com/view.html?section=Important%20CSC%20Link",
+          "external": true
+        }
+      ]
     }
   ]
 }
