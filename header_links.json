@@ -86,14 +86,13 @@
     {
       "name": "farmer ID किसान आईडी कार्ड",
       "url": "https://hrfr.agristack.gov.in/farmer-registry-hr/#/",      
-      "color": "bg-purple-400",
+      "color": "bg-teal-400",
       "external": true
     },
     {
-      "name": "🚜 ट्रैक्टर सब्सिडी हरियाणा योजना",
+      "name": "हरियाणा पुलिस कांस्टेबल भर्तीा",
       "url": "https://sarkariresultshine.com/haryana-tractor-subsidy-yojana-2026/",      
-      "color": "bg-teal-400",
-      "external": true
+      "color": "bg-purple-400"
     },
     {
       "name": "आपका आधार पैन से लिंक है या नहीं जाने",
