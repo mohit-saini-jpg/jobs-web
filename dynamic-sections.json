@@ -3543,11 +3543,6 @@
       "color": "#00FFA4",
       "items": [
         {
-          "name": "बुढ़ापा पेंशन स्टेटस चेक कट गई या चालू है",
-          "url": "https://pension.socialjusticehry.gov.in/Ben_Inf",
-          "external": true
-        },
-        {
           "name": "final list solar form 01/2026 Haryana",
           "url": "https://drive.google.com/file/d/14UfN9I3TzSVjgUkjkDtsN4dXRB-9RPFp/view?usp=sharing",
           "external": true
@@ -3725,6 +3720,11 @@
       "icon": "fas fa-trophy",
       "color": "#6527F5",
       "items": [
+        {
+          "name": "बुढ़ापा पेंशन स्टेटस चेक कट गई या चालू है",
+          "url": "https://pension.socialjusticehry.gov.in/Ben_Inf",
+          "external": true
+        },
         {
           "name": " लाडो लक्ष्मी योजना: पैसा आया  है या नहीं आया यहाँ से चेक करें",
           "url": "https://pension.socialjusticehry.gov.in/Ben_Inf",
