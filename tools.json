@@ -248,6 +248,11 @@
       "name": "Video Merge",
       "url": "https://clideo.com/editor/",
       "icon": "fas fa-object-group"
+    },
+    {
+      "name": "Remove Audio from Video",
+      "url": "https://www.audioremover.com/",
+      "icon": "fas fa-object-group"
     }
   ]
 }
