@@ -558,7 +558,8 @@
     },
     {
       "name": "ALL Admission",
-      "url": "https://www.topsarkarijobs.com/view.html?section=Admission/Education"
+      "url": "https://www.topsarkarijobs.com/view.html?section=Admission/Education",
+      "external": true
     },
     {
       "name": "10-12th Admission",
