@@ -10,13 +10,13 @@
       "name": "BC-A OR BC-B Certificate",
       "service": "BC-A OR BC-B Certificate",
       "icon": "fas fa-id-card",
-      "documents": ["Family ID", "FAMILY ID वाले नो पर OTP", "अगर माता पिता का देहांत हो गया है तो Death certificate", "केवल 8 लाख से कम इनकम वाले"]
+      "documents": ["Family ID", "FAMILY ID वाले नो पर OTP", "अगर माता पिता का देहांत हो गया है तो Death certificate"]
     },
     {
       "name": "OBC Certificate (अन्य पिछड़ा वर्ग प्रमाण पत्र)",
       "service": "OBC Certificate (अन्य पिछड़ा वर्ग प्रमाण पत्र)",
       "icon": "fas fa-certificate",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Caste Certificate"]
+      "documents": ["Family ID", "FAMILY ID वाले नो पर OTP", "अगर माता पिता का देहांत हो गया है तो Death certificate"]
     },
     {
       "name": "SC Certificate (अनुसूचित जाति प्रमाण पत्र)",
