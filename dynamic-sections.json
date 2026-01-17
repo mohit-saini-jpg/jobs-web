@@ -4075,6 +4075,11 @@
       "color": "#6527F5",
       "items": [
         {
+          "name": "आपका राशन कार्ड चालू ह या नही चेक करे न्यू राशन कार्ड डाउनलोड करे",
+          "url": "https://epds.haryanafood.gov.in/search-rc",
+          "external": true
+        },
+        {
           "name": "बुढ़ापा पेंशन स्टेटस चेक कट गई या चालू है",
           "url": "https://pension.socialjusticehry.gov.in/Ben_Inf",
           "external": true
