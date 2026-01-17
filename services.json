@@ -1,6 +1,12 @@
 {
   "services": [
     {
+      "name": "EWS Certificate",
+      "service": "EWS Certificateड",
+      "icon": "fas fa-id-card",
+      "documents": ["Family ID", "FAMILY ID वाले नो पर OTP", "अगर माता पिता का देहांत हो गया है तो Death certificate", "केवल 8 लाख से कम इनकम वाले"]
+    },
+    {
       "name": "नया पैन कार्ड",
       "service": "नया पैन कार्ड",
       "icon": "fas fa-id-card",
