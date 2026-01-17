@@ -7,6 +7,36 @@
       "documents": ["Family ID", "FAMILY ID वाले नो पर OTP", "अगर माता पिता का देहांत हो गया है तो Death certificate", "केवल 8 लाख से कम इनकम वाले"]
     },
     {
+      "name": "BC-A OR BC-B Certificate",
+      "service": "BC-A OR BC-B Certificate",
+      "icon": "fas fa-id-card",
+      "documents": ["Family ID", "FAMILY ID वाले नो पर OTP", "अगर माता पिता का देहांत हो गया है तो Death certificate", "केवल 8 लाख से कम इनकम वाले"]
+    },
+    {
+      "name": "OBC Certificate (अन्य पिछड़ा वर्ग प्रमाण पत्र)",
+      "service": "OBC Certificate (अन्य पिछड़ा वर्ग प्रमाण पत्र)",
+      "icon": "fas fa-certificate",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Caste Certificate"]
+    },
+    {
+      "name": "SC Certificate (अनुसूचित जाति प्रमाण पत्र)",
+      "service": "SC Certificate (अनुसूचित जाति प्रमाण पत्र)",
+      "icon": "fas fa-certificate",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Caste Certificate"]
+    },
+    {
+      "name": "ST Certificate (अनुसूचित जनजाति प्रमाण पत्र)",
+      "service": "ST Certificate (अनुसूचित जनजाति प्रमाण पत्र)",
+      "icon": "fas fa-certificate",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Caste Certificate"]
+    },
+    {
+      "name": "Income Certificate (आय प्रमाण पत्र)",
+      "service": "Income Certificate (आय प्रमाण पत्र)",
+      "icon": "fas fa-money-bill",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Income Proof"]
+    },
+    {
       "name": "नया पैन कार्ड",
       "service": "नया पैन कार्ड",
       "icon": "fas fa-id-card",
@@ -41,30 +71,6 @@
       "service": "Farmer ID किसान ID",
       "icon": "fas fa-redo",
       "documents": ["आधार कार्ड", "फॅमिली ID", "जमीन का कागज फर्द"]
-    },
-    {
-      "name": "SC Certificate (अनुसूचित जाति प्रमाण पत्र)",
-      "service": "SC Certificate (अनुसूचित जाति प्रमाण पत्र)",
-      "icon": "fas fa-certificate",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Caste Certificate"]
-    },
-    {
-      "name": "ST Certificate (अनुसूचित जनजाति प्रमाण पत्र)",
-      "service": "ST Certificate (अनुसूचित जनजाति प्रमाण पत्र)",
-      "icon": "fas fa-certificate",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Caste Certificate"]
-    },
-    {
-      "name": "OBC Certificate (अन्य पिछड़ा वर्ग प्रमाण पत्र)",
-      "service": "OBC Certificate (अन्य पिछड़ा वर्ग प्रमाण पत्र)",
-      "icon": "fas fa-certificate",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Caste Certificate"]
-    },
-    {
-      "name": "Income Certificate (आय प्रमाण पत्र)",
-      "service": "Income Certificate (आय प्रमाण पत्र)",
-      "icon": "fas fa-money-bill",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Income Proof"]
     },
     {
       "name": "जन्म प्रमाण पत्र अप्लाई",
@@ -151,7 +157,7 @@
       "documents": ["Photo", "ID Proof", "Address Proof", "Mark Sheets"]
     },
     {
-      "name": "हर घर गृहिणी योजना",
+      "name": "हर घर गृहिणी योजना 500 में Cylinder",
       "service": "हर घर गृहिणी योजना",
       "icon": "fas fa-home",
       "documents": ["Photo", "ID Proof", "Address Proof", "Income Proof"]
