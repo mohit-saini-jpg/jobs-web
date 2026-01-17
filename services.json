@@ -1,13 +1,13 @@
 {
   "services": [
     {
-      "name": "EWS Certificate",
-      "service": "EWS Certificateड",
+      "name": "EWS Certificate (आर्थिक रूप से कमजोर वर्ग ईडब्ल्यूएस प्रमाणपत्र)",
+      "service": "EWS Certificate",
       "icon": "fas fa-id-card",
       "documents": ["Family ID", "FAMILY ID वाले नो पर OTP", "अगर माता पिता का देहांत हो गया है तो Death certificate", "केवल 8 लाख से कम इनकम वाले"]
     },
     {
-      "name": "BC-A OR BC-B Certificate",
+      "name": "BC-A OR BC-B Certificate (पिछड़ा वर्ग प्रमाणपत्र)",
       "service": "BC-A OR BC-B Certificate",
       "icon": "fas fa-id-card",
       "documents": ["Family ID", "FAMILY ID वाले नो पर OTP", "अगर माता पिता का देहांत हो गया है तो Death certificate"]
