@@ -3459,87 +3459,259 @@
       ]
     },
     {
+      "id": "Teacher Jobs",
+      "title": "Teacher Jobs",
+      "icon": "fas fa-trophy",
+      "color": "#7DE8DA",
+      "items": [
+        {
+    "name": "डीआरडीओ सेप्टम सीनियर टेक्निकल असिस्टेंट-बी, तकनीशियन-ए",
+    "url": "https://www.indgovtjobs.in/2016/01/DRDO-CEPTAM-Recruitment.html"
+  },
+  {
+    "name": "सीमा सुरक्षा बल (BSF) कांस्टेबल जीडी स्पोर्ट्स कोटा",
+    "url": "https://www.indgovtjobs.in/2019/01/BSF-Sports-Quota-Recruitment.html"
+  },
+  {
+    "name": "भारतीय नौसेना 10+2 बी.टेक एंट्री कार्यकारी और तकनीकी",
+    "url": "https://www.indgovtjobs.in/2019/05/Indian-Navy-10-2-Btech-Entry.html"
+  },
+  {
+    "name": "एयरोनॉटिकल डेवलपमेंट एजेंसी (ADA) प्रोजेक्ट साइंटिस्ट",
+    "url": "https://www.indgovtjobs.in/2026/01/ada-project-scientist-recruitment-2026.html"
+  },
+  {
+    "name": "भारतीय तटरक्षक बल स्टोर फोरमैन",
+    "url": "https://www.indgovtjobs.in/2025/12/indian-coast-guard-foreman-of-stores.html"
+  },
+  {
+    "name": "भारतीय तटरक्षक बल ग्रुप सी पद",
+    "url": "https://www.indgovtjobs.in/2025/12/indian-coast-guard-group-c-recruitment.html"
+  },
+  {
+    "name": "बीएआरसी (BARC) वैज्ञानिक अधिकारी भर्ती 2026",
+    "url": "https://www.indgovtjobs.in/2025/12/BARC-OCES-DGFS-2026.html"
+  },
+  {
+    "name": "एयरोनॉटिकल डेवलपमेंट एजेंसी (ADA) मैनपावर पद",
+    "url": "https://www.indgovtjobs.in/2026/01/ada-manpower-recruitment-2026-apply"
+  },
+  {
+    "name": "डीआरडीओ डीआईपीआर अनुसंधान पद",
+    "url": "https://www.indgovtjobs.in/2026/01/dipr-recruitment-2026-apply-for-jrf-ra.html"
+  },
+  {
+    "name": "भारतीय सेना एसएससी टेक पुरुष - 350 पद",
+    "url": "https://www.indgovtjobs.in/2015/01/indian-army-ssc-tech-recruitment-2015.html"
+  },
+  {
+    "name": "भारतीय सेना एसएससी टेक महिला - 31 पद",
+    "url": "https://www.indgovtjobs.in/2026/01/indian-army-ssc-tech-women-recruitment.html"
+  },
+  {
+    "name": "असम राइफल्स राइफलमैन / महिला स्पोर्ट्स कोटा",
+    "url": "https://www.indgovtjobs.in/2018/12/Assam-Rifles-Recruitment.html"
+  },
+  {
+    "name": "ओड़िशा एसएससी सीजीएल ग्रुप बी और सी ऑनलाइन फॉर्म 2026",
+    "url": "https://www.freejobalert.com/articles/ossc-cgl-recruitment-2026-apply-online-for-1576-group-b-group-c-posts-3032784"
+  },
+  {
+    "name": "EdCIL जिला करियर और मानसिक स्वास्थ्य परामर्शदाता ऑनलाइन फॉर्म 2026",
+    "url": "https://www.freejobalert.com/articles/edcil-district-career-and-mental-health-counsellors-recruitment-2026-apply-online-for-424-posts-3034196"
+  },
+  {
+    "name": "सौराष्ट्र विश्वविद्यालय गैर-शिक्षण पद ऑनलाइन फॉर्म 2026",
+    "url": "https://www.freejobalert.com/articles/saurashtra-university-non-teaching-recruitment-2026-apply-online-for-41-posts-3033686"
+  },
+  {
+    "name": "एनएफएसयू (NFSU) उप रजिस्ट्रार, सहायक अभियंता और अन्य पद 2026",
+    "url": "https://www.freejobalert.com/articles/nfsu-deputy-registrar-assistant-engineer-and-more-recruitment-2026-apply-online-for-31-posts-3033186"
+  },
+  {
+    "name": "सीएसआईआर एनजीआरआई प्रोजेक्ट असिस्टेंट और एसोसिएट ऑनलाइन फॉर्म 2026",
+    "url": "https://www.freejobalert.com/articles/csir-ngri-recruitment-2026-apply-online-for-14-project-assistant-project-associate-and-more-posts-3035049"
+  },
+  {
+    "name": "जीएसएसएसबी (GSSSB) जूनियर फार्मासिस्ट ऑनलाइन फॉर्म 2026",
+    "url": "https://www.freejobalert.com/articles/gsssb-junior-pharmacist-recruitment-2025-apply-online-for-209-posts-3032852"
+  },
+  {
+    "name": "पुणे पीपल्स को-ऑपरेटिव बैंक क्लर्क ऑनलाइन फॉर्म 2026",
+    "url": "https://www.freejobalert.com/articles/kokan-bank-clerk-recruitment-2026-apply-online-for-80-posts-3034146"
+  },
+  {
+    "name": "डब्ल्यूबीएमएससी (WBMSC) विभिन्न पद ऑनलाइन फॉर्म 2025-26",
+    "url": "https://www.freejobalert.com/articles/wbmsc-recruitment-2025-apply-online-for-13-ldc-accounts-clerk-and-other-posts-3033392"
+  },
+  {
+    "name": "एचपीएससी (HPSC) पशु चिकित्सा सर्जन भर्ती 2026",
+    "url": "https://www.mysarkarinaukri.com/find/haryana-public-service-commission-jobs/151741"
+  },
+  {
+    "name": "एचएसएससी (HSSC) ग्रुप सी मुख्य परीक्षा भर्ती 2026",
+    "url": "https://www.mysarkarinaukri.com/find/haryana-staff-selection-commission-jobs/151363"
+  },
+  {
+    "name": "हरियाणा पुलिस कांस्टेबल भर्ती 2026",
+    "url": "https://www.mysarkarinaukri.com/find/haryana-staff-selection-commission-jobs/150727"
+  },
+  {
+    "name": "सैनिक स्कूल चित्तौड़गढ़ भर्ती 2026",
+    "url": "https://www.mysarkarinaukri.com/find/sainik-school-chittorgarh-jobs/151833"
+  },
+  {
+    "name": "सैनिक स्कूल सतारा भर्ती 2026",
+    "url": "https://www.mysarkarinaukri.com/find/sainik-school-satara-jobs/151805"
+  },
+  {
+    "name": "टाटा मेमोरियल सेंटर (TMC) पंजाब भर्ती 2026",
+    "url": "https://www.mysarkarinaukri.com/find/tata-memorial-centre-jobs/151799"
+  },
+  {
+    "name": "जेकेपीएससी (JKPSC) प्रोफेसर भर्ती 2026",
+    "url": "https://www.mysarkarinaukri.com/find/jammu-and-kashmir-public-service-commission-jobs/151007"
+  },
+  {
+    "name": "झारखंड होम गार्ड कॉर्प्स गढ़वा भर्ती 2026",
+    "url": "https://www.mysarkarinaukri.com/find/jharkhand-police-jobs/150963"
+  },
+  {
+    "name": "एनआईटीटीटीआर (NITTTR) चेन्नई भर्ती 2026",
+    "url": "https://www.mysarkarinaukri.com/find/national-institute-technical-teachers-training-and-research-chennai-jobs/150802"
+  },
+  {
+    "name": "आईएसएलआरटीसी (ISLRTC) भर्ती 2026",
+    "url": "https://www.mysarkarinaukri.com/find/islrtc-jobs/150789"
+  }
+      ]
+    },
+    {
       "id": "Police Jobs",
       "title": "Police Jobs",
       "icon": "fas fa-trophy",
       "color": "#DBA13D",
       "items": [
         {
-          "name": "Haryana Police Constable  for 5500 Posts 25-01-2026",
-          "url": "https://www.freejobalert.com/articles/haryana-police-constable-recruitment-2026-apply-online-for-5500-posts-3033959"
-        },
-        {
-          "name": "DRDO HEMRL Paid Internship Recruitment 2026 20-01-2026",
-          "url": "https://www.freejobalert.com/articles/drdo-hemrl-paid-internship-recruitment-2026-apply-offline-for-40-posts-3034597"
-        },
-        {
-          "name": "Gujarat Police SI Technical Operator Recruitment 2026  29-01-2026",
-          "url": "https://www.freejobalert.com/articles/gujarat-police-si-technical-operator-recruitment-2026-apply-online-for-950-psi-constable-driver-posts-3034593"
-        },
-        {
-          "name": "Assam Police Constable Recruitment 2026 - Apply Online for 1715  16-01-2026",
-          "url": "https://www.freejobalert.com/articles/assam-police-constable-recruitment-2025-apply-online-for-1715-posts-3032192"
-        },
-        {
-          "name": "Assam Rifles Recruitment for 95 sports quota posts 09-02-2026",
-          "url": "https://www.freejobalert.com/articles/assam-rifles-sports-quota-recruitment-2026-apply-online-for-95-posts-3034498"
-        },
-        {
-          "name": "ECHS Gaya Recruitment 2026 - Apply Offline for 68 Driver, Clerk and Other Posts 05-02-2026",
-          "url": "https://www.freejobalert.com/articles/echs-gaya-recruitment-2026-apply-offline-for-68-driver-clerk-and-other-posts-3034456"
-        },
-        {
-          "name": "JKSSB Constable 669 Posts 02-03-2026",
-          "url": "https://www.freejobalert.com/articles/jk-police-constable-recruitment-2026-apply-online-for-669-posts-3033977"
-        },
-        {
-          "name": "UPPRPB Constable, Jail Warder– 32,679 L-D-30-01-2026",
-          "url": "https://www.freejobalert.com/articles/up-police-constable-recruitment-2026-apply-online-for-32-679-posts-3033971"
-        },
-        {
-          "name": "HSSC Constable – 5500 Posts 25-01-2026",
-          "url": "https://www.freejobalert.com/articles/haryana-police-constable-recruitment-2026-apply-online-for-5500-posts-3033959"
-        },
-        {
-          "name": "Ordnance Factory Khamaria Hired Medical Practitioner– 01 Posts 12-01-2026",
-          "url": "https://www.freejobalert.com/articles/ordnance-factory-khamaria-hired-medical-practitioner-recruitment-2026-walk-in-for-01-posts-3033736"
-        },
-        {
-          "name": "Jharkhand Home Guard Corps Garhwa Home Guard – 810 Posts 24-01-2026",
-          "url": "https://www.freejobalert.com/articles/jharkhand-home-guard-corps-garhwa-home-guard-recruitment-2026-apply-online-for-810-posts-3033693"
-        },
-        {
-          "name": "Jharkhand Home Defense Corps Godda Home Guard – 446 Posts 30-01-2026",
-          "url": "https://www.freejobalert.com/articles/jharkhand-home-defense-corps-godda-home-guard-recruitment-2026-apply-online-for-446-posts-3033688"
-        },
-        {
-          "name": "JKSSB Constable – 1815 Posts 17-02-2026",
-          "url": "https://www.freejobalert.com/articles/jkssb-constables-executive-recruitment-2026-apply-online-for-1815-posts-3033560"
-        },
-        {
-          "name": "UP Police Sub Inspector  537 Posts 19-01-2026",
-          "url": "https://www.freejobalert.com/articles/up-police-sub-inspector-recruitment-2025-apply-online-for-537-posts-3033319"
-        },
-        {
-          "name": "UPPRPB Computer Operator Grade A  1352 Posts 15-01-2026",
-          "url": "https://www.freejobalert.com/articles/upprpb-computer-operator-grade-a-recruitment-2026-apply-offline-for-1352-posts-3032955"
-        },
-        {
-          "name": "Assam Police Constable  – 1715 Posts 16-01-2026",
-          "url": "https://www.freejobalert.com/articles/assam-police-constable-recruitment-2025-apply-online-for-1715-posts-3032192"
-        },
-        {
-          "name": "SLPRB Assam Police Constable, Driver Constable And More – 371 Posts 16-01-2026",
-          "url": "https://www.freejobalert.com/articles/assam-police-constable-driver-constable-and-more-recruitment-2026-apply-online-for-371-posts-3032780"
-        },
-        {
-          "name": "SLPRB Assam Police Sub Inspector And Constable    – 50 Posts 16-01-2026",
-          "url": "https://www.freejobalert.com/articles/assam-police-sub-inspector-and-constable-recruitment-2025-apply-online-for-50-posts-3032779"
-        },
-        {
-          "name": "SLPRB Assam Police Sub Inspector, Station Officer and More – 102 Posts  16-01-2026",
-          "url": "https://www.freejobalert.com/articles/assam-police-recruitment-2025-apply-online-for-102-sub-inspector-station-officer-and-more-posts-3032776"
-        }
+    "name": "DRDO CEPTAM Senior Technical Assistant-B, Technician-A (Last Date: 11/01/2026)",
+    "url": "https://www.indgovtjobs.in/2016/01/DRDO-CEPTAM-Recruitment.html"
+  },
+  {
+    "name": "Border Security Force Constable GD under Sports Quota (Last Date: 15/01/2026)",
+    "url": "https://www.indgovtjobs.in/2019/01/BSF-Sports-Quota-Recruitment.html"
+  },
+  {
+    "name": "Indian Navy 10+2 B.Tech Entry Executive & Technical (Last Date: 19/01/2026)",
+    "url": "https://www.indgovtjobs.in/2019/05/Indian-Navy-10-2-Btech-Entry.html"
+  },
+  {
+    "name": "Aeronautical Development Agency (ADA) Project Scientists (Last Date: 19/01/2026)",
+    "url": "https://www.indgovtjobs.in/2026/01/ada-project-scientist-recruitment-2026.html"
+  },
+  {
+    "name": "Indian Coast Guard Foreman of Stores (Last Date: 20/01/2026)",
+    "url": "https://www.indgovtjobs.in/2025/12/indian-coast-guard-foreman-of-stores.html"
+  },
+  {
+    "name": "Indian Coast Guard Group C Posts (Last Date: 20/01/2026)",
+    "url": "https://www.indgovtjobs.in/2025/12/indian-coast-guard-group-c-recruitment.html"
+  },
+  {
+    "name": "BARC OCES DGFS 2026 Scientific Officers (Last Date: 21/01/2026)",
+    "url": "https://www.indgovtjobs.in/2025/12/BARC-OCES-DGFS-2026.html"
+  },
+  {
+    "name": "Aeronautical Development Agency (ADA) Manpower Posts (Last Date: 29/01/2026)",
+    "url": "https://www.indgovtjobs.in/2026/01/ada-manpower-recruitment-2026-apply"
+  },
+  {
+    "name": "DRDO DIPR Research Posts (Last Date: 01/02/2026)",
+    "url": "https://www.indgovtjobs.in/2026/01/dipr-recruitment-2026-apply-for-jrf-ra.html"
+  },
+  {
+    "name": "Indian Army SSC Tech Men - 350 (Last Date: 05/02/2026)",
+    "url": "https://www.indgovtjobs.in/2015/01/indian-army-ssc-tech-recruitment-2015.html"
+  },
+  {
+    "name": "Indian Army SSC Tech Women - 31 (Last Date: 05/02/2026)",
+    "url": "https://www.indgovtjobs.in/2026/01/indian-army-ssc-tech-women-recruitment.html"
+  },
+  {
+    "name": "Assam Rifles Rifleman / Riflewoman under Sports Quota (Last Date: 09/02/2026)",
+    "url": "https://www.indgovtjobs.in/2018/12/Assam-Rifles-Recruitment.html"
+  },
+  {
+    "name": "OSSC CGL Group B, Group C Online Form 2026 (Last Date: N/A)",
+    "url": "https://www.freejobalert.com/articles/ossc-cgl-recruitment-2026-apply-online-for-1576-group-b-group-c-posts-3032784"
+  },
+  {
+    "name": "EdCIL District Career and Mental Health Counsellors Online Form 2026 (Last Date: N/A)",
+    "url": "https://www.freejobalert.com/articles/edcil-district-career-and-mental-health-counsellors-recruitment-2026-apply-online-for-424-posts-3034196"
+  },
+  {
+    "name": "Saurashtra University Non Teaching Online Form 2026 (Last Date: N/A)",
+    "url": "https://www.freejobalert.com/articles/saurashtra-university-non-teaching-recruitment-2026-apply-online-for-41-posts-3033686"
+  },
+  {
+    "name": "NFSU Deputy Registrar, Assistant Engineer and More Online Form 2026 (Last Date: N/A)",
+    "url": "https://www.freejobalert.com/articles/nfsu-deputy-registrar-assistant-engineer-and-more-recruitment-2026-apply-online-for-31-posts-3033186"
+  },
+  {
+    "name": "CSIR NGRI Project Assistant, Project Associate Online Form 2026 (Last Date: N/A)",
+    "url": "https://www.freejobalert.com/articles/csir-ngri-recruitment-2026-apply-online-for-14-project-assistant-project-associate-and-more-posts-3035049"
+  },
+  {
+    "name": "GSSSB Junior Pharmacist Online Form 2026 (Last Date: N/A)",
+    "url": "https://www.freejobalert.com/articles/gsssb-junior-pharmacist-recruitment-2025-apply-online-for-209-posts-3032852"
+  },
+  {
+    "name": "Pune Peoples Co-operative Bank Clerk Online Form 2026 (Last Date: N/A)",
+    "url": "https://www.freejobalert.com/articles/kokan-bank-clerk-recruitment-2026-apply-online-for-80-posts-3034146"
+  },
+  {
+    "name": "WBMSC Various Posts Online Form 2025-26 (Last Date: N/A)",
+    "url": "https://www.freejobalert.com/articles/wbmsc-recruitment-2025-apply-online-for-13-ldc-accounts-clerk-and-other-posts-3033392"
+  },
+  {
+    "name": "HPSC Veterinary Surgeon Recruitment 2026 (Last Date: N/A)",
+    "url": "https://www.mysarkarinaukri.com/find/haryana-public-service-commission-jobs/151741"
+  },
+  {
+    "name": "HSSC Group C Mains Recruitment 2026 (Last Date: N/A)",
+    "url": "https://www.mysarkarinaukri.com/find/haryana-staff-selection-commission-jobs/151363"
+  },
+  {
+    "name": "Haryana Police Constable Recruitment 2026 (Last Date: N/A)",
+    "url": "https://www.mysarkarinaukri.com/find/haryana-staff-selection-commission-jobs/150727"
+  },
+  {
+    "name": "Sainik School Chittorgarh Recruitment 2026 (Last Date: N/A)",
+    "url": "https://www.mysarkarinaukri.com/find/sainik-school-chittorgarh-jobs/151833"
+  },
+  {
+    "name": "Sainik School Satara Recruitment 2026 (Last Date: N/A)",
+    "url": "https://www.mysarkarinaukri.com/find/sainik-school-satara-jobs/151805"
+  },
+  {
+    "name": "Tata Memorial Centre (TMC) Punjab Recruitment 2026 (Last Date: N/A)",
+    "url": "https://www.mysarkarinaukri.com/find/tata-memorial-centre-jobs/151799"
+  },
+  {
+    "name": "JKPSC Professor Recruitment 2026 (Last Date: N/A)",
+    "url": "https://www.mysarkarinaukri.com/find/jammu-and-kashmir-public-service-commission-jobs/151007"
+  },
+  {
+    "name": "Jharkhand Home Guard Corps Garhwa Recruitment 2026 (Last Date: N/A)",
+    "url": "https://www.mysarkarinaukri.com/find/jharkhand-police-jobs/150963"
+  },
+  {
+    "name": "NITTTR Chennai Recruitment 2026 (Last Date: N/A)",
+    "url": "https://www.mysarkarinaukri.com/find/national-institute-technical-teachers-training-and-research-chennai-jobs/150802"
+  },
+  {
+    "name": "ISLRTC Recruitment 2026 (Last Date: N/A)",
+    "url": "https://www.mysarkarinaukri.com/find/islrtc-jobs/150789"
+  }
       ]
     },
     {
