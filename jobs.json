@@ -184,7 +184,8 @@
     },
     {
       "name": "Anganwadi Jobs",
-      "url": "https://www.freejobalert.com/anganwadi-recruitment/"
+      "url": "https://www.freejobalert.com/anganwadi-recruitment/",
+      "external": true
     },
     {
       "name": "Women Govt Jobs India",
@@ -200,7 +201,8 @@
     },
     {
       "name": "Sports Quota Jobs",
-      "url": "https://www.freejobalert.com/sports-quota-jobs/"
+      "url": "https://www.freejobalert.com/sports-quota-jobs/",
+      "external": true
     },
     {
       "name": "Medical Jobs",
@@ -273,7 +275,8 @@
     },
     {
       "name": "Technical Jobs",
-      "url": "https://www.freejobalert.com/engineering-jobs/"
+      "url": "https://www.freejobalert.com/engineering-jobs/",
+      "external": true
     },
     {
       "name": "HKRN Jobs",
@@ -351,7 +354,8 @@
     },
     {
       "name": "PWD Jobs",
-      "url": "https://www.freejobalert.com/pwd-jobs/"
+      "url": "https://www.freejobalert.com/pwd-jobs/",
+      "external": true
     },
     {
       "name": "Part Time Jobs",
