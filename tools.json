@@ -154,6 +154,11 @@
       "icon": "fas fa-object-group"
     },
     {
+      "name": "PDF 1000KB (1MB)",
+      "url": "https://pdf.pi7.org/compress-pdf-to-1mb",
+      "icon": "fas fa-object-group"
+    },
+    {
       "name": "PDF Editor",
       "url": "https://pdf.pi7.org/pdf-editor",
       "icon": "fas fa-object-group"
