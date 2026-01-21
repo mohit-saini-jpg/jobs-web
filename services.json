@@ -1,6 +1,12 @@
 {
   "services": [
     {
+      "name": "Senior Citizen – Old Age Pensioner",
+      "service": "Senior Citizen – Old Age Pensioner",
+      "icon": "fas fa-money-bill",
+      "documents": ["Family Id", "Adhaar cardf"]
+    },
+    {
       "name": "Income Certificate (आय प्रमाण पत्र)",
       "service": "Income Certificate (आय प्रमाण पत्र)",
       "icon": "fas fa-money-bill",
