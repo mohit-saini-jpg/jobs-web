@@ -232,27 +232,32 @@
     {
       "name": "Audio Cutter",
       "url": "https://clideo.com/editor/",
-      "icon": "fas fa-cut"
+      "icon": "fas fa-cut",
+       "external": true
     },
     {
       "name": "Audio Merge",
       "url": "https://clideo.com/editor/",
-      "icon": "fas fa-link"
+      "icon": "fas fa-link",
+       "external": true
     },
     {
       "name": "Audio-to-Text",
       "url": "https://any2text.com/audio-to-text",
-      "icon": "fas fa-link"
+      "icon": "fas fa-link",
+       "external": true
     },
     {
       "name": "Video Cutter",
       "url": "https://clideo.com/editor/",
-      "icon": "fas fa-scissors"
+      "icon": "fas fa-scissors",
+       "external": true
     },
     {
       "name": "Video Merge",
       "url": "https://clideo.com/editor/",
-      "icon": "fas fa-object-group"
+      "icon": "fas fa-object-group",
+       "external": true
     },
     {
       "name": "Remove Audio from Video",
