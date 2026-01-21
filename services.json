@@ -115,8 +115,8 @@
       "documents": ["Photo", "ID Proof", "Address Proof", "Unmarried Certificate"]
     },
     {
-      "name": "राशन कार्ड",
-      "service": "राशन कार्ड",
+      "name": "राशन कार्ड Download",
+      "service": "राशन कार्ड Download",
       "icon": "fas fa-utensils",
       "documents": ["Photo", "ID Proof", "Address Proof", "Income Proof"]
     },
@@ -127,26 +127,14 @@
       "documents": ["Photo", "ID Proof", "Address Proof", "Family Details"]
     },
     {
-      "name": "रोजगार फॉर्म अप्लाई",
-      "service": "रोजगार फॉर्म अप्लाई",
-      "icon": "fas fa-briefcase",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Qualification Certificates"]
-    },
-    {
-      "name": "ई-श्रम कार्ड अप्लाई",
-      "service": "ई-श्रम कार्ड अप्लाई",
-      "icon": "fas fa-id-badge",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Bank Details"]
-    },
-    {
       "name": "बिजली बिल",
       "service": "बिजली बिल",
       "icon": "fas fa-bolt",
       "documents": ["Photo", "ID Proof", "Address Proof", "Property Documents"]
     },
     {
-      "name": "पीएफ एडवांस/पूर्ण आवेदन",
-      "service": "पीएफ एडवांस/पूर्ण आवेदन",
+      "name": "PF एडवांस आवेदन",
+      "service": "पPF एडवांस आवेदन",
       "icon": "fas fa-money-check",
       "documents": ["Photo", "ID Proof", "Address Proof", "PF Account Details"]
     },
@@ -253,8 +241,8 @@
       "documents": ["पैन कार्ड नंबर", "आपके बैंक अकाउंट से जुड़ा फ़ोन नंबर", "उस बैंक का नाम जिसका स्टेटमेंट आप पाना चाहते हैं", "आपके फ़ोन नंबर पर एक OTP भेजा जाएगा","3 महीने से ले कर 12 महीने तक की STATEMNT  निकलवा सकतेा हो","STATEMNT   निकलने का चार्ज -50 rs रहेगा"]
     },
     {
-      "name": "GADI से GADI DETAILS FIND",
-      "service": "GADI से GADI DETAILS FIND",
+      "name": "Check status Lado Lakshmi Yojana (HR)",
+      "service": "Check status Lado Lakshmi Yojana (HR)",
       "icon": "fas fa-car",
       "documents": ["Photo", "ID Proof", "Address Proof", "Vehicle Number"]
     },
