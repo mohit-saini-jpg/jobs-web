@@ -5836,6 +5836,11 @@
       "icon": "fas fa-trophy",
       "color": "#6527F5",
       "items": [
+         {
+          "name": "राशन कार्ड कट ह या नही और कितना राशन मिलता ह चक करे",
+          "url": "https://epos.haryanafood.gov.in/SRC_Trans_Int.jsp",
+          "external": true
+        },
         {
           "name": "हरियाणा सरकार ने जमीनी नक्शे (शिजरा) ऑनलाइन जाने जमीन लाल डोरे में है, रजिस्ट्री प्लॉट है या अवैध कब्जा है",
           "url": "https://hsac.org.in/eodb/login",
@@ -5944,11 +5949,6 @@
         {
           "name": "All Bank statement Download By CSC ID ",
           "url": "https://csc.finduit.in/",
-          "external": true
-        },
-        {
-          "name": "राशन कार्ड कट ह या नही और कितना राशन मिलता ह चक करे",
-          "url": "https://epos.haryanafood.gov.in/SRC_Trans_Int.jsp",
           "external": true
         },
         {
