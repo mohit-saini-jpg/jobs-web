@@ -5836,6 +5836,11 @@
       "icon": "fas fa-trophy",
       "color": "#6527F5",
       "items": [
+        {
+          "name": "अपनी FAMILY ID का Exclusion चेक करे की आपका राशन कार्ड और आयुष्मान कार्ड कटा तो नही (HR)",
+          "url": "https://ppp-office.haryana.gov.in/ExclusionGrievance",
+          "external": true
+        },
          {
           "name": "राशन कार्ड कट ह या नही और कितना राशन मिलता ह चक करे",
           "url": "https://epos.haryanafood.gov.in/SRC_Trans_Int.jsp",
