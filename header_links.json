@@ -90,6 +90,12 @@
       "color": "bg-teal-400"
     },
     {
+      "name": "Family id Exclusive(Problem) check",
+      "url": "https://ppp-office.haryana.gov.in/ExclusionGrievance",
+      "color": "bg-green-400",
+      "external": true
+    },
+    {
       "name": "हरियाणा सरकार जमीनी नक्शे (शिजरा)",
       "url": "https://hsac.org.in/eodb/login",
       "color": "bg-slate-500",
