@@ -90,9 +90,10 @@
       "color": "bg-teal-400"
     },
     {
-      "name": "हरियाणा पुलिस कांस्टेबल 5500",
-      "url": "https://sarkariresult.com.im/hssc-haryana-police-constable-recruitment/",
-      "color": "bg-slate-500"
+      "name": "हरियाणा सरकार ने जमीनी नक्शे (शिजरा)",
+      "url": "https://hsac.org.in/eodb/login",
+      "color": "bg-slate-500",
+      "external": true
     },
     {
       "name": "farmer ID किसान आईडी कार्ड",
