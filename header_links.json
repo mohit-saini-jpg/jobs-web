@@ -85,9 +85,10 @@
       "external": true
     },
     {
-      "name": "Foreign jobs",
-      "url": "https://www.placementindia.com/international/",
-      "color": "bg-teal-400"
+      "name": "Bank DBT CHECK bY Adhaar No",
+      "url": "https://myaadhaar.uidai.gov.in/",
+      "color": "bg-teal-400",
+      "external": true
     },
     {
       "name": "Family id Exclusive(Problem) check",
