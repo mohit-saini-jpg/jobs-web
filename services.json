@@ -175,8 +175,8 @@
       "documents": ["Photo", "ID Proof", "Address Proof", "Purpose Document"]
     },
     {
-      "name": "खोये हुए आइटम की FIR करवाये",
-      "service": "खोये हुए आइटम की FIR करवाये",
+      "name": "Police FIR करवाये",
+      "service": "Police FIR करवाये",
       "icon": "fas fa-search",
       "documents": ["Photo", "ID Proof", "Address Proof", "Item Description"]
     },
