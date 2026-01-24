@@ -75,7 +75,7 @@
     {
       "name": "नौकरियां जिनकी अंतिम तिथि नजदीक है।",
       "url": "https://www.topsarkarijobs.com/view.html?section=Jobs%20with%20Last%20date",
-      "color": "bg-red-400",
+      "color": "bg-teal-400",
       "external": true
     },
     {
@@ -109,9 +109,9 @@
       "external": true
     },
     {
-      "name": "आपका आधार पैन से लिंक है या नहीं जाने",
-      "url": "https://eportal.incometax.gov.in/iec/foservices/#/pre-login/link-aadhaar-status",
-      "color": "bg-teal-400",
+      "name": "LPG एजेंसी आवेदन",
+      "url": "https://www.lpgvitarakchayan.in/",
+      "color": "bg-red-400",
       "external": true
     },
     {
