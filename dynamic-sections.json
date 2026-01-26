@@ -5960,90 +5960,115 @@
       ]
     },
     {
-      "id": "Haryana All State",
-      "title": "Haryana All State",
+      "id": "Haryana All State Jobs",
+      "title": "Haryana All State Jobs",
       "icon": "fas fa-trophy",
       "color": "#F24EEC",
       "items": [
- {
-    "name": "Ambala",
-    "url": "https://www.freejobalert.com/search-jobs/jobs-in-ambala/"
+{
+    "name": "Ambala Jobs",
+    "url": "https://www.freejobalert.com/search-jobs/jobs-in-ambala/",
+    "external": true
   },
   {
-    "name": "Bhiwani",
-    "url": "https://www.freejobalert.com/search-jobs/jobs-in-bhiwani/"
+    "name": "Bhiwani Jobs",
+    "url": "https://www.freejobalert.com/search-jobs/jobs-in-bhiwani/",
+    "external": true
   },
   {
-    "name": "Faridabad",
-    "url": "https://www.freejobalert.com/search-jobs/jobs-in-faridabad/"
+    "name": "Charkhi Dadri Jobs",
+    "url": "https://www.mysarkarinaukri.com/find/charkhi-dadri-jobs",
+    "external": true
   },
   {
-    "name": "Fatehabad",
-    "url": "https://www.freejobalert.com/search-jobs/jobs-in-fatehabad/"
+    "name": "Faridabad Jobs",
+    "url": "https://www.freejobalert.com/search-jobs/jobs-in-faridabad/",
+    "external": true
   },
   {
-    "name": "Gurgaon",
-    "url": "https://www.freejobalert.com/search-jobs/jobs-in-gurgaon/"
+    "name": "Fatehabad Jobs",
+    "url": "https://www.freejobalert.com/search-jobs/jobs-in-fatehabad/",
+    "external": true
   },
   {
-    "name": "Hissar",
-    "url": "https://www.freejobalert.com/search-jobs/jobs-in-hissar/"
+    "name": "Gurgaon Jobs",
+    "url": "https://www.freejobalert.com/search-jobs/jobs-in-gurgaon/",
+    "external": true
   },
   {
-    "name": "Jhajjar",
-    "url": "https://www.freejobalert.com/search-jobs/jobs-in-jhajjar/"
+    "name": "Hissar Jobs",
+    "url": "https://www.freejobalert.com/search-jobs/jobs-in-hissar/",
+    "external": true
   },
   {
-    "name": "Jind",
-    "url": "https://www.freejobalert.com/search-jobs/jobs-in-jind/"
+    "name": "Jhajjar Jobs",
+    "url": "https://www.freejobalert.com/search-jobs/jobs-in-jhajjar/",
+    "external": true
   },
   {
-    "name": "Kaithal",
-    "url": "https://www.freejobalert.com/search-jobs/jobs-in-kaithal/"
+    "name": "Jind Jobs",
+    "url": "https://www.freejobalert.com/search-jobs/jobs-in-jind/",
+    "external": true
   },
   {
-    "name": "Karnal",
-    "url": "https://www.freejobalert.com/search-jobs/jobs-in-karnal/"
+    "name": "Kaithal Jobs",
+    "url": "https://www.freejobalert.com/search-jobs/jobs-in-kaithal/",
+    "external": true
   },
   {
-    "name": "Kurukshetra",
-    "url": "https://www.freejobalert.com/search-jobs/jobs-in-kurukshetra/"
+    "name": "Karnal Jobs",
+    "url": "https://www.freejobalert.com/search-jobs/jobs-in-karnal/",
+    "external": true
   },
   {
-    "name": "Mahendergarh",
-    "url": "https://www.freejobalert.com/search-jobs/jobs-in-mahendergarh/"
+    "name": "Kurukshetra Jobs",
+    "url": "https://www.freejobalert.com/search-jobs/jobs-in-kurukshetra/",
+    "external": true
   },
   {
-    "name": "Mewat",
-    "url": "https://www.freejobalert.com/search-jobs/jobs-in-mewat/"
+    "name": "Mahendergarh Jobs",
+    "url": "https://www.freejobalert.com/search-jobs/jobs-in-mahendergarh/",
+    "external": true
   },
   {
-    "name": "Narnaul",
-    "url": "https://www.freejobalert.com/search-jobs/jobs-in-narnaul/"
+    "name": "Mewat Jobs",
+    "url": "https://www.freejobalert.com/search-jobs/jobs-in-mewat/",
+    "external": true
   },
   {
-    "name": "Palwal",
-    "url": "https://www.freejobalert.com/search-jobs/jobs-in-palwal/"
+    "name": "Narnaul Jobs",
+    "url": "https://www.freejobalert.com/search-jobs/jobs-in-narnaul/",
+    "external": true
   },
   {
-    "name": "Panchkula",
-    "url": "https://www.freejobalert.com/search-jobs/jobs-in-panchkula/"
+    "name": "Palwal Jobs",
+    "url": "https://www.freejobalert.com/search-jobs/jobs-in-palwal/",
+    "external": true
   },
   {
-    "name": "Panipat",
-    "url": "https://www.freejobalert.com/search-jobs/jobs-in-panipat/"
+    "name": "Panchkula Jobs",
+    "url": "https://www.freejobalert.com/search-jobs/jobs-in-panchkula/",
+    "external": true
   },
   {
-    "name": "Rewari",
-    "url": "https://www.freejobalert.com/search-jobs/jobs-in-rewari/"
+    "name": "Panipat Jobs",
+    "url": "https://www.freejobalert.com/search-jobs/jobs-in-panipat/",
+    "external": true
   },
   {
-    "name": "Rohtak",
-    "url": "https://www.freejobalert.com/search-jobs/jobs-in-rohtak/"
+    "name": "Rewari Jobs",
+    "url": "https://www.freejobalert.com/search-jobs/jobs-in-rewari/",
+    "external": true
   },
   {
-    "name": "Sirsa",
-    "url": "https://www.freejobalert.com/search-jobs/jobs-in-sirsa/"
+    "name": "Rohtak Jobs",
+    "url": "https://www.freejobalert.com/search-jobs/jobs-in-rohtak/",
+    "external": true
+  },
+  {
+    "name": "Sirsa Jobs",
+    "url": "https://www.freejobalert.com/search-jobs/jobs-in-sirsa/",
+    "external": true
   }
       ]
     }
