@@ -5352,6 +5352,12 @@
       "icon": "fas fa-trophy",
       "color": "#00FFA4",
       "items": [
+         { 
+          "name": "Application for Haryana Roadways Bus Pass PDF OR Fee Pay",
+          "url": "https://drive.google.com/file/d/1oXzVqIF0LYTNVB4bSATLkFg45luUYqFt/view?usp=sharing"
+          "url": "https://epay.hrtransport.gov.in/payBusPassAmt",
+          "external": true
+        },
        { 
           "name": "हरियाणा में गैस एजेंसी लेनी है ले सकता है LPG इंडियन भारत तीनो की मिलेगी आवेदन शुरू",
           "url": "www.lpgvitarakchayan.in",
