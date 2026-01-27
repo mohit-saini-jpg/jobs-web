@@ -383,11 +383,13 @@
       "items": [
         {
           "name": "हरियाणा बोर्ड ने जारी की 10वीं कक्षा के बोर्ड परीक्षाओं की डेट शीट, अभी इस लिंक से करें डाउनलोड",
-          "url": "https://bseh.org.in/uploads/files/60f9578d40bae001712176d09817a9d0.pdf"
+          "url": "https://bseh.org.in/uploads/files/60f9578d40bae001712176d09817a9d0.pdf",
+          "external": true
         },
         {
           "name": "हरियाणा बोर्ड ने जारी की 12 वीं कक्षा के बोर्ड परीक्षाओं की डेट शीट, अभी इस लिंक से करें डाउनलोड",
-          "url": "https://bseh.org.in/uploads/files/f37d00bb92a0e1604a9fb92c32179797.pdf"
+          "url": "https://bseh.org.in/uploads/files/f37d00bb92a0e1604a9fb92c32179797.pdf",
+          "external": true
         },
         {
           "name": "SSC MTS Self Slot Booking 2026 Link, Exam City, Exam Date, Hall Ticket Download",
