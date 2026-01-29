@@ -85,15 +85,15 @@
       "external": true
     },
     {
-      "name": "Bank DBT CHECK bY Adhaar No",
-      "url": "https://myaadhaar.uidai.gov.in/",
-      "color": "bg-teal-400",
+      "name": "कृषि मशीनों सब्सिडी",
+      "url": "http://agriharyana.gov.in/MechSMAMScheme.aspx",
+      "color": "bg-green-400",
       "external": true
     },
     {
       "name": "Family id Exclusive(Problem) check",
       "url": "https://ppp-office.haryana.gov.in/ExclusionGrievance",
-      "color": "bg-green-400",
+      "color": "bg-teal-400",
       "external": true
     },
     {
