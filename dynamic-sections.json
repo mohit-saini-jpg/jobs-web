@@ -5568,6 +5568,11 @@
       "icon": "fas fa-trophy",
       "color": "#913030",
       "items": [
+         { 
+          "name": "किसानों के लिए बड़ी खुशखबरी SMAM योजना- 25 कृषि मशीनों पर सब्सिडी 2026 Apply Now",
+          "url": "http://agriharyana.gov.in/MechSMAMScheme.aspx",
+          "external": true
+        },
         {
           "name": "AgriShakti Namo Drone Didi नमो ड्रोन दीदी योजना Last date -01/03/2026",
           "url": "http://agriharyana.gov.in/AgriShaktiNamoDroneDidi.aspx",
@@ -5581,11 +5586,6 @@
         {
           "name": "फ्लैटों की बुकिंग पेमेंट मुख्यमंत्री शहरी आवास EWS योजना",
           "url": "https://hfa.haryana.gov.in/",
-          "external": true
-        },
-         { 
-          "name": "किसानों के लिए बड़ी खुशखबरी SMAM योजना- 25 कृषि मशीनों पर सब्सिडी 2026 Apply Now",
-          "url": "http://agriharyana.gov.in/MechSMAMScheme.aspx",
           "external": true
         },
          { 
