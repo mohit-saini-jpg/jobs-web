@@ -6507,6 +6507,11 @@
           "external": true
         },
         {
+          "name": "Top 20 Jobs",
+          "url": "https://www.topsarkarijobs.com/view.html?section=Top%2020%20Jobs",
+          "external": true
+        },
+        {
           "name": "State jobs",
           "url": "https://www.topsarkarijobs.com/view.html?section=State%20jobs",
           "external": true
@@ -6539,6 +6544,11 @@
         {
           "name": "Important CSC link",
           "url": "https://www.topsarkarijobs.com/view.html?section=Important%20CSC%20Link",
+          "external": true
+        },
+        {
+          "name": "Haryana All State Jobs",
+          "url": "https://www.topsarkarijobs.com/view.html?section=Haryana%20All%20State%20Jobs",
           "external": true
         }
       ]
