@@ -13,87 +13,170 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Top Sarkari Jobs - Government Jobs, Results, Admit Card</title>
+    <title>Top Sarkari Jobs - Latest Government Jobs in India</title>
+    <meta name="description" content="Find the latest Sarkari Jobs, Admit Cards, Results, and Government Schemes in India. Updated daily for all states. Top Sarkari Jobs is your trusted portal for govt job alerts.">
+    <meta name="keywords" content="top sarkari jobs, sarkari result, govt jobs, sarkari naukri, latest government jobs, sarkari exam, admit card, result, india govt jobs, state govt jobs">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Top Sarkari Jobs">
+    <link rel="canonical" href="https://topsarkarijobs.com/">
+    <link rel="icon" type="image/x-icon" href="image.ico">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://topsarkarijobs.com/">
+    <meta property="og:title" content="Top Sarkari Jobs - Latest Government Jobs in India">
+    <meta property="og:description" content="Find the latest Sarkari Jobs, Admit Cards, Results, and Government Schemes in India. Updated daily for all states.">
+    <meta property="og:image" content="https://topsarkarijobs.com/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://topsarkarijobs.com/">
+    <meta property="twitter:title" content="Top Sarkari Jobs - Latest Government Jobs in India">
+    <meta property="twitter:description" content="Find the latest Sarkari Jobs, Admit Cards, Results, and Government Schemes in India. Updated daily for all states.">
+    <meta property="twitter:image" content="https://topsarkarijobs.com/og-image.jpg">
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Top Sarkari Jobs",
+      "url": "https://topsarkarijobs.com/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://topsarkarijobs.com/search.html?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Top Sarkari Jobs",
+      "url": "https://topsarkarijobs.com/",
+      "logo": "https://topsarkarijobs.com/logo.png"
+    }
+    </script>
 
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <!-- Google Font: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-    <!-- Supabase (if used elsewhere) -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <link rel="icon" href="image.png" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        body {
-            font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+        :root{
+            --primary-500: #0ea5e9;
+            --primary-600: #0284c7;
+            --muted-bg: #f8fafc;
+        }
+        html,body{height:100%;}
+        body{font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:var(--muted-bg); color:#0f172a}
+
+        /* ✅ FIX: prevent overlapping inside dynamically injected boxes */
+        #jobs-left-section a,
+        #jobs-right-section a,
+        #jobs-top-buttons a,
+        #home-section a {
+            display: block;
+            width: 100%;
+            padding: 10px 8px;
+            margin: 0;
+            line-height: 1.25;
+            text-align: center;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+            white-space: normal;
+        }
+
+        /* ✅ FIX: grid items spacing */
+        #jobs-left-section, #jobs-right-section {
+            gap: 8px;
+        }
+
+        /* ✅ FIX: dynamic boxes not squishing */
+        #jobs-left-section > div,
+        #jobs-right-section > div,
+        #jobs-top-buttons > div {
+            min-height: 42px;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0; transform: translateY(10px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.3s ease-out forwards;
+            opacity: 0;
         }
     </style>
 </head>
 
-<body class="bg-gray-100">
+<body>
 
-    <!-- ✅ HEADER (ONLY THIS SECTION WAS CHANGED) -->
-    <header class="bg-gradient-to-r from-sky-600 to-indigo-600 text-white shadow-sm relative">
+    <div class="min-h-screen flex flex-col">
+        <!-- Header with Navigation -->
+        <header class="bg-gradient-to-r from-sky-600 to-indigo-600 text-white shadow-sm relative">
             <div class="container mx-auto max-w-6xl px-4 py-4">
+                <div class="flex items-center justify-between">
+                    <h1 class="text-2xl font-bold flex items-center">
+                        <img src="image.png" alt="Top Sarkari Jobs Logo" class="h-10 w-10 mr-3 rounded-full">
+                        Top Sarkari Jobs
+                    </h1>
 
-                <!-- ✅ FIXED HEADER LAYOUT: wraps instead of overlapping -->
-                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                    <button id="mobile-menu-toggle" class="lg:hidden text-white hover:bg-blue-700 p-2 rounded">
+                        <i class="fas fa-bars"></i>
+                    </button>
 
-                    <!-- Logo -->
-                    <div class="flex items-center justify-between gap-3">
-                        <h1 class="text-2xl font-bold flex items-center shrink-0">
-                            <img src="image.png" alt="Top Sarkari Jobs Logo" class="h-10 w-10 mr-3 rounded-full">
-                            <span class="whitespace-nowrap">Top Sarkari Jobs</span>
-                        </h1>
+                    <!-- ✅ Desktop menu -->
+                    <nav class="hidden lg:flex items-center gap-3 flex-1 min-w-0 overflow-x-auto whitespace-nowrap px-1"
+     style="scrollbar-width: thin;">
+                        <a href="index.html" class="px-3 py-2 bg-white text-sky-600 rounded-md font-semibold shadow-sm hover:shadow-md transition">
+                            <i class="fas fa-briefcase mr-2"></i>Home
+                        </a>
 
-                        <button id="mobile-menu-toggle" class="lg:hidden text-white hover:bg-blue-700 p-2 rounded">
-                            <i class="fas fa-bars"></i>
-                        </button>
-                    </div>
+                        <!-- ✅ REMOVED: About -->
+                        <!-- ✅ REMOVED: Contact -->
 
-                    <!-- Desktop: main nav + dynamic links -->
-                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-end gap-3 min-w-0">
+                        <a href="result.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
+                            <i class="fas fa-clipboard-check mr-2"></i>Results
+                        </a>
 
-                        <!-- ✅ Desktop menu (About/Contact/Privacy/Terms removed) -->
-                        <nav class="hidden lg:flex flex-wrap items-center gap-3 min-w-0">
-                            <a href="index.html" class="px-3 py-2 bg-white text-sky-600 rounded-md font-semibold shadow-sm hover:shadow-md transition whitespace-nowrap">
-                                <i class="fas fa-briefcase mr-2"></i>Home
-                            </a>
+                        <a href="search.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
+                            <i class="fas fa-search mr-2"></i>Search
+                        </a>
 
-                            <a href="result.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition whitespace-nowrap">
-                                <i class="fas fa-clipboard-check mr-2"></i>Results
-                            </a>
+                        <!-- ✅ REMOVED: Privacy -->
+                        <!-- ✅ REMOVED: Terms -->
 
-                            <a href="search.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition whitespace-nowrap">
-                                <i class="fas fa-search mr-2"></i>Search
-                            </a>
+                        <!-- keep original links -->
+                        <a href="govt-services.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
+                            <i class="fas fa-gavel mr-2"></i>CSC Services
+                        </a>
+                        <a href="tools.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
+                            <i class="fas fa-tools mr-2"></i>Tools
+                        </a>
+                        <a href="helpdesk.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
+                            <i class="fas fa-headset mr-2"></i>Helpdesk
+                        </a>
+                    </nav>
 
-                            <a href="govt-services.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition whitespace-nowrap">
-                                <i class="fas fa-gavel mr-2"></i>CSC Services
-                            </a>
+                    <div id="header-links" class="hidden lg:flex gap-2"></div>
 
-                            <a href="tools.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition whitespace-nowrap">
-                                <i class="fas fa-tools mr-2"></i>Tools
-                            </a>
-
-                            <a href="helpdesk.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition whitespace-nowrap">
-                                <i class="fas fa-headset mr-2"></i>Helpdesk
-                            </a>
-                        </nav>
-
-                        <!-- Dynamic header buttons -->
-                        <div id="header-links" class="hidden lg:flex flex-wrap gap-2 justify-end max-w-full"></div>
-                    </div>
-
-                    <!-- Mobile menu -->
+                    <!-- ✅ Mobile menu -->
                     <div id="mobile-menu" class="hidden lg:hidden absolute top-full left-0 right-0 bg-sky-600 text-white shadow-lg z-50">
                         <div class="flex flex-col p-4 space-y-2">
                             <a href="index.html" class="px-4 py-2 bg-white text-sky-600 rounded-md font-semibold hover:bg-white/90 transition">
                                 <i class="fas fa-briefcase mr-2"></i>Home
                             </a>
+
+                            <!-- ✅ REMOVED: About -->
+                            <!-- ✅ REMOVED: Contact -->
 
                             <a href="result.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
                                 <i class="fas fa-clipboard-check mr-2"></i>Results
@@ -103,14 +186,15 @@
                                 <i class="fas fa-search mr-2"></i>Search
                             </a>
 
+                            <!-- ✅ REMOVED: Privacy -->
+                            <!-- ✅ REMOVED: Terms -->
+
                             <a href="govt-services.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
                                 <i class="fas fa-gavel mr-2"></i>CSC Services
                             </a>
-
                             <a href="tools.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
                                 <i class="fas fa-tools mr-2"></i>Tools
                             </a>
-
                             <a href="helpdesk.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
                                 <i class="fas fa-headset mr-2"></i>Helpdesk
                             </a>
@@ -118,67 +202,127 @@
                             <div id="header-links-mobile" class="mt-2 space-y-2"></div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </header>
 
-    <!-- Main Content -->
-    <main class="container mx-auto max-w-6xl px-4 py-6">
-
-        <!-- Search & Filters -->
-        <section class="bg-white p-4 rounded-lg shadow mb-6">
-            <h2 class="text-xl font-bold mb-3">Search Government Jobs</h2>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <input id="searchInput" type="text" placeholder="Search jobs..."
-                    class="border border-gray-300 rounded px-3 py-2 w-full">
-
-                <select id="categoryFilter" class="border border-gray-300 rounded px-3 py-2 w-full">
-                    <option value="">All Categories</option>
-                </select>
-
-                <select id="stateFilter" class="border border-gray-300 rounded px-3 py-2 w-full">
-                    <option value="">All States</option>
-                </select>
-            </div>
-        </section>
-
-        <!-- Jobs List -->
-        <section class="bg-white p-4 rounded-lg shadow">
-            <h2 class="text-xl font-bold mb-4">Latest Jobs</h2>
-            <div id="jobs-container" class="space-y-4"></div>
-
-            <!-- Pagination -->
-            <div class="flex justify-center mt-6">
-                <button id="loadMoreBtn" class="px-4 py-2 bg-sky-600 text-white rounded hover:bg-sky-700 transition">
-                    Load More
-                </button>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-200 mt-10">
-        <div class="container mx-auto max-w-6xl px-4 py-6 text-sm">
-            <div class="flex flex-col md:flex-row md:justify-between gap-3">
-                <p>© <span id="year"></span> Top Sarkari Jobs. All rights reserved.</p>
-                <div class="flex gap-4">
-                    <a href="privacy.html" class="hover:underline">Privacy</a>
-                    <a href="terms.html" class="hover:underline">Terms</a>
-                    <a href="contact.html" class="hover:underline">Contact</a>
-                </div>
+        <!-- home section  -->
+        <div class="container mx-auto px-4 py-4">
+            <div id="home-section" class="flex flex-wrap gap-2">
+                <!-- Home buttons will be populated here -->
             </div>
         </div>
-    </footer>
 
-    <script>
-        document.getElementById("year").textContent = new Date().getFullYear();
-    </script>
+        <main class="mx-auto w-full px-4">
+            <!-- Main Content Area -->
+            <div class="bg-white rounded-lg overflow-hidden">
+                <div class="flex flex-col gap-4">
+                    <!-- Jobs Section -->
+                    <div id="jobs-section" class="">
+                        <!-- Top 2 rows of jobs -->
+                        <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-12 mb-6"
+                            id="jobs-top-buttons">
+                            <!-- Top jobs will be populated here -->
+                        </div>
 
-    <!-- Your existing script (DO NOT CHANGE) -->
+                        <!-- Bottom section with left, center, right -->
+                        <div class="flex flex-col lg:flex-row gap-4 mt-6">
+                            <!-- Left section -->
+                            <div class="w-full lg:w-1/6 grid grid-cols-2 h-fit" id="jobs-left-section">
+                                <!-- Left jobs will be populated here -->
+                            </div>
+
+                            <!-- Center section -->
+                            <div class="w-full lg:w-3/4 flex flex-col gap-4 hidden md:flex">
+                                <div id="dynamic-sections-desktop" class="flex flex-col gap-4">
+                                    <!-- Dynamic sections will be populated here -->
+                                </div>
+                            </div>
+
+                            <!-- Right section -->
+                            <div class="w-full lg:w-1/6 grid grid-cols-2 h-fit" id="jobs-right-section">
+                                <!-- Right jobs will be populated here -->
+                            </div>
+                        </div>
+
+                        <div class="md:hidden space-y-4" id="dynamic-sections-mobile">
+                            <!-- Dynamic sections will be populated here for mobile -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-white text-gray-800 py-8 mt-12">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="mb-4 md:mb-0">
+                        <h3 class="text-xl font-bold">Top Sarkari Jobs</h3>
+                        <p class="text-gray-600 text-sm mt-1">Your gateway to government jobs and services</p>
+
+                        <!-- ✅ Footer internal links -->
+                        <div class="mt-3 flex flex-wrap gap-3 text-sm">
+                          <a class="text-sky-600 hover:underline" href="about.html">About</a>
+                          <a class="text-sky-600 hover:underline" href="contact.html">Contact</a>
+                          <a class="text-sky-600 hover:underline" href="privacy.html">Privacy</a>
+                          <a class="text-sky-600 hover:underline" href="terms.html">Terms</a>
+                          <a class="text-sky-600 hover:underline" href="result.html">Results</a>
+                          <a class="text-sky-600 hover:underline" href="search.html">Search</a>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-3" id="footer-social-links">
+                        <!-- Social links will be populated here -->
+                    </div>
+                </div>
+                <div class="border-t border-gray-200 mt-6 pt-6 text-center text-gray-600 text-sm">
+                    <p>&copy; 2025 Top Sarkari Jobs. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- WhatsApp Float Button -->
+        <div id="whatsapp-float" class="fixed bottom-6 right-6 z-50">
+            <button id="whatsapp-btn" class="bg-green-500 hover:bg-green-600 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110">
+                <i class="fab fa-whatsapp text-4xl"></i>
+            </button>
+        </div>
+
+        <!-- WhatsApp Chat Popup -->
+        <div id="whatsapp-popup" class="hidden fixed bottom-24 right-6 z-50 w-80 md:w-96 bg-white rounded-lg shadow-2xl overflow-hidden">
+            <div class="bg-green-500 text-white p-4 flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fab fa-whatsapp text-2xl mr-3"></i>
+                    <div>
+                        <h3 class="font-bold text-lg">Top Sarkari Jobs</h3>
+                        <p class="text-xs text-green-100">Online</p>
+                    </div>
+                </div>
+                <button id="close-whatsapp" class="text-white hover:text-green-100 transition">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <div id="whatsapp-messages" class="bg-gray-50 p-4 space-y-3 max-h-96 overflow-y-auto">
+                <!-- Messages will be populated here -->
+            </div>
+        </div>
+
+    </div>
+
     <script src="script.js"></script>
+
+    <!-- ✅ Mobile menu toggle fix (in case missing in script.js) -->
+    <script>
+      const toggleBtn = document.getElementById("mobile-menu-toggle");
+      const mobileMenu = document.getElementById("mobile-menu");
+      if(toggleBtn && mobileMenu){
+        toggleBtn.addEventListener("click", () => {
+          mobileMenu.classList.toggle("hidden");
+        });
+      }
+    </script>
 
 </body>
 </html>
