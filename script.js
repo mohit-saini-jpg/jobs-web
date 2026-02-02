@@ -1,1095 +1,312 @@
-document.addEventListener("DOMContentLoaded", async () => {
-  // Load Supabase config and initialize only if available
-  let supabase = null;
-  if (window.supabase) {
-    try {
-      const configResponse = await fetch('config.json');
-      const supabaseConfig = await configResponse.json();
-      supabase = window.supabase.createClient(supabaseConfig.supabase.url, supabaseConfig.supabase.anonKey);
-    } catch (error) {
-      console.warn('Could not load Supabase config:', error);
-    }
+(function () {
+  "use strict";
+
+  // ---------- helpers ----------
+  const $ = (id) => document.getElementById(id);
+
+  function isExternal(url) {
+    return /^https?:\/\//i.test(url);
   }
 
-  // Detect current page
-  const currentPage = window.location.pathname.split("/").pop() || "index.html";
-
-  // Load data from appropriate JSON file
-  let data;
-  const jsonFile =
-    currentPage === "index.html" || currentPage === ""
-      ? "jobs.json"
-      : currentPage === "tools.html"
-      ? "tools.json"
-      : "services.json";
-  try {
-    const response = await fetch(jsonFile);
-    data = await response.json();
-  } catch (error) {
-    console.error("Error loading data:", error);
-    // Fallback empty data
-    data = {
-      image: [],
-      pdf: [],
-      video: [],
-      services: [],
-      top_jobs: [],
-      left_jobs: [],
-      right_jobs: [],
-      news: [],
-      scrolling_jobs: [],
-      home_links: [],
-    };
+  function safeText(str) {
+    return (str || "").toString().trim();
   }
 
-  // Load dynamic sections data (for homepage)
-  let dynamicSections = null;
-  if (currentPage === "index.html" || currentPage === "") {
-    try {
-      const response = await fetch("dynamic-sections.json");
-      dynamicSections = await response.json();
-    } catch (error) {
-      console.error("Error loading dynamic sections:", error);
-      dynamicSections = { sections: [] };
-    }
-  }
+  function makeBtn({ text, href, bg, external = false, iconClass = "" }) {
+    const a = document.createElement("a");
+    a.href = href || "#";
+    a.className =
+      "inline-flex items-center justify-center gap-2 rounded-xl font-semibold shadow-sm hover:shadow-md transition " +
+      "px-4 py-3 text-white text-sm md:text-base";
+    a.style.background = bg || "#0ea5e9";
+    a.style.maxWidth = "100%";
+    a.style.textAlign = "center";
+    a.style.lineHeight = "1.2";
+    a.style.whiteSpace = "normal";
+    a.style.wordBreak = "break-word";
+    a.style.overflowWrap = "anywhere";
 
-  // Load header links (separate JSON)
-  let headerData = null;
-  try {
-    const resp = await fetch("header_links.json");
-    headerData = await resp.json();
-  } catch (err) {
-    console.warn("No header_links.json found or failed to load", err);
-    headerData = { header_links: [], home_links: [] };
-  }
-
-  // Render header links (desktop + mobile)
-  function loadHeaderLinks(headerData) {
-    if (!headerData) return;
-    const desktopContainer = document.getElementById("header-links");
-    const mobileContainer = document.getElementById("header-links-mobile");
-
-    const links = headerData.header_links || [];
-    if (desktopContainer) {
-      links.forEach((l) => {
-        const a = document.createElement("a");
-        a.href = l.link || l.url || "#";
-        a.target = "_blank";
-        a.rel = "noopener noreferrer";
-        const colorClass = l.color ? l.color : "bg-gray-800";
-        a.className = `${colorClass} text-white px-4 py-2 rounded-lg font-semibold hover:opacity-90 transition duration-200 flex items-center`;
-        a.innerHTML = `${l.name}`;
-        desktopContainer.appendChild(a);
-      });
+    if (external || isExternal(a.href)) {
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
     }
 
-    if (mobileContainer) {
-      links.forEach((l) => {
-        const a = document.createElement("a");
-        a.href = l.link || l.url || "#";
-        a.target = "_blank";
-        a.rel = "noopener noreferrer";
-        a.className = `px-4 py-2 rounded-lg bg-white text-blue-600 font-semibold hover:bg-blue-50 transition duration-200 block`;
-        a.textContent = l.name;
-        mobileContainer.appendChild(a);
-      });
+    if (iconClass) {
+      const i = document.createElement("i");
+      i.className = iconClass;
+      a.appendChild(i);
     }
+
+    const span = document.createElement("span");
+    span.textContent = safeText(text);
+    a.appendChild(span);
+    return a;
   }
 
-  // Get URL parameters
-  const urlParams = new URLSearchParams(window.location.search);
-  const jobParam = urlParams.get("job");
-  const toolParam = urlParams.get("tool");
+  function makeChip({ text, href, bg, external = false }) {
+    const a = document.createElement("a");
+    a.href = href || "#";
+    a.className =
+      "inline-flex items-center justify-center rounded-full font-bold shadow hover:shadow-lg transition " +
+      "px-5 py-3 text-white text-base";
+    a.style.background = bg || "#14b8a6";
+    a.style.maxWidth = "100%";
+    a.style.textAlign = "center";
+    a.style.lineHeight = "1.2";
+    a.style.whiteSpace = "normal";
+    a.style.wordBreak = "break-word";
+    a.style.overflowWrap = "anywhere";
 
-  // Page-specific elements
-  const mainCategories = document.getElementById("main-categories");
-  const subCategories = document.getElementById("sub-categories");
-  const backButton = document.getElementById("back-button");
-  const subCategoryTitle = document.getElementById("sub-category-title");
-  const toolsCards = document.getElementById("tools-cards");
-  const servicesCards = document.getElementById("services-cards");
-  const toolIframe = document.getElementById("tool-iframe");
-  const serviceModal = document.getElementById("service-modal");
-  const modalServiceContent = document.getElementById("modal-service-content");
-  const closeModalBtn = document.getElementById("close-modal");
-  const loadingOverlay = document.getElementById("loading-overlay");
-  const defaultState = document.getElementById("default-state");
+    if (external || isExternal(a.href)) {
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+    }
+    a.textContent = safeText(text);
+    return a;
+  }
 
-  // Mobile menu elements
-  const mobileMenuToggle = document.getElementById("mobile-menu-toggle");
-  const mobileMenu = document.getElementById("mobile-menu");
+  function makeSectionTitle(text, color) {
+    const div = document.createElement("div");
+    div.className =
+      "col-span-full rounded-lg px-4 py-2 font-extrabold text-white shadow-sm";
+    div.style.background = color || "#60a5fa";
+    div.style.lineHeight = "1.2";
+    div.style.whiteSpace = "normal";
+    div.style.wordBreak = "break-word";
+    div.style.overflowWrap = "anywhere";
+    div.textContent = safeText(text);
+    return div;
+  }
 
-  // Mobile menu toggle
-  if (mobileMenuToggle && mobileMenu) {
-    mobileMenuToggle.addEventListener("click", () => {
+  // ---------- header overflow fix ----------
+  function fixHeaderOverflow() {
+    // Make desktop nav horizontally scrollable so it never cuts off.
+    const header = document.querySelector("header");
+    if (!header) return;
+
+    const nav = header.querySelector("nav.hidden.lg\\:flex");
+    if (nav) {
+      nav.style.flex = "1";
+      nav.style.minWidth = "0";
+      nav.style.overflowX = "auto";
+      nav.style.whiteSpace = "nowrap";
+      nav.style.scrollbarWidth = "thin";
+      nav.style.paddingBottom = "2px";
+    }
+
+    // Ensure title/logo doesn't shrink weirdly
+    const h1 = header.querySelector("h1");
+    if (h1) h1.style.flexShrink = "0";
+  }
+
+  // ---------- mobile menu toggle (safe) ----------
+  function setupMobileMenuToggle() {
+    const toggleBtn = $("mobile-menu-toggle");
+    const mobileMenu = $("mobile-menu");
+    if (!toggleBtn || !mobileMenu) return;
+
+    toggleBtn.addEventListener("click", () => {
       mobileMenu.classList.toggle("hidden");
     });
 
-    // Close mobile menu when clicking a link
-    mobileMenu.querySelectorAll("a").forEach((link) => {
-      link.addEventListener("click", () => {
-        mobileMenu.classList.add("hidden");
-      });
-    });
-
-    // Close mobile menu when clicking outside
-    document.addEventListener("click", (e) => {
-      if (
-        !mobileMenu.contains(e.target) &&
-        !mobileMenuToggle.contains(e.target)
-      ) {
+    // close on link click
+    mobileMenu.addEventListener("click", (e) => {
+      const t = e.target;
+      if (t && t.closest && t.closest("a")) {
         mobileMenu.classList.add("hidden");
       }
     });
   }
 
-  // Render header links (if any)
-  loadHeaderLinks(headerData);
-
-  // Category names mapping
-  const categoryNames = {
-    image: "Image Tools",
-    pdf: "PDF Tools",
-    video: "Video/Audio Tools",
-  };
-
-  // Category icons mapping
-  const categoryIcons = {
-    image: "fas fa-image text-green-500",
-    pdf: "fas fa-file-pdf text-blue-500",
-    video: "fas fa-video text-purple-500",
-  };
-
-  // Load content based on current page
-  if (currentPage === "index.html" || currentPage === "") {
-    // Jobs page
-    loadJobs();
-    loadDynamicSections(dynamicSections);
-    loadHomeLinks();
-    loadFooterSocialLinks();
-    loadWhatsAppChat();
-  } else if (currentPage === "govt-services.html") {
-    // Government services page
-    loadGovernmentServices();
-
-    // Close modal event listeners
-    if (closeModalBtn) {
-      closeModalBtn.addEventListener("click", () => {
-        serviceModal.classList.add("hidden");
-      });
+  // ---------- optional utility links (right side in header) ----------
+  // NOTE: These do NOT affect your main nav. They only render inside #header-links and #header-links-mobile.
+  const utilityLinks = [
+    {
+      text: "AI Helpdesk",
+      href: "helpdesk.html",
+      bg: "#ef4444",
+      iconClass: "fas fa-robot",
+      external: false
+    },
+    {
+      text: "Resume/CV Maker",
+      href: "tools.html",
+      bg: "#6b7280",
+      iconClass: "fas fa-file-lines",
+      external: false
+    },
+    {
+      text: "Join WhatsApp",
+      href: "https://wa.me/",
+      bg: "#16a34a",
+      iconClass: "fab fa-whatsapp",
+      external: true
     }
+  ];
 
-    // Close modal when clicking outside
-    if (serviceModal) {
-      serviceModal.addEventListener("click", (e) => {
-        if (e.target === serviceModal) {
-          serviceModal.classList.add("hidden");
-        }
-      });
-    }
-  } else if (currentPage === "tools.html") {
-    // Tools page
-    loadToolsSection();
-  }
+  function renderUtilityLinks() {
+    const desktop = $("header-links");
+    const mobile = $("header-links-mobile");
+    if (desktop) desktop.innerHTML = "";
+    if (mobile) mobile.innerHTML = "";
 
-  // Function to load tools section (only on tools.html)
-  function loadToolsSection() {
-    const categoriesView = document.getElementById("categories-view");
-    const toolsView = document.getElementById("tools-view");
-    const toolsGrid = document.getElementById("tools-grid");
-    const toolsTitle = document.getElementById("tools-title");
-    const backButton = document.getElementById("back-button");
+    utilityLinks.forEach((l) => {
+      const btn = makeBtn(l);
+      btn.className += " rounded-2xl"; // match your existing look
 
-    if (!categoriesView || !toolsView) return;
-
-    // Update tool counts in category buttons
-    document.querySelectorAll(".category-button").forEach((button) => {
-      const category = button.dataset.category;
-      if (data[category] && Array.isArray(data[category])) {
-        const count = data[category].length;
-        const countElement = button.querySelector(".text-sm.text-gray-500");
-        if (countElement) {
-          countElement.textContent = `${count} tools available`;
-        }
+      if (desktop) {
+        desktop.appendChild(btn);
+      }
+      if (mobile) {
+        const wrap = document.createElement("div");
+        wrap.appendChild(btn);
+        mobile.appendChild(wrap);
       }
     });
-
-
-    // Get URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    const category = urlParams.get('category');
-
-    if (category && data[category]) {
-      // Show tools for the category
-      showToolsForCategory(category, toolsView, toolsGrid, toolsTitle, backButton);
-    } else {
-      // Show categories
-      showCategories(categoriesView, toolsView);
-    }
-
-    // Handle category button clicks
-    document.querySelectorAll(".category-button").forEach((button) => {
-      button.addEventListener("click", () => {
-        const cat = button.dataset.category;
-        window.location.href = `tools.html?category=${cat}`;
-      });
-    });
-
-    // Handle back button
-    if (backButton) {
-      backButton.addEventListener("click", () => {
-        window.location.href = 'tools.html';
-      });
-    }
   }
 
-  // Function to show categories view
-  function showCategories(categoriesView, toolsView) {
-    categoriesView.classList.remove("hidden");
-    toolsView.classList.add("hidden");
-  }
+  // ---------- footer social links (optional) ----------
+  const footerSocial = [
+    // Put your real links here if you want
+    // { text: "Telegram", href: "https://t.me/yourchannel", iconClass: "fab fa-telegram", bg: "#229ED9" },
+  ];
 
-  // Function to show tools for a category
-  function showToolsForCategory(category, toolsView, toolsGrid, toolsTitle, backButton) {
-    const categoriesView = document.getElementById("categories-view");
-    categoriesView.classList.add("hidden");
-    toolsView.classList.remove("hidden");
+  function renderFooterSocial() {
+    const el = $("footer-social-links");
+    if (!el) return;
+    el.innerHTML = "";
 
-    // Update title
-    const titleIcon = toolsTitle.querySelector("i");
-    const titleText = toolsTitle.querySelector("span");
-
-    titleIcon.className = categoryIcons[category];
-    titleText.textContent = categoryNames[category];
-
-    // Clear existing tools
-    toolsGrid.innerHTML = "";
-
-    // Add tools as cards
-    const tools = data[category];
-    tools.forEach((tool) => {
-      const toolCard = document.createElement("div");
-      toolCard.className =
-        "bg-white p-4 rounded-lg border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition duration-300 cursor-pointer";
-      toolCard.innerHTML = `
-        <div class="flex items-center mb-2">
-          <i class="${tool.icon} text-2xl mr-3 text-gray-600"></i>
-          <h4 class="font-semibold text-gray-800">${tool.name}</h4>
-        </div>
-        <p class="text-sm text-gray-500">Click to open tool</p>
-      `;
-
-      toolCard.addEventListener("click", () => {
-        if (tool.external) {
-          // Open in new tab
-          window.open(tool.url, '_blank');
-        } else {
-          // Open in view.html
-          const viewUrl = `view.html?url=${encodeURIComponent(tool.url)}&name=${encodeURIComponent(tool.name)}&type=tool`;
-          window.location.href = viewUrl;
-        }
+    footerSocial.forEach((s) => {
+      const a = makeBtn({
+        text: s.text,
+        href: s.href,
+        bg: s.bg || "#0ea5e9",
+        iconClass: s.iconClass || "",
+        external: true
       });
-
-      toolsGrid.appendChild(toolCard);
+      a.className =
+        "inline-flex items-center gap-2 px-4 py-2 rounded-full text-white font-semibold shadow hover:shadow-md transition";
+      el.appendChild(a);
     });
   }
 
-  // Function to auto-load a tool based on URL parameter
-  function autoLoadTool(toolName) {
-    // Search for the tool in all categories
-    let foundTool = null;
-    let foundCategory = null;
-
-    for (const [category, tools] of Object.entries(data)) {
-      if (
-        category === "services" ||
-        category === "top_jobs" ||
-        category === "left_jobs" ||
-        category === "right_jobs" ||
-        category === "news" ||
-        category === "scrolling_jobs" ||
-        category === "home_links"
-      )
-        continue;
-
-      const tool = tools.find(
-        (t) =>
-          t.name.toLowerCase().replace(/\s+/g, "-") ===
-            toolName.toLowerCase() ||
-          t.name.toLowerCase() === toolName.toLowerCase().replace(/-/g, " ")
-      );
-
-      if (tool) {
-        foundTool = tool;
-        foundCategory = category;
-        break;
-      }
-    }
-
-    if (foundTool && foundCategory) {
-      // Show the sub-categories for this category
-      showSubCategories(foundCategory);
-      // Load the tool
-      setTimeout(() => {
-        loadTool(foundTool.url);
-      }, 100);
-    }
+  // ---------- jobs.json rendering ----------
+  async function loadJobs() {
+    // tries jobs.json at root
+    const res = await fetch("jobs.json", { cache: "no-store" });
+    if (!res.ok) throw new Error("jobs.json not found or cannot be loaded");
+    return await res.json();
   }
 
-  // Function to load government services
-  function loadGovernmentServices() {
-    if (!servicesCards) return;
+  function renderHomeSection(topJobs) {
+    const home = $("home-section");
+    if (!home) return;
+    home.innerHTML = "";
+    home.classList.add("flex", "flex-wrap", "gap-3");
 
-    const services = data.services;
-    servicesCards.innerHTML = "";
+    let currentColor = "#14b8a6";
 
-    services.forEach((service) => {
-      const serviceCard = document.createElement("div");
-      serviceCard.className =
-        "service-card bg-white p-3 rounded-lg border border-green-200 hover:bg-green-50 hover:border-green-300 transition duration-300 cursor-pointer";
-      serviceCard.innerHTML = `
-        <div class="flex items-center mb-1">
-          <i class="${service.icon} text-2xl mr-3 text-green-600"></i>
-          <h4 class="font-semibold text-gray-800 text-sm">${service.name}</h4>
-        </div>
-      `;
-
-      serviceCard.addEventListener("click", () => {
-        showServiceDetails(service);
-      });
-
-      servicesCards.appendChild(serviceCard);
-    });
-  }
-
-  // Function to load home links
-  function loadHomeLinks() {
-    // Prefer home links from header_links.json (moved), fall back to jobs.json
-    const homeLinks =
-      headerData && headerData.home_links
-        ? headerData.home_links
-        : data.home_links || [];
-    const homeSection = document.getElementById("home-section");
-
-    if (!homeSection) return;
-
-    homeLinks.forEach((home) => {
-      const button = document.createElement("div");
-      button.className = `${home.color} text-white w-fit py-1 px-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 flex items-center justify-center font-bold text-sm cursor-pointer`;
-      button.innerHTML = `
-        ${home.name}
-      `;
-      button.addEventListener("click", () => {
-        openLink(home);
-      });
-      homeSection.appendChild(button);
-    });
-  }
-
-  // Function to load dynamic sections (Latest Jobs, Upcoming Jobs, etc.)
-  function loadDynamicSections(dynamicSectionsData) {
-    if (!dynamicSectionsData || !dynamicSectionsData.sections) return;
-
-    const desktopContainer = document.getElementById("dynamic-sections-desktop");
-    const mobileContainer = document.getElementById("dynamic-sections-mobile");
-
-    if (!desktopContainer || !mobileContainer) return;
-
-    // Clear existing content
-    desktopContainer.innerHTML = "";
-    mobileContainer.innerHTML = "";
-
-    const sections = dynamicSectionsData.sections;
-
-    // Create rows of 2 sections each for desktop
-    for (let i = 0; i < sections.length; i += 2) {
-      const row = document.createElement("div");
-      row.className = "flex flex-row gap-4";
-
-      // First section in the row
-      const section1 = sections[i];
-      row.appendChild(createSectionBox(section1, false));
-
-      // Second section in the row (if exists)
-      if (i + 1 < sections.length) {
-        const section2 = sections[i + 1];
-        row.appendChild(createSectionBox(section2, false));
+    topJobs.forEach((item) => {
+      // section heading object: {title,color}
+      if (item && item.title) {
+        currentColor = item.color || currentColor;
+        const titleChip = document.createElement("div");
+        titleChip.className =
+          "px-4 py-2 rounded-full font-extrabold text-white shadow";
+        titleChip.style.background = currentColor;
+        titleChip.style.maxWidth = "100%";
+        titleChip.style.whiteSpace = "normal";
+        titleChip.style.wordBreak = "break-word";
+        titleChip.style.overflowWrap = "anywhere";
+        titleChip.textContent = safeText(item.title);
+        home.appendChild(titleChip);
+        return;
       }
 
-      desktopContainer.appendChild(row);
-    }
-
-    // Create individual boxes for mobile
-    sections.forEach((section) => {
-      mobileContainer.appendChild(createSectionBox(section, true));
-    });
-  }
-
-  // Helper function to create a section box
-  function createSectionBox(section, isMobile) {
-    const box = document.createElement("div");
-    box.className = "w-full " + (isMobile ? "" : "lg:w-1/2") + " bg-white rounded-lg my-6";
-
-    // Extract color from hex string
-    const colorHex = section.color || "#3b82f6";
-    const colorName = getColorName(colorHex);
-
-    // Header
-    const header = document.createElement("h4");
-    header.className = `text-xl font-semibold text-white bg-[${colorHex}] p-2 rounded mb-2 flex items-center`;
-    header.innerHTML = `
-      <i class="${section.icon || 'fas fa-briefcase'} mr-2" style="color: white"></i>
-      ${section.title}
-    `;
-    box.appendChild(header);
-
-    // Content container
-    const contentWrapper = document.createElement("div");
-    contentWrapper.className = "relative";
-
-    // Items container
-    const itemsContainer = document.createElement("div");
-    itemsContainer.className = "space-y-2";
-
-    // Show max 10 items
-    const itemsToShow = section.items.slice(0, 10);
-    itemsToShow.forEach((item) => {
-      const itemDiv = document.createElement("div");
-      itemDiv.className = `bg-${colorName}-50 p-3 rounded border-l-4 border-${colorName}-500 cursor-pointer hover:bg-${colorName}-100 hover:shadow transition duration-300`;
-      itemDiv.style.backgroundColor = getLightColor(colorHex, 0.9);
-      itemDiv.style.borderLeftColor = colorHex;
-
-      let badgeHTML = "";
-      if (item.badge) {
-        badgeHTML = `<span class="${item.badgeColor || 'bg-blue-500'} text-white text-xs font-bold px-2 py-1 rounded ml-2">${item.badge}</span>`;
-      }
-
-      itemDiv.innerHTML = `
-        <div class="flex justify-between items-start">
-          <p class="text-sm font-medium text-gray-700 flex-1">${item.name}${badgeHTML}</p>
-        </div>
-        ${item.date ? `<p class="text-xs text-gray-500 mt-1">${item.date}</p>` : ""}
-      `;
-
-      itemDiv.addEventListener("click", () => {
-        openLink(item);
-      });
-
-      itemsContainer.appendChild(itemDiv);
-    });
-
-    contentWrapper.appendChild(itemsContainer);
-
-    // View More button
-    const viewMoreDiv = document.createElement("div");
-    viewMoreDiv.className = "mt-2 py-4";
-
-    const viewMoreBtn = document.createElement("a");
-    viewMoreBtn.className = `block w-fit mx-auto text-center bg-gray-700 hover:bg-gray-800 text-white font-semibold py-2 px-4 rounded transition duration-300`;
-    viewMoreBtn.style.color = "#ffffff";
- 
-    if (section.viewMoreType === "external" && section.viewMoreUrl) {
-      viewMoreBtn.href = section.viewMoreUrl;
-      viewMoreBtn.target = "_blank";
-    } else if (section.viewMoreType === "internal" && section.viewMoreUrl) {
-      viewMoreBtn.href = `view.html?url=${encodeURIComponent(section.viewMoreUrl)}&name=${encodeURIComponent(section.title)}`;
-    } else {
-      viewMoreBtn.href = `view.html?section=${section.id}`;
-    }
-
-    viewMoreBtn.innerHTML = 'View More<i class="fas fa-arrow-right ml-2"></i>';
-    viewMoreDiv.appendChild(viewMoreBtn);
-    contentWrapper.appendChild(viewMoreDiv);
-
-    box.appendChild(contentWrapper);
-    return box;
-  }
-
-  // Helper function to get color name from hex (approximation)
-  function getColorName(hex) {
-    const colorMap = {
-      "#3b82f6": "blue",
-      "#60a5fa": "blue",
-      "#2563eb": "blue",
-      "#34518A": "blue",
-      "#5D68D9": "indigo",
-      "#f59e0b": "amber",
-      "#fbbf24": "yellow",
-      "#d97706": "orange",
-      "#f97316": "orange",
-      "#10b981": "green",
-      "#34d399": "emerald",
-      "#059669": "green",
-      "#40825B": "green",
-      "#00FFA4": "green",
-      "#8b5cf6": "purple",
-      "#a78bfa": "purple",
-      "#7c3aed": "violet",
-      "#ef4444": "red",
-      "#f87171": "red",
-      "#dc2626": "red",
-      "#E31E53": "red",
-      "#913030": "red",
-      "#06b6d4": "cyan",
-      "#22d3ee": "cyan",
-      "#0891b2": "cyan",
-      "#00E4FA": "cyan",
-      "#dc7ec7": "pink",
-      "#fb7185": "rose",
-      "#ac938e": "stone",
-      "#CAD64D": "lime",
-    };
-    return colorMap[hex.toLowerCase()] || "blue";
-  }
-
-  // Function to load social links in footer
-  function loadFooterSocialLinks() {
-    const socialLinks = headerData && headerData.social_links ? headerData.social_links : [];
-    const footerSocialSection = document.getElementById("footer-social-links");
-
-    if (!footerSocialSection) return;
-
-    socialLinks.forEach((social) => {
-      const link = document.createElement("a");
-      link.href = social.url;
-      link.target = "_blank";
-      link.className = `${social.color} text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 flex items-center justify-center font-semibold`;
-      link.innerHTML = `<i class="${social.icon} mr-2"></i>${social.name}`;
-      link.title = social.name;
-      footerSocialSection.appendChild(link);
-    });
-  }
-
-  // Function to load jobs
-  function loadJobs() {
-    const topJobs = data.top_jobs || [];
-    const leftJobs = data.left_jobs || [];
-    const rightJobs = data.right_jobs || [];
-    const topButtons = document.getElementById("jobs-top-buttons");
-    const leftSection = document.getElementById("jobs-left-section");
-    const rightSection = document.getElementById("jobs-right-section");
-
-    if (!topButtons || !leftSection || !rightSection) return;
-
-    // Top buttons (2 rows of 3)
-    // Support a `color` property on title entries. When a title has a color,
-    // subsequent job buttons will use a lighter version of that color as
-    // their background until the next title.
-    let currentTopColor = null;
-    topJobs.forEach((job) => {
-      if (job.title) {
-        // It's a title — update current color if provided
-        if (job.color) currentTopColor = job.color;
-        else currentTopColor = null;
-
-        const titleDiv = document.createElement("div");
-        titleDiv.className = "col-span-full text-left mt-4 py-1";
-        titleDiv.innerHTML = `<h3 class="text-2xl font-bold px-2 text-white">${job.title}</h3>`;
-        titleDiv.style.backgroundColor = currentTopColor
-          ? getLightColor(currentTopColor, 0.05)
-          : "transparent";
-        topButtons.appendChild(titleDiv);
-      } else {
-        // It's a button
-        const button = document.createElement("div");
-        button.className =
-          "p-1 ps-2 border-1 hover:shadow-lg transition duration-300 cursor-pointer flex items-center";
-
-        // If a current color is set on the last title, apply a lighter background
-        if (currentTopColor) {
-          // Try to compute a light variant for hex or rgb colors; otherwise, set as class
-          const light = getLightColor(currentTopColor, 0.75);
-          if (light) {
-            const border = getLightColor(currentTopColor, 0.45);
-            if (border) button.style.borderColor = border;
-          }
-        }
-
-        button.innerHTML = `
-          <span class="font-bold text-gray-800 text-xs">${job.name}</span>
-        `;
-        button.addEventListener("click", () => {
-          openLink(job);
+      // job link object: {name,url,external}
+      if (item && item.name && item.url) {
+        const chip = makeChip({
+          text: item.name,
+          href: item.url,
+          bg: item.color || currentColor,
+          external: !!item.external
         });
-        topButtons.appendChild(button);
+        home.appendChild(chip);
       }
     });
+  }
 
-    // Left section
-    let currentLeftColor = null;
-    leftJobs.forEach((job) => {
-      if (job.title) {
-        if (job.color) currentLeftColor = job.color;
-        else currentLeftColor = null;
+  function renderSidebar(list, containerId) {
+    const el = $(containerId);
+    if (!el) return;
+    el.innerHTML = "";
 
-        const titleDiv = document.createElement("div");
-        titleDiv.className = "col-span-full text-left py-1 mt-4";
-        titleDiv.innerHTML = `<h3 class="text-2xl font-bold px-2 text-white">${job.title}</h3>`;
-        titleDiv.style.backgroundColor = currentLeftColor
-          ? getLightColor(currentLeftColor, 0.05)
-          : "transparent";
-        leftSection.appendChild(titleDiv);
-      } else {
-        const button = document.createElement("div");
-        button.className =
-          "p-1 ps-2 border-1 hover:shadow-lg transition duration-300 cursor-pointer flex items-center";
+    // preserve your layout: grid grid-cols-2
+    el.classList.add("gap-2");
 
-        if (currentLeftColor) {
-          const light = getLightColor(currentLeftColor, 0.75);
-          if (light) {
-            const border = getLightColor(currentLeftColor, 0.45);
-            if (border) button.style.borderColor = border;
-          }
+    let currentColor = "#0ea5e9";
+
+    list.forEach((item) => {
+      if (item && item.title) {
+        currentColor = item.color || currentColor;
+
+        // put section title spanning both columns
+        const title = makeSectionTitle(item.title, currentColor);
+        el.appendChild(title);
+        return;
+      }
+
+      if (item && item.name && item.url) {
+        const a = document.createElement("a");
+        a.href = item.url;
+        a.className =
+          "rounded-lg px-3 py-3 font-bold text-white shadow hover:shadow-md transition text-center";
+        a.style.background = item.color || currentColor;
+        a.style.lineHeight = "1.2";
+        a.style.whiteSpace = "normal";
+        a.style.wordBreak = "break-word";
+        a.style.overflowWrap = "anywhere";
+        a.style.display = "flex";
+        a.style.alignItems = "center";
+        a.style.justifyContent = "center";
+        a.style.minHeight = "44px";
+
+        if (item.external || isExternal(item.url)) {
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
         }
 
-        button.innerHTML = `
-          <span class="font-bold text-gray-800 text-sm">${job.name}</span>
-        `;
-        button.addEventListener("click", () => {
-          openLink(job);
-        });
-        leftSection.appendChild(button);
-      }
-    });
-
-    // Right section
-    let currentRightColor = null;
-    rightJobs.forEach((job) => {
-      if (job.title) {
-        if (job.color) currentRightColor = job.color;
-        else currentRightColor = null;
-
-        const titleDiv = document.createElement("div");
-        titleDiv.className = "col-span-full text-left py-1 mt-4";
-        titleDiv.innerHTML = `<h3 class="text-2xl font-bold px-2 text-white">${job.title}</h3>`;
-        titleDiv.style.backgroundColor = currentRightColor
-          ? getLightColor(currentRightColor, 0.05)
-          : "transparent";
-        rightSection.appendChild(titleDiv);
-      } else {
-        const button = document.createElement("div");
-        button.className =
-          "p-1 ps-2 border-1 hover:shadow-lg transition duration-300 cursor-pointer flex items-center";
-        button.style.backgroundColor = "#ffffff";
-        button.style.borderColor = "#bfdbfe";
-
-        if (currentRightColor) {
-          const light = getLightColor(currentRightColor, 0.75);
-          if (light) {
-            const border = getLightColor(currentRightColor, 0.45);
-            if (border) button.style.borderColor = border;
-            button.style.color = readableTextColor(currentRightColor);
-          }
-        }
-
-        button.innerHTML = `
-          <span class="font-bold text-gray-800 text-sm">${job.name}</span>
-        `;
-        button.addEventListener("click", () => {
-          openLink(job);
-        });
-        rightSection.appendChild(button);
+        a.textContent = safeText(item.name);
+        el.appendChild(a);
       }
     });
   }
 
-  // Function to open link - internal view or external
-  function openLink(link) {
-    if (link.external) {
-      window.open(link.url, '_blank');
-    } else {
-      const params = new URLSearchParams({
-        url: encodeURIComponent(link.url),
-        name: encodeURIComponent(link.name),
-        job: link.name.toLowerCase().replace(/\s+/g, "-"),
-      });
-      window.location.href = `view.html?${params.toString()}`;
-    }
-  }
+  // ---------- init ----------
+  async function init() {
+    fixHeaderOverflow();
+    setupMobileMenuToggle();
 
+    // This will NOT remove your About/Contact/Privacy/Terms etc.
+    // It only fills the utility containers.
+    renderUtilityLinks();
+    renderFooterSocial();
 
-
-  // Function to show service details in modal
-  function showServiceDetails(service) {
-    modalServiceContent.innerHTML = `
-      <div class="text-center mb-8">
-        <h2 class="text-4xl font-bold text-gray-800 mb-4">
-          <i class="fas fa-gavel mr-3 text-green-600"></i>
-          Service Request
-        </h2>
-        <div class="w-24 h-1 bg-green-600 mx-auto mb-4"></div>
-      </div>
-
-      <div class="mb-8">
-        <h3 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
-          <i class="fas fa-user text-green-500 mr-3"></i>
-          Your Information
-        </h3>
-        <form id="serviceForm">
-          <div class="grid md:grid-cols-2 gap-6 mb-6">
-            <div>
-              <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-              <input type="text" id="name" name="name" required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-            <div>
-              <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-              <input type="tel" id="phone" name="phone" required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-          </div>
-          <div class="flex justify-center">
-            <button type="submit"
-              class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition duration-300 font-medium">
-              <i class="fas fa-paper-plane mr-2"></i>Submit Request
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <div class="mb-8">
-        <h3 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
-          <i class="fas fa-info-circle text-blue-500 mr-3"></i>
-          Selected Service
-        </h3>
-        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-          <p class="text-xl font-medium text-blue-800">${service.name}</p>
-        </div>
-      </div>
-
-      <div class="mb-8">
-        <h3 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
-          <i class="fas fa-list-check text-purple-500 mr-3"></i>
-          Required Documents
-        </h3>
-        <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
-          <ul id="documentsList" class="text-gray-700 space-y-2">
-            <!-- Documents will be populated based on service -->
-          </ul>
-        </div>
-      </div>
-
-      <div class="mb-8">
-        <h3 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
-          <i class="fas fa-clock text-orange-500 mr-3"></i>
-          Processing Time
-        </h3>
-        <div class="bg-orange-50 border-l-4 border-orange-500 p-4 rounded">
-          <p id="processingTime" class="text-gray-700">2-7 working days</p>
-        </div>
-      </div>
-    `;
-
-    // Populate documents
-    populateDocuments(service.documents);
-
-    // Handle form submission: POST to Supabase with JSON payload
-    const form = modalServiceContent.querySelector("#serviceForm");
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const submitBtn = form.querySelector('button[type="submit"]');
-      const originalText = submitBtn.innerHTML;
-
-      // Disable button to prevent double submission
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Submitting...';
-      submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
-
-      const name = form.querySelector("#name").value.trim();
-      const phone = form.querySelector("#phone").value.trim();
-
-      try {
-        // Insert into Supabase if available
-        if (supabase) {
-          const { data, error } = await supabase
-            .from('service_requests')
-            .insert([
-              {
-                name: name,
-                phone: phone,
-                service: service.name,
-                created_at: new Date().toISOString()
-              }
-            ]);
-
-          if (error) {
-            console.error('Error submitting service request:', error);
-            alert('Failed to submit your request. Please try again.');
-            return;
-          }
-        } else {
-          console.warn('Supabase not available, saving to localStorage only');
-        }
-
-        // Save to localStorage as fallback
-        try {
-          const key = "service_requests";
-          const existing = JSON.parse(localStorage.getItem(key) || "[]");
-          existing.push({
-            service: service.name,
-            name,
-            phone,
-            createdAt: new Date().toISOString(),
-          });
-          localStorage.setItem(key, JSON.stringify(existing));
-        } catch (err) {
-          console.warn(
-            "Could not save service request to localStorage",
-            err
-          );
-        }
-
-        // Close modal and notify user
-        serviceModal.classList.add("hidden");
-        alert(
-          'Your request for "' +
-            service.name +
-            '" has been submitted. We will contact you soon.'
-        );
-        form.reset();
-
-      } catch (err) {
-        console.error('Error:', err);
-        alert(
-          "Could not submit your request right now. Please check your connection and try again."
-        );
-      } finally {
-        // Re-enable button
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-      }
-    });
-
-    // Show modal
-    serviceModal.classList.remove("hidden");
-  }
-
-  // Function to populate documents based on service
-  function populateDocuments(documents) {
-    const documentsList = modalServiceContent.querySelector("#documentsList");
-    documents.forEach((doc) => {
-      const li = document.createElement("li");
-      li.innerHTML = `<i class="fas fa-check-circle text-green-500 mr-2"></i>${doc}`;
-      documentsList.appendChild(li);
-    });
-  }
-
-  // Helper: convert hex color to RGB object
-  function hexToRgb(hex) {
-    if (!hex) return null;
-    hex = hex.replace("#", "").trim();
-    if (hex.length === 3) {
-      hex = hex
-        .split("")
-        .map((c) => c + c)
-        .join("");
-    }
-    if (!/^[0-9a-fA-F]{6}$/.test(hex)) return null;
-    const bigint = parseInt(hex, 16);
-    return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
-  }
-
-  // Helper: mix color towards white by `mix` fraction (0-1) and return hex string
-  function getLightColor(color, mix = 0.7) {
-    if (!color) return null;
-    color = color.trim();
-    // hex
-    if (color.startsWith("#")) {
-      const rgb = hexToRgb(color);
-      if (!rgb) return null;
-      const r = Math.round(rgb.r + (255 - rgb.r) * mix);
-      const g = Math.round(rgb.g + (255 - rgb.g) * mix);
-      const b = Math.round(rgb.b + (255 - rgb.b) * mix);
-      return `rgb(${r}, ${g}, ${b})`;
-    }
-
-    // rgb(...) format
-    const rgbMatch = color.match(
-      /rgb\s*\(\s*(\d{1,3})[,\s]+(\d{1,3})[,\s]+(\d{1,3})\s*\)/i
-    );
-    if (rgbMatch) {
-      const r0 = parseInt(rgbMatch[1], 10);
-      const g0 = parseInt(rgbMatch[2], 10);
-      const b0 = parseInt(rgbMatch[3], 10);
-      const r = Math.round(r0 + (255 - r0) * mix);
-      const g = Math.round(g0 + (255 - g0) * mix);
-      const b = Math.round(b0 + (255 - b0) * mix);
-      return `rgb(${r}, ${g}, ${b})`;
-    }
-
-    // Not recognized (could be a CSS class like 'bg-red-500')
-    return null;
-  }
-
-  // Helper: decide readable text color (dark or white) based on original color
-  function readableTextColor(color) {
-    if (!color) return "#111827"; // default dark gray
-    color = color.trim();
-    let r, g, b;
-    if (color.startsWith("#")) {
-      const rgb = hexToRgb(color);
-      if (!rgb) return "#111827";
-      r = rgb.r;
-      g = rgb.g;
-      b = rgb.b;
-    } else {
-      const m = color.match(
-        /rgb\s*\(\s*(\d{1,3})[,\s]+(\d{1,3})[,\s]+(\d{1,3})\s*\)/i
-      );
-      if (m) {
-        r = parseInt(m[1], 10);
-        g = parseInt(m[2], 10);
-        b = parseInt(m[3], 10);
-      } else {
-        return "#111827";
-      }
-    }
-
-    // Perceived luminance
-    const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
-    return luminance > 180 ? "#111827" : "#ffffff";
-  }
-
-  // Function to load WhatsApp chat
-  async function loadWhatsAppChat() {
-    const whatsappBtn = document.getElementById("whatsapp-btn");
-    const whatsappPopup = document.getElementById("whatsapp-popup");
-    const closeWhatsapp = document.getElementById("close-whatsapp");
-    const messagesContainer = document.getElementById("whatsapp-messages");
-
-    if (!whatsappBtn || !whatsappPopup || !messagesContainer) return;
-
-    // Load WhatsApp messages from JSON
-    let whatsappData = [];
+    // Load jobs.json and render chips + sidebars
     try {
-      const response = await fetch("whatsapp.json");
-      whatsappData = await response.json();
-    } catch (error) {
-      console.error("Error loading WhatsApp data:", error);
-      whatsappData = [
-        { message: "Welcome to Top Sarkari Jobs! 👋", link: null },
-        { message: "How can we help you today?", link: null }
-      ];
+      const data = await loadJobs();
+      if (data && Array.isArray(data.top_jobs)) renderHomeSection(data.top_jobs);
+      if (data && Array.isArray(data.left_jobs)) renderSidebar(data.left_jobs, "jobs-left-section");
+      if (data && Array.isArray(data.right_jobs)) renderSidebar(data.right_jobs, "jobs-right-section");
+    } catch (e) {
+      // If jobs.json fails, do nothing (site still works)
+      console.warn("Jobs rendering skipped:", e.message);
     }
-
-    // Populate messages
-    whatsappData.forEach((item, index) => {
-      const messageDiv = document.createElement("div");
-      messageDiv.className = "flex justify-start animate-fadeIn";
-      messageDiv.style.animationDelay = `${index * 0.1}s`;
-
-      // Convert URLs and file paths to clickable links
-      let messageContent = item.message;
-      
-      // Convert \n to <br> for multiline support
-      messageContent = messageContent.replace(/\n/g, '<br>');
-      
-      // Detect and convert URLs (http, https) - handle both correct and malformed URLs
-      messageContent = messageContent.replace(
-        /(https?:\/\/[^\s<]+|https?\/\/[^\s<]+)/gi,
-        (match) => {
-          // Fix malformed URLs by adding colon if missing
-          let fixedUrl = match;
-          if (match.startsWith('https//')) {
-            fixedUrl = 'https://' + match.substring(7);
-          } else if (match.startsWith('http//')) {
-            fixedUrl = 'http://' + match.substring(6);
-          }
-          
-          // Check if it's a YouTube link
-          const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
-          const youtubeMatch = fixedUrl.match(youtubeRegex);
-          console.log(fixedUrl);
-          
-          if (youtubeMatch) {
-            const videoId = youtubeMatch[1];
-            return `<div class="mt-2 mb-2">
-              <iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}" 
-                frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowfullscreen class="rounded-lg"></iframe>
-            </div>`;
-          } else {
-            return `<a href="${fixedUrl}" target="_blank" rel="noopener noreferrer" class="text-green-600 font-semibold hover:text-green-700 underline">click here</a>`;
-          }
-        }
-      );
-      
-      let imageHtml = '';
-      if (item.image) {
-        imageHtml = `<img src="${item.image}" alt="WhatsApp Image" class="max-w-full rounded-lg mt-2 cursor-pointer" onclick="window.open('${item.image}', '_blank')">`;
-      }
-
-      let videoHtml = '';
-      if (item.video) {
-        // Fix malformed URLs by adding colon if missing
-        let fixedVideoUrl = item.video;
-        if (item.video.startsWith('https//')) {
-          fixedVideoUrl = 'https://' + item.video.substring(7);
-        } else if (item.video.startsWith('http//')) {
-          fixedVideoUrl = 'http://' + item.video.substring(6);
-        }
-        
-        // Check if it's a YouTube URL
-        const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
-        const youtubeMatch = fixedVideoUrl.match(youtubeRegex);
-        
-        if (youtubeMatch) {
-          const videoId = youtubeMatch[1];
-          videoHtml = `<iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}" 
-            frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-            allowfullscreen class="max-w-full rounded-lg mt-2"></iframe>`;
-        } else {
-          videoHtml = `<video controls class="max-w-full rounded-lg mt-2"><source src="${fixedVideoUrl}" type="video/mp4"></video>`;
-        }
-      }
-
-      messageDiv.innerHTML = `
-        <div class="bg-white rounded-lg rounded-bl-none shadow p-3 max-w-[85%]">
-          <p class="text-gray-800 text-sm whatsapp-message">${messageContent}</p>
-          ${imageHtml}
-          ${videoHtml}
-        </div>
-      `;
-
-      messagesContainer.appendChild(messageDiv);
-    });
-
-    // Toggle popup
-    whatsappBtn.addEventListener("click", () => {
-      whatsappPopup.classList.toggle("hidden");
-      // Scroll to bottom when popup opens
-      if (!whatsappPopup.classList.contains("hidden")) {
-        setTimeout(() => {
-          messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }, 100);
-      }
-    });
-
-    closeWhatsapp.addEventListener("click", () => {
-      whatsappPopup.classList.add("hidden");
-    });
-
-    // Close popup when clicking outside
-    document.addEventListener("click", (e) => {
-      if (
-        !whatsappPopup.contains(e.target) &&
-        !whatsappBtn.contains(e.target) &&
-        !whatsappPopup.classList.contains("hidden")
-      ) {
-        whatsappPopup.classList.add("hidden");
-      }
-    });
   }
 
-  // Function to handle back button
-  window.goBack = function() {
-    if (window.history.length > 1) {
-      window.history.back();
-    } else {
-      window.location.href = 'index.html';
-    }
-  };
-});
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
