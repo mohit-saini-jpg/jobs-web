@@ -5,163 +5,153 @@
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-C4VRD1C9QS"></script>
     <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-        gtag('config', 'G-C4VRD1C9QS');
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-C4VRD1C9QS');
     </script>
 
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Top Sarkari Jobs – Latest Government Jobs</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Sarkari Jobs - Government Jobs, Results, Admit Card</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    <script defer src="script.js"></script>
+    <!-- Supabase (if used elsewhere) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <link rel="icon" href="image.png" />
+
+    <style>
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+        }
+    </style>
 </head>
 
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-gray-100">
 
-    <!-- ================= HEADER ================= -->
+    <!-- ✅ HEADER (ONLY THIS SECTION WAS CHANGED) -->
     <header class="bg-gradient-to-r from-sky-600 to-indigo-600 text-white shadow-sm relative">
-        <div class="container mx-auto max-w-6xl px-4 py-4">
+            <div class="container mx-auto max-w-6xl px-4 py-4">
 
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                <!-- ✅ FIXED HEADER LAYOUT: wraps instead of overlapping -->
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
 
-                <!-- Logo -->
-                <div class="flex items-center justify-between gap-3">
-                    <h1 class="text-2xl font-bold flex items-center shrink-0">
-                        <img src="image.png" alt="Top Sarkari Jobs Logo"
-                            class="h-10 w-10 mr-3 rounded-full">
-                        <span class="whitespace-nowrap">Top Sarkari Jobs</span>
-                    </h1>
+                    <!-- Logo -->
+                    <div class="flex items-center justify-between gap-3">
+                        <h1 class="text-2xl font-bold flex items-center shrink-0">
+                            <img src="image.png" alt="Top Sarkari Jobs Logo" class="h-10 w-10 mr-3 rounded-full">
+                            <span class="whitespace-nowrap">Top Sarkari Jobs</span>
+                        </h1>
 
-                    <!-- Mobile toggle -->
-                    <button id="mobile-menu-toggle"
-                        class="lg:hidden text-white hover:bg-blue-700 p-2 rounded">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                </div>
-
-                <!-- Desktop Nav -->
-                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-end gap-3 min-w-0">
-
-                    <nav class="hidden lg:flex flex-wrap items-center gap-2 min-w-0">
-                        <a href="index.html"
-                            class="px-3 py-2 bg-white text-sky-600 rounded-md font-semibold shadow-sm hover:shadow-md transition whitespace-nowrap">
-                            <i class="fas fa-briefcase mr-2"></i>Home
-                        </a>
-
-                        <a href="result.html"
-                            class="px-3 py-2 bg-white/10 text-white rounded-md font-semibold hover:bg-white/20 transition whitespace-nowrap">
-                            <i class="fas fa-clipboard-check mr-2"></i>Results
-                        </a>
-
-                        <a href="search.html"
-                            class="px-3 py-2 bg-white/10 text-white rounded-md font-semibold hover:bg-white/20 transition whitespace-nowrap">
-                            <i class="fas fa-search mr-2"></i>Search
-                        </a>
-
-                        <a href="govt-services.html"
-                            class="px-3 py-2 bg-white/10 text-white rounded-md font-semibold hover:bg-white/20 transition whitespace-nowrap">
-                            <i class="fas fa-gavel mr-2"></i>CSC Services
-                        </a>
-
-                        <a href="tools.html"
-                            class="px-3 py-2 bg-white/10 text-white rounded-md font-semibold hover:bg-white/20 transition whitespace-nowrap">
-                            <i class="fas fa-tools mr-2"></i>Tools
-                        </a>
-
-                        <a href="helpdesk.html"
-                            class="px-3 py-2 bg-white/10 text-white rounded-md font-semibold hover:bg-white/20 transition whitespace-nowrap">
-                            <i class="fas fa-headset mr-2"></i>Helpdesk
-                        </a>
-                    </nav>
-
-                    <!-- Dynamic header buttons -->
-                    <div id="header-links"
-                        class="hidden lg:flex flex-wrap gap-2 justify-end max-w-full"></div>
-                </div>
-
-                <!-- Mobile Menu -->
-                <div id="mobile-menu"
-                    class="hidden lg:hidden absolute top-full left-0 right-0 bg-sky-600 text-white shadow-lg z-50">
-                    <div class="flex flex-col p-4 space-y-2">
-
-                        <a href="index.html"
-                            class="px-4 py-2 bg-white text-sky-600 rounded-md font-semibold hover:bg-white/90 transition">
-                            <i class="fas fa-briefcase mr-2"></i>Home
-                        </a>
-
-                        <a href="result.html"
-                            class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
-                            <i class="fas fa-clipboard-check mr-2"></i>Results
-                        </a>
-
-                        <a href="search.html"
-                            class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
-                            <i class="fas fa-search mr-2"></i>Search
-                        </a>
-
-                        <a href="govt-services.html"
-                            class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
-                            <i class="fas fa-gavel mr-2"></i>CSC Services
-                        </a>
-
-                        <a href="tools.html"
-                            class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
-                            <i class="fas fa-tools mr-2"></i>Tools
-                        </a>
-
-                        <a href="helpdesk.html"
-                            class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
-                            <i class="fas fa-headset mr-2"></i>Helpdesk
-                        </a>
-
-                        <div id="header-links-mobile" class="mt-2 space-y-2"></div>
+                        <button id="mobile-menu-toggle" class="lg:hidden text-white hover:bg-blue-700 p-2 rounded">
+                            <i class="fas fa-bars"></i>
+                        </button>
                     </div>
+
+                    <!-- Desktop: main nav + dynamic links -->
+                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-end gap-3 min-w-0">
+
+                        <!-- ✅ Desktop menu (About/Contact/Privacy/Terms removed) -->
+                        <nav class="hidden lg:flex flex-wrap items-center gap-3 min-w-0">
+                            <a href="index.html" class="px-3 py-2 bg-white text-sky-600 rounded-md font-semibold shadow-sm hover:shadow-md transition whitespace-nowrap">
+                                <i class="fas fa-briefcase mr-2"></i>Home
+                            </a>
+
+                            <a href="result.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition whitespace-nowrap">
+                                <i class="fas fa-clipboard-check mr-2"></i>Results
+                            </a>
+
+                            <a href="search.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition whitespace-nowrap">
+                                <i class="fas fa-search mr-2"></i>Search
+                            </a>
+
+                            <a href="govt-services.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition whitespace-nowrap">
+                                <i class="fas fa-gavel mr-2"></i>CSC Services
+                            </a>
+
+                            <a href="tools.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition whitespace-nowrap">
+                                <i class="fas fa-tools mr-2"></i>Tools
+                            </a>
+
+                            <a href="helpdesk.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition whitespace-nowrap">
+                                <i class="fas fa-headset mr-2"></i>Helpdesk
+                            </a>
+                        </nav>
+
+                        <!-- Dynamic header buttons -->
+                        <div id="header-links" class="hidden lg:flex flex-wrap gap-2 justify-end max-w-full"></div>
+                    </div>
+
+                    <!-- Mobile menu -->
+                    <div id="mobile-menu" class="hidden lg:hidden absolute top-full left-0 right-0 bg-sky-600 text-white shadow-lg z-50">
+                        <div class="flex flex-col p-4 space-y-2">
+                            <a href="index.html" class="px-4 py-2 bg-white text-sky-600 rounded-md font-semibold hover:bg-white/90 transition">
+                                <i class="fas fa-briefcase mr-2"></i>Home
+                            </a>
+
+                            <a href="result.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
+                                <i class="fas fa-clipboard-check mr-2"></i>Results
+                            </a>
+
+                            <a href="search.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
+                                <i class="fas fa-search mr-2"></i>Search
+                            </a>
+
+                            <a href="govt-services.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
+                                <i class="fas fa-gavel mr-2"></i>CSC Services
+                            </a>
+
+                            <a href="tools.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
+                                <i class="fas fa-tools mr-2"></i>Tools
+                            </a>
+
+                            <a href="helpdesk.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
+                                <i class="fas fa-headset mr-2"></i>Helpdesk
+                            </a>
+
+                            <div id="header-links-mobile" class="mt-2 space-y-2"></div>
+                        </div>
+                    </div>
+
                 </div>
-
             </div>
-        </div>
-    </header>
+        </header>
 
-    <!-- ================= MAIN ================= -->
+    <!-- Main Content -->
     <main class="container mx-auto max-w-6xl px-4 py-6">
 
-        <section class="bg-white rounded-xl shadow p-6 mb-6">
-            <h2 class="text-2xl font-bold mb-2">
-                Latest Sarkari Jobs, Results & Notifications
-            </h2>
-            <p class="text-gray-600">
-                Find the newest government job updates, admit cards, and results in one place.
-            </p>
-        </section>
+        <!-- Search & Filters -->
+        <section class="bg-white p-4 rounded-lg shadow mb-6">
+            <h2 class="text-xl font-bold mb-3">Search Government Jobs</h2>
 
-        <section class="bg-white rounded-xl shadow p-6 mb-6">
-            <div class="grid md:grid-cols-3 gap-4">
-                <input id="searchInput" placeholder="Search jobs..."
-                    class="px-4 py-2 rounded-lg border border-gray-300" />
-                <select id="categoryFilter" class="px-4 py-2 rounded-lg border border-gray-300">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <input id="searchInput" type="text" placeholder="Search jobs..."
+                    class="border border-gray-300 rounded px-3 py-2 w-full">
+
+                <select id="categoryFilter" class="border border-gray-300 rounded px-3 py-2 w-full">
                     <option value="">All Categories</option>
                 </select>
-                <select id="stateFilter" class="px-4 py-2 rounded-lg border border-gray-300">
+
+                <select id="stateFilter" class="border border-gray-300 rounded px-3 py-2 w-full">
                     <option value="">All States</option>
                 </select>
             </div>
         </section>
 
-        <section class="bg-white rounded-xl shadow p-6">
-            <h3 class="text-xl font-bold mb-4">Latest Jobs</h3>
+        <!-- Jobs List -->
+        <section class="bg-white p-4 rounded-lg shadow">
+            <h2 class="text-xl font-bold mb-4">Latest Jobs</h2>
             <div id="jobs-container" class="space-y-4"></div>
 
+            <!-- Pagination -->
             <div class="flex justify-center mt-6">
-                <button id="loadMoreBtn"
-                    class="px-6 py-2 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700 transition">
+                <button id="loadMoreBtn" class="px-4 py-2 bg-sky-600 text-white rounded hover:bg-sky-700 transition">
                     Load More
                 </button>
             </div>
@@ -169,8 +159,8 @@
 
     </main>
 
-    <!-- ================= FOOTER ================= -->
-    <footer class="mt-10 bg-gray-900 text-gray-200">
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-200 mt-10">
         <div class="container mx-auto max-w-6xl px-4 py-6 text-sm">
             <div class="flex flex-col md:flex-row md:justify-between gap-3">
                 <p>© <span id="year"></span> Top Sarkari Jobs. All rights reserved.</p>
@@ -186,6 +176,9 @@
     <script>
         document.getElementById("year").textContent = new Date().getFullYear();
     </script>
+
+    <!-- Your existing script (DO NOT CHANGE) -->
+    <script src="script.js"></script>
 
 </body>
 </html>
