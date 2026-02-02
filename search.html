@@ -1,161 +1,127 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Search Government Jobs – Top Sarkari Jobs</title>
-  <meta name="description" content="Search government job notifications, results, admit cards and exam updates on Top Sarkari Jobs. Find SSC, Railway, Bank, Defence and state-wise Sarkari Naukri easily." />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://www.topsarkarijobs.com/search.html" />
-  <link rel="icon" type="image/x-icon" href="image.ico" />
+<!-- REPLACE your existing search form with this (homepage search works without a separate page) -->
+<form id="site-search" role="search" aria-label="Search government jobs" class="mt-4 flex flex-col sm:flex-row gap-3">
+  <label for="q" class="sr-only">Search jobs</label>
+  <input id="q" name="q" type="search"
+         placeholder="Search: SSC CGL, RRB NTPC, IBPS PO, Police, Teaching..."
+         class="w-full sm:flex-1 px-4 py-3 rounded-md border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-300"
+         autocomplete="off" />
+  <button type="submit" class="px-5 py-3 rounded-md bg-sky-600 text-white font-semibold hover:bg-sky-700 transition">
+    Search
+  </button>
+</form>
 
-  <style>
-    :root{
-      --bg:#f8fafc;
-      --card:#ffffff;
-      --text:#0f172a;
-      --muted:#475569;
-      --border:#e2e8f0;
-      --brand:#0284c7;
-    }
-    body{
-      margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
-      background:var(--bg);
-      color:var(--text);
-      line-height:1.5;
-    }
-    a{ color:var(--brand); text-decoration:none; }
-    a:hover{ text-decoration:underline; }
-    header{
-      background:linear-gradient(90deg,#0284c7,#4f46e5);
-      color:#fff;
-    }
-    .container{
-      max-width:1000px;
-      margin:0 auto;
-      padding:16px;
-    }
-    .brand{
-      font-weight:800;
-      font-size:1.1rem;
-    }
-    nav a{
-      color:#fff;
-      font-weight:700;
-      margin-left:12px;
-    }
-    .card{
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:14px;
-      padding:16px;
-      margin-top:16px;
-    }
-    input{
-      width:100%;
-      padding:12px;
-      border-radius:12px;
-      border:1px solid var(--border);
-      font-size:1rem;
-    }
-    button{
-      margin-top:10px;
-      padding:12px 16px;
-      border-radius:12px;
-      border:1px solid rgba(2,132,199,.25);
-      background:var(--brand);
-      color:#fff;
-      font-weight:800;
-      cursor:pointer;
-    }
-    button:hover{ filter:brightness(.95); }
-    ul{ list-style:none; padding:0; margin:16px 0 0; }
-    li{ padding:12px 0; border-top:1px solid var(--border); }
-    li:first-child{ border-top:none; }
-    .title{ font-weight:800; display:block; }
-    .small{ font-size:.92rem; color:var(--muted); margin-top:4px; }
-    .muted{ color:var(--muted); }
-  </style>
-</head>
-
-<body>
-  <header>
-    <div class="container">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <div class="brand">Top Sarkari Jobs</div>
-        <nav aria-label="Primary">
-          <a href="index.html">Home</a>
-          <a href="govt-services.html">CSC Services</a>
-          <a href="tools.html">Tools</a>
-          <a href="helpdesk.html">Helpdesk</a>
-        </nav>
-      </div>
+<!-- ADD this results container right below the form (homepage results) -->
+<section id="search-results" class="mt-4 hidden" aria-live="polite">
+  <div class="bg-white border border-slate-200 rounded-lg p-4">
+    <div class="flex items-center justify-between gap-3">
+      <h3 class="text-lg font-bold text-slate-900">Search results</h3>
+      <button type="button" id="clear-search"
+              class="text-sm px-3 py-1.5 rounded-md border border-slate-200 hover:bg-slate-50">
+        Clear
+      </button>
     </div>
-  </header>
+    <p id="search-status" class="text-sm text-slate-600 mt-2"></p>
+    <ul id="search-list" class="mt-3 space-y-2"></ul>
+    <p class="text-xs text-slate-500 mt-3">
+      Tip: This searches links already visible on the homepage (jobs, sections, tools). Always verify details on official sources.
+    </p>
+  </div>
+</section>
 
-  <main class="container">
-    <div class="card">
-      <h1 style="margin-top:0;">Search Government Jobs</h1>
-      <p class="muted">
-        Search Sarkari Naukri by keyword. Try terms like <strong>SSC</strong>, <strong>Railway</strong>, 
-        <strong>Bank</strong>, <strong>Police</strong>, <strong>Result</strong>, <strong>Admit Card</strong>.
-      </p>
+<!-- ADD this script near the bottom of index.html, BEFORE </body> and AFTER script.js -->
+<script>
+(function () {
+  const form = document.getElementById("site-search");
+  const input = document.getElementById("q");
+  const wrap = document.getElementById("search-results");
+  const status = document.getElementById("search-status");
+  const list = document.getElementById("search-list");
+  const clearBtn = document.getElementById("clear-search");
 
-      <form action="search.html" method="get" role="search" aria-label="Search government jobs">
-        <label for="q" class="muted" style="font-weight:700;">Search:</label>
-        <input id="q" name="q" type="search" placeholder="e.g. SSC CGL, RRB NTPC, IBPS PO..." />
-        <button type="submit">Search</button>
-      </form>
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  }
 
-      <p id="status" class="small"></p>
-      <ul id="results" aria-label="Search results"></ul>
+  function getSearchableLinks() {
+    // Collect ALL internal links currently on the page (including ones injected by script.js)
+    const anchors = Array.from(document.querySelectorAll("a[href]"));
+    const out = [];
+    const seen = new Set();
 
-      <p class="small muted" style="margin-top:12px;">
-        Disclaimer: Top Sarkari Jobs is not a government website. Always verify details on the official recruitment portal.
-      </p>
-    </div>
-  </main>
+    for (const a of anchors) {
+      const href = a.getAttribute("href") || "";
+      // ignore empty, hashes, mailto/tel, external
+      if (!href || href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:")) continue;
+      if (/^https?:\/\//i.test(href) && !href.includes(location.hostname)) continue;
 
-  <script>
-    const params = new URLSearchParams(location.search);
-    const q = (params.get("q") || "").trim();
-    const input = document.getElementById("q");
-    const statusEl = document.getElementById("status");
-    const resultsEl = document.getElementById("results");
+      const text = (a.textContent || "").trim();
+      const key = href + "|" + text;
+      if (!text || text.length < 2) continue;
+      if (seen.has(key)) continue;
+      seen.add(key);
 
-    input.value = q;
+      out.push({ href, text });
+    }
+    return out;
+  }
 
-    const PAGES = [
-      { title: "Latest Government Jobs", url: "index.html", desc: "Latest Sarkari Naukri updates" },
-      { title: "CSC Services", url: "govt-services.html", desc: "Common Services Center services" },
-      { title: "Tools", url: "tools.html", desc: "Job-related tools and utilities" },
-      { title: "Helpdesk", url: "helpdesk.html", desc: "Support and contact information" }
-    ];
-
-    function escapeHtml(s){
-      return s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  function renderResults(query, results) {
+    wrap.classList.remove("hidden");
+    if (!results.length) {
+      status.textContent = `No results found for “${query}”. Try SSC, Railway, Bank, Police, Admit Card, Result.`;
+      list.innerHTML = "";
+      return;
     }
 
-    if (!q) {
-      statusEl.textContent = "Enter a keyword to search.";
-    } else {
-      const needle = q.toLowerCase();
-      const matches = PAGES.filter(p =>
-        (p.title + " " + p.desc + " " + p.url).toLowerCase().includes(needle)
-      );
-
-      statusEl.textContent = matches.length
-        ? `Showing ${matches.length} result(s) for “${q}”.`
-        : `No results found for “${q}”. Try different keywords like SSC, Railway, Bank, Result.`;
-
-      resultsEl.innerHTML = matches.map(m => `
-        <li>
-          <a class="title" href="${escapeHtml(m.url)}">${escapeHtml(m.title)}</a>
-          <div class="small">${escapeHtml(m.desc)}</div>
+    status.textContent = `Showing ${results.length} result(s) for “${query}”.`;
+    list.innerHTML = results.slice(0, 30).map(r => {
+      return `
+        <li class="border border-slate-200 rounded-md p-3 hover:bg-slate-50 transition">
+          <a class="font-semibold text-sky-700 underline underline-offset-2" href="${escapeHtml(r.href)}">
+            ${escapeHtml(r.text)}
+          </a>
+          <div class="text-xs text-slate-500 mt-1">${escapeHtml(r.href)}</div>
         </li>
-      `).join("");
+      `;
+    }).join("");
+  }
+
+  function clearResults() {
+    input.value = "";
+    wrap.classList.add("hidden");
+    status.textContent = "";
+    list.innerHTML = "";
+    input.focus();
+  }
+
+  // Wait a bit so your existing script.js can inject job links first
+  function doSearch(query) {
+    const q = query.trim().toLowerCase();
+    if (!q) {
+      renderResults(query, []);
+      return;
     }
-  </script>
-</body>
-</html>
+    const links = getSearchableLinks();
+    const matches = links.filter(l => (l.text + " " + l.href).toLowerCase().includes(q));
+    renderResults(query, matches);
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    // ensure dynamic content is loaded (if still loading, search after a short delay)
+    doSearch(input.value);
+  });
+
+  clearBtn.addEventListener("click", clearResults);
+
+  // Optional: live search after user stops typing
+  let t = null;
+  input.addEventListener("input", function () {
+    clearTimeout(t);
+    t = setTimeout(() => {
+      if (input.value.trim().length >= 2) doSearch(input.value);
+      if (!input.value.trim()) wrap.classList.add("hidden");
+    }, 250);
+  });
+})();
+</script>
