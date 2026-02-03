@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-C4VRD1C9QS"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-C4VRD1C9QS');
+  </script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Government Exam Results 2026 – Sarkari Result</title>
@@ -15,14 +24,30 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
-    body{font-family:Arial,sans-serif;margin:0;padding:0;background:#f8fafc;color:#1e293b;}
-    .container{max-width:1100px;margin:0 auto;padding:16px;}
-    h1{font-size:1.6rem;margin:0;display:flex;align-items:center;}
-    table{width:100%;border-collapse:collapse;margin-top:1rem;}
-    th,td{border:1px solid #e2e8f0;padding:8px;}
+    body{
+      font-family:Arial,sans-serif;
+      margin:0;
+      padding:0;
+      background:#f8fafc;
+      color:#1e293b;
+    }
+    .container{
+      max-width:1100px;
+      margin:0 auto;
+      padding:16px;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:1rem;
+      background:#fff;
+    }
+    th,td{
+      border:1px solid #e2e8f0;
+      padding:8px;
+    }
     th{background:#e0f2fe;}
-    nav a{color:#fff;margin-right:10px;text-decoration:none;font-weight:bold;}
-    nav a:hover{text-decoration:underline;}
+    /* ✅ IMPORTANT: removed "nav a { color:#fff }" so header button styles are not overridden */
   </style>
 </head>
 
@@ -54,6 +79,7 @@
           <!-- RIGHT: Navigation fills remaining space -->
           <div class="hidden lg:flex items-center gap-3 flex-1 justify-end min-w-0">
             <nav class="flex items-center gap-3 flex-wrap">
+              <!-- ✅ Home button fixed: text no longer overridden -->
               <a href="index.html" class="px-3 py-2 bg-white text-sky-600 rounded-md font-semibold shadow-sm hover:shadow-md transition">
                 <i class="fas fa-briefcase mr-2"></i>Home
               </a>
@@ -118,9 +144,13 @@
       </div>
     </header>
 
-    <!-- ✅ MAIN CONTENT (UNCHANGED) -->
+    <!-- ✅ MAIN CONTENT (table/intro unchanged) -->
     <main class="container flex-1">
-      <p>Check the latest Sarkari Result updates for all India government exams. We list exam results for SSC, RRB, IBPS, state commissions, police, defence and more. Click the link to view the result and download marks/scorecards from the official site.</p>
+      <p>
+        Check the latest Sarkari Result updates for all India government exams. We list exam results for SSC, RRB, IBPS, state commissions, police, defence and more.
+        Click the link to view the result and download marks/scorecards from the official site.
+      </p>
+
       <table>
         <thead>
           <tr><th>Exam</th><th>Organization</th><th>Result Date</th><th>Link</th></tr>
@@ -130,26 +160,69 @@
             <td>SSC CHSL 2025 Result</td>
             <td>Staff Selection Commission</td>
             <td>31/03/2026</td>
-            <td><a href="https://ssc.nic.in/" target="_blank">View Result</a></td>
+            <td><a href="https://ssc.nic.in/" target="_blank" rel="noopener">View Result</a></td>
           </tr>
           <tr>
             <td>RRB NTPC Final Result</td>
             <td>Railway Recruitment Board</td>
             <td>15/04/2026</td>
-            <td><a href="https://indianrailways.gov.in/" target="_blank">View Result</a></td>
+            <td><a href="https://indianrailways.gov.in/" target="_blank" rel="noopener">View Result</a></td>
           </tr>
           <tr>
             <td>IBPS PO Mains Result</td>
             <td>Institute of Banking Personnel Selection</td>
             <td>10/05/2026</td>
-            <td><a href="https://ibps.in/" target="_blank">View Result</a></td>
+            <td><a href="https://ibps.in/" target="_blank" rel="noopener">View Result</a></td>
           </tr>
         </tbody>
       </table>
-      <h2>FAQs – Exam Results</h2>
-      <details><summary>Where can I find my SSC CHSL result?</summary><p>Visit the official SSC website and use your roll number and date of birth to download the result PDF.</p></details>
-      <details><summary>How do I check RRB results?</summary><p>RRB releases zone-wise results. Visit the RRB zone website where you applied and look for the result section.</p></details>
-      <details><summary>What do I need to check IBPS results?</summary><p>You will need your registration number and password or date of birth to check your result on the IBPS portal.</p></details>
+
+      <!-- ✅ FAQs (homepage style but compact) -->
+      <section class="mt-6">
+        <div class="bg-white border border-slate-200 rounded-lg p-4">
+          <h2 class="text-lg font-bold text-slate-900">FAQs – Exam Results</h2>
+          <p class="text-sm text-slate-600 mt-1">
+            Common questions about checking Sarkari results and downloading scorecards.
+          </p>
+
+          <div class="mt-3 space-y-2">
+
+            <div class="border border-slate-200 rounded-lg bg-white overflow-hidden">
+              <button type="button"
+                class="faq-btn w-full flex items-center justify-between gap-3 px-3 py-3 text-left font-semibold text-slate-900 hover:bg-slate-50 text-sm">
+                <span>Where can I find my SSC CHSL result?</span>
+                <i class="fas fa-chevron-down text-slate-500 transition-transform duration-200"></i>
+              </button>
+              <div class="faq-panel hidden px-3 pb-3 text-slate-700 text-sm">
+                Visit the official SSC website and use your roll number and date of birth to download the result PDF.
+              </div>
+            </div>
+
+            <div class="border border-slate-200 rounded-lg bg-white overflow-hidden">
+              <button type="button"
+                class="faq-btn w-full flex items-center justify-between gap-3 px-3 py-3 text-left font-semibold text-slate-900 hover:bg-slate-50 text-sm">
+                <span>How do I check RRB results?</span>
+                <i class="fas fa-chevron-down text-slate-500 transition-transform duration-200"></i>
+              </button>
+              <div class="faq-panel hidden px-3 pb-3 text-slate-700 text-sm">
+                RRB releases zone-wise results. Visit the RRB zone website where you applied and look for the result section.
+              </div>
+            </div>
+
+            <div class="border border-slate-200 rounded-lg bg-white overflow-hidden">
+              <button type="button"
+                class="faq-btn w-full flex items-center justify-between gap-3 px-3 py-3 text-left font-semibold text-slate-900 hover:bg-slate-50 text-sm">
+                <span>What do I need to check IBPS results?</span>
+                <i class="fas fa-chevron-down text-slate-500 transition-transform duration-200"></i>
+              </button>
+              <div class="faq-panel hidden px-3 pb-3 text-slate-700 text-sm">
+                You will need your registration number and password or date of birth to check your result on the IBPS portal.
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
     </main>
 
     <!-- ✅ MAIN FOOTER (same as homepage) -->
@@ -208,7 +281,6 @@
 
   </div>
 
-  <!-- Keep your existing script behavior if present globally -->
   <script src="script.js"></script>
 
   <!-- ✅ Mobile menu toggle fallback -->
@@ -221,5 +293,25 @@
       });
     }
   </script>
+
+  <!-- ✅ FAQ accordion toggle (compact) -->
+  <script>
+    (function () {
+      var buttons = document.querySelectorAll(".faq-btn");
+      if (!buttons || buttons.length === 0) return;
+
+      buttons.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var panel = btn.nextElementSibling;
+          if (!panel) return;
+          panel.classList.toggle("hidden");
+
+          var icon = btn.querySelector("i");
+          if (icon) icon.classList.toggle("rotate-180");
+        });
+      });
+    })();
+  </script>
+
 </body>
 </html>
