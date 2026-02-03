@@ -241,6 +241,18 @@
             </div>
         </main>
 
+        <script>
+  document.querySelectorAll(".faq-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const panel = btn.nextElementSibling;
+      const icon = btn.querySelector("i");
+
+      panel.classList.toggle("hidden");
+      icon.classList.toggle("rotate-180");
+    });
+  });
+</script>
+
         <!-- Footer -->
         <footer class="bg-white text-gray-800 py-8 mt-12">
             <div class="container mx-auto px-4">
