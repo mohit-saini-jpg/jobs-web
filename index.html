@@ -123,25 +123,22 @@
         <!-- Header with Navigation -->
         <header class="bg-gradient-to-r from-sky-600 to-indigo-600 text-white shadow-sm relative">
             <div class="container mx-auto max-w-6xl px-4 py-4">
-                <div class="flex items-center justify-between">
-                    <h1 class="text-2xl font-bold flex items-center">
+                <!-- ✅ Header row (wrap-safe to prevent overlap) -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <h1 class="text-2xl font-bold flex items-center shrink-0">
                         <img src="image.png" alt="Top Sarkari Jobs Logo" class="h-10 w-10 mr-3 rounded-full">
                         Top Sarkari Jobs
                     </h1>
 
-                    <button id="mobile-menu-toggle" class="lg:hidden text-white hover:bg-blue-700 p-2 rounded">
+                    <button id="mobile-menu-toggle" class="lg:hidden text-white hover:bg-blue-700 p-2 rounded ml-auto">
                         <i class="fas fa-bars"></i>
                     </button>
 
-                    <!-- ✅ Desktop menu -->
-                    <nav class="hidden lg:flex items-center gap-3 flex-1 min-w-0 overflow-x-auto whitespace-nowrap px-1"
-     style="scrollbar-width: thin;">
+                    <!-- ✅ Desktop menu (About/Contact/Privacy/Terms removed) -->
+                    <nav class="hidden lg:flex flex-wrap items-center gap-3 flex-1 min-w-0">
                         <a href="index.html" class="px-3 py-2 bg-white text-sky-600 rounded-md font-semibold shadow-sm hover:shadow-md transition">
                             <i class="fas fa-briefcase mr-2"></i>Home
                         </a>
-
-                        <!-- ✅ REMOVED: About -->
-                        <!-- ✅ REMOVED: Contact -->
 
                         <a href="result.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
                             <i class="fas fa-clipboard-check mr-2"></i>Results
@@ -150,9 +147,6 @@
                         <a href="search.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
                             <i class="fas fa-search mr-2"></i>Search
                         </a>
-
-                        <!-- ✅ REMOVED: Privacy -->
-                        <!-- ✅ REMOVED: Terms -->
 
                         <!-- keep original links -->
                         <a href="govt-services.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
@@ -166,41 +160,35 @@
                         </a>
                     </nav>
 
-                    <div id="header-links" class="hidden lg:flex gap-2"></div>
+                    <!-- Dynamic header links (filtered in script.js to remove WhatsApp button) -->
+                    <div id="header-links" class="hidden lg:flex gap-2 flex-wrap justify-end"></div>
+                </div>
 
-                    <!-- ✅ Mobile menu -->
-                    <div id="mobile-menu" class="hidden lg:hidden absolute top-full left-0 right-0 bg-sky-600 text-white shadow-lg z-50">
-                        <div class="flex flex-col p-4 space-y-2">
-                            <a href="index.html" class="px-4 py-2 bg-white text-sky-600 rounded-md font-semibold hover:bg-white/90 transition">
-                                <i class="fas fa-briefcase mr-2"></i>Home
-                            </a>
+                <!-- ✅ Mobile menu (About/Contact/Privacy/Terms removed) -->
+                <div id="mobile-menu" class="hidden lg:hidden absolute top-full left-0 right-0 bg-sky-600 text-white shadow-lg z-50">
+                    <div class="flex flex-col p-4 space-y-2">
+                        <a href="index.html" class="px-4 py-2 bg-white text-sky-600 rounded-md font-semibold hover:bg-white/90 transition">
+                            <i class="fas fa-briefcase mr-2"></i>Home
+                        </a>
 
-                            <!-- ✅ REMOVED: About -->
-                            <!-- ✅ REMOVED: Contact -->
+                        <a href="result.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
+                            <i class="fas fa-clipboard-check mr-2"></i>Results
+                        </a>
+                        <a href="search.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
+                            <i class="fas fa-search mr-2"></i>Search
+                        </a>
 
-                            <a href="result.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
-                                <i class="fas fa-clipboard-check mr-2"></i>Results
-                            </a>
+                        <a href="govt-services.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
+                            <i class="fas fa-gavel mr-2"></i>CSC Services
+                        </a>
+                        <a href="tools.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
+                            <i class="fas fa-tools mr-2"></i>Tools
+                        </a>
+                        <a href="helpdesk.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
+                            <i class="fas fa-headset mr-2"></i>Helpdesk
+                        </a>
 
-                            <a href="search.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
-                                <i class="fas fa-search mr-2"></i>Search
-                            </a>
-
-                            <!-- ✅ REMOVED: Privacy -->
-                            <!-- ✅ REMOVED: Terms -->
-
-                            <a href="govt-services.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
-                                <i class="fas fa-gavel mr-2"></i>CSC Services
-                            </a>
-                            <a href="tools.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
-                                <i class="fas fa-tools mr-2"></i>Tools
-                            </a>
-                            <a href="helpdesk.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
-                                <i class="fas fa-headset mr-2"></i>Helpdesk
-                            </a>
-
-                            <div id="header-links-mobile" class="mt-2 space-y-2"></div>
-                        </div>
+                        <div id="header-links-mobile" class="mt-2 space-y-2"></div>
                     </div>
                 </div>
             </div>
@@ -261,14 +249,12 @@
                         <h3 class="text-xl font-bold">Top Sarkari Jobs</h3>
                         <p class="text-gray-600 text-sm mt-1">Your gateway to government jobs and services</p>
 
-                        <!-- ✅ Footer internal links -->
+                        <!-- ✅ Footer internal links (Search/Results removed) -->
                         <div class="mt-3 flex flex-wrap gap-3 text-sm">
                           <a class="text-sky-600 hover:underline" href="about.html">About</a>
                           <a class="text-sky-600 hover:underline" href="contact.html">Contact</a>
                           <a class="text-sky-600 hover:underline" href="privacy.html">Privacy</a>
                           <a class="text-sky-600 hover:underline" href="terms.html">Terms</a>
-                          <a class="text-sky-600 hover:underline" href="result.html">Results</a>
-                          <a class="text-sky-600 hover:underline" href="search.html">Search</a>
                         </div>
                     </div>
 
