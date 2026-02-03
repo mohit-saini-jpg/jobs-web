@@ -126,15 +126,56 @@
                 <!-- ✅ Header row (wrap-safe to prevent overlap) -->
                 <div class="flex flex-wrap items-center gap-3">
                     <div class="flex flex-col shrink-0">
-    <h1 class="text-2xl font-bold flex items-center shrink-0">
-    <img src="image.png" alt="Top Sarkari Jobs Logo" class="h-10 w-10 mr-3 rounded-full">
-    <span class="flex flex-col leading-tight">
-        <span>Top Sarkari Jobs</span>
-        <span class="text-xs font-medium text-sky-200">
-            Latest Sarkari Jobs, Results, Admit Cards &amp; Online Forms – 2026
-        </span>
-    </span>
-</h1>
+    <div class="flex items-center gap-4">
+    <!-- LEFT: Logo + Title + Subtitle -->
+    <div class="flex items-center gap-3 shrink-0">
+        <img src="image.png" alt="Top Sarkari Jobs Logo" class="h-10 w-10 rounded-full">
+
+        <div class="leading-tight">
+            <h1 class="text-2xl font-bold">Top Sarkari Jobs</h1>
+            <p class="text-xs md:text-sm text-sky-200">
+                Latest Sarkari Jobs, Results, Admit Cards &amp; Online Forms – 2026
+            </p>
+        </div>
+    </div>
+
+    <!-- MOBILE MENU BUTTON -->
+    <button id="mobile-menu-toggle" class="lg:hidden text-white hover:bg-blue-700 p-2 rounded ml-auto">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- RIGHT: Navigation fills remaining space -->
+    <div class="hidden lg:flex items-center gap-3 flex-1 justify-end min-w-0">
+        <nav class="flex items-center gap-3 flex-wrap">
+            <a href="index.html" class="px-3 py-2 bg-white text-sky-600 rounded-md font-semibold shadow-sm hover:shadow-md transition">
+                <i class="fas fa-briefcase mr-2"></i>Home
+            </a>
+
+            <a href="result.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
+                <i class="fas fa-clipboard-check mr-2"></i>Results
+            </a>
+
+            <a href="search.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
+                <i class="fas fa-search mr-2"></i>Search
+            </a>
+
+            <a href="govt-services.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
+                <i class="fas fa-gavel mr-2"></i>CSC Services
+            </a>
+
+            <a href="tools.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
+                <i class="fas fa-tools mr-2"></i>Tools
+            </a>
+
+            <a href="helpdesk.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
+                <i class="fas fa-headset mr-2"></i>Helpdesk
+            </a>
+        </nav>
+
+        <!-- Dynamic header links -->
+        <div id="header-links" class="flex gap-2 flex-wrap justify-end"></div>
+    </div>
+</div>
                     <button id="mobile-menu-toggle" class="lg:hidden text-white hover:bg-blue-700 p-2 rounded ml-auto">
                         <i class="fas fa-bars"></i>
                     </button>
