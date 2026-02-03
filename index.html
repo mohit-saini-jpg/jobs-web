@@ -24,14 +24,20 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
-    <!-- Google Font -->
+    <!-- Google Font: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        body{font-family:'Inter',system-ui;background:#f8fafc;color:#0f172a}
+        :root{
+            --primary-500: #0ea5e9;
+            --primary-600: #0284c7;
+            --muted-bg: #f8fafc;
+        }
+        html,body{height:100%;}
+        body{font-family:'Inter',system-ui;background:var(--muted-bg);color:#0f172a}
     </style>
 </head>
 
@@ -39,18 +45,40 @@
 
 <div class="min-h-screen flex flex-col">
 
-    <!-- ================= EXISTING SITE CONTENT (UNCHANGED) ================= -->
-    <!-- YOUR HEADER, HOME SECTION, JOB SECTIONS, ETC. REMAIN EXACTLY THE SAME -->
-    <!-- (INTENTIONALLY NOT TOUCHED) -->
+    <!-- ================= YOUR SITE CONTENT (UNCHANGED) ================= -->
+    <!-- HEADER + HOME + JOBS SECTIONS EXACTLY AS BEFORE -->
 
-    <!-- ================= FAQ SECTION (NEW) ================= -->
-    <section class="bg-white border-t mt-12">
+    <!-- home section  -->
+    <div class="container mx-auto px-4 py-4">
+        <div id="home-section" class="flex flex-wrap gap-2"></div>
+    </div>
+
+    <main class="mx-auto w-full px-4">
+        <div class="bg-white rounded-lg overflow-hidden">
+            <div class="flex flex-col gap-4">
+                <div id="jobs-section">
+                    <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-12 mb-6" id="jobs-top-buttons"></div>
+                    <div class="flex flex-col lg:flex-row gap-4 mt-6">
+                        <div class="w-full lg:w-1/6 grid grid-cols-2 h-fit" id="jobs-left-section"></div>
+                        <div class="w-full lg:w-3/4 flex flex-col gap-4 hidden md:flex">
+                            <div id="dynamic-sections-desktop" class="flex flex-col gap-4"></div>
+                        </div>
+                        <div class="w-full lg:w-1/6 grid grid-cols-2 h-fit" id="jobs-right-section"></div>
+                    </div>
+                    <div class="md:hidden space-y-4" id="dynamic-sections-mobile"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ================= FAQ SECTION START (NEW) ================= -->
+    <section class="bg-white mt-12 border-t">
         <div class="container mx-auto px-4 py-10 max-w-6xl">
             <h2 class="text-2xl font-bold text-slate-900">
-                Frequently Asked Questions – Sarkari Jobs & Government Results
+                Frequently Asked Questions – Sarkari Jobs & Results
             </h2>
             <p class="text-slate-600 mt-1">
-                Answers to common questions about Sarkari Jobs, Admit Cards, Results, and Government Job Notifications.
+                Common questions about Sarkari Jobs, government job notifications, admit cards, and results in India.
             </p>
 
             <div class="mt-6 space-y-3">
@@ -61,7 +89,7 @@
                         <i class="fas fa-chevron-down"></i>
                     </button>
                     <div class="faq-panel hidden px-4 pb-4 text-slate-700">
-                        Top Sarkari Jobs is a trusted website that provides latest Sarkari Jobs, government job notifications, Sarkari Result, Admit Card, and Online Form links for central and state government recruitment in India.
+                        Top Sarkari Jobs is a trusted website for latest Sarkari Jobs, government job notifications, Sarkari Result, Admit Card, and online form links for central and state government recruitment in India.
                     </div>
                 </div>
 
@@ -71,7 +99,7 @@
                         <i class="fas fa-chevron-down"></i>
                     </button>
                     <div class="faq-panel hidden px-4 pb-4 text-slate-700">
-                        We regularly update government job notifications, Sarkari results, and admit card links. Candidates should always verify details from the official government website mentioned in each post.
+                        We regularly update government job notifications, Sarkari results, and admit card links. Always verify details from the official government website mentioned in each post.
                     </div>
                 </div>
 
@@ -81,7 +109,7 @@
                         <i class="fas fa-chevron-down"></i>
                     </button>
                     <div class="faq-panel hidden px-4 pb-4 text-slate-700">
-                        We aim to share official government recruitment portals whenever available. Users are advised to read the official notification PDF for complete and accurate information.
+                        We aim to share official government recruitment portals whenever available. Candidates should always read the official notification PDF for accurate information.
                     </div>
                 </div>
 
@@ -91,7 +119,7 @@
                         <i class="fas fa-chevron-down"></i>
                     </button>
                     <div class="faq-panel hidden px-4 pb-4 text-slate-700">
-                        Sarkari Result and Admit Card dates may change due to revised notifications or corrigendums issued by government departments. Always follow the latest update on the official website.
+                        Dates may change due to revised notifications or corrigendums issued by government departments. Always check the latest update on the official website.
                     </div>
                 </div>
 
@@ -101,30 +129,33 @@
                         <i class="fas fa-chevron-down"></i>
                     </button>
                     <div class="faq-panel hidden px-4 pb-4 text-slate-700">
-                        Visit the official Sarkari Result or Admit Card page using the link provided and log in using your registration number, roll number, or date of birth.
+                        Visit the official Sarkari Result or Admit Card page using the provided link and log in using your registration number, roll number, or date of birth.
                     </div>
                 </div>
 
                 <div class="border rounded-lg">
                     <button class="faq-btn w-full flex justify-between items-center px-4 py-4 font-semibold text-left">
-                        Does Top Sarkari Jobs charge any fees or collect personal data?
+                        Does Top Sarkari Jobs charge any fees?
                         <i class="fas fa-chevron-down"></i>
                     </button>
                     <div class="faq-panel hidden px-4 pb-4 text-slate-700">
-                        No. Top Sarkari Jobs does not charge any fees or collect sensitive personal data. All job applications and payments are done only on official government websites.
+                        No. Top Sarkari Jobs does not charge any fees or collect sensitive personal data. All applications are completed on official government websites only.
                     </div>
                 </div>
 
             </div>
         </div>
     </section>
+    <!-- ================= FAQ SECTION END ================= -->
 
     <!-- ================= FOOTER (UNCHANGED) ================= -->
-    <!-- Your existing footer comes here exactly as before -->
+    <!-- your existing footer is already here in your file -->
 
 </div>
 
-<!-- FAQ Toggle Script -->
+<script src="script.js"></script>
+
+<!-- FAQ accordion toggle -->
 <script>
   document.querySelectorAll(".faq-btn").forEach(btn => {
     btn.addEventListener("click", () => {
