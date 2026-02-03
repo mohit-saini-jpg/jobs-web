@@ -1,271 +1,428 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C4VRD1C9QS"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-C4VRD1C9QS"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-C4VRD1C9QS');
+  </script>
 
-      gtag('config', 'G-C4VRD1C9QS');
-    </script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job Details & Notifications - Top Sarkari Jobs</title>
-    <meta name="description" content="View detailed information about latest government jobs, admit cards, and results. Download notifications and apply online.">
-    <meta name="keywords" content="job details, notification, apply online, sarkari job vacancy, recruitment details">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://topsarkarijobs.com/view.html">
-    <link rel="icon" type="image/x-icon" href="image.ico">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://topsarkarijobs.com/view.html">
-    <meta property="og:title" content="Job Details & Notifications - Top Sarkari Jobs">
-    <meta property="og:description" content="View detailed information about latest government jobs, admit cards, and results.">
+  <!-- Default SEO (JS updates title/description based on section) -->
+  <title>Latest Sarkari Jobs, Results & Admit Card Updates | Top Sarkari Jobs</title>
+  <meta name="description" content="Browse the latest Sarkari Jobs and government job notifications in India. Find new recruitment updates, eligibility, last date, and apply online links — updated regularly." />
+  <meta name="keywords" content="top sarkari jobs, latest jobs, govt jobs 2026, sarkari naukri, sarkari result, admit card, online form, government job notifications, recruitment" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Top Sarkari Jobs" />
+  <link rel="canonical" id="canonical-link" href="https://www.topsarkarijobs.com/view.html" />
+  <link rel="icon" type="image/x-icon" href="image.ico">
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- Google Font: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary-500: #0ea5e9;
-            --muted-bg: #f8fafc
-        }
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.topsarkarijobs.com/view.html">
+  <meta property="og:title" content="Latest Sarkari Jobs | Top Sarkari Jobs">
+  <meta property="og:description" content="Find latest Sarkari Jobs, government job notifications, and apply online updates — updated regularly.">
+  <meta property="og:image" content="https://topsarkarijobs.com/og-image.jpg">
 
-        body {
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-            background: var(--muted-bg);
-            color: #0f172a
-        }
-    </style>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+  <!-- Inter font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root{
+      --muted-bg:#f8fafc;
+    }
+    html,body{height:100%;}
+    body{
+      font-family:'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background:var(--muted-bg);
+      color:#0f172a;
+    }
+  </style>
 </head>
 
-<body class="m-0 p-0 min-h-screen flex flex-col">
- <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold flex items-center">
-            <img src="image.png" alt="Top Sarkari Jobs Logo" class="h-10 w-10 mr-3 rounded-full">
-            Top Sarkari Jobs
-        </h1>
-    </div>
-    <div class="flex-1 flex flex-col">
-        <!-- Header with Back Button -->
-        <header class="bg-gradient-to-r from-sky-600 to-indigo-600 text-white shadow-sm relative">
-            <div class="container mx-auto max-w-6xl px-4 py-3">
-                <div class="flex items-center justify-between">
-                    <h1 id="page-title" class="text-xs font-bold flex items-center max-w-xs">
-                        <img src="image.png" alt="Top Sarkari Jobs Logo" class="h-8 w-8 mr-3 rounded-full">
-                        Loading...
-                    </h1>
+<body>
+  <div class="min-h-screen flex flex-col">
 
-                    <nav>
-                        <a href="#" onclick="goBack()" class="text-white hover:underline flex items-center">
-                            <i class="fas fa-arrow-left mr-2"></i>Go back
-                        </a>
-                    </nav>
-                </div>
+    <!-- HEADER (matches homepage structure you approved) -->
+    <header class="bg-gradient-to-r from-sky-600 to-indigo-600 text-white shadow-sm relative">
+      <div class="container mx-auto max-w-6xl px-4 py-4">
+
+        <div class="flex items-center gap-4">
+          <!-- LEFT -->
+          <div class="flex items-center gap-3 shrink-0">
+            <img src="image.png" alt="Top Sarkari Jobs Logo" class="h-10 w-10 rounded-full">
+            <div class="leading-tight">
+              <h1 class="text-2xl font-bold">Top Sarkari Jobs</h1>
+              <p class="text-xs md:text-sm text-sky-200">
+                Latest Sarkari Jobs, Results, Admit Cards &amp; Online Forms – 2026
+              </p>
             </div>
-        </header>
+          </div>
 
-        <!-- Full Screen Iframe -->
-        <div class="flex-1">
-            <iframe id="content-iframe" src="" width="100%" height="100%" style="min-height: 100vh;" frameborder="0"
-                class="w-full h-full"></iframe>
+          <!-- MOBILE MENU BUTTON -->
+          <button id="mobile-menu-toggle" class="lg:hidden text-white hover:bg-blue-700 p-2 rounded ml-auto">
+            <i class="fas fa-bars"></i>
+          </button>
+
+          <!-- RIGHT -->
+          <div class="hidden lg:flex items-center gap-3 flex-1 justify-end min-w-0">
+            <nav class="flex items-center gap-3 flex-wrap">
+              <a href="index.html" class="px-3 py-2 bg-white text-sky-600 rounded-md font-semibold shadow-sm hover:shadow-md transition">
+                <i class="fas fa-briefcase mr-2"></i>Home
+              </a>
+
+              <a href="result.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
+                <i class="fas fa-clipboard-check mr-2"></i>Results
+              </a>
+
+              <a href="search.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
+                <i class="fas fa-search mr-2"></i>Search
+              </a>
+
+              <a href="govt-services.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
+                <i class="fas fa-gavel mr-2"></i>CSC Services
+              </a>
+
+              <a href="tools.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
+                <i class="fas fa-tools mr-2"></i>Tools
+              </a>
+
+              <a href="helpdesk.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
+                <i class="fas fa-headset mr-2"></i>Helpdesk
+              </a>
+            </nav>
+
+            <!-- Dynamic header links (kept for consistency) -->
+            <div id="header-links" class="flex gap-2 flex-wrap justify-end"></div>
+          </div>
         </div>
 
-        <!-- Loading Overlay -->
-        <div id="loading-overlay" class="fixed inset-0 bg-white bg-opacity-90 flex items-center justify-center">
-            <div class="text-center">
-                <i class="fas fa-spinner fa-spin text-6xl text-blue-500 mb-4"></i>
-                <p class="text-gray-600 font-medium text-xl">Loading...</p>
-                <p class="text-gray-400 text-sm mt-2">Please wait while we load the content</p>
-            </div>
-        </div>
-    </div>
+        <!-- MOBILE MENU -->
+        <div id="mobile-menu" class="hidden lg:hidden absolute top-full left-0 right-0 bg-sky-600 text-white shadow-lg z-50">
+          <div class="flex flex-col p-4 space-y-2">
+            <a href="index.html" class="px-4 py-2 bg-white text-sky-600 rounded-md font-semibold hover:bg-white/90 transition">
+              <i class="fas fa-briefcase mr-2"></i>Home
+            </a>
+            <a href="result.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
+              <i class="fas fa-clipboard-check mr-2"></i>Results
+            </a>
+            <a href="search.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
+              <i class="fas fa-search mr-2"></i>Search
+            </a>
+            <a href="govt-services.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
+              <i class="fas fa-gavel mr-2"></i>CSC Services
+            </a>
+            <a href="tools.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
+              <i class="fas fa-tools mr-2"></i>Tools
+            </a>
+            <a href="helpdesk.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
+              <i class="fas fa-headset mr-2"></i>Helpdesk
+            </a>
 
-    <!-- Footer -->
-    <footer class="bg-white text-gray-800 py-8">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-4 md:mb-0">
-                    <h3 class="text-xl font-bold">Top Sarkari Jobs</h3>
-                    <p class="text-gray-600 text-sm mt-1">Your gateway to government jobs and services</p>
-                </div>
-                <div class="flex flex-wrap gap-3" id="footer-social-links">
-                    <!-- Social links will be populated here -->
-                </div>
-            </div>
-            <div class="border-t border-gray-200 mt-6 pt-6 text-center text-gray-600 text-sm">
-                <p>&copy; 2025 Top Sarkari Jobs. All rights reserved.</p>
-            </div>
+            <div id="header-links-mobile" class="mt-2 space-y-2"></div>
+          </div>
         </div>
+
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="container mx-auto max-w-6xl px-4 py-6 flex-1">
+
+      <!-- Title / Breadcrumb area -->
+      <div class="bg-white rounded-lg border border-slate-200 p-5">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <h2 id="page-title" class="text-2xl font-bold text-slate-900">Latest Jobs</h2>
+            <p id="page-subtitle" class="text-slate-600 mt-1">
+              Browse the latest government job notifications and apply online updates.
+            </p>
+          </div>
+
+          <a href="index.html" class="inline-flex items-center justify-center px-4 py-2 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold transition">
+            <i class="fas fa-arrow-left mr-2"></i> Back to Home
+          </a>
+        </div>
+      </div>
+
+      <!-- SEO CONTENT BLOCK -->
+      <section class="mt-5 bg-white rounded-lg border border-slate-200 p-5">
+        <h3 class="text-xl font-bold text-slate-900">Latest Sarkari Jobs 2026 – Govt Job Notifications (India)</h3>
+
+        <p class="text-slate-700 mt-2 leading-relaxed">
+          This page lists the most recent <strong>Sarkari Jobs</strong> and <strong>government job notifications</strong> in India.
+          You can find updates across <strong>central government</strong> and <strong>state government</strong> recruitment,
+          including <strong>eligibility</strong>, <strong>last date</strong>, <strong>application fees</strong>,
+          <strong>selection process</strong>, and <strong>apply online</strong> links.
+        </p>
+
+        <p class="text-slate-700 mt-2 leading-relaxed">
+          Tip: Before applying, always read the official notification carefully, keep documents ready
+          (photo, signature, ID proof), and double-check category/age criteria.
+          If a link is updated, we recommend checking the official recruitment portal for the newest notice.
+        </p>
+
+        <div class="mt-4 flex flex-wrap gap-2 text-sm">
+          <span class="px-3 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-100">Latest Govt Jobs</span>
+          <span class="px-3 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-100">Sarkari Naukri</span>
+          <span class="px-3 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-100">Apply Online</span>
+          <span class="px-3 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-100">Admit Card</span>
+          <span class="px-3 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-100">Sarkari Result</span>
+        </div>
+      </section>
+
+      <!-- LINKS LIST -->
+      <section class="mt-5 bg-white rounded-lg border border-slate-200 p-5">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <h3 class="text-xl font-bold text-slate-900">All Updates</h3>
+
+          <div class="flex items-center gap-2">
+            <label for="filterBox" class="text-sm font-semibold text-slate-700">Search:</label>
+            <input id="filterBox" type="text" placeholder="Type to filter jobs..."
+              class="w-full md:w-72 px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-200" />
+          </div>
+        </div>
+
+        <p class="text-slate-600 text-sm mt-2">
+          Showing <span id="countNow">0</span> links. Click any item to open details.
+        </p>
+
+        <!-- Accessible list for SEO -->
+        <ul id="links-list" class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+          <!-- JS will populate -->
+        </ul>
+
+        <div id="loading" class="mt-6 text-center text-slate-600">
+          <div class="inline-flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-md px-4 py-3">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Loading… Please wait</span>
+          </div>
+        </div>
+
+        <noscript>
+          <div class="mt-4 p-4 border border-amber-200 bg-amber-50 text-amber-900 rounded-lg">
+            This page needs JavaScript enabled to load the latest links automatically.
+          </div>
+        </noscript>
+      </section>
+
+    </main>
+
+    <!-- FOOTER (same as homepage) -->
+    <footer class="bg-white text-gray-800 py-8 mt-12">
+      <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <div class="mb-4 md:mb-0">
+            <h3 class="text-xl font-bold">Top Sarkari Jobs</h3>
+            <p class="text-gray-600 text-sm mt-1">Your gateway to government jobs and services</p>
+
+            <div class="mt-3 flex flex-wrap gap-3 text-sm">
+              <a class="text-sky-600 hover:underline" href="about.html">About</a>
+              <a class="text-sky-600 hover:underline" href="contact.html">Contact</a>
+              <a class="text-sky-600 hover:underline" href="privacy.html">Privacy</a>
+              <a class="text-sky-600 hover:underline" href="terms.html">Terms</a>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-3" id="footer-social-links">
+            <!-- Social links can be populated by script.js if you use it globally -->
+          </div>
+        </div>
+
+        <div class="border-t border-gray-200 mt-6 pt-6 text-center text-gray-600 text-sm">
+          <p>&copy; 2025 Top Sarkari Jobs. All rights reserved.</p>
+        </div>
+      </div>
     </footer>
 
-    <script>
-        // Get URL parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const url = urlParams.get('url');
-        const name = urlParams.get('name');
-        const type = urlParams.get('type');
-        const section = urlParams.get('section');
+    <!-- WhatsApp Float Button (same as homepage) -->
+    <div id="whatsapp-float" class="fixed bottom-6 right-6 z-50">
+      <button id="whatsapp-btn" class="bg-green-500 hover:bg-green-600 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110">
+        <i class="fab fa-whatsapp text-4xl"></i>
+      </button>
+    </div>
 
-        const iframe = document.getElementById('content-iframe');
-        const titleElement = document.getElementById('page-title');
-        const loadingOverlay = document.getElementById('loading-overlay');
-        const contentContainer = iframe.parentElement;
+    <!-- WhatsApp Chat Popup (same as homepage) -->
+    <div id="whatsapp-popup" class="hidden fixed bottom-24 right-6 z-50 w-80 md:w-96 bg-white rounded-lg shadow-2xl overflow-hidden">
+      <div class="bg-green-500 text-white p-4 flex items-center justify-between">
+        <div class="flex items-center">
+          <i class="fab fa-whatsapp text-2xl mr-3"></i>
+          <div>
+            <h3 class="font-bold text-lg">Top Sarkari Jobs</h3>
+            <p class="text-xs text-green-100">Online</p>
+          </div>
+        </div>
+        <button id="close-whatsapp" class="text-white hover:text-green-100 transition" aria-label="Close WhatsApp chat">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
 
-        // If section parameter is provided, load items from dynamic-sections.json
-        if (section) {
-            fetch('dynamic-sections.json')
-                .then(response => response.json())
-                .then(data => {
-                    const sectionData = data.sections.find(s => s.id === section);
-                    if (sectionData) {
-                        // Hide iframe and show list view
-                        iframe.style.display = 'none';
-                        
-                        // Set title
-                        titleElement.textContent = sectionData.title;
-                        
-                        // Create list view
-                        const listContainer = document.createElement('div');
-                        listContainer.className = 'p-6 bg-gray-50 min-h-screen';
-                        
-                        const listContent = document.createElement('div');
-                        listContent.className = 'max-w-4xl mx-auto space-y-3';
-                        
-                        sectionData.items.forEach((item, index) => {
-                            const itemDiv = document.createElement('div');
-                            itemDiv.className = 'bg-white p-2 rounded-lg shadow hover:shadow-lg transition duration-300 cursor-pointer border-l-4';
-                            itemDiv.style.borderLeftColor = sectionData.color || '#3b82f6';
-                            
-                            let badgeHTML = '';
-                            if (item.badge) {
-                                badgeHTML = `<span class="${item.badgeColor || 'bg-blue-500'} text-white text-xs font-bold px-2 py-1 rounded">${item.badge}</span>`;
-                            }
-                            
-                            itemDiv.innerHTML = `
-                                <div class="flex justify-between items-start mb-1">
-                                    <div class="flex items-center gap-1">
-                                        <span class="text-gray-500 text-sm font-semibold">${index + 1}.</span>
-                                        <h3 class="text-sm font-semibold text-gray-800">${item.name}</h3>
-                                    </div>
-                                    ${badgeHTML}
-                                </div>
-                                ${item.date ? `<p class="text-xs text-gray-600 ml-6">${item.date}</p>` : ''}
-                            `;
-                            
-                            itemDiv.addEventListener('click', () => {
-                                if (item.url) {
-                                    if (item.external) {
-                                        window.open(item.url, '_blank');
-                                    } else {
-                                        window.location.href = `view.html?url=${encodeURIComponent(item.url)}&name=${encodeURIComponent(item.name)}`;
-                                    }
-                                }
-                            });
-                            
-                            listContent.appendChild(itemDiv);
-                        });
-                        
-                        listContainer.appendChild(listContent);
-                        contentContainer.appendChild(listContainer);
-                        
-                        loadingOverlay.style.display = 'none';
-                    } else {
-                        window.location.href = 'index.html';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading section:', error);
-                    window.location.href = 'index.html';
-                });
-                
-        } else if (type === 'news' || type === 'jobs' || type === 'admitcard' || type === 'results' || type === 'upcoming') {
-            // If type is 'news', 'jobs', 'admitcard', 'results', or 'upcoming', load the view more URL in iframe
-            // Fetch the URL from jobs.json
-            fetch('jobs.json')
-                .then(response => response.json())
-                .then(data => {
-                    const viewUrl = data.view_more_urls[type];
-                    if (viewUrl) {
-                        iframe.src = viewUrl;
-                        
-                        // Set title based on type
-                        const titles = {
-                            news: 'Latest News',
-                            jobs: 'Latest Jobs',
-                            admitcard: 'Latest Admit Cards',
-                            results: 'Latest Results',
-                            upcoming: 'Upcoming Jobs'
-                        };
-                        titleElement.textContent = titles[type] || 'Viewing Content';
-                        
-                        iframe.onload = () => {
-                            loadingOverlay.style.display = 'none';
-                        };
-                        
-                        setTimeout(() => {
-                            loadingOverlay.style.display = 'none';
-                        }, 3000);
-                    } else {
-                        // Fallback
-                        window.location.href = 'index.html';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading URL:', error);
-                    window.location.href = 'index.html';
-                });
+      <div id="whatsapp-messages" class="bg-gray-50 p-4 space-y-3 max-h-96 overflow-y-auto">
+        <!-- Messages can be populated by your existing script.js -->
+      </div>
+    </div>
 
-        } else if (url) {
-            // Original iframe behavior
-            if (name) {
-                titleElement.textContent = decodeURIComponent(name);
-            } else {
-                titleElement.textContent = 'Viewing Content';
-            }
+  </div>
 
-            iframe.src = decodeURIComponent(url);
+  <!-- Keep your existing global script if it handles WhatsApp/social/header-links -->
+  <script src="script.js"></script>
 
-            iframe.onload = () => {
-                loadingOverlay.style.display = 'none';
-            };
+  <!-- Mobile menu toggle fallback -->
+  <script>
+    const toggleBtn = document.getElementById("mobile-menu-toggle");
+    const mobileMenu = document.getElementById("mobile-menu");
+    if(toggleBtn && mobileMenu){
+      toggleBtn.addEventListener("click", () => {
+        mobileMenu.classList.toggle("hidden");
+      });
+    }
+  </script>
 
-            setTimeout(() => {
-                loadingOverlay.style.display = 'none';
-            }, 3000);
-        } else {
-            window.location.href = 'index.html';
+  <!-- VIEW PAGE SCRIPT: renders ALL links in the selected section -->
+  <script>
+    (function () {
+      const urlParams = new URLSearchParams(window.location.search);
+      const sectionParam = urlParams.get("section") || "";
+      const decodedSection = decodeURIComponent(sectionParam || "").trim();
+
+      const pageTitle = document.getElementById("page-title");
+      const pageSubtitle = document.getElementById("page-subtitle");
+      const linksList = document.getElementById("links-list");
+      const loading = document.getElementById("loading");
+      const filterBox = document.getElementById("filterBox");
+      const countNow = document.getElementById("countNow");
+      const canonical = document.getElementById("canonical-link");
+
+      // Canonical includes section param
+      if (canonical) {
+        const u = new URL("https://www.topsarkarijobs.com/view.html");
+        if (sectionParam) u.searchParams.set("section", sectionParam);
+        canonical.href = u.toString();
+      }
+
+      // Helpful title text
+      const prettyTitle = decodedSection
+        ? decodedSection.replace(/\b\w/g, c => c.toUpperCase())
+        : "Job Updates";
+
+      if (pageTitle) pageTitle.textContent = prettyTitle;
+      if (pageSubtitle) {
+        pageSubtitle.textContent =
+          "Browse all updates in this section. Click any link to open details and official pages.";
+      }
+
+      // Update document title/meta for SEO
+      document.title = `${prettyTitle} | Latest Sarkari Jobs 2026 | Top Sarkari Jobs`;
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) {
+        metaDesc.setAttribute(
+          "content",
+          `Browse ${prettyTitle} on Top Sarkari Jobs. Find latest Sarkari Jobs 2026, government job notifications, eligibility, last date, and apply online links — updated regularly.`
+        );
+      }
+
+      function safeText(s) {
+        return (s || "").toString();
+      }
+
+      function makeItemHTML(item, idx) {
+        const name = safeText(item.name || item.title || item.label || "Job Update");
+        const url = safeText(item.url || item.link || "#");
+        const date = safeText(item.date || "");
+        const badge = safeText(item.badge || "");
+
+        // Small SEO-friendly helper snippet (generic but useful)
+        const hint =
+          "Check eligibility, important dates, and apply online through the official notification.";
+
+        return `
+          <li class="border border-slate-200 rounded-lg hover:shadow-sm transition bg-white p-4">
+            <div class="flex items-start justify-between gap-3">
+              <a href="${url}" class="text-sky-700 font-semibold hover:underline" rel="noopener">
+                ${name}
+              </a>
+              ${badge ? `<span class="text-xs font-bold px-2 py-1 rounded bg-emerald-100 text-emerald-700">${badge}</span>` : ``}
+            </div>
+            ${date ? `<p class="text-xs text-slate-500 mt-1"><i class="far fa-clock mr-1"></i>${date}</p>` : ``}
+            <p class="text-sm text-slate-600 mt-2">${hint}</p>
+          </li>
+        `;
+      }
+
+      function renderList(items) {
+        linksList.innerHTML = items.map(makeItemHTML).join("");
+        countNow.textContent = String(items.length);
+      }
+
+      function attachFilter(items) {
+        if (!filterBox) return;
+        filterBox.addEventListener("input", function () {
+          const q = filterBox.value.toLowerCase().trim();
+          const filtered = items.filter(it => safeText(it.name || it.title || "").toLowerCase().includes(q));
+          renderList(filtered);
+        });
+      }
+
+      async function load() {
+        try {
+          const res = await fetch("dynamic-sections.json", { cache: "no-store" });
+          const data = await res.json();
+
+          const sections = Array.isArray(data.sections) ? data.sections : [];
+          const match =
+            sections.find(s => (safeText(s.id).toLowerCase() === decodedSection.toLowerCase())) ||
+            sections.find(s => (safeText(s.title).toLowerCase() === decodedSection.toLowerCase())) ||
+            null;
+
+          // If section not found, show a safe fallback
+          if (!match || !Array.isArray(match.items)) {
+            if (loading) loading.classList.add("hidden");
+            linksList.innerHTML = `
+              <li class="col-span-full border border-amber-200 bg-amber-50 text-amber-900 rounded-lg p-4">
+                We couldn’t find this section. Please go back to the homepage and open the section again.
+              </li>
+            `;
+            countNow.textContent = "0";
+            return;
+          }
+
+          // Show ALL items (53 etc.)
+          const allItems = match.items;
+
+          if (loading) loading.classList.add("hidden");
+          renderList(allItems);
+          attachFilter(allItems);
+
+          // Extra: update the H2 to match the section title if present
+          const sectionTitle = safeText(match.title || prettyTitle);
+          if (pageTitle) pageTitle.textContent = sectionTitle;
+
+        } catch (e) {
+          if (loading) loading.classList.add("hidden");
+          linksList.innerHTML = `
+            <li class="col-span-full border border-rose-200 bg-rose-50 text-rose-900 rounded-lg p-4">
+              Failed to load content. Please refresh the page or try again later.
+            </li>
+          `;
+          countNow.textContent = "0";
+          console.error(e);
         }
-        
-        // Helper function to get color name
-        function getColorName(hex) {
-            const colorMap = {
-                '#3b82f6': 'blue', '#60a5fa': 'blue', '#2563eb': 'blue',
-                '#f59e0b': 'amber', '#fbbf24': 'yellow', '#d97706': 'orange',
-                '#10b981': 'green', '#34d399': 'emerald', '#059669': 'green',
-                '#8b5cf6': 'purple', '#a78bfa': 'purple', '#7c3aed': 'violet',
-                '#ef4444': 'red', '#f87171': 'red', '#dc2626': 'red',
-                '#06b6d4': 'cyan', '#22d3ee': 'cyan', '#0891b2': 'cyan',
-            };
-            return colorMap[hex?.toLowerCase()] || 'blue';
-        }
+      }
 
-        // Function to handle back button
-        function goBack() {
-            if (window.history.length > 1) {
-                window.history.back();
-            } else {
-                window.location.href = 'index.html';
-            }
-        }
-    </script>
+      load();
+    })();
+  </script>
+
 </body>
-
 </html>
