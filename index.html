@@ -21,6 +21,45 @@
     <link rel="canonical" href="https://topsarkarijobs.com/">
     <link rel="icon" type="image/x-icon" href="image.ico">
 
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://topsarkarijobs.com/">
+    <meta property="og:title" content="Top Sarkari Jobs - Latest Government Jobs in India">
+    <meta property="og:description" content="Find the latest Sarkari Jobs, Admit Cards, Results, and Government Schemes in India. Updated daily for all states.">
+    <meta property="og:image" content="https://topsarkarijobs.com/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://topsarkarijobs.com/">
+    <meta property="twitter:title" content="Top Sarkari Jobs - Latest Government Jobs in India">
+    <meta property="twitter:description" content="Find the latest Sarkari Jobs, Admit Cards, Results, and Government Schemes in India. Updated daily for all states.">
+    <meta property="twitter:image" content="https://topsarkarijobs.com/og-image.jpg">
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Top Sarkari Jobs",
+      "url": "https://topsarkarijobs.com/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://topsarkarijobs.com/search.html?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Top Sarkari Jobs",
+      "url": "https://topsarkarijobs.com/",
+      "logo": "https://topsarkarijobs.com/logo.png"
+    }
+    </script>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
@@ -37,133 +76,349 @@
             --muted-bg: #f8fafc;
         }
         html,body{height:100%;}
-        body{font-family:'Inter',system-ui;background:var(--muted-bg);color:#0f172a}
+        body{font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:var(--muted-bg); color:#0f172a}
+
+        /* ✅ FIX: prevent overlapping inside dynamically injected boxes */
+        #jobs-left-section a,
+        #jobs-right-section a,
+        #jobs-top-buttons a,
+        #home-section a {
+            display: block;
+            width: 100%;
+            padding: 10px 8px;
+            margin: 0;
+            line-height: 1.25;
+            text-align: center;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+            white-space: normal;
+        }
+
+        /* ✅ FIX: grid items spacing */
+        #jobs-left-section, #jobs-right-section {
+            gap: 8px;
+        }
+
+        /* ✅ FIX: dynamic boxes not squishing */
+        #jobs-left-section > div,
+        #jobs-right-section > div,
+        #jobs-top-buttons > div {
+            min-height: 42px;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0; transform: translateY(10px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.3s ease-out forwards;
+            opacity: 0;
+        }
     </style>
 </head>
 
 <body>
 
-<div class="min-h-screen flex flex-col">
+    <div class="min-h-screen flex flex-col">
+        <!-- Header with Navigation -->
+        <header class="bg-gradient-to-r from-sky-600 to-indigo-600 text-white shadow-sm relative">
+            <div class="container mx-auto max-w-6xl px-4 py-4">
+                <!-- ✅ Header row (wrap-safe to prevent overlap) -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <h1 class="text-2xl font-bold flex items-center shrink-0">
+                        <img src="image.png" alt="Top Sarkari Jobs Logo" class="h-10 w-10 mr-3 rounded-full">
+                        Top Sarkari Jobs
+                    </h1>
 
-    <!-- ================= YOUR SITE CONTENT (UNCHANGED) ================= -->
-    <!-- HEADER + HOME + JOBS SECTIONS EXACTLY AS BEFORE -->
+                    <button id="mobile-menu-toggle" class="lg:hidden text-white hover:bg-blue-700 p-2 rounded ml-auto">
+                        <i class="fas fa-bars"></i>
+                    </button>
 
-    <!-- home section  -->
-    <div class="container mx-auto px-4 py-4">
-        <div id="home-section" class="flex flex-wrap gap-2"></div>
+                    <!-- ✅ Desktop menu (About/Contact/Privacy/Terms removed) -->
+                    <nav class="hidden lg:flex flex-wrap items-center gap-3 flex-1 min-w-0">
+                        <a href="index.html" class="px-3 py-2 bg-white text-sky-600 rounded-md font-semibold shadow-sm hover:shadow-md transition">
+                            <i class="fas fa-briefcase mr-2"></i>Home
+                        </a>
+
+                        <a href="result.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
+                            <i class="fas fa-clipboard-check mr-2"></i>Results
+                        </a>
+
+                        <a href="search.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
+                            <i class="fas fa-search mr-2"></i>Search
+                        </a>
+
+                        <!-- keep original links -->
+                        <a href="govt-services.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
+                            <i class="fas fa-gavel mr-2"></i>CSC Services
+                        </a>
+                        <a href="tools.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
+                            <i class="fas fa-tools mr-2"></i>Tools
+                        </a>
+                        <a href="helpdesk.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
+                            <i class="fas fa-headset mr-2"></i>Helpdesk
+                        </a>
+                    </nav>
+
+                    <!-- Dynamic header links (filtered in script.js to remove WhatsApp button) -->
+                    <div id="header-links" class="hidden lg:flex gap-2 flex-wrap justify-end"></div>
+                </div>
+
+                <!-- ✅ Mobile menu (About/Contact/Privacy/Terms removed) -->
+                <div id="mobile-menu" class="hidden lg:hidden absolute top-full left-0 right-0 bg-sky-600 text-white shadow-lg z-50">
+                    <div class="flex flex-col p-4 space-y-2">
+                        <a href="index.html" class="px-4 py-2 bg-white text-sky-600 rounded-md font-semibold hover:bg-white/90 transition">
+                            <i class="fas fa-briefcase mr-2"></i>Home
+                        </a>
+
+                        <a href="result.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
+                            <i class="fas fa-clipboard-check mr-2"></i>Results
+                        </a>
+                        <a href="search.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
+                            <i class="fas fa-search mr-2"></i>Search
+                        </a>
+
+                        <a href="govt-services.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
+                            <i class="fas fa-gavel mr-2"></i>CSC Services
+                        </a>
+                        <a href="tools.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
+                            <i class="fas fa-tools mr-2"></i>Tools
+                        </a>
+                        <a href="helpdesk.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
+                            <i class="fas fa-headset mr-2"></i>Helpdesk
+                        </a>
+
+                        <div id="header-links-mobile" class="mt-2 space-y-2"></div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- home section  -->
+        <div class="container mx-auto px-4 py-4">
+            <div id="home-section" class="flex flex-wrap gap-2">
+                <!-- Home buttons will be populated here -->
+            </div>
+        </div>
+
+        <main class="mx-auto w-full px-4">
+            <!-- Main Content Area -->
+            <div class="bg-white rounded-lg overflow-hidden">
+                <div class="flex flex-col gap-4">
+                    <!-- Jobs Section -->
+                    <div id="jobs-section" class="">
+                        <!-- Top 2 rows of jobs -->
+                        <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-12 mb-6"
+                            id="jobs-top-buttons">
+                            <!-- Top jobs will be populated here -->
+                        </div>
+
+                        <!-- Bottom section with left, center, right -->
+                        <div class="flex flex-col lg:flex-row gap-4 mt-6">
+                            <!-- Left section -->
+                            <div class="w-full lg:w-1/6 grid grid-cols-2 h-fit" id="jobs-left-section">
+                                <!-- Left jobs will be populated here -->
+                            </div>
+
+                            <!-- Center section -->
+                            <div class="w-full lg:w-3/4 flex flex-col gap-4 hidden md:flex">
+                                <div id="dynamic-sections-desktop" class="flex flex-col gap-4">
+                                    <!-- Dynamic sections will be populated here -->
+                                </div>
+                            </div>
+
+                            <!-- Right section -->
+                            <div class="w-full lg:w-1/6 grid grid-cols-2 h-fit" id="jobs-right-section">
+                                <!-- Right jobs will be populated here -->
+                            </div>
+                        </div>
+
+                        <div class="md:hidden space-y-4" id="dynamic-sections-mobile">
+                            <!-- Dynamic sections will be populated here for mobile -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- ================= FAQ SECTION (ADDED ONLY) ================= -->
+        <section class="bg-white mt-12">
+            <div class="container mx-auto px-4 py-8 max-w-6xl">
+                <div class="bg-slate-50 border border-slate-200 rounded-lg p-6">
+                    <h2 class="text-2xl font-bold text-slate-900">
+                        Frequently Asked Questions – Sarkari Jobs & Results
+                    </h2>
+                    <p class="text-slate-600 mt-1">
+                        Quick answers about Sarkari Jobs, government job notifications, admit cards, and Sarkari results in India.
+                    </p>
+
+                    <div class="mt-5 space-y-3">
+
+                        <div class="border border-slate-200 rounded-lg bg-white overflow-hidden">
+                            <button type="button"
+                                class="faq-btn w-full flex items-center justify-between gap-4 px-4 py-4 text-left font-semibold text-slate-900 hover:bg-slate-50">
+                                <span>What is Top Sarkari Jobs?</span>
+                                <i class="fas fa-chevron-down text-slate-500 transition-transform duration-200"></i>
+                            </button>
+                            <div class="faq-panel hidden px-4 pb-4 text-slate-700">
+                                Top Sarkari Jobs is a trusted website for <strong>Sarkari Jobs</strong>, <strong>government job notifications</strong>,
+                                <strong>Sarkari Result</strong>, <strong>Admit Card</strong>, and <strong>Online Form</strong> links for central and state government recruitment in India.
+                            </div>
+                        </div>
+
+                        <div class="border border-slate-200 rounded-lg bg-white overflow-hidden">
+                            <button type="button"
+                                class="faq-btn w-full flex items-center justify-between gap-4 px-4 py-4 text-left font-semibold text-slate-900 hover:bg-slate-50">
+                                <span>How often are Sarkari Jobs and Results updated?</span>
+                                <i class="fas fa-chevron-down text-slate-500 transition-transform duration-200"></i>
+                            </button>
+                            <div class="faq-panel hidden px-4 pb-4 text-slate-700">
+                                We regularly update <strong>latest government jobs</strong>, <strong>Sarkari results</strong>, and <strong>admit card links</strong>.
+                                For the most accurate details (dates, eligibility, fees), always verify on the <strong>official website</strong> linked in each post.
+                            </div>
+                        </div>
+
+                        <div class="border border-slate-200 rounded-lg bg-white overflow-hidden">
+                            <button type="button"
+                                class="faq-btn w-full flex items-center justify-between gap-4 px-4 py-4 text-left font-semibold text-slate-900 hover:bg-slate-50">
+                                <span>Are the Sarkari Job links official and safe?</span>
+                                <i class="fas fa-chevron-down text-slate-500 transition-transform duration-200"></i>
+                            </button>
+                            <div class="faq-panel hidden px-4 pb-4 text-slate-700">
+                                We aim to share <strong>official government recruitment portals</strong> whenever available. Always rely on the
+                                <strong>official notification PDF</strong> and the official recruitment page for final confirmation.
+                            </div>
+                        </div>
+
+                        <div class="border border-slate-200 rounded-lg bg-white overflow-hidden">
+                            <button type="button"
+                                class="faq-btn w-full flex items-center justify-between gap-4 px-4 py-4 text-left font-semibold text-slate-900 hover:bg-slate-50">
+                                <span>Why do Sarkari Result or Admit Card dates change?</span>
+                                <i class="fas fa-chevron-down text-slate-500 transition-transform duration-200"></i>
+                            </button>
+                            <div class="faq-panel hidden px-4 pb-4 text-slate-700">
+                                Dates can change due to <strong>revised notifications</strong>, <strong>corrigendum</strong>, or schedule updates from government departments.
+                                If you see a mismatch, trust the latest update on the <strong>official Sarkari Result</strong> / <strong>Admit Card</strong> page.
+                            </div>
+                        </div>
+
+                        <div class="border border-slate-200 rounded-lg bg-white overflow-hidden">
+                            <button type="button"
+                                class="faq-btn w-full flex items-center justify-between gap-4 px-4 py-4 text-left font-semibold text-slate-900 hover:bg-slate-50">
+                                <span>How can I check my Sarkari Result or download Admit Card?</span>
+                                <i class="fas fa-chevron-down text-slate-500 transition-transform duration-200"></i>
+                            </button>
+                            <div class="faq-panel hidden px-4 pb-4 text-slate-700">
+                                Open the relevant job or result link, then go to the official page and look for <strong>Result</strong> or <strong>Admit Card</strong>.
+                                You typically need your <strong>registration number / roll number</strong> and <strong>date of birth</strong>.
+                            </div>
+                        </div>
+
+                        <div class="border border-slate-200 rounded-lg bg-white overflow-hidden">
+                            <button type="button"
+                                class="faq-btn w-full flex items-center justify-between gap-4 px-4 py-4 text-left font-semibold text-slate-900 hover:bg-slate-50">
+                                <span>Does Top Sarkari Jobs charge any fees or collect personal data?</span>
+                                <i class="fas fa-chevron-down text-slate-500 transition-transform duration-200"></i>
+                            </button>
+                            <div class="faq-panel hidden px-4 pb-4 text-slate-700">
+                                No. We do not ask for passwords, OTPs, or payment details. Applications and fees (if any) are completed only on the
+                                <strong>official government website</strong>.
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- ================= END FAQ SECTION ================= -->
+
+        <!-- Footer -->
+        <footer class="bg-white text-gray-800 py-8 mt-12">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="mb-4 md:mb-0">
+                        <h3 class="text-xl font-bold">Top Sarkari Jobs</h3>
+                        <p class="text-gray-600 text-sm mt-1">Your gateway to government jobs and services</p>
+
+                        <!-- ✅ Footer internal links (Search/Results removed) -->
+                        <div class="mt-3 flex flex-wrap gap-3 text-sm">
+                          <a class="text-sky-600 hover:underline" href="about.html">About</a>
+                          <a class="text-sky-600 hover:underline" href="contact.html">Contact</a>
+                          <a class="text-sky-600 hover:underline" href="privacy.html">Privacy</a>
+                          <a class="text-sky-600 hover:underline" href="terms.html">Terms</a>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-3" id="footer-social-links">
+                        <!-- Social links will be populated here -->
+                    </div>
+                </div>
+                <div class="border-t border-gray-200 mt-6 pt-6 text-center text-gray-600 text-sm">
+                    <p>&copy; 2025 Top Sarkari Jobs. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- WhatsApp Float Button -->
+        <div id="whatsapp-float" class="fixed bottom-6 right-6 z-50">
+            <button id="whatsapp-btn" class="bg-green-500 hover:bg-green-600 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110">
+                <i class="fab fa-whatsapp text-4xl"></i>
+            </button>
+        </div>
+
+        <!-- WhatsApp Chat Popup -->
+        <div id="whatsapp-popup" class="hidden fixed bottom-24 right-6 z-50 w-80 md:w-96 bg-white rounded-lg shadow-2xl overflow-hidden">
+            <div class="bg-green-500 text-white p-4 flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fab fa-whatsapp text-2xl mr-3"></i>
+                    <div>
+                        <h3 class="font-bold text-lg">Top Sarkari Jobs</h3>
+                        <p class="text-xs text-green-100">Online</p>
+                    </div>
+                </div>
+                <button id="close-whatsapp" class="text-white hover:text-green-100 transition">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <div id="whatsapp-messages" class="bg-gray-50 p-4 space-y-3 max-h-96 overflow-y-auto">
+                <!-- Messages will be populated here -->
+            </div>
+        </div>
+
     </div>
 
-    <main class="mx-auto w-full px-4">
-        <div class="bg-white rounded-lg overflow-hidden">
-            <div class="flex flex-col gap-4">
-                <div id="jobs-section">
-                    <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-12 mb-6" id="jobs-top-buttons"></div>
-                    <div class="flex flex-col lg:flex-row gap-4 mt-6">
-                        <div class="w-full lg:w-1/6 grid grid-cols-2 h-fit" id="jobs-left-section"></div>
-                        <div class="w-full lg:w-3/4 flex flex-col gap-4 hidden md:flex">
-                            <div id="dynamic-sections-desktop" class="flex flex-col gap-4"></div>
-                        </div>
-                        <div class="w-full lg:w-1/6 grid grid-cols-2 h-fit" id="jobs-right-section"></div>
-                    </div>
-                    <div class="md:hidden space-y-4" id="dynamic-sections-mobile"></div>
-                </div>
-            </div>
-        </div>
-    </main>
+    <script src="script.js"></script>
 
-    <!-- ================= FAQ SECTION START (NEW) ================= -->
-    <section class="bg-white mt-12 border-t">
-        <div class="container mx-auto px-4 py-10 max-w-6xl">
-            <h2 class="text-2xl font-bold text-slate-900">
-                Frequently Asked Questions – Sarkari Jobs & Results
-            </h2>
-            <p class="text-slate-600 mt-1">
-                Common questions about Sarkari Jobs, government job notifications, admit cards, and results in India.
-            </p>
+    <!-- ✅ Mobile menu toggle fix (in case missing in script.js) -->
+    <script>
+      const toggleBtn = document.getElementById("mobile-menu-toggle");
+      const mobileMenu = document.getElementById("mobile-menu");
+      if(toggleBtn && mobileMenu){
+        toggleBtn.addEventListener("click", () => {
+          mobileMenu.classList.toggle("hidden");
+        });
+      }
+    </script>
 
-            <div class="mt-6 space-y-3">
+    <!-- ✅ FAQ accordion toggle (only affects FAQ section) -->
+    <script>
+      (function () {
+        var buttons = document.querySelectorAll(".faq-btn");
+        if (!buttons || buttons.length === 0) return;
 
-                <div class="border rounded-lg">
-                    <button class="faq-btn w-full flex justify-between items-center px-4 py-4 font-semibold text-left">
-                        What is Top Sarkari Jobs?
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <div class="faq-panel hidden px-4 pb-4 text-slate-700">
-                        Top Sarkari Jobs is a trusted website for latest Sarkari Jobs, government job notifications, Sarkari Result, Admit Card, and online form links for central and state government recruitment in India.
-                    </div>
-                </div>
+        buttons.forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var panel = btn.nextElementSibling;
+            if (!panel) return;
+            panel.classList.toggle("hidden");
 
-                <div class="border rounded-lg">
-                    <button class="faq-btn w-full flex justify-between items-center px-4 py-4 font-semibold text-left">
-                        How often are Sarkari Jobs and Results updated?
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <div class="faq-panel hidden px-4 pb-4 text-slate-700">
-                        We regularly update government job notifications, Sarkari results, and admit card links. Always verify details from the official government website mentioned in each post.
-                    </div>
-                </div>
-
-                <div class="border rounded-lg">
-                    <button class="faq-btn w-full flex justify-between items-center px-4 py-4 font-semibold text-left">
-                        Are the Sarkari Job links official and safe?
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <div class="faq-panel hidden px-4 pb-4 text-slate-700">
-                        We aim to share official government recruitment portals whenever available. Candidates should always read the official notification PDF for accurate information.
-                    </div>
-                </div>
-
-                <div class="border rounded-lg">
-                    <button class="faq-btn w-full flex justify-between items-center px-4 py-4 font-semibold text-left">
-                        Why do Sarkari Result or Admit Card dates change?
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <div class="faq-panel hidden px-4 pb-4 text-slate-700">
-                        Dates may change due to revised notifications or corrigendums issued by government departments. Always check the latest update on the official website.
-                    </div>
-                </div>
-
-                <div class="border rounded-lg">
-                    <button class="faq-btn w-full flex justify-between items-center px-4 py-4 font-semibold text-left">
-                        How can I check my Sarkari Result or download Admit Card?
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <div class="faq-panel hidden px-4 pb-4 text-slate-700">
-                        Visit the official Sarkari Result or Admit Card page using the provided link and log in using your registration number, roll number, or date of birth.
-                    </div>
-                </div>
-
-                <div class="border rounded-lg">
-                    <button class="faq-btn w-full flex justify-between items-center px-4 py-4 font-semibold text-left">
-                        Does Top Sarkari Jobs charge any fees?
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <div class="faq-panel hidden px-4 pb-4 text-slate-700">
-                        No. Top Sarkari Jobs does not charge any fees or collect sensitive personal data. All applications are completed on official government websites only.
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
-    <!-- ================= FAQ SECTION END ================= -->
-
-    <!-- ================= FOOTER (UNCHANGED) ================= -->
-    <!-- your existing footer is already here in your file -->
-
-</div>
-
-<script src="script.js"></script>
-
-<!-- FAQ accordion toggle -->
-<script>
-  document.querySelectorAll(".faq-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      btn.nextElementSibling.classList.toggle("hidden");
-      btn.querySelector("i").classList.toggle("rotate-180");
-    });
-  });
-</script>
+            var icon = btn.querySelector("i");
+            if (icon) icon.classList.toggle("rotate-180");
+          });
+        });
+      })();
+    </script>
 
 </body>
 </html>
