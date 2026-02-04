@@ -33,55 +33,55 @@
     {
       "name": "Latest Jobs",
       "url": "https://www.topsarkarijobs.com/view.html?section=latest%20jobs",      
-      "color": "bg-amber-400",
+      "color": "bg-amber-600",
       "external": true
     },
     {
       "name": "Results",
       "url": "https://www.topsarkarijobs.com/view.html?section=results",
-      "color": "bg-amber-400",
+      "color": "bg-amber-600",
       "external": true
     },
     {
       "name": "Admit Card",
       "url": "https://www.topsarkarijobs.com/view.html?section=Admit%20cards%20Exams%20Date",
-      "color": "bg-amber-400",
+      "color": "bg-amber-600",
       "external": true
     },
     {
       "name": "Admission",
       "url": "https://www.topsarkarijobs.com/view.html?section=Admission/Education",
-      "color": "bg-amber-400",
+      "color": "bg-amber-600",
       "external": true
     },
     {
       "name": "Upcoming Jobs",
       "url": "https://www.topsarkarijobs.com/view.html?section=upcoming-jobs",
-      "color": "bg-amber-400",
+      "color": "bg-amber-600",
       "external": true
     },
     {
       "name": "Central Jobs",
       "url": "https://www.topsarkarijobs.com/view.html?section=Central%20jobs",
-      "color": "bg-amber-400",
+      "color": "bg-amber-600",
       "external": true
     },
     {
       "name": "Offline Jobs",
       "url": "https://www.topsarkarijobs.com/view.html?section=Offline%20jobs",
-      "color": "bg-teal-400",
+      "color": "bg-amber-600",
       "external": true
     },
     {
       "name": "नौकरियां जिनकी अंतिम तिथि नजदीक है।",
       "url": "https://www.topsarkarijobs.com/view.html?section=Jobs%20with%20Last%20date",
-      "color": "bg-amber-400",
+      "color": "bg-amber-600",
       "external": true
     },
     {
       "name": "सरकारी योजनाएँ",
       "url": "https://www.topsarkarijobs.com/view.html?section=Govt%20Scheme%20Yojna",
-      "color": "bg-amber-400",
+      "color": "bg-amber-600",
       "external": true
     },
     {
@@ -99,7 +99,7 @@
     {
       "name": "ABHA कार्ड",
       "url": "https://abha.abdm.gov.in/abha/v3/register/aadhaar",
-      "color": "bg-zinc-500",
+      "color": "bg-zinc-400",
       "external": true
     },
     {
