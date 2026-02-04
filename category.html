@@ -15,7 +15,6 @@
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
-  <!-- Reuse same header structure from homepage -->
   <header class="site-header">
     <div class="container header-row">
       <a class="brand" href="index.html" aria-label="Top Sarkari Jobs Home">
@@ -26,13 +25,13 @@
         </span>
       </a>
 
-      <nav class="nav desktop-nav" aria-label="Primary">
+      <nav class="desktop-nav" aria-label="Primary">
         <a class="nav-link" href="index.html">Home</a>
         <a class="nav-link" href="result.html">Results</a>
+        <a class="nav-link" href="search.html">Search</a>
         <a class="nav-link" href="govt-services.html">CSC Services</a>
         <a class="nav-link" href="tools.html">Tools</a>
         <a class="nav-link" href="helpdesk.html">Helpdesk</a>
-
         <div id="header-links" class="header-cta"></div>
       </nav>
 
@@ -47,12 +46,11 @@
     </div>
   </header>
 
-  <!-- Search (same component) -->
   <section class="top-search">
     <div class="container">
       <div class="search-card">
         <h2 class="search-title">Search across Top Sarkari Jobs</h2>
-        <p class="search-sub">Search job categories, results, admit cards, tools, and more.</p>
+        <p class="search-sub">Search jobs, results, admit cards, categories, CSC services and tools.</p>
         <div class="search-row">
           <input id="siteSearchInput" type="search" placeholder="Search…" autocomplete="off" />
           <button id="siteSearchBtn" type="button" class="btn-primary">
@@ -81,7 +79,7 @@
     </section>
 
     <section style="margin-top:14px;">
-      <div id="categoryGrid" class="duo-grid"></div>
+      <div id="categoryGrid" class="cat-grid"></div>
       <div id="categoryEmpty" class="seo-block" style="display:none;margin-top:12px;">
         <strong>No results found.</strong>
         <div style="margin-top:6px;color:var(--muted);">Try a different keyword.</div>
@@ -119,6 +117,7 @@
     <nav class="offcanvas-nav" aria-label="Mobile primary">
       <a href="index.html">Home</a>
       <a href="result.html">Results</a>
+      <a href="search.html">Search</a>
       <a href="govt-services.html">CSC Services</a>
       <a href="tools.html">Tools</a>
       <a href="helpdesk.html">Helpdesk</a>
