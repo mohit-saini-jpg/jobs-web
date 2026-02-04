@@ -1,1095 +1,557 @@
-document.addEventListener("DOMContentLoaded", async () => {
-  // Load Supabase config and initialize only if available
-  let supabase = null;
-  if (window.supabase) {
-    try {
-      const configResponse = await fetch('config.json');
-      const supabaseConfig = await configResponse.json();
-      supabase = window.supabase.createClient(supabaseConfig.supabase.url, supabaseConfig.supabase.anonKey);
-    } catch (error) {
-      console.warn('Could not load Supabase config:', error);
-    }
+/*
+ * Core JavaScript for the rebuilt Top Sarkari Jobs website.
+ *
+ * This script handles fetching job and section data, rendering the
+ * homepage and category pages, building a search index, and wiring
+ * up interactive components like the mobile side menu and live
+ * search.  It is designed to work with the new responsive HTML
+ * structure and CSS styles defined in styles.css.  All functions
+ * are written in vanilla JavaScript to keep the site lightweight
+ * and fast on mobile devices.
+ */
+
+document.addEventListener('DOMContentLoaded', async () => {
+  // Determine which page we are on via the data-page attribute on the body
+  const pageType = document.body.getAttribute('data-page') || 'home';
+
+  // Attempt to load data files in parallel.  If any fail, fallback
+  // gracefully to empty objects so the page still functions.
+  const [jobsData, dynamicData, headerData] = await Promise.all([
+    fetchJSON('jobs.json'),
+    fetchJSON('dynamic-sections.json'),
+    fetchJSON('header_links.json')
+  ]);
+
+  // Build a unified search index from jobs and dynamic sections for
+  // use on all pages.  The search index is an array of objects
+  // describing each searchable item with its name, URL and group.
+  const searchIndex = buildSearchIndex(jobsData, dynamicData);
+
+  // Populate the footer social links if available
+  loadFooterSocialLinks(headerData);
+
+  // Initialise the mobile side menu controls
+  setupSideMenu();
+
+  // Initialise the live search component
+  setupSearch(searchIndex);
+
+  // Render page‑specific content
+  if (pageType === 'home') {
+    renderHomeCards(headerData);
+    renderJobsSections(jobsData);
+    renderDynamicSections(dynamicData);
+  } else if (pageType === 'category') {
+    // Determine which group to display based on the URL query
+    const params = new URLSearchParams(window.location.search);
+    const groupSlug = params.get('group');
+    renderCategoryPage(groupSlug, jobsData, dynamicData);
   }
-
-  // Detect current page
-  const currentPage = window.location.pathname.split("/").pop() || "index.html";
-
-  // Load data from appropriate JSON file
-  let data;
-  const jsonFile =
-    currentPage === "index.html" || currentPage === ""
-      ? "jobs.json"
-      : currentPage === "tools.html"
-      ? "tools.json"
-      : "services.json";
-  try {
-    const response = await fetch(jsonFile);
-    data = await response.json();
-  } catch (error) {
-    console.error("Error loading data:", error);
-    // Fallback empty data
-    data = {
-      image: [],
-      pdf: [],
-      video: [],
-      services: [],
-      top_jobs: [],
-      left_jobs: [],
-      right_jobs: [],
-      news: [],
-      scrolling_jobs: [],
-      home_links: [],
-    };
-  }
-
-  // Load dynamic sections data (for homepage)
-  let dynamicSections = null;
-  if (currentPage === "index.html" || currentPage === "") {
-    try {
-      const response = await fetch("dynamic-sections.json");
-      dynamicSections = await response.json();
-    } catch (error) {
-      console.error("Error loading dynamic sections:", error);
-      dynamicSections = { sections: [] };
-    }
-  }
-
-  // Load header links (separate JSON)
-  let headerData = null;
-  try {
-    const resp = await fetch("header_links.json");
-    headerData = await resp.json();
-  } catch (err) {
-    console.warn("No header_links.json found or failed to load", err);
-    headerData = { header_links: [], home_links: [] };
-  }
-
-  // Render header links (desktop + mobile)
-  function loadHeaderLinks(headerData) {
-    if (!headerData) return;
-    const desktopContainer = document.getElementById("header-links");
-    const mobileContainer = document.getElementById("header-links-mobile");
-
-    const links = headerData.header_links || [];
-    if (desktopContainer) {
-      links.forEach((l) => {
-        const a = document.createElement("a");
-        a.href = l.link || l.url || "#";
-        a.target = "_blank";
-        a.rel = "noopener noreferrer";
-        const colorClass = l.color ? l.color : "bg-gray-800";
-        a.className = `${colorClass} text-white px-4 py-2 rounded-lg font-semibold hover:opacity-90 transition duration-200 flex items-center`;
-        a.innerHTML = `${l.name}`;
-        desktopContainer.appendChild(a);
-      });
-    }
-
-    if (mobileContainer) {
-      links.forEach((l) => {
-        const a = document.createElement("a");
-        a.href = l.link || l.url || "#";
-        a.target = "_blank";
-        a.rel = "noopener noreferrer";
-        a.className = `px-4 py-2 rounded-lg bg-white text-blue-600 font-semibold hover:bg-blue-50 transition duration-200 block`;
-        a.textContent = l.name;
-        mobileContainer.appendChild(a);
-      });
-    }
-  }
-
-  // Get URL parameters
-  const urlParams = new URLSearchParams(window.location.search);
-  const jobParam = urlParams.get("job");
-  const toolParam = urlParams.get("tool");
-
-  // Page-specific elements
-  const mainCategories = document.getElementById("main-categories");
-  const subCategories = document.getElementById("sub-categories");
-  const backButton = document.getElementById("back-button");
-  const subCategoryTitle = document.getElementById("sub-category-title");
-  const toolsCards = document.getElementById("tools-cards");
-  const servicesCards = document.getElementById("services-cards");
-  const toolIframe = document.getElementById("tool-iframe");
-  const serviceModal = document.getElementById("service-modal");
-  const modalServiceContent = document.getElementById("modal-service-content");
-  const closeModalBtn = document.getElementById("close-modal");
-  const loadingOverlay = document.getElementById("loading-overlay");
-  const defaultState = document.getElementById("default-state");
-
-  // Mobile menu elements
-  const mobileMenuToggle = document.getElementById("mobile-menu-toggle");
-  const mobileMenu = document.getElementById("mobile-menu");
-
-  // Mobile menu toggle
-  if (mobileMenuToggle && mobileMenu) {
-    mobileMenuToggle.addEventListener("click", () => {
-      mobileMenu.classList.toggle("hidden");
-    });
-
-    // Close mobile menu when clicking a link
-    mobileMenu.querySelectorAll("a").forEach((link) => {
-      link.addEventListener("click", () => {
-        mobileMenu.classList.add("hidden");
-      });
-    });
-
-    // Close mobile menu when clicking outside
-    document.addEventListener("click", (e) => {
-      if (
-        !mobileMenu.contains(e.target) &&
-        !mobileMenuToggle.contains(e.target)
-      ) {
-        mobileMenu.classList.add("hidden");
-      }
-    });
-  }
-
-  // Render header links (if any)
-  loadHeaderLinks(headerData);
-
-  // Category names mapping
-  const categoryNames = {
-    image: "Image Tools",
-    pdf: "PDF Tools",
-    video: "Video/Audio Tools",
-  };
-
-  // Category icons mapping
-  const categoryIcons = {
-    image: "fas fa-image text-green-500",
-    pdf: "fas fa-file-pdf text-blue-500",
-    video: "fas fa-video text-purple-500",
-  };
-
-  // Load content based on current page
-  if (currentPage === "index.html" || currentPage === "") {
-    // Jobs page
-    loadJobs();
-    loadDynamicSections(dynamicSections);
-    loadHomeLinks();
-    loadFooterSocialLinks();
-    loadWhatsAppChat();
-  } else if (currentPage === "govt-services.html") {
-    // Government services page
-    loadGovernmentServices();
-
-    // Close modal event listeners
-    if (closeModalBtn) {
-      closeModalBtn.addEventListener("click", () => {
-        serviceModal.classList.add("hidden");
-      });
-    }
-
-    // Close modal when clicking outside
-    if (serviceModal) {
-      serviceModal.addEventListener("click", (e) => {
-        if (e.target === serviceModal) {
-          serviceModal.classList.add("hidden");
-        }
-      });
-    }
-  } else if (currentPage === "tools.html") {
-    // Tools page
-    loadToolsSection();
-  }
-
-  // Function to load tools section (only on tools.html)
-  function loadToolsSection() {
-    const categoriesView = document.getElementById("categories-view");
-    const toolsView = document.getElementById("tools-view");
-    const toolsGrid = document.getElementById("tools-grid");
-    const toolsTitle = document.getElementById("tools-title");
-    const backButton = document.getElementById("back-button");
-
-    if (!categoriesView || !toolsView) return;
-
-    // Update tool counts in category buttons
-    document.querySelectorAll(".category-button").forEach((button) => {
-      const category = button.dataset.category;
-      if (data[category] && Array.isArray(data[category])) {
-        const count = data[category].length;
-        const countElement = button.querySelector(".text-sm.text-gray-500");
-        if (countElement) {
-          countElement.textContent = `${count} tools available`;
-        }
-      }
-    });
-
-
-    // Get URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    const category = urlParams.get('category');
-
-    if (category && data[category]) {
-      // Show tools for the category
-      showToolsForCategory(category, toolsView, toolsGrid, toolsTitle, backButton);
-    } else {
-      // Show categories
-      showCategories(categoriesView, toolsView);
-    }
-
-    // Handle category button clicks
-    document.querySelectorAll(".category-button").forEach((button) => {
-      button.addEventListener("click", () => {
-        const cat = button.dataset.category;
-        window.location.href = `tools.html?category=${cat}`;
-      });
-    });
-
-    // Handle back button
-    if (backButton) {
-      backButton.addEventListener("click", () => {
-        window.location.href = 'tools.html';
-      });
-    }
-  }
-
-  // Function to show categories view
-  function showCategories(categoriesView, toolsView) {
-    categoriesView.classList.remove("hidden");
-    toolsView.classList.add("hidden");
-  }
-
-  // Function to show tools for a category
-  function showToolsForCategory(category, toolsView, toolsGrid, toolsTitle, backButton) {
-    const categoriesView = document.getElementById("categories-view");
-    categoriesView.classList.add("hidden");
-    toolsView.classList.remove("hidden");
-
-    // Update title
-    const titleIcon = toolsTitle.querySelector("i");
-    const titleText = toolsTitle.querySelector("span");
-
-    titleIcon.className = categoryIcons[category];
-    titleText.textContent = categoryNames[category];
-
-    // Clear existing tools
-    toolsGrid.innerHTML = "";
-
-    // Add tools as cards
-    const tools = data[category];
-    tools.forEach((tool) => {
-      const toolCard = document.createElement("div");
-      toolCard.className =
-        "bg-white p-4 rounded-lg border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition duration-300 cursor-pointer";
-      toolCard.innerHTML = `
-        <div class="flex items-center mb-2">
-          <i class="${tool.icon} text-2xl mr-3 text-gray-600"></i>
-          <h4 class="font-semibold text-gray-800">${tool.name}</h4>
-        </div>
-        <p class="text-sm text-gray-500">Click to open tool</p>
-      `;
-
-      toolCard.addEventListener("click", () => {
-        if (tool.external) {
-          // Open in new tab
-          window.open(tool.url, '_blank');
-        } else {
-          // Open in view.html
-          const viewUrl = `view.html?url=${encodeURIComponent(tool.url)}&name=${encodeURIComponent(tool.name)}&type=tool`;
-          window.location.href = viewUrl;
-        }
-      });
-
-      toolsGrid.appendChild(toolCard);
-    });
-  }
-
-  // Function to auto-load a tool based on URL parameter
-  function autoLoadTool(toolName) {
-    // Search for the tool in all categories
-    let foundTool = null;
-    let foundCategory = null;
-
-    for (const [category, tools] of Object.entries(data)) {
-      if (
-        category === "services" ||
-        category === "top_jobs" ||
-        category === "left_jobs" ||
-        category === "right_jobs" ||
-        category === "news" ||
-        category === "scrolling_jobs" ||
-        category === "home_links"
-      )
-        continue;
-
-      const tool = tools.find(
-        (t) =>
-          t.name.toLowerCase().replace(/\s+/g, "-") ===
-            toolName.toLowerCase() ||
-          t.name.toLowerCase() === toolName.toLowerCase().replace(/-/g, " ")
-      );
-
-      if (tool) {
-        foundTool = tool;
-        foundCategory = category;
-        break;
-      }
-    }
-
-    if (foundTool && foundCategory) {
-      // Show the sub-categories for this category
-      showSubCategories(foundCategory);
-      // Load the tool
-      setTimeout(() => {
-        loadTool(foundTool.url);
-      }, 100);
-    }
-  }
-
-  // Function to load government services
-  function loadGovernmentServices() {
-    if (!servicesCards) return;
-
-    const services = data.services;
-    servicesCards.innerHTML = "";
-
-    services.forEach((service) => {
-      const serviceCard = document.createElement("div");
-      serviceCard.className =
-        "service-card bg-white p-3 rounded-lg border border-green-200 hover:bg-green-50 hover:border-green-300 transition duration-300 cursor-pointer";
-      serviceCard.innerHTML = `
-        <div class="flex items-center mb-1">
-          <i class="${service.icon} text-2xl mr-3 text-green-600"></i>
-          <h4 class="font-semibold text-gray-800 text-sm">${service.name}</h4>
-        </div>
-      `;
-
-      serviceCard.addEventListener("click", () => {
-        showServiceDetails(service);
-      });
-
-      servicesCards.appendChild(serviceCard);
-    });
-  }
-
-  // Function to load home links
-  function loadHomeLinks() {
-    // Prefer home links from header_links.json (moved), fall back to jobs.json
-    const homeLinks =
-      headerData && headerData.home_links
-        ? headerData.home_links
-        : data.home_links || [];
-    const homeSection = document.getElementById("home-section");
-
-    if (!homeSection) return;
-
-    homeLinks.forEach((home) => {
-      const button = document.createElement("div");
-      button.className = `${home.color} text-white w-fit py-1 px-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 flex items-center justify-center font-bold text-sm cursor-pointer`;
-      button.innerHTML = `
-        ${home.name}
-      `;
-      button.addEventListener("click", () => {
-        openLink(home);
-      });
-      homeSection.appendChild(button);
-    });
-  }
-
-  // Function to load dynamic sections (Latest Jobs, Upcoming Jobs, etc.)
-  function loadDynamicSections(dynamicSectionsData) {
-    if (!dynamicSectionsData || !dynamicSectionsData.sections) return;
-
-    const desktopContainer = document.getElementById("dynamic-sections-desktop");
-    const mobileContainer = document.getElementById("dynamic-sections-mobile");
-
-    if (!desktopContainer || !mobileContainer) return;
-
-    // Clear existing content
-    desktopContainer.innerHTML = "";
-    mobileContainer.innerHTML = "";
-
-    const sections = dynamicSectionsData.sections;
-
-    // Create rows of 2 sections each for desktop
-    for (let i = 0; i < sections.length; i += 2) {
-      const row = document.createElement("div");
-      row.className = "flex flex-row gap-4";
-
-      // First section in the row
-      const section1 = sections[i];
-      row.appendChild(createSectionBox(section1, false));
-
-      // Second section in the row (if exists)
-      if (i + 1 < sections.length) {
-        const section2 = sections[i + 1];
-        row.appendChild(createSectionBox(section2, false));
-      }
-
-      desktopContainer.appendChild(row);
-    }
-
-    // Create individual boxes for mobile
-    sections.forEach((section) => {
-      mobileContainer.appendChild(createSectionBox(section, true));
-    });
-  }
-
-  // Helper function to create a section box
-  function createSectionBox(section, isMobile) {
-    const box = document.createElement("div");
-    box.className = "w-full " + (isMobile ? "" : "lg:w-1/2") + " bg-white rounded-lg my-6";
-
-    // Extract color from hex string
-    const colorHex = section.color || "#3b82f6";
-    const colorName = getColorName(colorHex);
-
-    // Header
-    const header = document.createElement("h4");
-    header.className = `text-xl font-semibold text-white bg-[${colorHex}] p-2 rounded mb-2 flex items-center`;
-    header.innerHTML = `
-      <i class="${section.icon || 'fas fa-briefcase'} mr-2" style="color: white"></i>
-      ${section.title}
-    `;
-    box.appendChild(header);
-
-    // Content container
-    const contentWrapper = document.createElement("div");
-    contentWrapper.className = "relative";
-
-    // Items container
-    const itemsContainer = document.createElement("div");
-    itemsContainer.className = "space-y-2";
-
-    // Show max 10 items
-    const itemsToShow = section.items.slice(0, 10);
-    itemsToShow.forEach((item) => {
-      const itemDiv = document.createElement("div");
-      itemDiv.className = `bg-${colorName}-50 p-3 rounded border-l-4 border-${colorName}-500 cursor-pointer hover:bg-${colorName}-100 hover:shadow transition duration-300`;
-      itemDiv.style.backgroundColor = getLightColor(colorHex, 0.9);
-      itemDiv.style.borderLeftColor = colorHex;
-
-      let badgeHTML = "";
-      if (item.badge) {
-        badgeHTML = `<span class="${item.badgeColor || 'bg-blue-500'} text-white text-xs font-bold px-2 py-1 rounded ml-2">${item.badge}</span>`;
-      }
-
-      itemDiv.innerHTML = `
-        <div class="flex justify-between items-start">
-          <p class="text-sm font-medium text-gray-700 flex-1">${item.name}${badgeHTML}</p>
-        </div>
-        ${item.date ? `<p class="text-xs text-gray-500 mt-1">${item.date}</p>` : ""}
-      `;
-
-      itemDiv.addEventListener("click", () => {
-        openLink(item);
-      });
-
-      itemsContainer.appendChild(itemDiv);
-    });
-
-    contentWrapper.appendChild(itemsContainer);
-
-    // View More button
-    const viewMoreDiv = document.createElement("div");
-    viewMoreDiv.className = "mt-2 py-4";
-
-    const viewMoreBtn = document.createElement("a");
-    viewMoreBtn.className = `block w-fit mx-auto text-center bg-gray-700 hover:bg-gray-800 text-white font-semibold py-2 px-4 rounded transition duration-300`;
-    viewMoreBtn.style.color = "#ffffff";
- 
-    if (section.viewMoreType === "external" && section.viewMoreUrl) {
-      viewMoreBtn.href = section.viewMoreUrl;
-      viewMoreBtn.target = "_blank";
-    } else if (section.viewMoreType === "internal" && section.viewMoreUrl) {
-      viewMoreBtn.href = `view.html?url=${encodeURIComponent(section.viewMoreUrl)}&name=${encodeURIComponent(section.title)}`;
-    } else {
-      viewMoreBtn.href = `view.html?section=${section.id}`;
-    }
-
-    viewMoreBtn.innerHTML = 'View More<i class="fas fa-arrow-right ml-2"></i>';
-    viewMoreDiv.appendChild(viewMoreBtn);
-    contentWrapper.appendChild(viewMoreDiv);
-
-    box.appendChild(contentWrapper);
-    return box;
-  }
-
-  // Helper function to get color name from hex (approximation)
-  function getColorName(hex) {
-    const colorMap = {
-      "#3b82f6": "blue",
-      "#60a5fa": "blue",
-      "#2563eb": "blue",
-      "#34518A": "blue",
-      "#5D68D9": "indigo",
-      "#f59e0b": "amber",
-      "#fbbf24": "yellow",
-      "#d97706": "orange",
-      "#f97316": "orange",
-      "#10b981": "green",
-      "#34d399": "emerald",
-      "#059669": "green",
-      "#40825B": "green",
-      "#00FFA4": "green",
-      "#8b5cf6": "purple",
-      "#a78bfa": "purple",
-      "#7c3aed": "violet",
-      "#ef4444": "red",
-      "#f87171": "red",
-      "#dc2626": "red",
-      "#E31E53": "red",
-      "#913030": "red",
-      "#06b6d4": "cyan",
-      "#22d3ee": "cyan",
-      "#0891b2": "cyan",
-      "#00E4FA": "cyan",
-      "#dc7ec7": "pink",
-      "#fb7185": "rose",
-      "#ac938e": "stone",
-      "#CAD64D": "lime",
-    };
-    return colorMap[hex.toLowerCase()] || "blue";
-  }
-
-  // Function to load social links in footer
-  function loadFooterSocialLinks() {
-    const socialLinks = headerData && headerData.social_links ? headerData.social_links : [];
-    const footerSocialSection = document.getElementById("footer-social-links");
-
-    if (!footerSocialSection) return;
-
-    socialLinks.forEach((social) => {
-      const link = document.createElement("a");
-      link.href = social.url;
-      link.target = "_blank";
-      link.className = `${social.color} text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 flex items-center justify-center font-semibold`;
-      link.innerHTML = `<i class="${social.icon} mr-2"></i>${social.name}`;
-      link.title = social.name;
-      footerSocialSection.appendChild(link);
-    });
-  }
-
-  // Function to load jobs
-  function loadJobs() {
-    const topJobs = data.top_jobs || [];
-    const leftJobs = data.left_jobs || [];
-    const rightJobs = data.right_jobs || [];
-    const topButtons = document.getElementById("jobs-top-buttons");
-    const leftSection = document.getElementById("jobs-left-section");
-    const rightSection = document.getElementById("jobs-right-section");
-
-    if (!topButtons || !leftSection || !rightSection) return;
-
-    // Top buttons (2 rows of 3)
-    // Support a `color` property on title entries. When a title has a color,
-    // subsequent job buttons will use a lighter version of that color as
-    // their background until the next title.
-    let currentTopColor = null;
-    topJobs.forEach((job) => {
-      if (job.title) {
-        // It's a title — update current color if provided
-        if (job.color) currentTopColor = job.color;
-        else currentTopColor = null;
-
-        const titleDiv = document.createElement("div");
-        titleDiv.className = "col-span-full text-left mt-4 py-1";
-        titleDiv.innerHTML = `<h3 class="text-2xl font-bold px-2 text-white">${job.title}</h3>`;
-        titleDiv.style.backgroundColor = currentTopColor
-          ? getLightColor(currentTopColor, 0.05)
-          : "transparent";
-        topButtons.appendChild(titleDiv);
-      } else {
-        // It's a button
-        const button = document.createElement("div");
-        button.className =
-          "p-1 ps-2 border-1 hover:shadow-lg transition duration-300 cursor-pointer flex items-center";
-
-        // If a current color is set on the last title, apply a lighter background
-        if (currentTopColor) {
-          // Try to compute a light variant for hex or rgb colors; otherwise, set as class
-          const light = getLightColor(currentTopColor, 0.75);
-          if (light) {
-            const border = getLightColor(currentTopColor, 0.45);
-            if (border) button.style.borderColor = border;
-          }
-        }
-
-        button.innerHTML = `
-          <span class="font-bold text-gray-800 text-xs">${job.name}</span>
-        `;
-        button.addEventListener("click", () => {
-          openLink(job);
-        });
-        topButtons.appendChild(button);
-      }
-    });
-
-    // Left section
-    let currentLeftColor = null;
-    leftJobs.forEach((job) => {
-      if (job.title) {
-        if (job.color) currentLeftColor = job.color;
-        else currentLeftColor = null;
-
-        const titleDiv = document.createElement("div");
-        titleDiv.className = "col-span-full text-left py-1 mt-4";
-        titleDiv.innerHTML = `<h3 class="text-2xl font-bold px-2 text-white">${job.title}</h3>`;
-        titleDiv.style.backgroundColor = currentLeftColor
-          ? getLightColor(currentLeftColor, 0.05)
-          : "transparent";
-        leftSection.appendChild(titleDiv);
-      } else {
-        const button = document.createElement("div");
-        button.className =
-          "p-1 ps-2 border-1 hover:shadow-lg transition duration-300 cursor-pointer flex items-center";
-
-        if (currentLeftColor) {
-          const light = getLightColor(currentLeftColor, 0.75);
-          if (light) {
-            const border = getLightColor(currentLeftColor, 0.45);
-            if (border) button.style.borderColor = border;
-          }
-        }
-
-        button.innerHTML = `
-          <span class="font-bold text-gray-800 text-sm">${job.name}</span>
-        `;
-        button.addEventListener("click", () => {
-          openLink(job);
-        });
-        leftSection.appendChild(button);
-      }
-    });
-
-    // Right section
-    let currentRightColor = null;
-    rightJobs.forEach((job) => {
-      if (job.title) {
-        if (job.color) currentRightColor = job.color;
-        else currentRightColor = null;
-
-        const titleDiv = document.createElement("div");
-        titleDiv.className = "col-span-full text-left py-1 mt-4";
-        titleDiv.innerHTML = `<h3 class="text-2xl font-bold px-2 text-white">${job.title}</h3>`;
-        titleDiv.style.backgroundColor = currentRightColor
-          ? getLightColor(currentRightColor, 0.05)
-          : "transparent";
-        rightSection.appendChild(titleDiv);
-      } else {
-        const button = document.createElement("div");
-        button.className =
-          "p-1 ps-2 border-1 hover:shadow-lg transition duration-300 cursor-pointer flex items-center";
-        button.style.backgroundColor = "#ffffff";
-        button.style.borderColor = "#bfdbfe";
-
-        if (currentRightColor) {
-          const light = getLightColor(currentRightColor, 0.75);
-          if (light) {
-            const border = getLightColor(currentRightColor, 0.45);
-            if (border) button.style.borderColor = border;
-            button.style.color = readableTextColor(currentRightColor);
-          }
-        }
-
-        button.innerHTML = `
-          <span class="font-bold text-gray-800 text-sm">${job.name}</span>
-        `;
-        button.addEventListener("click", () => {
-          openLink(job);
-        });
-        rightSection.appendChild(button);
-      }
-    });
-  }
-
-  // Function to open link - internal view or external
-  function openLink(link) {
-    if (link.external) {
-      window.open(link.url, '_blank');
-    } else {
-      const params = new URLSearchParams({
-        url: encodeURIComponent(link.url),
-        name: encodeURIComponent(link.name),
-        job: link.name.toLowerCase().replace(/\s+/g, "-"),
-      });
-      window.location.href = `view.html?${params.toString()}`;
-    }
-  }
-
-
-
-  // Function to show service details in modal
-  function showServiceDetails(service) {
-    modalServiceContent.innerHTML = `
-      <div class="text-center mb-8">
-        <h2 class="text-4xl font-bold text-gray-800 mb-4">
-          <i class="fas fa-gavel mr-3 text-green-600"></i>
-          Service Request
-        </h2>
-        <div class="w-24 h-1 bg-green-600 mx-auto mb-4"></div>
-      </div>
-
-      <div class="mb-8">
-        <h3 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
-          <i class="fas fa-user text-green-500 mr-3"></i>
-          Your Information
-        </h3>
-        <form id="serviceForm">
-          <div class="grid md:grid-cols-2 gap-6 mb-6">
-            <div>
-              <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-              <input type="text" id="name" name="name" required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-            <div>
-              <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-              <input type="tel" id="phone" name="phone" required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-          </div>
-          <div class="flex justify-center">
-            <button type="submit"
-              class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition duration-300 font-medium">
-              <i class="fas fa-paper-plane mr-2"></i>Submit Request
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <div class="mb-8">
-        <h3 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
-          <i class="fas fa-info-circle text-blue-500 mr-3"></i>
-          Selected Service
-        </h3>
-        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-          <p class="text-xl font-medium text-blue-800">${service.name}</p>
-        </div>
-      </div>
-
-      <div class="mb-8">
-        <h3 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
-          <i class="fas fa-list-check text-purple-500 mr-3"></i>
-          Required Documents
-        </h3>
-        <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
-          <ul id="documentsList" class="text-gray-700 space-y-2">
-            <!-- Documents will be populated based on service -->
-          </ul>
-        </div>
-      </div>
-
-      <div class="mb-8">
-        <h3 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
-          <i class="fas fa-clock text-orange-500 mr-3"></i>
-          Processing Time
-        </h3>
-        <div class="bg-orange-50 border-l-4 border-orange-500 p-4 rounded">
-          <p id="processingTime" class="text-gray-700">2-7 working days</p>
-        </div>
-      </div>
-    `;
-
-    // Populate documents
-    populateDocuments(service.documents);
-
-    // Handle form submission: POST to Supabase with JSON payload
-    const form = modalServiceContent.querySelector("#serviceForm");
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const submitBtn = form.querySelector('button[type="submit"]');
-      const originalText = submitBtn.innerHTML;
-
-      // Disable button to prevent double submission
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Submitting...';
-      submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
-
-      const name = form.querySelector("#name").value.trim();
-      const phone = form.querySelector("#phone").value.trim();
-
-      try {
-        // Insert into Supabase if available
-        if (supabase) {
-          const { data, error } = await supabase
-            .from('service_requests')
-            .insert([
-              {
-                name: name,
-                phone: phone,
-                service: service.name,
-                created_at: new Date().toISOString()
-              }
-            ]);
-
-          if (error) {
-            console.error('Error submitting service request:', error);
-            alert('Failed to submit your request. Please try again.');
-            return;
-          }
-        } else {
-          console.warn('Supabase not available, saving to localStorage only');
-        }
-
-        // Save to localStorage as fallback
-        try {
-          const key = "service_requests";
-          const existing = JSON.parse(localStorage.getItem(key) || "[]");
-          existing.push({
-            service: service.name,
-            name,
-            phone,
-            createdAt: new Date().toISOString(),
-          });
-          localStorage.setItem(key, JSON.stringify(existing));
-        } catch (err) {
-          console.warn(
-            "Could not save service request to localStorage",
-            err
-          );
-        }
-
-        // Close modal and notify user
-        serviceModal.classList.add("hidden");
-        alert(
-          'Your request for "' +
-            service.name +
-            '" has been submitted. We will contact you soon.'
-        );
-        form.reset();
-
-      } catch (err) {
-        console.error('Error:', err);
-        alert(
-          "Could not submit your request right now. Please check your connection and try again."
-        );
-      } finally {
-        // Re-enable button
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-      }
-    });
-
-    // Show modal
-    serviceModal.classList.remove("hidden");
-  }
-
-  // Function to populate documents based on service
-  function populateDocuments(documents) {
-    const documentsList = modalServiceContent.querySelector("#documentsList");
-    documents.forEach((doc) => {
-      const li = document.createElement("li");
-      li.innerHTML = `<i class="fas fa-check-circle text-green-500 mr-2"></i>${doc}`;
-      documentsList.appendChild(li);
-    });
-  }
-
-  // Helper: convert hex color to RGB object
-  function hexToRgb(hex) {
-    if (!hex) return null;
-    hex = hex.replace("#", "").trim();
-    if (hex.length === 3) {
-      hex = hex
-        .split("")
-        .map((c) => c + c)
-        .join("");
-    }
-    if (!/^[0-9a-fA-F]{6}$/.test(hex)) return null;
-    const bigint = parseInt(hex, 16);
-    return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
-  }
-
-  // Helper: mix color towards white by `mix` fraction (0-1) and return hex string
-  function getLightColor(color, mix = 0.7) {
-    if (!color) return null;
-    color = color.trim();
-    // hex
-    if (color.startsWith("#")) {
-      const rgb = hexToRgb(color);
-      if (!rgb) return null;
-      const r = Math.round(rgb.r + (255 - rgb.r) * mix);
-      const g = Math.round(rgb.g + (255 - rgb.g) * mix);
-      const b = Math.round(rgb.b + (255 - rgb.b) * mix);
-      return `rgb(${r}, ${g}, ${b})`;
-    }
-
-    // rgb(...) format
-    const rgbMatch = color.match(
-      /rgb\s*\(\s*(\d{1,3})[,\s]+(\d{1,3})[,\s]+(\d{1,3})\s*\)/i
-    );
-    if (rgbMatch) {
-      const r0 = parseInt(rgbMatch[1], 10);
-      const g0 = parseInt(rgbMatch[2], 10);
-      const b0 = parseInt(rgbMatch[3], 10);
-      const r = Math.round(r0 + (255 - r0) * mix);
-      const g = Math.round(g0 + (255 - g0) * mix);
-      const b = Math.round(b0 + (255 - b0) * mix);
-      return `rgb(${r}, ${g}, ${b})`;
-    }
-
-    // Not recognized (could be a CSS class like 'bg-red-500')
-    return null;
-  }
-
-  // Helper: decide readable text color (dark or white) based on original color
-  function readableTextColor(color) {
-    if (!color) return "#111827"; // default dark gray
-    color = color.trim();
-    let r, g, b;
-    if (color.startsWith("#")) {
-      const rgb = hexToRgb(color);
-      if (!rgb) return "#111827";
-      r = rgb.r;
-      g = rgb.g;
-      b = rgb.b;
-    } else {
-      const m = color.match(
-        /rgb\s*\(\s*(\d{1,3})[,\s]+(\d{1,3})[,\s]+(\d{1,3})\s*\)/i
-      );
-      if (m) {
-        r = parseInt(m[1], 10);
-        g = parseInt(m[2], 10);
-        b = parseInt(m[3], 10);
-      } else {
-        return "#111827";
-      }
-    }
-
-    // Perceived luminance
-    const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
-    return luminance > 180 ? "#111827" : "#ffffff";
-  }
-
-  // Function to load WhatsApp chat
-  async function loadWhatsAppChat() {
-    const whatsappBtn = document.getElementById("whatsapp-btn");
-    const whatsappPopup = document.getElementById("whatsapp-popup");
-    const closeWhatsapp = document.getElementById("close-whatsapp");
-    const messagesContainer = document.getElementById("whatsapp-messages");
-
-    if (!whatsappBtn || !whatsappPopup || !messagesContainer) return;
-
-    // Load WhatsApp messages from JSON
-    let whatsappData = [];
-    try {
-      const response = await fetch("whatsapp.json");
-      whatsappData = await response.json();
-    } catch (error) {
-      console.error("Error loading WhatsApp data:", error);
-      whatsappData = [
-        { message: "Welcome to Top Sarkari Jobs! 👋", link: null },
-        { message: "How can we help you today?", link: null }
-      ];
-    }
-
-    // Populate messages
-    whatsappData.forEach((item, index) => {
-      const messageDiv = document.createElement("div");
-      messageDiv.className = "flex justify-start animate-fadeIn";
-      messageDiv.style.animationDelay = `${index * 0.1}s`;
-
-      // Convert URLs and file paths to clickable links
-      let messageContent = item.message;
-      
-      // Convert \n to <br> for multiline support
-      messageContent = messageContent.replace(/\n/g, '<br>');
-      
-      // Detect and convert URLs (http, https) - handle both correct and malformed URLs
-      messageContent = messageContent.replace(
-        /(https?:\/\/[^\s<]+|https?\/\/[^\s<]+)/gi,
-        (match) => {
-          // Fix malformed URLs by adding colon if missing
-          let fixedUrl = match;
-          if (match.startsWith('https//')) {
-            fixedUrl = 'https://' + match.substring(7);
-          } else if (match.startsWith('http//')) {
-            fixedUrl = 'http://' + match.substring(6);
-          }
-          
-          // Check if it's a YouTube link
-          const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
-          const youtubeMatch = fixedUrl.match(youtubeRegex);
-          console.log(fixedUrl);
-          
-          if (youtubeMatch) {
-            const videoId = youtubeMatch[1];
-            return `<div class="mt-2 mb-2">
-              <iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}" 
-                frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowfullscreen class="rounded-lg"></iframe>
-            </div>`;
-          } else {
-            return `<a href="${fixedUrl}" target="_blank" rel="noopener noreferrer" class="text-green-600 font-semibold hover:text-green-700 underline">click here</a>`;
-          }
-        }
-      );
-      
-      let imageHtml = '';
-      if (item.image) {
-        imageHtml = `<img src="${item.image}" alt="WhatsApp Image" class="max-w-full rounded-lg mt-2 cursor-pointer" onclick="window.open('${item.image}', '_blank')">`;
-      }
-
-      let videoHtml = '';
-      if (item.video) {
-        // Fix malformed URLs by adding colon if missing
-        let fixedVideoUrl = item.video;
-        if (item.video.startsWith('https//')) {
-          fixedVideoUrl = 'https://' + item.video.substring(7);
-        } else if (item.video.startsWith('http//')) {
-          fixedVideoUrl = 'http://' + item.video.substring(6);
-        }
-        
-        // Check if it's a YouTube URL
-        const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
-        const youtubeMatch = fixedVideoUrl.match(youtubeRegex);
-        
-        if (youtubeMatch) {
-          const videoId = youtubeMatch[1];
-          videoHtml = `<iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}" 
-            frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-            allowfullscreen class="max-w-full rounded-lg mt-2"></iframe>`;
-        } else {
-          videoHtml = `<video controls class="max-w-full rounded-lg mt-2"><source src="${fixedVideoUrl}" type="video/mp4"></video>`;
-        }
-      }
-
-      messageDiv.innerHTML = `
-        <div class="bg-white rounded-lg rounded-bl-none shadow p-3 max-w-[85%]">
-          <p class="text-gray-800 text-sm whatsapp-message">${messageContent}</p>
-          ${imageHtml}
-          ${videoHtml}
-        </div>
-      `;
-
-      messagesContainer.appendChild(messageDiv);
-    });
-
-    // Toggle popup
-    whatsappBtn.addEventListener("click", () => {
-      whatsappPopup.classList.toggle("hidden");
-      // Scroll to bottom when popup opens
-      if (!whatsappPopup.classList.contains("hidden")) {
-        setTimeout(() => {
-          messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }, 100);
-      }
-    });
-
-    closeWhatsapp.addEventListener("click", () => {
-      whatsappPopup.classList.add("hidden");
-    });
-
-    // Close popup when clicking outside
-    document.addEventListener("click", (e) => {
-      if (
-        !whatsappPopup.contains(e.target) &&
-        !whatsappBtn.contains(e.target) &&
-        !whatsappPopup.classList.contains("hidden")
-      ) {
-        whatsappPopup.classList.add("hidden");
-      }
-    });
-  }
-
-  // Function to handle back button
-  window.goBack = function() {
-    if (window.history.length > 1) {
-      window.history.back();
-    } else {
-      window.location.href = 'index.html';
-    }
-  };
 });
+
+/**
+ * Fetch a JSON file relative to the site root.  Returns an empty
+ * object if the fetch fails for any reason, such as a missing file
+ * or network error.  Errors are logged to the console for debugging.
+ *
+ * @param {string} url Path to the JSON file
+ * @returns {Promise<Object>}
+ */
+async function fetchJSON(url) {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Network response for ${url} was not ok`);
+    return await response.json();
+  } catch (err) {
+    console.warn(`Failed to fetch ${url}:`, err);
+    return {};
+  }
+}
+
+/**
+ * Build a flat search index from the jobs data and dynamic sections.
+ * Each entry in the index includes the name, URL, whether it is
+ * external, the originating group or section, and its type
+ * ('job' or 'dynamic').  This index is used by the live search
+ * component to filter and display results.
+ *
+ * @param {Object} jobsData Parsed jobs.json
+ * @param {Object} dynamicData Parsed dynamic-sections.json
+ * @returns {Array<Object>}
+ */
+function buildSearchIndex(jobsData, dynamicData) {
+  const index = [];
+
+  // Helper to process a jobs array (top_jobs, left_jobs, right_jobs)
+  function processJobsArray(arr, defaultGroup) {
+    if (!Array.isArray(arr)) return;
+    let currentGroup = defaultGroup;
+    for (const entry of arr) {
+      if (entry.title) {
+        // Use the title of a section as the group name for subsequent entries
+        currentGroup = entry.title;
+      } else if (entry.name) {
+        index.push({
+          name: entry.name,
+          url: entry.url,
+          external: entry.external,
+          group: currentGroup,
+          type: 'job'
+        });
+      }
+    }
+  }
+
+  processJobsArray(jobsData.top_jobs, 'Top');
+  processJobsArray(jobsData.left_jobs, 'Left');
+  processJobsArray(jobsData.right_jobs, 'Right');
+
+  // Include items from the dynamic sections
+  if (dynamicData && Array.isArray(dynamicData.sections)) {
+    dynamicData.sections.forEach(section => {
+      if (section && Array.isArray(section.items)) {
+        section.items.forEach(item => {
+          index.push({
+            name: item.name,
+            url: item.url,
+            external: item.external,
+            group: section.title,
+            type: 'dynamic',
+            badge: item.badge
+          });
+        });
+      }
+    });
+  }
+  return index;
+}
+
+/**
+ * Render the social media links in the footer.  Expects an array
+ * called social_links on the headerData object.  Each link should
+ * define a URL, name, colour and Font Awesome icon class.  Cards
+ * are appended to the element with id 'footer-social'.
+ *
+ * @param {Object} headerData Parsed header_links.json
+ */
+function loadFooterSocialLinks(headerData) {
+  const container = document.getElementById('footer-social');
+  if (!container) return;
+  const links = (headerData && headerData.social_links) || [];
+  links.forEach(link => {
+    const a = document.createElement('a');
+    a.href = link.url || '#';
+    a.target = '_blank';
+    // Use the colour from the JSON if provided, otherwise fallback to primary colour
+    a.style.backgroundColor = link.color || '#3b82f6';
+    a.innerHTML = `<i class="${link.icon || ''}" style="margin-right:0.5rem"></i>${link.name}`;
+    container.appendChild(a);
+  });
+}
+
+/**
+ * Initialise the mobile side menu.  Handles opening and closing
+ * the menu, managing the overlay and updating ARIA attributes.
+ */
+function setupSideMenu() {
+  const hamburger = document.getElementById('hamburger');
+  const sideMenu = document.getElementById('side-menu');
+  const overlay = document.getElementById('overlay');
+  const closeBtn = document.getElementById('close-menu');
+  if (!hamburger || !sideMenu || !overlay || !closeBtn) return;
+
+  function openMenu() {
+    sideMenu.classList.add('open');
+    overlay.classList.add('show');
+    hamburger.setAttribute('aria-expanded', 'true');
+    sideMenu.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeMenu() {
+    sideMenu.classList.remove('open');
+    overlay.classList.remove('show');
+    hamburger.setAttribute('aria-expanded', 'false');
+    sideMenu.setAttribute('aria-hidden', 'true');
+  }
+
+  hamburger.addEventListener('click', openMenu);
+  closeBtn.addEventListener('click', closeMenu);
+  overlay.addEventListener('click', closeMenu);
+
+  // Close the menu when pressing the Escape key
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && sideMenu.classList.contains('open')) {
+      closeMenu();
+    }
+  });
+}
+
+/**
+ * Initialise the live search.  As the user types into the search
+ * input, filter the search index and display a list of matching
+ * results.  Clicking a result will navigate to the item and hide
+ * the results list.  The search results container is hidden when
+ * clicking outside the input or results.
+ *
+ * @param {Array<Object>} searchIndex Prebuilt search index
+ */
+function setupSearch(searchIndex) {
+  const input = document.getElementById('search-input');
+  const resultsDiv = document.getElementById('search-results');
+  if (!input || !resultsDiv) return;
+
+  input.addEventListener('input', () => {
+    const query = input.value.trim().toLowerCase();
+    if (!query) {
+      resultsDiv.innerHTML = '';
+      resultsDiv.classList.remove('show');
+      return;
+    }
+    const results = searchIndex.filter(item => item.name.toLowerCase().includes(query)).slice(0, 15);
+    const list = document.createElement('ul');
+    if (results.length === 0) {
+      const li = document.createElement('li');
+      li.innerHTML = '<span style="padding:0.5rem;display:block;">No results found</span>';
+      list.appendChild(li);
+    } else {
+      results.forEach(item => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        // Escape the query for regex and highlight matches
+        const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(`(${escaped})`, 'gi');
+        a.innerHTML = item.name.replace(regex, '<mark>$1</mark>');
+        a.href = '#';
+        a.addEventListener('click', e => {
+          e.preventDefault();
+          openLink(item);
+          // Hide results and clear input after selection
+          resultsDiv.classList.remove('show');
+          resultsDiv.innerHTML = '';
+          input.value = '';
+        });
+        li.appendChild(a);
+        list.appendChild(li);
+      });
+    }
+    resultsDiv.innerHTML = '';
+    resultsDiv.appendChild(list);
+    resultsDiv.classList.add('show');
+  });
+
+  // Hide search results when clicking outside
+  document.addEventListener('click', e => {
+    if (!resultsDiv.contains(e.target) && e.target !== input) {
+      resultsDiv.classList.remove('show');
+    }
+  });
+}
+
+/**
+ * Render the quick access cards on the homepage.  These come from
+ * the home_links array in header_links.json.  Each card uses
+ * the .job-card class and optionally applies a background colour.
+ *
+ * @param {Object} headerData Parsed header_links.json
+ */
+function renderHomeCards(headerData) {
+  const container = document.getElementById('home-cards');
+  if (!container) return;
+  const homeLinks = (headerData && headerData.home_links) || [];
+  homeLinks.forEach(link => {
+    const card = document.createElement('div');
+    card.className = 'job-card';
+    // Apply colour if provided
+    if (link.color) {
+      // Make sure text is readable on coloured backgrounds
+      card.style.backgroundColor = link.color;
+      card.style.color = '#ffffff';
+    }
+    card.innerHTML = `<span>${link.name}</span>`;
+    card.addEventListener('click', () => openLink(link));
+    container.appendChild(card);
+  });
+}
+
+/**
+ * Render the job sections (top, left and right) on the homepage.  Each
+ * section is displayed in its respective container.  Section titles
+ * are inserted as headers with a coloured background taken from
+ * the JSON data.  Job entries appear as clickable cards.
+ *
+ * @param {Object} jobsData Parsed jobs.json
+ */
+function renderJobsSections(jobsData) {
+  const topContainer = document.getElementById('top-jobs');
+  const leftContainer = document.getElementById('left-jobs');
+  const rightContainer = document.getElementById('right-jobs');
+  if (!topContainer || !leftContainer || !rightContainer) return;
+
+  function renderSection(arr, container) {
+    if (!Array.isArray(arr)) return;
+    let currentColor = null;
+    for (let i = 0; i < arr.length; i++) {
+      const entry = arr[i];
+      if (entry.title) {
+        // Create a header for the section
+        currentColor = entry.color || null;
+        const header = document.createElement('div');
+        header.className = 'section-header';
+        header.style.backgroundColor = currentColor || '#3b82f6';
+        header.textContent = entry.title;
+        container.appendChild(header);
+      } else if (entry.name) {
+        // Render a job card
+        const card = document.createElement('div');
+        card.className = 'job-card';
+        if (currentColor) {
+          // Lighten the colour for the card background and use the base
+          // colour for the left border
+          card.style.backgroundColor = lightenColor(currentColor, 0.85);
+          card.style.borderLeft = `4px solid ${currentColor}`;
+        }
+        card.innerHTML = `<span>${entry.name}</span>`;
+        card.addEventListener('click', () => openLink(entry));
+        container.appendChild(card);
+      }
+    }
+  }
+
+  renderSection(jobsData.top_jobs, topContainer);
+  renderSection(jobsData.left_jobs, leftContainer);
+  renderSection(jobsData.right_jobs, rightContainer);
+}
+
+/**
+ * Render the dynamic sections such as Latest Jobs, Upcoming Jobs, etc.
+ * Each section is displayed in a box containing a coloured header,
+ * a list of items and a View More link.  All boxes are appended to
+ * the element with id 'dynamic-sections'.
+ *
+ * @param {Object} dynamicData Parsed dynamic-sections.json
+ */
+function renderDynamicSections(dynamicData) {
+  const container = document.getElementById('dynamic-sections');
+  if (!container || !dynamicData || !Array.isArray(dynamicData.sections)) return;
+  dynamicData.sections.forEach(section => {
+    const box = document.createElement('div');
+    box.className = 'section-box';
+    // Header
+    const header = document.createElement('div');
+    header.className = 'section-header';
+    const colour = section.color || '#3b82f6';
+    header.style.backgroundColor = colour;
+    header.innerHTML = `<i class="${section.icon || 'fas fa-briefcase'}" style="margin-right:0.5rem"></i>${section.title}`;
+    box.appendChild(header);
+    // Items list
+    const itemsDiv = document.createElement('div');
+    itemsDiv.className = 'section-items';
+    const items = Array.isArray(section.items) ? section.items.slice(0, 10) : [];
+    items.forEach(item => {
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'section-item';
+      itemDiv.style.borderLeftColor = colour;
+      itemDiv.innerHTML = `<span>${item.name}</span>`;
+      itemDiv.addEventListener('click', () => openLink(item));
+      itemsDiv.appendChild(itemDiv);
+    });
+    box.appendChild(itemsDiv);
+    // View more link
+    const moreDiv = document.createElement('div');
+    moreDiv.className = 'view-more';
+    const moreLink = document.createElement('a');
+    moreLink.textContent = 'View More';
+    if (section.viewMoreType === 'external' && section.viewMoreUrl) {
+      moreLink.href = section.viewMoreUrl;
+      moreLink.target = '_blank';
+    } else if (section.viewMoreType === 'internal' && section.viewMoreUrl) {
+      moreLink.href = `view.html?url=${encodeURIComponent(section.viewMoreUrl)}&name=${encodeURIComponent(section.title)}`;
+    } else {
+      // Default: no action
+      moreLink.href = '#';
+    }
+    moreDiv.appendChild(moreLink);
+    box.appendChild(moreDiv);
+    container.appendChild(box);
+  });
+}
+
+/**
+ * Render a category page based on the slug from the URL.  Looks up
+ * the appropriate section from jobsData or dynamicData to pull the
+ * list of items to display.  Provides descriptive text for the
+ * category and falls back gracefully if the slug is unknown.
+ *
+ * @param {string|null} groupSlug Slug extracted from the query string
+ * @param {Object} jobsData Parsed jobs.json
+ * @param {Object} dynamicData Parsed dynamic-sections.json
+ */
+function renderCategoryPage(groupSlug, jobsData, dynamicData) {
+  const titleEl = document.getElementById('category-title');
+  const descEl = document.getElementById('category-description');
+  const grid = document.getElementById('category-grid');
+  if (!titleEl || !descEl || !grid) return;
+
+  // Mapping of slugs to their titles, source and descriptions
+  const groups = {
+    study: {
+      title: 'Study‑wise Jobs',
+      from: 'top',
+      sectionTitle: 'Study wise Jobs',
+      description: 'Explore government job opportunities categorised by education level. Whether you passed class 8, 10, 12 or hold a diploma, find jobs tailored to your qualification.'
+    },
+    popular: {
+      title: 'Popular Jobs',
+      from: 'top',
+      sectionTitle: '⭐ Popular Jobs Categories',
+      description: 'Discover the most sought‑after government job categories in India. Browse by industry, role and trending career paths.'
+    },
+    state: {
+      title: 'State‑wise Jobs',
+      from: 'left',
+      sectionTitle: 'State wise Jobs',
+      description: 'Find government job openings across Indian states. Choose your state to view vacancies and notifications.'
+    },
+    admissions: {
+      title: 'Admissions',
+      from: 'left',
+      sectionTitle: 'Admission',
+      description: 'Stay updated on admission forms for universities, colleges and institutes. Find details about eligibility, application dates and entrance exams.'
+    },
+    admitresult: {
+      title: 'Admit Card / Result / Answer Key / Syllabus',
+      from: 'left',
+      sectionTitle: 'Admit Card / Result / Answer Key / Syllabus',
+      description: 'Access admit cards, exam results, answer keys and syllabuses for various recruitment exams. Stay prepared and informed.'
+    },
+    scheme: {
+      title: 'Govt Scheme & Yojna',
+      from: 'right',
+      sectionTitle: 'Govt Scheme & Yojna',
+      description: 'Learn about government schemes and yojanas offering benefits and subsidies. Browse information and eligibility criteria.'
+    }
+    // Additional slugs for dynamic sections can be defined here if needed
+  };
+
+  const config = groups[groupSlug];
+  if (!config) {
+    titleEl.textContent = 'Category Not Found';
+    descEl.textContent = '';
+    grid.innerHTML = '<p style="padding:1rem">The requested category does not exist.</p>';
+    return;
+  }
+
+  titleEl.textContent = config.title;
+  descEl.textContent = config.description;
+  grid.innerHTML = '';
+
+  // Extract the list of items for the selected group
+  let items = [];
+  if (config.from === 'top') {
+    items = extractSectionItems(jobsData.top_jobs, config.sectionTitle);
+  } else if (config.from === 'left') {
+    items = extractSectionItems(jobsData.left_jobs, config.sectionTitle);
+  } else if (config.from === 'right') {
+    items = extractSectionItems(jobsData.right_jobs, config.sectionTitle);
+  } else if (config.from === 'dynamic') {
+    items = extractDynamicItems(dynamicData.sections, config.sectionTitle);
+  }
+
+  // Create cards for each item
+  items.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'job-card';
+    card.innerHTML = `<span>${item.name}</span>`;
+    card.addEventListener('click', () => openLink(item));
+    grid.appendChild(card);
+  });
+}
+
+/**
+ * Extract all entries from a jobs array that belong to a given section
+ * title.  The function scans for the section header and collects
+ * subsequent items until the next header or end of the array.
+ *
+ * @param {Array<Object>} arr Jobs array from jobs.json
+ * @param {string} title Title of the section to extract
+ * @returns {Array<Object>}
+ */
+function extractSectionItems(arr, title) {
+  const result = [];
+  if (!Array.isArray(arr)) return result;
+  let collecting = false;
+  for (let i = 0; i < arr.length; i++) {
+    const entry = arr[i];
+    if (entry.title && entry.title === title) {
+      collecting = true;
+      continue;
+    }
+    if (entry.title && collecting) {
+      break;
+    }
+    if (collecting && entry.name) {
+      result.push(entry);
+    }
+  }
+  return result;
+}
+
+/**
+ * Extract items from the dynamic sections by matching the section
+ * title.  Returns the items array or an empty array if no section
+ * matches.
+ *
+ * @param {Array<Object>} sections Dynamic sections array
+ * @param {string} title Title of the dynamic section
+ * @returns {Array<Object>}
+ */
+function extractDynamicItems(sections, title) {
+  if (!Array.isArray(sections)) return [];
+  const section = sections.find(sec => sec.title === title);
+  return section && Array.isArray(section.items) ? section.items : [];
+}
+
+/**
+ * Navigate to the URL associated with a job or dynamic item.  If
+ * external is true, the link opens in a new tab.  Otherwise, the
+ * user is taken to view.html with the URL and name encoded in the
+ * query parameters.
+ *
+ * @param {Object} link Item containing at least name and url
+ */
+function openLink(link) {
+  if (!link || !link.url) return;
+  if (link.external) {
+    window.open(link.url, '_blank');
+  } else {
+    const params = new URLSearchParams();
+    params.set('url', encodeURIComponent(link.url));
+    params.set('name', encodeURIComponent(link.name));
+    window.location.href = `view.html?${params.toString()}`;
+  }
+}
+
+/**
+ * Compute a lighter variant of a hex colour by blending it towards
+ * white.  The ratio defines how far to lighten the colour (0–1).
+ *
+ * @param {string} hex Hex code of the base colour (e.g. "#2563eb")
+ * @param {number} ratio Number between 0 and 1 indicating the
+ *        degree of lightening (0 = no change, 1 = white)
+ * @returns {string} RGB string suitable for CSS
+ */
+function lightenColor(hex, ratio) {
+  // Ensure we have a valid hex string
+  if (typeof hex !== 'string' || !hex.startsWith('#')) return hex;
+  let clean = hex.replace('#', '');
+  if (clean.length === 3) {
+    clean = clean.split('').map(ch => ch + ch).join('');
+  }
+  const r = parseInt(clean.substring(0, 2), 16);
+  const g = parseInt(clean.substring(2, 4), 16);
+  const b = parseInt(clean.substring(4, 6), 16);
+  const newR = Math.round(r + (255 - r) * ratio);
+  const newG = Math.round(g + (255 - g) * ratio);
+  const newB = Math.round(b + (255 - b) * ratio);
+  return `rgb(${newR}, ${newG}, ${newB})`;
+}
