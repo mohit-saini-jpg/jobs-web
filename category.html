@@ -2,89 +2,98 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Job Category – Top Sarkari Jobs</title>
-  <meta name="description" content="Browse job categories on Top Sarkari Jobs. Find government jobs by study level, popularity, state, admissions and more." />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Category | Top Sarkari Jobs</title>
+  <meta name="description" content="Browse Top Sarkari Jobs categories with official links. Study-wise, state-wise, popular jobs, admissions, results, admit cards and more." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://www.topsarkarijobs.com/category.html" />
+  <link rel="icon" type="image/x-icon" href="image.ico">
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body data-page="category">
-  <header>
-    <div class="header-container">
-      <div class="brand">
-        <img src="image.png" alt="Top Sarkari Jobs logo" />
-        <div>
-          <h1>Top Sarkari Jobs</h1>
-          <p>Latest Sarkari Jobs, Results, Admit Cards &amp; Online Forms – 2026</p>
-        </div>
-      </div>
-      <!-- Desktop navigation -->
-      <nav class="desktop-nav" aria-label="Main navigation">
-        <ul>
-          <li><a href="index.html">Home</a></li>
-          <li class="dropdown">
-            <button aria-haspopup="true" aria-expanded="false">Jobs</button>
-            <ul class="dropdown-menu" aria-label="Job categories">
-              <li><a href="category.html?group=study" tabindex="0">Study‑wise Jobs</a></li>
-              <li><a href="category.html?group=popular" tabindex="0">Popular Jobs</a></li>
-              <li><a href="category.html?group=state" tabindex="0">State‑wise Jobs</a></li>
-              <li><a href="category.html?group=admissions" tabindex="0">Admissions</a></li>
-              <li><a href="category.html?group=admitresult" tabindex="0">Admit Card / Result / Answer Key / Syllabus</a></li>
-              <li><a href="category.html?group=scheme" tabindex="0">Govt Scheme &amp; Yojna</a></li>
-              <li><a href="category.html?group=latest-khabar" tabindex="0">Latest Khabar</a></li>
-              <li><a href="category.html?group=study-material" tabindex="0">Study Material &amp; Top Courses</a></li>
-            </ul>
-          </li>
-          <li><a href="govt-services.html">CSC Services</a></li>
-          <li><a href="tools.html">Tools</a></li>
-          <li><a href="helpdesk.html">Helpdesk</a></li>
-          <li><a href="search.html">Search</a></li>
-        </ul>
+
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Reuse same header structure from homepage -->
+  <header class="site-header">
+    <div class="container header-row">
+      <a class="brand" href="index.html" aria-label="Top Sarkari Jobs Home">
+        <img src="image.png" alt="Top Sarkari Jobs Logo" class="brand-logo">
+        <span class="brand-text">
+          <span class="brand-title">Top Sarkari Jobs</span>
+          <span class="brand-subtitle">Latest Sarkari Jobs, Results, Admit Cards & Online Forms – 2026</span>
+        </span>
+      </a>
+
+      <nav class="nav desktop-nav" aria-label="Primary">
+        <a class="nav-link" href="index.html">Home</a>
+        <a class="nav-link" href="result.html">Results</a>
+        <a class="nav-link" href="govt-services.html">CSC Services</a>
+        <a class="nav-link" href="tools.html">Tools</a>
+        <a class="nav-link" href="helpdesk.html">Helpdesk</a>
+
+        <div id="header-links" class="header-cta"></div>
       </nav>
-      <!-- Mobile menu toggle -->
-      <button id="hamburger" aria-label="Open navigation" aria-controls="side-menu" aria-expanded="false"><span></span></button>
+
+      <div class="header-actions">
+        <button id="openSearchBtn" class="icon-btn" type="button" aria-label="Open search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+        <button id="menuBtn" class="icon-btn" type="button" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
     </div>
   </header>
-  <!-- Side menu for mobile -->
-  <div id="side-menu" aria-hidden="true">
-    <button id="close-menu" aria-label="Close navigation">&times;</button>
-    <nav aria-label="Mobile navigation">
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="category.html?group=study">Study‑wise Jobs</a></li>
-        <li><a href="category.html?group=popular">Popular Jobs</a></li>
-        <li><a href="category.html?group=state">State‑wise Jobs</a></li>
-        <li><a href="category.html?group=admissions">Admissions</a></li>
-        <li><a href="category.html?group=admitresult">Admit Card / Result / Answer Key / Syllabus</a></li>
-        <li><a href="category.html?group=scheme">Govt Scheme &amp; Yojna</a></li>
-        <li><a href="category.html?group=latest-khabar">Latest Khabar</a></li>
-        <li><a href="category.html?group=study-material">Study Material &amp; Top Courses</a></li>
-        <li><a href="govt-services.html">CSC Services</a></li>
-        <li><a href="tools.html">Tools</a></li>
-        <li><a href="helpdesk.html">Helpdesk</a></li>
-        <li><a href="search.html">Search</a></li>
-      </ul>
-    </nav>
-  </div>
-  <div id="overlay"></div>
-  <main>
-    <section class="search-section">
-      <label for="search-input">Search within this category or across the site</label>
-      <input type="text" id="search-input" placeholder="Search job categories, results, admit cards …" autocomplete="off" />
-      <div id="search-results"></div>
+
+  <!-- Search (same component) -->
+  <section class="top-search">
+    <div class="container">
+      <div class="search-card">
+        <h2 class="search-title">Search across Top Sarkari Jobs</h2>
+        <p class="search-sub">Search job categories, results, admit cards, tools, and more.</p>
+        <div class="search-row">
+          <input id="siteSearchInput" type="search" placeholder="Search…" autocomplete="off" />
+          <button id="siteSearchBtn" type="button" class="btn-primary">
+            <i class="fa-solid fa-magnifying-glass"></i> Search
+          </button>
+        </div>
+        <div id="searchResults" class="search-results" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <main id="main" class="container page">
+    <section class="seo-block">
+      <p class="mini-links">
+        <a href="index.html">Home</a> <span style="opacity:.65">›</span> <span id="crumbText">Category</span>
+      </p>
+      <h1 id="categoryTitle" style="margin:6px 0 0;">Category</h1>
+      <p id="categoryDesc" style="margin:8px 0 0;color:var(--muted);line-height:1.6;"></p>
+
+      <div style="margin-top:12px;">
+        <div class="search-row" style="margin-top:0;">
+          <input id="categoryFilter" type="search" placeholder="Filter links on this page…" autocomplete="off" />
+          <button id="clearCategoryFilter" type="button" class="btn-primary">Clear</button>
+        </div>
+      </div>
     </section>
-    <section>
-      <h2 id="category-title" style="margin: 1rem 1rem 0.5rem; font-size: 1.5rem; font-weight: 700;"></h2>
-      <p id="category-description" style="margin: 0 1rem 1rem; color: #475569;"></p>
-      <div id="category-grid" class="job-grid" style="padding: 0 1rem 1rem;"></div>
+
+    <section style="margin-top:14px;">
+      <div id="categoryGrid" class="duo-grid"></div>
+      <div id="categoryEmpty" class="seo-block" style="display:none;margin-top:12px;">
+        <strong>No results found.</strong>
+        <div style="margin-top:6px;color:var(--muted);">Try a different keyword.</div>
+      </div>
     </section>
   </main>
-  <footer>
-    <div class="footer-content">
+
+  <footer class="site-footer">
+    <div class="container footer-row">
       <div>
-        <h3>Top Sarkari Jobs</h3>
-        <p>Your gateway to government jobs and services.</p>
+        <div class="footer-title">Top Sarkari Jobs</div>
+        <div class="footer-sub">Your gateway to government jobs and services</div>
         <div class="footer-links">
           <a href="about.html">About</a>
           <a href="contact.html">Contact</a>
@@ -92,12 +101,43 @@
           <a href="terms.html">Terms</a>
         </div>
       </div>
-      <div class="footer-social" id="footer-social"></div>
-      <div class="footer-bottom">
-        &copy; 2026 Top Sarkari Jobs. All rights reserved.
-      </div>
+      <div id="footer-social-links" class="footer-social"></div>
+    </div>
+    <div class="container footer-bottom">
+      © 2025 Top Sarkari Jobs. All rights reserved.
     </div>
   </footer>
-  <script src="script.js" defer></script>
+
+  <div id="menuOverlay" class="overlay" hidden></div>
+  <aside id="mobileMenu" class="offcanvas" aria-label="Mobile menu" hidden>
+    <div class="offcanvas-head">
+      <div class="offcanvas-title">Menu</div>
+      <button id="closeMenuBtn" class="icon-btn" type="button" aria-label="Close menu">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <nav class="offcanvas-nav" aria-label="Mobile primary">
+      <a href="index.html">Home</a>
+      <a href="result.html">Results</a>
+      <a href="govt-services.html">CSC Services</a>
+      <a href="tools.html">Tools</a>
+      <a href="helpdesk.html">Helpdesk</a>
+
+      <div class="offcanvas-group">
+        <div class="offcanvas-group-title">Categories</div>
+        <a href="category.html?group=study">Study wise jobs</a>
+        <a href="category.html?group=popular">Popular job categories</a>
+        <a href="category.html?group=state">State wise jobs</a>
+        <a href="category.html?group=admissions">Admissions</a>
+        <a href="category.html?group=admit-result">Admit Card / Result / Answer Key / Syllabus</a>
+        <a href="category.html?group=khabar">Latest Khabar</a>
+        <a href="category.html?group=study-material">Study Material & Top Courses</a>
+      </div>
+
+      <div class="offcanvas-cta" id="header-links-mobile"></div>
+    </nav>
+  </aside>
+
+  <script src="script.js"></script>
 </body>
 </html>
