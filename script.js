@@ -259,6 +259,14 @@ function renderHomeCards(headerData) {
   const container = document.getElementById('home-cards');
   if (!container) return;
   const homeLinks = (headerData && headerData.home_links) || [];
+  // If there are no quick links, hide the container entirely to
+  // avoid leaving a blank area on the page.  Otherwise set
+  // display to grid and populate cards.
+  if (!Array.isArray(homeLinks) || homeLinks.length === 0) {
+    container.style.display = 'none';
+    return;
+  }
+  container.style.display = 'grid';
   homeLinks.forEach(link => {
     const card = document.createElement('div');
     card.className = 'job-card';
@@ -434,14 +442,14 @@ function renderCategoryPage(groupSlug, jobsData, dynamicData) {
     'latest-khabar': {
       title: 'Latest Khabar',
       from: 'dynamic',
-      sectionTitle: 'Latest Jobs',
+      sectionTitle: 'Latest Khabar',
       description: 'Stay on top of the latest news, job notifications and exam updates released by government recruiting bodies.'
     },
     'study-material': {
       title: 'Study Material & Top Courses',
       from: 'dynamic',
-      sectionTitle: null,
-      description: 'Explore upcoming study material guides and top courses to prepare for government job exams.  Content will be added soon.'
+      sectionTitle: 'Study Material & Top Courses',
+      description: 'Browse study material guides and top courses to prepare for government job exams.'
     }
     // Additional slugs can be added here as needed
   };
