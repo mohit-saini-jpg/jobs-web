@@ -89,7 +89,7 @@
       document.body.style.overflow = "hidden";
     };
 
-    // ✅ FIX: toggle instead of open-only
+    // ✅ FIX: TOGGLE (your old code was "open only")
     btn.addEventListener("click", (e)=>{
       e.preventDefault();
       const isOpen = (btn.getAttribute("aria-expanded") === "true") && !menu.hidden;
@@ -265,8 +265,6 @@
 
   // -------------------------
   // Category pages (from jobs.json)
-  // - requested 3-column layout: handled by CSS .cat-grid
-  // - add SEO + FAQs automatically at bottom
   // -------------------------
   function normalizeGroup(g){
     const v=(g||"").toLowerCase().trim();
@@ -365,7 +363,6 @@
       .concat(Array.isArray(jobs.left_jobs)?jobs.left_jobs:[])
       .concat(Array.isArray(jobs.right_jobs)?jobs.right_jobs:[]);
 
-    // heading matchers (tune if your jobs.json headings differ)
     const matchers={
       "study":[/study/i],
       "popular":[/popular/i],
@@ -468,7 +465,6 @@
         grid.appendChild(card);
       });
 
-      // SEO + FAQs appended under grid
       renderCategorySEO(meta.title, meta.desc, group);
     };
 
@@ -496,7 +492,6 @@
   }
 
   function renderCategorySEO(title, desc, group){
-    // Remove old SEO block if re-rendering
     const old=$("#categorySEO");
     if(old) old.remove();
 
@@ -509,7 +504,6 @@
     wrap.innerHTML=`
       <h2>${title} – quick guide</h2>
       <p>${desc}</p>
-
       <div class="seo-grid">
         <div class="seo-card">
           <h3>How to use this page</h3>
@@ -519,7 +513,6 @@
             <li>Bookmark this page for quick access to updates.</li>
           </ul>
         </div>
-
         <div class="seo-card">
           <h3>Tips to avoid mistakes</h3>
           <ul>
@@ -529,12 +522,10 @@
           </ul>
         </div>
       </div>
-
       <div class="faq-wrap">
         <div class="faq-card" style="box-shadow:none;border:1px solid var(--line);">
           <h2>FAQs – ${title}</h2>
           <p class="faq-sub">Common questions related to ${title.toLowerCase()}.</p>
-
           <div class="faq-item">
             <button type="button" class="faq-btn" aria-expanded="false">
               <span>Are these links official?</span>
@@ -544,7 +535,6 @@
               We aim to list official and trusted sources. Always verify details on the official portal before applying or downloading documents.
             </div>
           </div>
-
           <div class="faq-item">
             <button type="button" class="faq-btn" aria-expanded="false">
               <span>Why do dates sometimes change?</span>
@@ -554,7 +544,6 @@
               Recruiting boards may revise schedules. Check the official notice for the latest updates.
             </div>
           </div>
-
           <div class="faq-item">
             <button type="button" class="faq-btn" aria-expanded="false">
               <span>How can I find a specific item quickly?</span>
@@ -568,14 +557,11 @@
       </div>
     `;
     main.appendChild(wrap);
-
-    // re-bind FAQ buttons inside the injected block
     initFAQ();
   }
 
   // -------------------------
   // CSC Services page (govt-services.html)
-  // Rebuild the missing list from services.json
   // -------------------------
   async function renderServicesPage(){
     if(page !== "govt-services.html") return;
@@ -597,7 +583,6 @@
       return;
     }
 
-    // Render as clean cards
     services.forEach(s=>{
       const name=safe(s.name || s.service);
       const url=s.url || s.link || "";
@@ -618,7 +603,6 @@
 
   // -------------------------
   // Tools page (tools.html)
-  // Render tools.json (image/pdf/video arrays)
   // -------------------------
   async function renderToolsPage(){
     if(page !== "tools.html") return;
@@ -695,7 +679,6 @@
 
     const out=[];
 
-    // dynamic sections
     try{
       const r=await fetch("dynamic-sections.json",{ cache:"no-store" });
       if(r.ok){
@@ -716,7 +699,6 @@
       }
     }catch(_){}
 
-    // jobs.json (all links)
     try{
       const r=await fetch("jobs.json",{ cache:"no-store" });
       if(r.ok){
@@ -737,7 +719,6 @@
       }
     }catch(_){}
 
-    // tools.json
     try{
       const r=await fetch("tools.json",{ cache:"no-store" });
       if(r.ok){
@@ -758,7 +739,6 @@
       }
     }catch(_){}
 
-    // services.json (titles only)
     try{
       const r=await fetch("services.json",{ cache:"no-store" });
       if(r.ok){
@@ -777,7 +757,6 @@
       }
     }catch(_){}
 
-    // de-dup
     const seen=new Set();
     SEARCH_INDEX = out.filter(x=>{
       const k=(x.title+"|"+x.href).toLowerCase();
