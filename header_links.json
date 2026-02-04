@@ -27,43 +27,43 @@
     {
       "name": "CSC की सभी सर्विस यह पर",
       "url": "https://www.topsarkarijobs.com/govt-services.html",      
-      "color": "bg-amber-600",
+      "color": "bg-slate-600",
       "external": true
     },
     {
       "name": "Latest Jobs",
       "url": "https://www.topsarkarijobs.com/view.html?section=latest%20jobs",      
-      "color": "bg-teal-400",
+      "color": "bg-amber-400",
       "external": true
     },
     {
       "name": "Results",
       "url": "https://www.topsarkarijobs.com/view.html?section=results",
-      "color": "bg-teal-400",
+      "color": "bg-amber-400",
       "external": true
     },
     {
       "name": "Admit Card",
       "url": "https://www.topsarkarijobs.com/view.html?section=Admit%20cards%20Exams%20Date",
-      "color": "bg-teal-400",
+      "color": "bg-amber-400",
       "external": true
     },
     {
       "name": "Admission",
       "url": "https://www.topsarkarijobs.com/view.html?section=Admission/Education",
-      "color": "bg-teal-400",
+      "color": "bg-amber-400",
       "external": true
     },
     {
       "name": "Upcoming Jobs",
       "url": "https://www.topsarkarijobs.com/view.html?section=upcoming-jobs",
-      "color": "bg-teal-400",
+      "color": "bg-amber-400",
       "external": true
     },
     {
       "name": "Central Jobs",
       "url": "https://www.topsarkarijobs.com/view.html?section=Central%20jobs",
-      "color": "bg-teal-400",
+      "color": "bg-amber-400",
       "external": true
     },
     {
@@ -75,55 +75,55 @@
     {
       "name": "नौकरियां जिनकी अंतिम तिथि नजदीक है।",
       "url": "https://www.topsarkarijobs.com/view.html?section=Jobs%20with%20Last%20date",
-      "color": "bg-teal-400",
+      "color": "bg-amber-400",
       "external": true
     },
     {
       "name": "सरकारी योजनाएँ",
       "url": "https://www.topsarkarijobs.com/view.html?section=Govt%20Scheme%20Yojna",
-      "color": "bg-pink-400",
+      "color": "bg-amber-400",
       "external": true
     },
     {
       "name": "कृषि मशीन सब्सिडी",
       "url": "http://agriharyana.gov.in/MechSMAMScheme.aspx",
-      "color": "bg-green-400",
+      "color": "bg-zinc-400",
       "external": true
     },
     {
       "name": "Family id Exclusive(Problem) check",
       "url": "https://ppp-office.haryana.gov.in/ExclusionGrievance",
-      "color": "bg-teal-400",
+      "color": "bg-zinc-400",
       "external": true
     },
     {
       "name": "ABHA कार्ड",
       "url": "https://abha.abdm.gov.in/abha/v3/register/aadhaar",
-      "color": "bg-slate-500",
+      "color": "bg-zinc-500",
       "external": true
     },
     {
       "name": "farmer ID किसान आईडी कार्ड",
       "url": "https://sarkariresultshine.com/farmer-id-download-2026/",      
-      "color": "bg-teal-400",
+      "color": "bg-zinc-400",
       "external": true
     },
     {
       "name": "LPG एजेंसी आवेदन",
       "url": "https://www.lpgvitarakchayan.in/",
-      "color": "bg-red-400",
+      "color": "bg-zinc-400",
       "external": true
     },
     {
       "name": "किसी भी पेंशन के पैसा आया है या नहीं आया चेक करें",
       "url": "https://pension.socialjusticehry.gov.in/Ben_Inf",
-      "color": "bg-yellow-400",
+      "color": "bg-zinc-400",
       "external": true
     },
     {
       "name": "आपके आधार कार्ड से कौन सा मोबाइल नंबर लिंक है",
       "url": "https://myaadhaar.uidai.gov.in/check-aadhaar-validity",
-      "color": "bg-teal-400",
+      "color": "bg-zinc-400",
       "external": true
     },
      {
@@ -135,7 +135,7 @@
     {
       "name": "APAAR ID",
       "url": "https://www.digilocker.gov.in/web/dashboard/issuers/010212",
-      "color": "bg-red-400",
+      "color": "bg-zinc-400",
       "external": true
     },
     {
