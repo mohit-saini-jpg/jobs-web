@@ -38,8 +38,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Render page‑specific content
   if (pageType === 'home') {
+    // On the homepage we only render the quick links and dynamic sections.
+    // Job category grids are shown on dedicated pages instead of the home page.
     renderHomeCards(headerData);
-    renderJobsSections(jobsData);
     renderDynamicSections(dynamicData);
   } else if (pageType === 'category') {
     // Determine which group to display based on the URL query
@@ -429,8 +430,20 @@ function renderCategoryPage(groupSlug, jobsData, dynamicData) {
       from: 'right',
       sectionTitle: 'Govt Scheme & Yojna',
       description: 'Learn about government schemes and yojanas offering benefits and subsidies. Browse information and eligibility criteria.'
+    },
+    'latest-khabar': {
+      title: 'Latest Khabar',
+      from: 'dynamic',
+      sectionTitle: 'Latest Jobs',
+      description: 'Stay on top of the latest news, job notifications and exam updates released by government recruiting bodies.'
+    },
+    'study-material': {
+      title: 'Study Material & Top Courses',
+      from: 'dynamic',
+      sectionTitle: null,
+      description: 'Explore upcoming study material guides and top courses to prepare for government job exams.  Content will be added soon.'
     }
-    // Additional slugs for dynamic sections can be defined here if needed
+    // Additional slugs can be added here as needed
   };
 
   const config = groups[groupSlug];
@@ -458,13 +471,18 @@ function renderCategoryPage(groupSlug, jobsData, dynamicData) {
   }
 
   // Create cards for each item
-  items.forEach(item => {
-    const card = document.createElement('div');
-    card.className = 'job-card';
-    card.innerHTML = `<span>${item.name}</span>`;
-    card.addEventListener('click', () => openLink(item));
-    grid.appendChild(card);
-  });
+  if (items.length === 0) {
+    // Show a friendly message if there are no items in this category
+    grid.innerHTML = '<p style="padding:1rem">Content will be added soon. Please check back later.</p>';
+  } else {
+    items.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'job-card';
+      card.innerHTML = `<span>${item.name}</span>`;
+      card.addEventListener('click', () => openLink(item));
+      grid.appendChild(card);
+    });
+  }
 }
 
 /**
