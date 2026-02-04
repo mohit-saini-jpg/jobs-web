@@ -19,13 +19,10 @@
   <link rel="canonical" href="https://www.topsarkarijobs.com/index.html" />
   <link rel="icon" type="image/x-icon" href="image.ico">
 
-  <!-- Font Awesome -->
+  <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <!-- Your CSS -->
-  <link rel="stylesheet" href="styles.css" />
-
-  <!-- JSON-LD basic (kept lightweight) -->
+  <!-- Basic WebSite schema -->
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
@@ -44,7 +41,6 @@
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
-  <!-- HEADER -->
   <header class="site-header">
     <div class="container header-row">
       <a class="brand" href="index.html" aria-label="Top Sarkari Jobs Home">
@@ -55,15 +51,14 @@
         </span>
       </a>
 
-      <!-- Desktop nav -->
-      <nav class="nav desktop-nav" aria-label="Primary">
+      <nav class="desktop-nav" aria-label="Primary">
         <a class="nav-link" href="index.html">Home</a>
         <a class="nav-link" href="result.html">Results</a>
+        <a class="nav-link" href="search.html">Search</a>
         <a class="nav-link" href="govt-services.html">CSC Services</a>
         <a class="nav-link" href="tools.html">Tools</a>
         <a class="nav-link" href="helpdesk.html">Helpdesk</a>
 
-        <!-- Dropdowns -->
         <div class="nav-dd" data-dd>
           <button class="nav-link nav-dd-btn" type="button" aria-haspopup="true" aria-expanded="false">
             Jobs <i class="fa-solid fa-chevron-down"></i>
@@ -92,20 +87,16 @@
           <div class="nav-dd-menu" role="menu">
             <a role="menuitem" href="category.html?group=khabar" class="nav-dd-item">Latest Khabar</a>
             <a role="menuitem" href="category.html?group=study-material" class="nav-dd-item">Study Material & Top Courses</a>
-            <a role="menuitem" href="category.html?group=tools" class="nav-dd-item">Tools</a>
           </div>
         </div>
 
-        <!-- Header CTA buttons (Resume/CV Maker etc) -->
         <div id="header-links" class="header-cta"></div>
       </nav>
 
-      <!-- Mobile buttons -->
       <div class="header-actions">
         <button id="openSearchBtn" class="icon-btn" type="button" aria-label="Open search">
           <i class="fa-solid fa-magnifying-glass"></i>
         </button>
-
         <button id="menuBtn" class="icon-btn" type="button" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
           <i class="fa-solid fa-bars"></i>
         </button>
@@ -113,12 +104,11 @@
     </div>
   </header>
 
-  <!-- SEARCH BAR (Top on desktop) -->
   <section class="top-search">
     <div class="container">
       <div class="search-card">
         <h2 class="search-title">Search across Top Sarkari Jobs</h2>
-        <p class="search-sub">Search jobs, results, admit cards, categories, and tools.</p>
+        <p class="search-sub">Search jobs, results, admit cards, categories, CSC services and tools.</p>
 
         <div class="search-row">
           <input id="siteSearchInput" type="search" placeholder="Search job categories, results, admit cards…" autocomplete="off" />
@@ -132,30 +122,25 @@
     </div>
   </section>
 
-  <!-- MAIN -->
   <main id="main" class="container page">
-    <!-- Big sections (two-column on desktop) -->
     <section aria-label="Latest updates">
-      <div id="dynamic-sections" class="duo-grid">
-        <!-- populated by script.js from dynamic-sections.json -->
-      </div>
+      <div id="dynamic-sections" class="duo-grid"></div>
     </section>
 
-    <!-- SEO content (after big sections) -->
-    <section class="seo-block" aria-label="Information">
-      <h2>Resources to help you find government jobs faster</h2>
+    <section class="seo-block" aria-label="Guides">
+      <h2>Government jobs in India: updates, forms and results in one place</h2>
       <p>
-        Top Sarkari Jobs helps you discover <strong>latest government job notifications</strong>, official application links,
-        and important updates like admit cards, results, answer keys, and syllabus — all in one place.
+        Top Sarkari Jobs helps you stay updated with <strong>latest government job notifications</strong>,
+        <strong>online forms</strong>, <strong>admit cards</strong>, <strong>results</strong>, <strong>answer keys</strong>
+        and <strong>syllabus</strong> links across India.
       </p>
-
       <div class="seo-grid">
         <div class="seo-card">
-          <h3>Why consider a government job?</h3>
+          <h3>Popular ways to browse</h3>
           <ul>
-            <li>Clear eligibility criteria and transparent selection process</li>
-            <li>Stable career paths across central and state departments</li>
-            <li>Opportunities for 10th/12th pass, ITI, diploma, and graduates</li>
+            <li>Browse by education: 8th, 10th, 12th, ITI, diploma, graduation</li>
+            <li>Browse by category: SSC, Railway, Police, Bank, Teaching</li>
+            <li>Browse by state for state-specific recruitment updates</li>
           </ul>
           <p class="mini-links">
             Quick links:
@@ -164,14 +149,13 @@
             <a href="category.html?group=state">State wise jobs</a>
           </p>
         </div>
-
         <div class="seo-card">
-          <h3>How to use this site effectively</h3>
-          <ol>
-            <li>Use the search box to find your exam/job quickly.</li>
-            <li>Open a category page (study/state/popular) to browse all links.</li>
-            <li>Always verify details on the official website before applying.</li>
-          </ol>
+          <h3>Before you apply</h3>
+          <ul>
+            <li>Check eligibility, age limit and last date carefully</li>
+            <li>Download notification PDF from official website</li>
+            <li>Keep ID proof, photo, signature and documents ready</li>
+          </ul>
           <p class="mini-links">
             Also check:
             <a href="result.html">Results</a> ·
@@ -179,53 +163,46 @@
           </p>
         </div>
       </div>
-
-      <div class="seo-note">
-        <strong>Schema suggestion:</strong> Use <code>WebSite</code> + <code>SearchAction</code> (already added),
-        and optionally <code>BreadcrumbList</code> on category pages.
-      </div>
     </section>
 
-    <!-- FAQ (kept, clean accordion) -->
     <section class="faq-wrap" aria-label="FAQ">
       <div class="faq-card">
-        <h2>Frequently Asked Questions – Sarkari Jobs & Results</h2>
-        <p class="faq-sub">Quick answers about Sarkari Jobs, government job notifications, admit cards, and results.</p>
+        <h2>FAQs – Top Sarkari Jobs</h2>
+        <p class="faq-sub">Common questions about jobs, results, admit cards and forms.</p>
 
         <div class="faq-item">
           <button type="button" class="faq-btn" aria-expanded="false">
-            <span>What is Top Sarkari Jobs?</span>
+            <span>Do you provide official links?</span>
             <i class="fas fa-chevron-down"></i>
           </button>
           <div class="faq-panel" hidden>
-            Top Sarkari Jobs is a portal that organizes government job updates, results, admit cards, and official links in one place.
+            We organize links from official and trusted sources. Always verify dates and eligibility on the official portal before applying.
           </div>
         </div>
 
         <div class="faq-item">
           <button type="button" class="faq-btn" aria-expanded="false">
-            <span>How often is the website updated?</span>
+            <span>How can I find something quickly?</span>
             <i class="fas fa-chevron-down"></i>
           </button>
           <div class="faq-panel" hidden>
-            Sections are updated regularly. Always confirm dates and eligibility on the official website.
+            Use the search box at the top to search jobs, results, admit cards, tools and categories across the website.
           </div>
         </div>
 
         <div class="faq-item">
           <button type="button" class="faq-btn" aria-expanded="false">
-            <span>Do you host the application forms?</span>
+            <span>Why do some dates change?</span>
             <i class="fas fa-chevron-down"></i>
           </button>
           <div class="faq-panel" hidden>
-            No — we link to official portals and trusted sources. Applications are submitted on official websites.
+            Recruiting boards can revise schedules. Always rely on the official notice for the final update.
           </div>
         </div>
       </div>
     </section>
   </main>
 
-  <!-- FOOTER -->
   <footer class="site-footer">
     <div class="container footer-row">
       <div>
@@ -238,18 +215,15 @@
           <a href="terms.html">Terms</a>
         </div>
       </div>
-
       <div id="footer-social-links" class="footer-social"></div>
     </div>
-
     <div class="container footer-bottom">
       © 2025 Top Sarkari Jobs. All rights reserved.
     </div>
   </footer>
 
-  <!-- MOBILE OFFCANVAS MENU -->
+  <!-- Offcanvas -->
   <div id="menuOverlay" class="overlay" hidden></div>
-
   <aside id="mobileMenu" class="offcanvas" aria-label="Mobile menu" hidden>
     <div class="offcanvas-head">
       <div class="offcanvas-title">Menu</div>
@@ -261,6 +235,7 @@
     <nav class="offcanvas-nav" aria-label="Mobile primary">
       <a href="index.html">Home</a>
       <a href="result.html">Results</a>
+      <a href="search.html">Search</a>
       <a href="govt-services.html">CSC Services</a>
       <a href="tools.html">Tools</a>
       <a href="helpdesk.html">Helpdesk</a>
@@ -282,7 +257,6 @@
         <div class="offcanvas-group-title">More</div>
         <a href="category.html?group=khabar">Latest Khabar</a>
         <a href="category.html?group=study-material">Study Material & Top Courses</a>
-        <a href="category.html?group=tools">Tools</a>
       </div>
 
       <div class="offcanvas-cta" id="header-links-mobile"></div>
