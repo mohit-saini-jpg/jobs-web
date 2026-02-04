@@ -1,95 +1,127 @@
 (() => {
   "use strict";
 
-  const $ = (s, r = document) => r.querySelector(s);
-  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
-  const PAGE = (location.pathname.split("/").pop() || "index.html").toLowerCase();
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
-  // Prevent double-boot (double listeners = stuck menus)
-  if (window.__TSJ_BOOTED__) return;
-  window.__TSJ_BOOTED__ = true;
+  const PAGE = (location.pathname.split("/").pop() || "index.html").toLowerCase();
 
   const safe = (v) => (v ?? "").toString().trim();
 
+  const escRE = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+  // ---- URL normalization (Fix: CSC links not opening when url missing scheme) ----
   function normalizeUrl(raw) {
     const url = safe(raw);
     if (!url) return "";
     if (url.startsWith("http://") || url.startsWith("https://")) return url;
     if (url.startsWith("//")) return "https:" + url;
     if (url.startsWith("www.")) return "https://" + url;
-    if (url.startsWith("/") || url.endsWith(".html")) return url;
+    // If it's a relative file path to your own site, keep it as is
+    if (url.startsWith("/") || url.endsWith(".html") || url.includes("view.html")) return url;
+    // Most external services are missing scheme -> assume https
     return "https://" + url;
   }
 
-  function debounce(fn, ms = 140) {
-    let t;
-    return (...args) => {
-      clearTimeout(t);
-      t = setTimeout(() => fn(...args), ms);
-    };
+  function openInternal(url, name) {
+    return `view.html?url=${encodeURIComponent(url)}&name=${encodeURIComponent(name)}`;
   }
 
-  // -----------------------
-  // NAV: ensure Jobs/Admissions/More show on ALL pages
-  // -----------------------
-  const NAV_GROUPS = [
-    {
-      label: "Jobs",
-      items: [
-        { label: "Study wise jobs", href: "category.html?group=study" },
-        { label: "Popular job categories", href: "category.html?group=popular" },
-        { label: "State wise jobs", href: "category.html?group=state" },
-      ],
-    },
-    {
-      label: "Admissions",
-      items: [
-        { label: "Admissions", href: "category.html?group=admissions" },
-        { label: "Admit Card / Result / Answer Key / Syllabus", href: "category.html?group=admit-result" },
-      ],
-    },
-    {
-      label: "More",
-      items: [
-        { label: "Latest Khabar", href: "category.html?group=khabar" },
-        { label: "Study Material & Top Courses", href: "category.html?group=study-material" },
-      ],
-    },
-  ];
-
-  function ensureHeaderStructure() {
-    // If header exists, do NOT replace it. Only add missing containers.
-    const header = $(".site-header") || $("header");
-    if (!header) return;
-
-    // Desktop nav container
-    let desktopNav = $("#desktopNav");
-    if (!desktopNav) {
-      // Try to find a nav that already contains Home/Results etc.
-      desktopNav = header.querySelector("nav");
-      if (desktopNav) desktopNav.id = "desktopNav";
-    }
-
-    // Mobile menu button
-    if (!$("#menuBtn")) {
-      // If user has no hamburger, add in header-actions area
-      let actions = header.querySelector(".header-actions");
-      if (!actions) {
-        actions = document.createElement("div");
-        actions.className = "header-actions";
-        header.appendChild(actions);
+  // ---- NAV STRUCTURE (rendered on EVERY page) ----
+  const NAV = {
+    main: [
+      { label: "Home", href: "index.html" },
+      { label: "Results", href: "result.html" },
+      { label: "CSC Services", href: "govt-services.html" },
+      { label: "Tools", href: "tools.html" },
+      { label: "Helpdesk", href: "helpdesk.html" },
+      { label: "Search", href: "search.html" }
+    ],
+    dropdowns: [
+      {
+        label: "Jobs",
+        items: [
+          { label: "Study wise jobs", href: "category.html?group=study" },
+          { label: "Popular job categories", href: "category.html?group=popular" },
+          { label: "State wise jobs", href: "category.html?group=state" }
+        ]
+      },
+      {
+        label: "Admissions",
+        items: [
+          { label: "Admissions", href: "category.html?group=admissions" },
+          { label: "Admit Card / Result / Answer Key / Syllabus", href: "category.html?group=admit-result" }
+        ]
+      },
+      {
+        label: "More",
+        items: [
+          { label: "Latest Khabar", href: "category.html?group=khabar" },
+          { label: "Study Material & Top Courses", href: "category.html?group=study-material" }
+        ]
       }
-      actions.insertAdjacentHTML(
-        "beforeend",
-        `
+    ]
+  };
+
+  // ---- Inject HEADER + FOOTER if missing (so dropdown NEVER disappears across pages) ----
+  function ensureChrome() {
+    // If a page already has .site-header, we’ll ensure required ids exist.
+    // If not, we inject a complete header + mobile menu + footer.
+    const existingHeader = $(".site-header");
+
+    if (!existingHeader) {
+      const header = document.createElement("header");
+      header.className = "site-header";
+      header.innerHTML = `
+        <div class="container header-row">
+          <a class="brand" href="index.html" aria-label="Top Sarkari Jobs Home">
+            <img src="image.png" alt="Top Sarkari Jobs Logo" class="brand-logo">
+            <span class="brand-text">
+              <span class="brand-title">Top Sarkari Jobs</span>
+              <span class="brand-subtitle">Latest Sarkari Jobs, Results, Admit Cards & Online Forms – 2026</span>
+            </span>
+          </a>
+
+          <nav class="desktop-nav" id="desktopNav" aria-label="Primary"></nav>
+
+          <div class="header-actions">
+            <button id="openSearchBtn" class="icon-btn" type="button" aria-label="Open search">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+            <button id="menuBtn" class="icon-btn" type="button" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
+              <i class="fa-solid fa-bars"></i>
+            </button>
+          </div>
+        </div>
+      `;
+      document.body.prepend(header);
+    } else {
+      // ensure nav container exists
+      if (!$("#desktopNav")) {
+        const nav = $(".desktop-nav", existingHeader);
+        if (nav) nav.id = "desktopNav";
+      }
+      // ensure menu button exists for mobile
+      if (!$("#menuBtn")) {
+        const actions = $(".header-actions", existingHeader) || (() => {
+          const a = document.createElement("div");
+          a.className = "header-actions";
+          $(".header-row", existingHeader)?.appendChild(a);
+          return a;
+        })();
+
+        actions.innerHTML = `
+          <button id="openSearchBtn" class="icon-btn" type="button" aria-label="Open search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
           <button id="menuBtn" class="icon-btn" type="button" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
             <i class="fa-solid fa-bars"></i>
           </button>
-        `
-      );
+        `;
+      }
     }
 
-    // Overlay and offcanvas (only if missing)
+    // Overlay + Offcanvas always injected (prevents “stuck menu” because markup is consistent)
     if (!$("#menuOverlay")) {
       const overlay = document.createElement("div");
       overlay.id = "menuOverlay";
@@ -99,48 +131,79 @@
     }
 
     if (!$("#mobileMenu")) {
-      const menu = document.createElement("aside");
-      menu.id = "mobileMenu";
-      menu.className = "offcanvas";
-      menu.hidden = true;
-      menu.innerHTML = `
+      const aside = document.createElement("aside");
+      aside.id = "mobileMenu";
+      aside.className = "offcanvas";
+      aside.setAttribute("aria-label", "Mobile menu");
+      aside.hidden = true;
+      aside.innerHTML = `
         <div class="offcanvas-head">
           <div class="offcanvas-title">Menu</div>
           <button id="closeMenuBtn" class="icon-btn" type="button" aria-label="Close menu">
             <i class="fa-solid fa-xmark"></i>
           </button>
         </div>
-        <nav id="mobileNav" class="offcanvas-nav" aria-label="Mobile Navigation"></nav>
+        <nav class="offcanvas-nav" id="mobileNav" aria-label="Mobile primary"></nav>
       `;
-      document.body.appendChild(menu);
+      document.body.appendChild(aside);
+    }
+
+    if (!$(".site-footer")) {
+      const footer = document.createElement("footer");
+      footer.className = "site-footer";
+      footer.innerHTML = `
+        <div class="container footer-row">
+          <div>
+            <div class="footer-title">Top Sarkari Jobs</div>
+            <div class="footer-sub">Government jobs, results, admit cards, services and tools.</div>
+            <div class="footer-links">
+              <a href="about.html">About</a>
+              <a href="contact.html">Contact</a>
+              <a href="privacy.html">Privacy</a>
+              <a href="terms.html">Terms</a>
+            </div>
+          </div>
+          <div id="footer-social-links" class="footer-social"></div>
+        </div>
+        <div class="container footer-bottom">© 2025 Top Sarkari Jobs. All rights reserved.</div>
+      `;
+      document.body.appendChild(footer);
     }
   }
 
-  function injectDropdownsIntoDesktopNav() {
+  function buildDesktopNav() {
     const nav = $("#desktopNav");
     if (!nav) return;
 
-    // Prevent duplicates
-    if (nav.querySelector("[data-tsj-dd='1']")) return;
+    nav.innerHTML = "";
 
-    const ddWrap = document.createElement("div");
-    ddWrap.className = "tsj-dd-row";
-    ddWrap.setAttribute("data-tsj-dd", "1");
+    // main links
+    NAV.main.forEach((l) => {
+      const a = document.createElement("a");
+      a.className = "nav-link";
+      a.href = l.href;
+      a.textContent = l.label;
+      nav.appendChild(a);
+    });
 
-    NAV_GROUPS.forEach((grp) => {
-      const box = document.createElement("div");
-      box.className = "nav-dd";
+    // dropdowns
+    NAV.dropdowns.forEach((dd) => {
+      const wrap = document.createElement("div");
+      wrap.className = "nav-dd";
+      wrap.setAttribute("data-dd", "1");
 
-      box.innerHTML = `
-        <button class="nav-dd-btn" type="button" aria-haspopup="true" aria-expanded="false">
-          ${grp.label} <i class="fa-solid fa-chevron-down"></i>
-        </button>
-        <div class="nav-dd-menu" role="menu"></div>
-      `;
+      const btn = document.createElement("button");
+      btn.className = "nav-link nav-dd-btn";
+      btn.type = "button";
+      btn.setAttribute("aria-haspopup", "true");
+      btn.setAttribute("aria-expanded", "false");
+      btn.innerHTML = `${dd.label} <i class="fa-solid fa-chevron-down"></i>`;
 
-      const menu = $(".nav-dd-menu", box);
+      const menu = document.createElement("div");
+      menu.className = "nav-dd-menu";
+      menu.setAttribute("role", "menu");
 
-      grp.items.forEach((it) => {
+      dd.items.forEach((it) => {
         const a = document.createElement("a");
         a.className = "nav-dd-item";
         a.setAttribute("role", "menuitem");
@@ -149,63 +212,124 @@
         menu.appendChild(a);
       });
 
-      ddWrap.appendChild(box);
+      wrap.appendChild(btn);
+      wrap.appendChild(menu);
+      nav.appendChild(wrap);
     });
 
-    nav.appendChild(ddWrap);
+    // CTA links injected from header_links.json
+    const cta = document.createElement("div");
+    cta.id = "header-links";
+    cta.className = "header-cta";
+    nav.appendChild(cta);
   }
 
-  function buildMobileNavFromDesktop() {
-    const mobileNav = $("#mobileNav");
-    if (!mobileNav) return;
+  function buildMobileNav() {
+    const nav = $("#mobileNav");
+    if (!nav) return;
 
-    // Always rebuild (so it stays consistent across pages)
-    mobileNav.innerHTML = "";
+    nav.innerHTML = "";
 
-    // Copy existing top-level header links (Home/Results/Search/CSC/Tools/Helpdesk)
-    const desktopNav = $("#desktopNav");
-    if (desktopNav) {
-      const links = $$("a", desktopNav).slice(0, 10);
-      links.forEach((a) => {
-        const href = a.getAttribute("href");
-        const text = a.textContent.trim();
-        if (!href || !text) return;
-        const item = document.createElement("a");
-        item.href = href;
-        item.textContent = text;
-        mobileNav.appendChild(item);
-      });
-    }
+    // main links
+    NAV.main.forEach((l) => {
+      const a = document.createElement("a");
+      a.href = l.href;
+      a.textContent = l.label;
+      nav.appendChild(a);
+    });
 
-    NAV_GROUPS.forEach((grp) => {
+    // groups
+    NAV.dropdowns.forEach((g) => {
       const group = document.createElement("div");
       group.className = "offcanvas-group";
-      group.innerHTML = `<div class="offcanvas-group-title">${grp.label}</div>`;
-      grp.items.forEach((it) => {
+      group.innerHTML = `<div class="offcanvas-group-title">${g.label}</div>`;
+      g.items.forEach((it) => {
         const a = document.createElement("a");
         a.href = it.href;
         a.textContent = it.label;
         group.appendChild(a);
       });
-      mobileNav.appendChild(group);
+      nav.appendChild(group);
     });
+
+    // CTA links injected
+    const cta = document.createElement("div");
+    cta.id = "header-links-mobile";
+    cta.className = "offcanvas-cta";
+    nav.appendChild(cta);
   }
 
-  function initDesktopDropdownBehavior() {
-    const dropdowns = $$(".nav-dd");
-    if (!dropdowns.length) return;
+  // ---- Load header_links.json for CTA + socials ----
+  async function loadHeaderLinks() {
+    let data = { header_links: [], social_links: [] };
+    try {
+      const r = await fetch("header_links.json", { cache: "no-store" });
+      if (r.ok) data = await r.json();
+    } catch (_) {}
+
+    const links = Array.isArray(data.header_links) ? data.header_links : [];
+    const socials = Array.isArray(data.social_links) ? data.social_links : [];
+
+    const desktop = $("#header-links");
+    const mobile = $("#header-links-mobile");
+    const footerSocial = $("#footer-social-links");
+
+    if (desktop) {
+      desktop.innerHTML = "";
+      links.forEach((l) => {
+        const a = document.createElement("a");
+        a.className = "nav-link";
+        a.href = normalizeUrl(l.link || l.url || "#");
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.textContent = l.name || "Link";
+        desktop.appendChild(a);
+      });
+    }
+
+    if (mobile) {
+      mobile.innerHTML = "";
+      links.forEach((l) => {
+        const a = document.createElement("a");
+        a.href = normalizeUrl(l.link || l.url || "#");
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.textContent = l.name || "Link";
+        mobile.appendChild(a);
+      });
+    }
+
+    if (footerSocial) {
+      footerSocial.innerHTML = "";
+      socials.forEach((s) => {
+        const a = document.createElement("a");
+        a.className = "nav-link";
+        a.href = normalizeUrl(s.url || "#");
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.textContent = s.name || "Social";
+        footerSocial.appendChild(a);
+      });
+    }
+  }
+
+  // ---- Desktop dropdown behavior (close on outside click / escape / scroll) ----
+  function initDropdowns() {
+    const dds = $$("[data-dd]");
+    if (!dds.length) return;
 
     const closeAll = () => {
-      dropdowns.forEach((dd) => {
+      dds.forEach((dd) => {
         const btn = $(".nav-dd-btn", dd);
         const menu = $(".nav-dd-menu", dd);
-        if (!btn || !menu) return;
-        btn.setAttribute("aria-expanded", "false");
-        menu.classList.remove("open");
+        if (btn && menu) {
+          btn.setAttribute("aria-expanded", "false");
+          menu.classList.remove("open");
+        }
       });
     };
 
-    dropdowns.forEach((dd) => {
+    dds.forEach((dd) => {
       const btn = $(".nav-dd-btn", dd);
       const menu = $(".nav-dd-menu", dd);
       if (!btn || !menu) return;
@@ -213,9 +337,9 @@
       btn.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
-        const isOpen = menu.classList.contains("open");
+        const open = menu.classList.contains("open");
         closeAll();
-        if (!isOpen) {
+        if (!open) {
           menu.classList.add("open");
           btn.setAttribute("aria-expanded", "true");
         }
@@ -223,7 +347,7 @@
     });
 
     document.addEventListener("click", (e) => {
-      if (!e.target.closest(".nav-dd")) closeAll();
+      if (!e.target.closest("[data-dd]")) closeAll();
     });
 
     document.addEventListener("keydown", (e) => {
@@ -233,18 +357,16 @@
     window.addEventListener("scroll", closeAll, { passive: true });
   }
 
-  // -----------------------
-  // OFFCANVAS: fix "stuck" menu
-  // -----------------------
+  // ---- OFFCANVAS (Fix “stuck menu”) ----
   function initOffcanvas() {
     const btn = $("#menuBtn");
+    const closeBtn = $("#closeMenuBtn");
     const menu = $("#mobileMenu");
     const overlay = $("#menuOverlay");
-    const closeBtn = $("#closeMenuBtn");
 
-    if (!btn || !menu || !overlay || !closeBtn) return;
+    if (!btn || !closeBtn || !menu || !overlay) return;
 
-    const unlockScroll = () => {
+    const forceUnlock = () => {
       document.body.style.overflow = "";
       document.documentElement.style.overflow = "";
     };
@@ -254,7 +376,7 @@
       overlay.hidden = true;
       overlay.style.pointerEvents = "none";
       btn.setAttribute("aria-expanded", "false");
-      unlockScroll();
+      forceUnlock();
     };
 
     const open = () => {
@@ -266,11 +388,12 @@
       document.documentElement.style.overflow = "hidden";
     };
 
-    // Reset handlers to avoid duplicates
+    // Important: remove any previous listeners (avoid double-binding if script loads twice)
     btn.onclick = open;
     closeBtn.onclick = close;
     overlay.onclick = close;
 
+    // close on any link click
     menu.addEventListener("click", (e) => {
       const a = e.target.closest("a");
       if (a) close();
@@ -280,21 +403,26 @@
       if (e.key === "Escape") close();
     });
 
+    // If page changes or refresh happens while open, force close
+    window.addEventListener("beforeunload", close);
+
+    // Force close on resize to desktop
     window.addEventListener("resize", () => {
       if (window.innerWidth > 980) close();
     });
 
-    // Safety: if overlay visible but menu hidden -> fix
-    setInterval(() => {
-      if (menu.hidden && !overlay.hidden) close();
-    }, 800);
-
+    // Expose emergency close
     window.__TSJ_CLOSE_MENU = close;
+
+    // Safety: if overlay is visible but menu is hidden, fix state
+    setInterval(() => {
+      const menuOpen = !menu.hidden;
+      const overlayOpen = !overlay.hidden;
+      if (!menuOpen && overlayOpen) close();
+    }, 800);
   }
 
-  // -----------------------
-  // SEARCH: works on pages with search UI present
-  // -----------------------
+  // ---- SEARCH (site-wide, fast, uses JSON sources) ----
   let SEARCH_INDEX = [];
   let SEARCH_READY = false;
 
@@ -303,7 +431,7 @@
 
     const out = [];
 
-    // dynamic-sections.json (Latest Jobs, Results, etc.)
+    // dynamic sections
     try {
       const r = await fetch("dynamic-sections.json", { cache: "no-store" });
       if (r.ok) {
@@ -316,30 +444,51 @@
             out.push({
               title,
               meta: safe(sec.title) || "Updates",
-              href: it.external ? url : `view.html?url=${encodeURIComponent(url)}&name=${encodeURIComponent(title)}`,
-              external: !!it.external,
+              href: it.external ? url : openInternal(url, title),
+              external: !!it.external
             });
           });
         });
       }
     } catch (_) {}
 
-    // jobs.json (categories)
+    // jobs.json
     try {
       const r = await fetch("jobs.json", { cache: "no-store" });
       if (r.ok) {
         const j = await r.json();
-        const pool = [...(j.left_jobs || []), ...(j.right_jobs || []), ...(j.top_jobs || [])];
+        const pool = [...(j.top_jobs || []), ...(j.left_jobs || []), ...(j.right_jobs || [])];
         pool.forEach((it) => {
-          if (it && it.title) return;
+          if (it && it.title) return; // skip headings
           const title = safe(it.name);
           const url = normalizeUrl(it.url || it.link || "");
           if (!title || !url) return;
           out.push({
             title,
-            meta: "Job Categories",
-            href: it.external ? url : `view.html?url=${encodeURIComponent(url)}&name=${encodeURIComponent(title)}`,
-            external: !!it.external,
+            meta: "Jobs / Categories",
+            href: it.external ? url : openInternal(url, title),
+            external: !!it.external
+          });
+        });
+      }
+    } catch (_) {}
+
+    // tools.json
+    try {
+      const r = await fetch("tools.json", { cache: "no-store" });
+      if (r.ok) {
+        const t = await r.json();
+        ["image", "pdf", "video"].forEach((k) => {
+          (t[k] || []).forEach((it) => {
+            const title = safe(it.name);
+            const url = normalizeUrl(it.url || it.link || "");
+            if (!title || !url) return;
+            out.push({
+              title,
+              meta: "Tools",
+              href: it.external ? url : openInternal(url, title),
+              external: !!it.external
+            });
           });
         });
       }
@@ -350,12 +499,17 @@
       const r = await fetch("services.json", { cache: "no-store" });
       if (r.ok) {
         const s = await r.json();
-        const services = Array.isArray(s.services) ? s.services : (Array.isArray(s) ? s : []);
-        services.forEach((it) => {
+        const services = (s.services || s || []);
+        (services || []).forEach((it) => {
           const title = safe(it.name || it.service);
           const url = normalizeUrl(it.url || it.link || "");
           if (!title || !url) return;
-          out.push({ title, meta: "CSC Services", href: url, external: true });
+          out.push({
+            title,
+            meta: "CSC Services",
+            href: url,
+            external: true
+          });
         });
       }
     } catch (_) {}
@@ -363,9 +517,9 @@
     // dedupe
     const seen = new Set();
     SEARCH_INDEX = out.filter((x) => {
-      const k = (x.title + "|" + x.href).toLowerCase();
-      if (seen.has(k)) return false;
-      seen.add(k);
+      const key = (x.title + "|" + x.href).toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
       return true;
     });
 
@@ -376,10 +530,13 @@
     const input = $("#siteSearchInput");
     const btn = $("#siteSearchBtn");
     const results = $("#searchResults");
+    const openBtn = $("#openSearchBtn");
 
-    if (!input || !btn || !results) return;
-
-    const escRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    if (!input || !btn || !results) {
+      // Some pages may not have search block; allow icon to redirect to search page
+      if (openBtn) openBtn.addEventListener("click", () => (location.href = "search.html"));
+      return;
+    }
 
     const run = async () => {
       const q = safe(input.value);
@@ -402,29 +559,27 @@
           <div class="result-item">
             <div>
               <div class="result-title">No results found</div>
-              <div class="result-meta">Try keywords like SSC, Railway, Police, Admit Card, Result, State name.</div>
+              <div class="result-meta">Try another keyword (job name, state, exam, board).</div>
             </div>
           </div>
         `;
         return;
       }
 
-      const re = new RegExp(`(${escRe(q)})`, "ig");
+      const re = new RegExp(`(${escRE(q)})`, "ig");
       results.classList.add("open");
-      results.innerHTML = matches
-        .map((m) => {
-          const title = safe(m.title).replace(re, "<mark>$1</mark>");
-          return `
-            <a class="result-item" href="${m.href}" ${m.external ? `target="_blank" rel="noopener"` : ""}>
-              <div>
-                <div class="result-title">${title}</div>
-                <div class="result-meta">${safe(m.meta)}</div>
-              </div>
-              <div class="result-meta">${m.external ? "↗" : "→"}</div>
-            </a>
-          `;
-        })
-        .join("");
+      results.innerHTML = matches.map((m) => {
+        const title = safe(m.title).replace(re, "<mark>$1</mark>");
+        return `
+          <a class="result-item" href="${m.href}" ${m.external ? `target="_blank" rel="noopener"` : ""}>
+            <div>
+              <div class="result-title">${title}</div>
+              <div class="result-meta">${safe(m.meta)}</div>
+            </div>
+            <div class="result-meta">${m.external ? "↗" : "→"}</div>
+          </a>
+        `;
+      }).join("");
     };
 
     btn.addEventListener("click", run);
@@ -441,107 +596,46 @@
     document.addEventListener("click", (e) => {
       if (!e.target.closest(".search-card")) results.classList.remove("open");
     });
-  }
 
-  // -----------------------
-  // HOME: render big sections (Latest Jobs etc.) from dynamic-sections.json
-  // -----------------------
-  function iconForTitle(t) {
-    const s = safe(t).toLowerCase();
-    if (s.includes("latest job")) return "fa-briefcase";
-    if (s.includes("upcoming")) return "fa-clock";
-    if (s.includes("admit")) return "fa-id-card";
-    if (s.includes("result")) return "fa-square-poll-vertical";
-    return "fa-link";
-  }
-  function colorForTitle(t) {
-    const s = safe(t).toLowerCase();
-    if (s.includes("latest job")) return "#3b82f6";
-    if (s.includes("upcoming")) return "#f59e0b";
-    if (s.includes("admit")) return "#10b981";
-    if (s.includes("result")) return "#8b5cf6";
-    return "#0ea5e9";
-  }
-
-  async function renderHomeSections() {
-    if (PAGE !== "index.html" && PAGE !== "") return;
-
-    const grid = $("#homeDuoGrid");
-    if (!grid) return;
-
-    grid.innerHTML = "";
-
-    let data = null;
-    try {
-      const r = await fetch("dynamic-sections.json", { cache: "no-store" });
-      if (r.ok) data = await r.json();
-    } catch (_) {}
-
-    const sections = (data && Array.isArray(data.sections)) ? data.sections : [];
-    if (!sections.length) {
-      grid.innerHTML = `<div class="seo-block"><strong>No sections found.</strong><p>Check dynamic-sections.json</p></div>`;
-      return;
-    }
-
-    // pick the 4 key sections if present, otherwise show first 4
-    const want = ["Latest Jobs", "Upcoming Jobs", "Admit Cards & Exams Date", "Latest Results"];
-    const picked = [];
-    want.forEach((name) => {
-      const s = sections.find((x) => safe(x.title).toLowerCase() === name.toLowerCase());
-      if (s) picked.push(s);
-    });
-    const finalList = picked.length ? picked : sections.slice(0, 4);
-
-    finalList.forEach((sec) => {
-      const title = safe(sec.title);
-      const items = Array.isArray(sec.items) ? sec.items : [];
-
-      const card = document.createElement("section");
-      card.className = "section-card";
-
-      const col = colorForTitle(title);
-      const ic = iconForTitle(title);
-
-      card.innerHTML = `
-        <div class="section-head" style="background:${col}">
-          <div class="left">
-            <i class="fa-solid ${ic}"></i>
-            <span>${title}</span>
-          </div>
-          <a class="view-all" href="search.html" aria-label="View all">View all</a>
-        </div>
-        <div class="section-body">
-          <div class="section-list"></div>
-        </div>
-      `;
-
-      const list = $(".section-list", card);
-
-      items.slice(0, 12).forEach((it) => {
-        const name = safe(it.name);
-        const url = normalizeUrl(it.url || it.link || "");
-        if (!name || !url) return;
-
-        const a = document.createElement("a");
-        a.className = "section-link";
-        a.href = it.external ? url : `view.html?url=${encodeURIComponent(url)}&name=${encodeURIComponent(name)}`;
-        if (it.external) {
-          a.target = "_blank";
-          a.rel = "noopener";
-        }
-        a.innerHTML = `<div class="t">${name}</div><div class="d">${it.external ? "Open official link" : "Open"}</div>`;
-        list.appendChild(a);
+    if (openBtn) {
+      openBtn.addEventListener("click", () => {
+        input.scrollIntoView({ behavior: "smooth", block: "center" });
+        setTimeout(() => input.focus(), 120);
       });
+    }
+  }
 
-      grid.appendChild(card);
+  function debounce(fn, wait) {
+    let t;
+    return (...args) => {
+      clearTimeout(t);
+      t = setTimeout(() => fn(...args), wait);
+    };
+  }
+
+  // ---- FAQ accordion ----
+  function initFAQ() {
+    $$(".faq-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const expanded = btn.getAttribute("aria-expanded") === "true";
+        $$(".faq-btn").forEach((b) => {
+          b.setAttribute("aria-expanded", "false");
+          const p = b.parentElement.querySelector(".faq-panel");
+          if (p) p.hidden = true;
+        });
+        if (!expanded) {
+          btn.setAttribute("aria-expanded", "true");
+          const p = btn.parentElement.querySelector(".faq-panel");
+          if (p) p.hidden = false;
+        }
+      });
     });
   }
 
-  // -----------------------
-  // CSC Services page: render services list
-  // -----------------------
-  async function renderServices() {
+  // ---- Render CSC services page (Fix links + clickability) ----
+  async function renderServicesPage() {
     if (PAGE !== "govt-services.html") return;
+
     const list = $("#servicesList");
     if (!list) return;
 
@@ -553,9 +647,9 @@
       if (r.ok) data = await r.json();
     } catch (_) {}
 
-    const services = Array.isArray(data?.services) ? data.services : (Array.isArray(data) ? data : []);
-    if (!services.length) {
-      list.innerHTML = `<div class="seo-block"><strong>No services found.</strong><p>Check services.json</p></div>`;
+    const services = (data && (data.services || data)) || [];
+    if (!Array.isArray(services) || !services.length) {
+      list.innerHTML = `<div class="seo-block"><strong>No services found.</strong><p>Check services.json format.</p></div>`;
       return;
     }
 
@@ -569,114 +663,198 @@
       a.href = url;
       a.target = "_blank";
       a.rel = "noopener";
-      a.innerHTML = `<div class="t">${name}</div><div class="d">Open service link</div>`;
+      a.innerHTML = `
+        <div class="t">${name}</div>
+        <div class="d">Open service (official / trusted)</div>
+      `;
       list.appendChild(a);
     });
   }
 
-  // -----------------------
-  // SEO content blocks: homepage + page brief
-  // -----------------------
-  function injectSEOBlocks() {
-    const main = $("#main") || $("main");
-    if (!main) return;
+  // ---- Render tools page ----
+  async function renderToolsPage() {
+    if (PAGE !== "tools.html") return;
 
-    if (PAGE === "index.html" || PAGE === "") {
-      if ($("#seoHomeBlock")) return;
-      const seo = document.createElement("section");
-      seo.className = "seo-block";
-      seo.id = "seoHomeBlock";
-      seo.innerHTML = `
-        <h2>Resources to Help Indians Get Government Jobs</h2>
-        <p>
-          Top Sarkari Jobs helps you find <strong>government job notifications</strong>,
-          <strong>online form links</strong>, <strong>admit cards</strong>, and <strong>results</strong>
-          from reliable sources. Always verify dates, eligibility, and fees on the official portal.
-        </p>
+    const grid = $("#toolsGrid");
+    if (!grid) return;
 
-        <div class="seo-grid">
-          <div class="seo-card">
-            <h3>Why consider a government job?</h3>
-            <ul>
-              <li>Stable career paths across central and state departments</li>
-              <li>Clear eligibility criteria and transparent recruitment schedules</li>
-              <li>Opportunities in SSC, Railways, Police, Banking, Defence and more</li>
-            </ul>
-            <p class="mini-links">
-              Explore: <a href="category.html?group=study">Study wise</a> ·
-              <a href="category.html?group=popular">Popular categories</a> ·
-              <a href="category.html?group=state">State wise</a>
-            </p>
-          </div>
+    grid.innerHTML = "";
+    grid.classList.add("cat-grid");
 
-          <div class="seo-card">
-            <h3>How to use this website</h3>
-            <ol>
-              <li>Open a section like Latest Jobs / Results / Admit Card</li>
-              <li>Read the official notice and keep required documents ready</li>
-              <li>Re-check the official portal for updates and corrigendum</li>
-            </ol>
-            <p class="mini-links">
-              Quick links: <a href="result.html">Results</a> ·
-              <a href="govt-services.html">CSC Services</a> ·
-              <a href="search.html">Search</a>
-            </p>
+    let data = null;
+    try {
+      const r = await fetch("tools.json", { cache: "no-store" });
+      if (r.ok) data = await r.json();
+    } catch (_) {}
+
+    const buckets = [
+      { key: "image", title: "Image Tools", color: "#0ea5e9" },
+      { key: "pdf", title: "PDF Tools", color: "#4f46e5" },
+      { key: "video", title: "Video Tools", color: "#db2777" }
+    ];
+
+    let any = false;
+
+    buckets.forEach((b) => {
+      const items = (data && Array.isArray(data[b.key])) ? data[b.key] : [];
+      if (!items.length) return;
+      any = true;
+
+      const card = document.createElement("article");
+      card.className = "section-card";
+      card.innerHTML = `
+        <div class="section-head" style="background:${b.color}">
+          <div class="left">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span>${b.title}</span>
           </div>
         </div>
+        <div class="section-body">
+          <div class="section-list"></div>
+        </div>
       `;
-      main.appendChild(seo);
+
+      const list = $(".section-list", card);
+
+      items.forEach((it) => {
+        const name = safe(it.name);
+        const url = normalizeUrl(it.url || it.link || "");
+        if (!name || !url) return;
+
+        const a = document.createElement("a");
+        a.className = "section-link";
+        a.href = it.external ? url : openInternal(url, name);
+        if (it.external) {
+          a.target = "_blank";
+          a.rel = "noopener";
+        }
+        a.innerHTML = `<div class="t">${name}</div><div class="d">Open tool</div>`;
+        list.appendChild(a);
+      });
+
+      grid.appendChild(card);
+    });
+
+    if (!any) {
+      grid.innerHTML = `<div class="seo-block"><strong>No tools found.</strong><p>Please check tools.json.</p></div>`;
+    }
+  }
+
+  // ---- SEO content injection (Homepage + page briefs like SarkariResult-style) ----
+  function injectSEOContent() {
+    // Homepage: add a richer block if not present
+    if (PAGE === "index.html" || PAGE === "") {
+      if (!$("#seoHomeBlock")) {
+        const main = $("#main") || $("main") || document.body;
+        const block = document.createElement("section");
+        block.id = "seoHomeBlock";
+        block.className = "seo-block";
+        block.innerHTML = `
+          <h2>Resources to help you get government jobs</h2>
+          <p>
+            Looking for the latest <strong>Sarkari Naukri</strong> updates? We organize official links for
+            <strong>online forms</strong>, <strong>admit cards</strong>, <strong>results</strong>,
+            <strong>answer keys</strong>, and <strong>syllabus</strong> so you can find updates faster.
+          </p>
+          <div class="seo-grid">
+            <div class="seo-card">
+              <h3>Why consider a government job?</h3>
+              <ul>
+                <li>Stable career paths with transparent recruitment processes</li>
+                <li>Opportunities across central + state departments</li>
+                <li>Clear eligibility requirements and published timelines</li>
+              </ul>
+              <p class="mini-links">
+                Browse: <a href="category.html?group=study">Study wise</a> ·
+                <a href="category.html?group=popular">Popular categories</a> ·
+                <a href="category.html?group=state">State wise</a>
+              </p>
+            </div>
+            <div class="seo-card">
+              <h3>How to use this website</h3>
+              <ol>
+                <li>Open a section like Latest Jobs / Results</li>
+                <li>Verify eligibility + dates on official portal</li>
+                <li>Save the page and re-check for updates</li>
+              </ol>
+              <p class="mini-links">
+                Quick: <a href="result.html">Results</a> ·
+                <a href="category.html?group=admit-result">Admit Card / Answer Key</a> ·
+                <a href="govt-services.html">CSC Services</a>
+              </p>
+            </div>
+          </div>
+        `;
+        // Insert near bottom before footer
+        if (main && main.appendChild) main.appendChild(block);
+      }
       return;
     }
 
+    // Other pages: add a brief relevant content block (once)
+    const main = $("#main") || $("main");
+    if (!main) return;
     if ($("#pageBriefBlock")) return;
 
-    const map = {
+    const titleMap = {
       "result.html": {
-        h: "Latest Sarkari Results (Scorecards, Merit Lists, PDFs)",
-        p: "Check result links for SSC, Railways, Banking, State boards and more. Always verify roll number and DOB on the official portal.",
+        h2: "Latest Results and important updates",
+        p: "Check result links, merit lists, score cards and official notices. Always verify your roll number, DOB and board details on the official portal."
       },
       "govt-services.html": {
-        h: "CSC Services & Government Schemes",
-        p: "Use these service links to access government services. Confirm requirements and any charges on the official portal before submission.",
-      },
-      "category.html": {
-        h: "Browse categories faster",
-        p: "Use the category pages to jump to relevant links. Always verify eligibility, last date, and official instructions.",
-      },
-      "search.html": {
-        h: "Search across jobs, results, admit cards and services",
-        p: "Type keywords like state name, exam name, board, post, admit card or result to find links quickly.",
+        h2: "CSC Services and government documents",
+        p: "Use these service links to apply for documents and services. Confirm charges, eligibility and requirements on the service portal before submitting."
       },
       "tools.html": {
-        h: "Helpful tools for students and applicants",
-        p: "Use tools for PDFs and documents while applying online. Keep files readable and properly sized before uploading.",
+        h2: "Free tools for students and job seekers",
+        p: "Use handy tools for images, PDFs and documents while applying. Keep your files clear, readable and properly sized before uploading to forms."
       },
+      "search.html": {
+        h2: "Search jobs, results, admit cards and categories",
+        p: "Type keywords like board name, state, exam, recruitment or post name to find links faster."
+      },
+      "helpdesk.html": {
+        h2: "Helpdesk & guidance",
+        p: "Use helpdesk resources for common form issues, document requirements and where to check official notices."
+      },
+      "category.html": {
+        h2: "Browse categories quickly",
+        p: "Use the filter to find a link quickly. Open official portals and confirm last date, eligibility and documents."
+      }
     };
 
-    const meta = map[PAGE];
+    const meta = titleMap[PAGE];
     if (!meta) return;
 
     const block = document.createElement("section");
-    block.className = "seo-block";
     block.id = "pageBriefBlock";
-    block.innerHTML = `<h2>${meta.h}</h2><p>${meta.p}</p>`;
+    block.className = "seo-block";
+    block.innerHTML = `<h2>${meta.h2}</h2><p>${meta.p}</p>`;
     main.appendChild(block);
   }
 
-  // -----------------------
-  // Boot
-  // -----------------------
+  // ---- Fix: “dropdown menu bar stuck” can also happen if script runs twice.
+  // We add a signature guard.
+  if (window.__TSJ_BOOTED) return;
+  window.__TSJ_BOOTED = true;
+
+  // ---- Boot ----
   document.addEventListener("DOMContentLoaded", async () => {
-    ensureHeaderStructure();
-    injectDropdownsIntoDesktopNav();
-    initDesktopDropdownBehavior();
-    buildMobileNavFromDesktop();
+    ensureChrome();
+    buildDesktopNav();
+    buildMobileNav();
+
+    await loadHeaderLinks();
+
+    initDropdowns();
     initOffcanvas();
     initSearch();
+    initFAQ();
 
-    await renderHomeSections();
-    await renderServices();
+    injectSEOContent();
 
-    injectSEOBlocks();
+    await renderServicesPage();
+    await renderToolsPage();
   });
+
 })();
