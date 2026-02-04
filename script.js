@@ -1,324 +1,225 @@
 (() => {
   "use strict";
 
-  const $ = (sel, root = document) => root.querySelector(sel);
-  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
-
+  const $ = (s, r=document) => r.querySelector(s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
 
+  const safe = (v) => (v ?? "").toString().trim();
+  const escRE = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
   // -------------------------
-  // Header links (CTA buttons)
+  // Header/footer links (from header_links.json)
   // -------------------------
-  async function loadHeaderLinks() {
-    let headerData = { header_links: [], home_links: [], social_links: [] };
-    try {
-      const r = await fetch("header_links.json", { cache: "no-store" });
-      if (r.ok) headerData = await r.json();
-    } catch (_) {}
+  async function loadHeaderLinks(){
+    let data = { header_links:[], social_links:[] };
+    try{
+      const r = await fetch("header_links.json", { cache:"no-store" });
+      if(r.ok) data = await r.json();
+    }catch(_){}
 
     const desktop = $("#header-links");
     const mobile = $("#header-links-mobile");
     const footerSocial = $("#footer-social-links");
 
-    // CTA buttons
-    const links = headerData.header_links || [];
-    if (desktop) {
+    const links = Array.isArray(data.header_links) ? data.header_links : [];
+    const socials = Array.isArray(data.social_links) ? data.social_links : [];
+
+    if(desktop){
       desktop.innerHTML = "";
-      links.forEach((l) => {
-        const a = document.createElement("a");
+      links.forEach(l=>{
+        const a=document.createElement("a");
+        a.className="nav-link";
         a.href = l.link || l.url || "#";
-        a.target = "_blank";
-        a.rel = "noopener";
-        a.className = "nav-link";
+        a.target="_blank";
+        a.rel="noopener";
         a.textContent = l.name || "Link";
         desktop.appendChild(a);
       });
     }
 
-    if (mobile) {
+    if(mobile){
       mobile.innerHTML = "";
-      links.forEach((l) => {
-        const a = document.createElement("a");
+      links.forEach(l=>{
+        const a=document.createElement("a");
         a.href = l.link || l.url || "#";
-        a.target = "_blank";
-        a.rel = "noopener";
+        a.target="_blank";
+        a.rel="noopener";
         a.textContent = l.name || "Link";
         mobile.appendChild(a);
       });
     }
 
-    // Footer social
-    const socials = headerData.social_links || [];
-    if (footerSocial) {
+    if(footerSocial){
       footerSocial.innerHTML = "";
-      socials.forEach((s) => {
-        const a = document.createElement("a");
+      socials.forEach(s=>{
+        const a=document.createElement("a");
+        a.className="nav-link";
         a.href = s.url || "#";
-        a.target = "_blank";
-        a.rel = "noopener";
-        a.className = "nav-link";
+        a.target="_blank";
+        a.rel="noopener";
         a.textContent = s.name || "Social";
         footerSocial.appendChild(a);
       });
     }
-
-    return headerData;
   }
 
   // -------------------------
-  // Mobile offcanvas menu
+  // Offcanvas menu (FIXED: always closes, no overlap)
   // -------------------------
-  function initOffcanvas() {
-    const menuBtn = $("#menuBtn");
+  function initOffcanvas(){
+    const btn = $("#menuBtn");
     const closeBtn = $("#closeMenuBtn");
     const menu = $("#mobileMenu");
     const overlay = $("#menuOverlay");
 
-    if (!menuBtn || !closeBtn || !menu || !overlay) return;
-
-    const open = () => {
-      menu.hidden = false;
-      overlay.hidden = false;
-      menuBtn.setAttribute("aria-expanded", "true");
-      // focus first link
-      const first = $("a", menu);
-      if (first) first.focus();
-      document.body.style.overflow = "hidden";
-    };
+    if(!btn || !closeBtn || !menu || !overlay) return;
 
     const close = () => {
       menu.hidden = true;
       overlay.hidden = true;
-      menuBtn.setAttribute("aria-expanded", "false");
+      btn.setAttribute("aria-expanded", "false");
       document.body.style.overflow = "";
-      menuBtn.focus();
     };
 
-    menuBtn.addEventListener("click", open);
+    const open = () => {
+      menu.hidden = false;
+      overlay.hidden = false;
+      btn.setAttribute("aria-expanded", "true");
+      document.body.style.overflow = "hidden";
+    };
+
+    btn.addEventListener("click", open);
     closeBtn.addEventListener("click", close);
     overlay.addEventListener("click", close);
 
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && !menu.hidden) close();
+    // close on any menu link click
+    menu.addEventListener("click", (e)=>{
+      const a = e.target.closest("a");
+      if(a) close();
     });
 
-    // close on link click
-    $$("a", menu).forEach((a) => a.addEventListener("click", close));
+    document.addEventListener("keydown", (e)=>{
+      if(e.key === "Escape") close();
+    });
+
+    // Safety: if overlay/menu ever mismatch, force close on resize
+    window.addEventListener("resize", ()=>{
+      if(window.innerWidth > 980) close();
+    });
+
+    // expose for debugging
+    window.__closeMenu = close;
   }
 
   // -------------------------
   // Desktop dropdowns
   // -------------------------
-  function initDropdowns() {
+  function initDropdowns(){
     const dds = $$("[data-dd]");
-    if (!dds.length) return;
+    if(!dds.length) return;
 
     const closeAll = () => {
-      dds.forEach((dd) => {
-        const btn = $(".nav-dd-btn", dd);
-        const menu = $(".nav-dd-menu", dd);
-        if (btn && menu) {
-          btn.setAttribute("aria-expanded", "false");
+      dds.forEach(dd=>{
+        const btn=$(".nav-dd-btn", dd);
+        const menu=$(".nav-dd-menu", dd);
+        if(btn && menu){
+          btn.setAttribute("aria-expanded","false");
           menu.classList.remove("open");
         }
       });
     };
 
-    dds.forEach((dd) => {
-      const btn = $(".nav-dd-btn", dd);
-      const menu = $(".nav-dd-menu", dd);
-      if (!btn || !menu) return;
+    dds.forEach(dd=>{
+      const btn=$(".nav-dd-btn", dd);
+      const menu=$(".nav-dd-menu", dd);
+      if(!btn || !menu) return;
 
-      btn.addEventListener("click", (e) => {
+      btn.addEventListener("click",(e)=>{
         e.preventDefault();
-        const isOpen = menu.classList.contains("open");
+        const open = menu.classList.contains("open");
         closeAll();
-        if (!isOpen) {
+        if(!open){
           menu.classList.add("open");
-          btn.setAttribute("aria-expanded", "true");
+          btn.setAttribute("aria-expanded","true");
         }
       });
 
-      dd.addEventListener("mouseenter", () => {
-        if (window.matchMedia("(hover:hover)").matches) {
+      dd.addEventListener("mouseenter",()=>{
+        if(window.matchMedia("(hover:hover)").matches){
           closeAll();
           menu.classList.add("open");
-          btn.setAttribute("aria-expanded", "true");
+          btn.setAttribute("aria-expanded","true");
         }
       });
 
-      dd.addEventListener("mouseleave", () => {
-        if (window.matchMedia("(hover:hover)").matches) {
+      dd.addEventListener("mouseleave",()=>{
+        if(window.matchMedia("(hover:hover)").matches){
           menu.classList.remove("open");
-          btn.setAttribute("aria-expanded", "false");
+          btn.setAttribute("aria-expanded","false");
         }
-      });
-
-      // keyboard
-      btn.addEventListener("keydown", (e) => {
-        if (e.key === "ArrowDown") {
-          e.preventDefault();
-          const first = $(".nav-dd-item", menu);
-          if (first) first.focus();
-        }
-      });
-
-      $$("a", menu).forEach((a) => {
-        a.addEventListener("keydown", (e) => {
-          if (e.key === "Escape") {
-            closeAll();
-            btn.focus();
-          }
-        });
       });
     });
 
-    document.addEventListener("click", (e) => {
-      const inside = e.target.closest("[data-dd]");
-      if (!inside) closeAll();
+    document.addEventListener("click",(e)=>{
+      if(!e.target.closest("[data-dd]")) closeAll();
     });
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeAll();
+    document.addEventListener("keydown",(e)=>{
+      if(e.key==="Escape") closeAll();
     });
   }
 
   // -------------------------
   // FAQ accordion
   // -------------------------
-  function initFAQ() {
-    $$(".faq-btn").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const expanded = btn.getAttribute("aria-expanded") === "true";
-        // close all
-        $$(".faq-btn").forEach((b) => {
-          b.setAttribute("aria-expanded", "false");
-          const panel = b.parentElement.querySelector(".faq-panel");
-          if (panel) panel.hidden = true;
+  function initFAQ(){
+    $$(".faq-btn").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        const expanded = btn.getAttribute("aria-expanded")==="true";
+        $$(".faq-btn").forEach(b=>{
+          b.setAttribute("aria-expanded","false");
+          const p=b.parentElement.querySelector(".faq-panel");
+          if(p) p.hidden=true;
         });
-        // open current if was closed
-        if (!expanded) {
-          btn.setAttribute("aria-expanded", "true");
-          const panel = btn.parentElement.querySelector(".faq-panel");
-          if (panel) panel.hidden = false;
+        if(!expanded){
+          btn.setAttribute("aria-expanded","true");
+          const p=btn.parentElement.querySelector(".faq-panel");
+          if(p) p.hidden=false;
         }
       });
     });
   }
 
   // -------------------------
-  // Helpers
+  // View helper
   // -------------------------
-  function safeText(v) {
-    return (v || "").toString().trim();
-  }
-
-  function highlight(text, q) {
-    const t = safeText(text);
-    const query = safeText(q);
-    if (!query) return t;
-    const re = new RegExp(`(${escapeRegExp(query)})`, "ig");
-    return t.replace(re, "<mark>$1</mark>");
-  }
-
-  function escapeRegExp(s) {
-    return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  }
-
-  function normalizeGroupParam(g) {
-    const v = (g || "").toLowerCase().trim();
-    // allow multiple aliases
-    const map = {
-      "study": "study",
-      "study-wise": "study",
-      "studywise": "study",
-
-      "popular": "popular",
-      "popular-jobs": "popular",
-
-      "state": "state",
-      "state-wise": "state",
-      "statewise": "state",
-
-      "admissions": "admissions",
-      "admission": "admissions",
-
-      "admit-result": "admit-result",
-      "result-admit": "admit-result",
-
-      "khabar": "khabar",
-      "news": "khabar",
-
-      "study-material": "study-material",
-      "courses": "study-material",
-
-      "tools": "tools"
-    };
-    return map[v] || v || "study";
-  }
-
-  function groupMeta(group) {
-    const meta = {
-      "study": {
-        title: "Study wise Jobs",
-        desc: "Browse government job links by education level — 8th, 10th, 12th, ITI, diploma, graduation and more."
-      },
-      "popular": {
-        title: "Popular Job Categories",
-        desc: "Browse popular government job categories like SSC, Railway, Bank, Police, Teaching and more."
-      },
-      "state": {
-        title: "State wise Jobs",
-        desc: "Find state-wise government job links and recruitment updates."
-      },
-      "admissions": {
-        title: "Admissions",
-        desc: "Admissions updates and official application links."
-      },
-      "admit-result": {
-        title: "Admit Card / Result / Answer Key / Syllabus",
-        desc: "Quick access to admit cards, results, answer keys and syllabus links."
-      },
-      "khabar": {
-        title: "Latest Khabar",
-        desc: "Latest news, updates and useful information related to jobs and exams."
-      },
-      "study-material": {
-        title: "Study Material & Top Courses",
-        desc: "Study resources, notes and recommended courses."
-      },
-      "tools": {
-        title: "Tools",
-        desc: "Quick tools to help with forms, PDFs and utilities."
-      }
-    };
-    return meta[group] || { title: "Category", desc: "Browse links and categories." };
+  function openInternal(url, name){
+    return `view.html?url=${encodeURIComponent(url)}&name=${encodeURIComponent(name)}`;
   }
 
   // -------------------------
-  // Homepage: big sections
+  // Homepage big sections (dynamic-sections.json)
   // -------------------------
-  async function loadHomepageDynamicSections() {
+  async function renderHomepageSections(){
     const wrap = $("#dynamic-sections");
-    if (!wrap) return;
+    if(!wrap) return;
 
-    let data = { sections: [] };
-    try {
-      const r = await fetch("dynamic-sections.json", { cache: "no-store" });
-      if (r.ok) data = await r.json();
-    } catch (_) {}
+    let data={ sections:[] };
+    try{
+      const r=await fetch("dynamic-sections.json",{ cache:"no-store" });
+      if(r.ok) data=await r.json();
+    }catch(_){}
 
-    wrap.innerHTML = "";
+    wrap.innerHTML="";
 
-    const sections = Array.isArray(data.sections) ? data.sections : [];
-    sections.forEach((sec) => {
-      const title = safeText(sec.title) || "Updates";
-      const color = safeText(sec.color) || "#0284c7";
-      const icon = safeText(sec.icon) || "fa-solid fa-briefcase";
+    (data.sections||[]).forEach(sec=>{
+      const title=safe(sec.title)||"Updates";
+      const color=safe(sec.color)||"#0284c7";
+      const icon=safe(sec.icon)||"fa-solid fa-briefcase";
 
-      const card = document.createElement("article");
-      card.className = "section-card";
-      card.innerHTML = `
+      const card=document.createElement("article");
+      card.className="section-card";
+      card.innerHTML=`
         <div class="section-head" style="background:${color}">
           <div class="left">
             <i class="${icon}"></i>
@@ -327,30 +228,26 @@
         </div>
         <div class="section-body">
           <div class="section-list"></div>
-          <a class="view-all" href="view.html?section=${encodeURIComponent(safeText(sec.id)||'')}">
-            View All <i class="fa-solid fa-arrow-right"></i>
-          </a>
+          ${sec.viewMoreUrl ? `<a class="view-all" href="${openInternal(sec.viewMoreUrl, title)}">View All <i class="fa-solid fa-arrow-right"></i></a>` : ""}
         </div>
       `;
 
-      const list = $(".section-list", card);
-      const items = Array.isArray(sec.items) ? sec.items.slice(0, 8) : [];
-      items.forEach((it) => {
-        const name = safeText(it.name) || "Open";
-        const date = safeText(it.date);
-        const url = it.url || it.link || "";
-        const external = !!it.external;
+      const list=$(".section-list", card);
+      const items=Array.isArray(sec.items) ? sec.items.slice(0,8) : [];
+      items.forEach(it=>{
+        const name=safe(it.name)||"Open";
+        const url=it.url||it.link||"";
+        if(!url) return;
+        const external=!!it.external;
 
-        const a = document.createElement("a");
-        a.className = "section-link";
-        a.href = external ? url : `view.html?url=${encodeURIComponent(url)}&name=${encodeURIComponent(name)}`;
-        if (external) {
-          a.target = "_blank";
-          a.rel = "noopener";
-        }
-        a.innerHTML = `
+        const a=document.createElement("a");
+        a.className="section-link";
+        a.href = external ? url : openInternal(url, name);
+        if(external){ a.target="_blank"; a.rel="noopener"; }
+
+        a.innerHTML=`
           <div class="t">${name}</div>
-          ${date ? `<div class="d">${date}</div>` : ``}
+          ${it.date ? `<div class="d">${safe(it.date)}</div>` : `<div class="d">Open official link</div>`}
         `;
         list.appendChild(a);
       });
@@ -360,165 +257,179 @@
   }
 
   // -------------------------
-  // Category page: extract blocks from jobs.json
+  // Category pages (from jobs.json)
+  // - requested 3-column layout: handled by CSS .cat-grid
+  // - add SEO + FAQs automatically at bottom
   // -------------------------
-  async function loadCategoryPage() {
-    if (page !== "category.html") return;
+  function normalizeGroup(g){
+    const v=(g||"").toLowerCase().trim();
+    const map={
+      "study":"study",
+      "study-wise":"study",
+      "studywise":"study",
+      "popular":"popular",
+      "popular-jobs":"popular",
+      "state":"state",
+      "state-wise":"state",
+      "statewise":"state",
+      "admissions":"admissions",
+      "admission":"admissions",
+      "admit-result":"admit-result",
+      "admitresult":"admit-result",
+      "khabar":"khabar",
+      "news":"khabar",
+      "study-material":"study-material",
+      "courses":"study-material"
+    };
+    return map[v] || v || "study";
+  }
 
-    const params = new URLSearchParams(location.search);
-    const group = normalizeGroupParam(params.get("group"));
+  function groupMeta(group){
+    const meta={
+      "study":{
+        title:"Study wise jobs",
+        desc:"Browse government job links by education level: 8th pass, 10th pass, 12th pass, ITI, diploma, graduation and more."
+      },
+      "popular":{
+        title:"Popular job categories",
+        desc:"Explore popular government job categories like SSC, Railway, Police, Bank, Teaching and more."
+      },
+      "state":{
+        title:"State wise jobs",
+        desc:"Find state-wise government job links and recruitment updates."
+      },
+      "admissions":{
+        title:"Admissions",
+        desc:"Admissions updates and official application links for universities, colleges and entrance exams."
+      },
+      "admit-result":{
+        title:"Admit Card / Result / Answer Key / Syllabus",
+        desc:"Quick access to admit cards, results, answer keys and syllabus links from official sources."
+      },
+      "khabar":{
+        title:"Latest Khabar",
+        desc:"Latest news and updates related to jobs, exams and government announcements."
+      },
+      "study-material":{
+        title:"Study Material & Top Courses",
+        desc:"Study resources, notes, preparation links and recommended courses for government exams."
+      }
+    };
+    return meta[group] || { title:"Category", desc:"Browse useful links and categories." };
+  }
 
-    const meta = groupMeta(group);
-    $("#categoryTitle").textContent = meta.title;
-    $("#crumbText").textContent = meta.title;
-    $("#categoryDesc").textContent = meta.desc;
+  async function renderCategoryPage(){
+    if(page !== "category.html") return;
+
+    const params=new URLSearchParams(location.search);
+    const group=normalizeGroup(params.get("group"));
+
+    const meta=groupMeta(group);
+    const titleEl=$("#categoryTitle");
+    const descEl=$("#categoryDesc");
+    const crumb=$("#crumbText");
+    if(titleEl) titleEl.textContent = meta.title;
+    if(descEl) descEl.textContent = meta.desc;
+    if(crumb) crumb.textContent = meta.title;
+
     document.title = `${meta.title} | Top Sarkari Jobs`;
 
-    const grid = $("#categoryGrid");
-    const empty = $("#categoryEmpty");
-    const filter = $("#categoryFilter");
-    const clearBtn = $("#clearCategoryFilter");
+    let jobs=null;
+    try{
+      const r=await fetch("jobs.json",{ cache:"no-store" });
+      if(r.ok) jobs=await r.json();
+    }catch(_){}
 
-    let jobs = null;
-    try {
-      const r = await fetch("jobs.json", { cache: "no-store" });
-      if (r.ok) jobs = await r.json();
-    } catch (_) {}
+    const grid=$("#categoryGrid");
+    const empty=$("#categoryEmpty");
+    const filter=$("#categoryFilter");
+    const clear=$("#clearCategoryFilter");
 
-    // If jobs.json not available, show empty
-    if (!jobs) {
-      grid.innerHTML = "";
-      empty.style.display = "block";
+    if(!grid) return;
+
+    if(!jobs){
+      grid.innerHTML="";
+      if(empty) empty.style.display="block";
       return;
     }
 
-    // Where are your category links stored?
-    // Many repos store them inside: top_jobs / left_jobs / right_jobs arrays with title separators.
-    const pool = []
-      .concat(Array.isArray(jobs.top_jobs) ? jobs.top_jobs : [])
-      .concat(Array.isArray(jobs.left_jobs) ? jobs.left_jobs : [])
-      .concat(Array.isArray(jobs.right_jobs) ? jobs.right_jobs : []);
+    const pool=[]
+      .concat(Array.isArray(jobs.top_jobs)?jobs.top_jobs:[])
+      .concat(Array.isArray(jobs.left_jobs)?jobs.left_jobs:[])
+      .concat(Array.isArray(jobs.right_jobs)?jobs.right_jobs:[]);
 
-    // Map group -> which "title" headings to match
-    // (These should match your jobs.json titles. Add more synonyms here if needed.)
-    const titleMatchers = {
-      "study": [/study/i],
-      "popular": [/popular/i],
-      "state": [/state/i],
-      "admissions": [/admission/i],
-      "admit-result": [/admit/i, /result/i, /answer/i, /syllabus/i],
-      "khabar": [/khabar/i, /news/i],
-      "study-material": [/study material/i, /course/i, /books?/i],
-      "tools": [/tools?/i]
+    // heading matchers (tune if your jobs.json headings differ)
+    const matchers={
+      "study":[/study/i],
+      "popular":[/popular/i],
+      "state":[/state/i],
+      "admissions":[/admission/i],
+      "admit-result":[/admit/i, /result/i, /answer/i, /syllabus/i],
+      "khabar":[/khabar/i, /news/i],
+      "study-material":[/study material/i, /course/i, /notes?/i]
     };
 
-    const matchers = titleMatchers[group] || [/.*/];
+    const reList = matchers[group] || [/.*/];
 
-    // Extract blocks:
-    // When an item has {title:true} or item.title (string), treat as heading.
-    // Collect all items under matching headings until next heading.
-    const blocks = [];
-    let currentHeading = null;
-    let currentItems = [];
+    const blocks=[];
+    let currentHeading=null;
+    let items=[];
 
-    function flush() {
-      if (currentHeading && currentItems.length) {
-        blocks.push({ heading: currentHeading, items: currentItems });
+    const flush=()=>{
+      if(currentHeading && items.length){
+        blocks.push({ heading: currentHeading, items: items.slice() });
       }
-      currentHeading = null;
-      currentItems = [];
-    }
+      currentHeading=null;
+      items=[];
+    };
 
-    for (const item of pool) {
-      const isHeading = !!item.title && typeof item.title === "string";
-
-      if (isHeading) {
-        // heading change
+    for(const it of pool){
+      if(it && typeof it.title==="string"){
         flush();
-        const h = safeText(item.title);
-        const isMatch = matchers.some((re) => re.test(h));
-        currentHeading = isMatch ? h : null;
-        currentItems = [];
+        const h=safe(it.title);
+        const ok=reList.some(re=>re.test(h));
+        currentHeading = ok ? h : null;
         continue;
       }
+      if(!currentHeading) continue;
 
-      // normal link item
-      if (!currentHeading) continue;
+      const name=safe(it.name);
+      const url=it.url || it.link || "";
+      if(!name || !url) continue;
 
-      const name = safeText(item.name);
-      const url = item.url || item.link || "";
-      if (!name || !url) continue;
-
-      currentItems.push({
-        name,
-        url,
-        external: !!item.external
-      });
+      items.push({ name, url, external: !!it.external });
     }
     flush();
 
-    // Render blocks
-    renderCategoryBlocks(blocks);
+    const render=(blocksToRender, q="")=>{
+      grid.classList.add("cat-grid");
+      grid.innerHTML="";
 
-    // Filter on category page
-    if (filter) {
-      filter.addEventListener("input", () => {
-        const q = safeText(filter.value).toLowerCase();
-        if (!q) {
-          renderCategoryBlocks(blocks);
-          return;
-        }
-        const filtered = blocks
-          .map((b) => ({
-            heading: b.heading,
-            items: b.items.filter((x) => x.name.toLowerCase().includes(q))
-          }))
-          .filter((b) => b.items.length);
-
-        renderCategoryBlocks(filtered, q);
-      });
-    }
-
-    if (clearBtn) {
-      clearBtn.addEventListener("click", () => {
-        if (!filter) return;
-        filter.value = "";
-        renderCategoryBlocks(blocks);
-        filter.focus();
-      });
-    }
-
-    function renderCategoryBlocks(blocksToRender, q = "") {
-      grid.innerHTML = "";
-      if (!blocksToRender.length) {
-        empty.style.display = "block";
+      if(!blocksToRender.length){
+        if(empty) empty.style.display="block";
         return;
       }
-      empty.style.display = "none";
+      if(empty) empty.style.display="none";
 
-      blocksToRender.forEach((b) => {
-        const card = document.createElement("article");
-        card.className = "section-card";
+      const colorMap={
+        "study":"#2563eb",
+        "popular":"#db2777",
+        "state":"#059669",
+        "admissions":"#f59e0b",
+        "admit-result":"#ef4444",
+        "khabar":"#7c3aed",
+        "study-material":"#0ea5e9"
+      };
+      const color=colorMap[group] || "#0284c7";
 
-        // stable color based on group
-        const colorMap = {
-          "study": "#2563eb",
-          "popular": "#db2777",
-          "state": "#059669",
-          "admissions": "#f59e0b",
-          "admit-result": "#ef4444",
-          "khabar": "#7c3aed",
-          "study-material": "#0ea5e9",
-          "tools": "#0f172a"
-        };
-
-        const color = colorMap[group] || "#0284c7";
-
-        card.innerHTML = `
+      blocksToRender.forEach(b=>{
+        const card=document.createElement("article");
+        card.className="section-card";
+        card.innerHTML=`
           <div class="section-head" style="background:${color}">
             <div class="left">
               <i class="fa-solid fa-layer-group"></i>
-              <span>${b.heading}</span>
+              <span>${safe(b.heading)}</span>
             </div>
           </div>
           <div class="section-body">
@@ -526,21 +437,22 @@
           </div>
         `;
 
-        const list = $(".section-list", card);
-        b.items.forEach((it) => {
-          const a = document.createElement("a");
-          a.className = "section-link";
-          const href = it.external
-            ? it.url
-            : `view.html?url=${encodeURIComponent(it.url)}&name=${encodeURIComponent(it.name)}`;
+        const list=$(".section-list", card);
+        b.items.forEach(x=>{
+          const a=document.createElement("a");
+          a.className="section-link";
 
-          a.href = href;
-          if (it.external) {
-            a.target = "_blank";
-            a.rel = "noopener";
-          }
-          a.innerHTML = `
-            <div class="t">${q ? highlight(it.name, q) : it.name}</div>
+          const href = x.external ? x.url : openInternal(x.url, x.name);
+          a.href=href;
+          if(x.external){ a.target="_blank"; a.rel="noopener"; }
+
+          const qSafe=safe(q);
+          const name = qSafe
+            ? safe(x.name).replace(new RegExp(`(${escRE(qSafe)})`, "ig"), "<mark>$1</mark>")
+            : safe(x.name);
+
+          a.innerHTML=`
+            <div class="t">${name}</div>
             <div class="d">Open official link</div>
           `;
           list.appendChild(a);
@@ -548,151 +460,373 @@
 
         grid.appendChild(card);
       });
+
+      // SEO + FAQs appended under grid
+      renderCategorySEO(meta.title, meta.desc, group);
+    };
+
+    render(blocks);
+
+    if(filter){
+      filter.addEventListener("input", ()=>{
+        const q=safe(filter.value).toLowerCase();
+        if(!q){ render(blocks); return; }
+        const filtered = blocks
+          .map(b=>({ heading:b.heading, items:b.items.filter(x=>safe(x.name).toLowerCase().includes(q)) }))
+          .filter(b=>b.items.length);
+        render(filtered, q);
+      });
+    }
+
+    if(clear){
+      clear.addEventListener("click", ()=>{
+        if(!filter) return;
+        filter.value="";
+        render(blocks);
+        filter.focus();
+      });
+    }
+  }
+
+  function renderCategorySEO(title, desc, group){
+    // Remove old SEO block if re-rendering
+    const old=$("#categorySEO");
+    if(old) old.remove();
+
+    const main=$("#main");
+    if(!main) return;
+
+    const wrap=document.createElement("section");
+    wrap.id="categorySEO";
+    wrap.className="seo-block";
+    wrap.innerHTML=`
+      <h2>${title} – quick guide</h2>
+      <p>${desc}</p>
+
+      <div class="seo-grid">
+        <div class="seo-card">
+          <h3>How to use this page</h3>
+          <ul>
+            <li>Use the filter box to find a link faster.</li>
+            <li>Open the official link and confirm eligibility & dates.</li>
+            <li>Bookmark this page for quick access to updates.</li>
+          </ul>
+        </div>
+
+        <div class="seo-card">
+          <h3>Tips to avoid mistakes</h3>
+          <ul>
+            <li>Always apply from the official website.</li>
+            <li>Check last date, fee, and required documents carefully.</li>
+            <li>Keep your registration number and DOB ready for results/admit cards.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="faq-wrap">
+        <div class="faq-card" style="box-shadow:none;border:1px solid var(--line);">
+          <h2>FAQs – ${title}</h2>
+          <p class="faq-sub">Common questions related to ${title.toLowerCase()}.</p>
+
+          <div class="faq-item">
+            <button type="button" class="faq-btn" aria-expanded="false">
+              <span>Are these links official?</span>
+              <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="faq-panel" hidden>
+              We aim to list official and trusted sources. Always verify details on the official portal before applying or downloading documents.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-btn" aria-expanded="false">
+              <span>Why do dates sometimes change?</span>
+              <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="faq-panel" hidden>
+              Recruiting boards may revise schedules. Check the official notice for the latest updates.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-btn" aria-expanded="false">
+              <span>How can I find a specific item quickly?</span>
+              <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="faq-panel" hidden>
+              Use the filter box on this page or the main site search at the top to locate jobs, results, admit cards, and categories.
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    main.appendChild(wrap);
+
+    // re-bind FAQ buttons inside the injected block
+    initFAQ();
+  }
+
+  // -------------------------
+  // CSC Services page (govt-services.html)
+  // Rebuild the missing list from services.json
+  // -------------------------
+  async function renderServicesPage(){
+    if(page !== "govt-services.html") return;
+
+    const list=$("#servicesList");
+    if(!list) return;
+
+    let data=null;
+    try{
+      const r=await fetch("services.json",{ cache:"no-store" });
+      if(r.ok) data=await r.json();
+    }catch(_){}
+
+    const services = (data && (data.services || data)) || [];
+    list.innerHTML="";
+
+    if(!Array.isArray(services) || !services.length){
+      list.innerHTML = `<div class="seo-block"><strong>No services found.</strong><p>Please check services.json.</p></div>`;
+      return;
+    }
+
+    // Render as clean cards
+    services.forEach(s=>{
+      const name=safe(s.name || s.service);
+      const url=s.url || s.link || "";
+      if(!name) return;
+
+      const a=document.createElement("a");
+      a.className="section-link";
+      a.href = url ? url : "#";
+      a.target = "_blank";
+      a.rel="noopener";
+      a.innerHTML = `
+        <div class="t">${name}</div>
+        <div class="d">Open service</div>
+      `;
+      list.appendChild(a);
+    });
+  }
+
+  // -------------------------
+  // Tools page (tools.html)
+  // Render tools.json (image/pdf/video arrays)
+  // -------------------------
+  async function renderToolsPage(){
+    if(page !== "tools.html") return;
+
+    const grid=$("#toolsGrid");
+    if(!grid) return;
+
+    let data=null;
+    try{
+      const r=await fetch("tools.json",{ cache:"no-store" });
+      if(r.ok) data=await r.json();
+    }catch(_){}
+
+    grid.innerHTML="";
+    grid.classList.add("cat-grid");
+
+    const buckets = [
+      { key:"image", title:"Image Tools", color:"#0ea5e9" },
+      { key:"pdf", title:"PDF Tools", color:"#4f46e5" },
+      { key:"video", title:"Video Tools", color:"#db2777" }
+    ];
+
+    let any=false;
+
+    buckets.forEach(b=>{
+      const items = (data && Array.isArray(data[b.key])) ? data[b.key] : [];
+      if(!items.length) return;
+      any=true;
+
+      const card=document.createElement("article");
+      card.className="section-card";
+      card.innerHTML=`
+        <div class="section-head" style="background:${b.color}">
+          <div class="left">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span>${b.title}</span>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="section-list"></div>
+        </div>
+      `;
+      const list=$(".section-list", card);
+
+      items.forEach(it=>{
+        const name=safe(it.name);
+        const url=it.url || it.link || "";
+        if(!name || !url) return;
+
+        const a=document.createElement("a");
+        a.className="section-link";
+        a.href = it.external ? url : openInternal(url, name);
+        if(it.external){ a.target="_blank"; a.rel="noopener"; }
+        a.innerHTML = `<div class="t">${name}</div><div class="d">Open tool</div>`;
+        list.appendChild(a);
+      });
+
+      grid.appendChild(card);
+    });
+
+    if(!any){
+      grid.innerHTML = `<div class="seo-block"><strong>No tools found.</strong><p>Please check tools.json.</p></div>`;
     }
   }
 
   // -------------------------
-  // Site-wide search index
+  // Site search (fast index)
   // -------------------------
   let SEARCH_INDEX = [];
   let SEARCH_READY = false;
 
-  async function buildSearchIndex() {
-    if (SEARCH_READY) return;
+  async function buildSearchIndex(){
+    if(SEARCH_READY) return;
 
-    const entries = [];
+    const out=[];
 
     // dynamic sections
-    try {
-      const r = await fetch("dynamic-sections.json", { cache: "no-store" });
-      if (r.ok) {
-        const ds = await r.json();
-        (ds.sections || []).forEach((s) => {
-          (s.items || []).forEach((it) => {
-            const name = safeText(it.name);
-            const url = it.url || it.link || "";
-            if (!name || !url) return;
-            entries.push({
-              title: name,
-              meta: safeText(s.title) || "Updates",
-              href: it.external ? url : `view.html?url=${encodeURIComponent(url)}&name=${encodeURIComponent(name)}`,
+    try{
+      const r=await fetch("dynamic-sections.json",{ cache:"no-store" });
+      if(r.ok){
+        const d=await r.json();
+        (d.sections||[]).forEach(sec=>{
+          (sec.items||[]).forEach(it=>{
+            const title=safe(it.name);
+            const url=it.url||it.link||"";
+            if(!title || !url) return;
+            out.push({
+              title,
+              meta: safe(sec.title)||"Updates",
+              href: it.external ? url : openInternal(url, title),
               external: !!it.external
             });
           });
         });
       }
-    } catch (_) {}
+    }catch(_){}
 
-    // jobs categories
-    try {
-      const r = await fetch("jobs.json", { cache: "no-store" });
-      if (r.ok) {
-        const jobs = await r.json();
-        const pool = []
-          .concat(jobs.top_jobs || [])
-          .concat(jobs.left_jobs || [])
-          .concat(jobs.right_jobs || []);
-        pool.forEach((it) => {
-          if (it && it.title) return;
-          const name = safeText(it.name);
-          const url = it.url || it.link || "";
-          if (!name || !url) return;
-          entries.push({
-            title: name,
-            meta: "Jobs / Categories",
-            href: it.external ? url : `view.html?url=${encodeURIComponent(url)}&name=${encodeURIComponent(name)}`,
+    // jobs.json (all links)
+    try{
+      const r=await fetch("jobs.json",{ cache:"no-store" });
+      if(r.ok){
+        const j=await r.json();
+        const pool=[...(j.top_jobs||[]), ...(j.left_jobs||[]), ...(j.right_jobs||[])];
+        pool.forEach(it=>{
+          if(it && it.title) return;
+          const title=safe(it.name);
+          const url=it.url||it.link||"";
+          if(!title || !url) return;
+          out.push({
+            title,
+            meta:"Jobs / Categories",
+            href: it.external ? url : openInternal(url, title),
             external: !!it.external
           });
         });
       }
-    } catch (_) {}
+    }catch(_){}
 
-    // tools + services (optional)
-    try {
-      const r = await fetch("tools.json", { cache: "no-store" });
-      if (r.ok) {
-        const t = await r.json();
-        ["image","pdf","video"].forEach((k) => {
-          (t[k] || []).forEach((it) => {
-            const name = safeText(it.name);
-            const url = it.url || "";
-            if (!name || !url) return;
-            entries.push({
-              title: name,
-              meta: "Tools",
-              href: it.external ? url : `view.html?url=${encodeURIComponent(url)}&name=${encodeURIComponent(name)}&type=tool`,
+    // tools.json
+    try{
+      const r=await fetch("tools.json",{ cache:"no-store" });
+      if(r.ok){
+        const t=await r.json();
+        ["image","pdf","video"].forEach(k=>{
+          (t[k]||[]).forEach(it=>{
+            const title=safe(it.name);
+            const url=it.url||it.link||"";
+            if(!title || !url) return;
+            out.push({
+              title,
+              meta:"Tools",
+              href: it.external ? url : openInternal(url, title),
               external: !!it.external
             });
           });
         });
       }
-    } catch (_) {}
+    }catch(_){}
 
-    try {
-      const r = await fetch("services.json", { cache: "no-store" });
-      if (r.ok) {
-        const s = await r.json();
-        (s.services || s || []).forEach((it) => {
-          const name = safeText(it.name || it.service);
-          if (!name) return;
-          entries.push({
-            title: name,
-            meta: "CSC Services",
-            href: "govt-services.html",
-            external: false
+    // services.json (titles only)
+    try{
+      const r=await fetch("services.json",{ cache:"no-store" });
+      if(r.ok){
+        const s=await r.json();
+        const services=(s.services||s||[]);
+        (services||[]).forEach(it=>{
+          const title=safe(it.name||it.service);
+          if(!title) return;
+          out.push({
+            title,
+            meta:"CSC Services",
+            href:"govt-services.html",
+            external:false
           });
         });
       }
-    } catch (_) {}
+    }catch(_){}
 
     // de-dup
-    const seen = new Set();
-    SEARCH_INDEX = entries.filter((e) => {
-      const key = (e.title + "|" + e.href).toLowerCase();
-      if (seen.has(key)) return false;
-      seen.add(key);
+    const seen=new Set();
+    SEARCH_INDEX = out.filter(x=>{
+      const k=(x.title+"|"+x.href).toLowerCase();
+      if(seen.has(k)) return false;
+      seen.add(k);
       return true;
     });
 
-    SEARCH_READY = true;
+    SEARCH_READY=true;
   }
 
-  function initSearchUI() {
-    const input = $("#siteSearchInput");
-    const btn = $("#siteSearchBtn");
-    const results = $("#searchResults");
-    const openSearchBtn = $("#openSearchBtn");
+  function initSearch(){
+    const input=$("#siteSearchInput");
+    const btn=$("#siteSearchBtn");
+    const results=$("#searchResults");
+    const openBtn=$("#openSearchBtn");
 
-    if (!input || !btn || !results) return;
+    if(!input || !btn || !results) return;
 
-    const run = async () => {
-      const q = safeText(input.value);
-      if (!q) {
+    const run = async ()=>{
+      const q=safe(input.value);
+      if(!q){
         results.classList.remove("open");
-        results.innerHTML = "";
+        results.innerHTML="";
         return;
       }
 
       await buildSearchIndex();
 
-      const ql = q.toLowerCase();
+      const ql=q.toLowerCase();
       const matches = SEARCH_INDEX
-        .filter((e) => e.title.toLowerCase().includes(ql) || e.meta.toLowerCase().includes(ql))
-        .slice(0, 25);
+        .filter(x => x.title.toLowerCase().includes(ql) || x.meta.toLowerCase().includes(ql))
+        .slice(0,25);
 
-      if (!matches.length) {
+      if(!matches.length){
         results.classList.add("open");
-        results.innerHTML = `<div class="result-item"><div><div class="result-title">No results found</div><div class="result-meta">Try a different keyword.</div></div></div>`;
+        results.innerHTML = `
+          <div class="result-item">
+            <div>
+              <div class="result-title">No results found</div>
+              <div class="result-meta">Try a different keyword.</div>
+            </div>
+          </div>
+        `;
         return;
       }
 
+      const re=new RegExp(`(${escRE(q)})`, "ig");
       results.classList.add("open");
-      results.innerHTML = matches.map((m) => {
+      results.innerHTML = matches.map(m=>{
+        const title = safe(m.title).replace(re, "<mark>$1</mark>");
         return `
           <a class="result-item" href="${m.href}" ${m.external ? `target="_blank" rel="noopener"` : ""}>
             <div>
-              <div class="result-title">${highlight(m.title, q)}</div>
-              <div class="result-meta">${m.meta}</div>
+              <div class="result-title">${title}</div>
+              <div class="result-meta">${safe(m.meta)}</div>
             </div>
             <div class="result-meta">${m.external ? "↗" : "→"}</div>
           </a>
@@ -700,64 +834,56 @@
       }).join("");
     };
 
-    // desktop/mobile open search button just focuses input
-    if (openSearchBtn) {
-      openSearchBtn.addEventListener("click", () => {
-        input.scrollIntoView({ behavior: "smooth", block: "center" });
-        setTimeout(() => input.focus(), 200);
-      });
-    }
-
     btn.addEventListener("click", run);
-    input.addEventListener("input", debounce(run, 140));
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") run();
-      if (e.key === "Escape") {
+    input.addEventListener("input", debounce(run, 150));
+    input.addEventListener("keydown",(e)=>{
+      if(e.key==="Enter") run();
+      if(e.key==="Escape"){
         results.classList.remove("open");
-        results.innerHTML = "";
+        results.innerHTML="";
         input.blur();
       }
     });
 
-    document.addEventListener("click", (e) => {
-      const inside = e.target.closest(".search-card");
-      if (!inside) {
+    document.addEventListener("click",(e)=>{
+      if(!e.target.closest(".search-card")){
         results.classList.remove("open");
       }
     });
 
-    // auto-run if ?q=
-    const params = new URLSearchParams(location.search);
-    const q = params.get("q");
-    if (q) {
-      input.value = q;
-      run();
+    if(openBtn){
+      openBtn.addEventListener("click", ()=>{
+        input.scrollIntoView({ behavior:"smooth", block:"center" });
+        setTimeout(()=>input.focus(), 150);
+      });
     }
   }
 
-  function debounce(fn, wait) {
-    let t = null;
-    return (...args) => {
+  function debounce(fn, wait){
+    let t=null;
+    return (...args)=>{
       clearTimeout(t);
-      t = setTimeout(() => fn(...args), wait);
+      t=setTimeout(()=>fn(...args), wait);
     };
   }
 
   // -------------------------
   // Boot
   // -------------------------
-  document.addEventListener("DOMContentLoaded", async () => {
+  document.addEventListener("DOMContentLoaded", async ()=>{
     await loadHeaderLinks();
     initOffcanvas();
     initDropdowns();
     initFAQ();
-    initSearchUI();
+    initSearch();
 
-    if (page === "index.html" || page === "") {
-      await loadHomepageDynamicSections();
+    if(page==="index.html" || page===""){
+      await renderHomepageSections();
     }
 
-    await loadCategoryPage();
+    await renderCategoryPage();
+    await renderServicesPage();
+    await renderToolsPage();
   });
 
 })();
