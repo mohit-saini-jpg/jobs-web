@@ -1,270 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C4VRD1C9QS"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-C4VRD1C9QS');
-    </script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSC Services & Government Schemes - Top Sarkari Jobs</title>
-    <meta name="description" content="Explore various Government Services (CSC) and Schemes available for Indian citizens. Apply for certificates, cards, and other govt services online.">
-    <meta name="keywords" content="csc services, government schemes, digital india, govt services online, aadhar card, pan card, passport seva, top sarkari jobs services">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://topsarkarijobs.com/govt-services.html">
-    <link rel="icon" type="image/x-icon" href="image.ico">
-
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://topsarkarijobs.com/govt-services.html">
-    <meta property="og:title" content="CSC Services & Government Schemes - Top Sarkari Jobs">
-    <meta property="og:description" content="Explore various Government Services (CSC) and Schemes available for Indian citizens.">
-
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- Google Font: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        :root {
-            --primary-500: #0ea5e9;
-            --muted-bg: #f8fafc
-        }
-
-        body {
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-            background: var(--muted-bg);
-            color: #0f172a
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CSC Services & Government Schemes - Top Sarkari Jobs</title>
+  <meta name="description" content="Apply for CSC services and government schemes. Explore service links and resources on Top Sarkari Jobs." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://www.topsarkarijobs.com/govt-services.html" />
+  <link rel="icon" type="image/x-icon" href="image.ico">
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-    <div class="min-h-screen flex flex-col">
-        <!-- Header with Navigation (Main Header) -->
-        <header class="bg-gradient-to-r from-sky-600 to-indigo-600 text-white shadow-sm relative">
-            <div class="container mx-auto max-w-6xl px-4 py-4">
+  <header class="site-header">
+    <div class="container header-row">
+      <a class="brand" href="index.html" aria-label="Top Sarkari Jobs Home">
+        <img src="image.png" alt="Top Sarkari Jobs Logo" class="brand-logo">
+        <span class="brand-text">
+          <span class="brand-title">Top Sarkari Jobs</span>
+          <span class="brand-subtitle">Latest Sarkari Jobs, Results, Admit Cards & Online Forms – 2026</span>
+        </span>
+      </a>
 
-                <div class="flex items-center gap-4">
+      <nav class="desktop-nav" aria-label="Primary">
+        <a class="nav-link" href="index.html">Home</a>
+        <a class="nav-link" href="govt-services.html">CSC Services</a>
+        <a class="nav-link" href="tools.html">Tools</a>
+        <a class="nav-link" href="helpdesk.html">Helpdesk</a>
+        <div id="header-links" class="header-cta"></div>
+      </nav>
 
-                    <!-- LEFT: Logo + Title + Subtitle -->
-                    <div class="flex items-center gap-3 shrink-0">
-                        <img src="image.png" alt="Top Sarkari Jobs Logo" class="h-10 w-10 rounded-full">
-
-                        <div class="leading-tight">
-                            <h1 class="text-2xl font-bold">Top Sarkari Jobs</h1>
-                            <p class="text-xs md:text-sm text-sky-200">
-                                Latest Sarkari Jobs, Results, Admit Cards &amp; Online Forms – 2026
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- MOBILE MENU BUTTON -->
-                    <button id="mobile-menu-toggle" class="lg:hidden text-white hover:bg-blue-700 p-2 rounded ml-auto">
-                        <i class="fas fa-bars"></i>
-                    </button>
-
-                    <!-- RIGHT: Navigation fills remaining space -->
-                    <div class="hidden lg:flex items-center gap-3 flex-1 justify-end min-w-0">
-                        <nav class="flex items-center gap-3 flex-wrap">
-                            <a href="index.html"
-                                class="px-3 py-2 bg-white text-sky-600 rounded-md font-semibold shadow-sm hover:shadow-md transition">
-                                <i class="fas fa-briefcase mr-2"></i>Home
-                            </a>
-
-                            <a href="result.html"
-                                class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
-                                <i class="fas fa-clipboard-check mr-2"></i>Results
-                            </a>
-
-                            <a href="search.html"
-                                class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
-                                <i class="fas fa-search mr-2"></i>Search
-                            </a>
-
-                            <a href="govt-services.html"
-                                class="px-3 py-2 bg-white/20 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/25 transition">
-                                <i class="fas fa-gavel mr-2"></i>CSC Services
-                            </a>
-
-                            <a href="tools.html"
-                                class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
-                                <i class="fas fa-tools mr-2"></i>Tools
-                            </a>
-
-                            <a href="helpdesk.html"
-                                class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
-                                <i class="fas fa-headset mr-2"></i>Helpdesk
-                            </a>
-                        </nav>
-
-                        <!-- Dynamic header links -->
-                        <div id="header-links" class="flex gap-2 flex-wrap justify-end"></div>
-                    </div>
-                </div>
-
-                <!-- Mobile menu -->
-                <div id="mobile-menu"
-                    class="hidden lg:hidden absolute top-full left-0 right-0 bg-sky-600 text-white shadow-lg z-50">
-                    <div class="flex flex-col p-4 space-y-2">
-                        <a href="index.html"
-                            class="px-4 py-2 bg-white text-sky-600 rounded-md font-semibold hover:bg-white/90 transition">
-                            <i class="fas fa-briefcase mr-2"></i>Home
-                        </a>
-
-                        <a href="result.html"
-                            class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
-                            <i class="fas fa-clipboard-check mr-2"></i>Results
-                        </a>
-
-                        <a href="search.html"
-                            class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
-                            <i class="fas fa-search mr-2"></i>Search
-                        </a>
-
-                        <a href="govt-services.html"
-                            class="px-4 py-2 bg-white/20 rounded-md font-semibold hover:bg-white/25 transition">
-                            <i class="fas fa-gavel mr-2"></i>CSC Services
-                        </a>
-
-                        <a href="tools.html"
-                            class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
-                            <i class="fas fa-tools mr-2"></i>Tools
-                        </a>
-
-                        <a href="helpdesk.html"
-                            class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
-                            <i class="fas fa-headset mr-2"></i>Helpdesk
-                        </a>
-
-                        <div id="header-links-mobile" class="mt-2 space-y-2"></div>
-                    </div>
-                </div>
-
-            </div>
-        </header>
-
-        <main class="mx-auto w-full px-4 py-6">
-            <a href="#" onclick="goBack()" class="text-black w-fit text-lg mb-2 font-extrabold hover:underline flex items-center">
-                <i class="fas fa-arrow-left mr-2"></i>Go back
-            </a>
-            <!-- Main Content Area -->
-            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-                <div class="flex flex-col gap-4">
-                    <!-- CSC Services Section -->
-                    <div id="government-services-section" class="p-6">
-                        <div class="mb-6">
-                            <h3 class="text-2xl font-semibold text-green-800 flex items-center">
-                                <i class="fas fa-gavel mr-3"></i>
-                                CSC Services
-                            </h3>
-                            <p class="text-gray-600 mt-2">Apply for various government services and documents</p>
-                        </div>
-                        <div id="services-cards" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                            <!-- Government services will be populated here as cards -->
-                        </div>
-                    </div>
-
-                    <!-- Service Details Modal -->
-                    <div id="service-modal"
-                        class="fixed inset-0 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-                        <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-                            <div class="p-6">
-                                <div class="flex justify-between items-center mb-6">
-                                    <h2 class="text-2xl font-bold text-gray-800">Service Request</h2>
-                                    <button id="close-modal"
-                                        class="bg-gray-200 hover:bg-gray-300 rounded-full p-2 text-gray-600 hover:text-gray-800 transition duration-300">
-                                        <i class="fas fa-times text-xl"></i>
-                                    </button>
-                                </div>
-                                <div id="modal-service-content">
-                                    <!-- Service details will be populated here -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-
-        <!-- Footer (Main Footer) -->
-        <footer class="bg-white text-gray-800 py-8 mt-12">
-            <div class="container mx-auto px-4">
-                <div class="flex flex-col md:flex-row justify-between items-center">
-                    <div class="mb-4 md:mb-0">
-                        <h3 class="text-xl font-bold">Top Sarkari Jobs</h3>
-                        <p class="text-gray-600 text-sm mt-1">Your gateway to government jobs and services</p>
-
-                        <div class="mt-3 flex flex-wrap gap-3 text-sm">
-                            <a class="text-sky-600 hover:underline" href="about.html">About</a>
-                            <a class="text-sky-600 hover:underline" href="contact.html">Contact</a>
-                            <a class="text-sky-600 hover:underline" href="privacy.html">Privacy</a>
-                            <a class="text-sky-600 hover:underline" href="terms.html">Terms</a>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-wrap gap-3" id="footer-social-links">
-                        <!-- Social links will be populated here -->
-                    </div>
-                </div>
-
-                <div class="border-t border-gray-200 mt-6 pt-6 text-center text-gray-600 text-sm">
-                    <p>&copy; 2025 Top Sarkari Jobs. All rights reserved.</p>
-                </div>
-            </div>
-        </footer>
-
-        <!-- WhatsApp Float Button -->
-        <div id="whatsapp-float" class="fixed bottom-6 right-6 z-50">
-            <button id="whatsapp-btn" class="bg-green-500 hover:bg-green-600 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110">
-                <i class="fab fa-whatsapp text-4xl"></i>
-            </button>
-        </div>
-
-        <!-- WhatsApp Chat Popup -->
-        <div id="whatsapp-popup" class="hidden fixed bottom-24 right-6 z-50 w-80 md:w-96 bg-white rounded-lg shadow-2xl overflow-hidden">
-            <div class="bg-green-500 text-white p-4 flex items-center justify-between">
-                <div class="flex items-center">
-                    <i class="fab fa-whatsapp text-2xl mr-3"></i>
-                    <div>
-                        <h3 class="font-bold text-lg">Top Sarkari Jobs</h3>
-                        <p class="text-xs text-green-100">Online</p>
-                    </div>
-                </div>
-                <button id="close-whatsapp" class="text-white hover:text-green-100 transition" aria-label="Close WhatsApp chat">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-
-            <div id="whatsapp-messages" class="bg-gray-50 p-4 space-y-3 max-h-96 overflow-y-auto">
-                <!-- Messages will be populated here -->
-            </div>
-        </div>
-
+      <div class="header-actions">
+        <button id="openSearchBtn" class="icon-btn" type="button" aria-label="Open search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+        <button id="menuBtn" class="icon-btn" type="button" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
     </div>
+  </header>
 
-    <script src="script.js"></script>
+  <section class="top-search">
+    <div class="container">
+      <div class="search-card">
+        <h2 class="search-title">Search across Top Sarkari Jobs</h2>
+        <p class="search-sub">Search jobs, categories, tools and services.</p>
+        <div class="search-row">
+          <input id="siteSearchInput" type="search" placeholder="Search…" autocomplete="off" />
+          <button id="siteSearchBtn" type="button" class="btn-primary">
+            <i class="fa-solid fa-magnifying-glass"></i> Search
+          </button>
+        </div>
+        <div id="searchResults" class="search-results" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
 
-    <!-- Mobile menu toggle fallback (safe) -->
-    <script>
-      const toggleBtn = document.getElementById("mobile-menu-toggle");
-      const mobileMenu = document.getElementById("mobile-menu");
-      if(toggleBtn && mobileMenu){
-        toggleBtn.addEventListener("click", () => {
-          mobileMenu.classList.toggle("hidden");
-        });
-      }
-    </script>
+  <main id="main" class="container page">
+    <section class="seo-block">
+      <h1 style="margin:0;">CSC Services</h1>
+      <p>Apply for various government services and documents using trusted service links.</p>
+    </section>
+
+    <section class="seo-block">
+      <h2>Service Request</h2>
+      <div id="servicesList" class="section-list"></div>
+    </section>
+
+    <section class="seo-block">
+      <h2>FAQs – CSC Services</h2>
+      <div class="faq-item">
+        <button type="button" class="faq-btn" aria-expanded="false">
+          <span>Are these service links official?</span>
+          <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="faq-panel" hidden>
+          We list service links from trusted sources. Please confirm details on the service portal before submitting any request.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-row">
+      <div>
+        <div class="footer-title">Top Sarkari Jobs</div>
+        <div class="footer-sub">Your gateway to government jobs and services</div>
+        <div class="footer-links">
+          <a href="about.html">About</a>
+          <a href="contact.html">Contact</a>
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
+        </div>
+      </div>
+      <div id="footer-social-links" class="footer-social"></div>
+    </div>
+    <div class="container footer-bottom">
+      © 2025 Top Sarkari Jobs. All rights reserved.
+    </div>
+  </footer>
+
+  <div id="menuOverlay" class="overlay" hidden></div>
+  <aside id="mobileMenu" class="offcanvas" aria-label="Mobile menu" hidden>
+    <div class="offcanvas-head">
+      <div class="offcanvas-title">Menu</div>
+      <button id="closeMenuBtn" class="icon-btn" type="button" aria-label="Close menu">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <nav class="offcanvas-nav" aria-label="Mobile primary">
+      <a href="index.html">Home</a>
+      <a href="govt-services.html">CSC Services</a>
+      <a href="tools.html">Tools</a>
+      <a href="helpdesk.html">Helpdesk</a>
+      <div class="offcanvas-cta" id="header-links-mobile"></div>
+    </nav>
+  </aside>
+
+  <script src="script.js"></script>
 </body>
-
 </html>
