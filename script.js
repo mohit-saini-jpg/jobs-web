@@ -8,20 +8,25 @@
   const safe = (v) => (v ?? "").toString().trim();
   const escRE = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-  // Ensure external URLs are clickable (fix missing scheme)
-  function normalizeExternalUrl(url) {
-    const u = safe(url);
-    if (!u) return "";
-    // already has scheme (http, https, mailto, tel, etc.)
-    if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(u)) return u;
-    // starts with //example.com
-    if (u.startsWith("//")) return "https:" + u;
-    // starts with www.example.com
-    if (/^www\./i.test(u)) return "https://" + u;
-    // otherwise treat as https domain if it looks like a domain
-    if (/^[\w-]+\.[\w.-]+/.test(u)) return "https://" + u;
-    // fallback (could be relative path)
-    return u;
+  // Fix URLs that are missing scheme (https://)
+  function normalizeExternalUrl(input) {
+    const url = safe(input);
+    if (!url) return "";
+
+    // already has scheme like https:, http:, mailto:, tel:, etc.
+    if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(url)) return url;
+
+    // protocol-relative //example.com
+    if (url.startsWith("//")) return "https:" + url;
+
+    // www.example.com
+    if (/^www\./i.test(url)) return "https://" + url;
+
+    // looks like a domain (example.com/...)
+    if (/^[\w-]+\.[\w.-]+/.test(url)) return "https://" + url;
+
+    // otherwise leave as-is (could be relative file)
+    return url;
   }
 
   // -------------------------
@@ -107,7 +112,7 @@
       document.documentElement.style.overflow = "hidden";
     };
 
-    // TOGGLE (fix "stuck" feeling when tapping menu again)
+    // ✅ Toggle (this is what your current script DOESN’T do)
     btn.addEventListener("click", (e) => {
       e.preventDefault();
       const isOpen = btn.getAttribute("aria-expanded") === "true" && !menu.hidden;
@@ -137,11 +142,8 @@
       if (window.innerWidth > 980) close();
     });
 
-    // Safety: close if page is being hidden/navigated (prevents overflow lock)
+    // Safety: prevents “scroll locked” stuck state on navigation
     window.addEventListener("pagehide", close);
-    document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "hidden") close();
-    });
 
     window.__closeMenu = close;
   }
@@ -196,12 +198,10 @@
       });
     });
 
-    // Click anywhere else closes
     document.addEventListener("click", (e) => {
       if (!e.target.closest("[data-dd]")) closeAll();
     });
 
-    // Escape closes
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") closeAll();
     });
@@ -298,295 +298,7 @@
   }
 
   // -------------------------
-  // Category pages (from jobs.json)
-  // -------------------------
-  function normalizeGroup(g) {
-    const v = (g || "").toLowerCase().trim();
-    const map = {
-      "study": "study",
-      "study-wise": "study",
-      "studywise": "study",
-      "popular": "popular",
-      "popular-jobs": "popular",
-      "state": "state",
-      "state-wise": "state",
-      "statewise": "state",
-      "admissions": "admissions",
-      "admission": "admissions",
-      "admit-result": "admit-result",
-      "admitresult": "admit-result",
-      "khabar": "khabar",
-      "news": "khabar",
-      "study-material": "study-material",
-      "courses": "study-material"
-    };
-    return map[v] || v || "study";
-  }
-
-  function groupMeta(group) {
-    const meta = {
-      "study": { title: "Study wise jobs", desc: "Browse government job links by education level: 8th pass, 10th pass, 12th pass, ITI, diploma, graduation and more." },
-      "popular": { title: "Popular job categories", desc: "Explore popular government job categories like SSC, Railway, Police, Bank, Teaching and more." },
-      "state": { title: "State wise jobs", desc: "Find state-wise government job links and recruitment updates." },
-      "admissions": { title: "Admissions", desc: "Admissions updates and official application links for universities, colleges and entrance exams." },
-      "admit-result": { title: "Admit Card / Result / Answer Key / Syllabus", desc: "Quick access to admit cards, results, answer keys and syllabus links from official sources." },
-      "khabar": { title: "Latest Khabar", desc: "Latest news and updates related to jobs, exams and government announcements." },
-      "study-material": { title: "Study Material & Top Courses", desc: "Study resources, notes, preparation links and recommended courses for government exams." }
-    };
-    return meta[group] || { title: "Category", desc: "Browse useful links and categories." };
-  }
-
-  async function renderCategoryPage() {
-    if (page !== "category.html") return;
-
-    const params = new URLSearchParams(location.search);
-    const group = normalizeGroup(params.get("group"));
-
-    const meta = groupMeta(group);
-    const titleEl = $("#categoryTitle");
-    const descEl = $("#categoryDesc");
-    const crumb = $("#crumbText");
-    if (titleEl) titleEl.textContent = meta.title;
-    if (descEl) descEl.textContent = meta.desc;
-    if (crumb) crumb.textContent = meta.title;
-
-    document.title = `${meta.title} | Top Sarkari Jobs`;
-
-    let jobs = null;
-    try {
-      const r = await fetch("jobs.json", { cache: "no-store" });
-      if (r.ok) jobs = await r.json();
-    } catch (_) {}
-
-    const grid = $("#categoryGrid");
-    const empty = $("#categoryEmpty");
-    const filter = $("#categoryFilter");
-    const clear = $("#clearCategoryFilter");
-
-    if (!grid) return;
-
-    if (!jobs) {
-      grid.innerHTML = "";
-      if (empty) empty.style.display = "block";
-      return;
-    }
-
-    const pool = []
-      .concat(Array.isArray(jobs.top_jobs) ? jobs.top_jobs : [])
-      .concat(Array.isArray(jobs.left_jobs) ? jobs.left_jobs : [])
-      .concat(Array.isArray(jobs.right_jobs) ? jobs.right_jobs : []);
-
-    const matchers = {
-      "study": [/study/i],
-      "popular": [/popular/i],
-      "state": [/state/i],
-      "admissions": [/admission/i],
-      "admit-result": [/admit/i, /result/i, /answer/i, /syllabus/i],
-      "khabar": [/khabar/i, /news/i],
-      "study-material": [/study material/i, /course/i, /notes?/i]
-    };
-
-    const reList = matchers[group] || [/.*/];
-
-    const blocks = [];
-    let currentHeading = null;
-    let items = [];
-
-    const flush = () => {
-      if (currentHeading && items.length) blocks.push({ heading: currentHeading, items: items.slice() });
-      currentHeading = null;
-      items = [];
-    };
-
-    for (const it of pool) {
-      if (it && typeof it.title === "string") {
-        flush();
-        const h = safe(it.title);
-        const ok = reList.some((re) => re.test(h));
-        currentHeading = ok ? h : null;
-        continue;
-      }
-      if (!currentHeading) continue;
-
-      const name = safe(it.name);
-      const url = it.url || it.link || "";
-      if (!name || !url) continue;
-
-      items.push({ name, url, external: !!it.external });
-    }
-    flush();
-
-    const render = (blocksToRender, q = "") => {
-      grid.classList.add("cat-grid");
-      grid.innerHTML = "";
-
-      if (!blocksToRender.length) {
-        if (empty) empty.style.display = "block";
-        return;
-      }
-      if (empty) empty.style.display = "none";
-
-      const colorMap = {
-        "study": "#2563eb",
-        "popular": "#db2777",
-        "state": "#059669",
-        "admissions": "#f59e0b",
-        "admit-result": "#ef4444",
-        "khabar": "#7c3aed",
-        "study-material": "#0ea5e9"
-      };
-      const color = colorMap[group] || "#0284c7";
-
-      blocksToRender.forEach((b) => {
-        const card = document.createElement("article");
-        card.className = "section-card";
-        card.innerHTML = `
-          <div class="section-head" style="background:${color}">
-            <div class="left">
-              <i class="fa-solid fa-layer-group"></i>
-              <span>${safe(b.heading)}</span>
-            </div>
-          </div>
-          <div class="section-body">
-            <div class="section-list"></div>
-          </div>
-        `;
-
-        const list = $(".section-list", card);
-        b.items.forEach((x) => {
-          const a = document.createElement("a");
-          a.className = "section-link";
-
-          // if external true => open direct
-          const href = x.external ? normalizeExternalUrl(x.url) : openInternal(x.url, x.name);
-          a.href = href;
-          if (x.external) {
-            a.target = "_blank";
-            a.rel = "noopener";
-          }
-
-          const qSafe = safe(q);
-          const name = qSafe
-            ? safe(x.name).replace(new RegExp(`(${escRE(qSafe)})`, "ig"), "<mark>$1</mark>")
-            : safe(x.name);
-
-          a.innerHTML = `
-            <div class="t">${name}</div>
-            <div class="d">Open official link</div>
-          `;
-          list.appendChild(a);
-        });
-
-        grid.appendChild(card);
-      });
-
-      renderCategorySEO(meta.title, meta.desc);
-    };
-
-    render(blocks);
-
-    if (filter) {
-      filter.addEventListener("input", () => {
-        const q = safe(filter.value).toLowerCase();
-        if (!q) {
-          render(blocks);
-          return;
-        }
-        const filtered = blocks
-          .map((b) => ({ heading: b.heading, items: b.items.filter((x) => safe(x.name).toLowerCase().includes(q)) }))
-          .filter((b) => b.items.length);
-        render(filtered, q);
-      });
-    }
-
-    if (clear) {
-      clear.addEventListener("click", () => {
-        if (!filter) return;
-        filter.value = "";
-        render(blocks);
-        filter.focus();
-      });
-    }
-  }
-
-  function renderCategorySEO(title, desc) {
-    const old = $("#categorySEO");
-    if (old) old.remove();
-
-    const main = $("#main");
-    if (!main) return;
-
-    const wrap = document.createElement("section");
-    wrap.id = "categorySEO";
-    wrap.className = "seo-block";
-    wrap.innerHTML = `
-      <h2>${title} – quick guide</h2>
-      <p>${desc}</p>
-
-      <div class="seo-grid">
-        <div class="seo-card">
-          <h3>How to use this page</h3>
-          <ul>
-            <li>Use the filter box to find a link faster.</li>
-            <li>Open the official link and confirm eligibility & dates.</li>
-            <li>Bookmark this page for quick access to updates.</li>
-          </ul>
-        </div>
-
-        <div class="seo-card">
-          <h3>Tips to avoid mistakes</h3>
-          <ul>
-            <li>Always apply from the official website.</li>
-            <li>Check last date, fee, and required documents carefully.</li>
-            <li>Keep your registration number and DOB ready for results/admit cards.</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="faq-wrap">
-        <div class="faq-card" style="box-shadow:none;border:1px solid var(--line);">
-          <h2>FAQs – ${title}</h2>
-          <p class="faq-sub">Common questions related to ${title.toLowerCase()}.</p>
-
-          <div class="faq-item">
-            <button type="button" class="faq-btn" aria-expanded="false">
-              <span>Are these links official?</span>
-              <i class="fas fa-chevron-down"></i>
-            </button>
-            <div class="faq-panel" hidden>
-              We aim to list official and trusted sources. Always verify details on the official portal before applying or downloading documents.
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <button type="button" class="faq-btn" aria-expanded="false">
-              <span>Why do dates sometimes change?</span>
-              <i class="fas fa-chevron-down"></i>
-            </button>
-            <div class="faq-panel" hidden>
-              Recruiting boards may revise schedules. Check the official notice for the latest updates.
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <button type="button" class="faq-btn" aria-expanded="false">
-              <span>How can I find a specific item quickly?</span>
-              <i class="fas fa-chevron-down"></i>
-            </button>
-            <div class="faq-panel" hidden>
-              Use the filter box on this page or the main site search at the top to locate jobs, results, admit cards, and categories.
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-    main.appendChild(wrap);
-
-    initFAQ();
-  }
-
-  // -------------------------
-  // CSC Services page (govt-services.html)
+  // CSC Services page (govt-services.html)  ✅ FIXED LINKS
   // -------------------------
   async function renderServicesPage() {
     if (page !== "govt-services.html") return;
@@ -672,16 +384,17 @@
           <div class="section-list"></div>
         </div>
       `;
+
       const list = $(".section-list", card);
 
       items.forEach((it) => {
         const name = safe(it.name);
-        const url = it.url || it.link || "";
-        if (!name || !url) return;
+        const rawUrl = it.url || it.link || "";
+        if (!name || !rawUrl) return;
 
         const a = document.createElement("a");
         a.className = "section-link";
-        a.href = it.external ? normalizeExternalUrl(url) : openInternal(url, name);
+        a.href = it.external ? normalizeExternalUrl(rawUrl) : openInternal(rawUrl, name);
         if (it.external) {
           a.target = "_blank";
           a.rel = "noopener";
@@ -699,193 +412,6 @@
   }
 
   // -------------------------
-  // Site search
-  // -------------------------
-  let SEARCH_INDEX = [];
-  let SEARCH_READY = false;
-
-  async function buildSearchIndex() {
-    if (SEARCH_READY) return;
-
-    const out = [];
-
-    try {
-      const r = await fetch("dynamic-sections.json", { cache: "no-store" });
-      if (r.ok) {
-        const d = await r.json();
-        (d.sections || []).forEach((sec) => {
-          (sec.items || []).forEach((it) => {
-            const title = safe(it.name);
-            const url = it.url || it.link || "";
-            if (!title || !url) return;
-            out.push({
-              title,
-              meta: safe(sec.title) || "Updates",
-              href: it.external ? normalizeExternalUrl(url) : openInternal(url, title),
-              external: !!it.external
-            });
-          });
-        });
-      }
-    } catch (_) {}
-
-    try {
-      const r = await fetch("jobs.json", { cache: "no-store" });
-      if (r.ok) {
-        const j = await r.json();
-        const pool = [...(j.top_jobs || []), ...(j.left_jobs || []), ...(j.right_jobs || [])];
-        pool.forEach((it) => {
-          if (it && it.title) return;
-          const title = safe(it.name);
-          const url = it.url || it.link || "";
-          if (!title || !url) return;
-          out.push({
-            title,
-            meta: "Jobs / Categories",
-            href: it.external ? normalizeExternalUrl(url) : openInternal(url, title),
-            external: !!it.external
-          });
-        });
-      }
-    } catch (_) {}
-
-    try {
-      const r = await fetch("tools.json", { cache: "no-store" });
-      if (r.ok) {
-        const t = await r.json();
-        ["image", "pdf", "video"].forEach((k) => {
-          (t[k] || []).forEach((it) => {
-            const title = safe(it.name);
-            const url = it.url || it.link || "";
-            if (!title || !url) return;
-            out.push({
-              title,
-              meta: "Tools",
-              href: it.external ? normalizeExternalUrl(url) : openInternal(url, title),
-              external: !!it.external
-            });
-          });
-        });
-      }
-    } catch (_) {}
-
-    try {
-      const r = await fetch("services.json", { cache: "no-store" });
-      if (r.ok) {
-        const s = await r.json();
-        const services = s.services || s || [];
-        (services || []).forEach((it) => {
-          const title = safe(it.name || it.service);
-          if (!title) return;
-          out.push({
-            title,
-            meta: "CSC Services",
-            href: "govt-services.html",
-            external: false
-          });
-        });
-      }
-    } catch (_) {}
-
-    const seen = new Set();
-    SEARCH_INDEX = out.filter((x) => {
-      const k = (x.title + "|" + x.href).toLowerCase();
-      if (seen.has(k)) return false;
-      seen.add(k);
-      return true;
-    });
-
-    SEARCH_READY = true;
-  }
-
-  function initSearch() {
-    const input = $("#siteSearchInput");
-    const btn = $("#siteSearchBtn");
-    const results = $("#searchResults");
-    const openBtn = $("#openSearchBtn");
-
-    if (!input || !btn || !results) return;
-
-    const run = async () => {
-      const q = safe(input.value);
-      if (!q) {
-        results.classList.remove("open");
-        results.innerHTML = "";
-        return;
-      }
-
-      await buildSearchIndex();
-
-      const ql = q.toLowerCase();
-      const matches = SEARCH_INDEX
-        .filter((x) => x.title.toLowerCase().includes(ql) || x.meta.toLowerCase().includes(ql))
-        .slice(0, 25);
-
-      if (!matches.length) {
-        results.classList.add("open");
-        results.innerHTML = `
-          <div class="result-item">
-            <div>
-              <div class="result-title">No results found</div>
-              <div class="result-meta">Try a different keyword.</div>
-            </div>
-          </div>
-        `;
-        return;
-      }
-
-      const re = new RegExp(`(${escRE(q)})`, "ig");
-      results.classList.add("open");
-      results.innerHTML = matches
-        .map((m) => {
-          const title = safe(m.title).replace(re, "<mark>$1</mark>");
-          return `
-          <a class="result-item" href="${m.href}" ${m.external ? `target="_blank" rel="noopener"` : ""}>
-            <div>
-              <div class="result-title">${title}</div>
-              <div class="result-meta">${safe(m.meta)}</div>
-            </div>
-            <div class="result-meta">${m.external ? "↗" : "→"}</div>
-          </a>
-        `;
-        })
-        .join("");
-    };
-
-    btn.addEventListener("click", run);
-    input.addEventListener("input", debounce(run, 150));
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") run();
-      if (e.key === "Escape") {
-        results.classList.remove("open");
-        results.innerHTML = "";
-        input.blur();
-      }
-    });
-
-    document.addEventListener("click", (e) => {
-      if (!e.target.closest(".search-card")) {
-        results.classList.remove("open");
-      }
-    });
-
-    if (openBtn) {
-      openBtn.addEventListener("click", () => {
-        input.scrollIntoView({ behavior: "smooth", block: "center" });
-        setTimeout(() => input.focus(), 150);
-      });
-    }
-  }
-
-  function debounce(fn, wait) {
-    let t = null;
-    return (...args) => {
-      clearTimeout(t);
-      t = setTimeout(() => fn(...args), wait);
-    };
-  }
-
-  // -------------------------
   // Boot
   // -------------------------
   document.addEventListener("DOMContentLoaded", async () => {
@@ -893,13 +419,11 @@
     initOffcanvas();
     initDropdowns();
     initFAQ();
-    initSearch();
 
     if (page === "index.html" || page === "") {
       await renderHomepageSections();
     }
 
-    await renderCategoryPage();
     await renderServicesPage();
     await renderToolsPage();
   });
