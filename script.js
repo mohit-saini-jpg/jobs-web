@@ -1,3 +1,4 @@
+```javascript
 (() => {
   "use strict";
 
@@ -65,7 +66,7 @@
   }
 
   // -------------------------
-  // Offcanvas menu (UPDATED: toggle open/close, not stuck)
+  // Offcanvas menu (FIXED: always closes, no overlap)
   // -------------------------
   function initOffcanvas(){
     const btn = $("#menuBtn");
@@ -89,14 +90,11 @@
       document.body.style.overflow = "hidden";
     };
 
-    // ✅ FIX: TOGGLE (your old code was "open only")
-    btn.addEventListener("click", (e)=>{
-      e.preventDefault();
-      const isOpen = (btn.getAttribute("aria-expanded") === "true") && !menu.hidden;
-      if(isOpen) close();
+    btn.addEventListener("click", () => {
+      const expanded = btn.getAttribute("aria-expanded") === "true";
+      if (expanded) close();
       else open();
     });
-
     closeBtn.addEventListener("click", close);
     overlay.addEventListener("click", close);
 
@@ -265,6 +263,8 @@
 
   // -------------------------
   // Category pages (from jobs.json)
+  // - requested 3-column layout: handled by CSS .cat-grid
+  // - add SEO + FAQs automatically at bottom
   // -------------------------
   function normalizeGroup(g){
     const v=(g||"").toLowerCase().trim();
@@ -337,231 +337,149 @@
     if(descEl) descEl.textContent = meta.desc;
     if(crumb) crumb.textContent = meta.title;
 
-    document.title = `${meta.title} | Top Sarkari Jobs`;
-
-    let jobs=null;
-    try{
-      const r=await fetch("jobs.json",{ cache:"no-store" });
-      if(r.ok) jobs=await r.json();
-    }catch(_){}
-
+    const input=$("#categoryFilter");
+    const clearBtn=$("#clearCategoryFilter");
     const grid=$("#categoryGrid");
     const empty=$("#categoryEmpty");
-    const filter=$("#categoryFilter");
-    const clear=$("#clearCategoryFilter");
 
     if(!grid) return;
 
-    if(!jobs){
-      grid.innerHTML="";
-      if(empty) empty.style.display="block";
+    let data={};
+    try{
+      const r=await fetch("jobs.json",{ cache:"no-store" });
+      if(r.ok) data=await r.json();
+    }catch(_){}
+
+    grid.innerHTML="";
+
+    const groups = (data[group] || data.categories || []).filter(g => g.name && g.items);
+    if(!groups.length){
+      grid.innerHTML = `<div class="seo-block"><strong>No items found.</strong><p>Please check jobs.json for "${group}".</p></div>`;
       return;
     }
 
-    const pool=[]
-      .concat(Array.isArray(jobs.top_jobs)?jobs.top_jobs:[])
-      .concat(Array.isArray(jobs.left_jobs)?jobs.left_jobs:[])
-      .concat(Array.isArray(jobs.right_jobs)?jobs.right_jobs:[]);
+    groups.forEach(g=>{
+      const title=safe(g.name)||"Category";
+      const color=safe(g.color)||"#0284c7";
 
-    const matchers={
-      "study":[/study/i],
-      "popular":[/popular/i],
-      "state":[/state/i],
-      "admissions":[/admission/i],
-      "admit-result":[/admit/i, /result/i, /answer/i, /syllabus/i],
-      "khabar":[/khabar/i, /news/i],
-      "study-material":[/study material/i, /course/i, /notes?/i]
-    };
-
-    const reList = matchers[group] || [/.*/];
-
-    const blocks=[];
-    let currentHeading=null;
-    let items=[];
-
-    const flush=()=>{
-      if(currentHeading && items.length){
-        blocks.push({ heading: currentHeading, items: items.slice() });
-      }
-      currentHeading=null;
-      items=[];
-    };
-
-    for(const it of pool){
-      if(it && typeof it.title==="string"){
-        flush();
-        const h=safe(it.title);
-        const ok=reList.some(re=>re.test(h));
-        currentHeading = ok ? h : null;
-        continue;
-      }
-      if(!currentHeading) continue;
-
-      const name=safe(it.name);
-      const url=it.url || it.link || "";
-      if(!name || !url) continue;
-
-      items.push({ name, url, external: !!it.external });
-    }
-    flush();
-
-    const render=(blocksToRender, q="")=>{
-      grid.classList.add("cat-grid");
-      grid.innerHTML="";
-
-      if(!blocksToRender.length){
-        if(empty) empty.style.display="block";
-        return;
-      }
-      if(empty) empty.style.display="none";
-
-      const colorMap={
-        "study":"#2563eb",
-        "popular":"#db2777",
-        "state":"#059669",
-        "admissions":"#f59e0b",
-        "admit-result":"#ef4444",
-        "khabar":"#7c3aed",
-        "study-material":"#0ea5e9"
-      };
-      const color=colorMap[group] || "#0284c7";
-
-      blocksToRender.forEach(b=>{
-        const card=document.createElement("article");
-        card.className="section-card";
-        card.innerHTML=`
-          <div class="section-head" style="background:${color}">
-            <div class="left">
-              <i class="fa-solid fa-layer-group"></i>
-              <span>${safe(b.heading)}</span>
-            </div>
+      const card=document.createElement("article");
+      card.className="section-card";
+      card.innerHTML=`
+        <div class="section-head" style="background:${color}">
+          <div class="left">
+            <i class="fa-solid fa-briefcase"></i>
+            <span>${title}</span>
           </div>
-          <div class="section-body">
-            <div class="section-list"></div>
-          </div>
+        </div>
+        <div class="section-body">
+          <div class="section-list"></div>
+        </div>
+      `;
+
+      const list=$(".section-list", card);
+      const items=Array.isArray(g.items) ? g.items : [];
+      items.forEach(it=>{
+        const name=safe(it.name)||"Open";
+        const url=it.url||it.link||"";
+        if(!url) return;
+        const external=!!it.external;
+
+        const a=document.createElement("a");
+        a.className="section-link";
+        a.href = external ? url : openInternal(url, name);
+        if(external){ a.target="_blank"; a.rel="noopener"; }
+
+        a.innerHTML=`
+          <div class="t">${name}</div>
+          ${it.date ? `<div class="d">${safe(it.date)}</div>` : `<div class="d">Open official link</div>`}
         `;
-
-        const list=$(".section-list", card);
-        b.items.forEach(x=>{
-          const a=document.createElement("a");
-          a.className="section-link";
-
-          const href = x.external ? x.url : openInternal(x.url, x.name);
-          a.href=href;
-          if(x.external){ a.target="_blank"; a.rel="noopener"; }
-
-          const qSafe=safe(q);
-          const name = qSafe
-            ? safe(x.name).replace(new RegExp(`(${escRE(qSafe)})`, "ig"), "<mark>$1</mark>")
-            : safe(x.name);
-
-          a.innerHTML=`
-            <div class="t">${name}</div>
-            <div class="d">Open official link</div>
-          `;
-          list.appendChild(a);
-        });
-
-        grid.appendChild(card);
+        list.appendChild(a);
       });
 
-      renderCategorySEO(meta.title, meta.desc, group);
+      grid.appendChild(card);
+    });
+
+    const filterCategory = () => {
+      const q = safe(input.value).toLowerCase();
+      let count = 0;
+
+      $$(".section-card", grid).forEach(card => {
+        const items = $$(".section-link", card);
+        items.forEach(it => {
+          const text = it.textContent.toLowerCase();
+          it.style.display = text.includes(q) ? "" : "none";
+        });
+        const visible = items.filter(it => it.style.display !== "none").length;
+        card.style.display = visible > 0 ? "" : "none";
+        count += visible;
+      });
+
+      if(empty) empty.style.display = count === 0 ? "" : "none";
     };
 
-    render(blocks);
+    if(input){
+      input.addEventListener("input", debounce(filterCategory, 150));
+    }
 
-    if(filter){
-      filter.addEventListener("input", ()=>{
-        const q=safe(filter.value).toLowerCase();
-        if(!q){ render(blocks); return; }
-        const filtered = blocks
-          .map(b=>({ heading:b.heading, items:b.items.filter(x=>safe(x.name).toLowerCase().includes(q)) }))
-          .filter(b=>b.items.length);
-        render(filtered, q);
+    if(clearBtn){
+      clearBtn.addEventListener("click", () => {
+        input.value = "";
+        filterCategory();
       });
     }
 
-    if(clear){
-      clear.addEventListener("click", ()=>{
-        if(!filter) return;
-        filter.value="";
-        render(blocks);
-        filter.focus();
-      });
-    }
-  }
-
-  function renderCategorySEO(title, desc, group){
-    const old=$("#categorySEO");
-    if(old) old.remove();
-
-    const main=$("#main");
+    // Inject SEO/FAQ at bottom of main
+    const main = $("main");
     if(!main) return;
 
-    const wrap=document.createElement("section");
-    wrap.id="categorySEO";
-    wrap.className="seo-block";
-    wrap.innerHTML=`
-      <h2>${title} – quick guide</h2>
-      <p>${desc}</p>
-      <div class="seo-grid">
-        <div class="seo-card">
-          <h3>How to use this page</h3>
-          <ul>
-            <li>Use the filter box to find a link faster.</li>
-            <li>Open the official link and confirm eligibility & dates.</li>
-            <li>Bookmark this page for quick access to updates.</li>
-          </ul>
-        </div>
-        <div class="seo-card">
-          <h3>Tips to avoid mistakes</h3>
-          <ul>
-            <li>Always apply from the official website.</li>
-            <li>Check last date, fee, and required documents carefully.</li>
-            <li>Keep your registration number and DOB ready for results/admit cards.</li>
-          </ul>
-        </div>
-      </div>
-      <div class="faq-wrap">
-        <div class="faq-card" style="box-shadow:none;border:1px solid var(--line);">
-          <h2>FAQs – ${title}</h2>
-          <p class="faq-sub">Common questions related to ${title.toLowerCase()}.</p>
-          <div class="faq-item">
-            <button type="button" class="faq-btn" aria-expanded="false">
-              <span>Are these links official?</span>
-              <i class="fas fa-chevron-down"></i>
-            </button>
-            <div class="faq-panel" hidden>
-              We aim to list official and trusted sources. Always verify details on the official portal before applying or downloading documents.
-            </div>
+    const wrap = document.createElement("section");
+    wrap.className = "faq-wrap";
+    wrap.setAttribute("aria-label", "FAQ");
+    wrap.innerHTML = `
+      <div class="faq-card">
+        <h2>FAQs – ${meta.title}</h2>
+        <p class="faq-sub">Common questions about this category.</p>
+
+        <div class="faq-item">
+          <button type="button" class="faq-btn" aria-expanded="false">
+            <span>Are these links official?</span>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-panel" hidden>
+            We aim to list official and trusted sources. Always verify details on the official portal before applying or downloading documents.
           </div>
-          <div class="faq-item">
-            <button type="button" class="faq-btn" aria-expanded="false">
-              <span>Why do dates sometimes change?</span>
-              <i class="fas fa-chevron-down"></i>
-            </button>
-            <div class="faq-panel" hidden>
-              Recruiting boards may revise schedules. Check the official notice for the latest updates.
-            </div>
+        </div>
+
+        <div class="faq-item">
+          <button type="button" class="faq-btn" aria-expanded="false">
+            <span>Why do dates sometimes change?</span>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-panel" hidden>
+            Recruiting boards may revise schedules. Check the official notice for the latest updates.
           </div>
-          <div class="faq-item">
-            <button type="button" class="faq-btn" aria-expanded="false">
-              <span>How can I find a specific item quickly?</span>
-              <i class="fas fa-chevron-down"></i>
-            </button>
-            <div class="faq-panel" hidden>
-              Use the filter box on this page or the main site search at the top to locate jobs, results, admit cards, and categories.
-            </div>
+        </div>
+
+        <div class="faq-item">
+          <button type="button" class="faq-btn" aria-expanded="false">
+            <span>How can I find a specific item quickly?</span>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-panel" hidden>
+            Use the filter box on this page or the main site search at the top to locate jobs, results, admit cards, and categories.
           </div>
         </div>
       </div>
     `;
     main.appendChild(wrap);
+
+    // re-bind FAQ buttons inside the injected block
     initFAQ();
   }
 
   // -------------------------
   // CSC Services page (govt-services.html)
+  // Rebuild the missing list from services.json
   // -------------------------
   async function renderServicesPage(){
     if(page !== "govt-services.html") return;
@@ -583,6 +501,7 @@
       return;
     }
 
+    // Render as clean cards
     services.forEach(s=>{
       const name=safe(s.name || s.service);
       const url=s.url || s.link || "";
@@ -603,6 +522,7 @@
 
   // -------------------------
   // Tools page (tools.html)
+  // Render tools.json (image/pdf/video arrays)
   // -------------------------
   async function renderToolsPage(){
     if(page !== "tools.html") return;
@@ -679,6 +599,7 @@
 
     const out=[];
 
+    // dynamic sections
     try{
       const r=await fetch("dynamic-sections.json",{ cache:"no-store" });
       if(r.ok){
@@ -699,6 +620,7 @@
       }
     }catch(_){}
 
+    // jobs.json (all links)
     try{
       const r=await fetch("jobs.json",{ cache:"no-store" });
       if(r.ok){
@@ -719,6 +641,7 @@
       }
     }catch(_){}
 
+    // tools.json
     try{
       const r=await fetch("tools.json",{ cache:"no-store" });
       if(r.ok){
@@ -739,6 +662,7 @@
       }
     }catch(_){}
 
+    // services.json (titles only)
     try{
       const r=await fetch("services.json",{ cache:"no-store" });
       if(r.ok){
@@ -757,6 +681,7 @@
       }
     }catch(_){}
 
+    // de-dup
     const seen=new Set();
     SEARCH_INDEX = out.filter(x=>{
       const k=(x.title+"|"+x.href).toLowerCase();
@@ -873,3 +798,4 @@
   });
 
 })();
+```
