@@ -108,10 +108,12 @@ a:hover{ text-decoration:underline; }
 /* Desktop dropdown */
 .nav-dd{ position:relative; }
 .nav-dd-btn{ display:flex; align-items:center; gap:8px; cursor:pointer; border:none; }
+
 .nav-dd-menu{
   position:absolute;
   top:calc(100% + 10px);
   right:0;
+  left:auto;
   min-width:260px;
   background:#fff;
   color:var(--text);
@@ -122,6 +124,18 @@ a:hover{ text-decoration:underline; }
   display:none;
   z-index:60;
 }
+
+/* ✅ FIX: invisible “hover bridge” so menu doesn’t disappear when moving cursor down */
+.nav-dd-menu::before{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  top:-10px;     /* must match the gap size in top:calc(100% + 10px) */
+  height:10px;
+  background:transparent;
+}
+
 .nav-dd-menu.open{ display:block; }
 .nav-dd-item{
   display:block;
