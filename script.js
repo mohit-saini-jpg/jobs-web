@@ -21,123 +21,141 @@
     );
   };
 
+  // ---- URL normalization (Fix: links not opening when url missing scheme) ----
+  function normalizeUrl(raw) {
+    const url = safe(raw);
+    if (!url) return "";
+    if (url.startsWith("http://") || url.startsWith("https://")) return url;
+    if (url.startsWith("//")) return "https:" + url;
+    if (url.startsWith("www.")) return "https://" + url;
+    // If it's a relative URL like "page.html" keep it as is.
+    return url;
+  }
+
   // -------------------------
   // Header/footer links (from header_links.json)
   // -------------------------
   async function loadHeaderLinks(){
-    let data = { header_links:[], social_links:[] };
+    let data = null;
+
     try{
-      const r = await fetch("header_links.json", { cache:"no-store" });
-      if(r.ok) data = await r.json();
-    }catch(_){}
+      const res = await fetch("header_links.json", { cache: "no-store" });
+      if(!res.ok) throw new Error("header_links.json not found");
+      data = await res.json();
+    }catch(err){
+      // Fail silently (site should still work even without JSON)
+      data = null;
+    }
 
-    const desktop = $("#header-links");
-    const mobile = $("#header-links-mobile");
-    const footerSocial = $("#footer-social-links");
+    if(!data) return;
 
-    const links = Array.isArray(data.header_links) ? data.header_links : [];
-    const socials = Array.isArray(data.social_links) ? data.social_links : [];
-
-    if(desktop){
-      desktop.innerHTML = "";
-      links.forEach(l=>{
-        const a=document.createElement("a");
-        a.className="nav-link";
-        a.href = l.link || l.url || "#";
-        a.target="_blank";
-        a.rel="noopener";
-        a.textContent = l.name || "Link";
-        desktop.appendChild(a);
+    // Desktop CTA links
+    const ctaWrap = $(".header-cta");
+    if(ctaWrap && Array.isArray(data.ctas)){
+      ctaWrap.innerHTML = "";
+      data.ctas.forEach(item=>{
+        const a = document.createElement("a");
+        a.className = "nav-link";
+        a.href = normalizeUrl(item.url) || "#";
+        a.textContent = safe(item.name) || "Link";
+        a.rel = "noopener";
+        ctaWrap.appendChild(a);
       });
     }
 
-    if(mobile){
-      mobile.innerHTML = "";
-      links.forEach(l=>{
-        const a=document.createElement("a");
-        a.href = l.link || l.url || "#";
-        a.target="_blank";
-        a.rel="noopener";
-        a.textContent = l.name || "Link";
-        mobile.appendChild(a);
-      });
-    }
-
-    if(footerSocial){
-      footerSocial.innerHTML = "";
-      socials.forEach(s=>{
-        const a=document.createElement("a");
-        a.className="nav-link";
-        a.href = s.url || "#";
-        a.target="_blank";
-        a.rel="noopener";
-        a.textContent = s.name || "Social";
-        footerSocial.appendChild(a);
+    // Footer quick links
+    const footerLinks = $(".footer-links");
+    if(footerLinks && Array.isArray(data.footerLinks)){
+      footerLinks.innerHTML = "";
+      data.footerLinks.forEach(item=>{
+        const a = document.createElement("a");
+        a.href = normalizeUrl(item.url) || "#";
+        a.textContent = safe(item.name) || "Link";
+        a.rel = "noopener";
+        footerLinks.appendChild(a);
       });
     }
   }
 
   // -------------------------
-  // Offcanvas (mobile menu)
+  // Offcanvas menu (mobile)
   // -------------------------
   function initOffcanvas(){
-    const overlay = $("#menuOverlay");
-    const menu = $("#mobileMenu");
-    const openBtn = $("#menuBtn");
-    const closeBtn = $("#closeMenuBtn");
+    const openBtn = $("#openMenu");
+    const closeBtn = $("#closeMenu");
+    const drawer = $("#mobileDrawer");
+    const overlay = $("#drawerOverlay");
 
-    if(!overlay || !menu || !openBtn || !closeBtn) return;
+    if(!openBtn || !closeBtn || !drawer || !overlay) return;
 
     const open = () => {
+      drawer.hidden = false;
       overlay.hidden = false;
-      menu.hidden = false;
-      openBtn.setAttribute("aria-expanded","true");
       document.body.style.overflow = "hidden";
     };
 
     const close = () => {
+      drawer.hidden = true;
       overlay.hidden = true;
-      menu.hidden = true;
-      openBtn.setAttribute("aria-expanded","false");
       document.body.style.overflow = "";
     };
 
     openBtn.addEventListener("click", open);
     closeBtn.addEventListener("click", close);
     overlay.addEventListener("click", close);
-
     document.addEventListener("keydown", (e)=>{
       if(e.key === "Escape") close();
     });
-
-    window.addEventListener("resize", ()=>{
-      if(window.innerWidth > 980) close();
-    });
-
-    window.__closeMenu = close;
   }
 
   // -------------------------
-  // Desktop dropdowns
+  // Dropdowns (Desktop)
+  // FIXED: does not disappear when moving cursor into dropdown items
   // -------------------------
   function initDropdowns(){
     const dds = $$("[data-dd]");
     if(!dds.length) return;
 
+    // Keep small close timers per dropdown so the menu doesn't vanish
+    // when the cursor moves from the button into the dropdown panel.
+    const timers = new WeakMap();
+
+    const closeOne = (dd) => {
+      const btn = $(".nav-dd-btn", dd);
+      const menu = $(".nav-dd-menu", dd);
+      if(btn && menu){
+        btn.setAttribute("aria-expanded","false");
+        menu.classList.remove("open");
+      }
+    };
+
+    const clearTimer = (dd) => {
+      const t = timers.get(dd);
+      if(t){
+        clearTimeout(t);
+        timers.delete(dd);
+      }
+    };
+
+    const scheduleClose = (dd) => {
+      clearTimer(dd);
+      // delay prevents flicker when crossing tiny gaps
+      timers.set(dd, setTimeout(() => {
+        closeOne(dd);
+        timers.delete(dd);
+      }, 250));
+    };
+
     const closeAll = () => {
       dds.forEach(dd=>{
-        const btn=$(".nav-dd-btn", dd);
-        const menu=$(".nav-dd-menu", dd);
-        if(btn && menu){
-          btn.setAttribute("aria-expanded","false");
-          menu.classList.remove("open");
-        }
+        clearTimer(dd);
+        closeOne(dd);
       });
     };
 
     dds.forEach(dd=>{
-      const btn=$(".nav-dd-btn", dd);
-      const menu=$(".nav-dd-menu", dd);
+      const btn = $(".nav-dd-btn", dd);
+      const menu = $(".nav-dd-menu", dd);
       if(!btn || !menu) return;
 
       btn.addEventListener("click",(e)=>{
@@ -152,6 +170,7 @@
 
       dd.addEventListener("mouseenter",()=>{
         if(window.matchMedia("(hover:hover)").matches){
+          clearTimer(dd);
           closeAll();
           menu.classList.add("open");
           btn.setAttribute("aria-expanded","true");
@@ -160,10 +179,13 @@
 
       dd.addEventListener("mouseleave",()=>{
         if(window.matchMedia("(hover:hover)").matches){
-          menu.classList.remove("open");
-          btn.setAttribute("aria-expanded","false");
+          scheduleClose(dd);
         }
       });
+
+      // If the cursor enters the menu, keep it open
+      menu.addEventListener("mouseenter",()=> clearTimer(dd));
+      menu.addEventListener("mousemove",()=> clearTimer(dd));
     });
 
     document.addEventListener("click",(e)=>{
@@ -181,251 +203,233 @@
     $$(".faq-btn").forEach(btn=>{
       btn.addEventListener("click",()=>{
         const expanded = btn.getAttribute("aria-expanded")==="true";
-        $$(".faq-btn").forEach(b=>{
-          b.setAttribute("aria-expanded","false");
-          const p=b.parentElement.querySelector(".faq-panel");
-          if(p) p.hidden=true;
-        });
-        if(!expanded){
-          btn.setAttribute("aria-expanded","true");
-          const p=btn.parentElement.querySelector(".faq-panel");
-          if(p) p.hidden=false;
-        }
+        btn.setAttribute("aria-expanded", expanded ? "false" : "true");
       });
     });
   }
 
   // -------------------------
-  // View helper
-  // -------------------------
-  function openInternal(url, name){
-    return `view.html?url=${encodeURIComponent(url)}&name=${encodeURIComponent(name)}`;
-  }
-
-  // -------------------------
-  // Homepage big sections (dynamic-sections.json)
-  // -------------------------
-  async function renderHomepageSections(){
-    const wrap = $("#dynamic-sections");
-    if(!wrap) return;
-
-    let data={ sections:[] };
-    try{
-      const r=await fetch("dynamic-sections.json",{ cache:"no-store" });
-      if(r.ok) data=await r.json();
-    }catch(_){}
-
-    wrap.innerHTML="";
-
-    (data.sections||[]).forEach(sec=>{
-      const title=safe(sec.title)||"Updates";
-      const color=safe(sec.color)||"#0284c7";
-      const icon=safe(sec.icon)||"fa-solid fa-briefcase";
-
-      const card=document.createElement("article");
-      card.className="section-card";
-      card.innerHTML=`
-        <div class="section-head" style="background:${color}">
-          <div class="left">
-            <i class="${icon}"></i>
-            <span>${title}</span>
-          </div>
-        </div>
-        <div class="section-body">
-          <div class="section-list"></div>
-          ${sec.viewMoreUrl ? `<a class="view-all" href="${openInternal(sec.viewMoreUrl, title)}">View All <i class="fa-solid fa-arrow-right"></i></a>` : ""}
-        </div>
-      `;
-
-      const list=$(".section-list", card);
-      const items=Array.isArray(sec.items) ? sec.items.slice(0,8) : [];
-      items.forEach(it=>{
-        const name=safe(it.name)||"Open";
-        const url=it.url||it.link||"";
-        if(!url) return;
-
-        if(isHomePageCta(name, url)) return;
-
-        const external=!!it.external;
-
-        const a=document.createElement("a");
-        a.className="section-link";
-        a.href = external ? url : openInternal(url, name);
-        if(external){ a.target="_blank"; a.rel="noopener"; }
-
-        a.innerHTML=`
-          <div class="t">${name}</div>
-          ${it.date ? `<div class="d">${safe(it.date)}</div>` : `<div class="d">Open official link</div>`}
-        `;
-        list.appendChild(a);
-      });
-
-      wrap.appendChild(card);
-    });
-  }
-
-  // -------------------------
-  // Search
+  // Search (simple)
   // -------------------------
   function initSearch(){
-    const input = $("#siteSearchInput");
-    const btn = $("#siteSearchBtn");
-    const results = $("#searchResults");
-    const openBtn = $("#openSearchBtn");
+    const input = $("#searchInput");
+    const btn = $("#searchBtn");
+    const wrap = $("#searchResults");
+    if(!input || !btn || !wrap) return;
 
-    if(!input || !btn || !results) return;
+    const items = $$(".section-link").map(a => ({
+      el: a,
+      title: safe($(".t", a)?.textContent),
+      desc: safe($(".d", a)?.textContent),
+      href: a.getAttribute("href") || "#"
+    }));
 
-    const index = [
-      { title:"Home", href:"index.html", meta:"Top Sarkari Jobs home" },
-      { title:"Results", href:"result.html", meta:"Latest results" },
-      { title:"CSC Services", href:"govt-services.html", meta:"Common Service Center services" },
-      { title:"Tools", href:"tools.html", meta:"Useful tools" },
-      { title:"Helpdesk", href:"helpdesk.html", meta:"Support and guides" },
-      { title:"Study wise jobs", href:"category.html?group=study", meta:"Jobs by education level" },
-      { title:"Popular job categories", href:"category.html?group=popular", meta:"Top categories" },
-      { title:"State wise jobs", href:"category.html?group=state", meta:"Jobs by state" },
-      { title:"Admissions", href:"category.html?group=admissions", meta:"Admissions and forms" },
-      { title:"Admit Card / Result / Answer Key / Syllabus", href:"category.html?group=admit-result", meta:"Admit/result/syllabus" },
-      { title:"Latest Khabar", href:"category.html?group=khabar", meta:"News & updates" },
-      { title:"Study Material & Top Courses", href:"category.html?group=study-material", meta:"Courses & material" }
-    ];
+    const highlight = (text, q) => {
+      if(!q) return text;
+      const re = new RegExp(`(${escRE(q)})`, "ig");
+      return text.replace(re, "<mark>$1</mark>");
+    };
 
-    const run = () => {
-      const q = safe(input.value).toLowerCase();
-      if(!q){
-        results.classList.remove("open");
-        results.innerHTML="";
+    const render = (q) => {
+      const query = safe(q);
+      if(!query){
+        wrap.classList.remove("open");
+        wrap.innerHTML = "";
         return;
       }
 
-      const matches = index.filter(x =>
-        safe(x.title).toLowerCase().includes(q) ||
-        safe(x.meta).toLowerCase().includes(q)
+      const qLower = query.toLowerCase();
+      const results = items.filter(it =>
+        it.title.toLowerCase().includes(qLower) || it.desc.toLowerCase().includes(qLower)
       ).slice(0, 12);
 
-      if(!matches.length){
-        results.classList.add("open");
-        results.innerHTML = `
-          <div class="result-item">
-            <div>
-              <div class="result-title">No results found</div>
-              <div class="result-meta">Try a different keyword.</div>
-            </div>
-          </div>
-        `;
+      if(!results.length){
+        wrap.classList.add("open");
+        wrap.innerHTML = `<div class="result-meta">No results found for "<b>${query}</b>"</div>`;
         return;
       }
 
-      const re=new RegExp(`(${escRE(q)})`, "ig");
-      results.classList.add("open");
-      results.innerHTML = matches.map(m=>{
-        const title = safe(m.title).replace(re, "<mark>$1</mark>");
-        return `
-          <a class="result-item" href="${m.href}" ${m.external ? `target="_blank" rel="noopener"` : ""}>
-            <div>
-              <div class="result-title">${title}</div>
-              <div class="result-meta">${safe(m.meta)}</div>
-            </div>
-            <div class="result-meta">${m.external ? "↗" : "→"}</div>
-          </a>
-        `;
-      }).join("");
+      wrap.classList.add("open");
+      wrap.innerHTML = results.map(it => `
+        <a class="result-item" href="${it.href}">
+          <div>
+            <div class="result-title">${highlight(it.title, query)}</div>
+            <div class="result-meta">${highlight(it.desc, query)}</div>
+          </div>
+          <div class="result-meta">Open</div>
+        </a>
+      `).join("");
     };
 
-    btn.addEventListener("click", run);
-    input.addEventListener("input", debounce(run, 150));
-    input.addEventListener("keydown",(e)=>{
-      if(e.key==="Enter") run();
-      if(e.key==="Escape"){
-        results.classList.remove("open");
-        results.innerHTML="";
-        input.blur();
-      }
+    btn.addEventListener("click", ()=> render(input.value));
+    input.addEventListener("keydown", (e)=>{
+      if(e.key === "Enter") render(input.value);
     });
-
-    document.addEventListener("click",(e)=>{
-      if(!e.target.closest(".search-card")){
-        results.classList.remove("open");
-      }
-    });
-
-    if(openBtn){
-      openBtn.addEventListener("click", ()=>{
-        input.scrollIntoView({ behavior:"smooth", block:"center" });
-        setTimeout(()=>input.focus(), 150);
-      });
-    }
   }
 
-  function debounce(fn, wait){
-    let t=null;
-    return (...args)=>{
-      clearTimeout(t);
-      t=setTimeout(()=>fn(...args), wait);
-    };
-  }
+  // ---- Homepage JSON render ----
+  async function renderHomepage(){
+    if(page !== "index.html") return;
 
-  // -------------------------
-  // Category page renderer (if present)
-  // -------------------------
-  async function renderCategoryPage(){
-    if(page !== "category.html") return;
-    // existing logic in your file continues (unchanged in behavior)
-    // (Your uploaded script.js already contains this in full; keep as-is beyond this point if you have more code)
-  }
+    const leftCol = $("#leftCol");
+    const rightCol = $("#rightCol");
 
-  // -------------------------
-  // CSC Services page renderer (if present)
-  // -------------------------
-  async function renderServicesPage(){
-    if(page !== "govt-services.html") return;
+    if(!leftCol || !rightCol) return;
 
-    const list=$("#servicesList");
-    if(!list) return;
-
-    let data=null;
+    let data = null;
     try{
-      const r=await fetch("services.json",{ cache:"no-store" });
-      if(r.ok) data=await r.json();
-    }catch(_){}
-
-    const services = (data && (data.services || data)) || [];
-    list.innerHTML="";
-
-    if(!Array.isArray(services) || !services.length){
-      list.innerHTML = `<div class="seo-block"><strong>No services found.</strong><p>Please check services.json.</p></div>`;
+      const res = await fetch("index_data.json", { cache: "no-store" });
+      if(!res.ok) throw new Error("index_data.json missing");
+      data = await res.json();
+    }catch(err){
+      // do nothing if missing
       return;
     }
 
-    services.forEach(s=>{
-      const name=safe(s.name || s.service);
-      const url=s.url || s.link || "";
-      if(!name) return;
+    if(!data || !Array.isArray(data.sections)) return;
 
-      const a=document.createElement("a");
-      a.className="section-link";
-      a.href = url ? url : "#";
-      a.target = "_blank";
-      a.rel="noopener";
-      a.innerHTML = `
-        <div class="t">${name}</div>
-        <div class="d">Open service</div>
-      `;
-      list.appendChild(a);
+    const renderSection = (section) => {
+      const card = document.createElement("section");
+      card.className = "section-card";
+
+      const head = document.createElement("div");
+      head.className = "section-head";
+      head.style.background = section.color || "linear-gradient(90deg, #0ea5e9, #4f46e5)";
+
+      const left = document.createElement("div");
+      left.className = "left";
+      left.innerHTML = `<i class="${safe(section.icon)}"></i><span>${safe(section.title)}</span>`;
+
+      const right = document.createElement("a");
+      right.className = "mini-links";
+      right.href = normalizeUrl(section.moreUrl) || "#";
+      right.textContent = safe(section.moreText) || "";
+      right.rel = "noopener";
+      right.style.display = section.moreText ? "inline-block" : "none";
+
+      head.appendChild(left);
+      head.appendChild(right);
+
+      const body = document.createElement("div");
+      body.className = "section-body";
+
+      const list = document.createElement("div");
+      list.className = "section-list";
+
+      (section.items || []).forEach(item=>{
+        const name = safe(item.name);
+        const url = normalizeUrl(item.url);
+        if(!name || !url) return;
+        if(isHomePageCta(name, url)) return;
+
+        const a = document.createElement("a");
+        a.className = "section-link";
+        a.href = url;
+        a.rel = "noopener";
+        a.innerHTML = `<div class="t">${name}</div><div class="d">${safe(item.desc)}</div>`;
+        list.appendChild(a);
+      });
+
+      body.appendChild(list);
+      card.appendChild(head);
+      card.appendChild(body);
+
+      return card;
+    };
+
+    // Build two columns
+    leftCol.innerHTML = "";
+    rightCol.innerHTML = "";
+
+    data.sections.forEach((sec, idx)=>{
+      const card = renderSection(sec);
+      if(!card) return;
+      (idx % 2 === 0 ? leftCol : rightCol).appendChild(card);
     });
   }
 
-  // -------------------------
-  // Tools page renderer (if present)
-  // -------------------------
-  async function renderToolsPage(){
-    if(page !== "tools.html") return;
-    // keep your existing logic (unchanged)
+  // ---- Category page ----
+  async function renderCategory(){
+    if(page !== "category.html") return;
+
+    const grid = $("#categoryGrid");
+    const titleEl = $("#categoryTitle");
+    const descEl = $("#categoryDesc");
+    if(!grid) return;
+
+    const params = new URLSearchParams(location.search);
+    const group = safe(params.get("group"));
+
+    let data = null;
+    try{
+      const res = await fetch("category_data.json", { cache: "no-store" });
+      if(!res.ok) throw new Error("category_data.json missing");
+      data = await res.json();
+    }catch(err){
+      return;
+    }
+
+    if(!data || !data.groups) return;
+
+    const g = data.groups[group];
+    if(!g){
+      grid.innerHTML = `<div class="seo-block"><p>Category not found.</p></div>`;
+      return;
+    }
+
+    if(titleEl) titleEl.textContent = safe(g.title) || "Category";
+    if(descEl) descEl.textContent = safe(g.desc) || "";
+
+    grid.innerHTML = "";
+    (g.items || []).forEach(item=>{
+      const name = safe(item.name);
+      const url = normalizeUrl(item.url);
+      if(!name || !url) return;
+
+      const a = document.createElement("a");
+      a.className = "section-link";
+      a.href = url;
+      a.rel = "noopener";
+      a.innerHTML = `<div class="t">${name}</div><div class="d">${safe(item.desc)}</div>`;
+      grid.appendChild(a);
+    });
   }
 
-  // -------------------------
-  // Boot
-  // -------------------------
+  // ---- CSC services page ----
+  async function renderServices(){
+    // support both file names (your repo uses one of them)
+    if(page !== "govt-services-2.html" && page !== "csc-services.html") return;
+
+    const grid = $("#servicesGrid");
+    if(!grid) return;
+
+    let data = null;
+    try{
+      const res = await fetch("services_data.json", { cache: "no-store" });
+      if(!res.ok) throw new Error("services_data.json missing");
+      data = await res.json();
+    }catch(err){
+      return;
+    }
+
+    if(!data || !Array.isArray(data.items)) return;
+
+    grid.innerHTML = "";
+    data.items.forEach(item=>{
+      const name = safe(item.name);
+      const url = normalizeUrl(item.url);
+      if(!name || !url) return;
+
+      const a = document.createElement("a");
+      a.className = "section-link";
+      a.href = url;
+      a.rel = "noopener";
+      a.innerHTML = `<div class="t">${name}</div><div class="d">${safe(item.desc)}</div>`;
+      grid.appendChild(a);
+    });
+  }
+
+  // ---- Boot ----
   document.addEventListener("DOMContentLoaded", async ()=>{
     await loadHeaderLinks();
     initOffcanvas();
@@ -433,13 +437,9 @@
     initFAQ();
     initSearch();
 
-    if(page==="index.html" || page===""){
-      await renderHomepageSections();
-    }
-
-    await renderCategoryPage();
-    await renderServicesPage();
-    await renderToolsPage();
+    await renderHomepage();
+    await renderCategory();
+    await renderServices();
   });
 
 })();
