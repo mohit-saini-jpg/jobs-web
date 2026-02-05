@@ -12,13 +12,9 @@
   function normalizeUrl(raw){
     const s = safe(raw);
     if(!s) return "";
-    // already absolute or special scheme
     if(/^(https?:)?\/\//i.test(s) || /^(mailto:|tel:)/i.test(s)) return s;
-    // hash / query only
     if(s.startsWith("#") || s.startsWith("?")) return s;
-    // internal relative paths should stay as-is
     if(s.startsWith("/") || s.endsWith(".html") || s.startsWith("./") || s.startsWith("../")) return s;
-    // plain domain / www / without scheme
     return "https://" + s.replace(/^\/+/, "");
   }
 
@@ -79,7 +75,7 @@
   }
 
   // -------------------------
-  // Offcanvas menu (FIXED: always closes, no overlap)
+  // Offcanvas menu
   // -------------------------
   function initOffcanvas(){
     const btn = $("#menuBtn");
@@ -107,7 +103,6 @@
     closeBtn.addEventListener("click", close);
     overlay.addEventListener("click", close);
 
-    // close on any menu link click
     menu.addEventListener("click", (e)=>{
       const a = e.target.closest("a");
       if(a) close();
@@ -117,101 +112,116 @@
       if(e.key === "Escape") close();
     });
 
-    // Safety: if overlay/menu ever mismatch, force close on resize
     window.addEventListener("resize", ()=>{
       if(window.innerWidth > 980) close();
     });
 
-    // expose for debugging
     window.__closeMenu = close;
   }
 
   // -------------------------
-  // Desktop dropdowns
+  // ✅ Desktop dropdowns (FIXED: no disappearing when moving into menu)
   // -------------------------
   function initDropdowns(){
-  const dds = $$("[data-dd]");
-  if(!dds.length) return;
+    const dds = $$("[data-dd]");
+    if(!dds.length) return;
 
-  const closeAll = () => {
+    const closeAll = () => {
+      dds.forEach(dd=>{
+        const btn = $(".nav-dd-btn", dd);
+        const menu = $(".nav-dd-menu", dd);
+        if(btn && menu){
+          btn.setAttribute("aria-expanded","false");
+          menu.classList.remove("open");
+        }
+        if(dd.__ddCloseTimer) clearTimeout(dd.__ddCloseTimer);
+        dd.__ddCloseTimer = null;
+        dd.__ddHoveringMenu = false;
+      });
+    };
+
     dds.forEach(dd=>{
       const btn = $(".nav-dd-btn", dd);
       const menu = $(".nav-dd-menu", dd);
-      if(btn && menu){
-        btn.setAttribute("aria-expanded","false");
-        menu.classList.remove("open");
-      }
-      dd.__ddCloseTimer && clearTimeout(dd.__ddCloseTimer);
-      dd.__ddCloseTimer = null;
-      dd.__ddHoveringMenu = false;
-    });
-  };
+      if(!btn || !menu) return;
 
-  dds.forEach(dd=>{
-    const btn = $(".nav-dd-btn", dd);
-    const menu = $(".nav-dd-menu", dd);
-    if(!btn || !menu) return;
-
-    // track when cursor is inside the menu (prevents instant close)
-    menu.addEventListener("mouseenter", () => { dd.__ddHoveringMenu = true; });
-    menu.addEventListener("mouseleave", () => {
-      dd.__ddHoveringMenu = false;
-      // close shortly after leaving menu
-      dd.__ddCloseTimer && clearTimeout(dd.__ddCloseTimer);
-      dd.__ddCloseTimer = setTimeout(() => {
-        if(!dd.__ddHoveringMenu){
-          menu.classList.remove("open");
-          btn.setAttribute("aria-expanded","false");
-        }
-      }, 120);
-    });
-
-    // click to toggle (works on all devices)
-    btn.addEventListener("click",(e)=>{
-      e.preventDefault();
-      const isOpen = menu.classList.contains("open");
-      closeAll();
-      if(!isOpen){
-        menu.classList.add("open");
-        btn.setAttribute("aria-expanded","true");
-      }
-    });
-
-    // hover open for desktop
-    dd.addEventListener("mouseenter", ()=>{
-      if(window.matchMedia("(hover:hover)").matches){
-        dd.__ddCloseTimer && clearTimeout(dd.__ddCloseTimer);
-        dd.__ddCloseTimer = null;
-        closeAll();
-        menu.classList.add("open");
-        btn.setAttribute("aria-expanded","true");
-      }
-    });
-
-    // hover close with delay (so moving into the menu doesn't collapse it)
-    dd.addEventListener("mouseleave", ()=>{
-      if(window.matchMedia("(hover:hover)").matches){
-        dd.__ddCloseTimer && clearTimeout(dd.__ddCloseTimer);
+      // Track cursor inside the dropdown panel
+      menu.addEventListener("mouseenter", () => { dd.__ddHoveringMenu = true; });
+      menu.addEventListener("mouseleave", () => {
+        dd.__ddHoveringMenu = false;
+        if(dd.__ddCloseTimer) clearTimeout(dd.__ddCloseTimer);
         dd.__ddCloseTimer = setTimeout(() => {
           if(!dd.__ddHoveringMenu){
             menu.classList.remove("open");
             btn.setAttribute("aria-expanded","false");
           }
-        }, 120);
-      }
+        }, 140);
+      });
+
+      // Click toggling (works everywhere)
+      btn.addEventListener("click",(e)=>{
+        e.preventDefault();
+        const isOpen = menu.classList.contains("open");
+        closeAll();
+        if(!isOpen){
+          menu.classList.add("open");
+          btn.setAttribute("aria-expanded","true");
+        }
+      });
+
+      // Hover open/close (desktop only)
+      dd.addEventListener("mouseenter",()=>{
+        if(window.matchMedia("(hover:hover)").matches){
+          if(dd.__ddCloseTimer) clearTimeout(dd.__ddCloseTimer);
+          dd.__ddCloseTimer = null;
+          closeAll();
+          menu.classList.add("open");
+          btn.setAttribute("aria-expanded","true");
+        }
+      });
+
+      dd.addEventListener("mouseleave",()=>{
+        if(window.matchMedia("(hover:hover)").matches){
+          if(dd.__ddCloseTimer) clearTimeout(dd.__ddCloseTimer);
+          dd.__ddCloseTimer = setTimeout(() => {
+            if(!dd.__ddHoveringMenu){
+              menu.classList.remove("open");
+              btn.setAttribute("aria-expanded","false");
+            }
+          }, 140);
+        }
+      });
     });
-  });
 
-  // close when clicking outside
-  document.addEventListener("click",(e)=>{
-    if(!e.target.closest("[data-dd]")) closeAll();
-  });
+    document.addEventListener("click",(e)=>{
+      if(!e.target.closest("[data-dd]")) closeAll();
+    });
 
-  // close on escape
-  document.addEventListener("keydown",(e)=>{
-    if(e.key==="Escape") closeAll();
-  });
-}
+    document.addEventListener("keydown",(e)=>{
+      if(e.key==="Escape") closeAll();
+    });
+  }
+
+  // -------------------------
+  // FAQ accordion
+  // -------------------------
+  function initFAQ(){
+    $$(".faq-btn").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        const expanded = btn.getAttribute("aria-expanded")==="true";
+        $$(".faq-btn").forEach(b=>{
+          b.setAttribute("aria-expanded","false");
+          const p=b.parentElement.querySelector(".faq-panel");
+          if(p) p.hidden=true;
+        });
+        if(!expanded){
+          btn.setAttribute("aria-expanded","true");
+          const p=btn.parentElement.querySelector(".faq-panel");
+          if(p) p.hidden=false;
+        }
+      });
+    });
+  }
 
   // -------------------------
   // View helper
@@ -362,7 +372,6 @@
 
     document.title = `${meta.title} | Top Sarkari Jobs`;
 
-    // ---- Load jobs.json (this is the original source of these lists) ----
     let jobs = null;
     try{
       const r = await fetch("jobs.json", { cache:"no-store" });
@@ -382,19 +391,16 @@
       return;
     }
 
-    // ---- Robustly build a single pool of items, regardless of jobs.json shape ----
     const pool = [];
 
     if(Array.isArray(jobs)){
       pool.push(...jobs);
     }else if(jobs && typeof jobs === "object"){
-      // tolerate any top-level arrays (future-proof)
       Object.keys(jobs).forEach(k=>{
         const v = jobs[k];
         if(Array.isArray(v)) pool.push(...v);
       });
 
-      // tolerate nested buckets like { data: {...} } or { jobs: {...} }
       ["data","jobs","payload"].forEach(k=>{
         const v = jobs && jobs[k];
         if(v && typeof v === "object"){
@@ -412,7 +418,6 @@
       return;
     }
 
-    // ---- Turn the pool into "sections" using title separators (same structure as homepage lists) ----
     const sections = [];
     let current = null;
 
@@ -455,7 +460,6 @@
       return needles.some(n => h.includes(n));
     };
 
-    // Keywords are ONLY for matching headings; we do NOT generate any new content.
     const groupKeywords = {
       "study": [
         "study", "education", "qualification", "pass", "8th", "10th", "12th",
@@ -488,11 +492,8 @@
     };
 
     const wants = groupKeywords[group] || [];
-
-    // First try: match by heading text
     let matched = nonEmptySections.filter(s => containsAny(s.heading, wants));
 
-    // If nothing matched, fail gracefully but NEVER show a blank page:
     if(!matched.length){
       if(["study","popular","state"].includes(group)){
         matched = nonEmptySections.slice(0, 6);
@@ -594,9 +595,6 @@
   }
 
   function renderCategorySEO(title, desc, group){
-    // Minimal SEO injection without changing page structure:
-    // - updates meta description
-    // - adds simple FAQ snippet for category pages if container exists
     const m = document.querySelector('meta[name="description"]');
     if(m && safe(desc)) m.setAttribute("content", safe(desc));
 
@@ -774,7 +772,6 @@
 
     const out=[];
 
-    // dynamic sections
     try{
       const r=await fetch("dynamic-sections.json",{ cache:"no-store" });
       if(r.ok){
@@ -795,7 +792,6 @@
       }
     }catch(_){}
 
-    // jobs.json (all links)
     try{
       const r=await fetch("jobs.json",{ cache:"no-store" });
       if(r.ok){
@@ -816,7 +812,6 @@
       }
     }catch(_){}
 
-    // tools.json
     try{
       const r=await fetch("tools.json",{ cache:"no-store" });
       if(r.ok){
@@ -837,7 +832,6 @@
       }
     }catch(_){}
 
-    // services.json (titles only)
     try{
       const r=await fetch("services.json",{ cache:"no-store" });
       if(r.ok){
@@ -856,7 +850,6 @@
       }
     }catch(_){}
 
-    // de-dup
     const seen=new Set();
     SEARCH_INDEX = out.filter(x=>{
       const k=(x.title+"|"+x.href).toLowerCase();
@@ -959,7 +952,7 @@
   document.addEventListener("DOMContentLoaded", async ()=>{
     await loadHeaderLinks();
     initOffcanvas();
-    initDropdowns();
+    initDropdowns(); // ✅ fixed version
     initFAQ();
     initSearch();
 
