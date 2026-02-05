@@ -65,7 +65,7 @@
   }
 
   // -------------------------
-  // Offcanvas menu (UPDATED: toggle open/close, not stuck)
+  // Offcanvas menu
   // -------------------------
   function initOffcanvas(){
     const btn = $("#menuBtn");
@@ -89,7 +89,6 @@
       document.body.style.overflow = "hidden";
     };
 
-    // ✅ FIX: TOGGLE (your old code was "open only")
     btn.addEventListener("click", (e)=>{
       e.preventDefault();
       const isOpen = (btn.getAttribute("aria-expanded") === "true") && !menu.hidden;
@@ -100,7 +99,6 @@
     closeBtn.addEventListener("click", close);
     overlay.addEventListener("click", close);
 
-    // close on any menu link click
     menu.addEventListener("click", (e)=>{
       const a = e.target.closest("a");
       if(a) close();
@@ -110,17 +108,15 @@
       if(e.key === "Escape") close();
     });
 
-    // Safety: if overlay/menu ever mismatch, force close on resize
     window.addEventListener("resize", ()=>{
       if(window.innerWidth > 980) close();
     });
 
-    // expose for debugging
     window.__closeMenu = close;
   }
 
   // -------------------------
-  // Desktop dropdowns
+  // ✅ Desktop dropdowns (FIXED: no disappearing)
   // -------------------------
   function initDropdowns(){
     const dds = $$("[data-dd]");
@@ -142,29 +138,49 @@
       const menu=$(".nav-dd-menu", dd);
       if(!btn || !menu) return;
 
-      btn.addEventListener("click",(e)=>{
-        e.preventDefault();
-        const open = menu.classList.contains("open");
+      let hoverCloseTimer = null;
+
+      const open = () => {
+        clearTimeout(hoverCloseTimer);
         closeAll();
-        if(!open){
-          menu.classList.add("open");
-          btn.setAttribute("aria-expanded","true");
-        }
-      });
+        menu.classList.add("open");
+        btn.setAttribute("aria-expanded","true");
+      };
 
-      dd.addEventListener("mouseenter",()=>{
-        if(window.matchMedia("(hover:hover)").matches){
-          closeAll();
-          menu.classList.add("open");
-          btn.setAttribute("aria-expanded","true");
-        }
-      });
-
-      dd.addEventListener("mouseleave",()=>{
-        if(window.matchMedia("(hover:hover)").matches){
+      const scheduleClose = () => {
+        clearTimeout(hoverCloseTimer);
+        hoverCloseTimer = setTimeout(()=>{
           menu.classList.remove("open");
           btn.setAttribute("aria-expanded","false");
+        }, 140);
+      };
+
+      // Click toggle (desktop + touch)
+      btn.addEventListener("click",(e)=>{
+        e.preventDefault();
+        const isOpen = menu.classList.contains("open");
+        closeAll();
+        if(!isOpen){
+          menu.classList.add("open");
+          btn.setAttribute("aria-expanded","true");
         }
+      });
+
+      // Hover open/close (only if hover supported)
+      dd.addEventListener("mouseenter", ()=>{
+        if(window.matchMedia("(hover:hover)").matches) open();
+      });
+
+      dd.addEventListener("mouseleave", ()=>{
+        if(window.matchMedia("(hover:hover)").matches) scheduleClose();
+      });
+
+      // IMPORTANT: keep open when moving cursor onto the menu itself
+      menu.addEventListener("mouseenter", ()=>{
+        if(window.matchMedia("(hover:hover)").matches) clearTimeout(hoverCloseTimer);
+      });
+      menu.addEventListener("mouseleave", ()=>{
+        if(window.matchMedia("(hover:hover)").matches) scheduleClose();
       });
     });
 
@@ -205,6 +221,22 @@
   }
 
   // -------------------------
+  // ✅ Remove unwanted homepage "Main Home Page" link from all dynamic sections
+  // -------------------------
+  function isUnwantedHomeLinkText(name){
+    const t = safe(name).toLowerCase();
+
+    // covers the exact text and common variants
+    return (
+      t.includes("website का main home page") ||
+      t.includes("main home page खोलने") ||
+      t.includes("╰┈➤") ||
+      t.includes("🏠website") ||
+      t.includes("home page खोलने")
+    );
+  }
+
+  // -------------------------
   // Homepage big sections (dynamic-sections.json)
   // -------------------------
   async function renderHomepageSections(){
@@ -241,10 +273,15 @@
 
       const list=$(".section-list", card);
       const items=Array.isArray(sec.items) ? sec.items.slice(0,8) : [];
+
       items.forEach(it=>{
         const name=safe(it.name)||"Open";
         const url=it.url||it.link||"";
         if(!url) return;
+
+        // ✅ REMOVE that unwanted button/link everywhere it appears
+        if(isUnwantedHomeLinkText(name)) return;
+
         const external=!!it.external;
 
         const a=document.createElement("a");
@@ -772,7 +809,7 @@
     const input=$("#siteSearchInput");
     const btn=$("#siteSearchBtn");
     const results=$("#searchResults");
-    const openBtn=$("#openSearchBtn");
+    const openBtn=$("#openSearchBtn"); // may be hidden by CSS
 
     if(!input || !btn || !results) return;
 
@@ -837,6 +874,7 @@
       }
     });
 
+    // open search button might be hidden - safe to keep
     if(openBtn){
       openBtn.addEventListener("click", ()=>{
         input.scrollIntoView({ behavior:"smooth", block:"center" });
