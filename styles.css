@@ -125,13 +125,13 @@ a:hover{ text-decoration:underline; }
   z-index:60;
 }
 
-/* ✅ FIX: invisible “hover bridge” so menu doesn’t disappear when moving cursor down */
+/* ✅ FIX: invisible hover bridge to prevent menu from closing while moving cursor down */
 .nav-dd-menu::before{
   content:"";
   position:absolute;
   left:0;
   right:0;
-  top:-10px;     /* must match the gap size in top:calc(100% + 10px) */
+  top:-10px;  /* must match the 10px gap above */
   height:10px;
   background:transparent;
 }
