@@ -1,6 +1,10 @@
 (() => {
   "use strict";
 
+  // ---- Guard (prevents double-init which causes stuck menu) ----
+  if (window.__TSJ_BOOTED) return;
+  window.__TSJ_BOOTED = true;
+
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
@@ -388,7 +392,6 @@
       document.documentElement.style.overflow = "hidden";
     };
 
-    // Important: remove any previous listeners (avoid double-binding if script loads twice)
     btn.onclick = open;
     closeBtn.onclick = close;
     overlay.onclick = close;
@@ -403,18 +406,14 @@
       if (e.key === "Escape") close();
     });
 
-    // If page changes or refresh happens while open, force close
     window.addEventListener("beforeunload", close);
 
-    // Force close on resize to desktop
     window.addEventListener("resize", () => {
       if (window.innerWidth > 980) close();
     });
 
-    // Expose emergency close
     window.__TSJ_CLOSE_MENU = close;
 
-    // Safety: if overlay is visible but menu is hidden, fix state
     setInterval(() => {
       const menuOpen = !menu.hidden;
       const overlayOpen = !overlay.hidden;
@@ -514,7 +513,6 @@
       }
     } catch (_) {}
 
-    // dedupe
     const seen = new Set();
     SEARCH_INDEX = out.filter((x) => {
       const key = (x.title + "|" + x.href).toLowerCase();
@@ -533,7 +531,6 @@
     const openBtn = $("#openSearchBtn");
 
     if (!input || !btn || !results) {
-      // Some pages may not have search block; allow icon to redirect to search page
       if (openBtn) openBtn.addEventListener("click", () => (location.href = "search.html"));
       return;
     }
@@ -630,6 +627,232 @@
         }
       });
     });
+  }
+
+  // =====================================================================
+  // ✅ NEW: CONTENT RESTORE (Homepage + Category pages) - NO layout changes
+  // =====================================================================
+
+  function iconForTitle(title) {
+    const t = safe(title).toLowerCase();
+    if (t.includes("latest job")) return "fa-briefcase";
+    if (t.includes("upcoming")) return "fa-clock";
+    if (t.includes("admit")) return "fa-id-card";
+    if (t.includes("result")) return "fa-square-poll-vertical";
+    return "fa-link";
+  }
+
+  function colorForTitle(title) {
+    const t = safe(title).toLowerCase();
+    if (t.includes("latest job")) return "#3b82f6";
+    if (t.includes("upcoming")) return "#f59e0b";
+    if (t.includes("admit")) return "#10b981";
+    if (t.includes("result")) return "#8b5cf6";
+    return "#0ea5e9";
+  }
+
+  // ---- Restore homepage "blue boxes" / top category cards from jobs.json ----
+  async function renderHomeCategoryBoxes() {
+    if (!(PAGE === "index.html" || PAGE === "")) return;
+
+    // Try common container ids/classes used in your versions
+    const mount =
+      $("#home-cards") ||
+      $("#topLinksGrid") ||
+      $("#categoryGrid") ||
+      $(".cat-grid");
+
+    if (!mount) return;
+
+    // If already has links, do nothing
+    if (mount.querySelector("a")) return;
+
+    let j = null;
+    try {
+      const r = await fetch("jobs.json", { cache: "no-store" });
+      if (r.ok) j = await r.json();
+    } catch (_) {}
+
+    if (!j) return;
+
+    const pool = [...(j.top_jobs || []), ...(j.left_jobs || []), ...(j.right_jobs || [])];
+
+    const items = pool
+      .filter((it) => it && !it.title)
+      .map((it) => {
+        const name = safe(it.name);
+        const url = normalizeUrl(it.url || it.link || "");
+        if (!name || !url) return null;
+        return {
+          name,
+          href: it.external ? url : openInternal(url, name),
+          external: !!it.external
+        };
+      })
+      .filter(Boolean)
+      .slice(0, 60);
+
+    if (!items.length) return;
+
+    // Do not change structure — just fill using your existing button styles
+    mount.innerHTML = items
+      .map((x) => {
+        const ext = x.external ? ` target="_blank" rel="noopener"` : "";
+        // supports both your "home-card" and "job-btn" styling
+        const cls = mount.id === "home-cards" ? "home-card" : "job-btn";
+        return `<a class="${cls}" href="${x.href}"${ext}>${x.name}</a>`;
+      })
+      .join("");
+  }
+
+  // ---- Restore homepage big sections (Latest Jobs / Upcoming / Admit / Results) from dynamic-sections.json ----
+  async function renderHomeBigSections() {
+    if (!(PAGE === "index.html" || PAGE === "")) return;
+
+    // Common containers across your builds:
+    const mount =
+      $("#dynamic-sections") ||
+      $("#homeDuoGrid") ||
+      $("#sectionsGrid") ||
+      $(".duo-grid");
+
+    if (!mount) return;
+
+    // If already has cards, do nothing
+    if (mount.querySelector(".section-card")) return;
+
+    let data = null;
+    try {
+      const r = await fetch("dynamic-sections.json", { cache: "no-store" });
+      if (r.ok) data = await r.json();
+    } catch (_) {}
+
+    const sections = Array.isArray(data?.sections) ? data.sections : [];
+    if (!sections.length) return;
+
+    const want = ["Latest Jobs", "Upcoming Jobs", "Admit Cards & Exams Date", "Latest Results"];
+    const picked = [];
+    want.forEach((w) => {
+      const s = sections.find((x) => safe(x.title).toLowerCase() === w.toLowerCase());
+      if (s) picked.push(s);
+    });
+
+    const finalList = picked.length ? picked : sections.slice(0, 4);
+
+    mount.innerHTML = "";
+
+    finalList.forEach((sec) => {
+      const title = safe(sec.title);
+      const items = Array.isArray(sec.items) ? sec.items : [];
+      const col = colorForTitle(title);
+      const ic = iconForTitle(title);
+
+      const card = document.createElement("section");
+      card.className = "section-card";
+      card.innerHTML = `
+        <div class="section-head" style="background:${col}">
+          <div class="left">
+            <i class="fa-solid ${ic}"></i>
+            <span>${title}</span>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="section-list"></div>
+        </div>
+      `;
+
+      const list = $(".section-list", card);
+
+      items.slice(0, 25).forEach((it) => {
+        const name = safe(it.name);
+        const url = normalizeUrl(it.url || it.link || "");
+        if (!name || !url) return;
+
+        const a = document.createElement("a");
+        a.className = "section-link";
+        a.href = it.external ? url : openInternal(url, name);
+        if (it.external) {
+          a.target = "_blank";
+          a.rel = "noopener";
+        }
+        a.innerHTML = `<div class="t">${name}</div><div class="d">${it.external ? "Open official link" : "Open"}</div>`;
+        list.appendChild(a);
+      });
+
+      mount.appendChild(card);
+    });
+  }
+
+  // ---- Restore category.html grid using jobs.json based on ?group= ----
+  async function renderCategoryPage() {
+    if (PAGE !== "category.html") return;
+
+    const grid =
+      $("#categoryGrid") ||
+      $("#category-grid") ||
+      $(".cat-grid");
+
+    if (!grid) return;
+
+    // If already has links, do nothing
+    if (grid.querySelector("a")) return;
+
+    const params = new URLSearchParams(location.search);
+    const group = safe(params.get("group") || "study").toLowerCase();
+
+    let j = null;
+    try {
+      const r = await fetch("jobs.json", { cache: "no-store" });
+      if (r.ok) j = await r.json();
+    } catch (_) {}
+
+    if (!j) return;
+
+    // Your data is mixed; we keep it simple: show both columns + top
+    // (keeps all existing links intact)
+    const pool = [...(j.left_jobs || []), ...(j.right_jobs || []), ...(j.top_jobs || [])];
+
+    const items = pool
+      .filter((it) => it && !it.title)
+      .map((it) => {
+        const name = safe(it.name);
+        const url = normalizeUrl(it.url || it.link || "");
+        if (!name || !url) return null;
+        return {
+          name,
+          href: it.external ? url : openInternal(url, name),
+          external: !!it.external
+        };
+      })
+      .filter(Boolean);
+
+    if (!items.length) return;
+
+    // Fill using existing button class
+    grid.innerHTML = items
+      .slice(0, 120)
+      .map((x) => {
+        const ext = x.external ? ` target="_blank" rel="noopener"` : "";
+        return `<a class="job-btn" href="${x.href}"${ext}>${x.name}</a>`;
+      })
+      .join("");
+
+    // Optional: if your page has title/desc placeholders, fill them
+    const titleEl = $("#category-title");
+    const descEl = $("#category-description");
+    const titleMap = {
+      study: "Study wise jobs",
+      popular: "Popular job categories",
+      state: "State wise jobs",
+      admissions: "Admissions",
+      "admit-result": "Admit Card / Result / Answer Key / Syllabus",
+      khabar: "Latest Khabar",
+      "study-material": "Study Material & Top Courses"
+    };
+    if (titleEl && titleMap[group]) titleEl.textContent = titleMap[group];
+    if (descEl && titleMap[group]) {
+      descEl.textContent = "Browse links below. Always verify eligibility and dates on the official portal.";
+    }
   }
 
   // ---- Render CSC services page (Fix links + clickability) ----
@@ -742,7 +965,6 @@
 
   // ---- SEO content injection (Homepage + page briefs like SarkariResult-style) ----
   function injectSEOContent() {
-    // Homepage: add a richer block if not present
     if (PAGE === "index.html" || PAGE === "") {
       if (!$("#seoHomeBlock")) {
         const main = $("#main") || $("main") || document.body;
@@ -785,13 +1007,11 @@
             </div>
           </div>
         `;
-        // Insert near bottom before footer
         if (main && main.appendChild) main.appendChild(block);
       }
       return;
     }
 
-    // Other pages: add a brief relevant content block (once)
     const main = $("#main") || $("main");
     if (!main) return;
     if ($("#pageBriefBlock")) return;
@@ -833,11 +1053,6 @@
     main.appendChild(block);
   }
 
-  // ---- Fix: “dropdown menu bar stuck” can also happen if script runs twice.
-  // We add a signature guard.
-  if (window.__TSJ_BOOTED) return;
-  window.__TSJ_BOOTED = true;
-
   // ---- Boot ----
   document.addEventListener("DOMContentLoaded", async () => {
     ensureChrome();
@@ -850,6 +1065,11 @@
     initOffcanvas();
     initSearch();
     initFAQ();
+
+    // ✅ Restore missing content
+    await renderHomeCategoryBoxes();
+    await renderHomeBigSections();
+    await renderCategoryPage();
 
     injectSEOContent();
 
