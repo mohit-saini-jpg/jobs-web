@@ -25,9 +25,19 @@
     const links = Array.isArray(data.header_links) ? data.header_links : [];
     const socials = Array.isArray(data.social_links) ? data.social_links : [];
 
+    // ✅ REMOVE the "Search" nav item (it is injected via header_links.json)
+    const filteredLinks = links.filter(l => {
+      const name = safe(l.name).toLowerCase();
+      const href = safe(l.link || l.url || "").toLowerCase();
+      if (!href) return false;
+      if (name === "search") return false;
+      if (href.includes("search.html")) return false;
+      return true;
+    });
+
     if(desktop){
       desktop.innerHTML = "";
-      links.forEach(l=>{
+      filteredLinks.forEach(l=>{
         const a=document.createElement("a");
         a.className="nav-link";
         a.href = l.link || l.url || "#";
@@ -40,7 +50,7 @@
 
     if(mobile){
       mobile.innerHTML = "";
-      links.forEach(l=>{
+      filteredLinks.forEach(l=>{
         const a=document.createElement("a");
         a.href = l.link || l.url || "#";
         a.target="_blank";
@@ -62,10 +72,17 @@
         footerSocial.appendChild(a);
       });
     }
+
+    // ✅ Safety: if any "Search" link is still present in the header, remove it (desktop or mobile)
+    $$('header a').forEach(a=>{
+      const txt = safe(a.textContent).toLowerCase();
+      const href = safe(a.getAttribute('href')).toLowerCase();
+      if (txt === 'search' || href.includes('search.html')) a.remove();
+    });
   }
 
   // -------------------------
-  // Offcanvas menu
+  // Offcanvas menu (UPDATED: toggle open/close)
   // -------------------------
   function initOffcanvas(){
     const btn = $("#menuBtn");
@@ -587,7 +604,7 @@
               <i class="fas fa-chevron-down"></i>
             </button>
             <div class="faq-panel" hidden>
-              Use the filter box on this page or the main site search at the top to locate jobs, results, admit cards, and categories.
+              Use the filter box on this page or the categories to locate jobs, results, admit cards, and categories.
             </div>
           </div>
         </div>
