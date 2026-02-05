@@ -442,18 +442,3 @@ mark{ background: rgba(250, 204, 21, .35); padding:0 2px; border-radius:4px; }
   .search-row{ flex-direction:column; align-items:stretch; }
   .btn-primary{ width:100%; }
 }
-/* Keep all header items perfectly aligned in one row */
-.desktop-nav{
-  flex-wrap: nowrap !important;
-  align-items: center !important;
-  gap: 10px !important;
-}
-
-/* Ensure dropdown buttons match other nav button height */
-.nav-link, .nav-dd-btn{
-  height: 44px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  line-height: 1 !important;
-}
