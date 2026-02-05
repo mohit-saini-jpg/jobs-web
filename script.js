@@ -130,79 +130,88 @@
   // Desktop dropdowns
   // -------------------------
   function initDropdowns(){
-    const dds = $$("[data-dd]");
-    if(!dds.length) return;
+  const dds = $$("[data-dd]");
+  if(!dds.length) return;
 
-    const closeAll = () => {
-      dds.forEach(dd=>{
-        const btn=$(".nav-dd-btn", dd);
-        const menu=$(".nav-dd-menu", dd);
-        if(btn && menu){
-          btn.setAttribute("aria-expanded","false");
-          menu.classList.remove("open");
-        }
-      });
-    };
-
+  const closeAll = () => {
     dds.forEach(dd=>{
-      const btn=$(".nav-dd-btn", dd);
-      const menu=$(".nav-dd-menu", dd);
-      if(!btn || !menu) return;
+      const btn = $(".nav-dd-btn", dd);
+      const menu = $(".nav-dd-menu", dd);
+      if(btn && menu){
+        btn.setAttribute("aria-expanded","false");
+        menu.classList.remove("open");
+      }
+      dd.__ddCloseTimer && clearTimeout(dd.__ddCloseTimer);
+      dd.__ddCloseTimer = null;
+      dd.__ddHoveringMenu = false;
+    });
+  };
 
-      btn.addEventListener("click",(e)=>{
-        e.preventDefault();
-        const open = menu.classList.contains("open");
-        closeAll();
-        if(!open){
-          menu.classList.add("open");
-          btn.setAttribute("aria-expanded","true");
-        }
-      });
+  dds.forEach(dd=>{
+    const btn = $(".nav-dd-btn", dd);
+    const menu = $(".nav-dd-menu", dd);
+    if(!btn || !menu) return;
 
-      dd.addEventListener("mouseenter",()=>{
-        if(window.matchMedia("(hover:hover)").matches){
-          closeAll();
-          menu.classList.add("open");
-          btn.setAttribute("aria-expanded","true");
-        }
-      });
-
-      dd.addEventListener("mouseleave",()=>{
-        if(window.matchMedia("(hover:hover)").matches){
+    // track when cursor is inside the menu (prevents instant close)
+    menu.addEventListener("mouseenter", () => { dd.__ddHoveringMenu = true; });
+    menu.addEventListener("mouseleave", () => {
+      dd.__ddHoveringMenu = false;
+      // close shortly after leaving menu
+      dd.__ddCloseTimer && clearTimeout(dd.__ddCloseTimer);
+      dd.__ddCloseTimer = setTimeout(() => {
+        if(!dd.__ddHoveringMenu){
           menu.classList.remove("open");
           btn.setAttribute("aria-expanded","false");
         }
-      });
+      }, 120);
     });
 
-    document.addEventListener("click",(e)=>{
-      if(!e.target.closest("[data-dd]")) closeAll();
+    // click to toggle (works on all devices)
+    btn.addEventListener("click",(e)=>{
+      e.preventDefault();
+      const isOpen = menu.classList.contains("open");
+      closeAll();
+      if(!isOpen){
+        menu.classList.add("open");
+        btn.setAttribute("aria-expanded","true");
+      }
     });
-    document.addEventListener("keydown",(e)=>{
-      if(e.key==="Escape") closeAll();
-    });
-  }
 
-  // -------------------------
-  // FAQ accordion
-  // -------------------------
-  function initFAQ(){
-    $$(".faq-btn").forEach(btn=>{
-      btn.addEventListener("click",()=>{
-        const expanded = btn.getAttribute("aria-expanded")==="true";
-        $$(".faq-btn").forEach(b=>{
-          b.setAttribute("aria-expanded","false");
-          const p=b.parentElement.querySelector(".faq-panel");
-          if(p) p.hidden=true;
-        });
-        if(!expanded){
-          btn.setAttribute("aria-expanded","true");
-          const p=btn.parentElement.querySelector(".faq-panel");
-          if(p) p.hidden=false;
-        }
-      });
+    // hover open for desktop
+    dd.addEventListener("mouseenter", ()=>{
+      if(window.matchMedia("(hover:hover)").matches){
+        dd.__ddCloseTimer && clearTimeout(dd.__ddCloseTimer);
+        dd.__ddCloseTimer = null;
+        closeAll();
+        menu.classList.add("open");
+        btn.setAttribute("aria-expanded","true");
+      }
     });
-  }
+
+    // hover close with delay (so moving into the menu doesn't collapse it)
+    dd.addEventListener("mouseleave", ()=>{
+      if(window.matchMedia("(hover:hover)").matches){
+        dd.__ddCloseTimer && clearTimeout(dd.__ddCloseTimer);
+        dd.__ddCloseTimer = setTimeout(() => {
+          if(!dd.__ddHoveringMenu){
+            menu.classList.remove("open");
+            btn.setAttribute("aria-expanded","false");
+          }
+        }, 120);
+      }
+    });
+  });
+
+  // close when clicking outside
+  document.addEventListener("click",(e)=>{
+    if(!e.target.closest("[data-dd]")) closeAll();
+  });
+
+  // close on escape
+  document.addEventListener("keydown",(e)=>{
+    if(e.key==="Escape") closeAll();
+  });
+}
 
   // -------------------------
   // View helper
