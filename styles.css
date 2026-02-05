@@ -105,12 +105,26 @@ a:hover{ text-decoration:underline; }
 }
 .icon-btn:hover{ background: rgba(255,255,255,.2); }
 
+/* ✅ 1) Remove search icon button from header (blue bar) */
+#openSearchBtn{ display:none !important; }
+
 /* Desktop dropdown */
-.nav-dd{ position:relative; }
+.nav-dd{
+  position:relative;
+
+  /* ✅ 2) FIX dropdown disappearing:
+     add "hover buffer" space so pointer can move from button → menu */
+  padding-bottom:12px;
+}
 .nav-dd-btn{ display:flex; align-items:center; gap:8px; cursor:pointer; border:none; }
+
 .nav-dd-menu{
   position:absolute;
-  top:calc(100% + 10px);
+
+  /* ✅ changed from calc(100% + 10px) to avoid hover-gap issues */
+  top:100%;
+  margin-top:10px;
+
   right:0;
   min-width:260px;
   background:#fff;
@@ -120,7 +134,7 @@ a:hover{ text-decoration:underline; }
   box-shadow: var(--shadow);
   padding:8px;
   display:none;
-  z-index:60;
+  z-index:999; /* ensure above header */
 }
 .nav-dd-menu.open{ display:block; }
 .nav-dd-item{
