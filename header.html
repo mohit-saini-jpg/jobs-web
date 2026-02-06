@@ -1,0 +1,84 @@
+<a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="container header-row">
+      <a class="brand" href="index.html" aria-label="Top Sarkari Jobs Home">
+        <img src="image.png" alt="Top Sarkari Jobs Logo" class="brand-logo">
+        <span class="brand-text">
+          <span class="brand-title">Top Sarkari Jobs</span>
+          <span class="brand-subtitle">Latest Sarkari Jobs, Results, Admit Cards & Online Forms – 2026</span>
+        </span>
+      </a>
+
+      <nav class="desktop-nav" aria-label="Primary">
+        <a class="nav-link" href="index.html">Home</a>
+        <a class="nav-link" href="result.html">Results</a>
+        <!-- REMOVED: Search nav button -->
+        <a class="nav-link" href="govt-services.html">CSC Services</a>
+        <a class="nav-link" href="tools.html">Tools</a>
+        <a class="nav-link" href="helpdesk.html">Helpdesk</a>
+
+        <div class="nav-dd" data-dd>
+          <button class="nav-link nav-dd-btn" type="button" aria-haspopup="true" aria-expanded="false">
+            Jobs <i class="fa-solid fa-chevron-down"></i>
+          </button>
+          <div class="nav-dd-menu" role="menu">
+            <a role="menuitem" href="category.html?group=study" class="nav-dd-item">Study wise jobs</a>
+            <a role="menuitem" href="category.html?group=popular" class="nav-dd-item">Popular job categories</a>
+            <a role="menuitem" href="category.html?group=state" class="nav-dd-item">State wise jobs</a>
+          </div>
+        </div>
+
+        <div class="nav-dd" data-dd>
+          <button class="nav-link nav-dd-btn" type="button" aria-haspopup="true" aria-expanded="false">
+            Admissions <i class="fa-solid fa-chevron-down"></i>
+          </button>
+          <div class="nav-dd-menu" role="menu">
+            <a role="menuitem" href="category.html?group=admissions" class="nav-dd-item">Admissions</a>
+            <a role="menuitem" href="category.html?group=admit-result" class="nav-dd-item">Admit Card / Result / Answer Key / Syllabus</a>
+          </div>
+        </div>
+
+        <div class="nav-dd" data-dd>
+          <button class="nav-link nav-dd-btn" type="button" aria-haspopup="true" aria-expanded="false">
+            More <i class="fa-solid fa-chevron-down"></i>
+          </button>
+          <div class="nav-dd-menu" role="menu">
+            <a role="menuitem" href="category.html?group=khabar" class="nav-dd-item">Latest Khabar</a>
+            <a role="menuitem" href="category.html?group=study-material" class="nav-dd-item">Study Material & Top Courses</a>
+          </div>
+        </div>
+
+        <!-- keep these CTA buttons -->
+        <div id="header-links" class="header-cta"></div>
+      </nav>
+
+      <div class="header-actions">
+        <button id="openSearchBtn" class="icon-btn" type="button" aria-label="Open search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+        <button id="menuBtn" class="icon-btn" type="button" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- KEEP the big search bar section -->
+  <section class="top-search">
+    <div class="container">
+      <div class="search-card">
+        <h2 class="search-title">Search across Top Sarkari Jobs</h2>
+        <p class="search-sub">Search jobs, results, admit cards, categories, CSC services and tools.</p>
+
+        <div class="search-row">
+          <input id="siteSearchInput" type="search" placeholder="Search job categories, results, admit cards…" autocomplete="off" />
+          <button id="siteSearchBtn" type="button" class="btn-primary">
+            <i class="fa-solid fa-magnifying-glass"></i> Search
+          </button>
+        </div>
+
+        <div id="searchResults" class="search-results" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
