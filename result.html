@@ -54,95 +54,8 @@
 <body>
   <div class="min-h-screen flex flex-col">
 
-    <!-- ✅ MAIN HEADER (same as homepage) -->
-    <header class="bg-gradient-to-r from-sky-600 to-indigo-600 text-white shadow-sm relative">
-      <div class="container mx-auto max-w-6xl px-4 py-4">
-
-        <div class="flex items-center gap-4">
-
-          <!-- LEFT: Logo + Title + Subtitle -->
-          <div class="flex items-center gap-3 shrink-0">
-            <img src="image.png" alt="Top Sarkari Jobs Logo" class="h-10 w-10 rounded-full">
-            <div class="leading-tight">
-              <div class="text-2xl font-bold">Top Sarkari Jobs</div>
-              <p class="text-xs md:text-sm text-sky-200">
-                Latest Sarkari Jobs, Results, Admit Cards &amp; Online Forms – 2026
-              </p>
-            </div>
-          </div>
-
-          <!-- MOBILE MENU BUTTON -->
-          <button id="mobile-menu-toggle" class="lg:hidden text-white hover:bg-blue-700 p-2 rounded ml-auto" aria-label="Open menu">
-            <i class="fas fa-bars"></i>
-          </button>
-
-          <!-- RIGHT: Navigation fills remaining space -->
-          <div class="hidden lg:flex items-center gap-3 flex-1 justify-end min-w-0">
-            <nav class="flex items-center gap-3 flex-wrap">
-              <!-- ✅ Home button fixed: text no longer overridden -->
-              <a href="index.html" class="px-3 py-2 bg-white text-sky-600 rounded-md font-semibold shadow-sm hover:shadow-md transition">
-                <i class="fas fa-briefcase mr-2"></i>Home
-              </a>
-
-              <a href="result.html" class="px-3 py-2 bg-white/20 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/25 transition">
-                <i class="fas fa-clipboard-check mr-2"></i>Results
-              </a>
-
-              <a href="search.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
-                <i class="fas fa-search mr-2"></i>Search
-              </a>
-
-              <a href="govt-services.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
-                <i class="fas fa-gavel mr-2"></i>CSC Services
-              </a>
-
-              <a href="tools.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
-                <i class="fas fa-tools mr-2"></i>Tools
-              </a>
-
-              <a href="helpdesk.html" class="px-3 py-2 bg-white/10 backdrop-blur-sm text-white rounded-md font-semibold hover:bg-white/20 transition">
-                <i class="fas fa-headset mr-2"></i>Helpdesk
-              </a>
-            </nav>
-
-            <!-- Dynamic header links (if script.js uses it) -->
-            <div id="header-links" class="flex gap-2 flex-wrap justify-end"></div>
-          </div>
-        </div>
-
-        <!-- Mobile menu -->
-        <div id="mobile-menu" class="hidden lg:hidden absolute top-full left-0 right-0 bg-sky-600 text-white shadow-lg z-50">
-          <div class="flex flex-col p-4 space-y-2">
-            <a href="index.html" class="px-4 py-2 bg-white text-sky-600 rounded-md font-semibold hover:bg-white/90 transition">
-              <i class="fas fa-briefcase mr-2"></i>Home
-            </a>
-
-            <a href="result.html" class="px-4 py-2 bg-white/20 rounded-md font-semibold hover:bg-white/25 transition">
-              <i class="fas fa-clipboard-check mr-2"></i>Results
-            </a>
-
-            <a href="search.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
-              <i class="fas fa-search mr-2"></i>Search
-            </a>
-
-            <a href="govt-services.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
-              <i class="fas fa-gavel mr-2"></i>CSC Services
-            </a>
-
-            <a href="tools.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
-              <i class="fas fa-tools mr-2"></i>Tools
-            </a>
-
-            <a href="helpdesk.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold hover:bg-white/20 transition">
-              <i class="fas fa-headset mr-2"></i>Helpdesk
-            </a>
-
-            <div id="header-links-mobile" class="mt-2 space-y-2"></div>
-          </div>
-        </div>
-
-      </div>
-    </header>
+    <!-- ✅ Global Header injected from header.html -->
+    <div id="site-header"></div>
 
     <!-- ✅ MAIN CONTENT (table/intro unchanged) -->
     <main class="container flex-1">
@@ -225,74 +138,12 @@
       </section>
     </main>
 
-    <!-- ✅ MAIN FOOTER (same as homepage) -->
-    <footer class="bg-white text-gray-800 py-8 mt-12">
-      <div class="container mx-auto px-4">
-        <div class="flex flex-col md:flex-row justify-between items-center">
-          <div class="mb-4 md:mb-0">
-            <h3 class="text-xl font-bold">Top Sarkari Jobs</h3>
-            <p class="text-gray-600 text-sm mt-1">Your gateway to government jobs and services</p>
-
-            <div class="mt-3 flex flex-wrap gap-3 text-sm">
-              <a class="text-sky-600 hover:underline" href="about.html">About</a>
-              <a class="text-sky-600 hover:underline" href="contact.html">Contact</a>
-              <a class="text-sky-600 hover:underline" href="privacy.html">Privacy</a>
-              <a class="text-sky-600 hover:underline" href="terms.html">Terms</a>
-            </div>
-          </div>
-
-          <div class="flex flex-wrap gap-3" id="footer-social-links">
-            <!-- Social links will be populated here -->
-          </div>
-        </div>
-
-        <div class="border-t border-gray-200 mt-6 pt-6 text-center text-gray-600 text-sm">
-          <p>&copy; 2025 Top Sarkari Jobs. All rights reserved.</p>
-        </div>
-      </div>
-    </footer>
-
-    <!-- ✅ WhatsApp Float Button -->
-    <div id="whatsapp-float" class="fixed bottom-6 right-6 z-50">
-      <button id="whatsapp-btn" class="bg-green-500 hover:bg-green-600 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110" aria-label="Open WhatsApp chat">
-        <i class="fab fa-whatsapp text-4xl"></i>
-      </button>
-    </div>
-
-    <!-- ✅ WhatsApp Chat Popup -->
-    <div id="whatsapp-popup" class="hidden fixed bottom-24 right-6 z-50 w-80 md:w-96 bg-white rounded-lg shadow-2xl overflow-hidden">
-      <div class="bg-green-500 text-white p-4 flex items-center justify-between">
-        <div class="flex items-center">
-          <i class="fab fa-whatsapp text-2xl mr-3"></i>
-          <div>
-            <h3 class="font-bold text-lg">Top Sarkari Jobs</h3>
-            <p class="text-xs text-green-100">Online</p>
-          </div>
-        </div>
-        <button id="close-whatsapp" class="text-white hover:text-green-100 transition" aria-label="Close WhatsApp chat">
-          <i class="fas fa-times text-xl"></i>
-        </button>
-      </div>
-
-      <div id="whatsapp-messages" class="bg-gray-50 p-4 space-y-3 max-h-96 overflow-y-auto">
-        <!-- Messages will be populated here -->
-      </div>
-    </div>
+    <!-- ✅ Global Footer injected from footer.html -->
+    <div id="site-footer"></div>
 
   </div>
 
   <script src="script.js"></script>
-
-  <!-- ✅ Mobile menu toggle fallback -->
-  <script>
-    const toggleBtn = document.getElementById("mobile-menu-toggle");
-    const mobileMenu = document.getElementById("mobile-menu");
-    if(toggleBtn && mobileMenu){
-      toggleBtn.addEventListener("click", () => {
-        mobileMenu.classList.toggle("hidden");
-      });
-    }
-  </script>
 
   <!-- ✅ FAQ accordion toggle (compact) -->
   <script>
