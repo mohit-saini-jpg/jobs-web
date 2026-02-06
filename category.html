@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <!-- ✅ Category subpages ONLY: hide Search UI inside injected header -->
+  <!-- ✅ Category subpages: hide Search UI inside injected header (same as tools/helpdesk) -->
   <style>
     #site-header a[href*="search" i],
     #site-header button[onclick*="search" i],
@@ -37,8 +37,10 @@
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
-  <!-- ✅ Injected Homepage Header -->
+  <!-- ✅ Injected homepage header -->
   <div id="site-header"></div>
+
+  <!-- ✅ NOTE: Removed the big "Search across Top Sarkari Jobs" section from this page -->
 
   <main id="main" class="container page">
     <section class="seo-block">
@@ -51,41 +53,25 @@
       <h1 id="categoryTitle" style="margin:6px 0 0;">Category</h1>
       <p id="categoryDesc" style="margin:8px 0 0;color:var(--muted);line-height:1.6;"></p>
 
-      <div style="margin-top:12px;">
-        <div class="search-row" style="margin-top:0;">
-          <input
-            id="categoryFilter"
-            type="search"
-            placeholder="Filter links on this page…"
-            autocomplete="off"
-          />
-          <button id="clearCategoryFilter" type="button" class="btn-primary">
-            Clear
-          </button>
-        </div>
-      </div>
+      <!-- ✅ Removed the mini filter bar:
+           input#categoryFilter + button#clearCategoryFilter
+      -->
     </section>
 
     <section style="margin-top:14px;">
       <div id="categoryGrid" class="cat-grid"></div>
 
-      <div
-        id="categoryEmpty"
-        class="seo-block"
-        style="display:none;margin-top:12px;"
-      >
+      <div id="categoryEmpty" class="seo-block" style="display:none;margin-top:12px;">
         <strong>No results found.</strong>
-        <div style="margin-top:6px;color:var(--muted);">
-          Try a different keyword.
-        </div>
+        <div style="margin-top:6px;color:var(--muted);">Try a different keyword.</div>
       </div>
     </section>
   </main>
 
-  <!-- ✅ Injected Homepage Footer -->
+  <!-- ✅ Injected homepage footer -->
   <div id="site-footer"></div>
 
-  <!-- Mobile menu elements still required by script.js -->
+  <!-- Mobile menu elements required by script.js -->
   <div id="menuOverlay" class="overlay" hidden></div>
   <aside id="mobileMenu" class="offcanvas" aria-label="Mobile menu" hidden>
     <div class="offcanvas-head">
@@ -100,7 +86,6 @@
     </nav>
   </aside>
 
-  <!-- Global JS (unchanged) -->
   <script src="script.js"></script>
 </body>
 </html>
