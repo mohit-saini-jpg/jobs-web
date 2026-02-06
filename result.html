@@ -23,7 +23,7 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <!-- ✅ IMPORTANT: load your site styling so injected homepage header/footer look identical -->
+  <!-- IMPORTANT: site styles for injected header/footer -->
   <link rel="stylesheet" href="styles.css">
 
   <style>
@@ -58,14 +58,15 @@
 <body>
   <div class="min-h-screen flex flex-col">
 
-    <!-- ✅ HOMEPAGE HEADER (injected by script.js) -->
+    <!-- Injected homepage header -->
     <div id="site-header"></div>
 
-    <!-- MAIN CONTENT (UNCHANGED) -->
+    <!-- MAIN CONTENT -->
     <main class="container flex-1">
       <p>
-        Check the latest Sarkari Result updates for all India government exams. We list exam results for SSC, RRB, IBPS, state commissions, police, defence and more.
-        Click the link to view the result and download marks/scorecards from the official site.
+        Check the latest Sarkari Result updates for all India government exams. We list exam results for SSC, RRB, IBPS,
+        state commissions, police, defence and more. Click the link to view the result and download marks/scorecards from
+        the official site.
       </p>
 
       <table>
@@ -110,8 +111,7 @@
           <div class="mt-3 space-y-2">
 
             <div class="border border-slate-200 rounded-lg bg-white overflow-hidden">
-              <button type="button"
-                class="faq-btn w-full flex items-center justify-between gap-3 px-3 py-3 text-left font-semibold text-slate-900 hover:bg-slate-50 text-sm">
+              <button type="button" class="faq-btn w-full flex items-center justify-between gap-3 px-3 py-3 text-left font-semibold text-slate-900 hover:bg-slate-50 text-sm">
                 <span>Where can I find my SSC CHSL result?</span>
                 <i class="fas fa-chevron-down text-slate-500 transition-transform duration-200"></i>
               </button>
@@ -121,8 +121,7 @@
             </div>
 
             <div class="border border-slate-200 rounded-lg bg-white overflow-hidden">
-              <button type="button"
-                class="faq-btn w-full flex items-center justify-between gap-3 px-3 py-3 text-left font-semibold text-slate-900 hover:bg-slate-50 text-sm">
+              <button type="button" class="faq-btn w-full flex items-center justify-between gap-3 px-3 py-3 text-left font-semibold text-slate-900 hover:bg-slate-50 text-sm">
                 <span>How do I check RRB results?</span>
                 <i class="fas fa-chevron-down text-slate-500 transition-transform duration-200"></i>
               </button>
@@ -132,8 +131,7 @@
             </div>
 
             <div class="border border-slate-200 rounded-lg bg-white overflow-hidden">
-              <button type="button"
-                class="faq-btn w-full flex items-center justify-between gap-3 px-3 py-3 text-left font-semibold text-slate-900 hover:bg-slate-50 text-sm">
+              <button type="button" class="faq-btn w-full flex items-center justify-between gap-3 px-3 py-3 text-left font-semibold text-slate-900 hover:bg-slate-50 text-sm">
                 <span>What do I need to check IBPS results?</span>
                 <i class="fas fa-chevron-down text-slate-500 transition-transform duration-200"></i>
               </button>
@@ -147,14 +145,14 @@
       </section>
     </main>
 
-    <!-- ✅ HOMEPAGE FOOTER (injected by script.js) -->
+    <!-- Injected homepage footer -->
     <div id="site-footer"></div>
 
   </div>
 
   <script src="script.js"></script>
 
-  <!-- FAQ toggle (UNCHANGED) -->
+  <!-- FAQ toggle -->
   <script>
     (function () {
       var buttons = document.querySelectorAll(".faq-btn");
