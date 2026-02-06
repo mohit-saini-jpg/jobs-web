@@ -355,9 +355,9 @@
 
       if (EMAIL_TO.includes("topsarkarijobs.com@gmail.com")) {
         navigator.clipboard?.writeText(lines.join("\n")).catch(() => {});
-        alert("Request copied. Please set EMAIL_TO in script.js to enable email submit.");
+        alert("Request copied. Please set topsarkarijobs.com@gmail.com in script.js to enable email submit.");
       } else {
-        window.location.href = `mailto:${EMAIL_TO}?subject=${subject}&body=${body}`;
+        window.location.href = `mailto:${topsarkarijobs.com@gmail.com}?subject=${subject}&body=${body}`;
       }
 
       close();
