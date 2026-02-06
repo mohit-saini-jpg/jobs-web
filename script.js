@@ -17,15 +17,13 @@
     return "https://" + s.replace(/^\/+/, "");
   }
 
-  // Used across site for external links inside view.html wrapper
   function openInternal(url, name) {
     const u = normalizeUrl(url);
     return `view.html?url=${encodeURIComponent(u)}&name=${encodeURIComponent(name)}`;
   }
 
-  // ✅ Tools page header uses onclick="goBack()" (tools.html)
+  // tools.html uses onclick="goBack()"
   window.goBack = () => {
-    // If user came from somewhere, go back; otherwise go home
     if (window.history.length > 1) window.history.back();
     else window.location.href = "index.html";
   };
@@ -297,10 +295,7 @@
     });
   }
 
-  // ---------------------------
-  // ✅ Tools page (tools.html) — FIX broken clicks and restore navigation
-  // Uses tools.json categories: image/pdf/video :contentReference[oaicite:3]{index=3}
-  // ---------------------------
+  // Tools page wiring
   async function initToolsPage() {
     if (page !== "tools.html") return;
 
@@ -324,14 +319,12 @@
     const showCategories = () => {
       toolsView.classList.add("hidden");
       categoriesView.classList.remove("hidden");
-      // Scroll to top for clean UX
       window.scrollTo({ top: 0, behavior: "instant" });
     };
 
     const showTools = (categoryKey) => {
       const list = Array.isArray(toolsData[categoryKey]) ? toolsData[categoryKey] : [];
 
-      // Title
       const titleMap = {
         image: "Image Tools",
         pdf: "PDF Tools",
@@ -354,8 +347,6 @@
           const url = t.url || t.link || "";
           if (!url) return;
 
-          // If a tool is explicitly marked external=true, open in a new tab.
-          // Otherwise, open inside view.html wrapper (same pattern as homepage cards).
           const isExternal = t.external === true;
 
           const a = document.createElement("a");
@@ -388,10 +379,8 @@
       window.scrollTo({ top: 0, behavior: "instant" });
     };
 
-    // Back button
     if (backBtn) backBtn.addEventListener("click", showCategories);
 
-    // Category tiles
     categoryButtons.forEach((btn) => {
       btn.addEventListener("click", () => {
         const key = safe(btn.getAttribute("data-category"));
@@ -400,8 +389,7 @@
       });
     });
 
-    // Optional: update the "X tools available" counts dynamically, without changing layout
-    // tools.html currently hardcodes counts :contentReference[oaicite:4]{index=4}
+    // Optional: update counts
     try {
       categoryButtons.forEach((btn) => {
         const key = safe(btn.getAttribute("data-category"));
@@ -413,13 +401,10 @@
       });
     } catch (_) {}
 
-    // Start on categories
     showCategories();
   }
 
-  // ---------------------------
-  // ✅ CSC Services (govt-services.html) — Supabase insert into csc_service_requests
-  // ---------------------------
+  // CSC services -> Supabase
   const CSC_TABLE = "csc_service_requests";
   let cscSupabase = null;
 
@@ -591,24 +576,23 @@
     });
   }
 
-  // Boot
   document.addEventListener("DOMContentLoaded", async () => {
     await loadHeaderLinks();
     initOffcanvas();
     initDropdowns();
     initFAQ();
 
-    if (page === "index.html" || page === "") {
+    // ✅ FIX: render dynamic sections on ANY page that has the container
+    if ($("#dynamic-sections")) {
       await renderHomepageSections();
     }
 
-    // Tools page wiring (fix broken clicks)
     await initToolsPage();
 
-    // Services page
     if (page === "govt-services.html") {
       ensureSupabaseClient().catch(() => {});
     }
+
     initCscModal();
     await renderServicesPage();
   });
