@@ -349,11 +349,11 @@
         currentService.url ? `Service link: ${normalizeUrl(currentService.url)}` : null,
       ].filter(Boolean);
 
-      const EMAIL_TO = "REPLACE_WITH_YOUR_EMAIL@example.com"; // <-- CHANGE THIS
+      const EMAIL_TO = "topsarkarijobs.com@gmail.com"; // <-- CHANGE THIS
       const subject = encodeURIComponent(`CSC Service Request - ${currentService.name || "Service"}`);
       const body = encodeURIComponent(lines.join("\n"));
 
-      if (EMAIL_TO.includes("REPLACE_WITH_YOUR_EMAIL")) {
+      if (EMAIL_TO.includes("topsarkarijobs.com@gmail.com")) {
         navigator.clipboard?.writeText(lines.join("\n")).catch(() => {});
         alert("Request copied. Please set EMAIL_TO in script.js to enable email submit.");
       } else {
