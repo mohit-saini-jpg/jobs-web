@@ -29,6 +29,33 @@
     else window.location.href = "index.html";
   };
 
+  // ✅ NEW: Inject same homepage header/footer everywhere (Results now, other pages later)
+  async function injectHeaderFooter() {
+    const headerHost = document.getElementById("site-header");
+    const footerHost = document.getElementById("site-footer");
+    if (!headerHost && !footerHost) return;
+
+    async function loadFirstWorking(paths) {
+      for (const p of paths) {
+        try {
+          const r = await fetch(p, { cache: "no-store" });
+          if (r.ok) return await r.text();
+        } catch (_) {}
+      }
+      return "";
+    }
+
+    if (headerHost) {
+      const headerHtml = await loadFirstWorking(["header.html", "./header.html", "/header.html"]);
+      if (headerHtml) headerHost.innerHTML = headerHtml;
+    }
+
+    if (footerHost) {
+      const footerHtml = await loadFirstWorking(["footer.html", "./footer.html", "/footer.html"]);
+      if (footerHtml) footerHost.innerHTML = footerHtml;
+    }
+  }
+
   async function loadHeaderLinks() {
     let data = { header_links: [], social_links: [] };
     try {
@@ -716,6 +743,10 @@
   // Boot
   // ---------------------------
   document.addEventListener("DOMContentLoaded", async () => {
+    // ✅ NEW: this enables same homepage header/footer on pages that have:
+    // <div id="site-header"></div> and <div id="site-footer"></div>
+    await injectHeaderFooter();
+
     await loadHeaderLinks();
     initOffcanvas();
     initDropdowns();
