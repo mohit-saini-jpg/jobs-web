@@ -32,10 +32,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- ✅ IMPORTANT: load your site styling so injected homepage header/footer look identical -->
-    <link rel="stylesheet" href="styles.css">
-
     <style>
         :root {
             --primary-500: #0ea5e9;
@@ -48,89 +44,126 @@
             color: #0f172a
         }
     </style>
+
+    <!-- ✅ Hide header search UI on this page only -->
+    <style>
+      /* Hide any header search link/button/input coming from injected header.html */
+      #site-header a[href*="search.html"],
+      #site-header a[href*="search"],
+      #site-header form[role="search"],
+      #site-header form[id*="search" i],
+      #site-header input[type="search"],
+      #site-header input[id*="search" i],
+      #site-header input[name="q"],
+      #site-header button[aria-label*="search" i],
+      #site-header button[title*="search" i],
+      #site-header .search,
+      #site-header .nav-search,
+      #site-header .search-container,
+      #site-header #siteSearchInput,
+      #site-header #siteSearchBtn,
+      #site-header #searchResults {
+        display: none !important;
+      }
+    </style>
+
 </head>
 
-<body>
+<body class="min-h-screen flex flex-col">
+    <a class="skip-link" href="#main">Skip to content</a>
 
-    <div class="min-h-screen flex flex-col">
+    <!-- ✅ Injected Homepage Header -->
+    <div id="site-header"></div>
 
-        <!-- ✅ HOMEPAGE HEADER (injected by script.js) -->
-        <div id="site-header"></div>
+    <main id="main" class="container flex-1 py-6">
+        <div class="max-w-6xl mx-auto">
+            <!-- Main Container -->
+            <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100">
+                <!-- Header -->
+                <div class="bg-gradient-to-r from-sky-500 to-blue-600 px-6 py-5">
+                    <h1 class="text-2xl font-bold text-white flex items-center gap-3">
+                        <i class="fa-solid fa-screwdriver-wrench"></i>
+                        Online Tools
+                    </h1>
+                    <p class="text-sky-100 mt-1 text-sm">
+                        Handy tools to help with your job applications – photo resize, PDF tools, and more.
+                    </p>
+                </div>
 
-        <main class="mx-auto w-full flex-1">
-            <!-- Tools Section -->
-            <div class="bg-white shadow-lg overflow-hidden">
-                <div class="min-h-screen">
+                <!-- Views -->
+                <div class="p-6">
                     <!-- Categories View -->
-                    <div id="categories-view" class="p-6">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Online Tools</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-                            <button
-                                class="category-button p-6 rounded-lg bg-white border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition duration-300 text-center"
+                    <div id="categories-view">
+                        <h2 class="text-lg font-semibold text-slate-900 mb-4">Choose a category</h2>
+
+                        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            <button class="category-button p-4 rounded-xl border border-gray-200 bg-white hover:bg-blue-50 hover:border-blue-300 transition duration-300 flex gap-3 items-center"
                                 data-category="image">
-                                <i class="fas fa-image text-green-500 text-4xl mb-4"></i>
-                                <div class="font-semibold text-gray-800 text-lg">Image Tools</div>
-                                <div class="text-sm text-gray-500 mt-2">19 tools available</div>
+                                <div class="text-2xl text-blue-600"><i class="fa-solid fa-image"></i></div>
+                                <div class="text-left">
+                                    <div class="font-semibold text-gray-800">Image Tools</div>
+                                    <div class="text-sm text-gray-500">Resize photo, signature, compress</div>
+                                </div>
                             </button>
 
-                            <button
-                                class="category-button p-6 rounded-lg bg-white border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition duration-300 text-center"
+                            <button class="category-button p-4 rounded-xl border border-gray-200 bg-white hover:bg-blue-50 hover:border-blue-300 transition duration-300 flex gap-3 items-center"
                                 data-category="pdf">
-                                <i class="fas fa-file-pdf text-blue-500 text-4xl mb-4"></i>
-                                <div class="font-semibold text-gray-800 text-lg">PDF Tools</div>
-                                <div class="text-sm text-gray-500 mt-2">13 tools available</div>
+                                <div class="text-2xl text-blue-600"><i class="fa-solid fa-file-pdf"></i></div>
+                                <div class="text-left">
+                                    <div class="font-semibold text-gray-800">PDF Tools</div>
+                                    <div class="text-sm text-gray-500">JPG to PDF, merge, compress</div>
+                                </div>
                             </button>
 
-                            <button
-                                class="category-button p-6 rounded-lg bg-white border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition duration-300 text-center"
+                            <button class="category-button p-4 rounded-xl border border-gray-200 bg-white hover:bg-blue-50 hover:border-blue-300 transition duration-300 flex gap-3 items-center"
                                 data-category="video">
-                                <i class="fas fa-video text-purple-500 text-4xl mb-4"></i>
-                                <div class="font-semibold text-gray-800 text-lg">Video/Audio Tools</div>
-                                <div class="text-sm text-gray-500 mt-2">5 tools available</div>
+                                <div class="text-2xl text-blue-600"><i class="fa-solid fa-video"></i></div>
+                                <div class="text-left">
+                                    <div class="font-semibold text-gray-800">Video/Audio Tools</div>
+                                    <div class="text-sm text-gray-500">Convert, compress, edit</div>
+                                </div>
                             </button>
                         </div>
                     </div>
 
                     <!-- Tools View -->
-                    <div id="tools-view" class="hidden p-6">
-                        <!-- Back Button -->
-                        <button id="back-button"
-                            class="mb-4 px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition duration-300 flex items-center inline-flex">
-                            <i class="fas fa-arrow-left mr-2 text-gray-600"></i>
-                            <span class="font-medium text-gray-700">Back to Categories</span>
-                        </button>
-
-                        <!-- Tools Title -->
-                        <h3 id="tools-title" class="text-xl font-semibold text-gray-800 mb-6 flex items-center">
-                            <i class="fas fa-list mr-2 text-blue-500"></i>
-                            <span>Tools</span>
-                        </h3>
-
-                        <!-- Tools Grid -->
-                        <div id="tools-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            <!-- Tools will be populated here -->
+                    <div id="tools-view" class="hidden">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 id="tools-title" class="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                                <button id="back-button" type="button"
+                                    class="px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition">
+                                    <i class="fa-solid fa-arrow-left"></i>
+                                </button>
+                                <span>Tools</span>
+                            </h2>
                         </div>
+
+                        <div id="tools-grid" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
+    </main>
 
-        <!-- ✅ HOMEPAGE FOOTER (injected by script.js) -->
-        <div id="site-footer"></div>
+    <!-- ✅ Injected Homepage Footer -->
+    <div id="site-footer"></div>
 
-    </div>
+    <!-- Required by script.js for hamburger -->
+    <div id="menuOverlay" class="overlay" hidden></div>
+    <aside id="mobileMenu" class="offcanvas" aria-label="Mobile menu" hidden>
+        <div class="offcanvas-head">
+            <div class="offcanvas-title">Menu</div>
+            <button id="closeMenuBtn" class="icon-btn" type="button" aria-label="Close menu">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <nav class="offcanvas-nav" aria-label="Mobile primary">
+            <div id="header-links-mobile"></div>
+        </nav>
+    </aside>
 
     <script src="script.js"></script>
 </body>
 
 </html>
-<style>
-/* 🔒 Tools page ONLY: hide header search button */
-#site-header .search-btn,
-#site-header .nav-search,
-#site-header button[data-search],
-#site-header .search-toggle {
-  display: none !important;
-}
-</style>
-
