@@ -29,7 +29,7 @@
     else window.location.href = "index.html";
   };
 
-  // ✅ NEW: Inject same homepage header/footer everywhere (Results now, other pages later)
+  // ✅ Inject same homepage header/footer everywhere
   async function injectHeaderFooter() {
     const headerHost = document.getElementById("site-header");
     const footerHost = document.getElementById("site-footer");
@@ -337,9 +337,35 @@
     });
   }
 
+  // ✅ NEW: Remove the specific homepage "Main Home Page" button/link wherever it exists in big sections
+  function removeHomeMainPageCtaLinks() {
+    // Only touch homepage
+    if (!(page === "index.html" || page === "")) return;
+
+    const wrap = $("#dynamic-sections");
+    if (!wrap) return;
+
+    const needles = [
+      "╰┈➤🏠Website का Main Home Page खोलने के लिए यहाँ क्लिक करें",
+      "Website का Main Home Page खोलने के लिए यहाँ क्लिक करें",
+      "Main Home Page खोलने के लिए यहाँ क्लिक करें",
+      "Website का Main Home Page",
+    ];
+
+    const els = $$("a, button", wrap);
+    els.forEach((el) => {
+      const text = safe(el.textContent).replace(/\s+/g, " ");
+      if (!text) return;
+
+      const match = needles.some((n) => text.includes(n));
+      if (match) {
+        el.remove(); // remove only that button/link
+      }
+    });
+  }
+
   // ---------------------------
   // Category pages (Jobs / Admissions / More dropdown subpages)
-  // Uses YOUR jobs.json structure and keeps URLs exactly as-is
   // ---------------------------
   async function initCategoryPage() {
     if (page !== "category.html") return;
@@ -372,8 +398,6 @@
 
     if (titleEl) titleEl.textContent = groupMeta[group] || "Category";
     if (descEl && groupMeta[group]) {
-      // Keep existing description if you have one; do not overwrite with new content
-      // Only set if it's empty:
       if (!safe(descEl.textContent)) descEl.textContent = "";
     }
 
@@ -416,24 +440,17 @@
 
     let items = [];
 
-    // Jobs dropdown
     if (group === "study") {
       items = sliceBetween(top, "study wise", "popular");
     } else if (group === "popular") {
       items = sliceBetween(top, "popular", null);
     } else if (group === "state") {
       items = sliceBetween(left, "state wise", "admit");
-    }
-
-    // Admissions dropdown
-    else if (group === "admit-result") {
+    } else if (group === "admit-result") {
       items = sliceBetween(left, "admit", null);
     } else if (group === "admissions") {
       items = sliceBetween(right, "admissions", "govt scheme");
-    }
-
-    // More dropdown
-    else if (group === "khabar") {
+    } else if (group === "khabar") {
       items = sliceBetween(right, "latest khabar", "study material");
     } else if (group === "study-material") {
       items = sliceBetween(right, "study material", "tools");
@@ -467,7 +484,7 @@
   }
 
   // ---------------------------
-  // Tools page (restores tools page functionality)
+  // Tools page
   // ---------------------------
   async function initToolsPage() {
     if (page !== "tools.html") return;
@@ -487,7 +504,7 @@
       if (r.ok) data = await r.json();
     } catch (_) {}
 
-    const toolsData = (data && typeof data === "object") ? data : {};
+    const toolsData = data && typeof data === "object" ? data : {};
 
     const showCategories = () => {
       toolsView.classList.add("hidden");
@@ -498,11 +515,7 @@
     const showTools = (categoryKey) => {
       const list = Array.isArray(toolsData[categoryKey]) ? toolsData[categoryKey] : [];
 
-      const titleMap = {
-        image: "Image Tools",
-        pdf: "PDF Tools",
-        video: "Video/Audio Tools",
-      };
+      const titleMap = { image: "Image Tools", pdf: "PDF Tools", video: "Video/Audio Tools" };
       const titleText = titleMap[categoryKey] || "Tools";
       if (toolsTitle) toolsTitle.textContent = titleText;
 
@@ -564,7 +577,7 @@
   }
 
   // ---------------------------
-  // CSC Services (restores services list + popup + supabase submit)
+  // CSC Services (popup + supabase submit)
   // ---------------------------
   const CSC_TABLE = "csc_service_requests";
   let cscSupabase = null;
@@ -605,7 +618,6 @@
     const closeBtn2 = $("#cscCloseBtn");
     const form = $("#cscRequestForm");
 
-    // If the page doesn't include the modal HTML, don't break anything.
     if (!modal || !overlay || !closeBtn || !form) return;
 
     const serviceNameEl = $("#cscServiceName");
@@ -647,7 +659,6 @@
       const state = safe($("#cscState")?.value);
       const msg = safe($("#cscMessage")?.value);
 
-      // Keep your existing validation behavior (do not add new rules)
       if (!fullName || !phone || phone.length < 8) {
         alert("Please fill all fields correctly.");
         return;
@@ -743,8 +754,6 @@
   // Boot
   // ---------------------------
   document.addEventListener("DOMContentLoaded", async () => {
-    // ✅ NEW: this enables same homepage header/footer on pages that have:
-    // <div id="site-header"></div> and <div id="site-footer"></div>
     await injectHeaderFooter();
 
     await loadHeaderLinks();
@@ -755,9 +764,10 @@
     // Homepage content
     if (page === "index.html" || page === "") {
       await renderHomepageSections();
+      removeHomeMainPageCtaLinks(); // ✅ remove that specific Hindi Home Page button/link
     }
 
-    // Category pages (Jobs/Admissions/More dropdown subpages)
+    // Category pages
     await initCategoryPage();
 
     // Tools page
