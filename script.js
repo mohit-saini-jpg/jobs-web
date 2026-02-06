@@ -3,7 +3,6 @@
 
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
-
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
 
   const safe = (v) => (v ?? "").toString().trim();
@@ -290,7 +289,47 @@
     });
   }
 
-  // ✅ CSC modal (Close button instead of Open link)
+  // ---------------------------
+  // ✅ Supabase init (Helpdesk-style)
+  // ---------------------------
+  const SUPABASE_CONFIG_PATH = "config.json";
+  const CSC_TABLE = "csc_service_requests"; // create this table in Supabase (recommended)
+
+  async function ensureSupabaseClient() {
+    // Only needed for CSC services page
+    if (page !== "govt-services.html") return null;
+
+    // If supabase-js isn't loaded on govt-services.html, load it dynamically (safe)
+    if (!window.supabase) {
+      await new Promise((resolve, reject) => {
+        const s = document.createElement("script");
+        s.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+        s.async = true;
+        s.onload = () => resolve();
+        s.onerror = () => reject(new Error("Failed to load supabase-js"));
+        document.head.appendChild(s);
+      }).catch(() => null);
+    }
+
+    if (!window.supabase) return null;
+
+    // Reuse existing client if already created
+    if (window.__tsjSupabase) return window.__tsjSupabase;
+
+    try {
+      const r = await fetch(SUPABASE_CONFIG_PATH, { cache: "no-store" });
+      if (!r.ok) return null;
+      const config = await r.json();
+      if (!config?.supabase?.url || !config?.supabase?.anonKey) return null;
+
+      window.__tsjSupabase = window.supabase.createClient(config.supabase.url, config.supabase.anonKey);
+      return window.__tsjSupabase;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  // ✅ CSC modal -> Supabase insert (no mailto)
   function initCscModal() {
     const modal = $("#cscModal");
     const overlay = $("#cscModalOverlay");
@@ -301,7 +340,6 @@
     if (!modal || !overlay || !closeBtn || !form) return;
 
     const serviceNameEl = $("#cscServiceName");
-
     let currentService = { name: "", url: "" };
 
     const close = () => {
@@ -332,7 +370,7 @@
       if (e.key === "Escape" && !modal.hidden) close();
     });
 
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const fullName = safe($("#cscFullName")?.value);
@@ -340,35 +378,46 @@
       const state = safe($("#cscState")?.value);
       const msg = safe($("#cscMessage")?.value);
 
-      const lines = [
-        `CSC Service Request`,
-        `Service: ${currentService.name || "-"}`,
-        fullName ? `Name: ${fullName}` : null,
-        phone ? `Phone: ${phone}` : null,
-        state ? `State: ${state}` : null,
-        msg ? `Details: ${msg}` : null,
-        currentService.url ? `Service link: ${normalizeUrl(currentService.url)}` : null,
-      ].filter(Boolean);
-
-      // ✅ FIXED: your real email should send mail, not show the "set email" warning
-      const EMAIL_TO = "topsarkarijobs.com@gmail.com";
-      const subject = encodeURIComponent(`CSC Service Request - ${currentService.name || "Service"}`);
-      const body = encodeURIComponent(lines.join("\n"));
-
-      // Only warn if someone leaves it blank or uses a placeholder
-      const looksUnset =
-        !EMAIL_TO ||
-        /replace_with_your_email/i.test(EMAIL_TO) ||
-        /example\.com/i.test(EMAIL_TO);
-
-      if (looksUnset) {
-        navigator.clipboard?.writeText(lines.join("\n")).catch(() => {});
-        alert("Request copied. Please set EMAIL_TO in script.js to enable email submit.");
-      } else {
-        window.location.href = `mailto:${EMAIL_TO}?subject=${subject}&body=${body}`;
+      // Basic validation (same spirit as Helpdesk)
+      if (!fullName || !phone || phone.length < 10 || !msg) {
+        alert("Please fill all fields correctly.");
+        return;
       }
 
-      close();
+      // Insert into Supabase (like Helpdesk)
+      const sb = await ensureSupabaseClient();
+      if (!sb) {
+        alert("Submission system is temporarily unavailable. Please try again later.");
+        return;
+      }
+
+      try {
+        const { error } = await sb.from(CSC_TABLE).insert([
+          {
+            service_name: safe(currentService.name),
+            full_name: fullName,
+            phone: phone,
+            state: state,
+            message: msg,
+            service_url: currentService.url ? normalizeUrl(currentService.url) : "",
+            created_at: new Date().toISOString(),
+          },
+        ]);
+
+        if (error) {
+          console.error("Supabase insert error:", error);
+          alert("Failed to submit your request. Please try again.");
+          return;
+        }
+
+        // Success UX (minimal)
+        alert("Request submitted successfully. We will contact you soon.");
+        form.reset();
+        close();
+      } catch (err) {
+        console.error("Submit error:", err);
+        alert("Could not submit your request. Please check your connection and try again.");
+      }
     });
   }
 
@@ -426,6 +475,11 @@
 
     if (page === "index.html" || page === "") {
       await renderHomepageSections();
+    }
+
+    // Pre-warm Supabase on services page so submit is instant
+    if (page === "govt-services.html") {
+      ensureSupabaseClient().catch(() => {});
     }
 
     initCscModal();
