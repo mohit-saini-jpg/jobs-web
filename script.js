@@ -1,32 +1,22 @@
 (() => {
   "use strict";
 
-  const $ = (s, r=document) => r.querySelector(s);
-  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
 
   const safe = (v) => (v ?? "").toString().trim();
   const escRE = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-  // ---- URL normalization (fixes links missing scheme like "www.*" or "csc.gov.in") ----
-  function normalizeUrl(raw){
-    const s = safe(raw);
-    if(!s) return "";
-    if(/^(https?:)?\/\//i.test(s) || /^(mailto:|tel:)/i.test(s)) return s;
-    if(s.startsWith("#") || s.startsWith("?")) return s;
-    if(s.startsWith("/") || s.endsWith(".html") || s.startsWith("./") || s.startsWith("../")) return s;
-    return "https://" + s.replace(/^\/+/, "");
-  }
-
   // -------------------------
   // Header/footer links (from header_links.json)
   // -------------------------
-  async function loadHeaderLinks(){
-    let data = { header_links:[], social_links:[] };
-    try{
-      const r = await fetch("header_links.json", { cache:"no-store" });
-      if(r.ok) data = await r.json();
-    }catch(_){}
+  async function loadHeaderLinks() {
+    let data = { header_links: [], social_links: [] };
+    try {
+      const r = await fetch("header_links.json", { cache: "no-store" });
+      if (r.ok) data = await r.json();
+    } catch (_) {}
 
     const desktop = $("#header-links");
     const mobile = $("#header-links-mobile");
@@ -35,39 +25,39 @@
     const links = Array.isArray(data.header_links) ? data.header_links : [];
     const socials = Array.isArray(data.social_links) ? data.social_links : [];
 
-    if(desktop){
+    if (desktop) {
       desktop.innerHTML = "";
-      links.forEach(l=>{
-        const a=document.createElement("a");
-        a.className="nav-link";
-        a.href = normalizeUrl(l.link || l.url || "#");
-        a.target="_blank";
-        a.rel="noopener";
+      links.forEach((l) => {
+        const a = document.createElement("a");
+        a.className = "nav-link";
+        a.href = l.link || l.url || "#";
+        a.target = "_blank";
+        a.rel = "noopener";
         a.textContent = l.name || "Link";
         desktop.appendChild(a);
       });
     }
 
-    if(mobile){
+    if (mobile) {
       mobile.innerHTML = "";
-      links.forEach(l=>{
-        const a=document.createElement("a");
-        a.href = normalizeUrl(l.link || l.url || "#");
-        a.target="_blank";
-        a.rel="noopener";
+      links.forEach((l) => {
+        const a = document.createElement("a");
+        a.href = l.link || l.url || "#";
+        a.target = "_blank";
+        a.rel = "noopener";
         a.textContent = l.name || "Link";
         mobile.appendChild(a);
       });
     }
 
-    if(footerSocial){
+    if (footerSocial) {
       footerSocial.innerHTML = "";
-      socials.forEach(s=>{
-        const a=document.createElement("a");
-        a.className="nav-link";
-        a.href = normalizeUrl(s.url || "#");
-        a.target="_blank";
-        a.rel="noopener";
+      socials.forEach((s) => {
+        const a = document.createElement("a");
+        a.className = "nav-link";
+        a.href = s.url || "#";
+        a.target = "_blank";
+        a.rel = "noopener";
         a.textContent = s.name || "Social";
         footerSocial.appendChild(a);
       });
@@ -77,13 +67,13 @@
   // -------------------------
   // Offcanvas menu
   // -------------------------
-  function initOffcanvas(){
+  function initOffcanvas() {
     const btn = $("#menuBtn");
     const closeBtn = $("#closeMenuBtn");
     const menu = $("#mobileMenu");
     const overlay = $("#menuOverlay");
 
-    if(!btn || !closeBtn || !menu || !overlay) return;
+    if (!btn || !closeBtn || !menu || !overlay) return;
 
     const close = () => {
       menu.hidden = true;
@@ -103,121 +93,125 @@
     closeBtn.addEventListener("click", close);
     overlay.addEventListener("click", close);
 
-    menu.addEventListener("click", (e)=>{
+    menu.addEventListener("click", (e) => {
       const a = e.target.closest("a");
-      if(a) close();
+      if (a) close();
     });
 
-    document.addEventListener("keydown", (e)=>{
-      if(e.key === "Escape") close();
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") close();
     });
 
-    window.addEventListener("resize", ()=>{
-      if(window.innerWidth > 980) close();
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 980) close();
     });
 
     window.__closeMenu = close;
   }
 
   // -------------------------
-  // ✅ Desktop dropdowns (FIXED: no disappearing when moving into menu)
+  // Desktop dropdowns (FIX: keep open while moving cursor into menu)
   // -------------------------
-  function initDropdowns(){
+  function initDropdowns() {
     const dds = $$("[data-dd]");
-    if(!dds.length) return;
+    if (!dds.length) return;
 
-    const closeAll = () => {
-      dds.forEach(dd=>{
-        const btn = $(".nav-dd-btn", dd);
-        const menu = $(".nav-dd-menu", dd);
-        if(btn && menu){
-          btn.setAttribute("aria-expanded","false");
-          menu.classList.remove("open");
-        }
-        if(dd.__ddCloseTimer) clearTimeout(dd.__ddCloseTimer);
-        dd.__ddCloseTimer = null;
-        dd.__ddHoveringMenu = false;
-      });
-    };
+    const timers = new WeakMap();
 
-    dds.forEach(dd=>{
+    const setOpen = (dd, yes) => {
       const btn = $(".nav-dd-btn", dd);
       const menu = $(".nav-dd-menu", dd);
-      if(!btn || !menu) return;
+      if (!btn || !menu) return;
+      if (yes) {
+        menu.classList.add("open");
+        btn.setAttribute("aria-expanded", "true");
+      } else {
+        menu.classList.remove("open");
+        btn.setAttribute("aria-expanded", "false");
+      }
+    };
 
-      // Track cursor inside the dropdown panel
-      menu.addEventListener("mouseenter", () => { dd.__ddHoveringMenu = true; });
-      menu.addEventListener("mouseleave", () => {
-        dd.__ddHoveringMenu = false;
-        if(dd.__ddCloseTimer) clearTimeout(dd.__ddCloseTimer);
-        dd.__ddCloseTimer = setTimeout(() => {
-          if(!dd.__ddHoveringMenu){
-            menu.classList.remove("open");
-            btn.setAttribute("aria-expanded","false");
-          }
-        }, 140);
-      });
+    const closeAll = () => dds.forEach((dd) => setOpen(dd, false));
 
-      // Click toggling (works everywhere)
-      btn.addEventListener("click",(e)=>{
+    const clearTimer = (dd) => {
+      const t = timers.get(dd);
+      if (t) clearTimeout(t);
+      timers.delete(dd);
+    };
+
+    const delayedClose = (dd) => {
+      clearTimer(dd);
+      timers.set(
+        dd,
+        setTimeout(() => setOpen(dd, false), 180) // small grace time to move cursor
+      );
+    };
+
+    dds.forEach((dd) => {
+      const btn = $(".nav-dd-btn", dd);
+      const menu = $(".nav-dd-menu", dd);
+      if (!btn || !menu) return;
+
+      btn.addEventListener("click", (e) => {
         e.preventDefault();
         const isOpen = menu.classList.contains("open");
         closeAll();
-        if(!isOpen){
-          menu.classList.add("open");
-          btn.setAttribute("aria-expanded","true");
-        }
+        if (!isOpen) setOpen(dd, true);
       });
 
-      // Hover open/close (desktop only)
-      dd.addEventListener("mouseenter",()=>{
-        if(window.matchMedia("(hover:hover)").matches){
-          if(dd.__ddCloseTimer) clearTimeout(dd.__ddCloseTimer);
-          dd.__ddCloseTimer = null;
-          closeAll();
-          menu.classList.add("open");
-          btn.setAttribute("aria-expanded","true");
-        }
+      // Hover behavior (desktop only)
+      const canHover = () => window.matchMedia("(hover:hover)").matches;
+
+      dd.addEventListener("mouseenter", () => {
+        if (!canHover()) return;
+        clearTimer(dd);
+        closeAll();
+        setOpen(dd, true);
       });
 
-      dd.addEventListener("mouseleave",()=>{
-        if(window.matchMedia("(hover:hover)").matches){
-          if(dd.__ddCloseTimer) clearTimeout(dd.__ddCloseTimer);
-          dd.__ddCloseTimer = setTimeout(() => {
-            if(!dd.__ddHoveringMenu){
-              menu.classList.remove("open");
-              btn.setAttribute("aria-expanded","false");
-            }
-          }, 140);
-        }
+      dd.addEventListener("mouseleave", () => {
+        if (!canHover()) return;
+        delayedClose(dd);
+      });
+
+      // Crucial: keep it open when cursor enters the menu itself
+      menu.addEventListener("mouseenter", () => {
+        if (!canHover()) return;
+        clearTimer(dd);
+        setOpen(dd, true);
+      });
+
+      menu.addEventListener("mouseleave", () => {
+        if (!canHover()) return;
+        delayedClose(dd);
       });
     });
 
-    document.addEventListener("click",(e)=>{
-      if(!e.target.closest("[data-dd]")) closeAll();
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest("[data-dd]")) closeAll();
     });
 
-    document.addEventListener("keydown",(e)=>{
-      if(e.key==="Escape") closeAll();
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeAll();
     });
   }
 
   // -------------------------
   // FAQ accordion
   // -------------------------
-  function initFAQ(){
-    $$(".faq-btn").forEach(btn=>{
-      btn.addEventListener("click",()=>{
-        const expanded = btn.getAttribute("aria-expanded")==="true";
-        $$(".faq-btn").forEach(b=>{
-          b.setAttribute("aria-expanded","false");
-          const p=b.parentElement.querySelector(".faq-panel");
-          if(p) p.hidden=true;
+  function initFAQ() {
+    $$(".faq-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const expanded = btn.getAttribute("aria-expanded") === "true";
+        $$(".faq-btn").forEach((b) => {
+          b.setAttribute("aria-expanded", "false");
+          const p = b.parentElement.querySelector(".faq-panel");
+          if (p) p.hidden = true;
         });
-        if(!expanded){
-          btn.setAttribute("aria-expanded","true");
-          const p=btn.parentElement.querySelector(".faq-panel");
-          if(p) p.hidden=false;
+        if (!expanded) {
+          btn.setAttribute("aria-expanded", "true");
+          const p = btn.parentElement.querySelector(".faq-panel");
+          if (p) p.hidden = false;
         }
       });
     });
@@ -226,34 +220,33 @@
   // -------------------------
   // View helper
   // -------------------------
-  function openInternal(url, name){
-    const u = normalizeUrl(url);
-    return `view.html?url=${encodeURIComponent(u)}&name=${encodeURIComponent(name)}`;
+  function openInternal(url, name) {
+    return `view.html?url=${encodeURIComponent(url)}&name=${encodeURIComponent(name)}`;
   }
 
   // -------------------------
   // Homepage big sections (dynamic-sections.json)
   // -------------------------
-  async function renderHomepageSections(){
+  async function renderHomepageSections() {
     const wrap = $("#dynamic-sections");
-    if(!wrap) return;
+    if (!wrap) return;
 
-    let data={ sections:[] };
-    try{
-      const r=await fetch("dynamic-sections.json",{ cache:"no-store" });
-      if(r.ok) data=await r.json();
-    }catch(_){}
+    let data = { sections: [] };
+    try {
+      const r = await fetch("dynamic-sections.json", { cache: "no-store" });
+      if (r.ok) data = await r.json();
+    } catch (_) {}
 
-    wrap.innerHTML="";
+    wrap.innerHTML = "";
 
-    (data.sections||[]).forEach(sec=>{
-      const title=safe(sec.title)||"Updates";
-      const color=safe(sec.color)||"#0284c7";
-      const icon=safe(sec.icon)||"fa-solid fa-briefcase";
+    (data.sections || []).forEach((sec) => {
+      const title = safe(sec.title) || "Updates";
+      const color = safe(sec.color) || "#0284c7";
+      const icon = safe(sec.icon) || "fa-solid fa-briefcase";
 
-      const card=document.createElement("article");
-      card.className="section-card";
-      card.innerHTML=`
+      const card = document.createElement("article");
+      card.className = "section-card";
+      card.innerHTML = `
         <div class="section-head" style="background:${color}">
           <div class="left">
             <i class="${icon}"></i>
@@ -266,20 +259,23 @@
         </div>
       `;
 
-      const list=$(".section-list", card);
-      const items=Array.isArray(sec.items) ? sec.items.slice(0,8) : [];
-      items.forEach(it=>{
-        const name=safe(it.name)||"Open";
-        const url=it.url||it.link||"";
-        if(!url) return;
-        const external=!!it.external;
+      const list = $(".section-list", card);
+      const items = Array.isArray(sec.items) ? sec.items.slice(0, 8) : [];
+      items.forEach((it) => {
+        const name = safe(it.name) || "Open";
+        const url = it.url || it.link || "";
+        if (!url) return;
 
-        const a=document.createElement("a");
-        a.className="section-link";
-        a.href = external ? normalizeUrl(url) : openInternal(url, name);
-        if(external){ a.target="_blank"; a.rel="noopener"; }
+        const external = !!it.external;
+        const a = document.createElement("a");
+        a.className = "section-link";
+        a.href = external ? url : openInternal(url, name);
+        if (external) {
+          a.target = "_blank";
+          a.rel = "noopener";
+        }
 
-        a.innerHTML=`
+        a.innerHTML = `
           <div class="t">${name}</div>
           ${it.date ? `<div class="d">${safe(it.date)}</div>` : `<div class="d">Open official link</div>`}
         `;
@@ -291,72 +287,67 @@
   }
 
   // -------------------------
-  // Category pages (from jobs.json)
+  // Category page (category.html)
   // -------------------------
-  function normalizeGroup(g){
-    const v=(g||"").toLowerCase().trim();
-    const map={
-      "study":"study",
-      "study-wise":"study",
-      "studywise":"study",
-      "popular":"popular",
-      "popular-jobs":"popular",
-      "categories":"popular",
-      "state":"state",
-      "state-wise":"state",
-      "statewise":"state",
-      "admissions":"admissions",
-      "admit-result":"admit-result",
-      "admit card":"admit-result",
-      "admit":"admit-result",
-      "result":"admit-result",
-      "answer":"admit-result",
-      "syllabus":"admit-result",
-      "admitresult":"admit-result",
-      "khabar":"khabar",
-      "news":"khabar",
-      "study-material":"study-material",
-      "courses":"study-material"
+  function normalizeGroup(g) {
+    const v = (g || "").toLowerCase().trim();
+    const map = {
+      study: "study",
+      "study-wise": "study",
+      studywise: "study",
+      popular: "popular",
+      "popular-jobs": "popular",
+      state: "state",
+      "state-wise": "state",
+      statewise: "state",
+      admissions: "admissions",
+      admission: "admissions",
+      "admit-result": "admit-result",
+      admitresult: "admit-result",
+      khabar: "khabar",
+      news: "khabar",
+      "study-material": "study-material",
+      courses: "study-material",
     };
     return map[v] || v || "study";
   }
 
-  function groupMeta(group){
-    const meta={
-      "study":{
-        title:"Study wise jobs",
-        desc:"Browse government job links by education level: 8th pass, 10th pass, 12th pass, ITI, diploma, graduation and more."
+  function groupMeta(group) {
+    const meta = {
+      study: {
+        title: "Study wise jobs",
+        desc: "Browse government job links by education level: 8th pass, 10th pass, 12th pass, ITI, diploma, graduation and more.",
       },
-      "popular":{
-        title:"Popular job categories",
-        desc:"Explore popular government job categories like SSC, Railway, Police, Bank, Teaching and more."
+      popular: {
+        title: "Popular job categories",
+        desc: "Explore popular government job categories like SSC, Railway, Police, Bank, Teaching and more.",
       },
-      "state":{
-        title:"State wise jobs",
-        desc:"Find state-wise government job links and recruitment updates."
+      state: {
+        title: "State wise jobs",
+        desc: "Find state-wise government job links and recruitment updates.",
       },
-      "admissions":{
-        title:"Admissions",
-        desc:"Admissions updates and official application links for universities, colleges and entrance exams."
+      admissions: {
+        title: "Admissions",
+        desc: "Admissions updates and official application links for universities, colleges and entrance exams.",
       },
-      "admit-result":{
-        title:"Admit Card / Result / Answer Key / Syllabus",
-        desc:"Quick access to admit cards, results, answer keys and syllabus links from official sources."
+      "admit-result": {
+        title: "Admit Card / Result / Answer Key / Syllabus",
+        desc: "Quick access to admit cards, results, answer keys and syllabus links from official sources.",
       },
-      "khabar":{
-        title:"Latest Khabar",
-        desc:"Latest news and updates related to jobs, exams and government announcements."
+      khabar: {
+        title: "Latest Khabar",
+        desc: "Latest news and updates related to jobs, exams and government announcements.",
       },
-      "study-material":{
-        title:"Study Material & Top Courses",
-        desc:"Study resources, notes, preparation links and recommended courses for government exams."
-      }
+      "study-material": {
+        title: "Study Material & Top Courses",
+        desc: "Study resources, notes, preparation links and recommended courses for government exams.",
+      },
     };
-    return meta[group] || { title:"Category", desc:"Browse useful links and categories." };
+    return meta[group] || { title: "Category", desc: "Browse useful links and categories." };
   }
 
-  async function renderCategoryPage(){
-    if(page !== "category.html") return;
+  async function renderCategoryPage() {
+    if (page !== "category.html") return;
 
     const params = new URLSearchParams(location.search);
     const group = normalizeGroup(params.get("group"));
@@ -365,165 +356,97 @@
     const titleEl = $("#categoryTitle");
     const descEl = $("#categoryDesc");
     const crumb = $("#crumbText");
-
-    if(titleEl) titleEl.textContent = meta.title;
-    if(descEl) descEl.textContent = meta.desc;
-    if(crumb) crumb.textContent = meta.title;
+    if (titleEl) titleEl.textContent = meta.title;
+    if (descEl) descEl.textContent = meta.desc;
+    if (crumb) crumb.textContent = meta.title;
 
     document.title = `${meta.title} | Top Sarkari Jobs`;
 
     let jobs = null;
-    try{
-      const r = await fetch("jobs.json", { cache:"no-store" });
-      if(r.ok) jobs = await r.json();
-    }catch(_){}
+    try {
+      const r = await fetch("jobs.json", { cache: "no-store" });
+      if (r.ok) jobs = await r.json();
+    } catch (_) {}
 
     const grid = $("#categoryGrid");
     const empty = $("#categoryEmpty");
     const filter = $("#categoryFilter");
     const clear = $("#clearCategoryFilter");
+    if (!grid) return;
 
-    if(!grid) return;
-
-    if(!jobs){
+    if (!jobs) {
       grid.innerHTML = "";
-      if(empty) empty.style.display = "block";
+      if (empty) empty.style.display = "block";
       return;
     }
 
-    const pool = [];
+    const pool = []
+      .concat(Array.isArray(jobs.top_jobs) ? jobs.top_jobs : [])
+      .concat(Array.isArray(jobs.left_jobs) ? jobs.left_jobs : [])
+      .concat(Array.isArray(jobs.right_jobs) ? jobs.right_jobs : []);
 
-    if(Array.isArray(jobs)){
-      pool.push(...jobs);
-    }else if(jobs && typeof jobs === "object"){
-      Object.keys(jobs).forEach(k=>{
-        const v = jobs[k];
-        if(Array.isArray(v)) pool.push(...v);
-      });
-
-      ["data","jobs","payload"].forEach(k=>{
-        const v = jobs && jobs[k];
-        if(v && typeof v === "object"){
-          Object.keys(v).forEach(kk=>{
-            const vv = v[kk];
-            if(Array.isArray(vv)) pool.push(...vv);
-          });
-        }
-      });
-    }
-
-    if(!pool.length){
-      grid.innerHTML = "";
-      if(empty) empty.style.display = "block";
-      return;
-    }
-
-    const sections = [];
-    let current = null;
-
-    const startSection = (heading) => {
-      const h = safe(heading);
-      if(!h) return;
-      current = { heading: h, items: [] };
-      sections.push(current);
+    const matchers = {
+      study: [/study/i],
+      popular: [/popular/i],
+      state: [/state/i],
+      admissions: [/admission/i],
+      "admit-result": [/admit/i, /result/i, /answer/i, /syllabus/i],
+      khabar: [/khabar/i, /news/i],
+      "study-material": [/study material/i, /course/i, /notes?/i],
     };
 
-    const pushItem = (name, url, external) => {
-      if(!current) startSection(meta.title);
-      const n = safe(name);
-      const u = safe(url);
-      if(!n || !u) return;
-      current.items.push({ name: n, url: u, external: !!external });
+    const reList = matchers[group] || [/.*/];
+
+    const blocks = [];
+    let currentHeading = null;
+    let items = [];
+
+    const flush = () => {
+      if (currentHeading && items.length) blocks.push({ heading: currentHeading, items: items.slice() });
+      currentHeading = null;
+      items = [];
     };
 
-    pool.forEach(it=>{
-      if(!it) return;
-
-      const title = (typeof it.title === "string" && it.title) ||
-                    (typeof it.heading === "string" && it.heading) ||
-                    (typeof it.section === "string" && it.section);
-
-      if(title){
-        startSection(title);
-        return;
+    for (const it of pool) {
+      if (it && typeof it.title === "string") {
+        flush();
+        const h = safe(it.title);
+        const ok = reList.some((re) => re.test(h));
+        currentHeading = ok ? h : null;
+        continue;
       }
+      if (!currentHeading) continue;
 
-      const name = it.name || it.label || it.text;
-      const url = it.url || it.link || it.href;
-      if(name && url) pushItem(name, url, it.external);
-    });
+      const name = safe(it.name);
+      const url = it.url || it.link || "";
+      if (!name || !url) continue;
 
-    const nonEmptySections = sections.filter(s => s.items && s.items.length);
-
-    const containsAny = (hay, needles) => {
-      const h = safe(hay).toLowerCase();
-      return needles.some(n => h.includes(n));
-    };
-
-    const groupKeywords = {
-      "study": [
-        "study", "education", "qualification", "pass", "8th", "10th", "12th",
-        "iti", "diploma", "graduation", "graduate", "degree",
-        "कक्षा", "पास", "योग्यता", "शिक्षा", "डिप्लोमा", "आईटीआई", "ग्रेजुएशन"
-      ],
-      "popular": [
-        "popular", "category", "categories", "ssc", "railway", "police", "bank", "teaching",
-        "लोकप्रिय", "कैटेगरी", "श्रेणी", "रेलवे", "पुलिस", "बैंक", "ssc"
-      ],
-      "state": [
-        "state", "states", "wise", "state-wise", "राज्य", "स्टेट"
-      ],
-      "admissions": [
-        "admission", "admissions", "apply", "registration", "counselling",
-        "एडमिशन", "प्रवेश", "रजिस्ट्रेशन", "काउंसलिंग"
-      ],
-      "admit-result": [
-        "admit", "admit card", "result", "answer key", "syllabus",
-        "एडमिट", "रिजल्ट", "उत्तर कुंजी", "आंसर", "सिलेबस"
-      ],
-      "khabar": [
-        "khabar", "news", "latest", "update", "updates",
-        "खबर", "समाचार", "न्यूज़", "अपडेट"
-      ],
-      "study-material": [
-        "study material", "material", "course", "courses", "notes", "pdf", "book",
-        "स्टडी", "मटेरियल", "कोर्स", "नोट्स"
-      ]
-    };
-
-    const wants = groupKeywords[group] || [];
-    let matched = nonEmptySections.filter(s => containsAny(s.heading, wants));
-
-    if(!matched.length){
-      if(["study","popular","state"].includes(group)){
-        matched = nonEmptySections.slice(0, 6);
-      }else{
-        matched = nonEmptySections.slice(0);
-      }
+      items.push({ name, url, external: !!it.external });
     }
+    flush();
 
-    const render = (blocksToRender, q="")=>{
+    const render = (blocksToRender, q = "") => {
       grid.classList.add("cat-grid");
       grid.innerHTML = "";
 
-      if(!blocksToRender.length){
-        if(empty) empty.style.display = "block";
+      if (!blocksToRender.length) {
+        if (empty) empty.style.display = "block";
         return;
       }
-      if(empty) empty.style.display = "none";
+      if (empty) empty.style.display = "none";
 
-      const colorMap={
-        "study":"#2563eb",
-        "popular":"#db2777",
-        "state":"#059669",
-        "admissions":"#f59e0b",
-        "admit-result":"#ef4444",
-        "khabar":"#7c3aed",
-        "study-material":"#0ea5e9"
+      const colorMap = {
+        study: "#2563eb",
+        popular: "#db2777",
+        state: "#059669",
+        admissions: "#f59e0b",
+        "admit-result": "#ef4444",
+        khabar: "#7c3aed",
+        "study-material": "#0ea5e9",
       };
       const color = colorMap[group] || "#0284c7";
 
-      blocksToRender.forEach(b=>{
+      blocksToRender.forEach((b) => {
         const card = document.createElement("article");
         card.className = "section-card";
         card.innerHTML = `
@@ -539,14 +462,15 @@
         `;
 
         const list = $(".section-list", card);
-
-        (b.items || []).forEach(x=>{
+        b.items.forEach((x) => {
           const a = document.createElement("a");
           a.className = "section-link";
-
-          const href = x.external ? normalizeUrl(x.url) : openInternal(x.url, x.name);
+          const href = x.external ? x.url : openInternal(x.url, x.name);
           a.href = href;
-          if(x.external){ a.target="_blank"; a.rel="noopener"; }
+          if (x.external) {
+            a.target = "_blank";
+            a.rel = "noopener";
+          }
 
           const qSafe = safe(q);
           const name = qSafe
@@ -562,329 +486,388 @@
 
         grid.appendChild(card);
       });
-
-      renderCategorySEO(meta.title, meta.desc, group);
     };
 
-    render(matched);
+    render(blocks);
 
-    if(filter){
-      filter.addEventListener("input", ()=>{
+    if (filter) {
+      filter.addEventListener("input", () => {
         const q = safe(filter.value).toLowerCase();
-        if(!q){ render(matched); return; }
-
-        const filtered = matched
-          .map(b=>({
-            heading: b.heading,
-            items: (b.items||[]).filter(x => safe(x.name).toLowerCase().includes(q))
-          }))
-          .filter(b => b.items.length);
-
+        if (!q) {
+          render(blocks);
+          return;
+        }
+        const filtered = blocks
+          .map((b) => ({ heading: b.heading, items: b.items.filter((x) => safe(x.name).toLowerCase().includes(q)) }))
+          .filter((b) => b.items.length);
         render(filtered, q);
       });
     }
 
-    if(clear){
-      clear.addEventListener("click", ()=>{
-        if(!filter) return;
+    if (clear) {
+      clear.addEventListener("click", () => {
+        if (!filter) return;
         filter.value = "";
-        render(matched);
+        render(blocks);
         filter.focus();
       });
     }
   }
 
-  function renderCategorySEO(title, desc, group){
-    const m = document.querySelector('meta[name="description"]');
-    if(m && safe(desc)) m.setAttribute("content", safe(desc));
+  // -------------------------
+  // CSC Services popup (govt-services.html)
+  // -------------------------
+  function initCscModal() {
+    const modal = $("#cscModal");
+    if (!modal) return;
 
-    const faqWrap = $("#categoryFaq");
-    if(!faqWrap) return;
+    const overlay = $("#cscModalOverlay");
+    const closeBtn = $("#cscModalClose");
+    const form = $("#cscRequestForm");
+    const serviceNameEl = $("#cscServiceName");
+    const openLinkBtn = $("#cscOpenLink");
+    const mailBtn = $("#cscMailBtn");
 
-    faqWrap.innerHTML = `
-      <div class="faq-card">
-        <h2>FAQs – ${safe(title)}</h2>
-        <p class="faq-sub">${safe(desc)}</p>
+    let currentService = { name: "", url: "" };
 
-        <div class="faq-item">
-          <button type="button" class="faq-btn" aria-expanded="false">
-            <span>Are these official links?</span>
-            <i class="fas fa-chevron-down"></i>
-          </button>
-          <div class="faq-panel" hidden>
-            We list official and trusted links. Always confirm dates and eligibility on the official portal.
-          </div>
-        </div>
+    const close = () => {
+      modal.hidden = true;
+      overlay.hidden = true;
+      document.body.style.overflow = "";
+    };
 
-        <div class="faq-item">
-          <button type="button" class="faq-btn" aria-expanded="false">
-            <span>Why do some links open in a viewer page?</span>
-            <i class="fas fa-chevron-down"></i>
-          </button>
-          <div class="faq-panel" hidden>
-            Internal viewer pages help keep navigation consistent. External links open directly.
-          </div>
-        </div>
-      </div>
-    `;
+    const open = (service) => {
+      currentService = service || { name: "", url: "" };
 
-    initFAQ();
+      if (serviceNameEl) serviceNameEl.textContent = currentService.name || "Service";
+      if (openLinkBtn) {
+        openLinkBtn.disabled = !currentService.url;
+        openLinkBtn.setAttribute("aria-disabled", String(!currentService.url));
+      }
+
+      modal.hidden = false;
+      overlay.hidden = false;
+      document.body.style.overflow = "hidden";
+
+      // focus first input
+      const first = form ? $("input, select, textarea", form) : null;
+      if (first) setTimeout(() => first.focus(), 50);
+    };
+
+    // expose for services renderer
+    window.__openCscModal = open;
+
+    const onKey = (e) => {
+      if (e.key === "Escape" && !modal.hidden) close();
+    };
+
+    if (overlay) overlay.addEventListener("click", close);
+    if (closeBtn) closeBtn.addEventListener("click", close);
+    document.addEventListener("keydown", onKey);
+
+    if (openLinkBtn) {
+      openLinkBtn.addEventListener("click", () => {
+        if (!currentService.url) return;
+        // keep your viewer behavior (internal) so nothing breaks
+        window.open(openInternal(currentService.url, currentService.name), "_blank", "noopener");
+      });
+    }
+
+    if (form) {
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const name = safe($("#cscFullName")?.value);
+        const phone = safe($("#cscPhone")?.value);
+        const state = safe($("#cscState")?.value);
+        const msg = safe($("#cscMessage")?.value);
+
+        const lines = [
+          `CSC Service Request`,
+          `Service: ${currentService.name || "-"}`,
+          name ? `Name: ${name}` : null,
+          phone ? `Phone: ${phone}` : null,
+          state ? `State: ${state}` : null,
+          msg ? `Details: ${msg}` : null,
+        ].filter(Boolean);
+
+        const body = encodeURIComponent(lines.join("\n"));
+
+        // IMPORTANT: put your real email here
+        const EMAIL_TO = "REPLACE_WITH_YOUR_EMAIL@example.com";
+        const subject = encodeURIComponent(`CSC Service Request - ${currentService.name || "Service"}`);
+
+        // If you haven't replaced email, just copy message to clipboard (fallback)
+        if (EMAIL_TO.includes("REPLACE_WITH_YOUR_EMAIL")) {
+          navigator.clipboard?.writeText(lines.join("\n")).catch(() => {});
+          alert("Copied request message. Set your email in script.js (EMAIL_TO) to enable one-click email.");
+        } else {
+          window.location.href = `mailto:${EMAIL_TO}?subject=${subject}&body=${body}`;
+        }
+
+        close();
+      });
+    }
+
+    if (mailBtn) {
+      mailBtn.addEventListener("click", () => {
+        if (!form) return;
+        form.requestSubmit();
+      });
+    }
   }
 
-  // -------------------------
-  // CSC Services page (services.json)
-  // -------------------------
-  async function renderServicesPage(){
-    if(page !== "govt-services.html") return;
+  async function renderServicesPage() {
+    if (page !== "govt-services.html") return;
 
     const list = $("#servicesList");
-    if(!list) return;
+    if (!list) return;
 
-    let data=null;
-    try{
-      const r=await fetch("services.json",{ cache:"no-store" });
-      if(r.ok) data=await r.json();
-    }catch(_){}
+    let data = null;
+    try {
+      const r = await fetch("services.json", { cache: "no-store" });
+      if (r.ok) data = await r.json();
+    } catch (_) {}
 
-    const services=(data && (data.services||data)) || [];
-    list.innerHTML="";
+    const services = (data && (data.services || data)) || [];
+    list.innerHTML = "";
 
-    if(!Array.isArray(services) || !services.length){
+    if (!Array.isArray(services) || !services.length) {
       list.innerHTML = `<div class="seo-block"><strong>No services found.</strong><p>Please check services.json.</p></div>`;
       return;
     }
 
-    const wrap=document.createElement("div");
-    wrap.className="section-card";
-    wrap.innerHTML = `
-      <div class="section-head" style="background:#0284c7">
-        <div class="left">
-          <i class="fa-solid fa-building-columns"></i>
-          <span>Service Request</span>
-        </div>
-      </div>
-      <div class="section-body">
-        <div class="section-list" id="servicesInner"></div>
-      </div>
-    `;
-    const inner=$("#servicesInner", wrap);
+    services.forEach((s) => {
+      const name = safe(s.name || s.service);
+      const url = s.url || s.link || "";
+      if (!name) return;
 
-    services.forEach(s=>{
-      const name=safe(s.name||s.service);
-      const url=s.url||s.link||"";
-      if(!name) return;
-
-      const a=document.createElement("a");
-      a.className="section-link";
-      a.href = url ? normalizeUrl(url) : "#";
-      if(url){
-        a.target="_blank";
-        a.rel="noopener";
-      }
+      // Render as "button-like link" that opens modal instead of dead external link
+      const a = document.createElement("a");
+      a.className = "section-link csc-service-link";
+      a.href = "#";
+      a.setAttribute("role", "button");
       a.innerHTML = `
         <div class="t">${name}</div>
-        <div class="d">Open service</div>
+        <div class="d">Click to fill details & open service</div>
       `;
-      inner.appendChild(a);
-    });
 
-    list.appendChild(wrap);
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (typeof window.__openCscModal === "function") {
+          window.__openCscModal({ name, url });
+        } else if (url) {
+          // fallback (shouldn't happen)
+          window.open(openInternal(url, name), "_blank", "noopener");
+        }
+      });
+
+      list.appendChild(a);
+    });
   }
 
   // -------------------------
-  // Tools page (tools.json)
+  // Tools page (tools.html)
   // -------------------------
-  async function renderToolsPage(){
-    if(page !== "tools.html") return;
+  async function renderToolsPage() {
+    if (page !== "tools.html") return;
 
-    const grid=$("#toolsGrid");
-    if(!grid) return;
+    const grid = $("#toolsGrid");
+    if (!grid) return;
 
-    let data=null;
-    try{
-      const r=await fetch("tools.json",{ cache:"no-store" });
-      if(r.ok) data=await r.json();
-    }catch(_){}
+    let data = null;
+    try {
+      const r = await fetch("tools.json", { cache: "no-store" });
+      if (r.ok) data = await r.json();
+    } catch (_) {}
 
-    grid.innerHTML="";
+    grid.innerHTML = "";
+    grid.classList.add("cat-grid");
 
-    if(!data){
-      grid.innerHTML = `<div class="seo-block"><strong>No tools found.</strong><p>Please check tools.json.</p></div>`;
-      return;
-    }
+    const buckets = [
+      { key: "image", title: "Image Tools", color: "#0ea5e9" },
+      { key: "pdf", title: "PDF Tools", color: "#4f46e5" },
+      { key: "video", title: "Video Tools", color: "#db2777" },
+    ];
 
-    const addGroup=(title, icon, arr)=>{
-      if(!Array.isArray(arr) || !arr.length) return;
+    let any = false;
 
-      const card=document.createElement("article");
-      card.className="section-card";
+    buckets.forEach((b) => {
+      const items = data && Array.isArray(data[b.key]) ? data[b.key] : [];
+      if (!items.length) return;
+      any = true;
+
+      const card = document.createElement("article");
+      card.className = "section-card";
       card.innerHTML = `
-        <div class="section-head" style="background:#4f46e5">
+        <div class="section-head" style="background:${b.color}">
           <div class="left">
-            <i class="${icon}"></i>
-            <span>${title}</span>
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span>${b.title}</span>
           </div>
         </div>
         <div class="section-body">
           <div class="section-list"></div>
         </div>
       `;
-      const list=$(".section-list", card);
+      const list = $(".section-list", card);
 
-      arr.forEach(it=>{
-        const name=safe(it.name)||"Open";
-        const url=it.url||it.link||"";
-        if(!url) return;
+      items.forEach((it) => {
+        const name = safe(it.name);
+        const url = it.url || it.link || "";
+        if (!name || !url) return;
 
-        const a=document.createElement("a");
-        a.className="section-link";
-        a.href = normalizeUrl(url);
-        a.target="_blank";
-        a.rel="noopener";
-        a.innerHTML = `
-          <div class="t">${name}</div>
-          <div class="d">Open tool</div>
-        `;
+        const a = document.createElement("a");
+        a.className = "section-link";
+        a.href = it.external ? url : openInternal(url, name);
+        if (it.external) {
+          a.target = "_blank";
+          a.rel = "noopener";
+        }
+        a.innerHTML = `<div class="t">${name}</div><div class="d">Open tool</div>`;
         list.appendChild(a);
       });
 
       grid.appendChild(card);
-    };
+    });
 
-    addGroup("PDF Tools", "fa-solid fa-file-pdf", data.pdf);
-    addGroup("Image Tools", "fa-solid fa-image", data.image);
-    addGroup("Video Tools", "fa-solid fa-video", data.video);
-
-    const any = grid.children.length > 0;
-    if(!any){
+    if (!any) {
       grid.innerHTML = `<div class="seo-block"><strong>No tools found.</strong><p>Please check tools.json.</p></div>`;
     }
   }
 
   // -------------------------
-  // Site search (fast index)
+  // Site search
   // -------------------------
   let SEARCH_INDEX = [];
   let SEARCH_READY = false;
 
-  async function buildSearchIndex(){
-    if(SEARCH_READY) return;
+  async function buildSearchIndex() {
+    if (SEARCH_READY) return;
 
-    const out=[];
+    const out = [];
 
-    try{
-      const r=await fetch("dynamic-sections.json",{ cache:"no-store" });
-      if(r.ok){
-        const d=await r.json();
-        (d.sections||[]).forEach(sec=>{
-          (sec.items||[]).forEach(it=>{
-            const title=safe(it.name);
-            const url=it.url||it.link||"";
-            if(!title || !url) return;
+    try {
+      const r = await fetch("dynamic-sections.json", { cache: "no-store" });
+      if (r.ok) {
+        const d = await r.json();
+        (d.sections || []).forEach((sec) => {
+          (sec.items || []).forEach((it) => {
+            const title = safe(it.name);
+            const url = it.url || it.link || "";
+            if (!title || !url) return;
             out.push({
               title,
-              meta: safe(sec.title)||"Updates",
-              href: it.external ? normalizeUrl(url) : openInternal(url, title),
-              external: !!it.external
+              meta: safe(sec.title) || "Updates",
+              href: it.external ? url : openInternal(url, title),
+              external: !!it.external,
             });
           });
         });
       }
-    }catch(_){}
+    } catch (_) {}
 
-    try{
-      const r=await fetch("jobs.json",{ cache:"no-store" });
-      if(r.ok){
-        const j=await r.json();
-        const pool=[...(j.top_jobs||[]), ...(j.left_jobs||[]), ...(j.right_jobs||[])];
-        pool.forEach(it=>{
-          if(it && it.title) return;
-          const title=safe(it.name);
-          const url=it.url||it.link||"";
-          if(!title || !url) return;
+    try {
+      const r = await fetch("jobs.json", { cache: "no-store" });
+      if (r.ok) {
+        const j = await r.json();
+        const pool = [...(j.top_jobs || []), ...(j.left_jobs || []), ...(j.right_jobs || [])];
+        pool.forEach((it) => {
+          if (it && it.title) return;
+          const title = safe(it.name);
+          const url = it.url || it.link || "";
+          if (!title || !url) return;
           out.push({
             title,
-            meta:"Jobs / Categories",
-            href: it.external ? normalizeUrl(url) : openInternal(url, title),
-            external: !!it.external
+            meta: "Jobs / Categories",
+            href: it.external ? url : openInternal(url, title),
+            external: !!it.external,
           });
         });
       }
-    }catch(_){}
+    } catch (_) {}
 
-    try{
-      const r=await fetch("tools.json",{ cache:"no-store" });
-      if(r.ok){
-        const t=await r.json();
-        ["image","pdf","video"].forEach(k=>{
-          (t[k]||[]).forEach(it=>{
-            const title=safe(it.name);
-            const url=it.url||it.link||"";
-            if(!title || !url) return;
+    try {
+      const r = await fetch("tools.json", { cache: "no-store" });
+      if (r.ok) {
+        const t = await r.json();
+        ["image", "pdf", "video"].forEach((k) => {
+          (t[k] || []).forEach((it) => {
+            const title = safe(it.name);
+            const url = it.url || it.link || "";
+            if (!title || !url) return;
             out.push({
               title,
-              meta:"Tools",
-              href: it.external ? normalizeUrl(url) : openInternal(url, title),
-              external: !!it.external
+              meta: "Tools",
+              href: it.external ? url : openInternal(url, title),
+              external: !!it.external,
             });
           });
         });
       }
-    }catch(_){}
+    } catch (_) {}
 
-    try{
-      const r=await fetch("services.json",{ cache:"no-store" });
-      if(r.ok){
-        const s=await r.json();
-        const services=(s.services||s||[]);
-        (services||[]).forEach(it=>{
-          const title=safe(it.name||it.service);
-          if(!title) return;
+    try {
+      const r = await fetch("services.json", { cache: "no-store" });
+      if (r.ok) {
+        const s = await r.json();
+        const services = s.services || s || [];
+        (services || []).forEach((it) => {
+          const title = safe(it.name || it.service);
+          if (!title) return;
           out.push({
             title,
-            meta:"CSC Services",
-            href:"govt-services.html",
-            external:false
+            meta: "CSC Services",
+            href: "govt-services.html",
+            external: false,
           });
         });
       }
-    }catch(_){}
+    } catch (_) {}
 
-    const seen=new Set();
-    SEARCH_INDEX = out.filter(x=>{
-      const k=(x.title+"|"+x.href).toLowerCase();
-      if(seen.has(k)) return false;
+    const seen = new Set();
+    SEARCH_INDEX = out.filter((x) => {
+      const k = (x.title + "|" + x.href).toLowerCase();
+      if (seen.has(k)) return false;
       seen.add(k);
       return true;
     });
 
-    SEARCH_READY=true;
+    SEARCH_READY = true;
   }
 
-  function initSearch(){
-    const input=$("#siteSearchInput");
-    const btn=$("#siteSearchBtn");
-    const results=$("#searchResults");
-    const openBtn=$("#openSearchBtn");
+  function debounce(fn, wait) {
+    let t = null;
+    return (...args) => {
+      clearTimeout(t);
+      t = setTimeout(() => fn(...args), wait);
+    };
+  }
 
-    if(!input || !btn || !results) return;
+  function initSearch() {
+    const input = $("#siteSearchInput");
+    const btn = $("#siteSearchBtn");
+    const results = $("#searchResults");
+    const openBtn = $("#openSearchBtn");
 
-    const run = async ()=>{
+    if (!input || !btn || !results) return;
+
+    const run = async () => {
       const q = safe(input.value);
-      if(!q){
+      if (!q) {
         results.classList.remove("open");
-        results.innerHTML="";
+        results.innerHTML = "";
         return;
       }
 
       await buildSearchIndex();
 
-      const ql=q.toLowerCase();
+      const ql = q.toLowerCase();
       const matches = SEARCH_INDEX
-        .filter(x => x.title.toLowerCase().includes(ql) || x.meta.toLowerCase().includes(ql))
-        .slice(0,25);
+        .filter((x) => x.title.toLowerCase().includes(ql) || x.meta.toLowerCase().includes(ql))
+        .slice(0, 25);
 
-      if(!matches.length){
+      if (!matches.length) {
         results.classList.add("open");
         results.innerHTML = `
           <div class="result-item">
@@ -897,72 +880,62 @@
         return;
       }
 
-      const re=new RegExp(`(${escRE(q)})`, "ig");
+      const re = new RegExp(`(${escRE(q)})`, "ig");
       results.classList.add("open");
-      results.innerHTML = matches.map(m=>{
-        const title = safe(m.title).replace(re, "<mark>$1</mark>");
-        return `
-          <a class="result-item" href="${m.href}" ${m.external ? `target="_blank" rel="noopener"` : ""}>
-            <div>
-              <div class="result-title">${title}</div>
-              <div class="result-meta">${safe(m.meta)}</div>
-            </div>
-            <div class="result-meta">${m.external ? "↗" : "→"}</div>
-          </a>
-        `;
-      }).join("");
+      results.innerHTML = matches
+        .map((m) => {
+          const title = safe(m.title).replace(re, "<mark>$1</mark>");
+          return `
+            <a class="result-item" href="${m.href}" ${m.external ? `target="_blank" rel="noopener"` : ""}>
+              <div>
+                <div class="result-title">${title}</div>
+                <div class="result-meta">${safe(m.meta)}</div>
+              </div>
+              <div class="result-meta">${m.external ? "↗" : "→"}</div>
+            </a>
+          `;
+        })
+        .join("");
     };
 
     btn.addEventListener("click", run);
     input.addEventListener("input", debounce(run, 150));
-    input.addEventListener("keydown",(e)=>{
-      if(e.key==="Enter") run();
-      if(e.key==="Escape"){
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") run();
+      if (e.key === "Escape") {
         results.classList.remove("open");
-        results.innerHTML="";
+        results.innerHTML = "";
         input.blur();
       }
     });
 
-    document.addEventListener("click",(e)=>{
-      if(!e.target.closest(".search-card")){
-        results.classList.remove("open");
-      }
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest(".search-card")) results.classList.remove("open");
     });
 
-    if(openBtn){
-      openBtn.addEventListener("click", ()=>{
-        input.scrollIntoView({ behavior:"smooth", block:"center" });
-        setTimeout(()=>input.focus(), 150);
+    if (openBtn) {
+      openBtn.addEventListener("click", () => {
+        input.scrollIntoView({ behavior: "smooth", block: "center" });
+        setTimeout(() => input.focus(), 150);
       });
     }
-  }
-
-  function debounce(fn, wait){
-    let t=null;
-    return (...args)=>{
-      clearTimeout(t);
-      t=setTimeout(()=>fn(...args), wait);
-    };
   }
 
   // -------------------------
   // Boot
   // -------------------------
-  document.addEventListener("DOMContentLoaded", async ()=>{
+  document.addEventListener("DOMContentLoaded", async () => {
     await loadHeaderLinks();
     initOffcanvas();
-    initDropdowns(); // ✅ fixed version
+    initDropdowns();
     initFAQ();
     initSearch();
 
-    if(page==="index.html" || page===""){
-      await renderHomepageSections();
-    }
+    if (page === "index.html" || page === "") await renderHomepageSections();
 
     await renderCategoryPage();
+    initCscModal();          // <-- NEW
     await renderServicesPage();
     await renderToolsPage();
   });
-
 })();
