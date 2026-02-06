@@ -290,46 +290,42 @@
   }
 
   // ---------------------------
-  // ✅ Supabase init (Helpdesk-style)
+  // ✅ Supabase init (Helpdesk-style) for CSC Services
   // ---------------------------
-  const SUPABASE_CONFIG_PATH = "config.json";
-  const CSC_TABLE = "csc_service_requests"; // create this table in Supabase (recommended)
+  const CSC_TABLE = "csc_service_requests";
+  let cscSupabase = null;
 
   async function ensureSupabaseClient() {
-    // Only needed for CSC services page
-    if (page !== "govt-services.html") return null;
+    if (cscSupabase) return cscSupabase;
 
-    // If supabase-js isn't loaded on govt-services.html, load it dynamically (safe)
+    // Load supabase-js dynamically if not present
     if (!window.supabase) {
       await new Promise((resolve, reject) => {
         const s = document.createElement("script");
         s.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
         s.async = true;
-        s.onload = () => resolve();
-        s.onerror = () => reject(new Error("Failed to load supabase-js"));
+        s.onload = resolve;
+        s.onerror = reject;
         document.head.appendChild(s);
       }).catch(() => null);
     }
 
     if (!window.supabase) return null;
 
-    // Reuse existing client if already created
-    if (window.__tsjSupabase) return window.__tsjSupabase;
-
     try {
-      const r = await fetch(SUPABASE_CONFIG_PATH, { cache: "no-store" });
+      const r = await fetch("config.json", { cache: "no-store" });
       if (!r.ok) return null;
       const config = await r.json();
       if (!config?.supabase?.url || !config?.supabase?.anonKey) return null;
 
-      window.__tsjSupabase = window.supabase.createClient(config.supabase.url, config.supabase.anonKey);
-      return window.__tsjSupabase;
+      cscSupabase = window.supabase.createClient(config.supabase.url, config.supabase.anonKey);
+      return cscSupabase;
     } catch (_) {
       return null;
     }
   }
 
-  // ✅ CSC modal -> Supabase insert (no mailto)
+  // ✅ CSC modal -> insert into csc_service_requests (name, phone, service, created_at)
   function initCscModal() {
     const modal = $("#cscModal");
     const overlay = $("#cscModalOverlay");
@@ -378,28 +374,34 @@
       const state = safe($("#cscState")?.value);
       const msg = safe($("#cscMessage")?.value);
 
-      // Basic validation (same spirit as Helpdesk)
-      if (!fullName || !phone || phone.length < 10 || !msg) {
+      // Keep validation flexible (your table already has mixed phone formats)
+      if (!fullName || !phone || phone.length < 8 || !msg) {
         alert("Please fill all fields correctly.");
         return;
       }
 
-      // Insert into Supabase (like Helpdesk)
       const sb = await ensureSupabaseClient();
       if (!sb) {
         alert("Submission system is temporarily unavailable. Please try again later.");
         return;
       }
 
+      // This goes into your table column: service (text)
+      const serviceText = [
+        safe(currentService.name) ? safe(currentService.name) : "-",
+        state ? `State: ${state}` : "",
+        currentService.url ? `Link: ${normalizeUrl(currentService.url)}` : "",
+        msg ? `Details: ${msg}` : "",
+      ]
+        .filter(Boolean)
+        .join("\n");
+
       try {
         const { error } = await sb.from(CSC_TABLE).insert([
           {
-            service_name: safe(currentService.name),
-            full_name: fullName,
+            name: fullName,
             phone: phone,
-            state: state,
-            message: msg,
-            service_url: currentService.url ? normalizeUrl(currentService.url) : "",
+            service: serviceText,
             created_at: new Date().toISOString(),
           },
         ]);
@@ -410,7 +412,6 @@
           return;
         }
 
-        // Success UX (minimal)
         alert("Request submitted successfully. We will contact you soon.");
         form.reset();
         close();
