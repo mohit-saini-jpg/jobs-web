@@ -12,6 +12,26 @@
   <!-- REQUIRED for injected header/footer -->
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- ✅ Category subpages ONLY: hide Search UI inside injected header -->
+  <style>
+    #site-header a[href*="search" i],
+    #site-header button[onclick*="search" i],
+    #site-header a[onclick*="search" i],
+    #site-header form[role="search" i],
+    #site-header form[id*="search" i],
+    #site-header form[class*="search" i],
+    #site-header input[type="search" i],
+    #site-header input[id*="search" i],
+    #site-header input[name*="search" i],
+    #site-header input[name="q" i],
+    #site-header button[id*="search" i],
+    #site-header button[class*="search" i],
+    #site-header [id*="search" i],
+    #site-header [class*="search" i]{
+      display: none !important;
+    }
+  </style>
 </head>
 
 <body>
@@ -81,6 +101,6 @@
   </aside>
 
   <!-- Global JS (unchanged) -->
-  <script src="script.js?v=20260205"></script>
+  <script src="script.js"></script>
 </body>
 </html>
