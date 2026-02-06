@@ -32,6 +32,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- ✅ IMPORTANT: load your site styling so injected homepage header/footer look identical -->
+    <link rel="stylesheet" href="styles.css">
+
     <style>
         :root {
             --primary-500: #0ea5e9;
@@ -49,24 +53,11 @@
 <body>
 
     <div class="min-h-screen flex flex-col">
-        <!-- Header with Navigation -->
-        <header class="bg-gradient-to-r from-sky-600 to-indigo-600 text-white shadow-sm relative">
-            <div class="container mx-auto max-w-6xl px-4 py-4">
-                <div class="flex items-center justify-between">
-                    <h1 class="text-2xl font-bold flex items-center">
-                        <img src="image.png" alt="Top Sarkari Jobs Logo" class="h-10 w-10 mr-3 rounded-full">
-                        Tools
-                    </h1>
-                    <nav>
-                        <a href="#" onclick="goBack()" class="text-white hover:underline flex items-center">
-                            <i class="fas fa-arrow-left mr-2"></i>Go back
-                        </a>
-                    </nav>
-                </div>
-            </div>
-        </header>
 
-        <main class="mx-auto w-full">
+        <!-- ✅ HOMEPAGE HEADER (injected by script.js) -->
+        <div id="site-header"></div>
+
+        <main class="mx-auto w-full flex-1">
             <!-- Tools Section -->
             <div class="bg-white shadow-lg overflow-hidden">
                 <div class="min-h-screen">
@@ -123,25 +114,11 @@
                 </div>
             </div>
         </main>
-    </div>
 
-    <!-- Footer -->
-    <footer class="bg-white text-gray-800 py-8 mt-12">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-4 md:mb-0">
-                    <h3 class="text-xl font-bold">Top Sarkari Jobs</h3>
-                    <p class="text-gray-600 text-sm mt-1">Your gateway to government jobs and services</p>
-                </div>
-                <div class="flex flex-wrap gap-3" id="footer-social-links">
-                    <!-- Social links will be populated here -->
-                </div>
-            </div>
-            <div class="border-t border-gray-200 mt-6 pt-6 text-center text-gray-600 text-sm">
-                <p>&copy; 2025 Top Sarkari Jobs. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+        <!-- ✅ HOMEPAGE FOOTER (injected by script.js) -->
+        <div id="site-footer"></div>
+
+    </div>
 
     <script src="script.js"></script>
 </body>
