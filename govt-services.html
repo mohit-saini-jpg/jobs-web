@@ -8,14 +8,29 @@
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://www.topsarkarijobs.com/govt-services.html" />
   <link rel="icon" type="image/x-icon" href="image.ico">
+
+  <!-- Site styles (required for injected header/footer) -->
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- ✅ CSC Services page ONLY: hide search section if present -->
+  <style>
+    .top-search,
+    .search-card,
+    #siteSearchInput,
+    #siteSearchBtn,
+    #searchResults {
+      display: none !important;
+    }
+  </style>
 </head>
 
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
-  <!-- ✅ Injected Homepage Header -->
+  <!-- Injected homepage header -->
   <div id="site-header"></div>
 
   <main id="main" class="container page">
@@ -43,9 +58,10 @@
     </section>
   </main>
 
-  <!-- ✅ Injected Homepage Footer -->
+  <!-- Injected homepage footer -->
   <div id="site-footer"></div>
 
+  <!-- Required for mobile menu (unchanged) -->
   <div id="menuOverlay" class="overlay" hidden></div>
   <aside id="mobileMenu" class="offcanvas" aria-label="Mobile menu" hidden>
     <div class="offcanvas-head">
@@ -54,39 +70,12 @@
         <i class="fa-solid fa-xmark"></i>
       </button>
     </div>
-
     <nav class="offcanvas-nav" aria-label="Mobile primary">
-      <a href="index.html">Home</a>
-      <a href="result.html">Results</a>
-      <a href="search.html">Search</a>
-      <a href="govt-services.html">CSC Services</a>
-      <a href="tools.html">Tools</a>
-      <a href="helpdesk.html">Helpdesk</a>
-
-      <div class="offcanvas-group">
-        <div class="offcanvas-group-title">Jobs</div>
-        <a href="category.html?group=study">Study wise jobs</a>
-        <a href="category.html?group=popular">Popular job categories</a>
-        <a href="category.html?group=state">State wise jobs</a>
-      </div>
-
-      <div class="offcanvas-group">
-        <div class="offcanvas-group-title">Admissions</div>
-        <a href="category.html?group=admissions">Admissions</a>
-        <a href="category.html?group=admit-result">Admit Card / Result / Answer Key / Syllabus</a>
-      </div>
-
-      <div class="offcanvas-group">
-        <div class="offcanvas-group-title">More</div>
-        <a href="category.html?group=khabar">Latest Khabar</a>
-        <a href="category.html?group=study-material">Study Material & Top Courses</a>
-      </div>
-
-      <div class="offcanvas-cta" id="header-links-mobile"></div>
+      <div id="header-links-mobile"></div>
     </nav>
   </aside>
 
-  <!-- ✅ CSC popup modal (UNCHANGED) -->
+  <!-- CSC modal (UNCHANGED) -->
   <div id="cscModalOverlay" class="modal-overlay" hidden></div>
 
   <section id="cscModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="cscModalTitle" hidden>
@@ -124,23 +113,14 @@
           </div>
 
           <div class="modal-actions">
-            <button id="cscCloseBtn" type="button" class="btn-primary">
-              Close
-            </button>
-
-            <button type="submit" class="btn-primary">
-              Submit request
-            </button>
+            <button id="cscCloseBtn" type="button" class="btn-primary">Close</button>
+            <button type="submit" class="btn-primary">Submit request</button>
           </div>
-
-          <p class="modal-note">
-            Note: “Submit request” opens your email app (mailto). Set EMAIL_TO inside <code>script.js</code>.
-          </p>
         </form>
       </div>
     </div>
   </section>
 
-  <script src="script.js?v=20260205-CLOSEBTN"></script>
+  <script src="script.js"></script>
 </body>
 </html>
