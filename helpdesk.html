@@ -1,138 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C4VRD1C9QS"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-C4VRD1C9QS');
-    </script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-C4VRD1C9QS"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-C4VRD1C9QS');
+  </script>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Helpdesk & Support - Top Sarkari Jobs</title>
-    <meta name="description" content="Contact Top Sarkari Jobs for any queries related to government jobs, results, or website issues. We are here to help.">
-    <meta name="keywords" content="helpdesk, contact us, support, top sarkari jobs contact, query">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://topsarkarijobs.com/helpdesk.html">
-    <link rel="icon" type="image/x-icon" href="image.ico">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Helpdesk & Support - Top Sarkari Jobs</title>
+  <meta name="description" content="Contact Top Sarkari Jobs for any queries related to government jobs, results, or website issues. We are here to help.">
+  <meta name="keywords" content="helpdesk, contact us, support, top sarkari jobs contact, query">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://topsarkarijobs.com/helpdesk.html">
+  <link rel="icon" type="image/x-icon" href="image.ico">
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
-    <!-- Google Font: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <!-- Google Font: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- ✅ REQUIRED: site styles for injected header/footer -->
-    <link rel="stylesheet" href="styles.css">
+  <!-- ✅ REQUIRED for injected header/footer -->
+  <link rel="stylesheet" href="styles.css">
 
-    <style>
-      :root { --primary-500:#0ea5e9; --muted-bg:#f8fafc; }
-      body{
-        font-family:'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-        background:var(--muted-bg);
-        color:#0f172a;
-      }
-    </style>
+  <style>
+    :root { --primary-500:#0ea5e9; --muted-bg:#f8fafc; }
+    body{
+      font-family:'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background:var(--muted-bg);
+      color:#0f172a;
+    }
+  </style>
 
-    <!-- ✅ Hide ONLY the Search item in injected header (Helpdesk page only) -->
-    <style>
-      #site-header a[href$="search.html"],
-      #site-header a[href*="search.html"],
-      #site-header a[href="/search.html"]{
-        display:none !important;
-      }
-    </style>
+  <!-- ✅ Helpdesk page ONLY: hide Search UI inside injected header -->
+  <style>
+    #site-header a[href*="search" i],
+    #site-header button[onclick*="search" i],
+    #site-header a[onclick*="search" i],
+    #site-header form[role="search" i],
+    #site-header form[id*="search" i],
+    #site-header form[class*="search" i],
+    #site-header input[type="search" i],
+    #site-header input[id*="search" i],
+    #site-header input[name*="search" i],
+    #site-header input[name="q" i],
+    #site-header button[id*="search" i],
+    #site-header button[class*="search" i],
+    #site-header [id*="search" i],
+    #site-header [class*="search" i]{
+      display:none !important;
+    }
+  </style>
 </head>
 
 <body class="min-h-screen flex flex-col">
-    <a class="skip-link" href="#main">Skip to content</a>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-    <!-- ✅ Injected Homepage Header -->
-    <div id="site-header"></div>
+  <!-- ✅ Injected homepage header -->
+  <div id="site-header"></div>
 
-    <main id="main" class="container flex-1 py-6">
-        <div class="max-w-5xl mx-auto">
-            <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100">
-                <div class="bg-gradient-to-r from-sky-500 to-blue-600 px-6 py-5">
-                    <h1 class="text-2xl font-bold text-white flex items-center gap-3">
-                        <i class="fa-solid fa-headset"></i>
-                        Helpdesk & Support
-                    </h1>
-                    <p class="text-sky-100 mt-1 text-sm">
-                        Submit your query and our team will contact you soon.
-                    </p>
-                </div>
+  <main id="main" class="container flex-1 py-6">
+    <div class="max-w-5xl mx-auto">
+      <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100">
+        <div class="bg-gradient-to-r from-sky-500 to-blue-600 px-6 py-5">
+          <h1 class="text-2xl font-bold text-white flex items-center gap-3">
+            <i class="fa-solid fa-headset"></i>
+            Helpdesk & Support
+          </h1>
+          <p class="text-sky-100 mt-1 text-sm">Submit your query and our team will contact you soon.</p>
+        </div>
 
-                <div class="p-6">
-                    <form id="helpdeskForm" class="grid gap-4">
-                        <div class="grid gap-2">
-                            <label class="text-sm font-semibold text-slate-800">Full Name</label>
-                            <input id="name" type="text" required
-                                class="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-sky-400"
-                                placeholder="Your full name">
-                        </div>
-
-                        <div class="grid gap-2">
-                            <label class="text-sm font-semibold text-slate-800">Phone Number</label>
-                            <input id="phone" type="tel" required
-                                class="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-sky-400"
-                                placeholder="Your phone number">
-                        </div>
-
-                        <div class="grid gap-2">
-                            <label class="text-sm font-semibold text-slate-800">Email (optional)</label>
-                            <input id="email" type="email"
-                                class="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-sky-400"
-                                placeholder="Your email address">
-                        </div>
-
-                        <div class="grid gap-2">
-                            <label class="text-sm font-semibold text-slate-800">Query</label>
-                            <textarea id="query" rows="5" required
-                                class="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-sky-400"
-                                placeholder="Describe your issue..."></textarea>
-                        </div>
-
-                        <button type="submit"
-                            class="btn-primary w-full py-3 rounded-xl font-semibold flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-paper-plane"></i>
-                            Submit Query
-                        </button>
-
-                        <p id="statusMsg" class="text-sm text-center text-slate-600"></p>
-                    </form>
-                </div>
+        <div class="p-6">
+          <form id="helpdeskForm" class="grid gap-4">
+            <div class="grid gap-2">
+              <label class="text-sm font-semibold text-slate-800">Full Name</label>
+              <input id="name" type="text" required class="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-sky-400" placeholder="Your full name">
             </div>
-        </div>
-    </main>
 
-    <!-- ✅ Injected Homepage Footer -->
-    <div id="site-footer"></div>
+            <div class="grid gap-2">
+              <label class="text-sm font-semibold text-slate-800">Phone Number</label>
+              <input id="phone" type="tel" required class="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-sky-400" placeholder="Your phone number">
+            </div>
 
-    <!-- Required by script.js for hamburger -->
-    <div id="menuOverlay" class="overlay" hidden></div>
-    <aside id="mobileMenu" class="offcanvas" aria-label="Mobile menu" hidden>
-        <div class="offcanvas-head">
-            <div class="offcanvas-title">Menu</div>
-            <button id="closeMenuBtn" class="icon-btn" type="button" aria-label="Close menu">
-                <i class="fa-solid fa-xmark"></i>
+            <div class="grid gap-2">
+              <label class="text-sm font-semibold text-slate-800">Email (optional)</label>
+              <input id="email" type="email" class="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-sky-400" placeholder="Your email address">
+            </div>
+
+            <div class="grid gap-2">
+              <label class="text-sm font-semibold text-slate-800">Query</label>
+              <textarea id="query" rows="5" required class="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-sky-400" placeholder="Describe your issue..."></textarea>
+            </div>
+
+            <button type="submit" class="btn-primary w-full py-3 rounded-xl font-semibold flex items-center justify-center gap-2">
+              <i class="fa-solid fa-paper-plane"></i>
+              Submit Query
             </button>
-        </div>
-        <nav class="offcanvas-nav" aria-label="Mobile primary">
-            <div id="header-links-mobile"></div>
-        </nav>
-    </aside>
 
-    <script src="script.js"></script>
+            <p id="statusMsg" class="text-sm text-center text-slate-600"></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ✅ Injected homepage footer -->
+  <div id="site-footer"></div>
+
+  <!-- Required by script.js for hamburger -->
+  <div id="menuOverlay" class="overlay" hidden></div>
+  <aside id="mobileMenu" class="offcanvas" aria-label="Mobile menu" hidden>
+    <div class="offcanvas-head">
+      <div class="offcanvas-title">Menu</div>
+      <button id="closeMenuBtn" class="icon-btn" type="button" aria-label="Close menu">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <nav class="offcanvas-nav" aria-label="Mobile primary">
+      <div id="header-links-mobile"></div>
+    </nav>
+  </aside>
+
+  <script src="script.js"></script>
 </body>
 </html>
