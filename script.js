@@ -10,152 +10,26 @@
 
   function normalizeUrl(raw) {
     const s = safe(raw);
-    if (!s) return "#";
-    if (/^(https?:)?\/\//i.test(s)) return s.startsWith("//") ? `https:${s}` : s;
-    if (/^[a-z][a-z0-9+\-.]*:/i.test(s)) return s; // mailto:, tel:, etc.
-    // treat as relative
-    return s;
+    if (!s) return "";
+    if (/^(https?:)?\/\//i.test(s) || /^(mailto:|tel:)/i.test(s)) return s;
+    if (s.startsWith("#") || s.startsWith("?")) return s;
+    if (s.startsWith("/") || s.endsWith(".html") || s.startsWith("./") || s.startsWith("../")) return s;
+    return "https://" + s.replace(/^\/+/, "");
   }
 
-  // ---- Offcanvas / Mobile menu ----
-  function initOffcanvas() {
-    const btn = $("#menu-toggle") || $(".menu-toggle") || $('[data-action="menu"]');
-    const panel = $("#mobile-menu") || $(".mobile-menu") || $("#offcanvas") || $(".offcanvas");
-    const overlay = $("#overlay") || $(".overlay");
-    const closeBtn = $("#menu-close") || $(".menu-close") || $('[data-action="close-menu"]');
-
-    if (!btn || !panel) return;
-
-    const openClass = "is-open";
-    const lockClass = "no-scroll";
-
-    const open = () => {
-      panel.classList.add(openClass);
-      if (overlay) overlay.classList.add(openClass);
-      document.body.classList.add(lockClass);
-      btn.setAttribute("aria-expanded", "true");
-    };
-
-    const close = () => {
-      panel.classList.remove(openClass);
-      if (overlay) overlay.classList.remove(openClass);
-      document.body.classList.remove(lockClass);
-      btn.setAttribute("aria-expanded", "false");
-    };
-
-    const toggle = () => {
-      if (panel.classList.contains(openClass)) close();
-      else open();
-    };
-
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-      toggle();
-    });
-
-    if (closeBtn) {
-      closeBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        close();
-      });
-    }
-
-    if (overlay) {
-      overlay.addEventListener("click", () => close());
-    }
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") close();
-    });
+  // Used across site for external links inside view.html wrapper
+  function openInternal(url, name) {
+    const u = normalizeUrl(url);
+    return `view.html?url=${encodeURIComponent(u)}&name=${encodeURIComponent(name)}`;
   }
 
-  // ---- Desktop dropdowns ----
-  function initDropdowns() {
-    const triggers = $$(".has-dropdown, .dropdown, [data-dropdown]");
-    if (!triggers.length) return;
+  // ✅ Tools page header uses onclick="goBack()" (tools.html)
+  window.goBack = () => {
+    // If user came from somewhere, go back; otherwise go home
+    if (window.history.length > 1) window.history.back();
+    else window.location.href = "index.html";
+  };
 
-    const OPEN = "open";
-    const CLOSE_DELAY = 180;
-
-    triggers.forEach((wrap) => {
-      const btn =
-        wrap.querySelector("button, a") ||
-        wrap.querySelector('[data-role="dropdown-trigger"]') ||
-        wrap;
-      const menu =
-        wrap.querySelector(".dropdown-menu, .submenu, ul") ||
-        wrap.querySelector('[data-role="dropdown-menu"]');
-
-      if (!btn || !menu) return;
-
-      let t = null;
-
-      const open = () => {
-        clearTimeout(t);
-        wrap.classList.add(OPEN);
-        btn.setAttribute("aria-expanded", "true");
-      };
-
-      const close = () => {
-        clearTimeout(t);
-        t = setTimeout(() => {
-          wrap.classList.remove(OPEN);
-          btn.setAttribute("aria-expanded", "false");
-        }, CLOSE_DELAY);
-      };
-
-      const closeNow = () => {
-        clearTimeout(t);
-        wrap.classList.remove(OPEN);
-        btn.setAttribute("aria-expanded", "false");
-      };
-
-      wrap.addEventListener("mouseenter", open);
-      wrap.addEventListener("mouseleave", close);
-
-      btn.addEventListener("click", (e) => {
-        // click should toggle (for touch devices / keyboard users)
-        if (wrap.classList.contains(OPEN)) {
-          e.preventDefault();
-          closeNow();
-        } else {
-          e.preventDefault();
-          open();
-        }
-      });
-
-      btn.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") closeNow();
-        if (e.key === "ArrowDown") open();
-      });
-
-      document.addEventListener("click", (e) => {
-        if (!wrap.contains(e.target)) closeNow();
-      });
-
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") closeNow();
-      });
-    });
-  }
-
-  // ---- FAQ toggles ----
-  function initFAQ() {
-    const items = $$(".faq-item, .faq");
-    if (!items.length) return;
-    items.forEach((it) => {
-      const btn = it.querySelector("button, .faq-question");
-      const panel = it.querySelector(".faq-panel, .faq-answer");
-      if (!btn || !panel) return;
-
-      btn.addEventListener("click", () => {
-        const isOpen = !panel.hidden;
-        panel.hidden = isOpen;
-      });
-    });
-  }
-
-  // ---- Header links JSON ----
   async function loadHeaderLinks() {
     let data = { header_links: [], social_links: [] };
     try {
@@ -197,23 +71,169 @@
 
     if (footerSocial) {
       footerSocial.innerHTML = "";
-      socials.forEach((l) => {
+      socials.forEach((s) => {
         const a = document.createElement("a");
-        a.href = normalizeUrl(l.link || l.url || "#");
+        a.className = "nav-link";
+        a.href = normalizeUrl(s.url || "#");
         a.target = "_blank";
         a.rel = "noopener";
-        a.textContent = l.name || "Social";
+        a.textContent = s.name || "Social";
         footerSocial.appendChild(a);
       });
     }
   }
 
-  function openInternal(url, name) {
-    const u = normalizeUrl(url);
-    return `view.html?url=${encodeURIComponent(u)}&name=${encodeURIComponent(name)}`;
+  function initOffcanvas() {
+    const btn = $("#menuBtn");
+    const closeBtn = $("#closeMenuBtn");
+    const menu = $("#mobileMenu");
+    const overlay = $("#menuOverlay");
+
+    if (!btn || !closeBtn || !menu || !overlay) return;
+
+    const close = () => {
+      menu.hidden = true;
+      overlay.hidden = true;
+      btn.setAttribute("aria-expanded", "false");
+      document.body.style.overflow = "";
+    };
+
+    const open = () => {
+      menu.hidden = false;
+      overlay.hidden = false;
+      btn.setAttribute("aria-expanded", "true");
+      document.body.style.overflow = "hidden";
+    };
+
+    btn.addEventListener("click", open);
+    closeBtn.addEventListener("click", close);
+    overlay.addEventListener("click", close);
+
+    menu.addEventListener("click", (e) => {
+      const a = e.target.closest("a");
+      if (a) close();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") close();
+    });
+
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 980) close();
+    });
+
+    window.__closeMenu = close;
   }
 
-  // ---- Homepage dynamic sections ----
+  function initDropdowns() {
+    const dds = $$("[data-dd]");
+    if (!dds.length) return;
+
+    const canHover = () => window.matchMedia("(hover:hover) and (pointer:fine)").matches;
+    const timers = new WeakMap();
+
+    const setOpen = (dd, open) => {
+      const btn = $(".nav-dd-btn", dd);
+      const menu = $(".nav-dd-menu", dd);
+      if (!btn || !menu) return;
+      if (open) {
+        menu.classList.add("open");
+        btn.setAttribute("aria-expanded", "true");
+      } else {
+        menu.classList.remove("open");
+        btn.setAttribute("aria-expanded", "false");
+      }
+    };
+
+    const clearTimer = (dd) => {
+      const t = timers.get(dd);
+      if (t) clearTimeout(t);
+      timers.delete(dd);
+    };
+
+    const closeAll = () => {
+      dds.forEach((dd) => {
+        clearTimer(dd);
+        setOpen(dd, false);
+      });
+    };
+
+    const scheduleClose = (dd) => {
+      clearTimer(dd);
+      timers.set(dd, setTimeout(() => setOpen(dd, false), 180));
+    };
+
+    dds.forEach((dd) => {
+      const btn = $(".nav-dd-btn", dd);
+      const menu = $(".nav-dd-menu", dd);
+      if (!btn || !menu) return;
+
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const isOpen = menu.classList.contains("open");
+        closeAll();
+        if (!isOpen) setOpen(dd, true);
+      });
+
+      btn.addEventListener("mouseenter", () => {
+        if (!canHover()) return;
+        clearTimer(dd);
+        closeAll();
+        setOpen(dd, true);
+      });
+      btn.addEventListener("mouseleave", () => {
+        if (!canHover()) return;
+        scheduleClose(dd);
+      });
+
+      menu.addEventListener("mouseenter", () => {
+        if (!canHover()) return;
+        clearTimer(dd);
+        setOpen(dd, true);
+      });
+      menu.addEventListener("mouseleave", () => {
+        if (!canHover()) return;
+        scheduleClose(dd);
+      });
+
+      dd.addEventListener("focusin", () => {
+        if (!canHover()) return;
+        clearTimer(dd);
+        closeAll();
+        setOpen(dd, true);
+      });
+      dd.addEventListener("focusout", (e) => {
+        if (!dd.contains(e.relatedTarget)) scheduleClose(dd);
+      });
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest("[data-dd]")) closeAll();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeAll();
+    });
+  }
+
+  function initFAQ() {
+    $$(".faq-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const expanded = btn.getAttribute("aria-expanded") === "true";
+        $$(".faq-btn").forEach((b) => {
+          b.setAttribute("aria-expanded", "false");
+          const p = b.parentElement.querySelector(".faq-panel");
+          if (p) p.hidden = true;
+        });
+        if (!expanded) {
+          btn.setAttribute("aria-expanded", "true");
+          const p = btn.parentElement.querySelector(".faq-panel");
+          if (p) p.hidden = false;
+        }
+      });
+    });
+  }
+
   async function renderHomepageSections() {
     const wrap = $("#dynamic-sections");
     if (!wrap) return;
@@ -226,143 +246,344 @@
 
     wrap.innerHTML = "";
 
-    const sections = Array.isArray(data.sections) ? data.sections : [];
-    sections.forEach((sec) => {
-      const title = safe(sec.title || sec.name);
-      const items = Array.isArray(sec.items) ? sec.items : Array.isArray(sec.links) ? sec.links : [];
-      if (!title || !items.length) return;
+    (data.sections || []).forEach((sec) => {
+      const title = safe(sec.title) || "Updates";
+      const color = safe(sec.color) || "#0284c7";
+      const icon = safe(sec.icon) || "fa-solid fa-briefcase";
 
-      const box = document.createElement("section");
-      box.className = "dynamic-section";
+      const card = document.createElement("article");
+      card.className = "section-card";
+      card.innerHTML = `
+        <div class="section-head" style="background:${color}">
+          <div class="left">
+            <i class="${icon}"></i>
+            <span>${title}</span>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="section-list"></div>
+          ${
+            sec.viewMoreUrl
+              ? `<a class="view-all" href="${openInternal(sec.viewMoreUrl, title)}">View All <i class="fa-solid fa-arrow-right"></i></a>`
+              : ""
+          }
+        </div>
+      `;
 
-      const h = document.createElement("h3");
-      h.textContent = title;
-      box.appendChild(h);
-
-      const list = document.createElement("div");
-      list.className = "dynamic-list";
-
+      const list = $(".section-list", card);
+      const items = Array.isArray(sec.items) ? sec.items.slice(0, 8) : [];
       items.forEach((it) => {
-        const nm = safe(it.name || it.title);
-        const url = safe(it.url || it.link || it.href);
-        if (!nm && !url) return;
+        const name = safe(it.name) || "Open";
+        const url = it.url || it.link || "";
+        if (!url) return;
 
+        const external = !!it.external;
         const a = document.createElement("a");
-        a.className = "dynamic-item";
-        a.textContent = nm || url;
-
-        if (url) {
-          const external = /^https?:\/\//i.test(url);
-          a.href = external ? openInternal(url, nm || url) : url;
-        } else {
-          a.href = `view.html?section=${encodeURIComponent(nm)}`;
+        a.className = "section-link";
+        a.href = external ? normalizeUrl(url) : openInternal(url, name);
+        if (external) {
+          a.target = "_blank";
+          a.rel = "noopener";
         }
+
+        a.innerHTML = `
+          <div class="t">${name}</div>
+          ${it.date ? `<div class="d">${safe(it.date)}</div>` : `<div class="d">Open official link</div>`}
+        `;
         list.appendChild(a);
       });
 
-      box.appendChild(list);
-      wrap.appendChild(box);
+      wrap.appendChild(card);
     });
   }
 
-  // ---- CSC modal (kept as-is) ----
-  function initCscModal() {
-    const modal = $("#csc-modal");
-    if (!modal) return;
+  // ---------------------------
+  // ✅ Tools page (tools.html) — FIX broken clicks and restore navigation
+  // Uses tools.json categories: image/pdf/video :contentReference[oaicite:3]{index=3}
+  // ---------------------------
+  async function initToolsPage() {
+    if (page !== "tools.html") return;
 
-    const closeBtns = $$(".csc-close", modal);
-    const titleEl = $("#csc-service-title", modal);
-    const form = $("#csc-form", modal);
+    const categoriesView = $("#categories-view");
+    const toolsView = $("#tools-view");
+    const toolsGrid = $("#tools-grid");
+    const toolsTitle = $("#tools-title span") || $("#tools-title");
+    const backBtn = $("#back-button");
+    const categoryButtons = $$(".category-button");
 
-    const open = () => {
-      modal.classList.add("open");
-      modal.setAttribute("aria-hidden", "false");
-      document.body.classList.add("no-scroll");
+    if (!categoriesView || !toolsView || !toolsGrid || !categoryButtons.length) return;
+
+    let data = null;
+    try {
+      const r = await fetch("tools.json", { cache: "no-store" });
+      if (r.ok) data = await r.json();
+    } catch (_) {}
+
+    const toolsData = (data && typeof data === "object") ? data : {};
+
+    const showCategories = () => {
+      toolsView.classList.add("hidden");
+      categoriesView.classList.remove("hidden");
+      // Scroll to top for clean UX
+      window.scrollTo({ top: 0, behavior: "instant" });
     };
+
+    const showTools = (categoryKey) => {
+      const list = Array.isArray(toolsData[categoryKey]) ? toolsData[categoryKey] : [];
+
+      // Title
+      const titleMap = {
+        image: "Image Tools",
+        pdf: "PDF Tools",
+        video: "Video/Audio Tools",
+      };
+      const titleText = titleMap[categoryKey] || "Tools";
+      if (toolsTitle) toolsTitle.textContent = titleText;
+
+      toolsGrid.innerHTML = "";
+
+      if (!list.length) {
+        toolsGrid.innerHTML = `
+          <div class="col-span-full p-4 bg-white border border-gray-200 rounded-lg text-center text-gray-600">
+            No tools found for this category.
+          </div>
+        `;
+      } else {
+        list.forEach((t) => {
+          const name = safe(t.name) || "Open Tool";
+          const url = t.url || t.link || "";
+          if (!url) return;
+
+          // If a tool is explicitly marked external=true, open in a new tab.
+          // Otherwise, open inside view.html wrapper (same pattern as homepage cards).
+          const isExternal = t.external === true;
+
+          const a = document.createElement("a");
+          a.className =
+            "p-4 rounded-lg bg-white border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition duration-300 flex items-start gap-3";
+          a.href = isExternal ? normalizeUrl(url) : openInternal(url, name);
+
+          if (isExternal) {
+            a.target = "_blank";
+            a.rel = "noopener";
+          }
+
+          const iconClass = safe(t.icon) || "fas fa-wand-magic-sparkles";
+          a.innerHTML = `
+            <div class="mt-0.5 text-xl text-blue-600">
+              <i class="${iconClass}"></i>
+            </div>
+            <div>
+              <div class="font-semibold text-gray-800">${name}</div>
+              <div class="text-sm text-gray-500 mt-1">Open tool</div>
+            </div>
+          `;
+
+          toolsGrid.appendChild(a);
+        });
+      }
+
+      categoriesView.classList.add("hidden");
+      toolsView.classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "instant" });
+    };
+
+    // Back button
+    if (backBtn) backBtn.addEventListener("click", showCategories);
+
+    // Category tiles
+    categoryButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const key = safe(btn.getAttribute("data-category"));
+        if (!key) return;
+        showTools(key);
+      });
+    });
+
+    // Optional: update the "X tools available" counts dynamically, without changing layout
+    // tools.html currently hardcodes counts :contentReference[oaicite:4]{index=4}
+    try {
+      categoryButtons.forEach((btn) => {
+        const key = safe(btn.getAttribute("data-category"));
+        const n = Array.isArray(toolsData[key]) ? toolsData[key].length : null;
+        if (typeof n === "number") {
+          const countEl = btn.querySelector(".text-sm.text-gray-500.mt-2");
+          if (countEl) countEl.textContent = `${n} tools available`;
+        }
+      });
+    } catch (_) {}
+
+    // Start on categories
+    showCategories();
+  }
+
+  // ---------------------------
+  // ✅ CSC Services (govt-services.html) — Supabase insert into csc_service_requests
+  // ---------------------------
+  const CSC_TABLE = "csc_service_requests";
+  let cscSupabase = null;
+
+  async function ensureSupabaseClient() {
+    if (cscSupabase) return cscSupabase;
+
+    if (!window.supabase) {
+      await new Promise((resolve, reject) => {
+        const s = document.createElement("script");
+        s.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+        s.async = true;
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      }).catch(() => null);
+    }
+
+    if (!window.supabase) return null;
+
+    try {
+      const r = await fetch("config.json", { cache: "no-store" });
+      if (!r.ok) return null;
+      const config = await r.json();
+      if (!config?.supabase?.url || !config?.supabase?.anonKey) return null;
+
+      cscSupabase = window.supabase.createClient(config.supabase.url, config.supabase.anonKey);
+      return cscSupabase;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function initCscModal() {
+    const modal = $("#cscModal");
+    const overlay = $("#cscModalOverlay");
+    const closeBtn = $("#cscModalClose");
+    const closeBtn2 = $("#cscCloseBtn");
+    const form = $("#cscRequestForm");
+
+    if (!modal || !overlay || !closeBtn || !form) return;
+
+    const serviceNameEl = $("#cscServiceName");
+    let currentService = { name: "", url: "" };
 
     const close = () => {
-      modal.classList.remove("open");
-      modal.setAttribute("aria-hidden", "true");
-      document.body.classList.remove("no-scroll");
+      modal.hidden = true;
+      overlay.hidden = true;
+      document.body.style.overflow = "";
     };
 
-    closeBtns.forEach((b) => b.addEventListener("click", (e) => {
-      e.preventDefault();
-      close();
-    }));
+    const open = (service) => {
+      currentService = service || { name: "", url: "" };
+      if (serviceNameEl) serviceNameEl.textContent = currentService.name || "Service";
 
-    modal.addEventListener("click", (e) => {
-      if (e.target === modal) close();
-    });
+      modal.hidden = false;
+      overlay.hidden = false;
+      document.body.style.overflow = "hidden";
+
+      const first = $("input, select, textarea", form);
+      if (first) setTimeout(() => first.focus(), 50);
+    };
+
+    window.__openCscModal = open;
+
+    overlay.addEventListener("click", close);
+    closeBtn.addEventListener("click", close);
+    if (closeBtn2) closeBtn2.addEventListener("click", close);
 
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") close();
+      if (e.key === "Escape" && !modal.hidden) close();
     });
 
-    function openModal({ name }) {
-      if (titleEl) titleEl.textContent = name || "Service Request";
-      if (form) form.reset();
-      open();
-    }
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-    // Bind all services that have data-csc-service
-    $$(".csc-service, [data-csc-service]").forEach((el) => {
-      el.addEventListener("click", (e) => {
-        const nm = el.getAttribute("data-csc-service") || el.textContent;
-        if (!nm) return;
-        e.preventDefault();
-        openModal({ name: nm });
-      });
-    });
+      const fullName = safe($("#cscFullName")?.value);
+      const phone = safe($("#cscPhone")?.value);
+      const state = safe($("#cscState")?.value);
+      const msg = safe($("#cscMessage")?.value);
 
-    if (form) {
-      form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        // Your existing CSC submit logic remains wherever you had it earlier.
-        // (This script only restores navigation/content rendering + header/footer consistency.)
+      if (!fullName || !phone || phone.length < 8 || !msg) {
+        alert("Please fill all fields correctly.");
+        return;
+      }
+
+      const sb = await ensureSupabaseClient();
+      if (!sb) {
+        alert("Submission system is temporarily unavailable. Please try again later.");
+        return;
+      }
+
+      const serviceText = [
+        safe(currentService.name) ? safe(currentService.name) : "-",
+        state ? `State: ${state}` : "",
+        currentService.url ? `Link: ${normalizeUrl(currentService.url)}` : "",
+        msg ? `Details: ${msg}` : "",
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+      try {
+        const { error } = await sb.from(CSC_TABLE).insert([
+          {
+            name: fullName,
+            phone: phone,
+            service: serviceText,
+            created_at: new Date().toISOString(),
+          },
+        ]);
+
+        if (error) {
+          console.error("Supabase insert error:", error);
+          alert("Failed to submit your request. Please try again.");
+          return;
+        }
+
+        alert("Request submitted successfully. We will contact you soon.");
+        form.reset();
         close();
-      });
-    }
+      } catch (err) {
+        console.error("Submit error:", err);
+        alert("Could not submit your request. Please check your connection and try again.");
+      }
+    });
   }
 
-  // ---- Services page render (kept) ----
   async function renderServicesPage() {
-    const list = $("#services-list");
+    if (page !== "govt-services.html") return;
+
+    const list = $("#servicesList");
     if (!list) return;
 
-    let data = [];
+    let data = null;
     try {
       const r = await fetch("services.json", { cache: "no-store" });
       if (r.ok) data = await r.json();
     } catch (_) {}
 
+    const services = (data && (data.services || data)) || [];
     list.innerHTML = "";
 
-    (Array.isArray(data) ? data : []).forEach((s) => {
-      const name = safe(s.name);
-      const url = safe(s.url);
+    if (!Array.isArray(services) || !services.length) {
+      list.innerHTML = `<div class="seo-block"><strong>No services found.</strong><p>Please check services.json.</p></div>`;
+      return;
+    }
+
+    services.forEach((s) => {
+      const name = safe(s.name || s.service);
+      const url = s.url || s.link || "";
       if (!name) return;
 
       const a = document.createElement("a");
+      a.className = "section-link csc-service-link";
       a.href = "#";
-      a.className = "service-item";
-      a.textContent = name;
+      a.setAttribute("role", "button");
+      a.innerHTML = `
+        <div class="t">${name}</div>
+        <div class="d">Click to fill details & submit request</div>
+      `;
 
       a.addEventListener("click", (e) => {
         e.preventDefault();
-        // open modal instead of linking away
-        const el = document.querySelector(`[data-csc-service="${escRE(name)}"]`);
-        if (el) el.click();
-        else {
-          // fallback: open modal directly if present
-          const modal = $("#csc-modal");
-          if (modal) {
-            const t = $("#csc-service-title", modal);
-            if (t) t.textContent = name;
-            modal.classList.add("open");
-          } else if (url) {
-            location.href = openInternal(url, name);
-          }
+        if (typeof window.__openCscModal === "function") {
+          window.__openCscModal({ name, url });
         }
       });
 
@@ -370,310 +591,8 @@
     });
   }
 
-  async function syncHeaderFooterWithHome() {
-    // Make every page use EXACT same header/footer as homepage.
-    // We copy markup from index.html at runtime (same-origin fetch).
-    if (page === "index.html" || page === "" || page === "index") return;
-
-    const curHeader = document.querySelector("header");
-    const curFooter = document.querySelector("footer");
-
-    try {
-      const r = await fetch("index.html", { cache: "no-store" });
-      if (!r.ok) return;
-
-      const html = await r.text();
-      const doc = new DOMParser().parseFromString(html, "text/html");
-
-      const homeHeader = doc.querySelector("header");
-      const homeFooter = doc.querySelector("footer");
-
-      if (homeHeader) {
-        const cloned = homeHeader.cloneNode(true);
-        if (curHeader) curHeader.replaceWith(cloned);
-        else document.body.insertAdjacentElement("afterbegin", cloned);
-      }
-
-      if (homeFooter) {
-        const cloned = homeFooter.cloneNode(true);
-        if (curFooter) curFooter.replaceWith(cloned);
-        else document.body.insertAdjacentElement("beforeend", cloned);
-      }
-    } catch (_) {}
-  }
-
-  function qsParam(name) {
-    try {
-      const sp = new URLSearchParams(location.search || "");
-      return safe(sp.get(name));
-    } catch (_) {
-      return "";
-    }
-  }
-
-  async function loadJson(path, fallback) {
-    try {
-      const r = await fetch(path, { cache: "no-store" });
-      if (r.ok) return await r.json();
-    } catch (_) {}
-    return fallback;
-  }
-
-  function ensureContainer(selectors, createAfterEl) {
-    const found = selectors.map((s) => document.querySelector(s)).find(Boolean);
-    if (found) return found;
-
-    const div = document.createElement("div");
-    div.id = "js-generated";
-    div.style.width = "100%";
-    if (createAfterEl && createAfterEl.parentNode) {
-      createAfterEl.insertAdjacentElement("afterend", div);
-    } else {
-      document.body.appendChild(div);
-    }
-    return div;
-  }
-
-  function normalizeSectionKey(s) {
-    return safe(s).toLowerCase().replace(/\s+/g, " ").trim();
-  }
-
-  function sectionMatchesTitle(group, title) {
-    const g = normalizeSectionKey(group);
-    const t = normalizeSectionKey(title);
-    if (!g || !t) return false;
-
-    const map = {
-      study: ["study", "education", "qualification", "class"],
-      popular: ["popular", "category", "categories"],
-      state: ["state", "states"],
-      admissions: ["admission", "admissions", "admit card", "answer key", "syllabus", "result"],
-      more: ["khabar", "news", "study material", "courses", "more"],
-    };
-
-    const keys = map[g] || [g];
-    return keys.some((k) => t.includes(k));
-  }
-
-  function renderLinkList(items, listEl) {
-    listEl.innerHTML = "";
-    items.forEach((it) => {
-      const name = safe(it.name || it.title || it.label || it.text);
-      const url = safe(it.url || it.link || it.href);
-
-      if (!name && !url) return;
-
-      const a = document.createElement("a");
-      a.className = "result-link";
-      a.textContent = name || url;
-
-      if (url) {
-        const external = /^https?:\/\//i.test(url);
-        a.href = external ? openInternal(url, name || url) : url;
-      } else {
-        a.href = `view.html?section=${encodeURIComponent(name)}`;
-      }
-
-      listEl.appendChild(a);
-    });
-  }
-
-  async function initToolsPage() {
-    const grid = document.getElementById("tools-grid");
-    if (!grid) return;
-
-    const data = await loadJson("tools.json", {});
-    const groups = Object.keys(data || {});
-    if (!groups.length) return;
-
-    grid.innerHTML = "";
-
-    groups.forEach((groupName) => {
-      const items = Array.isArray(data[groupName]) ? data[groupName] : [];
-      items.forEach((tool) => {
-        const name = safe(tool.name);
-        const url = safe(tool.url);
-        const icon = safe(tool.icon);
-
-        const card = document.createElement("a");
-        card.className =
-          "block p-4 rounded-lg border border-gray-200 hover:shadow-md transition bg-white";
-        card.href = normalizeUrl(url || "#");
-        card.target = "_blank";
-        card.rel = "noopener";
-
-        const title = document.createElement("div");
-        title.className = "flex items-center gap-3";
-
-        const i = document.createElement("i");
-        if (icon) i.className = icon;
-        title.appendChild(i);
-
-        const span = document.createElement("span");
-        span.className = "font-semibold";
-        span.textContent = name || "Tool";
-        title.appendChild(span);
-
-        card.appendChild(title);
-
-        const meta = document.createElement("div");
-        meta.className = "text-sm text-gray-500 mt-2";
-        meta.textContent = groupName.toUpperCase();
-        card.appendChild(meta);
-
-        grid.appendChild(card);
-      });
-    });
-  }
-
-  async function initCategoryPage() {
-    if (page !== "category.html") return;
-
-    const group = qsParam("group") || qsParam("g");
-    const q = qsParam("q");
-
-    const data = await loadJson("dynamic-sections.json", { sections: [] });
-    const sections = Array.isArray(data.sections) ? data.sections : [];
-
-    const matched = sections.filter((s) => sectionMatchesTitle(group, s.title || s.name || ""));
-    const source = matched.length ? matched : sections;
-
-    const h1 = Array.from(document.querySelectorAll("h1")).find((x) =>
-      /category/i.test(safe(x.textContent))
-    );
-    const list = ensureContainer(
-      ["#category-results", "#results", "#category-list", "#list", "#js-generated"],
-      h1
-    );
-
-    let items = [];
-    source.forEach((s) => {
-      const arr = Array.isArray(s.items) ? s.items : Array.isArray(s.links) ? s.links : [];
-      arr.forEach((it) => items.push(it));
-    });
-
-    if (q) {
-      const qq = normalizeSectionKey(q);
-      items = items.filter((it) => normalizeSectionKey(it.name || it.title || "").includes(qq));
-    }
-
-    if (!items.length) {
-      list.innerHTML = '<div class="text-sm text-gray-600">No results found.</div>';
-      return;
-    }
-
-    renderLinkList(
-      items.map((it) => {
-        const name = safe(it.name || it.title);
-        let url = safe(it.url || it.link);
-        if (!url && name) url = `view.html?section=${encodeURIComponent(name)}`;
-        return { name, url };
-      }),
-      list
-    );
-  }
-
-  async function initViewPage() {
-    if (page !== "view.html") return;
-
-    const url = qsParam("url");
-    const name = qsParam("name");
-    const section = qsParam("section");
-
-    const iframe = document.querySelector("iframe");
-    const openBtn = Array.from(document.querySelectorAll("a,button")).find((el) =>
-      /open in new tab/i.test(safe(el.textContent))
-    );
-
-    if (url) {
-      if (iframe) iframe.src = normalizeUrl(url);
-      if (openBtn && openBtn.tagName.toLowerCase() === "a") openBtn.href = normalizeUrl(url);
-      if (name) document.title = `${name} - Top Sarkari Jobs`;
-      return;
-    }
-
-    const targetSection = section || name;
-    const list = ensureContainer(
-      ["#links-list", "#links", "#results", ".links-list", ".results-list", "#js-generated"],
-      document.querySelector("h2")
-    );
-
-    const countEl = Array.from(document.querySelectorAll("p,div,span")).find((el) =>
-      /^showing\s+\d+\s+links\./i.test(safe(el.textContent))
-    );
-    const loadingEl = Array.from(document.querySelectorAll("*")).find((el) => {
-      const t = safe(el.textContent).toLowerCase();
-      return t.includes("loading") && t.includes("please wait");
-    });
-
-    const jobsData = await loadJson("jobs.json", []);
-    let items = [];
-
-    if (Array.isArray(jobsData) && jobsData.length) {
-      const key = normalizeSectionKey(targetSection);
-      items = jobsData
-        .filter((j) => {
-          const fields = [
-            j.section,
-            j.category,
-            j.group,
-            j.tag,
-            j.tags,
-            j.title,
-            j.name,
-            j.label,
-          ]
-            .map((v) => safe(Array.isArray(v) ? v.join(" ") : v))
-            .join(" ");
-          return normalizeSectionKey(fields).includes(key);
-        })
-        .map((j) => ({
-          name: safe(j.title || j.name || j.label || targetSection),
-          url: safe(j.url || j.link || j.href || ""),
-        }));
-    }
-
-    if (!items.length) {
-      const ds = await loadJson("dynamic-sections.json", { sections: [] });
-      const sections = Array.isArray(ds.sections) ? ds.sections : [];
-      const key = normalizeSectionKey(targetSection);
-      const sec = sections.find((s) => normalizeSectionKey(s.title || s.name || "").includes(key));
-      const arr = sec
-        ? Array.isArray(sec.items)
-          ? sec.items
-          : Array.isArray(sec.links)
-          ? sec.links
-          : []
-        : [];
-      items = arr.map((it) => ({
-        name: safe(it.name || it.title),
-        url: safe(it.url || it.link || ""),
-      }));
-    }
-
-    if (loadingEl) loadingEl.remove();
-
-    if (!items.length) {
-      list.innerHTML =
-        '<div class="text-sm text-gray-600">We couldn’t find what to display. Please go back and open the section again.</div>';
-      if (countEl) countEl.textContent = "Showing 0 links.";
-      return;
-    }
-
-    if (countEl) countEl.textContent = `Showing ${items.length} links.`;
-
-    renderLinkList(
-      items.map((it) => ({
-        name: it.name,
-        url: it.url || `view.html?section=${encodeURIComponent(it.name)}`,
-      })),
-      list
-    );
-  }
-
   // Boot
   document.addEventListener("DOMContentLoaded", async () => {
-    await syncHeaderFooterWithHome();
     await loadHeaderLinks();
     initOffcanvas();
     initDropdowns();
@@ -683,10 +602,14 @@
       await renderHomepageSections();
     }
 
+    // Tools page wiring (fix broken clicks)
+    await initToolsPage();
+
+    // Services page
+    if (page === "govt-services.html") {
+      ensureSupabaseClient().catch(() => {});
+    }
     initCscModal();
     await renderServicesPage();
-    await initToolsPage();
-    await initCategoryPage();
-    await initViewPage();
   });
 })();
