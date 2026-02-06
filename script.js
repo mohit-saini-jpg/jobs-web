@@ -110,239 +110,161 @@
   }
 
   // ---------------------------
-  // ✅ NEW: Remove/hide header search UI on ALL pages except homepage
+  // SEARCH POLICY (NEW)
+  // - Hide/remove header search UI on every page except homepage
+  // - Make homepage search work (redirect to Google site-search)
   // ---------------------------
-  function removeHeaderSearchEverywhereExceptHome() {
+  function applyHeaderSearchPolicy() {
     const isHome = page === "index.html" || page === "";
-    if (isHome) return;
 
-    // 1) Remove "Search" nav links (desktop + mobile) that point to search.html
-    const anchors = $$('a[href]');
-    anchors.forEach((a) => {
-      const href = safe(a.getAttribute("href")).toLowerCase();
-      if (!href) return;
+    // Prefer injected host; fallback to actual header/nav
+    const headerHost =
+      document.getElementById("site-header") ||
+      document.querySelector("header") ||
+      document;
 
-      // remove only the HEADER search UI (not random content links)
-      // heuristic: points to search.html or contains "search.html"
-      if (href.includes("search.html")) {
-        // If it's in a nav/header area, remove it
-        const inHeader =
-          !!a.closest("header") ||
-          !!a.closest("nav") ||
-          !!a.closest("#mobileMenu") ||
-          !!a.closest("#mobile-menu") ||
-          !!a.closest("#site-header");
+    const inHeader = (el) =>
+      !!(el && (el.closest("#site-header") || el.closest("header") || el.closest("nav")));
 
-        if (inHeader) a.remove();
-      }
-    });
+    const hideEl = (el) => {
+      if (!el) return;
+      const wrap =
+        el.closest(".search") ||
+        el.closest(".search-wrap") ||
+        el.closest(".search-container") ||
+        el.closest(".nav-search") ||
+        el.closest("form") ||
+        el;
+      wrap.style.setProperty("display", "none", "important");
+      wrap.setAttribute("data-search-hidden", "1");
+    };
 
-    // 2) Remove any search form/input that lives inside the header
-    const headerRoot = $("header") || $("#site-header") || document;
-    const headerSearchForms = $$('form[role="search"], form#site-search', headerRoot);
-    headerSearchForms.forEach((f) => f.remove());
+    // Remove/hide any header search UI on non-home pages
+    const hideSearchUI = () => {
+      if (isHome) return;
 
-    const headerSearchInputs = $$('input[type="search"], input[name="q"], input#q', headerRoot);
-    headerSearchInputs.forEach((inp) => {
-      const inHeader = !!inp.closest("header") || !!inp.closest("#site-header");
-      if (inHeader) {
-        const form = inp.closest("form");
-        if (form) form.remove();
-        else inp.remove();
-      }
-    });
-  }
-
-  // ---------------------------
-  // ✅ NEW: Homepage search (submit goes to search.html?q=...)
-  // and Search page renders results from existing JSON sources
-  // ---------------------------
-  async function initSiteSearch() {
-    const isHome = page === "index.html" || page === "";
-    const isSearchPage = page === "search.html";
-
-    // Helper: get query param
-    const params = new URLSearchParams(location.search || "");
-    const qParam = safe(params.get("q"));
-
-    // Try to find a search form (supports your "site-search" pattern)
-    function findSearchForm() {
-      // prefer specific ids if present
-      return (
-        $("#site-search") ||
-        $('form[role="search"]') ||
-        null
+      // 1) Links/buttons whose visible text contains "search" in header/nav
+      const clickable = Array.from(headerHost.querySelectorAll("a,button,span,div")).filter((el) =>
+        inHeader(el)
       );
-    }
 
-    function findSearchInput(form) {
-      if (!form) return null;
-      return (
-        $("#q", form) ||
-        $('input[type="search"]', form) ||
-        $('input[name="q"]', form) ||
-        null
-      );
-    }
+      clickable.forEach((el) => {
+        const t = safe(el.textContent).toLowerCase();
+        if (!t) return;
 
-    // HOME: bind submit to redirect to search.html
-    if (isHome) {
-      const form = findSearchForm();
-      const input = findSearchInput(form);
+        if (t === "search" || t.includes("search")) {
+          const looksNav =
+            el.tagName === "A" ||
+            el.tagName === "BUTTON" ||
+            !!el.closest("nav") ||
+            !!el.closest("header") ||
+            !!el.closest("#site-header");
+          if (looksNav) hideEl(el);
+        }
+      });
 
-      if (form && input) {
-        // Don’t double-bind
-        if (!form.__tsjBound) {
-          form.__tsjBound = true;
-          form.addEventListener("submit", (e) => {
-            e.preventDefault();
+      // 2) Any header forms/inputs likely used for search
+      headerHost
+        .querySelectorAll(
+          'form[role="search"], form#site-search, input[type="search"], input[name="q"], input#q, input#search, input#searchInput'
+        )
+        .forEach((el) => {
+          if (inHeader(el)) hideEl(el);
+        });
+
+      // 3) Common id/class patterns for search buttons/bars inside header
+      headerHost
+        .querySelectorAll(
+          [
+            '[id*="search" i]',
+            '[class*="search" i]',
+            '[aria-label*="search" i]',
+            '[title*="search" i]',
+          ].join(",")
+        )
+        .forEach((el) => {
+          if (!inHeader(el)) return;
+
+          // don’t hide the whole header container
+          const isHeaderContainer = el.id === "site-header" || el.tagName === "HEADER";
+          if (isHeaderContainer) return;
+
+          const t = safe(el.textContent).toLowerCase();
+          const idc = (safe(el.id) + " " + safe(el.className)).toLowerCase();
+          const looksSearch = idc.includes("search") || t === "search" || t.includes("search");
+          if (looksSearch) hideEl(el);
+        });
+    };
+
+    // HOME: bind search submit to site-wide search via Google (works instantly)
+    const bindHomepageSearch = () => {
+      if (!isHome) return;
+
+      const root =
+        document.getElementById("site-header") ||
+        document.querySelector("header") ||
+        document;
+
+      const input =
+        root.querySelector('input[type="search"]') ||
+        root.querySelector('input[name="q"]') ||
+        root.querySelector("#q") ||
+        root.querySelector("#searchInput") ||
+        document.querySelector('input[type="search"]') ||
+        document.querySelector("#q") ||
+        null;
+
+      if (!input) return;
+
+      const form = input.closest("form");
+      if (!form) {
+        // If there's no form, at least support Enter key
+        if (!input.dataset.boundSearchEnter) {
+          input.dataset.boundSearchEnter = "1";
+          input.addEventListener("keydown", (e) => {
+            if (e.key !== "Enter") return;
             const q = safe(input.value);
             if (!q) return;
-            window.location.href = `search.html?q=${encodeURIComponent(q)}`;
+            e.preventDefault();
+            window.location.href =
+              "https://www.google.com/search?q=" +
+              encodeURIComponent("site:topsarkarijobs.com " + q);
           });
         }
-      }
-      return;
-    }
-
-    // SEARCH PAGE: render results if search.html has a container; otherwise fallback to Google site search
-    if (isSearchPage) {
-      const query = qParam;
-
-      // If no query, do nothing
-      if (!query) return;
-
-      // Try to use your existing IDs (from your snippet pattern)
-      const statusEl = $("#search-status");
-      const listEl = $("#search-list");
-      const wrapEl = $("#search-results") || (listEl ? listEl.closest("section") : null);
-      const clearBtn = $("#clear-search");
-
-      // If the page doesn't have containers, fallback to Google site search
-      if (!listEl) {
-        const google = `https://www.google.com/search?q=${encodeURIComponent("site:topsarkarijobs.com " + query)}`;
-        window.location.href = google;
         return;
       }
 
-      // Ensure wrapper visible if it exists
-      if (wrapEl) wrapEl.classList.remove("hidden");
+      if (form.dataset.boundSearchSubmit === "1") return;
+      form.dataset.boundSearchSubmit = "1";
 
-      // Clear button behavior if present
-      if (clearBtn && !clearBtn.__tsjBound) {
-        clearBtn.__tsjBound = true;
-        clearBtn.addEventListener("click", () => {
-          window.location.href = "search.html";
-        });
-      }
+      form.addEventListener("submit", (e) => {
+        const q = safe(input.value);
+        if (!q) return;
 
-      function escapeHtml(s) {
-        return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-      }
+        // If form already has a real action, let it work
+        const action = safe(form.getAttribute("action"));
+        if (action && action !== "#" && action !== "javascript:void(0)") return;
 
-      async function fetchJson(path) {
-        const r = await fetch(path, { cache: "no-store" });
-        if (!r.ok) throw new Error("Failed: " + path);
-        return await r.json();
-      }
-
-      // Build a unified searchable pool from existing sources (no new content invented)
-      const pool = [];
-
-      // dynamic-sections.json (homepage cards)
-      try {
-        const ds = await fetchJson("dynamic-sections.json");
-        const sections = Array.isArray(ds.sections) ? ds.sections : [];
-        sections.forEach((sec) => {
-          const items = Array.isArray(sec.items) ? sec.items : [];
-          items.forEach((it) => {
-            const name = safe(it.name) || safe(it.title);
-            const url = safe(it.url || it.link);
-            if (!name || !url) return;
-
-            const external = !!it.external;
-            pool.push({
-              name,
-              url: external ? normalizeUrl(url) : openInternal(url, name),
-              rawUrl: url,
-            });
-          });
-        });
-      } catch (_) {}
-
-      // jobs.json (dropdown & category items)
-      try {
-        const jobs = await fetchJson("jobs.json");
-        const lists = []
-          .concat(Array.isArray(jobs.top_jobs) ? jobs.top_jobs : [])
-          .concat(Array.isArray(jobs.left_jobs) ? jobs.left_jobs : [])
-          .concat(Array.isArray(jobs.right_jobs) ? jobs.right_jobs : []);
-
-        lists.forEach((it) => {
-          const name = safe(it.name);
-          const url = safe(it.url);
-          if (!name || !url) return;
-
-          const external = it.external === true;
-          pool.push({
-            name,
-            url: external ? normalizeUrl(url) : url, // keep EXACT url if it's internal per your jobs.json behavior
-            rawUrl: url,
-          });
-        });
-      } catch (_) {}
-
-      // tools.json (tools -> openInternal unless external=true)
-      try {
-        const tools = await fetchJson("tools.json");
-        Object.keys(tools || {}).forEach((k) => {
-          const list = Array.isArray(tools[k]) ? tools[k] : [];
-          list.forEach((t) => {
-            const name = safe(t.name);
-            const url = safe(t.url || t.link);
-            if (!name || !url) return;
-
-            const external = t.external === true;
-            pool.push({
-              name,
-              url: external ? normalizeUrl(url) : openInternal(url, name),
-              rawUrl: url,
-            });
-          });
-        });
-      } catch (_) {}
-
-      // Deduplicate by (name|url)
-      const seen = new Set();
-      const deduped = [];
-      pool.forEach((x) => {
-        const key = `${x.name}|${x.url}`;
-        if (seen.has(key)) return;
-        seen.add(key);
-        deduped.push(x);
+        e.preventDefault();
+        window.location.href =
+          "https://www.google.com/search?q=" +
+          encodeURIComponent("site:topsarkarijobs.com " + q);
       });
+    };
 
-      const q = query.toLowerCase();
-      const matches = deduped.filter((x) => (x.name + " " + x.rawUrl).toLowerCase().includes(q));
+    // Run once now (after injection) and keep enforcing via MutationObserver
+    hideSearchUI();
+    bindHomepageSearch();
 
-      if (statusEl) {
-        statusEl.textContent = matches.length
-          ? `Showing ${matches.length} result(s) for “${query}”.`
-          : `No results found for “${query}”. Try SSC, Railway, Bank, Police, Admit Card, Result.`;
-      }
-
-      listEl.innerHTML = matches.slice(0, 50).map((r) => {
-        return `
-          <li class="border border-slate-200 rounded-md p-3 hover:bg-slate-50 transition">
-            <a class="font-semibold text-sky-700 underline underline-offset-2" href="${escapeHtml(r.url)}">
-              ${escapeHtml(r.name)}
-            </a>
-            <div class="text-xs text-slate-500 mt-1">${escapeHtml(r.rawUrl)}</div>
-          </li>
-        `;
-      }).join("");
-
-      return;
+    // If header HTML changes after load (mobile toggles, async injections), enforce again
+    const hostNode = document.getElementById("site-header") || document.querySelector("header");
+    if (hostNode && !hostNode.__searchObserverBound) {
+      hostNode.__searchObserverBound = true;
+      const obs = new MutationObserver(() => {
+        hideSearchUI();
+        bindHomepageSearch();
+      });
+      obs.observe(hostNode, { childList: true, subtree: true });
     }
   }
 
@@ -706,7 +628,7 @@
       if (r.ok) data = await r.json();
     } catch (_) {}
 
-    const toolsData = (data && typeof data === "object") ? data : {};
+    const toolsData = data && typeof data === "object" ? data : {};
 
     const showCategories = () => {
       toolsView.classList.add("hidden");
@@ -960,27 +882,32 @@
   // Boot
   // ---------------------------
   document.addEventListener("DOMContentLoaded", async () => {
+    // ✅ NEW: this enables same homepage header/footer on pages that have:
+    // <div id="site-header"></div> and <div id="site-footer"></div>
     await injectHeaderFooter();
 
     await loadHeaderLinks();
 
-    // ✅ MUST run after header injection
-    removeHeaderSearchEverywhereExceptHome();
+    // ✅ NEW: enforce search rule + fix homepage search
+    // MUST run after header injection
+    applyHeaderSearchPolicy();
 
     initOffcanvas();
     initDropdowns();
     initFAQ();
 
-    // ✅ Homepage & search page behavior
-    await initSiteSearch();
-
+    // Homepage content
     if (page === "index.html" || page === "") {
       await renderHomepageSections();
     }
 
+    // Category pages (Jobs/Admissions/More dropdown subpages)
     await initCategoryPage();
+
+    // Tools page
     await initToolsPage();
 
+    // CSC Services
     if (page === "govt-services.html") {
       ensureSupabaseClient().catch(() => {});
     }
