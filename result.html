@@ -26,14 +26,9 @@
   <!-- IMPORTANT: site styles for injected header/footer -->
   <link rel="stylesheet" href="styles.css">
 
-  <!-- ✅ GUARANTEED: remove/hide the big search section on Results page only -->
   <style>
-    /* Common containers used for that big search box */
-    .top-search,
-    .search-card,
-    #siteSearchInput,
-    #siteSearchBtn,
-    #searchResults {
+    /* Results page: hide the big search section (if present) */
+    .top-search, .search-card, #siteSearchInput, #siteSearchBtn, #searchResults {
       display: none !important;
     }
   </style>
@@ -75,32 +70,6 @@
 
     <!-- MAIN CONTENT -->
     <main class="container flex-1">
-
-      <!-- ✅ JS fallback: if the search block still exists (for ANY reason), hide it -->
-      <script>
-        (function () {
-          try {
-            // Hide by class/id if present
-            document.querySelectorAll(".top-search, .search-card, #siteSearchInput, #siteSearchBtn, #searchResults")
-              .forEach(el => el && (el.style.display = "none"));
-
-            // Hide by text match (last resort)
-            const needles = ["search across top sarkari jobs"];
-            const nodes = Array.from(document.querySelectorAll("h1,h2,h3,h4,p,div,section"));
-            nodes.forEach(n => {
-              const t = (n.textContent || "").trim().toLowerCase();
-              if (!t) return;
-              if (needles.some(x => t.includes(x))) {
-                const box = n.closest("section") || n.closest("div") || n.parentElement;
-                if (box && box.id !== "site-header" && box.id !== "site-footer") {
-                  box.style.display = "none";
-                }
-              }
-            });
-          } catch (_) {}
-        })();
-      </script>
-
       <p>
         Check the latest Sarkari Result updates for all India government exams. We list exam results for SSC, RRB, IBPS,
         state commissions, police, defence and more. Click the link to view the result and download marks/scorecards from
@@ -188,8 +157,7 @@
 
   </div>
 
-  <!-- ✅ Cache-bust script.js so you’re not stuck on an old version -->
-  <script src="script.js?v=results-nosrch-1"></script>
+  <script src="script.js"></script>
 
   <!-- FAQ toggle -->
   <script>
