@@ -297,8 +297,12 @@
   }
 
   // ---------------------------
-  // ✅ CATEGORY PAGE FIX (category.html?group=...)
-  // Restores the same content/links that were on homepage sections
+  // ✅ CATEGORY PAGE (category.html?group=...)
+  // Restores the same content/links that were previously shown on the homepage sections.
+  // Data source priority:
+  //   1) jobs.json (if present)
+  //   2) dynamic-sections.json (fallback)
+  // No new content is created — we only render existing data.
   // ---------------------------
   async function initCategoryPage() {
     if (page !== "category.html") return;
@@ -329,8 +333,6 @@
     titleEl.textContent = meta.title;
     if (descEl) descEl.textContent = meta.desc;
 
-    // Try to load data from the repo (NO new content is created)
-    // We just read whatever already exists in your repo.
     async function tryFetchJson(path) {
       try {
         const r = await fetch(path, { cache: "no-store" });
@@ -341,42 +343,84 @@
       }
     }
 
-    // Preferred: a dedicated categories file if you have it
-    // Fallback: reuse dynamic-sections.json (homepage data source)
-    const categoriesJson =
-      (await tryFetchJson("categories.json")) ||
-      (await tryFetchJson("category.json")) ||
-      (await tryFetchJson("dynamic-sections.json"));
+    // Decide whether a URL is internal to this site (should not be wrapped in view.html)
+    function isInternalLink(url) {
+      const u = safe(url);
+      if (!u) return false;
+      if (u.startsWith("#") || u.startsWith("?")) return true;
+      if (u.startsWith("/") || u.startsWith("./") || u.startsWith("../")) return true;
+      if (u.endsWith(".html") || /\.html[?#]/i.test(u)) return true;
+      if (/^(https?:)?\/\//i.test(u)) return false;
+      return true;
+    }
 
-    // Build candidate lists from data
-    // Supports either:
-    // 1) { groups: { study:[...], popular:[...], ... } }
-    // 2) { study:[...], popular:[...], ... }
-    // 3) dynamic-sections.json: { sections:[{title, items:[...]}] }
+    function hrefForItem(url, name) {
+      const u = safe(url);
+      const n = safe(name) || "Open";
+      if (!u) return "#";
+      if (isInternalLink(u)) return u; // internal pages should open normally
+      return openInternal(u, n); // external links use view.html wrapper
+    }
+
+    function normalizeList(list) {
+      return (list || [])
+        .map((it) => ({
+          name: safe(it?.name || it?.title || it?.label),
+          url: it?.url || it?.link || it?.href || it?.path || "",
+          date: safe(it?.date || it?.lastDate || it?.last_date),
+          external: it?.external === true,
+        }))
+        .filter((it) => it.name && it.url);
+    }
+
+    // 1) Try jobs.json
     let items = [];
-
-    const looksLikeList = (x) => Array.isArray(x) && x.length >= 0;
-
-    if (categoriesJson) {
-      // Case A: groups wrapper
-      if (categoriesJson.groups && typeof categoriesJson.groups === "object") {
-        const list = categoriesJson.groups[group];
-        if (looksLikeList(list)) items = list;
+    const jobsJson = await tryFetchJson("jobs.json");
+    if (jobsJson) {
+      if (jobsJson.groups && typeof jobsJson.groups === "object" && Array.isArray(jobsJson.groups[group])) {
+        items = normalizeList(jobsJson.groups[group]);
+      } else if (Array.isArray(jobsJson[group])) {
+        items = normalizeList(jobsJson[group]);
+      } else if (Array.isArray(jobsJson)) {
+        const byGroup = jobsJson.filter((x) => safe(x.group).toLowerCase() === group);
+        if (byGroup.length && Array.isArray(byGroup[0].items)) {
+          items = normalizeList(byGroup[0].items);
+        } else if (byGroup.length) {
+          items = normalizeList(byGroup);
+        }
+      } else if (typeof jobsJson === "object") {
+        const keyCandidates = [
+          group,
+          group.replace("-", "_"),
+          group.replace("-", ""),
+          `group_${group}`,
+        ];
+        for (const k of keyCandidates) {
+          const v = jobsJson[k];
+          if (Array.isArray(v)) {
+            items = normalizeList(v);
+            break;
+          }
+          if (v && Array.isArray(v.items)) {
+            items = normalizeList(v.items);
+            break;
+          }
+        }
       }
-      // Case B: direct keys
-      else if (typeof categoriesJson === "object" && looksLikeList(categoriesJson[group])) {
-        items = categoriesJson[group];
-      }
-      // Case C: dynamic-sections.json style
-      else if (Array.isArray(categoriesJson.sections)) {
-        const sections = categoriesJson.sections;
+    }
 
-        const pickByTitle = (needleList) => {
-          const re = new RegExp(needleList.map(escRE).join("|"), "i");
+    // 2) Fallback to dynamic-sections.json (if needed)
+    if (!items.length) {
+      const ds = await tryFetchJson("dynamic-sections.json");
+      if (ds && Array.isArray(ds.sections)) {
+        const sections = ds.sections;
+
+        const pickByTitle = (needles) => {
+          const re = new RegExp(needles.map(escRE).join("|"), "i");
           return sections.find((s) => re.test(safe(s.title)));
         };
 
-        let sec =
+        const sec =
           group === "study"
             ? pickByTitle(["Study wise"])
             : group === "popular"
@@ -393,21 +437,10 @@
             ? pickByTitle(["Study Material", "Courses"])
             : null;
 
-        if (sec && Array.isArray(sec.items)) items = sec.items;
+        if (sec && Array.isArray(sec.items)) items = normalizeList(sec.items);
       }
     }
 
-    // Normalize item shape: {name, url/link, date?, external?}
-    items = (items || [])
-      .map((it) => ({
-        name: safe(it?.name),
-        url: it?.url || it?.link || "",
-        date: safe(it?.date),
-        external: it?.external === true,
-      }))
-      .filter((it) => it.name && it.url);
-
-    // Render
     function render(list) {
       gridEl.innerHTML = "";
 
@@ -420,9 +453,14 @@
       list.forEach((it) => {
         const a = document.createElement("a");
         a.className = "section-link";
-        a.href = it.external ? normalizeUrl(it.url) : openInternal(it.url, it.name);
 
-        if (it.external) {
+        const href = hrefForItem(it.url, it.name);
+        a.href = href;
+
+        // Open new tab only if it's truly external and not wrapped
+        const isExternalRaw = /^(https?:)?\/\//i.test(safe(it.url)) || /^www\./i.test(safe(it.url));
+        const wrapped = href.startsWith("view.html?");
+        if (isExternalRaw && !wrapped) {
           a.target = "_blank";
           a.rel = "noopener";
         }
@@ -435,7 +473,6 @@
       });
     }
 
-    // Filter (search)
     const applyFilter = () => {
       const q = safe(filterEl?.value).toLowerCase();
       if (!q) return render(items);
@@ -443,11 +480,12 @@
     };
 
     if (filterEl) filterEl.addEventListener("input", applyFilter);
-    if (clearBtn)
+    if (clearBtn) {
       clearBtn.addEventListener("click", () => {
         if (filterEl) filterEl.value = "";
         applyFilter();
       });
+    }
 
     render(items);
   }
@@ -747,10 +785,10 @@
       await renderHomepageSections();
     }
 
-    // ✅ Restore dropdown subpages content
+    // ✅ Restore dropdown subpages content (Jobs / Admissions / More)
     await initCategoryPage();
 
-    // Tools page wiring
+    // Tools page wiring (fix broken clicks)
     await initToolsPage();
 
     // Services page
