@@ -1,141 +1,62 @@
 <script>
-(function () {
-  "use strict";
+document.addEventListener("DOMContentLoaded", function () {
 
-  /* =======================
-     HEADER INJECTION
-  ======================== */
+  /* ===== HEADER ===== */
   const header = document.getElementById("site-header");
   if (header) {
     header.innerHTML = `
-<header class="bg-gradient-to-r from-sky-600 to-indigo-600 text-white shadow-sm relative">
-  <div class="container mx-auto max-w-6xl px-4 py-4">
+<header class="bg-gradient-to-r from-sky-600 to-indigo-600 text-white shadow-sm">
+  <div class="container mx-auto max-w-6xl px-4 py-4 flex items-center gap-4">
 
-    <div class="flex items-center gap-4">
-
-      <!-- Logo -->
-      <div class="flex items-center gap-3 shrink-0">
-        <img src="image.png" alt="Top Sarkari Jobs Logo" class="h-10 w-10 rounded-full">
-        <div class="leading-tight">
-          <div class="text-2xl font-bold">Top Sarkari Jobs</div>
-          <p class="text-xs md:text-sm text-sky-200">
-            Latest Sarkari Jobs, Results, Admit Cards & Online Forms – 2026
-          </p>
-        </div>
-      </div>
-
-      <!-- Mobile Toggle -->
-      <button id="mobile-menu-toggle"
-        class="lg:hidden text-white hover:bg-blue-700 p-2 rounded ml-auto"
-        aria-label="Open menu">
-        <i class="fas fa-bars"></i>
-      </button>
-
-      <!-- Desktop Nav -->
-      <div class="hidden lg:flex items-center gap-3 flex-1 justify-end">
-        <nav class="flex items-center gap-3 flex-wrap">
-          <a href="index.html"
-            class="px-3 py-2 bg-white text-sky-600 rounded-md font-semibold shadow-sm hover:shadow-md transition">
-            <i class="fas fa-briefcase mr-2"></i>Home
-          </a>
-
-          <a href="result.html"
-            class="px-3 py-2 bg-white/20 text-white rounded-md font-semibold hover:bg-white/25 transition">
-            <i class="fas fa-clipboard-check mr-2"></i>Results
-          </a>
-
-          <a href="search.html"
-            class="px-3 py-2 bg-white/10 text-white rounded-md font-semibold hover:bg-white/20 transition">
-            <i class="fas fa-search mr-2"></i>Search
-          </a>
-
-          <a href="govt-services.html"
-            class="px-3 py-2 bg-white/10 text-white rounded-md font-semibold hover:bg-white/20 transition">
-            <i class="fas fa-gavel mr-2"></i>CSC Services
-          </a>
-
-          <a href="tools.html"
-            class="px-3 py-2 bg-white/10 text-white rounded-md font-semibold hover:bg-white/20 transition">
-            <i class="fas fa-tools mr-2"></i>Tools
-          </a>
-
-          <a href="helpdesk.html"
-            class="px-3 py-2 bg-white/10 text-white rounded-md font-semibold hover:bg-white/20 transition">
-            <i class="fas fa-headset mr-2"></i>Helpdesk
-          </a>
-        </nav>
-
-        <div id="header-links" class="flex gap-2 flex-wrap"></div>
+    <div class="flex items-center gap-3">
+      <img src="image.png" alt="Top Sarkari Jobs Logo" class="h-10 w-10 rounded-full">
+      <div>
+        <div class="text-2xl font-bold">Top Sarkari Jobs</div>
+        <p class="text-xs text-sky-200">
+          Latest Sarkari Jobs, Results & Admit Cards – 2026
+        </p>
       </div>
     </div>
 
-    <!-- Mobile Menu -->
-    <div id="mobile-menu"
-      class="hidden lg:hidden absolute top-full left-0 right-0 bg-sky-600 text-white shadow-lg z-50">
-      <div class="flex flex-col p-4 space-y-2">
-        <a href="index.html" class="px-4 py-2 bg-white text-sky-600 rounded-md font-semibold">
-          Home
-        </a>
-        <a href="result.html" class="px-4 py-2 bg-white/20 rounded-md font-semibold">Results</a>
-        <a href="search.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold">Search</a>
-        <a href="govt-services.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold">CSC Services</a>
-        <a href="tools.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold">Tools</a>
-        <a href="helpdesk.html" class="px-4 py-2 bg-white/10 rounded-md font-semibold">Helpdesk</a>
-        <div id="header-links-mobile"></div>
-      </div>
-    </div>
+    <nav class="ml-auto hidden lg:flex gap-3">
+      <a href="index.html" class="px-3 py-2 bg-white text-sky-600 rounded-md font-semibold">Home</a>
+      <a href="result.html" class="px-3 py-2 bg-white/20 rounded-md font-semibold">Results</a>
+      <a href="search.html" class="px-3 py-2 bg-white/10 rounded-md font-semibold">Search</a>
+      <a href="govt-services.html" class="px-3 py-2 bg-white/10 rounded-md font-semibold">CSC Services</a>
+      <a href="tools.html" class="px-3 py-2 bg-white/10 rounded-md font-semibold">Tools</a>
+      <a href="helpdesk.html" class="px-3 py-2 bg-white/10 rounded-md font-semibold">Helpdesk</a>
+    </nav>
 
   </div>
 </header>
 `;
   }
 
-  /* =======================
-     FOOTER INJECTION
-  ======================== */
+  /* ===== FOOTER ===== */
   const footer = document.getElementById("site-footer");
   if (footer) {
     footer.innerHTML = `
 <footer class="bg-white text-gray-800 py-8 mt-12">
-  <div class="container mx-auto px-4">
+  <div class="container mx-auto px-4 text-center">
+    <h3 class="text-xl font-bold">Top Sarkari Jobs</h3>
+    <p class="text-gray-600 text-sm mt-1">
+      Your gateway to government jobs and services
+    </p>
 
-    <div class="flex flex-col md:flex-row justify-between items-center">
-      <div>
-        <h3 class="text-xl font-bold">Top Sarkari Jobs</h3>
-        <p class="text-gray-600 text-sm mt-1">
-          Your gateway to government jobs and services
-        </p>
-
-        <div class="mt-3 flex flex-wrap gap-3 text-sm">
-          <a class="text-sky-600 hover:underline" href="about.html">About</a>
-          <a class="text-sky-600 hover:underline" href="contact.html">Contact</a>
-          <a class="text-sky-600 hover:underline" href="privacy.html">Privacy</a>
-          <a class="text-sky-600 hover:underline" href="terms.html">Terms</a>
-        </div>
-      </div>
-
-      <div id="footer-social-links" class="flex gap-3 mt-4 md:mt-0"></div>
+    <div class="mt-3 flex justify-center gap-4 text-sm">
+      <a class="text-sky-600 hover:underline" href="about.html">About</a>
+      <a class="text-sky-600 hover:underline" href="contact.html">Contact</a>
+      <a class="text-sky-600 hover:underline" href="privacy.html">Privacy</a>
+      <a class="text-sky-600 hover:underline" href="terms.html">Terms</a>
     </div>
 
-    <div class="border-t border-gray-200 mt-6 pt-6 text-center text-gray-600 text-sm">
-      &copy; 2025 Top Sarkari Jobs. All rights reserved.
+    <div class="border-t border-gray-200 mt-6 pt-4 text-gray-600 text-sm">
+      © 2025 Top Sarkari Jobs. All rights reserved.
     </div>
-
   </div>
 </footer>
 `;
   }
 
-  /* =======================
-     MOBILE MENU TOGGLE
-  ======================== */
-  document.addEventListener("click", function (e) {
-    const btn = document.getElementById("mobile-menu-toggle");
-    const menu = document.getElementById("mobile-menu");
-    if (btn && menu && btn.contains(e.target)) {
-      menu.classList.toggle("hidden");
-    }
-  });
-
-})();
+});
 </script>
