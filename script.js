@@ -29,7 +29,7 @@
     else window.location.href = "index.html";
   };
 
-  // ✅ NEW: Inject same homepage header/footer everywhere (Results now, other pages later)
+  // ✅ Inject same homepage header/footer everywhere
   async function injectHeaderFooter() {
     const headerHost = document.getElementById("site-header");
     const footerHost = document.getElementById("site-footer");
@@ -106,6 +106,93 @@
         a.textContent = s.name || "Social";
         footerSocial.appendChild(a);
       });
+    }
+  }
+
+  // ---------------------------
+  // Header Search Rule (SAFE PATCH)
+  // - Hide search button/bar on every page except homepage
+  // - Make homepage search work (site-wide search via Google)
+  // ---------------------------
+  function enforceHeaderSearchRule() {
+    try {
+      const isHome = page === "index.html" || page === "";
+      const host = document.getElementById("site-header") || document.querySelector("header") || document;
+
+      const hide = (el) => {
+        if (!el) return;
+        // Hide a reasonable wrapper if available, else hide the element itself
+        const wrap =
+          el.closest(".search-container") ||
+          el.closest(".search-wrap") ||
+          el.closest(".nav-search") ||
+          el.closest("form") ||
+          el;
+        wrap.style.setProperty("display", "none", "important");
+        wrap.setAttribute("data-hide-search", "1");
+      };
+
+      // 1) Hide "Search" nav link(s) that go to search.html (header only)
+      host.querySelectorAll('a[href]').forEach((a) => {
+        const href = safe(a.getAttribute("href")).toLowerCase();
+        if (!href) return;
+        if (href.includes("search.html")) {
+          if (!isHome) hide(a);
+        }
+      });
+
+      // 2) Find search input & bind homepage behavior
+      const input =
+        host.querySelector('input[type="search"]') ||
+        host.querySelector('input[name="q"]') ||
+        host.querySelector("#q") ||
+        host.querySelector("#searchInput") ||
+        null;
+
+      const form = input ? input.closest("form") : null;
+
+      if (!isHome) {
+        // Hide search UI on non-home pages
+        if (form) hide(form);
+        if (input) hide(input);
+        // Also hide any obvious toggle buttons near search inputs
+        host.querySelectorAll('button[aria-label*="search" i], button[title*="search" i]').forEach((b) => hide(b));
+        return;
+      }
+
+      // Homepage: make search actually work
+      if (input) {
+        const go = () => {
+          const q = safe(input.value);
+          if (!q) return;
+          // Works across the entire website without needing a custom search backend
+          const url = "https://www.google.com/search?q=" + encodeURIComponent("site:topsarkarijobs.com " + q);
+          window.location.href = url;
+        };
+
+        // Bind enter key (works even if there is no form)
+        if (!input.dataset.boundSearchEnter) {
+          input.dataset.boundSearchEnter = "1";
+          input.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              go();
+            }
+          });
+        }
+
+        // Bind form submit if form exists
+        if (form && !form.dataset.boundSearchSubmit) {
+          form.dataset.boundSearchSubmit = "1";
+          form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            go();
+          });
+        }
+      }
+    } catch (err) {
+      // Never let search patch break header/footer injection or other features
+      console.warn("Search rule patch skipped due to error:", err);
     }
   }
 
@@ -339,7 +426,6 @@
 
   // ---------------------------
   // Category pages (Jobs / Admissions / More dropdown subpages)
-  // Uses YOUR jobs.json structure and keeps URLs exactly as-is
   // ---------------------------
   async function initCategoryPage() {
     if (page !== "category.html") return;
@@ -372,8 +458,6 @@
 
     if (titleEl) titleEl.textContent = groupMeta[group] || "Category";
     if (descEl && groupMeta[group]) {
-      // Keep existing description if you have one; do not overwrite with new content
-      // Only set if it's empty:
       if (!safe(descEl.textContent)) descEl.textContent = "";
     }
 
@@ -416,28 +500,13 @@
 
     let items = [];
 
-    // Jobs dropdown
-    if (group === "study") {
-      items = sliceBetween(top, "study wise", "popular");
-    } else if (group === "popular") {
-      items = sliceBetween(top, "popular", null);
-    } else if (group === "state") {
-      items = sliceBetween(left, "state wise", "admit");
-    }
-
-    // Admissions dropdown
-    else if (group === "admit-result") {
-      items = sliceBetween(left, "admit", null);
-    } else if (group === "admissions") {
-      items = sliceBetween(right, "admissions", "govt scheme");
-    }
-
-    // More dropdown
-    else if (group === "khabar") {
-      items = sliceBetween(right, "latest khabar", "study material");
-    } else if (group === "study-material") {
-      items = sliceBetween(right, "study material", "tools");
-    }
+    if (group === "study") items = sliceBetween(top, "study wise", "popular");
+    else if (group === "popular") items = sliceBetween(top, "popular", null);
+    else if (group === "state") items = sliceBetween(left, "state wise", "admit");
+    else if (group === "admit-result") items = sliceBetween(left, "admit", null);
+    else if (group === "admissions") items = sliceBetween(right, "admissions", "govt scheme");
+    else if (group === "khabar") items = sliceBetween(right, "latest khabar", "study material");
+    else if (group === "study-material") items = sliceBetween(right, "study material", "tools");
 
     gridEl.innerHTML = "";
     if (!items.length) {
@@ -467,7 +536,7 @@
   }
 
   // ---------------------------
-  // Tools page (restores tools page functionality)
+  // Tools page
   // ---------------------------
   async function initToolsPage() {
     if (page !== "tools.html") return;
@@ -487,7 +556,7 @@
       if (r.ok) data = await r.json();
     } catch (_) {}
 
-    const toolsData = (data && typeof data === "object") ? data : {};
+    const toolsData = data && typeof data === "object" ? data : {};
 
     const showCategories = () => {
       toolsView.classList.add("hidden");
@@ -564,7 +633,7 @@
   }
 
   // ---------------------------
-  // CSC Services (restores services list + popup + supabase submit)
+  // CSC Services (popup + supabase submit)
   // ---------------------------
   const CSC_TABLE = "csc_service_requests";
   let cscSupabase = null;
@@ -605,7 +674,6 @@
     const closeBtn2 = $("#cscCloseBtn");
     const form = $("#cscRequestForm");
 
-    // If the page doesn't include the modal HTML, don't break anything.
     if (!modal || !overlay || !closeBtn || !form) return;
 
     const serviceNameEl = $("#cscServiceName");
@@ -647,7 +715,6 @@
       const state = safe($("#cscState")?.value);
       const msg = safe($("#cscMessage")?.value);
 
-      // Keep your existing validation behavior (do not add new rules)
       if (!fullName || !phone || phone.length < 8) {
         alert("Please fill all fields correctly.");
         return;
@@ -748,6 +815,11 @@
     await injectHeaderFooter();
 
     await loadHeaderLinks();
+
+    // ✅ SAFE: hide search everywhere except homepage + fix homepage search
+    // (never removes header, never removes nodes)
+    enforceHeaderSearchRule();
+
     initOffcanvas();
     initDropdowns();
     initFAQ();
