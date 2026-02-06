@@ -3,6 +3,7 @@
 
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
 
   const safe = (v) => (v ?? "").toString().trim();
@@ -349,15 +350,22 @@
         currentService.url ? `Service link: ${normalizeUrl(currentService.url)}` : null,
       ].filter(Boolean);
 
-      const EMAIL_TO = "topsarkarijobs.com@gmail.com"; // <-- CHANGE THIS
+      // ✅ FIXED: your real email should send mail, not show the "set email" warning
+      const EMAIL_TO = "topsarkarijobs.com@gmail.com";
       const subject = encodeURIComponent(`CSC Service Request - ${currentService.name || "Service"}`);
       const body = encodeURIComponent(lines.join("\n"));
 
-      if (EMAIL_TO.includes("topsarkarijobs.com@gmail.com")) {
+      // Only warn if someone leaves it blank or uses a placeholder
+      const looksUnset =
+        !EMAIL_TO ||
+        /replace_with_your_email/i.test(EMAIL_TO) ||
+        /example\.com/i.test(EMAIL_TO);
+
+      if (looksUnset) {
         navigator.clipboard?.writeText(lines.join("\n")).catch(() => {});
-        alert("Request copied. Please set topsarkarijobs.com@gmail.com in script.js to enable email submit.");
+        alert("Request copied. Please set EMAIL_TO in script.js to enable email submit.");
       } else {
-        window.location.href = `mailto:${topsarkarijobs.com@gmail.com}?subject=${subject}&body=${body}`;
+        window.location.href = `mailto:${EMAIL_TO}?subject=${subject}&body=${body}`;
       }
 
       close();
