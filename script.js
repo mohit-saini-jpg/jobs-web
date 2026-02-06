@@ -29,6 +29,33 @@
     else window.location.href = "index.html";
   };
 
+  // ✅ NEW: Inject header + footer fragments everywhere (no changes to page content)
+  async function injectHeaderFooter() {
+    const headerHost = document.getElementById("site-header");
+    const footerHost = document.getElementById("site-footer");
+
+    // If the placeholders don't exist on a page, do nothing.
+    if (!headerHost && !footerHost) return;
+
+    async function loadFragment(file) {
+      const r = await fetch(file, { cache: "no-store" });
+      if (!r.ok) throw new Error("Failed to load " + file);
+      return await r.text();
+    }
+
+    try {
+      if (headerHost) headerHost.innerHTML = await loadFragment("header.html");
+    } catch (e) {
+      console.warn(e);
+    }
+
+    try {
+      if (footerHost) footerHost.innerHTML = await loadFragment("footer.html");
+    } catch (e) {
+      console.warn(e);
+    }
+  }
+
   async function loadHeaderLinks() {
     let data = { header_links: [], social_links: [] };
     try {
@@ -344,11 +371,6 @@
     };
 
     if (titleEl) titleEl.textContent = groupMeta[group] || "Category";
-    if (descEl && groupMeta[group]) {
-      // Keep existing description if you have one; do not overwrite with new content
-      // Only set if it's empty:
-      if (!safe(descEl.textContent)) descEl.textContent = "";
-    }
 
     async function fetchJson(path) {
       const r = await fetch(path, { cache: "no-store" });
@@ -390,27 +412,17 @@
     let items = [];
 
     // Jobs dropdown
-    if (group === "study") {
-      items = sliceBetween(top, "study wise", "popular");
-    } else if (group === "popular") {
-      items = sliceBetween(top, "popular", null);
-    } else if (group === "state") {
-      items = sliceBetween(left, "state wise", "admit");
-    }
+    if (group === "study") items = sliceBetween(top, "study wise", "popular");
+    else if (group === "popular") items = sliceBetween(top, "popular", null);
+    else if (group === "state") items = sliceBetween(left, "state wise", "admit");
 
     // Admissions dropdown
-    else if (group === "admit-result") {
-      items = sliceBetween(left, "admit", null);
-    } else if (group === "admissions") {
-      items = sliceBetween(right, "admissions", "govt scheme");
-    }
+    else if (group === "admit-result") items = sliceBetween(left, "admit", null);
+    else if (group === "admissions") items = sliceBetween(right, "admissions", "govt scheme");
 
     // More dropdown
-    else if (group === "khabar") {
-      items = sliceBetween(right, "latest khabar", "study material");
-    } else if (group === "study-material") {
-      items = sliceBetween(right, "study material", "tools");
-    }
+    else if (group === "khabar") items = sliceBetween(right, "latest khabar", "study material");
+    else if (group === "study-material") items = sliceBetween(right, "study material", "tools");
 
     gridEl.innerHTML = "";
     if (!items.length) {
@@ -420,19 +432,15 @@
     if (emptyEl) emptyEl.hidden = true;
 
     items.forEach((it) => {
-      const name = safe(it.name);
-      const url = safe(it.url);
-      const external = it.external === true;
-
       const a = document.createElement("a");
       a.className = "section-link";
-      a.href = url; // ✅ EXACT URL FROM jobs.json
-      if (external) {
+      a.href = safe(it.url); // exact URL from JSON
+      if (it.external === true) {
         a.target = "_blank";
         a.rel = "noopener";
       }
       a.innerHTML = `
-        <div class="t">${name}</div>
+        <div class="t">${safe(it.name)}</div>
         <div class="d">Open official link</div>
       `;
       gridEl.appendChild(a);
@@ -471,11 +479,7 @@
     const showTools = (categoryKey) => {
       const list = Array.isArray(toolsData[categoryKey]) ? toolsData[categoryKey] : [];
 
-      const titleMap = {
-        image: "Image Tools",
-        pdf: "PDF Tools",
-        video: "Video/Audio Tools",
-      };
+      const titleMap = { image: "Image Tools", pdf: "PDF Tools", video: "Video/Audio Tools" };
       const titleText = titleMap[categoryKey] || "Tools";
       if (toolsTitle) toolsTitle.textContent = titleText;
 
@@ -498,7 +502,6 @@
           a.className =
             "p-4 rounded-lg bg-white border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition duration-300 flex items-start gap-3";
           a.href = isExternal ? normalizeUrl(url) : openInternal(url, name);
-
           if (isExternal) {
             a.target = "_blank";
             a.rel = "noopener";
@@ -506,9 +509,7 @@
 
           const iconClass = safe(t.icon) || "fas fa-wand-magic-sparkles";
           a.innerHTML = `
-            <div class="mt-0.5 text-xl text-blue-600">
-              <i class="${iconClass}"></i>
-            </div>
+            <div class="mt-0.5 text-xl text-blue-600"><i class="${iconClass}"></i></div>
             <div>
               <div class="font-semibold text-gray-800">${name}</div>
               <div class="text-sm text-gray-500 mt-1">Open tool</div>
@@ -537,7 +538,7 @@
   }
 
   // ---------------------------
-  // CSC Services (restores services list + popup + supabase submit)
+  // CSC Services (services list + popup + supabase submit)
   // ---------------------------
   const CSC_TABLE = "csc_service_requests";
   let cscSupabase = null;
@@ -578,7 +579,6 @@
     const closeBtn2 = $("#cscCloseBtn");
     const form = $("#cscRequestForm");
 
-    // If the page doesn't include the modal HTML, don't break anything.
     if (!modal || !overlay || !closeBtn || !form) return;
 
     const serviceNameEl = $("#cscServiceName");
@@ -593,11 +593,9 @@
     const open = (service) => {
       currentService = service || { name: "", url: "" };
       if (serviceNameEl) serviceNameEl.textContent = currentService.name || "Service";
-
       modal.hidden = false;
       overlay.hidden = false;
       document.body.style.overflow = "hidden";
-
       const first = $("input, textarea", form);
       if (first) setTimeout(() => first.focus(), 50);
     };
@@ -620,7 +618,6 @@
       const state = safe($("#cscState")?.value);
       const msg = safe($("#cscMessage")?.value);
 
-      // Keep your existing validation behavior (do not add new rules)
       if (!fullName || !phone || phone.length < 8) {
         alert("Please fill all fields correctly.");
         return;
@@ -643,12 +640,7 @@
 
       try {
         const { error } = await sb.from(CSC_TABLE).insert([
-          {
-            name: fullName,
-            phone: phone,
-            service: serviceText,
-            created_at: new Date().toISOString(),
-          },
+          { name: fullName, phone: phone, service: serviceText, created_at: new Date().toISOString() },
         ]);
 
         if (error) {
@@ -703,9 +695,7 @@
 
       a.addEventListener("click", (e) => {
         e.preventDefault();
-        if (typeof window.__openCscModal === "function") {
-          window.__openCscModal({ name, url });
-        }
+        if (typeof window.__openCscModal === "function") window.__openCscModal({ name, url });
       });
 
       list.appendChild(a);
@@ -716,23 +706,22 @@
   // Boot
   // ---------------------------
   document.addEventListener("DOMContentLoaded", async () => {
+    // ✅ NEW: load same homepage header/footer everywhere
+    await injectHeaderFooter();
+
+    // header/footer injection changes the DOM, so these must run AFTER it:
     await loadHeaderLinks();
     initOffcanvas();
     initDropdowns();
     initFAQ();
 
-    // Homepage content
     if (page === "index.html" || page === "") {
       await renderHomepageSections();
     }
 
-    // Category pages (Jobs/Admissions/More dropdown subpages)
     await initCategoryPage();
-
-    // Tools page
     await initToolsPage();
 
-    // CSC Services
     if (page === "govt-services.html") {
       ensureSupabaseClient().catch(() => {});
     }
