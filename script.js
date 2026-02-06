@@ -17,6 +17,19 @@
     return "https://" + s.replace(/^\/+/, "");
   }
 
+  // Used across site for external links inside view.html wrapper
+  function openInternal(url, name) {
+    const u = normalizeUrl(url);
+    return `view.html?url=${encodeURIComponent(u)}&name=${encodeURIComponent(name)}`;
+  }
+
+  // ✅ Tools page header uses onclick="goBack()" (tools.html)
+  window.goBack = () => {
+    // If user came from somewhere, go back; otherwise go home
+    if (window.history.length > 1) window.history.back();
+    else window.location.href = "index.html";
+  };
+
   async function loadHeaderLinks() {
     let data = { header_links: [], social_links: [] };
     try {
@@ -221,11 +234,6 @@
     });
   }
 
-  function openInternal(url, name) {
-    const u = normalizeUrl(url);
-    return `view.html?url=${encodeURIComponent(u)}&name=${encodeURIComponent(name)}`;
-  }
-
   async function renderHomepageSections() {
     const wrap = $("#dynamic-sections");
     if (!wrap) return;
@@ -290,7 +298,127 @@
   }
 
   // ---------------------------
-  // ✅ Supabase init (Helpdesk-style) for CSC Services
+  // ✅ Tools page (tools.html) — FIX broken clicks and restore navigation
+  // Uses tools.json categories: image/pdf/video :contentReference[oaicite:3]{index=3}
+  // ---------------------------
+  async function initToolsPage() {
+    if (page !== "tools.html") return;
+
+    const categoriesView = $("#categories-view");
+    const toolsView = $("#tools-view");
+    const toolsGrid = $("#tools-grid");
+    const toolsTitle = $("#tools-title span") || $("#tools-title");
+    const backBtn = $("#back-button");
+    const categoryButtons = $$(".category-button");
+
+    if (!categoriesView || !toolsView || !toolsGrid || !categoryButtons.length) return;
+
+    let data = null;
+    try {
+      const r = await fetch("tools.json", { cache: "no-store" });
+      if (r.ok) data = await r.json();
+    } catch (_) {}
+
+    const toolsData = (data && typeof data === "object") ? data : {};
+
+    const showCategories = () => {
+      toolsView.classList.add("hidden");
+      categoriesView.classList.remove("hidden");
+      // Scroll to top for clean UX
+      window.scrollTo({ top: 0, behavior: "instant" });
+    };
+
+    const showTools = (categoryKey) => {
+      const list = Array.isArray(toolsData[categoryKey]) ? toolsData[categoryKey] : [];
+
+      // Title
+      const titleMap = {
+        image: "Image Tools",
+        pdf: "PDF Tools",
+        video: "Video/Audio Tools",
+      };
+      const titleText = titleMap[categoryKey] || "Tools";
+      if (toolsTitle) toolsTitle.textContent = titleText;
+
+      toolsGrid.innerHTML = "";
+
+      if (!list.length) {
+        toolsGrid.innerHTML = `
+          <div class="col-span-full p-4 bg-white border border-gray-200 rounded-lg text-center text-gray-600">
+            No tools found for this category.
+          </div>
+        `;
+      } else {
+        list.forEach((t) => {
+          const name = safe(t.name) || "Open Tool";
+          const url = t.url || t.link || "";
+          if (!url) return;
+
+          // If a tool is explicitly marked external=true, open in a new tab.
+          // Otherwise, open inside view.html wrapper (same pattern as homepage cards).
+          const isExternal = t.external === true;
+
+          const a = document.createElement("a");
+          a.className =
+            "p-4 rounded-lg bg-white border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition duration-300 flex items-start gap-3";
+          a.href = isExternal ? normalizeUrl(url) : openInternal(url, name);
+
+          if (isExternal) {
+            a.target = "_blank";
+            a.rel = "noopener";
+          }
+
+          const iconClass = safe(t.icon) || "fas fa-wand-magic-sparkles";
+          a.innerHTML = `
+            <div class="mt-0.5 text-xl text-blue-600">
+              <i class="${iconClass}"></i>
+            </div>
+            <div>
+              <div class="font-semibold text-gray-800">${name}</div>
+              <div class="text-sm text-gray-500 mt-1">Open tool</div>
+            </div>
+          `;
+
+          toolsGrid.appendChild(a);
+        });
+      }
+
+      categoriesView.classList.add("hidden");
+      toolsView.classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "instant" });
+    };
+
+    // Back button
+    if (backBtn) backBtn.addEventListener("click", showCategories);
+
+    // Category tiles
+    categoryButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const key = safe(btn.getAttribute("data-category"));
+        if (!key) return;
+        showTools(key);
+      });
+    });
+
+    // Optional: update the "X tools available" counts dynamically, without changing layout
+    // tools.html currently hardcodes counts :contentReference[oaicite:4]{index=4}
+    try {
+      categoryButtons.forEach((btn) => {
+        const key = safe(btn.getAttribute("data-category"));
+        const n = Array.isArray(toolsData[key]) ? toolsData[key].length : null;
+        if (typeof n === "number") {
+          const countEl = btn.querySelector(".text-sm.text-gray-500.mt-2");
+          if (countEl) countEl.textContent = `${n} tools available`;
+        }
+      });
+    } catch (_) {}
+
+    // Start on categories
+    showCategories();
+  }
+
+  // ---------------------------
+  // ✅ CSC Services (govt-services.html) — Supabase insert into csc_service_requests
   // ---------------------------
   const CSC_TABLE = "csc_service_requests";
   let cscSupabase = null;
@@ -298,7 +426,6 @@
   async function ensureSupabaseClient() {
     if (cscSupabase) return cscSupabase;
 
-    // Load supabase-js dynamically if not present
     if (!window.supabase) {
       await new Promise((resolve, reject) => {
         const s = document.createElement("script");
@@ -325,7 +452,6 @@
     }
   }
 
-  // ✅ CSC modal -> insert into csc_service_requests (name, phone, service, created_at)
   function initCscModal() {
     const modal = $("#cscModal");
     const overlay = $("#cscModalOverlay");
@@ -374,7 +500,6 @@
       const state = safe($("#cscState")?.value);
       const msg = safe($("#cscMessage")?.value);
 
-      // Keep validation flexible (your table already has mixed phone formats)
       if (!fullName || !phone || phone.length < 8 || !msg) {
         alert("Please fill all fields correctly.");
         return;
@@ -386,7 +511,6 @@
         return;
       }
 
-      // This goes into your table column: service (text)
       const serviceText = [
         safe(currentService.name) ? safe(currentService.name) : "-",
         state ? `State: ${state}` : "",
@@ -478,11 +602,13 @@
       await renderHomepageSections();
     }
 
-    // Pre-warm Supabase on services page so submit is instant
+    // Tools page wiring (fix broken clicks)
+    await initToolsPage();
+
+    // Services page
     if (page === "govt-services.html") {
       ensureSupabaseClient().catch(() => {});
     }
-
     initCscModal();
     await renderServicesPage();
   });
