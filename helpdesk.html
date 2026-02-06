@@ -6,74 +6,52 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-C4VRD1C9QS"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-
-        function gtag() {
-            dataLayer.push(arguments);
-        }
+        function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-
         gtag('config', 'G-C4VRD1C9QS');
     </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Helpdesk & Support - Top Sarkari Jobs</title>
-    <meta name="description"
-        content="Contact Top Sarkari Jobs for any queries related to government jobs, results, or website issues. We are here to help.">
+    <meta name="description" content="Contact Top Sarkari Jobs for any queries related to government jobs, results, or website issues. We are here to help.">
     <meta name="keywords" content="helpdesk, contact us, support, top sarkari jobs contact, query">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://topsarkarijobs.com/helpdesk.html">
     <link rel="icon" type="image/x-icon" href="image.ico">
 
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://topsarkarijobs.com/helpdesk.html">
-    <meta property="og:title" content="Helpdesk & Support - Top Sarkari Jobs">
-    <meta property="og:description"
-        content="Contact Top Sarkari Jobs for any queries related to government jobs, results, or website issues.">
-
     <!-- Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
     <!-- Google Font: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        :root {
-            --primary-500: #0ea5e9;
-            --muted-bg: #f8fafc
-        }
 
-        body {
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-            background: var(--muted-bg);
-            color: #0f172a
-        }
-    </style>
+    <!-- ✅ REQUIRED: site styles for injected header/footer -->
+    <link rel="stylesheet" href="styles.css">
 
-    <!-- ✅ Hide header search UI on this page only -->
     <style>
-      /* Hide any header search link/button/input coming from injected header.html */
-      #site-header a[href*="search.html"],
-      #site-header a[href*="search"],
-      #site-header form[role="search"],
-      #site-header form[id*="search" i],
-      #site-header input[type="search"],
-      #site-header input[id*="search" i],
-      #site-header input[name="q"],
-      #site-header button[aria-label*="search" i],
-      #site-header button[title*="search" i],
-      #site-header .search,
-      #site-header .nav-search,
-      #site-header .search-container,
-      #site-header #siteSearchInput,
-      #site-header #siteSearchBtn,
-      #site-header #searchResults {
-        display: none !important;
+      :root { --primary-500:#0ea5e9; --muted-bg:#f8fafc; }
+      body{
+        font-family:'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+        background:var(--muted-bg);
+        color:#0f172a;
       }
     </style>
 
+    <!-- ✅ Hide ONLY the Search item in injected header (Helpdesk page only) -->
+    <style>
+      #site-header a[href$="search.html"],
+      #site-header a[href*="search.html"],
+      #site-header a[href="/search.html"]{
+        display:none !important;
+      }
+    </style>
 </head>
 
 <body class="min-h-screen flex flex-col">
@@ -150,7 +128,6 @@
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
-
         <nav class="offcanvas-nav" aria-label="Mobile primary">
             <div id="header-links-mobile"></div>
         </nav>
@@ -158,5 +135,4 @@
 
     <script src="script.js"></script>
 </body>
-
 </html>
