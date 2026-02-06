@@ -25,7 +25,6 @@
 
   // ✅ Tools page header uses onclick="goBack()" (tools.html)
   window.goBack = () => {
-    // If user came from somewhere, go back; otherwise go home
     if (window.history.length > 1) window.history.back();
     else window.location.href = "index.html";
   };
@@ -298,8 +297,163 @@
   }
 
   // ---------------------------
-  // ✅ Tools page (tools.html) — FIX broken clicks and restore navigation
-  // Uses tools.json categories: image/pdf/video :contentReference[oaicite:3]{index=3}
+  // ✅ CATEGORY PAGE FIX (category.html?group=...)
+  // Restores the same content/links that were on homepage sections
+  // ---------------------------
+  async function initCategoryPage() {
+    if (page !== "category.html") return;
+
+    const titleEl = $("#categoryTitle");
+    const descEl = $("#categoryDesc");
+    const filterEl = $("#categoryFilter");
+    const clearBtn = $("#clearCategoryFilter");
+    const gridEl = $("#categoryGrid");
+    const emptyEl = $("#categoryEmpty");
+
+    if (!titleEl || !gridEl || !emptyEl) return;
+
+    const params = new URLSearchParams(location.search || "");
+    const group = safe(params.get("group")).toLowerCase();
+
+    const groupMeta = {
+      study: { title: "Study wise jobs", desc: "Browse jobs by qualification level." },
+      popular: { title: "Popular job categories", desc: "Top job categories people search for." },
+      state: { title: "State wise jobs", desc: "Government jobs by state." },
+      admissions: { title: "Admissions", desc: "Admissions and entrance related updates." },
+      "admit-result": { title: "Admit Card / Result / Answer Key / Syllabus", desc: "Admit cards, results, answer keys and syllabus updates." },
+      khabar: { title: "Latest Khabar", desc: "Latest news and updates." },
+      "study-material": { title: "Study Material & Top Courses", desc: "Study notes, courses and preparation material." },
+    };
+
+    const meta = groupMeta[group] || { title: "Category", desc: "" };
+    titleEl.textContent = meta.title;
+    if (descEl) descEl.textContent = meta.desc;
+
+    // Try to load data from the repo (NO new content is created)
+    // We just read whatever already exists in your repo.
+    async function tryFetchJson(path) {
+      try {
+        const r = await fetch(path, { cache: "no-store" });
+        if (!r.ok) return null;
+        return await r.json();
+      } catch (_) {
+        return null;
+      }
+    }
+
+    // Preferred: a dedicated categories file if you have it
+    // Fallback: reuse dynamic-sections.json (homepage data source)
+    const categoriesJson =
+      (await tryFetchJson("categories.json")) ||
+      (await tryFetchJson("category.json")) ||
+      (await tryFetchJson("dynamic-sections.json"));
+
+    // Build candidate lists from data
+    // Supports either:
+    // 1) { groups: { study:[...], popular:[...], ... } }
+    // 2) { study:[...], popular:[...], ... }
+    // 3) dynamic-sections.json: { sections:[{title, items:[...]}] }
+    let items = [];
+
+    const looksLikeList = (x) => Array.isArray(x) && x.length >= 0;
+
+    if (categoriesJson) {
+      // Case A: groups wrapper
+      if (categoriesJson.groups && typeof categoriesJson.groups === "object") {
+        const list = categoriesJson.groups[group];
+        if (looksLikeList(list)) items = list;
+      }
+      // Case B: direct keys
+      else if (typeof categoriesJson === "object" && looksLikeList(categoriesJson[group])) {
+        items = categoriesJson[group];
+      }
+      // Case C: dynamic-sections.json style
+      else if (Array.isArray(categoriesJson.sections)) {
+        const sections = categoriesJson.sections;
+
+        const pickByTitle = (needleList) => {
+          const re = new RegExp(needleList.map(escRE).join("|"), "i");
+          return sections.find((s) => re.test(safe(s.title)));
+        };
+
+        let sec =
+          group === "study"
+            ? pickByTitle(["Study wise"])
+            : group === "popular"
+            ? pickByTitle(["Popular"])
+            : group === "state"
+            ? pickByTitle(["State wise"])
+            : group === "admissions"
+            ? pickByTitle(["Admissions"])
+            : group === "admit-result"
+            ? pickByTitle(["Admit", "Result", "Answer Key", "Syllabus"])
+            : group === "khabar"
+            ? pickByTitle(["Khabar", "News"])
+            : group === "study-material"
+            ? pickByTitle(["Study Material", "Courses"])
+            : null;
+
+        if (sec && Array.isArray(sec.items)) items = sec.items;
+      }
+    }
+
+    // Normalize item shape: {name, url/link, date?, external?}
+    items = (items || [])
+      .map((it) => ({
+        name: safe(it?.name),
+        url: it?.url || it?.link || "",
+        date: safe(it?.date),
+        external: it?.external === true,
+      }))
+      .filter((it) => it.name && it.url);
+
+    // Render
+    function render(list) {
+      gridEl.innerHTML = "";
+
+      if (!list.length) {
+        emptyEl.hidden = false;
+        return;
+      }
+      emptyEl.hidden = true;
+
+      list.forEach((it) => {
+        const a = document.createElement("a");
+        a.className = "section-link";
+        a.href = it.external ? normalizeUrl(it.url) : openInternal(it.url, it.name);
+
+        if (it.external) {
+          a.target = "_blank";
+          a.rel = "noopener";
+        }
+
+        a.innerHTML = `
+          <div class="t">${it.name}</div>
+          ${it.date ? `<div class="d">${it.date}</div>` : `<div class="d">Open official link</div>`}
+        `;
+        gridEl.appendChild(a);
+      });
+    }
+
+    // Filter (search)
+    const applyFilter = () => {
+      const q = safe(filterEl?.value).toLowerCase();
+      if (!q) return render(items);
+      render(items.filter((x) => x.name.toLowerCase().includes(q)));
+    };
+
+    if (filterEl) filterEl.addEventListener("input", applyFilter);
+    if (clearBtn)
+      clearBtn.addEventListener("click", () => {
+        if (filterEl) filterEl.value = "";
+        applyFilter();
+      });
+
+    render(items);
+  }
+
+  // ---------------------------
+  // ✅ Tools page
   // ---------------------------
   async function initToolsPage() {
     if (page !== "tools.html") return;
@@ -324,14 +478,12 @@
     const showCategories = () => {
       toolsView.classList.add("hidden");
       categoriesView.classList.remove("hidden");
-      // Scroll to top for clean UX
       window.scrollTo({ top: 0, behavior: "instant" });
     };
 
     const showTools = (categoryKey) => {
       const list = Array.isArray(toolsData[categoryKey]) ? toolsData[categoryKey] : [];
 
-      // Title
       const titleMap = {
         image: "Image Tools",
         pdf: "PDF Tools",
@@ -354,8 +506,6 @@
           const url = t.url || t.link || "";
           if (!url) return;
 
-          // If a tool is explicitly marked external=true, open in a new tab.
-          // Otherwise, open inside view.html wrapper (same pattern as homepage cards).
           const isExternal = t.external === true;
 
           const a = document.createElement("a");
@@ -388,10 +538,8 @@
       window.scrollTo({ top: 0, behavior: "instant" });
     };
 
-    // Back button
     if (backBtn) backBtn.addEventListener("click", showCategories);
 
-    // Category tiles
     categoryButtons.forEach((btn) => {
       btn.addEventListener("click", () => {
         const key = safe(btn.getAttribute("data-category"));
@@ -400,8 +548,6 @@
       });
     });
 
-    // Optional: update the "X tools available" counts dynamically, without changing layout
-    // tools.html currently hardcodes counts :contentReference[oaicite:4]{index=4}
     try {
       categoryButtons.forEach((btn) => {
         const key = safe(btn.getAttribute("data-category"));
@@ -413,7 +559,6 @@
       });
     } catch (_) {}
 
-    // Start on categories
     showCategories();
   }
 
@@ -602,7 +747,10 @@
       await renderHomepageSections();
     }
 
-    // Tools page wiring (fix broken clicks)
+    // ✅ Restore dropdown subpages content
+    await initCategoryPage();
+
+    // Tools page wiring
     await initToolsPage();
 
     // Services page
