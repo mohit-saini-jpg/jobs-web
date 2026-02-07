@@ -6,7 +6,7 @@
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
 
   const safe = (v) => (v ?? "").toString().trim();
-  const escRE = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const escRE = (s) => s.replace(/[.*+?^${}()|[\]\\\\]/g, "\\$&");
 
   function normalizeUrl(raw) {
     const s = safe(raw);
@@ -337,30 +337,104 @@
     });
   }
 
-  // ✅ NEW: Remove the specific homepage "Main Home Page" button/link wherever it exists in big sections
-  function removeHomeMainPageCtaLinks() {
-    // Only touch homepage
+  // ---------------------------
+  // Homepage quick buttons (old colorful links)
+  // ---------------------------
+  async function renderHomeQuickLinks() {
     if (!(page === "index.html" || page === "")) return;
 
-    const wrap = $("#dynamic-sections");
-    if (!wrap) return;
+    // Find the homepage search section and insert buttons right above it.
+    const searchInput =
+      document.getElementById("siteSearchInput") ||
+      document.querySelector('input[type="search"]') ||
+      document.querySelector('input[placeholder*="Search" i]');
 
-    const needles = [
-      "╰┈➤🏠Website का Main Home Page खोलने के लिए यहाँ क्लिक करें",
-      "Website का Main Home Page खोलने के लिए यहाँ क्लिक करें",
-      "Main Home Page खोलने के लिए यहाँ क्लिक करें",
-      "Website का Main Home Page",
-    ];
+    // Create host container (only once)
+    let host = document.getElementById("home-links");
+    if (!host) {
+      const wrap = document.createElement("section");
+      wrap.className = "home-quicklinks";
+      wrap.setAttribute("aria-label", "Homepage quick buttons");
 
-    const els = $$("a, button", wrap);
-    els.forEach((el) => {
-      const text = safe(el.textContent).replace(/\s+/g, " ");
-      if (!text) return;
+      host = document.createElement("div");
+      host.id = "home-links";
+      host.className = "home-links";
+      wrap.appendChild(host);
 
-      const match = needles.some((n) => text.includes(n));
-      if (match) {
-        el.remove(); // remove only that button/link
+      // Insert before the search block if possible, otherwise at top of main content.
+      const insertPoint =
+        (searchInput && (searchInput.closest("section") || searchInput.closest("div"))) ||
+        document.querySelector("main") ||
+        document.body;
+
+      insertPoint.parentNode.insertBefore(wrap, insertPoint);
+    }
+
+    // Add CSS (only once)
+    if (!document.getElementById("home-quicklinks-style")) {
+      const style = document.createElement("style");
+      style.id = "home-quicklinks-style";
+      style.textContent = `
+        .home-quicklinks{max-width:1200px;margin:0 auto;padding:12px 16px 0;}
+        .home-links{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+        .home-link-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border-radius:12px;color:#fff;font-weight:800;text-decoration:none;line-height:1;box-shadow:0 8px 18px rgba(2,6,23,.10);border:1px solid rgba(255,255,255,.15);white-space:nowrap;}
+        .home-link-btn:hover{filter:brightness(.95);}
+        .home-link-btn:active{transform:translateY(1px);}
+        @media (max-width:640px){
+          .home-quicklinks{padding:10px 12px 0;}
+          .home-links{gap:9px;}
+          .home-link-btn{padding:10px 12px;border-radius:12px;font-weight:800;font-size:15px;}
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    let data = null;
+    try {
+      const r = await fetch("header_links.json", { cache: "no-store" });
+      if (r.ok) data = await r.json();
+    } catch (_) {}
+
+    const links = Array.isArray(data?.home_links) ? data.home_links : [];
+    if (!links.length) return;
+
+    const colorMap = {
+      "bg-red-600": "#dc2626",
+      "bg-slate-600": "#475569",
+      "bg-amber-600": "#0ea5a4",
+      "bg-zinc-400": "#9ca3af",
+      "bg-green-600": "#16a34a",
+      "bg-pink-500": "#ec4899",
+      "bg-yellow-600": "#ca8a04",
+      "bg-red-500": "#ef4444"
+    };
+
+    host.innerHTML = "";
+    links.forEach((l) => {
+      const name = safe(l?.name);
+      const url = safe(l?.url || l?.link);
+      if (!name || !url) return;
+
+      const a = document.createElement("a");
+      a.className = "home-link-btn";
+      a.href = url;
+
+      const external = l?.external === true;
+      if (external) {
+        a.target = "_blank";
+        a.rel = "noopener";
       }
+
+      a.style.background = colorMap[l?.color] || "#0ea5e9";
+
+      const icon = safe(l?.icon);
+      if (icon) {
+        a.innerHTML = `<i class="${icon}" aria-hidden="true"></i><span>${name}</span>`;
+      } else {
+        a.textContent = name;
+      }
+
+      host.appendChild(a);
     });
   }
 
@@ -764,7 +838,7 @@
     // Homepage content
     if (page === "index.html" || page === "") {
       await renderHomepageSections();
-      removeHomeMainPageCtaLinks(); // ✅ remove that specific Hindi Home Page button/link
+      await renderHomeQuickLinks();
     }
 
     // Category pages
