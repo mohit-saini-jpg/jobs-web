@@ -1,0 +1,1070 @@
+(() => {
+  "use strict";
+
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
+
+  const safe = (v) => (v ?? "").toString().trim();
+  const escRE = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+  function normalizeUrl(raw) {
+    const s = safe(raw);
+    if (!s) return "";
+    if (/^(https?:)?\/\//i.test(s) || /^(mailto:|tel:)/i.test(s)) return s;
+    if (s.startsWith("#") || s.startsWith("?")) return s;
+    if (s.startsWith("/") || s.endsWith(".html") || s.startsWith("./") || s.startsWith("../")) return s;
+    return "https://" + s.replace(/^\/+/, "");
+  }
+
+  // External URL wrapper (used on homepage dynamic sections + tools)
+  function openInternal(url, name) {
+    const u = normalizeUrl(url);
+    return `view.html?url=${encodeURIComponent(u)}&name=${encodeURIComponent(name)}`;
+  }
+
+  // Used by tools.html header back button
+  window.goBack = () => {
+    if (window.history.length > 1) window.history.back();
+    else window.location.href = "index.html";
+  };
+
+  // ✅ NEW: Inject same homepage header/footer everywhere (Results now, other pages later)
+  async function injectHeaderFooter() {
+    const headerHost = document.getElementById("site-header");
+    const footerHost = document.getElementById("site-footer");
+    if (!headerHost && !footerHost) return;
+
+    async function loadFirstWorking(paths) {
+      for (const p of paths) {
+        try {
+          const r = await fetch(p, { cache: "no-store" });
+          if (r.ok) return await r.text();
+        } catch (_) {}
+      }
+      return "";
+    }
+
+    if (headerHost) {
+      const headerHtml = await loadFirstWorking(["header.html", "./header.html", "/header.html"]);
+      if (headerHtml) headerHost.innerHTML = headerHtml;
+    }
+
+    if (footerHost) {
+      const footerHtml = await loadFirstWorking(["footer.html", "./footer.html", "/footer.html"]);
+      if (footerHtml) footerHost.innerHTML = footerHtml;
+    }
+  }
+
+  async function loadHeaderLinks() {
+    let data = { header_links: [], social_links: [] };
+    try {
+      const r = await fetch("header_links.json", { cache: "no-store" });
+      if (r.ok) data = await r.json();
+    } catch (_) {}
+
+    const desktop = $("#header-links");
+    const mobile = $("#header-links-mobile");
+    const footerSocial = $("#footer-social-links");
+
+    const links = Array.isArray(data.header_links) ? data.header_links : [];
+    const socials = Array.isArray(data.social_links) ? data.social_links : [];
+
+    if (desktop) {
+      desktop.innerHTML = "";
+      links.forEach((l) => {
+        const a = document.createElement("a");
+        a.className = "nav-link";
+        a.href = normalizeUrl(l.link || l.url || "#");
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.textContent = l.name || "Link";
+        desktop.appendChild(a);
+      });
+    }
+
+    if (mobile) {
+      mobile.innerHTML = "";
+      links.forEach((l) => {
+        const a = document.createElement("a");
+        a.href = normalizeUrl(l.link || l.url || "#");
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.textContent = l.name || "Link";
+        mobile.appendChild(a);
+      });
+    }
+
+    if (footerSocial) {
+      footerSocial.innerHTML = "";
+      socials.forEach((s) => {
+        const a = document.createElement("a");
+        a.className = "nav-link";
+        a.href = normalizeUrl(s.url || "#");
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.textContent = s.name || "Social";
+        footerSocial.appendChild(a);
+      });
+    }
+  }
+
+  // ---------------------------
+  // Mobile menu (fixed)
+  // ---------------------------
+  function initOffcanvas() {
+    const btn = $("#menuBtn");
+    const closeBtn = $("#closeMenuBtn");
+    const menu = $("#mobileMenu");
+    const overlay = $("#menuOverlay");
+
+    if (!btn || !closeBtn || !menu || !overlay) return;
+
+    const close = () => {
+      menu.hidden = true;
+      overlay.hidden = true;
+      btn.setAttribute("aria-expanded", "false");
+      document.body.style.overflow = "";
+    };
+
+    const open = () => {
+      menu.hidden = false;
+      overlay.hidden = false;
+      btn.setAttribute("aria-expanded", "true");
+      document.body.style.overflow = "hidden";
+    };
+
+    btn.addEventListener("click", open);
+    closeBtn.addEventListener("click", close);
+    overlay.addEventListener("click", close);
+
+    menu.addEventListener("click", (e) => {
+      const a = e.target.closest("a");
+      if (a) close();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") close();
+    });
+
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 980) close();
+    });
+
+    window.__closeMenu = close;
+  }
+
+  // ---------------------------
+  // Desktop dropdowns (fixed hover gap)
+  // ---------------------------
+  function initDropdowns() {
+    const dds = $$("[data-dd]");
+    if (!dds.length) return;
+
+    const canHover = () => window.matchMedia("(hover:hover) and (pointer:fine)").matches;
+    const timers = new WeakMap();
+
+    const setOpen = (dd, open) => {
+      const btn = $(".nav-dd-btn", dd);
+      const menu = $(".nav-dd-menu", dd);
+      if (!btn || !menu) return;
+      if (open) {
+        menu.classList.add("open");
+        btn.setAttribute("aria-expanded", "true");
+      } else {
+        menu.classList.remove("open");
+        btn.setAttribute("aria-expanded", "false");
+      }
+    };
+
+    const clearTimer = (dd) => {
+      const t = timers.get(dd);
+      if (t) clearTimeout(t);
+      timers.delete(dd);
+    };
+
+    const closeAll = () => {
+      dds.forEach((dd) => {
+        clearTimer(dd);
+        setOpen(dd, false);
+      });
+    };
+
+    const scheduleClose = (dd) => {
+      clearTimer(dd);
+      timers.set(dd, setTimeout(() => setOpen(dd, false), 180));
+    };
+
+    dds.forEach((dd) => {
+      const btn = $(".nav-dd-btn", dd);
+      const menu = $(".nav-dd-menu", dd);
+      if (!btn || !menu) return;
+
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const isOpen = menu.classList.contains("open");
+        closeAll();
+        if (!isOpen) setOpen(dd, true);
+      });
+
+      btn.addEventListener("mouseenter", () => {
+        if (!canHover()) return;
+        clearTimer(dd);
+        closeAll();
+        setOpen(dd, true);
+      });
+      btn.addEventListener("mouseleave", () => {
+        if (!canHover()) return;
+        scheduleClose(dd);
+      });
+
+      menu.addEventListener("mouseenter", () => {
+        if (!canHover()) return;
+        clearTimer(dd);
+        setOpen(dd, true);
+      });
+      menu.addEventListener("mouseleave", () => {
+        if (!canHover()) return;
+        scheduleClose(dd);
+      });
+
+      dd.addEventListener("focusin", () => {
+        if (!canHover()) return;
+        clearTimer(dd);
+        closeAll();
+        setOpen(dd, true);
+      });
+      dd.addEventListener("focusout", (e) => {
+        if (!dd.contains(e.relatedTarget)) scheduleClose(dd);
+      });
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest("[data-dd]")) closeAll();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeAll();
+    });
+  }
+
+  // ---------------------------
+  // FAQ accordion
+  // ---------------------------
+  function initFAQ() {
+    $$(".faq-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const expanded = btn.getAttribute("aria-expanded") === "true";
+        $$(".faq-btn").forEach((b) => {
+          b.setAttribute("aria-expanded", "false");
+          const p = b.parentElement.querySelector(".faq-panel");
+          if (p) p.hidden = true;
+        });
+        if (!expanded) {
+          btn.setAttribute("aria-expanded", "true");
+          const p = btn.parentElement.querySelector(".faq-panel");
+          if (p) p.hidden = false;
+        }
+      });
+    });
+  }
+
+  // ---------------------------
+  // Homepage sections (restores homepage content)
+  // ---------------------------
+  async function renderHomepageSections() {
+    const wrap = $("#dynamic-sections");
+    if (!wrap) return;
+
+    let data = { sections: [] };
+    try {
+      const r = await fetch("dynamic-sections.json", { cache: "no-store" });
+      if (r.ok) data = await r.json();
+    } catch (_) {}
+
+    wrap.innerHTML = "";
+
+    (data.sections || []).forEach((sec) => {
+      const title = safe(sec.title) || "Updates";
+      const color = safe(sec.color) || "#0284c7";
+      const icon = safe(sec.icon) || "fa-solid fa-briefcase";
+
+      // ✅ Restore "More" under each big section
+      const sectionKey = safe(sec.id) || safe(sec.title);
+      let moreHref = "";
+      if (safe(sec.viewMoreUrl)) {
+        // keep existing behavior (wrap through view.html)
+        moreHref = openInternal(sec.viewMoreUrl, title);
+      } else if (safe(sec.viewMoreType).toLowerCase() === "list" && sectionKey) {
+        // old site behavior: open full listing page for this section
+        moreHref = `view.html?section=${encodeURIComponent(sectionKey)}`;
+      }
+
+      const card = document.createElement("article");
+      card.className = "section-card";
+      card.innerHTML = `
+        <div class="section-head" style="background:${color}">
+          <div class="left">
+            <i class="${icon}"></i>
+            <span>${title}</span>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="section-list"></div>
+          ${
+            moreHref
+              ? `<a class="view-all" href="${moreHref}">More <i class="fa-solid fa-arrow-right"></i></a>`
+              : ""
+          }
+        </div>
+      `;
+
+      const list = $(".section-list", card);
+      const items = Array.isArray(sec.items) ? sec.items.slice(0, 8) : [];
+
+      items.forEach((it) => {
+        const name = safe(it.name) || "Open";
+        const url = it.url || it.link || "";
+        if (!url) return;
+
+        const external = !!it.external;
+        const a = document.createElement("a");
+        a.className = "section-link";
+        a.href = external ? normalizeUrl(url) : openInternal(url, name);
+
+        if (external) {
+          a.target = "_blank";
+          a.rel = "noopener";
+        }
+
+        a.innerHTML = `
+          <div class="t">${name}</div>
+          ${it.date ? `<div class="d">${safe(it.date)}</div>` : `<div class="d">Open official link</div>`}
+        `;
+        list.appendChild(a);
+      });
+
+      wrap.appendChild(card);
+    });
+  }
+
+
+  // ---------------------------
+  // Homepage colorful headline buttons (from header_links.json -> home_links)
+  // ---------------------------
+  async function renderHomeQuickLinks() {
+    if (!(page === "index.html" || page === "")) return;
+
+    // Find where to insert: right above the homepage search bar/section
+    const searchInput =
+      document.getElementById("siteSearchInput") ||
+      document.querySelector('input[type="search"]') ||
+      document.querySelector('input[placeholder*="Search" i]');
+
+    let host = document.getElementById("home-links");
+    if (!host) {
+      const wrap = document.createElement("section");
+      wrap.className = "home-quicklinks";
+      wrap.setAttribute("aria-label", "Homepage quick buttons");
+
+      host = document.createElement("div");
+      host.id = "home-links";
+      host.className = "home-links";
+      wrap.appendChild(host);
+
+      const insertBeforeNode =
+        (searchInput && (searchInput.closest("section") || searchInput.closest("div"))) ||
+        document.querySelector("main") ||
+        document.body;
+
+      insertBeforeNode.parentNode.insertBefore(wrap, insertBeforeNode);
+    }
+
+    // Add CSS once (no styles.css edit needed)
+    if (!document.getElementById("home-quicklinks-style")) {
+      const style = document.createElement("style");
+      style.id = "home-quicklinks-style";
+      style.textContent = `
+        .home-quicklinks{max-width:1200px;margin:0 auto;padding:12px 16px 0;}
+        .home-links{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+        .home-link-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border-radius:12px;color:#fff;font-weight:800;text-decoration:none;line-height:1;box-shadow:0 8px 18px rgba(2,6,23,.10);border:1px solid rgba(255,255,255,.15);white-space:nowrap;}
+        .home-link-btn:hover{filter:brightness(.95);}
+        .home-link-btn:active{transform:translateY(1px);}
+        @media (max-width:640px){
+          .home-quicklinks{padding:10px 12px 0;}
+          .home-links{gap:9px;}
+          .home-link-btn{padding:10px 12px;border-radius:12px;font-weight:800;font-size:15px;}
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    let data = null;
+    try {
+      const r = await fetch("header_links.json", { cache: "no-store" });
+      if (r.ok) data = await r.json();
+    } catch (_) {}
+
+    const links = Array.isArray(data?.home_links) ? data.home_links : [];
+    if (!links.length) return;
+
+    const colorMap = {
+      "bg-red-600": "#dc2626",
+      "bg-slate-600": "#475569",
+      "bg-amber-600": "#0ea5a4",
+      "bg-zinc-400": "#9ca3af",
+      "bg-green-600": "#16a34a",
+      "bg-pink-500": "#ec4899",
+      "bg-yellow-600": "#ca8a04",
+      "bg-red-500": "#ef4444",
+    };
+
+    host.innerHTML = "";
+    links.forEach((l) => {
+      const name = safe(l?.name);
+      const url = safe(l?.url || l?.link);
+      if (!name || !url) return;
+
+      const a = document.createElement("a");
+      a.className = "home-link-btn";
+      a.href = normalizeUrl(url);
+
+      if (l?.external === true) {
+        a.target = "_blank";
+        a.rel = "noopener";
+      }
+
+      a.style.background = colorMap[safe(l?.color)] || "#0ea5e9";
+
+      const icon = safe(l?.icon);
+      if (icon) a.innerHTML = `<i class="${icon}" aria-hidden="true"></i><span>${name}</span>`;
+      else a.textContent = name;
+
+      host.appendChild(a);
+    });
+  }
+
+  // ---------------------------
+  // Homepage: remove the specific "Website ka Main Home Page..." button wherever it appears in big sections
+  // ---------------------------
+  function removeHomeMainPageCtaLinks() {
+    if (!(page === "index.html" || page === "")) return;
+    const wrap = document.getElementById("dynamic-sections");
+    if (!wrap) return;
+
+    const needles = [
+      "╰┈➤🏠Website का Main Home Page खोलने के लिए यहाँ क्लिक करें",
+      "Website का Main Home Page खोलने के लिए यहाँ क्लिक करें",
+      "Main Home Page खोलने के लिए यहाँ क्लिक करें",
+      "Website का Main Home Page",
+    ];
+
+    const els = Array.from(wrap.querySelectorAll("a, button"));
+    els.forEach((el) => {
+      const t = safe(el.textContent).replace(/\s+/g, " ");
+      if (!t) return;
+      if (needles.some((n) => t.includes(n))) el.remove();
+    });
+  }
+
+
+  // ---------------------------
+  // Homepage top search (site-wide index from JSON) — FIXED
+  // Uses existing UI: #siteSearchInput, #siteSearchBtn, #searchResults
+  // ---------------------------
+  async function initTopSearch() {
+    // Only activate on homepage (search bars removed elsewhere)
+    if (!(page === "index.html" || page === "")) return;
+
+    const input = document.getElementById("siteSearchInput");
+    const btn = document.getElementById("siteSearchBtn");
+    const resultsHost = document.getElementById("searchResults");
+    if (!input || !btn || !resultsHost) return;
+
+    // Build searchable index once (lazy)
+    let INDEX = null;
+
+    const addEntry = (arr, name, url, meta) => {
+      const n = safe(name);
+      const u = safe(url);
+      if (!n || !u) return;
+      arr.push({
+        name: n,
+        url: u,
+        href: /^([./]|\/)/.test(u) || /\.html(\?|#|$)/i.test(u) ? u : openInternal(u, n),
+        meta: safe(meta),
+      });
+    };
+
+    async function loadJson(path) {
+      try {
+        const r = await fetch(path, { cache: "no-store" });
+        if (r.ok) return await r.json();
+      } catch (_) {}
+      return null;
+    }
+
+    async function buildIndex() {
+      const out = [];
+
+      const [dyn, jobs, tools, services] = await Promise.all([
+        loadJson("dynamic-sections.json"),
+        loadJson("jobs.json"),
+        loadJson("tools.json"),
+        loadJson("services.json"),
+      ]);
+
+      // dynamic sections (homepage big boxes)
+      const sections = Array.isArray(dyn?.sections) ? dyn.sections : [];
+      sections.forEach((sec) => {
+        const items = Array.isArray(sec?.items) ? sec.items : [];
+        items.forEach((it) => addEntry(out, it?.name, it?.url || it?.link, "Homepage"));
+      });
+
+      // jobs categories (Jobs / Admissions / More)
+      const groups = Array.isArray(jobs?.groups) ? jobs.groups : [];
+      groups.forEach((g) => {
+        const gname = safe(g?.title) || safe(g?.id) || "Category";
+        const items = Array.isArray(g?.items) ? g.items : [];
+        items.forEach((it) => addEntry(out, it?.name, it?.url || it?.link, gname));
+      });
+
+      // tools
+      const cats = Array.isArray(tools?.categories) ? tools.categories : [];
+      cats.forEach((c) => {
+        const cname = safe(c?.title) || "Tools";
+        const items = Array.isArray(c?.items) ? c.items : [];
+        items.forEach((it) => addEntry(out, it?.name, it?.url || it?.link, cname));
+      });
+
+      // CSC services
+      const svcs = Array.isArray(services?.services) ? services.services : [];
+      svcs.forEach((s) => {
+        // if a service has a direct url, include it; otherwise just point to CSC page
+        const name = safe(s?.name);
+        const url = safe(s?.url || s?.link) || "govt-services.html";
+        addEntry(out, name, url, "CSC Services");
+      });
+
+      // De-dup by href+name
+      const seen = new Set();
+      const deduped = [];
+      out.forEach((e) => {
+        const key = e.href + "|" + e.name;
+        if (seen.has(key)) return;
+        seen.add(key);
+        deduped.push(e);
+      });
+
+      return deduped;
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    }
+
+    function render(query, matches) {
+      const q = safe(query);
+      if (!q) {
+        resultsHost.innerHTML = "";
+        return;
+      }
+
+      if (!matches.length) {
+        resultsHost.innerHTML = `
+          <div class="seo-block" style="margin-top:12px;">
+            <strong>No results found for “${escapeHtml(q)}”.</strong>
+            <div style="margin-top:6px;color:var(--muted);">Try: SSC, Railway, Bank, Police, Admit Card, Result</div>
+          </div>
+        `;
+        return;
+      }
+
+      // Use existing card style (.section-link) to avoid CSS changes
+      const html = matches.slice(0, 60).map((m) => {
+        return `
+          <a class="section-link" href="${escapeHtml(m.href)}">
+            <div class="t">${escapeHtml(m.name)}</div>
+            <div class="d">${escapeHtml(m.meta || "Open official link")}</div>
+          </a>
+        `;
+      }).join("");
+
+      resultsHost.innerHTML = `
+        <div style="margin-top:12px;">
+          <div style="color:var(--muted);font-size:14px;margin:0 0 8px;">Showing ${matches.length} result(s) for “${escapeHtml(q)}”</div>
+          <div class="section-list">${html}</div>
+        </div>
+      `;
+    }
+
+    async function runSearch() {
+      const q = safe(input.value).toLowerCase();
+      if (!q) {
+        render("", []);
+        return;
+      }
+      if (!INDEX) INDEX = await buildIndex();
+
+      const matches = INDEX.filter((e) => {
+        const hay = (e.name + " " + e.url + " " + e.meta).toLowerCase();
+        return hay.includes(q);
+      });
+
+      render(input.value, matches);
+      // ensure results are visible (if CSS uses empty height)
+      resultsHost.style.display = "block";
+    }
+
+    // Click search
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      runSearch();
+    });
+
+    // Enter in input
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        runSearch();
+      }
+    });
+  }
+
+
+  // ---------------------------
+  // Category pages (Jobs / Admissions / More dropdown subpages)
+  // Uses YOUR jobs.json structure and keeps URLs exactly as-is
+  // ---------------------------
+  async function initCategoryPage() {
+    if (page !== "category.html") return;
+
+    const params = new URLSearchParams(location.search || "");
+    const group = safe(params.get("group")).toLowerCase();
+
+    const titleEl = $("#categoryTitle") || $("h1") || $(".seo-block h1");
+    const descEl = $("#categoryDesc") || $(".seo-block p");
+    let gridEl = $("#categoryGrid") || $(".section-list");
+    const emptyEl = $("#categoryEmpty");
+
+    if (!gridEl) {
+      const main = $("#main") || $("main") || document.body;
+      const wrap = document.createElement("div");
+      wrap.className = "section-list";
+      main.appendChild(wrap);
+      gridEl = wrap;
+    }
+
+    const groupMeta = {
+      study: "Study wise jobs",
+      popular: "Popular job categories",
+      state: "State wise jobs",
+      admissions: "Admissions",
+      "admit-result": "Admit Card / Result / Answer Key / Syllabus",
+      khabar: "Latest Khabar",
+      "study-material": "Study Material & Top Courses",
+    };
+
+    if (titleEl) titleEl.textContent = groupMeta[group] || "Category";
+    if (descEl && groupMeta[group]) {
+      // Keep existing description if you have one; do not overwrite with new content
+      // Only set if it's empty:
+      if (!safe(descEl.textContent)) descEl.textContent = "";
+    }
+
+    async function fetchJson(path) {
+      const r = await fetch(path, { cache: "no-store" });
+      if (!r.ok) throw new Error("Failed: " + path);
+      return await r.json();
+    }
+
+    let data;
+    try {
+      data = await fetchJson("jobs.json");
+    } catch (_) {
+      gridEl.innerHTML = "";
+      if (emptyEl) emptyEl.hidden = false;
+      return;
+    }
+
+    const top = Array.isArray(data.top_jobs) ? data.top_jobs : [];
+    const left = Array.isArray(data.left_jobs) ? data.left_jobs : [];
+    const right = Array.isArray(data.right_jobs) ? data.right_jobs : [];
+
+    const isHeader = (x) => x && typeof x === "object" && safe(x.title) && !safe(x.name);
+    const isItem = (x) => x && typeof x === "object" && safe(x.name) && safe(x.url);
+
+    function sliceBetween(arr, startIncludes, endIncludes) {
+      const startIdx = arr.findIndex(
+        (x) => isHeader(x) && safe(x.title).toLowerCase().includes(startIncludes)
+      );
+      if (startIdx < 0) return [];
+      let endIdx = arr.length;
+      if (endIncludes) {
+        const ei = arr.findIndex(
+          (x, i) => i > startIdx && isHeader(x) && safe(x.title).toLowerCase().includes(endIncludes)
+        );
+        if (ei >= 0) endIdx = ei;
+      }
+      return arr.slice(startIdx + 1, endIdx).filter(isItem);
+    }
+
+    let items = [];
+
+    // Jobs dropdown
+    if (group === "study") {
+      items = sliceBetween(top, "study wise", "popular");
+    } else if (group === "popular") {
+      items = sliceBetween(top, "popular", null);
+    } else if (group === "state") {
+      items = sliceBetween(left, "state wise", "admit");
+    }
+
+    // Admissions dropdown
+    else if (group === "admit-result") {
+      items = sliceBetween(left, "admit", null);
+    } else if (group === "admissions") {
+      items = sliceBetween(right, "admissions", "govt scheme");
+    }
+
+    // More dropdown
+    else if (group === "khabar") {
+      items = sliceBetween(right, "latest khabar", "study material");
+    } else if (group === "study-material") {
+      items = sliceBetween(right, "study material", "tools");
+    }
+
+    gridEl.innerHTML = "";
+    if (!items.length) {
+      if (emptyEl) emptyEl.hidden = false;
+      return;
+    }
+    if (emptyEl) emptyEl.hidden = true;
+
+    items.forEach((it) => {
+      const name = safe(it.name);
+      const url = safe(it.url);
+      const external = it.external === true;
+
+      const a = document.createElement("a");
+      a.className = "section-link";
+      a.href = url; // ✅ EXACT URL FROM jobs.json
+      if (external) {
+        a.target = "_blank";
+        a.rel = "noopener";
+      }
+      a.innerHTML = `
+        <div class="t">${name}</div>
+        <div class="d">Open official link</div>
+      `;
+      gridEl.appendChild(a);
+    });
+  }
+
+  // ---------------------------
+  // Tools page (restores tools page functionality)
+  // ---------------------------
+  async function initToolsPage() {
+    if (page !== "tools.html") return;
+
+    const categoriesView = $("#categories-view");
+    const toolsView = $("#tools-view");
+    const toolsGrid = $("#tools-grid");
+    const toolsTitle = $("#tools-title span") || $("#tools-title");
+    const backBtn = $("#back-button");
+    const categoryButtons = $$(".category-button");
+
+    if (!categoriesView || !toolsView || !toolsGrid || !categoryButtons.length) return;
+
+    let data = null;
+    try {
+      const r = await fetch("tools.json", { cache: "no-store" });
+      if (r.ok) data = await r.json();
+    } catch (_) {}
+
+    const toolsData = (data && typeof data === "object") ? data : {};
+
+    const showCategories = () => {
+      toolsView.classList.add("hidden");
+      categoriesView.classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "instant" });
+    };
+
+    const showTools = (categoryKey) => {
+      const list = Array.isArray(toolsData[categoryKey]) ? toolsData[categoryKey] : [];
+
+      const titleMap = {
+        image: "Image Tools",
+        pdf: "PDF Tools",
+        video: "Video/Audio Tools",
+      };
+      const titleText = titleMap[categoryKey] || "Tools";
+      if (toolsTitle) toolsTitle.textContent = titleText;
+
+      toolsGrid.innerHTML = "";
+
+      if (!list.length) {
+        toolsGrid.innerHTML = `
+          <div class="col-span-full p-4 bg-white border border-gray-200 rounded-lg text-center text-gray-600">
+            No tools found for this category.
+          </div>
+        `;
+      } else {
+        list.forEach((t) => {
+          const name = safe(t.name) || "Open Tool";
+          const url = t.url || t.link || "";
+          if (!url) return;
+
+          const isExternal = t.external === true;
+          const a = document.createElement("a");
+          a.className =
+            "p-4 rounded-lg bg-white border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition duration-300 flex items-start gap-3";
+          a.href = isExternal ? normalizeUrl(url) : openInternal(url, name);
+
+          if (isExternal) {
+            a.target = "_blank";
+            a.rel = "noopener";
+          }
+
+          const iconClass = safe(t.icon) || "fas fa-wand-magic-sparkles";
+          a.innerHTML = `
+            <div class="mt-0.5 text-xl text-blue-600">
+              <i class="${iconClass}"></i>
+            </div>
+            <div>
+              <div class="font-semibold text-gray-800">${name}</div>
+              <div class="text-sm text-gray-500 mt-1">Open tool</div>
+            </div>
+          `;
+          toolsGrid.appendChild(a);
+        });
+      }
+
+      categoriesView.classList.add("hidden");
+      toolsView.classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "instant" });
+    };
+
+    if (backBtn) backBtn.addEventListener("click", showCategories);
+
+    categoryButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const key = safe(btn.getAttribute("data-category"));
+        if (!key) return;
+        showTools(key);
+      });
+    });
+
+    showCategories();
+  }
+
+  // ---------------------------
+  // CSC Services (restores services list + popup + supabase submit)
+  // ---------------------------
+  const CSC_TABLE = "csc_service_requests";
+  let cscSupabase = null;
+
+  async function ensureSupabaseClient() {
+    if (cscSupabase) return cscSupabase;
+
+    if (!window.supabase) {
+      await new Promise((resolve, reject) => {
+        const s = document.createElement("script");
+        s.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+        s.async = true;
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      }).catch(() => null);
+    }
+
+    if (!window.supabase) return null;
+
+    try {
+      const r = await fetch("config.json", { cache: "no-store" });
+      if (!r.ok) return null;
+      const config = await r.json();
+      if (!config?.supabase?.url || !config?.supabase?.anonKey) return null;
+
+      cscSupabase = window.supabase.createClient(config.supabase.url, config.supabase.anonKey);
+      return cscSupabase;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function initCscModal() {
+    const modal = $("#cscModal");
+    const overlay = $("#cscModalOverlay");
+    const closeBtn = $("#cscModalClose");
+    const closeBtn2 = $("#cscCloseBtn");
+    const form = $("#cscRequestForm");
+
+    // If the page doesn't include the modal HTML, don't break anything.
+    if (!modal || !overlay || !closeBtn || !form) return;
+
+    const serviceNameEl = $("#cscServiceName");
+    let currentService = { name: "", url: "" };
+
+    const close = () => {
+      modal.hidden = true;
+      overlay.hidden = true;
+      document.body.style.overflow = "";
+    };
+
+    const open = (service) => {
+      currentService = service || { name: "", url: "" };
+      if (serviceNameEl) serviceNameEl.textContent = currentService.name || "Service";
+
+      modal.hidden = false;
+      overlay.hidden = false;
+      document.body.style.overflow = "hidden";
+
+      const first = $("input, textarea", form);
+      if (first) setTimeout(() => first.focus(), 50);
+    };
+
+    window.__openCscModal = open;
+
+    overlay.addEventListener("click", close);
+    closeBtn.addEventListener("click", close);
+    if (closeBtn2) closeBtn2.addEventListener("click", close);
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !modal.hidden) close();
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const fullName = safe($("#cscFullName")?.value);
+      const phone = safe($("#cscPhone")?.value);
+      const state = safe($("#cscState")?.value);
+      const msg = safe($("#cscMessage")?.value);
+
+      // Keep your existing validation behavior (do not add new rules)
+      if (!fullName || !phone || phone.length < 8) {
+        alert("Please fill all fields correctly.");
+        return;
+      }
+
+      const sb = await ensureSupabaseClient();
+      if (!sb) {
+        alert("Submission system is temporarily unavailable. Please try again later.");
+        return;
+      }
+
+      const serviceText = [
+        safe(currentService.name) ? safe(currentService.name) : "-",
+        state ? `State: ${state}` : "",
+        currentService.url ? `Link: ${normalizeUrl(currentService.url)}` : "",
+        msg ? `Details: ${msg}` : "",
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+      try {
+        const { error } = await sb.from(CSC_TABLE).insert([
+          {
+            name: fullName,
+            phone: phone,
+            service: serviceText,
+            created_at: new Date().toISOString(),
+          },
+        ]);
+
+        if (error) {
+          console.error("Supabase insert error:", error);
+          alert("Failed to submit your request. Please try again.");
+          return;
+        }
+
+        alert("Request submitted successfully. We will contact you soon.");
+        form.reset();
+        close();
+      } catch (err) {
+        console.error("Submit error:", err);
+        alert("Could not submit your request. Please check your connection and try again.");
+      }
+    });
+  }
+
+  async function renderServicesPage() {
+    if (page !== "govt-services.html") return;
+
+    const list = $("#servicesList");
+    if (!list) return;
+
+    let data = null;
+    try {
+      const r = await fetch("services.json", { cache: "no-store" });
+      if (r.ok) data = await r.json();
+    } catch (_) {}
+
+    const services = (data && (data.services || data)) || [];
+    list.innerHTML = "";
+
+    if (!Array.isArray(services) || !services.length) {
+      list.innerHTML = `<div class="seo-block"><strong>No services found.</strong><p>Please check services.json.</p></div>`;
+      return;
+    }
+
+    services.forEach((s) => {
+      const name = safe(s.name || s.service);
+      const url = s.url || s.link || "";
+      if (!name) return;
+
+      const a = document.createElement("a");
+      a.className = "section-link csc-service-link";
+      a.href = "#";
+      a.setAttribute("role", "button");
+      a.innerHTML = `
+        <div class="t">${name}</div>
+        <div class="d">Click to fill details & submit request</div>
+      `;
+
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (typeof window.__openCscModal === "function") {
+          window.__openCscModal({ name, url });
+        }
+      });
+
+      list.appendChild(a);
+    });
+  }
+
+  // ---------------------------
+  // Boot
+  // ---------------------------
+  document.addEventListener("DOMContentLoaded", async () => {
+    // ✅ NEW: this enables same homepage header/footer on pages that have:
+    // <div id="site-header"></div> and <div id="site-footer"></div>
+    await injectHeaderFooter();
+
+    await loadHeaderLinks();
+    initOffcanvas();
+    initDropdowns();
+    initFAQ();
+
+    // Homepage content
+    if (page === "index.html" || page === "") {
+      await renderHomepageSections();
+      await renderHomeQuickLinks();
+      removeHomeMainPageCtaLinks();
+      await initTopSearch();
+    }
+// Category pages (Jobs/Admissions/More dropdown subpages)
+    await initCategoryPage();
+
+    // Tools page
+    await initToolsPage();
+
+    // CSC Services
+    if (page === "govt-services.html") {
+      ensureSupabaseClient().catch(() => {});
+    }
+    initCscModal();
+    await renderServicesPage();
+  });
+})();
