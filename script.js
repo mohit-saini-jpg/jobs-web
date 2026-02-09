@@ -502,8 +502,7 @@
       removeHomeMainPageCtaLinks();
       initHomepageSearch();
     }
-
-    // Category pages (Jobs/Admissions/More dropdown subpages)
+// Category pages (Jobs/Admissions/More dropdown subpages)
     await initCategoryPage();
 
     // Tools page
