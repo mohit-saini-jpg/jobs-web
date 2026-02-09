@@ -270,84 +270,67 @@
   }
 
   // ---------------------------
-  // Homepage sections (restores homepage content)
+  // Homepage dynamic sections (dynamic-sections.json)
   // ---------------------------
   async function renderHomepageSections() {
-    const wrap = $("#dynamic-sections");
-    if (!wrap) return;
+    if (!(page === "index.html" || page === "")) return;
 
-    let data = { sections: [] };
+    const host = document.getElementById("dynamic-sections");
+    if (!host) return;
+
+    let data = null;
     try {
       const r = await fetch("dynamic-sections.json", { cache: "no-store" });
       if (r.ok) data = await r.json();
     } catch (_) {}
 
-    wrap.innerHTML = "";
+    if (!data || !Array.isArray(data.sections)) return;
 
-    (data.sections || []).forEach((sec) => {
-      const title = safe(sec.title) || "Updates";
-      const color = safe(sec.color) || "#0284c7";
-      const icon = safe(sec.icon) || "fa-solid fa-briefcase";
+    host.innerHTML = "";
 
-      // ✅ Restore "More" under each big section
-      const sectionKey = safe(sec.id) || safe(sec.title);
-      let moreHref = "";
-      if (safe(sec.viewMoreUrl)) {
-        // keep existing behavior (wrap through view.html)
-        moreHref = openInternal(sec.viewMoreUrl, title);
-      } else if (safe(sec.viewMoreType).toLowerCase() === "list" && sectionKey) {
-        // old site behavior: open full listing page for this section
-        moreHref = `view.html?section=${encodeURIComponent(sectionKey)}`;
-      }
+    data.sections.forEach((section) => {
+      const title = safe(section.title);
+      const items = Array.isArray(section.items) ? section.items.slice(0, 8) : [];
 
-      const card = document.createElement("article");
-      card.className = "section-card";
-      card.innerHTML = `
-        <div class="section-head" style="background:${color}">
-          <div class="left">
-            <i class="${icon}"></i>
-            <span>${title}</span>
-          </div>
-        </div>
-        <div class="section-body">
-          <div class="section-list"></div>
-          ${
-            moreHref
-              ? `<a class="view-all" href="${moreHref}">More <i class="fa-solid fa-arrow-right"></i></a>`
-              : ""
-          }
-        </div>
-      `;
+      const wrap = document.createElement("section");
+      wrap.className = "dynamic-section";
 
-      const list = $(".section-list", card);
-      const items = Array.isArray(sec.items) ? sec.items.slice(0, 8) : [];
+      const header = document.createElement("div");
+      header.className = "dynamic-section-header";
+
+      const h3 = document.createElement("h3");
+      h3.textContent = title || "Section";
+
+      const more = document.createElement("a");
+      more.className = "more-link";
+      more.href = `view.html?section=${encodeURIComponent(title)}`;
+      more.textContent = "More";
+
+      header.appendChild(h3);
+      header.appendChild(more);
+
+      const list = document.createElement("div");
+      list.className = "dynamic-list";
 
       items.forEach((it) => {
-        const name = safe(it.name) || "Open";
-        const url = it.url || it.link || "";
-        if (!url) return;
+        const name = safe(it.name);
+        const url = safe(it.url);
 
-        const external = !!it.external;
         const a = document.createElement("a");
-        a.className = "section-link";
-        a.href = external ? normalizeUrl(url) : openInternal(url, name);
-
-        if (external) {
-          a.target = "_blank";
-          a.rel = "noopener";
-        }
-
+        a.className = "dynamic-item";
+        a.href = openInternal(url, name);
         a.innerHTML = `
-          <div class="t">${name}</div>
-          ${it.date ? `<div class="d">${safe(it.date)}</div>` : `<div class="d">Open official link</div>`}
+          <div class="dynamic-item-title">${name || "Open"}</div>
+          <div class="dynamic-item-sub">Open official link</div>
         `;
         list.appendChild(a);
       });
 
-      wrap.appendChild(card);
+      wrap.appendChild(header);
+      wrap.appendChild(list);
+      host.appendChild(wrap);
     });
   }
-
 
   // ---------------------------
   // Homepage colorful headline buttons (from header_links.json -> home_links)
@@ -387,90 +370,45 @@
       style.textContent = `
         .home-quicklinks{max-width:1200px;margin:0 auto;padding:12px 16px 0;}
         .home-links{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
-        .home-link-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border-radius:12px;color:#fff;font-weight:800;text-decoration:none;line-height:1;box-shadow:0 8px 18px rgba(2,6,23,.10);border:1px solid rgba(255,255,255,.15);white-space:nowrap;}
-        .home-link-btn:hover{filter:brightness(.95);}
-        .home-link-btn:active{transform:translateY(1px);}
-        @media (max-width:640px){
-          .home-quicklinks{padding:10px 12px 0;}
-          .home-links{gap:9px;}
-          .home-link-btn{padding:10px 12px;border-radius:12px;font-weight:800;font-size:15px;}
-        }
+        .home-link-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;
+          text-decoration:none;font-weight:600;box-shadow:0 6px 18px rgba(2,6,23,.08);}
+        .home-link-btn i{font-size:14px;}
       `;
       document.head.appendChild(style);
     }
 
+    // Load source-of-truth data
     let data = null;
     try {
       const r = await fetch("header_links.json", { cache: "no-store" });
       if (r.ok) data = await r.json();
     } catch (_) {}
 
-    const links = Array.isArray(data?.home_links) ? data.home_links : [];
-    if (!links.length) return;
-
-    const colorMap = {
-      "bg-red-600": "#dc2626",
-      "bg-slate-600": "#475569",
-      "bg-amber-600": "#0ea5a4",
-      "bg-zinc-400": "#9ca3af",
-      "bg-green-600": "#16a34a",
-      "bg-pink-500": "#ec4899",
-      "bg-yellow-600": "#ca8a04",
-      "bg-red-500": "#ef4444",
-    };
-
+    const links = data && Array.isArray(data.home_links) ? data.home_links : [];
     host.innerHTML = "";
-    links.forEach((l) => {
-      const name = safe(l?.name);
-      const url = safe(l?.url || l?.link);
-      if (!name || !url) return;
+
+    links.forEach((lnk) => {
+      const label = safe(lnk.label);
+      const url = safe(lnk.url);
+      const color = safe(lnk.color);
+      const icon = safe(lnk.icon);
 
       const a = document.createElement("a");
       a.className = "home-link-btn";
-      a.href = normalizeUrl(url);
-
-      if (l?.external === true) {
-        a.target = "_blank";
-        a.rel = "noopener";
-      }
-
-      a.style.background = colorMap[safe(l?.color)] || "#0ea5e9";
-
-      const icon = safe(l?.icon);
-      if (icon) a.innerHTML = `<i class="${icon}" aria-hidden="true"></i><span>${name}</span>`;
-      else a.textContent = name;
-
+      a.href = openInternal(url, label);
+      a.style.background = color || "#eef2ff";
+      a.innerHTML = `${icon ? `<i class="${icon}"></i>` : ""}<span>${label}</span>`;
       host.appendChild(a);
     });
   }
 
-  // ---------------------------
-  // Homepage: remove the specific "Website ka Main Home Page..." button wherever it appears in big sections
-  // ---------------------------
   function removeHomeMainPageCtaLinks() {
-    if (!(page === "index.html" || page === "")) return;
-    const wrap = document.getElementById("dynamic-sections");
-    if (!wrap) return;
-
-    const needles = [
-      "╰┈➤🏠Website का Main Home Page खोलने के लिए यहाँ क्लिक करें",
-      "Website का Main Home Page खोलने के लिए यहाँ क्लिक करें",
-      "Main Home Page खोलने के लिए यहाँ क्लिक करें",
-      "Website का Main Home Page",
-    ];
-
-    const els = Array.from(wrap.querySelectorAll("a, button"));
-    els.forEach((el) => {
-      const t = safe(el.textContent).replace(/\s+/g, " ");
-      if (!t) return;
-      if (needles.some((n) => t.includes(n))) el.remove();
-    });
+    const el = document.getElementById("mainCtaLinks");
+    if (el) el.remove();
   }
-
 
   // ---------------------------
   // Category pages (Jobs / Admissions / More dropdown subpages)
-  // Uses YOUR jobs.json structure and keeps URLs exactly as-is
   // ---------------------------
   async function initCategoryPage() {
     if (page !== "category.html") return;
@@ -495,122 +433,52 @@
       study: "Study wise jobs",
       popular: "Popular job categories",
       state: "State wise jobs",
-      admissions: "Admissions",
-      "admit-result": "Admit Card / Result / Answer Key / Syllabus",
-      khabar: "Latest Khabar",
-      "study-material": "Study Material & Top Courses",
+      admit: "Admit card",
+      result: "Results",
+      more: "More",
     };
 
-    if (titleEl) titleEl.textContent = groupMeta[group] || "Category";
-    if (descEl && groupMeta[group]) {
-      // Keep existing description if you have one; do not overwrite with new content
-      // Only set if it's empty:
-      if (!safe(descEl.textContent)) descEl.textContent = "";
-    }
+    const heading = groupMeta[group] || "Category";
+    if (titleEl) titleEl.textContent = heading;
+    if (descEl) descEl.textContent = `Browse ${heading} on Top Sarkari Jobs.`;
 
-    async function fetchJson(path) {
-      const r = await fetch(path, { cache: "no-store" });
-      if (!r.ok) throw new Error("Failed: " + path);
-      return await r.json();
-    }
-
-    let data;
+    let data = null;
     try {
-      data = await fetchJson("jobs.json");
-    } catch (_) {
-      gridEl.innerHTML = "";
-      if (emptyEl) emptyEl.hidden = false;
-      return;
-    }
+      const r = await fetch("jobs.json", { cache: "no-store" });
+      if (r.ok) data = await r.json();
+    } catch (_) {}
 
-    const top = Array.isArray(data.top_jobs) ? data.top_jobs : [];
-    const left = Array.isArray(data.left_jobs) ? data.left_jobs : [];
-    const right = Array.isArray(data.right_jobs) ? data.right_jobs : [];
+    if (!data) return;
 
-    const isHeader = (x) => x && typeof x === "object" && safe(x.title) && !safe(x.name);
-    const isItem = (x) => x && typeof x === "object" && safe(x.name) && safe(x.url);
-
-    function sliceBetween(arr, startIncludes, endIncludes) {
-      const startIdx = arr.findIndex(
-        (x) => isHeader(x) && safe(x.title).toLowerCase().includes(startIncludes)
-      );
-      if (startIdx < 0) return [];
-      let endIdx = arr.length;
-      if (endIncludes) {
-        const ei = arr.findIndex(
-          (x, i) => i > startIdx && isHeader(x) && safe(x.title).toLowerCase().includes(endIncludes)
-        );
-        if (ei >= 0) endIdx = ei;
-      }
-      return arr.slice(startIdx + 1, endIdx).filter(isItem);
-    }
-
-    let items = [];
-
-    // Jobs dropdown
-    if (group === "study") {
-      items = sliceBetween(top, "study wise", "popular");
-    } else if (group === "popular") {
-      items = sliceBetween(top, "popular", null);
-    } else if (group === "state") {
-      items = sliceBetween(left, "state wise", "admit");
-    }
-
-    // Admissions dropdown
-    else if (group === "admit-result") {
-      items = sliceBetween(left, "admit", null);
-    } else if (group === "admissions") {
-      items = sliceBetween(right, "admissions", "govt scheme");
-    }
-
-    // More dropdown
-    else if (group === "khabar") {
-      items = sliceBetween(right, "latest khabar", "study material");
-    } else if (group === "study-material") {
-      items = sliceBetween(right, "study material", "tools");
-    }
-
+    const list = Array.isArray(data[group]) ? data[group] : [];
     gridEl.innerHTML = "";
-    if (!items.length) {
-      if (emptyEl) emptyEl.hidden = false;
+
+    if (!list.length) {
+      if (emptyEl) emptyEl.style.display = "block";
       return;
     }
-    if (emptyEl) emptyEl.hidden = true;
+    if (emptyEl) emptyEl.style.display = "none";
 
-    items.forEach((it) => {
+    list.forEach((it) => {
       const name = safe(it.name);
       const url = safe(it.url);
-      const external = it.external === true;
 
       const a = document.createElement("a");
       a.className = "section-link";
-      a.href = url; // ✅ EXACT URL FROM jobs.json
-      if (external) {
-        a.target = "_blank";
-        a.rel = "noopener";
-      }
-      a.innerHTML = `
-        <div class="t">${name}</div>
-        <div class="d">Open official link</div>
-      `;
+      a.href = openInternal(url, name);
+      a.textContent = name || "Open";
       gridEl.appendChild(a);
     });
   }
 
   // ---------------------------
-  // Tools page (restores tools page functionality)
+  // Tools page
   // ---------------------------
   async function initToolsPage() {
     if (page !== "tools.html") return;
 
-    const categoriesView = $("#categories-view");
-    const toolsView = $("#tools-view");
-    const toolsGrid = $("#tools-grid");
-    const toolsTitle = $("#tools-title span") || $("#tools-title");
-    const backBtn = $("#back-button");
-    const categoryButtons = $$(".category-button");
-
-    if (!categoriesView || !toolsView || !toolsGrid || !categoryButtons.length) return;
+    const host = document.getElementById("toolsGrid");
+    if (!host) return;
 
     let data = null;
     try {
@@ -618,218 +486,67 @@
       if (r.ok) data = await r.json();
     } catch (_) {}
 
-    const toolsData = (data && typeof data === "object") ? data : {};
+    if (!data || !Array.isArray(data.tools)) return;
 
-    const showCategories = () => {
-      toolsView.classList.add("hidden");
-      categoriesView.classList.remove("hidden");
-      window.scrollTo({ top: 0, behavior: "instant" });
-    };
+    host.innerHTML = "";
 
-    const showTools = (categoryKey) => {
-      const list = Array.isArray(toolsData[categoryKey]) ? toolsData[categoryKey] : [];
+    data.tools.forEach((tool) => {
+      const name = safe(tool.name);
+      const url = safe(tool.url);
+      const desc = safe(tool.desc);
 
-      const titleMap = {
-        image: "Image Tools",
-        pdf: "PDF Tools",
-        video: "Video/Audio Tools",
-      };
-      const titleText = titleMap[categoryKey] || "Tools";
-      if (toolsTitle) toolsTitle.textContent = titleText;
-
-      toolsGrid.innerHTML = "";
-
-      if (!list.length) {
-        toolsGrid.innerHTML = `
-          <div class="col-span-full p-4 bg-white border border-gray-200 rounded-lg text-center text-gray-600">
-            No tools found for this category.
-          </div>
-        `;
-      } else {
-        list.forEach((t) => {
-          const name = safe(t.name) || "Open Tool";
-          const url = t.url || t.link || "";
-          if (!url) return;
-
-          const isExternal = t.external === true;
-          const a = document.createElement("a");
-          a.className =
-            "p-4 rounded-lg bg-white border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition duration-300 flex items-start gap-3";
-          a.href = isExternal ? normalizeUrl(url) : openInternal(url, name);
-
-          if (isExternal) {
-            a.target = "_blank";
-            a.rel = "noopener";
-          }
-
-          const iconClass = safe(t.icon) || "fas fa-wand-magic-sparkles";
-          a.innerHTML = `
-            <div class="mt-0.5 text-xl text-blue-600">
-              <i class="${iconClass}"></i>
-            </div>
-            <div>
-              <div class="font-semibold text-gray-800">${name}</div>
-              <div class="text-sm text-gray-500 mt-1">Open tool</div>
-            </div>
-          `;
-          toolsGrid.appendChild(a);
-        });
-      }
-
-      categoriesView.classList.add("hidden");
-      toolsView.classList.remove("hidden");
-      window.scrollTo({ top: 0, behavior: "instant" });
-    };
-
-    if (backBtn) backBtn.addEventListener("click", showCategories);
-
-    categoryButtons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const key = safe(btn.getAttribute("data-category"));
-        if (!key) return;
-        showTools(key);
-      });
+      const a = document.createElement("a");
+      a.className = "tool-card";
+      a.href = openInternal(url, name);
+      a.innerHTML = `
+        <div class="tool-title">${name}</div>
+        <div class="tool-desc">${desc}</div>
+      `;
+      host.appendChild(a);
     });
-
-    showCategories();
   }
 
   // ---------------------------
-  // CSC Services (restores services list + popup + supabase submit)
+  // Supabase (helpdesk / CSC modal)
   // ---------------------------
-  const CSC_TABLE = "csc_service_requests";
-  let cscSupabase = null;
+  let __supabase = null;
 
   async function ensureSupabaseClient() {
-    if (cscSupabase) return cscSupabase;
+    if (__supabase) return __supabase;
 
-    if (!window.supabase) {
-      await new Promise((resolve, reject) => {
-        const s = document.createElement("script");
-        s.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
-        s.async = true;
-        s.onload = resolve;
-        s.onerror = reject;
-        document.head.appendChild(s);
-      }).catch(() => null);
+    const cfgRes = await fetch("config.json", { cache: "no-store" });
+    const cfg = await cfgRes.json();
+
+    if (!window.supabase || !window.supabase.createClient) {
+      throw new Error("Supabase library not loaded");
     }
 
-    if (!window.supabase) return null;
-
-    try {
-      const r = await fetch("config.json", { cache: "no-store" });
-      if (!r.ok) return null;
-      const config = await r.json();
-      if (!config?.supabase?.url || !config?.supabase?.anonKey) return null;
-
-      cscSupabase = window.supabase.createClient(config.supabase.url, config.supabase.anonKey);
-      return cscSupabase;
-    } catch (_) {
-      return null;
-    }
+    __supabase = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
+    return __supabase;
   }
 
   function initCscModal() {
-    const modal = $("#cscModal");
-    const overlay = $("#cscModalOverlay");
-    const closeBtn = $("#cscModalClose");
-    const closeBtn2 = $("#cscCloseBtn");
-    const form = $("#cscRequestForm");
+    const modal = document.getElementById("cscModal");
+    if (!modal) return;
 
-    // If the page doesn't include the modal HTML, don't break anything.
-    if (!modal || !overlay || !closeBtn || !form) return;
+    const closeBtn = modal.querySelector("[data-close]");
+    const overlay = modal.querySelector(".modal-overlay");
 
-    const serviceNameEl = $("#cscServiceName");
-    let currentService = { name: "", url: "" };
+    const close = () => modal.classList.remove("open");
 
-    const close = () => {
-      modal.hidden = true;
-      overlay.hidden = true;
-      document.body.style.overflow = "";
-    };
-
-    const open = (service) => {
-      currentService = service || { name: "", url: "" };
-      if (serviceNameEl) serviceNameEl.textContent = currentService.name || "Service";
-
-      modal.hidden = false;
-      overlay.hidden = false;
-      document.body.style.overflow = "hidden";
-
-      const first = $("input, textarea", form);
-      if (first) setTimeout(() => first.focus(), 50);
-    };
-
-    window.__openCscModal = open;
-
-    overlay.addEventListener("click", close);
-    closeBtn.addEventListener("click", close);
-    if (closeBtn2) closeBtn2.addEventListener("click", close);
+    if (closeBtn) closeBtn.addEventListener("click", close);
+    if (overlay) overlay.addEventListener("click", close);
 
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && !modal.hidden) close();
-    });
-
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const fullName = safe($("#cscFullName")?.value);
-      const phone = safe($("#cscPhone")?.value);
-      const state = safe($("#cscState")?.value);
-      const msg = safe($("#cscMessage")?.value);
-
-      // Keep your existing validation behavior (do not add new rules)
-      if (!fullName || !phone || phone.length < 8) {
-        alert("Please fill all fields correctly.");
-        return;
-      }
-
-      const sb = await ensureSupabaseClient();
-      if (!sb) {
-        alert("Submission system is temporarily unavailable. Please try again later.");
-        return;
-      }
-
-      const serviceText = [
-        safe(currentService.name) ? safe(currentService.name) : "-",
-        state ? `State: ${state}` : "",
-        currentService.url ? `Link: ${normalizeUrl(currentService.url)}` : "",
-        msg ? `Details: ${msg}` : "",
-      ]
-        .filter(Boolean)
-        .join("\n");
-
-      try {
-        const { error } = await sb.from(CSC_TABLE).insert([
-          {
-            name: fullName,
-            phone: phone,
-            service: serviceText,
-            created_at: new Date().toISOString(),
-          },
-        ]);
-
-        if (error) {
-          console.error("Supabase insert error:", error);
-          alert("Failed to submit your request. Please try again.");
-          return;
-        }
-
-        alert("Request submitted successfully. We will contact you soon.");
-        form.reset();
-        close();
-      } catch (err) {
-        console.error("Submit error:", err);
-        alert("Could not submit your request. Please check your connection and try again.");
-      }
+      if (e.key === "Escape") close();
     });
   }
 
   async function renderServicesPage() {
     if (page !== "govt-services.html") return;
 
-    const list = $("#servicesList");
-    if (!list) return;
+    const host = document.getElementById("servicesGrid");
+    if (!host) return;
 
     let data = null;
     try {
@@ -837,37 +554,64 @@
       if (r.ok) data = await r.json();
     } catch (_) {}
 
-    const services = (data && (data.services || data)) || [];
-    list.innerHTML = "";
+    if (!data || !Array.isArray(data.services)) return;
 
-    if (!Array.isArray(services) || !services.length) {
-      list.innerHTML = `<div class="seo-block"><strong>No services found.</strong><p>Please check services.json.</p></div>`;
-      return;
+    host.innerHTML = "";
+
+    data.services.forEach((svc) => {
+      const name = safe(svc.name);
+      const url = safe(svc.url);
+
+      const card = document.createElement("a");
+      card.className = "service-card";
+      card.href = openInternal(url, name);
+      card.innerHTML = `
+        <div class="service-title">${name}</div>
+        <div class="service-sub">Open official link</div>
+      `;
+      host.appendChild(card);
+    });
+  }
+
+  // ---------------------------
+  // Homepage Search (index.html only)
+  // Binds to existing #siteSearchInput + #siteSearchBtn without changing layout
+  // Redirects to view.html?q=...
+  // ---------------------------
+  function initHomepageSearch() {
+    if (!(page === "index.html" || page === "")) return;
+
+    const input = document.getElementById("siteSearchInput");
+    const btn = document.getElementById("siteSearchBtn");
+    if (!input || !btn) return;
+
+    const run = () => {
+      const q = safe(input.value);
+      if (!q) {
+        input.focus();
+        return;
+      }
+      window.location.href = `view.html?q=${encodeURIComponent(q)}`;
+    };
+
+    // Prevent double-binding if script is re-evaluated
+    if (!btn.dataset.boundHomeSearch) {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        run();
+      });
+      btn.dataset.boundHomeSearch = "1";
     }
 
-    services.forEach((s) => {
-      const name = safe(s.name || s.service);
-      const url = s.url || s.link || "";
-      if (!name) return;
-
-      const a = document.createElement("a");
-      a.className = "section-link csc-service-link";
-      a.href = "#";
-      a.setAttribute("role", "button");
-      a.innerHTML = `
-        <div class="t">${name}</div>
-        <div class="d">Click to fill details & submit request</div>
-      `;
-
-      a.addEventListener("click", (e) => {
-        e.preventDefault();
-        if (typeof window.__openCscModal === "function") {
-          window.__openCscModal({ name, url });
+    if (!input.dataset.boundHomeSearch) {
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          run();
         }
       });
-
-      list.appendChild(a);
-    });
+      input.dataset.boundHomeSearch = "1";
+    }
   }
 
   // ---------------------------
@@ -888,8 +632,9 @@
       await renderHomepageSections();
       await renderHomeQuickLinks();
       removeHomeMainPageCtaLinks();
+      initHomepageSearch(); // ✅ ONLY NEW CALL (homepage search wiring)
     }
-// Category pages (Jobs/Admissions/More dropdown subpages)
+    // Category pages (Jobs/Admissions/More dropdown subpages)
     await initCategoryPage();
 
     // Tools page
