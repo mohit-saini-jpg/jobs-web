@@ -17,19 +17,17 @@
     return "https://" + s.replace(/^\/+/, "");
   }
 
-  // External URL wrapper (used on homepage dynamic sections + tools)
+  // External URL wrapper
   function openInternal(url, name) {
     const u = normalizeUrl(url);
     return `view.html?url=${encodeURIComponent(u)}&name=${encodeURIComponent(name)}`;
   }
 
-  // Used by tools.html header back button
   window.goBack = () => {
     if (window.history.length > 1) window.history.back();
     else window.location.href = "index.html";
   };
 
-  // ✅ NEW: Inject same homepage header/footer everywhere (Results now, other pages later)
   async function injectHeaderFooter() {
     const headerHost = document.getElementById("site-header");
     const footerHost = document.getElementById("site-footer");
@@ -109,9 +107,6 @@
     }
   }
 
-  // ---------------------------
-  // Mobile menu (fixed)
-  // ---------------------------
   function initOffcanvas() {
     const btn = $("#menuBtn");
     const closeBtn = $("#closeMenuBtn");
@@ -154,9 +149,6 @@
     window.__closeMenu = close;
   }
 
-  // ---------------------------
-  // Desktop dropdowns (fixed hover gap)
-  // ---------------------------
   function initDropdowns() {
     const dds = $$("[data-dd]");
     if (!dds.length) return;
@@ -248,9 +240,6 @@
     });
   }
 
-  // ---------------------------
-  // FAQ accordion
-  // ---------------------------
   function initFAQ() {
     $$(".faq-btn").forEach((btn) => {
       btn.addEventListener("click", () => {
@@ -269,9 +258,6 @@
     });
   }
 
-  // ---------------------------
-  // Homepage sections (restores homepage content)
-  // ---------------------------
   async function renderHomepageSections() {
     const wrap = $("#dynamic-sections");
     if (!wrap) return;
@@ -288,15 +274,12 @@
       const title = safe(sec.title) || "Updates";
       const color = safe(sec.color) || "#0284c7";
       const icon = safe(sec.icon) || "fa-solid fa-briefcase";
-
-      // ✅ Restore "More" under each big section
       const sectionKey = safe(sec.id) || safe(sec.title);
+      
       let moreHref = "";
       if (safe(sec.viewMoreUrl)) {
-        // keep existing behavior (wrap through view.html)
         moreHref = openInternal(sec.viewMoreUrl, title);
       } else if (safe(sec.viewMoreType).toLowerCase() === "list" && sectionKey) {
-        // old site behavior: open full listing page for this section
         moreHref = `view.html?section=${encodeURIComponent(sectionKey)}`;
       }
 
@@ -348,19 +331,10 @@
     });
   }
 
-
-  // ---------------------------
-  // Homepage colorful headline buttons (from header_links.json -> home_links)
-  // ---------------------------
   async function renderHomeQuickLinks() {
     if (!(page === "index.html" || page === "")) return;
-
-    // Find where to insert: right above the homepage search bar/section
-    const searchInput =
-      document.getElementById("siteSearchInput") ||
-      document.querySelector('input[type="search"]') ||
-      document.querySelector('input[placeholder*="Search" i]');
-
+    const searchInput = document.getElementById("siteSearchInput");
+    
     let host = document.getElementById("home-links");
     if (!host) {
       const wrap = document.createElement("section");
@@ -380,7 +354,6 @@
       insertBeforeNode.parentNode.insertBefore(wrap, insertBeforeNode);
     }
 
-    // Add CSS once (no styles.css edit needed)
     if (!document.getElementById("home-quicklinks-style")) {
       const style = document.createElement("style");
       style.id = "home-quicklinks-style";
@@ -429,24 +402,16 @@
       a.className = "home-link-btn";
       a.href = normalizeUrl(url);
 
-      if (l?.external === true) {
-        a.target = "_blank";
-        a.rel = "noopener";
-      }
+      if (l?.external === true) a.target = "_blank";
 
       a.style.background = colorMap[safe(l?.color)] || "#0ea5e9";
-
       const icon = safe(l?.icon);
       if (icon) a.innerHTML = `<i class="${icon}" aria-hidden="true"></i><span>${name}</span>`;
       else a.textContent = name;
-
       host.appendChild(a);
     });
   }
 
-  // ---------------------------
-  // Homepage: remove the specific "Website ka Main Home Page..." button wherever it appears in big sections
-  // ---------------------------
   function removeHomeMainPageCtaLinks() {
     if (!(page === "index.html" || page === "")) return;
     const wrap = document.getElementById("dynamic-sections");
@@ -467,11 +432,6 @@
     });
   }
 
-
-  // ---------------------------
-  // Category pages (Jobs / Admissions / More dropdown subpages)
-  // Uses YOUR jobs.json structure and keeps URLs exactly as-is
-  // ---------------------------
   async function initCategoryPage() {
     if (page !== "category.html") return;
 
@@ -503,20 +463,14 @@
 
     if (titleEl) titleEl.textContent = groupMeta[group] || "Category";
     if (descEl && groupMeta[group]) {
-      // Keep existing description if you have one; do not overwrite with new content
-      // Only set if it's empty:
       if (!safe(descEl.textContent)) descEl.textContent = "";
-    }
-
-    async function fetchJson(path) {
-      const r = await fetch(path, { cache: "no-store" });
-      if (!r.ok) throw new Error("Failed: " + path);
-      return await r.json();
     }
 
     let data;
     try {
-      data = await fetchJson("jobs.json");
+      const r = await fetch("jobs.json", { cache: "no-store" });
+      if (!r.ok) throw new Error("Failed");
+      data = await r.json();
     } catch (_) {
       gridEl.innerHTML = "";
       if (emptyEl) emptyEl.hidden = false;
@@ -547,28 +501,13 @@
 
     let items = [];
 
-    // Jobs dropdown
-    if (group === "study") {
-      items = sliceBetween(top, "study wise", "popular");
-    } else if (group === "popular") {
-      items = sliceBetween(top, "popular", null);
-    } else if (group === "state") {
-      items = sliceBetween(left, "state wise", "admit");
-    }
-
-    // Admissions dropdown
-    else if (group === "admit-result") {
-      items = sliceBetween(left, "admit", null);
-    } else if (group === "admissions") {
-      items = sliceBetween(right, "admissions", "govt scheme");
-    }
-
-    // More dropdown
-    else if (group === "khabar") {
-      items = sliceBetween(right, "latest khabar", "study material");
-    } else if (group === "study-material") {
-      items = sliceBetween(right, "study material", "tools");
-    }
+    if (group === "study") items = sliceBetween(top, "study wise", "popular");
+    else if (group === "popular") items = sliceBetween(top, "popular", null);
+    else if (group === "state") items = sliceBetween(left, "state wise", "admit");
+    else if (group === "admit-result") items = sliceBetween(left, "admit", null);
+    else if (group === "admissions") items = sliceBetween(right, "admissions", "govt scheme");
+    else if (group === "khabar") items = sliceBetween(right, "latest khabar", "study material");
+    else if (group === "study-material") items = sliceBetween(right, "study material", "tools");
 
     gridEl.innerHTML = "";
     if (!items.length) {
@@ -584,25 +523,18 @@
 
       const a = document.createElement("a");
       a.className = "section-link";
-      a.href = url; // ✅ EXACT URL FROM jobs.json
+      a.href = url;
       if (external) {
         a.target = "_blank";
         a.rel = "noopener";
       }
-      a.innerHTML = `
-        <div class="t">${name}</div>
-        <div class="d">Open official link</div>
-      `;
+      a.innerHTML = `<div class="t">${name}</div><div class="d">Open official link</div>`;
       gridEl.appendChild(a);
     });
   }
 
-  // ---------------------------
-  // Tools page (restores tools page functionality)
-  // ---------------------------
   async function initToolsPage() {
     if (page !== "tools.html") return;
-
     const categoriesView = $("#categories-view");
     const toolsView = $("#tools-view");
     const toolsGrid = $("#tools-grid");
@@ -617,7 +549,6 @@
       const r = await fetch("tools.json", { cache: "no-store" });
       if (r.ok) data = await r.json();
     } catch (_) {}
-
     const toolsData = (data && typeof data === "object") ? data : {};
 
     const showCategories = () => {
@@ -628,100 +559,66 @@
 
     const showTools = (categoryKey) => {
       const list = Array.isArray(toolsData[categoryKey]) ? toolsData[categoryKey] : [];
-
-      const titleMap = {
-        image: "Image Tools",
-        pdf: "PDF Tools",
-        video: "Video/Audio Tools",
-      };
-      const titleText = titleMap[categoryKey] || "Tools";
-      if (toolsTitle) toolsTitle.textContent = titleText;
+      const titleMap = { image: "Image Tools", pdf: "PDF Tools", video: "Video/Audio Tools" };
+      if (toolsTitle) toolsTitle.textContent = titleMap[categoryKey] || "Tools";
 
       toolsGrid.innerHTML = "";
-
       if (!list.length) {
-        toolsGrid.innerHTML = `
-          <div class="col-span-full p-4 bg-white border border-gray-200 rounded-lg text-center text-gray-600">
-            No tools found for this category.
-          </div>
-        `;
+        toolsGrid.innerHTML = `<div class="col-span-full p-4 text-center text-gray-600">No tools found.</div>`;
       } else {
         list.forEach((t) => {
           const name = safe(t.name) || "Open Tool";
           const url = t.url || t.link || "";
           if (!url) return;
-
           const isExternal = t.external === true;
           const a = document.createElement("a");
-          a.className =
-            "p-4 rounded-lg bg-white border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition duration-300 flex items-start gap-3";
+          a.className = "p-4 rounded-lg bg-white border border-gray-200 hover:bg-blue-50 transition flex items-start gap-3";
           a.href = isExternal ? normalizeUrl(url) : openInternal(url, name);
-
-          if (isExternal) {
-            a.target = "_blank";
-            a.rel = "noopener";
-          }
-
+          if (isExternal) a.target = "_blank";
           const iconClass = safe(t.icon) || "fas fa-wand-magic-sparkles";
           a.innerHTML = `
-            <div class="mt-0.5 text-xl text-blue-600">
-              <i class="${iconClass}"></i>
-            </div>
-            <div>
-              <div class="font-semibold text-gray-800">${name}</div>
-              <div class="text-sm text-gray-500 mt-1">Open tool</div>
-            </div>
+            <div class="mt-0.5 text-xl text-blue-600"><i class="${iconClass}"></i></div>
+            <div><div class="font-semibold text-gray-800">${name}</div><div class="text-sm text-gray-500 mt-1">Open tool</div></div>
           `;
           toolsGrid.appendChild(a);
         });
       }
-
       categoriesView.classList.add("hidden");
       toolsView.classList.remove("hidden");
       window.scrollTo({ top: 0, behavior: "instant" });
     };
 
     if (backBtn) backBtn.addEventListener("click", showCategories);
-
     categoryButtons.forEach((btn) => {
       btn.addEventListener("click", () => {
         const key = safe(btn.getAttribute("data-category"));
-        if (!key) return;
-        showTools(key);
+        if (key) showTools(key);
       });
     });
-
     showCategories();
   }
 
-  // ---------------------------
-  // CSC Services (restores services list + popup + supabase submit)
-  // ---------------------------
   const CSC_TABLE = "csc_service_requests";
   let cscSupabase = null;
 
   async function ensureSupabaseClient() {
     if (cscSupabase) return cscSupabase;
-
     if (!window.supabase) {
-      await new Promise((resolve, reject) => {
+      await new Promise((resolve) => {
         const s = document.createElement("script");
         s.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
         s.async = true;
         s.onload = resolve;
-        s.onerror = reject;
+        s.onerror = resolve; // proceed even if fails, to handle error gracefully
         document.head.appendChild(s);
-      }).catch(() => null);
+      });
     }
-
     if (!window.supabase) return null;
-
     try {
       const r = await fetch("config.json", { cache: "no-store" });
       if (!r.ok) return null;
       const config = await r.json();
       if (!config?.supabase?.url || !config?.supabase?.anonKey) return null;
-
       cscSupabase = window.supabase.createClient(config.supabase.url, config.supabase.anonKey);
       return cscSupabase;
     } catch (_) {
@@ -735,8 +632,6 @@
     const closeBtn = $("#cscModalClose");
     const closeBtn2 = $("#cscCloseBtn");
     const form = $("#cscRequestForm");
-
-    // If the page doesn't include the modal HTML, don't break anything.
     if (!modal || !overlay || !closeBtn || !form) return;
 
     const serviceNameEl = $("#cscServiceName");
@@ -751,17 +646,14 @@
     const open = (service) => {
       currentService = service || { name: "", url: "" };
       if (serviceNameEl) serviceNameEl.textContent = currentService.name || "Service";
-
       modal.hidden = false;
       overlay.hidden = false;
       document.body.style.overflow = "hidden";
-
       const first = $("input, textarea", form);
       if (first) setTimeout(() => first.focus(), 50);
     };
 
     window.__openCscModal = open;
-
     overlay.addEventListener("click", close);
     closeBtn.addEventListener("click", close);
     if (closeBtn2) closeBtn2.addEventListener("click", close);
@@ -772,13 +664,11 @@
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-
       const fullName = safe($("#cscFullName")?.value);
       const phone = safe($("#cscPhone")?.value);
       const state = safe($("#cscState")?.value);
       const msg = safe($("#cscMessage")?.value);
 
-      // Keep your existing validation behavior (do not add new rules)
       if (!fullName || !phone || phone.length < 8) {
         alert("Please fill all fields correctly.");
         return;
@@ -786,7 +676,7 @@
 
       const sb = await ensureSupabaseClient();
       if (!sb) {
-        alert("Submission system is temporarily unavailable. Please try again later.");
+        alert("Submission system is temporarily unavailable.");
         return;
       }
 
@@ -795,39 +685,33 @@
         state ? `State: ${state}` : "",
         currentService.url ? `Link: ${normalizeUrl(currentService.url)}` : "",
         msg ? `Details: ${msg}` : "",
-      ]
-        .filter(Boolean)
-        .join("\n");
+      ].filter(Boolean).join("\n");
 
       try {
-        const { error } = await sb.from(CSC_TABLE).insert([
-          {
-            name: fullName,
-            phone: phone,
-            service: serviceText,
-            created_at: new Date().toISOString(),
-          },
-        ]);
+        const { error } = await sb.from(CSC_TABLE).insert([{
+          name: fullName,
+          phone: phone,
+          service: serviceText,
+          created_at: new Date().toISOString(),
+        }]);
 
         if (error) {
-          console.error("Supabase insert error:", error);
-          alert("Failed to submit your request. Please try again.");
+          console.error("Supabase error:", error);
+          alert("Failed to submit request.");
           return;
         }
-
-        alert("Request submitted successfully. We will contact you soon.");
+        alert("Request submitted successfully.");
         form.reset();
         close();
       } catch (err) {
-        console.error("Submit error:", err);
-        alert("Could not submit your request. Please check your connection and try again.");
+        console.error("Error:", err);
+        alert("Could not submit request. Check connection.");
       }
     });
   }
 
   async function renderServicesPage() {
     if (page !== "govt-services.html") return;
-
     const list = $("#servicesList");
     if (!list) return;
 
@@ -841,7 +725,7 @@
     list.innerHTML = "";
 
     if (!Array.isArray(services) || !services.length) {
-      list.innerHTML = `<div class="seo-block"><strong>No services found.</strong><p>Please check services.json.</p></div>`;
+      list.innerHTML = `<div class="seo-block"><strong>No services found.</strong></div>`;
       return;
     }
 
@@ -849,24 +733,44 @@
       const name = safe(s.name || s.service);
       const url = s.url || s.link || "";
       if (!name) return;
-
       const a = document.createElement("a");
       a.className = "section-link csc-service-link";
       a.href = "#";
       a.setAttribute("role", "button");
-      a.innerHTML = `
-        <div class="t">${name}</div>
-        <div class="d">Click to fill details & submit request</div>
-      `;
-
+      a.innerHTML = `<div class="t">${name}</div><div class="d">Click to fill details & submit request</div>`;
       a.addEventListener("click", (e) => {
         e.preventDefault();
-        if (typeof window.__openCscModal === "function") {
-          window.__openCscModal({ name, url });
-        }
+        if (typeof window.__openCscModal === "function") window.__openCscModal({ name, url });
       });
-
       list.appendChild(a);
+    });
+  }
+
+  // ✅✅✅ NEW: Homepage Search Fix (Redirects to view.html) ✅✅✅
+  function initHomepageSearch() {
+    const input = document.getElementById("siteSearchInput");
+    const btn = document.getElementById("siteSearchBtn");
+
+    if (!input || !btn) return;
+
+    const doSearch = () => {
+      const q = input.value.trim();
+      if (q) {
+        // Redirect to robust search engine in view.html
+        window.location.href = `view.html?q=${encodeURIComponent(q)}`;
+      }
+    };
+
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      doSearch();
+    });
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        doSearch();
+      }
     });
   }
 
@@ -874,10 +778,7 @@
   // Boot
   // ---------------------------
   document.addEventListener("DOMContentLoaded", async () => {
-    // ✅ NEW: this enables same homepage header/footer on pages that have:
-    // <div id="site-header"></div> and <div id="site-footer"></div>
     await injectHeaderFooter();
-
     await loadHeaderLinks();
     initOffcanvas();
     initDropdowns();
@@ -888,14 +789,14 @@
       await renderHomepageSections();
       await renderHomeQuickLinks();
       removeHomeMainPageCtaLinks();
+      
+      // ✅ Call the new search function
+      initHomepageSearch();
     }
-// Category pages (Jobs/Admissions/More dropdown subpages)
-    await initCategoryPage();
 
-    // Tools page
+    await initCategoryPage();
     await initToolsPage();
 
-    // CSC Services
     if (page === "govt-services.html") {
       ensureSupabaseClient().catch(() => {});
     }
