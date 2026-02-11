@@ -3890,36 +3890,52 @@
       "title": "Admission/Education",
       "icon": "fas fa-trophy",
       "color": "#00FFA4",
-      "items": [
-      {
-    "name": "╰┈➤🏠Website का Main Home Page खोलने के लिए यहाँ क्लिक करें",
-    "url": "https://www.topsarkarijobs.com/",
+      "items": [ 
+        {
+    "name": "MP CPCT Online Form 2026 | Last Date: 22/02/2026",
+    "url": "https://www.sarkariresult.com/mp/mp-cpct-2026/",
     "external": true
-   },  
-        {
-          "name": "UPBED 2026 Online Form Last Date : 10/03/2026",
-          "url": "https://www.sarkariresult.com/2026/upbed-2026/",
-           "external": true
-        },
-        {
-          "name": "NTA NCHMJEE 2026 Online Form Last Date : 25/03/2026",
-          "url": "https://www.sarkariresult.com/2026/nta-nchm-jee-2026/",
-           "external": true
-        },
-        {
-          "name": "NTA JEEMAIN Session II April 2026 Exam Online Form Last Date : 25/02/2026",
-          "url": "https://www.sarkariresult.com/2026/nta-jeemain-session-2/",
-           "external": true
-        },
-        {
-          "name": "National Council of Hotel Management (NCHM) JEE 2026 के लिए Online Applications OPEN Last Date : 25/03/2026",
-          "url": "https://www.sarkariresult.com/2026/nta-nchm-jee-2026/",
-           "external": true
-        },
-        {
-          "name": "UP Polytechnic JEECUP 2026 Online Form Last Date : 30/04/2026",
-          "url": "https://sarkarinetwork.com/up-polytechnic-jeecup-2026/"
-        }
+  },
+  {
+    "name": "IMU CET Admissions Online Form 2026 | Last Date: 24/04/2026",
+    "url": "https://www.sarkariresult.com/2026/imu-cet-2026/",
+    "external": true
+  },
+  {
+    "name": "NTA CUET UG 2026 Correction / Edit Form | Last Date: 11/02/2026",
+    "url": "https://www.sarkariresult.com/2026/nta-cuet-ug-2026/",
+    "external": true
+  },
+  {
+    "name": "NTA NEET UG 2026 Online Form | Last Date: 08/03/2026",
+    "url": "https://www.sarkariresult.com/2026/nta-neet-ug-2026/",
+    "external": true
+  },
+  {
+    "name": "UP RTE Free Admissions Online Form 2026",
+    "url": "https://www.sarkariresult.com/2026/up-rte-free-admissions/",
+    "external": true
+  },
+  {
+    "name": "IERT Admission 2026 Online Form | Last Date: 30/04/2026",
+    "url": "https://www.sarkariresult.com/2026/iert-admissions-2026/",
+    "external": true
+  },
+  {
+    "name": "UPBED 2026 Online Form | Last Date: 10/03/2026",
+    "url": "https://www.sarkariresult.com/2026/upbed-2026/",
+    "external": true
+  },
+  {
+    "name": "NTA NCHMJEE 2026 Online Form | Last Date: 25/03/2026",
+    "url": "https://www.sarkariresult.com/2026/nta-nchm-jee-2026/",
+    "external": true
+  },
+  {
+    "name": "NTA JEEMAIN Session II April 2026 Online Form | Last Date: 25/02/2026",
+    "url": "https://www.sarkariresult.com/2026/nta-jeemain-session-2/",
+    "external": true
+  }
       ]
     },
     {
