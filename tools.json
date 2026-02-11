@@ -264,6 +264,12 @@
       "url": "https://www.audioremover.com/",
       "icon": "fas fa-object-group",
        "external": true
+    },
+    {
+      "name": "video to text",
+      "url": "https://elevenlabs.io/video-to-text",
+      "icon": "fas fa-object-group",
+       "external": true
     }
   ]
 }
