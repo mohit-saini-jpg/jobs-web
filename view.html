@@ -11,28 +11,24 @@
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
   <title>Top Sarkari Jobs | View</title>
-  <meta name="description" content="Browse official pages, tools, and sections on Top Sarkari Jobs." />
-  <meta name="robots" content="noindex, nofollow" />
   <link rel="icon" type="image/x-icon" href="image.ico">
 
   <link rel="stylesheet" href="styles.css" />
-
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
-    /* Ensure the body takes full height for the sticky footer */
     html,body{height:100%;}
     body{ display: flex; flex-direction: column; }
     main { flex: 1; }
+    
+    /* Ensure the search dropdown from script.js floats correctly */
+    #view-search-container { position: relative; }
   </style>
 </head>
 
 <body>
-
   <div id="site-header"></div>
 
   <main class="container mx-auto max-w-7xl px-4 py-6">
@@ -54,48 +50,50 @@
     </section>
 
     <section id="section-view" class="hidden">
-      <div class="bg-white rounded-lg border border-slate-200 p-5 shadow-sm">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-          <div>
-            <h2 id="page-title" class="text-2xl font-bold text-slate-900">Section</h2>
-            <p id="page-subtitle" class="text-slate-600 mt-1">
-              Browse all updates in this section.
-            </p>
+      
+      <div class="bg-white rounded-lg border border-slate-200 p-6 shadow-sm mb-6" id="view-search-container">
+        <h2 class="text-xl font-bold text-slate-900 mb-1">Search across Top Sarkari Jobs</h2>
+        <p class="text-slate-600 text-sm mb-4">Search jobs, results, admit cards, categories, CSC services and tools.</p>
+        
+        <div class="relative">
+          <div class="flex gap-2">
+            <input id="siteSearchInput" type="search" 
+                   placeholder="Search job categories, results, admit cards…" 
+                   class="flex-1 px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                   autocomplete="off" />
+            <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition">
+              <i class="fa-solid fa-magnifying-glass"></i> Search
+            </button>
           </div>
-
-          <div class="flex items-center gap-2">
-            <label for="filterBox" class="text-sm font-semibold text-slate-700">Search:</label>
-            <input id="filterBox" type="text" placeholder="Filter..."
-              class="w-full md:w-64 px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-200" />
-          </div>
+          <div id="searchResults" class="hidden absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-lg shadow-xl z-50 max-h-96 overflow-y-auto mt-1"></div>
         </div>
       </div>
 
-      <section class="mt-5 bg-white rounded-lg border border-slate-200 p-5 shadow-sm">
-        <p class="text-slate-600 text-sm mb-3">
-          Showing <span id="countNow" class="font-bold text-slate-900">0</span> items.
-        </p>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <h2 id="page-title" class="text-2xl font-bold text-slate-900">Section</h2>
+          <div class="text-slate-600 text-sm">
+            Showing <span id="countNow" class="font-bold text-slate-900">0</span> items.
+          </div>
+        </div>
 
         <ul id="links-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></ul>
 
         <div id="loading" class="mt-8 text-center text-slate-500">
           <i class="fas fa-spinner fa-spin text-2xl"></i>
         </div>
-      </section>
+      </div>
     </section>
 
     <section id="fallback" class="hidden">
       <div class="bg-amber-50 border border-amber-200 rounded-lg p-6 text-center text-amber-900">
         <h3 class="font-bold text-lg">Nothing found</h3>
-        <p class="mt-1">We couldn’t find the content you requested.</p>
-        <a href="index.html" class="mt-4 inline-block px-4 py-2 bg-amber-200 hover:bg-amber-300 rounded-md font-semibold text-amber-900 transition">Go Home</a>
       </div>
     </section>
 
   </main>
 
   <div id="site-footer"></div>
-
   <script src="script.js"></script>
 
   <script>
@@ -103,50 +101,31 @@
       const urlParams = new URLSearchParams(window.location.search);
       const sectionParam = urlParams.get("section");
       const urlParam = urlParams.get("url");
-      const qParam = urlParams.get("q") || urlParams.get("search");
       const nameParam = urlParams.get("name") || "View";
 
       const urlView = document.getElementById("url-view");
       const sectionView = document.getElementById("section-view");
       const fallback = document.getElementById("fallback");
 
-      function show(el){
-        if(el) el.classList.remove("hidden");
-      }
+      function show(el){ if(el) el.classList.remove("hidden"); }
 
-      // 1. Search Mode
-      if (qParam) {
-        show(sectionView);
-        document.title = `Search: ${qParam} | Top Sarkari Jobs`;
-        if(document.getElementById("page-title")) document.getElementById("page-title").textContent = `Search results for "${qParam}"`;
-        // ... (Logic handled by global script or similar, purely visual here)
-        // Note: For full search logic, rely on the main script's handling or the previous implementation.
-        // Re-injecting simple logic for display:
-        setTimeout(() => { document.getElementById("loading").classList.add("hidden"); }, 1000);
-        return;
-      }
-
-      // 2. URL View Mode (Tools, Resume Maker, External Links)
+      // 1. Resume / Tool View (No Search Bar)
       if (urlParam) {
         show(urlView);
         document.title = `${nameParam} | Top Sarkari Jobs`;
-        
         const iframe = document.getElementById("url-iframe");
-        if (iframe) {
-            iframe.src = decodeURIComponent(urlParam);
-        }
+        if (iframe) iframe.src = decodeURIComponent(urlParam);
         return;
       }
 
-      // 3. Section View Mode
+      // 2. Section View (Has Search Bar)
       if (sectionParam) {
         show(sectionView);
         const title = decodeURIComponent(sectionParam).replace(/-/g, ' ').toUpperCase();
         document.title = `${title} | Top Sarkari Jobs`;
         if(document.getElementById("page-title")) document.getElementById("page-title").textContent = title;
-        
-        // Fetch and render logic is reused from previous or handled by script.js
-        // Trigger loading simulation for UI completeness
+
+        // Render List
         (async () => {
              const list = document.getElementById("links-list");
              try {
@@ -156,8 +135,15 @@
                  
                  if(sec && sec.items) {
                      document.getElementById("loading").classList.add("hidden");
-                     document.getElementById("countNow").textContent = sec.items.length;
-                     list.innerHTML = sec.items.map(i => `
+                     
+                     // ✅ FILTER: Remove "Main Home Page" link here locally too
+                     const cleanItems = sec.items.filter(i => {
+                        const t = (i.name||i.title||"").toLowerCase();
+                        return !t.includes("website का main home page") && !t.includes("main home page खोलने");
+                     });
+
+                     document.getElementById("countNow").textContent = cleanItems.length;
+                     list.innerHTML = cleanItems.map(i => `
                         <li class="bg-white border border-slate-200 rounded-lg p-3 hover:shadow-md transition">
                             <a href="${i.url || i.link}" class="block font-semibold text-sky-700 hover:underline">
                                 ${i.name || i.title}
@@ -174,6 +160,5 @@
       show(fallback);
     })();
   </script>
-
 </body>
 </html>
