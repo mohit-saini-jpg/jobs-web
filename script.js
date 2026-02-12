@@ -16,15 +16,11 @@
     return "https://" + s.replace(/^\/+/, "");
   }
 
-  // ✅ HELPER: Block "Main Home Page" garbage link
+  // ✅ SUPER AGGRESSIVE FILTER for "Main Home Page"
   function isGarbageLink(item) {
     const text = (item.name || item.title || "").toLowerCase();
-    const badPhrases = [
-      "website का main home page",
-      "main home page खोलने",
-      "website ka main home page"
-    ];
-    return badPhrases.some(p => text.includes(p));
+    // Matches "main home page" regardless of spaces or extra words
+    return text.includes("main home page") || text.includes("website ka main");
   }
 
   function openInternal(url, name) {
@@ -281,7 +277,7 @@
       `;
 
       const list = $(".section-list", card);
-      // ✅ FILTER: Remove "Main Home Page" link here
+      // ✅ FILTER APPLIED
       const items = Array.isArray(sec.items) 
         ? sec.items.filter(i => !isGarbageLink(i)).slice(0, 8) 
         : [];
@@ -330,7 +326,6 @@
       target.parentNode.insertBefore(wrap, target);
     }
 
-    // Styles
     if (!document.getElementById("home-quicklinks-style")) {
       const style = document.createElement("style");
       style.id = "home-quicklinks-style";
@@ -440,7 +435,7 @@
     else if (group === "khabar") items = sliceBetween(right, "latest khabar", "study material");
     else if (group === "study-material") items = sliceBetween(right, "study material", "tools");
 
-    // ✅ FILTER: Remove "Main Home Page" link here too
+    // ✅ FILTER APPLIED
     items = items.filter(i => !isGarbageLink(i));
 
     gridEl.innerHTML = "";
@@ -465,8 +460,7 @@
       const r = await fetch("tools.json");
       data = await r.json();
     } catch(_) {}
-    
-    // Logic for tools page handled by HTML onClick usually, but if needed we can expand.
+    // Tools logic (abbreviated, mostly HTML driven)
   }
 
   // CSC
@@ -477,7 +471,6 @@
     const form = $("#cscRequestForm");
     if (!modal || !overlay || !closeBtn || !form) return;
     
-    // ... (CSC modal logic remains standard)
     const close = () => {
       modal.hidden = true;
       overlay.hidden = true;
@@ -493,14 +486,12 @@
     };
   }
 
-  // ✅ GLOBAL LIVE SEARCH
-  // Works on homepage AND view.html (if search bar exists)
+  // ✅ GLOBAL LIVE SEARCH (Fixed to support both Homepage & View page inputs)
   async function initGlobalLiveSearch() {
-    // 1. Find the input. It might be on index.html OR view.html
-    const input = document.getElementById("siteSearchInput");
+    // 1. Try to find EITHER the homepage input OR the section view input
+    const input = document.getElementById("siteSearchInput") || document.getElementById("sectionSearchInput");
     const resultsWrap = document.getElementById("searchResults");
     
-    // If we are on a page without a search bar, stop.
     if (!input || !resultsWrap) return;
 
     let searchData = [];
@@ -597,7 +588,7 @@
     await initToolsPage();
     initCscModal();
     
-    // Initialize Search everywhere (it checks for ID existence internally)
+    // Initialize Search everywhere
     await initGlobalLiveSearch();
   });
 })();
