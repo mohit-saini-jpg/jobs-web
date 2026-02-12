@@ -23,7 +23,7 @@
     body { display: flex; flex-direction: column; }
     main { flex: 1; }
     
-    /* ✅ CRITICAL FIX: Hide the search bar that comes inside the injected header */
+    /* Hide the search bar that comes inside the injected header */
     #site-header .search-card,
     #site-header .top-search,
     #site-header .search-row,
@@ -33,9 +33,22 @@
 
     /* Style for the local search dropdown */
     #view-search-container { position: relative; z-index: 50; }
-    
-    /* Ensure tailwind hidden class works with high specificity */
-    .hidden { display: none !important; }
+    .search-dropdown {
+       position: absolute; 
+       top: 100%; 
+       left: 0; 
+       right: 0; 
+       width: 100%;
+       background: white;
+       border: 1px solid #e2e8f0;
+       border-bottom-left-radius: 0.5rem;
+       border-bottom-right-radius: 0.5rem;
+       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+       max-height: 24rem; /* 96 * 0.25rem = 24rem */
+       overflow-y: auto;
+       margin-top: 0.25rem;
+       z-index: 100;
+    }
   </style>
 </head>
 
@@ -66,17 +79,17 @@
         <h2 class="text-xl font-bold text-slate-900 mb-1">Search across Top Sarkari Jobs</h2>
         <p class="text-slate-600 text-sm mb-4">Search jobs, results, admit cards, categories, CSC services and tools.</p>
         
-        <div class="relative">
-          <div class="flex gap-2">
+        <div class="relative w-full">
+          <div class="flex gap-2 w-full">
             <input id="sectionSearchInput" type="search" 
                    placeholder="Search job categories, results, admit cards…" 
-                   class="flex-1 px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                   class="flex-1 min-w-0 px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 text-base"
                    autocomplete="off" />
-            <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition">
-              <i class="fa-solid fa-magnifying-glass"></i> Search
+            <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition shrink-0">
+              <i class="fa-solid fa-magnifying-glass"></i> <span class="hidden sm:inline">Search</span>
             </button>
           </div>
-          <div id="searchResults" class="hidden absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-lg shadow-xl z-50 max-h-96 overflow-y-auto mt-1"></div>
+          <div id="sectionSearchResults" class="hidden search-dropdown"></div>
         </div>
       </div>
 
@@ -147,7 +160,7 @@
                  if(sec && sec.items) {
                      document.getElementById("loading").classList.add("hidden");
                      
-                     // ✅ FILTER: Remove "Main Home Page" link locally too
+                     // Filter Garbage Link
                      const cleanItems = sec.items.filter(i => {
                         const t = (i.name||i.title||"").toLowerCase();
                         return !t.includes("main home page");
@@ -156,7 +169,7 @@
                      document.getElementById("countNow").textContent = cleanItems.length;
                      list.innerHTML = cleanItems.map(i => `
                         <li class="bg-white border border-slate-200 rounded-lg p-3 hover:shadow-md transition">
-                            <a href="${i.url || i.link}" class="block font-semibold text-sky-700 hover:underline">
+                            <a href="${i.url || i.link}" class="block font-semibold text-sky-700 hover:underline" ${i.external ? 'target="_blank"' : ''}>
                                 ${i.name || i.title}
                             </a>
                             <div class="text-xs text-slate-500 mt-1">${i.date || 'Update'}</div>
