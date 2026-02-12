@@ -19,11 +19,23 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
-    html,body{height:100%;}
-    body{ display: flex; flex-direction: column; }
+    html, body { height: 100%; }
+    body { display: flex; flex-direction: column; }
     main { flex: 1; }
-    /* Fix for search dropdown z-index */
+    
+    /* ✅ CRITICAL FIX: Hide the search bar that comes inside the injected header */
+    #site-header .search-card,
+    #site-header .top-search,
+    #site-header .search-row,
+    #site-header input[type="search"] {
+      display: none !important;
+    }
+
+    /* Style for the local search dropdown */
     #view-search-container { position: relative; z-index: 50; }
+    
+    /* Ensure tailwind hidden class works with high specificity */
+    .hidden { display: none !important; }
   </style>
 </head>
 
@@ -56,7 +68,7 @@
         
         <div class="relative">
           <div class="flex gap-2">
-            <input id="siteSearchInput" type="search" 
+            <input id="sectionSearchInput" type="search" 
                    placeholder="Search job categories, results, admit cards…" 
                    class="flex-1 px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500"
                    autocomplete="off" />
@@ -135,10 +147,10 @@
                  if(sec && sec.items) {
                      document.getElementById("loading").classList.add("hidden");
                      
-                     // ✅ FILTER: Remove "Main Home Page" link here
+                     // ✅ FILTER: Remove "Main Home Page" link locally too
                      const cleanItems = sec.items.filter(i => {
                         const t = (i.name||i.title||"").toLowerCase();
-                        return !t.includes("website का main home page") && !t.includes("main home page खोलने");
+                        return !t.includes("main home page");
                      });
 
                      document.getElementById("countNow").textContent = cleanItems.length;
