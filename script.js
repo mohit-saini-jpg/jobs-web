@@ -16,10 +16,9 @@
     return "https://" + s.replace(/^\/+/, "");
   }
 
-  // ✅ SUPER AGGRESSIVE FILTER for "Main Home Page"
+  // ✅ GARBAGE FILTER
   function isGarbageLink(item) {
     const text = (item.name || item.title || "").toLowerCase();
-    // Matches "main home page" regardless of spaces or extra words
     return text.includes("main home page") || text.includes("website ka main");
   }
 
@@ -277,7 +276,6 @@
       `;
 
       const list = $(".section-list", card);
-      // ✅ FILTER APPLIED
       const items = Array.isArray(sec.items) 
         ? sec.items.filter(i => !isGarbageLink(i)).slice(0, 8) 
         : [];
@@ -290,7 +288,8 @@
         const external = !!it.external;
         const a = document.createElement("a");
         a.className = "section-link";
-        a.href = external ? normalizeUrl(url) : openInternal(url, name);
+        // Default to direct URL
+        a.href = normalizeUrl(url); 
         if (external) {
           a.target = "_blank";
           a.rel = "noopener";
@@ -435,7 +434,7 @@
     else if (group === "khabar") items = sliceBetween(right, "latest khabar", "study material");
     else if (group === "study-material") items = sliceBetween(right, "study material", "tools");
 
-    // ✅ FILTER APPLIED
+    // Filter Garbage
     items = items.filter(i => !isGarbageLink(i));
 
     gridEl.innerHTML = "";
@@ -454,13 +453,7 @@
     if (page !== "tools.html") return;
     const toolsGrid = $("#tools-grid");
     if (!toolsGrid) return;
-    
-    let data = null;
-    try {
-      const r = await fetch("tools.json");
-      data = await r.json();
-    } catch(_) {}
-    // Tools logic (abbreviated, mostly HTML driven)
+    try { await fetch("tools.json"); } catch(_) {}
   }
 
   // CSC
@@ -486,13 +479,17 @@
     };
   }
 
-  // ✅ GLOBAL LIVE SEARCH (Fixed to support both Homepage & View page inputs)
+  // ✅ GLOBAL LIVE SEARCH - ROBUST
   async function initGlobalLiveSearch() {
-    // 1. Try to find EITHER the homepage input OR the section view input
-    const input = document.getElementById("siteSearchInput") || document.getElementById("sectionSearchInput");
-    const resultsWrap = document.getElementById("searchResults");
+    // Collect unique inputs
+    const inputs = [];
+    const homeInput = document.getElementById("siteSearchInput");
+    const sectionInput = document.getElementById("sectionSearchInput");
     
-    if (!input || !resultsWrap) return;
+    if (homeInput) inputs.push({ input: homeInput, resultsId: "searchResults" });
+    if (sectionInput) inputs.push({ input: sectionInput, resultsId: "sectionSearchResults" });
+
+    if (!inputs.length) return;
 
     let searchData = [];
     try {
@@ -505,7 +502,6 @@
 
       const push = (name, url, src) => {
         if(!name || !url) return;
-        // ✅ FILTER: Exclude garbage link from search
         if (isGarbageLink({name})) return;
         searchData.push({ name: name.trim(), url: url.trim(), src });
       };
@@ -526,48 +522,62 @@
       }
     } catch (e) {}
 
-    const performSearch = () => {
-      const query = input.value.toLowerCase().trim();
-      if (query.length < 2) {
+    // Attach listeners to each input
+    inputs.forEach(({ input, resultsId }) => {
+      const resultsWrap = document.getElementById(resultsId);
+      if (!resultsWrap) return;
+
+      const performSearch = () => {
+        const query = input.value.toLowerCase().trim();
+        if (query.length < 2) {
+          resultsWrap.innerHTML = "";
+          resultsWrap.style.display = "none";
+          return;
+        }
+
+        const tokens = query.split(/\s+/).filter(t => t.length);
+        const matches = searchData.filter(item => {
+          const hay = (item.name + " " + item.src).toLowerCase();
+          return tokens.every(t => hay.includes(t));
+        }).slice(0, 10);
+
         resultsWrap.innerHTML = "";
-        resultsWrap.style.display = "none";
-        return;
-      }
+        if (matches.length > 0) {
+          resultsWrap.style.display = "block";
+          matches.forEach(m => {
+            // ✅ DIRECT URL LOGIC
+            // If it's a standard URL (http/https), go there directly
+            // If it's a relative path, go there directly
+            // We just ensure it's a valid link.
+            let href = normalizeUrl(m.url);
+            const isExternal = href.startsWith("http") && !href.includes(location.hostname);
+            
+            const a = document.createElement("a");
+            a.className = "search-result-item";
+            a.href = href;
+            // Add target blank for external
+            if (isExternal) {
+                a.target = "_blank";
+                a.rel = "noopener";
+            }
+            
+            a.innerHTML = `<div class="result-name">${m.name}</div><div class="result-meta">${m.src}</div>`;
+            resultsWrap.appendChild(a);
+          });
+        } else {
+          resultsWrap.style.display = "block";
+          resultsWrap.innerHTML = `<div class="search-no-results">No matches found.</div>`;
+        }
+      };
 
-      const tokens = query.split(/\s+/).filter(t => t.length);
-      const matches = searchData.filter(item => {
-        const hay = (item.name + " " + item.src).toLowerCase();
-        return tokens.every(t => hay.includes(t));
-      }).slice(0, 10);
-
-      resultsWrap.innerHTML = "";
-      if (matches.length > 0) {
-        resultsWrap.style.display = "block";
-        matches.forEach(m => {
-          let href = m.url;
-          const isExternal = m.url.startsWith("http") && !m.url.includes(location.hostname);
-          if (isExternal || (!m.url.endsWith(".html") && !m.url.startsWith("#"))) {
-             href = openInternal(m.url, m.name);
-          }
-          const a = document.createElement("a");
-          a.className = "search-result-item";
-          a.href = href;
-          a.innerHTML = `<div class="result-name">${m.name}</div><div class="result-meta">${m.src}</div>`;
-          resultsWrap.appendChild(a);
-        });
-      } else {
-        resultsWrap.style.display = "block";
-        resultsWrap.innerHTML = `<div class="search-no-results">No matches found.</div>`;
-      }
-    };
-
-    input.addEventListener("input", performSearch);
-    input.addEventListener("focus", () => { if(input.value.length >= 2) resultsWrap.style.display="block"; });
-    
-    document.addEventListener("click", (e) => {
-      if (!input.contains(e.target) && !resultsWrap.contains(e.target)) {
-        resultsWrap.style.display = "none";
-      }
+      input.addEventListener("input", performSearch);
+      input.addEventListener("focus", () => { if(input.value.length >= 2) resultsWrap.style.display="block"; });
+      
+      document.addEventListener("click", (e) => {
+        if (!input.contains(e.target) && !resultsWrap.contains(e.target)) {
+          resultsWrap.style.display = "none";
+        }
+      });
     });
   }
 
