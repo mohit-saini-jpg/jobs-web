@@ -3,7 +3,9 @@
 
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  // Relaxed page detection (checks if 'tools' is in the URL)
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
+  const isToolsPage = location.pathname.includes("tools");
 
   const safe = (v) => (v ?? "").toString().trim();
 
@@ -16,24 +18,16 @@
     return "https://" + s.replace(/^\/+/, "");
   }
 
-  // ✅ GARBAGE FILTER
-  function isGarbageLink(item) {
-    const text = (item.name || item.title || "").toLowerCase();
-    return text.includes("main home page") || text.includes("website ka main");
-  }
-
   function openInternal(url, name) {
     const u = normalizeUrl(url);
     return `view.html?url=${encodeURIComponent(u)}&name=${encodeURIComponent(name)}`;
   }
 
-  // Back button logic
   window.goBack = () => {
     if (window.history.length > 1) window.history.back();
     else window.location.href = "index.html";
   };
 
-  // Inject Header/Footer
   async function injectHeaderFooter() {
     const headerHost = document.getElementById("site-header");
     const footerHost = document.getElementById("site-footer");
@@ -234,7 +228,7 @@
     });
   }
 
-  // Homepage Sections (Updates)
+  // Homepage Sections
   async function renderHomepageSections() {
     const wrap = $("#dynamic-sections");
     if (!wrap) return;
@@ -276,9 +270,7 @@
       `;
 
       const list = $(".section-list", card);
-      const items = Array.isArray(sec.items) 
-        ? sec.items.filter(i => !isGarbageLink(i)).slice(0, 8) 
-        : [];
+      const items = Array.isArray(sec.items) ? sec.items.slice(0, 8) : [];
 
       items.forEach((it) => {
         const name = safe(it.name) || "Open";
@@ -288,27 +280,17 @@
         const external = !!it.external;
         const a = document.createElement("a");
         a.className = "section-link";
-        // Default to direct URL
-        a.href = normalizeUrl(url); 
-        if (external) {
-          a.target = "_blank";
-          a.rel = "noopener";
-        }
-        a.innerHTML = `
-          <div class="t">${name}</div>
-          ${it.date ? `<div class="d">${safe(it.date)}</div>` : `<div class="d">Open official link</div>`}
-        `;
+        a.href = external ? normalizeUrl(url) : openInternal(url, name);
+        if (external) { a.target = "_blank"; a.rel = "noopener"; }
+        a.innerHTML = `<div class="t">${name}</div>${it.date ? `<div class="d">${safe(it.date)}</div>` : `<div class="d">Open official link</div>`}`;
         list.appendChild(a);
       });
       wrap.appendChild(card);
     });
   }
 
-  // Homepage Headlines
   async function renderHomeQuickLinks() {
     if (!(page === "index.html" || page === "")) return;
-    
-    // Insert location
     const searchInput = $("#siteSearchInput");
     let host = $("#home-links");
     
@@ -319,8 +301,6 @@
       host.id = "home-links";
       host.className = "home-links";
       wrap.appendChild(host);
-
-      // Try to insert above search, otherwise at top of main
       const target = (searchInput && searchInput.closest(".container")) || $("main") || document.body;
       target.parentNode.insertBefore(wrap, target);
     }
@@ -347,11 +327,7 @@
     const links = Array.isArray(data?.home_links) ? data.home_links : [];
     if (!links.length) return;
 
-    const colorMap = {
-      "bg-red-600": "#dc2626", "bg-slate-600": "#475569", "bg-amber-600": "#0ea5a4",
-      "bg-zinc-400": "#9ca3af", "bg-green-600": "#16a34a", "bg-pink-500": "#ec4899",
-      "bg-yellow-600": "#ca8a04", "bg-red-500": "#ef4444",
-    };
+    const colorMap = { "bg-red-600": "#dc2626", "bg-slate-600": "#475569", "bg-amber-600": "#0ea5a4", "bg-zinc-400": "#9ca3af", "bg-green-600": "#16a34a", "bg-pink-500": "#ec4899", "bg-yellow-600": "#ca8a04", "bg-red-500": "#ef4444" };
 
     host.innerHTML = "";
     links.forEach((l) => {
@@ -390,11 +366,7 @@
       gridEl = wrap;
     }
 
-    const groupMeta = {
-      study: "Study wise jobs", popular: "Popular job categories", state: "State wise jobs",
-      admissions: "Admissions", "admit-result": "Admit Card / Result",
-      khabar: "Latest Khabar", "study-material": "Study Material & Top Courses",
-    };
+    const groupMeta = { study: "Study wise jobs", popular: "Popular job categories", state: "State wise jobs", admissions: "Admissions", "admit-result": "Admit Card / Result", khabar: "Latest Khabar", "study-material": "Study Material & Top Courses" };
     if (titleEl) titleEl.textContent = groupMeta[group] || "Category";
 
     let data;
@@ -434,9 +406,6 @@
     else if (group === "khabar") items = sliceBetween(right, "latest khabar", "study material");
     else if (group === "study-material") items = sliceBetween(right, "study material", "tools");
 
-    // Filter Garbage
-    items = items.filter(i => !isGarbageLink(i));
-
     gridEl.innerHTML = "";
     items.forEach((it) => {
       const a = document.createElement("a");
@@ -448,15 +417,111 @@
     });
   }
 
-  // Tools Page
+  // ✅ TOOLS PAGE - Fixed with Fallback Data
   async function initToolsPage() {
-    if (page !== "tools.html") return;
+    // Looser check: works on 'tools.html' or '/tools'
+    if (!isToolsPage) return;
+
+    const categoriesView = $("#categories-view");
+    const toolsView = $("#tools-view");
     const toolsGrid = $("#tools-grid");
-    if (!toolsGrid) return;
-    try { await fetch("tools.json"); } catch(_) {}
+    const toolsTitle = $("#tools-title span") || $("#tools-title");
+    const backBtn = $("#back-button");
+    const categoryButtons = $$(".category-button");
+
+    if (!categoriesView || !toolsView || !toolsGrid || !categoryButtons.length) return;
+
+    // ✅ FALLBACK DATA (Restores functionality even if JSON fails)
+    const fallbackData = {
+      image: [
+         { name: "Image Resizer", url: "https://imageresizer.com/", icon: "fa-solid fa-compress", external: true },
+         { name: "Compress Image", url: "https://tinypng.com/", icon: "fa-solid fa-file-image", external: true },
+         { name: "Passport Photo Maker", url: "https://www.cutout.pro/passport-photo-maker", icon: "fa-solid fa-id-card", external: true }
+      ],
+      pdf: [
+         { name: "JPG to PDF", url: "https://www.ilovepdf.com/jpg_to_pdf", icon: "fa-solid fa-file-pdf", external: true },
+         { name: "Compress PDF", url: "https://www.ilovepdf.com/compress_pdf", icon: "fa-solid fa-file-zipper", external: true },
+         { name: "Merge PDF", url: "https://www.ilovepdf.com/merge_pdf", icon: "fa-solid fa-file-circle-plus", external: true }
+      ],
+      video: [
+         { name: "Video Compressor", url: "https://www.freeconvert.com/video-compressor", icon: "fa-solid fa-video", external: true },
+         { name: "MP4 to MP3", url: "https://cloudconvert.com/mp4-to-mp3", icon: "fa-solid fa-music", external: true }
+      ]
+    };
+
+    let toolsData = fallbackData;
+    try {
+      const r = await fetch("tools.json", { cache: "no-store" });
+      if (r.ok) {
+        const json = await r.json();
+        if (json && Object.keys(json).length > 0) toolsData = json;
+      }
+    } catch (_) {
+      console.log("Using fallback tools data");
+    }
+
+    const showCategories = () => {
+      toolsView.classList.add("hidden");
+      categoriesView.classList.remove("hidden");
+      // Update URL to remove query param cleanly
+      if(history.pushState) history.pushState(null, null, location.pathname);
+      window.scrollTo({ top: 0, behavior: "instant" });
+    };
+
+    const showTools = (categoryKey) => {
+      const list = Array.isArray(toolsData[categoryKey]) ? toolsData[categoryKey] : [];
+      const titleMap = { image: "Image Tools", pdf: "PDF Tools", video: "Video/Audio Tools" };
+      if (toolsTitle) toolsTitle.textContent = titleMap[categoryKey] || "Tools";
+
+      toolsGrid.innerHTML = "";
+      if (!list.length) {
+        toolsGrid.innerHTML = `<div class="col-span-full p-4 text-center text-gray-600">No tools found.</div>`;
+      } else {
+        list.forEach((t) => {
+          const name = safe(t.name) || "Open Tool";
+          const url = t.url || t.link || "";
+          if (!url) return;
+          const isExternal = t.external === true;
+          const a = document.createElement("a");
+          a.className = "p-4 rounded-lg bg-white border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition duration-300 flex items-start gap-3 text-left";
+          // Direct Link logic
+          a.href = isExternal ? normalizeUrl(url) : openInternal(url, name);
+          if (isExternal) { a.target = "_blank"; a.rel = "noopener"; }
+
+          const iconClass = safe(t.icon) || "fas fa-wand-magic-sparkles";
+          a.innerHTML = `
+            <div class="mt-0.5 text-xl text-blue-600"><i class="${iconClass}"></i></div>
+            <div><div class="font-semibold text-gray-800">${name}</div><div class="text-sm text-gray-500 mt-1">Open tool</div></div>
+          `;
+          toolsGrid.appendChild(a);
+        });
+      }
+
+      categoriesView.classList.add("hidden");
+      toolsView.classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "instant" });
+    };
+
+    if (backBtn) backBtn.addEventListener("click", showCategories);
+
+    categoryButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const key = safe(btn.getAttribute("data-category"));
+        if (!key) return;
+        showTools(key);
+      });
+    });
+
+    // ✅ SUPPORT DIRECT LINKS: tools.html?cat=image
+    const params = new URLSearchParams(location.search);
+    const cat = params.get("cat");
+    if (cat && toolsData[cat]) {
+      showTools(cat);
+    } else {
+      showCategories();
+    }
   }
 
-  // CSC
   function initCscModal() {
     const modal = $("#cscModal");
     const overlay = $("#cscModalOverlay");
@@ -479,16 +544,13 @@
     };
   }
 
-  // ✅ GLOBAL LIVE SEARCH - ROBUST
+  // Global Search logic
   async function initGlobalLiveSearch() {
-    // Collect unique inputs
     const inputs = [];
     const homeInput = document.getElementById("siteSearchInput");
     const sectionInput = document.getElementById("sectionSearchInput");
-    
     if (homeInput) inputs.push({ input: homeInput, resultsId: "searchResults" });
     if (sectionInput) inputs.push({ input: sectionInput, resultsId: "sectionSearchResults" });
-
     if (!inputs.length) return;
 
     let searchData = [];
@@ -502,39 +564,23 @@
 
       const push = (name, url, src) => {
         if(!name || !url) return;
-        if (isGarbageLink({name})) return;
+        const text = (name).toLowerCase();
+        if (text.includes("main home page") || text.includes("website ka main")) return;
         searchData.push({ name: name.trim(), url: url.trim(), src });
       };
 
-      if (dyn.sections) {
-        dyn.sections.forEach(s => s.items?.forEach(i => push(i.name || i.title, i.url || i.link, s.title || "Update")));
-      }
-      [jobs.top_jobs, jobs.left_jobs, jobs.right_jobs].forEach(arr => {
-        arr?.forEach(i => push(i.name || i.title, i.url || i.link, "Category"));
-      });
-      if (tools) {
-        Object.keys(tools).forEach(k => {
-          if(Array.isArray(tools[k])) tools[k].forEach(t => push(t.name, t.url, "Tool"));
-        });
-      }
-      if (services.services) {
-        services.services.forEach(s => push(s.name, "govt-services.html", "CSC Service"));
-      }
+      if (dyn.sections) dyn.sections.forEach(s => s.items?.forEach(i => push(i.name || i.title, i.url || i.link, s.title || "Update")));
+      [jobs.top_jobs, jobs.left_jobs, jobs.right_jobs].forEach(arr => arr?.forEach(i => push(i.name || i.title, i.url || i.link, "Category")));
+      if (tools) Object.keys(tools).forEach(k => { if(Array.isArray(tools[k])) tools[k].forEach(t => push(t.name, t.url, "Tool")); });
+      if (services.services) services.services.forEach(s => push(s.name, "govt-services.html", "CSC Service"));
     } catch (e) {}
 
-    // Attach listeners to each input
     inputs.forEach(({ input, resultsId }) => {
       const resultsWrap = document.getElementById(resultsId);
       if (!resultsWrap) return;
-
       const performSearch = () => {
         const query = input.value.toLowerCase().trim();
-        if (query.length < 2) {
-          resultsWrap.innerHTML = "";
-          resultsWrap.style.display = "none";
-          return;
-        }
-
+        if (query.length < 2) { resultsWrap.innerHTML = ""; resultsWrap.style.display = "none"; return; }
         const tokens = query.split(/\s+/).filter(t => t.length);
         const matches = searchData.filter(item => {
           const hay = (item.name + " " + item.src).toLowerCase();
@@ -545,22 +591,12 @@
         if (matches.length > 0) {
           resultsWrap.style.display = "block";
           matches.forEach(m => {
-            // ✅ DIRECT URL LOGIC
-            // If it's a standard URL (http/https), go there directly
-            // If it's a relative path, go there directly
-            // We just ensure it's a valid link.
             let href = normalizeUrl(m.url);
             const isExternal = href.startsWith("http") && !href.includes(location.hostname);
-            
             const a = document.createElement("a");
             a.className = "search-result-item";
             a.href = href;
-            // Add target blank for external
-            if (isExternal) {
-                a.target = "_blank";
-                a.rel = "noopener";
-            }
-            
+            if (isExternal) { a.target = "_blank"; a.rel = "noopener"; }
             a.innerHTML = `<div class="result-name">${m.name}</div><div class="result-meta">${m.src}</div>`;
             resultsWrap.appendChild(a);
           });
@@ -569,36 +605,22 @@
           resultsWrap.innerHTML = `<div class="search-no-results">No matches found.</div>`;
         }
       };
-
       input.addEventListener("input", performSearch);
       input.addEventListener("focus", () => { if(input.value.length >= 2) resultsWrap.style.display="block"; });
-      
-      document.addEventListener("click", (e) => {
-        if (!input.contains(e.target) && !resultsWrap.contains(e.target)) {
-          resultsWrap.style.display = "none";
-        }
-      });
+      document.addEventListener("click", (e) => { if (!input.contains(e.target) && !resultsWrap.contains(e.target)) resultsWrap.style.display = "none"; });
     });
   }
 
-  // Boot
   document.addEventListener("DOMContentLoaded", async () => {
     await injectHeaderFooter();
     await loadHeaderLinks();
     initOffcanvas();
     initDropdowns();
     initFAQ();
-
-    if (page === "index.html" || page === "") {
-      await renderHomepageSections();
-      await renderHomeQuickLinks();
-    }
-
+    if (page === "index.html" || page === "") { await renderHomepageSections(); await renderHomeQuickLinks(); }
     await initCategoryPage();
     await initToolsPage();
     initCscModal();
-    
-    // Initialize Search everywhere
     await initGlobalLiveSearch();
   });
 })();
