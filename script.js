@@ -6,7 +6,6 @@
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
 
   const safe = (v) => (v ?? "").toString().trim();
-  const escRE = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
   function normalizeUrl(raw) {
     const s = safe(raw);
@@ -17,7 +16,7 @@
     return "https://" + s.replace(/^\/+/, "");
   }
 
-  // Helper: Detect and block the "Main Home Page" garbage link
+  // ✅ HELPER: Block "Main Home Page" garbage link
   function isGarbageLink(item) {
     const text = (item.name || item.title || "").toLowerCase();
     const badPhrases = [
@@ -28,7 +27,6 @@
     return badPhrases.some(p => text.includes(p));
   }
 
-  // External URL wrapper
   function openInternal(url, name) {
     const u = normalizeUrl(url);
     return `view.html?url=${encodeURIComponent(u)}&name=${encodeURIComponent(name)}`;
@@ -387,7 +385,6 @@
     const group = safe(params.get("group")).toLowerCase();
 
     const titleEl = $("#categoryTitle") || $("h1");
-    const descEl = $("#categoryDesc") || $(".seo-block p");
     let gridEl = $("#categoryGrid") || $(".section-list");
     const emptyEl = $("#categoryEmpty");
 
@@ -399,7 +396,6 @@
       gridEl = wrap;
     }
 
-    // Mapping
     const groupMeta = {
       study: "Study wise jobs", popular: "Popular job categories", state: "State wise jobs",
       admissions: "Admissions", "admit-result": "Admit Card / Result",
@@ -469,14 +465,33 @@
       const r = await fetch("tools.json");
       data = await r.json();
     } catch(_) {}
-
-    // (Simplified for brevity - relies on specific IDs in tools.html)
-    // Note: Assuming tools logic is largely handled by onClick events in HTML or simplified here
-    // For this fix, we focus on the global items.
+    
+    // Logic for tools page handled by HTML onClick usually, but if needed we can expand.
   }
 
   // CSC
-  function initCscModal() { /* ... kept as is ... */ }
+  function initCscModal() {
+    const modal = $("#cscModal");
+    const overlay = $("#cscModalOverlay");
+    const closeBtn = $("#cscModalClose");
+    const form = $("#cscRequestForm");
+    if (!modal || !overlay || !closeBtn || !form) return;
+    
+    // ... (CSC modal logic remains standard)
+    const close = () => {
+      modal.hidden = true;
+      overlay.hidden = true;
+      document.body.style.overflow = "";
+    };
+    overlay.addEventListener("click", close);
+    closeBtn.addEventListener("click", close);
+    window.__openCscModal = (service) => {
+      if($("#cscServiceName")) $("#cscServiceName").textContent = service.name || "Service";
+      modal.hidden = false;
+      overlay.hidden = false;
+      document.body.style.overflow = "hidden";
+    };
+  }
 
   // ✅ GLOBAL LIVE SEARCH
   // Works on homepage AND view.html (if search bar exists)
@@ -580,6 +595,7 @@
 
     await initCategoryPage();
     await initToolsPage();
+    initCscModal();
     
     // Initialize Search everywhere (it checks for ID existence internally)
     await initGlobalLiveSearch();
