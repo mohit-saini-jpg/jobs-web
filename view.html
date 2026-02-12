@@ -22,9 +22,8 @@
     html,body{height:100%;}
     body{ display: flex; flex-direction: column; }
     main { flex: 1; }
-    
-    /* Ensure the search dropdown from script.js floats correctly */
-    #view-search-container { position: relative; }
+    /* Fix for search dropdown z-index */
+    #view-search-container { position: relative; z-index: 50; }
   </style>
 </head>
 
@@ -136,7 +135,7 @@
                  if(sec && sec.items) {
                      document.getElementById("loading").classList.add("hidden");
                      
-                     // ✅ FILTER: Remove "Main Home Page" link here locally too
+                     // ✅ FILTER: Remove "Main Home Page" link here
                      const cleanItems = sec.items.filter(i => {
                         const t = (i.name||i.title||"").toLowerCase();
                         return !t.includes("website का main home page") && !t.includes("main home page खोलने");
