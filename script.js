@@ -263,7 +263,7 @@
             <span>${title}</span>
           </div>
         </div>
-        <div class="section-body">
+        <div class="section-body text-center text-bold rounded border border-gray-300 p-4">
           <div class="section-list"></div>
           ${moreHref ? `<a class="view-all" href="${moreHref}">More <i class="fa-solid fa-arrow-right"></i></a>` : ""}
         </div>
