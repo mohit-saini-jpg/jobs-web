@@ -1012,6 +1012,7 @@
       "title": "Answer Key",
       "icon": "fas fa-trophy",
       "color": "#5D68D9",
+       "viewMoreType": "list",
       "items": [
         {
           "name": "NTA CMAT 2026 Exam Final Answer Key",
@@ -1177,6 +1178,7 @@
       "title": "10th Pass jobs",
       "icon": "fas fa-trophy",
       "color": "#f97316",
+       "viewMoreType": "list",
       "items": [
         {
           "name": "रेलवे में 22000 पदों पर भर्ती | 10वीं पास अभी करें आवेदन | RRB Railway Group D Last date 03-Mar-2026",
@@ -1675,6 +1677,7 @@
       "title": "12th Pass Jobs",
       "icon": "fas fa-trophy",
       "color": "#f97316",
+       "viewMoreType": "list",
       "items": [
         {
           "name": "HSSC द्वारा हरियाणा में निकली 4227 पदों पर बंपर भर्ती आवेदन शुरू HSSC Group C Vacancy 04/2026  Last Date: 23-Mar-2026",
@@ -2118,6 +2121,7 @@
       "title": "ITI Pass jobs",
       "icon": "fas fa-trophy",
       "color": "#8b5cf6",
+       "viewMoreType": "list",
       "items": [
         {
           "name": "चंडीगढ़ पुलिस में निकली 10th पास के लिए दर्जी के पदों पर भर्ती, अभी लिंक से करें ऑनलाइन आवेदन Last Date 02-03-2026",
@@ -2256,6 +2260,7 @@
       "title": "Diploma /B.Tech Jobs",
       "icon": "fas fa-trophy",
       "color": "#FF4000",
+       "viewMoreType": "list",
       "items": [
         {
           "name": "BSNL में निकली 120 सीनियर एक्जीक्यूटिव पदों पर बंपर सरकारी भर्ती का नोटिस जारी 07 March 2026",
@@ -2754,6 +2759,7 @@
       "title": "Graduation jobs",
       "icon": "fas fa-trophy",
       "color": "#34518A",
+       "viewMoreType": "list",
       "items": [
         {
           "name": "Punjab and Haryana हाई कोर्ट में निकली Steno Typist के पदों पर भर्ती, अभी से करें ऑनलाइन अप्लाई  Last Date 26 February 2026",
@@ -3352,6 +3358,7 @@
       "title": "Post Graduation jobs",
       "icon": "fas fa-trophy",
       "color": "#ac938e",
+       "viewMoreType": "list",
       "items": [
         {
           "name": "BHU Jobs 2026 Project Research Scientist, Project Technical Support Last Date: 07-Mar-2026",
@@ -3685,6 +3692,7 @@
       "title": "Medical/Healthcare Jobs",
       "icon": "fas fa-trophy",
       "color": "#00FFA4",
+       "viewMoreType": "list",
       "items": [
         {
           "name": "PGI Chandigarh Bharti 2026 | Security Guard, Driver, Lab Assistant | Apply Now  Ends: Mar 16, 2026",
@@ -3763,6 +3771,7 @@
       "title": "Offline jobs",
       "icon": "fas fa-trophy",
       "color": "#CAD64D",
+       "viewMoreType": "list",
       "items": [
         {
           "name": "हरियाणा में निकली Tubewell Operator Vacancy 2026 Last Date : 07/03/2026",
@@ -3836,6 +3845,7 @@
       "title": "Admission/Education",
       "icon": "fas fa-trophy",
       "color": "#00FFA4",
+       "viewMoreType": "list",
       "items": [
         {
           "name": "MP CPCT Online Form 2026 | Last Date: 22/02/2026",
@@ -3889,6 +3899,7 @@
       "title": "State jobs",
       "icon": "fas fa-trophy",
       "color": "#E31E53",
+       "viewMoreType": "list",
       "items": [
         {
           "name": "ग्रामीण डाक सेवक (GDS) भर्ती में सुधार (Correction) की तिथि Last Date : 19/02/2026",
@@ -4182,6 +4193,7 @@
       "title": "Central jobs",
       "icon": "fas fa-trophy",
       "color": "#00E4FA",
+       "viewMoreType": "list",
       "items": [
         {
           "name": "IAF Agniveer (Non-Combatant) Offline Form Last Date : 04/03/2026",
@@ -4395,6 +4407,7 @@
       "title": "Railway Jobs",
       "icon": "fas fa-trophy",
       "color": "#36C99D",
+       "viewMoreType": "list",
       "items": [
         {
           "name": "RRB Group D – 22195 Posts, ITI, 10TH, Last Date: 02-03-2026",
@@ -4473,6 +4486,7 @@
       "title": "Teacher Jobs",
       "icon": "fas fa-trophy",
       "color": "#BF42C2",
+       "viewMoreType": "list",
       "items": [
         {
           "name": "ANIIMS Faculty – 34 Posts DNB, MS/MD Last Date: 28-02-2026",
@@ -4601,6 +4615,7 @@
       "title": "Police Jobs",
       "icon": "fas fa-trophy",
       "color": "#DBA13D",
+       "viewMoreType": "list",
       "items": [
         {
           "name": "Assam Police Constable (1715 Posts) - 12TH, 10TH - Last Date: 28-02-2026",
@@ -4759,6 +4774,7 @@
       "title": "Bank jobs",
       "icon": "fas fa-trophy",
       "color": "#3CC258",
+       "viewMoreType": "list",
       "items": [
         {
           "name": "SBI बैंक में निकली 2000+ CBO पदों पर बंपर भर्ती कल से ऑनलाइन आवेदन शुरू Last Date: 18/02/2026",
@@ -4897,6 +4913,7 @@
       "title": "Indian ARMY jobs",
       "icon": "fas fa-trophy",
       "color": "#50F25E",
+       "viewMoreType": "list",
       "items": [
         {
           "name": "Army NCC Special Entry 124 Course Online Form 2026 Last Date 16/03/2026",
@@ -4995,6 +5012,7 @@
       "title": "Indian Air Force jobs",
       "icon": "fas fa-trophy",
       "color": "#50F25E",
+       "viewMoreType": "list",
       "items": [
         {
           "name": "IAF Agniveervayu Non-Combatant Recruitment 2026: Offline Application, Eligibility, Salary & Dates Last Date: Feb 23, 2026",
@@ -5031,6 +5049,7 @@
       "title": "Govt Scheme & Yojna",
       "icon": "fas fa-trophy",
       "color": "#913030",
+       "viewMoreType": "list",
       "items": [
         {
           "name": "हरियाणा सरकार ने GST चोरी रोकने के लिए ‘कर हितैषी’ (Kar Hiteshi) मोबाइल ऐप लॉन्च",
@@ -5340,6 +5359,7 @@
       "title": "ImportantCSC PDF",
       "icon": "fas fa-trophy",
       "color": "#00FFA4",
+       "viewMoreType": "list",
       "items": [
         {
           "name": "SC किसानों के ट्रैक्टर ड्रा लिस्ट जारी SC Farmers Tractor Draw List 2026 (PDF)",
@@ -5563,6 +5583,7 @@
       "title": "ImportantCSC link",
       "icon": "fas fa-trophy",
       "color": "#6527F5",
+       "viewMoreType": "list",
       "items": [
         {
           "name": " लाडो लक्ष्मी योजना: पैसा आया  है या नहीं आया यहाँ से चेक करें",
@@ -5806,6 +5827,7 @@
       "title": "Top 20 Jobs",
       "icon": "fas fa-trophy",
       "color": "#6D0FF7",
+       "viewMoreType": "list",
       "items": [
         {
           "name": "Indian Army Agniveer Rally Bharti 2026 (GD, Technical, Female & Others) Last Date 01/04/2026",
@@ -5929,6 +5951,7 @@
       "title": "TOP Headlines Today",
       "icon": "fas fa-trophy",
       "color": "#FF4000",
+       "viewMoreType": "list",
       "items": [
         {
           "name": " Latest Jobs",
@@ -6072,6 +6095,7 @@
       "title": "Haryana All State Jobs",
       "icon": "fas fa-trophy",
       "color": "#F24EEC",
+       "viewMoreType": "list",
       "items": [
         {
           "name": "Ambala Jobs",
