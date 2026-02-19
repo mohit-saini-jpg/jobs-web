@@ -1,1095 +1,626 @@
-document.addEventListener("DOMContentLoaded", async () => {
-  // Load Supabase config and initialize only if available
-  let supabase = null;
-  if (window.supabase) {
-    try {
-      const configResponse = await fetch('config.json');
-      const supabaseConfig = await configResponse.json();
-      supabase = window.supabase.createClient(supabaseConfig.supabase.url, supabaseConfig.supabase.anonKey);
-    } catch (error) {
-      console.warn('Could not load Supabase config:', error);
-    }
+(() => {
+  "use strict";
+
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  // Relaxed page detection (checks if 'tools' is in the URL)
+  const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
+  const isToolsPage = location.pathname.includes("tools");
+
+  const safe = (v) => (v ?? "").toString().trim();
+
+  function normalizeUrl(raw) {
+    const s = safe(raw);
+    if (!s) return "";
+    if (/^(https?:)?\/\//i.test(s) || /^(mailto:|tel:)/i.test(s)) return s;
+    if (s.startsWith("#") || s.startsWith("?")) return s;
+    if (s.startsWith("/") || s.endsWith(".html") || s.startsWith("./") || s.startsWith("../")) return s;
+    return "https://" + s.replace(/^\/+/, "");
   }
 
-  // Detect current page
-  const currentPage = window.location.pathname.split("/").pop() || "index.html";
-
-  // Load data from appropriate JSON file
-  let data;
-  const jsonFile =
-    currentPage === "index.html" || currentPage === ""
-      ? "jobs.json"
-      : currentPage === "tools.html"
-      ? "tools.json"
-      : "services.json";
-  try {
-    const response = await fetch(jsonFile);
-    data = await response.json();
-  } catch (error) {
-    console.error("Error loading data:", error);
-    // Fallback empty data
-    data = {
-      image: [],
-      pdf: [],
-      video: [],
-      services: [],
-      top_jobs: [],
-      left_jobs: [],
-      right_jobs: [],
-      news: [],
-      scrolling_jobs: [],
-      home_links: [],
-    };
+  function openInternal(url, name) {
+    const u = normalizeUrl(url);
+    return `view.html?url=${encodeURIComponent(u)}&name=${encodeURIComponent(name)}`;
   }
 
-  // Load dynamic sections data (for homepage)
-  let dynamicSections = null;
-  if (currentPage === "index.html" || currentPage === "") {
-    try {
-      const response = await fetch("dynamic-sections.json");
-      dynamicSections = await response.json();
-    } catch (error) {
-      console.error("Error loading dynamic sections:", error);
-      dynamicSections = { sections: [] };
-    }
-  }
-
-  // Load header links (separate JSON)
-  let headerData = null;
-  try {
-    const resp = await fetch("header_links.json");
-    headerData = await resp.json();
-  } catch (err) {
-    console.warn("No header_links.json found or failed to load", err);
-    headerData = { header_links: [], home_links: [] };
-  }
-
-  // Render header links (desktop + mobile)
-  function loadHeaderLinks(headerData) {
-    if (!headerData) return;
-    const desktopContainer = document.getElementById("header-links");
-    const mobileContainer = document.getElementById("header-links-mobile");
-
-    const links = headerData.header_links || [];
-    if (desktopContainer) {
-      links.forEach((l) => {
-        const a = document.createElement("a");
-        a.href = l.link || l.url || "#";
-        a.target = "_blank";
-        a.rel = "noopener noreferrer";
-        const colorClass = l.color ? l.color : "bg-gray-800";
-        a.className = `${colorClass} text-white px-4 py-2 rounded-lg font-semibold hover:opacity-90 transition duration-200 flex items-center`;
-        a.innerHTML = `${l.name}`;
-        desktopContainer.appendChild(a);
-      });
-    }
-
-    if (mobileContainer) {
-      links.forEach((l) => {
-        const a = document.createElement("a");
-        a.href = l.link || l.url || "#";
-        a.target = "_blank";
-        a.rel = "noopener noreferrer";
-        a.className = `px-4 py-2 rounded-lg bg-white text-blue-600 font-semibold hover:bg-blue-50 transition duration-200 block`;
-        a.textContent = l.name;
-        mobileContainer.appendChild(a);
-      });
-    }
-  }
-
-  // Get URL parameters
-  const urlParams = new URLSearchParams(window.location.search);
-  const jobParam = urlParams.get("job");
-  const toolParam = urlParams.get("tool");
-
-  // Page-specific elements
-  const mainCategories = document.getElementById("main-categories");
-  const subCategories = document.getElementById("sub-categories");
-  const backButton = document.getElementById("back-button");
-  const subCategoryTitle = document.getElementById("sub-category-title");
-  const toolsCards = document.getElementById("tools-cards");
-  const servicesCards = document.getElementById("services-cards");
-  const toolIframe = document.getElementById("tool-iframe");
-  const serviceModal = document.getElementById("service-modal");
-  const modalServiceContent = document.getElementById("modal-service-content");
-  const closeModalBtn = document.getElementById("close-modal");
-  const loadingOverlay = document.getElementById("loading-overlay");
-  const defaultState = document.getElementById("default-state");
-
-  // Mobile menu elements
-  const mobileMenuToggle = document.getElementById("mobile-menu-toggle");
-  const mobileMenu = document.getElementById("mobile-menu");
-
-  // Mobile menu toggle
-  if (mobileMenuToggle && mobileMenu) {
-    mobileMenuToggle.addEventListener("click", () => {
-      mobileMenu.classList.toggle("hidden");
-    });
-
-    // Close mobile menu when clicking a link
-    mobileMenu.querySelectorAll("a").forEach((link) => {
-      link.addEventListener("click", () => {
-        mobileMenu.classList.add("hidden");
-      });
-    });
-
-    // Close mobile menu when clicking outside
-    document.addEventListener("click", (e) => {
-      if (
-        !mobileMenu.contains(e.target) &&
-        !mobileMenuToggle.contains(e.target)
-      ) {
-        mobileMenu.classList.add("hidden");
-      }
-    });
-  }
-
-  // Render header links (if any)
-  loadHeaderLinks(headerData);
-
-  // Category names mapping
-  const categoryNames = {
-    image: "Image Tools",
-    pdf: "PDF Tools",
-    video: "Video/Audio Tools",
+  window.goBack = () => {
+    if (window.history.length > 1) window.history.back();
+    else window.location.href = "index.html";
   };
 
-  // Category icons mapping
-  const categoryIcons = {
-    image: "fas fa-image text-green-500",
-    pdf: "fas fa-file-pdf text-blue-500",
-    video: "fas fa-video text-purple-500",
-  };
-
-  // Load content based on current page
-  if (currentPage === "index.html" || currentPage === "") {
-    // Jobs page
-    loadJobs();
-    loadDynamicSections(dynamicSections);
-    loadHomeLinks();
-    loadFooterSocialLinks();
-    loadWhatsAppChat();
-  } else if (currentPage === "govt-services.html") {
-    // Government services page
-    loadGovernmentServices();
-
-    // Close modal event listeners
-    if (closeModalBtn) {
-      closeModalBtn.addEventListener("click", () => {
-        serviceModal.classList.add("hidden");
-      });
-    }
-
-    // Close modal when clicking outside
-    if (serviceModal) {
-      serviceModal.addEventListener("click", (e) => {
-        if (e.target === serviceModal) {
-          serviceModal.classList.add("hidden");
-        }
-      });
-    }
-  } else if (currentPage === "tools.html") {
-    // Tools page
-    loadToolsSection();
-  }
-
-  // Function to load tools section (only on tools.html)
-  function loadToolsSection() {
-    const categoriesView = document.getElementById("categories-view");
-    const toolsView = document.getElementById("tools-view");
-    const toolsGrid = document.getElementById("tools-grid");
-    const toolsTitle = document.getElementById("tools-title");
-    const backButton = document.getElementById("back-button");
-
-    if (!categoriesView || !toolsView) return;
-
-    // Update tool counts in category buttons
-    document.querySelectorAll(".category-button").forEach((button) => {
-      const category = button.dataset.category;
-      if (data[category] && Array.isArray(data[category])) {
-        const count = data[category].length;
-        const countElement = button.querySelector(".text-sm.text-gray-500");
-        if (countElement) {
-          countElement.textContent = `${count} tools available`;
-        }
-      }
-    });
-
-
-    // Get URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    const category = urlParams.get('category');
-
-    if (category && data[category]) {
-      // Show tools for the category
-      showToolsForCategory(category, toolsView, toolsGrid, toolsTitle, backButton);
-    } else {
-      // Show categories
-      showCategories(categoriesView, toolsView);
-    }
-
-    // Handle category button clicks
-    document.querySelectorAll(".category-button").forEach((button) => {
-      button.addEventListener("click", () => {
-        const cat = button.dataset.category;
-        window.location.href = `tools.html?category=${cat}`;
-      });
-    });
-
-    // Handle back button
-    if (backButton) {
-      backButton.addEventListener("click", () => {
-        window.location.href = 'tools.html';
-      });
-    }
-  }
-
-  // Function to show categories view
-  function showCategories(categoriesView, toolsView) {
-    categoriesView.classList.remove("hidden");
-    toolsView.classList.add("hidden");
-  }
-
-  // Function to show tools for a category
-  function showToolsForCategory(category, toolsView, toolsGrid, toolsTitle, backButton) {
-    const categoriesView = document.getElementById("categories-view");
-    categoriesView.classList.add("hidden");
-    toolsView.classList.remove("hidden");
-
-    // Update title
-    const titleIcon = toolsTitle.querySelector("i");
-    const titleText = toolsTitle.querySelector("span");
-
-    titleIcon.className = categoryIcons[category];
-    titleText.textContent = categoryNames[category];
-
-    // Clear existing tools
-    toolsGrid.innerHTML = "";
-
-    // Add tools as cards
-    const tools = data[category];
-    tools.forEach((tool) => {
-      const toolCard = document.createElement("div");
-      toolCard.className =
-        "bg-white p-4 rounded-lg border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition duration-300 cursor-pointer";
-      toolCard.innerHTML = `
-        <div class="flex items-center mb-2">
-          <i class="${tool.icon} text-2xl mr-3 text-gray-600"></i>
-          <h4 class="font-semibold text-gray-800">${tool.name}</h4>
-        </div>
-        <p class="text-sm text-gray-500">Click to open tool</p>
-      `;
-
-      toolCard.addEventListener("click", () => {
-        if (tool.external) {
-          // Open in new tab
-          window.open(tool.url, '_blank');
-        } else {
-          // Open in view.html
-          const viewUrl = `view.html?url=${encodeURIComponent(tool.url)}&name=${encodeURIComponent(tool.name)}&type=tool`;
-          window.location.href = viewUrl;
-        }
-      });
-
-      toolsGrid.appendChild(toolCard);
-    });
-  }
-
-  // Function to auto-load a tool based on URL parameter
-  function autoLoadTool(toolName) {
-    // Search for the tool in all categories
-    let foundTool = null;
-    let foundCategory = null;
-
-    for (const [category, tools] of Object.entries(data)) {
-      if (
-        category === "services" ||
-        category === "top_jobs" ||
-        category === "left_jobs" ||
-        category === "right_jobs" ||
-        category === "news" ||
-        category === "scrolling_jobs" ||
-        category === "home_links"
-      )
-        continue;
-
-      const tool = tools.find(
-        (t) =>
-          t.name.toLowerCase().replace(/\s+/g, "-") ===
-            toolName.toLowerCase() ||
-          t.name.toLowerCase() === toolName.toLowerCase().replace(/-/g, " ")
-      );
-
-      if (tool) {
-        foundTool = tool;
-        foundCategory = category;
-        break;
-      }
-    }
-
-    if (foundTool && foundCategory) {
-      // Show the sub-categories for this category
-      showSubCategories(foundCategory);
-      // Load the tool
-      setTimeout(() => {
-        loadTool(foundTool.url);
-      }, 100);
-    }
-  }
-
-  // Function to load government services
-  function loadGovernmentServices() {
-    if (!servicesCards) return;
-
-    const services = data.services;
-    servicesCards.innerHTML = "";
-
-    services.forEach((service) => {
-      const serviceCard = document.createElement("div");
-      serviceCard.className =
-        "service-card bg-white p-3 rounded-lg border border-green-200 hover:bg-green-50 hover:border-green-300 transition duration-300 cursor-pointer";
-      serviceCard.innerHTML = `
-        <div class="flex items-center mb-1">
-          <i class="${service.icon} text-2xl mr-3 text-green-600"></i>
-          <h4 class="font-semibold text-gray-800 text-sm">${service.name}</h4>
-        </div>
-      `;
-
-      serviceCard.addEventListener("click", () => {
-        showServiceDetails(service);
-      });
-
-      servicesCards.appendChild(serviceCard);
-    });
-  }
-
-  // Function to load home links
-  function loadHomeLinks() {
-    // Prefer home links from header_links.json (moved), fall back to jobs.json
-    const homeLinks =
-      headerData && headerData.home_links
-        ? headerData.home_links
-        : data.home_links || [];
-    const homeSection = document.getElementById("home-section");
-
-    if (!homeSection) return;
-
-    homeLinks.forEach((home) => {
-      const button = document.createElement("div");
-      button.className = `${home.color} text-white w-fit py-1 px-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 flex items-center justify-center font-bold text-sm cursor-pointer`;
-      button.innerHTML = `
-        ${home.name}
-      `;
-      button.addEventListener("click", () => {
-        openLink(home);
-      });
-      homeSection.appendChild(button);
-    });
-  }
-
-  // Function to load dynamic sections (Latest Jobs, Upcoming Jobs, etc.)
-  function loadDynamicSections(dynamicSectionsData) {
-    if (!dynamicSectionsData || !dynamicSectionsData.sections) return;
-
-    const desktopContainer = document.getElementById("dynamic-sections-desktop");
-    const mobileContainer = document.getElementById("dynamic-sections-mobile");
-
-    if (!desktopContainer || !mobileContainer) return;
-
-    // Clear existing content
-    desktopContainer.innerHTML = "";
-    mobileContainer.innerHTML = "";
-
-    const sections = dynamicSectionsData.sections;
-
-    // Create rows of 2 sections each for desktop
-    for (let i = 0; i < sections.length; i += 2) {
-      const row = document.createElement("div");
-      row.className = "flex flex-row gap-4";
-
-      // First section in the row
-      const section1 = sections[i];
-      row.appendChild(createSectionBox(section1, false));
-
-      // Second section in the row (if exists)
-      if (i + 1 < sections.length) {
-        const section2 = sections[i + 1];
-        row.appendChild(createSectionBox(section2, false));
-      }
-
-      desktopContainer.appendChild(row);
-    }
-
-    // Create individual boxes for mobile
-    sections.forEach((section) => {
-      mobileContainer.appendChild(createSectionBox(section, true));
-    });
-  }
-
-  // Helper function to create a section box
-  function createSectionBox(section, isMobile) {
-    const box = document.createElement("div");
-    box.className = "w-full " + (isMobile ? "" : "lg:w-1/2") + " bg-white rounded-lg my-6";
-
-    // Extract color from hex string
-    const colorHex = section.color || "#3b82f6";
-    const colorName = getColorName(colorHex);
-
-    // Header
-    const header = document.createElement("h4");
-    header.className = `text-xl font-semibold text-white bg-[${colorHex}] p-2 rounded mb-2 flex items-center`;
-    header.innerHTML = `
-      <i class="${section.icon || 'fas fa-briefcase'} mr-2" style="color: white"></i>
-      ${section.title}
-    `;
-    box.appendChild(header);
-
-    // Content container
-    const contentWrapper = document.createElement("div");
-    contentWrapper.className = "relative";
-
-    // Items container
-    const itemsContainer = document.createElement("div");
-    itemsContainer.className = "space-y-2";
-
-    // Show max 10 items
-    const itemsToShow = section.items.slice(0, 10);
-    itemsToShow.forEach((item) => {
-      const itemDiv = document.createElement("div");
-      itemDiv.className = `bg-${colorName}-50 p-3 rounded border-l-4 border-${colorName}-500 cursor-pointer hover:bg-${colorName}-100 hover:shadow transition duration-300`;
-      itemDiv.style.backgroundColor = getLightColor(colorHex, 0.9);
-      itemDiv.style.borderLeftColor = colorHex;
-
-      let badgeHTML = "";
-      if (item.badge) {
-        badgeHTML = `<span class="${item.badgeColor || 'bg-blue-500'} text-white text-xs font-bold px-2 py-1 rounded ml-2">${item.badge}</span>`;
-      }
-
-      itemDiv.innerHTML = `
-        <div class="flex justify-between items-start">
-          <p class="text-sm font-medium text-gray-700 flex-1">${item.name}${badgeHTML}</p>
-        </div>
-        ${item.date ? `<p class="text-xs text-gray-500 mt-1">${item.date}</p>` : ""}
-      `;
-
-      itemDiv.addEventListener("click", () => {
-        openLink(item);
-      });
-
-      itemsContainer.appendChild(itemDiv);
-    });
-
-    contentWrapper.appendChild(itemsContainer);
-
-    // View More button
-    const viewMoreDiv = document.createElement("div");
-    viewMoreDiv.className = "mt-2 py-4";
-
-    const viewMoreBtn = document.createElement("a");
-    viewMoreBtn.className = `block w-fit mx-auto text-center bg-gray-700 hover:bg-gray-800 text-white font-semibold py-2 px-4 rounded transition duration-300`;
-    viewMoreBtn.style.color = "#ffffff";
- 
-    if (section.viewMoreType === "external" && section.viewMoreUrl) {
-      viewMoreBtn.href = section.viewMoreUrl;
-      viewMoreBtn.target = "_blank";
-    } else if (section.viewMoreType === "internal" && section.viewMoreUrl) {
-      viewMoreBtn.href = `view.html?url=${encodeURIComponent(section.viewMoreUrl)}&name=${encodeURIComponent(section.title)}`;
-    } else {
-      viewMoreBtn.href = `view.html?section=${section.id}`;
-    }
-
-    viewMoreBtn.innerHTML = 'View More<i class="fas fa-arrow-right ml-2"></i>';
-    viewMoreDiv.appendChild(viewMoreBtn);
-    contentWrapper.appendChild(viewMoreDiv);
-
-    box.appendChild(contentWrapper);
-    return box;
-  }
-
-  // Helper function to get color name from hex (approximation)
-  function getColorName(hex) {
-    const colorMap = {
-      "#3b82f6": "blue",
-      "#60a5fa": "blue",
-      "#2563eb": "blue",
-      "#34518A": "blue",
-      "#5D68D9": "indigo",
-      "#f59e0b": "amber",
-      "#fbbf24": "yellow",
-      "#d97706": "orange",
-      "#f97316": "orange",
-      "#10b981": "green",
-      "#34d399": "emerald",
-      "#059669": "green",
-      "#40825B": "green",
-      "#00FFA4": "green",
-      "#8b5cf6": "purple",
-      "#a78bfa": "purple",
-      "#7c3aed": "violet",
-      "#ef4444": "red",
-      "#f87171": "red",
-      "#dc2626": "red",
-      "#E31E53": "red",
-      "#913030": "red",
-      "#06b6d4": "cyan",
-      "#22d3ee": "cyan",
-      "#0891b2": "cyan",
-      "#00E4FA": "cyan",
-      "#dc7ec7": "pink",
-      "#fb7185": "rose",
-      "#ac938e": "stone",
-      "#CAD64D": "lime",
-    };
-    return colorMap[hex.toLowerCase()] || "blue";
-  }
-
-  // Function to load social links in footer
-  function loadFooterSocialLinks() {
-    const socialLinks = headerData && headerData.social_links ? headerData.social_links : [];
-    const footerSocialSection = document.getElementById("footer-social-links");
-
-    if (!footerSocialSection) return;
-
-    socialLinks.forEach((social) => {
-      const link = document.createElement("a");
-      link.href = social.url;
-      link.target = "_blank";
-      link.className = `${social.color} text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 flex items-center justify-center font-semibold`;
-      link.innerHTML = `<i class="${social.icon} mr-2"></i>${social.name}`;
-      link.title = social.name;
-      footerSocialSection.appendChild(link);
-    });
-  }
-
-  // Function to load jobs
-  function loadJobs() {
-    const topJobs = data.top_jobs || [];
-    const leftJobs = data.left_jobs || [];
-    const rightJobs = data.right_jobs || [];
-    const topButtons = document.getElementById("jobs-top-buttons");
-    const leftSection = document.getElementById("jobs-left-section");
-    const rightSection = document.getElementById("jobs-right-section");
-
-    if (!topButtons || !leftSection || !rightSection) return;
-
-    // Top buttons (2 rows of 3)
-    // Support a `color` property on title entries. When a title has a color,
-    // subsequent job buttons will use a lighter version of that color as
-    // their background until the next title.
-    let currentTopColor = null;
-    topJobs.forEach((job) => {
-      if (job.title) {
-        // It's a title — update current color if provided
-        if (job.color) currentTopColor = job.color;
-        else currentTopColor = null;
-
-        const titleDiv = document.createElement("div");
-        titleDiv.className = "col-span-full text-left mt-4 py-1";
-        titleDiv.innerHTML = `<h3 class="text-2xl font-bold px-2 text-white">${job.title}</h3>`;
-        titleDiv.style.backgroundColor = currentTopColor
-          ? getLightColor(currentTopColor, 0.05)
-          : "transparent";
-        topButtons.appendChild(titleDiv);
-      } else {
-        // It's a button
-        const button = document.createElement("div");
-        button.className =
-          "p-1 ps-2 border-1 hover:shadow-lg transition duration-300 cursor-pointer flex items-center";
-
-        // If a current color is set on the last title, apply a lighter background
-        if (currentTopColor) {
-          // Try to compute a light variant for hex or rgb colors; otherwise, set as class
-          const light = getLightColor(currentTopColor, 0.75);
-          if (light) {
-            const border = getLightColor(currentTopColor, 0.45);
-            if (border) button.style.borderColor = border;
-          }
-        }
-
-        button.innerHTML = `
-          <span class="font-bold text-gray-800 text-xs">${job.name}</span>
-        `;
-        button.addEventListener("click", () => {
-          openLink(job);
-        });
-        topButtons.appendChild(button);
-      }
-    });
-
-    // Left section
-    let currentLeftColor = null;
-    leftJobs.forEach((job) => {
-      if (job.title) {
-        if (job.color) currentLeftColor = job.color;
-        else currentLeftColor = null;
-
-        const titleDiv = document.createElement("div");
-        titleDiv.className = "col-span-full text-left py-1 mt-4";
-        titleDiv.innerHTML = `<h3 class="text-2xl font-bold px-2 text-white">${job.title}</h3>`;
-        titleDiv.style.backgroundColor = currentLeftColor
-          ? getLightColor(currentLeftColor, 0.05)
-          : "transparent";
-        leftSection.appendChild(titleDiv);
-      } else {
-        const button = document.createElement("div");
-        button.className =
-          "p-1 ps-2 border-1 hover:shadow-lg transition duration-300 cursor-pointer flex items-center";
-
-        if (currentLeftColor) {
-          const light = getLightColor(currentLeftColor, 0.75);
-          if (light) {
-            const border = getLightColor(currentLeftColor, 0.45);
-            if (border) button.style.borderColor = border;
-          }
-        }
-
-        button.innerHTML = `
-          <span class="font-bold text-gray-800 text-sm">${job.name}</span>
-        `;
-        button.addEventListener("click", () => {
-          openLink(job);
-        });
-        leftSection.appendChild(button);
-      }
-    });
-
-    // Right section
-    let currentRightColor = null;
-    rightJobs.forEach((job) => {
-      if (job.title) {
-        if (job.color) currentRightColor = job.color;
-        else currentRightColor = null;
-
-        const titleDiv = document.createElement("div");
-        titleDiv.className = "col-span-full text-left py-1 mt-4";
-        titleDiv.innerHTML = `<h3 class="text-2xl font-bold px-2 text-white">${job.title}</h3>`;
-        titleDiv.style.backgroundColor = currentRightColor
-          ? getLightColor(currentRightColor, 0.05)
-          : "transparent";
-        rightSection.appendChild(titleDiv);
-      } else {
-        const button = document.createElement("div");
-        button.className =
-          "p-1 ps-2 border-1 hover:shadow-lg transition duration-300 cursor-pointer flex items-center";
-        button.style.backgroundColor = "#ffffff";
-        button.style.borderColor = "#bfdbfe";
-
-        if (currentRightColor) {
-          const light = getLightColor(currentRightColor, 0.75);
-          if (light) {
-            const border = getLightColor(currentRightColor, 0.45);
-            if (border) button.style.borderColor = border;
-            button.style.color = readableTextColor(currentRightColor);
-          }
-        }
-
-        button.innerHTML = `
-          <span class="font-bold text-gray-800 text-sm">${job.name}</span>
-        `;
-        button.addEventListener("click", () => {
-          openLink(job);
-        });
-        rightSection.appendChild(button);
-      }
-    });
-  }
-
-  // Function to open link - internal view or external
-  function openLink(link) {
-    if (link.external) {
-      window.open(link.url, '_blank');
-    } else {
-      const params = new URLSearchParams({
-        url: encodeURIComponent(link.url),
-        name: encodeURIComponent(link.name),
-        job: link.name.toLowerCase().replace(/\s+/g, "-"),
-      });
-      window.location.href = `view.html?${params.toString()}`;
-    }
-  }
-
-
-
-  // Function to show service details in modal
-  function showServiceDetails(service) {
-    modalServiceContent.innerHTML = `
-      <div class="text-center mb-8">
-        <h2 class="text-4xl font-bold text-gray-800 mb-4">
-          <i class="fas fa-gavel mr-3 text-green-600"></i>
-          Service Request
-        </h2>
-        <div class="w-24 h-1 bg-green-600 mx-auto mb-4"></div>
-      </div>
-
-      <div class="mb-8">
-        <h3 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
-          <i class="fas fa-user text-green-500 mr-3"></i>
-          Your Information
-        </h3>
-        <form id="serviceForm">
-          <div class="grid md:grid-cols-2 gap-6 mb-6">
-            <div>
-              <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-              <input type="text" id="name" name="name" required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-            <div>
-              <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-              <input type="tel" id="phone" name="phone" required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-          </div>
-          <div class="flex justify-center">
-            <button type="submit"
-              class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition duration-300 font-medium">
-              <i class="fas fa-paper-plane mr-2"></i>Submit Request
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <div class="mb-8">
-        <h3 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
-          <i class="fas fa-info-circle text-blue-500 mr-3"></i>
-          Selected Service
-        </h3>
-        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-          <p class="text-xl font-medium text-blue-800">${service.name}</p>
-        </div>
-      </div>
-
-      <div class="mb-8">
-        <h3 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
-          <i class="fas fa-list-check text-purple-500 mr-3"></i>
-          Required Documents
-        </h3>
-        <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
-          <ul id="documentsList" class="text-gray-700 space-y-2">
-            <!-- Documents will be populated based on service -->
-          </ul>
-        </div>
-      </div>
-
-      <div class="mb-8">
-        <h3 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
-          <i class="fas fa-clock text-orange-500 mr-3"></i>
-          Processing Time
-        </h3>
-        <div class="bg-orange-50 border-l-4 border-orange-500 p-4 rounded">
-          <p id="processingTime" class="text-gray-700">2-7 working days</p>
-        </div>
-      </div>
-    `;
-
-    // Populate documents
-    populateDocuments(service.documents);
-
-    // Handle form submission: POST to Supabase with JSON payload
-    const form = modalServiceContent.querySelector("#serviceForm");
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const submitBtn = form.querySelector('button[type="submit"]');
-      const originalText = submitBtn.innerHTML;
-
-      // Disable button to prevent double submission
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Submitting...';
-      submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
-
-      const name = form.querySelector("#name").value.trim();
-      const phone = form.querySelector("#phone").value.trim();
-
-      try {
-        // Insert into Supabase if available
-        if (supabase) {
-          const { data, error } = await supabase
-            .from('service_requests')
-            .insert([
-              {
-                name: name,
-                phone: phone,
-                service: service.name,
-                created_at: new Date().toISOString()
-              }
-            ]);
-
-          if (error) {
-            console.error('Error submitting service request:', error);
-            alert('Failed to submit your request. Please try again.');
-            return;
-          }
-        } else {
-          console.warn('Supabase not available, saving to localStorage only');
-        }
-
-        // Save to localStorage as fallback
+  async function injectHeaderFooter() {
+    const headerHost = document.getElementById("site-header");
+    const footerHost = document.getElementById("site-footer");
+    if (!headerHost && !footerHost) return;
+
+    async function loadFirstWorking(paths) {
+      for (const p of paths) {
         try {
-          const key = "service_requests";
-          const existing = JSON.parse(localStorage.getItem(key) || "[]");
-          existing.push({
-            service: service.name,
-            name,
-            phone,
-            createdAt: new Date().toISOString(),
-          });
-          localStorage.setItem(key, JSON.stringify(existing));
-        } catch (err) {
-          console.warn(
-            "Could not save service request to localStorage",
-            err
-          );
-        }
-
-        // Close modal and notify user
-        serviceModal.classList.add("hidden");
-        alert(
-          'Your request for "' +
-            service.name +
-            '" has been submitted. We will contact you soon.'
-        );
-        form.reset();
-
-      } catch (err) {
-        console.error('Error:', err);
-        alert(
-          "Could not submit your request right now. Please check your connection and try again."
-        );
-      } finally {
-        // Re-enable button
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+          const r = await fetch(p, { cache: "no-store" });
+          if (r.ok) return await r.text();
+        } catch (_) {}
       }
-    });
-
-    // Show modal
-    serviceModal.classList.remove("hidden");
-  }
-
-  // Function to populate documents based on service
-  function populateDocuments(documents) {
-    const documentsList = modalServiceContent.querySelector("#documentsList");
-    documents.forEach((doc) => {
-      const li = document.createElement("li");
-      li.innerHTML = `<i class="fas fa-check-circle text-green-500 mr-2"></i>${doc}`;
-      documentsList.appendChild(li);
-    });
-  }
-
-  // Helper: convert hex color to RGB object
-  function hexToRgb(hex) {
-    if (!hex) return null;
-    hex = hex.replace("#", "").trim();
-    if (hex.length === 3) {
-      hex = hex
-        .split("")
-        .map((c) => c + c)
-        .join("");
-    }
-    if (!/^[0-9a-fA-F]{6}$/.test(hex)) return null;
-    const bigint = parseInt(hex, 16);
-    return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
-  }
-
-  // Helper: mix color towards white by `mix` fraction (0-1) and return hex string
-  function getLightColor(color, mix = 0.7) {
-    if (!color) return null;
-    color = color.trim();
-    // hex
-    if (color.startsWith("#")) {
-      const rgb = hexToRgb(color);
-      if (!rgb) return null;
-      const r = Math.round(rgb.r + (255 - rgb.r) * mix);
-      const g = Math.round(rgb.g + (255 - rgb.g) * mix);
-      const b = Math.round(rgb.b + (255 - rgb.b) * mix);
-      return `rgb(${r}, ${g}, ${b})`;
+      return "";
     }
 
-    // rgb(...) format
-    const rgbMatch = color.match(
-      /rgb\s*\(\s*(\d{1,3})[,\s]+(\d{1,3})[,\s]+(\d{1,3})\s*\)/i
-    );
-    if (rgbMatch) {
-      const r0 = parseInt(rgbMatch[1], 10);
-      const g0 = parseInt(rgbMatch[2], 10);
-      const b0 = parseInt(rgbMatch[3], 10);
-      const r = Math.round(r0 + (255 - r0) * mix);
-      const g = Math.round(g0 + (255 - g0) * mix);
-      const b = Math.round(b0 + (255 - b0) * mix);
-      return `rgb(${r}, ${g}, ${b})`;
+    if (headerHost) {
+      const headerHtml = await loadFirstWorking(["header.html", "./header.html", "/header.html"]);
+      if (headerHtml) headerHost.innerHTML = headerHtml;
     }
 
-    // Not recognized (could be a CSS class like 'bg-red-500')
-    return null;
-  }
-
-  // Helper: decide readable text color (dark or white) based on original color
-  function readableTextColor(color) {
-    if (!color) return "#111827"; // default dark gray
-    color = color.trim();
-    let r, g, b;
-    if (color.startsWith("#")) {
-      const rgb = hexToRgb(color);
-      if (!rgb) return "#111827";
-      r = rgb.r;
-      g = rgb.g;
-      b = rgb.b;
-    } else {
-      const m = color.match(
-        /rgb\s*\(\s*(\d{1,3})[,\s]+(\d{1,3})[,\s]+(\d{1,3})\s*\)/i
-      );
-      if (m) {
-        r = parseInt(m[1], 10);
-        g = parseInt(m[2], 10);
-        b = parseInt(m[3], 10);
-      } else {
-        return "#111827";
-      }
+    if (footerHost) {
+      const footerHtml = await loadFirstWorking(["footer.html", "./footer.html", "/footer.html"]);
+      if (footerHtml) footerHost.innerHTML = footerHtml;
     }
-
-    // Perceived luminance
-    const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
-    return luminance > 180 ? "#111827" : "#ffffff";
   }
 
-  // Function to load WhatsApp chat
-  async function loadWhatsAppChat() {
-    const whatsappBtn = document.getElementById("whatsapp-btn");
-    const whatsappPopup = document.getElementById("whatsapp-popup");
-    const closeWhatsapp = document.getElementById("close-whatsapp");
-    const messagesContainer = document.getElementById("whatsapp-messages");
-
-    if (!whatsappBtn || !whatsappPopup || !messagesContainer) return;
-
-    // Load WhatsApp messages from JSON
-    let whatsappData = [];
+  async function loadHeaderLinks() {
+    let data = { header_links: [], social_links: [] };
     try {
-      const response = await fetch("whatsapp.json");
-      whatsappData = await response.json();
-    } catch (error) {
-      console.error("Error loading WhatsApp data:", error);
-      whatsappData = [
-        { message: "Welcome to Top Sarkari Jobs! 👋", link: null },
-        { message: "How can we help you today?", link: null }
-      ];
+      const r = await fetch("header_links.json", { cache: "no-store" });
+      if (r.ok) data = await r.json();
+    } catch (_) {}
+
+    const desktop = $("#header-links");
+    const mobile = $("#header-links-mobile");
+    const footerSocial = $("#footer-social-links");
+
+    const links = Array.isArray(data.header_links) ? data.header_links : [];
+    const socials = Array.isArray(data.social_links) ? data.social_links : [];
+
+    if (desktop) {
+      desktop.innerHTML = "";
+      links.forEach((l) => {
+        const a = document.createElement("a");
+        a.className = "nav-link";
+        a.href = normalizeUrl(l.link || l.url || "#");
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.textContent = l.name || "Link";
+        desktop.appendChild(a);
+      });
     }
 
-    // Populate messages
-    whatsappData.forEach((item, index) => {
-      const messageDiv = document.createElement("div");
-      messageDiv.className = "flex justify-start animate-fadeIn";
-      messageDiv.style.animationDelay = `${index * 0.1}s`;
+    if (mobile) {
+      mobile.innerHTML = "";
+      links.forEach((l) => {
+        const a = document.createElement("a");
+        a.href = normalizeUrl(l.link || l.url || "#");
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.textContent = l.name || "Link";
+        mobile.appendChild(a);
+      });
+    }
 
-      // Convert URLs and file paths to clickable links
-      let messageContent = item.message;
-      
-      // Convert \n to <br> for multiline support
-      messageContent = messageContent.replace(/\n/g, '<br>');
-      
-      // Detect and convert URLs (http, https) - handle both correct and malformed URLs
-      messageContent = messageContent.replace(
-        /(https?:\/\/[^\s<]+|https?\/\/[^\s<]+)/gi,
-        (match) => {
-          // Fix malformed URLs by adding colon if missing
-          let fixedUrl = match;
-          if (match.startsWith('https//')) {
-            fixedUrl = 'https://' + match.substring(7);
-          } else if (match.startsWith('http//')) {
-            fixedUrl = 'http://' + match.substring(6);
-          }
-          
-          // Check if it's a YouTube link
-          const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
-          const youtubeMatch = fixedUrl.match(youtubeRegex);
-          console.log(fixedUrl);
-          
-          if (youtubeMatch) {
-            const videoId = youtubeMatch[1];
-            return `<div class="mt-2 mb-2">
-              <iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}" 
-                frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowfullscreen class="rounded-lg"></iframe>
-            </div>`;
-          } else {
-            return `<a href="${fixedUrl}" target="_blank" rel="noopener noreferrer" class="text-green-600 font-semibold hover:text-green-700 underline">click here</a>`;
-          }
+    if (footerSocial) {
+      footerSocial.innerHTML = "";
+      socials.forEach((s) => {
+        const a = document.createElement("a");
+        a.className = "nav-link";
+        a.href = normalizeUrl(s.url || "#");
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.textContent = s.name || "Social";
+        footerSocial.appendChild(a);
+      });
+    }
+  }
+
+  // Mobile menu
+  function initOffcanvas() {
+    const btn = $("#menuBtn");
+    const closeBtn = $("#closeMenuBtn");
+    const menu = $("#mobileMenu");
+    const overlay = $("#menuOverlay");
+    if (!btn || !closeBtn || !menu || !overlay) return;
+
+    const close = () => {
+      menu.hidden = true;
+      overlay.hidden = true;
+      btn.setAttribute("aria-expanded", "false");
+      document.body.style.overflow = "";
+    };
+    const open = () => {
+      menu.hidden = false;
+      overlay.hidden = false;
+      btn.setAttribute("aria-expanded", "true");
+      document.body.style.overflow = "hidden";
+    };
+
+    btn.addEventListener("click", open);
+    closeBtn.addEventListener("click", close);
+    overlay.addEventListener("click", close);
+    menu.addEventListener("click", (e) => {
+      if (e.target.closest("a")) close();
+    });
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 980) close();
+    });
+    window.__closeMenu = close;
+  }
+
+  // Dropdowns
+  function initDropdowns() {
+    const dds = $$("[data-dd]");
+    if (!dds.length) return;
+    const canHover = () => window.matchMedia("(hover:hover) and (pointer:fine)").matches;
+    const timers = new WeakMap();
+
+    const setOpen = (dd, open) => {
+      const btn = $(".nav-dd-btn", dd);
+      const menu = $(".nav-dd-menu", dd);
+      if (!btn || !menu) return;
+      if (open) {
+        menu.classList.add("open");
+        btn.setAttribute("aria-expanded", "true");
+      } else {
+        menu.classList.remove("open");
+        btn.setAttribute("aria-expanded", "false");
+      }
+    };
+
+    const clearTimer = (dd) => {
+      const t = timers.get(dd);
+      if (t) clearTimeout(t);
+      timers.delete(dd);
+    };
+    const closeAll = () => {
+      dds.forEach((dd) => { clearTimer(dd); setOpen(dd, false); });
+    };
+    const scheduleClose = (dd) => {
+      clearTimer(dd);
+      timers.set(dd, setTimeout(() => setOpen(dd, false), 180));
+    };
+
+    dds.forEach((dd) => {
+      const btn = $(".nav-dd-btn", dd);
+      const menu = $(".nav-dd-menu", dd);
+      if (!btn || !menu) return;
+
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const isOpen = menu.classList.contains("open");
+        closeAll();
+        if (!isOpen) setOpen(dd, true);
+      });
+      btn.addEventListener("mouseenter", () => {
+        if (!canHover()) return;
+        clearTimer(dd);
+        closeAll();
+        setOpen(dd, true);
+      });
+      btn.addEventListener("mouseleave", () => {
+        if (!canHover()) return;
+        scheduleClose(dd);
+      });
+      menu.addEventListener("mouseenter", () => {
+        if (!canHover()) return;
+        clearTimer(dd);
+        setOpen(dd, true);
+      });
+      menu.addEventListener("mouseleave", () => {
+        if (!canHover()) return;
+        scheduleClose(dd);
+      });
+    });
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest("[data-dd]")) closeAll();
+    });
+  }
+
+  // FAQ
+  function initFAQ() {
+    $$(".faq-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const expanded = btn.getAttribute("aria-expanded") === "true";
+        $$(".faq-btn").forEach((b) => {
+          b.setAttribute("aria-expanded", "false");
+          const p = b.parentElement.querySelector(".faq-panel");
+          if (p) p.hidden = true;
+        });
+        if (!expanded) {
+          btn.setAttribute("aria-expanded", "true");
+          const p = btn.parentElement.querySelector(".faq-panel");
+          if (p) p.hidden = false;
         }
-      );
-      
-      let imageHtml = '';
-      if (item.image) {
-        imageHtml = `<img src="${item.image}" alt="WhatsApp Image" class="max-w-full rounded-lg mt-2 cursor-pointer" onclick="window.open('${item.image}', '_blank')">`;
+      });
+    });
+  }
+
+  // Homepage Sections
+  async function renderHomepageSections() {
+    const wrap = $("#dynamic-sections");
+    if (!wrap) return;
+
+    let data = { sections: [] };
+    try {
+      const r = await fetch("dynamic-sections.json", { cache: "no-store" });
+      if (r.ok) data = await r.json();
+    } catch (_) {}
+
+    wrap.innerHTML = "";
+
+    (data.sections || []).forEach((sec) => {
+      const title = safe(sec.title) || "Updates";
+      const color = safe(sec.color) || "#0284c7";
+      const icon = safe(sec.icon) || "fa-solid fa-briefcase";
+
+      const sectionKey = safe(sec.id) || safe(sec.title);
+      let moreHref = "";
+      if (safe(sec.viewMoreUrl)) {
+        moreHref = openInternal(sec.viewMoreUrl, title);
+      } else if (safe(sec.viewMoreType).toLowerCase() === "list" && sectionKey) {
+        moreHref = `view.html?section=${encodeURIComponent(sectionKey)}`;
       }
 
-      let videoHtml = '';
-      if (item.video) {
-        // Fix malformed URLs by adding colon if missing
-        let fixedVideoUrl = item.video;
-        if (item.video.startsWith('https//')) {
-          fixedVideoUrl = 'https://' + item.video.substring(7);
-        } else if (item.video.startsWith('http//')) {
-          fixedVideoUrl = 'http://' + item.video.substring(6);
-        }
-        
-        // Check if it's a YouTube URL
-        const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
-        const youtubeMatch = fixedVideoUrl.match(youtubeRegex);
-        
-        if (youtubeMatch) {
-          const videoId = youtubeMatch[1];
-          videoHtml = `<iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}" 
-            frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-            allowfullscreen class="max-w-full rounded-lg mt-2"></iframe>`;
-        } else {
-          videoHtml = `<video controls class="max-w-full rounded-lg mt-2"><source src="${fixedVideoUrl}" type="video/mp4"></video>`;
-        }
-      }
-
-      messageDiv.innerHTML = `
-        <div class="bg-white rounded-lg rounded-bl-none shadow p-3 max-w-[85%]">
-          <p class="text-gray-800 text-sm whatsapp-message">${messageContent}</p>
-          ${imageHtml}
-          ${videoHtml}
+      const card = document.createElement("article");
+      card.className = "section-card";
+      card.innerHTML = `
+        <div class="section-head" style="background:${color}">
+          <div class="left">
+            <i class="${icon}"></i>
+            <span>${title}</span>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="section-list"></div>
+          ${moreHref ? `<a class="view-all" href="${moreHref}">More <i class="fa-solid fa-arrow-right"></i></a>` : ""}
         </div>
       `;
 
-      messagesContainer.appendChild(messageDiv);
-    });
+      const list = $(".section-list", card);
+      const items = Array.isArray(sec.items) ? sec.items.slice(0, 8) : [];
 
-    // Toggle popup
-    whatsappBtn.addEventListener("click", () => {
-      whatsappPopup.classList.toggle("hidden");
-      // Scroll to bottom when popup opens
-      if (!whatsappPopup.classList.contains("hidden")) {
-        setTimeout(() => {
-          messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }, 100);
-      }
-    });
+      items.forEach((it) => {
+        const name = safe(it.name) || "Open";
+        const url = it.url || it.link || "";
+        if (!url) return;
 
-    closeWhatsapp.addEventListener("click", () => {
-      whatsappPopup.classList.add("hidden");
-    });
-
-    // Close popup when clicking outside
-    document.addEventListener("click", (e) => {
-      if (
-        !whatsappPopup.contains(e.target) &&
-        !whatsappBtn.contains(e.target) &&
-        !whatsappPopup.classList.contains("hidden")
-      ) {
-        whatsappPopup.classList.add("hidden");
-      }
+        const external = !!it.external;
+        const a = document.createElement("a");
+        a.className = "section-link";
+        a.href = external ? normalizeUrl(url) : openInternal(url, name);
+        if (external) { a.target = "_blank"; a.rel = "noopener"; }
+        a.innerHTML = `<div class="t">${name}</div>${it.date ? `<div class="d">${safe(it.date)}</div>` : `<div class="d">Open official link</div>`}`;
+        list.appendChild(a);
+      });
+      wrap.appendChild(card);
     });
   }
 
-  // Function to handle back button
-  window.goBack = function() {
-    if (window.history.length > 1) {
-      window.history.back();
-    } else {
-      window.location.href = 'index.html';
+  async function renderHomeQuickLinks() {
+    if (!(page === "index.html" || page === "")) return;
+    const searchInput = $("#siteSearchInput");
+    let host = $("#home-links");
+    
+    if (!host) {
+      const wrap = document.createElement("section");
+      wrap.className = "home-quicklinks";
+      host = document.createElement("div");
+      host.id = "home-links";
+      host.className = "home-links";
+      wrap.appendChild(host);
+      const target = (searchInput && searchInput.closest(".container")) || $("main") || document.body;
+      target.parentNode.insertBefore(wrap, target);
     }
-  };
-});
+
+    if (!document.getElementById("home-quicklinks-style")) {
+      const style = document.createElement("style");
+      style.id = "home-quicklinks-style";
+      style.textContent = `
+        .home-quicklinks{width:min(1180px, calc(100% - 32px));margin:0 auto;padding:12px 0 0;}
+        .home-links{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+        .home-link-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border-radius:12px;color:#fff;font-weight:800;text-decoration:none;line-height:1;box-shadow:0 8px 18px rgba(2,6,23,.10);border:1px solid rgba(255,255,255,.15);white-space:nowrap;}
+        .home-link-btn:hover{filter:brightness(.95);}
+        .home-link-btn:active{transform:translateY(1px);}
+      `;
+      document.head.appendChild(style);
+    }
+
+    let data = null;
+    try {
+      const r = await fetch("header_links.json", { cache: "no-store" });
+      if (r.ok) data = await r.json();
+    } catch (_) {}
+
+    const links = Array.isArray(data?.home_links) ? data.home_links : [];
+    if (!links.length) return;
+
+    const colorMap = { "bg-red-600": "#dc2626", "bg-slate-600": "#475569", "bg-amber-600": "#0ea5a4", "bg-zinc-400": "#9ca3af", "bg-green-600": "#16a34a", "bg-pink-500": "#ec4899", "bg-yellow-600": "#ca8a04", "bg-red-500": "#ef4444" };
+
+    host.innerHTML = "";
+    links.forEach((l) => {
+      const name = safe(l?.name);
+      const url = safe(l?.url || l?.link);
+      if (!name || !url) return;
+      
+      const a = document.createElement("a");
+      a.className = "home-link-btn";
+      a.href = normalizeUrl(url);
+      if (l?.external) { a.target = "_blank"; a.rel = "noopener"; }
+      a.style.background = colorMap[safe(l?.color)] || "#0ea5e9";
+      
+      const icon = safe(l?.icon);
+      if (icon) a.innerHTML = `<i class="${icon}"></i><span>${name}</span>`;
+      else a.textContent = name;
+      host.appendChild(a);
+    });
+  }
+
+  // Category Pages
+  async function initCategoryPage() {
+    if (page !== "category.html") return;
+    const params = new URLSearchParams(location.search || "");
+    const group = safe(params.get("group")).toLowerCase();
+
+    const titleEl = $("#categoryTitle") || $("h1");
+    let gridEl = $("#categoryGrid") || $(".section-list");
+    const emptyEl = $("#categoryEmpty");
+
+    if (!gridEl) {
+      const main = $("#main") || $("main") || document.body;
+      const wrap = document.createElement("div");
+      wrap.className = "section-list";
+      main.appendChild(wrap);
+      gridEl = wrap;
+    }
+
+    const groupMeta = { study: "Study wise jobs", popular: "Popular job categories", state: "State wise jobs", admissions: "Admissions", "admit-result": "Admit Card / Result", khabar: "Latest Khabar", "study-material": "Study Material & Top Courses" };
+    if (titleEl) titleEl.textContent = groupMeta[group] || "Category";
+
+    let data;
+    try {
+      const r = await fetch("jobs.json", { cache: "no-store" });
+      if(!r.ok) throw new Error();
+      data = await r.json();
+    } catch (_) {
+      gridEl.innerHTML = "";
+      return;
+    }
+
+    const top = Array.isArray(data.top_jobs) ? data.top_jobs : [];
+    const left = Array.isArray(data.left_jobs) ? data.left_jobs : [];
+    const right = Array.isArray(data.right_jobs) ? data.right_jobs : [];
+
+    const isHeader = (x) => x && typeof x === "object" && safe(x.title) && !safe(x.name);
+    const isItem = (x) => x && typeof x === "object" && safe(x.name) && safe(x.url);
+
+    function sliceBetween(arr, startIncludes, endIncludes) {
+      const startIdx = arr.findIndex(x => isHeader(x) && safe(x.title).toLowerCase().includes(startIncludes));
+      if (startIdx < 0) return [];
+      let endIdx = arr.length;
+      if (endIncludes) {
+        const ei = arr.findIndex((x, i) => i > startIdx && isHeader(x) && safe(x.title).toLowerCase().includes(endIncludes));
+        if (ei >= 0) endIdx = ei;
+      }
+      return arr.slice(startIdx + 1, endIdx).filter(isItem);
+    }
+
+    let items = [];
+    if (group === "study") items = sliceBetween(top, "study wise", "popular");
+    else if (group === "popular") items = sliceBetween(top, "popular", null);
+    else if (group === "state") items = sliceBetween(left, "state wise", "admit");
+    else if (group === "admit-result") items = sliceBetween(left, "admit", null);
+    else if (group === "admissions") items = sliceBetween(right, "admissions", "govt scheme");
+    else if (group === "khabar") items = sliceBetween(right, "latest khabar", "study material");
+    else if (group === "study-material") items = sliceBetween(right, "study material", "tools");
+
+    gridEl.innerHTML = "";
+    items.forEach((it) => {
+      const a = document.createElement("a");
+      a.className = "section-link";
+      a.href = safe(it.url);
+      if (it.external) { a.target = "_blank"; a.rel = "noopener"; }
+      a.innerHTML = `<div class="t">${safe(it.name)}</div><div class="d">Open official link</div>`;
+      gridEl.appendChild(a);
+    });
+  }
+
+  // ✅ TOOLS PAGE - Fixed with Fallback Data
+  async function initToolsPage() {
+    // Looser check: works on 'tools.html' or '/tools'
+    if (!isToolsPage) return;
+
+    const categoriesView = $("#categories-view");
+    const toolsView = $("#tools-view");
+    const toolsGrid = $("#tools-grid");
+    const toolsTitle = $("#tools-title span") || $("#tools-title");
+    const backBtn = $("#back-button");
+    const categoryButtons = $$(".category-button");
+
+    if (!categoriesView || !toolsView || !toolsGrid || !categoryButtons.length) return;
+
+    // ✅ FALLBACK DATA (Restores functionality even if JSON fails)
+    const fallbackData = {
+      image: [
+         { name: "Image Resizer", url: "https://imageresizer.com/", icon: "fa-solid fa-compress", external: true },
+         { name: "Compress Image", url: "https://tinypng.com/", icon: "fa-solid fa-file-image", external: true },
+         { name: "Passport Photo Maker", url: "https://www.cutout.pro/passport-photo-maker", icon: "fa-solid fa-id-card", external: true }
+      ],
+      pdf: [
+         { name: "JPG to PDF", url: "https://www.ilovepdf.com/jpg_to_pdf", icon: "fa-solid fa-file-pdf", external: true },
+         { name: "Compress PDF", url: "https://www.ilovepdf.com/compress_pdf", icon: "fa-solid fa-file-zipper", external: true },
+         { name: "Merge PDF", url: "https://www.ilovepdf.com/merge_pdf", icon: "fa-solid fa-file-circle-plus", external: true }
+      ],
+      video: [
+         { name: "Video Compressor", url: "https://www.freeconvert.com/video-compressor", icon: "fa-solid fa-video", external: true },
+         { name: "MP4 to MP3", url: "https://cloudconvert.com/mp4-to-mp3", icon: "fa-solid fa-music", external: true }
+      ]
+    };
+
+    let toolsData = fallbackData;
+    try {
+      const r = await fetch("tools.json", { cache: "no-store" });
+      if (r.ok) {
+        const json = await r.json();
+        if (json && Object.keys(json).length > 0) toolsData = json;
+      }
+    } catch (_) {
+      console.log("Using fallback tools data");
+    }
+
+    const showCategories = () => {
+      toolsView.classList.add("hidden");
+      categoriesView.classList.remove("hidden");
+      // Update URL to remove query param cleanly
+      if(history.pushState) history.pushState(null, null, location.pathname);
+      window.scrollTo({ top: 0, behavior: "instant" });
+    };
+
+    const showTools = (categoryKey) => {
+      const list = Array.isArray(toolsData[categoryKey]) ? toolsData[categoryKey] : [];
+      const titleMap = { image: "Image Tools", pdf: "PDF Tools", video: "Video/Audio Tools" };
+      if (toolsTitle) toolsTitle.textContent = titleMap[categoryKey] || "Tools";
+
+      toolsGrid.innerHTML = "";
+      if (!list.length) {
+        toolsGrid.innerHTML = `<div class="col-span-full p-4 text-center text-gray-600">No tools found.</div>`;
+      } else {
+        list.forEach((t) => {
+          const name = safe(t.name) || "Open Tool";
+          const url = t.url || t.link || "";
+          if (!url) return;
+          const isExternal = t.external === true;
+          const a = document.createElement("a");
+          a.className = "p-4 rounded-lg bg-white border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition duration-300 flex items-start gap-3 text-left";
+          // Direct Link logic
+          a.href = isExternal ? normalizeUrl(url) : openInternal(url, name);
+          if (isExternal) { a.target = "_blank"; a.rel = "noopener"; }
+
+          const iconClass = safe(t.icon) || "fas fa-wand-magic-sparkles";
+          a.innerHTML = `
+            <div class="mt-0.5 text-xl text-blue-600"><i class="${iconClass}"></i></div>
+            <div><div class="font-semibold text-gray-800">${name}</div><div class="text-sm text-gray-500 mt-1">Open tool</div></div>
+          `;
+          toolsGrid.appendChild(a);
+        });
+      }
+
+      categoriesView.classList.add("hidden");
+      toolsView.classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "instant" });
+    };
+
+    if (backBtn) backBtn.addEventListener("click", showCategories);
+
+    categoryButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const key = safe(btn.getAttribute("data-category"));
+        if (!key) return;
+        showTools(key);
+      });
+    });
+
+    // ✅ SUPPORT DIRECT LINKS: tools.html?cat=image
+    const params = new URLSearchParams(location.search);
+    const cat = params.get("cat");
+    if (cat && toolsData[cat]) {
+      showTools(cat);
+    } else {
+      showCategories();
+    }
+  }
+
+  function initCscModal() {
+    const modal = $("#cscModal");
+    const overlay = $("#cscModalOverlay");
+    const closeBtn = $("#cscModalClose");
+    const form = $("#cscRequestForm");
+    if (!modal || !overlay || !closeBtn || !form) return;
+    
+    const close = () => {
+      modal.hidden = true;
+      overlay.hidden = true;
+      document.body.style.overflow = "";
+    };
+    overlay.addEventListener("click", close);
+    closeBtn.addEventListener("click", close);
+    window.__openCscModal = (service) => {
+      if($("#cscServiceName")) $("#cscServiceName").textContent = service.name || "Service";
+      modal.hidden = false;
+      overlay.hidden = false;
+      document.body.style.overflow = "hidden";
+    };
+  }
+
+  // Global Search logic
+  async function initGlobalLiveSearch() {
+    const inputs = [];
+    const homeInput = document.getElementById("siteSearchInput");
+    const sectionInput = document.getElementById("sectionSearchInput");
+    if (homeInput) inputs.push({ input: homeInput, resultsId: "searchResults" });
+    if (sectionInput) inputs.push({ input: sectionInput, resultsId: "sectionSearchResults" });
+    if (!inputs.length) return;
+
+    let searchData = [];
+    try {
+      const [dyn, jobs, tools, services] = await Promise.all([
+        fetch("dynamic-sections.json").then(r => r.json()).catch(() => ({})),
+        fetch("jobs.json").then(r => r.json()).catch(() => ({})),
+        fetch("tools.json").then(r => r.json()).catch(() => ({})),
+        fetch("services.json").then(r => r.json()).catch(() => ({}))
+      ]);
+
+      const push = (name, url, src) => {
+        if(!name || !url) return;
+        const text = (name).toLowerCase();
+        if (text.includes("main home page") || text.includes("website ka main")) return;
+        searchData.push({ name: name.trim(), url: url.trim(), src });
+      };
+
+      if (dyn.sections) dyn.sections.forEach(s => s.items?.forEach(i => push(i.name || i.title, i.url || i.link, s.title || "Update")));
+      [jobs.top_jobs, jobs.left_jobs, jobs.right_jobs].forEach(arr => arr?.forEach(i => push(i.name || i.title, i.url || i.link, "Category")));
+      if (tools) Object.keys(tools).forEach(k => { if(Array.isArray(tools[k])) tools[k].forEach(t => push(t.name, t.url, "Tool")); });
+      if (services.services) services.services.forEach(s => push(s.name, "govt-services.html", "CSC Service"));
+    } catch (e) {}
+
+    inputs.forEach(({ input, resultsId }) => {
+      const resultsWrap = document.getElementById(resultsId);
+      if (!resultsWrap) return;
+      const performSearch = () => {
+        const query = input.value.toLowerCase().trim();
+        if (query.length < 2) { resultsWrap.innerHTML = ""; resultsWrap.style.display = "none"; return; }
+        const tokens = query.split(/\s+/).filter(t => t.length);
+        const matches = searchData.filter(item => {
+          const hay = (item.name + " " + item.src).toLowerCase();
+          return tokens.every(t => hay.includes(t));
+        }).slice(0, 10);
+
+        resultsWrap.innerHTML = "";
+        if (matches.length > 0) {
+          resultsWrap.style.display = "block";
+          matches.forEach(m => {
+            let href = normalizeUrl(m.url);
+            const isExternal = href.startsWith("http") && !href.includes(location.hostname);
+            const a = document.createElement("a");
+            a.className = "search-result-item";
+            a.href = href;
+            if (isExternal) { a.target = "_blank"; a.rel = "noopener"; }
+            a.innerHTML = `<div class="result-name">${m.name}</div><div class="result-meta">${m.src}</div>`;
+            resultsWrap.appendChild(a);
+          });
+        } else {
+          resultsWrap.style.display = "block";
+          resultsWrap.innerHTML = `<div class="search-no-results">No matches found.</div>`;
+        }
+      };
+      input.addEventListener("input", performSearch);
+      input.addEventListener("focus", () => { if(input.value.length >= 2) resultsWrap.style.display="block"; });
+      document.addEventListener("click", (e) => { if (!input.contains(e.target) && !resultsWrap.contains(e.target)) resultsWrap.style.display = "none"; });
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    await injectHeaderFooter();
+    await loadHeaderLinks();
+    initOffcanvas();
+    initDropdowns();
+    initFAQ();
+    if (page === "index.html" || page === "") { await renderHomepageSections(); await renderHomeQuickLinks(); }
+    await initCategoryPage();
+    await initToolsPage();
+    initCscModal();
+    await initGlobalLiveSearch();
+  });
+})();

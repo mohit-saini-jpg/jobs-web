@@ -21,101 +21,121 @@
     {
       "name": "TOP Headlines Today",
       "url": "https://www.topsarkarijobs.com/view.html?section=TOP%20Headlines%20Today",      
-      "color": "bg-red-400",
+      "color": "bg-red-600",
+      "external": true
+    },
+    {
+      "name": "CSC की सभी सर्विस यह पर",
+      "url": "https://www.topsarkarijobs.com/govt-services.html",      
+      "color": "bg-slate-600",
       "external": true
     },
     {
       "name": "Latest Jobs",
       "url": "https://www.topsarkarijobs.com/view.html?section=latest%20jobs",      
-      "color": "bg-teal-400",
+      "color": "bg-amber-600",
       "external": true
     },
     {
       "name": "Results",
       "url": "https://www.topsarkarijobs.com/view.html?section=results",
-      "color": "bg-teal-400",
+      "color": "bg-amber-600",
       "external": true
     },
     {
       "name": "Admit Card",
-      "url": "https://www.topsarkarijobs.com/view.html?section=Latest%20Admit%20cards%20Exams%20Date",
-      "color": "bg-teal-400",
+      "url": "https://www.topsarkarijobs.com/view.html?section=Admit%20cards%20Exams%20Date",
+      "color": "bg-amber-600",
       "external": true
     },
     {
       "name": "Admission",
-      "url": "https://sarkariresult.com.cm/admission/",
-      "color": "bg-teal-400",
+      "url": "https://www.topsarkarijobs.com/view.html?section=Admission/Education",
+      "color": "bg-amber-600",
       "external": true
     },
     {
       "name": "Upcoming Jobs",
       "url": "https://www.topsarkarijobs.com/view.html?section=upcoming-jobs",
-      "color": "bg-teal-400",
+      "color": "bg-amber-600",
       "external": true
     },
     {
       "name": "Central Jobs",
       "url": "https://www.topsarkarijobs.com/view.html?section=Central%20jobs",
-      "color": "bg-teal-400",
+      "color": "bg-amber-600",
       "external": true
     },
     {
       "name": "Offline Jobs",
       "url": "https://www.topsarkarijobs.com/view.html?section=Offline%20jobs",
-      "color": "bg-teal-400",
+      "color": "bg-amber-600",
       "external": true
     },
     {
       "name": "नौकरियां जिनकी अंतिम तिथि नजदीक है।",
       "url": "https://www.topsarkarijobs.com/view.html?section=Jobs%20with%20Last%20date",
-      "color": "bg-red-400",
+      "color": "bg-amber-600",
       "external": true
     },
     {
       "name": "सरकारी योजनाएँ",
       "url": "https://www.topsarkarijobs.com/view.html?section=Govt%20Scheme%20Yojna",
-      "color": "bg-pink-400",
+      "color": "bg-amber-600",
       "external": true
     },
     {
-      "name": "Foreign jobs",
-      "url": "https://www.placementindia.com/international/",
-      "color": "bg-teal-400"
+      "name": "कृषि मशीन सब्सिडी",
+      "url": "http://agriharyana.gov.in/MechSMAMScheme.aspx",
+      "color": "bg-zinc-400",
+      "external": true
+    },
+    {
+      "name": "Family id Exclusive(Problem) check",
+      "url": "https://ppp-office.haryana.gov.in/ExclusionGrievance",
+      "color": "bg-zinc-400",
+      "external": true
+    },
+    {
+      "name": "ABHA कार्ड",
+      "url": "https://abha.abdm.gov.in/abha/v3/register/aadhaar",
+      "color": "bg-zinc-400",
+      "external": true
     },
     {
       "name": "farmer ID किसान आईडी कार्ड",
-      "url": "https://hrfr.agristack.gov.in/farmer-registry-hr/#/",      
-      "color": "bg-teal-400",
+      "url": "https://sarkariresultshine.com/farmer-id-download-2026/",      
+      "color": "bg-zinc-400",
       "external": true
     },
     {
-      "name": "हरियाणा पुलिस कांस्टेबल 5500 भर्ती",
-      "url": "https://sarkariresult.com.im/hssc-haryana-police-constable-recruitment/",      
-      "color": "bg-purple-400"
-    },
-    {
-      "name": "आपका आधार पैन से लिंक है या नहीं जाने",
-      "url": "https://eportal.incometax.gov.in/iec/foservices/#/pre-login/link-aadhaar-status",
-      "color": "bg-teal-400",
+      "name": "LPG एजेंसी आवेदन",
+      "url": "https://www.lpgvitarakchayan.in/",
+      "color": "bg-zinc-400",
       "external": true
     },
     {
       "name": "किसी भी पेंशन के पैसा आया है या नहीं आया चेक करें",
       "url": "https://pension.socialjusticehry.gov.in/Ben_Inf",
-      "color": "bg-yellow-400",
+      "color": "bg-zinc-400",
       "external": true
     },
     {
       "name": "आपके आधार कार्ड से कौन सा मोबाइल नंबर लिंक है",
       "url": "https://myaadhaar.uidai.gov.in/check-aadhaar-validity",
-      "color": "bg-teal-400",
+      "color": "bg-zinc-400",
+      "external": true
+    },
+     {
+      "name": "लाडो लक्ष्मी योजना: पैसा आया  है या नहीं आया यहाँ से चेक करें",
+      "url": "https://pension.socialjusticehry.gov.in/Ben_Inf",
+      "color": "bg-zinc-400",
       "external": true
     },
     {
-      "name": "CET GROUP-D OLD PAPER",
-      "url": "https://indianewjobs.com/hssc-cet-group-d-previous-year-question-paper/",
-      "color": "bg-orange-400",
+      "name": "APAAR ID",
+      "url": "https://www.digilocker.gov.in/web/dashboard/issuers/010212",
+      "color": "bg-zinc-400",
       "external": true
     },
     {

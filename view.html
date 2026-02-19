@@ -1,271 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C4VRD1C9QS"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-C4VRD1C9QS"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-C4VRD1C9QS');
+  </script>
 
-      gtag('config', 'G-C4VRD1C9QS');
-    </script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job Details & Notifications - Top Sarkari Jobs</title>
-    <meta name="description" content="View detailed information about latest government jobs, admit cards, and results. Download notifications and apply online.">
-    <meta name="keywords" content="job details, notification, apply online, sarkari job vacancy, recruitment details">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://topsarkarijobs.com/view.html">
-    <link rel="icon" type="image/x-icon" href="image.ico">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Top Sarkari Jobs | View</title>
+  <link rel="icon" type="image/x-icon" href="image.ico">
 
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://topsarkarijobs.com/view.html">
-    <meta property="og:title" content="Job Details & Notifications - Top Sarkari Jobs">
-    <meta property="og:description" content="View detailed information about latest government jobs, admit cards, and results.">
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- Google Font: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary-500: #0ea5e9;
-            --muted-bg: #f8fafc
-        }
+  <style>
+    html, body { height: 100%; }
+    body { display: flex; flex-direction: column; }
+    main { flex: 1; }
+    
+    /* Hide the search bar that comes inside the injected header */
+    #site-header .search-card,
+    #site-header .top-search,
+    #site-header .search-row,
+    #site-header input[type="search"] {
+      display: none !important;
+    }
 
-        body {
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-            background: var(--muted-bg);
-            color: #0f172a
-        }
-    </style>
+    /* Style for the local search dropdown */
+    #view-search-container { position: relative; z-index: 50; }
+    .search-dropdown {
+       position: absolute; 
+       top: 100%; 
+       left: 0; 
+       right: 0; 
+       width: 100%;
+       background: white;
+       border: 1px solid #e2e8f0;
+       border-bottom-left-radius: 0.5rem;
+       border-bottom-right-radius: 0.5rem;
+       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+       max-height: 24rem; /* 96 * 0.25rem = 24rem */
+       overflow-y: auto;
+       margin-top: 0.25rem;
+       z-index: 100;
+    }
+  </style>
 </head>
 
-<body class="m-0 p-0 min-h-screen flex flex-col">
- <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold flex items-center">
-            <img src="image.png" alt="Top Sarkari Jobs Logo" class="h-10 w-10 mr-3 rounded-full">
-            Top Sarkari Jobs
-        </h1>
-    </div>
-    <div class="flex-1 flex flex-col">
-        <!-- Header with Back Button -->
-        <header class="bg-gradient-to-r from-sky-600 to-indigo-600 text-white shadow-sm relative">
-            <div class="container mx-auto max-w-6xl px-4 py-3">
-                <div class="flex items-center justify-between">
-                    <h1 id="page-title" class="text-xs font-bold flex items-center max-w-xs">
-                        <img src="image.png" alt="Top Sarkari Jobs Logo" class="h-8 w-8 mr-3 rounded-full">
-                        Loading...
-                    </h1>
+<body>
+  <div id="site-header"></div>
 
-                    <nav>
-                        <a href="#" onclick="goBack()" class="text-white hover:underline flex items-center">
-                            <i class="fas fa-arrow-left mr-2"></i>Go back
-                        </a>
-                    </nav>
-                </div>
-            </div>
-        </header>
+  <main class="container mx-auto max-w-7xl px-4 py-6">
 
-        <!-- Full Screen Iframe -->
-        <div class="flex-1">
-            <iframe id="content-iframe" src="" width="100%" height="100%" style="min-height: 100vh;" frameborder="0"
-                class="w-full h-full"></iframe>
-        </div>
-
-        <!-- Loading Overlay -->
-        <div id="loading-overlay" class="fixed inset-0 bg-white bg-opacity-90 flex items-center justify-center">
-            <div class="text-center">
-                <i class="fas fa-spinner fa-spin text-6xl text-blue-500 mb-4"></i>
-                <p class="text-gray-600 font-medium text-xl">Loading...</p>
-                <p class="text-gray-400 text-sm mt-2">Please wait while we load the content</p>
-            </div>
-        </div>
+    <div class="mb-4">
+      <a href="index.html" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-white border border-slate-200 hover:bg-slate-50 text-sm font-semibold text-slate-700 transition shadow-sm">
+        <i class="fas fa-arrow-left"></i> Back
+      </a>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-white text-gray-800 py-8">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-4 md:mb-0">
-                    <h3 class="text-xl font-bold">Top Sarkari Jobs</h3>
-                    <p class="text-gray-600 text-sm mt-1">Your gateway to government jobs and services</p>
-                </div>
-                <div class="flex flex-wrap gap-3" id="footer-social-links">
-                    <!-- Social links will be populated here -->
-                </div>
-            </div>
-            <div class="border-t border-gray-200 mt-6 pt-6 text-center text-gray-600 text-sm">
-                <p>&copy; 2025 Top Sarkari Jobs. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+    <section id="url-view" class="hidden h-full">
+      <div class="w-full bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm flex flex-col" style="height: 85vh;">
+        <iframe id="url-iframe" title="Viewer"
+                class="w-full h-full border-0"
+                referrerpolicy="no-referrer"
+                loading="lazy"
+                sandbox="allow-forms allow-scripts allow-same-origin allow-popups allow-downloads"></iframe>
+      </div>
+    </section>
 
-    <script>
-        // Get URL parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const url = urlParams.get('url');
-        const name = urlParams.get('name');
-        const type = urlParams.get('type');
-        const section = urlParams.get('section');
-
-        const iframe = document.getElementById('content-iframe');
-        const titleElement = document.getElementById('page-title');
-        const loadingOverlay = document.getElementById('loading-overlay');
-        const contentContainer = iframe.parentElement;
-
-        // If section parameter is provided, load items from dynamic-sections.json
-        if (section) {
-            fetch('dynamic-sections.json')
-                .then(response => response.json())
-                .then(data => {
-                    const sectionData = data.sections.find(s => s.id === section);
-                    if (sectionData) {
-                        // Hide iframe and show list view
-                        iframe.style.display = 'none';
-                        
-                        // Set title
-                        titleElement.textContent = sectionData.title;
-                        
-                        // Create list view
-                        const listContainer = document.createElement('div');
-                        listContainer.className = 'p-6 bg-gray-50 min-h-screen';
-                        
-                        const listContent = document.createElement('div');
-                        listContent.className = 'max-w-4xl mx-auto space-y-3';
-                        
-                        sectionData.items.forEach((item, index) => {
-                            const itemDiv = document.createElement('div');
-                            itemDiv.className = 'bg-white p-2 rounded-lg shadow hover:shadow-lg transition duration-300 cursor-pointer border-l-4';
-                            itemDiv.style.borderLeftColor = sectionData.color || '#3b82f6';
-                            
-                            let badgeHTML = '';
-                            if (item.badge) {
-                                badgeHTML = `<span class="${item.badgeColor || 'bg-blue-500'} text-white text-xs font-bold px-2 py-1 rounded">${item.badge}</span>`;
-                            }
-                            
-                            itemDiv.innerHTML = `
-                                <div class="flex justify-between items-start mb-1">
-                                    <div class="flex items-center gap-1">
-                                        <span class="text-gray-500 text-sm font-semibold">${index + 1}.</span>
-                                        <h3 class="text-sm font-semibold text-gray-800">${item.name}</h3>
-                                    </div>
-                                    ${badgeHTML}
-                                </div>
-                                ${item.date ? `<p class="text-xs text-gray-600 ml-6">${item.date}</p>` : ''}
-                            `;
-                            
-                            itemDiv.addEventListener('click', () => {
-                                if (item.url) {
-                                    if (item.external) {
-                                        window.open(item.url, '_blank');
-                                    } else {
-                                        window.location.href = `view.html?url=${encodeURIComponent(item.url)}&name=${encodeURIComponent(item.name)}`;
-                                    }
-                                }
-                            });
-                            
-                            listContent.appendChild(itemDiv);
-                        });
-                        
-                        listContainer.appendChild(listContent);
-                        contentContainer.appendChild(listContainer);
-                        
-                        loadingOverlay.style.display = 'none';
-                    } else {
-                        window.location.href = 'index.html';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading section:', error);
-                    window.location.href = 'index.html';
-                });
-                
-        } else if (type === 'news' || type === 'jobs' || type === 'admitcard' || type === 'results' || type === 'upcoming') {
-            // If type is 'news', 'jobs', 'admitcard', 'results', or 'upcoming', load the view more URL in iframe
-            // Fetch the URL from jobs.json
-            fetch('jobs.json')
-                .then(response => response.json())
-                .then(data => {
-                    const viewUrl = data.view_more_urls[type];
-                    if (viewUrl) {
-                        iframe.src = viewUrl;
-                        
-                        // Set title based on type
-                        const titles = {
-                            news: 'Latest News',
-                            jobs: 'Latest Jobs',
-                            admitcard: 'Latest Admit Cards',
-                            results: 'Latest Results',
-                            upcoming: 'Upcoming Jobs'
-                        };
-                        titleElement.textContent = titles[type] || 'Viewing Content';
-                        
-                        iframe.onload = () => {
-                            loadingOverlay.style.display = 'none';
-                        };
-                        
-                        setTimeout(() => {
-                            loadingOverlay.style.display = 'none';
-                        }, 3000);
-                    } else {
-                        // Fallback
-                        window.location.href = 'index.html';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading URL:', error);
-                    window.location.href = 'index.html';
-                });
-
-        } else if (url) {
-            // Original iframe behavior
-            if (name) {
-                titleElement.textContent = decodeURIComponent(name);
-            } else {
-                titleElement.textContent = 'Viewing Content';
-            }
-
-            iframe.src = decodeURIComponent(url);
-
-            iframe.onload = () => {
-                loadingOverlay.style.display = 'none';
-            };
-
-            setTimeout(() => {
-                loadingOverlay.style.display = 'none';
-            }, 3000);
-        } else {
-            window.location.href = 'index.html';
-        }
+    <section id="section-view" class="hidden">
+      
+      <div class="bg-white rounded-lg border border-slate-200 p-6 shadow-sm mb-6" id="view-search-container">
+        <h2 class="text-xl font-bold text-slate-900 mb-1">Search across Top Sarkari Jobs</h2>
+        <p class="text-slate-600 text-sm mb-4">Search jobs, results, admit cards, categories, CSC services and tools.</p>
         
-        // Helper function to get color name
-        function getColorName(hex) {
-            const colorMap = {
-                '#3b82f6': 'blue', '#60a5fa': 'blue', '#2563eb': 'blue',
-                '#f59e0b': 'amber', '#fbbf24': 'yellow', '#d97706': 'orange',
-                '#10b981': 'green', '#34d399': 'emerald', '#059669': 'green',
-                '#8b5cf6': 'purple', '#a78bfa': 'purple', '#7c3aed': 'violet',
-                '#ef4444': 'red', '#f87171': 'red', '#dc2626': 'red',
-                '#06b6d4': 'cyan', '#22d3ee': 'cyan', '#0891b2': 'cyan',
-            };
-            return colorMap[hex?.toLowerCase()] || 'blue';
-        }
+        <div class="relative w-full">
+          <div class="flex gap-2 w-full">
+            <input id="sectionSearchInput" type="search" 
+                   placeholder="Search job categories, results, admit cards…" 
+                   class="flex-1 min-w-0 px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 text-base"
+                   autocomplete="off" />
+            <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition shrink-0">
+              <i class="fa-solid fa-magnifying-glass"></i> <span class="hidden sm:inline">Search</span>
+            </button>
+          </div>
+          <div id="sectionSearchResults" class="hidden search-dropdown"></div>
+        </div>
+      </div>
 
-        // Function to handle back button
-        function goBack() {
-            if (window.history.length > 1) {
-                window.history.back();
-            } else {
-                window.location.href = 'index.html';
-            }
-        }
-    </script>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <h2 id="page-title" class="text-2xl font-bold text-slate-900">Section</h2>
+          <div class="text-slate-600 text-sm">
+            Showing <span id="countNow" class="font-bold text-slate-900">0</span> items.
+          </div>
+        </div>
+
+        <ul id="links-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></ul>
+
+        <div id="loading" class="mt-8 text-center text-slate-500">
+          <i class="fas fa-spinner fa-spin text-2xl"></i>
+        </div>
+      </div>
+    </section>
+
+    <section id="fallback" class="hidden">
+      <div class="bg-amber-50 border border-amber-200 rounded-lg p-6 text-center text-amber-900">
+        <h3 class="font-bold text-lg">Nothing found</h3>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="site-footer"></div>
+  <script src="script.js"></script>
+
+  <script>
+    (function () {
+      const urlParams = new URLSearchParams(window.location.search);
+      const sectionParam = urlParams.get("section");
+      const urlParam = urlParams.get("url");
+      const nameParam = urlParams.get("name") || "View";
+
+      const urlView = document.getElementById("url-view");
+      const sectionView = document.getElementById("section-view");
+      const fallback = document.getElementById("fallback");
+
+      function show(el){ if(el) el.classList.remove("hidden"); }
+
+      // 1. Resume / Tool View (No Search Bar)
+      if (urlParam) {
+        show(urlView);
+        document.title = `${nameParam} | Top Sarkari Jobs`;
+        const iframe = document.getElementById("url-iframe");
+        if (iframe) iframe.src = decodeURIComponent(urlParam);
+        return;
+      }
+
+      // 2. Section View (Has Search Bar)
+      if (sectionParam) {
+        show(sectionView);
+        const title = decodeURIComponent(sectionParam).replace(/-/g, ' ').toUpperCase();
+        document.title = `${title} | Top Sarkari Jobs`;
+        if(document.getElementById("page-title")) document.getElementById("page-title").textContent = title;
+
+        // Render List
+        (async () => {
+             const list = document.getElementById("links-list");
+             try {
+                 const r = await fetch("dynamic-sections.json");
+                 const d = await r.json();
+                 const sec = d.sections.find(s => s.id === sectionParam || s.title === sectionParam) || d.sections[0];
+                 
+                 if(sec && sec.items) {
+                     document.getElementById("loading").classList.add("hidden");
+                     
+                     // Filter Garbage Link
+                     const cleanItems = sec.items.filter(i => {
+                        const t = (i.name||i.title||"").toLowerCase();
+                        return !t.includes("main home page");
+                     });
+
+                     document.getElementById("countNow").textContent = cleanItems.length;
+                     list.innerHTML = cleanItems.map(i => `
+                        <li class="bg-white border border-slate-200 rounded-lg p-3 hover:shadow-md transition">
+                            <a href="${i.url || i.link}" class="block font-semibold text-sky-700 hover:underline" ${i.external ? 'target="_blank"' : ''}>
+                                ${i.name || i.title}
+                            </a>
+                            <div class="text-xs text-slate-500 mt-1">${i.date || 'Update'}</div>
+                        </li>
+                     `).join('');
+                 }
+             } catch(e) {}
+        })();
+        return;
+      }
+
+      show(fallback);
+    })();
+  </script>
 </body>
-
 </html>

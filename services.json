@@ -1,7 +1,19 @@
 {
   "services": [
     {
-      "name": "EWS Certificate (आर्थिक रूप से कमजोर वर्ग ईडब्ल्यूएस प्रमाणपत्र)",
+      "name": " फॅमिली id में Senior Citizen करवाए",
+      "service": "फॅमिली id में Senior Citizen करवाए",
+      "icon": "fas fa-money-bill",
+      "documents": ["Family Id", "Adhaar cardf"]
+    },
+    {
+      "name": "Income Certificate (आय प्रमाण पत्र)",
+      "service": "Income Certificate (आय प्रमाण पत्र)",
+      "icon": "fas fa-money-bill",
+      "documents": ["Photo", "ID Proof", "Address Proof", "Income Proof"]
+    },
+    {
+      "name": "EWS Certificate (आर्थिक रूप से कमजोर वर्ग EWS प्रमाणपत्र)",
       "service": "EWS Certificate",
       "icon": "fas fa-id-card",
       "documents": ["Family ID", "FAMILY ID वाले नो पर OTP", "अगर माता पिता का देहांत हो गया है तो Death certificate", "केवल 8 लाख से कम इनकम वाले"]
@@ -31,12 +43,6 @@
       "documents": ["Photo", "ID Proof", "Address Proof", "Caste Certificate"]
     },
     {
-      "name": "Income Certificate (आय प्रमाण पत्र)",
-      "service": "Income Certificate (आय प्रमाण पत्र)",
-      "icon": "fas fa-money-bill",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Income Proof"]
-    },
-    {
       "name": "नया पैन कार्ड",
       "service": "नया पैन कार्ड",
       "icon": "fas fa-id-card",
@@ -61,100 +67,22 @@
       "documents": ["Photo", "ID Proof", "Address Proof", "Police Report"]
     },
     {
-      "name": "नया पासपोर्ट अप्लाई करें",
-      "service": "नया पासपोर्ट अप्लाई करें",
-      "icon": "fas fa-passport",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Birth Certificate"]
-    },
-    {
       "name": "Farmer ID किसान ID ",
       "service": "Farmer ID किसान ID",
       "icon": "fas fa-redo",
       "documents": ["आधार कार्ड", "फॅमिली ID", "जमीन का कागज फर्द"]
     },
     {
-      "name": "जन्म प्रमाण पत्र अप्लाई",
-      "service": "जन्म प्रमाण पत्र अप्लाई",
-      "icon": "fas fa-birthday-cake",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Hospital Certificate"]
-    },
-    {
-      "name": "मृत्यु प्रमाण पत्र अप्लाई",
-      "service": "मृत्यु प्रमाण पत्र अप्लाई",
-      "icon": "fas fa-cross",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Hospital Certificate"]
-    },
-    {
-      "name": "जन्म प्रमाण पत्र में नाम जोड़ें",
-      "service": "जन्म प्रमाण पत्र में नाम जोड़ें",
-      "icon": "fas fa-plus",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Birth Certificate"]
-    },
-    {
-      "name": "बुढ़ापा पेंशन (वृद्धावस्था)",
-      "service": "बुढ़ापा पेंशन (वृद्धावस्था)",
-      "icon": "fas fa-user-clock",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Age Proof"]
-    },
-    {
-      "name": "दिव्यांग पेंशन रिपोर्ट",
-      "service": "दिव्यांग पेंशन रिपोर्ट",
-      "icon": "fas fa-wheelchair",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Disability Certificate"]
-    },
-    {
-      "name": "विधवा पेंशन रिपोर्ट",
-      "service": "विधवा पेंशन रिपोर्ट",
-      "icon": "fas fa-female",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Death Certificate"]
-    },
-    {
-      "name": "अविवाहित पेंशन रिपोर्ट",
-      "service": "अविवाहित पेंशन रिपोर्ट",
-      "icon": "fas fa-user",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Unmarried Certificate"]
-    },
-    {
-      "name": "राशन कार्ड",
-      "service": "राशन कार्ड",
+      "name": "राशन कार्ड Download",
+      "service": "राशन कार्ड Download",
       "icon": "fas fa-utensils",
       "documents": ["Photo", "ID Proof", "Address Proof", "Income Proof"]
     },
     {
-      "name": "पारिवारिक पहचान",
-      "service": "पारिवारिक पहचान",
-      "icon": "fas fa-users",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Family Details"]
-    },
-    {
-      "name": "रोजगार फॉर्म अप्लाई",
-      "service": "रोजगार फॉर्म अप्लाई",
-      "icon": "fas fa-briefcase",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Qualification Certificates"]
-    },
-    {
-      "name": "ई-श्रम कार्ड अप्लाई",
-      "service": "ई-श्रम कार्ड अप्लाई",
-      "icon": "fas fa-id-badge",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Bank Details"]
-    },
-    {
-      "name": "बिजली बिल",
-      "service": "बिजली बिल",
-      "icon": "fas fa-bolt",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Property Documents"]
-    },
-    {
-      "name": "पीएफ एडवांस/पूर्ण आवेदन",
-      "service": "पीएफ एडवांस/पूर्ण आवेदन",
+      "name": "PF एडवांस आवेदन",
+      "service": "पPF एडवांस आवेदन",
       "icon": "fas fa-money-check",
       "documents": ["Photo", "ID Proof", "Address Proof", "PF Account Details"]
-    },
-    {
-      "name": "अंबेडकर छात्रवृत्ति आवेदन",
-      "service": "अंबेडकर छात्रवृत्ति आवेदन",
-      "icon": "fas fa-graduation-cap",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Mark Sheets"]
     },
     {
       "name": "हर घर गृहिणी योजना 500 में Cylinder",
@@ -169,40 +97,10 @@
       "documents": ["Photo", "ID Proof", "Address Proof", "Vehicle Documents"]
     },
     {
-      "name": "पीएम विश्वकर्मा",
-      "service": "पीएम विश्वकर्मा",
-      "icon": "fas fa-tools",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Skill Certificate"]
-    },
-    {
-      "name": "सिबिल रिपोर्ट",
-      "service": "सिबिल रिपोर्ट",
-      "icon": "fas fa-chart-line",
-      "documents": ["Photo", "ID Proof", "Address Proof", "PAN Card"]
-    },
-    {
-      "name": "सीवी(RESUME)",
-      "service": "सीवी(RESUME)",
-      "icon": "fas fa-file-alt",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Qualification Certificates"]
-    },
-    {
-      "name": "वाहन कर(Tax)",
-      "service": "वाहन कर(Tax)",
-      "icon": "fas fa-calculator",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Vehicle Documents"]
-    },
-    {
       "name": "खेतों के लिए 75% सोलर सब्सिडी फॉर्म",
       "service": "खेतों के लिए 75% सोलर सब्सिडी फॉर्म",
       "icon": "fas fa-sun",
       "documents": ["Photo", "ID Proof", "Address Proof", "Land Documents"]
-    },
-    {
-      "name": "हरियाणा कौशल रोजगार पंजीकरण",
-      "service": "हरियाणा कौशल रोजगार पंजीकरण",
-      "icon": "fas fa-user-graduate",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Qualification Certificates"]
     },
     {
       "name": "कृषि यंत्रों पर सब्सिडी",
@@ -253,8 +151,8 @@
       "documents": ["पैन कार्ड नंबर", "आपके बैंक अकाउंट से जुड़ा फ़ोन नंबर", "उस बैंक का नाम जिसका स्टेटमेंट आप पाना चाहते हैं", "आपके फ़ोन नंबर पर एक OTP भेजा जाएगा","3 महीने से ले कर 12 महीने तक की STATEMNT  निकलवा सकतेा हो","STATEMNT   निकलने का चार्ज -50 rs रहेगा"]
     },
     {
-      "name": "GADI से GADI DETAILS FIND",
-      "service": "GADI से GADI DETAILS FIND",
+      "name": "Check status Lado Lakshmi Yojana (HR)",
+      "service": "Check status Lado Lakshmi Yojana (HR)",
       "icon": "fas fa-car",
       "documents": ["Photo", "ID Proof", "Address Proof", "Vehicle Number"]
     },
@@ -277,8 +175,8 @@
       "documents": ["Photo", "ID Proof", "Address Proof", "Purpose Document"]
     },
     {
-      "name": "खोये हुए आइटम की FIR करवाये",
-      "service": "खोये हुए आइटम की FIR करवाये",
+      "name": "Police FIR करवाये",
+      "service": "Police FIR करवाये",
       "icon": "fas fa-search",
       "documents": ["Photo", "ID Proof", "Address Proof", "Item Description"]
     },
