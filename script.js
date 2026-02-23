@@ -292,6 +292,7 @@
     });
   }
 
+  // ✅ UPDATED: Responsive Search/Button Layout Fix
   async function renderHomeQuickLinks() {
     if (!(page === "index.html" || page === "")) return;
     const searchInput = $("#siteSearchInput");
@@ -312,7 +313,19 @@
       const style = document.createElement("style");
       style.id = "home-quicklinks-style";
       style.textContent = `
-        .home-quicklinks{width:min(1180px, calc(100% - 32px));margin:0 auto;padding:12px 0 0;}
+        /* Flexbox magic to swap order based on device */
+        .top-search { display: flex; flex-direction: column; }
+        
+        /* Mobile Default: Search Top, Buttons Bottom */
+        .top-search > .container { order: 1; }
+        .home-quicklinks { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 24px 0 0; order: 2; }
+        
+        /* Desktop: Buttons Top, Search Bottom (with gap) */
+        @media (min-width: 981px) {
+          .home-quicklinks { order: 1; padding: 0 0 24px; }
+          .top-search > .container { order: 2; }
+        }
+
         .home-links{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
         .home-link-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border-radius:12px;color:#fff;font-weight:800;text-decoration:none;line-height:1;box-shadow:0 8px 18px rgba(2,6,23,.10);border:1px solid rgba(255,255,255,.15);white-space:nowrap;}
         .home-link-btn:hover{filter:brightness(.95);}
@@ -348,6 +361,26 @@
       if (icon) a.innerHTML = `<i class="${icon}"></i><span>${name}</span>`;
       else a.textContent = name;
       host.appendChild(a);
+    });
+  }
+
+  function removeHomeMainPageCtaLinks() {
+    if (!(page === "index.html" || page === "")) return;
+    const wrap = document.getElementById("dynamic-sections");
+    if (!wrap) return;
+
+    const needles = [
+      "╰┈➤🏠Website का Main Home Page खोलने के लिए यहाँ क्लिक करें",
+      "Website का Main Home Page खोलने के लिए यहाँ क्लिक करें",
+      "Main Home Page खोलने के लिए यहाँ क्लिक करें",
+      "Website का Main Home Page",
+    ];
+
+    const els = Array.from(wrap.querySelectorAll("a, button"));
+    els.forEach((el) => {
+      const t = safe(el.textContent).replace(/\s+/g, " ");
+      if (!t) return;
+      if (needles.some((n) => t.includes(n))) el.remove();
     });
   }
 
@@ -422,7 +455,7 @@
       gridEl.appendChild(a);
     });
 
-    // ✅ INJECT SEO CONTENT DYNAMICALLY FOR ALL PAGES (LINKS STYLED BLUE)
+    // INJECT SEO CONTENT DYNAMICALLY FOR ALL PAGES
     const mainContainer = $("#main") || $("main") || document.body;
     let seoBox = document.getElementById("dynamic-seo-box");
     if (seoBox) seoBox.remove(); 
@@ -660,7 +693,6 @@
 
     if (!categoriesView || !toolsView || !toolsGrid || !categoryButtons.length) return;
 
-    // FALLBACK DATA
     const fallbackData = {
       image: [
          { name: "Image Resizer", url: "https://imageresizer.com/", icon: "fa-solid fa-compress", external: true },
@@ -894,7 +926,8 @@
     }
 
     services.forEach((s) => {
-      const name = safe(s.name || s.service);
+      // ✅ "ceck" spelling fix on the fly just in case
+      const name = safe(s.name || s.service).replace("ceck", "check");
       const url = s.url || s.link || "";
       if (!name) return;
 
@@ -1039,5 +1072,20 @@
     
     // Initialize Search everywhere
     await initGlobalLiveSearch();
+
+    // ✅ FIXED: Make the magnifying glass in the header actually work!
+    const openSearchBtn = document.getElementById("openSearchBtn");
+    if (openSearchBtn) {
+      openSearchBtn.addEventListener("click", () => {
+        const searchInput = document.getElementById("siteSearchInput") || document.getElementById("sectionSearchInput");
+        if (searchInput) {
+          if (typeof window.__closeMenu === "function") window.__closeMenu();
+          searchInput.scrollIntoView({ behavior: "smooth", block: "center" });
+          setTimeout(() => searchInput.focus(), 300);
+        } else {
+          window.location.href = "index.html"; // Fallback to home if no search bar on current page
+        }
+      });
+    }
   });
 })();
