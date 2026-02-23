@@ -230,6 +230,7 @@
     });
   }
 
+  // ✅ UPDATED: Professional Gradient Generation for Homepage Sections
   async function renderHomepageSections() {
     const wrap = $("#dynamic-sections");
     if (!wrap) return;
@@ -244,8 +245,13 @@
 
     (data.sections || []).forEach((sec) => {
       const title = safe(sec.title) || "Updates";
-      const color = safe(sec.color) || "#0284c7";
+      const baseColor = safe(sec.color) || "#0284c7";
       const icon = safe(sec.icon) || "fa-solid fa-briefcase";
+
+      // Dynamically create a sleek gradient from whatever solid color is provided
+      const bgStyle = baseColor.includes("gradient") 
+        ? `background: ${baseColor};` 
+        : `background-color: ${baseColor}; background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(0, 0, 0, 0.15) 100%);`;
 
       const sectionKey = safe(sec.id) || safe(sec.title);
       let moreHref = "";
@@ -258,7 +264,7 @@
       const card = document.createElement("article");
       card.className = "section-card";
       card.innerHTML = `
-        <div class="section-head" style="background:${color}">
+        <div class="section-head" style="${bgStyle} text-shadow: 0 1px 2px rgba(0,0,0,0.15); border-bottom: 1px solid rgba(0,0,0,0.05);">
           <div class="left">
             <i class="${icon}"></i>
             <span>${title}</span>
@@ -292,7 +298,6 @@
     });
   }
 
-  // ✅ UPDATED: Professional Quick Links Design
   async function renderHomeQuickLinks() {
     if (!(page === "index.html" || page === "")) return;
     const searchInput = $("#siteSearchInput");
@@ -366,27 +371,14 @@
     const links = Array.isArray(data?.home_links) ? data.home_links : [];
     if (!links.length) return;
 
-    // ✅ PROFESSIONAL GRADIENTS instead of blocky colors
-    const colorMap = {
-      "bg-red-600": "linear-gradient(135deg, #ef4444, #dc2626)",
-      "bg-slate-600": "linear-gradient(135deg, #64748b, #475569)",
-      "bg-amber-600": "linear-gradient(135deg, #f59e0b, #d97706)",
-      "bg-zinc-400": "linear-gradient(135deg, #a1a1aa, #71717a)",
-      "bg-green-600": "linear-gradient(135deg, #10b981, #059669)",
-      "bg-pink-500": "linear-gradient(135deg, #f43f5e, #e11d48)",
-      "bg-yellow-600": "linear-gradient(135deg, #eab308, #ca8a04)",
-      "bg-red-500": "linear-gradient(135deg, #f87171, #ef4444)"
-    };
+    const colorMap = { "bg-red-600": "linear-gradient(135deg, #ef4444, #dc2626)", "bg-slate-600": "linear-gradient(135deg, #64748b, #475569)", "bg-amber-600": "linear-gradient(135deg, #f59e0b, #d97706)", "bg-zinc-400": "linear-gradient(135deg, #a1a1aa, #71717a)", "bg-green-600": "linear-gradient(135deg, #10b981, #059669)", "bg-pink-500": "linear-gradient(135deg, #f43f5e, #e11d48)", "bg-yellow-600": "linear-gradient(135deg, #eab308, #ca8a04)", "bg-red-500": "linear-gradient(135deg, #f87171, #ef4444)" };
 
     host.innerHTML = "";
     links.forEach((l) => {
       let name = safe(l?.name);
-      
-      // ✅ TEXT REPLACEMENT FIX
       if (name.includes("लाडो लक्ष्मी योजना: पैसा आया है या नहीं आया यहाँ से चेक करें")) {
           name = "लाडो लक्ष्मी योजना: पैसा आया है या नहीं - यहाँ से चेक करें";
       }
-
       const url = safe(l?.url || l?.link);
       if (!name || !url) return;
       
@@ -1101,14 +1093,12 @@
     await initCategoryPage();
     await initToolsPage();
     
-    // CSC Services Boot Check
     if (page === "govt-services.html") {
       ensureSupabaseClient().catch(() => {});
     }
     initCscModal();
     await renderServicesPage();
     
-    // Initialize Search everywhere
     await initGlobalLiveSearch();
   });
 })();
