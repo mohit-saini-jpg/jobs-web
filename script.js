@@ -230,7 +230,6 @@
     });
   }
 
-  // ✅ UPDATED: Professional Gradient Generation for Homepage Sections
   async function renderHomepageSections() {
     const wrap = $("#dynamic-sections");
     if (!wrap) return;
@@ -298,6 +297,7 @@
     });
   }
 
+  // ✅ UPDATED: Added justify-content: center to fix mobile pill gaps
   async function renderHomeQuickLinks() {
     if (!(page === "index.html" || page === "")) return;
     const searchInput = $("#siteSearchInput");
@@ -327,9 +327,9 @@
           .top-search > .container { order: 2; }
         }
 
-        .home-links { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+        /* ✅ justify-content: center added here for perfect mobile wrapping */
+        .home-links { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; }
         
-        /* SLEEK PILL BUTTON DESIGN */
         .home-link-btn {
           display: inline-flex;
           align-items: center;
@@ -355,7 +355,7 @@
         .home-link-btn:active { transform: translateY(0); }
         
         @media (max-width: 640px) {
-          .home-links { gap: 8px; }
+          .home-links { gap: 8px; justify-content: center; }
           .home-link-btn { padding: 8px 14px; font-size: 13px; }
         }
       `;
@@ -723,7 +723,6 @@
 
     if (!categoriesView || !toolsView || !toolsGrid || !categoryButtons.length) return;
 
-    // FALLBACK DATA
     const fallbackData = {
       image: [
          { name: "Image Resizer", url: "https://imageresizer.com/", icon: "fa-solid fa-compress", external: true },
