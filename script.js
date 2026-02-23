@@ -3,7 +3,6 @@
 
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
-  // Relaxed page detection (checks if 'tools' is in the URL)
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
   const isToolsPage = location.pathname.includes("tools");
 
@@ -16,6 +15,12 @@
     if (s.startsWith("#") || s.startsWith("?")) return s;
     if (s.startsWith("/") || s.endsWith(".html") || s.startsWith("./") || s.startsWith("../")) return s;
     return "https://" + s.replace(/^\/+/, "");
+  }
+
+  // ✅ GARBAGE LINK FILTER
+  function isGarbageLink(item) {
+    const text = (item.name || item.title || "").toLowerCase();
+    return text.includes("main home page") || text.includes("website ka main");
   }
 
   function openInternal(url, name) {
@@ -263,14 +268,16 @@
             <span>${title}</span>
           </div>
         </div>
-        <div class="section-body text-center text-bold rounded border border-gray-300 p-4">
+        <div class="section-body">
           <div class="section-list"></div>
           ${moreHref ? `<a class="view-all" href="${moreHref}">More <i class="fa-solid fa-arrow-right"></i></a>` : ""}
         </div>
       `;
 
       const list = $(".section-list", card);
-      const items = Array.isArray(sec.items) ? sec.items.slice(0, 8) : [];
+      const items = Array.isArray(sec.items) 
+        ? sec.items.filter(i => !isGarbageLink(i)).slice(0, 8) 
+        : [];
 
       items.forEach((it) => {
         const name = safe(it.name) || "Open";
@@ -280,7 +287,7 @@
         const external = !!it.external;
         const a = document.createElement("a");
         a.className = "section-link";
-        a.href = external ? normalizeUrl(url) : openInternal(url, name);
+        a.href = normalizeUrl(url); 
         if (external) { a.target = "_blank"; a.rel = "noopener"; }
         a.innerHTML = `<div class="t">${name}</div>${it.date ? `<div class="d">${safe(it.date)}</div>` : `<div class="d">Open official link</div>`}`;
         list.appendChild(a);
@@ -406,6 +413,9 @@
     else if (group === "khabar") items = sliceBetween(right, "latest khabar", "study material");
     else if (group === "study-material") items = sliceBetween(right, "study material", "tools");
 
+    // Filter Garbage
+    items = items.filter(i => !isGarbageLink(i));
+
     gridEl.innerHTML = "";
     items.forEach((it) => {
       const a = document.createElement("a");
@@ -417,9 +427,8 @@
     });
   }
 
-  // ✅ TOOLS PAGE - Fixed with Fallback Data
+  // Tools Page
   async function initToolsPage() {
-    // Looser check: works on 'tools.html' or '/tools'
     if (!isToolsPage) return;
 
     const categoriesView = $("#categories-view");
@@ -431,7 +440,7 @@
 
     if (!categoriesView || !toolsView || !toolsGrid || !categoryButtons.length) return;
 
-    // ✅ FALLBACK DATA (Restores functionality even if JSON fails)
+    // FALLBACK DATA
     const fallbackData = {
       image: [
          { name: "Image Resizer", url: "https://imageresizer.com/", icon: "fa-solid fa-compress", external: true },
@@ -456,14 +465,11 @@
         const json = await r.json();
         if (json && Object.keys(json).length > 0) toolsData = json;
       }
-    } catch (_) {
-      console.log("Using fallback tools data");
-    }
+    } catch (_) {}
 
     const showCategories = () => {
       toolsView.classList.add("hidden");
       categoriesView.classList.remove("hidden");
-      // Update URL to remove query param cleanly
       if(history.pushState) history.pushState(null, null, location.pathname);
       window.scrollTo({ top: 0, behavior: "instant" });
     };
@@ -484,7 +490,6 @@
           const isExternal = t.external === true;
           const a = document.createElement("a");
           a.className = "p-4 rounded-lg bg-white border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition duration-300 flex items-start gap-3 text-left";
-          // Direct Link logic
           a.href = isExternal ? normalizeUrl(url) : openInternal(url, name);
           if (isExternal) { a.target = "_blank"; a.rel = "noopener"; }
 
@@ -512,7 +517,6 @@
       });
     });
 
-    // ✅ SUPPORT DIRECT LINKS: tools.html?cat=image
     const params = new URLSearchParams(location.search);
     const cat = params.get("cat");
     if (cat && toolsData[cat]) {
@@ -522,35 +526,187 @@
     }
   }
 
+  // ✅ CSC SERVICES RESTORED 
+  const CSC_TABLE = "csc_service_requests";
+  let cscSupabase = null;
+
+  async function ensureSupabaseClient() {
+    if (cscSupabase) return cscSupabase;
+
+    if (!window.supabase) {
+      await new Promise((resolve, reject) => {
+        const s = document.createElement("script");
+        s.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+        s.async = true;
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      }).catch(() => null);
+    }
+
+    if (!window.supabase) return null;
+
+    try {
+      const r = await fetch("config.json", { cache: "no-store" });
+      if (!r.ok) return null;
+      const config = await r.json();
+      if (!config?.supabase?.url || !config?.supabase?.anonKey) return null;
+
+      cscSupabase = window.supabase.createClient(config.supabase.url, config.supabase.anonKey);
+      return cscSupabase;
+    } catch (_) {
+      return null;
+    }
+  }
+
   function initCscModal() {
     const modal = $("#cscModal");
     const overlay = $("#cscModalOverlay");
     const closeBtn = $("#cscModalClose");
+    const closeBtn2 = $("#cscCloseBtn");
     const form = $("#cscRequestForm");
+
     if (!modal || !overlay || !closeBtn || !form) return;
-    
+
+    const serviceNameEl = $("#cscServiceName");
+    let currentService = { name: "", url: "" };
+
     const close = () => {
       modal.hidden = true;
       overlay.hidden = true;
       document.body.style.overflow = "";
     };
-    overlay.addEventListener("click", close);
-    closeBtn.addEventListener("click", close);
-    window.__openCscModal = (service) => {
-      if($("#cscServiceName")) $("#cscServiceName").textContent = service.name || "Service";
+
+    const open = (service) => {
+      currentService = service || { name: "", url: "" };
+      if (serviceNameEl) serviceNameEl.textContent = currentService.name || "Service";
+
       modal.hidden = false;
       overlay.hidden = false;
       document.body.style.overflow = "hidden";
+
+      const first = $("input, textarea", form);
+      if (first) setTimeout(() => first.focus(), 50);
     };
+
+    window.__openCscModal = open;
+
+    overlay.addEventListener("click", close);
+    closeBtn.addEventListener("click", close);
+    if (closeBtn2) closeBtn2.addEventListener("click", close);
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !modal.hidden) close();
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const fullName = safe($("#cscFullName")?.value);
+      const phone = safe($("#cscPhone")?.value);
+      const state = safe($("#cscState")?.value);
+      const msg = safe($("#cscMessage")?.value);
+
+      if (!fullName || !phone || phone.length < 8) {
+        alert("Please fill all fields correctly.");
+        return;
+      }
+
+      const sb = await ensureSupabaseClient();
+      if (!sb) {
+        alert("Submission system is temporarily unavailable. Please try again later.");
+        return;
+      }
+
+      const serviceText = [
+        safe(currentService.name) ? safe(currentService.name) : "-",
+        state ? `State: ${state}` : "",
+        currentService.url ? `Link: ${normalizeUrl(currentService.url)}` : "",
+        msg ? `Details: ${msg}` : "",
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+      try {
+        const { error } = await sb.from(CSC_TABLE).insert([
+          {
+            name: fullName,
+            phone: phone,
+            service: serviceText,
+            created_at: new Date().toISOString(),
+          },
+        ]);
+
+        if (error) {
+          console.error("Supabase insert error:", error);
+          alert("Failed to submit your request. Please try again.");
+          return;
+        }
+
+        alert("Request submitted successfully. We will contact you soon.");
+        form.reset();
+        close();
+      } catch (err) {
+        console.error("Submit error:", err);
+        alert("Could not submit your request. Please check your connection and try again.");
+      }
+    });
   }
 
-  // Global Search logic
+  async function renderServicesPage() {
+    if (page !== "govt-services.html") return;
+
+    const list = $("#servicesList");
+    if (!list) return;
+
+    let data = null;
+    try {
+      const r = await fetch("services.json", { cache: "no-store" });
+      if (r.ok) data = await r.json();
+    } catch (_) {}
+
+    const services = (data && (data.services || data)) || [];
+    list.innerHTML = "";
+
+    if (!Array.isArray(services) || !services.length) {
+      list.innerHTML = `<div class="seo-block"><strong>No services found.</strong><p>Please check services.json.</p></div>`;
+      return;
+    }
+
+    services.forEach((s) => {
+      const name = safe(s.name || s.service);
+      const url = s.url || s.link || "";
+      if (!name) return;
+
+      const a = document.createElement("a");
+      a.className = "section-link csc-service-link";
+      a.href = "#";
+      a.setAttribute("role", "button");
+      a.innerHTML = `
+        <div class="t">${name}</div>
+        <div class="d">Click to fill details & submit request</div>
+      `;
+
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (typeof window.__openCscModal === "function") {
+          window.__openCscModal({ name, url });
+        }
+      });
+
+      list.appendChild(a);
+    });
+  }
+
+  // ✅ GLOBAL LIVE SEARCH
   async function initGlobalLiveSearch() {
     const inputs = [];
     const homeInput = document.getElementById("siteSearchInput");
     const sectionInput = document.getElementById("sectionSearchInput");
+    
     if (homeInput) inputs.push({ input: homeInput, resultsId: "searchResults" });
     if (sectionInput) inputs.push({ input: sectionInput, resultsId: "sectionSearchResults" });
+
     if (!inputs.length) return;
 
     let searchData = [];
@@ -564,23 +720,38 @@
 
       const push = (name, url, src) => {
         if(!name || !url) return;
-        const text = (name).toLowerCase();
-        if (text.includes("main home page") || text.includes("website ka main")) return;
+        if (isGarbageLink({name})) return;
         searchData.push({ name: name.trim(), url: url.trim(), src });
       };
 
-      if (dyn.sections) dyn.sections.forEach(s => s.items?.forEach(i => push(i.name || i.title, i.url || i.link, s.title || "Update")));
-      [jobs.top_jobs, jobs.left_jobs, jobs.right_jobs].forEach(arr => arr?.forEach(i => push(i.name || i.title, i.url || i.link, "Category")));
-      if (tools) Object.keys(tools).forEach(k => { if(Array.isArray(tools[k])) tools[k].forEach(t => push(t.name, t.url, "Tool")); });
-      if (services.services) services.services.forEach(s => push(s.name, "govt-services.html", "CSC Service"));
+      if (dyn.sections) {
+        dyn.sections.forEach(s => s.items?.forEach(i => push(i.name || i.title, i.url || i.link, s.title || "Update")));
+      }
+      [jobs.top_jobs, jobs.left_jobs, jobs.right_jobs].forEach(arr => {
+        arr?.forEach(i => push(i.name || i.title, i.url || i.link, "Category"));
+      });
+      if (tools) {
+        Object.keys(tools).forEach(k => {
+          if(Array.isArray(tools[k])) tools[k].forEach(t => push(t.name, t.url, "Tool"));
+        });
+      }
+      if (services.services) {
+        services.services.forEach(s => push(s.name, "govt-services.html", "CSC Service"));
+      }
     } catch (e) {}
 
     inputs.forEach(({ input, resultsId }) => {
       const resultsWrap = document.getElementById(resultsId);
       if (!resultsWrap) return;
+
       const performSearch = () => {
         const query = input.value.toLowerCase().trim();
-        if (query.length < 2) { resultsWrap.innerHTML = ""; resultsWrap.style.display = "none"; return; }
+        if (query.length < 2) {
+          resultsWrap.innerHTML = "";
+          resultsWrap.style.display = "none";
+          return;
+        }
+
         const tokens = query.split(/\s+/).filter(t => t.length);
         const matches = searchData.filter(item => {
           const hay = (item.name + " " + item.src).toLowerCase();
@@ -593,10 +764,15 @@
           matches.forEach(m => {
             let href = normalizeUrl(m.url);
             const isExternal = href.startsWith("http") && !href.includes(location.hostname);
+            
             const a = document.createElement("a");
             a.className = "search-result-item";
             a.href = href;
-            if (isExternal) { a.target = "_blank"; a.rel = "noopener"; }
+            if (isExternal) {
+                a.target = "_blank";
+                a.rel = "noopener";
+            }
+            
             a.innerHTML = `<div class="result-name">${m.name}</div><div class="result-meta">${m.src}</div>`;
             resultsWrap.appendChild(a);
           });
@@ -605,22 +781,42 @@
           resultsWrap.innerHTML = `<div class="search-no-results">No matches found.</div>`;
         }
       };
+
       input.addEventListener("input", performSearch);
       input.addEventListener("focus", () => { if(input.value.length >= 2) resultsWrap.style.display="block"; });
-      document.addEventListener("click", (e) => { if (!input.contains(e.target) && !resultsWrap.contains(e.target)) resultsWrap.style.display = "none"; });
+      
+      document.addEventListener("click", (e) => {
+        if (!input.contains(e.target) && !resultsWrap.contains(e.target)) {
+          resultsWrap.style.display = "none";
+        }
+      });
     });
   }
 
+  // Boot
   document.addEventListener("DOMContentLoaded", async () => {
     await injectHeaderFooter();
     await loadHeaderLinks();
     initOffcanvas();
     initDropdowns();
     initFAQ();
-    if (page === "index.html" || page === "") { await renderHomepageSections(); await renderHomeQuickLinks(); }
+
+    if (page === "index.html" || page === "") {
+      await renderHomepageSections();
+      await renderHomeQuickLinks();
+    }
+
     await initCategoryPage();
     await initToolsPage();
+    
+    // CSC Services Boot Check
+    if (page === "govt-services.html") {
+      ensureSupabaseClient().catch(() => {});
+    }
     initCscModal();
+    await renderServicesPage();
+    
+    // Initialize Search everywhere
     await initGlobalLiveSearch();
   });
 })();
