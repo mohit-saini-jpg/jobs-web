@@ -33,6 +33,42 @@
     else window.location.href = "index.html";
   };
 
+  // ✅ FIXED: Dynamically inject the full mobile menu so it is identical on EVERY page
+  function buildMobileMenu() {
+    const nav = document.querySelector(".offcanvas-nav");
+    if (!nav) return;
+    
+    // This perfectly rebuilds the premium menu on any page that is missing it
+    nav.innerHTML = `
+      <a href="index.html">Home</a>
+      <a href="result.html">Results</a>
+      <a href="govt-services.html">CSC Services</a>
+      <a href="tools.html">Tools</a>
+      <a href="helpdesk.html">Helpdesk</a>
+
+      <div class="offcanvas-group">
+        <div class="offcanvas-group-title">Jobs</div>
+        <a href="category.html?group=study">Study wise jobs</a>
+        <a href="category.html?group=popular">Popular job categories</a>
+        <a href="category.html?group=state">State wise jobs</a>
+      </div>
+
+      <div class="offcanvas-group">
+        <div class="offcanvas-group-title">Admissions</div>
+        <a href="category.html?group=admissions">Admissions</a>
+        <a href="category.html?group=admit-result">Admit Card / Result / Answer Key / Syllabus</a>
+      </div>
+
+      <div class="offcanvas-group">
+        <div class="offcanvas-group-title">More</div>
+        <a href="category.html?group=khabar">Latest Khabar</a>
+        <a href="category.html?group=study-material">Study Material & Top Courses</a>
+      </div>
+
+      <div class="offcanvas-cta" id="header-links-mobile"></div>
+    `;
+  }
+
   async function injectHeaderFooter() {
     const headerHost = document.getElementById("site-header");
     const footerHost = document.getElementById("site-footer");
@@ -247,7 +283,6 @@
       const baseColor = safe(sec.color) || "#0284c7";
       const icon = safe(sec.icon) || "fa-solid fa-briefcase";
 
-      // Dynamically create a sleek gradient from whatever solid color is provided
       const bgStyle = baseColor.includes("gradient") 
         ? `background: ${baseColor};` 
         : `background-color: ${baseColor}; background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(0, 0, 0, 0.15) 100%);`;
@@ -297,7 +332,6 @@
     });
   }
 
-  // ✅ UPDATED: Added justify-content: center to fix mobile pill gaps
   async function renderHomeQuickLinks() {
     if (!(page === "index.html" || page === "")) return;
     const searchInput = $("#siteSearchInput");
@@ -327,7 +361,6 @@
           .top-search > .container { order: 2; }
         }
 
-        /* ✅ justify-content: center added here for perfect mobile wrapping */
         .home-links { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; }
         
         .home-link-btn {
@@ -1077,6 +1110,9 @@
 
   // Boot
   document.addEventListener("DOMContentLoaded", async () => {
+    // 🚀 BUILD MOBILE MENU FIRST to guarantee it is identical across the entire site
+    buildMobileMenu();
+    
     await injectHeaderFooter();
     await loadHeaderLinks();
     initOffcanvas();
