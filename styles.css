@@ -100,9 +100,11 @@ a:hover{ text-decoration:underline; }
   gap:8px;
 }
 
-/* Removes the search icon from the top header row */
-#openSearchBtn {
-  display: none !important;
+/* ✅ FIXED: Hide search icon ONLY on desktop so it shows on mobile */
+@media (min-width: 981px) {
+  #openSearchBtn {
+    display: none !important;
+  }
 }
 
 .icon-btn{
@@ -443,13 +445,13 @@ mark{ background: rgba(250, 204, 21, .35); padding:0 2px; border-radius:4px; }
   font-size:13px;
 }
 
-/* ✅ FIXED: Professional Mobile Dropdown Menu */
+/* Professional Mobile Dropdown Menu */
 .overlay {
   position: fixed; 
   inset: 0; 
   background: rgba(2,8,23,.6); 
   z-index: 80;
-  backdrop-filter: blur(4px); /* Premium glass blur effect */
+  backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
 }
 .overlay[hidden] { display: none !important; pointer-events: none !important; }
@@ -469,7 +471,6 @@ mark{ background: rgba(250, 204, 21, .35); padding:0 2px; border-radius:4px; }
 }
 .offcanvas[hidden] { display: none !important; }
 
-/* Make the header pop with the brand gradient */
 .offcanvas-head {
   padding: 20px 24px; 
   display: flex; 
@@ -499,7 +500,6 @@ mark{ background: rgba(250, 204, 21, .35); padding:0 2px; border-radius:4px; }
   flex-direction: column; 
 }
 
-/* Target all links directly inside nav, groups, and CTA */
 .offcanvas-nav > a, 
 .offcanvas-group > a,
 #header-links-mobile > a {
@@ -533,7 +533,6 @@ mark{ background: rgba(250, 204, 21, .35); padding:0 2px; border-radius:4px; }
   transform: translateX(4px); 
 }
 
-/* Add the subtle chevron icon to links */
 .offcanvas-nav > a::after, 
 .offcanvas-group > a::after,
 #header-links-mobile > a::after {
@@ -572,13 +571,41 @@ mark{ background: rgba(250, 204, 21, .35); padding:0 2px; border-radius:4px; }
   flex-direction: column; 
 }
 
-/* Responsive */
+/* Responsive Overrides */
 @media (max-width: 980px){
   .desktop-nav{ display:none; }
   .header-actions{ display:flex; }
   .brand-subtitle{ display:none; }
   .search-row{ flex-direction:column; align-items:stretch; }
   .btn-primary{ width:100%; }
+
+  /* ✅ FIXED: Mobile Search Bar Behavior */
+  .top-search { padding-top: 4px; }
+  
+  /* Hides normal block on mobile */
+  .search-card { display: none; }
+  
+  /* Shows as floating overlay when toggled via icon */
+  .search-card.mobile-active {
+    display: block;
+    position: fixed;
+    top: 76px;
+    left: 16px;
+    right: 16px;
+    z-index: 100;
+    box-shadow: 0 16px 40px rgba(2,8,23,0.25);
+    border: 1px solid var(--line);
+    animation: slideDownSearch 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .search-results {
+    max-height: 45vh;
+    overflow-y: auto;
+  }
+}
+
+@keyframes slideDownSearch {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ===== Modal (CSC Services popup) ===== */
