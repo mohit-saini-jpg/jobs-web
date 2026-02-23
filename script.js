@@ -112,7 +112,6 @@
     }
   }
 
-  // Mobile menu
   function initOffcanvas() {
     const btn = $("#menuBtn");
     const closeBtn = $("#closeMenuBtn");
@@ -145,7 +144,6 @@
     window.__closeMenu = close;
   }
 
-  // Dropdowns
   function initDropdowns() {
     const dds = $$("[data-dd]");
     if (!dds.length) return;
@@ -214,7 +212,6 @@
     });
   }
 
-  // FAQ
   function initFAQ() {
     $$(".faq-btn").forEach((btn) => {
       btn.addEventListener("click", () => {
@@ -233,7 +230,6 @@
     });
   }
 
-  // Homepage Sections
   async function renderHomepageSections() {
     const wrap = $("#dynamic-sections");
     if (!wrap) return;
@@ -436,187 +432,161 @@
     if (group === "study") {
       seoHTML = `
         <section class="seo-block" aria-label="Guides" style="margin-top: 24px;">
-          <h2>Government Exam Study Resources 2026 – Free Study Material, Syllabus & Preparation Strategy</h2>
-          <p>Welcome to the Study section of Top Sarkari Jobs, your dedicated hub for Government Exam Preparation, Free Study Material, Syllabus Guides, Previous Year Question Papers, Mock Tests and Concept Clarity Resources for all major competitive exams in India.</p>
-          <p>Government exams like UPSC, SSC, Railway, Banking, State PSC, Police, Defence and CUET require structured preparation. Random PDFs se selection nahi hota — strategic preparation hoti hai. Yahan par hum aapko verified, official aur high-quality resources provide karte hain jo real exam pattern ke according relevant hain.</p>
+          <h2>Government Exam Study Resources 2026 – Free Study Material, Syllabus, Mock Tests & Preparation Strategy</h2>
+          <p>Preparing for a Sarkari Job in India requires more than just hard work — it requires the right strategy, authentic study material, structured revision plan, and consistent practice. The Study section of Top Sarkari Jobs is designed to be your complete preparation hub for all major Government Exams 2026 including UPSC, SSC, Railway, Banking, State PSC, Police, Defence, CUET, JEE, NEET and other competitive exams.</p>
+          <p>Yahan par aapko milega free study material, official syllabus guidance, trusted government learning portals, previous year question papers, conceptual video lectures, and structured preparation roadmap — sab ek hi jagah par. This page is not just about downloading PDFs. It is about building strong conceptual clarity, analytical ability and exam confidence.</p>
+          
           <div class="seo-grid">
             <div class="seo-card">
-              <h3>Build Strong Foundation with NCERT Books</h3>
-              <p style="font-size: 13px; margin-bottom: 8px; color: var(--muted);">Most competitive exams test conceptual understanding from basic subjects:</p>
-              <ul style="list-style-type: disc; margin-left: 18px; color: var(--muted); line-height: 1.6;">
-                <li>Indian History & Geography</li>
-                <li>Polity & Economics</li>
-                <li>General Science & Mathematics</li>
+              <h3>Why Structured Study Resources Matter</h3>
+              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">Government exams in India are highly competitive. Lakhs of candidates apply every year for limited vacancies. Random preparation se selection mushkil hota hai. Structured preparation se success possible hoti hai. Most exams test:</p>
+              <ul style="list-style-type: disc; margin-left: 18px; color: var(--muted); line-height: 1.6; font-size: 13px;">
+                <li>Conceptual clarity & Analytical reasoning</li>
+                <li>Current affairs awareness</li>
+                <li>Time management & Accuracy under pressure</li>
               </ul>
-              <p style="font-size: 13px; margin-top: 10px; color: var(--muted);">For this reason, NCERT textbooks are considered the backbone of Sarkari exam preparation.</p>
+            </div>
+            <div class="seo-card">
+              <h3>Start with NCERT – Foundation</h3>
+              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">Almost every major competitive exam is linked to NCERT concepts (History, Geography, Polity, Economics, General Science). For UPSC and State PSC, Class 6–12 is mandatory.</p>
               <p style="font-size: 13px; margin-top: 8px; font-weight: 600;">👉 <a href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener" class="text-sky-600 hover:underline">ncert.nic.in/textbook.php</a></p>
-              <p style="font-size: 13px; margin-top: 8px; color: var(--muted);">These books (Class 6–12 especially) are essential for UPSC, State PSC, SSC, Railway, and Teaching Exams. Hindi aur English dono versions available hain.</p>
             </div>
             <div class="seo-card">
-              <h3>Advanced Concept Learning – SWAYAM</h3>
-              <p style="font-size: 13px; margin-bottom: 8px; color: var(--muted);">Government of India initiative offering free online courses in:</p>
-              <ul style="list-style-type: disc; margin-left: 18px; color: var(--muted); line-height: 1.6;">
-                <li>General Studies & Humanities</li>
-                <li>Engineering & Management</li>
-                <li>Law & Mathematics</li>
-              </ul>
-              <p style="font-size: 13px; margin-top: 10px; color: var(--muted);">Once basics are clear, next step is depth.</p>
-              <p style="font-size: 13px; margin-top: 8px; font-weight: 600;">👉 <a href="https://swayam.gov.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">swayam.gov.in</a></p>
-              <p style="font-size: 13px; margin-top: 8px; color: var(--muted);">These courses are taught by IIT, IIM and central university professors.</p>
-            </div>
-            <div class="seo-card">
-              <h3>NPTEL Courses (IIT Lectures)</h3>
-              <p style="font-size: 13px; margin-bottom: 8px; color: var(--muted);">Ideal for technical and analytical preparation:</p>
-              <ul style="list-style-type: disc; margin-left: 18px; color: var(--muted); line-height: 1.6;">
-                <li>Quantitative Aptitude & Data Interpretation</li>
-                <li>Logical Reasoning</li>
-                <li>Computer Science & Technical Govt Exams</li>
-              </ul>
-              <p style="font-size: 13px; margin-top: 10px; font-weight: 600;">👉 <a href="https://nptel.ac.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">nptel.ac.in</a></p>
-              <p style="font-size: 13px; margin-top: 8px; color: var(--muted);">These courses improve conceptual strength and analytical thinking.</p>
+              <h3>SWAYAM & NPTEL – Online Courses</h3>
+              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">SWAYAM offers free courses by IIT/IIM professors for Gen Studies, Economics, etc.</p>
+              <p style="font-size: 13px; margin-bottom: 8px; font-weight: 600;">👉 <a href="https://swayam.gov.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">swayam.gov.in</a></p>
+              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">NPTEL offers technical & analytical lectures (Aptitude, Reasoning, Engineering).</p>
+              <p style="font-size: 13px; font-weight: 600;">👉 <a href="https://nptel.ac.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">nptel.ac.in</a></p>
             </div>
             <div class="seo-card">
               <h3>National Digital Library (NDLI)</h3>
-              <p style="font-size: 13px; margin-bottom: 8px; color: var(--muted);">Research & Previous Year Papers provided by IIT Kharagpur:</p>
-              <ul style="list-style-type: disc; margin-left: 18px; color: var(--muted); line-height: 1.6;">
-                <li>Previous year question papers</li>
-                <li>Competitive exam books</li>
-                <li>Academic references, Journals & Research papers</li>
-              </ul>
-              <p style="font-size: 13px; margin-top: 10px; font-weight: 600;">👉 <a href="https://ndl.iitkgp.ac.in/" target="_blank" rel="noopener" class="text-sky-600 hover:underline">ndl.iitkgp.ac.in</a></p>
-              <p style="font-size: 13px; margin-top: 8px; color: var(--muted);">Serious aspirants must use NDLI for structured preparation.</p>
+              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">Access academic books, research material, and previous year papers.</p>
+              <p style="font-size: 13px; margin-bottom: 8px; font-weight: 600;">👉 <a href="https://ndl.iitkgp.ac.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">ndl.iitkgp.ac.in</a></p>
             </div>
           </div>
           <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line);">
-            <h3 style="font-size: 16px; font-weight: 900; margin-bottom: 8px;">Smart Study Plan for 2026 Exams</h3>
+            <h3 style="font-size: 16px; font-weight: 900; margin-bottom: 8px;">Smart Study Plan & Syllabus Strategy</h3>
+            <p style="font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 8px;">Always download the official syllabus (e.g., from upsc.gov.in or nta.ac.in). Avoid studying from too many sources, ignoring past papers, and following unverified PDFs.</p>
             <ul style="list-style-type: decimal; margin-left: 18px; color: var(--muted); line-height: 1.6; font-size: 14px;">
-              <li>Complete NCERT (6–12)</li>
-              <li>Download official syllabus</li>
-              <li>Take SWAYAM/NPTEL courses</li>
-              <li>Practice previous year papers</li>
-              <li>Weekly mock tests & Monthly revision</li>
+              <li>Complete NCERT (Foundation)</li>
+              <li>Download official syllabus & create timetable</li>
+              <li>Take SWAYAM/NPTEL lectures</li>
+              <li>Solve previous year question papers & weekly mock tests</li>
             </ul>
-            <p style="font-size: 14px; font-weight: 700; color: #0ea5e9; margin-top: 10px;">Consistency beats intensity.</p>
+            <p style="font-size: 14px; font-weight: 700; color: #0ea5e9; margin-top: 10px;">Preparation smart honi chahiye, sirf hard work se selection nahi hota.</p>
           </div>
         </section>`;
     } else if (group === "popular") {
       seoHTML = `
         <section class="seo-block" aria-label="Guides" style="margin-top: 24px;">
           <h2>Popular Government Exams 2026 – Most Applied Sarkari Jobs in India</h2>
-          <p>This section highlights high-demand, high-competition government exams in India. Har saal lakhon candidates apply karte hain for: UPSC Civil Services, SSC CGL / CHSL, Railway RRB NTPC, Banking PO & Clerk, CUET (UG), NEET / JEE, and State PSC.</p>
+          <p>Every year, millions of aspirants apply for popular government exams in India. These exams offer job security, stable salary, pension benefits, and long-term career growth. The Popular section of Top Sarkari Jobs highlights the most searched, most competitive and high-demand Sarkari exams in India for 2026.</p>
           <div class="seo-grid">
             <div class="seo-card">
-              <h3>UPSC Civil Services</h3>
-              <p style="font-size: 13px; margin-top: 8px; font-weight: 600;">👉 <a href="https://upsc.gov.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">upsc.gov.in</a></p>
-              <p style="font-size: 13px; margin-top: 8px; color: var(--muted);">UPSC is India’s most prestigious exam. Preparation Strategy: NCERT foundation (6–12), Daily current affairs, SWAYAM lectures for optional subjects, NDLI for research.</p>
+              <h3>UPSC Civil Services Examination</h3>
+              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">Recruits for IAS, IPS, IFS and other Group A services. Prep: NCERT foundation, daily newspaper, analytical writing, mock tests.</p>
+              <p style="font-size: 13px; margin-bottom: 4px; font-weight: 600;">Official: 👉 <a href="https://upsc.gov.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">upsc.gov.in</a></p>
             </div>
             <div class="seo-card">
               <h3>NTA Conducted Exams</h3>
-              <p style="font-size: 13px; margin-top: 8px; font-weight: 600;">👉 <a href="https://nta.ac.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">nta.ac.in</a></p>
-              <p style="font-size: 13px; margin-top: 8px; color: var(--muted);">NTA conducts CUET, JEE Main, NEET UG, and UGC NET. Candidates must check official portal for Application dates, Admit cards, Results, and Correction windows.</p>
+              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">NTA conducts CUET (UG), JEE Main, NEET UG, UGC NET, CSIR NET.</p>
+              <p style="font-size: 13px; margin-bottom: 4px; font-weight: 600;">Official: 👉 <a href="https://nta.ac.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">nta.ac.in</a></p>
             </div>
             <div class="seo-card">
               <h3>SSC & Railway Exams</h3>
-              <ul style="list-style-type: none; margin-left: 0; color: var(--muted); line-height: 1.6; font-size: 13px;">
-                <li><strong>NCERT Books:</strong> 👉 <a href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener" class="text-sky-600 hover:underline">ncert.nic.in/textbook.php</a></li>
-                <li><strong>Concept courses:</strong> 👉 <a href="https://nptel.ac.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">nptel.ac.in</a></li>
-                <li><strong>Practice material:</strong> 👉 <a href="https://ndl.iitkgp.ac.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">ndl.iitkgp.ac.in</a></li>
-              </ul>
+              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">SSC (CGL, CHSL, MTS) and RRB (NTPC, Group D, ALP) require quantitative aptitude, english, general awareness, speed & accuracy.</p>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>NCERT Books:</strong> 👉 <a href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener" class="text-sky-600 hover:underline">ncert.nic.in/textbook.php</a></p>
+            </div>
+            <div class="seo-card">
+              <h3>Banking Exams (IBPS / SBI / RBI)</h3>
+              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">Popular for urban postings and structured promotions. Requires strong quantitative aptitude and reasoning.</p>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>Concept lectures:</strong> 👉 <a href="https://nptel.ac.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">nptel.ac.in</a></p>
             </div>
           </div>
         </section>`;
     } else if (group === "state") {
       seoHTML = `
         <section class="seo-block" aria-label="Guides" style="margin-top: 24px;">
-          <h2>State Wise Sarkari Jobs 2026 – Preparation & Official Resources</h2>
-          <p>India ke har state ka apna recruitment system hota hai. This section covers state-level job notifications and preparation guidance.</p>
+          <h2>State Wise Sarkari Jobs 2026 – State PSC, Police & Local Recruitment Updates</h2>
+          <p>India has 28 states and each state conducts its own recruitment for administrative, police, teaching and technical posts. This section helps candidates explore State PSC Notifications, State Police Recruitment, State Teaching Jobs, and State Level Group B & C Vacancies.</p>
           <div class="seo-grid">
             <div class="seo-card">
-              <h3>Official State & Central Websites</h3>
-              <ul style="list-style-type: none; margin-left: 0; color: var(--muted); line-height: 1.6; font-size: 13px;">
-                <li><strong>UPSC Portal:</strong> 👉 <a href="https://upsc.gov.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">upsc.gov.in</a></li>
-                <li><strong>NTA Portal:</strong> 👉 <a href="https://nta.ac.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">nta.ac.in</a></li>
-              </ul>
-              <p style="font-size: 13px; margin-top: 8px; color: var(--muted);">Always verify notifications from official portals.</p>
-            </div>
-            <div class="seo-card">
-              <h3>State PSC Preparation Strategy</h3>
-              <ul style="list-style-type: none; margin-left: 0; color: var(--muted); line-height: 1.6; font-size: 13px;">
-                <li><strong>NCERT Books:</strong> 👉 <a href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener" class="text-sky-600 hover:underline">ncert.nic.in/textbook.php</a></li>
-                <li><strong>State specific history & geography:</strong> 👉 <a href="https://ndl.iitkgp.ac.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">ndl.iitkgp.ac.in</a></li>
-                <li><strong>Advanced lectures:</strong> 👉 <a href="https://swayam.gov.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">swayam.gov.in</a></li>
-              </ul>
-            </div>
-            <div class="seo-card">
-              <h3>Key Focus Areas for State Exams</h3>
+              <h3>Why State Jobs Are Important</h3>
               <ul style="list-style-type: disc; margin-left: 18px; color: var(--muted); line-height: 1.6; font-size: 13px;">
-                <li>State history & Local geography</li>
-                <li>Current affairs & General Studies</li>
+                <li>Local posting & Language advantage</li>
+                <li>Stable career & Regional growth</li>
               </ul>
-              <p style="font-size: 13px; margin-top: 8px; color: var(--muted);">Structured preparation increases success rate.</p>
+            </div>
+            <div class="seo-card">
+              <h3>Official Government Portals</h3>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>Civil Services:</strong> 👉 <a href="https://upsc.gov.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">upsc.gov.in</a></p>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>National Exams:</strong> 👉 <a href="https://nta.ac.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">nta.ac.in</a></p>
+              <p style="font-size: 13px; color: var(--muted);">Always verify notifications from official sources.</p>
+            </div>
+            <div class="seo-card">
+              <h3>State Exam Preparation Strategy</h3>
+              <p style="font-size: 13px; margin-bottom: 4px;">1. NCERT foundation: 👉 <a href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener" class="text-sky-600 hover:underline">ncert.nic.in</a></p>
+              <p style="font-size: 13px; margin-bottom: 4px;">2. State specific history: 👉 <a href="https://ndl.iitkgp.ac.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">ndl.iitkgp.ac.in</a></p>
+              <p style="font-size: 13px; margin-bottom: 4px;">3. Concept lectures: 👉 <a href="https://swayam.gov.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">swayam.gov.in</a></p>
+            </div>
+            <div class="seo-card">
+              <h3>Subjects Common in State Exams</h3>
+              <ul style="list-style-type: disc; margin-left: 18px; color: var(--muted); line-height: 1.6; font-size: 13px;">
+                <li>State History & Geography</li>
+                <li>Indian Polity & Current Affairs</li>
+              </ul>
+              <p style="font-size: 13px; margin-top: 8px; color: var(--muted);">Preparation must combine local + national knowledge.</p>
             </div>
           </div>
         </section>`;
     } else if (group === "admissions") {
       seoHTML = `
         <section class="seo-block" aria-label="Guides" style="margin-top: 24px;">
-          <h2>University Admissions & Entrance Exams 2026 – Official Preparation Resources</h2>
-          <p>This section covers national entrance exams for undergraduate and postgraduate admissions.</p>
+          <h2>University Admissions 2026 – Entrance Exams, Eligibility & Preparation Resources</h2>
+          <p>This section covers national and university-level entrance examinations. Students searching for CUET 2026, JEE Main 2026, NEET UG 2026, UGC NET, or Central University Admissions will find verified and structured guidance here.</p>
           <div class="seo-grid">
             <div class="seo-card">
               <h3>National Testing Agency (NTA)</h3>
+              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">NTA conducts major national entrance exams. Candidates must track deadlines, download admit cards, and review correction notices.</p>
               <p style="font-size: 13px; margin-top: 8px; font-weight: 600;">👉 <a href="https://nta.ac.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">nta.ac.in</a></p>
-              <p style="font-size: 13px; margin-top: 8px; color: var(--muted);">NTA conducts CUET, JEE Main, NEET, and UGC NET. Always check official website for updates.</p>
             </div>
             <div class="seo-card">
-              <h3>Entrance Exam Preparation Resources</h3>
-              <ul style="list-style-type: none; margin-left: 0; color: var(--muted); line-height: 1.6; font-size: 13px;">
-                <li><strong>NCERT Books:</strong> 👉 <a href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener" class="text-sky-600 hover:underline">ncert.nic.in/textbook.php</a></li>
-                <li><strong>SWAYAM Courses:</strong> 👉 <a href="https://swayam.gov.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">swayam.gov.in</a></li>
-                <li><strong>NPTEL Lectures:</strong> 👉 <a href="https://nptel.ac.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">nptel.ac.in</a></li>
-                <li><strong>NDLI Resources:</strong> 👉 <a href="https://ndl.iitkgp.ac.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">ndl.iitkgp.ac.in</a></li>
-              </ul>
+              <h3>Academic Preparation Resources</h3>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>NCERT:</strong> 👉 <a href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener" class="text-sky-600 hover:underline">ncert.nic.in/textbook.php</a></p>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>SWAYAM:</strong> 👉 <a href="https://swayam.gov.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">swayam.gov.in</a></p>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>NPTEL:</strong> 👉 <a href="https://nptel.ac.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">nptel.ac.in</a></p>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>NDLI:</strong> 👉 <a href="https://ndl.iitkgp.ac.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">ndl.iitkgp.ac.in</a></p>
             </div>
-            <div class="seo-card">
-              <h3>Smart Admission Preparation Tips</h3>
-              <ul style="list-style-type: disc; margin-left: 18px; color: var(--muted); line-height: 1.6; font-size: 13px;">
-                <li>Focus on syllabus</li>
-                <li>Practice mock tests</li>
-                <li>Track official announcements</li>
-                <li>Avoid unofficial rumors</li>
-              </ul>
-            </div>
+          </div>
+          <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line);">
+            <h3 style="font-size: 16px; font-weight: 900; margin-bottom: 8px;">Admission Preparation Strategy</h3>
+            <p style="font-size: 14px; color: var(--muted);">Follow official syllabus, practice mock tests, revise fundamentals, and track official announcements. Avoid relying on unverified portals.</p>
           </div>
         </section>`;
     } else if (group === "admit-result") {
       seoHTML = `
         <section class="seo-block" aria-label="Guides" style="margin-top: 24px;">
-          <h2>Sarkari Admit Card & Result 2026 – Official Download Links</h2>
-          <p>This section helps candidates find verified admit cards and results.</p>
+          <h2>Sarkari Admit Card & Result 2026 – Official Download Links & Verification Guide</h2>
+          <p>This section provides verified links for Sarkari Result 2026, Government Exam Admit Cards, Scorecards, and Merit Lists.</p>
           <div class="seo-grid">
             <div class="seo-card">
-              <h3>Official Result Portals</h3>
-              <ul style="list-style-type: none; margin-left: 0; color: var(--muted); line-height: 1.6; font-size: 13px;">
-                <li><strong>NTA:</strong> 👉 <a href="https://nta.ac.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">nta.ac.in</a></li>
-                <li><strong>UPSC:</strong> 👉 <a href="https://upsc.gov.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">upsc.gov.in</a></li>
-              </ul>
-              <p style="font-size: 13px; margin-top: 8px; color: var(--muted);">Never download admit cards from unknown websites.</p>
+              <h3>Official Portals</h3>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>NTA:</strong> 👉 <a href="https://nta.ac.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">nta.ac.in</a></p>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>UPSC:</strong> 👉 <a href="https://upsc.gov.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">upsc.gov.in</a></p>
+              <p style="font-size: 13px; margin-top: 8px; color: var(--muted);">Always use official websites only.</p>
             </div>
             <div class="seo-card">
-              <h3>Before Downloading Admit Card</h3>
+              <h3>Between Admit Card & Exam</h3>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>NCERT:</strong> 👉 <a href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener" class="text-sky-600 hover:underline">ncert.nic.in/textbook.php</a></p>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>Concept courses:</strong> 👉 <a href="https://swayam.gov.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">swayam.gov.in</a></p>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>Advanced practice:</strong> 👉 <a href="https://ndl.iitkgp.ac.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">ndl.iitkgp.ac.in</a></p>
+            </div>
+            <div class="seo-card">
+              <h3>After Result Declaration</h3>
               <ul style="list-style-type: disc; margin-left: 18px; color: var(--muted); line-height: 1.6; font-size: 13px;">
-                <li>Verify registration number</li>
-                <li>Check exam center</li>
-                <li>Read instructions</li>
-                <li>Keep printed copy</li>
-              </ul>
-            </div>
-            <div class="seo-card">
-              <h3>Preparation Between Admit Card & Exam</h3>
-              <ul style="list-style-type: none; margin-left: 0; color: var(--muted); line-height: 1.6; font-size: 13px;">
-                <li><strong>NCERT:</strong> 👉 <a href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener" class="text-sky-600 hover:underline">ncert.nic.in/textbook.php</a></li>
-                <li><strong>Mock practice:</strong> 👉 <a href="https://swayam.gov.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">swayam.gov.in</a></li>
-                <li><strong>Revision material:</strong> 👉 <a href="https://ndl.iitkgp.ac.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">ndl.iitkgp.ac.in</a></li>
+                <li>Check cut-off</li>
+                <li>Download scorecard</li>
+                <li>Prepare for next stage</li>
               </ul>
             </div>
           </div>
@@ -624,21 +594,18 @@
     } else if (group === "khabar") {
       seoHTML = `
         <section class="seo-block" aria-label="Guides" style="margin-top: 24px;">
-          <h2>Latest Government Exam News & Updates 2026</h2>
-          <p>Stay updated with official exam announcements.</p>
+          <h2>Latest Government Exam News 2026 – Official Notifications & Updates</h2>
+          <p>Stay updated with exam date changes, application extensions, correction windows, and result announcements.</p>
           <div class="seo-grid">
             <div class="seo-card">
-              <h3>Trusted Sources for News</h3>
-              <ul style="list-style-type: none; margin-left: 0; color: var(--muted); line-height: 1.6; font-size: 13px;">
-                <li><strong>NTA:</strong> 👉 <a href="https://nta.ac.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">nta.ac.in</a></li>
-                <li><strong>UPSC:</strong> 👉 <a href="https://upsc.gov.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">upsc.gov.in</a></li>
-                <li><strong>Educational courses:</strong> 👉 <a href="https://swayam.gov.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">swayam.gov.in</a></li>
-              </ul>
-              <p style="font-size: 13px; margin-top: 8px; color: var(--muted);">Always cross-check news from official portals.</p>
+              <h3>Trusted Sources</h3>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>NTA Official:</strong> 👉 <a href="https://nta.ac.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">nta.ac.in</a></p>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>UPSC Official:</strong> 👉 <a href="https://upsc.gov.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">upsc.gov.in</a></p>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>Educational portal:</strong> 👉 <a href="https://swayam.gov.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">swayam.gov.in</a></p>
             </div>
             <div class="seo-card">
-              <h3>Why Official News Matters</h3>
-              <p style="font-size: 13px; margin-top: 8px; color: var(--muted);">Avoid misinformation. Government exam timelines change frequently.</p>
+              <h3>Why News Section Matters</h3>
+              <p style="font-size: 13px; color: var(--muted);">Timely information helps avoid missed deadlines. Never rely on rumors.</p>
             </div>
           </div>
         </section>`;
@@ -646,24 +613,27 @@
       seoHTML = `
         <section class="seo-block" aria-label="Guides" style="margin-top: 24px;">
           <h2>Free Study Material for Government Exams – Download PDFs & Online Courses</h2>
-          <p>This page is dedicated to preparation material.</p>
+          <p>This page is dedicated exclusively to preparation material.</p>
           <div class="seo-grid">
             <div class="seo-card">
-              <h3>Foundation Material</h3>
-              <p style="font-size: 13px; margin-bottom: 8px; color: var(--muted);">NCERT Free PDF:</p>
-              <p style="font-size: 13px; margin-top: 8px; font-weight: 600;">👉 <a href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener" class="text-sky-600 hover:underline">ncert.nic.in/textbook.php</a></p>
+              <h3>Foundation & Online Learning</h3>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>NCERT Textbooks:</strong> 👉 <a href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener" class="text-sky-600 hover:underline">ncert.nic.in/textbook.php</a></p>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>SWAYAM:</strong> 👉 <a href="https://swayam.gov.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">swayam.gov.in</a></p>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>NPTEL:</strong> 👉 <a href="https://nptel.ac.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">nptel.ac.in</a></p>
             </div>
             <div class="seo-card">
-              <h3>Advanced Learning</h3>
-              <ul style="list-style-type: none; margin-left: 0; color: var(--muted); line-height: 1.6; font-size: 13px;">
-                <li><strong>SWAYAM:</strong> 👉 <a href="https://swayam.gov.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">swayam.gov.in</a></li>
-                <li><strong>NPTEL:</strong> 👉 <a href="https://nptel.ac.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">nptel.ac.in</a></li>
+              <h3>Research & Reference Library</h3>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>National Digital Library:</strong> 👉 <a href="https://ndl.iitkgp.ac.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">ndl.iitkgp.ac.in</a></p>
+            </div>
+            <div class="seo-card">
+              <h3>Complete Preparation Ecosystem</h3>
+              <ul style="list-style-type: disc; margin-left: 18px; color: var(--muted); line-height: 1.6; font-size: 13px;">
+                <li>Learn basics from NCERT</li>
+                <li>Deepen understanding via SWAYAM</li>
+                <li>Improve analytical skills through NPTEL</li>
+                <li>Practice using NDLI materials</li>
+                <li>Track official updates via NTA & UPSC</li>
               </ul>
-            </div>
-            <div class="seo-card">
-              <h3>Research & Question Papers</h3>
-              <p style="font-size: 13px; margin-bottom: 8px; color: var(--muted);">NDLI:</p>
-              <p style="font-size: 13px; margin-top: 8px; font-weight: 600;">👉 <a href="https://ndl.iitkgp.ac.in" target="_blank" rel="noopener" class="text-sky-600 hover:underline">ndl.iitkgp.ac.in</a></p>
             </div>
           </div>
         </section>`;
