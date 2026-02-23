@@ -33,12 +33,10 @@
     else window.location.href = "index.html";
   };
 
-  // ✅ FIXED: Dynamically inject the full mobile menu so it is identical on EVERY page
   function buildMobileMenu() {
     const nav = document.querySelector(".offcanvas-nav");
     if (!nav) return;
     
-    // This perfectly rebuilds the premium menu on any page that is missing it
     nav.innerHTML = `
       <a href="index.html">Home</a>
       <a href="result.html">Results</a>
@@ -161,11 +159,16 @@
       btn.setAttribute("aria-expanded", "false");
       document.body.style.overflow = "";
     };
+    
     const open = () => {
       menu.hidden = false;
       overlay.hidden = false;
       btn.setAttribute("aria-expanded", "true");
       document.body.style.overflow = "hidden";
+      
+      // ✅ Closes the mobile search card if it's open when clicking hamburger menu
+      const searchCard = document.querySelector(".search-card");
+      if(searchCard) searchCard.classList.remove("mobile-active");
     };
 
     btn.addEventListener("click", open);
@@ -1110,7 +1113,6 @@
 
   // Boot
   document.addEventListener("DOMContentLoaded", async () => {
-    // 🚀 BUILD MOBILE MENU FIRST to guarantee it is identical across the entire site
     buildMobileMenu();
     
     await injectHeaderFooter();
@@ -1135,5 +1137,50 @@
     await renderServicesPage();
     
     await initGlobalLiveSearch();
+
+    // ✅ FIXED: Make the mobile search icon perfectly toggle the floating search box
+    const openSearchBtn = document.getElementById("openSearchBtn");
+    if (openSearchBtn) {
+      openSearchBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const searchCard = document.querySelector(".search-card");
+        if (searchCard) {
+          // Close the hamburger menu if it happens to be open
+          if (typeof window.__closeMenu === "function") window.__closeMenu();
+          
+          if (window.innerWidth <= 980) {
+            // Toggle the floating search box on mobile
+            searchCard.classList.toggle("mobile-active");
+            if (searchCard.classList.contains("mobile-active")) {
+              const input = document.getElementById("siteSearchInput") || document.getElementById("sectionSearchInput");
+              if(input) setTimeout(() => input.focus(), 100);
+            }
+          } else {
+            // Fallback for desktop (though the button is hidden)
+            const input = document.getElementById("siteSearchInput") || document.getElementById("sectionSearchInput");
+            if (input) {
+              input.scrollIntoView({ behavior: "smooth", block: "center" });
+              setTimeout(() => input.focus(), 300);
+            }
+          }
+        } else {
+          window.location.href = "index.html"; 
+        }
+      });
+
+      // Close floating search card when clicking anywhere outside of it
+      document.addEventListener("click", (e) => {
+        if (window.innerWidth <= 980) {
+          const searchCard = document.querySelector(".search-card");
+          if (searchCard && searchCard.classList.contains("mobile-active")) {
+            if (!searchCard.contains(e.target) && e.target !== openSearchBtn && !openSearchBtn.contains(e.target)) {
+              searchCard.classList.remove("mobile-active");
+            }
+          }
+        }
+      });
+    }
   });
 })();
