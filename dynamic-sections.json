@@ -164,115 +164,55 @@
       "viewMoreType": "list",
       "items": [
         {
-        "name": "Delhi SCI Various Vacancy Online Form 2026 Starting Date : 23/02/2026",
-        "url": "https://sarkarinetwork.com/delhi-sci-various-posts-recruitment-2026/",
-        "external": true
-       },
-      {
-        "name": "DSSSB 01/26 Legal Asst, AE, JE, ASO Form Starting Date : 24/02/2026",
-        "url": "https://sarkarinetwork.com/dsssb-advt-01-2026-recruitment-2026/",
-        "external": true
-       },
-       {
-        "name": "RRC WR 5349 Apprentice Online Form 2026 Starting Date : 21/02/2026",
-        "url": "https://sarkarinetwork.com/rrc-wr-apprentice-recruitment-2026/",
-        "external": true
-       },
-       {
-        "name": "AFMS SSC Medical Officer Online Form 2026 Starting Date : 21/02/2026",
-        "url": "https://sarkarinetwork.com/army-afms-medical-officer-recruitment-2026/",
-        "external": true
-       },
-        {
-        "name": "JKSSB 01/2026 Various Posts Online Form Starting Date : 24/02/2026",
-        "url": "https://sarkarinetwork.com/jkssb-advt-01-2026-various-vacnacy-2026/https://sarkarinetwork.com/jkssb-advt-01-2026-various-vacnacy-2026/",
-        "external": true
-       },
-        {
-          "name": "MPPSC Assistant Town Planner Online Form Starting Date : 20/02/2026",
-          "url": "https://sarkarinetwork.com/mppsc-assistant-town-planner-recruitment-2026/",
-          "external": true
-        },
-        {
-          "name": "JPSC 349 Lecturer Vacancy Online Form Starting Date : 20/02/2026",
-          "url": "https://sarkarinetwork.com/jpsc-lecturer-recruitment-2026/",
-          "external": true
-        },
-        {
-          "name": "AFMS SSC Medical Officer Online Form 2026 Starting Date : 21/02/2026",
-          "url": "https://sarkarinetwork.com/army-afms-medical-officer-recruitment-2026/",
-          "external": true
-        },
-        {
-          "name": "AIIMS Nursing Officer (NORCET-10th) Form - Start Date: 24/02/2026",
-          "url": "https://sarkarinetwork.com/aiims-norcet-10-recruitment-2026/",
-          "external": true
-        },
-        {
-          "name": "Hisar Roadways 93 Apprentice Online Form - Start Date: 02/03/2026",
-          "url": "https://sarkarinetwork.com/hisar-roadways-apprentice-recruitment-2026/",
-          "external": true
-        },
-        {
-          "name": "PSSSB 01/2026 Excise Inspector Online Form - Start Date: 13/02/2026",
-          "url": "https://sarkarinetwork.com/psssb-excise-inspector-recruitment-2026/",
-          "external": true
-        },
-        {
-          "name": "HPSC 1672 PGT (Computer Sci.) Online Form - Start Date: 16/02/2026",
-          "url": "https://sarkarinetwork.com/hpsc-pgt-computer-science-recruitment-2026/",
-          "external": true
-        },
-        {
-          "name": "JKSSB 01/2026 Various Posts Online Form - Start Date: 24/02/2026",
-          "url": "https://sarkarinetwork.com/jkssb-advt-01-2026-various-vacnacy-2026/",
-          "external": true
-        },
-        {
-          "name": "Haryana Cheerag Scheme Admission Form - Start Date: 13/03/2026",
-          "url": "https://sarkarinetwork.com/haryana-cheerag-scheme-admission/",
-          "external": true
-        },
-        {
-          "name": "RBI Bank Assistant Vacancy Online Form 2026 - Start Date: 16/02/2026",
-          "url": "https://sarkarinetwork.com/rbi-assistant-recruitment-2026/",
-          "external": true
-        },
-        {
-          "name": "MPPSC Assistant Town Planner Online Form - Start Date: 20/02/2026",
-          "url": "https://sarkarinetwork.com/mppsc-assistant-town-planner-recruitment-2026/",
-          "external": true
-        },
-        {
-          "name": "HSSC CET (Group-D) Exam Online Form - Start Date: Available Soon",
-          "url": "https://sarkarinetwork.com/hssc-cet-group-d-2026/",
-          "external": true
-        },
-        {
-          "name": "MPPKVVCL 4009 Various Posts Online Form - Start Date: Available Soon",
-          "url": "https://sarkarinetwork.com/mppkvvcl-recruitment-2025-26/",
-          "external": true
-        },
-        {
-          "name": "HSSC Driver Vacancy Online Form 2026 - Start Date: Available Soon",
-          "url": "https://sarkarinetwork.com/haryana-hssc-driver-recruitment-2026/",
-          "external": true
-        },
-        {
-          "name": "BSHS 1075 Laboratory Technician Online Form - Start Date: Available Soon",
-          "url": "https://sarkarinetwork.com/bshs-laboratory-technician-recruitment-2025/",
-          "external": true
-        },
-        {
-          "name": "RSSB 526 Forest Guard, Surveyor Online Form - Start Date: Available Soon",
-          "url": "https://sarkarinetwork.com/rssb-forest-guard-and-surveyor-recruitment-2025/",
-          "external": true
-        },
-        {
-          "name": "Haryana Anganwadi Worker, Helper Form - Start Date: Available Soon",
-          "url": "https://sarkarinetwork.com/haryana-anganwadi-recruitment-2025/",
-          "external": true
-        }
+    "name": "BPSC 173 Civil Judge Vacancy Online Form 2026 - Starting Date: 25/02/2026",
+    "url": "https://sarkarinetwork.com/bihar-bpsc-civil-judge-recruitment-2026/",
+    "external": true
+  },
+  {
+    "name": "Bihar Police Constable (Operator) Online Form - Starting Date: 01/03/2026",
+    "url": "https://sarkarinetwork.com/bihar-police-constable-operator-vacancy-2026/",
+    "external": true
+  },
+  {
+    "name": "DSSSB 01/26 Legal Asst, AE, JE, ASO Form - Starting Date: 24/02/2026",
+    "url": "https://sarkarinetwork.com/dsssb-advt-01-2026-recruitment-2026/",
+    "external": true
+  },
+  {
+    "name": "AFMS SSC Medical Officer Online Form 2026 - Starting Date: 21/02/2026 (Delayed)",
+    "url": "https://sarkarinetwork.com/army-afms-medical-officer-recruitment-2026/",
+    "external": true
+  },
+  {
+    "name": "JKSSB 01/2026 Various Posts Online Form - Starting Date: 24/02/2026",
+    "url": "https://sarkarinetwork.com/jkssb-advt-01-2026-various-vacnacy-2026/",
+    "external": true
+  },
+  {
+    "name": "AIIMS Nursing Officer (NORCET-10th) Form - Starting Date: 24/02/2026",
+    "url": "https://sarkarinetwork.com/aiims-norcet-10-recruitment-2026/",
+    "external": true
+  },
+  {
+    "name": "Hisar Roadways 93 Apprentice Online Form - Starting Date: 02/03/2026",
+    "url": "https://sarkarinetwork.com/hisar-roadways-apprentice-recruitment-2026/",
+    "external": true
+  },
+  {
+    "name": "Haryana Cheerag Scheme Admission Form - Starting Date: 13/03/2026",
+    "url": "https://sarkarinetwork.com/haryana-cheerag-scheme-admission/",
+    "external": true
+  },
+  {
+    "name": "HSSC CET (Group-D) Exam Online Form - Starting Date: Available Soon",
+    "url": "https://sarkarinetwork.com/hssc-cet-group-d-2026/",
+    "external": true
+  },
+  {
+    "name": "HSSC Driver Vacancy Online Form 2026 - Starting Date: Available Soon",
+    "url": "https://sarkarinetwork.com/haryana-hssc-driver-recruitment-2026/",
+    "external": true
+  }
       ]
     },
     {
@@ -4031,6 +3971,16 @@
        "viewMoreType": "list",
       "items": [
         {
+        "name": "Assam PNRD 1508 Various Posts Online Form Last Date : 22/03/2026",
+        "url": "https://sarkarinetwork.com/pnrd-assam-recruitment-2026/",
+        "external": true
+        },
+        {
+        "name": "Delhi SCI Various Vacancy Online Form 2026 Last Date : 08/03/2026",
+        "url": "https://sarkarinetwork.com/delhi-sci-various-posts-recruitment-2026/",
+        "external": true
+        },
+        {
         "name": "Sonipat Court Peon Interview लिस्ट जारी",
         "url": "https://drive.google.com/file/d/12B7Y2ibrkEaHtsv97XywUJs7jwHSvv09/view?usp=sharing",
         "external": true
@@ -4101,11 +4051,6 @@
           "external": true
         },
         {
-          "name": "Maharashtra DMER Tutor, Jr Resident Form - Last Date: 23 February, 2026",
-          "url": "https://sarkarinetwork.com/maharashtra-dmer-tutor-jr-resident-vacancy-2026/",
-          "external": true
-        },
-        {
           "name": "NMMC 132 Group A, B and C Posts Online Form - Last Date: 01 March, 2026",
           "url": "https://sarkarinetwork.com/nmmc-recruitment-2025/",
           "external": true
@@ -4136,11 +4081,6 @@
           "external": true
         },
         {
-          "name": "HKRN Office Supervisor Vacancy Online Form Last Date : 23/02/2026",
-          "url": "https://sarkarinetwork.com/hkrn-office-supervisor-recruitment-2026/",
-          "external": true
-        },
-        {
           "name": "PSSSB 02/2026 Clerk Vacancy Online Form Last Date : 06/03/2026",
           "url": "https://sarkarinetwork.com/psssb-clerk-recruitment-2026/",
           "external": true
@@ -4168,11 +4108,6 @@
         {
           "name": "Chandigarh Police Tailor Vacancy Online Form Last Date : 02/03/2026",
           "url": "https://sarkarinetwork.com/chandigarh-police-tailor-recruitment-2026/",
-          "external": true
-        },
-        {
-          "name": "HSSC Advt 04/2026 (Group C Post) Online Form - Last Date : 23/02/2026 11:59 PM",
-          "url": "https://sarkarinetwork.com/hssc-advt-04-2026-group-c-recruitment-2026/",
           "external": true
         },
         {
@@ -4216,11 +4151,6 @@
           "external": true
         },
         {
-          "name": "Delhi CSIR-CRRI MTS, JHT, SA Online Form Last Date : 23/02/2026",
-          "url": "https://sarkarinetwork.com/delhi-csir-crri-recruitment-2026/",
-          "external": true
-        },
-        {
           "name": "JKSSB 669 Police Constable Online Form 2026 Last Date : 02/03/2026",
           "url": "https://sarkarinetwork.com/jkssb-police-constable-recruitment-2026/",
           "external": true
@@ -4259,6 +4189,21 @@
       "color": "#00E4FA",
        "viewMoreType": "list",
       "items": [
+      {
+        "name": "SBI Bank 116 Specialist Officer Online Form Last Date : 15/03/2026",
+        "url": "https://sarkarinetwork.com/sbi-bank-specialist-officer-vacancy-2026/",
+        "external": true
+        },
+        {
+        "name": "NFSU Assistant, Section Officer Online Form Last Date : 23/03/2026",
+        "url": "https://sarkarinetwork.com/nfsu-non-teaching-recruitment-2026/",
+        "external": true
+        },
+       {
+        "name": "NTA CUET UG 2026 Online Form Re-Open Last Date : 26/02/2026",
+        "url": "https://sarkarinetwork.com/nta-cuet-ug-2026/",
+        "external": true
+        },
        {
         "name": "GAIL Executive Trainee Vacancy Online Form Last Date : 18/03/2026",
         "url": "https://sarkarinetwork.com/gail-executive-trainee-recruitment-2026/",
@@ -4287,11 +4232,6 @@
         {
           "name": "RBI 650 Bank Assistant Vacancy Online Form Last Date : 08/03/2026",
           "url": "https://sarkarinetwork.com/rbi-assistant-recruitment-2026/",
-          "external": true
-        },
-        {
-          "name": "Air Force Agniveer 01/2027 Correction Form Last Date : 15/02/2026",
-          "url": "https://sarkarinetwork.com/air-force-agniveer-intake-01-2027/",
           "external": true
         },
         {
@@ -4340,28 +4280,8 @@
           "external": true
         },
         {
-          "name": "IAF Agniveer (Non-Combatant) Offline Form. Last Date: 23 February, 2026",
-          "url": "https://sarkarinetwork.com/air-force-agniveer-non-combatant-vacancy-2026/",
-          "external": true
-        },
-        {
-          "name": "PNB 5138 Apprentice Vacancy Online Form. Last Date: 24 February, 2026",
-          "url": "https://sarkarinetwork.com/pnb-apprentice-recruitment-2026/",
-          "external": true
-        },
-        {
           "name": "BSNL Senior Executive Trainee Online Form. Last Date: 07 March, 2026",
           "url": "https://sarkarinetwork.com/bsnl-senior-executive-trainee-recruitment-2026/",
-          "external": true
-        },
-        {
-          "name": "UPSC Forest Service Exam 2026 Online Form. Last Date: 24 February, 2026",
-          "url": "https://sarkarinetwork.com/upsc-forest-service-exam-2026/",
-          "external": true
-        },
-        {
-          "name": "UPSC Civil Service Exam 2026 Online Form. Last Date: 24 February, 2026",
-          "url": "https://sarkarinetwork.com/upsc-civil-service-exam-2026/",
           "external": true
         },
         {
@@ -4377,31 +4297,6 @@
         {
           "name": "RRB (CEN 09/2025) Group D Post Online Form. Last Date: 02 March, 2026",
           "url": "https://sarkarinetwork.com/railway-rrb-group-d-recruitment-2026/",
-          "external": true
-        },
-        {
-          "name": "SBI 2273 Circle Based Officer Online Form. Last Date: 18 February, 2026",
-          "url": "https://sarkarinetwork.com/sbi-bank-cbo-recruitment-2026/",
-          "external": true
-        },
-        {
-          "name": "UPSC Forest Service Exam 2026 Online Form Last Date: 24/02/2026 06:00 PM",
-          "url": "https://sarkarinetwork.com/upsc-forest-service-exam-2026/",
-          "external": true
-        },
-        {
-          "name": "UPSC Civil Service Exam 2026 Online Form Last Date: 24/02/2026 06:00 PM",
-          "url": "https://sarkarinetwork.com/upsc-civil-service-exam-2026/",
-          "external": true
-        },
-        {
-          "name": "Indian Navy 260 SSC Officer Posts Online Form Last Date: 24/02/2026 11:59 PM",
-          "url": "https://sarkarinetwork.com/indian-navy-ssc-officer-recruitment-2026/",
-          "external": true
-        },
-        {
-          "name": "NTA JEE Main Session-II 2026 Online Form Last Date: 25/02/2026 09:00 PM",
-          "url": "https://sarkarinetwork.com/nta-jee-main-session-ii-2026/",
           "external": true
         },
         {
