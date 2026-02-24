@@ -163,6 +163,18 @@
       "external": true
     },
     {
+      "name": "Central jobs",
+      "url": "https://www.topsarkarijobs.com/view.html?section=Central%20jobs",
+      "color": "bg-zinc-400",
+      "external": true
+    },
+    {
+      "name": "State jobs",
+      "url": "https://www.topsarkarijobs.com/view.html?section=State%20jobs",
+      "color": "bg-zinc-400",
+      "external": true
+    },
+    {
       "name": "Join WhatsApp Now",
       "url": "https://whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T",
       "icon": "fab fa-whatsapp",
