@@ -35,7 +35,7 @@ a:hover{ text-decoration:underline; }
 .skip-link{ position:absolute; left:-999px; top:auto; width:1px; height:1px; overflow:hidden; }
 .skip-link:focus{ left:16px; top:16px; width:auto; height:auto; padding:10px 12px; background:#fff; border:1px solid var(--line); border-radius:10px; z-index:9999; }
 
-/* ✅ Header - Forces Blue Theme Always */
+/* Header - Forces Blue Theme Always */
 .site-header, #site-header {
   background: linear-gradient(90deg, var(--brand1), var(--brand2));
   color:#fff;
@@ -62,6 +62,22 @@ a:hover{ text-decoration:underline; }
 
 .header-cta{ display:flex; gap:8px; flex-wrap:wrap; margin-left:6px; }
 .header-actions{ display:none; margin-left:auto; gap:8px; }
+
+/* Removes search icon globally on mobile */
+#openSearchBtn { display: none !important; }
+
+.icon-btn{
+  border:none;
+  background: rgba(255,255,255,.14);
+  color:#fff;
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+}
+.icon-btn:hover{ background: rgba(255,255,255,.2); }
 
 /* Desktop Dropdown Menu */
 .nav-dd{ position:relative; }
@@ -181,7 +197,7 @@ a:hover{ text-decoration:underline; }
 .offcanvas-group { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(0,0,0,0.06); }
 .offcanvas-group-title { font-weight: 800; color: #0ea5e9; margin: 0 0 12px 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-/* ✅ MOBILE APP-STYLE LAYOUT */
+/* ✅ MOBILE APP-STYLE LAYOUT CHANGES */
 .mobile-header-btns { display: none; }
 #openSearchBtn { display: none !important; }
 
@@ -189,7 +205,7 @@ a:hover{ text-decoration:underline; }
   .desktop-nav{ display:none; }
   .brand-subtitle { display: none; }
   
-  /* Restores perfect 2-row layout from reference */
+  /* Compact & Beautifully Fitted Header Row */
   .header-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; gap: 4px; flex-wrap: nowrap; }
   
   .brand { flex: 0 0 auto; display: flex; align-items: center; gap: 6px; min-width: 0; }
@@ -205,6 +221,7 @@ a:hover{ text-decoration:underline; }
     text-align: left;
   }
   
+  /* The EXACT 2-row button layout from your reference */
   .mobile-header-btns {
     flex: 1 1 auto;
     display: flex;
