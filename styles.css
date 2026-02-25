@@ -12,6 +12,7 @@
 
 *{ box-sizing:border-box; }
 
+/* Prevents horizontal stretching/empty white space on mobile */
 html,body{ 
   height:100%; 
   overflow-x: hidden;
@@ -59,6 +60,22 @@ a:hover{ text-decoration:underline; }
 
 .header-cta{ display:flex; gap:8px; flex-wrap:wrap; margin-left:6px; }
 .header-actions{ display:none; margin-left:auto; gap:8px; }
+
+/* ✅ Search Icon Completely Removed */
+#openSearchBtn { display: none !important; }
+
+.icon-btn{
+  border:none;
+  background: rgba(255,255,255,.14);
+  color:#fff;
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+}
+.icon-btn:hover{ background: rgba(255,255,255,.2); }
 
 /* Desktop Dropdown Menu */
 .nav-dd{ position:relative; }
@@ -186,27 +203,27 @@ a:hover{ text-decoration:underline; }
   
   /* Compact & Optimized Header for Mobile */
   .header-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; gap: 4px; }
-  .brand { flex: 0 0 auto; max-width: 120px; display: flex; align-items: center; gap: 6px; }
+  .brand { flex: 0 0 auto; display: flex; align-items: center; gap: 6px; }
   .brand-logo { width: 34px; height: 34px; flex-shrink: 0; border-radius: 50%; }
-  .brand-title { font-size: 14px; font-weight: 900; line-height: 1.1; white-space: normal; }
+  .brand-title { font-size: 14px; font-weight: 900; line-height: 1.1; white-space: nowrap; }
   .brand-subtitle { display: none; }
   
-  /* Centered Header Buttons */
+  /* ✅ Horizontal Header Buttons (Helpdesk, Home, Tools) */
   .mobile-header-btns {
     flex: 1 1 auto;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 4px;
-    max-width: 160px;
-    margin: 0 auto;
+    justify-content: center;
+    align-items: center;
+    margin: 0 4px;
   }
-  .mhb-row { display: flex; gap: 4px; }
   .mhb-btn {
     flex: 1;
-    background: linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+    background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.05));
     border: 1px solid rgba(255, 255, 255, 0.3);
     color: #fff;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 800;
     text-align: center;
     padding: 6px 2px;
@@ -214,12 +231,12 @@ a:hover{ text-decoration:underline; }
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 3px;
+    gap: 2px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     text-decoration: none;
+    white-space: nowrap;
   }
-  .mhb-btn i { font-size: 9px; opacity: 0.8; }
-  .mhb-full { width: 100%; font-size: 13px; padding: 6px; letter-spacing: 0.5px; }
+  .mhb-btn i { font-size: 8px; opacity: 0.8; }
 
   .header-actions { flex: 0 0 auto; display: flex; align-items: center; }
   .icon-btn { width: 36px; height: 36px; flex-shrink: 0; border:none; border-radius:10px; background: rgba(255,255,255,.15); color:#fff; }
