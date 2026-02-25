@@ -67,7 +67,7 @@
     `;
   }
 
-  // ✅ MOBILE HEADER BUTTON INJECTION (Chevron Dropdowns removed completely!)
+  // ✅ MOBILE HEADER BUTTON INJECTION (Restores 2-row layout from reference, Chevron Dropdowns removed completely)
   function injectMobileHeaderBtns() {
     if (window.innerWidth > 980) return;
     const headerHost = document.getElementById("site-header") || document.querySelector(".site-header");
@@ -498,18 +498,18 @@
           }
           .grid-nav-btn:active { transform: scale(0.95); }
           
-          /* Custom Vibrant Fancy Classes */
-          .grid-nav-btn.solid-primary { background: linear-gradient(135deg, #0ea5e9, #4f46e5); color: #fff; border: none; box-shadow: 0 4px 12px rgba(14,165,233,0.3); }
-          .grid-nav-btn.solid-purple { background: linear-gradient(135deg, #a855f7, #7e22ce); color: #fff; border: 1px solid #6b21a8; text-shadow: 0 1px 1px rgba(0,0,0,0.2); box-shadow: 0 4px 10px rgba(168,85,247,0.2); }
-          .grid-nav-btn.solid-teal { background: linear-gradient(135deg, #14b8a6, #0f766e); color: #fff; border: 1px solid #0f766e; text-shadow: 0 1px 1px rgba(0,0,0,0.2); box-shadow: 0 4px 10px rgba(20,184,166,0.2); }
-          .grid-nav-btn.solid-slate { background: linear-gradient(135deg, #475569, #334155); color: #fff; border: 1px solid #1e293b; text-shadow: 0 1px 1px rgba(0,0,0,0.2); box-shadow: 0 4px 10px rgba(71,85,105,0.2); }
-          
+          /* Glassy App Themes - NOW SOFT PASTEL BLENDS */
+          .grid-nav-btn.glass-primary { background: linear-gradient(135deg, #0ea5e9, #4f46e5); color: #fff; border: none; box-shadow: 0 4px 12px rgba(14,165,233,0.3); }
           .grid-nav-btn.glass-blue { color: #0284c7; border-color: #bae6fd; background: #f0f9ff; }
           .grid-nav-btn.glass-dark { color: #334155; border-color: #cbd5e1; background: #f8fafc; }
           .grid-nav-btn.glass-orange { color: #c2410c; border-color: #fed7aa; background: #fff7ed; }
           .grid-nav-btn.glass-green { color: #166534; border-color: #bbf7d0; background: #f0fdf4; }
+          
+          /* Brand New Soft Glassy Tones for the Middle Row */
+          .grid-nav-btn.glass-purple { color: #7e22ce; border-color: #e9d5ff; background: #faf5ff; }
+          .grid-nav-btn.glass-teal { color: #0f766e; border-color: #ccfbf1; background: #f0fdfa; }
 
-          /* ✅ PERFECT PILLS FIX: Flex-grow automatically stretches them to lock together! */
+          /* ✅ PERFECT PILLS FIX: Flex-grow makes them stretch and form a perfectly flush brick wall layout! */
           .home-links { 
             display: flex;
             flex-wrap: wrap;
@@ -533,7 +533,7 @@
             letter-spacing: 0.2px;
           }
           
-          /* Custom Bottom Search */
+          /* Custom Bottom Search exactly like screenshot */
           .mobile-bottom-search {
             background: #ffffff;
             border: 1px solid #e2e8f0;
@@ -605,17 +605,17 @@
         mobileNavWrap.id = "mobile-nav-grid";
         mobileNavWrap.className = "mobile-nav-grid";
 
-        // ✅ EXACT ABSOLUTE LINK FOR LATEST JOBS & FANCY NEW COLORS FOR THE SPECIFIED BUTTONS
+        // ✅ PERFECTED THEMES: Middle row is now soft, airy glass matching Admissions and Results!
         const mLinks = [
-            { name: "Latest Jobs", url: "https://www.topsarkarijobs.com/view.html?section=latest%20jobs", cls: "solid-primary" },
+            { name: "Latest Jobs", url: "https://www.topsarkarijobs.com/view.html?section=latest%20jobs", cls: "glass-primary" },
             { name: "Study wise jobs", url: "category.html?group=study", cls: "glass-blue" },
             { name: "Categories wise jobs", url: "category.html?group=popular", cls: "glass-blue" },
             { name: "State wise Jobs", url: "category.html?group=state", cls: "glass-blue" },
             
             { name: "Admissions", url: "category.html?group=admissions", cls: "glass-blue" },
-            { name: "Resume/CV Maker", url: "tools.html", cls: "solid-purple" },
-            { name: "CSC Services", url: "govt-services.html", cls: "solid-teal" },
-            { name: "Study Material", url: "category.html?group=study-material", cls: "solid-slate" },
+            { name: "Resume/CV Maker", url: "tools.html", cls: "glass-purple" }, // Light shade!
+            { name: "CSC Services", url: "govt-services.html", cls: "glass-teal" },   // Light shade!
+            { name: "Study Material", url: "category.html?group=study-material", cls: "glass-dark" }, // Light shade!
             
             { name: "Results", url: "result.html", cls: "glass-orange" },
             { name: "Admit Card", url: "category.html?group=admit-result", cls: "glass-orange" },
@@ -642,18 +642,6 @@
           "latest jobs", "study wise", "categories wise", "popular categories", "state wise",
           "admissions", "admission", "resume", "cv maker", "csc", "study material",
           "results", "result", "admit card", "khabar", "helpdesk", "home", "tools", "whatsapp"
-      ];
-
-      // Beautiful Vibrant Pill Gradients
-      const premiumGradients = [
-          "linear-gradient(135deg, #0f766e, #064e3b)", // Deep Emerald
-          "linear-gradient(135deg, #d97706, #9a3412)", // Rich Amber
-          "linear-gradient(135deg, #4f46e5, #312e81)", // Indigo
-          "linear-gradient(135deg, #0284c7, #075985)", // Ocean Blue
-          "linear-gradient(135deg, #be185d, #831843)", // Berry
-          "linear-gradient(135deg, #b45309, #78350f)", // Bronze
-          "linear-gradient(135deg, #4338ca, #1e3a8a)", // Royal
-          "linear-gradient(135deg, #0369a1, #0f172a)"  // Midnight
       ];
 
       let validLinks = [];
@@ -698,12 +686,12 @@
         a.href = normalizeUrl(l.url);
         if (l.external) { a.target = "_blank"; a.rel = "noopener"; }
         
-        // Top Headlines gets special red gradient, the rest cycle through beautiful colors
+        // Top Headlines gets special red, the rest use a soft slate gradient to match desktop
         if (l.name.toLowerCase().includes("headlines")) {
              a.style.background = "linear-gradient(135deg, #ef4444, #991b1b)";
              a.style.width = "100%"; 
         } else {
-             a.style.background = premiumGradients[index % premiumGradients.length];
+             a.style.background = "linear-gradient(180deg, #94a3b8, #64748b)";
         }
         
         const icon = safe(l.icon);
@@ -724,7 +712,7 @@
                 <input id="mobileBottomSearchInput" type="search" placeholder="Search job categories, results, admit cards..." autocomplete="off" />
                 <button type="button" id="mobileBottomSearchBtn"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
             </div>
-            <div id="mobileBottomSearchResults" class="search-results" style="margin-top: 10px;"></div>
+            <div id="mobileBottomSearchResults" class="search-results" style="margin-top: 10px; text-align: left;"></div>
         `;
         wrap.appendChild(mbs);
     }
@@ -1315,7 +1303,7 @@
     });
   }
 
-  // ✅ GLOBAL LIVE SEARCH ENGINE (Works flawlessly across desktop and mobile)
+  // ✅ GLOBAL LIVE SEARCH ENGINE (Works instantly on 1 letter!)
   async function initGlobalLiveSearch() {
     const inputs = [];
     
@@ -1367,7 +1355,8 @@
 
       const performSearch = () => {
         const query = input.value.toLowerCase().trim();
-        if (query.length < 2) {
+        // ✅ Searches instantly even from a single letter
+        if (query.length < 1) {
           resultsWrap.innerHTML = "";
           resultsWrap.style.display = "none";
           return;
@@ -1404,7 +1393,8 @@
       };
 
       input.addEventListener("input", performSearch);
-      input.addEventListener("focus", () => { if(input.value.length >= 2) resultsWrap.style.display="block"; });
+      // ✅ Shows results immediately on focus if there is at least 1 letter
+      input.addEventListener("focus", () => { if(input.value.length >= 1) resultsWrap.style.display="block"; });
       
       document.addEventListener("click", (e) => {
         if (!input.contains(e.target) && !resultsWrap.contains(e.target)) {
