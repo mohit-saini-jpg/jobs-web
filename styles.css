@@ -220,7 +220,7 @@ a:hover{ text-decoration:underline; }
     text-align: left;
   }
   
-  /* The EXACT 2-row button layout from your reference */
+  /* The 2-row button layout from reference */
   .mobile-header-btns {
     flex: 1 1 auto;
     display: flex;
