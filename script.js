@@ -116,6 +116,9 @@
                 if (parentBox && parentBox.id !== 'mobile-bottom-search') {
                     if (!parentBox.querySelector('a.section-link, table, .section-list')) {
                         parentBox.style.setProperty('display', 'none', 'important');
+                    } else {
+                        // If it holds jobs, wipe out the padding where the search used to be
+                        parentBox.style.setProperty('padding-top', '0', 'important');
                     }
                 }
             }
@@ -498,14 +501,13 @@
           }
           .grid-nav-btn:active { transform: scale(0.95); }
           
-          /* Glassy App Themes - Perfect "Light Shade" Matches */
-          .grid-nav-btn.glass-primary { background: linear-gradient(135deg, #0ea5e9, #4f46e5); color: #fff; border: none; box-shadow: 0 4px 12px rgba(14,165,233,0.3); }
-          .grid-nav-btn.glass-blue { color: #0284c7; border-color: #bae6fd; background: #f0f9ff; }
-          .grid-nav-btn.glass-purple { color: #7e22ce; border-color: #e9d5ff; background: #faf5ff; }
-          .grid-nav-btn.glass-orange { color: #c2410c; border-color: #fed7aa; background: #fff7ed; }
-          .grid-nav-btn.glass-green { color: #166534; border-color: #bbf7d0; background: #f0fdf4; }
+          /* Exact Solid & Outline Themes Matching Your Request */
+          .grid-nav-btn.btn-solid-blue { background: #3b82f6; color: #fff; box-shadow: 0 2px 4px rgba(59,130,246,0.3); border: 1px solid #2563eb; }
+          .grid-nav-btn.btn-outline-blue { background: #f0f9ff; color: #1e40af; border: 1px solid #bfdbfe; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
+          .grid-nav-btn.btn-solid-purple { background: #8b5cf6; color: #fff; box-shadow: 0 2px 4px rgba(139,92,246,0.3); border: 1px solid #7c3aed; }
+          .grid-nav-btn.btn-solid-orange { background: #f97316; color: #fff; box-shadow: 0 2px 4px rgba(249,115,22,0.3); border: 1px solid #ea580c; }
 
-          /* ✅ PERFECT PILLS FIX: Flex-grow makes them lock together flawlessly without awkward gaps! */
+          /* ✅ PERFECT PILLS FIX: Flex-grow makes them stretch and form a perfectly flush brick wall layout! */
           .home-links { 
             display: flex;
             flex-wrap: wrap;
@@ -595,28 +597,30 @@
         if (waObj && (waObj.url || waObj.link)) waLink = waObj.url || waObj.link;
     }
     
-    // ✅ INJECT GLASSY MODERN APP GRID
+    // ✅ INJECT CUSTOM APP GRID (Matching Exact Color Request + Deep Linked Resume)
     if (wrap && !document.getElementById("mobile-nav-grid")) {
         const mobileNavWrap = document.createElement("div");
         mobileNavWrap.id = "mobile-nav-grid";
         mobileNavWrap.className = "mobile-nav-grid";
 
-        // ✅ EXACT ROW COLORS MATCHING YOUR REQUEST
         const mLinks = [
-            { name: "Latest Jobs", url: "https://www.topsarkarijobs.com/view.html?section=latest%20jobs", cls: "glass-primary" },
-            { name: "Study wise jobs", url: "category.html?group=study", cls: "glass-blue" },
-            { name: "Categories wise jobs", url: "category.html?group=popular", cls: "glass-blue" },
-            { name: "State wise Jobs", url: "category.html?group=state", cls: "glass-blue" },
+            // Row 1
+            { name: "Latest Jobs", url: "https://www.topsarkarijobs.com/view.html?section=latest%20jobs", cls: "btn-solid-blue" },
+            { name: "Study wise jobs", url: "category.html?group=study", cls: "btn-outline-blue" },
+            { name: "Categories wise jobs", url: "category.html?group=popular", cls: "btn-outline-blue" },
+            { name: "State wise Jobs", url: "category.html?group=state", cls: "btn-outline-blue" },
             
-            { name: "Admissions", url: "category.html?group=admissions", cls: "glass-purple" },
-            { name: "Resume/CV Maker", url: "tools.html", cls: "glass-purple" },
-            { name: "CSC Services", url: "govt-services.html", cls: "glass-purple" },
-            { name: "Study Material", url: "category.html?group=study-material", cls: "glass-purple" },
+            // Row 2 (All Purple)
+            { name: "Admissions", url: "category.html?group=admissions", cls: "btn-solid-purple" },
+            { name: "Resume/CV Maker", url: "https://www.topsarkarijobs.com/view.html?url=https%253A%252F%252Fsarkariresulttools.net%252Fresume-maker%252F&name=Resume%2520CV%2520Maker&job=resume-cv-makerume-cv-maker", cls: "btn-solid-purple" },
+            { name: "CSC Services", url: "govt-services.html", cls: "btn-solid-purple" },
+            { name: "Study Material", url: "category.html?group=study-material", cls: "btn-solid-purple" },
             
-            { name: "Results", url: "result.html", cls: "glass-orange" },
-            { name: "Admit Card", url: "category.html?group=admit-result", cls: "glass-orange" },
-            { name: "Latest Khabar", url: "category.html?group=khabar", cls: "glass-orange" },
-            { name: "Join WhatsApp", url: waLink, cls: "glass-green" } 
+            // Row 3 (Orange + Join WhatsApp Blue)
+            { name: "Results", url: "result.html", cls: "btn-solid-orange" },
+            { name: "Admit Card", url: "category.html?group=admit-result", cls: "btn-solid-orange" },
+            { name: "Latest Khabar", url: "category.html?group=khabar", cls: "btn-solid-orange" },
+            { name: "Join WhatsApp", url: waLink, cls: "btn-solid-blue" } 
         ];
 
         mLinks.forEach(l => {
@@ -640,17 +644,32 @@
           "results", "result", "admit card", "khabar", "helpdesk", "home", "tools", "whatsapp"
       ];
 
-      // ✅ RESTORES THE EXACT, SLEEK ORIGINAL PILL COLORS YOU LOVED
+      // ✅ RESTORES THE ORIGINAL SLEEK PILL COLORS EXACTLY AS YOU LOVED THEM
       const colorMap = { 
         "bg-red-600": "linear-gradient(180deg, #ef4444, #dc2626)", 
-        "bg-slate-600": "linear-gradient(180deg, #94a3b8, #64748b)", 
+        "bg-slate-600": "linear-gradient(180deg, #64748b, #475569)", 
         "bg-amber-600": "linear-gradient(180deg, #f59e0b, #d97706)", 
         "bg-zinc-400": "linear-gradient(180deg, #a1a1aa, #71717a)", 
         "bg-green-600": "linear-gradient(180deg, #10b981, #059669)", 
-        "bg-pink-500": "linear-gradient(180deg, #f43f5e, #e11d48)", 
+        "bg-pink-500": "linear-gradient(180deg, #db2777, #be185d)", 
         "bg-yellow-600": "linear-gradient(180deg, #eab308, #ca8a04)", 
-        "bg-red-500": "linear-gradient(180deg, #f87171, #ef4444)" 
+        "bg-red-500": "linear-gradient(180deg, #f87171, #ef4444)",
+        "bg-blue-600": "linear-gradient(180deg, #2563eb, #1d4ed8)",
+        "bg-indigo-600": "linear-gradient(180deg, #4f46e5, #4338ca)",
+        "bg-cyan-600": "linear-gradient(180deg, #0891b2, #0e7490)"
       };
+
+      // Failsafe array of vibrant colors to cycle through if color property is missing in JSON
+      const fallbackColors = [
+          "linear-gradient(180deg, #d97706, #b45309)", // Amber/Brown
+          "linear-gradient(180deg, #4f46e5, #3730a3)", // Indigo
+          "linear-gradient(180deg, #2563eb, #1e40af)", // Blue
+          "linear-gradient(180deg, #9f1239, #831843)", // Maroon
+          "linear-gradient(180deg, #047857, #064e3b)", // Emerald Green
+          "linear-gradient(180deg, #c2410c, #9a3412)", // Rust
+          "linear-gradient(180deg, #6d28d9, #4c1d95)", // Purple
+          "linear-gradient(180deg, #0369a1, #075985)"  // Ocean
+      ];
 
       let validLinks = [];
       links.forEach((l) => {
@@ -674,7 +693,7 @@
           topHeadline = validLinks.splice(topHeadlineIndex, 1)[0];
       }
 
-      // 2. Pair shuffling algorithm (mixes long and short names so flex automatically wraps them beautifully)
+      // 2. Pair shuffling algorithm (mixes long and short names so flex automatically wraps them perfectly)
       validLinks.sort((a, b) => a.name.length - b.name.length);
       let mixedLinks = [];
       let left = 0; let right = validLinks.length - 1;
@@ -688,18 +707,18 @@
       const finalLinks = topHeadline ? [topHeadline, ...mixedLinks] : mixedLinks;
 
       host.innerHTML = "";
-      finalLinks.forEach((l) => {
+      finalLinks.forEach((l, index) => {
         const a = document.createElement("a");
         a.className = "home-link-btn";
         a.href = normalizeUrl(l.url);
         if (l.external) { a.target = "_blank"; a.rel = "noopener"; }
         
-        // Top Headlines gets special red, the rest map strictly to the JSON colors
+        // Top Headlines gets special red, the rest map strictly to your original appealing colors!
         if (l.name.toLowerCase().includes("headlines")) {
              a.style.background = "linear-gradient(180deg, #ef4444, #b91c1c)";
              a.style.width = "100%"; 
         } else {
-             a.style.background = colorMap[safe(l.color)] || "linear-gradient(180deg, #94a3b8, #64748b)";
+             a.style.background = colorMap[safe(l.color)] || fallbackColors[index % fallbackColors.length];
         }
         
         const icon = safe(l.icon);
