@@ -12,6 +12,7 @@
 
 *{ box-sizing:border-box; }
 
+/* Prevents horizontal stretching/empty white space on mobile */
 html,body{ 
   height:100%; 
   overflow-x: hidden;
@@ -203,8 +204,8 @@ a:hover{ text-decoration:underline; }
   .desktop-nav{ display:none; }
   .brand-subtitle { display: none; }
   
-  /* Restores perfect 2-row header layout */
-  .header-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; gap: 6px; flex-wrap: nowrap; }
+  /* Compact & Beautifully Fitted Header Row */
+  .header-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; gap: 4px; flex-wrap: nowrap; }
   
   .brand { flex: 0 0 auto; display: flex; align-items: center; gap: 6px; min-width: 0; }
   .brand-logo { width: 38px; height: 38px; flex-shrink: 0; }
@@ -219,7 +220,7 @@ a:hover{ text-decoration:underline; }
     text-align: left;
   }
   
-  /* Two-row header buttons */
+  /* The 2-row button layout from reference */
   .mobile-header-btns {
     flex: 1 1 auto;
     display: flex;
@@ -251,14 +252,8 @@ a:hover{ text-decoration:underline; }
   .icon-btn { width: 38px; height: 38px; flex-shrink: 0; border:none; border-radius:8px; background: rgba(255,255,255,.15); color:#fff; }
   .icon-btn i { font-size: 16px; }
 
-  /* ✅ Absolute Nuke for Old Search Bar on Mobile */
+  /* Safely hides top search UI elements */
   .top-search { display: none !important; }
-  #sectionSearchInput, #siteSearchInput { display: none !important; }
-  .search-row:not(.mbs-row) { display: none !important; }
-  
-  /* Advanced CSS to hide stray white box wrapper without touching jobs */
-  div:has(> #sectionSearchInput),
-  .section-card:has(#sectionSearchInput) { display: none !important; }
 }
 
 /* Modal */
