@@ -66,7 +66,7 @@
     `;
   }
 
-  // ✅ MOBILE HEADER BUTTON INJECTION (Perfect Horizontal Row)
+  // ✅ MOBILE HEADER BUTTON INJECTION (Restores the 2-row layout from reference)
   function injectMobileHeaderBtns() {
     if (window.innerWidth > 980) return;
     const headerHost = document.getElementById("site-header") || document.querySelector(".site-header");
@@ -80,15 +80,16 @@
         btns.id = 'mobile-header-btns';
         btns.className = 'mobile-header-btns';
         btns.innerHTML = `
-          <a href="helpdesk.html" class="mhb-btn">Helpdesk <i class="fa-solid fa-chevron-down"></i></a>
-          <a href="index.html" class="mhb-btn">Home <i class="fa-solid fa-chevron-down"></i></a>
-          <a href="tools.html" class="mhb-btn">Tools</a>
+          <div class="mhb-row">
+             <a href="helpdesk.html" class="mhb-btn">Helpdesk <i class="fa-solid fa-chevron-down"></i></a>
+             <a href="index.html" class="mhb-btn">Home <i class="fa-solid fa-chevron-down"></i></a>
+          </div>
+          <a href="tools.html" class="mhb-btn mhb-full">Tools</a>
         `;
         headerRow.insertBefore(btns, headerActions);
     }
   }
 
-  // ✅ SAFELY INJECT HEADER SO IT NEVER DISAPPEARS
   async function injectHeaderFooter() {
     let headerHost = document.getElementById("site-header");
     if (!headerHost) headerHost = document.querySelector(".site-header");
@@ -428,7 +429,7 @@
           .home-links { 
             display: flex;
             flex-wrap: wrap;
-            gap: 6px 4px; 
+            gap: 6px; 
             justify-content: center; 
             align-content: center;
             padding: 0 8px; 
@@ -436,12 +437,12 @@
           }
           .home-link-btn { 
             flex: 1 1 auto; 
-            padding: 8px 10px; 
+            padding: 8px 6px; 
             font-size: 12px; 
             text-align: center;
             justify-content: center;
             margin: 0;
-            min-width: calc(25% - 10px); 
+            min-width: calc(30% - 10px); 
           }
           
           /* The 4-Column Rectangular App Grid */
@@ -469,7 +470,7 @@
           
           /* Glossy Premium App Themes */
           .grid-nav-btn.solid-blue { background: linear-gradient(180deg, #3b82f6, #2563eb); color: #fff; border: 1px solid #1d4ed8; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
-          .grid-nav-btn.solid-orange { background: linear-gradient(180deg, #f98822, #ea580c); color: #fff; border: 1px solid #c2410c; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
+          .grid-nav-btn.solid-orange { background: linear-gradient(180deg, #f97316, #ea580c); color: #fff; border: 1px solid #c2410c; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
           .grid-nav-btn.solid-dark { background: linear-gradient(180deg, #1e40af, #1e3a8a); color: #fff; border: 1px solid #172554; }
           .grid-nav-btn.outline-blue { background: #f0f9ff; color: #2563eb; border: 1px solid #bfdbfe; font-weight: 700; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
           .grid-nav-btn.outline-dark { background: #fff; color: #0f172a; border: 1px solid #cbd5e1; font-weight: 800; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
@@ -542,9 +543,9 @@
         mobileNavWrap.id = "mobile-nav-grid";
         mobileNavWrap.className = "mobile-nav-grid";
 
-        // ✅ FIXED: "Latest Jobs" navigates successfully using category.html
+        // ✅ FIXED: "Latest Jobs" officially navigates perfectly to latest-jobs.html
         const mLinks = [
-            { name: "Latest Jobs", url: "category.html?group=latest", cls: "solid-blue" },
+            { name: "Latest Jobs", url: "latest-jobs.html", cls: "solid-blue" },
             { name: "Study wise jobs", url: "category.html?group=study", cls: "outline-blue" },
             { name: "Categories wise jobs", url: "category.html?group=popular", cls: "outline-blue" },
             { name: "State wise Jobs", url: "category.html?group=state", cls: "outline-blue" },
@@ -575,7 +576,7 @@
     const links = Array.isArray(data?.home_links) ? data.home_links : [];
     if (links.length) {
       
-      // ✅ Strict filter ensures NO overlaps and NO WhatsApp button repetition
+      // ✅ DEDUPLICATION: Strict filter ensures NO overlaps and NO WhatsApp button repetition
       const excludeList = [
           "latest jobs", "study wise", "categories wise", "popular categories", "state wise",
           "admissions", "admission", "resume", "cv maker", "csc", "study material",
@@ -699,8 +700,7 @@
       gridEl = wrap;
     }
 
-    // Added the latest jobs to the mapping!
-    const groupMeta = { latest: "Latest Jobs", study: "Study wise jobs", popular: "Popular job categories", state: "State wise jobs", admissions: "Admissions", "admit-result": "Admit Card / Result", khabar: "Latest Khabar", "study-material": "Study Material & Top Courses" };
+    const groupMeta = { study: "Study wise jobs", popular: "Popular job categories", state: "State wise jobs", admissions: "Admissions", "admit-result": "Admit Card / Result", khabar: "Latest Khabar", "study-material": "Study Material & Top Courses" };
     if (titleEl) titleEl.textContent = groupMeta[group] || "Category";
 
     let data;
@@ -732,8 +732,7 @@
     }
 
     let items = [];
-    if (group === "latest") items = sliceBetween(top, "latest", "study");
-    else if (group === "study") items = sliceBetween(top, "study wise", "popular");
+    if (group === "study") items = sliceBetween(top, "study wise", "popular");
     else if (group === "popular") items = sliceBetween(top, "popular", null);
     else if (group === "state") items = sliceBetween(left, "state wise", "admit");
     else if (group === "admit-result") items = sliceBetween(left, "admit", null);
