@@ -67,7 +67,7 @@
     `;
   }
 
-  // ✅ MOBILE HEADER BUTTON INJECTION (Restores the perfect 2-row layout from reference)
+  // ✅ MOBILE HEADER BUTTON INJECTION (Restores 2-row block for Helpdesk/Home + Tools)
   function injectMobileHeaderBtns() {
     if (window.innerWidth > 980) return;
     const headerHost = document.getElementById("site-header") || document.querySelector(".site-header");
@@ -91,23 +91,32 @@
     }
   }
 
-  // ✅ ULTRA-SAFE SEARCH HIDER: Laser targets only search inputs, never touches content!
+  // ✅ LASER-TARGETED OLD SEARCH HIDER: Removes ONLY the search inputs and their titles, leaving your job content entirely safe!
   function safeHideOldSearchBars() {
     if (window.innerWidth <= 980) {
-        const inputs = ['siteSearchInput', 'sectionSearchInput'];
-        inputs.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                // Safely hide the immediate search row
-                const row = el.closest('.search-row');
+        ['siteSearchInput', 'sectionSearchInput'].forEach(id => {
+            const inputEl = document.getElementById(id);
+            if (inputEl) {
+                // Safely hide the exact row holding the old input and button
+                const row = inputEl.closest('.search-row');
                 if (row) row.style.display = 'none';
                 
-                // Safely hide the wrapping card if it's strictly a search card
-                const card = el.closest('.search-card');
-                if (card) {
-                    card.style.display = 'none';
-                    card.style.padding = '0';
-                    card.style.margin = '0';
+                // Find its parent card
+                const card = inputEl.closest('.search-card') || inputEl.closest('.top-search') || inputEl.parentElement;
+                if (card && card.id !== 'mobile-bottom-search') {
+                    // Hide the specific search titles safely
+                    const title = card.querySelector('.search-title');
+                    const sub = card.querySelector('.search-sub');
+                    if (title && title.textContent.includes('Search')) title.style.display = 'none';
+                    if (sub && sub.textContent.includes('Search')) sub.style.display = 'none';
+                    
+                    // ONLY hide the white box entirely if it DOES NOT contain your jobs or other content!
+                    if (!card.querySelector('.section-list, table, ul, ol, a.section-link')) {
+                        card.style.display = 'none';
+                        card.style.padding = '0';
+                        card.style.margin = '0';
+                        card.style.border = 'none';
+                    }
                 }
             }
         });
@@ -384,7 +393,7 @@
     });
   }
 
-  // ✅ PERFECTED MOBILE APP GRID, STRETCHED JUSTIFIED PILL BOXES & BOTTOM SEARCH
+  // ✅ PERFECTED MOBILE APP GRID & STRETCHED JUSTIFIED PILLS
   async function renderHomeQuickLinks() {
     const isHome = (page === "index.html" || page === "");
     
@@ -450,11 +459,11 @@
         @media (max-width: 980px) {
           .home-quicklinks { padding-top: 12px; }
           
-          /* ✅ PERFECT PILLS FIX: flex: 1 1 auto forces them to stretch beautifully! */
+          /* ✅ PERFECT PILLS FIX: flex: 1 1 auto combined with smart padding perfectly stretches them! */
           .home-links { 
             display: flex;
             flex-wrap: wrap;
-            gap: 6px; 
+            gap: 6px 4px; 
             justify-content: center; 
             align-content: center;
             padding: 0 8px; 
@@ -467,6 +476,7 @@
             text-align: center;
             justify-content: center;
             margin: 0;
+            min-width: calc(30% - 10px); 
           }
           
           /* The 4-Column Rectangular App Grid */
@@ -494,7 +504,7 @@
           
           /* Glossy Premium App Themes */
           .grid-nav-btn.solid-blue { background: linear-gradient(180deg, #3b82f6, #2563eb); color: #fff; border: 1px solid #1d4ed8; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
-          .grid-nav-btn.solid-orange { background: linear-gradient(180deg, #f97316, #ea580c); color: #fff; border: 1px solid #c2410c; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
+          .grid-nav-btn.solid-orange { background: linear-gradient(180deg, #f98822, #ea580c); color: #fff; border: 1px solid #c2410c; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
           .grid-nav-btn.solid-dark { background: linear-gradient(180deg, #1e40af, #1e3a8a); color: #fff; border: 1px solid #172554; }
           .grid-nav-btn.outline-blue { background: #f0f9ff; color: #2563eb; border: 1px solid #bfdbfe; font-weight: 700; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
           .grid-nav-btn.outline-dark { background: #fff; color: #0f172a; border: 1px solid #cbd5e1; font-weight: 800; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
@@ -567,7 +577,7 @@
         mobileNavWrap.id = "mobile-nav-grid";
         mobileNavWrap.className = "mobile-nav-grid";
 
-        // ✅ EXACT ABSOLUTE LINK FOR LATEST JOBS TO GUARANTEE NAVIGATION
+        // ✅ EXACT ABSOLUTE LINK FOR LATEST JOBS (Guarantees Navigation)
         const mLinks = [
             { name: "Latest Jobs", url: "https://www.topsarkarijobs.com/view.html?section=latest%20jobs", cls: "solid-blue" },
             { name: "Study wise jobs", url: "category.html?group=study", cls: "outline-blue" },
@@ -600,7 +610,7 @@
     const links = Array.isArray(data?.home_links) ? data.home_links : [];
     if (links.length) {
       
-      // ✅ DEDUPLICATION: Strict filter ensures NO overlaps and NO WhatsApp button repetition
+      // Strict filter ensures NO overlaps and NO WhatsApp repetition
       const excludeList = [
           "latest jobs", "study wise", "categories wise", "popular categories", "state wise",
           "admissions", "admission", "resume", "cv maker", "csc", "study material",
@@ -633,14 +643,14 @@
         validLinks.push({ ...l, name: name, url: url });
       });
 
-      // Extract Top Headlines so it's always forced to the #1 top position
+      // 1. Extract Top Headlines so it's always forced to the #1 top position
       let topHeadlineIndex = validLinks.findIndex(l => l.name.toLowerCase().includes("headlines"));
       let topHeadline = null;
       if (topHeadlineIndex > -1) {
           topHeadline = validLinks.splice(topHeadlineIndex, 1)[0];
       }
 
-      // Pair shuffling algorithm (mixes long and short names so flex wraps them flawlessly into a solid box)
+      // 2. Pair shuffling algorithm (mixes long and short names so flex automatically wraps them beautifully)
       validLinks.sort((a, b) => a.name.length - b.name.length);
       let mixedLinks = [];
       let left = 0; let right = validLinks.length - 1;
@@ -684,26 +694,6 @@
         `;
         wrap.appendChild(mbs);
     }
-  }
-
-  function removeHomeMainPageCtaLinks() {
-    if (!(page === "index.html" || page === "")) return;
-    const wrap = document.getElementById("dynamic-sections");
-    if (!wrap) return;
-
-    const needles = [
-      "╰┈➤🏠Website का Main Home Page खोलने के लिए यहाँ क्लिक करें",
-      "Website का Main Home Page खोलने के लिए यहाँ क्लिक करें",
-      "Main Home Page खोलने के लिए यहाँ क्लिक करें",
-      "Website का Main Home Page",
-    ];
-
-    const els = Array.from(wrap.querySelectorAll("a, button"));
-    els.forEach((el) => {
-      const t = safe(el.textContent).replace(/\s+/g, " ");
-      if (!t) return;
-      if (needles.some((n) => t.includes(n))) el.remove();
-    });
   }
 
   // Category Pages
@@ -764,7 +754,6 @@
     else if (group === "khabar") items = sliceBetween(right, "latest khabar", "study material");
     else if (group === "study-material") items = sliceBetween(right, "study material", "tools");
 
-    // Filter Garbage
     items = items.filter(i => !isGarbageLink(i));
 
     gridEl.innerHTML = "";
@@ -1271,7 +1260,7 @@
     });
   }
 
-  // ✅ GLOBAL LIVE SEARCH ENGINE
+  // ✅ GLOBAL LIVE SEARCH ENGINE (Works for Mobile Bottom Search too)
   async function initGlobalLiveSearch() {
     const inputs = [];
     
@@ -1397,8 +1386,10 @@
     initCscModal();
     await renderServicesPage();
     
+    // Run search initializer immediately
     await initGlobalLiveSearch();
     
+    // In case mobile elements loaded a split second late, check again
     setTimeout(() => {
         safeHideOldSearchBars();
         initGlobalLiveSearch();
