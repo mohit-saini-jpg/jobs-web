@@ -91,22 +91,23 @@
     }
   }
 
-  // ✅ ULTIMATE FAILSAFE: ERASES ALL OLD SEARCH BARS FROM INNER PAGES ON MOBILE
-  function nukeOldSearchOnMobile() {
+  // ✅ ULTRA-SAFE SEARCH HIDER: Laser targets only search inputs, never touches content!
+  function safeHideOldSearchBars() {
     if (window.innerWidth <= 980) {
-        const oldInputs = ['siteSearchInput', 'sectionSearchInput'];
-        oldInputs.forEach(id => {
+        const inputs = ['siteSearchInput', 'sectionSearchInput'];
+        inputs.forEach(id => {
             const el = document.getElementById(id);
             if (el) {
-                // If it's the old desktop search, obliterate its container
-                const parentSection = el.closest('section');
-                if (parentSection && parentSection.id !== 'home-quicklinks-wrap') {
-                    parentSection.style.setProperty('display', 'none', 'important');
-                } else {
-                    const parentDiv = el.closest('div.search-card') || el.closest('div[class*="search"]');
-                    if (parentDiv && parentDiv.id !== 'mobile-bottom-search') {
-                        parentDiv.style.setProperty('display', 'none', 'important');
-                    }
+                // Safely hide the immediate search row
+                const row = el.closest('.search-row');
+                if (row) row.style.display = 'none';
+                
+                // Safely hide the wrapping card if it's strictly a search card
+                const card = el.closest('.search-card');
+                if (card) {
+                    card.style.display = 'none';
+                    card.style.padding = '0';
+                    card.style.margin = '0';
                 }
             }
         });
@@ -226,7 +227,7 @@
     });
     window.addEventListener("resize", () => {
       if (window.innerWidth > 980) close();
-      nukeOldSearchOnMobile(); // Added resize listener for failsafe
+      safeHideOldSearchBars(); 
     });
     window.__closeMenu = close;
   }
@@ -449,11 +450,11 @@
         @media (max-width: 980px) {
           .home-quicklinks { padding-top: 12px; }
           
-          /* ✅ PERFECT PILLS FIX: flex: 1 1 auto forces them to stretch and form a perfectly flush box! */
+          /* ✅ PERFECT PILLS FIX: flex: 1 1 auto forces them to stretch beautifully! */
           .home-links { 
             display: flex;
             flex-wrap: wrap;
-            gap: 6px 4px; 
+            gap: 6px; 
             justify-content: center; 
             align-content: center;
             padding: 0 8px; 
@@ -461,12 +462,11 @@
           }
           .home-link-btn { 
             flex: 1 1 auto; 
-            padding: 8px 6px; 
+            padding: 8px 10px; 
             font-size: 12px; 
             text-align: center;
             justify-content: center;
             margin: 0;
-            min-width: calc(30% - 10px); 
           }
           
           /* The 4-Column Rectangular App Grid */
@@ -494,7 +494,7 @@
           
           /* Glossy Premium App Themes */
           .grid-nav-btn.solid-blue { background: linear-gradient(180deg, #3b82f6, #2563eb); color: #fff; border: 1px solid #1d4ed8; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
-          .grid-nav-btn.solid-orange { background: linear-gradient(180deg, #f98822, #ea580c); color: #fff; border: 1px solid #c2410c; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
+          .grid-nav-btn.solid-orange { background: linear-gradient(180deg, #f97316, #ea580c); color: #fff; border: 1px solid #c2410c; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
           .grid-nav-btn.solid-dark { background: linear-gradient(180deg, #1e40af, #1e3a8a); color: #fff; border: 1px solid #172554; }
           .grid-nav-btn.outline-blue { background: #f0f9ff; color: #2563eb; border: 1px solid #bfdbfe; font-weight: 700; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
           .grid-nav-btn.outline-dark { background: #fff; color: #0f172a; border: 1px solid #cbd5e1; font-weight: 800; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
@@ -694,7 +694,7 @@
     const needles = [
       "╰┈➤🏠Website का Main Home Page खोलने के लिए यहाँ क्लिक करें",
       "Website का Main Home Page खोलने के लिए यहाँ क्लिक करें",
-      "Main Home Page खोलने শারীরিক के लिए यहाँ क्लिक करें",
+      "Main Home Page खोलने के लिए यहाँ क्लिक करें",
       "Website का Main Home Page",
     ];
 
@@ -1271,7 +1271,7 @@
     });
   }
 
-  // ✅ GLOBAL LIVE SEARCH ENGINE (Works for Mobile Bottom Search too)
+  // ✅ GLOBAL LIVE SEARCH ENGINE
   async function initGlobalLiveSearch() {
     const inputs = [];
     
@@ -1372,7 +1372,7 @@
 
   document.addEventListener("DOMContentLoaded", async () => {
     buildMobileMenu();
-    nukeOldSearchOnMobile(); // Fire aggressively on load
+    safeHideOldSearchBars(); 
     
     await injectHeaderFooter();
     await loadHeaderLinks();
@@ -1385,7 +1385,9 @@
       removeHomeMainPageCtaLinks();
     }
     
+    // Renders the global mobile layout across ALL pages
     await renderHomeQuickLinks();
+    
     await initCategoryPage();
     await initToolsPage();
     
@@ -1394,10 +1396,11 @@
     }
     initCscModal();
     await renderServicesPage();
+    
     await initGlobalLiveSearch();
     
     setTimeout(() => {
-        nukeOldSearchOnMobile();
+        safeHideOldSearchBars();
         initGlobalLiveSearch();
     }, 500); 
   });
