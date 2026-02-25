@@ -166,7 +166,6 @@
       btn.setAttribute("aria-expanded", "true");
       document.body.style.overflow = "hidden";
       
-      // ✅ Closes the mobile search card if it's open when clicking hamburger menu
       const searchCard = document.querySelector(".search-card");
       if(searchCard) searchCard.classList.remove("mobile-active");
     };
@@ -335,6 +334,7 @@
     });
   }
 
+  // ✅ UPDATED: Integrates the Mobile Top Nav Grid + Quick Links
   async function renderHomeQuickLinks() {
     if (!(page === "index.html" || page === "")) return;
     const searchInput = $("#siteSearchInput");
@@ -359,9 +359,11 @@
         .top-search > .container { order: 1; }
         .home-quicklinks { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 24px 0 0; order: 2; }
         
+        /* DESKTOP VIEW - NO MOBILE NAV GRID */
         @media (min-width: 981px) {
           .home-quicklinks { order: 1; padding: 0 0 24px; }
           .top-search > .container { order: 2; }
+          .mobile-nav-grid { display: none !important; }
         }
 
         .home-links { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; }
@@ -390,14 +392,77 @@
         }
         .home-link-btn:active { transform: translateY(0); }
         
-        @media (max-width: 640px) {
+        /* MOBILE VIEW - ENABLES NAV GRID */
+        @media (max-width: 980px) {
           .home-links { gap: 8px; justify-content: center; }
           .home-link-btn { padding: 8px 14px; font-size: 13px; }
+          
+          .mobile-nav-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px dashed rgba(0,0,0,0.15);
+          }
+          .grid-nav-btn {
+            flex: 1 1 auto; /* Fill available space gracefully */
+            padding: 10px 14px !important;
+            font-size: 13px !important;
+            text-align: center;
+          }
         }
       `;
       document.head.appendChild(style);
     }
 
+    // ✅ CREATE THE MOBILE-ONLY NAV GRID BASED ON THE SCREENSHOT
+    const quickLinksWrap = document.querySelector(".home-quicklinks");
+    if (quickLinksWrap && !document.getElementById("mobile-nav-grid")) {
+        const mobileNavWrap = document.createElement("div");
+        mobileNavWrap.id = "mobile-nav-grid";
+        mobileNavWrap.className = "mobile-nav-grid";
+
+        // Mapped exactly to mimic your screenshot's links layout for mobile
+        const mLinks = [
+            { name: "Helpdesk", url: "helpdesk.html", color: "blue" },
+            { name: "Home", url: "index.html", color: "blue" },
+            { name: "Tools", url: "tools.html", color: "blue", full: true },
+            { name: "Latest Jobs", url: "#", color: "blue" },
+            { name: "Study wise jobs", url: "category.html?group=study", color: "blue" },
+            { name: "Popular categories", url: "category.html?group=popular", color: "blue" },
+            { name: "State wise Jobs", url: "category.html?group=state", color: "blue" },
+            { name: "Admissions", url: "category.html?group=admissions", color: "cyan" },
+            { name: "Resume/CV Maker", url: "tools.html", color: "cyan" },
+            { name: "CSC Services", url: "govt-services.html", color: "cyan" },
+            { name: "Study Material", url: "category.html?group=study-material", color: "cyan" },
+            { name: "Results", url: "result.html", color: "orange" },
+            { name: "Admit Card", url: "category.html?group=admit-result", color: "orange" },
+            { name: "Latest Khabar", url: "category.html?group=khabar", color: "blue" }
+        ];
+
+        const gradients = {
+            "blue": "linear-gradient(135deg, #38bdf8, #0284c7)",
+            "cyan": "linear-gradient(135deg, #2dd4bf, #0891b2)",
+            "orange": "linear-gradient(135deg, #f59e0b, #d97706)"
+        };
+
+        mLinks.forEach(l => {
+            const a = document.createElement("a");
+            a.className = "home-link-btn grid-nav-btn";
+            a.href = l.url;
+            a.textContent = l.name;
+            a.style.background = gradients[l.color];
+            if (l.full) a.style.flex = "1 1 100%"; // Forces full width
+            mobileNavWrap.appendChild(a);
+        });
+
+        // Insert at the very top of the mobile content area
+        quickLinksWrap.insertBefore(mobileNavWrap, quickLinksWrap.firstChild);
+    }
+
+    // Now proceed with normal dynamic header links (Pill buttons underneath the grid)
     let data = null;
     try {
       const r = await fetch("header_links.json", { cache: "no-store" });
@@ -1138,7 +1203,6 @@
     
     await initGlobalLiveSearch();
 
-    // ✅ FIXED: Make the mobile search icon perfectly toggle the floating search box
     const openSearchBtn = document.getElementById("openSearchBtn");
     if (openSearchBtn) {
       openSearchBtn.addEventListener("click", (e) => {
@@ -1147,18 +1211,15 @@
         
         const searchCard = document.querySelector(".search-card");
         if (searchCard) {
-          // Close the hamburger menu if it happens to be open
           if (typeof window.__closeMenu === "function") window.__closeMenu();
           
           if (window.innerWidth <= 980) {
-            // Toggle the floating search box on mobile
             searchCard.classList.toggle("mobile-active");
             if (searchCard.classList.contains("mobile-active")) {
               const input = document.getElementById("siteSearchInput") || document.getElementById("sectionSearchInput");
               if(input) setTimeout(() => input.focus(), 100);
             }
           } else {
-            // Fallback for desktop (though the button is hidden)
             const input = document.getElementById("siteSearchInput") || document.getElementById("sectionSearchInput");
             if (input) {
               input.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -1170,7 +1231,6 @@
         }
       });
 
-      // Close floating search card when clicking anywhere outside of it
       document.addEventListener("click", (e) => {
         if (window.innerWidth <= 980) {
           const searchCard = document.querySelector(".search-card");
