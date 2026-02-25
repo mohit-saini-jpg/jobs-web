@@ -66,50 +66,48 @@
     `;
   }
 
+  // ✅ MOBILE HEADER BUTTON INJECTION (Centered in the blue bar)
+  function injectMobileHeaderBtns() {
+    if (window.innerWidth > 980) return;
+    const headerRow = document.querySelector('.site-header .header-row');
+    const headerActions = document.querySelector('.site-header .header-actions');
+    
+    if (headerRow && headerActions && !document.getElementById('mobile-header-btns')) {
+        const btns = document.createElement('div');
+        btns.id = 'mobile-header-btns';
+        btns.className = 'mobile-header-btns';
+        btns.innerHTML = `
+          <div class="mhb-row">
+             <a href="helpdesk.html" class="mhb-btn">Helpdesk <i class="fa-solid fa-chevron-down"></i></a>
+             <a href="index.html" class="mhb-btn">Home <i class="fa-solid fa-chevron-down"></i></a>
+          </div>
+          <a href="tools.html" class="mhb-btn mhb-full">Tools</a>
+        `;
+        headerRow.insertBefore(btns, headerActions);
+    }
+  }
+
+  // ✅ SAFELY INJECT HEADER SO HOMEPAGE NEVER BREAKS
   async function injectHeaderFooter() {
-    const headerHost = document.getElementById("site-header");
+    const headerHost = document.querySelector(".site-header");
     const footerHost = document.getElementById("site-footer");
-    if (!headerHost && !footerHost) return;
-
-    async function loadFirstWorking(paths) {
-      for (const p of paths) {
+    
+    // Only inject if the header is an empty target container (prevents wiping out index.html's hardcoded header)
+    if (headerHost && headerHost.id === "site-header-empty" && headerHost.innerHTML.trim() === "") {
         try {
-          const r = await fetch(p, { cache: "no-store" });
-          if (r.ok) return await r.text();
+          const r = await fetch("header.html", { cache: "no-store" });
+          if (r.ok) headerHost.innerHTML = await r.text();
         } catch (_) {}
-      }
-      return "";
     }
 
-    if (headerHost) {
-      const headerHtml = await loadFirstWorking(["header.html", "./header.html", "/header.html"]);
-      if (headerHtml) {
-          headerHost.innerHTML = headerHtml;
-          
-          // ✅ INJECT MOBILE HEADER BUTTONS (Helpdesk, Home, Tools)
-          const headerRow = headerHost.querySelector('.header-row');
-          const headerActions = headerHost.querySelector('.header-actions');
-          if (headerRow && headerActions && !document.getElementById('mobile-header-btns')) {
-              const btns = document.createElement('div');
-              btns.id = 'mobile-header-btns';
-              btns.className = 'mobile-header-btns';
-              btns.innerHTML = `
-                <div class="mhb-row">
-                   <a href="helpdesk.html" class="mhb-btn">Helpdesk <i class="fa-solid fa-chevron-down" style="font-size:8px;"></i></a>
-                   <a href="index.html" class="mhb-btn">Home <i class="fa-solid fa-chevron-down" style="font-size:8px;"></i></a>
-                </div>
-                <div class="mhb-row">
-                   <a href="tools.html" class="mhb-btn mhb-full">Tools</a>
-                </div>
-              `;
-              headerRow.insertBefore(btns, headerActions);
-          }
-      }
-    }
+    // Always inject mobile buttons into whichever header is active
+    injectMobileHeaderBtns();
 
-    if (footerHost) {
-      const footerHtml = await loadFirstWorking(["footer.html", "./footer.html", "/footer.html"]);
-      if (footerHtml) footerHost.innerHTML = footerHtml;
+    if (footerHost && footerHost.innerHTML.trim() === "") {
+        try {
+          const r = await fetch("footer.html", { cache: "no-store" });
+          if (r.ok) footerHost.innerHTML = await r.text();
+        } catch (_) {}
     }
   }
 
@@ -351,40 +349,43 @@
     });
   }
 
-  // ✅ UPDATED: Mobile App-Style Grid + Search Bar Injector
+  // ✅ PERFECTED 4x3 MOBILE GRID, TIGHT PILLS, AND BOTTOM SEARCH BAR
   async function renderHomeQuickLinks() {
     if (!(page === "index.html" || page === "")) return;
-    const searchInput = $("#siteSearchInput");
-    let host = $("#home-links");
     
-    if (!host) {
-      const wrap = document.createElement("section");
+    let wrap = document.getElementById("home-quicklinks-wrap");
+    let host = document.getElementById("home-links");
+    
+    if (!wrap) {
+      wrap = document.createElement("section");
+      wrap.id = "home-quicklinks-wrap";
       wrap.className = "home-quicklinks";
+      
       host = document.createElement("div");
       host.id = "home-links";
       host.className = "home-links";
       wrap.appendChild(host);
-      const target = (searchInput && searchInput.closest(".container")) || $("main") || document.body;
-      target.parentNode.insertBefore(wrap, target);
+      
+      const mainEl = document.getElementById("main") || document.querySelector("main") || document.body;
+      if (mainEl && mainEl.parentNode) {
+          mainEl.parentNode.insertBefore(wrap, mainEl);
+      }
     }
 
     if (!document.getElementById("home-quicklinks-style")) {
       const style = document.createElement("style");
       style.id = "home-quicklinks-style";
       style.textContent = `
-        .top-search { display: flex; flex-direction: column; }
-        .top-search > .container { order: 1; }
-        .home-quicklinks { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 24px 0 0; order: 2; }
+        .home-quicklinks { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 24px 0 0; }
         
         /* DESKTOP VIEW */
         @media (min-width: 981px) {
-          .home-quicklinks { order: 1; padding: 0 0 24px; }
-          .top-search > .container { order: 2; }
+          .home-quicklinks { padding: 0 0 24px; }
           .mobile-nav-grid, .mobile-bottom-search { display: none !important; }
         }
 
-        /* PILL BUTTONS (Tight spacing) */
-        .home-links { display: flex; flex-wrap: wrap; gap: 8px 6px; align-items: center; justify-content: center; }
+        .home-links { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; }
+        
         .home-link-btn {
           display: inline-flex;
           align-items: center;
@@ -402,27 +403,30 @@
           white-space: nowrap;
           transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
         }
-        .home-link-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); filter: brightness(1.05); }
+        .home-link-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+          filter: brightness(1.05);
+        }
+        .home-link-btn:active { transform: translateY(0); }
         
-        /* MOBILE OVERRIDES */
+        /* MOBILE VIEW OVERRIDES */
         @media (max-width: 980px) {
-          .home-links { gap: 6px; }
-          .home-link-btn { padding: 6px 12px; font-size: 12px; }
+          .home-quicklinks { padding-top: 12px; }
           
-          /* 4x3 Premium App Grid */
+          /* Extremely tight and nicely wrapping Pill Buttons */
+          .home-links { gap: 6px 4px; justify-content: center; padding: 0 6px; margin-bottom: 0px; }
+          .home-link-btn { padding: 6px 12px; font-size: 12.5px; flex: 0 1 auto; }
+          
+          /* 4x3 Rectangular Grid */
           .mobile-nav-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 5px;
-            margin-bottom: 20px;
-            padding-bottom: 16px;
-            border-bottom: 1px dashed rgba(0,0,0,0.15);
+            gap: 4px;
+            margin-bottom: 16px;
           }
           .grid-nav-btn {
-            background: #fff;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            color: #0f172a;
+            border-radius: 4px;
             font-size: 11px;
             font-weight: 800;
             text-align: center;
@@ -431,58 +435,56 @@
             align-items: center;
             justify-content: center;
             line-height: 1.2;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             text-decoration: none;
             word-break: break-word;
           }
-          .grid-nav-btn.light-blue { background: #f0f9ff; color: #0284c7; border-color: #bae6fd; }
-          .grid-nav-btn.dark-blue { background: #1e3a8a; color: #fff; border-color: #1e3a8a; }
-          .grid-nav-btn.orange { background: #ea580c; color: #fff; border-color: #ea580c; }
-          .grid-nav-btn.no-bg { background: #fff; color: #0f172a; border-color: #cbd5e1; }
+          .grid-nav-btn.solid-blue { background: linear-gradient(180deg, #3b82f6, #2563eb); color: #fff; border: 1px solid #1d4ed8; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
+          .grid-nav-btn.solid-orange { background: linear-gradient(180deg, #f97316, #ea580c); color: #fff; border: 1px solid #c2410c; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
+          .grid-nav-btn.outline-blue { background: #f8fafc; color: #1e40af; border: 1px solid #93c5fd; }
+          .grid-nav-btn.outline-dark { background: #ffffff; color: #0f172a; border: 1px solid #cbd5e1; font-weight: 900; }
 
-          /* Custom Bottom Search (Mobile Only) */
+          /* Beautiful Custom Bottom Search exactly like screenshot */
           .mobile-bottom-search {
-            margin-top: 24px;
-            background: #ffffff;
-            border: 1px solid var(--line);
-            padding: 16px;
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            text-align: center;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            margin-top: 16px;
+            margin-bottom: 16px;
+            border-radius: 8px;
+            text-align: left;
           }
           .mobile-bottom-search h3 {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 900;
-            margin: 0 0 12px;
+            margin: 0 0 8px;
             color: #0f172a;
           }
           .mbs-row {
             display: flex;
-            gap: 8px;
-            align-items: stretch;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #fff;
           }
           .mbs-row input {
             flex: 1;
-            height: 42px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            padding: 0 12px;
-            font-size: 14px;
+            height: 40px;
+            border: none;
+            padding: 0 10px;
+            font-size: 13px;
             outline: none;
           }
-          .mbs-row input:focus { border-color: #0ea5e9; }
           .mbs-row button {
-            height: 42px;
-            background: linear-gradient(90deg, #0284c7, #4f46e5);
+            background: linear-gradient(180deg, #3b82f6, #2563eb);
             color: #fff;
+            border: none;
+            padding: 0 14px;
             font-weight: 800;
             font-size: 13px;
-            border: none;
-            border-radius: 8px;
-            padding: 0 16px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
           }
         }
       `;
@@ -500,31 +502,29 @@
         const waObj = data.header_links.find(l => safe(l.name).toLowerCase().includes("whatsapp"));
         if (waObj && (waObj.url || waObj.link)) waLink = waObj.url || waObj.link;
     }
-
-    const quickLinksWrap = document.querySelector(".home-quicklinks");
     
     // ✅ INJECT 4x3 APP GRID
-    if (quickLinksWrap && !document.getElementById("mobile-nav-grid")) {
+    if (wrap && !document.getElementById("mobile-nav-grid")) {
         const mobileNavWrap = document.createElement("div");
         mobileNavWrap.id = "mobile-nav-grid";
         mobileNavWrap.className = "mobile-nav-grid";
 
         // Exact match to your screenshot design
         const mLinks = [
-            { name: "Latest Jobs", url: "index.html", cls: "light-blue" },
-            { name: "Study wise jobs", url: "category.html?group=study", cls: "light-blue" },
-            { name: "Categories wise jobs", url: "category.html?group=popular", cls: "light-blue" },
-            { name: "State wise Jobs", url: "category.html?group=state", cls: "light-blue" },
+            { name: "Latest Jobs", url: "index.html", cls: "solid-blue" },
+            { name: "Study wise jobs", url: "category.html?group=study", cls: "outline-blue" },
+            { name: "Categories wise jobs", url: "category.html?group=popular", cls: "outline-blue" },
+            { name: "State wise Jobs", url: "category.html?group=state", cls: "outline-blue" },
             
-            { name: "Admissions", url: "category.html?group=admissions", cls: "light-blue" },
-            { name: "Resume/CV Maker", url: "tools.html", cls: "dark-blue" },
-            { name: "CSC Services <i class='fa-solid fa-chevron-down' style='font-size:9px;margin-left:3px;'></i>", url: "govt-services.html", cls: "dark-blue" },
-            { name: "Study Material", url: "category.html?group=study-material", cls: "no-bg" },
+            { name: "Admissions", url: "category.html?group=admissions", cls: "outline-blue" },
+            { name: "Resume/CV Maker", url: "tools.html", cls: "solid-blue" },
+            { name: "CSC Services <i class='fa-solid fa-chevron-down' style='font-size:9px;margin-left:3px;'></i>", url: "govt-services.html", cls: "solid-blue" },
+            { name: "Study Material", url: "category.html?group=study-material", cls: "outline-dark" },
             
-            { name: "Results", url: "result.html", cls: "orange" },
-            { name: "Admit Card", url: "category.html?group=admit-result", cls: "orange" },
-            { name: "Latest Khabar", url: "category.html?group=khabar", cls: "light-blue" },
-            { name: "Join WhatsApp", url: waLink, cls: "dark-blue" } 
+            { name: "Results", url: "result.html", cls: "solid-orange" },
+            { name: "Admit Card", url: "category.html?group=admit-result", cls: "solid-orange" },
+            { name: "Latest Khabar", url: "category.html?group=khabar", cls: "outline-blue" },
+            { name: "Join WhatsApp", url: waLink, cls: "solid-blue" } 
         ];
 
         mLinks.forEach(l => {
@@ -535,13 +535,13 @@
             mobileNavWrap.appendChild(a);
         });
 
-        quickLinksWrap.insertBefore(mobileNavWrap, quickLinksWrap.firstChild);
+        wrap.insertBefore(mobileNavWrap, wrap.firstChild);
     }
 
     // Process bottom pill links
     const links = Array.isArray(data?.home_links) ? data.home_links : [];
     if (links.length) {
-      // DEDUPLICATION: Filters out links that are already in the 4x3 grid or header
+      // ✅ DEDUPLICATION: Strict filter ensures NO overlaps or awkward repetitions in pills
       const excludeList = [
           "latest jobs", "study wise", "categories wise", "popular categories", "state wise",
           "admissions", "admission", "resume", "cv maker", "csc", "study material",
@@ -577,20 +577,20 @@
       });
     }
 
-    // ✅ INJECT MOBILE BOTTOM SEARCH BAR
-    if (quickLinksWrap && !document.getElementById("mobile-bottom-search")) {
+    // ✅ INJECT NEW, PERFECTLY FUNCTIONAL MOBILE BOTTOM SEARCH BAR
+    if (wrap && !document.getElementById("mobile-bottom-search")) {
         const mbs = document.createElement("div");
         mbs.id = "mobile-bottom-search";
         mbs.className = "mobile-bottom-search";
         mbs.innerHTML = `
-            <h3>Search Sarkari नौकरियाँ - Just Click Below</h3>
+            <div class="mbs-header">Search Sarkari नौकरियाँ - Just Click Below</div>
             <div class="mbs-row">
                 <input id="mobileBottomSearchInput" type="search" placeholder="Search job categories, results, admit cards..." autocomplete="off" />
-                <button type="button"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+                <button type="button" id="mobileBottomSearchBtn"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
             </div>
             <div id="mobileBottomSearchResults" class="search-results"></div>
         `;
-        quickLinksWrap.appendChild(mbs);
+        wrap.appendChild(mbs);
     }
   }
 
@@ -1179,19 +1179,16 @@
     });
   }
 
-  // ✅ GLOBAL LIVE SEARCH
+  // ✅ GLOBAL LIVE SEARCH (Linked to the new mobile bottom bar too!)
   async function initGlobalLiveSearch() {
     const inputs = [];
     
-    // Desktop Home Search
     const homeInput = document.getElementById("siteSearchInput");
     if (homeInput) inputs.push({ input: homeInput, resultsId: "searchResults" });
     
-    // View.html / Category.html Search
     const sectionInput = document.getElementById("sectionSearchInput");
     if (sectionInput) inputs.push({ input: sectionInput, resultsId: "sectionSearchResults" });
     
-    // Mobile Bottom Search
     const mobileBottomInput = document.getElementById("mobileBottomSearchInput");
     if (mobileBottomInput) inputs.push({ input: mobileBottomInput, resultsId: "mobileBottomSearchResults" });
 
@@ -1281,10 +1278,8 @@
     });
   }
 
-  // Boot
   document.addEventListener("DOMContentLoaded", async () => {
     buildMobileMenu();
-    
     await injectHeaderFooter();
     await loadHeaderLinks();
     initOffcanvas();
