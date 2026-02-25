@@ -63,7 +63,7 @@ a:hover{ text-decoration:underline; }
 .header-cta{ display:flex; gap:8px; flex-wrap:wrap; margin-left:6px; }
 .header-actions{ display:none; margin-left:auto; gap:8px; }
 
-/* ✅ Completely removes search icon globally on mobile */
+/* Completely removes search icon globally on mobile */
 #openSearchBtn { display: none !important; }
 
 .icon-btn{
@@ -197,7 +197,7 @@ a:hover{ text-decoration:underline; }
 .offcanvas-group { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(0,0,0,0.06); }
 .offcanvas-group-title { font-weight: 800; color: #0ea5e9; margin: 0 0 12px 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-/* ✅ MOBILE APP-STYLE LAYOUT CHANGES */
+/* MOBILE APP-STYLE LAYOUT CHANGES */
 .mobile-header-btns { display: none; }
 
 @media (max-width: 980px){
@@ -253,8 +253,8 @@ a:hover{ text-decoration:underline; }
   .icon-btn { width: 38px; height: 38px; flex-shrink: 0; border:none; border-radius:8px; background: rgba(255,255,255,.15); color:#fff; }
   .icon-btn i { font-size: 16px; }
 
-  /* SAFELY HIDE TOP SEARCH ON MOBILE */
-  .top-search, .search-card.top-search { display: none !important; }
+  /* Hide the big desktop search box completely on mobile */
+  .top-search { display: none !important; }
 }
 
 /* Modal */
