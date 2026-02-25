@@ -12,6 +12,7 @@
 
 *{ box-sizing:border-box; }
 
+/* Prevents horizontal stretching/empty white space on mobile */
 html,body{ 
   height:100%; 
   overflow-x: hidden;
@@ -34,14 +35,16 @@ a:hover{ text-decoration:underline; }
 .skip-link{ position:absolute; left:-999px; top:auto; width:1px; height:1px; overflow:hidden; }
 .skip-link:focus{ left:16px; top:16px; width:auto; height:auto; padding:10px 12px; background:#fff; border:1px solid var(--line); border-radius:10px; z-index:9999; }
 
-/* Header */
-.site-header{
+/* ✅ FIXED: Globally forces the blue header on all pages (even if class is missing) */
+.site-header, #site-header {
   background: linear-gradient(90deg, var(--brand1), var(--brand2));
   color:#fff;
   position:sticky;
   top:0;
   z-index:50;
   box-shadow: 0 8px 24px rgba(2,8,23,.12);
+  width: 100%;
+  display: block;
 }
 
 .header-row{ display:flex; align-items:center; gap:16px; padding:14px 0; }
@@ -59,6 +62,22 @@ a:hover{ text-decoration:underline; }
 
 .header-cta{ display:flex; gap:8px; flex-wrap:wrap; margin-left:6px; }
 .header-actions{ display:none; margin-left:auto; gap:8px; }
+
+/* Search Icon Completely Removed */
+#openSearchBtn { display: none !important; }
+
+.icon-btn{
+  border:none;
+  background: rgba(255,255,255,.14);
+  color:#fff;
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+}
+.icon-btn:hover{ background: rgba(255,255,255,.2); }
 
 /* Desktop Dropdown Menu */
 .nav-dd{ position:relative; }
@@ -148,7 +167,7 @@ a:hover{ text-decoration:underline; }
 .faq-panel{ padding:0 14px 14px; color:var(--muted); line-height:1.6; }
 
 /* Footer */
-.site-footer{ margin-top:18px; background:#fff; border-top:1px solid var(--line); }
+.site-footer, #site-footer { margin-top:18px; background:#fff; border-top:1px solid var(--line); display: block; width: 100%; }
 .footer-row{ padding:18px 0; display:flex; align-items:flex-start; justify-content:space-between; gap:14px; flex-wrap:wrap; }
 .footer-title{ font-weight:950; font-size:16px; }
 .footer-sub{ color:var(--muted); margin-top:4px; font-size:13px; }
@@ -178,7 +197,7 @@ a:hover{ text-decoration:underline; }
 .offcanvas-group { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(0,0,0,0.06); }
 .offcanvas-group-title { font-weight: 800; color: #0ea5e9; margin: 0 0 12px 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-/* ✅ MOBILE APP-STYLE LAYOUT CHANGES */
+/* MOBILE APP-STYLE LAYOUT CHANGES */
 .mobile-header-btns { display: none; }
 
 @media (max-width: 980px){
@@ -186,27 +205,27 @@ a:hover{ text-decoration:underline; }
   
   /* Compact & Optimized Header for Mobile */
   .header-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; gap: 4px; }
-  .brand { flex: 0 0 auto; max-width: 120px; display: flex; align-items: center; gap: 6px; }
+  .brand { flex: 0 0 auto; display: flex; align-items: center; gap: 6px; }
   .brand-logo { width: 34px; height: 34px; flex-shrink: 0; border-radius: 50%; }
-  .brand-title { font-size: 14px; font-weight: 900; line-height: 1.1; white-space: normal; }
+  .brand-title { font-size: 14px; font-weight: 900; line-height: 1.1; white-space: nowrap; }
   .brand-subtitle { display: none; }
   
-  /* Centered Header Buttons */
+  /* Horizontal Header Buttons (Helpdesk, Home, Tools) */
   .mobile-header-btns {
     flex: 1 1 auto;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 4px;
-    max-width: 160px;
-    margin: 0 auto;
+    justify-content: center;
+    align-items: center;
+    margin: 0 4px;
   }
-  .mhb-row { display: flex; gap: 4px; }
   .mhb-btn {
     flex: 1;
-    background: linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+    background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.05));
     border: 1px solid rgba(255, 255, 255, 0.3);
     color: #fff;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 800;
     text-align: center;
     padding: 6px 2px;
@@ -214,12 +233,12 @@ a:hover{ text-decoration:underline; }
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 3px;
+    gap: 2px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     text-decoration: none;
+    white-space: nowrap;
   }
-  .mhb-btn i { font-size: 9px; opacity: 0.8; }
-  .mhb-full { width: 100%; font-size: 13px; padding: 6px; letter-spacing: 0.5px; }
+  .mhb-btn i { font-size: 8px; opacity: 0.8; }
 
   .header-actions { flex: 0 0 auto; display: flex; align-items: center; }
   .icon-btn { width: 36px; height: 36px; flex-shrink: 0; border:none; border-radius:10px; background: rgba(255,255,255,.15); color:#fff; }
