@@ -133,6 +133,11 @@
       "url": "https://pdf.pi7.org/pdf-to-jpg",
       "icon": "fas fa-image"
     },
+        {
+      "name": "PDF Page Size Crop",
+      "url": "https://pdf.pi7.org/crop-pdf",
+      "icon": "fas fa-crop"
+    },
     {
       "name": "PDF to 200kb",
       "url": "https://pdf.pi7.org/compress-pdf-to-200kb",
@@ -209,10 +214,6 @@
       "icon": "fas fa-unlock"
     },
     {
-      "name": "PDF Crop",
-      "url": "https://pdf.pi7.org/crop-pdf",
-      "icon": "fas fa-crop"
-    },{
       "name": "PDF to Excel",
       "url": "https://jpgtoexcel.com/pdf-to-excel",
       "icon": "fas fa-file-excel"
