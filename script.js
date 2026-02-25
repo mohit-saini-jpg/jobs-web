@@ -66,7 +66,7 @@
     `;
   }
 
-  // ✅ MOBILE HEADER BUTTON INJECTION (Horizontal Row in the middle)
+  // ✅ MOBILE HEADER BUTTON INJECTION (Perfect Horizontal Row)
   function injectMobileHeaderBtns() {
     if (window.innerWidth > 980) return;
     const headerHost = document.getElementById("site-header") || document.querySelector(".site-header");
@@ -90,19 +90,16 @@
 
   // ✅ SAFELY INJECT HEADER SO IT NEVER DISAPPEARS
   async function injectHeaderFooter() {
-    // Looks for ANY header target
     let headerHost = document.getElementById("site-header");
     if (!headerHost) headerHost = document.querySelector(".site-header");
 
     const footerHost = document.getElementById("site-footer");
     
-    // Only fetch/inject if the header container is completely empty
     if (headerHost && (!headerHost.querySelector(".brand") || headerHost.innerHTML.trim() === "")) {
         try {
           const r = await fetch("header.html", { cache: "no-store" });
           if (r.ok) {
               headerHost.innerHTML = await r.text();
-              // FORCE the blue header class so it doesn't break
               if (!headerHost.classList.contains("site-header")) {
                   headerHost.classList.add("site-header");
               }
@@ -110,7 +107,6 @@
         } catch (_) {}
     }
 
-    // Always inject mobile buttons into whichever header is active
     injectMobileHeaderBtns();
 
     if (footerHost && footerHost.innerHTML.trim() === "") {
@@ -362,18 +358,16 @@
     });
   }
 
-  // ✅ PERFECTED MOBILE APP GRID, SHUFFLED PILLS, AND SEARCH BAR (GLOBAL)
+  // ✅ PERFECTED MOBILE APP GRID, STRETCHED JUSTIFIED PILL BOXES & BOTTOM SEARCH
   async function renderHomeQuickLinks() {
     const isHome = (page === "index.html" || page === "");
     
-    // Inject globally ABOVE the main content area
     let wrap = document.getElementById("home-quicklinks-wrap");
     let host = document.getElementById("home-links");
     
     if (!wrap) {
       wrap = document.createElement("section");
       wrap.id = "home-quicklinks-wrap";
-      // Hidden on desktop unless it's the homepage
       wrap.className = isHome ? "home-quicklinks" : "home-quicklinks desktop-hidden";
       
       host = document.createElement("div");
@@ -430,7 +424,7 @@
         @media (max-width: 980px) {
           .home-quicklinks { padding-top: 12px; }
           
-          /* ✅ PERFECT PILLS FIX: flex: 1 1 auto forces them to stretch without leaving big gaps! */
+          /* ✅ PERFECT PILLS FIX: flex: 1 1 auto forces them to stretch and form a perfectly flush box! */
           .home-links { 
             display: flex;
             flex-wrap: wrap;
@@ -442,12 +436,12 @@
           }
           .home-link-btn { 
             flex: 1 1 auto; 
-            padding: 7px 10px; 
+            padding: 8px 10px; 
             font-size: 12px; 
             text-align: center;
             justify-content: center;
             margin: 0;
-            min-width: calc(25% - 8px); 
+            min-width: calc(25% - 10px); 
           }
           
           /* The 4-Column Rectangular App Grid */
@@ -459,7 +453,7 @@
             padding: 0 8px;
           }
           .grid-nav-btn {
-            border-radius: 6px;
+            border-radius: 4px;
             font-size: 11px;
             font-weight: 800;
             text-align: center;
@@ -475,12 +469,12 @@
           
           /* Glossy Premium App Themes */
           .grid-nav-btn.solid-blue { background: linear-gradient(180deg, #3b82f6, #2563eb); color: #fff; border: 1px solid #1d4ed8; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
-          .grid-nav-btn.solid-orange { background: linear-gradient(180deg, #f97316, #ea580c); color: #fff; border: 1px solid #c2410c; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
+          .grid-nav-btn.solid-orange { background: linear-gradient(180deg, #f98822, #ea580c); color: #fff; border: 1px solid #c2410c; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
           .grid-nav-btn.solid-dark { background: linear-gradient(180deg, #1e40af, #1e3a8a); color: #fff; border: 1px solid #172554; }
           .grid-nav-btn.outline-blue { background: #f0f9ff; color: #2563eb; border: 1px solid #bfdbfe; font-weight: 700; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
           .grid-nav-btn.outline-dark { background: #fff; color: #0f172a; border: 1px solid #cbd5e1; font-weight: 800; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
 
-          /* Beautiful Custom Bottom Search */
+          /* Beautiful Custom Bottom Search exactly like screenshot */
           .mobile-bottom-search {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
@@ -548,9 +542,9 @@
         mobileNavWrap.id = "mobile-nav-grid";
         mobileNavWrap.className = "mobile-nav-grid";
 
-        // ✅ "Latest Jobs" fixed to safely route to actual jobs page 
+        // ✅ FIXED: "Latest Jobs" navigates successfully using category.html
         const mLinks = [
-            { name: "Latest Jobs", url: "latest-jobs.html", cls: "solid-blue" },
+            { name: "Latest Jobs", url: "category.html?group=latest", cls: "solid-blue" },
             { name: "Study wise jobs", url: "category.html?group=study", cls: "outline-blue" },
             { name: "Categories wise jobs", url: "category.html?group=popular", cls: "outline-blue" },
             { name: "State wise Jobs", url: "category.html?group=state", cls: "outline-blue" },
@@ -581,7 +575,7 @@
     const links = Array.isArray(data?.home_links) ? data.home_links : [];
     if (links.length) {
       
-      // ✅ DEDUPLICATION: Strict filter ensures NO overlaps and NO WhatsApp button repetition
+      // ✅ Strict filter ensures NO overlaps and NO WhatsApp button repetition
       const excludeList = [
           "latest jobs", "study wise", "categories wise", "popular categories", "state wise",
           "admissions", "admission", "resume", "cv maker", "csc", "study material",
@@ -705,7 +699,8 @@
       gridEl = wrap;
     }
 
-    const groupMeta = { study: "Study wise jobs", popular: "Popular job categories", state: "State wise jobs", admissions: "Admissions", "admit-result": "Admit Card / Result", khabar: "Latest Khabar", "study-material": "Study Material & Top Courses" };
+    // Added the latest jobs to the mapping!
+    const groupMeta = { latest: "Latest Jobs", study: "Study wise jobs", popular: "Popular job categories", state: "State wise jobs", admissions: "Admissions", "admit-result": "Admit Card / Result", khabar: "Latest Khabar", "study-material": "Study Material & Top Courses" };
     if (titleEl) titleEl.textContent = groupMeta[group] || "Category";
 
     let data;
@@ -737,7 +732,8 @@
     }
 
     let items = [];
-    if (group === "study") items = sliceBetween(top, "study wise", "popular");
+    if (group === "latest") items = sliceBetween(top, "latest", "study");
+    else if (group === "study") items = sliceBetween(top, "study wise", "popular");
     else if (group === "popular") items = sliceBetween(top, "popular", null);
     else if (group === "state") items = sliceBetween(left, "state wise", "admit");
     else if (group === "admit-result") items = sliceBetween(left, "admit", null);
@@ -1252,19 +1248,16 @@
     });
   }
 
-  // ✅ GLOBAL LIVE SEARCH ENGINE (Works for both Mobile & Desktop)
+  // ✅ GLOBAL LIVE SEARCH ENGINE (Works for Mobile Bottom Search too)
   async function initGlobalLiveSearch() {
     const inputs = [];
     
-    // Desktop Home Search
     const homeInput = document.getElementById("siteSearchInput");
     if (homeInput) inputs.push({ input: homeInput, resultsId: "searchResults" });
     
-    // Desktop View/Category Search
     const sectionInput = document.getElementById("sectionSearchInput");
     if (sectionInput) inputs.push({ input: sectionInput, resultsId: "sectionSearchResults" });
     
-    // Mobile Bottom Search (Injected dynamically below)
     const mobileBottomInput = document.getElementById("mobileBottomSearchInput");
     if (mobileBottomInput) inputs.push({ input: mobileBottomInput, resultsId: "mobileBottomSearchResults" });
 
