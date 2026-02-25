@@ -91,9 +91,6 @@
       </nav>
 
       <div class="header-actions">
-        <button id="openSearchBtn" class="icon-btn" type="button" aria-label="Open search">
-          <i class="fa-solid fa-magnifying-glass"></i>
-        </button>
         <button id="menuBtn" class="icon-btn" type="button" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
           <i class="fa-solid fa-bars"></i>
         </button>
@@ -106,14 +103,12 @@
       <div class="search-card">
         <h2 class="search-title">Search across Top Sarkari Jobs</h2>
         <p class="search-sub">Search jobs, results, admit cards, categories, CSC services and tools.</p>
-
         <div class="search-row">
           <input id="siteSearchInput" type="search" placeholder="Search job categories, results, admit cards…" autocomplete="off" />
           <button id="siteSearchBtn" type="button" class="btn-primary">
             <i class="fa-solid fa-magnifying-glass"></i> Search
           </button>
         </div>
-
         <div id="searchResults" class="search-results" aria-live="polite"></div>
       </div>
     </div>
@@ -202,7 +197,6 @@
             <li>UPSC: <a href="https://upsc.gov.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">upsc.gov.in</a></li>
             <li>NTA: <a href="https://nta.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">nta.ac.in</a></li>
           </ul>
-          <p style="font-size: 13px; color: var(--muted); margin-top: 8px;">This reduces exposure to fake result portals.</p>
         </div>
 
         <div class="seo-card">
@@ -244,8 +238,6 @@
       <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line);">
         <h3 style="font-size: 16px; font-weight: 900; margin-bottom: 8px;">Upcoming Government Exams & Strategy</h3>
         <p style="font-size: 14px; color: var(--muted); line-height: 1.6;">Serious aspirants track exam calendars like the UPSC Civil Services Calendar (<a href="https://upsc.gov.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">upsc.gov.in</a>), NTA Exam Schedule (<a href="https://nta.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">nta.ac.in</a>), SSC, and Railway timelines. Planning preparation around official exam calendars improves success probability.</p>
-        <p style="font-size: 14px; color: var(--muted); line-height: 1.6; margin-top: 10px;"><strong>Why Government Jobs Dominate:</strong> Government employment offers Job Security, Salary Stability, Pension & Retirement Benefits, Medical Coverage, Allowances, Career Growth, and Social Prestige. Increasing applicants mean increased competition. Smart preparation + timely updates = higher probability of selection.</p>
-        <p style="font-size: 14px; color: var(--muted); line-height: 1.6; margin-top: 10px;"><strong>Trust & Verification Commitment:</strong> This platform focuses on official reference linking, structured categorization, reduced misinformation, clear eligibility presentation, and transparent content. The objective is long-term credibility, not short-term traffic.</p>
       </div>
     </section>
 
@@ -338,7 +330,7 @@
     </section>
   </main>
 
-  <footer class="site-footer">
+  <footer class="site-footer" id="site-footer">
     <div class="container footer-row">
       <div>
         <div class="footer-title">Top Sarkari Jobs</div>
@@ -366,8 +358,7 @@
       </button>
     </div>
 
-    <nav class="offcanvas-nav" aria-label="Mobile primary">
-      </nav>
+    <nav class="offcanvas-nav" aria-label="Mobile primary"></nav>
   </aside>
 
   <script src="script.js?v=20260205"></script>
