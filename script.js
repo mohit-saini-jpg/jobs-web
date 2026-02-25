@@ -66,7 +66,7 @@
     `;
   }
 
-  // ✅ MOBILE HEADER BUTTON INJECTION (Horizontal Row in the middle)
+  // ✅ MOBILE HEADER BUTTON INJECTION (Centered in the blue bar)
   function injectMobileHeaderBtns() {
     if (window.innerWidth > 980) return;
     const headerRow = document.querySelector('.site-header .header-row');
@@ -77,22 +77,23 @@
         btns.id = 'mobile-header-btns';
         btns.className = 'mobile-header-btns';
         btns.innerHTML = `
-          <a href="helpdesk.html" class="mhb-btn">Helpdesk <i class="fa-solid fa-chevron-down"></i></a>
-          <a href="index.html" class="mhb-btn">Home <i class="fa-solid fa-chevron-down"></i></a>
-          <a href="tools.html" class="mhb-btn">Tools</a>
+          <div class="mhb-row">
+             <a href="helpdesk.html" class="mhb-btn">Helpdesk <i class="fa-solid fa-chevron-down"></i></a>
+             <a href="index.html" class="mhb-btn">Home <i class="fa-solid fa-chevron-down"></i></a>
+          </div>
+          <a href="tools.html" class="mhb-btn mhb-full">Tools</a>
         `;
         headerRow.insertBefore(btns, headerActions);
     }
   }
 
-  // ✅ SAFELY INJECT HEADER SO IT NEVER DISAPPEARS
+  // ✅ SAFELY INJECT HEADER SO HOMEPAGE NEVER BREAKS
   async function injectHeaderFooter() {
     const headerHost = document.querySelector(".site-header");
     const footerHost = document.getElementById("site-footer");
     
-    // Only inject external header if this is a blank target element 
-    // This stops it from accidentally overwriting index.html's hardcoded header
-    if (headerHost && !headerHost.querySelector(".brand")) {
+    // Only inject if the header is an empty target container (prevents wiping out index.html's hardcoded header)
+    if (headerHost && headerHost.id === "site-header-empty" && headerHost.innerHTML.trim() === "") {
         try {
           const r = await fetch("header.html", { cache: "no-store" });
           if (r.ok) headerHost.innerHTML = await r.text();
@@ -348,19 +349,17 @@
     });
   }
 
-  // ✅ PERFECTED MOBILE GRID, SHUFFLED PILLS, AND SEARCH BAR (GLOBAL)
+  // ✅ PERFECTED 4x3 MOBILE GRID, TIGHT PILLS, AND BOTTOM SEARCH BAR
   async function renderHomeQuickLinks() {
-    const isHome = (page === "index.html" || page === "");
+    if (!(page === "index.html" || page === "")) return;
     
-    // Inject globally ABOVE the main content
     let wrap = document.getElementById("home-quicklinks-wrap");
     let host = document.getElementById("home-links");
     
     if (!wrap) {
       wrap = document.createElement("section");
       wrap.id = "home-quicklinks-wrap";
-      // If it's not the homepage, apply desktop-hidden so desktop users don't see it
-      wrap.className = isHome ? "home-quicklinks" : "home-quicklinks desktop-hidden";
+      wrap.className = "home-quicklinks";
       
       host = document.createElement("div");
       host.id = "home-links";
@@ -382,7 +381,6 @@
         /* DESKTOP VIEW */
         @media (min-width: 981px) {
           .home-quicklinks { padding: 0 0 24px; }
-          .desktop-hidden { display: none !important; }
           .mobile-nav-grid, .mobile-bottom-search { display: none !important; }
         }
 
@@ -416,28 +414,16 @@
         @media (max-width: 980px) {
           .home-quicklinks { padding-top: 12px; }
           
-          /* Extremely tight and perfectly packed Pill Buttons */
-          .home-links { 
-            gap: 8px 6px; 
-            justify-content: center; 
-            align-content: center;
-            padding: 0 4px; 
-            margin-bottom: 0px; 
-          }
-          .home-link-btn { 
-            padding: 7px 12px; 
-            font-size: 12px; 
-            flex: 0 1 auto; 
-            height: auto;
-            margin: 0;
-          }
+          /* Extremely tight and nicely wrapping Pill Buttons */
+          .home-links { gap: 6px 4px; justify-content: center; padding: 0 6px; margin-bottom: 0px; }
+          .home-link-btn { padding: 6px 12px; font-size: 12.5px; flex: 0 1 auto; }
           
-          /* The 4-Column Rectangular App Grid */
+          /* 4x3 Rectangular Grid */
           .mobile-nav-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 5px;
-            margin-bottom: 20px;
+            gap: 4px;
+            margin-bottom: 16px;
           }
           .grid-nav-btn {
             border-radius: 4px;
@@ -448,34 +434,30 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            line-height: 1.25;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 1px 2px rgba(0,0,0,0.08);
+            line-height: 1.2;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             text-decoration: none;
             word-break: break-word;
           }
-          
-          /* Glossy Premium App Themes */
-          .grid-nav-btn.solid-blue { background: linear-gradient(180deg, #5b86e5, #3653dc); color: #fff; border: 1px solid #2e43c5; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
-          .grid-nav-btn.solid-orange { background: linear-gradient(180deg, #f98822, #ea580c); color: #fff; border: 1px solid #c2410c; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
-          .grid-nav-btn.solid-dark { background: linear-gradient(180deg, #1e40af, #1e3a8a); color: #fff; border: 1px solid #172554; }
-          .grid-nav-btn.outline-blue { background: #fff; color: #2563eb; border: 1px solid #bfdbfe; font-weight: 700; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
-          .grid-nav-btn.outline-dark { background: #fff; color: #0f172a; border: 1px solid #cbd5e1; font-weight: 800; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+          .grid-nav-btn.solid-blue { background: linear-gradient(180deg, #3b82f6, #2563eb); color: #fff; border: 1px solid #1d4ed8; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
+          .grid-nav-btn.solid-orange { background: linear-gradient(180deg, #f97316, #ea580c); color: #fff; border: 1px solid #c2410c; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
+          .grid-nav-btn.outline-blue { background: #f8fafc; color: #1e40af; border: 1px solid #93c5fd; }
+          .grid-nav-btn.outline-dark { background: #ffffff; color: #0f172a; border: 1px solid #cbd5e1; font-weight: 900; }
 
           /* Beautiful Custom Bottom Search exactly like screenshot */
           .mobile-bottom-search {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
-            padding: 16px 12px;
-            margin-top: 24px;
+            padding: 12px;
+            margin-top: 16px;
             margin-bottom: 16px;
             border-radius: 8px;
             text-align: left;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
           }
           .mobile-bottom-search h3 {
             font-size: 14px;
             font-weight: 900;
-            margin: 0 0 10px;
+            margin: 0 0 8px;
             color: #0f172a;
           }
           .mbs-row {
@@ -484,27 +466,25 @@
             border-radius: 6px;
             overflow: hidden;
             background: #fff;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
           }
           .mbs-row input {
             flex: 1;
-            height: 42px;
+            height: 40px;
             border: none;
-            padding: 0 12px;
+            padding: 0 10px;
             font-size: 13px;
             outline: none;
           }
-          .mbs-row input:focus { border-color: #0ea5e9; }
           .mbs-row button {
             background: linear-gradient(180deg, #3b82f6, #2563eb);
             color: #fff;
             border: none;
-            padding: 0 16px;
+            padding: 0 14px;
             font-weight: 800;
             font-size: 13px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
           }
         }
       `;
@@ -529,22 +509,22 @@
         mobileNavWrap.id = "mobile-nav-grid";
         mobileNavWrap.className = "mobile-nav-grid";
 
-        // ✅ "Latest Jobs" link routing perfectly directly to sections
+        // Exact match to your screenshot design
         const mLinks = [
-            { name: "Latest Jobs", url: "index.html#main", cls: "solid-blue" },
+            { name: "Latest Jobs", url: "index.html", cls: "solid-blue" },
             { name: "Study wise jobs", url: "category.html?group=study", cls: "outline-blue" },
             { name: "Categories wise jobs", url: "category.html?group=popular", cls: "outline-blue" },
             { name: "State wise Jobs", url: "category.html?group=state", cls: "outline-blue" },
             
             { name: "Admissions", url: "category.html?group=admissions", cls: "outline-blue" },
-            { name: "Resume/CV Maker", url: "tools.html", cls: "solid-dark" },
-            { name: "CSC Services <i class='fa-solid fa-chevron-down' style='font-size:9px;margin-left:3px;'></i>", url: "govt-services.html", cls: "solid-dark" },
+            { name: "Resume/CV Maker", url: "tools.html", cls: "solid-blue" },
+            { name: "CSC Services <i class='fa-solid fa-chevron-down' style='font-size:9px;margin-left:3px;'></i>", url: "govt-services.html", cls: "solid-blue" },
             { name: "Study Material", url: "category.html?group=study-material", cls: "outline-dark" },
             
             { name: "Results", url: "result.html", cls: "solid-orange" },
             { name: "Admit Card", url: "category.html?group=admit-result", cls: "solid-orange" },
             { name: "Latest Khabar", url: "category.html?group=khabar", cls: "outline-blue" },
-            { name: "Join WhatsApp", url: waLink, cls: "solid-dark" } 
+            { name: "Join WhatsApp", url: waLink, cls: "solid-blue" } 
         ];
 
         mLinks.forEach(l => {
@@ -561,91 +541,54 @@
     // Process bottom pill links
     const links = Array.isArray(data?.home_links) ? data.home_links : [];
     if (links.length) {
-      
-      // Strict list to remove duplicates (including WhatsApp)
+      // ✅ DEDUPLICATION: Strict filter ensures NO overlaps or awkward repetitions in pills
       const excludeList = [
           "latest jobs", "study wise", "categories wise", "popular categories", "state wise",
           "admissions", "admission", "resume", "cv maker", "csc", "study material",
           "results", "result", "admit card", "khabar", "helpdesk", "home", "tools", "whatsapp"
       ];
 
-      // Mapped colors: Red for Headlines, Lighter Grays/Colors for the rest to match reference
-      const colorMap = { 
-        "bg-red-600": "linear-gradient(180deg, #ef4444, #dc2626)", 
-        "bg-slate-600": "linear-gradient(180deg, #94a3b8, #64748b)", 
-        "bg-amber-600": "linear-gradient(180deg, #f59e0b, #d97706)", 
-        "bg-zinc-400": "linear-gradient(180deg, #a1a1aa, #71717a)", 
-        "bg-green-600": "linear-gradient(180deg, #10b981, #059669)", 
-        "bg-pink-500": "linear-gradient(180deg, #f43f5e, #e11d48)", 
-        "bg-yellow-600": "linear-gradient(180deg, #eab308, #ca8a04)", 
-        "bg-red-500": "linear-gradient(180deg, #f87171, #ef4444)" 
-      };
+      const colorMap = { "bg-red-600": "linear-gradient(135deg, #ef4444, #dc2626)", "bg-slate-600": "linear-gradient(135deg, #64748b, #475569)", "bg-amber-600": "linear-gradient(135deg, #f59e0b, #d97706)", "bg-zinc-400": "linear-gradient(135deg, #a1a1aa, #71717a)", "bg-green-600": "linear-gradient(135deg, #10b981, #059669)", "bg-pink-500": "linear-gradient(135deg, #f43f5e, #e11d48)", "bg-yellow-600": "linear-gradient(135deg, #eab308, #ca8a04)", "bg-red-500": "linear-gradient(135deg, #f87171, #ef4444)" };
 
-      // 1. Prepare valid links array
-      let validLinks = [];
+      host.innerHTML = "";
       links.forEach((l) => {
         let name = safe(l?.name);
+        
         if (name.includes("लाडो लक्ष्मी योजना: पैसा आया है या नहीं आया यहाँ से चेक करें")) {
             name = "लाडो लक्ष्मी योजना: पैसा आया है या नहीं - यहाँ से चेक करें";
         }
+        
         const nLower = name.toLowerCase().trim();
         if (excludeList.some(ex => nLower.includes(ex))) return;
-        
+
         const url = safe(l?.url || l?.link);
         if (!name || !url) return;
         
-        validLinks.push({ ...l, name: name, url: url });
-      });
-
-      // 2. Extract Top Headlines so it stays 1st
-      let topHeadlineIndex = validLinks.findIndex(l => l.name.toLowerCase().includes("headlines"));
-      let topHeadline = null;
-      if (topHeadlineIndex > -1) {
-          topHeadline = validLinks.splice(topHeadlineIndex, 1)[0];
-      }
-
-      // 3. Perfect Shuffling Algorithm (mixes long and short names so flex wraps them perfectly)
-      validLinks.sort((a, b) => a.name.length - b.name.length);
-      let mixedLinks = [];
-      let left = 0; let right = validLinks.length - 1;
-      while (left <= right) {
-          if (left === right) { mixedLinks.push(validLinks[left]); break; }
-          mixedLinks.push(validLinks[right]); 
-          mixedLinks.push(validLinks[left]);  
-          right--; left++;
-      }
-
-      const finalLinks = topHeadline ? [topHeadline, ...mixedLinks] : mixedLinks;
-
-      // 4. Render
-      host.innerHTML = "";
-      finalLinks.forEach((l) => {
         const a = document.createElement("a");
         a.className = "home-link-btn";
-        a.href = normalizeUrl(l.url);
-        if (l.external) { a.target = "_blank"; a.rel = "noopener"; }
+        a.href = normalizeUrl(url);
+        if (l?.external) { a.target = "_blank"; a.rel = "noopener"; }
+        a.style.background = colorMap[safe(l?.color)] || "linear-gradient(135deg, #38bdf8, #0284c7)";
         
-        a.style.background = colorMap[safe(l.color)] || "linear-gradient(180deg, #94a3b8, #64748b)";
-        
-        const icon = safe(l.icon);
-        if (icon) a.innerHTML = `<i class="${icon}"></i><span>${l.name}</span>`;
-        else a.textContent = l.name;
+        const icon = safe(l?.icon);
+        if (icon) a.innerHTML = `<i class="${icon}"></i><span>${name}</span>`;
+        else a.textContent = name;
         host.appendChild(a);
       });
     }
 
-    // ✅ INJECT PERFECT BOTTOM SEARCH BAR
+    // ✅ INJECT NEW, PERFECTLY FUNCTIONAL MOBILE BOTTOM SEARCH BAR
     if (wrap && !document.getElementById("mobile-bottom-search")) {
         const mbs = document.createElement("div");
         mbs.id = "mobile-bottom-search";
         mbs.className = "mobile-bottom-search";
         mbs.innerHTML = `
-            <h3>Search Sarkari नौकरियाँ - Just Click Below</h3>
+            <div class="mbs-header">Search Sarkari नौकरियाँ - Just Click Below</div>
             <div class="mbs-row">
                 <input id="mobileBottomSearchInput" type="search" placeholder="Search job categories, results, admit cards..." autocomplete="off" />
                 <button type="button" id="mobileBottomSearchBtn"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
             </div>
-            <div id="mobileBottomSearchResults" class="search-results" style="margin-top: 10px;"></div>
+            <div id="mobileBottomSearchResults" class="search-results"></div>
         `;
         wrap.appendChild(mbs);
     }
@@ -1236,19 +1179,16 @@
     });
   }
 
-  // ✅ GLOBAL LIVE SEARCH ENGINE (Works for both Mobile & Desktop)
+  // ✅ GLOBAL LIVE SEARCH (Linked to the new mobile bottom bar too!)
   async function initGlobalLiveSearch() {
     const inputs = [];
     
-    // Desktop Home Search
     const homeInput = document.getElementById("siteSearchInput");
     if (homeInput) inputs.push({ input: homeInput, resultsId: "searchResults" });
     
-    // Desktop View/Category Search
     const sectionInput = document.getElementById("sectionSearchInput");
     if (sectionInput) inputs.push({ input: sectionInput, resultsId: "sectionSearchResults" });
     
-    // Mobile Bottom Search (Injected dynamically below)
     const mobileBottomInput = document.getElementById("mobileBottomSearchInput");
     if (mobileBottomInput) inputs.push({ input: mobileBottomInput, resultsId: "mobileBottomSearchResults" });
 
@@ -1361,10 +1301,6 @@
     initCscModal();
     await renderServicesPage();
     
-    // Run search initializer immediately
     await initGlobalLiveSearch();
-    
-    // In case mobile elements loaded a split second late, check again
-    setTimeout(initGlobalLiveSearch, 500); 
   });
 })();
