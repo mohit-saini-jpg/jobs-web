@@ -204,7 +204,7 @@ a:hover{ text-decoration:underline; }
   .desktop-nav{ display:none; }
   .brand-subtitle { display: none; }
   
-  /* Compact & Beautifully Fitted Header Row */
+  /* Restores perfect 2-row header layout */
   .header-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; gap: 4px; flex-wrap: nowrap; }
   
   .brand { flex: 0 0 auto; display: flex; align-items: center; gap: 6px; min-width: 0; }
@@ -220,7 +220,7 @@ a:hover{ text-decoration:underline; }
     text-align: left;
   }
   
-  /* The 2-row button layout from reference */
+  /* Two-row header buttons */
   .mobile-header-btns {
     flex: 1 1 auto;
     display: flex;
@@ -252,8 +252,10 @@ a:hover{ text-decoration:underline; }
   .icon-btn { width: 38px; height: 38px; flex-shrink: 0; border:none; border-radius:8px; background: rgba(255,255,255,.15); color:#fff; }
   .icon-btn i { font-size: 16px; }
 
-  /* Safely hides top search UI elements */
+  /* ✅ Absolute Nuke for Old Search Bar on Mobile */
   .top-search { display: none !important; }
+  #sectionSearchInput, #siteSearchInput { display: none !important; }
+  .search-row:not(.mbs-row) { display: none !important; }
 }
 
 /* Modal */
