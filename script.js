@@ -66,11 +66,14 @@
     `;
   }
 
-  // MOBILE HEADER BUTTON INJECTION (Horizontal Row in the middle)
+  // ✅ MOBILE HEADER BUTTON INJECTION (Horizontal Row in the middle)
   function injectMobileHeaderBtns() {
     if (window.innerWidth > 980) return;
-    const headerRow = document.querySelector('.site-header .header-row');
-    const headerActions = document.querySelector('.site-header .header-actions');
+    const headerHost = document.getElementById("site-header") || document.querySelector(".site-header");
+    if (!headerHost) return;
+
+    const headerRow = headerHost.querySelector('.header-row');
+    const headerActions = headerHost.querySelector('.header-actions');
     
     if (headerRow && headerActions && !document.getElementById('mobile-header-btns')) {
         const btns = document.createElement('div');
@@ -85,23 +88,38 @@
     }
   }
 
+  // ✅ SAFELY INJECT HEADER SO IT NEVER DISAPPEARS
   async function injectHeaderFooter() {
-    const headerHost = document.querySelector(".site-header");
+    // Looks for ANY header target
+    let headerHost = document.getElementById("site-header");
+    if (!headerHost) headerHost = document.querySelector(".site-header");
+
     const footerHost = document.getElementById("site-footer");
     
-    if (headerHost && !headerHost.querySelector(".brand")) {
+    // Only fetch/inject if the header container is completely empty
+    if (headerHost && (!headerHost.querySelector(".brand") || headerHost.innerHTML.trim() === "")) {
         try {
           const r = await fetch("header.html", { cache: "no-store" });
-          if (r.ok) headerHost.innerHTML = await r.text();
+          if (r.ok) {
+              headerHost.innerHTML = await r.text();
+              // FORCE the blue header class so it doesn't break
+              if (!headerHost.classList.contains("site-header")) {
+                  headerHost.classList.add("site-header");
+              }
+          }
         } catch (_) {}
     }
 
+    // Always inject mobile buttons into whichever header is active
     injectMobileHeaderBtns();
 
     if (footerHost && footerHost.innerHTML.trim() === "") {
         try {
           const r = await fetch("footer.html", { cache: "no-store" });
-          if (r.ok) footerHost.innerHTML = await r.text();
+          if (r.ok) {
+              footerHost.innerHTML = await r.text();
+              if (!footerHost.classList.contains("site-footer")) footerHost.classList.add("site-footer");
+          }
         } catch (_) {}
     }
   }
@@ -344,16 +362,18 @@
     });
   }
 
-  // ✅ PERFECTED MOBILE APP GRID & STRETCHED JUSTIFIED PILL BOXES
+  // ✅ PERFECTED MOBILE APP GRID, SHUFFLED PILLS, AND SEARCH BAR (GLOBAL)
   async function renderHomeQuickLinks() {
     const isHome = (page === "index.html" || page === "");
     
+    // Inject globally ABOVE the main content area
     let wrap = document.getElementById("home-quicklinks-wrap");
     let host = document.getElementById("home-links");
     
     if (!wrap) {
       wrap = document.createElement("section");
       wrap.id = "home-quicklinks-wrap";
+      // Hidden on desktop unless it's the homepage
       wrap.className = isHome ? "home-quicklinks" : "home-quicklinks desktop-hidden";
       
       host = document.createElement("div");
@@ -410,23 +430,24 @@
         @media (max-width: 980px) {
           .home-quicklinks { padding-top: 12px; }
           
-          /* ✅ PERFECT PILLS FIX: flex: 1 1 auto forces them to stretch and form a perfectly flush box! */
+          /* ✅ PERFECT PILLS FIX: flex: 1 1 auto forces them to stretch without leaving big gaps! */
           .home-links { 
             display: flex;
             flex-wrap: wrap;
-            gap: 6px; 
+            gap: 6px 4px; 
             justify-content: center; 
+            align-content: center;
             padding: 0 8px; 
             margin-bottom: 0px; 
           }
           .home-link-btn { 
             flex: 1 1 auto; 
-            padding: 8px 10px; 
+            padding: 7px 10px; 
             font-size: 12px; 
             text-align: center;
             justify-content: center;
             margin: 0;
-            min-width: calc(25% - 10px); 
+            min-width: calc(25% - 8px); 
           }
           
           /* The 4-Column Rectangular App Grid */
@@ -438,7 +459,7 @@
             padding: 0 8px;
           }
           .grid-nav-btn {
-            border-radius: 4px;
+            border-radius: 6px;
             font-size: 11px;
             font-weight: 800;
             text-align: center;
@@ -453,13 +474,13 @@
           }
           
           /* Glossy Premium App Themes */
-          .grid-nav-btn.solid-blue { background: linear-gradient(180deg, #5b86e5, #3653dc); color: #fff; border: 1px solid #2e43c5; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
-          .grid-nav-btn.solid-orange { background: linear-gradient(180deg, #f98822, #ea580c); color: #fff; border: 1px solid #c2410c; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
+          .grid-nav-btn.solid-blue { background: linear-gradient(180deg, #3b82f6, #2563eb); color: #fff; border: 1px solid #1d4ed8; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
+          .grid-nav-btn.solid-orange { background: linear-gradient(180deg, #f97316, #ea580c); color: #fff; border: 1px solid #c2410c; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
           .grid-nav-btn.solid-dark { background: linear-gradient(180deg, #1e40af, #1e3a8a); color: #fff; border: 1px solid #172554; }
           .grid-nav-btn.outline-blue { background: #f0f9ff; color: #2563eb; border: 1px solid #bfdbfe; font-weight: 700; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
           .grid-nav-btn.outline-dark { background: #fff; color: #0f172a; border: 1px solid #cbd5e1; font-weight: 800; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
 
-          /* Beautiful Custom Bottom Search exactly like screenshot */
+          /* Beautiful Custom Bottom Search */
           .mobile-bottom-search {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
@@ -521,16 +542,15 @@
         if (waObj && (waObj.url || waObj.link)) waLink = waObj.url || waObj.link;
     }
     
-    // ✅ "Latest Jobs" Link safely navigates to feed section no matter what page user is on
-    const latestJobsUrl = isHome ? "#dynamic-sections" : "index.html#dynamic-sections";
-    
+    // ✅ INJECT 4x3 APP GRID
     if (wrap && !document.getElementById("mobile-nav-grid")) {
         const mobileNavWrap = document.createElement("div");
         mobileNavWrap.id = "mobile-nav-grid";
         mobileNavWrap.className = "mobile-nav-grid";
 
+        // ✅ "Latest Jobs" fixed to safely route to actual jobs page 
         const mLinks = [
-            { name: "Latest Jobs", url: latestJobsUrl, cls: "solid-blue" },
+            { name: "Latest Jobs", url: "latest-jobs.html", cls: "solid-blue" },
             { name: "Study wise jobs", url: "category.html?group=study", cls: "outline-blue" },
             { name: "Categories wise jobs", url: "category.html?group=popular", cls: "outline-blue" },
             { name: "State wise Jobs", url: "category.html?group=state", cls: "outline-blue" },
@@ -557,9 +577,11 @@
         wrap.insertBefore(mobileNavWrap, wrap.firstChild);
     }
 
+    // Process bottom pill links
     const links = Array.isArray(data?.home_links) ? data.home_links : [];
     if (links.length) {
       
+      // ✅ DEDUPLICATION: Strict filter ensures NO overlaps and NO WhatsApp button repetition
       const excludeList = [
           "latest jobs", "study wise", "categories wise", "popular categories", "state wise",
           "admissions", "admission", "resume", "cv maker", "csc", "study material",
@@ -592,14 +614,14 @@
         validLinks.push({ ...l, name: name, url: url });
       });
 
-      // Extract Top Headlines so it's always forced to the top position
+      // 1. Extract Top Headlines so it's always forced to the #1 top position
       let topHeadlineIndex = validLinks.findIndex(l => l.name.toLowerCase().includes("headlines"));
       let topHeadline = null;
       if (topHeadlineIndex > -1) {
           topHeadline = validLinks.splice(topHeadlineIndex, 1)[0];
       }
 
-      // Automatically pair short names with long names so they lock together neatly in rows
+      // 2. Pair shuffling algorithm (mixes long and short names so flex wraps them flawlessly into a solid box)
       validLinks.sort((a, b) => a.name.length - b.name.length);
       let mixedLinks = [];
       let left = 0; let right = validLinks.length - 1;
@@ -628,7 +650,7 @@
       });
     }
 
-    // ✅ INJECT MOBILE BOTTOM SEARCH BAR (GLOBAL)
+    // ✅ INJECT PERFECT BOTTOM SEARCH BAR
     if (wrap && !document.getElementById("mobile-bottom-search")) {
         const mbs = document.createElement("div");
         mbs.id = "mobile-bottom-search";
@@ -1242,7 +1264,7 @@
     const sectionInput = document.getElementById("sectionSearchInput");
     if (sectionInput) inputs.push({ input: sectionInput, resultsId: "sectionSearchResults" });
     
-    // Mobile Bottom Search
+    // Mobile Bottom Search (Injected dynamically below)
     const mobileBottomInput = document.getElementById("mobileBottomSearchInput");
     if (mobileBottomInput) inputs.push({ input: mobileBottomInput, resultsId: "mobileBottomSearchResults" });
 
