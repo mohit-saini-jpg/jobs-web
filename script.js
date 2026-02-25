@@ -8,12 +8,13 @@
 
   const safe = (v) => (v ?? "").toString().trim();
 
+  // Updated normalizeUrl to safely handle internal relative paths like view.html
   function normalizeUrl(raw) {
     const s = safe(raw);
     if (!s) return "";
     if (/^(https?:)?\/\//i.test(s) || /^(mailto:|tel:)/i.test(s)) return s;
     if (s.startsWith("#") || s.startsWith("?")) return s;
-    if (s.startsWith("/") || s.endsWith(".html") || s.startsWith("./") || s.startsWith("../")) return s;
+    if (s.startsWith("/") || s.includes(".html") || s.startsWith("./") || s.startsWith("../")) return s;
     return "https://" + s.replace(/^\/+/, "");
   }
 
@@ -66,7 +67,7 @@
     `;
   }
 
-  // ✅ MOBILE HEADER BUTTON INJECTION (Restores the 2-row layout from reference)
+  // ✅ MOBILE HEADER BUTTON INJECTION (Restores the perfect 2-row layout from reference)
   function injectMobileHeaderBtns() {
     if (window.innerWidth > 980) return;
     const headerHost = document.getElementById("site-header") || document.querySelector(".site-header");
@@ -429,7 +430,7 @@
           .home-links { 
             display: flex;
             flex-wrap: wrap;
-            gap: 6px; 
+            gap: 6px 4px; 
             justify-content: center; 
             align-content: center;
             padding: 0 8px; 
@@ -470,7 +471,7 @@
           
           /* Glossy Premium App Themes */
           .grid-nav-btn.solid-blue { background: linear-gradient(180deg, #3b82f6, #2563eb); color: #fff; border: 1px solid #1d4ed8; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
-          .grid-nav-btn.solid-orange { background: linear-gradient(180deg, #f97316, #ea580c); color: #fff; border: 1px solid #c2410c; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
+          .grid-nav-btn.solid-orange { background: linear-gradient(180deg, #f98822, #ea580c); color: #fff; border: 1px solid #c2410c; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
           .grid-nav-btn.solid-dark { background: linear-gradient(180deg, #1e40af, #1e3a8a); color: #fff; border: 1px solid #172554; }
           .grid-nav-btn.outline-blue { background: #f0f9ff; color: #2563eb; border: 1px solid #bfdbfe; font-weight: 700; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
           .grid-nav-btn.outline-dark { background: #fff; color: #0f172a; border: 1px solid #cbd5e1; font-weight: 800; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
@@ -543,9 +544,9 @@
         mobileNavWrap.id = "mobile-nav-grid";
         mobileNavWrap.className = "mobile-nav-grid";
 
-        // ✅ FIXED: "Latest Jobs" officially navigates perfectly to latest-jobs.html
+        // ✅ EXACT ABSOLUTE LINK FOR LATEST JOBS TO GUARANTEE NAVIGATION
         const mLinks = [
-            { name: "Latest Jobs", url: "latest-jobs.html", cls: "solid-blue" },
+            { name: "Latest Jobs", url: "https://www.topsarkarijobs.com/view.html?section=latest%20jobs", cls: "solid-blue" },
             { name: "Study wise jobs", url: "category.html?group=study", cls: "outline-blue" },
             { name: "Categories wise jobs", url: "category.html?group=popular", cls: "outline-blue" },
             { name: "State wise Jobs", url: "category.html?group=state", cls: "outline-blue" },
@@ -609,14 +610,14 @@
         validLinks.push({ ...l, name: name, url: url });
       });
 
-      // 1. Extract Top Headlines so it's always forced to the #1 top position
+      // Extract Top Headlines so it's always forced to the #1 top position
       let topHeadlineIndex = validLinks.findIndex(l => l.name.toLowerCase().includes("headlines"));
       let topHeadline = null;
       if (topHeadlineIndex > -1) {
           topHeadline = validLinks.splice(topHeadlineIndex, 1)[0];
       }
 
-      // 2. Pair shuffling algorithm (mixes long and short names so flex wraps them flawlessly into a solid box)
+      // Pair shuffling algorithm (mixes long and short names so flex wraps them flawlessly into a solid box)
       validLinks.sort((a, b) => a.name.length - b.name.length);
       let mixedLinks = [];
       let left = 0; let right = validLinks.length - 1;
@@ -1359,7 +1360,6 @@
       removeHomeMainPageCtaLinks();
     }
     
-    // Renders the global mobile layout across ALL pages
     await renderHomeQuickLinks();
     
     await initCategoryPage();
@@ -1371,10 +1371,7 @@
     initCscModal();
     await renderServicesPage();
     
-    // Run search initializer immediately
     await initGlobalLiveSearch();
-    
-    // In case mobile elements loaded a split second late, check again
     setTimeout(initGlobalLiveSearch, 500); 
   });
 })();
