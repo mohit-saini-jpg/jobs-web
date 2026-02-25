@@ -8,6 +8,7 @@
 
   const safe = (v) => (v ?? "").toString().trim();
 
+  // Safely handles internal absolute URLs
   function normalizeUrl(raw) {
     const s = safe(raw);
     if (!s) return "";
@@ -66,7 +67,7 @@
     `;
   }
 
-  // ✅ MOBILE HEADER BUTTON INJECTION (Restores the perfect 2-row layout from reference)
+  // ✅ MOBILE HEADER BUTTON INJECTION (Chevron Dropdowns removed completely!)
   function injectMobileHeaderBtns() {
     if (window.innerWidth > 980) return;
     const headerHost = document.getElementById("site-header") || document.querySelector(".site-header");
@@ -81,8 +82,8 @@
         btns.className = 'mobile-header-btns';
         btns.innerHTML = `
           <div class="mhb-row">
-             <a href="helpdesk.html" class="mhb-btn">Helpdesk <i class="fa-solid fa-chevron-down"></i></a>
-             <a href="index.html" class="mhb-btn">Home <i class="fa-solid fa-chevron-down"></i></a>
+             <a href="helpdesk.html" class="mhb-btn">Helpdesk</a>
+             <a href="index.html" class="mhb-btn">Home</a>
           </div>
           <a href="tools.html" class="mhb-btn mhb-full">Tools</a>
         `;
@@ -90,56 +91,39 @@
     }
   }
 
-  // ✅ LASER-TARGETED OLD SEARCH ERASER
+  // ✅ LASER-TARGETED OLD SEARCH HIDER: Erases the old search texts and boxes without touching your jobs
   function safeHideOldSearchBars() {
     if (window.innerWidth <= 980) {
         
-        // 1. Target the exact input box and hide its row
+        // 1. Target explicit old search inputs and hide their immediate rows
         const oldInputs = document.querySelectorAll('#siteSearchInput, #sectionSearchInput');
         oldInputs.forEach(input => {
-            input.style.setProperty('display', 'none', 'important');
-            
-            // Hide its sibling button
-            if (input.nextElementSibling && input.nextElementSibling.tagName === 'BUTTON') {
-                input.nextElementSibling.style.setProperty('display', 'none', 'important');
+            const row = input.closest('.search-row');
+            if (row && !row.classList.contains('mbs-row')) {
+                row.style.setProperty('display', 'none', 'important');
             }
-            
-            // Safely hide the .search-row wrapper
-            if (input.parentElement && !input.parentElement.classList.contains('mbs-row')) {
-                input.parentElement.style.setProperty('display', 'none', 'important');
+        });
+        
+        // 2. Hide explicit "Search across..." titles & texts
+        document.querySelectorAll('h1, h2, h3, p').forEach(el => {
+            const txt = (el.textContent || "").trim();
+            if (txt === "Search across Top Sarkari Jobs" || 
+                txt === "Search jobs, results, admit cards, categories, CSC services and tools.") {
+                el.style.setProperty('display', 'none', 'important');
                 
-                // Now safely hide the white card ONLY if it doesn't contain the job list
-                const grandParent = input.parentElement.parentElement;
-                if (grandParent && grandParent.tagName === 'DIV' && grandParent.id !== 'main' && grandParent.id !== 'mobile-bottom-search') {
-                    // Check if jobs are inside
-                    if (!grandParent.querySelector('a.section-link, a.result-item, table, .section-list')) {
-                        grandParent.style.setProperty('display', 'none', 'important');
-                        grandParent.style.setProperty('padding', '0', 'important');
-                        grandParent.style.setProperty('margin', '0', 'important');
-                        grandParent.style.setProperty('border', 'none', 'important');
-                    } else {
-                        // If it holds jobs, just remove the top padding so the search bar gap vanishes
-                        grandParent.style.setProperty('padding-top', '0', 'important');
+                // Hide its direct wrapper ONLY if it doesn't contain jobs
+                const parentBox = el.closest('.search-card') || el.closest('div[style*="border"], div[class*="card"]');
+                if (parentBox && parentBox.id !== 'mobile-bottom-search') {
+                    if (!parentBox.querySelector('a.section-link, table, .section-list')) {
+                        parentBox.style.setProperty('display', 'none', 'important');
                     }
                 }
             }
         });
-        
-        // 2. Hide exact stray texts 
-        document.querySelectorAll('h1, h2, h3, p, span, div').forEach(el => {
-            if (el.children.length === 0 || el.tagName === 'H2' || el.tagName === 'H3' || el.tagName === 'P') {
-                const txt = (el.textContent || "").trim();
-                if (txt === "Search across Top Sarkari Jobs" || 
-                    txt === "Search jobs, results, admit cards, categories, CSC services and tools.") {
-                    el.style.setProperty('display', 'none', 'important');
-                    
-                    if (el.parentElement && el.parentElement.tagName === 'DIV' && el.parentElement.id !== 'main') {
-                        if (!el.parentElement.querySelector('table, .section-list, article')) {
-                            el.parentElement.style.setProperty('display', 'none', 'important');
-                        }
-                    }
-                }
-            }
+
+        // 3. Absolute nuke of any desktop top-search containers
+        document.querySelectorAll('.top-search').forEach(ts => {
+            ts.style.setProperty('display', 'none', 'important');
         });
     }
   }
@@ -414,7 +398,7 @@
     });
   }
 
-  // ✅ GLASSY MODERN APP GRID & PERFECTLY FITTED PILL BOXES
+  // ✅ GLOBAL GLASSY APP GRID & PERFECTLY STRETCHED PILLS
   async function renderHomeQuickLinks() {
     const isHome = (page === "index.html" || page === "");
     
@@ -480,52 +464,59 @@
         @media (max-width: 980px) {
           .home-quicklinks { padding-top: 16px; }
           
-          /* The Glassy, Simple, Modern 4-Column Grid */
+          /* The 4-Column "Glassy Simple Modern" Grid */
           .mobile-nav-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             grid-auto-rows: 1fr;
             gap: 8px;
             margin-bottom: 24px;
-            background: #ffffff;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             padding: 12px;
             border-radius: 16px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border: 1px solid rgba(0,0,0,0.04);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 24px rgba(2, 132, 199, 0.06);
           }
           .grid-nav-btn {
-            border-radius: 8px;
+            background: #ffffff;
+            border-radius: 10px;
             font-size: 11px;
             font-weight: 800;
             text-align: center;
-            padding: 10px 4px;
+            padding: 12px 4px;
             display: flex;
             align-items: center;
             justify-content: center;
             line-height: 1.3;
             text-decoration: none;
             word-break: break-word;
-            height: 100%;
-            transition: transform 0.2s;
-            letter-spacing: -0.2px;
+            transition: transform 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            border: 1px solid #e2e8f0;
           }
-          .grid-nav-btn:active { transform: scale(0.96); }
+          .grid-nav-btn:active { transform: scale(0.95); }
           
-          /* Glassy App Themes matching the reference image perfectly */
-          .grid-nav-btn.glass-primary { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 10px rgba(37,99,235,0.25); border: 1px solid #1e40af; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
+          /* Custom Vibrant Fancy Classes */
+          .grid-nav-btn.solid-primary { background: linear-gradient(135deg, #0ea5e9, #4f46e5); color: #fff; border: none; box-shadow: 0 4px 12px rgba(14,165,233,0.3); }
+          .grid-nav-btn.solid-purple { background: linear-gradient(135deg, #a855f7, #7e22ce); color: #fff; border: 1px solid #6b21a8; text-shadow: 0 1px 1px rgba(0,0,0,0.2); box-shadow: 0 4px 10px rgba(168,85,247,0.2); }
+          .grid-nav-btn.solid-teal { background: linear-gradient(135deg, #14b8a6, #0f766e); color: #fff; border: 1px solid #0f766e; text-shadow: 0 1px 1px rgba(0,0,0,0.2); box-shadow: 0 4px 10px rgba(20,184,166,0.2); }
+          .grid-nav-btn.solid-slate { background: linear-gradient(135deg, #475569, #334155); color: #fff; border: 1px solid #1e293b; text-shadow: 0 1px 1px rgba(0,0,0,0.2); box-shadow: 0 4px 10px rgba(71,85,105,0.2); }
+          
           .grid-nav-btn.glass-blue { color: #0284c7; border-color: #bae6fd; background: #f0f9ff; }
           .grid-nav-btn.glass-dark { color: #334155; border-color: #cbd5e1; background: #f8fafc; }
           .grid-nav-btn.glass-orange { color: #c2410c; border-color: #fed7aa; background: #fff7ed; }
           .grid-nav-btn.glass-green { color: #166534; border-color: #bbf7d0; background: #f0fdf4; }
 
-          /* ✅ PERFECT PILLS FIX: Flex-grow makes them lock together flawlessly without awkward gaps! */
+          /* ✅ PERFECT PILLS FIX: Flex-grow automatically stretches them to lock together! */
           .home-links { 
             display: flex;
             flex-wrap: wrap;
             gap: 8px 6px; 
             justify-content: center; 
             align-content: stretch;
-            padding: 0 4px; 
+            padding: 0 6px; 
             margin-bottom: 0px; 
           }
           .home-link-btn { 
@@ -580,7 +571,7 @@
           }
           .mbs-row input:focus { background: #fff; border-color: #0ea5e9; }
           .mbs-row button {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            background: linear-gradient(135deg, #0ea5e9, #4f46e5);
             color: #fff;
             border: none;
             padding: 0 20px;
@@ -614,17 +605,17 @@
         mobileNavWrap.id = "mobile-nav-grid";
         mobileNavWrap.className = "mobile-nav-grid";
 
-        // ✅ EXACT ABSOLUTE LINK FOR LATEST JOBS (Guarantees Navigation)
+        // ✅ EXACT ABSOLUTE LINK FOR LATEST JOBS & FANCY NEW COLORS FOR THE SPECIFIED BUTTONS
         const mLinks = [
-            { name: "Latest Jobs", url: "https://www.topsarkarijobs.com/view.html?section=latest%20jobs", cls: "glass-primary" },
+            { name: "Latest Jobs", url: "https://www.topsarkarijobs.com/view.html?section=latest%20jobs", cls: "solid-primary" },
             { name: "Study wise jobs", url: "category.html?group=study", cls: "glass-blue" },
             { name: "Categories wise jobs", url: "category.html?group=popular", cls: "glass-blue" },
             { name: "State wise Jobs", url: "category.html?group=state", cls: "glass-blue" },
             
             { name: "Admissions", url: "category.html?group=admissions", cls: "glass-blue" },
-            { name: "Resume/CV Maker", url: "tools.html", cls: "glass-dark" },
-            { name: "CSC Services <i class='fa-solid fa-chevron-down' style='font-size:9px;margin-left:3px;'></i>", url: "govt-services.html", cls: "glass-dark" },
-            { name: "Study Material", url: "category.html?group=study-material", cls: "glass-dark" },
+            { name: "Resume/CV Maker", url: "tools.html", cls: "solid-purple" },
+            { name: "CSC Services", url: "govt-services.html", cls: "solid-teal" },
+            { name: "Study Material", url: "category.html?group=study-material", cls: "solid-slate" },
             
             { name: "Results", url: "result.html", cls: "glass-orange" },
             { name: "Admit Card", url: "category.html?group=admit-result", cls: "glass-orange" },
@@ -653,7 +644,7 @@
           "results", "result", "admit card", "khabar", "helpdesk", "home", "tools", "whatsapp"
       ];
 
-      // Premium Vibrant Gradients for Pill Boxes
+      // Beautiful Vibrant Pill Gradients
       const premiumGradients = [
           "linear-gradient(135deg, #0f766e, #064e3b)", // Deep Emerald
           "linear-gradient(135deg, #d97706, #9a3412)", // Rich Amber
@@ -1324,7 +1315,7 @@
     });
   }
 
-  // ✅ GLOBAL LIVE SEARCH ENGINE (Works perfectly with Mobile Bottom Search)
+  // ✅ GLOBAL LIVE SEARCH ENGINE (Works flawlessly across desktop and mobile)
   async function initGlobalLiveSearch() {
     const inputs = [];
     
