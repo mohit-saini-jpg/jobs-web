@@ -8,6 +8,7 @@
 
   const safe = (v) => (v ?? "").toString().trim();
 
+  // Safely handles internal absolute URLs
   function normalizeUrl(raw) {
     const s = safe(raw);
     if (!s) return "";
@@ -66,6 +67,7 @@
     `;
   }
 
+  // ✅ MOBILE HEADER BUTTON INJECTION (Restores 2-row layout from reference image)
   function injectMobileHeaderBtns() {
     if (window.innerWidth > 980) return;
     const headerHost = document.getElementById("site-header") || document.querySelector(".site-header");
@@ -89,45 +91,39 @@
     }
   }
 
-  // ✅ SURGICAL SEARCH ERASER: Safely hides old search elements without destroying job content!
+  // ✅ LASER-TARGETED OLD SEARCH HIDER (100% Safe, will not touch jobs!)
   function safeHideOldSearchBars() {
     if (window.innerWidth <= 980) {
         
-        // 1. Hide the exact input row container
-        document.querySelectorAll('.search-row').forEach(row => {
-            if (!row.classList.contains('mbs-row')) {
+        // Target explicit old search inputs and hide their immediate rows
+        const oldInputs = document.querySelectorAll('#siteSearchInput, #sectionSearchInput');
+        oldInputs.forEach(input => {
+            const row = input.closest('.search-row');
+            if (row && !row.classList.contains('mbs-row')) {
                 row.style.setProperty('display', 'none', 'important');
             }
         });
         
-        // 2. Hide exact text nodes without touching the parent
-        document.querySelectorAll('h1, h2, h3, p, span, div').forEach(el => {
-            if (el.children.length === 0 || el.tagName === 'H2' || el.tagName === 'H3' || el.tagName === 'P') {
-                const text = (el.textContent || "").trim();
+        // Hide explicit "Search across..." titles & texts
+        document.querySelectorAll('h1, h2, h3, p').forEach(el => {
+            const txt = (el.textContent || "").trim();
+            if (txt === "Search across Top Sarkari Jobs" || 
+                txt === "Search jobs, results, admit cards, categories, CSC services and tools.") {
+                el.style.setProperty('display', 'none', 'important');
                 
-                if (text === "Search across Top Sarkari Jobs" || 
-                    text === "Search jobs, results, admit cards, categories, CSC services and tools.") {
-                    el.style.setProperty('display', 'none', 'important');
+                // Hide its direct wrapper ONLY if it doesn't contain jobs
+                const parentBox = el.closest('.search-card') || el.closest('div[style*="border"], div[class*="card"]');
+                if (parentBox && parentBox.id !== 'mobile-bottom-search') {
+                    if (!parentBox.querySelector('a.section-link, table')) {
+                        parentBox.style.setProperty('display', 'none', 'important');
+                    }
                 }
             }
         });
-        
-        // 3. Hide old search wrapper ONLY IF IT'S EMPTY OF JOBS
-        document.querySelectorAll('.search-card, .top-search').forEach(card => {
-            if (card.id !== 'mobile-bottom-search') {
-                if (!card.querySelector('a.section-link, a.result-item, .section-list, table')) {
-                    card.style.setProperty('display', 'none', 'important');
-                    card.style.setProperty('padding', '0', 'important');
-                    card.style.setProperty('margin', '0', 'important');
-                    card.style.setProperty('border', 'none', 'important');
-                } else {
-                    // If it DOES contain jobs, just remove the padding/border so it looks clean
-                    card.style.setProperty('border', 'none', 'important');
-                    card.style.setProperty('box-shadow', 'none', 'important');
-                    card.style.setProperty('background', 'transparent', 'important');
-                    card.style.setProperty('padding', '0', 'important');
-                }
-            }
+
+        // Clean up desktop .top-search container
+        document.querySelectorAll('.top-search').forEach(ts => {
+            ts.style.setProperty('display', 'none', 'important');
         });
     }
   }
@@ -402,7 +398,7 @@
     });
   }
 
-  // ✅ REDESIGNED PREMIUM APP UI (No Boring Colors!)
+  // ✅ GLASSY, MODERN GRID + PERFECTLY FLUSH PILLS 
   async function renderHomeQuickLinks() {
     const isHome = (page === "index.html" || page === "");
     
@@ -468,15 +464,22 @@
         @media (max-width: 980px) {
           .home-quicklinks { padding-top: 16px; }
           
-          /* The 4-Column Rectangular App Grid */
+          /* The 4-Column "Glassy Simple Modern" Grid */
           .mobile-nav-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 8px;
             margin-bottom: 24px;
-            padding: 0 4px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 12px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 24px rgba(2, 132, 199, 0.06);
           }
           .grid-nav-btn {
+            background: #ffffff;
             border-radius: 10px;
             font-size: 11px;
             font-weight: 800;
@@ -486,34 +489,34 @@
             align-items: center;
             justify-content: center;
             line-height: 1.3;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.06), inset 0 1px 1px rgba(255,255,255,0.3);
             text-decoration: none;
             word-break: break-word;
-            transition: transform 0.1s;
+            transition: transform 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            border: 1px solid #e2e8f0;
           }
-          .grid-nav-btn:active { transform: scale(0.96); }
+          .grid-nav-btn:active { transform: scale(0.95); }
           
-          /* Premium App Grid Colors */
-          .btn-blue-grad { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff; border: 1px solid #1e40af; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
-          .btn-purple-grad { background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: #fff; border: 1px solid #5b21b6; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
-          .btn-teal-grad { background: linear-gradient(135deg, #14b8a6, #0f766e); color: #fff; border: 1px solid #115e59; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
-          .btn-orange-grad { background: linear-gradient(135deg, #f97316, #c2410c); color: #fff; border: 1px solid #9a3412; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
-          .btn-white-blue { background: linear-gradient(180deg, #ffffff, #f0f9ff); color: #1d4ed8; border: 1px solid #bfdbfe; font-weight: 800; }
-          .btn-white-dark { background: linear-gradient(180deg, #ffffff, #f8fafc); color: #0f172a; border: 1px solid #cbd5e1; font-weight: 900; }
+          /* Glassy Modern Themes */
+          .grid-nav-btn.glass-primary { background: linear-gradient(135deg, #0ea5e9, #4f46e5); color: #fff; border: none; box-shadow: 0 4px 12px rgba(14,165,233,0.3); }
+          .grid-nav-btn.glass-blue { color: #0284c7; border-color: #bae6fd; background: #f0f9ff; }
+          .grid-nav-btn.glass-dark { color: #334155; border-color: #cbd5e1; background: #f8fafc; }
+          .grid-nav-btn.glass-orange { color: #c2410c; border-color: #fed7aa; background: #fff7ed; }
+          .grid-nav-btn.glass-green { color: #166534; border-color: #bbf7d0; background: #f0fdf4; }
 
-          /* ✅ PERFECT PILLS FIX: Flex-grow makes them stretch and form a perfectly flush brick layout! */
+          /* ✅ PERFECT PILLS FIX: Flex-grow makes them stretch and form a perfectly flush brick wall layout! */
           .home-links { 
             display: flex;
             flex-wrap: wrap;
             gap: 8px 6px; 
             justify-content: center; 
             align-content: stretch;
-            padding: 0 4px; 
+            padding: 0 6px; 
             margin-bottom: 0px; 
           }
           .home-link-btn { 
             flex: 1 1 auto; 
-            padding: 10px 14px; 
+            padding: 10px 12px; 
             font-size: 13px; 
             text-align: center;
             justify-content: center;
@@ -525,22 +528,23 @@
             letter-spacing: 0.2px;
           }
           
-          /* Custom Bottom Search */
+          /* Custom Bottom Search exactly like screenshot */
           .mobile-bottom-search {
             background: #ffffff;
             border: 1px solid #e2e8f0;
-            padding: 18px 14px;
-            margin-top: 26px;
+            padding: 20px 14px;
+            margin-top: 28px;
             margin-bottom: 20px;
             border-radius: 16px;
-            text-align: left;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
           }
           .mobile-bottom-search h3 {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 900;
-            margin: 0 0 12px;
+            margin: 0 0 14px;
             color: #0f172a;
+            letter-spacing: -0.2px;
           }
           .mbs-row {
             display: flex;
@@ -558,13 +562,14 @@
             padding: 0 14px;
             font-size: 14px;
             outline: none;
+            color: #0f172a;
           }
           .mbs-row input:focus { background: #fff; border-color: #0ea5e9; }
           .mbs-row button {
-            background: linear-gradient(135deg, #2563eb, #1e40af);
+            background: linear-gradient(135deg, #0ea5e9, #4f46e5);
             color: #fff;
             border: none;
-            padding: 0 18px;
+            padding: 0 20px;
             font-weight: 800;
             font-size: 14px;
             display: flex;
@@ -589,28 +594,28 @@
         if (waObj && (waObj.url || waObj.link)) waLink = waObj.url || waObj.link;
     }
     
-    // ✅ INJECT VIBRANT APP GRID
+    // ✅ INJECT GLASSY MODERN APP GRID
     if (wrap && !document.getElementById("mobile-nav-grid")) {
         const mobileNavWrap = document.createElement("div");
         mobileNavWrap.id = "mobile-nav-grid";
         mobileNavWrap.className = "mobile-nav-grid";
 
-        // ✅ EXACT ABSOLUTE LINK FOR LATEST JOBS + Premium Colors
+        // ✅ EXACT ABSOLUTE LINK FOR LATEST JOBS
         const mLinks = [
-            { name: "Latest Jobs", url: "https://www.topsarkarijobs.com/view.html?section=latest%20jobs", cls: "btn-blue-grad" },
-            { name: "Study wise jobs", url: "category.html?group=study", cls: "btn-white-blue" },
-            { name: "Categories wise jobs", url: "category.html?group=popular", cls: "btn-white-blue" },
-            { name: "State wise Jobs", url: "category.html?group=state", cls: "btn-white-blue" },
+            { name: "Latest Jobs", url: "https://www.topsarkarijobs.com/view.html?section=latest%20jobs", cls: "glass-primary" },
+            { name: "Study wise jobs", url: "category.html?group=study", cls: "glass-blue" },
+            { name: "Categories wise jobs", url: "category.html?group=popular", cls: "glass-blue" },
+            { name: "State wise Jobs", url: "category.html?group=state", cls: "glass-blue" },
             
-            { name: "Admissions", url: "category.html?group=admissions", cls: "btn-white-blue" },
-            { name: "Resume/CV Maker", url: "tools.html", cls: "btn-purple-grad" },
-            { name: "CSC Services <i class='fa-solid fa-chevron-down' style='font-size:9px;margin-left:3px;'></i>", url: "govt-services.html", cls: "btn-teal-grad" },
-            { name: "Study Material", url: "category.html?group=study-material", cls: "btn-white-dark" },
+            { name: "Admissions", url: "category.html?group=admissions", cls: "glass-blue" },
+            { name: "Resume/CV Maker", url: "tools.html", cls: "glass-dark" },
+            { name: "CSC Services <i class='fa-solid fa-chevron-down' style='font-size:9px;margin-left:3px;'></i>", url: "govt-services.html", cls: "glass-dark" },
+            { name: "Study Material", url: "category.html?group=study-material", cls: "glass-dark" },
             
-            { name: "Results", url: "result.html", cls: "btn-orange-grad" },
-            { name: "Admit Card", url: "category.html?group=admit-result", cls: "btn-orange-grad" },
-            { name: "Latest Khabar", url: "category.html?group=khabar", cls: "btn-white-blue" },
-            { name: "Join WhatsApp", url: waLink, cls: "btn-blue-grad" } 
+            { name: "Results", url: "result.html", cls: "glass-orange" },
+            { name: "Admit Card", url: "category.html?group=admit-result", cls: "glass-orange" },
+            { name: "Latest Khabar", url: "category.html?group=khabar", cls: "glass-blue" },
+            { name: "Join WhatsApp", url: waLink, cls: "glass-green" } 
         ];
 
         mLinks.forEach(l => {
@@ -634,7 +639,7 @@
           "results", "result", "admit card", "khabar", "helpdesk", "home", "tools", "whatsapp"
       ];
 
-      // Array of beautiful premium gradients to cycle through so it's never boring
+      // Beautiful Vibrant Pill Gradients
       const premiumGradients = [
           "linear-gradient(135deg, #0f766e, #064e3b)", // Deep Emerald
           "linear-gradient(135deg, #d97706, #9a3412)", // Rich Amber
@@ -691,7 +696,7 @@
         // Top Headlines gets special red gradient, the rest cycle through beautiful colors
         if (l.name.toLowerCase().includes("headlines")) {
              a.style.background = "linear-gradient(135deg, #ef4444, #991b1b)";
-             a.style.width = "100%"; // Forces it to span the top row
+             a.style.width = "100%"; 
         } else {
              a.style.background = premiumGradients[index % premiumGradients.length];
         }
@@ -714,7 +719,7 @@
                 <input id="mobileBottomSearchInput" type="search" placeholder="Search job categories, results, admit cards..." autocomplete="off" />
                 <button type="button" id="mobileBottomSearchBtn"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
             </div>
-            <div id="mobileBottomSearchResults" class="search-results" style="margin-top: 10px;"></div>
+            <div id="mobileBottomSearchResults" class="search-results" style="margin-top: 12px; text-align: left;"></div>
         `;
         wrap.appendChild(mbs);
     }
@@ -1305,7 +1310,7 @@
     });
   }
 
-  // ✅ GLOBAL LIVE SEARCH ENGINE
+  // ✅ GLOBAL LIVE SEARCH ENGINE (Works for Mobile Bottom Search too)
   async function initGlobalLiveSearch() {
     const inputs = [];
     
