@@ -86,7 +86,7 @@
       if (headerHtml) {
           headerHost.innerHTML = headerHtml;
           
-          // ✅ INJECT THE MOBILE HEADER BUTTONS (Helpdesk, Home, Tools)
+          // ✅ INJECT MOBILE HEADER BUTTONS (Helpdesk, Home, Tools)
           const headerRow = headerHost.querySelector('.header-row');
           const headerActions = headerHost.querySelector('.header-actions');
           if (headerRow && headerActions && !document.getElementById('mobile-header-btns')) {
@@ -94,12 +94,12 @@
               btns.id = 'mobile-header-btns';
               btns.className = 'mobile-header-btns';
               btns.innerHTML = `
-                <div class="mhb-top">
-                   <a href="helpdesk.html">Helpdesk <i class="fa-solid fa-chevron-down" style="font-size:9px;margin-left:2px;"></i></a>
-                   <a href="index.html">Home <i class="fa-solid fa-chevron-down" style="font-size:9px;margin-left:2px;"></i></a>
+                <div class="mhb-row">
+                   <a href="helpdesk.html" class="mhb-btn">Helpdesk <i class="fa-solid fa-chevron-down" style="font-size:8px;"></i></a>
+                   <a href="index.html" class="mhb-btn">Home <i class="fa-solid fa-chevron-down" style="font-size:8px;"></i></a>
                 </div>
-                <div class="mhb-bottom">
-                   <a href="tools.html">Tools</a>
+                <div class="mhb-row">
+                   <a href="tools.html" class="mhb-btn mhb-full">Tools</a>
                 </div>
               `;
               headerRow.insertBefore(btns, headerActions);
@@ -185,9 +185,6 @@
       overlay.hidden = false;
       btn.setAttribute("aria-expanded", "true");
       document.body.style.overflow = "hidden";
-      
-      const searchCard = document.querySelector(".search-card");
-      if(searchCard) searchCard.classList.remove("mobile-active");
     };
 
     btn.addEventListener("click", open);
@@ -354,7 +351,7 @@
     });
   }
 
-  // ✅ UPDATED: The 4x3 Mobile Grid & Tighter Pill Spacing
+  // ✅ UPDATED: Mobile App-Style Grid + Search Bar Injector
   async function renderHomeQuickLinks() {
     if (!(page === "index.html" || page === "")) return;
     const searchInput = $("#siteSearchInput");
@@ -383,11 +380,11 @@
         @media (min-width: 981px) {
           .home-quicklinks { order: 1; padding: 0 0 24px; }
           .top-search > .container { order: 2; }
-          .mobile-nav-grid { display: none !important; }
+          .mobile-nav-grid, .mobile-bottom-search { display: none !important; }
         }
 
-        .home-links { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; }
-        
+        /* PILL BUTTONS (Tight spacing) */
+        .home-links { display: flex; flex-wrap: wrap; gap: 8px 6px; align-items: center; justify-content: center; }
         .home-link-btn {
           display: inline-flex;
           align-items: center;
@@ -405,48 +402,88 @@
           white-space: nowrap;
           transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
         }
-        .home-link-btn:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-          filter: brightness(1.05);
-        }
-        .home-link-btn:active { transform: translateY(0); }
+        .home-link-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); filter: brightness(1.05); }
         
-        /* MOBILE VIEW GRID AND TIGHTER PILLS */
+        /* MOBILE OVERRIDES */
         @media (max-width: 980px) {
-          /* Tighter Pill Buttons */
-          .home-links { gap: 5px; justify-content: center; }
+          .home-links { gap: 6px; }
           .home-link-btn { padding: 6px 12px; font-size: 12px; }
           
-          /* The 4-Column Rectangular Grid */
+          /* 4x3 Premium App Grid */
           .mobile-nav-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 6px;
+            gap: 5px;
             margin-bottom: 20px;
             padding-bottom: 16px;
             border-bottom: 1px dashed rgba(0,0,0,0.15);
           }
           .grid-nav-btn {
             background: #fff;
-            border: 1px solid #e2e8f0;
+            border: 1px solid #cbd5e1;
             border-radius: 6px;
             color: #0f172a;
             font-size: 11px;
             font-weight: 800;
             text-align: center;
-            padding: 8px 4px;
+            padding: 8px 2px;
             display: flex;
             align-items: center;
             justify-content: center;
             line-height: 1.2;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
             text-decoration: none;
+            word-break: break-word;
           }
-          /* Grid specific theme colors based on screenshot */
-          .grid-nav-btn.light-blue { background: #e0f2fe; color: #0284c7; border-color: #bae6fd; }
+          .grid-nav-btn.light-blue { background: #f0f9ff; color: #0284c7; border-color: #bae6fd; }
           .grid-nav-btn.dark-blue { background: #1e3a8a; color: #fff; border-color: #1e3a8a; }
-          .grid-nav-btn.orange { background: #ea580c; color: #fff; border-color: #c2410c; }
+          .grid-nav-btn.orange { background: #ea580c; color: #fff; border-color: #ea580c; }
+          .grid-nav-btn.no-bg { background: #fff; color: #0f172a; border-color: #cbd5e1; }
+
+          /* Custom Bottom Search (Mobile Only) */
+          .mobile-bottom-search {
+            margin-top: 24px;
+            background: #ffffff;
+            border: 1px solid var(--line);
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            text-align: center;
+          }
+          .mobile-bottom-search h3 {
+            font-size: 15px;
+            font-weight: 900;
+            margin: 0 0 12px;
+            color: #0f172a;
+          }
+          .mbs-row {
+            display: flex;
+            gap: 8px;
+            align-items: stretch;
+          }
+          .mbs-row input {
+            flex: 1;
+            height: 42px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 0 12px;
+            font-size: 14px;
+            outline: none;
+          }
+          .mbs-row input:focus { border-color: #0ea5e9; }
+          .mbs-row button {
+            height: 42px;
+            background: linear-gradient(90deg, #0284c7, #4f46e5);
+            color: #fff;
+            font-weight: 800;
+            font-size: 13px;
+            border: none;
+            border-radius: 8px;
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+          }
         }
       `;
       document.head.appendChild(style);
@@ -466,12 +503,13 @@
 
     const quickLinksWrap = document.querySelector(".home-quicklinks");
     
-    // ✅ INJECT 4x3 GRID (Mobile Only)
+    // ✅ INJECT 4x3 APP GRID
     if (quickLinksWrap && !document.getElementById("mobile-nav-grid")) {
         const mobileNavWrap = document.createElement("div");
         mobileNavWrap.id = "mobile-nav-grid";
         mobileNavWrap.className = "mobile-nav-grid";
 
+        // Exact match to your screenshot design
         const mLinks = [
             { name: "Latest Jobs", url: "index.html", cls: "light-blue" },
             { name: "Study wise jobs", url: "category.html?group=study", cls: "light-blue" },
@@ -481,7 +519,7 @@
             { name: "Admissions", url: "category.html?group=admissions", cls: "light-blue" },
             { name: "Resume/CV Maker", url: "tools.html", cls: "dark-blue" },
             { name: "CSC Services <i class='fa-solid fa-chevron-down' style='font-size:9px;margin-left:3px;'></i>", url: "govt-services.html", cls: "dark-blue" },
-            { name: "Study Material", url: "category.html?group=study-material", cls: "" },
+            { name: "Study Material", url: "category.html?group=study-material", cls: "no-bg" },
             
             { name: "Results", url: "result.html", cls: "orange" },
             { name: "Admit Card", url: "category.html?group=admit-result", cls: "orange" },
@@ -500,44 +538,60 @@
         quickLinksWrap.insertBefore(mobileNavWrap, quickLinksWrap.firstChild);
     }
 
+    // Process bottom pill links
     const links = Array.isArray(data?.home_links) ? data.home_links : [];
-    if (!links.length) return;
+    if (links.length) {
+      // DEDUPLICATION: Filters out links that are already in the 4x3 grid or header
+      const excludeList = [
+          "latest jobs", "study wise", "categories wise", "popular categories", "state wise",
+          "admissions", "admission", "resume", "cv maker", "csc", "study material",
+          "results", "result", "admit card", "khabar", "helpdesk", "home", "tools", "whatsapp"
+      ];
 
-    // ✅ EXCLUDE DUPLICATES AND WHATSAPP FROM BOTTOM PILLS
-    const excludeList = [
-        "latest jobs", "study wise", "categories wise", "popular categories", "state wise",
-        "admissions", "admission", "resume", "cv maker", "csc", "study material",
-        "results", "result", "admit card", "khabar", "helpdesk", "home", "tools", "whatsapp"
-    ];
+      const colorMap = { "bg-red-600": "linear-gradient(135deg, #ef4444, #dc2626)", "bg-slate-600": "linear-gradient(135deg, #64748b, #475569)", "bg-amber-600": "linear-gradient(135deg, #f59e0b, #d97706)", "bg-zinc-400": "linear-gradient(135deg, #a1a1aa, #71717a)", "bg-green-600": "linear-gradient(135deg, #10b981, #059669)", "bg-pink-500": "linear-gradient(135deg, #f43f5e, #e11d48)", "bg-yellow-600": "linear-gradient(135deg, #eab308, #ca8a04)", "bg-red-500": "linear-gradient(135deg, #f87171, #ef4444)" };
 
-    const colorMap = { "bg-red-600": "linear-gradient(135deg, #ef4444, #dc2626)", "bg-slate-600": "linear-gradient(135deg, #64748b, #475569)", "bg-amber-600": "linear-gradient(135deg, #f59e0b, #d97706)", "bg-zinc-400": "linear-gradient(135deg, #a1a1aa, #71717a)", "bg-green-600": "linear-gradient(135deg, #10b981, #059669)", "bg-pink-500": "linear-gradient(135deg, #f43f5e, #e11d48)", "bg-yellow-600": "linear-gradient(135deg, #eab308, #ca8a04)", "bg-red-500": "linear-gradient(135deg, #f87171, #ef4444)" };
+      host.innerHTML = "";
+      links.forEach((l) => {
+        let name = safe(l?.name);
+        
+        if (name.includes("लाडो लक्ष्मी योजना: पैसा आया है या नहीं आया यहाँ से चेक करें")) {
+            name = "लाडो लक्ष्मी योजना: पैसा आया है या नहीं - यहाँ से चेक करें";
+        }
+        
+        const nLower = name.toLowerCase().trim();
+        if (excludeList.some(ex => nLower.includes(ex))) return;
 
-    host.innerHTML = "";
-    links.forEach((l) => {
-      let name = safe(l?.name);
-      
-      if (name.includes("लाडो लक्ष्मी योजना: पैसा आया है या नहीं आया यहाँ से चेक करें")) {
-          name = "लाडो लक्ष्मी योजना: पैसा आया है या नहीं - यहाँ से चेक करें";
-      }
-      
-      // Stop duplicates from rendering
-      const nLower = name.toLowerCase().trim();
-      if (excludeList.some(ex => nLower.includes(ex))) return;
+        const url = safe(l?.url || l?.link);
+        if (!name || !url) return;
+        
+        const a = document.createElement("a");
+        a.className = "home-link-btn";
+        a.href = normalizeUrl(url);
+        if (l?.external) { a.target = "_blank"; a.rel = "noopener"; }
+        a.style.background = colorMap[safe(l?.color)] || "linear-gradient(135deg, #38bdf8, #0284c7)";
+        
+        const icon = safe(l?.icon);
+        if (icon) a.innerHTML = `<i class="${icon}"></i><span>${name}</span>`;
+        else a.textContent = name;
+        host.appendChild(a);
+      });
+    }
 
-      const url = safe(l?.url || l?.link);
-      if (!name || !url) return;
-      
-      const a = document.createElement("a");
-      a.className = "home-link-btn";
-      a.href = normalizeUrl(url);
-      if (l?.external) { a.target = "_blank"; a.rel = "noopener"; }
-      a.style.background = colorMap[safe(l?.color)] || "linear-gradient(135deg, #38bdf8, #0284c7)";
-      
-      const icon = safe(l?.icon);
-      if (icon) a.innerHTML = `<i class="${icon}"></i><span>${name}</span>`;
-      else a.textContent = name;
-      host.appendChild(a);
-    });
+    // ✅ INJECT MOBILE BOTTOM SEARCH BAR
+    if (quickLinksWrap && !document.getElementById("mobile-bottom-search")) {
+        const mbs = document.createElement("div");
+        mbs.id = "mobile-bottom-search";
+        mbs.className = "mobile-bottom-search";
+        mbs.innerHTML = `
+            <h3>Search Sarkari नौकरियाँ - Just Click Below</h3>
+            <div class="mbs-row">
+                <input id="mobileBottomSearchInput" type="search" placeholder="Search job categories, results, admit cards..." autocomplete="off" />
+                <button type="button"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+            </div>
+            <div id="mobileBottomSearchResults" class="search-results"></div>
+        `;
+        quickLinksWrap.appendChild(mbs);
+    }
   }
 
   function removeHomeMainPageCtaLinks() {
@@ -1128,11 +1182,18 @@
   // ✅ GLOBAL LIVE SEARCH
   async function initGlobalLiveSearch() {
     const inputs = [];
-    const homeInput = document.getElementById("siteSearchInput");
-    const sectionInput = document.getElementById("sectionSearchInput");
     
+    // Desktop Home Search
+    const homeInput = document.getElementById("siteSearchInput");
     if (homeInput) inputs.push({ input: homeInput, resultsId: "searchResults" });
+    
+    // View.html / Category.html Search
+    const sectionInput = document.getElementById("sectionSearchInput");
     if (sectionInput) inputs.push({ input: sectionInput, resultsId: "sectionSearchResults" });
+    
+    // Mobile Bottom Search
+    const mobileBottomInput = document.getElementById("mobileBottomSearchInput");
+    if (mobileBottomInput) inputs.push({ input: mobileBottomInput, resultsId: "mobileBottomSearchResults" });
 
     if (!inputs.length) return;
 
@@ -1246,45 +1307,5 @@
     await renderServicesPage();
     
     await initGlobalLiveSearch();
-
-    const openSearchBtn = document.getElementById("openSearchBtn");
-    if (openSearchBtn) {
-      openSearchBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        const searchCard = document.querySelector(".search-card");
-        if (searchCard) {
-          if (typeof window.__closeMenu === "function") window.__closeMenu();
-          
-          if (window.innerWidth <= 980) {
-            searchCard.classList.toggle("mobile-active");
-            if (searchCard.classList.contains("mobile-active")) {
-              const input = document.getElementById("siteSearchInput") || document.getElementById("sectionSearchInput");
-              if(input) setTimeout(() => input.focus(), 100);
-            }
-          } else {
-            const input = document.getElementById("siteSearchInput") || document.getElementById("sectionSearchInput");
-            if (input) {
-              input.scrollIntoView({ behavior: "smooth", block: "center" });
-              setTimeout(() => input.focus(), 300);
-            }
-          }
-        } else {
-          window.location.href = "index.html"; 
-        }
-      });
-
-      document.addEventListener("click", (e) => {
-        if (window.innerWidth <= 980) {
-          const searchCard = document.querySelector(".search-card");
-          if (searchCard && searchCard.classList.contains("mobile-active")) {
-            if (!searchCard.contains(e.target) && e.target !== openSearchBtn && !openSearchBtn.contains(e.target)) {
-              searchCard.classList.remove("mobile-active");
-            }
-          }
-        }
-      });
-    }
   });
 })();
