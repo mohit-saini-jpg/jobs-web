@@ -17,7 +17,6 @@
     return "https://" + s.replace(/^\/+/, "");
   }
 
-  // ✅ GARBAGE LINK FILTER
   function isGarbageLink(item) {
     const text = (item.name || item.title || "").toLowerCase();
     return text.includes("main home page") || text.includes("website ka main");
@@ -84,7 +83,28 @@
 
     if (headerHost) {
       const headerHtml = await loadFirstWorking(["header.html", "./header.html", "/header.html"]);
-      if (headerHtml) headerHost.innerHTML = headerHtml;
+      if (headerHtml) {
+          headerHost.innerHTML = headerHtml;
+          
+          // ✅ INJECT THE MOBILE HEADER BUTTONS (Helpdesk, Home, Tools)
+          const headerRow = headerHost.querySelector('.header-row');
+          const headerActions = headerHost.querySelector('.header-actions');
+          if (headerRow && headerActions && !document.getElementById('mobile-header-btns')) {
+              const btns = document.createElement('div');
+              btns.id = 'mobile-header-btns';
+              btns.className = 'mobile-header-btns';
+              btns.innerHTML = `
+                <div class="mhb-top">
+                   <a href="helpdesk.html">Helpdesk <i class="fa-solid fa-chevron-down" style="font-size:9px;margin-left:2px;"></i></a>
+                   <a href="index.html">Home <i class="fa-solid fa-chevron-down" style="font-size:9px;margin-left:2px;"></i></a>
+                </div>
+                <div class="mhb-bottom">
+                   <a href="tools.html">Tools</a>
+                </div>
+              `;
+              headerRow.insertBefore(btns, headerActions);
+          }
+      }
     }
 
     if (footerHost) {
@@ -334,7 +354,7 @@
     });
   }
 
-  // ✅ UPDATED: Implements exact Custom Mobile Grid Layout & Duplicate Filter
+  // ✅ UPDATED: The 4x3 Mobile Grid & Tighter Pill Spacing
   async function renderHomeQuickLinks() {
     if (!(page === "index.html" || page === "")) return;
     const searchInput = $("#siteSearchInput");
@@ -359,11 +379,11 @@
         .top-search > .container { order: 1; }
         .home-quicklinks { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 24px 0 0; order: 2; }
         
-        /* DESKTOP VIEW - GRID IS HIDDEN */
+        /* DESKTOP VIEW */
         @media (min-width: 981px) {
           .home-quicklinks { order: 1; padding: 0 0 24px; }
           .top-search > .container { order: 2; }
-          .classic-nav-container { display: none !important; }
+          .mobile-nav-grid { display: none !important; }
         }
 
         .home-links { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; }
@@ -392,75 +412,41 @@
         }
         .home-link-btn:active { transform: translateY(0); }
         
-        /* MOBILE VIEW - GRID STYLES */
+        /* MOBILE VIEW GRID AND TIGHTER PILLS */
         @media (max-width: 980px) {
-          .home-links { gap: 8px; justify-content: center; }
-          .home-link-btn { padding: 8px 14px; font-size: 13px; }
+          /* Tighter Pill Buttons */
+          .home-links { gap: 5px; justify-content: center; }
+          .home-link-btn { padding: 6px 12px; font-size: 12px; }
           
-          .classic-nav-container {
-            display: block;
-            width: 100%;
-            background: #fff;
-            margin-bottom: 24px;
-          }
-          
-          /* Extended Blue Bar under header */
-          .classic-blue-row {
-            background: linear-gradient(90deg, #0ea5e9, #4f46e5);
-            padding: 10px 16px 14px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 6px;
-            margin-top: -24px; /* Sticks to header */
-            padding-top: 24px;
-            box-shadow: 0 8px 24px rgba(2,8,23,.12);
-            position: relative;
-            z-index: 10;
-          }
-          .classic-top-btns {
-            display: flex; gap: 6px; justify-content: flex-end; width: 100%;
-          }
-          .c-btn-blue {
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.4);
-            color: #fff;
-            font-size: 13px;
-            font-weight: 800;
-            padding: 4px 12px;
-            border-radius: 6px;
-            text-decoration: none;
-            display: flex; align-items: center; gap: 4px;
-          }
-          .c-btn-blue.full { width: 130px; justify-content: center; }
-          
-          /* Rectangular Grid */
-          .classic-grid-row {
+          /* The 4-Column Rectangular Grid */
+          .mobile-nav-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 4px;
-            padding: 12px 6px;
-            background: #fff;
+            gap: 6px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
             border-bottom: 1px dashed rgba(0,0,0,0.15);
           }
-          .c-box {
-            border: 1px solid #cbd5e1;
-            font-size: 11.5px;
-            font-weight: 700;
+          .grid-nav-btn {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            color: #0f172a;
+            font-size: 11px;
+            font-weight: 800;
             text-align: center;
-            padding: 8px 2px;
-            text-decoration: none;
+            padding: 8px 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-            line-height: 1.25;
-            border-radius: 4px;
-            word-break: break-word;
+            line-height: 1.2;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            text-decoration: none;
           }
-          .c-box.light-blue { background: #e0f2fe; color: #0284c7; border-color: #bae6fd; }
-          .c-box.dark-blue { background: #1e40af; color: #fff; border-color: #1e3a8a; }
-          .c-box.orange { background: #f97316; color: #fff; border-color: #ea580c; }
-          .c-box.no-bg { background: #fff; color: #0f172a; border-color: #cbd5e1; font-weight: 900; }
+          /* Grid specific theme colors based on screenshot */
+          .grid-nav-btn.light-blue { background: #e0f2fe; color: #0284c7; border-color: #bae6fd; }
+          .grid-nav-btn.dark-blue { background: #1e3a8a; color: #fff; border-color: #1e3a8a; }
+          .grid-nav-btn.orange { background: #ea580c; color: #fff; border-color: #c2410c; }
         }
       `;
       document.head.appendChild(style);
@@ -472,7 +458,6 @@
       if (r.ok) data = await r.json();
     } catch (_) {}
 
-    // Find the WhatsApp link if they provided one, otherwise fallback
     let waLink = "https://whatsapp.com/channel/0029VaA2aD4FCCoW3q8y6x25";
     if (data && data.header_links) {
         const waObj = data.header_links.find(l => safe(l.name).toLowerCase().includes("whatsapp"));
@@ -481,56 +466,48 @@
 
     const quickLinksWrap = document.querySelector(".home-quicklinks");
     
-    // Inject the Mobile Layout Container
-    if (quickLinksWrap && !document.getElementById("classic-nav-container")) {
-        const classicWrap = document.createElement("div");
-        classicWrap.id = "classic-nav-container";
-        classicWrap.className = "classic-nav-container";
+    // ✅ INJECT 4x3 GRID (Mobile Only)
+    if (quickLinksWrap && !document.getElementById("mobile-nav-grid")) {
+        const mobileNavWrap = document.createElement("div");
+        mobileNavWrap.id = "mobile-nav-grid";
+        mobileNavWrap.className = "mobile-nav-grid";
 
-        // Mapped exactly to mimic the screenshot's rectangular grid setup
         const mLinks = [
-            { name: "Latest Jobs", url: "#dynamic-sections", cls: "light-blue" },
+            { name: "Latest Jobs", url: "index.html", cls: "light-blue" },
             { name: "Study wise jobs", url: "category.html?group=study", cls: "light-blue" },
             { name: "Categories wise jobs", url: "category.html?group=popular", cls: "light-blue" },
             { name: "State wise Jobs", url: "category.html?group=state", cls: "light-blue" },
             
             { name: "Admissions", url: "category.html?group=admissions", cls: "light-blue" },
-            { name: "Resume/CV Maker", url: "tools.html", cls: "dark-blue text-white" },
-            { name: "CSC Services <i class='fa-solid fa-chevron-down' style='font-size:9px;margin-left:3px;'></i>", url: "govt-services.html", cls: "dark-blue text-white" },
-            { name: "Study Material", url: "category.html?group=study-material", cls: "no-bg" },
+            { name: "Resume/CV Maker", url: "tools.html", cls: "dark-blue" },
+            { name: "CSC Services <i class='fa-solid fa-chevron-down' style='font-size:9px;margin-left:3px;'></i>", url: "govt-services.html", cls: "dark-blue" },
+            { name: "Study Material", url: "category.html?group=study-material", cls: "" },
             
-            { name: "Results", url: "result.html", cls: "orange text-white" },
-            { name: "Admit Card", url: "category.html?group=admit-result", cls: "orange text-white" },
+            { name: "Results", url: "result.html", cls: "orange" },
+            { name: "Admit Card", url: "category.html?group=admit-result", cls: "orange" },
             { name: "Latest Khabar", url: "category.html?group=khabar", cls: "light-blue" },
-            { name: "Join WhatsApp", url: waLink, cls: "dark-blue text-white" } 
+            { name: "Join WhatsApp", url: waLink, cls: "dark-blue" } 
         ];
 
-        classicWrap.innerHTML = `
-            <div class="classic-blue-row">
-                <div class="classic-top-btns">
-                    <a href="helpdesk.html" class="c-btn-blue">Helpdesk <i class="fa-solid fa-chevron-down" style="font-size:10px;"></i></a>
-                    <a href="index.html" class="c-btn-blue">Home <i class="fa-solid fa-chevron-down" style="font-size:10px;"></i></a>
-                </div>
-                <div class="classic-top-btns">
-                    <a href="tools.html" class="c-btn-blue full">Tools</a>
-                </div>
-            </div>
-            <div class="classic-grid-row">
-                ${mLinks.map(l => `<a href="${l.url}" class="c-box ${l.cls}">${l.name}</a>`).join('')}
-            </div>
-        `;
+        mLinks.forEach(l => {
+            const a = document.createElement("a");
+            a.className = `grid-nav-btn ${l.cls}`;
+            a.href = l.url;
+            a.innerHTML = l.name;
+            mobileNavWrap.appendChild(a);
+        });
 
-        quickLinksWrap.insertBefore(classicWrap, quickLinksWrap.firstChild);
+        quickLinksWrap.insertBefore(mobileNavWrap, quickLinksWrap.firstChild);
     }
 
     const links = Array.isArray(data?.home_links) ? data.home_links : [];
     if (!links.length) return;
 
-    // The precise list of items to REMOVE from the dynamic pills to avoid duplicates
+    // ✅ EXCLUDE DUPLICATES AND WHATSAPP FROM BOTTOM PILLS
     const excludeList = [
         "latest jobs", "study wise", "categories wise", "popular categories", "state wise",
         "admissions", "admission", "resume", "cv maker", "csc", "study material",
-        "results", "result", "admit card", "khabar", "helpdesk", "home", "tools"
+        "results", "result", "admit card", "khabar", "helpdesk", "home", "tools", "whatsapp"
     ];
 
     const colorMap = { "bg-red-600": "linear-gradient(135deg, #ef4444, #dc2626)", "bg-slate-600": "linear-gradient(135deg, #64748b, #475569)", "bg-amber-600": "linear-gradient(135deg, #f59e0b, #d97706)", "bg-zinc-400": "linear-gradient(135deg, #a1a1aa, #71717a)", "bg-green-600": "linear-gradient(135deg, #10b981, #059669)", "bg-pink-500": "linear-gradient(135deg, #f43f5e, #e11d48)", "bg-yellow-600": "linear-gradient(135deg, #eab308, #ca8a04)", "bg-red-500": "linear-gradient(135deg, #f87171, #ef4444)" };
@@ -539,12 +516,11 @@
     links.forEach((l) => {
       let name = safe(l?.name);
       
-      // Fix requested typo
       if (name.includes("लाडो लक्ष्मी योजना: पैसा आया है या नहीं आया यहाँ से चेक करें")) {
           name = "लाडो लक्ष्मी योजना: पैसा आया है या नहीं - यहाँ से चेक करें";
       }
       
-      // ✅ SMART DUPLICATE REMOVER logic
+      // Stop duplicates from rendering
       const nLower = name.toLowerCase().trim();
       if (excludeList.some(ex => nLower.includes(ex))) return;
 
