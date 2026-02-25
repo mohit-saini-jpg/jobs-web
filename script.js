@@ -67,7 +67,7 @@
     `;
   }
 
-  // ✅ MOBILE HEADER BUTTON INJECTION (Restores 2-row block for Helpdesk/Home + Tools)
+  // ✅ MOBILE HEADER BUTTON INJECTION (Restores the perfect 2-row layout from reference)
   function injectMobileHeaderBtns() {
     if (window.innerWidth > 980) return;
     const headerHost = document.getElementById("site-header") || document.querySelector(".site-header");
@@ -91,31 +91,39 @@
     }
   }
 
-  // ✅ LASER-TARGETED OLD SEARCH HIDER: Removes ONLY the search inputs and their titles, leaving your job content entirely safe!
+  // ✅ LASER-TARGETED OLD SEARCH HIDER: Erases the old search texts and boxes without touching your jobs
   function safeHideOldSearchBars() {
     if (window.innerWidth <= 980) {
-        ['siteSearchInput', 'sectionSearchInput'].forEach(id => {
-            const inputEl = document.getElementById(id);
-            if (inputEl) {
-                // Safely hide the exact row holding the old input and button
-                const row = inputEl.closest('.search-row');
-                if (row) row.style.display = 'none';
+        
+        // 1. Hide the explicit old input boxes and their direct wrappers
+        const oldInputs = document.querySelectorAll('#siteSearchInput, #sectionSearchInput, .search-row');
+        oldInputs.forEach(el => {
+            if (!el.closest('#mobile-bottom-search')) {
+                el.style.setProperty('display', 'none', 'important');
                 
-                // Find its parent card
-                const card = inputEl.closest('.search-card') || inputEl.closest('.top-search') || inputEl.parentElement;
-                if (card && card.id !== 'mobile-bottom-search') {
-                    // Hide the specific search titles safely
-                    const title = card.querySelector('.search-title');
-                    const sub = card.querySelector('.search-sub');
-                    if (title && title.textContent.includes('Search')) title.style.display = 'none';
-                    if (sub && sub.textContent.includes('Search')) sub.style.display = 'none';
+                // If it's inside a generic white box wrapper, hide the wrapper safely
+                const parentBox = el.closest('.search-card') || el.closest('.top-search') || el.parentElement;
+                if (parentBox && parentBox.id !== 'mobile-bottom-search' && parentBox.id !== 'main') {
+                    // Only hide the parent if it doesn't accidentally contain jobs
+                    if (!parentBox.querySelector('table, .section-list, article')) {
+                        parentBox.style.setProperty('display', 'none', 'important');
+                    }
+                }
+            }
+        });
+
+        // 2. Hide the stray "Search across..." texts that are floating on inner pages
+        document.querySelectorAll('h1, h2, h3, p, span, div').forEach(el => {
+            if (el.children.length === 0 || el.tagName === 'H2' || el.tagName === 'P') {
+                const txt = (el.textContent || "").trim();
+                if (txt === "Search across Top Sarkari Jobs" || txt === "Search jobs, results, admit cards, categories, CSC services and tools.") {
+                    el.style.setProperty('display', 'none', 'important');
                     
-                    // ONLY hide the white box entirely if it DOES NOT contain your jobs or other content!
-                    if (!card.querySelector('.section-list, table, ul, ol, a.section-link')) {
-                        card.style.display = 'none';
-                        card.style.padding = '0';
-                        card.style.margin = '0';
-                        card.style.border = 'none';
+                    // Nuke the container holding the text if it's an isolated div
+                    if (el.parentElement && el.parentElement.tagName === 'DIV' && el.parentElement.id !== 'main') {
+                        if (!el.parentElement.querySelector('table, .section-list, article')) {
+                            el.parentElement.style.setProperty('display', 'none', 'important');
+                        }
                     }
                 }
             }
@@ -393,7 +401,7 @@
     });
   }
 
-  // ✅ PERFECTED MOBILE APP GRID & STRETCHED JUSTIFIED PILLS
+  // ✅ PERFECTED MOBILE APP GRID, STRETCHED JUSTIFIED PILL BOXES & BOTTOM SEARCH
   async function renderHomeQuickLinks() {
     const isHome = (page === "index.html" || page === "");
     
@@ -504,7 +512,7 @@
           
           /* Glossy Premium App Themes */
           .grid-nav-btn.solid-blue { background: linear-gradient(180deg, #3b82f6, #2563eb); color: #fff; border: 1px solid #1d4ed8; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
-          .grid-nav-btn.solid-orange { background: linear-gradient(180deg, #f98822, #ea580c); color: #fff; border: 1px solid #c2410c; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
+          .grid-nav-btn.solid-orange { background: linear-gradient(180deg, #f97316, #ea580c); color: #fff; border: 1px solid #c2410c; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
           .grid-nav-btn.solid-dark { background: linear-gradient(180deg, #1e40af, #1e3a8a); color: #fff; border: 1px solid #172554; }
           .grid-nav-btn.outline-blue { background: #f0f9ff; color: #2563eb; border: 1px solid #bfdbfe; font-weight: 700; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
           .grid-nav-btn.outline-dark { background: #fff; color: #0f172a; border: 1px solid #cbd5e1; font-weight: 800; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
@@ -643,14 +651,14 @@
         validLinks.push({ ...l, name: name, url: url });
       });
 
-      // 1. Extract Top Headlines so it's always forced to the #1 top position
+      // Extract Top Headlines so it's always forced to the #1 top position
       let topHeadlineIndex = validLinks.findIndex(l => l.name.toLowerCase().includes("headlines"));
       let topHeadline = null;
       if (topHeadlineIndex > -1) {
           topHeadline = validLinks.splice(topHeadlineIndex, 1)[0];
       }
 
-      // 2. Pair shuffling algorithm (mixes long and short names so flex automatically wraps them beautifully)
+      // Pair shuffling algorithm (mixes long and short names so flex automatically wraps them beautifully)
       validLinks.sort((a, b) => a.name.length - b.name.length);
       let mixedLinks = [];
       let left = 0; let right = validLinks.length - 1;
@@ -694,6 +702,26 @@
         `;
         wrap.appendChild(mbs);
     }
+  }
+
+  function removeHomeMainPageCtaLinks() {
+    if (!(page === "index.html" || page === "")) return;
+    const wrap = document.getElementById("dynamic-sections");
+    if (!wrap) return;
+
+    const needles = [
+      "╰┈➤🏠Website का Main Home Page खोलने के लिए यहाँ क्लिक करें",
+      "Website का Main Home Page खोलने के लिए यहाँ क्लिक करें",
+      "Main Home Page खोलने के लिए यहाँ क्लिक करें",
+      "Website का Main Home Page",
+    ];
+
+    const els = Array.from(wrap.querySelectorAll("a, button"));
+    els.forEach((el) => {
+      const t = safe(el.textContent).replace(/\s+/g, " ");
+      if (!t) return;
+      if (needles.some((n) => t.includes(n))) el.remove();
+    });
   }
 
   // Category Pages
@@ -754,6 +782,7 @@
     else if (group === "khabar") items = sliceBetween(right, "latest khabar", "study material");
     else if (group === "study-material") items = sliceBetween(right, "study material", "tools");
 
+    // Filter Garbage
     items = items.filter(i => !isGarbageLink(i));
 
     gridEl.innerHTML = "";
@@ -1260,7 +1289,7 @@
     });
   }
 
-  // ✅ GLOBAL LIVE SEARCH ENGINE (Works for Mobile Bottom Search too)
+  // ✅ GLOBAL LIVE SEARCH ENGINE
   async function initGlobalLiveSearch() {
     const inputs = [];
     
@@ -1374,9 +1403,7 @@
       removeHomeMainPageCtaLinks();
     }
     
-    // Renders the global mobile layout across ALL pages
     await renderHomeQuickLinks();
-    
     await initCategoryPage();
     await initToolsPage();
     
@@ -1386,13 +1413,12 @@
     initCscModal();
     await renderServicesPage();
     
-    // Run search initializer immediately
     await initGlobalLiveSearch();
     
-    // In case mobile elements loaded a split second late, check again
+    // Final aggressive cleanup of old search elements just in case they loaded late
     setTimeout(() => {
         safeHideOldSearchBars();
         initGlobalLiveSearch();
-    }, 500); 
+    }, 300); 
   });
 })();
