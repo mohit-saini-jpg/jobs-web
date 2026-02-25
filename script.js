@@ -8,7 +8,6 @@
 
   const safe = (v) => (v ?? "").toString().trim();
 
-  // Updated normalizeUrl to safely handle internal absolute links
   function normalizeUrl(raw) {
     const s = safe(raw);
     if (!s) return "";
@@ -67,7 +66,6 @@
     `;
   }
 
-  // ✅ MOBILE HEADER BUTTON INJECTION (Restores the perfect 2-row layout from reference)
   function injectMobileHeaderBtns() {
     if (window.innerWidth > 980) return;
     const headerHost = document.getElementById("site-header") || document.querySelector(".site-header");
@@ -91,37 +89,33 @@
     }
   }
 
-  // ✅ LASER-TARGETED HIDER: Safely hides ONLY old search texts/boxes without destroying job content!
+  // ✅ LASER-TARGETED HIDER: Safely hides old search elements without touching Jobs!
   function safeHideOldSearchBars() {
     if (window.innerWidth <= 980) {
-        
-        // 1. Hide actual old search input rows
-        document.querySelectorAll('.search-row').forEach(row => {
-            if (!row.classList.contains('mbs-row')) {
-                row.style.display = 'none';
+        const oldInputs = document.querySelectorAll('#siteSearchInput, #sectionSearchInput, .search-row');
+        oldInputs.forEach(el => {
+            if (!el.closest('#mobile-bottom-search')) {
+                el.style.setProperty('display', 'none', 'important');
+                
+                const parentBox = el.closest('.search-card') || el.closest('.top-search') || el.parentElement;
+                if (parentBox && parentBox.id !== 'mobile-bottom-search' && parentBox.id !== 'main') {
+                    // Only hide if it does NOT contain the main job lists or tables
+                    if (!parentBox.querySelector('table, .section-list, article')) {
+                        parentBox.style.setProperty('display', 'none', 'important');
+                    }
+                }
             }
         });
-        
-        // 2. Hide exact text nodes from old hardcoded inner pages
+
+        // Hide floating text strictly related to old search
         document.querySelectorAll('h1, h2, h3, p, span, div').forEach(el => {
-            // Target specific old headings and descriptions
-            if (el.children.length === 0 || el.tagName === 'H2' || el.tagName === 'H3' || el.tagName === 'P') {
-                const text = (el.textContent || "").trim();
-                
-                if (text === "Search across Top Sarkari Jobs" || 
-                    text === "Search jobs, results, admit cards, categories, CSC services and tools." ||
-                    (text.includes("Search Sarkari") && text.includes("Just Click Below") && !el.closest('#mobile-bottom-search'))) {
-                    
-                    el.style.display = 'none';
-                    
-                    // Safely hide the parent white box ONLY if it does not contain job links (<a> tags)
-                    const card = el.closest('.search-card');
-                    if (card && card.id !== 'mobile-bottom-search') {
-                        if (!card.querySelector('a.section-link, a.result-item, .section-list')) {
-                            card.style.display = 'none';
-                            card.style.padding = '0';
-                            card.style.margin = '0';
-                            card.style.border = 'none';
+            if (el.children.length === 0 || el.tagName === 'H2' || el.tagName === 'P') {
+                const txt = (el.textContent || "").trim();
+                if (txt === "Search across Top Sarkari Jobs" || txt === "Search jobs, results, admit cards, categories, CSC services and tools.") {
+                    el.style.setProperty('display', 'none', 'important');
+                    if (el.parentElement && el.parentElement.tagName === 'DIV' && el.parentElement.id !== 'main') {
+                        if (!el.parentElement.querySelector('table, .section-list, article')) {
+                            el.parentElement.style.setProperty('display', 'none', 'important');
                         }
                     }
                 }
@@ -400,7 +394,7 @@
     });
   }
 
-  // ✅ PERFECTED MOBILE APP GRID & TIGHTLY FITTED PILL BOXES
+  // ✅ PERFECTED PREMIUM MOBILE APP GRID & PILLS
   async function renderHomeQuickLinks() {
     const isHome = (page === "index.html" || page === "");
     
@@ -462,104 +456,120 @@
         }
         .home-link-btn:active { transform: translateY(0); }
         
-        /* MOBILE VIEW OVERRIDES */
+        /* MOBILE VIEW OVERRIDES - PREMIUM UI */
         @media (max-width: 980px) {
-          .home-quicklinks { padding-top: 12px; }
+          .home-quicklinks { padding-top: 16px; }
           
-          /* ✅ PERFECT PILLS FIX: flex: 1 1 auto perfectly stretches and fits them to the edges! */
+          /* The Premium 4-Column Rectangular App Grid */
+          .mobile-nav-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: 1fr;
+            gap: 8px;
+            margin-bottom: 24px;
+            background: #ffffff;
+            padding: 12px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.04);
+          }
+          .grid-nav-btn {
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 800;
+            text-align: center;
+            padding: 10px 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.3;
+            text-decoration: none;
+            word-break: break-word;
+            height: 100%;
+            transition: transform 0.2s;
+            letter-spacing: -0.2px;
+          }
+          .grid-nav-btn:active { transform: scale(0.96); }
+          
+          /* Glossy Premium App Themes */
+          .grid-nav-btn.solid-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 10px rgba(37,99,235,0.25); border: 1px solid #1e40af; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
+          .grid-nav-btn.solid-orange { background: linear-gradient(135deg, #f97316, #ea580c); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 10px rgba(234,88,12,0.25); border: 1px solid #c2410c; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
+          .grid-nav-btn.solid-dark { background: linear-gradient(135deg, #1e40af, #1e3a8a); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 4px 10px rgba(30,58,138,0.25); border: 1px solid #172554; }
+          .grid-nav-btn.outline-blue { background: linear-gradient(180deg, #ffffff, #f0f9ff); color: #1d4ed8; border: 1px solid #bfdbfe; font-weight: 800; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
+          .grid-nav-btn.outline-dark { background: linear-gradient(180deg, #ffffff, #f8fafc); color: #334155; border: 1px solid #cbd5e1; font-weight: 800; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
+
+          /* Perfectly Packed Pill Boxes */
           .home-links { 
             display: flex;
             flex-wrap: wrap;
-            gap: 6px 4px; 
+            gap: 8px; 
             justify-content: center; 
             align-content: center;
-            padding: 0 8px; 
+            padding: 0 6px; 
             margin-bottom: 0px; 
           }
           .home-link-btn { 
             flex: 1 1 auto; 
-            padding: 9px 8px; 
-            font-size: 12px; 
+            padding: 10px 12px; 
+            font-size: 13px; 
             text-align: center;
             justify-content: center;
             margin: 0;
-            min-width: calc(30% - 10px); 
+            min-width: calc(30% - 8px); 
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            letter-spacing: 0.2px;
           }
           
-          /* The 4-Column Rectangular App Grid */
-          .mobile-nav-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 6px;
-            margin-bottom: 18px;
-            padding: 0 8px;
-          }
-          .grid-nav-btn {
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 800;
-            text-align: center;
-            padding: 10px 2px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            line-height: 1.25;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 1px 3px rgba(0,0,0,0.08);
-            text-decoration: none;
-            word-break: break-word;
-          }
-          
-          /* Premium App Themes */
-          .grid-nav-btn.solid-blue { background: linear-gradient(180deg, #3b82f6, #2563eb); color: #fff; border: 1px solid #1d4ed8; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
-          .grid-nav-btn.solid-orange { background: linear-gradient(180deg, #f97316, #ea580c); color: #fff; border: 1px solid #c2410c; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
-          .grid-nav-btn.solid-dark { background: linear-gradient(180deg, #1e40af, #1e3a8a); color: #fff; border: 1px solid #172554; }
-          .grid-nav-btn.outline-blue { background: #f0f9ff; color: #2563eb; border: 1px solid #bfdbfe; font-weight: 700; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
-          .grid-nav-btn.outline-dark { background: #fff; color: #0f172a; border: 1px solid #cbd5e1; font-weight: 800; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
-
           /* Beautiful Custom Bottom Search exactly like screenshot */
           .mobile-bottom-search {
-            background: #f8fafc;
+            background: #ffffff;
             border: 1px solid #e2e8f0;
-            padding: 16px 12px;
-            margin-top: 24px;
+            padding: 20px 14px;
+            margin-top: 28px;
             margin-bottom: 16px;
-            border-radius: 8px;
-            text-align: left;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
           }
           .mobile-bottom-search h3 {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 900;
-            margin: 0 0 10px;
+            margin: 0 0 14px;
             color: #0f172a;
+            letter-spacing: -0.2px;
           }
           .mbs-row {
             display: flex;
             border: 1px solid #cbd5e1;
-            border-radius: 6px;
+            border-radius: 10px;
             overflow: hidden;
-            background: #fff;
+            background: #f8fafc;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
           }
           .mbs-row input {
             flex: 1;
-            height: 42px;
+            height: 46px;
             border: none;
-            padding: 0 12px;
-            font-size: 13px;
+            background: transparent;
+            padding: 0 14px;
+            font-size: 14px;
             outline: none;
+            color: #0f172a;
           }
-          .mbs-row input:focus { border-color: #0ea5e9; }
+          .mbs-row input:focus { background: #fff; border-color: #0ea5e9; }
           .mbs-row button {
-            background: linear-gradient(180deg, #3b82f6, #2563eb);
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
             color: #fff;
             border: none;
-            padding: 0 16px;
+            padding: 0 20px;
             font-weight: 800;
-            font-size: 13px;
+            font-size: 14px;
             display: flex;
             align-items: center;
             gap: 6px;
+            cursor: pointer;
           }
         }
       `;
@@ -578,13 +588,13 @@
         if (waObj && (waObj.url || waObj.link)) waLink = waObj.url || waObj.link;
     }
     
-    // ✅ INJECT 4x3 APP GRID
+    // ✅ INJECT PREMIUM 4x3 APP GRID
     if (wrap && !document.getElementById("mobile-nav-grid")) {
         const mobileNavWrap = document.createElement("div");
         mobileNavWrap.id = "mobile-nav-grid";
         mobileNavWrap.className = "mobile-nav-grid";
 
-        // ✅ EXACT ABSOLUTE LINK FOR LATEST JOBS (Guarantees Navigation)
+        // ✅ EXACT ABSOLUTE LINK FOR LATEST JOBS (Fixed logic)
         const mLinks = [
             { name: "Latest Jobs", url: "https://www.topsarkarijobs.com/view.html?section=latest%20jobs", cls: "solid-blue" },
             { name: "Study wise jobs", url: "category.html?group=study", cls: "outline-blue" },
@@ -617,22 +627,22 @@
     const links = Array.isArray(data?.home_links) ? data.home_links : [];
     if (links.length) {
       
-      // Strict filter ensures NO overlaps and NO WhatsApp repetition
       const excludeList = [
           "latest jobs", "study wise", "categories wise", "popular categories", "state wise",
           "admissions", "admission", "resume", "cv maker", "csc", "study material",
           "results", "result", "admit card", "khabar", "helpdesk", "home", "tools", "whatsapp"
       ];
 
+      // Beautiful Vibrant Pill Gradients
       const colorMap = { 
-        "bg-red-600": "linear-gradient(180deg, #ef4444, #dc2626)", 
-        "bg-slate-600": "linear-gradient(180deg, #94a3b8, #64748b)", 
-        "bg-amber-600": "linear-gradient(180deg, #f59e0b, #d97706)", 
-        "bg-zinc-400": "linear-gradient(180deg, #a1a1aa, #71717a)", 
-        "bg-green-600": "linear-gradient(180deg, #10b981, #059669)", 
-        "bg-pink-500": "linear-gradient(180deg, #f43f5e, #e11d48)", 
-        "bg-yellow-600": "linear-gradient(180deg, #eab308, #ca8a04)", 
-        "bg-red-500": "linear-gradient(180deg, #f87171, #ef4444)" 
+        "bg-red-600": "linear-gradient(135deg, #ef4444, #dc2626)", 
+        "bg-slate-600": "linear-gradient(135deg, #64748b, #475569)", 
+        "bg-amber-600": "linear-gradient(135deg, #f59e0b, #ea580c)", 
+        "bg-zinc-400": "linear-gradient(135deg, #a1a1aa, #71717a)", 
+        "bg-green-600": "linear-gradient(135deg, #10b981, #059669)", 
+        "bg-pink-500": "linear-gradient(135deg, #f43f5e, #e11d48)", 
+        "bg-yellow-600": "linear-gradient(135deg, #eab308, #ca8a04)", 
+        "bg-red-500": "linear-gradient(135deg, #f87171, #ef4444)" 
       };
 
       let validLinks = [];
@@ -657,7 +667,7 @@
           topHeadline = validLinks.splice(topHeadlineIndex, 1)[0];
       }
 
-      // 2. Pair shuffling algorithm (mixes long and short names so flex automatically wraps them beautifully)
+      // 2. Mix lengths so flexbox fills edges perfectly like bricks
       validLinks.sort((a, b) => a.name.length - b.name.length);
       let mixedLinks = [];
       let left = 0; let right = validLinks.length - 1;
@@ -677,7 +687,7 @@
         a.href = normalizeUrl(l.url);
         if (l.external) { a.target = "_blank"; a.rel = "noopener"; }
         
-        a.style.background = colorMap[safe(l.color)] || "linear-gradient(180deg, #94a3b8, #64748b)";
+        a.style.background = colorMap[safe(l.color)] || "linear-gradient(135deg, #64748b, #475569)";
         
         const icon = safe(l.icon);
         if (icon) a.innerHTML = `<i class="${icon}"></i><span>${l.name}</span>`;
@@ -697,30 +707,10 @@
                 <input id="mobileBottomSearchInput" type="search" placeholder="Search job categories, results, admit cards..." autocomplete="off" />
                 <button type="button" id="mobileBottomSearchBtn"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
             </div>
-            <div id="mobileBottomSearchResults" class="search-results" style="margin-top: 10px;"></div>
+            <div id="mobileBottomSearchResults" class="search-results" style="margin-top: 12px; text-align: left;"></div>
         `;
         wrap.appendChild(mbs);
     }
-  }
-
-  function removeHomeMainPageCtaLinks() {
-    if (!(page === "index.html" || page === "")) return;
-    const wrap = document.getElementById("dynamic-sections");
-    if (!wrap) return;
-
-    const needles = [
-      "╰┈➤🏠Website का Main Home Page खोलने के लिए यहाँ क्लिक करें",
-      "Website का Main Home Page खोलने के लिए यहाँ क्लिक करें",
-      "Main Home Page खोलने के लिए यहाँ क्लिक करें",
-      "Website का Main Home Page",
-    ];
-
-    const els = Array.from(wrap.querySelectorAll("a, button"));
-    els.forEach((el) => {
-      const t = safe(el.textContent).replace(/\s+/g, " ");
-      if (!t) return;
-      if (needles.some((n) => t.includes(n))) el.remove();
-    });
   }
 
   // Category Pages
@@ -1288,7 +1278,7 @@
     });
   }
 
-  // ✅ GLOBAL LIVE SEARCH ENGINE
+  // ✅ GLOBAL LIVE SEARCH ENGINE (Works for Mobile Bottom Search too)
   async function initGlobalLiveSearch() {
     const inputs = [];
     
@@ -1389,7 +1379,7 @@
 
   document.addEventListener("DOMContentLoaded", async () => {
     buildMobileMenu();
-    safeHideOldSearchBars(); 
+    safeHideOldSearchBars(); // Fire aggressively on load
     
     await injectHeaderFooter();
     await loadHeaderLinks();
@@ -1414,6 +1404,7 @@
     
     await initGlobalLiveSearch();
     
+    // Final aggressive cleanup of old search elements just in case they loaded late
     setTimeout(() => {
         safeHideOldSearchBars();
         initGlobalLiveSearch();
