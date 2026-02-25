@@ -139,14 +139,19 @@
       "icon": "fas fa-crop"
     },
     {
+      "name": "PDF resize (50KB,100KB,500KB आदि) सेट करें।",
+      "url": "https://pdf.pi7.org/pdf-resize-in-kb",
+      "icon": "fas fa-compress"
+    },
+        {
+      "name": "PDF Crop",
+      "url": "https://pdf.pi7.org/crop-pdf",
+      "icon": "fas fa-file-word"
+    },
+    {
       "name": "PDF to 200kb",
       "url": "https://pdf.pi7.org/compress-pdf-to-200kb",
       "icon": "fas fa-image"
-    },
-    {
-      "name": "PDF resize According You",
-      "url": "https://pdf.pi7.org/pdf-resize-in-kb",
-      "icon": "fas fa-compress"
     },
     {
       "name": "PDF Merge",
@@ -176,11 +181,6 @@
     {
       "name": "PDF to Word",
       "url": "https://pdf.pi7.org/pdf-to-word",
-      "icon": "fas fa-file-word"
-    },
-    {
-      "name": "PDF Crop",
-      "url": "https://pdf.pi7.org/crop-pdf",
       "icon": "fas fa-file-word"
     },
     {
