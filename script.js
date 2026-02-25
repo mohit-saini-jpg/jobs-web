@@ -498,18 +498,14 @@
           }
           .grid-nav-btn:active { transform: scale(0.95); }
           
-          /* Glassy App Themes - NOW SOFT PASTEL BLENDS */
+          /* Glassy App Themes - Perfect "Light Shade" Matches */
           .grid-nav-btn.glass-primary { background: linear-gradient(135deg, #0ea5e9, #4f46e5); color: #fff; border: none; box-shadow: 0 4px 12px rgba(14,165,233,0.3); }
           .grid-nav-btn.glass-blue { color: #0284c7; border-color: #bae6fd; background: #f0f9ff; }
-          .grid-nav-btn.glass-dark { color: #334155; border-color: #cbd5e1; background: #f8fafc; }
+          .grid-nav-btn.glass-purple { color: #7e22ce; border-color: #e9d5ff; background: #faf5ff; }
           .grid-nav-btn.glass-orange { color: #c2410c; border-color: #fed7aa; background: #fff7ed; }
           .grid-nav-btn.glass-green { color: #166534; border-color: #bbf7d0; background: #f0fdf4; }
-          
-          /* Brand New Soft Glassy Tones for the Middle Row */
-          .grid-nav-btn.glass-purple { color: #7e22ce; border-color: #e9d5ff; background: #faf5ff; }
-          .grid-nav-btn.glass-teal { color: #0f766e; border-color: #ccfbf1; background: #f0fdfa; }
 
-          /* ✅ PERFECT PILLS FIX: Flex-grow makes them stretch and form a perfectly flush brick wall layout! */
+          /* ✅ PERFECT PILLS FIX: Flex-grow makes them lock together flawlessly without awkward gaps! */
           .home-links { 
             display: flex;
             flex-wrap: wrap;
@@ -605,21 +601,21 @@
         mobileNavWrap.id = "mobile-nav-grid";
         mobileNavWrap.className = "mobile-nav-grid";
 
-        // ✅ PERFECTED THEMES: Middle row is now soft, airy glass matching Admissions and Results!
+        // ✅ EXACT ROW COLORS MATCHING YOUR REQUEST
         const mLinks = [
             { name: "Latest Jobs", url: "https://www.topsarkarijobs.com/view.html?section=latest%20jobs", cls: "glass-primary" },
             { name: "Study wise jobs", url: "category.html?group=study", cls: "glass-blue" },
             { name: "Categories wise jobs", url: "category.html?group=popular", cls: "glass-blue" },
             { name: "State wise Jobs", url: "category.html?group=state", cls: "glass-blue" },
             
-            { name: "Admissions", url: "category.html?group=admissions", cls: "glass-blue" },
-            { name: "Resume/CV Maker", url: "tools.html", cls: "glass-purple" }, // Light shade!
-            { name: "CSC Services", url: "govt-services.html", cls: "glass-teal" },   // Light shade!
-            { name: "Study Material", url: "category.html?group=study-material", cls: "glass-dark" }, // Light shade!
+            { name: "Admissions", url: "category.html?group=admissions", cls: "glass-purple" },
+            { name: "Resume/CV Maker", url: "tools.html", cls: "glass-purple" },
+            { name: "CSC Services", url: "govt-services.html", cls: "glass-purple" },
+            { name: "Study Material", url: "category.html?group=study-material", cls: "glass-purple" },
             
             { name: "Results", url: "result.html", cls: "glass-orange" },
             { name: "Admit Card", url: "category.html?group=admit-result", cls: "glass-orange" },
-            { name: "Latest Khabar", url: "category.html?group=khabar", cls: "glass-blue" },
+            { name: "Latest Khabar", url: "category.html?group=khabar", cls: "glass-orange" },
             { name: "Join WhatsApp", url: waLink, cls: "glass-green" } 
         ];
 
@@ -643,6 +639,18 @@
           "admissions", "admission", "resume", "cv maker", "csc", "study material",
           "results", "result", "admit card", "khabar", "helpdesk", "home", "tools", "whatsapp"
       ];
+
+      // ✅ RESTORES THE EXACT, SLEEK ORIGINAL PILL COLORS YOU LOVED
+      const colorMap = { 
+        "bg-red-600": "linear-gradient(180deg, #ef4444, #dc2626)", 
+        "bg-slate-600": "linear-gradient(180deg, #94a3b8, #64748b)", 
+        "bg-amber-600": "linear-gradient(180deg, #f59e0b, #d97706)", 
+        "bg-zinc-400": "linear-gradient(180deg, #a1a1aa, #71717a)", 
+        "bg-green-600": "linear-gradient(180deg, #10b981, #059669)", 
+        "bg-pink-500": "linear-gradient(180deg, #f43f5e, #e11d48)", 
+        "bg-yellow-600": "linear-gradient(180deg, #eab308, #ca8a04)", 
+        "bg-red-500": "linear-gradient(180deg, #f87171, #ef4444)" 
+      };
 
       let validLinks = [];
       links.forEach((l) => {
@@ -680,18 +688,18 @@
       const finalLinks = topHeadline ? [topHeadline, ...mixedLinks] : mixedLinks;
 
       host.innerHTML = "";
-      finalLinks.forEach((l, index) => {
+      finalLinks.forEach((l) => {
         const a = document.createElement("a");
         a.className = "home-link-btn";
         a.href = normalizeUrl(l.url);
         if (l.external) { a.target = "_blank"; a.rel = "noopener"; }
         
-        // Top Headlines gets special red, the rest use a soft slate gradient to match desktop
+        // Top Headlines gets special red, the rest map strictly to the JSON colors
         if (l.name.toLowerCase().includes("headlines")) {
-             a.style.background = "linear-gradient(135deg, #ef4444, #991b1b)";
+             a.style.background = "linear-gradient(180deg, #ef4444, #b91c1c)";
              a.style.width = "100%"; 
         } else {
-             a.style.background = "linear-gradient(180deg, #94a3b8, #64748b)";
+             a.style.background = colorMap[safe(l.color)] || "linear-gradient(180deg, #94a3b8, #64748b)";
         }
         
         const icon = safe(l.icon);
@@ -1393,7 +1401,6 @@
       };
 
       input.addEventListener("input", performSearch);
-      // ✅ Shows results immediately on focus if there is at least 1 letter
       input.addEventListener("focus", () => { if(input.value.length >= 1) resultsWrap.style.display="block"; });
       
       document.addEventListener("click", (e) => {
