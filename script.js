@@ -8,7 +8,7 @@
 
   const safe = (v) => (v ?? "").toString().trim();
 
-  // Updated normalizeUrl to safely handle internal relative paths like view.html
+  // Updated normalizeUrl to safely handle internal absolute links
   function normalizeUrl(raw) {
     const s = safe(raw);
     if (!s) return "";
@@ -88,6 +88,28 @@
           <a href="tools.html" class="mhb-btn mhb-full">Tools</a>
         `;
         headerRow.insertBefore(btns, headerActions);
+    }
+  }
+
+  // ✅ ULTIMATE FAILSAFE: ERASES ALL OLD SEARCH BARS FROM INNER PAGES ON MOBILE
+  function nukeOldSearchOnMobile() {
+    if (window.innerWidth <= 980) {
+        const oldInputs = ['siteSearchInput', 'sectionSearchInput'];
+        oldInputs.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                // If it's the old desktop search, obliterate its container
+                const parentSection = el.closest('section');
+                if (parentSection && parentSection.id !== 'home-quicklinks-wrap') {
+                    parentSection.style.setProperty('display', 'none', 'important');
+                } else {
+                    const parentDiv = el.closest('div.search-card') || el.closest('div[class*="search"]');
+                    if (parentDiv && parentDiv.id !== 'mobile-bottom-search') {
+                        parentDiv.style.setProperty('display', 'none', 'important');
+                    }
+                }
+            }
+        });
     }
   }
 
@@ -204,6 +226,7 @@
     });
     window.addEventListener("resize", () => {
       if (window.innerWidth > 980) close();
+      nukeOldSearchOnMobile(); // Added resize listener for failsafe
     });
     window.__closeMenu = close;
   }
@@ -671,7 +694,7 @@
     const needles = [
       "╰┈➤🏠Website का Main Home Page खोलने के लिए यहाँ क्लिक करें",
       "Website का Main Home Page खोलने के लिए यहाँ क्लिक करें",
-      "Main Home Page खोलने के लिए यहाँ क्लिक करें",
+      "Main Home Page खोलने শারীরিক के लिए यहाँ क्लिक करें",
       "Website का Main Home Page",
     ];
 
@@ -1349,6 +1372,8 @@
 
   document.addEventListener("DOMContentLoaded", async () => {
     buildMobileMenu();
+    nukeOldSearchOnMobile(); // Fire aggressively on load
+    
     await injectHeaderFooter();
     await loadHeaderLinks();
     initOffcanvas();
@@ -1361,7 +1386,6 @@
     }
     
     await renderHomeQuickLinks();
-    
     await initCategoryPage();
     await initToolsPage();
     
@@ -1370,8 +1394,11 @@
     }
     initCscModal();
     await renderServicesPage();
-    
     await initGlobalLiveSearch();
-    setTimeout(initGlobalLiveSearch, 500); 
+    
+    setTimeout(() => {
+        nukeOldSearchOnMobile();
+        initGlobalLiveSearch();
+    }, 500); 
   });
 })();
