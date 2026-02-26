@@ -67,7 +67,7 @@
     `;
   }
 
-  // ✅ MOBILE HEADER BUTTON INJECTION (Restores 2-row layout from reference, Chevron Dropdowns removed completely)
+  // ✅ MOBILE HEADER BUTTON INJECTION
   function injectMobileHeaderBtns() {
     if (window.innerWidth > 980) return;
     const headerHost = document.getElementById("site-header") || document.querySelector(".site-header");
@@ -91,25 +91,39 @@
     }
   }
 
-  // ✅ LASER-TARGETED OLD SEARCH HIDER: Erases the old search texts and boxes without touching your jobs
+  // ✅ ABSOLUTE OLD SEARCH HIDER: Hunts and removes the old white box and texts
   function safeHideOldSearchBars() {
     if (window.innerWidth <= 980) {
         
-        // 1. Target explicit old search wrapper cards that contain the old inputs
-        document.querySelectorAll('.search-card').forEach(card => {
-            if (card.id !== 'mobile-bottom-search') {
-                if (card.querySelector('#siteSearchInput') || card.querySelector('#sectionSearchInput')) {
-                    card.style.setProperty('display', 'none', 'important');
-                }
-            }
-        });
-        
-        // 2. Hide explicit "Search across..." titles & texts
+        // Hide explicit "Search across..." titles & texts and their containers
         document.querySelectorAll('h1, h2, h3, p').forEach(el => {
             const txt = (el.textContent || "").trim();
             if (txt === "Search across Top Sarkari Jobs" || 
                 txt === "Search jobs, results, admit cards, categories, CSC services and tools.") {
                 el.style.setProperty('display', 'none', 'important');
+                
+                const parentBox = el.closest('.search-card') || el.closest('div[style*="border"], div[class*="card"]');
+                if (parentBox && parentBox.id !== 'mobile-bottom-search') {
+                    if (!parentBox.querySelector('a.section-link, table, .section-list')) {
+                        parentBox.style.setProperty('display', 'none', 'important');
+                    }
+                }
+            }
+        });
+
+        // Target ANY element that contains the old inputs directly
+        const oldInputs = document.querySelectorAll('#siteSearchInput, #sectionSearchInput');
+        oldInputs.forEach(input => {
+            let p = input.parentElement;
+            while (p && p.tagName !== 'BODY') {
+                if (p.id === 'main' || p.id === 'mobile-bottom-search') break;
+                // If the wrapper contains jobs, don't hide it, just hide the input row
+                if (!p.querySelector('a.section-link, a.result-item, table, .section-list')) {
+                    p.style.setProperty('display', 'none', 'important');
+                } else {
+                    p.style.setProperty('padding-top', '0', 'important');
+                }
+                p = p.parentElement;
             }
         });
     }
@@ -385,7 +399,7 @@
     });
   }
 
-  // ✅ PERFECTED UI: Styled Grid Row Colors + Beautiful Solid Pill Colors 
+  // ✅ PERFECTED GRID (Matching outline rows) & PILLS HIDDEN ON INNER PAGES
   async function renderHomeQuickLinks() {
     const isHome = (page === "index.html" || page === "");
     
@@ -395,7 +409,7 @@
     if (!wrap) {
       wrap = document.createElement("section");
       wrap.id = "home-quicklinks-wrap";
-      wrap.className = isHome ? "home-quicklinks" : "home-quicklinks desktop-hidden";
+      wrap.className = "home-quicklinks"; // Shows grid + bottom search everywhere
       
       host = document.createElement("div");
       host.id = "home-links";
@@ -416,9 +430,7 @@
         
         /* DESKTOP VIEW */
         @media (min-width: 981px) {
-          .home-quicklinks { padding: 0 0 24px; }
-          .desktop-hidden { display: none !important; }
-          .mobile-nav-grid, .mobile-bottom-search { display: none !important; }
+          .home-quicklinks { display: none !important; }
         }
 
         .home-links { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; }
@@ -449,7 +461,7 @@
         
         /* ✅ PREMIUM MOBILE APP OVERRIDES */
         @media (max-width: 980px) {
-          .home-quicklinks { padding-top: 16px; }
+          .home-quicklinks { display: block !important; padding-top: 16px; }
           
           /* The 4-Column Grid */
           .mobile-nav-grid {
@@ -475,23 +487,16 @@
             height: 100%;
             transition: transform 0.2s;
             letter-spacing: -0.2px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
           }
           .grid-nav-btn:active { transform: scale(0.96); }
           
-          /* ✅ EXACT Grid Row Themes per user request */
-          .grid-nav-btn.solid-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 10px rgba(37,99,235,0.25); border: 1px solid #1e40af; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
-          .grid-nav-btn.outline-blue { background: #f0f9ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-weight: 800; }
-          
-          .grid-nav-btn.solid-purple { background: linear-gradient(135deg, #a855f7, #7e22ce); color: #fff; border: 1px solid #6b21a8; text-shadow: 0 1px 1px rgba(0,0,0,0.2); box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 10px rgba(168,85,247,0.2); }
-          .grid-nav-btn.outline-purple { background: #faf5ff; color: #7e22ce; border: 1px solid #e9d5ff; font-weight: 800; }
-          
-          .grid-nav-btn.solid-orange { background: linear-gradient(135deg, #f97316, #ea580c); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 10px rgba(234,88,12,0.25); border: 1px solid #c2410c; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
-          .grid-nav-btn.outline-orange { background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; font-weight: 800; }
-          
+          /* ✅ UNIFORM OUTLINE ROW THEMES */
+          .grid-nav-btn.outline-blue { background: #f0f9ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-weight: 800; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
+          .grid-nav-btn.outline-purple { background: #faf5ff; color: #7e22ce; border: 1px solid #e9d5ff; font-weight: 800; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
+          .grid-nav-btn.outline-orange { background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; font-weight: 800; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
           .grid-nav-btn.solid-green { background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 10px rgba(16,185,129,0.25); border: 1px solid #047857; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
 
-          /* ✅ BEAUTIFUL PREMIUM PILLS: Flex-grow makes them lock perfectly into rows */
+          /* ✅ PERFECT 3D EMBOSSED PILLS */
           .home-links { 
             display: flex;
             flex-wrap: wrap;
@@ -511,15 +516,15 @@
             justify-content: center;
             margin: 0;
             min-width: 28%; 
-            border-radius: 12px;
-            /* Premium modern glossy aesthetic replacing muddy 3D */
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1), inset 0 2px 0 rgba(255,255,255,0.2);
+            border-radius: 14px; 
+            /* Beautiful 3D bevel from your reference */
+            box-shadow: inset 0px 4px 6px rgba(255,255,255,0.35), inset 0px -4px 6px rgba(0,0,0,0.25), 0 4px 6px rgba(0,0,0,0.15);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
             border: none;
             letter-spacing: 0.2px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
           }
           
-          /* Custom Bottom Search exactly like screenshot */
+          /* Custom Bottom Search */
           .mobile-bottom-search {
             background: #ffffff;
             border: 1px solid #e2e8f0;
@@ -585,27 +590,27 @@
         if (waObj && (waObj.url || waObj.link)) waLink = waObj.url || waObj.link;
     }
     
-    // ✅ INJECT CUSTOM APP GRID (Matching Exact Color Rules & Recovered URL)
+    // ✅ INJECT CUSTOM APP GRID (Matching Outlined Row Uniformity)
     if (wrap && !document.getElementById("mobile-nav-grid")) {
         const mobileNavWrap = document.createElement("div");
         mobileNavWrap.id = "mobile-nav-grid";
         mobileNavWrap.className = "mobile-nav-grid";
 
         const mLinks = [
-            // Row 1 (Blue)
-            { name: "Latest Jobs", url: "https://www.topsarkarijobs.com/view.html?section=latest%20jobs", cls: "solid-blue" },
+            // Row 1 (All Blue)
+            { name: "Latest Jobs", url: "https://www.topsarkarijobs.com/view.html?section=latest%20jobs", cls: "outline-blue" },
             { name: "Study wise jobs", url: "category.html?group=study", cls: "outline-blue" },
             { name: "Categories wise jobs", url: "category.html?group=popular", cls: "outline-blue" },
             { name: "State wise Jobs", url: "category.html?group=state", cls: "outline-blue" },
             
-            // Row 2 (Purple)
-            { name: "Admissions", url: "category.html?group=admissions", cls: "solid-purple" },
-            { name: "Resume/CV Maker", url: "https://www.topsarkarijobs.com/view.html?url=https%253A%252F%252Fsarkariresulttools.net%252Fresume-maker%252F&name=Resume%2520CV%2520Maker&job=resume-cv-makerume-cv-maker", cls: "outline-purple" }, //
+            // Row 2 (All Purple)
+            { name: "Admissions", url: "category.html?group=admissions", cls: "outline-purple" },
+            { name: "Resume/CV Maker", url: "https://www.topsarkarijobs.com/view.html?url=https%253A%252F%252Fsarkariresulttools.net%252Fresume-maker%252F&name=Resume%2520CV%2520Maker&job=resume-cv-makerume-cv-maker", cls: "outline-purple" },
             { name: "CSC Services", url: "govt-services.html", cls: "outline-purple" },
             { name: "Study Material", url: "category.html?group=study-material", cls: "outline-purple" },
             
             // Row 3 (Orange + Green WhatsApp)
-            { name: "Results", url: "result.html", cls: "solid-orange" },
+            { name: "Results", url: "result.html", cls: "outline-orange" },
             { name: "Admit Card", url: "category.html?group=admit-result", cls: "outline-orange" },
             { name: "Latest Khabar", url: "category.html?group=khabar", cls: "outline-orange" },
             { name: "Join WhatsApp", url: waLink, cls: "solid-green" } 
@@ -622,83 +627,101 @@
         wrap.insertBefore(mobileNavWrap, wrap.firstChild);
     }
 
-    // Process bottom pill links
-    const links = Array.isArray(data?.home_links) ? data.home_links : [];
-    if (links.length) {
-      
-      const excludeList = [
-          "latest jobs", "study wise", "categories wise", "popular categories", "state wise",
-          "admissions", "admission", "resume", "cv maker", "csc", "study material",
-          "results", "result", "admit card", "khabar", "helpdesk", "home", "tools", "whatsapp"
-      ];
+    // ✅ PILL BOXES ONLY RENDER ON THE HOMEPAGE NOW
+    if (isHome) {
+        const links = Array.isArray(data?.home_links) ? data.home_links : [];
+        if (links.length) {
+          
+          const excludeList = [
+              "latest jobs", "study wise", "categories wise", "popular categories", "state wise",
+              "admissions", "admission", "resume", "cv maker", "csc", "study material",
+              "results", "result", "admit card", "khabar", "helpdesk", "home", "tools", "whatsapp"
+          ];
 
-      // ✅ BRAND NEW PREMIUM APP COLORS FOR PILLS (iOS Inspired Gradients)
-      const premiumGradients = [
-          "linear-gradient(135deg, #3b82f6, #2563eb)", // Blue
-          "linear-gradient(135deg, #8b5cf6, #7c3aed)", // Violet
-          "linear-gradient(135deg, #10b981, #059669)", // Emerald
-          "linear-gradient(135deg, #f59e0b, #d97706)", // Amber
-          "linear-gradient(135deg, #ec4899, #db2777)", // Pink
-          "linear-gradient(135deg, #0ea5e9, #0284c7)", // Sky
-          "linear-gradient(135deg, #f43f5e, #e11d48)", // Rose
-          "linear-gradient(135deg, #6366f1, #4f46e5)"  // Indigo
-      ];
+          // Restores Original Colors from JSON + Failsafe
+          const colorMap = { 
+            "bg-red-600": "linear-gradient(180deg, #ef4444, #991b1b)", 
+            "bg-slate-600": "linear-gradient(180deg, #475569, #1e293b)", 
+            "bg-amber-600": "linear-gradient(180deg, #d97706, #78350f)", 
+            "bg-zinc-400": "linear-gradient(180deg, #71717a, #3f3f46)", 
+            "bg-green-600": "linear-gradient(180deg, #10b981, #064e3b)", 
+            "bg-pink-500": "linear-gradient(180deg, #db2777, #831843)", 
+            "bg-yellow-600": "linear-gradient(180deg, #ea580c, #9a3412)", 
+            "bg-red-500": "linear-gradient(180deg, #f87171, #b91c1c)",
+            "bg-blue-600": "linear-gradient(180deg, #3b82f6, #1e40af)",
+            "bg-indigo-600": "linear-gradient(180deg, #6366f1, #312e81)",
+            "bg-cyan-600": "linear-gradient(180deg, #0891b2, #164e63)"
+          };
 
-      let validLinks = [];
-      links.forEach((l) => {
-        let name = safe(l?.name);
-        if (name.includes("लाडो लक्ष्मी योजना: पैसा आया है या नहीं आया यहाँ से चेक करें")) {
-            name = "लाडो लक्ष्मी योजना: पैसा आया है या नहीं - यहाँ से चेक करें";
+          const fallbackColors = [
+              "linear-gradient(180deg, #ea580c, #9a3412)", // Orange/Brown
+              "linear-gradient(180deg, #3b82f6, #1e40af)", // Blue
+              "linear-gradient(180deg, #be185d, #831843)", // Pink/Maroon
+              "linear-gradient(180deg, #6366f1, #3730a3)", // Indigo
+              "linear-gradient(180deg, #10b981, #064e3b)", // Green
+              "linear-gradient(180deg, #b45309, #78350f)", // Brown
+              "linear-gradient(180deg, #8b5cf6, #5b21b6)", // Purple
+              "linear-gradient(180deg, #0ea5e9, #0369a1)"  // Light Blue
+          ];
+
+          let validLinks = [];
+          links.forEach((l) => {
+            let name = safe(l?.name);
+            if (name.includes("लाडो लक्ष्मी योजना: पैसा आया है या नहीं आया यहाँ से चेक करें")) {
+                name = "लाडो लक्ष्मी योजना: पैसा आया है या नहीं - यहाँ से चेक करें";
+            }
+            const nLower = name.toLowerCase().trim();
+            if (excludeList.some(ex => nLower.includes(ex))) return;
+            
+            const url = safe(l?.url || l?.link);
+            if (!name || !url) return;
+            
+            validLinks.push({ ...l, name: name, url: url });
+          });
+
+          // Extract Top Headlines
+          let topHeadlineIndex = validLinks.findIndex(l => l.name.toLowerCase().includes("headlines"));
+          let topHeadline = null;
+          if (topHeadlineIndex > -1) {
+              topHeadline = validLinks.splice(topHeadlineIndex, 1)[0];
+          }
+
+          // Pair shuffling algorithm
+          validLinks.sort((a, b) => a.name.length - b.name.length);
+          let mixedLinks = [];
+          let left = 0; let right = validLinks.length - 1;
+          while (left <= right) {
+              if (left === right) { mixedLinks.push(validLinks[left]); break; }
+              mixedLinks.push(validLinks[right]); 
+              mixedLinks.push(validLinks[left]);  
+              right--; left++;
+          }
+
+          const finalLinks = topHeadline ? [topHeadline, ...mixedLinks] : mixedLinks;
+
+          host.innerHTML = "";
+          finalLinks.forEach((l, index) => {
+            const a = document.createElement("a");
+            a.className = "home-link-btn";
+            a.href = normalizeUrl(l.url);
+            if (l.external) { a.target = "_blank"; a.rel = "noopener"; }
+            
+            if (l.name.toLowerCase().includes("headlines")) {
+                 a.style.background = "linear-gradient(180deg, #ef4444, #991b1b)";
+                 a.style.width = "100%"; 
+            } else {
+                 a.style.background = colorMap[safe(l.color)] || fallbackColors[index % fallbackColors.length];
+            }
+            
+            const icon = safe(l.icon);
+            if (icon) a.innerHTML = `<i class="${icon}"></i><span>${l.name}</span>`;
+            else a.textContent = l.name;
+            host.appendChild(a);
+          });
         }
-        const nLower = name.toLowerCase().trim();
-        if (excludeList.some(ex => nLower.includes(ex))) return;
-        
-        const url = safe(l?.url || l?.link);
-        if (!name || !url) return;
-        
-        validLinks.push({ ...l, name: name, url: url });
-      });
-
-      // 1. Extract Top Headlines so it's always forced to the #1 top position
-      let topHeadlineIndex = validLinks.findIndex(l => l.name.toLowerCase().includes("headlines"));
-      let topHeadline = null;
-      if (topHeadlineIndex > -1) {
-          topHeadline = validLinks.splice(topHeadlineIndex, 1)[0];
-      }
-
-      // 2. Pair shuffling algorithm (mixes long and short names so flex automatically wraps them beautifully)
-      validLinks.sort((a, b) => a.name.length - b.name.length);
-      let mixedLinks = [];
-      let left = 0; let right = validLinks.length - 1;
-      while (left <= right) {
-          if (left === right) { mixedLinks.push(validLinks[left]); break; }
-          mixedLinks.push(validLinks[right]); 
-          mixedLinks.push(validLinks[left]);  
-          right--; left++;
-      }
-
-      const finalLinks = topHeadline ? [topHeadline, ...mixedLinks] : mixedLinks;
-
-      host.innerHTML = "";
-      finalLinks.forEach((l, index) => {
-        const a = document.createElement("a");
-        a.className = "home-link-btn";
-        a.href = normalizeUrl(l.url);
-        if (l.external) { a.target = "_blank"; a.rel = "noopener"; }
-        
-        // Top Headlines gets special bright red, the rest use our beautiful new palette
-        if (l.name.toLowerCase().includes("headlines")) {
-             a.style.background = "linear-gradient(135deg, #ef4444, #dc2626)";
-             a.style.width = "100%"; 
-        } else {
-             a.style.background = premiumGradients[index % premiumGradients.length];
-        }
-        
-        const icon = safe(l.icon);
-        if (icon) a.innerHTML = `<i class="${icon}"></i><span>${l.name}</span>`;
-        else a.textContent = l.name;
-        host.appendChild(a);
-      });
+    } else {
+        // Hides the pill container entirely if not on homepage
+        if (host) host.style.display = 'none';
     }
 
     // ✅ INJECT PERFECT BOTTOM SEARCH BAR
@@ -1355,7 +1378,6 @@
 
       const performSearch = () => {
         const query = input.value.toLowerCase().trim();
-        // ✅ Searches instantly even from a single letter
         if (query.length < 1) {
           resultsWrap.innerHTML = "";
           resultsWrap.style.display = "none";
