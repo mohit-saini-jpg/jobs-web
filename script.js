@@ -67,7 +67,7 @@
     `;
   }
 
-  // ✅ MOBILE HEADER BUTTON INJECTION
+  // MOBILE HEADER BUTTON INJECTION 
   function injectMobileHeaderBtns() {
     if (window.innerWidth > 980) return;
     const headerHost = document.getElementById("site-header") || document.querySelector(".site-header");
@@ -91,49 +91,35 @@
     }
   }
 
-  // ✅ LASER-TARGETED OLD SEARCH HIDER: Perfectly safe for jobs!
+  // SAFE OLD SEARCH HIDER
   function safeHideOldSearchBars() {
     if (window.innerWidth <= 980) {
         
-        // Target old inputs directly
-        document.querySelectorAll('#siteSearchInput, #sectionSearchInput').forEach(input => {
-            // Hide the input and button
-            input.style.setProperty('display', 'none', 'important');
-            if (input.nextElementSibling) input.nextElementSibling.style.setProperty('display', 'none', 'important');
-            
-            // Hide the immediate wrapper row
+        const oldInputs = document.querySelectorAll('#siteSearchInput, #sectionSearchInput');
+        oldInputs.forEach(input => {
             const row = input.closest('.search-row');
             if (row && !row.classList.contains('mbs-row')) {
                 row.style.setProperty('display', 'none', 'important');
             }
-            
-            // Safely hide the white card IF it contains NO jobs
-            const card = input.closest('.search-card');
-            if (card && card.id !== 'mobile-bottom-search') {
-                if (!card.querySelector('a.section-link, table, .section-list')) {
-                    card.style.setProperty('display', 'none', 'important');
-                } else {
-                    // It contains jobs! Just hide the search titles inside it
-                    card.querySelectorAll('.search-title, .search-sub').forEach(t => t.style.setProperty('display', 'none', 'important'));
-                }
-            }
         });
         
-        // Hide explicit "Search across..." titles that might float freely
         document.querySelectorAll('h1, h2, h3, p').forEach(el => {
             const txt = (el.textContent || "").trim();
             if (txt === "Search across Top Sarkari Jobs" || 
                 txt === "Search jobs, results, admit cards, categories, CSC services and tools.") {
                 el.style.setProperty('display', 'none', 'important');
                 
-                // Hide its direct wrapper if it's empty
-                const parent = el.parentElement;
-                if (parent && parent.tagName === 'DIV' && parent.id !== 'main') {
-                    if (!parent.querySelector('a.section-link, table, .section-list, article')) {
-                        parent.style.setProperty('display', 'none', 'important');
+                const parentBox = el.closest('.search-card') || el.closest('div[style*="border"], div[class*="card"]');
+                if (parentBox && parentBox.id !== 'mobile-bottom-search') {
+                    if (!parentBox.querySelector('a.section-link, table, .section-list')) {
+                        parentBox.style.setProperty('display', 'none', 'important');
                     }
                 }
             }
+        });
+
+        document.querySelectorAll('.top-search').forEach(ts => {
+            ts.style.setProperty('display', 'none', 'important');
         });
     }
   }
@@ -408,7 +394,6 @@
     });
   }
 
-  // ✅ PERFECTED GRID (Matching Outline Rows) & VIBRANT DESKTOP/MOBILE PILLS
   async function renderHomeQuickLinks() {
     const isHome = (page === "index.html" || page === "");
     
@@ -418,178 +403,17 @@
     if (!wrap) {
       wrap = document.createElement("section");
       wrap.id = "home-quicklinks-wrap";
-      wrap.className = "home-quicklinks"; // Wrapper is always visible for grid/search
+      wrap.className = "home-quicklinks"; 
       
       host = document.createElement("div");
       host.id = "home-links";
-      // ✅ Pill boxes display natively on desktop. On mobile inner pages, they hide!
-      host.className = isHome ? "home-links" : "home-links hidden-on-inner";
+      host.className = "home-links";
       wrap.appendChild(host);
       
       const mainEl = document.getElementById("main") || document.querySelector("main") || document.body;
       if (mainEl && mainEl.parentNode) {
           mainEl.parentNode.insertBefore(wrap, mainEl);
       }
-    }
-
-    if (!document.getElementById("home-quicklinks-style")) {
-      const style = document.createElement("style");
-      style.id = "home-quicklinks-style";
-      style.textContent = `
-        .home-quicklinks { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 24px 0 0; }
-        
-        /* DESKTOP VIEW */
-        .home-links { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; }
-        
-        .home-link-btn {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          padding: 8px 16px;
-          border-radius: 99px;
-          color: #fff;
-          font-weight: 700;
-          font-size: 14px;
-          text-decoration: none;
-          line-height: 1.2;
-          box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-          border: 1px solid rgba(255,255,255,0.2);
-          white-space: nowrap;
-          transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
-        }
-        .home-link-btn:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-          filter: brightness(1.05);
-        }
-        .home-link-btn:active { transform: translateY(0); }
-        
-        /* ✅ PREMIUM MOBILE APP OVERRIDES */
-        @media (max-width: 980px) {
-          .home-quicklinks { padding-top: 16px; }
-          .hidden-on-inner { display: none !important; }
-          
-          /* The 4-Column Grid */
-          .mobile-nav-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-auto-rows: 1fr;
-            gap: 8px;
-            margin-bottom: 24px;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            padding: 12px;
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 8px 24px rgba(2, 132, 199, 0.06);
-          }
-          .grid-nav-btn {
-            background: #ffffff;
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: 800;
-            text-align: center;
-            padding: 12px 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            line-height: 1.3;
-            text-decoration: none;
-            word-break: break-word;
-            transition: transform 0.2s ease;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-            border: 1px solid #e2e8f0;
-          }
-          .grid-nav-btn:active { transform: scale(0.95); }
-          
-          /* UNIFORM OUTLINE ROW THEMES (As requested) */
-          .grid-nav-btn.solid-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 10px rgba(37,99,235,0.25); border: 1px solid #1e40af; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
-          .grid-nav-btn.outline-blue { background: #f0f9ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-weight: 800; }
-          
-          .grid-nav-btn.outline-purple { background: #faf5ff; color: #7e22ce; border: 1px solid #e9d5ff; font-weight: 800; }
-          .grid-nav-btn.outline-orange { background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; font-weight: 800; }
-          .grid-nav-btn.solid-green { background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 10px rgba(16,185,129,0.25); border: 1px solid #047857; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
-
-          /* ✅ PERFECT 3D EMBOSSED PILLS: Flex-grow automatically stretches to lock together! */
-          .home-links { 
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px 6px; 
-            justify-content: center; 
-            align-content: stretch;
-            padding: 0 6px; 
-            margin-bottom: 0px; 
-          }
-          .home-link-btn { 
-            flex: 1 1 auto; 
-            padding: 10px 12px; 
-            font-size: 13px; 
-            text-align: center;
-            justify-content: center;
-            margin: 0;
-            min-width: 28%; 
-            border-radius: 12px;
-            /* Beautiful 3D bevel from your reference */
-            box-shadow: inset 0px 4px 6px rgba(255,255,255,0.35), inset 0px -4px 6px rgba(0,0,0,0.25), 0 4px 6px rgba(0,0,0,0.15);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
-            border: none;
-            letter-spacing: 0.2px;
-          }
-          
-          /* Custom Bottom Search exactly like screenshot */
-          .mobile-bottom-search {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            padding: 20px 14px;
-            margin-top: 28px;
-            margin-bottom: 20px;
-            border-radius: 16px;
-            text-align: center;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-          }
-          .mobile-bottom-search h3 {
-            font-size: 15px;
-            font-weight: 900;
-            margin: 0 0 14px;
-            color: #0f172a;
-            letter-spacing: -0.2px;
-          }
-          .mbs-row {
-            display: flex;
-            border: 1px solid #cbd5e1;
-            border-radius: 10px;
-            overflow: hidden;
-            background: #f8fafc;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-          }
-          .mbs-row input {
-            flex: 1;
-            height: 46px;
-            border: none;
-            background: transparent;
-            padding: 0 14px;
-            font-size: 14px;
-            outline: none;
-            color: #0f172a;
-          }
-          .mbs-row input:focus { background: #fff; border-color: #0ea5e9; }
-          .mbs-row button {
-            background: linear-gradient(135deg, #0ea5e9, #4f46e5);
-            color: #fff;
-            border: none;
-            padding: 0 20px;
-            font-weight: 800;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-          }
-        }
-      `;
-      document.head.appendChild(style);
     }
 
     let data = null;
@@ -604,30 +428,27 @@
         if (waObj && (waObj.url || waObj.link)) waLink = waObj.url || waObj.link;
     }
     
-    // ✅ INJECT CUSTOM APP GRID (Matching Exact Uniform Outlines & Link)
     if (wrap && !document.getElementById("mobile-nav-grid")) {
         const mobileNavWrap = document.createElement("div");
         mobileNavWrap.id = "mobile-nav-grid";
         mobileNavWrap.className = "mobile-nav-grid";
 
+        // ✅ ONLY URLS CHANGED HERE. Colors remain exactly as they were in your reverted code!
         const mLinks = [
-            // Row 1 (Blue)
-            { name: "Latest Jobs", url: "https://www.topsarkarijobs.com/view.html?section=latest%20jobs", cls: "outline-blue" },
-            { name: "Study wise jobs", url: "category.html?group=study", cls: "outline-blue" },
-            { name: "Categories wise jobs", url: "category.html?group=popular", cls: "outline-blue" },
-            { name: "State wise Jobs", url: "category.html?group=state", cls: "outline-blue" },
+            { name: "Latest Jobs", url: "https://www.topsarkarijobs.com/view.html?section=latest%20jobs", cls: "glass-primary" },
+            { name: "Study wise jobs", url: "category.html?group=study", cls: "glass-blue" },
+            { name: "Categories wise jobs", url: "category.html?group=popular", cls: "glass-blue" },
+            { name: "State wise Jobs", url: "category.html?group=state", cls: "glass-blue" },
             
-            // Row 2 (Purple)
-            { name: "Admissions", url: "category.html?group=admissions", cls: "outline-purple" },
-            { name: "Resume/CV Maker", url: "https://www.topsarkarijobs.com/view.html?url=https%253A%252F%252Fsarkariresulttools.net%252Fresume-maker%252F&name=Resume%2520CV%2520Maker&job=resume-cv-makerume-cv-maker", cls: "outline-purple" }, 
-            { name: "CSC Services", url: "govt-services.html", cls: "outline-purple" },
-            { name: "Study Material", url: "category.html?group=study-material", cls: "outline-purple" },
+            { name: "Admissions", url: "category.html?group=admissions", cls: "glass-blue" },
+            { name: "Resume/CV Maker", url: "https://www.topsarkarijobs.com/view.html?url=https%253A%252F%252Fsarkariresulttools.net%252Fresume-maker%252F&name=Resume%2520CV%2520Maker&job=resume-cv-makerume-cv-maker", cls: "glass-purple" }, 
+            { name: "CSC Services", url: "govt-services.html", cls: "glass-teal" },   
+            { name: "Study Material", url: "category.html?group=study-material", cls: "glass-dark" }, 
             
-            // Row 3 (Orange + Solid Green WhatsApp)
-            { name: "Results", url: "result.html", cls: "outline-orange" },
-            { name: "Admit Card", url: "category.html?group=admit-result", cls: "outline-orange" },
-            { name: "Latest Khabar", url: "category.html?group=khabar", cls: "outline-orange" },
-            { name: "Join WhatsApp", url: waLink, cls: "solid-green" } 
+            { name: "Results", url: "https://www.topsarkarijobs.com/view.html?section=results", cls: "glass-orange" },
+            { name: "Admit Card", url: "category.html?group=admit-result", cls: "glass-orange" },
+            { name: "Latest Khabar", url: "category.html?group=khabar", cls: "glass-blue" },
+            { name: "Join WhatsApp", url: waLink, cls: "glass-green" } 
         ];
 
         mLinks.forEach(l => {
@@ -641,7 +462,6 @@
         wrap.insertBefore(mobileNavWrap, wrap.firstChild);
     }
 
-    // Process pill links (Will be hidden automatically on inner pages by CSS)
     const links = Array.isArray(data?.home_links) ? data.home_links : [];
     if (links.length) {
       
@@ -651,16 +471,15 @@
           "results", "result", "admit card", "khabar", "helpdesk", "home", "tools", "whatsapp"
       ];
 
-      // ✅ BRAND NEW PREMIUM APP COLORS FOR PILLS (iOS Inspired Gradients)
       const premiumGradients = [
-          "linear-gradient(135deg, #3b82f6, #2563eb)", // Blue
-          "linear-gradient(135deg, #8b5cf6, #7c3aed)", // Violet
-          "linear-gradient(135deg, #10b981, #059669)", // Emerald
-          "linear-gradient(135deg, #f59e0b, #d97706)", // Amber
-          "linear-gradient(135deg, #ec4899, #db2777)", // Pink
-          "linear-gradient(135deg, #0ea5e9, #0284c7)", // Sky
-          "linear-gradient(135deg, #f43f5e, #e11d48)", // Rose
-          "linear-gradient(135deg, #6366f1, #4f46e5)"  // Indigo
+          "linear-gradient(135deg, #0f766e, #064e3b)", 
+          "linear-gradient(135deg, #d97706, #9a3412)", 
+          "linear-gradient(135deg, #4f46e5, #312e81)", 
+          "linear-gradient(135deg, #0284c7, #075985)", 
+          "linear-gradient(135deg, #be185d, #831843)", 
+          "linear-gradient(135deg, #b45309, #78350f)", 
+          "linear-gradient(135deg, #4338ca, #1e3a8a)", 
+          "linear-gradient(135deg, #0369a1, #0f172a)"  
       ];
 
       let validLinks = [];
@@ -678,14 +497,12 @@
         validLinks.push({ ...l, name: name, url: url });
       });
 
-      // 1. Extract Top Headlines so it's always forced to the #1 top position
       let topHeadlineIndex = validLinks.findIndex(l => l.name.toLowerCase().includes("headlines"));
       let topHeadline = null;
       if (topHeadlineIndex > -1) {
           topHeadline = validLinks.splice(topHeadlineIndex, 1)[0];
       }
 
-      // 2. Pair shuffling algorithm (mixes long and short names so flex automatically wraps them beautifully)
       validLinks.sort((a, b) => a.name.length - b.name.length);
       let mixedLinks = [];
       let left = 0; let right = validLinks.length - 1;
@@ -705,9 +522,8 @@
         a.href = normalizeUrl(l.url);
         if (l.external) { a.target = "_blank"; a.rel = "noopener"; }
         
-        // Top Headlines gets special bright red, the rest use our beautiful new palette
         if (l.name.toLowerCase().includes("headlines")) {
-             a.style.background = "linear-gradient(135deg, #ef4444, #dc2626)";
+             a.style.background = "linear-gradient(135deg, #ef4444, #991b1b)";
              a.style.width = "100%"; 
         } else {
              a.style.background = premiumGradients[index % premiumGradients.length];
@@ -720,7 +536,6 @@
       });
     }
 
-    // ✅ INJECT PERFECT BOTTOM SEARCH BAR
     if (wrap && !document.getElementById("mobile-bottom-search")) {
         const mbs = document.createElement("div");
         mbs.id = "mobile-bottom-search";
@@ -757,7 +572,6 @@
     });
   }
 
-  // Category Pages
   async function initCategoryPage() {
     if (page !== "category.html") return;
     const params = new URLSearchParams(location.search || "");
@@ -815,7 +629,6 @@
     else if (group === "khabar") items = sliceBetween(right, "latest khabar", "study material");
     else if (group === "study-material") items = sliceBetween(right, "study material", "tools");
 
-    // Filter Garbage
     items = items.filter(i => !isGarbageLink(i));
 
     gridEl.innerHTML = "";
@@ -827,232 +640,8 @@
       a.innerHTML = `<div class="t">${safe(it.name)}</div><div class="d">Open official link</div>`;
       gridEl.appendChild(a);
     });
-
-    const mainContainer = $("#main") || $("main") || document.body;
-    let seoBox = document.getElementById("dynamic-seo-box");
-    if (seoBox) seoBox.remove(); 
-
-    let seoHTML = "";
-
-    if (group === "study") {
-      seoHTML = `
-        <section class="seo-block" aria-label="Guides" style="margin-top: 24px;">
-          <h2>Government Exam Study Resources 2026 – Free Study Material, Syllabus, Mock Tests & Preparation Strategy</h2>
-          <p>Preparing for a Sarkari Job in India requires more than just hard work — it requires the right strategy, authentic study material, structured revision plan, and consistent practice. The Study section of Top Sarkari Jobs is designed to be your complete preparation hub for all major Government Exams 2026 including UPSC, SSC, Railway, Banking, State PSC, Police, Defence, CUET, JEE, NEET and other competitive exams.</p>
-          <p>Yahan par aapko milega free study material, official syllabus guidance, trusted government learning portals, previous year question papers, conceptual video lectures, and structured preparation roadmap — sab ek hi jagah par. This page is not just about downloading PDFs. It is about building strong conceptual clarity, analytical ability and exam confidence.</p>
-          
-          <div class="seo-grid">
-            <div class="seo-card">
-              <h3>Why Structured Study Resources Matter</h3>
-              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">Government exams in India are highly competitive. Lakhs of candidates apply every year for limited vacancies. Random preparation se selection mushkil hota hai. Structured preparation se success possible hoti hai. Most exams test:</p>
-              <ul style="list-style-type: disc; margin-left: 18px; color: var(--muted); line-height: 1.6; font-size: 13px;">
-                <li>Conceptual clarity & Analytical reasoning</li>
-                <li>Current affairs awareness</li>
-                <li>Time management & Accuracy under pressure</li>
-              </ul>
-            </div>
-            <div class="seo-card">
-              <h3>Start with NCERT – Foundation</h3>
-              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">Almost every major competitive exam is linked to NCERT concepts (History, Geography, Polity, Economics, General Science). For UPSC and State PSC, Class 6–12 is mandatory.</p>
-              <p style="font-size: 13px; margin-top: 8px; font-weight: 600;">👉 <a href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">ncert.nic.in/textbook.php</a></p>
-            </div>
-            <div class="seo-card">
-              <h3>SWAYAM & NPTEL – Online Courses</h3>
-              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">SWAYAM offers free courses by IIT/IIM professors for Gen Studies, Economics, etc.</p>
-              <p style="font-size: 13px; margin-bottom: 8px; font-weight: 600;">👉 <a href="https://swayam.gov.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">swayam.gov.in</a></p>
-              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">NPTEL offers technical & analytical lectures (Aptitude, Reasoning, Engineering).</p>
-              <p style="font-size: 13px; font-weight: 600;">👉 <a href="https://nptel.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">nptel.ac.in</a></p>
-            </div>
-            <div class="seo-card">
-              <h3>National Digital Library (NDLI)</h3>
-              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">Access academic books, research material, and previous year papers.</p>
-              <p style="font-size: 13px; margin-bottom: 8px; font-weight: 600;">👉 <a href="https://ndl.iitkgp.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">ndl.iitkgp.ac.in</a></p>
-            </div>
-          </div>
-          <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line);">
-            <h3 style="font-size: 16px; font-weight: 900; margin-bottom: 8px;">Smart Study Plan & Syllabus Strategy</h3>
-            <p style="font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 8px;">Always download the official syllabus (e.g., from <a href="https://upsc.gov.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">upsc.gov.in</a> or <a href="https://nta.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">nta.ac.in</a>). Avoid studying from too many sources, ignoring past papers, and following unverified PDFs.</p>
-            <ul style="list-style-type: decimal; margin-left: 18px; color: var(--muted); line-height: 1.6; font-size: 14px;">
-              <li>Complete NCERT (Foundation)</li>
-              <li>Download official syllabus & create timetable</li>
-              <li>Take SWAYAM/NPTEL lectures</li>
-              <li>Solve previous year question papers & weekly mock tests</li>
-            </ul>
-            <p style="font-size: 14px; font-weight: 700; color: #0ea5e9; margin-top: 10px;">Preparation smart honi chahiye, sirf hard work se selection nahi hota.</p>
-          </div>
-        </section>`;
-    } else if (group === "popular") {
-      seoHTML = `
-        <section class="seo-block" aria-label="Guides" style="margin-top: 24px;">
-          <h2>Popular Government Exams 2026 – Most Applied Sarkari Jobs in India</h2>
-          <p>Every year, millions of aspirants apply for popular government exams in India. These exams offer job security, stable salary, pension benefits, and long-term career growth. The Popular section of Top Sarkari Jobs highlights the most searched, most competitive and high-demand Sarkari exams in India for 2026.</p>
-          <div class="seo-grid">
-            <div class="seo-card">
-              <h3>UPSC Civil Services Examination</h3>
-              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">Recruits for IAS, IPS, IFS and other Group A services. Prep: NCERT foundation, daily newspaper, analytical writing, mock tests.</p>
-              <p style="font-size: 13px; margin-bottom: 4px; font-weight: 600;">Official: 👉 <a href="https://upsc.gov.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">upsc.gov.in</a></p>
-            </div>
-            <div class="seo-card">
-              <h3>NTA Conducted Exams</h3>
-              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">NTA conducts CUET (UG), JEE Main, NEET UG, UGC NET, CSIR NET.</p>
-              <p style="font-size: 13px; margin-bottom: 4px; font-weight: 600;">Official: 👉 <a href="https://nta.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">nta.ac.in</a></p>
-            </div>
-            <div class="seo-card">
-              <h3>SSC & Railway Exams</h3>
-              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">SSC (CGL, CHSL, MTS) and RRB (NTPC, Group D, ALP) require quantitative aptitude, english, general awareness, speed & accuracy.</p>
-              <p style="font-size: 13px; margin-bottom: 4px;"><strong>NCERT Books:</strong> 👉 <a href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">ncert.nic.in/textbook.php</a></p>
-            </div>
-            <div class="seo-card">
-              <h3>Banking Exams (IBPS / SBI / RBI)</h3>
-              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">Popular for urban postings and structured promotions. Requires strong quantitative aptitude and reasoning.</p>
-              <p style="font-size: 13px; margin-bottom: 4px;"><strong>Concept lectures:</strong> 👉 <a href="https://nptel.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">nptel.ac.in</a></p>
-            </div>
-          </div>
-        </section>`;
-    } else if (group === "state") {
-      seoHTML = `
-        <section class="seo-block" aria-label="Guides" style="margin-top: 24px;">
-          <h2>State Wise Sarkari Jobs 2026 – State PSC, Police & Local Recruitment Updates</h2>
-          <p>India has 28 states and each state conducts its own recruitment for administrative, police, teaching and technical posts. This section helps candidates explore State PSC Notifications, State Police Recruitment, State Teaching Jobs, and State Level Group B & C Vacancies.</p>
-          <div class="seo-grid">
-            <div class="seo-card">
-              <h3>Why State Jobs Are Important</h3>
-              <ul style="list-style-type: disc; margin-left: 18px; color: var(--muted); line-height: 1.6; font-size: 13px;">
-                <li>Local posting & Language advantage</li>
-                <li>Stable career & Regional growth</li>
-              </ul>
-            </div>
-            <div class="seo-card">
-              <h3>Official Government Portals</h3>
-              <p style="font-size: 13px; margin-bottom: 4px;"><strong>Civil Services:</strong> 👉 <a href="https://upsc.gov.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">upsc.gov.in</a></p>
-              <p style="font-size: 13px; margin-bottom: 4px;"><strong>National Exams:</strong> 👉 <a href="https://nta.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">nta.ac.in</a></p>
-              <p style="font-size: 13px; color: var(--muted);">Always verify notifications from official sources.</p>
-            </div>
-            <div class="seo-card">
-              <h3>State Exam Preparation Strategy</h3>
-              <p style="font-size: 13px; margin-bottom: 4px;">1. NCERT foundation: 👉 <a href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">ncert.nic.in</a></p>
-              <p style="font-size: 13px; margin-bottom: 4px;">2. State specific history: 👉 <a href="https://ndl.iitkgp.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">ndl.iitkgp.ac.in</a></p>
-              <p style="font-size: 13px; margin-bottom: 4px;">3. Concept lectures: 👉 <a href="https://swayam.gov.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">swayam.gov.in</a></p>
-            </div>
-            <div class="seo-card">
-              <h3>Subjects Common in State Exams</h3>
-              <ul style="list-style-type: disc; margin-left: 18px; color: var(--muted); line-height: 1.6; font-size: 13px;">
-                <li>State History & Geography</li>
-                <li>Indian Polity & Current Affairs</li>
-              </ul>
-              <p style="font-size: 13px; margin-top: 8px; color: var(--muted);">Preparation must combine local + national knowledge.</p>
-            </div>
-          </div>
-        </section>`;
-    } else if (group === "admissions") {
-      seoHTML = `
-        <section class="seo-block" aria-label="Guides" style="margin-top: 24px;">
-          <h2>University Admissions 2026 – Entrance Exams, Eligibility & Preparation Resources</h2>
-          <p>This section covers national and university-level entrance examinations. Students searching for CUET 2026, JEE Main 2026, NEET UG 2026, UGC NET, or Central University Admissions will find verified and structured guidance here.</p>
-          <div class="seo-grid">
-            <div class="seo-card">
-              <h3>National Testing Agency (NTA)</h3>
-              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">NTA conducts major national entrance exams. Candidates must track deadlines, download admit cards, and review correction notices.</p>
-              <p style="font-size: 13px; margin-top: 8px; font-weight: 600;">👉 <a href="https://nta.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">nta.ac.in</a></p>
-            </div>
-            <div class="seo-card">
-              <h3>Academic Preparation Resources</h3>
-              <p style="font-size: 13px; margin-bottom: 4px;"><strong>NCERT:</strong> 👉 <a href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">ncert.nic.in/textbook.php</a></p>
-              <p style="font-size: 13px; margin-bottom: 4px;"><strong>SWAYAM:</strong> 👉 <a href="https://swayam.gov.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">swayam.gov.in</a></p>
-              <p style="font-size: 13px; margin-bottom: 4px;"><strong>NPTEL:</strong> 👉 <a href="https://nptel.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">nptel.ac.in</a></p>
-              <p style="font-size: 13px; margin-bottom: 4px;"><strong>NDLI:</strong> 👉 <a href="https://ndl.iitkgp.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">ndl.iitkgp.ac.in</a></p>
-            </div>
-          </div>
-          <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line);">
-            <h3 style="font-size: 16px; font-weight: 900; margin-bottom: 8px;">Admission Preparation Strategy</h3>
-            <p style="font-size: 14px; color: var(--muted);">Follow official syllabus, practice mock tests, revise fundamentals, and track official announcements. Avoid relying on unverified portals.</p>
-          </div>
-        </section>`;
-    } else if (group === "admit-result") {
-      seoHTML = `
-        <section class="seo-block" aria-label="Guides" style="margin-top: 24px;">
-          <h2>Sarkari Admit Card & Result 2026 – Official Download Links & Verification Guide</h2>
-          <p>This section provides verified links for Sarkari Result 2026, Government Exam Admit Cards, Scorecards, and Merit Lists.</p>
-          <div class="seo-grid">
-            <div class="seo-card">
-              <h3>Official Portals</h3>
-              <p style="font-size: 13px; margin-bottom: 4px;"><strong>NTA:</strong> 👉 <a href="https://nta.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">nta.ac.in</a></p>
-              <p style="font-size: 13px; margin-bottom: 4px;"><strong>UPSC:</strong> 👉 <a href="https://upsc.gov.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">upsc.gov.in</a></p>
-              <p style="font-size: 13px; margin-top: 8px; color: var(--muted);">Always use official websites only.</p>
-            </div>
-            <div class="seo-card">
-              <h3>Between Admit Card & Exam</h3>
-              <p style="font-size: 13px; margin-bottom: 4px;"><strong>NCERT:</strong> 👉 <a href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">ncert.nic.in/textbook.php</a></p>
-              <p style="font-size: 13px; margin-bottom: 4px;"><strong>Concept courses:</strong> 👉 <a href="https://swayam.gov.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">swayam.gov.in</a></p>
-              <p style="font-size: 13px; margin-bottom: 4px;"><strong>Advanced practice:</strong> 👉 <a href="https://ndl.iitkgp.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">ndl.iitkgp.ac.in</a></p>
-            </div>
-            <div class="seo-card">
-              <h3>After Result Declaration</h3>
-              <ul style="list-style-type: disc; margin-left: 18px; color: var(--muted); line-height: 1.6; font-size: 13px;">
-                <li>Check cut-off</li>
-                <li>Download scorecard</li>
-                <li>Prepare for next stage</li>
-              </ul>
-            </div>
-          </div>
-        </section>`;
-    } else if (group === "khabar") {
-      seoHTML = `
-        <section class="seo-block" aria-label="Guides" style="margin-top: 24px;">
-          <h2>Latest Government Exam News 2026 – Official Notifications & Updates</h2>
-          <p>Stay updated with exam date changes, application extensions, correction windows, and result announcements.</p>
-          <div class="seo-grid">
-            <div class="seo-card">
-              <h3>Trusted Sources</h3>
-              <p style="font-size: 13px; margin-bottom: 4px;"><strong>NTA Official:</strong> 👉 <a href="https://nta.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">nta.ac.in</a></p>
-              <p style="font-size: 13px; margin-bottom: 4px;"><strong>UPSC Official:</strong> 👉 <a href="https://upsc.gov.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">upsc.gov.in</a></p>
-              <p style="font-size: 13px; margin-bottom: 4px;"><strong>Educational portal:</strong> 👉 <a href="https://swayam.gov.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">swayam.gov.in</a></p>
-            </div>
-            <div class="seo-card">
-              <h3>Why News Section Matters</h3>
-              <p style="font-size: 13px; color: var(--muted);">Timely information helps avoid missed deadlines. Never rely on rumors.</p>
-            </div>
-          </div>
-        </section>`;
-    } else if (group === "study-material") {
-      seoHTML = `
-        <section class="seo-block" aria-label="Guides" style="margin-top: 24px;">
-          <h2>Free Study Material for Government Exams – Download PDFs & Online Courses</h2>
-          <p>This page is dedicated exclusively to preparation material.</p>
-          <div class="seo-grid">
-            <div class="seo-card">
-              <h3>Foundation & Online Learning</h3>
-              <p style="font-size: 13px; margin-bottom: 4px;"><strong>NCERT Textbooks:</strong> 👉 <a href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">ncert.nic.in/textbook.php</a></p>
-              <p style="font-size: 13px; margin-bottom: 4px;"><strong>SWAYAM:</strong> 👉 <a href="https://swayam.gov.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">swayam.gov.in</a></p>
-              <p style="font-size: 13px; margin-bottom: 4px;"><strong>NPTEL:</strong> 👉 <a href="https://nptel.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">nptel.ac.in</a></p>
-            </div>
-            <div class="seo-card">
-              <h3>Research & Reference Library</h3>
-              <p style="font-size: 13px; margin-bottom: 4px;"><strong>National Digital Library:</strong> 👉 <a href="https://ndl.iitkgp.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">ndl.iitkgp.ac.in</a></p>
-            </div>
-            <div class="seo-card">
-              <h3>Complete Preparation Ecosystem</h3>
-              <ul style="list-style-type: disc; margin-left: 18px; color: var(--muted); line-height: 1.6; font-size: 13px;">
-                <li>Learn basics from NCERT</li>
-                <li>Deepen understanding via SWAYAM</li>
-                <li>Improve analytical skills through NPTEL</li>
-                <li>Practice using NDLI materials</li>
-                <li>Track official updates via <a href="https://nta.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">NTA</a> & <a href="https://upsc.gov.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">UPSC</a></li>
-              </ul>
-            </div>
-          </div>
-        </section>`;
-    }
-
-    if (seoHTML) {
-      seoBox = document.createElement("div");
-      seoBox.id = "dynamic-seo-box";
-      seoBox.innerHTML = seoHTML;
-      mainContainer.appendChild(seoBox);
-    }
   }
 
-  // Tools Page
   async function initToolsPage() {
     if (!isToolsPage) return;
 
@@ -1150,7 +739,6 @@
     }
   }
 
-  // CSC Services 
   const CSC_TABLE = "csc_service_requests";
   let cscSupabase = null;
 
@@ -1322,7 +910,7 @@
     });
   }
 
-  // ✅ GLOBAL LIVE SEARCH ENGINE (Works instantly on 1 letter!)
+  // GLOBAL LIVE SEARCH ENGINE (Works instantly on 1 letter!)
   async function initGlobalLiveSearch() {
     const inputs = [];
     
