@@ -91,39 +91,48 @@
     }
   }
 
-  // ✅ ABSOLUTE OLD SEARCH HIDER: Hunts and removes the old white box and texts
+  // ✅ LASER-TARGETED OLD SEARCH HIDER: Perfectly safe for jobs!
   function safeHideOldSearchBars() {
     if (window.innerWidth <= 980) {
         
-        // Hide explicit "Search across..." titles & texts and their containers
+        // Target old inputs directly
+        document.querySelectorAll('#siteSearchInput, #sectionSearchInput').forEach(input => {
+            // Hide the input and button
+            input.style.setProperty('display', 'none', 'important');
+            if (input.nextElementSibling) input.nextElementSibling.style.setProperty('display', 'none', 'important');
+            
+            // Hide the immediate wrapper row
+            const row = input.closest('.search-row');
+            if (row && !row.classList.contains('mbs-row')) {
+                row.style.setProperty('display', 'none', 'important');
+            }
+            
+            // Safely hide the white card IF it contains NO jobs
+            const card = input.closest('.search-card');
+            if (card && card.id !== 'mobile-bottom-search') {
+                if (!card.querySelector('a.section-link, table, .section-list')) {
+                    card.style.setProperty('display', 'none', 'important');
+                } else {
+                    // It contains jobs! Just hide the search titles inside it
+                    card.querySelectorAll('.search-title, .search-sub').forEach(t => t.style.setProperty('display', 'none', 'important'));
+                }
+            }
+        });
+        
+        // Hide explicit "Search across..." titles that might float freely
         document.querySelectorAll('h1, h2, h3, p').forEach(el => {
             const txt = (el.textContent || "").trim();
             if (txt === "Search across Top Sarkari Jobs" || 
                 txt === "Search jobs, results, admit cards, categories, CSC services and tools.") {
                 el.style.setProperty('display', 'none', 'important');
                 
-                const parentBox = el.closest('.search-card') || el.closest('div[style*="border"], div[class*="card"]');
-                if (parentBox && parentBox.id !== 'mobile-bottom-search') {
-                    if (!parentBox.querySelector('a.section-link, table, .section-list')) {
-                        parentBox.style.setProperty('display', 'none', 'important');
+                // Hide its direct wrapper if it's empty
+                const parent = el.parentElement;
+                if (parent && parent.tagName === 'DIV' && parent.id !== 'main') {
+                    if (!parent.querySelector('a.section-link, table, .section-list, article')) {
+                        parent.style.setProperty('display', 'none', 'important');
                     }
                 }
-            }
-        });
-
-        // Target ANY element that contains the old inputs directly
-        const oldInputs = document.querySelectorAll('#siteSearchInput, #sectionSearchInput');
-        oldInputs.forEach(input => {
-            let p = input.parentElement;
-            while (p && p.tagName !== 'BODY') {
-                if (p.id === 'main' || p.id === 'mobile-bottom-search') break;
-                // If the wrapper contains jobs, don't hide it, just hide the input row
-                if (!p.querySelector('a.section-link, a.result-item, table, .section-list')) {
-                    p.style.setProperty('display', 'none', 'important');
-                } else {
-                    p.style.setProperty('padding-top', '0', 'important');
-                }
-                p = p.parentElement;
             }
         });
     }
@@ -399,7 +408,7 @@
     });
   }
 
-  // ✅ PERFECTED GRID (Matching outline rows) & PILLS HIDDEN ON INNER PAGES
+  // ✅ PERFECTED GRID (Matching Outline Rows) & VIBRANT DESKTOP/MOBILE PILLS
   async function renderHomeQuickLinks() {
     const isHome = (page === "index.html" || page === "");
     
@@ -409,11 +418,12 @@
     if (!wrap) {
       wrap = document.createElement("section");
       wrap.id = "home-quicklinks-wrap";
-      wrap.className = "home-quicklinks"; // Shows grid + bottom search everywhere
+      wrap.className = "home-quicklinks"; // Wrapper is always visible for grid/search
       
       host = document.createElement("div");
       host.id = "home-links";
-      host.className = "home-links";
+      // ✅ Pill boxes display natively on desktop. On mobile inner pages, they hide!
+      host.className = isHome ? "home-links" : "home-links hidden-on-inner";
       wrap.appendChild(host);
       
       const mainEl = document.getElementById("main") || document.querySelector("main") || document.body;
@@ -429,10 +439,6 @@
         .home-quicklinks { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 24px 0 0; }
         
         /* DESKTOP VIEW */
-        @media (min-width: 981px) {
-          .home-quicklinks { display: none !important; }
-        }
-
         .home-links { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; }
         
         .home-link-btn {
@@ -461,7 +467,8 @@
         
         /* ✅ PREMIUM MOBILE APP OVERRIDES */
         @media (max-width: 980px) {
-          .home-quicklinks { display: block !important; padding-top: 16px; }
+          .home-quicklinks { padding-top: 16px; }
+          .hidden-on-inner { display: none !important; }
           
           /* The 4-Column Grid */
           .mobile-nav-grid {
@@ -470,33 +477,42 @@
             grid-auto-rows: 1fr;
             gap: 8px;
             margin-bottom: 24px;
-            padding: 0 6px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 12px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 24px rgba(2, 132, 199, 0.06);
           }
           .grid-nav-btn {
+            background: #ffffff;
             border-radius: 8px;
             font-size: 11px;
             font-weight: 800;
             text-align: center;
-            padding: 10px 4px;
+            padding: 12px 4px;
             display: flex;
             align-items: center;
             justify-content: center;
             line-height: 1.3;
             text-decoration: none;
             word-break: break-word;
-            height: 100%;
-            transition: transform 0.2s;
-            letter-spacing: -0.2px;
+            transition: transform 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            border: 1px solid #e2e8f0;
           }
-          .grid-nav-btn:active { transform: scale(0.96); }
+          .grid-nav-btn:active { transform: scale(0.95); }
           
-          /* ✅ UNIFORM OUTLINE ROW THEMES */
-          .grid-nav-btn.outline-blue { background: #f0f9ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-weight: 800; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
-          .grid-nav-btn.outline-purple { background: #faf5ff; color: #7e22ce; border: 1px solid #e9d5ff; font-weight: 800; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
-          .grid-nav-btn.outline-orange { background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; font-weight: 800; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
+          /* UNIFORM OUTLINE ROW THEMES (As requested) */
+          .grid-nav-btn.solid-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 10px rgba(37,99,235,0.25); border: 1px solid #1e40af; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
+          .grid-nav-btn.outline-blue { background: #f0f9ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-weight: 800; }
+          
+          .grid-nav-btn.outline-purple { background: #faf5ff; color: #7e22ce; border: 1px solid #e9d5ff; font-weight: 800; }
+          .grid-nav-btn.outline-orange { background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; font-weight: 800; }
           .grid-nav-btn.solid-green { background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 10px rgba(16,185,129,0.25); border: 1px solid #047857; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
 
-          /* ✅ PERFECT 3D EMBOSSED PILLS */
+          /* ✅ PERFECT 3D EMBOSSED PILLS: Flex-grow automatically stretches to lock together! */
           .home-links { 
             display: flex;
             flex-wrap: wrap;
@@ -508,15 +524,13 @@
           }
           .home-link-btn { 
             flex: 1 1 auto; 
-            padding: 12px 10px; 
+            padding: 10px 12px; 
             font-size: 13px; 
-            font-weight: 800;
-            color: #fff;
             text-align: center;
             justify-content: center;
             margin: 0;
             min-width: 28%; 
-            border-radius: 14px; 
+            border-radius: 12px;
             /* Beautiful 3D bevel from your reference */
             box-shadow: inset 0px 4px 6px rgba(255,255,255,0.35), inset 0px -4px 6px rgba(0,0,0,0.25), 0 4px 6px rgba(0,0,0,0.15);
             text-shadow: 0 1px 2px rgba(0,0,0,0.4);
@@ -524,7 +538,7 @@
             letter-spacing: 0.2px;
           }
           
-          /* Custom Bottom Search */
+          /* Custom Bottom Search exactly like screenshot */
           .mobile-bottom-search {
             background: #ffffff;
             border: 1px solid #e2e8f0;
@@ -562,7 +576,7 @@
           }
           .mbs-row input:focus { background: #fff; border-color: #0ea5e9; }
           .mbs-row button {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            background: linear-gradient(135deg, #0ea5e9, #4f46e5);
             color: #fff;
             border: none;
             padding: 0 20px;
@@ -590,26 +604,26 @@
         if (waObj && (waObj.url || waObj.link)) waLink = waObj.url || waObj.link;
     }
     
-    // ✅ INJECT CUSTOM APP GRID (Matching Outlined Row Uniformity)
+    // ✅ INJECT CUSTOM APP GRID (Matching Exact Uniform Outlines & Link)
     if (wrap && !document.getElementById("mobile-nav-grid")) {
         const mobileNavWrap = document.createElement("div");
         mobileNavWrap.id = "mobile-nav-grid";
         mobileNavWrap.className = "mobile-nav-grid";
 
         const mLinks = [
-            // Row 1 (All Blue)
+            // Row 1 (Blue)
             { name: "Latest Jobs", url: "https://www.topsarkarijobs.com/view.html?section=latest%20jobs", cls: "outline-blue" },
             { name: "Study wise jobs", url: "category.html?group=study", cls: "outline-blue" },
             { name: "Categories wise jobs", url: "category.html?group=popular", cls: "outline-blue" },
             { name: "State wise Jobs", url: "category.html?group=state", cls: "outline-blue" },
             
-            // Row 2 (All Purple)
+            // Row 2 (Purple)
             { name: "Admissions", url: "category.html?group=admissions", cls: "outline-purple" },
-            { name: "Resume/CV Maker", url: "https://www.topsarkarijobs.com/view.html?url=https%253A%252F%252Fsarkariresulttools.net%252Fresume-maker%252F&name=Resume%2520CV%2520Maker&job=resume-cv-makerume-cv-maker", cls: "outline-purple" },
+            { name: "Resume/CV Maker", url: "https://www.topsarkarijobs.com/view.html?url=https%253A%252F%252Fsarkariresulttools.net%252Fresume-maker%252F&name=Resume%2520CV%2520Maker&job=resume-cv-makerume-cv-maker", cls: "outline-purple" }, 
             { name: "CSC Services", url: "govt-services.html", cls: "outline-purple" },
             { name: "Study Material", url: "category.html?group=study-material", cls: "outline-purple" },
             
-            // Row 3 (Orange + Green WhatsApp)
+            // Row 3 (Orange + Solid Green WhatsApp)
             { name: "Results", url: "result.html", cls: "outline-orange" },
             { name: "Admit Card", url: "category.html?group=admit-result", cls: "outline-orange" },
             { name: "Latest Khabar", url: "category.html?group=khabar", cls: "outline-orange" },
@@ -627,101 +641,83 @@
         wrap.insertBefore(mobileNavWrap, wrap.firstChild);
     }
 
-    // ✅ PILL BOXES ONLY RENDER ON THE HOMEPAGE NOW
-    if (isHome) {
-        const links = Array.isArray(data?.home_links) ? data.home_links : [];
-        if (links.length) {
-          
-          const excludeList = [
-              "latest jobs", "study wise", "categories wise", "popular categories", "state wise",
-              "admissions", "admission", "resume", "cv maker", "csc", "study material",
-              "results", "result", "admit card", "khabar", "helpdesk", "home", "tools", "whatsapp"
-          ];
+    // Process pill links (Will be hidden automatically on inner pages by CSS)
+    const links = Array.isArray(data?.home_links) ? data.home_links : [];
+    if (links.length) {
+      
+      const excludeList = [
+          "latest jobs", "study wise", "categories wise", "popular categories", "state wise",
+          "admissions", "admission", "resume", "cv maker", "csc", "study material",
+          "results", "result", "admit card", "khabar", "helpdesk", "home", "tools", "whatsapp"
+      ];
 
-          // Restores Original Colors from JSON + Failsafe
-          const colorMap = { 
-            "bg-red-600": "linear-gradient(180deg, #ef4444, #991b1b)", 
-            "bg-slate-600": "linear-gradient(180deg, #475569, #1e293b)", 
-            "bg-amber-600": "linear-gradient(180deg, #d97706, #78350f)", 
-            "bg-zinc-400": "linear-gradient(180deg, #71717a, #3f3f46)", 
-            "bg-green-600": "linear-gradient(180deg, #10b981, #064e3b)", 
-            "bg-pink-500": "linear-gradient(180deg, #db2777, #831843)", 
-            "bg-yellow-600": "linear-gradient(180deg, #ea580c, #9a3412)", 
-            "bg-red-500": "linear-gradient(180deg, #f87171, #b91c1c)",
-            "bg-blue-600": "linear-gradient(180deg, #3b82f6, #1e40af)",
-            "bg-indigo-600": "linear-gradient(180deg, #6366f1, #312e81)",
-            "bg-cyan-600": "linear-gradient(180deg, #0891b2, #164e63)"
-          };
+      // ✅ BRAND NEW PREMIUM APP COLORS FOR PILLS (iOS Inspired Gradients)
+      const premiumGradients = [
+          "linear-gradient(135deg, #3b82f6, #2563eb)", // Blue
+          "linear-gradient(135deg, #8b5cf6, #7c3aed)", // Violet
+          "linear-gradient(135deg, #10b981, #059669)", // Emerald
+          "linear-gradient(135deg, #f59e0b, #d97706)", // Amber
+          "linear-gradient(135deg, #ec4899, #db2777)", // Pink
+          "linear-gradient(135deg, #0ea5e9, #0284c7)", // Sky
+          "linear-gradient(135deg, #f43f5e, #e11d48)", // Rose
+          "linear-gradient(135deg, #6366f1, #4f46e5)"  // Indigo
+      ];
 
-          const fallbackColors = [
-              "linear-gradient(180deg, #ea580c, #9a3412)", // Orange/Brown
-              "linear-gradient(180deg, #3b82f6, #1e40af)", // Blue
-              "linear-gradient(180deg, #be185d, #831843)", // Pink/Maroon
-              "linear-gradient(180deg, #6366f1, #3730a3)", // Indigo
-              "linear-gradient(180deg, #10b981, #064e3b)", // Green
-              "linear-gradient(180deg, #b45309, #78350f)", // Brown
-              "linear-gradient(180deg, #8b5cf6, #5b21b6)", // Purple
-              "linear-gradient(180deg, #0ea5e9, #0369a1)"  // Light Blue
-          ];
-
-          let validLinks = [];
-          links.forEach((l) => {
-            let name = safe(l?.name);
-            if (name.includes("लाडो लक्ष्मी योजना: पैसा आया है या नहीं आया यहाँ से चेक करें")) {
-                name = "लाडो लक्ष्मी योजना: पैसा आया है या नहीं - यहाँ से चेक करें";
-            }
-            const nLower = name.toLowerCase().trim();
-            if (excludeList.some(ex => nLower.includes(ex))) return;
-            
-            const url = safe(l?.url || l?.link);
-            if (!name || !url) return;
-            
-            validLinks.push({ ...l, name: name, url: url });
-          });
-
-          // Extract Top Headlines
-          let topHeadlineIndex = validLinks.findIndex(l => l.name.toLowerCase().includes("headlines"));
-          let topHeadline = null;
-          if (topHeadlineIndex > -1) {
-              topHeadline = validLinks.splice(topHeadlineIndex, 1)[0];
-          }
-
-          // Pair shuffling algorithm
-          validLinks.sort((a, b) => a.name.length - b.name.length);
-          let mixedLinks = [];
-          let left = 0; let right = validLinks.length - 1;
-          while (left <= right) {
-              if (left === right) { mixedLinks.push(validLinks[left]); break; }
-              mixedLinks.push(validLinks[right]); 
-              mixedLinks.push(validLinks[left]);  
-              right--; left++;
-          }
-
-          const finalLinks = topHeadline ? [topHeadline, ...mixedLinks] : mixedLinks;
-
-          host.innerHTML = "";
-          finalLinks.forEach((l, index) => {
-            const a = document.createElement("a");
-            a.className = "home-link-btn";
-            a.href = normalizeUrl(l.url);
-            if (l.external) { a.target = "_blank"; a.rel = "noopener"; }
-            
-            if (l.name.toLowerCase().includes("headlines")) {
-                 a.style.background = "linear-gradient(180deg, #ef4444, #991b1b)";
-                 a.style.width = "100%"; 
-            } else {
-                 a.style.background = colorMap[safe(l.color)] || fallbackColors[index % fallbackColors.length];
-            }
-            
-            const icon = safe(l.icon);
-            if (icon) a.innerHTML = `<i class="${icon}"></i><span>${l.name}</span>`;
-            else a.textContent = l.name;
-            host.appendChild(a);
-          });
+      let validLinks = [];
+      links.forEach((l) => {
+        let name = safe(l?.name);
+        if (name.includes("लाडो लक्ष्मी योजना: पैसा आया है या नहीं आया यहाँ से चेक करें")) {
+            name = "लाडो लक्ष्मी योजना: पैसा आया है या नहीं - यहाँ से चेक करें";
         }
-    } else {
-        // Hides the pill container entirely if not on homepage
-        if (host) host.style.display = 'none';
+        const nLower = name.toLowerCase().trim();
+        if (excludeList.some(ex => nLower.includes(ex))) return;
+        
+        const url = safe(l?.url || l?.link);
+        if (!name || !url) return;
+        
+        validLinks.push({ ...l, name: name, url: url });
+      });
+
+      // 1. Extract Top Headlines so it's always forced to the #1 top position
+      let topHeadlineIndex = validLinks.findIndex(l => l.name.toLowerCase().includes("headlines"));
+      let topHeadline = null;
+      if (topHeadlineIndex > -1) {
+          topHeadline = validLinks.splice(topHeadlineIndex, 1)[0];
+      }
+
+      // 2. Pair shuffling algorithm (mixes long and short names so flex automatically wraps them beautifully)
+      validLinks.sort((a, b) => a.name.length - b.name.length);
+      let mixedLinks = [];
+      let left = 0; let right = validLinks.length - 1;
+      while (left <= right) {
+          if (left === right) { mixedLinks.push(validLinks[left]); break; }
+          mixedLinks.push(validLinks[right]); 
+          mixedLinks.push(validLinks[left]);  
+          right--; left++;
+      }
+
+      const finalLinks = topHeadline ? [topHeadline, ...mixedLinks] : mixedLinks;
+
+      host.innerHTML = "";
+      finalLinks.forEach((l, index) => {
+        const a = document.createElement("a");
+        a.className = "home-link-btn";
+        a.href = normalizeUrl(l.url);
+        if (l.external) { a.target = "_blank"; a.rel = "noopener"; }
+        
+        // Top Headlines gets special bright red, the rest use our beautiful new palette
+        if (l.name.toLowerCase().includes("headlines")) {
+             a.style.background = "linear-gradient(135deg, #ef4444, #dc2626)";
+             a.style.width = "100%"; 
+        } else {
+             a.style.background = premiumGradients[index % premiumGradients.length];
+        }
+        
+        const icon = safe(l.icon);
+        if (icon) a.innerHTML = `<i class="${icon}"></i><span>${l.name}</span>`;
+        else a.textContent = l.name;
+        host.appendChild(a);
+      });
     }
 
     // ✅ INJECT PERFECT BOTTOM SEARCH BAR
