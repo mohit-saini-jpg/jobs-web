@@ -12,7 +12,6 @@
 
 *{ box-sizing:border-box; }
 
-/* Prevents horizontal stretching/empty white space on mobile */
 html,body{ 
   height:100%; 
   overflow-x: hidden;
@@ -252,16 +251,8 @@ a:hover{ text-decoration:underline; }
   .icon-btn { width: 38px; height: 38px; flex-shrink: 0; border:none; border-radius:8px; background: rgba(255,255,255,.15); color:#fff; }
   .icon-btn i { font-size: 16px; }
 
-  /* ✅ Absolute Nuke for Old Search Bar on Mobile CSS Failsafe */
-  .top-search { display: none !important; }
-  .search-row:not(.mbs-row) { display: none !important; }
-  
-  /* Target wrappers containing the specific inputs */
-  .search-card:has(#sectionSearchInput),
-  .search-card:has(#siteSearchInput),
-  div:has(> #sectionSearchInput) {
-      display: none !important;
-  }
+  /* ✅ Absolute Nuke for Old Search Bar & White Box on Mobile */
+  .top-search, .search-card, .search-row:not(.mbs-row) { display: none !important; }
 }
 
 /* Modal */
