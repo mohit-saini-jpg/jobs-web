@@ -8,7 +8,6 @@
 
   const safe = (v) => (v ?? "").toString().trim();
 
-  // Safely handles internal absolute URLs
   function normalizeUrl(raw) {
     const s = safe(raw);
     if (!s) return "";
@@ -67,7 +66,6 @@
     `;
   }
 
-  // ✅ MOBILE HEADER BUTTON INJECTION
   function injectMobileHeaderBtns() {
     if (window.innerWidth > 980) return;
     const headerHost = document.getElementById("site-header") || document.querySelector(".site-header");
@@ -91,46 +89,32 @@
     }
   }
 
-  // ✅ LASER-TARGETED OLD SEARCH HIDER: Perfectly safe for jobs!
+  // ✅ LASER-TARGETED OLD SEARCH HIDER: Erases the old search texts and boxes safely
   function safeHideOldSearchBars() {
     if (window.innerWidth <= 980) {
         
-        // Target old inputs directly
-        document.querySelectorAll('#siteSearchInput, #sectionSearchInput').forEach(input => {
-            // Hide the input and button
-            input.style.setProperty('display', 'none', 'important');
-            if (input.nextElementSibling) input.nextElementSibling.style.setProperty('display', 'none', 'important');
-            
-            // Hide the immediate wrapper row
-            const row = input.closest('.search-row');
-            if (row && !row.classList.contains('mbs-row')) {
-                row.style.setProperty('display', 'none', 'important');
-            }
-            
-            // Safely hide the white card IF it contains NO jobs
-            const card = input.closest('.search-card');
-            if (card && card.id !== 'mobile-bottom-search') {
-                if (!card.querySelector('a.section-link, table, .section-list')) {
-                    card.style.setProperty('display', 'none', 'important');
-                } else {
-                    // It contains jobs! Just hide the search titles inside it
-                    card.querySelectorAll('.search-title, .search-sub').forEach(t => t.style.setProperty('display', 'none', 'important'));
+        document.querySelectorAll('.search-row:not(.mbs-row)').forEach(row => {
+            row.style.setProperty('display', 'none', 'important');
+            let parent = row.parentElement;
+            if (parent && parent.tagName === 'DIV' && parent.id !== 'main') {
+                if (parent.children.length <= 2) {
+                     parent.style.setProperty('display', 'none', 'important');
                 }
             }
         });
         
-        // Hide explicit "Search across..." titles that might float freely
         document.querySelectorAll('h1, h2, h3, p').forEach(el => {
             const txt = (el.textContent || "").trim();
             if (txt === "Search across Top Sarkari Jobs" || 
                 txt === "Search jobs, results, admit cards, categories, CSC services and tools.") {
                 el.style.setProperty('display', 'none', 'important');
                 
-                // Hide its direct wrapper if it's empty
-                const parent = el.parentElement;
-                if (parent && parent.tagName === 'DIV' && parent.id !== 'main') {
-                    if (!parent.querySelector('a.section-link, table, .section-list, article')) {
-                        parent.style.setProperty('display', 'none', 'important');
+                const parentBox = el.closest('.search-card') || el.closest('div[style*="border"], div[class*="card"]');
+                if (parentBox && parentBox.id !== 'mobile-bottom-search') {
+                    if (!parentBox.querySelector('a.section-link, table, .section-list')) {
+                        parentBox.style.setProperty('display', 'none', 'important');
+                    } else {
+                        parentBox.style.setProperty('padding-top', '0', 'important');
                     }
                 }
             }
@@ -186,6 +170,8 @@
     if (desktop) {
       desktop.innerHTML = "";
       links.forEach((l) => {
+        // Prevents AI Helpdesk and Results from rendering in desktop JSON injection
+        if (safe(l.name).toLowerCase() === 'results' || safe(l.name).toLowerCase() === 'ai helpdesk') return;
         const a = document.createElement("a");
         a.className = "nav-link";
         a.href = normalizeUrl(l.link || l.url || "#");
@@ -408,7 +394,7 @@
     });
   }
 
-  // ✅ PERFECTED GRID (Matching Outline Rows) & VIBRANT DESKTOP/MOBILE PILLS
+  // ✅ PERFECTED GRID & 3D EMBOSSED PILLS
   async function renderHomeQuickLinks() {
     const isHome = (page === "index.html" || page === "");
     
@@ -418,11 +404,10 @@
     if (!wrap) {
       wrap = document.createElement("section");
       wrap.id = "home-quicklinks-wrap";
-      wrap.className = "home-quicklinks"; // Wrapper is always visible for grid/search
+      wrap.className = "home-quicklinks";
       
       host = document.createElement("div");
       host.id = "home-links";
-      // ✅ Pill boxes display natively on desktop. On mobile inner pages, they hide!
       host.className = isHome ? "home-links" : "home-links hidden-on-inner";
       wrap.appendChild(host);
       
@@ -439,6 +424,10 @@
         .home-quicklinks { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 24px 0 0; }
         
         /* DESKTOP VIEW */
+        @media (min-width: 981px) {
+          .home-quicklinks { display: none !important; }
+        }
+
         .home-links { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; }
         
         .home-link-btn {
@@ -467,7 +456,7 @@
         
         /* ✅ PREMIUM MOBILE APP OVERRIDES */
         @media (max-width: 980px) {
-          .home-quicklinks { padding-top: 16px; }
+          .home-quicklinks { display: block !important; padding-top: 16px; }
           .hidden-on-inner { display: none !important; }
           
           /* The 4-Column Grid */
@@ -491,28 +480,32 @@
             font-size: 11px;
             font-weight: 800;
             text-align: center;
-            padding: 12px 4px;
+            padding: 10px 4px;
             display: flex;
             align-items: center;
             justify-content: center;
             line-height: 1.3;
             text-decoration: none;
             word-break: break-word;
-            transition: transform 0.2s ease;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-            border: 1px solid #e2e8f0;
+            height: 100%;
+            transition: transform 0.2s;
+            letter-spacing: -0.2px;
           }
-          .grid-nav-btn:active { transform: scale(0.95); }
+          .grid-nav-btn:active { transform: scale(0.96); }
           
-          /* UNIFORM OUTLINE ROW THEMES (As requested) */
+          /* UNIFORM OUTLINE ROW THEMES */
           .grid-nav-btn.solid-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 10px rgba(37,99,235,0.25); border: 1px solid #1e40af; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
-          .grid-nav-btn.outline-blue { background: #f0f9ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-weight: 800; }
+          .grid-nav-btn.outline-blue { background: #f0f9ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-weight: 800; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
           
-          .grid-nav-btn.outline-purple { background: #faf5ff; color: #7e22ce; border: 1px solid #e9d5ff; font-weight: 800; }
-          .grid-nav-btn.outline-orange { background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; font-weight: 800; }
+          .grid-nav-btn.solid-purple { background: linear-gradient(135deg, #a855f7, #7e22ce); color: #fff; border: 1px solid #6b21a8; text-shadow: 0 1px 1px rgba(0,0,0,0.2); box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 10px rgba(168,85,247,0.2); }
+          .grid-nav-btn.outline-purple { background: #faf5ff; color: #7e22ce; border: 1px solid #e9d5ff; font-weight: 800; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
+          
+          .grid-nav-btn.solid-orange { background: linear-gradient(135deg, #f97316, #ea580c); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 10px rgba(234,88,12,0.25); border: 1px solid #c2410c; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
+          .grid-nav-btn.outline-orange { background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; font-weight: 800; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
+          
           .grid-nav-btn.solid-green { background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 10px rgba(16,185,129,0.25); border: 1px solid #047857; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
 
-          /* ✅ PERFECT 3D EMBOSSED PILLS: Flex-grow automatically stretches to lock together! */
+          /* ✅ PERFECT 3D EMBOSSED PILLS */
           .home-links { 
             display: flex;
             flex-wrap: wrap;
@@ -524,13 +517,15 @@
           }
           .home-link-btn { 
             flex: 1 1 auto; 
-            padding: 10px 12px; 
+            padding: 12px 10px; 
             font-size: 13px; 
+            font-weight: 800;
+            color: #fff;
             text-align: center;
             justify-content: center;
             margin: 0;
             min-width: 28%; 
-            border-radius: 12px;
+            border-radius: 14px; 
             /* Beautiful 3D bevel from your reference */
             box-shadow: inset 0px 4px 6px rgba(255,255,255,0.35), inset 0px -4px 6px rgba(0,0,0,0.25), 0 4px 6px rgba(0,0,0,0.15);
             text-shadow: 0 1px 2px rgba(0,0,0,0.4);
@@ -576,7 +571,7 @@
           }
           .mbs-row input:focus { background: #fff; border-color: #0ea5e9; }
           .mbs-row button {
-            background: linear-gradient(135deg, #0ea5e9, #4f46e5);
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
             color: #fff;
             border: none;
             padding: 0 20px;
@@ -604,7 +599,7 @@
         if (waObj && (waObj.url || waObj.link)) waLink = waObj.url || waObj.link;
     }
     
-    // ✅ INJECT CUSTOM APP GRID (Matching Exact Uniform Outlines & Link)
+    // ✅ INJECT CUSTOM APP GRID (With Requested Results URL)
     if (wrap && !document.getElementById("mobile-nav-grid")) {
         const mobileNavWrap = document.createElement("div");
         mobileNavWrap.id = "mobile-nav-grid";
@@ -612,19 +607,19 @@
 
         const mLinks = [
             // Row 1 (Blue)
-            { name: "Latest Jobs", url: "https://www.topsarkarijobs.com/view.html?section=latest%20jobs", cls: "outline-blue" },
+            { name: "Latest Jobs", url: "https://www.topsarkarijobs.com/view.html?section=latest%20jobs", cls: "solid-blue" },
             { name: "Study wise jobs", url: "category.html?group=study", cls: "outline-blue" },
             { name: "Categories wise jobs", url: "category.html?group=popular", cls: "outline-blue" },
             { name: "State wise Jobs", url: "category.html?group=state", cls: "outline-blue" },
             
             // Row 2 (Purple)
-            { name: "Admissions", url: "category.html?group=admissions", cls: "outline-purple" },
-            { name: "Resume/CV Maker", url: "https://www.topsarkarijobs.com/view.html?url=https%253A%252F%252Fsarkariresulttools.net%252Fresume-maker%252F&name=Resume%2520CV%2520Maker&job=resume-cv-makerume-cv-maker", cls: "outline-purple" }, 
+            { name: "Admissions", url: "category.html?group=admissions", cls: "solid-purple" },
+            { name: "Resume/CV Maker", url: "https://www.topsarkarijobs.com/view.html?url=https%253A%252F%252Fsarkariresulttools.net%252Fresume-maker%252F&name=Resume%2520CV%2520Maker&job=resume-cv-makerume-cv-maker", cls: "outline-purple" },
             { name: "CSC Services", url: "govt-services.html", cls: "outline-purple" },
             { name: "Study Material", url: "category.html?group=study-material", cls: "outline-purple" },
             
-            // Row 3 (Orange + Solid Green WhatsApp)
-            { name: "Results", url: "result.html", cls: "outline-orange" },
+            // Row 3 (Orange + Green WhatsApp)
+            { name: "Results", url: "https://www.topsarkarijobs.com/view.html?section=results", cls: "solid-orange" },
             { name: "Admit Card", url: "category.html?group=admit-result", cls: "outline-orange" },
             { name: "Latest Khabar", url: "category.html?group=khabar", cls: "outline-orange" },
             { name: "Join WhatsApp", url: waLink, cls: "solid-green" } 
@@ -1374,6 +1369,7 @@
 
       const performSearch = () => {
         const query = input.value.toLowerCase().trim();
+        // ✅ Searches instantly even from a single letter
         if (query.length < 1) {
           resultsWrap.innerHTML = "";
           resultsWrap.style.display = "none";
@@ -1423,10 +1419,18 @@
 
   document.addEventListener("DOMContentLoaded", async () => {
     buildMobileMenu();
-    safeHideOldSearchBars(); 
     
     await injectHeaderFooter();
     await loadHeaderLinks();
+    
+    // ✅ Desktop Cleanup: Remove Results and AI Helpdesk from header
+    document.querySelectorAll('.desktop-nav .nav-link, #header-links .nav-link').forEach(el => {
+        const txt = el.textContent.trim().toLowerCase();
+        if (txt === 'results' || txt === 'ai helpdesk') {
+            el.style.display = 'none';
+        }
+    });
+
     initOffcanvas();
     initDropdowns();
     initFAQ();
@@ -1448,6 +1452,7 @@
     
     await initGlobalLiveSearch();
     
+    safeHideOldSearchBars(); 
     setTimeout(() => {
         safeHideOldSearchBars();
         initGlobalLiveSearch();
