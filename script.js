@@ -95,16 +95,20 @@
   function safeHideOldSearchBars() {
     if (window.innerWidth <= 980) {
         
-        // 1. Target explicit old search inputs and hide their immediate rows
-        const oldInputs = document.querySelectorAll('#siteSearchInput, #sectionSearchInput');
-        oldInputs.forEach(input => {
-            const row = input.closest('.search-row');
-            if (row && !row.classList.contains('mbs-row')) {
-                row.style.setProperty('display', 'none', 'important');
+        // Target explicit old search inputs and hide their immediate rows
+        document.querySelectorAll('.search-row:not(.mbs-row)').forEach(row => {
+            row.style.setProperty('display', 'none', 'important');
+            
+            // Look for generic anonymous divs that wrap the search bar on inner pages and nuke them
+            let parent = row.parentElement;
+            if (parent && parent.tagName === 'DIV' && parent.id !== 'main') {
+                if (parent.children.length <= 2) {
+                     parent.style.setProperty('display', 'none', 'important');
+                }
             }
         });
         
-        // 2. Hide explicit "Search across..." titles & texts
+        // Hide explicit "Search across..." titles & texts
         document.querySelectorAll('h1, h2, h3, p').forEach(el => {
             const txt = (el.textContent || "").trim();
             if (txt === "Search across Top Sarkari Jobs" || 
@@ -116,17 +120,9 @@
                 if (parentBox && parentBox.id !== 'mobile-bottom-search') {
                     if (!parentBox.querySelector('a.section-link, table, .section-list')) {
                         parentBox.style.setProperty('display', 'none', 'important');
-                    } else {
-                        // If it holds jobs, wipe out the padding where the search used to be
-                        parentBox.style.setProperty('padding-top', '0', 'important');
                     }
                 }
             }
-        });
-
-        // 3. Absolute nuke of any desktop top-search containers
-        document.querySelectorAll('.top-search').forEach(ts => {
-            ts.style.setProperty('display', 'none', 'important');
         });
     }
   }
@@ -401,7 +397,7 @@
     });
   }
 
-  // ✅ GLOBAL GLASSY APP GRID & PERFECTLY STRETCHED PILLS
+  // ✅ PERFECTED GRID (Row Themes) & 3D EMBOSSED PILL BOXES
   async function renderHomeQuickLinks() {
     const isHome = (page === "index.html" || page === "");
     
@@ -467,47 +463,40 @@
         @media (max-width: 980px) {
           .home-quicklinks { padding-top: 16px; }
           
-          /* The 4-Column "Glassy Simple Modern" Grid */
+          /* The 4-Column Grid */
           .mobile-nav-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             grid-auto-rows: 1fr;
             gap: 8px;
             margin-bottom: 24px;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            padding: 12px;
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 8px 24px rgba(2, 132, 199, 0.06);
+            padding: 0 6px;
           }
           .grid-nav-btn {
-            background: #ffffff;
-            border-radius: 10px;
+            border-radius: 8px;
             font-size: 11px;
             font-weight: 800;
             text-align: center;
-            padding: 12px 4px;
+            padding: 10px 4px;
             display: flex;
             align-items: center;
             justify-content: center;
             line-height: 1.3;
             text-decoration: none;
             word-break: break-word;
-            transition: transform 0.2s ease;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-            border: 1px solid #e2e8f0;
+            height: 100%;
+            transition: transform 0.2s;
+            letter-spacing: -0.2px;
           }
-          .grid-nav-btn:active { transform: scale(0.95); }
+          .grid-nav-btn:active { transform: scale(0.96); }
           
-          /* Exact Solid & Outline Themes Matching Your Request */
-          .grid-nav-btn.btn-solid-blue { background: #3b82f6; color: #fff; box-shadow: 0 2px 4px rgba(59,130,246,0.3); border: 1px solid #2563eb; }
-          .grid-nav-btn.btn-outline-blue { background: #f0f9ff; color: #1e40af; border: 1px solid #bfdbfe; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
-          .grid-nav-btn.btn-solid-purple { background: #8b5cf6; color: #fff; box-shadow: 0 2px 4px rgba(139,92,246,0.3); border: 1px solid #7c3aed; }
-          .grid-nav-btn.btn-solid-orange { background: #f97316; color: #fff; box-shadow: 0 2px 4px rgba(249,115,22,0.3); border: 1px solid #ea580c; }
+          /* EXACT Grid Solid/Outline Row Rules */
+          .grid-nav-btn.solid-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 10px rgba(37,99,235,0.25); border: 1px solid #1e40af; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
+          .grid-nav-btn.outline-blue { background: #f0f9ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-weight: 800; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
+          .grid-nav-btn.solid-purple { background: linear-gradient(135deg, #a855f7, #7e22ce); color: #fff; border: 1px solid #6b21a8; text-shadow: 0 1px 1px rgba(0,0,0,0.2); box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 10px rgba(168,85,247,0.2); }
+          .grid-nav-btn.solid-orange { background: linear-gradient(135deg, #f97316, #ea580c); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 10px rgba(234,88,12,0.25); border: 1px solid #c2410c; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
 
-          /* ✅ PERFECT PILLS FIX: Flex-grow makes them stretch and form a perfectly flush brick wall layout! */
+          /* ✅ PERFECT 3D EMBOSSED PILLS FIX */
           .home-links { 
             display: flex;
             flex-wrap: wrap;
@@ -519,19 +508,23 @@
           }
           .home-link-btn { 
             flex: 1 1 auto; 
-            padding: 10px 12px; 
+            padding: 12px 10px; 
             font-size: 13px; 
+            font-weight: 800;
+            color: #fff;
             text-align: center;
             justify-content: center;
             margin: 0;
             min-width: 28%; 
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.08), inset 0 1px 1px rgba(255,255,255,0.2);
-            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 14px; 
+            /* Beautiful 3D bevel matching your screenshot */
+            box-shadow: inset 0px 4px 6px rgba(255,255,255,0.35), inset 0px -4px 6px rgba(0,0,0,0.25), 0 4px 6px rgba(0,0,0,0.15);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+            border: none;
             letter-spacing: 0.2px;
           }
           
-          /* Custom Bottom Search exactly like screenshot */
+          /* Custom Bottom Search */
           .mobile-bottom-search {
             background: #ffffff;
             border: 1px solid #e2e8f0;
@@ -569,7 +562,7 @@
           }
           .mbs-row input:focus { background: #fff; border-color: #0ea5e9; }
           .mbs-row button {
-            background: linear-gradient(135deg, #0ea5e9, #4f46e5);
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
             color: #fff;
             border: none;
             padding: 0 20px;
@@ -597,30 +590,30 @@
         if (waObj && (waObj.url || waObj.link)) waLink = waObj.url || waObj.link;
     }
     
-    // ✅ INJECT CUSTOM APP GRID (Matching Exact Color Request + Deep Linked Resume)
+    // ✅ INJECT CUSTOM APP GRID (Matching requested row colors + original CV Maker link)
     if (wrap && !document.getElementById("mobile-nav-grid")) {
         const mobileNavWrap = document.createElement("div");
         mobileNavWrap.id = "mobile-nav-grid";
         mobileNavWrap.className = "mobile-nav-grid";
 
         const mLinks = [
-            // Row 1
-            { name: "Latest Jobs", url: "https://www.topsarkarijobs.com/view.html?section=latest%20jobs", cls: "btn-solid-blue" },
-            { name: "Study wise jobs", url: "category.html?group=study", cls: "btn-outline-blue" },
-            { name: "Categories wise jobs", url: "category.html?group=popular", cls: "btn-outline-blue" },
-            { name: "State wise Jobs", url: "category.html?group=state", cls: "btn-outline-blue" },
+            // Row 1: Solid blue, Outline blue
+            { name: "Latest Jobs", url: "https://www.topsarkarijobs.com/view.html?section=latest%20jobs", cls: "solid-blue" },
+            { name: "Study wise jobs", url: "category.html?group=study", cls: "outline-blue" },
+            { name: "Categories wise jobs", url: "category.html?group=popular", cls: "outline-blue" },
+            { name: "State wise Jobs", url: "category.html?group=state", cls: "outline-blue" },
             
-            // Row 2 (All Purple)
-            { name: "Admissions", url: "category.html?group=admissions", cls: "btn-solid-purple" },
-            { name: "Resume/CV Maker", url: "https://www.topsarkarijobs.com/view.html?url=https%253A%252F%252Fsarkariresulttools.net%252Fresume-maker%252F&name=Resume%2520CV%2520Maker&job=resume-cv-makerume-cv-maker", cls: "btn-solid-purple" },
-            { name: "CSC Services", url: "govt-services.html", cls: "btn-solid-purple" },
-            { name: "Study Material", url: "category.html?group=study-material", cls: "btn-solid-purple" },
+            // Row 2: All Purple
+            { name: "Admissions", url: "category.html?group=admissions", cls: "solid-purple" },
+            { name: "Resume/CV Maker", url: "https://www.topsarkarijobs.com/view.html?url=https%253A%252F%252Fsarkariresulttools.net%252Fresume-maker%252F&name=Resume%2520CV%2520Maker&job=resume-cv-makerume-cv-maker", cls: "solid-purple" },
+            { name: "CSC Services", url: "govt-services.html", cls: "solid-purple" },
+            { name: "Study Material", url: "category.html?group=study-material", cls: "solid-purple" },
             
-            // Row 3 (Orange + Join WhatsApp Blue)
-            { name: "Results", url: "result.html", cls: "btn-solid-orange" },
-            { name: "Admit Card", url: "category.html?group=admit-result", cls: "btn-solid-orange" },
-            { name: "Latest Khabar", url: "category.html?group=khabar", cls: "btn-solid-orange" },
-            { name: "Join WhatsApp", url: waLink, cls: "btn-solid-blue" } 
+            // Row 3: All Orange + Join WhatsApp Solid Blue
+            { name: "Results", url: "result.html", cls: "solid-orange" },
+            { name: "Admit Card", url: "category.html?group=admit-result", cls: "solid-orange" },
+            { name: "Latest Khabar", url: "category.html?group=khabar", cls: "solid-orange" },
+            { name: "Join WhatsApp", url: waLink, cls: "solid-blue" } 
         ];
 
         mLinks.forEach(l => {
@@ -644,31 +637,31 @@
           "results", "result", "admit card", "khabar", "helpdesk", "home", "tools", "whatsapp"
       ];
 
-      // ✅ RESTORES THE ORIGINAL SLEEK PILL COLORS EXACTLY AS YOU LOVED THEM
+      // ✅ RESTORES THE 3D EMBOSSED PILL COLORS EXACTLY LIKE THE IMG_5786 SCREENSHOT
       const colorMap = { 
-        "bg-red-600": "linear-gradient(180deg, #ef4444, #dc2626)", 
-        "bg-slate-600": "linear-gradient(180deg, #64748b, #475569)", 
-        "bg-amber-600": "linear-gradient(180deg, #f59e0b, #d97706)", 
-        "bg-zinc-400": "linear-gradient(180deg, #a1a1aa, #71717a)", 
-        "bg-green-600": "linear-gradient(180deg, #10b981, #059669)", 
-        "bg-pink-500": "linear-gradient(180deg, #db2777, #be185d)", 
-        "bg-yellow-600": "linear-gradient(180deg, #eab308, #ca8a04)", 
-        "bg-red-500": "linear-gradient(180deg, #f87171, #ef4444)",
-        "bg-blue-600": "linear-gradient(180deg, #2563eb, #1d4ed8)",
-        "bg-indigo-600": "linear-gradient(180deg, #4f46e5, #4338ca)",
-        "bg-cyan-600": "linear-gradient(180deg, #0891b2, #0e7490)"
+        "bg-red-600": "linear-gradient(180deg, #ef4444, #991b1b)", 
+        "bg-slate-600": "linear-gradient(180deg, #475569, #1e293b)", 
+        "bg-amber-600": "linear-gradient(180deg, #d97706, #78350f)", 
+        "bg-zinc-400": "linear-gradient(180deg, #71717a, #3f3f46)", 
+        "bg-green-600": "linear-gradient(180deg, #10b981, #064e3b)", 
+        "bg-pink-500": "linear-gradient(180deg, #db2777, #831843)", 
+        "bg-yellow-600": "linear-gradient(180deg, #ea580c, #9a3412)", 
+        "bg-red-500": "linear-gradient(180deg, #f87171, #b91c1c)",
+        "bg-blue-600": "linear-gradient(180deg, #3b82f6, #1e40af)",
+        "bg-indigo-600": "linear-gradient(180deg, #6366f1, #312e81)",
+        "bg-cyan-600": "linear-gradient(180deg, #0891b2, #164e63)"
       };
 
-      // Failsafe array of vibrant colors to cycle through if color property is missing in JSON
+      // Failsafe 3D rich colors to cycle through
       const fallbackColors = [
-          "linear-gradient(180deg, #d97706, #b45309)", // Amber/Brown
-          "linear-gradient(180deg, #4f46e5, #3730a3)", // Indigo
-          "linear-gradient(180deg, #2563eb, #1e40af)", // Blue
-          "linear-gradient(180deg, #9f1239, #831843)", // Maroon
-          "linear-gradient(180deg, #047857, #064e3b)", // Emerald Green
-          "linear-gradient(180deg, #c2410c, #9a3412)", // Rust
-          "linear-gradient(180deg, #6d28d9, #4c1d95)", // Purple
-          "linear-gradient(180deg, #0369a1, #075985)"  // Ocean
+          "linear-gradient(180deg, #ea580c, #9a3412)", // Orange/Brown
+          "linear-gradient(180deg, #3b82f6, #1e40af)", // Blue
+          "linear-gradient(180deg, #be185d, #831843)", // Pink/Maroon
+          "linear-gradient(180deg, #6366f1, #3730a3)", // Indigo
+          "linear-gradient(180deg, #10b981, #064e3b)", // Green
+          "linear-gradient(180deg, #b45309, #78350f)", // Brown
+          "linear-gradient(180deg, #8b5cf6, #5b21b6)", // Purple
+          "linear-gradient(180deg, #0ea5e9, #0369a1)"  // Light Blue
       ];
 
       let validLinks = [];
@@ -693,7 +686,7 @@
           topHeadline = validLinks.splice(topHeadlineIndex, 1)[0];
       }
 
-      // 2. Pair shuffling algorithm (mixes long and short names so flex automatically wraps them perfectly)
+      // 2. Pair shuffling algorithm to interlock short and long buttons
       validLinks.sort((a, b) => a.name.length - b.name.length);
       let mixedLinks = [];
       let left = 0; let right = validLinks.length - 1;
@@ -713,9 +706,9 @@
         a.href = normalizeUrl(l.url);
         if (l.external) { a.target = "_blank"; a.rel = "noopener"; }
         
-        // Top Headlines gets special red, the rest map strictly to your original appealing colors!
+        // Maps original classes directly, maintaining exact look
         if (l.name.toLowerCase().includes("headlines")) {
-             a.style.background = "linear-gradient(180deg, #ef4444, #b91c1c)";
+             a.style.background = "linear-gradient(180deg, #ef4444, #991b1b)";
              a.style.width = "100%"; 
         } else {
              a.style.background = colorMap[safe(l.color)] || fallbackColors[index % fallbackColors.length];
