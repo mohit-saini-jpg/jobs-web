@@ -199,6 +199,13 @@ a:hover{ text-decoration:underline; }
 /* ✅ MOBILE APP-STYLE LAYOUT CHANGES */
 .mobile-header-btns { display: none; }
 
+/* Hide specific mobile injected UI elements on Desktop */
+.hidden-on-inner { display: none !important; }
+
+@media (min-width: 981px) {
+    .mobile-nav-grid, .mobile-bottom-search { display: none !important; }
+}
+
 @media (max-width: 980px){
   .desktop-nav{ display:none; }
   .brand-subtitle { display: none; }
@@ -251,8 +258,8 @@ a:hover{ text-decoration:underline; }
   .icon-btn { width: 38px; height: 38px; flex-shrink: 0; border:none; border-radius:8px; background: rgba(255,255,255,.15); color:#fff; }
   .icon-btn i { font-size: 16px; }
 
-  /* ✅ Absolute Nuke for Old Search Bar & White Box on Mobile */
-  .top-search, .search-card, .search-row:not(.mbs-row) { display: none !important; }
+  /* Safely hide the desktop search components on mobile */
+  .top-search { display: none !important; }
 }
 
 /* Modal */
