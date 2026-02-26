@@ -12,7 +12,6 @@
 
 *{ box-sizing:border-box; }
 
-/* Prevents horizontal stretching/empty white space on mobile */
 html,body{ 
   height:100%; 
   overflow-x: hidden;
@@ -62,22 +61,6 @@ a:hover{ text-decoration:underline; }
 
 .header-cta{ display:flex; gap:8px; flex-wrap:wrap; margin-left:6px; }
 .header-actions{ display:none; margin-left:auto; gap:8px; }
-
-/* Removes search icon globally on mobile */
-#openSearchBtn { display: none !important; }
-
-.icon-btn{
-  border:none;
-  background: rgba(255,255,255,.14);
-  color:#fff;
-  width:42px;
-  height:42px;
-  border-radius:12px;
-  display:grid;
-  place-items:center;
-  cursor:pointer;
-}
-.icon-btn:hover{ background: rgba(255,255,255,.2); }
 
 /* Desktop Dropdown Menu */
 .nav-dd{ position:relative; }
@@ -199,6 +182,7 @@ a:hover{ text-decoration:underline; }
 
 /* ✅ MOBILE APP-STYLE LAYOUT CHANGES */
 .mobile-header-btns { display: none; }
+#openSearchBtn { display: none !important; } 
 
 @media (max-width: 980px){
   .desktop-nav{ display:none; }
@@ -220,7 +204,7 @@ a:hover{ text-decoration:underline; }
     text-align: left;
   }
   
-  /* Two-row header buttons */
+  /* The EXACT 2-row button layout from your reference */
   .mobile-header-btns {
     flex: 1 1 auto;
     display: flex;
@@ -254,7 +238,6 @@ a:hover{ text-decoration:underline; }
 
   /* ✅ Absolute Nuke for Old Search Bar on Mobile */
   .top-search { display: none !important; }
-  #sectionSearchInput, #siteSearchInput { display: none !important; }
   .search-row:not(.mbs-row) { display: none !important; }
 }
 
