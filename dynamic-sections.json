@@ -4255,17 +4255,25 @@
       "color": "#00FFA4",
        "viewMoreType": "list",
       "items": [
+         {
+          "name": "MDU Re-appear/Improvement/Additional Forms for May/June 2026 Exams - Live Now  Last Date: 15/04/2026",
+          "url": "https://student.mdu.ac.in/index",
+          "external": true
+        },
         {
           "name": "RTE Free School Admission 2026 बच्चे को कक्षा 8 तक निशुल्क शिक्षा मिलेगी। Private Schools की 25% सीटों पर बच्चों को बिल्कुल फ्री एडमिशन Last Date: 03/03/2026",
-          "url": "https://govttime.com/rte-admission-2026-27/"
+          "url": "https://govttime.com/rte-admission-2026-27/",
+          "external": true
         },
         {
           "name": "ITEP Course Admission 2026: 12वीं के बाद टीचर बनने सुनहरा अवसर Last Date: 11/03/2026",
-          "url": "https://vacancynotice.com/itep-course-admission-2026/"
+          "url": "https://vacancynotice.com/itep-course-admission-2026/",
+          "external": true
         },
         {
           "name": "BHU School Admissions SET / CHS Online Form 2026 Last Date: 20/03/2026",
-          "url": "https://www.sarkariresult.com/2026/bhu-set-chs-2026/"
+          "url": "https://www.sarkariresult.com/2026/bhu-set-chs-2026/",
+          "external": true
         },
         {
         "name": "Rajasthan B.ED PTET 2026 Online Form Last Date : 20/03/2026",
