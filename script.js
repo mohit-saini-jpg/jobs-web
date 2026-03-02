@@ -113,6 +113,8 @@
                 if (parentBox && parentBox.id !== 'mobile-bottom-search') {
                     if (!parentBox.querySelector('a.section-link, table, .section-list')) {
                         parentBox.style.setProperty('display', 'none', 'important');
+                    } else {
+                        parentBox.style.setProperty('padding-top', '0', 'important');
                     }
                 }
             }
@@ -155,6 +157,7 @@
     }
   }
 
+  // ✅ SAFELY REPLACES THE RESULTS AND AI HELPDESK LINKS
   async function loadHeaderLinks() {
     let data = { header_links: [], social_links: [] };
     try {
@@ -172,12 +175,25 @@
     if (desktop) {
       desktop.innerHTML = "";
       links.forEach((l) => {
+        let linkName = safe(l.name);
+        let linkUrl = safe(l.link || l.url || "#");
+
+        // Override logic for Results
+        if (linkName.toLowerCase() === "results" || linkName.toLowerCase() === "result") {
+            linkUrl = "https://www.topsarkarijobs.com/view.html?section=results";
+        }
+        // Override logic for AI Helpdesk
+        if (linkName.toLowerCase() === "ai helpdesk") {
+            linkName = "Admit Card";
+            linkUrl = "https://www.topsarkarijobs.com/view.html?section=Admit%20cards%20Exams%20Date";
+        }
+
         const a = document.createElement("a");
         a.className = "nav-link";
-        a.href = normalizeUrl(l.link || l.url || "#");
+        a.href = normalizeUrl(linkUrl);
         a.target = "_blank";
         a.rel = "noopener";
-        a.textContent = l.name || "Link";
+        a.textContent = linkName;
         desktop.appendChild(a);
       });
     }
@@ -185,11 +201,24 @@
     if (mobile) {
       mobile.innerHTML = "";
       links.forEach((l) => {
+        let linkName = safe(l.name);
+        let linkUrl = safe(l.link || l.url || "#");
+
+        // Override logic for Results
+        if (linkName.toLowerCase() === "results" || linkName.toLowerCase() === "result") {
+            linkUrl = "https://www.topsarkarijobs.com/view.html?section=results";
+        }
+        // Override logic for AI Helpdesk
+        if (linkName.toLowerCase() === "ai helpdesk") {
+            linkName = "Admit Card";
+            linkUrl = "https://www.topsarkarijobs.com/view.html?section=Admit%20cards%20Exams%20Date";
+        }
+
         const a = document.createElement("a");
-        a.href = normalizeUrl(l.link || l.url || "#");
+        a.href = normalizeUrl(linkUrl);
         a.target = "_blank";
         a.rel = "noopener";
-        a.textContent = l.name || "Link";
+        a.textContent = linkName;
         mobile.appendChild(a);
       });
     }
@@ -403,7 +432,7 @@
     if (!wrap) {
       wrap = document.createElement("section");
       wrap.id = "home-quicklinks-wrap";
-      wrap.className = "home-quicklinks"; 
+      wrap.className = isHome ? "home-quicklinks" : "home-quicklinks desktop-hidden";
       
       host = document.createElement("div");
       host.id = "home-links";
@@ -433,7 +462,7 @@
         mobileNavWrap.id = "mobile-nav-grid";
         mobileNavWrap.className = "mobile-nav-grid";
 
-        // ✅ ONLY URLS AND NAMES CHANGED HERE. Colors remain exactly as they were in your reverted code!
+        // ✅ LINK UPDATES APPLIED HERE - CLASSES ARE UNTOUCHED
         const mLinks = [
             { name: "Latest Jobs", url: "https://www.topsarkarijobs.com/view.html?section=latest%20jobs", cls: "glass-primary" },
             { name: "Study wise jobs", url: "category.html?group=study", cls: "glass-blue" },
@@ -441,12 +470,12 @@
             { name: "State wise Jobs", url: "category.html?group=state", cls: "glass-blue" },
             
             { name: "Admissions", url: "category.html?group=admissions", cls: "glass-blue" },
-            { name: "Admit Card", url: "https://www.topsarkarijobs.com/view.html?section=Admit%20cards%20Exams%20Date", cls: "glass-purple" }, 
+            { name: "Resume/CV Maker", url: "https://www.topsarkarijobs.com/view.html?url=https%253A%252F%252Fsarkariresulttools.net%252Fresume-maker%252F&name=Resume%2520CV%2520Maker&job=resume-cv-makerume-cv-maker", cls: "glass-purple" }, 
             { name: "CSC Services", url: "govt-services.html", cls: "glass-teal" },   
             { name: "Study Material", url: "category.html?group=study-material", cls: "glass-dark" }, 
             
             { name: "Results", url: "https://www.topsarkarijobs.com/view.html?section=results", cls: "glass-orange" },
-            { name: "Admit Card", url: "category.html?group=admit-result", cls: "glass-orange" },
+            { name: "Admit Card", url: "https://www.topsarkarijobs.com/view.html?section=Admit%20cards%20Exams%20Date", cls: "glass-orange" },
             { name: "Latest Khabar", url: "category.html?group=khabar", cls: "glass-blue" },
             { name: "Join WhatsApp", url: waLink, cls: "glass-green" } 
         ];
@@ -471,15 +500,26 @@
           "results", "result", "admit card", "khabar", "helpdesk", "home", "tools", "whatsapp"
       ];
 
-      const premiumGradients = [
-          "linear-gradient(135deg, #0f766e, #064e3b)", 
-          "linear-gradient(135deg, #d97706, #9a3412)", 
-          "linear-gradient(135deg, #4f46e5, #312e81)", 
-          "linear-gradient(135deg, #0284c7, #075985)", 
-          "linear-gradient(135deg, #be185d, #831843)", 
-          "linear-gradient(135deg, #b45309, #78350f)", 
-          "linear-gradient(135deg, #4338ca, #1e3a8a)", 
-          "linear-gradient(135deg, #0369a1, #0f172a)"  
+      const colorMap = { 
+        "bg-red-600": "linear-gradient(180deg, #ef4444, #dc2626)", 
+        "bg-slate-600": "linear-gradient(180deg, #94a3b8, #64748b)", 
+        "bg-amber-600": "linear-gradient(180deg, #f59e0b, #d97706)", 
+        "bg-zinc-400": "linear-gradient(180deg, #a1a1aa, #71717a)", 
+        "bg-green-600": "linear-gradient(180deg, #10b981, #059669)", 
+        "bg-pink-500": "linear-gradient(180deg, #f43f5e, #e11d48)", 
+        "bg-yellow-600": "linear-gradient(180deg, #eab308, #ca8a04)", 
+        "bg-red-500": "linear-gradient(180deg, #f87171, #ef4444)" 
+      };
+
+      const fallbackColors = [
+          "linear-gradient(180deg, #ea580c, #9a3412)", 
+          "linear-gradient(180deg, #3b82f6, #1e40af)", 
+          "linear-gradient(180deg, #be185d, #831843)", 
+          "linear-gradient(180deg, #6366f1, #3730a3)", 
+          "linear-gradient(180deg, #10b981, #064e3b)", 
+          "linear-gradient(180deg, #b45309, #78350f)", 
+          "linear-gradient(180deg, #8b5cf6, #5b21b6)", 
+          "linear-gradient(180deg, #0ea5e9, #0369a1)"  
       ];
 
       let validLinks = [];
@@ -523,10 +563,10 @@
         if (l.external) { a.target = "_blank"; a.rel = "noopener"; }
         
         if (l.name.toLowerCase().includes("headlines")) {
-             a.style.background = "linear-gradient(135deg, #ef4444, #991b1b)";
+             a.style.background = "linear-gradient(180deg, #ef4444, #991b1b)";
              a.style.width = "100%"; 
         } else {
-             a.style.background = premiumGradients[index % premiumGradients.length];
+             a.style.background = colorMap[safe(l.color)] || fallbackColors[index % fallbackColors.length];
         }
         
         const icon = safe(l.icon);
@@ -629,7 +669,6 @@
     else if (group === "khabar") items = sliceBetween(right, "latest khabar", "study material");
     else if (group === "study-material") items = sliceBetween(right, "study material", "tools");
 
-    // Filter Garbage
     items = items.filter(i => !isGarbageLink(i));
 
     gridEl.innerHTML = "";
@@ -866,7 +905,6 @@
     }
   }
 
-  // Tools Page
   async function initToolsPage() {
     if (!isToolsPage) return;
 
@@ -1135,7 +1173,6 @@
     });
   }
 
-  // GLOBAL LIVE SEARCH ENGINE
   async function initGlobalLiveSearch() {
     const inputs = [];
     
@@ -1267,4 +1304,3 @@
     }, 300); 
   });
 })();
-}
