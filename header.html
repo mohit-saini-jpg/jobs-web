@@ -12,60 +12,81 @@
 
       <nav class="desktop-nav" aria-label="Primary">
         <a class="nav-link" href="index.html">Home</a>
-        <a class="nav-link" href="result.html">Results</a>
+        <a class="nav-link" href="https://www.topsarkarijobs.com/view.html?section=results">Results</a>
         <!-- REMOVED: Search nav button -->
         <a class="nav-link" href="govt-services.html">CSC Services</a>
         <a class="nav-link" href="tools.html">Tools</a>
         <a class="nav-link" href="helpdesk.html">Helpdesk</a>
 
-        <div class="nav-dd" data-dd>
-          <button class="nav-link nav-dd-btn" type="button" aria-haspopup="true" aria-expanded="false">
+        <div class="nav-dropdown">
+          <button class="nav-link nav-dropbtn" type="button">
             Jobs <i class="fa-solid fa-chevron-down"></i>
           </button>
-          <div class="nav-dd-menu" role="menu">
-            <a role="menuitem" href="category.html?group=study" class="nav-dd-item">Study wise jobs</a>
-            <a role="menuitem" href="category.html?group=popular" class="nav-dd-item">Popular job categories</a>
-            <a role="menuitem" href="category.html?group=state" class="nav-dd-item">State wise jobs</a>
+          <div class="nav-dropdown-content" role="menu">
+            <a href="category.html?group=study" role="menuitem">Study Wise Jobs</a>
+            <a href="category.html?group=popular" role="menuitem">Popular Jobs</a>
+            <a href="category.html?group=state" role="menuitem">State Wise Jobs</a>
           </div>
         </div>
 
-        <div class="nav-dd" data-dd>
-          <button class="nav-link nav-dd-btn" type="button" aria-haspopup="true" aria-expanded="false">
+        <div class="nav-dropdown">
+          <button class="nav-link nav-dropbtn" type="button">
             Admissions <i class="fa-solid fa-chevron-down"></i>
           </button>
-          <div class="nav-dd-menu" role="menu">
-            <a role="menuitem" href="category.html?group=admissions" class="nav-dd-item">Admissions</a>
-            <a role="menuitem" href="category.html?group=admit-result" class="nav-dd-item">Admit Card / Result / Answer Key / Syllabus</a>
+          <div class="nav-dropdown-content" role="menu">
+            <a href="category.html?group=admissions" role="menuitem">Admissions</a>
           </div>
         </div>
 
-        <div class="nav-dd" data-dd>
-          <button class="nav-link nav-dd-btn" type="button" aria-haspopup="true" aria-expanded="false">
+        <div class="nav-dropdown">
+          <button class="nav-link nav-dropbtn" type="button">
             More <i class="fa-solid fa-chevron-down"></i>
           </button>
-          <div class="nav-dd-menu" role="menu">
-            <a role="menuitem" href="category.html?group=khabar" class="nav-dd-item">Latest Khabar</a>
-            <a role="menuitem" href="category.html?group=study-material" class="nav-dd-item">Study Material & Top Courses</a>
+          <div class="nav-dropdown-content" role="menu">
+            <a href="category.html?group=admit-result" role="menuitem">Admit Card & Results</a>
+            <a href="category.html?group=khabar" role="menuitem">Latest Khabar</a>
+            <a href="category.html?group=study-material" role="menuitem">Study Material</a>
           </div>
         </div>
-
-        <!-- keep these CTA buttons -->
-        <div id="header-links" class="header-cta"></div>
       </nav>
 
-      <div class="header-actions">
-        <button id="openSearchBtn" class="icon-btn" type="button" aria-label="Open search">
-          <i class="fa-solid fa-magnifying-glass"></i>
-        </button>
-        <button id="menuBtn" class="icon-btn" type="button" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
-          <i class="fa-solid fa-bars"></i>
-        </button>
+      <button class="hamburger" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <div class="mobile-menu" id="mobileMenu" hidden>
+      <div class="mobile-links">
+        <a class="m-link" href="index.html">Home</a>
+        <a class="m-link" href="https://www.topsarkarijobs.com/view.html?section=results">Results</a>
+        <a class="m-link" href="govt-services.html">CSC Services</a>
+        <a class="m-link" href="tools.html">Tools</a>
+        <a class="m-link" href="helpdesk.html">Helpdesk</a>
+
+        <details class="m-dd">
+          <summary>Jobs</summary>
+          <a class="m-sublink" href="category.html?group=study">Study Wise Jobs</a>
+          <a class="m-sublink" href="category.html?group=popular">Popular Jobs</a>
+          <a class="m-sublink" href="category.html?group=state">State Wise Jobs</a>
+        </details>
+
+        <details class="m-dd">
+          <summary>Admissions</summary>
+          <a class="m-sublink" href="category.html?group=admissions">Admissions</a>
+        </details>
+
+        <details class="m-dd">
+          <summary>More</summary>
+          <a class="m-sublink" href="category.html?group=admit-result">Admit Card & Results</a>
+          <a class="m-sublink" href="category.html?group=khabar">Latest Khabar</a>
+          <a class="m-sublink" href="category.html?group=study-material">Study Material</a>
+        </details>
       </div>
     </div>
   </header>
 
-  <!-- KEEP the big search bar section -->
-  <section class="top-search">
+  <!-- Search Block (Homepage only) -->
+  <section class="search-wrap" id="headerSearchSection" aria-label="Site search">
     <div class="container">
       <div class="search-card">
         <h2 class="search-title">Search across Top Sarkari Jobs</h2>
