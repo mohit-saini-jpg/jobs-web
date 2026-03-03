@@ -539,16 +539,16 @@
           }
           
           /* Custom Bottom Search exactly like screenshot */
-          .mobile-bottom-search {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            padding: 20px 14px;
-            margin-top: 28px;
-            margin-bottom: 20px;
-            border-radius: 16px;
-            text-align: center;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-          }
+.mobile-bottom-search {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 20px 14px;
+  margin-top: 14px;
+  margin-bottom: 10px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
           .mobile-bottom-search h3 {
             font-size: 15px;
             font-weight: 900;
