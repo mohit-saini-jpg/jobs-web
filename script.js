@@ -544,7 +544,7 @@
            border: 1px solid #e2e8f0;
            padding: 20px 14px;
            margin-top: 14px;
-           margin-bottom: 10px;
+           margin-bottom: 8px;
            border-radius: 16px;
            text-align: center;
            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
