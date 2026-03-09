@@ -189,8 +189,7 @@
         const a = document.createElement("a");
         a.className = "nav-link";
         a.href = normalizeUrl(l.link || l.url || "#");
-        a.target = "_blank";
-        a.rel = "noopener";
+        if (l.external) { a.target = "_blank"; a.rel = "noopener"; }
         a.textContent = l.name || "Link";
         desktop.appendChild(a);
       });
@@ -201,8 +200,7 @@
       links.forEach((l) => {
         const a = document.createElement("a");
         a.href = normalizeUrl(l.link || l.url || "#");
-        a.target = "_blank";
-        a.rel = "noopener";
+        if (l.external) { a.target = "_blank"; a.rel = "noopener"; }
         a.textContent = l.name || "Link";
         mobile.appendChild(a);
       });
