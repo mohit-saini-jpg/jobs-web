@@ -467,7 +467,7 @@
         
         /* ✅ PREMIUM MOBILE APP OVERRIDES */
         @media (max-width: 980px) {
-          .home-quicklinks { padding-top: 16px; }
+          .home-quicklinks { padding-top: 16px; padding-bottom: 6px; }
           .hidden-on-inner { display: none !important; }
           
           /* The 4-Column Grid */
