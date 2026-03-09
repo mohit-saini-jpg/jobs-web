@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-C4VRD1C9QS"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-C4VRD1C9QS');
+  </script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Top Sarkari Jobs | View</title>
+  <link rel="icon" type="image/x-icon" href="image.ico">
+
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    html, body { height: 100%; }
+    body { display: flex; flex-direction: column; }
+    main { flex: 1; }
+    
+    /* Hide the search bar that comes inside the injected header */
+    #site-header .search-card,
+    #site-header .top-search,
+    #site-header .search-row,
+    #site-header input[type="search"] {
+      display: none !important;
+    }
+
+    /* Style for the local search dropdown */
+    #view-search-container { position: relative; z-index: 50; }
+    .search-dropdown {
+       position: absolute; 
+       top: 100%; 
+       left: 0; 
+       right: 0; 
+       width: 100%;
+       background: white;
+       border: 1px solid #e2e8f0;
+       border-bottom-left-radius: 0.5rem;
+       border-bottom-right-radius: 0.5rem;
+       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+       max-height: 24rem; /* 96 * 0.25rem = 24rem */
+       overflow-y: auto;
+       margin-top: 0.25rem;
+       z-index: 100;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <main class="container mx-auto max-w-7xl px-4 py-6">
+
+    <div class="mb-4">
+      <a href="index.html" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-white border border-slate-200 hover:bg-slate-50 text-sm font-semibold text-slate-700 transition shadow-sm">
+        <i class="fas fa-arrow-left"></i> Back
+      </a>
+    </div>
+
+    <section id="url-view" class="hidden h-full">
+      <div class="w-full bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm flex flex-col" style="height: 85vh;">
+        <iframe id="url-iframe" title="Viewer"
+                class="w-full h-full border-0"
+                referrerpolicy="no-referrer"
+                loading="lazy"
+                sandbox="allow-forms allow-scripts allow-same-origin allow-popups allow-downloads"></iframe>
+      </div>
+    </section>
+
+    <section id="section-view" class="hidden">
+      
+      <div class="bg-white rounded-lg border border-slate-200 p-6 shadow-sm mb-6" id="view-search-container">
+        <h2 class="text-xl font-bold text-slate-900 mb-1">Search across Top Sarkari Jobs</h2>
+        <p class="text-slate-600 text-sm mb-4">Search jobs, results, admit cards, categories, CSC services and tools.</p>
+        
+        <div class="relative w-full">
+          <div class="flex gap-2 w-full">
+            <input id="sectionSearchInput" type="search" 
+                   placeholder="Search job categories, results, admit cards…" 
+                   class="flex-1 min-w-0 px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 text-base"
+                   autocomplete="off" />
+            <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition shrink-0">
+              <i class="fa-solid fa-magnifying-glass"></i> <span class="hidden sm:inline">Search</span>
+            </button>
+          </div>
+          <div id="sectionSearchResults" class="hidden search-dropdown"></div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg border border-slate-200 p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <h2 id="page-title" class="text-2xl font-bold text-slate-900">Section</h2>
+          <div class="text-slate-600 text-sm">
+            Showing <span id="countNow" class="font-bold text-slate-900">0</span> items.
+          </div>
+        </div>
+
+        <ul id="links-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></ul>
+
+        <div id="loading" class="mt-8 text-center text-slate-500">
+          <i class="fas fa-spinner fa-spin text-2xl"></i>
+        </div>
+      </div>
+    </section>
+
+    <section id="fallback" class="hidden">
+      <div class="bg-amber-50 border border-amber-200 rounded-lg p-6 text-center text-amber-900">
+        <h3 class="font-bold text-lg">Nothing found</h3>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="site-footer"></div>
+
+  <!-- Mobile menu elements required by script.js -->
+  <div id="menuOverlay" class="overlay" hidden></div>
+  <aside id="mobileMenu" class="offcanvas" aria-label="Mobile menu" hidden>
+    <div class="offcanvas-head">
+      <div class="offcanvas-title">Menu</div>
+      <button id="closeMenuBtn" class="icon-btn" type="button" aria-label="Close menu">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <nav class="offcanvas-nav" aria-label="Mobile primary"></nav>
+  </aside>
+
+  <script src="script.js"></script>
+
+  <script>
+    (function () {
+      const urlParams = new URLSearchParams(window.location.search);
+      const sectionParam = urlParams.get("section");
+      const urlParam = urlParams.get("url");
+      const nameParam = urlParams.get("name") || "View";
+
+      const urlView = document.getElementById("url-view");
+      const sectionView = document.getElementById("section-view");
+      const fallback = document.getElementById("fallback");
+
+      function show(el){ if(el) el.classList.remove("hidden"); }
+
+      // 1. Resume / Tool View (No Search Bar)
+      if (urlParam) {
+        show(urlView);
+        document.title = `${nameParam} | Top Sarkari Jobs`;
+        const iframe = document.getElementById("url-iframe");
+        if (iframe) iframe.src = decodeURIComponent(urlParam);
+        return;
+      }
+
+      // 2. Section View (Has Search Bar)
+      if (sectionParam) {
+        show(sectionView);
+        const title = decodeURIComponent(sectionParam).replace(/-/g, ' ').toUpperCase();
+        document.title = `${title} | Top Sarkari Jobs`;
+        if(document.getElementById("page-title")) document.getElementById("page-title").textContent = title;
+
+        // Render List
+        (async () => {
+             const list = document.getElementById("links-list");
+             try {
+                 const r = await fetch("dynamic-sections.json");
+                 const d = await r.json();
+                 const sec = d.sections.find(s => s.id === sectionParam || s.title === sectionParam) || d.sections[0];
+                 
+                 if(sec && sec.items) {
+                     document.getElementById("loading").classList.add("hidden");
+                     
+                     // Filter Garbage Link
+                     const cleanItems = sec.items.filter(i => {
+                        const t = (i.name||i.title||"").toLowerCase();
+                        return !t.includes("main home page");
+                     });
+
+                     document.getElementById("countNow").textContent = cleanItems.length;
+                     list.innerHTML = cleanItems.map(i => `
+                        <li class="bg-white border border-slate-200 rounded-lg p-3 hover:shadow-md transition">
+                            <a href="${i.url || i.link}" class="block font-semibold text-sky-700 hover:underline" ${i.external ? 'target="_blank"' : ''}>
+                                ${i.name || i.title}
+                            </a>
+                            <div class="text-xs text-slate-500 mt-1">${i.date || 'Update'}</div>
+                        </li>
+                     `).join('');
+                 }
+             } catch(e) {}
+        })();
+        return;
+      }
+
+      show(fallback);
+    })();
+  </script>
+</body>
+</html>
