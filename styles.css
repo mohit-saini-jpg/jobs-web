@@ -553,6 +553,8 @@ a:hover{ text-decoration:underline; }
 
   /* Safely hide the desktop search components on mobile */
   .top-search { display: none !important; }
+  /* Tighten gap between quicklinks/search and page content on mobile */
+  .page { padding-top: 10px; }
 }
 
 /* Modal */
