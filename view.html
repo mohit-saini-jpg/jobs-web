@@ -23,6 +23,7 @@
   <meta property="og:image:width" content="800" />
   <meta property="og:image:height" content="800" />
   <meta property="og:site_name" content="Top Sarkari Jobs" />
+
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Top Sarkari Jobs - View" />
@@ -37,7 +38,7 @@
     html, body { height: 100%; }
     body { display: flex; flex-direction: column; }
     main { flex: 1; }
-    
+
     /* Hide the search bar that comes inside the injected header */
     #site-header .search-card,
     #site-header .top-search,
@@ -47,22 +48,39 @@
     }
 
     /* Style for the local search dropdown */
-    #view-search-container { position: relative; z-index: 50; }
+    #view-search-container {
+      position: relative;
+      z-index: 50;
+    }
+
     .search-dropdown {
-       position: absolute; 
-       top: 100%; 
-       left: 0; 
-       right: 0; 
-       width: 100%;
-       background: white;
-       border: 1px solid #e2e8f0;
-       border-bottom-left-radius: 0.5rem;
-       border-bottom-right-radius: 0.5rem;
-       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-       max-height: 24rem; /* 96 * 0.25rem = 24rem */
-       overflow-y: auto;
-       margin-top: 0.25rem;
-       z-index: 100;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      width: 100%;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-bottom-left-radius: 0.5rem;
+      border-bottom-right-radius: 0.5rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      max-height: 24rem;
+      overflow-y: auto;
+      margin-top: 0.25rem;
+      z-index: 100;
+    }
+
+    /* Iframe click overlay */
+    #iframe-click-area {
+      position: relative;
+      cursor: pointer;
+    }
+
+    #iframe-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      background: transparent;
     }
   </style>
 </head>
@@ -79,25 +97,32 @@
     </div>
 
     <section id="url-view" class="hidden h-full">
-      <div class="w-full bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm flex flex-col" style="height: 85vh;">
+      <div id="iframe-click-area"
+           class="w-full bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm flex flex-col"
+           style="height: 85vh;">
+
         <iframe id="url-iframe" title="Viewer"
                 class="w-full h-full border-0"
                 referrerpolicy="no-referrer"
                 loading="lazy"
                 sandbox="allow-forms allow-scripts allow-same-origin allow-popups allow-downloads"></iframe>
+
+        <!-- Transparent overlay: click anywhere in iframe area to open link in new page -->
+        <div id="iframe-overlay"
+             aria-label="Open link in new page"
+             title="Click anywhere to open in new page"></div>
       </div>
     </section>
 
     <section id="section-view" class="hidden">
-      
       <div class="bg-white rounded-lg border border-slate-200 p-6 shadow-sm mb-6" id="view-search-container">
         <h2 class="text-xl font-bold text-slate-900 mb-1">Search across Top Sarkari Jobs</h2>
         <p class="text-slate-600 text-sm mb-4">Search jobs, results, admit cards, categories, CSC services and tools.</p>
-        
+
         <div class="relative w-full">
           <div class="flex gap-2 w-full">
-            <input id="sectionSearchInput" type="search" 
-                   placeholder="Search job categories, results, admit cards…" 
+            <input id="sectionSearchInput" type="search"
+                   placeholder="Search job categories, results, admit cards…"
                    class="flex-1 min-w-0 px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 text-base"
                    autocomplete="off" />
             <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition shrink-0">
@@ -159,53 +184,76 @@
       const sectionView = document.getElementById("section-view");
       const fallback = document.getElementById("fallback");
 
-      function show(el){ if(el) el.classList.remove("hidden"); }
+      function show(el) {
+        if (el) el.classList.remove("hidden");
+      }
 
-      // 1. Resume / Tool View (No Search Bar)
+      // 1. URL / Tool View
       if (urlParam) {
         show(urlView);
+
+        const decodedUrl = decodeURIComponent(urlParam);
         document.title = `${nameParam} | Top Sarkari Jobs`;
+
         const iframe = document.getElementById("url-iframe");
-        if (iframe) iframe.src = decodeURIComponent(urlParam);
+        const overlay = document.getElementById("iframe-overlay");
+
+        if (iframe) iframe.src = decodedUrl;
+
+        function openPassedUrl() {
+          window.open(decodedUrl, "_blank", "noopener,noreferrer");
+        }
+
+        if (overlay) {
+          overlay.addEventListener("click", openPassedUrl);
+        }
+
         return;
       }
 
-      // 2. Section View (Has Search Bar)
+      // 2. Section View
       if (sectionParam) {
         show(sectionView);
-        const title = decodeURIComponent(sectionParam).replace(/-/g, ' ').toUpperCase();
+
+        const title = decodeURIComponent(sectionParam).replace(/-/g, " ").toUpperCase();
         document.title = `${title} | Top Sarkari Jobs`;
-        if(document.getElementById("page-title")) document.getElementById("page-title").textContent = title;
 
-        // Render List
+        if (document.getElementById("page-title")) {
+          document.getElementById("page-title").textContent = title;
+        }
+
         (async () => {
-             const list = document.getElementById("links-list");
-             try {
-                 const r = await fetch("dynamic-sections.json");
-                 const d = await r.json();
-                 const sec = d.sections.find(s => s.id === sectionParam || s.title === sectionParam) || d.sections[0];
-                 
-                 if(sec && sec.items) {
-                     document.getElementById("loading").classList.add("hidden");
-                     
-                     // Filter Garbage Link
-                     const cleanItems = sec.items.filter(i => {
-                        const t = (i.name||i.title||"").toLowerCase();
-                        return !t.includes("main home page");
-                     });
+          const list = document.getElementById("links-list");
 
-                     document.getElementById("countNow").textContent = cleanItems.length;
-                     list.innerHTML = cleanItems.map(i => `
-                        <li class="bg-white border border-slate-200 rounded-lg p-3 hover:shadow-md transition">
-                            <a href="${i.url || i.link}" class="block font-semibold text-sky-700 hover:underline" ${i.external ? 'target="_blank"' : ''}>
-                                ${i.name || i.title}
-                            </a>
-                            <div class="text-xs text-slate-500 mt-1">${i.date || 'Update'}</div>
-                        </li>
-                     `).join('');
-                 }
-             } catch(e) {}
+          try {
+            const r = await fetch("dynamic-sections.json");
+            const d = await r.json();
+            const sec = d.sections.find(s => s.id === sectionParam || s.title === sectionParam) || d.sections[0];
+
+            if (sec && sec.items) {
+              document.getElementById("loading").classList.add("hidden");
+
+              const cleanItems = sec.items.filter(i => {
+                const t = (i.name || i.title || "").toLowerCase();
+                return !t.includes("main home page");
+              });
+
+              document.getElementById("countNow").textContent = cleanItems.length;
+
+              list.innerHTML = cleanItems.map(i => `
+                <li class="bg-white border border-slate-200 rounded-lg p-3 hover:shadow-md transition">
+                  <a href="${i.url || i.link}" class="block font-semibold text-sky-700 hover:underline" ${i.external ? 'target="_blank"' : ''}>
+                    ${i.name || i.title}
+                  </a>
+                  <div class="text-xs text-slate-500 mt-1">${i.date || 'Update'}</div>
+                </li>
+              `).join("");
+            }
+          } catch (e) {
+            console.error("Failed to load section data:", e);
+          }
         })();
+
         return;
       }
 
