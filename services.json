@@ -49,40 +49,10 @@
       "documents": ["Photo", "ID Proof", "Address Proof", "Date of Birth Proof"]
     },
     {
-      "name": "नया वोटर कार्ड",
-      "service": "नया वोटर कार्ड",
-      "icon": "fas fa-vote-yea",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Age Proof"]
-    },
-    {
-      "name": "पुराने वोटर कार्ड में करेक्शन",
-      "service": "पुराने वोटर कार्ड में करेक्शन",
-      "icon": "fas fa-edit",
-      "documents": ["Photo", "Old Voter ID", "Address Proof"]
-    },
-    {
-      "name": "खोया हुआ वोटर कार्ड निकलवाएं",
-      "service": "खोया हुआ वोटर कार्ड निकलवाएं",
-      "icon": "fas fa-search",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Police Report"]
-    },
-    {
-      "name": "Farmer ID किसान ID ",
-      "service": "Farmer ID किसान ID",
-      "icon": "fas fa-redo",
-      "documents": ["आधार कार्ड", "फॅमिली ID", "जमीन का कागज फर्द"]
-    },
-    {
       "name": "राशन कार्ड Download",
       "service": "राशन कार्ड Download",
       "icon": "fas fa-utensils",
       "documents": ["Photo", "ID Proof", "Address Proof", "Income Proof"]
-    },
-    {
-      "name": "PF एडवांस आवेदन",
-      "service": "पPF एडवांस आवेदन",
-      "icon": "fas fa-money-check",
-      "documents": ["Photo", "ID Proof", "Address Proof", "PF Account Details"]
     },
     {
       "name": "हर घर गृहिणी योजना 500 में Cylinder",
@@ -91,100 +61,10 @@
       "documents": ["Photo", "ID Proof", "Address Proof", "Income Proof"]
     },
     {
-      "name": "वाहन बीमा",
-      "service": "वाहन बीमा",
-      "icon": "fas fa-car",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Vehicle Documents"]
-    },
-    {
-      "name": "खेतों के लिए 75% सोलर सब्सिडी फॉर्म",
-      "service": "खेतों के लिए 75% सोलर सब्सिडी फॉर्म",
-      "icon": "fas fa-sun",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Land Documents"]
-    },
-    {
-      "name": "कृषि यंत्रों पर सब्सिडी",
-      "service": "कृषि यंत्रों पर सब्सिडी",
-      "icon": "fas fa-tractor",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Land Documents"]
-    },
-    {
-      "name": "खाद-बीज की स्कीमें",
-      "service": "खाद-बीज की स्कीमें",
-      "icon": "fas fa-seedling",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Land Documents"]
-    },
-    {
-      "name": "पराली प्रबंधन हेतु ₹1200 प्रति एकड़ सहायता",
-      "service": "पराली प्रबंधन हेतु ₹1200 प्रति एकड़ सहायता",
-      "icon": "fas fa-leaf",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Land Documents"]
-    },
-    {
-      "name": "देशी कपास प्रोत्साहन राशि ₹4000",
-      "service": "देशी कपास प्रोत्साहन राशि ₹4000",
-      "icon": "fas fa-cotton-bureau",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Land Documents"]
-    },
-    {
-      "name": "बाजरा भावांतर स्कीम",
-      "service": "बाजरा भावांतर स्कीम",
-      "icon": "fas fa-wheat-awn",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Land Documents"]
-    },
-    {
-      "name": "DSR धान की स्कीम 4000 rs",
-      "service": "DSR धान की स्कीम 4000 rs",
-      "icon": "fas fa-wheat-awn",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Land Documents"]
-    },
-    {
-      "name": "बाजरा प्रोत्साहन राशि 3000 rs",
-      "service": "बाजरा प्रोत्साहन राशि 3000 rs",
-      "icon": "fas fa-wheat-awn",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Land Documents"]
-    },
-    {
-      "name": "सभी बैंक की STATEMNT निकलवाए",
-      "service": "सभी बैंक की STATEMNT निकलवाए",
-      "icon": "fas fa-university",
-      "documents": ["पैन कार्ड नंबर", "आपके बैंक अकाउंट से जुड़ा फ़ोन नंबर", "उस बैंक का नाम जिसका स्टेटमेंट आप पाना चाहते हैं", "आपके फ़ोन नंबर पर एक OTP भेजा जाएगा","3 महीने से ले कर 12 महीने तक की STATEMNT  निकलवा सकतेा हो","STATEMNT   निकलने का चार्ज -50 rs रहेगा"]
-    },
-    {
-      "name": "Check status Lado Lakshmi Yojana (HR)",
-      "service": "Check status Lado Lakshmi Yojana (HR)",
-      "icon": "fas fa-car",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Vehicle Number"]
-    },
-    {
-      "name": "आधार कार्ड में Mobile नंबर कोनसा link है check करे",
-      "service": "आधार कार्ड में Mobile नंबर कोनसा link है ceck करे",
-      "icon": "fas fa-mobile-alt",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Aadhaar Card"]
-    },
-    {
       "name": "पैन से आधार लिंक स्टेटस",
       "service": "पैन से आधार लिंक स्टेटस",
       "icon": "fas fa-link",
       "documents": ["Photo", "ID Proof", "Address Proof", "PAN Card", "Aadhaar Card"]
-    },
-    {
-      "name": "Police verification करवाये",
-      "service": "Police verification करवाये",
-      "icon": "fas fa-shield-alt",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Purpose Document"]
-    },
-    {
-      "name": "Police FIR करवाये",
-      "service": "Police FIR करवाये",
-      "icon": "fas fa-search",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Item Description"]
-    },
-    {
-      "name": "All Collage,ITI, All University और Polytechnic Admission फॉर्म भरवाए",
-      "service": "All Collage,ITI, All University और Polytechnic Admission फॉर्म भरवाए",
-      "icon": "fas fa-school",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Mark Sheets"]
     }
   ]
 }
