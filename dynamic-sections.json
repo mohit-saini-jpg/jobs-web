@@ -7730,6 +7730,21 @@
       "color": "#6527F5",
        "viewMoreType": "list",
       "items": [
+        {
+          "name": "NSDL PAN APPLY लिंक",
+          "url": "https://onlineservices.proteantech.in/paam/endUserRegisterContact.html",
+          "external": true
+        },
+        {
+          "name": "UTI PAN APPLY लिंक",
+          "url": "https://www.pan.utiitsl.com/newA.html",
+          "external": true
+        },
+        {
+          "name": "Instant E-PAN APPLY लिंक",
+          "url": "https://eportal.incometax.gov.in/iec/foservices/#/pre-login/instant-e-pan",
+          "external": true
+        },
          {
           "name": "दीन दयाल लाडो लक्ष्मी योजना आवेदन APPLY लिंक",
           "url": "https://play.google.com/store/apps/details?id=com.pragyaware.ladolaxmi&hl=en_IN",
