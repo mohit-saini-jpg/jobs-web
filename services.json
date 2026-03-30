@@ -1,12 +1,6 @@
 {
   "services": [
     {
-      "name": " फॅमिली id में Senior Citizen करवाए",
-      "service": "फॅमिली id में Senior Citizen करवाए",
-      "icon": "fas fa-money-bill",
-      "documents": ["Family Id", "Adhaar cardf"]
-    },
-    {
       "name": "Income Certificate (आय प्रमाण पत्र)",
       "service": "Income Certificate (आय प्रमाण पत्र)",
       "icon": "fas fa-money-bill",
@@ -43,21 +37,9 @@
       "documents": ["Photo", "ID Proof", "Address Proof", "Caste Certificate"]
     },
     {
-      "name": "नया पैन कार्ड",
-      "service": "नया पैन कार्ड",
-      "icon": "fas fa-id-card",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Date of Birth Proof"]
-    },
-    {
       "name": "राशन कार्ड Download",
       "service": "राशन कार्ड Download",
       "icon": "fas fa-utensils",
-      "documents": ["Photo", "ID Proof", "Address Proof", "Income Proof"]
-    },
-    {
-      "name": "हर घर गृहिणी योजना 500 में Cylinder",
-      "service": "हर घर गृहिणी योजना",
-      "icon": "fas fa-home",
       "documents": ["Photo", "ID Proof", "Address Proof", "Income Proof"]
     },
     {
@@ -65,6 +47,12 @@
       "service": "पैन से आधार लिंक स्टेटस",
       "icon": "fas fa-link",
       "documents": ["Photo", "ID Proof", "Address Proof", "PAN Card", "Aadhaar Card"]
+    },
+   {
+      "name": " फॅमिली id में Senior Citizen करवाए",
+      "service": "फॅमिली id में Senior Citizen करवाए",
+      "icon": "fas fa-money-bill",
+      "documents": ["Family Id", "Adhaar cardf"]
     }
   ]
 }
