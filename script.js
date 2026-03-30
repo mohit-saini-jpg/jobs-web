@@ -617,7 +617,7 @@
             
             // Row 2 (Purple)
             { name: "Admissions", url: "category.html?group=admissions", cls: "outline-purple" },
-            { name: "Resume/CV Maker", url: "https://www.topsarkarijobs.com/view.html?url=https%253A%252F%252Fsarkariresulttools.net%252Fresume-maker%252F&name=Resume%2520CV%2520Maker&job=resume-cv-makerume-cv-maker", cls: "outline-purple" }, 
+            { name: "Resume/CV Maker", url: "https://www.topsarkarijobs.com/resume-maker.html" }, 
             { name: "CSC Services", url: "govt-services.html", cls: "outline-purple" },
             { name: "Study Material", url: "category.html?group=study-material", cls: "outline-purple" },
             
