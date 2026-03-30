@@ -1123,6 +1123,1095 @@ document.querySelectorAll('.mover').forEach(o =>
 })();
 </script>
 </body>
+</html>  --b:   rgba(255,255,255,.07); --b2: rgba(255,255,255,.14);
+  --t:   #ededf8; --t2:  #7878a0; --t3: #404060;
+  --a:   #6c5ce7; --a2:  #4a8ae8; --a3: #e8569a;
+  --gw:  rgba(108,92,231,.22);
+  --gn:  #36d48a; --gl:  #eebb33; --re: #ef6060;
+
+  --r:9px; --rl:14px; --rx:20px;
+  --sh: 0 2px 12px rgba(0,0,0,.44);
+  --shl:0 10px 44px rgba(0,0,0,.64);
+  --tr:.16s cubic-bezier(.4,0,.2,1);
+}
+[data-theme=light]{
+  --bg:#f0f0f8; --bg2:#e6e6f2; --bg3:#d4d4e8;
+  --s:#fff; --s2:#f6f6fc;
+  --b:rgba(0,0,0,.07); --b2:rgba(0,0,0,.14);
+  --t:#0c0c1c; --t2:#50507c; --t3:#9090b0;
+  --gw:rgba(80,56,210,.1);
+  --sh:0 2px 12px rgba(0,0,0,.07); --shl:0 10px 44px rgba(0,0,0,.12);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--f);background:var(--bg);color:var(--t);overflow-x:hidden;transition:background var(--tr),color var(--tr);}
+a{color:inherit;text-decoration:none;}
+button{font-family:var(--f);cursor:pointer;}
+input,textarea,select{font-family:var(--f);}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:99px;}
+[contenteditable]:focus{outline:2px solid var(--a);outline-offset:1px;border-radius:2px;}
+
+/* ─── APP NAV (not sticky — flows naturally below site header) ─── */
+#appNav {
+  background:var(--s);
+  border-top:1px solid var(--b);
+  border-bottom:1px solid var(--b);
+  display:flex;align-items:center;
+  padding:0 16px;gap:10px;height:50px;
+}
+.nav-brand{display:flex;flex-direction:column;line-height:1.1;margin-right:8px;flex-shrink:0;}
+.nav-brand-main{font-size:14px;font-weight:800;color:var(--t);white-space:nowrap;}
+.nav-brand-sub{font-size:10px;color:var(--a);font-weight:600;white-space:nowrap;}
+.tab-bar{display:flex;gap:2px;background:var(--bg2);border:1px solid var(--b);border-radius:var(--r);padding:3px;overflow-x:auto;scrollbar-width:none;}
+.tab-bar::-webkit-scrollbar{display:none;}
+.tab-btn{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;color:var(--t2);background:transparent;border:none;transition:all var(--tr);white-space:nowrap;display:flex;align-items:center;gap:5px;}
+.tab-btn.on{background:var(--s);color:var(--t);box-shadow:var(--sh);}
+.tab-btn:hover:not(.on){color:var(--t);background:var(--bg3);}
+.nav-spacer{flex:1;}
+.ai-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;background:linear-gradient(135deg,var(--a),var(--a2));color:#fff;border:none;border-radius:var(--r);font-size:12px;font-weight:700;box-shadow:0 0 14px var(--gw);transition:all var(--tr);white-space:nowrap;}
+.ai-btn:hover{filter:brightness(1.1);transform:translateY(-1px);}
+.ico-btn{width:30px;height:30px;background:var(--bg2);border:1px solid var(--b);border-radius:var(--r);display:grid;place-items:center;color:var(--t2);font-size:12px;transition:all var(--tr);}
+.ico-btn:hover{background:var(--bg3);color:var(--t);}
+.ava{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--a3),var(--a));display:grid;place-items:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;}
+
+/* ─── PANELS ─── */
+.panel{display:none;}
+.panel.on{display:block;}
+
+/* ─── EDITOR LAYOUT ─── */
+#editorLayout{
+  display:grid;
+  grid-template-columns:210px 1fr 248px;
+  height:calc(100vh - 186px);
+  min-height:500px;
+  overflow:hidden;
+}
+@media(max-width:1100px){#editorLayout{grid-template-columns:190px 1fr;}#rPanel{display:none!important;}}
+@media(max-width:720px){#editorLayout{grid-template-columns:1fr;height:auto;min-height:auto;}#lPanel{display:none!important;}}
+
+/* Left panel */
+#lPanel{background:var(--s);border-right:1px solid var(--b);overflow-y:auto;padding:14px 10px;}
+.pt{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:var(--t3);margin-bottom:8px;padding:0 3px;}
+.si{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:7px;cursor:pointer;font-size:12.5px;font-weight:500;color:var(--t2);border:1px solid transparent;margin-bottom:2px;transition:all var(--tr);}
+.si:hover{background:var(--bg2);color:var(--t);}
+.si.on{background:var(--bg2);color:var(--a);border-color:var(--b);}
+.si .ic{width:14px;text-align:center;font-size:11px;}
+.si .gr{margin-left:auto;color:var(--t3);font-size:9px;}
+.dv{height:1px;background:var(--b);margin:11px 0;}
+.chip{display:flex;align-items:center;justify-content:center;gap:5px;padding:7px 9px;border-radius:7px;font-size:11.5px;font-weight:700;color:var(--a);cursor:pointer;margin-bottom:5px;width:100%;background:linear-gradient(135deg,rgba(108,92,231,.1),rgba(74,138,232,.1));border:1px solid rgba(108,92,231,.22);transition:all var(--tr);}
+.chip:hover{background:linear-gradient(135deg,rgba(108,92,231,.2),rgba(74,138,232,.2));transform:translateY(-1px);}
+.kk{display:inline-flex;align-items:center;padding:2px 5px;background:var(--bg3);border:1px solid var(--b2);border-radius:4px;font-size:10px;font-family:var(--fm);color:var(--t2);}
+
+/* Center */
+#cPanel{overflow-y:auto;background:var(--bg2);display:flex;flex-direction:column;align-items:center;padding:18px 14px;gap:13px;}
+.ctbar{display:flex;align-items:center;gap:7px;background:var(--s);border:1px solid var(--b);border-radius:var(--r);padding:6px 11px;width:100%;max-width:720px;flex-wrap:wrap;}
+.ctbar-lbl{font-size:11.5px;color:var(--t2);font-weight:600;flex:1;min-width:80px;}
+.tb{display:flex;align-items:center;gap:4px;padding:5px 10px;background:var(--bg2);border:1px solid var(--b);border-radius:6px;font-size:11.5px;font-weight:600;color:var(--t2);transition:all var(--tr);white-space:nowrap;}
+.tb:hover{background:var(--bg3);color:var(--t);}
+.tb.acc{background:linear-gradient(135deg,var(--a),var(--a2));color:#fff;border-color:transparent;}
+.tb.acc:hover{filter:brightness(1.1);}
+#rdocWrap{width:100%;max-width:720px;background:#fff;border-radius:var(--r);box-shadow:var(--shl);overflow:hidden;min-height:800px;}
+
+/* Right panel */
+#rPanel{background:var(--s);border-left:1px solid var(--b);overflow-y:auto;padding:13px 12px;}
+.ri{width:100%;background:var(--bg2);border:1px solid var(--b);border-radius:7px;padding:7px 9px;font-size:12.5px;color:var(--t);outline:none;transition:border-color var(--tr);margin-bottom:6px;}
+.ri:focus{border-color:var(--a);}
+.ri::placeholder{color:var(--t3);}
+.rl{font-size:10.5px;color:var(--t3);margin-bottom:3px;display:block;}
+.msc{background:var(--bg2);border:1px solid var(--b);border-radius:var(--rl);padding:13px;text-align:center;margin-bottom:13px;}
+.sr{width:72px;height:72px;position:relative;margin:0 auto 7px;}
+.sr svg{transform:rotate(-90deg);}
+.sr-v{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800;color:var(--t);}
+.sl{font-size:11px;font-weight:700;color:var(--t2);}
+
+/* Mobile action bar */
+#mobBar{display:none;gap:8px;padding:10px 12px;background:var(--s);border-top:1px solid var(--b);}
+@media(max-width:720px){
+  #mobBar{display:flex;flex-wrap:wrap;}
+  .panel.on{display:flex;flex-direction:column;}
+  #editorLayout{display:flex;flex-direction:column;}
+  #cPanel{padding:12px 10px;}
+  #rdocWrap{max-width:100%;min-height:auto;}
+}
+
+/* ─── RESUME DOC (white page) ─── */
+#rdoc{
+  font-family:var(--f);
+  font-size:10pt;
+  color:#1a1a2e;
+  background:#fff;
+  line-height:1.5;
+  min-height:800px;
+}
+/* shared resume atoms */
+.re{margin-bottom:11px;}
+.reh{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.ret{font-size:10pt;font-weight:700;color:#0f0f1a;}
+.rec{font-size:9pt;color:#555;font-weight:500;}
+.red{font-size:9pt;color:#888;white-space:nowrap;flex-shrink:0;}
+.rb{margin-top:4px;padding-left:0;list-style:none;}
+.rb li{font-size:9pt;color:#444;padding-left:13px;position:relative;margin-bottom:2px;line-height:1.5;}
+.rb li::before{content:'▸';position:absolute;left:0;color:var(--tc,#3730a3);font-size:7pt;top:2px;}
+.rsum{font-size:9.5pt;color:#444;line-height:1.65;}
+.rskg{display:flex;flex-wrap:wrap;gap:5px;}
+.rsk{padding:3px 8px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:4px;font-size:9pt;color:#374151;font-weight:500;}
+.redu{display:flex;justify-content:space-between;margin-bottom:7px;}
+.redg{font-size:10pt;font-weight:700;color:#0f0f1a;}
+.resc{font-size:9pt;color:#555;}
+.redy{font-size:9pt;color:#888;}
+.rct{display:flex;justify-content:space-between;margin-bottom:5px;}
+.rctn{font-size:9.5pt;font-weight:600;color:#374151;}
+.rcti{font-size:9pt;color:#888;}
+.rdcl{font-size:9pt;color:#444;margin-top:14px;border-top:1px solid #e5e7eb;padding-top:9px;}
+.rsgn{display:flex;justify-content:space-between;margin-top:18px;font-size:9.5pt;color:#444;}
+
+/* ─── Template 1: Classic Ivy ─── */
+.t1 #rh{padding:22px 28px 16px;border-bottom:2.5px solid var(--tc,#7b0000);text-align:center;}
+.t1 .rn{font-family:var(--fp),serif;font-size:22pt;letter-spacing:1px;color:#0f0f1a;}
+.t1 .rti{font-size:10pt;color:var(--tc,#7b0000);font-weight:600;margin-top:3px;letter-spacing:.5px;}
+.t1 .rco{display:flex;justify-content:center;flex-wrap:wrap;gap:14px;margin-top:8px;font-size:9pt;color:#555;}
+.t1 #rb{padding:16px 28px;}
+.t1 .rs{font-size:8.5pt;font-weight:800;text-transform:uppercase;letter-spacing:2.5px;color:var(--tc,#7b0000);margin:16px 0 7px;padding-bottom:3px;border-bottom:1px solid #ddd;}
+.t1 .rs:first-child{margin-top:0;}
+
+/* ─── Template 2: Executive FAANG ─── */
+.t2 #rh{background:var(--tc,#1a1a3e);color:#fff;padding:24px 28px;}
+.t2 .rn{font-size:22pt;font-weight:800;color:#fff;letter-spacing:-.5px;}
+.t2 .rti{font-size:10.5pt;color:rgba(255,255,255,.72);margin-top:2px;}
+.t2 .rco{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-size:9pt;color:rgba(255,255,255,.62);}
+.t2 #rb{padding:18px 28px;}
+.t2 .rs{font-size:8.5pt;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--tc,#1a1a3e);margin:16px 0 7px;padding-bottom:3px;border-bottom:2px solid var(--tc,#1a1a3e);}
+.t2 .rs:first-child{margin-top:0;}
+.t2 .rsk{background:color-mix(in srgb,var(--tc,#1a1a3e) 8%,transparent);border-color:color-mix(in srgb,var(--tc,#1a1a3e) 20%,transparent);color:var(--tc,#1a1a3e);}
+
+/* ─── Template 3: Tech Deep-Dive ─── */
+.t3{font-family:var(--fm),monospace!important;}
+.t3 #rh{background:#0d1117;color:#c9d1d9;padding:22px 28px;border-bottom:1px solid #30363d;}
+.t3 .rn{font-family:var(--fm);font-size:18pt;color:#e6edf3;letter-spacing:-1px;}
+.t3 .rn::before{content:'$ ';color:var(--tc,#56d364);}
+.t3 .rti{font-size:9pt;color:var(--tc,#56d364);margin-top:4px;}
+.t3 .rco{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px;font-size:8.5pt;color:#8b949e;}
+.t3 #rb{padding:16px 28px;background:#0d1117;color:#c9d1d9;}
+.t3 .rs{font-size:8pt;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--tc,#56d364);margin:16px 0 7px;padding-bottom:3px;border-bottom:1px solid #21262d;}
+.t3 .rs:first-child{margin-top:0;}
+.t3 .ret{color:#e6edf3;} .t3 .rec{color:#8b949e;} .t3 .rsum{color:#c9d1d9;}
+.t3 .rb li{color:#c9d1d9;} .t3 .rb li::before{color:var(--tc,#56d364);}
+.t3 .redg{color:#e6edf3;} .t3 .resc{color:#8b949e;} .t3 .rctn{color:#c9d1d9;}
+.t3 .rsk{background:#161b22;border-color:#30363d;color:#8b949e;}
+
+/* ─── Template 4: Two-Column Pro ─── */
+.t4{display:flex;min-height:800px;}
+.t4 #rh{display:none;}
+.t4 #rb{display:flex;width:100%;}
+.t4 .tc-left{width:37%;background:var(--tc,#1e293b);color:#fff;padding:24px 15px;}
+.t4 .tc-right{width:63%;padding:20px 20px;}
+.t4 .tc-name{font-family:var(--fp),serif;font-size:16pt;color:#fff;line-height:1.2;margin-bottom:4px;}
+.t4 .tc-title{font-size:9pt;color:rgba(255,255,255,.7);margin-bottom:14px;}
+.t4 .tc-photo{width:68px;height:68px;border-radius:50%;background:rgba(255,255,255,.15);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:25px;color:rgba(255,255,255,.45);}
+.t4 .tc-sh{font-size:8pt;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.45);margin:13px 0 6px;border-bottom:1px solid rgba(255,255,255,.12);padding-bottom:3px;}
+.t4 .tc-item{font-size:8.5pt;color:rgba(255,255,255,.75);margin-bottom:4px;line-height:1.5;}
+.t4 .tc-sk{display:inline-block;padding:2px 7px;background:rgba(255,255,255,.1);border-radius:3px;font-size:8pt;color:rgba(255,255,255,.8);margin:2px 2px 2px 0;}
+.t4 .rs{font-size:8.5pt;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--tc,#1e293b);margin:14px 0 7px;padding-bottom:3px;border-bottom:2px solid var(--tc,#1e293b);}
+.t4 .rs:first-child{margin-top:0;}
+
+/* ─── Template 5: One-Page ATS ─── */
+.t5 #rh{padding:20px 28px 14px;}
+.t5 .rn{font-size:28pt;font-weight:800;color:#0f0f1a;letter-spacing:-1px;}
+.t5 .rti{font-size:11pt;color:var(--tc,#6d5cf0);margin-top:2px;font-weight:500;}
+.t5 .rco{display:flex;flex-wrap:wrap;gap:16px;margin-top:8px;font-size:9pt;color:#666;}
+.t5 #rb{padding:0 28px 18px;display:grid;grid-template-columns:1fr 215px;gap:0 20px;}
+.t5 .t5-main{border-right:1px solid #f0f0f0;padding-right:20px;}
+.t5 .t5-side{}
+.t5 .rs{font-size:8pt;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--tc,#6d5cf0);margin:14px 0 6px;}
+.t5 .rs:first-child{margin-top:0;}
+
+/* ─── Template 6: Startup Founder ─── */
+.t6 #rh{padding:26px 28px 18px;border-bottom:3px solid var(--tc,#059669);position:relative;overflow:hidden;}
+.t6 #rh::before{content:'';position:absolute;top:-20px;right:-20px;width:110px;height:110px;border-radius:50%;background:color-mix(in srgb,var(--tc,#059669) 8%,transparent);}
+.t6 .rn{font-size:24pt;font-weight:800;color:#0f0f1a;letter-spacing:-.5px;}
+.t6 .rti{font-size:10.5pt;color:var(--tc,#059669);font-weight:700;margin-top:2px;}
+.t6 .rco{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px;font-size:9pt;color:#555;}
+.t6 #rb{padding:18px 28px;}
+.t6 .rs{display:flex;align-items:center;gap:8px;font-size:8.5pt;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--tc,#059669);margin:16px 0 7px;}
+.t6 .rs::after{content:'';flex:1;height:1px;background:var(--tc,#059669);opacity:.2;}
+.t6 .rs:first-child{margin-top:0;}
+
+/* ─── Template 7: Finance/Quant ─── */
+.t7 #rh{padding:22px 28px;background:#0f172a;color:#fff;}
+.t7 .rn{font-family:var(--fp),serif;font-size:22pt;color:#f8fafc;}
+.t7 .rti{font-size:10pt;color:var(--tc,#fbbf24);margin-top:2px;font-weight:700;letter-spacing:.5px;}
+.t7 .rco{display:flex;flex-wrap:wrap;gap:14px;margin-top:9px;font-size:9pt;color:rgba(255,255,255,.5);font-family:var(--fm);}
+.t7 #rb{padding:16px 28px;}
+.t7 .rs{font-size:8pt;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--tc,#fbbf24);margin:16px 0 7px;padding-bottom:3px;border-bottom:1px solid #1e293b;}
+.t7 .rs:first-child{margin-top:0;}
+.t7 .rb li::before{color:var(--tc,#fbbf24);}
+
+/* ─── Template 8: Product Design ─── */
+.t8 #rh{background:linear-gradient(135deg,var(--tc,#7c3aed),color-mix(in srgb,var(--tc,#7c3aed) 60%,#1d4ed8));color:#fff;padding:28px 28px 22px;}
+.t8 .rn{font-family:var(--fp),serif;font-size:22pt;color:#fff;letter-spacing:-.2px;}
+.t8 .rti{font-size:10.5pt;color:rgba(255,255,255,.78);margin-top:2px;}
+.t8 .rco{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-size:9pt;color:rgba(255,255,255,.72);}
+.t8 #rb{padding:18px 28px;}
+.t8 .rs{display:flex;align-items:center;gap:8px;font-size:8.5pt;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--tc,#7c3aed);margin:16px 0 7px;}
+.t8 .rs::after{content:'';flex:1;height:1px;background:var(--tc,#7c3aed);opacity:.25;}
+.t8 .rs:first-child{margin-top:0;}
+.t8 .rsk{background:color-mix(in srgb,var(--tc,#7c3aed) 8%,transparent);border-color:color-mix(in srgb,var(--tc,#7c3aed) 20%,transparent);color:var(--tc,#7c3aed);}
+
+/* ─── Template 9: Research/Academic ─── */
+.t9 #rh{padding:22px 32px 16px;border-bottom:1px solid #999;}
+.t9 .rn{font-family:var(--fp),serif;font-size:21pt;color:#0f0f1a;letter-spacing:.2px;}
+.t9 .rti{font-size:10.5pt;color:#444;margin-top:3px;font-style:italic;}
+.t9 .rco{display:flex;flex-wrap:wrap;gap:16px;margin-top:8px;font-size:9pt;color:#555;}
+.t9 #rb{padding:16px 32px;}
+.t9 .rs{font-family:var(--fp),serif;font-size:11pt;font-weight:700;color:var(--tc,#1a1a3e);margin:16px 0 7px;font-style:italic;}
+.t9 .rs:first-child{margin-top:0;}
+.t9 .rb li::before{color:var(--tc,#1a1a3e);}
+
+/* ─── Template 10: Government/Sarkari ─── */
+.t10 #rh{padding:18px 24px;text-align:center;border-bottom:3px double var(--tc,#1d4ed8);}
+.t10 .rn{font-family:var(--fp),serif;font-size:18pt;font-weight:700;color:#0f0f1a;text-transform:uppercase;letter-spacing:.5px;}
+.t10 .rti{font-size:10pt;color:var(--tc,#1d4ed8);font-weight:700;margin-top:3px;}
+.t10 .rco{display:flex;justify-content:center;flex-wrap:wrap;gap:14px;margin-top:8px;font-size:9pt;color:#444;}
+.t10 #rb{padding:14px 24px;}
+.t10 .rs{font-size:9pt;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;background:var(--tc,#1d4ed8);color:#fff;padding:4px 10px;margin:14px 0 8px;border-radius:2px;display:block;}
+.t10 .rs:first-child{margin-top:0;}
+.t10 table{width:100%;border-collapse:collapse;font-size:9pt;margin-bottom:6px;}
+.t10 th{background:var(--tc,#1d4ed8);color:#fff;padding:4px 8px;text-align:left;font-size:8.5pt;border:1px solid #ddd;}
+.t10 td{padding:3px 8px;border:1px solid #e5e7eb;color:#374151;}
+.t10 tr:nth-child(even) td{background:#f8fafc;}
+
+/* ─── Templates panel ─── */
+#tplPanel{padding:20px;overflow-y:auto;}
+.tpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;}
+@media(max-width:600px){.tpl-grid{grid-template-columns:repeat(2,1fr);}}
+.tc{background:var(--s);border:2px solid var(--b);border-radius:var(--rl);overflow:hidden;cursor:pointer;transition:all var(--tr);position:relative;}
+.tc:hover{border-color:var(--a);transform:translateY(-2px);box-shadow:var(--sh);}
+.tc.on{border-color:var(--a);box-shadow:0 0 0 1px var(--a),var(--sh);}
+.tc-thumb{width:100%;aspect-ratio:3/4;overflow:hidden;}
+.tc-info{padding:10px 12px;border-top:1px solid var(--b);}
+.tc-name{font-size:12.5px;font-weight:700;color:var(--t);margin-bottom:2px;}
+.tc-desc{font-size:11px;color:var(--t2);}
+.tc-badge{position:absolute;top:6px;right:6px;padding:2px 7px;background:rgba(54,212,138,.12);border:1px solid rgba(54,212,138,.25);color:var(--gn);border-radius:99px;font-size:10px;font-weight:700;}
+.tc-act{position:absolute;top:6px;left:6px;padding:2px 7px;background:var(--a);color:#fff;border-radius:99px;font-size:10px;font-weight:700;display:none;}
+.tc.on .tc-act{display:block;}
+.cdots{display:flex;gap:4px;margin-top:7px;}
+.cd{width:14px;height:14px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all var(--tr);}
+.cd.on{border-color:var(--t);transform:scale(1.2);}
+
+/* ─── Score panel ─── */
+#scorePanel{padding:22px;overflow-y:auto;}
+.s-hero{display:grid;grid-template-columns:260px 1fr;gap:18px;margin-bottom:20px;}
+@media(max-width:780px){.s-hero{grid-template-columns:1fr;}}
+.scard{background:var(--s);border:1px solid var(--b);border-radius:var(--rx);padding:24px;text-align:center;display:flex;flex-direction:column;align-items:center;}
+.bring{position:relative;width:140px;height:140px;margin-bottom:12px;}
+.bring svg{transform:rotate(-90deg);}
+.bval{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.bnum{font-size:36px;font-weight:800;color:var(--t);line-height:1;}
+.blbl{font-size:11px;font-weight:600;color:var(--t2);margin-top:2px;}
+.sgrd{font-size:12.5px;font-weight:700;padding:5px 14px;border-radius:99px;background:rgba(54,212,138,.1);border:1px solid rgba(54,212,138,.22);color:var(--gn);margin-bottom:9px;}
+.sbn{font-size:12px;color:var(--t2);background:var(--bg2);border:1px solid var(--b);border-radius:7px;padding:9px 12px;width:100%;text-align:left;margin-top:4px;}
+.sbn strong{color:var(--a);}
+.sbk{display:flex;flex-direction:column;gap:11px;}
+.srow{background:var(--s);border:1px solid var(--b);border-radius:var(--r);padding:13px 15px;}
+.srh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.srn{font-size:12.5px;font-weight:700;color:var(--t);display:flex;align-items:center;gap:6px;}
+.srn i{color:var(--a);}
+.srv{font-size:14px;font-weight:800;color:var(--t);}
+.sbar{height:5px;background:var(--bg3);border-radius:99px;overflow:hidden;}
+.sbf{height:100%;border-radius:99px;transition:width .8s cubic-bezier(.4,0,.2,1);}
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:11px;margin-top:20px;}
+.tip{background:var(--s);border:1px solid var(--b);border-radius:var(--r);padding:13px;display:flex;gap:10px;}
+.tic{width:32px;height:32px;border-radius:7px;display:grid;place-items:center;font-size:13px;flex-shrink:0;}
+.tit{font-size:12.5px;font-weight:700;color:var(--t);margin-bottom:3px;}
+.tid{font-size:11px;color:var(--t2);line-height:1.5;}
+.tapply{display:inline-flex;align-items:center;gap:3px;margin-top:6px;padding:3px 8px;background:var(--bg2);border:1px solid var(--b);border-radius:5px;font-size:10.5px;font-weight:700;color:var(--a);cursor:pointer;transition:all var(--tr);}
+.tapply:hover{background:rgba(108,92,231,.1);}
+
+/* ─── Export panel ─── */
+#exportPanel{padding:22px;overflow-y:auto;}
+.exp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:13px;}
+.ec{background:var(--s);border:1px solid var(--b);border-radius:var(--rl);padding:20px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;transition:all var(--tr);}
+.ec:hover{border-color:var(--b2);box-shadow:var(--sh);}
+.eic{width:44px;height:44px;border-radius:var(--r);display:grid;place-items:center;font-size:18px;}
+.etit{font-size:14px;font-weight:700;color:var(--t);}
+.edsc{font-size:11.5px;color:var(--t2);line-height:1.5;}
+.ebtn{display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border-radius:7px;font-size:12.5px;font-weight:700;border:none;cursor:pointer;transition:all var(--tr);}
+.ebtn:hover{transform:translateY(-1px);}
+
+/* ─── Modals ─── */
+.mover{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:9000;display:none;place-items:center;padding:20px;}
+.mover.on{display:grid;}
+.modal{background:var(--s);border:1px solid var(--b2);border-radius:var(--rx);width:100%;max-width:540px;box-shadow:var(--shl);overflow:hidden;animation:mIn .2s cubic-bezier(.4,0,.2,1);}
+@keyframes mIn{from{transform:scale(.95) translateY(6px);opacity:0;}to{transform:scale(1);opacity:1;}}
+.mhd{padding:17px 20px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;}
+.mttl{font-size:14.5px;font-weight:800;color:var(--t);display:flex;align-items:center;gap:7px;}
+.mclose{width:26px;height:26px;background:var(--bg2);border:none;border-radius:6px;color:var(--t2);display:grid;place-items:center;cursor:pointer;transition:all var(--tr);}
+.mclose:hover{background:var(--bg3);color:var(--t);}
+.mbdy{padding:17px 20px;}
+.mftr{padding:13px 20px;border-top:1px solid var(--b);display:flex;justify-content:flex-end;gap:8px;}
+.modal textarea{width:100%;background:var(--bg2);border:1px solid var(--b);border-radius:7px;padding:10px 12px;color:var(--t);font-size:12.5px;resize:vertical;min-height:120px;outline:none;transition:border-color var(--tr);}
+.modal textarea:focus{border-color:var(--a);}
+.modal textarea::placeholder{color:var(--t3);}
+.aiout{background:linear-gradient(135deg,rgba(108,92,231,.07),rgba(74,138,232,.07));border:1px solid rgba(108,92,231,.18);border-radius:var(--r);padding:12px 14px;margin-top:12px;font-size:12px;color:var(--t2);line-height:1.65;white-space:pre-wrap;display:none;}
+.aiout.on{display:block;animation:fU .3s ease;}
+@keyframes fU{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+.typing::after{content:'|';animation:blink .65s step-end infinite;color:var(--a);}
+@keyframes blink{50%{opacity:0;}}
+.roast-i{display:flex;gap:8px;padding:9px 11px;border-radius:7px;margin-bottom:6px;background:var(--bg2);border:1px solid var(--b);font-size:12px;color:var(--t2);line-height:1.5;}
+.roast-i i{color:var(--a3);margin-top:1px;flex-shrink:0;}
+
+/* Toast */
+.toast{position:fixed;bottom:16px;right:16px;background:var(--s2);border:1px solid var(--b2);border-radius:var(--r);padding:10px 14px;font-size:12.5px;font-weight:600;color:var(--t);box-shadow:var(--sh);z-index:9999;display:flex;align-items:center;gap:6px;transform:translateY(68px);opacity:0;transition:all .3s cubic-bezier(.4,0,.2,1);max-width:270px;}
+.toast.on{transform:translateY(0);opacity:1;}
+.toast i{color:var(--gn);}
+.spin{display:inline-block;width:13px;height:13px;border:2px solid var(--b2);border-top-color:var(--a);border-radius:50%;animation:spin .5s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.shd{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.shd h2{font-size:17px;font-weight:800;color:var(--t);}
+.shd p{font-size:12.5px;color:var(--t2);margin-top:2px;}
+.ver-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;background:rgba(238,187,51,.09);border:1px solid rgba(238,187,51,.2);color:var(--gl);border-radius:99px;font-size:10px;font-weight:700;}
+
+/* Print */
+@media print{
+  body *{visibility:hidden!important;}
+  #rdoc,#rdoc *{visibility:visible!important;color:inherit!important;}
+  #rdoc{position:fixed!important;left:0!important;top:0!important;width:210mm!important;margin:0!important;box-shadow:none!important;font-size:10pt!important;}
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<div id="site-header"></div>
+
+<main id="main" style="padding:0;margin:0;">
+<div id="appWrap">
+
+<!-- ════ APP NAV ════ -->
+<nav id="appNav">
+  <div class="nav-brand">
+    <div class="nav-brand-main">Resume/CV Maker</div>
+    <div class="nav-brand-sub">by Topsarkari.com</div>
+  </div>
+  <div class="tab-bar" id="tabBar">
+    <button class="tab-btn on" data-tab="editor"><i class="fa-solid fa-pen-nib"></i><span class="tlbl"> Editor</span></button>
+    <button class="tab-btn" data-tab="templates"><i class="fa-solid fa-layer-group"></i><span class="tlbl"> Templates</span></button>
+    <button class="tab-btn" data-tab="score"><i class="fa-solid fa-chart-pie"></i><span class="tlbl"> Score</span></button>
+    <button class="tab-btn" data-tab="export"><i class="fa-solid fa-arrow-up-from-bracket"></i><span class="tlbl"> Export</span></button>
+  </div>
+  <div class="nav-spacer"></div>
+  <span class="ver-badge" style="margin-right:4px;"><i class="fa-solid fa-crown"></i> Free</span>
+  <button class="ai-btn" onclick="openAI()"><i class="fa-solid fa-wand-magic-sparkles"></i><span> AI Magic</span></button>
+  <button class="ico-btn" onclick="toggleTheme()" id="themeBtn"><i class="fa-solid fa-moon"></i></button>
+  <div class="ava">RS</div>
+</nav>
+
+<!-- ════ EDITOR PANEL ════ -->
+<div class="panel on" id="panel-editor">
+  <div id="editorLayout">
+
+    <!-- LEFT -->
+    <div id="lPanel">
+      <div class="pt">Sections</div>
+      <div class="si on" onclick="goSec('summary',this)"><i class="fa-solid fa-user ic"></i>Header & Summary<i class="fa-solid fa-grip-vertical gr"></i></div>
+      <div class="si" onclick="goSec('experience',this)"><i class="fa-solid fa-briefcase ic"></i>Experience<i class="fa-solid fa-grip-vertical gr"></i></div>
+      <div class="si" onclick="goSec('projects',this)"><i class="fa-solid fa-code-branch ic"></i>Projects<i class="fa-solid fa-grip-vertical gr"></i></div>
+      <div class="si" onclick="goSec('skills',this)"><i class="fa-solid fa-star ic"></i>Skills<i class="fa-solid fa-grip-vertical gr"></i></div>
+      <div class="si" onclick="goSec('education',this)"><i class="fa-solid fa-graduation-cap ic"></i>Education<i class="fa-solid fa-grip-vertical gr"></i></div>
+      <div class="si" onclick="goSec('certifications',this)"><i class="fa-solid fa-certificate ic"></i>Certifications<i class="fa-solid fa-grip-vertical gr"></i></div>
+      <div class="dv"></div>
+      <div class="pt">AI Actions</div>
+      <button class="chip" onclick="openAI()"><i class="fa-solid fa-wand-magic-sparkles"></i>Tailor to Job Description</button>
+      <button class="chip" onclick="openRoast()"><i class="fa-solid fa-fire"></i>Roast My Resume</button>
+      <button class="chip" onclick="aiRewrite()"><i class="fa-solid fa-rotate"></i>Rewrite Summary</button>
+      <div class="dv"></div>
+      <div class="pt">Shortcuts</div>
+      <div style="font-size:11px;color:var(--t3);line-height:2;padding:0 3px;">
+        <span class="kk">⌘S</span> Save &nbsp;<span class="kk">⌘E</span> Export<br>
+        <span class="kk">⌘P</span> Print &nbsp;<span class="kk">Esc</span> Close
+      </div>
+    </div>
+
+    <!-- CENTER -->
+    <div id="cPanel">
+      <div class="ctbar">
+        <span class="ctbar-lbl" id="tplLabel">Template: <strong>Classic Ivy</strong></span>
+        <button class="tb" onclick="switchTab('templates')"><i class="fa-solid fa-layer-group"></i> Change</button>
+        <button class="tb acc" onclick="doDownload()"><i class="fa-solid fa-download"></i> PDF</button>
+      </div>
+      <div id="rdocWrap">
+        <div id="rdoc" class="t1" style="--tc:#7b0000;"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div id="rPanel">
+      <div class="msc">
+        <div class="sr">
+          <svg width="72" height="72" viewBox="0 0 72 72">
+            <circle cx="36" cy="36" r="28" fill="none" stroke="var(--bg3)" stroke-width="5.5"/>
+            <circle cx="36" cy="36" r="28" fill="none" stroke="var(--a)" stroke-width="5.5"
+              stroke-dasharray="176" id="miniCirc" stroke-dashoffset="43" stroke-linecap="round"/>
+          </svg>
+          <div class="sr-v" id="miniVal">76</div>
+        </div>
+        <div class="sl">Resume Score</div>
+        <button class="tb" style="margin-top:8px;width:100%;justify-content:center;" onclick="switchTab('score')">Full Analysis →</button>
+      </div>
+      <div style="margin-bottom:13px;">
+        <div class="pt" style="margin-bottom:7px;">Quick Edit</div>
+        <span class="rl">Full Name</span><input class="ri" id="qn" placeholder="Your name" oninput="onQ()">
+        <span class="rl">Job Title</span><input class="ri" id="qt" placeholder="Your title" oninput="onQ()">
+        <span class="rl">Email</span><input class="ri" id="qe" placeholder="email@example.com" oninput="onQ()">
+        <span class="rl">Phone</span><input class="ri" id="qp" placeholder="+91 xxxxx xxxxx" oninput="onQ()">
+        <span class="rl">Location</span><input class="ri" id="ql" placeholder="City, Country" oninput="onQ()">
+      </div>
+      <div class="pt" style="margin-bottom:7px;">AI Tools</div>
+      <button class="chip" onclick="aiRewrite()"><i class="fa-solid fa-wand-magic-sparkles"></i>Rewrite Summary</button>
+      <button class="chip" onclick="aiBullets()"><i class="fa-solid fa-bolt-lightning"></i>Enhance Bullets</button>
+      <button class="chip" onclick="aiKeywords()"><i class="fa-solid fa-key"></i>Optimize Keywords</button>
+      <div class="dv"></div>
+      <div class="pt" style="margin-bottom:7px;">Version History</div>
+      <div style="font-size:11px;color:var(--t3);">
+        <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--bg2);border-radius:6px;border:1px solid var(--b);margin-bottom:3px;"><span style="color:var(--t2);">Current</span><span>Just now</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--bg2);border-radius:6px;border:1px solid var(--b);margin-bottom:3px;"><span style="color:var(--t2);">v2</span><span>2h ago</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--bg2);border-radius:6px;border:1px solid var(--b);"><span style="color:var(--t2);">v1</span><span>Yesterday</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile bottom bar -->
+  <div id="mobBar">
+    <button class="tb acc" onclick="doDownload()" style="flex:1;justify-content:center;"><i class="fa-solid fa-download"></i> PDF</button>
+    <button class="tb" onclick="switchTab('templates')" style="flex:1;justify-content:center;"><i class="fa-solid fa-layer-group"></i> Templates</button>
+    <button class="tb" onclick="openAI()" style="flex:1;justify-content:center;"><i class="fa-solid fa-wand-magic-sparkles"></i> AI</button>
+  </div>
+</div>
+
+<!-- ════ TEMPLATES PANEL ════ -->
+<div class="panel" id="panel-templates">
+  <div id="tplPanel">
+    <div class="shd"><div><h2>Choose Template</h2><p>10 premium templates, all ATS-optimized. Click any to apply instantly.</p></div></div>
+    <div class="tpl-grid" id="tplGrid"></div>
+  </div>
+</div>
+
+<!-- ════ SCORE PANEL ════ -->
+<div class="panel" id="panel-score">
+  <div id="scorePanel">
+    <div class="shd"><div><h2>Score & ATS Analysis</h2><p>Live feedback to help your resume stand out.</p></div></div>
+    <div class="s-hero">
+      <div class="scard">
+        <div class="bring">
+          <svg width="140" height="140" viewBox="0 0 140 140">
+            <circle cx="70" cy="70" r="58" fill="none" stroke="var(--bg3)" stroke-width="9"/>
+            <circle cx="70" cy="70" r="58" fill="none" stroke="url(#sg)" stroke-width="9"
+              stroke-dasharray="364" id="bigCirc" stroke-dashoffset="87" stroke-linecap="round"/>
+            <defs><linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color:#6c5ce7"/><stop offset="100%" style="stop-color:#4a8ae8"/>
+            </linearGradient></defs>
+          </svg>
+          <div class="bval"><div class="bnum" id="bigN">76</div><div class="blbl">Overall</div></div>
+        </div>
+        <div class="sgrd" id="scoreGrade">★ Great — Top 22%</div>
+        <div class="sbn" id="scoreBench">Beats <strong>78%</strong> of resumes in Software Engineering roles.</div>
+        <button class="chip" style="width:100%;margin-top:11px;" onclick="refreshScore()"><i class="fa-solid fa-rotate"></i>Refresh Score</button>
+      </div>
+      <div class="sbk">
+        <div class="srow"><div class="srh"><div class="srn"><i class="fa-solid fa-robot"></i>ATS Compatibility</div><div class="srv" id="sv-a">82%</div></div><div class="sbar"><div class="sbf" id="sb-a" style="width:82%;background:linear-gradient(90deg,#6c5ce7,#4a8ae8);"></div></div></div>
+        <div class="srow"><div class="srh"><div class="srn"><i class="fa-solid fa-bolt-lightning"></i>Impact Score</div><div class="srv" id="sv-i">71%</div></div><div class="sbar"><div class="sbf" id="sb-i" style="width:71%;background:linear-gradient(90deg,#e8569a,#f59e0b);"></div></div></div>
+        <div class="srow"><div class="srh"><div class="srn"><i class="fa-solid fa-book-open"></i>Readability</div><div class="srv" id="sv-r">88%</div></div><div class="sbar"><div class="sbf" id="sb-r" style="width:88%;background:linear-gradient(90deg,#36d48a,#22d3ee);"></div></div></div>
+        <div class="srow"><div class="srh"><div class="srn"><i class="fa-solid fa-layer-group"></i>Content Depth</div><div class="srv" id="sv-d">65%</div></div><div class="sbar"><div class="sbf" id="sb-d" style="width:65%;background:linear-gradient(90deg,#f59e0b,#ef6060);"></div></div></div>
+        <div class="srow"><div class="srh"><div class="srn"><i class="fa-solid fa-ruler"></i>Format &amp; Length</div><div class="srv" id="sv-f">90%</div></div><div class="sbar"><div class="sbf" id="sb-f" style="width:90%;background:linear-gradient(90deg,#36d48a,#6c5ce7);"></div></div></div>
+      </div>
+    </div>
+    <div class="pt" style="margin-bottom:11px;">Actionable Recommendations</div>
+    <div class="tips-grid" id="tipsGrid"></div>
+  </div>
+</div>
+
+<!-- ════ EXPORT PANEL ════ -->
+<div class="panel" id="panel-export">
+  <div id="exportPanel">
+    <div class="shd"><div><h2>Export Resume</h2><p>PDF is recommended for all job applications.</p></div></div>
+    <div class="exp-grid">
+      <div class="ec"><div class="eic" style="background:rgba(239,68,68,.1);color:#ef4444;"><i class="fa-solid fa-file-pdf"></i></div><div class="etit">Download PDF</div><div class="edsc">Best for applications. Preserves exact formatting, fully ATS-compatible.</div><button class="ebtn" style="background:#ef4444;color:#fff;" onclick="doDownload()"><i class="fa-solid fa-download"></i> Download PDF</button></div>
+      <div class="ec"><div class="eic" style="background:rgba(59,130,246,.1);color:#3b82f6;"><i class="fa-solid fa-clipboard-list"></i></div><div class="etit">Copy Plain Text</div><div class="edsc">Clean text for pasting into online portals and email applications.</div><button class="ebtn" style="background:#3b82f6;color:#fff;" onclick="copyTxt()"><i class="fa-solid fa-copy"></i> Copy Text</button></div>
+      <div class="ec"><div class="eic" style="background:rgba(54,212,138,.1);color:#36d48a;"><i class="fa-solid fa-print"></i></div><div class="etit">Print Resume</div><div class="edsc">Open browser print dialog. Select "Save as PDF" for a local copy.</div><button class="ebtn" style="background:#36d48a;color:#0f0f1a;" onclick="window.print()"><i class="fa-solid fa-print"></i> Print</button></div>
+      <div class="ec"><div class="eic" style="background:rgba(238,187,51,.1);color:#eebb33;"><i class="fa-solid fa-share-nodes"></i></div><div class="etit">Share Link</div><div class="edsc">Generate a shareable link so recruiters can view your resume online.</div><button class="ebtn" style="background:#eebb33;color:#0f0f1a;" onclick="fakeShare()"><i class="fa-solid fa-link"></i> Share Link</button></div>
+    </div>
+    <div style="margin-top:22px;background:var(--s);border:1px solid var(--b);border-radius:var(--rl);padding:17px 20px;">
+      <div class="pt" style="margin-bottom:11px;">Export Settings</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:11px;">
+        <div><span class="rl">Paper Size</span><select class="ri" style="margin:0;"><option>A4 (210×297mm)</option><option>Letter (216×279mm)</option></select></div>
+        <div><span class="rl">Orientation</span><select class="ri" style="margin:0;"><option>Portrait</option><option>Landscape</option></select></div>
+        <div><span class="rl">Margins</span><select class="ri" style="margin:0;"><option>Normal (20mm)</option><option>Narrow (12mm)</option><option>Wide (28mm)</option></select></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /#appWrap -->
+</main>
+
+<!-- AI Modal -->
+<div class="mover" id="aiModal">
+  <div class="modal">
+    <div class="mhd"><div class="mttl"><i class="fa-solid fa-wand-magic-sparkles" style="color:var(--a);"></i>Tailor to Job Description</div><button class="mclose" onclick="closeM('aiModal')"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="mbdy"><p style="font-size:12.5px;color:var(--t2);margin-bottom:10px;line-height:1.6;">Paste a job description. AI will rewrite your summary and boost bullet points to match the role perfectly.</p><textarea id="jdTxt" placeholder="Paste job description here..."></textarea><div class="aiout" id="aiRes"></div></div>
+    <div class="mftr"><button class="tb" onclick="closeM('aiModal')" style="padding:7px 14px;">Cancel</button><button class="tb acc" style="padding:7px 15px;" onclick="runAI()" id="aiBtn"><i class="fa-solid fa-wand-magic-sparkles"></i> Tailor Resume</button></div>
+  </div>
+</div>
+
+<!-- Roast Modal -->
+<div class="mover" id="roastModal">
+  <div class="modal">
+    <div class="mhd"><div class="mttl"><i class="fa-solid fa-fire" style="color:var(--a3);"></i>Roast My Resume</div><button class="mclose" onclick="closeM('roastModal')"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="mbdy"><div id="roastB"></div></div>
+    <div class="mftr"><button class="tb acc" onclick="closeM('roastModal')" style="padding:7px 15px;">Got it, thanks!</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i class="fa-solid fa-check-circle"></i><span id="toastTxt">Done!</span></div>
+
+<div id="site-footer"></div>
+<div id="menuOverlay" class="overlay" hidden></div>
+<aside id="mobileMenu" class="offcanvas" aria-label="Mobile menu" hidden>
+  <div class="offcanvas-head">
+    <div class="offcanvas-title">Menu</div>
+    <button id="closeMenuBtn" class="icon-btn" type="button" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <nav class="offcanvas-nav" aria-label="Mobile primary"></nav>
+</aside>
+<script src="script.js"></script>
+<script>
+/* ================================================================
+   RESUME/CV MAKER BY TOPSARKARI.COM
+   Complete application — state, rendering, tabs, templates, score
+================================================================ */
+'use strict';
+
+/* ── STATE ── */
+const S = {
+  name:'Priya Sharma', title:'Senior Software Engineer',
+  email:'priya.sharma@gmail.com', phone:'+91 98765 43210',
+  location:'Bengaluru, India', linkedin:'linkedin.com/in/priyasharma', github:'github.com/priya-dev',
+  summary:'Results-driven Senior Software Engineer with 6+ years building high-scale distributed systems. Led teams of 8 engineers, reduced API latency by 40%, and shipped features used by 50M+ users. Passionate about clean architecture, developer experience, and mentoring engineers.',
+  experience:[
+    { title:'Senior Software Engineer', company:'Infosys Ltd.', loc:'Bengaluru', from:'Jan 2021', to:'Present',
+      bullets:[
+        'Architected microservices platform handling 2M+ requests/day, reducing P99 latency from 800ms to 120ms',
+        'Led migration of Java monolith to Node.js, cutting deployment time by 65%',
+        'Mentored 4 junior engineers; team PR rejection rate fell 30% within 6 months',
+        'Built real-time analytics dashboard with React + WebSockets, boosting DAU by 22%'
+      ]
+    },
+    { title:'Software Engineer', company:'TCS Digital', loc:'Pune', from:'Aug 2018', to:'Dec 2020',
+      bullets:[
+        'Developed REST APIs serving 500K daily active users with 99.95% uptime SLA',
+        'Implemented Redis caching layer reducing database load by 70%',
+        'Delivered 3 major product launches working with cross-functional teams of 20+'
+      ]
+    }
+  ],
+  projects:[
+    { name:'SmartATS — Resume Parser', tech:'Python · FastAPI · NLP · React',
+      bullets:['Built ML-powered ATS resume parser with 94% accuracy on 50K test resumes','Open-sourced with 1.2K GitHub stars in the first month of launch']
+    },
+    { name:'GovAlert — Job Notification Bot', tech:'Node.js · Telegram API · MongoDB',
+      bullets:['Automated Sarkari job alert system serving 80K+ subscribers daily','Reduced average notification delay from 4 hours to under 3 minutes']
+    }
+  ],
+  skills:{ lang:['Python','JavaScript','TypeScript','Java','SQL'], fw:['React','Node.js','FastAPI','Spring Boot','Next.js'], tools:['AWS','Docker','Kubernetes','Redis','PostgreSQL','MongoDB'] },
+  education:[{ deg:'B.Tech — Computer Science', school:'NIT Trichy', year:'2018', gpa:'8.7 CGPA' }],
+  certs:[
+    { name:'AWS Certified Solutions Architect', issuer:'Amazon Web Services', year:'2022' },
+    { name:'Google Cloud Professional', issuer:'Google', year:'2023' }
+  ]
+};
+
+/* ── Sync quick-edit inputs from state ── */
+function syncQ() {
+  document.getElementById('qn').value = S.name;
+  document.getElementById('qt').value = S.title;
+  document.getElementById('qe').value = S.email;
+  document.getElementById('qp').value = S.phone;
+  document.getElementById('ql').value = S.location;
+}
+function onQ() {
+  S.name     = document.getElementById('qn').value;
+  S.title    = document.getElementById('qt').value;
+  S.email    = document.getElementById('qe').value;
+  S.phone    = document.getElementById('qp').value;
+  S.location = document.getElementById('ql').value;
+  render();
+}
+
+/* ── 10 TEMPLATES ── */
+const TPLS = [
+  { id:'t1', name:'Classic Ivy',         desc:'Harvard/Ivy League style',    col:'#7b0000', tag:'Most Prestigious' },
+  { id:'t2', name:'Executive FAANG',     desc:'Google/Meta engineer style',  col:'#1a1a3e', tag:'FAANG Favourite'  },
+  { id:'t3', name:'Tech Deep-Dive',      desc:'Terminal/GitHub aesthetic',   col:'#56d364', tag:'Dev Friendly'     },
+  { id:'t4', name:'Two-Column Pro',      desc:'Sidebar layout, modern',      col:'#1e293b', tag:'Eye-catching'     },
+  { id:'t5', name:'One-Page ATS',        desc:'Clean, tight one-pager',      col:'#6c5ce7', tag:'ATS Optimized'    },
+  { id:'t6', name:'Startup Founder',     desc:'Bold, modern, founder-ready', col:'#059669', tag:'Startup'          },
+  { id:'t7', name:'Finance / Quant',     desc:'Wall Street & banking style', col:'#fbbf24', tag:'Finance Ready'    },
+  { id:'t8', name:'Product Design',      desc:'Gradient header, creative',   col:'#7c3aed', tag:'Stands Out'       },
+  { id:'t9', name:'Research / Academic', desc:'Serif, scholarly, classic',   col:'#1a1a3e', tag:'Academic'         },
+  { id:'t10',name:'Government / Sarkari',desc:'Traditional Indian format',   col:'#1d4ed8', tag:'Sarkari Ready'    },
+];
+const COLS = [
+  {n:'Crimson',h:'#7b0000'},{n:'Navy',h:'#1a1a3e'},{n:'Slate',h:'#1e293b'},
+  {n:'Indigo',h:'#6c5ce7'},{n:'Sapphire',h:'#1d4ed8'},{n:'Violet',h:'#7c3aed'},
+  {n:'Gold',h:'#fbbf24'},{n:'Emerald',h:'#059669'},{n:'Terminal',h:'#56d364'},{n:'Steel',h:'#374151'},
+];
+
+let curT = TPLS[0];
+let curC = '#7b0000';
+let isDark = true;
+
+/* ── HTML BUILDERS ── */
+function co() {
+  return [S.phone,S.email,S.location,S.linkedin].filter(Boolean).map(v=>`<span>${v}</span>`).join('');
+}
+function expH(lbl) {
+  return `<div class="rs" id="s-experience">${lbl||'Work Experience'}</div>`+
+    S.experience.map(e=>`<div class="re"><div class="reh"><div>
+      <div class="ret" contenteditable="true" spellcheck="false">${e.title}</div>
+      <div class="rec">${e.company} · ${e.loc}</div></div>
+      <div class="red">${e.from}–${e.to}</div></div>
+      <ul class="rb">${e.bullets.map(b=>`<li contenteditable="true" spellcheck="false">${b}</li>`).join('')}</ul>
+    </div>`).join('');
+}
+function projH(lbl) {
+  return `<div class="rs" id="s-projects">${lbl||'Key Projects'}</div>`+
+    S.projects.map(p=>`<div class="re"><div class="reh">
+      <div class="ret">${p.name}</div>
+      <div class="red" style="font-size:8pt;">${p.tech}</div></div>
+      <ul class="rb">${p.bullets.map(b=>`<li>${b}</li>`).join('')}</ul>
+    </div>`).join('');
+}
+function skillH(lbl) {
+  if (curT.id==='t10') {
+    return `<div class="rs" id="s-skills">${lbl||'Technical Skills'}</div>
+      <table><thead><tr><th>Category</th><th>Skills</th></tr></thead><tbody>
+      <tr><td>Languages</td><td>${S.skills.lang.join(', ')}</td></tr>
+      <tr><td>Frameworks</td><td>${S.skills.fw.join(', ')}</td></tr>
+      <tr><td>Tools</td><td>${S.skills.tools.join(', ')}</td></tr>
+      </tbody></table>`;
+  }
+  const all=[...S.skills.lang,...S.skills.fw,...S.skills.tools];
+  return `<div class="rs" id="s-skills">${lbl||'Technical Skills'}</div><div class="rskg">${all.map(s=>`<span class="rsk">${s}</span>`).join('')}</div>`;
+}
+function eduH(cls,lbl) {
+  return `<div class="${cls||'rs'}" id="s-education">${lbl||'Education'}</div>`+
+    S.education.map(e=>`<div class="redu"><div><div class="redg">${e.deg}</div><div class="resc">${e.school} · ${e.gpa}</div></div><div class="redy">${e.year}</div></div>`).join('');
+}
+function certH(cls,lbl) {
+  return `<div class="${cls||'rs'}" id="s-certifications">${lbl||'Certifications'}</div>`+
+    S.certs.map(c=>`<div class="rct"><div><div class="rctn">${c.name}</div><div class="rcti">${c.issuer}</div></div><div class="redy">${c.year}</div></div>`).join('');
+}
+function declH() {
+  return `<div class="rdcl"><strong>Declaration:</strong> I hereby declare all information is true and correct to the best of my knowledge.<div class="rsgn"><span>Date: ___________<br>Place: ___________</span><span>(${S.name})</span></div></div>`;
+}
+
+function ceHead() { /* contenteditable handlers on name/title */
+  return `<div class="rn" contenteditable="true" spellcheck="false" onblur="S.name=this.textContent.trim();syncQ()">${S.name}</div>
+          <div class="rti" contenteditable="true" spellcheck="false" onblur="S.title=this.textContent.trim();syncQ()">${S.title}</div>
+          <div class="rco">${co()}</div>`;
+}
+
+/* ── TEMPLATE RENDER FUNCTIONS ── */
+const BUILDS = {
+  t1() {
+    return `<div id="rh">${ceHead()}</div>
+      <div id="rb"><div class="rs" id="s-summary">Professional Summary</div>
+      <div class="rsum" contenteditable="true" spellcheck="false" onblur="S.summary=this.textContent.trim()">${S.summary}</div>
+      ${expH()}${projH()}${skillH()}${eduH()}${certH()}${declH()}</div>`;
+  },
+  t2() {
+    return `<div id="rh"><div style="flex:1;">
+      <div class="rn" contenteditable="true" spellcheck="false" onblur="S.name=this.textContent.trim();syncQ()">${S.name}</div>
+      <div class="rti">${S.title}</div><div class="rco">${co()}</div></div></div>
+      <div id="rb"><div class="rs" id="s-summary">Professional Summary</div>
+      <div class="rsum" contenteditable="true" spellcheck="false" onblur="S.summary=this.textContent.trim()">${S.summary}</div>
+      ${expH()}${projH()}${skillH()}${eduH()}${certH()}</div>`;
+  },
+  t3() {
+    return `<div id="rh">
+      <div class="rn" contenteditable="true" spellcheck="false" onblur="S.name=this.textContent.trim();syncQ()">${S.name}</div>
+      <div class="rti">${S.title}</div><div class="rco">${co()}</div></div>
+      <div id="rb"><div class="rs" id="s-summary">// about_me</div>
+      <div class="rsum" contenteditable="true" spellcheck="false" onblur="S.summary=this.textContent.trim()">${S.summary}</div>
+      ${expH('// experience')}${projH('// projects')}${skillH('// tech_stack')}${eduH('rs','// education')}${certH('rs','// certifications')}</div>`;
+  },
+  t4() {
+    const side = `<div class="tc-left">
+      <div class="tc-photo"><i class="fa-solid fa-user"></i></div>
+      <div class="tc-name">${S.name}</div>
+      <div class="tc-title">${S.title}</div>
+      <div class="tc-sh">Contact</div>
+      <div class="tc-item"><i class="fa-solid fa-phone" style="margin-right:4px;opacity:.7;font-size:8pt;"></i>${S.phone}</div>
+      <div class="tc-item"><i class="fa-solid fa-envelope" style="margin-right:4px;opacity:.7;font-size:8pt;"></i>${S.email}</div>
+      <div class="tc-item"><i class="fa-solid fa-location-dot" style="margin-right:4px;opacity:.7;font-size:8pt;"></i>${S.location}</div>
+      <div class="tc-sh">Skills</div>
+      ${[...S.skills.lang,...S.skills.fw].map(s=>`<span class="tc-sk">${s}</span>`).join('')}
+      <div class="tc-sh">Tools</div>
+      ${S.skills.tools.map(s=>`<span class="tc-sk">${s}</span>`).join('')}
+      <div class="tc-sh">Education</div>
+      ${S.education.map(e=>`<div class="tc-item" style="margin-bottom:5px;"><strong style="color:#fff;font-size:9pt;">${e.deg}</strong><br><span style="font-size:8.5pt;">${e.school} · ${e.year}</span></div>`).join('')}
+    </div>`;
+    const main = `<div class="tc-right">
+      <div class="rs" id="s-summary">Summary</div>
+      <div class="rsum" contenteditable="true" spellcheck="false" onblur="S.summary=this.textContent.trim()">${S.summary}</div>
+      ${expH()}${projH()}${certH()}
+    </div>`;
+    return `<div id="rh" style="display:none;"></div><div id="rb">${side}${main}</div>`;
+  },
+  t5() {
+    return `<div id="rh">
+      <div class="rn" contenteditable="true" spellcheck="false" onblur="S.name=this.textContent.trim();syncQ()">${S.name}</div>
+      <div class="rti">${S.title}</div><div class="rco">${co()}</div></div>
+      <div id="rb">
+        <div class="t5-main"><div class="rs" id="s-summary">Summary</div>
+        <div class="rsum" contenteditable="true" spellcheck="false" onblur="S.summary=this.textContent.trim()">${S.summary}</div>
+        ${expH()}${projH()}</div>
+        <div class="t5-side">${skillH()}${eduH('rs')}${certH('rs')}</div>
+      </div>`;
+  },
+  t6() {
+    return `<div id="rh">
+      <div class="rn" contenteditable="true" spellcheck="false" onblur="S.name=this.textContent.trim();syncQ()">${S.name}</div>
+      <div class="rti">${S.title}</div><div class="rco">${co()}</div></div>
+      <div id="rb"><div class="rs" id="s-summary">About Me</div>
+      <div class="rsum" contenteditable="true" spellcheck="false" onblur="S.summary=this.textContent.trim()">${S.summary}</div>
+      ${expH()}${projH()}${skillH()}${eduH()}${certH()}</div>`;
+  },
+  t7() {
+    return `<div id="rh">
+      <div class="rn">${S.name}</div><div class="rti">${S.title}</div><div class="rco">${co()}</div></div>
+      <div id="rb"><div class="rs" id="s-summary">Executive Summary</div>
+      <div class="rsum" contenteditable="true" spellcheck="false" onblur="S.summary=this.textContent.trim()">${S.summary}</div>
+      ${expH()}${projH()}${skillH()}${eduH()}${certH()}${declH()}</div>`;
+  },
+  t8() {
+    return `<div id="rh">
+      <div class="rn" contenteditable="true" spellcheck="false" onblur="S.name=this.textContent.trim();syncQ()">${S.name}</div>
+      <div class="rti">${S.title}</div><div class="rco">${co()}</div></div>
+      <div id="rb"><div class="rs" id="s-summary">About Me</div>
+      <div class="rsum" contenteditable="true" spellcheck="false" onblur="S.summary=this.textContent.trim()">${S.summary}</div>
+      ${expH()}${projH()}${skillH()}${eduH()}${certH()}</div>`;
+  },
+  t9() {
+    return `<div id="rh">
+      <div class="rn">${S.name}</div><div class="rti">${S.title}</div><div class="rco">${co()}</div></div>
+      <div id="rb"><div class="rs" id="s-summary">Research Profile</div>
+      <div class="rsum" contenteditable="true" spellcheck="false" onblur="S.summary=this.textContent.trim()">${S.summary}</div>
+      ${expH('Research Experience')}${projH('Selected Publications & Projects')}${skillH('Technical Skills')}${eduH()}${certH()}${declH()}</div>`;
+  },
+  t10() {
+    return `<div id="rh"><div class="rn">${S.name}</div><div class="rti">${S.title}</div><div class="rco">${co()}</div></div>
+      <div id="rb"><div class="rs" id="s-summary">Career Objective</div>
+      <div class="rsum" contenteditable="true" spellcheck="false" onblur="S.summary=this.textContent.trim()">${S.summary}</div>
+      <div class="rs" id="s-experience">Work Experience</div>
+      ${S.experience.map(e=>`<div class="re"><div class="reh"><div><div class="ret">${e.title}</div><div class="rec">${e.company} · ${e.loc}</div></div><div class="red">${e.from}–${e.to}</div></div><ul class="rb">${e.bullets.map(b=>`<li>${b}</li>`).join('')}</ul></div>`).join('')}
+      ${skillH()}${eduH('rs')}
+      <div class="rs" id="s-certifications">Certifications</div>
+      <table><thead><tr><th>Certificate</th><th>Issuing Organization</th><th>Year</th></tr></thead><tbody>
+      ${S.certs.map(c=>`<tr><td>${c.name}</td><td>${c.issuer}</td><td>${c.year}</td></tr>`).join('')}
+      </tbody></table>${declH()}</div>`;
+  }
+};
+
+/* ── RENDER ── */
+function render() {
+  const doc = document.getElementById('rdoc');
+  doc.className = curT.id;
+  doc.style.setProperty('--tc', curC);
+  const build = BUILDS[curT.id];
+  if (build) doc.innerHTML = build();
+}
+
+/* ── TAB SWITCHING ── */
+function switchTab(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('on'));
+  document.getElementById('panel-' + id).classList.add('on');
+  const btn = document.querySelector(`[data-tab="${id}"]`);
+  if (btn) btn.classList.add('on');
+}
+document.getElementById('tabBar').addEventListener('click', e => {
+  const b = e.target.closest('.tab-btn');
+  if (b) switchTab(b.dataset.tab);
+});
+
+/* ── SECTION SCROLL ── */
+function goSec(id, el) {
+  document.querySelectorAll('.si').forEach(i => i.classList.remove('on'));
+  el.classList.add('on');
+  const t = document.getElementById('s-' + id) || document.getElementById('rh');
+  if (t) t.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+/* ── TEMPLATE GRID ── */
+const THUMB_BG = {
+  t1:'background:#fff;padding:10px;', t2:'background:#1a1a3e;padding:10px;',
+  t3:'background:#0d1117;padding:10px;', t4:'background:linear-gradient(90deg,#1e293b 36%,#fff 36%);padding:10px;',
+  t5:'background:#fff;padding:10px;', t6:'background:#fff;padding:10px;border-bottom:3px solid #059669;',
+  t7:'background:#0f172a;padding:10px;', t8:'background:linear-gradient(135deg,#7c3aed,#1d4ed8);padding:10px;',
+  t9:'background:#fff;padding:10px;', t10:'background:#fff;padding:10px;border-top:3px solid #1d4ed8;',
+};
+const THUMB_BAR = {
+  t1:'#e5e7eb', t2:'rgba(255,255,255,.14)', t3:'#21262d', t4:'rgba(255,255,255,.12)',
+  t5:'#e5e7eb', t6:'#e5e7eb', t7:'rgba(255,255,255,.1)',
+  t8:'rgba(255,255,255,.15)', t9:'#ddd', t10:'#e5e7eb',
+};
+
+function buildTplGrid() {
+  const g = document.getElementById('tplGrid');
+  g.innerHTML = '';
+  TPLS.forEach(tpl => {
+    const bc = THUMB_BAR[tpl.id];
+    const card = document.createElement('div');
+    card.className = 'tc' + (tpl.id === curT.id ? ' on' : '');
+    card.innerHTML = `
+      <div class="tc-act">✓ Active</div>
+      <div class="tc-thumb" style="${THUMB_BG[tpl.id]}">
+        <div style="height:17px;background:${bc};border-radius:2px;margin-bottom:5px;opacity:.9;"></div>
+        ${[62,48,72,55,68,50].map(w=>`<div style="height:5px;background:${bc};border-radius:2px;margin-bottom:3px;width:${w}%;opacity:.6;"></div>`).join('')}
+        <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:5px;">${[1,2,3].map(()=>`<div style="height:11px;width:28%;background:${bc};border-radius:2px;opacity:.4;"></div>`).join('')}</div>
+      </div>
+      ${tpl.tag ? `<div class="tc-badge">${tpl.tag}</div>` : ''}
+      <div class="tc-info">
+        <div class="tc-name">${tpl.name}</div>
+        <div class="tc-desc">${tpl.desc} · <span style="color:var(--gn);font-weight:700;">ATS ✓</span></div>
+        <div class="cdots">${COLS.map((c,i)=>`<div class="cd${i===0?' on':''}" style="background:${c.h};" title="${c.n}" data-h="${c.h}"></div>`).join('')}</div>
+      </div>`;
+    card.addEventListener('click', e => {
+      const dot = e.target.closest('.cd');
+      if (dot) {
+        curC = dot.dataset.h;
+        dot.closest('.cdots').querySelectorAll('.cd').forEach(d => d.classList.remove('on'));
+        dot.classList.add('on');
+        render(); return;
+      }
+      curT = tpl; curC = tpl.col;
+      document.querySelectorAll('.tc').forEach(c => c.classList.remove('on'));
+      card.classList.add('on');
+      document.getElementById('tplLabel').innerHTML = `Template: <strong>${tpl.name}</strong>`;
+      render(); toast(`"${tpl.name}" applied`);
+    });
+    g.appendChild(card);
+  });
+}
+
+/* ── SCORE (lightweight, instant) ── */
+const TIPS_D = [
+  { ic:'fa-solid fa-bolt-lightning', c:'#f59e0b', t:'Add Quantified Metrics',   d:'Only 2 of 6 bullets have numbers. Add metrics to 4 more for ~15pt impact boost.',  fn:'aiBullets'  },
+  { ic:'fa-solid fa-key',            c:'#6c5ce7', t:'Include ATS Keywords',     d:'Missing: "system design", "scalability", "CI/CD". Add naturally to summary.',       fn:'aiKeywords' },
+  { ic:'fa-solid fa-check',          c:'#36d48a', t:'Summary Length Optimal',   d:'Your 3–4 line summary is perfect for ATS parsing. Keep it this length.',            fn:null         },
+  { ic:'fa-solid fa-at',             c:'#4a8ae8', t:'Add LinkedIn URL',         d:'Resumes with LinkedIn URLs get 40% more recruiter callbacks.',                      fn:null         },
+  { ic:'fa-solid fa-certificate',    c:'#e8569a', t:'Certifications Detected',  d:'AWS and GCP certs are strong. Consider a CKA for further differentiation.',         fn:null         },
+  { ic:'fa-solid fa-file',           c:'#22d3ee', t:'Ideal One-Page Length',    d:'Your resume fits one A4 page — perfect for under 10 years experience.',              fn:null         },
+];
+
+function buildTips() {
+  document.getElementById('tipsGrid').innerHTML = TIPS_D.map(t => `
+    <div class="tip">
+      <div class="tic" style="background:${t.c}18;color:${t.c};"><i class="${t.ic}"></i></div>
+      <div style="flex:1;">
+        <div class="tit">${t.t}</div><div class="tid">${t.d}</div>
+        ${t.fn
+          ? `<button class="tapply" onclick="${t.fn}();toast('AI fix applied!')"><i class="fa-solid fa-wand-magic-sparkles"></i> Auto-fix</button>`
+          : `<span class="tapply" style="cursor:default;color:var(--gn);border-color:rgba(54,212,138,.2);background:rgba(54,212,138,.07);"><i class="fa-solid fa-check"></i> Good</span>`}
+      </div>
+    </div>`).join('');
+}
+
+function setScore(id, val) {
+  const el = document.getElementById('sv-' + id);
+  const bar = document.getElementById('sb-' + id);
+  if (el) el.textContent = val + '%';
+  if (bar) bar.style.width = val + '%';
+}
+
+function refreshScore() {
+  const v = n => Math.min(100, Math.max(40, n + Math.floor((Math.random() - .5) * 12)));
+  const sc = { a:v(82), i:v(71), r:v(88), d:v(65), f:v(90) };
+  Object.entries(sc).forEach(([k, val]) => setScore(k, val));
+  const overall = Math.round(Object.values(sc).reduce((a,b)=>a+b,0) / 5);
+  document.getElementById('bigN').textContent = overall;
+  document.getElementById('miniVal').textContent = overall;
+  const bigOff = 364 - (overall / 100) * 364;
+  document.getElementById('bigCirc').style.strokeDashoffset = bigOff;
+  const miniOff = 176 - (overall / 100) * 176;
+  document.getElementById('miniCirc').style.strokeDashoffset = miniOff;
+  const grade = overall >= 85 ? '★★ Excellent — Top 5%' : overall >= 75 ? '★ Great — Top 22%' : 'Good — Top 40%';
+  document.getElementById('scoreGrade').textContent = grade;
+  document.getElementById('scoreBench').innerHTML = `Beats <strong>${overall}%</strong> of resumes in Software Engineering roles.`;
+  toast('Score refreshed!');
+}
+
+/* ── AI FEATURES ── */
+function openAI() {
+  document.getElementById('aiModal').classList.add('on');
+  document.getElementById('aiRes').classList.remove('on');
+  document.getElementById('jdTxt').value = '';
+}
+function openRoast() {
+  document.getElementById('roastModal').classList.add('on');
+  const ROAST = [
+    '"Results-driven" — every resume says this. Replace it with a specific achievement in the first line.',
+    'First bullet takes 2 lines to say what fits in 8 words. Recruiters spend 6 seconds. Brevity wins.',
+    'You have numbers — great. But 4 bullets are still vague ("collaborated"). More receipts please.',
+    'Skills section lists 15+ items. Prove your top 6 with real bullets in experience.',
+    '✓ Strong: Projects section is excellent. Real metrics and open-source proof.',
+    'One education entry for a senior role — perfect. Do not pad with irrelevant coursework.',
+  ];
+  document.getElementById('roastB').innerHTML =
+    '<p style="font-size:12px;color:var(--t3);margin-bottom:11px;"><i class="fa-solid fa-info-circle"></i> Brutally honest but constructive AI feedback.</p>' +
+    ROAST.map(r=>`<div class="roast-i"><i class="fa-solid fa-fire"></i><span>${r}</span></div>`).join('');
+}
+function closeM(id) { document.getElementById(id).classList.remove('on'); }
+
+const AI_OUT = `✦ Tailored Summary:\n"Senior Software Engineer with 6+ years delivering scalable, high-impact systems. Led microservices architecture serving 2M req/day (P99: 120ms), orchestrated a migration cutting deploy cycles 65%, and drove 22% DAU lift through real-time features. Ready to bring this track record to your team."\n\n✦ Enhanced Bullets (matched to JD):\n• Re-architected auth service for 5× peak traffic with zero downtime\n• Built Kafka event pipeline cutting data latency 78% — matches "streaming systems"\n• Automated perf regression suite, catching 3 critical bugs before production deploy`;
+
+function runAI() {
+  const jd = document.getElementById('jdTxt').value.trim();
+  if (!jd) { toast('Paste a job description first'); return; }
+  const btn = document.getElementById('aiBtn');
+  btn.innerHTML = '<span class="spin"></span> Analyzing...'; btn.disabled = true;
+  const res = document.getElementById('aiRes'); res.classList.remove('on');
+  setTimeout(() => {
+    res.classList.add('on','typing'); res.textContent = '';
+    let i = 0;
+    const iv = setInterval(() => {
+      res.textContent = AI_OUT.slice(0, i += 5);
+      if (i >= AI_OUT.length) {
+        clearInterval(iv); res.classList.remove('typing');
+        btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Tailor Resume';
+        btn.disabled = false; toast('AI tailoring complete! ✨');
+      }
+    }, 14);
+  }, 1500);
+}
+
+function aiRewrite() {
+  S.summary = 'Senior Software Engineer with 6+ years delivering high-impact distributed systems. Reduced P99 latency 40%, led 8-engineer teams, shipped to 50M+ users. Expert in clean architecture, observability, and ruthless prioritization.';
+  render(); toast('Summary rewritten ✨');
+}
+function aiBullets() {
+  S.experience[0].bullets = [
+    'Architected event-driven microservices processing 2.4M req/day with P99 < 120ms — 6.7× improvement',
+    'Owned Java → Node.js migration of 200K LOC; deploy time from 45min to 8min (65% faster)',
+    'Mentored 4 engineers to senior track; production bugs reduced 30% over 6 months',
+    'Shipped React + WebSockets analytics dashboard; 120K users in week 1, DAU +22% sustained',
+  ];
+  render(); toast('Bullets enhanced ⚡');
+}
+function aiKeywords() {
+  S.summary += ' Expert in system design, scalability patterns, CI/CD automation, and agile delivery.';
+  render(); toast('ATS keywords optimized 🔑');
+}
+
+/* ── EXPORT ── */
+function doDownload() {
+  toast('Preparing PDF...');
+  const el = document.getElementById('rdoc');
+  setTimeout(() => {
+    html2canvas(el, { scale:2, useCORS:true, backgroundColor:'#fff', logging:false })
+      .then(canvas => {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+        const pw = pdf.internal.pageSize.getWidth();
+        const ph = pdf.internal.pageSize.getHeight();
+        const ratio = pw / canvas.width;
+        const sh = canvas.height * ratio;
+        const img = canvas.toDataURL('image/png');
+        if (sh <= ph) {
+          pdf.addImage(img, 'PNG', 0, 0, pw, sh);
+        } else {
+          let y = 0;
+          while (y < sh) { pdf.addImage(img,'PNG',0,-y,pw,sh); y+=ph; if(y<sh)pdf.addPage(); }
+        }
+        pdf.save(`${S.name.replace(/\s+/g,'_')}_Resume.pdf`);
+        toast('PDF downloaded!');
+      })
+      .catch(() => { window.print(); toast('Use "Save as PDF" in print dialog'); });
+  }, 200);
+}
+
+function copyTxt() {
+  const txt = [
+    S.name, S.title,
+    [S.phone,S.email,S.location].filter(Boolean).join(' | '),'',
+    'PROFESSIONAL SUMMARY', S.summary,'',
+    'WORK EXPERIENCE',
+    ...S.experience.flatMap(e=>[`${e.title} — ${e.company}, ${e.loc} (${e.from}–${e.to})`,...e.bullets.map(b=>'• '+b),'']),
+    'TECHNICAL SKILLS',
+    'Languages: '+S.skills.lang.join(', '),
+    'Frameworks: '+S.skills.fw.join(', '),
+    'Tools: '+S.skills.tools.join(', '),'',
+    'EDUCATION',...S.education.map(e=>`${e.deg} — ${e.school} (${e.year}) · ${e.gpa}`),'',
+    'CERTIFICATIONS',...S.certs.map(c=>`${c.name} — ${c.issuer} (${c.year})`),
+  ].join('\n');
+  navigator.clipboard.writeText(txt)
+    .then(()=>toast('Copied as plain text!'))
+    .catch(()=>toast('Copy failed — use Ctrl+C'));
+}
+
+function fakeShare() {
+  const url = 'https://topsarkarijobs.com/cv/'+Math.random().toString(36).slice(2,9);
+  navigator.clipboard.writeText(url)
+    .then(()=>toast('Share link copied!'))
+    .catch(()=>toast('Link: '+url));
+}
+
+/* ── THEME ── */
+function toggleTheme() {
+  isDark = !isDark;
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  document.getElementById('themeBtn').innerHTML = isDark
+    ? '<i class="fa-solid fa-moon"></i>'
+    : '<i class="fa-solid fa-sun"></i>';
+}
+/* Light theme */
+document.documentElement.setAttribute('data-theme','dark');
+
+/* ── TOAST ── */
+function toast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastTxt').textContent = msg;
+  t.classList.add('on');
+  clearTimeout(t._t);
+  t._t = setTimeout(()=>t.classList.remove('on'), 3000);
+}
+
+/* ── KEYBOARD ── */
+document.addEventListener('keydown', e => {
+  if (e.metaKey || e.ctrlKey) {
+    if (e.key==='s') { e.preventDefault(); toast('Saved ✓'); }
+    if (e.key==='e') { e.preventDefault(); doDownload(); }
+    if (e.key==='p') { e.preventDefault(); window.print(); }
+  }
+  if (e.key==='Escape') {
+    document.querySelectorAll('.mover').forEach(m=>m.classList.remove('on'));
+  }
+});
+document.querySelectorAll('.mover').forEach(o =>
+  o.addEventListener('click', e => { if(e.target===o) o.classList.remove('on'); })
+);
+
+/* ── INIT ── */
+(function init() {
+  syncQ();
+  render();
+  buildTplGrid();
+  buildTips();
+})();
+</script>
+</body>
 </html>        
         * {
             transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
