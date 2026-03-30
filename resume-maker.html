@@ -3,38 +3,1411 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>LuminaCV – Free Resume Builder | Top Sarkari Jobs</title>
-<meta name="description" content="Build a stunning ATS-ready resume for free. Multiple templates, live preview, AI tools and instant PDF download."/>
+<title>Resume/CV Maker – Top Sarkari Jobs</title>
+<meta name="description" content="Free professional Resume and CV Maker by TopSarkariJobs.com. 10 premium templates, live preview, ATS scoring, and instant PDF download."/>
 <meta name="robots" content="index, follow"/>
 <link rel="canonical" href="https://www.topsarkarijobs.com/resume-maker.html"/>
 <link rel="icon" type="image/x-icon" href="image.ico">
 <meta property="og:type" content="website"/>
 <meta property="og:url" content="https://www.topsarkarijobs.com/resume-maker.html"/>
-<meta property="og:title" content="LuminaCV – Free Resume Builder | Top Sarkari Jobs"/>
-<meta property="og:description" content="Build a stunning ATS-ready resume for free. Live preview, AI suggestions, instant PDF."/>
+<meta property="og:title" content="Resume/CV Maker – Top Sarkari Jobs"/>
+<meta property="og:description" content="Free professional Resume and CV Maker. 10 premium templates, live preview, ATS scoring, instant PDF."/>
 <meta property="og:image" content="https://www.topsarkarijobs.com/image.png"/>
 <meta property="og:site_name" content="Top Sarkari Jobs"/>
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:image" content="https://www.topsarkarijobs.com/image.png"/>
 
+<!-- Site styles -->
 <link rel="stylesheet" href="styles.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
-/* ── FIX 1: Hide site search bar on this page ── */
-.top-search { display: none !important; }
-#site-header .top-search { display: none !important; }
-section.top-search { display: none !important; }
+/* ══════════════════════════════════════════
+   CRITICAL: hide site search bar on this page
+══════════════════════════════════════════ */
+.top-search, section.top-search, #site-header .top-search { display: none !important; }
 
-/* ── ROOT VARS ── */
+/* ══════════════════════════════════════════
+   DESIGN TOKENS
+══════════════════════════════════════════ */
 :root {
-  --l-bg:#0a0a0f; --l-bg2:#111118; --l-bg3:#1c1c28;
-  --l-sur:#15151e; --l-sur2:#1d1d2a;
-  --l-bd:rgba(255,255,255,.07); --l-bd2:rgba(255,255,255,.13);
-  --l-t:#eeeef8; --l-t2:#8888a8; --l-t3:#525270;
+  --ff: 'DM Sans', system-ui, sans-serif;
+  --ff-display: 'DM Serif Display', Georgia, serif;
+  --ff-mono: 'JetBrains Mono', monospace;
+  --ff-playfair: 'Playfair Display', Georgia, serif;
+
+  /* dark theme */
+  --bg:    #09090e;
+  --bg2:   #0f0f18;
+  --bg3:   #181826;
+  --sur:   #131320;
+  --sur2:  #1a1a2a;
+  --bd:    rgba(255,255,255,.07);
+  --bd2:   rgba(255,255,255,.14);
+  --t:     #eeeef8;
+  --t2:    #8080a0;
+  --t3:    #484868;
+  --acc:   #6d5cf0;
+  --acc2:  #4a80e8;
+  --acc3:  #e85a8a;
+  --gw:    rgba(109,92,240,.22);
+  --grn:   #3dd68c;
+  --gld:   #f0c040;
+  --red:   #f06060;
+
+  --r:  9px;
+  --rl: 14px;
+  --rx: 20px;
+  --sh:  0 2px 14px rgba(0,0,0,.45);
+  --shl: 0 10px 44px rgba(0,0,0,.65);
+  --tr: .16s cubic-bezier(.4,0,.2,1);
+}
+[data-theme=light] {
+  --bg:#f0f0f8; --bg2:#e6e6f2; --bg3:#d4d4e8;
+  --sur:#fff; --sur2:#f6f6fc;
+  --bd:rgba(0,0,0,.07); --bd2:rgba(0,0,0,.14);
+  --t:#0c0c1c; --t2:#50507c; --t3:#9090b0;
+  --gw:rgba(79,60,210,.1);
+  --sh:0 2px 14px rgba(0,0,0,.07); --shl:0 10px 44px rgba(0,0,0,.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--ff); background: var(--bg); color: var(--t); overflow-x: hidden; transition: background var(--tr), color var(--tr); }
+a { color: inherit; text-decoration: none; }
+button { font-family: var(--ff); cursor: pointer; }
+input, textarea, select { font-family: var(--ff); }
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bd2); border-radius: 99px; }
+
+/* ══════════════════════════════════════════
+   RCV NAV — NOT sticky, flows naturally
+══════════════════════════════════════════ */
+.rcv-nav {
+  background: var(--sur);
+  border-top: 1px solid var(--bd);
+  border-bottom: 1px solid var(--bd);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 10px;
+  height: 50px;
+}
+.rcv-brand {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  margin-right: 8px;
+  flex-shrink: 0;
+  cursor: default;
+}
+.rcv-brand-main {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--t);
+  white-space: nowrap;
+}
+.rcv-brand-sub {
+  font-size: 10px;
+  color: var(--acc);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.rcv-tabs {
+  display: flex;
+  gap: 2px;
+  background: var(--bg2);
+  border: 1px solid var(--bd);
+  border-radius: var(--r);
+  padding: 3px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.rcv-tabs::-webkit-scrollbar { display: none; }
+.rcv-tab {
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--t2);
+  background: transparent;
+  border: none;
+  transition: all var(--tr);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.rcv-tab.active { background: var(--sur); color: var(--t); box-shadow: var(--sh); }
+.rcv-tab:hover:not(.active) { color: var(--t); background: var(--bg3); }
+.rcv-spacer { flex: 1; }
+.rcv-ai-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 13px;
+  background: linear-gradient(135deg, var(--acc), var(--acc2));
+  color: #fff; border: none; border-radius: var(--r);
+  font-size: 12px; font-weight: 700;
+  box-shadow: 0 0 16px var(--gw);
+  transition: all var(--tr);
+  white-space: nowrap;
+}
+.rcv-ai-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.rcv-icon-btn {
+  width: 30px; height: 30px;
+  background: var(--bg2); border: 1px solid var(--bd);
+  border-radius: var(--r); display: grid; place-items: center;
+  color: var(--t2); font-size: 12px; transition: all var(--tr);
+}
+.rcv-icon-btn:hover { background: var(--bg3); color: var(--t); }
+.rcv-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--acc3), var(--acc));
+  display: grid; place-items: center;
+  font-size: 11px; font-weight: 800; color: #fff; flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════
+   PANELS
+══════════════════════════════════════════ */
+.rcv-panel { display: none; }
+.rcv-panel.active { display: block; }
+
+/* ══════════════════════════════════════════
+   EDITOR — 3-col layout, internal scroll
+══════════════════════════════════════════ */
+.rcv-editor {
+  display: grid;
+  grid-template-columns: 220px 1fr 250px;
+  height: calc(100vh - 190px);
+  min-height: 520px;
+  overflow: hidden;
+}
+@media(max-width:1120px) {
+  .rcv-editor { grid-template-columns: 195px 1fr; }
+  .rcv-rpanel { display: none !important; }
+}
+@media(max-width:740px) {
+  .rcv-editor { grid-template-columns: 1fr; height: auto; min-height: auto; }
+  .rcv-lpanel { display: none !important; }
+}
+
+/* ── LEFT PANEL ── */
+.rcv-lpanel {
+  background: var(--sur);
+  border-right: 1px solid var(--bd);
+  overflow-y: auto;
+  padding: 14px 10px;
+}
+.rcv-ptitle {
+  font-size: 10px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 1.2px;
+  color: var(--t3); margin-bottom: 8px; padding: 0 3px;
+}
+.rcv-si {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 9px; border-radius: 7px;
+  cursor: pointer; font-size: 12.5px; font-weight: 500;
+  color: var(--t2); border: 1px solid transparent;
+  margin-bottom: 2px; transition: all var(--tr);
+}
+.rcv-si:hover { background: var(--bg2); color: var(--t); }
+.rcv-si.active { background: var(--bg2); color: var(--acc); border-color: var(--bd); }
+.rcv-si .ic { width: 14px; text-align: center; font-size: 11px; }
+.rcv-si .gr { margin-left: auto; color: var(--t3); font-size: 9px; }
+.rcv-divider { height: 1px; background: var(--bd); margin: 11px 0; }
+.rcv-chip {
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  padding: 7px 9px; border-radius: 7px; font-size: 11.5px; font-weight: 700;
+  color: var(--acc); cursor: pointer; margin-bottom: 5px; width: 100%;
+  background: linear-gradient(135deg, rgba(109,92,240,.1), rgba(74,128,232,.1));
+  border: 1px solid rgba(109,92,240,.22);
+  transition: all var(--tr);
+}
+.rcv-chip:hover { background: linear-gradient(135deg, rgba(109,92,240,.2), rgba(74,128,232,.2)); transform: translateY(-1px); }
+.rcv-kbd {
+  display: inline-flex; align-items: center; padding: 2px 5px;
+  background: var(--bg3); border: 1px solid var(--bd2);
+  border-radius: 4px; font-size: 10px; font-family: var(--ff-mono); color: var(--t2);
+}
+
+/* ── CENTER ── */
+.rcv-center {
+  overflow-y: auto;
+  background: var(--bg2);
+  display: flex; flex-direction: column;
+  align-items: center; padding: 18px 14px; gap: 13px;
+}
+.rcv-ctbar {
+  display: flex; align-items: center; gap: 7px;
+  background: var(--sur); border: 1px solid var(--bd);
+  border-radius: var(--r); padding: 6px 11px;
+  width: 100%; max-width: 720px; flex-wrap: wrap;
+}
+.rcv-ctbar-label { font-size: 11.5px; color: var(--t2); font-weight: 600; flex: 1; min-width: 80px; }
+.rcv-tb {
+  display: flex; align-items: center; gap: 4px;
+  padding: 5px 10px; background: var(--bg2); border: 1px solid var(--bd);
+  border-radius: 6px; font-size: 11.5px; font-weight: 600;
+  color: var(--t2); transition: all var(--tr); white-space: nowrap;
+}
+.rcv-tb:hover { background: var(--bg3); color: var(--t); }
+.rcv-tb.acc { background: linear-gradient(135deg, var(--acc), var(--acc2)); color: #fff; border-color: transparent; }
+.rcv-tb.acc:hover { filter: brightness(1.1); }
+
+/* Resume doc wrapper */
+.rcv-doc-wrap {
+  width: 100%; max-width: 720px;
+  background: #fff; border-radius: var(--r);
+  box-shadow: var(--shl); overflow: hidden;
+  min-height: 800px;
+}
+
+/* ── RIGHT PANEL ── */
+.rcv-rpanel {
+  background: var(--sur);
+  border-left: 1px solid var(--bd);
+  overflow-y: auto; padding: 13px 12px;
+}
+.rcv-input {
+  width: 100%; background: var(--bg2); border: 1px solid var(--bd);
+  border-radius: 7px; padding: 7px 9px; font-size: 12.5px;
+  color: var(--t); outline: none; transition: border-color var(--tr);
+  margin-bottom: 6px;
+}
+.rcv-input:focus { border-color: var(--acc); }
+.rcv-input::placeholder { color: var(--t3); }
+.rcv-label { font-size: 10.5px; color: var(--t3); margin-bottom: 3px; display: block; }
+.rcv-mini-score {
+  background: var(--bg2); border: 1px solid var(--bd);
+  border-radius: var(--rl); padding: 13px; text-align: center; margin-bottom: 13px;
+}
+.rcv-score-ring { width: 72px; height: 72px; position: relative; margin: 0 auto 7px; }
+.rcv-score-ring svg { transform: rotate(-90deg); }
+.rcv-score-ring-val { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 19px; font-weight: 800; color: var(--t); }
+.rcv-score-label { font-size: 11px; font-weight: 700; color: var(--t2); }
+
+/* ══════════════════════════════════════════
+   RESUME TEMPLATES — shared atoms
+══════════════════════════════════════════ */
+#rdoc {
+  font-family: var(--ff);
+  font-size: 10pt;
+  color: #1a1a2e;
+  background: #fff;
+  line-height: 1.5;
+  min-height: 800px;
+  transition: none;
+}
+/* Shared entry atoms */
+.re { margin-bottom: 11px; }
+.reh { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.ret { font-size: 10pt; font-weight: 700; color: #0f0f1a; }
+.rec { font-size: 9pt; color: #555; font-weight: 500; }
+.red { font-size: 9pt; color: #888; white-space: nowrap; flex-shrink: 0; }
+.rb  { margin-top: 4px; padding-left: 0; list-style: none; }
+.rb li { font-size: 9pt; color: #444; padding-left: 13px; position: relative; margin-bottom: 2px; line-height: 1.5; }
+.rb li::before { content: '▸'; position: absolute; left: 0; color: var(--tc, #3730a3); font-size: 7pt; top: 2px; }
+.rsum { font-size: 9.5pt; color: #444; line-height: 1.65; }
+.rskg { display: flex; flex-wrap: wrap; gap: 5px; }
+.rsk  { padding: 3px 8px; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 9pt; color: #374151; font-weight: 500; }
+.redu { display: flex; justify-content: space-between; margin-bottom: 7px; }
+.redg { font-size: 10pt; font-weight: 700; color: #0f0f1a; }
+.resc { font-size: 9pt; color: #555; }
+.redy { font-size: 9pt; color: #888; }
+.rct  { display: flex; justify-content: space-between; margin-bottom: 5px; }
+.rctn { font-size: 9.5pt; font-weight: 600; color: #374151; }
+.rcti { font-size: 9pt; color: #888; }
+.rdcl { font-size: 9pt; color: #444; margin-top: 14px; border-top: 1px solid #e5e7eb; padding-top: 9px; }
+.rsgn { display: flex; justify-content: space-between; margin-top: 18px; font-size: 9.5pt; color: #444; }
+
+/* ══════════
+   TEMPLATE 1: Classic Ivy (Harvard-style)
+══════════ */
+.t-ivy { font-family: var(--ff-playfair), serif !important; }
+.t-ivy #rh { padding: 22px 28px 16px; border-bottom: 2px solid var(--tc, #7b0000); text-align: center; }
+.t-ivy .rn { font-family: var(--ff-playfair), serif; font-size: 22pt; letter-spacing: 1px; color: #0f0f1a; }
+.t-ivy .rti { font-size: 10pt; color: var(--tc, #7b0000); font-weight: 600; margin-top: 3px; letter-spacing: .5px; }
+.t-ivy .rco { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; margin-top: 8px; font-size: 9pt; color: #555; }
+.t-ivy #rb { padding: 16px 28px; }
+.t-ivy .rs { font-size: 8.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: 2.5px; color: var(--tc, #7b0000); margin: 16px 0 7px; padding-bottom: 3px; border-bottom: 1px solid #ddd; }
+.t-ivy .rs:first-child { margin-top: 0; }
+
+/* ══════════
+   TEMPLATE 2: Modern Tech FAANG
+══════════ */
+.t-faang #rh { background: linear-gradient(135deg, var(--tc, #1a1a3e), color-mix(in srgb, var(--tc,#1a1a3e) 70%, #0ea5e9)); color: #fff; padding: 24px 28px; }
+.t-faang .rn { font-family: var(--ff); font-size: 22pt; font-weight: 800; color: #fff; letter-spacing: -.5px; }
+.t-faang .rti { font-size: 10.5pt; color: rgba(255,255,255,.72); margin-top: 2px; }
+.t-faang .rco { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 10px; font-size: 9pt; color: rgba(255,255,255,.65); }
+.t-faang #rb { padding: 18px 28px; }
+.t-faang .rs { font-size: 8.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: var(--tc, #1a1a3e); margin: 16px 0 7px; padding-bottom: 3px; border-bottom: 2px solid var(--tc, #1a1a3e); }
+.t-faang .rs:first-child { margin-top: 0; }
+.t-faang .rsk { background: color-mix(in srgb, var(--tc, #1a1a3e) 10%, transparent); border-color: color-mix(in srgb, var(--tc, #1a1a3e) 25%, transparent); color: var(--tc, #1a1a3e); }
+
+/* ══════════
+   TEMPLATE 3: Executive Leadership
+══════════ */
+.t-exec #rh { background: var(--tc, #1e293b); color: #fff; padding: 24px 28px; display: flex; align-items: flex-start; gap: 16px; }
+.t-exec .rn { font-family: var(--ff-display), serif; font-size: 21pt; color: #fff; }
+.t-exec .rti { font-size: 10.5pt; color: rgba(255,255,255,.7); margin-top: 3px; }
+.t-exec .rco { display: flex; flex-wrap: wrap; gap: 13px; margin-top: 9px; font-size: 9pt; color: rgba(255,255,255,.6); }
+.t-exec #rb { display: grid; grid-template-columns: 1fr 265px; }
+.t-exec .rmain { padding: 18px 22px; }
+.t-exec .rside { padding: 18px 15px; background: #f8fafc; border-left: 1px solid #e5e7eb; }
+.t-exec .rs { font-size: 8.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--tc, #1e293b); margin: 14px 0 7px; padding-bottom: 3px; border-bottom: 1px solid #e5e7eb; }
+.t-exec .rs:first-child { margin-top: 0; }
+.t-exec .rss { font-size: 8.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--tc, #1e293b); margin: 14px 0 7px; }
+.t-exec .rss:first-child { margin-top: 0; }
+
+/* ══════════
+   TEMPLATE 4: One-Page Minimal
+══════════ */
+.t-mini #rh { padding: 20px 28px 14px; }
+.t-mini .rn { font-size: 28pt; font-weight: 800; color: #0f0f1a; letter-spacing: -1px; }
+.t-mini .rti { font-size: 11pt; color: var(--tc, #6d5cf0); margin-top: 2px; font-weight: 500; }
+.t-mini .rco { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 8px; font-size: 9pt; color: #666; }
+.t-mini #rb { padding: 0 28px 18px; display: grid; grid-template-columns: 1fr 220px; gap: 0 20px; }
+.t-mini .rmain { border-right: 1px solid #f0f0f0; padding-right: 20px; }
+.t-mini .rside { padding-left: 0; }
+.t-mini .rs { font-size: 8pt; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: var(--tc, #6d5cf0); margin: 14px 0 6px; }
+.t-mini .rs:first-child { margin-top: 0; }
+
+/* ══════════
+   TEMPLATE 5: Two-Page Professional
+══════════ */
+.t-twop #rh { padding: 26px 32px 20px; border-left: 5px solid var(--tc, #1d4ed8); }
+.t-twop .rn { font-family: var(--ff-display), serif; font-size: 24pt; color: #0f0f1a; }
+.t-twop .rti { font-size: 11pt; color: var(--tc, #1d4ed8); font-weight: 600; margin-top: 3px; }
+.t-twop .rco { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 10px; font-size: 9pt; color: #555; }
+.t-twop #rb { padding: 18px 32px; }
+.t-twop .rs { font-size: 9pt; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: var(--tc, #1d4ed8); margin: 18px 0 8px; padding: 5px 10px; background: color-mix(in srgb, var(--tc,#1d4ed8) 8%, transparent); border-radius: 4px; }
+.t-twop .rs:first-child { margin-top: 0; }
+
+/* ══════════
+   TEMPLATE 6: Creative Product Designer
+══════════ */
+.t-creative { display: flex; min-height: 800px; }
+.t-creative #rh { display: none; }
+.t-creative #rb { display: flex; width: 100%; }
+.t-creative .rside-c { width: 36%; background: var(--tc, #7c3aed); color: #fff; padding: 24px 15px; }
+.t-creative .rmain-c { width: 64%; padding: 22px 20px; }
+.t-creative .rc-name { font-family: var(--ff-display), serif; font-size: 17pt; color: #fff; line-height: 1.2; margin-bottom: 4px; }
+.t-creative .rc-title { font-size: 9pt; color: rgba(255,255,255,.72); margin-bottom: 14px; }
+.t-creative .rc-photo { width: 70px; height: 70px; border-radius: 50%; background: rgba(255,255,255,.15); margin: 0 auto 14px; display: flex; align-items: center; justify-content: center; font-size: 26px; color: rgba(255,255,255,.5); }
+.t-creative .rc-sh { font-size: 8pt; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: rgba(255,255,255,.5); margin: 13px 0 6px; border-bottom: 1px solid rgba(255,255,255,.15); padding-bottom: 3px; }
+.t-creative .rc-item { font-size: 8.5pt; color: rgba(255,255,255,.78); margin-bottom: 4px; line-height: 1.5; }
+.t-creative .rc-sk { display: inline-block; padding: 2px 7px; background: rgba(255,255,255,.12); border-radius: 3px; font-size: 8pt; color: rgba(255,255,255,.85); margin: 2px 2px 2px 0; }
+.t-creative .rs { font-size: 8.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--tc, #7c3aed); margin: 14px 0 7px; padding-bottom: 3px; border-bottom: 2px solid var(--tc, #7c3aed); }
+.t-creative .rs:first-child { margin-top: 0; }
+
+/* ══════════
+   TEMPLATE 7: Finance / Quant
+══════════ */
+.t-finance #rh { padding: 22px 28px; background: #0f172a; color: #fff; }
+.t-finance .rn { font-family: var(--ff-playfair), serif; font-size: 22pt; color: #f8fafc; }
+.t-finance .rti { font-size: 10pt; color: var(--tc, #fbbf24); margin-top: 2px; font-weight: 700; letter-spacing: .5px; }
+.t-finance .rco { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 9px; font-size: 9pt; color: rgba(255,255,255,.55); font-family: var(--ff-mono); }
+.t-finance #rb { padding: 16px 28px; }
+.t-finance .rs { font-size: 8pt; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: var(--tc, #fbbf24); margin: 16px 0 7px; padding-bottom: 3px; border-bottom: 1px solid #1e293b; }
+.t-finance .rs:first-child { margin-top: 0; }
+.t-finance .rsk { background: #0f172a0d; border-color: #0f172a1a; color: #0f172a; }
+.t-finance .rb li::before { color: var(--tc, #fbbf24); }
+
+/* ══════════
+   TEMPLATE 8: Startup Founder
+══════════ */
+.t-startup #rh { padding: 26px 28px 18px; border-bottom: 3px solid var(--tc, #059669); position: relative; overflow: hidden; }
+.t-startup #rh::before { content: ''; position: absolute; top: -20px; right: -20px; width: 120px; height: 120px; border-radius: 50%; background: color-mix(in srgb, var(--tc,#059669) 8%, transparent); }
+.t-startup .rn { font-size: 24pt; font-weight: 800; color: #0f0f1a; letter-spacing: -.5px; }
+.t-startup .rti { font-size: 10.5pt; color: var(--tc, #059669); font-weight: 700; margin-top: 2px; }
+.t-startup .rco { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 8px; font-size: 9pt; color: #555; }
+.t-startup #rb { padding: 18px 28px; }
+.t-startup .rs { display: flex; align-items: center; gap: 8px; font-size: 8.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--tc, #059669); margin: 16px 0 7px; }
+.t-startup .rs::after { content: ''; flex: 1; height: 1px; background: var(--tc, #059669); opacity: .2; }
+.t-startup .rs:first-child { margin-top: 0; }
+
+/* ══════════
+   TEMPLATE 9: Engineering Deep-Dive (Tech)
+══════════ */
+.t-eng { font-family: var(--ff-mono), monospace !important; }
+.t-eng #rh { background: #0d1117; color: #c9d1d9; padding: 22px 28px; border-bottom: 1px solid #30363d; }
+.t-eng .rn { font-family: var(--ff-mono); font-size: 18pt; color: #e6edf3; letter-spacing: -1px; }
+.t-eng .rn::before { content: '$ '; color: var(--tc, #56d364); }
+.t-eng .rti { font-size: 9.5pt; color: var(--tc, #56d364); margin-top: 4px; }
+.t-eng .rco { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; font-size: 8.5pt; color: #8b949e; }
+.t-eng #rb { padding: 16px 28px; background: #0d1117; color: #c9d1d9; }
+.t-eng .rs { font-size: 8pt; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--tc, #56d364); margin: 16px 0 7px; padding-bottom: 3px; border-bottom: 1px solid #21262d; }
+.t-eng .rs:first-child { margin-top: 0; }
+.t-eng .ret { color: #e6edf3; }
+.t-eng .rec { color: #8b949e; }
+.t-eng .rsum { color: #c9d1d9; }
+.t-eng .rb li { color: #c9d1d9; }
+.t-eng .rb li::before { color: var(--tc, #56d364); }
+.t-eng .redg { color: #e6edf3; }
+.t-eng .resc { color: #8b949e; }
+.t-eng .rctn { color: #c9d1d9; }
+.t-eng .rsk { background: #161b22; border-color: #30363d; color: #8b949e; }
+
+/* ══════════
+   TEMPLATE 10: Government / Sarkari
+══════════ */
+.t-govt #rh { padding: 18px 24px; text-align: center; border-bottom: 3px double var(--tc, #1d4ed8); }
+.t-govt .rn { font-family: var(--ff-playfair), serif; font-size: 18pt; font-weight: 700; color: #0f0f1a; text-transform: uppercase; letter-spacing: .5px; }
+.t-govt .rti { font-size: 10pt; color: var(--tc, #1d4ed8); font-weight: 700; margin-top: 3px; }
+.t-govt .rco { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-top: 8px; font-size: 9pt; color: #444; }
+.t-govt #rb { padding: 14px 24px; }
+.t-govt .rs { font-size: 9pt; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; background: var(--tc, #1d4ed8); color: #fff; padding: 4px 10px; margin: 14px 0 8px; border-radius: 2px; display: block; }
+.t-govt .rs:first-child { margin-top: 0; }
+.t-govt table { width: 100%; border-collapse: collapse; font-size: 9pt; margin-bottom: 6px; }
+.t-govt th { background: var(--tc, #1d4ed8); color: #fff; padding: 4px 8px; text-align: left; font-size: 8.5pt; border: 1px solid #ddd; }
+.t-govt td { padding: 3px 8px; border: 1px solid #e5e7eb; color: #374151; }
+.t-govt tr:nth-child(even) td { background: #f8fafc; }
+
+/* ══════════════════════════════════════════
+   TEMPLATES PANEL
+══════════════════════════════════════════ */
+.rcv-tpl-panel { padding: 20px; overflow-y: auto; }
+.rcv-tpl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(195px, 1fr)); gap: 13px; }
+.rcv-tc {
+  background: var(--sur); border: 2px solid var(--bd);
+  border-radius: var(--rl); overflow: hidden;
+  cursor: pointer; transition: all var(--tr); position: relative;
+}
+.rcv-tc:hover { border-color: var(--acc); transform: translateY(-2px); box-shadow: var(--sh); }
+.rcv-tc.active { border-color: var(--acc); box-shadow: 0 0 0 1px var(--acc), var(--sh); }
+.rcv-tc-thumb { width: 100%; aspect-ratio: 3/4; overflow: hidden; }
+.rcv-tc-info { padding: 10px 12px; border-top: 1px solid var(--bd); }
+.rcv-tc-name { font-size: 12.5px; font-weight: 700; color: var(--t); margin-bottom: 2px; }
+.rcv-tc-desc { font-size: 11px; color: var(--t2); }
+.rcv-tc-badge { position: absolute; top: 6px; right: 6px; padding: 2px 7px; background: rgba(61,214,140,.12); border: 1px solid rgba(61,214,140,.25); color: var(--grn); border-radius: 99px; font-size: 10px; font-weight: 700; }
+.rcv-tc-act { position: absolute; top: 6px; left: 6px; padding: 2px 7px; background: var(--acc); color: #fff; border-radius: 99px; font-size: 10px; font-weight: 700; display: none; }
+.rcv-tc.active .rcv-tc-act { display: block; }
+.rcv-cdots { display: flex; gap: 4px; margin-top: 7px; }
+.rcv-cdot { width: 14px; height: 14px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: all var(--tr); }
+.rcv-cdot.sel { border-color: var(--t); transform: scale(1.2); }
+
+/* ══════════════════════════════════════════
+   SCORE PANEL
+══════════════════════════════════════════ */
+.rcv-sp { padding: 22px; overflow-y: auto; }
+.rcv-shero { display: grid; grid-template-columns: 265px 1fr; gap: 18px; margin-bottom: 20px; }
+@media(max-width:780px) { .rcv-shero { grid-template-columns: 1fr; } }
+.rcv-scard { background: var(--sur); border: 1px solid var(--bd); border-radius: var(--rx); padding: 24px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+.rcv-bring { position: relative; width: 140px; height: 140px; margin-bottom: 12px; }
+.rcv-bring svg { transform: rotate(-90deg); }
+.rcv-bval { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.rcv-bnum { font-size: 36px; font-weight: 800; color: var(--t); line-height: 1; }
+.rcv-blbl { font-size: 11px; font-weight: 600; color: var(--t2); margin-top: 2px; }
+.rcv-sgrd { font-size: 12.5px; font-weight: 700; padding: 5px 14px; border-radius: 99px; background: rgba(61,214,140,.1); border: 1px solid rgba(61,214,140,.22); color: var(--grn); margin-bottom: 9px; }
+.rcv-bench { font-size: 12px; color: var(--t2); background: var(--bg2); border: 1px solid var(--bd); border-radius: 7px; padding: 9px 12px; width: 100%; text-align: left; margin-top: 4px; }
+.rcv-bench strong { color: var(--acc); }
+.rcv-sbk { display: flex; flex-direction: column; gap: 11px; }
+.rcv-srow { background: var(--sur); border: 1px solid var(--bd); border-radius: var(--r); padding: 13px 15px; }
+.rcv-srh { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.rcv-srn { font-size: 12.5px; font-weight: 700; color: var(--t); display: flex; align-items: center; gap: 6px; }
+.rcv-srn i { color: var(--acc); }
+.rcv-srv { font-size: 14px; font-weight: 800; color: var(--t); }
+.rcv-sbar { height: 5px; background: var(--bg3); border-radius: 99px; overflow: hidden; }
+.rcv-sbf { height: 100%; border-radius: 99px; transition: width .9s cubic-bezier(.4,0,.2,1); }
+.rcv-tips { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 11px; margin-top: 20px; }
+.rcv-tip { background: var(--sur); border: 1px solid var(--bd); border-radius: var(--r); padding: 13px; display: flex; gap: 10px; }
+.rcv-tic { width: 32px; height: 32px; border-radius: 7px; display: grid; place-items: center; font-size: 13px; flex-shrink: 0; }
+.rcv-tit { font-size: 12.5px; font-weight: 700; color: var(--t); margin-bottom: 3px; }
+.rcv-tid { font-size: 11px; color: var(--t2); line-height: 1.5; }
+.rcv-tapply { display: inline-flex; align-items: center; gap: 3px; margin-top: 6px; padding: 3px 8px; background: var(--bg2); border: 1px solid var(--bd); border-radius: 5px; font-size: 10.5px; font-weight: 700; color: var(--acc); cursor: pointer; transition: all var(--tr); }
+.rcv-tapply:hover { background: rgba(109,92,240,.1); }
+
+/* ══════════════════════════════════════════
+   EXPORT PANEL
+══════════════════════════════════════════ */
+.rcv-ep { padding: 22px; overflow-y: auto; }
+.rcv-egrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 13px; }
+.rcv-ec { background: var(--sur); border: 1px solid var(--bd); border-radius: var(--rl); padding: 20px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; transition: all var(--tr); }
+.rcv-ec:hover { border-color: var(--bd2); box-shadow: var(--sh); }
+.rcv-eic { width: 44px; height: 44px; border-radius: var(--r); display: grid; place-items: center; font-size: 18px; }
+.rcv-etit { font-size: 14px; font-weight: 700; color: var(--t); }
+.rcv-edsc { font-size: 11.5px; color: var(--t2); line-height: 1.5; }
+.rcv-ebtn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 15px; border-radius: 7px; font-size: 12.5px; font-weight: 700; border: none; cursor: pointer; transition: all var(--tr); }
+.rcv-ebtn:hover { transform: translateY(-1px); }
+
+/* ══════════════════════════════════════════
+   MODALS
+══════════════════════════════════════════ */
+.rcv-mover {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.78);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  z-index: 500; display: none; place-items: center; padding: 20px;
+}
+.rcv-mover.open { display: grid; }
+.rcv-modal { background: var(--sur); border: 1px solid var(--bd2); border-radius: var(--rx); width: 100%; max-width: 540px; box-shadow: var(--shl); overflow: hidden; animation: mIn .2s cubic-bezier(.4,0,.2,1); }
+@keyframes mIn { from { transform: scale(.95) translateY(6px); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.rcv-mhd { padding: 17px 20px; border-bottom: 1px solid var(--bd); display: flex; align-items: center; justify-content: space-between; }
+.rcv-mtit { font-size: 14.5px; font-weight: 800; color: var(--t); display: flex; align-items: center; gap: 7px; }
+.rcv-mclose { width: 26px; height: 26px; background: var(--bg2); border: none; border-radius: 6px; color: var(--t2); display: grid; place-items: center; cursor: pointer; transition: all var(--tr); }
+.rcv-mclose:hover { background: var(--bg3); color: var(--t); }
+.rcv-mbody { padding: 17px 20px; }
+.rcv-mfoot { padding: 13px 20px; border-top: 1px solid var(--bd); display: flex; justify-content: flex-end; gap: 8px; }
+.rcv-modal textarea { width: 100%; background: var(--bg2); border: 1px solid var(--bd); border-radius: 7px; padding: 10px 12px; color: var(--t); font-size: 12.5px; resize: vertical; min-height: 120px; outline: none; transition: border-color var(--tr); }
+.rcv-modal textarea:focus { border-color: var(--acc); }
+.rcv-modal textarea::placeholder { color: var(--t3); }
+.rcv-aiout { background: linear-gradient(135deg,rgba(109,92,240,.07),rgba(74,128,232,.07)); border: 1px solid rgba(109,92,240,.18); border-radius: var(--r); padding: 12px 14px; margin-top: 12px; font-size: 12px; color: var(--t2); line-height: 1.65; white-space: pre-wrap; display: none; }
+.rcv-aiout.vis { display: block; animation: fU .3s ease; }
+@keyframes fU { from { opacity:0; transform:translateY(4px); } to { opacity:1; } }
+.rcv-typing::after { content: '|'; animation: blink .65s step-end infinite; color: var(--acc); }
+@keyframes blink { 50% { opacity:0; } }
+.rcv-roast-i { display: flex; gap: 8px; padding: 9px 11px; border-radius: 7px; margin-bottom: 6px; background: var(--bg2); border: 1px solid var(--bd); font-size: 12px; color: var(--t2); line-height: 1.5; }
+.rcv-roast-i i { color: var(--acc3); margin-top: 1px; flex-shrink: 0; }
+
+/* Toast */
+.rcv-toast { position: fixed; bottom: 16px; right: 16px; background: var(--sur2); border: 1px solid var(--bd2); border-radius: var(--r); padding: 10px 14px; font-size: 12.5px; font-weight: 600; color: var(--t); box-shadow: var(--sh); z-index: 999; display: flex; align-items: center; gap: 6px; transform: translateY(68px); opacity: 0; transition: all .3s cubic-bezier(.4,0,.2,1); max-width: 270px; }
+.rcv-toast.show { transform: translateY(0); opacity: 1; }
+.rcv-toast i { color: var(--grn); }
+.rcv-spin { display: inline-block; width: 13px; height: 13px; border: 2px solid var(--bd2); border-top-color: var(--acc); border-radius: 50%; animation: spin .5s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Section header */
+.rcv-shd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.rcv-shd h2 { font-size: 17px; font-weight: 800; color: var(--t); }
+.rcv-shd p { font-size: 12.5px; color: var(--t2); margin-top: 2px; }
+.rcv-ver { display: inline-flex; align-items: center; gap: 4px; padding: 2px 7px; background: rgba(240,192,64,.09); border: 1px solid rgba(240,192,64,.2); color: var(--gld); border-radius: 99px; font-size: 10px; font-weight: 700; }
+
+/* ══════════════════════════════════════════
+   MOBILE
+══════════════════════════════════════════ */
+.rcv-mob-bar { display: none; }
+@media(max-width:740px) {
+  .rcv-panel.active { display: flex; flex-direction: column; }
+  .rcv-editor { display: flex; flex-direction: column; height: auto; }
+  .rcv-center { padding: 12px 10px; }
+  .rcv-doc-wrap { max-width: 100%; min-height: auto; }
+  .rcv-mob-bar { display: flex; gap: 8px; padding: 10px 12px; background: var(--sur); border-top: 1px solid var(--bd); flex-wrap: wrap; }
+  .rcv-tpl-grid { grid-template-columns: repeat(2, 1fr); }
+  .rcv-egrid { grid-template-columns: 1fr; }
+  .rcv-sp, .rcv-ep, .rcv-tpl-panel { padding: 14px; }
+  #rdoc { font-size: 8pt; }
+  .t-exec #rb, .t-mini #rb { grid-template-columns: 1fr !important; }
+  .t-exec .rside { border-left: none !important; border-top: 1px solid #e5e7eb; }
+  .t-creative #rb, .t-mini #rb { flex-direction: column !important; }
+  .t-creative .rside-c, .t-creative .rmain-c { width: 100% !important; }
+  .t-mini .rmain { border-right: none !important; padding-right: 0 !important; }
+}
+@media(max-width:480px) {
+  .rcv-nav { padding: 0 10px; gap: 7px; }
+  .rcv-brand-main { font-size: 12px; }
+  .rcv-tab { padding: 5px 8px; font-size: 11px; }
+  .rcv-tab .tlbl { display: none; }
+  .rcv-ai-btn span { display: none; }
+}
+
+/* Print */
+@media print {
+  body * { visibility: hidden !important; }
+  #rdoc, #rdoc * { visibility: visible !important; color: inherit !important; }
+  #rdoc { position: fixed !important; left: 0 !important; top: 0 !important; width: 210mm !important; margin: 0 !important; box-shadow: none !important; font-size: 10pt !important; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<div id="site-header"></div>
+<main id="main" style="padding:0;margin:0;">
+<div id="rcv-wrap">
+
+<!-- ══════════════ NAV ══════════════ -->
+<nav class="rcv-nav">
+  <div class="rcv-brand">
+    <div class="rcv-brand-main">Resume/CV Maker</div>
+    <div class="rcv-brand-sub">by Topsarkarijobs.com</div>
+  </div>
+  <div class="rcv-tabs" id="rcvTabs">
+    <button class="rcv-tab active" data-tab="editor"><i class="fa-solid fa-pen-nib"></i> <span class="tlbl">Editor</span></button>
+    <button class="rcv-tab" data-tab="templates"><i class="fa-solid fa-layer-group"></i> <span class="tlbl">Templates</span></button>
+    <button class="rcv-tab" data-tab="score"><i class="fa-solid fa-chart-pie"></i> <span class="tlbl">Score</span></button>
+    <button class="rcv-tab" data-tab="export"><i class="fa-solid fa-arrow-up-from-bracket"></i> <span class="tlbl">Export</span></button>
+  </div>
+  <div class="rcv-spacer"></div>
+  <span class="rcv-ver" style="margin-right:4px;"><i class="fa-solid fa-crown"></i> Free</span>
+  <button class="rcv-ai-btn" onclick="openAI()"><i class="fa-solid fa-wand-magic-sparkles"></i> <span>AI Magic</span></button>
+  <button class="rcv-icon-btn" onclick="toggleTheme()" id="themeBtn"><i class="fa-solid fa-moon"></i></button>
+  <div class="rcv-avatar">RS</div>
+</nav>
+
+<!-- ══════════════ EDITOR ══════════════ -->
+<div class="rcv-panel active" id="panel-editor">
+  <div class="rcv-editor">
+
+    <!-- LEFT -->
+    <div class="rcv-lpanel">
+      <div class="rcv-ptitle">Sections</div>
+      <div class="rcv-si active" onclick="goSec('summary',this)"><i class="fa-solid fa-user ic"></i>Header & Summary<i class="fa-solid fa-grip-vertical gr"></i></div>
+      <div class="rcv-si" onclick="goSec('experience',this)"><i class="fa-solid fa-briefcase ic"></i>Experience<i class="fa-solid fa-grip-vertical gr"></i></div>
+      <div class="rcv-si" onclick="goSec('projects',this)"><i class="fa-solid fa-code-branch ic"></i>Projects<i class="fa-solid fa-grip-vertical gr"></i></div>
+      <div class="rcv-si" onclick="goSec('skills',this)"><i class="fa-solid fa-star ic"></i>Skills<i class="fa-solid fa-grip-vertical gr"></i></div>
+      <div class="rcv-si" onclick="goSec('education',this)"><i class="fa-solid fa-graduation-cap ic"></i>Education<i class="fa-solid fa-grip-vertical gr"></i></div>
+      <div class="rcv-si" onclick="goSec('certifications',this)"><i class="fa-solid fa-certificate ic"></i>Certifications<i class="fa-solid fa-grip-vertical gr"></i></div>
+      <div class="rcv-divider"></div>
+      <div class="rcv-ptitle">AI Actions</div>
+      <button class="rcv-chip" onclick="openAI()"><i class="fa-solid fa-wand-magic-sparkles"></i>Tailor to Job Description</button>
+      <button class="rcv-chip" onclick="openRoast()"><i class="fa-solid fa-fire"></i>Roast My Resume</button>
+      <button class="rcv-chip" onclick="aiRewrite()"><i class="fa-solid fa-rotate"></i>Rewrite Summary</button>
+      <div class="rcv-divider"></div>
+      <div class="rcv-ptitle">Shortcuts</div>
+      <div style="font-size:11px;color:var(--t3);line-height:2;padding:0 3px;">
+        <span class="rcv-kbd">⌘S</span> Save &nbsp;<span class="rcv-kbd">⌘E</span> Export<br>
+        <span class="rcv-kbd">⌘P</span> Print &nbsp;<span class="rcv-kbd">Esc</span> Close
+      </div>
+    </div>
+
+    <!-- CENTER -->
+    <div class="rcv-center" id="rcvCenter">
+      <div class="rcv-ctbar">
+        <span class="rcv-ctbar-label" id="tplLabel">Template: <strong>Classic Ivy</strong></span>
+        <button class="rcv-tb" onclick="switchTab('templates')"><i class="fa-solid fa-layer-group"></i> Change</button>
+        <button class="rcv-tb acc" onclick="doDownload()"><i class="fa-solid fa-download"></i> PDF</button>
+      </div>
+      <div class="rcv-doc-wrap" id="rdocWrap">
+        <div id="rdoc" class="t-ivy" style="--tc:#7b0000;"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="rcv-rpanel">
+      <div class="rcv-mini-score">
+        <div class="rcv-score-ring">
+          <svg width="72" height="72" viewBox="0 0 72 72">
+            <circle cx="36" cy="36" r="28" fill="none" stroke="var(--bg3)" stroke-width="5.5"/>
+            <circle cx="36" cy="36" r="28" fill="none" stroke="var(--acc)" stroke-width="5.5"
+              stroke-dasharray="176" id="miniCirc" stroke-dashoffset="43" stroke-linecap="round"/>
+          </svg>
+          <div class="rcv-score-ring-val" id="miniVal">76</div>
+        </div>
+        <div class="rcv-score-label">Resume Score</div>
+        <button class="rcv-tb" style="margin-top:8px;width:100%;justify-content:center;" onclick="switchTab('score')">Full Analysis →</button>
+      </div>
+
+      <div style="margin-bottom:13px;">
+        <div class="rcv-ptitle" style="margin-bottom:7px;">Quick Edit</div>
+        <span class="rcv-label">Full Name</span>
+        <input class="rcv-input" id="qn" placeholder="Your name" oninput="onQEdit()">
+        <span class="rcv-label">Job Title</span>
+        <input class="rcv-input" id="qt" placeholder="Your title" oninput="onQEdit()">
+        <span class="rcv-label">Email</span>
+        <input class="rcv-input" id="qe" placeholder="email@example.com" oninput="onQEdit()">
+        <span class="rcv-label">Phone</span>
+        <input class="rcv-input" id="qp" placeholder="+91 xxxxx xxxxx" oninput="onQEdit()">
+        <span class="rcv-label">Location</span>
+        <input class="rcv-input" id="ql" placeholder="City, Country" oninput="onQEdit()">
+      </div>
+
+      <div class="rcv-ptitle" style="margin-bottom:7px;">AI Tools</div>
+      <button class="rcv-chip" onclick="aiRewrite()"><i class="fa-solid fa-wand-magic-sparkles"></i>Rewrite Summary</button>
+      <button class="rcv-chip" onclick="aiBullets()"><i class="fa-solid fa-bolt-lightning"></i>Enhance Bullets</button>
+      <button class="rcv-chip" onclick="aiKeywords()"><i class="fa-solid fa-key"></i>Optimize Keywords</button>
+
+      <div class="rcv-divider"></div>
+      <div class="rcv-ptitle" style="margin-bottom:7px;">Version History</div>
+      <div style="font-size:11px;color:var(--t3);">
+        <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--bg2);border-radius:6px;border:1px solid var(--bd);margin-bottom:3px;"><span style="color:var(--t2);">Current</span><span>Just now</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--bg2);border-radius:6px;border:1px solid var(--bd);margin-bottom:3px;"><span style="color:var(--t2);">v2</span><span>2h ago</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--bg2);border-radius:6px;border:1px solid var(--bd);"><span style="color:var(--t2);">v1</span><span>Yesterday</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile bar -->
+  <div class="rcv-mob-bar">
+    <button class="rcv-tb acc" onclick="doDownload()" style="flex:1;justify-content:center;"><i class="fa-solid fa-download"></i> PDF</button>
+    <button class="rcv-tb" onclick="switchTab('templates')" style="flex:1;justify-content:center;"><i class="fa-solid fa-layer-group"></i> Templates</button>
+    <button class="rcv-tb" onclick="openAI()" style="flex:1;justify-content:center;"><i class="fa-solid fa-wand-magic-sparkles"></i> AI</button>
+  </div>
+</div>
+
+<!-- ══════════════ TEMPLATES ══════════════ -->
+<div class="rcv-panel" id="panel-templates">
+  <div class="rcv-tpl-panel">
+    <div class="rcv-shd"><div><h2>Choose Template</h2><p>10 premium templates, all ATS-optimized. Click any to apply instantly.</p></div></div>
+    <div class="rcv-tpl-grid" id="tplGrid"></div>
+  </div>
+</div>
+
+<!-- ══════════════ SCORE ══════════════ -->
+<div class="rcv-panel" id="panel-score">
+  <div class="rcv-sp">
+    <div class="rcv-shd"><div><h2>Score & ATS Analysis</h2><p>Live feedback to make your resume stand out.</p></div></div>
+    <div class="rcv-shero">
+      <div class="rcv-scard">
+        <div class="rcv-bring">
+          <svg width="140" height="140" viewBox="0 0 140 140">
+            <circle cx="70" cy="70" r="58" fill="none" stroke="var(--bg3)" stroke-width="9"/>
+            <circle cx="70" cy="70" r="58" fill="none" stroke="url(#sg)" stroke-width="9"
+              stroke-dasharray="364" id="bigCirc" stroke-dashoffset="87" stroke-linecap="round"/>
+            <defs><linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color:#6d5cf0"/><stop offset="100%" style="stop-color:#4a80e8"/>
+            </linearGradient></defs>
+          </svg>
+          <div class="rcv-bval"><div class="rcv-bnum" id="bigN">76</div><div class="rcv-blbl">Overall</div></div>
+        </div>
+        <div class="rcv-sgrd" id="scoreGrade">★ Great — Top 22%</div>
+        <div class="rcv-bench" id="scoreBench">Beats <strong>78%</strong> of resumes in Software Engineering roles.</div>
+        <button class="rcv-chip" style="width:100%;margin-top:11px;" onclick="refreshScore()"><i class="fa-solid fa-rotate"></i>Refresh Score</button>
+      </div>
+      <div class="rcv-sbk">
+        <div class="rcv-srow"><div class="rcv-srh"><div class="rcv-srn"><i class="fa-solid fa-robot"></i>ATS Compatibility</div><div class="rcv-srv" id="sv-a">82%</div></div><div class="rcv-sbar"><div class="rcv-sbf" id="sb-a" style="width:82%;background:linear-gradient(90deg,#6d5cf0,#4a80e8);"></div></div></div>
+        <div class="rcv-srow"><div class="rcv-srh"><div class="rcv-srn"><i class="fa-solid fa-bolt-lightning"></i>Impact Score</div><div class="rcv-srv" id="sv-i">71%</div></div><div class="rcv-sbar"><div class="rcv-sbf" id="sb-i" style="width:71%;background:linear-gradient(90deg,#e85a8a,#f59e0b);"></div></div></div>
+        <div class="rcv-srow"><div class="rcv-srh"><div class="rcv-srn"><i class="fa-solid fa-book-open"></i>Readability</div><div class="rcv-srv" id="sv-r">88%</div></div><div class="rcv-sbar"><div class="rcv-sbf" id="sb-r" style="width:88%;background:linear-gradient(90deg,#3dd68c,#22d3ee);"></div></div></div>
+        <div class="rcv-srow"><div class="rcv-srh"><div class="rcv-srn"><i class="fa-solid fa-layer-group"></i>Content Depth</div><div class="rcv-srv" id="sv-d">65%</div></div><div class="rcv-sbar"><div class="rcv-sbf" id="sb-d" style="width:65%;background:linear-gradient(90deg,#f59e0b,#f06060);"></div></div></div>
+        <div class="rcv-srow"><div class="rcv-srh"><div class="rcv-srn"><i class="fa-solid fa-ruler"></i>Format & Length</div><div class="rcv-srv" id="sv-f">90%</div></div><div class="rcv-sbar"><div class="rcv-sbf" id="sb-f" style="width:90%;background:linear-gradient(90deg,#3dd68c,#6d5cf0);"></div></div></div>
+      </div>
+    </div>
+    <div class="rcv-ptitle" style="margin-bottom:11px;">Actionable Recommendations</div>
+    <div class="rcv-tips" id="tipsGrid"></div>
+  </div>
+</div>
+
+<!-- ══════════════ EXPORT ══════════════ -->
+<div class="rcv-panel" id="panel-export">
+  <div class="rcv-ep">
+    <div class="rcv-shd"><div><h2>Export Resume</h2><p>PDF is recommended for all job applications.</p></div></div>
+    <div class="rcv-egrid">
+      <div class="rcv-ec"><div class="rcv-eic" style="background:rgba(239,68,68,.1);color:#ef4444;"><i class="fa-solid fa-file-pdf"></i></div><div class="rcv-etit">Download PDF</div><div class="rcv-edsc">Best for applications. Preserves exact formatting and is fully ATS-compatible.</div><button class="rcv-ebtn" style="background:#ef4444;color:#fff;" onclick="doDownload()"><i class="fa-solid fa-download"></i> Download PDF</button></div>
+      <div class="rcv-ec"><div class="rcv-eic" style="background:rgba(59,130,246,.1);color:#3b82f6;"><i class="fa-solid fa-clipboard-list"></i></div><div class="rcv-etit">Copy Plain Text</div><div class="rcv-edsc">Clean text for pasting into online portals and email applications.</div><button class="rcv-ebtn" style="background:#3b82f6;color:#fff;" onclick="copyTxt()"><i class="fa-solid fa-copy"></i> Copy Text</button></div>
+      <div class="rcv-ec"><div class="rcv-eic" style="background:rgba(61,214,140,.1);color:#3dd68c;"><i class="fa-solid fa-print"></i></div><div class="rcv-etit">Print Resume</div><div class="rcv-edsc">Open browser print dialog. Choose "Save as PDF" for a local copy.</div><button class="rcv-ebtn" style="background:#3dd68c;color:#0f0f1a;" onclick="window.print()"><i class="fa-solid fa-print"></i> Print</button></div>
+      <div class="rcv-ec"><div class="rcv-eic" style="background:rgba(240,192,64,.1);color:#f0c040;"><i class="fa-solid fa-share-nodes"></i></div><div class="rcv-etit">Share Link</div><div class="rcv-edsc">Generate a shareable link so recruiters can view your resume online.</div><button class="rcv-ebtn" style="background:#f0c040;color:#0f0f1a;" onclick="fakeShare()"><i class="fa-solid fa-link"></i> Share Link</button></div>
+    </div>
+    <div style="margin-top:22px;background:var(--sur);border:1px solid var(--bd);border-radius:var(--rl);padding:17px 20px;">
+      <div class="rcv-ptitle" style="margin-bottom:11px;">Export Settings</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:11px;">
+        <div><span class="rcv-label">Paper Size</span><select class="rcv-input" style="margin:0;"><option>A4 (210×297mm)</option><option>Letter (216×279mm)</option></select></div>
+        <div><span class="rcv-label">Orientation</span><select class="rcv-input" style="margin:0;"><option>Portrait</option><option>Landscape</option></select></div>
+        <div><span class="rcv-label">Margins</span><select class="rcv-input" style="margin:0;"><option>Normal (20mm)</option><option>Narrow (12mm)</option><option>Wide (28mm)</option></select></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /#rcv-wrap -->
+</main>
+
+<!-- AI Modal -->
+<div class="rcv-mover" id="aiModal">
+  <div class="rcv-modal">
+    <div class="rcv-mhd"><div class="rcv-mtit"><i class="fa-solid fa-wand-magic-sparkles" style="color:var(--acc);"></i>Tailor to Job Description</div><button class="rcv-mclose" onclick="closeM('aiModal')"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="rcv-mbody"><p style="font-size:12.5px;color:var(--t2);margin-bottom:10px;line-height:1.6;">Paste a job description. AI will rewrite your summary and boost bullet points to match the role perfectly.</p><textarea id="jdTxt" placeholder="Paste job description here..."></textarea><div class="rcv-aiout" id="aiRes"></div></div>
+    <div class="rcv-mfoot"><button class="rcv-tb" onclick="closeM('aiModal')" style="padding:7px 14px;">Cancel</button><button class="rcv-tb acc" style="padding:7px 15px;" onclick="runAI()" id="aiBtn"><i class="fa-solid fa-wand-magic-sparkles"></i> Tailor Resume</button></div>
+  </div>
+</div>
+
+<!-- Roast Modal -->
+<div class="rcv-mover" id="roastModal">
+  <div class="rcv-modal">
+    <div class="rcv-mhd"><div class="rcv-mtit"><i class="fa-solid fa-fire" style="color:var(--acc3);"></i>Roast My Resume</div><button class="rcv-mclose" onclick="closeM('roastModal')"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="rcv-mbody"><div id="roastB"></div></div>
+    <div class="rcv-mfoot"><button class="rcv-tb acc" onclick="closeM('roastModal')" style="padding:7px 15px;">Got it, thanks!</button></div>
+  </div>
+</div>
+
+<div class="rcv-toast" id="rcvToast"><i class="fa-solid fa-check-circle"></i><span id="toastTxt">Done!</span></div>
+
+<div id="site-footer"></div>
+<div id="menuOverlay" class="overlay" hidden></div>
+<aside id="mobileMenu" class="offcanvas" aria-label="Mobile menu" hidden>
+  <div class="offcanvas-head">
+    <div class="offcanvas-title">Menu</div>
+    <button id="closeMenuBtn" class="icon-btn" type="button" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <nav class="offcanvas-nav" aria-label="Mobile primary"></nav>
+</aside>
+<script src="script.js"></script>
+<script>
+/* ════════════════════════════════════════════════════
+   RESUME/CV MAKER — Complete Application Logic
+   All rendering, two-way binding, templates, score
+════════════════════════════════════════════════════ */
+'use strict';
+
+/* ── RESUME DATA STATE ── */
+const S = {
+  name: 'Priya Sharma',
+  title: 'Senior Software Engineer',
+  email: 'priya.sharma@gmail.com',
+  phone: '+91 98765 43210',
+  location: 'Bengaluru, India',
+  linkedin: 'linkedin.com/in/priyasharma',
+  github: 'github.com/priya-dev',
+  summary: 'Results-driven Senior Software Engineer with 6+ years building high-scale distributed systems. Led teams of 8 engineers, reduced API latency by 40%, and shipped features used by 50M+ users. Passionate about clean architecture, developer experience, and mentoring engineers.',
+  experience: [
+    {
+      title: 'Senior Software Engineer', company: 'Infosys Ltd.', loc: 'Bengaluru',
+      from: 'Jan 2021', to: 'Present',
+      bullets: [
+        'Architected microservices platform handling 2M+ requests/day, reducing P99 latency from 800ms to 120ms',
+        'Led migration of Java monolith to Node.js microservices, cutting deployment time by 65%',
+        'Mentored 4 junior engineers; team PR rejection rate fell 30% within 6 months',
+        'Built real-time analytics dashboard with React + WebSockets, boosting DAU by 22%'
+      ]
+    },
+    {
+      title: 'Software Engineer', company: 'TCS Digital', loc: 'Pune',
+      from: 'Aug 2018', to: 'Dec 2020',
+      bullets: [
+        'Developed REST APIs serving 500K daily active users with 99.95% uptime SLA',
+        'Implemented Redis caching layer reducing database load by 70%',
+        'Delivered 3 major product launches working with cross-functional teams of 20+'
+      ]
+    }
+  ],
+  projects: [
+    {
+      name: 'SmartATS — Resume Parser', tech: 'Python · FastAPI · NLP · React',
+      bullets: [
+        'Built ML-powered ATS resume parser with 94% accuracy on 50K test resumes',
+        'Open-sourced with 1.2K GitHub stars in the first month of launch'
+      ]
+    },
+    {
+      name: 'GovAlert — Job Notification Bot', tech: 'Node.js · Telegram API · MongoDB',
+      bullets: [
+        'Automated Sarkari job alert system serving 80K+ subscribers daily',
+        'Reduced average notification delay from 4 hours to under 3 minutes'
+      ]
+    }
+  ],
+  skills: {
+    lang: ['Python', 'JavaScript', 'TypeScript', 'Java', 'SQL'],
+    fw:   ['React', 'Node.js', 'FastAPI', 'Spring Boot', 'Next.js'],
+    tools:['AWS', 'Docker', 'Kubernetes', 'Redis', 'PostgreSQL', 'MongoDB']
+  },
+  education: [
+    { deg: 'B.Tech — Computer Science', school: 'NIT Trichy', year: '2018', gpa: '8.7 CGPA' }
+  ],
+  certs: [
+    { name: 'AWS Certified Solutions Architect', issuer: 'Amazon Web Services', year: '2022' },
+    { name: 'Google Cloud Professional', issuer: 'Google', year: '2023' }
+  ]
+};
+
+/* Sync quick-edit inputs from state */
+function syncInputsFromState() {
+  document.getElementById('qn').value = S.name;
+  document.getElementById('qt').value = S.title;
+  document.getElementById('qe').value = S.email;
+  document.getElementById('qp').value = S.phone;
+  document.getElementById('ql').value = S.location;
+}
+
+/* Update state from quick-edit inputs → re-render */
+function onQEdit() {
+  S.name     = document.getElementById('qn').value;
+  S.title    = document.getElementById('qt').value;
+  S.email    = document.getElementById('qe').value;
+  S.phone    = document.getElementById('qp').value;
+  S.location = document.getElementById('ql').value;
+  render();
+}
+
+/* ── 10 TEMPLATES CONFIG ── */
+const TPLS = [
+  { id:'ivy',      cls:'t-ivy',      name:'Classic Ivy',              desc:'Harvard/Ivy League style',     col:'#7b0000', tag:'Most Prestigious' },
+  { id:'faang',    cls:'t-faang',    name:'Modern Tech FAANG',         desc:'Google / Meta engineer style', col:'#1a1a3e', tag:'FAANG Favourite' },
+  { id:'exec',     cls:'t-exec',     name:'Executive Leadership',      desc:'CXO & Director level',         col:'#1e293b', tag:'Senior Roles' },
+  { id:'mini',     cls:'t-mini',     name:'One-Page Minimal',          desc:'Clean, tight one-pager',       col:'#6d5cf0', tag:'ATS Optimized' },
+  { id:'twop',     cls:'t-twop',     name:'Two-Page Professional',     desc:'Detailed multi-page format',   col:'#1d4ed8', tag:'Comprehensive' },
+  { id:'creative', cls:'t-creative', name:'Creative Designer',         desc:'Sidebar, portfolio-ready',     col:'#7c3aed', tag:'Eye-catching' },
+  { id:'finance',  cls:'t-finance',  name:'Finance / Quant',           desc:'Wall Street & banking style',  col:'#fbbf24', tag:'Finance Ready' },
+  { id:'startup',  cls:'t-startup',  name:'Startup Founder',           desc:'Bold, modern, founder-ready',  col:'#059669', tag:'Startup' },
+  { id:'eng',      cls:'t-eng',      name:'Engineering Deep-Dive',     desc:'Terminal/GitHub aesthetic',    col:'#56d364', tag:'Dev Friendly' },
+  { id:'govt',     cls:'t-govt',     name:'Government / Sarkari',      desc:'Traditional Indian format',    col:'#1d4ed8', tag:'Sarkari Ready' },
+];
+
+const COLS = [
+  { n:'Crimson',  h:'#7b0000' }, { n:'Navy',     h:'#1a1a3e' }, { n:'Slate',    h:'#1e293b' },
+  { n:'Indigo',   h:'#6d5cf0' }, { n:'Sapphire', h:'#1d4ed8' }, { n:'Violet',   h:'#7c3aed' },
+  { n:'Gold',     h:'#fbbf24' }, { n:'Emerald',  h:'#059669' }, { n:'Terminal', h:'#56d364' },
+  { n:'Steel',    h:'#374151' },
+];
+
+let curT = TPLS[0];
+let curC = TPLS[0].col;
+let isDark = true;
+
+/* ── RENDER ENGINE ── */
+function co() {
+  return [S.phone, S.email, S.location, S.linkedin].filter(Boolean).map(v => `<span>${v}</span>`).join('');
+}
+
+function expHTML(secLabel) {
+  const lbl = secLabel || 'Work Experience';
+  return `<div class="rs" id="s-experience">${lbl}</div>` +
+    S.experience.map(e => `
+    <div class="re">
+      <div class="reh">
+        <div>
+          <div class="ret" contenteditable="true" spellcheck="false"
+               onblur="updateExpField(this, '${e.title}', 'title')">${e.title}</div>
+          <div class="rec">${e.company} · ${e.loc}</div>
+        </div>
+        <div class="red">${e.from} – ${e.to}</div>
+      </div>
+      <ul class="rb">${e.bullets.map(b => `<li contenteditable="true" spellcheck="false">${b}</li>`).join('')}</ul>
+    </div>`).join('');
+}
+
+function projHTML(secLabel) {
+  const lbl = secLabel || 'Key Projects';
+  return `<div class="rs" id="s-projects">${lbl}</div>` +
+    S.projects.map(p => `
+    <div class="re">
+      <div class="reh">
+        <div class="ret">${p.name}</div>
+        <div class="red" style="font-size:8pt;">${p.tech}</div>
+      </div>
+      <ul class="rb">${p.bullets.map(b => `<li>${b}</li>`).join('')}</ul>
+    </div>`).join('');
+}
+
+function skillHTML(secLabel) {
+  const lbl = secLabel || 'Technical Skills';
+  const all = [...S.skills.lang, ...S.skills.fw, ...S.skills.tools];
+  if (curT.id === 'govt') {
+    return `<div class="rs" id="s-skills">${lbl}</div>
+      <table><thead><tr><th>Category</th><th>Skills</th></tr></thead><tbody>
+      <tr><td>Languages</td><td>${S.skills.lang.join(', ')}</td></tr>
+      <tr><td>Frameworks</td><td>${S.skills.fw.join(', ')}</td></tr>
+      <tr><td>Tools & Platforms</td><td>${S.skills.tools.join(', ')}</td></tr>
+      </tbody></table>`;
+  }
+  return `<div class="rs" id="s-skills">${lbl}</div><div class="rskg">${all.map(s => `<span class="rsk">${s}</span>`).join('')}</div>`;
+}
+
+function eduHTML(cls, lbl) {
+  return `<div class="${cls || 'rs'}" id="s-education">${lbl || 'Education'}</div>` +
+    S.education.map(e => `
+    <div class="redu">
+      <div><div class="redg">${e.deg}</div><div class="resc">${e.school} · ${e.gpa}</div></div>
+      <div class="redy">${e.year}</div>
+    </div>`).join('');
+}
+
+function certHTML(cls, lbl) {
+  return `<div class="${cls || 'rs'}" id="s-certifications">${lbl || 'Certifications'}</div>` +
+    S.certs.map(c => `
+    <div class="rct">
+      <div><div class="rctn">${c.name}</div><div class="rcti">${c.issuer}</div></div>
+      <div class="redy">${c.year}</div>
+    </div>`).join('');
+}
+
+function declHTML() {
+  return `<div class="rdcl"><strong>Declaration:</strong> I hereby declare all information in this resume is true and correct to the best of my knowledge.
+    <div class="rsgn"><span>Date: ___________<br>Place: ___________</span><span>(${S.name})</span></div></div>`;
+}
+
+/* ── TEMPLATE BUILDERS ── */
+function buildIvy() {
+  return `<div id="rh"><div class="rn" contenteditable="true" spellcheck="false" onblur="S.name=this.textContent.trim();syncInputsFromState()">${S.name}</div>
+    <div class="rti" contenteditable="true" spellcheck="false" onblur="S.title=this.textContent.trim();syncInputsFromState()">${S.title}</div>
+    <div class="rco">${co()}</div></div>
+    <div id="rb"><div class="rs" id="s-summary">Professional Summary</div>
+    <div class="rsum" contenteditable="true" spellcheck="false" onblur="S.summary=this.textContent.trim()">${S.summary}</div>
+    ${expHTML()}${projHTML()}${skillHTML()}${eduHTML()}${certHTML()}${declHTML()}</div>`;
+}
+
+function buildFAANG() {
+  return `<div id="rh"><div style="flex:1;">
+    <div class="rn" contenteditable="true" spellcheck="false" onblur="S.name=this.textContent.trim();syncInputsFromState()">${S.name}</div>
+    <div class="rti" contenteditable="true" spellcheck="false" onblur="S.title=this.textContent.trim();syncInputsFromState()">${S.title}</div>
+    <div class="rco">${co()}</div></div></div>
+    <div id="rb"><div class="rs" id="s-summary">Professional Summary</div>
+    <div class="rsum" contenteditable="true" spellcheck="false" onblur="S.summary=this.textContent.trim()">${S.summary}</div>
+    ${expHTML()}${projHTML()}${skillHTML()}${eduHTML()}${certHTML()}</div>`;
+}
+
+function buildExec() {
+  return `<div id="rh"><div style="flex:1;">
+    <div class="rn">${S.name}</div><div class="rti">${S.title}</div><div class="rco">${co()}</div>
+    </div></div>
+    <div id="rb">
+      <div class="rmain"><div class="rs" id="s-summary">Profile Summary</div>
+        <div class="rsum" contenteditable="true" spellcheck="false" onblur="S.summary=this.textContent.trim()">${S.summary}</div>
+        ${expHTML()}${projHTML()}
+      </div>
+      <div class="rside">
+        <div class="rss">Core Skills</div>
+        ${[...S.skills.lang,...S.skills.fw,...S.skills.tools].map(s=>`<div style="padding:3px 0;border-bottom:1px solid #f0f5f9;font-size:9pt;color:#374151;">${s}</div>`).join('')}
+        ${eduHTML('rss')}${certHTML('rss')}
+      </div>
+    </div>`;
+}
+
+function buildMini() {
+  return `<div id="rh">
+    <div class="rn" contenteditable="true" spellcheck="false" onblur="S.name=this.textContent.trim();syncInputsFromState()">${S.name}</div>
+    <div class="rti">${S.title}</div><div class="rco">${co()}</div></div>
+    <div id="rb">
+      <div class="rmain"><div class="rs" id="s-summary">Summary</div>
+        <div class="rsum" contenteditable="true" spellcheck="false" onblur="S.summary=this.textContent.trim()">${S.summary}</div>
+        ${expHTML()}${projHTML()}
+      </div>
+      <div class="rside">${skillHTML()}${eduHTML('rs')}${certHTML('rs')}</div>
+    </div>`;
+}
+
+function buildTwop() {
+  return `<div id="rh">
+    <div class="rn">${S.name}</div><div class="rti">${S.title}</div><div class="rco">${co()}</div></div>
+    <div id="rb"><div class="rs" id="s-summary">Professional Summary</div>
+    <div class="rsum" contenteditable="true" spellcheck="false" onblur="S.summary=this.textContent.trim()">${S.summary}</div>
+    ${expHTML()}${projHTML()}${skillHTML()}${eduHTML()}${certHTML()}${declHTML()}</div>`;
+}
+
+function buildCreative() {
+  const side = `<div class="rside-c">
+    <div class="rc-photo"><i class="fa-solid fa-user"></i></div>
+    <div class="rc-name">${S.name}</div>
+    <div class="rc-title">${S.title}</div>
+    <div class="rc-sh">Contact</div>
+    <div class="rc-item"><i class="fa-solid fa-phone" style="margin-right:4px;opacity:.7;font-size:8pt;"></i>${S.phone}</div>
+    <div class="rc-item"><i class="fa-solid fa-envelope" style="margin-right:4px;opacity:.7;font-size:8pt;"></i>${S.email}</div>
+    <div class="rc-item"><i class="fa-solid fa-location-dot" style="margin-right:4px;opacity:.7;font-size:8pt;"></i>${S.location}</div>
+    <div class="rc-sh">Skills</div>
+    ${[...S.skills.lang,...S.skills.fw].map(s=>`<span class="rc-sk">${s}</span>`).join('')}
+    <div class="rc-sh">Tools</div>
+    ${S.skills.tools.map(s=>`<span class="rc-sk">${s}</span>`).join('')}
+    <div class="rc-sh">Education</div>
+    ${S.education.map(e=>`<div class="rc-item" style="margin-bottom:5px;"><strong style="color:#fff;font-size:9pt;">${e.deg}</strong><br><span style="font-size:8.5pt;">${e.school} · ${e.year}</span></div>`).join('')}
+  </div>`;
+  const main = `<div class="rmain-c">
+    <div class="rs" id="s-summary">About Me</div>
+    <div class="rsum" contenteditable="true" spellcheck="false" onblur="S.summary=this.textContent.trim()">${S.summary}</div>
+    ${expHTML()}${projHTML()}${certHTML()}
+  </div>`;
+  return `<div id="rh" style="display:none;"></div><div id="rb">${side}${main}</div>`;
+}
+
+function buildFinance() {
+  return `<div id="rh">
+    <div class="rn">${S.name}</div><div class="rti">${S.title}</div><div class="rco">${co()}</div></div>
+    <div id="rb"><div class="rs" id="s-summary">Executive Summary</div>
+    <div class="rsum" contenteditable="true" spellcheck="false" onblur="S.summary=this.textContent.trim()">${S.summary}</div>
+    ${expHTML()}${projHTML()}${skillHTML()}${eduHTML()}${certHTML()}${declHTML()}</div>`;
+}
+
+function buildStartup() {
+  return `<div id="rh">
+    <div class="rn" contenteditable="true" spellcheck="false" onblur="S.name=this.textContent.trim();syncInputsFromState()">${S.name}</div>
+    <div class="rti">${S.title}</div><div class="rco">${co()}</div></div>
+    <div id="rb"><div class="rs" id="s-summary">About Me</div>
+    <div class="rsum" contenteditable="true" spellcheck="false" onblur="S.summary=this.textContent.trim()">${S.summary}</div>
+    ${expHTML()}${projHTML()}${skillHTML()}${eduHTML()}${certHTML()}</div>`;
+}
+
+function buildEng() {
+  return `<div id="rh">
+    <div class="rn" contenteditable="true" spellcheck="false" onblur="S.name=this.textContent.trim();syncInputsFromState()">${S.name}</div>
+    <div class="rti">${S.title}</div><div class="rco">${co()}</div></div>
+    <div id="rb"><div class="rs" id="s-summary">// about_me</div>
+    <div class="rsum" contenteditable="true" spellcheck="false" onblur="S.summary=this.textContent.trim()">${S.summary}</div>
+    ${expHTML('// experience')}${projHTML('// projects')}${skillHTML('// tech_stack')}${eduHTML('rs','// education')}${certHTML('rs','// certifications')}</div>`;
+}
+
+function buildGovt() {
+  return `<div id="rh"><div class="rn">${S.name}</div><div class="rti">${S.title}</div><div class="rco">${co()}</div></div>
+    <div id="rb"><div class="rs" id="s-summary">Career Objective</div>
+    <div class="rsum" contenteditable="true" spellcheck="false" onblur="S.summary=this.textContent.trim()">${S.summary}</div>
+    <div class="rs" id="s-experience">Work Experience</div>
+    ${S.experience.map(e=>`<div class="re"><div class="reh"><div><div class="ret">${e.title}</div><div class="rec">${e.company} · ${e.loc}</div></div><div class="red">${e.from}–${e.to}</div></div><ul class="rb">${e.bullets.map(b=>`<li>${b}</li>`).join('')}</ul></div>`).join('')}
+    ${skillHTML()}${eduHTML('rs')}
+    <div class="rs" id="s-certifications">Certifications</div>
+    <table><thead><tr><th>Certificate</th><th>Issuing Organization</th><th>Year</th></tr></thead><tbody>
+    ${S.certs.map(c=>`<tr><td>${c.name}</td><td>${c.issuer}</td><td>${c.year}</td></tr>`).join('')}
+    </tbody></table>${declHTML()}</div>`;
+}
+
+const BUILDERS = { ivy:buildIvy, faang:buildFAANG, exec:buildExec, mini:buildMini, twop:buildTwop, creative:buildCreative, finance:buildFinance, startup:buildStartup, eng:buildEng, govt:buildGovt };
+
+/* ── RENDER ── */
+function render() {
+  const doc = document.getElementById('rdoc');
+  doc.className = curT.cls;
+  doc.style.setProperty('--tc', curC);
+  const builder = BUILDERS[curT.id] || buildIvy;
+  doc.innerHTML = builder();
+}
+
+/* ── TABS ── */
+function switchTab(id) {
+  document.querySelectorAll('.rcv-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.rcv-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  const tab = document.querySelector(`[data-tab="${id}"]`);
+  if (tab) tab.classList.add('active');
+}
+document.getElementById('rcvTabs').addEventListener('click', e => {
+  const t = e.target.closest('.rcv-tab');
+  if (t) switchTab(t.dataset.tab);
+});
+
+/* ── SECTION NAV ── */
+function goSec(id, el) {
+  document.querySelectorAll('.rcv-si').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  const target = document.getElementById('s-' + id) || document.getElementById('rh');
+  if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ── TEMPLATE GRID ── */
+const THUMB_STYLES = {
+  ivy:      'background:#fff;padding:10px;',
+  faang:    'background:#1a1a3e;padding:10px;',
+  exec:     'background:#1e293b;padding:10px;',
+  mini:     'background:#fff;padding:10px;',
+  twop:     'background:#fff;padding:10px;border-left:4px solid #1d4ed8;',
+  creative: 'background:linear-gradient(90deg,#7c3aed 36%,#fff 36%);padding:10px;',
+  finance:  'background:#0f172a;padding:10px;',
+  startup:  'background:#fff;padding:10px;border-bottom:3px solid #059669;',
+  eng:      'background:#0d1117;padding:10px;',
+  govt:     'background:#fff;padding:10px;border-top:4px solid #1d4ed8;',
+};
+const THUMB_BARS_DARK = {
+  ivy:      '#e5e7eb', faang:'rgba(255,255,255,.15)', exec:'rgba(255,255,255,.12)',
+  mini:     '#e5e7eb', twop:'#e5e7eb', creative:'rgba(255,255,255,.15)',
+  finance:  'rgba(255,255,255,.1)', startup:'#e5e7eb', eng:'#21262d', govt:'#e5e7eb',
+};
+
+function buildTplGrid() {
+  const grid = document.getElementById('tplGrid');
+  grid.innerHTML = '';
+  TPLS.forEach(tpl => {
+    const bc = THUMB_BARS_DARK[tpl.id];
+    const card = document.createElement('div');
+    card.className = 'rcv-tc' + (tpl.id === curT.id ? ' active' : '');
+    card.innerHTML = `
+      <div class="rcv-tc-act">✓ Active</div>
+      <div class="rcv-tc-thumb" style="${THUMB_STYLES[tpl.id]}">
+        <div style="height:18px;background:${bc};border-radius:2px;margin-bottom:5px;opacity:.9;"></div>
+        ${[62,48,72,55,68,50].map(w => `<div style="height:5px;background:${bc};border-radius:2px;margin-bottom:3px;width:${w}%;opacity:.6;"></div>`).join('')}
+        <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:5px;">${[1,2,3].map(()=>`<div style="height:12px;width:28%;background:${bc};border-radius:2px;opacity:.4;"></div>`).join('')}</div>
+      </div>
+      ${tpl.tag ? `<div class="rcv-tc-badge">${tpl.tag}</div>` : ''}
+      <div class="rcv-tc-info">
+        <div class="rcv-tc-name">${tpl.name}</div>
+        <div class="rcv-tc-desc">${tpl.desc} · <span style="color:var(--grn);font-weight:700;">ATS ✓</span></div>
+        <div class="rcv-cdots">${COLS.map((c,i) => `<div class="rcv-cdot${i===0?' sel':''}" style="background:${c.h};" title="${c.n}" data-h="${c.h}"></div>`).join('')}</div>
+      </div>`;
+    card.addEventListener('click', e => {
+      const dot = e.target.closest('.rcv-cdot');
+      if (dot) {
+        curC = dot.dataset.h;
+        dot.closest('.rcv-cdots').querySelectorAll('.rcv-cdot').forEach(d => d.classList.remove('sel'));
+        dot.classList.add('sel');
+        render(); return;
+      }
+      curT = tpl; curC = tpl.col;
+      document.querySelectorAll('.rcv-tc').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      document.getElementById('tplLabel').innerHTML = `Template: <strong>${tpl.name}</strong>`;
+      render(); toast(`"${tpl.name}" applied`);
+    });
+    grid.appendChild(card);
+  });
+}
+
+/* ── SCORE (lightweight, no freezing) ── */
+const TIPS_DATA = [
+  { ic:'fa-solid fa-bolt-lightning', c:'#f59e0b', t:'Add Quantified Metrics', d:'Only 2 of 6 bullets have numbers. Add metrics to 4 more for ~15pt impact boost.', fn:'aiBullets' },
+  { ic:'fa-solid fa-key', c:'#6d5cf0', t:'Include ATS Keywords', d:'Missing: "system design", "scalability", "CI/CD". Add naturally to summary.', fn:'aiKeywords' },
+  { ic:'fa-solid fa-check', c:'#3dd68c', t:'Summary Length Optimal', d:'Your 3–4 line summary is perfect for ATS parsing. Keep it this length.', fn:null },
+  { ic:'fa-solid fa-at', c:'#4a80e8', t:'Add LinkedIn URL', d:'Resumes with LinkedIn URLs get 40% more recruiter callbacks.', fn:null },
+  { ic:'fa-solid fa-certificate', c:'#e85a8a', t:'Certifications Detected', d:'AWS and GCP certs are strong. Consider a CKA for further differentiation.', fn:null },
+  { ic:'fa-solid fa-file', c:'#22d3ee', t:'Ideal One-Page Length', d:'Your resume fits one A4 page — perfect for under 10 years experience.', fn:null },
+];
+
+function buildTips() {
+  document.getElementById('tipsGrid').innerHTML = TIPS_DATA.map(t => `
+    <div class="rcv-tip">
+      <div class="rcv-tic" style="background:${t.c}18;color:${t.c};"><i class="${t.ic}"></i></div>
+      <div style="flex:1;">
+        <div class="rcv-tit">${t.t}</div>
+        <div class="rcv-tid">${t.d}</div>
+        ${t.fn
+          ? `<button class="rcv-tapply" onclick="${t.fn}();toast('AI fix applied!')"><i class="fa-solid fa-wand-magic-sparkles"></i> Auto-fix</button>`
+          : `<span class="rcv-tapply" style="cursor:default;color:var(--grn);border-color:rgba(61,214,140,.2);background:rgba(61,214,140,.07);"><i class="fa-solid fa-check"></i> Good</span>`}
+      </div>
+    </div>`).join('');
+}
+
+function refreshScore() {
+  const vary = n => Math.min(100, Math.max(40, n + Math.floor((Math.random() - .5) * 12)));
+  const scores = { a: vary(82), i: vary(71), r: vary(88), d: vary(65), f: vary(90) };
+  Object.entries(scores).forEach(([k, v]) => {
+    document.getElementById('sv-' + k).textContent = v + '%';
+    document.getElementById('sb-' + k).style.width = v + '%';
+  });
+  const overall = Math.round(Object.values(scores).reduce((a, b) => a + b, 0) / 5);
+  document.getElementById('bigN').textContent = overall;
+  const offset = 364 - (overall / 100) * 364;
+  document.getElementById('bigCirc').style.strokeDashoffset = offset;
+  const miniOffset = 176 - (overall / 100) * 176;
+  document.getElementById('miniCirc').style.strokeDashoffset = miniOffset;
+  document.getElementById('miniVal').textContent = overall;
+  const grade = overall >= 85 ? '★★ Excellent — Top 5%' : overall >= 75 ? '★ Great — Top 22%' : 'Good — Top 40%';
+  document.getElementById('scoreGrade').textContent = grade;
+  document.getElementById('scoreBench').innerHTML = `Beats <strong>${overall}%</strong> of resumes in Software Engineering roles.`;
+  toast('Score refreshed!');
+}
+
+/* ── AI FEATURES ── */
+function openAI() {
+  document.getElementById('aiModal').classList.add('open');
+  document.getElementById('aiRes').classList.remove('vis');
+  document.getElementById('jdTxt').value = '';
+}
+function openRoast() {
+  document.getElementById('roastModal').classList.add('open');
+  const ROAST = [
+    '"Results-driven" — every single resume says this. Replace it with a specific achievement in the first line.',
+    'Your first bullet takes 2 lines to say what could fit in 8 words. Recruiters spend 6 seconds. Brevity wins.',
+    'You have numbers — great. But 4 bullets are still vague ("collaborated", "worked on features"). More receipts please.',
+    'The skills section lists 15+ items. Prove your top 6 in the experience section with real bullets.',
+    '✓ Strong: Projects section is excellent. Real metrics and open-source proof. This separates you from 80% of applicants.',
+    'Only 1 education entry — for a senior role, perfect. Do not pad it with irrelevant coursework.',
+  ];
+  document.getElementById('roastB').innerHTML =
+    '<p style="font-size:12px;color:var(--t3);margin-bottom:11px;"><i class="fa-solid fa-info-circle"></i> Brutally honest but constructive AI feedback.</p>' +
+    ROAST.map(r => `<div class="rcv-roast-i"><i class="fa-solid fa-fire"></i><span>${r}</span></div>`).join('');
+}
+function closeM(id) { document.getElementById(id).classList.remove('open'); }
+
+const AI_OUT = `✦ Tailored Summary:\n"Senior Software Engineer with 6+ years delivering scalable, high-impact systems. Led microservices architecture serving 2M req/day (P99: 120ms), orchestrated a full-stack migration that cut deploy cycles by 65%, and drove a 22% DAU lift through real-time features. Ready to bring this track record to your team."\n\n✦ Enhanced Bullets (matched to JD):\n• Re-architected auth service for 5× peak traffic with zero downtime — aligned with "high availability" requirement\n• Built Kafka event pipeline cutting data processing latency 78% — matches "streaming systems" in JD\n• Automated perf regression test suite, catching 3 critical regressions before production deploy`;
+
+function runAI() {
+  const jd = document.getElementById('jdTxt').value.trim();
+  if (!jd) { toast('Paste a job description first'); return; }
+  const btn = document.getElementById('aiBtn');
+  btn.innerHTML = '<span class="rcv-spin"></span> Analyzing...'; btn.disabled = true;
+  const res = document.getElementById('aiRes'); res.classList.remove('vis');
+  setTimeout(() => {
+    res.classList.add('vis', 'rcv-typing'); res.textContent = '';
+    let i = 0;
+    const iv = setInterval(() => {
+      res.textContent = AI_OUT.slice(0, i += 5);
+      if (i >= AI_OUT.length) {
+        clearInterval(iv); res.classList.remove('rcv-typing');
+        btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Tailor Resume'; btn.disabled = false;
+        toast('AI tailoring complete! ✨');
+      }
+    }, 14);
+  }, 1500);
+}
+
+function aiRewrite() {
+  S.summary = 'Senior Software Engineer with 6+ years delivering high-impact distributed systems. Reduced P99 latency 40%, led 8-engineer teams, shipped to 50M+ users. Expert in clean architecture, observability, and ruthless prioritization.';
+  render(); toast('Summary rewritten ✨');
+}
+function aiBullets() {
+  S.experience[0].bullets = [
+    'Architected event-driven microservices processing 2.4M req/day with P99 < 120ms — 6.7× improvement over legacy',
+    'Owned Java → Node.js migration of 200K LOC codebase; deploy cycle cut from 45min to 8min (65% faster)',
+    'Mentored 4 engineers to senior track via structured 1:1s + code reviews; production bugs reduced 30%',
+    'Shipped React + WebSockets analytics dashboard; 120K users in week 1, DAU +22% sustained over 6 months',
+  ];
+  render(); toast('Bullets enhanced with stronger metrics ⚡');
+}
+function aiKeywords() {
+  S.summary += ' Expert in system design, scalability patterns, CI/CD automation, and agile delivery methodologies.';
+  render(); toast('ATS keywords optimized 🔑');
+}
+
+/* ── EXPORT ── */
+function doDownload() {
+  toast('Preparing PDF...');
+  const el = document.getElementById('rdoc');
+  setTimeout(() => {
+    html2canvas(el, { scale: 2, useCORS: true, backgroundColor: '#fff', logging: false })
+      .then(canvas => {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        const pw = pdf.internal.pageSize.getWidth();
+        const ph = pdf.internal.pageSize.getHeight();
+        const ratio = pw / canvas.width;
+        const sh = canvas.height * ratio;
+        const img = canvas.toDataURL('image/png');
+        if (sh <= ph) { pdf.addImage(img, 'PNG', 0, 0, pw, sh); }
+        else {
+          let y = 0;
+          while (y < sh) { pdf.addImage(img, 'PNG', 0, -y, pw, sh); y += ph; if (y < sh) pdf.addPage(); }
+        }
+        pdf.save(`${S.name.replace(/\s+/g, '_')}_Resume.pdf`);
+        toast('PDF downloaded successfully!');
+      })
+      .catch(() => { window.print(); toast('Use "Save as PDF" in print dialog'); });
+  }, 200);
+}
+
+function copyTxt() {
+  const txt = [
+    S.name, S.title,
+    [S.phone, S.email, S.location].filter(Boolean).join(' | '), '',
+    'PROFESSIONAL SUMMARY', S.summary, '',
+    'WORK EXPERIENCE',
+    ...S.experience.flatMap(e => [`${e.title} — ${e.company}, ${e.loc} (${e.from}–${e.to})`, ...e.bullets.map(b => '• ' + b), '']),
+    'TECHNICAL SKILLS',
+    'Languages: ' + S.skills.lang.join(', '),
+    'Frameworks: ' + S.skills.fw.join(', '),
+    'Tools: ' + S.skills.tools.join(', '), '',
+    'EDUCATION', ...S.education.map(e => `${e.deg} — ${e.school} (${e.year}) · ${e.gpa}`),
+    '', 'CERTIFICATIONS', ...S.certs.map(c => `${c.name} — ${c.issuer} (${c.year})`),
+  ].join('\n');
+  navigator.clipboard.writeText(txt).then(() => toast('Copied as plain text!')).catch(() => toast('Copy failed — use Ctrl+C'));
+}
+
+function fakeShare() {
+  const url = 'https://topsarkarijobs.com/cv/' + Math.random().toString(36).slice(2, 9);
+  navigator.clipboard.writeText(url).then(() => toast('Share link copied!')).catch(() => toast('Link: ' + url));
+}
+
+/* ── THEME ── */
+function toggleTheme() {
+  isDark = !isDark;
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  document.getElementById('themeBtn').innerHTML = isDark ? '<i class="fa-solid fa-moon"></i>' : '<i class="fa-solid fa-sun"></i>';
+}
+
+/* ── TOAST ── */
+function toast(msg) {
+  const t = document.getElementById('rcvToast');
+  document.getElementById('toastTxt').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ── KEYBOARD SHORTCUTS ── */
+document.addEventListener('keydown', e => {
+  if (e.metaKey || e.ctrlKey) {
+    if (e.key === 's') { e.preventDefault(); toast('Saved ✓'); }
+    if (e.key === 'e') { e.preventDefault(); doDownload(); }
+    if (e.key === 'p') { e.preventDefault(); window.print(); }
+  }
+  if (e.key === 'Escape') document.querySelectorAll('.rcv-mover').forEach(m => m.classList.remove('open'));
+});
+document.querySelectorAll('.rcv-mover').forEach(o => o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); }));
+
+/* ── INIT ── */
+function init() {
+  syncInputsFromState();
+  render();
+  buildTplGrid();
+  buildTips();
+}
+init();
+</script>
+</body>
+</html>  --l-t:#eeeef8; --l-t2:#8888a8; --l-t3:#525270;
   --l-a:#7c6dfa; --l-a2:#5b8def; --l-a3:#fa6d9a;
   --l-gw:rgba(124,109,250,.2);
   --l-gr:#4ade80; --l-go:#f5c842; --l-re:#f87171;
