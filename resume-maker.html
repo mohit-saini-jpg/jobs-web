@@ -4,289 +4,376 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>LuminaCV – Free Resume Builder | Top Sarkari Jobs</title>
-<meta name="description" content="Build a stunning ATS-ready resume for free. LuminaCV offers live preview, multiple templates, AI-powered suggestions and instant PDF download."/>
+<meta name="description" content="Build a stunning ATS-ready resume for free. Multiple templates, live preview, AI tools and instant PDF download."/>
 <meta name="robots" content="index, follow"/>
 <link rel="canonical" href="https://www.topsarkarijobs.com/resume-maker.html"/>
 <link rel="icon" type="image/x-icon" href="image.ico">
 <meta property="og:type" content="website"/>
 <meta property="og:url" content="https://www.topsarkarijobs.com/resume-maker.html"/>
 <meta property="og:title" content="LuminaCV – Free Resume Builder | Top Sarkari Jobs"/>
-<meta property="og:description" content="Build a stunning ATS-ready resume for free."/>
+<meta property="og:description" content="Build a stunning ATS-ready resume for free. Live preview, AI suggestions, instant PDF."/>
 <meta property="og:image" content="https://www.topsarkarijobs.com/image.png"/>
 <meta property="og:site_name" content="Top Sarkari Jobs"/>
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:image" content="https://www.topsarkarijobs.com/image.png"/>
+
 <link rel="stylesheet" href="styles.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 <style>
+/* ── FIX 1: Hide site search bar on this page ── */
+.top-search { display: none !important; }
+#site-header .top-search { display: none !important; }
+section.top-search { display: none !important; }
+
+/* ── ROOT VARS ── */
 :root {
-  --lcv-bg:#0a0a0f; --lcv-bg2:#111118; --lcv-bg3:#1a1a26;
-  --lcv-surf:#16161f; --lcv-surf2:#1e1e2e;
-  --lcv-bdr:rgba(255,255,255,.07); --lcv-bdr2:rgba(255,255,255,.13);
-  --lcv-t:#f0f0f8; --lcv-t2:#9090a8; --lcv-t3:#5c5c78;
-  --lcv-acc:#7c6dfa; --lcv-acc2:#5b8def; --lcv-acc3:#fa6d9a;
-  --lcv-glow:rgba(124,109,250,.22);
-  --lcv-green:#4ade80; --lcv-gold:#f5c842; --lcv-red:#f87171;
-  --lcv-r:10px; --lcv-rl:16px; --lcv-rx:22px;
-  --lcv-sh:0 4px 20px rgba(0,0,0,.45);
-  --lcv-shl:0 16px 52px rgba(0,0,0,.65);
-  --lcv-nav:56px;
-  --lcv-tr:.18s cubic-bezier(.4,0,.2,1);
-  --rdoc-col:#3730a3;
+  --l-bg:#0a0a0f; --l-bg2:#111118; --l-bg3:#1c1c28;
+  --l-sur:#15151e; --l-sur2:#1d1d2a;
+  --l-bd:rgba(255,255,255,.07); --l-bd2:rgba(255,255,255,.13);
+  --l-t:#eeeef8; --l-t2:#8888a8; --l-t3:#525270;
+  --l-a:#7c6dfa; --l-a2:#5b8def; --l-a3:#fa6d9a;
+  --l-gw:rgba(124,109,250,.2);
+  --l-gr:#4ade80; --l-go:#f5c842; --l-re:#f87171;
+  --l-r:9px; --l-rl:14px; --l-rx:20px;
+  --l-sh:0 3px 16px rgba(0,0,0,.42); --l-shl:0 12px 48px rgba(0,0,0,.62);
+  --l-tr:.17s cubic-bezier(.4,0,.2,1);
 }
 [data-theme=light]{
-  --lcv-bg:#f2f2f8; --lcv-bg2:#e8e8f2; --lcv-bg3:#ddddf0;
-  --lcv-surf:#fff; --lcv-surf2:#f8f8fd;
-  --lcv-bdr:rgba(0,0,0,.07); --lcv-bdr2:rgba(0,0,0,.13);
-  --lcv-t:#0f0f1a; --lcv-t2:#56567a; --lcv-t3:#9090a8;
-  --lcv-glow:rgba(91,77,212,.12);
-  --lcv-sh:0 4px 20px rgba(0,0,0,.08);
-  --lcv-shl:0 16px 52px rgba(0,0,0,.14);
+  --l-bg:#f0f0f8; --l-bg2:#e6e6f2; --l-bg3:#d8d8ee;
+  --l-sur:#fff; --l-sur2:#f7f7fd;
+  --l-bd:rgba(0,0,0,.07); --l-bd2:rgba(0,0,0,.13);
+  --l-t:#0e0e1c; --l-t2:#54547a; --l-t3:#9898b8;
+  --l-gw:rgba(91,77,212,.1);
+  --l-sh:0 3px 16px rgba(0,0,0,.07); --l-shl:0 12px 48px rgba(0,0,0,.13);
 }
+
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'DM Sans',system-ui,sans-serif;background:var(--lcv-bg);color:var(--lcv-t);overflow-x:hidden;min-height:100vh;transition:background var(--lcv-tr),color var(--lcv-tr);}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--l-bg);color:var(--l-t);overflow-x:hidden;}
 a{color:inherit;text-decoration:none;}
 button{font-family:'DM Sans',system-ui,sans-serif;cursor:pointer;}
 input,textarea,select{font-family:'DM Sans',system-ui,sans-serif;}
 ::-webkit-scrollbar{width:5px;height:5px;}
 ::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:var(--lcv-bdr2);border-radius:99px;}
-[contenteditable]:focus{outline:2px solid var(--lcv-acc);outline-offset:1px;border-radius:2px;}
+::-webkit-scrollbar-thumb{background:var(--l-bd2);border-radius:99px;}
+[contenteditable]:focus{outline:2px solid var(--l-a);outline-offset:1px;border-radius:2px;}
 
-/* ── NAV ── */
-.lcv-nav{
-  height:var(--lcv-nav);background:var(--lcv-surf);border-bottom:1px solid var(--lcv-bdr);
-  display:flex;align-items:center;padding:0 16px;gap:10px;
-  position:sticky;top:0;z-index:200;
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+/* ── LCV WRAPPER: fits naturally in page flow, NO sticky nav ── */
+.lcv-wrap { width:100%; }
+
+/* ── FIX 2: LCV nav is NOT sticky — flows naturally with page ── */
+.lcv-nav {
+  background: var(--l-sur);
+  border-bottom: 1px solid var(--l-bd);
+  border-top: 1px solid var(--l-bd);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 10px;
+  height: 52px;
+  /* NOT sticky — no position:sticky, no z-index clash */
 }
 .lcv-logo{display:flex;align-items:center;gap:7px;margin-right:6px;flex-shrink:0;}
-.lcv-logo-icon{width:30px;height:30px;background:linear-gradient(135deg,var(--lcv-acc),var(--lcv-acc2));border-radius:9px;display:grid;place-items:center;font-size:14px;color:#fff;}
-.lcv-logo-word{font-family:'DM Serif Display',serif;font-size:17px;color:var(--lcv-t);}
-.lcv-logo-word em{color:var(--lcv-acc);font-style:normal;}
-.lcv-tabs{display:flex;gap:2px;background:var(--lcv-bg2);border:1px solid var(--lcv-bdr);border-radius:var(--lcv-r);padding:3px;}
-.lcv-tab{padding:5px 13px;border-radius:7px;font-size:12.5px;font-weight:600;color:var(--lcv-t2);background:transparent;border:none;transition:all var(--lcv-tr);white-space:nowrap;display:flex;align-items:center;gap:5px;}
-.lcv-tab.active{background:var(--lcv-surf);color:var(--lcv-t);box-shadow:var(--lcv-sh);}
-.lcv-tab:hover:not(.active){color:var(--lcv-t);background:var(--lcv-bg3);}
+.lcv-logo-icon{width:28px;height:28px;background:linear-gradient(135deg,var(--l-a),var(--l-a2));border-radius:8px;display:grid;place-items:center;font-size:12px;color:#fff;}
+.lcv-logo-word{font-family:'DM Serif Display',serif;font-size:16px;color:var(--l-t);}
+.lcv-logo-word em{color:var(--l-a);font-style:normal;}
+.lcv-tabs{display:flex;gap:2px;background:var(--l-bg2);border:1px solid var(--l-bd);border-radius:var(--l-r);padding:3px;}
+.lcv-tab{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;color:var(--l-t2);background:transparent;border:none;transition:all var(--l-tr);white-space:nowrap;display:flex;align-items:center;gap:5px;}
+.lcv-tab.active{background:var(--l-sur);color:var(--l-t);box-shadow:var(--l-sh);}
+.lcv-tab:hover:not(.active){color:var(--l-t);background:var(--l-bg3);}
 .lcv-spacer{flex:1;}
-.lcv-ai-btn{display:flex;align-items:center;gap:6px;padding:7px 13px;background:linear-gradient(135deg,var(--lcv-acc),var(--lcv-acc2));color:#fff;border:none;border-radius:var(--lcv-r);font-size:13px;font-weight:700;box-shadow:0 0 18px var(--lcv-glow);transition:all var(--lcv-tr);white-space:nowrap;}
-.lcv-ai-btn:hover{transform:translateY(-1px);box-shadow:0 4px 22px var(--lcv-glow);}
-.lcv-icon-btn{width:32px;height:32px;background:var(--lcv-bg2);border:1px solid var(--lcv-bdr);border-radius:var(--lcv-r);display:grid;place-items:center;color:var(--lcv-t2);font-size:13px;transition:all var(--lcv-tr);}
-.lcv-icon-btn:hover{background:var(--lcv-bg3);color:var(--lcv-t);}
-.lcv-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--lcv-acc3),var(--lcv-acc));display:grid;place-items:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;}
+.lcv-ai-btn{display:flex;align-items:center;gap:6px;padding:6px 13px;background:linear-gradient(135deg,var(--l-a),var(--l-a2));color:#fff;border:none;border-radius:var(--l-r);font-size:12.5px;font-weight:700;box-shadow:0 0 16px var(--l-gw);transition:all var(--l-tr);white-space:nowrap;}
+.lcv-ai-btn:hover{filter:brightness(1.08);transform:translateY(-1px);}
+.lcv-icon-btn{width:30px;height:30px;background:var(--l-bg2);border:1px solid var(--l-bd);border-radius:var(--l-r);display:grid;place-items:center;color:var(--l-t2);font-size:12px;transition:all var(--l-tr);}
+.lcv-icon-btn:hover{background:var(--l-bg3);color:var(--l-t);}
+.lcv-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--l-a3),var(--l-a));display:grid;place-items:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;}
 
 /* ── PANELS ── */
-.lcv-panel{display:none;flex:1;overflow:hidden;}
-.lcv-panel.active{display:flex;}
+.lcv-panel{display:none;}
+.lcv-panel.active{display:block;}
 
-/* ── EDITOR LAYOUT ── */
-.lcv-editor{display:grid;grid-template-columns:230px 1fr 250px;height:calc(100vh - var(--lcv-nav) - 56px);overflow:hidden;}
-@media(max-width:1100px){.lcv-editor{grid-template-columns:200px 1fr;} .lcv-rpanel{display:none;}}
-@media(max-width:720px){.lcv-editor{grid-template-columns:1fr;} .lcv-lpanel{display:none;}}
+/* ── EDITOR LAYOUT: Fixed height box, internal scroll ── */
+.lcv-editor {
+  display: grid;
+  grid-template-columns: 210px 1fr 240px;
+  height: calc(100vh - 190px); /* viewport minus site header (~70px) minus lcv-nav (52px) minus footer area (~68px) */
+  min-height: 500px;
+  overflow: hidden;
+}
+@media(max-width:1100px){ .lcv-editor{grid-template-columns:190px 1fr;} .lcv-rpanel{display:none;} }
+@media(max-width:760px){ .lcv-editor{grid-template-columns:1fr; height:auto; min-height:auto;} .lcv-lpanel{display:none;} }
 
 /* Left panel */
-.lcv-lpanel{background:var(--lcv-surf);border-right:1px solid var(--lcv-bdr);overflow-y:auto;padding:14px 10px;}
-.lcv-ptitle{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:var(--lcv-t3);margin-bottom:8px;padding:0 4px;}
-.lcv-sec-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:var(--lcv-t2);border:1px solid transparent;margin-bottom:2px;transition:all var(--lcv-tr);}
-.lcv-sec-item:hover{background:var(--lcv-bg2);color:var(--lcv-t);}
-.lcv-sec-item.active{background:var(--lcv-bg2);color:var(--lcv-acc);border-color:var(--lcv-bdr);}
-.lcv-sec-item i.ico{width:15px;text-align:center;font-size:11px;}
-.lcv-sec-item .grip{margin-left:auto;color:var(--lcv-t3);font-size:10px;}
-.lcv-div{height:1px;background:var(--lcv-bdr);margin:12px 0;}
-.lcv-ai-chip{display:flex;align-items:center;justify-content:center;gap:5px;padding:7px 10px;background:linear-gradient(135deg,rgba(124,109,250,.1),rgba(91,141,239,.1));border:1px solid rgba(124,109,250,.25);border-radius:8px;font-size:12px;font-weight:700;color:var(--lcv-acc);cursor:pointer;transition:all var(--lcv-tr);margin-bottom:5px;width:100%;}
-.lcv-ai-chip:hover{background:linear-gradient(135deg,rgba(124,109,250,.2),rgba(91,141,239,.2));transform:translateY(-1px);}
-.lcv-kbd{display:inline-flex;align-items:center;padding:2px 5px;background:var(--lcv-bg3);border:1px solid var(--lcv-bdr2);border-radius:4px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--lcv-t2);}
+.lcv-lpanel{background:var(--l-sur);border-right:1px solid var(--l-bd);overflow-y:auto;padding:14px 10px;}
+.lcv-ptitle{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:var(--l-t3);margin-bottom:8px;padding:0 3px;}
+.lcv-si{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:7px;cursor:pointer;font-size:12.5px;font-weight:500;color:var(--l-t2);border:1px solid transparent;margin-bottom:2px;transition:all var(--l-tr);}
+.lcv-si:hover{background:var(--l-bg2);color:var(--l-t);}
+.lcv-si.active{background:var(--l-bg2);color:var(--l-a);border-color:var(--l-bd);}
+.lcv-si i.ic{width:14px;text-align:center;font-size:11px;}
+.lcv-si .gr{margin-left:auto;color:var(--l-t3);font-size:9px;}
+.lcv-div{height:1px;background:var(--l-bd);margin:11px 0;}
+.lcv-ac{display:flex;align-items:center;justify-content:center;gap:5px;padding:7px 9px;background:linear-gradient(135deg,rgba(124,109,250,.1),rgba(91,141,239,.1));border:1px solid rgba(124,109,250,.22);border-radius:7px;font-size:11.5px;font-weight:700;color:var(--l-a);cursor:pointer;transition:all var(--l-tr);margin-bottom:5px;width:100%;}
+.lcv-ac:hover{background:linear-gradient(135deg,rgba(124,109,250,.2),rgba(91,141,239,.2));transform:translateY(-1px);}
+.lcv-kbd{display:inline-flex;align-items:center;padding:2px 5px;background:var(--l-bg3);border:1px solid var(--l-bd2);border-radius:4px;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--l-t2);}
 
-/* Center */
-.lcv-center{overflow-y:auto;background:var(--lcv-bg2);display:flex;flex-direction:column;align-items:center;padding:20px 16px;gap:14px;}
-.lcv-ctbar{display:flex;align-items:center;gap:7px;background:var(--lcv-surf);border:1px solid var(--lcv-bdr);border-radius:var(--lcv-r);padding:6px 12px;width:100%;max-width:700px;}
-.lcv-ctbar span{font-size:12px;color:var(--lcv-t2);font-weight:600;flex:1;}
-.lcv-tbtn{display:flex;align-items:center;gap:4px;padding:5px 10px;background:var(--lcv-bg2);border:1px solid var(--lcv-bdr);border-radius:6px;font-size:12px;font-weight:600;color:var(--lcv-t2);transition:all var(--lcv-tr);white-space:nowrap;}
-.lcv-tbtn:hover{background:var(--lcv-bg3);color:var(--lcv-t);}
-.lcv-tbtn.acc{background:linear-gradient(135deg,var(--lcv-acc),var(--lcv-acc2));color:#fff;border-color:transparent;}
-.lcv-tbtn.acc:hover{filter:brightness(1.1);}
-.lcv-rdoc-wrap{width:100%;max-width:700px;background:#fff;border-radius:var(--lcv-r);box-shadow:var(--lcv-shl);overflow:hidden;min-height:860px;}
+/* Center: scrollable preview */
+.lcv-center{overflow-y:auto;background:var(--l-bg2);display:flex;flex-direction:column;align-items:center;padding:18px 14px;gap:13px;}
+.lcv-ctbar{display:flex;align-items:center;gap:7px;background:var(--l-sur);border:1px solid var(--l-bd);border-radius:var(--l-r);padding:6px 11px;width:100%;max-width:700px;flex-wrap:wrap;}
+.lcv-ctbar span{font-size:11.5px;color:var(--l-t2);font-weight:600;flex:1;min-width:100px;}
+.lcv-tb{display:flex;align-items:center;gap:4px;padding:5px 10px;background:var(--l-bg2);border:1px solid var(--l-bd);border-radius:6px;font-size:11.5px;font-weight:600;color:var(--l-t2);transition:all var(--l-tr);white-space:nowrap;}
+.lcv-tb:hover{background:var(--l-bg3);color:var(--l-t);}
+.lcv-tb.acc{background:linear-gradient(135deg,var(--l-a),var(--l-a2));color:#fff;border-color:transparent;}
+.lcv-tb.acc:hover{filter:brightness(1.09);}
+.lcv-rdoc{width:100%;max-width:700px;background:#fff;border-radius:var(--l-r);box-shadow:var(--l-shl);overflow:hidden;min-height:800px;}
 
 /* Right panel */
-.lcv-rpanel{background:var(--lcv-surf);border-left:1px solid var(--lcv-bdr);overflow-y:auto;padding:14px 13px;}
-.lcv-prop-input{width:100%;background:var(--lcv-bg2);border:1px solid var(--lcv-bdr);border-radius:8px;padding:7px 10px;font-size:12.5px;color:var(--lcv-t);outline:none;transition:border-color var(--lcv-tr);margin-bottom:7px;}
-.lcv-prop-input:focus{border-color:var(--lcv-acc);}
-.lcv-prop-input::placeholder{color:var(--lcv-t3);}
-.lcv-plabel{font-size:11px;color:var(--lcv-t3);margin-bottom:3px;display:block;}
-.lcv-mini-score{background:var(--lcv-bg2);border:1px solid var(--lcv-bdr);border-radius:var(--lcv-rl);padding:14px;text-align:center;margin-bottom:14px;}
-.lcv-sring{width:76px;height:76px;position:relative;margin:0 auto 8px;}
-.lcv-sring svg{transform:rotate(-90deg);}
-.lcv-sring-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:var(--lcv-t);}
-.lcv-slabel{font-size:11px;font-weight:700;color:var(--lcv-t2);}
+.lcv-rpanel{background:var(--l-sur);border-left:1px solid var(--l-bd);overflow-y:auto;padding:13px 12px;}
+.lcv-pi{width:100%;background:var(--l-bg2);border:1px solid var(--l-bd);border-radius:7px;padding:7px 9px;font-size:12.5px;color:var(--l-t);outline:none;transition:border-color var(--l-tr);margin-bottom:6px;}
+.lcv-pi:focus{border-color:var(--l-a);}
+.lcv-pi::placeholder{color:var(--l-t3);}
+.lcv-pl{font-size:10.5px;color:var(--l-t3);margin-bottom:3px;display:block;}
+.lcv-msc{background:var(--l-bg2);border:1px solid var(--l-bd);border-radius:var(--l-rl);padding:13px;text-align:center;margin-bottom:13px;}
+.lcv-sr{width:72px;height:72px;position:relative;margin:0 auto 7px;}
+.lcv-sr svg{transform:rotate(-90deg);}
+.lcv-srv{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800;color:var(--l-t);}
+.lcv-sl{font-size:11px;font-weight:700;color:var(--l-t2);}
 
 /* ── RESUME DOC ── */
-#resume-doc{font-family:'DM Sans',sans-serif;font-size:10pt;color:#1a1a2e;background:#fff;line-height:1.5;min-height:860px;}
+#resume-doc{font-family:'DM Sans',sans-serif;font-size:10pt;color:#1a1a2e;background:#fff;line-height:1.5;min-height:800px;}
 
-/* Template: Minimal */
-.tpl-minimal #rdoc-hdr{padding:26px 30px 18px;border-bottom:2.5px solid var(--rdoc-col,#3730a3);}
-.tpl-minimal .rn{font-family:'DM Serif Display',serif;font-size:24pt;color:#0f0f1a;letter-spacing:-.3px;}
-.tpl-minimal .rt{font-size:11pt;color:var(--rdoc-col,#3730a3);font-weight:600;margin-top:1px;}
-.tpl-minimal .rc{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px;font-size:9pt;color:#555;}
-.tpl-minimal #rdoc-body{padding:18px 30px;}
-.tpl-minimal .rs{font-size:9pt;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--rdoc-col,#3730a3);margin:16px 0 7px;padding-bottom:3px;border-bottom:1px solid #e5e7eb;}
-.tpl-minimal .rs:first-child{margin-top:0;}
+/* ──── TEMPLATE 1: Minimal Classic ──── */
+.tpl-min #rh{padding:24px 28px 18px;border-bottom:2.5px solid var(--rc,#3730a3);}
+.tpl-min .rn{font-family:'DM Serif Display',serif;font-size:23pt;color:#0f0f1a;letter-spacing:-.3px;}
+.tpl-min .rt{font-size:11pt;color:var(--rc,#3730a3);font-weight:600;margin-top:2px;}
+.tpl-min .rco{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px;font-size:9pt;color:#555;}
+.tpl-min #rb{padding:18px 28px;}
+.tpl-min .rs{font-size:8.5pt;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--rc,#3730a3);margin:16px 0 7px;padding-bottom:3px;border-bottom:1px solid #e5e7eb;}
+.tpl-min .rs:first-child{margin-top:0;}
 
-/* Template: Executive */
-.tpl-exec #rdoc-hdr{background:var(--rdoc-col,#1e293b);color:#fff;padding:26px 30px;display:flex;align-items:flex-start;gap:16px;}
-.tpl-exec .rn{font-family:'DM Serif Display',serif;font-size:22pt;color:#fff;}
-.tpl-exec .rt{font-size:11pt;color:rgba(255,255,255,.72);margin-top:2px;}
-.tpl-exec .rc{display:flex;flex-wrap:wrap;gap:12px;margin-top:9px;font-size:9pt;color:rgba(255,255,255,.65);}
-.tpl-exec #rdoc-body{display:grid;grid-template-columns:1fr 270px;}
+/* ──── TEMPLATE 2: Executive Pro ──── */
+.tpl-exec #rh{background:var(--rc,#1e293b);color:#fff;padding:24px 28px;}
+.tpl-exec .rn{font-family:'DM Serif Display',serif;font-size:21pt;color:#fff;}
+.tpl-exec .rt{font-size:10.5pt;color:rgba(255,255,255,.72);margin-top:2px;}
+.tpl-exec .rco{display:flex;flex-wrap:wrap;gap:12px;margin-top:9px;font-size:9pt;color:rgba(255,255,255,.65);}
+.tpl-exec #rb{display:grid;grid-template-columns:1fr 255px;}
 .tpl-exec .rmain{padding:18px 22px;}
-.tpl-exec .rside{padding:18px 16px;background:#f8fafc;border-left:1px solid #e5e7eb;}
-.tpl-exec .rs{font-size:9pt;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--rdoc-col,#1e293b);margin:15px 0 7px;padding-bottom:3px;border-bottom:1px solid #e5e7eb;}
+.tpl-exec .rside{padding:18px 15px;background:#f8fafc;border-left:1px solid #e5e7eb;}
+.tpl-exec .rs{font-size:8.5pt;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--rc,#1e293b);margin:15px 0 7px;padding-bottom:3px;border-bottom:1px solid #e5e7eb;}
 .tpl-exec .rs:first-child{margin-top:0;}
-.tpl-exec .rss{font-size:9pt;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--rdoc-col,#1e293b);margin:15px 0 7px;}
+.tpl-exec .rss{font-size:8.5pt;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--rc,#1e293b);margin:15px 0 7px;}
 .tpl-exec .rss:first-child{margin-top:0;}
 
-/* Template: Tech */
-.tpl-tech #rdoc-hdr{background:#0f172a;color:#e2e8f0;padding:22px 30px;display:flex;align-items:flex-start;}
-.tpl-tech .rn{font-family:'JetBrains Mono',monospace;font-size:17pt;color:#f8fafc;letter-spacing:-1px;}
-.tpl-tech .rn::before{content:'> ';color:var(--rdoc-col,#34d399);}
-.tpl-tech .rt{font-size:9.5pt;color:var(--rdoc-col,#34d399);font-family:'JetBrains Mono',monospace;margin-top:4px;}
-.tpl-tech .rc{display:flex;flex-wrap:wrap;gap:12px;margin-top:9px;font-size:8.5pt;color:#94a3b8;font-family:'JetBrains Mono',monospace;}
-.tpl-tech #rdoc-body{padding:18px 30px;}
-.tpl-tech .rs{font-size:8.5pt;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--rdoc-col,#34d399);margin:16px 0 7px;padding-bottom:3px;border-bottom:1px solid #1e293b;font-family:'JetBrains Mono',monospace;}
+/* ──── TEMPLATE 3: Tech Engineer ──── */
+.tpl-tech #rh{background:#0f172a;color:#e2e8f0;padding:22px 28px;}
+.tpl-tech .rn{font-family:'JetBrains Mono',monospace;font-size:16pt;color:#f8fafc;letter-spacing:-1px;}
+.tpl-tech .rn::before{content:'> ';color:var(--rc,#34d399);}
+.tpl-tech .rt{font-size:9pt;color:var(--rc,#34d399);font-family:'JetBrains Mono',monospace;margin-top:4px;}
+.tpl-tech .rco{display:flex;flex-wrap:wrap;gap:12px;margin-top:9px;font-size:8.5pt;color:#94a3b8;font-family:'JetBrains Mono',monospace;}
+.tpl-tech #rb{padding:18px 28px;}
+.tpl-tech .rs{font-size:8pt;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--rc,#34d399);margin:16px 0 7px;padding-bottom:3px;border-bottom:1px solid #1e293b;font-family:'JetBrains Mono',monospace;}
 .tpl-tech .rs:first-child{margin-top:0;}
 
-/* Shared resume atoms */
+/* ──── TEMPLATE 4: Two-Column Professional ──── */
+.tpl-twoc{display:flex;min-height:800px;}
+.tpl-twoc #rh{display:none;} /* header embedded in sidebar */
+.tpl-twoc #rb{display:flex;width:100%;}
+.tpl-twoc .rside-col{width:38%;background:var(--rc,#1e293b);color:#fff;padding:24px 16px;}
+.tpl-twoc .rmain-col{width:62%;padding:20px 20px;}
+.tpl-twoc .rside-name{font-family:'DM Serif Display',serif;font-size:16pt;color:#fff;margin-bottom:4px;line-height:1.2;}
+.tpl-twoc .rside-title{font-size:9pt;color:rgba(255,255,255,.72);margin-bottom:14px;}
+.tpl-twoc .rside-photo{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:28px;color:rgba(255,255,255,.5);}
+.tpl-twoc .rside-sec{font-size:8pt;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.5);margin:14px 0 7px;border-bottom:1px solid rgba(255,255,255,.15);padding-bottom:3px;}
+.tpl-twoc .rside-sec:first-of-type{margin-top:0;}
+.tpl-twoc .rside-item{font-size:8.5pt;color:rgba(255,255,255,.8);margin-bottom:4px;line-height:1.5;}
+.tpl-twoc .rside-skill{display:inline-block;padding:2px 7px;background:rgba(255,255,255,.12);border-radius:3px;font-size:8pt;color:rgba(255,255,255,.85);margin:2px 2px 2px 0;}
+.tpl-twoc .rs{font-size:8.5pt;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--rc,#1e293b);margin:15px 0 7px;padding-bottom:3px;border-bottom:2px solid var(--rc,#1e293b);}
+.tpl-twoc .rs:first-child{margin-top:0;}
+
+/* ──── TEMPLATE 5: Government / Sarkari Style ──── */
+.tpl-govt{padding:0;}
+.tpl-govt #rh{padding:20px 24px;text-align:center;border-bottom:3px double var(--rc,#1d4ed8);}
+.tpl-govt .rn{font-size:18pt;font-weight:800;color:#0f0f1a;font-family:'DM Serif Display',serif;text-transform:uppercase;letter-spacing:1px;}
+.tpl-govt .rt{font-size:10pt;color:var(--rc,#1d4ed8);font-weight:700;margin-top:3px;}
+.tpl-govt .rco{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin-top:8px;font-size:9pt;color:#444;}
+.tpl-govt #rb{padding:16px 24px;}
+.tpl-govt .rs{font-size:9pt;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;background:var(--rc,#1d4ed8);color:#fff;padding:4px 10px;margin:14px -0px 8px;border-radius:2px;}
+.tpl-govt .rs:first-child{margin-top:0;}
+.tpl-govt table{width:100%;border-collapse:collapse;font-size:9pt;margin-bottom:6px;}
+.tpl-govt th{background:var(--rc,#1d4ed8);color:#fff;padding:4px 8px;text-align:left;font-size:8.5pt;border:1px solid #ddd;}
+.tpl-govt td{padding:3px 8px;border:1px solid #e5e7eb;color:#374151;}
+.tpl-govt tr:nth-child(even) td{background:#f8fafc;}
+.tpl-govt .rgov-row{display:grid;grid-template-columns:1fr 1fr;gap:3px 20px;}
+.tpl-govt .rgov-item{font-size:9pt;color:#374151;margin-bottom:3px;}
+.tpl-govt .rgov-item strong{color:#1a1a2e;}
+
+/* ──── TEMPLATE 6: Modern Card ──── */
+.tpl-card #rh{background:linear-gradient(135deg,var(--rc,#7c3aed),color-mix(in srgb,var(--rc,#7c3aed) 60%,#1d4ed8));color:#fff;padding:28px 28px 22px;}
+.tpl-card .rn{font-family:'DM Serif Display',serif;font-size:22pt;color:#fff;letter-spacing:-.2px;}
+.tpl-card .rt{font-size:10.5pt;color:rgba(255,255,255,.8);margin-top:2px;}
+.tpl-card .rco{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-size:9pt;color:rgba(255,255,255,.75);}
+.tpl-card #rb{padding:18px 28px;}
+.tpl-card .rs{display:flex;align-items:center;gap:8px;font-size:8.5pt;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--rc,#7c3aed);margin:16px 0 7px;}
+.tpl-card .rs::after{content:'';flex:1;height:1px;background:var(--rc,#7c3aed);opacity:.25;}
+.tpl-card .rs:first-child{margin-top:0;}
+
+/* ── Shared resume atoms ── */
 .rentry{margin-bottom:11px;}
-.reh{display:flex;justify-content:space-between;align-items:flex-start;}
-.ret{font-size:10.5pt;font-weight:700;color:#0f0f1a;}
-.tpl-exec .ret{color:#0f0f1a;} .tpl-tech .ret{color:#e2e8f0;}
-.rec{font-size:9.5pt;color:#555;font-weight:500;}
+.reh{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.ret{font-size:10pt;font-weight:700;color:#0f0f1a;}
+.tpl-tech .ret{color:#e2e8f0;} .tpl-card .ret{color:#0f0f1a;}
+.rec{font-size:9pt;color:#555;font-weight:500;}
 .tpl-tech .rec{color:#64748b;}
-.red{font-size:9pt;color:#888;white-space:nowrap;}
+.red{font-size:9pt;color:#888;white-space:nowrap;flex-shrink:0;}
 .rbul{margin-top:4px;padding-left:0;list-style:none;}
-.rbul li{font-size:9.5pt;color:#444;padding-left:13px;position:relative;margin-bottom:2px;line-height:1.5;}
-.rbul li::before{content:'▸';position:absolute;left:0;color:var(--rdoc-col,#3730a3);font-size:7.5pt;top:2px;}
+.rbul li{font-size:9pt;color:#444;padding-left:13px;position:relative;margin-bottom:2px;line-height:1.5;}
+.rbul li::before{content:'▸';position:absolute;left:0;color:var(--rc,#3730a3);font-size:7pt;top:2px;}
 .tpl-tech .rbul li{color:#94a3b8;}
 .rsum{font-size:9.5pt;color:#444;line-height:1.65;}
 .tpl-tech .rsum{color:#94a3b8;}
 .rskgrid{display:flex;flex-wrap:wrap;gap:5px;}
-.rsktag{padding:3px 9px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:4px;font-size:9pt;color:#374151;font-weight:500;}
+.rsktag{padding:3px 8px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:4px;font-size:9pt;color:#374151;font-weight:500;}
 .tpl-tech .rsktag{background:#1e293b;border-color:#334155;color:#94a3b8;}
+.tpl-govt .rsktag{background:rgba(29,78,216,.08);border-color:rgba(29,78,216,.2);color:#1d4ed8;}
 .redurow{display:flex;justify-content:space-between;margin-bottom:7px;}
 .redeg{font-size:10pt;font-weight:700;color:#0f0f1a;}
 .tpl-tech .redeg{color:#e2e8f0;}
-.resc{font-size:9.5pt;color:#555;}
+.resc{font-size:9pt;color:#555;}
 .redy{font-size:9pt;color:#888;}
 .rcert{display:flex;justify-content:space-between;margin-bottom:5px;}
 .rcertn{font-size:9.5pt;font-weight:600;color:#374151;}
-.tpl-tech .rcertn{color:#94a3b8;}
 .rcerti{font-size:9pt;color:#888;}
 .rdecl{font-size:9pt;color:#444;margin-top:14px;border-top:1px solid #e5e7eb;padding-top:9px;}
 .rsign{display:flex;justify-content:space-between;margin-top:18px;font-size:9.5pt;color:#444;}
 
-/* ── TEMPLATES TAB ── */
-.lcv-tpl-panel{padding:22px;overflow-y:auto;flex:1;}
-.lcv-tpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;}
-.lcv-tcard{background:var(--lcv-surf);border:2px solid var(--lcv-bdr);border-radius:var(--lcv-rl);overflow:hidden;cursor:pointer;transition:all var(--lcv-tr);position:relative;}
-.lcv-tcard:hover{border-color:var(--lcv-acc);transform:translateY(-2px);box-shadow:var(--lcv-sh);}
-.lcv-tcard.active{border-color:var(--lcv-acc);box-shadow:0 0 0 1px var(--lcv-acc),var(--lcv-sh);}
-.lcv-tthumb{width:100%;aspect-ratio:3/4;overflow:hidden;background:#fff;}
-.lcv-tinfo{padding:11px 13px;border-top:1px solid var(--lcv-bdr);}
-.lcv-tname{font-size:13px;font-weight:700;color:var(--lcv-t);margin-bottom:2px;}
-.lcv-tdesc{font-size:11px;color:var(--lcv-t2);}
-.lcv-tbadge{position:absolute;top:7px;right:7px;padding:2px 7px;background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.25);color:var(--lcv-green);border-radius:99px;font-size:10px;font-weight:700;}
-.lcv-tactive{position:absolute;top:7px;left:7px;padding:2px 7px;background:var(--lcv-acc);color:#fff;border-radius:99px;font-size:10px;font-weight:700;display:none;}
-.lcv-tcard.active .lcv-tactive{display:block;}
-.lcv-tcolors{display:flex;gap:4px;margin-top:7px;}
-.lcv-cdot{width:15px;height:15px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all var(--lcv-tr);}
-.lcv-cdot.sel{border-color:var(--lcv-t);transform:scale(1.2);}
+/* ── TEMPLATES GALLERY ── */
+.lcv-tpl-panel{padding:20px;overflow-y:auto;}
+.lcv-tpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:13px;}
+.lcv-tc{background:var(--l-sur);border:2px solid var(--l-bd);border-radius:var(--l-rl);overflow:hidden;cursor:pointer;transition:all var(--l-tr);position:relative;}
+.lcv-tc:hover{border-color:var(--l-a);transform:translateY(-2px);box-shadow:var(--l-sh);}
+.lcv-tc.active{border-color:var(--l-a);box-shadow:0 0 0 1px var(--l-a),var(--l-sh);}
+.lcv-tthumb{width:100%;aspect-ratio:3/4;overflow:hidden;}
+.lcv-tinfo{padding:10px 12px;border-top:1px solid var(--l-bd);}
+.lcv-tname{font-size:13px;font-weight:700;color:var(--l-t);margin-bottom:2px;}
+.lcv-tdesc{font-size:11px;color:var(--l-t2);}
+.lcv-tbadge{position:absolute;top:6px;right:6px;padding:2px 7px;background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.25);color:var(--l-gr);border-radius:99px;font-size:10px;font-weight:700;}
+.lcv-tact{position:absolute;top:6px;left:6px;padding:2px 7px;background:var(--l-a);color:#fff;border-radius:99px;font-size:10px;font-weight:700;display:none;}
+.lcv-tc.active .lcv-tact{display:block;}
+.lcv-cdots{display:flex;gap:4px;margin-top:7px;}
+.lcv-cd{width:14px;height:14px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all var(--l-tr);}
+.lcv-cd.sel{border-color:var(--l-t);transform:scale(1.2);}
 
-/* ── SCORE TAB ── */
-.lcv-score-panel{padding:24px;overflow-y:auto;flex:1;}
-.lcv-score-hero{display:grid;grid-template-columns:270px 1fr;gap:20px;margin-bottom:22px;}
-@media(max-width:780px){.lcv-score-hero{grid-template-columns:1fr;}}
-.lcv-scard{background:var(--lcv-surf);border:1px solid var(--lcv-bdr);border-radius:var(--lcv-rx);padding:26px;text-align:center;display:flex;flex-direction:column;align-items:center;}
-.lcv-bring{position:relative;width:150px;height:150px;margin-bottom:14px;}
+/* ── SCORE PANEL ── */
+.lcv-sp{padding:22px;overflow-y:auto;}
+.lcv-shero{display:grid;grid-template-columns:260px 1fr;gap:18px;margin-bottom:20px;}
+@media(max-width:780px){.lcv-shero{grid-template-columns:1fr;}}
+.lcv-scard{background:var(--l-sur);border:1px solid var(--l-bd);border-radius:var(--l-rx);padding:24px;text-align:center;display:flex;flex-direction:column;align-items:center;}
+.lcv-bring{position:relative;width:140px;height:140px;margin-bottom:12px;}
 .lcv-bring svg{transform:rotate(-90deg);}
-.lcv-bring-val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-.lcv-bring-num{font-size:38px;font-weight:800;color:var(--lcv-t);line-height:1;}
-.lcv-bring-lbl{font-size:11px;font-weight:600;color:var(--lcv-t2);margin-top:2px;}
-.lcv-sgrade{font-size:13px;font-weight:700;padding:5px 14px;border-radius:99px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.22);color:var(--lcv-green);margin-bottom:10px;}
-.lcv-bench{font-size:12px;color:var(--lcv-t2);background:var(--lcv-bg2);border:1px solid var(--lcv-bdr);border-radius:8px;padding:9px 13px;width:100%;text-align:left;margin-top:4px;}
-.lcv-bench strong{color:var(--lcv-acc);}
-.lcv-sbreakdown{display:flex;flex-direction:column;gap:12px;}
-.lcv-srow{background:var(--lcv-surf);border:1px solid var(--lcv-bdr);border-radius:var(--lcv-r);padding:14px 16px;}
-.lcv-srow-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;}
-.lcv-srow-nm{font-size:13px;font-weight:700;color:var(--lcv-t);display:flex;align-items:center;gap:7px;}
-.lcv-srow-nm i{color:var(--lcv-acc);}
-.lcv-srow-vl{font-size:14px;font-weight:800;color:var(--lcv-t);}
-.lcv-sbar{height:5px;background:var(--lcv-bg3);border-radius:99px;overflow:hidden;}
-.lcv-sbar-fill{height:100%;border-radius:99px;transition:width .9s cubic-bezier(.4,0,.2,1);}
-.lcv-tips{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;margin-top:22px;}
-.lcv-tip{background:var(--lcv-surf);border:1px solid var(--lcv-bdr);border-radius:var(--lcv-r);padding:14px;display:flex;gap:10px;}
-.lcv-tip-icon{width:34px;height:34px;border-radius:8px;display:grid;place-items:center;font-size:14px;flex-shrink:0;}
-.lcv-tip-title{font-size:13px;font-weight:700;color:var(--lcv-t);margin-bottom:3px;}
-.lcv-tip-desc{font-size:11.5px;color:var(--lcv-t2);line-height:1.5;}
-.lcv-tip-btn{display:inline-flex;align-items:center;gap:4px;margin-top:7px;padding:4px 9px;background:var(--lcv-bg2);border:1px solid var(--lcv-bdr);border-radius:5px;font-size:11px;font-weight:700;color:var(--lcv-acc);cursor:pointer;transition:all var(--lcv-tr);}
-.lcv-tip-btn:hover{background:rgba(124,109,250,.1);}
+.lcv-bval{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.lcv-bnum{font-size:36px;font-weight:800;color:var(--l-t);line-height:1;}
+.lcv-blbl{font-size:11px;font-weight:600;color:var(--l-t2);margin-top:2px;}
+.lcv-sgrd{font-size:12.5px;font-weight:700;padding:5px 14px;border-radius:99px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.22);color:var(--l-gr);margin-bottom:9px;}
+.lcv-sbn{font-size:12px;color:var(--l-t2);background:var(--l-bg2);border:1px solid var(--l-bd);border-radius:7px;padding:9px 12px;width:100%;text-align:left;margin-top:4px;}
+.lcv-sbn strong{color:var(--l-a);}
+.lcv-sbk{display:flex;flex-direction:column;gap:11px;}
+.lcv-srow{background:var(--l-sur);border:1px solid var(--l-bd);border-radius:var(--l-r);padding:13px 15px;}
+.lcv-srh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.lcv-srn{font-size:12.5px;font-weight:700;color:var(--l-t);display:flex;align-items:center;gap:6px;}
+.lcv-srn i{color:var(--l-a);}
+.lcv-srv{font-size:14px;font-weight:800;color:var(--l-t);}
+.lcv-sbar{height:5px;background:var(--l-bg3);border-radius:99px;overflow:hidden;}
+.lcv-sbf{height:100%;border-radius:99px;transition:width .9s cubic-bezier(.4,0,.2,1);}
+.lcv-tips{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:11px;margin-top:20px;}
+.lcv-tip{background:var(--l-sur);border:1px solid var(--l-bd);border-radius:var(--l-r);padding:13px;display:flex;gap:10px;}
+.lcv-tic{width:32px;height:32px;border-radius:7px;display:grid;place-items:center;font-size:13px;flex-shrink:0;}
+.lcv-tit{font-size:12.5px;font-weight:700;color:var(--l-t);margin-bottom:3px;}
+.lcv-tid{font-size:11px;color:var(--l-t2);line-height:1.5;}
+.lcv-tab2{display:inline-flex;align-items:center;gap:3px;margin-top:6px;padding:3px 8px;background:var(--l-bg2);border:1px solid var(--l-bd);border-radius:5px;font-size:10.5px;font-weight:700;color:var(--l-a);cursor:pointer;transition:all var(--l-tr);}
+.lcv-tab2:hover{background:rgba(124,109,250,.1);}
 
-/* ── EXPORT TAB ── */
-.lcv-export-panel{padding:24px;overflow-y:auto;flex:1;}
-.lcv-exp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;}
-.lcv-exp-card{background:var(--lcv-surf);border:1px solid var(--lcv-bdr);border-radius:var(--lcv-rl);padding:22px;display:flex;flex-direction:column;align-items:flex-start;gap:9px;transition:all var(--lcv-tr);}
-.lcv-exp-card:hover{border-color:var(--lcv-bdr2);box-shadow:var(--lcv-sh);}
-.lcv-exp-icon{width:46px;height:46px;border-radius:var(--lcv-r);display:grid;place-items:center;font-size:19px;}
-.lcv-exp-title{font-size:15px;font-weight:700;color:var(--lcv-t);}
-.lcv-exp-desc{font-size:12px;color:var(--lcv-t2);line-height:1.55;}
-.lcv-exp-btn{margin-top:3px;display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;border:none;cursor:pointer;transition:all var(--lcv-tr);}
-.lcv-exp-btn:hover{transform:translateY(-1px);}
+/* ── EXPORT PANEL ── */
+.lcv-ep{padding:22px;overflow-y:auto;}
+.lcv-egrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:13px;}
+.lcv-ec{background:var(--l-sur);border:1px solid var(--l-bd);border-radius:var(--l-rl);padding:20px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;transition:all var(--l-tr);}
+.lcv-ec:hover{border-color:var(--l-bd2);box-shadow:var(--l-sh);}
+.lcv-eic{width:44px;height:44px;border-radius:var(--l-r);display:grid;place-items:center;font-size:18px;}
+.lcv-et{font-size:14px;font-weight:700;color:var(--l-t);}
+.lcv-ed{font-size:11.5px;color:var(--l-t2);line-height:1.5;}
+.lcv-ebtn{margin-top:3px;display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border-radius:7px;font-size:12.5px;font-weight:700;border:none;cursor:pointer;transition:all var(--l-tr);}
+.lcv-ebtn:hover{transform:translateY(-1px);}
 
 /* ── MODALS ── */
-.lcv-moverlay{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:500;display:none;place-items:center;padding:20px;}
-.lcv-moverlay.open{display:grid;}
-.lcv-modal{background:var(--lcv-surf);border:1px solid var(--lcv-bdr2);border-radius:var(--lcv-rx);width:100%;max-width:560px;box-shadow:var(--lcv-shl);overflow:hidden;animation:mIn .22s cubic-bezier(.4,0,.2,1);}
-@keyframes mIn{from{transform:scale(.95) translateY(8px);opacity:0;}to{transform:scale(1) translateY(0);opacity:1;}}
-.lcv-mhd{padding:18px 22px;border-bottom:1px solid var(--lcv-bdr);display:flex;align-items:center;justify-content:space-between;}
-.lcv-mtitle{font-size:15px;font-weight:800;color:var(--lcv-t);display:flex;align-items:center;gap:7px;}
-.lcv-mclose{width:28px;height:28px;background:var(--lcv-bg2);border:none;border-radius:7px;color:var(--lcv-t2);display:grid;place-items:center;cursor:pointer;transition:all var(--lcv-tr);}
-.lcv-mclose:hover{background:var(--lcv-bg3);color:var(--lcv-t);}
-.lcv-mbody{padding:18px 22px;}
-.lcv-mfooter{padding:14px 22px;border-top:1px solid var(--lcv-bdr);display:flex;justify-content:flex-end;gap:8px;}
-.lcv-modal textarea{width:100%;background:var(--lcv-bg2);border:1px solid var(--lcv-bdr);border-radius:8px;padding:10px 13px;color:var(--lcv-t);font-size:13px;resize:vertical;min-height:130px;outline:none;transition:border-color var(--lcv-tr);}
-.lcv-modal textarea:focus{border-color:var(--lcv-acc);}
-.lcv-modal textarea::placeholder{color:var(--lcv-t3);}
-.lcv-airesult{background:linear-gradient(135deg,rgba(124,109,250,.07),rgba(91,141,239,.07));border:1px solid rgba(124,109,250,.18);border-radius:var(--lcv-r);padding:13px 15px;margin-top:13px;font-size:12.5px;color:var(--lcv-t2);line-height:1.65;white-space:pre-wrap;display:none;}
-.lcv-airesult.vis{display:block;animation:fadeUp .3s ease;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
-.lcv-typing::after{content:'|';animation:blink .7s step-end infinite;color:var(--lcv-acc);}
+.lcv-mover{position:fixed;inset:0;background:rgba(0,0,0,.76);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:500;display:none;place-items:center;padding:20px;}
+.lcv-mover.open{display:grid;}
+.lcv-modal{background:var(--l-sur);border:1px solid var(--l-bd2);border-radius:var(--l-rx);width:100%;max-width:540px;box-shadow:var(--l-shl);overflow:hidden;animation:mIn .2s cubic-bezier(.4,0,.2,1);}
+@keyframes mIn{from{transform:scale(.95) translateY(6px);opacity:0;}to{transform:scale(1);opacity:1;}}
+.lcv-mhd{padding:17px 20px;border-bottom:1px solid var(--l-bd);display:flex;align-items:center;justify-content:space-between;}
+.lcv-mt{font-size:14.5px;font-weight:800;color:var(--l-t);display:flex;align-items:center;gap:7px;}
+.lcv-mx{width:26px;height:26px;background:var(--l-bg2);border:none;border-radius:6px;color:var(--l-t2);display:grid;place-items:center;cursor:pointer;transition:all var(--l-tr);}
+.lcv-mx:hover{background:var(--l-bg3);color:var(--l-t);}
+.lcv-mb{padding:17px 20px;}
+.lcv-mf{padding:13px 20px;border-top:1px solid var(--l-bd);display:flex;justify-content:flex-end;gap:8px;}
+.lcv-modal textarea{width:100%;background:var(--l-bg2);border:1px solid var(--l-bd);border-radius:7px;padding:10px 12px;color:var(--l-t);font-size:12.5px;resize:vertical;min-height:120px;outline:none;transition:border-color var(--l-tr);}
+.lcv-modal textarea:focus{border-color:var(--l-a);}
+.lcv-modal textarea::placeholder{color:var(--l-t3);}
+.lcv-air{background:linear-gradient(135deg,rgba(124,109,250,.07),rgba(91,141,239,.07));border:1px solid rgba(124,109,250,.18);border-radius:var(--l-r);padding:12px 14px;margin-top:12px;font-size:12px;color:var(--l-t2);line-height:1.65;white-space:pre-wrap;display:none;}
+.lcv-air.vis{display:block;animation:fU .3s ease;}
+@keyframes fU{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+.lcv-typing::after{content:'|';animation:blink .65s step-end infinite;color:var(--l-a);}
 @keyframes blink{50%{opacity:0;}}
-.lcv-roast-item{display:flex;gap:9px;padding:9px 11px;border-radius:8px;margin-bottom:7px;background:var(--lcv-bg2);border:1px solid var(--lcv-bdr);font-size:12px;color:var(--lcv-t2);line-height:1.5;}
-.lcv-roast-item i{color:var(--lcv-acc3);margin-top:1px;flex-shrink:0;}
+.lcv-ri{display:flex;gap:8px;padding:9px 11px;border-radius:7px;margin-bottom:6px;background:var(--l-bg2);border:1px solid var(--l-bd);font-size:12px;color:var(--l-t2);line-height:1.5;}
+.lcv-ri i{color:var(--l-a3);margin-top:1px;flex-shrink:0;}
 
 /* Toast */
-.lcv-toast{position:fixed;bottom:18px;right:18px;background:var(--lcv-surf2);border:1px solid var(--lcv-bdr2);border-radius:var(--lcv-r);padding:11px 15px;font-size:13px;font-weight:600;color:var(--lcv-t);box-shadow:var(--lcv-sh);z-index:999;display:flex;align-items:center;gap:7px;transform:translateY(72px);opacity:0;transition:all .32s cubic-bezier(.4,0,.2,1);max-width:280px;}
+.lcv-toast{position:fixed;bottom:16px;right:16px;background:var(--l-sur2);border:1px solid var(--l-bd2);border-radius:var(--l-r);padding:10px 14px;font-size:12.5px;font-weight:600;color:var(--l-t);box-shadow:var(--l-sh);z-index:999;display:flex;align-items:center;gap:6px;transform:translateY(68px);opacity:0;transition:all .3s cubic-bezier(.4,0,.2,1);max-width:270px;}
 .lcv-toast.show{transform:translateY(0);opacity:1;}
-.lcv-toast i{color:var(--lcv-green);}
-.lcv-spin{display:inline-block;width:14px;height:14px;border:2px solid var(--lcv-bdr2);border-top-color:var(--lcv-acc);border-radius:50%;animation:spin .55s linear infinite;}
+.lcv-toast i{color:var(--l-gr);}
+.lcv-spin{display:inline-block;width:13px;height:13px;border:2px solid var(--l-bd2);border-top-color:var(--l-a);border-radius:50%;animation:spin .5s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
-.lcv-sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
-.lcv-sec-hd h2{font-size:18px;font-weight:800;color:var(--lcv-t);}
-.lcv-sec-hd p{font-size:13px;color:var(--lcv-t2);margin-top:2px;}
-.lcv-version{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;background:rgba(245,200,66,.09);border:1px solid rgba(245,200,66,.2);color:var(--lcv-gold);border-radius:99px;font-size:10px;font-weight:700;}
+.lcv-shd{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.lcv-shd h2{font-size:17px;font-weight:800;color:var(--l-t);}
+.lcv-shd p{font-size:12.5px;color:var(--l-t2);margin-top:2px;}
+.lcv-ver{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;background:rgba(245,200,66,.09);border:1px solid rgba(245,200,66,.2);color:var(--l-go);border-radius:99px;font-size:10px;font-weight:700;}
 
+/* ── MOBILE: Stack layout for editor on small screens ── */
+@media(max-width:760px){
+  .lcv-panel.active{display:flex;flex-direction:column;}
+  .lcv-editor{display:flex;flex-direction:column;height:auto;}
+  .lcv-center{padding:12px 10px;}
+  .lcv-rdoc{max-width:100%;min-height:auto;}
+  /* Mobile tab row scroll */
+  .lcv-tabs{overflow-x:auto;scrollbar-width:none;flex-shrink:1;}
+  .lcv-tabs::-webkit-scrollbar{display:none;}
+  /* Mobile bottom action bar */
+  .lcv-mob-bar{display:flex;gap:8px;padding:10px 12px;background:var(--l-sur);border-top:1px solid var(--l-bd);flex-wrap:wrap;}
+  .lcv-tpl-grid{grid-template-columns:repeat(2,1fr);}
+  .lcv-egrid{grid-template-columns:1fr;}
+  .lcv-sp,.lcv-ep,.lcv-tpl-panel{padding:14px;}
+  #resume-doc{font-size:8pt;}
+  .tpl-min .rn,.tpl-exec .rn,.tpl-card .rn{font-size:16pt;}
+  .tpl-tech .rn{font-size:12pt;}
+  .tpl-twoc #rb{flex-direction:column;}
+  .tpl-twoc .rside-col,.tpl-twoc .rmain-col{width:100%;}
+  .tpl-exec #rb{grid-template-columns:1fr;}
+  .tpl-exec .rside{border-left:none;border-top:1px solid #e5e7eb;}
+}
+@media(min-width:761px){.lcv-mob-bar{display:none;}}
+@media(max-width:480px){
+  .lcv-nav{padding:0 10px;gap:7px;}
+  .lcv-logo-word{display:none;}
+  .lcv-tab{padding:5px 8px;font-size:11px;}
+  .lcv-tab .tlbl{display:none;}
+  .lcv-ai-btn span{display:none;}
+}
+
+/* Print */
 @media print{
   body *{visibility:hidden!important;}
   #resume-doc,#resume-doc *{visibility:visible!important;color:inherit!important;}
-  #resume-doc{position:fixed!important;left:0!important;top:0!important;width:210mm!important;margin:0!important;box-shadow:none!important;}
-}
-@media(max-width:600px){
-  .lcv-nav{padding:0 10px;gap:7px;}
-  .lcv-logo-word{display:none;}
-  .lcv-tab{padding:5px 9px;font-size:11.5px;}
-  .lcv-tab span.lbl{display:none;}
-  .lcv-score-panel,.lcv-export-panel,.lcv-tpl-panel{padding:14px;}
+  #resume-doc{position:fixed!important;left:0!important;top:0!important;width:210mm!important;margin:0!important;box-shadow:none!important;font-size:10pt!important;}
 }
 </style>
 </head>
@@ -294,230 +381,194 @@ input,textarea,select{font-family:'DM Sans',system-ui,sans-serif;}
 <a class="skip-link" href="#main">Skip to content</a>
 <div id="site-header"></div>
 
-<main id="main" style="padding:0;">
-<div style="display:flex;flex-direction:column;min-height:calc(100vh - 56px);">
+<main id="main" style="padding:0;margin:0;">
+<div class="lcv-wrap">
 
-<!-- NAV -->
+<!-- ── LUMINA NAV (not sticky, flows naturally) ── -->
 <nav class="lcv-nav">
   <div class="lcv-logo">
     <div class="lcv-logo-icon"><i class="fa-solid fa-bolt-lightning"></i></div>
     <div class="lcv-logo-word">lumina<em>.cv</em></div>
   </div>
   <div class="lcv-tabs" id="lcvTabs">
-    <button class="lcv-tab active" data-tab="editor"><i class="fa-solid fa-pen-nib"></i> <span class="lbl">Editor</span></button>
-    <button class="lcv-tab" data-tab="templates"><i class="fa-solid fa-layer-group"></i> <span class="lbl">Templates</span></button>
-    <button class="lcv-tab" data-tab="score"><i class="fa-solid fa-chart-pie"></i> <span class="lbl">Score</span></button>
-    <button class="lcv-tab" data-tab="export"><i class="fa-solid fa-arrow-up-from-bracket"></i> <span class="lbl">Export</span></button>
+    <button class="lcv-tab active" data-tab="editor"><i class="fa-solid fa-pen-nib"></i> <span class="tlbl">Editor</span></button>
+    <button class="lcv-tab" data-tab="templates"><i class="fa-solid fa-layer-group"></i> <span class="tlbl">Templates</span></button>
+    <button class="lcv-tab" data-tab="score"><i class="fa-solid fa-chart-pie"></i> <span class="tlbl">Score</span></button>
+    <button class="lcv-tab" data-tab="export"><i class="fa-solid fa-arrow-up-from-bracket"></i> <span class="tlbl">Export</span></button>
   </div>
   <div class="lcv-spacer"></div>
-  <span class="lcv-version" style="margin-right:4px;"><i class="fa-solid fa-crown"></i> Free</span>
-  <button class="lcv-ai-btn" onclick="openAI()"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Magic</button>
+  <span class="lcv-ver" style="margin-right:4px;"><i class="fa-solid fa-crown"></i> Free</span>
+  <button class="lcv-ai-btn" onclick="openAI()"><i class="fa-solid fa-wand-magic-sparkles"></i> <span>AI Magic</span></button>
   <button class="lcv-icon-btn" onclick="toggleTheme()" id="themeBtn"><i class="fa-solid fa-moon"></i></button>
   <div class="lcv-avatar">AS</div>
 </nav>
 
-<!-- ════ EDITOR ════ -->
+<!-- ══════ EDITOR ══════ -->
 <div class="lcv-panel active" id="panel-editor">
   <div class="lcv-editor">
 
-    <!-- Left -->
+    <!-- Left sections panel -->
     <div class="lcv-lpanel">
       <div class="lcv-ptitle">Sections</div>
-      <div class="lcv-sec-item active" onclick="scrollSec('summary',this)"><i class="fa-solid fa-user ico"></i> Header &amp; Summary<i class="fa-solid fa-grip-vertical grip"></i></div>
-      <div class="lcv-sec-item" onclick="scrollSec('experience',this)"><i class="fa-solid fa-briefcase ico"></i> Experience<i class="fa-solid fa-grip-vertical grip"></i></div>
-      <div class="lcv-sec-item" onclick="scrollSec('projects',this)"><i class="fa-solid fa-code-branch ico"></i> Projects<i class="fa-solid fa-grip-vertical grip"></i></div>
-      <div class="lcv-sec-item" onclick="scrollSec('skills',this)"><i class="fa-solid fa-star ico"></i> Skills<i class="fa-solid fa-grip-vertical grip"></i></div>
-      <div class="lcv-sec-item" onclick="scrollSec('education',this)"><i class="fa-solid fa-graduation-cap ico"></i> Education<i class="fa-solid fa-grip-vertical grip"></i></div>
-      <div class="lcv-sec-item" onclick="scrollSec('certifications',this)"><i class="fa-solid fa-certificate ico"></i> Certifications<i class="fa-solid fa-grip-vertical grip"></i></div>
+      <div class="lcv-si active" onclick="goSec('summary',this)"><i class="fa-solid fa-user ic"></i> Header & Summary<i class="fa-solid fa-grip-vertical gr"></i></div>
+      <div class="lcv-si" onclick="goSec('experience',this)"><i class="fa-solid fa-briefcase ic"></i> Experience<i class="fa-solid fa-grip-vertical gr"></i></div>
+      <div class="lcv-si" onclick="goSec('projects',this)"><i class="fa-solid fa-code-branch ic"></i> Projects<i class="fa-solid fa-grip-vertical gr"></i></div>
+      <div class="lcv-si" onclick="goSec('skills',this)"><i class="fa-solid fa-star ic"></i> Skills<i class="fa-solid fa-grip-vertical gr"></i></div>
+      <div class="lcv-si" onclick="goSec('education',this)"><i class="fa-solid fa-graduation-cap ic"></i> Education<i class="fa-solid fa-grip-vertical gr"></i></div>
+      <div class="lcv-si" onclick="goSec('certifications',this)"><i class="fa-solid fa-certificate ic"></i> Certifications<i class="fa-solid fa-grip-vertical gr"></i></div>
       <div class="lcv-div"></div>
       <div class="lcv-ptitle">AI Actions</div>
-      <button class="lcv-ai-chip" onclick="openAI()"><i class="fa-solid fa-wand-magic-sparkles"></i> Tailor to Job Description</button>
-      <button class="lcv-ai-chip" onclick="openRoast()"><i class="fa-solid fa-fire"></i> Roast My Resume</button>
-      <button class="lcv-ai-chip" onclick="aiRewrite()"><i class="fa-solid fa-rotate"></i> Rewrite Summary</button>
+      <button class="lcv-ac" onclick="openAI()"><i class="fa-solid fa-wand-magic-sparkles"></i> Tailor to Job Description</button>
+      <button class="lcv-ac" onclick="openRoast()"><i class="fa-solid fa-fire"></i> Roast My Resume</button>
+      <button class="lcv-ac" onclick="aiRewrite()"><i class="fa-solid fa-rotate"></i> Rewrite Summary</button>
       <div class="lcv-div"></div>
-      <div class="lcv-ptitle">Keyboard Shortcuts</div>
-      <div style="font-size:11px;color:var(--lcv-t3);line-height:2;padding:0 4px;">
-        <span class="lcv-kbd">⌘S</span> Save &nbsp; <span class="lcv-kbd">⌘E</span> Export<br>
-        <span class="lcv-kbd">⌘P</span> Print &nbsp; <span class="lcv-kbd">Esc</span> Close
+      <div class="lcv-ptitle">Shortcuts</div>
+      <div style="font-size:11px;color:var(--l-t3);line-height:2;padding:0 3px;">
+        <span class="lcv-kbd">⌘S</span> Save &nbsp;<span class="lcv-kbd">⌘E</span> Export<br>
+        <span class="lcv-kbd">⌘P</span> Print &nbsp;<span class="lcv-kbd">Esc</span> Close
       </div>
     </div>
 
     <!-- Center: live preview -->
-    <div class="lcv-center">
+    <div class="lcv-center" id="lcvCenter">
       <div class="lcv-ctbar">
         <span id="tplLabel">Template: <strong>Minimal Classic</strong></span>
-        <button class="lcv-tbtn" onclick="switchTab('templates')"><i class="fa-solid fa-layer-group"></i> Templates</button>
-        <button class="lcv-tbtn acc" onclick="doDownload()"><i class="fa-solid fa-download"></i> PDF</button>
+        <button class="lcv-tb" onclick="switchTab('templates')"><i class="fa-solid fa-layer-group"></i> Change</button>
+        <button class="lcv-tb acc" onclick="doDownload()"><i class="fa-solid fa-download"></i> PDF</button>
       </div>
-      <div class="lcv-rdoc-wrap" id="rdocWrap">
-        <div id="resume-doc" class="tpl-minimal" style="--rdoc-col:#3730a3;"></div>
+      <div class="lcv-rdoc" id="rdocWrap">
+        <div id="resume-doc" class="tpl-min" style="--rc:#3730a3;"></div>
       </div>
     </div>
 
-    <!-- Right -->
+    <!-- Right: quick-edit + score -->
     <div class="lcv-rpanel">
-      <div class="lcv-mini-score">
-        <div class="lcv-sring">
-          <svg width="76" height="76" viewBox="0 0 76 76">
-            <circle cx="38" cy="38" r="30" fill="none" stroke="var(--lcv-bg3)" stroke-width="6"/>
-            <circle cx="38" cy="38" r="30" fill="none" stroke="var(--lcv-acc)" stroke-width="6"
-              stroke-dasharray="188" stroke-dashoffset="46" stroke-linecap="round" id="miniCirc"/>
+      <div class="lcv-msc">
+        <div class="lcv-sr">
+          <svg width="72" height="72" viewBox="0 0 72 72">
+            <circle cx="36" cy="36" r="28" fill="none" stroke="var(--l-bg3)" stroke-width="5.5"/>
+            <circle cx="36" cy="36" r="28" fill="none" stroke="var(--l-a)" stroke-width="5.5"
+              stroke-dasharray="176" stroke-dashoffset="43" stroke-linecap="round" id="miniC"/>
           </svg>
-          <div class="lcv-sring-val" id="miniVal">76</div>
+          <div class="lcv-srv" id="miniV">76</div>
         </div>
-        <div class="lcv-slabel">Resume Score</div>
-        <button class="lcv-tbtn" style="margin-top:8px;width:100%;justify-content:center;" onclick="switchTab('score')">Full Analysis →</button>
+        <div class="lcv-sl">Resume Score</div>
+        <button class="lcv-tb" style="margin-top:8px;width:100%;justify-content:center;" onclick="switchTab('score')">Full Analysis →</button>
       </div>
-      <div style="margin-bottom:14px;">
-        <div class="lcv-ptitle" style="margin-bottom:8px;">Quick Edit</div>
-        <span class="lcv-plabel">Name</span>
-        <input class="lcv-prop-input" id="qn" value="Arjun Sharma" oninput="qsync()">
-        <span class="lcv-plabel">Title</span>
-        <input class="lcv-prop-input" id="qt" value="Senior Software Engineer" oninput="qsync()">
-        <span class="lcv-plabel">Email</span>
-        <input class="lcv-prop-input" id="qe" value="arjun.sharma@gmail.com" oninput="qsync()">
-        <span class="lcv-plabel">Phone</span>
-        <input class="lcv-prop-input" id="qp" value="+91 98765 43210" oninput="qsync()">
+      <div style="margin-bottom:13px;">
+        <div class="lcv-ptitle" style="margin-bottom:7px;">Quick Edit</div>
+        <span class="lcv-pl">Name</span><input class="lcv-pi" id="qn" value="Arjun Sharma" oninput="qsync()">
+        <span class="lcv-pl">Title</span><input class="lcv-pi" id="qt" value="Senior Software Engineer" oninput="qsync()">
+        <span class="lcv-pl">Email</span><input class="lcv-pi" id="qe" value="arjun.sharma@gmail.com" oninput="qsync()">
+        <span class="lcv-pl">Phone</span><input class="lcv-pi" id="qp" value="+91 98765 43210" oninput="qsync()">
       </div>
-      <div class="lcv-ptitle" style="margin-bottom:8px;">AI Tools</div>
-      <button class="lcv-ai-chip" onclick="aiRewrite()"><i class="fa-solid fa-wand-magic-sparkles"></i> Rewrite Summary</button>
-      <button class="lcv-ai-chip" onclick="aiBullets()"><i class="fa-solid fa-bolt-lightning"></i> Enhance Bullets</button>
-      <button class="lcv-ai-chip" onclick="aiKeywords()"><i class="fa-solid fa-key"></i> Optimize Keywords</button>
+      <div class="lcv-ptitle" style="margin-bottom:7px;">AI Tools</div>
+      <button class="lcv-ac" onclick="aiRewrite()"><i class="fa-solid fa-wand-magic-sparkles"></i> Rewrite Summary</button>
+      <button class="lcv-ac" onclick="aiBullets()"><i class="fa-solid fa-bolt-lightning"></i> Enhance Bullets</button>
+      <button class="lcv-ac" onclick="aiKeywords()"><i class="fa-solid fa-key"></i> Optimize Keywords</button>
       <div class="lcv-div"></div>
-      <div class="lcv-ptitle" style="margin-bottom:8px;">Version History</div>
-      <div style="font-size:11px;color:var(--lcv-t3);">
-        <div style="display:flex;justify-content:space-between;padding:6px 8px;background:var(--lcv-bg2);border-radius:6px;border:1px solid var(--lcv-bdr);margin-bottom:4px;"><span style="color:var(--lcv-t2);">Current</span><span>Now</span></div>
-        <div style="display:flex;justify-content:space-between;padding:6px 8px;background:var(--lcv-bg2);border-radius:6px;border:1px solid var(--lcv-bdr);margin-bottom:4px;"><span style="color:var(--lcv-t2);">v2</span><span>2h ago</span></div>
-        <div style="display:flex;justify-content:space-between;padding:6px 8px;background:var(--lcv-bg2);border-radius:6px;border:1px solid var(--lcv-bdr);"><span style="color:var(--lcv-t2);">v1</span><span>Yesterday</span></div>
+      <div class="lcv-ptitle" style="margin-bottom:7px;">Version History</div>
+      <div style="font-size:11px;color:var(--l-t3);">
+        <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--l-bg2);border-radius:6px;border:1px solid var(--l-bd);margin-bottom:3px;"><span style="color:var(--l-t2);">Current</span><span>Now</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--l-bg2);border-radius:6px;border:1px solid var(--l-bd);margin-bottom:3px;"><span style="color:var(--l-t2);">v2</span><span>2h ago</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--l-bg2);border-radius:6px;border:1px solid var(--l-bd);"><span style="color:var(--l-t2);">v1</span><span>Yesterday</span></div>
       </div>
     </div>
+
+  </div>
+
+  <!-- Mobile action bar (visible only on mobile) -->
+  <div class="lcv-mob-bar">
+    <button class="lcv-tb acc" onclick="doDownload()" style="flex:1;justify-content:center;"><i class="fa-solid fa-download"></i> Download PDF</button>
+    <button class="lcv-tb" onclick="switchTab('templates')" style="flex:1;justify-content:center;"><i class="fa-solid fa-layer-group"></i> Templates</button>
+    <button class="lcv-tb" onclick="openAI()" style="flex:1;justify-content:center;"><i class="fa-solid fa-wand-magic-sparkles"></i> AI</button>
   </div>
 </div>
 
-<!-- ════ TEMPLATES ════ -->
+<!-- ══════ TEMPLATES ══════ -->
 <div class="lcv-panel" id="panel-templates">
   <div class="lcv-tpl-panel">
-    <div class="lcv-sec-hd"><div><h2>Choose Template</h2><p>All templates are ATS-optimized. Click to apply instantly.</p></div></div>
+    <div class="lcv-shd"><div><h2>Choose Template</h2><p>6 ATS-optimized templates. Click any to apply instantly.</p></div></div>
     <div class="lcv-tpl-grid" id="tplGrid"></div>
   </div>
 </div>
 
-<!-- ════ SCORE ════ -->
+<!-- ══════ SCORE ══════ -->
 <div class="lcv-panel" id="panel-score">
-  <div class="lcv-score-panel">
-    <div class="lcv-sec-hd"><div><h2>Score &amp; ATS Analysis</h2><p>Real-time feedback to make your resume stand out.</p></div></div>
-    <div class="lcv-score-hero">
+  <div class="lcv-sp">
+    <div class="lcv-shd"><div><h2>Score & ATS Analysis</h2><p>Real-time feedback to help your resume stand out.</p></div></div>
+    <div class="lcv-shero">
       <div class="lcv-scard">
         <div class="lcv-bring">
-          <svg width="150" height="150" viewBox="0 0 150 150">
-            <circle cx="75" cy="75" r="62" fill="none" stroke="var(--lcv-bg3)" stroke-width="9"/>
-            <circle cx="75" cy="75" r="62" fill="none" stroke="url(#sg)" stroke-width="9"
-              stroke-dasharray="390" stroke-dashoffset="93" stroke-linecap="round" id="bigCirc"/>
-            <defs>
-              <linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" style="stop-color:#7c6dfa"/>
-                <stop offset="100%" style="stop-color:#5b8def"/>
-              </linearGradient>
-            </defs>
+          <svg width="140" height="140" viewBox="0 0 140 140">
+            <circle cx="70" cy="70" r="58" fill="none" stroke="var(--l-bg3)" stroke-width="9"/>
+            <circle cx="70" cy="70" r="58" fill="none" stroke="url(#sg)" stroke-width="9"
+              stroke-dasharray="364" stroke-dashoffset="87" stroke-linecap="round" id="bigC"/>
+            <defs><linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color:#7c6dfa"/><stop offset="100%" style="stop-color:#5b8def"/>
+            </linearGradient></defs>
           </svg>
-          <div class="lcv-bring-val">
-            <div class="lcv-bring-num" id="bigNum">76</div>
-            <div class="lcv-bring-lbl">Overall</div>
-          </div>
+          <div class="lcv-bval"><div class="lcv-bnum" id="bigN">76</div><div class="lcv-blbl">Overall</div></div>
         </div>
-        <div class="lcv-sgrade">★ Great — Top 22%</div>
-        <div class="lcv-bench">Beats <strong>78% of resumes</strong> in Software Engineering roles in India.</div>
-        <button class="lcv-ai-chip" style="width:100%;margin-top:12px;" onclick="refreshScore()"><i class="fa-solid fa-rotate"></i> Refresh Score</button>
+        <div class="lcv-sgrd">★ Great — Top 22%</div>
+        <div class="lcv-sbn">Beats <strong>78% of resumes</strong> in Software Engineering roles in India.</div>
+        <button class="lcv-ac" style="width:100%;margin-top:11px;" onclick="refreshScore()"><i class="fa-solid fa-rotate"></i> Refresh Score</button>
       </div>
-      <div class="lcv-sbreakdown">
-        <div class="lcv-srow"><div class="lcv-srow-hd"><div class="lcv-srow-nm"><i class="fa-solid fa-robot"></i>ATS Compatibility</div><div class="lcv-srow-vl" id="sv-ats">82%</div></div><div class="lcv-sbar"><div class="lcv-sbar-fill" style="width:82%;background:linear-gradient(90deg,#7c6dfa,#5b8def);"></div></div></div>
-        <div class="lcv-srow"><div class="lcv-srow-hd"><div class="lcv-srow-nm"><i class="fa-solid fa-bolt-lightning"></i>Impact Score</div><div class="lcv-srow-vl" id="sv-imp">71%</div></div><div class="lcv-sbar"><div class="lcv-sbar-fill" style="width:71%;background:linear-gradient(90deg,#fa6d9a,#f59e0b);"></div></div></div>
-        <div class="lcv-srow"><div class="lcv-srow-hd"><div class="lcv-srow-nm"><i class="fa-solid fa-book-open"></i>Readability</div><div class="lcv-srow-vl" id="sv-rd">88%</div></div><div class="lcv-sbar"><div class="lcv-sbar-fill" style="width:88%;background:linear-gradient(90deg,#4ade80,#22d3ee);"></div></div></div>
-        <div class="lcv-srow"><div class="lcv-srow-hd"><div class="lcv-srow-nm"><i class="fa-solid fa-layer-group"></i>Content Depth</div><div class="lcv-srow-vl" id="sv-dep">65%</div></div><div class="lcv-sbar"><div class="lcv-sbar-fill" style="width:65%;background:linear-gradient(90deg,#f59e0b,#f87171);"></div></div></div>
-        <div class="lcv-srow"><div class="lcv-srow-hd"><div class="lcv-srow-nm"><i class="fa-solid fa-ruler"></i>Format &amp; Length</div><div class="lcv-srow-vl" id="sv-fmt">90%</div></div><div class="lcv-sbar"><div class="lcv-sbar-fill" style="width:90%;background:linear-gradient(90deg,#4ade80,#7c6dfa);"></div></div></div>
+      <div class="lcv-sbk">
+        <div class="lcv-srow"><div class="lcv-srh"><div class="lcv-srn"><i class="fa-solid fa-robot"></i>ATS Compatibility</div><div class="lcv-srv" id="sv-a">82%</div></div><div class="lcv-sbar"><div class="lcv-sbf" style="width:82%;background:linear-gradient(90deg,#7c6dfa,#5b8def);"></div></div></div>
+        <div class="lcv-srow"><div class="lcv-srh"><div class="lcv-srn"><i class="fa-solid fa-bolt-lightning"></i>Impact Score</div><div class="lcv-srv" id="sv-i">71%</div></div><div class="lcv-sbar"><div class="lcv-sbf" style="width:71%;background:linear-gradient(90deg,#fa6d9a,#f59e0b);"></div></div></div>
+        <div class="lcv-srow"><div class="lcv-srh"><div class="lcv-srn"><i class="fa-solid fa-book-open"></i>Readability</div><div class="lcv-srv" id="sv-r">88%</div></div><div class="lcv-sbar"><div class="lcv-sbf" style="width:88%;background:linear-gradient(90deg,#4ade80,#22d3ee);"></div></div></div>
+        <div class="lcv-srow"><div class="lcv-srh"><div class="lcv-srn"><i class="fa-solid fa-layer-group"></i>Content Depth</div><div class="lcv-srv" id="sv-d">65%</div></div><div class="lcv-sbar"><div class="lcv-sbf" style="width:65%;background:linear-gradient(90deg,#f59e0b,#f87171);"></div></div></div>
+        <div class="lcv-srow"><div class="lcv-srh"><div class="lcv-srn"><i class="fa-solid fa-ruler"></i>Format & Length</div><div class="lcv-srv" id="sv-f">90%</div></div><div class="lcv-sbar"><div class="lcv-sbf" style="width:90%;background:linear-gradient(90deg,#4ade80,#7c6dfa);"></div></div></div>
       </div>
     </div>
-    <div class="lcv-ptitle" style="margin-bottom:12px;">Actionable Recommendations</div>
+    <div class="lcv-ptitle" style="margin-bottom:11px;">Actionable Recommendations</div>
     <div class="lcv-tips" id="tipsGrid"></div>
   </div>
 </div>
 
-<!-- ════ EXPORT ════ -->
+<!-- ══════ EXPORT ══════ -->
 <div class="lcv-panel" id="panel-export">
-  <div class="lcv-export-panel">
-    <div class="lcv-sec-hd"><div><h2>Export Resume</h2><p>Download in your preferred format. PDF is recommended for applications.</p></div></div>
-    <div class="lcv-exp-grid">
-      <div class="lcv-exp-card">
-        <div class="lcv-exp-icon" style="background:rgba(239,68,68,.1);color:#ef4444;"><i class="fa-solid fa-file-pdf"></i></div>
-        <div class="lcv-exp-title">Download PDF</div>
-        <div class="lcv-exp-desc">Best for job applications. Preserves exact layout and is ATS-compatible.</div>
-        <button class="lcv-exp-btn" style="background:#ef4444;color:#fff;" onclick="doDownload()"><i class="fa-solid fa-download"></i> Download PDF</button>
-      </div>
-      <div class="lcv-exp-card">
-        <div class="lcv-exp-icon" style="background:rgba(59,130,246,.1);color:#3b82f6;"><i class="fa-solid fa-clipboard-list"></i></div>
-        <div class="lcv-exp-title">Copy as Plain Text</div>
-        <div class="lcv-exp-desc">Clean plain text for pasting into application portals and email.</div>
-        <button class="lcv-exp-btn" style="background:#3b82f6;color:#fff;" onclick="copyText()"><i class="fa-solid fa-copy"></i> Copy Text</button>
-      </div>
-      <div class="lcv-exp-card">
-        <div class="lcv-exp-icon" style="background:rgba(74,222,128,.1);color:#4ade80;"><i class="fa-solid fa-print"></i></div>
-        <div class="lcv-exp-title">Print</div>
-        <div class="lcv-exp-desc">Open browser print dialog. Choose "Save as PDF" to save locally.</div>
-        <button class="lcv-exp-btn" style="background:#4ade80;color:#0f0f1a;" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Resume</button>
-      </div>
-      <div class="lcv-exp-card">
-        <div class="lcv-exp-icon" style="background:rgba(245,200,66,.1);color:#f5c842;"><i class="fa-solid fa-share-nodes"></i></div>
-        <div class="lcv-exp-title">Share Link</div>
-        <div class="lcv-exp-desc">Generate a shareable link so recruiters can view your resume online.</div>
-        <button class="lcv-exp-btn" style="background:#f5c842;color:#0f0f1a;" onclick="fakeShare()"><i class="fa-solid fa-link"></i> Generate Link</button>
-      </div>
+  <div class="lcv-ep">
+    <div class="lcv-shd"><div><h2>Export Resume</h2><p>PDF is recommended for job applications.</p></div></div>
+    <div class="lcv-egrid">
+      <div class="lcv-ec"><div class="lcv-eic" style="background:rgba(239,68,68,.1);color:#ef4444;"><i class="fa-solid fa-file-pdf"></i></div><div class="lcv-et">Download PDF</div><div class="lcv-ed">Best for applications. Preserves exact formatting and is ATS-compatible.</div><button class="lcv-ebtn" style="background:#ef4444;color:#fff;" onclick="doDownload()"><i class="fa-solid fa-download"></i> Download PDF</button></div>
+      <div class="lcv-ec"><div class="lcv-eic" style="background:rgba(59,130,246,.1);color:#3b82f6;"><i class="fa-solid fa-clipboard-list"></i></div><div class="lcv-et">Copy as Plain Text</div><div class="lcv-ed">Clean text for pasting into online portals and email applications.</div><button class="lcv-ebtn" style="background:#3b82f6;color:#fff;" onclick="copyTxt()"><i class="fa-solid fa-copy"></i> Copy Text</button></div>
+      <div class="lcv-ec"><div class="lcv-eic" style="background:rgba(74,222,128,.1);color:#4ade80;"><i class="fa-solid fa-print"></i></div><div class="lcv-et">Print Resume</div><div class="lcv-ed">Open browser print dialog. Select "Save as PDF" to save locally.</div><button class="lcv-ebtn" style="background:#4ade80;color:#0f0f1a;" onclick="window.print()"><i class="fa-solid fa-print"></i> Print</button></div>
+      <div class="lcv-ec"><div class="lcv-eic" style="background:rgba(245,200,66,.1);color:#f5c842;"><i class="fa-solid fa-share-nodes"></i></div><div class="lcv-et">Share Link</div><div class="lcv-ed">Generate a shareable link so recruiters can view your resume online.</div><button class="lcv-ebtn" style="background:#f5c842;color:#0f0f1a;" onclick="fakeShare()"><i class="fa-solid fa-link"></i> Share Link</button></div>
     </div>
-    <div style="margin-top:24px;background:var(--lcv-surf);border:1px solid var(--lcv-bdr);border-radius:var(--lcv-rl);padding:18px 22px;">
-      <div class="lcv-ptitle" style="margin-bottom:12px;">Export Settings</div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
-        <div><span class="lcv-plabel">Paper Size</span><select class="lcv-prop-input" style="margin:0;"><option>A4 (210×297mm)</option><option>Letter (216×279mm)</option></select></div>
-        <div><span class="lcv-plabel">Orientation</span><select class="lcv-prop-input" style="margin:0;"><option>Portrait</option><option>Landscape</option></select></div>
-        <div><span class="lcv-plabel">Margins</span><select class="lcv-prop-input" style="margin:0;"><option>Normal (20mm)</option><option>Narrow (12mm)</option><option>Wide (28mm)</option></select></div>
+    <div style="margin-top:22px;background:var(--l-sur);border:1px solid var(--l-bd);border-radius:var(--l-rl);padding:17px 20px;">
+      <div class="lcv-ptitle" style="margin-bottom:11px;">Export Settings</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:11px;">
+        <div><span class="lcv-pl">Paper Size</span><select class="lcv-pi" style="margin:0;"><option>A4 (210×297mm)</option><option>Letter</option></select></div>
+        <div><span class="lcv-pl">Orientation</span><select class="lcv-pi" style="margin:0;"><option>Portrait</option><option>Landscape</option></select></div>
+        <div><span class="lcv-pl">Margins</span><select class="lcv-pi" style="margin:0;"><option>Normal (20mm)</option><option>Narrow (12mm)</option><option>Wide (28mm)</option></select></div>
       </div>
     </div>
   </div>
 </div>
 
-</div><!-- flex wrapper -->
+</div><!-- /.lcv-wrap -->
 </main>
 
 <!-- AI Modal -->
-<div class="lcv-moverlay" id="aiModal">
+<div class="lcv-mover" id="aiModal">
   <div class="lcv-modal">
-    <div class="lcv-mhd">
-      <div class="lcv-mtitle"><i class="fa-solid fa-wand-magic-sparkles" style="color:var(--lcv-acc);"></i> Tailor to Job Description</div>
-      <button class="lcv-mclose" onclick="closeM('aiModal')"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-    <div class="lcv-mbody">
-      <p style="font-size:13px;color:var(--lcv-t2);margin-bottom:11px;line-height:1.6;">Paste the job description. AI will rewrite your summary and boost bullet points to match the role.</p>
-      <textarea id="jdTxt" placeholder="Paste job description here..."></textarea>
-      <div class="lcv-airesult" id="aiRes"></div>
-    </div>
-    <div class="lcv-mfooter">
-      <button class="lcv-tbtn" onclick="closeM('aiModal')" style="padding:8px 15px;">Cancel</button>
-      <button class="lcv-tbtn acc" style="padding:8px 16px;" onclick="runAI()" id="aiRunBtn"><i class="fa-solid fa-wand-magic-sparkles"></i> Tailor Resume</button>
-    </div>
+    <div class="lcv-mhd"><div class="lcv-mt"><i class="fa-solid fa-wand-magic-sparkles" style="color:var(--l-a);"></i>Tailor to Job Description</div><button class="lcv-mx" onclick="closeM('aiModal')"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="lcv-mb"><p style="font-size:12.5px;color:var(--l-t2);margin-bottom:10px;line-height:1.6;">Paste a job description. AI will rewrite your summary and boost bullet points to match.</p><textarea id="jdTxt" placeholder="Paste job description here..."></textarea><div class="lcv-air" id="aiRes"></div></div>
+    <div class="lcv-mf"><button class="lcv-tb" onclick="closeM('aiModal')" style="padding:7px 14px;">Cancel</button><button class="lcv-tb acc" style="padding:7px 15px;" onclick="runAI()" id="aiBtn"><i class="fa-solid fa-wand-magic-sparkles"></i> Tailor Resume</button></div>
   </div>
 </div>
 
 <!-- Roast Modal -->
-<div class="lcv-moverlay" id="roastModal">
+<div class="lcv-mover" id="roastModal">
   <div class="lcv-modal">
-    <div class="lcv-mhd">
-      <div class="lcv-mtitle"><i class="fa-solid fa-fire" style="color:var(--lcv-acc3);"></i> Roast My Resume</div>
-      <button class="lcv-mclose" onclick="closeM('roastModal')"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-    <div class="lcv-mbody"><div id="roastBody"></div></div>
-    <div class="lcv-mfooter"><button class="lcv-tbtn acc" onclick="closeM('roastModal')" style="padding:8px 16px;">Got it!</button></div>
+    <div class="lcv-mhd"><div class="lcv-mt"><i class="fa-solid fa-fire" style="color:var(--l-a3);"></i>Roast My Resume</div><button class="lcv-mx" onclick="closeM('roastModal')"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="lcv-mb"><div id="roastB"></div></div>
+    <div class="lcv-mf"><button class="lcv-tb acc" onclick="closeM('roastModal')" style="padding:7px 15px;">Got it!</button></div>
   </div>
 </div>
 
-<!-- Toast -->
 <div class="lcv-toast" id="lcvToast"><i class="fa-solid fa-check-circle"></i><span id="toastTxt">Done!</span></div>
 
 <div id="site-footer"></div>
@@ -530,23 +581,24 @@ input,textarea,select{font-family:'DM Sans',system-ui,sans-serif;}
   <nav class="offcanvas-nav" aria-label="Mobile primary"></nav>
 </aside>
 <script src="script.js"></script>
+
 <script>
 'use strict';
 // ── DATA ──
 const D = {
-  name:'Arjun Sharma', title:'Senior Software Engineer',
-  email:'arjun.sharma@gmail.com', phone:'+91 98765 43210',
-  location:'Bengaluru, India', linkedin:'linkedin.com/in/arjunsharma', github:'github.com/arjun-dev',
-  summary:'Results-driven Senior Software Engineer with 6+ years building high-scale distributed systems. Led teams of 8 engineers, reduced API latency by 40%, and shipped features used by 50M+ users. Passionate about clean architecture, developer experience, and mentoring engineers.',
+  name:'Arjun Sharma',title:'Senior Software Engineer',
+  email:'arjun.sharma@gmail.com',phone:'+91 98765 43210',
+  location:'Bengaluru, India',linkedin:'linkedin.com/in/arjunsharma',github:'github.com/arjun-dev',
+  summary:'Results-driven Senior Software Engineer with 6+ years building high-scale distributed systems. Led teams of 8 engineers, reduced API latency by 40%, and shipped features used by 50M+ users. Passionate about clean architecture and mentoring engineers.',
   experience:[
     {title:'Senior Software Engineer',company:'Infosys Ltd.',loc:'Bengaluru',from:'Jan 2021',to:'Present',
-     bullets:['Architected microservices platform handling 2M+ requests/day, reducing P99 latency from 800ms to 120ms','Led migration of monolithic Java application to Node.js, cutting deployment time by 65%','Mentored 4 junior engineers; team PR rejection rate fell 30%','Built real-time analytics dashboard with React + WebSockets, boosting DAU by 22%']},
+     bullets:['Architected microservices platform handling 2M+ requests/day, reducing P99 latency from 800ms to 120ms','Led migration of Java monolith to Node.js, cutting deployment time by 65%','Mentored 4 junior engineers; team PR rejection rate fell 30%','Built real-time analytics dashboard with React + WebSockets, boosting DAU by 22%']},
     {title:'Software Engineer',company:'TCS Digital',loc:'Pune',from:'Aug 2018',to:'Dec 2020',
-     bullets:['Developed REST APIs serving 500K daily active users with 99.95% uptime','Implemented Redis caching layer reducing database load by 70%','Delivered 3 major product launches working with cross-functional teams']}
+     bullets:['Developed REST APIs serving 500K daily active users with 99.95% uptime','Implemented Redis caching layer reducing database load by 70%','Delivered 3 major product launches with cross-functional teams']}
   ],
   projects:[
     {name:'SmartATS — Resume Parser',tech:'Python · FastAPI · NLP · React',
-     bullets:['Built ML-powered ATS resume parser with 94% accuracy on 50K test resumes','Open-sourced with 1.2K GitHub stars in first month']},
+     bullets:['Built ML-powered ATS parser with 94% accuracy on 50K test resumes','Open-sourced with 1.2K GitHub stars in first month']},
     {name:'GovAlert — Job Notification Bot',tech:'Node.js · Telegram API · MongoDB',
      bullets:['Automated Sarkari job alert system serving 80K+ subscribers daily','Reduced average notification delay from 4 hours to under 3 minutes']}
   ],
@@ -555,329 +607,286 @@ const D = {
   certs:[{name:'AWS Certified Solutions Architect',issuer:'Amazon Web Services',year:'2022'},{name:'Google Cloud Professional',issuer:'Google',year:'2023'}]
 };
 
+// ── 6 TEMPLATES ──
 const TPLS = [
-  {id:'minimal', name:'Minimal Classic', cls:'tpl-minimal', desc:'Clean & timeless', tag:'Most Popular'},
-  {id:'exec',    name:'Executive Pro',   cls:'tpl-exec',    desc:'Senior roles',    tag:'ATS Optimized'},
-  {id:'tech',    name:'Tech Engineer',   cls:'tpl-tech',    desc:'Developer focused',tag:'Dev Friendly'},
+  {id:'min',   cls:'tpl-min',  name:'Minimal Classic',   desc:'Clean & timeless',           col:'#3730a3', tag:'Most Popular'},
+  {id:'exec',  cls:'tpl-exec', name:'Executive Pro',     desc:'Senior leadership roles',     col:'#1e293b', tag:'ATS Optimized'},
+  {id:'tech',  cls:'tpl-tech', name:'Tech Engineer',     desc:'Developer focused',           col:'#34d399', tag:'Dev Friendly'},
+  {id:'twoc',  cls:'tpl-twoc', name:'Two-Column Pro',    desc:'Sidebar layout, modern',      col:'#1d4ed8', tag:'Eye-catching'},
+  {id:'govt',  cls:'tpl-govt', name:'Government / SSC',  desc:'Traditional Indian format',   col:'#1d4ed8', tag:'Sarkari Ready'},
+  {id:'card',  cls:'tpl-card', name:'Modern Card',       desc:'Gradient header, creative',   col:'#7c3aed', tag:'Stands Out'},
 ];
 const COLS = [
   {n:'Indigo',h:'#3730a3'},{n:'Sapphire',h:'#1d4ed8'},{n:'Emerald',h:'#047857'},
   {n:'Ruby',h:'#be123c'},{n:'Charcoal',h:'#1e293b'},{n:'Violet',h:'#7e22ce'},
-  {n:'Amber',h:'#b45309'},{n:'Slate',h:'#374151'},
+  {n:'Amber',h:'#b45309'},{n:'Teal',h:'#0e7490'},
 ];
-const TIPS_DATA = [
-  {icon:'fa-solid fa-bolt-lightning',col:'#f59e0b',t:'Add Quantified Metrics',d:'Only 2 of 6 bullets have numbers. Add metrics to 4 more to boost impact score by ~15 points.',fn:'aiBullets'},
-  {icon:'fa-solid fa-key',col:'#7c6dfa',t:'Include ATS Keywords',d:'Missing: "system design", "scalability", "CI/CD", "agile". Add these naturally to your summary.',fn:'aiKeywords'},
-  {icon:'fa-solid fa-check',col:'#4ade80',t:'Summary Length Optimal',d:'Your summary is 3–4 lines — perfect for ATS parsing. Maintain this when rewriting.',fn:null},
-  {icon:'fa-solid fa-at',col:'#5b8def',t:'Add LinkedIn URL',d:'Resumes with LinkedIn URLs get 40% more recruiter callbacks.',fn:null},
-  {icon:'fa-solid fa-certificate',col:'#fa6d9a',t:'Certifications Detected',d:'AWS and GCP certs are strong. Consider a CKA or PMP to further differentiate.',fn:null},
-  {icon:'fa-solid fa-file-alt',col:'#22d3ee',t:'Ideal One-Page Length',d:'Your resume fits one A4 page — exactly what most recruiters prefer for under 10 years experience.',fn:null},
+const TIPS_D = [
+  {ic:'fa-solid fa-bolt-lightning',c:'#f59e0b',t:'Add Quantified Metrics',d:'Only 2 of 6 bullets have numbers. Add metrics to 4 more for ~15pt impact boost.',fn:'aiBullets'},
+  {ic:'fa-solid fa-key',c:'#7c6dfa',t:'Include ATS Keywords',d:'Missing: "system design", "scalability", "CI/CD". Add naturally to summary.',fn:'aiKeywords'},
+  {ic:'fa-solid fa-check',c:'#4ade80',t:'Summary Length Optimal',d:'Your 3–4 line summary is perfect for ATS parsing.',fn:null},
+  {ic:'fa-solid fa-at',c:'#5b8def',t:'Add LinkedIn URL',d:'Resumes with LinkedIn URLs get 40% more recruiter callbacks.',fn:null},
+  {ic:'fa-solid fa-certificate',c:'#fa6d9a',t:'Certifications Detected',d:'AWS and GCP certs are strong. Consider CKA for further differentiation.',fn:null},
+  {ic:'fa-solid fa-file',c:'#22d3ee',t:'Ideal One-Page Length',d:'Your resume fits one A4 page — perfect for under 10 years experience.',fn:null},
 ];
 const ROAST = [
-  '"Results-driven" — every resume says this. You\'re better than this phrase. Replace it with a specific achievement.',
-  'Your first bullet takes 2 lines to say what could fit in 8 words. Recruiters spend 6 seconds scanning. Ruthless brevity wins.',
-  'You have numbers — good. But 4 bullets are still vague ("collaborated", "worked on features"). More receipts, please.',
-  'Your skills section lists 15+ items. PostgreSQL AND MongoDB AND Redis signals you may be average at all three. Prove them in bullets.',
-  '✓ Strong: The projects section is excellent. Real metrics, open-source proof. This separates you from 80% of applicants.',
-  'Only 1 education entry — for a senior role, perfect. Don\'t clutter it with irrelevant coursework.',
+  '"Results-driven" — every resume says this. Replace it with a specific achievement.',
+  'First bullet takes 2 lines to say what could fit in 8 words. Recruiters spend 6 seconds. Brevity wins.',
+  'You have numbers — good. But 4 bullets are still vague. More receipts please.',
+  'Your skills section lists 15+ items. Prove your top 6 in the experience bullets.',
+  '✓ Strong: Projects section is excellent. Real metrics and open-source proof.',
+  'Only 1 education entry — for a senior role, that\'s perfect.',
 ];
 
-let curTpl = TPLS[0], curCol = COLS[0].hex, isDark = true;
+let curT = TPLS[0], curC = TPLS[0].col, isDark = true;
+
+// ── RENDER HELPERS ──
+function co() { return [D.phone,D.email,D.location,D.linkedin].filter(Boolean).map(v=>`<span>${v}</span>`).join(''); }
+function expH(lbl) {
+  return `<div class="rs" id="s-experience">${lbl||'Work Experience'}</div>`+
+    D.experience.map(e=>`<div class="rentry"><div class="reh"><div><div class="ret" contenteditable spellcheck="false">${e.title}</div><div class="rec">${e.company} · ${e.loc}</div></div><div class="red">${e.from}–${e.to}</div></div><ul class="rbul">${e.bullets.map(b=>`<li contenteditable spellcheck="false">${b}</li>`).join('')}</ul></div>`).join('');
+}
+function projH(lbl) {
+  return `<div class="rs" id="s-projects">${lbl||'Key Projects'}</div>`+
+    D.projects.map(p=>`<div class="rentry"><div class="reh"><div class="ret">${p.name}</div><div class="red" style="font-size:8pt;">${p.tech}</div></div><ul class="rbul">${p.bullets.map(b=>`<li>${b}</li>`).join('')}</ul></div>`).join('');
+}
+function skillH(lbl) {
+  const tags = [...D.skills.lang,...D.skills.fw,...D.skills.tools].map(s=>`<span class="rsktag">${s}</span>`).join('');
+  if (curT.id==='govt') {
+    const rows = [...D.skills.lang,...D.skills.fw,...D.skills.tools];
+    return `<div class="rs" id="s-skills">${lbl||'Technical Skills'}</div><table><thead><tr><th>Category</th><th>Skills</th></tr></thead><tbody><tr><td>Languages</td><td>${D.skills.lang.join(', ')}</td></tr><tr><td>Frameworks</td><td>${D.skills.fw.join(', ')}</td></tr><tr><td>Tools</td><td>${D.skills.tools.join(', ')}</td></tr></tbody></table>`;
+  }
+  return `<div class="rs" id="s-skills">${lbl||'Technical Skills'}</div><div class="rskgrid">${tags}</div>`;
+}
+function eduH(cls,lbl) {
+  return `<div class="${cls||'rs'}" id="s-education">${lbl||'Education'}</div>`+
+    D.education.map(e=>`<div class="redurow"><div><div class="redeg">${e.deg}</div><div class="resc">${e.school} · ${e.gpa}</div></div><div class="redy">${e.year}</div></div>`).join('');
+}
+function certH(cls,lbl) {
+  return `<div class="${cls||'rs'}" id="s-certifications">${lbl||'Certifications'}</div>`+
+    D.certs.map(c=>`<div class="rcert"><div><div class="rcertn">${c.name}</div><div class="rcerti">${c.issuer}</div></div><div class="redy">${c.year}</div></div>`).join('');
+}
+function declH() {
+  return `<div class="rdecl"><strong>Declaration:</strong> I hereby declare all information in this resume is true and correct to the best of my knowledge.<div class="rsign"><span>Date: ___________<br>Place: ___________</span><span>(${D.name})</span></div></div>`;
+}
+
+// ── BUILD EACH TEMPLATE ──
+function buildMin() {
+  return `<div id="rh"><div class="rn" contenteditable spellcheck="false">${D.name}</div><div class="rt" contenteditable spellcheck="false">${D.title}</div><div class="rco">${co()}</div></div>
+  <div id="rb"><div class="rs" id="s-summary">Professional Summary</div><div class="rsum" contenteditable spellcheck="false">${D.summary}</div>${expH()}${projH()}${skillH()}${eduH()}${certH()}${declH()}</div>`;
+}
+function buildExec() {
+  return `<div id="rh"><div style="flex:1;"><div class="rn">${D.name}</div><div class="rt">${D.title}</div><div class="rco">${co()}</div></div></div>
+  <div id="rb"><div class="rmain"><div class="rs" id="s-summary">Profile Summary</div><div class="rsum" contenteditable spellcheck="false">${D.summary}</div>${expH()}${projH()}</div>
+  <div class="rside"><div class="rss">Core Skills</div>${[...D.skills.lang,...D.skills.fw,...D.skills.tools].map(s=>`<div style="padding:3px 0;border-bottom:1px solid #f0f5f9;font-size:9pt;color:#374151;">${s}</div>`).join('')}${eduH('rss')}${certH('rss')}</div></div>`;
+}
+function buildTech() {
+  return `<div id="rh"><div style="flex:1;"><div class="rn" contenteditable spellcheck="false">${D.name}</div><div class="rt">${D.title}</div><div class="rco">${co()}</div></div></div>
+  <div id="rb"><div class="rs" id="s-summary">// about_me</div><div class="rsum" contenteditable spellcheck="false">${D.summary}</div>${expH('// experience')}${projH('// projects')}${skillH('// tech_stack')}${eduH('rs','// education')}${certH('rs','// certifications')}</div>`;
+}
+function buildTwoc() {
+  const side = `<div class="rside-col">
+    <div class="rside-photo"><i class="fa-solid fa-user"></i></div>
+    <div class="rside-name">${D.name}</div>
+    <div class="rside-title">${D.title}</div>
+    <div class="rside-sec">Contact</div>
+    <div class="rside-item"><i class="fa-solid fa-phone" style="margin-right:4px;opacity:.7;font-size:8pt;"></i>${D.phone}</div>
+    <div class="rside-item"><i class="fa-solid fa-envelope" style="margin-right:4px;opacity:.7;font-size:8pt;"></i>${D.email}</div>
+    <div class="rside-item"><i class="fa-solid fa-location-dot" style="margin-right:4px;opacity:.7;font-size:8pt;"></i>${D.location}</div>
+    <div class="rside-sec">Skills</div>
+    ${[...D.skills.lang,...D.skills.fw].map(s=>`<span class="rside-skill">${s}</span>`).join('')}
+    <div class="rside-sec">Tools</div>
+    ${D.skills.tools.map(s=>`<span class="rside-skill">${s}</span>`).join('')}
+    ${eduH('rside-sec','Education').replace(/<div class="redurow">/g,'<div style="margin-bottom:6px;">').replace(/<div class="redeg">/g,'<div style="font-size:9pt;font-weight:700;color:rgba(255,255,255,.85);">').replace(/<div class="resc">/g,'<div style="font-size:8.5pt;color:rgba(255,255,255,.6);">').replace(/<div class="redy">/g,'<div style="font-size:8.5pt;color:rgba(255,255,255,.5);">')}
+  </div>`;
+  const main = `<div class="rmain-col">
+    <div class="rs" id="s-summary">Summary</div>
+    <div class="rsum" contenteditable spellcheck="false">${D.summary}</div>
+    ${expH()}<div id="s-projects"></div>${projH()}${certH()}
+  </div>`;
+  return `<div id="rh" style="display:none;"></div><div id="rb">${side}${main}</div>`;
+}
+function buildGovt() {
+  return `<div id="rh"><div class="rn">${D.name}</div><div class="rt">${D.title}</div><div class="rco">${co()}</div></div>
+  <div id="rb">
+    <div class="rs" id="s-summary">Career Objective</div>
+    <div class="rsum" contenteditable spellcheck="false">${D.summary}</div>
+    <div class="rs" id="s-experience">Work Experience</div>
+    ${D.experience.map(e=>`<div class="rentry"><div class="reh"><div><div class="ret">${e.title}</div><div class="rec">${e.company} · ${e.loc}</div></div><div class="red">${e.from}–${e.to}</div></div><ul class="rbul">${e.bullets.map(b=>`<li>${b}</li>`).join('')}</ul></div>`).join('')}
+    ${skillH()}
+    ${eduH('rs')}
+    <div class="rs" id="s-certifications">Certifications</div>
+    <table><thead><tr><th>Certificate</th><th>Issuing Organization</th><th>Year</th></tr></thead><tbody>${D.certs.map(c=>`<tr><td>${c.name}</td><td>${c.issuer}</td><td>${c.year}</td></tr>`).join('')}</tbody></table>
+    ${declH()}
+  </div>`;
+}
+function buildCard() {
+  return `<div id="rh"><div style="flex:1;"><div class="rn" contenteditable spellcheck="false">${D.name}</div><div class="rt">${D.title}</div><div class="rco">${co()}</div></div></div>
+  <div id="rb"><div class="rs" id="s-summary">About Me</div><div class="rsum" contenteditable spellcheck="false">${D.summary}</div>${expH()}${projH()}${skillH()}${eduH()}${certH()}</div>`;
+}
 
 // ── RENDER ──
 function render() {
   const doc = document.getElementById('resume-doc');
-  doc.className = curTpl.cls;
-  doc.style.setProperty('--rdoc-col', curCol);
-  doc.innerHTML = buildDoc();
-}
-
-function contact() {
-  return [D.phone,D.email,D.location,D.linkedin,D.github].filter(Boolean)
-    .map(v=>`<span>${v}</span>`).join('');
-}
-
-function expHTML() {
-  const lbl = curTpl.id==='tech' ? '// experience' : 'Work Experience';
-  return `<div class="rs" id="s-experience">${lbl}</div>`+
-    D.experience.map(e=>`<div class="rentry"><div class="reh"><div><div class="ret" contenteditable spellcheck="false">${e.title}</div><div class="rec">${e.company} · ${e.loc}</div></div><div class="red">${e.from} – ${e.to}</div></div><ul class="rbul">${e.bullets.map(b=>`<li contenteditable spellcheck="false">${b}</li>`).join('')}</ul></div>`).join('');
-}
-function projHTML() {
-  const lbl = curTpl.id==='tech' ? '// projects' : 'Key Projects';
-  return `<div class="rs" id="s-projects">${lbl}</div>`+
-    D.projects.map(p=>`<div class="rentry"><div class="reh"><div class="ret">${p.name}</div><div class="red" style="font-size:8.5pt;color:#888;">${p.tech}</div></div><ul class="rbul">${p.bullets.map(b=>`<li>${b}</li>`).join('')}</ul></div>`).join('');
-}
-function skillHTML() {
-  const lbl = curTpl.id==='tech' ? '// tech_stack' : 'Technical Skills';
-  return `<div class="rs" id="s-skills">${lbl}</div><div class="rskgrid">${[...D.skills.lang,...D.skills.fw,...D.skills.tools].map(s=>`<span class="rsktag">${s}</span>`).join('')}</div>`;
-}
-function eduHTML(side=false) {
-  const lbl = curTpl.id==='tech' ? '// education' : 'Education';
-  const cls = side ? 'rss' : 'rs';
-  return `<div class="${cls}" id="s-education">${lbl}</div>`+
-    D.education.map(e=>`<div class="redurow"><div><div class="redeg">${e.deg}</div><div class="resc">${e.school} · ${e.gpa}</div></div><div class="redy">${e.year}</div></div>`).join('');
-}
-function certHTML(side=false) {
-  const lbl = curTpl.id==='tech' ? '// certifications' : 'Certifications';
-  const cls = side ? 'rss' : 'rs';
-  return `<div class="${cls}" id="s-certifications">${lbl}</div>`+
-    D.certs.map(c=>`<div class="rcert"><div><div class="rcertn">${c.name}</div><div class="rcerti">${c.issuer}</div></div><div class="redy">${c.year}</div></div>`).join('');
-}
-
-function buildDoc() {
-  if (curTpl.id==='minimal') return `
-    <div id="rdoc-hdr">
-      <div class="rn" contenteditable spellcheck="false">${D.name}</div>
-      <div class="rt" contenteditable spellcheck="false">${D.title}</div>
-      <div class="rc">${contact()}</div>
-    </div>
-    <div id="rdoc-body">
-      <div class="rs" id="s-summary">Professional Summary</div>
-      <div class="rsum" contenteditable spellcheck="false">${D.summary}</div>
-      ${expHTML()}${projHTML()}${skillHTML()}${eduHTML()}${certHTML()}
-      <div class="rdecl"><strong>Declaration:</strong> I hereby declare that all statements in this resume are true, complete and correct to the best of my knowledge.<div class="rsign"><span>Date: ___________<br>Place: ___________</span><span>(${D.name})</span></div></div>
-    </div>`;
-
-  if (curTpl.id==='exec') return `
-    <div id="rdoc-hdr"><div style="flex:1;">
-      <div class="rn">${D.name}</div>
-      <div class="rt">${D.title}</div>
-      <div class="rc">${contact()}</div>
-    </div></div>
-    <div id="rdoc-body">
-      <div class="rmain">
-        <div class="rs" id="s-summary">Profile Summary</div>
-        <div class="rsum" contenteditable spellcheck="false">${D.summary}</div>
-        ${expHTML()}${projHTML()}
-      </div>
-      <div class="rside">
-        <div class="rss">Core Skills</div>
-        ${[...D.skills.lang,...D.skills.fw,...D.skills.tools].map(s=>`<div style="padding:3px 0;border-bottom:1px solid #f1f5f9;font-size:9pt;color:#374151;">${s}</div>`).join('')}
-        ${eduHTML(true)}${certHTML(true)}
-      </div>
-    </div>`;
-
-  return `
-    <div id="rdoc-hdr"><div style="flex:1;">
-      <div class="rn" contenteditable spellcheck="false">${D.name}</div>
-      <div class="rt" contenteditable spellcheck="false">${D.title}</div>
-      <div class="rc">${contact()}</div>
-    </div></div>
-    <div id="rdoc-body">
-      <div class="rs" id="s-summary">// about_me</div>
-      <div class="rsum" contenteditable spellcheck="false">${D.summary}</div>
-      ${expHTML()}${projHTML()}${skillHTML()}${eduHTML()}${certHTML()}
-    </div>`;
+  doc.className = curT.cls;
+  doc.style.setProperty('--rc', curC);
+  const builders = {min:buildMin,exec:buildExec,tech:buildTech,twoc:buildTwoc,govt:buildGovt,card:buildCard};
+  doc.innerHTML = (builders[curT.id] || buildMin)();
 }
 
 // ── QUICK SYNC ──
-function qsync() {
-  D.name=document.getElementById('qn').value;
-  D.title=document.getElementById('qt').value;
-  D.email=document.getElementById('qe').value;
-  D.phone=document.getElementById('qp').value;
-  render();
-}
+function qsync(){D.name=document.getElementById('qn').value;D.title=document.getElementById('qt').value;D.email=document.getElementById('qe').value;D.phone=document.getElementById('qp').value;render();}
 
 // ── TABS ──
-function switchTab(id) {
+function switchTab(id){
   document.querySelectorAll('.lcv-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.lcv-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('panel-'+id).classList.add('active');
-  document.querySelector(`[data-tab="${id}"]`).classList.add('active');
+  const tab = document.querySelector(`[data-tab="${id}"]`);
+  if(tab) tab.classList.add('active');
 }
-document.getElementById('lcvTabs').addEventListener('click',e=>{
-  const t=e.target.closest('.lcv-tab');
-  if(t) switchTab(t.dataset.tab);
-});
+document.getElementById('lcvTabs').addEventListener('click',e=>{const t=e.target.closest('.lcv-tab');if(t)switchTab(t.dataset.tab);});
 
-// ── SCROLL TO SECTION ──
-function scrollSec(id, el) {
-  document.querySelectorAll('.lcv-sec-item').forEach(i=>i.classList.remove('active'));
+// ── SECTION NAV ──
+function goSec(id,el){
+  document.querySelectorAll('.lcv-si').forEach(i=>i.classList.remove('active'));
   el.classList.add('active');
-  const target = document.getElementById('s-'+id)||document.getElementById('rdoc-hdr');
+  const target = document.getElementById('s-'+id)||document.getElementById('rh');
   if(target) target.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 // ── TEMPLATE GRID ──
-function buildTplGrid() {
+function buildTplGrid(){
   const grid = document.getElementById('tplGrid');
-  grid.innerHTML = '';
-  TPLS.forEach(tpl => {
+  grid.innerHTML='';
+  const thumbStyles = {
+    min:  `background:#fff;padding:10px;`,
+    exec: `background:#1e293b;padding:10px;`,
+    tech: `background:#0f172a;padding:10px;`,
+    twoc: `background:linear-gradient(90deg,#1d4ed8 38%,#fff 38%);padding:10px;`,
+    govt: `background:#fff;padding:10px;border-top:4px solid #1d4ed8;`,
+    card: `background:linear-gradient(135deg,#7c3aed,#1d4ed8);padding:10px;`,
+  };
+  const thumbContent = {
+    min:  `<div style="height:8px;background:#3730a380;border-radius:2px;width:55%;margin:0 auto 5px;"></div><div style="height:2px;background:#3730a3;margin-bottom:5px;"></div>${[65,50,75,55,70].map(w=>`<div style="height:5px;background:#e5e7eb;border-radius:2px;margin-bottom:3px;width:${w}%;"></div>`).join('')}`,
+    exec: `<div style="height:22px;background:rgba(255,255,255,.15);border-radius:2px;margin-bottom:6px;"></div>${[65,50,75,55,70].map(w=>`<div style="height:5px;background:rgba(255,255,255,.12);border-radius:2px;margin-bottom:3px;width:${w}%;"></div>`).join('')}`,
+    tech: `<div style="height:6px;background:#34d39940;border-radius:2px;width:70%;margin-bottom:4px;font-size:7px;color:#34d399;display:flex;align-items:center;padding-left:3px;"></div>${[65,55,75,60].map(w=>`<div style="height:5px;background:rgba(148,163,184,.15);border-radius:2px;margin-bottom:3px;width:${w}%;"></div>`).join('')}`,
+    twoc: ``,
+    govt: `<div style="height:7px;background:#1d4ed820;border-radius:2px;width:60%;margin:0 auto 5px;"></div><div style="height:2px;background:#1d4ed8;margin-bottom:5px;"></div>${[100,80,100,80].map(w=>`<div style="height:4px;background:#e5e7eb;border-radius:2px;margin-bottom:3px;width:${w}%;"></div>`).join('')}`,
+    card: `<div style="height:22px;background:rgba(255,255,255,.15);border-radius:2px;margin-bottom:6px;"></div>${[65,50,75,55].map(w=>`<div style="height:5px;background:rgba(255,255,255,.15);border-radius:2px;margin-bottom:3px;width:${w}%;"></div>`).join('')}`,
+  };
+  TPLS.forEach(tpl=>{
     const card = document.createElement('div');
-    card.className = 'lcv-tcard'+(tpl.id===curTpl.id?' active':'');
-    // Mini thumbnail using a scaled-down iframe-like div
-    const thumbBg = tpl.id==='exec' ? curCol : tpl.id==='tech' ? '#0f172a' : '#fff';
-    const thumbAccent = tpl.id==='tech' ? '#34d399' : curCol;
-    card.innerHTML = `
-      <div class="lcv-tactive">✓ Active</div>
-      <div class="lcv-tthumb" style="background:${thumbBg};padding:10px;">
-        <div style="height:28px;background:${tpl.id==='exec'?'rgba(255,255,255,.2)':tpl.id==='tech'?'rgba(255,255,255,.05)':thumbAccent+'18'};border-radius:4px;margin-bottom:6px;"></div>
-        ${[60,45,75,55,70,50].map(w=>`<div style="height:7px;background:${tpl.id==='tech'?'rgba(255,255,255,.08)':'#e5e7eb'};border-radius:2px;margin-bottom:4px;width:${w}%;"></div>`).join('')}
-        <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:6px;">${[1,2,3,4].map(()=>`<div style="height:14px;width:30%;background:${thumbAccent}22;border-radius:2px;"></div>`).join('')}</div>
-      </div>
+    card.className='lcv-tc'+(tpl.id===curT.id?' active':'');
+    card.innerHTML=`
+      <div class="lcv-tact">✓ Active</div>
+      <div class="lcv-tthumb" style="${thumbStyles[tpl.id]}">${thumbContent[tpl.id]}</div>
       ${tpl.tag?`<div class="lcv-tbadge">${tpl.tag}</div>`:''}
       <div class="lcv-tinfo">
         <div class="lcv-tname">${tpl.name}</div>
-        <div class="lcv-tdesc">${tpl.desc} · <span style="color:var(--lcv-green);font-weight:700;">ATS ✓</span></div>
-        <div class="lcv-tcolors">${COLS.map((c,i)=>`<div class="lcv-cdot${i===0?' sel':''}" style="background:${c.hex};" title="${c.n}" data-hex="${c.hex}"></div>`).join('')}</div>
+        <div class="lcv-tdesc">${tpl.desc} · <span style="color:var(--l-gr);font-weight:700;">ATS ✓</span></div>
+        <div class="lcv-cdots">${COLS.map((c,i)=>`<div class="lcv-cd${i===0?' sel':''}" style="background:${c.h};" title="${c.n}" data-h="${c.h}"></div>`).join('')}</div>
       </div>`;
-    card.addEventListener('click', e => {
-      const dot = e.target.closest('.lcv-cdot');
-      if(dot) {
-        curCol = dot.dataset.hex;
-        dot.closest('.lcv-tcolors').querySelectorAll('.lcv-cdot').forEach(d=>d.classList.remove('sel'));
-        dot.classList.add('sel');
-        render(); return;
-      }
-      curTpl = tpl;
-      document.querySelectorAll('.lcv-tcard').forEach(c=>c.classList.remove('active'));
+    card.addEventListener('click',e=>{
+      const dot=e.target.closest('.lcv-cd');
+      if(dot){curC=dot.dataset.h;dot.closest('.lcv-cdots').querySelectorAll('.lcv-cd').forEach(d=>d.classList.remove('sel'));dot.classList.add('sel');render();return;}
+      curT=tpl;curC=tpl.col;
+      document.querySelectorAll('.lcv-tc').forEach(c=>c.classList.remove('active'));
       card.classList.add('active');
-      document.getElementById('tplLabel').innerHTML = `Template: <strong>${tpl.name}</strong>`;
-      render(); toast(`Template "${tpl.name}" applied`);
+      document.getElementById('tplLabel').innerHTML=`Template: <strong>${tpl.name}</strong>`;
+      render();toast(`"${tpl.name}" applied`);
     });
     grid.appendChild(card);
   });
 }
 
 // ── SCORE ──
-function refreshScore() {
-  const vary = n => Math.min(100,Math.max(40,n+Math.floor((Math.random()-.5)*12)));
-  document.getElementById('sv-ats').textContent = vary(82)+'%';
-  document.getElementById('sv-imp').textContent = vary(71)+'%';
-  document.getElementById('sv-rd').textContent  = vary(88)+'%';
-  document.getElementById('sv-dep').textContent = vary(65)+'%';
-  document.getElementById('sv-fmt').textContent = vary(90)+'%';
+function refreshScore(){
+  const v=n=>Math.min(100,Math.max(40,n+Math.floor((Math.random()-.5)*12)));
+  document.getElementById('sv-a').textContent=v(82)+'%';
+  document.getElementById('sv-i').textContent=v(71)+'%';
+  document.getElementById('sv-r').textContent=v(88)+'%';
+  document.getElementById('sv-d').textContent=v(65)+'%';
+  document.getElementById('sv-f').textContent=v(90)+'%';
   toast('Score refreshed!');
 }
-
-function buildTips() {
-  document.getElementById('tipsGrid').innerHTML = TIPS_DATA.map(t=>`
+function buildTips(){
+  document.getElementById('tipsGrid').innerHTML=TIPS_D.map(t=>`
     <div class="lcv-tip">
-      <div class="lcv-tip-icon" style="background:${t.col}18;color:${t.col};"><i class="${t.icon}"></i></div>
-      <div style="flex:1;">
-        <div class="lcv-tip-title">${t.t}</div>
-        <div class="lcv-tip-desc">${t.d}</div>
-        ${t.fn?`<button class="lcv-tip-btn" onclick="${t.fn}();toast('Applying AI improvement...')"><i class="fa-solid fa-wand-magic-sparkles"></i> Auto-fix</button>`:`<span class="lcv-tip-btn" style="cursor:default;color:var(--lcv-green);border-color:rgba(74,222,128,.2);background:rgba(74,222,128,.07);"><i class="fa-solid fa-check"></i> Good</span>`}
+      <div class="lcv-tic" style="background:${t.c}18;color:${t.c};"><i class="${t.ic}"></i></div>
+      <div style="flex:1;"><div class="lcv-tit">${t.t}</div><div class="lcv-tid">${t.d}</div>
+      ${t.fn?`<button class="lcv-tab2" onclick="${t.fn}();toast('Applying AI fix...')"><i class="fa-solid fa-wand-magic-sparkles"></i> Auto-fix</button>`:`<span class="lcv-tab2" style="cursor:default;color:var(--l-gr);border-color:rgba(74,222,128,.2);background:rgba(74,222,128,.07);"><i class="fa-solid fa-check"></i> Good</span>`}
       </div>
     </div>`).join('');
 }
 
 // ── AI ──
 function openAI(){document.getElementById('aiModal').classList.add('open');document.getElementById('aiRes').classList.remove('vis');document.getElementById('jdTxt').value='';}
-function openRoast(){document.getElementById('roastModal').classList.add('open');document.getElementById('roastBody').innerHTML='<p style="font-size:12px;color:var(--lcv-t3);margin-bottom:12px;"><i class="fa-solid fa-info-circle"></i> Brutally honest but constructive AI feedback.</p>'+ROAST.map(r=>`<div class="lcv-roast-item"><i class="fa-solid fa-fire"></i><span>${r}</span></div>`).join('');}
+function openRoast(){document.getElementById('roastModal').classList.add('open');document.getElementById('roastB').innerHTML='<p style="font-size:12px;color:var(--l-t3);margin-bottom:11px;"><i class="fa-solid fa-info-circle"></i> Brutally honest but constructive AI feedback.</p>'+ROAST.map(r=>`<div class="lcv-ri"><i class="fa-solid fa-fire"></i><span>${r}</span></div>`).join('');}
 function closeM(id){document.getElementById(id).classList.remove('open');}
 
-const AI_OUT = `✦ Tailored Summary:\n"Highly accomplished Senior Software Engineer with 6+ years delivering scalable distributed systems. Led engineering teams of 8+, owned P0 microservices handling 2M req/day, and achieved measurable wins (40% latency drop, 65% faster deploys, 22% DAU lift). Excited to bring this impact to your product."\n\n✦ Enhanced Bullets (matched to JD):\n• Re-architected auth service for 5× traffic with zero downtime — aligns with "high availability" requirement\n• Built Kafka event pipeline cutting data latency by 78% — matches "streaming systems" in JD\n• Introduced automated perf regression tests, blocking 3 critical prod bugs pre-release`;
+const AI_OUT=`✦ Tailored Summary:\n"Highly accomplished Senior Software Engineer with 6+ years delivering scalable systems at Infosys and TCS. Led teams of 8+, owned microservices handling 2M req/day, and achieved measurable wins (40% latency drop, 65% faster deploys, 22% DAU lift). Ready to bring this impact to your product."\n\n✦ Enhanced Bullets (matched to JD):\n• Re-architected auth service for 5× traffic with zero downtime — aligns with "high availability"\n• Built Kafka event pipeline cutting data latency by 78% — matches "streaming systems"\n• Automated perf regression tests, catching 3 critical bugs before production`;
 
-function runAI() {
-  const jd = document.getElementById('jdTxt').value.trim();
+function runAI(){
+  const jd=document.getElementById('jdTxt').value.trim();
   if(!jd){toast('Paste a job description first');return;}
-  const btn = document.getElementById('aiRunBtn');
-  btn.innerHTML = '<span class="lcv-spin"></span> Analyzing...'; btn.disabled = true;
-  const res = document.getElementById('aiRes');
-  res.classList.remove('vis');
+  const btn=document.getElementById('aiBtn');
+  btn.innerHTML='<span class="lcv-spin"></span> Analyzing...';btn.disabled=true;
+  const res=document.getElementById('aiRes');res.classList.remove('vis');
   setTimeout(()=>{
-    res.classList.add('vis','lcv-typing'); res.textContent = '';
+    res.classList.add('vis','lcv-typing');res.textContent='';
     let i=0;
-    const iv = setInterval(()=>{
-      res.textContent = AI_OUT.slice(0,i+=5);
-      if(i>=AI_OUT.length){clearInterval(iv);res.classList.remove('lcv-typing');btn.innerHTML='<i class="fa-solid fa-wand-magic-sparkles"></i> Tailor Resume';btn.disabled=false;toast('AI tailoring complete! ✨');}
-    },16);
-  },1600);
+    const iv=setInterval(()=>{res.textContent=AI_OUT.slice(0,i+=5);if(i>=AI_OUT.length){clearInterval(iv);res.classList.remove('lcv-typing');btn.innerHTML='<i class="fa-solid fa-wand-magic-sparkles"></i> Tailor Resume';btn.disabled=false;toast('AI tailoring complete! ✨');}},14);
+  },1500);
 }
-
-function aiRewrite() {
-  const sums = [
-    'Senior Software Engineer with 6+ years delivering high-impact distributed systems. Reduced API latency 40%, led 8-engineer teams, shipped to 50M+ users. Strong in observability, clean architecture, and ruthless prioritization.',
-    'Engineering leader with deep expertise in backend systems and cloud-native architecture. 6 years at product companies turning ambitious roadmaps into reliable, performant software.',
-  ];
-  D.summary = sums[Math.floor(Math.random()*sums.length)];
-  render(); toast('Summary rewritten by AI ✨');
+function aiRewrite(){
+  D.summary='Senior Software Engineer with 6+ years delivering high-impact distributed systems. Reduced API latency 40%, led 8-engineer teams, shipped to 50M+ users. Strong in observability, clean architecture, and ruthless prioritization.';
+  render();toast('Summary rewritten ✨');
 }
-
-function aiBullets() {
-  D.experience[0].bullets = [
-    'Architected event-driven microservices processing 2.4M req/day with P99 < 120ms — 6.7× improvement',
-    'Owned end-to-end Java → Node.js migration of 200K LOC; cut deploy from 45min to 8min (65% faster)',
-    'Mentored 4 engineers to senior track; structured reviews cut production bugs by 30%',
-    'Shipped React + WebSockets analytics dashboard; 120K users in week 1, DAU +22%',
-  ];
-  render(); toast('Bullets enhanced with stronger metrics ⚡');
+function aiBullets(){
+  D.experience[0].bullets=['Architected event-driven microservices processing 2.4M req/day with P99 < 120ms — 6.7× improvement','Owned Java → Node.js migration of 200K LOC; deploy time from 45min to 8min (65% faster)','Mentored 4 engineers to senior track; production bugs reduced by 30%','Shipped React + WebSockets analytics dashboard; 120K users in week 1, DAU +22%'];
+  render();toast('Bullets enhanced with stronger metrics ⚡');
 }
-
-function aiKeywords() {
-  D.summary += ' Expert in system design, scalability patterns, CI/CD pipelines, and agile delivery.';
-  render(); toast('ATS keywords optimized 🔑');
-}
+function aiKeywords(){D.summary+=' Expert in system design, scalability patterns, CI/CD pipelines, and agile delivery.';render();toast('ATS keywords optimized 🔑');}
 
 // ── EXPORT ──
-function doDownload() {
+function doDownload(){
   toast('Preparing PDF...');
-  const el = document.getElementById('resume-doc');
+  const el=document.getElementById('resume-doc');
   setTimeout(()=>{
     html2canvas(el,{scale:2,useCORS:true,backgroundColor:'#fff',logging:false}).then(canvas=>{
-      const {jsPDF} = window.jspdf;
-      const pdf = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-      const pw = pdf.internal.pageSize.getWidth();
-      const ph = pdf.internal.pageSize.getHeight();
-      const ratio = pw / canvas.width;
-      const sh = canvas.height * ratio;
-      const img = canvas.toDataURL('image/png');
+      const{jsPDF}=window.jspdf;
+      const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+      const pw=pdf.internal.pageSize.getWidth(),ph=pdf.internal.pageSize.getHeight();
+      const ratio=pw/canvas.width,sh=canvas.height*ratio;
+      const img=canvas.toDataURL('image/png');
       if(sh<=ph){pdf.addImage(img,'PNG',0,0,pw,sh);}
       else{let y=0;while(y<sh){pdf.addImage(img,'PNG',0,-y,pw,sh);y+=ph;if(y<sh)pdf.addPage();}}
-      pdf.save(`${D.name.replace(/\s+/g,'_')}_Resume.pdf`);
-      toast('PDF downloaded!');
+      pdf.save(`${D.name.replace(/\s+/g,'_')}_Resume.pdf`);toast('PDF downloaded!');
     }).catch(()=>{window.print();toast('Use "Save as PDF" in print dialog');});
   },200);
 }
-
-function copyText() {
-  const txt = [
-    D.name,D.title,[D.phone,D.email,D.location].filter(Boolean).join(' | '),'',
-    'SUMMARY',D.summary,'',
-    'EXPERIENCE',
-    ...D.experience.flatMap(e=>[`${e.title} — ${e.company} (${e.from}–${e.to})`,...e.bullets.map(b=>'• '+b),'']),
-    'SKILLS','Languages: '+D.skills.lang.join(', '),'Frameworks: '+D.skills.fw.join(', '),'Tools: '+D.skills.tools.join(', '),'',
-    'EDUCATION',...D.education.map(e=>`${e.deg} — ${e.school} (${e.year})`),
-  ].join('\n');
+function copyTxt(){
+  const txt=[D.name,D.title,[D.phone,D.email,D.location].filter(Boolean).join(' | '),'','SUMMARY',D.summary,'','EXPERIENCE',...D.experience.flatMap(e=>[`${e.title} — ${e.company} (${e.from}–${e.to})`,...e.bullets.map(b=>'• '+b),'']),'SKILLS','Languages: '+D.skills.lang.join(', '),'Frameworks: '+D.skills.fw.join(', '),'Tools: '+D.skills.tools.join(', '),'','EDUCATION',...D.education.map(e=>`${e.deg} — ${e.school} (${e.year})`)].join('\n');
   navigator.clipboard.writeText(txt).then(()=>toast('Copied as plain text!')).catch(()=>toast('Copy failed'));
 }
-
-function fakeShare() {
-  const url = 'https://lumina.cv/r/'+Math.random().toString(36).slice(2,9);
-  navigator.clipboard.writeText(url).then(()=>toast('Share link copied!')).catch(()=>toast('Link: '+url));
-}
+function fakeShare(){const u='https://lumina.cv/r/'+Math.random().toString(36).slice(2,9);navigator.clipboard.writeText(u).then(()=>toast('Share link copied!')).catch(()=>toast('Link: '+u));}
 
 // ── THEME ──
-function toggleTheme(){
-  isDark=!isDark;
-  document.documentElement.setAttribute('data-theme',isDark?'dark':'light');
-  document.getElementById('themeBtn').innerHTML=isDark?'<i class="fa-solid fa-moon"></i>':'<i class="fa-solid fa-sun"></i>';
-}
+function toggleTheme(){isDark=!isDark;document.documentElement.setAttribute('data-theme',isDark?'dark':'light');document.getElementById('themeBtn').innerHTML=isDark?'<i class="fa-solid fa-moon"></i>':'<i class="fa-solid fa-sun"></i>';}
 
 // ── TOAST ──
-function toast(msg){
-  const t=document.getElementById('lcvToast');
-  document.getElementById('toastTxt').textContent=msg;
-  t.classList.add('show');
-  clearTimeout(t._t);
-  t._t=setTimeout(()=>t.classList.remove('show'),3000);
-}
+function toast(msg){const t=document.getElementById('lcvToast');document.getElementById('toastTxt').textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3000);}
 
 // ── KEYBOARD ──
 document.addEventListener('keydown',e=>{
-  if(e.metaKey||e.ctrlKey){
-    if(e.key==='s'){e.preventDefault();toast('Saved ✓');}
-    if(e.key==='e'){e.preventDefault();doDownload();}
-    if(e.key==='p'){e.preventDefault();window.print();}
-  }
-  if(e.key==='Escape') document.querySelectorAll('.lcv-moverlay').forEach(m=>m.classList.remove('open'));
+  if(e.metaKey||e.ctrlKey){if(e.key==='s'){e.preventDefault();toast('Saved ✓');}if(e.key==='e'){e.preventDefault();doDownload();}if(e.key==='p'){e.preventDefault();window.print();}}
+  if(e.key==='Escape')document.querySelectorAll('.lcv-mover').forEach(m=>m.classList.remove('open'));
 });
-document.querySelectorAll('.lcv-moverlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
+document.querySelectorAll('.lcv-mover').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
 
 // ── INIT ──
-render(); buildTplGrid(); buildTips();
+render();buildTplGrid();buildTips();
 </script>
 </body>
 </html>
