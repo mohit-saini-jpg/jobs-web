@@ -1,0 +1,212 @@
+{
+  "header_links": [
+    {
+      "name": "Admit Card",
+      "link": "https://www.topsarkarijobs.com/view.html?section=Admit%20cards%20Exams%20Date",
+      "color": "bg-red-500"
+    },
+    {
+      "name": "Resume/CV Maker",
+      "url": "https://www.topsarkarijobs.com/view.html?url=https%253A%252F%252Fsarkariresulttools.net%252Fresume-maker%252F&name=Resume%2520CV%2520Maker&job=resume-cv-makerume-cv-maker",
+      "color": "bg-zinc-400"
+    },
+    {
+      "name": "Join WhatsApp",
+      "url": "https://whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T",
+      "icon": "fab fa-whatsapp",
+      "color": "bg-green-600",
+      "external": true
+    }
+  ],
+  "home_links": [
+    {
+      "name": "TOP Headlines Today",
+      "url": "https://www.topsarkarijobs.com/view.html?section=TOP%20Headlines%20Today",      
+      "color": "bg-red-600",
+      "external": true
+    },
+    {
+      "name": "CSC की सभी सर्विस यहा पर",
+      "url": "https://www.topsarkarijobs.com/govt-services.html",      
+      "color": "bg-slate-600",
+      "external": true
+    },
+    {
+      "name": "Latest Jobs",
+      "url": "https://www.topsarkarijobs.com/view.html?section=latest%20jobs",      
+      "color": "bg-amber-600",
+      "external": true
+    },
+    {
+      "name": "Results",
+      "url": "https://www.topsarkarijobs.com/view.html?section=results",
+      "color": "bg-blue-600",
+      "external": true
+    },
+    {
+      "name": "Admit Card",
+      "url": "https://www.topsarkarijobs.com/view.html?section=Admit%20cards%20Exams%20Date",
+      "color": "bg-amber-600",
+      "external": true
+    },
+    {
+      "name": "Admission",
+      "url": "https://www.topsarkarijobs.com/view.html?section=Admission/Education",
+      "color": "bg-amber-600",
+      "external": true
+    },
+    {
+      "name": "Upcoming Jobs",
+      "url": "https://www.topsarkarijobs.com/view.html?section=upcoming-jobs",
+      "color": "bg-amber-600",
+      "external": true
+    },
+    {
+      "name": "Central Jobs",
+      "url": "https://www.topsarkarijobs.com/view.html?section=Central%20jobs",
+      "color": "bg-amber-600",
+      "external": true
+    },
+    {
+      "name": "Offline Jobs",
+      "url": "https://www.topsarkarijobs.com/view.html?section=Offline%20jobs",
+      "color": "bg-amber-600",
+      "external": true
+    },
+    {
+      "name": "नौकरियां जिनकी अंतिम तिथि नजदीक है।",
+      "url": "https://www.topsarkarijobs.com/view.html?section=Jobs%20with%20Last%20date",
+      "color": "bg-amber-600",
+      "external": true
+    },
+    {
+      "name": "सरकारी योजनाएँ",
+      "url": "https://www.topsarkarijobs.com/view.html?section=Govt%20Scheme%20Yojna",
+      "color": "bg-amber-600",
+      "external": true
+    },
+    {
+      "name": "10th Pass jobs",
+      "url": "https://www.topsarkarijobs.com/view.html?section=10th%20Pass%20jobs",
+      "color": "bg-red-400",
+      "external": true
+    },
+    {
+      "name": "12th Pass Jobs",
+      "url": "https://www.topsarkarijobs.com/view.html?section=12th%20Pass%20Jobs",
+      "color": "bg-zinc-400",
+      "external": true
+    },
+    {
+      "name": "ITI Pass jobs",
+      "url": "https://www.topsarkarijobs.com/view.html?section=ITI/Diploma%20job",      
+      "color": "bg-zinc-400",
+      "external": true
+    },
+    {
+      "name": "Diploma jobs",
+      "url": "https://www.topsarkarijobs.com/view.html?section=Diploma%20Jobs",
+      "color": "bg-zinc-400",
+      "external": true
+    },
+    {
+      "name": "Graduation jobs",
+      "url": "https://www.topsarkarijobs.com/view.html?section=Graduation%20jobs",
+      "color": "bg-zinc-400",
+      "external": true
+    },
+     {
+      "name": "Post Graduation jobs",
+      "url": "https://www.topsarkarijobs.com/view.html?section=Post%20Graduation%20jobs",
+      "color": "bg-zinc-400",
+      "external": true
+    },
+    {
+      "name": "Medical/Healthcare Jobs",
+      "url": "https://www.topsarkarijobs.com/view.html?section=Medical/%20Healthcare%20Jobs",
+      "color": "bg-zinc-400",
+      "external": true
+    },
+    {
+      "name": "B.tech M.tech jobs",
+      "url": "https://www.topsarkarijobs.com/view.html?section=B.tech%20M.tech%20jobs",
+      "color": "bg-zinc-400",
+      "external": true
+    },
+    {
+      "name": "Railway Jobs",
+      "url": "https://www.topsarkarijobs.com/view.html?section=Railway%20Jobs",
+      "color": "bg-zinc-400",
+      "external": true
+    },
+    {
+      "name": "Police Jobs",
+      "url": "https://www.topsarkarijobs.com/view.html?section=Police%20Jobs",
+      "color": "bg-zinc-400",
+      "external": true
+    },
+    {
+      "name": "Bank jobs",
+      "url": "https://www.topsarkarijobs.com/view.html?section=Bank%20jobs",
+      "color": "bg-zinc-400",
+      "external": true
+    },
+    {
+      "name": "Teacher jobs",
+      "url": "https://www.topsarkarijobs.com/view.html?section=Teacher%20Jobs",
+      "color": "bg-zinc-400",
+      "external": true
+    },
+    {
+      "name": "ARMY Navy Air Force job",
+      "url": "https://www.topsarkarijobs.com/view.html?section=Indian%20ARMY%20jobs",
+      "color": "bg-zinc-400",
+      "external": true
+    },
+    {
+      "name": "Central jobs",
+      "url": "https://www.topsarkarijobs.com/view.html?section=Central%20jobs",
+      "color": "bg-zinc-400",
+      "external": true
+    },
+    {
+      "name": "State jobs",
+      "url": "https://www.topsarkarijobs.com/view.html?section=State%20jobs",
+      "color": "bg-zinc-400",
+      "external": true
+    },
+    {
+      "name": "Join WhatsApp Now",
+      "url": "https://whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T",
+      "icon": "fab fa-whatsapp",
+      "color": "bg-green-600",
+      "external": true
+    }
+  ],
+  "social_links": [
+    {
+      "name": "Join WhatsApp",
+      "url": "https://whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T",
+      "icon": "fab fa-whatsapp",
+      "color": "bg-green-600"
+    },
+    {
+      "name": "Instagram",
+      "url": "https://www.instagram.com/topsarkarijobs?igsh=bTBsdjVpaTU3M2hn",
+      "icon": "fab fa-instagram",
+      "color": "bg-pink-500"
+    },
+    {
+      "name": "Youtube",
+      "url": "https://www.youtube.com/@Topsarkarijobs/shorts",
+      "icon": "fa-brands fa-youtube",
+      "color": "bg-red-600"
+    },
+    {
+      "name": "Snapchat",
+      "url": "https://www.snapchat.com/add/topsarkarijobs?share_id=4P4_sEzLRo8&locale=en-IN",
+      "icon": "fa-brands fa-snapchat",
+      "color": "bg-yellow-600"
+    }
+  ]
+}
