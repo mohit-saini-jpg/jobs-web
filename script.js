@@ -28,6 +28,70 @@
     return `view.html?url=${encodeURIComponent(u)}&name=${encodeURIComponent(name)}`;
   }
 
+  function buildRedirectUrl(targetUrl, label) {
+    const to = safe(targetUrl);
+    if (!to) return "";
+    const qs = new URLSearchParams();
+    qs.set("to", to);
+    if (safe(label)) qs.set("label", safe(label));
+    return `redirect.html?${qs.toString()}`;
+  }
+
+  function shouldBypassRedirect(anchor, href) {
+    if (!anchor || !href) return true;
+    if (anchor.hasAttribute("download")) return true;
+
+    const raw = href.trim();
+    if (!raw || raw === "#" || raw.startsWith("#")) return true;
+    if (/^(javascript:|data:|blob:)/i.test(raw)) return true;
+
+    let resolved;
+    try {
+      resolved = new URL(raw, location.href);
+    } catch (_) {
+      return true;
+    }
+
+    if (resolved.origin === location.origin && resolved.pathname.toLowerCase().endsWith("/redirect.html")) {
+      return true;
+    }
+    return false;
+  }
+
+  function installGlobalRedirectGate() {
+    if (page === "redirect.html") return;
+    if (window.__redirectGateInstalled) return;
+    window.__redirectGateInstalled = true;
+
+    document.addEventListener("click", (e) => {
+      const anchor = e.target.closest("a[href]");
+      if (!anchor) return;
+
+      if (e.defaultPrevented) return;
+      if (e.button !== 0) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+      const href = anchor.getAttribute("href") || "";
+      if (shouldBypassRedirect(anchor, href)) return;
+
+      const normalizedHref = normalizeUrl(href);
+      if (!normalizedHref) return;
+
+      const target = (anchor.getAttribute("target") || "").trim().toLowerCase();
+      const label = safe(anchor.textContent).replace(/\s+/g, " ").slice(0, 120);
+      const redirectUrl = buildRedirectUrl(normalizedHref, label);
+      if (!redirectUrl) return;
+
+      e.preventDefault();
+
+      if (target && target !== "_self") {
+        window.open(redirectUrl, target, "noopener");
+        return;
+      }
+      window.location.href = redirectUrl;
+    }, true);
+  }
+
   window.goBack = () => {
     if (window.history.length > 1) window.history.back();
     else window.location.href = "index.html";
@@ -1420,6 +1484,8 @@
   }
 
   document.addEventListener("DOMContentLoaded", async () => {
+    installGlobalRedirectGate();
+
     buildMobileMenu();
     safeHideOldSearchBars(); 
     
