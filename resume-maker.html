@@ -1,0 +1,1823 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resume/CV Maker by Topsarkari.com</title>
+  <meta name="description" content="Resume/CV Maker by Topsarkari.com with live editing, templates, ATS scoring, and PDF export." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            display: ['Space Grotesk', 'Inter', 'sans-serif']
+          },
+          colors: {
+            ui: {
+              950: '#060816',
+              900: '#0b1020',
+              850: '#12182a',
+              800: '#161d31',
+              700: '#1f2740',
+              600: '#2b3658'
+            },
+            brand: {
+              DEFAULT: '#7c3aed',
+              soft: '#a78bfa',
+              cyan: '#22d3ee',
+              gold: '#f59e0b'
+            }
+          },
+          boxShadow: {
+            luxe: '0 20px 80px rgba(0,0,0,0.35)',
+            glass: '0 12px 40px rgba(2,6,23,0.18)',
+            preview: '0 20px 70px rgba(15,23,42,0.14)'
+          },
+          animation: {
+            floaty: 'floaty 6s ease-in-out infinite',
+            pulseSoft: 'pulseSoft 2.2s ease-in-out infinite'
+          },
+          keyframes: {
+            floaty: {
+              '0%,100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-6px)' }
+            },
+            pulseSoft: {
+              '0%,100%': { opacity: '1' },
+              '50%': { opacity: '.7' }
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root {
+      --resume-accent: #4f46e5;
+      --resume-accent-2: #22c55e;
+      --resume-ink: #0f172a;
+      --resume-muted: #475569;
+      --resume-line: #e2e8f0;
+      --resume-soft: #eef2ff;
+      --resume-bg: #ffffff;
+      --resume-chip: #eff6ff;
+      --resume-heading-font: 'Space Grotesk', 'Inter', sans-serif;
+      --resume-body-font: 'Inter', system-ui, sans-serif;
+      --resume-scale: 1;
+      --resume-gap: 18px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      background:
+        radial-gradient(circle at top left, rgba(124,58,237,0.15), transparent 28%),
+        radial-gradient(circle at top right, rgba(34,211,238,0.10), transparent 24%),
+        linear-gradient(180deg, #060816 0%, #0b1020 55%, #090d18 100%);
+    }
+    .glass {
+      background: rgba(15, 23, 42, 0.62);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+    }
+    .light .glass {
+      background: rgba(255,255,255,0.85);
+      border-color: rgba(15,23,42,0.08);
+    }
+    .tab-btn.active {
+      background: linear-gradient(135deg, rgba(124,58,237,0.24), rgba(34,211,238,0.18));
+      color: white;
+      border-color: rgba(167,139,250,0.35);
+      box-shadow: 0 8px 30px rgba(124,58,237,0.18);
+    }
+    .light .tab-btn.active {
+      color: #111827;
+    }
+    .section-card.dragging,
+    .bullet-row.dragging,
+    .exp-card.dragging,
+    .resume-section.dragging,
+    .resume-bullet.dragging {
+      opacity: 0.42;
+      transform: scale(0.99);
+    }
+    .drop-target {
+      outline: 2px dashed rgba(34,211,238,0.7);
+      outline-offset: 4px;
+    }
+    .resume-page {
+      width: 210mm;
+      min-height: 297mm;
+      background: var(--resume-bg);
+      color: var(--resume-ink);
+      font-family: var(--resume-body-font);
+      transform: scale(var(--resume-scale));
+      transform-origin: top center;
+      transition: transform .2s ease;
+    }
+    .resume-shell {
+      min-height: 297mm;
+      position: relative;
+      overflow: hidden;
+    }
+    .resume-section-title {
+      font-family: var(--resume-heading-font);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .editable:focus {
+      outline: 2px solid rgba(79,70,229,0.35);
+      outline-offset: 2px;
+      border-radius: 6px;
+      background: rgba(79,70,229,0.05);
+    }
+    .selected-editable {
+      outline: 2px solid rgba(34,211,238,0.7);
+      outline-offset: 2px;
+      border-radius: 6px;
+      background: rgba(34,211,238,0.08);
+    }
+    .ring svg {
+      transform: rotate(-90deg);
+      overflow: visible;
+    }
+    .ring-circle {
+      transition: stroke-dashoffset .6s ease, stroke .3s ease;
+    }
+    .template-card.active,
+    .palette-card.active {
+      border-color: rgba(34,211,238,0.9);
+      box-shadow: 0 12px 30px rgba(34,211,238,0.12);
+      transform: translateY(-3px);
+    }
+    .custom-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: rgba(148,163,184,0.25); border-radius: 9999px; }
+    .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+    .template-mini .resume-shell { padding: 30px 34px; }
+    .template-mini .resume-header { border-bottom: 2px solid var(--resume-line); padding-bottom: 18px; margin-bottom: 18px; }
+    .template-mini .name { font-size: 34px; font-weight: 800; line-height: 1; font-family: var(--resume-heading-font); }
+    .template-mini .headline { font-size: 15px; color: var(--resume-accent); font-weight: 600; margin-top: 7px; }
+    .template-mini .meta { display: flex; flex-wrap: wrap; gap: 10px 14px; font-size: 12px; color: var(--resume-muted); margin-top: 11px; }
+    .template-mini .resume-section { margin-top: 18px; }
+    .template-mini .resume-section-title { font-size: 11px; color: var(--resume-accent); margin-bottom: 10px; }
+
+    .template-exec .resume-shell { padding: 0; }
+    .template-exec .resume-header { padding: 28px 34px; background: linear-gradient(135deg, var(--resume-accent), color-mix(in srgb, var(--resume-accent) 60%, #0f172a)); color: white; }
+    .template-exec .name { font-size: 34px; font-weight: 800; font-family: var(--resume-heading-font); line-height: 1; }
+    .template-exec .headline { font-size: 15px; margin-top: 8px; opacity: .9; }
+    .template-exec .meta { display: flex; flex-wrap: wrap; gap: 10px 14px; margin-top: 12px; font-size: 12px; opacity: .82; }
+    .template-exec .resume-body { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(220px, .9fr); gap: 0; }
+    .template-exec .main-col { padding: 24px 34px; }
+    .template-exec .side-col { padding: 24px 24px 24px 0; }
+    .template-exec .side-panel { background: #f8fafc; border-left: 1px solid var(--resume-line); min-height: 100%; padding: 24px; }
+    .template-exec .resume-section { margin-bottom: 18px; }
+    .template-exec .resume-section-title { font-size: 11px; color: var(--resume-accent); margin-bottom: 10px; }
+
+    .template-engineer .resume-shell { background: #0b1220; color: #e5edf9; padding: 0; }
+    .template-engineer .resume-header { padding: 28px 34px 20px; border-bottom: 1px solid rgba(148,163,184,0.18); }
+    .template-engineer .name { font-family: monospace; font-size: 29px; font-weight: 700; }
+    .template-engineer .name::before { content: '> '; color: var(--resume-accent); }
+    .template-engineer .headline { font-size: 14px; color: #9fb1c9; margin-top: 8px; }
+    .template-engineer .meta { display: flex; flex-wrap: wrap; gap: 12px 14px; margin-top: 12px; font-size: 11px; color: #9fb1c9; }
+    .template-engineer .resume-body { padding: 22px 34px 28px; }
+    .template-engineer .resume-section { margin-top: 18px; }
+    .template-engineer .resume-section-title { font-size: 11px; color: var(--resume-accent); margin-bottom: 10px; }
+    .template-engineer .summary, .template-engineer .entry-copy, .template-engineer .skill-chip, .template-engineer .project-link, .template-engineer .meta, .template-engineer .bullet-copy { color: #d8e2f0 !important; }
+    .template-engineer .job-meta, .template-engineer .edu-meta { color: #9fb1c9 !important; }
+    .template-engineer .skill-chip { background: rgba(148,163,184,0.08) !important; border-color: rgba(148,163,184,0.18) !important; }
+
+    .template-two-column .resume-shell { display: grid; grid-template-columns: 78mm 1fr; min-height: 297mm; }
+    .template-two-column .left-rail { background: color-mix(in srgb, var(--resume-accent) 92%, #0f172a); color: white; padding: 30px 22px; }
+    .template-two-column .right-body { padding: 30px 30px 26px; }
+    .template-two-column .name { font-size: 28px; font-weight: 800; font-family: var(--resume-heading-font); line-height: 1.05; }
+    .template-two-column .headline { margin-top: 8px; opacity: .9; font-size: 13px; }
+    .template-two-column .meta { display: grid; gap: 6px; margin-top: 16px; font-size: 11px; opacity: .84; }
+    .template-two-column .resume-section-title { font-size: 10px; color: rgba(255,255,255,.72); margin-bottom: 9px; }
+    .template-two-column .resume-section-title.right { color: var(--resume-accent); }
+    .template-two-column .resume-section { margin-bottom: 16px; }
+    .template-two-column .left-rail .skill-chip { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.16); color: white; }
+    .template-two-column .left-rail .summary, .template-two-column .left-rail .project-link { color: rgba(255,255,255,.9); }
+
+    .template-ats .resume-shell { padding: 24px 30px; }
+    .template-ats .resume-header { display: grid; grid-template-columns: 1.3fr 1fr; gap: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--resume-line); }
+    .template-ats .name { font-size: 30px; font-weight: 800; font-family: var(--resume-heading-font); }
+    .template-ats .headline { font-size: 14px; margin-top: 7px; color: var(--resume-accent); font-weight: 600; }
+    .template-ats .meta { display: grid; justify-content: end; gap: 6px; font-size: 11px; color: var(--resume-muted); text-align: right; }
+    .template-ats .resume-grid { display: grid; grid-template-columns: 1fr; gap: 0; }
+    .template-ats .resume-section { margin-top: 14px; }
+    .template-ats .resume-section-title { font-size: 10px; margin-bottom: 8px; color: var(--resume-accent); }
+
+    .template-founder .resume-shell { padding: 0; }
+    .template-founder .resume-header { padding: 28px 34px 22px; position: relative; overflow: hidden; }
+    .template-founder .resume-header::after { content: ''; position: absolute; inset: -30% auto auto 68%; width: 200px; height: 200px; border-radius: 9999px; background: color-mix(in srgb, var(--resume-accent) 14%, transparent); }
+    .template-founder .name { font-size: 34px; font-weight: 900; font-family: var(--resume-heading-font); }
+    .template-founder .headline { font-size: 15px; color: var(--resume-accent); font-weight: 700; margin-top: 8px; }
+    .template-founder .meta { display: flex; flex-wrap: wrap; gap: 10px 14px; font-size: 12px; color: var(--resume-muted); margin-top: 11px; }
+    .template-founder .resume-body { padding: 0 34px 28px; }
+    .template-founder .resume-section { margin-top: 18px; }
+    .template-founder .resume-section-title { font-size: 11px; color: var(--resume-accent); margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+    .template-founder .resume-section-title::after { content: ''; height: 1px; flex: 1; background: color-mix(in srgb, var(--resume-accent) 16%, transparent); }
+
+    .template-finance .resume-shell { padding: 0; }
+    .template-finance .resume-header { background: #0f172a; color: white; padding: 26px 34px; }
+    .template-finance .name { font-size: 32px; font-weight: 800; font-family: var(--resume-heading-font); }
+    .template-finance .headline { color: #fde68a; font-size: 14px; font-weight: 700; margin-top: 8px; }
+    .template-finance .meta { display: flex; flex-wrap: wrap; gap: 12px 14px; font-size: 11px; margin-top: 11px; color: rgba(255,255,255,.78); font-family: monospace; }
+    .template-finance .resume-body { padding: 22px 34px 28px; }
+    .template-finance .resume-section { margin-top: 16px; }
+    .template-finance .resume-section-title { font-size: 10px; color: var(--resume-accent); margin-bottom: 8px; }
+
+    .template-design .resume-shell { display: grid; grid-template-columns: 72mm 1fr; min-height: 297mm; }
+    .template-design .left-rail { background: linear-gradient(180deg, var(--resume-accent), color-mix(in srgb, var(--resume-accent) 72%, #0f172a)); color: white; padding: 28px 22px; }
+    .template-design .avatar { width: 86px; height: 86px; border-radius: 9999px; background: rgba(255,255,255,0.16); display: grid; place-items: center; font-size: 30px; margin-bottom: 16px; }
+    .template-design .name { font-size: 25px; font-weight: 800; font-family: var(--resume-heading-font); line-height: 1.08; }
+    .template-design .headline { margin-top: 8px; opacity: .9; font-size: 13px; }
+    .template-design .meta { display: grid; gap: 6px; margin-top: 16px; font-size: 11px; opacity: .84; }
+    .template-design .left-rail .resume-section-title { font-size: 10px; color: rgba(255,255,255,.76); margin-bottom: 8px; }
+    .template-design .left-rail .skill-chip { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.2); color: white; }
+    .template-design .left-rail .summary, .template-design .left-rail .project-link { color: rgba(255,255,255,.92); }
+    .template-design .right-body { padding: 28px 28px 24px; }
+    .template-design .right-body .resume-section { margin-bottom: 16px; }
+    .template-design .right-body .resume-section-title { font-size: 11px; color: var(--resume-accent); margin-bottom: 8px; }
+
+    .template-academic .resume-shell { padding: 26px 34px; }
+    .template-academic .resume-header { text-align: center; padding-bottom: 16px; border-bottom: 2px solid var(--resume-line); }
+    .template-academic .name { font-size: 32px; font-weight: 800; font-family: Georgia, 'Times New Roman', serif; }
+    .template-academic .headline { font-size: 14px; margin-top: 8px; color: var(--resume-accent); font-weight: 600; }
+    .template-academic .meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 14px; margin-top: 10px; font-size: 11px; color: var(--resume-muted); }
+    .template-academic .resume-section { margin-top: 18px; }
+    .template-academic .resume-section-title { font-size: 11px; color: var(--resume-accent); margin-bottom: 10px; }
+
+    .template-government .resume-shell { padding: 18px 22px 24px; }
+    .template-government .resume-header { border: 3px double var(--resume-accent); text-align: center; padding: 18px 18px 14px; }
+    .template-government .name { font-size: 28px; font-weight: 800; text-transform: uppercase; font-family: Georgia, 'Times New Roman', serif; }
+    .template-government .headline { font-size: 13px; font-weight: 700; color: var(--resume-accent); margin-top: 7px; }
+    .template-government .meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 14px; margin-top: 9px; font-size: 11px; color: var(--resume-muted); }
+    .template-government .resume-section { margin-top: 14px; }
+    .template-government .resume-section-title { font-size: 10px; color: white; background: var(--resume-accent); padding: 6px 10px; margin-bottom: 8px; display: inline-flex; letter-spacing: 0.12em; }
+
+    .entry-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+    .entry-title { font-size: 14px; font-weight: 700; color: inherit; }
+    .job-meta, .edu-meta { color: var(--resume-muted); font-size: 12px; }
+    .entry-copy { font-size: 12px; color: var(--resume-muted); line-height: 1.65; }
+    .bullet-copy { font-size: 12px; line-height: 1.6; color: var(--resume-ink); }
+    .bullet-list { margin-top: 8px; display: grid; gap: 5px; }
+    .bullet-item::before { content: '•'; color: var(--resume-accent); font-weight: 900; margin-right: 8px; }
+    .skill-chip {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 9999px;
+      border: 1px solid var(--resume-line);
+      background: var(--resume-chip);
+      padding: 5px 10px;
+      font-size: 11px;
+      color: var(--resume-ink);
+      margin: 0 6px 6px 0;
+    }
+    .resume-section-content > * + * { margin-top: 10px; }
+    .toolbar-sticky { position: sticky; top: 0; z-index: 20; }
+    .bounce-in { animation: bounceIn .35s ease; }
+    @keyframes bounceIn {
+      0% { opacity: 0; transform: translateY(6px) scale(.98); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @media (max-width: 1200px) {
+      .resume-page { transform: scale(.88); }
+    }
+    @media (max-width: 768px) {
+      .resume-page { width: 100%; min-height: auto; transform: scale(1) !important; }
+      .template-two-column .resume-shell,
+      .template-design .resume-shell,
+      .template-exec .resume-body { display: block; }
+      .template-two-column .left-rail,
+      .template-design .left-rail,
+      .template-exec .side-panel { padding: 20px; }
+      .template-ats .resume-header { grid-template-columns: 1fr; }
+      .template-ats .meta { text-align: left; justify-content: start; }
+      .resume-shell { min-height: auto; }
+    }
+    @media print {
+      body { background: white !important; }
+      .no-print { display: none !important; }
+      .resume-page { width: 210mm; transform: none !important; box-shadow: none !important; }
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-100 transition-colors duration-300">
+  <div class="pointer-events-none fixed inset-0 overflow-hidden">
+    <div class="absolute -top-20 left-10 h-72 w-72 rounded-full bg-violet-500/10 blur-3xl"></div>
+    <div class="absolute right-0 top-1/4 h-96 w-96 rounded-full bg-cyan-400/10 blur-3xl"></div>
+    <div class="absolute bottom-0 left-1/3 h-80 w-80 rounded-full bg-amber-400/5 blur-3xl"></div>
+  </div>
+
+  <div class="relative mx-auto max-w-[1600px] px-3 py-3 sm:px-5 lg:px-6">
+    <header class="glass no-print mb-3 rounded-3xl p-4 shadow-luxe sm:p-5">
+      <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div class="flex min-w-0 items-center gap-4">
+          <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 via-fuchsia-500 to-cyan-400 text-xl text-white shadow-lg shadow-violet-500/20">
+            <i class="fa-solid fa-file-lines"></i>
+          </div>
+          <div class="min-w-0">
+            <div class="font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">Resume/CV Maker</div>
+            <div class="text-sm font-medium text-slate-400">by Topsarkari.com</div>
+          </div>
+        </div>
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div class="flex flex-wrap items-center gap-2 rounded-2xl border border-white/10 bg-white/5 p-1.5">
+            <button class="tab-btn active rounded-xl border border-transparent px-4 py-2 text-sm font-semibold text-slate-300 transition-all duration-200" data-tab="editor"><i class="fa-solid fa-pen-ruler mr-2"></i>Editor</button>
+            <button class="tab-btn rounded-xl border border-transparent px-4 py-2 text-sm font-semibold text-slate-300 transition-all duration-200" data-tab="templates"><i class="fa-solid fa-swatchbook mr-2"></i>Templates</button>
+            <button class="tab-btn rounded-xl border border-transparent px-4 py-2 text-sm font-semibold text-slate-300 transition-all duration-200" data-tab="score"><i class="fa-solid fa-chart-line mr-2"></i>Score & ATS</button>
+            <button class="tab-btn rounded-xl border border-transparent px-4 py-2 text-sm font-semibold text-slate-300 transition-all duration-200" data-tab="export"><i class="fa-solid fa-download mr-2"></i>Export</button>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="openTailorTop" class="rounded-2xl border border-violet-400/30 bg-violet-500/15 px-4 py-2 text-sm font-semibold text-violet-100 transition hover:bg-violet-500/25"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i>AI Tailor</button>
+            <button id="themeToggle" class="rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:bg-white/10"><i class="fa-solid fa-moon mr-2"></i><span>Dark</span></button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="grid gap-3 xl:grid-cols-[320px_minmax(0,1fr)_320px]">
+      <aside class="no-print custom-scroll glass order-2 max-h-[calc(100vh-140px)] overflow-y-auto rounded-3xl p-4 shadow-glass xl:order-1">
+        <div class="toolbar-sticky -mx-4 -mt-4 mb-4 border-b border-white/10 bg-ui-900/80 px-4 py-4 backdrop-blur">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <div class="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Editor</div>
+              <div class="mt-1 text-lg font-bold text-white">Sections & Entries</div>
+            </div>
+            <button id="resetResumeBtn" class="rounded-xl border border-red-400/25 bg-red-500/10 px-3 py-2 text-xs font-semibold text-red-200 hover:bg-red-500/15">Reset</button>
+          </div>
+        </div>
+
+        <section class="tab-panel block" data-panel="editor">
+          <div class="mb-4 rounded-2xl border border-white/10 bg-white/5 p-3">
+            <div class="mb-2 flex items-center justify-between">
+              <div class="text-sm font-semibold text-white">Section Order</div>
+              <button id="addSectionTipBtn" class="rounded-lg bg-cyan-400/10 px-2.5 py-1 text-xs font-semibold text-cyan-200">Drag to reorder</button>
+            </div>
+            <div id="sectionList" class="grid gap-2"></div>
+          </div>
+
+          <div class="mb-4 rounded-2xl border border-white/10 bg-white/5 p-3">
+            <div class="mb-3 flex items-center justify-between gap-3">
+              <div class="text-sm font-semibold text-white">Experience</div>
+              <button id="addExperienceBtn" class="rounded-xl bg-emerald-400/15 px-3 py-2 text-xs font-semibold text-emerald-200 hover:bg-emerald-400/25"><i class="fa-solid fa-plus mr-1"></i>Add</button>
+            </div>
+            <div id="experienceManager" class="grid gap-3"></div>
+          </div>
+
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-3">
+            <div class="mb-3 flex items-center justify-between gap-3">
+              <div class="text-sm font-semibold text-white">Quick Actions</div>
+            </div>
+            <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-1">
+              <button id="addMetricBulletBtn" class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-left text-sm font-medium text-slate-200 hover:bg-white/10"><i class="fa-solid fa-chart-column mr-2 text-cyan-300"></i>Add quantified bullet</button>
+              <button id="tightenSummaryBtn" class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-left text-sm font-medium text-slate-200 hover:bg-white/10"><i class="fa-solid fa-scissors mr-2 text-violet-300"></i>Tighten summary</button>
+              <button id="addKeywordsBtn" class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-left text-sm font-medium text-slate-200 hover:bg-white/10"><i class="fa-solid fa-key mr-2 text-amber-300"></i>Add ATS keywords</button>
+              <button id="normalizeCaseBtn" class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-left text-sm font-medium text-slate-200 hover:bg-white/10"><i class="fa-solid fa-spell-check mr-2 text-emerald-300"></i>Normalize formatting</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="tab-panel hidden" data-panel="templates">
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-3">
+            <div class="mb-3 text-sm font-semibold text-white">Template Library</div>
+            <div id="templateGrid" class="grid gap-3"></div>
+          </div>
+          <div class="mt-4 rounded-2xl border border-white/10 bg-white/5 p-3">
+            <div class="mb-3 text-sm font-semibold text-white">Color Palettes</div>
+            <div id="paletteGrid" class="grid grid-cols-2 gap-3"></div>
+          </div>
+        </section>
+
+        <section class="tab-panel hidden" data-panel="score">
+          <div class="grid gap-3">
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <div class="text-sm font-semibold text-white">Live Diagnostics</div>
+              <div class="mt-2 text-sm text-slate-400">Scores update instantly as you edit in the preview or side panels.</div>
+              <div id="scoreSummary" class="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-1"></div>
+            </div>
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <div class="mb-3 text-sm font-semibold text-white">Actionable Fixes</div>
+              <div id="scoreTips" class="grid gap-3"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="tab-panel hidden" data-panel="export">
+          <div class="grid gap-3">
+            <button id="downloadPdfBtn" class="rounded-2xl bg-gradient-to-r from-violet-500 to-cyan-400 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-violet-500/20 transition hover:opacity-95"><i class="fa-solid fa-file-pdf mr-2"></i>Download PDF</button>
+            <button id="downloadWordBtn" class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white hover:bg-white/10"><i class="fa-solid fa-file-word mr-2"></i>Download as Word</button>
+            <button id="copyTextBtn" class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white hover:bg-white/10"><i class="fa-solid fa-copy mr-2"></i>Copy Resume Text</button>
+            <button id="printBtn" class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white hover:bg-white/10"><i class="fa-solid fa-print mr-2"></i>Print</button>
+            <div class="rounded-2xl border border-emerald-400/20 bg-emerald-400/10 p-3 text-sm text-emerald-100">
+              Export preserves the current live preview, chosen template, and palette.
+            </div>
+          </div>
+        </section>
+      </aside>
+
+      <section class="order-1 min-w-0 xl:order-2">
+        <div class="glass no-print mb-3 rounded-3xl p-3 shadow-glass">
+          <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div class="flex flex-wrap items-center gap-2">
+              <button id="zoomOutBtn" class="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/10"><i class="fa-solid fa-magnifying-glass-minus mr-2"></i>Zoom Out</button>
+              <button id="zoomInBtn" class="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/10"><i class="fa-solid fa-magnifying-glass-plus mr-2"></i>Zoom In</button>
+              <button id="fitBtn" class="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/10"><i class="fa-solid fa-expand mr-2"></i>Fit</button>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+              <label class="flex items-center gap-2 text-sm text-slate-300">Spacing <input id="gapRange" type="range" min="12" max="28" value="18" class="accent-cyan-400" /></label>
+              <div class="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-300">Template: <span id="currentTemplateName" class="font-semibold text-white"></span></div>
+              <div class="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-300">Palette: <span id="currentPaletteName" class="font-semibold text-white"></span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="custom-scroll overflow-auto rounded-3xl border border-white/10 bg-slate-950/40 p-3 shadow-luxe sm:p-5">
+          <div class="mx-auto w-full min-w-[320px] max-w-[920px]">
+            <div id="resumePage" class="resume-page mx-auto rounded-2xl shadow-preview"></div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="no-print custom-scroll glass order-3 max-h-[calc(100vh-140px)] overflow-y-auto rounded-3xl p-4 shadow-glass">
+        <div class="toolbar-sticky -mx-4 -mt-4 mb-4 border-b border-white/10 bg-ui-900/80 px-4 py-4 backdrop-blur">
+          <div class="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Properties & AI</div>
+          <div class="mt-1 text-lg font-bold text-white">Selected Content</div>
+        </div>
+
+        <section class="tab-panel block" data-panel="editor">
+          <div class="mb-4 rounded-2xl border border-white/10 bg-white/5 p-3">
+            <div class="mb-2 text-sm font-semibold text-white">Selected Path</div>
+            <div id="selectedPathLabel" class="rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2 text-xs text-slate-300">No field selected yet.</div>
+            <label class="mt-3 block text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Edit Text</label>
+            <textarea id="propertyEditor" rows="8" class="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-400" placeholder="Click any editable text in the preview, then edit it here."></textarea>
+            <div class="mt-3 flex gap-2">
+              <button id="clearSelectionBtn" class="flex-1 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/10">Clear</button>
+              <button id="focusPreviewBtn" class="flex-1 rounded-xl border border-cyan-400/20 bg-cyan-400/10 px-3 py-2 text-sm font-medium text-cyan-100 hover:bg-cyan-400/20">Focus</button>
+            </div>
+          </div>
+
+          <div class="mb-4 rounded-2xl border border-white/10 bg-white/5 p-3">
+            <div class="mb-3 text-sm font-semibold text-white">AI Helpers</div>
+            <div class="grid gap-2">
+              <button id="openTailorSide" class="rounded-xl border border-violet-400/25 bg-violet-500/10 px-3 py-2 text-left text-sm font-semibold text-violet-100 hover:bg-violet-500/20"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i>AI Tailor to Job Description</button>
+              <button id="improveBulletBtn" class="rounded-xl border border-emerald-400/25 bg-emerald-500/10 px-3 py-2 text-left text-sm font-semibold text-emerald-100 hover:bg-emerald-500/20"><i class="fa-solid fa-arrow-trend-up mr-2"></i>Improve Bullet</button>
+              <button id="roastResumeBtn" class="rounded-xl border border-amber-400/25 bg-amber-500/10 px-3 py-2 text-left text-sm font-semibold text-amber-100 hover:bg-amber-500/20"><i class="fa-solid fa-fire mr-2"></i>Roast My Resume</button>
+            </div>
+            <div id="aiOutput" class="mt-3 rounded-2xl border border-white/10 bg-slate-950/40 p-3 text-sm leading-6 text-slate-300">AI suggestions will appear here.</div>
+          </div>
+
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-3">
+            <div class="mb-3 text-sm font-semibold text-white">Layout Controls</div>
+            <label class="mb-3 block text-sm text-slate-300">Resume zoom
+              <input id="zoomRange" type="range" min="70" max="115" value="100" class="mt-2 w-full accent-violet-400" />
+            </label>
+            <label class="mb-3 block text-sm text-slate-300">Content spacing
+              <input id="spacingRange" type="range" min="12" max="28" value="18" class="mt-2 w-full accent-cyan-400" />
+            </label>
+            <label class="block text-sm text-slate-300">Preview density
+              <select id="densitySelect" class="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-white outline-none focus:border-cyan-400">
+                <option value="comfortable">Comfortable</option>
+                <option value="tight">Tight</option>
+                <option value="airy">Airy</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <section class="tab-panel hidden" data-panel="templates">
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <div class="text-sm font-semibold text-white">Template Notes</div>
+            <div id="templateDetails" class="mt-3 text-sm leading-6 text-slate-300"></div>
+          </div>
+        </section>
+
+        <section class="tab-panel hidden" data-panel="score">
+          <div class="grid gap-3">
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <div class="mb-3 text-sm font-semibold text-white">Keyword Snapshot</div>
+              <div id="keywordSnapshot" class="flex flex-wrap gap-2"></div>
+            </div>
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <div class="mb-3 text-sm font-semibold text-white">ATS Checklist</div>
+              <div id="atsChecklist" class="grid gap-2"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="tab-panel hidden" data-panel="export">
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <div class="text-sm font-semibold text-white">Export Notes</div>
+            <ul class="mt-3 grid gap-2 text-sm text-slate-300">
+              <li><i class="fa-solid fa-check mr-2 text-emerald-300"></i>PDF export captures the live A4 preview exactly.</li>
+              <li><i class="fa-solid fa-check mr-2 text-emerald-300"></i>Word export downloads a clean .doc file.</li>
+              <li><i class="fa-solid fa-check mr-2 text-emerald-300"></i>Copy Text exports ATS-readable plain text.</li>
+            </ul>
+          </div>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <div id="tailorModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm">
+    <div class="glass w-full max-w-3xl rounded-3xl p-5 shadow-luxe">
+      <div class="mb-4 flex items-start justify-between gap-4">
+        <div>
+          <div class="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Simulated AI</div>
+          <div class="mt-1 font-display text-2xl font-bold text-white">AI Tailor to Job Description</div>
+          <div class="mt-1 text-sm text-slate-400">Paste a job description and tailor the resume with stronger alignment, sharper keywords, and tighter bullets.</div>
+        </div>
+        <button id="closeTailorModal" class="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <textarea id="jobDescriptionInput" rows="10" class="w-full rounded-3xl border border-white/10 bg-slate-950/50 px-4 py-4 text-sm leading-6 text-white outline-none transition focus:border-cyan-400" placeholder="Paste the target job description here..."></textarea>
+      <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:justify-end">
+        <button id="insertSampleJD" class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-slate-200 hover:bg-white/10">Insert Sample JD</button>
+        <button id="applyTailorBtn" class="rounded-2xl bg-gradient-to-r from-violet-500 to-cyan-400 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-violet-500/20"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i>Tailor Resume</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="pointer-events-none fixed bottom-4 left-1/2 z-[60] hidden -translate-x-1/2 rounded-2xl border border-white/10 bg-slate-950/90 px-4 py-3 text-sm font-semibold text-white shadow-luxe"></div>
+
+  <script>
+    (() => {
+      const deepClone = (obj) => JSON.parse(JSON.stringify(obj));
+
+      const sampleResume = {
+        basics: {
+          name: 'Aarav Mehta',
+          headline: 'Senior Full-Stack Engineer | Product Systems | Growth Infrastructure',
+          email: 'aarav.mehta@email.com',
+          phone: '+1 (917) 555-0147',
+          location: 'New York, NY',
+          website: 'aaravmehta.dev',
+          linkedin: 'linkedin.com/in/aaravmehta'
+        },
+        summary: 'Senior full-stack engineer with 8+ years of experience building resilient consumer and enterprise platforms across payments, internal tooling, experimentation systems, and data-heavy workflows. Known for shipping clean architecture, lifting product velocity, and turning ambiguous requirements into elegant, measurable outcomes.',
+        experience: [
+          {
+            company: 'Nimbus Labs',
+            role: 'Staff Software Engineer',
+            dates: '2022 - Present',
+            location: 'New York, NY',
+            bullets: [
+              'Architected a multi-tenant workflow platform used by 140K+ weekly active users, improving critical path performance by 41% and cutting cloud spend by 18%.',
+              'Led migration from legacy REST services to typed edge-ready APIs with shared validation, reducing production defects by 37% quarter over quarter.',
+              'Partnered with design, PM, and analytics teams to launch experiment tooling that accelerated release cycles from biweekly to daily without quality regressions.'
+            ]
+          },
+          {
+            company: 'Helio Commerce',
+            role: 'Senior Software Engineer',
+            dates: '2019 - 2022',
+            location: 'San Francisco, CA',
+            bullets: [
+              'Built revenue intelligence dashboards and event pipelines processing 28M+ monthly records for merchandising, finance, and lifecycle marketing teams.',
+              'Implemented a modular component library and design token system that reduced front-end duplication by 52% across seven products.',
+              'Mentored 5 engineers, introduced PR quality rubrics, and improved median code review turnaround from 19 hours to 6 hours.'
+            ]
+          }
+        ],
+        projects: [
+          {
+            name: 'Experiment Control Tower',
+            subtitle: 'Feature flagging, cohort analysis, and release insights platform',
+            link: 'github.com/aarav/experiment-control-tower',
+            bullets: [
+              'Designed an internal experimentation console with live cohort health, metric trend comparisons, and rollback signals.',
+              'Combined SQL, TypeScript, and event-stream processing to let product teams self-serve decisions in minutes instead of days.'
+            ]
+          },
+          {
+            name: 'Resume Optimizer AI',
+            subtitle: 'Private résumé tailoring and ATS diagnostics app',
+            link: 'resume.aaravmehta.dev',
+            bullets: [
+              'Built a privacy-first resume assistant with keyword extraction, readability scoring, and export automation.',
+              'Packaged the app into a single-file static deployment with offline-safe editing and lightweight PDF generation.'
+            ]
+          }
+        ],
+        skills: [
+          'JavaScript', 'TypeScript', 'Node.js', 'React', 'Next.js', 'Python', 'SQL', 'PostgreSQL', 'Tailwind CSS', 'System Design', 'REST APIs', 'GraphQL', 'A/B Testing', 'Docker', 'CI/CD', 'Product Analytics'
+        ],
+        education: [
+          {
+            school: 'Carnegie Mellon University',
+            degree: 'M.S. in Software Engineering',
+            dates: '2016 - 2018',
+            details: 'Focus on distributed systems, human-computer interaction, and applied machine learning.'
+          },
+          {
+            school: 'University of Delhi',
+            degree: 'B.Tech in Computer Science',
+            dates: '2011 - 2015',
+            details: 'Graduated with distinction; led ACM student chapter and campus developer community.'
+          }
+        ],
+        certifications: [
+          'AWS Certified Developer – Associate',
+          'Google Analytics Certification',
+          'Certified Scrum Product Owner'
+        ],
+        sectionOrder: ['summary', 'experience', 'projects', 'skills', 'education', 'certifications']
+      };
+
+      const templates = [
+        { id: 'mini', name: 'Minimal Classic (Ivy)', description: 'Clean Ivy-League inspired layout with elegant typography and high signal-to-noise ratio.' },
+        { id: 'exec', name: 'Executive Pro (FAANG)', description: 'Polished executive layout with a premium header, clean hierarchy, and high-end presence.' },
+        { id: 'engineer', name: 'Tech Engineer Deep-Dive', description: 'Developer-forward technical format with dark terminal energy and dense technical storytelling.' },
+        { id: 'two-column', name: 'Modern Two-Column', description: 'Balanced side rail plus content body layout ideal for strong scannability and visual hierarchy.' },
+        { id: 'ats', name: 'One-Page ATS Optimized', description: 'Ultra-clean and parser-friendly one-page format optimized for ATS ingestion and recruiter skim speed.' },
+        { id: 'founder', name: 'Startup Founder', description: 'Energetic founder-style design with outcome-driven sections and modern storytelling.' },
+        { id: 'finance', name: 'Finance/Quant', description: 'Sharper institutional feel with analytical polish, precise spacing, and quant-ready aesthetics.' },
+        { id: 'design', name: 'Product Design', description: 'Portfolio-friendly structure with a refined visual rail and premium creative presentation.' },
+        { id: 'academic', name: 'Research/Academic', description: 'Scholarly layout with formal structure, clean citations flow, and academic credibility.' },
+        { id: 'government', name: 'Government/Sarkari Ready', description: 'Formal, highly legible, and structured for public sector and Sarkari-style applications.' }
+      ];
+
+      const palettes = [
+        { id: 'indigo', name: 'Midnight Indigo', accent: '#4f46e5', accent2: '#22c55e', soft: '#eef2ff', chip: '#eef2ff' },
+        { id: 'emerald', name: 'Executive Emerald', accent: '#059669', accent2: '#0ea5e9', soft: '#ecfdf5', chip: '#ecfdf5' },
+        { id: 'rose', name: 'Rose Quartz', accent: '#e11d48', accent2: '#8b5cf6', soft: '#fff1f2', chip: '#fff1f2' },
+        { id: 'cyan', name: 'Arctic Cyan', accent: '#0891b2', accent2: '#6366f1', soft: '#ecfeff', chip: '#ecfeff' },
+        { id: 'amber', name: 'Quant Gold', accent: '#d97706', accent2: '#0f172a', soft: '#fffbeb', chip: '#fffbeb' },
+        { id: 'slate', name: 'Graphite Slate', accent: '#334155', accent2: '#06b6d4', soft: '#f8fafc', chip: '#f1f5f9' },
+        { id: 'violet', name: 'Royal Violet', accent: '#7c3aed', accent2: '#14b8a6', soft: '#f5f3ff', chip: '#f5f3ff' },
+        { id: 'crimson', name: 'Crimson Classic', accent: '#b91c1c', accent2: '#2563eb', soft: '#fef2f2', chip: '#fef2f2' }
+      ];
+
+      const actionVerbs = ['architected', 'built', 'launched', 'optimized', 'scaled', 'led', 'designed', 'implemented', 'automated', 'improved', 'reduced', 'accelerated', 'drove', 'mentored', 'partnered', 'delivered'];
+      const atsKeywordsPool = ['roadmap', 'cross-functional', 'stakeholder', 'analytics', 'automation', 'scalable', 'performance', 'strategy', 'optimization', 'leadership', 'ownership', 'documentation', 'quality', 'delivery'];
+
+      let state = {
+        resume: deepClone(sampleResume),
+        template: 'exec',
+        palette: 'indigo',
+        selectedPath: null,
+        zoom: 100,
+        spacing: 18,
+        density: 'comfortable',
+        activeTab: 'editor',
+        theme: 'dark'
+      };
+
+      const els = {
+        html: document.documentElement,
+        body: document.body,
+        resumePage: document.getElementById('resumePage'),
+        sectionList: document.getElementById('sectionList'),
+        experienceManager: document.getElementById('experienceManager'),
+        propertyEditor: document.getElementById('propertyEditor'),
+        selectedPathLabel: document.getElementById('selectedPathLabel'),
+        aiOutput: document.getElementById('aiOutput'),
+        scoreSummary: document.getElementById('scoreSummary'),
+        scoreTips: document.getElementById('scoreTips'),
+        keywordSnapshot: document.getElementById('keywordSnapshot'),
+        atsChecklist: document.getElementById('atsChecklist'),
+        templateGrid: document.getElementById('templateGrid'),
+        paletteGrid: document.getElementById('paletteGrid'),
+        templateDetails: document.getElementById('templateDetails'),
+        currentTemplateName: document.getElementById('currentTemplateName'),
+        currentPaletteName: document.getElementById('currentPaletteName'),
+        tailorModal: document.getElementById('tailorModal'),
+        toast: document.getElementById('toast'),
+        gapRange: document.getElementById('gapRange'),
+        zoomRange: document.getElementById('zoomRange'),
+        spacingRange: document.getElementById('spacingRange'),
+        densitySelect: document.getElementById('densitySelect'),
+        jobDescriptionInput: document.getElementById('jobDescriptionInput')
+      };
+
+      function showToast(message, tone = 'default') {
+        els.toast.textContent = message;
+        els.toast.classList.remove('hidden');
+        els.toast.className = 'pointer-events-none fixed bottom-4 left-1/2 z-[60] -translate-x-1/2 rounded-2xl border px-4 py-3 text-sm font-semibold shadow-luxe';
+        if (tone === 'success') {
+          els.toast.classList.add('border-emerald-400/25', 'bg-emerald-500/90', 'text-white');
+        } else if (tone === 'warn') {
+          els.toast.classList.add('border-amber-400/25', 'bg-amber-500/90', 'text-slate-950');
+        } else {
+          els.toast.classList.add('border-white/10', 'bg-slate-950/90', 'text-white');
+        }
+        clearTimeout(showToast._timer);
+        showToast._timer = setTimeout(() => els.toast.classList.add('hidden'), 2200);
+      }
+
+      function getValueByPath(path) {
+        if (!path) return '';
+        return path.split('.').reduce((acc, key) => {
+          if (acc == null) return '';
+          const numeric = /^\d+$/.test(key) ? Number(key) : key;
+          return acc[numeric];
+        }, state.resume);
+      }
+
+      function setValueByPath(path, value) {
+        const keys = path.split('.');
+        let obj = state.resume;
+        for (let i = 0; i < keys.length - 1; i++) {
+          const key = /^\d+$/.test(keys[i]) ? Number(keys[i]) : keys[i];
+          obj = obj[key];
+        }
+        const lastKey = /^\d+$/.test(keys[keys.length - 1]) ? Number(keys[keys.length - 1]) : keys[keys.length - 1];
+        obj[lastKey] = value;
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      function applyDensity() {
+        const densityMap = {
+          comfortable: { body: '1.6', gap: state.spacing },
+          tight: { body: '1.45', gap: Math.max(12, state.spacing - 3) },
+          airy: { body: '1.75', gap: Math.min(28, state.spacing + 4) }
+        };
+        const density = densityMap[state.density] || densityMap.comfortable;
+        document.documentElement.style.setProperty('--resume-gap', density.gap + 'px');
+      }
+
+      function applyPalette() {
+        const palette = palettes.find(p => p.id === state.palette) || palettes[0];
+        document.documentElement.style.setProperty('--resume-accent', palette.accent);
+        document.documentElement.style.setProperty('--resume-accent-2', palette.accent2);
+        document.documentElement.style.setProperty('--resume-soft', palette.soft);
+        document.documentElement.style.setProperty('--resume-chip', palette.chip);
+        els.currentPaletteName.textContent = palette.name;
+      }
+
+      function renderSectionList() {
+        const labels = {
+          summary: 'Professional Summary',
+          experience: 'Experience',
+          projects: 'Projects',
+          skills: 'Skills',
+          education: 'Education',
+          certifications: 'Certifications'
+        };
+        els.sectionList.innerHTML = state.resume.sectionOrder.map((section, index) => `
+          <button draggable="true" data-section-index="${index}" class="section-card group flex items-center gap-3 rounded-2xl border border-white/10 bg-slate-950/40 px-3 py-3 text-left transition hover:border-cyan-400/30 hover:bg-white/5">
+            <span class="grid h-10 w-10 place-items-center rounded-xl bg-white/5 text-slate-300"><i class="fa-solid fa-grip-vertical"></i></span>
+            <span class="min-w-0 flex-1">
+              <span class="block truncate text-sm font-semibold text-white">${labels[section] || section}</span>
+              <span class="text-xs text-slate-400">Drag to reorder section flow</span>
+            </span>
+            <span class="rounded-xl bg-cyan-400/10 px-2 py-1 text-xs font-semibold text-cyan-200">${index + 1}</span>
+          </button>
+        `).join('');
+
+        [...els.sectionList.querySelectorAll('.section-card')].forEach(card => {
+          card.addEventListener('dragstart', () => card.classList.add('dragging'));
+          card.addEventListener('dragend', () => {
+            card.classList.remove('dragging');
+            [...els.sectionList.children].forEach(c => c.classList.remove('drop-target'));
+          });
+          card.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            card.classList.add('drop-target');
+          });
+          card.addEventListener('dragleave', () => card.classList.remove('drop-target'));
+          card.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const dragged = els.sectionList.querySelector('.dragging');
+            if (!dragged || dragged === card) return;
+            const from = Number(dragged.dataset.sectionIndex);
+            const to = Number(card.dataset.sectionIndex);
+            const [moved] = state.resume.sectionOrder.splice(from, 1);
+            state.resume.sectionOrder.splice(to, 0, moved);
+            renderAll();
+          });
+        });
+      }
+
+      function renderExperienceManager() {
+        els.experienceManager.innerHTML = state.resume.experience.map((exp, expIndex) => `
+          <div draggable="true" data-exp-index="${expIndex}" class="exp-card rounded-2xl border border-white/10 bg-slate-950/40 p-3 transition hover:bg-white/5">
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0">
+                <div class="truncate text-sm font-bold text-white">${escapeHtml(exp.role)}</div>
+                <div class="truncate text-xs text-slate-400">${escapeHtml(exp.company)} • ${escapeHtml(exp.dates)}</div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="add-bullet-btn rounded-lg bg-emerald-400/10 px-2.5 py-1 text-xs font-semibold text-emerald-100" data-exp-index="${expIndex}"><i class="fa-solid fa-plus"></i></button>
+                <button class="remove-exp-btn rounded-lg bg-red-500/10 px-2.5 py-1 text-xs font-semibold text-red-100" data-exp-index="${expIndex}"><i class="fa-solid fa-trash"></i></button>
+              </div>
+            </div>
+            <div class="mt-3 grid gap-2">
+              ${exp.bullets.map((bullet, bulletIndex) => `
+                <div draggable="true" class="bullet-row flex items-start gap-2 rounded-xl border border-white/10 bg-white/5 p-2" data-exp-index="${expIndex}" data-bullet-index="${bulletIndex}">
+                  <span class="mt-1 text-slate-400"><i class="fa-solid fa-grip-lines"></i></span>
+                  <button class="bullet-focus-btn min-w-0 flex-1 text-left text-xs leading-5 text-slate-200 hover:text-white" data-path="experience.${expIndex}.bullets.${bulletIndex}">${escapeHtml(bullet)}</button>
+                  <button class="remove-bullet-btn rounded-lg bg-red-500/10 px-2 py-1 text-[11px] font-semibold text-red-100" data-exp-index="${expIndex}" data-bullet-index="${bulletIndex}"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `).join('');
+
+        els.experienceManager.querySelectorAll('.bullet-focus-btn').forEach(btn => {
+          btn.addEventListener('click', () => setSelectedPath(btn.dataset.path));
+        });
+        els.experienceManager.querySelectorAll('.add-bullet-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const expIndex = Number(btn.dataset.expIndex);
+            state.resume.experience[expIndex].bullets.push('Write a sharper, quantified accomplishment here.');
+            renderAll();
+            setSelectedPath(`experience.${expIndex}.bullets.${state.resume.experience[expIndex].bullets.length - 1}`);
+          });
+        });
+        els.experienceManager.querySelectorAll('.remove-exp-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            if (state.resume.experience.length === 1) return showToast('At least one experience entry is required.', 'warn');
+            const expIndex = Number(btn.dataset.expIndex);
+            state.resume.experience.splice(expIndex, 1);
+            state.selectedPath = null;
+            renderAll();
+          });
+        });
+        els.experienceManager.querySelectorAll('.remove-bullet-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const expIndex = Number(btn.dataset.expIndex);
+            const bulletIndex = Number(btn.dataset.bulletIndex);
+            if (state.resume.experience[expIndex].bullets.length === 1) return showToast('Keep at least one bullet in each experience entry.', 'warn');
+            state.resume.experience[expIndex].bullets.splice(bulletIndex, 1);
+            renderAll();
+          });
+        });
+
+        [...els.experienceManager.querySelectorAll('.exp-card')].forEach(card => {
+          card.addEventListener('dragstart', () => card.classList.add('dragging'));
+          card.addEventListener('dragend', () => {
+            card.classList.remove('dragging');
+            [...els.experienceManager.querySelectorAll('.exp-card')].forEach(c => c.classList.remove('drop-target'));
+          });
+          card.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            card.classList.add('drop-target');
+          });
+          card.addEventListener('dragleave', () => card.classList.remove('drop-target'));
+          card.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const dragged = els.experienceManager.querySelector('.exp-card.dragging');
+            if (!dragged || dragged === card) return;
+            const from = Number(dragged.dataset.expIndex);
+            const to = Number(card.dataset.expIndex);
+            const [moved] = state.resume.experience.splice(from, 1);
+            state.resume.experience.splice(to, 0, moved);
+            renderAll();
+          });
+        });
+
+        [...els.experienceManager.querySelectorAll('.bullet-row')].forEach(row => {
+          row.addEventListener('dragstart', () => row.classList.add('dragging'));
+          row.addEventListener('dragend', () => {
+            row.classList.remove('dragging');
+            [...els.experienceManager.querySelectorAll('.bullet-row')].forEach(c => c.classList.remove('drop-target'));
+          });
+          row.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            row.classList.add('drop-target');
+          });
+          row.addEventListener('dragleave', () => row.classList.remove('drop-target'));
+          row.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const dragged = els.experienceManager.querySelector('.bullet-row.dragging');
+            if (!dragged || dragged === row) return;
+            const fromExp = Number(dragged.dataset.expIndex);
+            const fromBullet = Number(dragged.dataset.bulletIndex);
+            const toExp = Number(row.dataset.expIndex);
+            const toBullet = Number(row.dataset.bulletIndex);
+            const [moved] = state.resume.experience[fromExp].bullets.splice(fromBullet, 1);
+            state.resume.experience[toExp].bullets.splice(toBullet, 0, moved);
+            renderAll();
+          });
+        });
+      }
+
+      function editable(tag, path, value, className = '', multiline = false) {
+        const safeValue = multiline ? escapeHtml(value).replace(/\n/g, '<br>') : escapeHtml(value);
+        return `<${tag} contenteditable="true" spellcheck="true" data-path="${path}" class="editable ${className}">${safeValue}</${tag}>`;
+      }
+
+      function renderSummary() {
+        return `
+          <section class="resume-section" data-section="summary">
+            <div class="resume-section-title">Professional Summary</div>
+            <div class="resume-section-content">
+              ${editable('div', 'summary', state.resume.summary, 'summary text-[12px] leading-[1.7]', true)}
+            </div>
+          </section>
+        `;
+      }
+
+      function renderExperienceSection() {
+        return `
+          <section class="resume-section" data-section="experience">
+            <div class="resume-section-title">Experience</div>
+            <div class="resume-section-content" style="display:grid; gap: var(--resume-gap);">
+              ${state.resume.experience.map((exp, expIndex) => `
+                <article class="resume-entry" data-exp-index="${expIndex}">
+                  <div class="entry-head">
+                    <div>
+                      ${editable('div', `experience.${expIndex}.role`, exp.role, 'entry-title')}
+                      <div class="job-meta">${editable('span', `experience.${expIndex}.company`, exp.company, '')} • ${editable('span', `experience.${expIndex}.location`, exp.location, '')}</div>
+                    </div>
+                    ${editable('div', `experience.${expIndex}.dates`, exp.dates, 'job-meta text-right')}
+                  </div>
+                  <div class="bullet-list mt-2">
+                    ${exp.bullets.map((bullet, bulletIndex) => `
+                      <div class="resume-bullet bullet-item" draggable="true" data-exp-index="${expIndex}" data-bullet-index="${bulletIndex}">
+                        ${editable('span', `experience.${expIndex}.bullets.${bulletIndex}`, bullet, 'bullet-copy inline')}
+                      </div>
+                    `).join('')}
+                  </div>
+                </article>
+              `).join('')}
+            </div>
+          </section>
+        `;
+      }
+
+      function renderProjects() {
+        return `
+          <section class="resume-section" data-section="projects">
+            <div class="resume-section-title">Projects</div>
+            <div class="resume-section-content" style="display:grid; gap: calc(var(--resume-gap) - 4px);">
+              ${state.resume.projects.map((project, index) => `
+                <article>
+                  <div class="entry-head">
+                    <div>
+                      ${editable('div', `projects.${index}.name`, project.name, 'entry-title')}
+                      ${editable('div', `projects.${index}.subtitle`, project.subtitle, 'entry-copy')}
+                    </div>
+                    ${editable('div', `projects.${index}.link`, project.link, 'job-meta text-right project-link')}
+                  </div>
+                  <div class="bullet-list mt-2">
+                    ${project.bullets.map((bullet, bulletIndex) => `
+                      <div class="bullet-item">${editable('span', `projects.${index}.bullets.${bulletIndex}`, bullet, 'bullet-copy inline')}</div>
+                    `).join('')}
+                  </div>
+                </article>
+              `).join('')}
+            </div>
+          </section>
+        `;
+      }
+
+      function renderSkills() {
+        return `
+          <section class="resume-section" data-section="skills">
+            <div class="resume-section-title">Skills</div>
+            <div class="resume-section-content">
+              <div>${state.resume.skills.map((skill, index) => editable('span', `skills.${index}`, skill, 'skill-chip inline-flex')).join('')}</div>
+            </div>
+          </section>
+        `;
+      }
+
+      function renderEducation() {
+        return `
+          <section class="resume-section" data-section="education">
+            <div class="resume-section-title">Education</div>
+            <div class="resume-section-content" style="display:grid; gap: calc(var(--resume-gap) - 6px);">
+              ${state.resume.education.map((edu, index) => `
+                <article>
+                  <div class="entry-head">
+                    <div>
+                      ${editable('div', `education.${index}.school`, edu.school, 'entry-title')}
+                      <div class="edu-meta">${editable('span', `education.${index}.degree`, edu.degree, '')}</div>
+                    </div>
+                    ${editable('div', `education.${index}.dates`, edu.dates, 'edu-meta text-right')}
+                  </div>
+                  ${editable('div', `education.${index}.details`, edu.details, 'entry-copy mt-1', true)}
+                </article>
+              `).join('')}
+            </div>
+          </section>
+        `;
+      }
+
+      function renderCertifications() {
+        return `
+          <section class="resume-section" data-section="certifications">
+            <div class="resume-section-title">Certifications</div>
+            <div class="resume-section-content">
+              <div style="display:grid; gap:6px;">
+                ${state.resume.certifications.map((item, index) => editable('div', `certifications.${index}`, item, 'entry-copy')).join('')}
+              </div>
+            </div>
+          </section>
+        `;
+      }
+
+      function renderSections(sectionIds, side = 'main') {
+        return sectionIds.map(sectionId => {
+          switch (sectionId) {
+            case 'summary': return renderSummary();
+            case 'experience': return renderExperienceSection();
+            case 'projects': return renderProjects();
+            case 'skills': return renderSkills();
+            case 'education': return renderEducation();
+            case 'certifications': return renderCertifications();
+            default: return '';
+          }
+        }).join('');
+      }
+
+      function renderResume() {
+        const template = state.template;
+        const basics = state.resume.basics;
+        const defaultMeta = [
+          basics.email,
+          basics.phone,
+          basics.location,
+          basics.website,
+          basics.linkedin
+        ].filter(Boolean);
+
+        const mainSections = state.resume.sectionOrder;
+        let html = '';
+
+        if (template === 'exec') {
+          const main = mainSections.filter(s => ['summary', 'experience', 'projects'].includes(s));
+          const side = mainSections.filter(s => ['skills', 'education', 'certifications'].includes(s));
+          html = `
+            <div class="resume-shell template-exec">
+              <div class="resume-header">
+                ${editable('div', 'basics.name', basics.name, 'name')}
+                ${editable('div', 'basics.headline', basics.headline, 'headline')}
+                <div class="meta">
+                  ${editable('span', 'basics.email', basics.email, '')}
+                  ${editable('span', 'basics.phone', basics.phone, '')}
+                  ${editable('span', 'basics.location', basics.location, '')}
+                  ${editable('span', 'basics.website', basics.website, '')}
+                  ${editable('span', 'basics.linkedin', basics.linkedin, '')}
+                </div>
+              </div>
+              <div class="resume-body">
+                <div class="main-col">${renderSections(main)}</div>
+                <div class="side-col"><div class="side-panel">${renderSections(side)}</div></div>
+              </div>
+            </div>
+          `;
+        } else if (template === 'engineer') {
+          html = `
+            <div class="resume-shell template-engineer">
+              <div class="resume-header">
+                ${editable('div', 'basics.name', basics.name, 'name')}
+                ${editable('div', 'basics.headline', basics.headline, 'headline')}
+                <div class="meta">
+                  ${editable('span', 'basics.email', basics.email, '')}
+                  ${editable('span', 'basics.phone', basics.phone, '')}
+                  ${editable('span', 'basics.location', basics.location, '')}
+                  ${editable('span', 'basics.website', basics.website, '')}
+                  ${editable('span', 'basics.linkedin', basics.linkedin, '')}
+                </div>
+              </div>
+              <div class="resume-body">${renderSections(mainSections)}</div>
+            </div>
+          `;
+        } else if (template === 'two-column') {
+          const left = ['summary', 'skills', 'certifications'];
+          const right = state.resume.sectionOrder.filter(s => !left.includes(s));
+          html = `
+            <div class="resume-shell template-two-column">
+              <div class="left-rail">
+                ${editable('div', 'basics.name', basics.name, 'name')}
+                ${editable('div', 'basics.headline', basics.headline, 'headline')}
+                <div class="meta">
+                  ${editable('span', 'basics.email', basics.email, '')}
+                  ${editable('span', 'basics.phone', basics.phone, '')}
+                  ${editable('span', 'basics.location', basics.location, '')}
+                  ${editable('span', 'basics.website', basics.website, '')}
+                  ${editable('span', 'basics.linkedin', basics.linkedin, '')}
+                </div>
+                ${renderSections(left)}
+              </div>
+              <div class="right-body">${renderSections(right).replaceAll('resume-section-title"', 'resume-section-title right"')}</div>
+            </div>
+          `;
+        } else if (template === 'ats') {
+          html = `
+            <div class="resume-shell template-ats">
+              <div class="resume-header">
+                <div>
+                  ${editable('div', 'basics.name', basics.name, 'name')}
+                  ${editable('div', 'basics.headline', basics.headline, 'headline')}
+                </div>
+                <div class="meta">
+                  ${editable('span', 'basics.email', basics.email, '')}
+                  ${editable('span', 'basics.phone', basics.phone, '')}
+                  ${editable('span', 'basics.location', basics.location, '')}
+                  ${editable('span', 'basics.website', basics.website, '')}
+                  ${editable('span', 'basics.linkedin', basics.linkedin, '')}
+                </div>
+              </div>
+              <div class="resume-grid">${renderSections(mainSections)}</div>
+            </div>
+          `;
+        } else if (template === 'founder') {
+          html = `
+            <div class="resume-shell template-founder">
+              <div class="resume-header">
+                ${editable('div', 'basics.name', basics.name, 'name')}
+                ${editable('div', 'basics.headline', basics.headline, 'headline')}
+                <div class="meta">
+                  ${editable('span', 'basics.email', basics.email, '')}
+                  ${editable('span', 'basics.phone', basics.phone, '')}
+                  ${editable('span', 'basics.location', basics.location, '')}
+                  ${editable('span', 'basics.website', basics.website, '')}
+                  ${editable('span', 'basics.linkedin', basics.linkedin, '')}
+                </div>
+              </div>
+              <div class="resume-body">${renderSections(mainSections)}</div>
+            </div>
+          `;
+        } else if (template === 'finance') {
+          html = `
+            <div class="resume-shell template-finance">
+              <div class="resume-header">
+                ${editable('div', 'basics.name', basics.name, 'name')}
+                ${editable('div', 'basics.headline', basics.headline, 'headline')}
+                <div class="meta">
+                  ${editable('span', 'basics.email', basics.email, '')}
+                  ${editable('span', 'basics.phone', basics.phone, '')}
+                  ${editable('span', 'basics.location', basics.location, '')}
+                  ${editable('span', 'basics.website', basics.website, '')}
+                  ${editable('span', 'basics.linkedin', basics.linkedin, '')}
+                </div>
+              </div>
+              <div class="resume-body">${renderSections(mainSections)}</div>
+            </div>
+          `;
+        } else if (template === 'design') {
+          const left = ['summary', 'skills', 'certifications'];
+          const right = state.resume.sectionOrder.filter(s => !left.includes(s));
+          html = `
+            <div class="resume-shell template-design">
+              <div class="left-rail">
+                <div class="avatar"><i class="fa-solid fa-star"></i></div>
+                ${editable('div', 'basics.name', basics.name, 'name')}
+                ${editable('div', 'basics.headline', basics.headline, 'headline')}
+                <div class="meta">
+                  ${editable('span', 'basics.email', basics.email, '')}
+                  ${editable('span', 'basics.phone', basics.phone, '')}
+                  ${editable('span', 'basics.location', basics.location, '')}
+                  ${editable('span', 'basics.website', basics.website, '')}
+                  ${editable('span', 'basics.linkedin', basics.linkedin, '')}
+                </div>
+                ${renderSections(left)}
+              </div>
+              <div class="right-body">${renderSections(right)}</div>
+            </div>
+          `;
+        } else if (template === 'academic') {
+          html = `
+            <div class="resume-shell template-academic">
+              <div class="resume-header">
+                ${editable('div', 'basics.name', basics.name, 'name')}
+                ${editable('div', 'basics.headline', basics.headline, 'headline')}
+                <div class="meta">
+                  ${editable('span', 'basics.email', basics.email, '')}
+                  ${editable('span', 'basics.phone', basics.phone, '')}
+                  ${editable('span', 'basics.location', basics.location, '')}
+                  ${editable('span', 'basics.website', basics.website, '')}
+                  ${editable('span', 'basics.linkedin', basics.linkedin, '')}
+                </div>
+              </div>
+              ${renderSections(mainSections)}
+            </div>
+          `;
+        } else if (template === 'government') {
+          html = `
+            <div class="resume-shell template-government">
+              <div class="resume-header">
+                ${editable('div', 'basics.name', basics.name, 'name')}
+                ${editable('div', 'basics.headline', basics.headline, 'headline')}
+                <div class="meta">
+                  ${editable('span', 'basics.email', basics.email, '')}
+                  ${editable('span', 'basics.phone', basics.phone, '')}
+                  ${editable('span', 'basics.location', basics.location, '')}
+                  ${editable('span', 'basics.website', basics.website, '')}
+                  ${editable('span', 'basics.linkedin', basics.linkedin, '')}
+                </div>
+              </div>
+              ${renderSections(mainSections)}
+            </div>
+          `;
+        } else {
+          html = `
+            <div class="resume-shell template-mini">
+              <div class="resume-header">
+                ${editable('div', 'basics.name', basics.name, 'name')}
+                ${editable('div', 'basics.headline', basics.headline, 'headline')}
+                <div class="meta">
+                  ${editable('span', 'basics.email', basics.email, '')}
+                  ${editable('span', 'basics.phone', basics.phone, '')}
+                  ${editable('span', 'basics.location', basics.location, '')}
+                  ${editable('span', 'basics.website', basics.website, '')}
+                  ${editable('span', 'basics.linkedin', basics.linkedin, '')}
+                </div>
+              </div>
+              ${renderSections(mainSections)}
+            </div>
+          `;
+        }
+
+        els.resumePage.className = 'resume-page mx-auto rounded-2xl shadow-preview';
+        const templateClass = `template-${template}`;
+        els.resumePage.innerHTML = html;
+        els.resumePage.classList.add(templateClass, 'bounce-in');
+
+        document.documentElement.style.setProperty('--resume-scale', String(state.zoom / 100));
+        document.documentElement.style.setProperty('--resume-gap', state.spacing + 'px');
+        applyDensity();
+        bindEditableEvents();
+        bindPreviewDnD();
+        const templateMeta = templates.find(t => t.id === state.template);
+        els.currentTemplateName.textContent = templateMeta ? templateMeta.name : 'Template';
+        els.templateDetails.innerHTML = templateMeta ? `${templateMeta.description}<div class="mt-3 rounded-2xl border border-cyan-400/15 bg-cyan-400/10 p-3 text-cyan-100">Click any text inside the preview to edit it live. Every template instantly reuses the same structured resume data.</div>` : '';
+        setTimeout(() => els.resumePage.classList.remove('bounce-in'), 350);
+        highlightSelectedEditable();
+      }
+
+      function bindEditableEvents() {
+        els.resumePage.querySelectorAll('[contenteditable="true"]').forEach(node => {
+          node.addEventListener('focus', () => setSelectedPath(node.dataset.path));
+          node.addEventListener('click', () => setSelectedPath(node.dataset.path));
+          node.addEventListener('input', () => {
+            const value = node.innerText.replace(/\u00A0/g, ' ').trimEnd();
+            setValueByPath(node.dataset.path, value);
+            if (state.selectedPath === node.dataset.path) {
+              els.propertyEditor.value = getValueByPath(state.selectedPath);
+            }
+            renderScores();
+          });
+        });
+      }
+
+      function bindPreviewDnD() {
+        els.resumePage.querySelectorAll('.resume-bullet').forEach(row => {
+          row.addEventListener('dragstart', () => row.classList.add('dragging'));
+          row.addEventListener('dragend', () => {
+            row.classList.remove('dragging');
+            els.resumePage.querySelectorAll('.resume-bullet').forEach(c => c.classList.remove('drop-target'));
+          });
+          row.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            row.classList.add('drop-target');
+          });
+          row.addEventListener('dragleave', () => row.classList.remove('drop-target'));
+          row.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const dragged = els.resumePage.querySelector('.resume-bullet.dragging');
+            if (!dragged || dragged === row) return;
+            const fromExp = Number(dragged.dataset.expIndex);
+            const fromBullet = Number(dragged.dataset.bulletIndex);
+            const toExp = Number(row.dataset.expIndex);
+            const toBullet = Number(row.dataset.bulletIndex);
+            const [moved] = state.resume.experience[fromExp].bullets.splice(fromBullet, 1);
+            state.resume.experience[toExp].bullets.splice(toBullet, 0, moved);
+            renderAll();
+          });
+        });
+      }
+
+      function setSelectedPath(path) {
+        state.selectedPath = path;
+        const value = getValueByPath(path) || '';
+        els.selectedPathLabel.textContent = path || 'No field selected yet.';
+        els.propertyEditor.value = Array.isArray(value) ? value.join(', ') : value;
+        highlightSelectedEditable();
+      }
+
+      function highlightSelectedEditable() {
+        els.resumePage.querySelectorAll('.selected-editable').forEach(node => node.classList.remove('selected-editable'));
+        if (!state.selectedPath) return;
+        const target = els.resumePage.querySelector(`[data-path="${CSS.escape(state.selectedPath)}"]`);
+        if (target) target.classList.add('selected-editable');
+      }
+
+      function renderTemplates() {
+        els.templateGrid.innerHTML = templates.map(template => `
+          <button class="template-card ${template.id === state.template ? 'active' : ''} rounded-2xl border border-white/10 bg-slate-950/40 p-4 text-left transition hover:border-cyan-400/30 hover:bg-white/5" data-template-id="${template.id}">
+            <div class="mb-3 flex items-center justify-between gap-3">
+              <div class="rounded-xl bg-gradient-to-br from-violet-500/20 to-cyan-400/20 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-cyan-100">${template.id.replace('-', ' ')}</div>
+              <i class="fa-solid fa-check text-cyan-300 ${template.id === state.template ? '' : 'opacity-0'}"></i>
+            </div>
+            <div class="text-sm font-bold text-white">${template.name}</div>
+            <div class="mt-2 text-xs leading-5 text-slate-400">${template.description}</div>
+          </button>
+        `).join('');
+        els.templateGrid.querySelectorAll('[data-template-id]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            state.template = btn.dataset.templateId;
+            renderAll();
+            showToast('Template updated.', 'success');
+          });
+        });
+
+        els.paletteGrid.innerHTML = palettes.map(palette => `
+          <button class="palette-card ${palette.id === state.palette ? 'active' : ''} rounded-2xl border border-white/10 bg-slate-950/40 p-3 text-left transition hover:border-cyan-400/30 hover:bg-white/5" data-palette-id="${palette.id}">
+            <div class="mb-3 flex items-center gap-2">
+              <span class="h-6 w-6 rounded-full border border-white/10" style="background:${palette.accent}"></span>
+              <span class="h-6 w-6 rounded-full border border-white/10" style="background:${palette.accent2}"></span>
+              <span class="h-6 w-6 rounded-full border border-white/10" style="background:${palette.soft}"></span>
+            </div>
+            <div class="text-sm font-semibold text-white">${palette.name}</div>
+          </button>
+        `).join('');
+        els.paletteGrid.querySelectorAll('[data-palette-id]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            state.palette = btn.dataset.paletteId;
+            renderAll();
+            showToast('Palette switched.', 'success');
+          });
+        });
+      }
+
+      function computeScores() {
+        const resumeText = getPlainText();
+        const bullets = state.resume.experience.flatMap(exp => exp.bullets);
+        const withMetrics = bullets.filter(b => /\d|%|\$|million|K\+|M\+/i.test(b)).length;
+        const verbHits = bullets.filter(b => actionVerbs.some(v => b.toLowerCase().startsWith(v))).length;
+        const keywordHits = atsKeywordsPool.filter(k => resumeText.toLowerCase().includes(k)).length;
+        const summaryWords = state.resume.summary.trim().split(/\s+/).filter(Boolean).length;
+        const contactFields = ['email', 'phone', 'location', 'website', 'linkedin'].filter(k => state.resume.basics[k]).length;
+        const skillsCount = state.resume.skills.length;
+        const sentenceLength = resumeText.split(/\s+/).filter(Boolean).length;
+        const readabilityBase = Math.max(40, 100 - Math.max(0, summaryWords - 80) * 0.8 - Math.max(0, sentenceLength - 850) * 0.015);
+        const impact = Math.min(100, Math.round(45 + withMetrics * 12 + verbHits * 6));
+        const ats = Math.min(100, Math.round(48 + keywordHits * 4 + contactFields * 5 + Math.min(20, skillsCount))); 
+        const readability = Math.min(100, Math.round(readabilityBase));
+        const overall = Math.min(100, Math.round((impact + ats + readability) / 3));
+
+        return {
+          overall,
+          ats,
+          impact,
+          readability,
+          keywordHits,
+          withMetrics,
+          verbHits,
+          summaryWords,
+          contactFields,
+          skillsCount
+        };
+      }
+
+      function scoreRing(label, value, tone) {
+        const radius = 38;
+        const circumference = 2 * Math.PI * radius;
+        const offset = circumference - (value / 100) * circumference;
+        return `
+          <div class="ring rounded-3xl border border-white/10 bg-slate-950/40 p-4">
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <div class="text-sm font-semibold text-white">${label}</div>
+                <div class="text-xs text-slate-400">Live from current content</div>
+              </div>
+              <div class="relative h-24 w-24">
+                <svg width="96" height="96" viewBox="0 0 96 96">
+                  <circle cx="48" cy="48" r="38" fill="none" stroke="rgba(148,163,184,0.18)" stroke-width="8"></circle>
+                  <circle class="ring-circle" cx="48" cy="48" r="38" fill="none" stroke="${tone}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"></circle>
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center text-2xl font-black text-white">${value}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      function buildTips(scores) {
+        const tips = [];
+        if (scores.withMetrics < 3) {
+          tips.push({ title: 'Add more quantified outcomes', body: 'Recruiters love proof. Add metrics like %, $, time saved, or scale handled.', action: 'metric' });
+        }
+        if (scores.summaryWords > 75) {
+          tips.push({ title: 'Trim the summary', body: 'The summary is slightly long. Tighten it to sharpen clarity and improve skim speed.', action: 'summary' });
+        }
+        if (scores.keywordHits < 6) {
+          tips.push({ title: 'Add role keywords', body: 'We found limited ATS-aligned language. Add delivery, strategy, analytics, optimization, and ownership.', action: 'keywords' });
+        }
+        if (scores.skillsCount < 12) {
+          tips.push({ title: 'Expand skills coverage', body: 'A broader but still accurate skill section will improve both ATS coverage and recruiter confidence.', action: 'skills' });
+        }
+        if (tips.length === 0) {
+          tips.push({ title: 'Resume is in strong shape', body: 'You are in the high band. Fine-tune bullets for even stronger specificity or tailor to a role.', action: 'tailor' });
+        }
+        return tips;
+      }
+
+      function renderScores() {
+        const scores = computeScores();
+        els.scoreSummary.innerHTML = [
+          scoreRing('Overall Score', scores.overall, '#8b5cf6'),
+          scoreRing('ATS Score', scores.ats, '#22d3ee'),
+          scoreRing('Impact', scores.impact, '#10b981'),
+          scoreRing('Readability', scores.readability, '#f59e0b')
+        ].join('');
+
+        const tips = buildTips(scores);
+        els.scoreTips.innerHTML = tips.map((tip, i) => `
+          <div class="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <div class="text-sm font-semibold text-white">${tip.title}</div>
+                <div class="mt-1 text-sm leading-6 text-slate-400">${tip.body}</div>
+              </div>
+              <button class="apply-tip-btn rounded-xl border border-cyan-400/20 bg-cyan-400/10 px-3 py-2 text-xs font-semibold text-cyan-100 hover:bg-cyan-400/20" data-action="${tip.action}">Apply Fix</button>
+            </div>
+          </div>
+        `).join('');
+
+        els.keywordSnapshot.innerHTML = atsKeywordsPool.filter(k => getPlainText().toLowerCase().includes(k)).slice(0, 12).map(keyword => `<span class="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-xs font-semibold text-cyan-100">${keyword}</span>`).join('') || '<span class="text-sm text-slate-400">No strong ATS keywords detected yet.</span>';
+
+        const checklist = [
+          { label: 'Full contact details present', ok: scores.contactFields >= 5 },
+          { label: 'At least 3 quantified achievements', ok: scores.withMetrics >= 3 },
+          { label: 'Action-verb-led bullets', ok: scores.verbHits >= 4 },
+          { label: '12+ role-relevant skills', ok: scores.skillsCount >= 12 },
+          { label: 'Summary within optimal range', ok: scores.summaryWords <= 75 }
+        ];
+        els.atsChecklist.innerHTML = checklist.map(item => `
+          <div class="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-slate-950/40 px-3 py-3 text-sm">
+            <span class="text-slate-200">${item.label}</span>
+            <span class="rounded-full px-2.5 py-1 text-xs font-bold ${item.ok ? 'bg-emerald-400/15 text-emerald-200' : 'bg-amber-400/15 text-amber-200'}">${item.ok ? 'Pass' : 'Needs work'}</span>
+          </div>
+        `).join('');
+
+        els.scoreTips.querySelectorAll('.apply-tip-btn').forEach(btn => btn.addEventListener('click', () => applyFix(btn.dataset.action)));
+      }
+
+      function applyFix(action) {
+        if (action === 'metric') {
+          const first = state.resume.experience[0];
+          first.bullets.unshift('Raised platform conversion by 23% through faster delivery loops, deeper instrumentation, and cleaner experiment hygiene.');
+          showToast('Added a quantified bullet.', 'success');
+        } else if (action === 'summary') {
+          state.resume.summary = state.resume.summary.replace(/\s+/g, ' ').split('. ').slice(0, 2).join('. ').trim();
+          if (!state.resume.summary.endsWith('.')) state.resume.summary += '.';
+          showToast('Summary tightened.', 'success');
+        } else if (action === 'keywords') {
+          const additions = ['optimization', 'stakeholder', 'strategy', 'documentation'];
+          additions.forEach(keyword => {
+            if (!state.resume.skills.includes(keyword)) state.resume.skills.push(keyword);
+          });
+          state.resume.summary += ' Strong in cross-functional strategy, documentation, optimization, and stakeholder alignment.';
+          showToast('ATS keywords added.', 'success');
+        } else if (action === 'skills') {
+          ['Performance Tuning', 'Data Modeling', 'Observability', 'Accessibility'].forEach(skill => {
+            if (!state.resume.skills.includes(skill)) state.resume.skills.push(skill);
+          });
+          showToast('Skills section expanded.', 'success');
+        } else if (action === 'tailor') {
+          openTailorModal();
+          return;
+        }
+        renderAll();
+      }
+
+      function getPlainText() {
+        const resume = state.resume;
+        const parts = [];
+        parts.push(resume.basics.name, resume.basics.headline, resume.basics.email, resume.basics.phone, resume.basics.location, resume.basics.website, resume.basics.linkedin);
+        parts.push(resume.summary);
+        resume.experience.forEach(exp => parts.push(exp.role, exp.company, exp.location, exp.dates, ...exp.bullets));
+        resume.projects.forEach(project => parts.push(project.name, project.subtitle, project.link, ...project.bullets));
+        parts.push(...resume.skills);
+        resume.education.forEach(edu => parts.push(edu.school, edu.degree, edu.dates, edu.details));
+        parts.push(...resume.certifications);
+        return parts.filter(Boolean).join('\n');
+      }
+
+      function renderAll() {
+        applyPalette();
+        renderSectionList();
+        renderExperienceManager();
+        renderTemplates();
+        renderResume();
+        renderScores();
+      }
+
+      function switchTab(tabId) {
+        state.activeTab = tabId;
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId));
+        document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.toggle('hidden', panel.dataset.panel !== tabId));
+      }
+
+      function extractKeywords(text) {
+        const words = text.toLowerCase().match(/[a-zA-Z][a-zA-Z\-]+/g) || [];
+        const stop = new Set(['with', 'from', 'that', 'this', 'have', 'will', 'your', 'their', 'they', 'about', 'into', 'over', 'team', 'teams', 'build', 'building', 'years', 'role', 'work', 'using', 'used', 'high', 'strong', 'must', 'nice', 'plus']);
+        const freq = {};
+        words.forEach(word => {
+          if (word.length < 5 || stop.has(word)) return;
+          freq[word] = (freq[word] || 0) + 1;
+        });
+        return Object.entries(freq)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 10)
+          .map(([word]) => word);
+      }
+
+      function tailorResumeFromJD(text) {
+        const keywords = extractKeywords(text);
+        if (!keywords.length) {
+          showToast('Add a richer job description to tailor the resume.', 'warn');
+          return;
+        }
+        const topKeywords = keywords.slice(0, 5);
+        const jdPhrase = topKeywords.join(', ');
+        state.resume.summary = `Full-stack engineer with deep experience in ${jdPhrase}, combining product thinking, scalable systems design, and measurable execution across fast-moving teams.`;
+        state.resume.experience[0].bullets[0] = `Led ${topKeywords[0]} and ${topKeywords[1] || 'platform'} initiatives across product engineering, improving delivery speed by 34% while strengthening reliability and observability.`;
+        state.resume.experience[0].bullets[1] = `Partnered cross-functionally to ship ${topKeywords[2] || 'analytics'} and ${topKeywords[3] || 'automation'} workflows that improved decision velocity and reduced manual operational effort.`;
+        topKeywords.forEach(keyword => {
+          const pretty = keyword.charAt(0).toUpperCase() + keyword.slice(1);
+          if (!state.resume.skills.some(skill => skill.toLowerCase() === pretty.toLowerCase())) {
+            state.resume.skills.push(pretty);
+          }
+        });
+        els.aiOutput.innerHTML = `<strong class="text-white">Tailored successfully.</strong><br>Integrated these themes: ${topKeywords.map(k => `<span class="text-cyan-200">${escapeHtml(k)}</span>`).join(', ')}.`;
+        renderAll();
+        closeTailorModal();
+        switchTab('score');
+        showToast('Resume tailored to the job description.', 'success');
+      }
+
+      function improveSelectedBullet() {
+        if (!state.selectedPath || !/experience\.\d+\.bullets\.\d+/.test(state.selectedPath)) {
+          state.selectedPath = 'experience.0.bullets.0';
+        }
+        const current = getValueByPath(state.selectedPath) || '';
+        const improved = current
+          .replace(/^([A-Za-z]+)/, (match) => {
+            const lower = match.toLowerCase();
+            const swap = {
+              built: 'Architected',
+              led: 'Directed',
+              improved: 'Lifted',
+              worked: 'Executed',
+              created: 'Designed'
+            };
+            return swap[lower] || 'Engineered';
+          });
+        const withMetric = /\d|%|\$/.test(improved) ? improved : improved.replace(/\.$/, '') + ' by 27%, while improving cross-team visibility and reliability.';
+        setValueByPath(state.selectedPath, withMetric);
+        els.aiOutput.innerHTML = `<strong class="text-white">Bullet improved.</strong><br>${escapeHtml(withMetric)}`;
+        renderAll();
+        setSelectedPath(state.selectedPath);
+        showToast('Bullet strengthened.', 'success');
+      }
+
+      function roastResume() {
+        const scores = computeScores();
+        const roasts = [];
+        if (scores.withMetrics < 3) roasts.push('Your bullets are talking a big game but not showing enough receipts. Add hard numbers.');
+        if (scores.summaryWords > 75) roasts.push('The summary is trying to write a novel. Be sharp, not sentimental.');
+        if (scores.keywordHits < 6) roasts.push('ATS is squinting. Add keywords that sound like the target job, not vague ambition.');
+        if (scores.skillsCount < 12) roasts.push('Your skills section feels underfed. Recruiters want signal density.');
+        if (!roasts.length) roasts.push('Honestly? This is strong. At this point the only roast is that your competition is in trouble.');
+        els.aiOutput.innerHTML = `<strong class="text-white">Roast My Resume:</strong><br>${roasts.join('<br><br>')}`;
+      }
+
+      function openTailorModal() {
+        els.tailorModal.classList.remove('hidden');
+        els.tailorModal.classList.add('flex');
+      }
+
+      function closeTailorModal() {
+        els.tailorModal.classList.add('hidden');
+        els.tailorModal.classList.remove('flex');
+      }
+
+      async function downloadPDF() {
+        const resumeElement = document.getElementById('resumePage');
+        showToast('Rendering PDF...', 'default');
+        const canvas = await html2canvas(resumeElement, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
+        const imgData = canvas.toDataURL('image/png');
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        const imgWidth = pdfWidth;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        let heightLeft = imgHeight;
+        let position = 0;
+
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
+        heightLeft -= pdfHeight;
+        while (heightLeft > 0) {
+          position = heightLeft - imgHeight;
+          pdf.addPage();
+          pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
+          heightLeft -= pdfHeight;
+        }
+        pdf.save(`${state.resume.basics.name.replace(/\s+/g, '_')}_Resume.pdf`);
+        showToast('PDF downloaded.', 'success');
+      }
+
+      function downloadWord() {
+        const content = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Resume</title></head><body>${document.getElementById('resumePage').innerHTML}</body></html>`;
+        const blob = new Blob(['\ufeff', content], { type: 'application/msword' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${state.resume.basics.name.replace(/\s+/g, '_')}_Resume.doc`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        showToast('Word file downloaded.', 'success');
+      }
+
+      async function copyText() {
+        try {
+          await navigator.clipboard.writeText(getPlainText());
+          showToast('Resume text copied.', 'success');
+        } catch {
+          showToast('Clipboard access failed on this browser.', 'warn');
+        }
+      }
+
+      function setTheme(theme) {
+        state.theme = theme;
+        const isDark = theme === 'dark';
+        els.html.classList.toggle('dark', isDark);
+        document.body.classList.toggle('light', !isDark);
+        const toggle = document.getElementById('themeToggle');
+        const icon = toggle.querySelector('i');
+        const label = toggle.querySelector('span');
+        icon.className = isDark ? 'fa-solid fa-moon mr-2' : 'fa-solid fa-sun mr-2';
+        label.textContent = isDark ? 'Dark' : 'Light';
+      }
+
+      function resetResume() {
+        state.resume = deepClone(sampleResume);
+        state.template = 'exec';
+        state.palette = 'indigo';
+        state.selectedPath = null;
+        state.zoom = 100;
+        state.spacing = 18;
+        state.density = 'comfortable';
+        els.zoomRange.value = '100';
+        els.spacingRange.value = '18';
+        els.gapRange.value = '18';
+        els.densitySelect.value = 'comfortable';
+        renderAll();
+        showToast('Resume reset to sample data.', 'success');
+      }
+
+      function normalizeFormatting() {
+        state.resume.summary = state.resume.summary.replace(/\s+/g, ' ').trim();
+        state.resume.experience.forEach(exp => {
+          exp.company = exp.company.trim();
+          exp.role = exp.role.trim();
+          exp.location = exp.location.trim();
+          exp.bullets = exp.bullets.map(b => {
+            const cleaned = b.replace(/\s+/g, ' ').trim();
+            return cleaned.endsWith('.') ? cleaned : cleaned + '.';
+          });
+        });
+        showToast('Formatting normalized.', 'success');
+        renderAll();
+      }
+
+      function addKeywordPack() {
+        ['Stakeholder Management', 'Documentation', 'Optimization', 'Roadmapping'].forEach(skill => {
+          if (!state.resume.skills.includes(skill)) state.resume.skills.push(skill);
+        });
+        if (!/stakeholder/i.test(state.resume.summary)) {
+          state.resume.summary += ' Strong in stakeholder management, documentation, and scalable optimization.';
+        }
+        renderAll();
+        showToast('ATS keyword pack added.', 'success');
+      }
+
+      function addMetricBullet() {
+        state.resume.experience[0].bullets.push('Reduced deployment friction by 48% through reusable tooling, guardrails, and stronger release governance.');
+        renderAll();
+        showToast('Metric-rich bullet added.', 'success');
+      }
+
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
+
+      document.getElementById('addExperienceBtn').addEventListener('click', () => {
+        state.resume.experience.push({
+          company: 'New Company',
+          role: 'New Role',
+          dates: '2024 - Present',
+          location: 'Remote',
+          bullets: ['Describe a strong accomplishment with scope, action, and measurable impact.']
+        });
+        renderAll();
+        setSelectedPath(`experience.${state.resume.experience.length - 1}.role`);
+      });
+
+      document.getElementById('addMetricBulletBtn').addEventListener('click', addMetricBullet);
+      document.getElementById('tightenSummaryBtn').addEventListener('click', () => applyFix('summary'));
+      document.getElementById('addKeywordsBtn').addEventListener('click', addKeywordPack);
+      document.getElementById('normalizeCaseBtn').addEventListener('click', normalizeFormatting);
+      document.getElementById('improveBulletBtn').addEventListener('click', improveSelectedBullet);
+      document.getElementById('roastResumeBtn').addEventListener('click', roastResume);
+      document.getElementById('resetResumeBtn').addEventListener('click', resetResume);
+      document.getElementById('clearSelectionBtn').addEventListener('click', () => {
+        state.selectedPath = null;
+        els.propertyEditor.value = '';
+        els.selectedPathLabel.textContent = 'No field selected yet.';
+        highlightSelectedEditable();
+      });
+      document.getElementById('focusPreviewBtn').addEventListener('click', () => {
+        if (!state.selectedPath) return showToast('Select a field first.', 'warn');
+        const node = els.resumePage.querySelector(`[data-path="${CSS.escape(state.selectedPath)}"]`);
+        if (node) {
+          node.focus();
+          showToast('Field focused in preview.', 'success');
+        }
+      });
+
+      els.propertyEditor.addEventListener('input', () => {
+        if (!state.selectedPath) return;
+        setValueByPath(state.selectedPath, els.propertyEditor.value);
+        renderResume();
+        renderScores();
+      });
+
+      document.getElementById('downloadPdfBtn').addEventListener('click', downloadPDF);
+      document.getElementById('downloadWordBtn').addEventListener('click', downloadWord);
+      document.getElementById('copyTextBtn').addEventListener('click', copyText);
+      document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+      document.getElementById('themeToggle').addEventListener('click', () => setTheme(state.theme === 'dark' ? 'light' : 'dark'));
+
+      document.getElementById('zoomInBtn').addEventListener('click', () => {
+        state.zoom = Math.min(115, state.zoom + 5);
+        els.zoomRange.value = state.zoom;
+        renderResume();
+      });
+      document.getElementById('zoomOutBtn').addEventListener('click', () => {
+        state.zoom = Math.max(70, state.zoom - 5);
+        els.zoomRange.value = state.zoom;
+        renderResume();
+      });
+      document.getElementById('fitBtn').addEventListener('click', () => {
+        state.zoom = window.innerWidth < 900 ? 100 : 88;
+        els.zoomRange.value = state.zoom;
+        renderResume();
+      });
+      els.zoomRange.addEventListener('input', () => {
+        state.zoom = Number(els.zoomRange.value);
+        renderResume();
+      });
+      els.spacingRange.addEventListener('input', () => {
+        state.spacing = Number(els.spacingRange.value);
+        els.gapRange.value = String(state.spacing);
+        renderResume();
+      });
+      els.gapRange.addEventListener('input', () => {
+        state.spacing = Number(els.gapRange.value);
+        els.spacingRange.value = String(state.spacing);
+        renderResume();
+      });
+      els.densitySelect.addEventListener('change', () => {
+        state.density = els.densitySelect.value;
+        renderResume();
+      });
+
+      document.getElementById('openTailorTop').addEventListener('click', openTailorModal);
+      document.getElementById('openTailorSide').addEventListener('click', openTailorModal);
+      document.getElementById('closeTailorModal').addEventListener('click', closeTailorModal);
+      document.getElementById('applyTailorBtn').addEventListener('click', () => tailorResumeFromJD(els.jobDescriptionInput.value));
+      document.getElementById('insertSampleJD').addEventListener('click', () => {
+        els.jobDescriptionInput.value = `We are hiring a Senior Full-Stack Engineer to lead platform architecture, stakeholder collaboration, performance optimization, analytics instrumentation, design systems, and scalable product delivery. The ideal candidate is strong in cross-functional leadership, documentation, experimentation, automation, and product strategy.`;
+      });
+      els.tailorModal.addEventListener('click', (e) => {
+        if (e.target === els.tailorModal) closeTailorModal();
+      });
+
+      document.getElementById('addSectionTipBtn').addEventListener('click', () => showToast('Drag sections on the left to reorder the preview instantly.'));
+
+      setTheme('dark');
+      renderAll();
+      switchTab('editor');
+      els.zoomRange.value = '100';
+      els.spacingRange.value = '18';
+      els.gapRange.value = '18';
+    })();
+  </script>
+</body>
+</html>
