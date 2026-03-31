@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -17,24 +17,1320 @@
 
 <!-- Site stylesheet (header/footer/nav from existing site) -->
 <link rel="stylesheet" href="styles.css"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<!-- Tailwind CSS via CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Space Grotesk', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+        serif: ['Playfair Display', 'Georgia', 'serif'],
+      },
+      colors: {
+        brand: { DEFAULT:'#6c5ce7', light:'#a29bfe', dark:'#5b4cdb', glow:'rgba(108,92,231,0.22)' },
+        accent: { blue:'#4a8ae8', pink:'#e8569a' },
+        surface: { 1:'#08080f', 2:'#0e0e1c', 3:'#171728', card:'#121220', card2:'#1a1a2e' },
+        success: '#36d48a', warn: '#eebb33', danger: '#ef6060',
+      },
+      animation: {
+        'fade-in': 'fadeIn .25s ease',
+        'slide-up': 'slideUp .3s ease',
+        'spin-slow': 'spin 1s linear infinite',
+      },
+      keyframes: {
+        fadeIn: { from:{opacity:'0'}, to:{opacity:'1'} },
+        slideUp: { from:{opacity:'0',transform:'translateY(8px)'}, to:{opacity:'1',transform:'none'} },
+      }
+    }
+  }
+}
+</script>
+
+<!-- Font Awesome 6 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- html2canvas + jsPDF for PDF export -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
-/* ─── hide site search bar on this page ─── */
+/* ─── Hide site search bar on this page ─── */
 .top-search, section.top-search, #site-header .top-search { display:none!important; }
 
-/* ─── CSS custom props ─── */
-:root {
-  --f:   'DM Sans', system-ui, sans-serif;
-  --fp:  'Playfair Display', Georgia, serif;
-  --fm:  'JetBrains Mono', monospace;
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:99px;}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,.14);border-radius:99px;}
 
-  --bg:  #08080f; --bg2: #0e0e1c; --bg3: #171728;
-  --s:   #121220; --s2:  #1a1a2e;
-  --b:   rgba(255,255,255,.07); --b2: rgba(255,255,255,.14);
+/* ─── Focus ring for contenteditable ─── */
+[contenteditable]:focus{outline:2px solid #6c5ce7;outline-offset:1px;border-radius:2px;}
+
+/* ─── Resume Document Styles (white page — must be custom CSS for print fidelity) ─── */
+:root {
+  --fp: 'Playfair Display', Georgia, serif;
+  --fm: 'JetBrains Mono', monospace;
+  --f: 'Inter', system-ui, sans-serif;
+}
+#rdoc{
+  font-family: var(--f);
+  font-size:10pt;
+  color:#1a1a2e;
+  background:#fff;
+  line-height:1.5;
+  min-height:800px;
+}
+.re{margin-bottom:11px;}
+.reh{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.ret{font-size:10pt;font-weight:700;color:#0f0f1a;}
+.rec{font-size:9pt;color:#555;font-weight:500;}
+.red{font-size:9pt;color:#888;white-space:nowrap;flex-shrink:0;}
+.rb{margin-top:4px;padding-left:0;list-style:none;}
+.rb li{font-size:9pt;color:#444;padding-left:13px;position:relative;margin-bottom:2px;line-height:1.5;}
+.rb li::before{content:'▸';position:absolute;left:0;color:var(--tc,#3730a3);font-size:7pt;top:2px;}
+.rsum{font-size:9.5pt;color:#444;line-height:1.65;}
+.rskg{display:flex;flex-wrap:wrap;gap:5px;}
+.rsk{padding:3px 8px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:4px;font-size:9pt;color:#374151;font-weight:500;}
+.redu{display:flex;justify-content:space-between;margin-bottom:7px;}
+.redg{font-size:10pt;font-weight:700;color:#0f0f1a;}
+.resc{font-size:9pt;color:#555;}
+.redy{font-size:9pt;color:#888;}
+.rct{display:flex;justify-content:space-between;margin-bottom:5px;}
+.rctn{font-size:9.5pt;font-weight:600;color:#374151;}
+.rcti{font-size:9pt;color:#888;}
+.rdcl{font-size:9pt;color:#444;margin-top:14px;border-top:1px solid #e5e7eb;padding-top:9px;}
+.rsgn{display:flex;justify-content:space-between;margin-top:18px;font-size:9.5pt;color:#444;}
+
+/* ─── Template 1: Classic Ivy ─── */
+.t1 #rh{padding:22px 28px 16px;border-bottom:2.5px solid var(--tc,#7b0000);text-align:center;}
+.t1 .rn{font-family:var(--fp),serif;font-size:22pt;letter-spacing:1px;color:#0f0f1a;}
+.t1 .rti{font-size:10pt;color:var(--tc,#7b0000);font-weight:600;margin-top:3px;letter-spacing:.5px;}
+.t1 .rco{display:flex;justify-content:center;flex-wrap:wrap;gap:14px;margin-top:8px;font-size:9pt;color:#555;}
+.t1 #rb{padding:16px 28px;}
+.t1 .rs{font-size:8.5pt;font-weight:800;text-transform:uppercase;letter-spacing:2.5px;color:var(--tc,#7b0000);margin:16px 0 7px;padding-bottom:3px;border-bottom:1px solid #ddd;}
+.t1 .rs:first-child{margin-top:0;}
+
+/* ─── Template 2: Executive FAANG ─── */
+.t2 #rh{background:var(--tc,#1a1a3e);color:#fff;padding:24px 28px;}
+.t2 .rn{font-size:22pt;font-weight:800;color:#fff;letter-spacing:-.5px;}
+.t2 .rti{font-size:10.5pt;color:rgba(255,255,255,.72);margin-top:2px;}
+.t2 .rco{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-size:9pt;color:rgba(255,255,255,.62);}
+.t2 #rb{padding:18px 28px;}
+.t2 .rs{font-size:8.5pt;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--tc,#1a1a3e);margin:16px 0 7px;padding-bottom:3px;border-bottom:2px solid var(--tc,#1a1a3e);}
+.t2 .rs:first-child{margin-top:0;}
+.t2 .rsk{background:color-mix(in srgb,var(--tc,#1a1a3e) 8%,transparent);border-color:color-mix(in srgb,var(--tc,#1a1a3e) 20%,transparent);color:var(--tc,#1a1a3e);}
+
+/* ─── Template 3: Tech Deep-Dive ─── */
+.t3{font-family:var(--fm),monospace!important;}
+.t3 #rh{background:#0d1117;color:#c9d1d9;padding:22px 28px;border-bottom:1px solid #30363d;}
+.t3 .rn{font-family:var(--fm);font-size:18pt;color:#e6edf3;letter-spacing:-1px;}
+.t3 .rn::before{content:'$ ';color:var(--tc,#56d364);}
+.t3 .rti{font-size:9pt;color:var(--tc,#56d364);margin-top:4px;}
+.t3 .rco{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px;font-size:8.5pt;color:#8b949e;}
+.t3 #rb{padding:16px 28px;background:#0d1117;color:#c9d1d9;}
+.t3 .rs{font-size:8pt;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--tc,#56d364);margin:16px 0 7px;padding-bottom:3px;border-bottom:1px solid #21262d;}
+.t3 .rs:first-child{margin-top:0;}
+.t3 .ret{color:#e6edf3;} .t3 .rec{color:#8b949e;} .t3 .rsum{color:#c9d1d9;}
+.t3 .rb li{color:#c9d1d9;} .t3 .rb li::before{color:var(--tc,#56d364);}
+.t3 .redg{color:#e6edf3;} .t3 .resc{color:#8b949e;} .t3 .rctn{color:#c9d1d9;}
+.t3 .rsk{background:#161b22;border-color:#30363d;color:#8b949e;}
+
+/* ─── Template 4: Two-Column Pro ─── */
+.t4{display:flex;min-height:800px;}
+.t4 #rh{display:none;}
+.t4 #rb{display:flex;width:100%;}
+.t4 .tc-left{width:37%;background:var(--tc,#1e293b);color:#fff;padding:24px 15px;}
+.t4 .tc-right{width:63%;padding:20px 20px;}
+.t4 .tc-name{font-family:var(--fp),serif;font-size:16pt;color:#fff;line-height:1.2;margin-bottom:4px;}
+.t4 .tc-title{font-size:9pt;color:rgba(255,255,255,.7);margin-bottom:14px;}
+.t4 .tc-photo{width:68px;height:68px;border-radius:50%;background:rgba(255,255,255,.15);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:25px;color:rgba(255,255,255,.45);}
+.t4 .tc-sh{font-size:8pt;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.45);margin:13px 0 6px;border-bottom:1px solid rgba(255,255,255,.12);padding-bottom:3px;}
+.t4 .tc-item{font-size:8.5pt;color:rgba(255,255,255,.75);margin-bottom:4px;line-height:1.5;}
+.t4 .tc-sk{display:inline-block;padding:2px 7px;background:rgba(255,255,255,.1);border-radius:3px;font-size:8pt;color:rgba(255,255,255,.8);margin:2px 2px 2px 0;}
+.t4 .rs{font-size:8.5pt;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--tc,#1e293b);margin:14px 0 7px;padding-bottom:3px;border-bottom:2px solid var(--tc,#1e293b);}
+.t4 .rs:first-child{margin-top:0;}
+
+/* ─── Template 5: One-Page ATS ─── */
+.t5 #rh{padding:20px 28px 14px;}
+.t5 .rn{font-size:28pt;font-weight:800;color:#0f0f1a;letter-spacing:-1px;}
+.t5 .rti{font-size:11pt;color:var(--tc,#6d5cf0);margin-top:2px;font-weight:500;}
+.t5 .rco{display:flex;flex-wrap:wrap;gap:16px;margin-top:8px;font-size:9pt;color:#666;}
+.t5 #rb{padding:0 28px 18px;display:grid;grid-template-columns:1fr 215px;gap:0 20px;}
+.t5 .t5-main{border-right:1px solid #f0f0f0;padding-right:20px;}
+.t5 .t5-side{}
+.t5 .rs{font-size:8pt;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--tc,#6d5cf0);margin:14px 0 6px;}
+.t5 .rs:first-child{margin-top:0;}
+
+/* ─── Template 6: Startup Founder ─── */
+.t6 #rh{padding:26px 28px 18px;border-bottom:3px solid var(--tc,#059669);position:relative;overflow:hidden;}
+.t6 #rh::before{content:'';position:absolute;top:-20px;right:-20px;width:110px;height:110px;border-radius:50%;background:color-mix(in srgb,var(--tc,#059669) 8%,transparent);}
+.t6 .rn{font-size:24pt;font-weight:800;color:#0f0f1a;letter-spacing:-.5px;}
+.t6 .rti{font-size:10.5pt;color:var(--tc,#059669);font-weight:700;margin-top:2px;}
+.t6 .rco{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px;font-size:9pt;color:#555;}
+.t6 #rb{padding:18px 28px;}
+.t6 .rs{display:flex;align-items:center;gap:8px;font-size:8.5pt;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--tc,#059669);margin:16px 0 7px;}
+.t6 .rs::after{content:'';flex:1;height:1px;background:var(--tc,#059669);opacity:.2;}
+.t6 .rs:first-child{margin-top:0;}
+
+/* ─── Template 7: Finance/Quant ─── */
+.t7 #rh{padding:22px 28px;background:#0f172a;color:#fff;}
+.t7 .rn{font-family:var(--fp),serif;font-size:22pt;color:#f8fafc;}
+.t7 .rti{font-size:10pt;color:var(--tc,#fbbf24);margin-top:2px;font-weight:700;letter-spacing:.5px;}
+.t7 .rco{display:flex;flex-wrap:wrap;gap:14px;margin-top:9px;font-size:9pt;color:rgba(255,255,255,.5);font-family:var(--fm);}
+.t7 #rb{padding:16px 28px;}
+.t7 .rs{font-size:8pt;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--tc,#fbbf24);margin:16px 0 7px;padding-bottom:3px;border-bottom:1px solid #1e293b;}
+.t7 .rs:first-child{margin-top:0;}
+.t7 .rb li::before{color:var(--tc,#fbbf24);}
+
+/* ─── Template 8: Product Design ─── */
+.t8 #rh{background:linear-gradient(135deg,var(--tc,#7c3aed),color-mix(in srgb,var(--tc,#7c3aed) 60%,#1d4ed8));color:#fff;padding:28px 28px 22px;}
+.t8 .rn{font-family:var(--fp),serif;font-size:22pt;color:#fff;letter-spacing:-.2px;}
+.t8 .rti{font-size:10.5pt;color:rgba(255,255,255,.78);margin-top:2px;}
+.t8 .rco{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-size:9pt;color:rgba(255,255,255,.72);}
+.t8 #rb{padding:18px 28px;}
+.t8 .rs{display:flex;align-items:center;gap:8px;font-size:8.5pt;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--tc,#7c3aed);margin:16px 0 7px;}
+.t8 .rs::after{content:'';flex:1;height:1px;background:var(--tc,#7c3aed);opacity:.25;}
+.t8 .rs:first-child{margin-top:0;}
+.t8 .rsk{background:color-mix(in srgb,var(--tc,#7c3aed) 8%,transparent);border-color:color-mix(in srgb,var(--tc,#7c3aed) 20%,transparent);color:var(--tc,#7c3aed);}
+
+/* ─── Template 9: Research/Academic ─── */
+.t9 #rh{padding:22px 32px 16px;border-bottom:1px solid #999;}
+.t9 .rn{font-family:var(--fp),serif;font-size:21pt;color:#0f0f1a;letter-spacing:.2px;}
+.t9 .rti{font-size:10.5pt;color:#444;margin-top:3px;font-style:italic;}
+.t9 .rco{display:flex;flex-wrap:wrap;gap:16px;margin-top:8px;font-size:9pt;color:#555;}
+.t9 #rb{padding:16px 32px;}
+.t9 .rs{font-family:var(--fp),serif;font-size:11pt;font-weight:700;color:var(--tc,#1a1a3e);margin:16px 0 7px;font-style:italic;}
+.t9 .rs:first-child{margin-top:0;}
+.t9 .rb li::before{color:var(--tc,#1a1a3e);}
+
+/* ─── Template 10: Government/Sarkari ─── */
+.t10 #rh{padding:18px 24px;text-align:center;border-bottom:3px double var(--tc,#1d4ed8);}
+.t10 .rn{font-family:var(--fp),serif;font-size:18pt;font-weight:700;color:#0f0f1a;text-transform:uppercase;letter-spacing:.5px;}
+.t10 .rti{font-size:10pt;color:var(--tc,#1d4ed8);font-weight:700;margin-top:3px;}
+.t10 .rco{display:flex;justify-content:center;flex-wrap:wrap;gap:14px;margin-top:8px;font-size:9pt;color:#444;}
+.t10 #rb{padding:14px 24px;}
+.t10 .rs{font-size:9pt;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;background:var(--tc,#1d4ed8);color:#fff;padding:4px 10px;margin:14px 0 8px;border-radius:2px;display:block;}
+.t10 .rs:first-child{margin-top:0;}
+.t10 table{width:100%;border-collapse:collapse;font-size:9pt;margin-bottom:6px;}
+.t10 th{background:var(--tc,#1d4ed8);color:#fff;padding:4px 8px;text-align:left;font-size:8.5pt;border:1px solid #ddd;}
+.t10 td{padding:3px 8px;border:1px solid #e5e7eb;color:#374151;}
+.t10 tr:nth-child(even) td{background:#f8fafc;}
+
+/* ─── Color dot (template palette picker) ─── */
+.cd{width:14px;height:14px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .15s ease;}
+.cd.on{border-color:white;transform:scale(1.25);box-shadow:0 0 0 1px rgba(0,0,0,.3);}
+
+/* ─── Animation helpers ─── */
+@keyframes typing-blink{50%{opacity:0;}}
+.typing::after{content:'|';animation:typing-blink .65s step-end infinite;color:#6c5ce7;}
+@keyframes modalIn{from{transform:scale(.95) translateY(6px);opacity:0;}to{transform:scale(1);opacity:1;}}
+.modal-anim{animation:modalIn .2s cubic-bezier(.4,0,.2,1);}
+
+/* ─── Print ─── */
+@media print{
+  body *{visibility:hidden!important;}
+  #rdoc,#rdoc *{visibility:visible!important;color:inherit!important;}
+  #rdoc{position:fixed!important;left:0!important;top:0!important;width:210mm!important;margin:0!important;box-shadow:none!important;font-size:10pt!important;}
+}
+</style>
+</head>
+
+<body class="font-sans bg-white dark:bg-[#08080f] text-gray-900 dark:text-gray-100 overflow-x-hidden transition-colors duration-200">
+<a class="skip-link" href="#main">Skip to content</a>
+<div id="site-header"></div>
+
+<main id="main" style="padding:0;margin:0;">
+<div id="appWrap">
+
+<!-- ════════════════════════ APP NAVIGATION BAR ════════════════════════ -->
+<nav id="appNav" class="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 h-[52px] bg-white dark:bg-[#121220] border-t border-b border-gray-200 dark:border-white/[.07]">
+  <!-- Brand -->
+  <div class="flex flex-col leading-tight mr-1 sm:mr-2 shrink-0">
+    <span class="text-[13px] sm:text-sm font-extrabold text-gray-900 dark:text-gray-100 whitespace-nowrap">Resume/CV Maker</span>
+    <span class="text-[10px] font-semibold text-brand whitespace-nowrap">by Topsarkari.com</span>
+  </div>
+
+  <!-- Tab Bar -->
+  <div id="tabBar" class="flex gap-0.5 bg-gray-100 dark:bg-[#0e0e1c] border border-gray-200 dark:border-white/[.07] rounded-lg p-[3px] overflow-x-auto scrollbar-hide">
+    <button class="tab-btn on flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-md text-xs font-semibold whitespace-nowrap transition-all duration-150" data-tab="editor">
+      <i class="fa-solid fa-pen-nib text-[10px]"></i><span class="hidden sm:inline">Editor</span>
+    </button>
+    <button class="tab-btn flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-md text-xs font-semibold whitespace-nowrap transition-all duration-150" data-tab="templates">
+      <i class="fa-solid fa-layer-group text-[10px]"></i><span class="hidden sm:inline">Templates</span>
+    </button>
+    <button class="tab-btn flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-md text-xs font-semibold whitespace-nowrap transition-all duration-150" data-tab="score">
+      <i class="fa-solid fa-chart-pie text-[10px]"></i><span class="hidden sm:inline">Score</span>
+    </button>
+    <button class="tab-btn flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-md text-xs font-semibold whitespace-nowrap transition-all duration-150" data-tab="export">
+      <i class="fa-solid fa-arrow-up-from-bracket text-[10px]"></i><span class="hidden sm:inline">Export</span>
+    </button>
+  </div>
+
+  <div class="flex-1"></div>
+
+  <!-- Free Badge -->
+  <span class="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-full text-[10px] font-bold mr-1">
+    <i class="fa-solid fa-crown"></i> Free
+  </span>
+
+  <!-- AI Button -->
+  <button onclick="openAI()" class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-gradient-to-br from-brand to-accent-blue text-white rounded-lg text-xs font-bold shadow-[0_0_14px_rgba(108,92,231,.22)] hover:brightness-110 hover:-translate-y-px transition-all duration-150 whitespace-nowrap">
+    <i class="fa-solid fa-wand-magic-sparkles"></i><span class="hidden sm:inline">AI Magic</span>
+  </button>
+
+  <!-- Theme Toggle -->
+  <button onclick="toggleTheme()" id="themeBtn" class="w-[30px] h-[30px] grid place-items-center bg-gray-100 dark:bg-[#0e0e1c] border border-gray-200 dark:border-white/[.07] rounded-lg text-gray-400 dark:text-gray-500 text-xs hover:text-gray-700 dark:hover:text-gray-200 transition-all duration-150">
+    <i class="fa-solid fa-moon"></i>
+  </button>
+
+  <!-- Avatar -->
+  <div class="w-7 h-7 rounded-full bg-gradient-to-br from-accent-pink to-brand grid place-items-center text-[11px] font-extrabold text-white shrink-0">RS</div>
+</nav>
+
+<!-- Tab button active styles (injected via Tailwind @apply isn't available, so we use a small style block) -->
+<style>
+  .tab-btn{color:#78789e;}
+  .dark .tab-btn{color:#78789e;}
+  .tab-btn.on{background:#fff;color:#0f0f1a;box-shadow:0 1px 4px rgba(0,0,0,.1);}
+  .dark .tab-btn.on{background:#121220;color:#ededf8;box-shadow:0 1px 4px rgba(0,0,0,.4);}
+  .tab-btn:hover:not(.on){color:#333;background:#e5e7eb;}
+  .dark .tab-btn:hover:not(.on){color:#ededf8;background:#171728;}
+  .scrollbar-hide{-ms-overflow-style:none;scrollbar-width:none;}
+  .scrollbar-hide::-webkit-scrollbar{display:none;}
+</style>
+
+<!-- ════════════════════════ EDITOR PANEL ════════════════════════ -->
+<div class="panel on" id="panel-editor">
+  <div id="editorLayout" class="grid grid-cols-1 lg:grid-cols-[210px_1fr_248px] xl:grid-cols-[220px_1fr_260px]" style="height:calc(100vh - 186px);min-height:500px;overflow:hidden;">
+
+    <!-- ── LEFT SIDEBAR ── -->
+    <div id="lPanel" class="hidden lg:block bg-white dark:bg-[#121220] border-r border-gray-200 dark:border-white/[.07] overflow-y-auto p-3">
+      <div class="text-[10px] font-extrabold uppercase tracking-[1.2px] text-gray-400 dark:text-gray-600 mb-2 px-1">Sections</div>
+
+      <div class="si on flex items-center gap-2 px-2.5 py-[7px] rounded-lg cursor-pointer text-[12.5px] font-medium transition-all duration-150 mb-0.5" onclick="goSec('summary',this)">
+        <i class="fa-solid fa-user text-[11px] w-3.5 text-center"></i>Header & Summary<i class="fa-solid fa-grip-vertical ml-auto text-[9px] text-gray-400 dark:text-gray-600"></i>
+      </div>
+      <div class="si flex items-center gap-2 px-2.5 py-[7px] rounded-lg cursor-pointer text-[12.5px] font-medium transition-all duration-150 mb-0.5" onclick="goSec('experience',this)">
+        <i class="fa-solid fa-briefcase text-[11px] w-3.5 text-center"></i>Experience<i class="fa-solid fa-grip-vertical ml-auto text-[9px] text-gray-400 dark:text-gray-600"></i>
+      </div>
+      <div class="si flex items-center gap-2 px-2.5 py-[7px] rounded-lg cursor-pointer text-[12.5px] font-medium transition-all duration-150 mb-0.5" onclick="goSec('projects',this)">
+        <i class="fa-solid fa-code-branch text-[11px] w-3.5 text-center"></i>Projects<i class="fa-solid fa-grip-vertical ml-auto text-[9px] text-gray-400 dark:text-gray-600"></i>
+      </div>
+      <div class="si flex items-center gap-2 px-2.5 py-[7px] rounded-lg cursor-pointer text-[12.5px] font-medium transition-all duration-150 mb-0.5" onclick="goSec('skills',this)">
+        <i class="fa-solid fa-star text-[11px] w-3.5 text-center"></i>Skills<i class="fa-solid fa-grip-vertical ml-auto text-[9px] text-gray-400 dark:text-gray-600"></i>
+      </div>
+      <div class="si flex items-center gap-2 px-2.5 py-[7px] rounded-lg cursor-pointer text-[12.5px] font-medium transition-all duration-150 mb-0.5" onclick="goSec('education',this)">
+        <i class="fa-solid fa-graduation-cap text-[11px] w-3.5 text-center"></i>Education<i class="fa-solid fa-grip-vertical ml-auto text-[9px] text-gray-400 dark:text-gray-600"></i>
+      </div>
+      <div class="si flex items-center gap-2 px-2.5 py-[7px] rounded-lg cursor-pointer text-[12.5px] font-medium transition-all duration-150 mb-0.5" onclick="goSec('certifications',this)">
+        <i class="fa-solid fa-certificate text-[11px] w-3.5 text-center"></i>Certifications<i class="fa-solid fa-grip-vertical ml-auto text-[9px] text-gray-400 dark:text-gray-600"></i>
+      </div>
+
+      <div class="h-px bg-gray-200 dark:bg-white/[.07] my-3"></div>
+
+      <div class="text-[10px] font-extrabold uppercase tracking-[1.2px] text-gray-400 dark:text-gray-600 mb-2 px-1">AI Actions</div>
+      <button class="chip flex items-center justify-center gap-1.5 w-full px-2.5 py-[7px] rounded-lg text-[11.5px] font-bold text-brand cursor-pointer mb-1.5 bg-gradient-to-br from-brand/10 to-accent-blue/10 border border-brand/20 hover:from-brand/20 hover:to-accent-blue/20 hover:-translate-y-px transition-all duration-150" onclick="openAI()">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>Tailor to Job Description
+      </button>
+      <button class="chip flex items-center justify-center gap-1.5 w-full px-2.5 py-[7px] rounded-lg text-[11.5px] font-bold text-brand cursor-pointer mb-1.5 bg-gradient-to-br from-brand/10 to-accent-blue/10 border border-brand/20 hover:from-brand/20 hover:to-accent-blue/20 hover:-translate-y-px transition-all duration-150" onclick="openRoast()">
+        <i class="fa-solid fa-fire"></i>Roast My Resume
+      </button>
+      <button class="chip flex items-center justify-center gap-1.5 w-full px-2.5 py-[7px] rounded-lg text-[11.5px] font-bold text-brand cursor-pointer mb-1.5 bg-gradient-to-br from-brand/10 to-accent-blue/10 border border-brand/20 hover:from-brand/20 hover:to-accent-blue/20 hover:-translate-y-px transition-all duration-150" onclick="aiRewrite()">
+        <i class="fa-solid fa-rotate"></i>Rewrite Summary
+      </button>
+
+      <div class="h-px bg-gray-200 dark:bg-white/[.07] my-3"></div>
+
+      <div class="text-[10px] font-extrabold uppercase tracking-[1.2px] text-gray-400 dark:text-gray-600 mb-2 px-1">Shortcuts</div>
+      <div class="text-[11px] text-gray-400 dark:text-gray-500 leading-loose px-1">
+        <span class="inline-flex items-center px-1.5 py-0.5 bg-gray-100 dark:bg-[#171728] border border-gray-200 dark:border-white/10 rounded text-[10px] font-mono">⌘S</span> Save&ensp;
+        <span class="inline-flex items-center px-1.5 py-0.5 bg-gray-100 dark:bg-[#171728] border border-gray-200 dark:border-white/10 rounded text-[10px] font-mono">⌘E</span> Export<br>
+        <span class="inline-flex items-center px-1.5 py-0.5 bg-gray-100 dark:bg-[#171728] border border-gray-200 dark:border-white/10 rounded text-[10px] font-mono">⌘P</span> Print&ensp;
+        <span class="inline-flex items-center px-1.5 py-0.5 bg-gray-100 dark:bg-[#171728] border border-gray-200 dark:border-white/10 rounded text-[10px] font-mono">Esc</span> Close
+      </div>
+    </div>
+
+    <!-- ── CENTER: LIVE PREVIEW ── -->
+    <div id="cPanel" class="overflow-y-auto bg-gray-100 dark:bg-[#0e0e1c] flex flex-col items-center p-3 sm:p-4 gap-3">
+      <!-- Toolbar above preview -->
+      <div class="flex items-center gap-2 bg-white dark:bg-[#121220] border border-gray-200 dark:border-white/[.07] rounded-lg px-3 py-1.5 w-full max-w-[720px] flex-wrap">
+        <span class="text-[11.5px] text-gray-400 dark:text-gray-500 font-semibold flex-1 min-w-[80px]" id="tplLabel">Template: <strong class="text-gray-700 dark:text-gray-200">Classic Ivy</strong></span>
+        <button class="flex items-center gap-1 px-2.5 py-1.5 bg-gray-100 dark:bg-[#0e0e1c] border border-gray-200 dark:border-white/[.07] rounded-md text-[11.5px] font-semibold text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#171728] hover:text-gray-700 dark:hover:text-gray-200 transition-all duration-150 whitespace-nowrap" onclick="switchTab('templates')">
+          <i class="fa-solid fa-layer-group"></i> Change
+        </button>
+        <button class="flex items-center gap-1 px-2.5 py-1.5 bg-gradient-to-br from-brand to-accent-blue text-white rounded-md text-[11.5px] font-semibold hover:brightness-110 transition-all duration-150 whitespace-nowrap" onclick="doDownload()">
+          <i class="fa-solid fa-download"></i> PDF
+        </button>
+      </div>
+
+      <!-- Resume Document Container -->
+      <div id="rdocWrap" class="w-full max-w-[720px] bg-white rounded-lg shadow-2xl overflow-hidden" style="min-height:800px;">
+        <div id="rdoc" class="t1" style="--tc:#7b0000;"></div>
+      </div>
+    </div>
+
+    <!-- ── RIGHT SIDEBAR ── -->
+    <div id="rPanel" class="hidden xl:block bg-white dark:bg-[#121220] border-l border-gray-200 dark:border-white/[.07] overflow-y-auto p-3">
+      <!-- Mini Score -->
+      <div class="bg-gray-50 dark:bg-[#0e0e1c] border border-gray-200 dark:border-white/[.07] rounded-xl p-3.5 text-center mb-3.5">
+        <div class="relative w-[72px] h-[72px] mx-auto mb-2">
+          <svg width="72" height="72" viewBox="0 0 72 72">
+            <circle cx="36" cy="36" r="28" fill="none" stroke="#e5e7eb" class="dark:stroke-[#171728]" stroke-width="5.5"/>
+            <circle cx="36" cy="36" r="28" fill="none" stroke="#6c5ce7" stroke-width="5.5"
+              stroke-dasharray="176" id="miniCirc" stroke-dashoffset="43" stroke-linecap="round"/>
+          </svg>
+          <div class="absolute inset-0 flex items-center justify-center text-[19px] font-extrabold text-gray-900 dark:text-gray-100" id="miniVal">76</div>
+        </div>
+        <div class="text-[11px] font-bold text-gray-500 dark:text-gray-400">Resume Score</div>
+        <button class="w-full mt-2 flex items-center justify-center gap-1 px-2 py-1.5 bg-gray-100 dark:bg-[#0e0e1c] border border-gray-200 dark:border-white/[.07] rounded-md text-[11.5px] font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-all duration-150" onclick="switchTab('score')">Full Analysis →</button>
+      </div>
+
+      <!-- Quick Edit -->
+      <div class="mb-3.5">
+        <div class="text-[10px] font-extrabold uppercase tracking-[1.2px] text-gray-400 dark:text-gray-600 mb-2">Quick Edit</div>
+        <label class="text-[10.5px] text-gray-400 dark:text-gray-500 mb-0.5 block">Full Name</label>
+        <input class="w-full bg-gray-50 dark:bg-[#0e0e1c] border border-gray-200 dark:border-white/[.07] rounded-lg px-2.5 py-[7px] text-[12.5px] text-gray-900 dark:text-gray-100 outline-none focus:border-brand transition-colors duration-150 mb-1.5 placeholder:text-gray-400 dark:placeholder:text-gray-600" id="qn" placeholder="Your name" oninput="onQ()">
+        <label class="text-[10.5px] text-gray-400 dark:text-gray-500 mb-0.5 block">Job Title</label>
+        <input class="w-full bg-gray-50 dark:bg-[#0e0e1c] border border-gray-200 dark:border-white/[.07] rounded-lg px-2.5 py-[7px] text-[12.5px] text-gray-900 dark:text-gray-100 outline-none focus:border-brand transition-colors duration-150 mb-1.5 placeholder:text-gray-400 dark:placeholder:text-gray-600" id="qt" placeholder="Your title" oninput="onQ()">
+        <label class="text-[10.5px] text-gray-400 dark:text-gray-500 mb-0.5 block">Email</label>
+        <input class="w-full bg-gray-50 dark:bg-[#0e0e1c] border border-gray-200 dark:border-white/[.07] rounded-lg px-2.5 py-[7px] text-[12.5px] text-gray-900 dark:text-gray-100 outline-none focus:border-brand transition-colors duration-150 mb-1.5 placeholder:text-gray-400 dark:placeholder:text-gray-600" id="qe" placeholder="email@example.com" oninput="onQ()">
+        <label class="text-[10.5px] text-gray-400 dark:text-gray-500 mb-0.5 block">Phone</label>
+        <input class="w-full bg-gray-50 dark:bg-[#0e0e1c] border border-gray-200 dark:border-white/[.07] rounded-lg px-2.5 py-[7px] text-[12.5px] text-gray-900 dark:text-gray-100 outline-none focus:border-brand transition-colors duration-150 mb-1.5 placeholder:text-gray-400 dark:placeholder:text-gray-600" id="qp" placeholder="+91 xxxxx xxxxx" oninput="onQ()">
+        <label class="text-[10.5px] text-gray-400 dark:text-gray-500 mb-0.5 block">Location</label>
+        <input class="w-full bg-gray-50 dark:bg-[#0e0e1c] border border-gray-200 dark:border-white/[.07] rounded-lg px-2.5 py-[7px] text-[12.5px] text-gray-900 dark:text-gray-100 outline-none focus:border-brand transition-colors duration-150 mb-1.5 placeholder:text-gray-400 dark:placeholder:text-gray-600" id="ql" placeholder="City, Country" oninput="onQ()">
+      </div>
+
+      <!-- AI Tools -->
+      <div class="text-[10px] font-extrabold uppercase tracking-[1.2px] text-gray-400 dark:text-gray-600 mb-2">AI Tools</div>
+      <button class="chip flex items-center justify-center gap-1.5 w-full px-2.5 py-[7px] rounded-lg text-[11.5px] font-bold text-brand cursor-pointer mb-1.5 bg-gradient-to-br from-brand/10 to-accent-blue/10 border border-brand/20 hover:from-brand/20 hover:to-accent-blue/20 hover:-translate-y-px transition-all duration-150" onclick="aiRewrite()"><i class="fa-solid fa-wand-magic-sparkles"></i>Rewrite Summary</button>
+      <button class="chip flex items-center justify-center gap-1.5 w-full px-2.5 py-[7px] rounded-lg text-[11.5px] font-bold text-brand cursor-pointer mb-1.5 bg-gradient-to-br from-brand/10 to-accent-blue/10 border border-brand/20 hover:from-brand/20 hover:to-accent-blue/20 hover:-translate-y-px transition-all duration-150" onclick="aiBullets()"><i class="fa-solid fa-bolt-lightning"></i>Enhance Bullets</button>
+      <button class="chip flex items-center justify-center gap-1.5 w-full px-2.5 py-[7px] rounded-lg text-[11.5px] font-bold text-brand cursor-pointer mb-1.5 bg-gradient-to-br from-brand/10 to-accent-blue/10 border border-brand/20 hover:from-brand/20 hover:to-accent-blue/20 hover:-translate-y-px transition-all duration-150" onclick="aiKeywords()"><i class="fa-solid fa-key"></i>Optimize Keywords</button>
+
+      <div class="h-px bg-gray-200 dark:bg-white/[.07] my-3"></div>
+
+      <div class="text-[10px] font-extrabold uppercase tracking-[1.2px] text-gray-400 dark:text-gray-600 mb-2">Add Section</div>
+      <button class="w-full flex items-center justify-center gap-1.5 px-2.5 py-[7px] rounded-lg text-[11.5px] font-bold text-emerald-500 cursor-pointer mb-1.5 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition-all duration-150" onclick="addExperience()"><i class="fa-solid fa-plus"></i>Add Experience</button>
+      <button class="w-full flex items-center justify-center gap-1.5 px-2.5 py-[7px] rounded-lg text-[11.5px] font-bold text-sky-500 cursor-pointer mb-1.5 bg-sky-500/10 border border-sky-500/20 hover:bg-sky-500/20 transition-all duration-150" onclick="addProject()"><i class="fa-solid fa-plus"></i>Add Project</button>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Action Bar -->
+  <div id="mobBar" class="flex lg:hidden flex-wrap gap-2 p-2.5 bg-white dark:bg-[#121220] border-t border-gray-200 dark:border-white/[.07]">
+    <button class="flex-1 flex items-center justify-center gap-1 px-2.5 py-2 bg-gradient-to-br from-brand to-accent-blue text-white rounded-lg text-xs font-semibold" onclick="doDownload()"><i class="fa-solid fa-download"></i> PDF</button>
+    <button class="flex-1 flex items-center justify-center gap-1 px-2.5 py-2 bg-gray-100 dark:bg-[#0e0e1c] border border-gray-200 dark:border-white/[.07] rounded-lg text-xs font-semibold text-gray-500 dark:text-gray-400" onclick="switchTab('templates')"><i class="fa-solid fa-layer-group"></i> Templates</button>
+    <button class="flex-1 flex items-center justify-center gap-1 px-2.5 py-2 bg-gray-100 dark:bg-[#0e0e1c] border border-gray-200 dark:border-white/[.07] rounded-lg text-xs font-semibold text-gray-500 dark:text-gray-400" onclick="openAI()"><i class="fa-solid fa-wand-magic-sparkles"></i> AI</button>
+  </div>
+</div>
+
+<!-- Left sidebar active styles -->
+<style>
+  .si{color:#78789e;}
+  .si:hover{background:#f3f4f6;color:#333;}
+  .dark .si:hover{background:#0e0e1c;color:#ededf8;}
+  .si.on{background:#f3f4f6;color:#6c5ce7;border:1px solid #e5e7eb;}
+  .dark .si.on{background:#0e0e1c;color:#6c5ce7;border:1px solid rgba(255,255,255,.07);}
+  .si:not(.on){border:1px solid transparent;}
+  @media(max-width:1279px){#rPanel{display:none!important;}}
+  @media(max-width:1023px){
+    #lPanel{display:none!important;}
+    #editorLayout{grid-template-columns:1fr!important;height:auto!important;min-height:auto!important;}
+    #cPanel{padding:12px 10px;}
+    #rdocWrap{max-width:100%;min-height:auto;}
+  }
+</style>
+
+<!-- ════════════════════════ TEMPLATES PANEL ════════════════════════ -->
+<div class="panel hidden" id="panel-templates">
+  <div class="p-4 sm:p-5 overflow-y-auto" style="max-height:calc(100vh - 186px);">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h2 class="text-[17px] font-extrabold text-gray-900 dark:text-gray-100">Choose Template</h2>
+        <p class="text-[12.5px] text-gray-500 dark:text-gray-400 mt-0.5">10 premium templates, all ATS-optimized. Click any to apply instantly.</p>
+      </div>
+    </div>
+    <div id="tplGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════ SCORE & ATS PANEL ════════════════════════ -->
+<div class="panel hidden" id="panel-score">
+  <div class="p-4 sm:p-5 overflow-y-auto" style="max-height:calc(100vh - 186px);">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h2 class="text-[17px] font-extrabold text-gray-900 dark:text-gray-100">Score & ATS Analysis</h2>
+        <p class="text-[12.5px] text-gray-500 dark:text-gray-400 mt-0.5">Live feedback to help your resume stand out.</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-[260px_1fr] gap-4 mb-5">
+      <!-- Big Score Circle -->
+      <div class="bg-white dark:bg-[#121220] border border-gray-200 dark:border-white/[.07] rounded-2xl p-6 text-center flex flex-col items-center">
+        <div class="relative w-[140px] h-[140px] mb-3">
+          <svg width="140" height="140" viewBox="0 0 140 140">
+            <circle cx="70" cy="70" r="58" fill="none" stroke="#e5e7eb" class="dark:stroke-[#171728]" stroke-width="9"/>
+            <circle cx="70" cy="70" r="58" fill="none" stroke="url(#sg)" stroke-width="9"
+              stroke-dasharray="364" id="bigCirc" stroke-dashoffset="87" stroke-linecap="round" style="transition:stroke-dashoffset .8s cubic-bezier(.4,0,.2,1);"/>
+            <defs><linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color:#6c5ce7"/><stop offset="100%" style="stop-color:#4a8ae8"/>
+            </linearGradient></defs>
+          </svg>
+          <div class="absolute inset-0 flex flex-col items-center justify-center">
+            <div class="text-4xl font-extrabold text-gray-900 dark:text-gray-100 leading-none" id="bigN">76</div>
+            <div class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 mt-0.5">Overall</div>
+          </div>
+        </div>
+        <div class="text-[12.5px] font-bold px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 mb-2.5" id="scoreGrade">★ Great — Top 22%</div>
+        <div class="text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-[#0e0e1c] border border-gray-200 dark:border-white/[.07] rounded-lg p-2.5 w-full text-left" id="scoreBench">Beats <strong class="text-brand">78%</strong> of resumes in Software Engineering roles.</div>
+        <button class="chip flex items-center justify-center gap-1.5 w-full px-2.5 py-[7px] rounded-lg text-[11.5px] font-bold text-brand cursor-pointer mt-3 bg-gradient-to-br from-brand/10 to-accent-blue/10 border border-brand/20 hover:from-brand/20 hover:to-accent-blue/20 transition-all duration-150" onclick="refreshScore()"><i class="fa-solid fa-rotate"></i>Refresh Score</button>
+      </div>
+
+      <!-- Score Bars -->
+      <div class="flex flex-col gap-3">
+        <div class="bg-white dark:bg-[#121220] border border-gray-200 dark:border-white/[.07] rounded-lg p-3.5">
+          <div class="flex justify-between items-center mb-2"><div class="text-[12.5px] font-bold text-gray-900 dark:text-gray-100 flex items-center gap-1.5"><i class="fa-solid fa-robot text-brand"></i>ATS Compatibility</div><div class="text-sm font-extrabold text-gray-900 dark:text-gray-100" id="sv-a">82%</div></div>
+          <div class="h-[5px] bg-gray-200 dark:bg-[#171728] rounded-full overflow-hidden"><div class="h-full rounded-full transition-all duration-700" id="sb-a" style="width:82%;background:linear-gradient(90deg,#6c5ce7,#4a8ae8);"></div></div>
+        </div>
+        <div class="bg-white dark:bg-[#121220] border border-gray-200 dark:border-white/[.07] rounded-lg p-3.5">
+          <div class="flex justify-between items-center mb-2"><div class="text-[12.5px] font-bold text-gray-900 dark:text-gray-100 flex items-center gap-1.5"><i class="fa-solid fa-bolt-lightning text-brand"></i>Impact Score</div><div class="text-sm font-extrabold text-gray-900 dark:text-gray-100" id="sv-i">71%</div></div>
+          <div class="h-[5px] bg-gray-200 dark:bg-[#171728] rounded-full overflow-hidden"><div class="h-full rounded-full transition-all duration-700" id="sb-i" style="width:71%;background:linear-gradient(90deg,#e8569a,#f59e0b);"></div></div>
+        </div>
+        <div class="bg-white dark:bg-[#121220] border border-gray-200 dark:border-white/[.07] rounded-lg p-3.5">
+          <div class="flex justify-between items-center mb-2"><div class="text-[12.5px] font-bold text-gray-900 dark:text-gray-100 flex items-center gap-1.5"><i class="fa-solid fa-book-open text-brand"></i>Readability</div><div class="text-sm font-extrabold text-gray-900 dark:text-gray-100" id="sv-r">88%</div></div>
+          <div class="h-[5px] bg-gray-200 dark:bg-[#171728] rounded-full overflow-hidden"><div class="h-full rounded-full transition-all duration-700" id="sb-r" style="width:88%;background:linear-gradient(90deg,#36d48a,#22d3ee);"></div></div>
+        </div>
+        <div class="bg-white dark:bg-[#121220] border border-gray-200 dark:border-white/[.07] rounded-lg p-3.5">
+          <div class="flex justify-between items-center mb-2"><div class="text-[12.5px] font-bold text-gray-900 dark:text-gray-100 flex items-center gap-1.5"><i class="fa-solid fa-layer-group text-brand"></i>Content Depth</div><div class="text-sm font-extrabold text-gray-900 dark:text-gray-100" id="sv-d">65%</div></div>
+          <div class="h-[5px] bg-gray-200 dark:bg-[#171728] rounded-full overflow-hidden"><div class="h-full rounded-full transition-all duration-700" id="sb-d" style="width:65%;background:linear-gradient(90deg,#f59e0b,#ef6060);"></div></div>
+        </div>
+        <div class="bg-white dark:bg-[#121220] border border-gray-200 dark:border-white/[.07] rounded-lg p-3.5">
+          <div class="flex justify-between items-center mb-2"><div class="text-[12.5px] font-bold text-gray-900 dark:text-gray-100 flex items-center gap-1.5"><i class="fa-solid fa-ruler text-brand"></i>Format & Length</div><div class="text-sm font-extrabold text-gray-900 dark:text-gray-100" id="sv-f">90%</div></div>
+          <div class="h-[5px] bg-gray-200 dark:bg-[#171728] rounded-full overflow-hidden"><div class="h-full rounded-full transition-all duration-700" id="sb-f" style="width:90%;background:linear-gradient(90deg,#36d48a,#6c5ce7);"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-[10px] font-extrabold uppercase tracking-[1.2px] text-gray-400 dark:text-gray-600 mb-3">Actionable Recommendations</div>
+    <div id="tipsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════ EXPORT PANEL ════════════════════════ -->
+<div class="panel hidden" id="panel-export">
+  <div class="p-4 sm:p-5 overflow-y-auto" style="max-height:calc(100vh - 186px);">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h2 class="text-[17px] font-extrabold text-gray-900 dark:text-gray-100">Export Resume</h2>
+        <p class="text-[12.5px] text-gray-500 dark:text-gray-400 mt-0.5">PDF is recommended for all job applications.</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+      <!-- PDF -->
+      <div class="bg-white dark:bg-[#121220] border border-gray-200 dark:border-white/[.07] rounded-xl p-5 flex flex-col items-start gap-2 hover:border-gray-300 dark:hover:border-white/[.14] hover:shadow-lg transition-all duration-150">
+        <div class="w-11 h-11 rounded-lg grid place-items-center text-lg bg-red-500/10 text-red-500"><i class="fa-solid fa-file-pdf"></i></div>
+        <div class="text-sm font-bold text-gray-900 dark:text-gray-100">Download PDF</div>
+        <div class="text-[11.5px] text-gray-500 dark:text-gray-400 leading-relaxed">Best for applications. Preserves exact formatting, fully ATS-compatible.</div>
+        <button class="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-[12.5px] font-bold bg-red-500 text-white hover:-translate-y-px transition-all duration-150" onclick="doDownload()"><i class="fa-solid fa-download"></i> Download PDF</button>
+      </div>
+      <!-- Word -->
+      <div class="bg-white dark:bg-[#121220] border border-gray-200 dark:border-white/[.07] rounded-xl p-5 flex flex-col items-start gap-2 hover:border-gray-300 dark:hover:border-white/[.14] hover:shadow-lg transition-all duration-150">
+        <div class="w-11 h-11 rounded-lg grid place-items-center text-lg bg-blue-500/10 text-blue-500"><i class="fa-solid fa-file-word"></i></div>
+        <div class="text-sm font-bold text-gray-900 dark:text-gray-100">Download Word</div>
+        <div class="text-[11.5px] text-gray-500 dark:text-gray-400 leading-relaxed">DOCX format for editing in Microsoft Word or Google Docs.</div>
+        <button class="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-[12.5px] font-bold bg-blue-500 text-white hover:-translate-y-px transition-all duration-150" onclick="downloadWord()"><i class="fa-solid fa-download"></i> Download .docx</button>
+      </div>
+      <!-- Copy Text -->
+      <div class="bg-white dark:bg-[#121220] border border-gray-200 dark:border-white/[.07] rounded-xl p-5 flex flex-col items-start gap-2 hover:border-gray-300 dark:hover:border-white/[.14] hover:shadow-lg transition-all duration-150">
+        <div class="w-11 h-11 rounded-lg grid place-items-center text-lg bg-sky-500/10 text-sky-500"><i class="fa-solid fa-clipboard-list"></i></div>
+        <div class="text-sm font-bold text-gray-900 dark:text-gray-100">Copy Plain Text</div>
+        <div class="text-[11.5px] text-gray-500 dark:text-gray-400 leading-relaxed">Clean text for pasting into online portals and email applications.</div>
+        <button class="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-[12.5px] font-bold bg-sky-500 text-white hover:-translate-y-px transition-all duration-150" onclick="copyTxt()"><i class="fa-solid fa-copy"></i> Copy Text</button>
+      </div>
+      <!-- Print -->
+      <div class="bg-white dark:bg-[#121220] border border-gray-200 dark:border-white/[.07] rounded-xl p-5 flex flex-col items-start gap-2 hover:border-gray-300 dark:hover:border-white/[.14] hover:shadow-lg transition-all duration-150">
+        <div class="w-11 h-11 rounded-lg grid place-items-center text-lg bg-emerald-500/10 text-emerald-500"><i class="fa-solid fa-print"></i></div>
+        <div class="text-sm font-bold text-gray-900 dark:text-gray-100">Print Resume</div>
+        <div class="text-[11.5px] text-gray-500 dark:text-gray-400 leading-relaxed">Open browser print dialog. Select "Save as PDF" for a local copy.</div>
+        <button class="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-[12.5px] font-bold bg-emerald-500 text-gray-900 hover:-translate-y-px transition-all duration-150" onclick="window.print()"><i class="fa-solid fa-print"></i> Print</button>
+      </div>
+    </div>
+
+    <!-- Export Settings -->
+    <div class="mt-5 bg-white dark:bg-[#121220] border border-gray-200 dark:border-white/[.07] rounded-xl p-4">
+      <div class="text-[10px] font-extrabold uppercase tracking-[1.2px] text-gray-400 dark:text-gray-600 mb-3">Export Settings</div>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div>
+          <label class="text-[10.5px] text-gray-400 dark:text-gray-500 mb-1 block">Paper Size</label>
+          <select class="w-full bg-gray-50 dark:bg-[#0e0e1c] border border-gray-200 dark:border-white/[.07] rounded-lg px-2.5 py-[7px] text-[12.5px] text-gray-900 dark:text-gray-100 outline-none">
+            <option>A4 (210x297mm)</option><option>Letter (216x279mm)</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-[10.5px] text-gray-400 dark:text-gray-500 mb-1 block">Orientation</label>
+          <select class="w-full bg-gray-50 dark:bg-[#0e0e1c] border border-gray-200 dark:border-white/[.07] rounded-lg px-2.5 py-[7px] text-[12.5px] text-gray-900 dark:text-gray-100 outline-none">
+            <option>Portrait</option><option>Landscape</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-[10.5px] text-gray-400 dark:text-gray-500 mb-1 block">Margins</label>
+          <select class="w-full bg-gray-50 dark:bg-[#0e0e1c] border border-gray-200 dark:border-white/[.07] rounded-lg px-2.5 py-[7px] text-[12.5px] text-gray-900 dark:text-gray-100 outline-none">
+            <option>Normal (20mm)</option><option>Narrow (12mm)</option><option>Wide (28mm)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /#appWrap -->
+</main>
+
+<!-- ════════════════════════ AI TAILOR MODAL ════════════════════════ -->
+<div class="fixed inset-0 bg-black/75 backdrop-blur-sm z-[9000] hidden place-items-center p-5" id="aiModal" onclick="if(event.target===this)closeM('aiModal')">
+  <div class="modal-anim bg-white dark:bg-[#121220] border border-gray-200 dark:border-white/[.14] rounded-2xl w-full max-w-[540px] shadow-2xl overflow-hidden">
+    <div class="px-5 py-4 border-b border-gray-200 dark:border-white/[.07] flex items-center justify-between">
+      <div class="text-[14.5px] font-extrabold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+        <i class="fa-solid fa-wand-magic-sparkles text-brand"></i>Tailor to Job Description
+      </div>
+      <button class="w-[26px] h-[26px] bg-gray-100 dark:bg-[#0e0e1c] rounded-md grid place-items-center text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-200 transition-all duration-150" onclick="closeM('aiModal')"><i class="fa-solid fa-xmark text-xs"></i></button>
+    </div>
+    <div class="px-5 py-4">
+      <p class="text-[12.5px] text-gray-500 dark:text-gray-400 mb-2.5 leading-relaxed">Paste a job description. AI will rewrite your summary and boost bullet points to match the role perfectly.</p>
+      <textarea id="jdTxt" class="w-full bg-gray-50 dark:bg-[#0e0e1c] border border-gray-200 dark:border-white/[.07] rounded-lg p-3 text-[12.5px] text-gray-900 dark:text-gray-100 resize-y min-h-[120px] outline-none focus:border-brand transition-colors duration-150 placeholder:text-gray-400 dark:placeholder:text-gray-600" placeholder="Paste job description here..." rows="6"></textarea>
+      <div id="aiRes" class="hidden mt-3 bg-gradient-to-br from-brand/[.07] to-accent-blue/[.07] border border-brand/20 rounded-lg p-3.5 text-xs text-gray-500 dark:text-gray-400 leading-relaxed whitespace-pre-wrap"></div>
+    </div>
+    <div class="px-5 py-3 border-t border-gray-200 dark:border-white/[.07] flex justify-end gap-2">
+      <button class="px-3.5 py-2 bg-gray-100 dark:bg-[#0e0e1c] border border-gray-200 dark:border-white/[.07] rounded-lg text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-all duration-150" onclick="closeM('aiModal')">Cancel</button>
+      <button id="aiBtn" class="px-3.5 py-2 bg-gradient-to-br from-brand to-accent-blue text-white rounded-lg text-xs font-bold hover:brightness-110 transition-all duration-150 flex items-center gap-1.5" onclick="runAI()"><i class="fa-solid fa-wand-magic-sparkles"></i> Tailor Resume</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════ ROAST MODAL ════════════════════════ -->
+<div class="fixed inset-0 bg-black/75 backdrop-blur-sm z-[9000] hidden place-items-center p-5" id="roastModal" onclick="if(event.target===this)closeM('roastModal')">
+  <div class="modal-anim bg-white dark:bg-[#121220] border border-gray-200 dark:border-white/[.14] rounded-2xl w-full max-w-[540px] shadow-2xl overflow-hidden">
+    <div class="px-5 py-4 border-b border-gray-200 dark:border-white/[.07] flex items-center justify-between">
+      <div class="text-[14.5px] font-extrabold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+        <i class="fa-solid fa-fire text-pink-500"></i>Roast My Resume
+      </div>
+      <button class="w-[26px] h-[26px] bg-gray-100 dark:bg-[#0e0e1c] rounded-md grid place-items-center text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-200 transition-all duration-150" onclick="closeM('roastModal')"><i class="fa-solid fa-xmark text-xs"></i></button>
+    </div>
+    <div class="px-5 py-4" id="roastB"></div>
+    <div class="px-5 py-3 border-t border-gray-200 dark:border-white/[.07] flex justify-end">
+      <button class="px-3.5 py-2 bg-gradient-to-br from-brand to-accent-blue text-white rounded-lg text-xs font-bold hover:brightness-110 transition-all duration-150" onclick="closeM('roastModal')">Got it, thanks!</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════ IMPROVE BULLET MODAL ════════════════════════ -->
+<div class="fixed inset-0 bg-black/75 backdrop-blur-sm z-[9000] hidden place-items-center p-5" id="bulletModal" onclick="if(event.target===this)closeM('bulletModal')">
+  <div class="modal-anim bg-white dark:bg-[#121220] border border-gray-200 dark:border-white/[.14] rounded-2xl w-full max-w-[540px] shadow-2xl overflow-hidden">
+    <div class="px-5 py-4 border-b border-gray-200 dark:border-white/[.07] flex items-center justify-between">
+      <div class="text-[14.5px] font-extrabold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+        <i class="fa-solid fa-bolt-lightning text-amber-400"></i>Improve Bullet
+      </div>
+      <button class="w-[26px] h-[26px] bg-gray-100 dark:bg-[#0e0e1c] rounded-md grid place-items-center text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-200 transition-all duration-150" onclick="closeM('bulletModal')"><i class="fa-solid fa-xmark text-xs"></i></button>
+    </div>
+    <div class="px-5 py-4">
+      <p class="text-[12.5px] text-gray-500 dark:text-gray-400 mb-2 leading-relaxed">AI will enhance this bullet with stronger action verbs, metrics, and ATS keywords.</p>
+      <textarea id="bulletTxt" class="w-full bg-gray-50 dark:bg-[#0e0e1c] border border-gray-200 dark:border-white/[.07] rounded-lg p-3 text-[12.5px] text-gray-900 dark:text-gray-100 resize-y min-h-[80px] outline-none focus:border-brand transition-colors" placeholder="Paste a bullet point..." rows="3"></textarea>
+      <div id="bulletRes" class="hidden mt-3 bg-gradient-to-br from-brand/[.07] to-accent-blue/[.07] border border-brand/20 rounded-lg p-3.5 text-xs text-gray-500 dark:text-gray-400 leading-relaxed whitespace-pre-wrap"></div>
+    </div>
+    <div class="px-5 py-3 border-t border-gray-200 dark:border-white/[.07] flex justify-end gap-2">
+      <button class="px-3.5 py-2 bg-gray-100 dark:bg-[#0e0e1c] border border-gray-200 dark:border-white/[.07] rounded-lg text-xs font-semibold text-gray-500 dark:text-gray-400" onclick="closeM('bulletModal')">Cancel</button>
+      <button class="px-3.5 py-2 bg-gradient-to-br from-brand to-accent-blue text-white rounded-lg text-xs font-bold hover:brightness-110 transition-all duration-150 flex items-center gap-1.5" onclick="improveBullet()"><i class="fa-solid fa-bolt-lightning"></i> Improve</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════ TOAST ════════════════════════ -->
+<div id="toast" class="fixed bottom-4 right-4 bg-white dark:bg-[#1a1a2e] border border-gray-200 dark:border-white/[.14] rounded-lg px-3.5 py-2.5 text-[12.5px] font-semibold text-gray-900 dark:text-gray-100 shadow-xl z-[9999] flex items-center gap-1.5 max-w-[270px] translate-y-[68px] opacity-0 transition-all duration-300">
+  <i class="fa-solid fa-check-circle text-emerald-500"></i>
+  <span id="toastTxt">Done!</span>
+</div>
+
+<!-- Site footer placeholder -->
+<div id="site-footer"></div>
+<div id="menuOverlay" class="overlay" hidden></div>
+<aside id="mobileMenu" class="offcanvas" aria-label="Mobile menu" hidden>
+  <div class="offcanvas-head">
+    <div class="offcanvas-title">Menu</div>
+    <button id="closeMenuBtn" class="icon-btn" type="button" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <nav class="offcanvas-nav" aria-label="Mobile primary"></nav>
+</aside>
+<script src="script.js"></script>
+
+<!-- ════════════════════════════════════════════════════════════════════
+     RESUME/CV MAKER BY TOPSARKARI.COM
+     Complete Application — State, Rendering, Tabs, Templates, Score, Export
+     ════════════════════════════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+/* ══════════════════════════════════════════
+   STATE — Pre-filled FAANG-level sample data
+   ══════════════════════════════════════════ */
+const S = {
+  name:'Priya Sharma', title:'Senior Software Engineer',
+  email:'priya.sharma@gmail.com', phone:'+91 98765 43210',
+  location:'Bengaluru, India', linkedin:'linkedin.com/in/priyasharma', github:'github.com/priya-dev',
+  summary:'Results-driven Senior Software Engineer with 6+ years building high-scale distributed systems. Led teams of 8 engineers, reduced API latency by 40%, and shipped features used by 50M+ users. Passionate about clean architecture, developer experience, and mentoring engineers.',
+  experience:[
+    { title:'Senior Software Engineer', company:'Infosys Ltd.', loc:'Bengaluru', from:'Jan 2021', to:'Present',
+      bullets:[
+        'Architected microservices platform handling 2M+ requests/day, reducing P99 latency from 800ms to 120ms',
+        'Led migration of Java monolith to Node.js, cutting deployment time by 65%',
+        'Mentored 4 junior engineers; team PR rejection rate fell 30% within 6 months',
+        'Built real-time analytics dashboard with React + WebSockets, boosting DAU by 22%'
+      ]
+    },
+    { title:'Software Engineer', company:'TCS Digital', loc:'Pune', from:'Aug 2018', to:'Dec 2020',
+      bullets:[
+        'Developed REST APIs serving 500K daily active users with 99.95% uptime SLA',
+        'Implemented Redis caching layer reducing database load by 70%',
+        'Delivered 3 major product launches working with cross-functional teams of 20+'
+      ]
+    }
+  ],
+  projects:[
+    { name:'SmartATS — Resume Parser', tech:'Python · FastAPI · NLP · React',
+      bullets:['Built ML-powered ATS resume parser with 94% accuracy on 50K test resumes','Open-sourced with 1.2K GitHub stars in the first month of launch']
+    },
+    { name:'GovAlert — Job Notification Bot', tech:'Node.js · Telegram API · MongoDB',
+      bullets:['Automated Sarkari job alert system serving 80K+ subscribers daily','Reduced average notification delay from 4 hours to under 3 minutes']
+    }
+  ],
+  skills:{ lang:['Python','JavaScript','TypeScript','Java','SQL'], fw:['React','Node.js','FastAPI','Spring Boot','Next.js'], tools:['AWS','Docker','Kubernetes','Redis','PostgreSQL','MongoDB'] },
+  education:[{ deg:'B.Tech — Computer Science', school:'NIT Trichy', year:'2018', gpa:'8.7 CGPA' }],
+  certs:[
+    { name:'AWS Certified Solutions Architect', issuer:'Amazon Web Services', year:'2022' },
+    { name:'Google Cloud Professional', issuer:'Google', year:'2023' }
+  ]
+};
+
+/* ══════════════════════════════════════════
+   QUICK EDIT (Right Panel) — Syncs with state
+   ══════════════════════════════════════════ */
+function syncQ() {
+  const g = id => document.getElementById(id);
+  if(g('qn')) g('qn').value = S.name;
+  if(g('qt')) g('qt').value = S.title;
+  if(g('qe')) g('qe').value = S.email;
+  if(g('qp')) g('qp').value = S.phone;
+  if(g('ql')) g('ql').value = S.location;
+}
+function onQ() {
+  S.name     = document.getElementById('qn').value;
+  S.title    = document.getElementById('qt').value;
+  S.email    = document.getElementById('qe').value;
+  S.phone    = document.getElementById('qp').value;
+  S.location = document.getElementById('ql').value;
+  render();
+}
+
+/* ══════════════════════════════════════════
+   10 TEMPLATE DEFINITIONS
+   ══════════════════════════════════════════ */
+const TPLS = [
+  { id:'t1',  name:'Classic Ivy',          desc:'Harvard/Ivy League style',      col:'#7b0000', tag:'Most Prestigious' },
+  { id:'t2',  name:'Executive FAANG',      desc:'Google/Meta engineer style',    col:'#1a1a3e', tag:'FAANG Favourite'  },
+  { id:'t3',  name:'Tech Deep-Dive',       desc:'Terminal/GitHub aesthetic',     col:'#56d364', tag:'Dev Friendly'     },
+  { id:'t4',  name:'Two-Column Pro',       desc:'Sidebar layout, modern',        col:'#1e293b', tag:'Eye-catching'     },
+  { id:'t5',  name:'One-Page ATS',         desc:'Clean, tight one-pager',        col:'#6c5ce7', tag:'ATS Optimized'    },
+  { id:'t6',  name:'Startup Founder',      desc:'Bold, modern, founder-ready',   col:'#059669', tag:'Startup'          },
+  { id:'t7',  name:'Finance / Quant',      desc:'Wall Street & banking style',   col:'#fbbf24', tag:'Finance Ready'    },
+  { id:'t8',  name:'Product Design',       desc:'Gradient header, creative',     col:'#7c3aed', tag:'Stands Out'       },
+  { id:'t9',  name:'Research / Academic',   desc:'Serif, scholarly, classic',     col:'#1a1a3e', tag:'Academic'         },
+  { id:'t10', name:'Government / Sarkari',  desc:'Traditional Indian format',     col:'#1d4ed8', tag:'Sarkari Ready'    },
+];
+
+const COLS = [
+  {n:'Crimson',h:'#7b0000'},{n:'Navy',h:'#1a1a3e'},{n:'Slate',h:'#1e293b'},
+  {n:'Indigo',h:'#6c5ce7'},{n:'Sapphire',h:'#1d4ed8'},{n:'Violet',h:'#7c3aed'},
+  {n:'Gold',h:'#fbbf24'},{n:'Emerald',h:'#059669'},{n:'Terminal',h:'#56d364'},{n:'Steel',h:'#374151'},
+];
+
+let curT = TPLS[0];
+let curC = '#7b0000';
+let isDark = true;
+
+/* ══════════════════════════════════════════
+   HTML BUILDERS — Resume section generators
+   ══════════════════════════════════════════ */
+function co() {
+  return [S.phone,S.email,S.location,S.linkedin].filter(Boolean).map(v=>`<span>${v}</span>`).join('');
+}
+
+function expH(lbl) {
+  return `<div class="rs" id="s-experience">${lbl||'Work Experience'}</div>`+
+    S.experience.map((e,idx)=>`<div class="re"><div class="reh"><div>
+      <div class="ret" contenteditable="true" spellcheck="false" oninput="S.experience[${idx}].title=this.textContent.trim()">${e.title}</div>
+      <div class="rec" contenteditable="true" spellcheck="false" oninput="S.experience[${idx}].company=this.textContent.split('·')[0].trim()">${e.company} · ${e.loc}</div></div>
+      <div class="red" contenteditable="true" spellcheck="false" oninput="let p=this.textContent.split('–');S.experience[${idx}].from=p[0]?.trim()||'';S.experience[${idx}].to=p[1]?.trim()||'';">${e.from}–${e.to}</div></div>
+      <ul class="rb">${e.bullets.map((b,bi)=>`<li contenteditable="true" spellcheck="false" oninput="S.experience[${idx}].bullets[${bi}]=this.textContent.trim()">${b}</li>`).join('')}</ul>
+    </div>`).join('');
+}
+
+function projH(lbl) {
+  return `<div class="rs" id="s-projects">${lbl||'Key Projects'}</div>`+
+    S.projects.map((p,idx)=>`<div class="re"><div class="reh">
+      <div class="ret" contenteditable="true" spellcheck="false" oninput="S.projects[${idx}].name=this.textContent.trim()">${p.name}</div>
+      <div class="red" style="font-size:8pt;" contenteditable="true" spellcheck="false" oninput="S.projects[${idx}].tech=this.textContent.trim()">${p.tech}</div></div>
+      <ul class="rb">${p.bullets.map((b,bi)=>`<li contenteditable="true" spellcheck="false" oninput="S.projects[${idx}].bullets[${bi}]=this.textContent.trim()">${b}</li>`).join('')}</ul>
+    </div>`).join('');
+}
+
+function skillH(lbl) {
+  if (curT.id==='t10') {
+    return `<div class="rs" id="s-skills">${lbl||'Technical Skills'}</div>
+      <table><thead><tr><th>Category</th><th>Skills</th></tr></thead><tbody>
+      <tr><td>Languages</td><td>${S.skills.lang.join(', ')}</td></tr>
+      <tr><td>Frameworks</td><td>${S.skills.fw.join(', ')}</td></tr>
+      <tr><td>Tools</td><td>${S.skills.tools.join(', ')}</td></tr>
+      </tbody></table>`;
+  }
+  const all=[...S.skills.lang,...S.skills.fw,...S.skills.tools];
+  return `<div class="rs" id="s-skills">${lbl||'Technical Skills'}</div><div class="rskg">${all.map(s=>`<span class="rsk">${s}</span>`).join('')}</div>`;
+}
+
+function eduH(cls,lbl) {
+  return `<div class="${cls||'rs'}" id="s-education">${lbl||'Education'}</div>`+
+    S.education.map((e,idx)=>`<div class="redu"><div><div class="redg" contenteditable="true" spellcheck="false" oninput="S.education[${idx}].deg=this.textContent.trim()">${e.deg}</div><div class="resc" contenteditable="true" spellcheck="false">${e.school} · ${e.gpa}</div></div><div class="redy" contenteditable="true" spellcheck="false" oninput="S.education[${idx}].year=this.textContent.trim()">${e.year}</div></div>`).join('');
+}
+
+function certH(cls,lbl) {
+  return `<div class="${cls||'rs'}" id="s-certifications">${lbl||'Certifications'}</div>`+
+    S.certs.map((c,idx)=>`<div class="rct"><div><div class="rctn" contenteditable="true" spellcheck="false" oninput="S.certs[${idx}].name=this.textContent.trim()">${c.name}</div><div class="rcti" contenteditable="true" spellcheck="false" oninput="S.certs[${idx}].issuer=this.textContent.trim()">${c.issuer}</div></div><div class="redy" contenteditable="true" spellcheck="false" oninput="S.certs[${idx}].year=this.textContent.trim()">${c.year}</div></div>`).join('');
+}
+
+function declH() {
+  return `<div class="rdcl"><strong>Declaration:</strong> I hereby declare all information is true and correct to the best of my knowledge.<div class="rsgn"><span>Date: ___________<br>Place: ___________</span><span>(${S.name})</span></div></div>`;
+}
+
+function ceHead() {
+  return `<div class="rn" contenteditable="true" spellcheck="false" oninput="S.name=this.textContent.trim();syncQ()">${S.name}</div>
+          <div class="rti" contenteditable="true" spellcheck="false" oninput="S.title=this.textContent.trim();syncQ()">${S.title}</div>
+          <div class="rco">${co()}</div>`;
+}
+
+/* ══════════════════════════════════════════
+   TEMPLATE RENDER FUNCTIONS (10 templates)
+   ══════════════════════════════════════════ */
+const BUILDS = {
+  t1() {
+    return `<div id="rh">${ceHead()}</div>
+      <div id="rb"><div class="rs" id="s-summary">Professional Summary</div>
+      <div class="rsum" contenteditable="true" spellcheck="false" oninput="S.summary=this.textContent.trim()">${S.summary}</div>
+      ${expH()}${projH()}${skillH()}${eduH()}${certH()}${declH()}</div>`;
+  },
+  t2() {
+    return `<div id="rh"><div style="flex:1;">
+      <div class="rn" contenteditable="true" spellcheck="false" oninput="S.name=this.textContent.trim();syncQ()">${S.name}</div>
+      <div class="rti">${S.title}</div><div class="rco">${co()}</div></div></div>
+      <div id="rb"><div class="rs" id="s-summary">Professional Summary</div>
+      <div class="rsum" contenteditable="true" spellcheck="false" oninput="S.summary=this.textContent.trim()">${S.summary}</div>
+      ${expH()}${projH()}${skillH()}${eduH()}${certH()}</div>`;
+  },
+  t3() {
+    return `<div id="rh">
+      <div class="rn" contenteditable="true" spellcheck="false" oninput="S.name=this.textContent.trim();syncQ()">${S.name}</div>
+      <div class="rti">${S.title}</div><div class="rco">${co()}</div></div>
+      <div id="rb"><div class="rs" id="s-summary">// about_me</div>
+      <div class="rsum" contenteditable="true" spellcheck="false" oninput="S.summary=this.textContent.trim()">${S.summary}</div>
+      ${expH('// experience')}${projH('// projects')}${skillH('// tech_stack')}${eduH('rs','// education')}${certH('rs','// certifications')}</div>`;
+  },
+  t4() {
+    const side = `<div class="tc-left">
+      <div class="tc-photo"><i class="fa-solid fa-user"></i></div>
+      <div class="tc-name" contenteditable="true" spellcheck="false" oninput="S.name=this.textContent.trim();syncQ()">${S.name}</div>
+      <div class="tc-title">${S.title}</div>
+      <div class="tc-sh">Contact</div>
+      <div class="tc-item"><i class="fa-solid fa-phone" style="margin-right:4px;opacity:.7;font-size:8pt;"></i>${S.phone}</div>
+      <div class="tc-item"><i class="fa-solid fa-envelope" style="margin-right:4px;opacity:.7;font-size:8pt;"></i>${S.email}</div>
+      <div class="tc-item"><i class="fa-solid fa-location-dot" style="margin-right:4px;opacity:.7;font-size:8pt;"></i>${S.location}</div>
+      <div class="tc-sh">Skills</div>
+      ${[...S.skills.lang,...S.skills.fw].map(s=>`<span class="tc-sk">${s}</span>`).join('')}
+      <div class="tc-sh">Tools</div>
+      ${S.skills.tools.map(s=>`<span class="tc-sk">${s}</span>`).join('')}
+      <div class="tc-sh">Education</div>
+      ${S.education.map(e=>`<div class="tc-item" style="margin-bottom:5px;"><strong style="color:#fff;font-size:9pt;">${e.deg}</strong><br><span style="font-size:8.5pt;">${e.school} · ${e.year}</span></div>`).join('')}
+    </div>`;
+    const main = `<div class="tc-right">
+      <div class="rs" id="s-summary">Summary</div>
+      <div class="rsum" contenteditable="true" spellcheck="false" oninput="S.summary=this.textContent.trim()">${S.summary}</div>
+      ${expH()}${projH()}${certH()}
+    </div>`;
+    return `<div id="rh" style="display:none;"></div><div id="rb">${side}${main}</div>`;
+  },
+  t5() {
+    return `<div id="rh">
+      <div class="rn" contenteditable="true" spellcheck="false" oninput="S.name=this.textContent.trim();syncQ()">${S.name}</div>
+      <div class="rti">${S.title}</div><div class="rco">${co()}</div></div>
+      <div id="rb">
+        <div class="t5-main"><div class="rs" id="s-summary">Summary</div>
+        <div class="rsum" contenteditable="true" spellcheck="false" oninput="S.summary=this.textContent.trim()">${S.summary}</div>
+        ${expH()}${projH()}</div>
+        <div class="t5-side">${skillH()}${eduH('rs')}${certH('rs')}</div>
+      </div>`;
+  },
+  t6() {
+    return `<div id="rh">
+      <div class="rn" contenteditable="true" spellcheck="false" oninput="S.name=this.textContent.trim();syncQ()">${S.name}</div>
+      <div class="rti">${S.title}</div><div class="rco">${co()}</div></div>
+      <div id="rb"><div class="rs" id="s-summary">About Me</div>
+      <div class="rsum" contenteditable="true" spellcheck="false" oninput="S.summary=this.textContent.trim()">${S.summary}</div>
+      ${expH()}${projH()}${skillH()}${eduH()}${certH()}</div>`;
+  },
+  t7() {
+    return `<div id="rh">
+      <div class="rn" contenteditable="true" spellcheck="false" oninput="S.name=this.textContent.trim();syncQ()">${S.name}</div>
+      <div class="rti">${S.title}</div><div class="rco">${co()}</div></div>
+      <div id="rb"><div class="rs" id="s-summary">Executive Summary</div>
+      <div class="rsum" contenteditable="true" spellcheck="false" oninput="S.summary=this.textContent.trim()">${S.summary}</div>
+      ${expH()}${projH()}${skillH()}${eduH()}${certH()}${declH()}</div>`;
+  },
+  t8() {
+    return `<div id="rh">
+      <div class="rn" contenteditable="true" spellcheck="false" oninput="S.name=this.textContent.trim();syncQ()">${S.name}</div>
+      <div class="rti">${S.title}</div><div class="rco">${co()}</div></div>
+      <div id="rb"><div class="rs" id="s-summary">About Me</div>
+      <div class="rsum" contenteditable="true" spellcheck="false" oninput="S.summary=this.textContent.trim()">${S.summary}</div>
+      ${expH()}${projH()}${skillH()}${eduH()}${certH()}</div>`;
+  },
+  t9() {
+    return `<div id="rh">
+      <div class="rn" contenteditable="true" spellcheck="false" oninput="S.name=this.textContent.trim();syncQ()">${S.name}</div>
+      <div class="rti">${S.title}</div><div class="rco">${co()}</div></div>
+      <div id="rb"><div class="rs" id="s-summary">Research Profile</div>
+      <div class="rsum" contenteditable="true" spellcheck="false" oninput="S.summary=this.textContent.trim()">${S.summary}</div>
+      ${expH('Research Experience')}${projH('Selected Publications & Projects')}${skillH('Technical Skills')}${eduH()}${certH()}${declH()}</div>`;
+  },
+  t10() {
+    return `<div id="rh"><div class="rn">${S.name}</div><div class="rti">${S.title}</div><div class="rco">${co()}</div></div>
+      <div id="rb"><div class="rs" id="s-summary">Career Objective</div>
+      <div class="rsum" contenteditable="true" spellcheck="false" oninput="S.summary=this.textContent.trim()">${S.summary}</div>
+      <div class="rs" id="s-experience">Work Experience</div>
+      ${S.experience.map((e,idx)=>`<div class="re"><div class="reh"><div><div class="ret">${e.title}</div><div class="rec">${e.company} · ${e.loc}</div></div><div class="red">${e.from}–${e.to}</div></div><ul class="rb">${e.bullets.map((b,bi)=>`<li contenteditable="true" spellcheck="false" oninput="S.experience[${idx}].bullets[${bi}]=this.textContent.trim()">${b}</li>`).join('')}</ul></div>`).join('')}
+      ${skillH()}${eduH('rs')}
+      <div class="rs" id="s-certifications">Certifications</div>
+      <table><thead><tr><th>Certificate</th><th>Issuing Organization</th><th>Year</th></tr></thead><tbody>
+      ${S.certs.map(c=>`<tr><td>${c.name}</td><td>${c.issuer}</td><td>${c.year}</td></tr>`).join('')}
+      </tbody></table>${declH()}</div>`;
+  }
+};
+
+/* ══════════════════════════════════════════
+   RENDER — Updates the live preview
+   ══════════════════════════════════════════ */
+function render() {
+  const doc = document.getElementById('rdoc');
+  doc.className = curT.id;
+  doc.style.setProperty('--tc', curC);
+  const build = BUILDS[curT.id];
+  if (build) doc.innerHTML = build();
+}
+
+/* ══════════════════════════════════════════
+   TAB SWITCHING — Pure JS, no reload
+   ══════════════════════════════════════════ */
+function switchTab(id) {
+  document.querySelectorAll('.panel').forEach(p => { p.classList.remove('on'); p.classList.add('hidden'); });
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('on'));
+  const panel = document.getElementById('panel-' + id);
+  if(panel) { panel.classList.remove('hidden'); panel.classList.add('on'); }
+  const btn = document.querySelector(`[data-tab="${id}"]`);
+  if (btn) btn.classList.add('on');
+  /* Refresh score bars when switching to score tab */
+  if (id === 'score') refreshScoreAnimated();
+}
+
+document.getElementById('tabBar').addEventListener('click', e => {
+  const b = e.target.closest('.tab-btn');
+  if (b) switchTab(b.dataset.tab);
+});
+
+/* ══════════════════════════════════════════
+   SECTION SCROLL — Left sidebar navigation
+   ══════════════════════════════════════════ */
+function goSec(id, el) {
+  document.querySelectorAll('.si').forEach(i => i.classList.remove('on'));
+  el.classList.add('on');
+  const t = document.getElementById('s-' + id) || document.getElementById('rh');
+  if (t) t.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+/* ══════════════════════════════════════════
+   ADD/REMOVE EXPERIENCE & PROJECTS
+   ══════════════════════════════════════════ */
+function addExperience() {
+  S.experience.push({
+    title:'New Role', company:'Company Name', loc:'City', from:'Month Year', to:'Present',
+    bullets:['Describe your key achievement with metrics here']
+  });
+  render();
+  toast('Experience entry added!');
+}
+
+function addProject() {
+  S.projects.push({
+    name:'New Project', tech:'Tech Stack',
+    bullets:['Describe the project impact and outcome']
+  });
+  render();
+  toast('Project entry added!');
+}
+
+/* ══════════════════════════════════════════
+   TEMPLATE GRID — Beautiful card layout
+   ══════════════════════════════════════════ */
+const THUMB_BG = {
+  t1:'background:#fff;padding:10px;', t2:'background:#1a1a3e;padding:10px;',
+  t3:'background:#0d1117;padding:10px;', t4:'background:linear-gradient(90deg,#1e293b 36%,#fff 36%);padding:10px;',
+  t5:'background:#fff;padding:10px;', t6:'background:#fff;padding:10px;border-bottom:3px solid #059669;',
+  t7:'background:#0f172a;padding:10px;', t8:'background:linear-gradient(135deg,#7c3aed,#1d4ed8);padding:10px;',
+  t9:'background:#fff;padding:10px;', t10:'background:#fff;padding:10px;border-top:3px solid #1d4ed8;',
+};
+const THUMB_BAR = {
+  t1:'#e5e7eb', t2:'rgba(255,255,255,.14)', t3:'#21262d', t4:'rgba(255,255,255,.12)',
+  t5:'#e5e7eb', t6:'#e5e7eb', t7:'rgba(255,255,255,.1)',
+  t8:'rgba(255,255,255,.15)', t9:'#ddd', t10:'#e5e7eb',
+};
+
+function buildTplGrid() {
+  const g = document.getElementById('tplGrid');
+  g.innerHTML = '';
+  TPLS.forEach(tpl => {
+    const bc = THUMB_BAR[tpl.id];
+    const card = document.createElement('div');
+    card.className = `relative bg-white dark:bg-[#121220] border-2 rounded-xl overflow-hidden cursor-pointer transition-all duration-150 hover:-translate-y-0.5 hover:shadow-lg ${tpl.id === curT.id ? 'border-brand shadow-md' : 'border-gray-200 dark:border-white/[.07]'}`;
+    card.innerHTML = `
+      <div class="absolute top-1.5 left-1.5 px-2 py-0.5 bg-brand text-white rounded-full text-[10px] font-bold ${tpl.id === curT.id ? 'block' : 'hidden'}" data-active>✓ Active</div>
+      <div style="${THUMB_BG[tpl.id]}" class="w-full aspect-[3/4] overflow-hidden">
+        <div style="height:17px;background:${bc};border-radius:2px;margin-bottom:5px;opacity:.9;"></div>
+        ${[62,48,72,55,68,50].map(w=>`<div style="height:5px;background:${bc};border-radius:2px;margin-bottom:3px;width:${w}%;opacity:.6;"></div>`).join('')}
+        <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:5px;">${[1,2,3].map(()=>`<div style="height:11px;width:28%;background:${bc};border-radius:2px;opacity:.4;"></div>`).join('')}</div>
+      </div>
+      ${tpl.tag ? `<div class="absolute top-1.5 right-1.5 px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/25 text-emerald-500 rounded-full text-[10px] font-bold">${tpl.tag}</div>` : ''}
+      <div class="p-2.5 border-t border-gray-100 dark:border-white/[.07]">
+        <div class="text-[12.5px] font-bold text-gray-900 dark:text-gray-100 mb-0.5">${tpl.name}</div>
+        <div class="text-[11px] text-gray-500 dark:text-gray-400">${tpl.desc} · <span class="text-emerald-500 font-bold">ATS ✓</span></div>
+        <div class="flex gap-1 mt-2">${COLS.map((c,i)=>`<div class="cd${i===0?' on':''}" style="background:${c.h};" title="${c.n}" data-h="${c.h}"></div>`).join('')}</div>
+      </div>`;
+    card.addEventListener('click', e => {
+      const dot = e.target.closest('.cd');
+      if (dot) {
+        curC = dot.dataset.h;
+        dot.closest('.flex').querySelectorAll('.cd').forEach(d => d.classList.remove('on'));
+        dot.classList.add('on');
+        render(); return;
+      }
+      curT = tpl; curC = tpl.col;
+      document.querySelectorAll('#tplGrid > div').forEach(c => {
+        c.classList.remove('border-brand','shadow-md');
+        c.classList.add('border-gray-200','dark:border-white/[.07]');
+        const badge = c.querySelector('[data-active]');
+        if(badge) badge.classList.add('hidden');
+      });
+      card.classList.add('border-brand','shadow-md');
+      card.classList.remove('border-gray-200','dark:border-white/[.07]');
+      const badge = card.querySelector('[data-active]');
+      if(badge) badge.classList.remove('hidden');
+      document.getElementById('tplLabel').innerHTML = `Template: <strong class="text-gray-700 dark:text-gray-200">${tpl.name}</strong>`;
+      render(); toast(`"${tpl.name}" applied`);
+    });
+    g.appendChild(card);
+  });
+}
+
+/* ══════════════════════════════════════════
+   SCORE ENGINE — Live updating, no freezing
+   ══════════════════════════════════════════ */
+const TIPS_D = [
+  { ic:'fa-solid fa-bolt-lightning', c:'#f59e0b', t:'Add Quantified Metrics',   d:'Only 2 of 6 bullets have numbers. Add metrics to 4 more for ~15pt impact boost.',  fn:'aiBullets'  },
+  { ic:'fa-solid fa-key',            c:'#6c5ce7', t:'Include ATS Keywords',     d:'Missing: "system design", "scalability", "CI/CD". Add naturally to summary.',       fn:'aiKeywords' },
+  { ic:'fa-solid fa-check',          c:'#36d48a', t:'Summary Length Optimal',   d:'Your 3-4 line summary is perfect for ATS parsing. Keep it this length.',            fn:null         },
+  { ic:'fa-solid fa-at',             c:'#4a8ae8', t:'Add LinkedIn URL',         d:'Resumes with LinkedIn URLs get 40% more recruiter callbacks.',                      fn:null         },
+  { ic:'fa-solid fa-certificate',    c:'#e8569a', t:'Certifications Detected',  d:'AWS and GCP certs are strong. Consider a CKA for further differentiation.',         fn:null         },
+  { ic:'fa-solid fa-file',           c:'#22d3ee', t:'Ideal One-Page Length',    d:'Your resume fits one A4 page — perfect for under 10 years experience.',              fn:null         },
+];
+
+function buildTips() {
+  const el = document.getElementById('tipsGrid');
+  if(!el) return;
+  el.innerHTML = TIPS_D.map(t => `
+    <div class="bg-white dark:bg-[#121220] border border-gray-200 dark:border-white/[.07] rounded-lg p-3.5 flex gap-2.5">
+      <div class="w-8 h-8 rounded-lg grid place-items-center text-[13px] shrink-0" style="background:${t.c}18;color:${t.c};"><i class="${t.ic}"></i></div>
+      <div class="flex-1">
+        <div class="text-[12.5px] font-bold text-gray-900 dark:text-gray-100 mb-1">${t.t}</div>
+        <div class="text-[11px] text-gray-500 dark:text-gray-400 leading-relaxed">${t.d}</div>
+        ${t.fn
+          ? `<button class="inline-flex items-center gap-1 mt-1.5 px-2 py-1 bg-gray-50 dark:bg-[#0e0e1c] border border-gray-200 dark:border-white/[.07] rounded text-[10.5px] font-bold text-brand cursor-pointer hover:bg-brand/10 transition-all duration-150" onclick="${t.fn}();toast('AI fix applied!')"><i class="fa-solid fa-wand-magic-sparkles"></i> Auto-fix</button>`
+          : `<span class="inline-flex items-center gap-1 mt-1.5 px-2 py-1 bg-emerald-500/[.07] border border-emerald-500/20 rounded text-[10.5px] font-bold text-emerald-500"><i class="fa-solid fa-check"></i> Good</span>`}
+      </div>
+    </div>`).join('');
+}
+
+function setScore(id, val) {
+  const el = document.getElementById('sv-' + id);
+  const bar = document.getElementById('sb-' + id);
+  if (el) el.textContent = val + '%';
+  if (bar) bar.style.width = val + '%';
+}
+
+function refreshScore() {
+  const v = n => Math.min(100, Math.max(40, n + Math.floor((Math.random() - .5) * 12)));
+  const sc = { a:v(82), i:v(71), r:v(88), d:v(65), f:v(90) };
+  Object.entries(sc).forEach(([k, val]) => setScore(k, val));
+  const overall = Math.round(Object.values(sc).reduce((a,b)=>a+b,0) / 5);
+  document.getElementById('bigN').textContent = overall;
+  document.getElementById('miniVal').textContent = overall;
+  const bigOff = 364 - (overall / 100) * 364;
+  document.getElementById('bigCirc').style.strokeDashoffset = bigOff;
+  const miniOff = 176 - (overall / 100) * 176;
+  document.getElementById('miniCirc').style.strokeDashoffset = miniOff;
+  const grade = overall >= 85 ? '★★ Excellent — Top 5%' : overall >= 75 ? '★ Great — Top 22%' : 'Good — Top 40%';
+  document.getElementById('scoreGrade').textContent = grade;
+  document.getElementById('scoreBench').innerHTML = `Beats <strong class="text-brand">${overall}%</strong> of resumes in Software Engineering roles.`;
+  toast('Score refreshed!');
+}
+
+/* Animated score on tab open */
+function refreshScoreAnimated() {
+  /* Reset all bars to 0 first, then animate in */
+  ['a','i','r','d','f'].forEach(k => {
+    const bar = document.getElementById('sb-' + k);
+    if(bar) { bar.style.transition='none'; bar.style.width='0%'; }
+  });
+  const bigC = document.getElementById('bigCirc');
+  if(bigC) { bigC.style.transition='none'; bigC.style.strokeDashoffset='364'; }
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      ['a','i','r','d','f'].forEach(k => {
+        const bar = document.getElementById('sb-' + k);
+        if(bar) { bar.style.transition='width .8s cubic-bezier(.4,0,.2,1)'; }
+      });
+      if(bigC) bigC.style.transition='stroke-dashoffset .8s cubic-bezier(.4,0,.2,1)';
+      refreshScore();
+    });
+  });
+}
+
+/* ══════════════════════════════════════════
+   AI FEATURES (Simulated but realistic)
+   ══════════════════════════════════════════ */
+function openAI() {
+  const m = document.getElementById('aiModal');
+  m.classList.remove('hidden');
+  m.style.display = 'grid';
+  document.getElementById('aiRes').classList.add('hidden');
+  document.getElementById('jdTxt').value = '';
+}
+
+function openRoast() {
+  const m = document.getElementById('roastModal');
+  m.classList.remove('hidden');
+  m.style.display = 'grid';
+  const ROAST = [
+    '"Results-driven" — every resume says this. Replace it with a specific achievement in the first line.',
+    'First bullet takes 2 lines to say what fits in 8 words. Recruiters spend 6 seconds. Brevity wins.',
+    'You have numbers — great. But 4 bullets are still vague ("collaborated"). More receipts please.',
+    'Skills section lists 15+ items. Prove your top 6 with real bullets in experience.',
+    '✓ Strong: Projects section is excellent. Real metrics and open-source proof.',
+    'One education entry for a senior role — perfect. Do not pad with irrelevant coursework.',
+  ];
+  document.getElementById('roastB').innerHTML =
+    `<p class="text-xs text-gray-400 mb-3 flex items-center gap-1.5"><i class="fa-solid fa-info-circle"></i> Brutally honest but constructive AI feedback.</p>` +
+    ROAST.map(r=>`<div class="flex gap-2 p-2.5 rounded-lg mb-1.5 bg-gray-50 dark:bg-[#0e0e1c] border border-gray-200 dark:border-white/[.07] text-xs text-gray-500 dark:text-gray-400 leading-relaxed"><i class="fa-solid fa-fire text-pink-500 mt-0.5 shrink-0"></i><span>${r}</span></div>`).join('');
+}
+
+function closeM(id) {
+  const el = document.getElementById(id);
+  el.classList.add('hidden');
+  el.style.display = 'none';
+}
+
+const AI_OUT = `✦ Tailored Summary:\n"Senior Software Engineer with 6+ years delivering scalable, high-impact systems. Led microservices architecture serving 2M req/day (P99: 120ms), orchestrated a migration cutting deploy cycles 65%, and drove 22% DAU lift through real-time features. Ready to bring this track record to your team."\n\n✦ Enhanced Bullets (matched to JD):\n• Re-architected auth service for 5× peak traffic with zero downtime\n• Built Kafka event pipeline cutting data latency 78% — matches "streaming systems"\n• Automated perf regression suite, catching 3 critical bugs before production deploy`;
+
+function runAI() {
+  const jd = document.getElementById('jdTxt').value.trim();
+  if (!jd) { toast('Paste a job description first'); return; }
+  const btn = document.getElementById('aiBtn');
+  btn.innerHTML = '<span class="inline-block w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> Analyzing...';
+  btn.disabled = true;
+  const res = document.getElementById('aiRes');
+  res.classList.add('hidden');
+  setTimeout(() => {
+    res.classList.remove('hidden');
+    res.classList.add('typing');
+    res.textContent = '';
+    let i = 0;
+    const iv = setInterval(() => {
+      res.textContent = AI_OUT.slice(0, i += 5);
+      if (i >= AI_OUT.length) {
+        clearInterval(iv);
+        res.classList.remove('typing');
+        btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Tailor Resume';
+        btn.disabled = false;
+        toast('AI tailoring complete!');
+      }
+    }, 14);
+  }, 1500);
+}
+
+function aiRewrite() {
+  S.summary = 'Senior Software Engineer with 6+ years delivering high-impact distributed systems. Reduced P99 latency 40%, led 8-engineer teams, shipped to 50M+ users. Expert in clean architecture, observability, and ruthless prioritization.';
+  render(); toast('Summary rewritten!');
+}
+
+function aiBullets() {
+  S.experience[0].bullets = [
+    'Architected event-driven microservices processing 2.4M req/day with P99 < 120ms — 6.7x improvement',
+    'Owned Java to Node.js migration of 200K LOC; deploy time from 45min to 8min (65% faster)',
+    'Mentored 4 engineers to senior track; production bugs reduced 30% over 6 months',
+    'Shipped React + WebSockets analytics dashboard; 120K users in week 1, DAU +22% sustained',
+  ];
+  render(); toast('Bullets enhanced!');
+}
+
+function aiKeywords() {
+  S.summary += ' Expert in system design, scalability patterns, CI/CD automation, and agile delivery.';
+  render(); toast('ATS keywords optimized!');
+}
+
+function improveBullet() {
+  const txt = document.getElementById('bulletTxt').value.trim();
+  if(!txt) { toast('Enter a bullet point first'); return; }
+  const res = document.getElementById('bulletRes');
+  res.classList.remove('hidden');
+  res.textContent = '';
+  const improved = 'Spearheaded ' + txt.charAt(0).toLowerCase() + txt.slice(1).replace(/\.$/,'') + ', resulting in measurable impact across key performance metrics and team velocity improvements';
+  let i = 0;
+  const iv = setInterval(()=>{
+    res.textContent = improved.slice(0,i+=3);
+    if(i>=improved.length) clearInterval(iv);
+  },15);
+}
+
+/* ══════════════════════════════════════════
+   EXPORT — PDF, Word, Copy Text
+   ══════════════════════════════════════════ */
+function doDownload() {
+  toast('Preparing PDF...');
+  const el = document.getElementById('rdoc');
+  setTimeout(() => {
+    html2canvas(el, { scale:2, useCORS:true, backgroundColor:'#fff', logging:false })
+      .then(canvas => {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+        const pw = pdf.internal.pageSize.getWidth();
+        const ph = pdf.internal.pageSize.getHeight();
+        const ratio = pw / canvas.width;
+        const sh = canvas.height * ratio;
+        const img = canvas.toDataURL('image/png');
+        if (sh <= ph) {
+          pdf.addImage(img, 'PNG', 0, 0, pw, sh);
+        } else {
+          let y = 0;
+          while (y < sh) { pdf.addImage(img,'PNG',0,-y,pw,sh); y+=ph; if(y<sh)pdf.addPage(); }
+        }
+        pdf.save(`${S.name.replace(/\s+/g,'_')}_Resume.pdf`);
+        toast('PDF downloaded!');
+      })
+      .catch(() => { window.print(); toast('Use "Save as PDF" in print dialog'); });
+  }, 200);
+}
+
+function downloadWord() {
+  /* Generate a simple .doc (HTML-based, opens in Word) */
+  const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="UTF-8"><style>body{font-family:Calibri,sans-serif;font-size:11pt;line-height:1.5;color:#1a1a2e;}h1{font-size:22pt;margin:0;}h2{font-size:13pt;color:#333;border-bottom:1px solid #ccc;padding-bottom:3px;margin:14px 0 7px;}h3{font-size:11pt;margin:0;}.sub{font-size:10pt;color:#666;}ul{padding-left:18px;}li{margin-bottom:3px;font-size:10pt;}</style></head><body><h1>${S.name}</h1><div class="sub">${S.title}</div><div class="sub">${[S.phone,S.email,S.location].filter(Boolean).join(' | ')}</div><h2>Professional Summary</h2><p>${S.summary}</p><h2>Work Experience</h2>${S.experience.map(e=>`<h3>${e.title} — ${e.company}, ${e.loc}</h3><div class="sub">${e.from} – ${e.to}</div><ul>${e.bullets.map(b=>`<li>${b}</li>`).join('')}</ul>`).join('')}<h2>Key Projects</h2>${S.projects.map(p=>`<h3>${p.name}</h3><div class="sub">${p.tech}</div><ul>${p.bullets.map(b=>`<li>${b}</li>`).join('')}</ul>`).join('')}<h2>Technical Skills</h2><p><strong>Languages:</strong> ${S.skills.lang.join(', ')}<br><strong>Frameworks:</strong> ${S.skills.fw.join(', ')}<br><strong>Tools:</strong> ${S.skills.tools.join(', ')}</p><h2>Education</h2>${S.education.map(e=>`<p><strong>${e.deg}</strong> — ${e.school} (${e.year}) · ${e.gpa}</p>`).join('')}<h2>Certifications</h2>${S.certs.map(c=>`<p>${c.name} — ${c.issuer} (${c.year})</p>`).join('')}</body></html>`;
+  const blob = new Blob(['\ufeff'+html], {type:'application/msword'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${S.name.replace(/\s+/g,'_')}_Resume.doc`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('Word document downloaded!');
+}
+
+function copyTxt() {
+  const txt = [
+    S.name, S.title,
+    [S.phone,S.email,S.location].filter(Boolean).join(' | '),'',
+    'PROFESSIONAL SUMMARY', S.summary,'',
+    'WORK EXPERIENCE',
+    ...S.experience.flatMap(e=>[`${e.title} — ${e.company}, ${e.loc} (${e.from} – ${e.to})`,...e.bullets.map(b=>'• '+b),'']),
+    'KEY PROJECTS',
+    ...S.projects.flatMap(p=>[`${p.name} (${p.tech})`,...p.bullets.map(b=>'• '+b),'']),
+    'TECHNICAL SKILLS',
+    'Languages: '+S.skills.lang.join(', '),
+    'Frameworks: '+S.skills.fw.join(', '),
+    'Tools: '+S.skills.tools.join(', '),'',
+    'EDUCATION',...S.education.map(e=>`${e.deg} — ${e.school} (${e.year}) · ${e.gpa}`),'',
+    'CERTIFICATIONS',...S.certs.map(c=>`${c.name} — ${c.issuer} (${c.year})`),
+  ].join('\n');
+  navigator.clipboard.writeText(txt)
+    .then(()=>toast('Copied as plain text!'))
+    .catch(()=>toast('Copy failed — use Ctrl+C'));
+}
+
+/* ══════════════════════════════════════════
+   THEME TOGGLE
+   ══════════════════════════════════════════ */
+function toggleTheme() {
+  isDark = !isDark;
+  document.documentElement.classList.toggle('dark', isDark);
+  document.getElementById('themeBtn').innerHTML = isDark
+    ? '<i class="fa-solid fa-moon"></i>'
+    : '<i class="fa-solid fa-sun"></i>';
+}
+
+/* ══════════════════════════════════════════
+   TOAST NOTIFICATION
+   ══════════════════════════════════════════ */
+function toast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastTxt').textContent = msg;
+  t.style.transform = 'translateY(0)';
+  t.style.opacity = '1';
+  clearTimeout(t._t);
+  t._t = setTimeout(()=>{ t.style.transform='translateY(68px)'; t.style.opacity='0'; }, 3000);
+}
+
+/* ══════════════════════════════════════════
+   KEYBOARD SHORTCUTS
+   ══════════════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  if (e.metaKey || e.ctrlKey) {
+    if (e.key==='s') { e.preventDefault(); toast('Saved ✓'); }
+    if (e.key==='e') { e.preventDefault(); doDownload(); }
+    if (e.key==='p') { e.preventDefault(); window.print(); }
+  }
+  if (e.key==='Escape') {
+    ['aiModal','roastModal','bulletModal'].forEach(id => closeM(id));
+  }
+});
+
+/* ══════════════════════════════════════════
+   INITIALIZATION
+   ══════════════════════════════════════════ */
+(function init() {
+  syncQ();
+  render();
+  buildTplGrid();
+  buildTips();
+})();
+</script>
+</body>
+</html>  --b:   rgba(255,255,255,.07); --b2: rgba(255,255,255,.14);
   --t:   #ededf8; --t2:  #7878a0; --t3: #404060;
   --a:   #6c5ce7; --a2:  #4a8ae8; --a3: #e8569a;
   --gw:  rgba(108,92,231,.22);
