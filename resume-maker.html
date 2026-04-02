@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Easy Resume Maker by Topsarkari.com</title>
+  <meta name="description" content="Simple, sober, AI-assisted resume maker for first-time job seekers and professionals. Built for easy use, with live preview and PDF export." />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            ink: '#101828',
+            mist: '#F8FAFC',
+            line: '#E5E7EB',
+            brand: {
+              50: '#eef4ff',
+              100: '#dfeaff',
+              200: '#c7dbff',
+              300: '#a4c3ff',
+              400: '#7ca1ff',
+              500: '#4f7bff',
+              600: '#345de6',
+              700: '#2949b4',
+              800: '#243e8e',
+              900: '#23376f'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            display: ['Space Grotesk', 'Inter', 'system-ui', 'sans-serif'],
+            hindi: ['Noto Sans Devanagari', 'Inter', 'system-ui', 'sans-serif']
+          },
+          boxShadow: {
+            soft: '0 10px 30px rgba(15, 23, 42, 0.08)',
+            card: '0 16px 40px rgba(2, 6, 23, 0.08)'
+          },
+          keyframes: {
+            pulseSoft: {
+              '0%, 100%': { transform: 'scale(1)', opacity: '1' },
+              '50%': { transform: 'scale(1.02)', opacity: '.92' }
+            }
+          },
+          animation: {
+            pulseSoft: 'pulseSoft 1.8s ease-in-out infinite'
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&family=Noto+Sans+Devanagari:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    html { scroll-behavior: smooth; }
+    [contenteditable="true"]:focus { outline: 2px solid rgba(79,123,255,.35); outline-offset: 2px; border-radius: 4px; }
+    .thin-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
+    .thin-scroll::-webkit-scrollbar-thumb { background: rgba(148,163,184,.35); border-radius: 999px; }
+    .resume-paper { width: min(100%, 794px); min-height: 1123px; }
+    .resume-paper * { word-break: break-word; }
+    .dragging { opacity: .45; }
+    .drop-target { outline: 2px dashed rgba(79,123,255,.45); outline-offset: 4px; }
+    @media (max-width: 1024px) {
+      .resume-paper { width: 100%; min-height: auto; }
+    }
+
+    .site-shell-space { min-height: calc(100vh - 220px); }
+    #site-header .top-search, #site-header .search-wrap, #site-header .search-section, .top-search, section.top-search { display:none !important; }
+    #site-header:empty, #site-footer:empty { display:none; }
+    .preview-scroller { overflow:auto; }
+    .preview-stage { display:flex; justify-content:center; min-height: 1180px; }
+    .resume-photo { width: 88px; height: 88px; object-fit: cover; border-radius: 18px; border: 3px solid rgba(255,255,255,.9); box-shadow: 0 10px 24px rgba(15,23,42,.14); }
+    .template-btn.is-active { border-color: rgb(79 123 255 / 1); background: rgb(238 244 255); color: rgb(37 99 235); }
+    .dark .template-btn.is-active { background: rgba(79,123,255,.12); color: rgb(191 219 254); }
+    .profile-card.is-active { outline: 2px solid rgba(124,161,255,.8); }
+    @media (max-width: 768px) { .preview-stage { min-height: auto; } .resume-paper { min-height: auto; } }
+    @media print {
+      body { background: white !important; }
+      #app-shell, #sticky-help { display: none !important; }
+      #previewWrap { padding: 0 !important; margin: 0 !important; }
+      #resumePaper { box-shadow: none !important; border: none !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+  <div id="site-header"></div>
+  <div class="site-shell-space min-h-screen" id="app-shell">
+
+    <main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <section class="mb-6 grid gap-4 lg:grid-cols-[1.15fr_.85fr]">
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900">
+          <div class="mb-4 inline-flex items-center gap-2 rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700 dark:bg-brand-500/10 dark:text-brand-300">
+            <i class="fa-solid fa-sparkles"></i>
+            AI help for first-time job seekers and professionals
+          </div>
+          <h1 class="font-display text-3xl font-bold tracking-tight sm:text-4xl">Make a simple resume in minutes</h1>
+          <p class="mt-3 max-w-3xl text-sm leading-6 text-slate-600 dark:text-slate-300">
+            Built for people who want a clean, easy resume without confusion. Start with a simple job resume for helper, office, shop, warehouse, driver, delivery, security, fresher, or school-pass jobs. Need something more advanced? Switch to professional mode for manager, analyst, engineer, designer, finance, or executive roles.
+          </p>
+          <div class="mt-5 grid gap-3 sm:grid-cols-3">
+            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/60">
+              <div class="mb-2 text-brand-600 dark:text-brand-300"><i class="fa-solid fa-list-check"></i></div>
+              <div class="font-semibold">Step-by-step form</div>
+              <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">Easy fields with examples, plain words, and guidance.</div>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/60">
+              <div class="mb-2 text-brand-600 dark:text-brand-300"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+              <div class="font-semibold">AI writing help</div>
+              <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">Generate simple lines, improve bullets, and tailor to a job.</div>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/60">
+              <div class="mb-2 text-brand-600 dark:text-brand-300"><i class="fa-solid fa-file-pdf"></i></div>
+              <div class="font-semibold">PDF and Word export</div>
+              <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">Download, print, or copy ready-to-use text.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-900 via-slate-900 to-brand-900 p-6 text-white shadow-card dark:border-slate-800">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-xs font-semibold uppercase tracking-[0.2em] text-brand-200">Choose your path</div>
+              <div class="mt-2 text-2xl font-bold">Two resume styles</div>
+            </div>
+            <div class="rounded-2xl bg-white/10 px-3 py-2 text-xs">Live preview</div>
+          </div>
+          <div class="mt-5 space-y-3">
+            <button data-profile="simple" class="profile-card w-full rounded-2xl border border-white/10 bg-white/10 p-4 text-left transition hover:bg-white/15">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <div class="text-sm font-semibold">Simple Job Resume</div>
+                  <div class="mt-1 text-xs leading-5 text-slate-200">Best for 10th pass, 12th pass, helpers, shop staff, drivers, security, warehouse, delivery, office support, and freshers.</div>
+                </div>
+                <i class="fa-solid fa-circle-check text-brand-200"></i>
+              </div>
+            </button>
+            <button data-profile="pro" class="profile-card w-full rounded-2xl border border-white/10 bg-white/5 p-4 text-left transition hover:bg-white/10">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <div class="text-sm font-semibold">Professional / High-Profile Resume</div>
+                  <div class="mt-1 text-xs leading-5 text-slate-200">For highly qualified users: managers, analysts, engineers, researchers, consultants, designers, finance, tech, and leadership roles.</div>
+                </div>
+                <i class="fa-solid fa-briefcase text-brand-200"></i>
+              </div>
+            </button>
+          </div>
+          <div class="mt-5 rounded-2xl bg-white/10 p-4">
+            <div class="text-sm font-semibold">Quick AI starter</div>
+            <div class="mt-2 text-xs leading-5 text-slate-200">Choose a job target, click “Auto Fill,” and the page will create a ready draft you can edit.</div>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <button class="quick-fill rounded-full bg-white/15 px-3 py-2 text-xs hover:bg-white/20" data-role="delivery associate">Delivery</button>
+              <button class="quick-fill rounded-full bg-white/15 px-3 py-2 text-xs hover:bg-white/20" data-role="warehouse helper">Warehouse</button>
+              <button class="quick-fill rounded-full bg-white/15 px-3 py-2 text-xs hover:bg-white/20" data-role="office assistant">Office</button>
+              <button class="quick-fill rounded-full bg-white/15 px-3 py-2 text-xs hover:bg-white/20" data-role="data analyst">Analyst</button>
+              <button class="quick-fill rounded-full bg-white/15 px-3 py-2 text-xs hover:bg-white/20" data-role="software engineer">Engineer</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid gap-6 xl:grid-cols-[420px_minmax(0,1fr)]">
+        <aside class="thin-scroll space-y-4 xl:sticky xl:top-24 xl:h-[calc(100vh-7rem)] xl:overflow-y-auto">
+          <div class="rounded-3xl border border-slate-200 bg-white p-4 shadow-soft dark:border-slate-800 dark:bg-slate-900">
+            <div class="mb-4 flex items-center justify-between">
+              <div>
+                <h2 class="font-display text-xl font-bold">Builder Form</h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Simple inputs, live preview, drag to rearrange sections.</p>
+              </div>
+              <span id="profileBadge" class="rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700 dark:bg-brand-500/10 dark:text-brand-300">Simple</span>
+            </div>
+
+            <div class="mb-4 grid grid-cols-2 gap-2 rounded-2xl bg-slate-100 p-1 dark:bg-slate-800">
+              <button class="tab-btn rounded-2xl px-3 py-2 text-sm font-semibold text-slate-700 transition dark:text-slate-200" data-tab="formTab">Form</button>
+              <button class="tab-btn rounded-2xl px-3 py-2 text-sm font-semibold text-slate-700 transition dark:text-slate-200" data-tab="aiTab">AI Help</button>
+            </div>
+
+            <div id="formTab" class="tab-panel space-y-4">
+              <div class="rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
+                <div class="mb-3 flex items-center justify-between">
+                  <div>
+                    <div class="font-semibold">1. Personal Details</div>
+                    <div class="helper-text mt-1 text-xs text-slate-500 dark:text-slate-400">Fill basic details. Use the name on your ID if possible.</div>
+                  </div>
+                  <i class="fa-solid fa-user text-slate-400"></i>
+                </div>
+                <div class="grid gap-4 lg:grid-cols-[1fr_120px]">
+                  <div class="grid gap-3 sm:grid-cols-2">
+                    <label class="block">
+                      <span class="text-xs font-medium text-slate-600 dark:text-slate-300">Full Name</span>
+                      <input id="fullName" class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-brand-400 dark:border-slate-700 dark:bg-slate-950" value="Ravi Kumar" />
+                    </label>
+                    <label class="block">
+                      <span class="text-xs font-medium text-slate-600 dark:text-slate-300">Target Job</span>
+                      <input id="targetRole" class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-brand-400 dark:border-slate-700 dark:bg-slate-950" value="Warehouse Associate" />
+                    </label>
+                    <label class="block">
+                      <span class="text-xs font-medium text-slate-600 dark:text-slate-300">Phone</span>
+                      <input id="phone" class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-brand-400 dark:border-slate-700 dark:bg-slate-950" value="+91 98765 43210" />
+                    </label>
+                    <label class="block">
+                      <span class="text-xs font-medium text-slate-600 dark:text-slate-300">Email</span>
+                      <input id="email" class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-brand-400 dark:border-slate-700 dark:bg-slate-950" value="ravikumar.jobs@gmail.com" />
+                    </label>
+                    <label class="block sm:col-span-2">
+                      <span class="text-xs font-medium text-slate-600 dark:text-slate-300">Address</span>
+                      <input id="address" class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-brand-400 dark:border-slate-700 dark:bg-slate-950" value="Village Rampur, Jaipur, Rajasthan" />
+                    </label>
+                    <label class="block sm:col-span-2">
+                      <span class="text-xs font-medium text-slate-600 dark:text-slate-300">Photo (optional)</span>
+                      <input id="photoUpload" type="file" accept="image/*" class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition file:mr-3 file:rounded-lg file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-brand-700 focus:border-brand-400 dark:border-slate-700 dark:bg-slate-950 dark:file:bg-brand-500/10 dark:file:text-brand-300" />
+                    </label>
+                  </div>
+                  <div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-3 text-center dark:border-slate-700 dark:bg-slate-950">
+                    <div class="mx-auto mb-2 flex h-24 w-24 items-center justify-center overflow-hidden rounded-2xl bg-white text-slate-400 shadow-sm dark:bg-slate-900">
+                      <img id="photoPreview" alt="Resume photo" class="hidden h-full w-full object-cover" />
+                      <i id="photoPlaceholder" class="fa-regular fa-image text-2xl"></i>
+                    </div>
+                    <div class="text-[11px] text-slate-500 dark:text-slate-400">Optional photo for local/private use</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
+                <div class="mb-3 flex items-center justify-between">
+                  <div>
+                    <div class="font-semibold">2. About You</div>
+                    <div class="helper-text mt-1 text-xs text-slate-500 dark:text-slate-400">Write 2 to 4 simple lines about what work you can do and what kind of job you want.</div>
+                  </div>
+                  <i class="fa-solid fa-pen text-slate-400"></i>
+                </div>
+                <textarea id="summary" rows="4" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm outline-none transition focus:border-brand-400 dark:border-slate-700 dark:bg-slate-950">Hardworking and reliable candidate with experience supporting stock handling, packing, and daily store work. Comfortable with physical tasks, teamwork, and following instructions. Looking for a stable job where I can work honestly and learn quickly.</textarea>
+                <div class="mt-2 flex flex-wrap gap-2">
+                  <button id="aiSummary" class="rounded-full border border-slate-200 px-3 py-2 text-xs font-semibold hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800"><i class="fa-solid fa-sparkles mr-2 text-brand-500"></i>Generate Summary</button>
+                  <button id="simplifySummary" class="rounded-full border border-slate-200 px-3 py-2 text-xs font-semibold hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800">Make Simpler</button>
+                </div>
+              </div>
+
+              <div class="rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
+                <div class="mb-3 flex items-center justify-between">
+                  <div>
+                    <div class="font-semibold">3. Education</div>
+                    <div class="helper-text mt-1 text-xs text-slate-500 dark:text-slate-400">Add multiple education entries like 8th, 10th, 12th, ITI, diploma, graduation, board, marks, and passing year.</div>
+                  </div>
+                  <button id="addEducation" class="rounded-full border border-slate-200 px-3 py-2 text-xs font-semibold hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800"><i class="fa-solid fa-plus mr-1"></i>Add Education</button>
+                </div>
+                <div id="educationList" class="space-y-3"></div>
+              </div>
+
+              <div class="rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
+                <div class="mb-3 flex items-center justify-between">
+                  <div>
+                    <div class="font-semibold">4. Experience</div>
+                    <div class="helper-text mt-1 text-xs text-slate-500 dark:text-slate-400">Add past work. No formal job? You can mention family business, farm work, shop work, internship, or daily responsibility.</div>
+                  </div>
+                  <div class="flex gap-2">
+                    <button id="addExperience" class="rounded-full border border-slate-200 px-3 py-2 text-xs font-semibold hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800"><i class="fa-solid fa-plus mr-1"></i>Add Job</button>
+                  </div>
+                </div>
+                <label class="mb-3 flex items-center gap-2 rounded-2xl bg-slate-50 px-3 py-3 text-sm dark:bg-slate-950">
+                  <input id="isFresher" type="checkbox" class="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500" />
+                  <span>I am a fresher / no formal work experience</span>
+                </label>
+                <div id="experienceList" class="space-y-3"></div>
+              </div>
+
+              <div class="rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
+                <div class="mb-3 flex items-center justify-between">
+                  <div>
+                    <div class="font-semibold">5. Skills</div>
+                    <div class="helper-text mt-1 text-xs text-slate-500 dark:text-slate-400">Keep skills honest. Example: punctual, teamwork, packing, computer, Excel, driving, customer service.</div>
+                  </div>
+                  <button id="suggestSkills" class="rounded-full border border-slate-200 px-3 py-2 text-xs font-semibold hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800">AI Suggest Skills</button>
+                </div>
+                <textarea id="skills" rows="3" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm outline-none transition focus:border-brand-400 dark:border-slate-700 dark:bg-slate-950">Packing, stock handling, teamwork, time management, basic computer, physical stamina, honesty</textarea>
+              </div>
+
+              <div class="rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
+                <div class="mb-3 flex items-center justify-between">
+                  <div>
+                    <div class="font-semibold">6. Extra Details</div>
+                    <div class="helper-text mt-1 text-xs text-slate-500 dark:text-slate-400">Useful for simple jobs and premium jobs both.</div>
+                  </div>
+                  <i class="fa-solid fa-square-check text-slate-400"></i>
+                </div>
+                <div class="grid gap-3 sm:grid-cols-2">
+                  <input id="language" class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-brand-400 dark:border-slate-700 dark:bg-slate-950" value="Hindi, Basic English" />
+                  <input id="availability" class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-brand-400 dark:border-slate-700 dark:bg-slate-950" value="Immediate Joining" />
+                  <input id="certifications" class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-brand-400 dark:border-slate-700 dark:bg-slate-950" value="MS Office Basics Certificate" />
+                  <input id="links" class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-brand-400 dark:border-slate-700 dark:bg-slate-950" value="linkedin.com/in/ravikumar" />
+                </div>
+              </div>
+
+              <div class="rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
+                <div class="mb-3 flex items-center justify-between">
+                  <div>
+                    <div class="font-semibold">Template Style</div>
+                    <div class="helper-text mt-1 text-xs text-slate-500 dark:text-slate-400">Choose a simple design or a premium professional look.</div>
+                  </div>
+                  <i class="fa-solid fa-layer-group text-slate-400"></i>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <button class="template-btn rounded-2xl border border-slate-200 p-3 text-left text-xs transition hover:border-brand-400 hover:bg-brand-50 dark:border-slate-700 dark:hover:bg-brand-500/10" data-template="simple">Simple Clean</button>
+                  <button class="template-btn rounded-2xl border border-slate-200 p-3 text-left text-xs transition hover:border-brand-400 hover:bg-brand-50 dark:border-slate-700 dark:hover:bg-brand-500/10" data-template="worker">Worker Bold</button>
+                  <button class="template-btn rounded-2xl border border-slate-200 p-3 text-left text-xs transition hover:border-brand-400 hover:bg-brand-50 dark:border-slate-700 dark:hover:bg-brand-500/10" data-template="fresher">Fresher Smart</button>
+                  <button class="template-btn rounded-2xl border border-slate-200 p-3 text-left text-xs transition hover:border-brand-400 hover:bg-brand-50 dark:border-slate-700 dark:hover:bg-brand-500/10" data-template="classic">Classic Formal</button>
+                  <button class="template-btn rounded-2xl border border-slate-200 p-3 text-left text-xs transition hover:border-brand-400 hover:bg-brand-50 dark:border-slate-700 dark:hover:bg-brand-500/10" data-template="government">Government Ready</button>
+                  <button class="template-btn rounded-2xl border border-slate-200 p-3 text-left text-xs transition hover:border-brand-400 hover:bg-brand-50 dark:border-slate-700 dark:hover:bg-brand-500/10" data-template="modern">Modern Profile</button>
+                  <button class="template-btn rounded-2xl border border-slate-200 p-3 text-left text-xs transition hover:border-brand-400 hover:bg-brand-50 dark:border-slate-700 dark:hover:bg-brand-500/10" data-template="pro">Professional Executive</button>
+                  <button class="template-btn rounded-2xl border border-slate-200 p-3 text-left text-xs transition hover:border-brand-400 hover:bg-brand-50 dark:border-slate-700 dark:hover:bg-brand-500/10" data-template="academic">Academic / High Profile</button>
+                </div>
+              </div>
+            </div>
+
+            <div id="aiTab" class="tab-panel hidden space-y-4">
+              <div class="rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
+                <div class="mb-2 font-semibold">AI Job Tailor</div>
+                <p class="helper-text text-xs text-slate-500 dark:text-slate-400">Paste job title or a few lines from a job post. The tool will adjust your summary and skills.</p>
+                <textarea id="jobDescription" rows="5" class="mt-3 w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm outline-none transition focus:border-brand-400 dark:border-slate-700 dark:bg-slate-950" placeholder="Example: Looking for warehouse helper with packing, scanning, loading, teamwork, and punctuality..."></textarea>
+                <button id="tailorResume" class="mt-3 w-full rounded-2xl bg-brand-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-700">AI Tailor to Job</button>
+              </div>
+
+              <div class="rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
+                <div class="mb-2 font-semibold">AI Improve One Bullet</div>
+                <textarea id="bulletInput" rows="3" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm outline-none transition focus:border-brand-400 dark:border-slate-700 dark:bg-slate-950" placeholder="Example: Helped in shop work and customer support"></textarea>
+                <div class="mt-3 grid grid-cols-2 gap-2">
+                  <button id="improveBullet" class="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800">Improve Bullet</button>
+                  <button id="roastResume" class="rounded-2xl border border-rose-200 px-4 py-3 text-sm font-semibold text-rose-600 hover:bg-rose-50 dark:border-rose-900/50 dark:text-rose-300 dark:hover:bg-rose-950/30">Roast My Resume</button>
+                </div>
+                <div id="aiOutput" class="mt-3 hidden rounded-2xl bg-slate-50 p-4 text-sm leading-6 dark:bg-slate-800/60"></div>
+              </div>
+
+              <div class="rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
+                <div class="mb-2 font-semibold">AI Resume Level</div>
+                <div class="grid gap-2">
+                  <button class="preset-btn rounded-2xl border border-slate-200 px-4 py-3 text-left text-sm hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800" data-preset="simple">Create a simple village-to-city job resume</button>
+                  <button class="preset-btn rounded-2xl border border-slate-200 px-4 py-3 text-left text-sm hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800" data-preset="fresher">Create a strong fresher resume</button>
+                  <button class="preset-btn rounded-2xl border border-slate-200 px-4 py-3 text-left text-sm hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800" data-preset="pro">Create a premium high-profile resume</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <section class="space-y-4">
+          <div class="grid gap-4 lg:grid-cols-[1fr_320px]">
+            <div class="rounded-3xl border border-slate-200 bg-white p-4 shadow-soft dark:border-slate-800 dark:bg-slate-900">
+              <div class="flex flex-wrap items-center gap-2">
+                <button id="downloadPdf" class="rounded-2xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700"><i class="fa-solid fa-file-pdf mr-2"></i>Download PDF</button>
+                <button id="downloadWord" class="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm font-semibold hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800"><i class="fa-solid fa-file-word mr-2 text-blue-600"></i>Download Word</button>
+                <button id="copyText" class="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm font-semibold hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800"><i class="fa-regular fa-copy mr-2"></i>Copy Text</button>
+                <button id="printResume" class="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm font-semibold hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800"><i class="fa-solid fa-print mr-2"></i>Print</button>
+              </div>
+            </div>
+
+            <div class="rounded-3xl border border-slate-200 bg-white p-4 shadow-soft dark:border-slate-800 dark:bg-slate-900">
+              <div class="mb-3 flex items-center justify-between">
+                <div>
+                  <div class="font-semibold">Resume Health</div>
+                  <div class="text-xs text-slate-500 dark:text-slate-400">Updates live as you edit</div>
+                </div>
+                <div id="healthScore" class="rounded-full bg-emerald-50 px-3 py-1 text-sm font-bold text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300">82</div>
+              </div>
+              <div class="space-y-3">
+                <div>
+                  <div class="mb-1 flex items-center justify-between text-xs"><span>Completeness</span><span id="metricComplete">84%</span></div>
+                  <div class="h-2 rounded-full bg-slate-100 dark:bg-slate-800"><div id="barComplete" class="h-2 rounded-full bg-brand-500" style="width:84%"></div></div>
+                </div>
+                <div>
+                  <div class="mb-1 flex items-center justify-between text-xs"><span>Readability</span><span id="metricRead">81%</span></div>
+                  <div class="h-2 rounded-full bg-slate-100 dark:bg-slate-800"><div id="barRead" class="h-2 rounded-full bg-emerald-500" style="width:81%"></div></div>
+                </div>
+                <div>
+                  <div class="mb-1 flex items-center justify-between text-xs"><span>Job Match</span><span id="metricMatch">79%</span></div>
+                  <div class="h-2 rounded-full bg-slate-100 dark:bg-slate-800"><div id="barMatch" class="h-2 rounded-full bg-amber-500" style="width:79%"></div></div>
+                </div>
+              </div>
+              <div id="tipsBox" class="mt-4 space-y-2 text-xs"></div>
+            </div>
+          </div>
+
+          <div id="previewWrap" class="rounded-[2rem] border border-slate-200 bg-slate-100 p-3 shadow-card dark:border-slate-800 dark:bg-slate-900 sm:p-5">
+            <div class="mb-3 flex items-center justify-between">
+              <div>
+                <h3 class="font-display text-xl font-bold">Live Resume Preview</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Editable preview. Click text and type. Drag sections to reorder.</p>
+              </div>
+              <div class="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold dark:border-slate-700 dark:bg-slate-950">A4</div>
+            </div>
+            <div class="preview-scroller rounded-[1.5rem] border border-slate-200 bg-slate-200 p-2 dark:border-slate-800 dark:bg-slate-950/60">
+              <div class="preview-stage">
+                <div id="resumePaper" class="resume-paper mx-auto overflow-hidden rounded-[1rem] border border-slate-300 bg-white shadow-card">
+                  <div id="resumeRoot" class="min-h-[1120px] text-slate-900"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+  <div id="site-footer"></div>
+
+  <div id="sticky-help" class="fixed bottom-4 right-4 z-40 hidden sm:block">
+    <div class="animate-pulseSoft rounded-full bg-brand-600 px-4 py-3 text-sm font-semibold text-white shadow-card">
+      <i class="fa-solid fa-wand-magic-sparkles mr-2"></i>AI help is ready
+    </div>
+  </div>
+
+  <script>
+
+    const siteFallbacks = {
+      'site-header': `
+        <header class="site-header-shell border-b border-slate-200 bg-gradient-to-r from-sky-500 to-indigo-600 text-white">
+          <div class="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <a href="/index.html" class="flex items-center gap-3">
+                <div class="flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-white/90 text-sky-700 shadow">
+                  <i class="fa-solid fa-graduation-cap text-xl"></i>
+                </div>
+                <div>
+                  <div class="text-3xl font-bold leading-none">Top Sarkari Jobs</div>
+                  <div class="mt-1 text-sm text-white/85">Latest Sarkari Jobs, Results, Admit Cards ...</div>
+                </div>
+              </a>
+              <nav class="flex flex-wrap gap-2 text-sm font-semibold">
+                <a class="rounded-xl border border-white/20 bg-white/10 px-4 py-3 hover:bg-white/15" href="/index.html">Home</a>
+                <a class="rounded-xl border border-white/20 bg-white/10 px-4 py-3 hover:bg-white/15" href="/results.html">Results</a>
+                <a class="rounded-xl border border-white/20 bg-white/10 px-4 py-3 hover:bg-white/15" href="/csc-services.html">CSC Services</a>
+                <div class="group relative">
+                  <button class="rounded-xl border border-white/20 bg-white/10 px-4 py-3 hover:bg-white/15">Tools</button>
+                </div>
+                <a class="rounded-xl border border-white/20 bg-white/10 px-4 py-3 hover:bg-white/15" href="/helpdesk.html">Helpdesk</a>
+                <div class="relative header-dd">
+                  <button class="header-dd-btn rounded-xl border border-white/20 bg-white/10 px-4 py-3 hover:bg-white/15">Jobs</button>
+                  <div class="header-dd-menu invisible absolute left-0 top-full z-50 mt-2 min-w-[220px] rounded-2xl bg-white p-2 text-slate-800 opacity-0 shadow-xl transition">
+                    <a class="block rounded-xl px-3 py-2 hover:bg-slate-100" href="/latest-jobs.html">Latest Jobs</a>
+                    <a class="block rounded-xl px-3 py-2 hover:bg-slate-100" href="/state-wise-jobs.html">State Wise Jobs</a>
+                    <a class="block rounded-xl px-3 py-2 hover:bg-slate-100" href="/admit-card.html">Admit Card</a>
+                  </div>
+                </div>
+                <div class="relative header-dd">
+                  <button class="header-dd-btn rounded-xl border border-white/20 bg-white/10 px-4 py-3 hover:bg-white/15">Admissions</button>
+                  <div class="header-dd-menu invisible absolute left-0 top-full z-50 mt-2 min-w-[220px] rounded-2xl bg-white p-2 text-slate-800 opacity-0 shadow-xl transition">
+                    <a class="block rounded-xl px-3 py-2 hover:bg-slate-100" href="/admissions.html">Admissions</a>
+                    <a class="block rounded-xl px-3 py-2 hover:bg-slate-100" href="/answer-key.html">Answer Key</a>
+                    <a class="block rounded-xl px-3 py-2 hover:bg-slate-100" href="/syllabus.html">Syllabus</a>
+                  </div>
+                </div>
+                <div class="relative header-dd">
+                  <button class="header-dd-btn rounded-xl border border-white/20 bg-white/10 px-4 py-3 hover:bg-white/15">More</button>
+                  <div class="header-dd-menu invisible absolute right-0 top-full z-50 mt-2 min-w-[220px] rounded-2xl bg-white p-2 text-slate-800 opacity-0 shadow-xl transition">
+                    <a class="block rounded-xl px-3 py-2 hover:bg-slate-100" href="/latest-khabar.html">Latest Khabar</a>
+                    <a class="block rounded-xl px-3 py-2 hover:bg-slate-100" href="/study-material.html">Study Material</a>
+                    <a class="block rounded-xl px-3 py-2 hover:bg-slate-100" href="/tools.html">More Tools</a>
+                  </div>
+                </div>
+              </nav>
+            </div>
+            <div class="mt-3 flex flex-wrap gap-2 text-sm font-semibold">
+              <a class="rounded-xl border border-white/20 bg-white/10 px-4 py-3 hover:bg-white/15" href="/admit-card.html">Admit Card</a>
+              <a class="resume-maker-direct rounded-xl border border-white/20 bg-white/10 px-4 py-3 hover:bg-white/15" href="/resume-maker.html">Resume/CV Maker</a>
+              <a class="rounded-xl border border-white/20 bg-white/10 px-4 py-3 hover:bg-white/15" href="/join-whatsapp.html">Join WhatsApp</a>
+            </div>
+          </div>
+        </header>
+      `,
+      'site-footer': `
+        <footer class="border-t border-slate-200 bg-white text-slate-700">
+          <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+            <div class="text-3xl font-bold text-slate-900">Top Sarkari Jobs</div>
+            <div class="mt-2 text-lg">Your gateway to government jobs and services</div>
+            <div class="mt-6 flex flex-wrap gap-4 text-xl font-semibold">
+              <a href="/about.html">About</a><a href="/contact.html">Contact</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a>
+            </div>
+            <div class="mt-8 border-t border-slate-200 pt-5 text-lg">© 2025 Top Sarkari Jobs. All rights reserved.</div>
+          </div>
+        </footer>
+      `
+    };
+
+    async function loadFragment(targetId, candidates) {
+      for (const path of candidates) {
+        try {
+          const res = await fetch(path, { credentials: 'same-origin' });
+          if (!res.ok) continue;
+          const text = await res.text();
+          if (text && text.trim()) {
+            document.getElementById(targetId).innerHTML = text;
+            return true;
+          }
+        } catch (e) {}
+      }
+      document.getElementById(targetId).innerHTML = siteFallbacks[targetId] || '';
+      return false;
+    }
+
+    function normalizeResumeLinks() {
+      document.querySelectorAll('a[href*="redirect.html"], a.resume-maker-direct, a[href*="resume-maker"]').forEach(link => {
+        const txt = (link.textContent || '').toLowerCase();
+        const href = link.getAttribute('href') || '';
+        if (txt.includes('resume') || href.includes('resume-maker')) {
+          link.setAttribute('href', '/resume-maker.html');
+        }
+      });
+    }
+
+    function initHeaderDropdowns() {
+      document.querySelectorAll('.header-dd').forEach(dd => {
+        const btn = dd.querySelector('.header-dd-btn');
+        const menu = dd.querySelector('.header-dd-menu');
+        if (!btn || !menu) return;
+        const open = () => { menu.classList.remove('invisible','opacity-0'); menu.classList.add('visible','opacity-100'); };
+        const close = () => { menu.classList.add('invisible','opacity-0'); menu.classList.remove('visible','opacity-100'); };
+        dd.addEventListener('mouseenter', open);
+        dd.addEventListener('mouseleave', close);
+        btn.addEventListener('click', e => { e.preventDefault(); menu.classList.toggle('invisible'); menu.classList.toggle('opacity-0'); menu.classList.toggle('visible'); menu.classList.toggle('opacity-100'); });
+      });
+    }
+
+    async function loadSiteShell() {
+      await loadFragment('site-header', ['header.html', '/header.html']);
+      await loadFragment('site-footer', ['footer.html', '/footer.html']);
+      normalizeResumeLinks();
+      initHeaderDropdowns();
+    }
+
+    const state = {
+      language: 'en',
+      theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
+      profile: 'simple',
+      template: 'simple',
+      sections: ['summary','experience','education','skills','extras'],
+      data: {
+        fullName: 'Ravi Kumar',
+        targetRole: 'Warehouse Associate',
+        phone: '+91 98765 43210',
+        email: 'ravikumar.jobs@gmail.com',
+        address: 'Village Rampur, Jaipur, Rajasthan',
+        summary: 'Hardworking and reliable candidate with experience supporting stock handling, packing, and daily store work. Comfortable with physical tasks, teamwork, and following instructions. Looking for a stable job where I can work honestly and learn quickly.',
+        photo: '',
+        isFresher: false,
+        educationList: [
+          { level: '12th Pass', institute: 'Govt. Senior Secondary School, Jaipur', board: 'Rajasthan Board', marks: '72%', year: '2021' },
+          { level: '10th Pass', institute: 'Govt. Higher Secondary School, Jaipur', board: 'Rajasthan Board', marks: '76%', year: '2019' }
+        ],
+        experiences: [
+          {
+            title: 'Store Helper',
+            company: 'Sharma General Store',
+            duration: '2022 - 2024',
+            bullets: [
+              'Handled stock arrangement, packing, and shelf refilling on time.',
+              'Supported customers and kept the store clean and organized.',
+              'Helped with daily loading and unloading of goods.'
+            ]
+          }
+        ],
+        skills: 'Packing, stock handling, teamwork, time management, basic computer, physical stamina, honesty',
+        language: 'Hindi, Basic English',
+        availability: 'Immediate Joining',
+        certifications: 'MS Office Basics Certificate',
+        links: 'linkedin.com/in/ravikumar'
+      }
+    };
+
+    const el = {
+      fullName: document.getElementById('fullName'),
+      targetRole: document.getElementById('targetRole'),
+      phone: document.getElementById('phone'),
+      email: document.getElementById('email'),
+      address: document.getElementById('address'),
+      summary: document.getElementById('summary'),
+      educationList: document.getElementById('educationList'),
+      photoUpload: document.getElementById('photoUpload'),
+      photoPreview: document.getElementById('photoPreview'),
+      photoPlaceholder: document.getElementById('photoPlaceholder'),
+      isFresher: document.getElementById('isFresher'),
+      skills: document.getElementById('skills'),
+      language: document.getElementById('language'),
+      availability: document.getElementById('availability'),
+      certifications: document.getElementById('certifications'),
+      links: document.getElementById('links'),
+      experienceList: document.getElementById('experienceList'),
+      resumeRoot: document.getElementById('resumeRoot'),
+      profileBadge: document.getElementById('profileBadge'),
+      tipsBox: document.getElementById('tipsBox'),
+      healthScore: document.getElementById('healthScore'),
+      metricComplete: document.getElementById('metricComplete'),
+      metricRead: document.getElementById('metricRead'),
+      metricMatch: document.getElementById('metricMatch'),
+      barComplete: document.getElementById('barComplete'),
+      barRead: document.getElementById('barRead'),
+      barMatch: document.getElementById('barMatch'),
+      aiOutput: document.getElementById('aiOutput'),
+      jobDescription: document.getElementById('jobDescription'),
+      bulletInput: document.getElementById('bulletInput')
+    };
+
+    const helperCopy = {
+      en: {
+        personal: 'Fill basic details. Use the name on your ID if possible.',
+        about: 'Write 2 to 4 simple lines about what work you can do and what kind of job you want.',
+        education: 'Add your latest education. You can mention 10th pass, 12th pass, ITI, diploma, graduation, or masters.',
+        experience: 'Add past work. No formal job? You can mention family business, farm work, shop work, internship, or daily responsibility.',
+        skills: 'Keep skills honest. Example: punctual, teamwork, packing, computer, Excel, driving, customer service.',
+        extra: 'Useful for simple jobs and premium jobs both.'
+      },
+      hi: {
+        personal: 'अपनी बुनियादी जानकारी भरें। संभव हो तो वही नाम लिखें जो आपके पहचान पत्र में है।',
+        about: 'अपने बारे में 2 से 4 आसान लाइन लिखें। आप क्या काम कर सकते हैं और कैसी नौकरी चाहते हैं।',
+        education: 'अपनी सबसे नई पढ़ाई लिखें। 10वीं पास, 12वीं पास, आईटीआई, डिप्लोमा, ग्रेजुएशन, या मास्टर्स लिख सकते हैं।',
+        experience: 'पुराना काम लिखें। अगर औपचारिक नौकरी नहीं थी तो परिवार का काम, खेती, दुकान, इंटर्नशिप, या रोज की जिम्मेदारी लिख सकते हैं।',
+        skills: 'सिर्फ सही स्किल लिखें। जैसे: समय पर आना, टीमवर्क, पैकिंग, कंप्यूटर, एक्सेल, ड्राइविंग, ग्राहक सेवा।',
+        extra: 'यह जानकारी साधारण और प्रोफेशनल दोनों प्रकार की नौकरी के लिए उपयोगी है।'
+      }
+    };
+
+    const quickProfiles = {
+      simple: {
+        fullName: 'Ravi Kumar',
+        targetRole: 'Warehouse Associate',
+        phone: '+91 98765 43210',
+        email: 'ravikumar.jobs@gmail.com',
+        address: 'Village Rampur, Jaipur, Rajasthan',
+        summary: 'Hardworking and reliable candidate with experience supporting stock handling, packing, and daily store work. Comfortable with physical tasks, teamwork, and following instructions. Looking for a stable job where I can work honestly and learn quickly.',
+        photo: '',
+        isFresher: false,
+        educationList: [
+          { level: '12th Pass', institute: 'Govt. Senior Secondary School, Jaipur', board: 'Rajasthan Board', marks: '72%', year: '2021' },
+          { level: '10th Pass', institute: 'Govt. Higher Secondary School, Jaipur', board: 'Rajasthan Board', marks: '76%', year: '2019' }
+        ],
+        experiences: [{
+          title: 'Store Helper',
+          company: 'Sharma General Store',
+          duration: '2022 - 2024',
+          bullets: [
+            'Handled stock arrangement, packing, and shelf refilling on time.',
+            'Supported customers and kept the store clean and organized.',
+            'Helped with daily loading and unloading of goods.'
+          ]
+        }],
+        skills: 'Packing, stock handling, teamwork, time management, basic computer, physical stamina, honesty',
+        language: 'Hindi, Basic English',
+        availability: 'Immediate Joining',
+        certifications: 'MS Office Basics Certificate',
+        links: 'linkedin.com/in/ravikumar'
+      },
+      pro: {
+        fullName: 'Ananya Verma',
+        targetRole: 'Senior Business Analyst',
+        phone: '+91 98123 45678',
+        email: 'ananya.verma@gmail.com',
+        address: 'Bengaluru, Karnataka',
+        summary: 'Strategy and analytics professional with 7+ years of experience driving business growth through data-backed decision making, stakeholder communication, process improvement, and executive reporting. Known for translating complex data into clear business actions and delivering measurable outcomes across operations, finance, and product teams.',
+        photo: '',
+        isFresher: false,
+        educationList: [
+          { level: 'MBA, Business Analytics', institute: 'Symbiosis Institute of Business Management', board: 'Pune', marks: 'CGPA 8.6', year: '2018' },
+          { level: 'B.Com', institute: 'Delhi University', board: 'Delhi', marks: 'First Division', year: '2016' }
+        ],
+        experiences: [{
+          title: 'Senior Business Analyst',
+          company: 'Apex Digital Services',
+          duration: '2021 - Present',
+          bullets: [
+            'Built KPI dashboards for leadership, reducing reporting turnaround time by 35%.',
+            'Partnered with product and operations teams to improve workflow visibility and issue resolution.',
+            'Led monthly business reviews with actionable insights on growth, risk, and performance trends.'
+          ]
+        }, {
+          title: 'Business Analyst',
+          company: 'Northstar Consulting',
+          duration: '2018 - 2021',
+          bullets: [
+            'Created executive-ready reports and presentations for client decision making.',
+            'Automated weekly reporting using Excel and SQL, improving consistency and speed.',
+            'Supported process improvement projects that increased team productivity and accuracy.'
+          ]
+        }],
+        skills: 'Business analysis, SQL, Excel, Power BI, stakeholder management, dashboarding, process improvement, communication, requirements gathering',
+        language: 'English, Hindi',
+        availability: '2 Weeks Notice',
+        certifications: 'Google Data Analytics | Lean Six Sigma Green Belt',
+        links: 'linkedin.com/in/ananyaverma | portfolio.example.com'
+      },
+      fresher: {
+        fullName: 'Pooja Singh',
+        targetRole: 'Customer Support Executive',
+        phone: '+91 98888 22211',
+        email: 'pooja.singh@gmail.com',
+        address: 'Lucknow, Uttar Pradesh',
+        summary: 'Motivated fresher with strong communication, customer handling, and basic computer skills. Looking for an entry-level role where I can support customers, learn fast, and grow with the company.',
+        photo: '',
+        isFresher: true,
+        educationList: [
+          { level: 'B.A. Graduate', institute: 'Lucknow University', board: 'Lucknow', marks: '72%', year: '2024' },
+          { level: '12th Pass', institute: 'City Inter College, Lucknow', board: 'UP Board', marks: '79%', year: '2021' }
+        ],
+        experiences: [{
+          title: 'College Volunteer',
+          company: 'Student Help Desk',
+          duration: '2023 - 2024',
+          bullets: [
+            'Helped students with basic queries and event coordination.',
+            'Maintained records and supported smooth communication.',
+            'Worked with team members to manage busy help desk hours.'
+          ]
+        }],
+        skills: 'Communication, customer service, typing, MS Office, teamwork, patience, phone handling',
+        language: 'Hindi, English',
+        availability: 'Immediate Joining',
+        certifications: 'Basic Computer Course',
+        links: 'linkedin.com/in/poojasingh'
+      }
+    };
+
+    function syncInputsFromState() {
+      el.fullName.value = state.data.fullName;
+      el.targetRole.value = state.data.targetRole;
+      el.phone.value = state.data.phone;
+      el.email.value = state.data.email;
+      el.address.value = state.data.address;
+      el.summary.value = state.data.summary;
+      el.isFresher.checked = !!state.data.isFresher;
+      updatePhotoThumb();
+      renderEducationInputs();
+      el.skills.value = state.data.skills;
+      el.language.value = state.data.language;
+      el.availability.value = state.data.availability;
+      el.certifications.value = state.data.certifications;
+      el.links.value = state.data.links;
+      renderExperienceInputs();
+      updateProfileBadge();
+      renderResume();
+      updateHealth();
+    }
+
+    function updateProfileBadge() {
+      el.profileBadge.textContent = state.profile === 'simple' ? 'Simple' : 'Professional';
+      document.querySelectorAll('.profile-card').forEach(btn => {
+        const active = btn.dataset.profile === state.profile;
+        btn.classList.toggle('ring-2', active);
+        btn.classList.toggle('ring-brand-400', active);
+        btn.classList.toggle('bg-white/10', active);
+        btn.classList.toggle('bg-white/5', !active);
+        btn.classList.toggle('is-active', active);
+      });
+    }
+
+    function renderExperienceInputs() {
+      el.experienceList.innerHTML = state.data.experiences.map((exp, index) => `
+        <div class="exp-card rounded-2xl border border-slate-200 p-3 dark:border-slate-700" data-index="${index}">
+          <div class="mb-3 flex items-center justify-between">
+            <div class="text-sm font-semibold">Experience ${index + 1}</div>
+            <div class="flex gap-2">
+              <button class="add-bullet rounded-full border border-slate-200 px-3 py-1.5 text-[11px] font-semibold hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800" data-index="${index}">Add Bullet</button>
+              <button class="remove-exp rounded-full border border-rose-200 px-3 py-1.5 text-[11px] font-semibold text-rose-600 hover:bg-rose-50 dark:border-rose-900/50 dark:text-rose-300 dark:hover:bg-rose-950/30" data-index="${index}">Remove</button>
+            </div>
+          </div>
+          <div class="grid gap-3 sm:grid-cols-2">
+            <input class="exp-field rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-brand-400 dark:border-slate-700 dark:bg-slate-950" data-index="${index}" data-field="title" value="${escapeHtml(exp.title)}" placeholder="Job title" />
+            <input class="exp-field rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-brand-400 dark:border-slate-700 dark:bg-slate-950" data-index="${index}" data-field="company" value="${escapeHtml(exp.company)}" placeholder="Company / Place" />
+            <input class="exp-field sm:col-span-2 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-brand-400 dark:border-slate-700 dark:bg-slate-950" data-index="${index}" data-field="duration" value="${escapeHtml(exp.duration)}" placeholder="Duration" />
+          </div>
+          <div class="mt-3 space-y-2">
+            ${exp.bullets.map((bullet, bulletIndex) => `
+              <div class="flex gap-2">
+                <textarea class="bullet-field min-h-[72px] flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-brand-400 dark:border-slate-700 dark:bg-slate-950" data-index="${index}" data-bullet="${bulletIndex}" placeholder="Describe what you did">${escapeHtml(bullet)}</textarea>
+                <button class="remove-bullet self-start rounded-xl border border-rose-200 px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 dark:border-rose-900/50 dark:text-rose-300 dark:hover:bg-rose-950/30" data-index="${index}" data-bullet="${bulletIndex}"><i class="fa-solid fa-trash"></i></button>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+
+      el.experienceList.querySelectorAll('.exp-field').forEach(input => {
+        input.addEventListener('input', e => {
+          const idx = +e.target.dataset.index;
+          const field = e.target.dataset.field;
+          state.data.experiences[idx][field] = e.target.value;
+          renderResume();
+          updateHealth();
+        });
+      });
+      document.querySelectorAll('.profile-card').forEach(btn => btn.classList.toggle('is-active', btn.dataset.profile === state.profile));
+
+      el.experienceList.querySelectorAll('.bullet-field').forEach(textarea => {
+        textarea.addEventListener('input', e => {
+          const idx = +e.target.dataset.index;
+          const bulletIdx = +e.target.dataset.bullet;
+          state.data.experiences[idx].bullets[bulletIdx] = e.target.value;
+          renderResume();
+          updateHealth();
+        });
+      });
+
+      el.experienceList.querySelectorAll('.remove-exp').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = +btn.dataset.index;
+          state.data.experiences.splice(idx, 1);
+          if (!state.data.experiences.length) {
+            state.data.experiences.push({ title: 'New Role', company: 'Company Name', duration: 'Year - Year', bullets: ['Describe your work here.'] });
+          }
+          renderExperienceInputs();
+          renderResume();
+          updateHealth();
+        });
+      });
+
+      el.experienceList.querySelectorAll('.add-bullet').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = +btn.dataset.index;
+          state.data.experiences[idx].bullets.push('Added new responsibility.');
+          renderExperienceInputs();
+          renderResume();
+          updateHealth();
+        });
+      });
+
+      el.experienceList.querySelectorAll('.remove-bullet').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = +btn.dataset.index;
+          const bulletIdx = +btn.dataset.bullet;
+          state.data.experiences[idx].bullets.splice(bulletIdx, 1);
+          if (!state.data.experiences[idx].bullets.length) {
+            state.data.experiences[idx].bullets.push('Describe your work here.');
+          }
+          renderExperienceInputs();
+          renderResume();
+          updateHealth();
+        });
+      });
+    }
+
+    function renderEducationInputs() {
+      el.educationList.innerHTML = state.data.educationList.map((edu, index) => `
+        <div class="rounded-2xl border border-slate-200 p-3 dark:border-slate-700" data-edu-index="${index}">
+          <div class="mb-3 flex items-center justify-between">
+            <div class="text-sm font-semibold">Education ${index + 1}</div>
+            <button class="remove-edu rounded-full border border-rose-200 px-3 py-1.5 text-[11px] font-semibold text-rose-600 hover:bg-rose-50 dark:border-rose-900/50 dark:text-rose-300 dark:hover:bg-rose-950/30" data-index="${index}">Remove</button>
+          </div>
+          <div class="grid gap-3 sm:grid-cols-2">
+            <input class="edu-field rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-brand-400 dark:border-slate-700 dark:bg-slate-950" data-index="${index}" data-field="level" value="${escapeHtml(edu.level)}" placeholder="8th pass / 10th pass / 12th pass / Degree" />
+            <input class="edu-field rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-brand-400 dark:border-slate-700 dark:bg-slate-950" data-index="${index}" data-field="institute" value="${escapeHtml(edu.institute)}" placeholder="School / College" />
+            <input class="edu-field rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-brand-400 dark:border-slate-700 dark:bg-slate-950" data-index="${index}" data-field="board" value="${escapeHtml(edu.board)}" placeholder="Board / University" />
+            <input class="edu-field rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-brand-400 dark:border-slate-700 dark:bg-slate-950" data-index="${index}" data-field="marks" value="${escapeHtml(edu.marks)}" placeholder="Marks / CGPA / Division" />
+            <input class="edu-field sm:col-span-2 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-brand-400 dark:border-slate-700 dark:bg-slate-950" data-index="${index}" data-field="year" value="${escapeHtml(edu.year)}" placeholder="Passing year" />
+          </div>
+        </div>
+      `).join('');
+
+      el.educationList.querySelectorAll('.edu-field').forEach(input => {
+        input.addEventListener('input', e => {
+          const idx = +e.target.dataset.index;
+          const field = e.target.dataset.field;
+          state.data.educationList[idx][field] = e.target.value;
+          renderResume();
+          updateHealth();
+        });
+      });
+
+      el.educationList.querySelectorAll('.remove-edu').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = +btn.dataset.index;
+          state.data.educationList.splice(idx, 1);
+          if (!state.data.educationList.length) state.data.educationList.push({ level: '10th Pass', institute: '', board: '', marks: '', year: '' });
+          renderEducationInputs();
+          renderResume();
+          updateHealth();
+        });
+      });
+    }
+
+    function updatePhotoThumb() {
+      if (state.data.photo) {
+        el.photoPreview.src = state.data.photo;
+        el.photoPreview.classList.remove('hidden');
+        el.photoPlaceholder.classList.add('hidden');
+      } else {
+        el.photoPreview.classList.add('hidden');
+        el.photoPlaceholder.classList.remove('hidden');
+      }
+    }
+
+
+    function renderResume() {
+      const palette = getTemplatePalette();
+      const sectionMap = {
+        summary: renderSummarySection,
+        experience: renderExperienceSection,
+        education: renderEducationSection,
+        skills: renderSkillsSection,
+        extras: renderExtrasSection
+      };
+
+      const photo = state.data.photo ? `<img src="${state.data.photo}" alt="${escapeHtml(state.data.fullName)}" class="resume-photo" />` : '';
+      const header = `
+        <div class="${palette.headerWrap}">
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex-1">
+              <div contenteditable="true" data-bind="fullName" class="editable ${palette.nameClass}">${escapeHtml(state.data.fullName)}</div>
+              <div contenteditable="true" data-bind="targetRole" class="editable ${palette.roleClass}">${escapeHtml(state.data.targetRole)}</div>
+              <div class="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs ${palette.metaClass}">
+                <span contenteditable="true" data-bind="phone" class="editable inline-block">${escapeHtml(state.data.phone)}</span>
+                <span contenteditable="true" data-bind="email" class="editable inline-block">${escapeHtml(state.data.email)}</span>
+                <span contenteditable="true" data-bind="address" class="editable inline-block">${escapeHtml(state.data.address)}</span>
+              </div>
+            </div>
+            ${photo}
+          </div>
+        </div>
+      `;
+
+      const sections = state.sections.map(key => sectionMap[key]()).join('');
+
+      el.resumeRoot.className = `${palette.rootClass}`;
+      el.resumeRoot.innerHTML = header + `<div id="sectionContainer" class="${palette.bodyClass}">${sections}</div>`;
+
+      bindEditablePreview();
+      bindDragAndDrop();
+    }
+
+    function renderSummarySection() {
+      return sectionBlock('summary', 'Profile Summary', `
+        <div contenteditable="true" data-bind="summary" class="editable text-sm leading-6 text-slate-700">${escapeHtml(state.data.summary)}</div>
+      `);
+    }
+
+    function renderExperienceSection() {
+      if (state.data.isFresher) {
+        return sectionBlock('experience', 'Work Experience', `<div class="rounded-xl border border-dashed border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">Fresher - no formal work experience yet. Ready to learn, work hard, and join immediately.</div>`);
+      }
+      const items = state.data.experiences.map((exp, idx) => `
+        <div class="exp-preview group rounded-xl border border-transparent p-2 hover:border-slate-200" data-exp-index="${idx}">
+          <div class="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <div contenteditable="true" data-exp-field="title" data-exp-index="${idx}" class="editable font-semibold text-slate-900">${escapeHtml(exp.title)}</div>
+              <div contenteditable="true" data-exp-field="company" data-exp-index="${idx}" class="editable text-sm text-slate-600">${escapeHtml(exp.company)}</div>
+            </div>
+            <div contenteditable="true" data-exp-field="duration" data-exp-index="${idx}" class="editable text-xs font-medium text-slate-500">${escapeHtml(exp.duration)}</div>
+          </div>
+          <ul class="mt-2 space-y-1.5">
+            ${exp.bullets.map((bullet, bulletIdx) => `
+              <li draggable="true" class="bullet-item rounded-lg pl-4 text-sm leading-6 text-slate-700" data-exp-index="${idx}" data-bullet-index="${bulletIdx}">
+                <span class="mr-2 text-brand-500">•</span>
+                <span contenteditable="true" data-exp-index="${idx}" data-bullet-content="${bulletIdx}" class="editable inline">${escapeHtml(bullet)}</span>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+      `).join('');
+      return sectionBlock('experience', 'Work Experience', items);
+    }
+
+    function renderEducationSection() {
+      return sectionBlock('education', 'Education', `
+        <div class="space-y-3">
+          ${state.data.educationList.map((edu, idx) => `
+            <div class="rounded-xl border border-slate-100 p-3">
+              <div class="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <div contenteditable="true" data-edu-preview="level" data-edu-index="${idx}" class="editable font-semibold text-slate-900">${escapeHtml(edu.level)}</div>
+                  <div contenteditable="true" data-edu-preview="institute" data-edu-index="${idx}" class="editable text-sm text-slate-600">${escapeHtml(edu.institute)}</div>
+                </div>
+                <div contenteditable="true" data-edu-preview="year" data-edu-index="${idx}" class="editable text-xs font-medium text-slate-500">${escapeHtml(edu.year)}</div>
+              </div>
+              <div class="mt-2 text-sm text-slate-700">
+                <span contenteditable="true" data-edu-preview="board" data-edu-index="${idx}" class="editable inline-block">${escapeHtml(edu.board)}</span>
+                <span class="mx-1 text-slate-300">•</span>
+                <span contenteditable="true" data-edu-preview="marks" data-edu-index="${idx}" class="editable inline-block">${escapeHtml(edu.marks)}</span>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `);
+    }
+
+    function renderSkillsSection() {
+      const skills = splitCommaList(state.data.skills).map(skill => `<span class="rounded-full border border-slate-200 px-3 py-1 text-xs font-medium text-slate-700">${escapeHtml(skill)}</span>`).join('');
+      return sectionBlock('skills', 'Skills', `
+        <div contenteditable="true" data-bind="skills" class="editable hidden">${escapeHtml(state.data.skills)}</div>
+        <div class="flex flex-wrap gap-2">${skills}</div>
+      `);
+    }
+
+    function renderExtrasSection() {
+      return sectionBlock('extras', 'Extra Details', `
+        <div class="grid gap-3 sm:grid-cols-2">
+          ${extraRow('Languages', 'language', state.data.language)}
+          ${extraRow('Availability', 'availability', state.data.availability)}
+          ${extraRow('Certificates', 'certifications', state.data.certifications)}
+          ${extraRow('Links', 'links', state.data.links)}
+        </div>
+      `);
+    }
+
+    function extraRow(label, bind, value) {
+      return `
+        <div class="rounded-xl bg-slate-50 p-3">
+          <div class="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">${label}</div>
+          <div contenteditable="true" data-bind="${bind}" class="editable mt-1 text-sm leading-6 text-slate-700">${escapeHtml(value)}</div>
+        </div>
+      `;
+    }
+
+    function sectionBlock(id, title, body) {
+      return `
+        <section class="resume-section" draggable="true" data-section="${id}">
+          <div class="mb-3 flex items-center gap-3">
+            <div class="h-px flex-1 bg-slate-200"></div>
+            <div class="text-xs font-bold uppercase tracking-[0.22em] text-slate-500">${title}</div>
+            <div class="h-px flex-1 bg-slate-200"></div>
+          </div>
+          ${body}
+        </section>
+      `;
+    }
+
+    function getTemplatePalette() {
+      const common = {
+        simple: {
+          rootClass: 'bg-white text-slate-900',
+          headerWrap: 'border-b border-slate-200 px-8 py-8',
+          nameClass: 'font-display text-3xl font-bold tracking-tight text-slate-900',
+          roleClass: 'mt-2 text-base font-medium text-brand-700',
+          metaClass: 'text-slate-600',
+          bodyClass: 'space-y-7 px-8 py-8'
+        },
+        worker: {
+          rootClass: 'bg-white text-slate-900',
+          headerWrap: 'bg-brand-600 px-8 py-8 text-white',
+          nameClass: 'font-display text-3xl font-bold tracking-tight text-white',
+          roleClass: 'mt-2 text-base font-medium text-brand-100',
+          metaClass: 'text-white/90',
+          bodyClass: 'space-y-7 px-8 py-8'
+        },
+        fresher: {
+          rootClass: 'bg-white text-slate-900',
+          headerWrap: 'border-l-[10px] border-brand-500 px-8 py-8',
+          nameClass: 'font-display text-3xl font-bold tracking-tight text-slate-900',
+          roleClass: 'mt-2 text-base font-medium text-slate-600',
+          metaClass: 'text-slate-500',
+          bodyClass: 'space-y-7 px-8 py-8'
+        },
+        pro: {
+          rootClass: 'bg-white text-slate-900',
+          headerWrap: 'bg-slate-900 px-8 py-8 text-white',
+          nameClass: 'font-display text-3xl font-bold tracking-tight text-white',
+          roleClass: 'mt-2 text-base font-medium text-slate-300',
+          metaClass: 'text-slate-300',
+          bodyClass: 'space-y-7 px-8 py-8'
+        },
+        classic: {
+          rootClass: 'bg-white text-slate-900',
+          headerWrap: 'border-b-4 border-slate-900 px-8 py-8',
+          nameClass: 'font-serif text-3xl font-bold tracking-tight text-slate-900',
+          roleClass: 'mt-2 text-base font-medium text-slate-700',
+          metaClass: 'text-slate-600',
+          bodyClass: 'space-y-7 px-8 py-8'
+        },
+        government: {
+          rootClass: 'bg-white text-slate-900',
+          headerWrap: 'border-y-4 border-brand-700 bg-slate-50 px-8 py-7',
+          nameClass: 'font-display text-3xl font-bold tracking-tight text-slate-900 uppercase',
+          roleClass: 'mt-2 text-sm font-semibold tracking-wide text-brand-700',
+          metaClass: 'text-slate-700',
+          bodyClass: 'space-y-6 px-8 py-8'
+        },
+        modern: {
+          rootClass: 'bg-white text-slate-900',
+          headerWrap: 'rounded-b-[2rem] bg-gradient-to-r from-brand-600 to-brand-800 px-8 py-8 text-white',
+          nameClass: 'font-display text-3xl font-bold tracking-tight text-white',
+          roleClass: 'mt-2 text-base font-medium text-brand-100',
+          metaClass: 'text-white/90',
+          bodyClass: 'space-y-7 px-8 py-8'
+        },
+        academic: {
+          rootClass: 'bg-white text-slate-900',
+          headerWrap: 'border-l-[12px] border-slate-900 bg-slate-50 px-8 py-8',
+          nameClass: 'font-display text-3xl font-bold tracking-tight text-slate-900',
+          roleClass: 'mt-2 text-base font-medium text-slate-600',
+          metaClass: 'text-slate-600',
+          bodyClass: 'space-y-7 px-8 py-8'
+        }
+      };
+      return common[state.template] || common.simple;
+    }
+
+    function bindEditablePreview() {
+      el.resumeRoot.querySelectorAll('[data-bind]').forEach(node => {
+        node.addEventListener('input', e => {
+          const key = e.target.dataset.bind;
+          const value = e.target.innerText.trim();
+          state.data[key] = value;
+          syncInputsWithoutRerender();
+          if (key === 'skills') renderResume();
+          updateHealth();
+        });
+      });
+
+      el.resumeRoot.querySelectorAll('[data-edu-preview]').forEach(node => {
+        node.addEventListener('input', e => {
+          const idx = +e.target.dataset.eduIndex;
+          const field = e.target.dataset.eduPreview;
+          state.data.educationList[idx][field] = e.target.innerText.trim();
+          renderEducationInputs();
+          updateHealth();
+        });
+      });
+
+      el.resumeRoot.querySelectorAll('[data-exp-field]').forEach(node => {
+        node.addEventListener('input', e => {
+          const idx = +e.target.dataset.expIndex;
+          const field = e.target.dataset.expField;
+          state.data.experiences[idx][field] = e.target.innerText.trim();
+          renderExperienceInputs();
+          updateHealth();
+        });
+      });
+
+      el.resumeRoot.querySelectorAll('[data-bullet-content]').forEach(node => {
+        node.addEventListener('input', e => {
+          const idx = +e.target.dataset.expIndex;
+          const bulletIndex = +e.target.dataset.bulletContent;
+          state.data.experiences[idx].bullets[bulletIndex] = e.target.innerText.trim();
+          renderExperienceInputs();
+          updateHealth();
+        });
+      });
+    }
+
+    function bindDragAndDrop() {
+      const sectionContainer = document.getElementById('sectionContainer');
+      if (!sectionContainer) return;
+      let draggedSection = null;
+      sectionContainer.querySelectorAll('.resume-section').forEach(section => {
+        section.addEventListener('dragstart', () => {
+          draggedSection = section;
+          section.classList.add('dragging');
+        });
+        section.addEventListener('dragend', () => {
+          section.classList.remove('dragging');
+          sectionContainer.querySelectorAll('.resume-section').forEach(s => s.classList.remove('drop-target'));
+          const newOrder = [...sectionContainer.querySelectorAll('.resume-section')].map(s => s.dataset.section);
+          state.sections = newOrder;
+        });
+        section.addEventListener('dragover', e => {
+          e.preventDefault();
+          if (draggedSection && draggedSection !== section) section.classList.add('drop-target');
+        });
+        section.addEventListener('dragleave', () => section.classList.remove('drop-target'));
+        section.addEventListener('drop', e => {
+          e.preventDefault();
+          if (!draggedSection || draggedSection === section) return;
+          section.classList.remove('drop-target');
+          const sections = [...sectionContainer.querySelectorAll('.resume-section')];
+          const draggedIndex = sections.indexOf(draggedSection);
+          const targetIndex = sections.indexOf(section);
+          const order = [...state.sections];
+          const [moved] = order.splice(draggedIndex, 1);
+          order.splice(targetIndex, 0, moved);
+          state.sections = order;
+          renderResume();
+        });
+      });
+
+      el.resumeRoot.querySelectorAll('.bullet-item').forEach(item => {
+        item.addEventListener('dragstart', () => item.classList.add('dragging'));
+        item.addEventListener('dragend', () => item.classList.remove('dragging'));
+        item.addEventListener('dragover', e => e.preventDefault());
+        item.addEventListener('drop', e => {
+          e.preventDefault();
+          const dragged = el.resumeRoot.querySelector('.bullet-item.dragging');
+          if (!dragged || dragged === item) return;
+          const expIdx = +item.dataset.expIndex;
+          const fromExp = +dragged.dataset.expIndex;
+          if (expIdx !== fromExp) return;
+          const from = +dragged.dataset.bulletIndex;
+          const to = +item.dataset.bulletIndex;
+          const bullets = [...state.data.experiences[expIdx].bullets];
+          const [moved] = bullets.splice(from, 1);
+          bullets.splice(to, 0, moved);
+          state.data.experiences[expIdx].bullets = bullets;
+          renderExperienceInputs();
+          renderResume();
+          updateHealth();
+        });
+      });
+    }
+
+    function splitCommaList(value) {
+      return value.split(',').map(v => v.trim()).filter(Boolean);
+    }
+
+    function updateHealth() {
+      const eduComplete = state.data.educationList.some(edu => [edu.level, edu.institute, edu.board, edu.marks, edu.year].some(Boolean));
+      const completeness = Math.min(100, Math.round([
+        state.data.fullName,
+        state.data.targetRole,
+        state.data.phone,
+        state.data.email,
+        state.data.address,
+        state.data.summary,
+        eduComplete ? 'education' : '',
+        state.data.skills,
+        state.data.language,
+        state.data.availability
+      ].filter(Boolean).length / 10 * 100));
+
+      const summaryWords = state.data.summary.trim().split(/\s+/).filter(Boolean).length;
+      const avgBulletWords = averageBulletWords();
+      const readability = Math.max(55, Math.min(100, 100 - Math.abs(summaryWords - (state.profile === 'simple' ? 35 : 55)) - Math.abs(avgBulletWords - 9) * 2));
+
+      const jobText = `${state.data.targetRole} ${state.data.summary} ${state.data.skills} ${state.data.experiences.map(e => `${e.title} ${e.company} ${e.bullets.join(' ')}`).join(' ')}`.toLowerCase();
+      const jd = el.jobDescription.value.toLowerCase();
+      const jdTokens = [...new Set(jd.split(/[^a-z0-9+#]+/).filter(t => t.length > 3))];
+      const match = jdTokens.length ? Math.min(100, Math.round((jdTokens.filter(t => jobText.includes(t)).length / jdTokens.length) * 100)) : estimateMatchByRole();
+      const overall = Math.round((completeness + readability + match) / 3);
+
+      el.metricComplete.textContent = `${completeness}%`;
+      el.metricRead.textContent = `${readability}%`;
+      el.metricMatch.textContent = `${match}%`;
+      el.barComplete.style.width = `${completeness}%`;
+      el.barRead.style.width = `${readability}%`;
+      el.barMatch.style.width = `${match}%`;
+      el.healthScore.textContent = overall;
+      el.healthScore.className = `rounded-full px-3 py-1 text-sm font-bold ${overall >= 80 ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300' : overall >= 65 ? 'bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-300' : 'bg-rose-50 text-rose-700 dark:bg-rose-500/10 dark:text-rose-300'}`;
+
+      const tips = [];
+      if (summaryWords < 20) tips.push({ label: 'Summary is too short', action: 'Apply Fix', fix: () => generateSummary() });
+      if (splitCommaList(state.data.skills).length < 6) tips.push({ label: 'Add more job-relevant skills', action: 'Apply Fix', fix: () => suggestSkills() });
+      if (!state.data.links && state.profile === 'pro') tips.push({ label: 'Add LinkedIn or portfolio link', action: 'Add Example', fix: () => { state.data.links = 'linkedin.com/in/yourname'; syncInputsFromState(); } });
+      if (state.data.experiences[0]?.bullets.some(b => b.split(/\s+/).length < 5)) tips.push({ label: 'Make bullet points stronger and more specific', action: 'Apply Fix', fix: () => autoImproveBullets() });
+      if (!tips.length) tips.push({ label: 'Strong draft. Keep details honest and role-specific.', action: 'Nice', fix: null });
+
+      el.tipsBox.innerHTML = tips.slice(0, 3).map((tip, idx) => `
+        <div class="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 p-3 dark:border-slate-700">
+          <div class="leading-5 text-slate-600 dark:text-slate-300">${escapeHtml(tip.label)}</div>
+          ${tip.fix ? `<button class="tip-fix rounded-full bg-slate-900 px-3 py-1.5 text-[11px] font-semibold text-white dark:bg-white dark:text-slate-900" data-tip="${idx}">${tip.action}</button>` : `<span class="rounded-full bg-emerald-50 px-3 py-1.5 text-[11px] font-semibold text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300">${tip.action}</span>`}
+        </div>
+      `).join('');
+      el.tipsBox.querySelectorAll('.tip-fix').forEach((btn, idx) => btn.addEventListener('click', () => tips[idx].fix()));
+    }
+
+    function averageBulletWords() {
+      const bullets = state.data.experiences.flatMap(exp => exp.bullets);
+      if (!bullets.length) return 0;
+      return bullets.reduce((sum, bullet) => sum + bullet.trim().split(/\s+/).filter(Boolean).length, 0) / bullets.length;
+    }
+
+    function estimateMatchByRole() {
+      const role = state.data.targetRole.toLowerCase();
+      const skills = state.data.skills.toLowerCase();
+      let score = 68;
+      if (role.includes('analyst') && /(excel|sql|power bi|dashboard)/.test(skills)) score += 18;
+      if (role.includes('engineer') && /(javascript|python|react|api|sql)/.test(skills)) score += 18;
+      if (/(helper|warehouse|delivery|store|driver)/.test(role) && /(packing|stock|lifting|time|driving|teamwork)/.test(skills)) score += 16;
+      if (/(support|customer|office)/.test(role) && /(communication|customer|ms office|typing|computer)/.test(skills)) score += 15;
+      return Math.min(score, 96);
+    }
+
+    function suggestSkills() {
+      const role = state.data.targetRole.toLowerCase();
+      let suggested = [];
+      if (/(warehouse|store|helper|delivery)/.test(role)) {
+        suggested = ['Packing', 'Stock handling', 'Loading and unloading', 'Teamwork', 'Time management', 'Punctuality', 'Physical stamina', 'Basic scanning'];
+      } else if (/(office|support|assistant)/.test(role)) {
+        suggested = ['MS Office', 'Typing', 'Record keeping', 'Customer handling', 'Communication', 'Email support', 'Time management', 'Basic Excel'];
+      } else if (/(analyst|data|business)/.test(role)) {
+        suggested = ['Excel', 'SQL', 'Dashboarding', 'Power BI', 'Reporting', 'Stakeholder communication', 'Data cleaning', 'Problem solving'];
+      } else if (/(engineer|developer|software)/.test(role)) {
+        suggested = ['JavaScript', 'APIs', 'HTML/CSS', 'React', 'Node.js', 'Git', 'Debugging', 'Problem solving'];
+      } else {
+        suggested = ['Communication', 'Teamwork', 'Honesty', 'Quick learning', 'Punctuality', 'Customer service'];
+      }
+      state.data.skills = suggested.join(', ');
+      syncInputsFromState();
+    }
+
+    function generateSummary() {
+      const role = state.data.targetRole;
+      if (state.profile === 'simple') {
+        state.data.summary = `Reliable and hardworking candidate seeking a ${role} role. Able to follow instructions, work with a team, and complete daily tasks on time. Ready to learn quickly, support the workplace honestly, and give full effort in every shift.`;
+      } else {
+        state.data.summary = `Results-oriented professional targeting a ${role} position, with a strong blend of execution, communication, and problem solving. Brings practical experience, structured thinking, and a consistent record of helping teams improve performance, accuracy, and day-to-day operations.`;
+      }
+      syncInputsFromState();
+    }
+
+    function simplifyText(text) {
+      return text
+        .replace(/leveraged/gi, 'used')
+        .replace(/optimized/gi, 'improved')
+        .replace(/facilitated/gi, 'helped')
+        .replace(/stakeholders/gi, 'team members')
+        .replace(/cross-functional/gi, 'different')
+        .replace(/implemented/gi, 'started')
+        .replace(/streamlined/gi, 'made easier');
+    }
+
+    function autoImproveBullets() {
+      state.data.experiences = state.data.experiences.map(exp => ({
+        ...exp,
+        bullets: exp.bullets.map(b => improveBulletText(b))
+      }));
+      syncInputsFromState();
+    }
+
+    function improveBulletText(bullet) {
+      const clean = bullet.trim().replace(/\.$/, '');
+      if (state.profile === 'simple') {
+        if (/helped/i.test(clean)) return clean.replace(/helped/i, 'Supported') + ' with focus on speed, cleanliness, and teamwork.';
+        if (/handled/i.test(clean)) return clean + ' while following safety and timing needs.';
+        return clean + ' and completed work responsibly on time.';
+      }
+      if (/built|created|led|managed|delivered|improved/i.test(clean)) return clean + ' with measurable business value and stronger execution quality.';
+      return clean.charAt(0).toUpperCase() + clean.slice(1) + ' to improve quality, speed, and team outcomes.';
+    }
+
+    function tailorToJob() {
+      const jd = el.jobDescription.value.trim();
+      if (!jd) {
+        showAiOutput('Paste a job title or a few lines from a job description first.');
+        return;
+      }
+      const lower = jd.toLowerCase();
+      const roleMatch = jd.split(/[\n,.]/)[0].slice(0, 80);
+      state.data.targetRole = roleMatch || state.data.targetRole;
+      const keywords = [...new Set(lower.split(/[^a-z0-9+#]+/).filter(w => w.length > 4))].slice(0, 8);
+      if (state.profile === 'simple') {
+        state.data.summary = `Reliable candidate applying for ${state.data.targetRole}. Comfortable with ${keywords.slice(0, 4).join(', ') || 'daily work tasks'}, teamwork, and learning quickly. Ready to follow instructions, maintain discipline, and support smooth daily work.`;
+      } else {
+        state.data.summary = `Targeting ${state.data.targetRole} with experience aligned to ${keywords.slice(0, 5).join(', ') || 'business operations and execution'}. Brings structured problem solving, clear communication, and the ability to turn role expectations into measurable results.`;
+      }
+      const currentSkills = new Set(splitCommaList(state.data.skills).map(s => s.toLowerCase()));
+      keywords.forEach(k => currentSkills.add(toTitleCase(k)));
+      state.data.skills = [...currentSkills].map(toTitleCase).slice(0, 10).join(', ');
+      syncInputsFromState();
+      showAiOutput(`Tailored your resume toward: ${escapeHtml(state.data.targetRole)}. Added likely keywords and refreshed the summary for a better job match.`);
+    }
+
+    function roastCurrentResume() {
+      const problems = [];
+      if (state.data.summary.split(/\s+/).length < 25) problems.push('Your summary is too weak. It should clearly say what job you want and what value you bring.');
+      if (splitCommaList(state.data.skills).length < 6) problems.push('Your skills list is too short. Add honest, role-specific skills instead of keeping it generic.');
+      if (state.data.experiences.some(exp => exp.bullets.some(b => b.split(/\s+/).length < 6))) problems.push('Some bullets are vague. Say what you actually did, how you did it, and why it mattered.');
+      if (state.profile === 'pro' && !state.data.links) problems.push('For a high-profile resume, having no LinkedIn or portfolio link makes you look unfinished.');
+      if (!problems.length) problems.push('This draft is already solid. Your next upgrade should be stronger role-specific keywords and cleaner export formatting.');
+      showAiOutput(problems.map((p, i) => `${i + 1}. ${p}`).join('<br>'));
+    }
+
+    function showAiOutput(html) {
+      el.aiOutput.classList.remove('hidden');
+      el.aiOutput.innerHTML = html;
+    }
+
+    function syncInputsWithoutRerender() {
+      el.fullName.value = state.data.fullName;
+      el.targetRole.value = state.data.targetRole;
+      el.phone.value = state.data.phone;
+      el.email.value = state.data.email;
+      el.address.value = state.data.address;
+      el.summary.value = state.data.summary;
+      el.isFresher.checked = !!state.data.isFresher;
+      updatePhotoThumb();
+      renderEducationInputs();
+      el.skills.value = state.data.skills;
+      el.language.value = state.data.language;
+      el.availability.value = state.data.availability;
+      el.certifications.value = state.data.certifications;
+      el.links.value = state.data.links;
+      renderExperienceInputs();
+    }
+
+    function applyPreset(name) {
+      const preset = quickProfiles[name];
+      if (!preset) return;
+      state.data = JSON.parse(JSON.stringify(preset));
+      state.profile = name === 'pro' ? 'pro' : 'simple';
+      state.template = name === 'pro' ? 'pro' : name === 'fresher' ? 'fresher' : 'simple';
+      syncInputsFromState();
+      showAiOutput(`${name === 'pro' ? 'Premium professional' : 'Easy job'} draft loaded. Edit anything you want in the form or directly in the preview.`);
+    }
+
+    function applyRoleFill(role) {
+      if (/delivery/i.test(role)) {
+        state.profile = 'simple';
+        state.data.targetRole = 'Delivery Associate';
+        state.data.summary = 'Reliable and punctual candidate with experience in local delivery support, route understanding, and customer interaction. Able to manage time well, carry items safely, and complete work responsibly.';
+        state.data.skills = 'Delivery support, route awareness, customer handling, time management, teamwork, honesty';
+      } else if (/warehouse/i.test(role)) {
+        state.profile = 'simple';
+        state.data.targetRole = 'Warehouse Helper';
+        state.data.summary = 'Hardworking candidate with experience in packing, stock movement, shelf arrangement, and shift-based work. Quick learner who can follow instructions and support smooth warehouse operations.';
+        state.data.skills = 'Packing, stock movement, loading, unloading, teamwork, time management, physical stamina';
+      } else if (/office/i.test(role)) {
+        state.profile = 'simple';
+        state.data.targetRole = 'Office Assistant';
+        state.data.summary = 'Reliable office support candidate with basic computer knowledge, document handling, and communication skills. Ready to assist with records, calls, and daily office work.';
+        state.data.skills = 'MS Office, typing, record keeping, communication, customer support, time management';
+      } else if (/analyst/i.test(role)) {
+        state.profile = 'pro';
+        state.template = 'pro';
+        state.data.targetRole = 'Data Analyst';
+        state.data.summary = 'Data-focused professional with experience in reporting, dashboarding, and turning business data into clear insights. Strong with structured analysis, communication, and process improvement.';
+        state.data.skills = 'Excel, SQL, Power BI, reporting, data cleaning, dashboarding, analysis, stakeholder communication';
+      } else if (/engineer/i.test(role)) {
+        state.profile = 'pro';
+        state.template = 'pro';
+        state.data.targetRole = 'Software Engineer';
+        state.data.summary = 'Software professional with experience building reliable web features, solving product problems, and collaborating across teams. Focused on clean code, scalable systems, and practical user outcomes.';
+        state.data.skills = 'JavaScript, React, APIs, Node.js, HTML/CSS, Git, debugging, problem solving';
+      }
+      syncInputsFromState();
+    }
+
+    function toTitleCase(str) {
+      return str.replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    async function downloadPdf() {
+      const paper = document.getElementById('resumePaper');
+      const canvas = await html2canvas(paper, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
+      const imgData = canvas.toDataURL('image/png');
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = 210;
+      const pdfHeight = 297;
+      const imgWidth = pdfWidth;
+      const imgHeight = canvas.height * imgWidth / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
+      heightLeft -= pdfHeight;
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
+        heightLeft -= pdfHeight;
+      }
+      pdf.save(`${state.data.fullName.replace(/\s+/g, '_') || 'resume'}.pdf`);
+    }
+
+    function downloadWord() {
+      const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${escapeHtml(state.data.fullName)} Resume</title></head><body>${document.getElementById('resumeRoot').innerHTML}</body></html>`;
+      const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${state.data.fullName.replace(/\s+/g, '_') || 'resume'}.doc`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    async function copyResumeText() {
+      const text = document.getElementById('resumeRoot').innerText;
+      await navigator.clipboard.writeText(text);
+      showAiOutput('Resume text copied successfully. You can now paste it anywhere.');
+    }
+
+    function bindFormInputs() {
+      const map = {
+        fullName: 'fullName',
+        targetRole: 'targetRole',
+        phone: 'phone',
+        email: 'email',
+        address: 'address',
+        summary: 'summary',
+        skills: 'skills',
+        language: 'language',
+        availability: 'availability',
+        certifications: 'certifications',
+        links: 'links'
+      };
+      Object.entries(map).forEach(([id, key]) => {
+        document.getElementById(id).addEventListener('input', e => {
+          state.data[key] = e.target.value;
+          renderResume();
+          updateHealth();
+        });
+      });
+
+    }
+
+    function updateLanguageHelp() {
+      const helpers = document.querySelectorAll('.helper-text');
+      const copy = helperCopy[state.language];
+      if (helpers[0]) helpers[0].textContent = copy.personal;
+      if (helpers[1]) helpers[1].textContent = copy.about;
+      if (helpers[2]) helpers[2].textContent = copy.education;
+      if (helpers[3]) helpers[3].textContent = copy.experience;
+      if (helpers[4]) helpers[4].textContent = copy.skills;
+      if (helpers[5]) helpers[5].textContent = copy.extra;
+      document.getElementById('langToggle').textContent = state.language === 'en' ? 'हिंदी सहायता' : 'English Help';
+      document.body.classList.toggle('font-hindi', state.language === 'hi');
+    }
+
+    function initTabs() {
+      const buttons = document.querySelectorAll('.tab-btn');
+      const panels = document.querySelectorAll('.tab-panel');
+      const activate = (id) => {
+        buttons.forEach(btn => {
+          const active = btn.dataset.tab === id;
+          btn.classList.toggle('bg-white', active);
+          btn.classList.toggle('shadow-sm', active);
+          btn.classList.toggle('dark:bg-slate-900', active);
+        });
+        panels.forEach(panel => panel.classList.toggle('hidden', panel.id !== id));
+      };
+      buttons.forEach(btn => btn.addEventListener('click', () => activate(btn.dataset.tab)));
+      activate('formTab');
+    }
+
+    function initEvents() {
+      bindFormInputs();
+      initTabs();
+      updateLanguageHelp();
+      syncInputsFromState();
+
+      document.getElementById('langToggle').addEventListener('click', () => {
+        state.language = state.language === 'en' ? 'hi' : 'en';
+        updateLanguageHelp();
+      });
+
+      document.getElementById('modeToggle').addEventListener('click', () => {
+        const isDark = document.documentElement.classList.toggle('dark');
+        state.theme = isDark ? 'dark' : 'light';
+        document.getElementById('modeToggle').innerHTML = isDark ? '<i class="fa-regular fa-moon mr-2"></i>Dark' : '<i class="fa-regular fa-sun mr-2"></i>Light';
+      });
+
+      document.querySelectorAll('.profile-card').forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.profile = btn.dataset.profile;
+          if (state.profile === 'pro' && state.template === 'simple') state.template = 'pro';
+          if (state.profile === 'simple' && state.template === 'pro') state.template = 'simple';
+          updateProfileBadge();
+          renderResume();
+          updateHealth();
+        });
+      });
+
+      document.querySelectorAll('.quick-fill').forEach(btn => btn.addEventListener('click', () => applyRoleFill(btn.dataset.role)));
+      document.querySelectorAll('.preset-btn').forEach(btn => btn.addEventListener('click', () => applyPreset(btn.dataset.preset)));
+      document.querySelectorAll('.template-btn').forEach(btn => btn.addEventListener('click', () => {
+        state.template = btn.dataset.template;
+        document.querySelectorAll('.template-btn').forEach(item => item.classList.toggle('is-active', item.dataset.template === state.template));
+        renderResume();
+      }));
+
+      document.getElementById('addExperience').addEventListener('click', () => {
+        state.data.experiences.push({ title: 'New Role', company: 'Company / Place', duration: 'Year - Year', bullets: ['Describe your work here.'] });
+        state.data.isFresher = false;
+        el.isFresher.checked = false;
+        renderExperienceInputs();
+        renderResume();
+        updateHealth();
+      });
+
+      document.getElementById('addEducation').addEventListener('click', () => {
+        state.data.educationList.push({ level: 'New Education', institute: '', board: '', marks: '', year: '' });
+        renderEducationInputs();
+        renderResume();
+        updateHealth();
+      });
+
+      el.isFresher.addEventListener('change', () => {
+        state.data.isFresher = el.isFresher.checked;
+        renderResume();
+        updateHealth();
+      });
+
+      el.photoUpload.addEventListener('change', e => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          state.data.photo = reader.result;
+          updatePhotoThumb();
+          renderResume();
+        };
+        reader.readAsDataURL(file);
+      });
+
+      document.querySelectorAll('.template-btn').forEach(btn => btn.classList.toggle('is-active', btn.dataset.template === state.template));
+
+      document.getElementById('suggestSkills').addEventListener('click', suggestSkills);
+      document.getElementById('aiSummary').addEventListener('click', generateSummary);
+      document.getElementById('simplifySummary').addEventListener('click', () => {
+        state.data.summary = simplifyText(state.data.summary);
+        syncInputsFromState();
+      });
+      document.getElementById('tailorResume').addEventListener('click', tailorToJob);
+      document.getElementById('improveBullet').addEventListener('click', () => {
+        const input = el.bulletInput.value.trim();
+        if (!input) return showAiOutput('Paste one bullet first.');
+        const improved = improveBulletText(input);
+        showAiOutput(`<strong>Improved bullet:</strong><br>${escapeHtml(improved)}`);
+      });
+      document.getElementById('roastResume').addEventListener('click', roastCurrentResume);
+      document.getElementById('downloadPdf').addEventListener('click', downloadPdf);
+      document.getElementById('downloadWord').addEventListener('click', downloadWord);
+      document.getElementById('copyText').addEventListener('click', copyResumeText);
+      document.getElementById('printResume').addEventListener('click', () => window.print());
+    }
+
+    loadSiteShell().finally(initEvents);
+  </script>
+</body>
+</html>
