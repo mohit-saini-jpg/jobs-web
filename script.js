@@ -18,6 +18,30 @@
     return "https://" + s.replace(/^\/+/, "");
   }
 
+  /** 12-char base36 fingerprint; must match redirect.html resolver (dynamic-sections.json lookup). */
+  function urlRedirectFingerprint(raw) {
+    const s = normalizeUrl(raw);
+    let h1 = 2166136261 >>> 0;
+    let h2 = 8159751279 >>> 0;
+    for (let i = 0; i < s.length; i++) {
+      const c = s.charCodeAt(i);
+      h1 ^= c;
+      h1 = Math.imul(h1, 16777619) >>> 0;
+      h2 = (Math.imul(h2, 1099511627) ^ c) >>> 0;
+    }
+    const alphabet = "0123456789abcdefghijklmnopqrstuvwxyz";
+    function pack(n, len) {
+      let x = n >>> 0;
+      let out = "";
+      for (let i = 0; i < len; i++) {
+        out = alphabet[x % 36] + out;
+        x = Math.floor(x / 36);
+      }
+      return out;
+    }
+    return pack(h1, 6) + pack(h2, 6);
+  }
+
   function isGarbageLink(item) {
     const text = (item.name || item.title || "").toLowerCase();
     return text.includes("main home page") || text.includes("website ka main");
@@ -28,17 +52,29 @@
     return `view.html?url=${encodeURIComponent(u)}&name=${encodeURIComponent(name)}`;
   }
 
-  function buildRedirectUrl(targetUrl, label) {
+  function buildRedirectUrl(targetUrl) {
     const to = safe(targetUrl);
     if (!to) return "";
     const qs = new URLSearchParams();
-    qs.set("to", to);
-    if (safe(label)) qs.set("label", safe(label));
+    qs.set("k", urlRedirectFingerprint(to));
     return `redirect.html?${qs.toString()}`;
+  }
+
+  /** Redirect interstitial only for home section rows and view.html list items (not More / nav / etc.). */
+  function isRedirectGatedLink(anchor) {
+    if (!anchor || anchor.closest(".view-all")) return false;
+    if (page === "index.html" || page === "") {
+      return !!(anchor.closest("#dynamic-sections") && anchor.classList.contains("section-link"));
+    }
+    if (page === "view.html") {
+      return !!anchor.closest("#links-list");
+    }
+    return false;
   }
 
   function shouldBypassRedirect(anchor, href) {
     if (!anchor || !href) return true;
+    if (anchor.closest(".site-header") || anchor.closest("#mobileMenu")) return true;
     if (anchor.hasAttribute("download")) return true;
 
     const raw = href.trim();
@@ -73,13 +109,14 @@
 
       const href = anchor.getAttribute("href") || "";
       if (shouldBypassRedirect(anchor, href)) return;
+      if (!isRedirectGatedLink(anchor)) return;
 
       const normalizedHref = normalizeUrl(href);
       if (!normalizedHref) return;
+      if (/^(mailto:|tel:)/i.test(normalizedHref)) return;
 
       const target = (anchor.getAttribute("target") || "").trim().toLowerCase();
-      const label = safe(anchor.textContent).replace(/\s+/g, " ").slice(0, 120);
-      const redirectUrl = buildRedirectUrl(normalizedHref, label);
+      const redirectUrl = buildRedirectUrl(normalizedHref);
       if (!redirectUrl) return;
 
       e.preventDefault();

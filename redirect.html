@@ -13,16 +13,24 @@
 
   <main id="main" class="container page">
     <section class="seo-block" style="max-width: 760px; margin: 16px auto;">
-      <h2 id="redirectHeading">Redirecting in <span id="countdown">5</span> seconds...</h2>
-      <p id="redirectLabel" style="font-weight: 700; color: var(--text); margin-top: 10px;"></p>
-      <p style="margin-top: 6px;">
-        Destination:
-        <a id="redirectTarget" href="#" rel="noopener" style="word-break: break-all; color: #0369a1; text-decoration: underline;"></a>
+      <h2 id="redirectHeading" style="line-height: 1.4;">
+        Redirecting in <span id="countdown">5</span> seconds…
+        <span style="display: block; margin-top: 10px; font-size: 0.92em; font-weight: 700; color: var(--text);">
+          <span id="countdownHi">5</span> सेकंड में आपको अगले पेज पर भेजा जा रहा है…
+        </span>
+      </h2>
+      <p id="redirectStatus" style="margin-top: 10px; color: var(--muted); font-size: 0.95rem;"></p>
+      <p id="redirectLabel" hidden style="font-weight: 700; color: var(--text); margin-top: 10px;"></p>
+      <p id="redirectHint" style="margin-top: 10px; color: var(--muted, #64748b); font-size: 0.95rem; line-height: 1.5;">
+        If the page does not open by itself, tap the button below.
+        <span style="display: block; margin-top: 6px;">अगर पेज अपने आप न खुले, नीचे दिए बटन पर क्लिक करें।</span>
       </p>
-      <p style="margin-top: 14px;">
-        If redirect does not happen, click
-        <a id="redirectNow" href="#" rel="noopener" style="color: #0369a1; text-decoration: underline;">Continue now</a>.
-      </p>
+      <div style="margin-top: 18px;">
+        <button type="button" id="redirectNowBtn" class="btn-primary" disabled style="min-height: auto; height: auto; padding: 14px 22px; display: inline-flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; line-height: 1.25; opacity: 0.65;">
+          <span>Continue now — अभी जारी रखें</span>
+          <span style="font-size: 0.88em; font-weight: 700; opacity: 0.95;">Click here — यहाँ क्लिक करें</span>
+        </button>
+      </div>
     </section>
   </main>
 
@@ -32,64 +40,197 @@
     (() => {
       "use strict";
 
+      /* Keep normalizeUrl + urlRedirectFingerprint in sync with script.js */
+
+      const REDIRECT_DELAY_SEC = 5;
+
+      function safe(v) {
+        return (v ?? "").toString().trim();
+      }
+
+      function normalizeUrl(raw) {
+        const s = safe(raw);
+        if (!s) return "";
+        if (/^(https?:)?\/\//i.test(s) || /^(mailto:|tel:)/i.test(s)) return s;
+        if (s.startsWith("#") || s.startsWith("?")) return s;
+        if (s.startsWith("/") || s.includes(".html") || s.startsWith("./") || s.startsWith("../")) return s;
+        return "https://" + s.replace(/^\/+/, "");
+      }
+
+      function urlRedirectFingerprint(raw) {
+        const s = normalizeUrl(raw);
+        let h1 = 2166136261 >>> 0;
+        let h2 = 8159751279 >>> 0;
+        for (let i = 0; i < s.length; i++) {
+          const c = s.charCodeAt(i);
+          h1 ^= c;
+          h1 = Math.imul(h1, 16777619) >>> 0;
+          h2 = (Math.imul(h2, 1099511627) ^ c) >>> 0;
+        }
+        const alphabet = "0123456789abcdefghijklmnopqrstuvwxyz";
+        function pack(n, len) {
+          let x = n >>> 0;
+          let out = "";
+          for (let i = 0; i < len; i++) {
+            out = alphabet[x % 36] + out;
+            x = Math.floor(x / 36);
+          }
+          return out;
+        }
+        return pack(h1, 6) + pack(h2, 6);
+      }
+
       const params = new URLSearchParams(window.location.search || "");
-      const rawTo = (params.get("to") || "").trim();
-      const label = (params.get("label") || "").trim();
+      const rawK = safe(params.get("k")).toLowerCase();
+      const rawTo = safe(params.get("to"));
 
       const countdownEl = document.getElementById("countdown");
+      const countdownHiEl = document.getElementById("countdownHi");
       const labelEl = document.getElementById("redirectLabel");
-      const targetEl = document.getElementById("redirectTarget");
-      const nowEl = document.getElementById("redirectNow");
+      const statusEl = document.getElementById("redirectStatus");
+      const btnEl = document.getElementById("redirectNowBtn");
+
+      let timer = null;
+      let finalUrl = "";
+
+      function go(url) {
+        window.location.href = url;
+      }
+
+      function setCountdown(n) {
+        const s = String(Math.max(0, n));
+        if (countdownEl) countdownEl.textContent = s;
+        if (countdownHiEl) countdownHiEl.textContent = s;
+      }
 
       function setInvalidState() {
-        if (countdownEl) countdownEl.textContent = "0";
-        if (labelEl) labelEl.textContent = "Invalid redirect link.";
-        if (targetEl) {
-          targetEl.textContent = window.location.origin + "/index.html";
-          targetEl.href = "index.html";
-        }
-        if (nowEl) nowEl.href = "index.html";
-      }
-
-      if (!rawTo) {
-        setInvalidState();
-        return;
-      }
-
-      let destination;
-      try {
-        destination = new URL(rawTo, window.location.href);
-      } catch (_) {
-        setInvalidState();
-        return;
-      }
-
-      const allowed = ["http:", "https:", "mailto:", "tel:"];
-      if (!allowed.includes(destination.protocol)) {
-        setInvalidState();
-        return;
-      }
-
-      const finalUrl = destination.href;
-
-      if (labelEl && label) labelEl.textContent = label;
-      if (targetEl) {
-        targetEl.href = finalUrl;
-        targetEl.textContent = finalUrl;
-      }
-      if (nowEl) nowEl.href = finalUrl;
-
-      let secondsLeft = 5;
-      if (countdownEl) countdownEl.textContent = String(secondsLeft);
-
-      const timer = setInterval(() => {
-        secondsLeft -= 1;
-        if (countdownEl) countdownEl.textContent = String(Math.max(0, secondsLeft));
-        if (secondsLeft <= 0) {
+        if (timer) {
           clearInterval(timer);
-          window.location.href = finalUrl;
+          timer = null;
         }
-      }, 1000);
+        setCountdown(0);
+        if (statusEl) statusEl.textContent = "";
+        if (labelEl) {
+          labelEl.hidden = false;
+          labelEl.innerHTML =
+            "Invalid or expired link.<span style=\"display:block;margin-top:6px;\">लिंक अमान्य है या समाप्त हो गया।</span>";
+        }
+        finalUrl = "index.html";
+        if (btnEl) {
+          btnEl.disabled = false;
+          btnEl.style.opacity = "1";
+          btnEl.innerHTML =
+            "<span>Go to home — होम पर जाएँ</span><span style=\"font-size:0.88em;font-weight:700;opacity:0.95;\">Click here — यहाँ क्लिक करें</span>";
+          btnEl.onclick = () => go(finalUrl);
+        }
+      }
+
+      function enableContinue() {
+        if (!btnEl) return;
+        btnEl.disabled = false;
+        btnEl.style.opacity = "1";
+        btnEl.onclick = () => {
+          if (timer) {
+            clearInterval(timer);
+            timer = null;
+          }
+          go(finalUrl);
+        };
+      }
+
+      function startRedirectCountdown() {
+        let secondsLeft = REDIRECT_DELAY_SEC;
+        setCountdown(secondsLeft);
+        timer = setInterval(() => {
+          secondsLeft -= 1;
+          setCountdown(secondsLeft);
+          if (secondsLeft <= 0) {
+            clearInterval(timer);
+            timer = null;
+            go(finalUrl);
+          }
+        }, 1000);
+      }
+
+      async function resolveFromJson(wantKey) {
+        const r = await fetch("dynamic-sections.json", { cache: "no-store" });
+        if (!r.ok) return null;
+        const data = await r.json();
+        const sections = Array.isArray(data.sections) ? data.sections : [];
+        for (const sec of sections) {
+          const items = Array.isArray(sec.items) ? sec.items : [];
+          for (const it of items) {
+            const u = it.url || it.link || "";
+            if (!u) continue;
+            if (urlRedirectFingerprint(u).toLowerCase() === wantKey) {
+              const url = normalizeUrl(u);
+              const title = safe(it.name || it.title || "").replace(/\s+/g, " ").slice(0, 400);
+              return { url, title };
+            }
+          }
+        }
+        return null;
+      }
+
+      function setResolvedTitle(text) {
+        if (!labelEl) return;
+        const t = safe(text);
+        if (t) {
+          labelEl.textContent = t;
+          labelEl.hidden = false;
+        } else {
+          labelEl.textContent = "";
+          labelEl.hidden = true;
+        }
+      }
+
+      function validateAndSetDestination(urlStr) {
+        let destination;
+        try {
+          destination = new URL(urlStr, window.location.href);
+        } catch (_) {
+          return false;
+        }
+        const allowed = ["http:", "https:", "mailto:", "tel:"];
+        if (!allowed.includes(destination.protocol)) return false;
+        finalUrl = destination.href;
+        return true;
+      }
+
+      (async function run() {
+        if (statusEl) {
+          statusEl.innerHTML =
+            "Looking up the official link…<span style=\"display:block;margin-top:4px;\">ऑफिशियल लिंक ढूँढ रहे हैं…</span>";
+        }
+
+        if (rawTo) {
+          setResolvedTitle("");
+          if (!validateAndSetDestination(rawTo)) {
+            setInvalidState();
+            return;
+          }
+        } else if (rawK) {
+          let row = null;
+          try {
+            row = await resolveFromJson(rawK);
+          } catch (_) {
+            row = null;
+          }
+          if (!row || !validateAndSetDestination(row.url)) {
+            setInvalidState();
+            return;
+          }
+          setResolvedTitle(row.title);
+        } else {
+          setInvalidState();
+          return;
+        }
+
+        if (statusEl) statusEl.textContent = "";
+
+        enableContinue();
+        startRedirectCountdown();
+      })();
     })();
   </script>
   <script src="script.js?v=20260331"></script>
