@@ -6498,6 +6498,11 @@
       "color": "#913030",
        "viewMoreType": "list",
       "items": [
+        {
+          "name": "ई-क्षतिपूर्ति पोर्टल फसल का खराबा का फॉर्म भरवाए Shatipurti Portal",
+          "url": "https://ekshatipurti.haryana.gov.in/",
+          "external": true
+        },
        {
           "name": "हरियाणा  मेरी फसल मेरा ब्यौरा फसल का पंजीकरण करे",
           "url": "https://fasal.haryana.gov.in/home/login",
