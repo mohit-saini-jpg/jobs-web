@@ -1521,7 +1521,7 @@
   }
 
   document.addEventListener("DOMContentLoaded", async () => {
-    installGlobalRedirectGate();
+    // installGlobalRedirectGate(); // Disabled: redirect interstitial removed per user request
 
     buildMobileMenu();
     safeHideOldSearchBars(); 
