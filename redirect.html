@@ -13,10 +13,10 @@
 
   <main id="main" class="container page">
     <section class="seo-block" style="max-width: 760px; margin: 16px auto;">
-      <h2 id="redirectHeading" style="line-height: 1.4;">
+      <h2 id="redirectHeading" style="line-height: 1.4; font-size: 1em; color: var(--muted);">
         Redirecting in <span id="countdown">5</span> seconds…
-        <span style="display: block; margin-top: 10px; font-size: 0.92em; font-weight: 700; color: var(--text);">
-          <span id="countdownHi">5</span> सेकंड में आपको अगले पेज पर भेजा जा रहा है…
+        <span style="display: block; margin-top: 6px; font-size: 0.9em;">
+          <span id="countdownHi">5</span> सेकंड में अगले पेज पर भेजा जा रहा है…
         </span>
       </h2>
       <p id="redirectStatus" style="margin-top: 10px; color: var(--muted); font-size: 0.95rem;"></p>
@@ -81,8 +81,9 @@
       }
 
       const params = new URLSearchParams(window.location.search || "");
-      const rawK = safe(params.get("k")).toLowerCase();
+      const rawK  = safe(params.get("k")).toLowerCase();
       const rawTo = safe(params.get("to"));
+      const rawJob = safe(params.get("job")); // human-readable job slug e.g. "bihar-btsc-instructor-2026"
 
       const countdownEl = document.getElementById("countdown");
       const countdownHiEl = document.getElementById("countdownHi");
@@ -198,6 +199,16 @@
       }
 
       (async function run() {
+        // Show job title immediately from the slug (no JSON wait needed for display)
+        if (rawJob) {
+          const displayTitle = rawJob
+            .replace(/-+/g, ' ')
+            .replace(/([a-z])/g, (_, c) => c.toUpperCase())
+            .trim();
+          setResolvedTitle(displayTitle);
+          document.title = displayTitle + " | Top Sarkari Jobs";
+        }
+
         if (statusEl) {
           statusEl.innerHTML =
             "Looking up the official link…<span style=\"display:block;margin-top:4px;\">ऑफिशियल लिंक ढूँढ रहे हैं…</span>";
