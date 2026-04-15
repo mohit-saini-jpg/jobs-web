@@ -161,10 +161,23 @@
 
       function show(el){ if(el) el.classList.remove("hidden"); }
 
+      // Update OG/Twitter meta tags so shared links show the correct title
+      function updateShareMeta(title, desc) {
+        var setMeta = function(sel, val) { var el = document.querySelector(sel); if (el) el.setAttribute('content', val); };
+        var safeTitle = title || 'Top Sarkari Jobs';
+        var safeDesc  = desc  || 'Latest government job updates, admit cards and results on Top Sarkari Jobs.';
+        document.title = safeTitle + ' | Top Sarkari Jobs';
+        setMeta('meta[property="og:title"]',       safeTitle + ' | Top Sarkari Jobs');
+        setMeta('meta[property="og:description"]', safeDesc);
+        setMeta('meta[name="twitter:title"]',      safeTitle + ' | Top Sarkari Jobs');
+        setMeta('meta[name="twitter:description"]',safeDesc);
+        setMeta('meta[property="og:url"]', window.location.href);
+      }
+
       // 1. Resume / Tool View (No Search Bar)
       if (urlParam) {
         show(urlView);
-        document.title = `${nameParam} | Top Sarkari Jobs`;
+        updateShareMeta(nameParam, 'View ' + nameParam + ' on Top Sarkari Jobs.');
         const iframe = document.getElementById("url-iframe");
         if (iframe) iframe.src = decodeURIComponent(urlParam);
         return;
@@ -173,9 +186,10 @@
       // 2. Section View (Has Search Bar)
       if (sectionParam) {
         show(sectionView);
-        const title = decodeURIComponent(sectionParam).replace(/-/g, ' ').toUpperCase();
-        document.title = `${title} | Top Sarkari Jobs`;
-        if(document.getElementById("page-title")) document.getElementById("page-title").textContent = title;
+        const rawTitle = decodeURIComponent(sectionParam).replace(/-/g, ' ');
+        const title = rawTitle.replace(/\b\w/g, function(c){ return c.toUpperCase(); });
+        updateShareMeta(title, 'Browse ' + title + ' — latest government job updates on Top Sarkari Jobs.');
+        if(document.getElementById("page-title")) document.getElementById("page-title").textContent = title.toUpperCase();
 
         // Render List
         (async () => {
