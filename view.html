@@ -161,6 +161,68 @@
 
       function show(el){ if(el) el.classList.remove("hidden"); }
 
+      function safe(v) {
+        return (v ?? "").toString().trim();
+      }
+
+      function normalizeUrl(raw) {
+        const s = safe(raw);
+        if (!s) return "";
+        if (/^(https?:)?\/\//i.test(s) || /^(mailto:|tel:)/i.test(s)) return s;
+        if (s.startsWith("#") || s.startsWith("?")) return s;
+        if (s.startsWith("/") || s.includes(".html") || s.startsWith("./") || s.startsWith("../")) return s;
+        return "https://" + s.replace(/^\/+/, "");
+      }
+
+      function slugifyTitle(raw) {
+        const text = safe(raw)
+          .normalize("NFKD")
+          .replace(/[̀-ͯ]/g, "")
+          .replace(/&/g, " and ")
+          .replace(/[’']/g, "")
+          .toLowerCase();
+
+        const slug = text
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "")
+          .replace(/-{2,}/g, "-")
+          .slice(0, 120);
+
+        return slug || "official-link";
+      }
+
+      function urlRedirectFingerprint(raw) {
+        const s = normalizeUrl(raw);
+        let h1 = 2166136261 >>> 0;
+        let h2 = 8159751279 >>> 0;
+        for (let i = 0; i < s.length; i++) {
+          const c = s.charCodeAt(i);
+          h1 ^= c;
+          h1 = Math.imul(h1, 16777619) >>> 0;
+          h2 = (Math.imul(h2, 1099511627) ^ c) >>> 0;
+        }
+        const alphabet = "0123456789abcdefghijklmnopqrstuvwxyz";
+        function pack(n, len) {
+          let x = n >>> 0;
+          let out = "";
+          for (let i = 0; i < len; i++) {
+            out = alphabet[x % 36] + out;
+            x = Math.floor(x / 36);
+          }
+          return out;
+        }
+        return pack(h1, 6) + pack(h2, 6);
+      }
+
+      function buildRedirectUrl(targetUrl, label) {
+        const to = safe(targetUrl);
+        if (!to) return "";
+        const qs = new URLSearchParams();
+        qs.set("job", slugifyTitle(label || targetUrl));
+        qs.set("k", urlRedirectFingerprint(to));
+        return `redirect.html?${qs.toString()}`;
+      }
+
       // Update OG/Twitter meta tags so shared links show the correct title
       function updateShareMeta(title, desc) {
         var setMeta = function(sel, val) { var el = document.querySelector(sel); if (el) el.setAttribute('content', val); };
@@ -209,14 +271,19 @@
                      });
 
                      document.getElementById("countNow").textContent = cleanItems.length;
-                     list.innerHTML = cleanItems.map(i => `
+                     list.innerHTML = cleanItems.map(i => {
+                        const label = i.name || i.title || 'Open';
+                        const href = buildRedirectUrl(i.url || i.link, label) || (i.url || i.link || '#');
+                        const targetAttr = i.external ? 'target="_blank" rel="noopener"' : '';
+                        return `
                         <li class="bg-white border border-slate-200 rounded-lg p-3 hover:shadow-md transition">
-                            <a href="${i.url || i.link}" class="block font-semibold text-sky-700 hover:underline" ${i.external ? 'target="_blank"' : ''}>
-                                ${i.name || i.title}
+                            <a href="${href}" data-redirect-label="${label}" class="block font-semibold text-sky-700 hover:underline" ${targetAttr}>
+                                ${label}
                             </a>
                             <div class="text-xs text-slate-500 mt-1">${i.date || 'Update'}</div>
                         </li>
-                     `).join('');
+                     `;
+                     }).join('');
                  }
              } catch(e) {}
         })();
