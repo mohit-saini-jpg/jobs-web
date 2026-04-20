@@ -78,12 +78,21 @@
   <!-- Site stylesheet for header/footer -->
   <link rel="stylesheet" href="styles.css" />
   <style>
-    /* Hide the site's search bar section on this page */
+    /* Keep the same site header/footer on this page, but remove search + quick links */
     .top-search, section.top-search,
     #site-header .top-search, #site-header .search-card,
     #site-header .search-row, #site-header input[type="search"],
     #site-header #siteSearchInput, #site-header #siteSearchBtn,
-    #site-header #searchResults { display: none !important; }
+    #site-header #searchResults,
+    #home-quicklinks-wrap {
+      display: none !important;
+    }
+
+    #site-header,
+    #site-footer {
+      width: 100%;
+      display: block;
+    }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
