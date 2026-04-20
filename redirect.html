@@ -42,7 +42,7 @@
 
       /* Keep normalizeUrl + urlRedirectFingerprint in sync with script.js */
 
-      const REDIRECT_DELAY_SEC = 5;
+      const REDIRECT_DELAY_SEC = 1;
 
       function safe(v) {
         return (v ?? "").toString().trim();
@@ -173,6 +173,14 @@
         return null;
       }
 
+      function humanizeJobSlug(slug) {
+        const text = safe(slug)
+          .replace(/-+/g, " ")
+          .replace(/\b[a-z]/g, (m) => m.toUpperCase())
+          .trim();
+        return text;
+      }
+
       function setResolvedTitle(text) {
         if (!labelEl) return;
         const t = safe(text);
@@ -201,12 +209,9 @@
       (async function run() {
         // Show job title immediately from the slug (no JSON wait needed for display)
         if (rawJob) {
-          const displayTitle = rawJob
-            .replace(/-+/g, ' ')
-            .replace(/([a-z])/g, (_, c) => c.toUpperCase())
-            .trim();
+          const displayTitle = humanizeJobSlug(rawJob);
           setResolvedTitle(displayTitle);
-          document.title = displayTitle + " | Top Sarkari Jobs";
+          if (displayTitle) document.title = displayTitle + " | Top Sarkari Jobs";
         }
 
         if (statusEl) {
@@ -231,7 +236,8 @@
             setInvalidState();
             return;
           }
-          setResolvedTitle(row.title);
+          setResolvedTitle(row.title || humanizeJobSlug(rawJob));
+          if (row.title) document.title = row.title + " | Top Sarkari Jobs";
         } else {
           setInvalidState();
           return;
