@@ -636,4 +636,26 @@ a:hover{ text-decoration:underline; }
   .grid-nav-btn.outline-purple { background: #faf5ff; color: #7e22ce; border: 1px solid #e9d5ff; font-weight: 800; }
   .grid-nav-btn.outline-orange { background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; font-weight: 800; }
   .grid-nav-btn.solid-green { background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 10px rgba(16,185,129,0.25); border: 1px solid #047857; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
+
+  /* Mobile bottom search (pre-baked in HTML to prevent CLS) */
+  .mobile-bottom-search {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    padding: 20px 14px;
+    margin-top: 6px;
+    margin-bottom: 6px;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  }
+  .mobile-bottom-search h3 { font-size: 15px; font-weight: 900; margin: 0 0 14px; color: #0f172a; letter-spacing: -0.2px; }
+  .mbs-row { display: flex; border: 1px solid #cbd5e1; border-radius: 10px; overflow: hidden; background: #f8fafc; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
+  .mbs-row input { flex: 1; height: 46px; border: none; background: transparent; padding: 0 14px; font-size: 14px; outline: none; color: #0f172a; }
+  .mbs-row input:focus { background: #fff; border-color: #0ea5e9; }
+  .mbs-row button { background: linear-gradient(135deg, #0ea5e9, #4f46e5); color: #fff; border: none; padding: 0 20px; font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 6px; cursor: pointer; }
+}
+
+/* Hide mobile-bottom-search on desktop (matches existing JS-injected behavior) */
+@media (min-width: 981px) {
+  .mobile-bottom-search { display: none !important; }
 }
