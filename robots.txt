@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /redirect.html
+Disallow: /search.html
+Disallow: /*?*
+
+Sitemap: https://www.topsarkarijobs.com/sitemap.xml
