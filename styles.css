@@ -572,3 +572,21 @@ a:hover{ text-decoration:underline; }
 .modal-form input, .modal-form textarea{ border:1px solid var(--line); border-radius:12px; padding:10px 12px; font-size:14px; outline:none; }
 .modal-form input:focus, .modal-form textarea:focus{ border-color: rgba(14,165,233,.65); }
 .modal-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }
+
+/* ============================================
+   CLS PREVENTION — reserve space for JS-injected content
+   Prevents layout shift while header/footer/sections load
+   ============================================ */
+#site-header:empty { min-height: 64px; background: linear-gradient(90deg, var(--brand1), var(--brand2)); }
+#site-footer:empty { min-height: 200px; background:#fff; border-top:1px solid var(--line); }
+#dynamic-sections:empty { min-height: 800px; }
+#header-links:empty { min-height: 40px; }
+#footer-social-links:empty { min-height: 40px; }
+.brand-logo { aspect-ratio: 1 / 1; }
+
+/* Mobile: smaller reserved heights */
+@media (max-width: 720px) {
+  #site-header:empty { min-height: 60px; }
+  #site-footer:empty { min-height: 180px; }
+  #dynamic-sections:empty { min-height: 1200px; }
+}

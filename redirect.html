@@ -154,7 +154,7 @@
       }
 
       async function resolveFromJson(wantKey) {
-        const r = await fetch("dynamic-sections.json", { cache: "no-store" });
+        const r = await fetch("dynamic-sections.json");
         if (!r.ok) return null;
         const data = await r.json();
         const sections = Array.isArray(data.sections) ? data.sections : [];
@@ -250,6 +250,6 @@
       })();
     })();
   </script>
-  <script src="script.js?v=20260331"></script>
+  <script src="script.js?v=20260331" defer></script>
 </body>
 </html>
