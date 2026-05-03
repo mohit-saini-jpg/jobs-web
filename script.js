@@ -163,7 +163,7 @@
     
     nav.innerHTML = `
       <a href="index.html">Home</a>
-      <a href="https://www.topsarkarijobs.com/view.html?section=results">Results</a>
+      <a href="view.html?section=results">Results</a>
       <a href="govt-services.html">CSC Services</a>
       <a href="tools.html">Tools</a>
       <a href="helpdesk.html">Helpdesk</a>
@@ -735,19 +735,19 @@
 
         const mLinks = [
             // Row 1 (Blue)
-            { name: "Latest Jobs", url: "https://www.topsarkarijobs.com/view.html?section=latest%20jobs", cls: "outline-blue" },
+            { name: "Latest Jobs", url: "view.html?section=latest%20jobs", cls: "outline-blue" },
             { name: "Study wise jobs", url: "category.html?group=study", cls: "outline-blue" },
             { name: "Categories wise jobs", url: "category.html?group=popular", cls: "outline-blue" },
             { name: "State wise Jobs", url: "category.html?group=state", cls: "outline-blue" },
             
             // Row 2 (Purple)
             { name: "Admissions", url: "category.html?group=admissions", cls: "outline-purple" },
-            { name: "Resume/CV Maker", url: "https://www.topsarkarijobs.com/resume-maker.html" }, 
+            { name: "Resume/CV Maker", url: "resume-maker.html" }, 
             { name: "CSC Services", url: "govt-services.html", cls: "outline-purple" },
             { name: "Study Material", url: "category.html?group=study-material", cls: "outline-purple" },
             
             // Row 3 (Orange + Solid Green WhatsApp)
-            { name: "Results", url: "https://www.topsarkarijobs.com/view.html?section=results", cls: "outline-orange" },
+            { name: "Results", url: "view.html?section=results", cls: "outline-orange" },
             { name: "Admit Card", url: "category.html?group=admit-result", cls: "outline-orange" },
             { name: "Latest Khabar", url: "category.html?group=khabar", cls: "outline-orange" },
             { name: "Join WhatsApp", url: waLink, cls: "solid-green" } 
