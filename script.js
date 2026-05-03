@@ -482,9 +482,24 @@
     if (!wrap) return;
 
     let data = { sections: [] };
-    try { data = await getJSON("dynamic-sections.json"); } catch (_) {}
+    let fetchFailed = false;
+    try { data = await getJSON("dynamic-sections.json"); }
+    catch (_) { fetchFailed = true; }
 
     wrap.innerHTML = "";
+
+    // ISSUE-009: surface a visible message when the data file failed to load
+    // instead of silently rendering a blank homepage.
+    if (fetchFailed || !Array.isArray(data.sections) || !data.sections.length) {
+      const note = document.createElement("div");
+      note.className = "seo-block";
+      note.style.margin = "16px 0";
+      note.innerHTML = fetchFailed
+        ? "<strong>Couldn't load the latest updates.</strong><div style=\"margin-top:6px;color:var(--muted);\">Please check your connection and refresh the page.</div>"
+        : "<strong>No updates to show right now.</strong>";
+      wrap.appendChild(note);
+      if (fetchFailed) return;
+    }
 
     (data.sections || []).forEach((sec) => {
       const title = safe(sec.title) || "Updates";
