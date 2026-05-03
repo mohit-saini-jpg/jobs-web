@@ -18,6 +18,22 @@
     return "https://" + s.replace(/^\/+/, "");
   }
 
+  // ISSUE-002: memoize JSON fetches so dynamic-sections.json (474KB) and the
+  // siblings are downloaded once per page load instead of 2-3 times.
+  const __jsonCache = new Map();
+  function getJSON(path) {
+    if (__jsonCache.has(path)) return __jsonCache.get(path);
+    const p = fetch(path).then((r) => {
+      if (!r.ok) throw new Error("HTTP " + r.status + " for " + path);
+      return r.json();
+    });
+    // Drop the cache entry on rejection so a transient network error doesn't
+    // poison the rest of the page.
+    p.catch(() => __jsonCache.delete(path));
+    __jsonCache.set(path, p);
+    return p;
+  }
+
   function slugifyTitle(raw) {
     const text = safe(raw)
       .normalize("NFKD")
@@ -295,10 +311,7 @@
 
   async function loadHeaderLinks() {
     let data = { header_links: [], social_links: [] };
-    try {
-      const r = await fetch("header_links.json", { cache: "no-store" });
-      if (r.ok) data = await r.json();
-    } catch (_) {}
+    try { data = await getJSON("header_links.json"); } catch (_) {}
 
     const desktop = $("#header-links");
     const mobile = $("#header-links-mobile");
@@ -469,10 +482,7 @@
     if (!wrap) return;
 
     let data = { sections: [] };
-    try {
-      const r = await fetch("dynamic-sections.json", { cache: "no-store" });
-      if (r.ok) data = await r.json();
-    } catch (_) {}
+    try { data = await getJSON("dynamic-sections.json"); } catch (_) {}
 
     wrap.innerHTML = "";
 
@@ -716,10 +726,7 @@
     }
 
     let data = null;
-    try {
-      const r = await fetch("header_links.json", { cache: "no-store" });
-      if (r.ok) data = await r.json();
-    } catch (_) {}
+    try { data = await getJSON("header_links.json"); } catch (_) {}
 
     let waLink = "https://whatsapp.com/channel/0029VaA2aD4FCCoW3q8y6x25";
     if (data && data.header_links) {
@@ -918,11 +925,7 @@
     }
 
     let data;
-    try {
-      const r = await fetch("jobs.json", { cache: "no-store" });
-      if(!r.ok) throw new Error();
-      data = await r.json();
-    } catch (_) {
+    try { data = await getJSON("jobs.json"); } catch (_) {
       gridEl.innerHTML = "";
       return;
     }
@@ -1223,11 +1226,8 @@
 
     let toolsData = fallbackData;
     try {
-      const r = await fetch("tools.json", { cache: "no-store" });
-      if (r.ok) {
-        const json = await r.json();
-        if (json && Object.keys(json).length > 0) toolsData = json;
-      }
+      const json = await getJSON("tools.json");
+      if (json && Object.keys(json).length > 0) toolsData = json;
     } catch (_) {}
 
     const showCategories = () => {
@@ -1423,10 +1423,7 @@
     if (!list) return;
 
     let data = null;
-    try {
-      const r = await fetch("services.json", { cache: "no-store" });
-      if (r.ok) data = await r.json();
-    } catch (_) {}
+    try { data = await getJSON("services.json"); } catch (_) {}
 
     const services = (data && (data.services || data)) || [];
     list.innerHTML = "";
@@ -1479,10 +1476,10 @@
     let searchData = [];
     try {
       const [dyn, jobs, tools, services] = await Promise.all([
-        fetch("dynamic-sections.json").then(r => r.json()).catch(() => ({})),
-        fetch("jobs.json").then(r => r.json()).catch(() => ({})),
-        fetch("tools.json").then(r => r.json()).catch(() => ({})),
-        fetch("services.json").then(r => r.json()).catch(() => ({}))
+        getJSON("dynamic-sections.json").catch(() => ({})),
+        getJSON("jobs.json").catch(() => ({})),
+        getJSON("tools.json").catch(() => ({})),
+        getJSON("services.json").catch(() => ({}))
       ]);
 
       const push = (name, url, src) => {
