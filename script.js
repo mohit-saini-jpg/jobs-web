@@ -899,7 +899,23 @@
     }
 
     const groupMeta = { study: "Study wise jobs", popular: "Popular job categories", state: "State wise jobs", admissions: "Admissions", "admit-result": "Admit Card / Result", khabar: "Latest Khabar", "study-material": "Study Material & Top Courses" };
-    if (titleEl) titleEl.textContent = groupMeta[group] || "Category";
+    if (titleEl) titleEl.textContent = groupMeta[group] || "Browse Categories";
+
+    // ISSUE-006: with no/unknown group, render a directory of valid groups
+    // instead of a blank page.
+    if (!group || !(group in groupMeta)) {
+      gridEl.innerHTML = "";
+      Object.entries(groupMeta).forEach(([slug, label]) => {
+        const a = document.createElement("a");
+        a.className = "section-link";
+        a.href = "category.html?group=" + encodeURIComponent(slug);
+        a.innerHTML = `<div class="t">${label}</div><div class="d">Browse this category</div>`;
+        gridEl.appendChild(a);
+      });
+      const desc = $("#categoryDesc");
+      if (desc) desc.textContent = "Pick a category to see related government jobs, admit cards, results and study material.";
+      return;
+    }
 
     let data;
     try {
