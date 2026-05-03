@@ -1551,8 +1551,27 @@
 
       input.addEventListener("input", performSearch);
       input.addEventListener("focus", () => { if(input.value.length >= 1) resultsWrap.style.display="block"; });
-      
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") { e.preventDefault(); performSearch(); }
+      });
+
+      // ISSUE-008: wire the visible Search button so clicking it actually
+      // runs the search (was previously inert).
+      const btnId = input.id === "siteSearchInput" ? "siteSearchBtn"
+                  : input.id === "sectionSearchInput" ? "sectionSearchBtn"
+                  : null;
+      const btn = btnId ? document.getElementById(btnId) : null;
+      if (btn && !btn.dataset.qaBound) {
+        btn.dataset.qaBound = "1";
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          if (!input.value.trim()) { input.focus(); return; }
+          performSearch();
+        });
+      }
+
       document.addEventListener("click", (e) => {
+        if (btn && btn.contains(e.target)) return;
         if (!input.contains(e.target) && !resultsWrap.contains(e.target)) {
           resultsWrap.style.display = "none";
         }
