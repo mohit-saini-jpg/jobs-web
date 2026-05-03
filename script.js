@@ -534,11 +534,11 @@
       `;
 
       const list = $(".section-list", card);
-      const items = Array.isArray(sec.items) 
-        ? sec.items.filter(i => !isGarbageLink(i)).slice(0, 8) 
+      const items = Array.isArray(sec.items)
+        ? sec.items.filter(i => !isGarbageLink(i)).slice(0, 8)
         : [];
 
-      items.forEach((it) => {
+      items.forEach((it, idx) => {
         const name = safe(it.name) || "Open";
         const url = it.url || it.link || "";
         if (!url) return;
@@ -546,12 +546,32 @@
         const external = !!it.external;
         const a = document.createElement("a");
         a.className = "section-link";
+        // ISSUE-001: collapse to 4 items per section by default; the rest are
+        // hidden until the user clicks "Show all". Cuts the mobile homepage
+        // scroll length roughly in half.
+        if (idx >= 4) a.dataset.collapsed = "1";
         a.href = buildRedirectUrl(url, name) || normalizeUrl(url);
         a.setAttribute("data-redirect-label", name);
         if (external) { a.target = "_blank"; a.rel = "noopener"; }
         a.innerHTML = `<div class="t">${name}</div>${it.date ? `<div class="d">${safe(it.date)}</div>` : `<div class="d">Open official link</div>`}`;
         list.appendChild(a);
       });
+
+      const hidden = items.length - 4;
+      if (hidden > 0) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "section-show-more";
+        btn.textContent = "Show all " + items.length;
+        btn.addEventListener("click", () => {
+          list.querySelectorAll('[data-collapsed="1"]').forEach((el) => {
+            el.removeAttribute("data-collapsed");
+          });
+          btn.remove();
+        });
+        const body = $(".section-body", card);
+        body.insertBefore(btn, body.querySelector(".view-all"));
+      }
       wrap.appendChild(card);
     });
   }
