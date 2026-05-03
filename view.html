@@ -207,8 +207,11 @@
     </section>
 
     <section id="fallback" class="hidden">
-      <div class="bg-amber-50 border border-amber-200 rounded-lg p-6 text-center text-amber-900">
-        <h3 class="font-bold text-lg">Nothing found</h3>
+      <div class="bg-amber-50 border border-amber-200 rounded-lg p-6 text-amber-900">
+        <h3 class="font-bold text-lg">Pick a section</h3>
+        <p class="mt-2 text-sm">This page needs a <code>?section=</code> or <code>?url=</code> in the address bar. Try one of these instead:</p>
+        <ul id="fallback-sections" class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-2 text-sm"></ul>
+        <p class="mt-4 text-sm"><a href="index.html" class="font-semibold underline">&larr; Back to home</a></p>
       </div>
     </section>
 
@@ -373,6 +376,28 @@
       }
 
       show(fallback);
+      // ISSUE-007: populate the fallback with the known sections so the user
+      // has somewhere to go instead of a dead "Nothing found" card.
+      (async () => {
+        try {
+          const r = await fetch("dynamic-sections.json");
+          if (!r.ok) return;
+          const d = await r.json();
+          const ul = document.getElementById("fallback-sections");
+          if (!ul || !Array.isArray(d.sections)) return;
+          d.sections.slice(0, 12).forEach((s) => {
+            const id = s.id || s.title;
+            if (!id) return;
+            const li = document.createElement("li");
+            const a = document.createElement("a");
+            a.className = "font-semibold text-sky-700 hover:underline";
+            a.href = "view.html?section=" + encodeURIComponent(id);
+            a.textContent = s.title || id;
+            li.appendChild(a);
+            ul.appendChild(li);
+          });
+        } catch (_) {}
+      })();
     })();
   </script>
 </body>
