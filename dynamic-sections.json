@@ -6406,6 +6406,10 @@
     "name": "नौकरियां जिनकी अंतिम तिथि नजदीक है।",
     "url": "view.html?section=Jobs%20with%20Last%20date"
   },
+    {
+    "name": "8th Pass jobs",
+    "url": "https://www.topsarkarijobs.com/view.html?section=8th%20Pass"
+  },
   {
     "name": "10th Pass jobs",
     "url": "view.html?section=10th%20Pass%20jobs"
@@ -6421,6 +6425,10 @@
   {
     "name": "Diploma jobs",
     "url": "view.html?section=Diploma%20Jobs"
+  },
+  {
+    "name": "B.A Pass jobs",
+    "url": "https://www.topsarkarijobs.com/view.html?section=B.A%20Pass"
   },
   {
     "name": "Graduation jobs",
@@ -6492,7 +6500,7 @@
   },
   {
     "name": "Admission/Education",
-    "url": "view.html?section=Admit%20cards%20Exams%20Date"
+    "url": "https://www.topsarkarijobs.com/category.html?group=admissions"
   },
   {
     "name": "ImportantCSC PDF",
