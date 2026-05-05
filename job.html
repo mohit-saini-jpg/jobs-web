@@ -557,27 +557,6 @@
       errorEl.style.display = "block";
     }
 
-    /* ─── Look up in dynamic-sections.json ─── */
-    async function resolveFromJson(wantKey) {
-      const r = await fetch("dynamic-sections.json");
-      if (!r.ok) return null;
-      const data = await r.json();
-      for (const sec of (data.sections || [])) {
-        for (const it of (sec.items || [])) {
-          const u = it.url || it.link || "";
-          if (!u) continue;
-          if (urlRedirectFingerprint(u).toLowerCase() === wantKey) {
-            return {
-              url:   normalizeUrl(u),
-              title: safe(it.name || it.title || "").slice(0, 500),
-              secId: safe(sec.id || sec.title)
-            };
-          }
-        }
-      }
-      return null;
-    }
-
     function validateUrl(urlStr) {
       try {
         const d = new URL(urlStr, window.location.href);
@@ -586,24 +565,105 @@
       } catch (_) { return null; }
     }
 
+    /* ─── Load all items from dynamic-sections.json once ─── */
+    async function loadAllItems() {
+      const r = await fetch("dynamic-sections.json");
+      if (!r.ok) return [];
+      const data = await r.json();
+      const out = [];
+      for (const sec of (data.sections || [])) {
+        for (const it of (sec.items || [])) {
+          const u = it.url || it.link || "";
+          if (!u) continue;
+          out.push({
+            url:   normalizeUrl(u),
+            title: safe(it.name || it.title || "").slice(0, 500),
+            secId: safe(sec.id || sec.title),
+            fp:    urlRedirectFingerprint(u).toLowerCase()
+          });
+        }
+      }
+      return out;
+    }
+
+    /* ─── Tier-1: exact fingerprint match ─── */
+    function matchByKey(items, wantKey) {
+      return items.find(i => i.fp === wantKey) || null;
+    }
+
+    /* ─── Tier-2: slug fuzzy match ─── */
+    // Convert a job title to slug tokens and score against rawSlug
+    function slugScore(title, targetSlug) {
+      if (!title || !targetSlug) return 0;
+      const titleSlug = title.toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+      const tTokens = targetSlug.split("-").filter(t => t.length > 2);
+      if (!tTokens.length) return 0;
+      let hits = 0;
+      for (const t of tTokens) {
+        if (titleSlug.includes(t)) hits++;
+      }
+      return hits / tTokens.length; // 0–1
+    }
+
+    function matchBySlug(items, slug) {
+      if (!slug) return null;
+      let best = null, bestScore = 0;
+      for (const it of items) {
+        const score = slugScore(it.title, slug);
+        if (score > bestScore) { bestScore = score; best = it; }
+      }
+      // Only accept if >60% of slug tokens matched
+      return bestScore >= 0.6 ? best : null;
+    }
+
     /* ─── Main ─── */
     (async function run() {
       if (!rawK && !rawSlug) { showError(); return; }
 
+      let items = [];
+      try { items = await loadAllItems(); } catch (_) {}
+
       let row = null;
-      if (rawK) {
-        try { row = await resolveFromJson(rawK); } catch (_) {}
-        if (!row) { showError(); return; }
-        const dest = validateUrl(row.url);
-        if (!dest) { showError(); return; }
-        if (row.secId && !rawSec) bcSection.textContent = humanizeSlug(row.secId);
-        showContent(row.title || humanizeSlug(rawSlug), dest);
-      } else {
-        // Slug-only mode: no URL — just show what we can from the slug
-        showContent(humanizeSlug(rawSlug), "#");
-        goBtn.textContent = "Cannot find external link — go back";
-        goBtn.href = "javascript:history.back()";
+
+      /* Tier 1: fingerprint */
+      if (rawK && items.length) {
+        row = matchByKey(items, rawK);
       }
+
+      /* Tier 2: slug fuzzy match (fallback when live JSON differs from when link was built) */
+      if (!row && rawSlug && items.length) {
+        row = matchBySlug(items, rawSlug);
+      }
+
+      /* Tier 3: slug-only — show details parsed from slug, no external link */
+      if (!row) {
+        if (rawSlug) {
+          const humanTitle = humanizeSlug(rawSlug);
+          showContent(humanTitle, "");
+          // Hide the go button gracefully since we have no URL
+          goBtn.style.display = "none";
+          document.getElementById("jbContent").insertAdjacentHTML("beforeend",
+            `<p style="text-align:center;color:#64748b;font-size:0.85rem;margin-top:-10px;margin-bottom:20px;">
+              Official link not available. Please search on
+              <a href="https://www.sarkariresult.com" target="_blank" rel="noopener" style="color:#0369a1;">sarkariresult.com</a>
+              or go back and try again.
+            </p>`
+          );
+          return;
+        }
+        showError();
+        return;
+      }
+
+      /* Found — validate URL and render */
+      const dest = validateUrl(row.url);
+      if (!dest) { showError(); return; }
+
+      const secToShow = rawSec && rawSec !== "view.html" ? rawSec : row.secId;
+      if (secToShow) bcSection.textContent = humanizeSlug(secToShow);
+
+      showContent(row.title || humanizeSlug(rawSlug), dest);
     })();
   })();
   </script>
