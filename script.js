@@ -541,19 +541,24 @@
     ? sec.items.slice(0, 8)
     : [];
 
-  items.forEach((it, idx) => {
-    const name = safe(it.name) || "Open";
+items.forEach((it, idx) => {
+  const name = safe(it.name) || "Open";
 
-    const a = document.createElement("a");
-    a.className = "section-link";
+  const a = document.createElement("a");
+  a.className = "section-link";
 
-    // 🔥 SEO LINK
-    const slug = slugifyTitle(name);
-    a.href = `view.html?job=${slug}`;
+  // 🔥 SHOW MORE FIX
+  if (idx >= 4) {
+    a.setAttribute("data-collapsed", "1");
+    a.style.display = "none";
+  }
 
-    a.innerHTML = `<div>${name}</div>`;
-    list.appendChild(a);
-  });
+  const slug = slugifyTitle(name);
+  a.href = `view.html?job=${slug}`;
+
+  a.innerHTML = `<div>${name}</div>`;
+  list.appendChild(a);
+});
 
   // 🔥 SHOW MORE (single block only)
   const hidden = items.length - 4;
