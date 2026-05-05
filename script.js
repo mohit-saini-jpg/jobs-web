@@ -501,7 +501,7 @@
       if (fetchFailed) return;
     }
 
-   (data.sections || []).forEach((sec) => {
+(data.sections || []).forEach((sec) => {
   const title = safe(sec.title) || "Updates";
   const baseColor = safe(sec.color) || "#0284c7";
   const icon = safe(sec.icon) || "fa-solid fa-briefcase";
@@ -512,6 +512,7 @@
 
   const sectionKey = safe(sec.id) || safe(sec.title);
   let moreHref = "";
+
   if (safe(sec.viewMoreUrl)) {
     moreHref = openInternal(sec.viewMoreUrl, title);
   } else if (safe(sec.viewMoreType).toLowerCase() === "list" && sectionKey) {
@@ -520,8 +521,9 @@
 
   const card = document.createElement("article");
   card.className = "section-card";
+
   card.innerHTML = `
-    <div class="section-head" style="${bgStyle} text-shadow: 0 1px 2px rgba(0,0,0,0.15); border-bottom: 1px solid rgba(0,0,0,0.05);">
+    <div class="section-head" style="${bgStyle}">
       <div class="left">
         <i class="${icon}"></i>
         <span>${title}</span>
@@ -529,36 +531,45 @@
     </div>
     <div class="section-body">
       <div class="section-list"></div>
-      ${moreHref ? `<a class="view-all" href="${moreHref}">More <i class="fa-solid fa-arrow-right"></i></a>` : ""}
+      ${moreHref ? `<a class="view-all" href="${moreHref}">More</a>` : ""}
     </div>
   `;
 
   const list = $(".section-list", card);
+
   const items = Array.isArray(sec.items)
-    ? sec.items.filter(i => !isGarbageLink(i)).slice(0, 8)
+    ? sec.items.slice(0, 8)
     : [];
 
   items.forEach((it, idx) => {
     const name = safe(it.name) || "Open";
-    const url = it.url || it.link || "";
-    if (!url) return;
 
-    const external = !!it.external;
     const a = document.createElement("a");
     a.className = "section-link";
 
-    if (idx >= 4) a.dataset.collapsed = "1";
-
-    // 🔥🔥 ONLY CHANGE (IMPORTANT)
+    // 🔥 SEO LINK
     const slug = slugifyTitle(name);
     a.href = `view.html?job=${slug}`;
 
-    a.setAttribute("data-redirect-label", name);
+    a.innerHTML = `<div>${name}</div>`;
+    list.appendChild(a);
+  });
 
-    if (external) { 
-      a.target = "_blank"; 
-      a.rel = "noopener"; 
-    }
+  // 🔥 SHOW MORE
+  const hidden = items.length - 4;
+  if (hidden > 0) {
+    const btn = document.createElement("button");
+    btn.textContent = "Show all " + items.length;
+    btn.onclick = () => {
+      list.querySelectorAll('[data-collapsed="1"]').forEach(el => el.removeAttribute("data-collapsed"));
+      btn.remove();
+    };
+    card.appendChild(btn);
+  }
+
+  wrap.appendChild(card);
+
+}); // 🔥🔥 ये सबसे जरूरी है
 
     a.innerHTML = `
       <div class="t">${name}</div>
