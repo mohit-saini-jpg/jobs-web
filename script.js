@@ -85,13 +85,16 @@
     return `view.html?url=${encodeURIComponent(u)}&name=${encodeURIComponent(name)}`;
   }
 
-  function buildRedirectUrl(targetUrl, label = "") {
+  function buildRedirectUrl(targetUrl, label = "", sectionId = "") {
     const to = safe(targetUrl);
     if (!to) return "";
     const qs = new URLSearchParams();
-    qs.set("job", slugifyTitle(label || targetUrl));
+    qs.set("slug", slugifyTitle(label || targetUrl));
     qs.set("k", urlRedirectFingerprint(to));
-    return `redirect.html?${qs.toString()}`;
+    // Pass section context so job.html can show breadcrumb
+    const sec = sectionId || (typeof page !== "undefined" ? page : "");
+    if (sec && sec !== "index.html" && sec !== "") qs.set("section", sec);
+    return `job.html?${qs.toString()}`;
   }
 
   /** Redirect interstitial only for home section rows and view.html list items (not More / nav / etc.). */
@@ -550,7 +553,7 @@
         // hidden until the user clicks "Show all". Cuts the mobile homepage
         // scroll length roughly in half.
         if (idx >= 4) a.dataset.collapsed = "1";
-        a.href = buildRedirectUrl(url, name) || normalizeUrl(url);
+        a.href = buildRedirectUrl(url, name, sectionKey) || normalizeUrl(url);
         a.setAttribute("data-redirect-label", name);
         if (external) { a.target = "_blank"; a.rel = "noopener"; }
         a.innerHTML = `<div class="t">${name}</div>${it.date ? `<div class="d">${safe(it.date)}</div>` : `<div class="d">Open official link</div>`}`;
