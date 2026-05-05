@@ -1621,7 +1621,7 @@ items.forEach((it, idx) => {
     });
   }
 
-  ddocument.addEventListener("DOMContentLoaded", async () => {
+  document.addEventListener("DOMContentLoaded", async () => {
     // ❌ REDIRECT OFF
     // installGlobalRedirectGate();
 
