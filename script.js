@@ -91,9 +91,10 @@
     const qs = new URLSearchParams();
     qs.set("slug", slugifyTitle(label || targetUrl));
     qs.set("k", urlRedirectFingerprint(to));
-    // Pass section context so job.html can show breadcrumb
-    const sec = sectionId || (typeof page !== "undefined" ? page : "");
-    if (sec && sec !== "index.html" && sec !== "") qs.set("section", sec);
+    // Only pass section if it's a real section ID (not a page filename)
+    const pageFilenames = new Set(["index.html", "view.html", "redirect.html", "job.html", ""]);
+    const sec = sectionId && !pageFilenames.has(sectionId.toLowerCase()) ? sectionId : "";
+    if (sec) qs.set("section", sec);
     return `job.html?${qs.toString()}`;
   }
 
