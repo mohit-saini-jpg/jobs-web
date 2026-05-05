@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script type="application/ld+json" id="jobSchema">{}</script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sarkari Job Details | Top Sarkari Jobs</title>
+  <meta name="description" content="Full details of this government job — post name, vacancies, salary, last date, qualification and apply mode." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" id="canonicalTag" href="https://www.topsarkarijobs.com/job.html" />
+  <link rel="icon" type="image/x-icon" href="image.ico" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="fonts/fa/all.min.css" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Top Sarkari Jobs" />
+  <meta property="og:image" content="https://www.topsarkarijobs.com/image.png" />
+  <meta property="og:image:width" content="800" />
+  <meta property="og:image:height" content="800" />
+  <meta id="ogTitle" property="og:title" content="Sarkari Job | Top Sarkari Jobs" />
+  <meta id="ogDesc"  property="og:description" content="Latest government job details on Top Sarkari Jobs." />
+  <meta id="ogUrl"   property="og:url" content="https://www.topsarkarijobs.com/job.html" />
+  <meta name="twitter:card" content="summary" />
+  <meta id="twTitle" name="twitter:title" content="Sarkari Job | Top Sarkari Jobs" />
+  <meta id="twDesc"  name="twitter:description" content="Latest government job details on Top Sarkari Jobs." />
+  <meta name="twitter:image" content="https://www.topsarkarijobs.com/image.png" />
+
+  <style>
+    /* ── Page shell ── */
+    html, body { height: 100%; margin: 0; }
+    body { display: flex; flex-direction: column; font-family: inherit; }
+    main { flex: 1; }
+
+    /* ── Wrapper ── */
+    .job-page-wrap {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 16px 14px 32px;
+    }
+
+    /* ── Breadcrumb ── */
+    .jb-breadcrumb {
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .jb-breadcrumb a { color: #0369a1; text-decoration: none; }
+    .jb-breadcrumb a:hover { text-decoration: underline; }
+    .jb-breadcrumb .sep { color: #cbd5e1; }
+
+    /* ── Category badge ── */
+    .jb-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 4px 12px;
+      border-radius: 999px;
+      border: 1px solid #bfdbfe;
+      margin-bottom: 10px;
+    }
+
+    /* ── Job title ── */
+    .jb-title {
+      font-size: 1.22rem;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.45;
+      margin: 0 0 18px;
+    }
+
+    /* ── Info table ── */
+    .jb-table-wrap {
+      border: 1.5px solid #e2e8f0;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .jb-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .jb-table tr:not(:last-child) td,
+    .jb-table tr:not(:last-child) th {
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .jb-table th {
+      width: 38%;
+      background: #f1f5f9;
+      color: #374151;
+      font-size: 0.84rem;
+      font-weight: 700;
+      padding: 11px 14px;
+      text-align: left;
+      vertical-align: top;
+    }
+    .jb-table td {
+      color: #0f172a;
+      font-size: 0.88rem;
+      font-weight: 500;
+      padding: 11px 14px;
+      vertical-align: top;
+      line-height: 1.5;
+    }
+    /* Highlight last-date row */
+    .jb-table tr.highlight-row th,
+    .jb-table tr.highlight-row td {
+      background: #fff7ed;
+      color: #9a3412;
+      font-weight: 700;
+    }
+
+    /* ── Notice box ── */
+    .jb-notice {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 8px;
+      padding: 13px 16px;
+      font-size: 0.84rem;
+      color: #78350f;
+      line-height: 1.65;
+      margin-bottom: 22px;
+    }
+    .jb-notice strong { color: #92400e; }
+
+    /* ── CTA button ── */
+    .jb-cta-wrap {
+      text-align: center;
+      margin-bottom: 26px;
+    }
+    .jb-btn {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%);
+      color: #fff !important;
+      font-weight: 800;
+      font-size: 1rem;
+      padding: 15px 36px;
+      border-radius: 10px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 4px 14px rgba(3,105,161,0.3);
+      transition: background 0.18s, box-shadow 0.18s, transform 0.1s;
+    }
+    .jb-btn:hover {
+      background: linear-gradient(135deg, #075985 0%, #0369a1 100%);
+      box-shadow: 0 6px 20px rgba(3,105,161,0.4);
+      transform: translateY(-1px);
+      color: #fff !important;
+    }
+    .jb-btn:active { transform: translateY(0); }
+    .jb-btn-sub {
+      font-size: 0.8rem;
+      font-weight: 600;
+      opacity: 0.88;
+    }
+    .jb-disclaimer {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+
+    /* ── Tips box ── */
+    .jb-tips {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+    }
+    .jb-tips h2 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0 0 10px;
+    }
+    .jb-tips ul {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 0.83rem;
+      color: #334155;
+      line-height: 1.95;
+    }
+    .jb-tips-note {
+      font-size: 0.79rem;
+      color: #64748b;
+      margin: 10px 0 0;
+    }
+
+    /* ── Section head ── */
+    .jb-section-tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #64748b;
+      margin-bottom: 6px;
+    }
+
+    /* ── Loading / error states ── */
+    .jb-loading {
+      padding: 40px 0;
+      text-align: center;
+      color: #64748b;
+      font-size: 0.95rem;
+    }
+    .jb-error {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      padding: 16px 18px;
+      color: #991b1b;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    /* ── Mobile tweaks ── */
+    @media (max-width: 520px) {
+      .jb-title { font-size: 1.05rem; }
+      .jb-table th { width: 42%; font-size: 0.78rem; padding: 10px 10px; }
+      .jb-table td { font-size: 0.82rem; padding: 10px 10px; }
+      .jb-btn { font-size: 0.93rem; padding: 14px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header" id="site-header"></header>
+
+  <main id="main" class="container">
+    <div class="job-page-wrap">
+
+      <!-- Breadcrumb -->
+      <nav class="jb-breadcrumb" aria-label="Breadcrumb">
+        <a href="index.html"><i class="fa-solid fa-house" style="font-size:0.75rem;"></i> Home</a>
+        <span class="sep">›</span>
+        <span id="bcSection" style="cursor:pointer;color:#0369a1;" onclick="history.back()">Back</span>
+        <span class="sep">›</span>
+        <span id="bcTitle" style="color:#0f172a;">Job Details</span>
+      </nav>
+
+      <!-- Loading state -->
+      <div class="jb-loading" id="jbLoading">
+        <i class="fa-solid fa-circle-notch fa-spin" style="color:#0369a1; font-size:1.4rem;"></i>
+        <p style="margin:10px 0 4px; font-weight:600;">Loading job details…</p>
+        <p style="font-size:0.85rem; color:#94a3b8;">जानकारी लोड हो रही है…</p>
+      </div>
+
+      <!-- Main content (hidden until loaded) -->
+      <div id="jbContent" style="display:none;">
+
+        <span class="jb-badge" id="jbBadge">
+          <i class="fa-solid fa-briefcase" id="jbBadgeIcon"></i>
+          <span id="jbBadgeText">Sarkari Job</span>
+        </span>
+
+        <h1 class="jb-title" id="jbTitle">Job Title</h1>
+
+        <!-- Detail table -->
+        <div class="jb-section-tag">Job Details / नौकरी की जानकारी</div>
+        <div class="jb-table-wrap">
+          <table class="jb-table" id="jbTable">
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <!-- Important notice -->
+        <div class="jb-notice">
+          <strong>⚠ Important / ध्यान दें:</strong> Always verify all details on the
+          <strong>official government / organization website</strong> before applying.
+          Dates, fees, and eligibility may change without prior notice.
+          <span style="display:block;margin-top:5px;">
+            आवेदन करने से पहले सभी जानकारी आधिकारिक वेबसाइट पर जरूर जाँचें। तिथियाँ और पात्रता बदल सकती हैं।
+          </span>
+        </div>
+
+        <!-- CTA -->
+        <div class="jb-cta-wrap">
+          <a id="jbGoBtn" href="#" target="_blank" rel="noopener noreferrer" class="jb-btn">
+            <span>🔗 Apply / View Official Notification</span>
+            <span class="jb-btn-sub">आधिकारिक वेबसाइट खोलें — Click here</span>
+          </a>
+          <p class="jb-disclaimer">
+            You will be taken to an external website (e.g. sarkariresult.com).
+            Top Sarkari Jobs is not responsible for content on third-party sites.
+          </p>
+        </div>
+
+        <!-- Tips -->
+        <div class="jb-tips">
+          <h2>💡 Tips before you apply / आवेदन से पहले</h2>
+          <ul>
+            <li>Read the full official notification PDF before filling the form.</li>
+            <li>Keep scanned photo &amp; signature ready (JPG, as per size requirement).</li>
+            <li>Pay the application fee only via the official payment gateway.</li>
+            <li>Save / print the confirmation page after successful submission.</li>
+            <li>Check age, education &amp; domicile eligibility before applying.</li>
+            <li>Apply well before the last date to avoid server load issues.</li>
+          </ul>
+          <p class="jb-tips-note">
+            <strong>नोट:</strong> अंतिम तिथि से पहले फॉर्म भरें और शुल्क भुगतान करें।
+          </p>
+        </div>
+
+      </div><!-- /jbContent -->
+
+      <!-- Error state (hidden until needed) -->
+      <div id="jbError" style="display:none;">
+        <div class="jb-error">
+          <strong>Job not found or link is invalid.</strong><br />
+          यह नौकरी नहीं मिली या लिंक गलत है।
+        </div>
+        <div style="margin-top:16px; text-align:center;">
+          <a href="index.html" class="jb-btn" style="max-width:280px;">
+            ← Go to Home — होम पर जाएँ
+          </a>
+        </div>
+      </div>
+
+    </div><!-- /job-page-wrap -->
+  </main>
+
+  <div id="site-footer"></div>
+
+  <!-- Mobile menu (required by script.js) -->
+  <div id="menuOverlay" class="overlay" hidden></div>
+  <aside id="mobileMenu" class="offcanvas" aria-label="Mobile menu" hidden>
+    <div class="offcanvas-head">
+      <div class="offcanvas-title">Menu</div>
+      <button id="closeMenuBtn" class="icon-btn" type="button" aria-label="Close menu">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <nav class="offcanvas-nav" aria-label="Mobile primary"></nav>
+  </aside>
+
+  <script>
+  (() => {
+    "use strict";
+
+    /* ─── Shared helpers (kept in sync with script.js) ─── */
+    const safe = v => (v ?? "").toString().trim();
+
+    function normalizeUrl(raw) {
+      const s = safe(raw);
+      if (!s) return "";
+      if (/^(https?:)?\/\//i.test(s) || /^(mailto:|tel:)/i.test(s)) return s;
+      if (s.startsWith("#") || s.startsWith("?")) return s;
+      if (s.startsWith("/") || s.includes(".html") || s.startsWith("./") || s.startsWith("../")) return s;
+      return "https://" + s.replace(/^\/+/, "");
+    }
+
+    function urlRedirectFingerprint(raw) {
+      const s = normalizeUrl(raw);
+      let h1 = 2166136261 >>> 0, h2 = 8159751279 >>> 0;
+      for (let i = 0; i < s.length; i++) {
+        const c = s.charCodeAt(i);
+        h1 ^= c; h1 = Math.imul(h1, 16777619) >>> 0;
+        h2 = (Math.imul(h2, 1099511627) ^ c) >>> 0;
+      }
+      const ab = "0123456789abcdefghijklmnopqrstuvwxyz";
+      const pack = (n, len) => { let x=n>>>0, o=""; for(let i=0;i<len;i++){o=ab[x%36]+o;x=Math.floor(x/36);} return o; };
+      return pack(h1, 6) + pack(h2, 6);
+    }
+
+    function humanizeSlug(slug) {
+      return safe(slug).replace(/-+/g, " ").replace(/\b[a-z]/g, m => m.toUpperCase()).trim();
+    }
+
+    /* ─── DOM refs ─── */
+    const loading    = document.getElementById("jbLoading");
+    const content    = document.getElementById("jbContent");
+    const errorEl    = document.getElementById("jbError");
+    const titleEl    = document.getElementById("jbTitle");
+    const badgeText  = document.getElementById("jbBadgeText");
+    const badgeIcon  = document.getElementById("jbBadgeIcon");
+    const tableBody  = document.querySelector("#jbTable tbody");
+    const goBtn      = document.getElementById("jbGoBtn");
+    const bcSection  = document.getElementById("bcSection");
+    const bcTitle    = document.getElementById("bcTitle");
+
+    /* ─── URL params ─── */
+    const params   = new URLSearchParams(window.location.search);
+    const rawSlug  = safe(params.get("slug"));   // human slug of job name
+    const rawK     = safe(params.get("k")).toLowerCase(); // fingerprint key
+    const rawSec   = safe(params.get("section")); // which section user came from
+
+    /* ─── Smart job title parser ─── */
+
+    /**
+     * Parses a job name string into structured fields.
+     * Input example:
+     *   "BPSSC Havildar Instructor Online Form 2026 Last Date: 01/06/2026"
+     * Returns an array of { label, value } pairs for the table.
+     */
+    function parseJobName(name) {
+      const rows = [];
+      const n = safe(name);
+
+      /* 1. Detect category */
+      const catMap = [
+        { key: /admit\s*card/i,  label: "Admit Card",  icon: "fa-id-card" },
+        { key: /answer\s*key/i,  label: "Answer Key",  icon: "fa-key" },
+        { key: /result/i,        label: "Result",      icon: "fa-trophy" },
+        { key: /syllabus/i,      label: "Syllabus",    icon: "fa-book" },
+        { key: /admission/i,     label: "Admission",   icon: "fa-graduation-cap" },
+        { key: /scholarship/i,   label: "Scholarship", icon: "fa-medal" },
+        { key: /online\s*form|application/i, label: "Online Form", icon: "fa-file-alt" },
+        { key: /vacancy|recruitment|notification/i, label: "Recruitment", icon: "fa-briefcase" },
+      ];
+      let category = "Sarkari Job";
+      let catIcon  = "fa-briefcase";
+      for (const c of catMap) {
+        if (c.key.test(n)) { category = c.label; catIcon = c.icon; break; }
+      }
+      badgeText.textContent = category;
+      badgeIcon.className   = "fa-solid " + catIcon;
+
+      /* 2. Post / exam name — words BEFORE first stop keyword */
+      const stopRx = /\b(various|online|form|result|admit|answer|key|syllabus|post|vacancy|recruitment|notification|application|scholarship|2025|2026|2027|last)\b/i;
+      const words  = n.split(/\s+/);
+      const cut    = words.findIndex(w => stopRx.test(w));
+      const orgRaw = (cut > 0 ? words.slice(0, Math.min(cut, 6)) : words.slice(0, 5)).join(" ").replace(/,+$/, "");
+
+      /* 3. Post name — look for known patterns */
+      // "BPSSC Havildar Instructor Online Form" → post = "Havildar Instructor"
+      // Strategy: everything between org end and first stop keyword; fallback to org itself
+      let postName = "";
+      if (cut > 0) {
+        // words between the org and the stop word
+        const orgWordCount = orgRaw.split(/\s+/).length;
+        const mid = words.slice(orgWordCount, cut);
+        if (mid.length) postName = mid.join(" ").replace(/,+$/, "");
+      }
+
+      /* 4. Last date */
+      const ldMatch = n.match(/last\s*date\s*[:\-–]\s*([\d\/\-\.]+(?:[\d]{4})?)/i);
+      const lastDate = ldMatch ? ldMatch[1].trim() : null;
+
+      /* 5. Year */
+      const yearMatch = n.match(/\b(202[4-9]|203\d)\b/);
+      const year = yearMatch ? yearMatch[1] : null;
+
+      /* 6. No of posts */
+      const postNumMatch = n.match(/(\d[\d,]*)\s*(?:post|posts|vacancies|vacancy|seat|seats)/i);
+      const postNum = postNumMatch ? postNumMatch[1] : null;
+
+      /* 7. Advt / notification no */
+      const advtMatch = n.match(/(?:advt|adv|no|notification)[.\s#]*([A-Z0-9\/\-]+(?:\/\d+)?)/i);
+      const advtNo = advtMatch ? advtMatch[1] : null;
+
+      /* 8. Salary */
+      const salMatch = n.match(/(?:salary|pay|stipend|₹|rs\.?)\s*([\d,]+(?:\s*[-–to]+\s*[\d,]+)?(?:\s*(?:per\s*month|pm|lakh|per\s*annum|pa))?)/i);
+      const salary = salMatch ? salMatch[0].replace(/^(?:salary|pay|stipend)\s*/i, "") : null;
+
+      /* 9. Apply mode */
+      const applyMode = /offline/i.test(n) ? "Offline" : /online/i.test(n) ? "Online" : null;
+
+      /* ── Build table rows in the visual order from the screenshot ── */
+      rows.push({ label: "Company / Organisation", value: orgRaw || "—", highlight: false });
+      if (postName) rows.push({ label: "Post Name",           value: postName,  highlight: false });
+      if (postNum)  rows.push({ label: "No of Posts",         value: postNum,   highlight: false });
+      if (advtNo)   rows.push({ label: "Advt No",             value: advtNo,    highlight: false });
+      if (salary)   rows.push({ label: "Salary",              value: salary,    highlight: false });
+      if (year)     rows.push({ label: "Year",                value: year,      highlight: false });
+      rows.push({ label: "Apply Mode", value: applyMode || "Online (Check Notification)", highlight: false });
+      rows.push({ label: "Job Type",   value: /contract/i.test(n) ? "Contract" : /permanent/i.test(n) ? "Permanent" : "Check Notification", highlight: false });
+      if (lastDate) rows.push({ label: "Last Date",           value: lastDate,  highlight: true });
+      rows.push({ label: "Age Limit",  value: "As per notification", highlight: false });
+      rows.push({ label: "Qualification", value: "As per notification", highlight: false });
+
+      return rows;
+    }
+
+    /* ─── Render table ─── */
+    function renderTable(rows) {
+      tableBody.innerHTML = rows.map(r => `
+        <tr class="${r.highlight ? "highlight-row" : ""}">
+          <th scope="row">${r.label}</th>
+          <td>${r.value}</td>
+        </tr>
+      `).join("");
+    }
+
+    /* ─── Meta / SEO helpers ─── */
+    function setMeta(sel, val) {
+      const el = document.querySelector(sel);
+      if (el) el.setAttribute("content", val);
+    }
+    function updateSEO(title, destUrl, lastDate) {
+      const fullTitle = title + " | Top Sarkari Jobs";
+      document.title = fullTitle;
+      setMeta("#ogTitle",  fullTitle);
+      setMeta("#twTitle",  fullTitle);
+      const desc = "Apply for " + title + (lastDate ? " — Last Date: " + lastDate : "") + ". Full details on Top Sarkari Jobs.";
+      setMeta("#ogDesc", desc);
+      setMeta("#twDesc", desc);
+      setMeta("#ogUrl",  window.location.href);
+      document.getElementById("canonicalTag").href = window.location.href;
+
+      // JSON-LD structured data
+      const schema = {
+        "@context": "https://schema.org",
+        "@type": "JobPosting",
+        "title": title,
+        "description": desc,
+        "hiringOrganization": { "@type": "Organization", "name": "Top Sarkari Jobs", "sameAs": "https://www.topsarkarijobs.com/" },
+        "jobLocation": { "@type": "Place", "address": { "@type": "PostalAddress", "addressCountry": "IN" } },
+        "employmentType": "FULL_TIME",
+        "datePosted": new Date().toISOString().slice(0, 10),
+        ...(lastDate ? { "validThrough": lastDate } : {}),
+        "url": window.location.href,
+        "applyUrl": destUrl
+      };
+      document.getElementById("jobSchema").textContent = JSON.stringify(schema, null, 2);
+    }
+
+    /* ─── Show/hide helpers ─── */
+    function showContent(name, destUrl) {
+      loading.style.display = "none";
+
+      const rows   = parseJobName(name);
+      const ldRow  = rows.find(r => r.label === "Last Date");
+      const lastDt = ldRow ? ldRow.value : null;
+
+      titleEl.textContent = name;
+      bcTitle.textContent = name.length > 60 ? name.slice(0, 57) + "…" : name;
+      if (rawSec) bcSection.textContent = humanizeSlug(rawSec);
+
+      renderTable(rows);
+      goBtn.href = destUrl;
+
+      updateSEO(name, destUrl, lastDt);
+
+      content.style.display = "block";
+    }
+
+    function showError() {
+      loading.style.display = "none";
+      errorEl.style.display = "block";
+    }
+
+    /* ─── Look up in dynamic-sections.json ─── */
+    async function resolveFromJson(wantKey) {
+      const r = await fetch("dynamic-sections.json");
+      if (!r.ok) return null;
+      const data = await r.json();
+      for (const sec of (data.sections || [])) {
+        for (const it of (sec.items || [])) {
+          const u = it.url || it.link || "";
+          if (!u) continue;
+          if (urlRedirectFingerprint(u).toLowerCase() === wantKey) {
+            return {
+              url:   normalizeUrl(u),
+              title: safe(it.name || it.title || "").slice(0, 500),
+              secId: safe(sec.id || sec.title)
+            };
+          }
+        }
+      }
+      return null;
+    }
+
+    function validateUrl(urlStr) {
+      try {
+        const d = new URL(urlStr, window.location.href);
+        if (!["http:", "https:"].includes(d.protocol)) return null;
+        return d.href;
+      } catch (_) { return null; }
+    }
+
+    /* ─── Main ─── */
+    (async function run() {
+      if (!rawK && !rawSlug) { showError(); return; }
+
+      let row = null;
+      if (rawK) {
+        try { row = await resolveFromJson(rawK); } catch (_) {}
+        if (!row) { showError(); return; }
+        const dest = validateUrl(row.url);
+        if (!dest) { showError(); return; }
+        if (row.secId && !rawSec) bcSection.textContent = humanizeSlug(row.secId);
+        showContent(row.title || humanizeSlug(rawSlug), dest);
+      } else {
+        // Slug-only mode: no URL — just show what we can from the slug
+        showContent(humanizeSlug(rawSlug), "#");
+        goBtn.textContent = "Cannot find external link — go back";
+        goBtn.href = "javascript:history.back()";
+      }
+    })();
+  })();
+  </script>
+
+  <script src="script.js?v=20260501" defer></script>
+</body>
+</html>
