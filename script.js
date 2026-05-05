@@ -128,44 +128,50 @@
     return false;
   }
 
-  function installGlobalRedirectGate() {
-    if (page === "redirect.html") return;
-    if (window.__redirectGateInstalled) return;
-    window.__redirectGateInstalled = true;
+ function installGlobalRedirectGate() {
+  // 🔥 FULL DISABLE (BEST FIX)
+  return;
 
-    document.addEventListener("click", (e) => {
-      const anchor = e.target.closest("a[href]");
-      if (!anchor) return;
+  // नीचे का code रहेगा लेकिन कभी run नहीं होगा
+  if (page === "redirect.html") return;
+  if (window.__redirectGateInstalled) return;
+  window.__redirectGateInstalled = true;
 
-      if (e.defaultPrevented) return;
-      if (e.button !== 0) return;
-      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  document.addEventListener("click", (e) => {
+    const anchor = e.target.closest("a[href]");
+    if (!anchor) return;
 
-      const href = anchor.getAttribute("href") || "";
-      if (shouldBypassRedirect(anchor, href)) return;
-      if (!isRedirectGatedLink(anchor)) return;
+    if (e.defaultPrevented) return;
+    if (e.button !== 0) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
 
-      const normalizedHref = normalizeUrl(href);
-      if (!normalizedHref) return;
-      if (/^(mailto:|tel:)/i.test(normalizedHref)) return;
+    const href = anchor.getAttribute("href") || "";
+    if (shouldBypassRedirect(anchor, href)) return;
+    if (!isRedirectGatedLink(anchor)) return;
 
-      const target = (anchor.getAttribute("target") || "").trim().toLowerCase();
-      const redirectLabel =
-        anchor.getAttribute("data-redirect-label") ||
-        anchor.getAttribute("aria-label") ||
-        anchor.getAttribute("title") ||
-        safe(anchor.textContent);
-      const redirectUrl = buildRedirectUrl(normalizedHref, redirectLabel);
-      if (!redirectUrl) return;
+    const normalizedHref = normalizeUrl(href);
+    if (!normalizedHref) return;
+    if (/^(mailto:|tel:)/i.test(normalizedHref)) return;
 
-      e.preventDefault();
+    const target = (anchor.getAttribute("target") || "").trim().toLowerCase();
+    const redirectLabel =
+      anchor.getAttribute("data-redirect-label") ||
+      anchor.getAttribute("aria-label") ||
+      anchor.getAttribute("title") ||
+      safe(anchor.textContent);
 
-      if (target && target !== "_self") {
-        window.open(redirectUrl, target, "noopener");
-        return;
-      }
-      window.location.href = redirectUrl;
-    }, true);
+    const redirectUrl = buildRedirectUrl(normalizedHref, redirectLabel);
+    if (!redirectUrl) return;
+
+    e.preventDefault();
+
+    if (target && target !== "_self") {
+      window.open(redirectUrl, target, "noopener");
+      return;
+    }
+    window.location.href = redirectUrl;
+  }, true);
+}
   }
 
   window.goBack = () => {
