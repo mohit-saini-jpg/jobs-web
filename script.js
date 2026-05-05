@@ -501,79 +501,88 @@
       if (fetchFailed) return;
     }
 
-    (data.sections || []).forEach((sec) => {
-      const title = safe(sec.title) || "Updates";
-      const baseColor = safe(sec.color) || "#0284c7";
-      const icon = safe(sec.icon) || "fa-solid fa-briefcase";
+   (data.sections || []).forEach((sec) => {
+  const title = safe(sec.title) || "Updates";
+  const baseColor = safe(sec.color) || "#0284c7";
+  const icon = safe(sec.icon) || "fa-solid fa-briefcase";
 
-      const bgStyle = baseColor.includes("gradient") 
-        ? `background: ${baseColor};` 
-        : `background-color: ${baseColor}; background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(0, 0, 0, 0.15) 100%);`;
+  const bgStyle = baseColor.includes("gradient") 
+    ? `background: ${baseColor};` 
+    : `background-color: ${baseColor}; background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(0, 0, 0, 0.15) 100%);`;
 
-      const sectionKey = safe(sec.id) || safe(sec.title);
-      let moreHref = "";
-      if (safe(sec.viewMoreUrl)) {
-        moreHref = openInternal(sec.viewMoreUrl, title);
-      } else if (safe(sec.viewMoreType).toLowerCase() === "list" && sectionKey) {
-        moreHref = `view.html?section=${encodeURIComponent(sectionKey)}`;
-      }
+  const sectionKey = safe(sec.id) || safe(sec.title);
+  let moreHref = "";
+  if (safe(sec.viewMoreUrl)) {
+    moreHref = openInternal(sec.viewMoreUrl, title);
+  } else if (safe(sec.viewMoreType).toLowerCase() === "list" && sectionKey) {
+    moreHref = `view.html?section=${encodeURIComponent(sectionKey)}`;
+  }
 
-      const card = document.createElement("article");
-      card.className = "section-card";
-      card.innerHTML = `
-        <div class="section-head" style="${bgStyle} text-shadow: 0 1px 2px rgba(0,0,0,0.15); border-bottom: 1px solid rgba(0,0,0,0.05);">
-          <div class="left">
-            <i class="${icon}"></i>
-            <span>${title}</span>
-          </div>
-        </div>
-        <div class="section-body">
-          <div class="section-list"></div>
-          ${moreHref ? `<a class="view-all" href="${moreHref}">More <i class="fa-solid fa-arrow-right"></i></a>` : ""}
-        </div>
-      `;
+  const card = document.createElement("article");
+  card.className = "section-card";
+  card.innerHTML = `
+    <div class="section-head" style="${bgStyle} text-shadow: 0 1px 2px rgba(0,0,0,0.15); border-bottom: 1px solid rgba(0,0,0,0.05);">
+      <div class="left">
+        <i class="${icon}"></i>
+        <span>${title}</span>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="section-list"></div>
+      ${moreHref ? `<a class="view-all" href="${moreHref}">More <i class="fa-solid fa-arrow-right"></i></a>` : ""}
+    </div>
+  `;
 
-      const list = $(".section-list", card);
-      const items = Array.isArray(sec.items)
-        ? sec.items.filter(i => !isGarbageLink(i)).slice(0, 8)
-        : [];
+  const list = $(".section-list", card);
+  const items = Array.isArray(sec.items)
+    ? sec.items.filter(i => !isGarbageLink(i)).slice(0, 8)
+    : [];
 
-      items.forEach((it, idx) => {
-        const name = safe(it.name) || "Open";
-        const url = it.url || it.link || "";
-        if (!url) return;
+  items.forEach((it, idx) => {
+    const name = safe(it.name) || "Open";
+    const url = it.url || it.link || "";
+    if (!url) return;
 
-        const external = !!it.external;
-        const a = document.createElement("a");
-        a.className = "section-link";
-        // ISSUE-001: collapse to 4 items per section by default; the rest are
-        // hidden until the user clicks "Show all". Cuts the mobile homepage
-        // scroll length roughly in half.
-        if (idx >= 4) a.dataset.collapsed = "1";
-        a.href = buildRedirectUrl(url, name) || normalizeUrl(url);
-        a.setAttribute("data-redirect-label", name);
-        if (external) { a.target = "_blank"; a.rel = "noopener"; }
-        a.innerHTML = `<div class="t">${name}</div>${it.date ? `<div class="d">${safe(it.date)}</div>` : `<div class="d">Open official link</div>`}`;
-        list.appendChild(a);
-      });
+    const external = !!it.external;
+    const a = document.createElement("a");
+    a.className = "section-link";
 
-      const hidden = items.length - 4;
-      if (hidden > 0) {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "section-show-more";
-        btn.textContent = "Show all " + items.length;
-        btn.addEventListener("click", () => {
-          list.querySelectorAll('[data-collapsed="1"]').forEach((el) => {
-            el.removeAttribute("data-collapsed");
-          });
-          btn.remove();
-        });
-        const body = $(".section-body", card);
-        body.insertBefore(btn, body.querySelector(".view-all"));
-      }
-      wrap.appendChild(card);
+    if (idx >= 4) a.dataset.collapsed = "1";
+
+    // 🔥🔥 ONLY CHANGE (IMPORTANT)
+    const slug = slugifyTitle(name);
+    a.href = `view.html?job=${slug}`;
+
+    a.setAttribute("data-redirect-label", name);
+
+    if (external) { 
+      a.target = "_blank"; 
+      a.rel = "noopener"; 
+    }
+
+    a.innerHTML = `
+      <div class="t">${name}</div>
+      ${it.date ? `<div class="d">${safe(it.date)}</div>` : `<div class="d">Open official link</div>`}
+    `;
+
+    list.appendChild(a);
+  });
+
+const hidden = items.length - 4;
+if (hidden > 0) {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "section-show-more";
+  btn.textContent = "Show all " + items.length;
+  btn.addEventListener("click", () => {
+    list.querySelectorAll('[data-collapsed="1"]').forEach((el) => {
+      el.removeAttribute("data-collapsed");
     });
+    btn.remove();
+  });
+  const body = $(".section-body", card);
+  body.insertBefore(btn, body.querySelector(".view-all"));
+}
   }
 
   // ✅ PERFECTED GRID (Matching Outline Rows) & VIBRANT DESKTOP/MOBILE PILLS
