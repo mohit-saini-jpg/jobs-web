@@ -1613,8 +1613,9 @@ items.forEach((it, idx) => {
     });
   }
 
-  document.addEventListener("DOMContentLoaded", async () => {
-    installGlobalRedirectGate();
+  ddocument.addEventListener("DOMContentLoaded", async () => {
+    // ❌ REDIRECT OFF
+    // installGlobalRedirectGate();
 
     buildMobileMenu();
     safeHideOldSearchBars(); 
@@ -1646,5 +1647,5 @@ items.forEach((it, idx) => {
         safeHideOldSearchBars();
         initGlobalLiveSearch();
     }, 300); 
-  });
+});
 })();
