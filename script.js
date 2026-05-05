@@ -128,50 +128,45 @@
     return false;
   }
 
- function installGlobalRedirectGate() {
-  // 🔥 FULL DISABLE (BEST FIX)
-  return;
+  function installGlobalRedirectGate() {
+    if (page === "redirect.html") return;
+    if (window.__redirectGateInstalled) return;
+    window.__redirectGateInstalled = true;
 
-  // नीचे का code रहेगा लेकिन कभी run नहीं होगा
-  if (page === "redirect.html") return;
-  if (window.__redirectGateInstalled) return;
-  window.__redirectGateInstalled = true;
+    document.addEventListener("click", (e) => {
+      const anchor = e.target.closest("a[href]");
+      if (!anchor) return;
 
-  document.addEventListener("click", (e) => {
-    const anchor = e.target.closest("a[href]");
-    if (!anchor) return;
+      if (e.defaultPrevented) return;
+      if (e.button !== 0) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
 
-    if (e.defaultPrevented) return;
-    if (e.button !== 0) return;
-    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const href = anchor.getAttribute("href") || "";
+      if (shouldBypassRedirect(anchor, href)) return;
+      if (!isRedirectGatedLink(anchor)) return;
 
-    const href = anchor.getAttribute("href") || "";
-    if (shouldBypassRedirect(anchor, href)) return;
-    if (!isRedirectGatedLink(anchor)) return;
+      const normalizedHref = normalizeUrl(href);
+      if (!normalizedHref) return;
+      if (/^(mailto:|tel:)/i.test(normalizedHref)) return;
 
-    const normalizedHref = normalizeUrl(href);
-    if (!normalizedHref) return;
-    if (/^(mailto:|tel:)/i.test(normalizedHref)) return;
+      const target = (anchor.getAttribute("target") || "").trim().toLowerCase();
+      const redirectLabel =
+        anchor.getAttribute("data-redirect-label") ||
+        anchor.getAttribute("aria-label") ||
+        anchor.getAttribute("title") ||
+        safe(anchor.textContent);
+      const redirectUrl = buildRedirectUrl(normalizedHref, redirectLabel);
+      if (!redirectUrl) return;
 
-    const target = (anchor.getAttribute("target") || "").trim().toLowerCase();
-    const redirectLabel =
-      anchor.getAttribute("data-redirect-label") ||
-      anchor.getAttribute("aria-label") ||
-      anchor.getAttribute("title") ||
-      safe(anchor.textContent);
+      e.preventDefault();
 
-    const redirectUrl = buildRedirectUrl(normalizedHref, redirectLabel);
-    if (!redirectUrl) return;
-
-    e.preventDefault();
-
-    if (target && target !== "_self") {
-      window.open(redirectUrl, target, "noopener");
-      return;
-    }
-    window.location.href = redirectUrl;
-  }, true);
-}
+      if (target && target !== "_self") {
+        window.open(redirectUrl, target, "noopener");
+        return;
+      }
+      window.location.href = redirectUrl;
+    }, true);
+  }
 
   window.goBack = () => {
     if (window.history.length > 1) window.history.back();
@@ -506,84 +501,79 @@
       if (fetchFailed) return;
     }
 
-(data.sections || []).forEach((sec) => {
-  const title = safe(sec.title) || "Updates";
-  const baseColor = safe(sec.color) || "#0284c7";
-  const icon = safe(sec.icon) || "fa-solid fa-briefcase";
+    (data.sections || []).forEach((sec) => {
+      const title = safe(sec.title) || "Updates";
+      const baseColor = safe(sec.color) || "#0284c7";
+      const icon = safe(sec.icon) || "fa-solid fa-briefcase";
 
-  const bgStyle = baseColor.includes("gradient") 
-    ? `background: ${baseColor};` 
-    : `background-color: ${baseColor}; background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(0, 0, 0, 0.15) 100%);`;
+      const bgStyle = baseColor.includes("gradient") 
+        ? `background: ${baseColor};` 
+        : `background-color: ${baseColor}; background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(0, 0, 0, 0.15) 100%);`;
 
-  const sectionKey = safe(sec.id) || safe(sec.title);
-  let moreHref = "";
+      const sectionKey = safe(sec.id) || safe(sec.title);
+      let moreHref = "";
+      if (safe(sec.viewMoreUrl)) {
+        moreHref = openInternal(sec.viewMoreUrl, title);
+      } else if (safe(sec.viewMoreType).toLowerCase() === "list" && sectionKey) {
+        moreHref = `view.html?section=${encodeURIComponent(sectionKey)}`;
+      }
 
-  if (safe(sec.viewMoreUrl)) {
-    moreHref = openInternal(sec.viewMoreUrl, title);
-  } else if (safe(sec.viewMoreType).toLowerCase() === "list" && sectionKey) {
-    moreHref = `view.html?section=${encodeURIComponent(sectionKey)}`;
-  }
+      const card = document.createElement("article");
+      card.className = "section-card";
+      card.innerHTML = `
+        <div class="section-head" style="${bgStyle} text-shadow: 0 1px 2px rgba(0,0,0,0.15); border-bottom: 1px solid rgba(0,0,0,0.05);">
+          <div class="left">
+            <i class="${icon}"></i>
+            <span>${title}</span>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="section-list"></div>
+          ${moreHref ? `<a class="view-all" href="${moreHref}">More <i class="fa-solid fa-arrow-right"></i></a>` : ""}
+        </div>
+      `;
 
-  const card = document.createElement("article");
-  card.className = "section-card";
+      const list = $(".section-list", card);
+      const items = Array.isArray(sec.items)
+        ? sec.items.filter(i => !isGarbageLink(i)).slice(0, 8)
+        : [];
 
-  card.innerHTML = `
-    <div class="section-head" style="${bgStyle}">
-      <div class="left">
-        <i class="${icon}"></i>
-        <span>${title}</span>
-      </div>
-    </div>
-    <div class="section-body">
-      <div class="section-list"></div>
-      ${moreHref ? `<a class="view-all" href="${moreHref}">More</a>` : ""}
-    </div>
-  `;
+      items.forEach((it, idx) => {
+        const name = safe(it.name) || "Open";
+        const url = it.url || it.link || "";
+        if (!url) return;
 
-  const list = $(".section-list", card);
+        const external = !!it.external;
+        const a = document.createElement("a");
+        a.className = "section-link";
+        // ISSUE-001: collapse to 4 items per section by default; the rest are
+        // hidden until the user clicks "Show all". Cuts the mobile homepage
+        // scroll length roughly in half.
+        if (idx >= 4) a.dataset.collapsed = "1";
+        a.href = buildRedirectUrl(url, name) || normalizeUrl(url);
+        a.setAttribute("data-redirect-label", name);
+        if (external) { a.target = "_blank"; a.rel = "noopener"; }
+        a.innerHTML = `<div class="t">${name}</div>${it.date ? `<div class="d">${safe(it.date)}</div>` : `<div class="d">Open official link</div>`}`;
+        list.appendChild(a);
+      });
 
-  const items = Array.isArray(sec.items)
-    ? sec.items.slice(0, 8)
-    : [];
-
-items.forEach((it, idx) => {
-  const name = safe(it.name) || "Open";
-
-  const a = document.createElement("a");
-  a.className = "section-link";
-
-  // 🔥 SHOW MORE FIX
-  if (idx >= 4) {
-    a.setAttribute("data-collapsed", "1");
-    a.style.display = "none";
-  }
-
-  const slug = slugifyTitle(name);
-  a.href = `view.html?job=${slug}`;
-
-  a.innerHTML = `<div>${name}</div>`;
-  list.appendChild(a);
-});
-
-  // 🔥 SHOW MORE (single block only)
-  const hidden = items.length - 4;
-  if (hidden > 0) {
-    const btn = document.createElement("button");
-    btn.textContent = "Show all " + items.length;
-   btn.onclick = () => {
-  list.querySelectorAll('[data-collapsed="1"]').forEach(el => {
-    el.removeAttribute("data-collapsed");
-    el.style.display = "block"; // 🔥 CRITICAL FIX
-  });
-  btn.remove();
-};
-    card.appendChild(btn);
-  }
-
-  wrap.appendChild(card);
-
-}); // ✅ सबसे जरूरी (loop close)
-
+      const hidden = items.length - 4;
+      if (hidden > 0) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "section-show-more";
+        btn.textContent = "Show all " + items.length;
+        btn.addEventListener("click", () => {
+          list.querySelectorAll('[data-collapsed="1"]').forEach((el) => {
+            el.removeAttribute("data-collapsed");
+          });
+          btn.remove();
+        });
+        const body = $(".section-body", card);
+        body.insertBefore(btn, body.querySelector(".view-all"));
+      }
+      wrap.appendChild(card);
+    });
   }
 
   // ✅ PERFECTED GRID (Matching Outline Rows) & VIBRANT DESKTOP/MOBILE PILLS
@@ -1622,8 +1612,7 @@ items.forEach((it, idx) => {
   }
 
   document.addEventListener("DOMContentLoaded", async () => {
-    // ❌ REDIRECT OFF
-    // installGlobalRedirectGate();
+    installGlobalRedirectGate();
 
     buildMobileMenu();
     safeHideOldSearchBars(); 
@@ -1655,5 +1644,5 @@ items.forEach((it, idx) => {
         safeHideOldSearchBars();
         initGlobalLiveSearch();
     }, 300); 
-});
+  });
 })();
