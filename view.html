@@ -303,9 +303,11 @@
         const to = safe(targetUrl);
         if (!to) return "";
         const qs = new URLSearchParams();
-        qs.set("job", slugifyTitle(label || targetUrl));
+        qs.set("slug", slugifyTitle(label || targetUrl));
         qs.set("k", urlRedirectFingerprint(to));
-        return `redirect.html?${qs.toString()}`;
+        // pass section context for breadcrumb on job.html
+        if (sectionParam) qs.set("section", sectionParam);
+        return `job.html?${qs.toString()}`;
       }
 
       // Update OG/Twitter meta tags so shared links show the correct title
