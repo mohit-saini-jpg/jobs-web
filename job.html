@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
   <script type="application/ld+json" id="jobSchema">{}</script>
-
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sarkari Job Details | Top Sarkari Jobs</title>
@@ -12,232 +11,122 @@
   <link rel="icon" type="image/x-icon" href="image.ico" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="fonts/fa/all.min.css" />
-
-  <!-- Open Graph -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Top Sarkari Jobs" />
   <meta property="og:image" content="https://www.topsarkarijobs.com/image.png" />
-  <meta property="og:image:width" content="800" />
-  <meta property="og:image:height" content="800" />
   <meta id="ogTitle" property="og:title" content="Sarkari Job | Top Sarkari Jobs" />
   <meta id="ogDesc"  property="og:description" content="Latest government job details on Top Sarkari Jobs." />
   <meta id="ogUrl"   property="og:url" content="https://www.topsarkarijobs.com/job.html" />
   <meta name="twitter:card" content="summary" />
   <meta id="twTitle" name="twitter:title" content="Sarkari Job | Top Sarkari Jobs" />
   <meta id="twDesc"  name="twitter:description" content="Latest government job details on Top Sarkari Jobs." />
-  <meta name="twitter:image" content="https://www.topsarkarijobs.com/image.png" />
 
   <style>
-    /* ── Page shell ── */
-    html, body { height: 100%; margin: 0; }
-    body { display: flex; flex-direction: column; font-family: inherit; }
-    main { flex: 1; }
+    /* ── Base ── */
+    html,body{height:100%;margin:0;}
+    body{display:flex;flex-direction:column;font-family:inherit;background:#f3f4f6;}
+    main{flex:1;}
 
-    /* ── Wrapper ── */
-    .job-page-wrap {
-      max-width: 820px;
-      margin: 0 auto;
-      padding: 16px 14px 32px;
-    }
+    /* ── Layout ── */
+    .jp-wrap{max-width:1100px;margin:0 auto;padding:14px 12px 36px;}
+    .jp-grid{display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start;}
+    @media(max-width:800px){.jp-grid{grid-template-columns:1fr;}}
+
+    /* ── Card shell ── */
+    .jp-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:18px;}
 
     /* ── Breadcrumb ── */
-    .jb-breadcrumb {
-      font-size: 0.8rem;
-      color: #64748b;
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-    .jb-breadcrumb a { color: #0369a1; text-decoration: none; }
-    .jb-breadcrumb a:hover { text-decoration: underline; }
-    .jb-breadcrumb .sep { color: #cbd5e1; }
+    .jp-breadcrumb{font-size:0.79rem;color:#64748b;margin-bottom:12px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+    .jp-breadcrumb a{color:#1d6dbc;text-decoration:none;}
+    .jp-breadcrumb a:hover{text-decoration:underline;}
+    .jp-breadcrumb .sep{color:#cbd5e1;}
 
-    /* ── Category badge ── */
-    .jb-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #eff6ff;
-      color: #1d4ed8;
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      padding: 4px 12px;
-      border-radius: 999px;
-      border: 1px solid #bfdbfe;
-      margin-bottom: 10px;
-    }
+    /* ── Job header card ── */
+    .jp-header-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:18px 20px 16px;margin-bottom:18px;}
+    .jp-tag{display:inline-block;background:#dbeafe;color:#1e40af;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 10px;border-radius:4px;margin-bottom:8px;}
+    .jp-title{font-size:1.28rem;font-weight:800;color:#0f172a;line-height:1.4;margin:0 0 10px;}
+    .jp-meta{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:0.78rem;color:#64748b;}
+    .jp-meta span{display:flex;align-items:center;gap:5px;}
+    .jp-meta i{color:#94a3b8;}
 
-    /* ── Job title ── */
-    .jb-title {
-      font-size: 1.22rem;
-      font-weight: 800;
-      color: #0f172a;
-      line-height: 1.45;
-      margin: 0 0 18px;
-    }
+    /* ── Quick stats bar ── */
+    .jp-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid #e2e8f0;margin-top:14px;}
+    @media(max-width:500px){.jp-stats{grid-template-columns:repeat(2,1fr);}}
+    .jp-stat{padding:12px 10px;text-align:center;border-right:1px solid #e2e8f0;}
+    .jp-stat:last-child{border-right:none;}
+    .jp-stat-icon{font-size:1.3rem;margin-bottom:4px;}
+    .jp-stat-label{font-size:0.7rem;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px;}
+    .jp-stat-val{font-size:0.93rem;font-weight:800;color:#0f172a;}
+    .jp-stat-val.red{color:#dc2626;}
+    .jp-stat-val.blue{color:#1d4ed8;}
 
-    /* ── Info table ── */
-    .jb-table-wrap {
-      border: 1.5px solid #e2e8f0;
-      border-radius: 10px;
-      overflow: hidden;
-      margin-bottom: 20px;
-    }
-    .jb-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    .jb-table tr:not(:last-child) td,
-    .jb-table tr:not(:last-child) th {
-      border-bottom: 1px solid #e2e8f0;
-    }
-    .jb-table th {
-      width: 38%;
-      background: #f1f5f9;
-      color: #374151;
-      font-size: 0.84rem;
-      font-weight: 700;
-      padding: 11px 14px;
-      text-align: left;
-      vertical-align: top;
-    }
-    .jb-table td {
-      color: #0f172a;
-      font-size: 0.88rem;
-      font-weight: 500;
-      padding: 11px 14px;
-      vertical-align: top;
-      line-height: 1.5;
-    }
-    /* Highlight last-date row */
-    .jb-table tr.highlight-row th,
-    .jb-table tr.highlight-row td {
-      background: #fff7ed;
-      color: #9a3412;
-      font-weight: 700;
-    }
+    /* ── Section headers ── */
+    .jp-sec-head{background:#1d6dbc;color:#fff;font-size:0.88rem;font-weight:700;padding:9px 16px;display:flex;align-items:center;gap:8px;}
+    .jp-sec-head i{opacity:.85;}
 
-    /* ── Notice box ── */
-    .jb-notice {
-      background: #fffbeb;
-      border: 1px solid #fde68a;
-      border-radius: 8px;
-      padding: 13px 16px;
-      font-size: 0.84rem;
-      color: #78350f;
-      line-height: 1.65;
-      margin-bottom: 22px;
-    }
-    .jb-notice strong { color: #92400e; }
+    /* ── Overview table ── */
+    .jp-table{width:100%;border-collapse:collapse;}
+    .jp-table tr:not(:last-child) td,.jp-table tr:not(:last-child) th{border-bottom:1px solid #e9eef4;}
+    .jp-table th{width:36%;background:#f8fafc;color:#374151;font-size:0.83rem;font-weight:700;padding:10px 14px;text-align:left;vertical-align:top;}
+    .jp-table td{color:#1e293b;font-size:0.85rem;padding:10px 14px;vertical-align:top;line-height:1.55;}
+    .jp-table tr.hl-row th,.jp-table tr.hl-row td{background:#fff7ed;font-weight:700;}
+    .jp-table tr.hl-row td{color:#b45309;}
 
-    /* ── CTA button ── */
-    .jb-cta-wrap {
-      text-align: center;
-      margin-bottom: 26px;
-    }
-    .jb-btn {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%);
-      color: #fff !important;
-      font-weight: 800;
-      font-size: 1rem;
-      padding: 15px 36px;
-      border-radius: 10px;
-      text-decoration: none;
-      border: none;
-      cursor: pointer;
-      width: 100%;
-      max-width: 440px;
-      box-shadow: 0 4px 14px rgba(3,105,161,0.3);
-      transition: background 0.18s, box-shadow 0.18s, transform 0.1s;
-    }
-    .jb-btn:hover {
-      background: linear-gradient(135deg, #075985 0%, #0369a1 100%);
-      box-shadow: 0 6px 20px rgba(3,105,161,0.4);
-      transform: translateY(-1px);
-      color: #fff !important;
-    }
-    .jb-btn:active { transform: translateY(0); }
-    .jb-btn-sub {
-      font-size: 0.8rem;
-      font-weight: 600;
-      opacity: 0.88;
-    }
-    .jb-disclaimer {
-      font-size: 0.75rem;
-      color: #94a3b8;
-      margin-top: 10px;
-      line-height: 1.5;
-    }
+    /* ── Notice ── */
+    .jp-notice{padding:12px 16px;font-size:0.82rem;color:#78350f;line-height:1.65;background:#fffbeb;border-top:1px solid #fde68a;}
+    .jp-notice strong{color:#92400e;}
 
-    /* ── Tips box ── */
-    .jb-tips {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 10px;
-      padding: 16px 20px;
-      margin-bottom: 24px;
-    }
-    .jb-tips h2 {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: #0f172a;
-      margin: 0 0 10px;
-    }
-    .jb-tips ul {
-      margin: 0;
-      padding-left: 18px;
-      font-size: 0.83rem;
-      color: #334155;
-      line-height: 1.95;
-    }
-    .jb-tips-note {
-      font-size: 0.79rem;
-      color: #64748b;
-      margin: 10px 0 0;
-    }
+    /* ── Action buttons ── */
+    .jp-actions{display:flex;gap:10px;flex-wrap:wrap;padding:16px;}
+    .jp-btn{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:11px 18px;border-radius:7px;text-decoration:none;font-weight:700;font-size:0.85rem;line-height:1.2;transition:filter .15s,transform .1s;flex:1;min-width:120px;text-align:center;border:none;cursor:pointer;}
+    .jp-btn:hover{filter:brightness(1.1);transform:translateY(-1px);}
+    .jp-btn-green{background:#16a34a;color:#fff!important;}
+    .jp-btn-blue{background:#1d4ed8;color:#fff!important;}
+    .jp-btn-red{background:#dc2626;color:#fff!important;}
+    .jp-btn-sub{font-size:0.7rem;font-weight:600;opacity:.9;}
 
-    /* ── Section head ── */
-    .jb-section-tag {
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #64748b;
-      margin-bottom: 6px;
-    }
+    /* ── SIDEBAR ── */
 
-    /* ── Loading / error states ── */
-    .jb-loading {
-      padding: 40px 0;
-      text-align: center;
-      color: #64748b;
-      font-size: 0.95rem;
-    }
-    .jb-error {
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      border-radius: 8px;
-      padding: 16px 18px;
-      color: #991b1b;
-      font-size: 0.9rem;
-      line-height: 1.6;
-    }
+    /* Important Dates */
+    .jp-dates-card .jp-sec-head{background:#dc2626;}
+    .jp-dates-list{padding:0;}
+    .jp-date-row{display:flex;justify-content:space-between;align-items:baseline;padding:10px 14px;font-size:0.83rem;border-bottom:1px solid #f1f5f9;}
+    .jp-date-row:last-child{border-bottom:none;}
+    .jp-date-label{color:#374151;font-weight:600;}
+    .jp-date-val{font-weight:700;color:#0f172a;text-align:right;}
+    .jp-date-val.red{color:#dc2626;}
 
-    /* ── Mobile tweaks ── */
-    @media (max-width: 520px) {
-      .jb-title { font-size: 1.05rem; }
-      .jb-table th { width: 42%; font-size: 0.78rem; padding: 10px 10px; }
-      .jb-table td { font-size: 0.82rem; padding: 10px 10px; }
-      .jb-btn { font-size: 0.93rem; padding: 14px 20px; }
+    /* Highlights */
+    .jp-highlights-card .jp-sec-head{background:#1d6dbc;}
+    .jp-hl-list{padding:10px 14px;}
+    .jp-hl-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0;font-size:0.83rem;color:#1e293b;line-height:1.4;}
+    .jp-hl-item i{color:#16a34a;font-size:0.85rem;margin-top:2px;flex-shrink:0;}
+
+    /* Share box */
+    .jp-share-card .jp-sec-head{background:#7c3aed;}
+    .jp-share-btns{display:flex;gap:8px;padding:12px 14px;flex-wrap:wrap;}
+    .jp-share-btn{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:6px;text-decoration:none;font-size:1rem;transition:opacity .15s;}
+    .jp-share-btn:hover{opacity:.85;}
+    .sh-fb{background:#1877f2;color:#fff;}
+    .sh-tw{background:#000;color:#fff;}
+    .sh-wa{background:#25d366;color:#fff;}
+    .sh-tg{background:#2aabee;color:#fff;}
+    .sh-cp{background:#64748b;color:#fff;}
+
+    /* Tips */
+    .jp-tips-card .jp-sec-head{background:#0891b2;}
+    .jp-tips-list{padding:10px 16px 14px;}
+    .jp-tips-list li{font-size:0.82rem;color:#334155;line-height:1.85;padding:0;}
+
+    /* ── Loading / Error ── */
+    .jp-loading{padding:48px 0;text-align:center;color:#64748b;}
+    .jp-error-box{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:16px 18px;color:#991b1b;font-size:.9rem;margin-bottom:16px;}
+
+    /* ── Mobile padding fix ── */
+    @media(max-width:520px){
+      .jp-title{font-size:1.05rem;}
+      .jp-btn{font-size:.78rem;padding:10px 12px;}
+      .jp-actions{gap:8px;}
     }
   </style>
 </head>
@@ -245,108 +134,178 @@
   <header class="site-header" id="site-header"></header>
 
   <main id="main" class="container">
-    <div class="job-page-wrap">
+    <div class="jp-wrap">
 
       <!-- Breadcrumb -->
-      <nav class="jb-breadcrumb" aria-label="Breadcrumb">
-        <a href="index.html"><i class="fa-solid fa-house" style="font-size:0.75rem;"></i> Home</a>
+      <nav class="jp-breadcrumb" aria-label="Breadcrumb">
+        <a href="index.html"><i class="fa-solid fa-house" style="font-size:.72rem;"></i> Home</a>
         <span class="sep">›</span>
-        <span id="bcSection" style="cursor:pointer;color:#0369a1;" onclick="history.back()">Back</span>
+        <a href="#" id="bcSectionLink" onclick="history.back();return false;" id="bcSectionLink">Jobs</a>
         <span class="sep">›</span>
         <span id="bcTitle" style="color:#0f172a;">Job Details</span>
       </nav>
 
-      <!-- Loading state -->
-      <div class="jb-loading" id="jbLoading">
-        <i class="fa-solid fa-circle-notch fa-spin" style="color:#0369a1; font-size:1.4rem;"></i>
-        <p style="margin:10px 0 4px; font-weight:600;">Loading job details…</p>
-        <p style="font-size:0.85rem; color:#94a3b8;">जानकारी लोड हो रही है…</p>
+      <!-- Loading -->
+      <div class="jp-loading" id="jbLoading">
+        <i class="fa-solid fa-circle-notch fa-spin" style="color:#1d6dbc;font-size:1.6rem;"></i>
+        <p style="margin:12px 0 4px;font-weight:700;">Loading job details…</p>
+        <p style="font-size:.84rem;color:#94a3b8;">जानकारी लोड हो रही है…</p>
       </div>
 
-      <!-- Main content (hidden until loaded) -->
+      <!-- Main content -->
       <div id="jbContent" style="display:none;">
 
-        <span class="jb-badge" id="jbBadge">
-          <i class="fa-solid fa-briefcase" id="jbBadgeIcon"></i>
-          <span id="jbBadgeText">Sarkari Job</span>
-        </span>
-
-        <h1 class="jb-title" id="jbTitle">Job Title</h1>
-
-        <!-- Detail table -->
-        <div class="jb-section-tag">Job Details / नौकरी की जानकारी</div>
-        <div class="jb-table-wrap">
-          <table class="jb-table" id="jbTable">
-            <tbody></tbody>
-          </table>
+        <!-- Header card -->
+        <div class="jp-header-card">
+          <span class="jp-tag" id="jbBadge">Sarkari Job</span>
+          <h1 class="jp-title" id="jbTitle">Job Title</h1>
+          <div class="jp-meta">
+            <span><i class="fa-regular fa-calendar"></i> <span id="metaPosted">Posted</span></span>
+            <span><i class="fa-solid fa-tag"></i> <span id="metaCat">Government Job</span></span>
+          </div>
+          <!-- Quick stats -->
+          <div class="jp-stats">
+            <div class="jp-stat">
+              <div class="jp-stat-icon">🏢</div>
+              <div class="jp-stat-label">Organisation</div>
+              <div class="jp-stat-val" id="statOrg">—</div>
+            </div>
+            <div class="jp-stat">
+              <div class="jp-stat-icon">👥</div>
+              <div class="jp-stat-label">Total Posts</div>
+              <div class="jp-stat-val blue" id="statPosts">—</div>
+            </div>
+            <div class="jp-stat">
+              <div class="jp-stat-icon">📅</div>
+              <div class="jp-stat-label">Last Date</div>
+              <div class="jp-stat-val red" id="statLastDate">—</div>
+            </div>
+            <div class="jp-stat">
+              <div class="jp-stat-icon">💻</div>
+              <div class="jp-stat-label">Apply Mode</div>
+              <div class="jp-stat-val" id="statApplyMode">Online</div>
+            </div>
+          </div>
         </div>
 
-        <!-- Important notice -->
-        <div class="jb-notice">
-          <strong>⚠ Important / ध्यान दें:</strong> Always verify all details on the
-          <strong>official government / organization website</strong> before applying.
-          Dates, fees, and eligibility may change without prior notice.
-          <span style="display:block;margin-top:5px;">
-            आवेदन करने से पहले सभी जानकारी आधिकारिक वेबसाइट पर जरूर जाँचें। तिथियाँ और पात्रता बदल सकती हैं।
-          </span>
-        </div>
+        <!-- Two-column layout -->
+        <div class="jp-grid">
 
-        <!-- CTA -->
-        <div class="jb-cta-wrap">
-          <a id="jbGoBtn" href="#" target="_blank" rel="noopener noreferrer" class="jb-btn">
-            <span>🔗 Apply / View Official Notification</span>
-            <span class="jb-btn-sub">आधिकारिक वेबसाइट खोलें — Click here</span>
-          </a>
-          <p class="jb-disclaimer">
-            You will be taken to an external website (e.g. sarkariresult.com).
-            Top Sarkari Jobs is not responsible for content on third-party sites.
-          </p>
-        </div>
+          <!-- LEFT: main content -->
+          <div>
 
-        <!-- Tips -->
-        <div class="jb-tips">
-          <h2>💡 Tips before you apply / आवेदन से पहले</h2>
-          <ul>
-            <li>Read the full official notification PDF before filling the form.</li>
-            <li>Keep scanned photo &amp; signature ready (JPG, as per size requirement).</li>
-            <li>Pay the application fee only via the official payment gateway.</li>
-            <li>Save / print the confirmation page after successful submission.</li>
-            <li>Check age, education &amp; domicile eligibility before applying.</li>
-            <li>Apply well before the last date to avoid server load issues.</li>
-          </ul>
-          <p class="jb-tips-note">
-            <strong>नोट:</strong> अंतिम तिथि से पहले फॉर्म भरें और शुल्क भुगतान करें।
-          </p>
-        </div>
+            <!-- Overview table -->
+            <div class="jp-card">
+              <div class="jp-sec-head"><i class="fa-solid fa-table-list"></i> <span id="overviewTitle">Recruitment 2026 : Overview</span></div>
+              <table class="jp-table" id="jbTable"><tbody></tbody></table>
+              <div class="jp-notice">
+                <strong>⚠ Important:</strong> Always verify all details on the
+                <strong>official website</strong> before applying. Dates &amp; eligibility may change.
+                <span style="display:block;margin-top:4px;">
+                  <strong>ध्यान दें:</strong> आवेदन से पहले आधिकारिक वेबसाइट पर सभी जानकारी जाँचें।
+                </span>
+              </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="jp-card">
+              <div class="jp-sec-head"><i class="fa-solid fa-link"></i> Important Links</div>
+              <div class="jp-actions">
+                <a id="btnApply" href="#" target="_blank" rel="noopener" class="jp-btn jp-btn-green">
+                  <span>✍ Apply Online</span>
+                  <span class="jp-btn-sub">Click Here</span>
+                </a>
+                <a id="btnNotification" href="#" target="_blank" rel="noopener" class="jp-btn jp-btn-blue">
+                  <span>📄 Official Notification</span>
+                  <span class="jp-btn-sub">Download PDF</span>
+                </a>
+                <a id="btnWebsite" href="#" target="_blank" rel="noopener" class="jp-btn jp-btn-red">
+                  <span>🌐 Official Website</span>
+                  <span class="jp-btn-sub">Visit Now</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Tips -->
+            <div class="jp-card jp-tips-card">
+              <div class="jp-sec-head"><i class="fa-solid fa-lightbulb"></i> Tips before you apply / आवेदन से पहले</div>
+              <ul class="jp-tips-list">
+                <li>Read the full official notification PDF carefully before filling the form.</li>
+                <li>Keep scanned photo &amp; signature ready (JPG, as per size requirement).</li>
+                <li>Pay the application fee only via the official payment gateway.</li>
+                <li>Save or print the confirmation page after successful submission.</li>
+                <li>Check age, education &amp; domicile eligibility before applying.</li>
+                <li>Apply well before the last date to avoid server issues.</li>
+              </ul>
+            </div>
+
+          </div><!-- /left -->
+
+          <!-- RIGHT: sidebar -->
+          <div>
+
+            <!-- Important Dates -->
+            <div class="jp-card jp-dates-card" style="margin-bottom:16px;">
+              <div class="jp-sec-head"><i class="fa-regular fa-calendar-check"></i> Important Dates</div>
+              <div class="jp-dates-list" id="datesList">
+                <div class="jp-date-row">
+                  <span class="jp-date-label">Notification Date</span>
+                  <span class="jp-date-val" id="dateNotif">—</span>
+                </div>
+                <div class="jp-date-row">
+                  <span class="jp-date-label">Apply Start Date</span>
+                  <span class="jp-date-val" id="dateStart">—</span>
+                </div>
+                <div class="jp-date-row">
+                  <span class="jp-date-label">Last Date to Apply</span>
+                  <span class="jp-date-val red" id="dateEnd">—</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Job Highlights -->
+            <div class="jp-card jp-highlights-card" style="margin-bottom:16px;">
+              <div class="jp-sec-head"><i class="fa-solid fa-star"></i> Job Highlights</div>
+              <div class="jp-hl-list" id="hlList"></div>
+            </div>
+
+            <!-- Share -->
+            <div class="jp-card jp-share-card">
+              <div class="jp-sec-head"><i class="fa-solid fa-share-nodes"></i> Share This Job</div>
+              <div class="jp-share-btns">
+                <a id="shFb" href="#" target="_blank" rel="noopener" class="jp-share-btn sh-fb" title="Share on Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                <a id="shTw" href="#" target="_blank" rel="noopener" class="jp-share-btn sh-tw" title="Share on X"><i class="fa-brands fa-x-twitter"></i></a>
+                <a id="shWa" href="#" target="_blank" rel="noopener" class="jp-share-btn sh-wa" title="Share on WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                <a id="shTg" href="#" target="_blank" rel="noopener" class="jp-share-btn sh-tg" title="Share on Telegram"><i class="fa-brands fa-telegram"></i></a>
+                <button onclick="navigator.clipboard&&navigator.clipboard.writeText(location.href);this.title='Copied!'" class="jp-share-btn sh-cp" title="Copy link"><i class="fa-solid fa-link"></i></button>
+              </div>
+            </div>
+
+          </div><!-- /sidebar -->
+        </div><!-- /jp-grid -->
 
       </div><!-- /jbContent -->
 
-      <!-- Error state (hidden until needed) -->
+      <!-- Error state -->
       <div id="jbError" style="display:none;">
-        <div class="jb-error">
-          <strong>Job not found or link is invalid.</strong><br />
+        <div class="jp-error-box">
+          <strong>Job not found or link is invalid.</strong><br/>
           यह नौकरी नहीं मिली या लिंक गलत है।
         </div>
-        <div style="margin-top:16px; text-align:center;">
-          <a href="index.html" class="jb-btn" style="max-width:280px;">
-            ← Go to Home — होम पर जाएँ
-          </a>
+        <div style="text-align:center;">
+          <a href="index.html" class="jp-btn jp-btn-blue" style="display:inline-flex;max-width:260px;">← Go to Home — होम पर जाएँ</a>
         </div>
       </div>
 
-    </div><!-- /job-page-wrap -->
+    </div>
   </main>
 
   <div id="site-footer"></div>
-
-  <!-- Mobile menu (required by script.js) -->
   <div id="menuOverlay" class="overlay" hidden></div>
   <aside id="mobileMenu" class="offcanvas" aria-label="Mobile menu" hidden>
     <div class="offcanvas-head">
       <div class="offcanvas-title">Menu</div>
-      <button id="closeMenuBtn" class="icon-btn" type="button" aria-label="Close menu">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
+      <button id="closeMenuBtn" class="icon-btn" type="button" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <nav class="offcanvas-nav" aria-label="Mobile primary"></nav>
   </aside>
@@ -355,18 +314,16 @@
   (() => {
     "use strict";
 
-    /* ─── Shared helpers (kept in sync with script.js) ─── */
+    /* ─── helpers ─── */
     const safe = v => (v ?? "").toString().trim();
-
     function normalizeUrl(raw) {
       const s = safe(raw);
       if (!s) return "";
       if (/^(https?:)?\/\//i.test(s) || /^(mailto:|tel:)/i.test(s)) return s;
       if (s.startsWith("#") || s.startsWith("?")) return s;
-      if (s.startsWith("/") || s.includes(".html") || s.startsWith("./") || s.startsWith("../")) return s;
+      if (s.startsWith("/") || s.includes(".html") || s.startsWith("./")) return s;
       return "https://" + s.replace(/^\/+/, "");
     }
-
     function urlRedirectFingerprint(raw) {
       const s = normalizeUrl(raw);
       let h1 = 2166136261 >>> 0, h2 = 8159751279 >>> 0;
@@ -376,209 +333,229 @@
         h2 = (Math.imul(h2, 1099511627) ^ c) >>> 0;
       }
       const ab = "0123456789abcdefghijklmnopqrstuvwxyz";
-      const pack = (n, len) => { let x=n>>>0, o=""; for(let i=0;i<len;i++){o=ab[x%36]+o;x=Math.floor(x/36);} return o; };
-      return pack(h1, 6) + pack(h2, 6);
+      const pack = (n,l) => { let x=n>>>0,o=""; for(let i=0;i<l;i++){o=ab[x%36]+o;x=Math.floor(x/36);} return o; };
+      return pack(h1,6)+pack(h2,6);
     }
-
     function humanizeSlug(slug) {
-      return safe(slug).replace(/-+/g, " ").replace(/\b[a-z]/g, m => m.toUpperCase()).trim();
+      return safe(slug).replace(/-+/g," ").replace(/\b[a-z]/g,m=>m.toUpperCase()).trim();
+    }
+    function today() {
+      return new Date().toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"});
     }
 
-    /* ─── DOM refs ─── */
-    const loading    = document.getElementById("jbLoading");
-    const content    = document.getElementById("jbContent");
-    const errorEl    = document.getElementById("jbError");
-    const titleEl    = document.getElementById("jbTitle");
-    const badgeText  = document.getElementById("jbBadgeText");
-    const badgeIcon  = document.getElementById("jbBadgeIcon");
-    const tableBody  = document.querySelector("#jbTable tbody");
-    const goBtn      = document.getElementById("jbGoBtn");
-    const bcSection  = document.getElementById("bcSection");
-    const bcTitle    = document.getElementById("bcTitle");
+    /* ─── DOM ─── */
+    const loading   = document.getElementById("jbLoading");
+    const content   = document.getElementById("jbContent");
+    const errorEl   = document.getElementById("jbError");
 
-    /* ─── URL params ─── */
-    const params   = new URLSearchParams(window.location.search);
-    const rawSlug  = safe(params.get("slug"));   // human slug of job name
-    const rawK     = safe(params.get("k")).toLowerCase(); // fingerprint key
-    const rawSec   = safe(params.get("section")); // which section user came from
+    /* ─── Params ─── */
+    const params  = new URLSearchParams(window.location.search);
+    const rawSlug = safe(params.get("slug"));
+    const rawK    = safe(params.get("k")).toLowerCase();
+    const rawSec  = safe(params.get("section"));
 
-    /* ─── Smart job title parser ─── */
-
-    /**
-     * Parses a job name string into structured fields.
-     * Input example:
-     *   "BPSSC Havildar Instructor Online Form 2026 Last Date: 01/06/2026"
-     * Returns an array of { label, value } pairs for the table.
-     */
-    function parseJobName(name) {
-      const rows = [];
+    /* ─── Parser ─── */
+    function parseJob(name) {
       const n = safe(name);
+      const nl = n.toLowerCase();
 
-      /* 1. Detect category */
+      /* Category */
       const catMap = [
-        { key: /admit\s*card/i,  label: "Admit Card",  icon: "fa-id-card" },
-        { key: /answer\s*key/i,  label: "Answer Key",  icon: "fa-key" },
-        { key: /result/i,        label: "Result",      icon: "fa-trophy" },
-        { key: /syllabus/i,      label: "Syllabus",    icon: "fa-book" },
-        { key: /admission/i,     label: "Admission",   icon: "fa-graduation-cap" },
-        { key: /scholarship/i,   label: "Scholarship", icon: "fa-medal" },
-        { key: /online\s*form|application/i, label: "Online Form", icon: "fa-file-alt" },
-        { key: /vacancy|recruitment|notification/i, label: "Recruitment", icon: "fa-briefcase" },
+        {rx:/admit\s*card/i,  label:"Admit Card",   icon:"fa-id-card",  color:"#7c3aed"},
+        {rx:/answer\s*key/i,  label:"Answer Key",   icon:"fa-key",      color:"#b45309"},
+        {rx:/result/i,        label:"Result",       icon:"fa-trophy",   color:"#b45309"},
+        {rx:/syllabus/i,      label:"Syllabus",     icon:"fa-book",     color:"#0891b2"},
+        {rx:/admission/i,     label:"Admission",    icon:"fa-graduation-cap", color:"#7c3aed"},
+        {rx:/scholarship/i,   label:"Scholarship",  icon:"fa-medal",    color:"#b45309"},
+        {rx:/online\s*form|application/i, label:"Online Form", icon:"fa-file-alt", color:"#1d4ed8"},
+        {rx:/vacancy|recruitment|notification/i, label:"Recruitment", icon:"fa-briefcase", color:"#1d4ed8"},
       ];
-      let category = "Sarkari Job";
-      let catIcon  = "fa-briefcase";
-      for (const c of catMap) {
-        if (c.key.test(n)) { category = c.label; catIcon = c.icon; break; }
-      }
-      badgeText.textContent = category;
-      badgeIcon.className   = "fa-solid " + catIcon;
+      let category = {label:"Sarkari Job", icon:"fa-briefcase", color:"#1d4ed8"};
+      for (const c of catMap) { if (c.rx.test(n)) { category = c; break; } }
 
-      /* 2. Post / exam name — words BEFORE first stop keyword */
+      /* Org */
       const stopRx = /\b(various|online|form|result|admit|answer|key|syllabus|post|vacancy|recruitment|notification|application|scholarship|2025|2026|2027|last)\b/i;
       const words  = n.split(/\s+/);
       const cut    = words.findIndex(w => stopRx.test(w));
-      const orgRaw = (cut > 0 ? words.slice(0, Math.min(cut, 6)) : words.slice(0, 5)).join(" ").replace(/,+$/, "");
+      const org    = (cut > 0 ? words.slice(0, Math.min(cut, 6)) : words.slice(0, 5)).join(" ").replace(/,+$/, "");
 
-      /* 3. Post name — look for known patterns */
-      // "BPSSC Havildar Instructor Online Form" → post = "Havildar Instructor"
-      // Strategy: everything between org end and first stop keyword; fallback to org itself
+      /* Post name (between org and stop word) */
       let postName = "";
       if (cut > 0) {
-        // words between the org and the stop word
-        const orgWordCount = orgRaw.split(/\s+/).length;
-        const mid = words.slice(orgWordCount, cut);
+        const orgWc = org.split(/\s+/).length;
+        const mid   = words.slice(orgWc, cut);
         if (mid.length) postName = mid.join(" ").replace(/,+$/, "");
       }
 
-      /* 4. Last date */
-      const ldMatch = n.match(/last\s*date\s*[:\-–]\s*([\d\/\-\.]+(?:[\d]{4})?)/i);
-      const lastDate = ldMatch ? ldMatch[1].trim() : null;
+      /* Last date */
+      const ldM    = n.match(/last\s*date\s*[:\-–]\s*([\d\/\-\.]+(?:\d{4})?)/i);
+      const lastDt = ldM ? ldM[1].trim() : null;
 
-      /* 5. Year */
-      const yearMatch = n.match(/\b(202[4-9]|203\d)\b/);
-      const year = yearMatch ? yearMatch[1] : null;
+      /* Year */
+      const yrM  = n.match(/\b(202[4-9]|203\d)\b/);
+      const year = yrM ? yrM[1] : null;
 
-      /* 6. No of posts */
-      const postNumMatch = n.match(/(\d[\d,]*)\s*(?:post|posts|vacancies|vacancy|seat|seats)/i);
-      const postNum = postNumMatch ? postNumMatch[1] : null;
+      /* Posts count */
+      const pnM    = n.match(/(\d[\d,]*)\s*(?:post|posts|vacancies|vacancy|seat|seats)/i);
+      const postNum = pnM ? pnM[1] : null;
 
-      /* 7. Advt / notification no */
-      const advtMatch = n.match(/(?:advt|adv|no|notification)[.\s#]*([A-Z0-9\/\-]+(?:\/\d+)?)/i);
-      const advtNo = advtMatch ? advtMatch[1] : null;
+      /* Salary */
+      const salM   = n.match(/(?:salary|pay|stipend|₹|rs\.?)\s*([\d,]+(?:\s*[-–to]+\s*[\d,]+)?(?:\s*(?:per\s*month|pm|lakh|per\s*annum|pa))?)/i);
+      const salary  = salM ? salM[0].replace(/^(?:salary|pay|stipend)\s*/i, "") : null;
 
-      /* 8. Salary */
-      const salMatch = n.match(/(?:salary|pay|stipend|₹|rs\.?)\s*([\d,]+(?:\s*[-–to]+\s*[\d,]+)?(?:\s*(?:per\s*month|pm|lakh|per\s*annum|pa))?)/i);
-      const salary = salMatch ? salMatch[0].replace(/^(?:salary|pay|stipend)\s*/i, "") : null;
+      /* Advt no */
+      const advtM  = n.match(/(?:advt|adv\.?\s*no\.?|notification\s*no\.?)\s*[:\-#]?\s*([A-Z0-9\/\-]+)/i);
+      const advtNo = advtM ? advtM[1] : null;
 
-      /* 9. Apply mode */
-      const applyMode = /offline/i.test(n) ? "Offline" : /online/i.test(n) ? "Online" : null;
+      const applyMode = /offline/i.test(n) ? "Offline" : "Online";
+      const jobType   = /contract/i.test(n) ? "Contract" : /permanent/i.test(n) ? "Regular (Permanent)" : "Check Notification";
 
-      /* ── Build table rows in the visual order from the screenshot ── */
-      rows.push({ label: "Company / Organisation", value: orgRaw || "—", highlight: false });
-      if (postName) rows.push({ label: "Post Name",           value: postName,  highlight: false });
-      if (postNum)  rows.push({ label: "No of Posts",         value: postNum,   highlight: false });
-      if (advtNo)   rows.push({ label: "Advt No",             value: advtNo,    highlight: false });
-      if (salary)   rows.push({ label: "Salary",              value: salary,    highlight: false });
-      if (year)     rows.push({ label: "Year",                value: year,      highlight: false });
-      rows.push({ label: "Apply Mode", value: applyMode || "Online (Check Notification)", highlight: false });
-      rows.push({ label: "Job Type",   value: /contract/i.test(n) ? "Contract" : /permanent/i.test(n) ? "Permanent" : "Check Notification", highlight: false });
-      if (lastDate) rows.push({ label: "Last Date",           value: lastDate,  highlight: true });
-      rows.push({ label: "Age Limit",  value: "As per notification", highlight: false });
-      rows.push({ label: "Qualification", value: "As per notification", highlight: false });
-
-      return rows;
+      return { category, org, postName, lastDt, year, postNum, salary, advtNo, applyMode, jobType };
     }
 
-    /* ─── Render table ─── */
-    function renderTable(rows) {
-      tableBody.innerHTML = rows.map(r => `
-        <tr class="${r.highlight ? "highlight-row" : ""}">
+    /* ─── Render ─── */
+    function renderPage(name, destUrl, parsed) {
+      const { category, org, postName, lastDt, year, postNum, salary, advtNo, applyMode, jobType } = parsed;
+
+      /* Badge */
+      document.getElementById("jbBadge").textContent = category.label;
+      document.getElementById("metaCat").textContent  = category.label;
+
+      /* Title */
+      document.getElementById("jbTitle").textContent  = name;
+      const shortTitle = name.length > 55 ? name.slice(0, 52) + "…" : name;
+      document.getElementById("bcTitle").textContent  = shortTitle;
+
+      /* Breadcrumb section link */
+      const secLink = document.getElementById("bcSectionLink");
+      if (rawSec && rawSec !== "view.html") {
+        secLink.textContent = humanizeSlug(rawSec);
+        secLink.href = `view.html?section=${encodeURIComponent(rawSec)}`;
+      } else {
+        secLink.textContent = category.label + " Jobs";
+        secLink.removeAttribute("href");
+        secLink.style.cursor = "pointer";
+      }
+
+      /* Meta */
+      document.getElementById("metaPosted").textContent = "Posted: " + today();
+
+      /* Quick stats */
+      document.getElementById("statOrg").textContent       = org || "—";
+      document.getElementById("statPosts").textContent     = postNum || "Various";
+      document.getElementById("statLastDate").textContent  = lastDt  || "See Notification";
+      document.getElementById("statApplyMode").textContent = applyMode;
+
+      /* Overview table */
+      const rows = [];
+      rows.push({label:"Organisation Name", val: org || "Check Notification", hl:false});
+      if (postName) rows.push({label:"Post Name",      val: postName, hl:false});
+      if (postNum)  rows.push({label:"Total Vacancies",val: postNum,  hl:false});
+      if (advtNo)   rows.push({label:"Advt No",        val: advtNo,   hl:false});
+      if (salary)   rows.push({label:"Pay Scale",      val: salary,   hl:false});
+      rows.push({label:"Nature of Post", val: jobType,   hl:false});
+      rows.push({label:"Application Mode", val: applyMode, hl:false});
+      rows.push({label:"Age Limit",      val: "As per notification", hl:false});
+      rows.push({label:"Qualification",  val: "As per notification", hl:false});
+      const destHost = destUrl && destUrl !== "#" ? (() => { try { return new URL(destUrl).hostname.replace(/^www\./,""); } catch(_){ return ""; } })() : "";
+      if (destHost) rows.push({label:"Official Website", val: `<a href="${destUrl}" target="_blank" rel="noopener" style="color:#1d6dbc;">${destHost}</a>`, hl:false, html:true});
+      if (lastDt)   rows.push({label:"Last Date",        val: lastDt,  hl:true});
+
+      const tbody = document.querySelector("#jbTable tbody");
+      tbody.innerHTML = rows.map(r => `
+        <tr class="${r.hl?"hl-row":""}">
           <th scope="row">${r.label}</th>
-          <td>${r.value}</td>
+          <td>${r.html ? r.val : r.val.replace(/</g,"&lt;").replace(/>/g,"&gt;")}</td>
         </tr>
-      `).join("");
-    }
+      `).join("").replace(/&lt;a /g,"<a ").replace(/&lt;\/a&gt;/g,"</a>"); // allow link in official website row
 
-    /* ─── Meta / SEO helpers ─── */
-    function setMeta(sel, val) {
-      const el = document.querySelector(sel);
-      if (el) el.setAttribute("content", val);
-    }
-    function updateSEO(title, destUrl, lastDate) {
-      const fullTitle = title + " | Top Sarkari Jobs";
+      /* Overview heading */
+      const orgShort = org.split(/\s+/).slice(0,3).join(" ");
+      document.getElementById("overviewTitle").textContent = orgShort + (year?" "+year:"") + " : Overview";
+
+      /* Dates sidebar */
+      document.getElementById("dateNotif").textContent = today();
+      document.getElementById("dateStart").textContent = today();
+      document.getElementById("dateEnd").textContent   = lastDt || "See Notification";
+
+      /* Highlights sidebar */
+      const hlItems = [
+        postNum  ? `Total Posts: ${postNum}` : null,
+        `Job Type: ${jobType}`,
+        `Application Mode: ${applyMode}`,
+        salary   ? `Salary: ${salary}` : null,
+        lastDt   ? `Last Date: ${lastDt}` : null,
+        destHost ? `Official Website: ${destHost}` : null,
+      ].filter(Boolean);
+      document.getElementById("hlList").innerHTML = hlItems.map(h =>
+        `<div class="jp-hl-item"><i class="fa-solid fa-circle-check"></i><span>${h}</span></div>`
+      ).join("");
+
+      /* Buttons */
+      const safeUrl = destUrl && destUrl !== "#" ? destUrl : null;
+      ["btnApply","btnNotification","btnWebsite"].forEach(id => {
+        const el = document.getElementById(id);
+        if (safeUrl) { el.href = safeUrl; }
+        else { el.style.opacity = ".45"; el.removeAttribute("href"); el.style.pointerEvents = "none"; }
+      });
+
+      /* Share */
+      const pageUrl = encodeURIComponent(location.href);
+      const pageTitle = encodeURIComponent(name + " | Top Sarkari Jobs");
+      document.getElementById("shFb").href = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
+      document.getElementById("shTw").href = `https://twitter.com/intent/tweet?text=${pageTitle}&url=${pageUrl}`;
+      document.getElementById("shWa").href = `https://wa.me/?text=${pageTitle}%20${pageUrl}`;
+      document.getElementById("shTg").href = `https://t.me/share/url?url=${pageUrl}&text=${pageTitle}`;
+
+      /* SEO */
+      const fullTitle = name + " | Top Sarkari Jobs";
       document.title = fullTitle;
-      setMeta("#ogTitle",  fullTitle);
-      setMeta("#twTitle",  fullTitle);
-      const desc = "Apply for " + title + (lastDate ? " — Last Date: " + lastDate : "") + ". Full details on Top Sarkari Jobs.";
-      setMeta("#ogDesc", desc);
-      setMeta("#twDesc", desc);
-      setMeta("#ogUrl",  window.location.href);
-      document.getElementById("canonicalTag").href = window.location.href;
+      const desc = `${name}${lastDt?" — Last Date: "+lastDt:""}. Total Posts: ${postNum||"Various"}. Check full details on Top Sarkari Jobs.`;
+      const setMeta = (sel,val) => { const el=document.querySelector(sel); if(el) el.setAttribute("content",val); };
+      setMeta("#ogTitle",fullTitle); setMeta("#twTitle",fullTitle);
+      setMeta("#ogDesc",desc); setMeta("#twDesc",desc);
+      setMeta("#ogUrl",location.href);
+      document.getElementById("canonicalTag").href = location.href;
 
-      // JSON-LD structured data
+      /* JSON-LD */
       const schema = {
-        "@context": "https://schema.org",
-        "@type": "JobPosting",
-        "title": title,
-        "description": desc,
-        "hiringOrganization": { "@type": "Organization", "name": "Top Sarkari Jobs", "sameAs": "https://www.topsarkarijobs.com/" },
-        "jobLocation": { "@type": "Place", "address": { "@type": "PostalAddress", "addressCountry": "IN" } },
-        "employmentType": "FULL_TIME",
-        "datePosted": new Date().toISOString().slice(0, 10),
-        ...(lastDate ? { "validThrough": lastDate } : {}),
-        "url": window.location.href,
-        "applyUrl": destUrl
+        "@context":"https://schema.org","@type":"JobPosting",
+        "title":name,"description":desc,
+        "hiringOrganization":{"@type":"Organization","name":org||"Government of India","sameAs":"https://www.topsarkarijobs.com/"},
+        "jobLocation":{"@type":"Place","address":{"@type":"PostalAddress","addressCountry":"IN"}},
+        "employmentType": jobType.toLowerCase().includes("contract") ? "CONTRACTOR" : "FULL_TIME",
+        "datePosted": new Date().toISOString().slice(0,10),
+        ...(lastDt?{"validThrough":lastDt}:{}),
+        "url":location.href, ...(safeUrl?{"applyUrl":safeUrl}:{})
       };
-      document.getElementById("jobSchema").textContent = JSON.stringify(schema, null, 2);
-    }
+      document.getElementById("jobSchema").textContent = JSON.stringify(schema,null,2);
 
-    /* ─── Show/hide helpers ─── */
-    function showContent(name, destUrl) {
+      /* Show */
       loading.style.display = "none";
-
-      const rows   = parseJobName(name);
-      const ldRow  = rows.find(r => r.label === "Last Date");
-      const lastDt = ldRow ? ldRow.value : null;
-
-      titleEl.textContent = name;
-      bcTitle.textContent = name.length > 60 ? name.slice(0, 57) + "…" : name;
-      if (rawSec) bcSection.textContent = humanizeSlug(rawSec);
-
-      renderTable(rows);
-      goBtn.href = destUrl;
-
-      updateSEO(name, destUrl, lastDt);
-
       content.style.display = "block";
     }
 
-    function showError() {
-      loading.style.display = "none";
-      errorEl.style.display = "block";
+    /* ─── Table HTML fix — allow safe link in "Official Website" row ─── */
+    // (handled inline above with replace trick)
+
+    /* ─── Data loading ─── */
+    function validateUrl(u) {
+      try { const d=new URL(u,location.href); return ["http:","https:"].includes(d.protocol)?d.href:null; } catch(_){return null;}
     }
 
-    function validateUrl(urlStr) {
-      try {
-        const d = new URL(urlStr, window.location.href);
-        if (!["http:", "https:"].includes(d.protocol)) return null;
-        return d.href;
-      } catch (_) { return null; }
-    }
-
-    /* ─── Load all items from dynamic-sections.json once ─── */
     async function loadAllItems() {
       const r = await fetch("dynamic-sections.json");
       if (!r.ok) return [];
       const data = await r.json();
       const out = [];
-      for (const sec of (data.sections || [])) {
-        for (const it of (sec.items || [])) {
-          const u = it.url || it.link || "";
+      for (const sec of (data.sections||[])) {
+        for (const it of (sec.items||[])) {
+          const u = it.url||it.link||"";
           if (!u) continue;
           out.push({
             url:   normalizeUrl(u),
-            title: safe(it.name || it.title || "").slice(0, 500),
-            secId: safe(sec.id || sec.title),
+            title: safe(it.name||it.title||"").slice(0,500),
+            secId: safe(sec.id||sec.title),
             fp:    urlRedirectFingerprint(u).toLowerCase()
           });
         }
@@ -586,88 +563,71 @@
       return out;
     }
 
-    /* ─── Tier-1: exact fingerprint match ─── */
-    function matchByKey(items, wantKey) {
-      return items.find(i => i.fp === wantKey) || null;
-    }
+    function matchByKey(items, k)    { return items.find(i=>i.fp===k)||null; }
 
-    /* ─── Tier-2: slug fuzzy match ─── */
-    // Convert a job title to slug tokens and score against rawSlug
     function slugScore(title, targetSlug) {
-      if (!title || !targetSlug) return 0;
-      const titleSlug = title.toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-      const tTokens = targetSlug.split("-").filter(t => t.length > 2);
-      if (!tTokens.length) return 0;
-      let hits = 0;
-      for (const t of tTokens) {
-        if (titleSlug.includes(t)) hits++;
-      }
-      return hits / tTokens.length; // 0–1
+      if (!title||!targetSlug) return 0;
+      const ts = title.toLowerCase().replace(/[^a-z0-9]+/g,"-");
+      const tokens = targetSlug.split("-").filter(t=>t.length>2);
+      if (!tokens.length) return 0;
+      return tokens.filter(t=>ts.includes(t)).length / tokens.length;
     }
-
     function matchBySlug(items, slug) {
       if (!slug) return null;
-      let best = null, bestScore = 0;
+      let best=null, bestScore=0;
       for (const it of items) {
-        const score = slugScore(it.title, slug);
-        if (score > bestScore) { bestScore = score; best = it; }
+        const s = slugScore(it.title, slug);
+        if (s > bestScore) { bestScore=s; best=it; }
       }
-      // Only accept if >60% of slug tokens matched
-      return bestScore >= 0.6 ? best : null;
+      return bestScore >= 0.55 ? best : null;
     }
 
     /* ─── Main ─── */
     (async function run() {
-      if (!rawK && !rawSlug) { showError(); return; }
+      if (!rawK && !rawSlug) { loading.style.display="none"; errorEl.style.display="block"; return; }
 
       let items = [];
-      try { items = await loadAllItems(); } catch (_) {}
+      try { items = await loadAllItems(); } catch(_) {}
 
       let row = null;
+      if (rawK && items.length)     row = matchByKey(items, rawK);
+      if (!row && rawSlug && items.length) row = matchBySlug(items, rawSlug);
 
-      /* Tier 1: fingerprint */
-      if (rawK && items.length) {
-        row = matchByKey(items, rawK);
-      }
-
-      /* Tier 2: slug fuzzy match (fallback when live JSON differs from when link was built) */
-      if (!row && rawSlug && items.length) {
-        row = matchBySlug(items, rawSlug);
-      }
-
-      /* Tier 3: slug-only — show details parsed from slug, no external link */
       if (!row) {
+        /* Tier 3: slug-only display */
         if (rawSlug) {
           const humanTitle = humanizeSlug(rawSlug);
-          showContent(humanTitle, "");
-          // Hide the go button gracefully since we have no URL
-          goBtn.style.display = "none";
-          document.getElementById("jbContent").insertAdjacentHTML("beforeend",
-            `<p style="text-align:center;color:#64748b;font-size:0.85rem;margin-top:-10px;margin-bottom:20px;">
-              Official link not available. Please search on
-              <a href="https://www.sarkariresult.com" target="_blank" rel="noopener" style="color:#0369a1;">sarkariresult.com</a>
-              or go back and try again.
-            </p>`
-          );
-          return;
+          const parsed = parseJob(humanTitle);
+          renderPage(humanTitle, "", parsed);
+          // Disable all external buttons
+          ["btnApply","btnNotification","btnWebsite"].forEach(id => {
+            const el = document.getElementById(id);
+            el.style.display = "none";
+          });
+          document.querySelector(".jp-card:has(#btnApply) .jp-sec-head").innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Official link temporarily unavailable';
+        } else {
+          loading.style.display = "none";
+          errorEl.style.display = "block";
         }
-        showError();
         return;
       }
 
-      /* Found — validate URL and render */
       const dest = validateUrl(row.url);
-      if (!dest) { showError(); return; }
+      if (!dest) { loading.style.display="none"; errorEl.style.display="block"; return; }
 
-      const secToShow = rawSec && rawSec !== "view.html" ? rawSec : row.secId;
-      if (secToShow) bcSection.textContent = humanizeSlug(secToShow);
+      // Override section from data if URL param missing/bad
+      if (!rawSec || rawSec === "view.html") {
+        const secLink = document.getElementById("bcSectionLink");
+        secLink.textContent = humanizeSlug(row.secId || "Jobs");
+        secLink.href = row.secId ? `view.html?section=${encodeURIComponent(row.secId)}` : "#";
+      }
 
-      showContent(row.title || humanizeSlug(rawSlug), dest);
+      const parsed = parseJob(row.title || humanizeSlug(rawSlug));
+      renderPage(row.title || humanizeSlug(rawSlug), dest, parsed);
     })();
   })();
   </script>
 
-  <script src="script.js?v=20260501" defer></script>
+  <script src="script.js?v=20260502" defer></script>
 </body>
 </html>
