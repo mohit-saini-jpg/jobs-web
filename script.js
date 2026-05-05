@@ -570,10 +570,13 @@ items.forEach((it, idx) => {
   if (hidden > 0) {
     const btn = document.createElement("button");
     btn.textContent = "Show all " + items.length;
-    btn.onclick = () => {
-      list.querySelectorAll('[data-collapsed="1"]').forEach(el => el.removeAttribute("data-collapsed"));
-      btn.remove();
-    };
+   btn.onclick = () => {
+  list.querySelectorAll('[data-collapsed="1"]').forEach(el => {
+    el.removeAttribute("data-collapsed");
+    el.style.display = "block"; // 🔥 CRITICAL FIX
+  });
+  btn.remove();
+};
     card.appendChild(btn);
   }
 
