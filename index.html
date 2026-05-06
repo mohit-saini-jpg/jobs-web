@@ -699,12 +699,8 @@
         </div>
       </a>
 
-      <div class="header-search-wrap">
-        <div class="header-search-box">
-          <input type="search" id="headerSearch" placeholder="Search jobs, admit card, result..." autocomplete="off" aria-label="Search jobs">
-          <button type="button" id="headerSearchBtn">Search</button>
-        </div>
-      </div>
+      <!-- Header search removed to avoid duplicate search bars -->
+      <!-- <div class="header-search-wrap">...</div> -->
 
       <div class="header-actions">
         <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" class="wa-btn-header">
@@ -1496,6 +1492,49 @@
       { text: 'Helpdesk & Support', href: 'helpdesk.html', icon: 'fa-headset', tags: 'help support contact helpdesk query' },
     ];
 
+    // ✅ Load extra data from JSON files and merge into ALL_LINKS
+    (async function loadJsonSearchData() {
+      try {
+        const [dynRes, jobsRes] = await Promise.allSettled([
+          fetch('dynamic-sections.json').then(r => r.ok ? r.json() : null),
+          fetch('jobs.json').then(r => r.ok ? r.json() : null)
+        ]);
+
+        const existingHrefs = new Set(ALL_LINKS.map(l => l.href));
+
+        const addItem = (name, url) => {
+          if (!name || !url) return;
+          // Normalize url
+          const href = (url.startsWith('http') && !url.includes(location.hostname))
+            ? url
+            : url.replace(/^https?:\/\/[^/]+\//, '');
+          if (existingHrefs.has(href)) return;
+          existingHrefs.add(href);
+          ALL_LINKS.push({ text: name.trim(), href: href, icon: 'fa-briefcase', tags: name.toLowerCase() });
+        };
+
+        // From dynamic-sections.json
+        if (dynRes.status === 'fulfilled' && dynRes.value) {
+          const dyn = dynRes.value;
+          if (Array.isArray(dyn.sections)) {
+            dyn.sections.forEach(sec => {
+              (sec.items || []).forEach(item => addItem(item.name || item.title, item.url || item.link));
+            });
+          }
+        }
+
+        // From jobs.json
+        if (jobsRes.status === 'fulfilled' && jobsRes.value) {
+          const jobs = jobsRes.value;
+          ['top_jobs', 'left_jobs', 'right_jobs', 'jobs', 'latest_jobs'].forEach(key => {
+            if (Array.isArray(jobs[key])) {
+              jobs[key].forEach(item => addItem(item.name || item.title, item.url || item.link));
+            }
+          });
+        }
+      } catch(e) {}
+    })();
+
     function scoreMatch(link, q) {
       const haystack = (link.text + ' ' + (link.tags || '')).toLowerCase();
       const query = q.toLowerCase().trim();
@@ -1594,15 +1633,13 @@
 
     function openMenu() {
       if (!mobileMenu || !overlay || !menuBtn) return;
-      mobileMenu.hidden = false;
-      overlay.hidden = false;
+      mobileMenu.hidden = false; overlay.hidden = false;
       menuBtn.setAttribute('aria-expanded', 'true');
       document.body.style.overflow = 'hidden';
     }
     function closeMenu() {
       if (!mobileMenu || !overlay || !menuBtn) return;
-      mobileMenu.hidden = true;
-      overlay.hidden = true;
+      mobileMenu.hidden = true; overlay.hidden = true;
       menuBtn.setAttribute('aria-expanded', 'false');
       document.body.style.overflow = '';
     }
@@ -1612,9 +1649,7 @@
       menuBtn.addEventListener('click', openMenu);
       if (closeBtn) closeBtn.addEventListener('click', closeMenu);
       if (overlay) overlay.addEventListener('click', closeMenu);
-      if (mobileMenu) mobileMenu.addEventListener('click', function(e) {
-        if (e.target.closest('a')) closeMenu();
-      });
+      if (mobileMenu) mobileMenu.addEventListener('click', function(e) { if (e.target.closest('a')) closeMenu(); });
     }
     window.__menuInitialized = true;
 
