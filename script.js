@@ -235,51 +235,11 @@
     }
   }
 
-  // ✅ LASER-TARGETED OLD SEARCH HIDER: Perfectly safe for jobs!
+  // ✅ SEARCH HIDER: Only hides truly duplicate/old search bars, never the main ones
   function safeHideOldSearchBars() {
-    if (window.innerWidth <= 980) {
-        
-        // Target old inputs directly
-        document.querySelectorAll('#siteSearchInput, #sectionSearchInput').forEach(input => {
-            // Hide the input and button
-            input.style.setProperty('display', 'none', 'important');
-            if (input.nextElementSibling) input.nextElementSibling.style.setProperty('display', 'none', 'important');
-            
-            // Hide the immediate wrapper row
-            const row = input.closest('.search-row');
-            if (row && !row.classList.contains('mbs-row')) {
-                row.style.setProperty('display', 'none', 'important');
-            }
-            
-            // Safely hide the white card IF it contains NO jobs
-            const card = input.closest('.search-card');
-            if (card && card.id !== 'mobile-bottom-search') {
-                if (!card.querySelector('a.section-link, table, .section-list')) {
-                    card.style.setProperty('display', 'none', 'important');
-                } else {
-                    // It contains jobs! Just hide the search titles inside it
-                    card.querySelectorAll('.search-title, .search-sub').forEach(t => t.style.setProperty('display', 'none', 'important'));
-                }
-            }
-        });
-        
-        // Hide explicit "Search across..." titles that might float freely
-        document.querySelectorAll('h1, h2, h3, p').forEach(el => {
-            const txt = (el.textContent || "").trim();
-            if (txt === "Search across Top Sarkari Jobs" || 
-                txt === "Search jobs, results, admit cards, categories, CSC services and tools.") {
-                el.style.setProperty('display', 'none', 'important');
-                
-                // Hide its direct wrapper if it's empty
-                const parent = el.parentElement;
-                if (parent && parent.tagName === 'DIV' && parent.id !== 'main') {
-                    if (!parent.querySelector('a.section-link, table, .section-list, article')) {
-                        parent.style.setProperty('display', 'none', 'important');
-                    }
-                }
-            }
-        });
-    }
+    // DO NOT hide #siteSearchInput or #sectionSearchInput - these are the main search bars
+    // that need to work on BOTH mobile and desktop. Hiding them breaks search functionality.
+    // This function is intentionally left as a no-op to prevent search bars from being hidden.
   }
 
   async function injectHeaderFooter() {
@@ -1601,6 +1561,7 @@
       const btnId = input.id === "siteSearchInput" ? "siteSearchBtn"
                   : input.id === "sectionSearchInput" ? "sectionSearchBtn"
                   : input.id === "heroSearch" ? "heroSearchBtn"
+                  : input.id === "mobileBottomSearchInput" ? "mobileBottomSearchBtn"
                   : null;
       const btn = btnId ? document.getElementById(btnId) : null;
       if (btn && !btn.dataset.qaBound) {
@@ -1658,10 +1619,5 @@
     await renderServicesPage();
     
     await initGlobalLiveSearch();
-    
-    setTimeout(() => {
-        safeHideOldSearchBars();
-        initGlobalLiveSearch();
-    }, 300); 
   });
 })();
