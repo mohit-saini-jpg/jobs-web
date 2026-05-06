@@ -141,11 +141,20 @@
        border-bottom-left-radius: 0.5rem;
        border-bottom-right-radius: 0.5rem;
        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-       max-height: 24rem; /* 96 * 0.25rem = 24rem */
+       max-height: 24rem;
        overflow-y: auto;
        margin-top: 0.25rem;
        z-index: 100;
     }
+    .search-result-item {
+      display: flex; flex-direction: column;
+      padding: 10px 14px; border-bottom: 1px solid #f1f5f9;
+      text-decoration: none; color: #0f172a; transition: background .12s;
+    }
+    .search-result-item:hover { background: #eff6ff; }
+    .result-name { font-size: .84rem; font-weight: 700; color: #0369a1; }
+    .result-meta { font-size: .72rem; color: #64748b; margin-top: 2px; }
+    .search-no-results { padding: 12px 14px; font-size: .82rem; color: #64748b; }
   </style>
 </head>
 
@@ -182,11 +191,12 @@
                    placeholder="Search job categories, results, admit cards…" 
                    class="flex-1 min-w-0 px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 text-base"
                    autocomplete="off" />
-            <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition shrink-0">
+            <button id="sectionSearchBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition shrink-0">
               <i class="fa-solid fa-magnifying-glass"></i> <span class="hidden sm:inline">Search</span>
             </button>
           </div>
-          <div id="sectionSearchResults" class="hidden search-dropdown"></div>
+          <!-- Note: script.js uses style.display to show/hide results, so we must NOT use Tailwind "hidden" class here -->
+          <div id="sectionSearchResults" class="search-dropdown" style="display:none;"></div>
         </div>
       </div>
 
