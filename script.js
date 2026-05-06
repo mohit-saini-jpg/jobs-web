@@ -1500,6 +1500,9 @@
   async function initGlobalLiveSearch() {
     const inputs = [];
     
+    const heroInput = document.getElementById("heroSearch");
+    if (heroInput) inputs.push({ input: heroInput, resultsId: "heroSearchSuggestResults" });
+
     const homeInput = document.getElementById("siteSearchInput");
     if (homeInput) inputs.push({ input: homeInput, resultsId: "searchResults" });
     
