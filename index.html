@@ -340,6 +340,14 @@
     @media (max-width: 960px) { .home-sidebar { position: static; } }
 
     /* ============================================================
+       MAIN CONTENT 2-COLUMN GRID (Latest Jobs + Upcoming side by side)
+    ============================================================ */
+    .main-two-col {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;
+    }
+    @media (max-width: 680px) { .main-two-col { grid-template-columns: 1fr; } }
+
+    /* ============================================================
        SECTION CARDS
     ============================================================ */
     .sec-card {
@@ -976,97 +984,137 @@
       <!-- ===== MAIN COLUMN ===== -->
       <div>
 
-        <!-- LATEST JOB NOTIFICATIONS -->
-        <div class="sec-card">
-          <div class="sec-head red">
-            <div class="left"><i class="fa-solid fa-briefcase"></i> LATEST JOBS</div>
-            <a href="view.html?section=latest%20jobs" class="view-all-btn">View All</a>
+        <!-- LATEST JOBS + UPCOMING JOBS (side by side) -->
+        <div class="main-two-col">
+
+          <!-- LATEST JOB NOTIFICATIONS -->
+          <div class="sec-card" style="margin-bottom:0;">
+            <div class="sec-head red">
+              <div class="left"><i class="fa-solid fa-briefcase"></i> LATEST JOBS</div>
+              <a href="view.html?section=latest%20jobs" class="view-all-btn">View All</a>
+            </div>
+            <div class="job-list" id="dynamic-sections">
+              <!-- These will be populated by script.js; fallback static rows: -->
+              <a href="view.html?section=latest%20jobs">
+                <span class="job-new">NEW</span>
+                <div class="job-body">
+                  <div class="job-title">SSC MTS Recruitment 2026</div>
+                  <div class="job-meta">Last Date: 24/06/2026</div>
+                </div>
+                <span class="job-date">Apply Now</span>
+              </a>
+              <a href="view.html?section=Railway%20Jobs">
+                <span class="job-new">NEW</span>
+                <div class="job-body">
+                  <div class="job-title">Railway Group D Vacancy 2026</div>
+                  <div class="job-meta">Last Date: 22/06/2026</div>
+                </div>
+                <span class="job-date">Apply Now</span>
+              </a>
+              <a href="view.html?section=Bank%20Jobs">
+                <span class="job-new">NEW</span>
+                <div class="job-body">
+                  <div class="job-title">Bank of Baroda Recruitment 2026</div>
+                  <div class="job-meta">Last Date: 30/06/2026</div>
+                </div>
+                <span class="job-date">Apply Now</span>
+              </a>
+              <a href="view.html?section=Police%20Jobs">
+                <span class="job-new">NEW</span>
+                <div class="job-body">
+                  <div class="job-title">UP Police Constable Vacancy 2026</div>
+                  <div class="job-meta">Last Date: 28/06/2026</div>
+                </div>
+                <span class="job-date">Apply Now</span>
+              </a>
+              <a href="view.html?section=Teacher%20Jobs">
+                <span class="job-new">NEW</span>
+                <div class="job-body">
+                  <div class="job-title">Rajasthan Patwari Recruitment 2026</div>
+                  <div class="job-meta">Last Date: 20/06/2026</div>
+                </div>
+                <span class="job-date">Apply Now</span>
+              </a>
+              <a href="view.html?section=Indian%20ARMY%20jobs">
+                <span class="job-new">NEW</span>
+                <div class="job-body">
+                  <div class="job-title">Indian Army Agniveer Rally 2026</div>
+                  <div class="job-meta">Last Date: 25/06/2026</div>
+                </div>
+                <span class="job-date">Apply Now</span>
+              </a>
+              <a href="view.html?section=latest%20jobs">
+                <span class="job-new">NEW</span>
+                <div class="job-body">
+                  <div class="job-title">India Post GDS Recruitment 2026</div>
+                  <div class="job-meta">Last Date: 10/06/2026</div>
+                </div>
+                <span class="job-date">Apply Now</span>
+              </a>
+              <a href="view.html?section=Bank%20Jobs">
+                <span class="job-new">NEW</span>
+                <div class="job-body">
+                  <div class="job-title">SSB Head Constable Vacancy 2026</div>
+                  <div class="job-meta">Last Date: 21/06/2026</div>
+                </div>
+                <span class="job-date">Apply Now</span>
+              </a>
+              <a href="view.html?section=latest%20jobs">
+                <span class="job-new">NEW</span>
+                <div class="job-body">
+                  <div class="job-title">BSF HC Ministerial Vacancy 2026</div>
+                  <div class="job-meta">Last Date: 18/06/2026</div>
+                </div>
+                <span class="job-date">Apply Now</span>
+              </a>
+              <a href="view.html?section=latest%20jobs">
+                <span class="job-new">NEW</span>
+                <div class="job-body">
+                  <div class="job-title">IB ACIO Recruitment 2026</div>
+                  <div class="job-meta">Last Date: 15/06/2026</div>
+                </div>
+                <span class="job-date">Apply Now</span>
+              </a>
+            </div>
+            <a href="view.html?section=latest%20jobs" class="sec-more"><i class="fa-solid fa-eye"></i> View All Latest Jobs</a>
           </div>
-          <div class="job-list" id="dynamic-sections">
-            <!-- These will be populated by script.js; fallback static rows: -->
-            <a href="view.html?section=latest%20jobs">
-              <span class="job-new">NEW</span>
-              <div class="job-body">
-                <div class="job-title">SSC MTS Recruitment 2026</div>
-                <div class="job-meta">Last Date: 24/06/2026</div>
+
+          <!-- UPCOMING JOBS -->
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div class="sec-card" style="margin-bottom:0;">
+              <div class="sec-head" style="background:linear-gradient(90deg,#065f46,#059669);">
+                <div class="left"><i class="fa-solid fa-calendar-plus"></i> UPCOMING JOBS</div>
+                <a href="view.html?section=upcoming-jobs" class="view-all-btn">View All</a>
               </div>
-              <span class="job-date">Apply Now</span>
-            </a>
-            <a href="view.html?section=Railway%20Jobs">
-              <span class="job-new">NEW</span>
-              <div class="job-body">
-                <div class="job-title">Railway Group D Vacancy 2026</div>
-                <div class="job-meta">Last Date: 22/06/2026</div>
+              <div class="sec-list">
+                <a href="view.html?section=upcoming-jobs"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#94a3b8;width:auto;"></i><span>SSC CGL 2026 Notification</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+                <a href="view.html?section=upcoming-jobs"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#94a3b8;width:auto;"></i><span>UPSC CSE 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+                <a href="view.html?section=upcoming-jobs"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#94a3b8;width:auto;"></i><span>RRB NTPC 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+                <a href="view.html?section=upcoming-jobs"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#94a3b8;width:auto;"></i><span>IBPS PO 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+                <a href="view.html?section=upcoming-jobs"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#94a3b8;width:auto;"></i><span>Army Agniveer 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+                <a href="view.html?section=upcoming-jobs"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#94a3b8;width:auto;"></i><span>CTET Dec 2026 Form</span><i class="fa-solid fa-chevron-right arrow"></i></a>
               </div>
-              <span class="job-date">Apply Now</span>
-            </a>
-            <a href="view.html?section=Bank%20Jobs">
-              <span class="job-new">NEW</span>
-              <div class="job-body">
-                <div class="job-title">Bank of Baroda Recruitment 2026</div>
-                <div class="job-meta">Last Date: 30/06/2026</div>
+              <a href="view.html?section=upcoming-jobs" class="sec-more">View All Upcoming →</a>
+            </div>
+
+            <!-- JOBS WITH LAST DATE NEAR -->
+            <div class="sec-card" style="margin-bottom:0;">
+              <div class="sec-head" style="background:linear-gradient(90deg,#7c2d12,#f97316);">
+                <div class="left"><i class="fa-solid fa-clock"></i> LAST DATE NEAR</div>
+                <a href="view.html?section=Jobs%20with%20Last%20date" class="view-all-btn">View All</a>
               </div>
-              <span class="job-date">Apply Now</span>
-            </a>
-            <a href="view.html?section=Police%20Jobs">
-              <span class="job-new">NEW</span>
-              <div class="job-body">
-                <div class="job-title">UP Police Constable Vacancy 2026</div>
-                <div class="job-meta">Last Date: 28/06/2026</div>
+              <div class="sec-list">
+                <a href="view.html?section=Jobs%20with%20Last%20date"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#f97316;width:auto;"></i><span>MPESB Hospital Assistant 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+                <a href="view.html?section=Jobs%20with%20Last%20date"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#f97316;width:auto;"></i><span>UP Police Constable Form</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+                <a href="view.html?section=Jobs%20with%20Last%20date"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#f97316;width:auto;"></i><span>Haryana HSSC New Vacancy</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+                <a href="view.html?section=Jobs%20with%20Last%20date"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#f97316;width:auto;"></i><span>India Post Gramin Dak</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+                <a href="view.html?section=Jobs%20with%20Last%20date"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#f97316;width:auto;"></i><span>SSB Head Constable 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
               </div>
-              <span class="job-date">Apply Now</span>
-            </a>
-            <a href="view.html?section=Teacher%20Jobs">
-              <span class="job-new">NEW</span>
-              <div class="job-body">
-                <div class="job-title">Rajasthan Patwari Recruitment 2026</div>
-                <div class="job-meta">Last Date: 20/06/2026</div>
-              </div>
-              <span class="job-date">Apply Now</span>
-            </a>
-            <a href="view.html?section=Indian%20ARMY%20jobs">
-              <span class="job-new">NEW</span>
-              <div class="job-body">
-                <div class="job-title">Indian Army Agniveer Rally 2026</div>
-                <div class="job-meta">Last Date: 25/06/2026</div>
-              </div>
-              <span class="job-date">Apply Now</span>
-            </a>
-            <a href="view.html?section=latest%20jobs">
-              <span class="job-new">NEW</span>
-              <div class="job-body">
-                <div class="job-title">India Post GDS Recruitment 2026</div>
-                <div class="job-meta">Last Date: 10/06/2026</div>
-              </div>
-              <span class="job-date">Apply Now</span>
-            </a>
-            <a href="view.html?section=Bank%20Jobs">
-              <span class="job-new">NEW</span>
-              <div class="job-body">
-                <div class="job-title">SSB Head Constable Vacancy 2026</div>
-                <div class="job-meta">Last Date: 21/06/2026</div>
-              </div>
-              <span class="job-date">Apply Now</span>
-            </a>
-            <a href="view.html?section=latest%20jobs">
-              <span class="job-new">NEW</span>
-              <div class="job-body">
-                <div class="job-title">BSF HC Ministerial Vacancy 2026</div>
-                <div class="job-meta">Last Date: 18/06/2026</div>
-              </div>
-              <span class="job-date">Apply Now</span>
-            </a>
-            <a href="view.html?section=latest%20jobs">
-              <span class="job-new">NEW</span>
-              <div class="job-body">
-                <div class="job-title">IB ACIO Recruitment 2026</div>
-                <div class="job-meta">Last Date: 15/06/2026</div>
-              </div>
-              <span class="job-date">Apply Now</span>
-            </a>
+              <a href="view.html?section=Jobs%20with%20Last%20date" class="sec-more">View All →</a>
+            </div>
           </div>
-          <a href="view.html?section=latest%20jobs" class="sec-more"><i class="fa-solid fa-eye"></i> View All Latest Jobs</a>
-        </div>
+
+        </div><!-- /main-two-col -->
 
         <!-- ADMIT CARD + RESULTS (two col) -->
         <div class="two-col-grid">
