@@ -339,6 +339,15 @@
     .home-sidebar { position: sticky; top: 90px; }
     @media (max-width: 960px) { .home-sidebar { position: static; } }
 
+    /* 2-col side-by-side for main col section cards */
+    .two-col-sections {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .two-col-sections > .sec-card { margin-bottom: 0; }
+
     /* ============================================================
        SECTION CARDS
     ============================================================ */
@@ -816,7 +825,7 @@
           <input id="heroSearch" type="search" placeholder="Search jobs, admit card, result..." autocomplete="off" aria-label="Search jobs" aria-autocomplete="list" aria-controls="searchSuggest"/>
           <button id="heroSearchBtn" type="button"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
         </div>
-        <div id="searchSuggest" role="listbox" aria-label="Search suggestions"></div>
+        <div id="heroSearchSuggestResults" role="listbox" aria-label="Search suggestions" style="position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,.15);z-index:500;max-height:300px;overflow-y:auto;display:none;"></div>
       </div>
       <div class="search-results-panel" id="heroSearchResults"></div>
     </div>
@@ -976,6 +985,9 @@
       <!-- ===== MAIN COLUMN ===== -->
       <div>
 
+        <!-- ROW 1: LATEST JOBS + UPCOMING JOBS side by side -->
+        <div class="two-col-sections">
+
         <!-- LATEST JOB NOTIFICATIONS -->
         <div class="sec-card">
           <div class="sec-head red">
@@ -1068,10 +1080,30 @@
           <a href="view.html?section=latest%20jobs" class="sec-more"><i class="fa-solid fa-eye"></i> View All Latest Jobs</a>
         </div>
 
-        <!-- ADMIT CARD + RESULTS (two col) -->
-        <div class="two-col-grid">
-          <div class="sec-card" style="margin-bottom:0;">
-            <div class="bng-hd green"><i class="fa-solid fa-id-card"></i> Admit Cards</div>
+        <!-- UPCOMING JOBS (paired with Latest Jobs) -->
+        <div class="sec-card">
+          <div class="sec-head" style="background:linear-gradient(90deg,#065f46,var(--green));">
+            <div class="left"><i class="fa-solid fa-calendar-plus"></i> UPCOMING JOBS</div>
+            <a href="view.html?section=upcoming-jobs" class="view-all-btn">View All</a>
+          </div>
+          <div class="sec-list">
+            <a href="view.html?section=upcoming-jobs"><i class="fa-solid fa-calendar-plus" style="color:var(--green);"></i><span>Upcoming Govt Jobs 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+            <a href="view.html?section=Jobs%20with%20Last%20date"><i class="fa-solid fa-clock" style="color:var(--red);"></i><span>Last Date Near Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+            <a href="view.html?section=Top%2020%20Jobs"><i class="fa-solid fa-medal" style="color:var(--yellow);"></i><span>Top 20 Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+            <a href="view.html?section=Latest%20Govt%20Jobs"><i class="fa-solid fa-globe"></i><span>All India Current Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+            <a href="view.html?section=Haryana%20All%20State%20Jobs"><i class="fa-solid fa-location-dot" style="color:var(--blue);"></i><span>Haryana Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+            <a href="view.html?section=State%20jobs"><i class="fa-solid fa-map-location-dot" style="color:var(--teal);"></i><span>State Wise Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+            <a href="view.html?section=Central%20jobs"><i class="fa-solid fa-flag" style="color:var(--accent);"></i><span>Central Govt Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+          </div>
+          <a href="view.html?section=upcoming-jobs" class="sec-more"><i class="fa-solid fa-eye"></i> View All Upcoming Jobs</a>
+        </div>
+
+        </div><!-- /two-col-sections row 1 -->
+
+        <!-- ROW 2: ADMIT CARDS + RESULTS side by side -->
+        <div class="two-col-sections">
+          <div class="sec-card">
+            <div class="bng-hd green" style="background:linear-gradient(90deg,#065f46,var(--green));"><i class="fa-solid fa-id-card"></i> Admit Cards & Exams</div>
             <div class="sec-list" id="dynamic-admit-cards">
               <a href="category.html?group=admit-result"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#94a3b8;width:auto;"></i><span>SSC MTS Admit Card 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
               <a href="category.html?group=admit-result"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#94a3b8;width:auto;"></i><span>Railway Group D Admit Card</span><i class="fa-solid fa-chevron-right arrow"></i></a>
@@ -1082,8 +1114,8 @@
             <a href="category.html?group=admit-result" class="sec-more">View All Admit Card →</a>
           </div>
 
-          <div class="sec-card" style="margin-bottom:0;">
-            <div class="bng-hd purple"><i class="fa-solid fa-trophy"></i> Latest Results</div>
+          <div class="sec-card">
+            <div class="bng-hd purple" style="background:linear-gradient(90deg,#4c1d95,var(--purple));"><i class="fa-solid fa-trophy"></i> Latest Results</div>
             <div class="sec-list" id="dynamic-results">
               <a href="category.html?group=admissions"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#94a3b8;width:auto;"></i><span>SSC MTS Result 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
               <a href="category.html?group=admissions"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#94a3b8;width:auto;"></i><span>Railway Group D Result 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
@@ -1093,7 +1125,7 @@
             </div>
             <a href="category.html?group=admissions" class="sec-more">View All Results →</a>
           </div>
-        </div>
+        </div><!-- /two-col-sections row 2 -->
         <br>
 
         <!-- BROWSE JOBS BY CATEGORY (scrollable) -->
