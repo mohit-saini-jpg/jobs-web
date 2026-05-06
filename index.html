@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://www.topsarkarijobs.com/image.png"/>
 
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://www.topsarkarijobs.com/#organization","name":"Top Sarkari Jobs","url":"https://www.topsarkarijobs.com/","logo":"https://www.topsarkarijobs.com/logo.png","description":"Latest Government Jobs, Sarkari Results, Admit Cards, Answer Keys and Online Forms in India","sameAs":["https://www.facebook.com/topsarkarijobs","https://twitter.com/topsarkarijobs","https://www.instagram.com/topsarkarijobs"],"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"info@topsarkarijobs.com"}},{"@type":"WebSite","@id":"https://www.topsarkarijobs.com/#website","url":"https://www.topsarkarijobs.com/","name":"Top Sarkari Jobs","description":"Latest Sarkari Jobs 2026, Government Jobs, Results, Admit Cards & Application Forms","publisher":{"@id":"https://www.topsarkarijobs.com/#organization"},"inLanguage":"en-IN","potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://www.topsarkarijobs.com/view.html?section={search_term_string}"},"query-input":"required name=search_term_string"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How to find latest government jobs?","acceptedAnswer":{"@type":"Answer","text":"Visit Top Sarkari Jobs for the latest sarkari jobs, results, admit cards and application forms updated daily."}},{"@type":"Question","name":"Are government job notifications updated daily?","acceptedAnswer":{"@type":"Answer","text":"Yes, we update latest government jobs, results and admit cards on a daily basis."}}]}]}
+  {"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://www.topsarkarijobs.com/#organization","name":"Top Sarkari Jobs","url":"https://www.topsarkarijobs.com/","logo":"https://www.topsarkarijobs.com/logo.png","description":"Latest Government Jobs, Sarkari Results, Admit Cards, Answer Keys and Online Forms in India"},{"@type":"WebSite","@id":"https://www.topsarkarijobs.com/#website","url":"https://www.topsarkarijobs.com/","name":"Top Sarkari Jobs","description":"Latest Sarkari Jobs 2026, Government Jobs, Results, Admit Cards & Application Forms","publisher":{"@id":"https://www.topsarkarijobs.com/#organization"},"inLanguage":"en-IN","potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://www.topsarkarijobs.com/view.html?section={search_term_string}"},"query-input":"required name=search_term_string"}}]}
   </script>
 
   <link rel="stylesheet" href="styles.css"/>
@@ -42,22 +42,83 @@
        DESIGN TOKENS & RESET
     ============================================================ */
     :root {
-      --brand:      #1a3c8f;
-      --brand2:     #0d6efd;
-      --accent:     #f97316;
-      --accent2:    #dc2626;
-      --green:      #059669;
-      --purple:     #7c3aed;
-      --gold:       #d97706;
-      --text:       #0f172a;
-      --muted:      #64748b;
-      --border:     #e2e8f0;
-      --bg:         #f0f4fb;
-      --white:      #ffffff;
-      --radius:     10px;
-      --shadow:     0 2px 12px rgba(0,0,0,.08);
-      --shadow-lg:  0 6px 24px rgba(0,0,0,.12);
+      --brand:    #1a3c8f;
+      --brand2:   #0d6efd;
+      --accent:   #f97316;
+      --red:      #dc2626;
+      --green:    #059669;
+      --purple:   #7c3aed;
+      --text:     #0f172a;
+      --muted:    #64748b;
+      --border:   #e2e8f0;
+      --bg:       #f0f4fb;
+      --white:    #ffffff;
+      --radius:   10px;
+      --shadow:   0 2px 12px rgba(0,0,0,.08);
     }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); }
+
+    /* ============================================================
+       JOB CATEGORIES QUICK WRAP (replaces icon-grid)
+    ============================================================ */
+    .job-cat-quick-wrap {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+    }
+    .job-cat-quick-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px 8px;
+      background: linear-gradient(90deg, #0c1f6b, #1a3c8f);
+      color: #fff;
+      font-size: .82rem; font-weight: 800;
+    }
+    .job-cat-quick-header a {
+      color: rgba(255,255,255,.85); font-size: .74rem; font-weight: 700;
+      text-decoration: none; background: rgba(255,255,255,.15);
+      padding: 3px 10px; border-radius: 20px;
+    }
+    .job-cat-quick-header a:hover { background: rgba(255,255,255,.3); }
+    .job-cat-quick-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border-top: 1px solid var(--border);
+    }
+    .jcq-item {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 3px; padding: 10px 6px;
+      text-decoration: none; color: var(--text);
+      border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      text-align: center; transition: background .12s;
+      font-size: .7rem;
+    }
+    .jcq-item:nth-child(4n) { border-right: none; }
+    .jcq-item:hover { background: #eff6ff; color: var(--brand2); }
+    .jcq-name { font-weight: 700; line-height: 1.3; }
+    .jcq-count { font-size: .65rem; font-weight: 800; color: var(--brand2); background: #eff6ff; padding: 1px 6px; border-radius: 10px; }
+    .jcq-imp { flex-direction: row; gap: 6px; justify-content: center; }
+    .jcq-imp i { color: var(--brand2); font-size: .85rem; flex-shrink: 0; }
+
+    /* ============================================================
+       BELOW-NOTIF TWO-COLUMN GRID
+    ============================================================ */
+    .below-notif-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 600px) {
+      .below-notif-grid { grid-template-columns: 1fr; }
+      .job-cat-quick-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+    .bng-col { display: flex; flex-direction: column; gap: 14px; }
+
+    /* ============================================================
+    ============================================================ */
+    .skip-link { position:absolute;left:-999px;top:-999px;background:#fff;color:var(--brand2);padding:8px 16px;font-weight:700;text-decoration:none;z-index:9999;border-radius:0 0 8px 0; }
+    .skip-link:focus { left:0;top:0; }
 
     /* ============================================================
        STICKY HEADER
@@ -66,638 +127,519 @@
       position: sticky;
       top: 0;
       z-index: 300;
-      background: linear-gradient(90deg, #0c1f6b 0%, #1a3c8f 50%, #1558c0 100%);
-      box-shadow: 0 2px 12px rgba(0,0,0,.25);
-      border-bottom: 2px solid #f97316;
+      background: var(--white);
+      box-shadow: 0 2px 8px rgba(0,0,0,.12);
     }
-    .header-top-bar {
-      background: #0a1650;
+
+    /* Logo bar */
+    .header-logo-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 4px 16px;
-      font-size: .7rem;
-      color: rgba(255,255,255,.75);
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .header-top-bar a { color: rgba(255,255,255,.85); text-decoration: none; margin-right: 10px; }
-    .header-top-bar a:hover { color: #f97316; }
-    .header-top-social a { color: rgba(255,255,255,.75); font-size: .85rem; margin-left: 8px; }
-    .header-top-social a:hover { color: #25d366; }
-    .header-row {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 16px;
+      padding: 8px 14px;
+      border-bottom: 1px solid var(--border);
     }
     .brand {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       text-decoration: none;
-      flex-shrink: 0;
     }
-    .brand-logo { width: 44px; height: 44px; border-radius: 8px; }
-    .brand-text { line-height: 1.2; }
+    .brand-logo { width: 36px; height: 36px; border-radius: 6px; }
     .brand-title {
-      font-size: 1.05rem;
+      font-size: 1rem;
       font-weight: 900;
-      color: #fff;
-      letter-spacing: .01em;
-      display: block;
+      color: var(--brand);
+      letter-spacing: -.01em;
     }
-    .brand-subtitle {
-      font-size: .62rem;
-      color: rgba(255,255,255,.7);
-      display: block;
-    }
-    /* Desktop nav */
-    .desktop-nav {
-      display: flex;
-      align-items: center;
-      gap: 2px;
-      flex: 1;
-      flex-wrap: wrap;
-    }
-    @media (max-width: 900px) { .desktop-nav { display: none; } }
-    .nav-link {
-      color: rgba(255,255,255,.9);
-      text-decoration: none;
-      font-size: .8rem;
-      font-weight: 700;
-      padding: 7px 11px;
-      border-radius: 6px;
-      white-space: nowrap;
-      transition: background .15s, color .15s;
-    }
-    .nav-link:hover, .nav-link.active { background: rgba(255,255,255,.15); color: #fff; }
-    .nav-link.highlight {
-      background: #f97316;
-      color: #fff !important;
-      border-radius: 6px;
-    }
-    .nav-link.highlight:hover { background: #ea580c; }
-    /* Dropdown */
-    .nav-dd { position: relative; }
-    .nav-dd-btn {
+    .brand-title span { color: var(--accent); }
+    .header-logo-actions { display: flex; align-items: center; gap: 8px; }
+    .icon-btn {
       background: none;
       border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .nav-dd-btn .fa-chevron-down { font-size: .6rem; transition: transform .2s; }
-    .nav-dd:hover .nav-dd-btn .fa-chevron-down { transform: rotate(180deg); }
-    .nav-dd-menu {
-      position: absolute;
-      top: calc(100% + 4px);
-      left: 0;
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      box-shadow: var(--shadow-lg);
-      min-width: 200px;
-      padding: 6px;
-      display: none;
-      z-index: 400;
-    }
-    .nav-dd:hover .nav-dd-menu { display: block; }
-    .nav-dd-item {
-      display: block;
-      padding: 8px 12px;
-      font-size: .8rem;
-      font-weight: 600;
       color: var(--text);
-      text-decoration: none;
-      border-radius: 6px;
-      transition: background .12s;
-      white-space: nowrap;
-    }
-    .nav-dd-item:hover { background: #eff6ff; color: var(--brand2); }
-    /* Header actions */
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-left: auto;
-    }
-    .icon-btn {
-      background: rgba(255,255,255,.15);
-      border: none;
-      color: #fff;
-      width: 38px;
-      height: 38px;
+      width: 36px; height: 36px;
       border-radius: 8px;
       cursor: pointer;
-      font-size: 1rem;
+      font-size: 1.1rem;
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+    .icon-btn:hover { background: var(--bg); }
+
+    /* Desktop nav */
+    .desktop-nav {
+      display: none;
+      align-items: center;
+      gap: 2px;
+      padding: 6px 14px;
+      background: linear-gradient(90deg, #0c1f6b, #1a3c8f);
+    }
+    @media (min-width: 901px) {
+      .desktop-nav { display: flex; }
+      #menuBtn { display: none; }
+    }
+    .nav-link {
+      color: rgba(255,255,255,.9);
+      text-decoration: none;
+      font-size: .78rem;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 6px;
+      white-space: nowrap;
       transition: background .15s;
     }
-    .icon-btn:hover { background: rgba(255,255,255,.28); }
-    @media (min-width: 901px) { #menuBtn { display: none; } }
+    .nav-link:hover, .nav-link.active { background: rgba(255,255,255,.15); }
+    .nav-dd { position: relative; }
+    .nav-dd-btn { background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+    .nav-dd-btn .fa-chevron-down { font-size: .6rem; transition: transform .2s; }
+    .nav-dd-menu {
+      position: absolute; top: calc(100% + 4px); left: 0;
+      background: #fff; border: 1px solid var(--border);
+      border-radius: 10px; box-shadow: 0 6px 24px rgba(0,0,0,.12);
+      min-width: 200px; padding: 6px; display: none; z-index: 400;
+    }
+    .nav-dd:hover .nav-dd-menu, .nav-dd-menu.open { display: block; }
+    .nav-dd-item {
+      display: block; padding: 8px 12px; font-size: .8rem; font-weight: 600;
+      color: var(--text); text-decoration: none; border-radius: 6px; transition: background .12s; white-space: nowrap;
+    }
+    .nav-dd-item:hover { background: #eff6ff; color: var(--brand2); }
 
     /* ============================================================
-       LIVE TICKER
-    ============================================================ */
-    .hero-ticker {
-      background: #dc2626;
-      color: #fff;
-      font-size: .77rem;
-      font-weight: 700;
-      padding: 6px 0;
-      overflow: hidden;
-      white-space: nowrap;
-    }
-    .hero-ticker-inner {
-      display: inline-block;
-      animation: tickerScroll 30s linear infinite;
-    }
-    @keyframes tickerScroll { 0%{transform:translateX(100vw);} 100%{transform:translateX(-100%);} }
-    .hero-ticker-inner a {
-      color: #fff;
-      text-decoration: none;
-      margin-right: 48px;
-    }
-    .hero-ticker-inner a::before { content: "🔴 "; }
-    .hero-ticker-inner a:hover { text-decoration: underline; }
-
-    /* ============================================================
-       HERO BANNER + SEARCH
+       HERO BANNER
     ============================================================ */
     .hero-banner {
-      background: linear-gradient(135deg, #0c1f6b 0%, #1a3c8f 45%, #1d6dbc 100%);
+      background: linear-gradient(135deg, #0c1f6b 0%, #1a3c8f 50%, #1d6dbc 100%);
       color: #fff;
-      padding: 26px 0 22px;
-      position: relative;
-      overflow: hidden;
+      padding: 20px 14px 18px;
     }
-    .hero-banner::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-      pointer-events: none;
-    }
-    .hero-inner { max-width: 1200px; margin: 0 auto; padding: 0 16px; position: relative; }
     .hero-tagline {
-      font-size: .72rem;
+      font-size: .7rem;
       font-weight: 800;
       letter-spacing: .12em;
       text-transform: uppercase;
-      opacity: .8;
-      margin-bottom: 6px;
+      opacity: .85;
+      margin-bottom: 4px;
     }
     .hero-h1 {
-      font-size: 1.6rem;
+      font-size: 1.35rem;
       font-weight: 900;
       line-height: 1.3;
-      margin: 0 0 6px;
+      margin-bottom: 5px;
     }
-    @media (max-width: 640px) { .hero-h1 { font-size: 1.2rem; } }
-    .hero-sub { font-size: .84rem; opacity: .85; margin-bottom: 18px; }
+    .hero-sub { font-size: .8rem; opacity: .85; margin-bottom: 14px; line-height: 1.5; }
 
-    /* ======= ADVANCED SEARCH BOX ======= */
-    .search-box-wrap {
-      background: rgba(255,255,255,.12);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255,255,255,.28);
-      border-radius: 14px;
-      padding: 16px 18px;
-    }
-    .search-label-row {
-      font-size: .72rem;
-      font-weight: 800;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      opacity: .8;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .search-main-row {
+    /* Search box */
+    .search-box {
       display: flex;
       gap: 8px;
       position: relative;
     }
     #heroSearch {
       flex: 1;
-      padding: 12px 16px;
-      border-radius: 9px;
+      padding: 11px 14px;
+      border-radius: 8px;
       border: 2px solid transparent;
-      font-size: .9rem;
+      font-size: .88rem;
       outline: none;
-      transition: border .2s;
       background: #fff;
       color: var(--text);
     }
-    #heroSearch:focus { border-color: #f97316; }
+    #heroSearch:focus { border-color: var(--accent); }
     #heroSearchBtn {
-      padding: 12px 22px;
-      background: #f97316;
+      padding: 11px 18px;
+      background: var(--accent);
       color: #fff;
       border: none;
-      border-radius: 9px;
+      border-radius: 8px;
       font-weight: 800;
       font-size: .88rem;
       cursor: pointer;
       white-space: nowrap;
-      transition: background .15s;
-      display: flex;
-      align-items: center;
-      gap: 6px;
     }
     #heroSearchBtn:hover { background: #ea580c; }
-    /* Auto-suggest dropdown */
+
+    /* Search suggest */
     #searchSuggest {
       position: absolute;
-      top: calc(100% + 4px);
-      left: 0;
-      right: 0;
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      box-shadow: var(--shadow-lg);
-      z-index: 500;
-      max-height: 280px;
-      overflow-y: auto;
-      display: none;
+      top: calc(100% + 4px); left: 0; right: 0;
+      background: #fff; border: 1px solid var(--border);
+      border-radius: 10px; box-shadow: 0 6px 24px rgba(0,0,0,.15);
+      z-index: 500; max-height: 300px; overflow-y: auto; display: none;
     }
     #searchSuggest.open { display: block; }
     .suggest-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 14px;
-      font-size: .84rem;
-      font-weight: 600;
-      color: var(--text);
-      text-decoration: none;
-      border-bottom: 1px solid #f8fafc;
-      transition: background .1s;
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; font-size: .84rem; font-weight: 600;
+      color: var(--text); text-decoration: none;
+      border-bottom: 1px solid #f8fafc; transition: background .1s;
     }
     .suggest-item:last-child { border-bottom: none; }
     .suggest-item:hover, .suggest-item.active { background: #eff6ff; color: var(--brand2); }
     .suggest-item i { color: var(--brand2); width: 16px; font-size: .8rem; }
     .suggest-no { padding: 12px 14px; font-size: .82rem; color: var(--muted); }
 
-    /* Filter row */
-    .search-filter-row {
-      display: flex;
-      gap: 8px;
-      margin-top: 10px;
-      flex-wrap: wrap;
-      align-items: center;
+    /* Search results panel */
+    .search-results-panel {
+      margin-top: 10px; display: none;
     }
-    .search-filter-row select {
-      flex: 1;
-      min-width: 120px;
-      padding: 9px 10px;
-      border-radius: 8px;
-      border: none;
-      font-size: .8rem;
-      background: rgba(255,255,255,.9);
-      cursor: pointer;
-      color: var(--text);
-      font-weight: 600;
-    }
-    #filterApplyBtn {
-      padding: 9px 16px;
-      background: #1d4ed8;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-weight: 700;
-      cursor: pointer;
-      font-size: .82rem;
-      white-space: nowrap;
-    }
-    #filterApplyBtn:hover { background: #1e3a8a; }
-    .search-results-wrap {
-      margin-top: 10px;
-      display: none;
-    }
-    .search-results-wrap.open { display: block; }
+    .search-results-panel.open { display: block; }
     .search-result-item {
-      display: block;
-      background: rgba(255,255,255,.95);
-      color: var(--text);
-      padding: 9px 13px;
-      border-radius: 7px;
-      margin-bottom: 4px;
-      text-decoration: none;
-      font-size: .83rem;
-      font-weight: 700;
-      transition: background .1s;
+      display: block; background: rgba(255,255,255,.95);
+      color: var(--text); padding: 9px 13px; border-radius: 7px;
+      margin-bottom: 4px; text-decoration: none; font-size: .83rem; font-weight: 700;
     }
     .search-result-item:hover { background: #fff; }
-    .search-no-result {
-      color: rgba(255,255,255,.8);
-      font-size: .8rem;
-      padding: 6px 0;
+    .search-no-result { color: rgba(255,255,255,.8); font-size: .8rem; padding: 6px 0; }
+
+    /* ============================================================
+       QUICK ICON GRID (8 icons like the screenshot)
+    ============================================================ */
+    .icon-grid-wrap {
+      background: #fff;
+      padding: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .icon-grid-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      color: var(--text);
+      padding: 6px 4px;
+    }
+    .icon-grid-item:hover .ig-icon { transform: scale(1.08); }
+    .ig-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      transition: transform .15s;
+    }
+    .ig-icon.red    { background: #fff0f0; color: #dc2626; }
+    .ig-icon.blue   { background: #eff6ff; color: #2563eb; }
+    .ig-icon.green  { background: #f0fdf4; color: #059669; }
+    .ig-icon.purple { background: #f5f3ff; color: #7c3aed; }
+    .ig-icon.orange { background: #fff7ed; color: #f97316; }
+    .ig-icon.teal   { background: #f0fdfa; color: #0d9488; }
+    .ig-icon.indigo { background: #eef2ff; color: #4f46e5; }
+    .ig-icon.pink   { background: #fdf2f8; color: #db2777; }
+    .icon-grid-item span {
+      font-size: .68rem;
+      font-weight: 700;
+      color: var(--text);
+      text-align: center;
+      line-height: 1.3;
     }
 
     /* ============================================================
-       QUICK NAV CHIPS
+       LIVE TICKER
     ============================================================ */
-    .quicknav {
-      background: #fff;
-      border-bottom: 1px solid var(--border);
-      padding: 8px 0;
-      overflow-x: auto;
-      white-space: nowrap;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
+    .hero-ticker {
+      background: #dc2626; color: #fff;
+      font-size: .75rem; font-weight: 700;
+      padding: 6px 0; overflow: hidden; white-space: nowrap;
     }
-    .quicknav::-webkit-scrollbar { display: none; }
-    .quicknav-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 16px;
-      display: flex;
-      gap: 6px;
-    }
-    .qnav-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 5px 13px;
-      border-radius: 20px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      font-size: .74rem;
-      font-weight: 700;
-      color: #374151;
-      text-decoration: none;
-      white-space: nowrap;
-      transition: all .15s;
-      flex-shrink: 0;
-    }
-    .qnav-chip:hover { background: var(--brand2); color: #fff; border-color: var(--brand2); }
-    .qnav-chip.hot { border-color: #dc2626; color: #dc2626; }
-    .qnav-chip.hot:hover { background: #dc2626; color: #fff; }
-    .qnav-chip.new-tag { border-color: #059669; color: #059669; }
-    .qnav-chip.new-tag:hover { background: #059669; color: #fff; }
+    .hero-ticker-inner { display: inline-block; animation: tickerScroll 30s linear infinite; }
+    @keyframes tickerScroll { 0%{transform:translateX(100vw);} 100%{transform:translateX(-100%);} }
+    .hero-ticker-inner a { color: #fff; text-decoration: none; margin-right: 48px; }
+    .hero-ticker-inner a::before { content: "🔴 "; }
+    .hero-ticker-inner a:hover { text-decoration: underline; }
 
     /* ============================================================
        MAIN LAYOUT
     ============================================================ */
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
-    .page { padding-top: 18px; padding-bottom: 24px; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 14px; }
+    .page { padding-top: 14px; padding-bottom: 20px; }
     .home-two-col {
       display: grid;
-      grid-template-columns: 1fr 300px;
-      gap: 22px;
+      grid-template-columns: 1fr 290px;
+      gap: 20px;
       align-items: start;
     }
     @media (max-width: 960px) { .home-two-col { grid-template-columns: 1fr; } }
-    .home-sidebar { position: sticky; top: 76px; }
+    .home-sidebar { position: sticky; top: 70px; }
     @media (max-width: 960px) { .home-sidebar { position: static; } }
 
     /* ============================================================
-       SECTION TITLES
+       SECTION TITLE BAR
     ============================================================ */
     .sec-title-bar {
-      display: flex;
-      align-items: center;
+      display: flex; align-items: center;
       justify-content: space-between;
       padding: 10px 0 8px;
       border-bottom: 2px solid var(--brand2);
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
     .sec-title-bar h2 {
-      font-size: .95rem;
-      font-weight: 900;
-      color: var(--text);
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      margin: 0;
+      font-size: .95rem; font-weight: 900; color: var(--text);
+      display: flex; align-items: center; gap: 7px; margin: 0;
     }
     .sec-title-bar h2 i { color: var(--brand2); }
     .sec-view-all {
-      font-size: .76rem;
-      color: var(--brand2);
-      font-weight: 700;
-      text-decoration: none;
-      background: #eff6ff;
-      padding: 4px 10px;
-      border-radius: 20px;
+      font-size: .74rem; color: var(--brand2); font-weight: 700;
+      text-decoration: none; background: #eff6ff;
+      padding: 4px 10px; border-radius: 20px;
     }
     .sec-view-all:hover { background: var(--brand2); color: #fff; }
-    .cat-section { margin-bottom: 24px; }
+    .cat-section { margin-bottom: 20px; }
 
     /* ============================================================
-       3 ALERT CARDS (Admit / Result / Admission)
+       LATEST JOB NOTIFICATION LIST (screenshot style)
     ============================================================ */
-    .alert-strip {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 22px;
-    }
-    @media (max-width: 640px) { .alert-strip { grid-template-columns: 1fr; } }
-    .alert-card {
-      border-radius: 12px;
-      padding: 16px 18px;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      transition: transform .15s, box-shadow .15s;
-    }
-    .alert-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
-    .alert-card.ac-admit  { background: linear-gradient(135deg, #7c3aed, #5b21b6); }
-    .alert-card.ac-result { background: linear-gradient(135deg, #dc2626, #b91c1c); }
-    .alert-card.ac-admit2 { background: linear-gradient(135deg, #0369a1, #0c4a6e); }
-    .alert-card i { font-size: 1.7rem; color: rgba(255,255,255,.85); }
-    .alert-card-body { color: #fff; }
-    .alert-card-title { font-size: .9rem; font-weight: 800; }
-    .alert-card-sub { font-size: .72rem; opacity: .85; margin-top: 2px; }
-
-    /* ============================================================
-       JOB TABS — Latest + Upcoming side by side
-    ============================================================ */
-    .jobs-tabs-wrap { margin-bottom: 24px; }
-    .tabs-nav {
-      display: flex;
-      gap: 4px;
-      margin-bottom: 12px;
-      background: var(--bg);
-      border-radius: 10px;
-      padding: 4px;
-    }
-    .tab-btn {
-      flex: 1;
-      padding: 8px 12px;
-      border: none;
-      background: transparent;
-      border-radius: 7px;
-      font-size: .8rem;
-      font-weight: 700;
-      color: var(--muted);
-      cursor: pointer;
-      transition: all .15s;
-    }
-    .tab-btn.active { background: #fff; color: var(--brand2); box-shadow: var(--shadow); }
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
-
-    /* ============================================================
-       PINNED / FEATURED JOBS
-    ============================================================ */
-    .pinned-job {
-      background: linear-gradient(135deg, #fff7ed, #fffbeb);
-      border: 1.5px solid #f97316;
-      border-radius: 10px;
-      padding: 14px;
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-      margin-bottom: 10px;
+    .job-notif-list { display: flex; flex-direction: column; gap: 0; }
+    .job-notif-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
       text-decoration: none;
       color: inherit;
-      transition: box-shadow .15s;
     }
-    .pinned-job:hover { box-shadow: 0 4px 16px rgba(249,115,22,.2); }
-    .pinned-icon {
-      background: #f97316;
+    .job-notif-item:last-child { border-bottom: none; }
+    .job-badge {
+      background: var(--red);
       color: #fff;
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1rem;
+      font-size: .6rem;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
       flex-shrink: 0;
+      margin-top: 2px;
+      text-transform: uppercase;
     }
-    .pinned-label { font-size: .68rem; font-weight: 800; color: #f97316; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 3px; }
-    .pinned-title { font-size: .9rem; font-weight: 800; color: var(--text); line-height: 1.4; }
-    .pinned-meta { font-size: .73rem; color: var(--muted); margin-top: 4px; }
+    .job-notif-body { flex: 1; }
+    .job-notif-title {
+      font-size: .85rem;
+      font-weight: 800;
+      color: var(--brand2);
+      line-height: 1.4;
+      margin-bottom: 2px;
+    }
+    .job-notif-item:hover .job-notif-title { text-decoration: underline; }
+    .job-notif-org {
+      font-size: .73rem;
+      color: var(--muted);
+    }
+    .job-notif-date {
+      font-size: .72rem;
+      color: var(--red);
+      font-weight: 700;
+    }
+
+    /* Dynamic sections from script.js */
+    .duo-grid { display: flex; flex-direction: column; gap: 0; }
 
     /* ============================================================
-       CATEGORY CARD GRID
+       JOB CATEGORIES GRID (2-column list style like screenshot)
     ============================================================ */
-    .cat-grid-4 {
+    .cat-grid-2col {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: 1fr 1fr;
       gap: 8px;
     }
-    @media (max-width: 800px) { .cat-grid-4 { grid-template-columns: repeat(3, 1fr); } }
-    @media (max-width: 520px) { .cat-grid-4 { grid-template-columns: repeat(2, 1fr); } }
-    .cat-card {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 13px 10px;
-      text-align: center;
-      text-decoration: none;
-      color: #374151;
-      transition: all .15s;
+    .cat-list-item {
       display: flex;
-      flex-direction: column;
       align-items: center;
-      gap: 6px;
-    }
-    .cat-card:hover { border-color: var(--brand2); background: #eff6ff; color: var(--brand2); }
-    .cat-card i { font-size: 1.3rem; color: var(--brand2); }
-    .cat-card:hover i { color: var(--brand2); }
-    .cat-card-label { font-size: .76rem; font-weight: 700; line-height: 1.3; }
-    .cat-card-count { font-size: .65rem; color: var(--muted); }
-
-    /* ============================================================
-       DEPT / SPECIAL CARDS (wider icons + colored)
-    ============================================================ */
-    .dept-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
       gap: 8px;
-    }
-    @media (max-width: 800px) { .dept-grid { grid-template-columns: repeat(3, 1fr); } }
-    @media (max-width: 520px) { .dept-grid { grid-template-columns: repeat(2, 1fr); } }
-    .dept-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 7px;
-      padding: 14px 10px;
+      padding: 10px 12px;
       background: var(--white);
       border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: 8px;
       text-decoration: none;
       color: var(--text);
-      text-align: center;
+      font-size: .8rem;
+      font-weight: 700;
       transition: all .15s;
     }
-    .dept-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
-    .dept-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      color: #fff;
-    }
-    .dept-name { font-size: .76rem; font-weight: 700; }
-    .dept-sub { font-size: .64rem; color: var(--muted); }
+    .cat-list-item:hover { border-color: var(--brand2); color: var(--brand2); background: #eff6ff; }
+    .cat-list-item i { color: var(--brand2); width: 16px; font-size: .85rem; }
+    .cat-count { font-size: .7rem; font-weight: 600; color: var(--muted); margin-left: auto; }
 
     /* ============================================================
-       STATES GRID
+       IMPORTANT SECTIONS LIST (screenshot Image 2)
     ============================================================ */
-    .states-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-      gap: 6px;
-    }
-    .state-btn {
+    .important-sections-card {
       background: var(--white);
       border: 1px solid var(--border);
-      border-radius: 7px;
-      padding: 8px 10px;
-      text-align: center;
-      text-decoration: none;
-      font-size: .76rem;
-      font-weight: 700;
-      color: #374151;
-      transition: all .15s;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 20px;
     }
-    .state-btn:hover { background: var(--brand2); color: #fff; border-color: var(--brand2); }
+    .is-head {
+      background: linear-gradient(90deg, #0c1f6b, #1a3c8f);
+      color: #fff;
+      font-size: .85rem;
+      font-weight: 900;
+      padding: 12px 16px;
+    }
+    .is-list a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 16px;
+      border-bottom: 1px solid #f1f5f9;
+      text-decoration: none;
+      color: var(--text);
+      transition: background .12s;
+    }
+    .is-list a:last-child { border-bottom: none; }
+    .is-list a:hover { background: #f8faff; }
+    .is-icon {
+      width: 38px; height: 38px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .is-body { flex: 1; }
+    .is-name { font-size: .83rem; font-weight: 800; text-transform: uppercase; letter-spacing: .03em; }
+    .is-sub { font-size: .72rem; color: var(--muted); margin-top: 1px; }
+    .is-arrow { color: #cbd5e1; font-size: .8rem; margin-left: auto; }
 
     /* ============================================================
-       SOCIAL STRIP
+       JOBS BY CATEGORY — chevron list style (screenshot)
     ============================================================ */
-    .social-strip {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 22px;
+    .jcat-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 20px;
     }
-    .social-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 18px;
-      border-radius: 24px;
-      font-size: .8rem;
-      font-weight: 800;
+    .jcat-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .jcat-head h3 { font-size: .9rem; font-weight: 900; }
+    .jcat-head a { font-size: .74rem; color: var(--brand2); text-decoration: none; font-weight: 700; }
+    .jcat-list a {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 16px;
+      border-bottom: 1px solid #f1f5f9;
       text-decoration: none;
-      transition: transform .15s, box-shadow .15s;
-      box-shadow: var(--shadow);
+      color: var(--text);
+      font-size: .83rem;
+      font-weight: 600;
+      transition: background .12s;
     }
-    .social-pill:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
-    .sp-wa { background: #25d366; color: #fff; }
-    .sp-yt { background: #ff0000; color: #fff; }
-    .sp-ig { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: #fff; }
-    .sp-sc { background: #fffc00; color: #000; }
+    .jcat-list a:last-child { border-bottom: none; }
+    .jcat-list a:hover { background: #f8faff; color: var(--brand2); }
+    .jcat-list a i { width: 18px; font-size: 1rem; color: var(--brand2); flex-shrink: 0; }
+    .jcat-arrow { margin-left: auto; color: #cbd5e1; font-size: .8rem; }
+
+    /* ============================================================
+       IMPORTANT UPDATES (screenshot)
+    ============================================================ */
+    .imp-updates {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .imp-updates-head {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .imp-updates-head h3 { font-size: .9rem; font-weight: 900; color: var(--red); }
+    .imp-updates-list a {
+      display: flex; align-items: center;
+      padding: 11px 16px;
+      border-bottom: 1px solid #f1f5f9;
+      text-decoration: none;
+      color: var(--text);
+      font-size: .8rem;
+      font-weight: 600;
+      transition: background .12s;
+    }
+    .imp-updates-list a:last-child { border-bottom: none; }
+    .imp-updates-list a:hover { background: #f8faff; color: var(--brand2); }
+    .imp-updates-list a::before { content: "›"; color: var(--red); font-size: 1rem; font-weight: 900; margin-right: 8px; }
+    .imp-updates-list a .arr { margin-left: auto; color: #cbd5e1; font-size: .8rem; }
+    .imp-updates-more {
+      display: block; text-align: center; padding: 10px;
+      font-size: .8rem; font-weight: 700; color: var(--brand2);
+      text-decoration: none; border-top: 1px solid var(--border);
+    }
+
+    /* ============================================================
+       SOCIAL FOLLOW (screenshot)
+    ============================================================ */
+    .social-follow { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+    .social-btn {
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px; padding: 12px 16px; border-radius: 8px;
+      font-size: .88rem; font-weight: 800; text-decoration: none;
+      transition: opacity .15s;
+    }
+    .social-btn:hover { opacity: .9; }
+    .sb-wa { background: #25d366; color: #fff; }
+    .sb-tg { background: #0088cc; color: #fff; }
+    .sb-yt { background: #ff0000; color: #fff; }
+    .sb-ig { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: #fff; }
+
+    /* ============================================================
+       ADMIT / RESULT / ANSWER KEY / UPCOMING sections (screenshot 3)
+    ============================================================ */
+    .ar-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .ar-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .ar-head h3 { font-size: .9rem; font-weight: 900; }
+    .ar-head a { font-size: .74rem; color: var(--brand2); text-decoration: none; font-weight: 700; }
+    .ar-list a {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 16px;
+      border-bottom: 1px solid #f1f5f9;
+      text-decoration: none; color: var(--text);
+      font-size: .8rem; font-weight: 600; transition: background .12s;
+    }
+    .ar-list a:last-child { border-bottom: none; }
+    .ar-list a:hover { background: #f8faff; color: var(--brand2); }
+    .ar-icon { width: 26px; height: 26px; border-radius: 4px; background: #e0e7ff; display: flex; align-items: center; justify-content: center; font-size: .7rem; color: var(--brand2); flex-shrink: 0; }
+    .ar-more {
+      display: block; text-align: center; padding: 10px;
+      font-size: .8rem; font-weight: 700; color: var(--brand2);
+      text-decoration: none; border-top: 1px solid var(--border);
+    }
+    .ar-more:hover { background: #f0f9ff; }
+
+    /* ============================================================
+       IMPORTANT LINKS GRID (screenshot 3)
+    ============================================================ */
+    .imp-links-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 14px;
+    }
+    .imp-link-btn {
+      display: block; padding: 9px 12px;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 7px; text-align: center;
+      text-decoration: none; font-size: .78rem; font-weight: 700;
+      color: var(--text); transition: all .15s;
+    }
+    .imp-link-btn:hover { background: var(--brand2); color: #fff; border-color: var(--brand2); }
 
     /* ============================================================
        SIDEBAR CARDS
@@ -716,25 +658,18 @@
       font-size: .8rem;
       font-weight: 800;
       padding: 10px 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      display: flex; align-items: center; gap: 8px;
     }
-    .sb-head.red { background: #dc2626; }
-    .sb-head.green { background: #059669; }
+    .sb-head.red    { background: #dc2626; }
+    .sb-head.green  { background: #059669; }
     .sb-head.orange { background: #f97316; }
     .sb-head.purple { background: #7c3aed; }
-    .sb-head.brown { background: #92400e; }
+    .sb-head.brown  { background: #92400e; }
     .sb-list a {
-      display: flex;
-      align-items: center;
-      padding: 9px 14px;
-      font-size: .79rem;
-      color: #374151;
-      text-decoration: none;
-      border-bottom: 1px solid #f1f5f9;
-      gap: 8px;
-      transition: background .12s;
+      display: flex; align-items: center;
+      padding: 9px 14px; font-size: .79rem; color: #374151;
+      text-decoration: none; border-bottom: 1px solid #f1f5f9;
+      gap: 8px; transition: background .12s;
     }
     .sb-list a:last-child { border-bottom: none; }
     .sb-list a:hover { background: #f0f9ff; color: var(--brand2); }
@@ -743,81 +678,55 @@
     .sb-list a .arrow { margin-left: auto; color: #d1d5db; font-size: .62rem; }
 
     /* ============================================================
-       DYNAMIC SECTIONS (from script.js)
+       STATE GRID
     ============================================================ */
-    .duo-grid { display: flex; flex-direction: column; gap: 0; }
+    .states-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 6px;
+    }
+    .state-btn {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 7px; padding: 8px 10px; text-align: center;
+      text-decoration: none; font-size: .76rem; font-weight: 700;
+      color: #374151; transition: all .15s;
+    }
+    .state-btn:hover { background: var(--brand2); color: #fff; border-color: var(--brand2); }
 
     /* ============================================================
-       SEO + FAQ
+       SEO / FAQ
     ============================================================ */
     .seo-block {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 18px;
-      margin-bottom: 18px;
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 12px; padding: 18px; margin-bottom: 18px;
     }
-    .seo-block h2 { font-size: 1rem; font-weight: 800; color: var(--text); margin: 0 0 8px; }
-    .seo-block p { font-size: .83rem; color: var(--muted); line-height: 1.7; margin: 0; }
-    .seo-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-top: 12px;
-    }
-    @media (max-width: 560px) { .seo-grid { grid-template-columns: 1fr; } }
-    .seo-card {
-      background: #f8fafc;
-      border-radius: 8px;
-      padding: 12px 14px;
-    }
-    .seo-card h3 { font-size: .82rem; font-weight: 800; color: var(--text); margin: 0 0 8px; }
-    .faq-wrap { margin-bottom: 18px; }
+    .seo-block h2 { font-size: .95rem; font-weight: 800; margin-bottom: 8px; }
+    .seo-block p { font-size: .82rem; color: var(--muted); line-height: 1.7; }
     .faq-card {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 18px;
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 12px; padding: 18px; margin-bottom: 18px;
     }
-    .faq-card h2 { font-size: 1rem; font-weight: 800; margin: 0 0 4px; }
+    .faq-card h2 { font-size: .95rem; font-weight: 800; margin-bottom: 4px; }
     .faq-sub { font-size: .8rem; color: var(--muted); margin-bottom: 14px; }
     .faq-item { border-bottom: 1px solid var(--border); }
     .faq-item:last-child { border-bottom: none; }
     .faq-btn {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      background: none;
-      border: none;
-      padding: 12px 0;
-      font-size: .83rem;
-      font-weight: 700;
-      color: var(--text);
-      cursor: pointer;
-      text-align: left;
+      width: 100%; display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; background: none; border: none; padding: 12px 0;
+      font-size: .83rem; font-weight: 700; color: var(--text); cursor: pointer; text-align: left;
     }
     .faq-btn i { color: var(--muted); font-size: .7rem; transition: transform .2s; }
     .faq-btn[aria-expanded="true"] i { transform: rotate(180deg); }
-    .faq-panel {
-      font-size: .81rem;
-      color: var(--muted);
-      line-height: 1.7;
-      padding-bottom: 12px;
-    }
+    .faq-panel { font-size: .81rem; color: var(--muted); line-height: 1.7; padding-bottom: 12px; }
 
     /* ============================================================
-       MOBILE BOTTOM BAR
+       MOBILE BOTTOM BAR (5-tab like screenshot)
     ============================================================ */
     .mobile-bottom-bar { display: none; }
-    @media (max-width: 640px) {
+    @media (max-width: 900px) {
       .mobile-bottom-bar {
         display: flex;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
+        position: fixed; bottom: 0; left: 0; right: 0;
         background: #fff;
         border-top: 1px solid var(--border);
         z-index: 200;
@@ -825,157 +734,75 @@
         box-shadow: 0 -2px 12px rgba(0,0,0,.08);
       }
       .mobile-bottom-bar a {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 3px;
-        font-size: .58rem;
-        font-weight: 700;
-        color: #64748b;
-        text-decoration: none;
-        padding: 4px 0;
+        flex: 1; display: flex; flex-direction: column; align-items: center;
+        gap: 3px; font-size: .58rem; font-weight: 700; color: #64748b;
+        text-decoration: none; padding: 4px 0;
       }
       .mobile-bottom-bar a i { font-size: 1.1rem; }
       .mobile-bottom-bar a.active, .mobile-bottom-bar a:hover { color: var(--brand2); }
-      body { padding-bottom: 60px; }
+      body { padding-bottom: 64px; }
     }
 
     /* WhatsApp float */
     .wa-float {
-      position: fixed;
-      bottom: 72px;
-      right: 16px;
-      background: #25d366;
-      color: #fff;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.4rem;
-      box-shadow: 0 4px 14px rgba(37,211,102,.4);
-      text-decoration: none;
-      z-index: 150;
-      transition: transform .2s;
+      position: fixed; bottom: 72px; right: 16px;
+      background: #25d366; color: #fff;
+      width: 46px; height: 46px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; box-shadow: 0 4px 14px rgba(37,211,102,.4);
+      text-decoration: none; z-index: 150; transition: transform .2s;
     }
     .wa-float:hover { transform: scale(1.1); }
-    @media (min-width: 641px) { .wa-float { bottom: 22px; } }
+    @media (min-width: 901px) { .wa-float { bottom: 22px; } }
 
     /* Offcanvas mobile menu */
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.5);
-      z-index: 350;
-    }
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 350; }
     .offcanvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      width: min(320px, 88vw);
-      background: #fff;
-      z-index: 360;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      box-shadow: var(--shadow-lg);
+      position: fixed; top: 0; left: 0; bottom: 0;
+      width: min(320px, 88vw); background: #fff; z-index: 360;
+      overflow-y: auto; display: flex; flex-direction: column;
+      box-shadow: 0 6px 24px rgba(0,0,0,.12);
     }
     .offcanvas-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
       padding: 14px 16px;
       background: linear-gradient(90deg, #0c1f6b, #1558c0);
-      color: #fff;
-      border-bottom: 2px solid #f97316;
+      color: #fff; border-bottom: 2px solid var(--accent);
     }
     .offcanvas-title { font-weight: 900; font-size: 1rem; }
     .offcanvas-close {
-      background: rgba(255,255,255,.15);
-      border: none;
-      color: #fff;
-      width: 34px;
-      height: 34px;
-      border-radius: 7px;
-      cursor: pointer;
-      font-size: .95rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: rgba(255,255,255,.15); border: none; color: #fff;
+      width: 34px; height: 34px; border-radius: 7px; cursor: pointer;
+      font-size: .95rem; display: flex; align-items: center; justify-content: center;
     }
     .offcanvas-nav { display: flex; flex-direction: column; padding: 10px; gap: 3px; }
     .offcanvas-nav a {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 11px 14px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-size: .85rem;
-      font-weight: 700;
-      color: var(--text);
-      transition: background .12s;
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 14px; border-radius: 8px; text-decoration: none;
+      font-size: .85rem; font-weight: 700; color: var(--text); transition: background .12s;
     }
     .offcanvas-nav a:hover { background: #eff6ff; color: var(--brand2); }
     .offcanvas-nav a i { width: 18px; color: var(--brand2); }
     .offcanvas-section {
-      font-size: .68rem;
-      font-weight: 900;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      padding: 10px 14px 4px;
+      font-size: .68rem; font-weight: 900; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--muted); padding: 10px 14px 4px;
     }
-
-    /* Skip link */
-    .skip-link {
-      position: absolute;
-      left: -999px;
-      top: -999px;
-      background: #fff;
-      color: var(--brand2);
-      padding: 8px 16px;
-      font-weight: 700;
-      text-decoration: none;
-      z-index: 9999;
-      border-radius: 0 0 8px 0;
-    }
-    .skip-link:focus { left: 0; top: 0; }
 
     /* Footer */
     .site-footer {
       background: linear-gradient(90deg, #0c1f6b 0%, #1a3c8f 100%);
-      color: rgba(255,255,255,.8);
-      margin-top: 30px;
+      color: rgba(255,255,255,.8); margin-top: 20px;
     }
     .footer-row {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 20px;
-      padding: 24px 16px 16px;
-      flex-wrap: wrap;
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 20px; padding: 20px 16px 14px; flex-wrap: wrap;
     }
-    .footer-title { font-size: 1.1rem; font-weight: 900; color: #fff; margin-bottom: 4px; }
-    .footer-sub { font-size: .78rem; opacity: .75; margin-bottom: 10px; }
-    .footer-links a {
-      color: rgba(255,255,255,.75);
-      text-decoration: none;
-      margin-right: 14px;
-      font-size: .78rem;
-      font-weight: 600;
-    }
+    .footer-title { font-size: 1rem; font-weight: 900; color: #fff; margin-bottom: 4px; }
+    .footer-sub { font-size: .76rem; opacity: .75; margin-bottom: 10px; }
+    .footer-links a { color: rgba(255,255,255,.75); text-decoration: none; margin-right: 14px; font-size: .76rem; font-weight: 600; }
     .footer-links a:hover { color: #fff; }
-    .footer-social a { font-size: 1.4rem; margin-left: 10px; }
-    .footer-bottom {
-      border-top: 1px solid rgba(255,255,255,.1);
-      padding: 12px 16px;
-      font-size: .72rem;
-      color: rgba(255,255,255,.55);
-    }
+    .footer-social a { font-size: 1.3rem; margin-left: 10px; }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,.1); padding: 12px 16px; font-size: .7rem; color: rgba(255,255,255,.5); }
   </style>
 </head>
 
@@ -986,114 +813,209 @@
        STICKY HEADER
   =================================================== -->
   <header class="site-header" id="site-header">
-    <!-- Top bar: quick links + social -->
-    <div class="header-top-bar">
-      <div>
-        <a href="view.html?section=latest%20jobs">Latest Jobs</a>
-        <a href="view.html?section=Jobs%20with%20Last%20date">⏳ Last Date</a>
-        <a href="helpdesk.html">Helpdesk</a>
-        <a href="about.html">About</a>
-      </div>
-      <div class="header-top-social">
-        <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
-        <a href="https://www.instagram.com/topsarkarijobs" target="_blank" rel="noopener" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
-        <a href="https://www.youtube.com/@Topsarkarijobs" target="_blank" rel="noopener" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
-        <a href="https://www.snapchat.com/add/topsarkarijobss" target="_blank" rel="noopener" title="Snapchat"><i class="fa-brands fa-snapchat"></i></a>
-      </div>
-    </div>
 
-    <!-- Main header row -->
-    <div class="header-row">
-      <a class="brand" href="index.html" aria-label="Top Sarkari Jobs Home">
+    <!-- Logo row -->
+    <div class="header-logo-bar">
+      <a class="brand" href="./" aria-label="Top Sarkari Jobs Home">
         <picture>
           <source srcset="image.webp" type="image/webp">
-          <img src="image.png" alt="Top Sarkari Jobs Logo" class="brand-logo" width="44" height="44" fetchpriority="high">
+          <img src="image.png" alt="Top Sarkari Jobs Logo" class="brand-logo" width="36" height="36" fetchpriority="high">
         </picture>
-        <span class="brand-text">
-          <span class="brand-title">Top Sarkari Jobs</span>
-          <span class="brand-subtitle">Latest Govt Jobs, Results, Admit Cards – 2026</span>
-        </span>
+        <span class="brand-title">Top<span>Sarkari</span>Jobs</span>
       </a>
-
-      <!-- Desktop Nav -->
-      <nav class="desktop-nav" aria-label="Primary">
-        <a class="nav-link" href="index.html">Home</a>
-
-        <!-- Jobs Dropdown -->
-        <div class="nav-dd">
-          <button class="nav-link nav-dd-btn" type="button" aria-haspopup="true" aria-expanded="false">
-            Jobs <i class="fa-solid fa-chevron-down"></i>
-          </button>
-          <div class="nav-dd-menu" role="menu">
-            <a role="menuitem" href="view.html?section=latest%20jobs" class="nav-dd-item"><i class="fa-solid fa-bolt"></i> Latest Jobs</a>
-            <a role="menuitem" href="view.html?section=upcoming-jobs" class="nav-dd-item"><i class="fa-solid fa-calendar-plus"></i> Upcoming Jobs</a>
-            <a role="menuitem" href="view.html?section=Jobs%20with%20Last%20date" class="nav-dd-item"><i class="fa-solid fa-clock"></i> Last Date Near</a>
-            <a role="menuitem" href="view.html?section=Top%2020%20Jobs" class="nav-dd-item"><i class="fa-solid fa-medal"></i> Top 20 Jobs</a>
-            <a role="menuitem" href="view.html?section=Latest%20Govt%20Jobs" class="nav-dd-item"><i class="fa-solid fa-globe"></i> All India Jobs</a>
-            <hr style="border:none;border-top:1px solid #f1f5f9;margin:4px 0;">
-            <a role="menuitem" href="category.html?group=study" class="nav-dd-item"><i class="fa-solid fa-graduation-cap"></i> Study Wise</a>
-            <a role="menuitem" href="category.html?group=popular" class="nav-dd-item"><i class="fa-solid fa-star"></i> Popular Categories</a>
-            <a role="menuitem" href="category.html?group=state" class="nav-dd-item"><i class="fa-solid fa-map-location-dot"></i> State Wise</a>
-          </div>
-        </div>
-
-        <!-- Admit/Result Dropdown -->
-        <div class="nav-dd">
-          <button class="nav-link nav-dd-btn" type="button" aria-haspopup="true" aria-expanded="false">
-            Admit &amp; Result <i class="fa-solid fa-chevron-down"></i>
-          </button>
-          <div class="nav-dd-menu" role="menu">
-            <a role="menuitem" href="category.html?group=admit-result" class="nav-dd-item"><i class="fa-solid fa-id-card"></i> Admit Cards 2026</a>
-            <a role="menuitem" href="category.html?group=admissions" class="nav-dd-item"><i class="fa-solid fa-trophy"></i> Latest Results</a>
-            <a role="menuitem" href="view.html?section=Admit%20cards%20Exams%20Date" class="nav-dd-item"><i class="fa-solid fa-calendar-days"></i> Exam Dates</a>
-            <a role="menuitem" href="category.html?group=admissions" class="nav-dd-item"><i class="fa-solid fa-graduation-cap"></i> Admissions 2026</a>
-          </div>
-        </div>
-
-        <!-- Category Dropdown -->
-        <div class="nav-dd">
-          <button class="nav-link nav-dd-btn" type="button" aria-haspopup="true" aria-expanded="false">
-            Categories <i class="fa-solid fa-chevron-down"></i>
-          </button>
-          <div class="nav-dd-menu" role="menu">
-            <a role="menuitem" href="view.html?section=Railway%20Jobs" class="nav-dd-item"><i class="fa-solid fa-train"></i> Railway</a>
-            <a role="menuitem" href="view.html?section=Police%20Jobs" class="nav-dd-item"><i class="fa-solid fa-shield-halved"></i> Police</a>
-            <a role="menuitem" href="view.html?section=Bank%20Jobs" class="nav-dd-item"><i class="fa-solid fa-building-columns"></i> Bank</a>
-            <a role="menuitem" href="view.html?section=Teacher%20Jobs" class="nav-dd-item"><i class="fa-solid fa-chalkboard-user"></i> Teaching</a>
-            <a role="menuitem" href="view.html?section=Indian%20ARMY%20jobs" class="nav-dd-item"><i class="fa-solid fa-star"></i> Army/Defence</a>
-            <a role="menuitem" href="view.html?section=Medical%2F%20Healthcare%20Jobs" class="nav-dd-item"><i class="fa-solid fa-stethoscope"></i> Medical</a>
-            <a role="menuitem" href="view.html?section=Govt%20Scheme%20Yojna" class="nav-dd-item"><i class="fa-solid fa-hand-holding-heart"></i> Govt Schemes</a>
-          </div>
-        </div>
-
-        <a class="nav-link" href="govt-services.html">CSC Services</a>
-        <a class="nav-link" href="tools.html">Tools</a>
-
-        <!-- More Dropdown -->
-        <div class="nav-dd">
-          <button class="nav-link nav-dd-btn" type="button" aria-haspopup="true" aria-expanded="false">
-            More <i class="fa-solid fa-chevron-down"></i>
-          </button>
-          <div class="nav-dd-menu" role="menu">
-            <a role="menuitem" href="category.html?group=khabar" class="nav-dd-item"><i class="fa-solid fa-newspaper"></i> Latest Khabar</a>
-            <a role="menuitem" href="category.html?group=study-material" class="nav-dd-item"><i class="fa-solid fa-book-open"></i> Study Material</a>
-            <a role="menuitem" href="view.html?section=Important%20CSC%20PDF" class="nav-dd-item"><i class="fa-solid fa-file-pdf"></i> Important CSC PDF</a>
-            <a role="menuitem" href="redirect.html?job=important-csc-link&k=5fhb1122kh9b" class="nav-dd-item"><i class="fa-solid fa-link"></i> CSC Links</a>
-            <a role="menuitem" href="resume-maker.html" class="nav-dd-item"><i class="fa-solid fa-file-lines"></i> Resume Maker</a>
-            <a role="menuitem" href="helpdesk.html" class="nav-dd-item"><i class="fa-solid fa-headset"></i> Helpdesk</a>
-          </div>
-        </div>
-
-        <div id="header-links"></div>
-      </nav>
-
-      <div class="header-actions">
+      <div class="header-logo-actions">
+        <!-- Search icon triggers hero search on mobile -->
+        <button class="icon-btn" id="mobileSearchBtn" type="button" aria-label="Search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
         <button id="menuBtn" class="icon-btn" type="button" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
           <i class="fa-solid fa-bars"></i>
         </button>
       </div>
     </div>
+
+    <!-- Desktop Nav -->
+    <nav class="desktop-nav" aria-label="Primary navigation">
+      <a class="nav-link active" href="./">Home</a>
+
+      <div class="nav-dd" data-dd>
+        <button class="nav-link nav-dd-btn" type="button" aria-haspopup="true" aria-expanded="false">
+          Jobs <i class="fa-solid fa-chevron-down"></i>
+        </button>
+        <div class="nav-dd-menu" role="menu">
+          <a role="menuitem" href="view.html?section=latest%20jobs" class="nav-dd-item"><i class="fa-solid fa-bolt"></i> Latest Jobs</a>
+          <a role="menuitem" href="view.html?section=upcoming-jobs" class="nav-dd-item"><i class="fa-solid fa-calendar-plus"></i> Upcoming Jobs</a>
+          <a role="menuitem" href="view.html?section=Jobs%20with%20Last%20date" class="nav-dd-item"><i class="fa-solid fa-clock"></i> Last Date Near</a>
+          <a role="menuitem" href="view.html?section=Top%2020%20Jobs" class="nav-dd-item"><i class="fa-solid fa-medal"></i> Top 20 Jobs</a>
+          <a role="menuitem" href="view.html?section=Latest%20Govt%20Jobs" class="nav-dd-item"><i class="fa-solid fa-globe"></i> All India Jobs</a>
+          <hr style="border:none;border-top:1px solid #f1f5f9;margin:4px 0;">
+          <a role="menuitem" href="category.html?group=study" class="nav-dd-item"><i class="fa-solid fa-graduation-cap"></i> Study Wise</a>
+          <a role="menuitem" href="category.html?group=popular" class="nav-dd-item"><i class="fa-solid fa-star"></i> Popular Categories</a>
+          <a role="menuitem" href="category.html?group=state" class="nav-dd-item"><i class="fa-solid fa-map-location-dot"></i> State Wise</a>
+        </div>
+      </div>
+
+      <div class="nav-dd" data-dd>
+        <button class="nav-link nav-dd-btn" type="button" aria-haspopup="true" aria-expanded="false">
+          Admit &amp; Result <i class="fa-solid fa-chevron-down"></i>
+        </button>
+        <div class="nav-dd-menu" role="menu">
+          <a role="menuitem" href="category.html?group=admit-result" class="nav-dd-item"><i class="fa-solid fa-id-card"></i> Admit Cards 2026</a>
+          <a role="menuitem" href="category.html?group=admissions" class="nav-dd-item"><i class="fa-solid fa-trophy"></i> Latest Results</a>
+          <a role="menuitem" href="view.html?section=Admit%20cards%20Exams%20Date" class="nav-dd-item"><i class="fa-solid fa-calendar-days"></i> Exam Dates</a>
+          <a role="menuitem" href="category.html?group=admissions" class="nav-dd-item"><i class="fa-solid fa-graduation-cap"></i> Admissions 2026</a>
+        </div>
+      </div>
+
+      <div class="nav-dd" data-dd>
+        <button class="nav-link nav-dd-btn" type="button" aria-haspopup="true" aria-expanded="false">
+          Categories <i class="fa-solid fa-chevron-down"></i>
+        </button>
+        <div class="nav-dd-menu" role="menu">
+          <a role="menuitem" href="view.html?section=Railway%20Jobs" class="nav-dd-item"><i class="fa-solid fa-train"></i> Railway</a>
+          <a role="menuitem" href="view.html?section=Police%20Jobs" class="nav-dd-item"><i class="fa-solid fa-shield-halved"></i> Police</a>
+          <a role="menuitem" href="view.html?section=Bank%20Jobs" class="nav-dd-item"><i class="fa-solid fa-building-columns"></i> Bank</a>
+          <a role="menuitem" href="view.html?section=Teacher%20Jobs" class="nav-dd-item"><i class="fa-solid fa-chalkboard-user"></i> Teaching</a>
+          <a role="menuitem" href="view.html?section=Indian%20ARMY%20jobs" class="nav-dd-item"><i class="fa-solid fa-star"></i> Army/Defence</a>
+          <a role="menuitem" href="view.html?section=Medical%2F%20Healthcare%20Jobs" class="nav-dd-item"><i class="fa-solid fa-stethoscope"></i> Medical</a>
+          <a role="menuitem" href="view.html?section=Govt%20Scheme%20Yojna" class="nav-dd-item"><i class="fa-solid fa-hand-holding-heart"></i> Govt Schemes</a>
+        </div>
+      </div>
+
+      <a class="nav-link" href="govt-services.html">CSC Services</a>
+      <a class="nav-link" href="tools.html">Tools</a>
+
+      <div class="nav-dd" data-dd>
+        <button class="nav-link nav-dd-btn" type="button" aria-haspopup="true" aria-expanded="false">
+          More <i class="fa-solid fa-chevron-down"></i>
+        </button>
+        <div class="nav-dd-menu" role="menu">
+          <a role="menuitem" href="category.html?group=khabar" class="nav-dd-item"><i class="fa-solid fa-newspaper"></i> Latest Khabar</a>
+          <a role="menuitem" href="category.html?group=study-material" class="nav-dd-item"><i class="fa-solid fa-book-open"></i> Study Material</a>
+          <a role="menuitem" href="resume-maker.html" class="nav-dd-item"><i class="fa-solid fa-file-lines"></i> Resume Maker</a>
+          <a role="menuitem" href="helpdesk.html" class="nav-dd-item"><i class="fa-solid fa-headset"></i> Helpdesk</a>
+        </div>
+      </div>
+    </nav>
+
   </header>
+
+  <!-- ===================================================
+       HERO BANNER + SEARCH
+  =================================================== -->
+  <section class="hero-banner" aria-label="Search government jobs" id="hero-search-section">
+    <div class="hero-tagline">🇮🇳 India's No.1</div>
+    <h1 class="hero-h1">Sarkari Job Portal</h1>
+    <p class="hero-sub">Get Latest Govt Jobs, Admit Card, Result, Answer Key &amp; More Updates Daily.</p>
+
+    <div style="position:relative;">
+      <div class="search-box">
+        <input id="heroSearch" type="search" placeholder="Search for jobs, exams..." autocomplete="off" aria-label="Search jobs" aria-autocomplete="list" aria-controls="searchSuggest"/>
+        <button id="heroSearchBtn" type="button">Search</button>
+      </div>
+      <div id="searchSuggest" role="listbox" aria-label="Search suggestions"></div>
+    </div>
+    <div class="search-results-panel" id="heroSearchResults"></div>
+  </section>
+
+  <!-- ===================================================
+       JOB CATEGORIES QUICK LINKS (replaces icon grid)
+  =================================================== -->
+  <div class="job-cat-quick-wrap">
+    <div class="job-cat-quick-header">
+      <span><i class="fa-solid fa-th-large"></i> Job Categories</span>
+      <a href="category.html?group=popular">View All</a>
+    </div>
+    <div class="job-cat-quick-grid">
+      <a href="view.html?section=10th%20Pass%20jobs" class="jcq-item">
+        <span class="jcq-name">10th Pass Jobs</span>
+        <span class="jcq-count">1250+</span>
+      </a>
+      <a href="view.html?section=12th%20Pass%20jobs" class="jcq-item">
+        <span class="jcq-name">12th Pass Jobs</span>
+        <span class="jcq-count">2100+</span>
+      </a>
+      <a href="view.html?section=ITI%20Pass%20jobs" class="jcq-item">
+        <span class="jcq-name">ITI Jobs</span>
+        <span class="jcq-count">850+</span>
+      </a>
+      <a href="view.html?section=Diploma%20Jobs" class="jcq-item">
+        <span class="jcq-name">Diploma Jobs</span>
+        <span class="jcq-count">1250+</span>
+      </a>
+      <a href="view.html?section=Graduation%20jobs" class="jcq-item">
+        <span class="jcq-name">Graduate Jobs</span>
+        <span class="jcq-count">5200+</span>
+      </a>
+      <a href="view.html?section=Post%20Graduation%20jobs" class="jcq-item">
+        <span class="jcq-name">Post Graduate Jobs</span>
+        <span class="jcq-count">1470+</span>
+      </a>
+      <a href="view.html?section=B.Tech%20Jobs" class="jcq-item">
+        <span class="jcq-name">B.Tech / M.Tech Jobs</span>
+        <span class="jcq-count">930+</span>
+      </a>
+      <a href="view.html?section=Railway%20Jobs" class="jcq-item">
+        <span class="jcq-name">Railway Jobs</span>
+        <span class="jcq-count">340+</span>
+      </a>
+    </div>
+
+    <!-- State Wise Jobs row — same bar as Job Categories -->
+    <div class="job-cat-quick-header" style="border-top:1px solid rgba(255,255,255,.15);">
+      <span><i class="fa-solid fa-map-location-dot"></i> State Wise Jobs</span>
+      <a href="category.html?group=state">View All</a>
+    </div>
+    <div class="job-cat-quick-grid jcq-states">
+      <a href="view.html?section=Haryana%20All%20State%20Jobs" class="jcq-item">Haryana</a>
+      <a href="view.html?section=State%20jobs" class="jcq-item">Uttar Pradesh</a>
+      <a href="view.html?section=State%20jobs" class="jcq-item">Bihar</a>
+      <a href="view.html?section=State%20jobs" class="jcq-item">Rajasthan</a>
+      <a href="view.html?section=State%20jobs" class="jcq-item">Delhi</a>
+      <a href="view.html?section=State%20jobs" class="jcq-item">Maharashtra</a>
+      <a href="view.html?section=State%20jobs" class="jcq-item">Madhya Pradesh</a>
+      <a href="view.html?section=State%20jobs" class="jcq-item">Gujarat</a>
+      <a href="view.html?section=State%20jobs" class="jcq-item">Punjab</a>
+      <a href="view.html?section=State%20jobs" class="jcq-item">Tamil Nadu</a>
+      <a href="view.html?section=State%20jobs" class="jcq-item">Karnataka</a>
+      <a href="view.html?section=State%20jobs" class="jcq-item">Uttarakhand</a>
+      <a href="view.html?section=State%20jobs" class="jcq-item">Jharkhand</a>
+      <a href="view.html?section=State%20jobs" class="jcq-item">Odisha</a>
+      <a href="view.html?section=State%20jobs" class="jcq-item">Himachal</a>
+      <a href="category.html?group=state" class="jcq-item" style="font-weight:800;color:var(--brand2);">All States →</a>
+    </div>
+
+    <!-- Important Sections row -->
+    <div class="job-cat-quick-header" style="border-top:1px solid rgba(255,255,255,.15);">
+      <span><i class="fa-solid fa-star"></i> Important Sections</span>
+    </div>
+    <div class="job-cat-quick-grid">
+      <a href="view.html?section=latest%20jobs" class="jcq-item jcq-imp">
+        <i class="fa-solid fa-briefcase"></i><span class="jcq-name">Latest Jobs</span>
+      </a>
+      <a href="category.html?group=admit-result" class="jcq-item jcq-imp">
+        <i class="fa-solid fa-id-card"></i><span class="jcq-name">Admit Card</span>
+      </a>
+      <a href="category.html?group=admissions" class="jcq-item jcq-imp">
+        <i class="fa-solid fa-trophy"></i><span class="jcq-name">Results</span>
+      </a>
+      <a href="category.html?group=admit-result" class="jcq-item jcq-imp">
+        <i class="fa-solid fa-key"></i><span class="jcq-name">Answer Key</span>
+      </a>
+      <a href="view.html?section=upcoming-jobs" class="jcq-item jcq-imp">
+        <i class="fa-solid fa-calendar-alt"></i><span class="jcq-name">Upcoming Jobs</span>
+      </a>
+      <a href="view.html?section=Syllabus" class="jcq-item jcq-imp">
+        <i class="fa-solid fa-book-open"></i><span class="jcq-name">Syllabus</span>
+      </a>
+      <a href="tools.html" class="jcq-item jcq-imp">
+        <i class="fa-solid fa-screwdriver-wrench"></i><span class="jcq-name">Free Tools</span>
+      </a>
+      <a href="govt-services.html" class="jcq-item jcq-imp">
+        <i class="fa-solid fa-id-badge"></i><span class="jcq-name">CSC Services</span>
+      </a>
+    </div>
+  </div>
 
   <!-- ===================================================
        LIVE TICKER
@@ -1113,505 +1035,109 @@
   </div>
 
   <!-- ===================================================
-       HERO BANNER + ADVANCED SEARCH
-  =================================================== -->
-  <section class="hero-banner" aria-label="Search government jobs">
-    <div class="hero-inner">
-      <div class="hero-tagline">🇮🇳 India's Trusted Govt Job Portal — Updated Daily</div>
-      <h1 class="hero-h1">Latest Sarkari Jobs 2026 – Govt Naukri, Results &amp; Admit Cards</h1>
-      <p class="hero-sub">SSC • Railway • Bank • Police • Defence • State PSC • Teaching – Updated Daily</p>
-
-      <div class="search-box-wrap">
-        <div class="search-label-row">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          Search Sarkari नौकरियाँ — Just Click Below
-        </div>
-        <p style="font-size:.74rem;opacity:.7;margin:0 0 10px;">Search job categories, results, admit cards…</p>
-
-        <div style="position:relative;">
-          <div class="search-main-row">
-            <input id="heroSearch" type="search" placeholder="Search: SSC CGL, RRB NTPC, IBPS PO, Police, 10th Pass, Haryana…" autocomplete="off" aria-label="Search jobs" aria-autocomplete="list" aria-controls="searchSuggest"/>
-            <button id="heroSearchBtn" type="button"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
-          </div>
-          <!-- Auto-suggest dropdown -->
-          <div id="searchSuggest" role="listbox" aria-label="Search suggestions"></div>
-        </div>
-
-        <!-- Filters -->
-        <div class="search-filter-row">
-          <select id="filterQual" aria-label="Filter by qualification">
-            <option value="">📚 All Qualifications</option>
-            <option value="8th%20Pass">8th Pass</option>
-            <option value="10th%20Pass%20jobs">10th Pass</option>
-            <option value="12th%20Pass%20jobs">12th Pass</option>
-            <option value="ITI%20Pass%20jobs">ITI</option>
-            <option value="Diploma%20Jobs">Diploma</option>
-            <option value="B.A%20Pass">B.A Pass</option>
-            <option value="Graduation%20jobs">Graduation</option>
-            <option value="Post%20Graduation%20jobs">Post Graduation</option>
-            <option value="B.Tech%20Jobs">B.Tech / M.Tech</option>
-          </select>
-          <select id="filterDept" aria-label="Filter by department">
-            <option value="">🏢 All Departments</option>
-            <option value="Railway%20Jobs">Railway</option>
-            <option value="Police%20Jobs">Police</option>
-            <option value="Bank%20Jobs">Bank</option>
-            <option value="Teacher%20Jobs">Teaching</option>
-            <option value="Indian%20ARMY%20jobs">Army / Defence</option>
-            <option value="Medical%2F%20Healthcare%20Jobs">Medical</option>
-            <option value="Central%20jobs">Central Govt</option>
-            <option value="Offline%20jobs">Offline Jobs</option>
-          </select>
-          <select id="filterState" aria-label="Filter by state">
-            <option value="">📍 All States</option>
-            <option value="Haryana%20All%20State%20Jobs">Haryana</option>
-            <option value="State%20jobs">UP / Bihar / Raj</option>
-            <option value="State%20jobs">Delhi</option>
-            <option value="State%20jobs">Maharashtra</option>
-            <option value="Central%20jobs">Central Govt</option>
-          </select>
-          <button id="filterApplyBtn" type="button"><i class="fa-solid fa-filter"></i> Filter</button>
-        </div>
-
-        <!-- Results inside banner -->
-        <div class="search-results-wrap" id="heroSearchResults"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================================================
-       QUICK NAV CHIPS
-  =================================================== -->
-  <nav class="quicknav" aria-label="Quick category navigation">
-    <div class="quicknav-inner">
-      <a class="qnav-chip hot" href="view.html?section=latest%20jobs"><i class="fa-solid fa-fire"></i> Latest Jobs</a>
-      <a class="qnav-chip hot" href="view.html?section=Jobs%20with%20Last%20date"><i class="fa-solid fa-clock"></i> Last Date</a>
-      <a class="qnav-chip new-tag" href="view.html?section=upcoming-jobs"><i class="fa-solid fa-calendar-plus"></i> Upcoming</a>
-      <a class="qnav-chip" href="view.html?section=Top%2020%20Jobs"><i class="fa-solid fa-medal"></i> Top 20</a>
-      <a class="qnav-chip" href="view.html?section=Railway%20Jobs"><i class="fa-solid fa-train"></i> Railway</a>
-      <a class="qnav-chip" href="view.html?section=Bank%20Jobs"><i class="fa-solid fa-building-columns"></i> Bank</a>
-      <a class="qnav-chip" href="view.html?section=Police%20Jobs"><i class="fa-solid fa-shield-halved"></i> Police</a>
-      <a class="qnav-chip" href="view.html?section=Teacher%20Jobs"><i class="fa-solid fa-chalkboard-user"></i> Teacher</a>
-      <a class="qnav-chip" href="view.html?section=Indian%20ARMY%20jobs"><i class="fa-solid fa-star"></i> Army/Defence</a>
-      <a class="qnav-chip" href="category.html?group=admit-result"><i class="fa-solid fa-id-card"></i> Admit Card</a>
-      <a class="qnav-chip" href="category.html?group=admissions"><i class="fa-solid fa-trophy"></i> Results</a>
-      <a class="qnav-chip" href="view.html?section=Govt%20Scheme%20Yojna"><i class="fa-solid fa-hand-holding-heart"></i> Schemes</a>
-      <a class="qnav-chip" href="tools.html"><i class="fa-solid fa-screwdriver-wrench"></i> Tools</a>
-      <a class="qnav-chip" href="govt-services.html"><i class="fa-solid fa-id-card"></i> CSC</a>
-    </div>
-  </nav>
-
-  <!-- ===================================================
        MAIN CONTENT
   =================================================== -->
   <main id="main" class="container page">
 
-    <!-- 3 ALERT CARDS -->
-    <div class="alert-strip" aria-label="Important sections">
-      <a href="category.html?group=admit-result" class="alert-card ac-admit">
-        <i class="fa-solid fa-id-card"></i>
-        <div class="alert-card-body">
-          <div class="alert-card-title">Admit Cards 2026</div>
-          <div class="alert-card-sub">Download hall tickets</div>
-        </div>
-      </a>
-      <a href="category.html?group=admissions" class="alert-card ac-result">
-        <i class="fa-solid fa-trophy"></i>
-        <div class="alert-card-body">
-          <div class="alert-card-title">Latest Results 2026</div>
-          <div class="alert-card-sub">Check exam results</div>
-        </div>
-      </a>
-      <a href="view.html?section=Admit%20cards%20Exams%20Date" class="alert-card ac-admit2">
-        <i class="fa-solid fa-calendar-days"></i>
-        <div class="alert-card-body">
-          <div class="alert-card-title">Admission / Education</div>
-          <div class="alert-card-sub">Exam dates & admissions</div>
-        </div>
-      </a>
-    </div>
-
-    <!-- TWO-COLUMN LAYOUT -->
     <div class="home-two-col">
 
       <!-- ===== MAIN COLUMN ===== -->
       <div>
 
-        <!-- PINNED FEATURED JOBS -->
-        <section class="cat-section" aria-label="Featured jobs">
+        <!-- LATEST JOB NOTIFICATIONS (dynamic from script.js) -->
+        <section class="cat-section" aria-label="Latest Job Notifications">
           <div class="sec-title-bar">
-            <h2><i class="fa-solid fa-thumbtack"></i> Featured &amp; Trending</h2>
-            <a href="view.html?section=Top%2020%20Jobs" class="sec-view-all">View All →</a>
+            <h2><i class="fa-solid fa-bolt"></i> Latest Job Notifications</h2>
+            <a href="view.html?section=latest%20jobs" class="sec-view-all">View All</a>
           </div>
-          <a href="view.html?section=Top%2020%20Jobs" class="pinned-job">
-            <div class="pinned-icon"><i class="fa-solid fa-fire-flame-curved"></i></div>
-            <div>
-              <div class="pinned-label">🔥 Top Trending Jobs 2026</div>
-              <div class="pinned-title">Most Applied Government Jobs This Week – Don't Miss Deadline</div>
-              <div class="pinned-meta"><i class="fa-solid fa-arrow-right"></i> SSC, Railway, Banking, Police &amp; More | Updated Today</div>
+          <!-- Dynamic sections injected by script.js - shown as 2 columns -->
+          <div id="dynamic-sections" class="duo-grid duo-grid-2col"></div>
+        </section>
+
+        <!-- TWO-COLUMN GRID: sections shown side-by-side like the screenshot image -->
+        <div class="below-notif-grid">
+
+          <!-- LEFT COLUMN: Admit Cards & Exams Date (dynamic from script.js) — NO colored header -->
+          <div class="bng-col">
+            <div class="sb-card">
+              <div class="bng-section-title bng-green">
+                <i class="fa-solid fa-id-card"></i> Admit Cards &amp; Exams Date
+              </div>
+              <div class="sb-list bng-list" id="dynamic-admit-cards">
+                <a href="view.html?section=Admit%20cards%20Exams%20Date"><i class="fa-solid fa-circle" style="font-size:.45rem;color:#94a3b8;"></i><span>View All Admit Cards 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              </div>
+              <a href="view.html?section=Admit%20cards%20Exams%20Date" class="ar-more">View More →</a>
             </div>
-          </a>
-          <a href="view.html?section=Jobs%20with%20Last%20date" class="pinned-job">
-            <div class="pinned-icon" style="background:#dc2626;"><i class="fa-solid fa-clock"></i></div>
-            <div>
-              <div class="pinned-label" style="color:#dc2626;">⏳ Last Date Approaching</div>
-              <div class="pinned-title">नौकरियां जिनकी अंतिम तिथि नजदीक है – Apply Before Too Late</div>
-              <div class="pinned-meta">Check closing dates &amp; apply now on official portals</div>
+          </div><!-- /left col -->
+
+          <!-- RIGHT COLUMN: Latest Results (dynamic from script.js) — NO colored header -->
+          <div class="bng-col">
+            <div class="sb-card">
+              <div class="bng-section-title bng-purple">
+                <i class="fa-solid fa-trophy"></i> Latest Results
+              </div>
+              <div class="sb-list bng-list" id="dynamic-results">
+                <a href="category.html?group=admissions"><i class="fa-solid fa-circle" style="font-size:.45rem;color:#94a3b8;"></i><span>View All Results 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              </div>
+              <a href="category.html?group=admissions" class="ar-more">View More →</a>
             </div>
-          </a>
-        </section>
+          </div><!-- /right col -->
 
-        <!-- LATEST + UPCOMING JOBS (TAB TOGGLE) -->
-        <section class="jobs-tabs-wrap cat-section" aria-label="Latest and upcoming government jobs 2026">
-          <div class="sec-title-bar">
-            <h2><i class="fa-solid fa-bolt"></i> Jobs Feed</h2>
-            <a href="view.html?section=latest%20jobs" class="sec-view-all">View All →</a>
-          </div>
-          <div class="tabs-nav" role="tablist">
-            <button class="tab-btn active" role="tab" aria-selected="true" data-tab="tab-latest">
-              <i class="fa-solid fa-fire"></i> Latest Jobs
-            </button>
-            <button class="tab-btn" role="tab" aria-selected="false" data-tab="tab-upcoming">
-              <i class="fa-solid fa-calendar-plus"></i> Upcoming Jobs
-            </button>
-            <button class="tab-btn" role="tab" aria-selected="false" data-tab="tab-india">
-              <i class="fa-solid fa-globe"></i> All India
-            </button>
-          </div>
-          <div id="tab-latest" class="tab-panel active">
-            <div id="dynamic-sections" class="duo-grid"></div>
-          </div>
-          <div id="tab-upcoming" class="tab-panel">
-            <div id="dynamic-upcoming" class="duo-grid"></div>
-          </div>
-          <div id="tab-india" class="tab-panel">
-            <div id="dynamic-india" class="duo-grid"></div>
-          </div>
-        </section>
+        </div><!-- /below-notif-grid -->
 
-        <!-- JOBS BY QUALIFICATION -->
-        <section class="cat-section" aria-label="Government jobs by qualification">
-          <div class="sec-title-bar">
-            <h2><i class="fa-solid fa-graduation-cap"></i> Jobs by Qualification</h2>
-            <a href="category.html?group=study" class="sec-view-all">View All →</a>
-          </div>
-          <div class="cat-grid-4">
-            <a href="view.html?section=8th%20Pass" class="cat-card">
-              <i class="fa-solid fa-school"></i>
-              <span class="cat-card-label">8th Pass</span>
-              <span class="cat-card-count">Peon, Helper &amp; More</span>
-            </a>
-            <a href="view.html?section=10th%20Pass%20jobs" class="cat-card">
-              <i class="fa-solid fa-certificate"></i>
-              <span class="cat-card-label">10th Pass</span>
-              <span class="cat-card-count">Railway, Police &amp; More</span>
-            </a>
-            <a href="view.html?section=12th%20Pass%20jobs" class="cat-card">
-              <i class="fa-solid fa-file-certificate"></i>
-              <span class="cat-card-label">12th Pass</span>
-              <span class="cat-card-count">SSC CHSL, Clerk &amp; More</span>
-            </a>
-            <a href="view.html?section=ITI%20Pass%20jobs" class="cat-card">
-              <i class="fa-solid fa-tools"></i>
-              <span class="cat-card-label">ITI Pass</span>
-              <span class="cat-card-count">Technical Posts</span>
-            </a>
-            <a href="view.html?section=Diploma%20Jobs" class="cat-card">
-              <i class="fa-solid fa-scroll"></i>
-              <span class="cat-card-label">Diploma</span>
-              <span class="cat-card-count">PSU &amp; Technical</span>
-            </a>
-            <a href="view.html?section=B.A%20Pass" class="cat-card">
-              <i class="fa-solid fa-user-graduate"></i>
-              <span class="cat-card-label">B.A Pass</span>
-              <span class="cat-card-count">Clerk, Officer Posts</span>
-            </a>
-            <a href="view.html?section=Graduation%20jobs" class="cat-card">
-              <i class="fa-solid fa-university"></i>
-              <span class="cat-card-label">Graduation</span>
-              <span class="cat-card-count">SSC CGL, UPSC</span>
-            </a>
-            <a href="view.html?section=Post%20Graduation%20jobs" class="cat-card">
-              <i class="fa-solid fa-user-tie"></i>
-              <span class="cat-card-label">Post Graduation</span>
-              <span class="cat-card-count">Professor, Specialist</span>
-            </a>
-            <a href="view.html?section=B.Tech%20Jobs" class="cat-card">
-              <i class="fa-solid fa-microchip"></i>
-              <span class="cat-card-label">B.Tech / M.Tech</span>
-              <span class="cat-card-count">Engineer, JE Posts</span>
-            </a>
-            <a href="view.html?section=Medical%2F%20Healthcare%20Jobs" class="cat-card">
-              <i class="fa-solid fa-stethoscope"></i>
-              <span class="cat-card-label">Medical Jobs</span>
-              <span class="cat-card-count">Doctor, Nurse, AIIMS</span>
-            </a>
-            <a href="view.html?section=Offline%20jobs" class="cat-card">
-              <i class="fa-solid fa-file-pen"></i>
-              <span class="cat-card-label">Offline Jobs</span>
-              <span class="cat-card-count">Walk-in, Postal Apply</span>
-            </a>
-            <a href="category.html?group=study" class="cat-card" style="border-style:dashed;">
-              <i class="fa-solid fa-ellipsis"></i>
-              <span class="cat-card-label">All Categories</span>
-              <span class="cat-card-count">Browse More →</span>
-            </a>
-          </div>
-        </section>
+        <!-- BELOW GRID: Jobs by Category + Important Links + Follow Us (full width) -->
+        <div class="full-width-sections">
 
-        <!-- JOBS BY DEPARTMENT (with colored icons) -->
-        <section class="cat-section" aria-label="Government jobs by department">
-          <div class="sec-title-bar">
-            <h2><i class="fa-solid fa-building-flag"></i> Jobs by Department</h2>
-            <a href="category.html?group=popular" class="sec-view-all">View All →</a>
+          <!-- Jobs by Category -->
+          <div class="sb-card cat-section">
+            <div class="sb-head" style="background:#1a3c8f;"><i class="fa-solid fa-briefcase"></i> Jobs by Category</div>
+            <div class="sb-list">
+              <a href="view.html?section=Railway%20Jobs"><i class="fa-solid fa-train"></i><span>Railway Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Bank%20Jobs"><i class="fa-solid fa-building-columns"></i><span>Bank Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Police%20Jobs"><i class="fa-solid fa-shield-halved"></i><span>Police Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Indian%20ARMY%20jobs"><i class="fa-solid fa-star"></i><span>Defence Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Teacher%20Jobs"><i class="fa-solid fa-chalkboard-user"></i><span>Teaching Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Latest%20Govt%20Jobs"><i class="fa-solid fa-building"></i><span>All India Govt Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=State%20jobs"><i class="fa-solid fa-map-location-dot"></i><span>State Govt Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Central%20jobs"><i class="fa-solid fa-flag"></i><span>Central Govt Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+            </div>
+            <a href="category.html?group=popular" class="ar-more">View All Categories →</a>
           </div>
-          <div class="dept-grid">
-            <a href="view.html?section=Railway%20Jobs" class="dept-card">
-              <div class="dept-icon" style="background:#ea580c;"><i class="fa-solid fa-train"></i></div>
-              <div class="dept-name">Railway</div>
-              <div class="dept-sub">RRB, RRC, NTPC</div>
-            </a>
-            <a href="view.html?section=Police%20Jobs" class="dept-card">
-              <div class="dept-icon" style="background:#1d4ed8;"><i class="fa-solid fa-shield-halved"></i></div>
-              <div class="dept-name">Police</div>
-              <div class="dept-sub">Constable, SI</div>
-            </a>
-            <a href="view.html?section=Bank%20Jobs" class="dept-card">
-              <div class="dept-icon" style="background:#059669;"><i class="fa-solid fa-building-columns"></i></div>
-              <div class="dept-name">Bank</div>
-              <div class="dept-sub">IBPS, SBI, RBI</div>
-            </a>
-            <a href="view.html?section=Teacher%20Jobs" class="dept-card">
-              <div class="dept-icon" style="background:#7c3aed;"><i class="fa-solid fa-chalkboard-user"></i></div>
-              <div class="dept-name">Teaching</div>
-              <div class="dept-sub">TET, CTET, PGT</div>
-            </a>
-            <a href="view.html?section=Indian%20ARMY%20jobs" class="dept-card">
-              <div class="dept-icon" style="background:#dc2626;"><i class="fa-solid fa-star"></i></div>
-              <div class="dept-name">Army/Navy/AF</div>
-              <div class="dept-sub">Defence Recruitment</div>
-            </a>
-            <a href="view.html?section=Medical%2F%20Healthcare%20Jobs" class="dept-card">
-              <div class="dept-icon" style="background:#0891b2;"><i class="fa-solid fa-stethoscope"></i></div>
-              <div class="dept-name">Medical / Health</div>
-              <div class="dept-sub">AIIMS, NHM</div>
-            </a>
-            <a href="view.html?section=Central%20jobs" class="dept-card">
-              <div class="dept-icon" style="background:#1a3c8f;"><i class="fa-solid fa-flag"></i></div>
-              <div class="dept-name">Central Govt</div>
-              <div class="dept-sub">Ministries, UPSC</div>
-            </a>
-            <a href="view.html?section=Govt%20Scheme%20Yojna" class="dept-card">
-              <div class="dept-icon" style="background:#059669;"><i class="fa-solid fa-hand-holding-heart"></i></div>
-              <div class="dept-name">Govt Schemes</div>
-              <div class="dept-sub">Yojana &amp; Benefits</div>
-            </a>
-          </div>
-        </section>
 
-        <!-- SPECIAL SECTIONS -->
-        <section class="cat-section" aria-label="Special sections">
-          <div class="sec-title-bar">
-            <h2><i class="fa-solid fa-layer-group"></i> Special Sections</h2>
-            <a href="category.html?group=popular" class="sec-view-all">View All →</a>
+          <!-- Important Links -->
+          <div class="sb-card cat-section">
+            <div class="sb-head" style="background:#7c3aed;"><i class="fa-solid fa-link"></i> Important Links</div>
+            <div class="imp-links-grid">
+              <a href="view.html?section=Latest%20Govt%20Jobs" class="imp-link-btn">All India Jobs</a>
+              <a href="view.html?section=State%20jobs" class="imp-link-btn">State Jobs</a>
+              <a href="view.html?section=Bank%20Jobs" class="imp-link-btn">Bank Jobs</a>
+              <a href="view.html?section=Railway%20Jobs" class="imp-link-btn">Railway Jobs</a>
+              <a href="view.html?section=Police%20Jobs" class="imp-link-btn">Police Jobs</a>
+              <a href="view.html?section=Admit%20cards%20Exams%20Date" class="imp-link-btn">Exam Calendar</a>
+              <a href="view.html?section=Syllabus" class="imp-link-btn">Syllabus</a>
+              <a href="category.html?group=study-material" class="imp-link-btn">Study Material</a>
+              <a href="view.html?section=Govt%20Scheme%20Yojna" class="imp-link-btn">Govt Schemes</a>
+              <a href="category.html?group=khabar" class="imp-link-btn">Current Affairs</a>
+            </div>
           </div>
-          <div class="cat-grid-4">
-            <a href="view.html?section=Top%2020%20Jobs" class="cat-card">
-              <i class="fa-solid fa-medal" style="color:#d97706;"></i>
-              <span class="cat-card-label">Top 20 Jobs</span>
-              <span class="cat-card-count">Most Popular</span>
-            </a>
-            <a href="view.html?section=Haryana%20All%20State%20Jobs" class="cat-card">
-              <i class="fa-solid fa-location-dot" style="color:#059669;"></i>
-              <span class="cat-card-label">Haryana Jobs</span>
-              <span class="cat-card-count">All State Vacancies</span>
-            </a>
-            <a href="view.html?section=State%20jobs" class="cat-card">
-              <i class="fa-solid fa-map-location-dot" style="color:#7c3aed;"></i>
-              <span class="cat-card-label">State Jobs</span>
-              <span class="cat-card-count">All State Recruitment</span>
-            </a>
-            <a href="view.html?section=Central%20jobs" class="cat-card">
-              <i class="fa-solid fa-flag" style="color:#1a3c8f;"></i>
-              <span class="cat-card-label">Central Jobs</span>
-              <span class="cat-card-count">Central Govt Posts</span>
-            </a>
-            <a href="view.html?section=Govt%20Scheme%20Yojna" class="cat-card">
-              <i class="fa-solid fa-hand-holding-heart" style="color:#059669;"></i>
-              <span class="cat-card-label">Govt Schemes</span>
-              <span class="cat-card-count">Yojana &amp; Benefits</span>
-            </a>
-            <a href="category.html?group=khabar" class="cat-card">
-              <i class="fa-solid fa-newspaper" style="color:#92400e;"></i>
-              <span class="cat-card-label">Latest Khabar</span>
-              <span class="cat-card-count">News &amp; Updates</span>
-            </a>
-            <a href="category.html?group=study-material" class="cat-card">
-              <i class="fa-solid fa-book-open" style="color:#7c3aed;"></i>
-              <span class="cat-card-label">Study Material</span>
-              <span class="cat-card-count">Top Courses</span>
-            </a>
-            <a href="view.html?section=Important%20CSC%20PDF" class="cat-card">
-              <i class="fa-solid fa-file-pdf" style="color:#dc2626;"></i>
-              <span class="cat-card-label">CSC PDF</span>
-              <span class="cat-card-count">Important Docs</span>
-            </a>
-          </div>
-        </section>
 
-        <!-- ADMIT CARD / RESULT / ADMISSION -->
-        <section class="cat-section" aria-label="Admit cards results admissions">
-          <div class="sec-title-bar">
-            <h2><i class="fa-solid fa-calendar-check"></i> Admit Card / Result / Admission</h2>
+          <!-- Follow Us -->
+          <div class="sb-card cat-section">
+            <div class="sb-head" style="background:#f97316;"><i class="fa-solid fa-bell"></i> Follow Us</div>
+            <div style="padding:12px;display:flex;flex-direction:column;gap:8px;">
+              <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" class="social-btn sb-wa"><i class="fa-brands fa-whatsapp"></i> Join WhatsApp</a>
+              <a href="https://t.me/topsarkarijobs" target="_blank" rel="noopener" class="social-btn sb-tg"><i class="fa-brands fa-telegram"></i> Join Telegram</a>
+              <a href="https://www.youtube.com/@Topsarkarijobs" target="_blank" rel="noopener" class="social-btn sb-yt"><i class="fa-brands fa-youtube"></i> YouTube</a>
+              <a href="https://www.instagram.com/topsarkarijobs" target="_blank" rel="noopener" class="social-btn sb-ig"><i class="fa-brands fa-instagram"></i> Instagram</a>
+            </div>
           </div>
-          <div class="dept-grid">
-            <a href="category.html?group=admit-result" class="dept-card">
-              <div class="dept-icon" style="background:#7c3aed;"><i class="fa-solid fa-id-card"></i></div>
-              <div class="dept-name">Admit Cards</div>
-              <div class="dept-sub">Exam Hall Tickets</div>
-            </a>
-            <a href="category.html?group=admissions" class="dept-card">
-              <div class="dept-icon" style="background:#dc2626;"><i class="fa-solid fa-trophy"></i></div>
-              <div class="dept-name">Latest Results</div>
-              <div class="dept-sub">Check Exam Results</div>
-            </a>
-            <a href="view.html?section=Admit%20cards%20Exams%20Date" class="dept-card">
-              <div class="dept-icon" style="background:#0369a1;"><i class="fa-solid fa-calendar-days"></i></div>
-              <div class="dept-name">Exam Dates</div>
-              <div class="dept-sub">Schedule &amp; Timetable</div>
-            </a>
-            <a href="category.html?group=admissions" class="dept-card">
-              <div class="dept-icon" style="background:#059669;"><i class="fa-solid fa-graduation-cap"></i></div>
-              <div class="dept-name">Admissions</div>
-              <div class="dept-sub">Education &amp; Colleges</div>
-            </a>
-          </div>
-        </section>
 
-        <!-- STATE WISE JOBS -->
-        <section class="cat-section" aria-label="State wise government jobs">
-          <div class="sec-title-bar">
-            <h2><i class="fa-solid fa-map-location-dot"></i> State Wise Jobs</h2>
-            <a href="category.html?group=state" class="sec-view-all">View All States →</a>
-          </div>
-          <div class="states-grid">
-            <a href="view.html?section=Haryana%20All%20State%20Jobs" class="state-btn">Haryana</a>
-            <a href="view.html?section=State%20jobs" class="state-btn">Uttar Pradesh</a>
-            <a href="view.html?section=State%20jobs" class="state-btn">Bihar</a>
-            <a href="view.html?section=State%20jobs" class="state-btn">Rajasthan</a>
-            <a href="view.html?section=State%20jobs" class="state-btn">Delhi</a>
-            <a href="view.html?section=State%20jobs" class="state-btn">Maharashtra</a>
-            <a href="view.html?section=State%20jobs" class="state-btn">Madhya Pradesh</a>
-            <a href="view.html?section=State%20jobs" class="state-btn">Gujarat</a>
-            <a href="view.html?section=State%20jobs" class="state-btn">Punjab</a>
-            <a href="view.html?section=State%20jobs" class="state-btn">Tamil Nadu</a>
-            <a href="view.html?section=State%20jobs" class="state-btn">Karnataka</a>
-            <a href="view.html?section=State%20jobs" class="state-btn">Uttarakhand</a>
-            <a href="view.html?section=State%20jobs" class="state-btn">Jharkhand</a>
-            <a href="view.html?section=State%20jobs" class="state-btn">Odisha</a>
-            <a href="view.html?section=State%20jobs" class="state-btn">Himachal</a>
-            <a href="category.html?group=state" class="state-btn" style="border-style:dashed;">All States →</a>
-          </div>
-        </section>
-
-        <!-- TOOLS & SERVICES -->
-        <section class="cat-section" aria-label="Tools and CSC services">
-          <div class="sec-title-bar">
-            <h2><i class="fa-solid fa-screwdriver-wrench"></i> Free Tools &amp; CSC Services</h2>
-          </div>
-          <div class="dept-grid">
-            <a href="tools.html" class="dept-card">
-              <div class="dept-icon" style="background:#1a3c8f;"><i class="fa-solid fa-image"></i></div>
-              <div class="dept-name">Image Tools</div>
-              <div class="dept-sub">Resize, Crop, Convert</div>
-            </a>
-            <a href="tools.html" class="dept-card">
-              <div class="dept-icon" style="background:#dc2626;"><i class="fa-solid fa-file-pdf"></i></div>
-              <div class="dept-name">PDF Tools</div>
-              <div class="dept-sub">Merge, Compress, Edit</div>
-            </a>
-            <a href="govt-services.html" class="dept-card">
-              <div class="dept-icon" style="background:#059669;"><i class="fa-solid fa-id-card"></i></div>
-              <div class="dept-name">CSC Services</div>
-              <div class="dept-sub">Income, EWS, OBC Cert</div>
-            </a>
-            <a href="resume-maker.html" class="dept-card">
-              <div class="dept-icon" style="background:#7c3aed;"><i class="fa-solid fa-file-lines"></i></div>
-              <div class="dept-name">Resume Maker</div>
-              <div class="dept-sub">Free CV Builder</div>
-            </a>
-            <a href="view.html?section=Important%20CSC%20PDF" class="dept-card">
-              <div class="dept-icon" style="background:#d97706;"><i class="fa-solid fa-file-pdf"></i></div>
-              <div class="dept-name">CSC PDF</div>
-              <div class="dept-sub">Important Documents</div>
-            </a>
-            <a href="redirect.html?job=important-csc-link&k=5fhb1122kh9b" class="dept-card">
-              <div class="dept-icon" style="background:#0891b2;"><i class="fa-solid fa-link"></i></div>
-              <div class="dept-name">CSC Links</div>
-              <div class="dept-sub">Important Portals</div>
-            </a>
-            <a href="helpdesk.html" class="dept-card">
-              <div class="dept-icon" style="background:#374151;"><i class="fa-solid fa-headset"></i></div>
-              <div class="dept-name">Helpdesk</div>
-              <div class="dept-sub">Support &amp; Queries</div>
-            </a>
-            <a href="tools.html" class="dept-card">
-              <div class="dept-icon" style="background:#ea580c;"><i class="fa-solid fa-video"></i></div>
-              <div class="dept-name">Video Tools</div>
-              <div class="dept-sub">Cut, Merge, Convert</div>
-            </a>
-          </div>
-        </section>
-
-        <!-- SOCIAL FOLLOW -->
-        <section class="cat-section" aria-label="Follow us on social media">
-          <div class="sec-title-bar">
-            <h2><i class="fa-solid fa-bell"></i> जॉब अलर्ट पाएं – Join Now</h2>
-          </div>
-          <div class="social-strip">
-            <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" class="social-pill sp-wa">
-              <i class="fa-brands fa-whatsapp"></i> WhatsApp Channel Join करें
-            </a>
-            <a href="https://www.youtube.com/@Topsarkarijobs" target="_blank" rel="noopener" class="social-pill sp-yt">
-              <i class="fa-brands fa-youtube"></i> YouTube Subscribe
-            </a>
-            <a href="https://www.instagram.com/topsarkarijobs" target="_blank" rel="noopener" class="social-pill sp-ig">
-              <i class="fa-brands fa-instagram"></i> Instagram Follow
-            </a>
-            <a href="https://www.snapchat.com/add/topsarkarijobss" target="_blank" rel="noopener" class="social-pill sp-sc">
-              <i class="fa-brands fa-snapchat"></i> Snapchat
-            </a>
-          </div>
-        </section>
+        </div><!-- /full-width-sections -->
 
         <!-- SEO CONTENT -->
         <section class="seo-block" aria-label="About sarkari jobs 2026">
           <h2>Latest Sarkari Jobs 2026 – Sarkari Result, Online Form, Admit Card &amp; Government Recruitment</h2>
           <p>Top Sarkari Jobs is India's trusted platform for latest government job notifications, sarkari results, admit cards, and online forms. We cover SSC, Railway RRB, IBPS Banking, UPSC, Police, Defence, Teaching, State PSC and all central &amp; state government vacancies – updated daily.</p>
-          <div class="seo-grid">
-            <div class="seo-card">
-              <h3>Popular Searches</h3>
-              <ul style="list-style:disc;margin-left:18px;color:var(--muted);line-height:1.8;font-size:.83rem;">
-                <li><a href="view.html?section=latest%20jobs">Latest Government Jobs 2026</a></li>
-                <li><a href="category.html?group=admissions">Sarkari Result 2026 Today</a></li>
-                <li><a href="category.html?group=admit-result">Admit Card 2026 Download</a></li>
-                <li><a href="view.html?section=Railway%20Jobs">Railway Recruitment 2026</a></li>
-                <li><a href="view.html?section=10th%20Pass%20jobs">10th Pass Sarkari Naukri</a></li>
-                <li><a href="view.html?section=12th%20Pass%20jobs">12th Pass Govt Jobs</a></li>
-                <li><a href="view.html?section=Haryana%20All%20State%20Jobs">Haryana Sarkari Jobs</a></li>
-              </ul>
-            </div>
-            <div class="seo-card">
-              <h3>Official Portals</h3>
-              <ul style="list-style:none;margin:0;color:var(--muted);line-height:1.8;font-size:.83rem;">
-                <li>UPSC – <a href="https://upsc.gov.in" target="_blank" rel="noopener">upsc.gov.in</a></li>
-                <li>SSC – <a href="https://ssc.gov.in" target="_blank" rel="noopener">ssc.gov.in</a></li>
-                <li>NTA – <a href="https://nta.ac.in" target="_blank" rel="noopener">nta.ac.in</a></li>
-                <li>IBPS – <a href="https://ibps.in" target="_blank" rel="noopener">ibps.in</a></li>
-                <li>Railway – <a href="https://indianrailways.gov.in" target="_blank" rel="noopener">indianrailways.gov.in</a></li>
-              </ul>
-            </div>
-          </div>
         </section>
 
         <!-- FAQ -->
@@ -1621,7 +1147,7 @@
             <p class="faq-sub">Common questions about government jobs, results and admit cards.</p>
             <div class="faq-item">
               <button type="button" class="faq-btn" aria-expanded="false"><span>How to find latest government jobs in 2026?</span><i class="fas fa-chevron-down"></i></button>
-              <div class="faq-panel" hidden>Visit Top Sarkari Jobs daily for the latest government job notifications. Use the search bar above to find jobs by qualification, department or state. All links direct to official recruitment portals.</div>
+              <div class="faq-panel" hidden>Visit Top Sarkari Jobs daily for the latest government job notifications. Use the search bar above to find jobs by qualification, department or state.</div>
             </div>
             <div class="faq-item">
               <button type="button" class="faq-btn" aria-expanded="false"><span>Are notifications on this site updated daily?</span><i class="fas fa-chevron-down"></i></button>
@@ -1629,22 +1155,18 @@
             </div>
             <div class="faq-item">
               <button type="button" class="faq-btn" aria-expanded="false"><span>How to check Sarkari Result 2026?</span><i class="fas fa-chevron-down"></i></button>
-              <div class="faq-panel" hidden>Visit our <a href="category.html?group=admissions">Results page</a> for the latest sarkari results. Click the official link to download your scorecard from the recruitment board's portal.</div>
+              <div class="faq-panel" hidden>Visit our <a href="category.html?group=admissions">Results page</a> for the latest sarkari results.</div>
             </div>
             <div class="faq-item">
               <button type="button" class="faq-btn" aria-expanded="false"><span>Are there jobs for 10th / 12th pass candidates?</span><i class="fas fa-chevron-down"></i></button>
-              <div class="faq-panel" hidden>Yes! Railway, Police, Defence and various departments regularly release vacancies for 10th and 12th pass candidates. Browse <a href="view.html?section=10th%20Pass%20jobs">10th Pass Jobs</a> or <a href="view.html?section=12th%20Pass%20jobs">12th Pass Jobs</a>.</div>
-            </div>
-            <div class="faq-item">
-              <button type="button" class="faq-btn" aria-expanded="false"><span>How to download admit card?</span><i class="fas fa-chevron-down"></i></button>
-              <div class="faq-panel" hidden>Visit our <a href="category.html?group=admit-result">Admit Card page</a>, find your exam, and click the official download link. You will need to log in with your registration number and date of birth on the official portal.</div>
+              <div class="faq-panel" hidden>Yes! Railway, Police, Defence and various departments regularly release vacancies for 10th and 12th pass candidates.</div>
             </div>
           </div>
         </section>
 
       </div><!-- /main col -->
 
-      <!-- ===== SIDEBAR ===== -->
+      <!-- ===== SIDEBAR (desktop only) ===== -->
       <aside class="home-sidebar" aria-label="Quick links sidebar">
 
         <div class="sb-card">
@@ -1678,7 +1200,6 @@
             <a href="view.html?section=Teacher%20Jobs"><i class="fa-solid fa-chalkboard-user"></i><span>Teacher Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
             <a href="view.html?section=Indian%20ARMY%20jobs"><i class="fa-solid fa-star"></i><span>Army/Navy/AF</span><i class="fa-solid fa-chevron-right arrow"></i></a>
             <a href="view.html?section=Medical%2F%20Healthcare%20Jobs"><i class="fa-solid fa-stethoscope"></i><span>Medical Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="view.html?section=Offline%20jobs"><i class="fa-solid fa-file-pen"></i><span>Offline Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
           </div>
         </div>
 
@@ -1700,23 +1221,12 @@
             <a href="tools.html"><i class="fa-solid fa-image"></i><span>Photo &amp; PDF Tools</span><i class="fa-solid fa-chevron-right arrow"></i></a>
             <a href="govt-services.html"><i class="fa-solid fa-id-card"></i><span>CSC Services</span><i class="fa-solid fa-chevron-right arrow"></i></a>
             <a href="resume-maker.html"><i class="fa-solid fa-file-lines"></i><span>Resume Maker</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="view.html?section=Important%20CSC%20PDF"><i class="fa-solid fa-file-pdf"></i><span>CSC PDF</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="redirect.html?job=important-csc-link&k=5fhb1122kh9b"><i class="fa-solid fa-link"></i><span>CSC Links</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-          </div>
-        </div>
-
-        <div class="sb-card">
-          <div class="sb-head brown"><i class="fa-solid fa-newspaper"></i> More Pages</div>
-          <div class="sb-list">
-            <a href="category.html?group=khabar"><i class="fa-solid fa-rss"></i><span>Latest Khabar</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="category.html?group=study-material"><i class="fa-solid fa-book-open"></i><span>Study Material</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="view.html?section=Govt%20Scheme%20Yojna"><i class="fa-solid fa-hand-holding-heart"></i><span>Govt Schemes</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="view.html?section=Haryana%20All%20State%20Jobs"><i class="fa-solid fa-location-dot"></i><span>Haryana Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
             <a href="helpdesk.html"><i class="fa-solid fa-headset"></i><span>Helpdesk</span><i class="fa-solid fa-chevron-right arrow"></i></a>
           </div>
         </div>
 
       </aside>
+
     </div><!-- /two-col -->
 
   </main>
@@ -1745,13 +1255,13 @@
     <div class="container footer-bottom">© 2026 Top Sarkari Jobs. All rights reserved. | Not a Government Website – Verify on Official Portals.</div>
   </footer>
 
-  <!-- Mobile bottom bar -->
+  <!-- Mobile bottom bar (5-tab) -->
   <nav class="mobile-bottom-bar" aria-label="Mobile navigation">
-    <a href="index.html" class="active"><i class="fa-solid fa-house"></i>Home</a>
+    <a href="./" class="active"><i class="fa-solid fa-house"></i>Home</a>
     <a href="view.html?section=latest%20jobs"><i class="fa-solid fa-fire"></i>Jobs</a>
-    <a href="category.html?group=admit-result"><i class="fa-solid fa-id-card"></i>Admit</a>
-    <a href="category.html?group=admissions"><i class="fa-solid fa-trophy"></i>Result</a>
-    <a href="tools.html"><i class="fa-solid fa-screwdriver-wrench"></i>Tools</a>
+    <a href="category.html?group=admit-result"><i class="fa-solid fa-id-card"></i>Admit Card</a>
+    <a href="category.html?group=admissions"><i class="fa-solid fa-trophy"></i>Results</a>
+    <a href="tools.html"><i class="fa-solid fa-ellipsis"></i>More</a>
   </nav>
 
   <!-- WhatsApp float button -->
@@ -1768,7 +1278,7 @@
     </div>
     <nav class="offcanvas-nav" aria-label="Mobile primary">
       <div class="offcanvas-section">Main</div>
-      <a href="index.html"><i class="fa-solid fa-house"></i>Home</a>
+      <a href="./"><i class="fa-solid fa-house"></i>Home</a>
       <a href="view.html?section=latest%20jobs"><i class="fa-solid fa-fire"></i>Latest Jobs</a>
       <a href="view.html?section=upcoming-jobs"><i class="fa-solid fa-calendar-plus"></i>Upcoming Jobs</a>
       <a href="view.html?section=Top%2020%20Jobs"><i class="fa-solid fa-medal"></i>Top 20 Jobs</a>
@@ -1810,15 +1320,12 @@
   (function () {
     'use strict';
 
-    // ---- Full searchable index ----
     const ALL_LINKS = [
-      // Main Job Sections
       { text: 'Latest Jobs 2026', href: 'view.html?section=latest%20jobs', icon: 'fa-fire', tags: 'latest naukri vacancy new' },
       { text: 'Upcoming Jobs', href: 'view.html?section=upcoming-jobs', icon: 'fa-calendar-plus', tags: 'upcoming future new' },
       { text: 'India All Current Running Jobs', href: 'view.html?section=Latest%20Govt%20Jobs', icon: 'fa-globe', tags: 'all india govt central' },
       { text: 'Last Date Near Jobs', href: 'view.html?section=Jobs%20with%20Last%20date', icon: 'fa-clock', tags: 'last date deadline urgent' },
       { text: 'Top 20 Jobs 2026', href: 'view.html?section=Top%2020%20Jobs', icon: 'fa-medal', tags: 'top best popular trending' },
-      // Qualification Wise
       { text: '8th Pass Jobs', href: 'view.html?section=8th%20Pass', icon: 'fa-school', tags: '8th eighth primary' },
       { text: '10th Pass Jobs', href: 'view.html?section=10th%20Pass%20jobs', icon: 'fa-certificate', tags: '10th tenth matric pass' },
       { text: '12th Pass Jobs', href: 'view.html?section=12th%20Pass%20jobs', icon: 'fa-file-certificate', tags: '12th twelfth intermediate pass' },
@@ -1828,7 +1335,6 @@
       { text: 'B.A Pass Jobs', href: 'view.html?section=B.A%20Pass', icon: 'fa-user-graduate', tags: 'ba arts graduate pass' },
       { text: 'Graduation Jobs', href: 'view.html?section=Graduation%20jobs', icon: 'fa-university', tags: 'graduation graduate degree' },
       { text: 'Post Graduation Jobs', href: 'view.html?section=Post%20Graduation%20jobs', icon: 'fa-user-tie', tags: 'post graduation pg masters mba' },
-      // Category Wise
       { text: 'Medical / Healthcare Jobs', href: 'view.html?section=Medical%2F%20Healthcare%20Jobs', icon: 'fa-stethoscope', tags: 'medical doctor nurse aiims health hospital' },
       { text: 'Offline Jobs', href: 'view.html?section=Offline%20jobs', icon: 'fa-file-pen', tags: 'offline walkin postal apply' },
       { text: 'Railway Jobs 2026', href: 'view.html?section=Railway%20Jobs', icon: 'fa-train', tags: 'railway rrb rrrc ntpc group d loco' },
@@ -1836,31 +1342,20 @@
       { text: 'Bank Jobs 2026', href: 'view.html?section=Bank%20Jobs', icon: 'fa-building-columns', tags: 'bank ibps sbi rbi po clerk' },
       { text: 'Teacher Jobs 2026', href: 'view.html?section=Teacher%20Jobs', icon: 'fa-chalkboard-user', tags: 'teacher tet ctet pgt tgt school' },
       { text: 'Army / Navy / Air Force Jobs', href: 'view.html?section=Indian%20ARMY%20jobs', icon: 'fa-star', tags: 'army navy air force defence military agniveer' },
-      // Special
       { text: 'Govt Scheme & Yojna', href: 'view.html?section=Govt%20Scheme%20Yojna', icon: 'fa-hand-holding-heart', tags: 'govt scheme yojana benefit pm' },
       { text: 'State Jobs', href: 'view.html?section=State%20jobs', icon: 'fa-map-location-dot', tags: 'state up bihar rajasthan delhi punjab' },
       { text: 'Central Govt Jobs', href: 'view.html?section=Central%20jobs', icon: 'fa-flag', tags: 'central ministry ssc upsc govt' },
       { text: 'Haryana All State Jobs', href: 'view.html?section=Haryana%20All%20State%20Jobs', icon: 'fa-location-dot', tags: 'haryana hssc hpsc jobs state' },
-      // Admit / Result
       { text: 'Admit Cards 2026', href: 'category.html?group=admit-result', icon: 'fa-id-card', tags: 'admit card hall ticket download exam' },
       { text: 'Latest Results 2026', href: 'category.html?group=admissions', icon: 'fa-trophy', tags: 'result sarkari result declared' },
       { text: 'Admission / Education', href: 'view.html?section=Admit%20cards%20Exams%20Date', icon: 'fa-calendar-days', tags: 'admission education college exam date' },
-      // Pages
-      { text: 'Important CSC PDF', href: 'view.html?section=Important%20CSC%20PDF', icon: 'fa-file-pdf', tags: 'csc pdf document important' },
-      { text: 'Important CSC Link', href: 'redirect.html?job=important-csc-link&k=5fhb1122kh9b', icon: 'fa-link', tags: 'csc link portal' },
       { text: 'Free Tools – Image PDF Video', href: 'tools.html', icon: 'fa-screwdriver-wrench', tags: 'tools image pdf resize compress video' },
       { text: 'CSC Government Services', href: 'govt-services.html', icon: 'fa-id-card', tags: 'csc service income ews obc sc certificate' },
       { text: 'Resume Maker', href: 'resume-maker.html', icon: 'fa-file-lines', tags: 'resume cv maker build' },
       { text: 'Study Wise Jobs', href: 'category.html?group=study', icon: 'fa-graduation-cap', tags: 'study wise qualification jobs' },
-      { text: 'Popular Job Categories', href: 'category.html?group=popular', icon: 'fa-star', tags: 'popular category jobs' },
-      { text: 'State Wise Jobs Browse', href: 'category.html?group=state', icon: 'fa-map-location-dot', tags: 'state wise all states browse' },
-      { text: 'Admissions 2026', href: 'category.html?group=admissions', icon: 'fa-graduation-cap', tags: 'admission college university 2026' },
-      { text: 'Latest Khabar', href: 'category.html?group=khabar', icon: 'fa-newspaper', tags: 'khabar news update alert' },
-      { text: 'Study Material & Top Courses', href: 'category.html?group=study-material', icon: 'fa-book-open', tags: 'study material notes courses pdf' },
       { text: 'Helpdesk & Support', href: 'helpdesk.html', icon: 'fa-headset', tags: 'help support contact helpdesk query' },
     ];
 
-    // Typo-tolerance: Levenshtein distance
     function levenshtein(a, b) {
       const m = a.length, n = b.length;
       const dp = Array.from({ length: m + 1 }, (_, i) => Array.from({ length: n + 1 }, (_, j) => i === 0 ? j : j === 0 ? i : 0));
@@ -1876,32 +1371,75 @@
       const haystack = (link.text + ' ' + (link.tags || '')).toLowerCase();
       const query = q.toLowerCase().trim();
       if (!query) return 0;
-
       const words = query.split(/\s+/);
       let score = 0;
-
       for (const word of words) {
         if (haystack.includes(word)) {
           score += word.length >= 4 ? 10 : 6;
         } else {
-          // Typo tolerance: check each word in haystack
           for (const hw of haystack.split(/\s+/)) {
             if (hw.length < 3) continue;
             const dist = levenshtein(word, hw.substring(0, word.length + 2));
-            if (dist <= Math.ceil(word.length * 0.4)) {
-              score += 4;
-              break;
-            }
+            if (dist <= Math.ceil(word.length * 0.4)) { score += 4; break; }
           }
         }
       }
-      // Bonus for title match
       if (link.text.toLowerCase().includes(query)) score += 5;
       return score;
     }
 
+    // Also load dynamic data from JSON files for richer search
+    let dynamicLinks = [];
+    Promise.all([
+      fetch('dynamic-sections.json').then(r => r.ok ? r.json() : {}).catch(() => ({})),
+      fetch('jobs.json').then(r => r.ok ? r.json() : {}).catch(() => ({})),
+      fetch('header_links.json').then(r => r.ok ? r.json() : {}).catch(() => ({})),
+    ]).then(([dyn, jobs, hl]) => {
+      if (dyn.sections) {
+        dyn.sections.forEach(s => (s.items || []).forEach(i => {
+          const name = (i.name || i.title || '').trim();
+          const url  = (i.url  || i.link  || '').trim();
+          if (name && url) dynamicLinks.push({ text: name, href: url, icon: 'fa-briefcase', tags: s.title || '' });
+        }));
+      }
+      [jobs.top_jobs, jobs.left_jobs, jobs.right_jobs].forEach(arr => {
+        (arr || []).forEach(i => {
+          const name = (i.name || i.title || '').trim();
+          const url  = (i.url  || i.link  || '').trim();
+          if (name && url) dynamicLinks.push({ text: name, href: url, icon: 'fa-briefcase', tags: 'category' });
+        });
+      });
+      if (Array.isArray(hl)) {
+        hl.forEach(i => {
+          const name = (i.name || i.title || '').trim();
+          const url  = (i.url  || i.link  || '').trim();
+          if (name && url) dynamicLinks.push({ text: name, href: url, icon: 'fa-link', tags: 'header' });
+        });
+      }
+
+      // Also populate dynamic Admit Cards & Results lists on homepage
+      if (dyn.sections) {
+        const admitSection = dyn.sections.find(s => /admit|exam date/i.test(s.title || ''));
+        const resultSection = dyn.sections.find(s => /result/i.test(s.title || ''));
+        function fillList(sectionData, containerId, fallbackHref) {
+          const el = document.getElementById(containerId);
+          if (!el || !sectionData) return;
+          const items = (sectionData.items || []).slice(0, 10);
+          if (!items.length) return;
+          el.innerHTML = items.map(i => {
+            const name = (i.name || i.title || '').trim();
+            const href = (i.url || i.link || fallbackHref).trim();
+            return `<a href="${href}"><i class="fa-solid fa-circle" style="font-size:.5rem;"></i><span>${name}</span><i class="fa-solid fa-chevron-right arrow"></i></a>`;
+          }).join('');
+        }
+        fillList(admitSection, 'dynamic-admit-cards', 'view.html?section=Admit%20cards%20Exams%20Date');
+        fillList(resultSection, 'dynamic-results', 'category.html?group=admissions');
+      }
+    }).catch(() => {});
+
     function search(q) {
-      return ALL_LINKS
+      const combined = [...ALL_LINKS, ...dynamicLinks];
+      return combined
         .map(l => ({ ...l, score: scoreMatch(l, q) }))
         .filter(l => l.score > 0)
         .sort((a, b) => b.score - a.score)
@@ -1912,11 +1450,11 @@
       return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
     }
 
-    const input     = document.getElementById('heroSearch');
-    const btn       = document.getElementById('heroSearchBtn');
-    const suggest   = document.getElementById('searchSuggest');
+    const input = document.getElementById('heroSearch');
+    const btn = document.getElementById('heroSearchBtn');
+    const suggest = document.getElementById('searchSuggest');
     const resultsWrap = document.getElementById('heroSearchResults');
-    let activeIdx   = -1;
+    let activeIdx = -1;
 
     function showSuggest(q) {
       if (!q.trim() || q.length < 2) { hideSuggest(); return; }
@@ -1945,7 +1483,7 @@
       if (!q.trim()) { resultsWrap.classList.remove('open'); return; }
       resultsWrap.classList.add('open');
       if (!results.length) {
-        resultsWrap.innerHTML = '<div class="search-no-result">कोई result नहीं मिला। Try: SSC, Railway, Bank, 10th pass, Haryana…</div>';
+        resultsWrap.innerHTML = '<div class="search-no-result">No result found. Try: SSC, Railway, Bank, 10th pass, Haryana…</div>';
       } else {
         resultsWrap.innerHTML = results.map(r =>
           `<a class="search-result-item" href="${escHtml(r.href)}">
@@ -1956,7 +1494,6 @@
       hideSuggest();
     }
 
-    // Keyboard navigation in suggest
     input.addEventListener('keydown', function (e) {
       const items = suggest.querySelectorAll('.suggest-item');
       if (e.key === 'ArrowDown') {
@@ -1968,11 +1505,8 @@
         items.forEach((el, i) => el.classList.toggle('active', i === activeIdx));
         e.preventDefault();
       } else if (e.key === 'Enter') {
-        if (activeIdx >= 0 && items[activeIdx]) {
-          window.location.href = items[activeIdx].href;
-        } else {
-          showResults(input.value);
-        }
+        if (activeIdx >= 0 && items[activeIdx]) { window.location.href = items[activeIdx].href; }
+        else { showResults(input.value); }
         e.preventDefault();
       } else if (e.key === 'Escape') {
         hideSuggest();
@@ -1995,28 +1529,17 @@
 
     btn.addEventListener('click', () => showResults(input.value));
 
-    // Filter apply
-    document.getElementById('filterApplyBtn').addEventListener('click', function () {
-      const qual  = document.getElementById('filterQual').value;
-      const dept  = document.getElementById('filterDept').value;
-      const state = document.getElementById('filterState').value;
-      const target = qual || dept || state;
-      window.location.href = target
-        ? 'view.html?section=' + target
-        : 'view.html?section=latest%20jobs';
-    });
-
-    // ---- TABS ----
-    document.querySelectorAll('.tab-btn').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
-        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-        this.classList.add('active');
-        this.setAttribute('aria-selected', 'true');
-        const target = document.getElementById(this.dataset.tab);
-        if (target) target.classList.add('active');
+    // Mobile search icon — scroll to hero search
+    const mobileSearchBtn = document.getElementById('mobileSearchBtn');
+    if (mobileSearchBtn) {
+      mobileSearchBtn.addEventListener('click', function () {
+        const hero = document.getElementById('hero-search-section');
+        if (hero) {
+          hero.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          setTimeout(() => input.focus(), 400);
+        }
       });
-    });
+    }
 
     // ---- FAQ ----
     document.querySelectorAll('.faq-btn').forEach(function (btn) {
@@ -2050,14 +1573,13 @@
     if (closeBtn) closeBtn.addEventListener('click', closeMenu);
     if (overlay)  overlay.addEventListener('click', closeMenu);
 
-    // ---- Desktop nav dropdowns (keyboard) ----
+    // ---- Desktop nav dropdowns ----
     document.querySelectorAll('.nav-dd').forEach(function (dd) {
       const btn = dd.querySelector('.nav-dd-btn');
       const menu = dd.querySelector('.nav-dd-menu');
       if (btn && menu) {
         btn.addEventListener('click', function () {
           const open = btn.getAttribute('aria-expanded') === 'true';
-          // close all others
           document.querySelectorAll('.nav-dd-btn').forEach(b => b.setAttribute('aria-expanded', 'false'));
           document.querySelectorAll('.nav-dd-menu').forEach(m => m.style.display = '');
           if (!open) {
@@ -2074,6 +1596,17 @@
       }
     });
 
+    // Wire heroSearch to also trigger script.js initGlobalLiveSearch (uses id heroSearch as siteSearchInput alias)
+    // script.js looks for id=siteSearchInput — add alias
+    document.addEventListener('DOMContentLoaded', function() {
+      const heroInput = document.getElementById('heroSearch');
+      const heroResults = document.getElementById('heroSearchResults');
+      if (heroInput && !document.getElementById('siteSearchInput')) {
+        // Create hidden alias input so script.js initGlobalLiveSearch picks it up
+        heroInput.id = 'heroSearch'; // keep for inline script
+        // script.js already handles via initGlobalLiveSearch with heroSearch; no action needed
+      }
+    });
   })();
   </script>
 </body>
