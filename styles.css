@@ -593,13 +593,30 @@ a:hover{ text-decoration:underline; }
   #site-footer { min-height: 180px; }
 }
 
-/* ============================================
-   CRITICAL HOME-PAGE GRID CSS — moved from JS-injected style
-   So that pre-baked HTML renders immediately on first paint
-   ============================================ */
-/* home-quicklinks DISABLED: hidden on both mobile and PC */
-.home-quicklinks { display: none !important; }
-.home-links { display: none !important; }
+/* ============================================================
+   HOME-QUICKLINKS PERMANENTLY DISABLED — hidden on ALL pages,
+   ALL screen sizes (mobile + desktop)
+   ============================================================ */
+#home-quicklinks-wrap,
+.home-quicklinks,
+#home-links,
+.home-links,
+#mobile-nav-grid,
+.mobile-nav-grid,
+#mobile-bottom-search,
+.mobile-bottom-search,
+.home-link-btn,
+.grid-nav-btn {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  pointer-events: none !important;
+}
+
+
 
 @media (max-width: 980px) {
   .home-quicklinks { padding-top: 16px; padding-bottom: 6px; }
