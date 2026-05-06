@@ -1501,8 +1501,10 @@
   async function initGlobalLiveSearch() {
     const inputs = [];
     
-    const heroInput = document.getElementById("heroSearch");
-    if (heroInput) inputs.push({ input: heroInput, resultsId: "heroSearchSuggestResults" });
+    // heroSearch is handled by the dedicated inline script in index.html
+    // (uses #searchSuggest for dropdown). Skip it here to avoid double-binding.
+    // const heroInput = document.getElementById("heroSearch");
+    // if (heroInput) inputs.push({ input: heroInput, resultsId: "heroSearchSuggestResults" });
 
     const homeInput = document.getElementById("siteSearchInput");
     if (homeInput) inputs.push({ input: homeInput, resultsId: "searchResults" });
@@ -1598,6 +1600,7 @@
       // runs the search (was previously inert).
       const btnId = input.id === "siteSearchInput" ? "siteSearchBtn"
                   : input.id === "sectionSearchInput" ? "sectionSearchBtn"
+                  : input.id === "heroSearch" ? "heroSearchBtn"
                   : null;
       const btn = btnId ? document.getElementById(btnId) : null;
       if (btn && !btn.dataset.qaBound) {
