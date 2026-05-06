@@ -620,12 +620,14 @@
 
     /* Mobile offcanvas */
     .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 350; }
+    .overlay[hidden] { display: none !important; }
     .offcanvas {
       position: fixed; top: 0; left: 0; bottom: 0;
       width: min(300px, 85vw); background: #fff; z-index: 360;
       overflow-y: auto; display: flex; flex-direction: column;
       box-shadow: 0 6px 24px rgba(0,0,0,.12);
     }
+    .offcanvas[hidden] { display: none !important; }
     .offcanvas-head {
       display: flex; align-items: center; justify-content: space-between;
       padding: 13px 14px;
@@ -1586,17 +1588,35 @@
     const mobileMenu = document.getElementById('mobileMenu');
     const overlay = document.getElementById('menuOverlay');
 
-    function openMenu() { mobileMenu.hidden = false; overlay.hidden = false; menuBtn.setAttribute('aria-expanded', 'true'); document.body.style.overflow = 'hidden'; }
-    function closeMenu() { mobileMenu.hidden = true; overlay.hidden = true; menuBtn.setAttribute('aria-expanded', 'false'); document.body.style.overflow = ''; }
+    // ✅ Force closed on page load
+    if (mobileMenu) mobileMenu.hidden = true;
+    if (overlay) overlay.hidden = true;
 
-    if (menuBtn) {
-      menuBtn.addEventListener('click', openMenu);
-      menuBtn.dataset.offcanvasInit = "1"; // ✅ flag so script.js won't add duplicate listeners
+    function openMenu() {
+      if (!mobileMenu || !overlay || !menuBtn) return;
+      mobileMenu.hidden = false;
+      overlay.hidden = false;
+      menuBtn.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
     }
-    if (closeBtn) closeBtn.addEventListener('click', closeMenu);
-    if (overlay) overlay.addEventListener('click', closeMenu);
-    if (mobileMenu) mobileMenu.addEventListener('click', function(e) { if (e.target.closest('a')) closeMenu(); });
-    window.__menuInitialized = true; // ✅ tell script.js menu is already initialized
+    function closeMenu() {
+      if (!mobileMenu || !overlay || !menuBtn) return;
+      mobileMenu.hidden = true;
+      overlay.hidden = true;
+      menuBtn.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    if (menuBtn && !menuBtn.dataset.offcanvasInit) {
+      menuBtn.dataset.offcanvasInit = "1";
+      menuBtn.addEventListener('click', openMenu);
+      if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+      if (overlay) overlay.addEventListener('click', closeMenu);
+      if (mobileMenu) mobileMenu.addEventListener('click', function(e) {
+        if (e.target.closest('a')) closeMenu();
+      });
+    }
+    window.__menuInitialized = true;
 
     // ---- Desktop nav dropdowns ----
     document.querySelectorAll('[data-dd]').forEach(function (dd) {
