@@ -960,7 +960,33 @@
         <span class="jcq-count">340+</span>
       </a>
     </div>
-    <div class="job-cat-quick-header" style="margin-top:2px; border-top:1px solid var(--border); border-radius:0;">
+
+    <!-- State Wise Jobs row — same bar as Job Categories -->
+    <div class="job-cat-quick-header" style="border-top:1px solid rgba(255,255,255,.15);">
+      <span><i class="fa-solid fa-map-location-dot"></i> State Wise Jobs</span>
+      <a href="category.html?group=state">View All</a>
+    </div>
+    <div class="job-cat-quick-grid jcq-states">
+      <a href="view.html?section=Haryana%20All%20State%20Jobs" class="jcq-item">Haryana</a>
+      <a href="view.html?section=State%20jobs" class="jcq-item">Uttar Pradesh</a>
+      <a href="view.html?section=State%20jobs" class="jcq-item">Bihar</a>
+      <a href="view.html?section=State%20jobs" class="jcq-item">Rajasthan</a>
+      <a href="view.html?section=State%20jobs" class="jcq-item">Delhi</a>
+      <a href="view.html?section=State%20jobs" class="jcq-item">Maharashtra</a>
+      <a href="view.html?section=State%20jobs" class="jcq-item">Madhya Pradesh</a>
+      <a href="view.html?section=State%20jobs" class="jcq-item">Gujarat</a>
+      <a href="view.html?section=State%20jobs" class="jcq-item">Punjab</a>
+      <a href="view.html?section=State%20jobs" class="jcq-item">Tamil Nadu</a>
+      <a href="view.html?section=State%20jobs" class="jcq-item">Karnataka</a>
+      <a href="view.html?section=State%20jobs" class="jcq-item">Uttarakhand</a>
+      <a href="view.html?section=State%20jobs" class="jcq-item">Jharkhand</a>
+      <a href="view.html?section=State%20jobs" class="jcq-item">Odisha</a>
+      <a href="view.html?section=State%20jobs" class="jcq-item">Himachal</a>
+      <a href="category.html?group=state" class="jcq-item" style="font-weight:800;color:var(--brand2);">All States →</a>
+    </div>
+
+    <!-- Important Sections row -->
+    <div class="job-cat-quick-header" style="border-top:1px solid rgba(255,255,255,.15);">
       <span><i class="fa-solid fa-star"></i> Important Sections</span>
     </div>
     <div class="job-cat-quick-grid">
@@ -1024,118 +1050,89 @@
             <h2><i class="fa-solid fa-bolt"></i> Latest Job Notifications</h2>
             <a href="view.html?section=latest%20jobs" class="sec-view-all">View All</a>
           </div>
-          <!-- Dynamic sections injected by script.js -->
-          <div id="dynamic-sections" class="duo-grid"></div>
+          <!-- Dynamic sections injected by script.js - shown as 2 columns -->
+          <div id="dynamic-sections" class="duo-grid duo-grid-2col"></div>
         </section>
 
         <!-- TWO-COLUMN GRID: sections shown side-by-side like the screenshot image -->
         <div class="below-notif-grid">
 
-          <!-- LEFT COLUMN: Admit Cards & Exams Date (dynamic from script.js) -->
+          <!-- LEFT COLUMN: Admit Cards & Exams Date (dynamic from script.js) — NO colored header -->
           <div class="bng-col">
             <div class="sb-card">
-              <div class="sb-head" style="background:#059669;"><i class="fa-solid fa-id-card"></i> Admit Cards &amp; Exams Date</div>
-              <div class="sb-list" id="dynamic-admit-cards">
-                <!-- populated by script.js renderHomepageSections or fallback below -->
-                <a href="view.html?section=Admit%20cards%20Exams%20Date"><i class="fa-solid fa-circle"></i><span>View All Admit Cards 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <div class="bng-section-title bng-green">
+                <i class="fa-solid fa-id-card"></i> Admit Cards &amp; Exams Date
+              </div>
+              <div class="sb-list bng-list" id="dynamic-admit-cards">
+                <a href="view.html?section=Admit%20cards%20Exams%20Date"><i class="fa-solid fa-circle" style="font-size:.45rem;color:#94a3b8;"></i><span>View All Admit Cards 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
               </div>
               <a href="view.html?section=Admit%20cards%20Exams%20Date" class="ar-more">View More →</a>
             </div>
-
-            <!-- Jobs by Category -->
-            <div class="sb-card">
-              <div class="sb-head" style="background:#1a3c8f;"><i class="fa-solid fa-briefcase"></i> Jobs by Category</div>
-              <div class="sb-list">
-                <a href="view.html?section=Railway%20Jobs"><i class="fa-solid fa-train"></i><span>Railway Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-                <a href="view.html?section=Bank%20Jobs"><i class="fa-solid fa-building-columns"></i><span>Bank Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-                <a href="view.html?section=Police%20Jobs"><i class="fa-solid fa-shield-halved"></i><span>Police Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-                <a href="view.html?section=Indian%20ARMY%20jobs"><i class="fa-solid fa-star"></i><span>Defence Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-                <a href="view.html?section=Teacher%20Jobs"><i class="fa-solid fa-chalkboard-user"></i><span>Teaching Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-                <a href="view.html?section=Latest%20Govt%20Jobs"><i class="fa-solid fa-building"></i><span>All India Govt Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-                <a href="view.html?section=State%20jobs"><i class="fa-solid fa-map-location-dot"></i><span>State Govt Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-                <a href="view.html?section=Central%20jobs"><i class="fa-solid fa-flag"></i><span>Central Govt Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-              </div>
-              <a href="category.html?group=popular" class="ar-more">View All Categories →</a>
-            </div>
-
-            <!-- Important Links -->
-            <div class="sb-card">
-              <div class="sb-head" style="background:#7c3aed;"><i class="fa-solid fa-link"></i> Important Links</div>
-              <div class="imp-links-grid">
-                <a href="view.html?section=Latest%20Govt%20Jobs" class="imp-link-btn">All India Jobs</a>
-                <a href="view.html?section=State%20jobs" class="imp-link-btn">State Jobs</a>
-                <a href="view.html?section=Bank%20Jobs" class="imp-link-btn">Bank Jobs</a>
-                <a href="view.html?section=Railway%20Jobs" class="imp-link-btn">Railway Jobs</a>
-                <a href="view.html?section=Police%20Jobs" class="imp-link-btn">Police Jobs</a>
-                <a href="view.html?section=Admit%20cards%20Exams%20Date" class="imp-link-btn">Exam Calendar</a>
-                <a href="view.html?section=Syllabus" class="imp-link-btn">Syllabus</a>
-                <a href="category.html?group=study-material" class="imp-link-btn">Study Material</a>
-                <a href="view.html?section=Govt%20Scheme%20Yojna" class="imp-link-btn">Govt Schemes</a>
-                <a href="category.html?group=khabar" class="imp-link-btn">Current Affairs</a>
-              </div>
-            </div>
-
-            <!-- Follow Us -->
-            <div class="sb-card">
-              <div class="sb-head" style="background:#f97316;"><i class="fa-solid fa-bell"></i> Follow Us</div>
-              <div style="padding:12px;display:flex;flex-direction:column;gap:8px;">
-                <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" class="social-btn sb-wa"><i class="fa-brands fa-whatsapp"></i> Join WhatsApp</a>
-                <a href="https://t.me/topsarkarijobs" target="_blank" rel="noopener" class="social-btn sb-tg"><i class="fa-brands fa-telegram"></i> Join Telegram</a>
-                <a href="https://www.youtube.com/@Topsarkarijobs" target="_blank" rel="noopener" class="social-btn sb-yt"><i class="fa-brands fa-youtube"></i> YouTube</a>
-                <a href="https://www.instagram.com/topsarkarijobs" target="_blank" rel="noopener" class="social-btn sb-ig"><i class="fa-brands fa-instagram"></i> Instagram</a>
-              </div>
-            </div>
           </div><!-- /left col -->
 
-          <!-- RIGHT COLUMN: Latest Results (dynamic from script.js) -->
+          <!-- RIGHT COLUMN: Latest Results (dynamic from script.js) — NO colored header -->
           <div class="bng-col">
             <div class="sb-card">
-              <div class="sb-head" style="background:#7c3aed;"><i class="fa-solid fa-trophy"></i> Latest Results</div>
-              <div class="sb-list" id="dynamic-results">
-                <a href="category.html?group=admissions"><i class="fa-solid fa-circle"></i><span>View All Results 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <div class="bng-section-title bng-purple">
+                <i class="fa-solid fa-trophy"></i> Latest Results
+              </div>
+              <div class="sb-list bng-list" id="dynamic-results">
+                <a href="category.html?group=admissions"><i class="fa-solid fa-circle" style="font-size:.45rem;color:#94a3b8;"></i><span>View All Results 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
               </div>
               <a href="category.html?group=admissions" class="ar-more">View More →</a>
-            </div>
-
-            <!-- Important Updates -->
-            <div class="sb-card">
-              <div class="sb-head red"><i class="fa-solid fa-bolt"></i> Important Updates</div>
-              <div class="sb-list">
-                <a href="view.html?section=latest%20jobs"><i class="fa-solid fa-fire"></i><span>SSC CGL 2026 Notification Out</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-                <a href="view.html?section=Railway%20Jobs"><i class="fa-solid fa-train"></i><span>RRB Technician 2026 Apply Online</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-                <a href="view.html?section=Bank%20Jobs"><i class="fa-solid fa-building-columns"></i><span>IBPS Clerk 2026 Notification</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-                <a href="view.html?section=Police%20Jobs"><i class="fa-solid fa-shield-halved"></i><span>UP Police Constable Result</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-                <a href="view.html?section=Police%20Jobs"><i class="fa-solid fa-shield-halved"></i><span>Delhi Police Constable Apply</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-                <a href="view.html?section=latest%20jobs"><i class="fa-solid fa-briefcase"></i><span>MPESB Group 5 Notification Out</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-              </div>
-              <a href="view.html?section=latest%20jobs" class="ar-more">View All Updates →</a>
-            </div>
-
-            <!-- State Wise Jobs -->
-            <div class="sb-card">
-              <div class="sb-head green"><i class="fa-solid fa-map-location-dot"></i> State Wise Jobs</div>
-              <div class="states-grid" style="padding:12px;">
-                <a href="view.html?section=Haryana%20All%20State%20Jobs" class="state-btn">Haryana</a>
-                <a href="view.html?section=State%20jobs" class="state-btn">Uttar Pradesh</a>
-                <a href="view.html?section=State%20jobs" class="state-btn">Bihar</a>
-                <a href="view.html?section=State%20jobs" class="state-btn">Rajasthan</a>
-                <a href="view.html?section=State%20jobs" class="state-btn">Delhi</a>
-                <a href="view.html?section=State%20jobs" class="state-btn">Maharashtra</a>
-                <a href="view.html?section=State%20jobs" class="state-btn">Madhya Pradesh</a>
-                <a href="view.html?section=State%20jobs" class="state-btn">Gujarat</a>
-                <a href="view.html?section=State%20jobs" class="state-btn">Punjab</a>
-                <a href="view.html?section=State%20jobs" class="state-btn">Tamil Nadu</a>
-                <a href="view.html?section=State%20jobs" class="state-btn">Karnataka</a>
-                <a href="view.html?section=State%20jobs" class="state-btn">Uttarakhand</a>
-                <a href="view.html?section=State%20jobs" class="state-btn">Jharkhand</a>
-                <a href="view.html?section=State%20jobs" class="state-btn">Odisha</a>
-                <a href="view.html?section=State%20jobs" class="state-btn">Himachal</a>
-                <a href="category.html?group=state" class="state-btn" style="border-style:dashed;">All States →</a>
-              </div>
             </div>
           </div><!-- /right col -->
 
         </div><!-- /below-notif-grid -->
+
+        <!-- BELOW GRID: Jobs by Category + Important Links + Follow Us (full width) -->
+        <div class="full-width-sections">
+
+          <!-- Jobs by Category -->
+          <div class="sb-card cat-section">
+            <div class="sb-head" style="background:#1a3c8f;"><i class="fa-solid fa-briefcase"></i> Jobs by Category</div>
+            <div class="sb-list">
+              <a href="view.html?section=Railway%20Jobs"><i class="fa-solid fa-train"></i><span>Railway Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Bank%20Jobs"><i class="fa-solid fa-building-columns"></i><span>Bank Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Police%20Jobs"><i class="fa-solid fa-shield-halved"></i><span>Police Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Indian%20ARMY%20jobs"><i class="fa-solid fa-star"></i><span>Defence Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Teacher%20Jobs"><i class="fa-solid fa-chalkboard-user"></i><span>Teaching Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Latest%20Govt%20Jobs"><i class="fa-solid fa-building"></i><span>All India Govt Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=State%20jobs"><i class="fa-solid fa-map-location-dot"></i><span>State Govt Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Central%20jobs"><i class="fa-solid fa-flag"></i><span>Central Govt Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+            </div>
+            <a href="category.html?group=popular" class="ar-more">View All Categories →</a>
+          </div>
+
+          <!-- Important Links -->
+          <div class="sb-card cat-section">
+            <div class="sb-head" style="background:#7c3aed;"><i class="fa-solid fa-link"></i> Important Links</div>
+            <div class="imp-links-grid">
+              <a href="view.html?section=Latest%20Govt%20Jobs" class="imp-link-btn">All India Jobs</a>
+              <a href="view.html?section=State%20jobs" class="imp-link-btn">State Jobs</a>
+              <a href="view.html?section=Bank%20Jobs" class="imp-link-btn">Bank Jobs</a>
+              <a href="view.html?section=Railway%20Jobs" class="imp-link-btn">Railway Jobs</a>
+              <a href="view.html?section=Police%20Jobs" class="imp-link-btn">Police Jobs</a>
+              <a href="view.html?section=Admit%20cards%20Exams%20Date" class="imp-link-btn">Exam Calendar</a>
+              <a href="view.html?section=Syllabus" class="imp-link-btn">Syllabus</a>
+              <a href="category.html?group=study-material" class="imp-link-btn">Study Material</a>
+              <a href="view.html?section=Govt%20Scheme%20Yojna" class="imp-link-btn">Govt Schemes</a>
+              <a href="category.html?group=khabar" class="imp-link-btn">Current Affairs</a>
+            </div>
+          </div>
+
+          <!-- Follow Us -->
+          <div class="sb-card cat-section">
+            <div class="sb-head" style="background:#f97316;"><i class="fa-solid fa-bell"></i> Follow Us</div>
+            <div style="padding:12px;display:flex;flex-direction:column;gap:8px;">
+              <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" class="social-btn sb-wa"><i class="fa-brands fa-whatsapp"></i> Join WhatsApp</a>
+              <a href="https://t.me/topsarkarijobs" target="_blank" rel="noopener" class="social-btn sb-tg"><i class="fa-brands fa-telegram"></i> Join Telegram</a>
+              <a href="https://www.youtube.com/@Topsarkarijobs" target="_blank" rel="noopener" class="social-btn sb-yt"><i class="fa-brands fa-youtube"></i> YouTube</a>
+              <a href="https://www.instagram.com/topsarkarijobs" target="_blank" rel="noopener" class="social-btn sb-ig"><i class="fa-brands fa-instagram"></i> Instagram</a>
+            </div>
+          </div>
+
+        </div><!-- /full-width-sections -->
 
         <!-- SEO CONTENT -->
         <section class="seo-block" aria-label="About sarkari jobs 2026">
