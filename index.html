@@ -231,8 +231,6 @@
     .hero-quick-btn.green-btn { background: var(--green); border-color: var(--green); }
     .hero-quick-btn.accent-btn { background: var(--accent); border-color: var(--accent); }
     .hero-quick-btn.ghost-btn { background: rgba(255,255,255,.1); }
-    .hero-img-wrap { display: none; }
-    @media (min-width: 640px) { .hero-img-wrap { display: block; } }
     .hero-quick-btn:hover { opacity: .88; }
 
     /* Hero search */
@@ -804,32 +802,25 @@
   ============================================================ -->
   <section class="hero-banner" aria-label="Search government jobs" id="hero-search-section">
     <div class="container hero-inner">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
-        <div style="flex:1;min-width:0;">
-          <div class="hero-badge"><i class="fa-solid fa-flag"></i> 🇮🇳 India's No.1 Sarkari Jobs Portal</div>
-          <h1 class="hero-h1">Latest <span>Govt Jobs 2026</span><br>Find Your Dream Sarkari Naukri</h1>
-          <p class="hero-sub">Daily Updated Jobs, Admit Card, Results, Answer Key & More</p>
+      <div class="hero-badge"><i class="fa-solid fa-flag"></i> 🇮🇳 India's No.1 Sarkari Jobs Portal</div>
+      <h1 class="hero-h1">Latest <span>Govt Jobs 2026</span><br>Find Your Dream Sarkari Naukri</h1>
+      <p class="hero-sub">Daily Updated Jobs, Admit Card, Results, Answer Key & More</p>
 
-          <div class="hero-quick-btns">
-            <a href="view.html?section=latest%20jobs" class="hero-quick-btn red-btn"><i class="fa-solid fa-bolt"></i> Latest Jobs</a>
-            <a href="category.html?group=admit-result" class="hero-quick-btn green-btn"><i class="fa-solid fa-id-card"></i> Admit Card</a>
-            <a href="category.html?group=admissions" class="hero-quick-btn accent-btn"><i class="fa-solid fa-trophy"></i> Results</a>
-            <a href="view.html?section=Top%2020%20Jobs" class="hero-quick-btn ghost-btn"><i class="fa-solid fa-medal"></i> Top 20 Jobs</a>
-          </div>
-
-          <div style="position:relative;">
-            <div class="hero-search-box">
-              <input id="heroSearch" type="search" placeholder="Search jobs, admit card, result..." autocomplete="off" aria-label="Search jobs" aria-autocomplete="list" aria-controls="searchSuggest"/>
-              <button id="heroSearchBtn" type="button"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
-            </div>
-            <div id="searchSuggest" role="listbox" aria-label="Search suggestions"></div>
-          </div>
-          <div class="search-results-panel" id="heroSearchResults"></div>
-        </div>
-        <div class="hero-img-wrap" style="flex-shrink:0;">
-          <img src="image.webp" alt="Top Sarkari Jobs" style="width:200px;height:200px;object-fit:contain;display:block;" onerror="this.style.display='none'">
-        </div>
+      <div class="hero-quick-btns">
+        <a href="view.html?section=latest%20jobs" class="hero-quick-btn red-btn"><i class="fa-solid fa-bolt"></i> Latest Jobs</a>
+        <a href="category.html?group=admit-result" class="hero-quick-btn green-btn"><i class="fa-solid fa-id-card"></i> Admit Card</a>
+        <a href="category.html?group=admissions" class="hero-quick-btn accent-btn"><i class="fa-solid fa-trophy"></i> Results</a>
+        <a href="view.html?section=Top%2020%20Jobs" class="hero-quick-btn ghost-btn"><i class="fa-solid fa-medal"></i> Top 20 Jobs</a>
       </div>
+
+      <div style="position:relative;">
+        <div class="hero-search-box">
+          <input id="heroSearch" type="search" placeholder="Search jobs, admit card, result..." autocomplete="off" aria-label="Search jobs" aria-autocomplete="list" aria-controls="searchSuggest"/>
+          <button id="heroSearchBtn" type="button"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+        </div>
+        <div id="searchSuggest" role="listbox" aria-label="Search suggestions"></div>
+      </div>
+      <div class="search-results-panel" id="heroSearchResults"></div>
     </div>
   </section>
 
@@ -1250,7 +1241,7 @@
             <a href="category.html?group=admit-result"><i class="fa-solid fa-id-card"></i><span>Admit Card</span><i class="fa-solid fa-chevron-right arrow"></i></a>
             <a href="category.html?group=admissions"><i class="fa-solid fa-trophy"></i><span>Results</span><i class="fa-solid fa-chevron-right arrow"></i></a>
             <a href="category.html?group=admit-result"><i class="fa-solid fa-key"></i><span>Answer Key</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="view.html?section=Latest%20Govt%20Jobs"><i class="fa-solid fa-book"></i><span>Syllabus</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+            <a href="view.html?section=Syllabus"><i class="fa-solid fa-book"></i><span>Syllabus</span><i class="fa-solid fa-chevron-right arrow"></i></a>
             <a href="view.html?section=Govt%20Scheme%20Yojna"><i class="fa-solid fa-hand-holding-heart"></i><span>Govt Schemes</span><i class="fa-solid fa-chevron-right arrow"></i></a>
             <a href="view.html?section=Haryana%20All%20State%20Jobs"><i class="fa-solid fa-location-dot"></i><span>Haryana Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
             <a href="view.html?section=Latest%20Govt%20Jobs"><i class="fa-solid fa-globe"></i><span>All India Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
@@ -1598,9 +1589,14 @@
     function openMenu() { mobileMenu.hidden = false; overlay.hidden = false; menuBtn.setAttribute('aria-expanded', 'true'); document.body.style.overflow = 'hidden'; }
     function closeMenu() { mobileMenu.hidden = true; overlay.hidden = true; menuBtn.setAttribute('aria-expanded', 'false'); document.body.style.overflow = ''; }
 
-    if (menuBtn) menuBtn.addEventListener('click', openMenu);
+    if (menuBtn) {
+      menuBtn.addEventListener('click', openMenu);
+      menuBtn.dataset.offcanvasInit = "1"; // ✅ flag so script.js won't add duplicate listeners
+    }
     if (closeBtn) closeBtn.addEventListener('click', closeMenu);
     if (overlay) overlay.addEventListener('click', closeMenu);
+    if (mobileMenu) mobileMenu.addEventListener('click', function(e) { if (e.target.closest('a')) closeMenu(); });
+    window.__menuInitialized = true; // ✅ tell script.js menu is already initialized
 
     // ---- Desktop nav dropdowns ----
     document.querySelectorAll('[data-dd]').forEach(function (dd) {
