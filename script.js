@@ -579,8 +579,9 @@
     });
   }
 
-  // ✅ PERFECTED GRID (Matching Outline Rows) & VIBRANT DESKTOP/MOBILE PILLS
-  async function renderHomeQuickLinks() {
+  // renderHomeQuickLinks: DISABLED per site update (removed from all pages)
+  async function renderHomeQuickLinks() { return; }
+  async function _renderHomeQuickLinks_disabled() {
     const isHome = (page === "index.html" || page === "");
     
     let wrap = document.getElementById("home-quicklinks-wrap");
@@ -1634,7 +1635,7 @@
       removeHomeMainPageCtaLinks();
     }
     
-    await renderHomeQuickLinks();
+    // renderHomeQuickLinks() removed as per site update
     await initCategoryPage();
     await initToolsPage();
     
