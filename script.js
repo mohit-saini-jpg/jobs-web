@@ -368,25 +368,13 @@
     const overlay = $("#menuOverlay");
     if (!btn || !closeBtn || !menu || !overlay) return;
 
-    // ✅ Force closed on every page load
-    menu.hidden = true;
-    overlay.hidden = true;
-    btn.setAttribute("aria-expanded", "false");
-    document.body.style.overflow = "";
-
-    // ✅ Guard: skip adding listeners if already attached
-    if (btn.dataset.offcanvasInit === "1") {
-      window.__closeMenu = () => { menu.hidden = true; overlay.hidden = true; btn.setAttribute("aria-expanded","false"); document.body.style.overflow = ""; };
-      return;
-    }
-    btn.dataset.offcanvasInit = "1";
-
     const close = () => {
       menu.hidden = true;
       overlay.hidden = true;
       btn.setAttribute("aria-expanded", "false");
       document.body.style.overflow = "";
     };
+    
     const open = () => {
       menu.hidden = false;
       overlay.hidden = false;
@@ -397,10 +385,12 @@
     btn.addEventListener("click", open);
     closeBtn.addEventListener("click", close);
     overlay.addEventListener("click", close);
-    menu.addEventListener("click", (e) => { if (e.target.closest("a")) close(); });
+    menu.addEventListener("click", (e) => {
+      if (e.target.closest("a")) close();
+    });
     window.addEventListener("resize", () => {
       if (window.innerWidth > 980) close();
-      safeHideOldSearchBars();
+      safeHideOldSearchBars(); 
     });
     window.__closeMenu = close;
   }
@@ -589,8 +579,9 @@
     });
   }
 
-  // ✅ PERFECTED GRID (Matching Outline Rows) & VIBRANT DESKTOP/MOBILE PILLS
-  async function renderHomeQuickLinks() {
+  // ✅ DISABLED — home-quicklinks-wrap section permanently removed from all pages
+  async function renderHomeQuickLinks() { return; }
+  async function _renderHomeQuickLinks_bak() {
     const isHome = (page === "index.html" || page === "");
     
     let wrap = document.getElementById("home-quicklinks-wrap");
@@ -1511,7 +1502,7 @@
     const inputs = [];
     
     const heroInput = document.getElementById("heroSearch");
-    if (heroInput) inputs.push({ input: heroInput, resultsId: "heroSearchResults" });
+    if (heroInput) inputs.push({ input: heroInput, resultsId: "heroSearchSuggestResults" });
 
     const homeInput = document.getElementById("siteSearchInput");
     if (homeInput) inputs.push({ input: homeInput, resultsId: "searchResults" });
@@ -1630,6 +1621,15 @@
   document.addEventListener("DOMContentLoaded", async () => {
     installGlobalRedirectGate();
 
+    // ✅ Remove home-quicklinks-wrap from DOM immediately (all pages)
+    const qlWrap = document.getElementById("home-quicklinks-wrap");
+    if (qlWrap) qlWrap.remove();
+    // Also remove any injected home-links or mobile-nav-grid
+    ["home-links", "mobile-nav-grid", "mobile-bottom-search", "home-quicklinks-style"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.remove();
+    });
+
     buildMobileMenu();
     safeHideOldSearchBars(); 
     
@@ -1644,7 +1644,7 @@
       removeHomeMainPageCtaLinks();
     }
     
-    await renderHomeQuickLinks();
+    // renderHomeQuickLinks() — PERMANENTLY DISABLED (removed from all pages)
     await initCategoryPage();
     await initToolsPage();
     
