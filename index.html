@@ -71,6 +71,16 @@
 
     .container { max-width: 1220px; margin: 0 auto; padding: 0 12px; }
 
+    .search-result-item {
+      display: flex; flex-direction: column;
+      padding: 10px 14px; border-bottom: 1px solid #f1f5f9;
+      text-decoration: none; color: var(--text); transition: background .12s;
+    }
+    .search-result-item:hover { background: #eff6ff; }
+    .result-name { font-size: .84rem; font-weight: 700; color: var(--blue); }
+    .result-meta { font-size: .72rem; color: var(--muted); margin-top: 2px; }
+    .search-no-results { padding: 12px 14px; font-size: .82rem; color: var(--muted); }
+
     /* ============================================================
        TOP UTILITY BAR
     ============================================================ */
@@ -347,6 +357,9 @@
       margin-bottom: 14px;
     }
     .two-col-sections > .sec-card { margin-bottom: 0; }
+    @media (max-width: 580px) {
+      .two-col-sections { grid-template-columns: 1fr; }
+    }
 
     /* ============================================================
        SECTION CARDS
@@ -1222,7 +1235,7 @@
             <a href="tools.html" class="tool-btn"><i class="fa-solid fa-file-pdf" style="color:var(--red);"></i><span>PDF Tools</span><small style="font-size:.6rem;color:var(--muted);">Merge, Split, Lock</small></a>
             <a href="view.html?section=Important%20CSC%20PDF" class="tool-btn"><i class="fa-solid fa-id-badge" style="color:var(--green);"></i><span>CSC Services</span><small style="font-size:.6rem;color:var(--muted);">VLE, CSC, Digi Pay</small></a>
             <a href="resume-maker.html" class="tool-btn"><i class="fa-solid fa-file-lines" style="color:var(--purple);"></i><span>Resume Maker</span><small style="font-size:.6rem;color:var(--muted);">Create Resume</small></a>
-            <a href="redirect.html?job=important-csc-link&k=5fhb1122kh9b" class="tool-btn"><i class="fa-solid fa-link" style="color:var(--accent);"></i><span>Important CSC Link</span><small style="font-size:.6rem;color:var(--muted);">Govt Services</small></a>
+            <a href="view.html?section=Important%20CSC%20PDF" class="tool-btn"><i class="fa-solid fa-link" style="color:var(--accent);"></i><span>Important CSC Link</span><small style="font-size:.6rem;color:var(--muted);">Govt Services</small></a>
             <a href="helpdesk.html" class="tool-btn"><i class="fa-solid fa-headset" style="color:var(--teal);"></i><span>Helpdesk</span><small style="font-size:.6rem;color:var(--muted);">Support & Help</small></a>
           </div>
         </div>
