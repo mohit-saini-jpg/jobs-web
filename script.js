@@ -368,6 +368,10 @@
     const overlay = $("#menuOverlay");
     if (!btn || !closeBtn || !menu || !overlay) return;
 
+    // ✅ GUARD: prevent duplicate listeners if already initialized by inline script
+    if (btn.dataset.offcanvasInit === "1") return;
+    btn.dataset.offcanvasInit = "1";
+
     const close = () => {
       menu.hidden = true;
       overlay.hidden = true;
@@ -382,12 +386,18 @@
       document.body.style.overflow = "hidden";
     };
 
-    btn.addEventListener("click", open);
-    closeBtn.addEventListener("click", close);
-    overlay.addEventListener("click", close);
-    menu.addEventListener("click", (e) => {
-      if (e.target.closest("a")) close();
-    });
+    // ✅ Remove any previous listeners by replacing the element clone trick
+    // Instead just use the flag above - if inline script already added listeners, skip
+    // Only add listeners here if inline script did NOT add them (no openMenu defined)
+    if (typeof window.__menuInitialized === "undefined") {
+      btn.addEventListener("click", open);
+      closeBtn.addEventListener("click", close);
+      overlay.addEventListener("click", close);
+      menu.addEventListener("click", (e) => {
+        if (e.target.closest("a")) close();
+      });
+    }
+
     window.addEventListener("resize", () => {
       if (window.innerWidth > 980) close();
       safeHideOldSearchBars(); 
@@ -579,9 +589,8 @@
     });
   }
 
-  // renderHomeQuickLinks: DISABLED per site update (removed from all pages)
-  async function renderHomeQuickLinks() { return; }
-  async function _renderHomeQuickLinks_disabled() {
+  // ✅ PERFECTED GRID (Matching Outline Rows) & VIBRANT DESKTOP/MOBILE PILLS
+  async function renderHomeQuickLinks() {
     const isHome = (page === "index.html" || page === "");
     
     let wrap = document.getElementById("home-quicklinks-wrap");
@@ -1635,7 +1644,7 @@
       removeHomeMainPageCtaLinks();
     }
     
-    // renderHomeQuickLinks() removed as per site update
+    await renderHomeQuickLinks();
     await initCategoryPage();
     await initToolsPage();
     
