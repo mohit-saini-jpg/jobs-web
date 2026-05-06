@@ -368,21 +368,15 @@
     const overlay = $("#menuOverlay");
     if (!btn || !closeBtn || !menu || !overlay) return;
 
-    // ✅ FORCE CLOSE on page load - ensures menu never stays open on load
+    // ✅ Force closed on every page load
     menu.hidden = true;
     overlay.hidden = true;
     btn.setAttribute("aria-expanded", "false");
     document.body.style.overflow = "";
 
-    // ✅ GUARD: prevent duplicate event listeners (e.g. if inline script already ran)
+    // ✅ Guard: skip adding listeners if already attached
     if (btn.dataset.offcanvasInit === "1") {
-      // Still update __closeMenu reference
-      window.__closeMenu = () => {
-        menu.hidden = true;
-        overlay.hidden = true;
-        btn.setAttribute("aria-expanded", "false");
-        document.body.style.overflow = "";
-      };
+      window.__closeMenu = () => { menu.hidden = true; overlay.hidden = true; btn.setAttribute("aria-expanded","false"); document.body.style.overflow = ""; };
       return;
     }
     btn.dataset.offcanvasInit = "1";
@@ -393,7 +387,6 @@
       btn.setAttribute("aria-expanded", "false");
       document.body.style.overflow = "";
     };
-    
     const open = () => {
       menu.hidden = false;
       overlay.hidden = false;
@@ -404,12 +397,10 @@
     btn.addEventListener("click", open);
     closeBtn.addEventListener("click", close);
     overlay.addEventListener("click", close);
-    menu.addEventListener("click", (e) => {
-      if (e.target.closest("a")) close();
-    });
+    menu.addEventListener("click", (e) => { if (e.target.closest("a")) close(); });
     window.addEventListener("resize", () => {
       if (window.innerWidth > 980) close();
-      safeHideOldSearchBars(); 
+      safeHideOldSearchBars();
     });
     window.__closeMenu = close;
   }
@@ -1520,7 +1511,7 @@
     const inputs = [];
     
     const heroInput = document.getElementById("heroSearch");
-    if (heroInput) inputs.push({ input: heroInput, resultsId: "heroSearchSuggestResults" });
+    if (heroInput) inputs.push({ input: heroInput, resultsId: "heroSearchResults" });
 
     const homeInput = document.getElementById("siteSearchInput");
     if (homeInput) inputs.push({ input: homeInput, resultsId: "searchResults" });
