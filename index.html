@@ -60,7 +60,62 @@
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); }
 
     /* ============================================================
-       SKIP LINK
+       JOB CATEGORIES QUICK WRAP (replaces icon-grid)
+    ============================================================ */
+    .job-cat-quick-wrap {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+    }
+    .job-cat-quick-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px 8px;
+      background: linear-gradient(90deg, #0c1f6b, #1a3c8f);
+      color: #fff;
+      font-size: .82rem; font-weight: 800;
+    }
+    .job-cat-quick-header a {
+      color: rgba(255,255,255,.85); font-size: .74rem; font-weight: 700;
+      text-decoration: none; background: rgba(255,255,255,.15);
+      padding: 3px 10px; border-radius: 20px;
+    }
+    .job-cat-quick-header a:hover { background: rgba(255,255,255,.3); }
+    .job-cat-quick-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border-top: 1px solid var(--border);
+    }
+    .jcq-item {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 3px; padding: 10px 6px;
+      text-decoration: none; color: var(--text);
+      border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      text-align: center; transition: background .12s;
+      font-size: .7rem;
+    }
+    .jcq-item:nth-child(4n) { border-right: none; }
+    .jcq-item:hover { background: #eff6ff; color: var(--brand2); }
+    .jcq-name { font-weight: 700; line-height: 1.3; }
+    .jcq-count { font-size: .65rem; font-weight: 800; color: var(--brand2); background: #eff6ff; padding: 1px 6px; border-radius: 10px; }
+    .jcq-imp { flex-direction: row; gap: 6px; justify-content: center; }
+    .jcq-imp i { color: var(--brand2); font-size: .85rem; flex-shrink: 0; }
+
+    /* ============================================================
+       BELOW-NOTIF TWO-COLUMN GRID
+    ============================================================ */
+    .below-notif-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 600px) {
+      .below-notif-grid { grid-template-columns: 1fr; }
+      .job-cat-quick-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+    .bng-col { display: flex; flex-direction: column; gap: 14px; }
+
+    /* ============================================================
     ============================================================ */
     .skip-link { position:absolute;left:-999px;top:-999px;background:#fff;color:var(--brand2);padding:8px 16px;font-weight:700;text-decoration:none;z-index:9999;border-radius:0 0 8px 0; }
     .skip-link:focus { left:0;top:0; }
@@ -864,41 +919,74 @@
   </section>
 
   <!-- ===================================================
-       QUICK ICON NAVIGATION GRID
+       JOB CATEGORIES QUICK LINKS (replaces icon grid)
   =================================================== -->
-  <div class="icon-grid-wrap">
-    <div class="icon-grid">
-      <a href="view.html?section=latest%20jobs" class="icon-grid-item">
-        <div class="ig-icon red"><i class="fa-solid fa-briefcase"></i></div>
-        <span>Latest Jobs</span>
+  <div class="job-cat-quick-wrap">
+    <div class="job-cat-quick-header">
+      <span><i class="fa-solid fa-th-large"></i> Job Categories</span>
+      <a href="category.html?group=popular">View All</a>
+    </div>
+    <div class="job-cat-quick-grid">
+      <a href="view.html?section=10th%20Pass%20jobs" class="jcq-item">
+        <span class="jcq-name">10th Pass Jobs</span>
+        <span class="jcq-count">1250+</span>
       </a>
-      <a href="category.html?group=admit-result" class="icon-grid-item">
-        <div class="ig-icon blue"><i class="fa-solid fa-id-card"></i></div>
-        <span>Admit Card</span>
+      <a href="view.html?section=12th%20Pass%20jobs" class="jcq-item">
+        <span class="jcq-name">12th Pass Jobs</span>
+        <span class="jcq-count">2100+</span>
       </a>
-      <a href="category.html?group=admissions" class="icon-grid-item">
-        <div class="ig-icon green"><i class="fa-solid fa-chart-bar"></i></div>
-        <span>Results</span>
+      <a href="view.html?section=ITI%20Pass%20jobs" class="jcq-item">
+        <span class="jcq-name">ITI Jobs</span>
+        <span class="jcq-count">850+</span>
       </a>
-      <a href="category.html?group=admit-result" class="icon-grid-item">
-        <div class="ig-icon purple"><i class="fa-solid fa-key"></i></div>
-        <span>Answer Key</span>
+      <a href="view.html?section=Diploma%20Jobs" class="jcq-item">
+        <span class="jcq-name">Diploma Jobs</span>
+        <span class="jcq-count">1250+</span>
       </a>
-      <a href="view.html?section=upcoming-jobs" class="icon-grid-item">
-        <div class="ig-icon orange"><i class="fa-solid fa-calendar-alt"></i></div>
-        <span>Upcoming Jobs</span>
+      <a href="view.html?section=Graduation%20jobs" class="jcq-item">
+        <span class="jcq-name">Graduate Jobs</span>
+        <span class="jcq-count">5200+</span>
       </a>
-      <a href="category.html?group=admissions" class="icon-grid-item">
-        <div class="ig-icon teal"><i class="fa-solid fa-graduation-cap"></i></div>
-        <span>Admission</span>
+      <a href="view.html?section=Post%20Graduation%20jobs" class="jcq-item">
+        <span class="jcq-name">Post Graduate Jobs</span>
+        <span class="jcq-count">1470+</span>
       </a>
-      <a href="view.html?section=Syllabus" class="icon-grid-item">
-        <div class="ig-icon indigo"><i class="fa-solid fa-book-open"></i></div>
-        <span>Syllabus</span>
+      <a href="view.html?section=B.Tech%20Jobs" class="jcq-item">
+        <span class="jcq-name">B.Tech / M.Tech Jobs</span>
+        <span class="jcq-count">930+</span>
       </a>
-      <a href="tools.html" class="icon-grid-item">
-        <div class="ig-icon pink"><i class="fa-solid fa-ellipsis"></i></div>
-        <span>More</span>
+      <a href="view.html?section=Railway%20Jobs" class="jcq-item">
+        <span class="jcq-name">Railway Jobs</span>
+        <span class="jcq-count">340+</span>
+      </a>
+    </div>
+    <div class="job-cat-quick-header" style="margin-top:2px; border-top:1px solid var(--border); border-radius:0;">
+      <span><i class="fa-solid fa-star"></i> Important Sections</span>
+    </div>
+    <div class="job-cat-quick-grid">
+      <a href="view.html?section=latest%20jobs" class="jcq-item jcq-imp">
+        <i class="fa-solid fa-briefcase"></i><span class="jcq-name">Latest Jobs</span>
+      </a>
+      <a href="category.html?group=admit-result" class="jcq-item jcq-imp">
+        <i class="fa-solid fa-id-card"></i><span class="jcq-name">Admit Card</span>
+      </a>
+      <a href="category.html?group=admissions" class="jcq-item jcq-imp">
+        <i class="fa-solid fa-trophy"></i><span class="jcq-name">Results</span>
+      </a>
+      <a href="category.html?group=admit-result" class="jcq-item jcq-imp">
+        <i class="fa-solid fa-key"></i><span class="jcq-name">Answer Key</span>
+      </a>
+      <a href="view.html?section=upcoming-jobs" class="jcq-item jcq-imp">
+        <i class="fa-solid fa-calendar-alt"></i><span class="jcq-name">Upcoming Jobs</span>
+      </a>
+      <a href="view.html?section=Syllabus" class="jcq-item jcq-imp">
+        <i class="fa-solid fa-book-open"></i><span class="jcq-name">Syllabus</span>
+      </a>
+      <a href="tools.html" class="jcq-item jcq-imp">
+        <i class="fa-solid fa-screwdriver-wrench"></i><span class="jcq-name">Free Tools</span>
+      </a>
+      <a href="govt-services.html" class="jcq-item jcq-imp">
+        <i class="fa-solid fa-id-badge"></i><span class="jcq-name">CSC Services</span>
       </a>
     </div>
   </div>
@@ -940,313 +1028,114 @@
           <div id="dynamic-sections" class="duo-grid"></div>
         </section>
 
-        <!-- JOB CATEGORIES -->
-        <section class="cat-section" aria-label="Job Categories">
-          <div class="sec-title-bar">
-            <h2><i class="fa-solid fa-th-large"></i> Job Categories</h2>
-            <a href="category.html?group=popular" class="sec-view-all">View All</a>
-          </div>
-          <div class="cat-grid-2col">
-            <a href="view.html?section=10th%20Pass%20jobs" class="cat-list-item">
-              <i class="fa-solid fa-school"></i> 10th Pass Jobs
-              <span class="cat-count">1250+</span>
-            </a>
-            <a href="view.html?section=12th%20Pass%20jobs" class="cat-list-item">
-              <i class="fa-solid fa-certificate"></i> 12th Pass Jobs
-              <span class="cat-count">2100+</span>
-            </a>
-            <a href="view.html?section=ITI%20Pass%20jobs" class="cat-list-item">
-              <i class="fa-solid fa-tools"></i> ITI Jobs
-              <span class="cat-count">850+</span>
-            </a>
-            <a href="view.html?section=Diploma%20Jobs" class="cat-list-item">
-              <i class="fa-solid fa-scroll"></i> Diploma Jobs
-              <span class="cat-count">1250+</span>
-            </a>
-            <a href="view.html?section=Graduation%20jobs" class="cat-list-item">
-              <i class="fa-solid fa-user-graduate"></i> Graduate Jobs
-              <span class="cat-count">5200+</span>
-            </a>
-            <a href="view.html?section=Post%20Graduation%20jobs" class="cat-list-item">
-              <i class="fa-solid fa-user-tie"></i> Post Graduate Jobs
-              <span class="cat-count">1470+</span>
-            </a>
-            <a href="view.html?section=B.Tech%20Jobs" class="cat-list-item">
-              <i class="fa-solid fa-microchip"></i> B.Tech / M.Tech Jobs
-              <span class="cat-count">930+</span>
-            </a>
-            <a href="view.html?section=Railway%20Jobs" class="cat-list-item">
-              <i class="fa-solid fa-train"></i> Railway Jobs
-              <span class="cat-count">340+</span>
-            </a>
-          </div>
-        </section>
+        <!-- TWO-COLUMN GRID: sections shown side-by-side like the screenshot image -->
+        <div class="below-notif-grid">
 
-        <!-- IMPORTANT SECTIONS (from screenshot 2) -->
-        <section class="cat-section important-sections-card" aria-label="Important Sections">
-          <div class="is-head">Important Sections</div>
-          <div class="is-list">
-            <a href="view.html?section=latest%20jobs">
-              <div class="is-icon" style="background:#fff0f0;color:#dc2626;"><i class="fa-solid fa-briefcase"></i></div>
-              <div class="is-body">
-                <div class="is-name">Latest Jobs</div>
-                <div class="is-sub">All India Govt Jobs</div>
+          <!-- LEFT COLUMN: Admit Cards & Exams Date (dynamic from script.js) -->
+          <div class="bng-col">
+            <div class="sb-card">
+              <div class="sb-head" style="background:#059669;"><i class="fa-solid fa-id-card"></i> Admit Cards &amp; Exams Date</div>
+              <div class="sb-list" id="dynamic-admit-cards">
+                <!-- populated by script.js renderHomepageSections or fallback below -->
+                <a href="view.html?section=Admit%20cards%20Exams%20Date"><i class="fa-solid fa-circle"></i><span>View All Admit Cards 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
               </div>
-              <i class="fa-solid fa-chevron-right is-arrow"></i>
-            </a>
-            <a href="category.html?group=admit-result">
-              <div class="is-icon" style="background:#eff6ff;color:#2563eb;"><i class="fa-solid fa-id-card"></i></div>
-              <div class="is-body">
-                <div class="is-name">Admit Card</div>
-                <div class="is-sub">Download Admit Card</div>
+              <a href="view.html?section=Admit%20cards%20Exams%20Date" class="ar-more">View More →</a>
+            </div>
+
+            <!-- Jobs by Category -->
+            <div class="sb-card">
+              <div class="sb-head" style="background:#1a3c8f;"><i class="fa-solid fa-briefcase"></i> Jobs by Category</div>
+              <div class="sb-list">
+                <a href="view.html?section=Railway%20Jobs"><i class="fa-solid fa-train"></i><span>Railway Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+                <a href="view.html?section=Bank%20Jobs"><i class="fa-solid fa-building-columns"></i><span>Bank Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+                <a href="view.html?section=Police%20Jobs"><i class="fa-solid fa-shield-halved"></i><span>Police Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+                <a href="view.html?section=Indian%20ARMY%20jobs"><i class="fa-solid fa-star"></i><span>Defence Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+                <a href="view.html?section=Teacher%20Jobs"><i class="fa-solid fa-chalkboard-user"></i><span>Teaching Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+                <a href="view.html?section=Latest%20Govt%20Jobs"><i class="fa-solid fa-building"></i><span>All India Govt Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+                <a href="view.html?section=State%20jobs"><i class="fa-solid fa-map-location-dot"></i><span>State Govt Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+                <a href="view.html?section=Central%20jobs"><i class="fa-solid fa-flag"></i><span>Central Govt Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
               </div>
-              <i class="fa-solid fa-chevron-right is-arrow"></i>
-            </a>
-            <a href="category.html?group=admissions">
-              <div class="is-icon" style="background:#f0fdf4;color:#059669;"><i class="fa-solid fa-chart-bar"></i></div>
-              <div class="is-body">
-                <div class="is-name">Results</div>
-                <div class="is-sub">Check Exam Results</div>
+              <a href="category.html?group=popular" class="ar-more">View All Categories →</a>
+            </div>
+
+            <!-- Important Links -->
+            <div class="sb-card">
+              <div class="sb-head" style="background:#7c3aed;"><i class="fa-solid fa-link"></i> Important Links</div>
+              <div class="imp-links-grid">
+                <a href="view.html?section=Latest%20Govt%20Jobs" class="imp-link-btn">All India Jobs</a>
+                <a href="view.html?section=State%20jobs" class="imp-link-btn">State Jobs</a>
+                <a href="view.html?section=Bank%20Jobs" class="imp-link-btn">Bank Jobs</a>
+                <a href="view.html?section=Railway%20Jobs" class="imp-link-btn">Railway Jobs</a>
+                <a href="view.html?section=Police%20Jobs" class="imp-link-btn">Police Jobs</a>
+                <a href="view.html?section=Admit%20cards%20Exams%20Date" class="imp-link-btn">Exam Calendar</a>
+                <a href="view.html?section=Syllabus" class="imp-link-btn">Syllabus</a>
+                <a href="category.html?group=study-material" class="imp-link-btn">Study Material</a>
+                <a href="view.html?section=Govt%20Scheme%20Yojna" class="imp-link-btn">Govt Schemes</a>
+                <a href="category.html?group=khabar" class="imp-link-btn">Current Affairs</a>
               </div>
-              <i class="fa-solid fa-chevron-right is-arrow"></i>
-            </a>
-            <a href="category.html?group=admit-result">
-              <div class="is-icon" style="background:#f5f3ff;color:#7c3aed;"><i class="fa-solid fa-key"></i></div>
-              <div class="is-body">
-                <div class="is-name">Answer Key</div>
-                <div class="is-sub">Check Answer Key</div>
+            </div>
+
+            <!-- Follow Us -->
+            <div class="sb-card">
+              <div class="sb-head" style="background:#f97316;"><i class="fa-solid fa-bell"></i> Follow Us</div>
+              <div style="padding:12px;display:flex;flex-direction:column;gap:8px;">
+                <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" class="social-btn sb-wa"><i class="fa-brands fa-whatsapp"></i> Join WhatsApp</a>
+                <a href="https://t.me/topsarkarijobs" target="_blank" rel="noopener" class="social-btn sb-tg"><i class="fa-brands fa-telegram"></i> Join Telegram</a>
+                <a href="https://www.youtube.com/@Topsarkarijobs" target="_blank" rel="noopener" class="social-btn sb-yt"><i class="fa-brands fa-youtube"></i> YouTube</a>
+                <a href="https://www.instagram.com/topsarkarijobs" target="_blank" rel="noopener" class="social-btn sb-ig"><i class="fa-brands fa-instagram"></i> Instagram</a>
               </div>
-              <i class="fa-solid fa-chevron-right is-arrow"></i>
-            </a>
-            <a href="view.html?section=upcoming-jobs">
-              <div class="is-icon" style="background:#fff7ed;color:#f97316;"><i class="fa-solid fa-calendar-alt"></i></div>
-              <div class="is-body">
-                <div class="is-name">Upcoming Jobs</div>
-                <div class="is-sub">Upcoming Govt Jobs</div>
+            </div>
+          </div><!-- /left col -->
+
+          <!-- RIGHT COLUMN: Latest Results (dynamic from script.js) -->
+          <div class="bng-col">
+            <div class="sb-card">
+              <div class="sb-head" style="background:#7c3aed;"><i class="fa-solid fa-trophy"></i> Latest Results</div>
+              <div class="sb-list" id="dynamic-results">
+                <a href="category.html?group=admissions"><i class="fa-solid fa-circle"></i><span>View All Results 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
               </div>
-              <i class="fa-solid fa-chevron-right is-arrow"></i>
-            </a>
-            <a href="category.html?group=admissions">
-              <div class="is-icon" style="background:#f0fdfa;color:#0d9488;"><i class="fa-solid fa-graduation-cap"></i></div>
-              <div class="is-body">
-                <div class="is-name">Admission</div>
-                <div class="is-sub">Admission &amp; Education</div>
+              <a href="category.html?group=admissions" class="ar-more">View More →</a>
+            </div>
+
+            <!-- Important Updates -->
+            <div class="sb-card">
+              <div class="sb-head red"><i class="fa-solid fa-bolt"></i> Important Updates</div>
+              <div class="sb-list">
+                <a href="view.html?section=latest%20jobs"><i class="fa-solid fa-fire"></i><span>SSC CGL 2026 Notification Out</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+                <a href="view.html?section=Railway%20Jobs"><i class="fa-solid fa-train"></i><span>RRB Technician 2026 Apply Online</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+                <a href="view.html?section=Bank%20Jobs"><i class="fa-solid fa-building-columns"></i><span>IBPS Clerk 2026 Notification</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+                <a href="view.html?section=Police%20Jobs"><i class="fa-solid fa-shield-halved"></i><span>UP Police Constable Result</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+                <a href="view.html?section=Police%20Jobs"><i class="fa-solid fa-shield-halved"></i><span>Delhi Police Constable Apply</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+                <a href="view.html?section=latest%20jobs"><i class="fa-solid fa-briefcase"></i><span>MPESB Group 5 Notification Out</span><i class="fa-solid fa-chevron-right arrow"></i></a>
               </div>
-              <i class="fa-solid fa-chevron-right is-arrow"></i>
-            </a>
-            <a href="view.html?section=Syllabus">
-              <div class="is-icon" style="background:#eef2ff;color:#4f46e5;"><i class="fa-solid fa-book-open"></i></div>
-              <div class="is-body">
-                <div class="is-name">Syllabus</div>
-                <div class="is-sub">Exam Syllabus</div>
+              <a href="view.html?section=latest%20jobs" class="ar-more">View All Updates →</a>
+            </div>
+
+            <!-- State Wise Jobs -->
+            <div class="sb-card">
+              <div class="sb-head green"><i class="fa-solid fa-map-location-dot"></i> State Wise Jobs</div>
+              <div class="states-grid" style="padding:12px;">
+                <a href="view.html?section=Haryana%20All%20State%20Jobs" class="state-btn">Haryana</a>
+                <a href="view.html?section=State%20jobs" class="state-btn">Uttar Pradesh</a>
+                <a href="view.html?section=State%20jobs" class="state-btn">Bihar</a>
+                <a href="view.html?section=State%20jobs" class="state-btn">Rajasthan</a>
+                <a href="view.html?section=State%20jobs" class="state-btn">Delhi</a>
+                <a href="view.html?section=State%20jobs" class="state-btn">Maharashtra</a>
+                <a href="view.html?section=State%20jobs" class="state-btn">Madhya Pradesh</a>
+                <a href="view.html?section=State%20jobs" class="state-btn">Gujarat</a>
+                <a href="view.html?section=State%20jobs" class="state-btn">Punjab</a>
+                <a href="view.html?section=State%20jobs" class="state-btn">Tamil Nadu</a>
+                <a href="view.html?section=State%20jobs" class="state-btn">Karnataka</a>
+                <a href="view.html?section=State%20jobs" class="state-btn">Uttarakhand</a>
+                <a href="view.html?section=State%20jobs" class="state-btn">Jharkhand</a>
+                <a href="view.html?section=State%20jobs" class="state-btn">Odisha</a>
+                <a href="view.html?section=State%20jobs" class="state-btn">Himachal</a>
+                <a href="category.html?group=state" class="state-btn" style="border-style:dashed;">All States →</a>
               </div>
-              <i class="fa-solid fa-chevron-right is-arrow"></i>
-            </a>
-            <a href="view.html?section=Important%20CSC%20PDF">
-              <div class="is-icon" style="background:#fdf2f8;color:#db2777;"><i class="fa-solid fa-file-pdf"></i></div>
-              <div class="is-body">
-                <div class="is-name">Important Links</div>
-                <div class="is-sub">Important PDF &amp; Links</div>
-              </div>
-              <i class="fa-solid fa-chevron-right is-arrow"></i>
-            </a>
-          </div>
-        </section>
+            </div>
+          </div><!-- /right col -->
 
-        <!-- JOBS BY CATEGORY -->
-        <div class="jcat-card cat-section">
-          <div class="jcat-head">
-            <h3>Jobs by Category</h3>
-            <a href="category.html?group=popular">View All</a>
-          </div>
-          <div class="jcat-list">
-            <a href="view.html?section=Railway%20Jobs">
-              <i class="fa-solid fa-train"></i> Railway Jobs
-              <i class="fa-solid fa-chevron-right jcat-arrow"></i>
-            </a>
-            <a href="view.html?section=Bank%20Jobs">
-              <i class="fa-solid fa-building-columns"></i> Bank Jobs
-              <i class="fa-solid fa-chevron-right jcat-arrow"></i>
-            </a>
-            <a href="view.html?section=Police%20Jobs">
-              <i class="fa-solid fa-shield-halved"></i> Police Jobs
-              <i class="fa-solid fa-chevron-right jcat-arrow"></i>
-            </a>
-            <a href="view.html?section=Indian%20ARMY%20jobs">
-              <i class="fa-solid fa-star"></i> Defence Jobs
-              <i class="fa-solid fa-chevron-right jcat-arrow"></i>
-            </a>
-            <a href="view.html?section=Teacher%20Jobs">
-              <i class="fa-solid fa-chalkboard-user"></i> Teaching Jobs
-              <i class="fa-solid fa-chevron-right jcat-arrow"></i>
-            </a>
-            <a href="view.html?section=Latest%20Govt%20Jobs">
-              <i class="fa-solid fa-building"></i> Government Jobs
-              <i class="fa-solid fa-chevron-right jcat-arrow"></i>
-            </a>
-            <a href="view.html?section=State%20jobs">
-              <i class="fa-solid fa-map-location-dot"></i> State Government Jobs
-              <i class="fa-solid fa-chevron-right jcat-arrow"></i>
-            </a>
-            <a href="view.html?section=Central%20jobs">
-              <i class="fa-solid fa-flag"></i> Central Government Jobs
-              <i class="fa-solid fa-chevron-right jcat-arrow"></i>
-            </a>
-          </div>
-        </div>
-
-        <!-- IMPORTANT UPDATES -->
-        <div class="imp-updates cat-section">
-          <div class="imp-updates-head">
-            <h3>Important Updates</h3>
-          </div>
-          <div class="imp-updates-list">
-            <a href="view.html?section=latest%20jobs">SSC CGL 2025 Notification Out <i class="fa-solid fa-chevron-right arr"></i></a>
-            <a href="view.html?section=Railway%20Jobs">RRB Technician 2025 Apply Online <i class="fa-solid fa-chevron-right arr"></i></a>
-            <a href="view.html?section=Bank%20Jobs">IBPS Clerk 2025 Notification <i class="fa-solid fa-chevron-right arr"></i></a>
-            <a href="view.html?section=Police%20Jobs">UP Police Constable Result 2025 <i class="fa-solid fa-chevron-right arr"></i></a>
-            <a href="view.html?section=Police%20Jobs">Delhi Police Constable Apply Online <i class="fa-solid fa-chevron-right arr"></i></a>
-            <a href="view.html?section=latest%20jobs">MPESB Group 5 Notification Out <i class="fa-solid fa-chevron-right arr"></i></a>
-          </div>
-          <a href="view.html?section=latest%20jobs" class="imp-updates-more">View All Updates →</a>
-        </div>
-
-        <!-- UPCOMING jobs (dynamic) -->
-        <section class="cat-section" aria-label="Upcoming Jobs">
-          <div class="sec-title-bar">
-            <h2><i class="fa-solid fa-calendar-plus"></i> Upcoming Jobs</h2>
-            <a href="view.html?section=upcoming-jobs" class="sec-view-all">View All</a>
-          </div>
-          <div id="dynamic-upcoming" class="duo-grid"></div>
-        </section>
-
-        <!-- ADMIT CARD section -->
-        <div class="ar-card cat-section">
-          <div class="ar-head">
-            <h3>Admit Card</h3>
-            <a href="category.html?group=admit-result">View All</a>
-          </div>
-          <div class="ar-list">
-            <a href="category.html?group=admit-result"><div class="ar-icon"><i class="fa-solid fa-id-card"></i></div>SSC GD Admit Card 2025<i class="fa-solid fa-chevron-right jcat-arrow"></i></a>
-            <a href="category.html?group=admit-result"><div class="ar-icon"><i class="fa-solid fa-id-card"></i></div>RRB NTPC Admit Card 2025<i class="fa-solid fa-chevron-right jcat-arrow"></i></a>
-            <a href="category.html?group=admit-result"><div class="ar-icon"><i class="fa-solid fa-id-card"></i></div>UP Police Constable Admit Card<i class="fa-solid fa-chevron-right jcat-arrow"></i></a>
-            <a href="category.html?group=admit-result"><div class="ar-icon"><i class="fa-solid fa-id-card"></i></div>Bihar Police Admit Card 2025<i class="fa-solid fa-chevron-right jcat-arrow"></i></a>
-            <a href="category.html?group=admit-result"><div class="ar-icon"><i class="fa-solid fa-id-card"></i></div>UPSSSC Pet Admit Card 2025<i class="fa-solid fa-chevron-right jcat-arrow"></i></a>
-          </div>
-          <a href="category.html?group=admit-result" class="ar-more">More Admit Card →</a>
-        </div>
-
-        <!-- RESULTS section -->
-        <div class="ar-card cat-section">
-          <div class="ar-head">
-            <h3>Results</h3>
-            <a href="category.html?group=admissions">View All</a>
-          </div>
-          <div class="ar-list">
-            <a href="category.html?group=admissions"><div class="ar-icon"><i class="fa-solid fa-trophy"></i></div>SSC GD Result 2025<i class="fa-solid fa-chevron-right jcat-arrow"></i></a>
-            <a href="category.html?group=admissions"><div class="ar-icon"><i class="fa-solid fa-trophy"></i></div>UP Police Constable Result 2025<i class="fa-solid fa-chevron-right jcat-arrow"></i></a>
-            <a href="category.html?group=admissions"><div class="ar-icon"><i class="fa-solid fa-trophy"></i></div>Bihar Police Result 2025<i class="fa-solid fa-chevron-right jcat-arrow"></i></a>
-            <a href="category.html?group=admissions"><div class="ar-icon"><i class="fa-solid fa-trophy"></i></div>IBPS Clerk Result 2025<i class="fa-solid fa-chevron-right jcat-arrow"></i></a>
-            <a href="category.html?group=admissions"><div class="ar-icon"><i class="fa-solid fa-trophy"></i></div>UP Board Result 2025<i class="fa-solid fa-chevron-right jcat-arrow"></i></a>
-          </div>
-          <a href="category.html?group=admissions" class="ar-more">More Results →</a>
-        </div>
-
-        <!-- ANSWER KEY section -->
-        <div class="ar-card cat-section">
-          <div class="ar-head">
-            <h3>Answer Key</h3>
-            <a href="category.html?group=admit-result">View All</a>
-          </div>
-          <div class="ar-list">
-            <a href="category.html?group=admit-result"><div class="ar-icon"><i class="fa-solid fa-key"></i></div>SSC GD Answer Key 2025<i class="fa-solid fa-chevron-right jcat-arrow"></i></a>
-            <a href="category.html?group=admit-result"><div class="ar-icon"><i class="fa-solid fa-key"></i></div>RRB NTPC Answer Key 2025<i class="fa-solid fa-chevron-right jcat-arrow"></i></a>
-            <a href="category.html?group=admit-result"><div class="ar-icon"><i class="fa-solid fa-key"></i></div>UP Police Answer Key 2025<i class="fa-solid fa-chevron-right jcat-arrow"></i></a>
-            <a href="category.html?group=admit-result"><div class="ar-icon"><i class="fa-solid fa-key"></i></div>Bihar Police Answer Key 2025<i class="fa-solid fa-chevron-right jcat-arrow"></i></a>
-            <a href="category.html?group=admit-result"><div class="ar-icon"><i class="fa-solid fa-key"></i></div>UPSSSC Pet Answer Key 2025<i class="fa-solid fa-chevron-right jcat-arrow"></i></a>
-          </div>
-          <a href="category.html?group=admit-result" class="ar-more">More Answer Key →</a>
-        </div>
-
-        <!-- UPCOMING JOBS section list -->
-        <div class="ar-card cat-section">
-          <div class="ar-head">
-            <h3>Upcoming Jobs</h3>
-            <a href="view.html?section=upcoming-jobs">View All</a>
-          </div>
-          <div class="ar-list">
-            <a href="view.html?section=upcoming-jobs"><div class="ar-icon"><i class="fa-solid fa-calendar-plus"></i></div>SSC CGL 2026<i class="fa-solid fa-chevron-right jcat-arrow"></i></a>
-            <a href="view.html?section=upcoming-jobs"><div class="ar-icon"><i class="fa-solid fa-calendar-plus"></i></div>IBPS PO 2026<i class="fa-solid fa-chevron-right jcat-arrow"></i></a>
-            <a href="view.html?section=upcoming-jobs"><div class="ar-icon"><i class="fa-solid fa-calendar-plus"></i></div>RRB ALP 2026<i class="fa-solid fa-chevron-right jcat-arrow"></i></a>
-            <a href="view.html?section=upcoming-jobs"><div class="ar-icon"><i class="fa-solid fa-calendar-plus"></i></div>UP Police SI 2026<i class="fa-solid fa-chevron-right jcat-arrow"></i></a>
-            <a href="view.html?section=upcoming-jobs"><div class="ar-icon"><i class="fa-solid fa-calendar-plus"></i></div>UPSSSC VDO 2026<i class="fa-solid fa-chevron-right jcat-arrow"></i></a>
-          </div>
-          <a href="view.html?section=upcoming-jobs" class="ar-more">More Upcoming Jobs →</a>
-        </div>
-
-        <!-- IMPORTANT LINKS -->
-        <div class="ar-card cat-section">
-          <div class="ar-head"><h3>Important Links</h3></div>
-          <div class="imp-links-grid">
-            <a href="view.html?section=Latest%20Govt%20Jobs" class="imp-link-btn">All India Govt Jobs</a>
-            <a href="view.html?section=State%20jobs" class="imp-link-btn">State Jobs</a>
-            <a href="view.html?section=Bank%20Jobs" class="imp-link-btn">Bank Jobs</a>
-            <a href="view.html?section=Railway%20Jobs" class="imp-link-btn">Railway Jobs</a>
-            <a href="view.html?section=Police%20Jobs" class="imp-link-btn">Police Jobs</a>
-            <a href="view.html?section=Admit%20cards%20Exams%20Date" class="imp-link-btn">Exam Calendar</a>
-            <a href="view.html?section=Syllabus" class="imp-link-btn">Syllabus</a>
-            <a href="category.html?group=study-material" class="imp-link-btn">Previous Papers</a>
-            <a href="view.html?section=Govt%20Scheme%20Yojna" class="imp-link-btn">Govt Schemes</a>
-            <a href="category.html?group=khabar" class="imp-link-btn">Current Affairs</a>
-          </div>
-        </div>
-
-        <!-- STATE WISE JOBS -->
-        <section class="cat-section" aria-label="State wise government jobs">
-          <div class="sec-title-bar">
-            <h2><i class="fa-solid fa-map-location-dot"></i> State Wise Jobs</h2>
-            <a href="category.html?group=state" class="sec-view-all">View All →</a>
-          </div>
-          <div class="states-grid">
-            <a href="view.html?section=Haryana%20All%20State%20Jobs" class="state-btn">Haryana</a>
-            <a href="view.html?section=State%20jobs" class="state-btn">Uttar Pradesh</a>
-            <a href="view.html?section=State%20jobs" class="state-btn">Bihar</a>
-            <a href="view.html?section=State%20jobs" class="state-btn">Rajasthan</a>
-            <a href="view.html?section=State%20jobs" class="state-btn">Delhi</a>
-            <a href="view.html?section=State%20jobs" class="state-btn">Maharashtra</a>
-            <a href="view.html?section=State%20jobs" class="state-btn">Madhya Pradesh</a>
-            <a href="view.html?section=State%20jobs" class="state-btn">Gujarat</a>
-            <a href="view.html?section=State%20jobs" class="state-btn">Punjab</a>
-            <a href="view.html?section=State%20jobs" class="state-btn">Tamil Nadu</a>
-            <a href="view.html?section=State%20jobs" class="state-btn">Karnataka</a>
-            <a href="view.html?section=State%20jobs" class="state-btn">Uttarakhand</a>
-            <a href="view.html?section=State%20jobs" class="state-btn">Jharkhand</a>
-            <a href="view.html?section=State%20jobs" class="state-btn">Odisha</a>
-            <a href="view.html?section=State%20jobs" class="state-btn">Himachal</a>
-            <a href="category.html?group=state" class="state-btn" style="border-style:dashed;">All States →</a>
-          </div>
-        </section>
-
-        <!-- FOLLOW US (screenshot 2) -->
-        <section class="cat-section" aria-label="Follow us">
-          <div class="sec-title-bar">
-            <h2><i class="fa-solid fa-bell"></i> Follow Us</h2>
-          </div>
-          <div class="social-follow">
-            <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" class="social-btn sb-wa">
-              <i class="fa-brands fa-whatsapp"></i> Join WhatsApp
-            </a>
-            <a href="https://t.me/topsarkarijobs" target="_blank" rel="noopener" class="social-btn sb-tg">
-              <i class="fa-brands fa-telegram"></i> Join Telegram
-            </a>
-            <a href="https://www.youtube.com/@Topsarkarijobs" target="_blank" rel="noopener" class="social-btn sb-yt">
-              <i class="fa-brands fa-youtube"></i> YouTube Channel
-            </a>
-            <a href="https://www.instagram.com/topsarkarijobs" target="_blank" rel="noopener" class="social-btn sb-ig">
-              <i class="fa-brands fa-instagram"></i> Instagram
-            </a>
-          </div>
-        </section>
+        </div><!-- /below-notif-grid -->
 
         <!-- SEO CONTENT -->
         <section class="seo-block" aria-label="About sarkari jobs 2026">
@@ -1502,8 +1391,58 @@
       return score;
     }
 
+    // Also load dynamic data from JSON files for richer search
+    let dynamicLinks = [];
+    Promise.all([
+      fetch('dynamic-sections.json').then(r => r.ok ? r.json() : {}).catch(() => ({})),
+      fetch('jobs.json').then(r => r.ok ? r.json() : {}).catch(() => ({})),
+      fetch('header_links.json').then(r => r.ok ? r.json() : {}).catch(() => ({})),
+    ]).then(([dyn, jobs, hl]) => {
+      if (dyn.sections) {
+        dyn.sections.forEach(s => (s.items || []).forEach(i => {
+          const name = (i.name || i.title || '').trim();
+          const url  = (i.url  || i.link  || '').trim();
+          if (name && url) dynamicLinks.push({ text: name, href: url, icon: 'fa-briefcase', tags: s.title || '' });
+        }));
+      }
+      [jobs.top_jobs, jobs.left_jobs, jobs.right_jobs].forEach(arr => {
+        (arr || []).forEach(i => {
+          const name = (i.name || i.title || '').trim();
+          const url  = (i.url  || i.link  || '').trim();
+          if (name && url) dynamicLinks.push({ text: name, href: url, icon: 'fa-briefcase', tags: 'category' });
+        });
+      });
+      if (Array.isArray(hl)) {
+        hl.forEach(i => {
+          const name = (i.name || i.title || '').trim();
+          const url  = (i.url  || i.link  || '').trim();
+          if (name && url) dynamicLinks.push({ text: name, href: url, icon: 'fa-link', tags: 'header' });
+        });
+      }
+
+      // Also populate dynamic Admit Cards & Results lists on homepage
+      if (dyn.sections) {
+        const admitSection = dyn.sections.find(s => /admit|exam date/i.test(s.title || ''));
+        const resultSection = dyn.sections.find(s => /result/i.test(s.title || ''));
+        function fillList(sectionData, containerId, fallbackHref) {
+          const el = document.getElementById(containerId);
+          if (!el || !sectionData) return;
+          const items = (sectionData.items || []).slice(0, 10);
+          if (!items.length) return;
+          el.innerHTML = items.map(i => {
+            const name = (i.name || i.title || '').trim();
+            const href = (i.url || i.link || fallbackHref).trim();
+            return `<a href="${href}"><i class="fa-solid fa-circle" style="font-size:.5rem;"></i><span>${name}</span><i class="fa-solid fa-chevron-right arrow"></i></a>`;
+          }).join('');
+        }
+        fillList(admitSection, 'dynamic-admit-cards', 'view.html?section=Admit%20cards%20Exams%20Date');
+        fillList(resultSection, 'dynamic-results', 'category.html?group=admissions');
+      }
+    }).catch(() => {});
+
     function search(q) {
-      return ALL_LINKS
+      const combined = [...ALL_LINKS, ...dynamicLinks];
+      return combined
         .map(l => ({ ...l, score: scoreMatch(l, q) }))
         .filter(l => l.score > 0)
         .sort((a, b) => b.score - a.score)
@@ -1660,6 +1599,17 @@
       }
     });
 
+    // Wire heroSearch to also trigger script.js initGlobalLiveSearch (uses id heroSearch as siteSearchInput alias)
+    // script.js looks for id=siteSearchInput — add alias
+    document.addEventListener('DOMContentLoaded', function() {
+      const heroInput = document.getElementById('heroSearch');
+      const heroResults = document.getElementById('heroSearchResults');
+      if (heroInput && !document.getElementById('siteSearchInput')) {
+        // Create hidden alias input so script.js initGlobalLiveSearch picks it up
+        heroInput.id = 'heroSearch'; // keep for inline script
+        // script.js already handles via initGlobalLiveSearch with heroSearch; no action needed
+      }
+    });
   })();
   </script>
 </body>
