@@ -298,7 +298,7 @@
       color: var(--text);
     }
     #heroSearch:focus { border-color: #f97316; }
-    #heroSearchBtn {
+    #heroSearchBtn, #siteSearchBtn {
       padding: 12px 22px;
       background: #f97316;
       color: #fff;
@@ -313,9 +313,9 @@
       align-items: center;
       gap: 6px;
     }
-    #heroSearchBtn:hover { background: #ea580c; }
-    /* Auto-suggest dropdown */
-    #searchSuggest {
+    #heroSearchBtn:hover, #siteSearchBtn:hover { background: #ea580c; }
+    /* Auto-suggest / live search dropdown */
+    #searchResults, #searchSuggest {
       position: absolute;
       top: calc(100% + 4px);
       left: 0;
@@ -325,15 +325,15 @@
       border-radius: 10px;
       box-shadow: var(--shadow-lg);
       z-index: 500;
-      max-height: 280px;
+      max-height: 320px;
       overflow-y: auto;
       display: none;
     }
-    #searchSuggest.open { display: block; }
-    .suggest-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    #searchResults.open, #searchSuggest.open { display: block; }
+    /* script.js sets display:block directly, so override: */
+    #searchResults[style*="display: block"], #searchResults[style*="display:block"] { display: block !important; }
+    .search-result-item {
+      display: block;
       padding: 10px 14px;
       font-size: .84rem;
       font-weight: 600;
@@ -342,10 +342,11 @@
       border-bottom: 1px solid #f8fafc;
       transition: background .1s;
     }
-    .suggest-item:last-child { border-bottom: none; }
-    .suggest-item:hover, .suggest-item.active { background: #eff6ff; color: var(--brand2); }
-    .suggest-item i { color: var(--brand2); width: 16px; font-size: .8rem; }
-    .suggest-no { padding: 12px 14px; font-size: .82rem; color: var(--muted); }
+    .search-result-item:last-child { border-bottom: none; }
+    .search-result-item:hover { background: #eff6ff; color: var(--brand2); }
+    .result-name { font-weight: 700; font-size: .84rem; }
+    .result-meta { font-size: .72rem; color: var(--muted); margin-top: 2px; }
+    .search-no-results { padding: 12px 14px; font-size: .82rem; color: var(--muted); }
 
     /* Filter row */
     .search-filter-row {
@@ -1130,11 +1131,11 @@
 
         <div style="position:relative;">
           <div class="search-main-row">
-            <input id="heroSearch" type="search" placeholder="Search: SSC CGL, RRB NTPC, IBPS PO, Police, 10th Pass, Haryana…" autocomplete="off" aria-label="Search jobs" aria-autocomplete="list" aria-controls="searchSuggest"/>
-            <button id="heroSearchBtn" type="button"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+            <input id="siteSearchInput" type="search" placeholder="Search: SSC CGL, RRB NTPC, IBPS PO, Police, 10th Pass, Haryana…" autocomplete="off" aria-label="Search jobs" aria-autocomplete="list" aria-controls="searchResults"/>
+            <button id="siteSearchBtn" type="button"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
           </div>
-          <!-- Auto-suggest dropdown -->
-          <div id="searchSuggest" role="listbox" aria-label="Search suggestions"></div>
+          <!-- Live search results dropdown -->
+          <div id="searchResults" class="search-dropdown-results" role="listbox" aria-label="Search results"></div>
         </div>
 
         <!-- Filters -->
@@ -1178,6 +1179,199 @@
       </div>
     </div>
   </section>
+
+  <!-- ===================================================
+       DYNAMIC SECTIONS 2-COLUMN OVERRIDE STYLES
+  =================================================== -->
+  <style>
+    /* 2-column layout for section cards matching reference image */
+    .duo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 640px) { .duo-grid { grid-template-columns: 1fr; } }
+
+    /* Section card redesign */
+    .section-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+    }
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      gap: 8px;
+      font-size: .85rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: .01em;
+    }
+    .section-head .left { display: flex; align-items: center; gap: 8px; }
+    .section-head .view-all-head {
+      font-size: .72rem;
+      font-weight: 700;
+      color: rgba(255,255,255,.85);
+      text-decoration: none;
+      background: rgba(255,255,255,.18);
+      padding: 3px 9px;
+      border-radius: 12px;
+      white-space: nowrap;
+    }
+    .section-head .view-all-head:hover { background: rgba(255,255,255,.32); }
+    .section-body { flex: 1; display: flex; flex-direction: column; }
+    .section-list {
+      flex: 1;
+      max-height: 220px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #e2e8f0 transparent;
+    }
+    .section-list::-webkit-scrollbar { width: 4px; }
+    .section-list::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; }
+    .section-link {
+      display: flex;
+      flex-direction: column;
+      padding: 8px 12px;
+      border-bottom: 1px solid #f1f5f9;
+      text-decoration: none;
+      transition: background .1s;
+    }
+    .section-link:last-child { border-bottom: none; }
+    .section-link:hover { background: #f0f9ff; }
+    .section-link .t {
+      font-size: .78rem;
+      font-weight: 700;
+      color: #1e293b;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .section-link:hover .t { color: var(--brand2); }
+    .section-link .d { font-size: .68rem; color: var(--muted); margin-top: 2px; }
+    .section-link[data-collapsed="1"] { display: none; }
+    .view-all {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px;
+      font-size: .78rem;
+      font-weight: 700;
+      color: var(--brand2);
+      text-decoration: none;
+      border-top: 1px solid var(--border);
+      background: #f8fafc;
+      transition: background .12s;
+    }
+    .view-all:hover { background: #eff6ff; }
+    .section-show-more {
+      background: none;
+      border: none;
+      border-top: 1px solid var(--border);
+      color: var(--brand2);
+      font-size: .76rem;
+      font-weight: 700;
+      padding: 7px;
+      cursor: pointer;
+      width: 100%;
+      text-align: center;
+    }
+    .section-show-more:hover { background: #f0f9ff; }
+
+    /* Admit Card + Result sections - 2-col matching reference image */
+    .two-col-admit-result {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    @media (max-width: 640px) { .two-col-admit-result { grid-template-columns: 1fr; } }
+    .admit-result-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .arc-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      font-size: .85rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    .arc-head.admit { background: linear-gradient(90deg, #059669, #047857); }
+    .arc-head.result { background: linear-gradient(90deg, #7c3aed, #5b21b6); }
+    .arc-head.answer { background: linear-gradient(90deg, #d97706, #b45309); }
+    .arc-head.upcoming { background: linear-gradient(90deg, #0ea5e9, #0284c7); }
+    .arc-view-all {
+      font-size: .7rem;
+      font-weight: 700;
+      color: rgba(255,255,255,.85);
+      background: rgba(255,255,255,.18);
+      padding: 3px 9px;
+      border-radius: 10px;
+      text-decoration: none;
+    }
+    .arc-view-all:hover { background: rgba(255,255,255,.3); }
+    .arc-list { max-height: 200px; overflow-y: auto; }
+    .arc-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 8px 12px;
+      border-bottom: 1px solid #f1f5f9;
+      text-decoration: none;
+      transition: background .1s;
+    }
+    .arc-item:last-child { border-bottom: none; }
+    .arc-item:hover { background: #f0f9ff; }
+    .arc-item-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #059669;
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+    .arc-item-dot.result { background: #7c3aed; }
+    .arc-item-dot.answer { background: #d97706; }
+    .arc-item-dot.upcoming { background: #0ea5e9; }
+    .arc-item-text {
+      font-size: .77rem;
+      font-weight: 600;
+      color: #1e293b;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .arc-item:hover .arc-item-text { color: var(--brand2); }
+    .arc-more {
+      display: block;
+      text-align: center;
+      padding: 8px;
+      font-size: .76rem;
+      font-weight: 700;
+      color: var(--brand2);
+      text-decoration: none;
+      border-top: 1px solid var(--border);
+      background: #f8fafc;
+    }
+    .arc-more:hover { background: #eff6ff; }
+  </style>
 
   <!-- ===================================================
        QUICK NAV CHIPS
@@ -1286,6 +1480,57 @@
           </div>
           <div id="tab-india" class="tab-panel">
             <div id="dynamic-india" class="duo-grid"></div>
+          </div>
+        </section>
+
+        <!-- ADMIT CARD + RESULT - 2 Column Layout (Reference Image Style) -->
+        <section class="cat-section" aria-label="Admit cards and results">
+          <div class="two-col-admit-result" id="admit-result-grid">
+            <!-- Admit Card Column -->
+            <div class="admit-result-card">
+              <div class="arc-head admit">
+                <span><i class="fa-solid fa-id-card"></i> Admit Cards &amp; Exam Date</span>
+                <a href="category.html?group=admit-result" class="arc-view-all">View All</a>
+              </div>
+              <div class="arc-list" id="admit-card-list">
+                <div style="padding:12px;font-size:.78rem;color:var(--muted);">Loading...</div>
+              </div>
+              <a href="category.html?group=admit-result" class="arc-more">View More →</a>
+            </div>
+            <!-- Result Column -->
+            <div class="admit-result-card">
+              <div class="arc-head result">
+                <span><i class="fa-solid fa-trophy"></i> Latest Results</span>
+                <a href="category.html?group=admissions" class="arc-view-all">View All</a>
+              </div>
+              <div class="arc-list" id="result-list">
+                <div style="padding:12px;font-size:.78rem;color:var(--muted);">Loading...</div>
+              </div>
+              <a href="category.html?group=admissions" class="arc-more">View More →</a>
+            </div>
+          </div>
+          <!-- Answer Key + Upcoming -->
+          <div class="two-col-admit-result">
+            <div class="admit-result-card">
+              <div class="arc-head answer">
+                <span><i class="fa-solid fa-key"></i> Answer Key</span>
+                <a href="view.html?section=Answer%20Key" class="arc-view-all">View All</a>
+              </div>
+              <div class="arc-list" id="answer-key-list">
+                <div style="padding:12px;font-size:.78rem;color:var(--muted);">Loading...</div>
+              </div>
+              <a href="view.html?section=Answer%20Key" class="arc-more">View More →</a>
+            </div>
+            <div class="admit-result-card">
+              <div class="arc-head upcoming">
+                <span><i class="fa-solid fa-calendar-plus"></i> Upcoming Jobs</span>
+                <a href="view.html?section=upcoming-jobs" class="arc-view-all">View All</a>
+              </div>
+              <div class="arc-list" id="upcoming-jobs-list">
+                <div style="padding:12px;font-size:.78rem;color:var(--muted);">Loading...</div>
+              </div>
+              <a href="view.html?section=upcoming-jobs" class="arc-more">View More →</a>
+            </div>
           </div>
         </section>
 
@@ -2074,6 +2319,62 @@
       }
     });
 
+  })();
+  </script>
+
+  <!-- Fix filter button & load admit/result sections from dynamic-sections.json -->
+  <script>
+  (function() {
+    // Fix filter apply button navigation
+    const filterBtn = document.getElementById('filterApplyBtn');
+    if (filterBtn) {
+      filterBtn.addEventListener('click', function() {
+        const qual = document.getElementById('filterQual')?.value;
+        const dept = document.getElementById('filterDept')?.value;
+        const state = document.getElementById('filterState')?.value;
+        const section = qual || dept || state;
+        window.location.href = 'view.html?section=' + (section || 'latest%20jobs');
+      });
+    }
+
+    // Load admit/result/answer key/upcoming from dynamic-sections.json
+    const sectionMap = {
+      'Admit cards Exams Date': 'admit-card-list',
+      'results': 'result-list',
+      'Answer Key': 'answer-key-list',
+      'upcoming-jobs': 'upcoming-jobs-list'
+    };
+    const dotClass = { 'admit-card-list': '', 'result-list': 'result', 'answer-key-list': 'answer', 'upcoming-jobs-list': 'upcoming' };
+
+    fetch('dynamic-sections.json')
+      .then(r => r.json())
+      .then(data => {
+        if (!data.sections) return;
+        data.sections.forEach(sec => {
+          const listId = sectionMap[sec.id];
+          if (!listId) return;
+          const el = document.getElementById(listId);
+          if (!el) return;
+          const items = (sec.items || []).slice(0, 10);
+          if (!items.length) { el.innerHTML = '<div style="padding:12px;font-size:.78rem;color:var(--muted);">No data.</div>'; return; }
+          el.innerHTML = items.map(it => {
+            const name = (it.name || it.title || '').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+            const url = it.url || it.link || '#';
+            return `<a class="arc-item" href="${url}" target="_blank" rel="noopener"><div class="arc-item-dot ${dotClass[listId]}"></div><div class="arc-item-text">${name}</div></a>`;
+          }).join('');
+        });
+      }).catch(() => {});
+
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        this.classList.add('active'); this.setAttribute('aria-selected','true');
+        const t = document.getElementById(this.dataset.tab);
+        if (t) t.classList.add('active');
+      });
+    });
   })();
   </script>
 </body>
