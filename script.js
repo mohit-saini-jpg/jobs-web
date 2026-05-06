@@ -530,6 +530,7 @@
             <i class="${icon}"></i>
             <span>${title}</span>
           </div>
+          ${moreHref ? `<a class="view-all-head" href="${moreHref}">View All</a>` : ""}
         </div>
         <div class="section-body">
           <div class="section-list"></div>
@@ -539,7 +540,7 @@
 
       const list = $(".section-list", card);
       const items = Array.isArray(sec.items)
-        ? sec.items.filter(i => !isGarbageLink(i)).slice(0, 8)
+        ? sec.items.filter(i => !isGarbageLink(i)).slice(0, 10)
         : [];
 
       items.forEach((it, idx) => {
@@ -550,10 +551,8 @@
         const external = !!it.external;
         const a = document.createElement("a");
         a.className = "section-link";
-        // ISSUE-001: collapse to 4 items per section by default; the rest are
-        // hidden until the user clicks "Show all". Cuts the mobile homepage
-        // scroll length roughly in half.
-        if (idx >= 4) a.dataset.collapsed = "1";
+        // Show 5 items by default; rest hidden until "Show all" clicked
+        if (idx >= 5) a.dataset.collapsed = "1";
         a.href = buildRedirectUrl(url, name, sectionKey) || normalizeUrl(url);
         a.setAttribute("data-redirect-label", name);
         if (external) { a.target = "_blank"; a.rel = "noopener"; }
@@ -561,7 +560,7 @@
         list.appendChild(a);
       });
 
-      const hidden = items.length - 4;
+      const hidden = items.length - 5;
       if (hidden > 0) {
         const btn = document.createElement("button");
         btn.type = "button";
