@@ -620,14 +620,12 @@
 
     /* Mobile offcanvas */
     .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 350; }
-    .overlay[hidden] { display: none !important; }
     .offcanvas {
       position: fixed; top: 0; left: 0; bottom: 0;
       width: min(300px, 85vw); background: #fff; z-index: 360;
       overflow-y: auto; display: flex; flex-direction: column;
       box-shadow: 0 6px 24px rgba(0,0,0,.12);
     }
-    .offcanvas[hidden] { display: none !important; }
     .offcanvas-head {
       display: flex; align-items: center; justify-content: space-between;
       padding: 13px 14px;
@@ -699,8 +697,12 @@
         </div>
       </a>
 
-      <!-- Header search removed to avoid duplicate search bars -->
-      <!-- <div class="header-search-wrap">...</div> -->
+      <div class="header-search-wrap">
+        <div class="header-search-box">
+          <input type="search" id="headerSearch" placeholder="Search jobs, admit card, result..." autocomplete="off" aria-label="Search jobs">
+          <button type="button" id="headerSearchBtn">Search</button>
+        </div>
+      </div>
 
       <div class="header-actions">
         <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" class="wa-btn-header">
@@ -976,178 +978,196 @@
       <!-- ===== MAIN COLUMN ===== -->
       <div>
 
-        <!-- LATEST JOB NOTIFICATIONS -->
-        <div class="sec-card">
-          <div class="sec-head red">
-            <div class="left"><i class="fa-solid fa-briefcase"></i> LATEST JOBS</div>
-            <a href="view.html?section=latest%20jobs" class="view-all-btn">View All</a>
-          </div>
-          <div class="job-list" id="dynamic-sections">
-            <!-- These will be populated by script.js; fallback static rows: -->
-            <a href="view.html?section=latest%20jobs">
-              <span class="job-new">NEW</span>
-              <div class="job-body">
-                <div class="job-title">SSC MTS Recruitment 2026</div>
-                <div class="job-meta">Last Date: 24/06/2026</div>
-              </div>
-              <span class="job-date">Apply Now</span>
-            </a>
-            <a href="view.html?section=Railway%20Jobs">
-              <span class="job-new">NEW</span>
-              <div class="job-body">
-                <div class="job-title">Railway Group D Vacancy 2026</div>
-                <div class="job-meta">Last Date: 22/06/2026</div>
-              </div>
-              <span class="job-date">Apply Now</span>
-            </a>
-            <a href="view.html?section=Bank%20Jobs">
-              <span class="job-new">NEW</span>
-              <div class="job-body">
-                <div class="job-title">Bank of Baroda Recruitment 2026</div>
-                <div class="job-meta">Last Date: 30/06/2026</div>
-              </div>
-              <span class="job-date">Apply Now</span>
-            </a>
-            <a href="view.html?section=Police%20Jobs">
-              <span class="job-new">NEW</span>
-              <div class="job-body">
-                <div class="job-title">UP Police Constable Vacancy 2026</div>
-                <div class="job-meta">Last Date: 28/06/2026</div>
-              </div>
-              <span class="job-date">Apply Now</span>
-            </a>
-            <a href="view.html?section=Teacher%20Jobs">
-              <span class="job-new">NEW</span>
-              <div class="job-body">
-                <div class="job-title">Rajasthan Patwari Recruitment 2026</div>
-                <div class="job-meta">Last Date: 20/06/2026</div>
-              </div>
-              <span class="job-date">Apply Now</span>
-            </a>
-            <a href="view.html?section=Indian%20ARMY%20jobs">
-              <span class="job-new">NEW</span>
-              <div class="job-body">
-                <div class="job-title">Indian Army Agniveer Rally 2026</div>
-                <div class="job-meta">Last Date: 25/06/2026</div>
-              </div>
-              <span class="job-date">Apply Now</span>
-            </a>
-            <a href="view.html?section=latest%20jobs">
-              <span class="job-new">NEW</span>
-              <div class="job-body">
-                <div class="job-title">India Post GDS Recruitment 2026</div>
-                <div class="job-meta">Last Date: 10/06/2026</div>
-              </div>
-              <span class="job-date">Apply Now</span>
-            </a>
-            <a href="view.html?section=Bank%20Jobs">
-              <span class="job-new">NEW</span>
-              <div class="job-body">
-                <div class="job-title">SSB Head Constable Vacancy 2026</div>
-                <div class="job-meta">Last Date: 21/06/2026</div>
-              </div>
-              <span class="job-date">Apply Now</span>
-            </a>
-            <a href="view.html?section=latest%20jobs">
-              <span class="job-new">NEW</span>
-              <div class="job-body">
-                <div class="job-title">BSF HC Ministerial Vacancy 2026</div>
-                <div class="job-meta">Last Date: 18/06/2026</div>
-              </div>
-              <span class="job-date">Apply Now</span>
-            </a>
-            <a href="view.html?section=latest%20jobs">
-              <span class="job-new">NEW</span>
-              <div class="job-body">
-                <div class="job-title">IB ACIO Recruitment 2026</div>
-                <div class="job-meta">Last Date: 15/06/2026</div>
-              </div>
-              <span class="job-date">Apply Now</span>
-            </a>
-          </div>
-          <a href="view.html?section=latest%20jobs" class="sec-more"><i class="fa-solid fa-eye"></i> View All Latest Jobs</a>
-        </div>
+        <!-- ✅ TOP 2-COLUMN JOB LISTS: Latest Jobs | Upcoming Jobs -->
+        <div class="jobs-two-col">
 
-        <!-- ADMIT CARD + RESULTS (two col) -->
-        <div class="two-col-grid">
-          <div class="sec-card" style="margin-bottom:0;">
-            <div class="bng-hd green"><i class="fa-solid fa-id-card"></i> Admit Cards</div>
-            <div class="sec-list" id="dynamic-admit-cards">
-              <a href="category.html?group=admit-result"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#94a3b8;width:auto;"></i><span>SSC MTS Admit Card 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-              <a href="category.html?group=admit-result"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#94a3b8;width:auto;"></i><span>Railway Group D Admit Card</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-              <a href="category.html?group=admit-result"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#94a3b8;width:auto;"></i><span>IB ACIO Admit Card 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-              <a href="category.html?group=admit-result"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#94a3b8;width:auto;"></i><span>UP Police Constable Hall Ticket</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-              <a href="category.html?group=admit-result"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#94a3b8;width:auto;"></i><span>Rajasthan Patwari Admit Card</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+          <!-- LATEST JOBS -->
+          <div class="sec-card">
+            <div class="sec-head red">
+              <div class="left"><i class="fa-solid fa-briefcase"></i> LATEST JOBS</div>
+              <a href="view.html?section=latest%20jobs" class="view-all-btn">View All</a>
             </div>
-            <a href="category.html?group=admit-result" class="sec-more">View All Admit Card →</a>
+            <div class="job-list" id="dynamic-sections">
+              <a href="view.html?section=latest%20jobs"><span class="job-new">NEW</span><div class="job-body"><div class="job-title">SSC MTS Recruitment 2026</div><div class="job-meta">Last Date: 24/06/2026</div></div></a>
+              <a href="view.html?section=Railway%20Jobs"><span class="job-new">NEW</span><div class="job-body"><div class="job-title">Railway Group D Vacancy 2026</div><div class="job-meta">Last Date: 22/06/2026</div></div></a>
+              <a href="view.html?section=Bank%20Jobs"><span class="job-new">NEW</span><div class="job-body"><div class="job-title">Bank of Baroda Recruitment 2026</div><div class="job-meta">Last Date: 30/06/2026</div></div></a>
+              <a href="view.html?section=Police%20Jobs"><span class="job-new">NEW</span><div class="job-body"><div class="job-title">UP Police Constable Vacancy 2026</div><div class="job-meta">Last Date: 28/06/2026</div></div></a>
+              <a href="view.html?section=Teacher%20Jobs"><span class="job-new">NEW</span><div class="job-body"><div class="job-title">Rajasthan Patwari Recruitment 2026</div><div class="job-meta">Last Date: 20/06/2026</div></div></a>
+              <a href="view.html?section=Indian%20ARMY%20jobs"><span class="job-new">NEW</span><div class="job-body"><div class="job-title">Indian Army Agniveer Rally 2026</div><div class="job-meta">Last Date: 25/06/2026</div></div></a>
+              <a href="view.html?section=latest%20jobs"><span class="job-new">NEW</span><div class="job-body"><div class="job-title">India Post GDS Recruitment 2026</div><div class="job-meta">Last Date: 10/06/2026</div></div></a>
+              <a href="view.html?section=latest%20jobs"><span class="job-new">NEW</span><div class="job-body"><div class="job-title">BSF HC Ministerial Vacancy 2026</div><div class="job-meta">Last Date: 18/06/2026</div></div></a>
+            </div>
+            <a href="view.html?section=latest%20jobs" class="sec-more"><i class="fa-solid fa-eye"></i> View All Latest Jobs</a>
+          </div>
+
+          <!-- UPCOMING JOBS -->
+          <div class="sec-card">
+            <div class="sec-head" style="background:linear-gradient(90deg,#065f46,#059669);">
+              <div class="left"><i class="fa-solid fa-calendar-plus"></i> UPCOMING JOBS</div>
+              <a href="view.html?section=upcoming-jobs" class="view-all-btn">View All</a>
+            </div>
+            <div class="job-list" id="dynamic-upcoming">
+              <a href="view.html?section=upcoming-jobs"><span class="job-new" style="background:#059669;">SOON</span><div class="job-body"><div class="job-title">UPSC Civil Services 2026</div><div class="job-meta">Expected: Jul 2026</div></div></a>
+              <a href="view.html?section=upcoming-jobs"><span class="job-new" style="background:#059669;">SOON</span><div class="job-body"><div class="job-title">SSC CGL 2026 Notification</div><div class="job-meta">Expected: Jun 2026</div></div></a>
+              <a href="view.html?section=upcoming-jobs"><span class="job-new" style="background:#059669;">SOON</span><div class="job-body"><div class="job-title">RRB NTPC 2026 New Batch</div><div class="job-meta">Expected: Jun 2026</div></div></a>
+              <a href="view.html?section=upcoming-jobs"><span class="job-new" style="background:#059669;">SOON</span><div class="job-body"><div class="job-title">IBPS PO 2026 Notification</div><div class="job-meta">Expected: Jul 2026</div></div></a>
+              <a href="view.html?section=upcoming-jobs"><span class="job-new" style="background:#059669;">SOON</span><div class="job-body"><div class="job-title">NDA 2026 New Vacancy</div><div class="job-meta">Expected: Jun 2026</div></div></a>
+              <a href="view.html?section=upcoming-jobs"><span class="job-new" style="background:#059669;">SOON</span><div class="job-body"><div class="job-title">State Police Constable 2026</div><div class="job-meta">Expected: Jul 2026</div></div></a>
+              <a href="view.html?section=upcoming-jobs"><span class="job-new" style="background:#059669;">SOON</span><div class="job-body"><div class="job-title">CTET July 2026 Notification</div><div class="job-meta">Expected: Jun 2026</div></div></a>
+              <a href="view.html?section=upcoming-jobs"><span class="job-new" style="background:#059669;">SOON</span><div class="job-body"><div class="job-title">Haryana Police 2026 Vacancy</div><div class="job-meta">Expected: Jul 2026</div></div></a>
+            </div>
+            <a href="view.html?section=upcoming-jobs" class="sec-more"><i class="fa-solid fa-eye"></i> View All Upcoming Jobs</a>
+          </div>
+
+        </div><!-- /jobs-two-col -->
+
+        <!-- ✅ 2-COLUMN: Admit Card | Latest Results -->
+        <div class="jobs-two-col" style="margin-top:14px;">
+
+          <div class="sec-card" style="margin-bottom:0;">
+            <div class="sec-head green">
+              <div class="left"><i class="fa-solid fa-id-card"></i> ADMIT CARD</div>
+              <a href="category.html?group=admit-result" class="view-all-btn">View All</a>
+            </div>
+            <div class="job-list" id="dynamic-admit-cards">
+              <a href="category.html?group=admit-result"><span class="job-new" style="background:#059669;">NEW</span><div class="job-body"><div class="job-title">SSC MTS Admit Card 2026</div><div class="job-meta">Released: 16/05/2026</div></div></a>
+              <a href="category.html?group=admit-result"><span class="job-new" style="background:#059669;">NEW</span><div class="job-body"><div class="job-title">Railway Group D Admit Card</div><div class="job-meta">Released: 14/05/2026</div></div></a>
+              <a href="category.html?group=admit-result"><span class="job-new" style="background:#059669;">NEW</span><div class="job-body"><div class="job-title">IB ACIO Admit Card 2026</div><div class="job-meta">Released: 12/05/2026</div></div></a>
+              <a href="category.html?group=admit-result"><span class="job-new" style="background:#059669;">NEW</span><div class="job-body"><div class="job-title">UP Police Constable Hall Ticket</div><div class="job-meta">Released: 10/05/2026</div></div></a>
+              <a href="category.html?group=admit-result"><span class="job-new" style="background:#059669;">NEW</span><div class="job-body"><div class="job-title">Rajasthan Patwari Admit Card</div><div class="job-meta">Released: 09/05/2026</div></div></a>
+            </div>
+            <a href="category.html?group=admit-result" class="sec-more"><i class="fa-solid fa-eye"></i> View All Admit Cards</a>
           </div>
 
           <div class="sec-card" style="margin-bottom:0;">
-            <div class="bng-hd purple"><i class="fa-solid fa-trophy"></i> Latest Results</div>
-            <div class="sec-list" id="dynamic-results">
-              <a href="category.html?group=admissions"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#94a3b8;width:auto;"></i><span>SSC MTS Result 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-              <a href="category.html?group=admissions"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#94a3b8;width:auto;"></i><span>Railway Group D Result 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-              <a href="category.html?group=admissions"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#94a3b8;width:auto;"></i><span>UP Police Constable Result</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-              <a href="category.html?group=admissions"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#94a3b8;width:auto;"></i><span>Rajasthan Patwari Result 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-              <a href="category.html?group=admissions"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#94a3b8;width:auto;"></i><span>IB ACIO Result 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+            <div class="sec-head purple">
+              <div class="left"><i class="fa-solid fa-trophy"></i> LATEST RESULTS</div>
+              <a href="category.html?group=admissions" class="view-all-btn">View All</a>
             </div>
-            <a href="category.html?group=admissions" class="sec-more">View All Results →</a>
+            <div class="job-list" id="dynamic-results">
+              <a href="category.html?group=admissions"><span class="job-new" style="background:#7c3aed;">OUT</span><div class="job-body"><div class="job-title">SSC MTS Result 2026</div><div class="job-meta">Declared: 20/05/2026</div></div></a>
+              <a href="category.html?group=admissions"><span class="job-new" style="background:#7c3aed;">OUT</span><div class="job-body"><div class="job-title">Railway Group D Result 2026</div><div class="job-meta">Released: 18/05/2026</div></div></a>
+              <a href="category.html?group=admissions"><span class="job-new" style="background:#7c3aed;">OUT</span><div class="job-body"><div class="job-title">UP Police Constable Result</div><div class="job-meta">Released: 15/05/2026</div></div></a>
+              <a href="category.html?group=admissions"><span class="job-new" style="background:#7c3aed;">OUT</span><div class="job-body"><div class="job-title">Rajasthan Patwari Result 2026</div><div class="job-meta">Released: 12/05/2026</div></div></a>
+              <a href="category.html?group=admissions"><span class="job-new" style="background:#7c3aed;">OUT</span><div class="job-body"><div class="job-title">IB ACIO Result 2026</div><div class="job-meta">Declared: 10/05/2026</div></div></a>
+            </div>
+            <a href="category.html?group=admissions" class="sec-more"><i class="fa-solid fa-eye"></i> View All Results</a>
           </div>
-        </div>
-        <br>
 
-        <!-- BROWSE JOBS BY CATEGORY (scrollable) -->
-        <div class="sec-card">
-          <div class="sec-head blue">
-            <div class="left"><i class="fa-solid fa-th-large"></i> BROWSE JOBS BY CATEGORY</div>
-          </div>
-          <div class="browse-row">
-            <a href="view.html?section=Railway%20Jobs" class="browse-item">
-              <div class="browse-icon" style="background:#fff0e6;color:#c2410c;"><i class="fa-solid fa-train"></i></div>
-              <span>Railway Jobs</span>
-              <small>125+ Jobs</small>
-            </a>
-            <a href="view.html?section=Bank%20Jobs" class="browse-item">
-              <div class="browse-icon" style="background:#eff6ff;color:#1d4ed8;"><i class="fa-solid fa-building-columns"></i></div>
-              <span>Bank Jobs</span>
-              <small>180+ Jobs</small>
-            </a>
-            <a href="view.html?section=Police%20Jobs" class="browse-item">
-              <div class="browse-icon" style="background:#fff1f2;color:#be123c;"><i class="fa-solid fa-shield-halved"></i></div>
-              <span>Police Jobs</span>
-              <small>95+ Jobs</small>
-            </a>
-            <a href="view.html?section=Latest%20Govt%20Jobs" class="browse-item">
-              <div class="browse-icon" style="background:#f0fdf4;color:#16a34a;"><i class="fa-solid fa-briefcase"></i></div>
-              <span>SSC Jobs</span>
-              <small>210+ Jobs</small>
-            </a>
-            <a href="view.html?section=Indian%20ARMY%20jobs" class="browse-item">
-              <div class="browse-icon" style="background:#f5f3ff;color:#7c3aed;"><i class="fa-solid fa-star"></i></div>
-              <span>Army Jobs</span>
-              <small>90+ Jobs</small>
-            </a>
-            <a href="view.html?section=Teacher%20Jobs" class="browse-item">
-              <div class="browse-icon" style="background:#fef3c7;color:#d97706;"><i class="fa-solid fa-chalkboard-user"></i></div>
-              <span>Teaching Jobs</span>
-              <small>120+ Jobs</small>
-            </a>
-            <a href="view.html?section=Medical%2F%20Healthcare%20Jobs" class="browse-item">
-              <div class="browse-icon" style="background:#fff0f0;color:#dc2626;"><i class="fa-solid fa-stethoscope"></i></div>
-              <span>Medical Jobs</span>
-              <small>80+ Jobs</small>
-            </a>
-            <a href="view.html?section=Haryana%20All%20State%20Jobs" class="browse-item">
-              <div class="browse-icon" style="background:#ecfdf5;color:#059669;"><i class="fa-solid fa-location-dot"></i></div>
-              <span>Haryana Jobs</span>
-              <small>65+ Jobs</small>
-            </a>
-          </div>
-          <a href="category.html?group=popular" class="browse-view-all"><i class="fa-solid fa-eye"></i> View All Categories</a>
-        </div>
+        </div><!-- /2col admit+results -->
 
-        <!-- STUDY MATERIAL & TOOLS + LATEST KHABAR row -->
-        <div class="two-col-grid">
+        <!-- ✅ 2-COLUMN: Top 20 Jobs | Haryana Jobs -->
+        <div class="jobs-two-col" style="margin-top:14px;">
+
+          <div class="sec-card" style="margin-bottom:0;">
+            <div class="sec-head" style="background:linear-gradient(90deg,#92400e,#d97706);">
+              <div class="left"><i class="fa-solid fa-medal"></i> TOP 20 JOBS</div>
+              <a href="view.html?section=Top%2020%20Jobs" class="view-all-btn">View All</a>
+            </div>
+            <div class="sec-list">
+              <a href="view.html?section=Top%2020%20Jobs"><i class="fa-solid fa-fire" style="color:#d97706;"></i><span>SSC CGL 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Top%2020%20Jobs"><i class="fa-solid fa-fire" style="color:#d97706;"></i><span>UPSC IAS 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Top%2020%20Jobs"><i class="fa-solid fa-fire" style="color:#d97706;"></i><span>RRB NTPC 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Top%2020%20Jobs"><i class="fa-solid fa-fire" style="color:#d97706;"></i><span>IBPS PO 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Top%2020%20Jobs"><i class="fa-solid fa-fire" style="color:#d97706;"></i><span>Army Agniveer 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Top%2020%20Jobs"><i class="fa-solid fa-fire" style="color:#d97706;"></i><span>UP Police 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+            </div>
+            <a href="view.html?section=Top%2020%20Jobs" class="sec-more">View All Top 20 Jobs →</a>
+          </div>
+
+          <div class="sec-card" style="margin-bottom:0;">
+            <div class="sec-head" style="background:linear-gradient(90deg,#1e3a8a,#2563eb);">
+              <div class="left"><i class="fa-solid fa-location-dot"></i> HARYANA JOBS</div>
+              <a href="view.html?section=Haryana%20All%20State%20Jobs" class="view-all-btn">View All</a>
+            </div>
+            <div class="sec-list">
+              <a href="view.html?section=Haryana%20All%20State%20Jobs"><i class="fa-solid fa-briefcase" style="color:#2563eb;"></i><span>HSSC Group D 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Haryana%20All%20State%20Jobs"><i class="fa-solid fa-briefcase" style="color:#2563eb;"></i><span>Haryana Police Constable</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Haryana%20All%20State%20Jobs"><i class="fa-solid fa-briefcase" style="color:#2563eb;"></i><span>Haryana Teacher Vacancy</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Haryana%20All%20State%20Jobs"><i class="fa-solid fa-briefcase" style="color:#2563eb;"></i><span>HPSC HCS 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Haryana%20All%20State%20Jobs"><i class="fa-solid fa-briefcase" style="color:#2563eb;"></i><span>Haryana PWD Vacancy</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Haryana%20All%20State%20Jobs"><i class="fa-solid fa-briefcase" style="color:#2563eb;"></i><span>Haryana Anganwadi 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+            </div>
+            <a href="view.html?section=Haryana%20All%20State%20Jobs" class="sec-more">View All Haryana Jobs →</a>
+          </div>
+
+        </div><!-- /top20 + haryana -->
+
+        <!-- ✅ 2-COLUMN: Central Jobs | State Jobs -->
+        <div class="jobs-two-col" style="margin-top:14px;">
+
+          <div class="sec-card" style="margin-bottom:0;">
+            <div class="sec-head" style="background:linear-gradient(90deg,#7f1d1d,#dc2626);">
+              <div class="left"><i class="fa-solid fa-flag"></i> CENTRAL GOVT JOBS</div>
+              <a href="view.html?section=Central%20jobs" class="view-all-btn">View All</a>
+            </div>
+            <div class="sec-list">
+              <a href="view.html?section=Central%20jobs"><i class="fa-solid fa-briefcase" style="color:#dc2626;"></i><span>UPSC Recruitment 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Central%20jobs"><i class="fa-solid fa-briefcase" style="color:#dc2626;"></i><span>SSC Jobs 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Central%20jobs"><i class="fa-solid fa-briefcase" style="color:#dc2626;"></i><span>Railway RRB 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Central%20jobs"><i class="fa-solid fa-briefcase" style="color:#dc2626;"></i><span>Defence Ministry Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Central%20jobs"><i class="fa-solid fa-briefcase" style="color:#dc2626;"></i><span>India Post Recruitment</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Central%20jobs"><i class="fa-solid fa-briefcase" style="color:#dc2626;"></i><span>NHM Central Jobs 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+            </div>
+            <a href="view.html?section=Central%20jobs" class="sec-more">View All Central Jobs →</a>
+          </div>
+
+          <div class="sec-card" style="margin-bottom:0;">
+            <div class="sec-head" style="background:linear-gradient(90deg,#134e4a,#0d9488);">
+              <div class="left"><i class="fa-solid fa-map-location-dot"></i> STATE JOBS</div>
+              <a href="view.html?section=State%20jobs" class="view-all-btn">View All</a>
+            </div>
+            <div class="sec-list">
+              <a href="view.html?section=State%20jobs"><i class="fa-solid fa-briefcase" style="color:#0d9488;"></i><span>UP State Jobs 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=State%20jobs"><i class="fa-solid fa-briefcase" style="color:#0d9488;"></i><span>Bihar State Vacancy</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=State%20jobs"><i class="fa-solid fa-briefcase" style="color:#0d9488;"></i><span>Rajasthan State Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=State%20jobs"><i class="fa-solid fa-briefcase" style="color:#0d9488;"></i><span>MP State Vacancy 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=State%20jobs"><i class="fa-solid fa-briefcase" style="color:#0d9488;"></i><span>Punjab State Jobs 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=State%20jobs"><i class="fa-solid fa-briefcase" style="color:#0d9488;"></i><span>Maharashtra Recruitment</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+            </div>
+            <a href="view.html?section=State%20jobs" class="sec-more">View All State Jobs →</a>
+          </div>
+
+        </div><!-- /central + state -->
+
+        <!-- ✅ 2-COLUMN: Govt Schemes | Exam Calendar -->
+        <div class="jobs-two-col" style="margin-top:14px;">
+
+          <div class="sec-card" style="margin-bottom:0;">
+            <div class="sec-head" style="background:linear-gradient(90deg,#4c1d95,#7c3aed);">
+              <div class="left"><i class="fa-solid fa-hand-holding-heart"></i> GOVT SCHEMES</div>
+              <a href="view.html?section=Govt%20Scheme%20Yojna" class="view-all-btn">View All</a>
+            </div>
+            <div class="sec-list">
+              <a href="view.html?section=Govt%20Scheme%20Yojna"><i class="fa-solid fa-star" style="color:#7c3aed;"></i><span>PM Kisan Yojana</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Govt%20Scheme%20Yojna"><i class="fa-solid fa-star" style="color:#7c3aed;"></i><span>Ladli Behna Yojana</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Govt%20Scheme%20Yojna"><i class="fa-solid fa-star" style="color:#7c3aed;"></i><span>Ayushman Bharat Card</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Govt%20Scheme%20Yojna"><i class="fa-solid fa-star" style="color:#7c3aed;"></i><span>Ujjwala Yojana 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Govt%20Scheme%20Yojna"><i class="fa-solid fa-star" style="color:#7c3aed;"></i><span>CCRT Scholarship 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+            </div>
+            <a href="view.html?section=Govt%20Scheme%20Yojna" class="sec-more">View All Schemes →</a>
+          </div>
+
+          <div class="sec-card" style="margin-bottom:0;">
+            <div class="sec-head" style="background:linear-gradient(90deg,#065f46,#10b981);">
+              <div class="left"><i class="fa-solid fa-calendar-days"></i> EXAM CALENDAR</div>
+              <a href="view.html?section=Admit%20cards%20Exams%20Date" class="view-all-btn">View All</a>
+            </div>
+            <div class="sec-list">
+              <a href="view.html?section=Admit%20cards%20Exams%20Date"><i class="fa-solid fa-calendar-check" style="color:#10b981;"></i><span>SSC CGL Exam – Jun 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Admit%20cards%20Exams%20Date"><i class="fa-solid fa-calendar-check" style="color:#10b981;"></i><span>IBPS PO Exam – Aug 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Admit%20cards%20Exams%20Date"><i class="fa-solid fa-calendar-check" style="color:#10b981;"></i><span>UPSC Prelims – Jun 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Admit%20cards%20Exams%20Date"><i class="fa-solid fa-calendar-check" style="color:#10b981;"></i><span>CTET July 2026 Exam</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="view.html?section=Admit%20cards%20Exams%20Date"><i class="fa-solid fa-calendar-check" style="color:#10b981;"></i><span>NDA 2 Exam – Sep 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+            </div>
+            <a href="view.html?section=Admit%20cards%20Exams%20Date" class="sec-more">View All Exam Dates →</a>
+          </div>
+
+        </div><!-- /schemes + calendar -->
+
+        <!-- ✅ 2-COLUMN: Study Material | Latest Khabar -->
+        <div class="jobs-two-col" style="margin-top:14px;">
+
           <div class="sec-card" style="margin-bottom:0;">
             <div class="sec-head brown">
               <div class="left"><i class="fa-solid fa-book-open"></i> STUDY MATERIAL</div>
@@ -1159,7 +1179,7 @@
               <a href="category.html?group=study-material"><i class="fa-solid fa-file-pdf"></i><span>E-Book Download</span><i class="fa-solid fa-chevron-right arrow"></i></a>
               <a href="category.html?group=study-material"><i class="fa-solid fa-star"></i><span>Best Books for Competitive</span><i class="fa-solid fa-chevron-right arrow"></i></a>
             </div>
-            <a href="category.html?group=study-material" class="sec-more">View All Tools →</a>
+            <a href="category.html?group=study-material" class="sec-more">View All Study Material →</a>
           </div>
 
           <div class="sec-card" style="margin-bottom:0;">
@@ -1176,14 +1196,32 @@
             </div>
             <a href="category.html?group=khabar" class="sec-more">Read All News →</a>
           </div>
+
+        </div><!-- /study + khabar -->
+
+        <!-- BROWSE JOBS BY CATEGORY -->
+        <div class="sec-card" style="margin-top:14px;">
+          <div class="sec-head blue">
+            <div class="left"><i class="fa-solid fa-th-large"></i> BROWSE JOBS BY CATEGORY</div>
+          </div>
+          <div class="browse-row">
+            <a href="view.html?section=Railway%20Jobs" class="browse-item"><div class="browse-icon" style="background:#fff0e6;color:#c2410c;"><i class="fa-solid fa-train"></i></div><span>Railway Jobs</span><small>125+ Jobs</small></a>
+            <a href="view.html?section=Bank%20Jobs" class="browse-item"><div class="browse-icon" style="background:#eff6ff;color:#1d4ed8;"><i class="fa-solid fa-building-columns"></i></div><span>Bank Jobs</span><small>180+ Jobs</small></a>
+            <a href="view.html?section=Police%20Jobs" class="browse-item"><div class="browse-icon" style="background:#fff1f2;color:#be123c;"><i class="fa-solid fa-shield-halved"></i></div><span>Police Jobs</span><small>95+ Jobs</small></a>
+            <a href="view.html?section=Latest%20Govt%20Jobs" class="browse-item"><div class="browse-icon" style="background:#f0fdf4;color:#16a34a;"><i class="fa-solid fa-briefcase"></i></div><span>SSC Jobs</span><small>210+ Jobs</small></a>
+            <a href="view.html?section=Indian%20ARMY%20jobs" class="browse-item"><div class="browse-icon" style="background:#f5f3ff;color:#7c3aed;"><i class="fa-solid fa-star"></i></div><span>Army Jobs</span><small>90+ Jobs</small></a>
+            <a href="view.html?section=Teacher%20Jobs" class="browse-item"><div class="browse-icon" style="background:#fef3c7;color:#d97706;"><i class="fa-solid fa-chalkboard-user"></i></div><span>Teaching Jobs</span><small>120+ Jobs</small></a>
+            <a href="view.html?section=Medical%2F%20Healthcare%20Jobs" class="browse-item"><div class="browse-icon" style="background:#fff0f0;color:#dc2626;"><i class="fa-solid fa-stethoscope"></i></div><span>Medical Jobs</span><small>80+ Jobs</small></a>
+            <a href="view.html?section=Haryana%20All%20State%20Jobs" class="browse-item"><div class="browse-icon" style="background:#ecfdf5;color:#059669;"><i class="fa-solid fa-location-dot"></i></div><span>Haryana Jobs</span><small>65+ Jobs</small></a>
+          </div>
+          <a href="category.html?group=popular" class="browse-view-all"><i class="fa-solid fa-eye"></i> View All Categories</a>
         </div>
-        <br>
 
         <!-- TOOLS & SERVICES -->
-        <div class="sec-card">
+        <div class="sec-card" style="margin-top:14px;">
           <div class="sec-head teal">
             <div class="left"><i class="fa-solid fa-screwdriver-wrench"></i> FREE TOOLS & CSC SERVICES</div>
-            <a href="tools.html" class="view-all-btn">View All Schemes</a>
+            <a href="tools.html" class="view-all-btn">View All</a>
           </div>
           <div class="tools-grid">
             <a href="tools.html" class="tool-btn"><i class="fa-solid fa-image" style="color:var(--blue);"></i><span>Image Tool</span><small style="font-size:.6rem;color:var(--muted);">Compress, Convert</small></a>
@@ -1196,7 +1234,7 @@
         </div>
 
         <!-- SEO CONTENT -->
-        <div class="seo-block">
+        <div class="seo-block" style="margin-top:14px;">
           <h2>Latest Sarkari Jobs 2026 – Sarkari Result, Online Form, Admit Card & Government Recruitment</h2>
           <p>Top Sarkari Jobs is India's trusted platform for latest government job notifications, sarkari results, admit cards, and online forms. We cover SSC, Railway RRB, IBPS Banking, UPSC, Police, Defence, Teaching, State PSC and all central & state government vacancies – updated daily. Find jobs by qualification: 8th pass, 10th pass, 12th pass, ITI, diploma, graduation and post-graduation.</p>
         </div>
@@ -1492,49 +1530,6 @@
       { text: 'Helpdesk & Support', href: 'helpdesk.html', icon: 'fa-headset', tags: 'help support contact helpdesk query' },
     ];
 
-    // ✅ Load extra data from JSON files and merge into ALL_LINKS
-    (async function loadJsonSearchData() {
-      try {
-        const [dynRes, jobsRes] = await Promise.allSettled([
-          fetch('dynamic-sections.json').then(r => r.ok ? r.json() : null),
-          fetch('jobs.json').then(r => r.ok ? r.json() : null)
-        ]);
-
-        const existingHrefs = new Set(ALL_LINKS.map(l => l.href));
-
-        const addItem = (name, url) => {
-          if (!name || !url) return;
-          // Normalize url
-          const href = (url.startsWith('http') && !url.includes(location.hostname))
-            ? url
-            : url.replace(/^https?:\/\/[^/]+\//, '');
-          if (existingHrefs.has(href)) return;
-          existingHrefs.add(href);
-          ALL_LINKS.push({ text: name.trim(), href: href, icon: 'fa-briefcase', tags: name.toLowerCase() });
-        };
-
-        // From dynamic-sections.json
-        if (dynRes.status === 'fulfilled' && dynRes.value) {
-          const dyn = dynRes.value;
-          if (Array.isArray(dyn.sections)) {
-            dyn.sections.forEach(sec => {
-              (sec.items || []).forEach(item => addItem(item.name || item.title, item.url || item.link));
-            });
-          }
-        }
-
-        // From jobs.json
-        if (jobsRes.status === 'fulfilled' && jobsRes.value) {
-          const jobs = jobsRes.value;
-          ['top_jobs', 'left_jobs', 'right_jobs', 'jobs', 'latest_jobs'].forEach(key => {
-            if (Array.isArray(jobs[key])) {
-              jobs[key].forEach(item => addItem(item.name || item.title, item.url || item.link));
-            }
-          });
-        }
-      } catch(e) {}
-    })();
-
     function scoreMatch(link, q) {
       const haystack = (link.text + ' ' + (link.tags || '')).toLowerCase();
       const query = q.toLowerCase().trim();
@@ -1627,31 +1622,12 @@
     const mobileMenu = document.getElementById('mobileMenu');
     const overlay = document.getElementById('menuOverlay');
 
-    // ✅ Force closed on page load
-    if (mobileMenu) mobileMenu.hidden = true;
-    if (overlay) overlay.hidden = true;
+    function openMenu() { mobileMenu.hidden = false; overlay.hidden = false; menuBtn.setAttribute('aria-expanded', 'true'); document.body.style.overflow = 'hidden'; }
+    function closeMenu() { mobileMenu.hidden = true; overlay.hidden = true; menuBtn.setAttribute('aria-expanded', 'false'); document.body.style.overflow = ''; }
 
-    function openMenu() {
-      if (!mobileMenu || !overlay || !menuBtn) return;
-      mobileMenu.hidden = false; overlay.hidden = false;
-      menuBtn.setAttribute('aria-expanded', 'true');
-      document.body.style.overflow = 'hidden';
-    }
-    function closeMenu() {
-      if (!mobileMenu || !overlay || !menuBtn) return;
-      mobileMenu.hidden = true; overlay.hidden = true;
-      menuBtn.setAttribute('aria-expanded', 'false');
-      document.body.style.overflow = '';
-    }
-
-    if (menuBtn && !menuBtn.dataset.offcanvasInit) {
-      menuBtn.dataset.offcanvasInit = "1";
-      menuBtn.addEventListener('click', openMenu);
-      if (closeBtn) closeBtn.addEventListener('click', closeMenu);
-      if (overlay) overlay.addEventListener('click', closeMenu);
-      if (mobileMenu) mobileMenu.addEventListener('click', function(e) { if (e.target.closest('a')) closeMenu(); });
-    }
-    window.__menuInitialized = true;
+    if (menuBtn) menuBtn.addEventListener('click', openMenu);
+    if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+    if (overlay) overlay.addEventListener('click', closeMenu);
 
     // ---- Desktop nav dropdowns ----
     document.querySelectorAll('[data-dd]').forEach(function (dd) {
