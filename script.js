@@ -368,8 +368,23 @@
     const overlay = $("#menuOverlay");
     if (!btn || !closeBtn || !menu || !overlay) return;
 
-    // ✅ GUARD: prevent duplicate listeners if already initialized by inline script
-    if (btn.dataset.offcanvasInit === "1") return;
+    // ✅ FORCE CLOSE on page load - ensures menu never stays open on load
+    menu.hidden = true;
+    overlay.hidden = true;
+    btn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = "";
+
+    // ✅ GUARD: prevent duplicate event listeners (e.g. if inline script already ran)
+    if (btn.dataset.offcanvasInit === "1") {
+      // Still update __closeMenu reference
+      window.__closeMenu = () => {
+        menu.hidden = true;
+        overlay.hidden = true;
+        btn.setAttribute("aria-expanded", "false");
+        document.body.style.overflow = "";
+      };
+      return;
+    }
     btn.dataset.offcanvasInit = "1";
 
     const close = () => {
@@ -386,18 +401,12 @@
       document.body.style.overflow = "hidden";
     };
 
-    // ✅ Remove any previous listeners by replacing the element clone trick
-    // Instead just use the flag above - if inline script already added listeners, skip
-    // Only add listeners here if inline script did NOT add them (no openMenu defined)
-    if (typeof window.__menuInitialized === "undefined") {
-      btn.addEventListener("click", open);
-      closeBtn.addEventListener("click", close);
-      overlay.addEventListener("click", close);
-      menu.addEventListener("click", (e) => {
-        if (e.target.closest("a")) close();
-      });
-    }
-
+    btn.addEventListener("click", open);
+    closeBtn.addEventListener("click", close);
+    overlay.addEventListener("click", close);
+    menu.addEventListener("click", (e) => {
+      if (e.target.closest("a")) close();
+    });
     window.addEventListener("resize", () => {
       if (window.innerWidth > 980) close();
       safeHideOldSearchBars(); 
