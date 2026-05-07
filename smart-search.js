@@ -36,42 +36,55 @@
   ];
 
   /* ── BUILT-IN SEED DATA (fallback when JSON not loaded) ── */
+  // ── HELPER: Section slug se readable section name nikaalein ──
+  function getSectionName(slug) {
+    if (!slug) return 'Other';
+    try {
+      const url = new URL(slug, 'https://x.com');
+      const section = url.searchParams.get('section');
+      if (section) return decodeURIComponent(section);
+    } catch(e) {}
+    // fallback: slug se filename
+    const base = slug.split('?')[0].split('/').pop().replace(/\.html?$/i, '');
+    return base || 'Other';
+  }
+
   const SEED_DATA = [
-    { title: 'SSC CGL 2026', dept: 'Staff Selection Commission', qual: 'Graduation', state: 'All India', cat: 'SSC', tags: 'ssc cgl combined graduate level', slug: 'view.html?section=SSC%20Jobs', lastDate: '', icon: 'fa-medal' },
-    { title: 'SSC CHSL 2026', dept: 'Staff Selection Commission', qual: '12th Pass', state: 'All India', cat: 'SSC', tags: 'ssc chsl 10+2 combined higher secondary', slug: 'view.html?section=SSC%20Jobs', lastDate: '', icon: 'fa-medal' },
-    { title: 'RRB NTPC 2026', dept: 'Railway Recruitment Board', qual: 'Graduation/12th', state: 'All India', cat: 'Railway', tags: 'railway rrb ntpc non technical popular categories', slug: 'view.html?section=Railway%20Jobs', lastDate: '', icon: 'fa-train' },
-    { title: 'RRB Group D', dept: 'Railway Recruitment Board', qual: '10th Pass / ITI', state: 'All India', cat: 'Railway', tags: 'railway rrb group d 10th iti', slug: 'view.html?section=Railway%20Jobs', lastDate: '', icon: 'fa-train' },
-    { title: 'Railway Apprentice 2026', dept: 'Indian Railways', qual: '10th / ITI', state: 'All India', cat: 'Railway', tags: 'railway apprentice 10th iti', slug: 'view.html?section=Railway%20Jobs', lastDate: '', icon: 'fa-train' },
-    { title: 'IBPS PO 2026', dept: 'Institute of Banking Personnel Selection', qual: 'Graduation', state: 'All India', cat: 'Bank', tags: 'ibps po probationary officer bank', slug: 'view.html?section=Bank%20Jobs', lastDate: '', icon: 'fa-building-columns' },
-    { title: 'IBPS Clerk 2026', dept: 'IBPS', qual: 'Graduation', state: 'All India', cat: 'Bank', tags: 'ibps clerk bank banking', slug: 'view.html?section=Bank%20Jobs', lastDate: '', icon: 'fa-building-columns' },
-    { title: 'SBI PO 2026', dept: 'State Bank of India', qual: 'Graduation', state: 'All India', cat: 'Bank', tags: 'sbi po bank probationary officer', slug: 'view.html?section=Bank%20Jobs', lastDate: '', icon: 'fa-building-columns' },
-    { title: 'UP Police Constable 2026', dept: 'UP Police', qual: '12th Pass', state: 'Uttar Pradesh', cat: 'Police', tags: 'police up uttar pradesh constable 12th', slug: 'view.html?section=Police%20Jobs', lastDate: '', icon: 'fa-shield-halved' },
-    { title: 'Haryana Police 2026', dept: 'Haryana Police', qual: '12th Pass / Graduation', state: 'Haryana', cat: 'Police', tags: 'haryana police constable si', slug: 'view.html?section=Haryana%20All%20State%20Jobs', lastDate: '', icon: 'fa-shield-halved' },
-    { title: 'HSSC Group D 2026', dept: 'Haryana Staff Selection Commission', qual: '10th / 8th Pass', state: 'Haryana', cat: 'State Jobs', tags: 'haryana hssc group d 10th 8th', slug: 'view.html?section=Haryana%20All%20State%20Jobs', lastDate: '', icon: 'fa-location-dot' },
-    { title: 'Haryana CET 2026', dept: 'HSSC', qual: 'Graduation / 10th', state: 'Haryana', cat: 'State Jobs', tags: 'haryana cet common eligibility test hssc', slug: 'view.html?section=Haryana%20All%20State%20Jobs', lastDate: '', icon: 'fa-location-dot' },
-    { title: 'Indian Army Agniveer 2026', dept: 'Indian Army', qual: '10th / 12th Pass', state: 'All India', cat: 'Defence', tags: 'army agniveer defence 10th 12th soldier', slug: 'view.html?section=Defence%20Jobs', lastDate: '', icon: 'fa-star' },
-    { title: 'Indian Navy Agniveer 2026', dept: 'Indian Navy', qual: '10th / 12th Pass', state: 'All India', cat: 'Defence', tags: 'navy agniveer defence 10th 12th', slug: 'view.html?section=Defence%20Jobs', lastDate: '', icon: 'fa-star' },
-    { title: 'CRPF Constable 2026', dept: 'CRPF', qual: '10th Pass', state: 'All India', cat: 'Police', tags: 'crpf constable police 10th central', slug: 'view.html?section=Police%20Jobs', lastDate: '', icon: 'fa-shield-halved' },
-    { title: 'UPSC Civil Services 2026', dept: 'UPSC', qual: 'Graduation', state: 'All India', cat: 'UPSC', tags: 'upsc ias ips civil services exam', slug: 'view.html?section=UPSC%20Jobs', lastDate: '', icon: 'fa-graduation-cap' },
-    { title: 'NTA NEET 2026', dept: 'NTA', qual: '12th Pass (PCB)', state: 'All India', cat: 'Admissions', tags: 'neet medical admission mbbs 12th', slug: 'view.html?section=Admissions', lastDate: '', icon: 'fa-stethoscope' },
-    { title: 'JEE Main 2026', dept: 'NTA', qual: '12th Pass (PCM)', state: 'All India', cat: 'Admissions', tags: 'jee main engineering admission b.tech 12th', slug: 'view.html?section=Admissions', lastDate: '', icon: 'fa-microchip' },
-    { title: 'Bihar Police 2026', dept: 'Bihar Police', qual: '12th Pass', state: 'Bihar', cat: 'Police', tags: 'bihar police constable 12th', slug: 'view.html?section=State%20jobs', lastDate: '', icon: 'fa-shield-halved' },
-    { title: 'Rajasthan Police 2026', dept: 'Rajasthan Police', qual: '10th / 12th Pass', state: 'Rajasthan', cat: 'Police', tags: 'rajasthan police constable 10th 12th', slug: 'view.html?section=State%20jobs', lastDate: '', icon: 'fa-shield-halved' },
-    { title: 'RPSC RAS 2026', dept: 'Rajasthan PSC', qual: 'Graduation', state: 'Rajasthan', cat: 'State Jobs', tags: 'rpsc ras rajasthan administrative service graduation', slug: 'view.html?section=State%20jobs', lastDate: '', icon: 'fa-briefcase' },
-    { title: 'Teacher Recruitment 2026', dept: 'Various State Boards', qual: 'B.Ed / D.El.Ed', state: 'All India', cat: 'Teaching', tags: 'teacher teaching primary tgt pgt bed stet ctet', slug: 'view.html?section=Teaching%20Jobs', lastDate: '', icon: 'fa-chalkboard-teacher' },
-    { title: 'CTET 2026', dept: 'CBSE', qual: 'B.Ed / D.El.Ed', state: 'All India', cat: 'Teaching', tags: 'ctet teacher teaching eligibility test cbse bed', slug: 'view.html?section=Teaching%20Jobs', lastDate: '', icon: 'fa-chalkboard-teacher' },
-    { title: 'Driver Recruitment 2026', dept: 'Various Depts', qual: '8th / 10th Pass', state: 'All India', cat: 'Others', tags: 'driver 8th 10th pass vehicle government', slug: 'view.html?section=latest%20jobs', lastDate: '', icon: 'fa-car' },
-    { title: 'Clerk Recruitment 2026', dept: 'Various Depts', qual: '12th / Graduation', state: 'All India', cat: 'Others', tags: 'clerk 12th graduation office assistant', slug: 'view.html?section=latest%20jobs', lastDate: '', icon: 'fa-briefcase' },
-    { title: 'Anganwadi Workers 2026', dept: 'Women & Child Development', qual: '8th / 10th Pass', state: 'All India', cat: 'Others', tags: 'anganwadi worker helper 8th 10th women', slug: 'view.html?section=latest%20jobs', lastDate: '', icon: 'fa-heart' },
-    { title: 'ITI Apprentice 2026', dept: 'Various PSUs', qual: 'ITI Pass', state: 'All India', cat: 'ITI Jobs', tags: 'iti apprentice technician trade', slug: 'view.html?section=ITI%20Pass%20jobs', lastDate: '', icon: 'fa-tools' },
-    { title: 'ONGC Recruitment 2026', dept: 'ONGC', qual: 'ITI / Diploma / B.Tech', state: 'All India', cat: 'PSU', tags: 'ongc psu oil gas iti diploma engineer', slug: 'view.html?section=latest%20jobs', lastDate: '', icon: 'fa-industry' },
-    { title: 'BSNL JE 2026', dept: 'BSNL', qual: 'Diploma / B.Tech', state: 'All India', cat: 'Telecom', tags: 'bsnl je junior engineer telecom diploma btech', slug: 'view.html?section=latest%20jobs', lastDate: '', icon: 'fa-tower-broadcast' },
-    { title: 'MP Police 2026', dept: 'MP Police', qual: '12th Pass', state: 'Madhya Pradesh', cat: 'Police', tags: 'mp madhya pradesh police constable 12th', slug: 'view.html?section=State%20jobs', lastDate: '', icon: 'fa-shield-halved' },
-    { title: 'BPSC 2026', dept: 'Bihar PSC', qual: 'Graduation', state: 'Bihar', cat: 'State Jobs', tags: 'bpsc bihar psc state civil services graduation', slug: 'view.html?section=State%20jobs', lastDate: '', icon: 'fa-briefcase' },
-    { title: 'SSC MTS 2026', dept: 'Staff Selection Commission', qual: '10th Pass', state: 'All India', cat: 'SSC', tags: 'ssc mts multi tasking staff 10th pass', slug: 'view.html?section=SSC%20Jobs', lastDate: '', icon: 'fa-medal' },
-    { title: 'SSC GD Constable 2026', dept: 'SSC / CAPF', qual: '10th Pass', state: 'All India', cat: 'SSC', tags: 'ssc gd constable 10th pass capf paramilitary', slug: 'view.html?section=SSC%20Jobs', lastDate: '', icon: 'fa-medal' },
-    { title: 'Post Office GDS 2026', dept: 'India Post', qual: '10th Pass', state: 'All India', cat: 'Postal', tags: 'post office gds gramin dak sevak 10th pass', slug: 'view.html?section=latest%20jobs', lastDate: '', icon: 'fa-envelope' },
-    { title: 'AIIMS Nursing 2026', dept: 'AIIMS', qual: 'B.Sc Nursing', state: 'All India', cat: 'Medical', tags: 'aiims nursing nurse medical hospital healthcare', slug: 'view.html?section=Medical%2F%20Healthcare%20Jobs', lastDate: '', icon: 'fa-stethoscope' },
+    { title: 'SSC CGL 2026', dept: 'Staff Selection Commission', qual: 'Graduation', state: 'All India', cat: 'SSC', tags: 'ssc cgl combined graduate level', slug: 'view.html?section=SSC%20Jobs', lastDate: '', icon: 'fa-medal', lastUpdated: '2026-05-06T10:00:00', sectionSource: 'SSC Jobs' },
+    { title: 'SSC CHSL 2026', dept: 'Staff Selection Commission', qual: '12th Pass', state: 'All India', cat: 'SSC', tags: 'ssc chsl 10+2 combined higher secondary', slug: 'view.html?section=SSC%20Jobs', lastDate: '', icon: 'fa-medal', lastUpdated: '2026-05-05T08:00:00', sectionSource: 'SSC Jobs' },
+    { title: 'RRB NTPC 2026', dept: 'Railway Recruitment Board', qual: 'Graduation/12th', state: 'All India', cat: 'Railway', tags: 'railway rrb ntpc non technical popular categories', slug: 'view.html?section=Railway%20Jobs', lastDate: '', icon: 'fa-train', lastUpdated: '2026-05-04T12:00:00', sectionSource: 'Railway Jobs' },
+    { title: 'RRB Group D', dept: 'Railway Recruitment Board', qual: '10th Pass / ITI', state: 'All India', cat: 'Railway', tags: 'railway rrb group d 10th iti', slug: 'view.html?section=Railway%20Jobs', lastDate: '', icon: 'fa-train', lastUpdated: '2026-05-03T09:00:00', sectionSource: 'Railway Jobs' },
+    { title: 'Railway Apprentice 2026', dept: 'Indian Railways', qual: '10th / ITI', state: 'All India', cat: 'Railway', tags: 'railway apprentice 10th iti', slug: 'view.html?section=Railway%20Jobs', lastDate: '', icon: 'fa-train', lastUpdated: '2026-05-02T11:00:00', sectionSource: 'Railway Jobs' },
+    { title: 'IBPS PO 2026', dept: 'Institute of Banking Personnel Selection', qual: 'Graduation', state: 'All India', cat: 'Bank', tags: 'ibps po probationary officer bank', slug: 'view.html?section=Bank%20Jobs', lastDate: '', icon: 'fa-building-columns', lastUpdated: '2026-05-01T07:00:00', sectionSource: 'Bank Jobs' },
+    { title: 'IBPS Clerk 2026', dept: 'IBPS', qual: 'Graduation', state: 'All India', cat: 'Bank', tags: 'ibps clerk bank banking', slug: 'view.html?section=Bank%20Jobs', lastDate: '', icon: 'fa-building-columns', lastUpdated: '2026-04-30T10:00:00', sectionSource: 'Bank Jobs' },
+    { title: 'SBI PO 2026', dept: 'State Bank of India', qual: 'Graduation', state: 'All India', cat: 'Bank', tags: 'sbi po bank probationary officer', slug: 'view.html?section=Bank%20Jobs', lastDate: '', icon: 'fa-building-columns', lastUpdated: '2026-04-29T09:00:00', sectionSource: 'Bank Jobs' },
+    { title: 'UP Police Constable 2026', dept: 'UP Police', qual: '12th Pass', state: 'Uttar Pradesh', cat: 'Police', tags: 'police up uttar pradesh constable 12th', slug: 'view.html?section=Police%20Jobs', lastDate: '', icon: 'fa-shield-halved', lastUpdated: '2026-04-28T08:00:00', sectionSource: 'Police Jobs' },
+    { title: 'Haryana Police 2026', dept: 'Haryana Police', qual: '12th Pass / Graduation', state: 'Haryana', cat: 'Police', tags: 'haryana police constable si', slug: 'view.html?section=Haryana%20All%20State%20Jobs', lastDate: '', icon: 'fa-shield-halved', lastUpdated: '2026-04-27T14:00:00', sectionSource: 'Haryana All State Jobs' },
+    { title: 'HSSC Group D 2026', dept: 'Haryana Staff Selection Commission', qual: '10th / 8th Pass', state: 'Haryana', cat: 'State Jobs', tags: 'haryana hssc group d 10th 8th', slug: 'view.html?section=Haryana%20All%20State%20Jobs', lastDate: '', icon: 'fa-location-dot', lastUpdated: '2026-04-26T10:00:00', sectionSource: 'Haryana All State Jobs' },
+    { title: 'Haryana CET 2026', dept: 'HSSC', qual: 'Graduation / 10th', state: 'Haryana', cat: 'State Jobs', tags: 'haryana cet common eligibility test hssc', slug: 'view.html?section=Haryana%20All%20State%20Jobs', lastDate: '', icon: 'fa-location-dot', lastUpdated: '2026-04-25T09:00:00', sectionSource: 'Haryana All State Jobs' },
+    { title: 'Indian Army Agniveer 2026', dept: 'Indian Army', qual: '10th / 12th Pass', state: 'All India', cat: 'Defence', tags: 'army agniveer defence 10th 12th soldier', slug: 'view.html?section=Defence%20Jobs', lastDate: '', icon: 'fa-star', lastUpdated: '2026-04-24T11:00:00', sectionSource: 'Defence Jobs' },
+    { title: 'Indian Navy Agniveer 2026', dept: 'Indian Navy', qual: '10th / 12th Pass', state: 'All India', cat: 'Defence', tags: 'navy agniveer defence 10th 12th', slug: 'view.html?section=Defence%20Jobs', lastDate: '', icon: 'fa-star', lastUpdated: '2026-04-23T08:00:00', sectionSource: 'Defence Jobs' },
+    { title: 'CRPF Constable 2026', dept: 'CRPF', qual: '10th Pass', state: 'All India', cat: 'Police', tags: 'crpf constable police 10th central', slug: 'view.html?section=Police%20Jobs', lastDate: '', icon: 'fa-shield-halved', lastUpdated: '2026-04-22T10:00:00', sectionSource: 'Police Jobs' },
+    { title: 'UPSC Civil Services 2026', dept: 'UPSC', qual: 'Graduation', state: 'All India', cat: 'UPSC', tags: 'upsc ias ips civil services exam', slug: 'view.html?section=UPSC%20Jobs', lastDate: '', icon: 'fa-graduation-cap', lastUpdated: '2026-04-21T09:00:00', sectionSource: 'UPSC Jobs' },
+    { title: 'NTA NEET 2026', dept: 'NTA', qual: '12th Pass (PCB)', state: 'All India', cat: 'Admissions', tags: 'neet medical admission mbbs 12th', slug: 'view.html?section=Admissions', lastDate: '', icon: 'fa-stethoscope', lastUpdated: '2026-04-20T12:00:00', sectionSource: 'Admissions' },
+    { title: 'JEE Main 2026', dept: 'NTA', qual: '12th Pass (PCM)', state: 'All India', cat: 'Admissions', tags: 'jee main engineering admission b.tech 12th', slug: 'view.html?section=Admissions', lastDate: '', icon: 'fa-microchip', lastUpdated: '2026-04-19T10:00:00', sectionSource: 'Admissions' },
+    { title: 'Bihar Police 2026', dept: 'Bihar Police', qual: '12th Pass', state: 'Bihar', cat: 'Police', tags: 'bihar police constable 12th', slug: 'view.html?section=State%20jobs', lastDate: '', icon: 'fa-shield-halved', lastUpdated: '2026-04-18T08:00:00', sectionSource: 'State Jobs' },
+    { title: 'Rajasthan Police 2026', dept: 'Rajasthan Police', qual: '10th / 12th Pass', state: 'Rajasthan', cat: 'Police', tags: 'rajasthan police constable 10th 12th', slug: 'view.html?section=State%20jobs', lastDate: '', icon: 'fa-shield-halved', lastUpdated: '2026-04-17T09:00:00', sectionSource: 'State Jobs' },
+    { title: 'RPSC RAS 2026', dept: 'Rajasthan PSC', qual: 'Graduation', state: 'Rajasthan', cat: 'State Jobs', tags: 'rpsc ras rajasthan administrative service graduation', slug: 'view.html?section=State%20jobs', lastDate: '', icon: 'fa-briefcase', lastUpdated: '2026-04-16T11:00:00', sectionSource: 'State Jobs' },
+    { title: 'Teacher Recruitment 2026', dept: 'Various State Boards', qual: 'B.Ed / D.El.Ed', state: 'All India', cat: 'Teaching', tags: 'teacher teaching primary tgt pgt bed stet ctet', slug: 'view.html?section=Teaching%20Jobs', lastDate: '', icon: 'fa-chalkboard-teacher', lastUpdated: '2026-04-15T10:00:00', sectionSource: 'Teaching Jobs' },
+    { title: 'CTET 2026', dept: 'CBSE', qual: 'B.Ed / D.El.Ed', state: 'All India', cat: 'Teaching', tags: 'ctet teacher teaching eligibility test cbse bed', slug: 'view.html?section=Teaching%20Jobs', lastDate: '', icon: 'fa-chalkboard-teacher', lastUpdated: '2026-04-14T09:00:00', sectionSource: 'Teaching Jobs' },
+    { title: 'Driver Recruitment 2026', dept: 'Various Depts', qual: '8th / 10th Pass', state: 'All India', cat: 'Others', tags: 'driver 8th 10th pass vehicle government', slug: 'view.html?section=latest%20jobs', lastDate: '', icon: 'fa-car', lastUpdated: '2026-04-13T08:00:00', sectionSource: 'Latest Jobs' },
+    { title: 'Clerk Recruitment 2026', dept: 'Various Depts', qual: '12th / Graduation', state: 'All India', cat: 'Others', tags: 'clerk 12th graduation office assistant', slug: 'view.html?section=latest%20jobs', lastDate: '', icon: 'fa-briefcase', lastUpdated: '2026-04-12T12:00:00', sectionSource: 'Latest Jobs' },
+    { title: 'Anganwadi Workers 2026', dept: 'Women & Child Development', qual: '8th / 10th Pass', state: 'All India', cat: 'Others', tags: 'anganwadi worker helper 8th 10th women', slug: 'view.html?section=latest%20jobs', lastDate: '', icon: 'fa-heart', lastUpdated: '2026-04-11T10:00:00', sectionSource: 'Latest Jobs' },
+    { title: 'ITI Apprentice 2026', dept: 'Various PSUs', qual: 'ITI Pass', state: 'All India', cat: 'ITI Jobs', tags: 'iti apprentice technician trade', slug: 'view.html?section=ITI%20Pass%20jobs', lastDate: '', icon: 'fa-tools', lastUpdated: '2026-04-10T09:00:00', sectionSource: 'ITI Pass Jobs' },
+    { title: 'ONGC Recruitment 2026', dept: 'ONGC', qual: 'ITI / Diploma / B.Tech', state: 'All India', cat: 'PSU', tags: 'ongc psu oil gas iti diploma engineer', slug: 'view.html?section=latest%20jobs', lastDate: '', icon: 'fa-industry', lastUpdated: '2026-04-09T11:00:00', sectionSource: 'Latest Jobs' },
+    { title: 'BSNL JE 2026', dept: 'BSNL', qual: 'Diploma / B.Tech', state: 'All India', cat: 'Telecom', tags: 'bsnl je junior engineer telecom diploma btech', slug: 'view.html?section=latest%20jobs', lastDate: '', icon: 'fa-tower-broadcast', lastUpdated: '2026-04-08T08:00:00', sectionSource: 'Latest Jobs' },
+    { title: 'MP Police 2026', dept: 'MP Police', qual: '12th Pass', state: 'Madhya Pradesh', cat: 'Police', tags: 'mp madhya pradesh police constable 12th', slug: 'view.html?section=State%20jobs', lastDate: '', icon: 'fa-shield-halved', lastUpdated: '2026-04-07T10:00:00', sectionSource: 'State Jobs' },
+    { title: 'BPSC 2026', dept: 'Bihar PSC', qual: 'Graduation', state: 'Bihar', cat: 'State Jobs', tags: 'bpsc bihar psc state civil services graduation', slug: 'view.html?section=State%20jobs', lastDate: '', icon: 'fa-briefcase', lastUpdated: '2026-04-06T09:00:00', sectionSource: 'State Jobs' },
+    { title: 'SSC MTS 2026', dept: 'Staff Selection Commission', qual: '10th Pass', state: 'All India', cat: 'SSC', tags: 'ssc mts multi tasking staff 10th pass', slug: 'view.html?section=SSC%20Jobs', lastDate: '', icon: 'fa-medal', lastUpdated: '2026-04-05T11:00:00', sectionSource: 'SSC Jobs' },
+    { title: 'SSC GD Constable 2026', dept: 'SSC / CAPF', qual: '10th Pass', state: 'All India', cat: 'SSC', tags: 'ssc gd constable 10th pass capf paramilitary', slug: 'view.html?section=SSC%20Jobs', lastDate: '', icon: 'fa-medal', lastUpdated: '2026-04-04T08:00:00', sectionSource: 'SSC Jobs' },
+    { title: 'Post Office GDS 2026', dept: 'India Post', qual: '10th Pass', state: 'All India', cat: 'Postal', tags: 'post office gds gramin dak sevak 10th pass', slug: 'view.html?section=latest%20jobs', lastDate: '', icon: 'fa-envelope', lastUpdated: '2026-04-03T10:00:00', sectionSource: 'Latest Jobs' },
+    { title: 'AIIMS Nursing 2026', dept: 'AIIMS', qual: 'B.Sc Nursing', state: 'All India', cat: 'Medical', tags: 'aiims nursing nurse medical hospital healthcare', slug: 'view.html?section=Medical%2F%20Healthcare%20Jobs', lastDate: '', icon: 'fa-stethoscope', lastUpdated: '2026-04-02T09:00:00', sectionSource: 'Medical / Healthcare Jobs' },
   ];
 
   /* ── STATE ──────────────────────────────────────────────── */
@@ -161,6 +174,7 @@
             const title = item.name || item.title;
             const slug  = item.url  || item.link || item.slug;
             if (!title || !slug) return;
+            const sectionSource = item.section || item.source || getSectionName(slug);
             extra.push({
               title, slug,
               dept:  item.department || item.dept || '',
@@ -170,6 +184,8 @@
               tags:  [title, item.tags, item.keywords, item.description].filter(Boolean).join(' '),
               lastDate: item.last_date || item.lastDate || '',
               icon: item.icon || 'fa-briefcase',
+              lastUpdated: item.last_updated || item.lastUpdated || item.updated_at || item.updatedAt || new Date().toISOString(),
+              sectionSource,
             });
           });
         }
@@ -182,7 +198,17 @@
             const title = item.name || item.title;
             const slug  = item.url  || item.link;
             if (!title || !slug) return;
-            extra.push({ title, slug, dept: sec.title || '', qual: '', state: '', cat: sec.category || '', tags: title, lastDate: '', icon: 'fa-file-alt' });
+            extra.push({
+              title, slug,
+              dept: sec.title || '',
+              qual: '', state: '',
+              cat: sec.category || '',
+              tags: title,
+              lastDate: '',
+              icon: 'fa-file-alt',
+              lastUpdated: item.last_updated || item.lastUpdated || sec.updated_at || new Date().toISOString(),
+              sectionSource: sec.title || getSectionName(slug),
+            });
           });
         });
       }
@@ -191,7 +217,16 @@
       if (Array.isArray(data.services)) {
         data.services.forEach(s => {
           if (!s.name || !s.url) return;
-          extra.push({ title: s.name, slug: s.url, dept: 'Services', qual: '', state: '', cat: 'Service', tags: s.name + ' ' + (s.description || ''), lastDate: '', icon: 'fa-cog' });
+          extra.push({
+            title: s.name, slug: s.url,
+            dept: 'Services', qual: '', state: '',
+            cat: 'Service',
+            tags: s.name + ' ' + (s.description || ''),
+            lastDate: '',
+            icon: 'fa-cog',
+            lastUpdated: s.last_updated || s.lastUpdated || new Date().toISOString(),
+            sectionSource: 'Services',
+          });
         });
       }
     });
@@ -203,6 +238,32 @@
     }
 
     loadFuse(() => buildFuse(allData));
+  }
+
+  /* ── SORT BY LAST UPDATED (descending) ─────────────────── */
+  function sortByLastUpdated(results) {
+    return results.slice().sort((a, b) => {
+      const ta = a.lastUpdated ? new Date(a.lastUpdated).getTime() : 0;
+      const tb = b.lastUpdated ? new Date(b.lastUpdated).getTime() : 0;
+      return tb - ta; // newest first
+    });
+  }
+
+  /* ── FORMAT RELATIVE TIME ───────────────────────────────── */
+  function relativeTime(dateStr) {
+    if (!dateStr) return null;
+    const d = new Date(dateStr);
+    if (isNaN(d)) return null;
+    const now = Date.now();
+    const diff = now - d.getTime();
+    const mins  = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days  = Math.floor(diff / 86400000);
+    if (mins < 1)   return 'अभी';
+    if (mins < 60)  return `${mins} मिनट पहले`;
+    if (hours < 24) return `${hours} घंटे पहले`;
+    if (days < 7)   return `${days} दिन पहले`;
+    return d.toLocaleDateString('hi-IN', { day: '2-digit', month: 'short', year: 'numeric' });
   }
 
   /* ── SEARCH ENGINE ──────────────────────────────────────── */
@@ -236,6 +297,9 @@
     if (filters.state) results = results.filter(r => r.state.toLowerCase().includes(filters.state.toLowerCase()) || r.state === 'All India');
     if (filters.cat) results = results.filter(r => r.cat.toLowerCase().includes(filters.cat.toLowerCase()));
 
+    // Sort by lastUpdated descending (newly updated → top)
+    results = sortByLastUpdated(results);
+
     return results;
   }
 
@@ -250,7 +314,7 @@
         <span class="tsj-si-icon"><i class="fa-solid ${esc(item.icon || 'fa-briefcase')}"></i></span>
         <span class="tsj-si-body">
           <span class="tsj-si-title">${highlight(item.title, query)}</span>
-          ${item.cat ? `<span class="tsj-si-meta">${esc(item.cat)}${item.state && item.state !== 'All India' ? ' · ' + esc(item.state) : ''}</span>` : ''}
+          ${(item.sectionSource || item.cat) ? `<span class="tsj-si-meta">${esc(item.sectionSource || item.cat)}${item.state && item.state !== 'All India' ? ' · ' + esc(item.state) : ''}</span>` : ''}
         </span>
         <span class="tsj-si-arr"><i class="fa-solid fa-arrow-right"></i></span>
       </a>`;
@@ -259,6 +323,8 @@
   /* ── RENDER RESULT CARD ─────────────────────────────────── */
   function renderResultCard(item, query) {
     const slug = item.slug || '#';
+    const relTime = relativeTime(item.lastUpdated);
+    const sectionLabel = item.sectionSource || getSectionName(item.slug);
     return `
       <div class="tsj-result-card">
         <div class="tsj-rc-head">
@@ -273,6 +339,10 @@
           ${item.state ? `<span class="tsj-tag tsj-tag-state"><i class="fa-solid fa-location-dot"></i> ${esc(item.state)}</span>` : ''}
           ${item.cat ? `<span class="tsj-tag tsj-tag-cat">${esc(item.cat)}</span>` : ''}
           ${item.lastDate ? `<span class="tsj-tag tsj-tag-date"><i class="fa-solid fa-clock"></i> ${esc(item.lastDate)}</span>` : ''}
+        </div>
+        <div class="tsj-rc-meta-row">
+          <span class="tsj-section-badge"><i class="fa-solid fa-layer-group"></i> ${esc(sectionLabel)}</span>
+          ${relTime ? `<span class="tsj-updated-time"><i class="fa-regular fa-clock"></i> ${esc(relTime)} अपडेट</span>` : ''}
         </div>
         <a class="tsj-rc-apply" href="${esc(slug)}"><i class="fa-solid fa-arrow-right"></i> View / Apply</a>
       </div>`;
@@ -454,6 +524,24 @@
         font-size: .72rem; font-weight: 800; text-decoration: none; transition: background .12s;
       }
       .tsj-rc-apply:hover { background: #1e40af; }
+
+      /* ── Section Source Badge + Updated Time ── */
+      .tsj-rc-meta-row {
+        display: flex; align-items: center; gap: 8px;
+        flex-wrap: wrap; margin-bottom: 8px;
+      }
+      .tsj-section-badge {
+        display: inline-flex; align-items: center; gap: 4px;
+        font-size: .66rem; font-weight: 700; padding: 2px 8px;
+        border-radius: 20px;
+        background: #f0f9ff; color: #0369a1;
+        border: 1px solid #bae6fd;
+      }
+      .tsj-updated-time {
+        display: inline-flex; align-items: center; gap: 4px;
+        font-size: .66rem; font-weight: 600;
+        color: #6b7280;
+      }
 
       /* ── Results header ── */
       .tsj-res-head {
