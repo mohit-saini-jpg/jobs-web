@@ -256,7 +256,8 @@
               if (!headerHost.classList.contains("site-header")) {
                   headerHost.classList.add("site-header");
               }
-              // ✅ FIX: Re-init menu/dropdowns after header HTML is injected into DOM
+              // ✅ FIX: Build mobile menu & re-init AFTER header HTML exists in DOM
+              buildMobileMenu();
               initOffcanvas();
               initDropdowns();
           }
@@ -1597,13 +1598,13 @@
       if (el) el.remove();
     });
 
-    buildMobileMenu();
+    buildMobileMenu();   // NOTE: runs again after header inject — safe, idempotent
     safeHideOldSearchBars(); 
     
-    await injectHeaderFooter();
+    await injectHeaderFooter();  // ← buildMobileMenu() also called inside here after DOM ready
     await loadHeaderLinks();
-    initOffcanvas();
-    initDropdowns();
+    initOffcanvas();   // called again here as safety fallback
+    initDropdowns();   // called again here as safety fallback
     initFAQ();
 
     if (page === "index.html" || page === "") {
