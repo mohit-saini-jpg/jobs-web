@@ -671,8 +671,37 @@
   };
 
   // ═══ READ URL PARAM ═══
+  // Supports both ?state=Delhi AND ?section=Delhi State Jobs (from category.html links)
   const params = new URLSearchParams(location.search);
-  const stateName = (params.get('state') || '').trim();
+  let stateName = (params.get('state') || '').trim();
+
+  // If ?state= not given, try to extract from ?section= param
+  // e.g. "Delhi State Jobs" → "Delhi", "Gujarat State Jobs" → "Gujarat"
+  if (!stateName) {
+    const sectionParam = (params.get('section') || '').trim();
+    if (sectionParam) {
+      // Try exact match first in STATE_DATA by checking if section name matches
+      const foundBySection = Object.keys(STATE_DATA).find(k =>
+        STATE_DATA[k].section.toLowerCase() === sectionParam.toLowerCase()
+      );
+      if (foundBySection) {
+        stateName = foundBySection;
+      } else {
+        // Fallback: strip common suffixes and match state name
+        // "Delhi State Jobs" → "Delhi", "Haryana All State Jobs" → "Haryana"
+        const cleaned = sectionParam
+          .replace(/\s+(all\s+)?state\s+jobs?/i, '')
+          .replace(/\s+govt\s+jobs?/i, '')
+          .trim();
+        const foundByName = Object.keys(STATE_DATA).find(k =>
+          k.toLowerCase() === cleaned.toLowerCase() ||
+          cleaned.toLowerCase().startsWith(k.toLowerCase())
+        );
+        if (foundByName) stateName = foundByName;
+      }
+    }
+  }
+
   const info = STATE_DATA[stateName] || null;
 
   // ═══ UPDATE PAGE WITH STATE INFO ═══
@@ -790,41 +819,53 @@
     const jobsList = document.getElementById('jobsList');
 
     try {
-      // Try state-jobs-data.json first (state-specific data)
       let matchedItems = [];
-      let dataLoaded = false;
 
+      // ── PRIMARY: state-jobs-data.json se load karo ──
       try {
         const r = await fetch('state-jobs-data.json');
         if (r.ok) {
           const data = await r.json();
-          // Match section by state name (exact or partial)
-          const stateKey = (stateName || '').toLowerCase();
+
+          // 3-step matching (most precise se least precise):
+          // 1) sec.state exact match  →  "Delhi" === "Delhi"
+          // 2) sec.id slug match      →  "delhi" === "delhi"
+          // 3) sec.title includes     →  "Delhi Govt Jobs 2026" includes "delhi"
+          const stateKey   = (stateName || '').toLowerCase();
+          const stateSlug  = stateKey.replace(/\s+/g, '-');
+
           for (const sec of (data.sections || [])) {
-            if ((sec.state || '').toLowerCase() === stateKey ||
-                (sec.id || '').toLowerCase() === stateKey.replace(/ /g,'-') ||
-                (sec.title || '').toLowerCase().includes(stateKey.split(' ')[0])) {
+            const secState = (sec.state || '').toLowerCase();
+            const secId    = (sec.id    || '').toLowerCase();
+            const secTitle = (sec.title || '').toLowerCase();
+
+            if (
+              secState === stateKey ||
+              secId    === stateSlug ||
+              secTitle.startsWith(stateKey)
+            ) {
               matchedItems = sec.items || [];
               break;
             }
           }
-          dataLoaded = true;
         }
       } catch(e2) {}
 
-      // Fallback: try dynamic-sections.json
-      if (!matchedItems.length) {
+      // ── FALLBACK: dynamic-sections.json ──
+      if (!matchedItems.length && stateName) {
         try {
           const info2 = STATE_DATA[stateName];
-          const sectionKeyword = info2 ? info2.section.toLowerCase() : (stateName || '').toLowerCase();
+          const keyword = (info2 ? info2.section : stateName).toLowerCase();
           const r2 = await fetch('dynamic-sections.json');
           if (r2.ok) {
             const data2 = await r2.json();
             for (const sec of (data2.sections || [])) {
               const secTitle = (sec.id || sec.title || '').toLowerCase();
-              if (secTitle.includes(sectionKeyword.split(' ')[0].toLowerCase()) ||
-                  secTitle.includes((stateName || '').toLowerCase().split(' ')[0])) {
-                matchedItems = sec.items || [];
+              if (
+                secTitle.includes(keyword) ||
+                secTitle.includes(stateName.toLowerCase())
+              ) {
+                matchedItems = (sec.items || []);
                 break;
               }
             }
@@ -843,11 +884,15 @@
         return;
       }
 
+      // Update stats bar with actual count
+      const statJobsEl = document.getElementById('statJobs');
+      if (statJobsEl) statJobsEl.textContent = matchedItems.length + (matchedItems.length >= 12 ? '+' : '');
+
       jobsList.innerHTML = matchedItems.slice(0, 12).map((item, i) => {
         const title = item.name || item.title || 'Government Job';
         const url   = item.url || item.link || '#';
         const date  = item.date || item.lastDate || '';
-        return `<a href="${url}">
+        return `<a href="${url}" target="_blank" rel="noopener">
           ${i < 3 ? '<span class="job-new">NEW</span>' : ''}
           <div class="job-body">
             <div class="job-title">${title}</div>
