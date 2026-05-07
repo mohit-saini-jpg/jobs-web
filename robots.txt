@@ -1,7 +1,40 @@
+# robots.txt — Top Sarkari Jobs
+# https://www.topsarkarijobs.com/robots.txt
+# Last updated: 2026-05-07
+
+# Allow all major search engines
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 2
+
 User-agent: *
 Allow: /
-Disallow: /redirect.html
-Disallow: /search.html
-Disallow: /*?*
 
+# Block crawling of utility/admin paths (none currently but good practice)
+Disallow: /admin/
+Disallow: /private/
+Disallow: /tmp/
+Disallow: /*.json$
+
+# Allow JSON data files that power the site (Google needs to understand dynamic content)
+Allow: /dynamic-sections.json
+Allow: /sections/*.json
+
+# Block duplicate parameter combinations that create low-value pages
+Disallow: /view.html?section=&
+Disallow: /category.html?group=&
+Disallow: /state-jobs.html?state=&
+
+# Block redirect interstitial from being indexed
+Disallow: /redirect.html
+
+# Sitemap location
 Sitemap: https://www.topsarkarijobs.com/sitemap.xml
+
+# Additional sitemaps (add these when created)
+# Sitemap: https://www.topsarkarijobs.com/sitemap-jobs.xml
+# Sitemap: https://www.topsarkarijobs.com/sitemap-news.xml
