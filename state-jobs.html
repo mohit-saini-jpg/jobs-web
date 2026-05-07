@@ -457,9 +457,7 @@
             <div class="skel-row"><div class="skeleton skel-dot"></div><div class="skel-lines"><div class="skeleton skel-line" style="width:75%"></div><div class="skeleton skel-line" style="width:65%"></div></div></div>
             <div class="skel-row"><div class="skeleton skel-dot"></div><div class="skel-lines"><div class="skeleton skel-line" style="width:88%"></div><div class="skeleton skel-line" style="width:45%"></div></div></div>
           </div>
-          <a id="jobsMoreBtn" href="#" class="sec-more">
-            <i class="fa-solid fa-arrow-right"></i> View All Jobs in This State
-          </a>
+
         </div>
 
         <!-- ADMIT CARDS + RESULTS two-col -->
@@ -762,8 +760,6 @@
     // Jobs section head
     document.getElementById('jobsHeadTitle').textContent = `${name} Govt Jobs 2026`;
     document.getElementById('jobsViewAll').href = jobsUrl;
-    document.getElementById('jobsMoreBtn').href = jobsUrl;
-    document.getElementById('jobsMoreBtn').innerHTML = `<i class="fa-solid fa-arrow-right"></i> View All ${name} Govt Jobs`;
 
     // Admit/Result placeholders
     document.getElementById('admitTitle1').textContent = `${name} ${new Date().getFullYear()} Admit Card Released`;
