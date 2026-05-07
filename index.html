@@ -283,22 +283,97 @@
     .search-no-result { color: rgba(255,255,255,.8); font-size: .8rem; padding: 6px 0; }
 
     /* ============================================================
-       LIVE TICKER
+       LIVE TICKER — Dynamic Infinite Scroll
     ============================================================ */
     .ticker-wrap {
-      background: #dc2626; color: #fff; overflow: hidden;
-      padding: 6px 0; white-space: nowrap;
+      background: #dc2626;
+      color: #fff;
+      overflow: hidden;
+      padding: 0;
+      display: flex;
+      align-items: stretch;
+      min-height: 30px;
+      position: relative;
+      z-index: 10;
     }
     .ticker-label {
-      display: inline-block; background: #991b1b; padding: 0 12px;
-      font-size: .72rem; font-weight: 900; margin-right: 12px;
-      line-height: 1; letter-spacing: .05em;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      background: #991b1b;
+      padding: 5px 14px;
+      font-size: .71rem;
+      font-weight: 900;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      z-index: 2;
+      gap: 5px;
     }
-    .ticker-inner { display: inline-block; animation: scroll 35s linear infinite; }
-    @keyframes scroll { 0%{transform:translateX(100vw);} 100%{transform:translateX(-100%);} }
-    .ticker-inner a { color: #fff; text-decoration: none; margin-right: 50px; font-size: .75rem; font-weight: 700; }
-    .ticker-inner a::before { content: "● "; font-size: .55rem; }
-    .ticker-inner a:hover { text-decoration: underline; }
+    .ticker-label::after {
+      content: '';
+      position: absolute;
+      left: calc(var(--label-w, 90px));
+      top: 0; bottom: 0;
+      width: 20px;
+      background: linear-gradient(to right, #991b1b, transparent);
+      pointer-events: none;
+      z-index: 3;
+    }
+    .ticker-track {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      padding: 5px 0;
+    }
+    /* Two identical sets side-by-side for seamless infinite loop */
+    .ticker-belt {
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      will-change: transform;
+      animation: ticker-scroll var(--ticker-duration, 40s) linear infinite;
+    }
+    .ticker-belt:hover,
+    .ticker-wrap:hover .ticker-belt {
+      animation-play-state: paused;
+    }
+    @keyframes ticker-scroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .ticker-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #fff;
+      text-decoration: none;
+      font-size: .75rem;
+      font-weight: 700;
+      padding-right: 40px;
+      transition: opacity .15s;
+      white-space: nowrap;
+    }
+    .ticker-item::before {
+      content: '●';
+      font-size: .45rem;
+      opacity: .8;
+      flex-shrink: 0;
+    }
+    .ticker-item:hover { text-decoration: underline; opacity: .9; }
+    /* Loading skeleton */
+    .ticker-loading {
+      font-size: .73rem;
+      font-weight: 600;
+      opacity: .75;
+      padding: 5px 16px;
+      letter-spacing: .03em;
+    }
+    @media (max-width: 480px) {
+      .ticker-item { font-size: .71rem; padding-right: 28px; }
+      .ticker-label { padding: 5px 10px; font-size: .67rem; }
+    }
 
     /* ============================================================
        JOB CATEGORY QUICK BAR
@@ -1344,19 +1419,146 @@
   <!-- ============================================================
        LIVE TICKER
   ============================================================ -->
-  <div class="ticker-wrap" aria-label="Latest updates">
-    <div class="ticker-inner">
-      <a href="view.html?section=latest%20jobs">SSC CGL 2026 Notification Out – Apply Now</a>
-      <a href="view.html?section=Railway%20Jobs">RRB Group D Recruitment 2026 – New Vacancy</a>
-      <a href="view.html?section=Bank%20Jobs">IBPS PO 2026 Online Form Released</a>
-      <a href="category.html?group=admit-result">SSC MTS Admit Card 2026 Released</a>
-      <a href="category.html?group=admissions">Railway Group D Result 2026 Declared</a>
-      <a href="view.html?section=Police%20Jobs">UP Police Constable Vacancy 2026</a>
-      <a href="view.html?section=Teacher%20Jobs">CTET 2026 Notification Released</a>
-      <a href="view.html?section=Indian%20ARMY%20jobs">Army Agniveer Recruitment 2026</a>
-      <a href="view.html?section=Haryana%20All%20State%20Jobs">Haryana HSSC New Vacancy 2026</a>
+  <!-- Dynamic Live Ticker — data pulled from dynamic-sections.json (latest jobs section) -->
+  <div class="ticker-wrap" id="tickerWrap" aria-label="Latest job updates" role="marquee" aria-live="off">
+    <span class="ticker-label" aria-hidden="true"><i class="fa-solid fa-bolt"></i> LIVE</span>
+    <div class="ticker-track" id="tickerTrack">
+      <span class="ticker-loading" aria-live="polite">Loading latest jobs…</span>
     </div>
   </div>
+  <script>
+  (function initDynamicTicker() {
+    'use strict';
+
+    var SECTION_KEY = 'latest jobs';   // matches section title in dynamic-sections.json (case-insensitive)
+    var MAX_JOBS    = 15;              // max items in ticker
+    var BASE_SPEED  = 45;             // base seconds for full scroll (auto-scaled by count)
+
+    /* ── fetch with 5-min cache via sessionStorage ── */
+    function fetchSections() {
+      var CACHE_KEY = '__ticker_cache';
+      var CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+      try {
+        var cached = JSON.parse(sessionStorage.getItem(CACHE_KEY) || 'null');
+        if (cached && (Date.now() - cached.ts) < CACHE_TTL) return Promise.resolve(cached.data);
+      } catch(e) {}
+
+      return fetch('dynamic-sections.json', { cache: 'no-cache' })
+        .then(function(r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.json();
+        })
+        .then(function(json) {
+          try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: json })); } catch(e) {}
+          return json;
+        });
+    }
+
+    /* ── find "latest jobs" section (case-insensitive) ── */
+    function extractLatestJobs(json) {
+      var sections = (json && Array.isArray(json.sections)) ? json.sections : [];
+      var sec = null;
+      for (var i = 0; i < sections.length; i++) {
+        var t = (sections[i].title || sections[i].id || '').toLowerCase().trim();
+        if (t === SECTION_KEY) { sec = sections[i]; break; }
+      }
+      if (!sec) {
+        // fallback: first section whose title contains "latest"
+        for (var j = 0; j < sections.length; j++) {
+          if ((sections[j].title || '').toLowerCase().includes('latest')) { sec = sections[j]; break; }
+        }
+      }
+      if (!sec || !Array.isArray(sec.items)) return [];
+
+      /* deduplicate by name + url, limit to MAX_JOBS */
+      var seen = new Set();
+      var out = [];
+      for (var k = 0; k < sec.items.length; k++) {
+        var item = sec.items[k];
+        var name = (item.name || item.title || '').trim();
+        var url  = (item.url  || item.link  || '').trim();
+        if (!name || !url) continue;
+        var key = name.toLowerCase() + '|' + url.toLowerCase();
+        if (seen.has(key)) continue;
+        seen.add(key);
+        out.push({ name: name, url: url });
+        if (out.length >= MAX_JOBS) break;
+      }
+      return out;
+    }
+
+    /* ── build SEO-friendly href (relative internal URLs preferred) ── */
+    function buildHref(rawUrl, name) {
+      var u = rawUrl.trim();
+      /* if it's already an absolute external URL, keep it */
+      if (/^https?:\/\//i.test(u) && !u.includes('topsarkarijobs.com')) return u;
+      /* if relative, keep as-is */
+      if (!u.startsWith('http')) return u;
+      /* internal absolute → strip domain to relative */
+      return u.replace(/^https?:\/\/[^/]+/i, '') || ('view.html?section=' + encodeURIComponent(name));
+    }
+
+    /* ── render ticker belt ── */
+    function renderTicker(jobs) {
+      var track = document.getElementById('tickerTrack');
+      if (!track) return;
+
+      if (!jobs || jobs.length === 0) {
+        track.innerHTML = '<a class="ticker-item" href="view.html?section=latest%20jobs">View Latest Sarkari Jobs 2026</a>';
+        return;
+      }
+
+      /* build one set of links */
+      function buildSet() {
+        var frag = document.createDocumentFragment();
+        for (var i = 0; i < jobs.length; i++) {
+          var a = document.createElement('a');
+          a.className = 'ticker-item';
+          a.href = buildHref(jobs[i].url, jobs[i].name);
+          a.textContent = jobs[i].name;
+          a.setAttribute('title', jobs[i].name);
+          /* internal links: no target; external: open new tab */
+          if (/^https?:\/\//i.test(jobs[i].url) && !jobs[i].url.includes('topsarkarijobs.com')) {
+            a.target = '_blank'; a.rel = 'noopener noreferrer';
+          }
+          frag.appendChild(a);
+        }
+        return frag;
+      }
+
+      /* belt = set A + set B (seamless loop: when A scrolls out, B is already there) */
+      var belt = document.createElement('div');
+      belt.className = 'ticker-belt';
+      belt.id = 'tickerBelt';
+      /* two identical sets */
+      belt.appendChild(buildSet());
+      belt.appendChild(buildSet());
+
+      /* auto-scale speed by job count so fast phones don't zip through */
+      var duration = Math.max(20, Math.round(BASE_SPEED * (jobs.length / 10)));
+      belt.style.setProperty('--ticker-duration', duration + 's');
+      /* also apply via inline animation-duration for broader support */
+      belt.style.animationDuration = duration + 's';
+
+      track.innerHTML = '';
+      track.appendChild(belt);
+
+      /* ── accessibility: pause on focus ── */
+      belt.addEventListener('focusin',  function() { belt.style.animationPlayState = 'paused'; });
+      belt.addEventListener('focusout', function() { belt.style.animationPlayState = 'running'; });
+    }
+
+    /* ── init ── */
+    fetchSections()
+      .then(extractLatestJobs)
+      .then(renderTicker)
+      .catch(function(err) {
+        console.warn('[Ticker] Failed to load dynamic jobs:', err);
+        /* graceful fallback — render link to latest jobs page */
+        renderTicker([{ name: 'View Latest Sarkari Jobs 2026', url: 'view.html?section=latest%20jobs' }]);
+      });
+  })();
+  </script>
 
   <!-- ============================================================
        MAIN CONTENT
