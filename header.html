@@ -67,15 +67,21 @@
 .brand-text { display: flex; flex-direction: column; min-width: 0; }
 .brand-title {
   font-size: 1.15rem; font-weight: 900; color: var(--navy); line-height: 1.2;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .brand-title span { color: var(--accent); }
 .brand-sub {
   font-size: .62rem; color: var(--muted); font-weight: 600;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;
 }
 /* Logo bar solid white background — prevents content bleed-through on mobile */
 .header-logo-bar { background: var(--white); }
+/* Mobile: shrink font so full title fits */
+@media (max-width: 480px) {
+  .brand-title { font-size: .92rem; }
+  .brand-sub { font-size: .55rem; max-width: 160px; }
+  .brand-logo { width: 34px; height: 34px; }
+}
 
 /* ── Header Actions ── */
 .header-actions { display: flex; align-items: center; gap: 8px; }
