@@ -962,12 +962,11 @@
 
       <div style="position:relative;">
         <div class="hero-search-box">
-          <input id="heroSearch" type="search" placeholder="Search jobs, admit card, result..." autocomplete="off" aria-label="Search jobs" aria-autocomplete="list" aria-controls="searchSuggest"/>
+          <input id="heroSearch" type="search" placeholder="Search jobs, admit card, result..." autocomplete="off" aria-label="Search jobs" aria-autocomplete="list"/>
           <button id="heroSearchBtn" type="button"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
         </div>
-        <div id="heroSearchSuggestResults" role="listbox" aria-label="Search suggestions" style="position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,.15);z-index:500;max-height:300px;overflow-y:auto;display:none;"></div>
       </div>
-      <div class="search-results-panel" id="heroSearchResults"></div>
+      <div id="heroSearchResults"></div>
     </div>
   </section>
 
@@ -1559,160 +1558,18 @@
   })();
   </script>
 
+  <!-- Smart Search System v2.0 -->
+  <script src="smart-search.js" defer></script>
+
   <script>
   (function () {
     'use strict';
 
-    // ---- Search System ----
-    const ALL_LINKS = [
-      { text: 'Latest Jobs 2026', href: 'view.html?section=latest%20jobs', icon: 'fa-bolt', tags: 'latest naukri vacancy new' },
-      { text: 'Upcoming Jobs', href: 'view.html?section=upcoming-jobs', icon: 'fa-calendar-plus', tags: 'upcoming future new' },
-      { text: 'India All Current Running Jobs', href: 'view.html?section=Latest%20Govt%20Jobs', icon: 'fa-globe', tags: 'all india govt central' },
-      { text: 'Last Date Near Jobs', href: 'view.html?section=Jobs%20with%20Last%20date', icon: 'fa-clock', tags: 'last date deadline urgent' },
-      { text: 'Top 20 Jobs 2026', href: 'view.html?section=Top%2020%20Jobs', icon: 'fa-medal', tags: 'top best popular trending' },
-      { text: '8th Pass Jobs', href: 'view.html?section=8th%20Pass', icon: 'fa-school', tags: '8th eighth primary' },
-      { text: '10th Pass Jobs', href: 'view.html?section=10th%20Pass%20jobs', icon: 'fa-certificate', tags: '10th tenth matric pass' },
-      { text: '12th Pass Jobs', href: 'view.html?section=12th%20Pass%20jobs', icon: 'fa-file-certificate', tags: '12th twelfth intermediate pass' },
-      { text: 'ITI Pass Jobs', href: 'view.html?section=ITI%20Pass%20jobs', icon: 'fa-tools', tags: 'iti trade technical' },
-      { text: 'Diploma Jobs', href: 'view.html?section=Diploma%20Jobs', icon: 'fa-scroll', tags: 'diploma polytechnic technical' },
-      { text: 'B.Tech Jobs', href: 'view.html?section=B.Tech%20Jobs', icon: 'fa-microchip', tags: 'btech mtech engineering graduate' },
-      { text: 'B.A Pass Jobs', href: 'view.html?section=B.A%20Pass', icon: 'fa-user-graduate', tags: 'ba arts graduate pass' },
-      { text: 'Graduation Jobs', href: 'view.html?section=Graduation%20jobs', icon: 'fa-university', tags: 'graduation graduate degree' },
-      { text: 'Post Graduation Jobs', href: 'view.html?section=Post%20Graduation%20jobs', icon: 'fa-user-tie', tags: 'post graduation pg masters mba' },
-      { text: 'Medical Jobs', href: 'view.html?section=Medical%2F%20Healthcare%20Jobs', icon: 'fa-stethoscope', tags: 'medical doctor nurse aiims health' },
-      { text: 'Railway Jobs 2026', href: 'view.html?section=Railway%20Jobs', icon: 'fa-train', tags: 'railway rrb ntpc group d loco' },
-      { text: 'Police Jobs 2026', href: 'view.html?section=Police%20Jobs', icon: 'fa-shield-halved', tags: 'police constable si sub inspector' },
-      { text: 'Bank Jobs 2026', href: 'view.html?section=Bank%20Jobs', icon: 'fa-building-columns', tags: 'bank ibps sbi rbi po clerk' },
-      { text: 'Teacher Jobs 2026', href: 'view.html?section=Teacher%20Jobs', icon: 'fa-chalkboard-user', tags: 'teacher tet ctet pgt tgt school' },
-      { text: 'Army / Navy / Air Force', href: 'view.html?section=Indian%20ARMY%20jobs', icon: 'fa-star', tags: 'army navy air force defence military agniveer' },
-      { text: 'Govt Scheme & Yojna', href: 'view.html?section=Govt%20Scheme%20Yojna', icon: 'fa-hand-holding-heart', tags: 'govt scheme yojana benefit pm' },
-      { text: 'Haryana Jobs', href: 'view.html?section=Haryana%20All%20State%20Jobs', icon: 'fa-location-dot', tags: 'haryana hssc hpsc jobs state' },
-      { text: 'Admit Cards 2026', href: 'category.html?group=admit-result', icon: 'fa-id-card', tags: 'admit card hall ticket download exam' },
-      { text: 'Latest Results 2026', href: 'category.html?group=admissions', icon: 'fa-trophy', tags: 'result sarkari result declared' },
-      { text: 'Free Tools', href: 'tools.html', icon: 'fa-screwdriver-wrench', tags: 'tools image pdf resize compress' },
-      { text: 'Helpdesk & Support', href: 'helpdesk.html', icon: 'fa-headset', tags: 'help support contact helpdesk query' },
-    ];
-
-    // ✅ Load extra data from JSON files and merge into ALL_LINKS
-    (async function loadJsonSearchData() {
-      try {
-        const [dynRes, jobsRes] = await Promise.allSettled([
-          fetch('dynamic-sections.json').then(r => r.ok ? r.json() : null),
-          fetch('jobs.json').then(r => r.ok ? r.json() : null)
-        ]);
-
-        const existingHrefs = new Set(ALL_LINKS.map(l => l.href));
-
-        const addItem = (name, url) => {
-          if (!name || !url) return;
-          // Normalize url
-          const href = (url.startsWith('http') && !url.includes(location.hostname))
-            ? url
-            : url.replace(/^https?:\/\/[^/]+\//, '');
-          if (existingHrefs.has(href)) return;
-          existingHrefs.add(href);
-          ALL_LINKS.push({ text: name.trim(), href: href, icon: 'fa-briefcase', tags: name.toLowerCase() });
-        };
-
-        // From dynamic-sections.json
-        if (dynRes.status === 'fulfilled' && dynRes.value) {
-          const dyn = dynRes.value;
-          if (Array.isArray(dyn.sections)) {
-            dyn.sections.forEach(sec => {
-              (sec.items || []).forEach(item => addItem(item.name || item.title, item.url || item.link));
-            });
-          }
-        }
-
-        // From jobs.json
-        if (jobsRes.status === 'fulfilled' && jobsRes.value) {
-          const jobs = jobsRes.value;
-          ['top_jobs', 'left_jobs', 'right_jobs', 'jobs', 'latest_jobs'].forEach(key => {
-            if (Array.isArray(jobs[key])) {
-              jobs[key].forEach(item => addItem(item.name || item.title, item.url || item.link));
-            }
-          });
-        }
-      } catch(e) {}
-    })();
-
-    function scoreMatch(link, q) {
-      const haystack = (link.text + ' ' + (link.tags || '')).toLowerCase();
-      const query = q.toLowerCase().trim();
-      if (!query) return 0;
-      let score = 0;
-      for (const word of query.split(/\s+/)) {
-        if (haystack.includes(word)) score += word.length >= 4 ? 10 : 6;
-      }
-      if (link.text.toLowerCase().includes(query)) score += 5;
-      return score;
-    }
-
-    function search(q) {
-      return ALL_LINKS.map(l => ({ ...l, score: scoreMatch(l, q) }))
-        .filter(l => l.score > 0).sort((a, b) => b.score - a.score).slice(0, 8);
-    }
-
-    function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
-
-    // Hero search
-    const input = document.getElementById('heroSearch');
-    const btn = document.getElementById('heroSearchBtn');
-    const suggest = document.getElementById('searchSuggest');
-    const resultsWrap = document.getElementById('heroSearchResults');
-
-    function showSuggest(q) {
-      if (!q.trim() || q.length < 2) { suggest.classList.remove('open'); return; }
-      const results = search(q);
-      suggest.innerHTML = results.length
-        ? results.map((r, i) => `<a class="suggest-item" href="${esc(r.href)}" role="option"><i class="fa-solid ${esc(r.icon || 'fa-briefcase')}"></i>${esc(r.text)}</a>`).join('')
-        : '<div class="suggest-no">No results. Try: SSC, Railway, Bank, Police…</div>';
-      suggest.classList.add('open');
-    }
-
-    function showResults(q) {
-      const results = search(q);
-      if (!q.trim()) { resultsWrap.classList.remove('open'); return; }
-      resultsWrap.classList.add('open');
-      resultsWrap.innerHTML = results.length
-        ? results.map(r => `<a class="search-result-item" href="${esc(r.href)}"><i class="fa-solid ${esc(r.icon || 'fa-briefcase')}"></i> ${esc(r.text)}</a>`).join('')
-        : '<div class="search-no-result">No result found. Try: SSC, Railway, Bank, 10th pass…</div>';
-      suggest.classList.remove('open');
-    }
-
-    let t;
-    input.addEventListener('input', function () { clearTimeout(t); t = setTimeout(() => showSuggest(this.value), 180); });
-    input.addEventListener('focus', function () { if (this.value.length >= 2) showSuggest(this.value); });
-    input.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') { showResults(input.value); e.preventDefault(); }
-      if (e.key === 'Escape') { suggest.classList.remove('open'); }
-    });
-    document.addEventListener('click', function (e) { if (!suggest.contains(e.target) && e.target !== input) suggest.classList.remove('open'); });
-    btn.addEventListener('click', () => showResults(input.value));
-
-    // Header search (desktop)
-    const hInput = document.getElementById('headerSearch');
-    const hBtn = document.getElementById('headerSearchBtn');
-    if (hBtn && hInput) {
-      hBtn.addEventListener('click', () => { window.location.href = 'view.html?section=' + encodeURIComponent(hInput.value); });
-      hInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') window.location.href = 'view.html?section=' + encodeURIComponent(this.value); });
-    }
-
-    // Mobile search btn show on mobile
-    const mobileSearchBtn = document.getElementById('mobileSearchBtn');
-    if (mobileSearchBtn) {
-      const headerSearchWrap = document.querySelector('.header-search-wrap');
-      if (window.innerWidth < 768) {
-        mobileSearchBtn.style.display = 'flex';
-        if (headerSearchWrap) headerSearchWrap.style.display = 'none';
-      }
-      mobileSearchBtn.addEventListener('click', function () {
-        const hero = document.getElementById('hero-search-section');
-        if (hero) { hero.scrollIntoView({ behavior: 'smooth', block: 'start' }); setTimeout(() => input.focus(), 400); }
-      });
-    }
+    // ---- OLD SEARCH SYSTEM REMOVED — smart-search.js handles all search ----
+    // Keeping only: FAQ, Mobile Menu, Desktop Nav Dropdowns
 
     // ---- FAQ ----
+    document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.faq-btn').forEach(function (btn) {
       btn.addEventListener('click', function () {
         const panel = this.nextElementSibling;
@@ -1728,7 +1585,6 @@
     const mobileMenu = document.getElementById('mobileMenu');
     const overlay = document.getElementById('menuOverlay');
 
-    // ✅ Force closed on page load
     if (mobileMenu) mobileMenu.hidden = true;
     if (overlay) overlay.hidden = true;
 
@@ -1752,7 +1608,6 @@
       if (overlay) overlay.addEventListener('click', closeMenu);
       if (mobileMenu) mobileMenu.addEventListener('click', function(e) { if (e.target.closest('a')) closeMenu(); });
     }
-    window.__menuInitialized = true;
 
     // ---- Desktop nav dropdowns ----
     document.querySelectorAll('[data-dd]').forEach(function (dd) {
@@ -1770,6 +1625,23 @@
     document.addEventListener('click', function () {
       document.querySelectorAll('.nav-dd-menu').forEach(m => m.style.display = '');
     });
+
+    // Mobile search btn
+    const mobileSearchBtn = document.getElementById('mobileSearchBtn');
+    if (mobileSearchBtn) {
+      if (window.innerWidth < 768) mobileSearchBtn.style.display = 'flex';
+      mobileSearchBtn.addEventListener('click', function () {
+        const hero = document.getElementById('hero-search-section');
+        if (hero) { hero.scrollIntoView({ behavior: 'smooth', block: 'start' }); setTimeout(() => { const inp = document.getElementById('heroSearch'); if(inp) inp.focus(); }, 400); }
+      });
+    }
+    }); // end DOMContentLoaded
+
+    // ---- PLACEHOLDER to skip old search code (removed, handled by smart-search.js) ----
+    if (false) { const _x = null; }
+
+  })();
+  </script>
 
   <!-- Carousel JS for cat-bar-grid -->
   <script>
