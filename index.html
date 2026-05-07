@@ -358,6 +358,11 @@
       display: flex; align-items: center; justify-content: center;
       font-size: 1.15rem; flex-shrink: 0;
     }
+    .cbi-count {
+      font-size: .58rem; font-weight: 800; color: var(--blue);
+      background: #eff6ff; padding: 1px 6px; border-radius: 10px;
+      white-space: nowrap;
+    }
     .cbi-count { font-size: .6rem; font-weight: 800; color: var(--blue); background: #eff6ff; padding: 1px 5px; border-radius: 10px; }
 
     /* ============================================================
@@ -971,6 +976,87 @@
   </section>
 
   <!-- ============================================================
+       BROWSE JOBS BY CATEGORY — HORIZONTAL CAROUSEL
+  ============================================================ -->
+  <div class="cat-bar-wrap" id="browseCatWrap">
+    <div class="cat-bar-hd">
+      <span><i class="fa-solid fa-th-large"></i> &nbsp;BROWSE JOBS BY CATEGORY</span>
+      <a href="category.html?group=popular">View All</a>
+    </div>
+    <div class="cat-bar-carousel-wrap">
+      <button class="cbg-arrow prev" id="browsePrev" aria-label="Scroll left"><i class="fa-solid fa-chevron-left"></i></button>
+      <button class="cbg-arrow next" id="browseNext" aria-label="Scroll right"><i class="fa-solid fa-chevron-right"></i></button>
+      <div class="cat-bar-grid" id="browseCatGrid">
+        <a href="view.html?section=Railway%20Jobs" class="cbi">
+          <div class="cbi-icon" style="background:#fff0e6;color:#c2410c;"><i class="fa-solid fa-train"></i></div>
+          <span>Railway Jobs</span>
+          <small class="cbi-count">125+ Jobs</small>
+        </a>
+        <a href="view.html?section=Bank%20Jobs" class="cbi">
+          <div class="cbi-icon" style="background:#eff6ff;color:#1d4ed8;"><i class="fa-solid fa-building-columns"></i></div>
+          <span>Bank Jobs</span>
+          <small class="cbi-count">180+ Jobs</small>
+        </a>
+        <a href="view.html?section=Police%20Jobs" class="cbi">
+          <div class="cbi-icon" style="background:#fff1f2;color:#be123c;"><i class="fa-solid fa-shield-halved"></i></div>
+          <span>Police Jobs</span>
+          <small class="cbi-count">95+ Jobs</small>
+        </a>
+        <a href="view.html?section=Latest%20Govt%20Jobs" class="cbi">
+          <div class="cbi-icon" style="background:#f0fdf4;color:#16a34a;"><i class="fa-solid fa-briefcase"></i></div>
+          <span>SSC Jobs</span>
+          <small class="cbi-count">210+ Jobs</small>
+        </a>
+        <a href="view.html?section=Indian%20ARMY%20jobs" class="cbi">
+          <div class="cbi-icon" style="background:#f5f3ff;color:#7c3aed;"><i class="fa-solid fa-star"></i></div>
+          <span>Army Jobs</span>
+          <small class="cbi-count">90+ Jobs</small>
+        </a>
+        <a href="view.html?section=Teacher%20Jobs" class="cbi">
+          <div class="cbi-icon" style="background:#fef3c7;color:#d97706;"><i class="fa-solid fa-chalkboard-user"></i></div>
+          <span>Teaching Jobs</span>
+          <small class="cbi-count">120+ Jobs</small>
+        </a>
+        <a href="view.html?section=Medical%2F%20Healthcare%20Jobs" class="cbi">
+          <div class="cbi-icon" style="background:#fff0f0;color:#dc2626;"><i class="fa-solid fa-stethoscope"></i></div>
+          <span>Medical Jobs</span>
+          <small class="cbi-count">80+ Jobs</small>
+        </a>
+        <a href="view.html?section=Haryana%20All%20State%20Jobs" class="cbi">
+          <div class="cbi-icon" style="background:#ecfdf5;color:#059669;"><i class="fa-solid fa-location-dot"></i></div>
+          <span>Haryana Jobs</span>
+          <small class="cbi-count">65+ Jobs</small>
+        </a>
+        <a href="view.html?section=Defence%20Jobs" class="cbi">
+          <div class="cbi-icon" style="background:#f0f9ff;color:#0369a1;"><i class="fa-solid fa-shield"></i></div>
+          <span>Defence Jobs</span>
+          <small class="cbi-count">70+ Jobs</small>
+        </a>
+        <a href="view.html?section=UPSC%20Jobs" class="cbi">
+          <div class="cbi-icon" style="background:#fdf4ff;color:#9333ea;"><i class="fa-solid fa-graduation-cap"></i></div>
+          <span>UPSC Jobs</span>
+          <small class="cbi-count">30+ Jobs</small>
+        </a>
+        <a href="view.html?section=ITI%20Pass%20jobs" class="cbi">
+          <div class="cbi-icon" style="background:#fff7ed;color:#ea580c;"><i class="fa-solid fa-tools"></i></div>
+          <span>ITI Jobs</span>
+          <small class="cbi-count">55+ Jobs</small>
+        </a>
+        <a href="view.html?section=SSC%20Jobs" class="cbi">
+          <div class="cbi-icon" style="background:#fefce8;color:#ca8a04;"><i class="fa-solid fa-medal"></i></div>
+          <span>SSC CGL/CHSL</span>
+          <small class="cbi-count">40+ Jobs</small>
+        </a>
+        <a href="category.html?group=popular" class="cbi" style="color:var(--blue);font-weight:800;">
+          <div class="cbi-icon" style="background:#eff6ff;color:#1a56db;"><i class="fa-solid fa-grid-2-plus"></i></div>
+          <span>View All</span>
+          <small class="cbi-count">500+ Jobs</small>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
        JOBS BY QUALIFICATION QUICK BAR
   ============================================================ -->
   <div class="cat-bar-wrap">
@@ -1168,55 +1254,7 @@
           </div>
         </div><!-- /two-col-sections row 2 -->
 
-        <!-- BROWSE JOBS BY CATEGORY (scrollable) -->
-        <div class="sec-card">
-          <div class="sec-head blue">
-            <div class="left"><i class="fa-solid fa-th-large"></i> BROWSE JOBS BY CATEGORY</div>
-          </div>
-          <div class="browse-row">
-            <a href="view.html?section=Railway%20Jobs" class="browse-item">
-              <div class="browse-icon" style="background:#fff0e6;color:#c2410c;"><i class="fa-solid fa-train"></i></div>
-              <span>Railway Jobs</span>
-              <small>125+ Jobs</small>
-            </a>
-            <a href="view.html?section=Bank%20Jobs" class="browse-item">
-              <div class="browse-icon" style="background:#eff6ff;color:#1d4ed8;"><i class="fa-solid fa-building-columns"></i></div>
-              <span>Bank Jobs</span>
-              <small>180+ Jobs</small>
-            </a>
-            <a href="view.html?section=Police%20Jobs" class="browse-item">
-              <div class="browse-icon" style="background:#fff1f2;color:#be123c;"><i class="fa-solid fa-shield-halved"></i></div>
-              <span>Police Jobs</span>
-              <small>95+ Jobs</small>
-            </a>
-            <a href="view.html?section=Latest%20Govt%20Jobs" class="browse-item">
-              <div class="browse-icon" style="background:#f0fdf4;color:#16a34a;"><i class="fa-solid fa-briefcase"></i></div>
-              <span>SSC Jobs</span>
-              <small>210+ Jobs</small>
-            </a>
-            <a href="view.html?section=Indian%20ARMY%20jobs" class="browse-item">
-              <div class="browse-icon" style="background:#f5f3ff;color:#7c3aed;"><i class="fa-solid fa-star"></i></div>
-              <span>Army Jobs</span>
-              <small>90+ Jobs</small>
-            </a>
-            <a href="view.html?section=Teacher%20Jobs" class="browse-item">
-              <div class="browse-icon" style="background:#fef3c7;color:#d97706;"><i class="fa-solid fa-chalkboard-user"></i></div>
-              <span>Teaching Jobs</span>
-              <small>120+ Jobs</small>
-            </a>
-            <a href="view.html?section=Medical%2F%20Healthcare%20Jobs" class="browse-item">
-              <div class="browse-icon" style="background:#fff0f0;color:#dc2626;"><i class="fa-solid fa-stethoscope"></i></div>
-              <span>Medical Jobs</span>
-              <small>80+ Jobs</small>
-            </a>
-            <a href="view.html?section=Haryana%20All%20State%20Jobs" class="browse-item">
-              <div class="browse-icon" style="background:#ecfdf5;color:#059669;"><i class="fa-solid fa-location-dot"></i></div>
-              <span>Haryana Jobs</span>
-              <small>65+ Jobs</small>
-            </a>
-          </div>
-          <a href="category.html?group=popular" class="browse-view-all"><i class="fa-solid fa-eye"></i> View All Categories</a>
-        </div>
+        <!-- BROWSE JOBS BY CATEGORY moved above cat-bar-wrap -->
 
         <!-- STUDY MATERIAL & TOOLS + LATEST KHABAR row -->
         <div class="two-col-grid">
