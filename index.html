@@ -426,10 +426,13 @@
     .job-list a:hover { background: #f0f7ff; transform: translateX(2px); }
     .job-new { background: var(--red); color: #fff; font-size: .56rem; font-weight: 900; padding: 2px 5px; border-radius: 4px; flex-shrink: 0; margin-top: 3px; letter-spacing: .04em; }
     .job-body { flex: 1; min-width: 0; }
-    .job-title { font-size: .82rem; font-weight: 800; color: var(--blue); line-height: 1.4; word-break: break-word; }
+    .job-title { font-size: .82rem; font-weight: 800; color: var(--blue); line-height: 1.4; word-break: break-word; white-space: normal; }
     .job-list a:hover .job-title { text-decoration: underline; }
     .job-meta { font-size: .7rem; color: var(--muted); margin-top: 2px; }
-    .job-date { font-size: .69rem; color: var(--red); font-weight: 800; white-space: nowrap; flex-shrink: 0; margin-top: 3px; }
+    .job-date { display: none; }
+
+    /* section-link .d — real dates show in red; "Open official link" hidden via JS */
+    .section-link .d { font-size: .68rem; font-weight: 800; color: var(--red); white-space: nowrap; flex-shrink: 0; }
 
     /* View more link */
     .sec-more {
@@ -695,12 +698,15 @@
 
     /* ============================================================
        DYNAMIC SECTION CARDS (rendered by script.js)
+       Standalone row below the static two-col-sections
     ============================================================ */
     #dynamic-sections {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 14px;
+      margin-bottom: 14px;
     }
+    #dynamic-sections:empty { display: none; }
     @media (max-width: 600px) {
       #dynamic-sections { grid-template-columns: 1fr; }
     }
@@ -738,7 +744,6 @@
       line-height: 1.4; word-break: break-word;
     }
     .section-link:hover .t { text-decoration: underline; }
-    .section-link .d { font-size: .68rem; font-weight: 800; color: var(--red); white-space: nowrap; flex-shrink: 0; }
     .section-show-more {
       margin: 5px 14px 9px; padding: 6px 14px; background: #eff6ff;
       border: 1px solid #bfdbfe; border-radius: 7px; font-size: .75rem;
@@ -1106,7 +1111,7 @@
             <div class="left"><i class="fa-solid fa-briefcase"></i> LATEST JOBS</div>
             <a href="view.html?section=latest%20jobs" class="view-all-btn">View All</a>
           </div>
-          <div class="job-list" id="dynamic-sections">
+          <div class="job-list">
             <!-- These will be populated by script.js; fallback static rows: -->
             <a href="view.html?section=latest%20jobs">
               <span class="job-new">NEW</span>
@@ -1114,7 +1119,7 @@
                 <div class="job-title">SSC MTS Recruitment 2026</div>
                 <div class="job-meta">Last Date: 24/06/2026</div>
               </div>
-              <span class="job-date">Apply Now</span>
+              
             </a>
             <a href="view.html?section=Railway%20Jobs">
               <span class="job-new">NEW</span>
@@ -1122,7 +1127,7 @@
                 <div class="job-title">Railway Group D Vacancy 2026</div>
                 <div class="job-meta">Last Date: 22/06/2026</div>
               </div>
-              <span class="job-date">Apply Now</span>
+              
             </a>
             <a href="view.html?section=Bank%20Jobs">
               <span class="job-new">NEW</span>
@@ -1130,7 +1135,7 @@
                 <div class="job-title">Bank of Baroda Recruitment 2026</div>
                 <div class="job-meta">Last Date: 30/06/2026</div>
               </div>
-              <span class="job-date">Apply Now</span>
+              
             </a>
             <a href="view.html?section=Police%20Jobs">
               <span class="job-new">NEW</span>
@@ -1138,7 +1143,7 @@
                 <div class="job-title">UP Police Constable Vacancy 2026</div>
                 <div class="job-meta">Last Date: 28/06/2026</div>
               </div>
-              <span class="job-date">Apply Now</span>
+              
             </a>
             <a href="view.html?section=Teacher%20Jobs">
               <span class="job-new">NEW</span>
@@ -1146,7 +1151,7 @@
                 <div class="job-title">Rajasthan Patwari Recruitment 2026</div>
                 <div class="job-meta">Last Date: 20/06/2026</div>
               </div>
-              <span class="job-date">Apply Now</span>
+              
             </a>
             <a href="view.html?section=Indian%20ARMY%20jobs">
               <span class="job-new">NEW</span>
@@ -1154,7 +1159,7 @@
                 <div class="job-title">Indian Army Agniveer Rally 2026</div>
                 <div class="job-meta">Last Date: 25/06/2026</div>
               </div>
-              <span class="job-date">Apply Now</span>
+              
             </a>
             <a href="view.html?section=latest%20jobs">
               <span class="job-new">NEW</span>
@@ -1162,7 +1167,7 @@
                 <div class="job-title">India Post GDS Recruitment 2026</div>
                 <div class="job-meta">Last Date: 10/06/2026</div>
               </div>
-              <span class="job-date">Apply Now</span>
+              
             </a>
             <a href="view.html?section=Bank%20Jobs">
               <span class="job-new">NEW</span>
@@ -1170,7 +1175,7 @@
                 <div class="job-title">SSB Head Constable Vacancy 2026</div>
                 <div class="job-meta">Last Date: 21/06/2026</div>
               </div>
-              <span class="job-date">Apply Now</span>
+              
             </a>
             <a href="view.html?section=latest%20jobs">
               <span class="job-new">NEW</span>
@@ -1178,7 +1183,7 @@
                 <div class="job-title">BSF HC Ministerial Vacancy 2026</div>
                 <div class="job-meta">Last Date: 18/06/2026</div>
               </div>
-              <span class="job-date">Apply Now</span>
+              
             </a>
             <a href="view.html?section=latest%20jobs">
               <span class="job-new">NEW</span>
@@ -1186,7 +1191,7 @@
                 <div class="job-title">IB ACIO Recruitment 2026</div>
                 <div class="job-meta">Last Date: 15/06/2026</div>
               </div>
-              <span class="job-date">Apply Now</span>
+              
             </a>
           </div>
           <a href="view.html?section=latest%20jobs" class="sec-more"><i class="fa-solid fa-eye"></i> View All Latest Jobs</a>
@@ -1194,7 +1199,7 @@
 
         <!-- UPCOMING JOBS (paired with Latest Jobs) -->
         <div class="sec-card">
-          <div class="sec-head green">
+          <div class="sec-head blue">
             <div class="left"><i class="fa-solid fa-calendar-plus"></i> UPCOMING JOBS</div>
             <a href="view.html?section=upcoming-jobs" class="view-all-btn">View All</a>
           </div>
@@ -1206,11 +1211,16 @@
             <a href="view.html?section=Haryana%20All%20State%20Jobs"><i class="fa-solid fa-location-dot" style="color:var(--blue);"></i><span>Haryana Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
             <a href="view.html?section=State%20jobs"><i class="fa-solid fa-map-location-dot" style="color:var(--teal);"></i><span>State Wise Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
             <a href="view.html?section=Central%20jobs"><i class="fa-solid fa-flag" style="color:var(--accent);"></i><span>Central Govt Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+            <a href="category.html?group=admit-result"><i class="fa-solid fa-id-card" style="color:var(--blue);"></i><span>Latest Results</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+            <a href="category.html?group=admit-result"><i class="fa-solid fa-key" style="color:var(--purple);"></i><span>Answer Key</span><i class="fa-solid fa-chevron-right arrow"></i></a>
           </div>
           <a href="view.html?section=upcoming-jobs" class="sec-more"><i class="fa-solid fa-eye"></i> View All Upcoming Jobs</a>
         </div>
 
         </div><!-- /two-col-sections row 1 -->
+
+        <!-- DYNAMIC SECTIONS: script.js renders section cards here in 2-col grid -->
+        <div id="dynamic-sections" class="dynamic-sections-row"></div>
 
         <!-- ROW 2: ADMIT CARDS + RESULTS side by side -->
         <div class="two-col-sections">
@@ -1599,6 +1609,35 @@
 
   <!-- Load existing script.js (handles dynamic sections from JSON) -->
   <script src="script.js?v=20260506" defer></script>
+
+  <!-- Remove "Open official link" from dynamic cards after render -->
+  <script>
+  (function removeOpenLink() {
+    function cleanLinks() {
+      document.querySelectorAll('.section-link .d').forEach(function(el) {
+        if (el.textContent.trim() === 'Open official link' || el.textContent.trim() === 'Open') {
+          el.style.display = 'none';
+        }
+      });
+    }
+    // Run after script.js renders dynamic sections (observe DOM changes)
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        cleanLinks();
+        var obs = new MutationObserver(cleanLinks);
+        var target = document.getElementById('dynamic-sections');
+        if (target) obs.observe(target, { childList: true, subtree: true });
+        setTimeout(cleanLinks, 1500);
+      });
+    } else {
+      cleanLinks();
+      var obs = new MutationObserver(cleanLinks);
+      var target = document.getElementById('dynamic-sections');
+      if (target) obs.observe(target, { childList: true, subtree: true });
+      setTimeout(cleanLinks, 1500);
+    }
+  })();
+  </script>
 
   <script>
   (function () {
