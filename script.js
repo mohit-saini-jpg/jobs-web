@@ -963,7 +963,34 @@
     items.forEach((it) => {
       const a = document.createElement("a");
       a.className = "section-link";
-      a.href = safe(it.url);
+
+      // ✅ FIX: State wise jobs → state-jobs.html?state=StateName (not view.html?section=...)
+      let href = safe(it.url);
+      if (group === "state") {
+        // Extract state name from the item name or url
+        // Item name example: "Delhi State Jobs", "Gujarat State Jobs"
+        // URL example: view.html?section=Delhi%20State%20Jobs
+        let extractedState = "";
+        // Try from URL param first
+        try {
+          const urlObj = new URL(href, location.href);
+          const sec = urlObj.searchParams.get("section") || "";
+          if (sec) {
+            // "Delhi State Jobs" → "Delhi", "Haryana All State Jobs" → "Haryana"
+            extractedState = sec.replace(/\s+(all\s+)?state\s+jobs?/gi, '').replace(/\s+govt\s+jobs?/gi,'').trim();
+          }
+        } catch(_) {}
+        // If not from URL, try from item name
+        if (!extractedState) {
+          const nameClean = safe(it.name).replace(/\s+(all\s+)?state\s+jobs?/gi,'').replace(/\s+govt\s+jobs?/gi,'').trim();
+          extractedState = nameClean;
+        }
+        if (extractedState) {
+          href = `state-jobs.html?state=${encodeURIComponent(extractedState)}`;
+        }
+      }
+
+      a.href = href;
       if (it.external) { a.target = "_blank"; a.rel = "noopener"; }
       a.innerHTML = `<div class="t">${safe(it.name)}</div><div class="d">Open official link</div>`;
       gridEl.appendChild(a);
