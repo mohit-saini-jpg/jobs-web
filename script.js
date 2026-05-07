@@ -497,17 +497,20 @@
           ${moreHref ? `<a class="view-all-head" href="${moreHref}">View All</a>` : ""}
         </div>
         <div class="section-body">
-          <div class="section-list"></div>
+          <div class="section-list-wrap">
+            <div class="section-list"></div>
+          </div>
           ${moreHref ? `<a class="view-all" href="${moreHref}">More <i class="fa-solid fa-arrow-right"></i></a>` : ""}
         </div>
       `;
 
       const list = $(".section-list", card);
+      const listWrap = $(".section-list-wrap", card);
       const items = Array.isArray(sec.items)
         ? sec.items.filter(i => !isGarbageLink(i)).slice(0, 10)
         : [];
 
-      items.forEach((it, idx) => {
+      items.forEach((it) => {
         const name = safe(it.name) || "Open";
         const url = it.url || it.link || "";
         if (!url) return;
@@ -515,7 +518,6 @@
         const external = !!it.external;
         const a = document.createElement("a");
         a.className = "section-link";
-        // All items visible — scrollable container handles overflow
         a.href = buildRedirectUrl(url, name, sectionKey) || normalizeUrl(url);
         a.setAttribute("data-redirect-label", name);
         if (external) { a.target = "_blank"; a.rel = "noopener"; }
@@ -523,23 +525,17 @@
         list.appendChild(a);
       });
 
-      // All items visible — scrollable container handles overflow
       wrap.appendChild(card);
 
-      // ✅ Dynamically set max-height = height of first 5 items + their gaps
-      // Must run after card is in DOM so offsetHeight is measurable
-      requestAnimationFrame(() => {
-        const links = list.querySelectorAll(".section-link");
-        if (links.length > 5) {
-          const gap = 10; // matches gap:10px in CSS
-          let h = 0;
-          for (let i = 0; i < 5; i++) {
-            h += links[i].getBoundingClientRect().height;
-            if (i < 4) h += gap;
-          }
-          list.style.maxHeight = h + "px";
-        }
-      });
+      // Scroll-end shadow detection — hide bottom fade when scrolled to end
+      if (items.length > 5 && listWrap) {
+        list.addEventListener("scroll", () => {
+          const atEnd = list.scrollHeight - list.scrollTop <= list.clientHeight + 8;
+          listWrap.classList.toggle("scrolled-to-end", atEnd);
+        }, { passive: true });
+      } else if (listWrap) {
+        listWrap.classList.add("scrolled-to-end"); // no scroll needed, no shadow
+      }
     });
   }
 
