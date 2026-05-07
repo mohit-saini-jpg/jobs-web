@@ -1,0 +1,157 @@
+# .htaccess — Top Sarkari Jobs
+# Upload this file to your website root (public_html or www folder)
+# Last updated: 2026-05-07
+
+Options -Indexes
+RewriteEngine On
+RewriteBase /
+
+# =====================================================================
+# 1. FORCE WWW + HTTPS (pick one block based on your setup)
+# =====================================================================
+
+# Force HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Force WWW
+RewriteCond %{HTTP_HOST} !^www\. [NC]
+RewriteRule ^(.*)$ https://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+
+# =====================================================================
+# 2. CLEAN URL REWRITES (SEO Friendly URLs → Internal Query Params)
+#    These let Google index clean URLs while your JS still works
+# =====================================================================
+
+# Latest Jobs
+RewriteRule ^latest-sarkari-jobs/?$         view.html?section=latest+jobs [L,QSA]
+RewriteRule ^latest-sarkari-jobs/2026/?$    view.html?section=latest+jobs [L,QSA]
+
+# Upcoming Jobs
+RewriteRule ^upcoming-government-jobs/?$    view.html?section=upcoming-jobs [L,QSA]
+
+# All India Jobs
+RewriteRule ^all-india-government-jobs/?$   view.html?section=Latest+Govt+Jobs [L,QSA]
+
+# Jobs with Last Date
+RewriteRule ^jobs-with-last-date/?$         view.html?section=Jobs+with+Last+date [L,QSA]
+
+# Top 20 Jobs
+RewriteRule ^top-20-sarkari-jobs/?$         view.html?section=Top+20+Jobs [L,QSA]
+
+# Qualification-wise
+RewriteRule ^8th-pass-jobs/?$               view.html?section=8th+Pass [L,QSA]
+RewriteRule ^10th-pass-jobs/?$              view.html?section=10th+Pass+jobs [L,QSA]
+RewriteRule ^12th-pass-jobs/?$              view.html?section=12th+Pass+jobs [L,QSA]
+RewriteRule ^iti-pass-jobs/?$               view.html?section=ITI+Pass+jobs [L,QSA]
+RewriteRule ^diploma-jobs/?$                view.html?section=Diploma+Jobs [L,QSA]
+RewriteRule ^btech-jobs/?$                  view.html?section=B.Tech+Jobs [L,QSA]
+RewriteRule ^graduation-jobs/?$             view.html?section=Graduation+jobs [L,QSA]
+RewriteRule ^post-graduation-jobs/?$        view.html?section=Post+Graduation+jobs [L,QSA]
+
+# Department-wise
+RewriteRule ^railway-jobs/?$                view.html?section=Railway+Jobs [L,QSA]
+RewriteRule ^bank-jobs/?$                   view.html?section=Bank+Jobs [L,QSA]
+RewriteRule ^police-jobs/?$                 view.html?section=Police+Jobs [L,QSA]
+RewriteRule ^teacher-jobs/?$                view.html?section=Teacher+Jobs [L,QSA]
+RewriteRule ^army-navy-airforce-jobs/?$     view.html?section=Indian+ARMY+jobs [L,QSA]
+RewriteRule ^government-schemes-yojna/?$    view.html?section=Govt+Scheme+Yojna [L,QSA]
+
+# Central / State
+RewriteRule ^central-government-jobs/?$     view.html?section=Central+jobs [L,QSA]
+RewriteRule ^state-government-jobs/?$       view.html?section=State+jobs [L,QSA]
+RewriteRule ^haryana-government-jobs/?$     view.html?section=Haryana+All+State+Jobs [L,QSA]
+
+# Category pages
+RewriteRule ^admit-card-result/?$           category.html?group=admit-result [L,QSA]
+RewriteRule ^admissions/?$                  category.html?group=admissions [L,QSA]
+RewriteRule ^latest-khabar/?$               category.html?group=khabar [L,QSA]
+RewriteRule ^study-material/?$              category.html?group=study-material [L,QSA]
+RewriteRule ^study-wise-jobs/?$             category.html?group=study [L,QSA]
+RewriteRule ^popular-job-categories/?$      category.html?group=popular [L,QSA]
+RewriteRule ^state-wise-jobs/?$             category.html?group=state [L,QSA]
+
+# State-specific jobs
+RewriteRule ^haryana-jobs/?$                state-jobs.html?state=Haryana [L,QSA]
+RewriteRule ^up-jobs/?$                     state-jobs.html?state=Uttar+Pradesh [L,QSA]
+RewriteRule ^rajasthan-jobs/?$              state-jobs.html?state=Rajasthan [L,QSA]
+RewriteRule ^bihar-jobs/?$                  state-jobs.html?state=Bihar [L,QSA]
+RewriteRule ^mp-jobs/?$                     state-jobs.html?state=Madhya+Pradesh [L,QSA]
+RewriteRule ^maharashtra-jobs/?$            state-jobs.html?state=Maharashtra [L,QSA]
+RewriteRule ^punjab-jobs/?$                 state-jobs.html?state=Punjab [L,QSA]
+
+
+# =====================================================================
+# 3. SECURITY HEADERS
+# =====================================================================
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+</IfModule>
+
+
+# =====================================================================
+# 4. CACHE CONTROL (Critical for performance)
+# =====================================================================
+<IfModule mod_expires.c>
+  ExpiresActive On
+
+  # HTML — short cache (content changes daily)
+  ExpiresByType text/html                     "access plus 1 hour"
+
+  # CSS & JavaScript — long cache (use versioned filenames like styles.css?v=20260507)
+  ExpiresByType text/css                      "access plus 1 year"
+  ExpiresByType application/javascript        "access plus 1 year"
+  ExpiresByType text/javascript               "access plus 1 year"
+
+  # Images
+  ExpiresByType image/png                     "access plus 30 days"
+  ExpiresByType image/jpeg                    "access plus 30 days"
+  ExpiresByType image/gif                     "access plus 30 days"
+  ExpiresByType image/svg+xml                 "access plus 30 days"
+  ExpiresByType image/webp                    "access plus 30 days"
+  ExpiresByType image/x-icon                  "access plus 1 year"
+
+  # Fonts
+  ExpiresByType font/woff                     "access plus 1 year"
+  ExpiresByType font/woff2                    "access plus 1 year"
+  ExpiresByType font/ttf                      "access plus 1 year"
+  ExpiresByType application/font-woff         "access plus 1 year"
+
+  # JSON data files — moderate cache (jobs update frequently)
+  ExpiresByType application/json              "access plus 4 hours"
+
+  # XML (sitemap)
+  ExpiresByType application/xml               "access plus 1 day"
+  ExpiresByType text/xml                      "access plus 1 day"
+</IfModule>
+
+
+# =====================================================================
+# 5. GZIP COMPRESSION
+# =====================================================================
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html
+  AddOutputFilterByType DEFLATE text/css
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE text/javascript
+  AddOutputFilterByType DEFLATE application/json
+  AddOutputFilterByType DEFLATE text/xml
+  AddOutputFilterByType DEFLATE application/xml
+  AddOutputFilterByType DEFLATE image/svg+xml
+  AddOutputFilterByType DEFLATE font/woff2
+  AddOutputFilterByType DEFLATE font/ttf
+</IfModule>
+
+
+# =====================================================================
+# 6. CORS HEADERS FOR FONTS
+# =====================================================================
+<IfModule mod_headers.c>
+  <FilesMatch "\.(woff|woff2|ttf|eot)$">
+    Header set Access-Control-Allow-Origin "*"
+  </FilesMatch>
+</IfModule>
