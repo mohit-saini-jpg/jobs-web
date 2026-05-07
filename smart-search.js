@@ -13,7 +13,7 @@
   const CFG = {
     fuseJs: 'https://cdnjs.cloudflare.com/ajax/libs/fuse.js/7.0.0/fuse.min.js',
     jsonFiles: ['jobs.json', 'dynamic-sections.json', 'services.json'],
-    maxSuggest: 8,
+    maxSuggest: 10,
     maxResults: 30,
     debounceMs: 200,
     recentKey: 'tsj_recent_searches',
@@ -345,10 +345,9 @@
 
       /* ── Dropdown ── */
       #tsjDrop {
-        position: absolute; top: calc(100% + 6px); left: 0; right: 0;
         background: #fff; border: 1px solid #e2e8f0;
         border-radius: 14px; box-shadow: 0 16px 48px rgba(13,34,87,.18);
-        z-index: 9999; max-height: 520px; overflow-y: auto;
+        z-index: 99999; max-height: 420px; overflow-y: auto;
         display: none; animation: tsjFadeIn .15s ease;
       }
       #tsjDrop.open { display: block; }
@@ -520,14 +519,28 @@
     const oldSuggest = document.getElementById('searchSuggest') || document.getElementById('heroSearchSuggestResults');
     if (oldSuggest) oldSuggest.remove();
 
-    // Create dropdown
+    // Create dropdown — appended to body with fixed positioning so it's never clipped
     const drop = document.createElement('div');
     drop.id = 'tsjDrop';
     drop.setAttribute('role', 'listbox');
     drop.setAttribute('aria-label', 'Search suggestions');
-    const searchBoxParent = input.closest('[style*="position"]') || input.parentElement.parentElement;
-    searchBoxParent.style.position = 'relative';
-    searchBoxParent.appendChild(drop);
+    document.body.appendChild(drop);
+
+    // Position dropdown below the search input using getBoundingClientRect
+    function positionDrop() {
+      const rect = (input.closest('.hero-search-box') || input).getBoundingClientRect();
+      drop.style.position = 'fixed';
+      drop.style.top  = (rect.bottom + 6) + 'px';
+      drop.style.left = rect.left + 'px';
+      drop.style.width = rect.width + 'px';
+      drop.style.maxHeight = '420px';
+      drop.style.zIndex = '99999';
+    }
+    positionDrop();
+    window.addEventListener('resize',  () => { if (drop.classList.contains('open')) positionDrop(); });
+    window.addEventListener('scroll',  () => { if (drop.classList.contains('open')) positionDrop(); }, true);
+
+    const searchBoxParent = input.parentElement;
 
     // Replace old results panel
     const oldPanel = document.getElementById('heroSearchResults');
@@ -555,6 +568,7 @@
 
     /* ── Dropdown content ── */
     function showDefaultDrop() {
+      positionDrop();
       const recentHtml = buildRecentHtml();
       const trendingHtml = buildTrendingHtml();
       drop.innerHTML = (recentHtml || trendingHtml)
@@ -565,6 +579,7 @@
     }
 
     function showSuggest(q) {
+      positionDrop();
       const results = doSearch(q, {}).slice(0, CFG.maxSuggest);
       if (!results.length) {
         drop.innerHTML = `<div class="tsj-no-suggest">No results for "<strong>${esc(q)}</strong>". Try: SSC, Railway, Bank, Police…</div>`;
