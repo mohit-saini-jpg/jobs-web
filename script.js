@@ -515,8 +515,7 @@
         const external = !!it.external;
         const a = document.createElement("a");
         a.className = "section-link";
-        // Show 5 items by default; rest hidden until "Show all" clicked
-        if (idx >= 5) a.dataset.collapsed = "1";
+        // All items visible — scrollable container handles overflow
         a.href = buildRedirectUrl(url, name, sectionKey) || normalizeUrl(url);
         a.setAttribute("data-redirect-label", name);
         if (external) { a.target = "_blank"; a.rel = "noopener"; }
@@ -524,21 +523,7 @@
         list.appendChild(a);
       });
 
-      const hidden = items.length - 5;
-      if (hidden > 0) {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "section-show-more";
-        btn.textContent = "Show all " + items.length;
-        btn.addEventListener("click", () => {
-          list.querySelectorAll('[data-collapsed="1"]').forEach((el) => {
-            el.removeAttribute("data-collapsed");
-          });
-          btn.remove();
-        });
-        const body = $(".section-body", card);
-        body.insertBefore(btn, body.querySelector(".view-all"));
-      }
+      // No "Show all" button needed — section-list is scrollable
       wrap.appendChild(card);
     });
   }
