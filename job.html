@@ -25,6 +25,7 @@
     /* ── Reset & Base ── */
     *,*::before,*::after{box-sizing:border-box;}
     html,body{height:100%;margin:0;}
+    html{scroll-padding-top:100px;}
     body{display:flex;flex-direction:column;font-family:inherit;background:#f0f4f8;}
     main{flex:1;}
 
@@ -37,7 +38,7 @@
     @media(max-width:768px){.jp-three-col{grid-template-columns:1fr;}}
 
     /* ── LEFT NAV SIDEBAR ── */
-    .jp-left-nav{position:sticky;top:72px;}
+    .jp-left-nav{position:sticky;top:100px;}
     @media(max-width:1024px){.jp-left-nav{display:none;}}
     .jp-left-nav-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:14px;}
     .jp-left-nav-head{background:linear-gradient(135deg,#1d4ed8,#1d6dbc);color:#fff;font-size:0.78rem;font-weight:700;padding:9px 12px;display:flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:.05em;}
@@ -136,7 +137,7 @@
     .jp-tips-list li{font-size:0.81rem;color:#334155;line-height:1.9;padding:0;}
 
     /* ── RIGHT SIDEBAR ── */
-    .jp-right-sidebar{position:sticky;top:72px;}
+    .jp-right-sidebar{position:sticky;top:100px;}
     @media(max-width:768px){.jp-right-sidebar{position:static;}}
 
     /* Dates sidebar */
