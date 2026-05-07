@@ -256,6 +256,9 @@
               if (!headerHost.classList.contains("site-header")) {
                   headerHost.classList.add("site-header");
               }
+              // ✅ FIX: Re-init menu/dropdowns after header HTML is injected into DOM
+              initOffcanvas();
+              initDropdowns();
           }
         } catch (_) {}
     }
