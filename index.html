@@ -51,7 +51,9 @@
       --bg:      #f0f4fb;
       --white:   #ffffff;
       --radius:  10px;
-      --shadow:  0 2px 10px rgba(0,0,0,.07);
+      --shadow:  0 2px 12px rgba(13,34,87,.08);
+      --shadow-hover: 0 6px 24px rgba(13,34,87,.14);
+      --gap: 14px;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -338,16 +340,22 @@
     /* ============================================================
        MAIN TWO-COLUMN LAYOUT
     ============================================================ */
-    .page { padding: 14px 0 24px; }
+    .page { padding: 16px 0 30px; }
     .home-grid {
       display: grid; grid-template-columns: 1fr;
-      gap: 16px; align-items: start;
+      gap: 18px; align-items: start;
     }
-    @media (min-width: 960px) {
-      .home-grid { grid-template-columns: 1fr 290px; }
+    @media (min-width: 980px) {
+      .home-grid { grid-template-columns: 1fr 300px; }
     }
-    .home-sidebar { position: sticky; top: 90px; }
-    @media (max-width: 960px) { .home-sidebar { position: static; } }
+    .home-sidebar {
+      position: sticky; top: 86px;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .home-sidebar .sec-card { margin-bottom: 0; }
+    @media (max-width: 980px) {
+      .home-sidebar { position: static; margin-top: 2px; }
+    }
 
     /* 2-col side-by-side for main col section cards */
     .two-col-sections {
@@ -357,46 +365,52 @@
       margin-bottom: 14px;
     }
     .two-col-sections > .sec-card { margin-bottom: 0; }
-    @media (max-width: 580px) {
+    @media (max-width: 600px) {
       .two-col-sections { grid-template-columns: 1fr; }
     }
+    main br { display: none; }
 
     /* ============================================================
        SECTION CARDS
     ============================================================ */
     .sec-card {
       background: var(--white); border: 1px solid var(--border);
-      border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow);
-      margin-bottom: 14px;
+      border-radius: var(--radius); overflow: hidden;
+      box-shadow: var(--shadow); margin-bottom: 14px;
+      transition: box-shadow .2s, transform .2s;
     }
+    .sec-card:hover { box-shadow: var(--shadow-hover); }
     .sec-head {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 14px; color: #fff; font-size: .82rem; font-weight: 900;
+      padding: 11px 14px; color: #fff; font-size: .83rem; font-weight: 900;
+      border-bottom: 2px solid rgba(0,0,0,.1); letter-spacing: .01em;
     }
     .sec-head .left { display: flex; align-items: center; gap: 8px; }
+    .sec-head .left i { font-size: .9rem; opacity: .9; }
     .sec-head .view-all-btn {
-      color: rgba(255,255,255,.9); font-size: .72rem; font-weight: 700;
-      background: rgba(255,255,255,.18); padding: 3px 10px; border-radius: 20px; text-decoration: none;
+      color: rgba(255,255,255,.93); font-size: .72rem; font-weight: 700;
+      background: rgba(255,255,255,.2); padding: 4px 11px; border-radius: 20px;
+      text-decoration: none; white-space: nowrap; flex-shrink: 0; transition: background .15s;
     }
-    .sec-head .view-all-btn:hover { background: rgba(255,255,255,.3); }
-    .sec-head.blue { background: linear-gradient(90deg, var(--navy), var(--blue2)); }
-    .sec-head.red { background: linear-gradient(90deg, #9b1c1c, var(--red)); }
-    .sec-head.green { background: linear-gradient(90deg, #065f46, var(--green)); }
-    .sec-head.orange { background: linear-gradient(90deg, #92400e, var(--accent)); }
-    .sec-head.purple { background: linear-gradient(90deg, #4c1d95, var(--purple)); }
-    .sec-head.teal { background: linear-gradient(90deg, #134e4a, var(--teal)); }
-    .sec-head.brown { background: linear-gradient(90deg, #451a03, var(--yellow)); }
+    .sec-head .view-all-btn:hover { background: rgba(255,255,255,.35); }
+    .sec-head.blue  { background: linear-gradient(90deg, #0d2257 0%, #1a56db 100%); }
+    .sec-head.red   { background: linear-gradient(90deg, #7f1d1d 0%, #dc2626 100%); }
+    .sec-head.green { background: linear-gradient(90deg, #064e3b 0%, #059669 100%); }
+    .sec-head.orange{ background: linear-gradient(90deg, #78350f 0%, #f97316 100%); }
+    .sec-head.purple{ background: linear-gradient(90deg, #3b0764 0%, #7c3aed 100%); }
+    .sec-head.teal  { background: linear-gradient(90deg, #134e4a 0%, #0d9488 100%); }
+    .sec-head.brown { background: linear-gradient(90deg, #451a03 0%, #d97706 100%); }
 
     /* List inside card */
     .sec-list a {
-      display: flex; align-items: center; gap: 9px; padding: 10px 14px;
+      display: flex; align-items: center; gap: 10px; padding: 10px 14px;
       border-bottom: 1px solid #f1f5f9; text-decoration: none; color: var(--text);
-      font-size: .8rem; font-weight: 600; transition: background .12s;
+      font-size: .81rem; font-weight: 600; transition: background .12s, transform .1s;
     }
     .sec-list a:last-child { border-bottom: none; }
-    .sec-list a:hover { background: #f8faff; color: var(--blue); }
-    .sec-list a i { width: 16px; color: var(--blue); font-size: .82rem; flex-shrink: 0; }
-    .sec-list a .arrow { margin-left: auto; color: #d1d5db; font-size: .6rem; }
+    .sec-list a:hover { background: #f0f7ff; color: var(--blue); transform: translateX(2px); }
+    .sec-list a i { width: 17px; color: var(--blue); font-size: .82rem; flex-shrink: 0; }
+    .sec-list a .arrow { margin-left: auto; color: #d1d5db; font-size: .6rem; flex-shrink: 0; }
     .sec-list a .badge {
       background: var(--red); color: #fff; font-size: .58rem; font-weight: 800;
       padding: 2px 5px; border-radius: 4px; flex-shrink: 0; text-transform: uppercase;
@@ -406,20 +420,21 @@
     .job-list a {
       display: flex; align-items: flex-start; gap: 10px;
       padding: 10px 14px; border-bottom: 1px solid #f1f5f9;
-      text-decoration: none; color: var(--text); transition: background .12s;
+      text-decoration: none; color: var(--text); transition: background .12s, transform .1s;
     }
     .job-list a:last-child { border-bottom: none; }
-    .job-list a:hover { background: #f8faff; }
-    .job-new { background: var(--red); color: #fff; font-size: .57rem; font-weight: 800; padding: 2px 5px; border-radius: 4px; flex-shrink: 0; margin-top: 2px; }
-    .job-body { flex: 1; }
-    .job-title { font-size: .82rem; font-weight: 800; color: var(--blue); line-height: 1.4; }
+    .job-list a:hover { background: #f0f7ff; transform: translateX(2px); }
+    .job-new { background: var(--red); color: #fff; font-size: .56rem; font-weight: 900; padding: 2px 5px; border-radius: 4px; flex-shrink: 0; margin-top: 3px; letter-spacing: .04em; }
+    .job-body { flex: 1; min-width: 0; }
+    .job-title { font-size: .82rem; font-weight: 800; color: var(--blue); line-height: 1.4; word-break: break-word; }
     .job-list a:hover .job-title { text-decoration: underline; }
     .job-meta { font-size: .7rem; color: var(--muted); margin-top: 2px; }
-    .job-date { font-size: .7rem; color: var(--red); font-weight: 700; }
+    .job-date { font-size: .69rem; color: var(--red); font-weight: 800; white-space: nowrap; flex-shrink: 0; margin-top: 3px; }
 
     /* View more link */
     .sec-more {
-      display: block; text-align: center; padding: 9px; font-size: .79rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 9px 14px; font-size: .79rem; font-weight: 700;
       color: var(--blue); text-decoration: none; border-top: 1px solid var(--border);
       transition: background .12s;
     }
@@ -429,7 +444,8 @@
        TWO COLUMN GRID (admit + results)
     ============================================================ */
     .two-col-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
-    @media (max-width: 520px) { .two-col-grid { grid-template-columns: 1fr; } }
+    .two-col-grid > .sec-card { margin-bottom: 0; }
+    @media (max-width: 540px) { .two-col-grid { grid-template-columns: 1fr; } }
 
     /* ============================================================
        IMPORTANT LINKS GRID
@@ -559,25 +575,26 @@
     }
     .tool-btn {
       display: flex; flex-direction: column; align-items: center; gap: 5px;
-      padding: 10px 6px; border: 1px solid var(--border); border-radius: 8px;
+      padding: 11px 6px; border: 1.5px solid var(--border); border-radius: 9px;
       text-decoration: none; color: var(--text); text-align: center; transition: all .15s;
-      font-size: .68rem; font-weight: 700; background: var(--white);
+      font-size: .68rem; font-weight: 800; background: var(--white);
     }
-    .tool-btn i { font-size: 1.2rem; }
-    .tool-btn:hover { background: var(--blue); color: #fff; border-color: var(--blue); }
-    .tool-btn:hover i { color: #fff; }
+    .tool-btn i { font-size: 1.25rem; }
+    .tool-btn small { font-size: .59rem; color: var(--muted); font-weight: 600; }
+    .tool-btn:hover { background: var(--blue); color: #fff; border-color: var(--blue); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(26,86,219,.2); }
+    .tool-btn:hover i, .tool-btn:hover small { color: rgba(255,255,255,.85); }
 
     /* ============================================================
        LATEST KHABAR
     ============================================================ */
     .khabar-list a {
-      display: flex; align-items: center; gap: 9px; padding: 10px 14px;
+      display: flex; align-items: center; gap: 10px; padding: 10px 14px;
       border-bottom: 1px solid #f1f5f9; text-decoration: none; color: var(--text);
-      font-size: .8rem; font-weight: 600; transition: background .12s;
+      font-size: .8rem; font-weight: 600; transition: background .12s, transform .1s;
     }
     .khabar-list a:last-child { border-bottom: none; }
-    .khabar-list a:hover { background: #f8faff; color: var(--blue); }
-    .khabar-badge { background: var(--accent); color: #fff; font-size: .57rem; font-weight: 800; padding: 2px 5px; border-radius: 4px; flex-shrink: 0; }
+    .khabar-list a:hover { background: #fff7ed; color: var(--accent); transform: translateX(2px); }
+    .khabar-badge { background: var(--accent); color: #fff; font-size: .57rem; font-weight: 900; padding: 2px 5px; border-radius: 4px; flex-shrink: 0; letter-spacing: .03em; }
     .khabar-list a i { width: 16px; color: var(--accent); font-size: .8rem; }
 
     /* ============================================================
@@ -676,13 +693,95 @@
       text-transform: uppercase; color: var(--muted); padding: 10px 12px 3px;
     }
 
-    /* bng colors for the two-column admit/results mini headers */
-    .bng-hd {
-      display: flex; align-items: center; gap: 7px;
-      padding: 9px 14px; font-size: .8rem; font-weight: 900; color: #fff;
+    /* ============================================================
+       DYNAMIC SECTION CARDS (rendered by script.js)
+    ============================================================ */
+    #dynamic-sections {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
     }
-    .bng-hd.green { background: linear-gradient(90deg, #065f46, var(--green)); }
-    .bng-hd.purple { background: linear-gradient(90deg, #4c1d95, var(--purple)); }
+    @media (max-width: 600px) {
+      #dynamic-sections { grid-template-columns: 1fr; }
+    }
+    .section-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+      box-shadow: var(--shadow); transition: box-shadow .2s;
+      display: flex; flex-direction: column;
+    }
+    .section-card:hover { box-shadow: var(--shadow-hover); }
+    .section-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 11px 14px; color: #fff; font-size: .82rem; font-weight: 900;
+      border-bottom: 2px solid rgba(0,0,0,.1); letter-spacing: .01em;
+    }
+    .section-head .left { display: flex; align-items: center; gap: 8px; }
+    .view-all-head {
+      color: rgba(255,255,255,.9); font-size: .72rem; font-weight: 700;
+      background: rgba(255,255,255,.2); padding: 3px 10px; border-radius: 20px;
+      text-decoration: none; white-space: nowrap; flex-shrink: 0; transition: background .15s;
+    }
+    .view-all-head:hover { background: rgba(255,255,255,.35); }
+    .section-body { flex: 1; display: flex; flex-direction: column; }
+    .section-list { flex: 1; display: flex; flex-direction: column; }
+    .section-link {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 14px; border-bottom: 1px solid #f1f5f9;
+      text-decoration: none; color: var(--text); cursor: pointer;
+      transition: background .12s, transform .1s;
+    }
+    .section-link:last-child { border-bottom: none; }
+    .section-link:hover { background: #f0f7ff; transform: translateX(2px); }
+    .section-link .t {
+      flex: 1; font-size: .82rem; font-weight: 700; color: var(--blue);
+      line-height: 1.4; word-break: break-word;
+    }
+    .section-link:hover .t { text-decoration: underline; }
+    .section-link .d { font-size: .68rem; font-weight: 800; color: var(--red); white-space: nowrap; flex-shrink: 0; }
+    .section-show-more {
+      margin: 5px 14px 9px; padding: 6px 14px; background: #eff6ff;
+      border: 1px solid #bfdbfe; border-radius: 7px; font-size: .75rem;
+      font-weight: 700; color: var(--blue); cursor: pointer; font-family: inherit;
+      transition: background .15s; align-self: flex-start;
+    }
+    .section-show-more:hover { background: #dbeafe; }
+    .section-body .view-all {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 9px 14px; font-size: .79rem; font-weight: 700; color: var(--blue);
+      text-decoration: none; border-top: 1px solid var(--border);
+      transition: background .12s; margin-top: auto;
+    }
+    .section-body .view-all:hover { background: #f0f9ff; }
+
+    /* Browse hover */
+    .browse-item:hover .browse-icon { transform: scale(1.08) translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,.12); }
+    .browse-icon { box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+
+    /* bng-hd (Admit Cards & Results card headers) */
+    .bng-hd {
+      display: flex; align-items: center; gap: 8px;
+      padding: 11px 14px; font-size: .83rem; font-weight: 900; color: #fff;
+      border-bottom: 2px solid rgba(0,0,0,.1); letter-spacing: .01em;
+    }
+    .bng-hd i { font-size: .9rem; opacity: .9; }
+    .bng-hd.green  { background: linear-gradient(90deg, #064e3b 0%, #059669 100%); }
+    .bng-hd.purple { background: linear-gradient(90deg, #3b0764 0%, #7c3aed 100%); }
+
+    /* Social buttons upgrade */
+    .soc-btn { transition: opacity .15s, transform .15s; }
+    .soc-btn:hover { opacity: .92; transform: translateY(-1px); }
+    .sb-wa { background: #25d366; }
+    .sb-yt { background: #ff0000; }
+    .sb-ig { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+    .sb-sc { background: #fffc00; color: #000 !important; }
+    .sb-sc i { color: #000; }
+
+    /* Responsive mobile tweaks */
+    @media (max-width: 600px) {
+      .tools-grid { grid-template-columns: repeat(3, 1fr); }
+      .two-col-sections, .two-col-grid, #dynamic-sections { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 
@@ -1095,7 +1194,7 @@
 
         <!-- UPCOMING JOBS (paired with Latest Jobs) -->
         <div class="sec-card">
-          <div class="sec-head" style="background:linear-gradient(90deg,#065f46,var(--green));">
+          <div class="sec-head green">
             <div class="left"><i class="fa-solid fa-calendar-plus"></i> UPCOMING JOBS</div>
             <a href="view.html?section=upcoming-jobs" class="view-all-btn">View All</a>
           </div>
@@ -1116,7 +1215,7 @@
         <!-- ROW 2: ADMIT CARDS + RESULTS side by side -->
         <div class="two-col-sections">
           <div class="sec-card">
-            <div class="bng-hd green" style="background:linear-gradient(90deg,#065f46,var(--green));"><i class="fa-solid fa-id-card"></i> Admit Cards & Exams</div>
+            <div class="bng-hd green"><i class="fa-solid fa-id-card"></i> Admit Cards & Exams</div>
             <div class="sec-list" id="dynamic-admit-cards">
               <a href="category.html?group=admit-result"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#94a3b8;width:auto;"></i><span>SSC MTS Admit Card 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
               <a href="category.html?group=admit-result"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#94a3b8;width:auto;"></i><span>Railway Group D Admit Card</span><i class="fa-solid fa-chevron-right arrow"></i></a>
@@ -1128,7 +1227,7 @@
           </div>
 
           <div class="sec-card">
-            <div class="bng-hd purple" style="background:linear-gradient(90deg,#4c1d95,var(--purple));"><i class="fa-solid fa-trophy"></i> Latest Results</div>
+            <div class="bng-hd purple"><i class="fa-solid fa-trophy"></i> Latest Results</div>
             <div class="sec-list" id="dynamic-results">
               <a href="category.html?group=admissions"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#94a3b8;width:auto;"></i><span>SSC MTS Result 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
               <a href="category.html?group=admissions"><i class="fa-solid fa-circle" style="font-size:.4rem;color:#94a3b8;width:auto;"></i><span>Railway Group D Result 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a>
@@ -1139,7 +1238,6 @@
             <a href="category.html?group=admissions" class="sec-more">View All Results →</a>
           </div>
         </div><!-- /two-col-sections row 2 -->
-        <br>
 
         <!-- BROWSE JOBS BY CATEGORY (scrollable) -->
         <div class="sec-card">
@@ -1222,7 +1320,6 @@
             <a href="category.html?group=khabar" class="sec-more">Read All News →</a>
           </div>
         </div>
-        <br>
 
         <!-- TOOLS & SERVICES -->
         <div class="sec-card">
@@ -1309,7 +1406,7 @@
 
         <!-- ADMIT CARD & RESULT SIDEBAR -->
         <div class="sec-card">
-          <div class="sec-head" style="background:linear-gradient(90deg,#9b1c1c,#dc2626);">
+          <div class="sec-head red">
             <div class="left"><i class="fa-solid fa-calendar-check"></i> ADMIT CARD & RESULT</div>
             <a href="category.html?group=admit-result" class="view-all-btn">View All</a>
           </div>
@@ -1372,7 +1469,7 @@
 
         <!-- FOLLOW US -->
         <div class="sec-card">
-          <div class="sec-head" style="background:linear-gradient(90deg,#92400e,#f97316);">
+          <div class="sec-head orange">
             <div class="left"><i class="fa-solid fa-bell"></i> JOIN & FOLLOW US</div>
           </div>
           <div class="social-btns">
