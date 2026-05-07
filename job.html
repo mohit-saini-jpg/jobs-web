@@ -29,13 +29,16 @@
     body{display:flex;flex-direction:column;font-family:inherit;background:#f0f4f8;}
     main{flex:1;}
 
-    /* ── Ensure sticky header stays above page content ── */
+    /* ── Ensure sticky header stays above page content on ALL pages ── */
     .site-header{
-      position:sticky;top:0;z-index:300;
-      background:#fff;
+      position:sticky!important;top:0!important;z-index:500!important;
+      background:#fff!important;
       box-shadow:0 2px 8px rgba(0,0,0,.1);
     }
-    .header-logo-bar{background:#fff;}
+    /* header-logo-bar must be opaque white so nothing shows through */
+    .header-logo-bar{background:#fff!important;}
+    /* desktop-nav must also be opaque */
+    .desktop-nav{position:relative;z-index:499;}
 
     /* ── Outer wrapper ── */
     .jp-wrap{max-width:1200px;margin:0 auto;padding:12px 12px 40px;}
