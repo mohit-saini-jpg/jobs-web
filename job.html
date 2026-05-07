@@ -29,6 +29,14 @@
     body{display:flex;flex-direction:column;font-family:inherit;background:#f0f4f8;}
     main{flex:1;}
 
+    /* ── Ensure sticky header stays above page content ── */
+    .site-header{
+      position:sticky;top:0;z-index:300;
+      background:#fff;
+      box-shadow:0 2px 8px rgba(0,0,0,.1);
+    }
+    .header-logo-bar{background:#fff;}
+
     /* ── Outer wrapper ── */
     .jp-wrap{max-width:1200px;margin:0 auto;padding:12px 12px 40px;}
 
