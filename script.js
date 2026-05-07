@@ -523,8 +523,23 @@
         list.appendChild(a);
       });
 
-      // No "Show all" button needed — section-list is scrollable
+      // All items visible — scrollable container handles overflow
       wrap.appendChild(card);
+
+      // ✅ Dynamically set max-height = height of first 5 items + their gaps
+      // Must run after card is in DOM so offsetHeight is measurable
+      requestAnimationFrame(() => {
+        const links = list.querySelectorAll(".section-link");
+        if (links.length > 5) {
+          const gap = 10; // matches gap:10px in CSS
+          let h = 0;
+          for (let i = 0; i < 5; i++) {
+            h += links[i].getBoundingClientRect().height;
+            if (i < 4) h += gap;
+          }
+          list.style.maxHeight = h + "px";
+        }
+      });
     });
   }
 
