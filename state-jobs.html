@@ -785,37 +785,51 @@
     document.getElementById('faq2A').textContent = `Eligibility varies by post. Most ${name} govt jobs require 10th/12th pass, graduation or post-graduation. Domicile/Residence certificate of ${name} is usually required. Age: 18–40 years (relaxation for reserved categories).`;
   }
 
-  // ═══ LOAD JOBS FROM dynamic-sections.json ═══
+  // ═══ LOAD JOBS FROM state-jobs-data.json ═══
   async function loadJobs() {
-    const info2 = STATE_DATA[stateName];
-    const sectionKeyword = info2 ? info2.section.toLowerCase() : (stateName || '').toLowerCase();
     const jobsList = document.getElementById('jobsList');
 
     try {
-      const r = await fetch('dynamic-sections.json');
-      if (!r.ok) throw new Error('fetch failed');
-      const data = await r.json();
-
-      // Find matching section
+      // Try state-jobs-data.json first (state-specific data)
       let matchedItems = [];
-      for (const sec of (data.sections || [])) {
-        const secTitle = (sec.id || sec.title || '').toLowerCase();
-        if (secTitle.includes(sectionKeyword.split(' ')[0].toLowerCase()) ||
-            secTitle.includes((stateName || '').toLowerCase().split(' ')[0])) {
-          matchedItems = sec.items || [];
-          break;
-        }
-      }
+      let dataLoaded = false;
 
-      // If no state-specific section found, show general state jobs
-      if (!matchedItems.length) {
-        for (const sec of (data.sections || [])) {
-          const secTitle = (sec.id || sec.title || '').toLowerCase();
-          if (secTitle.includes('state') || secTitle.includes('haryana') || secTitle.includes('job')) {
-            matchedItems = sec.items || [];
-            break;
+      try {
+        const r = await fetch('state-jobs-data.json');
+        if (r.ok) {
+          const data = await r.json();
+          // Match section by state name (exact or partial)
+          const stateKey = (stateName || '').toLowerCase();
+          for (const sec of (data.sections || [])) {
+            if ((sec.state || '').toLowerCase() === stateKey ||
+                (sec.id || '').toLowerCase() === stateKey.replace(/ /g,'-') ||
+                (sec.title || '').toLowerCase().includes(stateKey.split(' ')[0])) {
+              matchedItems = sec.items || [];
+              break;
+            }
           }
+          dataLoaded = true;
         }
+      } catch(e2) {}
+
+      // Fallback: try dynamic-sections.json
+      if (!matchedItems.length) {
+        try {
+          const info2 = STATE_DATA[stateName];
+          const sectionKeyword = info2 ? info2.section.toLowerCase() : (stateName || '').toLowerCase();
+          const r2 = await fetch('dynamic-sections.json');
+          if (r2.ok) {
+            const data2 = await r2.json();
+            for (const sec of (data2.sections || [])) {
+              const secTitle = (sec.id || sec.title || '').toLowerCase();
+              if (secTitle.includes(sectionKeyword.split(' ')[0].toLowerCase()) ||
+                  secTitle.includes((stateName || '').toLowerCase().split(' ')[0])) {
+                matchedItems = sec.items || [];
+                break;
+              }
+            }
+          }
+        } catch(e3) {}
       }
 
       if (!matchedItems.length) {
@@ -839,7 +853,7 @@
             <div class="job-title">${title}</div>
             <div class="job-meta">
               <i class="fa-solid fa-calendar"></i> ${date || 'Apply Now'}
-              ${item.vacancies ? `&nbsp;|&nbsp; <i class="fa-solid fa-users"></i> ${item.vacancies} Posts` : ''}
+              ${item.qualification ? `&nbsp;|&nbsp; <i class="fa-solid fa-graduation-cap"></i> ${item.qualification.split(',')[0]}` : ''}
             </div>
           </div>
           <i class="fa-solid fa-chevron-right" style="color:#d1d5db;font-size:.6rem;flex-shrink:0;margin-top:4px;"></i>
@@ -847,7 +861,6 @@
       }).join('');
 
     } catch(e) {
-      // Fallback
       jobsList.innerHTML = `<div style="padding:20px 14px;text-align:center;color:var(--muted);font-size:.82rem;">
         <i class="fa-solid fa-briefcase" style="font-size:1.5rem;color:var(--blue);display:block;margin-bottom:8px;"></i>
         Click below to view all state govt jobs.<br>
