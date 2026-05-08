@@ -640,6 +640,11 @@
       }
     }
 
+    /* Clean URL: if loaded as job.html?slug=... rewrite to /jobs/<slug>/ */
+    if (rawSlug && window.location.pathname.includes("job.html")) {
+      try { history.replaceState(null, "", "/jobs/" + rawSlug + "/"); } catch(_) {}
+    }
+
     /* ─── Parser (enhanced) ─── */
     function parseJob(name) {
       const n = safe(name);
