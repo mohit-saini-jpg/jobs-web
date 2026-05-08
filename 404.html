@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Redirecting… | Top Sarkari Jobs</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <style>
+    body { font-family: sans-serif; display: flex; align-items: center;
+           justify-content: center; min-height: 100vh; margin: 0; background: #f0f4f8; }
+    .box { text-align: center; color: #374151; }
+    .spinner { width: 40px; height: 40px; border: 4px solid #e2e8f0;
+               border-top-color: #1d4ed8; border-radius: 50%;
+               animation: spin .7s linear infinite; margin: 0 auto 16px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+  <script>
+    /**
+     * GitHub Pages SEO Routing — 404.html
+     * ------------------------------------
+     * GitHub Pages serves this file for any path that doesn't match a real file.
+     * We detect /jobs/<slug>/ paths and redirect to /jobs/<slug>/index.html
+     * which reads window.location.pathname to get the slug.
+     *
+     * For all other 404s (not /jobs/) we fall through to the real 404 UI.
+     */
+    (function () {
+      var path = window.location.pathname;
+      var jobMatch = path.match(/^\/jobs\/([^\/]+)\/?$/);
+
+      if (jobMatch) {
+        // Store the slug in sessionStorage so the destination page can read it
+        // even after the browser normalises the URL.
+        sessionStorage.setItem('__tsj_slug', decodeURIComponent(jobMatch[1]));
+        // Redirect to the static template — no query params, clean URL preserved
+        // by using history.replaceState inside the template.
+        window.location.replace('/jobs/index.html');
+      }
+      // Non-job 404 paths: let the page render the error UI below.
+    })();
+  </script>
+</head>
+<body>
+  <div class="box">
+    <div class="spinner"></div>
+    <p style="margin:0;font-weight:600;">Loading…</p>
+    <p style="margin:8px 0 0;font-size:.85rem;color:#94a3b8;" id="fallbackMsg"></p>
+  </div>
+  <script>
+    // If we didn't redirect above, show a proper 404 message after a tick.
+    setTimeout(function () {
+      if (!window.location.pathname.match(/^\/jobs\//)) {
+        document.querySelector('.spinner').style.display = 'none';
+        document.getElementById('fallbackMsg').textContent =
+          'Page not found. Please go back or visit the home page.';
+        document.querySelector('p').textContent = '404 — Page Not Found';
+      }
+    }, 200);
+  </script>
+</body>
+</html>
