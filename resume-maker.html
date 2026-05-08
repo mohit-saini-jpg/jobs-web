@@ -22,7 +22,7 @@
   <style>
     @page {
       size: A4 portrait;
-      margin: 0mm;
+      margin: 8mm 8mm 8mm 8mm;
     }
     /* ══════════════════════════════════════════════
        ROOT DESIGN TOKENS
@@ -267,7 +267,7 @@
     .back-btn:hover{background:var(--bg);}
     .print-btn{background:linear-gradient(135deg,#059669,#10b981);color:#fff;border:none;border-radius:9px;padding:10px 24px;font-size:.88rem;font-weight:800;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(5,150,105,.3);transition:all .2s;}
     .print-btn:hover{opacity:.92;transform:translateY(-1px);}
-    .resume-paper{background:#fff;border-radius:10px;overflow:hidden;color:#111;font-size:11px;line-height:1.45;box-shadow:var(--shadow-md);width:100%;max-width:210mm;margin:0 auto;}
+    .resume-paper{background:#fff;border-radius:10px;overflow:visible;color:#111;font-size:11px;line-height:1.45;box-shadow:var(--shadow-md);width:100%;max-width:210mm;margin:0 auto;}
     @media print{
       /* Hide everything except the resume output */
       .site-header,.top-bar,.breadcrumb,.page-hero,.home-sidebar,.preview-actions,.sec-card,
@@ -316,6 +316,13 @@
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
         color-adjust: exact !important;
+        word-spacing: normal !important;
+        letter-spacing: normal !important;
+      }
+
+      /* Fix word spacing in paragraphs */
+      #resumeOutput p, #resumeOutput td, #resumeOutput li, #resumeOutput div {
+        word-spacing: 0.05em !important;
       }
 
       /* Prevent page break inside resume sections */
@@ -1156,8 +1163,8 @@
         +'<th style="padding:4px 7px;text-align:center;font-size:11px;font-weight:800">Marks%</th>'
         +'<th style="padding:4px 7px;text-align:center;font-size:11px;font-weight:800">Division</th></tr>';
       rows.forEach(function(r,i){
-        var bg=i%2===0?'#f8fafc':'#fff';
-        h+='<tr style="background:'+bg+'">'
+        var bg=i%2===0?'#f5f7fa':'#fff';
+        h+='<tr style="background:'+bg+';-webkit-print-color-adjust:exact;print-color-adjust:exact">'
           +'<td style="border-bottom:1px solid #e5e7eb;padding:4px 7px;font-size:11px;font-weight:700;color:#000">'+r.q+'</td>'
           +'<td style="border-bottom:1px solid #e5e7eb;padding:4px 7px;font-size:11px;color:#222">'+r.e+'</td>'
           +'<td style="border-bottom:1px solid #e5e7eb;padding:4px 7px;font-size:11px;text-align:center;font-weight:700;color:#000">'+r.y+'</td>'
@@ -1256,13 +1263,12 @@
       // ════════════ SIDEBAR TEMPLATES: 2, 5, 7, 10 ════════════
       if(hasSb){
         var sbBg=isDark?'#0f172a':c;
-        var sbTxt='#fff';
         var accentBar=isDark?'#fbbf24':ca;
 
         var sbSkills=d.skills.length?
           secHeadSb('Skills',isDark?'#fbbf24':'rgba(255,255,255,.7)')
           +d.skills.map(function(s){
-            return '<div style="margin-bottom:6px">'
+            return '<div style="margin-bottom:5px">'
               +'<div style="display:flex;justify-content:space-between;font-size:10px;font-weight:800;margin-bottom:2px;color:'+(isDark?'#f1f5f9':'rgba(255,255,255,.95)')+'"><span>'+s.name+'</span><span style="color:'+accentBar+'">'+s.pct+'%</span></div>'
               +'<div style="background:rgba(255,255,255,.2);height:5px;border-radius:4px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
               +'<div style="background:'+accentBar+';height:5px;border-radius:4px;width:'+s.pct+'%;-webkit-print-color-adjust:exact;print-color-adjust:exact"></div>'
@@ -1272,51 +1278,50 @@
         var sbInfo=function(lbl,val){
           return val?'<div style="margin-bottom:4px">'
             +'<div style="font-size:9px;font-weight:900;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.4px">'+lbl+'</div>'
-            +'<div style="font-size:10px;font-weight:700;color:#fff;line-height:1.3">'+val+'</div>'
+            +'<div style="font-size:10px;font-weight:700;color:#fff;line-height:1.3;word-break:break-all">'+val+'</div>'
             +'</div>':'';
         };
 
         var mainSecHead=function(lbl){
-          return '<div style="background:'+c+';color:#fff;padding:5px 14px;margin:0 -14px;font-size:12px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;margin-bottom:7px;border-left:4px solid '+accentBar+';-webkit-print-color-adjust:exact;print-color-adjust:exact">'+lbl+'</div>';
+          return '<div style="background:'+c+';color:#fff;padding:5px 12px;margin:0 -12px;font-size:11px;font-weight:900;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;border-left:4px solid '+accentBar+';-webkit-print-color-adjust:exact;print-color-adjust:exact">'+lbl+'</div>';
         };
 
-        return '<div style="'+F+';display:flex;min-height:auto">'
-          // SIDEBAR
-          +'<div style="width:30%;background:'+sbBg+';padding:14px 12px;display:flex;flex-direction:column;gap:0;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
-          // Photo + Name
-          +(d.photo?'<div style="text-align:center;margin-bottom:10px"><img src="'+d.photo+'" style="width:76px;height:92px;object-fit:cover;border-radius:8px;border:3px solid '+accentBar+'"></div>':'')
-          +'<div style="text-align:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.15)">'
-          +'<div style="font-size:14px;font-weight:900;color:'+accentBar+';line-height:1.2;word-break:break-word">'+d.name+'</div>'
-          +'<div style="font-size:9px;font-weight:800;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.5px;margin-top:3px">'+getDocType()+'</div>'
+        // Use TABLE layout for print compatibility (flexbox splits pages)
+        return '<div style="'+F+'">'
+          +'<table style="width:100%;border-collapse:collapse;table-layout:fixed;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
+          +'<colgroup><col style="width:30%"><col style="width:70%"></colgroup>'
+          +'<tr style="-webkit-print-color-adjust:exact;print-color-adjust:exact">'
+          // ── SIDEBAR CELL ──
+          +'<td style="vertical-align:top;background:'+sbBg+';padding:14px 11px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
+          +(d.photo?'<div style="text-align:center;margin-bottom:9px"><img src="'+d.photo+'" style="width:72px;height:88px;object-fit:cover;border-radius:8px;border:3px solid '+accentBar+'"></div>':'')
+          +'<div style="text-align:center;margin-bottom:10px;padding-bottom:9px;border-bottom:1px solid rgba(255,255,255,.15)">'
+          +'<div style="font-size:13px;font-weight:900;color:'+accentBar+';line-height:1.2;word-break:break-word">'+d.name+'</div>'
+          +'<div style="font-size:9px;font-weight:800;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.5px;margin-top:2px">'+getDocType()+'</div>'
           +'</div>'
-          // Contact
           +secHeadSb('Contact',isDark?'#fbbf24':'rgba(255,255,255,.7)')
           +sbInfo('Mobile',d.contact)+sbInfo('Email',d.email)+sbInfo('Address',d.address)
-          // Personal
           +secHeadSb('Personal',isDark?'#fbbf24':'rgba(255,255,255,.7)')
           +sbInfo('Date of Birth',d.dob)+sbInfo("Father's Name",d.fname)+sbInfo("Mother's Name",d.mname)
           +sbInfo('Gender',d.gender)+sbInfo('Nationality',d.nationality)+sbInfo('Marital Status',d.marital)
-          // Skills
           +sbSkills
-          // Languages & Hobbies
           +(d.language?secHeadSb('Languages',isDark?'#fbbf24':'rgba(255,255,255,.7)')+'<div style="font-size:10px;font-weight:700;color:#fff">'+d.language+'</div>':'')
           +(d.hobbies?secHeadSb('Hobbies',isDark?'#fbbf24':'rgba(255,255,255,.7)')+'<div style="font-size:10px;font-weight:700;color:#fff">'+d.hobbies+'</div>':'')
+          +'</td>'
+          // ── MAIN CONTENT CELL ──
+          +'<td style="vertical-align:top;background:#fff;padding:0">'
+          +'<div style="background:linear-gradient(135deg,'+c+','+ca+');padding:12px 14px;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
+          +'<div style="font-size:19px;font-weight:900;letter-spacing:.3px">'+d.name+'</div>'
+          +'<div style="font-size:10px;font-weight:700;opacity:.9;margin-top:2px">'+[d.contact,d.email].filter(Boolean).join(' • ')+'</div>'
           +'</div>'
-          // MAIN CONTENT
-          +'<div style="flex:1;background:#fff;padding:0">'
-          // Top colour bar
-          +'<div style="background:linear-gradient(135deg,'+c+','+ca+');padding:14px 14px 12px;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
-          +'<div style="font-size:20px;font-weight:900;letter-spacing:.3px">'+d.name+'</div>'
-          +'<div style="font-size:11px;font-weight:700;opacity:.9;margin-top:2px">'+[d.contact,d.email].filter(Boolean).join('  •  ')+'</div>'
-          +'</div>'
-          +'<div style="padding:10px 14px">'
-          +(d.objective?mainSecHead('Career Objective')+'<p style="font-size:11px;line-height:1.6;margin-bottom:10px;color:#222;font-weight:600">'+d.objective+'</p>':'')
+          +'<div style="padding:9px 12px">'
+          +(d.objective?mainSecHead('Career Objective')+'<p style="font-size:11px;line-height:1.55;margin-bottom:8px;color:#111;font-weight:600">'+d.objective+'</p>':'')
           +mainSecHead('Academic Qualification')+tblHtml(d.edu,c,ca)
           +(d.pro.length?mainSecHead('Professional Qualification')+tblHtml(d.pro,c,ca):'')
-          +(d.work.length?mainSecHead('Work Experience')+'<ul style="margin:0 0 10px 16px">'+li(d.work)+'</ul>':'')
-          +(d.extra.length?mainSecHead('Certifications & Extra')+'<ul style="margin:0 0 10px 16px">'+li(d.extra)+'</ul>':'')
+          +(d.work.length?mainSecHead('Work Experience')+'<ul style="margin:0 0 8px 14px;padding:0">'+li(d.work)+'</ul>':'')
+          +(d.extra.length?mainSecHead('Certifications & Extra')+'<ul style="margin:0 0 8px 14px;padding:0">'+li(d.extra)+'</ul>':'')
           +decl+sign
-          +'</div></div></div>';
+          +'</div></td>'
+          +'</tr></table></div>';
       }
 
       // ════════════ FULL-WIDTH TEMPLATES: 1, 3, 6, 8, 9 ════════════
