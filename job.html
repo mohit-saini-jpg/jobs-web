@@ -626,9 +626,19 @@
 
     /* ─── Params ─── */
     const params  = new URLSearchParams(window.location.search);
-    const rawSlug = safe(params.get("slug"));
+    let rawSlug = safe(params.get("slug"));
     const rawK    = safe(params.get("k")).toLowerCase();
     const rawSec  = safe(params.get("section"));
+
+    /* Support /jobs/<slug>/ path-based URLs (GitHub Pages routing via 404.html) */
+    if (!rawSlug && !rawK) {
+      const pathMatch = window.location.pathname.match(/\/jobs\/([^\/]+)\/?$/);
+      if (pathMatch) rawSlug = decodeURIComponent(pathMatch[1]);
+      if (!rawSlug) {
+        rawSlug = safe(sessionStorage.getItem("__tsj_slug"));
+        if (rawSlug) sessionStorage.removeItem("__tsj_slug");
+      }
+    }
 
     /* ─── Parser (enhanced) ─── */
     function parseJob(name) {
