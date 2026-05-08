@@ -9,8 +9,8 @@
   <meta name="robots" content="index, follow" />
   <link rel="canonical" id="canonicalTag" href="https://www.topsarkarijobs.com/job.html" />
   <link rel="icon" type="image/x-icon" href="image.ico" />
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="fonts/fa/all.min.css" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/fonts/fa/all.min.css" />
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Top Sarkari Jobs" />
   <meta property="og:image" content="https://www.topsarkarijobs.com/image.png" />
@@ -960,7 +960,7 @@
     }
 
     async function loadAllItems() {
-      const r = await fetch("dynamic-sections.json");
+      const r = await fetch("/dynamic-sections.json");
       if (!r.ok) return [];
       const data = await r.json();
       const out = [];
@@ -1058,6 +1058,6 @@
   })();
   </script>
 
-  <script src="script.js?v=20260509" defer></script>
+  <script src="/script.js?v=20260509" defer></script>
 </body>
 </html>
