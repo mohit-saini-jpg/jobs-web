@@ -333,12 +333,137 @@
         setMeta('meta[property="og:url"]', window.location.href);
       }
 
-      // 1. Resume / Tool View (No Search Bar)
+      // ── 1. Tool / URL View ──────────────────────────────────────────
       if (urlParam) {
         show(urlView);
-        updateShareMeta(nameParam, 'View ' + nameParam + ' on Top Sarkari Jobs.');
-        const iframe = document.getElementById("url-iframe");
-        if (iframe) iframe.src = decodeURIComponent(urlParam);
+        const toolName = nameParam || 'Online Tool';
+        const toolUrl  = decodeURIComponent(urlParam);
+        updateShareMeta(toolName, 'Use ' + toolName + ' free on Top Sarkari Jobs.');
+
+        // Sites known to block iframe embedding (X-Frame-Options / CSP)
+        var IFRAME_BLOCKED = [
+          'imageresizer.com','tinypng.com','iloveimg.com','ilovepdf.com',
+          'photoroom.com','cutout.pro','befunky.com','cloudconvert.com',
+          'resizepixel.com','freeconvert.com','clideo.com',
+          'online-video-cutter.com','mp3cut.net','mp3joiner.com',
+          'online-voice-recorder.com','compressjpeg.com','compressnow.com',
+          'smallpdf.com','pdf2go.com','sejda.com','tools.pdf24.org',
+          'www.adobe.com','canva.com','remove.bg','cleanup.pictures',
+          'upscalepics.com','picresize.com','birme.net','bulkresizephotos.com',
+          'pdfresizer.com','lightpdf.com','freepdfconvert.com'
+        ];
+
+        function isBlocked(url) {
+          try {
+            var host = new URL(url).hostname.replace(/^www\./,'');
+            return IFRAME_BLOCKED.some(function(b){ return host === b || host.endsWith('.'+b); });
+          } catch(e){ return false; }
+        }
+
+        // Tool icon map by keyword
+        function toolIcon(name) {
+          var n = (name||'').toLowerCase();
+          if(n.includes('pdf'))      return {icon:'fa-file-pdf',   color:'#dc2626', bg:'#fff5f5'};
+          if(n.includes('image')||n.includes('photo')||n.includes('resize')||n.includes('compress')||n.includes('passport')||n.includes('background')||n.includes('crop')||n.includes('signature')) return {icon:'fa-image', color:'#1a56db', bg:'#eff6ff'};
+          if(n.includes('video')||n.includes('mp4')||n.includes('avi')||n.includes('mov')) return {icon:'fa-video', color:'#7c3aed', bg:'#faf5ff'};
+          if(n.includes('audio')||n.includes('mp3')||n.includes('music')||n.includes('voice')) return {icon:'fa-music', color:'#0891b2', bg:'#ecfeff'};
+          if(n.includes('convert')) return {icon:'fa-arrows-rotate', color:'#059669', bg:'#f0fdf4'};
+          return {icon:'fa-screwdriver-wrench', color:'#1a56db', bg:'#eff6ff'};
+        }
+
+        var iframe = document.getElementById("url-iframe");
+        var urlViewEl = document.getElementById("url-view");
+
+        // Render a branded "Open Tool" landing card
+        function showLandingCard(reason) {
+          var t = toolIcon(toolName);
+          urlViewEl.innerHTML = [
+            '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:72vh;padding:24px;text-align:center;">',
+
+              // Card
+              '<div style="background:#fff;border:1.5px solid #e2e8f0;border-radius:18px;padding:36px 32px 32px;max-width:460px;width:100%;box-shadow:0 8px 32px rgba(13,34,87,.1);">',
+
+                // Big icon
+                '<div style="width:72px;height:72px;background:'+t.bg+';border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:2rem;color:'+t.color+';margin:0 auto 18px;border:1.5px solid rgba(0,0,0,.06);">',
+                  '<i class="fa-solid '+t.icon+'"></i>',
+                '</div>',
+
+                '<h1 style="font-size:1.25rem;font-weight:900;color:#0d2257;margin-bottom:8px;">'+toolName+'</h1>',
+                '<p style="font-size:.83rem;color:#64748b;line-height:1.6;margin-bottom:8px;">Yeh tool ek alag website par hai. Security restrictions ki wajah se hum ise seedha yahan nahi dikha sakte.</p>',
+
+                // Info badge
+                '<div style="display:inline-flex;align-items:center;gap:7px;background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:8px;padding:8px 14px;font-size:.76rem;font-weight:700;margin-bottom:22px;">',
+                  '<i class="fa-solid fa-circle-info"></i> Tool new tab mein khulega — bilkul free hai',
+                '</div>',
+
+                // Main CTA button
+                '<a href="'+toolUrl+'" target="_blank" rel="noopener noreferrer" ',
+                  'style="display:inline-flex;align-items:center;justify-content:center;gap:10px;',
+                  'background:'+t.color+';color:#fff;font-size:.95rem;font-weight:800;',
+                  'padding:14px 32px;border-radius:12px;text-decoration:none;width:100%;',
+                  'box-shadow:0 4px 14px rgba(0,0,0,.15);transition:opacity .15s;margin-bottom:12px;" ',
+                  'onmouseover="this.style.opacity=\'.88\';" onmouseout="this.style.opacity=\'1\';">',
+                  '<i class="fa-solid fa-arrow-up-right-from-square"></i>',
+                  toolName+' Kholo',
+                '</a>',
+
+                // Secondary: back
+                '<a href="tools.html" ',
+                  'style="display:inline-flex;align-items:center;justify-content:center;gap:7px;',
+                  'color:#64748b;font-size:.8rem;font-weight:700;padding:10px 20px;',
+                  'border-radius:10px;border:1.5px solid #e2e8f0;text-decoration:none;width:100%;',
+                  'background:#f8fafc;" ',
+                  'onmouseover="this.style.background=\'#f1f5f9\';" onmouseout="this.style.background=\'#f8fafc\';">',
+                  '<i class="fa-solid fa-arrow-left"></i> Wapas Tools Par Jao',
+                '</a>',
+
+              '</div>',
+
+              // Trust badges row
+              '<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:20px;">',
+                '<span style="background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:4px 13px;font-size:.68rem;font-weight:700;color:#64748b;"><i class="fa-solid fa-check" style="color:#059669;"></i> 100% Free</span>',
+                '<span style="background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:4px 13px;font-size:.68rem;font-weight:700;color:#64748b;"><i class="fa-solid fa-lock" style="color:#1a56db;"></i> No Signup</span>',
+                '<span style="background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:4px 13px;font-size:.68rem;font-weight:700;color:#64748b;"><i class="fa-solid fa-bolt" style="color:#d97706;"></i> Instant</span>',
+              '</div>',
+
+            '</div>'
+          ].join('');
+        }
+
+        // If URL is in known-blocked list → show landing card immediately (no iframe attempt)
+        if (isBlocked(toolUrl)) {
+          showLandingCard('blocked');
+          return;
+        }
+
+        // Otherwise try iframe; show landing card if it errors or doesn't load within 6s
+        if (iframe) {
+          var iframeLoaded = false;
+          var timer = setTimeout(function(){
+            if(!iframeLoaded) showLandingCard('timeout');
+          }, 6000);
+
+          iframe.addEventListener('load', function(){
+            iframeLoaded = true;
+            clearTimeout(timer);
+            // Try to detect X-Frame-Options block — if contentDocument is null/about:blank after load, it was blocked
+            try {
+              var doc = iframe.contentDocument || iframe.contentWindow.document;
+              if (!doc || doc.URL === 'about:blank' || doc.body === null) {
+                showLandingCard('blocked-detected');
+              }
+            } catch(e) {
+              // Cross-origin error = loaded fine (same-origin restriction means content IS there)
+            }
+          });
+
+          iframe.addEventListener('error', function(){
+            clearTimeout(timer);
+            showLandingCard('iframe-error');
+          });
+
+          iframe.src = toolUrl;
+        }
         return;
       }
 
