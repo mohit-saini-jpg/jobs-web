@@ -243,7 +243,7 @@
     
     if (headerHost && (!headerHost.querySelector(".brand") || headerHost.innerHTML.trim() === "")) {
         try {
-          const r = await fetch("header.html", { cache: "no-store" });
+          const r = await fetch("/header.html", { cache: "no-store" });
           if (r.ok) {
               headerHost.innerHTML = await r.text();
               if (!headerHost.classList.contains("site-header")) {
@@ -261,7 +261,7 @@
 
     if (footerHost && footerHost.innerHTML.trim() === "") {
         try {
-          const r = await fetch("footer.html", { cache: "no-store" });
+          const r = await fetch("/footer.html", { cache: "no-store" });
           if (r.ok) {
               footerHost.innerHTML = await r.text();
               if (!footerHost.classList.contains("site-footer")) footerHost.classList.add("site-footer");
@@ -272,7 +272,7 @@
 
   async function loadHeaderLinks() {
     let data = { header_links: [], social_links: [] };
-    try { data = await getJSON("header_links.json"); } catch (_) {}
+    try { data = await getJSON("/header_links.json"); } catch (_) {}
 
     const desktop = $("#header-links");
     const mobile = $("#header-links-mobile");
@@ -444,7 +444,7 @@
 
     let data = { sections: [] };
     let fetchFailed = false;
-    try { data = await getJSON("dynamic-sections.json"); }
+    try { data = await getJSON("/dynamic-sections.json"); }
     catch (_) { fetchFailed = true; }
 
     wrap.innerHTML = "";
@@ -718,7 +718,7 @@
     }
 
     let data = null;
-    try { data = await getJSON("header_links.json"); } catch (_) {}
+    try { data = await getJSON("/header_links.json"); } catch (_) {}
 
     let waLink = "https://whatsapp.com/channel/0029VaA2aD4FCCoW3q8y6x25";
     if (data && data.header_links) {
@@ -917,7 +917,7 @@
     }
 
     let data;
-    try { data = await getJSON("jobs.json"); } catch (_) {
+    try { data = await getJSON("/jobs.json"); } catch (_) {
       gridEl.innerHTML = "";
       return;
     }
@@ -1245,7 +1245,7 @@
 
     let toolsData = fallbackData;
     try {
-      const json = await getJSON("tools.json");
+      const json = await getJSON("/tools.json");
       if (json && Object.keys(json).length > 0) toolsData = json;
     } catch (_) {}
 
@@ -1329,7 +1329,7 @@
     if (!window.supabase) return null;
 
     try {
-      const r = await fetch("config.json", { cache: "no-store" });
+      const r = await fetch("/config.json", { cache: "no-store" });
       if (!r.ok) return null;
       const config = await r.json();
       if (!config?.supabase?.url || !config?.supabase?.anonKey) return null;
@@ -1442,7 +1442,7 @@
     if (!list) return;
 
     let data = null;
-    try { data = await getJSON("services.json"); } catch (_) {}
+    try { data = await getJSON("/services.json"); } catch (_) {}
 
     const services = (data && (data.services || data)) || [];
     list.innerHTML = "";
@@ -1500,10 +1500,10 @@
     let searchData = [];
     try {
       const [dyn, jobs, tools, services] = await Promise.all([
-        getJSON("dynamic-sections.json").catch(() => ({})),
-        getJSON("jobs.json").catch(() => ({})),
-        getJSON("tools.json").catch(() => ({})),
-        getJSON("services.json").catch(() => ({}))
+        getJSON("/dynamic-sections.json").catch(() => ({})),
+        getJSON("/jobs.json").catch(() => ({})),
+        getJSON("/tools.json").catch(() => ({})),
+        getJSON("/services.json").catch(() => ({}))
       ]);
 
       const push = (name, url, src) => {
