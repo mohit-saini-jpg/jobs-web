@@ -34,7 +34,7 @@
         sessionStorage.setItem('__tsj_slug', decodeURIComponent(jobMatch[1]));
         // Redirect to the static template — no query params, clean URL preserved
         // by using history.replaceState inside the template.
-        window.location.replace('/job.html');
+        window.location.replace('/job.html?slug=' + encodeURIComponent(decodeURIComponent(jobMatch[1])));
       }
       // Non-job 404 paths: let the page render the error UI below.
     })();
