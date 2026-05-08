@@ -18,11 +18,6 @@ Allow: /
 Disallow: /admin/
 Disallow: /private/
 Disallow: /tmp/
-Disallow: /*.json$
-
-# Allow JSON data files that power the site (Google needs to understand dynamic content)
-Allow: /dynamic-sections.json
-Allow: /sections/*.json
 
 # Block duplicate parameter combinations that create low-value pages
 Disallow: /view.html?section=&
@@ -36,5 +31,5 @@ Disallow: /redirect.html
 Sitemap: https://www.topsarkarijobs.com/sitemap.xml
 
 # Additional sitemaps (add these when created)
-# Sitemap: https://www.topsarkarijobs.com/sitemap-jobs.xml
+Sitemap: https://www.topsarkarijobs.com/sitemap-jobs.xml
 # Sitemap: https://www.topsarkarijobs.com/sitemap-news.xml
