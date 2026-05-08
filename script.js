@@ -86,16 +86,9 @@
   }
 
   function buildRedirectUrl(targetUrl, label = "", sectionId = "") {
-    const to = safe(targetUrl);
-    if (!to) return "";
-    const qs = new URLSearchParams();
-    qs.set("slug", slugifyTitle(label || targetUrl));
-    qs.set("k", urlRedirectFingerprint(to));
-    // Only pass section if it's a real section ID (not a page filename)
-    const pageFilenames = new Set(["index.html", "view.html", "redirect.html", "job.html", ""]);
-    const sec = sectionId && !pageFilenames.has(sectionId.toLowerCase()) ? sectionId : "";
-    if (sec) qs.set("section", sec);
-    return `job.html?${qs.toString()}`;
+    const slug = slugifyTitle(label || targetUrl);
+    if (!slug || slug === "official-link") return "";
+    return "/jobs/" + slug + "/";
   }
 
   /** Redirect interstitial only for home section rows and view.html list items (not More / nav / etc.). */
