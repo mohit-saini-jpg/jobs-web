@@ -1400,20 +1400,20 @@ window.ppDownload = function() {
   downloadDataURL(canvas.toDataURL('image/jpeg', 0.95), 'passport_photo.jpg');
 };
 
-/* ─── 7. BACKGROUND REMOVE (AI - No API Key) ─── */
+/* ─── 7. BACKGROUND REMOVE (Transformers.js - RMBG-1.4) ─── */
 TOOLS.bgRemove = {
   title: 'Background Remove',
   icon: '<i class="fa-solid fa-eraser"></i>',
   html: () => `
     <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:.78rem;color:#065f46;display:flex;align-items:center;gap:8px;">
       <i class="fa-solid fa-robot" style="font-size:1.1rem;"></i>
-      <span><strong>100% Free AI</strong> — No API key, no signup, koi limit nahi! Browser mein hi chalta hai.</span>
+      <span><strong>100% Free AI</strong> — No API key, no signup! RMBG-1.4 model use karta hai.</span>
     </div>
     <div class="drop-zone" id="bgDrop">
       <input type="file" id="bgFile" accept="image/*">
       <div class="drop-icon"><i class="fa-solid fa-image"></i></div>
       <div class="drop-text">Photo yahan drop karein ya click karein</div>
-      <div class="drop-sub">JPG, PNG • Portrait, product, animal, car — kuch bhi kaam karega</div>
+      <div class="drop-sub">JPG, PNG • Portrait, product, animal — kuch bhi</div>
     </div>
     <div class="preview-wrap" id="bgPreview">
       <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-bottom:12px;">
@@ -1429,7 +1429,7 @@ TOOLS.bgRemove = {
       <div class="form-row" style="margin-bottom:4px;">
         <div class="form-group">
           <label class="form-label">Output Background</label>
-          <select class="form-input" id="bgOutputBg" onchange="bgRenderOutput()">
+          <select class="form-input" id="bgOutputBg" onchange="bgRenderWithBg()">
             <option value="transparent">Transparent (PNG)</option>
             <option value="white">White Background</option>
             <option value="black">Black Background</option>
@@ -1438,15 +1438,15 @@ TOOLS.bgRemove = {
         </div>
         <div class="form-group" id="bgCustomColorWrap" style="display:none;">
           <label class="form-label">Custom Color</label>
-          <input type="color" class="form-input" id="bgCustomColor" value="#ffffff" style="height:38px;padding:2px 6px;cursor:pointer;" oninput="bgRenderOutput()">
+          <input type="color" class="form-input" id="bgCustomColor" value="#ffffff" style="height:38px;padding:2px 6px;cursor:pointer;" oninput="bgRenderWithBg()">
         </div>
       </div>
       <div id="bgProgressWrap" style="display:none;margin-top:10px;">
-        <div style="font-size:.78rem;color:#059669;font-weight:600;margin-bottom:6px;" id="bgProgressText">AI model load ho raha hai...</div>
-        <div style="background:#e2e8f0;border-radius:20px;height:8px;overflow:hidden;">
-          <div id="bgProgressBar" style="height:100%;background:linear-gradient(90deg,#059669,#10b981);border-radius:20px;width:5%;transition:width .5s;"></div>
+        <div style="font-size:.78rem;color:#059669;font-weight:700;margin-bottom:5px;" id="bgProgressText">Loading...</div>
+        <div style="background:#dcfce7;border-radius:20px;height:10px;overflow:hidden;">
+          <div id="bgProgressBar" style="height:100%;background:linear-gradient(90deg,#059669,#10b981);border-radius:20px;width:3%;transition:width .4s ease;"></div>
         </div>
-        <div style="font-size:.68rem;color:var(--muted);margin-top:4px;" id="bgProgressSub">Pehli baar model download hota hai (~30-40 sec), baad mein fast</div>
+        <div style="font-size:.68rem;color:#64748b;margin-top:4px;" id="bgProgressSub">Pehli baar model ~50MB download hoga (ek baar browser cache mein save ho jaata hai)</div>
       </div>
     </div>
     <div class="btn-bar">
@@ -1456,12 +1456,15 @@ TOOLS.bgRemove = {
     <div class="status-msg" id="bgStatus"></div>
   `,
   init: () => {
-    window._bgState = { file: null, resultBlob: null };
+    window._bgState = { file: null, maskData: null, origImg: null };
     setupDrop('bgDrop', 'bgFile', async file => {
       window._bgState.file = file;
-      window._bgState.resultBlob = null;
+      window._bgState.maskData = null;
+      window._bgState.origImg = null;
       document.getElementById('bgDlBtn').style.display = 'none';
       const url = await readFileAsDataURL(file);
+      const img = await loadImage(url);
+      window._bgState.origImg = img;
       document.getElementById('bgOrigImg').src = url;
       document.getElementById('bgPreview').classList.add('show');
       const c = document.getElementById('bgCanvas');
@@ -1471,68 +1474,109 @@ TOOLS.bgRemove = {
     });
     document.getElementById('bgOutputBg').addEventListener('change', function() {
       document.getElementById('bgCustomColorWrap').style.display = this.value === 'custom' ? 'flex' : 'none';
-      if (window._bgState.resultBlob) bgRenderOutput();
+      if (window._bgState.maskData) bgRenderWithBg();
     });
   }
 };
 
-window.bgRenderOutput = function() {
-  const blob = window._bgState.resultBlob;
-  if (!blob) return;
+/* Render final output using stored mask + chosen background */
+window.bgRenderWithBg = function() {
+  const s = window._bgState;
+  if (!s.maskData || !s.origImg) return;
   const bgChoice = document.getElementById('bgOutputBg').value;
+  const img = s.origImg;
+  const W = img.naturalWidth, H = img.naturalHeight;
+
+  const offscreen = document.createElement('canvas');
+  offscreen.width = W; offscreen.height = H;
+  const ctx = offscreen.getContext('2d');
+
+  // Fill background
+  if (bgChoice !== 'transparent') {
+    ctx.fillStyle = bgChoice === 'white' ? '#ffffff'
+      : bgChoice === 'black' ? '#000000'
+      : (document.getElementById('bgCustomColor').value || '#ffffff');
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  // Draw original image
+  ctx.drawImage(img, 0, 0);
+
+  // Apply mask as alpha
+  const imageData = ctx.getImageData(0, 0, W, H);
+  const d = imageData.data;
+  const mask = s.maskData; // Float32Array, values 0..1
+  for (let i = 0; i < mask.length; i++) {
+    d[i * 4 + 3] = Math.round(mask[i] * 255);
+  }
+  ctx.putImageData(imageData, 0, 0);
+
   const outCanvas = document.getElementById('bgCanvas');
-  const img = new Image();
-  const objUrl = URL.createObjectURL(blob);
-  img.onload = () => {
-    outCanvas.width = img.naturalWidth;
-    outCanvas.height = img.naturalHeight;
-    const ctx = outCanvas.getContext('2d');
-    ctx.clearRect(0, 0, outCanvas.width, outCanvas.height);
-    if (bgChoice !== 'transparent') {
-      const color = bgChoice === 'white' ? '#ffffff'
-        : bgChoice === 'black' ? '#000000'
-        : (document.getElementById('bgCustomColor').value || '#ffffff');
-      ctx.fillStyle = color;
-      ctx.fillRect(0, 0, outCanvas.width, outCanvas.height);
-    }
-    ctx.drawImage(img, 0, 0);
-    URL.revokeObjectURL(objUrl);
-    outCanvas.toBlob(b => { window._bgFinalBlob = b; }, 'image/png');
-    document.getElementById('bgDlBtn').style.display = 'flex';
-  };
-  img.src = objUrl;
+  outCanvas.width = W; outCanvas.height = H;
+  outCanvas.getContext('2d').drawImage(offscreen, 0, 0);
+
+  offscreen.toBlob(b => { window._bgFinalBlob = b; }, 'image/png');
+  document.getElementById('bgDlBtn').style.display = 'flex';
 };
 
-/* 
-  Use @imgly/background-removal via CDN with correct publicPath pointing to CDN assets.
-  The key fix: publicPath must point to where the WASM/model files actually are on the CDN.
-*/
-window._bgRemoveFn = null;
+/* Load Transformers.js via module script */
+window._bgPipeline = null;
 
-async function bgLoadLib() {
-  if (window._bgRemoveFn) return window._bgRemoveFn;
+function bgSetProgress(pct, text, sub) {
+  const pb = document.getElementById('bgProgressBar');
+  const pt = document.getElementById('bgProgressText');
+  const ps = document.getElementById('bgProgressSub');
+  if (pb) pb.style.width = pct + '%';
+  if (pt && text) pt.textContent = text;
+  if (ps && sub !== undefined) ps.textContent = sub;
+}
 
-  // Try jsDelivr CDN — correct publicPath for models
+async function bgLoadPipeline() {
+  if (window._bgPipeline) return window._bgPipeline;
+
   return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(new Error('Timeout: CDN se library load nahi hui. VPN try karein ya baad mein retry karein.'));
+    }, 60000);
+
     const s = document.createElement('script');
     s.type = 'module';
     s.textContent = `
-      import { removeBackground } from 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/+esm';
-      window._bgRemoveFn = async (file, opts) => {
-        return removeBackground(file, {
-          ...opts,
-          publicPath: 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/'
+      try {
+        // Load transformers.js from CDN
+        const { pipeline, env } = await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.1.2/dist/transformers.min.js');
+        
+        // Use Hugging Face CDN for models (no local server needed)
+        env.allowLocalModels = false;
+        env.useBrowserCache = true;
+        
+        // Report loading started
+        window.dispatchEvent(new CustomEvent('_bgStatus', {detail: {type:'loading', msg:'RMBG-1.4 model download ho raha hai...'}}));
+        
+        const pipe = await pipeline('image-segmentation', 'briaai/RMBG-1.4', {
+          device: 'webgpu',
+          dtype: 'fp32',
+        }).catch(async () => {
+          // WebGPU not available, fallback to CPU WASM
+          window.dispatchEvent(new CustomEvent('_bgStatus', {detail: {type:'loading', msg:'CPU mode mein load ho raha hai...'}}));
+          return pipeline('image-segmentation', 'briaai/RMBG-1.4', {
+            dtype: 'fp32',
+          });
         });
-      };
-      window.dispatchEvent(new CustomEvent('_bgLibReady', {detail:'ok'}));
+        
+        window._bgPipeline = pipe;
+        window.dispatchEvent(new CustomEvent('_bgPipelineReady', {detail: 'ok'}));
+      } catch(e) {
+        window.dispatchEvent(new CustomEvent('_bgPipelineError', {detail: e.message || String(e)}));
+      }
     `;
-    const onReady = () => { clearTimeout(timer); resolve(window._bgRemoveFn); };
-    window.addEventListener('_bgLibReady', onReady, {once:true});
-    const timer = setTimeout(() => {
-      window.removeEventListener('_bgLibReady', onReady);
-      reject(new Error('Library load timeout — internet slow hai ya CDN block hai'));
-    }, 30000);
-    s.onerror = (e) => { clearTimeout(timer); reject(new Error('Script load failed')); };
+
+    window.addEventListener('_bgPipelineReady', () => { clearTimeout(timer); resolve(window._bgPipeline); }, {once:true});
+    window.addEventListener('_bgPipelineError', (e) => { clearTimeout(timer); reject(new Error(e.detail)); }, {once:true});
+    window.addEventListener('_bgStatus', (e) => {
+      if (e.detail.type === 'loading') bgSetProgress(40, e.detail.msg, '');
+    });
+
     document.head.appendChild(s);
   });
 }
@@ -1543,55 +1587,82 @@ window.bgProcess = async function() {
 
   const btn = document.getElementById('bgProcessBtn');
   const pw  = document.getElementById('bgProgressWrap');
-  const pb  = document.getElementById('bgProgressBar');
-  const pt  = document.getElementById('bgProgressText');
-  const ps  = document.getElementById('bgProgressSub');
   btn.disabled = true;
   pw.style.display = 'block';
-  pb.style.width = '5%';
-  pt.textContent = 'AI library load ho rahi hai...';
-  ps.textContent = 'Pehli baar 30-40 sec lag sakte hain';
-  showStatus('bgStatus', '⏳ AI kaam kar raha hai, please wait...', 'info');
+  bgSetProgress(5, 'AI library load ho rahi hai...', 'Pehli baar ~50MB download hoga, baad mein fast');
+  showStatus('bgStatus', '⏳ Please wait...', 'info');
 
   try {
-    const removeBg = await bgLoadLib();
-    pb.style.width = '25%';
-    pt.textContent = 'Model download ho raha hai...';
-    ps.textContent = 'ONNX model CDN se aa raha hai';
+    bgSetProgress(10, 'Transformers.js load ho raha hai...', '');
+    const pipe = await bgLoadPipeline();
+    bgSetProgress(60, 'Image process ho rahi hai...', 'AI subject detect kar raha hai...');
 
-    const resultBlob = await removeBg(s.file, {
-      progress: (key, cur, tot) => {
-        if (tot > 0) {
-          const pct = 25 + Math.round((cur/tot) * 70);
-          pb.style.width = Math.min(95, pct) + '%';
-          pt.textContent = key.includes('fetch') ? 'Model download: ' + Math.round(cur/tot*100) + '%'
-            : 'Processing: ' + Math.round(cur/tot*100) + '%';
-          ps.textContent = '';
-        }
+    // Run segmentation
+    const dataUrl = await readFileAsDataURL(s.file);
+    const result = await pipe(dataUrl);
+
+    bgSetProgress(90, 'Mask apply ho raha hai...', '');
+
+    // result is array of {score, label, mask}
+    // mask is a Tensor or RawImage — extract pixel data
+    let maskArr;
+    if (result && result[0] && result[0].mask) {
+      const mask = result[0].mask;
+      // mask.data is Uint8ClampedArray or similar, values 0-255
+      const W = mask.width, H = mask.height;
+      // Resize mask to match original image
+      const origImg = s.origImg;
+      const oW = origImg.naturalWidth, oH = origImg.naturalHeight;
+
+      // Draw mask on temp canvas, then read pixels
+      const maskCanvas = document.createElement('canvas');
+      maskCanvas.width = W; maskCanvas.height = H;
+      const maskCtx = maskCanvas.getContext('2d');
+      const maskImgData = maskCtx.createImageData(W, H);
+      // mask.data is grayscale: one byte per pixel  
+      const maskRaw = mask.data;
+      for (let i = 0; i < W * H; i++) {
+        const v = maskRaw[i];
+        maskImgData.data[i*4]   = v;
+        maskImgData.data[i*4+1] = v;
+        maskImgData.data[i*4+2] = v;
+        maskImgData.data[i*4+3] = 255;
       }
-    });
+      maskCtx.putImageData(maskImgData, 0, 0);
 
-    pb.style.width = '100%';
-    pt.textContent = '✅ Ho gaya!';
-    ps.textContent = '';
-    window._bgState.resultBlob = resultBlob;
-    bgRenderOutput();
-    showStatus('bgStatus', '✅ Background remove ho gaya! Download karein.', 'success');
+      // Scale mask to original image size
+      const scaledCanvas = document.createElement('canvas');
+      scaledCanvas.width = oW; scaledCanvas.height = oH;
+      scaledCanvas.getContext('2d').drawImage(maskCanvas, 0, 0, oW, oH);
+      const scaledData = scaledCanvas.getContext('2d').getImageData(0, 0, oW, oH);
+
+      // Build Float32 mask (0..1)
+      maskArr = new Float32Array(oW * oH);
+      for (let i = 0; i < oW * oH; i++) {
+        maskArr[i] = scaledData.data[i * 4] / 255;
+      }
+    } else {
+      throw new Error('Model se mask nahi mila. Result format unexpected.');
+    }
+
+    bgSetProgress(100, '✅ Done!', '');
+    s.maskData = maskArr;
+    bgRenderWithBg();
+    showStatus('bgStatus', '✅ Background perfectly remove ho gaya!', 'success');
 
   } catch(err) {
     console.error('BG remove error:', err);
-    showStatus('bgStatus', '❌ ' + (err.message || 'Error aaya') + '. Internet check karein aur retry karein.', 'error');
-    pb.style.width = '0%';
+    showStatus('bgStatus', '❌ ' + (err.message || 'Error') + '. Retry karein.', 'error');
+    bgSetProgress(0, '', '');
   } finally {
     btn.disabled = false;
-    setTimeout(() => { pw.style.display = 'none'; pb.style.width = '0%'; }, 3000);
+    setTimeout(() => { pw.style.display = 'none'; }, 3500);
   }
 };
 
 window.bgDownload = function() {
-  const blob = window._bgFinalBlob || window._bgState?.resultBlob;
-  if (!blob) return;
-  downloadBlob(blob, 'bg_removed.png');
+  if (!window._bgFinalBlob) return;
+  downloadBlob(window._bgFinalBlob, 'bg_removed.png');
 };
 
 /* ─── 8. SIGNATURE RESIZER ─── */
