@@ -1,0 +1,164 @@
+# ══════════════════════════════════════════════════════════
+#  Top Sarkari Jobs — .htaccess SEO + Performance Config
+#  https://www.topsarkarijobs.com
+# ══════════════════════════════════════════════════════════
+
+Options -Indexes
+ServerSignature Off
+
+# ── Enable Rewrite Engine ──────────────────────────────────
+RewriteEngine On
+
+# ── Force HTTPS ───────────────────────────────────────────
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# ── Force WWW ─────────────────────────────────────────────
+RewriteCond %{HTTP_HOST} !^www\. [NC]
+RewriteRule ^ https://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# ── Remove trailing slash for HTML files ──────────────────
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.+)/$ /$1 [R=301,L]
+
+# ── SEO-friendly job slugs to jobs/index.html ─────────────
+# /jobs/ssc-cgl-2026/ → /jobs/index.html?slug=ssc-cgl-2026
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^jobs/([a-z0-9-]+)/?$ /jobs/index.html?slug=$1 [L,QSA]
+
+# ── Custom Error Pages ────────────────────────────────────
+ErrorDocument 404 /404.html
+ErrorDocument 500 /offline.html
+
+# ══════════════════════════════════════════════════════════
+#  COMPRESSION (mod_deflate)
+# ══════════════════════════════════════════════════════════
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml
+  AddOutputFilterByType DEFLATE text/css text/javascript application/javascript
+  AddOutputFilterByType DEFLATE application/json application/xml application/xhtml+xml
+  AddOutputFilterByType DEFLATE image/svg+xml font/woff font/woff2
+  AddOutputFilterByType DEFLATE application/font-woff application/font-woff2
+
+  # Remove browser bugs
+  BrowserMatch ^Mozilla/4 gzip-only-text/html
+  BrowserMatch ^Mozilla/4\.0[678] no-gzip
+  BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+  Header append Vary User-Agent
+</IfModule>
+
+# ══════════════════════════════════════════════════════════
+#  BROWSER CACHING (mod_expires)
+# ══════════════════════════════════════════════════════════
+<IfModule mod_expires.c>
+  ExpiresActive On
+
+  # HTML — short cache (content updates daily)
+  ExpiresByType text/html                 "access plus 2 hours"
+
+  # CSS & JS — longer cache with versioning
+  ExpiresByType text/css                  "access plus 1 year"
+  ExpiresByType application/javascript    "access plus 1 year"
+  ExpiresByType text/javascript           "access plus 1 year"
+
+  # Images
+  ExpiresByType image/png                 "access plus 6 months"
+  ExpiresByType image/jpg                 "access plus 6 months"
+  ExpiresByType image/jpeg                "access plus 6 months"
+  ExpiresByType image/webp                "access plus 6 months"
+  ExpiresByType image/svg+xml             "access plus 6 months"
+  ExpiresByType image/x-icon              "access plus 1 year"
+  ExpiresByType image/vnd.microsoft.icon  "access plus 1 year"
+
+  # Fonts
+  ExpiresByType font/woff                 "access plus 1 year"
+  ExpiresByType font/woff2                "access plus 1 year"
+  ExpiresByType application/font-woff     "access plus 1 year"
+  ExpiresByType application/font-woff2    "access plus 1 year"
+
+  # JSON data — short cache (updates frequently)
+  ExpiresByType application/json          "access plus 30 minutes"
+  ExpiresByType text/xml                  "access plus 1 day"
+  ExpiresByType application/xml           "access plus 1 day"
+
+  # Default
+  ExpiresDefault "access plus 7 days"
+</IfModule>
+
+# ══════════════════════════════════════════════════════════
+#  CACHE-CONTROL HEADERS
+# ══════════════════════════════════════════════════════════
+<IfModule mod_headers.c>
+  # HTML
+  <FilesMatch "\.(html|htm)$">
+    Header set Cache-Control "public, max-age=7200, must-revalidate"
+    Header set X-Content-Type-Options "nosniff"
+  </FilesMatch>
+
+  # CSS & JS (versioned, long cache)
+  <FilesMatch "\.(css|js)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # Images
+  <FilesMatch "\.(png|jpg|jpeg|webp|ico|svg|gif)$">
+    Header set Cache-Control "public, max-age=15552000"
+  </FilesMatch>
+
+  # Fonts
+  <FilesMatch "\.(woff|woff2|ttf|eot)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+    Header set Access-Control-Allow-Origin "*"
+  </FilesMatch>
+
+  # JSON data
+  <FilesMatch "\.(json)$">
+    Header set Cache-Control "public, max-age=1800"
+  </FilesMatch>
+
+  # Sitemaps
+  <FilesMatch "sitemap.*\.xml$">
+    Header set Cache-Control "public, max-age=86400"
+  </FilesMatch>
+
+  # ── Security Headers (improve Core Web Vitals & Trust) ──
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set X-XSS-Protection "1; mode=block"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+  # ── CORS for fonts ──
+  <FilesMatch "\.(woff|woff2|ttf|eot|otf)$">
+    Header set Access-Control-Allow-Origin "*"
+  </FilesMatch>
+</IfModule>
+
+# ══════════════════════════════════════════════════════════
+#  KEEP ALIVE
+# ══════════════════════════════════════════════════════════
+<IfModule mod_headers.c>
+  Header set Connection keep-alive
+</IfModule>
+
+# ══════════════════════════════════════════════════════════
+#  CONTENT TYPE FIXES
+# ══════════════════════════════════════════════════════════
+AddType application/javascript .js
+AddType text/css .css
+AddType image/webp .webp
+AddType font/woff .woff
+AddType font/woff2 .woff2
+AddType application/json .json
+AddType application/manifest+json .json
+
+# Serve correct content-type for manifest
+<FilesMatch "manifest\.json$">
+  Header set Content-Type "application/manifest+json"
+</FilesMatch>
+
+# ══════════════════════════════════════════════════════════
+#  BLOCK BAD BOTS & SCRAPERS
+# ══════════════════════════════════════════════════════════
+RewriteCond %{HTTP_USER_AGENT} (AhrefsBot|MJ12bot|DotBot|SEMrushBot|BLEXBot|DataForSeoBot) [NC]
+RewriteRule .* - [F,L]
