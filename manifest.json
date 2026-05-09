@@ -1,0 +1,60 @@
+{
+  "name": "Top Sarkari Jobs – Latest Govt Jobs 2026",
+  "short_name": "TopSarkariJobs",
+  "description": "India's No.1 platform for latest Sarkari Jobs, Results, Admit Cards & Government Recruitment 2026",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f0f4fb",
+  "theme_color": "#0d2257",
+  "lang": "en-IN",
+  "orientation": "portrait-primary",
+  "categories": ["news", "education", "government"],
+  "icons": [
+    {
+      "src": "/image.webp",
+      "sizes": "192x192",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/image.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/image.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Top Sarkari Jobs Homepage"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Latest Jobs",
+      "short_name": "Jobs",
+      "description": "View latest government job notifications",
+      "url": "/view.html?section=latest%20jobs",
+      "icons": [{ "src": "/image.ico", "sizes": "128x128" }]
+    },
+    {
+      "name": "Results",
+      "short_name": "Results",
+      "description": "Check latest sarkari results",
+      "url": "/result.html",
+      "icons": [{ "src": "/image.ico", "sizes": "128x128" }]
+    },
+    {
+      "name": "Admit Cards",
+      "short_name": "Admit Card",
+      "description": "Download admit cards",
+      "url": "/admit-card.html",
+      "icons": [{ "src": "/image.ico", "sizes": "128x128" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}
