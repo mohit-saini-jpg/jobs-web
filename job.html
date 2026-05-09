@@ -218,6 +218,15 @@
     .jp-mobile-grid a:hover{background:#f0fdf4;color:#0f766e;}
     .jp-mobile-grid a:nth-child(even){border-right:none;}
     .jp-mobile-grid a i{color:#0f766e;width:14px;font-size:.75rem;}
+
+    /* Recently Viewed items */
+    #rv-card-job .rv-item {
+      display:flex;align-items:center;gap:8px;padding:7px 12px;
+      font-size:.75rem;color:#374151;text-decoration:none;
+      border-bottom:1px solid #f1f5f9;transition:background .12s;
+    }
+    #rv-card-job .rv-item:hover { background:#f0f7ff; }
+    #rv-card-job .rv-item span { flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
   </style>
 </head>
 <body>
@@ -503,6 +512,12 @@
               <a class="jp-qlink-item" href="https://www.topsarkarijobs.com/view.html?section=Govt%20Scheme%20Yojna"><i class="fa-solid fa-landmark"></i><span>Govt Schemes</span><i class="fa-solid fa-chevron-right" style="margin-left:auto;color:#d1d5db;font-size:.65rem;"></i></a>
               <a class="jp-qlink-item" href="https://www.topsarkarijobs.com/view.html?section=Haryana%20All%20State%20Jobs"><i class="fa-solid fa-location-dot"></i><span>Haryana Jobs</span><i class="fa-solid fa-chevron-right" style="margin-left:auto;color:#d1d5db;font-size:.65rem;"></i></a>
             </div>
+          </div>
+
+          <!-- RECENTLY VIEWED -->
+          <div class="jp-card" id="rv-card-job" style="margin-bottom:14px;display:none;">
+            <div class="jp-sec-head" style="background:#7c3aed;"><i class="fa-solid fa-clock-rotate-left"></i> Recently Viewed</div>
+            <div id="recently-viewed-list" style="display:flex;flex-direction:column;"></div>
           </div>
 
           <!-- Follow us -->
@@ -1059,5 +1074,17 @@
   </script>
 
   <script src="/script.js?v=20260509" defer></script>
+  <script src="seo-engine.js?v=20260508" defer></script>
+  <script>
+  // Show recently viewed card if populated
+  (function() {
+    var card = document.getElementById('rv-card-job');
+    if (!card) return;
+    try {
+      var items = JSON.parse(localStorage.getItem('tsj_rv') || '[]');
+      if (items.length > 0) card.style.display = '';
+    } catch(e) {}
+  })();
+  </script>
 </body>
 </html>
