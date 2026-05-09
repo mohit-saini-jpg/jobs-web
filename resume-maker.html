@@ -1,1478 +1,679 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-C4VRD1C9QS"></script>
-  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-C4VRD1C9QS');</script>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Free Resume / CV Maker 2026 – Top Sarkari Jobs</title>
-  <meta name="description" content="Create a professional Resume or CV online for free. Choose from modern templates, fill your details and download as PDF. No registration required."/>
-  <meta name="keywords" content="resume maker, cv maker, free resume, biodata maker, sarkari resume, online resume maker 2026"/>
-  <meta name="robots" content="index, follow"/>
-  <link rel="canonical" href="https://www.topsarkarijobs.com/resume-maker.html"/>
-  <link rel="icon" type="image/x-icon" href="image.ico">
-  <meta property="og:type" content="website"/>
-  <meta property="og:url" content="https://www.topsarkarijobs.com/resume-maker.html"/>
-  <meta property="og:title" content="Free Resume / CV Maker 2026 – Top Sarkari Jobs"/>
-  <meta property="og:description" content="Create a professional Resume or CV online for free with modern templates."/>
-  <meta property="og:image" content="https://www.topsarkarijobs.com/image.png"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=DM+Serif+Display&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    @page {
-      size: A4 portrait;
-      margin: 8mm 8mm 8mm 8mm;
+    @page{size:A4 portrait;margin:0;}
+    :root{
+      --navy:#0d2257;--blue:#1a56db;--blue2:#1e40af;--accent:#f97316;
+      --green:#059669;--teal:#0d9488;--muted:#64748b;
+      --border:#e2e8f0;--bg:#f0f4fb;--white:#fff;--text:#0f172a;
+      --radius:14px;--shadow:0 2px 18px rgba(13,34,87,.08);--shadow-md:0 4px 28px rgba(13,34,87,.12);
     }
-    /* ══════════════════════════════════════════════
-       ROOT DESIGN TOKENS
-    ══════════════════════════════════════════════ */
-    :root {
-      --navy:#0d2257; --blue:#1a56db; --blue2:#1e40af; --accent:#f97316;
-      --green:#059669; --purple:#7c3aed; --teal:#0d9488; --red:#dc2626; --yellow:#d97706;
-      --text:#0f172a; --muted:#64748b; --border:#e2e8f0; --bg:#f0f4fb; --white:#ffffff;
-      --radius:12px; --radius-sm:8px;
-      --shadow:0 2px 16px rgba(13,34,87,.07);
-      --shadow-md:0 4px 24px rgba(13,34,87,.11);
-      --shadow-lg:0 8px 40px rgba(13,34,87,.16);
-      --gap:16px;
-      /* Color Themes */
-      --theme-primary:#0d2257; --theme-accent:#1a56db; --theme-light:#eef3ff;
-    }
-    /* Navy Blue Theme */
-    .theme-navy { --theme-primary:#0d2257; --theme-accent:#1a56db; --theme-light:#eef3ff; }
-    /* Black & White */
-    .theme-bw { --theme-primary:#1a1a1a; --theme-accent:#444444; --theme-light:#f5f5f5; }
-    /* Modern Green */
-    .theme-green { --theme-primary:#064e3b; --theme-accent:#059669; --theme-light:#ecfdf5; }
-    /* Corporate Grey */
-    .theme-grey { --theme-primary:#374151; --theme-accent:#6b7280; --theme-light:#f9fafb; }
-
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);font-size:14px;overflow-x:hidden;}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px;}
     a{text-decoration:none;color:inherit;}
-    img{max-width:100%;}
-    .skip-link{position:absolute;left:-999px;top:-999px;background:#fff;color:var(--blue);padding:8px 16px;font-weight:700;z-index:9999;}
-    .skip-link:focus{left:0;top:0;}
-    .container{max-width:1240px;margin:0 auto;padding:0 14px;}
 
-    /* ══ TOP BAR ══ */
-    .top-bar{background:var(--navy);color:rgba(255,255,255,.85);font-size:.72rem;font-weight:600;padding:5px 0;display:none;}
-    @media(min-width:768px){.top-bar{display:block;}}
-    .top-bar-inner{display:flex;align-items:center;justify-content:space-between;gap:12px;}
-    .top-bar-social{display:flex;align-items:center;gap:10px;}
-    .top-bar-social a{color:rgba(255,255,255,.8);transition:color .15s;font-size:.85rem;}
-    .top-bar-social a:hover{color:#fff;}
-    .join-wa{background:#25d366;color:#fff;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700;display:flex;align-items:center;gap:5px;}
-    .join-wa:hover{background:#22c35e;}
-
-    /* ══ STICKY HEADER ══ */
-    .site-header{background:var(--white);box-shadow:0 2px 12px rgba(0,0,0,.08);position:sticky;top:0;z-index:300;}
-    .header-logo-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;gap:10px;}
-    .brand{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
-    .brand-logo{width:42px;height:42px;border-radius:10px;object-fit:cover;}
-    .brand-title{font-size:1.18rem;font-weight:900;color:var(--navy);line-height:1.1;}
+    /* HEADER */
+    .site-header{background:#fff;box-shadow:0 2px 16px rgba(0,0,0,.07);position:sticky;top:0;z-index:300;}
+    .hdr-inner{display:flex;align-items:center;justify-content:space-between;padding:10px 24px;max-width:1200px;margin:0 auto;}
+    .brand{display:flex;align-items:center;gap:10px;}
+    .brand-icon{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--navy),var(--blue));display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.15rem;flex-shrink:0;}
+    .brand-title{font-family:'Sora',sans-serif;font-size:1.05rem;font-weight:900;color:var(--navy);}
     .brand-title span{color:var(--accent);}
-    .brand-sub{font-size:.6rem;color:var(--muted);font-weight:600;letter-spacing:.02em;}
-    .header-actions{display:flex;align-items:center;gap:8px;}
-    .wa-btn-header{background:#25d366;color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:.78rem;font-weight:800;cursor:pointer;display:none;align-items:center;gap:6px;}
-    @media(min-width:1024px){.wa-btn-header{display:flex;}}
-    .icon-btn{background:none;border:none;color:var(--text);width:38px;height:38px;border-radius:9px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:background .15s;}
-    .icon-btn:hover{background:var(--bg);}
+    .brand-sub{font-size:.58rem;color:var(--muted);font-weight:600;}
+    .wa-hdr{background:#25d366;color:#fff;border:none;border-radius:9px;padding:8px 16px;font-size:.76rem;font-weight:800;display:flex;align-items:center;gap:6px;cursor:pointer;}
+    .nav-bar{background:linear-gradient(90deg,var(--navy),var(--blue2));border-bottom:3px solid var(--accent);display:flex;align-items:center;padding:0 24px;overflow-x:auto;}
+    .nav-link{color:rgba(255,255,255,.9);font-size:.74rem;font-weight:700;padding:9px 13px;white-space:nowrap;display:flex;align-items:center;gap:5px;transition:background .15s;}
+    .nav-link:hover,.nav-link.cur{background:rgba(255,255,255,.14);}
+    @media(max-width:768px){.nav-bar{display:none;}}
 
-    /* ══ DESKTOP NAV ══ */
-    .desktop-nav{display:none;align-items:center;gap:1px;padding:0 14px;background:linear-gradient(90deg,var(--navy) 0%,var(--blue2) 100%);border-bottom:3px solid var(--accent);}
-    @media(min-width:901px){.desktop-nav{display:flex;}#menuBtn{display:none;}}
-    .nav-link{color:rgba(255,255,255,.92);font-size:.79rem;font-weight:700;padding:10px 12px;white-space:nowrap;transition:background .15s;display:flex;align-items:center;gap:5px;}
-    .nav-link:hover,.nav-link.active{background:rgba(255,255,255,.15);color:#fff;}
-    .nav-dd{position:relative;}
-    .nav-dd-btn{background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;color:rgba(255,255,255,.92);font-size:.79rem;font-weight:700;padding:10px 12px;white-space:nowrap;font-family:inherit;}
-    .nav-dd-btn:hover{background:rgba(255,255,255,.12);}
-    .nav-dd-menu{position:absolute;top:100%;left:0;background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.12);min-width:220px;padding:6px;display:none;z-index:400;}
-    .nav-dd:hover .nav-dd-menu{display:block;}
-    .nav-dd-item{display:flex;align-items:center;gap:9px;padding:9px 13px;font-size:.8rem;font-weight:600;color:var(--text);text-decoration:none;border-radius:8px;transition:all .12s;}
-    .nav-dd-item i{width:16px;color:var(--blue);font-size:.82rem;}
-    .nav-dd-item:hover{background:#eff6ff;color:var(--blue);}
+    /* HERO */
+    .hero{background:linear-gradient(135deg,var(--navy) 0%,#1a3c8f 55%,var(--blue) 100%);color:#fff;padding:32px 24px 28px;position:relative;overflow:hidden;}
+    .hero::before{content:'';position:absolute;right:-60px;top:-60px;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,.04);}
+    .hero-in{max-width:1200px;margin:0 auto;position:relative;z-index:1;}
+    .hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);padding:5px 15px;border-radius:30px;font-size:.67rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:13px;}
+    .hero h1{font-family:'Sora',sans-serif;font-size:1.7rem;font-weight:900;line-height:1.2;margin-bottom:9px;}
+    .hero h1 span{color:#fbbf24;}
+    .hero p{font-size:.84rem;opacity:.88;line-height:1.65;max-width:540px;}
+    .hero-stats{display:flex;gap:11px;margin-top:16px;flex-wrap:wrap;}
+    .h-stat{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:7px 13px;font-size:.72rem;font-weight:700;}
+    .h-stat i{color:#fbbf24;font-size:.8rem;}
 
-    /* ══ BREADCRUMB ══ */
-    .breadcrumb{background:var(--white);border-bottom:1px solid var(--border);padding:8px 0;}
-    .breadcrumb-inner{display:flex;align-items:center;gap:6px;font-size:.75rem;color:var(--muted);}
-    .breadcrumb-inner a{color:var(--blue);font-weight:600;}
-    .breadcrumb-inner a:hover{text-decoration:underline;}
+    /* PAGE LAYOUT */
+    .page{padding:22px 24px 48px;max-width:1200px;margin:0 auto;}
+    .grid{display:grid;grid-template-columns:1fr;gap:22px;align-items:start;}
+    @media(min-width:1000px){.grid{grid-template-columns:1fr 275px;}}
 
-    /* ══ PAGE HERO ══ */
-    .page-hero{background:linear-gradient(135deg,var(--navy) 0%,#1a3c8f 55%,var(--blue) 100%);color:#fff;padding:26px 14px 22px;position:relative;overflow:hidden;}
-    .page-hero::before{content:'';position:absolute;right:-40px;top:-40px;width:240px;height:240px;border-radius:50%;background:rgba(255,255,255,.04);pointer-events:none;}
-    .page-hero::after{content:'';position:absolute;left:-20px;bottom:-30px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.03);pointer-events:none;}
-    .page-hero-inner{position:relative;z-index:1;}
-    .page-hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);padding:4px 14px;border-radius:20px;font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;}
-    .page-hero h1{font-size:1.55rem;font-weight:900;line-height:1.22;margin-bottom:6px;}
-    .page-hero h1 span{color:#fbbf24;}
-    .page-hero p{font-size:.83rem;opacity:.88;line-height:1.6;max-width:600px;}
-    .hero-stats{display:flex;gap:20px;margin-top:14px;flex-wrap:wrap;}
-    .hero-stat{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border-radius:8px;padding:6px 12px;font-size:.75rem;font-weight:700;}
-    .hero-stat i{font-size:.85rem;opacity:.85;}
+    /* SIDEBAR */
+    .aside{position:sticky;top:90px;display:flex;flex-direction:column;gap:14px;}
+    @media(max-width:999px){.aside{position:static;}}
+    .s-card{background:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
+    .s-head{display:flex;align-items:center;gap:8px;padding:11px 15px;color:#fff;font-size:.76rem;font-weight:800;}
+    .s-head.blue{background:linear-gradient(90deg,#0d2257,#1a56db);}
+    .s-head.red{background:linear-gradient(90deg,#7f1d1d,#dc2626);}
+    .s-head.teal{background:linear-gradient(90deg,#134e4a,#0d9488);}
+    .s-head.orange{background:linear-gradient(90deg,#78350f,#f97316);}
+    .s-list a{display:flex;align-items:center;gap:10px;padding:10px 15px;border-bottom:1px solid #f1f5f9;color:var(--text);font-size:.78rem;font-weight:600;transition:all .12s;}
+    .s-list a:last-child{border-bottom:none;}
+    .s-list a:hover{background:#f0f7ff;color:var(--blue);padding-left:19px;}
+    .s-list a i{width:16px;color:var(--blue);font-size:.79rem;}
+    .s-list a .arr{margin-left:auto;color:#d1d5db;font-size:.6rem;}
+    .s-more{display:flex;align-items:center;justify-content:center;padding:9px;font-size:.76rem;font-weight:700;color:var(--blue);border-top:1px solid var(--border);}
+    .s-more:hover{background:#f0f9ff;}
+    .soc-btns{display:flex;flex-direction:column;gap:8px;padding:12px;}
+    .soc-btn{display:flex;align-items:center;justify-content:center;gap:9px;padding:10px 14px;border-radius:9px;font-size:.81rem;font-weight:800;color:#fff;transition:all .15s;}
+    .soc-btn:hover{opacity:.88;transform:translateY(-2px);}
+    .sb-wa{background:#25d366;}.sb-yt{background:#ff0000;}
+    .sb-ig{background:linear-gradient(45deg,#f09433,#dc2743,#bc1888);}
 
-    /* ══ MAIN LAYOUT ══ */
-    .page{padding:18px 0 36px;}
-    .resume-grid{display:grid;grid-template-columns:1fr;gap:20px;align-items:start;}
-    @media(min-width:980px){.resume-grid{grid-template-columns:1fr 300px;}}
+    /* FORM CARDS */
+    .f-card{background:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin-bottom:18px;}
+    .f-head{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;color:#fff;font-size:.81rem;font-weight:800;}
+    .f-head.blue{background:linear-gradient(90deg,#0d2257,#1a56db);}
+    .f-head.teal{background:linear-gradient(90deg,#134e4a,#0d9488);}
+    .f-head.green{background:linear-gradient(90deg,#064e3b,#059669);}
+    .f-head.orange{background:linear-gradient(90deg,#78350f,#f97316);}
+    .f-head.purple{background:linear-gradient(90deg,#3b0764,#7c3aed);}
+    .f-head.slate{background:linear-gradient(90deg,#1e293b,#475569);}
+    .f-body{padding:18px;}
+    .sec-lbl{font-size:.68rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;display:flex;align-items:center;gap:6px;padding-bottom:9px;border-bottom:1.5px solid var(--border);}
 
-    /* ══ STICKY SIDEBAR ══ */
-    .home-sidebar{position:sticky;top:88px;display:flex;flex-direction:column;gap:14px;}
-    @media(max-width:980px){.home-sidebar{position:static;}}
+    /* FIELDS */
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+    .row.full{grid-template-columns:1fr;}
+    .row.three{grid-template-columns:1fr 1fr 1fr;}
+    @media(max-width:520px){.row,.row.three{grid-template-columns:1fr;}}
+    .fld{display:flex;flex-direction:column;gap:5px;}
+    .fld label{font-size:.69rem;font-weight:700;color:var(--muted);}
+    .fld input,.fld textarea,.fld select{padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:.82rem;font-family:inherit;color:var(--text);background:#fff;outline:none;transition:border .15s,box-shadow .15s;}
+    .fld input:focus,.fld textarea:focus,.fld select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,.09);}
+    .fld textarea{resize:vertical;min-height:66px;}
+    .req{color:#ef4444;}
 
-    /* ══ SECTION CARDS ══ */
-    .sec-card{background:var(--white);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin-bottom:14px;transition:box-shadow .2s;}
-    .sec-card:hover{box-shadow:var(--shadow-md);}
-    .sec-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;color:#fff;font-size:.83rem;font-weight:900;letter-spacing:.01em;}
-    .sec-head .left{display:flex;align-items:center;gap:8px;}
-    .sec-head .left i{font-size:.9rem;opacity:.9;}
-    .sec-head .view-all-btn{color:rgba(255,255,255,.93);font-size:.71rem;font-weight:700;background:rgba(255,255,255,.2);padding:4px 11px;border-radius:20px;white-space:nowrap;}
-    .sec-head.blue{background:linear-gradient(90deg,#0d2257 0%,#1a56db 100%);}
-    .sec-head.red{background:linear-gradient(90deg,#7f1d1d 0%,#dc2626 100%);}
-    .sec-head.green{background:linear-gradient(90deg,#064e3b 0%,#059669 100%);}
-    .sec-head.orange{background:linear-gradient(90deg,#78350f 0%,#f97316 100%);}
-    .sec-head.purple{background:linear-gradient(90deg,#3b0764 0%,#7c3aed 100%);}
-    .sec-head.teal{background:linear-gradient(90deg,#134e4a 0%,#0d9488 100%);}
-    .sec-head.slate{background:linear-gradient(90deg,#1e293b 0%,#475569 100%);}
-    .sec-list a{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid #f1f5f9;color:var(--text);font-size:.81rem;font-weight:600;transition:background .12s,transform .1s;}
-    .sec-list a:last-child{border-bottom:none;}
-    .sec-list a:hover{background:#f0f7ff;color:var(--blue);transform:translateX(3px);}
-    .sec-list a i{width:17px;color:var(--blue);font-size:.82rem;flex-shrink:0;}
-    .sec-list a .arrow{margin-left:auto;color:#d1d5db;font-size:.6rem;flex-shrink:0;}
-    .sec-more{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px;font-size:.79rem;font-weight:700;color:var(--blue);border-top:1px solid var(--border);transition:background .12s;}
-    .sec-more:hover{background:#f0f9ff;}
-    .social-btns{display:flex;flex-direction:column;gap:8px;padding:14px;}
-    .soc-btn{display:flex;align-items:center;justify-content:center;gap:9px;padding:11px 14px;border-radius:9px;font-size:.85rem;font-weight:800;transition:opacity .15s,transform .15s;color:#fff;}
-    .soc-btn:hover{opacity:.9;transform:translateY(-2px);}
-    .sb-wa{background:#25d366;} .sb-yt{background:#ff0000;}
-    .sb-ig{background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);}
+    /* PHOTO */
+    .ph-grid{display:grid;grid-template-columns:1fr 108px;gap:16px;align-items:start;}
+    .ph-col{display:flex;flex-direction:column;align-items:center;gap:8px;}
+    .ph-zone{border:2px dashed var(--border);border-radius:12px;padding:16px 10px;text-align:center;cursor:pointer;position:relative;background:#fafbff;transition:all .2s;}
+    .ph-zone:hover{border-color:var(--blue);background:#f0f6ff;}
+    .ph-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+    .ph-zone i{font-size:1.5rem;color:var(--blue);margin-bottom:5px;display:block;}
+    .ph-zone p{font-size:.7rem;color:var(--muted);font-weight:600;}
+    .ph-prev{width:90px;height:108px;border-radius:10px;object-fit:cover;border:3px solid var(--blue);box-shadow:var(--shadow-md);display:none;}
+    .ph-prev.show{display:block;}
+    .rm-ph{font-size:.64rem;color:#ef4444;font-weight:700;cursor:pointer;display:none;}
+    .rm-ph.show{display:inline-block;}
 
-    /* ══ RESUME FORM CARD ══ */
-    .rm-card{background:var(--white);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin-bottom:16px;transition:box-shadow .2s;}
-    .rm-card:hover{box-shadow:var(--shadow-md);}
-    .rm-section{padding:18px 18px 12px;}
-    .rm-section-title{font-size:.72rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;display:flex;align-items:center;gap:6px;padding-bottom:10px;border-bottom:1.5px solid var(--border);}
-    .rm-section-title i{color:var(--blue);}
-    .rm-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
-    .rm-row.full{grid-template-columns:1fr;}
-    .rm-row.three{grid-template-columns:1fr 1fr 1fr;}
-    @media(max-width:540px){.rm-row,.rm-row.three{grid-template-columns:1fr;}}
-    .rm-field{display:flex;flex-direction:column;gap:5px;}
-    .rm-field label{font-size:.72rem;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:4px;}
-    .rm-field input,.rm-field textarea,.rm-field select{
-      padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;
-      font-size:.83rem;font-family:inherit;color:var(--text);background:#fff;outline:none;
-      transition:border .15s,box-shadow .15s;
-    }
-    .rm-field input:focus,.rm-field textarea:focus,.rm-field select:focus{
-      border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,.09);
-    }
-    .rm-field textarea{resize:vertical;min-height:68px;}
-    .rm-radio-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px;}
-    .rm-radio-row label{display:flex;align-items:center;gap:7px;font-size:.83rem;font-weight:600;cursor:pointer;padding:8px 14px;border:1.5px solid var(--border);border-radius:9px;transition:all .12s;}
-    .rm-radio-row label:has(input:checked){border-color:var(--blue);background:#eff6ff;color:var(--blue);}
-    .rm-radio-row input[type=radio]{accent-color:var(--blue);}
+    /* RADIO ROW */
+    .rr{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+    .rr label{display:flex;align-items:center;gap:7px;font-size:.79rem;font-weight:600;cursor:pointer;padding:8px 13px;border:1.5px solid var(--border);border-radius:9px;transition:all .12s;}
+    .rr label:has(input:checked){border-color:var(--blue);background:#eff6ff;color:var(--blue);}
+    .rr input[type=radio]{accent-color:var(--blue);}
 
-    /* ══ PHOTO UPLOAD ══ */
-    .photo-upload-area{border:2px dashed var(--border);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;position:relative;background:#fafbff;}
-    .photo-upload-area:hover{border-color:var(--blue);background:#f0f6ff;}
-    .photo-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
-    .photo-upload-area i{font-size:2rem;color:var(--blue);margin-bottom:8px;display:block;}
-    .photo-upload-area p{font-size:.78rem;color:var(--muted);font-weight:600;}
-    .photo-upload-area small{font-size:.68rem;color:#94a3b8;}
-    .photo-preview{width:90px;height:110px;border-radius:10px;object-fit:cover;border:3px solid var(--blue);box-shadow:var(--shadow-md);display:none;}
-    .photo-preview.show{display:block;}
-    .photo-col{display:flex;flex-direction:column;align-items:center;gap:8px;}
-    .remove-photo-btn{font-size:.68rem;color:var(--red);font-weight:700;cursor:pointer;display:none;}
-    .remove-photo-btn.show{display:inline-block;}
+    /* CAT TABS */
+    .c-tabs{display:flex;gap:8px;padding:14px 18px 0;border-bottom:2px solid var(--border);}
+    .c-tab{padding:9px 20px;border-radius:10px 10px 0 0;font-size:.78rem;font-weight:700;cursor:pointer;border:1.5px solid transparent;border-bottom:none;color:var(--muted);background:none;font-family:inherit;transition:all .15s;}
+    .c-tab.active{background:var(--blue);color:#fff;border-color:var(--blue);}
+    .c-panel{display:none;}.c-panel.active{display:block;}
 
-    /* ══ SKILLS SECTION ══ */
-    .skill-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
-    .skill-name-input{flex:0 0 160px;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.8rem;font-family:inherit;outline:none;}
-    .skill-name-input:focus{border-color:var(--blue);}
-    .skill-bar-wrap{flex:1;display:flex;align-items:center;gap:10px;}
-    .skill-range{flex:1;-webkit-appearance:none;height:6px;border-radius:4px;background:var(--border);outline:none;cursor:pointer;}
-    .skill-range::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--blue);cursor:pointer;box-shadow:0 1px 4px rgba(26,86,219,.3);}
-    .skill-pct{font-size:.72rem;font-weight:700;color:var(--blue);min-width:34px;text-align:right;}
+    /* SKILLS */
+    .sk-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+    .sk-name{flex:0 0 155px;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.79rem;font-family:inherit;outline:none;}
+    .sk-name:focus{border-color:var(--blue);}
+    .sk-bar-w{flex:1;display:flex;align-items:center;gap:10px;}
+    .sk-range{flex:1;-webkit-appearance:none;height:6px;border-radius:4px;background:var(--border);outline:none;cursor:pointer;}
+    .sk-range::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--blue);cursor:pointer;}
+    .sk-pct{font-size:.71rem;font-weight:700;color:var(--blue);min-width:34px;text-align:right;}
 
-    /* ══ CATEGORY TABS (Fresher / Experienced) ══ */
-    .category-tabs{display:flex;gap:8px;padding:16px 18px 0;border-bottom:2px solid var(--border);margin-bottom:0;}
-    .cat-tab{padding:9px 20px;border-radius:10px 10px 0 0;font-size:.8rem;font-weight:700;cursor:pointer;border:1.5px solid transparent;border-bottom:none;color:var(--muted);background:none;font-family:inherit;transition:all .15s;}
-    .cat-tab.active{background:var(--blue);color:#fff;border-color:var(--blue);}
-    .cat-panel{display:none;}
-    .cat-panel.active{display:block;}
-
-    /* ══ COLOR THEMES ══ */
-    .theme-picker{display:flex;gap:10px;flex-wrap:wrap;padding:4px 0 10px;}
-    .theme-dot{width:34px;height:34px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .2s;position:relative;}
-    .theme-dot.active{border-color:#fff;box-shadow:0 0 0 3px var(--blue),0 2px 8px rgba(0,0,0,.2);}
-    .theme-dot[title]:hover::after{content:attr(title);position:absolute;bottom:-24px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;font-size:.6rem;font-weight:700;padding:3px 7px;border-radius:4px;white-space:nowrap;pointer-events:none;}
-
-    /* ══ EDU TABLE ══ */
-    .edu-table-header{display:grid;grid-template-columns:2fr 2fr 1.1fr 1.1fr 1.1fr 36px;gap:6px;margin-bottom:5px;}
-    .edu-table-header span{font-size:.64rem;font-weight:700;color:var(--muted);padding:0 2px;}
-    .edu-row{display:grid;grid-template-columns:2fr 2fr 1.1fr 1.1fr 1.1fr 36px;gap:6px;margin-bottom:7px;align-items:center;}
-    .edu-row input{padding:7px 9px;border:1.5px solid var(--border);border-radius:7px;font-size:.76rem;font-family:inherit;color:var(--text);background:#fff;outline:none;}
+    /* EDU */
+    .edu-hdr{display:grid;grid-template-columns:2fr 2fr 1fr 1fr 1fr 34px;gap:6px;margin-bottom:5px;}
+    .edu-hdr span{font-size:.62rem;font-weight:700;color:var(--muted);padding:0 2px;}
+    .edu-row{display:grid;grid-template-columns:2fr 2fr 1fr 1fr 1fr 34px;gap:6px;margin-bottom:7px;align-items:center;}
+    .edu-row input{padding:7px 8px;border:1.5px solid var(--border);border-radius:7px;font-size:.75rem;font-family:inherit;color:var(--text);outline:none;}
     .edu-row input:focus{border-color:var(--blue);}
-    @media(max-width:600px){
-      .edu-table-header{grid-template-columns:1fr 1fr;}.edu-table-header span:nth-child(n+3){display:none;}
-      .edu-row{grid-template-columns:1fr 1fr;}.edu-row input:nth-child(n+3){display:none;}
-    }
-    .add-btn{display:inline-flex;align-items:center;gap:6px;font-size:.76rem;font-weight:700;color:var(--blue);background:none;border:1.5px dashed var(--blue);border-radius:7px;padding:6px 14px;cursor:pointer;margin-top:5px;transition:background .12s;}
+    @media(max-width:600px){.edu-hdr,.edu-row{grid-template-columns:1fr 1fr;}.edu-hdr span:nth-child(n+3){display:none;}.edu-row input:nth-child(n+3){display:none;}}
+    .add-btn{display:inline-flex;align-items:center;gap:6px;font-size:.74rem;font-weight:700;color:var(--blue);background:none;border:1.5px dashed var(--blue);border-radius:7px;padding:6px 14px;cursor:pointer;margin-top:4px;font-family:inherit;transition:background .12s;}
     .add-btn:hover{background:#eff6ff;}
-    .rm-btn{background:none;border:1.5px solid var(--border);border-radius:7px;padding:5px 8px;cursor:pointer;color:var(--muted);font-size:.7rem;transition:all .12s;}
-    .rm-btn:hover{border-color:var(--red);color:var(--red);}
-    .extra-row{display:flex;gap:8px;margin-bottom:9px;align-items:center;}
-    .extra-row input{flex:1;padding:8px 11px;border:1.5px solid var(--border);border-radius:7px;font-size:.8rem;font-family:inherit;color:var(--text);outline:none;}
-    .extra-row input:focus{border-color:var(--blue);}
+    .rm-btn{background:none;border:1.5px solid var(--border);border-radius:7px;padding:5px 7px;cursor:pointer;color:var(--muted);font-size:.67rem;transition:all .12s;}
+    .rm-btn:hover{border-color:#ef4444;color:#ef4444;}
+    .xrow{display:flex;gap:8px;margin-bottom:9px;align-items:center;}
+    .xrow input{flex:1;padding:8px 11px;border:1.5px solid var(--border);border-radius:7px;font-size:.79rem;font-family:inherit;color:var(--text);outline:none;}
+    .xrow input:focus{border-color:var(--blue);}
 
-    /* ══ CAREER OBJECTIVE ══ */
-    .obj-option{display:flex;align-items:flex-start;gap:8px;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;margin-bottom:7px;cursor:pointer;transition:all .12s;}
-    .obj-option:hover{background:#f0f7ff;border-color:#93c5fd;}
-    .obj-option:has(input:checked){background:#eff6ff;border-color:var(--blue);}
-    .obj-option input{margin-top:3px;flex-shrink:0;accent-color:var(--blue);}
-    .obj-option span{font-size:.76rem;line-height:1.6;color:var(--muted);}
+    /* OBJECTIVE */
+    .obj-opt{display:flex;align-items:flex-start;gap:8px;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;margin-bottom:7px;cursor:pointer;transition:all .12s;}
+    .obj-opt:hover{background:#f0f7ff;border-color:#93c5fd;}
+    .obj-opt:has(input:checked){background:#eff6ff;border-color:var(--blue);}
+    .obj-opt input{margin-top:3px;flex-shrink:0;accent-color:var(--blue);}
+    .obj-opt span{font-size:.73rem;line-height:1.6;color:var(--muted);}
 
-    /* ══ TEMPLATE GRID ══ */
-    .tpl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;padding:4px 0 10px;}
+    /* THEME */
+    .th-pick{display:flex;gap:10px;flex-wrap:wrap;padding:4px 0 12px;}
+    .th-dot{width:34px;height:34px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .18s;position:relative;}
+    .th-dot.active{border-color:#fff;box-shadow:0 0 0 3px var(--blue),0 2px 8px rgba(0,0,0,.2);}
+
+    /* TEMPLATE GRID */
+    .tpl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;padding:4px 0 12px;}
     @media(max-width:480px){.tpl-grid{grid-template-columns:repeat(2,1fr);}}
-    .tpl-item{border:2.5px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:border-color .15s,transform .12s,box-shadow .15s;}
-    .tpl-item:hover{border-color:var(--blue);transform:translateY(-2px);box-shadow:var(--shadow-md);}
-    .tpl-item.active{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,.15);}
-    .tpl-preview{height:108px;display:flex;flex-direction:column;overflow:hidden;position:relative;}
-    .tpl-header-bar{padding:8px 9px;font-size:7.5px;font-weight:800;letter-spacing:.02em;}
-    .tpl-body-wrap{flex:1;display:flex;gap:3px;padding:5px 8px;}
-    .tpl-main-col{flex:1;display:flex;flex-direction:column;gap:4px;}
-    .tpl-side-col{width:28%;display:flex;flex-direction:column;gap:3px;padding:4px;}
-    .tpl-line{height:3px;border-radius:3px;opacity:.3;}
-    .tpl-line.dk{opacity:.65;}
-    .tpl-label{padding:6px 8px;font-size:9.5px;font-weight:800;text-align:center;border-top:1.5px solid var(--border);color:var(--text);}
-    .tpl-badge{position:absolute;top:4px;right:4px;background:#10b981;color:#fff;font-size:6px;font-weight:800;padding:2px 5px;border-radius:3px;text-transform:uppercase;}
-    .tpl-badge.ats{background:#6366f1;}
+    .tpl-it{border:2.5px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .15s;}
+    .tpl-it:hover{border-color:var(--blue);transform:translateY(-2px);box-shadow:var(--shadow-md);}
+    .tpl-it.active{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,.15);}
+    .tpl-prev{height:108px;display:flex;flex-direction:column;overflow:hidden;position:relative;}
+    .tpl-hbar{padding:8px 9px;font-size:7.5px;font-weight:800;}
+    .tpl-bwrap{flex:1;display:flex;gap:3px;padding:5px 8px;}
+    .tpl-mc{flex:1;display:flex;flex-direction:column;gap:4px;}
+    .tpl-sc{width:28%;display:flex;flex-direction:column;gap:3px;padding:4px;}
+    .tpl-ln{height:3px;border-radius:3px;opacity:.3;}
+    .tpl-ln.dk{opacity:.65;}
+    .tpl-lbl{padding:6px 8px;font-size:9.5px;font-weight:800;text-align:center;border-top:1.5px solid var(--border);color:var(--text);}
+    .tpl-bdg{position:absolute;top:4px;right:4px;color:#fff;font-size:6px;font-weight:800;padding:2px 5px;border-radius:3px;text-transform:uppercase;}
 
-    /* ══ GENERATE BUTTON ══ */
-    .rm-submit-row{padding:14px 18px 18px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
-    .gen-btn{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;border:none;border-radius:10px;padding:14px 32px;font-size:.95rem;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:10px;font-family:inherit;transition:all .2s;box-shadow:0 4px 18px rgba(26,86,219,.3);}
-    .gen-btn:hover{opacity:.92;transform:translateY(-2px);box-shadow:0 6px 24px rgba(26,86,219,.4);}
-    .gen-btn:active{transform:scale(.98);}
-    .gen-btn i{font-size:1.1rem;}
+    /* GEN BUTTON */
+    .sub-row{padding:14px 18px 18px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
+    .gen-btn{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;border:none;border-radius:11px;padding:14px 34px;font-size:.9rem;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:10px;font-family:inherit;transition:all .2s;box-shadow:0 4px 20px rgba(26,86,219,.3);}
+    .gen-btn:hover{opacity:.9;transform:translateY(-2px);}
 
-    /* ══ PREVIEW ══ */
-    .preview-wrap{display:none;}
-    .preview-wrap.show{display:block;}
-    .preview-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center;}
-    .back-btn{background:none;border:1.5px solid var(--border);border-radius:9px;padding:10px 20px;font-size:.82rem;font-weight:700;cursor:pointer;color:var(--text);font-family:inherit;display:flex;align-items:center;gap:6px;transition:background .12s;}
+    /* ATS INFO */
+    .ats-box{background:linear-gradient(135deg,#eff6ff,#e0f2fe);border:1.5px solid #bfdbfe;border-radius:10px;padding:12px 14px;margin-bottom:14px;display:flex;gap:10px;align-items:flex-start;}
+    .ats-box i{color:#2563eb;font-size:1rem;flex-shrink:0;margin-top:1px;}
+    .ats-box p{font-size:.73rem;font-weight:700;color:#1e40af;margin-bottom:2px;}
+    .ats-box span{font-size:.69rem;color:#3b82f6;}
+
+    /* PREVIEW */
+    .prev-wrap{display:none;}.prev-wrap.show{display:block;}
+    .prev-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;align-items:center;background:#fff;padding:14px 18px;border-radius:var(--radius);box-shadow:var(--shadow);}
+    .back-btn{background:none;border:1.5px solid var(--border);border-radius:9px;padding:10px 20px;font-size:.81rem;font-weight:700;cursor:pointer;color:var(--text);font-family:inherit;display:flex;align-items:center;gap:6px;}
     .back-btn:hover{background:var(--bg);}
-    .print-btn{background:linear-gradient(135deg,#059669,#10b981);color:#fff;border:none;border-radius:9px;padding:10px 24px;font-size:.88rem;font-weight:800;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(5,150,105,.3);transition:all .2s;}
-    .print-btn:hover{opacity:.92;transform:translateY(-1px);}
-    .resume-paper{background:#fff;border-radius:10px;overflow:visible;color:#111;font-size:11px;line-height:1.45;box-shadow:var(--shadow-md);width:100%;max-width:210mm;margin:0 auto;}
+    .print-btn{background:linear-gradient(135deg,#059669,#10b981);color:#fff;border:none;border-radius:9px;padding:10px 24px;font-size:.86rem;font-weight:800;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:8px;}
+    .print-btn:hover{opacity:.9;}
+    .r-paper{background:#fff;border-radius:12px;overflow:visible;color:#111;box-shadow:var(--shadow-md);width:100%;max-width:210mm;margin:0 auto;}
+
+    /* LIVE BADGE */
+    .live{display:inline-flex;align-items:center;gap:5px;background:#dcfce7;color:#15803d;font-size:.66rem;font-weight:800;padding:3px 10px;border-radius:20px;border:1px solid #bbf7d0;}
+    .live::before{content:'';width:6px;height:6px;background:#22c55e;border-radius:50%;animation:pd 1.5s infinite;}
+    @keyframes pd{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(1.3);}}
+
+    /* FOOTER */
+    footer{background:linear-gradient(135deg,var(--navy),#1a3c8f);color:rgba(255,255,255,.75);padding:24px 24px 14px;margin-top:32px;}
+    .ft-in{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+    @media(min-width:768px){.ft-in{grid-template-columns:2fr 1fr 1fr;}}
+    .ft-t{font-size:.88rem;font-weight:900;color:#fff;margin-bottom:8px;}
+    .ft-sub{font-size:.71rem;opacity:.72;line-height:1.65;}
+    .ft-links{display:flex;flex-direction:column;gap:5px;margin-top:4px;}
+    .ft-links a{color:rgba(255,255,255,.68);font-size:.71rem;font-weight:600;transition:color .12s;}
+    .ft-links a:hover{color:#fff;}
+    .ft-bot{border-top:1px solid rgba(255,255,255,.1);margin-top:14px;padding-top:10px;font-size:.66rem;color:rgba(255,255,255,.38);text-align:center;}
+
+    /* PRINT */
     @media print{
-      /* Hide everything except the resume output */
-      .site-header,.top-bar,.breadcrumb,.page-hero,.home-sidebar,.preview-actions,.sec-card,
-      .mobile-bottom-bar,.wa-float,.site-footer,#menuOverlay,.offcanvas,
-      #formSection, .seo-block, footer, nav, .breadcrumb, .page-hero,
-      .rm-card, .gen-btn, .back-btn, .print-btn {display:none!important;}
-
-      /* Remove browser default header/footer (date, URL, title) */
-      @page {
-        size: A4 portrait;
-        margin: 0;
-      }
-
-      html, body {
-        margin: 0 !important;
-        padding: 0 !important;
-        background: #fff !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-        color-adjust: exact !important;
-      }
-
-      .resume-grid, .page, .container {
-        display: block !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        max-width: 100% !important;
-        width: 100% !important;
-      }
-
-      .preview-wrap { display: block !important; }
-
-      .resume-paper {
-        border: none !important;
-        border-radius: 0 !important;
-        box-shadow: none !important;
-        width: 210mm !important;
-        min-height: auto !important;
-        max-height: none !important;
-        overflow: visible !important;
-        page-break-inside: avoid;
-      }
-
-      /* Force dark black text – no fading */
-      #resumeOutput * {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-        color-adjust: exact !important;
-        word-spacing: normal !important;
-        letter-spacing: normal !important;
-      }
-
-      /* Fix word spacing in paragraphs */
-      #resumeOutput p, #resumeOutput td, #resumeOutput li, #resumeOutput div {
-        word-spacing: 0.05em !important;
-      }
-
-      /* Prevent page break inside resume sections */
-      #resumeOutput table, #resumeOutput tr,
-      #resumeOutput div, #resumeOutput ul {
-        page-break-inside: avoid;
-      }
+      .site-header,.nav-bar,.hero,.aside,.prev-actions,.s-card,#formSection,footer{display:none!important;}
+      @page{size:A4 portrait;margin:0;}
+      html,body{margin:0!important;padding:0!important;background:#fff!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+      .grid,.page{display:block!important;padding:0!important;margin:0!important;max-width:100%!important;width:100%!important;}
+      .prev-wrap{display:block!important;}
+      .r-paper{border:none!important;border-radius:0!important;box-shadow:none!important;width:210mm!important;max-width:210mm!important;overflow:visible!important;}
+      #resumeOut *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
     }
-
-    /* ══ SEO BLOCK ══ */
-    .seo-block{background:var(--white);border-radius:var(--radius);padding:18px;margin-bottom:16px;box-shadow:var(--shadow);}
-    .seo-block h2{font-size:.93rem;font-weight:800;margin-bottom:9px;}
-    .seo-block p{font-size:.8rem;color:var(--muted);line-height:1.75;}
-
-    /* ══ FOOTER ══ */
-    .site-footer{background:linear-gradient(135deg,var(--navy) 0%,#1a3c8f 100%);color:rgba(255,255,255,.8);margin-top:24px;}
-    .footer-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:22px 14px 16px;}
-    @media(min-width:768px){.footer-grid{grid-template-columns:2fr 1fr 1fr 1.5fr;}}
-    .footer-title{font-size:.95rem;font-weight:900;color:#fff;margin-bottom:9px;}
-    .footer-sub{font-size:.75rem;opacity:.75;margin-bottom:10px;line-height:1.65;}
-    .footer-links-list{display:flex;flex-direction:column;gap:5px;}
-    .footer-links-list a{color:rgba(255,255,255,.75);font-size:.75rem;font-weight:600;transition:color .12s;}
-    .footer-links-list a:hover{color:#fff;}
-    .footer-social{display:flex;gap:10px;margin-top:10px;}
-    .footer-social a{font-size:1.3rem;color:rgba(255,255,255,.7);transition:color .12s;}
-    .footer-social a:hover{color:#fff;}
-    .footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding:10px 14px;font-size:.7rem;color:rgba(255,255,255,.45);text-align:center;}
-
-    /* ══ MOBILE BOTTOM BAR ══ */
-    .mobile-bottom-bar{display:none;}
-    @media(max-width:900px){
-      .mobile-bottom-bar{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);z-index:200;padding:5px 0 env(safe-area-inset-bottom,5px);box-shadow:0 -2px 14px rgba(0,0,0,.08);}
-      .mobile-bottom-bar a{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.57rem;font-weight:700;color:#64748b;padding:4px 0;}
-      .mobile-bottom-bar a i{font-size:1.05rem;}
-      .mobile-bottom-bar a.active,.mobile-bottom-bar a:hover{color:var(--blue);}
-      body{padding-bottom:62px;}
-    }
-    .wa-float{position:fixed;bottom:72px;right:14px;background:#25d366;color:#fff;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;box-shadow:0 4px 16px rgba(37,211,102,.45);z-index:150;transition:transform .2s;}
-    .wa-float:hover{transform:scale(1.1);}
-    @media(min-width:901px){.wa-float{bottom:22px;}}
-
-    /* ══ OFFCANVAS ══ */
-    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:350;}
-    .overlay[hidden]{display:none!important;}
-    .offcanvas{position:fixed;top:0;left:0;bottom:0;width:min(300px,85vw);background:#fff;z-index:360;overflow-y:auto;display:flex;flex-direction:column;box-shadow:0 6px 30px rgba(0,0,0,.14);}
-    .offcanvas[hidden]{display:none!important;}
-    .offcanvas-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:linear-gradient(90deg,var(--navy),var(--blue2));color:#fff;border-bottom:2px solid var(--accent);flex-shrink:0;}
-    .offcanvas-title{font-weight:900;font-size:.95rem;}
-    .offcanvas-close{background:rgba(255,255,255,.15);border:none;color:#fff;width:33px;height:33px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-    .offcanvas-nav{display:flex;flex-direction:column;padding:8px;gap:2px;}
-    .offcanvas-nav a{display:flex;align-items:center;gap:9px;padding:10px 13px;border-radius:8px;font-size:.82rem;font-weight:700;color:var(--text);transition:background .12s;}
-    .offcanvas-nav a:hover{background:#eff6ff;color:var(--blue);}
-    .offcanvas-nav a i{width:17px;color:var(--blue);}
-    .offcanvas-section{font-size:.65rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:10px 12px 3px;}
-
-    /* ══ LIVE PREVIEW BAR ══ */
-    .live-badge{display:inline-flex;align-items:center;gap:5px;background:#dcfce7;color:#15803d;font-size:.68rem;font-weight:800;padding:3px 10px;border-radius:20px;border:1px solid #bbf7d0;}
-    .live-badge::before{content:'';width:6px;height:6px;background:#22c55e;border-radius:50%;animation:pulse-dot 1.5s infinite;}
-    @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(1.3);}}
-
-    /* ══ PROGRESS BARS IN RESUME ══ */
-    .skill-bar-resume{height:5px;border-radius:3px;margin-top:2px;}
-
-    /* ══ STEP INDICATOR ══ */
-    .steps-row{display:flex;gap:0;margin-bottom:20px;overflow-x:auto;padding:4px 0;}
-    .step-item{display:flex;align-items:center;gap:0;flex-shrink:0;}
-    .step-dot{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:var(--border);color:var(--muted);font-size:.75rem;font-weight:800;transition:all .2s;}
-    .step-dot.done{background:var(--green);color:#fff;}
-    .step-dot.active{background:var(--blue);color:#fff;box-shadow:0 0 0 4px rgba(26,86,219,.2);}
-    .step-label{font-size:.65rem;font-weight:700;color:var(--muted);margin:0 4px;white-space:nowrap;}
-    .step-label.active{color:var(--blue);}
-    .step-line{width:24px;height:2px;background:var(--border);}
-    .step-line.done{background:var(--green);}
-
-    /* ══ TOOLTIP ══ */
-    [data-tip]{position:relative;}
-    [data-tip]:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;font-size:.65rem;font-weight:600;padding:4px 9px;border-radius:6px;white-space:nowrap;pointer-events:none;z-index:99;}
-
-    /* ══ ATS INFO BOX ══ */
-    .ats-info{background:linear-gradient(135deg,#eff6ff,#e0f2fe);border:1.5px solid #bfdbfe;border-radius:10px;padding:12px 14px;margin-bottom:14px;display:flex;gap:10px;align-items:flex-start;}
-    .ats-info i{color:#2563eb;font-size:1.1rem;flex-shrink:0;margin-top:1px;}
-    .ats-info-text p{font-size:.76rem;font-weight:700;color:#1e40af;margin-bottom:2px;}
-    .ats-info-text span{font-size:.72rem;color:#3b82f6;}
   </style>
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to content</a>
 
-  <!-- TOP BAR -->
-  <div class="top-bar">
-    <div class="container top-bar-inner">
-      <span>🇮🇳 Welcome to Top Sarkari Jobs – India's No.1 Sarkari Jobs Portal</span>
-      <div class="top-bar-social">
-        <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" class="join-wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp Join</a>
-        <a href="https://www.instagram.com/topsarkarijobs" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i> Instagram</a>
-        <a href="https://www.youtube.com/@Topsarkarijobs/shorts" target="_blank" rel="noopener"><i class="fa-brands fa-youtube"></i> YouTube</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- HEADER -->
-  <header class="site-header" id="site-header">
-    <div class="header-logo-bar container">
-      <a class="brand" href="./" aria-label="Top Sarkari Jobs Home">
-        <picture>
-          <source srcset="image.webp" type="image/webp">
-          <img src="image.png" alt="Top Sarkari Jobs Logo" class="brand-logo" width="42" height="42" fetchpriority="high">
-        </picture>
-        <div class="brand-text">
-          <span class="brand-title">TOP <span>SARKARI</span> JOBS</span>
-          <span class="brand-sub">Sarkari Job, Result, Admit Card, Yojana</span>
-        </div>
-      </a>
-      <div class="header-actions">
-        <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" class="wa-btn-header">
-          <i class="fa-brands fa-whatsapp"></i> Join WhatsApp Channel
-        </a>
-        <button id="menuBtn" class="icon-btn" type="button" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false"><i class="fa-solid fa-bars"></i></button>
-      </div>
-    </div>
-    <nav class="desktop-nav" aria-label="Primary navigation">
-      <a class="nav-link" href="./"><i class="fa-solid fa-house"></i> HOME</a>
-      <div class="nav-dd" data-dd>
-        <button class="nav-link nav-dd-btn" type="button"><i class="fa-solid fa-briefcase"></i> LATEST JOBS <i class="fa-solid fa-chevron-down" style="font-size:.6rem"></i></button>
-        <div class="nav-dd-menu">
-          <a href="view.html?section=latest%20jobs" class="nav-dd-item"><i class="fa-solid fa-bolt"></i> Latest Jobs</a>
-          <a href="view.html?section=upcoming-jobs" class="nav-dd-item"><i class="fa-solid fa-calendar-plus"></i> Upcoming Jobs</a>
-          <a href="view.html?section=Jobs%20with%20Last%20date" class="nav-dd-item"><i class="fa-solid fa-clock"></i> Last Date Near</a>
-          <a href="view.html?section=Top%2020%20Jobs" class="nav-dd-item"><i class="fa-solid fa-medal"></i> Top 20 Jobs</a>
-        </div>
-      </div>
-      <div class="nav-dd" data-dd>
-        <button class="nav-link nav-dd-btn" type="button"><i class="fa-solid fa-id-card"></i> ADMIT CARD <i class="fa-solid fa-chevron-down" style="font-size:.6rem"></i></button>
-        <div class="nav-dd-menu">
-          <a href="category.html?group=admit-result" class="nav-dd-item"><i class="fa-solid fa-id-card"></i> Admit Cards 2026</a>
-          <a href="category.html?group=admissions" class="nav-dd-item"><i class="fa-solid fa-trophy"></i> Latest Results</a>
-          <a href="view.html?section=Admit%20cards%20Exams%20Date" class="nav-dd-item"><i class="fa-solid fa-calendar-days"></i> Exam Dates</a>
-        </div>
-      </div>
-      <div class="nav-dd" data-dd>
-        <button class="nav-link nav-dd-btn" type="button"><i class="fa-solid fa-trophy"></i> RESULTS <i class="fa-solid fa-chevron-down" style="font-size:.6rem"></i></button>
-        <div class="nav-dd-menu">
-          <a href="category.html?group=admissions" class="nav-dd-item"><i class="fa-solid fa-trophy"></i> Latest Results</a>
-          <a href="category.html?group=admit-result" class="nav-dd-item"><i class="fa-solid fa-key"></i> Answer Key</a>
-        </div>
-      </div>
-      <div class="nav-dd" data-dd>
-        <button class="nav-link nav-dd-btn" type="button"><i class="fa-solid fa-building-columns"></i> GOVT SCHEMES <i class="fa-solid fa-chevron-down" style="font-size:.6rem"></i></button>
-        <div class="nav-dd-menu">
-          <a href="view.html?section=Govt%20Scheme%20Yojna" class="nav-dd-item"><i class="fa-solid fa-hand-holding-heart"></i> Govt Schemes & Yojna</a>
-          <a href="view.html?section=Important%20CSC%20PDF" class="nav-dd-item"><i class="fa-solid fa-file-pdf"></i> Important CSC PDF</a>
-        </div>
-      </div>
-      <div class="nav-dd" data-dd>
-        <button class="nav-link nav-dd-btn" type="button"><i class="fa-solid fa-map-location-dot"></i> STATE JOBS <i class="fa-solid fa-chevron-down" style="font-size:.6rem"></i></button>
-        <div class="nav-dd-menu">
-          <a href="view.html?section=Haryana%20All%20State%20Jobs" class="nav-dd-item"><i class="fa-solid fa-location-dot"></i> Haryana Jobs</a>
-          <a href="view.html?section=State%20jobs" class="nav-dd-item"><i class="fa-solid fa-map-location-dot"></i> All State Jobs</a>
-        </div>
-      </div>
-      <div class="nav-dd" data-dd>
-        <button class="nav-link nav-dd-btn" type="button"><i class="fa-solid fa-book-open"></i> STUDY MATERIAL <i class="fa-solid fa-chevron-down" style="font-size:.6rem"></i></button>
-        <div class="nav-dd-menu">
-          <a href="category.html?group=study-material" class="nav-dd-item"><i class="fa-solid fa-book-open"></i> Study Material</a>
-          <a href="category.html?group=khabar" class="nav-dd-item"><i class="fa-solid fa-newspaper"></i> Latest Khabar</a>
-          <a href="resume-maker.html" class="nav-dd-item"><i class="fa-solid fa-file-lines"></i> Resume Maker</a>
-        </div>
-      </div>
-      <a class="nav-link" href="helpdesk.html"><i class="fa-solid fa-headset"></i> CONTACT US</a>
-    </nav>
-  </header>
-
-  <!-- BREADCRUMB -->
-  <div class="breadcrumb">
-    <div class="container breadcrumb-inner">
-      <a href="./"><i class="fa-solid fa-house"></i> Home</a>
-      <i class="fa-solid fa-chevron-right" style="font-size:.6rem"></i>
-      <span>Resume Maker</span>
-    </div>
-  </div>
-
-  <!-- PAGE HERO -->
-  <section class="page-hero">
-    <div class="container page-hero-inner">
-      <div class="page-hero-badge"><i class="fa-solid fa-file-lines"></i> FREE TOOL 2026</div>
-      <h1>Free <span>Resume / CV Maker</span> 2026</h1>
-      <p>Fill your details, choose from modern templates & download as PDF. No login required. Photo upload, skills, color themes & ATS-friendly formats included.</p>
-      <div class="hero-stats">
-        <div class="hero-stat"><i class="fa-solid fa-palette"></i> 10 Modern Templates</div>
-        <div class="hero-stat"><i class="fa-solid fa-file-arrow-down"></i> Instant PDF Download</div>
-        <div class="hero-stat"><i class="fa-solid fa-robot"></i> ATS Friendly Option</div>
-        <div class="hero-stat"><i class="fa-solid fa-lock-open"></i> 100% Free</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- MAIN -->
-  <main id="main" class="container page">
-    <div class="resume-grid">
-
-      <!-- ===== MAIN COLUMN ===== -->
+<header class="site-header">
+  <div class="hdr-inner">
+    <a class="brand" href="./">
+      <div class="brand-icon"><i class="fa-solid fa-file-lines"></i></div>
       <div>
+        <div class="brand-title">TOP <span>SARKARI</span> JOBS</div>
+        <div class="brand-sub">Sarkari Job · Result · Admit Card · Yojana</div>
+      </div>
+    </a>
+    <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" class="wa-hdr"><i class="fa-brands fa-whatsapp"></i> Join WhatsApp</a>
+  </div>
+  <nav class="nav-bar">
+    <a class="nav-link" href="./"><i class="fa-solid fa-house"></i> HOME</a>
+    <a class="nav-link" href="view.html?section=latest%20jobs"><i class="fa-solid fa-briefcase"></i> LATEST JOBS</a>
+    <a class="nav-link" href="category.html?group=admit-result"><i class="fa-solid fa-id-card"></i> ADMIT CARD</a>
+    <a class="nav-link" href="category.html?group=admissions"><i class="fa-solid fa-trophy"></i> RESULTS</a>
+    <a class="nav-link" href="view.html?section=Govt%20Scheme%20Yojna"><i class="fa-solid fa-hand-holding-heart"></i> GOVT SCHEMES</a>
+    <a class="nav-link cur" href="resume-maker.html"><i class="fa-solid fa-file-lines"></i> RESUME MAKER</a>
+    <a class="nav-link" href="helpdesk.html"><i class="fa-solid fa-headset"></i> CONTACT</a>
+  </nav>
+</header>
 
-        <!-- FORM SECTION -->
-        <div id="formSection">
+<section class="hero">
+  <div class="hero-in">
+    <div class="hero-badge"><i class="fa-solid fa-star" style="color:#fbbf24"></i> FREE TOOL 2026 – NO LOGIN REQUIRED</div>
+    <h1>Free <span>Resume / CV Maker</span> 2026</h1>
+    <p>Fill your details, choose from modern templates &amp; download as PDF instantly. Photo upload, skill bars, color themes &amp; ATS-friendly formats.</p>
+    <div class="hero-stats">
+      <div class="h-stat"><i class="fa-solid fa-palette"></i> 10 Modern Templates</div>
+      <div class="h-stat"><i class="fa-solid fa-file-arrow-down"></i> Instant PDF Download</div>
+      <div class="h-stat"><i class="fa-solid fa-robot"></i> ATS Friendly</div>
+      <div class="h-stat"><i class="fa-solid fa-lock-open"></i> 100% Free</div>
+    </div>
+  </div>
+</section>
 
-          <!-- Category Tabs: Fresher / Experienced -->
-          <div class="rm-card" style="overflow:visible">
-            <div class="category-tabs">
-              <button class="cat-tab active" onclick="switchCategory('fresher',this)"><i class="fa-solid fa-user-graduate" style="margin-right:6px"></i>Fresher Resume</button>
-              <button class="cat-tab" onclick="switchCategory('experienced',this)"><i class="fa-solid fa-briefcase" style="margin-right:6px"></i>Experienced Resume</button>
+<main class="page">
+  <div class="grid">
+    <div>
+      <div id="formSection">
+
+        <!-- Doc Type -->
+        <div class="f-card" style="overflow:visible">
+          <div class="c-tabs">
+            <button class="c-tab active" onclick="switchCat('fresher',this)"><i class="fa-solid fa-user-graduate" style="margin-right:6px"></i>Fresher Resume</button>
+            <button class="c-tab" onclick="switchCat('experienced',this)"><i class="fa-solid fa-briefcase" style="margin-right:6px"></i>Experienced Resume</button>
+          </div>
+          <div class="f-body" style="padding-top:14px">
+            <div id="catF" class="c-panel active">
+              <div class="ats-box"><i class="fa-solid fa-info-circle"></i><div><p>Fresher Resume Tips</p><span>Focus on education, skills &amp; objectives. Add internships/projects if available.</span></div></div>
             </div>
-            <div class="rm-section" style="padding-top:14px">
-              <div id="catFresher" class="cat-panel active">
-                <div class="ats-info">
-                  <i class="fa-solid fa-info-circle"></i>
-                  <div class="ats-info-text">
-                    <p>Fresher Resume Tips</p>
-                    <span>Focus on education, skills & objectives. Add internships / projects if available.</span>
-                  </div>
-                </div>
-              </div>
-              <div id="catExperienced" class="cat-panel">
-                <div class="ats-info" style="background:linear-gradient(135deg,#fefce8,#fef3c7);border-color:#fde68a;">
-                  <i class="fa-solid fa-star" style="color:#d97706"></i>
-                  <div class="ats-info-text">
-                    <p style="color:#92400e">Experienced Resume Tips</p>
-                    <span style="color:#b45309">Highlight work experience first. Add achievements with numbers/results.</span>
-                  </div>
-                </div>
-              </div>
-              <!-- Doc Type -->
-              <div class="rm-section-title"><i class="fa-solid fa-id-badge"></i> Document Type</div>
-              <div class="rm-radio-row">
-                <label><input type="radio" name="doctype" value="Resume" checked> <i class="fa-solid fa-file-user"></i> Resume</label>
-                <label><input type="radio" name="doctype" value="Curriculum Vitae"> <i class="fa-solid fa-scroll"></i> Curriculum Vitae</label>
-                <label><input type="radio" name="doctype" value="Biodata"> <i class="fa-solid fa-address-card"></i> Biodata</label>
-              </div>
+            <div id="catE" class="c-panel">
+              <div class="ats-box" style="background:linear-gradient(135deg,#fefce8,#fef3c7);border-color:#fde68a;"><i class="fa-solid fa-star" style="color:#d97706"></i><div><p style="color:#92400e">Experienced Resume Tips</p><span style="color:#b45309">Highlight work experience first. Add achievements with numbers.</span></div></div>
             </div>
-          </div>
-
-          <!-- Personal Info with Photo Upload -->
-          <div class="rm-card">
-            <div class="sec-head blue"><div class="left"><i class="fa-solid fa-user"></i> Personal Information</div><span class="live-badge">LIVE PREVIEW</span></div>
-            <div class="rm-section">
-              <div style="display:grid;grid-template-columns:1fr 110px;gap:16px;align-items:start;" class="photo-grid">
-                <div>
-                  <div class="rm-row">
-                    <div class="rm-field"><label>Full Name <span style="color:var(--red)">*</span></label><input type="text" id="f_name" placeholder="e.g. Rahul Kumar" oninput="liveUpdate()"></div>
-                    <div class="rm-field"><label>Mobile No. <span style="color:var(--red)">*</span></label><input type="text" id="f_contact" placeholder="e.g. 9876543210" oninput="liveUpdate()"></div>
-                  </div>
-                  <div class="rm-row">
-                    <div class="rm-field"><label>Email Address</label><input type="email" id="f_email" placeholder="e.g. rahul@gmail.com" oninput="liveUpdate()"></div>
-                    <div class="rm-field"><label>Date of Birth</label><input type="text" id="f_dob" placeholder="e.g. 01-01-2000" oninput="liveUpdate()"></div>
-                  </div>
-                </div>
-                <div class="photo-col">
-                  <img id="photoPreview" src="" alt="Profile Photo" class="photo-preview">
-                  <div class="photo-upload-area" id="photoUploadArea" style="padding:14px 10px;">
-                    <input type="file" accept="image/*" onchange="handlePhotoUpload(this)">
-                    <i class="fa-solid fa-camera"></i>
-                    <p>Upload Photo</p>
-                    <small>JPG/PNG</small>
-                  </div>
-                  <span class="remove-photo-btn" id="removePhotoBtn" onclick="removePhoto()"><i class="fa-solid fa-trash-can"></i> Remove</span>
-                </div>
-              </div>
-              <div class="rm-row">
-                <div class="rm-field"><label>Father's Name</label><input type="text" id="f_fname" placeholder="Father's name" oninput="liveUpdate()"></div>
-                <div class="rm-field"><label>Mother's Name</label><input type="text" id="f_mname" placeholder="Mother's name" oninput="liveUpdate()"></div>
-              </div>
-              <div class="rm-row three">
-                <div class="rm-field"><label>Nationality</label><input type="text" id="f_nationality" placeholder="e.g. Indian" oninput="liveUpdate()"></div>
-                <div class="rm-field"><label>Gender</label>
-                  <select id="f_gender" onchange="liveUpdate()"><option value="">-- Select --</option><option>Male</option><option>Female</option><option>Other</option></select>
-                </div>
-                <div class="rm-field"><label>Marital Status</label>
-                  <select id="f_marital" onchange="liveUpdate()"><option value="">-- Select --</option><option>Married</option><option>Unmarried</option></select>
-                </div>
-              </div>
-              <div class="rm-row">
-                <div class="rm-field"><label>Languages Known</label><input type="text" id="f_language" placeholder="e.g. Hindi, English" oninput="liveUpdate()"></div>
-                <div class="rm-field"><label>Hobbies</label><input type="text" id="f_hobbies" placeholder="e.g. Reading, Cricket" oninput="liveUpdate()"></div>
-              </div>
-              <div class="rm-row full">
-                <div class="rm-field"><label>Address</label><textarea id="f_address" placeholder="Full address" oninput="liveUpdate()"></textarea></div>
-              </div>
+            <div class="sec-lbl"><i class="fa-solid fa-id-badge"></i> Document Type</div>
+            <div class="rr">
+              <label><input type="radio" name="doctype" value="Resume" checked> <i class="fa-solid fa-file-user"></i> Resume</label>
+              <label><input type="radio" name="doctype" value="Curriculum Vitae"> <i class="fa-solid fa-scroll"></i> Curriculum Vitae</label>
+              <label><input type="radio" name="doctype" value="Biodata"> <i class="fa-solid fa-address-card"></i> Biodata</label>
             </div>
-          </div>
-
-          <!-- Skills with Progress Bar -->
-          <div class="rm-card">
-            <div class="sec-head teal"><div class="left"><i class="fa-solid fa-chart-bar"></i> Skills <span style="font-size:.72rem;opacity:.85">(with Progress Bar)</span></div></div>
-            <div class="rm-section">
-              <div class="rm-section-title"><i class="fa-solid fa-sliders"></i> Add your key skills & proficiency level</div>
-              <div id="skillsList"></div>
-              <button class="add-btn" onclick="addSkill()"><i class="fa-solid fa-plus"></i> Add Skill</button>
-            </div>
-          </div>
-
-          <!-- Career Objective -->
-          <div class="rm-card">
-            <div class="sec-head green"><div class="left"><i class="fa-solid fa-bullseye"></i> Career Objective</div></div>
-            <div class="rm-section">
-              <div class="rm-section-title"><i class="fa-solid fa-list-check"></i> Choose a preset or write your own</div>
-              <div id="objList">
-                <div class="obj-option"><input type="radio" name="obj" value="1"><span>Secure a responsible career opportunity to fully utilize my talent and skills while making a significant contribution to the success of the company.</span></div>
-                <div class="obj-option"><input type="radio" name="obj" value="2"><span>Self-motivated and hardworking fresher seeking an opportunity to work in a challenging environment to prove my skills in the growth of the organization.</span></div>
-                <div class="obj-option"><input type="radio" name="obj" value="3"><span>To seek a position in a professionally managed organization where conceptual and functional skills are effectively utilized, contributing to organizational and personal growth.</span></div>
-                <div class="obj-option"><input type="radio" name="obj" value="4"><span>To make a good position in a reputed company and work enthusiastically in a team, providing steady career growth along with job satisfaction.</span></div>
-                <div class="obj-option"><input type="radio" name="obj" value="5"><span>To contribute my best to the organization and utilize my skills to perform the job to the best of my ability with zeal and willingness to learn.</span></div>
-                <div class="obj-option"><input type="radio" name="obj" value="6"><span>Experienced professional with [X] years of expertise, seeking a senior role to apply domain knowledge, mentor teams, and deliver measurable results aligned with organizational goals.</span></div>
-              </div>
-              <div class="rm-row full" style="margin-top:12px;">
-                <div class="rm-field"><label>Or write your own objective</label><textarea id="f_objective" placeholder="Write a custom career objective..."></textarea></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Academic Qualification -->
-          <div class="rm-card">
-            <div class="sec-head orange"><div class="left"><i class="fa-solid fa-graduation-cap"></i> Academic Qualification <span style="font-size:.72rem;opacity:.85">(required)</span></div></div>
-            <div class="rm-section">
-              <div class="edu-table-header"><span>Exam / Degree</span><span>Board / University</span><span>Year</span><span>Marks%</span><span>Division</span><span></span></div>
-              <div id="eduList"></div>
-              <button class="add-btn" onclick="addEdu('edu')"><i class="fa-solid fa-plus"></i> Add Row</button>
-            </div>
-          </div>
-
-          <!-- Professional Qualification -->
-          <div class="rm-card">
-            <div class="sec-head orange"><div class="left"><i class="fa-solid fa-certificate"></i> Professional Qualification <span style="font-size:.72rem;opacity:.85">(optional)</span></div></div>
-            <div class="rm-section">
-              <div class="edu-table-header"><span>Exam / Degree</span><span>Board / University</span><span>Year</span><span>Marks%</span><span>Division</span><span></span></div>
-              <div id="proList"></div>
-              <button class="add-btn" onclick="addEdu('pro')"><i class="fa-solid fa-plus"></i> Add Row</button>
-            </div>
-          </div>
-
-          <!-- Work Experience -->
-          <div class="rm-card">
-            <div class="sec-head teal"><div class="left"><i class="fa-solid fa-briefcase"></i> Work Experience <span style="font-size:.72rem;opacity:.85">(optional)</span></div></div>
-            <div class="rm-section">
-              <div id="workList"></div>
-              <button class="add-btn" onclick="addWork()"><i class="fa-solid fa-plus"></i> Add</button>
-            </div>
-          </div>
-
-          <!-- Extra Qualification -->
-          <div class="rm-card">
-            <div class="sec-head slate"><div class="left"><i class="fa-solid fa-award"></i> Extra Qualifications / Certifications <span style="font-size:.72rem;opacity:.85">(optional)</span></div></div>
-            <div class="rm-section">
-              <div id="extraList"></div>
-              <button class="add-btn" onclick="addExtra()"><i class="fa-solid fa-plus"></i> Add</button>
-            </div>
-          </div>
-
-          <!-- Template & Color Theme Select -->
-          <div class="rm-card">
-            <div class="sec-head purple"><div class="left"><i class="fa-solid fa-palette"></i> Template & Color Theme</div></div>
-            <div class="rm-section">
-              <!-- Color Themes -->
-              <div class="rm-section-title"><i class="fa-solid fa-swatchbook"></i> Professional Color Themes</div>
-              <div class="theme-picker" id="themePicker">
-                <div class="theme-dot active" style="background:linear-gradient(135deg,#0d2257,#1a56db)" data-theme="navy" title="Navy Blue" onclick="selectTheme(this)"></div>
-                <div class="theme-dot" style="background:linear-gradient(135deg,#1a1a1a,#444)" data-theme="bw" title="Black & White" onclick="selectTheme(this)"></div>
-                <div class="theme-dot" style="background:linear-gradient(135deg,#064e3b,#059669)" data-theme="green" title="Modern Green" onclick="selectTheme(this)"></div>
-                <div class="theme-dot" style="background:linear-gradient(135deg,#374151,#6b7280)" data-theme="grey" title="Corporate Grey" onclick="selectTheme(this)"></div>
-                <div class="theme-dot" style="background:linear-gradient(135deg,#534AB7,#7c3aed)" data-theme="purple" title="Deep Purple" onclick="selectTheme(this)"></div>
-                <div class="theme-dot" style="background:linear-gradient(135deg,#A32D2D,#dc2626)" data-theme="red" title="Bold Red" onclick="selectTheme(this)"></div>
-                <div class="theme-dot" style="background:linear-gradient(135deg,#185FA5,#3b82f6)" data-theme="blue" title="Royal Blue" onclick="selectTheme(this)"></div>
-                <div class="theme-dot" style="background:linear-gradient(135deg,#BA7517,#f97316)" data-theme="amber" title="Corporate Amber" onclick="selectTheme(this)"></div>
-              </div>
-
-              <!-- Template Grid -->
-              <div class="rm-section-title" style="margin-top:8px"><i class="fa-solid fa-layout"></i> Choose Resume Template</div>
-              <div class="tpl-grid">
-
-                <!-- 1: Classic Header -->
-                <div class="tpl-item active" data-tpl="1" onclick="selectTpl(this)">
-                  <div class="tpl-preview" style="background:#f8f7ff">
-                    <div class="tpl-badge">Popular</div>
-                    <div class="tpl-header-bar" style="background:#0d2257;color:#fff">Name · Classic</div>
-                    <div class="tpl-body-wrap"><div class="tpl-main-col"><div class="tpl-line dk" style="background:#0d2257;width:75%"></div><div class="tpl-line" style="background:#888;width:55%"></div><div class="tpl-line" style="background:#888;width:85%"></div><div class="tpl-line" style="background:#888;width:65%"></div></div></div>
-                  </div>
-                  <div class="tpl-label">1 – Classic</div>
-                </div>
-
-                <!-- 2: Sidebar Modern -->
-                <div class="tpl-item" data-tpl="2" onclick="selectTpl(this)">
-                  <div class="tpl-preview" style="background:#f5f5f5">
-                    <div class="tpl-header-bar" style="background:#374151;color:#fff">Sidebar Layout</div>
-                    <div class="tpl-body-wrap"><div class="tpl-side-col" style="background:#e0e0e0"><div class="tpl-line dk" style="background:#374151;width:90%"></div><div class="tpl-line" style="background:#888;width:70%"></div></div><div class="tpl-main-col"><div class="tpl-line" style="background:#888;width:90%"></div><div class="tpl-line" style="background:#888;width:65%"></div><div class="tpl-line" style="background:#888;width:78%"></div></div></div>
-                  </div>
-                  <div class="tpl-label">2 – Sidebar</div>
-                </div>
-
-                <!-- 3: Navy Professional -->
-                <div class="tpl-item" data-tpl="3" onclick="selectTpl(this)">
-                  <div class="tpl-preview" style="background:#eef3ff">
-                    <div class="tpl-header-bar" style="background:#185FA5;color:#fff">Navy Professional</div>
-                    <div class="tpl-body-wrap"><div class="tpl-main-col"><div class="tpl-line dk" style="background:#185FA5;width:70%"></div><div class="tpl-line" style="background:#888;width:50%"></div><div class="tpl-line" style="background:#888;width:80%"></div><div class="tpl-line" style="background:#888;width:60%"></div></div></div>
-                  </div>
-                  <div class="tpl-label">3 – Navy Blue</div>
-                </div>
-
-                <!-- 4: ATS Simple -->
-                <div class="tpl-item" data-tpl="4" onclick="selectTpl(this)">
-                  <div class="tpl-preview" style="background:#fff">
-                    <div class="tpl-badge ats">ATS</div>
-                    <div class="tpl-header-bar" style="background:#fff;color:#111;border-bottom:2px solid #111;">ATS Friendly</div>
-                    <div class="tpl-body-wrap"><div class="tpl-main-col"><div class="tpl-line dk" style="background:#333;width:70%"></div><div class="tpl-line" style="background:#555;width:90%"></div><div class="tpl-line" style="background:#555;width:75%"></div><div class="tpl-line" style="background:#555;width:85%"></div></div></div>
-                  </div>
-                  <div class="tpl-label">4 – ATS Simple</div>
-                </div>
-
-                <!-- 5: Dark Sidebar -->
-                <div class="tpl-item" data-tpl="5" onclick="selectTpl(this)">
-                  <div class="tpl-preview" style="background:#1e293b">
-                    <div class="tpl-header-bar" style="background:#1e293b;color:#fbbf24;">Dark Premium</div>
-                    <div class="tpl-body-wrap"><div class="tpl-side-col" style="background:#0f172a"><div class="tpl-line" style="background:#fbbf24;width:85%"></div><div class="tpl-line" style="background:#94a3b8;width:65%"></div></div><div class="tpl-main-col"><div class="tpl-line" style="background:#e2e8f0;width:80%"></div><div class="tpl-line" style="background:#94a3b8;width:65%"></div><div class="tpl-line" style="background:#94a3b8;width:75%"></div></div></div>
-                  </div>
-                  <div class="tpl-label">5 – Dark Premium</div>
-                </div>
-
-                <!-- 6: Green Minimal -->
-                <div class="tpl-item" data-tpl="6" onclick="selectTpl(this)">
-                  <div class="tpl-preview" style="background:#f0fdf4">
-                    <div class="tpl-header-bar" style="background:#064e3b;color:#fff">Modern Green</div>
-                    <div class="tpl-body-wrap"><div class="tpl-main-col"><div class="tpl-line dk" style="background:#059669;width:68%"></div><div class="tpl-line" style="background:#888;width:52%"></div><div class="tpl-line" style="background:#888;width:82%"></div><div class="tpl-line" style="background:#888;width:63%"></div></div></div>
-                  </div>
-                  <div class="tpl-label">6 – Modern Green</div>
-                </div>
-
-                <!-- 7: Elegant Serif -->
-                <div class="tpl-item" data-tpl="7" onclick="selectTpl(this)">
-                  <div class="tpl-preview" style="background:#fffbeb">
-                    <div class="tpl-header-bar" style="background:#78350f;color:#fef3c7;">Elegant Gold</div>
-                    <div class="tpl-body-wrap"><div class="tpl-side-col" style="background:#fef3c7"><div class="tpl-line dk" style="background:#b45309;width:90%"></div><div class="tpl-line" style="background:#d97706;width:65%"></div></div><div class="tpl-main-col"><div class="tpl-line" style="background:#888;width:85%"></div><div class="tpl-line" style="background:#888;width:65%"></div></div></div>
-                  </div>
-                  <div class="tpl-label">7 – Elegant Gold</div>
-                </div>
-
-                <!-- 8: Split Color Header -->
-                <div class="tpl-item" data-tpl="8" onclick="selectTpl(this)">
-                  <div class="tpl-preview" style="background:#fff0f5">
-                    <div class="tpl-header-bar" style="background:linear-gradient(90deg,#D4537E,#9d174d);color:#fff">Gradient Header</div>
-                    <div class="tpl-body-wrap"><div class="tpl-main-col"><div class="tpl-line dk" style="background:#D4537E;width:72%"></div><div class="tpl-line" style="background:#888;width:58%"></div><div class="tpl-line" style="background:#888;width:80%"></div></div></div>
-                  </div>
-                  <div class="tpl-label">8 – Gradient</div>
-                </div>
-
-                <!-- 9: Minimal Lines -->
-                <div class="tpl-item" data-tpl="9" onclick="selectTpl(this)">
-                  <div class="tpl-preview" style="background:#fff">
-                    <div class="tpl-header-bar" style="background:#fff;color:#1e293b;border-bottom:3px solid #6366f1;">Minimal Lines</div>
-                    <div class="tpl-body-wrap"><div class="tpl-main-col"><div class="tpl-line dk" style="background:#6366f1;width:60%"></div><div class="tpl-line" style="background:#888;width:85%"></div><div class="tpl-line" style="background:#888;width:70%"></div><div class="tpl-line" style="background:#888;width:80%"></div></div></div>
-                  </div>
-                  <div class="tpl-label">9 – Minimal</div>
-                </div>
-
-                <!-- 10: Corporate Grey -->
-                <div class="tpl-item" data-tpl="10" onclick="selectTpl(this)">
-                  <div class="tpl-preview" style="background:#f9fafb">
-                    <div class="tpl-header-bar" style="background:#374151;color:#fff">Corporate Grey</div>
-                    <div class="tpl-body-wrap"><div class="tpl-side-col" style="background:#e5e7eb"><div class="tpl-line dk" style="background:#374151;width:85%"></div><div class="tpl-line" style="background:#888;width:60%"></div></div><div class="tpl-main-col"><div class="tpl-line" style="background:#888;width:90%"></div><div class="tpl-line" style="background:#888;width:70%"></div></div></div>
-                  </div>
-                  <div class="tpl-label">10 – Corp. Grey</div>
-                </div>
-
-              </div>
-            </div>
-
-            <div class="rm-submit-row">
-              <button class="gen-btn" onclick="generateResume()">
-                <i class="fa-solid fa-file-arrow-down"></i>
-                Generate Resume / CV
-              </button>
-              <span style="font-size:.74rem;color:var(--muted);display:flex;align-items:center;gap:5px;"><i class="fa-solid fa-print" style="color:var(--green)"></i> Then Print → Save as PDF</span>
-            </div>
-          </div>
-
-          <!-- SEO -->
-          <div class="seo-block">
-            <h2>Free Resume / CV Maker 2026 – Create Professional Biodata Online</h2>
-            <p>Top Sarkari Jobs Resume Maker lets you create a professional Resume, CV or Biodata online for free. Choose from 10 modern templates including ATS-friendly, dark, and corporate designs. Upload your photo, add skill progress bars, pick a color theme and download as PDF. No registration, no watermark, no fee. Perfect for freshers and experienced candidates.</p>
-          </div>
-
-        </div><!-- /#formSection -->
-
-        <!-- PREVIEW SECTION -->
-        <div class="preview-wrap" id="previewSection">
-          <div class="preview-actions">
-            <button class="back-btn" onclick="goBack()"><i class="fa-solid fa-arrow-left"></i> Edit Details</button>
-            <button class="print-btn" onclick="window.print()">
-              <i class="fa-solid fa-file-arrow-down"></i>
-              Download PDF / Print
-            </button>
-            <span style="font-size:.73rem;color:var(--muted)"><i class="fa-solid fa-lightbulb" style="color:var(--accent)"></i> Ctrl+P → <strong>More settings</strong> → Uncheck <strong>"Headers and footers"</strong> → Margins: None → Save as PDF</span>
-          </div>
-          <div class="resume-paper" id="resumeOutput"></div>
-        </div>
-
-      </div><!-- /main col -->
-
-      <!-- ===== SIDEBAR ===== -->
-      <aside class="home-sidebar" aria-label="Quick links sidebar">
-
-        <div class="sec-card">
-          <div class="sec-head red"><div class="left"><i class="fa-solid fa-link"></i> IMPORTANT LINKS</div></div>
-          <div class="sec-list">
-            <a href="view.html?section=latest%20jobs"><i class="fa-solid fa-briefcase"></i><span>Latest Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="category.html?group=admit-result"><i class="fa-solid fa-id-card"></i><span>Admit Card</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="category.html?group=admissions"><i class="fa-solid fa-trophy"></i><span>Results</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="view.html?section=Govt%20Scheme%20Yojna"><i class="fa-solid fa-hand-holding-heart"></i><span>Govt Schemes</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="view.html?section=Haryana%20All%20State%20Jobs"><i class="fa-solid fa-location-dot"></i><span>Haryana Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-          </div>
-          <a href="category.html?group=popular" class="sec-more">View All →</a>
-        </div>
-
-        <div class="sec-card">
-          <div class="sec-head blue"><div class="left"><i class="fa-solid fa-fire-flame-curved"></i> TRENDING JOBS</div></div>
-          <div class="sec-list">
-            <a href="view.html?section=Railway%20Jobs"><i class="fa-solid fa-train"></i><span>Railway Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="view.html?section=Bank%20Jobs"><i class="fa-solid fa-building-columns"></i><span>Bank Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="view.html?section=Police%20Jobs"><i class="fa-solid fa-shield-halved"></i><span>Police Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="view.html?section=Teacher%20Jobs"><i class="fa-solid fa-chalkboard-user"></i><span>Teaching Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="view.html?section=Indian%20ARMY%20jobs"><i class="fa-solid fa-star"></i><span>Army Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-          </div>
-          <a href="view.html?section=latest%20jobs" class="sec-more">View All Jobs →</a>
-        </div>
-
-        <div class="sec-card">
-          <div class="sec-head teal"><div class="left"><i class="fa-solid fa-screwdriver-wrench"></i> TOOLS & SERVICES</div></div>
-          <div class="sec-list">
-            <a href="tools.html"><i class="fa-solid fa-image"></i><span>Photo & PDF Tools</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="view.html?section=Important%20CSC%20PDF"><i class="fa-solid fa-id-card"></i><span>CSC Services</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="resume-maker.html"><i class="fa-solid fa-file-lines" style="color:var(--purple)"></i><span>Resume Maker</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="helpdesk.html"><i class="fa-solid fa-headset"></i><span>Helpdesk</span><i class="fa-solid fa-chevron-right arrow"></i></a>
           </div>
         </div>
 
-        <div class="sec-card">
-          <div class="sec-head orange"><div class="left"><i class="fa-solid fa-bell"></i> JOIN & FOLLOW US</div></div>
-          <div class="social-btns">
-            <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" class="soc-btn sb-wa"><i class="fa-brands fa-whatsapp"></i> Join WhatsApp Channel</a>
-            <a href="https://www.youtube.com/@Topsarkarijobs/shorts" target="_blank" rel="noopener" class="soc-btn sb-yt"><i class="fa-brands fa-youtube"></i> YouTube Channel</a>
-            <a href="https://www.instagram.com/topsarkarijobs" target="_blank" rel="noopener" class="soc-btn sb-ig"><i class="fa-brands fa-instagram"></i> Instagram</a>
+        <!-- Personal Info -->
+        <div class="f-card">
+          <div class="f-head blue"><div style="display:flex;align-items:center;gap:8px"><i class="fa-solid fa-user"></i> Personal Information</div><span class="live">LIVE PREVIEW</span></div>
+          <div class="f-body">
+            <div class="ph-grid">
+              <div>
+                <div class="row">
+                  <div class="fld"><label>Full Name <span class="req">*</span></label><input type="text" id="f_name" placeholder="e.g. Rahul Kumar"></div>
+                  <div class="fld"><label>Mobile No. <span class="req">*</span></label><input type="text" id="f_contact" placeholder="e.g. 9876543210"></div>
+                </div>
+                <div class="row">
+                  <div class="fld"><label>Email Address</label><input type="email" id="f_email" placeholder="e.g. rahul@gmail.com"></div>
+                  <div class="fld"><label>Date of Birth</label><input type="text" id="f_dob" placeholder="e.g. 01-01-2000"></div>
+                </div>
+              </div>
+              <div class="ph-col">
+                <img id="phPrev" src="" alt="" class="ph-prev">
+                <div class="ph-zone" id="phZone">
+                  <input type="file" accept="image/*" onchange="handlePhoto(this)">
+                  <i class="fa-solid fa-camera"></i>
+                  <p>Upload Photo</p>
+                </div>
+                <span class="rm-ph" id="rmPh" onclick="removePhoto()"><i class="fa-solid fa-trash-can"></i> Remove</span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="fld"><label>Father's Name</label><input type="text" id="f_fname" placeholder="Father's name"></div>
+              <div class="fld"><label>Mother's Name</label><input type="text" id="f_mname" placeholder="Mother's name"></div>
+            </div>
+            <div class="row three">
+              <div class="fld"><label>Nationality</label><input type="text" id="f_nationality" placeholder="e.g. Indian"></div>
+              <div class="fld"><label>Gender</label><select id="f_gender"><option value="">-- Select --</option><option>Male</option><option>Female</option><option>Other</option></select></div>
+              <div class="fld"><label>Marital Status</label><select id="f_marital"><option value="">-- Select --</option><option>Married</option><option>Unmarried</option></select></div>
+            </div>
+            <div class="row">
+              <div class="fld"><label>Languages Known</label><input type="text" id="f_language" placeholder="e.g. Hindi, English"></div>
+              <div class="fld"><label>Hobbies</label><input type="text" id="f_hobbies" placeholder="e.g. Reading, Cricket"></div>
+            </div>
+            <div class="row full">
+              <div class="fld"><label>Address</label><textarea id="f_address" placeholder="Full address"></textarea></div>
+            </div>
           </div>
         </div>
 
-      </aside>
+        <!-- Skills -->
+        <div class="f-card">
+          <div class="f-head teal"><i class="fa-solid fa-chart-bar"></i> Skills <span style="font-size:.71rem;opacity:.85;margin-left:4px">(with Progress Bar)</span></div>
+          <div class="f-body">
+            <div class="sec-lbl"><i class="fa-solid fa-sliders"></i> Add skills &amp; proficiency level</div>
+            <div id="skillsList"></div>
+            <button class="add-btn" onclick="addSkill()"><i class="fa-solid fa-plus"></i> Add Skill</button>
+          </div>
+        </div>
 
-    </div><!-- /resume-grid -->
-  </main>
+        <!-- Objective -->
+        <div class="f-card">
+          <div class="f-head green"><i class="fa-solid fa-bullseye"></i> Career Objective</div>
+          <div class="f-body">
+            <div class="sec-lbl"><i class="fa-solid fa-list-check"></i> Choose preset or write your own</div>
+            <div id="objList">
+              <div class="obj-opt"><input type="radio" name="obj" value="1"><span>Secure a responsible career opportunity to fully utilize my talent and skills while making a significant contribution to the success of the company.</span></div>
+              <div class="obj-opt"><input type="radio" name="obj" value="2"><span>Self-motivated and hardworking fresher seeking an opportunity to work in a challenging environment to prove my skills in the growth of the organization.</span></div>
+              <div class="obj-opt"><input type="radio" name="obj" value="3"><span>To seek a position in a professionally managed organization where conceptual and functional skills are effectively utilized, contributing to organizational and personal growth.</span></div>
+              <div class="obj-opt"><input type="radio" name="obj" value="4"><span>To make a good position in a reputed company and work enthusiastically in a team, providing steady career growth along with job satisfaction.</span></div>
+              <div class="obj-opt"><input type="radio" name="obj" value="5"><span>To contribute my best to the organization and utilize my skills to perform the job to the best of my ability with zeal and willingness to learn.</span></div>
+              <div class="obj-opt"><input type="radio" name="obj" value="6"><span>Experienced professional seeking a senior role to apply domain knowledge, mentor teams, and deliver measurable results aligned with organizational goals.</span></div>
+            </div>
+            <div class="row full" style="margin-top:12px">
+              <div class="fld"><label>Or write your own objective</label><textarea id="f_objective" placeholder="Write a custom career objective..."></textarea></div>
+            </div>
+          </div>
+        </div>
 
-  <!-- FOOTER -->
-  <footer class="site-footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div>
-          <div class="footer-title">Top Sarkari Jobs</div>
-          <p class="footer-sub">India's No.1 portal for Sarkari Jobs, Results, Admit Cards, Govt Schemes and Free Tools.</p>
-          <div class="footer-social">
-            <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i></a>
-            <a href="https://www.youtube.com/@Topsarkarijobs/shorts" target="_blank" rel="noopener"><i class="fa-brands fa-youtube"></i></a>
-            <a href="https://www.instagram.com/topsarkarijobs" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>
+        <!-- Academic -->
+        <div class="f-card">
+          <div class="f-head orange"><i class="fa-solid fa-graduation-cap"></i> Academic Qualification <span style="font-size:.71rem;opacity:.85;margin-left:4px">(required)</span></div>
+          <div class="f-body">
+            <div class="edu-hdr"><span>Exam / Degree</span><span>Board / University</span><span>Year</span><span>Marks%</span><span>Division</span><span></span></div>
+            <div id="eduList"></div>
+            <button class="add-btn" onclick="addEdu('edu')"><i class="fa-solid fa-plus"></i> Add Row</button>
           </div>
         </div>
-        <div>
-          <div class="footer-title">Quick Links</div>
-          <div class="footer-links-list">
-            <a href="./">Home</a>
-            <a href="view.html?section=latest%20jobs">Latest Jobs</a>
-            <a href="category.html?group=admit-result">Admit Card</a>
-            <a href="category.html?group=admissions">Results</a>
+
+        <!-- Professional -->
+        <div class="f-card">
+          <div class="f-head orange"><i class="fa-solid fa-certificate"></i> Professional Qualification <span style="font-size:.71rem;opacity:.85;margin-left:4px">(optional)</span></div>
+          <div class="f-body">
+            <div class="edu-hdr"><span>Exam / Degree</span><span>Board / University</span><span>Year</span><span>Marks%</span><span>Division</span><span></span></div>
+            <div id="proList"></div>
+            <button class="add-btn" onclick="addEdu('pro')"><i class="fa-solid fa-plus"></i> Add Row</button>
           </div>
         </div>
-        <div>
-          <div class="footer-title">Tools</div>
-          <div class="footer-links-list">
-            <a href="resume-maker.html">Resume Maker</a>
-            <a href="tools.html">Free Tools</a>
-            <a href="helpdesk.html">Helpdesk</a>
+
+        <!-- Work -->
+        <div class="f-card">
+          <div class="f-head teal"><i class="fa-solid fa-briefcase"></i> Work Experience <span style="font-size:.71rem;opacity:.85;margin-left:4px">(optional)</span></div>
+          <div class="f-body">
+            <div id="workList"></div>
+            <button class="add-btn" onclick="addWork()"><i class="fa-solid fa-plus"></i> Add</button>
           </div>
         </div>
-        <div class="footer-contact">
-          <div class="footer-title">Contact</div>
-          <p><i class="fa-solid fa-envelope"></i> topsarkarijobs2023@gmail.com</p>
-          <p><i class="fa-brands fa-whatsapp"></i> WhatsApp Channel</p>
+
+        <!-- Extra -->
+        <div class="f-card">
+          <div class="f-head slate"><i class="fa-solid fa-award"></i> Extra Qualifications / Certifications <span style="font-size:.71rem;opacity:.85;margin-left:4px">(optional)</span></div>
+          <div class="f-body">
+            <div id="extraList"></div>
+            <button class="add-btn" onclick="addExtra()"><i class="fa-solid fa-plus"></i> Add</button>
+          </div>
+        </div>
+
+        <!-- Template & Theme -->
+        <div class="f-card">
+          <div class="f-head purple"><i class="fa-solid fa-palette"></i> Template &amp; Color Theme</div>
+          <div class="f-body">
+            <div class="sec-lbl"><i class="fa-solid fa-swatchbook"></i> Professional Color Themes</div>
+            <div class="th-pick" id="thPick">
+              <div class="th-dot active" style="background:linear-gradient(135deg,#0d2257,#1a56db)" data-theme="navy" title="Navy Blue" onclick="selTheme(this)"></div>
+              <div class="th-dot" style="background:linear-gradient(135deg,#1a1a1a,#444)" data-theme="bw" title="Black &amp; White" onclick="selTheme(this)"></div>
+              <div class="th-dot" style="background:linear-gradient(135deg,#064e3b,#059669)" data-theme="green" title="Modern Green" onclick="selTheme(this)"></div>
+              <div class="th-dot" style="background:linear-gradient(135deg,#374151,#6b7280)" data-theme="grey" title="Corporate Grey" onclick="selTheme(this)"></div>
+              <div class="th-dot" style="background:linear-gradient(135deg,#534AB7,#7c3aed)" data-theme="purple" title="Deep Purple" onclick="selTheme(this)"></div>
+              <div class="th-dot" style="background:linear-gradient(135deg,#A32D2D,#dc2626)" data-theme="red" title="Bold Red" onclick="selTheme(this)"></div>
+              <div class="th-dot" style="background:linear-gradient(135deg,#185FA5,#3b82f6)" data-theme="blue" title="Royal Blue" onclick="selTheme(this)"></div>
+              <div class="th-dot" style="background:linear-gradient(135deg,#BA7517,#f97316)" data-theme="amber" title="Corporate Amber" onclick="selTheme(this)"></div>
+            </div>
+            <div class="sec-lbl" style="margin-top:4px"><i class="fa-solid fa-layout"></i> Choose Resume Template</div>
+            <div class="tpl-grid">
+              <div class="tpl-it active" data-tpl="1" onclick="selTpl(this)">
+                <div class="tpl-prev" style="background:#f8f7ff"><div class="tpl-bdg" style="background:#10b981">Popular</div><div class="tpl-hbar" style="background:#0d2257;color:#fff">Name · Classic</div><div class="tpl-bwrap"><div class="tpl-mc"><div class="tpl-ln dk" style="background:#0d2257"></div><div class="tpl-ln" style="background:#0d2257"></div><div class="tpl-ln" style="background:#0d2257"></div></div></div></div>
+                <div class="tpl-lbl">1 – Classic Bold</div>
+              </div>
+              <div class="tpl-it" data-tpl="2" onclick="selTpl(this)">
+                <div class="tpl-prev" style="background:#f8f7ff"><div class="tpl-bwrap" style="padding:0;gap:0"><div class="tpl-sc" style="background:#0d2257;padding:6px 5px"><div class="tpl-ln" style="background:#fff"></div><div class="tpl-ln" style="background:#fff"></div></div><div class="tpl-mc" style="padding:6px 8px"><div class="tpl-hbar" style="background:#1a56db;color:#fff;padding:5px 6px;font-size:7px">NAME</div><div class="tpl-ln dk" style="background:#0d2257"></div></div></div></div>
+                <div class="tpl-lbl">2 – Sidebar Modern</div>
+              </div>
+              <div class="tpl-it" data-tpl="3" onclick="selTpl(this)">
+                <div class="tpl-prev" style="background:#fff"><div style="display:flex;height:100%"><div style="width:5px;background:#0d2257;flex-shrink:0"></div><div style="flex:1;padding:5px 8px"><div style="font-size:8px;font-weight:800;color:#0d2257">NAME</div><div style="height:2px;background:#1a56db;width:30px;margin:3px 0"></div><div class="tpl-ln" style="background:#0d2257"></div></div></div></div>
+                <div class="tpl-lbl">3 – Accent Line</div>
+              </div>
+              <div class="tpl-it" data-tpl="4" onclick="selTpl(this)">
+                <div class="tpl-prev" style="background:#fff"><div class="tpl-bdg" style="background:#6366f1">ATS</div><div style="padding:6px 8px;border-bottom:2px solid #111"><div style="font-size:8px;font-weight:900;color:#000">NAME</div><div style="font-size:6px;color:#666">contact · email</div></div><div style="padding:5px 8px"><div class="tpl-ln dk" style="background:#111"></div><div class="tpl-ln" style="background:#111"></div></div></div>
+                <div class="tpl-lbl">4 – ATS Friendly</div>
+              </div>
+              <div class="tpl-it" data-tpl="5" onclick="selTpl(this)">
+                <div class="tpl-prev" style="background:#0f172a"><div style="display:flex;height:100%"><div style="width:35%;background:#1e293b;padding:5px"><div style="font-size:6.5px;font-weight:800;color:#fbbf24">NAME</div><div class="tpl-ln" style="background:#fff"></div></div><div style="flex:1;padding:5px 7px"><div class="tpl-ln dk" style="background:#fbbf24"></div><div class="tpl-ln" style="background:#e2e8f0"></div></div></div></div>
+                <div class="tpl-lbl">5 – Dark Pro</div>
+              </div>
+              <div class="tpl-it" data-tpl="6" onclick="selTpl(this)">
+                <div class="tpl-prev" style="background:#f8f7ff"><div style="background:linear-gradient(135deg,#0d2257,#1a56db);padding:10px 9px"><div style="font-size:8px;font-weight:900;color:#fff">NAME</div></div><div style="padding:5px 8px"><div class="tpl-ln dk" style="background:#0d2257"></div></div></div>
+                <div class="tpl-lbl">6 – Gradient</div>
+              </div>
+              <div class="tpl-it" data-tpl="7" onclick="selTpl(this)">
+                <div class="tpl-prev" style="background:#f8f7ff"><div style="display:flex;height:100%"><div style="width:32%;background:#1e40af;padding:5px;display:flex;flex-direction:column;align-items:center;gap:3px"><div style="width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.3)"></div><div class="tpl-ln" style="background:#fff;width:80%"></div></div><div style="flex:1;padding:5px 7px"><div class="tpl-ln dk" style="background:#1e40af"></div><div class="tpl-ln" style="background:#1e40af"></div></div></div></div>
+                <div class="tpl-lbl">7 – Photo Sidebar</div>
+              </div>
+              <div class="tpl-it" data-tpl="8" onclick="selTpl(this)">
+                <div class="tpl-prev" style="background:#f8f7ff"><div style="background:linear-gradient(120deg,#0d2257,#1a56db 50%,#f97316);padding:12px 9px;text-align:center"><div style="font-size:8px;font-weight:900;color:#fff">NAME</div></div><div style="padding:5px 8px"><div class="tpl-ln dk" style="background:#0d2257"></div></div></div>
+                <div class="tpl-lbl">8 – Tri-Gradient</div>
+              </div>
+              <div class="tpl-it" data-tpl="9" onclick="selTpl(this)">
+                <div class="tpl-prev" style="background:#fff"><div style="padding:6px 8px;border-bottom:3px solid #0d2257"><div style="font-size:8px;font-weight:900;color:#0d2257">NAME</div></div><div style="padding:5px 8px"><div class="tpl-ln dk" style="background:#0d2257"></div></div></div>
+                <div class="tpl-lbl">9 – Minimal Lines</div>
+              </div>
+              <div class="tpl-it" data-tpl="10" onclick="selTpl(this)">
+                <div class="tpl-prev" style="background:#f8f7ff"><div style="display:flex;height:100%"><div style="width:32%;background:#374151;padding:5px"><div class="tpl-ln" style="background:#fff"></div></div><div style="flex:1;padding:5px 7px"><div style="background:#374151;height:18px;margin-bottom:4px;display:flex;align-items:center;padding:2px 5px"><span style="font-size:6.5px;font-weight:900;color:#fff">NAME</span></div><div class="tpl-ln" style="background:#374151"></div></div></div></div>
+                <div class="tpl-lbl">10 – Corp. Grey</div>
+              </div>
+            </div>
+          </div>
+          <div class="sub-row">
+            <button class="gen-btn" onclick="genResume()"><i class="fa-solid fa-file-arrow-down"></i> Generate Resume / CV</button>
+            <span style="font-size:.72rem;color:var(--muted);display:flex;align-items:center;gap:5px"><i class="fa-solid fa-print" style="color:var(--green)"></i> Then Print → Save as PDF</span>
+          </div>
+        </div>
+
+      </div><!-- /#formSection -->
+
+      <!-- PREVIEW -->
+      <div class="prev-wrap" id="prevSection">
+        <div class="prev-actions">
+          <button class="back-btn" onclick="goBack()"><i class="fa-solid fa-arrow-left"></i> Edit Details</button>
+          <button class="print-btn" onclick="window.print()"><i class="fa-solid fa-file-arrow-down"></i> Download PDF / Print</button>
+          <span style="font-size:.71rem;color:var(--muted)"><i class="fa-solid fa-lightbulb" style="color:var(--accent)"></i> Ctrl+P → Margins: None → Uncheck Headers/Footers → Save PDF</span>
+        </div>
+        <div class="r-paper" id="resumeOut"></div>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside class="aside">
+      <div class="s-card">
+        <div class="s-head red"><i class="fa-solid fa-link"></i> IMPORTANT LINKS</div>
+        <div class="s-list">
+          <a href="view.html?section=latest%20jobs"><i class="fa-solid fa-briefcase"></i><span>Latest Jobs</span><i class="fa-solid fa-chevron-right arr"></i></a>
+          <a href="category.html?group=admit-result"><i class="fa-solid fa-id-card"></i><span>Admit Card</span><i class="fa-solid fa-chevron-right arr"></i></a>
+          <a href="category.html?group=admissions"><i class="fa-solid fa-trophy"></i><span>Results</span><i class="fa-solid fa-chevron-right arr"></i></a>
+          <a href="view.html?section=Govt%20Scheme%20Yojna"><i class="fa-solid fa-hand-holding-heart"></i><span>Govt Schemes</span><i class="fa-solid fa-chevron-right arr"></i></a>
+          <a href="view.html?section=Haryana%20All%20State%20Jobs"><i class="fa-solid fa-location-dot"></i><span>Haryana Jobs</span><i class="fa-solid fa-chevron-right arr"></i></a>
+        </div>
+        <a href="category.html?group=popular" class="s-more">View All →</a>
+      </div>
+      <div class="s-card">
+        <div class="s-head blue"><i class="fa-solid fa-fire-flame-curved"></i> TRENDING JOBS</div>
+        <div class="s-list">
+          <a href="view.html?section=Railway%20Jobs"><i class="fa-solid fa-train"></i><span>Railway Jobs</span><i class="fa-solid fa-chevron-right arr"></i></a>
+          <a href="view.html?section=Bank%20Jobs"><i class="fa-solid fa-building-columns"></i><span>Bank Jobs</span><i class="fa-solid fa-chevron-right arr"></i></a>
+          <a href="view.html?section=Police%20Jobs"><i class="fa-solid fa-shield-halved"></i><span>Police Jobs</span><i class="fa-solid fa-chevron-right arr"></i></a>
+          <a href="view.html?section=Teacher%20Jobs"><i class="fa-solid fa-chalkboard-user"></i><span>Teaching Jobs</span><i class="fa-solid fa-chevron-right arr"></i></a>
+          <a href="view.html?section=Indian%20ARMY%20jobs"><i class="fa-solid fa-star"></i><span>Army Jobs</span><i class="fa-solid fa-chevron-right arr"></i></a>
+        </div>
+        <a href="view.html?section=latest%20jobs" class="s-more">View All Jobs →</a>
+      </div>
+      <div class="s-card">
+        <div class="s-head teal"><i class="fa-solid fa-screwdriver-wrench"></i> TOOLS</div>
+        <div class="s-list">
+          <a href="tools.html"><i class="fa-solid fa-image"></i><span>Photo &amp; PDF Tools</span><i class="fa-solid fa-chevron-right arr"></i></a>
+          <a href="resume-maker.html"><i class="fa-solid fa-file-lines" style="color:#7c3aed"></i><span>Resume Maker</span><i class="fa-solid fa-chevron-right arr"></i></a>
+          <a href="helpdesk.html"><i class="fa-solid fa-headset"></i><span>Helpdesk</span><i class="fa-solid fa-chevron-right arr"></i></a>
         </div>
       </div>
-      <div class="footer-bottom">© 2026 Top Sarkari Jobs. All Rights Reserved. <span class="dmca-badge">DMCA PROTECTED</span></div>
+      <div class="s-card">
+        <div class="s-head orange"><i class="fa-solid fa-bell"></i> JOIN &amp; FOLLOW US</div>
+        <div class="soc-btns">
+          <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" class="soc-btn sb-wa"><i class="fa-brands fa-whatsapp"></i> Join WhatsApp Channel</a>
+          <a href="https://www.youtube.com/@Topsarkarijobs/shorts" target="_blank" class="soc-btn sb-yt"><i class="fa-brands fa-youtube"></i> YouTube Channel</a>
+          <a href="https://www.instagram.com/topsarkarijobs" target="_blank" class="soc-btn sb-ig"><i class="fa-brands fa-instagram"></i> Instagram</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<footer>
+  <div class="ft-in">
+    <div>
+      <div class="ft-t">Top Sarkari Jobs</div>
+      <div class="ft-sub">India's No.1 portal for Sarkari Jobs, Results, Admit Cards, Govt Schemes and Free Tools.</div>
     </div>
-  </footer>
-
-  <!-- MOBILE BOTTOM BAR -->
-  <nav class="mobile-bottom-bar" aria-label="Mobile navigation">
-    <a href="./"><i class="fa-solid fa-house"></i>Home</a>
-    <a href="view.html?section=latest%20jobs"><i class="fa-solid fa-briefcase"></i>Jobs</a>
-    <a href="category.html?group=admit-result"><i class="fa-solid fa-id-card"></i>Admit</a>
-    <a href="category.html?group=admissions"><i class="fa-solid fa-trophy"></i>Result</a>
-    <a href="resume-maker.html" class="active"><i class="fa-solid fa-file-lines"></i>Resume</a>
-  </nav>
-
-  <!-- WA FLOAT -->
-  <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" class="wa-float" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
-
-  <!-- OFFCANVAS MENU -->
-  <div class="overlay" id="menuOverlay" hidden></div>
-  <aside class="offcanvas" id="mobileMenu" hidden aria-label="Mobile menu" role="dialog">
-    <div class="offcanvas-head">
-      <span class="offcanvas-title">TOP SARKARI JOBS</span>
-      <button class="offcanvas-close" id="closeMenuBtn" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
+    <div>
+      <div class="ft-t">Quick Links</div>
+      <div class="ft-links">
+        <a href="./">Home</a>
+        <a href="view.html?section=latest%20jobs">Latest Jobs</a>
+        <a href="category.html?group=admit-result">Admit Card</a>
+        <a href="resume-maker.html">Resume Maker</a>
+      </div>
     </div>
-    <nav class="offcanvas-nav">
-      <div class="offcanvas-section">Main</div>
-      <a href="./"><i class="fa-solid fa-house"></i>Home</a>
-      <a href="view.html?section=latest%20jobs"><i class="fa-solid fa-fire"></i>Latest Jobs</a>
-      <a href="category.html?group=admit-result"><i class="fa-solid fa-id-card"></i>Admit Cards</a>
-      <a href="category.html?group=admissions"><i class="fa-solid fa-trophy"></i>Results</a>
-      <div class="offcanvas-section">Tools & More</div>
-      <a href="tools.html"><i class="fa-solid fa-screwdriver-wrench"></i>Free Tools</a>
-      <a href="resume-maker.html"><i class="fa-solid fa-file-lines"></i>Resume Maker</a>
-      <a href="helpdesk.html"><i class="fa-solid fa-headset"></i>Helpdesk</a>
-      <div class="offcanvas-section">Follow Us</div>
-      <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" style="color:#25d366"><i class="fa-brands fa-whatsapp"></i>Join WhatsApp</a>
-      <a href="https://www.youtube.com/@Topsarkarijobs/shorts" target="_blank" rel="noopener" style="color:#ff0000"><i class="fa-brands fa-youtube"></i>YouTube</a>
-    </nav>
-  </aside>
+    <div>
+      <div class="ft-t">Follow Us</div>
+      <div class="ft-links">
+        <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T">WhatsApp Channel</a>
+        <a href="https://www.youtube.com/@Topsarkarijobs/shorts">YouTube</a>
+        <a href="https://www.instagram.com/topsarkarijobs">Instagram</a>
+      </div>
+    </div>
+  </div>
+  <div class="ft-bot">© 2026 Top Sarkari Jobs. All rights reserved.</div>
+</footer>
 
-  <!-- ============================================================ MAIN JS ============================================================ -->
-  <script>
-  (function(){
-    'use strict';
+<script>
+(function(){
+'use strict';
+var eduC=0,proC=0,exC=0,wkC=0,skC=0,selTplN=1,photoDU='',curTheme='navy';
+var TC={navy:{p:'#0d2257',a:'#1a56db',l:'#eef3ff'},bw:{p:'#1a1a1a',a:'#444',l:'#f5f5f5'},green:{p:'#064e3b',a:'#059669',l:'#ecfdf5'},grey:{p:'#374151',a:'#6b7280',l:'#f9fafb'},purple:{p:'#3b0764',a:'#7c3aed',l:'#f5f3ff'},red:{p:'#7f1d1d',a:'#dc2626',l:'#fff5f5'},blue:{p:'#1e3a8a',a:'#3b82f6',l:'#eff6ff'},amber:{p:'#78350f',a:'#f97316',l:'#fffbeb'}};
 
-    // ── State ──
-    var eduCount=0, proCount=0, extraCount=0, workCount=0, skillCount=0, selectedTpl=1;
-    var photoDataUrl='';
-    var selectedThemeColor='#0d2257'; // default navy
-    var currentCategory='fresher';
+window.switchCat=function(cat,btn){
+  document.querySelectorAll('.c-tab').forEach(function(t){t.classList.remove('active');});btn.classList.add('active');
+  document.querySelectorAll('.c-panel').forEach(function(p){p.classList.remove('active');});
+  document.getElementById(cat==='fresher'?'catF':'catE').classList.add('active');
+};
+window.selTheme=function(el){document.querySelectorAll('.th-dot').forEach(function(d){d.classList.remove('active');});el.classList.add('active');curTheme=el.getAttribute('data-theme');};
+window.handlePhoto=function(inp){if(!inp.files||!inp.files[0])return;var r=new FileReader();r.onload=function(e){photoDU=e.target.result;var p=document.getElementById('phPrev');p.src=photoDU;p.classList.add('show');document.getElementById('phZone').style.display='none';document.getElementById('rmPh').classList.add('show');};r.readAsDataURL(inp.files[0]);};
+window.removePhoto=function(){photoDU='';var p=document.getElementById('phPrev');p.src='';p.classList.remove('show');document.getElementById('phZone').style.display='';document.getElementById('rmPh').classList.remove('show');};
+window.addSkill=function(){var l=document.getElementById('skillsList');var n=++skC;var id='sk'+n;var d=document.createElement('div');d.className='sk-row';d.id='sr'+id;d.innerHTML='<input type="text" class="sk-name" id="'+id+'n" placeholder="e.g. MS Word"><div class="sk-bar-w"><input type="range" class="sk-range" id="'+id+'r" min="0" max="100" value="70" oninput="updSk(\''+id+'\')"><span class="sk-pct" id="'+id+'p">70%</span></div><button class="rm-btn" onclick="rmR(\'sr'+id+'\')" title="Remove"><i class="fa-solid fa-trash"></i></button>';l.appendChild(d);};
+window.updSk=function(id){document.getElementById(id+'p').textContent=document.getElementById(id+'r').value+'%';};
+window.addEdu=function(t){var l=document.getElementById(t==='edu'?'eduList':'proList');var n=t==='edu'?++eduC:++proC;var id=t+n;var d=document.createElement('div');d.className='edu-row';d.id='r'+id;d.innerHTML='<input type="text" placeholder="Exam/Degree" id="'+id+'q"><input type="text" placeholder="Board/University" id="'+id+'e"><input type="text" placeholder="Year" id="'+id+'y"><input type="text" placeholder="Marks%" id="'+id+'m"><input type="text" placeholder="Division" id="'+id+'d"><button class="rm-btn" onclick="rmR(\'r'+id+'\')" title="Remove"><i class="fa-solid fa-trash"></i></button>';l.appendChild(d);};
+window.addExtra=function(){var l=document.getElementById('extraList');var n=++exC;var id='ex'+n;var d=document.createElement('div');d.className='xrow';d.id='r'+id;d.innerHTML='<input type="text" placeholder="Extra qualification / certification" id="'+id+'v"><button class="rm-btn" onclick="rmR(\'r'+id+'\')" title="Remove"><i class="fa-solid fa-trash"></i></button>';l.appendChild(d);};
+window.addWork=function(){var l=document.getElementById('workList');var n=++wkC;var id='wk'+n;var d=document.createElement('div');d.className='xrow';d.id='r'+id;d.innerHTML='<input type="text" placeholder="e.g. Software Engineer at XYZ Ltd (2022-2024) – Key responsibilities..." id="'+id+'v"><button class="rm-btn" onclick="rmR(\'r'+id+'\')" title="Remove"><i class="fa-solid fa-trash"></i></button>';l.appendChild(d);};
+window.rmR=function(id){var el=document.getElementById(id);if(el)el.remove();};
+window.selTpl=function(el){document.querySelectorAll('.tpl-it').forEach(function(t){t.classList.remove('active');});el.classList.add('active');selTplN=parseInt(el.getAttribute('data-tpl'));};
 
-    var themeColors={
-      navy:{primary:'#0d2257',accent:'#1a56db',light:'#eef3ff'},
-      bw:{primary:'#1a1a1a',accent:'#444444',light:'#f5f5f5'},
-      green:{primary:'#064e3b',accent:'#059669',light:'#ecfdf5'},
-      grey:{primary:'#374151',accent:'#6b7280',light:'#f9fafb'},
-      purple:{primary:'#3b0764',accent:'#7c3aed',light:'#f5f3ff'},
-      red:{primary:'#7f1d1d',accent:'#dc2626',light:'#fff5f5'},
-      blue:{primary:'#1e3a8a',accent:'#3b82f6',light:'#eff6ff'},
-      amber:{primary:'#78350f',accent:'#f97316',light:'#fffbeb'}
-    };
-    var currentTheme='navy';
+function g(id){var el=document.getElementById(id);return el?el.value.trim():'';}
+var OBJ=['','Secure a responsible career opportunity to fully utilize my talent and skills while making a significant contribution to the success of the company.','Self-motivated and hardworking fresher seeking an opportunity to work in a challenging environment to prove my skills in the growth of the organization.','To seek a position in a professionally managed organization where conceptual and functional skills are effectively utilized, contributing to organizational and personal growth.','To make a good position in a reputed company and work enthusiastically in a team, providing steady career growth along with job satisfaction.','To contribute my best to the organization and utilize my skills to perform the job to the best of my ability with zeal and willingness to learn.','Experienced professional seeking a senior role to apply domain knowledge, mentor teams, and deliver measurable results aligned with organizational goals.'];
+function getObj(){var c=g('f_objective');if(c)return c;var s=document.querySelector('input[name="obj"]:checked');return s?OBJ[parseInt(s.value)]||'':"";};
+function getDT(){var s=document.querySelector('input[name="doctype"]:checked');return s?s.value:'Resume';}
+function colEdu(t){var px=t==='edu'?'edu':'pro',rows=[];for(var i=1;i<=80;i++){var q=document.getElementById(px+i+'q');if(!q)continue;rows.push({q:q.value,e:document.getElementById(px+i+'e').value,y:document.getElementById(px+i+'y').value,m:document.getElementById(px+i+'m').value,d:document.getElementById(px+i+'d').value});}return rows.filter(function(r){return r.q.trim();});}
+function colList(px,max){var rows=[];for(var i=1;i<=max;i++){var v=document.getElementById(px+i+'v');if(v&&v.value.trim())rows.push(v.value.trim());}return rows;}
+function colSkills(){var sk=[];for(var i=1;i<=skC;i++){var n=document.getElementById('sk'+i+'n'),r=document.getElementById('sk'+i+'r');if(n&&n.value.trim())sk.push({name:n.value.trim(),pct:r?parseInt(r.value):70});}return sk;}
 
-    // ── Category Switch ──
-    window.switchCategory=function(cat, btn){
-      currentCategory=cat;
-      document.querySelectorAll('.cat-tab').forEach(function(t){t.classList.remove('active');});
-      btn.classList.add('active');
-      document.querySelectorAll('.cat-panel').forEach(function(p){p.classList.remove('active');});
-      document.getElementById(cat==='fresher'?'catFresher':'catExperienced').classList.add('active');
-    };
+/* ── RESUME HTML BUILDERS ── */
+var RF='font-family:"Segoe UI",Arial,sans-serif;color:#111;-webkit-print-color-adjust:exact;print-color-adjust:exact';
 
-    // ── Theme Select ──
-    window.selectTheme=function(el){
-      document.querySelectorAll('.theme-dot').forEach(function(d){d.classList.remove('active');});
-      el.classList.add('active');
-      currentTheme=el.getAttribute('data-theme');
-    };
+function tbl(rows,c,ca){
+  if(!rows.length)return'';
+  var h='<table style="width:100%;border-collapse:collapse;margin-bottom:8px"><tr style="background:'+c+';color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact"><th style="padding:5px 8px;text-align:left;font-size:10.5px;font-weight:800;border:1px solid rgba(255,255,255,.15)">Exam / Degree</th><th style="padding:5px 8px;text-align:left;font-size:10.5px;font-weight:800;border:1px solid rgba(255,255,255,.15)">Board / University</th><th style="padding:5px 8px;text-align:center;font-size:10.5px;font-weight:800;border:1px solid rgba(255,255,255,.15)">Year</th><th style="padding:5px 8px;text-align:center;font-size:10.5px;font-weight:800;border:1px solid rgba(255,255,255,.15)">Marks%</th><th style="padding:5px 8px;text-align:center;font-size:10.5px;font-weight:800;border:1px solid rgba(255,255,255,.15)">Division</th></tr>';
+  rows.forEach(function(r,i){var bg=i%2===0?'#f7f9fc':'#fff';h+='<tr style="background:'+bg+';-webkit-print-color-adjust:exact;print-color-adjust:exact"><td style="border:1px solid #e2e8f0;padding:4px 8px;font-size:10.5px;font-weight:700">'+r.q+'</td><td style="border:1px solid #e2e8f0;padding:4px 8px;font-size:10.5px">'+r.e+'</td><td style="border:1px solid #e2e8f0;padding:4px 8px;text-align:center;font-size:10.5px;font-weight:700">'+r.y+'</td><td style="border:1px solid #e2e8f0;padding:4px 8px;text-align:center;font-size:10.5px;font-weight:700;color:'+c+'">'+r.m+'</td><td style="border:1px solid #e2e8f0;padding:4px 8px;text-align:center;font-size:10.5px;font-weight:700">'+r.d+'</td></tr>';});
+  return h+'</table>';
+}
+function li(items){return items.map(function(x){return'<li style="font-size:10.5px;font-weight:600;margin-bottom:4px;color:#111;line-height:1.5">'+x+'</li>';}).join('');}
+function iRow(lbl,val){return val?'<tr><td style="font-size:10.5px;font-weight:700;color:#555;padding:3px 8px;width:40%;border-bottom:1px solid #f1f5f9;vertical-align:top">'+lbl+'</td><td style="font-size:10.5px;font-weight:700;padding:3px 8px;color:#111;border-bottom:1px solid #f1f5f9"><span style="color:#aaa;margin-right:3px">:</span>'+val+'</td></tr>':'';}
+function pTbl(d){return'<table style="width:100%;border-collapse:collapse">'+iRow('Date of Birth',d.dob)+iRow("Father's Name",d.fname)+iRow("Mother's Name",d.mname)+iRow('Nationality',d.nationality)+iRow('Gender',d.gender)+iRow('Marital Status',d.marital)+iRow('Languages Known',d.language)+iRow('Hobbies',d.hobbies)+'</table>';}
+function decl(ca){return'<div style="margin-top:12px;padding:8px 14px;background:#f8fafc;border-left:4px solid '+ca+';border-radius:4px;-webkit-print-color-adjust:exact;print-color-adjust:exact"><span style="font-size:10.5px;font-weight:800;color:#000">Declaration: </span><span style="font-size:10.5px;color:#333;font-weight:600">I hereby declare that the information given above is true and correct to the best of my knowledge and belief.</span></div><div style="margin-top:10px;display:flex;justify-content:space-between;font-size:10.5px;font-weight:700;color:#444"><span>Place: _______________________</span><span>Signature: _______________________</span></div>';}
+function skBars(skills,c){if(!skills.length)return'';var h='<div style="display:flex;flex-wrap:wrap;gap:6px 14px;margin-bottom:8px">';skills.forEach(function(s){h+='<div style="min-width:130px;flex:1"><div style="display:flex;justify-content:space-between;font-size:10.5px;font-weight:800;margin-bottom:3px"><span>'+s.name+'</span><span style="color:'+c+'">'+s.pct+'%</span></div><div style="background:#e5e7eb;height:6px;border-radius:5px;overflow:hidden;-webkit-print-color-adjust:exact;print-color-adjust:exact"><div style="background:'+c+';height:6px;width:'+s.pct+'%;-webkit-print-color-adjust:exact;print-color-adjust:exact"></div></div></div>';});return h+'</div>';}
+function sh(lbl,c,ca){return'<div style="background:'+c+';color:#fff;padding:5px 20px;margin:10px -24px 8px;font-size:11px;font-weight:900;letter-spacing:.6px;text-transform:uppercase;border-left:5px solid '+ca+';-webkit-print-color-adjust:exact;print-color-adjust:exact">'+lbl+'</div>';}
+function shSb(lbl,col){return'<div style="font-size:8.5px;font-weight:900;color:'+col+';text-transform:uppercase;letter-spacing:.8px;border-bottom:1.5px solid '+col+';padding-bottom:2px;margin:10px 0 5px;opacity:.9">'+lbl+'</div>';}
+function sbInf(lbl,val,tc,sc){return val?'<div style="margin-bottom:5px"><div style="font-size:8px;font-weight:900;color:'+sc+';text-transform:uppercase;letter-spacing:.4px;margin-bottom:1px">'+lbl+'</div><div style="font-size:9.5px;font-weight:700;color:'+tc+';line-height:1.35;word-break:break-all">'+val+'</div></div>':'';}
 
-    // ── Photo Upload ──
-    window.handlePhotoUpload=function(input){
-      if(!input.files||!input.files[0]) return;
-      var reader=new FileReader();
-      reader.onload=function(e){
-        photoDataUrl=e.target.result;
-        var prev=document.getElementById('photoPreview');
-        prev.src=photoDataUrl; prev.classList.add('show');
-        document.getElementById('photoUploadArea').style.display='none';
-        document.getElementById('removePhotoBtn').classList.add('show');
-        liveUpdate();
-      };
-      reader.readAsDataURL(input.files[0]);
-    };
-    window.removePhoto=function(){
-      photoDataUrl='';
-      var prev=document.getElementById('photoPreview');
-      prev.src=''; prev.classList.remove('show');
-      document.getElementById('photoUploadArea').style.display='';
-      document.getElementById('removePhotoBtn').classList.remove('show');
-    };
+function buildResume(d){
+  var th=TC[curTheme]||TC.navy,c=th.p,ca=th.a,cl=th.l;
+  var hasSb=[2,5,7,10].indexOf(selTplN)>-1;
+  var isAts=selTplN===4,isDark=selTplN===5;
 
-    // ── Skills ──
-    window.addSkill=function(){
-      var list=document.getElementById('skillsList');
-      var n=++skillCount; var id='sk'+n;
-      var d=document.createElement('div');
-      d.className='skill-row'; d.id='srow_'+id;
-      d.innerHTML='<input type="text" class="skill-name-input" id="'+id+'_n" placeholder="e.g. MS Word" oninput="liveUpdate()">'
-        +'<div class="skill-bar-wrap">'
-        +'<input type="range" class="skill-range" id="'+id+'_r" min="0" max="100" value="70" oninput="updateSkillPct(\''+id+'\')">'
-        +'<span class="skill-pct" id="'+id+'_p">70%</span>'
-        +'</div>'
-        +'<button class="rm-btn" onclick="rmRow(\'srow_'+id+'\')" title="Remove"><i class="fa-solid fa-trash"></i></button>';
-      list.appendChild(d);
-    };
-    window.updateSkillPct=function(id){
-      var val=document.getElementById(id+'_r').value;
-      document.getElementById(id+'_p').textContent=val+'%';
-      liveUpdate();
-    };
+  // ATS
+  if(isAts){
+    return'<div style="'+RF+';padding:24px 28px;background:#fff;min-height:270mm"><div style="border-bottom:3px solid #000;padding-bottom:12px;margin-bottom:14px;display:flex;align-items:center;gap:16px">'+(d.photo?'<img src="'+d.photo+'" style="width:72px;height:88px;object-fit:cover;border:2px solid #111;border-radius:4px;flex-shrink:0">':'')+'<div style="flex:1"><div style="font-size:22px;font-weight:900;color:#000;letter-spacing:.3px;line-height:1.1">'+d.name+'</div><div style="font-size:11px;font-weight:700;color:#333;margin-top:5px">'+[d.contact,d.email].filter(Boolean).join('  |  ')+'</div>'+(d.address?'<div style="font-size:10.5px;color:#555;margin-top:2px;font-weight:600">'+d.address+'</div>':'')+'</div></div>'
+    +(d.objective?'<div style="font-size:11.5px;font-weight:900;color:#000;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #000;margin-bottom:7px;padding-bottom:2px">Career Objective</div><p style="font-size:10.5px;line-height:1.65;margin-bottom:12px;color:#222;font-weight:600">'+d.objective+'</p>':'')
+    +(d.skills.length?'<div style="font-size:11.5px;font-weight:900;color:#000;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #000;margin-bottom:7px;padding-bottom:2px">Skills</div><div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px">'+d.skills.map(function(s){return'<span style="background:#f1f5f9;border:1.5px solid #cbd5e1;padding:3px 10px;border-radius:4px;font-size:10.5px;font-weight:800">'+s.name+' — '+s.pct+'%</span>';}).join('')+'</div>':'')
+    +'<div style="font-size:11.5px;font-weight:900;color:#000;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #000;margin-bottom:7px;padding-bottom:2px">Education</div>'+tbl(d.edu,'#374151','#374151')
+    +(d.pro.length?'<div style="margin-top:10px;font-size:11.5px;font-weight:900;color:#000;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #000;margin-bottom:7px;padding-bottom:2px">Professional Qualification</div>'+tbl(d.pro,'#374151','#374151'):'')
+    +(d.work.length?'<div style="margin-top:10px;font-size:11.5px;font-weight:900;color:#000;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #000;margin-bottom:7px;padding-bottom:2px">Work Experience</div><ul style="margin:0 0 10px 18px">'+li(d.work)+'</ul>':'')
+    +(d.extra.length?'<div style="margin-top:10px;font-size:11.5px;font-weight:900;color:#000;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #000;margin-bottom:7px;padding-bottom:2px">Certifications</div><ul style="margin:0 0 10px 18px">'+li(d.extra)+'</ul>':'')
+    +'<div style="margin-top:10px;font-size:11.5px;font-weight:900;color:#000;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #000;margin-bottom:7px;padding-bottom:2px">Personal Information</div>'
+    +pTbl(d)+decl(ca)+'</div>';
+  }
 
-    // ── Edu Rows ──
-    window.addEdu=function(type){
-      var list=document.getElementById(type==='edu'?'eduList':'proList');
-      var n=type==='edu'?++eduCount:++proCount;
-      var id=type+n; var d=document.createElement('div');
-      d.className='edu-row'; d.id='row_'+id;
-      d.innerHTML='<input type="text" placeholder="Exam/Degree" id="'+id+'_q">'
-        +'<input type="text" placeholder="Board/University" id="'+id+'_e">'
-        +'<input type="text" placeholder="Year" id="'+id+'_y">'
-        +'<input type="text" placeholder="Marks%" id="'+id+'_m">'
-        +'<input type="text" placeholder="Division" id="'+id+'_d">'
-        +'<button class="rm-btn" onclick="rmRow(\'row_'+id+'\')" title="Remove"><i class="fa-solid fa-trash"></i></button>';
-      list.appendChild(d);
-    };
+  // SIDEBAR TEMPLATES
+  if(hasSb){
+    var sbBg=isDark?'#0f172a':c,acBr=isDark?'#fbbf24':ca;
+    var tc=isDark?'#f1f5f9':'#fff',sc=isDark?'rgba(255,255,255,.5)':'rgba(255,255,255,.55)';
+    var msh=function(lbl){return'<div style="background:'+c+';color:#fff;padding:5px 14px;margin:10px -14px 7px;font-size:10.5px;font-weight:900;letter-spacing:.5px;text-transform:uppercase;border-left:4px solid '+acBr+';-webkit-print-color-adjust:exact;print-color-adjust:exact">'+lbl+'</div>';};
+    var sbSk=d.skills.length?shSb('Skills',isDark?'#fbbf24':'rgba(255,255,255,.7)')+d.skills.map(function(s){return'<div style="margin-bottom:6px"><div style="display:flex;justify-content:space-between;font-size:9.5px;font-weight:800;margin-bottom:2px;color:'+tc+'"><span>'+s.name+'</span><span style="color:'+acBr+'">'+s.pct+'%</span></div><div style="background:rgba(255,255,255,.18);height:5px;border-radius:4px;overflow:hidden;-webkit-print-color-adjust:exact;print-color-adjust:exact"><div style="background:'+acBr+';height:5px;width:'+s.pct+'%;-webkit-print-color-adjust:exact;print-color-adjust:exact"></div></div></div>';}).join(''):'';
+    return'<div style="'+RF+';min-height:270mm"><table style="width:100%;border-collapse:collapse;table-layout:fixed;-webkit-print-color-adjust:exact;print-color-adjust:exact"><colgroup><col style="width:31%"><col style="width:69%"></colgroup><tr>'
+    +'<td style="vertical-align:top;background:'+sbBg+';padding:18px 12px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
+    +(d.photo?'<div style="text-align:center;margin-bottom:10px"><img src="'+d.photo+'" style="width:76px;height:92px;object-fit:cover;border-radius:10px;border:3px solid '+acBr+'"></div>':'')
+    +'<div style="text-align:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.15)"><div style="font-size:13px;font-weight:900;color:'+acBr+';line-height:1.2;word-break:break-word">'+d.name+'</div><div style="font-size:8.5px;font-weight:800;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;margin-top:3px">'+getDT()+'</div></div>'
+    +shSb('Contact',isDark?'#fbbf24':'rgba(255,255,255,.7)')+sbInf('Mobile',d.contact,tc,sc)+sbInf('Email',d.email,tc,sc)+sbInf('Address',d.address,tc,sc)
+    +shSb('Personal',isDark?'#fbbf24':'rgba(255,255,255,.7)')+sbInf('Date of Birth',d.dob,tc,sc)+sbInf("Father's Name",d.fname,tc,sc)+sbInf("Mother's Name",d.mname,tc,sc)+sbInf('Gender',d.gender,tc,sc)+sbInf('Nationality',d.nationality,tc,sc)+sbInf('Marital Status',d.marital,tc,sc)
+    +sbSk+(d.language?shSb('Languages',isDark?'#fbbf24':'rgba(255,255,255,.7)')+'<div style="font-size:9.5px;font-weight:700;color:#fff">'+d.language+'</div>':'')+(d.hobbies?shSb('Hobbies',isDark?'#fbbf24':'rgba(255,255,255,.7)')+'<div style="font-size:9.5px;font-weight:700;color:#fff">'+d.hobbies+'</div>':'')
+    +'</td>'
+    +'<td style="vertical-align:top;background:#fff;padding:0"><div style="background:linear-gradient(135deg,'+c+','+ca+');padding:15px 18px;-webkit-print-color-adjust:exact;print-color-adjust:exact"><div style="font-size:20px;font-weight:900;color:#fff;letter-spacing:.3px;line-height:1.1">'+d.name+'</div><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.88);margin-top:3px">'+[d.contact,d.email].filter(Boolean).join(' • ')+'</div></div>'
+    +'<div style="padding:10px 14px">'
+    +(d.objective?msh('Career Objective')+'<p style="font-size:10.5px;line-height:1.6;margin-bottom:9px;color:#111;font-weight:600">'+d.objective+'</p>':'')
+    +msh('Academic Qualification')+tbl(d.edu,c,ca)
+    +(d.pro.length?msh('Professional Qualification')+tbl(d.pro,c,ca):'')
+    +(d.work.length?msh('Work Experience')+'<ul style="margin:0 0 9px 16px">'+li(d.work)+'</ul>':'')
+    +(d.extra.length?msh('Certifications & Extra')+'<ul style="margin:0 0 9px 16px">'+li(d.extra)+'</ul>':'')
+    +decl(ca)+'</div></td></tr></table></div>';
+  }
 
-    window.addExtra=function(){
-      var list=document.getElementById('extraList');
-      var n=++extraCount; var id='ex'+n; var d=document.createElement('div');
-      d.className='extra-row'; d.id='row_'+id;
-      d.innerHTML='<input type="text" placeholder="Extra qualification / certification" id="'+id+'_v">'
-        +'<button class="rm-btn" onclick="rmRow(\'row_'+id+'\')" title="Remove"><i class="fa-solid fa-trash"></i></button>';
-      list.appendChild(d);
-    };
+  // FULL-WIDTH TEMPLATES
+  var W='<div style="'+RF+';background:#fff;padding:22px 24px;min-height:270mm">';
+  var H='';
+  if(selTplN===1){
+    H='<div style="background:'+c+';padding:18px 24px 16px;margin:-22px -24px 0;position:relative;overflow:hidden;-webkit-print-color-adjust:exact;print-color-adjust:exact"><div style="position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.05);-webkit-print-color-adjust:exact;print-color-adjust:exact"></div>'+(d.photo?'<img src="'+d.photo+'" style="position:absolute;top:12px;right:20px;width:74px;height:90px;object-fit:cover;border-radius:8px;border:3px solid rgba(255,255,255,.4)">':'')+'<div style="color:rgba(255,255,255,.6);font-size:9px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:4px">'+getDT()+'</div><div style="font-size:26px;font-weight:900;color:#fff;line-height:1.1;letter-spacing:.2px">'+d.name+'</div><div style="height:3px;width:52px;background:'+ca+';margin:8px 0 10px;border-radius:2px;-webkit-print-color-adjust:exact;print-color-adjust:exact"></div><div style="display:flex;flex-wrap:wrap;gap:13px">'+(d.contact?'<span style="font-size:10.5px;font-weight:700;color:rgba(255,255,255,.95)">📱 '+d.contact+'</span>':'')+(d.email?'<span style="font-size:10.5px;font-weight:700;color:rgba(255,255,255,.95)">✉ '+d.email+'</span>':'')+(d.address?'<span style="font-size:10.5px;font-weight:700;color:rgba(255,255,255,.82)">📍 '+d.address+'</span>':'')+'</div></div>';
+  }else if(selTplN===3){
+    H='<div style="display:flex;background:#fff;border-bottom:3px solid '+ca+';margin:-22px -24px 0;-webkit-print-color-adjust:exact;print-color-adjust:exact"><div style="width:7px;background:'+c+';flex-shrink:0;-webkit-print-color-adjust:exact;print-color-adjust:exact"></div><div style="flex:1;padding:16px 18px;display:flex;align-items:center;gap:16px">'+(d.photo?'<img src="'+d.photo+'" style="width:76px;height:92px;object-fit:cover;border-radius:8px;border:2px solid '+c+';flex-shrink:0">':'')+'<div><div style="font-size:23px;font-weight:900;color:'+c+';letter-spacing:.2px;line-height:1.1">'+d.name+'</div><div style="font-size:9px;font-weight:800;color:'+ca+';text-transform:uppercase;letter-spacing:.8px;margin:5px 0 7px">'+getDT()+'</div><div style="display:flex;flex-wrap:wrap;gap:12px">'+(d.contact?'<span style="font-size:10.5px;font-weight:700;color:#333">📱 '+d.contact+'</span>':'')+(d.email?'<span style="font-size:10.5px;font-weight:700;color:#333">✉ '+d.email+'</span>':'')+(d.address?'<span style="font-size:10.5px;font-weight:700;color:#555">📍 '+d.address+'</span>':'')+'</div></div></div></div>';
+  }else if(selTplN===6){
+    H='<div style="background:linear-gradient(135deg,'+c+','+ca+');padding:18px 24px;margin:-22px -24px 0;display:flex;align-items:center;gap:16px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'+(d.photo?'<img src="'+d.photo+'" style="width:76px;height:92px;object-fit:cover;border-radius:50%;border:3px solid rgba(255,255,255,.5);flex-shrink:0">':'')+'<div style="flex:1"><div style="font-size:24px;font-weight:900;color:#fff;letter-spacing:.3px;line-height:1.1">'+d.name+'</div><div style="height:2px;width:42px;background:rgba(255,255,255,.5);margin:7px 0;-webkit-print-color-adjust:exact;print-color-adjust:exact"></div><div style="display:flex;flex-wrap:wrap;gap:12px">'+(d.contact?'<span style="font-size:10.5px;font-weight:700;color:rgba(255,255,255,.95)">📱 '+d.contact+'</span>':'')+(d.email?'<span style="font-size:10.5px;font-weight:700;color:rgba(255,255,255,.95)">✉ '+d.email+'</span>':'')+'</div></div></div>';
+  }else if(selTplN===8){
+    H='<div style="background:linear-gradient(120deg,'+c+','+ca+' 50%,#f97316);padding:20px 24px 16px;margin:-22px -24px 0;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact">'+(d.photo?'<img src="'+d.photo+'" style="width:72px;height:86px;object-fit:cover;border-radius:50%;border:3px solid rgba(255,255,255,.5);margin-bottom:8px;display:block;margin-left:auto;margin-right:auto">':'')+'<div style="font-size:25px;font-weight:900;color:#fff;letter-spacing:.3px">'+d.name+'</div><div style="font-size:9px;font-weight:800;color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:.8px;margin:4px 0 7px">'+getDT()+'</div><div style="display:flex;justify-content:center;flex-wrap:wrap;gap:14px">'+(d.contact?'<span style="font-size:10.5px;font-weight:700;color:rgba(255,255,255,.95)">📱 '+d.contact+'</span>':'')+(d.email?'<span style="font-size:10.5px;font-weight:700;color:rgba(255,255,255,.95)">✉ '+d.email+'</span>':'')+'</div></div>';
+  }else{
+    H='<div style="padding:18px 24px 14px;margin:-22px -24px 0;border-bottom:3px solid '+c+';background:#fff;display:flex;align-items:center;gap:16px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'+(d.photo?'<img src="'+d.photo+'" style="width:74px;height:90px;object-fit:cover;border-radius:5px;border:2px solid '+ca+';flex-shrink:0">':'')+'<div style="flex:1"><div style="font-size:24px;font-weight:900;color:'+c+';letter-spacing:.2px;line-height:1.1">'+d.name+'</div><div style="width:42px;height:3px;background:'+ca+';border-radius:2px;margin:7px 0;-webkit-print-color-adjust:exact;print-color-adjust:exact"></div><div style="display:flex;flex-wrap:wrap;gap:12px">'+(d.contact?'<span style="font-size:10.5px;font-weight:700;color:#333">📱 '+d.contact+'</span>':'')+(d.email?'<span style="font-size:10.5px;font-weight:700;color:#333">✉ '+d.email+'</span>':'')+(d.address?'<span style="font-size:10.5px;font-weight:700;color:#555">📍 '+d.address+'</span>':'')+'</div></div></div>';
+  }
 
-    window.addWork=function(){
-      var list=document.getElementById('workList');
-      var n=++workCount; var id='wk'+n; var d=document.createElement('div');
-      d.className='extra-row'; d.id='row_'+id;
-      d.innerHTML='<input type="text" placeholder="e.g. Software Engineer at XYZ Ltd (2022-2024) – Key responsibilities..." id="'+id+'_v">'
-        +'<button class="rm-btn" onclick="rmRow(\'row_'+id+'\')" title="Remove"><i class="fa-solid fa-trash"></i></button>';
-      list.appendChild(d);
-    };
+  var body=
+    (d.objective?sh('Career Objective',c,ca)+'<p style="font-size:10.5px;line-height:1.65;margin-bottom:4px;color:#111;font-weight:600">'+d.objective+'</p>':'')
+    +(d.skills.length?sh('Skills',c,ca)+skBars(d.skills,c):'')
+    +sh('Academic Qualification',c,ca)+tbl(d.edu,c,ca)
+    +(d.pro.length?sh('Professional Qualification',c,ca)+tbl(d.pro,c,ca):'')
+    +(d.work.length?sh('Work Experience',c,ca)+'<ul style="margin:0 0 8px 18px">'+li(d.work)+'</ul>':'')
+    +(d.extra.length?sh('Certifications & Extra',c,ca)+'<ul style="margin:0 0 8px 18px">'+li(d.extra)+'</ul>':'')
+    +sh('Personal Information',c,ca)+pTbl(d)+decl(ca);
 
-    window.rmRow=function(id){var el=document.getElementById(id);if(el)el.remove();};
+  return W+H+'<div style="margin-top:16px">'+body+'</div></div>';
+}
 
-    window.selectTpl=function(el){
-      document.querySelectorAll('.tpl-item').forEach(function(t){t.classList.remove('active');});
-      el.classList.add('active');
-      selectedTpl=parseInt(el.getAttribute('data-tpl'));
-    };
+window.genResume=function(){
+  var name=g('f_name');if(!name){alert('Please enter your full name.');return;}
+  var d={name:name,contact:g('f_contact'),email:g('f_email'),dob:g('f_dob'),fname:g('f_fname'),mname:g('f_mname'),nationality:g('f_nationality'),gender:g('f_gender'),marital:g('f_marital'),language:g('f_language'),hobbies:g('f_hobbies'),address:g('f_address'),objective:getObj(),edu:colEdu('edu'),pro:colEdu('pro'),extra:colList('ex',exC),work:colList('wk',wkC),skills:colSkills(),photo:photoDU};
+  document.getElementById('resumeOut').innerHTML=buildResume(d);
+  document.getElementById('formSection').style.display='none';
+  document.getElementById('prevSection').classList.add('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+};
+window.goBack=function(){document.getElementById('formSection').style.display='block';document.getElementById('prevSection').classList.remove('show');window.scrollTo({top:0,behavior:'smooth'});};
 
-    // ── Helpers ──
-    function g(id){var el=document.getElementById(id);return el?el.value.trim():'';}
-    var objectives=['',
-      'Secure a responsible career opportunity to fully utilize my talent and skills while making a significant contribution to the success of the company.',
-      'Self-motivated and hardworking fresher seeking an opportunity to work in a challenging environment to prove my skills in the growth of the organization.',
-      'To seek a position in a professionally managed organization where conceptual and functional skills are effectively utilized, contributing to organizational and personal growth.',
-      'To make a good position in a reputed company and work enthusiastically in a team, providing steady career growth along with job satisfaction.',
-      'To contribute my best to the organization and utilize my skills to perform the job to the best of my ability with zeal and willingness to learn.',
-      'Experienced professional seeking a senior role to apply domain knowledge, mentor teams, and deliver measurable results aligned with organizational goals.'
-    ];
-    function getObj(){
-      var custom=g('f_objective'); if(custom)return custom;
-      var sel=document.querySelector('input[name="obj"]:checked');
-      return sel?objectives[parseInt(sel.value)]||'':"";
-    }
-    function getDocType(){
-      var sel=document.querySelector('input[name="doctype"]:checked');
-      return sel?sel.value:'Resume';
-    }
-    function collectEduRows(type){
-      var px=type==='edu'?'edu':'pro'; var rows=[];
-      for(var i=1;i<=50;i++){
-        var q=document.getElementById(px+i+'_q');
-        if(!q)continue;
-        rows.push({q:q.value,e:document.getElementById(px+i+'_e').value,y:document.getElementById(px+i+'_y').value,m:document.getElementById(px+i+'_m').value,d:document.getElementById(px+i+'_d').value});
-      }
-      return rows.filter(function(r){return r.q.trim();});
-    }
-    function collectList(px,max){
-      var rows=[];
-      for(var i=1;i<=max;i++){var v=document.getElementById(px+i+'_v');if(v&&v.value.trim())rows.push(v.value.trim());}
-      return rows;
-    }
-    function collectSkills(){
-      var skills=[];
-      for(var i=1;i<=skillCount;i++){
-        var n=document.getElementById('sk'+i+'_n');
-        var r=document.getElementById('sk'+i+'_r');
-        if(n&&n.value.trim())skills.push({name:n.value.trim(),pct:r?parseInt(r.value):70});
-      }
-      return skills;
-    }
-    function tblHtml(rows,c){
-      if(!rows.length)return'';
-      var bdr='1px solid #ddd';
-      var h='<table style="width:100%;border-collapse:collapse;font-size:10px;margin-bottom:8px">'
-        +'<tr style="background:'+c+';color:#fff"><th style="border:'+bdr+';padding:4px 6px;text-align:left">Exam/Degree</th><th style="border:'+bdr+';padding:4px 6px;text-align:left">Board/University</th><th style="border:'+bdr+';padding:4px 6px;text-align:center">Year</th><th style="border:'+bdr+';padding:4px 6px;text-align:center">Marks%</th><th style="border:'+bdr+';padding:4px 6px;text-align:center">Division</th></tr>';
-      rows.forEach(function(r){
-        h+='<tr><td style="border:'+bdr+';padding:4px 6px">'+r.q+'</td><td style="border:'+bdr+';padding:4px 6px">'+r.e+'</td><td style="border:'+bdr+';padding:4px 6px;text-align:center">'+r.y+'</td><td style="border:'+bdr+';padding:4px 6px;text-align:center">'+r.m+'</td><td style="border:'+bdr+';padding:4px 6px;text-align:center">'+r.d+'</td></tr>';
-      });
-      return h+'</table>';
-    }
-    function li(items,c){return items.map(function(x){return '<li style="font-size:10.5px;margin-bottom:3px;color:#333">'+x+'</li>';}).join('');}
-    function infoRow(lbl,val){return val?'<tr><td style="font-size:10px;color:#666;padding:3px 0;width:40%;vertical-align:top;font-weight:600">'+lbl+'</td><td style="font-size:10px;padding:3px 0"><span style="color:#888">:</span> <b>'+val+'</b></td></tr>':'';}
-
-    // ── BOLD SKILL BARS ──
-    function skillBarsHtml(skills,c,light){
-      if(!skills.length)return'';
-      var h='<div style="display:flex;flex-wrap:wrap;gap:6px 12px;margin-bottom:8px">';
-      skills.forEach(function(s,i){
-        h+='<div style="min-width:130px;flex:1">'
-          +'<div style="display:flex;justify-content:space-between;font-size:11px;font-weight:800;margin-bottom:2px"><span style="color:#000">'+s.name+'</span><span style="color:'+c+';font-weight:900">'+s.pct+'%</span></div>'
-          +'<div style="background:#e5e7eb;height:6px;border-radius:5px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
-          +'<div style="background:'+c+';height:6px;border-radius:5px;width:'+s.pct+'%;-webkit-print-color-adjust:exact;print-color-adjust:exact"></div>'
-          +'</div></div>';
-      });
-      return h+'</div>';
-    }
-
-    // ── SECTION HEADING STYLE ──
-    function secHead(label,c,ca){
-      return '<div style="background:'+c+';color:#fff;padding:5px 12px;margin:0 -18px;font-size:12px;font-weight:900;letter-spacing:.5px;text-transform:uppercase;border-left:4px solid '+ca+';margin-bottom:6px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'+label+'</div>';
-    }
-    function secHeadSb(label,c){
-      return '<div style="font-size:9px;font-weight:900;color:'+c+';text-transform:uppercase;letter-spacing:.7px;border-bottom:2px solid '+c+';padding-bottom:2px;margin:10px 0 5px">'+label+'</div>';
-    }
-
-    // ── BOLD TABLE ──
-    function tblHtml(rows,c,ca){
-      if(!rows.length)return'';
-      var h='<table style="width:100%;border-collapse:collapse;margin-bottom:7px">'
-        +'<tr style="background:'+c+';color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact"><th style="padding:4px 7px;text-align:left;font-size:11px;font-weight:800">Exam / Degree</th>'
-        +'<th style="padding:4px 7px;text-align:left;font-size:11px;font-weight:800">Board / University</th>'
-        +'<th style="padding:4px 7px;text-align:center;font-size:11px;font-weight:800">Year</th>'
-        +'<th style="padding:4px 7px;text-align:center;font-size:11px;font-weight:800">Marks%</th>'
-        +'<th style="padding:4px 7px;text-align:center;font-size:11px;font-weight:800">Division</th></tr>';
-      rows.forEach(function(r,i){
-        var bg=i%2===0?'#f5f7fa':'#fff';
-        h+='<tr style="background:'+bg+';-webkit-print-color-adjust:exact;print-color-adjust:exact">'
-          +'<td style="border-bottom:1px solid #e5e7eb;padding:4px 7px;font-size:11px;font-weight:700;color:#000">'+r.q+'</td>'
-          +'<td style="border-bottom:1px solid #e5e7eb;padding:4px 7px;font-size:11px;color:#222">'+r.e+'</td>'
-          +'<td style="border-bottom:1px solid #e5e7eb;padding:4px 7px;font-size:11px;text-align:center;font-weight:700;color:#000">'+r.y+'</td>'
-          +'<td style="border-bottom:1px solid #e5e7eb;padding:4px 7px;font-size:11px;text-align:center;font-weight:700;color:'+c+'">'+r.m+'</td>'
-          +'<td style="border-bottom:1px solid #e5e7eb;padding:4px 7px;font-size:11px;text-align:center;font-weight:700;color:#000">'+r.d+'</td></tr>';
-      });
-      return h+'</table>';
-    }
-
-    // ── LIST ITEMS ──
-    function li(items){
-      return items.map(function(x){
-        return '<li style="font-size:11px;font-weight:600;margin-bottom:3px;color:#111;line-height:1.45">'+x+'</li>';
-      }).join('');
-    }
-
-    // ── INFO TABLE ──
-    function infoRow(lbl,val){
-      return val?'<tr>'
-        +'<td style="font-size:11px;font-weight:800;color:#333;padding:3px 6px;width:38%;border-bottom:1px solid #f1f5f9">'+lbl+'</td>'
-        +'<td style="font-size:11px;font-weight:700;padding:3px 6px;color:#000;border-bottom:1px solid #f1f5f9"><span style="color:#666;margin-right:4px">:</span>'+val+'</td></tr>':'';
-    }
-
-    // ══════════════════════════════════════════════
-    //  BUILD RESUME – BOLD, COLORFUL, HEAVY TEXT
-    // ══════════════════════════════════════════════
-    function buildResume(d){
-      var th=themeColors[currentTheme]||themeColors.navy;
-      var c=th.primary; var ca=th.accent; var cl=th.light;
-
-      var hasSb=[2,5,7,10].indexOf(selectedTpl)>-1;
-      var isAts=selectedTpl===4;
-      var isDark=selectedTpl===5;
-
-      var F='font-family:"Segoe UI",Arial,sans-serif;color:#111;-webkit-print-color-adjust:exact;print-color-adjust:exact';
-
-      // ── PERSONAL INFO BLOCK (shared) ──
-      function personalTable(){
-        return '<table style="width:100%;border-collapse:collapse">'
-          +infoRow('Date of Birth',d.dob)
-          +infoRow("Father's Name",d.fname)
-          +infoRow("Mother's Name",d.mname)
-          +infoRow('Nationality',d.nationality)
-          +infoRow('Gender',d.gender)
-          +infoRow('Marital Status',d.marital)
-          +infoRow('Languages Known',d.language)
-          +infoRow('Hobbies',d.hobbies)
-          +'</table>';
-      }
-
-      // ── DECLARATION ──
-      var decl='<div style="margin-top:10px;padding:7px 12px;background:#f8fafc;border-left:4px solid '+ca+';border-radius:4px">'
-        +'<span style="font-size:11px;font-weight:800;color:#000">Declaration: </span>'
-        +'<span style="font-size:11px;color:#222;font-weight:600">I hereby declare that the information given above is true and correct to the best of my knowledge and belief.</span>'
-        +'</div>';
-      var sign='<div style="margin-top:10px;display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:#333">'
-        +'<span>Place: _______________________</span><span>Signature: _______________________</span></div>';
-
-      // ════════════ TEMPLATE 4 – ATS FRIENDLY ════════════
-      if(isAts){
-        return '<div style="'+F+';padding:20px 24px;color:#111;background:#fff">'
-          +'<div style="border-bottom:3px solid #111;padding-bottom:10px;margin-bottom:12px;display:flex;align-items:center;gap:14px">'
-          +(d.photo?'<img src="'+d.photo+'" style="width:70px;height:84px;object-fit:cover;border:2px solid #111;border-radius:3px;flex-shrink:0">':'')
-          +'<div style="flex:1">'
-          +'<div style="font-size:22px;font-weight:900;letter-spacing:.3px;line-height:1.1;color:#000">'+d.name+'</div>'
-          +'<div style="font-size:12px;font-weight:700;color:#222;margin-top:4px">'+[d.contact,d.email].filter(Boolean).join('  |  ')+'</div>'
-          +(d.address?'<div style="font-size:11px;color:#333;margin-top:2px;font-weight:600">'+d.address+'</div>':'')
-          +'</div></div>'
-
-          +(d.objective?'<div style="font-size:12px;font-weight:900;color:#000;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #000;margin-bottom:6px;padding-bottom:2px">Career Objective</div>'
-            +'<p style="font-size:11px;line-height:1.6;margin-bottom:10px;color:#222;font-weight:600">'+d.objective+'</p>':'')
-
-          +(d.skills.length?'<div style="font-size:12px;font-weight:900;color:#000;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #000;margin-bottom:6px;padding-bottom:2px">Skills</div>'
-            +'<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px">'+d.skills.map(function(s){
-              return '<span style="background:#f1f5f9;border:1.5px solid #cbd5e1;padding:3px 10px;border-radius:3px;font-size:11px;font-weight:800;color:#000">'+s.name+' — '+s.pct+'%</span>';
-            }).join('')+'</div>':'')
-
-          +'<div style="font-size:12px;font-weight:900;color:#000;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #000;margin-bottom:6px;padding-bottom:2px">Education</div>'
-          +tblHtml(d.edu,'#374151','#374151')
-
-          +(d.pro.length?'<div style="font-size:12px;font-weight:900;color:#000;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #000;margin-bottom:6px;padding-bottom:2px;margin-top:9px">Professional Qualification</div>'
-            +tblHtml(d.pro,'#374151','#374151'):'')
-
-          +(d.work.length?'<div style="font-size:12px;font-weight:900;color:#000;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #000;margin-bottom:6px;padding-bottom:2px;margin-top:9px">Work Experience</div>'
-            +'<ul style="margin:0 0 10px 16px">'+li(d.work)+'</ul>':'')
-
-          +(d.extra.length?'<div style="font-size:12px;font-weight:900;color:#000;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #000;margin-bottom:6px;padding-bottom:2px;margin-top:9px">Certifications & Extra</div>'
-            +'<ul style="margin:0 0 10px 16px">'+li(d.extra)+'</ul>':'')
-
-          +'<div style="font-size:12px;font-weight:900;color:#000;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #000;margin-bottom:6px;padding-bottom:2px;margin-top:9px">Personal Information</div>'
-          +personalTable()
-          +decl+sign
-          +'</div>';
-      }
-
-      // ════════════ SIDEBAR TEMPLATES: 2, 5, 7, 10 ════════════
-      if(hasSb){
-        var sbBg=isDark?'#0f172a':c;
-        var accentBar=isDark?'#fbbf24':ca;
-
-        var sbSkills=d.skills.length?
-          secHeadSb('Skills',isDark?'#fbbf24':'rgba(255,255,255,.7)')
-          +d.skills.map(function(s){
-            return '<div style="margin-bottom:5px">'
-              +'<div style="display:flex;justify-content:space-between;font-size:10px;font-weight:800;margin-bottom:2px;color:'+(isDark?'#f1f5f9':'rgba(255,255,255,.95)')+'"><span>'+s.name+'</span><span style="color:'+accentBar+'">'+s.pct+'%</span></div>'
-              +'<div style="background:rgba(255,255,255,.2);height:5px;border-radius:4px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
-              +'<div style="background:'+accentBar+';height:5px;border-radius:4px;width:'+s.pct+'%;-webkit-print-color-adjust:exact;print-color-adjust:exact"></div>'
-              +'</div></div>';
-          }).join('') : '';
-
-        var sbInfo=function(lbl,val){
-          return val?'<div style="margin-bottom:4px">'
-            +'<div style="font-size:9px;font-weight:900;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.4px">'+lbl+'</div>'
-            +'<div style="font-size:10px;font-weight:700;color:#fff;line-height:1.3;word-break:break-all">'+val+'</div>'
-            +'</div>':'';
-        };
-
-        var mainSecHead=function(lbl){
-          return '<div style="background:'+c+';color:#fff;padding:5px 12px;margin:0 -12px;font-size:11px;font-weight:900;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;border-left:4px solid '+accentBar+';-webkit-print-color-adjust:exact;print-color-adjust:exact">'+lbl+'</div>';
-        };
-
-        // Use TABLE layout for print compatibility (flexbox splits pages)
-        return '<div style="'+F+'">'
-          +'<table style="width:100%;border-collapse:collapse;table-layout:fixed;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
-          +'<colgroup><col style="width:30%"><col style="width:70%"></colgroup>'
-          +'<tr style="-webkit-print-color-adjust:exact;print-color-adjust:exact">'
-          // ── SIDEBAR CELL ──
-          +'<td style="vertical-align:top;background:'+sbBg+';padding:14px 11px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
-          +(d.photo?'<div style="text-align:center;margin-bottom:9px"><img src="'+d.photo+'" style="width:72px;height:88px;object-fit:cover;border-radius:8px;border:3px solid '+accentBar+'"></div>':'')
-          +'<div style="text-align:center;margin-bottom:10px;padding-bottom:9px;border-bottom:1px solid rgba(255,255,255,.15)">'
-          +'<div style="font-size:13px;font-weight:900;color:'+accentBar+';line-height:1.2;word-break:break-word">'+d.name+'</div>'
-          +'<div style="font-size:9px;font-weight:800;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.5px;margin-top:2px">'+getDocType()+'</div>'
-          +'</div>'
-          +secHeadSb('Contact',isDark?'#fbbf24':'rgba(255,255,255,.7)')
-          +sbInfo('Mobile',d.contact)+sbInfo('Email',d.email)+sbInfo('Address',d.address)
-          +secHeadSb('Personal',isDark?'#fbbf24':'rgba(255,255,255,.7)')
-          +sbInfo('Date of Birth',d.dob)+sbInfo("Father's Name",d.fname)+sbInfo("Mother's Name",d.mname)
-          +sbInfo('Gender',d.gender)+sbInfo('Nationality',d.nationality)+sbInfo('Marital Status',d.marital)
-          +sbSkills
-          +(d.language?secHeadSb('Languages',isDark?'#fbbf24':'rgba(255,255,255,.7)')+'<div style="font-size:10px;font-weight:700;color:#fff">'+d.language+'</div>':'')
-          +(d.hobbies?secHeadSb('Hobbies',isDark?'#fbbf24':'rgba(255,255,255,.7)')+'<div style="font-size:10px;font-weight:700;color:#fff">'+d.hobbies+'</div>':'')
-          +'</td>'
-          // ── MAIN CONTENT CELL ──
-          +'<td style="vertical-align:top;background:#fff;padding:0">'
-          +'<div style="background:linear-gradient(135deg,'+c+','+ca+');padding:12px 14px;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
-          +'<div style="font-size:19px;font-weight:900;letter-spacing:.3px">'+d.name+'</div>'
-          +'<div style="font-size:10px;font-weight:700;opacity:.9;margin-top:2px">'+[d.contact,d.email].filter(Boolean).join(' • ')+'</div>'
-          +'</div>'
-          +'<div style="padding:9px 12px">'
-          +(d.objective?mainSecHead('Career Objective')+'<p style="font-size:11px;line-height:1.55;margin-bottom:8px;color:#111;font-weight:600">'+d.objective+'</p>':'')
-          +mainSecHead('Academic Qualification')+tblHtml(d.edu,c,ca)
-          +(d.pro.length?mainSecHead('Professional Qualification')+tblHtml(d.pro,c,ca):'')
-          +(d.work.length?mainSecHead('Work Experience')+'<ul style="margin:0 0 8px 14px;padding:0">'+li(d.work)+'</ul>':'')
-          +(d.extra.length?mainSecHead('Certifications & Extra')+'<ul style="margin:0 0 8px 14px;padding:0">'+li(d.extra)+'</ul>':'')
-          +decl+sign
-          +'</div></td>'
-          +'</tr></table></div>';
-      }
-
-      // ════════════ FULL-WIDTH TEMPLATES: 1, 3, 6, 8, 9 ════════════
-      // Each template gets a unique colourful header design
-
-      // Header style per template
-      var headerHtml='';
-      if(selectedTpl===1){
-        // Classic – solid colour band, name huge, contact below
-        headerHtml='<div style="background:'+c+';padding:16px 18px 14px;position:relative;overflow:hidden;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
-          +'<div style="position:absolute;right:-20px;top:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.06)"></div>'
-          +(d.photo?'<img src="'+d.photo+'" style="position:absolute;top:10px;right:16px;width:70px;height:86px;object-fit:cover;border-radius:6px;border:3px solid rgba(255,255,255,.4)">':'')
-          +'<div style="color:rgba(255,255,255,.65);font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px">'+getDocType()+'</div>'
-          +'<div style="font-size:24px;font-weight:900;color:#fff;line-height:1.1;letter-spacing:.2px">'+d.name+'</div>'
-          +'<div style="height:3px;width:50px;background:'+ca+';margin:7px 0 8px;border-radius:2px"></div>'
-          +'<div style="display:flex;flex-wrap:wrap;gap:10px">'
-          +(d.contact?'<span style="font-size:11px;font-weight:700;color:rgba(255,255,255,.95)">📱 '+d.contact+'</span>':'')
-          +(d.email?'<span style="font-size:11px;font-weight:700;color:rgba(255,255,255,.95)">✉ '+d.email+'</span>':'')
-          +(d.address?'<span style="font-size:11px;font-weight:700;color:rgba(255,255,255,.85)">📍 '+d.address+'</span>':'')
-          +'</div>'
-          +'</div>';
-      } else if(selectedTpl===3){
-        // Navy Professional – left accent strip
-        headerHtml='<div style="display:flex;background:#fff;border-bottom:3px solid '+ca+'">'
-          +'<div style="width:6px;background:'+c+';flex-shrink:0;-webkit-print-color-adjust:exact;print-color-adjust:exact"></div>'
-          +'<div style="flex:1;padding:14px 16px;display:flex;align-items:center;gap:14px">'
-          +(d.photo?'<img src="'+d.photo+'" style="width:74px;height:90px;object-fit:cover;border-radius:6px;border:2px solid '+c+';flex-shrink:0">':'')
-          +'<div>'
-          +'<div style="font-size:22px;font-weight:900;color:'+c+';letter-spacing:.2px;line-height:1.1">'+d.name+'</div>'
-          +'<div style="font-size:10px;font-weight:800;color:'+ca+';text-transform:uppercase;letter-spacing:.7px;margin:4px 0 6px">'+getDocType()+'</div>'
-          +'<div style="display:flex;flex-wrap:wrap;gap:10px">'
-          +(d.contact?'<span style="font-size:11px;font-weight:700;color:#333">📱 '+d.contact+'</span>':'')
-          +(d.email?'<span style="font-size:11px;font-weight:700;color:#333">✉ '+d.email+'</span>':'')
-          +(d.address?'<span style="font-size:11px;font-weight:700;color:#555">📍 '+d.address+'</span>':'')
-          +'</div></div></div></div>';
-      } else if(selectedTpl===6){
-        // Green modern – diagonal accent
-        headerHtml='<div style="background:linear-gradient(135deg,'+c+' 0%,'+ca+' 100%);padding:16px 18px;display:flex;align-items:center;gap:14px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
-          +(d.photo?'<img src="'+d.photo+'" style="width:72px;height:88px;object-fit:cover;border-radius:50%;border:3px solid rgba(255,255,255,.5);flex-shrink:0">':'')
-          +'<div style="flex:1">'
-          +'<div style="font-size:23px;font-weight:900;color:#fff;letter-spacing:.3px;line-height:1.1">'+d.name+'</div>'
-          +'<div style="height:2px;width:40px;background:rgba(255,255,255,.5);margin:6px 0"></div>'
-          +'<div style="display:flex;flex-wrap:wrap;gap:10px">'
-          +(d.contact?'<span style="font-size:11px;font-weight:700;color:rgba(255,255,255,.95)">📱 '+d.contact+'</span>':'')
-          +(d.email?'<span style="font-size:11px;font-weight:700;color:rgba(255,255,255,.95)">✉ '+d.email+'</span>':'')
-          +'</div></div></div>';
-      } else if(selectedTpl===8){
-        // Gradient – two-colour diagonal
-        headerHtml='<div style="background:linear-gradient(120deg,'+c+' 0%,'+ca+' 50%,#f97316 100%);padding:18px 18px 14px;text-align:center;position:relative;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
-          +(d.photo?'<img src="'+d.photo+'" style="width:70px;height:84px;object-fit:cover;border-radius:50%;border:3px solid rgba(255,255,255,.5);margin-bottom:8px;display:block;margin-left:auto;margin-right:auto">':'')
-          +'<div style="font-size:24px;font-weight:900;color:#fff;letter-spacing:.3px">'+d.name+'</div>'
-          +'<div style="font-size:10px;font-weight:800;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:.8px;margin:4px 0 7px">'+getDocType()+'</div>'
-          +'<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:12px">'
-          +(d.contact?'<span style="font-size:11px;font-weight:700;color:rgba(255,255,255,.95)">📱 '+d.contact+'</span>':'')
-          +(d.email?'<span style="font-size:11px;font-weight:700;color:rgba(255,255,255,.95)">✉ '+d.email+'</span>':'')
-          +'</div></div>';
-      } else {
-        // Template 9 – Minimal Lines
-        headerHtml='<div style="padding:16px 18px 12px;border-bottom:3px solid '+c+';background:#fff;display:flex;align-items:center;gap:14px">'
-          +(d.photo?'<img src="'+d.photo+'" style="width:70px;height:84px;object-fit:cover;border-radius:5px;border:2px solid '+ca+';flex-shrink:0">':'')
-          +'<div style="flex:1">'
-          +'<div style="font-size:23px;font-weight:900;color:'+c+';letter-spacing:.2px;line-height:1.1">'+d.name+'</div>'
-          +'<div style="width:40px;height:3px;background:'+ca+';border-radius:2px;margin:6px 0"></div>'
-          +'<div style="display:flex;flex-wrap:wrap;gap:10px">'
-          +(d.contact?'<span style="font-size:11px;font-weight:700;color:#333">📱 '+d.contact+'</span>':'')
-          +(d.email?'<span style="font-size:11px;font-weight:700;color:#333">✉ '+d.email+'</span>':'')
-          +(d.address?'<span style="font-size:11px;font-weight:700;color:#555">📍 '+d.address+'</span>':'')
-          +'</div></div></div>';
-      }
-
-      // Section heading for full-width
-      function msh(lbl){
-        return '<div style="background:'+c+';color:#fff;padding:5px 14px;margin:10px -16px 7px;font-size:12px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;border-left:4px solid '+ca+';-webkit-print-color-adjust:exact;print-color-adjust:exact">'+lbl+'</div>';
-      }
-
-      return '<div style="'+F+'">'
-        +headerHtml
-        +'<div style="padding:10px 16px">'
-        +(d.objective?msh('Career Objective')+'<p style="font-size:11px;line-height:1.6;margin-bottom:3px;color:#222;font-weight:600">'+d.objective+'</p>':'')
-        +(d.skills.length?msh('Skills')+skillBarsHtml(d.skills,ca,cl):'')
-        +msh('Academic Qualification')+tblHtml(d.edu,c,ca)
-        +(d.pro.length?msh('Professional Qualification')+tblHtml(d.pro,c,ca):'')
-        +(d.work.length?msh('Work Experience')+'<ul style="margin:0 0 7px 18px">'+li(d.work)+'</ul>':'')
-        +(d.extra.length?msh('Certifications & Extra')+'<ul style="margin:0 0 7px 18px">'+li(d.extra)+'</ul>':'')
-        +msh('Personal Information')+personalTable()
-        +decl+sign
-        +'</div></div>';
-    }
-
-    // ── Live Update (mini preview) ──
-    window.liveUpdate=function(){
-      // Could be expanded to update a mini preview badge
-    };
-
-    // ── Generate ──
-    window.generateResume=function(){
-      var name=g('f_name');
-      if(!name){alert('Please enter your full name.');return;}
-      var data={
-        docType:getDocType(), name:name, contact:g('f_contact'), email:g('f_email'),
-        dob:g('f_dob'), fname:g('f_fname'), mname:g('f_mname'), nationality:g('f_nationality'),
-        gender:g('f_gender'), marital:g('f_marital'), language:g('f_language'),
-        hobbies:g('f_hobbies'), address:g('f_address'), objective:getObj(),
-        edu:collectEduRows('edu'), pro:collectEduRows('pro'),
-        extra:collectList('ex',extraCount), work:collectList('wk',workCount),
-        skills:collectSkills(), photo:photoDataUrl
-      };
-      document.getElementById('resumeOutput').innerHTML=buildResume(data);
-      document.getElementById('formSection').style.display='none';
-      document.getElementById('previewSection').classList.add('show');
-      window.scrollTo({top:0,behavior:'smooth'});
-    };
-
-    window.goBack=function(){
-      document.getElementById('formSection').style.display='block';
-      document.getElementById('previewSection').classList.remove('show');
-      window.scrollTo({top:0,behavior:'smooth'});
-    };
-
-    // ── Init ──
-    addEdu('edu'); addEdu('pro'); addExtra(); addWork(); addSkill(); addSkill();
-
-    // Mobile menu
-    document.addEventListener('DOMContentLoaded',function(){
-      var menuBtn=document.getElementById('menuBtn');
-      var closeBtn=document.getElementById('closeMenuBtn');
-      var mobileMenu=document.getElementById('mobileMenu');
-      var overlay=document.getElementById('menuOverlay');
-      function openMenu(){mobileMenu.hidden=false;overlay.hidden=false;menuBtn.setAttribute('aria-expanded','true');document.body.style.overflow='hidden';}
-      function closeMenu(){mobileMenu.hidden=true;overlay.hidden=true;menuBtn.setAttribute('aria-expanded','false');document.body.style.overflow='';}
-      if(menuBtn)menuBtn.addEventListener('click',openMenu);
-      if(closeBtn)closeBtn.addEventListener('click',closeMenu);
-      if(overlay)overlay.addEventListener('click',closeMenu);
-      document.querySelectorAll('[data-dd]').forEach(function(dd){
-        var btn=dd.querySelector('.nav-dd-btn');
-        var menu=dd.querySelector('.nav-dd-menu');
-        if(btn&&menu){
-          btn.addEventListener('click',function(e){
-            e.stopPropagation();
-            var isOpen=menu.style.display==='block';
-            document.querySelectorAll('.nav-dd-menu').forEach(function(m){m.style.display='';});
-            if(!isOpen)menu.style.display='block';
-          });
-        }
-      });
-      document.addEventListener('click',function(){
-        document.querySelectorAll('.nav-dd-menu').forEach(function(m){m.style.display='';});
-      });
-    });
-
-  })();
-  </script>
+addEdu('edu');addEdu('pro');addExtra();addWork();addSkill();addSkill();
+})();
+</script>
 </body>
 </html>
