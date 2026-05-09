@@ -8,17 +8,13 @@ on:
 jobs:
   update-sitemap:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-
       - name: Run Sitemap Generator
         run: node sitemap-generator.js
-
       - name: Push changes
         run: |
           git config user.name "github-actions[bot]"
