@@ -18,3 +18,4 @@ jobs:
         with:
           commit_message: "sitemap update"
           file_pattern: "sitemap-jobs.xml sitemap-index.xml sitemap.xml"
+          push_options: "--force"
