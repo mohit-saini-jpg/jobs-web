@@ -5,32 +5,24 @@ on:
     - cron: '0 1 * * *'
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
   update-sitemap:
     runs-on: ubuntu-latest
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
 
       - name: Run Sitemap Generator
         run: node sitemap-generator.js
 
-      - name: Commit and Push
+      - name: Push changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
-          git add sitemap-jobs.xml sitemap-index.xml sitemap.xml
-          git diff --staged --quiet || git commit -m "Auto sitemap update $(date +'%Y-%m-%d')"
+          git add -A
+          git diff --staged --quiet || git commit -m "sitemap update $(date +'%Y-%m-%d')"
           git push
