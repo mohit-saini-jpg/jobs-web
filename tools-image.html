@@ -1446,7 +1446,7 @@ TOOLS.bgRemove = {
         <div style="background:#e2e8f0;border-radius:20px;height:8px;overflow:hidden;">
           <div id="bgProgressBar" style="height:100%;background:linear-gradient(90deg,#059669,#10b981);border-radius:20px;width:5%;transition:width .5s;"></div>
         </div>
-        <div style="font-size:.68rem;color:var(--muted);margin-top:4px;" id="bgProgressSub">Pehli baar ~10-15 sec lagta hai model download hone mein</div>
+        <div style="font-size:.68rem;color:var(--muted);margin-top:4px;" id="bgProgressSub">Pehli baar model download hota hai (~30-40 sec), baad mein fast</div>
       </div>
     </div>
     <div class="btn-bar">
@@ -1503,25 +1503,37 @@ window.bgRenderOutput = function() {
   img.src = objUrl;
 };
 
-// Load @imgly/background-removal from correct ESM CDN
-window._bgModelReady = false;
+/* 
+  Use @imgly/background-removal via CDN with correct publicPath pointing to CDN assets.
+  The key fix: publicPath must point to where the WASM/model files actually are on the CDN.
+*/
 window._bgRemoveFn = null;
 
-async function bgEnsureModel(onProgress) {
+async function bgLoadLib() {
   if (window._bgRemoveFn) return window._bgRemoveFn;
+
+  // Try jsDelivr CDN — correct publicPath for models
   return new Promise((resolve, reject) => {
-    // Use importmap-style dynamic import from esm.sh which handles ESM properly
-    const script = document.createElement('script');
-    script.type = 'module';
-    script.textContent = `
-      import { removeBackground } from 'https://esm.sh/@imgly/background-removal@1.4.5';
-      window._bgRemoveFn = removeBackground;
-      window._bgModelReady = true;
-      window.dispatchEvent(new Event('bgModelReady'));
+    const s = document.createElement('script');
+    s.type = 'module';
+    s.textContent = `
+      import { removeBackground } from 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/+esm';
+      window._bgRemoveFn = async (file, opts) => {
+        return removeBackground(file, {
+          ...opts,
+          publicPath: 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/'
+        });
+      };
+      window.dispatchEvent(new CustomEvent('_bgLibReady', {detail:'ok'}));
     `;
-    window.addEventListener('bgModelReady', () => resolve(window._bgRemoveFn), { once: true });
-    script.onerror = reject;
-    document.head.appendChild(script);
+    const onReady = () => { clearTimeout(timer); resolve(window._bgRemoveFn); };
+    window.addEventListener('_bgLibReady', onReady, {once:true});
+    const timer = setTimeout(() => {
+      window.removeEventListener('_bgLibReady', onReady);
+      reject(new Error('Library load timeout — internet slow hai ya CDN block hai'));
+    }, 30000);
+    s.onerror = (e) => { clearTimeout(timer); reject(new Error('Script load failed')); };
+    document.head.appendChild(s);
   });
 }
 
@@ -1530,32 +1542,33 @@ window.bgProcess = async function() {
   if (!s.file) return showStatus('bgStatus', 'Pehle image upload karein!', 'error');
 
   const btn = document.getElementById('bgProcessBtn');
-  const pw = document.getElementById('bgProgressWrap');
-  const pb = document.getElementById('bgProgressBar');
-  const pt = document.getElementById('bgProgressText');
-  const ps = document.getElementById('bgProgressSub');
+  const pw  = document.getElementById('bgProgressWrap');
+  const pb  = document.getElementById('bgProgressBar');
+  const pt  = document.getElementById('bgProgressText');
+  const ps  = document.getElementById('bgProgressSub');
   btn.disabled = true;
   pw.style.display = 'block';
   pb.style.width = '5%';
-  pt.textContent = 'AI model load ho raha hai...';
-  ps.textContent = 'Pehli baar ~15 sec lagta hai (ek baar download hota hai)';
-  showStatus('bgStatus', 'AI kaam kar raha hai, wait karein...', 'info');
+  pt.textContent = 'AI library load ho rahi hai...';
+  ps.textContent = 'Pehli baar 30-40 sec lag sakte hain';
+  showStatus('bgStatus', '⏳ AI kaam kar raha hai, please wait...', 'info');
 
   try {
-    const removeBg = await bgEnsureModel();
-    pb.style.width = '30%';
-    pt.textContent = 'Image process ho rahi hai...';
-    ps.textContent = 'AI subject detect kar raha hai...';
+    const removeBg = await bgLoadLib();
+    pb.style.width = '25%';
+    pt.textContent = 'Model download ho raha hai...';
+    ps.textContent = 'ONNX model CDN se aa raha hai';
 
     const resultBlob = await removeBg(s.file, {
-      progress: (key, current, total) => {
-        if (total > 0) {
-          const pct = 30 + Math.round((current / total) * 65);
+      progress: (key, cur, tot) => {
+        if (tot > 0) {
+          const pct = 25 + Math.round((cur/tot) * 70);
           pb.style.width = Math.min(95, pct) + '%';
-          pt.textContent = 'Processing: ' + Math.round(current/total*100) + '%';
+          pt.textContent = key.includes('fetch') ? 'Model download: ' + Math.round(cur/tot*100) + '%'
+            : 'Processing: ' + Math.round(cur/tot*100) + '%';
+          ps.textContent = '';
         }
-      },
-      publicPath: 'https://esm.sh/@imgly/background-removal@1.4.5/dist/'
+      }
     });
 
     pb.style.width = '100%';
@@ -1563,69 +1576,17 @@ window.bgProcess = async function() {
     ps.textContent = '';
     window._bgState.resultBlob = resultBlob;
     bgRenderOutput();
-    showStatus('bgStatus', '✅ Background remove ho gaya! Perfect transparent PNG download karein.', 'success');
+    showStatus('bgStatus', '✅ Background remove ho gaya! Download karein.', 'success');
 
   } catch(err) {
     console.error('BG remove error:', err);
-    // If ESM import failed, try alternate CDN
-    if (!window._bgRemoveFn) {
-      pt.textContent = 'Alternate method try kar raha hai...';
-      try {
-        await bgFallbackUnpkg(s);
-        return;
-      } catch(e2) {
-        console.error('Fallback also failed:', e2);
-      }
-    }
-    showStatus('bgStatus', '❌ Error aaya: ' + (err.message || 'Unknown error') + '. Page refresh karke retry karein.', 'error');
+    showStatus('bgStatus', '❌ ' + (err.message || 'Error aaya') + '. Internet check karein aur retry karein.', 'error');
     pb.style.width = '0%';
   } finally {
     btn.disabled = false;
     setTimeout(() => { pw.style.display = 'none'; pb.style.width = '0%'; }, 3000);
   }
 };
-
-// Fallback: try unpkg CDN
-async function bgFallbackUnpkg(s) {
-  const pb = document.getElementById('bgProgressBar');
-  const pt = document.getElementById('bgProgressText');
-  pb.style.width = '15%';
-  pt.textContent = 'Alternate CDN se load kar raha hai...';
-
-  await new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.type = 'module';
-    script.textContent = `
-      import { removeBackground } from 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/+esm';
-      window._bgRemoveFn = removeBackground;
-      window._bgModelReady = true;
-      window.dispatchEvent(new Event('bgModelReady2'));
-    `;
-    window.addEventListener('bgModelReady2', () => resolve(), { once: true });
-    script.onerror = reject;
-    document.head.appendChild(script);
-  });
-
-  const removeBg = window._bgRemoveFn;
-  if (!removeBg) throw new Error('Function not loaded');
-
-  pb.style.width = '40%';
-  pt.textContent = 'Processing...';
-
-  const resultBlob = await removeBg(s.file, {
-    progress: (key, cur, tot) => {
-      if (tot > 0) pb.style.width = (40 + Math.round(cur/tot*55)) + '%';
-    }
-  });
-
-  pb.style.width = '100%';
-  pt.textContent = '✅ Done!';
-  window._bgState.resultBlob = resultBlob;
-  bgRenderOutput();
-  showStatus('bgStatus', '✅ Background remove ho gaya!', 'success');
-  document.getElementById('bgProcessBtn').disabled = false;
-  setTimeout(() => { document.getElementById('bgProgressWrap').style.display = 'none'; }, 3000);
-}
 
 window.bgDownload = function() {
   const blob = window._bgFinalBlob || window._bgState?.resultBlob;
