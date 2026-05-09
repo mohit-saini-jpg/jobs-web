@@ -1,35 +1,48 @@
 # robots.txt — Top Sarkari Jobs
 # https://www.topsarkarijobs.com/robots.txt
-# Last updated: 2026-05-07
+# Last updated: 2026-05-08
 
-# Allow all major search engines
+# ── Googlebot ──────────────────────────────
 User-agent: Googlebot
 Allow: /
 Crawl-delay: 1
 
+# ── Bingbot ────────────────────────────────
 User-agent: Bingbot
 Allow: /
 Crawl-delay: 2
 
+# ── All other crawlers ─────────────────────
 User-agent: *
 Allow: /
 
-# Block crawling of utility/admin paths (none currently but good practice)
+# ── Block low-value utility paths ──────────
 Disallow: /admin/
 Disallow: /private/
 Disallow: /tmp/
+Disallow: /.gstack/
 
-# Block duplicate parameter combinations that create low-value pages
+# ── Block duplicate / thin content patterns ──
 Disallow: /view.html?section=&
 Disallow: /category.html?group=&
 Disallow: /state-jobs.html?state=&
+Disallow: /search.html?q=&
 
-# Block redirect interstitial from being indexed
+# ── Block redirect interstitial from indexing ──
 Disallow: /redirect.html
 
-# Sitemap location
-Sitemap: https://www.topsarkarijobs.com/sitemap.xml
+# ── Block build/config files ──
+Disallow: /config.json
+Disallow: /header_links.json
+Disallow: /services.json
+Disallow: /tools.json
+Disallow: /whatsapp.json
 
-# Additional sitemaps (add these when created)
+# ── Sitemaps ───────────────────────────────
+Sitemap: https://www.topsarkarijobs.com/sitemap-index.xml
+Sitemap: https://www.topsarkarijobs.com/sitemap-pages.xml
 Sitemap: https://www.topsarkarijobs.com/sitemap-jobs.xml
-# Sitemap: https://www.topsarkarijobs.com/sitemap-news.xml
+Sitemap: https://www.topsarkarijobs.com/sitemap-results.xml
+Sitemap: https://www.topsarkarijobs.com/sitemap-admitcards.xml
+Sitemap: https://www.topsarkarijobs.com/sitemap-categories.xml
+Sitemap: https://www.topsarkarijobs.com/sitemap-states.xml
