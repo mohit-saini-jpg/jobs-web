@@ -92,8 +92,8 @@
   <title>Top Sarkari Jobs | Latest Government Jobs, Results & Admit Cards</title>
   <meta name="description" content="Browse latest Sarkari Jobs, Results, Admit Cards, Answer Keys, Admissions and Online Forms by category — updated daily on Top Sarkari Jobs." />
   <meta name="keywords" content="sarkari jobs, sarkari result, govt jobs, admit card, online form, answer key, syllabus" />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://www.topsarkarijobs.com/view.html" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <link id="canonicalTag" rel="canonical" href="https://www.topsarkarijobs.com/view.html" />
   <link rel="icon" type="image/x-icon" href="image.ico">
 
   <!-- Open Graph / WhatsApp / Social Share -->
@@ -331,6 +331,16 @@
         setMeta('meta[name="twitter:title"]',      safeTitle + ' | Top Sarkari Jobs');
         setMeta('meta[name="twitter:description"]',safeDesc);
         setMeta('meta[property="og:url"]', window.location.href);
+        // Update canonical URL dynamically
+        var canonical = document.getElementById('canonicalTag');
+        if (canonical) canonical.setAttribute('href', window.location.href);
+        // Update description meta
+        setMeta('meta[name="description"]', safeDesc);
+        // Update keywords dynamically
+        var kwMeta = document.querySelector('meta[name="keywords"]');
+        if (kwMeta && safeTitle) {
+          kwMeta.setAttribute('content', safeTitle + ', sarkari jobs 2026, government jobs, top sarkari jobs');
+        }
       }
 
       // ── 1. Tool / URL View ──────────────────────────────────────────
@@ -537,5 +547,6 @@
       })();
     })();
   </script>
+  <script src="seo-engine.js?v=20260508" defer></script>
 </body>
 </html>
