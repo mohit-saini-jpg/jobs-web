@@ -1406,29 +1406,82 @@ window.ciProcess = async function() {
 
       showStatus('ciStatus', '⏳ Target size dhundh raha hai...', 'info');
 
-      // Binary search for quality
-      const isPng = fmt.mime === 'image/png';
-      if (isPng) {
-        blob = await canvasToBlob(canvas, 'image/png', 1);
+      const isLossless = fmt.mime === 'image/png' || fmt.mime === 'image/bmp' || fmt.mime === 'image/gif';
+
+      if (isLossless) {
+        // PNG/BMP/GIF: lossless — quality param kaam nahi karta, dimensions reduce karo
+        blob = await canvasToBlob(canvas, fmt.mime, 1);
         if (blob.size > targetBytes) {
-          // For PNG, try reducing dimensions
-          let scale = Math.sqrt(targetBytes / blob.size);
-          const nc = document.createElement('canvas');
-          nc.width = Math.max(1, Math.round(sw * scale));
-          nc.height = Math.max(1, Math.round(sh * scale));
-          nc.getContext('2d').drawImage(canvas, 0, 0, nc.width, nc.height);
-          blob = await canvasToBlob(nc, 'image/png', 1);
+          let scaleFactor = Math.sqrt(targetBytes / blob.size) * 0.95;
+          for (let attempt = 0; attempt < 10; attempt++) {
+            scaleFactor = Math.min(scaleFactor, 0.99);
+            const nc = document.createElement('canvas');
+            nc.width  = Math.max(1, Math.round(sw * scaleFactor));
+            nc.height = Math.max(1, Math.round(sh * scaleFactor));
+            nc.getContext('2d').drawImage(canvas, 0, 0, nc.width, nc.height);
+            const nb = await canvasToBlob(nc, fmt.mime, 1);
+            if (nb.size <= targetBytes) { blob = nb; break; }
+            scaleFactor *= Math.sqrt(targetBytes / nb.size) * 0.92;
+          }
         }
       } else {
-        let lo = 0.05, hi = 1.0, best = null;
-        for (let i = 0; i < 12; i++) {
-          const mid = (lo + hi) / 2;
-          const b = await canvasToBlob(canvas, fmt.mime, mid);
-          if (b.size <= targetBytes) { best = b; lo = mid; }
-          else { hi = mid; }
-          if (hi - lo < 0.01) break;
+        // JPEG / WEBP / AVIF — binary search on quality first, then dimension fallback
+        const maxBlob = await canvasToBlob(canvas, fmt.mime, 1.0);
+        if (maxBlob.size <= targetBytes) {
+          blob = maxBlob;
+        } else {
+          // Binary search quality — 16 iterations for high precision
+          let lo = 0.01, hi = 1.0, bestBlob = null;
+          for (let i = 0; i < 16; i++) {
+            const mid = (lo + hi) / 2;
+            const b = await canvasToBlob(canvas, fmt.mime, mid);
+            if (b.size <= targetBytes) { bestBlob = b; lo = mid; }
+            else { hi = mid; }
+            if ((hi - lo) < 0.005) break;
+          }
+
+          if (bestBlob) {
+            blob = bestBlob;
+          } else {
+            // Even lowest quality > target: scale down dimensions + quality search
+            let dimScale = 0.85;
+            let found = false;
+            for (let attempt = 0; attempt < 12; attempt++) {
+              const nc = document.createElement('canvas');
+              nc.width  = Math.max(1, Math.round(sw * dimScale));
+              nc.height = Math.max(1, Math.round(sh * dimScale));
+              nc.getContext('2d').drawImage(canvas, 0, 0, nc.width, nc.height);
+              // Quick check at lowest quality
+              const minQ = await canvasToBlob(nc, fmt.mime, 0.01);
+              if (minQ.size <= targetBytes) {
+                // Binary search quality on this smaller canvas
+                let slo = 0.01, shi = 1.0, sBest = minQ;
+                for (let j = 0; j < 12; j++) {
+                  const smid = (slo + shi) / 2;
+                  const sb = await canvasToBlob(nc, fmt.mime, smid);
+                  if (sb.size <= targetBytes) { sBest = sb; slo = smid; }
+                  else { shi = smid; }
+                  if ((shi - slo) < 0.01) break;
+                }
+                blob = sBest; found = true; break;
+              }
+              // Still too big: reduce dimensions further
+              dimScale *= Math.sqrt(targetBytes / minQ.size) * 0.88;
+            }
+            if (!found) blob = await canvasToBlob(canvas, fmt.mime, 0.01);
+          }
         }
-        blob = best || await canvasToBlob(canvas, fmt.mime, 0.05);
+      }
+
+      // Final result check
+      const actualKB = (blob.size / 1024).toFixed(1);
+      const targetKB  = (targetBytes / 1024).toFixed(0);
+      if (blob.size > targetBytes) {
+        spin.classList.remove('show');
+        ciShowStats(file.size, blob.size, fmt.ext.toUpperCase());
+        downloadBlob(blob, 'compressed_' + file.name.replace(/\.[^.]+$/, '') + '.' + fmt.ext);
+        showStatus('ciStatus', `⚠️ Target ${targetKB}KB fully possible nahi tha. Best result: ${actualKB}KB download ho rahi hai. JPG/WEBP format try karein.`, 'error');
+        return;
       }
     } else {
       // ── Quality mode ──
