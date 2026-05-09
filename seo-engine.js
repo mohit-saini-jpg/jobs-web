@@ -1,8 +1,15 @@
-
+/**
+ * SEO Engine — Top Sarkari Jobs
+ * Handles: Push Notifications, Recently Viewed, Trending, Share buttons,
+ *          Sticky Notification Bar, Popular Searches, Auto-refresh updates,
+ *          Schema injection, Breadcrumb, Performance optimizations
+ */
 (function () {
   'use strict';
 
-  
+  /* ══════════════════════════════════════════
+     1. CONSTANTS & CONFIG
+  ══════════════════════════════════════════ */
   const SITE = 'https://www.topsarkarijobs.com';
   const SITE_NAME = 'Top Sarkari Jobs';
   const MAX_RECENTLY_VIEWED = 10;
@@ -13,7 +20,9 @@
     'Teaching Jobs 2026', 'CRPF 2026', 'NDA 2026', 'DRDO 2026'
   ];
 
-  
+  /* ══════════════════════════════════════════
+     2. STORAGE HELPERS (localStorage safe)
+  ══════════════════════════════════════════ */
   const Store = {
     get(key, fallback = null) {
       try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
@@ -24,7 +33,9 @@
     }
   };
 
-  
+  /* ══════════════════════════════════════════
+     3. RECENTLY VIEWED TRACKER
+  ══════════════════════════════════════════ */
   const RecentlyViewed = {
     key: 'tsj_rv',
     add(item) {
@@ -49,11 +60,13 @@
     }
   };
 
-  
+  /* ══════════════════════════════════════════
+     4. STICKY NOTIFICATION BAR
+  ══════════════════════════════════════════ */
   function buildStickyNotifBar() {
     if (document.getElementById('sticky-notif-bar')) return;
     const dismissed = Store.get('tsj_notif_dismissed', 0);
-    if (Date.now() - dismissed < 86400000) return; 
+    if (Date.now() - dismissed < 86400000) return; // 24h cooldown
 
     const bar = document.createElement('div');
     bar.id = 'sticky-notif-bar';
@@ -104,11 +117,13 @@
     });
   }
 
-  
+  /* ══════════════════════════════════════════
+     5. PUSH NOTIFICATION (Service Worker)
+  ══════════════════════════════════════════ */
   function initPushNotifications() {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
     const asked = Store.get('tsj_push_asked', 0);
-    if (Date.now() - asked < 604800000) return; 
+    if (Date.now() - asked < 604800000) return; // 7 days
     Store.set('tsj_push_asked', Date.now());
 
     setTimeout(() => {
@@ -119,22 +134,26 @@
           }
         });
       }
-    }, 15000); 
+    }, 15000); // Ask after 15 seconds
   }
 
-  
+  /* ══════════════════════════════════════════
+     6. POPULAR SEARCHES WIDGET
+  ══════════════════════════════════════════ */
   function buildPopularSearches() {
     const el = document.getElementById('popular-searches-widget');
     if (!el) return;
     const searches = Store.get('tsj_searches', []);
-    
+    // Merge with defaults (recent user searches first)
     const all = [...new Set([...searches, ...POPULAR_SEARCHES])].slice(0, 16);
     el.innerHTML = all.map(q =>
       `<a href="search.html?q=${encodeURIComponent(q)}" class="ps-tag">${escHtml(q)}</a>`
     ).join('');
   }
 
-  
+  /* ══════════════════════════════════════════
+     7. SEARCH QUERY TRACKER
+  ══════════════════════════════════════════ */
   function trackSearch(query) {
     if (!query || query.length < 2) return;
     let searches = Store.get('tsj_searches', []);
@@ -142,7 +161,9 @@
     Store.set('tsj_searches', searches);
   }
 
-  
+  /* ══════════════════════════════════════════
+     8. SHARE BUTTONS
+  ══════════════════════════════════════════ */
   function buildShareButtons(container) {
     if (!container) return;
     const url = encodeURIComponent(location.href);
@@ -189,7 +210,9 @@
     }
   }
 
-  
+  /* ══════════════════════════════════════════
+     9. AUTO SCHEMA INJECTION (JobPosting, Breadcrumb)
+  ══════════════════════════════════════════ */
   function injectJobSchema(jobData) {
     const existing = document.getElementById('jobSchema');
     if (!existing || !jobData) return;
@@ -216,7 +239,7 @@
         value: { '@type': 'QuantitativeValue', value: jobData.salary, unitText: 'MONTH' }
       } : undefined
     };
-    
+    // Clean undefined
     Object.keys(schema).forEach(k => schema[k] === undefined && delete schema[k]);
     existing.textContent = JSON.stringify(schema);
   }
@@ -240,7 +263,9 @@
     document.head.appendChild(el);
   }
 
-  
+  /* ══════════════════════════════════════════
+     10. DYNAMIC BREADCRUMB HTML
+  ══════════════════════════════════════════ */
   function buildBreadcrumb(crumbs) {
     const el = document.getElementById('dynamic-breadcrumb');
     if (!el) return;
@@ -251,7 +276,9 @@
     injectBreadcrumbSchema(crumbs);
   }
 
-  
+  /* ══════════════════════════════════════════
+     11. LAZY LOADING IMAGES
+  ══════════════════════════════════════════ */
   function applyLazyLoading() {
     document.querySelectorAll('img:not([loading])').forEach(img => {
       img.setAttribute('loading', 'lazy');
@@ -260,7 +287,9 @@
     });
   }
 
-  
+  /* ══════════════════════════════════════════
+     12. PERFORMANCE: LINK PREFETCH
+  ══════════════════════════════════════════ */
   function prefetchOnHover() {
     const prefetched = new Set();
     document.addEventListener('mouseover', e => {
@@ -275,7 +304,9 @@
     }, { passive: true });
   }
 
-  
+  /* ══════════════════════════════════════════
+     13. AUTO-REFRESH LATEST UPDATES (badge)
+  ══════════════════════════════════════════ */
   function setupAutoRefreshBadge() {
     const el = document.getElementById('live-update-badge');
     if (!el) return;
@@ -284,27 +315,29 @@
       count++;
       el.textContent = `${count} new update${count > 1 ? 's' : ''}`;
       el.style.display = 'inline-block';
-    }, 120000); 
+    }, 120000); // Every 2 minutes show "+1 update"
   }
 
-  
+  /* ══════════════════════════════════════════
+     14. PAGE-SPECIFIC LOGIC
+  ══════════════════════════════════════════ */
   function initPage() {
     const page = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
 
-    
+    // Track page as recently viewed (for detail pages)
     if (page === 'view.html' || page === 'job.html') {
       const params = new URLSearchParams(location.search);
       const title = params.get('name') || params.get('section') || document.title;
       if (title) RecentlyViewed.add({ title, url: location.href });
     }
 
-    
+    // Home page
     if (page === '' || page === 'index.html') {
       buildBreadcrumb([{ name: 'Home', url: SITE + '/' }]);
       buildPopularSearches();
       setupAutoRefreshBadge();
 
-      
+      // Track hero search
       const heroSearchBtn = document.getElementById('heroSearchBtn');
       const heroSearchInput = document.getElementById('heroSearch');
       if (heroSearchBtn && heroSearchInput) {
@@ -313,7 +346,7 @@
       }
     }
 
-    
+    // Result page
     if (page === 'result.html') {
       buildBreadcrumb([
         { name: 'Home', url: SITE + '/' },
@@ -321,7 +354,7 @@
       ]);
     }
 
-    
+    // Admit card page
     if (page === 'admit-card.html') {
       buildBreadcrumb([
         { name: 'Home', url: SITE + '/' },
@@ -329,13 +362,13 @@
       ]);
     }
 
-    
+    // Job detail page — inject schema & share buttons
     if (page === 'job.html') {
       const shareContainer = document.getElementById('job-share-buttons');
       if (shareContainer) buildShareButtons(shareContainer);
     }
 
-    
+    // View page (job listing)
     if (page === 'view.html') {
       const params = new URLSearchParams(location.search);
       const section = params.get('section') || '';
@@ -349,37 +382,43 @@
       if (shareContainer) buildShareButtons(shareContainer);
     }
 
-    
+    // Search page — track queries
     if (page === 'search.html') {
       const params = new URLSearchParams(location.search);
       const q = params.get('q') || '';
       if (q) trackSearch(q);
     }
 
-    
+    // Recently viewed sidebar render
     RecentlyViewed.render();
 
-    
+    // Share buttons in any existing container
     const shareEl = document.querySelector('.page-share-container');
     if (shareEl) buildShareButtons(shareEl);
   }
 
-  
+  /* ══════════════════════════════════════════
+     15. CORE WEB VITALS: CLS FIX
+  ══════════════════════════════════════════ */
   function fixCLS() {
-    
+    // Reserve space for dynamically loaded images
     document.querySelectorAll('img:not([width]):not([height])').forEach(img => {
       if (!img.style.aspectRatio) img.style.aspectRatio = '16/9';
     });
   }
 
-  
+  /* ══════════════════════════════════════════
+     HELPERS
+  ══════════════════════════════════════════ */
   function escHtml(s) {
     return String(s || '')
       .replace(/&/g, '&amp;').replace(/</g, '&lt;')
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  
+  /* ══════════════════════════════════════════
+     INIT
+  ══════════════════════════════════════════ */
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', run);
   } else {
@@ -392,7 +431,7 @@
     applyLazyLoading();
     prefetchOnHover();
     fixCLS();
-    
+    // Defer push notification prompt
     if ('requestIdleCallback' in window) {
       requestIdleCallback(initPushNotifications, { timeout: 10000 });
     } else {
@@ -400,7 +439,7 @@
     }
   }
 
-  
+  // Expose for external use
   window.TSJSeo = { RecentlyViewed, buildShareButtons, buildBreadcrumb, injectJobSchema, trackSearch };
 
 })();
