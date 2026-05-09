@@ -932,71 +932,532 @@ TOOLS.compressImage = {
   title: 'Compress Image',
   icon: '<i class="fa-solid fa-file-image"></i>',
   html: () => `
-    <div class="drop-zone" id="ciDrop">
-      <input type="file" id="ciFile" accept="image/*">
-      <div class="drop-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-      <div class="drop-text">Image yahan drop karein ya click karein</div>
-      <div class="drop-sub">JPG, PNG, WEBP support</div>
-    </div>
-    <div class="preview-wrap" id="ciPreview">
-      <img id="ciImg" class="preview-img" src="" alt="">
-      <div class="preview-info">
-        <span class="preview-chip" id="ciOrigSize">Original: -</span>
+    <style>
+      /* Compress Tool Tabs */
+      #ciToolWrap .ci-tabs{display:flex;gap:6px;margin-bottom:14px;border-bottom:2px solid #f1f5f9;padding-bottom:10px;}
+      #ciToolWrap .ci-tab{flex:1;padding:8px 6px;border-radius:8px;border:1.5px solid #e2e8f0;background:#f8fafc;font-size:.76rem;font-weight:700;cursor:pointer;text-align:center;color:#64748b;transition:all .15s;font-family:inherit;}
+      #ciToolWrap .ci-tab.active{background:var(--cat);color:#fff;border-color:var(--cat);}
+      #ciToolWrap .ci-tab:hover:not(.active){background:#eff6ff;border-color:var(--cat);color:var(--cat);}
+      #ciToolWrap .ci-panel{display:none;}
+      #ciToolWrap .ci-panel.active{display:block;}
+      /* Mode toggle */
+      #ciToolWrap .mode-row{display:flex;gap:0;border:1.5px solid #e2e8f0;border-radius:9px;overflow:hidden;margin-bottom:14px;}
+      #ciToolWrap .mode-btn{flex:1;padding:7px 4px;font-size:.75rem;font-weight:700;border:none;background:#f8fafc;cursor:pointer;color:#64748b;font-family:inherit;transition:all .15s;}
+      #ciToolWrap .mode-btn.active{background:var(--cat);color:#fff;}
+      /* Format grid */
+      #ciToolWrap .fmt-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px;}
+      @media(max-width:480px){#ciToolWrap .fmt-grid{grid-template-columns:repeat(3,1fr);}}
+      #ciToolWrap .fmt-chip{padding:6px 4px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.7rem;font-weight:700;text-align:center;cursor:pointer;background:#fff;color:#0d2257;transition:all .15s;line-height:1.3;}
+      #ciToolWrap .fmt-chip:hover{border-color:var(--cat);background:#eff6ff;color:var(--cat);}
+      #ciToolWrap .fmt-chip.selected{border-color:var(--cat);background:var(--cat);color:#fff;}
+      #ciToolWrap .fmt-chip .fmt-note{display:block;font-size:.6rem;font-weight:500;opacity:.75;margin-top:1px;}
+      #ciToolWrap .fmt-chip.disabled{opacity:.4;cursor:not-allowed;pointer-events:none;}
+      /* Crop area */
+      #ciToolWrap .crop-container{position:relative;display:inline-block;max-width:100%;cursor:crosshair;user-select:none;}
+      #ciToolWrap #ciCropCanvas{max-width:100%;border-radius:10px;border:1.5px solid var(--border);display:block;}
+      #ciToolWrap .crop-sel-box{position:absolute;border:2px dashed #1a56db;background:rgba(26,86,219,.08);pointer-events:none;box-sizing:border-box;}
+      #ciToolWrap .crop-handle{position:absolute;width:10px;height:10px;background:#1a56db;border:2px solid #fff;border-radius:2px;pointer-events:none;}
+      /* Stats bar */
+      #ciToolWrap .stats-bar{display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:9px;margin-top:10px;}
+      #ciToolWrap .stat-item{font-size:.73rem;color:#064e3b;font-weight:600;}
+      #ciToolWrap .stat-item span{color:#059669;font-weight:800;}
+      /* Target KB section */
+      #ciToolWrap .target-toggle{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:.78rem;font-weight:700;color:#0d2257;cursor:pointer;}
+      #ciToolWrap .target-toggle input{accent-color:var(--cat);width:15px;height:15px;cursor:pointer;}
+      #ciToolWrap .target-kb-row{margin-top:10px;display:none;}
+      #ciToolWrap .target-kb-row.show{display:flex;}
+    </style>
+
+    <div id="ciToolWrap">
+      <!-- TABS -->
+      <div class="ci-tabs">
+        <button class="ci-tab active" onclick="ciSwitchTab('compress',this)"><i class="fa-solid fa-compress-arrows-alt"></i> Compress</button>
+        <button class="ci-tab" onclick="ciSwitchTab('crop',this)"><i class="fa-solid fa-crop"></i> Crop</button>
+        <button class="ci-tab" onclick="ciSwitchTab('format',this)"><i class="fa-solid fa-arrows-rotate"></i> Format</button>
       </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group" style="flex:2;">
-        <label class="form-label">Quality</label>
-        <div class="range-wrap">
-          <input type="range" id="ciQ" min="10" max="100" value="75">
-          <span class="range-val" id="ciQVal">75%</span>
+
+      <!-- DROP ZONE (shared) -->
+      <div class="drop-zone" id="ciDrop">
+        <input type="file" id="ciFile" accept="image/*,.heic,.heif,.avif,.tiff,.bmp,.raw,.cr2,.nef,.psd">
+        <div class="drop-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+        <div class="drop-text">Image yahan drop karein ya click karein</div>
+        <div class="drop-sub">JPG · PNG · WEBP · BMP · GIF · HEIC · AVIF aur zyada</div>
+      </div>
+
+      <!-- IMAGE INFO BAR -->
+      <div id="ciInfoBar" style="display:none;margin-top:10px;padding:10px 12px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:9px;">
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;">
+          <img id="ciThumb" style="width:44px;height:44px;object-fit:cover;border-radius:7px;border:1.5px solid #bfdbfe;" src="" alt="">
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:.78rem;font-weight:800;color:#0d2257;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="ciFileName">-</div>
+            <div style="font-size:.71rem;color:#64748b;margin-top:2px;">
+              <span id="ciOrigSize">-</span> &nbsp;·&nbsp; <span id="ciOrigDim">-</span>
+            </div>
+          </div>
+          <button onclick="ciClearFile()" style="background:#fee2e2;border:none;color:#dc2626;border-radius:7px;padding:4px 10px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:inherit;">✕ Clear</button>
         </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Output Format</label>
-        <select class="form-input" id="ciFmt">
-          <option value="image/jpeg">JPG</option>
-          <option value="image/png">PNG</option>
-          <option value="image/webp">WEBP</option>
-        </select>
+
+      <!-- ===== TAB: COMPRESS ===== -->
+      <div class="ci-panel active" id="ciPanel-compress" style="margin-top:14px;">
+        <!-- Mode: Quality vs Target KB -->
+        <div class="mode-row">
+          <button class="mode-btn active" id="ciModeQ" onclick="ciSetMode('quality')"><i class="fa-solid fa-sliders"></i> Quality Mode</button>
+          <button class="mode-btn" id="ciModeT" onclick="ciSetMode('target')"><i class="fa-solid fa-bullseye"></i> Target Size (KB)</button>
+        </div>
+
+        <!-- Quality Mode -->
+        <div id="ciQualitySection">
+          <label class="form-label"><i class="fa-solid fa-sliders" style="color:var(--cat)"></i> Compression Quality</label>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:6px;">
+            <div style="flex:1;">
+              <div class="range-wrap">
+                <input type="range" id="ciQ" min="5" max="100" value="75">
+                <span class="range-val" id="ciQVal">75%</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:.64rem;color:#94a3b8;margin-top:4px;">
+                <span>Smaller file</span><span>Best quality</span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;">
+            <button onclick="ciQuickQ(30)" style="padding:4px 11px;border-radius:7px;border:1.5px solid #e2e8f0;background:#fff;font-size:.72rem;font-weight:700;cursor:pointer;color:#dc2626;font-family:inherit;">30% Min</button>
+            <button onclick="ciQuickQ(60)" style="padding:4px 11px;border-radius:7px;border:1.5px solid #e2e8f0;background:#fff;font-size:.72rem;font-weight:700;cursor:pointer;color:#d97706;font-family:inherit;">60% Balanced</button>
+            <button onclick="ciQuickQ(80)" style="padding:4px 11px;border-radius:7px;border:1.5px solid #e2e8f0;background:#fff;font-size:.72rem;font-weight:700;cursor:pointer;color:#059669;font-family:inherit;">80% High</button>
+            <button onclick="ciQuickQ(95)" style="padding:4px 11px;border-radius:7px;border:1.5px solid #e2e8f0;background:#fff;font-size:.72rem;font-weight:700;cursor:pointer;color:#1a56db;font-family:inherit;">95% Max</button>
+          </div>
+        </div>
+
+        <!-- Target KB Mode -->
+        <div id="ciTargetSection" style="display:none;">
+          <label class="form-label"><i class="fa-solid fa-bullseye" style="color:var(--cat)"></i> Target File Size</label>
+          <div class="form-row" style="align-items:flex-end;gap:8px;margin-top:8px;">
+            <div class="form-group" style="flex:1;">
+              <input type="number" class="form-input" id="ciTargetKB" placeholder="e.g. 50" min="5" max="10000" value="100" style="font-size:1rem;font-weight:700;padding:10px;">
+            </div>
+            <div class="form-group" style="flex:0 0 70px;">
+              <select class="form-input" id="ciTargetUnit">
+                <option value="kb">KB</option>
+                <option value="mb">MB</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;">
+            <button onclick="ciQuickKB(20)" style="padding:4px 11px;border-radius:7px;border:1.5px solid #e2e8f0;background:#fff;font-size:.72rem;font-weight:700;cursor:pointer;color:#0d2257;font-family:inherit;">20 KB</button>
+            <button onclick="ciQuickKB(50)" style="padding:4px 11px;border-radius:7px;border:1.5px solid #e2e8f0;background:#fff;font-size:.72rem;font-weight:700;cursor:pointer;color:#0d2257;font-family:inherit;">50 KB</button>
+            <button onclick="ciQuickKB(100)" style="padding:4px 11px;border-radius:7px;border:1.5px solid #e2e8f0;background:#fff;font-size:.72rem;font-weight:700;cursor:pointer;color:#0d2257;font-family:inherit;">100 KB</button>
+            <button onclick="ciQuickKB(200)" style="padding:4px 11px;border-radius:7px;border:1.5px solid #e2e8f0;background:#fff;font-size:.72rem;font-weight:700;cursor:pointer;color:#0d2257;font-family:inherit;">200 KB</button>
+            <button onclick="ciQuickKB(500)" style="padding:4px 11px;border-radius:7px;border:1.5px solid #e2e8f0;background:#fff;font-size:.72rem;font-weight:700;cursor:pointer;color:#0d2257;font-family:inherit;">500 KB</button>
+          </div>
+          <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 12px;margin-top:10px;font-size:.73rem;color:#92400e;line-height:1.5;">
+            <i class="fa-solid fa-circle-info"></i> Binary search se best quality dhundha jayega jo target size ke andar fit ho. PNG ke liye target accurate nahi hoga kyunki PNG lossless hai.
+          </div>
+        </div>
       </div>
+
+      <!-- ===== TAB: CROP ===== -->
+      <div class="ci-panel" id="ciPanel-crop" style="margin-top:14px;">
+        <div id="ciCropEmpty" style="text-align:center;padding:20px;color:#94a3b8;font-size:.82rem;">
+          <i class="fa-solid fa-crop" style="font-size:1.5rem;margin-bottom:8px;display:block;"></i>
+          Pehle upar image upload karein, phir crop karein
+        </div>
+        <div id="ciCropActive" style="display:none;">
+          <p style="font-size:.76rem;color:#64748b;margin-bottom:10px;"><i class="fa-solid fa-hand-pointer" style="color:var(--cat)"></i> Mouse drag karke crop area select karein, ya niche numbers type karein:</p>
+          <div class="crop-container" id="ciCropContainer">
+            <canvas id="ciCropCanvas"></canvas>
+            <div class="crop-sel-box" id="ciCropSelBox" style="display:none;"></div>
+            <div class="crop-handle" id="ciCropHtl" style="display:none;top:-5px;left:-5px;"></div>
+            <div class="crop-handle" id="ciCropHtr" style="display:none;top:-5px;right:-5px;"></div>
+            <div class="crop-handle" id="ciCropHbl" style="display:none;bottom:-5px;left:-5px;"></div>
+            <div class="crop-handle" id="ciCropHbr" style="display:none;bottom:-5px;right:-5px;"></div>
+          </div>
+          <div class="form-row" style="margin-top:10px;">
+            <div class="form-group"><label class="form-label">X (px)</label><input type="number" class="form-input" id="ciCX" value="0" min="0"></div>
+            <div class="form-group"><label class="form-label">Y (px)</label><input type="number" class="form-input" id="ciCY" value="0" min="0"></div>
+            <div class="form-group"><label class="form-label">Width (px)</label><input type="number" class="form-input" id="ciCW" value="0" min="1"></div>
+            <div class="form-group"><label class="form-label">Height (px)</label><input type="number" class="form-input" id="ciCH" value="0" min="1"></div>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;">
+            <button onclick="ciCropPreset(1,1)" style="padding:4px 10px;border-radius:7px;border:1.5px solid #e2e8f0;background:#fff;font-size:.71rem;font-weight:700;cursor:pointer;color:#0d2257;font-family:inherit;">1:1</button>
+            <button onclick="ciCropPreset(4,3)" style="padding:4px 10px;border-radius:7px;border:1.5px solid #e2e8f0;background:#fff;font-size:.71rem;font-weight:700;cursor:pointer;color:#0d2257;font-family:inherit;">4:3</button>
+            <button onclick="ciCropPreset(16,9)" style="padding:4px 10px;border-radius:7px;border:1.5px solid #e2e8f0;background:#fff;font-size:.71rem;font-weight:700;cursor:pointer;color:#0d2257;font-family:inherit;">16:9</button>
+            <button onclick="ciCropPreset(3,4)" style="padding:4px 10px;border-radius:7px;border:1.5px solid #e2e8f0;background:#fff;font-size:.71rem;font-weight:700;cursor:pointer;color:#0d2257;font-family:inherit;">3:4</button>
+            <button onclick="ciCropPreset(2,3)" style="padding:4px 10px;border-radius:7px;border:1.5px solid #e2e8f0;background:#fff;font-size:.71rem;font-weight:700;cursor:pointer;color:#0d2257;font-family:inherit;">2:3</button>
+            <button onclick="ciCropSelectAll()" style="padding:4px 10px;border-radius:7px;border:1.5px solid #bfdbfe;background:#eff6ff;font-size:.71rem;font-weight:700;cursor:pointer;color:#1a56db;font-family:inherit;"><i class="fa-solid fa-expand"></i> Full</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== TAB: FORMAT ===== -->
+      <div class="ci-panel" id="ciPanel-format" style="margin-top:14px;">
+        <label class="form-label" style="margin-bottom:8px;"><i class="fa-solid fa-file-export" style="color:var(--cat)"></i> Output Format choose karein:</label>
+        <div class="fmt-grid" id="ciFmtGrid">
+          <div class="fmt-chip selected" data-mime="image/jpeg" data-ext="jpg" onclick="ciSelectFmt(this)">JPG<span class="fmt-note">Lossy · Small</span></div>
+          <div class="fmt-chip" data-mime="image/jpeg" data-ext="jpeg" onclick="ciSelectFmt(this)">JPEG<span class="fmt-note">= JPG</span></div>
+          <div class="fmt-chip" data-mime="image/png" data-ext="png" onclick="ciSelectFmt(this)">PNG<span class="fmt-note">Lossless · Alpha</span></div>
+          <div class="fmt-chip" data-mime="image/gif" data-ext="gif" onclick="ciSelectFmt(this)">GIF<span class="fmt-note">Animated</span></div>
+          <div class="fmt-chip" data-mime="image/webp" data-ext="webp" onclick="ciSelectFmt(this)">WebP<span class="fmt-note">Modern · Small</span></div>
+          <div class="fmt-chip disabled" data-mime="" data-ext="svg" onclick="ciSelectFmt(this)" title="SVG vectorization browser mein fully supported nahi">SVG<span class="fmt-note">⚠ Limited</span></div>
+          <div class="fmt-chip" data-mime="image/bmp" data-ext="bmp" onclick="ciSelectFmt(this)">BMP<span class="fmt-note">Uncompressed</span></div>
+          <div class="fmt-chip disabled" data-mime="" data-ext="tiff" title="TIFF browser canvas mein supported nahi">TIFF<span class="fmt-note">⚠ Browser only</span></div>
+          <div class="fmt-chip" data-mime="image/x-icon" data-ext="ico" onclick="ciSelectFmt(this)">ICO<span class="fmt-note">Icon · 256px</span></div>
+          <div class="fmt-chip" data-mime="image/avif" data-ext="avif" onclick="ciSelectFmt(this)">AVIF<span class="fmt-note">Next-gen</span></div>
+          <div class="fmt-chip disabled" data-mime="" data-ext="heic" title="HEIC output browser mein supported nahi">HEIC<span class="fmt-note">⚠ Apple only</span></div>
+          <div class="fmt-chip disabled" data-mime="" data-ext="raw" title="RAW output supported nahi">RAW<span class="fmt-note">⚠ Camera only</span></div>
+          <div class="fmt-chip disabled" data-mime="" data-ext="cr2" title="CR2 output supported nahi">CR2<span class="fmt-note">⚠ Canon only</span></div>
+          <div class="fmt-chip disabled" data-mime="" data-ext="nef" title="NEF output supported nahi">NEF<span class="fmt-note">⚠ Nikon only</span></div>
+          <div class="fmt-chip disabled" data-mime="" data-ext="psd" title="PSD output supported nahi">PSD<span class="fmt-note">⚠ Photoshop</span></div>
+          <div class="fmt-chip disabled" data-mime="" data-ext="ai" title="AI output supported nahi">AI<span class="fmt-note">⚠ Illustrator</span></div>
+          <div class="fmt-chip disabled" data-mime="" data-ext="eps" title="EPS output supported nahi">EPS<span class="fmt-note">⚠ Vector</span></div>
+          <div class="fmt-chip" data-mime="application/pdf" data-ext="pdf" onclick="ciSelectFmt(this)">PDF<span class="fmt-note">Document</span></div>
+        </div>
+        <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 12px;margin-top:10px;font-size:.72rem;color:#92400e;line-height:1.5;">
+          <i class="fa-solid fa-circle-info"></i> <strong>⚠ Disabled formats</strong> (RAW, NEF, CR2, PSD, AI, EPS, SVG, HEIC, TIFF) browser ke Canvas API se generate nahi ho sakte — yeh proprietary/vector formats hain. Inhe professional software (Photoshop, Lightroom) se export karein.
+        </div>
+      </div>
+
+      <!-- RESULT STATS -->
+      <div class="stats-bar" id="ciStats" style="display:none;">
+        <div class="stat-item">Before: <span id="ciStatBefore">-</span></div>
+        <div class="stat-item">After: <span id="ciStatAfter">-</span></div>
+        <div class="stat-item">Saved: <span id="ciStatSaved">-</span></div>
+        <div class="stat-item">Format: <span id="ciStatFmt">-</span></div>
+      </div>
+
+      <!-- MAIN BUTTON -->
+      <div class="btn-bar" style="margin-top:14px;">
+        <button class="btn btn-primary" id="ciMainBtn" onclick="ciProcess()">
+          <i class="fa-solid fa-compress-arrows-alt"></i> <span id="ciBtnLabel">Compress &amp; Download</span>
+        </button>
+        <span class="spinner" id="ciSpin"></span>
+      </div>
+      <div class="status-msg" id="ciStatus"></div>
     </div>
-    <div class="btn-bar">
-      <button class="btn btn-primary" onclick="ciProcess()"><i class="fa-solid fa-compress-arrows-alt"></i> Compress Karein</button>
-    </div>
-    <div class="status-msg" id="ciStatus"></div>
   `,
   init: () => {
     window._ciFile = null;
+    window._ciImg = null;
+    window._ciMode = 'quality';
+    window._ciCurrentFmt = { mime: 'image/jpeg', ext: 'jpg' };
+    window._ciCropState = { x:0, y:0, w:0, h:0, active: false };
+    window._ciActiveTab = 'compress';
+
     setupDrop('ciDrop', 'ciFile', async file => {
       window._ciFile = file;
       const url = await readFileAsDataURL(file);
-      document.getElementById('ciImg').src = url;
-      document.getElementById('ciPreview').classList.add('show');
-      document.getElementById('ciOrigSize').textContent = 'Original: ' + formatBytes(file.size);
+      try {
+        const img = await loadImage(url);
+        window._ciImg = img;
+        // Info bar
+        document.getElementById('ciThumb').src = url;
+        document.getElementById('ciFileName').textContent = file.name;
+        document.getElementById('ciOrigSize').textContent = formatBytes(file.size);
+        document.getElementById('ciOrigDim').textContent = img.naturalWidth + ' × ' + img.naturalHeight + ' px';
+        document.getElementById('ciInfoBar').style.display = 'block';
+        // Setup crop canvas
+        ciInitCrop(img);
+      } catch(e) {
+        document.getElementById('ciFileName').textContent = file.name;
+        document.getElementById('ciOrigSize').textContent = formatBytes(file.size);
+        document.getElementById('ciInfoBar').style.display = 'block';
+      }
     });
+
     const qSlider = document.getElementById('ciQ');
-    const qVal = document.getElementById('ciQVal');
-    qSlider.addEventListener('input', () => qVal.textContent = qSlider.value + '%');
+    qSlider && qSlider.addEventListener('input', () => {
+      document.getElementById('ciQVal').textContent = qSlider.value + '%';
+    });
+
+    // Input fields sync to crop box
+    ['ciCX','ciCY','ciCW','ciCH'].forEach(id => {
+      const el = document.getElementById(id);
+      el && el.addEventListener('input', () => ciUpdateCropBoxFromInputs());
+    });
   }
 };
 
+/* ── CI helpers ── */
+window.ciSwitchTab = function(tab, btn) {
+  document.querySelectorAll('#ciToolWrap .ci-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#ciToolWrap .ci-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('ciPanel-' + tab).classList.add('active');
+  window._ciActiveTab = tab;
+  // Update button label
+  const labels = { compress: 'Compress &amp; Download', crop: 'Crop &amp; Download', format: 'Convert &amp; Download' };
+  document.getElementById('ciBtnLabel').innerHTML = labels[tab] || 'Process &amp; Download';
+};
+
+window.ciSetMode = function(mode) {
+  window._ciMode = mode;
+  document.getElementById('ciModeQ').classList.toggle('active', mode === 'quality');
+  document.getElementById('ciModeT').classList.toggle('active', mode === 'target');
+  document.getElementById('ciQualitySection').style.display = mode === 'quality' ? 'block' : 'none';
+  document.getElementById('ciTargetSection').style.display = mode === 'target' ? 'block' : 'none';
+};
+
+window.ciQuickQ = function(v) {
+  document.getElementById('ciQ').value = v;
+  document.getElementById('ciQVal').textContent = v + '%';
+};
+
+window.ciQuickKB = function(kb) {
+  document.getElementById('ciTargetKB').value = kb;
+  document.getElementById('ciTargetUnit').value = 'kb';
+};
+
+window.ciSelectFmt = function(el) {
+  document.querySelectorAll('#ciFmtGrid .fmt-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  window._ciCurrentFmt = { mime: el.dataset.mime, ext: el.dataset.ext };
+};
+
+window.ciClearFile = function() {
+  window._ciFile = null;
+  window._ciImg = null;
+  document.getElementById('ciInfoBar').style.display = 'none';
+  document.getElementById('ciCropActive').style.display = 'none';
+  document.getElementById('ciCropEmpty').style.display = 'block';
+  document.getElementById('ciStats').style.display = 'none';
+  const inp = document.getElementById('ciFile');
+  if (inp) inp.value = '';
+};
+
+window.ciInitCrop = function(img) {
+  const canvas = document.getElementById('ciCropCanvas');
+  if (!canvas) return;
+  const container = document.getElementById('ciCropActive');
+  container.style.display = 'block';
+  document.getElementById('ciCropEmpty').style.display = 'none';
+
+  const maxW = Math.min(680, (document.querySelector('#ciToolWrap') || document.body).offsetWidth - 40);
+  const scale = Math.min(1, maxW / img.naturalWidth);
+  window._ciCropScale = scale;
+
+  canvas.width = Math.round(img.naturalWidth * scale);
+  canvas.height = Math.round(img.naturalHeight * scale);
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+  // Default: select all
+  window._ciCropState = { x: 0, y: 0, w: img.naturalWidth, h: img.naturalHeight };
+  ciUpdateCropInputs(0, 0, img.naturalWidth, img.naturalHeight);
+  ciUpdateCropBox(0, 0, canvas.width, canvas.height);
+
+  let isDown = false, sx = 0, sy = 0;
+  const sel = document.getElementById('ciCropSelBox');
+
+  canvas.onmousedown = e => {
+    const r = canvas.getBoundingClientRect();
+    sx = e.clientX - r.left; sy = e.clientY - r.top;
+    isDown = true;
+    sel.style.display = 'block';
+  };
+  canvas.onmousemove = e => {
+    if (!isDown) return;
+    const r = canvas.getBoundingClientRect();
+    const ex = e.clientX - r.left, ey = e.clientY - r.top;
+    const cx = Math.max(0, Math.min(sx, ex)), cy = Math.max(0, Math.min(sy, ey));
+    const cw = Math.min(Math.abs(ex - sx), canvas.width - cx);
+    const ch = Math.min(Math.abs(ey - sy), canvas.height - cy);
+    ciUpdateCropBox(cx, cy, cw, ch);
+    ciUpdateCropInputs(Math.round(cx/scale), Math.round(cy/scale), Math.round(cw/scale), Math.round(ch/scale));
+    window._ciCropState = { x: Math.round(cx/scale), y: Math.round(cy/scale), w: Math.round(cw/scale), h: Math.round(ch/scale) };
+  };
+  canvas.onmouseup = () => { isDown = false; };
+
+  // Touch support
+  canvas.ontouchstart = e => { e.preventDefault(); const t = e.touches[0]; const r = canvas.getBoundingClientRect(); sx = t.clientX - r.left; sy = t.clientY - r.top; isDown = true; };
+  canvas.ontouchmove = e => { e.preventDefault(); if (!isDown) return; const t = e.touches[0]; const r = canvas.getBoundingClientRect(); const ex = t.clientX - r.left, ey = t.clientY - r.top; const cx = Math.max(0,Math.min(sx,ex)), cy = Math.max(0,Math.min(sy,ey)); const cw = Math.min(Math.abs(ex-sx), canvas.width-cx), ch = Math.min(Math.abs(ey-sy), canvas.height-cy); ciUpdateCropBox(cx,cy,cw,ch); ciUpdateCropInputs(Math.round(cx/scale),Math.round(cy/scale),Math.round(cw/scale),Math.round(ch/scale)); window._ciCropState={x:Math.round(cx/scale),y:Math.round(cy/scale),w:Math.round(cw/scale),h:Math.round(ch/scale)}; };
+  canvas.ontouchend = () => { isDown = false; };
+};
+
+window.ciUpdateCropBox = function(x, y, w, h) {
+  const sel = document.getElementById('ciCropSelBox');
+  const canvas = document.getElementById('ciCropCanvas');
+  if (!sel || !canvas) return;
+  const offX = canvas.offsetLeft, offY = canvas.offsetTop;
+  sel.style.left = (offX + x) + 'px'; sel.style.top = (offY + y) + 'px';
+  sel.style.width = w + 'px'; sel.style.height = h + 'px';
+  sel.style.display = w > 2 && h > 2 ? 'block' : 'none';
+  // handles
+  ['ciCropHtl','ciCropHtr','ciCropHbl','ciCropHbr'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = w > 2 && h > 2 ? 'block' : 'none'; });
+};
+
+window.ciUpdateCropInputs = function(x, y, w, h) {
+  ['ciCX','ciCY','ciCW','ciCH'].forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (el) el.value = [x,y,w,h][i];
+  });
+};
+
+window.ciUpdateCropBoxFromInputs = function() {
+  const img = window._ciImg;
+  if (!img) return;
+  const scale = window._ciCropScale || 1;
+  const x = parseInt(document.getElementById('ciCX').value) || 0;
+  const y = parseInt(document.getElementById('ciCY').value) || 0;
+  const w = parseInt(document.getElementById('ciCW').value) || 10;
+  const h = parseInt(document.getElementById('ciCH').value) || 10;
+  window._ciCropState = { x, y, w, h };
+  ciUpdateCropBox(x * scale, y * scale, w * scale, h * scale);
+};
+
+window.ciCropPreset = function(rw, rh) {
+  const img = window._ciImg;
+  if (!img) return;
+  const W = img.naturalWidth, H = img.naturalHeight;
+  let w, h;
+  if (W / rw * rh <= H) { w = W; h = Math.round(W / rw * rh); }
+  else { h = H; w = Math.round(H / rh * rw); }
+  const x = Math.round((W - w) / 2), y = Math.round((H - h) / 2);
+  const scale = window._ciCropScale || 1;
+  window._ciCropState = { x, y, w, h };
+  ciUpdateCropInputs(x, y, w, h);
+  ciUpdateCropBox(x * scale, y * scale, w * scale, h * scale);
+};
+
+window.ciCropSelectAll = function() {
+  const img = window._ciImg;
+  if (!img) return;
+  const scale = window._ciCropScale || 1;
+  window._ciCropState = { x:0, y:0, w:img.naturalWidth, h:img.naturalHeight };
+  ciUpdateCropInputs(0, 0, img.naturalWidth, img.naturalHeight);
+  ciUpdateCropBox(0, 0, img.naturalWidth * scale, img.naturalHeight * scale);
+};
+
+/* ── CI Main Process ── */
 window.ciProcess = async function() {
   const file = window._ciFile;
-  if (!file) return showStatus('ciStatus', 'Pehle image upload karein!', 'error');
-  const q = parseInt(document.getElementById('ciQ').value) / 100;
-  const fmt = document.getElementById('ciFmt').value;
-  const ext = fmt.split('/')[1];
-  showStatus('ciStatus', 'Compress ho rahi hai...', 'info');
-  const url = await readFileAsDataURL(file);
-  const img = await loadImage(url);
-  const canvas = document.createElement('canvas');
-  canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
-  canvas.getContext('2d').drawImage(img, 0, 0);
-  const blob = await canvasToBlob(canvas, fmt, q);
-  const saved = Math.max(0, ((file.size - blob.size) / file.size * 100)).toFixed(1);
-  downloadBlob(blob, 'compressed_' + file.name.replace(/\.[^.]+$/, '') + '.' + ext);
-  showStatus('ciStatus', `✅ Compress complete! ${formatBytes(file.size)} → ${formatBytes(blob.size)} (${saved}% saved)`, 'success');
+  if (!file) return showStatus('ciStatus', '❌ Pehle image upload karein!', 'error');
+
+  const spin = document.getElementById('ciSpin');
+  spin.classList.add('show');
+  document.getElementById('ciStats').style.display = 'none';
+
+  const tab = window._ciActiveTab || 'compress';
+  const fmt = window._ciCurrentFmt || { mime: 'image/jpeg', ext: 'jpg' };
+
+  // If mime is empty (disabled format), abort
+  if (!fmt.mime) {
+    spin.classList.remove('show');
+    return showStatus('ciStatus', `❌ ${fmt.ext.toUpperCase()} format browser mein generate nahi ho sakta. Dusra format choose karein.`, 'error');
+  }
+
+  try {
+    const url = await readFileAsDataURL(file);
+    const img = window._ciImg || await loadImage(url);
+    window._ciImg = img;
+
+    // Determine crop region
+    let sx = 0, sy = 0, sw = img.naturalWidth, sh = img.naturalHeight;
+    if (tab === 'crop') {
+      const cs = window._ciCropState;
+      if (cs && cs.w > 0 && cs.h > 0) { sx = cs.x; sy = cs.y; sw = cs.w; sh = cs.h; }
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = sw; canvas.height = sh;
+    const ctx = canvas.getContext('2d');
+
+    // White BG for non-alpha formats
+    if (fmt.mime === 'image/jpeg' || fmt.mime === 'image/bmp' || fmt.mime === 'application/pdf') {
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, sw, sh);
+    }
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, sw, sh);
+
+    let blob;
+
+    // ── PDF special case ──
+    if (fmt.mime === 'application/pdf') {
+      showStatus('ciStatus', '⏳ PDF ban raha hai...', 'info');
+      const jpegData = canvas.toDataURL('image/jpeg', 0.92);
+      const b64 = jpegData.split(',')[1];
+      const jpegBytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+      const pdfBytes = await buildPDFBinary([{ jpegBytes, imgW: sw, imgH: sh, dw: sw, dh: sh, dx: 0, dy: 0, pageW: sw, pageH: sh }]);
+      blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      spin.classList.remove('show');
+      ciShowStats(file.size, blob.size, 'PDF');
+      downloadBlob(blob, file.name.replace(/\.[^.]+$/, '') + '.pdf');
+      showStatus('ciStatus', `✅ PDF ready! ${formatBytes(blob.size)}`, 'success');
+      return;
+    }
+
+    // ── ICO special case (resize to 256x256 max) ──
+    if (fmt.ext === 'ico') {
+      const icoCanvas = document.createElement('canvas');
+      const icoSize = Math.min(sw, sh, 256);
+      icoCanvas.width = icoSize; icoCanvas.height = icoSize;
+      icoCanvas.getContext('2d').drawImage(canvas, 0, 0, sw, sh, 0, 0, icoSize, icoSize);
+      blob = await canvasToBlob(icoCanvas, 'image/png', 1);
+      spin.classList.remove('show');
+      ciShowStats(file.size, blob.size, 'ICO');
+      downloadBlob(blob, file.name.replace(/\.[^.]+$/, '') + '.ico');
+      showStatus('ciStatus', `✅ ICO ready (${icoSize}×${icoSize}px)! ${formatBytes(blob.size)}`, 'success');
+      return;
+    }
+
+    // ── Target KB mode ──
+    if (tab === 'compress' && window._ciMode === 'target') {
+      const targetUnit = document.getElementById('ciTargetUnit').value;
+      const targetVal = parseFloat(document.getElementById('ciTargetKB').value) || 100;
+      const targetBytes = targetUnit === 'mb' ? targetVal * 1024 * 1024 : targetVal * 1024;
+
+      showStatus('ciStatus', '⏳ Target size dhundh raha hai...', 'info');
+
+      // Binary search for quality
+      const isPng = fmt.mime === 'image/png';
+      if (isPng) {
+        blob = await canvasToBlob(canvas, 'image/png', 1);
+        if (blob.size > targetBytes) {
+          // For PNG, try reducing dimensions
+          let scale = Math.sqrt(targetBytes / blob.size);
+          const nc = document.createElement('canvas');
+          nc.width = Math.max(1, Math.round(sw * scale));
+          nc.height = Math.max(1, Math.round(sh * scale));
+          nc.getContext('2d').drawImage(canvas, 0, 0, nc.width, nc.height);
+          blob = await canvasToBlob(nc, 'image/png', 1);
+        }
+      } else {
+        let lo = 0.05, hi = 1.0, best = null;
+        for (let i = 0; i < 12; i++) {
+          const mid = (lo + hi) / 2;
+          const b = await canvasToBlob(canvas, fmt.mime, mid);
+          if (b.size <= targetBytes) { best = b; lo = mid; }
+          else { hi = mid; }
+          if (hi - lo < 0.01) break;
+        }
+        blob = best || await canvasToBlob(canvas, fmt.mime, 0.05);
+      }
+    } else {
+      // ── Quality mode ──
+      const q = tab === 'compress' ? (parseInt(document.getElementById('ciQ').value) / 100) : 0.92;
+      const useQ = (fmt.mime === 'image/jpeg' || fmt.mime === 'image/webp' || fmt.mime === 'image/avif') ? q : undefined;
+      blob = await canvasToBlob(canvas, fmt.mime, useQ);
+    }
+
+    if (!blob || blob.size === 0) throw new Error('Conversion failed');
+
+    spin.classList.remove('show');
+    ciShowStats(file.size, blob.size, fmt.ext.toUpperCase());
+    const prefix = tab === 'crop' ? 'cropped_' : (tab === 'format' ? 'converted_' : 'compressed_');
+    downloadBlob(blob, prefix + file.name.replace(/\.[^.]+$/, '') + '.' + fmt.ext);
+    showStatus('ciStatus', `✅ Done! ${formatBytes(file.size)} → ${formatBytes(blob.size)}`, 'success');
+
+  } catch(err) {
+    spin.classList.remove('show');
+    showStatus('ciStatus', '❌ Error: ' + (err.message || 'Process failed. Dusra format try karein.'), 'error');
+  }
+};
+
+window.ciShowStats = function(before, after, fmtLabel) {
+  const saved = Math.max(0, ((before - after) / before * 100)).toFixed(1);
+  document.getElementById('ciStatBefore').textContent = formatBytes(before);
+  document.getElementById('ciStatAfter').textContent = formatBytes(after);
+  document.getElementById('ciStatSaved').textContent = saved + '%';
+  document.getElementById('ciStatFmt').textContent = fmtLabel;
+  document.getElementById('ciStats').style.display = 'flex';
 };
 
 /* ─── 3. CROP IMAGE ─── */
