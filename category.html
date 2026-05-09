@@ -83,6 +83,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sarkari Jobs by Category – Study, State, Popular & More | Top Sarkari Jobs</title>
   <meta name="description" content="Browse Top Sarkari Jobs categories with official links. Study-wise, state-wise, popular jobs, admissions, results, admit cards and more." />
+  <meta name="theme-color" content="#0d2257"/>
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://www.topsarkarijobs.com/category.html" />
   <link rel="icon" type="image/x-icon" href="image.ico">
@@ -104,7 +105,7 @@
 
   <!-- REQUIRED for injected header/footer -->
   <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="fonts/fa/all.min.css">
+  <link rel="preload" href="fonts/fa/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"/><noscript><link rel="stylesheet" href="fonts/fa/all.min.css"/></noscript>
 
   <!-- ✅ Category subpages: hide Search UI inside injected header (same as tools/helpdesk) -->
   <style>
@@ -170,7 +171,7 @@
     <div class="offcanvas-head">
       <div class="offcanvas-title">Menu</div>
       <button id="closeMenuBtn" class="icon-btn" type="button" aria-label="Close menu">
-        <i class="fa-solid fa-xmark"></i>
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
       </button>
     </div>
 
