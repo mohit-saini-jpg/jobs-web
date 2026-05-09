@@ -1400,20 +1400,27 @@ window.ppDownload = function() {
   downloadDataURL(canvas.toDataURL('image/jpeg', 0.95), 'passport_photo.jpg');
 };
 
-/* ─── 7. BACKGROUND REMOVE (AI-Powered) ─── */
+/* ─── 7. BACKGROUND REMOVE (remove.bg API) ─── */
 TOOLS.bgRemove = {
   title: 'Background Remove',
   icon: '<i class="fa-solid fa-eraser"></i>',
   html: () => `
-    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:.78rem;color:#1e40af;display:flex;align-items:center;gap:8px;">
-      <i class="fa-solid fa-robot" style="font-size:1rem;"></i>
-      <span><strong>AI-Powered:</strong> Remove.bg jaisi quality — baal, kapde, complex backgrounds sab handle karta hai!</span>
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:.78rem;color:#1e40af;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+        <i class="fa-solid fa-key" style="font-size:1rem;"></i>
+        <strong>Remove.bg API — bilkul same results!</strong>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <input type="text" id="bgApiKey" placeholder="Apna remove.bg API Key daalen..." style="flex:1;min-width:180px;padding:7px 11px;border:1.5px solid #bfdbfe;border-radius:7px;font-size:.78rem;font-family:inherit;color:#0f172a;background:#fff;">
+        <a href="https://www.remove.bg/api#remove-background" target="_blank" style="font-size:.72rem;color:#1a56db;font-weight:700;white-space:nowrap;text-decoration:none;border:1.5px solid #bfdbfe;padding:5px 10px;border-radius:7px;background:#fff;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Free API Key lein</a>
+      </div>
+      <div style="font-size:.7rem;color:#3b82f6;margin-top:5px;">💡 Free: 50 credits/month • Signup free hai • API Key turant milti hai</div>
     </div>
     <div class="drop-zone" id="bgDrop">
       <input type="file" id="bgFile" accept="image/*">
       <div class="drop-icon"><i class="fa-solid fa-image"></i></div>
       <div class="drop-text">Photo yahan drop karein ya click karein</div>
-      <div class="drop-sub">JPG, PNG support • Any background — portrait, product, anything</div>
+      <div class="drop-sub">JPG, PNG • Portrait, product, animal, car — kuch bhi</div>
     </div>
     <div class="preview-wrap" id="bgPreview">
       <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-bottom:12px;">
@@ -1423,206 +1430,152 @@ TOOLS.bgRemove = {
         </div>
         <div style="text-align:center;">
           <p style="font-size:.72rem;color:var(--muted);margin-bottom:5px;font-weight:700;">Background Removed</p>
-          <canvas id="bgCanvas" style="width:160px;height:160px;border-radius:10px;border:1.5px solid var(--border);background:repeating-conic-gradient(#e2e8f0 0% 25%, #fff 0% 50%) 0 0 / 14px 14px;display:block;"></canvas>
+          <canvas id="bgCanvas" style="width:160px;height:160px;border-radius:10px;border:1.5px solid var(--border);background:repeating-conic-gradient(#e2e8f0 0% 25%,#fff 0% 50%) 0 0/14px 14px;display:block;"></canvas>
         </div>
       </div>
       <div class="form-row" style="margin-bottom:4px;">
         <div class="form-group">
           <label class="form-label">Output Background</label>
-          <select class="form-input" id="bgOutputBg">
+          <select class="form-input" id="bgOutputBg" onchange="bgRenderOutput()">
             <option value="transparent">Transparent (PNG)</option>
             <option value="white">White Background</option>
             <option value="black">Black Background</option>
-            <option value="blue">#007bff Blue Background</option>
             <option value="custom">Custom Color</option>
           </select>
         </div>
         <div class="form-group" id="bgCustomColorWrap" style="display:none;">
           <label class="form-label">Custom Color</label>
-          <input type="color" class="form-input" id="bgCustomColor" value="#ff0000" style="height:38px;padding:2px 6px;cursor:pointer;">
+          <input type="color" class="form-input" id="bgCustomColor" value="#ffffff" style="height:38px;padding:2px 6px;cursor:pointer;" oninput="bgRenderOutput()">
         </div>
       </div>
-      <div id="bgAiProgress" style="display:none;margin-top:10px;">
-        <div style="font-size:.78rem;color:#1a56db;font-weight:600;margin-bottom:6px;" id="bgProgressText">AI model load ho raha hai...</div>
+      <div id="bgProgressWrap" style="display:none;margin-top:10px;">
+        <div style="font-size:.78rem;color:#1a56db;font-weight:600;margin-bottom:6px;" id="bgProgressText">Processing...</div>
         <div style="background:#e2e8f0;border-radius:20px;height:8px;overflow:hidden;">
           <div id="bgProgressBar" style="height:100%;background:linear-gradient(90deg,#1a56db,#3b82f6);border-radius:20px;width:0%;transition:width .4s;"></div>
         </div>
       </div>
     </div>
     <div class="btn-bar">
-      <button class="btn btn-primary" onclick="bgProcess()" id="bgProcessBtn"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Remove Background</button>
+      <button class="btn btn-primary" onclick="bgProcess()" id="bgProcessBtn"><i class="fa-solid fa-wand-magic-sparkles"></i> Remove Background</button>
       <button class="btn btn-success" onclick="bgDownload()" id="bgDlBtn" style="display:none;"><i class="fa-solid fa-download"></i> Download PNG</button>
     </div>
     <div class="status-msg" id="bgStatus"></div>
   `,
   init: () => {
-    window._bgState = { file: null, img: null, resultBlob: null };
+    window._bgState = { file: null, resultBlob: null };
+    // Restore saved API key
+    const saved = localStorage.getItem('rbg_api_key');
+    if (saved) setTimeout(() => {
+      const el = document.getElementById('bgApiKey');
+      if (el) el.value = saved;
+    }, 50);
+
     setupDrop('bgDrop', 'bgFile', async file => {
       window._bgState.file = file;
       window._bgState.resultBlob = null;
       document.getElementById('bgDlBtn').style.display = 'none';
       const url = await readFileAsDataURL(file);
       const img = await loadImage(url);
-      window._bgState.img = img;
+      window._bgState.origDataUrl = url;
       document.getElementById('bgOrigImg').src = url;
       document.getElementById('bgPreview').classList.add('show');
-      // Clear output canvas
       const c = document.getElementById('bgCanvas');
       c.width = 160; c.height = 160;
       c.getContext('2d').clearRect(0,0,160,160);
       hideStatus('bgStatus');
     });
+
     document.getElementById('bgOutputBg').addEventListener('change', function() {
-      const wrap = document.getElementById('bgCustomColorWrap');
-      wrap.style.display = this.value === 'custom' ? 'flex' : 'none';
-      // If result exists, re-apply background
-      if (window._bgState.resultBlob) bgApplyBackground(window._bgState.resultBlob);
-    });
-    document.getElementById('bgCustomColor') && document.getElementById('bgCustomColor').addEventListener('input', function() {
-      if (window._bgState.resultBlob) bgApplyBackground(window._bgState.resultBlob);
+      document.getElementById('bgCustomColorWrap').style.display = this.value === 'custom' ? 'flex' : 'none';
+      if (window._bgState.resultBlob) bgRenderOutput();
     });
   }
 };
 
-// Load @imgly/background-removal library (CDN) lazily
-window._bgImglyLoaded = false;
-async function bgLoadImgly() {
-  if (window._bgImglyLoaded && window.ImglyBackgroundRemoval) return window.ImglyBackgroundRemoval;
-  return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/browser.js';
-    script.onload = () => {
-      window._bgImglyLoaded = true;
-      // Library exposes as window.BackgroundRemoval or window.ImglyBackgroundRemoval
-      const lib = window.BackgroundRemoval || window.ImglyBackgroundRemoval || window['@imgly/background-removal'];
-      if (lib) { window.ImglyBackgroundRemoval = lib; resolve(lib); }
-      else reject(new Error('Library load failed'));
-    };
-    script.onerror = () => reject(new Error('Script load failed'));
-    document.head.appendChild(script);
-  });
-}
-
-function bgApplyBackground(blob) {
+window.bgRenderOutput = function() {
+  const blob = window._bgState.resultBlob;
+  if (!blob) return;
   const bgChoice = document.getElementById('bgOutputBg').value;
   const outCanvas = document.getElementById('bgCanvas');
   const img = new Image();
+  const objUrl = URL.createObjectURL(blob);
   img.onload = () => {
     outCanvas.width = img.naturalWidth;
     outCanvas.height = img.naturalHeight;
     const ctx = outCanvas.getContext('2d');
     ctx.clearRect(0, 0, outCanvas.width, outCanvas.height);
     if (bgChoice !== 'transparent') {
-      let color = bgChoice;
-      if (bgChoice === 'white') color = '#ffffff';
-      else if (bgChoice === 'black') color = '#000000';
-      else if (bgChoice === 'blue') color = '#007bff';
-      else if (bgChoice === 'custom') color = document.getElementById('bgCustomColor').value;
+      let color = bgChoice === 'white' ? '#ffffff' : bgChoice === 'black' ? '#000000'
+        : bgChoice === 'custom' ? (document.getElementById('bgCustomColor').value) : '#ffffff';
       ctx.fillStyle = color;
       ctx.fillRect(0, 0, outCanvas.width, outCanvas.height);
     }
     ctx.drawImage(img, 0, 0);
-    URL.revokeObjectURL(img.src);
-    // For download: re-generate blob with background
+    URL.revokeObjectURL(objUrl);
     outCanvas.toBlob(b => { window._bgFinalBlob = b; }, 'image/png');
     document.getElementById('bgDlBtn').style.display = 'flex';
   };
-  img.src = URL.createObjectURL(blob);
-}
+  img.src = objUrl;
+};
 
 window.bgProcess = async function() {
   const s = window._bgState;
   if (!s.file) return showStatus('bgStatus', 'Pehle image upload karein!', 'error');
+  const apiKey = (document.getElementById('bgApiKey').value || '').trim();
+  if (!apiKey) return showStatus('bgStatus', '⚠️ API Key daalna zaroori hai! Upar "Free API Key lein" pe click karein.', 'error');
+
+  // Save API key for convenience
+  try { localStorage.setItem('rbg_api_key', apiKey); } catch(e) {}
+
   const btn = document.getElementById('bgProcessBtn');
-  const progressWrap = document.getElementById('bgAiProgress');
-  const progressBar = document.getElementById('bgProgressBar');
-  const progressText = document.getElementById('bgProgressText');
+  const pw = document.getElementById('bgProgressWrap');
+  const pb = document.getElementById('bgProgressBar');
+  const pt = document.getElementById('bgProgressText');
   btn.disabled = true;
-  progressWrap.style.display = 'block';
-  progressBar.style.width = '5%';
-  progressText.textContent = 'AI model load ho raha hai (pehli baar 5-10 sec lagega)...';
-  showStatus('bgStatus', 'AI background remove kar raha hai...', 'info');
+  pw.style.display = 'block';
+  pb.style.width = '20%';
+  pt.textContent = 'Uploading to remove.bg...';
+  showStatus('bgStatus', 'Processing...', 'info');
 
   try {
-    progressBar.style.width = '15%';
-    const lib = await bgLoadImgly();
-    progressBar.style.width = '30%';
-    progressText.textContent = 'Image process ho rahi hai...';
+    const formData = new FormData();
+    formData.append('image_file', s.file);
+    formData.append('size', 'auto');
 
-    // Use the removeBackground function
-    const removeFn = lib.removeBackground || lib.default?.removeBackground || lib;
-    if (typeof removeFn !== 'function') throw new Error('removeBackground function nahi mila');
+    pb.style.width = '50%';
+    pt.textContent = 'AI background remove kar raha hai...';
 
-    progressBar.style.width = '50%';
-    progressText.textContent = 'AI magic chal raha hai ✨';
-
-    const resultBlob = await removeFn(s.file, {
-      progress: (key, current, total) => {
-        if (total > 0) {
-          const pct = Math.min(90, 50 + Math.round((current / total) * 40));
-          progressBar.style.width = pct + '%';
-        }
-      }
+    const response = await fetch('https://api.remove.bg/v1.0/removebg', {
+      method: 'POST',
+      headers: { 'X-Api-Key': apiKey },
+      body: formData
     });
 
-    progressBar.style.width = '100%';
-    progressText.textContent = 'Done!';
-    window._bgState.resultBlob = resultBlob;
-    window._bgFinalBlob = resultBlob;
+    pb.style.width = '90%';
 
-    bgApplyBackground(resultBlob);
-    showStatus('bgStatus', '✅ Background remove ho gaya! Download karein.', 'success');
-  } catch (err) {
-    console.error('BG Remove error:', err);
-    // Fallback to flood-fill if AI fails
-    progressText.textContent = 'AI failed, basic method try kar raha hai...';
-    bgFallbackProcess(s);
+    if (!response.ok) {
+      let errMsg = 'Error: ' + response.status;
+      if (response.status === 402) errMsg = '❌ Credits khatam ho gaye! remove.bg pe check karein.';
+      else if (response.status === 403) errMsg = '❌ API Key galat hai! dobara check karein.';
+      else if (response.status === 429) errMsg = '❌ Rate limit exceed! Thodi der baad try karein.';
+      else { try { const j = await response.json(); errMsg = j.errors?.[0]?.title || errMsg; } catch(e) {} }
+      throw new Error(errMsg);
+    }
+
+    const blob = await response.blob();
+    pb.style.width = '100%';
+    pt.textContent = 'Done! ✅';
+    window._bgState.resultBlob = blob;
+    bgRenderOutput();
+    showStatus('bgStatus', '✅ Background perfectly remove ho gaya! Download karein.', 'success');
+  } catch(err) {
+    showStatus('bgStatus', err.message || '❌ Kuch error aaya. API key aur internet check karein.', 'error');
+    pb.style.width = '0%';
   } finally {
     btn.disabled = false;
-    setTimeout(() => { progressWrap.style.display = 'none'; progressBar.style.width = '0%'; }, 2000);
+    setTimeout(() => { pw.style.display = 'none'; pb.style.width = '0%'; }, 2500);
   }
 };
-
-function bgFallbackProcess(s) {
-  const img = s.img;
-  if (!img) { showStatus('bgStatus', 'Error: Image load nahi hui', 'error'); return; }
-  const tol = 40;
-  const offscreen = document.createElement('canvas');
-  offscreen.width = img.naturalWidth; offscreen.height = img.naturalHeight;
-  const ctx = offscreen.getContext('2d');
-  ctx.drawImage(img, 0, 0);
-  const imageData = ctx.getImageData(0, 0, offscreen.width, offscreen.height);
-  const data = imageData.data;
-  const W = offscreen.width, H = offscreen.height;
-  function getPixel(x, y) { const i = (y*W+x)*4; return [data[i],data[i+1],data[i+2]]; }
-  const corners = [getPixel(0,0),getPixel(W-1,0),getPixel(0,H-1),getPixel(W-1,H-1)];
-  const bgR = Math.round(corners.reduce((s,c)=>s+c[0],0)/4);
-  const bgG = Math.round(corners.reduce((s,c)=>s+c[1],0)/4);
-  const bgB = Math.round(corners.reduce((s,c)=>s+c[2],0)/4);
-  const visited = new Uint8Array(W * H);
-  const queue = [[0,0],[W-1,0],[0,H-1],[W-1,H-1]];
-  queue.forEach(([x,y]) => { visited[y*W+x]=1; });
-  let head = 0;
-  const flatQueue = queue.map(([x,y]) => y*W+x);
-  while (head < flatQueue.length) {
-    const pos = flatQueue[head++];
-    const px = pos*4;
-    const diff = Math.abs(data[px]-bgR)+Math.abs(data[px+1]-bgG)+Math.abs(data[px+2]-bgB);
-    if (diff > tol) continue;
-    data[px+3] = 0;
-    const x = pos%W, y = Math.floor(pos/W);
-    [[x>0,pos-1],[x<W-1,pos+1],[y>0,pos-W],[y<H-1,pos+W]].forEach(([ok,n]) => {
-      if (ok && !visited[n]) { visited[n]=1; flatQueue.push(n); }
-    });
-  }
-  ctx.putImageData(imageData, 0, 0);
-  offscreen.toBlob(blob => {
-    window._bgState.resultBlob = blob;
-    window._bgFinalBlob = blob;
-    bgApplyBackground(blob);
-    showStatus('bgStatus', '✅ Background remove ho gaya (basic mode)! Better results ke liye retry karein.', 'success');
-  }, 'image/png');
-}
 
 window.bgDownload = function() {
   const blob = window._bgFinalBlob || window._bgState?.resultBlob;
