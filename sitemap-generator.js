@@ -1,9 +1,7 @@
 /**
- * Auto Sitemap Generator — Top Sarkari Jobs
+ * Sitemap Generator — Top Sarkari Jobs
+ * Works in: Local, GitHub Actions, cPanel
  * Run: node sitemap-generator.js
- * Generates sitemap-jobs.xml from dynamic-sections.json
- * 
- * Add to cron/deploy: node sitemap-generator.js
  */
 
 const fs = require('fs');
@@ -12,13 +10,14 @@ const path = require('path');
 const SITE = 'https://www.topsarkarijobs.com';
 const TODAY = new Date().toISOString().split('T')[0];
 
+console.log('🗺️  Sitemap Generator Started...');
+console.log('📅 Date:', TODAY);
+
 function slugify(text) {
-  return String(text)
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^\w\s-]/g, ' ')
-    .trim()
+  return String(text || '')
     .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, ' ')
+    .trim()
     .replace(/[\s_]+/g, '-')
     .replace(/-{2,}/g, '-')
     .slice(0, 100);
@@ -38,72 +37,89 @@ ${urlEntries}
 </urlset>`;
 }
 
-function main() {
-  const dataPath = path.join(__dirname, 'dynamic-sections.json');
-  if (!fs.existsSync(dataPath)) {
-    console.error('dynamic-sections.json not found');
-    process.exit(1);
-  }
+// ── Read dynamic-sections.json ──────────────────────────
+const dataPath = path.join(__dirname, 'dynamic-sections.json');
 
-  const data = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
-  const sections = data.sections || [];
-
-  const jobUrls = [];
-  const seenSlugs = new Set();
-
-  for (const section of sections) {
-    const items = section.items || [];
-    for (const item of items) {
-      const name = item.name || '';
-      if (!name || name.length < 5) continue;
-      const slug = slugify(name);
-      if (!slug || slug === 'official-link' || seenSlugs.has(slug)) continue;
-      seenSlugs.add(slug);
-
-      jobUrls.push({
-        loc: `${SITE}/jobs/${slug}/`,
-        lastmod: TODAY,
-        changefreq: 'daily',
-        priority: '0.8'
-      });
-    }
-  }
-
-  console.log(`Generated ${jobUrls.length} job URLs`);
-
-  // Write jobs sitemap
-  const jobsSitemapPath = path.join(__dirname, 'sitemap-jobs.xml');
-  fs.writeFileSync(jobsSitemapPath, generateSitemap(jobUrls), 'utf8');
-  console.log(`Written: sitemap-jobs.xml`);
-
-  // Update sitemap-index.xml with current date
-  const indexPath = path.join(__dirname, 'sitemap-index.xml');
-  if (fs.existsSync(indexPath)) {
-    let indexContent = fs.readFileSync(indexPath, 'utf8');
-    // Update lastmod dates
-    indexContent = indexContent.replace(
-      /(<lastmod>)\d{4}-\d{2}-\d{2}(<\/lastmod>)/g,
-      `$1${TODAY}$2`
-    );
-    fs.writeFileSync(indexPath, indexContent, 'utf8');
-    console.log(`Updated: sitemap-index.xml dates to ${TODAY}`);
-  }
-
-  // Also update sitemap.xml date
-  const mainSitemapPath = path.join(__dirname, 'sitemap.xml');
-  if (fs.existsSync(mainSitemapPath)) {
-    let mainContent = fs.readFileSync(mainSitemapPath, 'utf8');
-    mainContent = mainContent.replace(
-      /(<lastmod>)\d{4}-\d{2}-\d{2}(<\/lastmod>)/g,
-      `$1${TODAY}$2`
-    );
-    fs.writeFileSync(mainSitemapPath, mainContent, 'utf8');
-    console.log(`Updated: sitemap.xml dates to ${TODAY}`);
-  }
-
-  console.log('\n✅ Sitemap generation complete!');
-  console.log(`📋 Job URLs: ${jobUrls.length}`);
-  console.log(`📅 Date: ${TODAY}`);
+if (!fs.existsSync(dataPath)) {
+  console.error('❌ dynamic-sections.json not found at:', dataPath);
+  console.log('📁 Files in directory:', fs.readdirSync(__dirname).join(', '));
+  process.exit(1);
 }
 
-main();
+let data;
+try {
+  data = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+  console.log('✅ dynamic-sections.json loaded');
+} catch (e) {
+  console.error('❌ JSON parse error:', e.message);
+  process.exit(1);
+}
+
+const sections = data.sections || [];
+console.log('📦 Total sections:', sections.length);
+
+// ── Generate Job URLs ───────────────────────────────────
+const jobUrls = [];
+const seenSlugs = new Set();
+
+for (const section of sections) {
+  const items = section.items || [];
+  for (const item of items) {
+    const name = item.name || item.title || '';
+    if (!name || name.length < 3) continue;
+    const slug = slugify(name);
+    if (!slug || slug.length < 3 || seenSlugs.has(slug)) continue;
+    seenSlugs.add(slug);
+    jobUrls.push({
+      loc: `${SITE}/view.html?section=${encodeURIComponent(section.id || section.title || '')}&name=${encodeURIComponent(name)}`,
+      lastmod: TODAY,
+      changefreq: 'daily',
+      priority: '0.8'
+    });
+  }
+}
+
+console.log('🔗 Job URLs generated:', jobUrls.length);
+
+// ── Write sitemap-jobs.xml ──────────────────────────────
+try {
+  fs.writeFileSync(
+    path.join(__dirname, 'sitemap-jobs.xml'),
+    generateSitemap(jobUrls),
+    'utf8'
+  );
+  console.log('✅ sitemap-jobs.xml written');
+} catch (e) {
+  console.error('❌ Error writing sitemap-jobs.xml:', e.message);
+  process.exit(1);
+}
+
+// ── Update sitemap-index.xml dates ─────────────────────
+const indexPath = path.join(__dirname, 'sitemap-index.xml');
+if (fs.existsSync(indexPath)) {
+  try {
+    let content = fs.readFileSync(indexPath, 'utf8');
+    content = content.replace(/(<lastmod>)\d{4}-\d{2}-\d{2}(<\/lastmod>)/g, `$1${TODAY}$2`);
+    fs.writeFileSync(indexPath, content, 'utf8');
+    console.log('✅ sitemap-index.xml updated');
+  } catch (e) {
+    console.error('⚠️  Could not update sitemap-index.xml:', e.message);
+  }
+}
+
+// ── Update sitemap.xml dates ────────────────────────────
+const mainPath = path.join(__dirname, 'sitemap.xml');
+if (fs.existsSync(mainPath)) {
+  try {
+    let content = fs.readFileSync(mainPath, 'utf8');
+    content = content.replace(/(<lastmod>)\d{4}-\d{2}-\d{2}(<\/lastmod>)/g, `$1${TODAY}$2`);
+    fs.writeFileSync(mainPath, content, 'utf8');
+    console.log('✅ sitemap.xml updated');
+  } catch (e) {
+    console.error('⚠️  Could not update sitemap.xml:', e.message);
+  }
+}
+
+console.log('\n✅ Sitemap generation complete!');
+console.log(`📋 Total job URLs: ${jobUrls.length}`);
+console.log(`📅 Date: ${TODAY}`);
