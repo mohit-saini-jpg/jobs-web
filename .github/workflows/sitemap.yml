@@ -1,26 +1,25 @@
 name: Daily Sitemap Update
+
 on:
   schedule:
     - cron: '0 1 * * *'
   workflow_dispatch:
+
 jobs:
   update-sitemap:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+
       - name: Run Sitemap Generator
         run: node sitemap-generator.js
-      - name: Push changes
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git fetch origin
-          git add sitemap-jobs.xml sitemap-index.xml sitemap.xml
-          git diff --staged --quiet || git commit -m "sitemap update $(date +'%Y-%m-%d')"
-          git push --force origin HEAD:main
+
+      - name: Commit and Push
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "sitemap update $(date +'%Y-%m-%d')"
+          file_pattern: "sitemap-jobs.xml sitemap-index.xml sitemap.xml"
