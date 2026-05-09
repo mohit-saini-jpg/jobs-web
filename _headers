@@ -1,0 +1,35 @@
+# Netlify Headers for Performance & Security
+/*
+  X-Frame-Options: SAMEORIGIN
+  X-XSS-Protection: 1; mode=block
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+
+/*.html
+  Cache-Control: public, max-age=7200, must-revalidate
+
+/*.css
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.js
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.webp
+  Cache-Control: public, max-age=15552000
+
+/*.png
+  Cache-Control: public, max-age=15552000
+
+/*.ico
+  Cache-Control: public, max-age=31536000
+
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+/*.json
+  Cache-Control: public, max-age=1800
+
+/sitemap*.xml
+  Cache-Control: public, max-age=86400
