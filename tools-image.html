@@ -1407,7 +1407,7 @@ TOOLS.bgRemove = {
   html: () => `
     <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:.78rem;color:#065f46;display:flex;align-items:center;gap:8px;">
       <i class="fa-solid fa-robot" style="font-size:1.1rem;"></i>
-      <span><strong>100% Free AI</strong> — No API key, no signup! RMBG-1.4 model use karta hai.</span>
+      <span><strong>100% Free AI</strong> — No API key, no signup! Segformer AI model use karta hai (browser mein run hota hai).</span>
     </div>
     <div class="drop-zone" id="bgDrop">
       <input type="file" id="bgFile" accept="image/*">
@@ -1446,7 +1446,7 @@ TOOLS.bgRemove = {
         <div style="background:#dcfce7;border-radius:20px;height:10px;overflow:hidden;">
           <div id="bgProgressBar" style="height:100%;background:linear-gradient(90deg,#059669,#10b981);border-radius:20px;width:3%;transition:width .4s ease;"></div>
         </div>
-        <div style="font-size:.68rem;color:#64748b;margin-top:4px;" id="bgProgressSub">Pehli baar model ~50MB download hoga (ek baar browser cache mein save ho jaata hai)</div>
+        <div style="font-size:.68rem;color:#64748b;margin-top:4px;" id="bgProgressSub">Pehli baar model ~20MB download hoga (ek baar browser cache mein save ho jaata hai)</div>
       </div>
     </div>
     <div class="btn-bar">
@@ -1537,33 +1537,28 @@ async function bgLoadPipeline() {
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => {
       reject(new Error('Timeout: CDN se library load nahi hui. VPN try karein ya baad mein retry karein.'));
-    }, 60000);
+    }, 120000);
 
     const s = document.createElement('script');
     s.type = 'module';
     s.textContent = `
       try {
-        // Load transformers.js from CDN
-        const { pipeline, env } = await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.1.2/dist/transformers.min.js');
-        
+        // Load @huggingface/transformers v3 which supports SegformerForSemanticSegmentation
+        const { pipeline, env } = await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3/dist/transformers.min.js');
+
         // Use Hugging Face CDN for models (no local server needed)
         env.allowLocalModels = false;
         env.useBrowserCache = true;
-        
-        // Report loading started
-        window.dispatchEvent(new CustomEvent('_bgStatus', {detail: {type:'loading', msg:'RMBG-1.4 model download ho raha hai...'}}));
-        
-        const pipe = await pipeline('image-segmentation', 'briaai/RMBG-1.4', {
-          device: 'webgpu',
-          dtype: 'fp32',
-        }).catch(async () => {
-          // WebGPU not available, fallback to CPU WASM
-          window.dispatchEvent(new CustomEvent('_bgStatus', {detail: {type:'loading', msg:'CPU mode mein load ho raha hai...'}}));
-          return pipeline('image-segmentation', 'briaai/RMBG-1.4', {
-            dtype: 'fp32',
-          });
-        });
-        
+
+        window.dispatchEvent(new CustomEvent('_bgStatus', {detail: {type:'loading', msg:'AI model download ho raha hai (~20MB)...'}}));
+
+        // Use Xenova/segformer — fully supported in v3, no SegformerForSemanticSegmentation error
+        const pipe = await pipeline(
+          'image-segmentation',
+          'Xenova/segformer-b0-finetuned-ade-512-512',
+          { dtype: 'fp32' }
+        );
+
         window._bgPipeline = pipe;
         window.dispatchEvent(new CustomEvent('_bgPipelineReady', {detail: 'ok'}));
       } catch(e) {
@@ -1603,43 +1598,58 @@ window.bgProcess = async function() {
 
     bgSetProgress(90, 'Mask apply ho raha hai...', '');
 
-    // result is array of {score, label, mask}
-    // mask is a Tensor or RawImage — extract pixel data
+    // result is array of {score, label, mask} — each segment has a mask
+    // We combine all non-background segments to create foreground mask
     let maskArr;
-    if (result && result[0] && result[0].mask) {
-      const mask = result[0].mask;
-      // mask.data is Uint8ClampedArray or similar, values 0-255
-      const W = mask.width, H = mask.height;
-      // Resize mask to match original image
+    if (result && Array.isArray(result) && result.length > 0) {
       const origImg = s.origImg;
       const oW = origImg.naturalWidth, oH = origImg.naturalHeight;
 
-      // Draw mask on temp canvas, then read pixels
-      const maskCanvas = document.createElement('canvas');
-      maskCanvas.width = W; maskCanvas.height = H;
-      const maskCtx = maskCanvas.getContext('2d');
-      const maskImgData = maskCtx.createImageData(W, H);
-      // mask.data is grayscale: one byte per pixel  
-      const maskRaw = mask.data;
-      for (let i = 0; i < W * H; i++) {
-        const v = maskRaw[i];
-        maskImgData.data[i*4]   = v;
-        maskImgData.data[i*4+1] = v;
-        maskImgData.data[i*4+2] = v;
-        maskImgData.data[i*4+3] = 255;
-      }
-      maskCtx.putImageData(maskImgData, 0, 0);
+      // Background labels to exclude (keep everything else as foreground)
+      const bgLabels = new Set(['background', 'sky', 'floor', 'wall', 'ceiling', 'earth', 'ground', 'grass', 'water', 'sea', 'river', 'mountain', 'building', 'house', 'tree', 'plant', 'road', 'sidewalk', 'pavement']);
 
-      // Scale mask to original image size
-      const scaledCanvas = document.createElement('canvas');
-      scaledCanvas.width = oW; scaledCanvas.height = oH;
-      scaledCanvas.getContext('2d').drawImage(maskCanvas, 0, 0, oW, oH);
-      const scaledData = scaledCanvas.getContext('2d').getImageData(0, 0, oW, oH);
+      // Merge all foreground segment masks
+      // If model has "person" or human label, prioritize it
+      const humanLabels = new Set(['person', 'people', 'man', 'woman', 'child', 'human', 'face', 'animal', 'cat', 'dog', 'bird']);
 
-      // Build Float32 mask (0..1)
+      // Sort: prefer human/animal labels first
+      const sorted = [...result].sort((a, b) => {
+        const aH = humanLabels.has((a.label||'').toLowerCase()) ? 1 : 0;
+        const bH = humanLabels.has((b.label||'').toLowerCase()) ? 1 : 0;
+        return bH - aH;
+      });
+
+      // Use top non-background segment(s)
+      const fgSegs = sorted.filter(seg => !bgLabels.has((seg.label||'').toLowerCase()));
+      const useSegs = fgSegs.length > 0 ? fgSegs : [sorted[0]]; // fallback: use top segment
+
       maskArr = new Float32Array(oW * oH);
-      for (let i = 0; i < oW * oH; i++) {
-        maskArr[i] = scaledData.data[i * 4] / 255;
+
+      for (const seg of useSegs) {
+        if (!seg.mask) continue;
+        const mask = seg.mask;
+        const W = mask.width, H = mask.height;
+        const maskCanvas = document.createElement('canvas');
+        maskCanvas.width = W; maskCanvas.height = H;
+        const maskCtx = maskCanvas.getContext('2d');
+        const maskImgData = maskCtx.createImageData(W, H);
+        const maskRaw = mask.data;
+        for (let i = 0; i < W * H; i++) {
+          const v = maskRaw[i];
+          maskImgData.data[i*4]   = v;
+          maskImgData.data[i*4+1] = v;
+          maskImgData.data[i*4+2] = v;
+          maskImgData.data[i*4+3] = 255;
+        }
+        maskCtx.putImageData(maskImgData, 0, 0);
+        // Scale mask to original image size
+        const scaledCanvas = document.createElement('canvas');
+        scaledCanvas.width = oW; scaledCanvas.height = oH;
+        scaledCanvas.getContext('2d').drawImage(maskCanvas, 0, 0, oW, oH);
+        const scaledData = scaledCanvas.getContext('2d').getImageData(0, 0, oW, oH);
+        for (let i = 0; i < oW * oH; i++) {
+          maskArr[i] = Math.max(maskArr[i], scaledData.data[i * 4] / 255);
+        }
       }
     } else {
       throw new Error('Model se mask nahi mila. Result format unexpected.');
