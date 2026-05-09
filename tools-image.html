@@ -1400,68 +1400,193 @@ window.ppDownload = function() {
   downloadDataURL(canvas.toDataURL('image/jpeg', 0.95), 'passport_photo.jpg');
 };
 
-/* ─── 7. BACKGROUND REMOVE ─── */
+/* ─── 7. BACKGROUND REMOVE (AI-Powered) ─── */
 TOOLS.bgRemove = {
   title: 'Background Remove',
   icon: '<i class="fa-solid fa-eraser"></i>',
   html: () => `
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:.78rem;color:#1e40af;display:flex;align-items:center;gap:8px;">
+      <i class="fa-solid fa-robot" style="font-size:1rem;"></i>
+      <span><strong>AI-Powered:</strong> Remove.bg jaisi quality — baal, kapde, complex backgrounds sab handle karta hai!</span>
+    </div>
     <div class="drop-zone" id="bgDrop">
       <input type="file" id="bgFile" accept="image/*">
       <div class="drop-icon"><i class="fa-solid fa-image"></i></div>
-      <div class="drop-text">Image yahan drop karein</div>
-      <div class="drop-sub">Best result: solid background wali photos</div>
+      <div class="drop-text">Photo yahan drop karein ya click karein</div>
+      <div class="drop-sub">JPG, PNG support • Any background — portrait, product, anything</div>
     </div>
     <div class="preview-wrap" id="bgPreview">
-      <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:10px;">
+      <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-bottom:12px;">
         <div style="text-align:center;">
-          <p style="font-size:.72rem;color:var(--muted);margin-bottom:4px;">Original</p>
-          <img id="bgOrigImg" style="width:140px;height:140px;object-fit:cover;border-radius:8px;border:1.5px solid var(--border);" src="" alt="">
+          <p style="font-size:.72rem;color:var(--muted);margin-bottom:5px;font-weight:700;">Original</p>
+          <img id="bgOrigImg" style="width:160px;height:160px;object-fit:cover;border-radius:10px;border:1.5px solid var(--border);" src="" alt="">
         </div>
         <div style="text-align:center;">
-          <p style="font-size:.72rem;color:var(--muted);margin-bottom:4px;">Background Removed</p>
-          <canvas id="bgCanvas" style="width:140px;height:140px;border-radius:8px;border:1.5px solid var(--border);background:repeating-conic-gradient(#e2e8f0 0% 25%, #fff 0% 50%) 0 0 / 16px 16px;"></canvas>
+          <p style="font-size:.72rem;color:var(--muted);margin-bottom:5px;font-weight:700;">Background Removed</p>
+          <canvas id="bgCanvas" style="width:160px;height:160px;border-radius:10px;border:1.5px solid var(--border);background:repeating-conic-gradient(#e2e8f0 0% 25%, #fff 0% 50%) 0 0 / 14px 14px;display:block;"></canvas>
         </div>
       </div>
-      <div class="form-row">
+      <div class="form-row" style="margin-bottom:4px;">
         <div class="form-group">
-          <label class="form-label">Tolerance (Higher = More Remove)</label>
-          <div class="range-wrap">
-            <input type="range" id="bgTol" min="10" max="120" value="40">
-            <span class="range-val" id="bgTolV">40</span>
-          </div>
+          <label class="form-label">Output Background</label>
+          <select class="form-input" id="bgOutputBg">
+            <option value="transparent">Transparent (PNG)</option>
+            <option value="white">White Background</option>
+            <option value="black">Black Background</option>
+            <option value="blue">#007bff Blue Background</option>
+            <option value="custom">Custom Color</option>
+          </select>
+        </div>
+        <div class="form-group" id="bgCustomColorWrap" style="display:none;">
+          <label class="form-label">Custom Color</label>
+          <input type="color" class="form-input" id="bgCustomColor" value="#ff0000" style="height:38px;padding:2px 6px;cursor:pointer;">
         </div>
       </div>
-      <p style="font-size:.74rem;color:var(--muted);margin-top:6px;">💡 Background corner se automatically remove hoti hai. Adjust tolerance for better results.</p>
+      <div id="bgAiProgress" style="display:none;margin-top:10px;">
+        <div style="font-size:.78rem;color:#1a56db;font-weight:600;margin-bottom:6px;" id="bgProgressText">AI model load ho raha hai...</div>
+        <div style="background:#e2e8f0;border-radius:20px;height:8px;overflow:hidden;">
+          <div id="bgProgressBar" style="height:100%;background:linear-gradient(90deg,#1a56db,#3b82f6);border-radius:20px;width:0%;transition:width .4s;"></div>
+        </div>
+      </div>
     </div>
     <div class="btn-bar">
-      <button class="btn btn-primary" onclick="bgProcess()"><i class="fa-solid fa-eraser"></i> Remove Background</button>
+      <button class="btn btn-primary" onclick="bgProcess()" id="bgProcessBtn"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Remove Background</button>
       <button class="btn btn-success" onclick="bgDownload()" id="bgDlBtn" style="display:none;"><i class="fa-solid fa-download"></i> Download PNG</button>
     </div>
     <div class="status-msg" id="bgStatus"></div>
   `,
   init: () => {
-    window._bgState = { file: null, img: null };
+    window._bgState = { file: null, img: null, resultBlob: null };
     setupDrop('bgDrop', 'bgFile', async file => {
       window._bgState.file = file;
+      window._bgState.resultBlob = null;
+      document.getElementById('bgDlBtn').style.display = 'none';
       const url = await readFileAsDataURL(file);
       const img = await loadImage(url);
       window._bgState.img = img;
       document.getElementById('bgOrigImg').src = url;
       document.getElementById('bgPreview').classList.add('show');
+      // Clear output canvas
+      const c = document.getElementById('bgCanvas');
+      c.width = 160; c.height = 160;
+      c.getContext('2d').clearRect(0,0,160,160);
+      hideStatus('bgStatus');
     });
-    document.getElementById('bgTol').addEventListener('input', function() {
-      document.getElementById('bgTolV').textContent = this.value;
+    document.getElementById('bgOutputBg').addEventListener('change', function() {
+      const wrap = document.getElementById('bgCustomColorWrap');
+      wrap.style.display = this.value === 'custom' ? 'flex' : 'none';
+      // If result exists, re-apply background
+      if (window._bgState.resultBlob) bgApplyBackground(window._bgState.resultBlob);
+    });
+    document.getElementById('bgCustomColor') && document.getElementById('bgCustomColor').addEventListener('input', function() {
+      if (window._bgState.resultBlob) bgApplyBackground(window._bgState.resultBlob);
     });
   }
 };
 
-window.bgProcess = function() {
-  const s = window._bgState;
-  if (!s.img) return showStatus('bgStatus', 'Pehle image upload karein!', 'error');
-  const img = s.img;
-  const tol = parseInt(document.getElementById('bgTol').value);
-  showStatus('bgStatus', 'Background remove ho raha hai...', 'info');
+// Load @imgly/background-removal library (CDN) lazily
+window._bgImglyLoaded = false;
+async function bgLoadImgly() {
+  if (window._bgImglyLoaded && window.ImglyBackgroundRemoval) return window.ImglyBackgroundRemoval;
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/browser.js';
+    script.onload = () => {
+      window._bgImglyLoaded = true;
+      // Library exposes as window.BackgroundRemoval or window.ImglyBackgroundRemoval
+      const lib = window.BackgroundRemoval || window.ImglyBackgroundRemoval || window['@imgly/background-removal'];
+      if (lib) { window.ImglyBackgroundRemoval = lib; resolve(lib); }
+      else reject(new Error('Library load failed'));
+    };
+    script.onerror = () => reject(new Error('Script load failed'));
+    document.head.appendChild(script);
+  });
+}
 
+function bgApplyBackground(blob) {
+  const bgChoice = document.getElementById('bgOutputBg').value;
+  const outCanvas = document.getElementById('bgCanvas');
+  const img = new Image();
+  img.onload = () => {
+    outCanvas.width = img.naturalWidth;
+    outCanvas.height = img.naturalHeight;
+    const ctx = outCanvas.getContext('2d');
+    ctx.clearRect(0, 0, outCanvas.width, outCanvas.height);
+    if (bgChoice !== 'transparent') {
+      let color = bgChoice;
+      if (bgChoice === 'white') color = '#ffffff';
+      else if (bgChoice === 'black') color = '#000000';
+      else if (bgChoice === 'blue') color = '#007bff';
+      else if (bgChoice === 'custom') color = document.getElementById('bgCustomColor').value;
+      ctx.fillStyle = color;
+      ctx.fillRect(0, 0, outCanvas.width, outCanvas.height);
+    }
+    ctx.drawImage(img, 0, 0);
+    URL.revokeObjectURL(img.src);
+    // For download: re-generate blob with background
+    outCanvas.toBlob(b => { window._bgFinalBlob = b; }, 'image/png');
+    document.getElementById('bgDlBtn').style.display = 'flex';
+  };
+  img.src = URL.createObjectURL(blob);
+}
+
+window.bgProcess = async function() {
+  const s = window._bgState;
+  if (!s.file) return showStatus('bgStatus', 'Pehle image upload karein!', 'error');
+  const btn = document.getElementById('bgProcessBtn');
+  const progressWrap = document.getElementById('bgAiProgress');
+  const progressBar = document.getElementById('bgProgressBar');
+  const progressText = document.getElementById('bgProgressText');
+  btn.disabled = true;
+  progressWrap.style.display = 'block';
+  progressBar.style.width = '5%';
+  progressText.textContent = 'AI model load ho raha hai (pehli baar 5-10 sec lagega)...';
+  showStatus('bgStatus', 'AI background remove kar raha hai...', 'info');
+
+  try {
+    progressBar.style.width = '15%';
+    const lib = await bgLoadImgly();
+    progressBar.style.width = '30%';
+    progressText.textContent = 'Image process ho rahi hai...';
+
+    // Use the removeBackground function
+    const removeFn = lib.removeBackground || lib.default?.removeBackground || lib;
+    if (typeof removeFn !== 'function') throw new Error('removeBackground function nahi mila');
+
+    progressBar.style.width = '50%';
+    progressText.textContent = 'AI magic chal raha hai ✨';
+
+    const resultBlob = await removeFn(s.file, {
+      progress: (key, current, total) => {
+        if (total > 0) {
+          const pct = Math.min(90, 50 + Math.round((current / total) * 40));
+          progressBar.style.width = pct + '%';
+        }
+      }
+    });
+
+    progressBar.style.width = '100%';
+    progressText.textContent = 'Done!';
+    window._bgState.resultBlob = resultBlob;
+    window._bgFinalBlob = resultBlob;
+
+    bgApplyBackground(resultBlob);
+    showStatus('bgStatus', '✅ Background remove ho gaya! Download karein.', 'success');
+  } catch (err) {
+    console.error('BG Remove error:', err);
+    // Fallback to flood-fill if AI fails
+    progressText.textContent = 'AI failed, basic method try kar raha hai...';
+    bgFallbackProcess(s);
+  } finally {
+    btn.disabled = false;
+    setTimeout(() => { progressWrap.style.display = 'none'; progressBar.style.width = '0%'; }, 2000);
+  }
+};
+
+function bgFallbackProcess(s) {
+  const img = s.img;
+  if (!img) { showStatus('bgStatus', 'Error: Image load nahi hui', 'error'); return; }
+  const tol = 40;
   const offscreen = document.createElement('canvas');
   offscreen.width = img.naturalWidth; offscreen.height = img.naturalHeight;
   const ctx = offscreen.getContext('2d');
@@ -1469,50 +1594,40 @@ window.bgProcess = function() {
   const imageData = ctx.getImageData(0, 0, offscreen.width, offscreen.height);
   const data = imageData.data;
   const W = offscreen.width, H = offscreen.height;
-
-  // Sample background color from corners
-  function getPixel(x, y) {
-    const i = (y * W + x) * 4;
-    return [data[i], data[i+1], data[i+2]];
-  }
-  const corners = [getPixel(0,0), getPixel(W-1,0), getPixel(0,H-1), getPixel(W-1,H-1)];
+  function getPixel(x, y) { const i = (y*W+x)*4; return [data[i],data[i+1],data[i+2]]; }
+  const corners = [getPixel(0,0),getPixel(W-1,0),getPixel(0,H-1),getPixel(W-1,H-1)];
   const bgR = Math.round(corners.reduce((s,c)=>s+c[0],0)/4);
   const bgG = Math.round(corners.reduce((s,c)=>s+c[1],0)/4);
   const bgB = Math.round(corners.reduce((s,c)=>s+c[2],0)/4);
-
-  // Flood fill from corners to remove background
   const visited = new Uint8Array(W * H);
-  const queue = [];
-  const cornerPx = [[0,0],[W-1,0],[0,H-1],[W-1,H-1]];
-  cornerPx.forEach(([x,y]) => { queue.push(y*W+x); visited[y*W+x]=1; });
-
+  const queue = [[0,0],[W-1,0],[0,H-1],[W-1,H-1]];
+  queue.forEach(([x,y]) => { visited[y*W+x]=1; });
   let head = 0;
-  while (head < queue.length) {
-    const pos = queue[head++];
-    const px = pos * 4;
-    const r = data[px], g = data[px+1], b = data[px+2];
-    const diff = Math.abs(r-bgR)+Math.abs(g-bgG)+Math.abs(b-bgB);
+  const flatQueue = queue.map(([x,y]) => y*W+x);
+  while (head < flatQueue.length) {
+    const pos = flatQueue[head++];
+    const px = pos*4;
+    const diff = Math.abs(data[px]-bgR)+Math.abs(data[px+1]-bgG)+Math.abs(data[px+2]-bgB);
     if (diff > tol) continue;
-    data[px+3] = 0; // transparent
-    const x = pos % W, y = Math.floor(pos / W);
-    const neighbors = [x>0&&pos-1, x<W-1&&pos+1, y>0&&pos-W, y<H-1&&pos+W];
-    neighbors.forEach(n => { if (n!==false && !visited[n]) { visited[n]=1; queue.push(n); } });
+    data[px+3] = 0;
+    const x = pos%W, y = Math.floor(pos/W);
+    [[x>0,pos-1],[x<W-1,pos+1],[y>0,pos-W],[y<H-1,pos+W]].forEach(([ok,n]) => {
+      if (ok && !visited[n]) { visited[n]=1; flatQueue.push(n); }
+    });
   }
-
   ctx.putImageData(imageData, 0, 0);
-  const outCanvas = document.getElementById('bgCanvas');
-  outCanvas.width = W; outCanvas.height = H;
-  outCanvas.getContext('2d').drawImage(offscreen, 0, 0);
-  window._bgOutput = offscreen;
-  document.getElementById('bgDlBtn').style.display = 'flex';
-  showStatus('bgStatus', '✅ Background remove ho gaya! PNG download karein.', 'success');
-};
+  offscreen.toBlob(blob => {
+    window._bgState.resultBlob = blob;
+    window._bgFinalBlob = blob;
+    bgApplyBackground(blob);
+    showStatus('bgStatus', '✅ Background remove ho gaya (basic mode)! Better results ke liye retry karein.', 'success');
+  }, 'image/png');
+}
 
 window.bgDownload = function() {
-  if (!window._bgOutput) return;
-  window._bgOutput.toBlob(blob => {
-    downloadBlob(blob, 'bg_removed.png');
-  }, 'image/png');
+  const blob = window._bgFinalBlob || window._bgState?.resultBlob;
+  if (!blob) return;
+  downloadBlob(blob, 'bg_removed.png');
 };
 
 /* ─── 8. SIGNATURE RESIZER ─── */
