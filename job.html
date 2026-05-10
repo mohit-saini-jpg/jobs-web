@@ -1218,19 +1218,68 @@
 
       /* ── Important Links ── */
       const linkDefs=[
-        {key:"apply_online",label:"Apply Online",icon:"fa-paper-plane",cls:"green"},
-        {key:"apply_offline",label:"Apply Offline",icon:"fa-file-pen",cls:"orange"},
-        {key:"notification_pdf",label:"Official Notification",icon:"fa-file-pdf",cls:"red"},
-        {key:"official_website",label:"Official Website",icon:"fa-globe",cls:"blue"},
-        {key:"result_link",label:"Result",icon:"fa-trophy",cls:"purple"},
-        {key:"admit_card_link",label:"Admit Card",icon:"fa-id-card",cls:"teal"},
-        {key:"answer_key",label:"Answer Key",icon:"fa-key",cls:"orange"},
+        {key:"apply_online",          label:"Apply Online",          icon:"fa-paper-plane", cls:"green"},
+        {key:"apply_offline",         label:"Apply Offline",         icon:"fa-file-pen",    cls:"orange"},
+        {key:"click_here",            label:"Apply / Click Here",    icon:"fa-paper-plane", cls:"green"},
+        {key:"click_here_to_apply",   label:"Apply Here",            icon:"fa-paper-plane", cls:"green"},
+        {key:"login",                 label:"Login / Apply",         icon:"fa-right-to-bracket", cls:"teal"},
+        {key:"notification_pdf",      label:"Official Notification", icon:"fa-file-pdf",    cls:"red"},
+        {key:"download_pdf",          label:"Download PDF",          icon:"fa-file-pdf",    cls:"red"},
+        {key:"official_website",      label:"Official Website",      icon:"fa-globe",       cls:"blue"},
+        {key:"visit_website",         label:"Visit Website",         icon:"fa-globe",       cls:"blue"},
+        {key:"get_app",               label:"Get App / Download",    icon:"fa-download",    cls:"purple"},
+        {key:"result_link",           label:"Result",                icon:"fa-trophy",      cls:"purple"},
+        {key:"result",                label:"Result",                icon:"fa-trophy",      cls:"purple"},
+        {key:"admit_card_link",       label:"Admit Card",            icon:"fa-id-card",     cls:"teal"},
+        {key:"answer_key",            label:"Answer Key",            icon:"fa-key",         cls:"orange"},
       ];
+
+      /* helper: convert snake_case / weird keys → human readable label */
+      function keyToLabel(k){
+        // Handle URL-like keys (e.g. https_www_xyz_com → xyz.com Link)
+        if(/^https?_/.test(k)){
+          try{
+            const raw = k.replace(/^https?_/,'https://').replace(/_/g,'/');
+            const host = new URL(raw).hostname.replace(/^www\./,'');
+            return host + ' Link';
+          }catch(e){}
+        }
+        return k
+          .replace(/_/g,' ')
+          .replace(/\b\w/g, c => c.toUpperCase())
+          .trim() || 'Link';
+      }
+
+      /* which keys are already handled by linkDefs */
+      const knownKeys = new Set([...linkDefs.map(ld=>ld.key), 'other_links']);
+
       let linksHtml=linkDefs.filter(ld=>links[ld.key]).map(ld=>
         `<a href="${esc(normalizeUrl(links[ld.key]))}" target="_blank" rel="noopener" class="jp-link-btn ${ld.cls}">
           <i class="fa-solid ${ld.icon}"></i>${esc(ld.label)}<span>Click Here</span>
         </a>`
       ).join("");
+
+      /* ── Auto-detect ALL remaining unknown keys in important_links ── */
+      Object.entries(links).forEach(([k,v])=>{
+        if(knownKeys.has(k)) return;               // already rendered
+        if(!v || typeof v !== 'string') return;     // skip non-string values
+        const url = normalizeUrl(v);
+        if(!url) return;                            // skip empty/invalid URLs
+        const lbl = keyToLabel(k);
+        /* pick icon & colour heuristically */
+        let icon='fa-link', cls='outline-blue';
+        const kl=k.toLowerCase();
+        if(/apply|register|form/.test(kl))          { icon='fa-paper-plane'; cls='green'; }
+        else if(/login|signin|sign_in/.test(kl))    { icon='fa-right-to-bracket'; cls='teal'; }
+        else if(/pdf|notification|notice/.test(kl)) { icon='fa-file-pdf'; cls='red'; }
+        else if(/result/.test(kl))                  { icon='fa-trophy'; cls='purple'; }
+        else if(/admit|card/.test(kl))              { icon='fa-id-card'; cls='teal'; }
+        else if(/answer|key/.test(kl))              { icon='fa-key'; cls='orange'; }
+        else if(/download|app/.test(kl))            { icon='fa-download'; cls='purple'; }
+        else if(/website|official|web/.test(kl))    { icon='fa-globe'; cls='blue'; }
+        linksHtml+=`<a href="${esc(url)}" target="_blank" rel="noopener" class="jp-link-btn ${cls}"><i class="fa-solid ${icon}"></i>${esc(lbl)}<span>Click Here</span></a>`;
+      });
+
       if(links.other_links&&Array.isArray(links.other_links)){
         links.other_links.forEach(ol=>{
           const url=normalizeUrl(ol.url||ol.link||ol);
