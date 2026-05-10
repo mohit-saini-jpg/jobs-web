@@ -488,33 +488,12 @@
         // Render List
         (async () => {
              const list = document.getElementById("links-list");
-             const loadingEl = document.getElementById("loading");
              try {
                  const d = await getJobsSectionsV();
-
-                 // Show error if data failed to load
-                 if (d.error && (!d.sections || !d.sections.length)) {
-                   if (loadingEl) loadingEl.innerHTML = '<div style="color:#dc2626;font-weight:600;padding:16px;">⚠️ Data load nahi ho saka. Please page refresh karein.<br><small style="color:#64748b;">' + d.error + '</small></div>';
-                   return;
-                 }
-
-                 // Case-insensitive + emoji-stripped section matching
-                 function stripEmoji(s) { return (s||"").replace(/[\u{1F300}-\u{1FFFF}]|[\u2600-\u26FF]|[\u2700-\u27BF]/gu,"").trim(); }
-                 const spLower = sectionParam.toLowerCase();
-                 const sec = d.sections.find(s =>
-                   s.id === sectionParam ||
-                   s.title === sectionParam ||
-                   s.id.toLowerCase() === spLower ||
-                   stripEmoji(s.title).toLowerCase() === spLower ||
-                   s.id.toLowerCase().includes(spLower) ||
-                   spLower.includes(s.id.toLowerCase())
-                 );
+                 const sec = d.sections.find(s => s.id === sectionParam || s.title === sectionParam) || d.sections[0];
                  
                  if(sec && sec.items) {
-                     if (loadingEl) loadingEl.classList.add("hidden");
-                 
-                 if(sec && sec.items) {
-                     if (loadingEl) loadingEl.classList.add("hidden");
+                     document.getElementById("loading").classList.add("hidden");
                      
                      // Filter Garbage Link
                      const cleanItems = sec.items.filter(i => {
@@ -543,15 +522,8 @@
                         </li>
                      `;
                      }).join('');
-                 } else {
-                   // Section not found — show helpful message
-                   if (loadingEl) loadingEl.innerHTML = '<div style="padding:16px;color:#64748b;"><strong>Koi results nahi mile</strong> "' + sectionParam + '" ke liye.<br><a href="index.html" style="color:#0369a1;font-weight:600;">← Home Page par jaayein</a></div>';
                  }
-             } catch(e) {
-               console.error("Section render error:", e);
-               const loadEl = document.getElementById("loading");
-               if (loadEl) loadEl.innerHTML = '<div style="color:#dc2626;font-weight:600;padding:16px;">⚠️ Kuch error aa gayi. Please page refresh karein.</div>';
-             }
+             } catch(e) {}
         })();
         return;
       }
@@ -582,59 +554,102 @@
   <script src="seo-engine.js?v=20260508" defer></script>
 
   <script>
-  /* ── Convert Complete_Jobs_Full_Data.json → sections format (inline for view.html) ── */
+  /* ── jobs-index.json se data load karo (fast! sirf ~300KB even for 1500+ jobs) ──
+     Complete_Jobs_Full_Data.json NAHI fetch karta — wo 16MB+ ho sakta hai 1500 jobs ke saath
+     jobs-index.json = sirf slug, category, title, last_date — bahut fast! ── */
   const JOBS_CAT_META_V = {
-    "Latest_Notifications": { id: "Latest Notifications",    title: "🔔 Latest Notifications"   },
-    "10TH_Pass":            { id: "10th Pass jobs",           title: "📚 10th Pass Jobs"          },
-    "8TH_Pass":             { id: "8th Pass",                 title: "📖 8th Pass Jobs"           },
-    "12TH_Pass":            { id: "12th Pass jobs",           title: "🎓 12th Pass Jobs"          },
-    "Diploma":              { id: "Diploma Jobs",              title: "📜 Diploma Jobs"            },
-    "ITI":                  { id: "ITI Jobs",                  title: "🔧 ITI Jobs"               },
-    "B_Tech_BE":            { id: "B.Tech Jobs",              title: "💻 B.Tech / B.E. Jobs"      },
-    "B_Com":                { id: "B.Com Jobs",               title: "💼 B.Com Jobs"              },
-    "Any_Graduate":         { id: "Graduation jobs",          title: "🎓 Any Graduate Jobs"       },
-    "Any_Post_Graduate":    { id: "Post Graduation jobs",     title: "🏛️ Post Graduate Jobs"     },
-    "Railway_Jobs":         { id: "Railway Jobs",             title: "🚂 Railway Jobs"            },
-    "Police_Defence":       { id: "Police Jobs",              title: "🛡️ Police / Defence Jobs"  },
-    "Teaching_Faculty":     { id: "Teacher Jobs",             title: "📝 Teaching / Faculty Jobs" },
-    "Bank_Jobs":            { id: "Bank Jobs",                title: "🏦 Bank Jobs"               },
-    "Medical_Hospital":     { id: "Medical/ Healthcare Jobs", title: "🏥 Medical / Hospital Jobs" },
+    "Latest_Notifications": { id: "Latest Notifications",      title: "🔔 Latest Notifications"    },
+    "10TH_Pass":            { id: "10th Pass jobs",             title: "📚 10th Pass Jobs"           },
+    "8TH_Pass":             { id: "8th Pass",                   title: "📖 8th Pass Jobs"            },
+    "12TH_Pass":            { id: "12th Pass jobs",             title: "🎓 12th Pass Jobs"           },
+    "Diploma":              { id: "Diploma Jobs",                title: "📜 Diploma Jobs"             },
+    "ITI":                  { id: "ITI Jobs",                    title: "🔧 ITI Jobs"                },
+    "B_Tech_BE":            { id: "B.Tech Jobs",                title: "💻 B.Tech / B.E. Jobs"       },
+    "B_Com":                { id: "B.Com Jobs",                 title: "💼 B.Com Jobs"               },
+    "Any_Graduate":         { id: "Graduation jobs",            title: "🎓 Any Graduate Jobs"        },
+    "Any_Post_Graduate":    { id: "Post Graduation jobs",       title: "🏛️ Post Graduate Jobs"      },
+    "Railway_Jobs":         { id: "Railway Jobs",               title: "🚂 Railway Jobs"             },
+    "Police_Defence":       { id: "Police Jobs",                title: "🛡️ Police / Defence Jobs"   },
+    "Teaching_Faculty":     { id: "Teacher Jobs",               title: "📝 Teaching / Faculty Jobs"  },
+    "Bank_Jobs":            { id: "Bank Jobs",                  title: "🏦 Bank Jobs"                },
+    "Medical_Hospital":     { id: "Medical/ Healthcare Jobs",   title: "🏥 Medical / Hospital Jobs"  },
   };
+
+  /* ID → catKey reverse map */
+  const ID_TO_CAT = {};
+  for (const [catKey, meta] of Object.entries(JOBS_CAT_META_V)) {
+    ID_TO_CAT[meta.id.toLowerCase()] = catKey;
+    ID_TO_CAT[meta.title.replace(/\p{Emoji}/gu,"").trim().toLowerCase()] = catKey;
+  }
+
   async function getJobsSectionsV() {
-    // Try relative path first (works on all hosting), fallback to absolute
-    const paths = ["./Complete_Jobs_Full_Data.json", "/Complete_Jobs_Full_Data.json"];
-    let raw = null;
-    let lastErr = null;
-    for (const path of paths) {
-      try {
-        const r = await fetch(path);
-        if (!r.ok) throw new Error("HTTP " + r.status);
-        raw = await r.json();
-        if (raw && typeof raw === "object" && !Array.isArray(raw)) break;
-        raw = null;
-      } catch (e) { lastErr = e; raw = null; }
+    // Try jobs-index.json first (very small, fast for 1500+ jobs)
+    // Fallback to Complete_Jobs_Full_Data.json if index missing
+    let indexData = null;
+    try {
+      const paths = ["./jobs-index.json", "/jobs-index.json"];
+      for (const p of paths) {
+        try {
+          const r = await fetch(p);
+          if (r.ok) { indexData = await r.json(); break; }
+        } catch(_) {}
+      }
+    } catch(_) {}
+
+    if (indexData && typeof indexData === "object") {
+      // Build sections from jobs-index.json
+      const cats = {}; // catKey → items[]
+      for (const [slug, info] of Object.entries(indexData)) {
+        const catKey = info.cat;
+        if (!JOBS_CAT_META_V[catKey]) continue;
+        if (!cats[catKey]) cats[catKey] = [];
+        const last = (info.last_date || "").trim();
+        cats[catKey].push({
+          name: info.title || slug,
+          url:  info.url || `/jobs/${slug}/`,
+          date: last ? "Last Date: " + last : ""
+        });
+      }
+      const sections = [];
+      for (const [catKey, meta] of Object.entries(JOBS_CAT_META_V)) {
+        const items = cats[catKey];
+        if (!items || !items.length) continue;
+        sections.push({ id: meta.id, title: meta.title, items });
+      }
+      return { sections };
     }
-    if (!raw) {
-      console.error("getJobsSectionsV: failed to load data", lastErr);
-      return { sections: [], error: lastErr ? lastErr.message : "Load failed" };
+
+    // Fallback: Complete_Jobs_Full_Data.json (heavy but works)
+    try {
+      const paths = ["./Complete_Jobs_Full_Data.json", "/Complete_Jobs_Full_Data.json"];
+      let raw = null;
+      for (const p of paths) {
+        try {
+          const r = await fetch(p);
+          if (r.ok) { raw = await r.json(); break; }
+        } catch(_) {}
+      }
+      if (!raw || typeof raw !== "object" || Array.isArray(raw)) return { sections: [], error: "No data" };
+      const sections = [];
+      for (const [catKey, meta] of Object.entries(JOBS_CAT_META_V)) {
+        const jobs = raw[catKey];
+        if (!Array.isArray(jobs) || !jobs.length) continue;
+        const items = jobs.map(job => {
+          const bd   = job.basic_details || {};
+          const dates = job.important_dates || {};
+          const name = (bd.job_title || "").trim();
+          const url  = (job.source_url || "").trim();
+          const last = (dates.last_date || "").trim();
+          if (!name || !url) return null;
+          return { name, url, date: last ? "Last Date: " + last : "" };
+        }).filter(Boolean);
+        if (!items.length) continue;
+        sections.push({ id: meta.id, title: meta.title, items });
+      }
+      return { sections };
+    } catch (e) {
+      return { sections: [], error: e.message };
     }
-    const sections = [];
-    for (const [catKey, meta] of Object.entries(JOBS_CAT_META_V)) {
-      const jobs = raw[catKey];
-      if (!Array.isArray(jobs) || !jobs.length) continue;
-      const items = jobs.map(job => {
-        const bd    = job.basic_details || {};
-        const dates = job.important_dates || {};
-        const name  = (bd.job_title || "").trim();
-        const url   = (job.source_url || "").trim();
-        const last  = (dates.last_date || "").trim();
-        if (!name || !url) return null;
-        return { name, url, date: last ? "Last Date: " + last : "" };
-      }).filter(Boolean);
-      if (!items.length) continue;
-      sections.push({ id: meta.id, title: meta.title, items });
-    }
-    return { sections };
   }
   </script>
 
