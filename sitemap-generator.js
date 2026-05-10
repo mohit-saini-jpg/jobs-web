@@ -37,26 +37,36 @@ ${urlEntries}
 </urlset>`;
 }
 
-// ── Read dynamic-sections.json ──────────────────────────
-const dataPath = path.join(__dirname, 'dynamic-sections.json');
+// ── Read Complete_Jobs_Full_Data.json ───────────────────
+const dataPath = path.join(__dirname, 'Complete_Jobs_Full_Data.json');
 
 if (!fs.existsSync(dataPath)) {
-  console.error('❌ dynamic-sections.json not found at:', dataPath);
+  console.error('❌ Complete_Jobs_Full_Data.json not found at:', dataPath);
   console.log('📁 Files in directory:', fs.readdirSync(__dirname).join(', '));
   process.exit(1);
 }
 
-let data;
+let rawData;
 try {
-  data = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
-  console.log('✅ dynamic-sections.json loaded');
+  rawData = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+  console.log('✅ Complete_Jobs_Full_Data.json loaded');
 } catch (e) {
   console.error('❌ JSON parse error:', e.message);
   process.exit(1);
 }
 
-const sections = data.sections || [];
+// Convert Complete_Jobs_Full_Data format → sections format
+// Structure: { "CATEGORY_KEY": [ { basic_details: { job_title, ... }, ... } ] }
+const sections = Object.entries(rawData).map(([categoryKey, jobs]) => ({
+  id: categoryKey,
+  title: categoryKey.replace(/_/g, ' '),
+  items: (Array.isArray(jobs) ? jobs : []).map(job => ({
+    name: (job.basic_details && (job.basic_details.job_title || job.basic_details.post_name)) || ''
+  })).filter(item => item.name.length >= 3)
+})).filter(section => section.items.length > 0);
+
 console.log('📦 Total sections:', sections.length);
+console.log('NEW JSON FILE NAME -Complete_Jobs_Full_Data.json');
 
 // ── Generate Job URLs ───────────────────────────────────
 const jobUrls = [];
