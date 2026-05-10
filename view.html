@@ -490,8 +490,24 @@
              const list = document.getElementById("links-list");
              try {
                  const d = await getJobsSectionsV();
-                 const sec = d.sections.find(s => s.id === sectionParam || s.title === sectionParam) || d.sections[0];
+                 // Normalize for comparison: lowercase + trim
+                 const normalizeStr = (s) => (s || "").toString().toLowerCase().trim().replace(/-/g, " ");
+                 const spNorm = normalizeStr(sectionParam);
+                 const sec = d.sections.find(s =>
+                   normalizeStr(s.id) === spNorm ||
+                   normalizeStr(s.title) === spNorm ||
+                   normalizeStr(s.title.replace(/\p{Emoji}/gu, "")) === spNorm
+                 );
                  
+                 if (!sec) {
+                     document.getElementById("loading").classList.add("hidden");
+                     list.innerHTML = `<li class="col-span-3 text-center text-slate-500 py-8">
+                       <i class="fas fa-exclamation-circle text-2xl mb-2 block text-amber-400"></i>
+                       <strong>Section "${sectionParam}" nahi mila.</strong><br>
+                       <a href="index.html" class="text-sky-600 underline mt-2 inline-block">Home par wapas jao</a>
+                     </li>`;
+                     return;
+                 }
                  if(sec && sec.items) {
                      document.getElementById("loading").classList.add("hidden");
                      
@@ -523,7 +539,15 @@
                      `;
                      }).join('');
                  }
-             } catch(e) {}
+             } catch(e) {
+                 document.getElementById("loading").classList.add("hidden");
+                 list.innerHTML = `<li class="col-span-3 text-center text-slate-500 py-8">
+                   <i class="fas fa-wifi text-2xl mb-2 block text-red-400"></i>
+                   <strong>Data load nahi ho saka.</strong><br>
+                   <span class="text-xs">Connection check karo aur page refresh karo.</span><br>
+                   <button onclick="location.reload()" class="mt-3 px-4 py-2 bg-sky-600 text-white rounded-lg text-sm font-bold hover:bg-sky-700">Refresh</button>
+                 </li>`;
+             }
         })();
         return;
       }
@@ -554,9 +578,12 @@
   <script src="seo-engine.js?v=20260508" defer></script>
 
   <script>
-  /* ── jobs-index.json se data load karo (fast! sirf ~300KB even for 1500+ jobs) ──
-     Complete_Jobs_Full_Data.json NAHI fetch karta — wo 16MB+ ho sakta hai 1500 jobs ke saath
-     jobs-index.json = sirf slug, category, title, last_date — bahut fast! ── */
+  /* ── View page data loader ──
+     getJobsSectionsV() tries (in order):
+       1. script.js getJobsSections() if already loaded (fastest, memoized)
+       2. Complete_Jobs_Full_Data.json — has source_url for all jobs (jobs-index.json
+          is skipped here because it has no url field, only slug/cat/title/last_date)
+  ─────────────────────────────────────────────────────────────────────────────── */
   const JOBS_CAT_META_V = {
     "Latest_Notifications": { id: "Latest Notifications",      title: "🔔 Latest Notifications"    },
     "10TH_Pass":            { id: "10th Pass jobs",             title: "📚 10th Pass Jobs"           },
@@ -575,51 +602,30 @@
     "Medical_Hospital":     { id: "Medical/ Healthcare Jobs",   title: "🏥 Medical / Hospital Jobs"  },
   };
 
-  /* ID → catKey reverse map */
+  /* ID → catKey reverse map — includes catKey itself for URL matching */
   const ID_TO_CAT = {};
   for (const [catKey, meta] of Object.entries(JOBS_CAT_META_V)) {
     ID_TO_CAT[meta.id.toLowerCase()] = catKey;
     ID_TO_CAT[meta.title.replace(/\p{Emoji}/gu,"").trim().toLowerCase()] = catKey;
+    // Also map the catKey itself (e.g. "Latest_Notifications" → catKey)
+    ID_TO_CAT[catKey.toLowerCase()] = catKey;
+    ID_TO_CAT[catKey.replace(/_/g," ").toLowerCase()] = catKey;
   }
 
   async function getJobsSectionsV() {
-    // Try jobs-index.json first (very small, fast for 1500+ jobs)
-    // Fallback to Complete_Jobs_Full_Data.json if index missing
-    let indexData = null;
-    try {
-      const paths = ["./jobs-index.json", "/jobs-index.json"];
-      for (const p of paths) {
-        try {
-          const r = await fetch(p);
-          if (r.ok) { indexData = await r.json(); break; }
-        } catch(_) {}
-      }
-    } catch(_) {}
-
-    if (indexData && typeof indexData === "object") {
-      // Build sections from jobs-index.json
-      const cats = {}; // catKey → items[]
-      for (const [slug, info] of Object.entries(indexData)) {
-        const catKey = info.cat;
-        if (!JOBS_CAT_META_V[catKey]) continue;
-        if (!cats[catKey]) cats[catKey] = [];
-        const last = (info.last_date || "").trim();
-        cats[catKey].push({
-          name: info.title || slug,
-          url:  info.url || `/jobs/${slug}/`,
-          date: last ? "Last Date: " + last : ""
-        });
-      }
-      const sections = [];
-      for (const [catKey, meta] of Object.entries(JOBS_CAT_META_V)) {
-        const items = cats[catKey];
-        if (!items || !items.length) continue;
-        sections.push({ id: meta.id, title: meta.title, items });
-      }
-      return { sections };
+    // If script.js already has getJobsSections loaded, reuse it (avoids double fetch)
+    if (typeof getJobsSections === "function") {
+      try {
+        const d = await getJobsSections();
+        // getJobsSections returns sections with color/icon too — compatible
+        if (d && Array.isArray(d.sections) && d.sections.length) return d;
+      } catch(_) {}
     }
 
-    // Fallback: Complete_Jobs_Full_Data.json (heavy but works)
+    // NOTE: jobs-index.json does NOT have a 'url' field — skip it for view page.
+    // Use Complete_Jobs_Full_Data.json directly which has proper source_url for each job.
+
+    // Fallback: Complete_Jobs_Full_Data.json (heavy but has all data needed)
     try {
       const paths = ["./Complete_Jobs_Full_Data.json", "/Complete_Jobs_Full_Data.json"];
       let raw = null;
