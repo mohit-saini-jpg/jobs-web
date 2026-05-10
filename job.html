@@ -865,7 +865,7 @@
     /* Step 2: fetch individual job JSON (~11 KB) */
     async function getJobBySlug(slug) {
       try {
-        const r = await fetchWithTimeout(`/jobs-data/${encodeURIComponent(slug)}.json`);
+        const r = await fetchWithTimeout(`/jobs/data/${encodeURIComponent(slug)}.json`);
         return await r.json();
       } catch(_) { return null; }
     }
