@@ -1506,7 +1506,15 @@
     async function getRichData() {
       if (_richDataCache) return _richDataCache;
       try {
-        const r = await fetch("/Complete_Jobs_Full_Data.json");
+        // Timeout after 8 seconds so the page doesn't hang forever
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 8000);
+        let r;
+        try {
+          r = await fetch("/Complete_Jobs_Full_Data.json", { signal: controller.signal });
+        } finally {
+          clearTimeout(timer);
+        }
         if (!r.ok) return null;
         const data = await r.json();
         if (typeof data !== "object" || Array.isArray(data)) return null;
@@ -1565,77 +1573,102 @@
 
     /* ─── MAIN ─── */
     (async function run() {
+      // Helper: always called at the very end to reveal page and hide loader
+      function revealPage() {
+        loading.style.display = "none";
+        threeCol.style.display = "grid";
+      }
+      // Helper: hide CTA buttons that have no real URL
+      function hideEmptyCtaBtns() {
+        ["btnMainCta","btnNotifCta","btnNonJobCta"].forEach(id => {
+          const el = document.getElementById(id);
+          if (el && (!el.href || el.href === "#" || el.href === location.href + "#")) {
+            el.style.display = "none";
+          }
+        });
+      }
+
       if (!rawK && !rawSlug) {
-        loading.style.display="none"; errorEl.style.display="block"; return;
+        loading.style.display = "none";
+        errorEl.style.display = "block";
+        return;
       }
 
-      // FAST PATH: If we have a slug, try rich data first (single fetch, no double load)
-      if (rawSlug && !rawK) {
-        const humanTitle = humanizeSlug(rawSlug);
-        const richJob = await loadRichJobData(humanTitle);
-        if (richJob) {
-          renderFromJsonData(richJob, safe(richJob.source_url || ""));
-          loading.style.display = "none";
-          threeCol.style.display = "grid";
-          return;
-        }
-      }
-
-      // FALLBACK: load all items and match by key or slug
-      let items = [];
-      try { items = await loadAllItems(); } catch(_) {}
-
-      let row = null;
-      if (rawK && items.length)           row = matchByKey(items, rawK);
-      if (!row && rawSlug && items.length) row = matchBySlug(items, rawSlug);
-
-      if (!row) {
+      try {
+        // FAST PATH: slug available → try rich JSON data directly
         if (rawSlug) {
           const humanTitle = humanizeSlug(rawSlug);
-          // Try to get rich data
           const richJob = await loadRichJobData(humanTitle);
           if (richJob) {
-            renderFromJsonData(richJob, "");
-          } else if (isJobItem(humanTitle)) {
-            renderLegacyJobPage(humanTitle, "");
-          } else {
-            renderNonJobPage(humanTitle, "");
+            renderFromJsonData(richJob, safe(richJob.source_url || ""));
+            hideEmptyCtaBtns();
+            revealPage();
+            return;
           }
-          // Hide buttons with no URL
-          ["btnMainCta","btnNotifCta","btnNonJobCta"].forEach(id => {
-            const el = document.getElementById(id);
-            if (el && (!el.href || el.href==="#" || el.href===location.href+"#")) {
-              el.style.display="none";
+        }
+
+        // FALLBACK PATH: load all items index and match by fingerprint key or slug
+        let items = [];
+        try { items = await loadAllItems(); } catch(_) {}
+
+        let row = null;
+        if (rawK && items.length)            row = matchByKey(items, rawK);
+        if (!row && rawSlug && items.length) row = matchBySlug(items, rawSlug);
+
+        if (!row) {
+          // No match in index — render from slug title alone
+          if (rawSlug) {
+            const humanTitle = humanizeSlug(rawSlug);
+            if (isJobItem(humanTitle)) {
+              renderLegacyJobPage(humanTitle, "");
+            } else {
+              renderNonJobPage(humanTitle, "");
             }
-          });
+            hideEmptyCtaBtns();
+          } else {
+            loading.style.display = "none";
+            errorEl.style.display = "block";
+            return;
+          }
         } else {
-          loading.style.display="none"; errorEl.style.display="block"; return;
-        }
-      } else {
-        const dest = validateUrl(row.url);
-        if (!dest) { loading.style.display="none"; errorEl.style.display="block"; return; }
+          const dest = validateUrl(row.url);
+          if (!dest) {
+            loading.style.display = "none";
+            errorEl.style.display = "block";
+            return;
+          }
 
-        // Override breadcrumb
-        if (!rawSec || rawSec === "view.html") {
-          const secLink = document.getElementById("bcSectionLink");
-          secLink.textContent = humanizeSlug(row.secId || "Jobs");
-          secLink.href = row.secId ? `view.html?section=${encodeURIComponent(row.secId)}` : "#";
-        }
+          // Override breadcrumb section link
+          if (!rawSec || rawSec === "view.html") {
+            const secLink = document.getElementById("bcSectionLink");
+            if (secLink) {
+              secLink.textContent = humanizeSlug(row.secId || "Jobs");
+              secLink.href = row.secId ? `view.html?section=${encodeURIComponent(row.secId)}` : "#";
+            }
+          }
 
-        const name = row.title || humanizeSlug(rawSlug);
-        // Try to get rich JSON data first
-        const richJob = await loadRichJobData(name);
-        if (richJob) {
-          renderFromJsonData(richJob, dest);
-        } else if (isJobItem(name)) {
-          renderLegacyJobPage(name, dest);
+          const name = row.title || humanizeSlug(rawSlug);
+          // Try rich JSON first, then legacy, then non-job
+          const richJob = await loadRichJobData(name);
+          if (richJob) {
+            renderFromJsonData(richJob, dest);
+          } else if (isJobItem(name)) {
+            renderLegacyJobPage(name, dest);
+          } else {
+            renderNonJobPage(name, dest);
+          }
+        }
+      } catch (err) {
+        // Last-resort: if anything throws, show slug-based legacy page rather than hanging
+        if (rawSlug) {
+          try { renderLegacyJobPage(humanizeSlug(rawSlug), ""); } catch(_) {}
         } else {
-          renderNonJobPage(name, dest);
+          errorEl.style.display = "block";
         }
+      } finally {
+        // ALWAYS reveal the page — no more infinite loading spinner
+        revealPage();
       }
-
-      loading.style.display = "none";
-      threeCol.style.display = "grid";
     })();
   })();
   </script>
