@@ -1,0 +1,27 @@
+name: Generate Job Files
+
+on:
+  push:
+    paths:
+      - 'Complete_Jobs_Full_Data.json'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Run generator script
+        run: python3 .github/workflows/generate_jobs.py
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add jobs-index.json jobs/data/
+          git diff --staged --quiet || git commit -m "Auto: update job files"
+          git push
