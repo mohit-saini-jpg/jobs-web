@@ -18,6 +18,55 @@
     return "https://" + s.replace(/^\/+/, "");
   }
 
+
+  /* ─── Convert Complete_Jobs_Full_Data.json → sections format ─── */
+  const JOBS_CAT_META = {
+    "Latest_Notifications": { id: "Latest Notifications",    title: "🔔 Latest Notifications",   color: "linear-gradient(135deg,#dc2626,#b91c1c)", icon: "fa-solid fa-bell" },
+    "10TH_Pass":            { id: "10th Pass jobs",           title: "📚 10th Pass Jobs",          color: "linear-gradient(135deg,#0284c7,#0369a1)", icon: "fa-solid fa-graduation-cap" },
+    "8TH_Pass":             { id: "8th Pass",                 title: "📖 8th Pass Jobs",           color: "linear-gradient(135deg,#7c3aed,#6d28d9)", icon: "fa-solid fa-book" },
+    "12TH_Pass":            { id: "12th Pass jobs",           title: "🎓 12th Pass Jobs",          color: "linear-gradient(135deg,#059669,#047857)", icon: "fa-solid fa-graduation-cap" },
+    "Diploma":              { id: "Diploma Jobs",              title: "📜 Diploma Jobs",            color: "linear-gradient(135deg,#d97706,#b45309)", icon: "fa-solid fa-scroll" },
+    "ITI":                  { id: "ITI Jobs",                  title: "🔧 ITI Jobs",               color: "linear-gradient(135deg,#0891b2,#0e7490)", icon: "fa-solid fa-wrench" },
+    "B_Tech_BE":            { id: "B.Tech Jobs",              title: "💻 B.Tech / B.E. Jobs",      color: "linear-gradient(135deg,#4f46e5,#4338ca)", icon: "fa-solid fa-microchip" },
+    "B_Com":                { id: "B.Com Jobs",               title: "💼 B.Com Jobs",              color: "linear-gradient(135deg,#0d9488,#0f766e)", icon: "fa-solid fa-chart-line" },
+    "Any_Graduate":         { id: "Graduation jobs",          title: "🎓 Any Graduate Jobs",       color: "linear-gradient(135deg,#2563eb,#1d4ed8)", icon: "fa-solid fa-university" },
+    "Any_Post_Graduate":    { id: "Post Graduation jobs",     title: "🏛️ Post Graduate Jobs",     color: "linear-gradient(135deg,#9333ea,#7e22ce)", icon: "fa-solid fa-user-tie" },
+    "Railway_Jobs":         { id: "Railway Jobs",             title: "🚂 Railway Jobs",            color: "linear-gradient(135deg,#b45309,#92400e)", icon: "fa-solid fa-train" },
+    "Police_Defence":       { id: "Police Jobs",              title: "🛡️ Police / Defence Jobs",  color: "linear-gradient(135deg,#1e40af,#1e3a8a)", icon: "fa-solid fa-shield-halved" },
+    "Teaching_Faculty":     { id: "Teacher Jobs",             title: "📝 Teaching / Faculty Jobs", color: "linear-gradient(135deg,#16a34a,#15803d)", icon: "fa-solid fa-chalkboard-user" },
+    "Bank_Jobs":            { id: "Bank Jobs",                title: "🏦 Bank Jobs",               color: "linear-gradient(135deg,#ca8a04,#a16207)", icon: "fa-solid fa-building-columns" },
+    "Medical_Hospital":     { id: "Medical/ Healthcare Jobs", title: "🏥 Medical / Hospital Jobs", color: "linear-gradient(135deg,#dc2626,#b91c1c)", icon: "fa-solid fa-stethoscope" },
+  };
+
+  function convertJobsDataToSections(rawData) {
+    if (!rawData || typeof rawData !== "object" || Array.isArray(rawData)) return { sections: [] };
+    const sections = [];
+    for (const [catKey, meta] of Object.entries(JOBS_CAT_META)) {
+      const jobs = rawData[catKey];
+      if (!Array.isArray(jobs) || !jobs.length) continue;
+      const items = jobs.map(job => {
+        const bd    = job.basic_details || {};
+        const dates = job.important_dates || {};
+        const name  = (bd.job_title || "").trim();
+        const url   = (job.source_url || "").trim();
+        const last  = (dates.last_date || "").trim();
+        if (!name || !url) return null;
+        return { name, url, date: last ? "Last Date: " + last : "" };
+      }).filter(Boolean);
+      if (!items.length) continue;
+      sections.push({ id: meta.id, title: meta.title, color: meta.color, icon: meta.icon, viewMoreType: "list", items });
+    }
+    return { sections };
+  }
+
+  /* Fetch Complete_Jobs_Full_Data.json and return it as sections format */
+  async function getJobsSections() {
+    try {
+      const raw = await getJSON("/Complete_Jobs_Full_Data.json");
+      return convertJobsDataToSections(raw);
+    } catch (_) { return { sections: [] }; }
+  }
+
   // ISSUE-002: memoize JSON fetches so dynamic-sections.json (474KB) and the
   // siblings are downloaded once per page load instead of 2-3 times.
   const __jsonCache = new Map();
@@ -444,7 +493,7 @@
 
     let data = { sections: [] };
     let fetchFailed = false;
-    try { data = await getJSON("/dynamic-sections.json"); }
+    try { data = await getJobsSections(); }
     catch (_) { fetchFailed = true; }
 
     wrap.innerHTML = "";
@@ -1500,7 +1549,7 @@
     let searchData = [];
     try {
       const [dyn, jobs, tools, services] = await Promise.all([
-        getJSON("/dynamic-sections.json").catch(() => ({})),
+        getJobsSections().catch(() => ({})),
         getJSON("/jobs.json").catch(() => ({})),
         getJSON("/tools.json").catch(() => ({})),
         getJSON("/services.json").catch(() => ({}))
