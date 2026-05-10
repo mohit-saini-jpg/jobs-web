@@ -156,6 +156,8 @@
     if (!anchor || !href) return true;
     if (anchor.closest(".site-header") || anchor.closest("#mobileMenu")) return true;
     if (anchor.hasAttribute("download")) return true;
+    // Skip redirect gate for direct job.html links (have data-bypass-gate or data-slug)
+    if (anchor.hasAttribute("data-bypass-gate") || anchor.hasAttribute("data-slug")) return true;
 
     const raw = href.trim();
     if (!raw || raw === "#" || raw.startsWith("#")) return true;
