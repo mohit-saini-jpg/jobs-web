@@ -489,8 +489,7 @@
         (async () => {
              const list = document.getElementById("links-list");
              try {
-                 const r = await fetch("dynamic-sections.json");
-                 const d = await r.json();
+                 const d = await getJobsSectionsV();
                  const sec = d.sections.find(s => s.id === sectionParam || s.title === sectionParam) || d.sections[0];
                  
                  if(sec && sec.items) {
@@ -527,9 +526,7 @@
       // has somewhere to go instead of a dead "Nothing found" card.
       (async () => {
         try {
-          const r = await fetch("dynamic-sections.json");
-          if (!r.ok) return;
-          const d = await r.json();
+          const d = await getJobsSectionsV();
           const ul = document.getElementById("fallback-sections");
           if (!ul || !Array.isArray(d.sections)) return;
           d.sections.slice(0, 12).forEach((s) => {
@@ -548,5 +545,52 @@
     })();
   </script>
   <script src="seo-engine.js?v=20260508" defer></script>
+
+  <script>
+  /* ── Convert Complete_Jobs_Full_Data.json → sections format (inline for view.html) ── */
+  const JOBS_CAT_META_V = {
+    "Latest_Notifications": { id: "Latest Notifications",    title: "🔔 Latest Notifications"   },
+    "10TH_Pass":            { id: "10th Pass jobs",           title: "📚 10th Pass Jobs"          },
+    "8TH_Pass":             { id: "8th Pass",                 title: "📖 8th Pass Jobs"           },
+    "12TH_Pass":            { id: "12th Pass jobs",           title: "🎓 12th Pass Jobs"          },
+    "Diploma":              { id: "Diploma Jobs",              title: "📜 Diploma Jobs"            },
+    "ITI":                  { id: "ITI Jobs",                  title: "🔧 ITI Jobs"               },
+    "B_Tech_BE":            { id: "B.Tech Jobs",              title: "💻 B.Tech / B.E. Jobs"      },
+    "B_Com":                { id: "B.Com Jobs",               title: "💼 B.Com Jobs"              },
+    "Any_Graduate":         { id: "Graduation jobs",          title: "🎓 Any Graduate Jobs"       },
+    "Any_Post_Graduate":    { id: "Post Graduation jobs",     title: "🏛️ Post Graduate Jobs"     },
+    "Railway_Jobs":         { id: "Railway Jobs",             title: "🚂 Railway Jobs"            },
+    "Police_Defence":       { id: "Police Jobs",              title: "🛡️ Police / Defence Jobs"  },
+    "Teaching_Faculty":     { id: "Teacher Jobs",             title: "📝 Teaching / Faculty Jobs" },
+    "Bank_Jobs":            { id: "Bank Jobs",                title: "🏦 Bank Jobs"               },
+    "Medical_Hospital":     { id: "Medical/ Healthcare Jobs", title: "🏥 Medical / Hospital Jobs" },
+  };
+  async function getJobsSectionsV() {
+    try {
+      const r = await fetch("/Complete_Jobs_Full_Data.json");
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      const raw = await r.json();
+      if (!raw || typeof raw !== "object" || Array.isArray(raw)) return { sections: [] };
+      const sections = [];
+      for (const [catKey, meta] of Object.entries(JOBS_CAT_META_V)) {
+        const jobs = raw[catKey];
+        if (!Array.isArray(jobs) || !jobs.length) continue;
+        const items = jobs.map(job => {
+          const bd    = job.basic_details || {};
+          const dates = job.important_dates || {};
+          const name  = (bd.job_title || "").trim();
+          const url   = (job.source_url || "").trim();
+          const last  = (dates.last_date || "").trim();
+          if (!name || !url) return null;
+          return { name, url, date: last ? "Last Date: " + last : "" };
+        }).filter(Boolean);
+        if (!items.length) continue;
+        sections.push({ id: meta.id, title: meta.title, items });
+      }
+      return { sections };
+    } catch (_) { return { sections: [] }; }
+  }
+  </script>
+
 </body>
 </html>
