@@ -38,6 +38,18 @@
     "Medical_Hospital":     { id: "Medical/ Healthcare Jobs", title: "🏥 Medical / Hospital Jobs", color: "linear-gradient(135deg,#dc2626,#b91c1c)", icon: "fa-solid fa-stethoscope" },
   };
 
+  /* Slugify a job title the same way the Python generator does */
+  function slugifyForJob(title) {
+    return title
+      .normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/&/g, " and ").replace(/['']/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .replace(/-{2,}/g, "-")
+      .slice(0, 120) || "official-link";
+  }
+
   function convertJobsDataToSections(rawData) {
     if (!rawData || typeof rawData !== "object" || Array.isArray(rawData)) return { sections: [] };
     const sections = [];
@@ -47,11 +59,24 @@
       const items = jobs.map(job => {
         const bd    = job.basic_details || {};
         const dates = job.important_dates || {};
+        const links = job.important_links || {};
         const name  = (bd.job_title || "").trim();
-        const url   = (job.source_url || "").trim();
-        const last  = (dates.last_date || "").trim();
-        if (!name || !url) return null;
-        return { name, url, date: last ? "Last Date: " + last : "" };
+        if (!name) return null;
+
+        /* Build job.html URL from slug */
+        const slug = slugifyForJob(name);
+        const url  = "job.html?slug=" + encodeURIComponent(slug) + "&section=" + encodeURIComponent(meta.id);
+
+        /* Try multiple date keys */
+        const last = (
+          dates.last_date_to_apply ||
+          dates.last_date ||
+          dates.last_date_apply ||
+          dates.closing_date ||
+          ""
+        ).trim();
+
+        return { slug, name, url, date: last || "" };
       }).filter(Boolean);
       if (!items.length) continue;
       sections.push({ id: meta.id, title: meta.title, color: meta.color, icon: meta.icon, viewMoreType: "list", items });
@@ -62,7 +87,7 @@
   /* Fetch Complete_Jobs_Full_Data.json and return it as sections format */
   async function getJobsSections() {
     try {
-      const raw = await getJSON("/Complete_Jobs_Full_Data.json");
+      const raw = await getJSON("Complete_Jobs_Full_Data.json");
       return convertJobsDataToSections(raw);
     } catch (_) { return { sections: [] }; }
   }
@@ -562,7 +587,14 @@
         const external = !!it.external;
         const a = document.createElement("a");
         a.className = "section-link";
-        a.href = buildRedirectUrl(url, name, sectionKey) || normalizeUrl(url);
+        /* If URL is a job.html link (from slug), use directly — bypass redirect gate */
+        if (url.startsWith("job.html")) {
+          a.href = url;
+          a.setAttribute("data-bypass-gate", "1");
+          if (it.slug) a.setAttribute("data-slug", it.slug);
+        } else {
+          a.href = buildRedirectUrl(url, name, sectionKey) || normalizeUrl(url);
+        }
         a.setAttribute("data-redirect-label", name);
         if (external) { a.target = "_blank"; a.rel = "noopener"; }
         // Clean date: truncate long/unclear dates to keep layout clean
