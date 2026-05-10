@@ -48,12 +48,8 @@
         const bd    = job.basic_details || {};
         const dates = job.important_dates || {};
         const name  = (bd.job_title || "").trim();
-        // source_url is not present in Complete_Jobs_Full_Data.json;
-        // build internal job detail URL from the slugified title instead.
-        const slug  = slugifyTitle(name);
-        const url   = (job.source_url || "").trim() || (slug && slug !== "official-link" ? "/jobs/" + slug + "/" : "");
-        // The date field in this dataset is last_date_to_apply, not last_date.
-        const last  = (dates.last_date || dates.last_date_to_apply || "").trim();
+        const url   = (job.source_url || "").trim();
+        const last  = (dates.last_date || "").trim();
         if (!name || !url) return null;
         return { name, url, date: last ? "Last Date: " + last : "" };
       }).filter(Boolean);
@@ -577,7 +573,7 @@
         } else if (rawDate.length > 35) {
           displayDate = rawDate.slice(0, 32) + "…";
         }
-        a.innerHTML = `<div class="t">${name}</div><div class="d">${displayDate || "Open official link"}</div>`;
+        a.innerHTML = `<span class="t">${name}</span>${displayDate ? `<span class="d">⏰ Last Date: ${displayDate}</span>` : ""}`;
         list.appendChild(a);
       });
 
