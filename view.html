@@ -537,9 +537,10 @@
                         } else if (dspDate.length > 40) {
                           dspDate = dspDate.slice(0, 37) + '…';
                         }
+                        const dataSlug = i.slug ? `data-slug="${i.slug}" data-bypass-gate="1"` : '';
                         return `
                         <li class="bg-white border border-slate-200 rounded-lg p-3 hover:shadow-md transition">
-                            <a href="${href}" data-redirect-label="${label}" class="block font-semibold text-sky-700 hover:underline" ${targetAttr}>
+                            <a href="${href}" data-redirect-label="${label}" ${dataSlug} class="block font-semibold text-sky-700 hover:underline" ${targetAttr}>
                                 ${label}
                             </a>
                             <div class="text-xs text-slate-500 mt-1">${dspDate}</div>
@@ -614,23 +615,27 @@
     ID_TO_CAT[meta.title.replace(/\p{Emoji}/gu,"").trim().toLowerCase()] = catKey;
   }
 
-  async function getJobsSectionsV() {
-    // Try jobs-index.json first (very small, fast for 1500+ jobs)
-    // Fallback to Complete_Jobs_Full_Data.json if index missing
-    let indexData = null;
-    try {
-      const paths = ["./jobs-index.json", "/jobs-index.json"];
-      for (const p of paths) {
-        try {
-          const r = await fetch(p);
-          if (r.ok) { indexData = await r.json(); break; }
-        } catch(_) {}
-      }
-    } catch(_) {}
+  /* Safe fetch: bypasses SW stale cache, rejects array responses (SW offline fallback) */
+  async function fetchJSON(path) {
+    const url = path + (path.includes("?") ? "&" : "?") + "_v=" + Date.now();
+    const r = await fetch(url, { cache: "no-store" });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const data = await r.json();
+    // Service Worker offline fallback returns '[]' — reject it
+    if (Array.isArray(data)) throw new Error("SW returned empty array fallback");
+    if (!data || typeof data !== "object") throw new Error("Invalid JSON shape");
+    return data;
+  }
 
-    if (indexData && typeof indexData === "object") {
-      // Build sections from jobs-index.json
-      const cats = {}; // catKey → items[]
+  async function getJobsSectionsV() {
+    /* 1. Try jobs-index.json (lightweight, preferred) */
+    let indexData = null;
+    for (const p of ["./jobs-index.json", "/jobs-index.json"]) {
+      try { indexData = await fetchJSON(p); break; } catch(_) {}
+    }
+
+    if (indexData && !Array.isArray(indexData) && typeof indexData === "object") {
+      const cats = {};
       for (const [slug, info] of Object.entries(indexData)) {
         const catKey = info.cat;
         if (!JOBS_CAT_META_V[catKey]) continue;
@@ -638,8 +643,8 @@
         const last = (info.last_date || "").trim();
         cats[catKey].push({
           name: info.title || slug,
-          slug: slug,                          // actual file slug for job.html
-          url:  info.url || "",               // usually empty in index
+          slug: slug,   // actual file key for job.html?slug=SLUG
+          url:  "",
           date: last ? "Last Date: " + last : ""
         });
       }
@@ -649,40 +654,33 @@
         if (!items || !items.length) continue;
         sections.push({ id: meta.id, title: meta.title, items });
       }
-      return { sections };
+      if (sections.length) return { sections };
     }
 
-    // Fallback: Complete_Jobs_Full_Data.json (heavy but works)
-    try {
-      const paths = ["./Complete_Jobs_Full_Data.json", "/Complete_Jobs_Full_Data.json"];
-      let raw = null;
-      for (const p of paths) {
-        try {
-          const r = await fetch(p);
-          if (r.ok) { raw = await r.json(); break; }
-        } catch(_) {}
-      }
-      if (!raw || typeof raw !== "object" || Array.isArray(raw)) return { sections: [], error: "No data" };
-      const sections = [];
-      for (const [catKey, meta] of Object.entries(JOBS_CAT_META_V)) {
-        const jobs = raw[catKey];
-        if (!Array.isArray(jobs) || !jobs.length) continue;
-        const items = jobs.map(job => {
-          const bd   = job.basic_details || {};
-          const dates = job.important_dates || {};
-          const name = (bd.job_title || "").trim();
-          const url  = (job.source_url || "").trim();
-          const last = (dates.last_date || "").trim();
-          if (!name || !url) return null;
-          return { name, url, date: last ? "Last Date: " + last : "" };
-        }).filter(Boolean);
-        if (!items.length) continue;
-        sections.push({ id: meta.id, title: meta.title, items });
-      }
-      return { sections };
-    } catch (e) {
-      return { sections: [], error: e.message };
+    /* 2. Fallback: Complete_Jobs_Full_Data.json */
+    let raw = null;
+    for (const p of ["./Complete_Jobs_Full_Data.json", "/Complete_Jobs_Full_Data.json"]) {
+      try { raw = await fetchJSON(p); break; } catch(_) {}
     }
+    if (!raw) return { sections: [], error: "Both data sources failed" };
+
+    const sections = [];
+    for (const [catKey, meta] of Object.entries(JOBS_CAT_META_V)) {
+      const jobs = raw[catKey];
+      if (!Array.isArray(jobs) || !jobs.length) continue;
+      const items = jobs.map(job => {
+        const bd    = job.basic_details   || {};
+        const dates = job.important_dates || {};
+        const name  = (bd.job_title  || "").trim();
+        const url   = (job.source_url || "").trim();
+        const last  = (dates.last_date || "").trim();
+        if (!name) return null;
+        return { name, url, date: last ? "Last Date: " + last : "" };
+      }).filter(Boolean);
+      if (!items.length) continue;
+      sections.push({ id: meta.id, title: meta.title, items });
+    }
+    return { sections };
   }
   </script>
 
