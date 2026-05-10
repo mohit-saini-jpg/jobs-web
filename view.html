@@ -495,7 +495,7 @@
                    s.id === sectionParam ||
                    s.title === sectionParam ||
                    (s.id || "").toLowerCase().replace(/[\s_-]+/g, " ").trim() === spLower ||
-                   (s.title || "").replace(/\p{Emoji}/gu, "").trim().toLowerCase().replace(/[\s_-]+/g, " ").trim() === spLower
+                   (s.title || "").replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FEFF}]/gu, "").replace(/[^\x00-\x7E]/g, "").trim().toLowerCase().replace(/[\s_-]+/g, " ").trim() === spLower
                  ) || d.sections[0];
                  
                  if(sec && sec.items) {
@@ -550,11 +550,14 @@
                      } // end else (cleanItems.length > 0)
                  }
              } catch(e) {
-                document.getElementById("loading").innerHTML = `
+                console.error('[TSJ] Section render error:', e);
+                const loadEl = document.getElementById("loading");
+                if (loadEl) loadEl.innerHTML = `
                   <div class="flex flex-col items-center gap-3 py-10">
                     <i class="fas fa-wifi-slash text-3xl text-slate-400"></i>
                     <p class="font-bold text-slate-700">Data load nahi ho saka.</p>
                     <p class="text-sm text-slate-500">Connection check karo aur page refresh karo.</p>
+                    <p class="text-xs text-red-400 mt-1">${(e && e.message) ? e.message : 'Unknown error'}</p>
                     <button onclick="location.reload()" class="mt-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-5 rounded-lg transition">Refresh</button>
                   </div>`;
              }        })();
@@ -612,7 +615,7 @@
   const ID_TO_CAT = {};
   for (const [catKey, meta] of Object.entries(JOBS_CAT_META_V)) {
     ID_TO_CAT[meta.id.toLowerCase()] = catKey;
-    ID_TO_CAT[meta.title.replace(/\p{Emoji}/gu,"").trim().toLowerCase()] = catKey;
+    ID_TO_CAT[meta.title.replace(/[^\x00-\x7E]/g, "").trim().toLowerCase()] = catKey;
   }
 
   /* Safe fetch: bypasses SW stale cache, rejects array responses (SW offline fallback) */
