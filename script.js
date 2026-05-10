@@ -605,7 +605,7 @@
         } else if (rawDate.length > 35) {
           displayDate = rawDate.slice(0, 32) + "…";
         }
-        a.innerHTML = `<span class="t">${name}</span>${displayDate ? `<span class="d">⏰ Last Date: ${displayDate}</span>` : ""}`;
+        a.innerHTML = `<span class="t">${name}${displayDate ? ` <span class="d">| ${displayDate}</span>` : ""}</span>`;
         list.appendChild(a);
       });
 
