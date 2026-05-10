@@ -4,9 +4,9 @@
  *           Network-First for dynamic data, Offline fallback
  */
 
-const CACHE_NAME = 'tsj-v3';
-const STATIC_CACHE = 'tsj-static-v3';
-const DATA_CACHE = 'tsj-data-v3';
+const CACHE_NAME = 'tsj-v4';
+const STATIC_CACHE = 'tsj-static-v4';
+const DATA_CACHE = 'tsj-data-v4';
 
 const STATIC_ASSETS = [
   '/',
@@ -29,6 +29,8 @@ const CACHEABLE_PATTERNS = [
 const NETWORK_FIRST_PATTERNS = [
   /dynamic-sections\.json$/,
   /jobs\.json$/,
+  /jobs-index\.json/,
+  /Complete_Jobs_Full_Data\.json/,
   /state-jobs-data\.json$/
 ];
 
