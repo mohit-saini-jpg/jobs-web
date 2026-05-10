@@ -1457,24 +1457,49 @@
       try { const d=new URL(u,location.href); return ["http:","https:"].includes(d.protocol)?d.href:null; } catch(_){return null;}
     }
 
+    /* ── Load from Complete_Jobs_Full_Data.json directly ── */
+    const _JOBS_CAT_META_JH = {
+      "Latest_Notifications": { id: "Latest Notifications"    },
+      "10TH_Pass":            { id: "10th Pass jobs"           },
+      "8TH_Pass":             { id: "8th Pass"                 },
+      "12TH_Pass":            { id: "12th Pass jobs"           },
+      "Diploma":              { id: "Diploma Jobs"              },
+      "ITI":                  { id: "ITI Jobs"                  },
+      "B_Tech_BE":            { id: "B.Tech Jobs"              },
+      "B_Com":                { id: "B.Com Jobs"               },
+      "Any_Graduate":         { id: "Graduation jobs"          },
+      "Any_Post_Graduate":    { id: "Post Graduation jobs"     },
+      "Railway_Jobs":         { id: "Railway Jobs"             },
+      "Police_Defence":       { id: "Police Jobs"              },
+      "Teaching_Faculty":     { id: "Teacher Jobs"             },
+      "Bank_Jobs":            { id: "Bank Jobs"                },
+      "Medical_Hospital":     { id: "Medical/ Healthcare Jobs" },
+    };
     async function loadAllItems() {
-      const r = await fetch("/dynamic-sections.json");
-      if (!r.ok) return [];
-      const data = await r.json();
-      const out = [];
-      for (const sec of (data.sections||[])) {
-        for (const it of (sec.items||[])) {
-          const u = it.url||it.link||"";
-          if (!u) continue;
-          out.push({
-            url: normalizeUrl(u),
-            title: safe(it.name||it.title||"").slice(0,600),
-            secId: safe(sec.id||sec.title),
-            fp: urlRedirectFingerprint(u).toLowerCase()
-          });
+      try {
+        const r = await fetch("/Complete_Jobs_Full_Data.json");
+        if (!r.ok) return [];
+        const raw = await r.json();
+        if (!raw || typeof raw !== "object" || Array.isArray(raw)) return [];
+        const out = [];
+        for (const [catKey, meta] of Object.entries(_JOBS_CAT_META_JH)) {
+          const jobs = raw[catKey];
+          if (!Array.isArray(jobs)) continue;
+          for (const job of jobs) {
+            const bd  = job.basic_details || {};
+            const u   = (job.source_url || "").trim();
+            const ttl = (bd.job_title || "").trim();
+            if (!u || !ttl) continue;
+            out.push({
+              url:   normalizeUrl(u),
+              title: ttl.slice(0, 600),
+              secId: meta.id,
+              fp:    urlRedirectFingerprint(u).toLowerCase()
+            });
+          }
         }
-      }
-      return out;
+        return out;
+      } catch(_) { return []; }
     }
 
     /* Try to load the Complete_Jobs_Full_Data.json to get rich data */
