@@ -719,7 +719,7 @@
     .job-date { display: none; }
 
     /* section-link .d — real dates show in red; "Open official link" hidden via JS */
-    .section-link .d { font-size: .68rem; font-weight: 800; color: var(--red); white-space: nowrap; flex-shrink: 0; }
+    .section-link .d { font-size: .68rem; font-weight: 800; color: var(--red); white-space: normal; display: inline-block; margin-top: 1px; }
 
     /* View more link */
     .sec-more {
@@ -1020,12 +1020,10 @@
     .section-list {
       display: flex;
       flex-direction: column;
-      /* Show exactly 5 items: 5 × 52px height + 0 gap (border-bottom layout) */
-      max-height: 260px;
+      max-height: 280px;
       overflow-y: auto;
       overflow-x: hidden;
       scroll-behavior: smooth;
-      /* Firefox scrollbar */
       scrollbar-width: thin;
       scrollbar-color: #94a3b8 #f1f5f9;
     }
@@ -1034,19 +1032,18 @@
     .section-list::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
     .section-list::-webkit-scrollbar-thumb:hover { background: #475569; }
     .section-link {
-      display: flex; align-items: center; gap: 10px;
+      display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
       padding: 9px 14px; border-bottom: 1px solid #f1f5f9;
       text-decoration: none; color: var(--text); cursor: pointer;
       transition: background .12s, transform .1s;
       flex-shrink: 0;
-      min-height: 52px;
       box-sizing: border-box;
     }
     .section-link:last-child { border-bottom: none; }
     .section-link:hover { background: #f0f7ff; transform: translateX(2px); }
     .section-link .t {
-      flex: 1; font-size: .82rem; font-weight: 700; color: var(--blue);
-      line-height: 1.4; word-break: break-word;
+      width: 100%; font-size: .82rem; font-weight: 700; color: var(--blue);
+      line-height: 1.4; word-break: break-word; white-space: normal;
     }
     .section-link:hover .t { text-decoration: underline; }
     .section-show-more { display: none !important; }
