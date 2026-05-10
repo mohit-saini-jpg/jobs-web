@@ -754,284 +754,332 @@
   (() => {
     "use strict";
 
-    /* ─── Helpers ─── */
+    /* ══════════════════════════════════════════════
+       HELPERS
+    ══════════════════════════════════════════════ */
     const safe = v => (v ?? "").toString().trim();
-    const esc = s => safe(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    const esc  = s => safe(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 
     function normalizeUrl(raw) {
       const s = safe(raw);
       if (!s) return "";
-      if (/^(https?:)?\\/\\//i.test(s) || /^(mailto:|tel:)/i.test(s)) return s;
+      if (/^(https?:)?\/\//i.test(s) || /^(mailto:|tel:)/i.test(s)) return s;
       if (s.startsWith("#") || s.startsWith("?")) return s;
       if (s.startsWith("/") || s.includes(".html") || s.startsWith("./")) return s;
-      return "https://" + s.replace(/^\\/+/, "");
-    }
-
-    function urlRedirectFingerprint(raw) {
-      const s = normalizeUrl(raw);
-      let h1 = 2166136261 >>> 0, h2 = 8159751279 >>> 0;
-      for (let i = 0; i < s.length; i++) {
-        const c = s.charCodeAt(i);
-        h1 ^= c; h1 = Math.imul(h1, 16777619) >>> 0;
-        h2 = (Math.imul(h2, 1099511627) ^ c) >>> 0;
-      }
-      const ab = "0123456789abcdefghijklmnopqrstuvwxyz";
-      const pack = (n,l) => { let x=n>>>0,o=""; for(let i=0;i<l;i++){o=ab[x%36]+o;x=Math.floor(x/36);} return o; };
-      return pack(h1,6)+pack(h2,6);
+      return "https://" + s.replace(/^\/+/, "");
     }
 
     function humanizeSlug(slug) {
-      return safe(slug).replace(/-+/g," ").replace(/\b[a-z]/g,m=>m.toUpperCase()).trim();
+      return safe(slug).replace(/-+/g," ")
+        .replace(/\b[a-z]/g, m => m.toUpperCase()).trim();
+    }
+
+    function slugify(text) {
+      return safe(text).toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, "")
+        .replace(/[\s-]+/g, "-")
+        .slice(0, 120).replace(/^-+|-+$/g, "") || "job";
     }
 
     function todayStr() {
-      return new Date().toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"});
+      return new Date().toLocaleDateString("en-IN",
+        {day:"2-digit", month:"short", year:"numeric"});
     }
 
-    /* ─── Section nav pills ─── */
-    const sectionNavSections = [];
-    function addNavPill(label, targetId) {
-      sectionNavSections.push({label, targetId});
-    }
-    function buildSectionNav() {
-      const nav = document.getElementById("sectionNav");
-      if (!nav || !sectionNavSections.length) return;
-      nav.innerHTML = sectionNavSections.map(s =>
-        `<button class="jp-sec-nav-pill" onclick="document.getElementById('${s.targetId}')?.scrollIntoView({behavior:'smooth',block:'start'})">
-          ${esc(s.label)}
-        </button>`
-      ).join("");
+    function validateUrl(u) {
+      try {
+        const d = new URL(u, location.href);
+        return ["http:","https:"].includes(d.protocol) ? d.href : null;
+      } catch(_) { return null; }
     }
 
-    /* ─── Detection helpers ─── */
     function isJobItem(name) {
-      const n = safe(name).toLowerCase();
-      if (/last\s*date/i.test(n)) return true;
-      if (/recruitment|vacancy|vacancies|apply online|online form|result|admit card|answer key|syllabus|notification/i.test(n)) return true;
-      return false;
+      return /last\s*date|recruitment|vacancy|vacancies|apply online|online form|result|admit card|answer key|syllabus|notification/i.test(safe(name));
     }
 
     function detectNonJobType(name) {
       const n = safe(name).toLowerCase();
-      if (/scheme|yojna|yojana/i.test(n)) return {label:"Govt Scheme / Yojna",color:"linear-gradient(135deg,#059669,#047857)"};
-      if (/csc|pdf|vle|digital seva/i.test(n)) return {label:"CSC Resource",color:"linear-gradient(135deg,#dc2626,#b91c1c)"};
-      if (/khabar|news|latest|update/i.test(n)) return {label:"Latest Khabar",color:"linear-gradient(135deg,#ea580c,#c2410c)"};
-      if (/study material|course|book|notes/i.test(n)) return {label:"Study Material",color:"linear-gradient(135deg,#7c3aed,#5b21b6)"};
-      if (/admit card/i.test(n)) return {label:"Admit Card",color:"linear-gradient(135deg,#7c3aed,#5b21b6)"};
-      if (/result/i.test(n)) return {label:"Result",color:"linear-gradient(135deg,#b45309,#92400e)"};
-      return {label:"Important Link",color:"linear-gradient(135deg,#475569,#334155)"};
+      if (/scheme|yojna|yojana/i.test(n)) return {label:"Govt Scheme / Yojna", color:"linear-gradient(135deg,#059669,#047857)"};
+      if (/csc|pdf|vle|digital seva/i.test(n)) return {label:"CSC Resource", color:"linear-gradient(135deg,#dc2626,#b91c1c)"};
+      if (/khabar|news|latest|update/i.test(n)) return {label:"Latest Khabar", color:"linear-gradient(135deg,#ea580c,#c2410c)"};
+      if (/study material|course|book|notes/i.test(n)) return {label:"Study Material", color:"linear-gradient(135deg,#7c3aed,#5b21b6)"};
+      if (/admit card/i.test(n)) return {label:"Admit Card", color:"linear-gradient(135deg,#7c3aed,#5b21b6)"};
+      if (/result/i.test(n)) return {label:"Result", color:"linear-gradient(135deg,#b45309,#92400e)"};
+      return {label:"Important Link", color:"linear-gradient(135deg,#475569,#334155)"};
     }
 
-    /* ─── Params ─── */
-    const params = new URLSearchParams(window.location.search);
-    let rawSlug = safe(params.get("slug"));
-    const rawK  = safe(params.get("k")).toLowerCase();
-    const rawSec = safe(params.get("section"));
+    /* ══════════════════════════════════════════════
+       URL PARAMS
+    ══════════════════════════════════════════════ */
+    const params  = new URLSearchParams(window.location.search);
+    let rawSlug   = safe(params.get("slug"));
+    const rawSec  = safe(params.get("section"));
 
-    if (!rawSlug && !rawK) {
-      const pathMatch = window.location.pathname.match(/\/jobs\/([^\/]+)\/?$/);
-      if (pathMatch) rawSlug = decodeURIComponent(pathMatch[1]);
-      if (!rawSlug) {
-        rawSlug = safe(sessionStorage.getItem("__tsj_slug"));
-        if (rawSlug) sessionStorage.removeItem("__tsj_slug");
-      }
+    if (!rawSlug) {
+      const m = window.location.pathname.match(/\/jobs\/([^\/]+)\/?$/);
+      if (m) rawSlug = decodeURIComponent(m[1]);
     }
-    if (rawSlug && window.location.pathname.includes("job.html")) {
-      try { history.replaceState(null, "", "/jobs/" + rawSlug + "/"); } catch(_) {}
+    if (!rawSlug) {
+      rawSlug = safe(sessionStorage.getItem("__tsj_slug"));
+      if (rawSlug) sessionStorage.removeItem("__tsj_slug");
     }
 
-    /* ─── DOM refs ─── */
+    /* ══════════════════════════════════════════════
+       DOM REFS
+    ══════════════════════════════════════════════ */
     const loading    = document.getElementById("jbLoading");
     const threeCol   = document.getElementById("jbThreeCol");
     const errorEl    = document.getElementById("jbError");
     const layoutJob  = document.getElementById("layoutJob");
     const layoutNonJob = document.getElementById("layoutNonJob");
 
-    /* ─── Show/hide helpers ─── */
-    function showCard(id) { const el = document.getElementById(id); if(el) el.style.display=""; }
-    function hideCard(id) { const el = document.getElementById(id); if(el) el.style.display="none"; }
-    function setHtml(id, html) { const el = document.getElementById(id); if(el) el.innerHTML = html; }
-    function setText(id, txt) { const el = document.getElementById(id); if(el) el.textContent = txt; }
+    const showCard = id => { const e=document.getElementById(id); if(e) e.style.display=""; };
+    const setText  = (id,t) => { const e=document.getElementById(id); if(e) e.textContent=t; };
+    const setHtml  = (id,h) => { const e=document.getElementById(id); if(e) e.innerHTML=h; };
 
-    /* ─── Render table rows ─── */
+    /* ══════════════════════════════════════════════
+       DATA FETCHING  ← NEW LIGHTWEIGHT APPROACH
+    ══════════════════════════════════════════════ */
+    let _indexCache = null;
+
+    async function fetchWithTimeout(url, ms=10000) {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), ms);
+      try {
+        const r = await fetch(url, {signal: ctrl.signal});
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        return r;
+      } finally { clearTimeout(t); }
+    }
+
+    /* Step 1: fetch lightweight index (75 KB) */
+    async function getIndex() {
+      if (_indexCache) return _indexCache;
+      try {
+        const r = await fetchWithTimeout("/jobs-index.json");
+        _indexCache = await r.json();
+        return _indexCache;
+      } catch(_) { return null; }
+    }
+
+    /* Step 2: fetch individual job JSON (~11 KB) */
+    async function getJobBySlug(slug) {
+      try {
+        const r = await fetchWithTimeout(`/jobs-data/${encodeURIComponent(slug)}.json`);
+        return await r.json();
+      } catch(_) { return null; }
+    }
+
+    /* Find best slug match in index */
+    function findSlugInIndex(index, targetSlug) {
+      if (!index || !targetSlug) return null;
+
+      // 1. Exact match
+      if (index[targetSlug]) return {slug: targetSlug, meta: index[targetSlug]};
+
+      // 2. Fuzzy: score by common tokens
+      const tokens = targetSlug.split("-").filter(t => t.length > 2);
+      let best = null, bestScore = 0;
+      for (const [slug, meta] of Object.entries(index)) {
+        const matches = tokens.filter(t => slug.includes(t)).length;
+        const score = matches / tokens.length;
+        if (score > bestScore) { bestScore = score; best = {slug, meta}; }
+      }
+      return bestScore >= 0.55 ? best : null;
+    }
+
+    /* ══════════════════════════════════════════════
+       SECTION NAV PILLS
+    ══════════════════════════════════════════════ */
+    const _navPills = [];
+    function addNavPill(label, id) { _navPills.push({label, id}); }
+    function buildSectionNav() {
+      const nav = document.getElementById("sectionNav");
+      if (!nav || !_navPills.length) return;
+      nav.innerHTML = _navPills.map(p =>
+        `<button class="jp-sec-nav-pill"
+           onclick="document.getElementById('${p.id}')?.scrollIntoView({behavior:'smooth',block:'start'})">
+           ${esc(p.label)}
+         </button>`
+      ).join("");
+    }
+
+    /* ══════════════════════════════════════════════
+       TABLE BUILDER
+    ══════════════════════════════════════════════ */
     function buildTableRows(rows) {
       return rows.map(r => {
-        const cls = r.hl === "last" ? "hl-last" : r.hl === "warn" ? "hl-row" : "";
-        return `<tr class="${cls}"><th scope="row">${esc(r.label)}</th><td>${r.html ? r.val : esc(r.val)}</td></tr>`;
+        const cls = r.hl==="last" ? "hl-last" : r.hl==="warn" ? "hl-row" : "";
+        return `<tr class="${cls}">
+          <th scope="row">${esc(r.label)}</th>
+          <td>${r.html ? r.val : esc(r.val)}</td>
+        </tr>`;
       }).join("");
     }
 
-    /* ─── Render FULL JOB page from JSON data ─── */
+    /* ══════════════════════════════════════════════
+       RENDER: FULL JOB PAGE
+    ══════════════════════════════════════════════ */
     function renderFromJsonData(job, destUrl) {
-      const bd   = job.basic_details || {};
-      const dates = job.important_dates || {};
-      const fee  = job.application_fee || {};
-      const age  = job.age_limit || {};
-      const qual = job.qualification || {};
-      const vac  = job.vacancy_details || [];
-      const catVac = job.category_wise_vacancy || {};
-      const sal  = job.salary_details || {};
-      const sel  = job.selection_process || [];
-      const phys = job.physical_eligibility || {};
-      const exam = job.exam_pattern || {};
-      const syl  = job.syllabus || {};
-      const how  = job.how_to_apply || [];
+      const bd    = job.basic_details      || {};
+      const dates = job.important_dates    || {};
+      const fee   = job.application_fee   || {};
+      const age   = job.age_limit         || {};
+      const qual  = job.qualification     || {};
+      const vac   = job.vacancy_details   || [];
+      const sal   = job.salary_details    || {};
+      const sel   = job.selection_process || [];
+      const phys  = job.physical_eligibility || {};
+      const exam  = job.exam_pattern      || {};
+      const syl   = job.syllabus          || {};
+      const how   = job.how_to_apply      || [];
       const instr = job.important_instructions || [];
-      const links = job.important_links || {};
-      const faq  = job.faq || [];
-      const tags = job.seo_tags || [];
+      const links = job.important_links   || {};
+      const faq   = job.faq              || [];
+      const tags  = job.seo_tags         || [];
 
-      layoutJob.style.display = "block";
+      layoutJob.style.display    = "block";
       layoutNonJob.style.display = "none";
 
-      /* ── Title & breadcrumb ── */
+      /* ── Title ── */
       const title = safe(bd.job_title || bd.post_name || "Government Job");
-      document.getElementById("jbTitle").textContent = title;
-      document.getElementById("bcTitle").textContent = title.length > 60 ? title.slice(0,57)+"…" : title;
+      setText("jbTitle", title);
+      setText("bcTitle", title.length>60 ? title.slice(0,57)+"…" : title);
       document.title = title + " | Top Sarkari Jobs";
 
-      /* ── Badge / Category ── */
+      /* ── Badge ── */
       const catMap = [
-        {rx:/admit\s*card/i,label:"Admit Card"},{rx:/answer\s*key/i,label:"Answer Key"},
-        {rx:/result/i,label:"Result"},{rx:/syllabus/i,label:"Syllabus"},
-        {rx:/online\s*form|application/i,label:"Online Form"},
-        {rx:/vacancy|recruitment|notification/i,label:"Recruitment"},
+        {rx:/admit\s*card/i,l:"Admit Card"},{rx:/answer\s*key/i,l:"Answer Key"},
+        {rx:/result/i,l:"Result"},{rx:/syllabus/i,l:"Syllabus"},
+        {rx:/online\s*form|application/i,l:"Online Form"},
+        {rx:/vacancy|recruitment|notification/i,l:"Recruitment"},
       ];
       let catLabel = "Sarkari Job";
-      for (const c of catMap) { if (c.rx.test(title)) { catLabel = c.label; break; } }
+      for (const c of catMap) { if(c.rx.test(title)){catLabel=c.l;break;} }
       setText("jbBadge", catLabel);
 
-      /* ── Advertisement No ── */
+      /* ── Advert number ── */
       if (bd.advertisement_number) {
         document.getElementById("metaAdvtWrap").style.display = "flex";
         setText("metaAdvt", "Advt No: " + bd.advertisement_number);
       }
 
-      /* ── Last date urgency ── */
+      /* ── Last date & urgency ── */
       const lastDate = safe(dates.last_date || "");
       if (lastDate) {
         const ldClean = lastDate.replace(/\(.*\)/g,"").trim();
         document.getElementById("metaLastDateWrap").style.display = "flex";
         setText("metaLastDate", "Last Date: " + ldClean);
-        // Check urgency
-        const dtM = ldClean.match(/(\d{1,2})[-\/](\d{1,2}|\w+)[-\/](\d{2,4})/);
-        if (dtM) {
-          try {
-            const months = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+        try {
+          const months={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+          const dtM = ldClean.match(/(\d{1,2})[-\/\.](\d{1,2}|\w+)[-\/\.](\d{2,4})/);
+          if (dtM) {
             const mo = isNaN(+dtM[2]) ? (months[dtM[2].toLowerCase().slice(0,3)]??0) : (+dtM[2]-1);
-            const yr = +dtM[3] < 100 ? 2000 + +dtM[3] : +dtM[3];
+            const yr = +dtM[3]<100 ? 2000+(+dtM[3]) : +dtM[3];
             const diff = (new Date(yr,mo,+dtM[1]) - new Date()) / 86400000;
-            if (diff >= 0 && diff <= 7) document.getElementById("jbUrgentBadge").style.display = "inline-flex";
-            if (diff >= 0 && diff <= 30) document.getElementById("jbNewBadge").style.display = "inline-flex";
-          } catch(_) {}
-        }
+            if (diff>=0&&diff<=7)  document.getElementById("jbUrgentBadge").style.display="inline-flex";
+            if (diff>=0&&diff<=30) document.getElementById("jbNewBadge").style.display="inline-flex";
+          }
+        } catch(_) {}
       }
 
-      /* ── Meta posted ── */
       setText("metaPosted", "Updated: " + safe(bd.last_updated || todayStr()));
 
-      /* ── Short info ── */
       if (bd.short_information) {
-        document.getElementById("jbShortInfo").textContent = bd.short_information;
-        document.getElementById("jbShortInfo").style.display = "";
+        const si = document.getElementById("jbShortInfo");
+        si.textContent = bd.short_information; si.style.display="";
       }
-
-      /* ── Job type category tag ── */
       if (bd.job_type) {
         const ct = document.getElementById("jbCatTag");
-        ct.style.display = "inline-flex";
-        ct.textContent = bd.job_type;
+        ct.style.display="inline-flex"; ct.textContent=bd.job_type;
       }
 
       /* ── Quick stats ── */
-      setText("statOrg", (bd.organization_name||"—").split(/[,(]/)[0].trim().slice(0,35) || "—");
-      setText("statPosts", bd.total_vacancies || (vac.find(r=>safe(r["Post Name"]||r["Category"]||"").toLowerCase().includes("total"))||{})["Total Posts"] || "Various");
+      setText("statOrg", (bd.organization_name||"—").split(/[,(]/)[0].trim().slice(0,35)||"—");
+      setText("statPosts", bd.total_vacancies || "Various");
       setText("statLastDate", lastDate ? lastDate.replace(/\(.*\)/g,"").trim() : "See Notification");
-      setText("statApplyMode", bd.application_mode || "Online");
+      setText("statApplyMode", bd.application_mode||"Online");
 
       /* ── CTAs ── */
-      const applyUrl = normalizeUrl(links.apply_online || links.official_website || destUrl || "");
-      const notifUrl = normalizeUrl(links.notification_pdf || "");
-      const mainCta = document.getElementById("btnMainCta");
-      const notifCta = document.getElementById("btnNotifCta");
-      if (applyUrl) { mainCta.href = applyUrl; } else { mainCta.style.opacity=".5"; mainCta.style.pointerEvents="none"; }
-      if (notifUrl) { notifCta.href = notifUrl; } else { notifCta.style.opacity=".5"; notifCta.style.pointerEvents="none"; }
+      const applyUrl  = normalizeUrl(links.apply_online||links.official_website||destUrl||"");
+      const notifUrl  = normalizeUrl(links.notification_pdf||"");
+      const mainCta   = document.getElementById("btnMainCta");
+      const notifCta  = document.getElementById("btnNotifCta");
+      if (applyUrl) mainCta.href = applyUrl;
+      else { mainCta.style.opacity=".5"; mainCta.style.pointerEvents="none"; }
+      if (notifUrl) notifCta.href = notifUrl;
+      else { notifCta.style.opacity=".5"; notifCta.style.pointerEvents="none"; }
 
       /* ── Overview Table ── */
       const yearM = title.match(/\b(202[4-9]|203\d)\b/);
-      const year = yearM ? yearM[1] : "";
       const orgShort = (bd.organization_name||"").split(/\s+/).slice(0,4).join(" ");
-      setText("overviewTitle", orgShort + (year?" "+year:"") + " – Recruitment Overview");
-
-      const overviewRows = [];
-      if (bd.organization_name) overviewRows.push({label:"Organisation Name", val:bd.organization_name});
-      if (bd.department)        overviewRows.push({label:"Department", val:bd.department});
-      if (bd.advertisement_number) overviewRows.push({label:"Advertisement No.", val:bd.advertisement_number});
-      if (bd.post_name)         overviewRows.push({label:"Post Name", val:bd.post_name});
-      if (bd.total_vacancies)   overviewRows.push({label:"Total Vacancies", val:bd.total_vacancies});
-      if (bd.job_type)          overviewRows.push({label:"Job / Post Type", val:bd.job_type});
-      if (bd.application_mode)  overviewRows.push({label:"Application Mode", val:bd.application_mode});
-      if (age.age_limit || age.minimum_age || age.maximum_age) {
-        const ageVal = age.age_limit || ((age.minimum_age||"")+(age.minimum_age&&age.maximum_age?" – ":"")+(age.maximum_age||""));
-        overviewRows.push({label:"Age Limit", val:ageVal});
+      setText("overviewTitle", orgShort+(yearM?" "+yearM[1]:"")+"\u2013 Recruitment Overview");
+      const ovRows = [];
+      if (bd.organization_name) ovRows.push({label:"Organisation Name",val:bd.organization_name});
+      if (bd.department)        ovRows.push({label:"Department",val:bd.department});
+      if (bd.advertisement_number) ovRows.push({label:"Advertisement No.",val:bd.advertisement_number});
+      if (bd.post_name)         ovRows.push({label:"Post Name",val:bd.post_name});
+      if (bd.total_vacancies)   ovRows.push({label:"Total Vacancies",val:bd.total_vacancies});
+      if (bd.job_type)          ovRows.push({label:"Job / Post Type",val:bd.job_type});
+      if (bd.application_mode)  ovRows.push({label:"Application Mode",val:bd.application_mode});
+      if (age.age_limit||age.minimum_age||age.maximum_age) {
+        const av=age.age_limit||((age.minimum_age||"")+(age.minimum_age&&age.maximum_age?" – ":"")+(age.maximum_age||""));
+        ovRows.push({label:"Age Limit",val:av});
       }
-      if (qual.education_qualification) overviewRows.push({label:"Qualification", val:qual.education_qualification.slice(0,120)+"..."});
-      if (sal.pay_scale || sal.salary_range) overviewRows.push({label:"Pay Scale / Salary", val:sal.pay_scale||sal.salary_range});
-      if (dates.application_start_date) overviewRows.push({label:"Apply Start Date", val:dates.application_start_date});
-      if (lastDate) overviewRows.push({label:"Last Date to Apply", val:lastDate, hl:"last"});
-      if (dates.exam_date) overviewRows.push({label:"Exam Date", val:dates.exam_date});
+      if (qual.education_qualification) ovRows.push({label:"Qualification",val:(qual.education_qualification||"").slice(0,120)+"…"});
+      if (sal.pay_scale||sal.salary_range) ovRows.push({label:"Pay Scale / Salary",val:sal.pay_scale||sal.salary_range});
+      if (dates.application_start_date) ovRows.push({label:"Apply Start Date",val:dates.application_start_date});
+      if (lastDate) ovRows.push({label:"Last Date to Apply",val:lastDate,hl:"last"});
+      if (dates.exam_date) ovRows.push({label:"Exam Date",val:dates.exam_date});
       if (links.official_website) {
         try {
-          const host = new URL(normalizeUrl(links.official_website)).hostname.replace(/^www\./,"");
-          overviewRows.push({label:"Official Website", val:`<a href="${esc(normalizeUrl(links.official_website))}" target="_blank" rel="noopener" style="color:#1d4ed8;">${esc(host)}</a>`, html:true});
+          const host=new URL(normalizeUrl(links.official_website)).hostname.replace(/^www\./,"");
+          ovRows.push({label:"Official Website",val:`<a href="${esc(normalizeUrl(links.official_website))}" target="_blank" rel="noopener" style="color:#1d4ed8;">${esc(host)}</a>`,html:true});
         } catch(_) {}
       }
-      document.querySelector("#jbTable tbody").innerHTML = buildTableRows(overviewRows);
-      addNavPill("Overview", "overviewCard");
+      document.querySelector("#jbTable tbody").innerHTML = buildTableRows(ovRows);
+      addNavPill("Overview","overviewCard");
 
       /* ── Important Dates ── */
-      const dateFields = [
-        {key:"notification_date", label:"Notification Date"},
-        {key:"application_start_date", label:"Application Start"},
-        {key:"last_date", label:"Last Date to Apply", cls:"red"},
-        {key:"admit_card_date", label:"Admit Card Date"},
-        {key:"exam_date", label:"Exam Date"},
-        {key:"result_date", label:"Result Date"},
-        {key:"cut_off_date", label:"Cut-off Date"},
-        {key:"correction_date", label:"Correction Window"},
-        {key:"interview_date", label:"Interview Date"},
+      const dateFields=[
+        {key:"notification_date",label:"Notification Date"},
+        {key:"application_start_date",label:"Application Start"},
+        {key:"last_date",label:"Last Date to Apply",cls:"red"},
+        {key:"admit_card_date",label:"Admit Card Date"},
+        {key:"exam_date",label:"Exam Date"},
+        {key:"result_date",label:"Result Date"},
+        {key:"cut_off_date",label:"Cut-off Date"},
+        {key:"correction_date",label:"Correction Window"},
+        {key:"interview_date",label:"Interview Date"},
       ];
-      const dateRows = dateFields.filter(f => dates[f.key]).map(f =>
-        `<tr${f.cls ? ' class="hl-last"':""}>
+      const dateRows = dateFields.filter(f=>dates[f.key]).map(f =>
+        `<tr${f.cls?' class="hl-last"':""}>
            <th scope="row">${esc(f.label)}</th>
            <td style="${f.cls?'color:#dc2626;font-weight:800;':''}">${esc(safe(dates[f.key]))}</td>
          </tr>`
       );
-      // Also check extra keys in dates object
-      const knownDateKeys = dateFields.map(f=>f.key);
-      Object.keys(dates).forEach(k => {
-        if (!knownDateKeys.includes(k) && dates[k]) {
-          dateRows.push(`<tr><th scope="row">${esc(humanizeSlug(k))}</th><td>${esc(safe(dates[k]))}</td></tr>`);
-        }
+      const knownDK = dateFields.map(f=>f.key);
+      Object.keys(dates).forEach(k=>{
+        if(!knownDK.includes(k)&&dates[k])
+          dateRows.push(`<tr><th>${esc(humanizeSlug(k))}</th><td>${esc(safe(dates[k]))}</td></tr>`);
       });
       if (dateRows.length) {
-        document.querySelector("#datesTable tbody").innerHTML = dateRows.join("");
-        showCard("datesMainCard");
-        addNavPill("Important Dates", "datesMainCard");
+        document.querySelector("#datesTable tbody").innerHTML=dateRows.join("");
+        showCard("datesMainCard"); addNavPill("Important Dates","datesMainCard");
       }
 
       /* ── Sidebar Dates ── */
-      const sidebarDL = document.getElementById("sidebarDatesList");
-      if (sidebarDL) {
-        const sideDates = [
-          {label:"Notification Date", val:dates.notification_date||"—"},
-          {label:"Apply Start", val:dates.application_start_date||"—"},
-          {label:"Last Date to Apply", val:lastDate||"See Notification", cls:"red"},
-          ...(dates.exam_date ? [{label:"Exam Date", val:dates.exam_date}] : []),
-          ...(dates.result_date ? [{label:"Result Date", val:dates.result_date}] : []),
-          ...(dates.admit_card_date ? [{label:"Admit Card", val:dates.admit_card_date}] : []),
+      const sdl = document.getElementById("sidebarDatesList");
+      if (sdl) {
+        const sd=[
+          {label:"Notification Date",val:dates.notification_date||"—"},
+          {label:"Apply Start",val:dates.application_start_date||"—"},
+          {label:"Last Date to Apply",val:lastDate||"See Notification",cls:"red"},
+          ...(dates.exam_date?[{label:"Exam Date",val:dates.exam_date}]:[]),
+          ...(dates.result_date?[{label:"Result Date",val:dates.result_date}]:[]),
+          ...(dates.admit_card_date?[{label:"Admit Card",val:dates.admit_card_date}]:[]),
         ];
-        sidebarDL.innerHTML = sideDates.map(d =>
+        sdl.innerHTML=sd.map(d=>
           `<div class="jp-date-row">
             <span class="jp-date-label" style="${d.cls==='red'?'color:#dc2626;font-weight:700;':''}">${esc(d.label)}</span>
             <span class="jp-date-val ${d.cls||''}">${esc(d.val)}</span>
@@ -1040,252 +1088,165 @@
       }
 
       /* ── Application Fee ── */
-      const feeKeys = ["general_fee","obc_fee","ews_fee","sc_fee","st_fee","female_fee","ph_fee","pwd_fee"];
-      const feeLabels = {general_fee:"General / UR",obc_fee:"OBC",ews_fee:"EWS",sc_fee:"SC",st_fee:"ST",female_fee:"Female",ph_fee:"PH / Divyang",pwd_fee:"PwBD / Divyang"};
-      const feeItems = feeKeys.filter(k=>fee[k]).map(k=>
+      const feeKeys=["general_fee","obc_fee","ews_fee","sc_fee","st_fee","female_fee","ph_fee","pwd_fee"];
+      const feeLbls={general_fee:"General / UR",obc_fee:"OBC",ews_fee:"EWS",sc_fee:"SC",st_fee:"ST",female_fee:"Female",ph_fee:"PH / Divyang",pwd_fee:"PwBD / Divyang"};
+      const feeItems=feeKeys.filter(k=>fee[k]).map(k=>
         `<div class="jp-kv-item">
-          <div class="jp-kv-label">${esc(feeLabels[k])}</div>
+          <div class="jp-kv-label">${esc(feeLbls[k])}</div>
           <div class="jp-kv-val ${fee[k].toString().toLowerCase().includes('nil')||fee[k]==='0'?'free':'paid'}">${esc(safe(fee[k]))}</div>
         </div>`
       );
-      // Dynamic additional fee fields
-      Object.keys(fee).forEach(k => {
-        if (!feeKeys.includes(k) && k!=="category" && k!=="payment_mode" && k!=="fee_details" && k!=="details" && fee[k]) {
+      Object.keys(fee).forEach(k=>{
+        if(!feeKeys.includes(k)&&!["category","payment_mode","fee_details","details"].includes(k)&&fee[k])
           feeItems.push(`<div class="jp-kv-item"><div class="jp-kv-label">${esc(humanizeSlug(k))}</div><div class="jp-kv-val paid">${esc(safe(fee[k]))}</div></div>`);
-        }
       });
-      if (feeItems.length) {
-        document.getElementById("feeGrid").innerHTML = feeItems.join("");
-        if (fee.payment_mode || fee.fee_details || fee.details) {
-          const fd = document.getElementById("feeDetails");
-          fd.style.display = "";
-          fd.innerHTML = `<strong>Payment Mode:</strong> ${esc(fee.payment_mode||"Online")}<br>${esc(fee.fee_details||fee.details||"")}`;
+      if(feeItems.length){
+        document.getElementById("feeGrid").innerHTML=feeItems.join("");
+        if(fee.payment_mode||fee.fee_details||fee.details){
+          const fd=document.getElementById("feeDetails");
+          fd.style.display="";
+          fd.innerHTML=`<strong>Payment Mode:</strong> ${esc(fee.payment_mode||"Online")}<br>${esc(fee.fee_details||fee.details||"")}`;
         }
-        showCard("feeCard");
-        addNavPill("Application Fee", "feeCard");
+        showCard("feeCard"); addNavPill("Application Fee","feeCard");
       }
 
       /* ── Age Limit ── */
-      const ageRows = [];
-      const ageIgnore = ["category","details"];
-      Object.keys(age).forEach(k => {
-        if (!ageIgnore.includes(k) && age[k]) {
-          ageRows.push({label:humanizeSlug(k), val:safe(age[k])});
-        }
-      });
-      if (age.details) ageRows.push({label:"Age Relaxation Details", val:age.details});
-      if (ageRows.length) {
-        document.querySelector("#ageTable tbody").innerHTML = buildTableRows(ageRows);
-        showCard("ageCard");
-        addNavPill("Age Limit", "ageCard");
-      }
+      const ageIgnore=["category","details"];
+      const ageRows=[];
+      Object.keys(age).forEach(k=>{if(!ageIgnore.includes(k)&&age[k])ageRows.push({label:humanizeSlug(k),val:safe(age[k])});});
+      if(age.details) ageRows.push({label:"Age Relaxation Details",val:age.details});
+      if(ageRows.length){document.querySelector("#ageTable tbody").innerHTML=buildTableRows(ageRows);showCard("ageCard");addNavPill("Age Limit","ageCard");}
 
       /* ── Qualification ── */
-      const qualIgnore = ["education_qualification","qualification_details","details","post_wise_qualification","experience","domicile","desirable_qualification","sports_qualification","technical_qualification"];
-      let qualHtml = "";
-      if (qual.education_qualification) qualHtml += `<div class="jp-detail-text"><strong>Education Qualification:</strong> ${esc(qual.education_qualification)}</div>`;
-      const qualTable = [];
-      Object.keys(qual).forEach(k => {
-        if (!["education_qualification","details"].includes(k) && qual[k]) {
-          qualTable.push({label:humanizeSlug(k), val:safe(qual[k])});
-        }
-      });
-      if (qualTable.length > 1) {
-        qualHtml += `<table class="jp-table"><tbody>${buildTableRows(qualTable)}</tbody></table>`;
-      }
-      if (qual.details) qualHtml += `<div class="jp-detail-text" style="border-top:1px solid #e9eef4;">${esc(qual.details)}</div>`;
-      if (qualHtml) {
-        document.getElementById("qualContent").innerHTML = qualHtml;
-        showCard("qualCard");
-        addNavPill("Qualification", "qualCard");
-      }
+      let qualHtml="";
+      if(qual.education_qualification) qualHtml+=`<div class="jp-detail-text"><strong>Education Qualification:</strong> ${esc(qual.education_qualification)}</div>`;
+      const qualTable=[];
+      Object.keys(qual).forEach(k=>{if(!["education_qualification","details"].includes(k)&&qual[k])qualTable.push({label:humanizeSlug(k),val:safe(qual[k])});});
+      if(qualTable.length>1) qualHtml+=`<table class="jp-table"><tbody>${buildTableRows(qualTable)}</tbody></table>`;
+      if(qual.details) qualHtml+=`<div class="jp-detail-text" style="border-top:1px solid #e9eef4;">${esc(qual.details)}</div>`;
+      if(qualHtml){document.getElementById("qualContent").innerHTML=qualHtml;showCard("qualCard");addNavPill("Qualification","qualCard");}
 
       /* ── Vacancy Details ── */
-      if (vac.length > 0) {
-        // Detect columns from first item
-        const allKeys = [...new Set(vac.flatMap(r => Object.keys(r)))];
-        document.getElementById("vacHead").innerHTML = allKeys.map(k=>`<th>${esc(k)}</th>`).join("");
-        document.getElementById("vacBody").innerHTML = vac.map((r,i) => {
-          const isTotal = Object.values(r).some(v => safe(v).toLowerCase() === "total") ||
-                          Object.keys(r).some(k => k.toLowerCase()==="total");
-          const cls = isTotal ? ' style="background:#f0f9ff;font-weight:700;"' : (i%2===0?' style="background:#fafafa;"':'');
+      if(vac.length>0){
+        const allKeys=[...new Set(vac.flatMap(r=>Object.keys(r)))];
+        document.getElementById("vacHead").innerHTML=allKeys.map(k=>`<th>${esc(k)}</th>`).join("");
+        document.getElementById("vacBody").innerHTML=vac.map((r,i)=>{
+          const isTotal=Object.values(r).some(v=>safe(v).toLowerCase()==="total");
+          const cls=isTotal?' style="background:#f0f9ff;font-weight:700;"':(i%2===0?' style="background:#fafafa;"':'');
           return `<tr${cls}>${allKeys.map(k=>`<td>${esc(safe(r[k]))}</td>`).join("")}</tr>`;
         }).join("");
-        showCard("vacCard");
-        addNavPill("Vacancy Details", "vacCard");
+        showCard("vacCard"); addNavPill("Vacancy Details","vacCard");
       }
 
-      /* ── Salary Details ── */
-      const salRows = [];
-      const salIgnore = ["details"];
-      Object.keys(sal).forEach(k => {
-        if (!salIgnore.includes(k) && sal[k]) salRows.push({label:humanizeSlug(k), val:safe(sal[k])});
-      });
-      if (sal.details) salRows.push({label:"Salary Details", val:sal.details});
-      if (salRows.length) {
-        document.querySelector("#salaryTable tbody").innerHTML = buildTableRows(salRows);
-        showCard("salaryCard");
-        addNavPill("Salary", "salaryCard");
-      }
+      /* ── Salary ── */
+      const salRows=[];
+      Object.keys(sal).forEach(k=>{if(k!=="details"&&sal[k])salRows.push({label:humanizeSlug(k),val:safe(sal[k])});});
+      if(sal.details) salRows.push({label:"Salary Details",val:sal.details});
+      if(salRows.length){document.querySelector("#salaryTable tbody").innerHTML=buildTableRows(salRows);showCard("salaryCard");addNavPill("Salary","salaryCard");}
 
       /* ── Selection Process ── */
-      const selIcons = {
-        "written":"fa-file-alt","exam":"fa-file-alt","test":"fa-file-pen",
-        "interview":"fa-comments","physical":"fa-person-running","document":"fa-folder-open",
-        "verification":"fa-check-double","merit":"fa-list-ol","typing":"fa-keyboard",
-        "skill":"fa-screwdriver-wrench","medical":"fa-stethoscope","swimming":"fa-water",
-        "long jump":"fa-person-falling","high jump":"fa-person-falling-burst","run":"fa-person-running"
-      };
-      if (sel.length > 0) {
-        // Simple selection steps (short entries as badges)
-        const simpleSel = sel.filter(s => safe(s).length < 80);
-        const detailSel = sel.filter(s => safe(s).length >= 80);
-        if (simpleSel.length) {
-          document.getElementById("selBadges").innerHTML = simpleSel.map((s,i) => {
-            const txt = safe(s).toLowerCase();
-            let icon = "fa-check-circle";
-            for (const [k,ic] of Object.entries(selIcons)) { if(txt.includes(k)){ icon=ic; break; } }
+      const selIcons={written:"fa-file-alt",exam:"fa-file-alt",test:"fa-file-pen",interview:"fa-comments",physical:"fa-person-running",document:"fa-folder-open",verification:"fa-check-double",merit:"fa-list-ol",typing:"fa-keyboard",skill:"fa-screwdriver-wrench",medical:"fa-stethoscope"};
+      if(sel.length>0){
+        const simpleSel=sel.filter(s=>safe(s).length<80);
+        const detailSel=sel.filter(s=>safe(s).length>=80);
+        if(simpleSel.length){
+          document.getElementById("selBadges").innerHTML=simpleSel.map(s=>{
+            const txt=safe(s).toLowerCase();
+            let icon="fa-check-circle";
+            for(const[k,ic] of Object.entries(selIcons)){if(txt.includes(k)){icon=ic;break;}}
             return `<div class="jp-sel-badge"><i class="fa-solid ${icon}"></i>${esc(safe(s).slice(0,70))}</div>`;
           }).join("");
         }
-        if (detailSel.length) {
-          const dd = document.getElementById("selDetails");
-          dd.style.display = "";
-          dd.innerHTML = detailSel.map(s => `<p style="margin:0 0 8px;">${esc(safe(s))}</p>`).join("");
-        }
-        showCard("selCard");
-        addNavPill("Selection Process", "selCard");
+        if(detailSel.length){const dd=document.getElementById("selDetails");dd.style.display="";dd.innerHTML=detailSel.map(s=>`<p style="margin:0 0 8px;">${esc(safe(s))}</p>`).join("");}
+        showCard("selCard"); addNavPill("Selection Process","selCard");
       }
 
       /* ── Physical Eligibility ── */
-      const physIgnore = ["Parameter","details"];
-      const physIcons = {height:"📏",weight:"⚖️",chest:"💪",running:"🏃",jump:"🤸","long jump":"🤸","high jump":"🦘",swimming:"🏊",bmi:"📊"};
-      const physItems = [];
-      Object.keys(phys).forEach(k => {
-        if (!physIgnore.includes(k) && phys[k]) {
-          const kl = k.toLowerCase();
-          let icon = "📋";
-          for (const [pk,pi] of Object.entries(physIcons)) { if(kl.includes(pk)){icon=pi;break;} }
+      const physIgnore=["Parameter","details"];
+      const physIcons={height:"📏",weight:"⚖️",chest:"💪",running:"🏃",jump:"🤸","long jump":"🤸","high jump":"🦘",swimming:"🏊",bmi:"📊"};
+      const physItems=[];
+      Object.keys(phys).forEach(k=>{
+        if(!physIgnore.includes(k)&&phys[k]){
+          const kl=k.toLowerCase();let icon="📋";
+          for(const[pk,pi] of Object.entries(physIcons)){if(kl.includes(pk)){icon=pi;break;}}
           physItems.push(`<div class="jp-phys-item"><div class="jp-phys-icon">${icon}</div><div class="jp-phys-label">${esc(humanizeSlug(k))}</div><div class="jp-phys-val">${esc(safe(phys[k]))}</div></div>`);
         }
       });
-      if (physItems.length) {
-        document.getElementById("physGrid").innerHTML = physItems.join("");
-        if (phys.details) {
-          const pd = document.getElementById("physDetails");
-          pd.style.display = "";
-          pd.textContent = phys.details;
-        }
-        showCard("physCard");
-        addNavPill("Physical Eligibility", "physCard");
+      if(physItems.length){
+        document.getElementById("physGrid").innerHTML=physItems.join("");
+        if(phys.details){const pd=document.getElementById("physDetails");pd.style.display="";pd.textContent=phys.details;}
+        showCard("physCard"); addNavPill("Physical Eligibility","physCard");
       }
 
       /* ── Exam Pattern ── */
-      const examIgnore = ["details"];
-      const examRows = [];
-      const examFieldMap = {
-        exam_mode:"Exam Mode",total_questions:"Total Questions",total_marks:"Total Marks",
-        negative_marking:"Negative Marking",duration:"Duration",
-      };
-      Object.keys(exam).forEach(k => {
-        if (!examIgnore.includes(k) && exam[k]) {
-          examRows.push({label:examFieldMap[k]||humanizeSlug(k), val:safe(exam[k])});
-        }
-      });
-      if (examRows.length) {
-        document.querySelector("#examTable tbody").innerHTML = buildTableRows(examRows);
-        showCard("examCard");
-        addNavPill("Exam Pattern", "examCard");
-      }
+      const examRows=[];
+      const examFM={exam_mode:"Exam Mode",total_questions:"Total Questions",total_marks:"Total Marks",negative_marking:"Negative Marking",duration:"Duration"};
+      Object.keys(exam).forEach(k=>{if(k!=="details"&&exam[k])examRows.push({label:examFM[k]||humanizeSlug(k),val:safe(exam[k])});});
+      if(examRows.length){document.querySelector("#examTable tbody").innerHTML=buildTableRows(examRows);showCard("examCard");addNavPill("Exam Pattern","examCard");}
 
       /* ── Syllabus ── */
-      const sylIgnore = ["details","topic_list"];
-      let sylHtml = "";
-      Object.keys(syl).forEach(k => {
-        if (!sylIgnore.includes(k) && syl[k]) {
-          const val = syl[k];
-          if (typeof val === "object" && !Array.isArray(val)) {
-            sylHtml += `<div class="jp-detail-text"><strong>${esc(humanizeSlug(k))}</strong></div>`;
-            Object.keys(val).forEach(sk => {
-              sylHtml += `<div class="jp-detail-text" style="padding:4px 15px;">&bull; <strong>${esc(sk)}:</strong> ${esc(safe(val[sk]))}</div>`;
-            });
-          } else if (Array.isArray(val)) {
-            sylHtml += `<ul class="jp-detail-list">${val.map(v=>`<li>${esc(safe(v))}</li>`).join("")}</ul>`;
+      let sylHtml="";
+      Object.keys(syl).forEach(k=>{
+        if(!["details","topic_list"].includes(k)&&syl[k]){
+          const val=syl[k];
+          if(typeof val==="object"&&!Array.isArray(val)){
+            sylHtml+=`<div class="jp-detail-text"><strong>${esc(humanizeSlug(k))}</strong></div>`;
+            Object.keys(val).forEach(sk=>sylHtml+=`<div class="jp-detail-text" style="padding:4px 15px;">&bull; <strong>${esc(sk)}:</strong> ${esc(safe(val[sk]))}</div>`);
+          } else if(Array.isArray(val)){
+            sylHtml+=`<ul class="jp-detail-list">${val.map(v=>`<li>${esc(safe(v))}</li>`).join("")}</ul>`;
           } else {
-            sylHtml += `<div class="jp-detail-text"><strong>${esc(humanizeSlug(k))}:</strong> ${esc(safe(val))}</div>`;
+            sylHtml+=`<div class="jp-detail-text"><strong>${esc(humanizeSlug(k))}:</strong> ${esc(safe(val))}</div>`;
           }
         }
       });
-      if (syl.topic_list && Array.isArray(syl.topic_list)) {
-        sylHtml += `<ul class="jp-detail-list">${syl.topic_list.map(t=>`<li>${esc(safe(t))}</li>`).join("")}</ul>`;
-      }
-      if (sylHtml) {
-        document.getElementById("syllabusContent").innerHTML = sylHtml;
-        showCard("syllabusCard");
-        addNavPill("Syllabus", "syllabusCard");
-      }
+      if(syl.topic_list&&Array.isArray(syl.topic_list)) sylHtml+=`<ul class="jp-detail-list">${syl.topic_list.map(t=>`<li>${esc(safe(t))}</li>`).join("")}</ul>`;
+      if(sylHtml){document.getElementById("syllabusContent").innerHTML=sylHtml;showCard("syllabusCard");addNavPill("Syllabus","syllabusCard");}
 
       /* ── How To Apply ── */
-      if (Array.isArray(how) && how.length > 0) {
-        document.getElementById("howSteps").innerHTML = how.map((s,i) =>
-          `<div class="jp-step">
-            <div class="jp-step-num">${i+1}</div>
-            <div class="jp-step-text">${esc(safe(s))}</div>
-          </div>`
+      if(Array.isArray(how)&&how.length>0){
+        document.getElementById("howSteps").innerHTML=how.map((s,i)=>
+          `<div class="jp-step"><div class="jp-step-num">${i+1}</div><div class="jp-step-text">${esc(safe(s))}</div></div>`
         ).join("");
-        showCard("howCard");
-        addNavPill("How To Apply", "howCard");
+        showCard("howCard"); addNavPill("How To Apply","howCard");
       }
 
       /* ── Important Instructions ── */
-      if (Array.isArray(instr) && instr.length > 0) {
-        document.getElementById("instrList").innerHTML = instr.map(ins =>
-          `<li>${esc(safe(ins))}</li>`
-        ).join("");
-        showCard("instrCard");
-        addNavPill("Instructions", "instrCard");
+      if(Array.isArray(instr)&&instr.length>0){
+        document.getElementById("instrList").innerHTML=instr.map(ins=>`<li>${esc(safe(ins))}</li>`).join("");
+        showCard("instrCard"); addNavPill("Instructions","instrCard");
       }
 
       /* ── Important Links ── */
-      const linkDefs = [
-        {key:"apply_online",      label:"Apply Online",      icon:"fa-paper-plane",      cls:"green"},
-        {key:"apply_offline",     label:"Apply Offline",     icon:"fa-file-pen",         cls:"orange"},
-        {key:"notification_pdf",  label:"Official Notification",icon:"fa-file-pdf",      cls:"red"},
-        {key:"official_website",  label:"Official Website",  icon:"fa-globe",            cls:"blue"},
-        {key:"result_link",       label:"Result",            icon:"fa-trophy",           cls:"purple"},
-        {key:"admit_card_link",   label:"Admit Card",        icon:"fa-id-card",          cls:"teal"},
-        {key:"answer_key",        label:"Answer Key",        icon:"fa-key",              cls:"orange"},
+      const linkDefs=[
+        {key:"apply_online",label:"Apply Online",icon:"fa-paper-plane",cls:"green"},
+        {key:"apply_offline",label:"Apply Offline",icon:"fa-file-pen",cls:"orange"},
+        {key:"notification_pdf",label:"Official Notification",icon:"fa-file-pdf",cls:"red"},
+        {key:"official_website",label:"Official Website",icon:"fa-globe",cls:"blue"},
+        {key:"result_link",label:"Result",icon:"fa-trophy",cls:"purple"},
+        {key:"admit_card_link",label:"Admit Card",icon:"fa-id-card",cls:"teal"},
+        {key:"answer_key",label:"Answer Key",icon:"fa-key",cls:"orange"},
       ];
-      let linksHtml = linkDefs.filter(ld => links[ld.key]).map(ld =>
+      let linksHtml=linkDefs.filter(ld=>links[ld.key]).map(ld=>
         `<a href="${esc(normalizeUrl(links[ld.key]))}" target="_blank" rel="noopener" class="jp-link-btn ${ld.cls}">
-          <i class="fa-solid ${ld.icon}"></i>${esc(ld.label)}
-          <span>Click Here</span>
+          <i class="fa-solid ${ld.icon}"></i>${esc(ld.label)}<span>Click Here</span>
         </a>`
       ).join("");
-      // other_links
-      if (links.other_links) {
-        if (Array.isArray(links.other_links)) {
-          links.other_links.forEach(ol => {
-            const url = normalizeUrl(ol.url||ol.link||ol);
-            const lbl = safe(ol.label||ol.name||"Other Link");
-            if (url) linksHtml += `<a href="${esc(url)}" target="_blank" rel="noopener" class="jp-link-btn outline-blue"><i class="fa-solid fa-link"></i>${esc(lbl)}<span>Click Here</span></a>`;
-          });
-        }
+      if(links.other_links&&Array.isArray(links.other_links)){
+        links.other_links.forEach(ol=>{
+          const url=normalizeUrl(ol.url||ol.link||ol);
+          const lbl=safe(ol.label||ol.name||"Other Link");
+          if(url) linksHtml+=`<a href="${esc(url)}" target="_blank" rel="noopener" class="jp-link-btn outline-blue"><i class="fa-solid fa-link"></i>${esc(lbl)}<span>Click Here</span></a>`;
+        });
       }
-      if (!linksHtml) linksHtml = `<div style="padding:14px;font-size:.82rem;color:#64748b;">Links not available. Please check official website.</div>`;
-      document.getElementById("linksGrid").innerHTML = linksHtml;
-      addNavPill("Important Links", "linksCard");
+      if(!linksHtml) linksHtml=`<div style="padding:14px;font-size:.82rem;color:#64748b;">Links not available. Please check official website.</div>`;
+      document.getElementById("linksGrid").innerHTML=linksHtml;
+      addNavPill("Important Links","linksCard");
 
       /* ── FAQ ── */
-      if (faq.length > 0) {
-        // Deduplicate FAQs
-        const seen = new Set();
-        const uniqueFaq = faq.filter(f => {
-          const k = safe(f.question).toLowerCase().slice(0,60);
-          if (seen.has(k)) return false;
-          seen.add(k); return true;
-        });
-        document.getElementById("faqList").innerHTML = uniqueFaq.map((f,i) =>
+      if(faq.length>0){
+        const seen=new Set();
+        const uniq=faq.filter(f=>{const k=safe(f.question).toLowerCase().slice(0,60);if(seen.has(k))return false;seen.add(k);return true;});
+        document.getElementById("faqList").innerHTML=uniq.map((f,i)=>
           `<div class="jp-faq-item" id="faq${i}">
             <div class="jp-faq-q" onclick="toggleFaq(${i})">
               <span>${esc(safe(f.question))}</span>
@@ -1294,379 +1255,177 @@
             <div class="jp-faq-a">${esc(safe(f.answer))}</div>
           </div>`
         ).join("");
-        showCard("faqCard");
-        addNavPill("FAQ", "faqCard");
+        showCard("faqCard"); addNavPill("FAQ","faqCard");
       }
 
       /* ── SEO Tags ── */
-      if (tags.length > 0) {
-        document.getElementById("tagsList").innerHTML = tags.map(t =>
-          `<span class="jp-keyword-tag">${esc(safe(t))}</span>`
-        ).join("");
+      if(tags.length>0){
+        document.getElementById("tagsList").innerHTML=tags.map(t=>`<span class="jp-keyword-tag">${esc(safe(t))}</span>`).join("");
         showCard("tagsCard");
       }
 
       /* ── Highlights sidebar ── */
-      const hlItems = [
-        bd.organization_name ? `Organisation: ${bd.organization_name.slice(0,50)}` : null,
-        bd.total_vacancies   ? `Total Posts: ${bd.total_vacancies}` : null,
-        bd.job_type          ? `Job Type: ${bd.job_type}` : null,
-        bd.application_mode  ? `Apply Mode: ${bd.application_mode}` : null,
-        sal.pay_scale||sal.salary_range ? `Pay Scale: ${(sal.pay_scale||sal.salary_range).slice(0,60)}` : null,
-        age.age_limit        ? `Age Limit: ${age.age_limit.slice(0,50)}` : null,
-        lastDate             ? `⚠ Last Date: ${lastDate.replace(/\(.*\)/g,"").trim()}` : null,
-        qual.education_qualification ? `Qualification: ${qual.education_qualification.slice(0,50)}` : null,
+      const hlItems=[
+        bd.organization_name?`Organisation: ${bd.organization_name.slice(0,50)}`:null,
+        bd.total_vacancies?`Total Posts: ${bd.total_vacancies}`:null,
+        bd.job_type?`Job Type: ${bd.job_type}`:null,
+        bd.application_mode?`Apply Mode: ${bd.application_mode}`:null,
+        (sal.pay_scale||sal.salary_range)?`Pay Scale: ${(sal.pay_scale||sal.salary_range).slice(0,60)}`:null,
+        age.age_limit?`Age Limit: ${age.age_limit.slice(0,50)}`:null,
+        lastDate?`⚠ Last Date: ${lastDate.replace(/\(.*\)/g,"").trim()}`:null,
+        qual.education_qualification?`Qualification: ${qual.education_qualification.slice(0,50)}`:null,
       ].filter(Boolean);
-      document.getElementById("hlList").innerHTML = hlItems.map(h =>
-        `<div class="jp-hl-item"><i class="fa-solid fa-circle-check"></i><span>${esc(h)}</span></div>`
-      ).join("");
+      document.getElementById("hlList").innerHTML=hlItems.map(h=>`<div class="jp-hl-item"><i class="fa-solid fa-circle-check"></i><span>${esc(h)}</span></div>`).join("");
 
-      /* ── Breadcrumb section ── */
-      const secLink = document.getElementById("bcSectionLink");
-      if (rawSec && rawSec !== "view.html") {
-        secLink.textContent = humanizeSlug(rawSec);
-        secLink.href = `view.html?section=${encodeURIComponent(rawSec)}`;
-      } else if (job.category) {
-        secLink.textContent = humanizeSlug(job.category.replace(/_/g," "));
-        secLink.removeAttribute("href");
-      } else {
-        secLink.textContent = "Latest Jobs";
-        secLink.removeAttribute("href");
-      }
+      /* ── Breadcrumb ── */
+      const secLink=document.getElementById("bcSectionLink");
+      if(rawSec&&rawSec!=="view.html"){secLink.textContent=humanizeSlug(rawSec);secLink.href=`view.html?section=${encodeURIComponent(rawSec)}`;}
+      else if(job.category){secLink.textContent=humanizeSlug(job.category.replace(/_/g," "));secLink.removeAttribute("href");}
+      else{secLink.textContent="Latest Jobs";secLink.removeAttribute("href");}
 
-      /* ── Share buttons ── */
-      const pageUrl   = encodeURIComponent(location.href);
-      const pageTitle = encodeURIComponent(title + " | Top Sarkari Jobs");
-      document.getElementById("shFb").href = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
-      document.getElementById("shTw").href = `https://twitter.com/intent/tweet?text=${pageTitle}&url=${pageUrl}`;
-      document.getElementById("shWa").href = `https://wa.me/?text=${pageTitle}%20${pageUrl}`;
-      document.getElementById("shTg").href = `https://t.me/share/url?url=${pageUrl}&text=${pageTitle}`;
+      /* ── Share ── */
+      const pageUrl=encodeURIComponent(location.href);
+      const pageTitle=encodeURIComponent(title+" | Top Sarkari Jobs");
+      document.getElementById("shFb").href=`https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
+      document.getElementById("shTw").href=`https://twitter.com/intent/tweet?text=${pageTitle}&url=${pageUrl}`;
+      document.getElementById("shWa").href=`https://wa.me/?text=${pageTitle}%20${pageUrl}`;
+      document.getElementById("shTg").href=`https://t.me/share/url?url=${pageUrl}&text=${pageTitle}`;
 
-      /* ── SEO meta ── */
-      const descText = `${title} – Last Date: ${lastDate||"See Notification"}. Total Posts: ${bd.total_vacancies||"Various"}. Qualification: ${(qual.education_qualification||"Check Notification").slice(0,80)}. Apply Mode: ${bd.application_mode||"Online"}. Check full details on Top Sarkari Jobs.`;
-      const setMeta = (sel,val) => { const el=document.querySelector(sel); if(el) el.setAttribute("content",val); };
-      setMeta("#ogTitle", title+" | Top Sarkari Jobs");
-      setMeta("#twTitle", title+" | Top Sarkari Jobs");
-      setMeta("#ogDesc", descText);
-      setMeta("#twDesc", descText);
-      setMeta("#ogUrl", location.href);
-      document.getElementById("canonicalTag").href = location.href;
+      /* ── SEO Meta ── */
+      const descText=`${title} – Last Date: ${lastDate||"See Notification"}. Total Posts: ${bd.total_vacancies||"Various"}. Qualification: ${(qual.education_qualification||"Check Notification").slice(0,80)}. Apply Mode: ${bd.application_mode||"Online"}.`;
+      const setMeta=(sel,val)=>{const el=document.querySelector(sel);if(el)el.setAttribute("content",val);};
+      setMeta("#ogTitle",title+" | Top Sarkari Jobs");setMeta("#twTitle",title+" | Top Sarkari Jobs");
+      setMeta("#ogDesc",descText);setMeta("#twDesc",descText);setMeta("#ogUrl",location.href);
+      document.getElementById("canonicalTag").href=location.href;
 
-      /* ── JSON-LD Schema ── */
-      const schema = {
-        "@context":"https://schema.org",
-        "@type":"JobPosting",
-        "title": title,
-        "description": descText,
+      /* ── JSON-LD ── */
+      document.getElementById("jobSchema").textContent=JSON.stringify({
+        "@context":"https://schema.org","@type":"JobPosting",
+        "title":title,"description":descText,
         "hiringOrganization":{"@type":"Organization","name":bd.organization_name||"Government of India"},
         "jobLocation":{"@type":"Place","address":{"@type":"PostalAddress","addressCountry":"IN"}},
-        "employmentType": (bd.job_type||"").toLowerCase().includes("contract") ? "CONTRACTOR" : "FULL_TIME",
-        "datePosted": new Date().toISOString().slice(0,10),
+        "employmentType":(bd.job_type||"").toLowerCase().includes("contract")?"CONTRACTOR":"FULL_TIME",
+        "datePosted":new Date().toISOString().slice(0,10),
         ...(lastDate?{"validThrough":lastDate}:{}),
-        "url": location.href,
+        "url":location.href,
         ...(applyUrl?{"applyUrl":applyUrl}:{}),
-        ...(bd.total_vacancies?{"totalJobOpenings":parseInt(bd.total_vacancies.replace(/[^0-9]/g,""))||1}:{}),
-      };
-      document.getElementById("jobSchema").textContent = JSON.stringify(schema,null,2);
+      },null,2);
 
-      /* ── Build nav pills ── */
       buildSectionNav();
     }
 
-    /* ─── Legacy render from name string (fallback) ─── */
+    /* ══════════════════════════════════════════════
+       RENDER: LEGACY (slug-only, no JSON found)
+    ══════════════════════════════════════════════ */
     function renderLegacyJobPage(name, destUrl) {
-      // Parse basic info from title string
       const n = safe(name);
       const ldM = n.match(/last\s*date[:\s\-–]+([0-9]{1,2}[-\/][A-Za-z0-9]{2,3}[-\/][0-9]{2,4})/i);
-      const lastDt = ldM ? ldM[1].trim() : null;
       const pnM = n.match(/(\d[\d,]*)\s*(?:post|posts|vacancies|vacancy)/i);
-      const postNum = pnM ? pnM[1] : null;
-      const salM = n.match(/(?:salary|pay scale|₹|rs\.?)\s*([\d,]+(?:\s*[-–to]+\s*[\d,]+)?)/i);
-      const salary = salM ? salM[0] : null;
       const applyMode = /offline/i.test(n) ? "Offline" : "Online";
-
-      // Build minimal job object and render
-      const minJob = {
-        basic_details:{
-          job_title: n.slice(0,200),
-          total_vacancies: postNum,
-          application_mode: applyMode,
-          last_updated: todayStr(),
-        },
-        important_dates:{ last_date: lastDt||"" },
-        application_fee:{},
-        age_limit:{ age_limit:"As per official notification" },
-        qualification:{ education_qualification:"Check official notification" },
-        vacancy_details:[],
-        category_wise_vacancy:{},
-        salary_details: salary ? { pay_scale: salary } : {},
-        selection_process:[],
-        physical_eligibility:{},
-        exam_pattern:{},
-        syllabus:{},
-        how_to_apply:[],
-        important_instructions:[],
-        important_links:{ official_website: destUrl },
-        faq:[],
-        seo_tags:[],
-        category:"",
-      };
-      renderFromJsonData(minJob, destUrl);
+      renderFromJsonData({
+        basic_details:{job_title:n.slice(0,200),total_vacancies:pnM?pnM[1]:null,application_mode:applyMode,last_updated:todayStr()},
+        important_dates:{last_date:ldM?ldM[1].trim():""},
+        application_fee:{},age_limit:{age_limit:"As per official notification"},
+        qualification:{education_qualification:"Check official notification"},
+        vacancy_details:[],salary_details:{},selection_process:[],
+        physical_eligibility:{},exam_pattern:{},syllabus:{},
+        how_to_apply:[],important_instructions:[],
+        important_links:{official_website:destUrl},
+        faq:[],seo_tags:[],category:""
+      }, destUrl);
     }
 
-    /* ─── Non-job page ─── */
+    /* ══════════════════════════════════════════════
+       RENDER: NON-JOB PAGE
+    ══════════════════════════════════════════════ */
     function renderNonJobPage(name, destUrl) {
-      layoutJob.style.display = "none";
-      layoutNonJob.style.display = "block";
-      hideCard("sidebarDatesCard");
-      hideCard("hlCard");
-
-      const typeInfo = detectNonJobType(name);
-      const cleanName = safe(name).slice(0, 200);
-      document.getElementById("nonJobBadge").textContent = typeInfo.label;
-      document.getElementById("nonJobTitle").textContent = cleanName;
-      document.getElementById("nonJobBanner").style.background = typeInfo.color;
-      document.getElementById("nonJobDesc").innerHTML =
-        `<p><strong>${esc(typeInfo.label)}</strong></p>
-         <p>यह एक सरकारी संसाधन / लिंक है। नीचे दिए गए बटन पर क्लिक करके आधिकारिक पेज पर जाएँ।</p>
-         <p style="color:#64748b;font-size:.8rem;">This is an official government resource. Click below to visit.</p>`;
-      const cta = document.getElementById("btnNonJobCta");
-      cta.style.background = typeInfo.color;
-      cta.href = destUrl || "#";
-      if (!destUrl || destUrl === "#") { cta.style.opacity=".5"; cta.style.pointerEvents="none"; }
-      setText("nonJobCtaText", typeInfo.label.includes("PDF") ? "Download / View PDF" :
-        typeInfo.label.includes("Scheme") ? "View Govt Scheme Details" : "Visit Official Page");
-      document.getElementById("bcTitle").textContent = cleanName.length > 60 ? cleanName.slice(0,57)+"…" : cleanName;
-
-      const pageUrl = encodeURIComponent(location.href);
-      const pageTitle = encodeURIComponent(cleanName + " | Top Sarkari Jobs");
-      document.getElementById("shFb").href = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
-      document.getElementById("shTw").href = `https://twitter.com/intent/tweet?text=${pageTitle}&url=${pageUrl}`;
-      document.getElementById("shWa").href = `https://wa.me/?text=${pageTitle}%20${pageUrl}`;
-      document.getElementById("shTg").href = `https://t.me/share/url?url=${pageUrl}&text=${pageTitle}`;
+      layoutJob.style.display="none"; layoutNonJob.style.display="block";
+      document.getElementById("sidebarDatesCard").style.display="none";
+      document.getElementById("hlCard").style.display="none";
+      const ti=detectNonJobType(name);
+      const cn=safe(name).slice(0,200);
+      document.getElementById("nonJobBadge").textContent=ti.label;
+      document.getElementById("nonJobTitle").textContent=cn;
+      document.getElementById("nonJobBanner").style.background=ti.color;
+      document.getElementById("nonJobDesc").innerHTML=`<p><strong>${esc(ti.label)}</strong></p><p>नीचे दिए बटन पर क्लिक करके आधिकारिक पेज पर जाएँ।</p>`;
+      const cta=document.getElementById("btnNonJobCta");
+      cta.style.background=ti.color; cta.href=destUrl||"#";
+      if(!destUrl||destUrl==="#"){cta.style.opacity=".5";cta.style.pointerEvents="none";}
+      setText("nonJobCtaText",ti.label.includes("PDF")?"Download / View PDF":ti.label.includes("Scheme")?"View Govt Scheme Details":"Visit Official Page");
+      setText("bcTitle",cn.length>60?cn.slice(0,57)+"…":cn);
+      const pu=encodeURIComponent(location.href),pt=encodeURIComponent(cn+" | Top Sarkari Jobs");
+      document.getElementById("shFb").href=`https://www.facebook.com/sharer/sharer.php?u=${pu}`;
+      document.getElementById("shTw").href=`https://twitter.com/intent/tweet?text=${pt}&url=${pu}`;
+      document.getElementById("shWa").href=`https://wa.me/?text=${pt}%20${pu}`;
+      document.getElementById("shTg").href=`https://t.me/share/url?url=${pu}&text=${pt}`;
     }
 
-    /* ─── FAQ Toggle ─── */
-    window.toggleFaq = function(i) {
-      const el = document.getElementById("faq"+i);
-      if (el) el.classList.toggle("open");
+    /* ══════════════════════════════════════════════
+       FAQ TOGGLE
+    ══════════════════════════════════════════════ */
+    window.toggleFaq = i => {
+      const el=document.getElementById("faq"+i);
+      if(el) el.classList.toggle("open");
     };
 
-    /* ─── Data loading ─── */
-    function validateUrl(u) {
-      try { const d=new URL(u,location.href); return ["http:","https:"].includes(d.protocol)?d.href:null; } catch(_){return null;}
-    }
-
-    /* ── Load from Complete_Jobs_Full_Data.json directly ── */
-    const _JOBS_CAT_META_JH = {
-      "Latest_Notifications": { id: "Latest Notifications"    },
-      "10TH_Pass":            { id: "10th Pass jobs"           },
-      "8TH_Pass":             { id: "8th Pass"                 },
-      "12TH_Pass":            { id: "12th Pass jobs"           },
-      "Diploma":              { id: "Diploma Jobs"              },
-      "ITI":                  { id: "ITI Jobs"                  },
-      "B_Tech_BE":            { id: "B.Tech Jobs"              },
-      "B_Com":                { id: "B.Com Jobs"               },
-      "Any_Graduate":         { id: "Graduation jobs"          },
-      "Any_Post_Graduate":    { id: "Post Graduation jobs"     },
-      "Railway_Jobs":         { id: "Railway Jobs"             },
-      "Police_Defence":       { id: "Police Jobs"              },
-      "Teaching_Faculty":     { id: "Teacher Jobs"             },
-      "Bank_Jobs":            { id: "Bank Jobs"                },
-      "Medical_Hospital":     { id: "Medical/ Healthcare Jobs" },
-    };
-    async function loadAllItems() {
-      try {
-        // Reuse cached data if getRichData already fetched it
-        const raw = await getRichData();
-        if (!raw || typeof raw !== "object" || Array.isArray(raw)) return [];
-        const out = [];
-        for (const [catKey, meta] of Object.entries(_JOBS_CAT_META_JH)) {
-          const jobs = raw[catKey];
-          if (!Array.isArray(jobs)) continue;
-          for (const job of jobs) {
-            const bd  = job.basic_details || {};
-            const u   = (job.source_url || "").trim();
-            const ttl = (bd.job_title || "").trim();
-            if (!u || !ttl) continue;
-            out.push({
-              url:   normalizeUrl(u),
-              title: ttl.slice(0, 600),
-              secId: meta.id,
-              fp:    urlRedirectFingerprint(u).toLowerCase()
-            });
-          }
-        }
-        return out;
-      } catch(_) { return []; }
-    }
-
-    /* Try to load the Complete_Jobs_Full_Data.json to get rich data */
-    let _richDataCache = null;
-    async function getRichData() {
-      if (_richDataCache) return _richDataCache;
-      try {
-        // Timeout after 8 seconds so the page doesn't hang forever
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 8000);
-        let r;
-        try {
-          r = await fetch("/Complete_Jobs_Full_Data.json", { signal: controller.signal });
-        } finally {
-          clearTimeout(timer);
-        }
-        if (!r.ok) return null;
-        const data = await r.json();
-        if (typeof data !== "object" || Array.isArray(data)) return null;
-        _richDataCache = data;
-        return data;
-      } catch(_) { return null; }
-    }
-
-    async function loadRichJobData(title) {
-      try {
-        const data = await getRichData();
-        if (!data) return null;
-        // Search all categories for matching job
-        const tl = title.toLowerCase();
-        // Also try slug-based matching
-        const slug = safe(rawSlug).toLowerCase();
-        let bestMatch = null, bestScore = 0;
-        for (const cat of Object.values(data)) {
-          if (!Array.isArray(cat)) continue;
-          for (const job of cat) {
-            const jt = safe((job.basic_details||{}).job_title).toLowerCase();
-            if (!jt) continue;
-            // Score by title words
-            const titleWords = tl.split(/\s+/).filter(w=>w.length>3);
-            const titleScore = titleWords.length > 0
-              ? titleWords.filter(w=>jt.includes(w)).length / titleWords.length : 0;
-            // Score by slug tokens
-            const slugTokens = slug ? slug.split("-").filter(t=>t.length>2) : [];
-            const slugScore = slugTokens.length > 0
-              ? slugTokens.filter(t=>jt.includes(t)).length / slugTokens.length : 0;
-            const score = Math.max(titleScore, slugScore);
-            if (score > bestScore) { bestScore = score; bestMatch = job; }
-          }
-        }
-        return bestScore >= 0.35 ? bestMatch : null;
-      } catch(_) { return null; }
-    }
-
-    function matchByKey(items, k)    { return items.find(i=>i.fp===k)||null; }
-    function slugScore(title, targetSlug) {
-      if (!title||!targetSlug) return 0;
-      const ts = title.toLowerCase().replace(/[^a-z0-9]+/g,"-");
-      const tokens = targetSlug.split("-").filter(t=>t.length>2);
-      if (!tokens.length) return 0;
-      return tokens.filter(t=>ts.includes(t)).length / tokens.length;
-    }
-    function matchBySlug(items, slug) {
-      if (!slug) return null;
-      let best=null, bestScore=0;
-      for (const it of items) {
-        const s = slugScore(it.title, slug);
-        if (s > bestScore) { bestScore=s; best=it; }
-      }
-      return bestScore >= 0.55 ? best : null;
-    }
-
-    /* ─── MAIN ─── */
+    /* ══════════════════════════════════════════════
+       MAIN — NEW FAST 2-STEP FETCH
+    ══════════════════════════════════════════════ */
     (async function run() {
-      // Helper: always called at the very end to reveal page and hide loader
       function revealPage() {
         loading.style.display = "none";
         threeCol.style.display = "grid";
       }
-      // Helper: hide CTA buttons that have no real URL
-      function hideEmptyCtaBtns() {
-        ["btnMainCta","btnNotifCta","btnNonJobCta"].forEach(id => {
-          const el = document.getElementById(id);
-          if (el && (!el.href || el.href === "#" || el.href === location.href + "#")) {
-            el.style.display = "none";
-          }
+      function hideEmptyBtns() {
+        ["btnMainCta","btnNotifCta","btnNonJobCta"].forEach(id=>{
+          const el=document.getElementById(id);
+          if(el&&(!el.href||el.href==="#"||el.href===location.href+"#"))
+            el.style.display="none";
         });
       }
 
-      if (!rawK && !rawSlug) {
-        loading.style.display = "none";
-        errorEl.style.display = "block";
+      if (!rawSlug) {
+        loading.style.display="none";
+        errorEl.style.display="block";
         return;
       }
 
       try {
-        // FAST PATH: slug available → try rich JSON data directly
-        if (rawSlug) {
+        /* ── STEP 1: Fetch index (75KB) ── */
+        const index = await getIndex();
+
+        let matchedSlug = rawSlug;
+        let destUrl = "";
+
+        if (index) {
+          const found = findSlugInIndex(index, rawSlug);
+          if (found) {
+            matchedSlug = found.slug;
+          }
+        }
+
+        /* ── STEP 2: Fetch individual job JSON (~11KB) ── */
+        const job = await getJobBySlug(matchedSlug);
+
+        if (job && job.basic_details) {
+          destUrl = safe(job.source_url || job.important_links?.official_website || "");
+          renderFromJsonData(job, destUrl);
+        } else {
+          /* Fallback: render from slug title */
           const humanTitle = humanizeSlug(rawSlug);
-          const richJob = await loadRichJobData(humanTitle);
-          if (richJob) {
-            renderFromJsonData(richJob, safe(richJob.source_url || ""));
-            hideEmptyCtaBtns();
-            revealPage();
-            return;
+          if (isJobItem(humanTitle)) {
+            renderLegacyJobPage(humanTitle, "");
+          } else {
+            renderNonJobPage(humanTitle, "");
           }
         }
 
-        // FALLBACK PATH: load all items index and match by fingerprint key or slug
-        let items = [];
-        try { items = await loadAllItems(); } catch(_) {}
+        hideEmptyBtns();
 
-        let row = null;
-        if (rawK && items.length)            row = matchByKey(items, rawK);
-        if (!row && rawSlug && items.length) row = matchBySlug(items, rawSlug);
-
-        if (!row) {
-          // No match in index — render from slug title alone
-          if (rawSlug) {
-            const humanTitle = humanizeSlug(rawSlug);
-            if (isJobItem(humanTitle)) {
-              renderLegacyJobPage(humanTitle, "");
-            } else {
-              renderNonJobPage(humanTitle, "");
-            }
-            hideEmptyCtaBtns();
-          } else {
-            loading.style.display = "none";
-            errorEl.style.display = "block";
-            return;
-          }
-        } else {
-          const dest = validateUrl(row.url);
-          if (!dest) {
-            loading.style.display = "none";
-            errorEl.style.display = "block";
-            return;
-          }
-
-          // Override breadcrumb section link
-          if (!rawSec || rawSec === "view.html") {
-            const secLink = document.getElementById("bcSectionLink");
-            if (secLink) {
-              secLink.textContent = humanizeSlug(row.secId || "Jobs");
-              secLink.href = row.secId ? `view.html?section=${encodeURIComponent(row.secId)}` : "#";
-            }
-          }
-
-          const name = row.title || humanizeSlug(rawSlug);
-          // Try rich JSON first, then legacy, then non-job
-          const richJob = await loadRichJobData(name);
-          if (richJob) {
-            renderFromJsonData(richJob, dest);
-          } else if (isJobItem(name)) {
-            renderLegacyJobPage(name, dest);
-          } else {
-            renderNonJobPage(name, dest);
-          }
-        }
       } catch (err) {
-        // Last-resort: if anything throws, show slug-based legacy page rather than hanging
-        if (rawSlug) {
-          try { renderLegacyJobPage(humanizeSlug(rawSlug), ""); } catch(_) {}
-        } else {
-          errorEl.style.display = "block";
-        }
+        /* Last resort */
+        try { renderLegacyJobPage(humanizeSlug(rawSlug), ""); } catch(_) {}
       } finally {
-        // ALWAYS reveal the page — no more infinite loading spinner
         revealPage();
       }
     })();
