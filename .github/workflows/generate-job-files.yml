@@ -1,10 +1,17 @@
-name: Auto-Update Jobs (Push JSON → Generate All Files)
+name: Auto-Update Jobs
 
-# ✅ Sirf Complete_Jobs_Full_Data.json push karo — baaki sab automatic!
 on:
+  # TRIGGER 1: Jab bhi Complete_Jobs_Full_Data.json GitHub pe update ho
   push:
     paths:
       - 'Complete_Jobs_Full_Data.json'
+
+  # TRIGGER 2: GitHub Actions tab se manual "Run workflow" button
+  workflow_dispatch:
+
+  # TRIGGER 3: Har roz raat 12 baje automatic (India time = UTC+5:30, so 18:30 UTC)
+  schedule:
+    - cron: '30 18 * * *'
 
 jobs:
   build:
@@ -19,20 +26,21 @@ jobs:
       - name: Run job file generator
         run: python3 .github/workflows/generate_jobs.py
 
-      - name: Generate sitemap (if script exists)
+      - name: Generate sitemap
         run: |
           if [ -f sitemap-generator.js ]; then
             node sitemap-generator.js && echo "Sitemap updated"
           else
-            echo "No sitemap-generator.js found, skipping"
+            echo "No sitemap-generator.js, skipping"
           fi
 
-      - name: Commit and push all changes
+      - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add jobs-index.json jobs/data/ sitemap-jobs.xml sitemap-index.xml sitemap.xml 2>/dev/null || true
-          git diff --staged --quiet && echo "No changes to commit" && exit 0
-          git commit -m "Auto: jobs updated $(date +'%Y-%m-%d %H:%M')"
+          git add jobs-index.json jobs/data/
+          git add sitemap-jobs.xml sitemap-index.xml sitemap.xml 2>/dev/null || true
+          git diff --staged --quiet && echo "No changes" && exit 0
+          git commit -m "Auto: jobs updated $(date +'%Y-%m-%d %H:%M UTC')"
           git pull --rebase origin main
           git push
