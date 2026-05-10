@@ -563,7 +563,15 @@
         a.href = buildRedirectUrl(url, name, sectionKey) || normalizeUrl(url);
         a.setAttribute("data-redirect-label", name);
         if (external) { a.target = "_blank"; a.rel = "noopener"; }
-        a.innerHTML = `<div class="t">${name}</div>${it.date ? `<div class="d">${safe(it.date)}</div>` : `<div class="d">Open official link</div>`}`;
+        // Clean date: truncate long/unclear dates to keep layout clean
+        const rawDate = safe(it.date || "");
+        let displayDate = rawDate;
+        if (rawDate.toLowerCase().includes("please refer") || rawDate.toLowerCase().includes("days from") || rawDate.toLowerCase().includes("date of publication")) {
+          displayDate = "Check Official Notification";
+        } else if (rawDate.length > 35) {
+          displayDate = rawDate.slice(0, 32) + "…";
+        }
+        a.innerHTML = `<div class="t">${name}</div><div class="d">${displayDate || "Open official link"}</div>`;
         list.appendChild(a);
       });
 
