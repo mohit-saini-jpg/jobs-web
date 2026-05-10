@@ -1,14 +1,15 @@
 """
 generate_jobs.py — Auto-runs when Complete_Jobs_Full_Data.json is pushed to GitHub
 ====================================================================================
-Kya karta hai:
-  1. Complete_Jobs_Full_Data.json padh ke saari jobs process karta hai
-  2. jobs/data/<slug>.json — har job ke liye individual file banata hai
-  3. jobs-index.json — slug → category/title/date index update karta hai
-  4. Purani stale files automatically delete karta hai
+Sirf Complete_Jobs_Full_Data.json push karo → ye script sab kar deta hai:
+  1. jobs/data/<slug>.json — har job ke liye alag file banata hai
+  2. jobs-index.json       — fast index (slug → cat/title/date/url)
+  3. Purani stale files    — automatically delete ho jaati hain
+
+365 jobs ho ya 1500+ — sab handle hoga!
 """
 
-import json, re, os, shutil
+import json, re, os
 
 SRC   = "Complete_Jobs_Full_Data.json"
 DEST  = "jobs/data"
@@ -33,20 +34,18 @@ with open(SRC, encoding="utf-8") as f:
 
 os.makedirs(DEST, exist_ok=True)
 
-# ── Collect existing files (for stale-deletion later) ──
 existing_files = set(os.listdir(DEST))
-
 index      = {}
 new_files  = set()
 written    = 0
 skipped    = 0
-seen_slugs = {}   # slug → first cat (for duplicate title tracking)
+seen_slugs = {}
 
 for cat, jobs in data.items():
     if not isinstance(jobs, list):
         continue
     if cat not in VALID_CATS:
-        print(f"  WARN: unknown category '{cat}' — skipping")
+        print(f"  WARN: Unknown category '{cat}' — skipping")
         continue
 
     for job in jobs:
@@ -59,22 +58,18 @@ for cat, jobs in data.items():
             skipped += 1
             continue
 
-        slug = slugify(title)
+        slug  = slugify(title)
         fname = f"{slug}.json"
 
-        # If same slug from different category, keep first (avoid overwrite)
+        # Duplicate slug? Add category suffix
         if slug in seen_slugs and seen_slugs[slug] != cat:
-            # Make slug unique by appending category suffix
-            slug = f"{slug}-{cat.lower().replace('_','-')}"
+            slug  = f"{slug}-{cat.lower().replace('_','-')}"
             fname = f"{slug}.json"
 
         seen_slugs[slug] = cat
+        job["category"]  = cat
 
-        # Ensure category field is set correctly inside job
-        job["category"] = cat
-
-        fpath = os.path.join(DEST, fname)
-        with open(fpath, "w", encoding="utf-8") as f:
+        with open(os.path.join(DEST, fname), "w", encoding="utf-8") as f:
             json.dump(job, f, ensure_ascii=False, separators=(",", ":"))
 
         last_date = (dates.get("last_date", "") or "").strip()
@@ -87,30 +82,30 @@ for cat, jobs in data.items():
         new_files.add(fname)
         written += 1
 
-# ── Delete stale files that are no longer in the JSON ──
+# Delete stale files
 stale = existing_files - new_files
 for fname in stale:
     try:
         os.remove(os.path.join(DEST, fname))
     except Exception:
         pass
-if stale:
-    print(f"  Deleted {len(stale)} stale file(s)")
 
-# ── Write jobs-index.json ──
+# Write index
 with open(INDEX, "w", encoding="utf-8") as f:
     json.dump(index, f, ensure_ascii=False, separators=(",", ":"))
 
-# ── Summary ──
-print(f"\n✅ Done!")
+print(f"\nDone!")
 print(f"  Written : {written} job files")
+print(f"  Deleted : {len(stale)} stale files")
 print(f"  Skipped : {skipped} (no title)")
-print(f"  Stale   : {len(stale)} deleted")
-print(f"  Index   : {len(index)} entries → {INDEX}")
+print(f"  Index   : {len(index)} entries")
 
 cat_count = {}
 for v in index.values():
     cat_count[v["cat"]] = cat_count.get(v["cat"], 0) + 1
 print("\nPer category:")
-for cat, n in sorted(cat_count.items()):
+for cat in ["Latest_Notifications","10TH_Pass","8TH_Pass","12TH_Pass","Diploma",
+            "ITI","B_Tech_BE","B_Com","Any_Graduate","Any_Post_Graduate",
+            "Railway_Jobs","Police_Defence","Teaching_Faculty","Bank_Jobs","Medical_Hospital"]:
+    n = cat_count.get(cat, 0)
     print(f"  {cat:<25} {n}")
