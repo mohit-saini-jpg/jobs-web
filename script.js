@@ -48,8 +48,12 @@
         const bd    = job.basic_details || {};
         const dates = job.important_dates || {};
         const name  = (bd.job_title || "").trim();
-        const url   = (job.source_url || "").trim();
-        const last  = (dates.last_date || "").trim();
+        // source_url is not present in Complete_Jobs_Full_Data.json;
+        // build internal job detail URL from the slugified title instead.
+        const slug  = slugifyTitle(name);
+        const url   = (job.source_url || "").trim() || (slug && slug !== "official-link" ? "/jobs/" + slug + "/" : "");
+        // The date field in this dataset is last_date_to_apply, not last_date.
+        const last  = (dates.last_date || dates.last_date_to_apply || "").trim();
         if (!name || !url) return null;
         return { name, url, date: last ? "Last Date: " + last : "" };
       }).filter(Boolean);
