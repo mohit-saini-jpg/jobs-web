@@ -488,12 +488,33 @@
         // Render List
         (async () => {
              const list = document.getElementById("links-list");
+             const loadingEl = document.getElementById("loading");
              try {
                  const d = await getJobsSectionsV();
-                 const sec = d.sections.find(s => s.id === sectionParam || s.title === sectionParam) || d.sections[0];
+
+                 // Show error if data failed to load
+                 if (d.error && (!d.sections || !d.sections.length)) {
+                   if (loadingEl) loadingEl.innerHTML = '<div style="color:#dc2626;font-weight:600;padding:16px;">⚠️ Data load nahi ho saka. Please page refresh karein.<br><small style="color:#64748b;">' + d.error + '</small></div>';
+                   return;
+                 }
+
+                 // Case-insensitive + emoji-stripped section matching
+                 function stripEmoji(s) { return (s||"").replace(/[\u{1F300}-\u{1FFFF}]|[\u2600-\u26FF]|[\u2700-\u27BF]/gu,"").trim(); }
+                 const spLower = sectionParam.toLowerCase();
+                 const sec = d.sections.find(s =>
+                   s.id === sectionParam ||
+                   s.title === sectionParam ||
+                   s.id.toLowerCase() === spLower ||
+                   stripEmoji(s.title).toLowerCase() === spLower ||
+                   s.id.toLowerCase().includes(spLower) ||
+                   spLower.includes(s.id.toLowerCase())
+                 );
                  
                  if(sec && sec.items) {
-                     document.getElementById("loading").classList.add("hidden");
+                     if (loadingEl) loadingEl.classList.add("hidden");
+                 
+                 if(sec && sec.items) {
+                     if (loadingEl) loadingEl.classList.add("hidden");
                      
                      // Filter Garbage Link
                      const cleanItems = sec.items.filter(i => {
@@ -522,8 +543,15 @@
                         </li>
                      `;
                      }).join('');
+                 } else {
+                   // Section not found — show helpful message
+                   if (loadingEl) loadingEl.innerHTML = '<div style="padding:16px;color:#64748b;"><strong>Koi results nahi mile</strong> "' + sectionParam + '" ke liye.<br><a href="index.html" style="color:#0369a1;font-weight:600;">← Home Page par jaayein</a></div>';
                  }
-             } catch(e) {}
+             } catch(e) {
+               console.error("Section render error:", e);
+               const loadEl = document.getElementById("loading");
+               if (loadEl) loadEl.innerHTML = '<div style="color:#dc2626;font-weight:600;padding:16px;">⚠️ Kuch error aa gayi. Please page refresh karein.</div>';
+             }
         })();
         return;
       }
@@ -573,29 +601,40 @@
     "Medical_Hospital":     { id: "Medical/ Healthcare Jobs", title: "🏥 Medical / Hospital Jobs" },
   };
   async function getJobsSectionsV() {
-    try {
-      const r = await fetch("/Complete_Jobs_Full_Data.json");
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      const raw = await r.json();
-      if (!raw || typeof raw !== "object" || Array.isArray(raw)) return { sections: [] };
-      const sections = [];
-      for (const [catKey, meta] of Object.entries(JOBS_CAT_META_V)) {
-        const jobs = raw[catKey];
-        if (!Array.isArray(jobs) || !jobs.length) continue;
-        const items = jobs.map(job => {
-          const bd    = job.basic_details || {};
-          const dates = job.important_dates || {};
-          const name  = (bd.job_title || "").trim();
-          const url   = (job.source_url || "").trim();
-          const last  = (dates.last_date || "").trim();
-          if (!name || !url) return null;
-          return { name, url, date: last ? "Last Date: " + last : "" };
-        }).filter(Boolean);
-        if (!items.length) continue;
-        sections.push({ id: meta.id, title: meta.title, items });
-      }
-      return { sections };
-    } catch (_) { return { sections: [] }; }
+    // Try relative path first (works on all hosting), fallback to absolute
+    const paths = ["./Complete_Jobs_Full_Data.json", "/Complete_Jobs_Full_Data.json"];
+    let raw = null;
+    let lastErr = null;
+    for (const path of paths) {
+      try {
+        const r = await fetch(path);
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        raw = await r.json();
+        if (raw && typeof raw === "object" && !Array.isArray(raw)) break;
+        raw = null;
+      } catch (e) { lastErr = e; raw = null; }
+    }
+    if (!raw) {
+      console.error("getJobsSectionsV: failed to load data", lastErr);
+      return { sections: [], error: lastErr ? lastErr.message : "Load failed" };
+    }
+    const sections = [];
+    for (const [catKey, meta] of Object.entries(JOBS_CAT_META_V)) {
+      const jobs = raw[catKey];
+      if (!Array.isArray(jobs) || !jobs.length) continue;
+      const items = jobs.map(job => {
+        const bd    = job.basic_details || {};
+        const dates = job.important_dates || {};
+        const name  = (bd.job_title || "").trim();
+        const url   = (job.source_url || "").trim();
+        const last  = (dates.last_date || "").trim();
+        if (!name || !url) return null;
+        return { name, url, date: last ? "Last Date: " + last : "" };
+      }).filter(Boolean);
+      if (!items.length) continue;
+      sections.push({ id: meta.id, title: meta.title, items });
+    }
+    return { sections };
   }
   </script>
 
