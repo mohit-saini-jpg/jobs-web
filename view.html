@@ -506,12 +506,19 @@
                         const label = i.name || i.title || 'Open';
                         const href = buildRedirectUrl(i.url || i.link, label) || (i.url || i.link || '#');
                         const targetAttr = i.external ? 'target="_blank" rel="noopener"' : '';
+                        // Clean date display
+                        let dspDate = i.date || 'Update';
+                        if (dspDate.toLowerCase().includes('please refer') || dspDate.toLowerCase().includes('days from') || dspDate.toLowerCase().includes('date of publication')) {
+                          dspDate = 'Check Official Notification';
+                        } else if (dspDate.length > 40) {
+                          dspDate = dspDate.slice(0, 37) + '…';
+                        }
                         return `
                         <li class="bg-white border border-slate-200 rounded-lg p-3 hover:shadow-md transition">
                             <a href="${href}" data-redirect-label="${label}" class="block font-semibold text-sky-700 hover:underline" ${targetAttr}>
                                 ${label}
                             </a>
-                            <div class="text-xs text-slate-500 mt-1">${i.date || 'Update'}</div>
+                            <div class="text-xs text-slate-500 mt-1">${dspDate}</div>
                         </li>
                      `;
                      }).join('');
