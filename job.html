@@ -1477,9 +1477,8 @@
     };
     async function loadAllItems() {
       try {
-        const r = await fetch("/Complete_Jobs_Full_Data.json");
-        if (!r.ok) return [];
-        const raw = await r.json();
+        // Reuse cached data if getRichData already fetched it
+        const raw = await getRichData();
         if (!raw || typeof raw !== "object" || Array.isArray(raw)) return [];
         const out = [];
         for (const [catKey, meta] of Object.entries(_JOBS_CAT_META_JH)) {
@@ -1570,6 +1569,19 @@
         loading.style.display="none"; errorEl.style.display="block"; return;
       }
 
+      // FAST PATH: If we have a slug, try rich data first (single fetch, no double load)
+      if (rawSlug && !rawK) {
+        const humanTitle = humanizeSlug(rawSlug);
+        const richJob = await loadRichJobData(humanTitle);
+        if (richJob) {
+          renderFromJsonData(richJob, safe(richJob.source_url || ""));
+          loading.style.display = "none";
+          threeCol.style.display = "grid";
+          return;
+        }
+      }
+
+      // FALLBACK: load all items and match by key or slug
       let items = [];
       try { items = await loadAllItems(); } catch(_) {}
 
