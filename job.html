@@ -894,29 +894,72 @@
       /* ── Build important_links from useful_links array ── */
       const linksObj = {};
       const ul = job.useful_links || [];
+
+      /* Title → key mapping for ALL supported link types */
+      const titleToKey = [
+        { rx: /apply\s*online/i,                       key: "apply_online" },
+        { rx: /^registration$/i,                       key: "registration" },
+        { rx: /candidate\s*login|^login$/i,            key: "login" },
+        { rx: /download\s*notification|download\s*notif|official\s*notification/i, key: "notification_pdf" },
+        { rx: /download\s*result\s*notice/i,           key: "result_notice" },
+        { rx: /download\s*result/i,                    key: "result_link" },
+        { rx: /final\s*answer\s*key/i,                 key: "final_answer_key" },
+        { rx: /download\s*answer\s*key\s*notice/i,     key: "answer_key_notice" },
+        { rx: /download\s*answer\s*key/i,              key: "answer_key" },
+        { rx: /response\s*sheet/i,                     key: "response_sheet" },
+        { rx: /download\s*admit\s*card/i,              key: "admit_card_link" },
+        { rx: /check\s*exam\s*city/i,                  key: "exam_city" },
+        { rx: /download\s*syllabus/i,                  key: "syllabus_pdf" },
+        { rx: /download\s*exam\s*notice/i,             key: "exam_notice" },
+        { rx: /download\s*corrigendum/i,               key: "corrigendum" },
+        { rx: /otr\s*registration/i,                   key: "otr_registration" },
+        { rx: /score\s*card/i,                         key: "score_card" },
+        { rx: /merit\s*list/i,                         key: "merit_list" },
+        { rx: /cut\s*off|cutoff/i,                     key: "cutoff" },
+        { rx: /seat\s*allotment/i,                     key: "seat_allotment" },
+        { rx: /counselling\s*schedule/i,               key: "counselling_schedule" },
+        { rx: /interview\s*letter/i,                   key: "interview_letter" },
+        { rx: /phase\s*i{2}\s*result|phase\s*2\s*result/i, key: "phase2_result" },
+        { rx: /phase\s*i\s*result|phase\s*1\s*result/i,    key: "phase1_result" },
+        { rx: /pet\s*\/?\s*pst/i,                      key: "pet_pst_notice" },
+        { rx: /dv\s*schedule/i,                        key: "dv_schedule" },
+        { rx: /skill\s*test/i,                         key: "skill_test_notice" },
+        { rx: /typing\s*test/i,                        key: "typing_test_notice" },
+        { rx: /medical\s*exam/i,                       key: "medical_exam_notice" },
+        { rx: /official\s*website/i,                   key: "official_website" },
+        { rx: /apply\s*here|click\s*here\s*to\s*apply/i, key: "apply_online" },
+        { rx: /notification|notice/i,                  key: "notification_pdf" },
+        { rx: /result/i,                               key: "result_link" },
+        { rx: /admit\s*card/i,                         key: "admit_card_link" },
+        { rx: /answer\s*key/i,                         key: "answer_key" },
+        { rx: /download|pdf/i,                         key: "download_pdf" },
+        { rx: /login|sign\s*in/i,                      key: "login" },
+      ];
+
       ul.forEach(item => {
-        const title = safe(item.title).toLowerCase();
-        const url   = safe(item.links || item.url);
+        const rawTitle = safe(item.title);
+        const url      = safe(item.links || item.url);
         if (!url) return;
-        if (/apply\s*online|apply\s*here|click\s*here\s*to\s*apply/i.test(title))
-          linksObj.apply_online = url;
-        else if (/login|candidate\s*login|sign\s*in/i.test(title))
-          linksObj.login = url;
-        else if (/notification|notice|official\s*notification|download\s*notif/i.test(title))
-          linksObj.notification_pdf = url;
-        else if (/official\s*website|website/i.test(title))
-          linksObj.official_website = url;
-        else if (/result/i.test(title))
-          linksObj.result_link = url;
-        else if (/admit\s*card/i.test(title))
-          linksObj.admit_card_link = url;
-        else if (/answer\s*key/i.test(title))
-          linksObj.answer_key = url;
-        else if (/download|pdf/i.test(title))
-          linksObj.download_pdf = url;
-        else {
-          /* Store unknown links with sanitized key */
-          const k = title.replace(/[^a-z0-9]+/g,"_").slice(0,40) || "other";
+
+        /* Find matching key */
+        let matched = false;
+        for (const {rx, key} of titleToKey) {
+          if (rx.test(rawTitle)) {
+            /* If key already set, store extras with suffix */
+            if (!linksObj[key]) {
+              linksObj[key] = url;
+            } else {
+              /* Store with title-based key so it still shows */
+              const k = rawTitle.toLowerCase().replace(/[^a-z0-9]+/g,"_").slice(0,40) || "link";
+              linksObj[k] = url;
+            }
+            matched = true;
+            break;
+          }
+        }
+        if (!matched) {
+          /* Store with title as key so auto-detect renders it */
+          const k = rawTitle.toLowerCase().replace(/[^a-z0-9]+/g,"_").slice(0,40) || "link";
           linksObj[k] = url;
         }
       });
@@ -1375,20 +1418,43 @@
 
       /* ── Important Links ── */
       const linkDefs=[
-        {key:"apply_online",          label:"Apply Online",          icon:"fa-paper-plane", cls:"green"},
-        {key:"apply_offline",         label:"Apply Offline",         icon:"fa-file-pen",    cls:"orange"},
-        {key:"click_here",            label:"Apply / Click Here",    icon:"fa-paper-plane", cls:"green"},
-        {key:"click_here_to_apply",   label:"Apply Here",            icon:"fa-paper-plane", cls:"green"},
-        {key:"login",                 label:"Login / Apply",         icon:"fa-right-to-bracket", cls:"teal"},
-        {key:"notification_pdf",      label:"Official Notification", icon:"fa-file-pdf",    cls:"red"},
-        {key:"download_pdf",          label:"Download PDF",          icon:"fa-file-pdf",    cls:"red"},
-        {key:"official_website",      label:"Official Website",      icon:"fa-globe",       cls:"blue"},
-        {key:"visit_website",         label:"Visit Website",         icon:"fa-globe",       cls:"blue"},
-        {key:"get_app",               label:"Get App / Download",    icon:"fa-download",    cls:"purple"},
-        {key:"result_link",           label:"Result",                icon:"fa-trophy",      cls:"purple"},
-        {key:"result",                label:"Result",                icon:"fa-trophy",      cls:"purple"},
-        {key:"admit_card_link",       label:"Admit Card",            icon:"fa-id-card",     cls:"teal"},
-        {key:"answer_key",            label:"Answer Key",            icon:"fa-key",         cls:"orange"},
+        {key:"apply_online",          label:"Apply Online",                icon:"fa-paper-plane",         cls:"green"},
+        {key:"registration",          label:"Registration",                icon:"fa-user-plus",           cls:"green"},
+        {key:"apply_offline",         label:"Apply Offline",               icon:"fa-file-pen",            cls:"orange"},
+        {key:"click_here",            label:"Apply / Click Here",          icon:"fa-paper-plane",         cls:"green"},
+        {key:"click_here_to_apply",   label:"Apply Here",                  icon:"fa-paper-plane",         cls:"green"},
+        {key:"login",                 label:"Candidate Login",             icon:"fa-right-to-bracket",    cls:"teal"},
+        {key:"notification_pdf",      label:"Download Notification",       icon:"fa-file-pdf",            cls:"red"},
+        {key:"download_pdf",          label:"Download PDF",                icon:"fa-file-pdf",            cls:"red"},
+        {key:"result_notice",         label:"Download Result Notice",      icon:"fa-file-lines",          cls:"purple"},
+        {key:"result_link",           label:"Download Result",             icon:"fa-trophy",              cls:"purple"},
+        {key:"result",                label:"Download Result",             icon:"fa-trophy",              cls:"purple"},
+        {key:"final_answer_key",      label:"Final Answer Key",            icon:"fa-key",                 cls:"orange"},
+        {key:"answer_key_notice",     label:"Answer Key Notice",           icon:"fa-file-lines",          cls:"orange"},
+        {key:"answer_key",            label:"Download Answer Key",         icon:"fa-key",                 cls:"orange"},
+        {key:"response_sheet",        label:"Response Sheet",              icon:"fa-sheet-plastic",       cls:"orange"},
+        {key:"admit_card_link",       label:"Download Admit Card",         icon:"fa-id-card",             cls:"teal"},
+        {key:"exam_city",             label:"Check Exam City Details",     icon:"fa-location-dot",        cls:"teal"},
+        {key:"syllabus_pdf",          label:"Download Syllabus",           icon:"fa-book-open",           cls:"blue"},
+        {key:"exam_notice",           label:"Download Exam Notice",        icon:"fa-file-alt",            cls:"blue"},
+        {key:"corrigendum",           label:"Download Corrigendum",        icon:"fa-file-circle-exclamation", cls:"red"},
+        {key:"otr_registration",      label:"OTR Registration",            icon:"fa-user-check",          cls:"green"},
+        {key:"score_card",            label:"Score Card",                  icon:"fa-chart-bar",           cls:"purple"},
+        {key:"merit_list",            label:"Merit List",                  icon:"fa-list-ol",             cls:"purple"},
+        {key:"cutoff",                label:"Cutoff",                      icon:"fa-scissors",            cls:"orange"},
+        {key:"seat_allotment",        label:"Seat Allotment Result",       icon:"fa-chair",               cls:"purple"},
+        {key:"counselling_schedule",  label:"Counselling Schedule",        icon:"fa-calendar-days",       cls:"teal"},
+        {key:"interview_letter",      label:"Interview Letter",            icon:"fa-envelope-open-text",  cls:"teal"},
+        {key:"phase1_result",         label:"Phase I Result",              icon:"fa-trophy",              cls:"purple"},
+        {key:"phase2_result",         label:"Phase II Result",             icon:"fa-trophy",              cls:"purple"},
+        {key:"pet_pst_notice",        label:"PET / PST Notice",            icon:"fa-person-running",      cls:"orange"},
+        {key:"dv_schedule",           label:"DV Schedule",                 icon:"fa-calendar-check",      cls:"teal"},
+        {key:"skill_test_notice",     label:"Skill Test Notice",           icon:"fa-screwdriver-wrench",  cls:"orange"},
+        {key:"typing_test_notice",    label:"Typing Test Notice",          icon:"fa-keyboard",            cls:"orange"},
+        {key:"medical_exam_notice",   label:"Medical Exam Notice",         icon:"fa-stethoscope",         cls:"red"},
+        {key:"official_website",      label:"Official Website",            icon:"fa-globe",               cls:"blue"},
+        {key:"visit_website",         label:"Visit Website",               icon:"fa-globe",               cls:"blue"},
+        {key:"get_app",               label:"Get App / Download",          icon:"fa-download",            cls:"purple"},
       ];
 
       /* helper: convert snake_case / weird keys → human readable label */
@@ -1408,7 +1474,13 @@
       }
 
       /* which keys are already handled by linkDefs */
-      const knownKeys = new Set([...linkDefs.map(ld=>ld.key), 'other_links']);
+      const knownKeys = new Set([...linkDefs.map(ld=>ld.key), 'other_links',
+        'registration','result_notice','final_answer_key','answer_key_notice',
+        'response_sheet','exam_city','syllabus_pdf','exam_notice','corrigendum',
+        'otr_registration','score_card','merit_list','cutoff','seat_allotment',
+        'counselling_schedule','interview_letter','phase1_result','phase2_result',
+        'pet_pst_notice','dv_schedule','skill_test_notice','typing_test_notice',
+        'medical_exam_notice']);
 
       let linksHtml=linkDefs.filter(ld=>links[ld.key]).map(ld=>
         `<a href="${esc(normalizeUrl(links[ld.key]))}" target="_blank" rel="noopener" class="jp-link-btn ${ld.cls}">
@@ -1426,14 +1498,19 @@
         /* pick icon & colour heuristically */
         let icon='fa-link', cls='outline-blue';
         const kl=k.toLowerCase();
-        if(/apply|register|form/.test(kl))          { icon='fa-paper-plane'; cls='green'; }
-        else if(/login|signin|sign_in/.test(kl))    { icon='fa-right-to-bracket'; cls='teal'; }
-        else if(/pdf|notification|notice/.test(kl)) { icon='fa-file-pdf'; cls='red'; }
-        else if(/result/.test(kl))                  { icon='fa-trophy'; cls='purple'; }
-        else if(/admit|card/.test(kl))              { icon='fa-id-card'; cls='teal'; }
-        else if(/answer|key/.test(kl))              { icon='fa-key'; cls='orange'; }
-        else if(/download|app/.test(kl))            { icon='fa-download'; cls='purple'; }
-        else if(/website|official|web/.test(kl))    { icon='fa-globe'; cls='blue'; }
+        if(/apply|register|form|otr/.test(kl))        { icon='fa-paper-plane'; cls='green'; }
+        else if(/login|signin|sign_in/.test(kl))      { icon='fa-right-to-bracket'; cls='teal'; }
+        else if(/corrigendum|exam_notice/.test(kl))   { icon='fa-file-circle-exclamation'; cls='red'; }
+        else if(/pdf|notification|notice/.test(kl))   { icon='fa-file-pdf'; cls='red'; }
+        else if(/phase.*result|result/.test(kl))      { icon='fa-trophy'; cls='purple'; }
+        else if(/score|merit|cutoff|seat|allot/.test(kl)){ icon='fa-chart-bar'; cls='purple'; }
+        else if(/counsell|interview/.test(kl))        { icon='fa-calendar-days'; cls='teal'; }
+        else if(/admit|card|exam_city/.test(kl))      { icon='fa-id-card'; cls='teal'; }
+        else if(/answer|key|response_sheet/.test(kl)) { icon='fa-key'; cls='orange'; }
+        else if(/pet|pst|dv_|skill|typing|medical/.test(kl)){ icon='fa-person-running'; cls='orange'; }
+        else if(/syllabus/.test(kl))                  { icon='fa-book-open'; cls='blue'; }
+        else if(/download|app/.test(kl))              { icon='fa-download'; cls='purple'; }
+        else if(/website|official|web/.test(kl))      { icon='fa-globe'; cls='blue'; }
         linksHtml+=`<a href="${esc(url)}" target="_blank" rel="noopener" class="jp-link-btn ${cls}"><i class="fa-solid ${icon}"></i>${esc(lbl)}<span>Click Here</span></a>`;
       });
 
