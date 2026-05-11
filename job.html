@@ -838,9 +838,9 @@
     const setHtml  = (id,h) => { const e=document.getElementById(id); if(e) e.innerHTML=h; };
 
     /* ══════════════════════════════════════════════
-       DATA FETCHING  ← NEW LIGHTWEIGHT APPROACH
+       DATA FETCHING — sarkari_result_clean_final.json
     ══════════════════════════════════════════════ */
-    let _indexCache = null;
+    let _srCache = null;
 
     async function fetchWithTimeout(url, ms=10000) {
       const ctrl = new AbortController();
@@ -852,32 +852,189 @@
       } finally { clearTimeout(t); }
     }
 
-    /* Step 1: fetch lightweight index (75 KB) */
-    async function getIndex() {
-      if (_indexCache) return _indexCache;
+    /* Load sarkari_result_clean_final.json once */
+    async function getSRData() {
+      if (_srCache) return _srCache;
       try {
-        const r = await fetchWithTimeout("/jobs-index.json");
-        _indexCache = await r.json();
-        return _indexCache;
+        const r = await fetchWithTimeout("/sarkari_result_clean_final.json");
+        _srCache = await r.json();
+        return _srCache;
       } catch(_) { return null; }
     }
 
-    /* Step 2: fetch individual job JSON (~11 KB) */
+    /* Convert flat SR job → job.html expected nested format */
+    function convertSRJobToNestedFormat(job) {
+      if (!job) return null;
+
+      /* ── Parse application fee string → individual fields ── */
+      const feeRaw  = safe(job.application_fee);
+      const feeObj  = { fee_details: feeRaw };
+      const feeGenM = feeRaw.match(/General\s*\/\s*OBC\s*\/?\s*EWS?\s*[:\-]\s*([₹\d,\/\s\-]+)/i);
+      const feeSCM  = feeRaw.match(/SC\s*\/\s*ST\s*(?:\/\s*PH)?\s*[:\-]\s*([₹\d,\/\s\-]+)/i);
+      const feePHM  = feeRaw.match(/PH\s*[:\-]\s*([₹\d,\/\s\-]+)/i);
+      if (feeGenM) feeObj.general_fee = feeGenM[1].trim().replace(/\/-/g,"/-");
+      if (feeSCM)  feeObj.sc_fee      = feeSCM[1].trim().replace(/\/-/g,"/-");
+      if (feeSCM)  feeObj.st_fee      = feeSCM[1].trim().replace(/\/-/g,"/-");
+      if (feePHM)  feeObj.ph_fee      = feePHM[1].trim().replace(/\/-/g,"/-");
+      /* Payment mode */
+      if (/debit\s*card|credit\s*card|net\s*banking|challan|online/i.test(feeRaw))
+        feeObj.payment_mode = "Debit Card / Credit Card / Net Banking / E-Challan";
+
+      /* ── Parse important_dates ── */
+      const id = job.important_dates || {};
+      const datesObj = {
+        application_start_date : safe(id.application_begin || id.start_date || ""),
+        last_date              : safe(id.last_date || job.last_date || ""),
+        exam_date              : safe(id.exam_date || ""),
+        result_date            : safe(id.result_date || ""),
+        admit_card_date        : safe(id.admit_card || ""),
+        correction_date        : safe(id.correction_date || ""),
+      };
+
+      /* ── Build important_links from useful_links array ── */
+      const linksObj = {};
+      const ul = job.useful_links || [];
+      ul.forEach(item => {
+        const title = safe(item.title).toLowerCase();
+        const url   = safe(item.links || item.url);
+        if (!url) return;
+        if (/apply\s*online|apply\s*here|click\s*here\s*to\s*apply/i.test(title))
+          linksObj.apply_online = url;
+        else if (/login|candidate\s*login|sign\s*in/i.test(title))
+          linksObj.login = url;
+        else if (/notification|notice|official\s*notification|download\s*notif/i.test(title))
+          linksObj.notification_pdf = url;
+        else if (/official\s*website|website/i.test(title))
+          linksObj.official_website = url;
+        else if (/result/i.test(title))
+          linksObj.result_link = url;
+        else if (/admit\s*card/i.test(title))
+          linksObj.admit_card_link = url;
+        else if (/answer\s*key/i.test(title))
+          linksObj.answer_key = url;
+        else if (/download|pdf/i.test(title))
+          linksObj.download_pdf = url;
+        else {
+          /* Store unknown links with sanitized key */
+          const k = title.replace(/[^a-z0-9]+/g,"_").slice(0,40) || "other";
+          linksObj[k] = url;
+        }
+      });
+      /* Fallback: source_url as official_website */
+      if (!linksObj.official_website && job.source_url)
+        linksObj.official_website = job.source_url;
+
+      /* ── Total posts ── */
+      const totalPost = safe(job.total_post || "");
+      const postM = totalPost.match(/(\d[\d,]*)/);
+      const vacancies = postM ? postM[1] : (totalPost || "Various");
+
+      /* ── Qualification ── */
+      const eligStr = safe(job.eligibility || "Check official notification");
+
+      /* ── Age limit ── */
+      const ageRaw = safe(job.age_limit || "As per official notification");
+      /* Try to extract a sensible age string — remove obvious junk */
+      const ageClean = ageRaw.length > 120
+        ? "As per official notification"
+        : ageRaw;
+
+      return {
+        slug          : job.slug,
+        category      : job.category,
+        source_url    : job.source_url,
+        basic_details : {
+          job_title          : safe(job.title),
+          organization_name  : extractOrg(job.title, job.short_information),
+          total_vacancies    : vacancies,
+          application_mode   : "Online",
+          short_information  : safe(job.short_information),
+          last_updated       : safe(job.post_date),
+        },
+        important_dates    : datesObj,
+        application_fee    : feeObj,
+        age_limit          : { age_limit: ageClean },
+        qualification      : { education_qualification: eligStr },
+        vacancy_details    : [],
+        salary_details     : {},
+        selection_process  : [],
+        physical_eligibility: {},
+        exam_pattern       : {},
+        syllabus           : {},
+        how_to_apply       : [],
+        important_instructions: [],
+        important_links    : linksObj,
+        faq                : [],
+        seo_tags           : [],
+      };
+    }
+
+    /* Best-effort org name extraction from title */
+    function extractOrg(title, shortInfo) {
+      const t = safe(title);
+      /* Common patterns: "CBSE CTET", "UPSSSC ASO", "MPPSC Scientific Officer" */
+      const abbrevM = t.match(/^([A-Z]{2,8})\s/);
+      if (abbrevM) return abbrevM[1];
+      /* Try to get org from shortInfo */
+      const siM = safe(shortInfo).match(/^([^.]{10,60})\s+has\s+released/i);
+      if (siM) return siM[1].trim().slice(0,60);
+      return t.split(/\s+/).slice(0,4).join(" ");
+    }
+
+    /* Slug fuzzy match — same logic as before but over SR data */
+    function findJobBySlug(allJobs, targetSlug) {
+      if (!allJobs || !targetSlug) return null;
+      /* 1. Exact match */
+      const exact = allJobs.find(j => j.slug === targetSlug);
+      if (exact) return exact;
+      /* 2. Fuzzy token match */
+      const tokens = targetSlug.split("-").filter(t => t.length > 2);
+      let best = null, bestScore = 0;
+      for (const j of allJobs) {
+        const matches = tokens.filter(t => (j.slug||"").includes(t)).length;
+        const score = matches / tokens.length;
+        if (score > bestScore) { bestScore = score; best = j; }
+      }
+      return bestScore >= 0.55 ? best : null;
+    }
+
+    /* ── MAIN LOOKUP: find job by slug across all categories ── */
     async function getJobBySlug(slug) {
       try {
+        /* Try individual job JSON first (future-proofing) */
         const r = await fetchWithTimeout(`/jobs/data/${encodeURIComponent(slug)}.json`);
-        return await r.json();
+        const data = await r.json();
+        if (data && data.basic_details) return data;   // already nested format
+        return convertSRJobToNestedFormat(data);
+      } catch(_) { /* individual file not found — fall back to master JSON */ }
+
+      try {
+        const srData = await getSRData();
+        if (!srData || !srData.data) return null;
+        /* Flatten all categories into one list */
+        const allJobs = Object.values(srData.data).flat();
+        const match   = findJobBySlug(allJobs, slug);
+        return match ? convertSRJobToNestedFormat(match) : null;
+      } catch(_) { return null; }
+    }
+
+    /* Build a simple index map from SR data for slug resolution */
+    async function getIndex() {
+      try {
+        const srData = await getSRData();
+        if (!srData || !srData.data) return null;
+        const idx = {};
+        Object.values(srData.data).flat().forEach(j => {
+          if (j.slug) idx[j.slug] = { title: j.title, category: j.category };
+        });
+        return Object.keys(idx).length ? idx : null;
       } catch(_) { return null; }
     }
 
     /* Find best slug match in index */
     function findSlugInIndex(index, targetSlug) {
       if (!index || !targetSlug) return null;
-
-      // 1. Exact match
       if (index[targetSlug]) return {slug: targetSlug, meta: index[targetSlug]};
-
-      // 2. Fuzzy: score by common tokens
       const tokens = targetSlug.split("-").filter(t => t.length > 2);
       let best = null, bestScore = 0;
       for (const [slug, meta] of Object.entries(index)) {
