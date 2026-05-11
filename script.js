@@ -36,6 +36,7 @@
     "Teaching_Faculty":     { id: "Teacher Jobs",             title: "📝 Teaching / Faculty Jobs", color: "linear-gradient(135deg,#16a34a,#15803d)", icon: "fa-solid fa-chalkboard-user" },
     "Bank_Jobs":            { id: "Bank Jobs",                title: "🏦 Bank Jobs",               color: "linear-gradient(135deg,#ca8a04,#a16207)", icon: "fa-solid fa-building-columns" },
     "Medical_Hospital":     { id: "Medical/ Healthcare Jobs", title: "🏥 Medical / Hospital Jobs", color: "linear-gradient(135deg,#dc2626,#b91c1c)", icon: "fa-solid fa-stethoscope" },
+    "Last_Date_Reminder":   { id: "Last Date Reminder",        title: "⏰ Last Date Reminder",      color: "linear-gradient(135deg,#e11d48,#be123c)", icon: "fa-solid fa-clock" },
   };
 
   /* Slugify a job title the same way the Python generator does */
@@ -581,7 +582,11 @@
 
       items.forEach((it) => {
         const name = safe(it.name) || "Open";
-        const url = it.url || it.link || "";
+        // Build URL: prefer explicit url/link, fallback to slug-based job.html
+        let url = it.url || it.link || "";
+        if (!url && it.slug) {
+          url = "job.html?slug=" + encodeURIComponent(it.slug) + "&section=" + encodeURIComponent(sectionKey);
+        }
         if (!url) return;
 
         const external = !!it.external;
