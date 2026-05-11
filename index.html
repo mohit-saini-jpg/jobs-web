@@ -997,6 +997,120 @@
     @media (max-width: 600px) {
       #dynamic-sections { grid-template-columns: 1fr; }
     }
+    /* ============================================================
+       SARKARI RESULT DYNAMIC SECTIONS
+    ============================================================ */
+    #sr-dynamic-wrap {
+      margin-bottom: 18px;
+    }
+    .sr-sections-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--gap);
+    }
+    @media (max-width: 600px) {
+      .sr-sections-grid { grid-template-columns: 1fr; }
+    }
+    .sr-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: box-shadow .2s;
+      display: flex;
+      flex-direction: column;
+    }
+    .sr-card:hover { box-shadow: var(--shadow-hover); }
+    .sr-card-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 11px 14px; color: #fff; font-size: .82rem; font-weight: 900;
+      border-bottom: 2px solid rgba(0,0,0,.1); letter-spacing: .01em;
+    }
+    .sr-card-head .left { display: flex; align-items: center; gap: 8px; }
+    .sr-card-head a {
+      color: rgba(255,255,255,.9); font-size: .72rem; font-weight: 700;
+      background: rgba(255,255,255,.2); padding: 3px 10px; border-radius: 20px;
+      text-decoration: none; white-space: nowrap;
+    }
+    .sr-card-head a:hover { background: rgba(255,255,255,.32); }
+    .sr-card-head.red    { background: linear-gradient(135deg,#dc2626,#b91c1c); }
+    .sr-card-head.blue   { background: linear-gradient(135deg,#1a56db,#1e40af); }
+    .sr-card-head.green  { background: linear-gradient(135deg,#059669,#047857); }
+    .sr-card-head.purple { background: linear-gradient(135deg,#7c3aed,#6d28d9); }
+    .sr-card-head.orange { background: linear-gradient(135deg,#f97316,#ea580c); }
+    .sr-card-head.teal   { background: linear-gradient(135deg,#0d9488,#0f766e); }
+    .sr-card-body {
+      flex: 1;
+      overflow: hidden;
+    }
+    .sr-job-list {
+      list-style: none;
+      margin: 0; padding: 0;
+    }
+    .sr-job-list li {
+      border-bottom: 1px solid var(--border);
+    }
+    .sr-job-list li:last-child { border-bottom: none; }
+    .sr-job-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 13px;
+      text-decoration: none;
+      color: var(--text);
+      font-size: .78rem;
+      font-weight: 600;
+      transition: background .15s;
+      line-height: 1.35;
+    }
+    .sr-job-link:hover { background: #f8fafc; color: var(--blue); }
+    .sr-job-link .sr-dot {
+      flex-shrink: 0;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--border);
+    }
+    .sr-job-link:hover .sr-dot { background: var(--blue); }
+    .sr-job-title { flex: 1; min-width: 0; }
+    .sr-job-date {
+      flex-shrink: 0;
+      font-size: .67rem;
+      font-weight: 700;
+      color: var(--red);
+      background: #fff0f0;
+      border: 1px solid #fecaca;
+      padding: 2px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .sr-job-date.soon { color: var(--green); background: #f0fdf4; border-color: #bbf7d0; }
+    .sr-card-footer {
+      padding: 8px 13px;
+      border-top: 1px solid var(--border);
+      text-align: right;
+    }
+    .sr-card-footer a {
+      font-size: .74rem; font-weight: 700; color: var(--blue);
+      text-decoration: none;
+    }
+    .sr-card-footer a:hover { text-decoration: underline; }
+    .sr-loading {
+      padding: 16px 14px;
+      text-align: center;
+      color: var(--muted);
+      font-size: .78rem;
+    }
+    .sr-section-title {
+      display: flex; align-items: center; gap: 10px;
+      font-size: .82rem; font-weight: 900; color: var(--navy);
+      padding: 0 0 8px 0;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 10px;
+      text-transform: uppercase; letter-spacing: .04em;
+    }
+    .sr-section-title i { color: var(--blue); }
+
     .section-card {
       background: var(--white); border: 1px solid var(--border);
       border-radius: var(--radius); overflow: hidden;
@@ -1729,6 +1843,17 @@
 
 
 
+        <!-- ============================================================
+             SARKARI RESULT DYNAMIC SECTION (from sarkari_result_clean_final.json)
+        ============================================================ -->
+        <div id="sr-dynamic-wrap">
+          <div id="sr-sections-grid" class="sr-sections-grid">
+            <!-- Cards rendered by inline script below -->
+            <div class="sr-card"><div class="sr-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div></div>
+            <div class="sr-card"><div class="sr-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div></div>
+          </div>
+        </div>
+
         <!-- DYNAMIC SECTIONS: script.js renders section cards here in 2-col grid -->
         <div id="dynamic-sections" class="dynamic-sections-row"></div>
 
@@ -2265,5 +2390,178 @@
     } catch(e) {}
   })();
   </script>
+  <!-- ============================================================
+       SARKARI RESULT DYNAMIC SECTIONS — loads sarkari_result_clean_final.json
+  ============================================================ -->
+  <script>
+  (function initSarkariResultSections() {
+    'use strict';
+
+    /* ── Config ──────────────────────────────────────────── */
+    var JSON_FILE = 'sarkari_result_clean_final.json';
+    var MAX_ITEMS = 8; // max items per category card
+
+    var CATEGORY_CONFIG = [
+      {
+        key: 'SR_Latest_Jobs',
+        label: 'Latest Jobs',
+        icon: 'fa-solid fa-briefcase',
+        headClass: 'red',
+        viewUrl: 'view.html?section=latest%20jobs'
+      },
+      {
+        key: 'SR_Admit_Card',
+        label: 'Admit Card',
+        icon: 'fa-solid fa-id-card',
+        headClass: 'blue',
+        viewUrl: 'admit-card.html'
+      },
+      {
+        key: 'SR_Result',
+        label: 'Result',
+        icon: 'fa-solid fa-trophy',
+        headClass: 'green',
+        viewUrl: 'result.html'
+      },
+      {
+        key: 'SR_Admission',
+        label: 'Admission',
+        icon: 'fa-solid fa-graduation-cap',
+        headClass: 'purple',
+        viewUrl: 'category.html?group=admissions'
+      },
+      {
+        key: 'SR_Answer_Key',
+        label: 'Answer Key',
+        icon: 'fa-solid fa-key',
+        headClass: 'orange',
+        viewUrl: 'category.html?group=admit-result'
+      }
+    ];
+
+    /* ── Helpers ─────────────────────────────────────────── */
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      try {
+        var d = new Date(dateStr);
+        if (isNaN(d.getTime())) return dateStr;
+        var day   = d.getDate();
+        var month = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
+        var year  = d.getFullYear();
+        return day + ' ' + month + ' ' + year;
+      } catch(e) { return dateStr; }
+    }
+
+    function isSoon(dateStr) {
+      if (!dateStr) return false;
+      try {
+        var d = new Date(dateStr);
+        var now = new Date();
+        var diff = (d - now) / (1000 * 60 * 60 * 24);
+        return diff >= 0 && diff <= 7;
+      } catch(e) { return false; }
+    }
+
+    function buildCard(cfg, items) {
+      var list = items.slice(0, MAX_ITEMS);
+
+      var liHtml = list.map(function(job) {
+        var title    = job.title || 'View Details';
+        var lastDate = job.last_date || (job.important_dates && job.important_dates.last_date) || '';
+        var url      = job.source_url || '#';
+        var slug     = job.slug || '';
+        // Use local job page if slug exists
+        var href = slug ? ('job.html?slug=' + encodeURIComponent(slug)) : url;
+
+        var dateLabel = lastDate ? formatDate(lastDate) : '';
+        var dateClass = isSoon(lastDate) ? 'sr-job-date soon' : 'sr-job-date';
+        var dateBadge = dateLabel
+          ? '<span class="' + dateClass + '">📅 ' + dateLabel + '</span>'
+          : '';
+
+        return '<li><a href="' + href + '" class="sr-job-link"' +
+               (url !== '#' ? ' target="_blank" rel="noopener"' : '') + '>' +
+               '<span class="sr-dot"></span>' +
+               '<span class="sr-job-title">' + title + '</span>' +
+               dateBadge +
+               '</a></li>';
+      }).join('');
+
+      var html =
+        '<div class="sr-card">' +
+          '<div class="sr-card-head ' + cfg.headClass + '">' +
+            '<div class="left"><i class="' + cfg.icon + '"></i> ' + cfg.label + '</div>' +
+            '<a href="' + cfg.viewUrl + '">View All</a>' +
+          '</div>' +
+          '<div class="sr-card-body">' +
+            '<ul class="sr-job-list">' + liHtml + '</ul>' +
+          '</div>' +
+          '<div class="sr-card-footer">' +
+            '<a href="' + cfg.viewUrl + '">View All ' + cfg.label + ' →</a>' +
+          '</div>' +
+        '</div>';
+      return html;
+    }
+
+    function render(jsonData) {
+      var grid = document.getElementById('sr-sections-grid');
+      if (!grid) return;
+
+      var categories = jsonData.data || {};
+      var html = '';
+
+      CATEGORY_CONFIG.forEach(function(cfg) {
+        var items = categories[cfg.key] || [];
+        if (items.length > 0) {
+          html += buildCard(cfg, items);
+        }
+      });
+
+      if (html) {
+        grid.innerHTML = html;
+      } else {
+        var wrap = document.getElementById('sr-dynamic-wrap');
+        if (wrap) wrap.style.display = 'none';
+      }
+    }
+
+    function loadData() {
+      var CACHE_KEY = '__sr_sections_cache';
+      var CACHE_TTL = 5 * 60 * 1000;
+
+      try {
+        var cached = JSON.parse(sessionStorage.getItem(CACHE_KEY) || 'null');
+        if (cached && (Date.now() - cached.ts) < CACHE_TTL) {
+          render(cached.data);
+          return;
+        }
+      } catch(e) {}
+
+      fetch(JSON_FILE, { cache: 'no-cache' })
+        .then(function(res) {
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          return res.json();
+        })
+        .then(function(data) {
+          try {
+            sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: data }));
+          } catch(e) {}
+          render(data);
+        })
+        .catch(function(err) {
+          console.warn('SR sections load failed:', err);
+          var wrap = document.getElementById('sr-dynamic-wrap');
+          if (wrap) wrap.style.display = 'none';
+        });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadData);
+    } else {
+      loadData();
+    }
+  })();
+  </script>
+
 </body>
 </html>
