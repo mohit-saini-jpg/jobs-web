@@ -723,15 +723,28 @@
         return `<tr${cls}><th>${th}</th><td>${td}</td></tr>`;
       }).join('');
 
-      // Buttons
+      // Buttons — use destUrl, fallback to ?ref= param
+      const _refUrlJI = (() => {
+        try { return new URLSearchParams(window.location.search).get('ref') || ''; } catch(_){ return ''; }
+      })();
+      const _finalDestUrl = destUrl || validateUrl(_refUrlJI) || '';
+
       const applyBtn = document.getElementById('btnApply');
       const notifBtn = document.getElementById('btnNotification');
       const webBtn   = document.getElementById('btnWebsite');
       const mainCta  = document.getElementById('btnMainCta');
 
-      if (destUrl) {
-        applyBtn.href = destUrl; notifBtn.href = destUrl;
-        webBtn.href = destUrl;   mainCta.href = destUrl;
+      if (_finalDestUrl) {
+        applyBtn.href = _finalDestUrl; notifBtn.href = _finalDestUrl;
+        webBtn.href = _finalDestUrl;   mainCta.href = _finalDestUrl;
+        /* Label buttons based on source */
+        const isSarkariResult = _finalDestUrl.includes('sarkariresult.com');
+        const isSarkariShine  = _finalDestUrl.includes('sarkariresultshine.com');
+        const srcLabel = isSarkariResult  ? 'SarkariResult.com'
+                       : isSarkariShine   ? 'SarkariResultShine.com'
+                       : 'Official Portal';
+        if (applyBtn.querySelector('.jp-btn-sub')) applyBtn.querySelector('.jp-btn-sub').textContent = srcLabel;
+        if (webBtn.querySelector('.jp-btn-sub'))   webBtn.querySelector('.jp-btn-sub').textContent   = srcLabel;
       } else {
         [applyBtn, notifBtn, webBtn, mainCta].forEach(el => { el.style.opacity = '.5'; el.style.pointerEvents = 'none'; });
       }
