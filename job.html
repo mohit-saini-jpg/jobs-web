@@ -776,9 +776,21 @@
 
       /* ── Main CTA button ── */
       const mainCta = document.getElementById('btnMainCta');
-      const finalDest = (row && row.destUrl) || destUrl || '';
+      const _ctaRefUrl = (() => {
+        try { return new URLSearchParams(window.location.search).get('ref') || ''; } catch(_){ return ''; }
+      })();
+      const finalDest = (row && row.destUrl) || destUrl || normalizeUrl(_ctaRefUrl) || '';
       if (finalDest) {
         mainCta.href = finalDest;
+        /* Show source name in sub-label */
+        const ctaSub = mainCta.querySelector('.jp-main-cta-sub');
+        if (ctaSub) {
+          const isSR = finalDest.includes('sarkariresult.com');
+          const isSS = finalDest.includes('sarkariresultshine.com');
+          ctaSub.textContent = isSR  ? 'SarkariResult.com पर जाएँ'
+                             : isSS  ? 'SarkariResultShine.com पर जाएँ'
+                             : 'Click to visit the official recruitment portal';
+        }
       } else {
         mainCta.style.opacity = '.5'; mainCta.style.pointerEvents = 'none';
       }
@@ -932,6 +944,17 @@
       }
 
       /* ── Important Links card ── */
+      /* Resolve best available URL: row fields → destUrl → refUrl → sarkariresult fallback */
+      const _refUrl = (() => {
+        try { return new URLSearchParams(window.location.search).get('ref') || ''; } catch(_){ return ''; }
+      })();
+      const _fallbackUrl = normalizeUrl(
+        (row && row.applyOnline)     ||
+        (row && row.officialWebsite) ||
+        (row && row.destUrl)         ||
+        _refUrl                      || ''
+      );
+
       const linkDefs = [
         { key: 'applyOnline',      href: row && row.applyOnline,       label: 'Apply Online',            icon: 'fa-paper-plane',         cls: 'jp-btn-green' },
         { key: 'candidateLogin',   href: row && row.candidateLogin,    label: 'Candidate Login',         icon: 'fa-right-to-bracket',    cls: 'jp-btn-green' },
@@ -946,7 +969,7 @@
         { key: 'officialWebsite',  href: row && row.officialWebsite,   label: 'Official Website',        icon: 'fa-globe',               cls: 'jp-btn-red'   },
       ];
 
-      /* Useful links from array */
+      /* Useful links from LINK.txt array */
       const extraLinks = (row && row.usefulLinks) || [];
 
       const linksContainer = document.getElementById('linksActions');
@@ -971,7 +994,29 @@
           }
         });
 
-        if (!linksHtml) linksHtml = '<p style="color:#64748b;font-size:.83rem;padding:4px;">Links not available. Please check official website.</p>';
+        /* ── FALLBACK: agar koi bhi specific link nahi mili ── */
+        /* Hamesha Official Website / Apply Online dikhao source_url se */
+        if (!linksHtml && _fallbackUrl) {
+          /* Detect source: sarkariresult.com vs sarkariresultshine.com */
+          const isSarkariResult  = _fallbackUrl.includes('sarkariresult.com');
+          const isSarkariShine   = _fallbackUrl.includes('sarkariresultshine.com');
+          const srcLabel = isSarkariResult  ? 'SarkariResult.com'
+                         : isSarkariShine   ? 'SarkariResultShine.com'
+                         : 'Official Website';
+          linksHtml =
+            `<a href="${_fallbackUrl}" target="_blank" rel="noopener" class="jp-btn jp-btn-green">
+              <span><i class="fa-solid fa-arrow-up-right-from-square"></i> Apply / View Details</span>
+              <span class="jp-btn-sub">${srcLabel}</span>
+            </a>
+            <a href="${_fallbackUrl}" target="_blank" rel="noopener" class="jp-btn jp-btn-red">
+              <span><i class="fa-solid fa-globe"></i> Official Website</span>
+              <span class="jp-btn-sub">${srcLabel}</span>
+            </a>`;
+        } else if (!linksHtml) {
+          linksHtml = `<p style="color:#64748b;font-size:.83rem;padding:4px;">
+            Links not available. Please check official website.</p>`;
+        }
+
         linksContainer.innerHTML = linksHtml;
       }
 
