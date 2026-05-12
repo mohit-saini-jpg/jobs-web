@@ -838,11 +838,11 @@
     const setHtml  = (id,h) => { const e=document.getElementById(id); if(e) e.innerHTML=h; };
 
     /* ══════════════════════════════════════════════
-       DATA FETCHING — sarkari_result_clean_final.json
+       DATA FETCHING — merged_sarkari_data.json
     ══════════════════════════════════════════════ */
-    let _srCache = null;
+    let _mergedCache = null;
 
-    async function fetchWithTimeout(url, ms=10000) {
+    async function fetchWithTimeout(url, ms=12000) {
       const ctrl = new AbortController();
       const t = setTimeout(() => ctrl.abort(), ms);
       try {
@@ -852,163 +852,355 @@
       } finally { clearTimeout(t); }
     }
 
-    /* Load sarkari_result_clean_final.json once */
-    async function getSRData() {
-      if (_srCache) return _srCache;
+    /* Load merged_sarkari_data.json once — primary data source */
+    async function getMergedData() {
+      if (_mergedCache) return _mergedCache;
       try {
-        const r = await fetchWithTimeout("/sarkari_result_clean_final.json");
-        _srCache = await r.json();
-        return _srCache;
+        const r = await fetchWithTimeout("/merged_sarkari_data.json");
+        _mergedCache = await r.json();
+        return _mergedCache;
       } catch(_) { return null; }
     }
 
-    /* Convert flat SR job → job.html expected nested format */
-    function convertSRJobToNestedFormat(job) {
-      if (!job) return null;
+    /* ── Title → important_links key mapper ── */
+    const TITLE_TO_KEY = [
+      { rx: /apply\s*online/i,                              key: "apply_online" },
+      { rx: /^registration$/i,                              key: "registration" },
+      { rx: /otr\s*registration/i,                          key: "otr_registration" },
+      { rx: /candidate\s*login|^login$/i,                   key: "login" },
+      { rx: /download\s*notification|official\s*notification|download\s*notif/i, key: "notification_pdf" },
+      { rx: /download\s*result\s*notice/i,                  key: "result_notice" },
+      { rx: /download\s*result/i,                           key: "result_link" },
+      { rx: /final\s*answer\s*key/i,                        key: "final_answer_key" },
+      { rx: /download\s*answer\s*key\s*notice/i,            key: "answer_key_notice" },
+      { rx: /download\s*answer\s*key/i,                     key: "answer_key" },
+      { rx: /response\s*sheet/i,                            key: "response_sheet" },
+      { rx: /download\s*admit\s*card/i,                     key: "admit_card_link" },
+      { rx: /check\s*exam\s*city/i,                         key: "exam_city" },
+      { rx: /download\s*syllabus/i,                         key: "syllabus_pdf" },
+      { rx: /download\s*exam\s*notice/i,                    key: "exam_notice" },
+      { rx: /download\s*corrigendum/i,                      key: "corrigendum" },
+      { rx: /score\s*card/i,                                key: "score_card" },
+      { rx: /merit\s*list/i,                                key: "merit_list" },
+      { rx: /cut\s*off|cutoff/i,                            key: "cutoff" },
+      { rx: /seat\s*allotment/i,                            key: "seat_allotment" },
+      { rx: /counselling\s*schedule/i,                      key: "counselling_schedule" },
+      { rx: /interview\s*letter/i,                          key: "interview_letter" },
+      { rx: /phase\s*i{2}\s*result|phase\s*2\s*result/i,   key: "phase2_result" },
+      { rx: /phase\s*i\s*result|phase\s*1\s*result/i,      key: "phase1_result" },
+      { rx: /pet\s*\/?\s*pst/i,                             key: "pet_pst_notice" },
+      { rx: /dv\s*schedule|document\s*verification/i,       key: "dv_schedule" },
+      { rx: /skill\s*test/i,                                key: "skill_test_notice" },
+      { rx: /typing\s*test/i,                               key: "typing_test_notice" },
+      { rx: /medical\s*exam/i,                              key: "medical_exam_notice" },
+      { rx: /official\s*website/i,                          key: "official_website" },
+      { rx: /apply\s*here|click\s*here\s*to\s*apply/i,     key: "apply_online" },
+      { rx: /download\s*form|application\s*form|form\s*pdf/i, key: "download_pdf" },
+      { rx: /notification|notice/i,                         key: "notification_pdf" },
+      { rx: /result/i,                                      key: "result_link" },
+      { rx: /admit\s*card/i,                                key: "admit_card_link" },
+      { rx: /answer\s*key/i,                                key: "answer_key" },
+      { rx: /download|pdf/i,                                key: "download_pdf" },
+      { rx: /login|sign\s*in/i,                             key: "login" },
+    ];
 
-      /* ── Parse application fee string → individual fields ── */
-      const feeRaw  = safe(job.application_fee);
-      const feeObj  = { fee_details: feeRaw };
-      const feeGenM = feeRaw.match(/General\s*\/\s*OBC\s*\/?\s*EWS?\s*[:\-]\s*([₹\d,\/\s\-]+)/i);
-      const feeSCM  = feeRaw.match(/SC\s*\/\s*ST\s*(?:\/\s*PH)?\s*[:\-]\s*([₹\d,\/\s\-]+)/i);
-      const feePHM  = feeRaw.match(/PH\s*[:\-]\s*([₹\d,\/\s\-]+)/i);
-      if (feeGenM) feeObj.general_fee = feeGenM[1].trim().replace(/\/-/g,"/-");
-      if (feeSCM)  feeObj.sc_fee      = feeSCM[1].trim().replace(/\/-/g,"/-");
-      if (feeSCM)  feeObj.st_fee      = feeSCM[1].trim().replace(/\/-/g,"/-");
-      if (feePHM)  feeObj.ph_fee      = feePHM[1].trim().replace(/\/-/g,"/-");
-      /* Payment mode */
-      if (/debit\s*card|credit\s*card|net\s*banking|challan|online/i.test(feeRaw))
-        feeObj.payment_mode = "Debit Card / Credit Card / Net Banking / E-Challan";
-
-      /* ── Parse important_dates ── */
-      const id = job.important_dates || {};
-      const datesObj = {
-        application_start_date : safe(id.application_begin || id.start_date || ""),
-        last_date              : safe(id.last_date || job.last_date || ""),
-        exam_date              : safe(id.exam_date || ""),
-        result_date            : safe(id.result_date || ""),
-        admit_card_date        : safe(id.admit_card || ""),
-        correction_date        : safe(id.correction_date || ""),
-      };
-
-      /* ── Build important_links from useful_links array ── */
+    /* Build linksObj from useful_links array */
+    function buildLinksFromUsefulLinks(usefulLinks, sourceUrl, officialWebsiteLink, importantLinksRaw) {
       const linksObj = {};
-      const ul = job.useful_links || [];
 
-      /* Title → key mapping for ALL supported link types */
-      const titleToKey = [
-        { rx: /apply\s*online/i,                       key: "apply_online" },
-        { rx: /^registration$/i,                       key: "registration" },
-        { rx: /candidate\s*login|^login$/i,            key: "login" },
-        { rx: /download\s*notification|download\s*notif|official\s*notification/i, key: "notification_pdf" },
-        { rx: /download\s*result\s*notice/i,           key: "result_notice" },
-        { rx: /download\s*result/i,                    key: "result_link" },
-        { rx: /final\s*answer\s*key/i,                 key: "final_answer_key" },
-        { rx: /download\s*answer\s*key\s*notice/i,     key: "answer_key_notice" },
-        { rx: /download\s*answer\s*key/i,              key: "answer_key" },
-        { rx: /response\s*sheet/i,                     key: "response_sheet" },
-        { rx: /download\s*admit\s*card/i,              key: "admit_card_link" },
-        { rx: /check\s*exam\s*city/i,                  key: "exam_city" },
-        { rx: /download\s*syllabus/i,                  key: "syllabus_pdf" },
-        { rx: /download\s*exam\s*notice/i,             key: "exam_notice" },
-        { rx: /download\s*corrigendum/i,               key: "corrigendum" },
-        { rx: /otr\s*registration/i,                   key: "otr_registration" },
-        { rx: /score\s*card/i,                         key: "score_card" },
-        { rx: /merit\s*list/i,                         key: "merit_list" },
-        { rx: /cut\s*off|cutoff/i,                     key: "cutoff" },
-        { rx: /seat\s*allotment/i,                     key: "seat_allotment" },
-        { rx: /counselling\s*schedule/i,               key: "counselling_schedule" },
-        { rx: /interview\s*letter/i,                   key: "interview_letter" },
-        { rx: /phase\s*i{2}\s*result|phase\s*2\s*result/i, key: "phase2_result" },
-        { rx: /phase\s*i\s*result|phase\s*1\s*result/i,    key: "phase1_result" },
-        { rx: /pet\s*\/?\s*pst/i,                      key: "pet_pst_notice" },
-        { rx: /dv\s*schedule/i,                        key: "dv_schedule" },
-        { rx: /skill\s*test/i,                         key: "skill_test_notice" },
-        { rx: /typing\s*test/i,                        key: "typing_test_notice" },
-        { rx: /medical\s*exam/i,                       key: "medical_exam_notice" },
-        { rx: /official\s*website/i,                   key: "official_website" },
-        { rx: /apply\s*here|click\s*here\s*to\s*apply/i, key: "apply_online" },
-        { rx: /notification|notice/i,                  key: "notification_pdf" },
-        { rx: /result/i,                               key: "result_link" },
-        { rx: /admit\s*card/i,                         key: "admit_card_link" },
-        { rx: /answer\s*key/i,                         key: "answer_key" },
-        { rx: /download|pdf/i,                         key: "download_pdf" },
-        { rx: /login|sign\s*in/i,                      key: "login" },
-      ];
+      /* First: map from important_links object (direct key-value in JSON) */
+      if (importantLinksRaw && typeof importantLinksRaw === "object" && !Array.isArray(importantLinksRaw)) {
+        const ilMap = {
+          apply_online           : importantLinksRaw.apply_online,
+          candidate_login        : importantLinksRaw.candidate_login,
+          official_website       : importantLinksRaw.official_website,
+          official_notification  : importantLinksRaw.official_notification || importantLinksRaw.download_notification,
+          notification_pdf       : importantLinksRaw.official_notification || importantLinksRaw.download_notification,
+          admit_card_link        : importantLinksRaw.admit_card,
+          answer_key             : importantLinksRaw.answer_key,
+          result_link            : importantLinksRaw.result,
+          merit_list             : importantLinksRaw.merit_list,
+          score_card             : importantLinksRaw.score_card,
+          syllabus_pdf           : importantLinksRaw.syllabus,
+          exam_city              : importantLinksRaw.exam_city,
+          response_sheet         : importantLinksRaw.response_sheet,
+          objection_link         : importantLinksRaw.objection_link,
+          final_answer_key       : importantLinksRaw.final_answer_key,
+          question_paper         : importantLinksRaw.question_paper,
+          download_pdf           : importantLinksRaw.official_notification,
+        };
+        Object.entries(ilMap).forEach(([k,v]) => {
+          const url = safe(v);
+          if (url && url !== "#" && !linksObj[k]) linksObj[k] = url;
+        });
+      }
 
+      /* Second: parse useful_links array */
+      const ul = Array.isArray(usefulLinks) ? usefulLinks : [];
       ul.forEach(item => {
-        const rawTitle = safe(item.title);
-        const url      = safe(item.links || item.url);
-        if (!url) return;
+        const rawTitle = safe(item.title || item.name || "");
+        const url      = safe(item.links || item.url || item.link || "");
+        if (!url || url === "#") return;
 
-        /* Find matching key */
         let matched = false;
-        for (const {rx, key} of titleToKey) {
+        for (const {rx, key} of TITLE_TO_KEY) {
           if (rx.test(rawTitle)) {
-            /* If key already set, store extras with suffix */
             if (!linksObj[key]) {
               linksObj[key] = url;
             } else {
-              /* Store with title-based key so it still shows */
-              const k = rawTitle.toLowerCase().replace(/[^a-z0-9]+/g,"_").slice(0,40) || "link";
-              linksObj[k] = url;
+              const k = rawTitle.toLowerCase().replace(/[^a-z0-9]+/g,"_").slice(0,40) || "link_extra";
+              if (!linksObj[k]) linksObj[k] = url;
             }
             matched = true;
             break;
           }
         }
         if (!matched) {
-          /* Store with title as key so auto-detect renders it */
           const k = rawTitle.toLowerCase().replace(/[^a-z0-9]+/g,"_").slice(0,40) || "link";
-          linksObj[k] = url;
+          if (!linksObj[k]) linksObj[k] = url;
         }
       });
-      /* Fallback: source_url as official_website */
-      if (!linksObj.official_website && job.source_url)
-        linksObj.official_website = job.source_url;
 
-      /* ── Total posts ── */
-      const totalPost = safe(job.total_post || "");
-      const postM = totalPost.match(/(\d[\d,]*)/);
-      const vacancies = postM ? postM[1] : (totalPost || "Various");
+      /* Fallbacks */
+      if (!linksObj.official_website && officialWebsiteLink) linksObj.official_website = safe(officialWebsiteLink);
+      if (!linksObj.official_website && sourceUrl)           linksObj.official_website = safe(sourceUrl);
 
-      /* ── Qualification ── */
-      const eligStr = safe(job.eligibility || "Check official notification");
+      return linksObj;
+    }
 
-      /* ── Age limit ── */
-      const ageRaw = safe(job.age_limit || "As per official notification");
-      /* Try to extract a sensible age string — remove obvious junk */
-      const ageClean = ageRaw.length > 120
-        ? "As per official notification"
-        : ageRaw;
+    /* ── Parse fee: works for both string and object formats ── */
+    function parseFee(job) {
+      const feeObj = {};
+
+      /* Format A: application_fees is an object {general, obc, sc, st, ews, female, ph} */
+      const feesObjRaw = job.application_fees || job.fees || null;
+      if (feesObjRaw && typeof feesObjRaw === "object" && !Array.isArray(feesObjRaw)) {
+        const fMap = {
+          general_fee : feesObjRaw.general,
+          obc_fee     : feesObjRaw.obc,
+          ews_fee     : feesObjRaw.ews,
+          sc_fee      : feesObjRaw.sc,
+          st_fee      : feesObjRaw.st,
+          female_fee  : feesObjRaw.female,
+          ph_fee      : feesObjRaw.ph || feesObjRaw.pwd,
+        };
+        Object.entries(fMap).forEach(([k,v]) => { if(safe(v)) feeObj[k] = safe(v); });
+      }
+
+      /* Format B: application_fee is a string */
+      const feeRaw = safe(job.application_fee || job.fee || "");
+      if (feeRaw) {
+        feeObj.fee_details = feeRaw;
+        /* Parse inline if not already set from object */
+        if (!feeObj.general_fee) {
+          const genM = feeRaw.match(/(?:General|UR|Gen)[^:]*[:\-]\s*(?:Rs\.?\s*)?([₹\d,\/\s]+(?:\/-)?)/i);
+          if (genM) feeObj.general_fee = genM[1].trim();
+        }
+        if (!feeObj.sc_fee) {
+          const scM = feeRaw.match(/SC\s*\/?\s*ST[^:]*[:\-]\s*(?:Rs\.?\s*)?([₹\d,\/\s]+(?:\/-)?)/i);
+          if (scM) { feeObj.sc_fee = scM[1].trim(); feeObj.st_fee = scM[1].trim(); }
+        }
+        if (!feeObj.ph_fee) {
+          const phM = feeRaw.match(/(?:PH|PWD|Divyang)[^:]*[:\-]\s*(?:Rs\.?\s*)?([₹\d,\/\s]+(?:\/-)?)/i);
+          if (phM) feeObj.ph_fee = phM[1].trim();
+        }
+        /* Check for Nil / free */
+        if (/nil|no\s*fee|free|exempt/i.test(feeRaw) && !feeObj.general_fee)
+          feeObj.general_fee = "Nil / Free";
+        if (/debit|credit|net\s*banking|challan|online/i.test(feeRaw))
+          feeObj.payment_mode = "Online (Debit / Credit Card / Net Banking)";
+      }
+      return feeObj;
+    }
+
+    /* ── Parse dates: handles both nested object and flat string fields ── */
+    function parseDates(job) {
+      const id = job.important_dates || {};
+      return {
+        notification_date      : safe(id.notification_date || id.notification || ""),
+        application_start_date : safe(id.application_begin || id.application_start || id.start_date || id.apply_start || ""),
+        last_date              : safe(id.last_date || id.last_date_apply || id.fee_payment_last_date || job.last_date || ""),
+        correction_date        : safe(id.correction_last_date || id.correction_date || ""),
+        exam_date              : safe(id.exam_date || id.examination_date || ""),
+        admit_card_date        : safe(id.admit_card_date || id.admit_card || ""),
+        answer_key_date        : safe(id.answer_key_date || id.answer_key || ""),
+        result_date            : safe(id.result_date || id.result || ""),
+        interview_date         : safe(id.interview_date || ""),
+        document_verification_date: safe(id.document_verification_date || ""),
+      };
+    }
+
+    /* ── Parse vacancy_details: array of post objects ── */
+    function parseVacancyDetails(job) {
+      const vdRaw = job.vacancy_details || job.vacancies || [];
+      if (!Array.isArray(vdRaw) || !vdRaw.length) return [];
+      return vdRaw.map(v => ({
+        post_name   : safe(v.post_name || v.name || v.post || ""),
+        category    : safe(v.category || v.caste || ""),
+        total       : safe(v.total || v.vacancy || v.posts || ""),
+        general     : safe(v.general || v.ur || ""),
+        obc         : safe(v.obc || ""),
+        ews         : safe(v.ews || ""),
+        sc          : safe(v.sc || ""),
+        st          : safe(v.st || ""),
+        ph          : safe(v.ph || v.pwd || ""),
+        salary      : safe(v.salary || v.pay_scale || ""),
+        eligibility : safe(v.eligibility || v.qualification || ""),
+      })).filter(v => v.post_name || v.total);
+    }
+
+    /* ── Parse selection_process: handles string, array, object ── */
+    function parseSelectionProcess(job) {
+      const sp = job.selection_process || job.selection || "";
+      if (Array.isArray(sp)) return sp.map(safe).filter(Boolean);
+      if (typeof sp === "string" && sp.trim()) {
+        /* Split on common delimiters */
+        return sp.split(/[,\n;\/]|(?:\d+[\.\)])\s+/).map(safe).filter(s => s.length > 2);
+      }
+      if (typeof sp === "object" && sp !== null) {
+        return Object.values(sp).map(safe).filter(Boolean);
+      }
+      return [];
+    }
+
+    /* ── Parse how_to_apply: handles string, array ── */
+    function parseHowToApply(job) {
+      const h = job.how_to_apply || "";
+      if (Array.isArray(h)) return h.map(safe).filter(Boolean);
+      if (typeof h === "string" && h.trim()) {
+        return h.split(/\n+|\d+[\.\)]\s+/).map(safe).filter(s => s.length > 5);
+      }
+      return [];
+    }
+
+    /* ── Parse physical eligibility ── */
+    function parsePhysical(job) {
+      const p = job.physical_eligibility || job.physical || {};
+      if (!p || typeof p !== "object") return {};
+      return {
+        height  : safe(p.height  || ""),
+        chest   : safe(p.chest   || ""),
+        running : safe(p.running || ""),
+        weight  : safe(p.weight  || ""),
+        details : safe(p.details || ""),
+      };
+    }
+
+    /* ── Parse exam_pattern: handles object or string ── */
+    function parseExamPattern(job) {
+      const ep = job.exam_pattern || {};
+      if (typeof ep === "string" && ep.trim()) return { details: ep };
+      if (typeof ep === "object" && ep !== null) return ep;
+      return {};
+    }
+
+    /* ── Parse syllabus: handles string or object ── */
+    function parseSyllabus(job) {
+      const syl = job.syllabus || {};
+      if (typeof syl === "string" && syl.trim()) return { details: syl };
+      if (typeof syl === "object" && syl !== null) return syl;
+      return {};
+    }
+
+    /* ── Determine apply mode ── */
+    function parseApplyMode(job) {
+      const mode = safe(job.apply_mode || job.application_mode || job.apply_type || "");
+      if (/offline/i.test(mode) || /offline/i.test(safe(job.title)) || /offline/i.test(safe(job.category))) return "Offline";
+      if (/online/i.test(mode)) return "Online";
+      /* Guess from links */
+      const il = job.important_links || {};
+      if (safe(il.apply_online)) return "Online";
+      return safe(mode) || "Online";
+    }
+
+    /* ── Parse salary ── */
+    function parseSalary(job) {
+      const sal = safe(job.salary || job.salary_pay_scale || job.pay_scale || "");
+      if (!sal) return {};
+      return { pay_scale: sal };
+    }
+
+    /* ── Convert merged_sarkari_data.json job → job.html nested format ── */
+    function convertMergedJobToNestedFormat(job) {
+      if (!job) return null;
+
+      const title    = safe(job.title || job.post_name || job.job_title || "");
+      const orgName  = safe(job.organization || job.department || job.board_name || extractOrg(title, job.short_information));
+      const vacRaw   = safe(job.total_vacancy || job.total_vacancies || job.total_post || "");
+      const vacNum   = vacRaw.match(/[\d,]+/)?.[0] || vacRaw || "Various";
+
+      const datesObj = parseDates(job);
+      const feeObj   = parseFee(job);
+      const linksObj = buildLinksFromUsefulLinks(
+        job.useful_links,
+        job.source_url || job.official_website_link,
+        job.official_website_link,
+        job.important_links
+      );
+
+      /* Eligibility / Qualification */
+      const eligStr  = safe(job.eligibility || job.education_qualification || job.qualification || "Check official notification");
+
+      /* Age */
+      const ageRaw   = safe(job.minimum_age || "");
+      const ageMaxRaw= safe(job.maximum_age || "");
+      const ageRelax = safe(job.age_relaxation || "");
+      let ageDisplay = safe(job.age_limit || "");
+      if (!ageDisplay && (ageRaw || ageMaxRaw)) {
+        ageDisplay = [ageRaw && "Min: "+ageRaw, ageMaxRaw && "Max: "+ageMaxRaw].filter(Boolean).join(" | ");
+      }
+      if (!ageDisplay) ageDisplay = "As per official notification";
+
+      /* Short info / jobs_info */
+      const shortInfo= safe(job.short_information || job.jobs_info || job.description || "");
+
+      /* Documents required */
+      const docsArr  = Array.isArray(job.documents_required) ? job.documents_required : [];
+
+      /* Tables (rendered in jobs_info / extra card) */
+      const tablesArr= Array.isArray(job.tables) ? job.tables : [];
 
       return {
-        slug          : job.slug,
-        category      : job.category,
-        source_url    : job.source_url,
-        basic_details : {
-          job_title          : safe(job.title),
-          organization_name  : extractOrg(job.title, job.short_information),
-          total_vacancies    : vacancies,
-          application_mode   : "Online",
-          short_information  : safe(job.short_information),
-          last_updated       : safe(job.post_date),
+        slug              : job.slug,
+        category          : job.category,
+        source_url        : job.source_url || job.official_website_link,
+        basic_details     : {
+          job_title           : title,
+          organization_name   : orgName,
+          department          : safe(job.department || ""),
+          advertisement_number: safe(job.advt_no || job.advertisement_number || ""),
+          post_name           : safe(job.post_name || ""),
+          total_vacancies     : vacNum,
+          job_type            : safe(job.job_type || ""),
+          apply_mode          : parseApplyMode(job),
+          application_mode    : parseApplyMode(job),
+          short_information   : shortInfo,
+          last_updated        : safe(job.post_date || job.last_updated || ""),
         },
-        important_dates    : datesObj,
-        application_fee    : feeObj,
-        age_limit          : { age_limit: ageClean },
-        qualification      : { education_qualification: eligStr },
-        vacancy_details    : [],
-        salary_details     : {},
-        selection_process  : [],
-        physical_eligibility: {},
-        exam_pattern       : {},
-        syllabus           : {},
-        how_to_apply       : [],
-        important_instructions: [],
-        important_links    : linksObj,
-        faq                : [],
-        seo_tags           : [],
+        important_dates     : datesObj,
+        application_fee     : feeObj,
+        age_limit           : {
+          age_limit           : ageDisplay,
+          minimum_age         : ageRaw,
+          maximum_age         : ageMaxRaw,
+          details             : ageRelax,
+        },
+        qualification       : {
+          education_qualification: eligStr,
+          experience_required    : safe(job.experience_required || ""),
+        },
+        vacancy_details     : parseVacancyDetails(job),
+        salary_details      : parseSalary(job),
+        selection_process   : parseSelectionProcess(job),
+        physical_eligibility: parsePhysical(job),
+        exam_pattern        : parseExamPattern(job),
+        syllabus            : parseSyllabus(job),
+        how_to_apply        : parseHowToApply(job),
+        important_instructions: docsArr.length ? ["Documents required: " + docsArr.join(", ")] : [],
+        important_links     : linksObj,
+        tables              : tablesArr,
+        faq                 : Array.isArray(job.faq) ? job.faq : [],
+        seo_tags            : Array.isArray(job.seo_tags) ? job.seo_tags : [],
       };
     }
 
@@ -1043,43 +1235,76 @@
 
     /* ── MAIN LOOKUP: find job by slug across all categories ── */
     async function getJobBySlug(slug) {
-      /* Strip common prefixes added by scraper (e.g. "sr_latest_jobs-") */
+      /* Strip scraper prefixes (e.g. "sr_latest_jobs-", "sr_admit_card-") */
       const cleanSlug = slug.replace(/^sr_[a-z_]+-/, "").replace(/^latest_jobs-/, "");
       const slugsToTry = [slug, cleanSlug].filter((s,i,a) => s && a.indexOf(s)===i);
 
-      try {
-        /* Try individual job JSON first (exact slug, then clean slug) */
-        for (const s of slugsToTry) {
-          try {
-            const r = await fetchWithTimeout(`/jobs/data/${encodeURIComponent(s)}.json`);
-            const data = await r.json();
-            if (data && data.basic_details) return data;
-            return convertSRJobToNestedFormat(data);
-          } catch(_) {}
-        }
-      } catch(_) {}
+      /* Step 1: Try individual /jobs/data/{slug}.json (pre-generated per-job files) */
+      for (const s of slugsToTry) {
+        try {
+          const r = await fetchWithTimeout(`/jobs/data/${encodeURIComponent(s)}.json`);
+          const data = await r.json();
+          if (data && data.basic_details) return data;           // already full nested format
+          if (data && (data.title || data.slug)) return convertMergedJobToNestedFormat(data);
+        } catch(_) {}
+      }
 
+      /* Step 2: Search merged_sarkari_data.json */
       try {
-        const srData = await getSRData();
-        if (!srData || !srData.data) return null;
-        const allJobs = Object.values(srData.data).flat();
-        /* Try each slug variant */
+        const merged = await getMergedData();
+        if (!merged) return null;
+
+        /* merged_sarkari_data.json can be:
+           A) Array of job objects
+           B) Object with category keys → each value is array of jobs
+           C) Object with a top-level "data" / "jobs" array
+        */
+        let allJobs = [];
+        if (Array.isArray(merged)) {
+          allJobs = merged;
+        } else if (Array.isArray(merged.data)) {
+          allJobs = merged.data;
+        } else if (Array.isArray(merged.jobs)) {
+          allJobs = merged.jobs;
+        } else if (typeof merged === "object") {
+          /* Flatten category buckets */
+          allJobs = Object.values(merged).reduce((acc, v) => {
+            if (Array.isArray(v)) acc.push(...v);
+            return acc;
+          }, []);
+        }
+
         for (const s of slugsToTry) {
           const match = findJobBySlug(allJobs, s);
-          if (match) return convertSRJobToNestedFormat(match);
+          if (match) return convertMergedJobToNestedFormat(match);
         }
         return null;
       } catch(_) { return null; }
     }
 
-    /* Build a simple index map from SR data for slug resolution */
+    /* Build slug index from merged data */
     async function getIndex() {
       try {
-        const srData = await getSRData();
-        if (!srData || !srData.data) return null;
+        const merged = await getMergedData();
+        if (!merged) return null;
+
+        let allJobs = [];
+        if (Array.isArray(merged)) {
+          allJobs = merged;
+        } else if (Array.isArray(merged.data)) {
+          allJobs = merged.data;
+        } else if (Array.isArray(merged.jobs)) {
+          allJobs = merged.jobs;
+        } else if (typeof merged === "object") {
+          allJobs = Object.values(merged).reduce((acc, v) => {
+            if (Array.isArray(v)) acc.push(...v);
+            return acc;
+          }, []);
+        }
+
         const idx = {};
-        Object.values(srData.data).flat().forEach(j => {
-          if (j.slug) idx[j.slug] = { title: j.title, category: j.category };
+        allJobs.forEach(j => {
+          if (j.slug) idx[j.slug] = { title: j.title || j.job_title || "", category: j.category || "" };
         });
         return Object.keys(idx).length ? idx : null;
       } catch(_) { return null; }
@@ -1209,7 +1434,7 @@
       setText("statOrg", (bd.organization_name||"—").split(/[,(]/)[0].trim().slice(0,35)||"—");
       setText("statPosts", bd.total_vacancies || "Various");
       setText("statLastDate", lastDate ? lastDate.replace(/\(.*\)/g,"").trim() : "See Notification");
-      setText("statApplyMode", bd.application_mode||"Online");
+      setText("statApplyMode", bd.apply_mode||bd.application_mode||"Online");
 
       /* ── CTAs ── */
       const _applyRaw = links.apply_online||links.official_website||destUrl||"";
@@ -1340,15 +1565,48 @@
       if(qualHtml){document.getElementById("qualContent").innerHTML=qualHtml;showCard("qualCard");addNavPill("Qualification","qualCard");}
 
       /* ── Vacancy Details ── */
-      if(vac.length>0){
-        const allKeys=[...new Set(vac.flatMap(r=>Object.keys(r)))];
-        document.getElementById("vacHead").innerHTML=allKeys.map(k=>`<th>${esc(k)}</th>`).join("");
-        document.getElementById("vacBody").innerHTML=vac.map((r,i)=>{
-          const isTotal=Object.values(r).some(v=>safe(v).toLowerCase()==="total");
+      const vacDisplay = vac.filter(r => Object.values(r).some(v => safe(v)));
+      if(vacDisplay.length>0){
+        /* Human-readable column names */
+        const colLabels = {
+          post_name:"Post Name", category:"Category", total:"Total", general:"General/UR",
+          obc:"OBC", ews:"EWS", sc:"SC", st:"ST", ph:"PH/PwD", salary:"Salary",
+          eligibility:"Eligibility", qualification:"Qualification"
+        };
+        const allKeys=[...new Set(vacDisplay.flatMap(r=>Object.keys(r)))].filter(k=>vacDisplay.some(r=>safe(r[k])));
+        document.getElementById("vacHead").innerHTML=allKeys.map(k=>`<th>${esc(colLabels[k]||humanizeSlug(k))}</th>`).join("");
+        document.getElementById("vacBody").innerHTML=vacDisplay.map((r,i)=>{
+          const isTotal=Object.values(r).some(v=>/^total$/i.test(safe(v)));
           const cls=isTotal?' style="background:#f0f9ff;font-weight:700;"':(i%2===0?' style="background:#fafafa;"':'');
           return `<tr${cls}>${allKeys.map(k=>`<td>${esc(safe(r[k]))}</td>`).join("")}</tr>`;
         }).join("");
         showCard("vacCard"); addNavPill("Vacancy Details","vacCard");
+      }
+
+      /* ── Extra Tables from JSON (tables array) ── */
+      const tables = job.tables || [];
+      if(Array.isArray(tables) && tables.length) {
+        tables.forEach((tbl, ti) => {
+          const tblTitle = safe(tbl.title || tbl.heading || `Table ${ti+1}`);
+          const rows = Array.isArray(tbl.rows) ? tbl.rows : [];
+          const headers = Array.isArray(tbl.headers) ? tbl.headers : (rows.length ? Object.keys(rows[0]) : []);
+          if(!rows.length && !headers.length) return;
+          const cardId = `extraTable${ti}`;
+          const card = document.createElement("div");
+          card.id = cardId;
+          card.className = "jp-card";
+          card.innerHTML = `<div class="jp-sec-head slate"><i class="fa-solid fa-table"></i> ${esc(tblTitle)}</div>
+            <div style="overflow-x:auto;padding:0;">
+              <table class="jp-vac-table">
+                <thead><tr>${headers.map(h=>`<th>${esc(safe(h))}</th>`).join("")}</tr></thead>
+                <tbody>${rows.map((r,i)=>`<tr style="${i%2===0?'background:#fafafa;':''}">${headers.map(h=>`<td>${esc(safe(Array.isArray(r)?r[headers.indexOf(h)]:r[h]))}</td>`).join("")}</tr>`).join("")}</tbody>
+              </table>
+            </div>`;
+          /* Insert after vacCard or before linksCard */
+          const anchor = document.getElementById("linksCard") || document.getElementById("selCard");
+          if(anchor && anchor.parentNode) anchor.parentNode.insertBefore(card, anchor);
+          addNavPill(tblTitle, cardId);
+        });
       }
 
       /* ── Salary ── */
