@@ -2403,105 +2403,80 @@
     var JSON_FILE = 'merged_sarkari_data.json';
     var MAX_ITEMS = 8;
 
+    /*
+      merged_sarkari_data.json actual structure:
+      {
+        "sarkariresultshine_jobs": [ { title, source_url, important_dates:{last_date}, apply_mode... } ],
+        "sarkariresult_categories": {
+          "SR_Latest_Jobs": [ { title, url, last_date, ... } ],
+          "SR_Admit_Card":  [ ... ],
+          "SR_Result":      [ ... ],
+          "SR_Admission":   [ ... ],
+          "SR_Answer_Key":  [ ... ]
+        }
+      }
+    */
+
     var CATEGORY_CONFIG = [
       {
         key: 'SR_Latest_Jobs',
         label: 'Latest Jobs',
         icon: 'fa-solid fa-briefcase',
         headClass: 'red',
-        viewUrl: 'view.html?section=SR_Latest_Jobs'
+        viewUrl: 'view.html?section=SR_Latest_Jobs',
+        source: 'sarkariresult_categories'
       },
       {
         key: 'SR_Admit_Card',
         label: 'Admit Card',
         icon: 'fa-solid fa-id-card',
         headClass: 'blue',
-        viewUrl: 'view.html?section=SR_Admit_Card'
+        viewUrl: 'view.html?section=SR_Admit_Card',
+        source: 'sarkariresult_categories'
       },
       {
         key: 'SR_Result',
         label: 'Result',
         icon: 'fa-solid fa-trophy',
         headClass: 'green',
-        viewUrl: 'view.html?section=SR_Result'
+        viewUrl: 'view.html?section=SR_Result',
+        source: 'sarkariresult_categories'
       },
       {
         key: 'SR_Admission',
         label: 'Admission',
         icon: 'fa-solid fa-graduation-cap',
         headClass: 'purple',
-        viewUrl: 'view.html?section=SR_Admission'
+        viewUrl: 'view.html?section=SR_Admission',
+        source: 'sarkariresult_categories'
       },
       {
         key: 'SR_Answer_Key',
         label: 'Answer Key',
         icon: 'fa-solid fa-key',
         headClass: 'orange',
-        viewUrl: 'view.html?section=SR_Answer_Key'
+        viewUrl: 'view.html?section=SR_Answer_Key',
+        source: 'sarkariresult_categories'
       },
       {
-        key: 'SR_Offline_Form',
+        key: 'sarkariresultshine_jobs',
         label: 'Offline Form',
         icon: 'fa-solid fa-file-pen',
         headClass: 'cyan',
-        viewUrl: 'view.html?section=SR_Offline_Form'
+        viewUrl: 'view.html?section=SR_Offline_Form',
+        source: 'root'
       }
     ];
-
-    /* ── Smart structure detector ────────────────────────────
-       Supports ALL of these JSON shapes:
-       1. { "data": { "SR_Latest_Jobs": [...] } }        ← data wrapper
-       2. { "SR_Latest_Jobs": [...] }                    ← direct keys
-       3. { "sections": { "SR_Latest_Jobs": [...] } }    ← sections wrapper
-       4. Array of section objects [{ key, items }]      ← array format
-    ─────────────────────────────────────────────────── */
-    function extractCategories(jsonData) {
-      if (!jsonData || typeof jsonData !== 'object') return {};
-
-      // Array format: [{ key: "SR_Latest_Jobs", items: [...] }, ...]
-      if (Array.isArray(jsonData)) {
-        var obj = {};
-        jsonData.forEach(function(sec) {
-          var k = sec.key || sec.id || sec.category || sec.name;
-          var v = sec.items || sec.jobs || sec.data || [];
-          if (k && Array.isArray(v)) obj[k] = v;
-        });
-        return obj;
-      }
-
-      // { data: { SR_Latest_Jobs: [...] } }
-      if (jsonData.data && typeof jsonData.data === 'object' && !Array.isArray(jsonData.data)) {
-        return jsonData.data;
-      }
-
-      // { sections: { SR_Latest_Jobs: [...] } }
-      if (jsonData.sections && typeof jsonData.sections === 'object' && !Array.isArray(jsonData.sections)) {
-        return jsonData.sections;
-      }
-
-      // { sections: [{ key, items }] }  — array under sections key
-      if (jsonData.sections && Array.isArray(jsonData.sections)) {
-        var obj2 = {};
-        jsonData.sections.forEach(function(sec) {
-          var k = sec.key || sec.id || sec.category || sec.name;
-          var v = sec.items || sec.jobs || sec.data || [];
-          if (k && Array.isArray(v)) obj2[k] = v;
-        });
-        return obj2;
-      }
-
-      // Direct keys: check if any CATEGORY_CONFIG key exists at root
-      var KNOWN_KEYS = ['SR_Latest_Jobs','SR_Admit_Card','SR_Result','SR_Admission','SR_Answer_Key','SR_Offline_Form'];
-      var hasDirectKey = KNOWN_KEYS.some(function(k) { return Array.isArray(jsonData[k]); });
-      if (hasDirectKey) return jsonData;
-
-      // Last resort: return whole object and let render try
-      return jsonData;
-    }
 
     /* ── Helpers ─────────────────────────────────────────── */
     function formatDate(dateStr) {
       if (!dateStr) return '';
+      /* Handle DD-MM-YYYY format (e.g. "28-06-2026") */
+      var dmyMatch = dateStr.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+      if (dmyMatch) {
+        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        return dmyMatch[1] + ' ' + months[parseInt(dmyMatch[2], 10) - 1] + ' ' + dmyMatch[3];
+      }
       try {
         var d = new Date(dateStr);
         if (isNaN(d.getTime())) return dateStr;
@@ -2515,39 +2490,40 @@
     function isSoon(dateStr) {
       if (!dateStr) return false;
       try {
-        var d   = new Date(dateStr);
-        var now = new Date();
+        var d;
+        var dmyMatch = dateStr.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+        if (dmyMatch) {
+          d = new Date(dmyMatch[3] + '-' + dmyMatch[2] + '-' + dmyMatch[1]);
+        } else {
+          d = new Date(dateStr);
+        }
+        var now  = new Date();
         var diff = (d - now) / (1000 * 60 * 60 * 24);
         return diff >= 0 && diff <= 7;
       } catch(e) { return false; }
     }
 
-    /* Normalize a single job item — handles varied field names */
+    /* Normalise one job item — handles both sarkariresult & sarkariresultshine formats */
     function normalizeJob(job) {
       if (!job || typeof job !== 'object') return null;
+
       var title = (
-        job.title || job.job_title || job.name ||
-        (job.basic_details && job.basic_details.job_title) || ''
-      ).trim();
+        job.title || job.job_title || job.name || ''
+      ).replace(/ -\s*$/, '').trim();
       if (!title) return null;
 
+      /* Date: sarkariresult uses last_date directly;
+         sarkariresultshine uses important_dates.last_date */
       var lastDate = (
         job.last_date ||
-        job.lastDate ||
-        (job.important_dates && (
-          job.important_dates.last_date ||
-          job.important_dates.last_date_to_apply ||
-          job.important_dates.last_date_apply ||
-          job.important_dates.closing_date
-        )) || ''
+        (job.important_dates && job.important_dates.last_date) ||
+        ''
       ).trim();
 
+      /* URL */
       var url = (
         job.source_url || job.url || job.link ||
-        (job.important_links && (
-          job.important_links.apply_online ||
-          job.important_links.official_website
-        )) || '#'
+        job.official_website_link || '#'
       ).trim();
 
       var slug = (job.slug || '').trim();
@@ -2558,7 +2534,6 @@
 
     function buildCard(cfg, items) {
       var list = items.slice(0, MAX_ITEMS);
-
       var liHtml = list.map(function(rawJob) {
         var job = normalizeJob(rawJob);
         if (!job) return '';
@@ -2569,12 +2544,14 @@
           ? '<span class="' + dateClass + '">📅 ' + dateLabel + '</span>'
           : '';
 
-        return '<li><a href="' + job.href + '" class="sr-job-link"' +
-               (job.url !== '#' ? ' target="_blank" rel="noopener"' : '') + '>' +
-               '<span class="sr-dot"></span>' +
-               '<span class="sr-job-title">' + job.title + '</span>' +
-               dateBadge +
-               '</a></li>';
+        return (
+          '<li><a href="' + job.href + '" class="sr-job-link"' +
+          (job.url !== '#' ? ' target="_blank" rel="noopener"' : '') + '>' +
+          '<span class="sr-dot"></span>' +
+          '<span class="sr-job-title">' + job.title + '</span>' +
+          dateBadge +
+          '</a></li>'
+        );
       }).filter(Boolean).join('');
 
       if (!liHtml) return '';
@@ -2599,12 +2576,21 @@
       var grid = document.getElementById('sr-sections-grid');
       if (!grid) return;
 
-      var categories = extractCategories(jsonData);
+      /* Extract both data sources from JSON */
+      var srCategories  = jsonData.sarkariresult_categories || {};
+      var shineJobs     = jsonData.sarkariresultshine_jobs  || [];
+
       var html = '';
 
       CATEGORY_CONFIG.forEach(function(cfg) {
-        var items = categories[cfg.key];
-        if (!Array.isArray(items)) items = [];
+        var items;
+        if (cfg.source === 'root') {
+          /* Offline Form — from sarkariresultshine_jobs array */
+          items = shineJobs;
+        } else {
+          /* All other cards — from sarkariresult_categories object */
+          items = srCategories[cfg.key] || [];
+        }
         if (items.length > 0) {
           html += buildCard(cfg, items);
         }
@@ -2613,15 +2599,14 @@
       if (html) {
         grid.innerHTML = html;
       } else {
-        /* Debug: log what keys were actually found */
-        console.warn('[SR Sections] No matching keys found. Available keys:', Object.keys(categories));
+        console.warn('[SR] No data found. Keys in JSON:', Object.keys(jsonData));
         var wrap = document.getElementById('sr-dynamic-wrap');
         if (wrap) wrap.style.display = 'none';
       }
     }
 
     function loadData() {
-      var CACHE_KEY = '__sr_sections_v2_cache';
+      var CACHE_KEY = '__sr_merged_v1';
       var CACHE_TTL = 5 * 60 * 1000;
 
       try {
@@ -2634,7 +2619,7 @@
 
       fetch(JSON_FILE, { cache: 'no-cache' })
         .then(function(res) {
-          if (!res.ok) throw new Error('HTTP ' + res.status + ' — ' + JSON_FILE + ' not found');
+          if (!res.ok) throw new Error('HTTP ' + res.status + ' — ' + JSON_FILE);
           return res.json();
         })
         .then(function(data) {
@@ -2644,7 +2629,7 @@
           render(data);
         })
         .catch(function(err) {
-          console.warn('[SR Sections] Load failed:', err.message);
+          console.warn('[SR] Load failed:', err.message);
           var wrap = document.getElementById('sr-dynamic-wrap');
           if (wrap) wrap.style.display = 'none';
         });
