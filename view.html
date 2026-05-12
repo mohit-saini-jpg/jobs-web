@@ -254,10 +254,10 @@
     "SR_Offline_Form": { id: "SR_Offline_Form",  title: "📋 Offline Form",                  param: "SR_Offline_Form" },
   };
 
-  /* Build sections from sarkari_result_clean_final.json */
+  /* Build sections from merged_sarkari_data.json */
   function __buildSRSections(rawData) {
     const sections = [];
-    const categories = rawData.data || rawData || {};
+    const categories = (rawData.sarkariresult_data && rawData.sarkariresult_data.data) || rawData.data || rawData || {};
     for (const [catKey, meta] of Object.entries(__SR_CAT_META)) {
       const jobs = categories[catKey];
       if (!Array.isArray(jobs) || !jobs.length) continue;
@@ -282,13 +282,13 @@
   async function getSRSectionsV() {
     if (__cachedSRDataV) return __cachedSRDataV;
     try {
-      const resp = await fetch("sarkari_result_clean_final.json", { cache: "no-cache" });
+      const resp = await fetch("merged_sarkari_data.json", { cache: "no-cache" });
       if (!resp.ok) throw new Error("HTTP " + resp.status);
       const raw = await resp.json();
       __cachedSRDataV = __buildSRSections(raw);
       return __cachedSRDataV;
     } catch(e) {
-      console.error("[TSJ view] Failed to load sarkari_result_clean_final.json:", e);
+      console.error("[TSJ view] Failed to load merged_sarkari_data.json:", e);
       return [];
     }
   }
@@ -623,7 +623,7 @@
                  let sec = null;
 
                  if (isSRSection) {
-                   // Load from sarkari_result_clean_final.json
+                   // Load from merged_sarkari_data.json
                    const srSections = await getSRSectionsV();
                    sec = srSections.find(s => s.id === sectionParam || s.param === sectionParam);
                    // Update page title with nice label
