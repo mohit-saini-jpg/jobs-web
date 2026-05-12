@@ -1040,6 +1040,7 @@
     .sr-card-head.purple { background: linear-gradient(135deg,#7c3aed,#6d28d9); }
     .sr-card-head.orange { background: linear-gradient(135deg,#f97316,#ea580c); }
     .sr-card-head.teal   { background: linear-gradient(135deg,#0d9488,#0f766e); }
+    .sr-card-head.cyan   { background: linear-gradient(135deg,#0891b2,#0e7490); }
     .sr-card-body {
       flex: 1;
       overflow: hidden;
@@ -1844,11 +1845,12 @@
 
 
         <!-- ============================================================
-             SARKARI RESULT DYNAMIC SECTION (from sarkari_result_clean_final.json)
+             SARKARI RESULT DYNAMIC SECTION (from merged_sarkari_data.json)
         ============================================================ -->
         <div id="sr-dynamic-wrap">
           <div id="sr-sections-grid" class="sr-sections-grid">
             <!-- Cards rendered by inline script below -->
+            <div class="sr-card"><div class="sr-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div></div>
             <div class="sr-card"><div class="sr-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div></div>
             <div class="sr-card"><div class="sr-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div></div>
           </div>
@@ -2391,14 +2393,14 @@
   })();
   </script>
   <!-- ============================================================
-       SARKARI RESULT DYNAMIC SECTIONS — loads sarkari_result_clean_final.json
+       SARKARI RESULT DYNAMIC SECTIONS — loads merged_sarkari_data.json
   ============================================================ -->
   <script>
   (function initSarkariResultSections() {
     'use strict';
 
     /* ── Config ──────────────────────────────────────────── */
-    var JSON_FILE = 'sarkari_result_clean_final.json';
+    var JSON_FILE = 'merged_sarkari_data.json';
     var MAX_ITEMS = 8; // max items per category card
 
     var CATEGORY_CONFIG = [
@@ -2436,6 +2438,13 @@
         icon: 'fa-solid fa-key',
         headClass: 'orange',
         viewUrl: 'view.html?section=SR_Answer_Key'
+      },
+      {
+        key: 'SR_Offline_Form',
+        label: 'Offline Form',
+        icon: 'fa-solid fa-file-pen',
+        headClass: 'cyan',
+        viewUrl: 'view.html?section=SR_Offline_Form'
       }
     ];
 
