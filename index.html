@@ -2528,21 +2528,32 @@
 
       var slug = (job.slug || '').trim();
 
-      /* For offline/sarkariresultshine jobs (no slug), generate one */
-      var href;
-      if (slug) {
-        href = 'job.html?slug=' + encodeURIComponent(slug);
-      } else if (job.source && job.source === 'sarkariresultshine.com') {
-        /* Generate offline slug matching job.html logic */
-        var offlineSlug = 'offline-' + title
+      /* Generate a slug from title if not present */
+      function makeSlug(t, prefix) {
+        var base = (prefix ? prefix + '-' : '') + t
           .toLowerCase()
           .replace(/[^a-z0-9\s-]/g, '')
           .replace(/[\s-]+/g, '-')
           .slice(0, 120)
           .replace(/^-+|-+$/g, '');
-        href = 'job.html?slug=' + encodeURIComponent(offlineSlug);
+        return base;
+      }
+
+      /* ALL items → job.html?slug= for internal detail page */
+      var href;
+      if (slug) {
+        href = 'job.html?slug=' + encodeURIComponent(slug);
+      } else if (job.source && job.source === 'sarkariresultshine.com') {
+        href = 'job.html?slug=' + encodeURIComponent(makeSlug(title, 'offline'));
       } else {
-        href = url;
+        /* sarkariresult_categories items (SR_Latest_Jobs, SR_Admit_Card, etc.) */
+        var generatedSlug = makeSlug(title, '');
+        if (generatedSlug) {
+          /* Store the external URL so job.html can link out */
+          href = 'job.html?slug=' + encodeURIComponent(generatedSlug) + '&ref=' + encodeURIComponent(url);
+        } else {
+          href = url;
+        }
       }
 
       return { title: title, lastDate: lastDate, url: url, href: href };
