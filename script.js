@@ -515,38 +515,6 @@
     });
   }
 
-  /* Fallback: merged_sarkari_data.json SR categories → dynamic-sections cards */
-  async function getJobsSectionsFallback() {
-    try {
-      const raw = await getJSON("merged_sarkari_data.json");
-      const srCats = (raw.sarkariresult_data && raw.sarkariresult_data.data)
-                   || raw.sarkariresult_categories || {};
-      const META = [
-        { key:'SR_Latest_Jobs', title:'🔔 Latest Jobs',   color:'linear-gradient(135deg,#dc2626,#b91c1c)', icon:'fa-solid fa-briefcase',       id:'SR_Latest_Jobs' },
-        { key:'SR_Admit_Card',  title:'🪪 Admit Card',    color:'linear-gradient(135deg,#1a56db,#1e40af)', icon:'fa-solid fa-id-card',          id:'SR_Admit_Card' },
-        { key:'SR_Result',      title:'🏆 Result',        color:'linear-gradient(135deg,#059669,#047857)', icon:'fa-solid fa-trophy',           id:'SR_Result' },
-        { key:'SR_Admission',   title:'🎓 Admission',     color:'linear-gradient(135deg,#7c3aed,#6d28d9)', icon:'fa-solid fa-graduation-cap',   id:'SR_Admission' },
-        { key:'SR_Answer_Key',  title:'🔑 Answer Key',    color:'linear-gradient(135deg,#f97316,#ea580c)', icon:'fa-solid fa-key',              id:'SR_Answer_Key' },
-      ];
-      const sections = [];
-      META.forEach(m => {
-        const jobs = srCats[m.key];
-        if (!Array.isArray(jobs) || !jobs.length) return;
-        const items = jobs.map(job => {
-          const title = safe(job.title || job.job_title || job.name || '');
-          if (!title) return null;
-          const jslug = job.slug || slugifyTitle(title);
-          const last  = safe(job.last_date || (job.important_dates && job.important_dates.last_date) || '');
-          return { name: title, slug: jslug, date: last,
-                   url: 'job.html?slug=' + encodeURIComponent('sr_' + m.key.toLowerCase() + '-' + jslug) + '&section=' + encodeURIComponent(m.id) };
-        }).filter(Boolean);
-        if (!items.length) return;
-        sections.push({ id: m.id, title: m.title, color: m.color, icon: m.icon, viewMoreType: 'list', items });
-      });
-      return { sections };
-    } catch(_) { return { sections: [] }; }
-  }
-
   async function renderHomepageSections() {
     const wrap = $("#dynamic-sections");
     if (!wrap) return;
@@ -556,13 +524,10 @@
     try { data = await getJobsSections(); }
     catch (_) { fetchFailed = true; }
 
-    /* Fallback: agar Complete_Jobs_Full_Data.json missing/empty ho */
-    if (fetchFailed || !Array.isArray(data.sections) || !data.sections.length) {
-      try { data = await getJobsSectionsFallback(); fetchFailed = false; } catch(_) {}
-    }
-
     wrap.innerHTML = "";
 
+    // ISSUE-009: surface a visible message when the data file failed to load
+    // instead of silently rendering a blank homepage.
     if (fetchFailed || !Array.isArray(data.sections) || !data.sections.length) {
       const note = document.createElement("div");
       note.className = "seo-block";
