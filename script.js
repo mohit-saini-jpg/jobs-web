@@ -628,6 +628,126 @@
     });
   }
 
+  /* ─────────────────────────────────────────────────────────────────
+     renderDailyUpdatesSections()
+     Loads dailyupdates.json and appends each section as a section-card
+     BELOW the existing #dynamic-sections cards.
+     • Fully automatic: add/remove sections in JSON → auto updates homepage.
+     • Uses a separate container #daily-updates-sections so it never
+       overwrites the jobs cards above.
+  ───────────────────────────────────────────────────────────────── */
+  function buildSectionCard(sec, wrap) {
+    const title     = safe(sec.title) || "Updates";
+    const baseColor = safe(sec.color) || "#0284c7";
+    const icon      = safe(sec.icon)  || "fa-solid fa-briefcase";
+
+    const bgStyle = baseColor.includes("gradient")
+      ? `background: ${baseColor};`
+      : `background-color: ${baseColor}; background-image: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(0,0,0,0.15) 100%);`;
+
+    const sectionKey = safe(sec.id) || safe(sec.title);
+    let moreHref = "";
+    if (safe(sec.viewMoreUrl)) {
+      moreHref = openInternal(sec.viewMoreUrl, title);
+    } else if (safe(sec.viewMoreType).toLowerCase() === "list" && sectionKey) {
+      moreHref = `view.html?section=${encodeURIComponent(sectionKey)}`;
+    }
+
+    const card = document.createElement("article");
+    card.className = "section-card";
+    card.innerHTML = `
+      <div class="section-head" style="${bgStyle} text-shadow: 0 1px 2px rgba(0,0,0,0.15); border-bottom: 1px solid rgba(0,0,0,0.05);">
+        <div class="left">
+          <i class="${icon}"></i>
+          <span>${title}</span>
+        </div>
+        ${moreHref ? `<a class="view-all-head" href="${moreHref}">View All</a>` : ""}
+      </div>
+      <div class="section-body">
+        <div class="section-list-wrap">
+          <div class="section-list"></div>
+        </div>
+        ${moreHref ? `<a class="view-all" href="${moreHref}">More <i class="fa-solid fa-arrow-right"></i></a>` : ""}
+      </div>
+    `;
+
+    const list     = $(".section-list", card);
+    const listWrap = $(".section-list-wrap", card);
+    const items = Array.isArray(sec.items)
+      ? sec.items.filter(i => !isGarbageLink(i)).slice(0, 10)
+      : [];
+
+    items.forEach((it) => {
+      const name = safe(it.name) || "Open";
+      let url = it.url || it.link || "";
+      if (!url && it.slug) {
+        url = "job.html?slug=" + encodeURIComponent(it.slug) + "&section=" + encodeURIComponent(sectionKey);
+      }
+      if (!url) return;
+
+      const external = !!it.external;
+      const a = document.createElement("a");
+      a.className = "section-link";
+      if (url.startsWith("job.html")) {
+        a.href = url;
+        a.setAttribute("data-bypass-gate", "1");
+        if (it.slug) a.setAttribute("data-slug", it.slug);
+      } else {
+        a.href = buildRedirectUrl(url, name, sectionKey) || normalizeUrl(url);
+      }
+      a.setAttribute("data-redirect-label", name);
+      if (external) { a.target = "_blank"; a.rel = "noopener"; }
+
+      const rawDate = safe(it.date || "");
+      let displayDate = rawDate;
+      if (rawDate.toLowerCase().includes("please refer") || rawDate.toLowerCase().includes("days from") || rawDate.toLowerCase().includes("date of publication")) {
+        displayDate = "Check Official Notification";
+      } else if (rawDate.length > 35) {
+        displayDate = rawDate.slice(0, 32) + "…";
+      }
+      a.innerHTML = `<span class="t">${name}${displayDate ? ` <span class="d">| ${displayDate}</span>` : ""}</span>`;
+      list.appendChild(a);
+    });
+
+    wrap.appendChild(card);
+
+    if (items.length > 5 && listWrap) {
+      list.addEventListener("scroll", () => {
+        const atEnd = list.scrollHeight - list.scrollTop <= list.clientHeight + 8;
+        listWrap.classList.toggle("scrolled-to-end", atEnd);
+      }, { passive: true });
+    } else if (listWrap) {
+      listWrap.classList.add("scrolled-to-end");
+    }
+  }
+
+  async function renderDailyUpdatesSections() {
+    // Only run on homepage
+    if (!(page === "index.html" || page === "")) return;
+
+    // Find or create the daily-updates container (placed right after #dynamic-sections)
+    let dailyWrap = document.getElementById("daily-updates-sections");
+    if (!dailyWrap) {
+      const dynSec = document.getElementById("dynamic-sections");
+      if (!dynSec) return;
+      dailyWrap = document.createElement("div");
+      dailyWrap.id = "daily-updates-sections";
+      dailyWrap.className = "dynamic-sections-row";
+      dynSec.parentNode.insertBefore(dailyWrap, dynSec.nextSibling);
+    }
+    dailyWrap.innerHTML = "";
+
+    let data;
+    try {
+      data = await getJSON("dailyupdates.json");
+    } catch (_) {
+      return; // silently skip if file not found
+    }
+
+    const sections = Array.isArray(data.sections) ? data.sections : [];
+    sections.forEach(sec => buildSectionCard(sec, dailyWrap));
+  }
+
   // ✅ DISABLED — home-quicklinks-wrap section permanently removed from all pages
   async function renderHomeQuickLinks() { return; }
   async function _renderHomeQuickLinks_bak() {
@@ -1721,6 +1841,7 @@
 
     if (page === "index.html" || page === "") {
       await renderHomepageSections();
+      await renderDailyUpdatesSections();   // ← dailyupdates.json sections (below dynamic-sections)
       removeHomeMainPageCtaLinks();
     }
     
