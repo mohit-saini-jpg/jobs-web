@@ -2532,7 +2532,12 @@
       var href;
       if (slug) {
         href = 'job.html?slug=' + encodeURIComponent(slug);
-      } else if (job.source && job.source === 'sarkariresultshine.com') {
+      } else if (
+        /* Case-insensitive source check */
+        (job.source && job.source.toLowerCase().indexOf('sarkariresultshine') !== -1) ||
+        /* Sarkariresultshine-specific fields exist (source field missing ho tab bhi kaam kare) */
+        job.important_dates !== undefined || job.apply_mode !== undefined
+      ) {
         /* Generate offline slug matching job.html logic */
         var offlineSlug = 'offline-' + title
           .toLowerCase()
@@ -2540,9 +2545,16 @@
           .replace(/[\s-]+/g, '-')
           .slice(0, 120)
           .replace(/^-+|-+$/g, '');
-        href = 'job.html?slug=' + encodeURIComponent(offlineSlug);
-      } else {
+        /* Guard: agar slug bilkul empty ban jaaye to href '#' rakho */
+        if (!offlineSlug || offlineSlug === 'offline-') {
+          href = '#';
+        } else {
+          href = 'job.html?slug=' + encodeURIComponent(offlineSlug);
+        }
+      } else if (url && url !== '#') {
         href = url;
+      } else {
+        href = '#';
       }
 
       return { title: title, lastDate: lastDate, url: url, href: href };
