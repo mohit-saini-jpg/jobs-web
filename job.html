@@ -948,11 +948,17 @@
       const _refUrl = (() => {
         try { return new URLSearchParams(window.location.search).get('ref') || ''; } catch(_){ return ''; }
       })();
+      /* sarkariresult / sarkariresultshine URLs Important Links mein NAHI dikhne chahiye */
+      function isSRUrl(u) {
+        return u && (u.includes('sarkariresult.com') || u.includes('sarkariresultshine.com'));
+      }
+      function officialOnly(u) { return isSRUrl(u) ? '' : u; }
+
       const _fallbackUrl = normalizeUrl(
-        (row && row.applyOnline)     ||
-        (row && row.officialWebsite) ||
-        (row && row.destUrl)         ||
-        _refUrl                      || ''
+        officialOnly(row && row.applyOnline)     ||
+        officialOnly(row && row.officialWebsite) ||
+        officialOnly(row && row.destUrl)         ||
+        officialOnly(_refUrl)                    || ''
       );
 
       /* ── Smart link categorization by title keyword ── */
@@ -994,21 +1000,22 @@
       const usefulLinksRaw = (row && row.usefulLinks) || [];
 
       /* ── Static row fields (SUPPLEMENTAL — only if useful_links missing that link) ── */
+      /* officialOnly() se SR/SRS URLs filter ho jaate hain — wo Important Links mein nahi aate */
       const staticLinkDefs = [
-        { href: row && row.applyOnline,           label: 'Apply Online',             icon: 'fa-paper-plane',      cls: 'jp-btn-green',  sub: 'Apply Now'    },
-        { href: row && row.candidateLogin,        label: 'Candidate Login',          icon: 'fa-right-to-bracket', cls: 'jp-btn-green',  sub: 'Login Here'   },
-        { href: row && row.notifPdf,              label: 'Notification PDF',         icon: 'fa-file-pdf',         cls: 'jp-btn-blue',   sub: 'View PDF'     },
-        { href: row && row.officialNotifPdfLink,  label: 'Official Notification',    icon: 'fa-file-pdf',         cls: 'jp-btn-blue',   sub: 'Download PDF' },
-        { href: row && row.formPdfFreeLink,       label: 'Download Form (Free PDF)', icon: 'fa-file-arrow-down',  cls: 'jp-btn-orange', sub: 'Free PDF'     },
-        { href: row && row.admitCard,             label: 'Admit Card',               icon: 'fa-id-card',          cls: 'jp-btn-orange', sub: 'Download Now' },
-        { href: row && row.result,                label: 'Result',                   icon: 'fa-trophy',           cls: 'jp-btn-orange', sub: 'View Result'  },
-        { href: row && row.answerKey,             label: 'Answer Key',               icon: 'fa-key',              cls: 'jp-btn-blue',   sub: 'Download Now' },
-        { href: row && row.syllabus,              label: 'Syllabus',                 icon: 'fa-book-open',        cls: 'jp-btn-blue',   sub: 'Download Now' },
-        { href: row && row.meritList,             label: 'Merit List',               icon: 'fa-list-ol',          cls: 'jp-btn-orange', sub: 'View List'    },
-        { href: row && row.scoreCard,             label: 'Score Card',               icon: 'fa-chart-bar',        cls: 'jp-btn-orange', sub: 'Download Now' },
-        { href: row && row.examCity,              label: 'Exam City Details',        icon: 'fa-location-dot',     cls: 'jp-btn-blue',   sub: 'Check City'   },
-        { href: row && row.officialWebsite,       label: 'Official Website',         icon: 'fa-globe',            cls: 'jp-btn-red',    sub: 'Visit Now'    },
-        { href: row && row.officialWebsiteLink,   label: 'Official Website',         icon: 'fa-globe',            cls: 'jp-btn-red',    sub: 'Visit Now'    },
+        { href: officialOnly(row && row.applyOnline),          label: 'Apply Online',             icon: 'fa-paper-plane',      cls: 'jp-btn-green',  sub: 'Apply Now'    },
+        { href: officialOnly(row && row.candidateLogin),       label: 'Candidate Login',          icon: 'fa-right-to-bracket', cls: 'jp-btn-green',  sub: 'Login Here'   },
+        { href: officialOnly(row && row.notifPdf),             label: 'Notification PDF',         icon: 'fa-file-pdf',         cls: 'jp-btn-blue',   sub: 'View PDF'     },
+        { href: officialOnly(row && row.officialNotifPdfLink), label: 'Official Notification',    icon: 'fa-file-pdf',         cls: 'jp-btn-blue',   sub: 'Download PDF' },
+        { href: officialOnly(row && row.formPdfFreeLink),      label: 'Download Form (Free PDF)', icon: 'fa-file-arrow-down',  cls: 'jp-btn-orange', sub: 'Free PDF'     },
+        { href: officialOnly(row && row.admitCard),            label: 'Admit Card',               icon: 'fa-id-card',          cls: 'jp-btn-orange', sub: 'Download Now' },
+        { href: officialOnly(row && row.result),               label: 'Result',                   icon: 'fa-trophy',           cls: 'jp-btn-orange', sub: 'View Result'  },
+        { href: officialOnly(row && row.answerKey),            label: 'Answer Key',               icon: 'fa-key',              cls: 'jp-btn-blue',   sub: 'Download Now' },
+        { href: officialOnly(row && row.syllabus),             label: 'Syllabus',                 icon: 'fa-book-open',        cls: 'jp-btn-blue',   sub: 'Download Now' },
+        { href: officialOnly(row && row.meritList),            label: 'Merit List',               icon: 'fa-list-ol',          cls: 'jp-btn-orange', sub: 'View List'    },
+        { href: officialOnly(row && row.scoreCard),            label: 'Score Card',               icon: 'fa-chart-bar',        cls: 'jp-btn-orange', sub: 'Download Now' },
+        { href: officialOnly(row && row.examCity),             label: 'Exam City Details',        icon: 'fa-location-dot',     cls: 'jp-btn-blue',   sub: 'Check City'   },
+        { href: officialOnly(row && row.officialWebsite),      label: 'Official Website',         icon: 'fa-globe',            cls: 'jp-btn-red',    sub: 'Visit Now'    },
+        { href: officialOnly(row && row.officialWebsiteLink),  label: 'Official Website',         icon: 'fa-globe',            cls: 'jp-btn-red',    sub: 'Visit Now'    },
       ];
 
       const linksContainer = document.getElementById('linksActions');
@@ -1027,6 +1034,7 @@
           linkArr.forEach((rawUrl, idx) => {
             const href = normalizeUrl(safe(rawUrl));
             if (!href || href === '#') return;
+            if (isSRUrl(href)) return;         /* sarkariresult/sarkariresultshine links skip */
             if (seenHrefs.has(href)) return;   /* duplicate href skip */
             seenHrefs.add(href);
             /* Multiple URLs same title mein → (1), (2) suffix */
