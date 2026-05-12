@@ -955,53 +955,111 @@
         _refUrl                      || ''
       );
 
-      const linkDefs = [
-        { key: 'applyOnline',      href: row && row.applyOnline,       label: 'Apply Online',            icon: 'fa-paper-plane',         cls: 'jp-btn-green' },
-        { key: 'candidateLogin',   href: row && row.candidateLogin,    label: 'Candidate Login',         icon: 'fa-right-to-bracket',    cls: 'jp-btn-green' },
-        { key: 'notifPdf',         href: row && row.notifPdf,          label: 'Notification PDF',        icon: 'fa-file-pdf',            cls: 'jp-btn-blue'  },
-        { key: 'admitCard',        href: row && row.admitCard,         label: 'Admit Card',              icon: 'fa-id-card',             cls: 'jp-btn-orange'},
-        { key: 'result',           href: row && row.result,            label: 'Result',                  icon: 'fa-trophy',              cls: 'jp-btn-orange'},
-        { key: 'answerKey',        href: row && row.answerKey,         label: 'Answer Key',              icon: 'fa-key',                 cls: 'jp-btn-blue'  },
-        { key: 'syllabus',         href: row && row.syllabus,          label: 'Syllabus',                icon: 'fa-book-open',           cls: 'jp-btn-blue'  },
-        { key: 'meritList',        href: row && row.meritList,         label: 'Merit List',              icon: 'fa-list-ol',             cls: 'jp-btn-orange'},
-        { key: 'scoreCard',        href: row && row.scoreCard,         label: 'Score Card',              icon: 'fa-chart-bar',           cls: 'jp-btn-orange'},
-        { key: 'examCity',         href: row && row.examCity,          label: 'Exam City Details',       icon: 'fa-location-dot',        cls: 'jp-btn-blue'  },
-        { key: 'officialWebsite',  href: row && row.officialWebsite,   label: 'Official Website',        icon: 'fa-globe',               cls: 'jp-btn-red'   },
+      /* ── Smart link categorization by title keyword ── */
+      function categorizeLinkByTitle(title) {
+        const t = title.toLowerCase();
+        if (/apply\s*online|apply\s*link|registration\s*link|apply\s*form|apply\s*for\s*correction|apply\s*through\s*otr|apply\s*via|otr\s*registration|for\s*otr|sewayojan\s*reg|uppsc.*otr|apply.*sub\s*inspector|apply.*constable|apply.*manager|apply.*inspector|apply.*lucknow|apply.*noida|apply.*mains|apply.*ug|apply.*pg|apply.*re\s*open|apply.*other/i.test(t))
+          return { icon: 'fa-paper-plane',          cls: 'jp-btn-green',  sub: 'Apply Now' };
+        if (/candidate\s*login|login\s*portal|dashboard\s*login|uppsc.*dash|find.*registration/i.test(t))
+          return { icon: 'fa-right-to-bracket',     cls: 'jp-btn-green',  sub: 'Login Here' };
+        if (/admit\s*card|hall\s*ticket|call\s*letter|download\s*admit|pre\s*admit|second.*phase.*admit|tier.*admit|pet.*admit/i.test(t))
+          return { icon: 'fa-id-card',              cls: 'jp-btn-orange', sub: 'Download Now' };
+        if (/exam\s*city|exam\s*centre|slot\s*booking|self\s*slot/i.test(t))
+          return { icon: 'fa-location-dot',         cls: 'jp-btn-blue',   sub: 'Check City' };
+        if (/answer\s*key|final\s*answer\s*key|response\s*sheet|raise\s*objection|objection\s*link|for\s*answer\s*key|paper.*answer\s*key|tier.*answer\s*key|second.*answer\s*key/i.test(t))
+          return { icon: 'fa-key',                  cls: 'jp-btn-blue',   sub: 'Download Now' };
+        if (/result|merit\s*list|selection\s*list|score\s*card|cutoff|cut.?off|download.*result|first.*phase.*result|paper.*result|tier.*result|eligibility.*result|final.*result|ias.*result|ifs.*result|jee.*result|bseb.*result|upsssc.*result/i.test(t))
+          return { icon: 'fa-trophy',               cls: 'jp-btn-orange', sub: 'View Result' };
+        if (/syllabus|exam\s*pattern|previous\s*paper|practice\s*set|pgt\s*syllabus/i.test(t))
+          return { icon: 'fa-book-open',            cls: 'jp-btn-blue',   sub: 'Download Now' };
+        if (/notification|official\s*notif|download\s*notif|short\s*notice|detailed\s*advert|info\s*brochure|exam\s*notice|mains.*notice|revised.*notif|date.*notice|correction.*notif|re.*schedule|re.*open.*notice|compartment.*notice|download\s*go|download.*notice/i.test(t))
+          return { icon: 'fa-file-pdf',             cls: 'jp-btn-blue',   sub: 'View PDF' };
+        if (/counselling|seat\s*allotment|choice\s*filling|admission\s*form/i.test(t))
+          return { icon: 'fa-graduation-cap',       cls: 'jp-btn-blue',   sub: 'Counselling' };
+        if (/interview\s*letter|dv\s*schedule|joining\s*letter/i.test(t))
+          return { icon: 'fa-calendar-check',       cls: 'jp-btn-orange', sub: 'Download Now' };
+        if (/correction|edit\s*form|form\s*edit|modify.*form|how\s*to.*edit/i.test(t))
+          return { icon: 'fa-pen-to-square',        cls: 'jp-btn-blue',   sub: 'Edit Form' };
+        if (/official\s*website|official\s*portal|visit\s*website|ctet\s*official/i.test(t))
+          return { icon: 'fa-globe',                cls: 'jp-btn-red',    sub: 'Visit Now' };
+        if (/vacancy|revised.*vacancy|vacancies/i.test(t))
+          return { icon: 'fa-users',                cls: 'jp-btn-blue',   sub: 'View Details' };
+        if (/how\s*to|video|hindi.*video/i.test(t))
+          return { icon: 'fa-circle-play',          cls: 'jp-btn-red',    sub: 'Watch Now' };
+        /* default */
+        return { icon: 'fa-link',                   cls: 'jp-btn-blue',   sub: 'Click Here' };
+      }
+
+      /* ── Build merged links list from row fields + useful_links ── */
+      /* Priority-ordered static fields */
+      const staticLinkDefs = [
+        { key: 'applyOnline',     href: row && row.applyOnline,      label: 'Apply Online',        icon: 'fa-paper-plane',      cls: 'jp-btn-green',  sub: 'Apply Now'     },
+        { key: 'candidateLogin',  href: row && row.candidateLogin,   label: 'Candidate Login',     icon: 'fa-right-to-bracket', cls: 'jp-btn-green',  sub: 'Login Here'    },
+        { key: 'notifPdf',        href: row && row.notifPdf,         label: 'Notification PDF',    icon: 'fa-file-pdf',         cls: 'jp-btn-blue',   sub: 'View PDF'      },
+        { key: 'admitCard',       href: row && row.admitCard,        label: 'Admit Card',          icon: 'fa-id-card',          cls: 'jp-btn-orange', sub: 'Download Now'  },
+        { key: 'result',          href: row && row.result,           label: 'Result',              icon: 'fa-trophy',           cls: 'jp-btn-orange', sub: 'View Result'   },
+        { key: 'answerKey',       href: row && row.answerKey,        label: 'Answer Key',          icon: 'fa-key',              cls: 'jp-btn-blue',   sub: 'Download Now'  },
+        { key: 'syllabus',        href: row && row.syllabus,         label: 'Syllabus',            icon: 'fa-book-open',        cls: 'jp-btn-blue',   sub: 'Download Now'  },
+        { key: 'meritList',       href: row && row.meritList,        label: 'Merit List',          icon: 'fa-list-ol',          cls: 'jp-btn-orange', sub: 'View List'     },
+        { key: 'scoreCard',       href: row && row.scoreCard,        label: 'Score Card',          icon: 'fa-chart-bar',        cls: 'jp-btn-orange', sub: 'Download Now'  },
+        { key: 'examCity',        href: row && row.examCity,         label: 'Exam City Details',   icon: 'fa-location-dot',     cls: 'jp-btn-blue',   sub: 'Check City'    },
+        { key: 'officialWebsite', href: row && row.officialWebsite,  label: 'Official Website',    icon: 'fa-globe',            cls: 'jp-btn-red',    sub: 'Visit Now'     },
       ];
 
-      /* Useful links from LINK.txt array */
-      const extraLinks = (row && row.usefulLinks) || [];
+      /* Useful links from JSON (useful_links array) — support both string and array of links */
+      const usefulLinksRaw = (row && row.usefulLinks) || [];
 
       const linksContainer = document.getElementById('linksActions');
       if (linksContainer) {
-        let linksHtml = linkDefs
-          .filter(ld => ld.href && ld.href.trim() && ld.href !== '#')
-          .map(ld =>
-            `<a href="${normalizeUrl(ld.href)}" target="_blank" rel="noopener" class="jp-btn ${ld.cls}">
-              <span><i class="fa-solid ${ld.icon}"></i> ${ld.label}</span>
-              <span class="jp-btn-sub">Click Here</span>
-            </a>`
-          ).join('');
+        /* Collect all links to render */
+        const allLinks = [];
 
-        extraLinks.forEach(ul => {
-          const t = safe(ul.title || ul.name || '');
-          const u = safe(ul.links || ul.url || ul.href || '');
-          if (t && u) {
-            linksHtml += `<a href="${normalizeUrl(u)}" target="_blank" rel="noopener" class="jp-btn jp-btn-blue">
-              <span><i class="fa-solid fa-link"></i> ${t.slice(0,40)}</span>
-              <span class="jp-btn-sub">Click Here</span>
-            </a>`;
+        /* 1. Static row fields (only if not empty) */
+        staticLinkDefs.forEach(ld => {
+          const href = normalizeUrl(safe(ld.href));
+          if (href && href !== '#') {
+            allLinks.push({ href, label: ld.label, icon: ld.icon, cls: ld.cls, sub: ld.sub });
           }
         });
 
+        /* 2. useful_links array from JSON — smart categorize by title */
+        usefulLinksRaw.forEach(ul => {
+          const t = safe(ul.title || ul.name || '');
+          if (!t) return;
+          /* links field can be string or array of strings */
+          const rawLinks = ul.links || ul.url || ul.href || '';
+          const linkArr = Array.isArray(rawLinks) ? rawLinks : [rawLinks];
+          linkArr.forEach((rawUrl, idx) => {
+            const href = normalizeUrl(safe(rawUrl));
+            if (!href || href === '#') return;
+            /* For multiple links under same title, suffix link number */
+            const label = linkArr.length > 1 ? `${t} (${idx + 1})` : t;
+            const cat = categorizeLinkByTitle(t);
+            allLinks.push({ href, label, icon: cat.icon, cls: cat.cls, sub: cat.sub });
+          });
+        });
+
+        /* 3. Deduplicate by href */
+        const seenHrefs = new Set();
+        const deduped = allLinks.filter(lk => {
+          if (seenHrefs.has(lk.href)) return false;
+          seenHrefs.add(lk.href);
+          return true;
+        });
+
+        let linksHtml = deduped.map(lk =>
+          `<a href="${lk.href}" target="_blank" rel="noopener" class="jp-btn ${lk.cls}">
+            <span><i class="fa-solid ${lk.icon}"></i> ${lk.label.slice(0, 50)}</span>
+            <span class="jp-btn-sub">${lk.sub}</span>
+          </a>`
+        ).join('');
+
         /* ── FALLBACK: agar koi bhi specific link nahi mili ── */
-        /* Hamesha Official Website / Apply Online dikhao source_url se */
         if (!linksHtml && _fallbackUrl) {
-          /* Detect source: sarkariresult.com vs sarkariresultshine.com */
-          const isSarkariResult  = _fallbackUrl.includes('sarkariresult.com');
-          const isSarkariShine   = _fallbackUrl.includes('sarkariresultshine.com');
-          const srcLabel = isSarkariResult  ? 'SarkariResult.com'
-                         : isSarkariShine   ? 'SarkariResultShine.com'
+          const isSarkariResult = _fallbackUrl.includes('sarkariresult.com');
+          const isSarkariShine  = _fallbackUrl.includes('sarkariresultshine.com');
+          const srcLabel = isSarkariResult ? 'SarkariResult.com'
+                         : isSarkariShine  ? 'SarkariResultShine.com'
                          : 'Official Website';
           linksHtml =
             `<a href="${_fallbackUrl}" target="_blank" rel="noopener" class="jp-btn jp-btn-green">
