@@ -792,27 +792,62 @@
     };
     async function loadAllItems() {
       try {
-        const r = await fetch('/Complete_Jobs_Full_Data.json');
-        if (!r.ok) return [];
-        const raw = await r.json();
-        if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return [];
+        /* Try merged_sarkari_data.json first */
+        let raw = null;
+        try {
+          const r1 = await fetch('/merged_sarkari_data.json');
+          if (r1.ok) raw = await r1.json();
+        } catch (_) {}
+
+        if (!raw) {
+          const r2 = await fetch('/Complete_Jobs_Full_Data.json');
+          if (!r2.ok) return [];
+          raw = await r2.json();
+        }
+
         const out = [];
-        for (const [catKey, meta] of Object.entries(_JOBS_CAT_META_JI)) {
-          const jobs = raw[catKey];
-          if (!Array.isArray(jobs)) continue;
-          for (const job of jobs) {
-            const bd  = job.basic_details || {};
-            const u   = (job.source_url || '').trim();
-            const ttl = (bd.job_title || '').trim();
-            if (!u || !ttl) continue;
-            out.push({
-              url:   normalizeUrl(u),
-              title: ttl.slice(0, 600),
-              secId: meta.id,
-              fp:    urlRedirectFingerprint(u).toLowerCase()
-            });
+
+        if (typeof raw === 'object' && !Array.isArray(raw)) {
+          /* sarkariresult_categories */
+          const srCats = (raw.sarkariresult_data && raw.sarkariresult_data.data)
+                      || raw.sarkariresult_categories || null;
+          if (srCats) {
+            for (const [catKey, items] of Object.entries(srCats)) {
+              if (!Array.isArray(items)) continue;
+              for (const job of items) {
+                const title = safe(job.title || job.name || '');
+                const url   = safe(job.url || job.link || job.source_url || '');
+                if (!title) continue;
+                out.push({ url: normalizeUrl(url), title, secId: catKey, fp: urlRedirectFingerprint(url).toLowerCase() });
+              }
+            }
+          }
+
+          /* sarkariresultshine_jobs */
+          if (Array.isArray(raw.sarkariresultshine_jobs)) {
+            for (const job of raw.sarkariresultshine_jobs) {
+              const bd  = job.basic_details || {};
+              const ttl = safe(job.title || bd.job_title || '');
+              const url = safe(job.source_url || '');
+              if (!ttl) continue;
+              out.push({ url: normalizeUrl(url), title: ttl, secId: 'SR_Offline_Form', fp: urlRedirectFingerprint(url).toLowerCase() });
+            }
+          }
+
+          /* Complete_Jobs_Full_Data.json categories */
+          for (const [catKey, meta] of Object.entries(_JOBS_CAT_META_JI)) {
+            const jobs = raw[catKey];
+            if (!Array.isArray(jobs)) continue;
+            for (const job of jobs) {
+              const bd  = job.basic_details || {};
+              const u   = safe(job.source_url || '');
+              const ttl = safe(bd.job_title || '');
+              if (!ttl) continue;
+              out.push({ url: normalizeUrl(u), title: ttl.slice(0, 600), secId: meta.id, fp: urlRedirectFingerprint(u).toLowerCase() });
+            }
           }
         }
+
         return out;
       } catch (_) { return []; }
     }
@@ -838,36 +873,54 @@
         return;
       }
 
+      /* ?ref= fallback URL from index.html SR section links */
+      const refUrl = (() => {
+        try { return new URLSearchParams(window.location.search).get('ref') || ''; } catch (_) { return ''; }
+      })();
+
       let items = [];
       try { items = await loadAllItems(); } catch (_) {}
 
       let row = matchBySlug(items, rawSlug);
 
       if (!row) {
-        // Fallback: render from slug alone
         const humanTitle = humanizeSlug(rawSlug);
-        if (isJobItem(humanTitle)) {
+        const dest = validateUrl(refUrl);
+        if (dest) {
+          renderJobPage(humanTitle, dest, parseJob(humanTitle));
+        } else if (isJobItem(humanTitle)) {
           renderJobPage(humanTitle, '', parseJob(humanTitle));
+          ['btnApply', 'btnNotification', 'btnWebsite', 'btnMainCta'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+          });
         } else {
           renderNonJobPage(humanTitle, '');
+          ['btnMainCta','btnNonJobCta'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) { el.style.display = 'none'; }
+          });
         }
-        ['btnApply', 'btnNotification', 'btnWebsite', 'btnMainCta', 'btnNonJobCta'].forEach(id => {
-          const el = document.getElementById(id);
-          if (el) { el.style.display = 'none'; }
-        });
       } else {
-        const dest = validateUrl(row.url);
-        if (!dest) { loading.style.display = 'none'; errorEl.style.display = 'block'; return; }
+        const dest = validateUrl(row.url) || validateUrl(refUrl);
         const name = row.title || humanizeSlug(rawSlug);
         if (isJobItem(name)) {
-          renderJobPage(name, dest, parseJob(name));
+          renderJobPage(name, dest || '', parseJob(name));
+          if (!dest) {
+            ['btnApply', 'btnNotification', 'btnWebsite', 'btnMainCta'].forEach(id => {
+              const el = document.getElementById(id);
+              if (el) el.style.display = 'none';
+            });
+          }
         } else {
-          renderNonJobPage(name, dest);
+          renderNonJobPage(name, dest || '');
         }
         // Update breadcrumb section link
         const secLink = document.getElementById('bcSectionLink');
-        secLink.textContent = humanizeSlug(row.secId || 'Jobs');
-        secLink.href = row.secId ? `/view.html?section=${encodeURIComponent(row.secId)}` : '#';
+        if (secLink) {
+          secLink.textContent = humanizeSlug(row.secId || 'Jobs');
+          secLink.href = row.secId ? `/view.html?section=${encodeURIComponent(row.secId)}` : '#';
+        }
       }
 
       loading.style.display = 'none';
