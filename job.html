@@ -1187,7 +1187,7 @@
 
     async function loadAllItems() {
       try {
-        /* Try merged_sarkari_data.json first (flat LINK.txt format) */
+        /* Try merged_sarkari_data.json first */
         let raw = null;
         try {
           const r1 = await fetch('/merged_sarkari_data.json');
@@ -1203,7 +1203,7 @@
 
         const out = [];
 
-        /* Handle array format (merged_sarkari_data.json) */
+        /* Handle array format */
         if (Array.isArray(raw)) {
           for (const job of raw) {
             const parsed = parseFullJob(job, job.category || 'Latest Notifications');
@@ -1213,8 +1213,45 @@
           return out;
         }
 
-        /* Handle nested category object format (Complete_Jobs_Full_Data.json) */
         if (typeof raw === 'object') {
+          /* ── merged_sarkari_data.json: handle sarkariresult_categories ── */
+          const srCats = (raw.sarkariresult_data && raw.sarkariresult_data.data)
+                      || raw.sarkariresult_categories || null;
+
+          if (srCats && typeof srCats === 'object') {
+            for (const [catKey, items] of Object.entries(srCats)) {
+              if (!Array.isArray(items)) continue;
+              for (const job of items) {
+                /* SR category items: {title, url, last_date, post_date} */
+                if (!job || typeof job !== 'object') continue;
+                const title = safe(job.title || job.name || '');
+                if (!title) continue;
+                const externalUrl = safe(job.url || job.link || job.source_url || '');
+                const lastDate = safe(job.last_date || '');
+                /* Build a pseudo-full job object so parseFullJob works */
+                const pseudoJob = {
+                  title,
+                  source_url: externalUrl,
+                  official_website_link: externalUrl,
+                  last_date: lastDate,
+                  category: catKey,
+                  important_links: { apply_online: externalUrl, official_website: externalUrl }
+                };
+                const parsed = parseFullJob(pseudoJob, catKey);
+                if (parsed.title) out.push(parsed);
+              }
+            }
+          }
+
+          /* ── merged_sarkari_data.json: sarkariresultshine_jobs ── */
+          if (Array.isArray(raw.sarkariresultshine_jobs)) {
+            for (const job of raw.sarkariresultshine_jobs) {
+              const parsed = parseFullJob(job, 'SR_Offline_Form');
+              if (parsed.title) out.push(parsed);
+            }
+          }
+
+          /* ── Complete_Jobs_Full_Data.json: known category keys ── */
           for (const [catKey, meta] of Object.entries(_JOBS_CAT_META_JI)) {
             const jobs = raw[catKey];
             if (!Array.isArray(jobs)) continue;
@@ -1224,9 +1261,15 @@
               out.push(parsed);
             }
           }
-          /* Also handle category-bucket object with unknown keys */
+
+          /* ── Any remaining array-value keys ── */
+          const handled = new Set([
+            ...Object.keys(_JOBS_CAT_META_JI),
+            'sarkariresult_categories', 'sarkariresult_data',
+            'sarkariresultshine_jobs'
+          ]);
           for (const [key, val] of Object.entries(raw)) {
-            if (_JOBS_CAT_META_JI[key]) continue; // already handled
+            if (handled.has(key)) continue;
             if (Array.isArray(val)) {
               for (const job of val) {
                 const parsed = parseFullJob(job, key);
@@ -1271,23 +1314,54 @@
         return;
       }
 
+      /* Read optional ?ref= URL passed from index.html SR section */
+      const refUrl = (() => {
+        try {
+          return new URLSearchParams(window.location.search).get('ref') || '';
+        } catch (_) { return ''; }
+      })();
+
       let items = [];
       try { items = await loadAllItems(); } catch (_) {}
 
       let row = matchBySlug(items, rawSlug);
 
+      /* If we found a row but it has no destUrl, use refUrl */
+      if (row && !row.destUrl && refUrl) {
+        row = Object.assign({}, row, {
+          destUrl: refUrl,
+          applyOnline: refUrl,
+          officialWebsite: refUrl
+        });
+      }
+
       if (!row) {
-        // Fallback: render from slug alone
         const humanTitle = humanizeSlug(rawSlug);
-        if (isJobItem(humanTitle)) {
+        if (refUrl) {
+          /* Build minimal row from slug + refUrl */
+          const parsed = parseJob(humanTitle);
+          const minRow = {
+            title: humanTitle,
+            destUrl: refUrl,
+            applyOnline: refUrl,
+            officialWebsite: refUrl,
+            org: parsed.org || '',
+            totalVac: parsed.vac || 'See Notification',
+            lastDate: parsed.lastDt || 'See Notification',
+            applyMode: parsed.applyMode || 'Online',
+            usefulLinks: [],
+            vd: []
+          };
+          renderJobPage(humanTitle, refUrl, parsed, minRow);
+        } else if (isJobItem(humanTitle)) {
           renderJobPage(humanTitle, '', parseJob(humanTitle), null);
         } else {
           renderNonJobPage(humanTitle, '');
+          ['btnMainCta','btnNonJobCta'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) { el.style.display = 'none'; }
+          });
         }
-        ['btnMainCta','btnNonJobCta'].forEach(id => {
-          const el = document.getElementById(id);
-          if (el) { el.style.display = 'none'; }
-        });
       } else {
         const name = row.title || humanizeSlug(rawSlug);
         if (isJobItem(name)) {
