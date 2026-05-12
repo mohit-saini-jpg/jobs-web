@@ -2527,7 +2527,23 @@
       ).trim();
 
       var slug = (job.slug || '').trim();
-      var href = slug ? ('job.html?slug=' + encodeURIComponent(slug)) : url;
+
+      /* For offline/sarkariresultshine jobs (no slug), generate one */
+      var href;
+      if (slug) {
+        href = 'job.html?slug=' + encodeURIComponent(slug);
+      } else if (job.source && job.source === 'sarkariresultshine.com') {
+        /* Generate offline slug matching job.html logic */
+        var offlineSlug = 'offline-' + title
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, '')
+          .replace(/[\s-]+/g, '-')
+          .slice(0, 120)
+          .replace(/^-+|-+$/g, '');
+        href = 'job.html?slug=' + encodeURIComponent(offlineSlug);
+      } else {
+        href = url;
+      }
 
       return { title: title, lastDate: lastDate, url: url, href: href };
     }
@@ -2546,7 +2562,7 @@
 
         return (
           '<li><a href="' + job.href + '" class="sr-job-link"' +
-          (job.url !== '#' ? ' target="_blank" rel="noopener"' : '') + '>' +
+          (job.href.includes('job.html') ? '' : (job.url !== '#' ? ' target="_blank" rel="noopener"' : '')) + '>' +
           '<span class="sr-dot"></span>' +
           '<span class="sr-job-title">' + job.title + '</span>' +
           dateBadge +
