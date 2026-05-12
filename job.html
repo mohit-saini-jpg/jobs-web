@@ -1032,251 +1032,132 @@
       catch (_) { return null; }
     }
 
-    /* ══════════════════════════════════════════════════════════════
-       DATA LOADING — Robust multi-source lookup
-       Matches the same logic as job__17_.html:
-         1. /jobs/data/{slug}.json        (per-job file)
-         2. /merged_sarkari_data.json     (flat array — SR data, LINK.txt format)
-         3. /sarkari_result_clean_final.json (SR category buckets)
-         4. /Complete_Jobs_Full_Data.json  (nested basic_details format)
-    ══════════════════════════════════════════════════════════════ */
+    /* ── Convert Complete_Jobs_Full_Data.json → flat items list ── */
+    const _JOBS_CAT_META_JI = {
+      "Latest_Notifications": { id: "Latest Notifications",    title: "Latest Notifications" },
+      "10TH_Pass":            { id: "10th Pass jobs",           title: "10th Pass Jobs" },
+      "8TH_Pass":             { id: "8th Pass",                 title: "8th Pass Jobs" },
+      "12TH_Pass":            { id: "12th Pass jobs",           title: "12th Pass Jobs" },
+      "Diploma":              { id: "Diploma Jobs",              title: "Diploma Jobs" },
+      "ITI":                  { id: "ITI Jobs",                  title: "ITI Jobs" },
+      "B_Tech_BE":            { id: "B.Tech Jobs",              title: "B.Tech / B.E. Jobs" },
+      "B_Com":                { id: "B.Com Jobs",               title: "B.Com Jobs" },
+      "Any_Graduate":         { id: "Graduation jobs",          title: "Any Graduate Jobs" },
+      "Any_Post_Graduate":    { id: "Post Graduation jobs",     title: "Post Graduate Jobs" },
+      "Railway_Jobs":         { id: "Railway Jobs",             title: "Railway Jobs" },
+      "Police_Defence":       { id: "Police Jobs",              title: "Police / Defence Jobs" },
+      "Teaching_Faculty":     { id: "Teacher Jobs",             title: "Teaching / Faculty Jobs" },
+      "Bank_Jobs":            { id: "Bank Jobs",                title: "Bank Jobs" },
+      "Medical_Hospital":     { id: "Medical/ Healthcare Jobs", title: "Medical / Hospital Jobs" },
+    };
 
-    let _mergedCache = null;
-    let _srCache     = null;
-    let _cjfdCache   = null;
-
-    async function _fetchJSON(url, ms) {
-      ms = ms || 12000;
-      const ctrl = new AbortController();
-      const t = setTimeout(() => ctrl.abort(), ms);
-      try {
-        const r = await fetch(url, { signal: ctrl.signal });
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        return await r.json();
-      } finally { clearTimeout(t); }
-    }
-
-    async function getMergedData() {
-      if (_mergedCache !== null) return _mergedCache;
-      try { _mergedCache = await _fetchJSON('/merged_sarkari_data.json'); }
-      catch (_) { _mergedCache = false; }
-      return _mergedCache || null;
-    }
-
-    async function getSRData() {
-      if (_srCache !== null) return _srCache;
-      try { _srCache = await _fetchJSON('/sarkari_result_clean_final.json'); }
-      catch (_) { _srCache = false; }
-      return _srCache || null;
-    }
-
-    async function getCJFData() {
-      if (_cjfdCache !== null) return _cjfdCache;
-      try { _cjfdCache = await _fetchJSON('/Complete_Jobs_Full_Data.json'); }
-      catch (_) { _cjfdCache = false; }
-      return _cjfdCache || null;
-    }
-
-    /* Flatten any JSON structure into flat array */
-    function flattenJobs(raw) {
-      if (!raw) return [];
-      if (Array.isArray(raw)) return raw;
-      const out = [];
-      if (Array.isArray(raw.data))  { return raw.data; }
-      if (Array.isArray(raw.jobs))  { return raw.jobs; }
-      for (const val of Object.values(raw)) {
-        if (Array.isArray(val)) out.push(...val);
-        else if (val && typeof val === 'object') {
-          for (const v2 of Object.values(val)) {
-            if (Array.isArray(v2)) out.push(...v2);
-          }
-        }
-      }
-      return out;
-    }
-
-    /* Normalize any slug variant for comparison */
-    function normSlug(s) {
-      return safe(s)
-        .toLowerCase()
-        .replace(/^sr_[a-z_]+-/i, '')        // strip sr_latest_jobs-, sr_admit_card- etc.
-        .replace(/^latest_jobs-/i, '')
-        .replace(/-[0-9a-f]{5,8}$/i, '')      // strip hash suffix like -bd964d
-        .replace(/[^a-z0-9-]/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-+|-+$/g, '');
-    }
-
-    /* Title → slug for fuzzy comparison */
-    function t2slug(t) {
-      return safe(t).toLowerCase()
-        .normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
-        .replace(/&/g,' and ').replace(/['']/g,'')
-        .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'')
-        .replace(/-{2,}/g,'-').slice(0,120);
-    }
-
-    /* Score job against target normalised slug */
-    function jobScore(job, tgt) {
-      const bd = job.basic_details || {};
-      const jSlug  = normSlug(safe(job.slug || job.id || ''));
-      const jTitle = t2slug(job.title || job.post_name || bd.job_title || bd.post_name || '');
-      const tokens = tgt.split('-').filter(t => t.length > 2);
-      if (!tokens.length) return 0;
-      const ms = tokens.filter(t => jSlug.includes(t)).length;
-      const mt = tokens.filter(t => jTitle.includes(t)).length;
-      return Math.max(ms, mt) / tokens.length;
-    }
-
-    /* Find best match in a flat array */
-    function findBest(jobs, tgtNorm) {
-      if (!jobs || !jobs.length || !tgtNorm) return null;
-      /* Exact normalised match first */
-      const exact = jobs.find(j => normSlug(safe(j.slug || j.id || '')) === tgtNorm);
-      if (exact) return exact;
-      /* Fuzzy */
-      let best = null, bestSc = 0;
-      for (const j of jobs) {
-        const sc = jobScore(j, tgtNorm);
-        if (sc > bestSc) { bestSc = sc; best = j; }
-      }
-      return bestSc >= 0.45 ? best : null;
-    }
-
-    /* Convert nested basic_details job → parseFullJob-compatible flat object */
-    function flattenNested(job) {
-      if (!job) return null;
-      const bd    = job.basic_details    || {};
-      const dates = job.important_dates  || {};
-      const fee   = job.application_fee  || {};
-      const age   = job.age_limit        || {};
-      const qual  = job.qualification    || {};
-      const links = job.important_links  || {};
-      const sal   = job.salary_details   || {};
-      const vd    = job.vacancy_details  || [];
-      return {
-        title:       safe(bd.job_title || bd.post_name || job.title || ''),
-        organization:safe(bd.organization_name || bd.department || ''),
-        total_vacancy:safe(bd.total_vacancies || bd.total_posts || ''),
-        apply_mode:  safe(bd.apply_mode || bd.application_mode || 'Online'),
-        salary:      safe(sal.pay_scale || sal.salary_range || bd.salary || ''),
-        short_information: safe(bd.short_information || ''),
-        slug:        safe(job.slug || ''),
-        category:    safe(job.category || ''),
-        source_url:  safe(job.source_url || ''),
-        important_dates: {
-          application_begin:     safe(dates.application_start_date || dates.notification_date || ''),
-          last_date:             safe(dates.last_date_to_apply || dates.last_date || dates.closing_date || ''),
-          exam_date:             safe(dates.exam_date || ''),
-          admit_card_date:       safe(dates.admit_card_date || dates.admit_card || ''),
-          result_date:           safe(dates.result_date || ''),
-          fee_payment_last_date: safe(dates.fee_last_date || dates.fee_payment_last_date || ''),
-          correction_last_date:  safe(dates.correction_last_date || ''),
-        },
-        application_fees: {
-          general: safe(fee.general_fee || fee.general || ''),
-          obc:     safe(fee.obc_fee  || fee.obc  || ''),
-          ews:     safe(fee.ews_fee  || fee.ews  || ''),
-          sc:      safe(fee.sc_fee   || fee.sc   || ''),
-          st:      safe(fee.st_fee   || fee.st   || ''),
-          female:  safe(fee.female_fee || fee.female || ''),
-          ph:      safe(fee.ph_fee || fee.pwd_fee || fee.ph || ''),
-        },
-        age_limit: {
-          minimum_age:   safe(age.minimum_age || ''),
-          maximum_age:   safe(age.maximum_age || age.age_limit || ''),
-          age_relaxation:safe(age.details || age.age_relaxation || ''),
-        },
-        education_qualification: safe(qual.education_qualification || qual.eligibility || ''),
-        experience_required:     safe(qual.experience_required || ''),
-        selection_process:       job.selection_process || [],
-        vacancy_details:         vd,
-        category_wise_vacancy:   {},
-        useful_links:            [],
-        important_links: {
-          apply_online:          safe(links.apply_online || links.registration || job.source_url || ''),
-          candidate_login:       safe(links.login || links.candidate_login || ''),
-          official_notification: safe(links.notification_pdf || links.download_pdf || links.official_notification || ''),
-          official_website:      safe(links.official_website || links.visit_website || job.source_url || ''),
-          admit_card:            safe(links.admit_card_link || links.admit_card || ''),
-          result:                safe(links.result_link || links.result || ''),
-          answer_key:            safe(links.answer_key || links.final_answer_key || ''),
-          syllabus:              safe(links.syllabus_pdf || links.syllabus || ''),
-          merit_list:            safe(links.merit_list || ''),
-          score_card:            safe(links.score_card || ''),
-          exam_city:             safe(links.exam_city || ''),
-        },
-      };
-    }
-
-    /* ── parseFullJob: accepts BOTH flat (LINK.txt/SR) AND nested jobs ── */
+    /* ── Parse flat LINK.txt-style fields from a job object ── */
     function parseFullJob(job, secId) {
-      if (!job) return null;
-      /* If nested basic_details format, flatten first */
-      const flat = job.basic_details ? flattenNested(job) : job;
-      if (!flat) return null;
+      const bd  = job.basic_details  || {};
+      const il  = job.important_links || job.important_links_obj || {};
+      const id  = job.important_dates || {};
+      const fee = job.application_fee || job.application_fees || {};
+      const age = job.age_limit       || {};
+      const qual= job.qualification   || {};
+      const vd  = job.vacancy_details || [];
+      const cwv = job.category_wise_vacancy || {};
 
-      const il  = flat.important_links  || {};
-      const dts = flat.important_dates  || {};
-      const fee = flat.application_fees || flat.application_fee || {};
-      const age = flat.age_limit        || {};
-      const vd  = flat.vacancy_details  || [];
-      const cwv = flat.category_wise_vacancy || {};
+      /* Title — try flat fields first (LINK.txt style), then basic_details */
+      const title = safe(
+        job.title || job.post_name || bd.job_title || bd.post_name || ''
+      ).slice(0, 600);
 
-      const title = safe(flat.title || flat.post_name || '').slice(0, 600);
-      if (!title) return null;
+      /* Organisation */
+      const org = safe(
+        job.organization || job.board_name || job.department ||
+        bd.organization_name || bd.department || ''
+      );
 
-      const org      = safe(flat.organization || flat.board_name || flat.department || '');
-      const totalVac = safe(flat.total_vacancy || flat.total_vacancies || '');
-      let applyMode  = safe(flat.apply_mode || 'Online');
+      /* Total vacancy */
+      const totalVac = safe(
+        job.total_vacancy || job.total_vacancies || bd.total_vacancies || ''
+      );
+
+      /* Apply mode */
+      let applyMode = safe(job.apply_mode || bd.apply_mode || bd.application_mode || 'Online');
       if (!applyMode || applyMode === '-') applyMode = 'Online';
 
-      /* Links */
-      const applyOnline      = safe(il.apply_online || il.apply_link || il.registration || flat.source_url || flat.official_website_link || '');
-      const officialWebsite  = safe(il.official_website || il.visit_website || flat.official_website_link || flat.source_url || '');
-      const notifPdf         = safe(il.official_notification || il.download_notification || il.notification_pdf || il.download_pdf || flat.form_pdf_free_link || '');
-      const candidateLogin   = safe(il.candidate_login || il.login || '');
-      const admitCard        = safe(il.admit_card || il.admit_card_link || '');
-      const result           = safe(il.result || il.result_link || '');
-      const answerKey        = safe(il.answer_key || il.final_answer_key || '');
-      const syllabus         = safe(il.syllabus || il.syllabus_pdf || '');
-      const meritList        = safe(il.merit_list || '');
-      const scoreCard        = safe(il.score_card || '');
-      const examCity         = safe(il.exam_city || '');
-      const destUrl          = normalizeUrl(applyOnline || officialWebsite);
+      /* Source / apply URL — prefer apply_online link */
+      const applyOnline = safe(
+        il.apply_online || il.apply_link || il.registration ||
+        job.source_url  || job.official_website_link || bd.source_url || ''
+      );
+      const officialWebsite = safe(
+        il.official_website || il.visit_website ||
+        job.official_website_link || job.source_url || ''
+      );
+      const notifPdf = safe(
+        il.official_notification || il.download_notification ||
+        il.notification_pdf || il.download_pdf || job.form_pdf_free_link || ''
+      );
+      const candidateLogin = safe(il.candidate_login || il.login || '');
+      const admitCard = safe(il.admit_card || il.admit_card_link || '');
+      const result    = safe(il.result || il.result_link || '');
+      const answerKey = safe(il.answer_key || il.final_answer_key || '');
+      const syllabus  = safe(il.syllabus || il.syllabus_pdf || '');
+      const meritList = safe(il.merit_list || '');
+      const scoreCard = safe(il.score_card || '');
+      const examCity  = safe(il.exam_city || '');
 
-      /* Dates — handles both flat (last_date) and nested-converted formats */
-      const lastDate    = safe(dts.last_date    || dts.last_date_to_apply    || dts.closing_date || '');
-      const appBegin    = safe(dts.application_begin || dts.application_start || dts.start_date  || '');
-      const examDate    = safe(dts.exam_date    || '');
-      const admitDate   = safe(dts.admit_card_date || dts.admit_card         || '');
-      const resultDate  = safe(dts.result_date  || '');
-      const feeLastDate = safe(dts.fee_payment_last_date || dts.fee_last_date || '');
-      const corrDate    = safe(dts.correction_last_date  || '');
+      /* Primary dest URL for main CTA */
+      const destUrl = normalizeUrl(applyOnline || officialWebsite);
 
-      /* Fee */
-      const feeGen = safe(fee.general || fee.ur  || flat.application_fee || '');
+      /* Dates */
+      const lastDate   = safe(
+        id.last_date || id.application_last_date || id.last_date_for_apply ||
+        job.last_date || ''
+      );
+      const appBegin   = safe(
+        id.application_begin || id.application_start || id.start_date ||
+        job.application_begin || ''
+      );
+      const examDate   = safe(id.exam_date || job.exam_date || '');
+      const admitDate  = safe(id.admit_card_date || id.admit_card || '');
+      const resultDate = safe(id.result_date || '');
+      const feeLastDate= safe(id.fee_payment_last_date || id.fee_last_date || '');
+      const corrDate   = safe(id.correction_last_date || '');
+
+      /* Application fee */
+      const feeGen = safe(fee.general || fee.ur  || job.application_fee || '');
       const feeObc = safe(fee.obc  || '');
       const feeEws = safe(fee.ews  || '');
       const feeSc  = safe(fee.sc   || '');
       const feeSt  = safe(fee.st   || '');
       const feeFem = safe(fee.female || '');
-      const feePh  = safe(fee.ph || fee.pwd || '');
+      const feePh  = safe(fee.ph   || fee.pwd || '');
 
       /* Age */
-      const minAge   = safe(age.minimum_age || flat.minimum_age || '');
-      const maxAge   = safe(age.maximum_age || flat.maximum_age || age.age_limit || '');
-      const ageRelax = safe(age.age_relaxation || flat.age_relaxation || age.details || '');
+      const minAge    = safe(job.minimum_age || age.minimum_age || '');
+      const maxAge    = safe(job.maximum_age || age.maximum_age || age.age_limit || '');
+      const ageRelax  = safe(job.age_relaxation || age.age_relaxation || age.details || '');
 
       /* Qualification */
-      const eduQual = safe(flat.education_qualification || flat.eligibility || '');
-      const expReqd = safe(flat.experience_required || '');
+      const eduQual   = safe(
+        job.education_qualification || job.eligibility ||
+        qual.education_qualification || qual.eligibility || ''
+      );
+      const expReqd   = safe(
+        job.experience_required || qual.experience_required || ''
+      );
 
-      /* Salary / selection / short info */
-      const salary    = safe(flat.salary || flat.salary_pay_scale || '');
-      const selProc   = flat.selection_process || [];
-      const shortInfo = safe(flat.short_information || flat.jobs_info || '');
-      const usefulLinks = Array.isArray(flat.useful_links) ? flat.useful_links : [];
+      /* Salary */
+      const salary    = safe(
+        job.salary || job.salary_pay_scale || bd.salary || bd.salary_pay_scale || ''
+      );
+
+      /* Selection process */
+      const selProc   = job.selection_process || bd.selection_process || '';
+
+      /* Short info */
+      const shortInfo = safe(job.short_information || job.jobs_info || bd.short_information || '');
+
+      /* Useful links array (LINK.txt format) */
+      const usefulLinks = Array.isArray(job.useful_links) ? job.useful_links : [];
 
       /* Category-wise vacancy */
       const cwVacGen = safe(cwv.general || cwv.ur || '');
@@ -1297,50 +1178,89 @@
         eduQual, expReqd,
         salary, selProc, shortInfo,
         usefulLinks, vd, cwVacGen, cwVacObc, cwVacEws, cwVacSc, cwVacSt, cwVacPh,
-        secId: safe(secId || flat.__secId || flat.category || ''),
-        slug:  safe(flat.slug || ''),
-        category: safe(flat.category || ''),
+        secId: secId || '',
+        slug: safe(job.slug || ''),
+        category: safe(job.category || ''),
+        fp: urlRedirectFingerprint(safe(job.source_url || officialWebsite || applyOnline)).toLowerCase()
       };
     }
 
-    /* ── MAIN JOB LOOKUP ── */
-    async function getJobRow(rawSlug) {
-      if (!rawSlug) return null;
-      const tgt = normSlug(rawSlug);
-
-      /* Step 1: per-job JSON */
-      for (const s of [rawSlug, tgt]) {
-        if (!s) continue;
+    async function loadAllItems() {
+      try {
+        /* Try merged_sarkari_data.json first (flat LINK.txt format) */
+        let raw = null;
         try {
-          const data = await _fetchJSON('/jobs/data/' + encodeURIComponent(s) + '.json', 6000);
-          if (data && (data.title || data.basic_details || data.slug)) {
-            return parseFullJob(data, '');
-          }
+          const r1 = await fetch('/merged_sarkari_data.json');
+          if (r1.ok) raw = await r1.json();
         } catch (_) {}
-      }
 
-      /* Step 2: merged_sarkari_data.json */
-      const merged = await getMergedData();
-      if (merged) {
-        const hit = findBest(flattenJobs(merged), tgt);
-        if (hit) return parseFullJob(hit, safe(hit.category || ''));
-      }
+        /* Fallback to Complete_Jobs_Full_Data.json */
+        if (!raw) {
+          const r2 = await fetch('/Complete_Jobs_Full_Data.json');
+          if (!r2.ok) return [];
+          raw = await r2.json();
+        }
 
-      /* Step 3: sarkari_result_clean_final.json */
-      const sr = await getSRData();
-      if (sr) {
-        const hit = findBest(flattenJobs(sr), tgt);
-        if (hit) return parseFullJob(hit, safe(hit.category || ''));
-      }
+        const out = [];
 
-      /* Step 4: Complete_Jobs_Full_Data.json */
-      const cjfd = await getCJFData();
-      if (cjfd) {
-        const hit = findBest(flattenJobs(cjfd), tgt);
-        if (hit) return parseFullJob(hit, '');
-      }
+        /* Handle array format (merged_sarkari_data.json) */
+        if (Array.isArray(raw)) {
+          for (const job of raw) {
+            const parsed = parseFullJob(job, job.category || 'Latest Notifications');
+            if (!parsed.title) continue;
+            out.push(parsed);
+          }
+          return out;
+        }
 
-      return null;
+        /* Handle nested category object format (Complete_Jobs_Full_Data.json) */
+        if (typeof raw === 'object') {
+          for (const [catKey, meta] of Object.entries(_JOBS_CAT_META_JI)) {
+            const jobs = raw[catKey];
+            if (!Array.isArray(jobs)) continue;
+            for (const job of jobs) {
+              const parsed = parseFullJob(job, meta.id);
+              if (!parsed.title) continue;
+              out.push(parsed);
+            }
+          }
+          /* Also handle category-bucket object with unknown keys */
+          for (const [key, val] of Object.entries(raw)) {
+            if (_JOBS_CAT_META_JI[key]) continue; // already handled
+            if (Array.isArray(val)) {
+              for (const job of val) {
+                const parsed = parseFullJob(job, key);
+                if (!parsed.title) continue;
+                out.push(parsed);
+              }
+            }
+          }
+        }
+
+        return out;
+      } catch (_) { return []; }
+    }
+
+    function matchBySlug(items, slug) {
+      if (!slug) return null;
+      /* Exact slug match */
+      const exact = items.find(it => it.slug && it.slug === slug);
+      if (exact) return exact;
+      /* Strip hash suffix (e.g. -bd964d) */
+      const noHash = slug.replace(/-[0-9a-f]{5,8}$/i, '');
+      const exactNoHash = items.find(it => it.slug && (it.slug === noHash || it.slug.replace(/-[0-9a-f]{5,8}$/i,'') === noHash));
+      if (exactNoHash) return exactNoHash;
+
+      /* Token-based fuzzy match on title */
+      const tokens = noHash.split('-').filter(t => t.length > 2);
+      if (!tokens.length) return null;
+      let best = null, bestScore = 0;
+      for (const it of items) {
+        const ts = it.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        const score = tokens.filter(t => ts.includes(t)).length / tokens.length;
+        if (score > bestScore) { bestScore = score; best = it; }
+      }
+      return bestScore >= 0.45 ? best : null;
     }
 
     /* ── Main ── */
@@ -1351,14 +1271,14 @@
         return;
       }
 
-      let row = null;
-      try { row = await getJobRow(rawSlug); } catch (_) {}
+      let items = [];
+      try { items = await loadAllItems(); } catch (_) {}
+
+      let row = matchBySlug(items, rawSlug);
 
       if (!row) {
-        /* Fallback: humanize slug and render minimal page */
-        const humanTitle = humanizeSlug(rawSlug
-          .replace(/^sr_[a-z_]+-/i, '')
-          .replace(/-[0-9a-f]{5,8}$/i, ''));
+        // Fallback: render from slug alone
+        const humanTitle = humanizeSlug(rawSlug);
         if (isJobItem(humanTitle)) {
           renderJobPage(humanTitle, '', parseJob(humanTitle), null);
         } else {
@@ -1366,7 +1286,7 @@
         }
         ['btnMainCta','btnNonJobCta'].forEach(id => {
           const el = document.getElementById(id);
-          if (el) el.style.display = 'none';
+          if (el) { el.style.display = 'none'; }
         });
       } else {
         const name = row.title || humanizeSlug(rawSlug);
