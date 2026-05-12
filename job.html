@@ -1185,30 +1185,77 @@
       let applyMode = safe(job.apply_mode || bd.apply_mode || bd.application_mode || 'Online');
       if (!applyMode || applyMode === '-') applyMode = 'Online';
 
-      /* Source / apply URL — prefer apply_online link */
+      /* ── Extract links from useful_links array by title keyword ── */
+      /* useful_links se title match karke specific links nikalte hain */
+      const usefulLinks = Array.isArray(job.useful_links) ? job.useful_links : [];
+      function getUsefulLink(rxList) {
+        for (const ul of usefulLinks) {
+          const t = safe(ul.title || ul.name || '').toLowerCase();
+          if (rxList.some(rx => rx.test(t))) {
+            const raw = ul.links || ul.url || '';
+            const first = Array.isArray(raw) ? raw[0] : raw;
+            return safe(first);
+          }
+        }
+        return '';
+      }
+
+      /* Source / apply URL — ONLY from important_links obj or useful_links, NOT source_url */
+      /* source_url = sarkariresult.com page, use only for main CTA fallback */
       const applyOnline = safe(
         il.apply_online || il.apply_link || il.registration ||
-        job.source_url  || job.official_website_link || bd.source_url || ''
+        getUsefulLink([/apply\s*online|apply\s*link|registration\s*link|apply\s*form|apply.*otr|apply.*mains|apply.*re\s*open|apply.*other|apply.*sub|apply.*constable|apply.*manager|apply.*inspector|apply.*lucknow|apply.*noida|apply.*ug|apply.*pg/i]) ||
+        ''
       );
       const officialWebsite = safe(
         il.official_website || il.visit_website ||
-        job.official_website_link || job.source_url || ''
+        getUsefulLink([/official\s*website|official\s*portal|visit\s*website|ctet\s*official/i]) ||
+        job.official_website_link || ''   /* official_website_link = real govt site, ok to use */
       );
       const notifPdf = safe(
         il.official_notification || il.download_notification ||
-        il.notification_pdf || il.download_pdf || job.form_pdf_free_link || ''
+        il.notification_pdf || il.download_pdf ||
+        getUsefulLink([/notification|download\s*notif|short\s*notice|detailed\s*advert|info\s*brochure|exam\s*notice|download.*notice|download\s*go/i]) ||
+        job.form_pdf_free_link || ''
       );
-      const candidateLogin = safe(il.candidate_login || il.login || '');
-      const admitCard = safe(il.admit_card || il.admit_card_link || '');
-      const result    = safe(il.result || il.result_link || '');
-      const answerKey = safe(il.answer_key || il.final_answer_key || '');
-      const syllabus  = safe(il.syllabus || il.syllabus_pdf || '');
-      const meritList = safe(il.merit_list || '');
-      const scoreCard = safe(il.score_card || '');
-      const examCity  = safe(il.exam_city || '');
+      const candidateLogin = safe(
+        il.candidate_login || il.login ||
+        getUsefulLink([/candidate\s*login|login\s*portal|dashboard\s*login/i]) || ''
+      );
+      const admitCard = safe(
+        il.admit_card || il.admit_card_link ||
+        getUsefulLink([/admit\s*card|hall\s*ticket|call\s*letter|download\s*admit|pet\s*admit|tier.*admit|second.*admit/i]) || ''
+      );
+      const result = safe(
+        il.result || il.result_link ||
+        getUsefulLink([/^download\s*result|^result$|download.*final\s*result|merit\s*list|score\s*card|paper.*result|tier.*result|eligibility.*result|ias.*result|ifs.*result|jee.*result|bseb.*result/i]) || ''
+      );
+      const answerKey = safe(
+        il.answer_key || il.final_answer_key ||
+        getUsefulLink([/answer\s*key|final\s*answer\s*key|response\s*sheet|paper.*answer\s*key|tier.*answer\s*key|second.*answer\s*key/i]) || ''
+      );
+      const syllabus = safe(
+        il.syllabus || il.syllabus_pdf ||
+        getUsefulLink([/syllabus|exam\s*pattern|previous\s*paper|practice\s*set|pgt\s*syllabus/i]) || ''
+      );
+      const meritList = safe(
+        il.merit_list ||
+        getUsefulLink([/merit\s*list|selection\s*list/i]) || ''
+      );
+      const scoreCard = safe(
+        il.score_card ||
+        getUsefulLink([/score\s*card|cutoff|cut.?off/i]) || ''
+      );
+      const examCity = safe(
+        il.exam_city ||
+        getUsefulLink([/exam\s*city|exam\s*centre|slot\s*booking|check\s*exam\s*city/i]) || ''
+      );
 
-      /* Primary dest URL for main CTA */
-      const destUrl = normalizeUrl(applyOnline || officialWebsite);
+      /* Primary dest URL for main CTA — use source_url as fallback only here */
+      const destUrl = normalizeUrl(
+        applyOnline || officialWebsite ||
+        job.source_url || job.official_website_link || bd.source_url || ''
+      );
 
       /* Dates */
       const lastDate   = safe(
@@ -1258,9 +1305,6 @@
 
       /* Short info */
       const shortInfo = safe(job.short_information || job.jobs_info || bd.short_information || '');
-
-      /* Useful links array (LINK.txt format) */
-      const usefulLinks = Array.isArray(job.useful_links) ? job.useful_links : [];
 
       /* Category-wise vacancy */
       const cwVacGen = safe(cwv.general || cwv.ur || '');
