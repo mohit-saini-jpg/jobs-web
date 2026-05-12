@@ -995,17 +995,20 @@
 
       /* ── Static row fields (SUPPLEMENTAL — only if useful_links missing that link) ── */
       const staticLinkDefs = [
-        { href: row && row.applyOnline,      label: 'Apply Online',       icon: 'fa-paper-plane',      cls: 'jp-btn-green',  sub: 'Apply Now'    },
-        { href: row && row.candidateLogin,   label: 'Candidate Login',    icon: 'fa-right-to-bracket', cls: 'jp-btn-green',  sub: 'Login Here'   },
-        { href: row && row.notifPdf,         label: 'Notification PDF',   icon: 'fa-file-pdf',         cls: 'jp-btn-blue',   sub: 'View PDF'     },
-        { href: row && row.admitCard,        label: 'Admit Card',         icon: 'fa-id-card',          cls: 'jp-btn-orange', sub: 'Download Now' },
-        { href: row && row.result,           label: 'Result',             icon: 'fa-trophy',           cls: 'jp-btn-orange', sub: 'View Result'  },
-        { href: row && row.answerKey,        label: 'Answer Key',         icon: 'fa-key',              cls: 'jp-btn-blue',   sub: 'Download Now' },
-        { href: row && row.syllabus,         label: 'Syllabus',           icon: 'fa-book-open',        cls: 'jp-btn-blue',   sub: 'Download Now' },
-        { href: row && row.meritList,        label: 'Merit List',         icon: 'fa-list-ol',          cls: 'jp-btn-orange', sub: 'View List'    },
-        { href: row && row.scoreCard,        label: 'Score Card',         icon: 'fa-chart-bar',        cls: 'jp-btn-orange', sub: 'Download Now' },
-        { href: row && row.examCity,         label: 'Exam City Details',  icon: 'fa-location-dot',     cls: 'jp-btn-blue',   sub: 'Check City'   },
-        { href: row && row.officialWebsite,  label: 'Official Website',   icon: 'fa-globe',            cls: 'jp-btn-red',    sub: 'Visit Now'    },
+        { href: row && row.applyOnline,           label: 'Apply Online',             icon: 'fa-paper-plane',      cls: 'jp-btn-green',  sub: 'Apply Now'    },
+        { href: row && row.candidateLogin,        label: 'Candidate Login',          icon: 'fa-right-to-bracket', cls: 'jp-btn-green',  sub: 'Login Here'   },
+        { href: row && row.notifPdf,              label: 'Notification PDF',         icon: 'fa-file-pdf',         cls: 'jp-btn-blue',   sub: 'View PDF'     },
+        { href: row && row.officialNotifPdfLink,  label: 'Official Notification',    icon: 'fa-file-pdf',         cls: 'jp-btn-blue',   sub: 'Download PDF' },
+        { href: row && row.formPdfFreeLink,       label: 'Download Form (Free PDF)', icon: 'fa-file-arrow-down',  cls: 'jp-btn-orange', sub: 'Free PDF'     },
+        { href: row && row.admitCard,             label: 'Admit Card',               icon: 'fa-id-card',          cls: 'jp-btn-orange', sub: 'Download Now' },
+        { href: row && row.result,                label: 'Result',                   icon: 'fa-trophy',           cls: 'jp-btn-orange', sub: 'View Result'  },
+        { href: row && row.answerKey,             label: 'Answer Key',               icon: 'fa-key',              cls: 'jp-btn-blue',   sub: 'Download Now' },
+        { href: row && row.syllabus,              label: 'Syllabus',                 icon: 'fa-book-open',        cls: 'jp-btn-blue',   sub: 'Download Now' },
+        { href: row && row.meritList,             label: 'Merit List',               icon: 'fa-list-ol',          cls: 'jp-btn-orange', sub: 'View List'    },
+        { href: row && row.scoreCard,             label: 'Score Card',               icon: 'fa-chart-bar',        cls: 'jp-btn-orange', sub: 'Download Now' },
+        { href: row && row.examCity,              label: 'Exam City Details',        icon: 'fa-location-dot',     cls: 'jp-btn-blue',   sub: 'Check City'   },
+        { href: row && row.officialWebsite,       label: 'Official Website',         icon: 'fa-globe',            cls: 'jp-btn-red',    sub: 'Visit Now'    },
+        { href: row && row.officialWebsiteLink,   label: 'Official Website',         icon: 'fa-globe',            cls: 'jp-btn-red',    sub: 'Visit Now'    },
       ];
 
       const linksContainer = document.getElementById('linksActions');
@@ -1309,6 +1312,11 @@
       const cwVacSt  = safe(cwv.st  || '');
       const cwVacPh  = safe(cwv.ph  || '');
 
+      /* Offline form specific fields */
+      const formPdfFreeLink       = safe(job.form_pdf_free_link || '');
+      const officialNotifPdfLink  = safe(job.official_notification_pdf_link || '');
+      const officialWebsiteLink   = safe(job.official_website_link || '');
+
       return {
         title, org, totalVac, applyMode,
         destUrl, applyOnline, officialWebsite, notifPdf,
@@ -1320,6 +1328,7 @@
         eduQual, expReqd,
         salary, selProc, shortInfo,
         usefulLinks, vd, cwVacGen, cwVacObc, cwVacEws, cwVacSc, cwVacSt, cwVacPh,
+        formPdfFreeLink, officialNotifPdfLink, officialWebsiteLink,
         secId: secId || '',
         slug: safe(job.slug || ''),
         category: safe(job.category || ''),
