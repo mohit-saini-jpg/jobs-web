@@ -1216,35 +1216,67 @@
       return t.split(/\s+/).slice(0,4).join(" ");
     }
 
-    /* Slug fuzzy match — same logic as before but over SR data */
+    /* ── Robust slug matching ── */
     function findJobBySlug(allJobs, targetSlug) {
       if (!allJobs || !targetSlug) return null;
-      /* 1. Exact match */
-      const exact = allJobs.find(j => j.slug === targetSlug);
-      if (exact) return exact;
-      /* 2. Fuzzy token match */
-      const tokens = targetSlug.split("-").filter(t => t.length > 2);
+
+      /* 1. Exact match on slug */
+      let hit = allJobs.find(j => safe(j.slug) === targetSlug);
+      if (hit) return hit;
+
+      /* 2. Strip trailing hash suffix (e.g. "-2f0dc5", "-bd964d") then exact */
+      const noHash = targetSlug.replace(/-[0-9a-f]{5,8}$/i, "");
+      if (noHash !== targetSlug) {
+        hit = allJobs.find(j => safe(j.slug) === noHash
+                             || safe(j.slug).replace(/-[0-9a-f]{5,8}$/i,"") === noHash);
+        if (hit) return hit;
+      }
+
+      /* 3. Try matching on title slugified (some JSONs store title not slug) */
+      function titleToSlug(t) {
+        return safe(t).toLowerCase()
+          .replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,120);
+      }
+      const tokens = noHash.split("-").filter(t => t.length > 2);
+      if (!tokens.length) return null;
+
+      /* 4. Score-based fuzzy match against slug OR title-slug */
       let best = null, bestScore = 0;
       for (const j of allJobs) {
-        const matches = tokens.filter(t => (j.slug||"").includes(t)).length;
-        const score = matches / tokens.length;
+        const jSlug  = safe(j.slug || j.id || "");
+        const jTitle = titleToSlug(j.title || j.job_title || j.post_name || "");
+        const haystack = jSlug || jTitle;
+        if (!haystack) continue;
+
+        const matchesSlug  = tokens.filter(t => jSlug.includes(t)).length;
+        const matchesTitle = tokens.filter(t => jTitle.includes(t)).length;
+        const score = Math.max(matchesSlug, matchesTitle) / tokens.length;
+
         if (score > bestScore) { bestScore = score; best = j; }
       }
-      return bestScore >= 0.55 ? best : null;
+      /* Lower threshold to 0.45 so partial matches (like org name missing) still hit */
+      return bestScore >= 0.45 ? best : null;
     }
 
-    /* ── MAIN LOOKUP: find job by slug across all categories ── */
+    /* ── MAIN LOOKUP: find job by slug ── */
     async function getJobBySlug(slug) {
-      /* Strip scraper prefixes (e.g. "sr_latest_jobs-", "sr_admit_card-") */
-      const cleanSlug = slug.replace(/^sr_[a-z_]+-/, "").replace(/^latest_jobs-/, "");
-      const slugsToTry = [slug, cleanSlug].filter((s,i,a) => s && a.indexOf(s)===i);
+      /* Build all slug variants to try */
+      const variants = new Set();
+      variants.add(slug);
+      /* Strip scraper category prefix: sr_latest_jobs-, sr_admit_card-, sr_result- etc. */
+      const noPrefix = slug.replace(/^sr_[a-z_]+-/i, "").replace(/^latest_jobs-/i, "");
+      variants.add(noPrefix);
+      /* Also strip hash suffix from both */
+      variants.add(slug.replace(/-[0-9a-f]{5,8}$/i, ""));
+      variants.add(noPrefix.replace(/-[0-9a-f]{5,8}$/i, ""));
+      const slugsToTry = [...variants].filter(Boolean);
 
-      /* Step 1: Try individual /jobs/data/{slug}.json (pre-generated per-job files) */
+      /* Step 1: Try individual per-job JSON files */
       for (const s of slugsToTry) {
         try {
           const r = await fetchWithTimeout(`/jobs/data/${encodeURIComponent(s)}.json`);
           const data = await r.json();
-          if (data && data.basic_details) return data;           // already full nested format
+          if (data && data.basic_details) return data;
           if (data && (data.title || data.slug)) return convertMergedJobToNestedFormat(data);
         } catch(_) {}
       }
@@ -1254,11 +1286,7 @@
         const merged = await getMergedData();
         if (!merged) return null;
 
-        /* merged_sarkari_data.json can be:
-           A) Array of job objects
-           B) Object with category keys → each value is array of jobs
-           C) Object with a top-level "data" / "jobs" array
-        */
+        /* Flatten merged JSON — handles array, {data:[]}, {jobs:[]}, or category-bucket object */
         let allJobs = [];
         if (Array.isArray(merged)) {
           allJobs = merged;
@@ -1267,13 +1295,19 @@
         } else if (Array.isArray(merged.jobs)) {
           allJobs = merged.jobs;
         } else if (typeof merged === "object") {
-          /* Flatten category buckets */
-          allJobs = Object.values(merged).reduce((acc, v) => {
-            if (Array.isArray(v)) acc.push(...v);
-            return acc;
-          }, []);
+          /* Category buckets — flatten all values that are arrays */
+          for (const val of Object.values(merged)) {
+            if (Array.isArray(val)) allJobs.push(...val);
+            else if (val && typeof val === "object" && !Array.isArray(val)) {
+              /* One more level deep */
+              for (const v2 of Object.values(val)) {
+                if (Array.isArray(v2)) allJobs.push(...v2);
+              }
+            }
+          }
         }
 
+        /* Try each slug variant */
         for (const s of slugsToTry) {
           const match = findJobBySlug(allJobs, s);
           if (match) return convertMergedJobToNestedFormat(match);
@@ -1296,15 +1330,20 @@
         } else if (Array.isArray(merged.jobs)) {
           allJobs = merged.jobs;
         } else if (typeof merged === "object") {
-          allJobs = Object.values(merged).reduce((acc, v) => {
-            if (Array.isArray(v)) acc.push(...v);
-            return acc;
-          }, []);
+          for (const val of Object.values(merged)) {
+            if (Array.isArray(val)) allJobs.push(...val);
+            else if (val && typeof val === "object") {
+              for (const v2 of Object.values(val)) {
+                if (Array.isArray(v2)) allJobs.push(...v2);
+              }
+            }
+          }
         }
 
         const idx = {};
         allJobs.forEach(j => {
-          if (j.slug) idx[j.slug] = { title: j.title || j.job_title || "", category: j.category || "" };
+          const s = safe(j.slug || j.id || "");
+          if (s) idx[s] = { title: safe(j.title || j.job_title || ""), category: safe(j.category || "") };
         });
         return Object.keys(idx).length ? idx : null;
       } catch(_) { return null; }
@@ -1941,6 +1980,22 @@
        MAIN — NEW FAST 2-STEP FETCH
     ══════════════════════════════════════════════ */
     (async function run() {
+      const DEBUG = new URLSearchParams(location.search).get("debug") === "1";
+
+      function dbg(...args) {
+        if (DEBUG) console.log("[TSJ-DEBUG]", ...args);
+      }
+
+      function showDebugPanel(info) {
+        if (!DEBUG) return;
+        const panel = document.createElement("div");
+        panel.style.cssText = "position:fixed;bottom:0;left:0;right:0;max-height:50vh;overflow:auto;background:#0f172a;color:#e2e8f0;font-size:11px;font-family:monospace;padding:12px;z-index:9999;border-top:3px solid #f59e0b;";
+        panel.innerHTML = `<strong style="color:#fbbf24">🔍 TSJ DEBUG PANEL</strong>
+          <button onclick="this.parentNode.remove()" style="float:right;background:#ef4444;color:#fff;border:none;padding:2px 8px;cursor:pointer;border-radius:3px;">✕ Close</button>
+          <pre style="margin:8px 0 0;white-space:pre-wrap;word-break:break-all;">${JSON.stringify(info,null,2)}</pre>`;
+        document.body.appendChild(panel);
+      }
+
       function revealPage() {
         loading.style.display = "none";
         threeCol.style.display = "grid";
@@ -1959,30 +2014,85 @@
         return;
       }
 
+      dbg("rawSlug:", rawSlug);
+
       try {
-        /* ── STEP 1: Fetch index (75KB) ── */
+        /* ── STEP 1: Load merged JSON & build index ── */
+        const merged = await getMergedData();
+        dbg("merged_sarkari_data.json loaded:", merged ? "✅" : "❌ FAILED");
+
+        if (merged) {
+          /* Show top-level structure */
+          if (Array.isArray(merged)) {
+            dbg("JSON structure: TOP-LEVEL ARRAY, length:", merged.length);
+            dbg("First item keys:", merged[0] ? Object.keys(merged[0]) : "empty");
+            dbg("First item slug:", merged[0]?.slug);
+          } else if (typeof merged === "object") {
+            const topKeys = Object.keys(merged);
+            dbg("JSON structure: OBJECT with keys:", topKeys.slice(0,10));
+            const firstKey = topKeys[0];
+            const firstVal = merged[firstKey];
+            if (Array.isArray(firstVal)) {
+              dbg("Category bucket format — first bucket:", firstKey, "length:", firstVal.length);
+              dbg("First job keys:", firstVal[0] ? Object.keys(firstVal[0]) : "none");
+              dbg("First job slug:", firstVal[0]?.slug);
+            } else {
+              dbg("Top-level value type:", typeof firstVal);
+            }
+          }
+        }
+
         const index = await getIndex();
+        dbg("Index built:", index ? Object.keys(index).length + " slugs" : "❌ null");
 
         let matchedSlug = rawSlug;
         let destUrl = "";
 
-        /* Strip scraper prefixes like "sr_latest_jobs-", "sr_admit_card-" etc. */
-        const cleanRawSlug = rawSlug.replace(/^sr_[a-z_]+-/, "").replace(/^latest_jobs-/, "");
+        /* Strip scraper prefixes */
+        const cleanRawSlug = rawSlug.replace(/^sr_[a-z_]+-/i, "").replace(/^latest_jobs-/i, "");
+        dbg("cleanRawSlug:", cleanRawSlug);
 
         if (index) {
           const found = findSlugInIndex(index, rawSlug)
                      || (cleanRawSlug !== rawSlug ? findSlugInIndex(index, cleanRawSlug) : null);
           if (found) {
             matchedSlug = found.slug;
+            dbg("Index match found:", matchedSlug);
           } else if (cleanRawSlug !== rawSlug) {
             matchedSlug = cleanRawSlug;
+            dbg("No index match — using cleanRawSlug:", matchedSlug);
+          } else {
+            dbg("No index match found at all");
           }
         } else if (cleanRawSlug !== rawSlug) {
           matchedSlug = cleanRawSlug;
         }
 
-        /* ── STEP 2: Fetch individual job JSON (~11KB) ── */
+        /* ── STEP 2: Fetch job data ── */
+        dbg("Fetching job for matchedSlug:", matchedSlug);
         const job = await getJobBySlug(matchedSlug);
+        dbg("Job found:", job ? "✅" : "❌ null");
+
+        if (job) {
+          dbg("Job title:", job.basic_details?.job_title || job.title);
+          dbg("Job keys:", Object.keys(job));
+          dbg("important_links:", JSON.stringify(job.important_links));
+          dbg("vacancy_details count:", job.vacancy_details?.length);
+        }
+
+        showDebugPanel({
+          rawSlug, cleanRawSlug, matchedSlug,
+          jsonLoaded: !!merged,
+          jsonType: merged ? (Array.isArray(merged) ? "array" : "object") : "null",
+          jsonTopKeys: merged && !Array.isArray(merged) ? Object.keys(merged).slice(0,8) : null,
+          jsonArrayLen: Array.isArray(merged) ? merged.length : null,
+          indexSlugs: index ? Object.keys(index).slice(0, 8) : null,
+          jobFound: !!job,
+          jobTitle: job?.basic_details?.job_title || job?.title || null,
+          jobKeys: job ? Object.keys(job) : null,
+          importantLinks: job?.important_links || null,
+          vacancyCount: job?.vacancy_details?.length ?? 0,
+        });
 
         if (job && job.basic_details) {
           destUrl = safe(job.source_url || job.important_links?.official_website || "");
@@ -1990,6 +2100,7 @@
         } else {
           /* Fallback: render from slug title */
           const humanTitle = humanizeSlug(rawSlug);
+          dbg("Fallback render — humanTitle:", humanTitle);
           if (isJobItem(humanTitle)) {
             renderLegacyJobPage(humanTitle, "");
           } else {
@@ -2000,6 +2111,7 @@
         hideEmptyBtns();
 
       } catch (err) {
+        dbg("FATAL ERROR:", err.message, err.stack);
         /* Last resort */
         try { renderLegacyJobPage(humanizeSlug(rawSlug), ""); } catch(_) {}
       } finally {
