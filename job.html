@@ -1043,21 +1043,32 @@
 
     /* ── MAIN LOOKUP: find job by slug across all categories ── */
     async function getJobBySlug(slug) {
+      /* Strip common prefixes added by scraper (e.g. "sr_latest_jobs-") */
+      const cleanSlug = slug.replace(/^sr_[a-z_]+-/, "").replace(/^latest_jobs-/, "");
+      const slugsToTry = [slug, cleanSlug].filter((s,i,a) => s && a.indexOf(s)===i);
+
       try {
-        /* Try individual job JSON first (future-proofing) */
-        const r = await fetchWithTimeout(`/jobs/data/${encodeURIComponent(slug)}.json`);
-        const data = await r.json();
-        if (data && data.basic_details) return data;   // already nested format
-        return convertSRJobToNestedFormat(data);
-      } catch(_) { /* individual file not found — fall back to master JSON */ }
+        /* Try individual job JSON first (exact slug, then clean slug) */
+        for (const s of slugsToTry) {
+          try {
+            const r = await fetchWithTimeout(`/jobs/data/${encodeURIComponent(s)}.json`);
+            const data = await r.json();
+            if (data && data.basic_details) return data;
+            return convertSRJobToNestedFormat(data);
+          } catch(_) {}
+        }
+      } catch(_) {}
 
       try {
         const srData = await getSRData();
         if (!srData || !srData.data) return null;
-        /* Flatten all categories into one list */
         const allJobs = Object.values(srData.data).flat();
-        const match   = findJobBySlug(allJobs, slug);
-        return match ? convertSRJobToNestedFormat(match) : null;
+        /* Try each slug variant */
+        for (const s of slugsToTry) {
+          const match = findJobBySlug(allJobs, s);
+          if (match) return convertSRJobToNestedFormat(match);
+        }
+        return null;
       } catch(_) { return null; }
     }
 
@@ -1201,8 +1212,10 @@
       setText("statApplyMode", bd.application_mode||"Online");
 
       /* ── CTAs ── */
-      const applyUrl  = normalizeUrl(links.apply_online||links.official_website||destUrl||"");
-      const notifUrl  = normalizeUrl(links.notification_pdf||"");
+      const _applyRaw = links.apply_online||links.official_website||destUrl||"";
+      const _notifRaw = links.notification_pdf||"";
+      const applyUrl  = !isBlockedUrl(_applyRaw) ? normalizeUrl(_applyRaw) : normalizeUrl(links.official_website||destUrl||"");
+      const notifUrl  = !isBlockedUrl(_notifRaw) ? normalizeUrl(_notifRaw) : "";
       const mainCta   = document.getElementById("btnMainCta");
       const notifCta  = document.getElementById("btnNotifCta");
       if (applyUrl) mainCta.href = applyUrl;
@@ -1457,6 +1470,20 @@
         {key:"get_app",               label:"Get App / Download",          icon:"fa-download",            cls:"purple"},
       ];
 
+      /* ── Blocked link domains (third-party result sites, not official) ── */
+      const BLOCKED_LINK_DOMAINS = [
+        "sarkariresult.com",
+        "sarkariresultshine.com",
+        "sarkariresult.info",
+        "sarkariresults.info",
+      ];
+      function isBlockedUrl(url) {
+        try {
+          const host = new URL(normalizeUrl(url)).hostname.replace(/^www\./,"").toLowerCase();
+          return BLOCKED_LINK_DOMAINS.some(d => host === d || host.endsWith("."+d));
+        } catch(_) { return false; }
+      }
+
       /* helper: convert snake_case / weird keys → human readable label */
       function keyToLabel(k){
         // Handle URL-like keys (e.g. https_www_xyz_com → xyz.com Link)
@@ -1482,7 +1509,7 @@
         'pet_pst_notice','dv_schedule','skill_test_notice','typing_test_notice',
         'medical_exam_notice']);
 
-      let linksHtml=linkDefs.filter(ld=>links[ld.key]).map(ld=>
+      let linksHtml=linkDefs.filter(ld=>links[ld.key]&&!isBlockedUrl(links[ld.key])).map(ld=>
         `<a href="${esc(normalizeUrl(links[ld.key]))}" target="_blank" rel="noopener" class="jp-link-btn ${ld.cls}">
           <i class="fa-solid ${ld.icon}"></i>${esc(ld.label)}<span>Click Here</span>
         </a>`
@@ -1494,6 +1521,7 @@
         if(!v || typeof v !== 'string') return;     // skip non-string values
         const url = normalizeUrl(v);
         if(!url) return;                            // skip empty/invalid URLs
+        if(isBlockedUrl(url)) return;               // skip blocked third-party sites
         const lbl = keyToLabel(k);
         /* pick icon & colour heuristically */
         let icon='fa-link', cls='outline-blue';
@@ -1518,7 +1546,7 @@
         links.other_links.forEach(ol=>{
           const url=normalizeUrl(ol.url||ol.link||ol);
           const lbl=safe(ol.label||ol.name||"Other Link");
-          if(url) linksHtml+=`<a href="${esc(url)}" target="_blank" rel="noopener" class="jp-link-btn outline-blue"><i class="fa-solid fa-link"></i>${esc(lbl)}<span>Click Here</span></a>`;
+          if(url&&!isBlockedUrl(url)) linksHtml+=`<a href="${esc(url)}" target="_blank" rel="noopener" class="jp-link-btn outline-blue"><i class="fa-solid fa-link"></i>${esc(lbl)}<span>Click Here</span></a>`;
         });
       }
       if(!linksHtml) linksHtml=`<div style="padding:14px;font-size:.82rem;color:#64748b;">Links not available. Please check official website.</div>`;
@@ -1680,11 +1708,19 @@
         let matchedSlug = rawSlug;
         let destUrl = "";
 
+        /* Strip scraper prefixes like "sr_latest_jobs-", "sr_admit_card-" etc. */
+        const cleanRawSlug = rawSlug.replace(/^sr_[a-z_]+-/, "").replace(/^latest_jobs-/, "");
+
         if (index) {
-          const found = findSlugInIndex(index, rawSlug);
+          const found = findSlugInIndex(index, rawSlug)
+                     || (cleanRawSlug !== rawSlug ? findSlugInIndex(index, cleanRawSlug) : null);
           if (found) {
             matchedSlug = found.slug;
+          } else if (cleanRawSlug !== rawSlug) {
+            matchedSlug = cleanRawSlug;
           }
+        } else if (cleanRawSlug !== rawSlug) {
+          matchedSlug = cleanRawSlug;
         }
 
         /* ── STEP 2: Fetch individual job JSON (~11KB) ── */
