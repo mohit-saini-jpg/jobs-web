@@ -244,6 +244,54 @@
   <script src="script.js" defer></script>
 
   <script>
+  /* ── SR (Sarkari Result) CATEGORY META ── */
+  const __SR_CAT_META = {
+    "SR_Latest_Jobs":  { id: "SR_Latest_Jobs",  title: "🔴 Latest Jobs (Sarkari Result)",  param: "SR_Latest_Jobs" },
+    "SR_Admit_Card":   { id: "SR_Admit_Card",   title: "🔵 Admit Card",                    param: "SR_Admit_Card" },
+    "SR_Result":       { id: "SR_Result",        title: "🟢 Result",                        param: "SR_Result" },
+    "SR_Admission":    { id: "SR_Admission",     title: "🟣 Admission",                     param: "SR_Admission" },
+    "SR_Answer_Key":   { id: "SR_Answer_Key",    title: "🟠 Answer Key",                    param: "SR_Answer_Key" },
+  };
+
+  /* Build sections from sarkari_result_clean_final.json */
+  function __buildSRSections(rawData) {
+    const sections = [];
+    const categories = rawData.data || rawData || {};
+    for (const [catKey, meta] of Object.entries(__SR_CAT_META)) {
+      const jobs = categories[catKey];
+      if (!Array.isArray(jobs) || !jobs.length) continue;
+      const items = jobs.map(job => {
+        const title = (job.title || "").trim();
+        if (!title) return null;
+        const slug = job.slug || __viewSlugify(title);
+        const dates = job.important_dates || {};
+        const last = (
+          dates.last_date || dates.last_date_to_apply ||
+          dates.closing_date || job.last_date || ""
+        ).trim();
+        return { slug, name: title, date: last || "" };
+      }).filter(Boolean);
+      if (!items.length) continue;
+      sections.push({ id: meta.id, title: meta.title, param: meta.param, items, _srSource: true });
+    }
+    return sections;
+  }
+
+  let __cachedSRDataV = null;
+  async function getSRSectionsV() {
+    if (__cachedSRDataV) return __cachedSRDataV;
+    try {
+      const resp = await fetch("sarkari_result_clean_final.json", { cache: "no-cache" });
+      if (!resp.ok) throw new Error("HTTP " + resp.status);
+      const raw = await resp.json();
+      __cachedSRDataV = __buildSRSections(raw);
+      return __cachedSRDataV;
+    } catch(e) {
+      console.error("[TSJ view] Failed to load sarkari_result_clean_final.json:", e);
+      return [];
+    }
+  }
+
   /* ── DYNAMIC DATA: Auto-fetched from Complete_Jobs_Full_Data.json ── */
   /* Category metadata — same as script.js JOBS_CAT_META */
   const __VIEW_CAT_META = {
@@ -569,14 +617,35 @@
         (async () => {
              const list = document.getElementById("links-list");
              try {
-                 const d = await getJobsSectionsV();
-                 const spLower = sectionParam.toLowerCase().replace(/[\s_-]+/g, " ").trim();
-                 const sec = d.sections.find(s =>
-                   s.id === sectionParam ||
-                   s.title === sectionParam ||
-                   (s.id || "").toLowerCase().replace(/[\s_-]+/g, " ").trim() === spLower ||
-                   (s.title || "").replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FEFF}]/gu, "").replace(/[^\x00-\x7E]/g, "").trim().toLowerCase().replace(/[\s_-]+/g, " ").trim() === spLower
-                 ) || d.sections[0];
+                 // ── Check if this is a Sarkari Result (SR_*) section ──
+                 const isSRSection = sectionParam.startsWith('SR_');
+                 let sec = null;
+
+                 if (isSRSection) {
+                   // Load from sarkari_result_clean_final.json
+                   const srSections = await getSRSectionsV();
+                   sec = srSections.find(s => s.id === sectionParam || s.param === sectionParam);
+                   // Update page title with nice label
+                   const srTitleMap = {
+                     'SR_Latest_Jobs': 'Latest Jobs',
+                     'SR_Admit_Card':  'Admit Card',
+                     'SR_Result':      'Result',
+                     'SR_Admission':   'Admission',
+                     'SR_Answer_Key':  'Answer Key',
+                   };
+                   const niceTitle = srTitleMap[sectionParam] || title;
+                   if(document.getElementById("page-title")) document.getElementById("page-title").textContent = niceTitle.toUpperCase();
+                 } else {
+                   // Load from Complete_Jobs_Full_Data.json
+                   const d = await getJobsSectionsV();
+                   const spLower = sectionParam.toLowerCase().replace(/[\s_-]+/g, " ").trim();
+                   sec = d.sections.find(s =>
+                     s.id === sectionParam ||
+                     s.title === sectionParam ||
+                     (s.id || "").toLowerCase().replace(/[\s_-]+/g, " ").trim() === spLower ||
+                     (s.title || "").replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FEFF}]/gu, "").replace(/[^\x00-\x7E]/g, "").trim().toLowerCase().replace(/[\s_-]+/g, " ").trim() === spLower
+                   ) || d.sections[0];
+                 }
                  
                  if(sec && sec.items) {
                      document.getElementById("loading").classList.add("hidden");
