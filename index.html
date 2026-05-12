@@ -2577,7 +2577,7 @@
       if (!grid) return;
 
       /* Extract both data sources from JSON */
-      var srCategories  = jsonData.sarkariresult_categories || {};
+      var srCategories  = (jsonData.sarkariresult_data && jsonData.sarkariresult_data.data) || jsonData.sarkariresult_categories || {};
       var shineJobs     = jsonData.sarkariresultshine_jobs  || [];
 
       var html = '';
@@ -2599,7 +2599,7 @@
       if (html) {
         grid.innerHTML = html;
       } else {
-        console.warn('[SR] No data found. Keys in JSON:', Object.keys(jsonData));
+        console.warn('[SR] No data found. Keys in JSON:', Object.keys(jsonData), '| sarkariresult_data:', jsonData.sarkariresult_data ? Object.keys(jsonData.sarkariresult_data) : 'missing');
         var wrap = document.getElementById('sr-dynamic-wrap');
         if (wrap) wrap.style.display = 'none';
       }
