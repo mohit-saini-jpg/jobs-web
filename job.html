@@ -1379,14 +1379,17 @@
                 if (!title) continue;
                 const externalUrl = safe(job.url || job.link || job.source_url || '');
                 const lastDate = safe(job.last_date || '');
-                /* Build a pseudo-full job object so parseFullJob works */
+                /* Build a pseudo-full job object so parseFullJob works.
+                   Spread the full original job so useful_links, important_dates,
+                   application_fee, age_limit, total_post, short_information all come through. */
                 const pseudoJob = {
+                  ...job,
                   title,
                   source_url: externalUrl,
-                  official_website_link: externalUrl,
                   last_date: lastDate,
                   category: catKey,
-                  important_links: { apply_online: externalUrl, official_website: externalUrl }
+                  important_links: job.important_links || { apply_online: externalUrl, official_website: externalUrl },
+                  total_vacancy: job.total_vacancy || job.total_vacancies || job.total_post || '',
                 };
                 const parsed = parseFullJob(pseudoJob, catKey);
                 if (parsed.title) out.push(parsed);
