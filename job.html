@@ -968,7 +968,7 @@
           return { icon: 'fa-location-dot',         cls: 'jp-btn-blue',   sub: 'Check City' };
         if (/answer\s*key|final\s*answer\s*key|response\s*sheet|raise\s*objection|objection\s*link|for\s*answer\s*key|paper.*answer\s*key|tier.*answer\s*key|second.*answer\s*key/i.test(t))
           return { icon: 'fa-key',                  cls: 'jp-btn-blue',   sub: 'Download Now' };
-        if (/result|merit\s*list|selection\s*list|score\s*card|cutoff|cut.?off|download.*result|first.*phase.*result|paper.*result|tier.*result|eligibility.*result|final.*result|ias.*result|ifs.*result|jee.*result|bseb.*result|upsssc.*result/i.test(t))
+        if (/result|merit\s*list|selection\s*list|score\s*card|cutoff|cut.?off|download.*result|first.*phase.*result|paper.*result|tier.*result|eligibility.*result|final.*result|ias.*result|ifs.*result|jee.*result|bseb.*result|upsssc.*result/i.test(t) && !/notice|pdf/i.test(t))
           return { icon: 'fa-trophy',               cls: 'jp-btn-orange', sub: 'View Result' };
         if (/syllabus|exam\s*pattern|previous\s*paper|practice\s*set|pgt\s*syllabus/i.test(t))
           return { icon: 'fa-book-open',            cls: 'jp-btn-blue',   sub: 'Download Now' };
@@ -990,66 +990,61 @@
         return { icon: 'fa-link',                   cls: 'jp-btn-blue',   sub: 'Click Here' };
       }
 
-      /* ── Build merged links list from row fields + useful_links ── */
-      /* Priority-ordered static fields */
-      const staticLinkDefs = [
-        { key: 'applyOnline',     href: row && row.applyOnline,      label: 'Apply Online',        icon: 'fa-paper-plane',      cls: 'jp-btn-green',  sub: 'Apply Now'     },
-        { key: 'candidateLogin',  href: row && row.candidateLogin,   label: 'Candidate Login',     icon: 'fa-right-to-bracket', cls: 'jp-btn-green',  sub: 'Login Here'    },
-        { key: 'notifPdf',        href: row && row.notifPdf,         label: 'Notification PDF',    icon: 'fa-file-pdf',         cls: 'jp-btn-blue',   sub: 'View PDF'      },
-        { key: 'admitCard',       href: row && row.admitCard,        label: 'Admit Card',          icon: 'fa-id-card',          cls: 'jp-btn-orange', sub: 'Download Now'  },
-        { key: 'result',          href: row && row.result,           label: 'Result',              icon: 'fa-trophy',           cls: 'jp-btn-orange', sub: 'View Result'   },
-        { key: 'answerKey',       href: row && row.answerKey,        label: 'Answer Key',          icon: 'fa-key',              cls: 'jp-btn-blue',   sub: 'Download Now'  },
-        { key: 'syllabus',        href: row && row.syllabus,         label: 'Syllabus',            icon: 'fa-book-open',        cls: 'jp-btn-blue',   sub: 'Download Now'  },
-        { key: 'meritList',       href: row && row.meritList,        label: 'Merit List',          icon: 'fa-list-ol',          cls: 'jp-btn-orange', sub: 'View List'     },
-        { key: 'scoreCard',       href: row && row.scoreCard,        label: 'Score Card',          icon: 'fa-chart-bar',        cls: 'jp-btn-orange', sub: 'Download Now'  },
-        { key: 'examCity',        href: row && row.examCity,         label: 'Exam City Details',   icon: 'fa-location-dot',     cls: 'jp-btn-blue',   sub: 'Check City'    },
-        { key: 'officialWebsite', href: row && row.officialWebsite,  label: 'Official Website',    icon: 'fa-globe',            cls: 'jp-btn-red',    sub: 'Visit Now'     },
-      ];
-
-      /* Useful links from JSON (useful_links array) — support both string and array of links */
+      /* ── useful_links array from JSON (PRIMARY source) ── */
       const usefulLinksRaw = (row && row.usefulLinks) || [];
+
+      /* ── Static row fields (SUPPLEMENTAL — only if useful_links missing that link) ── */
+      const staticLinkDefs = [
+        { href: row && row.applyOnline,      label: 'Apply Online',       icon: 'fa-paper-plane',      cls: 'jp-btn-green',  sub: 'Apply Now'    },
+        { href: row && row.candidateLogin,   label: 'Candidate Login',    icon: 'fa-right-to-bracket', cls: 'jp-btn-green',  sub: 'Login Here'   },
+        { href: row && row.notifPdf,         label: 'Notification PDF',   icon: 'fa-file-pdf',         cls: 'jp-btn-blue',   sub: 'View PDF'     },
+        { href: row && row.admitCard,        label: 'Admit Card',         icon: 'fa-id-card',          cls: 'jp-btn-orange', sub: 'Download Now' },
+        { href: row && row.result,           label: 'Result',             icon: 'fa-trophy',           cls: 'jp-btn-orange', sub: 'View Result'  },
+        { href: row && row.answerKey,        label: 'Answer Key',         icon: 'fa-key',              cls: 'jp-btn-blue',   sub: 'Download Now' },
+        { href: row && row.syllabus,         label: 'Syllabus',           icon: 'fa-book-open',        cls: 'jp-btn-blue',   sub: 'Download Now' },
+        { href: row && row.meritList,        label: 'Merit List',         icon: 'fa-list-ol',          cls: 'jp-btn-orange', sub: 'View List'    },
+        { href: row && row.scoreCard,        label: 'Score Card',         icon: 'fa-chart-bar',        cls: 'jp-btn-orange', sub: 'Download Now' },
+        { href: row && row.examCity,         label: 'Exam City Details',  icon: 'fa-location-dot',     cls: 'jp-btn-blue',   sub: 'Check City'   },
+        { href: row && row.officialWebsite,  label: 'Official Website',   icon: 'fa-globe',            cls: 'jp-btn-red',    sub: 'Visit Now'    },
+      ];
 
       const linksContainer = document.getElementById('linksActions');
       if (linksContainer) {
-        /* Collect all links to render */
         const allLinks = [];
+        const seenHrefs = new Set();
 
-        /* 1. Static row fields (only if not empty) */
-        staticLinkDefs.forEach(ld => {
-          const href = normalizeUrl(safe(ld.href));
-          if (href && href !== '#') {
-            allLinks.push({ href, label: ld.label, icon: ld.icon, cls: ld.cls, sub: ld.sub });
-          }
-        });
-
-        /* 2. useful_links array from JSON — smart categorize by title */
+        /* ── STEP 1: useful_links se SAARE links render karo (PRIMARY) ── */
+        /* Ye JSON mein jo bhi links hain wo SABHI show honge — koi filter nahi */
         usefulLinksRaw.forEach(ul => {
           const t = safe(ul.title || ul.name || '');
           if (!t) return;
-          /* links field can be string or array of strings */
+          /* links field: string ya array dono support */
           const rawLinks = ul.links || ul.url || ul.href || '';
           const linkArr = Array.isArray(rawLinks) ? rawLinks : [rawLinks];
           linkArr.forEach((rawUrl, idx) => {
             const href = normalizeUrl(safe(rawUrl));
             if (!href || href === '#') return;
-            /* For multiple links under same title, suffix link number */
+            if (seenHrefs.has(href)) return;   /* duplicate href skip */
+            seenHrefs.add(href);
+            /* Multiple URLs same title mein → (1), (2) suffix */
             const label = linkArr.length > 1 ? `${t} (${idx + 1})` : t;
             const cat = categorizeLinkByTitle(t);
             allLinks.push({ href, label, icon: cat.icon, cls: cat.cls, sub: cat.sub });
           });
         });
 
-        /* 3. Deduplicate by href */
-        const seenHrefs = new Set();
-        const deduped = allLinks.filter(lk => {
-          if (seenHrefs.has(lk.href)) return false;
-          seenHrefs.add(lk.href);
-          return true;
+        /* ── STEP 2: Static fields se sirf wo links add karo jo useful_links mein nahi hain ── */
+        staticLinkDefs.forEach(ld => {
+          const href = normalizeUrl(safe(ld.href));
+          if (!href || href === '#') return;
+          if (seenHrefs.has(href)) return;   /* already shown from useful_links */
+          seenHrefs.add(href);
+          allLinks.push({ href, label: ld.label, icon: ld.icon, cls: ld.cls, sub: ld.sub });
         });
 
-        let linksHtml = deduped.map(lk =>
+        let linksHtml = allLinks.map(lk =>
           `<a href="${lk.href}" target="_blank" rel="noopener" class="jp-btn ${lk.cls}">
-            <span><i class="fa-solid ${lk.icon}"></i> ${lk.label.slice(0, 50)}</span>
+            <span><i class="fa-solid ${lk.icon}"></i> ${lk.label.slice(0, 55)}</span>
             <span class="jp-btn-sub">${lk.sub}</span>
           </a>`
         ).join('');
