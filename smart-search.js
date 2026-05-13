@@ -84,7 +84,7 @@
     { title: 'Anganwadi Workers 2026', dept: 'Women & Child Development', qual: '8th / 10th Pass', state: 'All India', cat: 'Others', tags: 'anganwadi worker helper 8th 10th women', slug: 'view.html?section=latest%20jobs', lastDate: '', icon: 'fa-heart', lastUpdated: '2026-04-11T10:00:00', sectionSource: 'Latest Jobs' },
     { title: 'ITI Apprentice 2026', dept: 'Various PSUs', qual: 'ITI Pass', state: 'All India', cat: 'ITI Jobs', tags: 'iti apprentice technician trade', slug: 'view.html?section=ITI%20Pass%20jobs', lastDate: '', icon: 'fa-tools', lastUpdated: '2026-04-10T09:00:00', sectionSource: 'ITI Pass Jobs' },
     { title: 'ONGC Recruitment 2026', dept: 'ONGC', qual: 'ITI / Diploma / B.Tech', state: 'All India', cat: 'PSU', tags: 'ongc psu oil gas iti diploma engineer', slug: 'view.html?section=latest%20jobs', lastDate: '', icon: 'fa-industry', lastUpdated: '2026-04-09T11:00:00', sectionSource: 'Latest Jobs' },
-    { title: 'BSNL JE 2026', dept: 'BSNL', qual: 'Diploma / B.Tech', state: 'All India', cat: 'Telecom', tags: 'bsnl je junior engineer telecom diploma btech', slug: 'view.html?section=latest%20jobs', lastDate: '', icon: 'fa-tower-broadcast', lastUpdated: '2026-04-08T08:00:00', sectionSource: 'Latest Jobs' },
+    { title: 'BSNL JE 2026', dept: 'BSNL', qual: 'Diploma / B.Tech', state: 'All India', cat: 'Telecom', tags: 'bsnl je telecom diploma btech', slug: 'view.html?section=latest%20jobs', lastDate: '', icon: 'fa-tower-broadcast', lastUpdated: '2026-04-08T08:00:00', sectionSource: 'Latest Jobs' },
     { title: 'MP Police 2026', dept: 'MP Police', qual: '12th Pass', state: 'Madhya Pradesh', cat: 'Police', tags: 'mp madhya pradesh police constable 12th', slug: 'view.html?section=State%20jobs', lastDate: '', icon: 'fa-shield-halved', lastUpdated: '2026-04-07T10:00:00', sectionSource: 'State Jobs' },
     { title: 'BPSC 2026', dept: 'Bihar PSC', qual: 'Graduation', state: 'Bihar', cat: 'State Jobs', tags: 'bpsc bihar psc state civil services graduation', slug: 'view.html?section=State%20jobs', lastDate: '', icon: 'fa-briefcase', lastUpdated: '2026-04-06T09:00:00', sectionSource: 'State Jobs' },
     { title: 'SSC MTS 2026', dept: 'Staff Selection Commission', qual: '10th Pass', state: 'All India', cat: 'SSC', tags: 'ssc mts multi tasking staff 10th pass', slug: 'view.html?section=SSC%20Jobs', lastDate: '', icon: 'fa-medal', lastUpdated: '2026-04-05T11:00:00', sectionSource: 'SSC Jobs' },
@@ -691,10 +691,15 @@
     const queryWords      = q.split(/\s+/).filter(w => w.length >= 1);
     const meaningfulWords = queryWords.filter(w => w.length >= 2 && !STOP_WORDS.has(w));
 
+    // MIN_SCORE: tag-only penalty results in score ~5 (20*0.25).
+    // Require at least 15 so weak tag-only matches (e.g. BSNL JE for "upsssc junior engineer")
+    // are suppressed unless JSON is still loading (in which case lower bar avoids empty results).
+    const MIN_SCORE = jsonIndexReady ? 15 : 5;
+
     let results = allData
       .map(item => {
         const s = scoreItem(item, q, queryWords, meaningfulWords);
-        return s > 0 ? { ...item, _score: s } : null;
+        return s >= MIN_SCORE ? { ...item, _score: s } : null;
       })
       .filter(Boolean)
       .sort((a, b) => {
@@ -1138,7 +1143,35 @@
     function showFullResults(q) {
       resultsPanel.classList.add('open');
 
-      // ✅ FIX: seedha search karo, JSON load ka wait nahi — SEED_DATA available hai
+      // If JSON not ready yet, show loading skeleton and retry when ready
+      if (!jsonIndexReady) {
+        resultsPanel.innerHTML = `
+          <div class="tsj-res-head">
+            <span class="tsj-res-count"><i class="fa-solid fa-spinner fa-spin"></i> Loading results for "${esc(q)}"…</span>
+            <button type="button" class="tsj-res-close" id="tsjResClose">✕ Close</button>
+          </div>
+          <div class="tsj-result-card" style="text-align:center;color:rgba(255,255,255,.75);padding:20px;">
+            <p>Searching all jobs — please wait a moment…</p>
+          </div>`;
+        resultsPanel.querySelector('#tsjResClose')?.addEventListener('click', () => {
+          resultsPanel.classList.remove('open');
+          resultsPanel.innerHTML = '';
+          input.value = '';
+          input.focus();
+        });
+        // Poll until JSON is ready, then re-run full search
+        let retries = 0;
+        const maxRetries = 20;
+        (function waitForJson() {
+          if (jsonIndexReady) {
+            showFullResults(q);  // re-run with full data
+          } else if (retries++ < maxRetries) {
+            setTimeout(waitForJson, 500);
+          }
+        })();
+        return;
+      }
+
       const results = doSearch(q, currentFilters);
 
       if (!results.length) {
