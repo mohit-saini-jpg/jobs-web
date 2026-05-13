@@ -155,10 +155,10 @@
         { name: 'state',  weight: 0.04 },
         { name: 'qual',   weight: 0.03 },
       ],
-      threshold: 0.45,
+      threshold: 0.5,          // ✅ FIX: 0.45→0.5, single word bhi match hoga
       includeScore: true,
       ignoreLocation: true,
-      minMatchCharLength: 2,
+      minMatchCharLength: 1,  // ✅ FIX: 1 word/char se bhi search ho
     });
     fuseLoaded = true;
   }
@@ -550,7 +550,18 @@
     jsonIndexReady = true;
     console.log('[smart-search] ✅ Index ready. Total items:', allData.length,
       '(SEED:', SEED_DATA.length, '+ JSON:', totalLoaded, ')');
-    loadFuse(() => buildFuse(allData));
+    loadFuse(() => {
+      buildFuse(allData);
+      // ✅ FIX: JSON load ke baad agar user ne kuch type kar rakha hai to suggestion refresh karo
+      const heroInput = document.getElementById('heroSearch');
+      if (heroInput && heroInput.value.trim().length >= 1) {
+        const drop = document.getElementById('tsjDrop');
+        if (drop && drop.classList.contains('open')) {
+          // showSuggest already bound — trigger input event to refresh
+          heroInput.dispatchEvent(new Event('input'));
+        }
+      }
+    });
   }
 
     /* ── SORT BY LAST UPDATED (descending) ─────────────────── */
@@ -586,16 +597,27 @@
 
     let results;
 
-    if (fuseLoaded && fuseInstance) {
+    // ✅ FIX: Single char (≤2) ke liye seedha includes match — Fuse short strings mein weak hai
+    if (q.length <= 2) {
+      results = allData
+        .map(item => {
+          const hay = (item.title + ' ' + item.tags + ' ' + item.cat + ' ' + item.dept + ' ' + item.state).toLowerCase();
+          const score = hay.includes(q) ? (item.title.toLowerCase().startsWith(q) ? 20 : 10) : 0;
+          return { ...item, _score: score };
+        })
+        .filter(r => r._score > 0)
+        .sort((a, b) => b._score - a._score);
+    } else if (fuseLoaded && fuseInstance) {
       results = fuseInstance.search(q, { limit: 50 }).map(r => r.item);
     } else {
-      // Fallback built-in search
+      // Fallback built-in search — single word bhi match kare
       results = allData
         .map(item => {
           const hay = (item.title + ' ' + item.tags + ' ' + item.cat + ' ' + item.dept + ' ' + item.state).toLowerCase();
           let score = 0;
           q.split(/\s+/).forEach(word => {
-            if (hay.includes(word)) score += word.length >= 4 ? 10 : 6;
+            if (word.length === 0) return;
+            if (hay.includes(word)) score += word.length >= 3 ? 10 : 6;  // ✅ FIX: single char words bhi match
           });
           if (item.title.toLowerCase().includes(q)) score += 15;
           if (item.cat.toLowerCase().includes(q)) score += 5;
@@ -980,21 +1002,10 @@
     }
 
     function showSuggest(q) {
-      // ✅ If JSON still loading, retry after 500ms (max 3 retries)
-      if (!jsonIndexReady) {
-        let retries = 0;
-        const wait = setInterval(() => {
-          retries++;
-          if (jsonIndexReady || retries >= 6) {
-            clearInterval(wait);
-            if (input.value.trim().toLowerCase() === q.trim().toLowerCase()) showSuggest(q);
-          }
-        }, 300);
-        drop.innerHTML = '<div class="tsj-no-suggest" style="color:#64748b;"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading jobs data…</div>';
-        drop.classList.add('open');
-        return;
-      }
       positionDrop();
+
+      // ✅ FIX: JSON load hone ka wait mat karo — SEED_DATA se search karo abhi,
+      //         aur agar JSON load ho jaye to auto-refresh karo
       const results = doSearch(q, {}).slice(0, CFG.maxSuggest);
       if (!results.length) {
         drop.innerHTML = `<div class="tsj-no-suggest">No results for "<strong>${esc(q)}</strong>". Try: SSC, Railway, Bank, Police…</div>`;
@@ -1009,6 +1020,16 @@
       }
       drop.classList.add('open');
       wireDropEvents();
+
+      // ✅ FIX: Agar JSON abhi load ho raha hai to 500ms baad re-render karo (updated data se)
+      if (!jsonIndexReady) {
+        const currentQ = q;
+        setTimeout(() => {
+          if (input.value.trim().toLowerCase() === currentQ.trim().toLowerCase() && jsonIndexReady) {
+            showSuggest(currentQ);
+          }
+        }, 800);
+      }
     }
 
     function wireDropEvents() {
@@ -1035,21 +1056,10 @@
     }
 
     function showFullResults(q) {
-      if (!jsonIndexReady) {
-        resultsPanel.classList.add('open');
-        resultsPanel.innerHTML = '<div class="tsj-res-head"><span class="tsj-res-count"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading jobs data…</span></div>';
-        let retries = 0;
-        const wait = setInterval(() => {
-          retries++;
-          if (jsonIndexReady || retries >= 6) {
-            clearInterval(wait);
-            showFullResults(q);
-          }
-        }, 300);
-        return;
-      }
-      const results = doSearch(q, currentFilters);
       resultsPanel.classList.add('open');
+
+      // ✅ FIX: seedha search karo, JSON load ka wait nahi — SEED_DATA available hai
+      const results = doSearch(q, currentFilters);
 
       if (!results.length) {
         resultsPanel.innerHTML = `
@@ -1109,13 +1119,13 @@
 
     /* ── Events ── */
     const debouncedSuggest = debounce(q => {
-      if (q.trim().length < 1) { showDefaultDrop(); return; }
+      if (q.trim().length < 1) { showDefaultDrop(); return; }  // ✅ 1 char se suggest shuru
       showSuggest(q);
     }, CFG.debounceMs);
 
     input.addEventListener('input', function () { debouncedSuggest(this.value); });
     input.addEventListener('focus', function () {
-      if (this.value.trim().length >= 1) showSuggest(this.value);
+      if (this.value.trim().length >= 1) showSuggest(this.value);  // ✅ 1 char se
       else showDefaultDrop();
     });
 
