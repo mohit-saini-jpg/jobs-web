@@ -1352,6 +1352,7 @@
           <input id="heroSearch" type="search" placeholder="Search jobs, admit card, result..." autocomplete="off" aria-label="Search jobs" aria-autocomplete="list"/>
           <button id="heroSearchBtn" type="button"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
         </div>
+        <div id="searchSuggest" role="listbox" aria-label="Search suggestions"></div>
       </div>
       <div id="heroSearchResults"></div>
     </div>
@@ -2745,6 +2746,206 @@
     } else {
       loadData();
     }
+  })();
+  </script>
+
+  <!-- ============================================================
+       HERO SEARCH — reads merged_sarkari_data.json + dailyupdates.json
+       + Complete_Jobs_Full_Data.json for live typeahead & results
+  ============================================================ -->
+  <script>
+  (function heroSearchInit() {
+    'use strict';
+
+    var input   = document.getElementById('heroSearch');
+    var btn     = document.getElementById('heroSearchBtn');
+    var suggest = document.getElementById('searchSuggest');
+    if (!input || !btn || !suggest) return;
+
+    /* ── Keyword → category label ── */
+    var KW_ADMIT     = ['admit card','hall ticket','call letter'];
+    var KW_ANSWER    = ['answer key','answer sheet','objection'];
+    var KW_RESULT    = ['result','merit list','cut off','cutoff','scorecard'];
+    var KW_ADMISSION = ['admission','counselling','counseling'];
+
+    function categoryOf(title) {
+      var t = title.toLowerCase();
+      if (KW_ADMIT.some(function(k){ return t.indexOf(k)!==-1; }))     return 'Admit Card';
+      if (KW_ANSWER.some(function(k){ return t.indexOf(k)!==-1; }))    return 'Answer Key';
+      if (KW_RESULT.some(function(k){ return t.indexOf(k)!==-1; }))    return 'Result';
+      if (KW_ADMISSION.some(function(k){ return t.indexOf(k)!==-1; })) return 'Admission';
+      return 'Latest Job';
+    }
+
+    var ICON_MAP = {
+      'Latest Job' : 'fa-briefcase',
+      'Admit Card' : 'fa-id-card',
+      'Result'     : 'fa-trophy',
+      'Answer Key' : 'fa-key',
+      'Admission'  : 'fa-graduation-cap',
+      'Offline'    : 'fa-file-pen',
+      'Update'     : 'fa-bell'
+    };
+
+    function iconFor(cat) { return ICON_MAP[cat] || 'fa-circle-dot'; }
+
+    /* ── Slug generator (same as view.html) ── */
+    function slugify(t) {
+      return t.toLowerCase()
+        .replace(/[^a-z0-9\s-]/g,'')
+        .replace(/[\s-]+/g,'-')
+        .slice(0,120)
+        .replace(/^-+|-+$/g,'');
+    }
+
+    function hrefFor(job, cat) {
+      var mode = (job.apply_mode || '').toLowerCase();
+      var slug = job.slug || slugify(job.title || '');
+      if (!slug) return job.official_website_link || '#';
+      var prefix = (mode === 'offline') ? 'offline' : '';
+      var base = prefix ? prefix + '-' + slug : slug;
+      return 'job.html?slug=' + encodeURIComponent(base);
+    }
+
+    /* ── Fetch helpers ── */
+    function fetchJSON(url) {
+      return fetch(url, { cache: 'no-cache' })
+        .then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); })
+        .catch(function(){ return null; });
+    }
+
+    /* ── Build unified search index ── */
+    var searchIndex = [];   // { title, href, cat, date }
+    var indexReady  = false;
+
+    function buildIndex(results) {
+      var merged    = results[0];
+      var daily     = results[1];
+      var complete  = results[2];
+
+      /* 1. merged_sarkari_data.json → jobs[] */
+      if (merged && Array.isArray(merged.jobs)) {
+        merged.jobs.forEach(function(j) {
+          if (!j.title) return;
+          var cat  = categoryOf(j.title);
+          if ((j.apply_mode||'').toLowerCase()==='offline') cat = 'Offline';
+          var date = (j.important_dates && j.important_dates.last_date) || '';
+          searchIndex.push({ title: j.title, href: hrefFor(j, cat), cat: cat, date: date });
+        });
+      }
+
+      /* 2. dailyupdates.json — support both array and {sections:[]} shape */
+      if (daily) {
+        var duArr = Array.isArray(daily) ? daily
+                  : (Array.isArray(daily.sections) ? daily.sections : []);
+        duArr.forEach(function(sec) {
+          var items = Array.isArray(sec.items) ? sec.items : (Array.isArray(sec) ? [sec] : []);
+          items.forEach(function(i) {
+            var t = i.name || i.title || '';
+            if (!t) return;
+            var href = i.url || i.link || i.source_url || '#';
+            searchIndex.push({ title: t, href: href, cat: sec.title || 'Update', date: i.date || i.last_date || '' });
+          });
+        });
+      }
+
+      /* 3. Complete_Jobs_Full_Data.json — object of arrays */
+      if (complete && typeof complete === 'object') {
+        Object.keys(complete).forEach(function(key) {
+          if (!Array.isArray(complete[key])) return;
+          complete[key].forEach(function(i) {
+            var t = i.name || i.title || '';
+            if (!t) return;
+            var href = i.url || i.link || '#';
+            searchIndex.push({ title: t, href: href, cat: key.replace(/_/g,' '), date: i.date || '' });
+          });
+        });
+      }
+
+      indexReady = true;
+    }
+
+    /* Load all three JSON files in parallel */
+    Promise.all([
+      fetchJSON('merged_sarkari_data.json'),
+      fetchJSON('dailyupdates.json'),
+      fetchJSON('Complete_Jobs_Full_Data.json')
+    ]).then(buildIndex);
+
+    /* ── Render dropdown ── */
+    function renderSuggest(matches, query) {
+      if (!matches.length) {
+        suggest.innerHTML =
+          '<div class="suggest-item" style="color:var(--muted);justify-content:center;">' +
+          'No results for "' + escHtml(query) + '". Try SSC, Railway, Bank, Admit Card…' +
+          '</div>';
+        suggest.classList.add('open');
+        return;
+      }
+      var html = matches.slice(0, 12).map(function(m) {
+        var dateStr = m.date ? ' &nbsp;<span style="font-size:.72rem;color:var(--red);font-weight:700;">📅 ' + escHtml(m.date) + '</span>' : '';
+        return '<a class="suggest-item" href="' + escHtml(m.href) + '">' +
+          '<i class="fa-solid ' + iconFor(m.cat) + '" style="color:var(--blue);min-width:16px;"></i>' +
+          '<span style="flex:1;min-width:0;">' +
+            '<span style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escHtml(m.title) + '</span>' +
+            '<span style="font-size:.7rem;color:var(--muted);font-weight:400;">' + escHtml(m.cat) + dateStr + '</span>' +
+          '</span>' +
+        '</a>';
+      }).join('');
+      suggest.innerHTML = html;
+      suggest.classList.add('open');
+    }
+
+    function closeSuggest() { suggest.classList.remove('open'); suggest.innerHTML = ''; }
+
+    function escHtml(s) {
+      return String(s||'').replace(/[&<>"]/g, function(c){
+        return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
+      });
+    }
+
+    /* ── Search logic ── */
+    function doSearch(query) {
+      var q = query.trim().toLowerCase();
+      if (q.length < 2) { closeSuggest(); return; }
+
+      /* If index not ready yet, wait and retry once */
+      if (!indexReady) {
+        setTimeout(function(){ doSearch(query); }, 600);
+        return;
+      }
+
+      var tokens = q.split(/\s+/).filter(Boolean);
+      var matches = searchIndex.filter(function(item) {
+        var hay = (item.title + ' ' + item.cat).toLowerCase();
+        return tokens.every(function(t){ return hay.indexOf(t) !== -1; });
+      });
+
+      renderSuggest(matches, query);
+    }
+
+    /* ── Event wiring ── */
+    var debounceTimer;
+    input.addEventListener('input', function() {
+      clearTimeout(debounceTimer);
+      var val = input.value;
+      if (!val.trim()) { closeSuggest(); return; }
+      debounceTimer = setTimeout(function(){ doSearch(val); }, 220);
+    });
+
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); doSearch(input.value); }
+      if (e.key === 'Escape') { closeSuggest(); }
+    });
+
+    btn.addEventListener('click', function() { doSearch(input.value); });
+
+    /* Close on outside click */
+    document.addEventListener('click', function(e) {
+      if (!suggest.contains(e.target) && e.target !== input && e.target !== btn) {
+        closeSuggest();
+      }
+    });
   })();
   </script>
 
