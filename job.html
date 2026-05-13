@@ -1204,7 +1204,50 @@
 
       /* ── Extract links from useful_links array by title keyword ── */
       /* useful_links se title match karke specific links nikalte hain */
-      const usefulLinks = Array.isArray(job.useful_links) ? job.useful_links : [];
+      /* Also convert important_links object keys → usefulLinks entries so
+         click_here / download_pdf / visit_website / click_here_to_apply /
+         URL-keyed entries etc. are ALL shown in Important Links section.   */
+      const _ilRaw = job.important_links || job.important_links_obj || {};
+      /* Human-readable label map for known keys */
+      const _IL_LABELS = {
+        click_here:          'Click Here',
+        click_here_to_apply: 'Click Here to Apply',
+        apply_online:        'Apply Online',
+        notification_pdf:    'Notification PDF',
+        download_pdf:        'Download PDF',
+        official_website:    'Official Website',
+        visit_website:       'Official Website',
+        login:               'Candidate Login',
+        result:              'Result',
+      };
+      /* Build synthetic usefulLinks entries from important_links object */
+      const _ilEntries = [];
+      if (typeof _ilRaw === 'object' && !Array.isArray(_ilRaw)) {
+        for (const [key, val] of Object.entries(_ilRaw)) {
+          if (!val) continue;
+          /* Resolve human label: known key → label, or title-case the key */
+          const label = _IL_LABELS[key] ||
+            key.replace(/^https?_+/i, '').replace(/_/g, ' ')
+               .replace(/\b[a-z]/g, c => c.toUpperCase()).trim() ||
+            'Click Here';
+          /* Val can be string or array */
+          const urls = Array.isArray(val) ? val : [val];
+          urls.forEach((u, idx) => {
+            const href = safe(u);
+            if (!href || !/^https?:\/\//i.test(href)) return;
+            _ilEntries.push({
+              title: urls.length > 1 ? `${label} (${idx + 1})` : label,
+              url:   href
+            });
+          });
+        }
+      }
+      /* Merge: useful_links array first, then important_links entries
+         (dedup by URL is handled in the renderer via seenHrefs)          */
+      const usefulLinks = [
+        ...(Array.isArray(job.useful_links) ? job.useful_links : []),
+        ..._ilEntries
+      ];
       function getUsefulLink(rxList) {
         for (const ul of usefulLinks) {
           const t = safe(ul.title || ul.name || '').toLowerCase();
