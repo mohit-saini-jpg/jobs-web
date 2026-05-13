@@ -2604,14 +2604,24 @@
       var grid = document.getElementById('sr-sections-grid');
       if (!grid) return;
 
-      /* ── NEW: handle flat jobs[] array structure ──────────────────────
-         If JSON has a top-level "jobs" array (new format), auto-categorise
-         each job using title keywords, then build the expected shape.
+      /* ── FIXED: handle flat jobs[] array structure ────────────────────
+         Priority: use j.sr_category field (set by scraper) for strict
+         category assignment. Keyword-based fallback only used when
+         sr_category is missing/unknown — prevents data mixing across sections.
       ------------------------------------------------------------------ */
       if (Array.isArray(jsonData.jobs) && jsonData.jobs.length > 0) {
         var allJobs = jsonData.jobs;
 
-        /* Keyword lists for each category (order matters — checked top-down) */
+        /* Valid SR category keys */
+        var VALID_SR_CATS = {
+          'SR_Latest_Jobs': true,
+          'SR_Admit_Card':  true,
+          'SR_Result':      true,
+          'SR_Admission':   true,
+          'SR_Answer_Key':  true
+        };
+
+        /* Keyword fallback lists (used ONLY when sr_category is absent) */
         var KW_ADMIT    = ['admit card', 'hall ticket', 'call letter'];
         var KW_ANSWER   = ['answer key', 'answer sheet', 'objection'];
         var KW_RESULT   = ['result', 'merit list', 'final list', 'cut off', 'cutoff', 'scorecard', 'score card'];
@@ -2637,7 +2647,7 @@
           };
         }
 
-        /* Categorise */
+        /* Categorise — strict sr_category field first, keyword fallback second */
         var cat_latest    = [];
         var cat_admit     = [];
         var cat_result    = [];
@@ -2649,22 +2659,34 @@
           var item  = toSRItem(j);
           var title = j.title || '';
           var mode  = (j.apply_mode || '').toLowerCase();
+          var srCat = (j.sr_category || '').trim();   /* ← scraper-assigned category */
 
-          /* Offline Form — apply_mode is offline */
+          /* Offline Form — apply_mode is offline → goes to Offline section */
           if (mode === 'offline') cat_offline.push(item);
 
-          /* Category by title keyword (priority order) */
-          if (hasKw(title, KW_ADMIT)) {
-            cat_admit.push(item);
-          } else if (hasKw(title, KW_ANSWER)) {
-            cat_answer.push(item);
-          } else if (hasKw(title, KW_RESULT)) {
-            cat_result.push(item);
-          } else if (hasKw(title, KW_ADMISSION)) {
-            cat_admission.push(item);
-          } else {
-            /* Everything else → Latest Jobs */
-            cat_latest.push(item);
+          /* ── PRIMARY: use sr_category field set by scraper ── */
+          if (srCat && VALID_SR_CATS[srCat]) {
+            if (srCat === 'SR_Latest_Jobs')  { cat_latest.push(item);    return; }
+            if (srCat === 'SR_Admit_Card')   { cat_admit.push(item);     return; }
+            if (srCat === 'SR_Result')       { cat_result.push(item);    return; }
+            if (srCat === 'SR_Admission')    { cat_admission.push(item); return; }
+            if (srCat === 'SR_Answer_Key')   { cat_answer.push(item);    return; }
+          }
+
+          /* ── FALLBACK: keyword-based (only when sr_category is absent/unknown) ── */
+          if (mode !== 'offline') {
+            if (hasKw(title, KW_ADMIT)) {
+              cat_admit.push(item);
+            } else if (hasKw(title, KW_ANSWER)) {
+              cat_answer.push(item);
+            } else if (hasKw(title, KW_RESULT)) {
+              cat_result.push(item);
+            } else if (hasKw(title, KW_ADMISSION)) {
+              cat_admission.push(item);
+            } else {
+              /* Everything else → Latest Jobs */
+              cat_latest.push(item);
+            }
           }
         });
 
@@ -2680,7 +2702,7 @@
           sarkariresultshine_jobs: cat_offline
         };
       }
-      /* ── END new format handler ──────────────────────────────────────── */
+      /* ── END fixed format handler ────────────────────────────────────── */
 
       /* Extract both data sources from JSON */
       var srCategories  = (jsonData.sarkariresult_data && jsonData.sarkariresult_data.data) || jsonData.sarkariresult_categories || {};
