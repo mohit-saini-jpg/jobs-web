@@ -1316,55 +1316,83 @@
       </style>`);
   }
 
-  /* ── MERGE window.tsjSearchIndex → allData ──────────────────
-   *  script.js ab har section item render karte waqt
-   *  window.tsjSearchIndex mein push karta hai.
-   *  Yeh function us data ko allData mein merge karta hai aur
-   *  Fuse index rebuild karta hai.
+  /* ── LIVE INDEX SYNC ─────────────────────────────────────────
+   *  window.tsjSearchIndex ko intercept karo:
+   *  script.js jab bhi .push() kare, seedha allData mein jaaye.
+   *  Polling bhi rakho as fallback.
    * ─────────────────────────────────────────────────────────── */
-  function mergeExternalIndex() {
-    const items = window.tsjSearchIndex;
-    if (!Array.isArray(items) || !items.length) return 0;
+  const _seenSlugs = new Set(allData.map(d => d.slug));
 
-    const seen = new Set(allData.map(d => d.slug));
-    let added = 0;
-    items.forEach(item => {
-      if (!item.title || !item.slug) return;
-      if (seen.has(item.slug)) return;
-      seen.add(item.slug);
-      allData.push(item);
-      added++;
-    });
+  function absorbItem(item) {
+    if (!item || !item.title || !item.slug) return false;
+    if (_seenSlugs.has(item.slug)) return false;
+    _seenSlugs.add(item.slug);
+    allData.push(item);
+    return true;
+  }
 
-    if (added > 0) {
-      console.log('[smart-search] ✅ tsjSearchIndex se', added, 'items merged. Total:', allData.length);
-      if (window.Fuse) buildFuse(allData);
+  function installIndexProxy() {
+    // Agar tsjSearchIndex pehle se exist karta hai (script.js pehle load hua)
+    // to existing items absorb karo
+    if (Array.isArray(window.tsjSearchIndex)) {
+      let added = 0;
+      window.tsjSearchIndex.forEach(item => { if (absorbItem(item)) added++; });
+      if (added > 0) {
+        console.log('[smart-search] Absorbed', added, 'existing items. Total:', allData.length);
+      }
     }
-    return added;
+
+    // Proxy array banao — script.js ke future .push() calls intercept honge
+    const _realArray = Array.isArray(window.tsjSearchIndex) ? window.tsjSearchIndex : [];
+    let _rebuildScheduled = false;
+
+    function scheduleRebuild() {
+      if (_rebuildScheduled) return;
+      _rebuildScheduled = true;
+      setTimeout(() => {
+        _rebuildScheduled = false;
+        console.log('[smart-search] Index updated. Total items:', allData.length);
+      }, 100);
+    }
+
+    window.tsjSearchIndex = new Proxy(_realArray, {
+      get(target, prop) {
+        return target[prop];
+      },
+      set(target, prop, value) {
+        target[prop] = value;
+        // Numeric index = new item pushed
+        if (!isNaN(prop)) {
+          if (absorbItem(value)) scheduleRebuild();
+        }
+        return true;
+      }
+    });
   }
 
   /* ── INIT ───────────────────────────────────────────────── */
   function init() {
     injectStyles();
     loadFuse(() => buildFuse(allData));
-    loadJsonFiles(); // async, updates allData + rebuilds Fuse when done
+    loadJsonFiles(); // async, JSON se bhi data load karo
     setupHeroSearch();
     setupHeaderSearch();
     setupSearchPage();
 
-    // ✅ script.js ke render hone ka wait karo, phir index merge karo
-    // script.js async hai (JSON fetch karta hai), isliye multiple attempts
-    let mergeAttempts = 0;
-    function tryMerge() {
-      const added = mergeExternalIndex();
-      mergeAttempts++;
-      // 8 baar tak try karo (0.5s, 1s, 2s, 3s, 4s, 5s, 7s, 10s intervals)
-      const delays = [500, 500, 1000, 1000, 2000, 2000, 3000, 3000];
-      if (mergeAttempts < delays.length) {
-        setTimeout(tryMerge, delays[mergeAttempts]);
-      }
+    // Proxy install karo — script.js ke push() seedha allData mein jayenge
+    installIndexProxy();
+
+    // Fallback polling — agar proxy miss kare
+    const pollIntervals = [300, 600, 1200, 2000, 3500, 5000, 8000];
+    let pi = 0;
+    function poll() {
+      if (!Array.isArray(window.tsjSearchIndex)) { if (++pi < pollIntervals.length) setTimeout(poll, pollIntervals[pi]); return; }
+      let added = 0;
+      window.tsjSearchIndex.forEach(item => { if (absorbItem(item)) added++; });
+      if (added > 0) console.log('[smart-search] Poll absorbed', added, 'items. Total:', allData.length);
+      if (++pi < pollIntervals.length) setTimeout(poll, pollIntervals[pi]);
     }
-    setTimeout(tryMerge, 300);
+    setTimeout(poll, pollIntervals[0]);
   }
 
   if (document.readyState === 'loading') {
