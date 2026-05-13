@@ -785,7 +785,7 @@
       }
       document.getElementById('jbNewBadge').style.display = '';
 
-      /* ── SR/SRS filter helpers ── */
+      /* ── SR/SRS filter helpers (used by CTA + Important Links) ── */
       function isSRUrl(u) {
         return !!(u && (u.includes('sarkariresult.com') || u.includes('sarkariresultshine.com')));
       }
@@ -983,10 +983,11 @@
       }
 
       /* ── Important Links card ── */
-      /* Resolve best available URL: row fields → destUrl → refUrl → sarkariresult fallback */
       const _refUrl = (() => {
         try { return new URLSearchParams(window.location.search).get('ref') || ''; } catch(_){ return ''; }
       })();
+      /* isSRUrl / officialOnly already defined above (CTA section) */
+
       const _fallbackUrl = normalizeUrl(
         officialOnly(row && row.applyOnline)     ||
         officialOnly(row && row.officialWebsite) ||
@@ -1290,7 +1291,7 @@
         getUsefulLink([/exam\s*city|exam\s*centre|slot\s*booking|check\s*exam\s*city/i]) || ''
       );
 
-      /* Primary dest URL — ONLY official links. source_url (sarkariresult) NEVER used here. */
+      /* Primary dest URL — ONLY official links. source_url (sarkariresult) NEVER used. */
       const destUrl = normalizeUrl(
         applyOnline || officialWebsite ||
         job.official_website_link || bd.official_website_link || ''
@@ -1393,15 +1394,16 @@
                   const title = safe(item.name || item.title || '');
                   if (!title) continue;
                   const itemUrl = normalizeUrl(safe(item.url || item.link || ''));
-                  /* Build a full-compatible row object */
+                  /* Filter SR links from daily items too */
+                  const _safeItemUrl = (itemUrl && !itemUrl.includes('sarkariresult.com') && !itemUrl.includes('sarkariresultshine.com')) ? itemUrl : '';
                   dailyItems.push({
                     title,
                     org: '',
                     totalVac: '',
                     applyMode: 'Online',
-                    destUrl: itemUrl,
-                    applyOnline: itemUrl,
-                    officialWebsite: itemUrl,
+                    destUrl: _safeItemUrl,
+                    applyOnline: _safeItemUrl,
+                    officialWebsite: _safeItemUrl,
                     notifPdf: '',
                     candidateLogin: '',
                     admitCard: '',
@@ -1425,7 +1427,7 @@
                     usefulLinks: [],
                     vd: [],
                     cwVacGen: '', cwVacObc: '', cwVacEws: '', cwVacSc: '', cwVacSt: '', cwVacPh: '',
-                    formPdfFreeLink: '', officialNotifPdfLink: '', officialWebsiteLink: itemUrl,
+                    formPdfFreeLink: '', officialNotifPdfLink: '', officialWebsiteLink: _safeItemUrl,
                     secId,
                     slug: '',
                     category: secId,
@@ -1481,12 +1483,12 @@
                 /* Build a pseudo-full job object so parseFullJob works.
                    Spread the full original job so useful_links, important_dates,
                    application_fee, age_limit, total_post, short_information all come through. */
-                /* important_links: use only if job already has them (real official links).
+                /* important_links: use only real official links from JSON.
                    NEVER set apply_online/official_website to externalUrl (SR link). */
                 const pseudoJob = {
                   ...job,
                   title,
-                  source_url: externalUrl,  /* kept only for slug fingerprint matching */
+                  source_url: externalUrl,  /* kept only for slug fingerprint */
                   last_date: lastDate,
                   category: catKey,
                   important_links: job.important_links || {},
