@@ -2756,10 +2756,11 @@
   ============================================================ -->
   <script>
   (function HERO_OVERRIDE_DISABLED() {
-    /* DISABLED: smart-search.js directly loads:
-       merged_sarkari_data.json, dailyupdates.json, Complete_Jobs_Full_Data.json
-       Yahan kuch karne ki zaroorat nahi. */
-    return;
+    /* ENABLED: Handles heroSearch with all 3 JSON files:
+       - merged_sarkari_data.json  → jobs[].title
+       - dailyupdates.json         → sections[].items[].name
+       - Complete_Jobs_Full_Data.json → [key][].basic_details.job_title
+    */
     var input   = document.getElementById('heroSearch');
     var btn     = document.getElementById('heroSearchBtn');
     var suggest = document.getElementById('searchSuggest');
@@ -2858,14 +2859,29 @@
         });
       }
 
-      /* 3. Complete_Jobs_Full_Data.json */
+      /* 3. Complete_Jobs_Full_Data.json
+         Title is in basic_details.job_title — top-level title is null */
       if (complete && typeof complete === 'object') {
         Object.keys(complete).forEach(function(key) {
           if (!Array.isArray(complete[key])) return;
           complete[key].forEach(function(i) {
-            var t = i.name || i.title || '';
+            var bd = i.basic_details || {};
+            var t = bd.job_title || bd.post_name || i.title || i.name || '';
             if (!t) return;
-            searchIndex.push({ title: t, href: i.url || i.link || '#', cat: key.replace(/_/g,' '), date: i.date || '' });
+            // Build slug from title since items have no slug field
+            var applyMode = (i.apply_mode || bd.application_mode || '').toLowerCase();
+            var prefix    = applyMode === 'offline' ? 'offline-' : '';
+            var slug      = slugify(t);
+            var href      = slug ? 'job.html?slug=' + encodeURIComponent(prefix + slug) + '&section=' + encodeURIComponent(key.replace(/_/g,' ')) : '#';
+            var dates     = i.important_dates || {};
+            var lastDate  = dates.last_date_to_apply || dates.last_date || '';
+            searchIndex.push({
+              title: t.replace(/[\s\-\u2013\u2014,|]+$/, '').trim(),
+              href: href,
+              cat: key.replace(/_/g,' '),
+              date: lastDate,
+              org: bd.organization_name || i.organization || ''
+            });
           });
         });
       }
@@ -2954,8 +2970,7 @@
         closeSuggest();
       }
     });
-  // END OF DISABLED CODE
-  })(); // HERO_OVERRIDE_DISABLED
+  })(); // HERO_OVERRIDE
   </script>
 
 </body>
