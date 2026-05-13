@@ -564,11 +564,27 @@
       console.log('[smart-search]', fileName, '→', count, 'items indexed');
     });
 
-    /* Merge into allData (deduplicate by slug URL) */
+    /* Merge into allData — deduplicate by base slug (ignoring ?section= param)
+       so the same job appearing in multiple categories (Bank_Jobs, Last_Date_Reminder,
+       Latest_Notifications, etc.) is only indexed once. */
     if (extra.length) {
-      const seen = new Set(allData.map(d => d.slug));
+      // Build a key from the slug that strips ?section=... and trailing dashes
+      function dedupeKey(slug) {
+        if (!slug) return slug;
+        try {
+          const u = new URL(slug, 'https://x.com');
+          // Use path + 'slug' param only (ignore 'section')
+          const s = u.searchParams.get('slug') || u.pathname;
+          return s.toLowerCase().trim();
+        } catch (_) {
+          // Fallback: strip ?section= query param manually
+          return slug.split('?')[0].toLowerCase().trim();
+        }
+      }
+      const seen = new Set(allData.map(d => dedupeKey(d.slug)));
       extra.forEach(item => {
-        if (!seen.has(item.slug)) { seen.add(item.slug); allData.push(item); }
+        const key = dedupeKey(item.slug);
+        if (!seen.has(key)) { seen.add(key); allData.push(item); }
       });
     }
 
@@ -580,19 +596,12 @@
       ' Complete_Jobs_Full_Data(basic_details.job_title)');
     loadFuse(() => {
       buildFuse(allData);
-      // After JSON load, refresh any active search in heroSearch
+      // After JSON load, refresh any active search in heroSearch.
+      // Always re-trigger if there is text — even when showing "No results"
+      // (the drop is open but the old search ran before JSON was ready).
       const heroInput = document.getElementById('heroSearch');
       if (heroInput && heroInput.value.trim().length >= 1) {
-        // Refresh dropdown suggestions if open
-        const drop = document.getElementById('tsjDrop');
-        if (drop && drop.classList.contains('open')) {
-          heroInput.dispatchEvent(new Event('input'));
-        }
-        // Refresh full results panel if open
-        const panel = document.getElementById('tsjResultsPanel');
-        if (panel && panel.classList.contains('open')) {
-          heroInput.dispatchEvent(new Event('input'));
-        }
+        heroInput.dispatchEvent(new Event('input'));
       }
     });
   }
@@ -1086,14 +1095,20 @@
       drop.classList.add('open');
       wireDropEvents();
 
-      // ✅ FIX: Agar JSON abhi load ho raha hai to 500ms baad re-render karo (updated data se)
+      // ✅ FIX: Poll until JSON is ready, then refresh suggestions with full data.
+      // Handles slow networks where JSON takes >800ms to load.
       if (!jsonIndexReady) {
         const currentQ = q;
-        setTimeout(() => {
-          if (input.value.trim().toLowerCase() === currentQ.trim().toLowerCase() && jsonIndexReady) {
+        let retries = 0;
+        const maxRetries = 20; // polls every 500ms, up to 10s total
+        (function waitAndRefresh() {
+          if (input.value.trim().toLowerCase() !== currentQ.trim().toLowerCase()) return;
+          if (jsonIndexReady) {
             showSuggest(currentQ);
+          } else if (retries++ < maxRetries) {
+            setTimeout(waitAndRefresh, 500);
           }
-        }, 800);
+        })();
       }
     }
 
