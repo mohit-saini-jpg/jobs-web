@@ -1357,6 +1357,64 @@
 
     async function loadAllItems() {
       try {
+        /* ── ALWAYS load dailyupdates.json (section-cards source) ── */
+        let dailyItems = [];
+        try {
+          const rd = await fetch('/dailyupdates.json');
+          if (rd.ok) {
+            const dailyRaw = await rd.json();
+            if (dailyRaw && Array.isArray(dailyRaw.sections)) {
+              for (const sec of dailyRaw.sections) {
+                const secId = safe(sec.id || sec.title || '');
+                if (!Array.isArray(sec.items)) continue;
+                for (const item of sec.items) {
+                  const title = safe(item.name || item.title || '');
+                  if (!title) continue;
+                  const itemUrl = normalizeUrl(safe(item.url || item.link || ''));
+                  /* Build a full-compatible row object */
+                  dailyItems.push({
+                    title,
+                    org: '',
+                    totalVac: '',
+                    applyMode: 'Online',
+                    destUrl: itemUrl,
+                    applyOnline: itemUrl,
+                    officialWebsite: itemUrl,
+                    notifPdf: '',
+                    candidateLogin: '',
+                    admitCard: '',
+                    result: '',
+                    answerKey: '',
+                    syllabus: '',
+                    meritList: '',
+                    scoreCard: '',
+                    examCity: '',
+                    lastDate: '',
+                    appBegin: '',
+                    examDate: '',
+                    admitDate: '',
+                    resultDate: '',
+                    feeLastDate: '',
+                    corrDate: '',
+                    feeGen: '', feeObc: '', feeEws: '', feeSc: '', feeSt: '', feeFem: '', feePh: '',
+                    minAge: '', maxAge: '', ageRelax: '',
+                    eduQual: '', expReqd: '',
+                    salary: '', selProc: '', shortInfo: '',
+                    usefulLinks: [],
+                    vd: [],
+                    cwVacGen: '', cwVacObc: '', cwVacEws: '', cwVacSc: '', cwVacSt: '', cwVacPh: '',
+                    formPdfFreeLink: '', officialNotifPdfLink: '', officialWebsiteLink: itemUrl,
+                    secId,
+                    slug: '',
+                    category: secId,
+                    fp: urlRedirectFingerprint(itemUrl).toLowerCase()
+                  });
+                }
+              }
+            }
+          }
+        } catch (_) {}
+
         /* Try merged_sarkari_data.json first */
         let raw = null;
         try {
@@ -1367,11 +1425,11 @@
         /* Fallback to Complete_Jobs_Full_Data.json */
         if (!raw) {
           const r2 = await fetch('/Complete_Jobs_Full_Data.json');
-          if (!r2.ok) return [];
+          if (!r2.ok) return dailyItems; /* Return dailyItems even if main JSON fails */
           raw = await r2.json();
         }
 
-        const out = [];
+        const out = [...dailyItems]; /* Start with dailyupdates items */
 
         /* Handle array format */
         if (Array.isArray(raw)) {
@@ -1467,16 +1525,25 @@
       const exactNoHash = items.find(it => it.slug && (it.slug === noHash || it.slug.replace(/-[0-9a-f]{5,8}$/i,'') === noHash));
       if (exactNoHash) return exactNoHash;
 
-      /* Token-based fuzzy match on title */
+      /* Fingerprint match — matches items from dailyupdates.json via URL hash */
+      const fpMatch = items.find(it => it.fp && noHash.endsWith(it.fp));
+      if (fpMatch) return fpMatch;
+
+      /* Token-based fuzzy match on title (works for all items including dailyupdates) */
       const tokens = noHash.split('-').filter(t => t.length > 2);
       if (!tokens.length) return null;
       let best = null, bestScore = 0;
       for (const it of items) {
-        const ts = it.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        /* Normalize title for comparison — strip Hindi/Unicode, lowercase */
+        const ts = it.title.toLowerCase()
+          .normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^\x00-\x7e]/g, ' ')
+          .replace(/[^a-z0-9]+/g, '-');
         const score = tokens.filter(t => ts.includes(t)).length / tokens.length;
         if (score > bestScore) { bestScore = score; best = it; }
       }
-      return bestScore >= 0.45 ? best : null;
+      /* Lower threshold (0.35) to catch dailyupdates items with mixed Hindi/English titles */
+      return bestScore >= 0.35 ? best : null;
     }
 
     /* ── Main ── */
@@ -1518,6 +1585,7 @@
             destUrl: refUrl,
             applyOnline: refUrl,
             officialWebsite: refUrl,
+            officialWebsiteLink: refUrl,
             org: parsed.org || '',
             totalVac: parsed.vac || 'See Notification',
             lastDate: parsed.lastDt || 'See Notification',
@@ -1530,6 +1598,7 @@
           renderJobPage(humanTitle, '', parseJob(humanTitle), null);
         } else {
           renderNonJobPage(humanTitle, '');
+          /* Hide CTA only if there's truly no URL */
           ['btnMainCta','btnNonJobCta'].forEach(id => {
             const el = document.getElementById(id);
             if (el) { el.style.display = 'none'; }
@@ -1537,10 +1606,19 @@
         }
       } else {
         const name = row.title || humanizeSlug(rawSlug);
+        const destUrl = row.destUrl || refUrl || '';
+        /* For ALL rows with a URL — render with Click Here button regardless of isJobItem */
         if (isJobItem(name)) {
-          renderJobPage(name, row.destUrl, parseJob(name), row);
+          renderJobPage(name, destUrl, parseJob(name), Object.assign({}, row, { destUrl }));
         } else {
-          renderNonJobPage(name, row.destUrl);
+          /* Non-job page (schemes, khabar, etc.) — ALWAYS show Click Here if URL exists */
+          renderNonJobPage(name, destUrl);
+          if (!destUrl) {
+            ['btnMainCta','btnNonJobCta'].forEach(id => {
+              const el = document.getElementById(id);
+              if (el) { el.style.display = 'none'; }
+            });
+          }
         }
       }
 
