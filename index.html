@@ -2603,6 +2603,47 @@
       var grid = document.getElementById('sr-sections-grid');
       if (!grid) return;
 
+      /* ── NEW: handle flat jobs[] array structure ──────────────────────
+         If JSON has a top-level "jobs" array (new format), convert it into
+         the expected sarkariresult_categories / sarkariresultshine_jobs shape.
+      ------------------------------------------------------------------ */
+      if (Array.isArray(jsonData.jobs) && jsonData.jobs.length > 0) {
+        var allJobs = jsonData.jobs;
+
+        /* Map each job to the normalised shape expected by normalizeJob() */
+        function toSRItem(j) {
+          return {
+            title:       j.title || '',
+            url:         j.official_website_link || j.official_notification_pdf_link || '#',
+            source_url:  j.official_website_link || '#',
+            last_date:   (j.important_dates && j.important_dates.last_date) || '',
+            apply_mode:  j.apply_mode || '',
+            slug:        j.slug || ''
+          };
+        }
+
+        /* Offline Form section — jobs where apply_mode is Offline */
+        var offlineJobs = allJobs
+          .filter(function(j){ return (j.apply_mode || '').toLowerCase() === 'offline'; })
+          .map(toSRItem);
+
+        /* All jobs → Latest Jobs section */
+        var latestJobs = allJobs.map(toSRItem);
+
+        /* Inject into expected structure so rest of code works unchanged */
+        jsonData = {
+          sarkariresult_categories: {
+            SR_Latest_Jobs: latestJobs,
+            SR_Admit_Card:  [],
+            SR_Result:      [],
+            SR_Admission:   [],
+            SR_Answer_Key:  []
+          },
+          sarkariresultshine_jobs: offlineJobs
+        };
+      }
+      /* ── END new format handler ──────────────────────────────────────── */
+
       /* Extract both data sources from JSON */
       var srCategories  = (jsonData.sarkariresult_data && jsonData.sarkariresult_data.data) || jsonData.sarkariresult_categories || {};
       var shineJobs     = jsonData.sarkariresultshine_jobs  || [];
