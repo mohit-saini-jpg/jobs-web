@@ -1284,124 +1284,55 @@
       </style>`);
   }
 
-  /* ── DOM SCRAPER — page ke rendered cards se data nikalo ────────
-   *  script.js jo section-cards DOM mein render karta hai (dailyupdates.json,
-   *  Complete_Jobs_Full_Data.json etc.) unka data seedha allData mein dalo.
-   *  Yeh function JSON load fail hone par bhi kaam karta hai.
-   * ────────────────────────────────────────────────────────────── */
-  function scrapeDomCards() {
+  /* ── MERGE window.tsjSearchIndex → allData ──────────────────
+   *  script.js ab har section item render karte waqt
+   *  window.tsjSearchIndex mein push karta hai.
+   *  Yeh function us data ko allData mein merge karta hai aur
+   *  Fuse index rebuild karta hai.
+   * ─────────────────────────────────────────────────────────── */
+  function mergeExternalIndex() {
+    const items = window.tsjSearchIndex;
+    if (!Array.isArray(items) || !items.length) return 0;
+
     const seen = new Set(allData.map(d => d.slug));
-    let count = 0;
-
-    // All .section-link anchors (rendered by script.js section cards)
-    const anchors = Array.from(document.querySelectorAll(
-      '.section-link[href], .section-list a[href], #dynamic-sections a[href], #daily-updates-sections a[href]'
-    ));
-
-    anchors.forEach(a => {
-      const href = a.getAttribute('href') || '';
-      if (!href || href === '#') return;
-
-      // Get title: .t span me se (script.js ka format)
-      const tSpan = a.querySelector('.t');
-      let title = '';
-      if (tSpan) {
-        // Remove date span text to get clean title
-        const dSpan = tSpan.querySelector('.d');
-        if (dSpan) {
-          title = tSpan.textContent.replace(dSpan.textContent, '').trim();
-        } else {
-          title = tSpan.textContent.trim();
-        }
-      } else {
-        title = a.textContent.trim().split('|')[0].trim();
-      }
-      if (!title || title.length < 3) return;
-
-      // Get date from .d span
-      const dSpan2 = a.querySelector('.d');
-      const lastDate = dSpan2 ? dSpan2.textContent.replace('|', '').trim() : '';
-
-      // Section title from closest section-card header
-      const card = a.closest('.section-card, article');
-      let sectionSource = '';
-      let catIcon = 'fa-briefcase';
-      if (card) {
-        const headSpan = card.querySelector('.section-head span');
-        sectionSource = headSpan ? headSpan.textContent.trim() : '';
-        const headIcon = card.querySelector('.section-head i');
-        if (headIcon) {
-          const cls = Array.from(headIcon.classList).find(c => c.startsWith('fa-') && c !== 'fa-solid' && c !== 'fa-regular');
-          if (cls) catIcon = cls;
-        }
-      }
-
-      // Determine category from sectionSource
-      const src = sectionSource.toLowerCase();
-      let cat = 'Latest Job';
-      if (src.includes('admit')) cat = 'Admit Card';
-      else if (src.includes('result')) cat = 'Result';
-      else if (src.includes('answer key')) cat = 'Answer Key';
-      else if (src.includes('admission')) cat = 'Admission';
-      else if (src.includes('offline')) cat = 'Offline Form';
-      else if (src.includes('bank')) cat = 'Bank';
-      else if (src.includes('railway')) cat = 'Railway';
-      else if (src.includes('police') || src.includes('defence')) cat = 'Police';
-      else if (src.includes('teaching') || src.includes('faculty')) cat = 'Teaching';
-      else if (src.includes('10th')) cat = 'State Jobs';
-      else if (src.includes('iti')) cat = 'ITI Jobs';
-      else if (src.includes('medical')) cat = 'Medical';
-      else if (src.includes('last date')) cat = 'Last Date Reminder';
-
-      const key = href;
-      if (seen.has(key)) return;
-      seen.add(key);
-
-      allData.push({
-        title,
-        slug: href,
-        dept: sectionSource,
-        qual: '',
-        state: 'All India',
-        cat,
-        tags: title + ' ' + sectionSource + ' sarkari naukri 2026',
-        lastDate,
-        icon: catIcon,
-        lastUpdated: new Date().toISOString(),
-        sectionSource,
-      });
-      count++;
+    let added = 0;
+    items.forEach(item => {
+      if (!item.title || !item.slug) return;
+      if (seen.has(item.slug)) return;
+      seen.add(item.slug);
+      allData.push(item);
+      added++;
     });
 
-    if (count > 0) {
-      console.log('[smart-search] DOM scraper added', count, 'items from rendered cards');
-      // Rebuild Fuse with new data
+    if (added > 0) {
+      console.log('[smart-search] ✅ tsjSearchIndex se', added, 'items merged. Total:', allData.length);
       if (window.Fuse) buildFuse(allData);
     }
-    return count;
+    return added;
   }
 
   /* ── INIT ───────────────────────────────────────────────── */
   function init() {
     injectStyles();
     loadFuse(() => buildFuse(allData));
-    loadJsonFiles(); // async, updates data + rebuilds Fuse when done
+    loadJsonFiles(); // async, updates allData + rebuilds Fuse when done
     setupHeroSearch();
     setupHeaderSearch();
     setupSearchPage();
 
-    // ✅ DOM scraper: page render hone ke baad cards ka data index mein dalo
-    // script.js async render karta hai, isliye multiple attempts
-    function tryDomScrape(attemptsLeft) {
-      const found = scrapeDomCards();
-      if (found > 0) {
-        // Ek baar aur try karo — script.js baad mein aur cards add kar sakta hai
-        setTimeout(() => scrapeDomCards(), 2000);
-      } else if (attemptsLeft > 0) {
-        setTimeout(() => tryDomScrape(attemptsLeft - 1), 800);
+    // ✅ script.js ke render hone ka wait karo, phir index merge karo
+    // script.js async hai (JSON fetch karta hai), isliye multiple attempts
+    let mergeAttempts = 0;
+    function tryMerge() {
+      const added = mergeExternalIndex();
+      mergeAttempts++;
+      // 8 baar tak try karo (0.5s, 1s, 2s, 3s, 4s, 5s, 7s, 10s intervals)
+      const delays = [500, 500, 1000, 1000, 2000, 2000, 3000, 3000];
+      if (mergeAttempts < delays.length) {
+        setTimeout(tryMerge, delays[mergeAttempts]);
       }
     }
-    setTimeout(() => tryDomScrape(5), 500);
+    setTimeout(tryMerge, 300);
   }
 
   if (document.readyState === 'loading') {
