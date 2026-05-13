@@ -1408,8 +1408,7 @@
     injectStyles();
     loadFuse(() => buildFuse(allData));
     loadJsonFiles(); // async, JSON se bhi data load karo
-    // heroSearch is handled by inline script in index.html
-    // (reads basic_details.job_title from Complete_Jobs correctly)
+    setupHeroSearch();  // heroSearch — all 3 JSON sources: title / name / job_title
     setupHeaderSearch();
     setupSearchPage();
 
