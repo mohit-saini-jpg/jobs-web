@@ -2604,42 +2604,79 @@
       if (!grid) return;
 
       /* ── NEW: handle flat jobs[] array structure ──────────────────────
-         If JSON has a top-level "jobs" array (new format), convert it into
-         the expected sarkariresult_categories / sarkariresultshine_jobs shape.
+         If JSON has a top-level "jobs" array (new format), auto-categorise
+         each job using title keywords, then build the expected shape.
       ------------------------------------------------------------------ */
       if (Array.isArray(jsonData.jobs) && jsonData.jobs.length > 0) {
         var allJobs = jsonData.jobs;
 
-        /* Map each job to the normalised shape expected by normalizeJob() */
+        /* Keyword lists for each category (order matters — checked top-down) */
+        var KW_ADMIT    = ['admit card', 'hall ticket', 'call letter'];
+        var KW_ANSWER   = ['answer key', 'answer sheet', 'objection'];
+        var KW_RESULT   = ['result', 'merit list', 'final list', 'cut off', 'cutoff', 'scorecard', 'score card'];
+        var KW_ADMISSION= ['admission', 'counselling', 'counseling'];
+
+        function hasKw(title, kwList) {
+          var t = title.toLowerCase();
+          for (var i = 0; i < kwList.length; i++) {
+            if (t.indexOf(kwList[i]) !== -1) return true;
+          }
+          return false;
+        }
+
+        /* Map one job to the shape expected by normalizeJob() */
         function toSRItem(j) {
           return {
-            title:       j.title || '',
-            url:         j.official_website_link || j.official_notification_pdf_link || '#',
-            source_url:  j.official_website_link || '#',
-            last_date:   (j.important_dates && j.important_dates.last_date) || '',
-            apply_mode:  j.apply_mode || '',
-            slug:        j.slug || ''
+            title:      j.title || '',
+            url:        j.official_website_link || j.official_notification_pdf_link || '#',
+            source_url: j.official_website_link || '#',
+            last_date:  (j.important_dates && j.important_dates.last_date) || '',
+            apply_mode: j.apply_mode || '',
+            slug:       j.slug || ''
           };
         }
 
-        /* Offline Form section — jobs where apply_mode is Offline */
-        var offlineJobs = allJobs
-          .filter(function(j){ return (j.apply_mode || '').toLowerCase() === 'offline'; })
-          .map(toSRItem);
+        /* Categorise */
+        var cat_latest    = [];
+        var cat_admit     = [];
+        var cat_result    = [];
+        var cat_admission = [];
+        var cat_answer    = [];
+        var cat_offline   = [];
 
-        /* All jobs → Latest Jobs section */
-        var latestJobs = allJobs.map(toSRItem);
+        allJobs.forEach(function(j) {
+          var item  = toSRItem(j);
+          var title = j.title || '';
+          var mode  = (j.apply_mode || '').toLowerCase();
 
-        /* Inject into expected structure so rest of code works unchanged */
+          /* Offline Form — apply_mode is offline */
+          if (mode === 'offline') cat_offline.push(item);
+
+          /* Category by title keyword (priority order) */
+          if (hasKw(title, KW_ADMIT)) {
+            cat_admit.push(item);
+          } else if (hasKw(title, KW_ANSWER)) {
+            cat_answer.push(item);
+          } else if (hasKw(title, KW_RESULT)) {
+            cat_result.push(item);
+          } else if (hasKw(title, KW_ADMISSION)) {
+            cat_admission.push(item);
+          } else {
+            /* Everything else → Latest Jobs */
+            cat_latest.push(item);
+          }
+        });
+
+        /* Build the expected structure */
         jsonData = {
           sarkariresult_categories: {
-            SR_Latest_Jobs: latestJobs,
-            SR_Admit_Card:  [],
-            SR_Result:      [],
-            SR_Admission:   [],
-            SR_Answer_Key:  []
+            SR_Latest_Jobs: cat_latest,
+            SR_Admit_Card:  cat_admit,
+            SR_Result:      cat_result,
+            SR_Admission:   cat_admission,
+            SR_Answer_Key:  cat_answer
           },
-          sarkariresultshine_jobs: offlineJobs
+          sarkariresultshine_jobs: cat_offline
         };
       }
       /* ── END new format handler ──────────────────────────────────────── */
