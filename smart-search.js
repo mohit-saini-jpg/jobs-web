@@ -200,42 +200,71 @@
   };
 
   /* ── LOAD JSON FILES ────────────────────────────────────── */
+  /*
+   * EXACT structures (from script.js — the working search):
+   *
+   * merged_sarkari_data.json:
+   *   { jobs: [{title, apply_mode, organization, important_dates:{last_date}, slug, ...}],
+   *     sarkariresultshine_jobs: [{title, source_url, ...}],
+   *     sarkariresult_categories: { SR_Latest_Jobs:[{title,url,last_date}], ... } }
+   *
+   * dailyupdates.json:
+   *   { sections: [{title, color, icon, items:[{name, url, date, slug}]}] }
+   *   OR Array of sections directly
+   *
+   * Complete_Jobs_Full_Data.json:
+   *   { Railway_Jobs:[{name, title, url, link}],
+   *     Bank_Jobs:[...], Latest_Notifications:[...], ... }
+   *   Items are FLAT — use i.name || i.title  (NOT basic_details.job_title)
+   */
   async function loadJsonFiles() {
-    const results = await Promise.allSettled(
-      CFG.jsonFiles.map(f => fetch(f).then(r => r.ok ? r.json() : null).catch(() => null))
-    );
+    let fetchResults;
+    try {
+      fetchResults = await Promise.allSettled(
+        CFG.jsonFiles.map(f =>
+          fetch(f)
+            .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+            .catch(() => null)
+        )
+      );
+    } catch(e) {
+      fetchResults = [];
+    }
 
     const extra = [];
 
-    results.forEach((res, idx) => {
+    fetchResults.forEach((res, idx) => {
       if (res.status !== 'fulfilled' || !res.value) return;
       const data = res.value;
       const fileName = CFG.jsonFiles[idx];
 
-      /* ════════════════════════════════════════════════════════
-         1.  merged_sarkari_data.json
-             Structure:
-               { sarkariresultshine_jobs: [ {title, source_url, important_dates, ...} ],
-                 sarkariresult_categories: { SR_Latest_Jobs:[{title,url,last_date}], SR_Admit_Card:[...], ... } }
-         ════════════════════════════════════════════════════════ */
+      /* ──────────────────────────────────────────────────────
+         1. merged_sarkari_data.json
+         { jobs:[{title, apply_mode, organization, slug, important_dates}],
+           sarkariresultshine_jobs:[{title, source_url, ...}],
+           sarkariresult_categories:{ SR_Latest_Jobs:[{title,url}], ... } }
+      ────────────────────────────────────────────────────── */
       if (fileName === 'merged_sarkari_data.json') {
-        // Part A: jobs[] array (primary — this is what script.js uses too)
-        const mainJobs = Array.isArray(data.jobs) ? data.jobs : [];
-        mainJobs.forEach(j => {
-          const title = (j.title || j.job_title || '').trim();
+
+        /* jobs[] — main array, has slug for job.html links */
+        (Array.isArray(data.jobs) ? data.jobs : []).forEach(j => {
+          const title = (j.title || '').trim();
           if (!title) return;
-          const slug = slugifyTitle(title);
+          const slug      = j.slug || slugifyTitle(title);
           const applyMode = (j.apply_mode || '').toLowerCase();
-          const prefix = applyMode === 'offline' ? 'offline-' : '';
-          const href = 'job.html?slug=' + encodeURIComponent(prefix + slug);
-          const lastDate = (j.important_dates && (j.important_dates.last_date || j.important_dates.last_date_to_apply)) || j.last_date || '';
+          const prefix    = applyMode === 'offline' ? 'offline-' : '';
+          const href      = 'job.html?slug=' + encodeURIComponent(prefix + slug);
+          const lastDate  = (j.important_dates
+            ? (j.important_dates.last_date || j.important_dates.last_date_to_apply || '')
+            : '') || j.last_date || '';
           extra.push({
-            title, slug: href,
+            title,
+            slug: href,
             dept: j.organization || j.org || '',
-            qual: j.qualification || j.qual || '',
+            qual: j.qualification || '',
             state: j.state || 'All India',
             cat: applyMode === 'offline' ? 'Offline Form' : 'Latest Job',
-            tags: title + ' ' + (j.organization || '') + ' sarkari naukri',
+            tags: title + ' ' + (j.organization || '') + ' sarkari naukri 2026',
             lastDate,
             icon: 'fa-briefcase',
             lastUpdated: j.updated_at || j.last_updated || new Date().toISOString(),
@@ -243,82 +272,96 @@
           });
         });
 
-        // Part B: sarkariresultshine_jobs array
-        const shine = Array.isArray(data.sarkariresultshine_jobs) ? data.sarkariresultshine_jobs : [];
-        shine.forEach(j => {
-          const title = (j.title || j.job_title || '').trim();
+        /* sarkariresultshine_jobs[] — secondary array */
+        (Array.isArray(data.sarkariresultshine_jobs) ? data.sarkariresultshine_jobs : []).forEach(j => {
+          const title = (j.title || '').trim();
           if (!title) return;
-          const slug = slugifyTitle(title);
-          const href = 'job.html?slug=' + encodeURIComponent(slug);
-          const lastDate = (j.important_dates && j.important_dates.last_date) || j.last_date || '';
+          const href = j.source_url || j.url || j.link || '#';
+          if (!href || href === '#') return;
+          const lastDate = (j.important_dates
+            ? (j.important_dates.last_date || j.important_dates.last_date_to_apply || '')
+            : '') || j.last_date || '';
           extra.push({
-            title, slug: href,
-            dept: j.organization || j.org || '',
-            qual: j.qualification || j.qual || '',
-            state: j.state || 'All India',
-            cat: j.apply_mode === 'offline' ? 'Offline Form' : 'Latest Job',
+            title,
+            slug: href,
+            dept: j.organization || '',
+            qual: '', state: '',
+            cat: 'Latest Job',
             tags: title + ' sarkari result',
             lastDate,
             icon: 'fa-briefcase',
             lastUpdated: j.updated_at || j.last_updated || new Date().toISOString(),
-            sectionSource: 'Sarkari Result Jobs',
+            sectionSource: 'Sarkari Result',
           });
         });
 
-        // Part B: sarkariresult_categories object
-        const SRCAT_META = {
-          SR_Latest_Jobs: { cat: 'Latest Job',  icon: 'fa-briefcase',     src: 'SR Latest Jobs'  },
-          SR_Admit_Card:  { cat: 'Admit Card',  icon: 'fa-id-card',       src: 'SR Admit Card'   },
-          SR_Result:      { cat: 'Result',      icon: 'fa-trophy',        src: 'SR Result'       },
-          SR_Admission:   { cat: 'Admission',   icon: 'fa-graduation-cap',src: 'SR Admission'    },
-          SR_Answer_Key:  { cat: 'Answer Key',  icon: 'fa-key',           src: 'SR Answer Key'   },
+        /* sarkariresult_categories — SR_Latest_Jobs, SR_Admit_Card, SR_Result, etc. */
+        const SR_ICONS = {
+          SR_Latest_Jobs: { cat: 'Latest Job',  icon: 'fa-briefcase',      label: 'SR Latest Jobs'  },
+          SR_Admit_Card:  { cat: 'Admit Card',  icon: 'fa-id-card',        label: 'SR Admit Card'   },
+          SR_Result:      { cat: 'Result',      icon: 'fa-trophy',         label: 'SR Result'       },
+          SR_Admission:   { cat: 'Admission',   icon: 'fa-graduation-cap', label: 'SR Admission'    },
+          SR_Answer_Key:  { cat: 'Answer Key',  icon: 'fa-key',            label: 'SR Answer Key'   },
         };
-        const srCats = data.sarkariresult_categories || {};
-        Object.keys(srCats).forEach(key => {
-          const meta = SRCAT_META[key] || { cat: key, icon: 'fa-circle-dot', src: key };
-          const arr  = Array.isArray(srCats[key]) ? srCats[key] : [];
+        const cats = data.sarkariresult_categories || {};
+        Object.keys(cats).forEach(key => {
+          const m   = SR_ICONS[key] || { cat: key, icon: 'fa-circle-dot', label: key };
+          const arr = Array.isArray(cats[key]) ? cats[key] : [];
           arr.forEach(item => {
             const title = (item.title || item.name || '').trim();
-            const href  = item.url  || item.link || item.source_url || '#';
+            const href  = item.url || item.link || item.source_url || '#';
             if (!title || !href || href === '#') return;
             extra.push({
-              title, slug: href,
-              dept: item.org || '',
+              title,
+              slug: href,
+              dept: item.org || item.organization || '',
               qual: '', state: '',
-              cat: meta.cat,
-              tags: title + ' sarkari result ' + meta.cat,
+              cat: m.cat,
+              tags: title + ' ' + m.cat + ' sarkari result',
               lastDate: item.last_date || '',
-              icon: meta.icon,
+              icon: m.icon,
               lastUpdated: item.updated_at || item.last_updated || new Date().toISOString(),
-              sectionSource: meta.src,
+              sectionSource: m.label,
             });
           });
         });
       }
 
-      /* ════════════════════════════════════════════════════════
-         2.  dailyupdates.json
-             Structure: Array of sections OR { sections: [...] }
-               Each section: { title, items: [{name/title, url/link, date}] }
-         ════════════════════════════════════════════════════════ */
+      /* ──────────────────────────────────────────────────────
+         2. dailyupdates.json
+         { sections:[{title, color, icon, items:[{name, url, date, slug}]}] }
+         OR top-level Array of sections
+      ────────────────────────────────────────────────────── */
       if (fileName === 'dailyupdates.json') {
         const sections = Array.isArray(data)
           ? data
-          : Array.isArray(data.sections) ? data.sections : [];
+          : (Array.isArray(data.sections) ? data.sections : []);
+
         sections.forEach(sec => {
-          const secTitle = sec.title || sec.name || 'Daily Update';
+          const secTitle = (sec.title || 'Update').trim();
           (sec.items || []).forEach(item => {
             const title = (item.name || item.title || '').trim();
-            const href  = item.url  || item.link || '#';
             if (!title) return;
+
+            /* Build href — prefer slug for job.html, else url/link */
+            let href;
+            if (item.slug) {
+              href = 'job.html?slug=' + encodeURIComponent(item.slug)
+                   + '&section=' + encodeURIComponent(secTitle);
+            } else {
+              href = item.url || item.link || '#';
+            }
+            if (!href || href === '#') return;
+
             extra.push({
-              title, slug: href,
+              title,
+              slug: href,
               dept: secTitle,
               qual: '', state: '',
               cat: secTitle,
               tags: title + ' ' + secTitle,
               lastDate: item.date || item.last_date || '',
-              icon: 'fa-bell',
+              icon: sec.icon ? sec.icon.replace(/^fa-solid /, '') : 'fa-bell',
               lastUpdated: item.updated_at || item.last_updated || new Date().toISOString(),
               sectionSource: secTitle,
             });
@@ -326,83 +369,91 @@
         });
       }
 
-      /* ════════════════════════════════════════════════════════
-         3.  Complete_Jobs_Full_Data.json
-             Structure: { Latest_Notifications:[...], 10TH_Pass:[...],
-                          Railway_Jobs:[...], ... }
-             Each item: { basic_details:{job_title}, important_dates:{last_date_to_apply},
-                          important_links:{...} }
-         ════════════════════════════════════════════════════════ */
+      /* ──────────────────────────────────────────────────────
+         3. Complete_Jobs_Full_Data.json
+         { Railway_Jobs:[{name, title, url, link}],
+           Bank_Jobs:[...], Latest_Notifications:[...], ... }
+         Items are FLAT objects — use i.name || i.title
+         (script.js line 1776 confirms this)
+      ────────────────────────────────────────────────────── */
       if (fileName === 'Complete_Jobs_Full_Data.json') {
-        if (typeof data === 'object' && !Array.isArray(data)) {
+        if (data && typeof data === 'object' && !Array.isArray(data)) {
           Object.keys(data).forEach(catKey => {
-            const meta = JOBS_CAT_MAP[catKey];
-            const jobs = Array.isArray(data[catKey]) ? data[catKey] : [];
-            jobs.forEach(job => {
-              // Support both nested (basic_details.job_title) and flat (name/title)
-              const bd    = job.basic_details || job;
-              const dates = job.important_dates || {};
-              const title = (bd.job_title || bd.name || bd.title || '').trim();
+            const arr = Array.isArray(data[catKey]) ? data[catKey] : [];
+            if (!arr.length) return;
+            const meta  = JOBS_CAT_MAP[catKey];
+            const label = meta ? meta.id : catKey.replace(/_/g, ' ');
+            arr.forEach(item => {
+              /* FLAT structure: item.name || item.title
+                 Also handle nested basic_details just in case */
+              const bd    = item.basic_details || item;
+              const title = (bd.job_title || item.name || item.title || bd.name || '').trim();
               if (!title) return;
-              const slug    = slugifyTitle(title);
-              const secId   = meta ? meta.id : catKey.replace(/_/g, ' ');
-              const href    = 'job.html?slug=' + encodeURIComponent(slug) + '&section=' + encodeURIComponent(secId);
+
+              /* URL: prefer item.url/link, else build job.html from slug */
+              let href = item.url || item.link || bd.url || bd.link || '';
+              if (!href) {
+                const dates = item.important_dates || {};
+                const slug  = slugifyTitle(title);
+                href = 'job.html?slug=' + encodeURIComponent(slug)
+                     + '&section=' + encodeURIComponent(label);
+              }
+              if (!href || href === '#') return;
+
+              const dates    = item.important_dates || {};
               const lastDate = (
-                dates.last_date_to_apply ||
-                dates.last_date ||
-                dates.last_date_apply ||
-                dates.closing_date ||
-                job.last_date || ''
+                dates.last_date_to_apply || dates.last_date ||
+                dates.last_date_apply    || dates.closing_date ||
+                item.last_date           || item.date || ''
               ).trim();
+
               extra.push({
-                title, slug: href,
-                dept: bd.organization || bd.department || bd.dept || job.organization || '',
-                qual: meta ? meta.qual : (bd.qualification || ''),
-                state: bd.state || job.state || 'All India',
-                cat:   meta ? meta.cat : catKey.replace(/_/g, ' '),
-                tags:  title + ' ' + (meta ? meta.id : catKey) + ' sarkari job',
+                title,
+                slug: href,
+                dept: item.organization || item.department || item.dept || bd.organization || '',
+                qual: meta ? meta.qual : (item.qualification || bd.qualification || ''),
+                state: item.state || bd.state || 'All India',
+                cat:   meta ? meta.cat : label,
+                tags:  title + ' ' + label + ' ' + (item.organization || '') + ' sarkari job 2026',
                 lastDate,
                 icon:  meta ? meta.icon : 'fa-briefcase',
-                lastUpdated: job.updated_at || job.last_updated || job.created_at || new Date().toISOString(),
-                sectionSource: meta ? meta.id : catKey.replace(/_/g, ' '),
+                lastUpdated: item.updated_at || item.last_updated || item.created_at || new Date().toISOString(),
+                sectionSource: label,
               });
             });
           });
         }
       }
 
-      /* ════════════════════════════════════════════════════════
-         4.  jobs.json (legacy / flat arrays)
-             Structure: { top_jobs:[...], left_jobs:[...], sections:[{items:[...]}] }
-         ════════════════════════════════════════════════════════ */
+      /* ──────────────────────────────────────────────────────
+         4. jobs.json  (legacy flat arrays + sections)
+      ────────────────────────────────────────────────────── */
       if (fileName === 'jobs.json') {
-        // Flat arrays at root level
         ['top_jobs', 'left_jobs', 'right_jobs', 'jobs', 'latest_jobs', 'items'].forEach(key => {
           if (!Array.isArray(data[key])) return;
           data[key].forEach(item => {
             const title = (item.name || item.title || '').trim();
-            const href  = item.url  || item.link || item.slug || '#';
+            const href  = item.url || item.link || item.slug || '#';
             if (!title || !href || href === '#') return;
             extra.push({
               title, slug: href,
-              dept:  item.department || item.dept || '',
-              qual:  item.qualification || item.qual || '',
+              dept: item.department || item.dept || '',
+              qual: item.qualification || item.qual || '',
               state: item.state || '',
-              cat:   item.category || item.cat || 'Latest',
-              tags:  [title, item.tags, item.keywords].filter(Boolean).join(' '),
+              cat: item.category || item.cat || 'Latest',
+              tags: [title, item.tags, item.keywords].filter(Boolean).join(' '),
               lastDate: item.last_date || item.lastDate || '',
-              icon:  item.icon || 'fa-briefcase',
+              icon: item.icon || 'fa-briefcase',
               lastUpdated: item.last_updated || item.lastUpdated || item.updated_at || new Date().toISOString(),
               sectionSource: item.section || item.source || getSectionName(href),
             });
           });
         });
-        // Sections format
         if (Array.isArray(data.sections)) {
           data.sections.forEach(sec => {
             (sec.items || []).forEach(item => {
               const title = (item.name || item.title || '').trim();
-              const href  = item.url  || item.link || '#';
+              const href  = item.url || item.link || '#';
               if (!title || !href || href === '#') return;
               extra.push({
                 title, slug: href,
@@ -419,8 +470,9 @@
           });
         }
       }
-    });
+    }); // end forEach
 
+    /* Merge into allData (dedup by slug) */
     if (extra.length) {
       const seen = new Set(allData.map(d => d.slug));
       extra.forEach(item => {
@@ -429,10 +481,13 @@
     }
 
     jsonIndexReady = true;
+    // Debug log — open browser Console to verify JSON loaded
+    console.log('[smart-search] JSON loaded. Total items in index:', allData.length,
+      '| Sources:', CFG.jsonFiles.join(', '));
     loadFuse(() => buildFuse(allData));
   }
 
-  /* ── SORT BY LAST UPDATED (descending) ─────────────────── */
+    /* ── SORT BY LAST UPDATED (descending) ─────────────────── */
   function sortByLastUpdated(results) {
     return results.slice().sort((a, b) => {
       const ta = a.lastUpdated ? new Date(a.lastUpdated).getTime() : 0;
