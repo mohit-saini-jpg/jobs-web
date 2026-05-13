@@ -260,31 +260,41 @@
     ).trim();
   }
 
-  async function loadJsonFiles() {
-    let fetchResults;
+  /* ── SHARED DEDUP KEY ──────────────────────────────────── */
+  function dedupeKey(slug) {
+    if (!slug) return slug;
     try {
-      fetchResults = await Promise.allSettled(
-        CFG.jsonFiles.map(f =>
-          fetch(f)
-            .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-            .catch(() => null)
-        )
-      );
-    } catch (e) {
-      fetchResults = [];
+      const u = new URL(slug, 'https://x.com');
+      const s = u.searchParams.get('slug') || u.pathname;
+      return s.toLowerCase().trim();
+    } catch (_) {
+      return slug.split('?')[0].toLowerCase().trim();
     }
+  }
 
-    const extra = [];
-    let totalLoaded = 0;
-
-    fetchResults.forEach((res, idx) => {
-      if (res.status !== 'fulfilled' || !res.value) {
-        console.warn('[smart-search] Failed to load:', CFG.jsonFiles[idx]);
-        return;
+  /* ── MERGE BATCH INTO allData (deduplicated) ────────────── */
+  function mergeItems(extra, totalLoaded) {
+    if (!extra.length) return;
+    const seen = new Set(allData.map(d => dedupeKey(d.slug)));
+    extra.forEach(item => {
+      const key = dedupeKey(item.slug);
+      if (!seen.has(key)) { seen.add(key); allData.push(item); }
+    });
+    // Refresh any active heroSearch with updated data
+    loadFuse(() => {
+      buildFuse(allData);
+      const heroInput = document.getElementById('heroSearch');
+      if (heroInput && heroInput.value.trim().length >= 1) {
+        heroInput.dispatchEvent(new Event('input'));
       }
-      const data = res.value;
-      const fileName = CFG.jsonFiles[idx];
-      let count = 0;
+    });
+    console.log('[smart-search] Merged', totalLoaded, 'items. allData total:', allData.length);
+  }
+
+  /* ── PROCESS ONE JSON FILE ──────────────────────────────── */
+  function processJsonFile(data, fileName) {
+    const extra = [];
+    let count = 0;
 
       /* ══════════════════════════════════════════════════════
          1.  merged_sarkari_data.json
@@ -560,50 +570,58 @@
         }
       }
 
-      totalLoaded += count;
-      console.log('[smart-search]', fileName, '→', count, 'items indexed');
-    });
+    return { extra, count };
+  }
 
-    /* Merge into allData — deduplicate by base slug (ignoring ?section= param)
-       so the same job appearing in multiple categories (Bank_Jobs, Last_Date_Reminder,
-       Latest_Notifications, etc.) is only indexed once. */
-    if (extra.length) {
-      // Build a key from the slug that strips ?section=... and trailing dashes
-      function dedupeKey(slug) {
-        if (!slug) return slug;
-        try {
-          const u = new URL(slug, 'https://x.com');
-          // Use path + 'slug' param only (ignore 'section')
-          const s = u.searchParams.get('slug') || u.pathname;
-          return s.toLowerCase().trim();
-        } catch (_) {
-          // Fallback: strip ?section= query param manually
-          return slug.split('?')[0].toLowerCase().trim();
-        }
-      }
-      const seen = new Set(allData.map(d => dedupeKey(d.slug)));
-      extra.forEach(item => {
-        const key = dedupeKey(item.slug);
-        if (!seen.has(key)) { seen.add(key); allData.push(item); }
+  /* ── FETCH + INDEX HELPER ───────────────────────────────── */
+  function fetchAndIndex(fileName) {
+    return fetch(fileName)
+      .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(data => {
+        const { extra, count } = processJsonFile(data, fileName);
+        console.log('[smart-search]', fileName, '→', count, 'items');
+        mergeItems(extra, count);
+        return count;
+      })
+      .catch(err => {
+        console.warn('[smart-search] Failed to load:', fileName, err);
+        return 0;
       });
-    }
+  }
 
-    jsonIndexReady = true;
-    console.log('[smart-search] ✅ Index ready. Total items:', allData.length,
-      '(SEED:', SEED_DATA.length, '+ JSON:', totalLoaded, ')');
-    console.log('[smart-search] Sources: merged_sarkari_data(jobs[]),' +
-      ' dailyupdates(sections[].items[].name),' +
-      ' Complete_Jobs_Full_Data(basic_details.job_title)');
-    loadFuse(() => {
-      buildFuse(allData);
-      // After JSON load, refresh any active search in heroSearch.
-      // Always re-trigger if there is text — even when showing "No results"
-      // (the drop is open but the old search ran before JSON was ready).
-      const heroInput = document.getElementById('heroSearch');
-      if (heroInput && heroInput.value.trim().length >= 1) {
-        heroInput.dispatchEvent(new Event('input'));
-      }
+  /* ── LOAD JSON FILES — streaming, not all-at-once ───────── */
+  /*
+   * KEY FIX: Previously used Promise.allSettled() which waited for ALL files
+   * including the 11MB Complete_Jobs_Full_Data.json before setting
+   * jsonIndexReady=true. This caused 10-30s delay on slow connections.
+   *
+   * NEW APPROACH:
+   *  Phase 1 — Fast files (merged_sarkari + dailyupdates, ~700KB total):
+   *            Load together, set jsonIndexReady=true immediately after.
+   *            Search works within ~1-2 seconds.
+   *  Phase 2 — Heavy file (Complete_Jobs_Full_Data.json, 11MB):
+   *            Loads in background, merges silently, refreshes active search.
+   */
+  function loadJsonFiles() {
+    const FAST_FILES  = ['merged_sarkari_data.json', 'dailyupdates.json'];
+    const HEAVY_FILES = ['Complete_Jobs_Full_Data.json', 'jobs.json'];
+
+    // Phase 1: fetch fast files in parallel, mark ready when done
+    Promise.allSettled(FAST_FILES.map(f => fetchAndIndex(f))).then(() => {
+      jsonIndexReady = true;
+      console.log('[smart-search] ✅ Fast index ready. Items:', allData.length);
+      // Trigger initial Fuse build + search refresh
+      loadFuse(() => {
+        buildFuse(allData);
+        const heroInput = document.getElementById('heroSearch');
+        if (heroInput && heroInput.value.trim().length >= 1) {
+          heroInput.dispatchEvent(new Event('input'));
+        }
+      });
     });
+
+    // Phase 2: fetch heavy files in background — merge silently when ready
+    HEAVY_FILES.forEach(f => fetchAndIndex(f));
   }
 
     /* ── SORT BY LAST UPDATED (descending) ─────────────────── */
