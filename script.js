@@ -1697,10 +1697,8 @@
   async function initGlobalLiveSearch() {
     const inputs = [];
     
-    // heroSearch is handled by the dedicated inline script in index.html
-    // (uses #searchSuggest for dropdown). Skip it here to avoid double-binding.
-    // const heroInput = document.getElementById("heroSearch");
-    // if (heroInput) inputs.push({ input: heroInput, resultsId: "heroSearchSuggestResults" });
+    // heroSearch handled by inline heroSearchInit() in index.html (richer UI)
+    // Do NOT add it here to avoid double-binding.
 
     const homeInput = document.getElementById("siteSearchInput");
     if (homeInput) inputs.push({ input: homeInput, resultsId: "searchResults" });
@@ -1713,13 +1711,39 @@
 
     if (!inputs.length) return;
 
+    /* ── keyword category helper ── */
+    const KW = {
+      'Admit Card' : ['admit card','hall ticket','call letter'],
+      'Answer Key' : ['answer key','answer sheet','objection'],
+      'Result'     : ['result','merit list','cut off','cutoff','scorecard'],
+      'Admission'  : ['admission','counselling','counseling']
+    };
+    function categoryOf(title) {
+      const t = title.toLowerCase();
+      for (const [cat, words] of Object.entries(KW))
+        if (words.some(w => t.includes(w))) return cat;
+      return 'Latest Job';
+    }
+    function slugify(t) {
+      return t.toLowerCase().replace(/[^a-z0-9\s-]/g,'').replace(/[\s-]+/g,'-').slice(0,120).replace(/^-+|-+$/g,'');
+    }
+    function jobHref(j) {
+      const slug = j.slug || slugify(j.title || '');
+      if (!slug) return j.official_website_link || '#';
+      const prefix = (j.apply_mode||'').toLowerCase() === 'offline' ? 'offline-' : '';
+      return 'job.html?slug=' + encodeURIComponent(prefix + slug);
+    }
+
     let searchData = [];
     try {
-      const [dyn, jobs, tools, services] = await Promise.all([
+      const [dyn, jobs, tools, services, merged, daily, complete] = await Promise.all([
         getJobsSections().catch(() => ({})),
         getJSON("/jobs.json").catch(() => ({})),
         getJSON("/tools.json").catch(() => ({})),
-        getJSON("/services.json").catch(() => ({}))
+        getJSON("/services.json").catch(() => ({})),
+        getJSON("merged_sarkari_data.json").catch(() => null),
+        getJSON("dailyupdates.json").catch(() => null),
+        getJSON("Complete_Jobs_Full_Data.json").catch(() => null)
       ]);
 
       const push = (name, url, src) => {
@@ -1728,6 +1752,32 @@
         searchData.push({ name: name.trim(), url: url.trim(), src });
       };
 
+      /* 1. merged_sarkari_data.json — jobs[] array */
+      if (merged && Array.isArray(merged.jobs)) {
+        merged.jobs.forEach(j => {
+          if (!j.title) return;
+          const cat = (j.apply_mode||'').toLowerCase() === 'offline' ? 'Offline Form' : categoryOf(j.title);
+          push(j.title, jobHref(j), cat);
+        });
+      }
+
+      /* 2. dailyupdates.json */
+      if (daily) {
+        const arr = Array.isArray(daily) ? daily : (Array.isArray(daily.sections) ? daily.sections : []);
+        arr.forEach(sec => {
+          (sec.items || []).forEach(i => push(i.name || i.title, i.url || i.link || '#', sec.title || 'Update'));
+        });
+      }
+
+      /* 3. Complete_Jobs_Full_Data.json */
+      if (complete && typeof complete === 'object') {
+        Object.keys(complete).forEach(k => {
+          if (!Array.isArray(complete[k])) return;
+          complete[k].forEach(i => push(i.name || i.title, i.url || i.link || '#', k.replace(/_/g,' ')));
+        });
+      }
+
+      /* 4. existing sources */
       if (dyn.sections) {
         dyn.sections.forEach(s => s.items?.forEach(i => push(i.name || i.title, i.url || i.link, s.title || "Update")));
       }
@@ -1763,26 +1813,31 @@
         }).slice(0, 10);
 
         resultsWrap.innerHTML = "";
+        /* use .suggest-item for #searchSuggest, .search-result-item for others */
+        const isSuggest = resultsWrap.id === "searchSuggest";
         if (matches.length > 0) {
           resultsWrap.style.display = "block";
+          if (isSuggest) resultsWrap.classList.add("open");
           matches.forEach(m => {
             let href = normalizeUrl(m.url);
             const isExternal = href.startsWith("http") && !href.includes(location.hostname);
-            
             const a = document.createElement("a");
-            a.className = "search-result-item";
+            a.className = isSuggest ? "suggest-item" : "search-result-item";
             a.href = href;
-            if (isExternal) {
-                a.target = "_blank";
-                a.rel = "noopener";
+            if (isExternal) { a.target = "_blank"; a.rel = "noopener"; }
+            if (isSuggest) {
+              a.innerHTML = `<i class="fa-solid fa-circle-dot" style="color:var(--blue);min-width:16px;font-size:.8rem;"></i><span style="flex:1;min-width:0;"><span style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${m.name}</span><span style="font-size:.7rem;color:var(--muted);font-weight:400;">${m.src}</span></span>`;
+            } else {
+              a.innerHTML = `<div class="result-name">${m.name}</div><div class="result-meta">${m.src}</div>`;
             }
-            
-            a.innerHTML = `<div class="result-name">${m.name}</div><div class="result-meta">${m.src}</div>`;
             resultsWrap.appendChild(a);
           });
         } else {
           resultsWrap.style.display = "block";
-          resultsWrap.innerHTML = `<div class="search-no-results">No matches found.</div>`;
+          if (isSuggest) resultsWrap.classList.add("open");
+          resultsWrap.innerHTML = isSuggest
+            ? `<div class="suggest-item" style="color:var(--muted);justify-content:center;">No results found. Try SSC, Railway, Bank, Admit Card…</div>`
+            : `<div class="search-no-results">No matches found.</div>`;
         }
       };
 
@@ -1813,7 +1868,11 @@
         if (btn && btn.contains(e.target)) return;
         if (!input.contains(e.target) && !resultsWrap.contains(e.target)) {
           resultsWrap.style.display = "none";
+          resultsWrap.classList.remove("open");
         }
+      });
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") { resultsWrap.style.display = "none"; resultsWrap.classList.remove("open"); resultsWrap.innerHTML = ""; }
       });
     });
   }
