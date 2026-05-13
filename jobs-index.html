@@ -785,20 +785,20 @@
       }
       document.getElementById('jbNewBadge').style.display = '';
 
-      /* ── SR/SRS filter helpers — defined early, used by CTA + Important Links ── */
+      /* ── SR/SRS filter helpers — used by CTA + Important Links ── */
       function isSRUrl(u) {
         return !!(u && (u.includes('sarkariresult.com') || u.includes('sarkariresultshine.com')));
       }
       function officialOnly(u) { return isSRUrl(u) ? '' : u; }
 
       /* ── Main CTA button ── */
-      /* RULE: ONLY official links shown — sarkariresult.com / sarkariresultshine.com NEVER shown here.
-         Priority: first non-SR link in useful_links → official_website_link → applyOnline → officialWebsite */
+      /* RULE: ONLY official links — sarkariresult.com / sarkariresultshine.com NEVER shown.
+         Priority: first non-SR/SRS link from useful_links → officialWebsiteLink → officialWebsite → applyOnline */
       const mainCta = document.getElementById('btnMainCta');
 
-      function getFirstOfficialFromUsefulLinks(usefulLinksArr) {
-        if (!Array.isArray(usefulLinksArr)) return '';
-        for (const ul of usefulLinksArr) {
+      function getFirstOfficialFromUsefulLinks(arr) {
+        if (!Array.isArray(arr)) return '';
+        for (const ul of arr) {
           const rawLinks = ul.links || ul.url || ul.href || '';
           const linkArr = Array.isArray(rawLinks) ? rawLinks : [rawLinks];
           for (const rawUrl of linkArr) {
@@ -816,7 +816,6 @@
         officialOnly(row && row.applyOnline)                           ||
         ''
       );
-
       const finalDest = normalizeUrl(_ctaOfficialUrl) || '';
       if (finalDest) {
         mainCta.href = finalDest;
@@ -984,9 +983,8 @@
       }
 
       /* ── Important Links card ── */
-      /* RULE: Show ONLY links present in useful_links array in JSON.
-         All static row field fallbacks removed.
-         sarkariresult.com / sarkariresultshine.com links ALWAYS filtered out. */
+      /* RULE: Show ONLY links from useful_links array in JSON.
+         Static field fallbacks removed. SR/SRS links always blocked. */
 
       /* ── Smart link categorization by title keyword ── */
       function categorizeLinkByTitle(title) {
