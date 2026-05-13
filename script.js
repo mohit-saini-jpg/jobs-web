@@ -1803,11 +1803,20 @@
         });
       }
 
-      /* 3. Complete_Jobs_Full_Data.json */
+      /* 3. Complete_Jobs_Full_Data.json — title lives in basic_details.job_title */
       if (complete && typeof complete === 'object') {
         Object.keys(complete).forEach(k => {
           if (!Array.isArray(complete[k])) return;
-          complete[k].forEach(i => push(i.name || i.title, i.url || i.link || '#', k.replace(/_/g,' ')));
+          complete[k].forEach(i => {
+            const bd = i.basic_details || {};
+            const title = bd.job_title || bd.post_name || i.title || i.name || '';
+            if (!title) return;
+            const applyMode = (bd.application_mode || i.apply_mode || '').toLowerCase();
+            const prefix = applyMode === 'offline' ? 'offline-' : '';
+            const slug = slugify(title);
+            const href = slug ? 'job.html?slug=' + encodeURIComponent(prefix + slug) + '&section=' + encodeURIComponent(k.replace(/_/g,' ')) : '#';
+            push(title, href, k.replace(/_/g,' '));
+          });
         });
       }
 
