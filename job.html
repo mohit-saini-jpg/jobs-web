@@ -1542,8 +1542,10 @@
         const score = tokens.filter(t => ts.includes(t)).length / tokens.length;
         if (score > bestScore) { bestScore = score; best = it; }
       }
-      /* Lower threshold (0.35) to catch dailyupdates items with mixed Hindi/English titles */
-      return bestScore >= 0.35 ? best : null;
+      /* Threshold 0.6 — requires majority of slug tokens to match title.
+         Lower values (e.g. 0.35) caused wrong-job mapping when multiple jobs
+         share common tokens like "recruitment", "2026", "apply", "offline". */
+      return bestScore >= 0.6 ? best : null;
     }
 
     /* ── Main ── */
@@ -1561,10 +1563,28 @@
         } catch (_) { return ''; }
       })();
 
-      let items = [];
-      try { items = await loadAllItems(); } catch (_) {}
+      /* ── PRIMARY: Fetch individual job JSON from /jobs/data/<slug>.json ── */
+      /* This is the authoritative source — exact slug match, no fuzzy logic */
+      let row = null;
+      try {
+        const directRes = await fetch('/jobs/data/' + encodeURIComponent(rawSlug) + '.json');
+        if (directRes.ok) {
+          const directData = await directRes.json();
+          if (directData && (directData.basic_details || directData.title)) {
+            row = parseFullJob(directData, directData.category || 'Latest Notifications');
+            /* Inject the slug so downstream code can use it */
+            if (row) row.slug = rawSlug;
+          }
+        }
+      } catch (_) {}
 
-      let row = matchBySlug(items, rawSlug);
+      /* ── FALLBACK: Search aggregated JSON files (fuzzy/token match) ── */
+      /* Only used when individual job file is not found */
+      let items = [];
+      if (!row) {
+        try { items = await loadAllItems(); } catch (_) {}
+        row = matchBySlug(items, rawSlug);
+      }
 
       /* If we found a row but it has no destUrl, use refUrl */
       if (row && !row.destUrl && refUrl) {
