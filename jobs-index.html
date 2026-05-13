@@ -785,8 +785,14 @@
       }
       document.getElementById('jbNewBadge').style.display = '';
 
+      /* ── SR/SRS filter helpers ── */
+      function isSRUrl(u) {
+        return !!(u && (u.includes('sarkariresult.com') || u.includes('sarkariresultshine.com')));
+      }
+      function officialOnly(u) { return isSRUrl(u) ? '' : u; }
+
       /* ── Main CTA button ── */
-      /* RULE: ONLY official links — sarkariresult.com / sarkariresultshine.com NEVER shown.
+      /* RULE: sarkariresult.com / sarkariresultshine.com NEVER shown in CTA.
          Priority: useful_links first official URL → applyOnline → officialWebsite → officialWebsiteLink */
       const mainCta = document.getElementById('btnMainCta');
 
@@ -981,12 +987,6 @@
       const _refUrl = (() => {
         try { return new URLSearchParams(window.location.search).get('ref') || ''; } catch(_){ return ''; }
       })();
-      /* sarkariresult / sarkariresultshine URLs Important Links mein NAHI dikhne chahiye */
-      function isSRUrl(u) {
-        return u && (u.includes('sarkariresult.com') || u.includes('sarkariresultshine.com'));
-      }
-      function officialOnly(u) { return isSRUrl(u) ? '' : u; }
-
       const _fallbackUrl = normalizeUrl(
         officialOnly(row && row.applyOnline)     ||
         officialOnly(row && row.officialWebsite) ||
@@ -1240,7 +1240,7 @@
       }
 
       /* Source / apply URL — ONLY from important_links obj or useful_links, NOT source_url */
-      /* source_url = sarkariresult.com page — NEVER used, always filtered */
+      /* source_url = sarkariresult.com page, use only for main CTA fallback */
       const applyOnline = safe(
         il.apply_online || il.apply_link || il.registration ||
         getUsefulLink([/apply\s*online|apply\s*link|registration\s*link|apply\s*form|apply.*otr|apply.*mains|apply.*re\s*open|apply.*other|apply.*sub|apply.*constable|apply.*manager|apply.*inspector|apply.*lucknow|apply.*noida|apply.*ug|apply.*pg/i]) ||
@@ -1290,10 +1290,10 @@
         getUsefulLink([/exam\s*city|exam\s*centre|slot\s*booking|check\s*exam\s*city/i]) || ''
       );
 
-      /* Primary dest URL — ONLY official links, source_url (sarkariresult) NEVER used */
+      /* Primary dest URL — ONLY official links. source_url (sarkariresult) NEVER used here. */
       const destUrl = normalizeUrl(
         applyOnline || officialWebsite ||
-        job.official_website_link || ''
+        job.official_website_link || bd.official_website_link || ''
       );
 
       /* Dates */
@@ -1481,13 +1481,15 @@
                 /* Build a pseudo-full job object so parseFullJob works.
                    Spread the full original job so useful_links, important_dates,
                    application_fee, age_limit, total_post, short_information all come through. */
+                /* important_links: use only if job already has them (real official links).
+                   NEVER set apply_online/official_website to externalUrl (SR link). */
                 const pseudoJob = {
                   ...job,
                   title,
-                  source_url: externalUrl,
+                  source_url: externalUrl,  /* kept only for slug fingerprint matching */
                   last_date: lastDate,
                   category: catKey,
-                  important_links: job.important_links || { apply_online: externalUrl, official_website: externalUrl },
+                  important_links: job.important_links || {},
                   total_vacancy: job.total_vacancy || job.total_vacancies || job.total_post || '',
                 };
                 const parsed = parseFullJob(pseudoJob, catKey);
