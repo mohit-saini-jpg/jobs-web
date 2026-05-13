@@ -785,15 +785,9 @@
       }
       document.getElementById('jbNewBadge').style.display = '';
 
-      /* ── SR/SRS filter helpers — used by CTA + Important Links ── */
-      function isSRUrl(u) {
-        return !!(u && (u.includes('sarkariresult.com') || u.includes('sarkariresultshine.com')));
-      }
-      function officialOnly(u) { return isSRUrl(u) ? '' : u; }
-
       /* ── Main CTA button ── */
       /* RULE: ONLY official links — sarkariresult.com / sarkariresultshine.com NEVER shown.
-         Priority: first non-SR/SRS link from useful_links → officialWebsiteLink → officialWebsite → applyOnline */
+         Priority: useful_links first official URL → applyOnline → officialWebsite → officialWebsiteLink */
       const mainCta = document.getElementById('btnMainCta');
 
       function getFirstOfficialFromUsefulLinks(arr) {
@@ -811,9 +805,9 @@
 
       const _ctaOfficialUrl = (
         getFirstOfficialFromUsefulLinks((row && row.usefulLinks) || []) ||
-        officialOnly(row && row.officialWebsiteLink)                   ||
-        officialOnly(row && row.officialWebsite)                       ||
-        officialOnly(row && row.applyOnline)                           ||
+        officialOnly(row && row.applyOnline)                            ||
+        officialOnly(row && row.officialWebsite)                        ||
+        officialOnly(row && row.officialWebsiteLink)                    ||
         ''
       );
       const finalDest = normalizeUrl(_ctaOfficialUrl) || '';
@@ -983,8 +977,22 @@
       }
 
       /* ── Important Links card ── */
-      /* RULE: Show ONLY links from useful_links array in JSON.
-         Static field fallbacks removed. SR/SRS links always blocked. */
+      /* Resolve best available URL: row fields → destUrl → refUrl → sarkariresult fallback */
+      const _refUrl = (() => {
+        try { return new URLSearchParams(window.location.search).get('ref') || ''; } catch(_){ return ''; }
+      })();
+      /* sarkariresult / sarkariresultshine URLs Important Links mein NAHI dikhne chahiye */
+      function isSRUrl(u) {
+        return u && (u.includes('sarkariresult.com') || u.includes('sarkariresultshine.com'));
+      }
+      function officialOnly(u) { return isSRUrl(u) ? '' : u; }
+
+      const _fallbackUrl = normalizeUrl(
+        officialOnly(row && row.applyOnline)     ||
+        officialOnly(row && row.officialWebsite) ||
+        officialOnly(row && row.destUrl)         ||
+        officialOnly(_refUrl)                    || ''
+      );
 
       /* ── Smart link categorization by title keyword ── */
       function categorizeLinkByTitle(title) {
@@ -1017,33 +1025,65 @@
           return { icon: 'fa-users',                cls: 'jp-btn-blue',   sub: 'View Details' };
         if (/how\s*to|video|hindi.*video/i.test(t))
           return { icon: 'fa-circle-play',          cls: 'jp-btn-red',    sub: 'Watch Now' };
+        /* default */
         return { icon: 'fa-link',                   cls: 'jp-btn-blue',   sub: 'Click Here' };
       }
 
-      /* ── useful_links from JSON — ONLY source for Important Links ── */
+      /* ── useful_links array from JSON (PRIMARY source) ── */
       const usefulLinksRaw = (row && row.usefulLinks) || [];
+
+      /* ── Static row fields (SUPPLEMENTAL — only if useful_links missing that link) ── */
+      /* officialOnly() se SR/SRS URLs filter ho jaate hain — wo Important Links mein nahi aate */
+      const staticLinkDefs = [
+        { href: officialOnly(row && row.applyOnline),          label: 'Apply Online',             icon: 'fa-paper-plane',      cls: 'jp-btn-green',  sub: 'Apply Now'    },
+        { href: officialOnly(row && row.candidateLogin),       label: 'Candidate Login',          icon: 'fa-right-to-bracket', cls: 'jp-btn-green',  sub: 'Login Here'   },
+        { href: officialOnly(row && row.notifPdf),             label: 'Notification PDF',         icon: 'fa-file-pdf',         cls: 'jp-btn-blue',   sub: 'View PDF'     },
+        { href: officialOnly(row && row.officialNotifPdfLink), label: 'Official Notification',    icon: 'fa-file-pdf',         cls: 'jp-btn-blue',   sub: 'Download PDF' },
+        { href: officialOnly(row && row.formPdfFreeLink),      label: 'Download Form (Free PDF)', icon: 'fa-file-arrow-down',  cls: 'jp-btn-orange', sub: 'Free PDF'     },
+        { href: officialOnly(row && row.admitCard),            label: 'Admit Card',               icon: 'fa-id-card',          cls: 'jp-btn-orange', sub: 'Download Now' },
+        { href: officialOnly(row && row.result),               label: 'Result',                   icon: 'fa-trophy',           cls: 'jp-btn-orange', sub: 'View Result'  },
+        { href: officialOnly(row && row.answerKey),            label: 'Answer Key',               icon: 'fa-key',              cls: 'jp-btn-blue',   sub: 'Download Now' },
+        { href: officialOnly(row && row.syllabus),             label: 'Syllabus',                 icon: 'fa-book-open',        cls: 'jp-btn-blue',   sub: 'Download Now' },
+        { href: officialOnly(row && row.meritList),            label: 'Merit List',               icon: 'fa-list-ol',          cls: 'jp-btn-orange', sub: 'View List'    },
+        { href: officialOnly(row && row.scoreCard),            label: 'Score Card',               icon: 'fa-chart-bar',        cls: 'jp-btn-orange', sub: 'Download Now' },
+        { href: officialOnly(row && row.examCity),             label: 'Exam City Details',        icon: 'fa-location-dot',     cls: 'jp-btn-blue',   sub: 'Check City'   },
+        { href: officialOnly(row && row.officialWebsite),      label: 'Official Website',         icon: 'fa-globe',            cls: 'jp-btn-red',    sub: 'Visit Now'    },
+        { href: officialOnly(row && row.officialWebsiteLink),  label: 'Official Website',         icon: 'fa-globe',            cls: 'jp-btn-red',    sub: 'Visit Now'    },
+      ];
 
       const linksContainer = document.getElementById('linksActions');
       if (linksContainer) {
         const allLinks = [];
         const seenHrefs = new Set();
 
-        /* Render ALL useful_links — SR/SRS filtered, no static field fallbacks */
+        /* ── STEP 1: useful_links se SAARE links render karo (PRIMARY) ── */
+        /* Ye JSON mein jo bhi links hain wo SABHI show honge — koi filter nahi */
         usefulLinksRaw.forEach(ul => {
           const t = safe(ul.title || ul.name || '');
           if (!t) return;
+          /* links field: string ya array dono support */
           const rawLinks = ul.links || ul.url || ul.href || '';
           const linkArr = Array.isArray(rawLinks) ? rawLinks : [rawLinks];
           linkArr.forEach((rawUrl, idx) => {
             const href = normalizeUrl(safe(rawUrl));
             if (!href || href === '#') return;
-            if (isSRUrl(href)) return;           /* sarkariresult/sarkariresultshine — never show */
-            if (seenHrefs.has(href)) return;
+            if (isSRUrl(href)) return;         /* sarkariresult/sarkariresultshine links skip */
+            if (seenHrefs.has(href)) return;   /* duplicate href skip */
             seenHrefs.add(href);
+            /* Multiple URLs same title mein → (1), (2) suffix */
             const label = linkArr.length > 1 ? `${t} (${idx + 1})` : t;
             const cat = categorizeLinkByTitle(t);
             allLinks.push({ href, label, icon: cat.icon, cls: cat.cls, sub: cat.sub });
           });
+        });
+
+        /* ── STEP 2: Static fields se sirf wo links add karo jo useful_links mein nahi hain ── */
+        staticLinkDefs.forEach(ld => {
+          const href = normalizeUrl(safe(ld.href));
+          if (!href || href === '#') return;
+          if (seenHrefs.has(href)) return;   /* already shown from useful_links */
+          seenHrefs.add(href);
+          allLinks.push({ href, label: ld.label, icon: ld.icon, cls: ld.cls, sub: ld.sub });
         });
 
         let linksHtml = allLinks.map(lk =>
@@ -1053,8 +1093,23 @@
           </a>`
         ).join('');
 
-        /* Fallback only when useful_links completely empty */
-        if (!linksHtml) {
+        /* ── FALLBACK: agar koi bhi specific link nahi mili ── */
+        if (!linksHtml && _fallbackUrl) {
+          const isSarkariResult = _fallbackUrl.includes('sarkariresult.com');
+          const isSarkariShine  = _fallbackUrl.includes('sarkariresultshine.com');
+          const srcLabel = isSarkariResult ? 'SarkariResult.com'
+                         : isSarkariShine  ? 'SarkariResultShine.com'
+                         : 'Official Website';
+          linksHtml =
+            `<a href="${_fallbackUrl}" target="_blank" rel="noopener" class="jp-btn jp-btn-green">
+              <span><i class="fa-solid fa-arrow-up-right-from-square"></i> Apply / View Details</span>
+              <span class="jp-btn-sub">${srcLabel}</span>
+            </a>
+            <a href="${_fallbackUrl}" target="_blank" rel="noopener" class="jp-btn jp-btn-red">
+              <span><i class="fa-solid fa-globe"></i> Official Website</span>
+              <span class="jp-btn-sub">${srcLabel}</span>
+            </a>`;
+        } else if (!linksHtml) {
           linksHtml = `<p style="color:#64748b;font-size:.83rem;padding:4px;">
             Links not available. Please check official website.</p>`;
         }
@@ -1184,69 +1239,61 @@
         return '';
       }
 
-      /* ── Helper: filter SR/SRS URLs at parse time ── */
-      function _noSR(u) {
-        const s = safe(u);
-        if (!s) return '';
-        if (s.includes('sarkariresult.com') || s.includes('sarkariresultshine.com')) return '';
-        return s;
-      }
-
       /* Source / apply URL — ONLY from important_links obj or useful_links, NOT source_url */
-      /* SR/SRS URLs filtered at parse time */
+      /* source_url = sarkariresult.com page — NEVER used, always filtered */
       const applyOnline = safe(
-        _noSR(il.apply_online) || _noSR(il.apply_link) || _noSR(il.registration) ||
+        il.apply_online || il.apply_link || il.registration ||
         getUsefulLink([/apply\s*online|apply\s*link|registration\s*link|apply\s*form|apply.*otr|apply.*mains|apply.*re\s*open|apply.*other|apply.*sub|apply.*constable|apply.*manager|apply.*inspector|apply.*lucknow|apply.*noida|apply.*ug|apply.*pg/i]) ||
         ''
       );
       const officialWebsite = safe(
-        _noSR(il.official_website) || _noSR(il.visit_website) ||
+        il.official_website || il.visit_website ||
         getUsefulLink([/official\s*website|official\s*portal|visit\s*website|ctet\s*official/i]) ||
-        _noSR(job.official_website_link) || ''
+        job.official_website_link || ''   /* official_website_link = real govt site, ok to use */
       );
       const notifPdf = safe(
-        _noSR(il.official_notification) || _noSR(il.download_notification) ||
-        _noSR(il.notification_pdf) || _noSR(il.download_pdf) ||
+        il.official_notification || il.download_notification ||
+        il.notification_pdf || il.download_pdf ||
         getUsefulLink([/notification|download\s*notif|short\s*notice|detailed\s*advert|info\s*brochure|exam\s*notice|download.*notice|download\s*go/i]) ||
-        _noSR(job.form_pdf_free_link) || ''
+        job.form_pdf_free_link || ''
       );
       const candidateLogin = safe(
-        _noSR(il.candidate_login) || _noSR(il.login) ||
+        il.candidate_login || il.login ||
         getUsefulLink([/candidate\s*login|login\s*portal|dashboard\s*login/i]) || ''
       );
       const admitCard = safe(
-        _noSR(il.admit_card) || _noSR(il.admit_card_link) ||
+        il.admit_card || il.admit_card_link ||
         getUsefulLink([/admit\s*card|hall\s*ticket|call\s*letter|download\s*admit|pet\s*admit|tier.*admit|second.*admit/i]) || ''
       );
       const result = safe(
-        _noSR(il.result) || _noSR(il.result_link) ||
+        il.result || il.result_link ||
         getUsefulLink([/^download\s*result|^result$|download.*final\s*result|merit\s*list|score\s*card|paper.*result|tier.*result|eligibility.*result|ias.*result|ifs.*result|jee.*result|bseb.*result/i]) || ''
       );
       const answerKey = safe(
-        _noSR(il.answer_key) || _noSR(il.final_answer_key) ||
+        il.answer_key || il.final_answer_key ||
         getUsefulLink([/answer\s*key|final\s*answer\s*key|response\s*sheet|paper.*answer\s*key|tier.*answer\s*key|second.*answer\s*key/i]) || ''
       );
       const syllabus = safe(
-        _noSR(il.syllabus) || _noSR(il.syllabus_pdf) ||
+        il.syllabus || il.syllabus_pdf ||
         getUsefulLink([/syllabus|exam\s*pattern|previous\s*paper|practice\s*set|pgt\s*syllabus/i]) || ''
       );
       const meritList = safe(
-        _noSR(il.merit_list) ||
+        il.merit_list ||
         getUsefulLink([/merit\s*list|selection\s*list/i]) || ''
       );
       const scoreCard = safe(
-        _noSR(il.score_card) ||
+        il.score_card ||
         getUsefulLink([/score\s*card|cutoff|cut.?off/i]) || ''
       );
       const examCity = safe(
-        _noSR(il.exam_city) ||
+        il.exam_city ||
         getUsefulLink([/exam\s*city|exam\s*centre|slot\s*booking|check\s*exam\s*city/i]) || ''
       );
 
-      /* Primary dest URL for main CTA — source_url (SR link) NEVER used */
+      /* Primary dest URL — ONLY official links, source_url (sarkariresult) NEVER used */
       const destUrl = normalizeUrl(
         applyOnline || officialWebsite ||
-        _noSR(job.official_website_link) || _noSR(bd.official_website_link) || ''
+        job.official_website_link || ''
       );
 
       /* Dates */
@@ -1332,6 +1379,64 @@
 
     async function loadAllItems() {
       try {
+        /* ── ALWAYS load dailyupdates.json (section-cards source) ── */
+        let dailyItems = [];
+        try {
+          const rd = await fetch('/dailyupdates.json');
+          if (rd.ok) {
+            const dailyRaw = await rd.json();
+            if (dailyRaw && Array.isArray(dailyRaw.sections)) {
+              for (const sec of dailyRaw.sections) {
+                const secId = safe(sec.id || sec.title || '');
+                if (!Array.isArray(sec.items)) continue;
+                for (const item of sec.items) {
+                  const title = safe(item.name || item.title || '');
+                  if (!title) continue;
+                  const itemUrl = normalizeUrl(safe(item.url || item.link || ''));
+                  /* Build a full-compatible row object */
+                  dailyItems.push({
+                    title,
+                    org: '',
+                    totalVac: '',
+                    applyMode: 'Online',
+                    destUrl: itemUrl,
+                    applyOnline: itemUrl,
+                    officialWebsite: itemUrl,
+                    notifPdf: '',
+                    candidateLogin: '',
+                    admitCard: '',
+                    result: '',
+                    answerKey: '',
+                    syllabus: '',
+                    meritList: '',
+                    scoreCard: '',
+                    examCity: '',
+                    lastDate: '',
+                    appBegin: '',
+                    examDate: '',
+                    admitDate: '',
+                    resultDate: '',
+                    feeLastDate: '',
+                    corrDate: '',
+                    feeGen: '', feeObc: '', feeEws: '', feeSc: '', feeSt: '', feeFem: '', feePh: '',
+                    minAge: '', maxAge: '', ageRelax: '',
+                    eduQual: '', expReqd: '',
+                    salary: '', selProc: '', shortInfo: '',
+                    usefulLinks: [],
+                    vd: [],
+                    cwVacGen: '', cwVacObc: '', cwVacEws: '', cwVacSc: '', cwVacSt: '', cwVacPh: '',
+                    formPdfFreeLink: '', officialNotifPdfLink: '', officialWebsiteLink: itemUrl,
+                    secId,
+                    slug: '',
+                    category: secId,
+                    fp: urlRedirectFingerprint(itemUrl).toLowerCase()
+                  });
+                }
+              }
+            }
+          }
+        } catch (_) {}
+
         /* Try merged_sarkari_data.json first */
         let raw = null;
         try {
@@ -1342,11 +1447,11 @@
         /* Fallback to Complete_Jobs_Full_Data.json */
         if (!raw) {
           const r2 = await fetch('/Complete_Jobs_Full_Data.json');
-          if (!r2.ok) return [];
+          if (!r2.ok) return dailyItems; /* Return dailyItems even if main JSON fails */
           raw = await r2.json();
         }
 
-        const out = [];
+        const out = [...dailyItems]; /* Start with dailyupdates items */
 
         /* Handle array format */
         if (Array.isArray(raw)) {
@@ -1382,8 +1487,7 @@
                   source_url: externalUrl,
                   last_date: lastDate,
                   category: catKey,
-                  /* Don't inject SR/SRS URL into important_links — _noSR() filters in parseFullJob */
-                  important_links: job.important_links || {},
+                  important_links: job.important_links || { apply_online: externalUrl, official_website: externalUrl },
                   total_vacancy: job.total_vacancy || job.total_vacancies || job.total_post || '',
                 };
                 const parsed = parseFullJob(pseudoJob, catKey);
@@ -1443,16 +1547,25 @@
       const exactNoHash = items.find(it => it.slug && (it.slug === noHash || it.slug.replace(/-[0-9a-f]{5,8}$/i,'') === noHash));
       if (exactNoHash) return exactNoHash;
 
-      /* Token-based fuzzy match on title */
+      /* Fingerprint match — matches items from dailyupdates.json via URL hash */
+      const fpMatch = items.find(it => it.fp && noHash.endsWith(it.fp));
+      if (fpMatch) return fpMatch;
+
+      /* Token-based fuzzy match on title (works for all items including dailyupdates) */
       const tokens = noHash.split('-').filter(t => t.length > 2);
       if (!tokens.length) return null;
       let best = null, bestScore = 0;
       for (const it of items) {
-        const ts = it.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        /* Normalize title for comparison — strip Hindi/Unicode, lowercase */
+        const ts = it.title.toLowerCase()
+          .normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^\x00-\x7e]/g, ' ')
+          .replace(/[^a-z0-9]+/g, '-');
         const score = tokens.filter(t => ts.includes(t)).length / tokens.length;
         if (score > bestScore) { bestScore = score; best = it; }
       }
-      return bestScore >= 0.45 ? best : null;
+      /* Lower threshold (0.35) to catch dailyupdates items with mixed Hindi/English titles */
+      return bestScore >= 0.35 ? best : null;
     }
 
     /* ── Main ── */
@@ -1494,6 +1607,7 @@
             destUrl: refUrl,
             applyOnline: refUrl,
             officialWebsite: refUrl,
+            officialWebsiteLink: refUrl,
             org: parsed.org || '',
             totalVac: parsed.vac || 'See Notification',
             lastDate: parsed.lastDt || 'See Notification',
@@ -1506,6 +1620,7 @@
           renderJobPage(humanTitle, '', parseJob(humanTitle), null);
         } else {
           renderNonJobPage(humanTitle, '');
+          /* Hide CTA only if there's truly no URL */
           ['btnMainCta','btnNonJobCta'].forEach(id => {
             const el = document.getElementById(id);
             if (el) { el.style.display = 'none'; }
@@ -1513,10 +1628,19 @@
         }
       } else {
         const name = row.title || humanizeSlug(rawSlug);
+        const destUrl = row.destUrl || refUrl || '';
+        /* For ALL rows with a URL — render with Click Here button regardless of isJobItem */
         if (isJobItem(name)) {
-          renderJobPage(name, row.destUrl, parseJob(name), row);
+          renderJobPage(name, destUrl, parseJob(name), Object.assign({}, row, { destUrl }));
         } else {
-          renderNonJobPage(name, row.destUrl);
+          /* Non-job page (schemes, khabar, etc.) — ALWAYS show Click Here if URL exists */
+          renderNonJobPage(name, destUrl);
+          if (!destUrl) {
+            ['btnMainCta','btnNonJobCta'].forEach(id => {
+              const el = document.getElementById(id);
+              if (el) { el.style.display = 'none'; }
+            });
+          }
         }
       }
 
