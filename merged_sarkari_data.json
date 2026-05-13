@@ -1,6 +1,6 @@
 {
-  "scraped_at": "2026-05-13 19:08:11",
-  "total": 134,
+  "scraped_at": "2026-05-13 21:14:30",
+  "total": 135,
   "summary": {
     "sarkariresultshine_active_jobs": 20,
     "sarkariresult_categories": {
@@ -8,12 +8,21 @@
       "SR_Admit_Card": 25,
       "SR_Result": 25,
       "SR_Admission": 12,
-      "SR_Answer_Key": 12
+      "SR_Answer_Key": 13
     },
-    "sarkariresult_total": 114
+    "sarkariresult_total": 115
+  },
+  "category_counts": {
+    "OFFLINE_FORM": 20,
+    "SR_Latest_Jobs": 40,
+    "SR_Admit_Card": 25,
+    "SR_Result": 25,
+    "SR_Admission": 12,
+    "SR_Answer_Key": 13
   },
   "jobs": [
     {
+      "category": "OFFLINE_FORM",
       "title": "Ambala Court Clerk Vacancy 2026, Notification Out, Apply Now -",
       "organization": "District and Sessions Judge, Ambala (HR)",
       "post_name": "Clerk",
@@ -48,13 +57,14 @@
       ]
     },
     {
-      "title": "Air Force Station Delhi Recruitment 2026, Notification Out And Free AppliCation Form -",
+      "category": "OFFLINE_FORM",
+      "title": "Air Force Station Gurgaon Recruitment 2026, Free AppliCation Form And Notification Out -",
       "organization": "Indian Air Force",
       "post_name": "Lower Division Clerk (LDC)",
       "total_vacancy": "",
       "salary_pay_scale": "As per the Rules",
       "apply_mode": "Offline",
-      "job_location": "Delhi",
+      "job_location": "Haryana",
       "important_dates": {
         "application_start": "02-05-2026",
         "last_date": "01-06-2026",
@@ -68,7 +78,7 @@
       },
       "minimum_age": "18",
       "maximum_age": "25",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website https://indianairforce.nic.in/ Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.), 2 additional photos. Also, attach a self-addressed envelope with a ₹10 stamp of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send the application form to the address. Candidates can send the application to any of the following Delhi Air Force Units: 👇👇 Air Officer Commanding Air Force Station Race Course Lok Kalyan Marg New Delhi – 110003 President Central Airmen Selection Board (CASB) Brar Square, Delhi Cantt, New Delhi – 110010 Air Officer Commanding Air Force Central Accounts Office (AFCAO) Subroto Park New Delhi – 110010",
+      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website https://indianairforce.nic.in/ Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.), 2 additional photos. Also, attach a self-addressed envelope with a ₹10 stamp of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Air Officer Commanding, Air Force Station, Sohna Road, Gurugram – 122001",
       "form_pdf_free_link": "",
       "official_website_link": "https://indianairforce.nic.in/",
       "official_notification_pdf_link": "https://drive.google.com/file/d/1QsybyUT9rUKZWn98MlJKCNvW8sCAaaxg/view?usp=sharing",
@@ -76,6 +86,42 @@
       "vacancy_details": []
     },
     {
+      "category": "OFFLINE_FORM",
+      "title": "Indian Army CSBO Grade 2 Recruitment 2026, Notification Out, Apply Now -",
+      "organization": "Ministry of Defence (Indian Army)",
+      "post_name": "CSBO (Civilian Switch Board Operator) Grade-II",
+      "total_vacancy": "190",
+      "salary_pay_scale": "₹21,700 – ₹69,100",
+      "apply_mode": "Offline",
+      "job_location": "All India",
+      "important_dates": {
+        "application_start": "02-05-2026",
+        "last_date": "31-05-2026",
+        "exam_date": "",
+        "interview_date": ""
+      },
+      "application_fees": {
+        "general_obc_ews": "",
+        "sc_st": "00",
+        "female": ""
+      },
+      "minimum_age": "18",
+      "maximum_age": "25",
+      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website https://www.indianarmy.nic.in/ Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). Also, attach a self-addressed envelope of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form along with all Required Documents to the official E-mail id : sunshine.rise@nic.in",
+      "form_pdf_free_link": "https://indianarmy.nic.in/writereaddata/Documents/Advt_020526.pdf",
+      "official_website_link": "https://www.indianarmy.nic.in/",
+      "official_notification_pdf_link": "https://indianarmy.nic.in/writereaddata/Documents/Advt_020526.pdf",
+      "jobs_info": "",
+      "vacancy_details": [
+        {
+          "post_name": "CSBO Grade-II",
+          "total": "190",
+          "eligibility": "10Th + PBX Handling Experience"
+        }
+      ]
+    },
+    {
+      "category": "OFFLINE_FORM",
       "title": "Indian Air Force Civilian Recruitment 2026, Apply for LDC, Hindi Typist, and Driver Posts -",
       "organization": "Indian Air Force",
       "post_name": "LDC, Hindi Typist, and Driver Posts",
@@ -120,40 +166,7 @@
       ]
     },
     {
-      "title": "Indian Army CSBO Grade 2 Recruitment 2026, Notification Out, Apply Now -",
-      "organization": "Ministry of Defence (Indian Army)",
-      "post_name": "CSBO (Civilian Switch Board Operator) Grade-II",
-      "total_vacancy": "190",
-      "salary_pay_scale": "₹21,700 – ₹69,100",
-      "apply_mode": "Offline",
-      "job_location": "All India",
-      "important_dates": {
-        "application_start": "02-05-2026",
-        "last_date": "31-05-2026",
-        "exam_date": "",
-        "interview_date": ""
-      },
-      "application_fees": {
-        "general_obc_ews": "",
-        "sc_st": "00",
-        "female": ""
-      },
-      "minimum_age": "18",
-      "maximum_age": "25",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website https://www.indianarmy.nic.in/ Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). Also, attach a self-addressed envelope of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form along with all Required Documents to the official E-mail id : sunshine.rise@nic.in",
-      "form_pdf_free_link": "https://indianarmy.nic.in/writereaddata/Documents/Advt_020526.pdf",
-      "official_website_link": "https://www.indianarmy.nic.in/",
-      "official_notification_pdf_link": "https://indianarmy.nic.in/writereaddata/Documents/Advt_020526.pdf",
-      "jobs_info": "",
-      "vacancy_details": [
-        {
-          "post_name": "CSBO Grade-II",
-          "total": "190",
-          "eligibility": "10Th + PBX Handling Experience"
-        }
-      ]
-    },
-    {
+      "category": "OFFLINE_FORM",
       "title": "MNSS, Rai Recruitment 2026, Notification Out, Apply Now -",
       "organization": "Motilal Nehru School of Sports, Rai",
       "post_name": "Driver",
@@ -188,6 +201,7 @@
       ]
     },
     {
+      "category": "OFFLINE_FORM",
       "title": "Chandigarh Ayush Yoga Instructor Vacancy 2026, Free PDF Form & Apply Now -",
       "organization": "State AYUSH Society under National AYUSH Mission (NAM), U.T. Chandigarh",
       "post_name": "Yoga Instructor",
@@ -216,6 +230,7 @@
       "vacancy_details": []
     },
     {
+      "category": "OFFLINE_FORM",
       "title": "New Delhi Municipal Council Recruitment 2026, Notification for 254 Posts -",
       "organization": "New Delhi Municipal Council",
       "post_name": "Teaching & Non-Teaching Consultant",
@@ -244,6 +259,7 @@
       "vacancy_details": []
     },
     {
+      "category": "OFFLINE_FORM",
       "title": "Yamunanagar Safai Karamchari Recruitment 2026 -",
       "organization": "Office of Block Development & Panchayat Department",
       "post_name": "Safai Karamchari",
@@ -278,34 +294,7 @@
       ]
     },
     {
-      "title": "PNB Bank Rewari Security Guard-cum-Mali Recruitment 2026, Vacancy Notification Out, Apply Now -",
-      "organization": "Punjab National Bank Rural Self Employment Training Institute Manethi (Rewari)",
-      "post_name": "Security Guard-cum-Mali",
-      "total_vacancy": "",
-      "salary_pay_scale": "Rs. 16,000/-",
-      "apply_mode": "Offline",
-      "job_location": "Haryana",
-      "important_dates": {
-        "application_start": "29-04-2026",
-        "last_date": "20-05-2026",
-        "exam_date": "",
-        "interview_date": ""
-      },
-      "application_fees": {
-        "general_obc_ews": "",
-        "sc_st": "00",
-        "female": ""
-      },
-      "minimum_age": "18",
-      "maximum_age": "42",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Director, Punjab National Bank, Rural Self Employment Training Institute (RSETI) Manethi, Near Govt Industrial Training Institute, Kund, Distt Rewari – 123102 Haryana",
-      "form_pdf_free_link": "https://drive.google.com/file/d/1TvZXdbSssgV9UC-A7yBQFhBamyhR4jqU/view?usp=drive_link",
-      "official_website_link": "",
-      "official_notification_pdf_link": "",
-      "jobs_info": "<p style=\"text-align: justify;\">PNB Bank Rewari Security Guard-cum-Mali Recruitment 2026: Punjab National Bank Rural Self Employment Training Institute Manethi (Rewari) has issued a notification for the position of Security Guard-cum-Mali. The recruitment drive comprises 01 vacancy. All eligible and interested candidates are advised to carefully read the official notification and apply before 30–04-2026, the last Date. All relevant information regarding the PNB Bank Rewari Security Guard-cum-Mali Recruitment 2026 is provided below.</p>",
-      "vacancy_details": []
-    },
-    {
+      "category": "OFFLINE_FORM",
       "title": "BRCM Law College Recruitment 2026, Notification Out for Teaching & Non-Teaching Posts -",
       "organization": "BRCM Law College Bahal",
       "post_name": "Teaching & Non-Teaching",
@@ -334,6 +323,36 @@
       "vacancy_details": []
     },
     {
+      "category": "OFFLINE_FORM",
+      "title": "PNB Bank Rewari Security Guard-cum-Mali Recruitment 2026, Vacancy Notification Out, Apply Now -",
+      "organization": "Punjab National Bank Rural Self Employment Training Institute Manethi (Rewari)",
+      "post_name": "Security Guard-cum-Mali",
+      "total_vacancy": "",
+      "salary_pay_scale": "Rs. 16,000/-",
+      "apply_mode": "Offline",
+      "job_location": "Haryana",
+      "important_dates": {
+        "application_start": "29-04-2026",
+        "last_date": "20-05-2026",
+        "exam_date": "",
+        "interview_date": ""
+      },
+      "application_fees": {
+        "general_obc_ews": "",
+        "sc_st": "00",
+        "female": ""
+      },
+      "minimum_age": "18",
+      "maximum_age": "42",
+      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Director, Punjab National Bank, Rural Self Employment Training Institute (RSETI) Manethi, Near Govt Industrial Training Institute, Kund, Distt Rewari – 123102 Haryana",
+      "form_pdf_free_link": "https://drive.google.com/file/d/1TvZXdbSssgV9UC-A7yBQFhBamyhR4jqU/view?usp=drive_link",
+      "official_website_link": "",
+      "official_notification_pdf_link": "",
+      "jobs_info": "<p style=\"text-align: justify;\">PNB Bank Rewari Security Guard-cum-Mali Recruitment 2026: Punjab National Bank Rural Self Employment Training Institute Manethi (Rewari) has issued a notification for the position of Security Guard-cum-Mali. The recruitment drive comprises 01 vacancy. All eligible and interested candidates are advised to carefully read the official notification and apply before 30–04-2026, the last Date. All relevant information regarding the PNB Bank Rewari Security Guard-cum-Mali Recruitment 2026 is provided below.</p>",
+      "vacancy_details": []
+    },
+    {
+      "category": "OFFLINE_FORM",
       "title": "Pooja College of Education Kurukshetra Recruitment 2026, Free Application Form PDF -",
       "organization": "The Pooja College of Education, Kurukshetra",
       "post_name": "Librarian, Accountant, Computer Operator, Technical Assistant, Lab Attendant, Store Keeper, and Helper",
@@ -362,6 +381,7 @@
       "vacancy_details": []
     },
     {
+      "category": "OFFLINE_FORM",
       "title": "SHKM GMC Nalhar Recruitment 2026, Vacancy for Senior Resident posts, Apply Now -",
       "organization": "S.H.K.M. Government Medical College, Nalhar",
       "post_name": "Senior Resident",
@@ -396,6 +416,7 @@
       ]
     },
     {
+      "category": "OFFLINE_FORM",
       "title": "PTSRS College Bhiwani Recruitment 2026, Apply For Helper, Lab Assistant and Lab Attendant Posts -",
       "organization": "Pt. Sita Ram Shastri B.Ed. Training College, Bhiwani",
       "post_name": "Helper, Lab Assistant, and Lab Attendant Posts",
@@ -424,6 +445,7 @@
       "vacancy_details": []
     },
     {
+      "category": "OFFLINE_FORM",
       "title": "ICAR-CIRB Hisar Recruitment 2026, Vacancy for Young Professional-II posts Salary ₹42,000 -",
       "organization": "ICAR-Central Institute for Research on Buffaloes (ICAR-CIRB), Hisar",
       "post_name": "Young Professional-II",
@@ -458,34 +480,7 @@
       ]
     },
     {
-      "title": "Guru Nanak Khalsa College Recruitment 2026, Notification For Teaching Staff -",
-      "organization": "Guru Nanak Khalsa College, Yamuna Nagar, Haryana",
-      "post_name": "Teaching Staff",
-      "total_vacancy": "",
-      "salary_pay_scale": "As per the Rules",
-      "apply_mode": "Offline",
-      "job_location": "Haryana",
-      "important_dates": {
-        "application_start": "07-05-2026",
-        "last_date": "17-05-2026",
-        "exam_date": "",
-        "interview_date": ""
-      },
-      "application_fees": {
-        "general_obc_ews": "",
-        "sc_st": "300",
-        "female": ""
-      },
-      "minimum_age": "18",
-      "maximum_age": "42",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website https://www.gnkc.ac.in./ Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). Also, attach a self-addressed envelope of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Principal, Guru Nanak Khalsa College, Yamuna Nagar 135 001",
-      "form_pdf_free_link": "https://drive.google.com/file/d/1GACUjqh1DcuO4ieB66iHHFNDWAVVjtW0/view?usp=sharing",
-      "official_website_link": "https://www.gnkc.ac.in./",
-      "official_notification_pdf_link": "",
-      "jobs_info": "",
-      "vacancy_details": []
-    },
-    {
+      "category": "OFFLINE_FORM",
       "title": "ICAR-National Research Centre on Equines, Hisar Recruitment 2026 -",
       "organization": "ICAR-National Research Centre on Equines, Hisar",
       "post_name": "Young Professional-II",
@@ -520,6 +515,36 @@
       ]
     },
     {
+      "category": "OFFLINE_FORM",
+      "title": "Guru Nanak Khalsa College Recruitment 2026, Notification For Teaching Staff -",
+      "organization": "Guru Nanak Khalsa College, Yamuna Nagar, Haryana",
+      "post_name": "Teaching Staff",
+      "total_vacancy": "",
+      "salary_pay_scale": "As per the Rules",
+      "apply_mode": "Offline",
+      "job_location": "Haryana",
+      "important_dates": {
+        "application_start": "07-05-2026",
+        "last_date": "17-05-2026",
+        "exam_date": "",
+        "interview_date": ""
+      },
+      "application_fees": {
+        "general_obc_ews": "",
+        "sc_st": "300",
+        "female": ""
+      },
+      "minimum_age": "18",
+      "maximum_age": "42",
+      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website https://www.gnkc.ac.in./ Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). Also, attach a self-addressed envelope of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Principal, Guru Nanak Khalsa College, Yamuna Nagar 135 001",
+      "form_pdf_free_link": "https://drive.google.com/file/d/1GACUjqh1DcuO4ieB66iHHFNDWAVVjtW0/view?usp=sharing",
+      "official_website_link": "https://www.gnkc.ac.in./",
+      "official_notification_pdf_link": "",
+      "jobs_info": "",
+      "vacancy_details": []
+    },
+    {
+      "category": "OFFLINE_FORM",
       "title": "PNB Hoshiarpur Attender Vacancy 2026, Free PDF Form & Apply Now -",
       "organization": "Punjab National Bank (PNB) Rural Self Employment Training Institute (RSETI) Hoshiarpur, (Punjab)",
       "post_name": "Attender",
@@ -548,6 +573,7 @@
       "vacancy_details": []
     },
     {
+      "category": "OFFLINE_FORM",
       "title": "Chandigarh AIDS Control Society Vacancy 2026, Notification Out, Free Offline Form -",
       "organization": "Chandigarh AIDS Control Society",
       "post_name": "Store Officer, ICTC Counselor, Assistant Director, and Deputy Director Posts",
@@ -576,6 +602,7 @@
       "vacancy_details": []
     },
     {
+      "category": "OFFLINE_FORM",
       "title": "ICAR CIRB Hisar Vacancy 2026, Notification Out, Apply Now -",
       "organization": "ICAR – Central Institute for Research on Buffaloes",
       "post_name": "Young Professional",
@@ -615,6 +642,7 @@
       ]
     },
     {
+      "category": "OFFLINE_FORM",
       "title": "ICAR ATARI DEO Recruitment 2026, Notification Out Apply Now -",
       "organization": "ICAR-Agricultural Technology Application Research Institute, Zone-I",
       "post_name": "Data Entry Operator",
@@ -649,8 +677,8 @@
       ]
     },
     {
-      "title": "Army 10+2 TES 56 Online Form 2026 for 90 Post January 2027 Batch",
       "category": "SR_Latest_Jobs",
+      "title": "Army 10+2 TES 56 Online Form 2026 for 90 Post January 2027 Batch",
       "post_date": "2026-05-13",
       "last_date": "2026-06-12",
       "status": "active",
@@ -700,8 +728,8 @@
       ]
     },
     {
-      "title": "SBI Trade Finance Officer TFO Online Form 2026 for 100 Post",
       "category": "SR_Latest_Jobs",
+      "title": "SBI Trade Finance Officer TFO Online Form 2026 for 100 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-06-02",
       "status": "active",
@@ -762,8 +790,8 @@
       ]
     },
     {
-      "title": "NFL Management Trainee MT Online Form 2026 for 21 Post",
       "category": "SR_Latest_Jobs",
+      "title": "NFL Management Trainee MT Online Form 2026 for 21 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-06-12",
       "status": "active",
@@ -852,8 +880,8 @@
       ]
     },
     {
-      "title": "UPSSSC Various Post Online Form 2026 Through PET 2025",
       "category": "SR_Latest_Jobs",
+      "title": "UPSSSC Various Post Online Form 2026 Through PET 2025",
       "post_date": "2026-05-13",
       "last_date": "",
       "status": "active",
@@ -994,8 +1022,8 @@
       ]
     },
     {
-      "title": "Indian Air Force AFCAT 02/2026 Batch Online Form 2026",
       "category": "SR_Latest_Jobs",
+      "title": "Indian Air Force AFCAT 02/2026 Batch Online Form 2026",
       "post_date": "2026-05-13",
       "last_date": "2026-06-19",
       "status": "active",
@@ -1146,8 +1174,8 @@
       ]
     },
     {
-      "title": "CTET September 2026 Online Form",
       "category": "SR_Latest_Jobs",
+      "title": "CTET September 2026 Online Form",
       "post_date": "2026-05-13",
       "last_date": "2026-06-10",
       "status": "active",
@@ -1199,8 +1227,8 @@
       ]
     },
     {
-      "title": "MPPSC Scientific Officer Biology Online Form 2026 for 25 Post",
       "category": "SR_Latest_Jobs",
+      "title": "MPPSC Scientific Officer Biology Online Form 2026 for 25 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-05-20",
       "status": "active",
@@ -1266,8 +1294,8 @@
       ]
     },
     {
-      "title": "UPSSSC Assistant Statistical Officer Online Form 2026 for 1565 Post",
       "category": "SR_Latest_Jobs",
+      "title": "UPSSSC Assistant Statistical Officer Online Form 2026 for 1565 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-05-15",
       "status": "active",
@@ -1337,8 +1365,8 @@
       ]
     },
     {
-      "title": "Coal India CIL Management Trainee MT Online Form 2026 for 660 Post",
       "category": "SR_Latest_Jobs",
+      "title": "Coal India CIL Management Trainee MT Online Form 2026 for 660 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-06-11",
       "status": "active",
@@ -1431,8 +1459,8 @@
       ]
     },
     {
-      "title": "Railway RRC SECR Raipur Apprentices Online Form 2026 for 1644 Post",
       "category": "SR_Latest_Jobs",
+      "title": "Railway RRC SECR Raipur Apprentices Online Form 2026 for 1644 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-06-04",
       "status": "active",
@@ -1500,8 +1528,8 @@
       ]
     },
     {
-      "title": "Navy SSC Executive IT Online Form 2026 for 15 Post",
       "category": "SR_Latest_Jobs",
+      "title": "Navy SSC Executive IT Online Form 2026 for 15 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-06-01",
       "status": "active",
@@ -1557,8 +1585,8 @@
       ]
     },
     {
-      "title": "Bihar BPSC 72 Pre Exam Online Form 2026 for 1186 Post",
       "category": "SR_Latest_Jobs",
+      "title": "Bihar BPSC 72 Pre Exam Online Form 2026 for 1186 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-05-31",
       "status": "active",
@@ -1691,8 +1719,8 @@
       ]
     },
     {
-      "title": "UP Cooperative Bank Various Post Online Form 2026 for 2085 Posts",
       "category": "SR_Latest_Jobs",
+      "title": "UP Cooperative Bank Various Post Online Form 2026 for 2085 Posts",
       "post_date": "2026-05-13",
       "last_date": "2026-05-15",
       "status": "active",
@@ -1998,8 +2026,8 @@
       ]
     },
     {
-      "title": "Rajasthan RSSB Teaching Associate Online Form 2026 for 3540 Post",
       "category": "SR_Latest_Jobs",
+      "title": "Rajasthan RSSB Teaching Associate Online Form 2026 for 3540 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-06-03",
       "status": "active",
@@ -2330,8 +2358,8 @@
       ]
     },
     {
-      "title": "MPESB Hospital Assistant Online Form 2026 for 1200 Post",
       "category": "SR_Latest_Jobs",
+      "title": "MPESB Hospital Assistant Online Form 2026 for 1200 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-05-21",
       "status": "active",
@@ -2392,8 +2420,8 @@
       ]
     },
     {
-      "title": "NTA UGC NET June 2026 Online Form for JRF and Assistant Professor",
       "category": "SR_Latest_Jobs",
+      "title": "NTA UGC NET June 2026 Online Form for JRF and Assistant Professor",
       "post_date": "2026-05-13",
       "last_date": "2026-05-20",
       "status": "active",
@@ -2711,8 +2739,8 @@
       ]
     },
     {
-      "title": "UPESSC UP Assistant Professor BEd Online Form 2026 for 107 Post",
       "category": "SR_Latest_Jobs",
+      "title": "UPESSC UP Assistant Professor BEd Online Form 2026 for 107 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-05-27",
       "status": "active",
@@ -2782,8 +2810,8 @@
       ]
     },
     {
-      "title": "BPSSC Havildar Instructor Online Form 2026 for 122 Post",
       "category": "SR_Latest_Jobs",
+      "title": "BPSSC Havildar Instructor Online Form 2026 for 122 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-06-01",
       "status": "active",
@@ -2862,8 +2890,8 @@
       ]
     },
     {
-      "title": "Union Bank of India UBI Apprentices Online Form 2026 for 1865 Post",
       "category": "SR_Latest_Jobs",
+      "title": "Union Bank of India UBI Apprentices Online Form 2026 for 1865 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-05-19",
       "status": "active",
@@ -2940,8 +2968,8 @@
       ]
     },
     {
-      "title": "Reserve Bank RBI Officer Grade B Online Form 2026 for 60 Post",
       "category": "SR_Latest_Jobs",
+      "title": "Reserve Bank RBI Officer Grade B Online Form 2026 for 60 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-05-20",
       "status": "active",
@@ -3016,8 +3044,8 @@
       ]
     },
     {
-      "title": "Uttar Pradesh UP Anganwadi Worker Bharti Online Form 2026",
       "category": "SR_Latest_Jobs",
+      "title": "Uttar Pradesh UP Anganwadi Worker Bharti Online Form 2026",
       "post_date": "2026-05-13",
       "last_date": "",
       "status": "active",
@@ -3217,8 +3245,8 @@
       ]
     },
     {
-      "title": "SSC Stenographer Online Form 2026 for 731 Post",
       "category": "SR_Latest_Jobs",
+      "title": "SSC Stenographer Online Form 2026 for 731 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-05-15",
       "status": "active",
@@ -3290,8 +3318,8 @@
       ]
     },
     {
-      "title": "SSC Combined Hindi Translators JHT Online Form 2026 for 84 Post",
       "category": "SR_Latest_Jobs",
+      "title": "SSC Combined Hindi Translators JHT Online Form 2026 for 84 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-05-14",
       "status": "active",
@@ -3365,8 +3393,8 @@
       ]
     },
     {
-      "title": "UPSSSC Havaldar Instructor Online Form 2026 for 209 Post",
       "category": "SR_Latest_Jobs",
+      "title": "UPSSSC Havaldar Instructor Online Form 2026 for 209 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-07-09",
       "status": "active",
@@ -3516,8 +3544,8 @@
       ]
     },
     {
-      "title": "Sashastra Seema Bal SSB Constable HC ASI SI Online Form 2026",
       "category": "SR_Latest_Jobs",
+      "title": "Sashastra Seema Bal SSB Constable HC ASI SI Online Form 2026",
       "post_date": "2026-05-13",
       "last_date": "",
       "status": "active",
@@ -3630,8 +3658,8 @@
       ]
     },
     {
-      "title": "ITBP Assistant Commandant Engineer Online Form 2026 for 06 Post",
       "category": "SR_Latest_Jobs",
+      "title": "ITBP Assistant Commandant Engineer Online Form 2026 for 06 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-05-20",
       "status": "active",
@@ -3718,8 +3746,8 @@
       ]
     },
     {
-      "title": "Patna High Court Computer Operator Cum Typist Online Form 2026",
       "category": "SR_Latest_Jobs",
+      "title": "Patna High Court Computer Operator Cum Typist Online Form 2026",
       "post_date": "2026-05-13",
       "last_date": "2026-05-16",
       "status": "active",
@@ -3780,8 +3808,8 @@
       ]
     },
     {
-      "title": "Patna High Court District Judge Online Form 2026",
       "category": "SR_Latest_Jobs",
+      "title": "Patna High Court District Judge Online Form 2026",
       "post_date": "2026-05-13",
       "last_date": "2026-05-15",
       "status": "active",
@@ -3846,8 +3874,8 @@
       ]
     },
     {
-      "title": "SECL Grade C Various Post Online Form 2026 for 1055 Post",
       "category": "SR_Latest_Jobs",
+      "title": "SECL Grade C Various Post Online Form 2026 for 1055 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-05-14",
       "status": "active",
@@ -3918,8 +3946,8 @@
       ]
     },
     {
-      "title": "Bihar BTSC Instructor Online Form 2026 for 726 Post",
       "category": "SR_Latest_Jobs",
+      "title": "Bihar BTSC Instructor Online Form 2026 for 726 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-05-15",
       "status": "active",
@@ -4039,8 +4067,8 @@
       ]
     },
     {
-      "title": "UPSSSC UP Vidhan Bhawan Guard / Fireman Online Form 2026 for 170 Post",
       "category": "SR_Latest_Jobs",
+      "title": "UPSSSC UP Vidhan Bhawan Guard / Fireman Online Form 2026 for 170 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-06-29",
       "status": "active",
@@ -4137,8 +4165,8 @@
       ]
     },
     {
-      "title": "Indian Army SSC RVC 95th Veterinary Graduates Online Form 2026",
       "category": "SR_Latest_Jobs",
+      "title": "Indian Army SSC RVC 95th Veterinary Graduates Online Form 2026",
       "post_date": "2026-05-13",
       "last_date": "2026-05-15",
       "status": "active",
@@ -4197,8 +4225,8 @@
       ]
     },
     {
-      "title": "CRPF Constable Tradesman Online Form 2026 for 9175 Post",
       "category": "SR_Latest_Jobs",
+      "title": "CRPF Constable Tradesman Online Form 2026 for 9175 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-05-19",
       "status": "active",
@@ -4370,8 +4398,8 @@
       ]
     },
     {
-      "title": "UPSSSC UP Excise Constable Online Form 2026 for 722 Post",
       "category": "SR_Latest_Jobs",
+      "title": "UPSSSC UP Excise Constable Online Form 2026 for 722 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-06-24",
       "status": "active",
@@ -4450,8 +4478,8 @@
       ]
     },
     {
-      "title": "Uttar Pradesh UPSRTC Conductor Online Form 2026",
       "category": "SR_Latest_Jobs",
+      "title": "Uttar Pradesh UPSRTC Conductor Online Form 2026",
       "post_date": "2026-05-13",
       "last_date": "",
       "status": "active",
@@ -4546,8 +4574,8 @@
       ]
     },
     {
-      "title": "UPSSSC UP Lower PCS Graduate Level Online Form 2026 for 2285 Post",
       "category": "SR_Latest_Jobs",
+      "title": "UPSSSC UP Lower PCS Graduate Level Online Form 2026 for 2285 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-06-18",
       "status": "active",
@@ -4732,8 +4760,8 @@
       ]
     },
     {
-      "title": "Jharkhand JAC JHTET 2026 Online Form for Primary and Junior Level",
       "category": "SR_Latest_Jobs",
+      "title": "Jharkhand JAC JHTET 2026 Online Form for Primary and Junior Level",
       "post_date": "2026-05-13",
       "last_date": "2026-05-21",
       "status": "active",
@@ -4797,8 +4825,8 @@
       ]
     },
     {
-      "title": "UPSSSC Technical Assistant Group C Online Form 2026 for 2759 Post",
       "category": "SR_Latest_Jobs",
+      "title": "UPSSSC Technical Assistant Group C Online Form 2026 for 2759 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-06-11",
       "status": "active",
@@ -4873,8 +4901,8 @@
       ]
     },
     {
-      "title": "UPSRTC Female Conductor Recruitment 2026 for 2584 Post",
       "category": "SR_Latest_Jobs",
+      "title": "UPSRTC Female Conductor Recruitment 2026 for 2584 Post",
       "post_date": "2026-05-13",
       "last_date": "",
       "status": "active",
@@ -5013,8 +5041,8 @@
       ]
     },
     {
-      "title": "Railway RRB ALP CEN 01/2026 Online Form 2026 for 11127 Post",
       "category": "SR_Latest_Jobs",
+      "title": "Railway RRB ALP CEN 01/2026 Online Form 2026 for 11127 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-06-14",
       "status": "active",
@@ -5066,8 +5094,8 @@
       "useful_links": []
     },
     {
-      "title": "Bihar BPSC 33 Civil Judge PCS J Pre Exam Date 2026 for 173 Post",
       "category": "SR_Admit_Card",
+      "title": "Bihar BPSC 33 Civil Judge PCS J Pre Exam Date 2026 for 173 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-04-30",
       "status": "admit_card_released",
@@ -5164,8 +5192,8 @@
       ]
     },
     {
-      "title": "BPSSC Bihar Police Sub Inspector SI Mains Admit Card 2026",
       "category": "SR_Admit_Card",
+      "title": "BPSSC Bihar Police Sub Inspector SI Mains Admit Card 2026",
       "post_date": "2026-05-13",
       "last_date": "2025-10-26",
       "status": "admit_card_released",
@@ -5254,8 +5282,8 @@
       ]
     },
     {
-      "title": "RPSC Rajasthan Police Sub Inspector 2021 New Exam Date 2026",
       "category": "SR_Admit_Card",
+      "title": "RPSC Rajasthan Police Sub Inspector 2021 New Exam Date 2026",
       "post_date": "2026-05-13",
       "last_date": "2021-06-23",
       "status": "admit_card_released",
@@ -5557,8 +5585,8 @@
       ]
     },
     {
-      "title": "Railway RRB Isolated Various Post Application Status 2026 for 312 Post",
       "category": "SR_Admit_Card",
+      "title": "Railway RRB Isolated Various Post Application Status 2026 for 312 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-01-29",
       "status": "admit_card_released",
@@ -5658,8 +5686,8 @@
       ]
     },
     {
-      "title": "NTA NEET UG Entrance Exam Cancelled Notice 2026",
       "category": "SR_Admit_Card",
+      "title": "NTA NEET UG Entrance Exam Cancelled Notice 2026",
       "post_date": "2026-05-13",
       "last_date": "2026-03-11",
       "status": "admit_card_released",
@@ -5788,8 +5816,8 @@
       ]
     },
     {
-      "title": "Haryana HPSC PGT Computer Science Admit Card 2026 for 1672 Post",
       "category": "SR_Admit_Card",
+      "title": "Haryana HPSC PGT Computer Science Admit Card 2026 for 1672 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-03-09",
       "status": "admit_card_released",
@@ -5883,8 +5911,8 @@
       ]
     },
     {
-      "title": "UPPSC LT Grade Assistant Teacher Mains Admit Card 2026",
       "category": "SR_Admit_Card",
+      "title": "UPPSC LT Grade Assistant Teacher Mains Admit Card 2026",
       "post_date": "2026-05-13",
       "last_date": "2025-08-28",
       "status": "admit_card_released",
@@ -6046,8 +6074,8 @@
       ]
     },
     {
-      "title": "UPSSSC UP Lekhpal Mains Exam City Details 2026 for 7994 Post",
       "category": "SR_Admit_Card",
+      "title": "UPSSSC UP Lekhpal Mains Exam City Details 2026 for 7994 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-01-28",
       "status": "admit_card_released",
@@ -6186,8 +6214,8 @@
       ]
     },
     {
-      "title": "UPSC Civil Services IAS IFS Pre Admit Card 2026",
       "category": "SR_Admit_Card",
+      "title": "UPSC Civil Services IAS IFS Pre Admit Card 2026",
       "post_date": "2026-05-13",
       "last_date": "2026-02-27",
       "status": "admit_card_released",
@@ -6325,8 +6353,8 @@
       ]
     },
     {
-      "title": "Bihar Police BPSSC Havildar Clerk Home Guard Admit Card 2026",
       "category": "SR_Admit_Card",
+      "title": "Bihar Police BPSSC Havildar Clerk Home Guard Admit Card 2026",
       "post_date": "2026-05-13",
       "last_date": "2026-02-05",
       "status": "admit_card_released",
@@ -6422,8 +6450,8 @@
       ]
     },
     {
-      "title": "BCECEB Bihar ITI Entrance Exam Admit Card 2026",
       "category": "SR_Admit_Card",
+      "title": "BCECEB Bihar ITI Entrance Exam Admit Card 2026",
       "post_date": "2026-05-13",
       "last_date": "2026-04-25",
       "status": "admit_card_released",
@@ -6499,8 +6527,8 @@
       ]
     },
     {
-      "title": "IIT JEE Advanced Admit Card 2026",
       "category": "SR_Admit_Card",
+      "title": "IIT JEE Advanced Admit Card 2026",
       "post_date": "2026-05-13",
       "last_date": "2026-05-05",
       "status": "admit_card_released",
@@ -6574,8 +6602,8 @@
       ]
     },
     {
-      "title": "Indian Navy MR Musician 02/2026 Batch Admit Card 2026",
       "category": "SR_Admit_Card",
+      "title": "Indian Navy MR Musician 02/2026 Batch Admit Card 2026",
       "post_date": "2026-05-13",
       "last_date": "2026-04-30",
       "status": "admit_card_released",
@@ -6636,8 +6664,8 @@
       ]
     },
     {
-      "title": "MPESB Nursing Officer, Sister Tutor Admit Card 2026 for 2317 Post",
       "category": "SR_Admit_Card",
+      "title": "MPESB Nursing Officer, Sister Tutor Admit Card 2026 for 2317 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-04-20",
       "status": "admit_card_released",
@@ -6711,8 +6739,8 @@
       ]
     },
     {
-      "title": "NIELIT CCC Exam Admit Card May 2026",
       "category": "SR_Admit_Card",
+      "title": "NIELIT CCC Exam Admit Card May 2026",
       "post_date": "2026-05-13",
       "last_date": "",
       "status": "admit_card_released",
@@ -6760,8 +6788,8 @@
       ]
     },
     {
-      "title": "UPSESSB UP PGT 2022 Answer Key 2026 for 624 Post",
       "category": "SR_Admit_Card",
+      "title": "UPSESSB UP PGT 2022 Answer Key 2026 for 624 Post",
       "post_date": "2026-05-13",
       "last_date": "2022-07-10",
       "status": "admit_card_released",
@@ -7123,8 +7151,8 @@
       ]
     },
     {
-      "title": "Indian Army Agniveer Rally Admit Card 2026",
       "category": "SR_Admit_Card",
+      "title": "Indian Army Agniveer Rally Admit Card 2026",
       "post_date": "2026-05-13",
       "last_date": "2026-04-10",
       "status": "admit_card_released",
@@ -7207,8 +7235,8 @@
       ]
     },
     {
-      "title": "Railway RRB NTPC 10+2 UG Level CEN 07/2025 Exam City Details 2026",
       "category": "SR_Admit_Card",
+      "title": "Railway RRB NTPC 10+2 UG Level CEN 07/2025 Exam City Details 2026",
       "post_date": "2026-05-13",
       "last_date": "2025-12-04",
       "status": "admit_card_released",
@@ -7327,8 +7355,8 @@
       ]
     },
     {
-      "title": "Rajasthan RSSB Lab Assistant Admit Card 2026 for 804 Post",
       "category": "SR_Admit_Card",
+      "title": "Rajasthan RSSB Lab Assistant Admit Card 2026 for 804 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-02-25",
       "status": "admit_card_released",
@@ -7398,8 +7426,8 @@
       ]
     },
     {
-      "title": "Indian Navy SSR Medical INET 2026 Admit Card for 02/2027 Batch",
       "category": "SR_Admit_Card",
+      "title": "Indian Navy SSR Medical INET 2026 Admit Card for 02/2027 Batch",
       "post_date": "2026-05-13",
       "last_date": "2026-04-06",
       "status": "admit_card_released",
@@ -7470,8 +7498,8 @@
       ]
     },
     {
-      "title": "Indian Navy Agniveer SSR and MR INET Admit Card 2026",
       "category": "SR_Admit_Card",
+      "title": "Indian Navy Agniveer SSR and MR INET Admit Card 2026",
       "post_date": "2026-05-13",
       "last_date": "2026-04-06",
       "status": "admit_card_released",
@@ -7554,8 +7582,8 @@
       ]
     },
     {
-      "title": "UPPSC GIC Lecturer New Exam Date 2026 for 1516 Post",
       "category": "SR_Admit_Card",
+      "title": "UPPSC GIC Lecturer New Exam Date 2026 for 1516 Post",
       "post_date": "2026-05-13",
       "last_date": "2025-09-12",
       "status": "admit_card_released",
@@ -7645,8 +7673,8 @@
       ]
     },
     {
-      "title": "NTA CUET UG Admit Card / Hall Ticket 2026",
       "category": "SR_Admit_Card",
+      "title": "NTA CUET UG Admit Card / Hall Ticket 2026",
       "post_date": "2026-05-13",
       "last_date": "2026-02-04",
       "status": "admit_card_released",
@@ -7774,8 +7802,8 @@
       ]
     },
     {
-      "title": "Bihar BPSC AEDO Exam Cancelled Notice 2026 for 935 Post",
       "category": "SR_Admit_Card",
+      "title": "Bihar BPSC AEDO Exam Cancelled Notice 2026 for 935 Post",
       "post_date": "2026-05-13",
       "last_date": "2025-12-12",
       "status": "admit_card_released",
@@ -7890,8 +7918,8 @@
       ]
     },
     {
-      "title": "MP ESB Pre Agriculture Test PAT Answer Key 2026",
       "category": "SR_Admit_Card",
+      "title": "MP ESB Pre Agriculture Test PAT Answer Key 2026",
       "post_date": "2026-05-13",
       "last_date": "2026-04-07",
       "status": "admit_card_released",
@@ -7981,8 +8009,8 @@
       ]
     },
     {
-      "title": "Railway RRB Junior Engineer JE CEN 05/2025 Result 2026",
       "category": "SR_Result",
+      "title": "Railway RRB Junior Engineer JE CEN 05/2025 Result 2026",
       "post_date": "2026-05-13",
       "last_date": "2025-12-10",
       "status": "result_declared",
@@ -8192,8 +8220,8 @@
       ]
     },
     {
-      "title": "AIIMS Nursing Officer NORCET 10th Stage II Result 2026 for 2551 Post",
       "category": "SR_Result",
+      "title": "AIIMS Nursing Officer NORCET 10th Stage II Result 2026 for 2551 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-03-16",
       "status": "result_declared",
@@ -8336,8 +8364,8 @@
       ]
     },
     {
-      "title": "CBSE Board 12th Result 2026",
       "category": "SR_Result",
+      "title": "CBSE Board 12th Result 2026",
       "post_date": "2026-05-13",
       "last_date": "",
       "status": "result_declared",
@@ -8402,8 +8430,8 @@
       ]
     },
     {
-      "title": "NTA NSSNET Result 2026 Admissions for Navayug School",
       "category": "SR_Result",
+      "title": "NTA NSSNET Result 2026 Admissions for Navayug School",
       "post_date": "2026-05-13",
       "last_date": "2026-03-18",
       "status": "result_declared",
@@ -8495,8 +8523,8 @@
       ]
     },
     {
-      "title": "India Post GDS Third Result / Merit List 2026 for 28635 Post",
       "category": "SR_Result",
+      "title": "India Post GDS Third Result / Merit List 2026 for 28635 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-02-14",
       "status": "result_declared",
@@ -8696,8 +8724,8 @@
       ]
     },
     {
-      "title": "MPESB MP Police ASI HC Computer Result 2026 for 89 Post",
       "category": "SR_Result",
+      "title": "MPESB MP Police ASI HC Computer Result 2026 for 89 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-02-19",
       "status": "result_declared",
@@ -8783,8 +8811,8 @@
       ]
     },
     {
-      "title": "IDBI Bank JAM and Assistant Manager Result 2026 for 1300 Post",
       "category": "SR_Result",
+      "title": "IDBI Bank JAM and Assistant Manager Result 2026 for 1300 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-03-19",
       "status": "result_declared",
@@ -8972,8 +9000,8 @@
       ]
     },
     {
-      "title": "UPSC CDS I Result 2026",
       "category": "SR_Result",
+      "title": "UPSC CDS I Result 2026",
       "post_date": "2026-05-13",
       "last_date": "2025-12-30",
       "status": "result_declared",
@@ -9078,8 +9106,8 @@
       ]
     },
     {
-      "title": "UPSC Civil Services IAS 2025 and IFS Final Results 2026",
       "category": "SR_Result",
+      "title": "UPSC Civil Services IAS 2025 and IFS Final Results 2026",
       "post_date": "2026-05-13",
       "last_date": "2025-02-21",
       "status": "result_declared",
@@ -9256,8 +9284,8 @@
       ]
     },
     {
-      "title": "UPSC NDA I Exam Result 2026",
       "category": "SR_Result",
+      "title": "UPSC NDA I Exam Result 2026",
       "post_date": "2026-05-13",
       "last_date": "2025-12-30",
       "status": "result_declared",
@@ -9379,8 +9407,8 @@
       ]
     },
     {
-      "title": "Railway RRB Section Controller CEN 04/2025 Result / Score Card 2026",
       "category": "SR_Result",
+      "title": "Railway RRB Section Controller CEN 04/2025 Result / Score Card 2026",
       "post_date": "2026-05-13",
       "last_date": "2025-10-14",
       "status": "result_declared",
@@ -9564,8 +9592,8 @@
       ]
     },
     {
-      "title": "IB Security Assistant Executive Tier II Result 2026 for 4987 Post",
       "category": "SR_Result",
+      "title": "IB Security Assistant Executive Tier II Result 2026 for 4987 Post",
       "post_date": "2026-05-13",
       "last_date": "2025-08-17",
       "status": "result_declared",
@@ -9662,8 +9690,8 @@
       ]
     },
     {
-      "title": "UP Police Home Guard Answer Key 2026 for 41424 Post",
       "category": "SR_Result",
+      "title": "UP Police Home Guard Answer Key 2026 for 41424 Post",
       "post_date": "2026-05-13",
       "last_date": "2025-12-17",
       "status": "result_declared",
@@ -9811,8 +9839,8 @@
       ]
     },
     {
-      "title": "UP Police Sub Inspector SI Result 2026 for 4543 Post",
       "category": "SR_Result",
+      "title": "UP Police Sub Inspector SI Result 2026 for 4543 Post",
       "post_date": "2026-05-13",
       "last_date": "2025-09-11",
       "status": "result_declared",
@@ -9995,8 +10023,8 @@
       ]
     },
     {
-      "title": "Railway RRB NTPC Graduate Level CEN 05/2025 Final Result 2026",
       "category": "SR_Result",
+      "title": "Railway RRB NTPC Graduate Level CEN 05/2025 Final Result 2026",
       "post_date": "2026-05-13",
       "last_date": "2024-10-20",
       "status": "result_declared",
@@ -10418,8 +10446,8 @@
       ]
     },
     {
-      "title": "NTA JEEMAIN Session II Paper 2 Result 2026 for April Exam",
       "category": "SR_Result",
+      "title": "NTA JEEMAIN Session II Paper 2 Result 2026 for April Exam",
       "post_date": "2026-05-13",
       "last_date": "2026-02-25",
       "status": "result_declared",
@@ -10563,8 +10591,8 @@
       ]
     },
     {
-      "title": "BSEB OFSS Bihar Class 11th Admissions Merit List / Result 2026",
       "category": "SR_Result",
+      "title": "BSEB OFSS Bihar Class 11th Admissions Merit List / Result 2026",
       "post_date": "2026-05-13",
       "last_date": "2026-04-18",
       "status": "result_declared",
@@ -10621,8 +10649,8 @@
       ]
     },
     {
-      "title": "Rajasthan RSSB Jail Prahari 2024 Final Result for 803 Post",
       "category": "SR_Result",
+      "title": "Rajasthan RSSB Jail Prahari 2024 Final Result for 803 Post",
       "post_date": "2026-05-13",
       "last_date": "2025-01-22",
       "status": "result_declared",
@@ -10728,8 +10756,8 @@
       ]
     },
     {
-      "title": "Bihar Police BPSSC Range Officer of Forest Marks / Score Card 2026",
       "category": "SR_Result",
+      "title": "Bihar Police BPSSC Range Officer of Forest Marks / Score Card 2026",
       "post_date": "2026-05-13",
       "last_date": "2025-06-01",
       "status": "result_declared",
@@ -10857,8 +10885,8 @@
       ]
     },
     {
-      "title": "Haryana HPSC Civil Services HCS Pre Result 2026 for 102 Post",
       "category": "SR_Result",
+      "title": "Haryana HPSC Civil Services HCS Pre Result 2026 for 102 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-02-26",
       "status": "result_declared",
@@ -11010,8 +11038,8 @@
       ]
     },
     {
-      "title": "Intelligence Bureau IB SA / MT Final Result 2026 for 455 Post",
       "category": "SR_Result",
+      "title": "Intelligence Bureau IB SA / MT Final Result 2026 for 455 Post",
       "post_date": "2026-05-13",
       "last_date": "2025-09-28",
       "status": "result_declared",
@@ -11110,8 +11138,8 @@
       ]
     },
     {
-      "title": "UPPSC Asst Prosecution Officer APO 2025 Mains Online Form 2026",
       "category": "SR_Result",
+      "title": "UPPSC Asst Prosecution Officer APO 2025 Mains Online Form 2026",
       "post_date": "2026-05-13",
       "last_date": "2025-10-16",
       "status": "result_declared",
@@ -11213,8 +11241,8 @@
       ]
     },
     {
-      "title": "UPSSSC Mandi Parishad Sachiv Grade II 2024 Final Result",
       "category": "SR_Result",
+      "title": "UPSSSC Mandi Parishad Sachiv Grade II 2024 Final Result",
       "post_date": "2026-05-13",
       "last_date": "2024-05-24",
       "status": "result_declared",
@@ -11346,8 +11374,8 @@
       ]
     },
     {
-      "title": "UPSSSC Forest Guard 2023 PET Result 2026 for 709 Post",
       "category": "SR_Result",
+      "title": "UPSSSC Forest Guard 2023 PET Result 2026 for 709 Post",
       "post_date": "2026-05-13",
       "last_date": "2023-10-10",
       "status": "result_declared",
@@ -11476,8 +11504,8 @@
       ]
     },
     {
-      "title": "UPSSSC Enforcement Constable PET Result 2026 for 477 Post",
       "category": "SR_Result",
+      "title": "UPSSSC Enforcement Constable PET Result 2026 for 477 Post",
       "post_date": "2026-05-13",
       "last_date": "2023-07-28",
       "status": "result_declared",
@@ -11645,8 +11673,8 @@
       ]
     },
     {
-      "title": "NTA ICAR AIEEA PG and PHd Admissions Online form 2026",
       "category": "SR_Admission",
+      "title": "NTA ICAR AIEEA PG and PHd Admissions Online form 2026",
       "post_date": "2026-05-13",
       "last_date": "2026-06-07",
       "status": "active",
@@ -11717,8 +11745,8 @@
       ]
     },
     {
-      "title": "UPCATET 2026 Admissions Online Form",
       "category": "SR_Admission",
+      "title": "UPCATET 2026 Admissions Online Form",
       "post_date": "2026-05-13",
       "last_date": "2026-05-15",
       "status": "active",
@@ -11819,8 +11847,8 @@
       ]
     },
     {
-      "title": "ABVMU UP CAHET Entrance Test Online Form 2026",
       "category": "SR_Admission",
+      "title": "ABVMU UP CAHET Entrance Test Online Form 2026",
       "post_date": "2026-05-13",
       "last_date": "2026-06-05",
       "status": "active",
@@ -11902,8 +11930,8 @@
       ]
     },
     {
-      "title": "Allahabad University PGAT Admissions Online Form 2026",
       "category": "SR_Admission",
+      "title": "Allahabad University PGAT Admissions Online Form 2026",
       "post_date": "2026-05-13",
       "last_date": "2026-05-25",
       "status": "active",
@@ -12000,8 +12028,8 @@
       ]
     },
     {
-      "title": "Bihar 2 Year BEd Admissions Online Form 2026",
       "category": "SR_Admission",
+      "title": "Bihar 2 Year BEd Admissions Online Form 2026",
       "post_date": "2026-05-13",
       "last_date": "2026-05-18",
       "status": "active",
@@ -12052,8 +12080,8 @@
       ]
     },
     {
-      "title": "ABVMU UP GNM Entrance Test UPGET Online Form 2026",
       "category": "SR_Admission",
+      "title": "ABVMU UP GNM Entrance Test UPGET Online Form 2026",
       "post_date": "2026-05-13",
       "last_date": "2026-05-26",
       "status": "active",
@@ -12116,8 +12144,8 @@
       ]
     },
     {
-      "title": "MUIT Noida and Lucknow Campus Admissions Online Form 2026",
       "category": "SR_Admission",
+      "title": "MUIT Noida and Lucknow Campus Admissions Online Form 2026",
       "post_date": "2026-05-13",
       "last_date": "2026-07-15",
       "status": "active",
@@ -12324,8 +12352,8 @@
       ]
     },
     {
-      "title": "BSEB Class 10th Matric Scrutiny and Compartment Online Form 2026",
       "category": "SR_Admission",
+      "title": "BSEB Class 10th Matric Scrutiny and Compartment Online Form 2026",
       "post_date": "2026-05-13",
       "last_date": "",
       "status": "active",
@@ -12398,8 +12426,8 @@
       ]
     },
     {
-      "title": "ABVMU UP Common Nursing Entrance Test UPCNET Online Form 2026",
       "category": "SR_Admission",
+      "title": "ABVMU UP Common Nursing Entrance Test UPCNET Online Form 2026",
       "post_date": "2026-05-13",
       "last_date": "2026-05-20",
       "status": "active",
@@ -12470,8 +12498,8 @@
       ]
     },
     {
-      "title": "Army BSc Nursing Admissions Online Form 2026 Through NEET UG",
       "category": "SR_Admission",
+      "title": "Army BSc Nursing Admissions Online Form 2026 Through NEET UG",
       "post_date": "2026-05-13",
       "last_date": "",
       "status": "active",
@@ -12548,8 +12576,8 @@
       ]
     },
     {
-      "title": "UP RTE Free Admissions Online Form 2026 for Private Schools",
       "category": "SR_Admission",
+      "title": "UP RTE Free Admissions Online Form 2026 for Private Schools",
       "post_date": "2026-05-13",
       "last_date": "",
       "status": "active",
@@ -12624,8 +12652,8 @@
       ]
     },
     {
-      "title": "JOSAA 2025 Online Counselling",
       "category": "SR_Admission",
+      "title": "JOSAA 2025 Online Counselling",
       "post_date": "2026-05-13",
       "last_date": "",
       "status": "active",
@@ -12683,8 +12711,171 @@
       "useful_links": []
     },
     {
-      "title": "NTA NCHMJEE Answer Key 2026 for Hotel Management Course",
       "category": "SR_Answer_Key",
+      "title": "CBSE KVS / NVS Teaching and Non Teaching Post Tier II Answer Key 2026",
+      "post_date": "2026-05-13",
+      "last_date": "2025-12-11",
+      "status": "answer_key_released",
+      "slug": "sr_answer_key-cbse-kvs-nvs-teaching-and-non-teaching-post-tier-ii-answer-key-2026-eb004d",
+      "short_information": "Central Board of Secondary Education (CBSE) has relased Kendriya Vidyalaya Sangathan KVS and Navodayalay Vidyalaya Samiti NVS Teaching and Non Teaching Various Post Exam Notification 2025. Those candidates who are Enrolled in this CBSE Combined Teaching and Non Teaching Recruitment Can Check and Download Admit Card. Read the notification for CBSE KVS NVS Exam, eligibility, Vacancy Details information, Document Required, age limit, How to Apply and all other information. Central Board of Secondary Education (CBSE) CBSE KVS / NVS Teaching and Non Teaching Recruitment 2025 Kendriya Vidyalaya Sangathan KVS & Navodaya Vidyalaya Samiti NVS Teaching & Non Teaching CBSE KVS / NVS Advt No. 01/2025 : Short Details of Notification",
+      "application_fee": "For Assistant Commissioner / Principal / Vice Principal Post : General / OBC / EWS : 2800/- For Sr / Jr Secretariat Assistant / Stenographer / JSA / Lab Attendant / MTS Post : General / OBC / EWS : 1700/- For PGT / TGT / PRT & Other Post : General / OBC / EWS : 2000/- SC / ST : 500 /- (All Post) PH (Divyang) : 500 /- (All Post) Pay the Examination Fee Through Cast at E Challan or Debit Card, Credit Card, Net Banking CBSE KVS / NVS Teaching and Non Teaching",
+      "age_limit": "Minimum Age : 18 Years (All Post) Primary Teacher : Max 30 Years TGT Teacher : Max 35 Years PGT Teacher : Max 40 Years Vice Principal : 35-45 Years Principal : 35-50 Years Assistant Commissioner : Max 50 Years Non Teaching Post : Post Wise Age Relaxation Extra as per CBSE KVS / NVS Teaching and Non Teaching Recruitment Rules. CBSE KVS / NVS Teaching and Non Teaching Recruitment 2025:",
+      "eligibility": "Read the Notification. Navodaya Vidyalay Samiti (NVS) Various Post 5841 Post Post Wise Eligibility More Eligibility Details Read the Notification. How to Fill CBSE KVS / NVS Teaching and Non Teaching Recruitment Online Form 2025 CBSE KVS / NVS Teaching and Non Teaching Recruitment for Various Post Candidate Can Apply Between 14/11/2025 to 11/12/2025 Candidate Read the Notification Before Apply the Recruitment Application Form in CBSE KVS / NVS Teaching and Non Teaching Recruitment 2025. Kindly Check and Collect the All Document - Eligibility, ID Proof, Address Details, Basic Details. Kindly Ready Scan Document Related to Recruitment Form - Photo, Sign, ID Proof, Etc. Before Submit the Application Form Must Check the Preview and All Column Carefully. If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed. Take A Print Out of Final Submitted Form. Interested Candidates Can Read the Full CBSE KVS / NVS Teaching and Non Teaching Exam 2025 Notification Before Apply Online Download Mobile Apps for Latest Updates Android Apps Apple IOS Apps Some Useful",
+      "total_post": "15762",
+      "important_dates": {
+        "application_begin": "2025-11-14",
+        "last_date": "2025-12-11",
+        "admit_card": "2026-01-08"
+      },
+      "tables": [
+        [
+          [
+            "Important Dates Application Begin : 14/11/2025 Last Date for Apply Online : 11/12/2025 Last Date Pay Exam Fee : 11/12/2025 Exam Date : 10-11 January 2026 Exam City Available : 26/12/2025 Admit Card Available : 08/01/2026 Answer Key Available: 31/01/2026 Tier I Result Available : 28/02/2026 Tier II Exam Date : 27-31 March 2026 Exam City Available : 10/03/2026 Tier II Admit Card Available : 23/03/2026 Answer Key Available: 13/05/2026",
+            "Application Fee For Assistant Commissioner / Principal / Vice Principal Post : General / OBC / EWS : 2800/- For Sr / Jr Secretariat Assistant / Stenographer / JSA / Lab Attendant / MTS Post : General / OBC / EWS : 1700/- For PGT / TGT / PRT & Other Post : General / OBC / EWS : 2000/- SC / ST : 500 /- (All Post) PH (Divyang) : 500 /- (All Post) Pay the Examination Fee Through Cast at E Challan or Debit Card, Credit Card, Net Banking"
+          ],
+          [
+            "Post Name",
+            "Total Post",
+            "CBSE KVS / NVS Teaching and Non Teaching Eligibility"
+          ],
+          [
+            "Kendriya Vidyalaya Sangatha (KVS) Various Post",
+            "9921 Post",
+            "Post Wise Eligibility More Eligibility Details Read the Notification."
+          ],
+          [
+            "Navodaya Vidyalay Samiti (NVS) Various Post",
+            "5841 Post",
+            "Post Wise Eligibility More Eligibility Details Read the Notification."
+          ],
+          [
+            "Download Tier II Answer Key",
+            "Click Here"
+          ],
+          [
+            "Download Tier II Answer Key Notice",
+            "Click Here"
+          ],
+          [
+            "Download Tier II Admit Card",
+            "Click Here"
+          ],
+          [
+            "KVS-NVS Recruitment 2025 No. of candidates shortlisted for Tier - 2",
+            "Click Here"
+          ],
+          [
+            "Check Tier II Exam City",
+            "Click Here"
+          ],
+          [
+            "Download Tier I Result",
+            "Click Here"
+          ],
+          [
+            "Download Tier II Exam Notice",
+            "Click Here"
+          ],
+          [
+            "Download Tier I Answer Key",
+            "Click Here"
+          ],
+          [
+            "Download Answer Key",
+            "Click Here"
+          ],
+          [
+            "Download Answer Key Notice",
+            "Click Here"
+          ],
+          [
+            "Download Admit Card",
+            "Click Here"
+          ],
+          [
+            "Check Exam City",
+            "Click Here"
+          ],
+          [
+            "Download Exam Notice",
+            "Click Here"
+          ],
+          [
+            "Apply Online",
+            "Click Here"
+          ],
+          [
+            "Download Revised Vacancy Details",
+            "Click Here"
+          ],
+          [
+            "Download Notification",
+            "Click Here"
+          ],
+          [
+            "Official Website",
+            "Click Here"
+          ]
+        ]
+      ],
+      "useful_links": [
+        {
+          "title": "Download Tier II Answer Key",
+          "links": "https://cbseit.in/cbse/2026/kvjnvkeyt2/"
+        },
+        {
+          "title": "Download Tier II Answer Key Notice",
+          "links": "https://cdnbbsr.s3waas.gov.in/s32d2ca7eedf739ef4c3800713ec482e1a/uploads/2026/05/2026051355.pdf"
+        },
+        {
+          "title": "Download Tier II Admit Card",
+          "links": "https://examinationservices.nic.in/AdmitCardService/Admitcard/Login?enc=jceiDD5eI/fkuWrvtzhL4O3SorfW2FjrNPJfimMxtcY="
+        },
+        {
+          "title": "Download Tier I Result",
+          "links": "https://examinationservices.nic.in/recSys2025/root/CandidateLogin.aspx?enc=Ei4cajBkK1gZSfgr53ImFbEsl0hvvhEEwgxfU0IzC28jtU4yhpqb3pomlo4g+VC8"
+        },
+        {
+          "title": "Download Tier II Exam Notice",
+          "links": "https://cdnbbsr.s3waas.gov.in/s32d2ca7eedf739ef4c3800713ec482e1a/uploads/2026/02/2026022897.pdf"
+        },
+        {
+          "title": "Download Tier I Answer Key",
+          "links": "https://cdnbbsr.s3waas.gov.in/s32d2ca7eedf739ef4c3800713ec482e1a/uploads/2026/02/2026022866.pdf"
+        },
+        {
+          "title": "Download Answer Key",
+          "links": "https://cbseit.in/cbse/2026/kvjnvkey/"
+        },
+        {
+          "title": "Download Admit Card",
+          "links": "https://examinationservices.nic.in/AdmitCardService/Home/AdmitcardList?AppFormId=102982511"
+        },
+        {
+          "title": "Check Exam City",
+          "links": "https://examinationservices.nic.in/AdmitCard/AuthForCity/Login?ApplicationId=102982511"
+        },
+        {
+          "title": "Download Exam Notice",
+          "links": "https://cdnbbsr.s3waas.gov.in/s32d2ca7eedf739ef4c3800713ec482e1a/uploads/2025/11/2025112186.pdf"
+        },
+        {
+          "title": "Apply Online",
+          "links": "https://examinationservices.nic.in/recsys2025/root/Home.aspx?enc=Ei4cajBkK1gZSfgr53ImFbEsl0hvvhEEwgxfU0IzC28jtU4yhpqb3pomlo4g+VC8"
+        },
+        {
+          "title": "Download Revised Vacancy Details",
+          "links": "https://www.cbse.gov.in/cbsenew/documents/Corrigendum_3_10122025.pdf"
+        },
+        {
+          "title": "Download Notification",
+          "links": "https://www.cbse.gov.in/cbsenew/documents/Detailed_Notification_KVS_NVS_2025_13112025.pdf"
+        }
+      ]
+    },
+    {
+      "category": "SR_Answer_Key",
+      "title": "NTA NCHMJEE Answer Key 2026 for Hotel Management Course",
       "post_date": "2026-05-13",
       "last_date": "2026-03-25",
       "status": "answer_key_released",
@@ -12780,8 +12971,8 @@
       ]
     },
     {
-      "title": "UPSSSC Junior Engineer JE Civil Answer Key 2026 for 4612 Post",
       "category": "SR_Answer_Key",
+      "title": "UPSSSC Junior Engineer JE Civil Answer Key 2026 for 4612 Post",
       "post_date": "2026-05-13",
       "last_date": "2024-07-13",
       "status": "answer_key_released",
@@ -12953,8 +13144,8 @@
       ]
     },
     {
-      "title": "MPESB MP Police Sub Inspector SI Subedar Phase II Answer Key 2026",
       "category": "SR_Answer_Key",
+      "title": "MPESB MP Police Sub Inspector SI Subedar Phase II Answer Key 2026",
       "post_date": "2026-05-13",
       "last_date": "2025-11-10",
       "status": "answer_key_released",
@@ -13043,8 +13234,8 @@
       ]
     },
     {
-      "title": "NTA National Teachers Eligibility Test NTET Answer Key 2026",
       "category": "SR_Answer_Key",
+      "title": "NTA National Teachers Eligibility Test NTET Answer Key 2026",
       "post_date": "2026-05-13",
       "last_date": "2026-04-07",
       "status": "answer_key_released",
@@ -13141,8 +13332,8 @@
       ]
     },
     {
-      "title": "NTA NCET 2026 Answer Key for National Common Entrance Test",
       "category": "SR_Answer_Key",
+      "title": "NTA NCET 2026 Answer Key for National Common Entrance Test",
       "post_date": "2026-05-13",
       "last_date": "2026-03-10",
       "status": "answer_key_released",
@@ -13251,8 +13442,8 @@
       ]
     },
     {
-      "title": "MPPSC State Service Exam SSE Pre Answer Key 2026 for 155 Post",
       "category": "SR_Answer_Key",
+      "title": "MPPSC State Service Exam SSE Pre Answer Key 2026 for 155 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-02-09",
       "status": "answer_key_released",
@@ -13410,8 +13601,8 @@
       ]
     },
     {
-      "title": "MPESB Group 5 Staff Nurse, Other Post Answer Key 2026 for 291 Post",
       "category": "SR_Answer_Key",
+      "title": "MPESB Group 5 Staff Nurse, Other Post Answer Key 2026 for 291 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-03-30",
       "status": "answer_key_released",
@@ -13504,8 +13695,8 @@
       ]
     },
     {
-      "title": "UPHESC UP Assistant Professor 2022 Answer Key 2026 for 981 Post",
       "category": "SR_Answer_Key",
+      "title": "UPHESC UP Assistant Professor 2022 Answer Key 2026 for 981 Post",
       "post_date": "2026-05-13",
       "last_date": "2022-08-29",
       "status": "answer_key_released",
@@ -13729,8 +13920,8 @@
       ]
     },
     {
-      "title": "Jharkhand JPSC Civil Services Pre Answer Key 2026 for 103 Post",
       "category": "SR_Answer_Key",
+      "title": "Jharkhand JPSC Civil Services Pre Answer Key 2026 for 103 Post",
       "post_date": "2026-05-13",
       "last_date": "2026-03-09",
       "status": "answer_key_released",
@@ -13871,8 +14062,8 @@
       ]
     },
     {
-      "title": "SSC 10+2 CHSL Tier II Answer Key 2026",
       "category": "SR_Answer_Key",
+      "title": "SSC 10+2 CHSL Tier II Answer Key 2026",
       "post_date": "2026-05-13",
       "last_date": "2025-07-18",
       "status": "answer_key_released",
@@ -14033,8 +14224,8 @@
       ]
     },
     {
-      "title": "SSC Junior Engineer JE 2025 Paper II Answer Key 2026 for 1731 Post",
       "category": "SR_Answer_Key",
+      "title": "SSC Junior Engineer JE 2025 Paper II Answer Key 2026 for 1731 Post",
       "post_date": "2026-05-13",
       "last_date": "2025-07-21",
       "status": "answer_key_released",
@@ -14212,8 +14403,8 @@
       ]
     },
     {
-      "title": "NTA CUET PG Result / Score Card 2026",
       "category": "SR_Answer_Key",
+      "title": "NTA CUET PG Result / Score Card 2026",
       "post_date": "2026-05-13",
       "last_date": "2026-01-20",
       "status": "answer_key_released",
