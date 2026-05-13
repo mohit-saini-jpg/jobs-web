@@ -2396,152 +2396,279 @@
        SARKARI RESULT DYNAMIC SECTIONS — loads merged_sarkari_data.json
   ============================================================ -->
   <script>
-(function initSarkariResultSections() {
-  'use strict';
-  var JSON_FILE = 'merged_sarkari_data.json';
-  var MAX_ITEMS = 8;
+  (function initSarkariResultSections() {
+    'use strict';
 
-  var CATEGORY_CONFIG = [
-    { key: 'sarkariresultshine', label: 'Local Govt Jobs', icon: 'fa-solid fa-file-pen', headClass: 'cyan', viewUrl: 'view.html?section=Offline_Form' },
-    { key: 'SR_Latest_Jobs', label: 'SR Latest Jobs', icon: 'fa-solid fa-briefcase', headClass: 'red', viewUrl: 'view.html?section=SR_Latest_Jobs' },
-    { key: 'SR_Admit_Card', label: 'Admit Card', icon: 'fa-solid fa-id-card', headClass: 'blue', viewUrl: 'view.html?section=SR_Admit_Card' },
-    { key: 'SR_Result', label: 'Result', icon: 'fa-solid fa-trophy', headClass: 'green', viewUrl: 'view.html?section=SR_Result' },
-    { key: 'SR_Admission', label: 'Admission', icon: 'fa-solid fa-graduation-cap', headClass: 'purple', viewUrl: 'view.html?section=SR_Admission' },
-    { key: 'SR_Answer_Key', label: 'Answer Key', icon: 'fa-solid fa-key', headClass: 'orange', viewUrl: 'view.html?section=SR_Answer_Key' }
-  ];
+    /* ── Config ──────────────────────────────────────────── */
+    var JSON_FILE = 'merged_sarkari_data.json';
+    var MAX_ITEMS = 8;
 
-  function formatDate(d) {
-    if (!d) return '';
-    var m = d.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
-    if (m) {
-      var mn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      return m[1] + ' ' + mn[+m[2]-1];
+    /*
+      merged_sarkari_data.json actual structure:
+      {
+        "sarkariresultshine_jobs": [ { title, source_url, important_dates:{last_date}, apply_mode... } ],
+        "sarkariresult_categories": {
+          "SR_Latest_Jobs": [ { title, url, last_date, ... } ],
+          "SR_Admit_Card":  [ ... ],
+          "SR_Result":      [ ... ],
+          "SR_Admission":   [ ... ],
+          "SR_Answer_Key":  [ ... ]
+        }
+      }
+    */
+
+    var CATEGORY_CONFIG = [
+      {
+        key: 'SR_Latest_Jobs',
+        label: 'Latest Jobs',
+        icon: 'fa-solid fa-briefcase',
+        headClass: 'red',
+        viewUrl: 'view.html?section=SR_Latest_Jobs',
+        source: 'sarkariresult_categories'
+      },
+      {
+        key: 'SR_Admit_Card',
+        label: 'Admit Card',
+        icon: 'fa-solid fa-id-card',
+        headClass: 'blue',
+        viewUrl: 'view.html?section=SR_Admit_Card',
+        source: 'sarkariresult_categories'
+      },
+      {
+        key: 'SR_Result',
+        label: 'Result',
+        icon: 'fa-solid fa-trophy',
+        headClass: 'green',
+        viewUrl: 'view.html?section=SR_Result',
+        source: 'sarkariresult_categories'
+      },
+      {
+        key: 'SR_Admission',
+        label: 'Admission',
+        icon: 'fa-solid fa-graduation-cap',
+        headClass: 'purple',
+        viewUrl: 'view.html?section=SR_Admission',
+        source: 'sarkariresult_categories'
+      },
+      {
+        key: 'SR_Answer_Key',
+        label: 'Answer Key',
+        icon: 'fa-solid fa-key',
+        headClass: 'orange',
+        viewUrl: 'view.html?section=SR_Answer_Key',
+        source: 'sarkariresult_categories'
+      },
+      {
+        key: 'sarkariresultshine_jobs',
+        label: 'Offline Form',
+        icon: 'fa-solid fa-file-pen',
+        headClass: 'cyan',
+        viewUrl: 'view.html?section=SR_Offline_Form',
+        source: 'root'
+      }
+    ];
+
+    /* ── Helpers ─────────────────────────────────────────── */
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      /* Handle DD-MM-YYYY format (e.g. "28-06-2026") */
+      var dmyMatch = dateStr.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+      if (dmyMatch) {
+        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        return dmyMatch[1] + ' ' + months[parseInt(dmyMatch[2], 10) - 1] + ' ' + dmyMatch[3];
+      }
+      try {
+        var d = new Date(dateStr);
+        if (isNaN(d.getTime())) return dateStr;
+        var day   = d.getDate();
+        var month = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
+        var year  = d.getFullYear();
+        return day + ' ' + month + ' ' + year;
+      } catch(e) { return dateStr; }
     }
-    try {
-      var dt = new Date(d);
-      if (isNaN(dt)) return d.slice(0,10);
-      return dt.getDate() + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][dt.getMonth()];
-    } catch(e) { return d.slice(0,10); }
-  }
 
-  function isSoon(d) {
-    if (!d) return false;
-    try {
-      var dt, m = d.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
-      if (m) dt = new Date(m[3]+'-'+m[2]+'-'+m[1]);
-      else dt = new Date(d);
-      var diff = (dt - new Date()) / 86400000;
-      return diff >= 0 && diff <= 7;
-    } catch(e) { return false; }
-  }
+    function isSoon(dateStr) {
+      if (!dateStr) return false;
+      try {
+        var d;
+        var dmyMatch = dateStr.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+        if (dmyMatch) {
+          d = new Date(dmyMatch[3] + '-' + dmyMatch[2] + '-' + dmyMatch[1]);
+        } else {
+          d = new Date(dateStr);
+        }
+        var now  = new Date();
+        var diff = (d - now) / (1000 * 60 * 60 * 24);
+        return diff >= 0 && diff <= 7;
+      } catch(e) { return false; }
+    }
 
-  function buildCard(cfg, items) {
-    if (!items || !items.length) return '';
-    var liHtml = items.slice(0, MAX_ITEMS).map(function(job) {
-      var title = (job.title || job.post_name || '').replace(/ -\s*$/, '').trim();
-      if (!title) return '';
+    /* Normalise one job item — handles both sarkariresult & sarkariresultshine formats */
+    function normalizeJob(job) {
+      if (!job || typeof job !== 'object') return null;
 
+      var title = (
+        job.title || job.job_title || job.name || ''
+      ).replace(/ -\s*$/, '').trim();
+      if (!title) return null;
+
+      /* Date: sarkariresult uses last_date directly;
+         sarkariresultshine uses important_dates.last_date */
       var lastDate = (
         job.last_date ||
         (job.important_dates && job.important_dates.last_date) ||
         ''
       ).trim();
 
+      /* URL */
+      var url = (
+        job.source_url || job.url || job.link ||
+        job.official_website_link || '#'
+      ).trim();
+
+      var slug = (job.slug || '').trim();
+
+      /* Generate a slug from title if not present */
+      function makeSlug(t, prefix) {
+        var base = (prefix ? prefix + '-' : '') + t
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, '')
+          .replace(/[\s-]+/g, '-')
+          .slice(0, 120)
+          .replace(/^-+|-+$/g, '');
+        return base;
+      }
+
+      /* ALL items → job.html?slug= for internal detail page */
       var href;
-      if (job.slug) {
-        href = 'job.html?slug=' + encodeURIComponent(job.slug);
-      } else if (job.official_website_link) {
-        href = job.official_website_link;
-      } else if (job.source_url) {
-        href = job.source_url;
+      if (slug) {
+        href = 'job.html?slug=' + encodeURIComponent(slug);
+      } else if (job.source && job.source === 'sarkariresultshine.com') {
+        href = 'job.html?slug=' + encodeURIComponent(makeSlug(title, 'offline'));
       } else {
-        href = '#';
+        /* sarkariresult_categories items (SR_Latest_Jobs, SR_Admit_Card, etc.) */
+        var generatedSlug = makeSlug(title, '');
+        if (generatedSlug) {
+          /* Store the external URL so job.html can link out */
+          href = 'job.html?slug=' + encodeURIComponent(generatedSlug) + '&ref=' + encodeURIComponent(url);
+        } else {
+          href = url;
+        }
       }
 
-      var isExt = /^https?:\/\//.test(href) && href.indexOf('job.html') === -1;
-      var target = isExt ? ' target="_blank" rel="noopener"' : '';
-      var dateLabel = formatDate(lastDate);
-      var dateBadge = dateLabel
-        ? '<span class="sr-job-date' + (isSoon(lastDate) ? ' soon' : '') + '">📅 ' + dateLabel + '</span>'
-        : '';
-
-      return '<li><a href="' + href + '" class="sr-job-link"' + target + '>' +
-        '<span class="sr-dot"></span>' +
-        '<span class="sr-job-title">' + title + '</span>' +
-        dateBadge + '</a></li>';
-    }).filter(Boolean).join('');
-
-    if (!liHtml) return '';
-
-    return '<div class="sr-card">' +
-      '<div class="sr-card-head ' + cfg.headClass + '">' +
-        '<div class="left"><i class="' + cfg.icon + '"></i> ' + cfg.label + '</div>' +
-        '<a href="' + cfg.viewUrl + '">View All</a>' +
-      '</div>' +
-      '<div class="sr-card-body"><ul class="sr-job-list">' + liHtml + '</ul></div>' +
-      '<div class="sr-card-footer"><a href="' + cfg.viewUrl + '">View All ' + cfg.label + ' →</a></div>' +
-    '</div>';
-  }
-
-  function render(data) {
-    var wrap = document.getElementById('sr-dynamic-wrap');
-    var grid = document.getElementById('sr-sections-grid');
-    if (!grid) return;
-
-    var allJobs = data.jobs || [];
-
-    // Category ke hisaab se alag karo
-    var srCats = {};
-    var shineJobs = [];
-
-    allJobs.forEach(function(job) {
-      if (job.category) {
-        if (!srCats[job.category]) srCats[job.category] = [];
-        srCats[job.category].push(job);
-      } else {
-        shineJobs.push(job);
-      }
-    });
-
-    var html = '';
-    CATEGORY_CONFIG.forEach(function(cfg) {
-      var items = cfg.key === 'sarkariresultshine' ? shineJobs : (srCats[cfg.key] || []);
-      html += buildCard(cfg, items);
-    });
-
-    if (html) {
-      grid.innerHTML = html;
-      if (wrap) wrap.style.display = '';
-    } else {
-      if (wrap) wrap.style.display = 'none';
+      return { title: title, lastDate: lastDate, url: url, href: href };
     }
-  }
 
-  function load() {
-    var CK = '__sr_v3', TTL = 300000;
-    try {
-      var c = JSON.parse(sessionStorage.getItem(CK) || 'null');
-      if (c && Date.now() - c.ts < TTL) { render(c.data); return; }
-    } catch(e) {}
+    function buildCard(cfg, items) {
+      var list = items.slice(0, MAX_ITEMS);
+      var liHtml = list.map(function(rawJob) {
+        var job = normalizeJob(rawJob);
+        if (!job) return '';
 
-    fetch(JSON_FILE, { cache: 'no-cache' })
-      .then(function(r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-      .then(function(d) {
-        try { sessionStorage.setItem(CK, JSON.stringify({ ts: Date.now(), data: d })); } catch(e) {}
-        render(d);
-      })
-      .catch(function(e) {
-        console.warn('[SR] Error:', e.message);
+        var dateLabel = job.lastDate ? formatDate(job.lastDate) : '';
+        var dateClass = isSoon(job.lastDate) ? 'sr-job-date soon' : 'sr-job-date';
+        var dateBadge = dateLabel
+          ? '<span class="' + dateClass + '">📅 ' + dateLabel + '</span>'
+          : '';
+
+        return (
+          '<li><a href="' + job.href + '" class="sr-job-link"' +
+          (job.href.includes('job.html') ? '' : (job.url !== '#' ? ' target="_blank" rel="noopener"' : '')) + '>' +
+          '<span class="sr-dot"></span>' +
+          '<span class="sr-job-title">' + job.title + '</span>' +
+          dateBadge +
+          '</a></li>'
+        );
+      }).filter(Boolean).join('');
+
+      if (!liHtml) return '';
+
+      return (
+        '<div class="sr-card">' +
+          '<div class="sr-card-head ' + cfg.headClass + '">' +
+            '<div class="left"><i class="' + cfg.icon + '"></i> ' + cfg.label + '</div>' +
+            '<a href="' + cfg.viewUrl + '">View All</a>' +
+          '</div>' +
+          '<div class="sr-card-body">' +
+            '<ul class="sr-job-list">' + liHtml + '</ul>' +
+          '</div>' +
+          '<div class="sr-card-footer">' +
+            '<a href="' + cfg.viewUrl + '">View All ' + cfg.label + ' →</a>' +
+          '</div>' +
+        '</div>'
+      );
+    }
+
+    function render(jsonData) {
+      var grid = document.getElementById('sr-sections-grid');
+      if (!grid) return;
+
+      /* Extract both data sources from JSON */
+      var srCategories  = (jsonData.sarkariresult_data && jsonData.sarkariresult_data.data) || jsonData.sarkariresult_categories || {};
+      var shineJobs     = jsonData.sarkariresultshine_jobs  || [];
+
+      var html = '';
+
+      CATEGORY_CONFIG.forEach(function(cfg) {
+        var items;
+        if (cfg.source === 'root') {
+          /* Offline Form — from sarkariresultshine_jobs array */
+          items = shineJobs;
+        } else {
+          /* All other cards — from sarkariresult_categories object */
+          items = srCategories[cfg.key] || [];
+        }
+        if (items.length > 0) {
+          html += buildCard(cfg, items);
+        }
+      });
+
+      if (html) {
+        grid.innerHTML = html;
+      } else {
+        console.warn('[SR] No data found. Keys in JSON:', Object.keys(jsonData), '| sarkariresult_data:', jsonData.sarkariresult_data ? Object.keys(jsonData.sarkariresult_data) : 'missing');
         var wrap = document.getElementById('sr-dynamic-wrap');
         if (wrap) wrap.style.display = 'none';
-      });
-  }
+      }
+    }
 
-  document.readyState === 'loading'
-    ? document.addEventListener('DOMContentLoaded', load)
-    : load();
-})();
-</script>
+    function loadData() {
+      var CACHE_KEY = '__sr_merged_v1';
+      var CACHE_TTL = 5 * 60 * 1000;
+
+      try {
+        var cached = JSON.parse(sessionStorage.getItem(CACHE_KEY) || 'null');
+        if (cached && (Date.now() - cached.ts) < CACHE_TTL) {
+          render(cached.data);
+          return;
+        }
+      } catch(e) {}
+
+      fetch(JSON_FILE, { cache: 'no-cache' })
+        .then(function(res) {
+          if (!res.ok) throw new Error('HTTP ' + res.status + ' — ' + JSON_FILE);
+          return res.json();
+        })
+        .then(function(data) {
+          try {
+            sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: data }));
+          } catch(e) {}
+          render(data);
+        })
+        .catch(function(err) {
+          console.warn('[SR] Load failed:', err.message);
+          var wrap = document.getElementById('sr-dynamic-wrap');
+          if (wrap) wrap.style.display = 'none';
+        });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadData);
+    } else {
+      loadData();
+    }
+  })();
+  </script>
 
 </body>
 </html>
