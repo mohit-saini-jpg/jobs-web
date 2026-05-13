@@ -685,15 +685,37 @@
                    const niceTitle = srTitleMap[sectionParam] || title;
                    if(document.getElementById("page-title")) document.getElementById("page-title").textContent = niceTitle.toUpperCase();
                  } else {
-                   // Load from Complete_Jobs_Full_Data.json
-                   const d = await getJobsSectionsV();
                    const spLower = sectionParam.toLowerCase().replace(/[\s_-]+/g, " ").trim();
-                   sec = d.sections.find(s =>
-                     s.id === sectionParam ||
-                     s.title === sectionParam ||
-                     (s.id || "").toLowerCase().replace(/[\s_-]+/g, " ").trim() === spLower ||
-                     (s.title || "").replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FEFF}]/gu, "").replace(/[^\x00-\x7E]/g, "").trim().toLowerCase().replace(/[\s_-]+/g, " ").trim() === spLower
-                   ) || d.sections[0];
+
+                   // ── Step 1: Try dailyupdates.json first (Govt Scheme, CSC PDF/Link, Top 20 Jobs, Headlines, Latest Govt Jobs, etc.) ──
+                   try {
+                     const duResp = await fetch("dailyupdates.json", { cache: "no-cache" });
+                     if (duResp.ok) {
+                       const duData = await duResp.json();
+                       if (duData && Array.isArray(duData.sections)) {
+                         sec = duData.sections.find(s =>
+                           s.id === sectionParam ||
+                           s.title === sectionParam ||
+                           (s.id || "").toLowerCase().replace(/[\s_-]+/g, " ").trim() === spLower ||
+                           (s.title || "").toLowerCase().replace(/[\s_-]+/g, " ").trim() === spLower
+                         ) || null;
+                       }
+                     }
+                   } catch(duErr) {
+                     console.warn("[TSJ view] dailyupdates.json load failed:", duErr);
+                   }
+
+                   // ── Step 2: If not found in dailyupdates.json, try Complete_Jobs_Full_Data.json ──
+                   if (!sec) {
+                     const d = await getJobsSectionsV();
+                     sec = d.sections.find(s =>
+                       s.id === sectionParam ||
+                       s.title === sectionParam ||
+                       (s.id || "").toLowerCase().replace(/[\s_-]+/g, " ").trim() === spLower ||
+                       (s.title || "").replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FEFF}]/gu, "").replace(/[^\x00-\x7E]/g, "").trim().toLowerCase().replace(/[\s_-]+/g, " ").trim() === spLower
+                     ) || null;
+                     // NOTE: Do NOT fallback to d.sections[0] — that shows wrong data
+                   }
                  }
                  
                  if(!sec || !sec.items) {
