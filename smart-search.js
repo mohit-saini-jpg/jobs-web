@@ -590,50 +590,82 @@
     return d.toLocaleDateString('hi-IN', { day: '2-digit', month: 'short', year: 'numeric' });
   }
 
+  /* ── STOP WORDS — common words jo score inflate karte hain ── */
+  const STOP_WORDS = new Set([
+    'recruitment','2026','2025','2024','apply','online','offline','now','out',
+    'notification','for','and','the','of','to','in','a','an','is','are','with',
+    'posts','post','grade','form','exam','test','board','india','all','bharti',
+    'vacancy','vacancies','jobs','job','latest','new','official','download',
+  ]);
+
+  /* ── CUSTOM SCORER — title match ko priority de ─────────── */
+  function scoreItem(item, q, queryWords, meaningfulWords) {
+    const title = (item.title || '').toLowerCase();
+    const tags  = (item.tags  || '').toLowerCase();
+    const cat   = (item.cat   || '').toLowerCase();
+    const dept  = (item.dept  || '').toLowerCase();
+    const sec   = (item.sectionSource || '').toLowerCase();
+    let score = 0;
+
+    // Tier 1: exact full query in title
+    if (title.includes(q)) score += 200;
+    else if (queryWords.length > 0 && title.startsWith(queryWords[0])) score += 80;
+
+    // Tier 2: meaningful words in title
+    let titleMeaningfulHits = 0;
+    meaningfulWords.forEach(w => {
+      if (title.includes(w)) {
+        score += w.length >= 5 ? 40 : (w.length >= 3 ? 20 : 8);
+        titleMeaningfulHits++;
+      }
+    });
+    // Bonus: ALL meaningful words found in title
+    if (meaningfulWords.length > 0 && titleMeaningfulHits === meaningfulWords.length) score += 60;
+
+    // Tier 3: meaningful words in tags/dept/cat/sec
+    meaningfulWords.forEach(w => {
+      if (tags.includes(w))  score += w.length >= 5 ? 10 : 5;
+      if (cat.includes(w))   score += 8;
+      if (dept.includes(w))  score += 6;
+      if (sec.includes(w))   score += 5;
+    });
+
+    // Tier 4: ALL query words (inc stop words) match in title
+    let allWordsHit = 0;
+    queryWords.forEach(w => { if (title.includes(w)) allWordsHit++; });
+    if (allWordsHit === queryWords.length && queryWords.length >= 2) score += 50;
+
+    // Penalty: only stop words matched
+    if (titleMeaningfulHits === 0 && score > 0) score = Math.floor(score * 0.25);
+
+    return score;
+  }
+
   /* ── SEARCH ENGINE ──────────────────────────────────────── */
   function doSearch(query, filters = {}) {
     const q = (query || '').trim().toLowerCase();
     if (!q) return [];
 
-    let results;
+    const queryWords      = q.split(/\s+/).filter(w => w.length >= 1);
+    const meaningfulWords = queryWords.filter(w => w.length >= 2 && !STOP_WORDS.has(w));
 
-    // ✅ FIX: Single char (≤2) ke liye seedha includes match — Fuse short strings mein weak hai
-    if (q.length <= 2) {
-      results = allData
-        .map(item => {
-          const hay = (item.title + ' ' + item.tags + ' ' + item.cat + ' ' + item.dept + ' ' + item.state).toLowerCase();
-          const score = hay.includes(q) ? (item.title.toLowerCase().startsWith(q) ? 20 : 10) : 0;
-          return { ...item, _score: score };
-        })
-        .filter(r => r._score > 0)
-        .sort((a, b) => b._score - a._score);
-    } else if (fuseLoaded && fuseInstance) {
-      results = fuseInstance.search(q, { limit: 50 }).map(r => r.item);
-    } else {
-      // Fallback built-in search — single word bhi match kare
-      results = allData
-        .map(item => {
-          const hay = (item.title + ' ' + item.tags + ' ' + item.cat + ' ' + item.dept + ' ' + item.state).toLowerCase();
-          let score = 0;
-          q.split(/\s+/).forEach(word => {
-            if (word.length === 0) return;
-            if (hay.includes(word)) score += word.length >= 3 ? 10 : 6;  // ✅ FIX: single char words bhi match
-          });
-          if (item.title.toLowerCase().includes(q)) score += 15;
-          if (item.cat.toLowerCase().includes(q)) score += 5;
-          return { ...item, _score: score };
-        })
-        .filter(r => r._score > 0)
-        .sort((a, b) => b._score - a._score);
-    }
+    let results = allData
+      .map(item => {
+        const s = scoreItem(item, q, queryWords, meaningfulWords);
+        return s > 0 ? { ...item, _score: s } : null;
+      })
+      .filter(Boolean)
+      .sort((a, b) => {
+        if (b._score !== a._score) return b._score - a._score;
+        const ta = a.lastUpdated ? new Date(a.lastUpdated).getTime() : 0;
+        const tb = b.lastUpdated ? new Date(b.lastUpdated).getTime() : 0;
+        return tb - ta;
+      });
 
     // Apply filters
-    if (filters.qual) results = results.filter(r => r.qual.toLowerCase().includes(filters.qual.toLowerCase()));
-    if (filters.state) results = results.filter(r => r.state.toLowerCase().includes(filters.state.toLowerCase()) || r.state === 'All India');
-    if (filters.cat) results = results.filter(r => r.cat.toLowerCase().includes(filters.cat.toLowerCase()));
-
-    // Sort by lastUpdated descending (newly updated → top)
-    results = sortByLastUpdated(results);
+    if (filters.qual)  results = results.filter(r => (r.qual  || '').toLowerCase().includes(filters.qual.toLowerCase()));
+    if (filters.state) results = results.filter(r => (r.state || '').toLowerCase().includes(filters.state.toLowerCase()) || r.state === 'All India');
+    if (filters.cat)   results = results.filter(r => (r.cat   || '').toLowerCase().includes(filters.cat.toLowerCase()));
 
     return results;
   }
