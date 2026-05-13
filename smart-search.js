@@ -100,6 +100,7 @@
   let suggestItems = [];
   let currentFilters = { qual: '', state: '', cat: '', sort: 'latest' };
   let fuseLoaded = false;
+  let jsonIndexReady = false;   // ✅ true after all JSON files loaded
 
   /* ── UTILS ──────────────────────────────────────────────── */
   function esc(s) {
@@ -218,7 +219,31 @@
                  sarkariresult_categories: { SR_Latest_Jobs:[{title,url,last_date}], SR_Admit_Card:[...], ... } }
          ════════════════════════════════════════════════════════ */
       if (fileName === 'merged_sarkari_data.json') {
-        // Part A: sarkariresultshine_jobs array
+        // Part A: jobs[] array (primary — this is what script.js uses too)
+        const mainJobs = Array.isArray(data.jobs) ? data.jobs : [];
+        mainJobs.forEach(j => {
+          const title = (j.title || j.job_title || '').trim();
+          if (!title) return;
+          const slug = slugifyTitle(title);
+          const applyMode = (j.apply_mode || '').toLowerCase();
+          const prefix = applyMode === 'offline' ? 'offline-' : '';
+          const href = 'job.html?slug=' + encodeURIComponent(prefix + slug);
+          const lastDate = (j.important_dates && (j.important_dates.last_date || j.important_dates.last_date_to_apply)) || j.last_date || '';
+          extra.push({
+            title, slug: href,
+            dept: j.organization || j.org || '',
+            qual: j.qualification || j.qual || '',
+            state: j.state || 'All India',
+            cat: applyMode === 'offline' ? 'Offline Form' : 'Latest Job',
+            tags: title + ' ' + (j.organization || '') + ' sarkari naukri',
+            lastDate,
+            icon: 'fa-briefcase',
+            lastUpdated: j.updated_at || j.last_updated || new Date().toISOString(),
+            sectionSource: 'Latest Jobs',
+          });
+        });
+
+        // Part B: sarkariresultshine_jobs array
         const shine = Array.isArray(data.sarkariresultshine_jobs) ? data.sarkariresultshine_jobs : [];
         shine.forEach(j => {
           const title = (j.title || j.job_title || '').trim();
@@ -403,6 +428,7 @@
       });
     }
 
+    jsonIndexReady = true;
     loadFuse(() => buildFuse(allData));
   }
 
@@ -833,6 +859,20 @@
     }
 
     function showSuggest(q) {
+      // ✅ If JSON still loading, retry after 500ms (max 3 retries)
+      if (!jsonIndexReady) {
+        let retries = 0;
+        const wait = setInterval(() => {
+          retries++;
+          if (jsonIndexReady || retries >= 6) {
+            clearInterval(wait);
+            if (input.value.trim().toLowerCase() === q.trim().toLowerCase()) showSuggest(q);
+          }
+        }, 300);
+        drop.innerHTML = '<div class="tsj-no-suggest" style="color:#64748b;"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading jobs data…</div>';
+        drop.classList.add('open');
+        return;
+      }
       positionDrop();
       const results = doSearch(q, {}).slice(0, CFG.maxSuggest);
       if (!results.length) {
@@ -874,6 +914,19 @@
     }
 
     function showFullResults(q) {
+      if (!jsonIndexReady) {
+        resultsPanel.classList.add('open');
+        resultsPanel.innerHTML = '<div class="tsj-res-head"><span class="tsj-res-count"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading jobs data…</span></div>';
+        let retries = 0;
+        const wait = setInterval(() => {
+          retries++;
+          if (jsonIndexReady || retries >= 6) {
+            clearInterval(wait);
+            showFullResults(q);
+          }
+        }, 300);
+        return;
+      }
       const results = doSearch(q, currentFilters);
       resultsPanel.classList.add('open');
 
