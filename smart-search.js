@@ -12,7 +12,13 @@
   /* ── CONFIG ────────────────────────────────────────────── */
   const CFG = {
     fuseJs: 'https://cdnjs.cloudflare.com/ajax/libs/fuse.js/7.0.0/fuse.min.js',
-    jsonFiles: ['jobs.json', 'dynamic-sections.json', 'services.json'],
+    // ✅ FIXED: Actual JSON files used by this site
+    jsonFiles: [
+      'merged_sarkari_data.json',
+      'dailyupdates.json',
+      'Complete_Jobs_Full_Data.json',
+      'jobs.json',
+    ],
     maxSuggest: 10,
     maxResults: 30,
     debounceMs: 200,
@@ -156,6 +162,42 @@
     fuseLoaded = true;
   }
 
+  /* ── SLUGIFY (matches server-side generator) ────────────── */
+  function slugifyTitle(title) {
+    return String(title || '')
+      .normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/&/g, ' and ').replace(/['']/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .replace(/-{2,}/g, '-')
+      .slice(0, 120) || 'official-link';
+  }
+
+  /* ── Complete_Jobs_Full_Data.json category map ──────────── */
+  const JOBS_CAT_MAP = {
+    Latest_Notifications: { id: 'Latest Notifications',    icon: 'fa-bell',               qual: '',                 cat: 'Latest' },
+    '10TH_Pass':          { id: '10th Pass Jobs',           icon: 'fa-graduation-cap',     qual: '10th Pass',        cat: 'State Jobs' },
+    '8TH_Pass':           { id: '8th Pass Jobs',            icon: 'fa-book',               qual: '8th Pass',         cat: 'State Jobs' },
+    '12TH_Pass':          { id: '12th Pass Jobs',           icon: 'fa-graduation-cap',     qual: '12th Pass',        cat: 'State Jobs' },
+    Diploma:              { id: 'Diploma Jobs',             icon: 'fa-scroll',             qual: 'Diploma',          cat: 'Others' },
+    ITI:                  { id: 'ITI Jobs',                 icon: 'fa-tools',              qual: 'ITI',              cat: 'ITI Jobs' },
+    B_Tech_BE:            { id: 'B.Tech Jobs',              icon: 'fa-microchip',          qual: 'B.Tech',           cat: 'Others' },
+    B_Com:                { id: 'B.Com Jobs',               icon: 'fa-chart-line',         qual: 'B.Com',            cat: 'Others' },
+    Any_Graduate:         { id: 'Graduation Jobs',          icon: 'fa-university',         qual: 'Graduation',       cat: 'Others' },
+    Any_Post_Graduate:    { id: 'Post Graduation Jobs',     icon: 'fa-user-tie',           qual: 'Post Graduation',  cat: 'Others' },
+    Railway_Jobs:         { id: 'Railway Jobs',             icon: 'fa-train',              qual: '',                 cat: 'Railway' },
+    Police_Defence:       { id: 'Police Jobs',              icon: 'fa-shield-halved',      qual: '',                 cat: 'Police' },
+    Teaching_Faculty:     { id: 'Teaching Jobs',            icon: 'fa-chalkboard-user',    qual: 'B.Ed / D.El.Ed',   cat: 'Teaching' },
+    Bank_Jobs:            { id: 'Bank Jobs',                icon: 'fa-building-columns',   qual: 'Graduation',       cat: 'Bank' },
+    Medical_Hospital:     { id: 'Medical Jobs',             icon: 'fa-stethoscope',        qual: '',                 cat: 'Medical' },
+    Last_Date_Reminder:   { id: 'Last Date Reminder',       icon: 'fa-clock',              qual: '',                 cat: 'Latest' },
+    SSC_Jobs:             { id: 'SSC Jobs',                 icon: 'fa-medal',              qual: '',                 cat: 'SSC' },
+    UPSC_Jobs:            { id: 'UPSC Jobs',                icon: 'fa-graduation-cap',     qual: 'Graduation',       cat: 'UPSC' },
+    Haryana_Jobs:         { id: 'Haryana Jobs',             icon: 'fa-location-dot',       qual: '',                 cat: 'State Jobs' },
+    Defence_Jobs:         { id: 'Defence Jobs',             icon: 'fa-star',               qual: '',                 cat: 'Defence' },
+  };
+
   /* ── LOAD JSON FILES ────────────────────────────────────── */
   async function loadJsonFiles() {
     const results = await Promise.allSettled(
@@ -163,78 +205,202 @@
     );
 
     const extra = [];
-    results.forEach(res => {
+
+    results.forEach((res, idx) => {
       if (res.status !== 'fulfilled' || !res.value) return;
       const data = res.value;
+      const fileName = CFG.jsonFiles[idx];
 
-      // jobs.json
-      ['top_jobs', 'left_jobs', 'right_jobs', 'jobs', 'latest_jobs', 'items'].forEach(key => {
-        if (Array.isArray(data[key])) {
-          data[key].forEach(item => {
-            const title = item.name || item.title;
-            const slug  = item.url  || item.link || item.slug;
-            if (!title || !slug) return;
-            const sectionSource = item.section || item.source || getSectionName(slug);
-            extra.push({
-              title, slug,
-              dept:  item.department || item.dept || '',
-              qual:  item.qualification || item.qual || '',
-              state: item.state || '',
-              cat:   item.category || item.cat || '',
-              tags:  [title, item.tags, item.keywords, item.description].filter(Boolean).join(' '),
-              lastDate: item.last_date || item.lastDate || '',
-              icon: item.icon || 'fa-briefcase',
-              lastUpdated: item.last_updated || item.lastUpdated || item.updated_at || item.updatedAt || new Date().toISOString(),
-              sectionSource,
-            });
+      /* ════════════════════════════════════════════════════════
+         1.  merged_sarkari_data.json
+             Structure:
+               { sarkariresultshine_jobs: [ {title, source_url, important_dates, ...} ],
+                 sarkariresult_categories: { SR_Latest_Jobs:[{title,url,last_date}], SR_Admit_Card:[...], ... } }
+         ════════════════════════════════════════════════════════ */
+      if (fileName === 'merged_sarkari_data.json') {
+        // Part A: sarkariresultshine_jobs array
+        const shine = Array.isArray(data.sarkariresultshine_jobs) ? data.sarkariresultshine_jobs : [];
+        shine.forEach(j => {
+          const title = (j.title || j.job_title || '').trim();
+          if (!title) return;
+          const slug = slugifyTitle(title);
+          const href = 'job.html?slug=' + encodeURIComponent(slug);
+          const lastDate = (j.important_dates && j.important_dates.last_date) || j.last_date || '';
+          extra.push({
+            title, slug: href,
+            dept: j.organization || j.org || '',
+            qual: j.qualification || j.qual || '',
+            state: j.state || 'All India',
+            cat: j.apply_mode === 'offline' ? 'Offline Form' : 'Latest Job',
+            tags: title + ' sarkari result',
+            lastDate,
+            icon: 'fa-briefcase',
+            lastUpdated: j.updated_at || j.last_updated || new Date().toISOString(),
+            sectionSource: 'Sarkari Result Jobs',
           });
-        }
-      });
+        });
 
-      // dynamic-sections.json
-      if (Array.isArray(data.sections)) {
-        data.sections.forEach(sec => {
-          (sec.items || []).forEach(item => {
-            const title = item.name || item.title;
-            const slug  = item.url  || item.link;
-            if (!title || !slug) return;
+        // Part B: sarkariresult_categories object
+        const SRCAT_META = {
+          SR_Latest_Jobs: { cat: 'Latest Job',  icon: 'fa-briefcase',     src: 'SR Latest Jobs'  },
+          SR_Admit_Card:  { cat: 'Admit Card',  icon: 'fa-id-card',       src: 'SR Admit Card'   },
+          SR_Result:      { cat: 'Result',      icon: 'fa-trophy',        src: 'SR Result'       },
+          SR_Admission:   { cat: 'Admission',   icon: 'fa-graduation-cap',src: 'SR Admission'    },
+          SR_Answer_Key:  { cat: 'Answer Key',  icon: 'fa-key',           src: 'SR Answer Key'   },
+        };
+        const srCats = data.sarkariresult_categories || {};
+        Object.keys(srCats).forEach(key => {
+          const meta = SRCAT_META[key] || { cat: key, icon: 'fa-circle-dot', src: key };
+          const arr  = Array.isArray(srCats[key]) ? srCats[key] : [];
+          arr.forEach(item => {
+            const title = (item.title || item.name || '').trim();
+            const href  = item.url  || item.link || item.source_url || '#';
+            if (!title || !href || href === '#') return;
             extra.push({
-              title, slug,
-              dept: sec.title || '',
+              title, slug: href,
+              dept: item.org || '',
               qual: '', state: '',
-              cat: sec.category || '',
-              tags: title,
-              lastDate: '',
-              icon: 'fa-file-alt',
-              lastUpdated: item.last_updated || item.lastUpdated || sec.updated_at || new Date().toISOString(),
-              sectionSource: sec.title || getSectionName(slug),
+              cat: meta.cat,
+              tags: title + ' sarkari result ' + meta.cat,
+              lastDate: item.last_date || '',
+              icon: meta.icon,
+              lastUpdated: item.updated_at || item.last_updated || new Date().toISOString(),
+              sectionSource: meta.src,
             });
           });
         });
       }
 
-      // services.json
-      if (Array.isArray(data.services)) {
-        data.services.forEach(s => {
-          if (!s.name || !s.url) return;
-          extra.push({
-            title: s.name, slug: s.url,
-            dept: 'Services', qual: '', state: '',
-            cat: 'Service',
-            tags: s.name + ' ' + (s.description || ''),
-            lastDate: '',
-            icon: 'fa-cog',
-            lastUpdated: s.last_updated || s.lastUpdated || new Date().toISOString(),
-            sectionSource: 'Services',
+      /* ════════════════════════════════════════════════════════
+         2.  dailyupdates.json
+             Structure: Array of sections OR { sections: [...] }
+               Each section: { title, items: [{name/title, url/link, date}] }
+         ════════════════════════════════════════════════════════ */
+      if (fileName === 'dailyupdates.json') {
+        const sections = Array.isArray(data)
+          ? data
+          : Array.isArray(data.sections) ? data.sections : [];
+        sections.forEach(sec => {
+          const secTitle = sec.title || sec.name || 'Daily Update';
+          (sec.items || []).forEach(item => {
+            const title = (item.name || item.title || '').trim();
+            const href  = item.url  || item.link || '#';
+            if (!title) return;
+            extra.push({
+              title, slug: href,
+              dept: secTitle,
+              qual: '', state: '',
+              cat: secTitle,
+              tags: title + ' ' + secTitle,
+              lastDate: item.date || item.last_date || '',
+              icon: 'fa-bell',
+              lastUpdated: item.updated_at || item.last_updated || new Date().toISOString(),
+              sectionSource: secTitle,
+            });
           });
         });
+      }
+
+      /* ════════════════════════════════════════════════════════
+         3.  Complete_Jobs_Full_Data.json
+             Structure: { Latest_Notifications:[...], 10TH_Pass:[...],
+                          Railway_Jobs:[...], ... }
+             Each item: { basic_details:{job_title}, important_dates:{last_date_to_apply},
+                          important_links:{...} }
+         ════════════════════════════════════════════════════════ */
+      if (fileName === 'Complete_Jobs_Full_Data.json') {
+        if (typeof data === 'object' && !Array.isArray(data)) {
+          Object.keys(data).forEach(catKey => {
+            const meta = JOBS_CAT_MAP[catKey];
+            const jobs = Array.isArray(data[catKey]) ? data[catKey] : [];
+            jobs.forEach(job => {
+              // Support both nested (basic_details.job_title) and flat (name/title)
+              const bd    = job.basic_details || job;
+              const dates = job.important_dates || {};
+              const title = (bd.job_title || bd.name || bd.title || '').trim();
+              if (!title) return;
+              const slug    = slugifyTitle(title);
+              const secId   = meta ? meta.id : catKey.replace(/_/g, ' ');
+              const href    = 'job.html?slug=' + encodeURIComponent(slug) + '&section=' + encodeURIComponent(secId);
+              const lastDate = (
+                dates.last_date_to_apply ||
+                dates.last_date ||
+                dates.last_date_apply ||
+                dates.closing_date ||
+                job.last_date || ''
+              ).trim();
+              extra.push({
+                title, slug: href,
+                dept: bd.organization || bd.department || bd.dept || job.organization || '',
+                qual: meta ? meta.qual : (bd.qualification || ''),
+                state: bd.state || job.state || 'All India',
+                cat:   meta ? meta.cat : catKey.replace(/_/g, ' '),
+                tags:  title + ' ' + (meta ? meta.id : catKey) + ' sarkari job',
+                lastDate,
+                icon:  meta ? meta.icon : 'fa-briefcase',
+                lastUpdated: job.updated_at || job.last_updated || job.created_at || new Date().toISOString(),
+                sectionSource: meta ? meta.id : catKey.replace(/_/g, ' '),
+              });
+            });
+          });
+        }
+      }
+
+      /* ════════════════════════════════════════════════════════
+         4.  jobs.json (legacy / flat arrays)
+             Structure: { top_jobs:[...], left_jobs:[...], sections:[{items:[...]}] }
+         ════════════════════════════════════════════════════════ */
+      if (fileName === 'jobs.json') {
+        // Flat arrays at root level
+        ['top_jobs', 'left_jobs', 'right_jobs', 'jobs', 'latest_jobs', 'items'].forEach(key => {
+          if (!Array.isArray(data[key])) return;
+          data[key].forEach(item => {
+            const title = (item.name || item.title || '').trim();
+            const href  = item.url  || item.link || item.slug || '#';
+            if (!title || !href || href === '#') return;
+            extra.push({
+              title, slug: href,
+              dept:  item.department || item.dept || '',
+              qual:  item.qualification || item.qual || '',
+              state: item.state || '',
+              cat:   item.category || item.cat || 'Latest',
+              tags:  [title, item.tags, item.keywords].filter(Boolean).join(' '),
+              lastDate: item.last_date || item.lastDate || '',
+              icon:  item.icon || 'fa-briefcase',
+              lastUpdated: item.last_updated || item.lastUpdated || item.updated_at || new Date().toISOString(),
+              sectionSource: item.section || item.source || getSectionName(href),
+            });
+          });
+        });
+        // Sections format
+        if (Array.isArray(data.sections)) {
+          data.sections.forEach(sec => {
+            (sec.items || []).forEach(item => {
+              const title = (item.name || item.title || '').trim();
+              const href  = item.url  || item.link || '#';
+              if (!title || !href || href === '#') return;
+              extra.push({
+                title, slug: href,
+                dept: sec.title || '',
+                qual: '', state: '',
+                cat: sec.category || sec.title || '',
+                tags: title,
+                lastDate: item.last_date || '',
+                icon: 'fa-file-alt',
+                lastUpdated: item.last_updated || sec.updated_at || new Date().toISOString(),
+                sectionSource: sec.title || getSectionName(href),
+              });
+            });
+          });
+        }
       }
     });
 
     if (extra.length) {
-      // Merge, dedup by slug
       const seen = new Set(allData.map(d => d.slug));
-      extra.forEach(item => { if (!seen.has(item.slug)) { seen.add(item.slug); allData.push(item); } });
+      extra.forEach(item => {
+        if (!seen.has(item.slug)) { seen.add(item.slug); allData.push(item); }
+      });
     }
 
     loadFuse(() => buildFuse(allData));
