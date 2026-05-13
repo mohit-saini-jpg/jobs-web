@@ -221,23 +221,34 @@
 
   /* Build job.html href from a job object — same as index.html jobHref() */
   function buildJobHref(job, secId) {
+    const bd = job.basic_details || {};
     const slug = job.slug || slugifyTitle(
       job.title || job.post_name ||
-      (job.basic_details && (job.basic_details.job_title || job.basic_details.post_name)) || ''
+      bd.job_title || bd.post_name || ''
     );
     if (!slug || slug === 'official-link') return job.source_url || job.url || job.link || '#';
-    const prefix = (job.apply_mode || '').toLowerCase() === 'offline' ? 'offline-' : '';
+    // Check apply_mode at top level AND inside basic_details.application_mode
+    const applyMode = (job.apply_mode || bd.application_mode || '').toLowerCase();
+    const prefix = applyMode === 'offline' ? 'offline-' : '';
     return 'job.html?slug=' + encodeURIComponent(prefix + slug) +
            (secId ? '&section=' + encodeURIComponent(secId) : '');
   }
 
-  /* Extract title from a job object — same priority as job.html parseFullJob */
+  /* Extract title from a job object — same priority as job.html parseFullJob
+   * Handles all 3 JSON formats:
+   *   merged_sarkari_data.json  → job.title  (e.g. "Ambala Court Clerk Vacancy 2026")
+   *   Complete_Jobs_Full_Data.json → basic_details.job_title
+   *   dailyupdates.json items   → item.name  (handled in section loop directly)
+   */
   function getJobTitle(job) {
     const bd = job.basic_details || {};
-    return String(
+    const raw = String(
       job.title || job.post_name ||
-      bd.job_title || bd.post_name || ''
+      bd.job_title || bd.post_name ||
+      job.name || ''
     ).trim();
+    // Strip trailing punctuation/dashes left by scrapers (e.g. "Apply Now -")
+    return raw.replace(/[\s\-–—,|]+$/, '').trim();
   }
 
   /* Extract org from a job object */
@@ -277,18 +288,22 @@
 
       /* ══════════════════════════════════════════════════════
          1.  merged_sarkari_data.json
-         Structure: { jobs:[], sarkariresultshine_jobs:[],
-                      sarkariresult_categories:{SR_*:[]} }
+         Structure: { jobs:[] }
+         Each job: { title, post_name, organization, apply_mode,
+                     important_dates:{application_start, last_date},
+                     total_vacancy, official_website_link }
+         NOTE: No 'slug' field — href is built by slugifying title.
       ══════════════════════════════════════════════════════ */
       if (fileName === 'merged_sarkari_data.json') {
 
-        /* A. jobs[] — main array with full job objects */
+        /* jobs[] — main array */
         const mainJobs = Array.isArray(data.jobs) ? data.jobs : [];
         mainJobs.forEach(j => {
           const title = getJobTitle(j);
           if (!title) return;
           const org  = getJobOrg(j);
           const href = buildJobHref(j, 'Latest Jobs');
+          if (!href || href === '#') return;
           const lastDate = (j.important_dates
             ? (j.important_dates.last_date || j.important_dates.last_date_to_apply || '')
             : '') || j.last_date || '';
@@ -297,9 +312,10 @@
             title, slug: href,
             dept: org,
             qual: j.qualification || '',
-            state: j.state || 'All India',
+            state: j.job_location || j.state || 'All India',
             cat: applyMode === 'offline' ? 'Offline Form' : 'Latest Job',
-            tags: title + ' ' + org + ' ' + (j.total_vacancy || '') + ' sarkari naukri 2026',
+            tags: title + ' ' + org + ' ' + (j.post_name || '') + ' '
+                + (j.total_vacancy || '') + ' sarkari naukri 2026',
             lastDate,
             icon: 'fa-briefcase',
             lastUpdated: j.updated_at || j.last_updated || new Date().toISOString(),
@@ -308,32 +324,33 @@
           count++;
         });
 
-        /* B. sarkariresultshine_jobs[] */
-        const shineJobs = Array.isArray(data.sarkariresultshine_jobs) ? data.sarkariresultshine_jobs : [];
-        shineJobs.forEach(j => {
-          const title = getJobTitle(j);
-          if (!title) return;
-          const org  = getJobOrg(j);
-          const href = j.source_url || j.url || j.link || buildJobHref(j, 'SR Latest Jobs');
-          if (!href || href === '#') return;
-          const lastDate = (j.important_dates
-            ? (j.important_dates.last_date || '')
-            : '') || j.last_date || '';
-          extra.push({
-            title, slug: href,
-            dept: org,
-            qual: '', state: '',
-            cat: 'Latest Job',
-            tags: title + ' ' + org + ' sarkari result naukri',
-            lastDate,
-            icon: 'fa-briefcase',
-            lastUpdated: j.updated_at || new Date().toISOString(),
-            sectionSource: 'Sarkari Result',
+        /* sarkariresultshine_jobs[] — if present in future updates */
+        if (Array.isArray(data.sarkariresultshine_jobs)) {
+          data.sarkariresultshine_jobs.forEach(j => {
+            const title = getJobTitle(j);
+            if (!title) return;
+            const org  = getJobOrg(j);
+            const href = j.source_url || j.url || j.link || buildJobHref(j, 'SR Latest Jobs');
+            if (!href || href === '#') return;
+            const lastDate = (j.important_dates
+              ? (j.important_dates.last_date || '')
+              : '') || j.last_date || '';
+            extra.push({
+              title, slug: href,
+              dept: org,
+              qual: '', state: '',
+              cat: 'Latest Job',
+              tags: title + ' ' + org + ' sarkari result naukri',
+              lastDate,
+              icon: 'fa-briefcase',
+              lastUpdated: j.updated_at || new Date().toISOString(),
+              sectionSource: 'Sarkari Result',
+            });
+            count++;
           });
-          count++;
-        });
+        }
 
-        /* C. sarkariresult_categories — SR_Latest_Jobs, SR_Admit_Card, etc. */
+        /* sarkariresult_categories — if present in future updates */
         const srCats = data.sarkariresult_categories || {};
         const SR_META = {
           SR_Latest_Jobs: { cat:'Latest Job',  icon:'fa-briefcase',      label:'SR Latest Jobs' },
@@ -367,8 +384,9 @@
 
       /* ══════════════════════════════════════════════════════
          2.  dailyupdates.json
-         Structure: { sections:[{title, id, icon, items:[{name, url, slug, date}]}] }
-         (confirmed by job.html line 1366: Array.isArray(dailyRaw.sections))
+         Structure: { sections:[{id, title, icon, color, items:[{name, url}]}] }
+         Items use 'name' as the job title and 'url' as the link.
+         Some items have 'slug' for internal job.html links.
       ══════════════════════════════════════════════════════ */
       if (fileName === 'dailyupdates.json') {
         /* Support both {sections:[]} and top-level array */
@@ -381,10 +399,11 @@
           const secIcon  = (String(sec.icon || 'fa-bell')).replace(/^fa-solid\s+/, '');
 
           (sec.items || []).forEach(item => {
+            // dailyupdates items use 'name' as title
             const title = String(item.name || item.title || '').trim();
             if (!title) return;
 
-            /* href: slug → job.html, else url/link */
+            /* href: prefer internal slug → job.html, else use url/link directly */
             let href = '';
             if (item.slug) {
               href = 'job.html?slug=' + encodeURIComponent(item.slug)
@@ -399,7 +418,8 @@
               dept: secTitle,
               qual: '', state: '',
               cat: secTitle,
-              tags: title + ' ' + secTitle + ' sarkari 2026',
+              // Include section title in tags so searching by section name works too
+              tags: title + ' ' + secTitle + ' ' + secId + ' sarkari 2026',
               lastDate: item.date || item.last_date || '',
               icon: secIcon,
               lastUpdated: item.updated_at || item.last_updated || new Date().toISOString(),
@@ -431,23 +451,28 @@
               const title = getJobTitle(job);
               if (!title) return;
               const org  = getJobOrg(job);
+              const bd   = job.basic_details || {};
               const href = buildJobHref(job, meta.id);
               const dates = job.important_dates || {};
               const lastDate = (
                 dates.last_date_to_apply || dates.last_date ||
                 dates.closing_date || job.last_date || ''
               ).toString().trim();
+              // Include post_name + short_information in tags for richer search
+              const postName = String(bd.post_name || job.post_name || '').trim();
+              const shortInfo = String(bd.short_information || '').slice(0, 100);
               extra.push({
                 title, slug: href,
                 dept: org,
-                qual: meta.qual || job.qualification || '',
+                qual: meta.qual || job.qualification || bd.qualification || '',
                 state: job.state || 'All India',
                 cat: meta.cat,
-                tags: title + ' ' + org + ' ' + meta.id
-                    + ' ' + (job.total_vacancy || '') + ' sarkari job 2026',
+                tags: title + ' ' + postName + ' ' + org + ' ' + meta.id
+                    + ' ' + (job.total_vacancies || job.total_vacancy || bd.total_vacancies || '')
+                    + ' ' + shortInfo + ' sarkari job 2026',
                 lastDate,
                 icon: meta.icon,
-                lastUpdated: job.updated_at || job.last_updated || job.created_at || new Date().toISOString(),
+                lastUpdated: bd.last_updated || job.updated_at || job.last_updated || job.created_at || new Date().toISOString(),
                 sectionSource: meta.id,
               });
               count++;
@@ -550,14 +575,22 @@
     jsonIndexReady = true;
     console.log('[smart-search] ✅ Index ready. Total items:', allData.length,
       '(SEED:', SEED_DATA.length, '+ JSON:', totalLoaded, ')');
+    console.log('[smart-search] Sources: merged_sarkari_data(jobs[]),' +
+      ' dailyupdates(sections[].items[].name),' +
+      ' Complete_Jobs_Full_Data(basic_details.job_title)');
     loadFuse(() => {
       buildFuse(allData);
-      // ✅ FIX: JSON load ke baad agar user ne kuch type kar rakha hai to suggestion refresh karo
+      // After JSON load, refresh any active search in heroSearch
       const heroInput = document.getElementById('heroSearch');
       if (heroInput && heroInput.value.trim().length >= 1) {
+        // Refresh dropdown suggestions if open
         const drop = document.getElementById('tsjDrop');
         if (drop && drop.classList.contains('open')) {
-          // showSuggest already bound — trigger input event to refresh
+          heroInput.dispatchEvent(new Event('input'));
+        }
+        // Refresh full results panel if open
+        const panel = document.getElementById('tsjResultsPanel');
+        if (panel && panel.classList.contains('open')) {
           heroInput.dispatchEvent(new Event('input'));
         }
       }
