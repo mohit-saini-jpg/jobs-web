@@ -2750,12 +2750,16 @@
   </script>
 
   <!-- ============================================================
-       HERO SEARCH — JSON-powered, runs AFTER smart-search.js to override it
+       HERO SEARCH — ✅ FIXED: smart-search.js handles everything now.
+       Yeh purana script smart-search.js ke event listeners strip karta tha
+       aur #searchSuggest dhundhta tha jo exist nahi karta — isliye DISABLED kiya.
   ============================================================ -->
   <script>
-  window.addEventListener('load', function() {
-    'use strict';
-
+  (function HERO_OVERRIDE_DISABLED() {
+    /* DISABLED: smart-search.js directly loads:
+       merged_sarkari_data.json, dailyupdates.json, Complete_Jobs_Full_Data.json
+       Yahan kuch karne ki zaroorat nahi. */
+    return;
     var input   = document.getElementById('heroSearch');
     var btn     = document.getElementById('heroSearchBtn');
     var suggest = document.getElementById('searchSuggest');
@@ -2950,7 +2954,8 @@
         closeSuggest();
       }
     });
-  });
+  // END OF DISABLED CODE
+  })(); // HERO_OVERRIDE_DISABLED
   </script>
 
 </body>
