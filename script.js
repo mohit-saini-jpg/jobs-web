@@ -1,6 +1,10 @@
 (() => {
   "use strict";
 
+  // ✅ SEARCH INDEX: smart-search.js is array ko monitor karta hai
+  // Pehle se exist kare to use karo, nahi to nayi array banao
+  window.tsjSearchIndex = window.tsjSearchIndex || [];
+
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
