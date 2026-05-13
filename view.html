@@ -258,8 +258,14 @@
   function __buildSRSections(rawData) {
     const sections = [];
 
-    /* ── NEW: flat jobs[] format — categorise by title keywords ── */
+    /* ── FIXED: flat jobs[] format — use sr_category field (scraper-assigned) ──
+       Priority: j.sr_category field is used first (exact category match).
+       Keyword-based fallback only used when sr_category is absent/unknown.
+       This prevents cross-category data mixing on the homepage grid and view pages.
+    ── */
     if (Array.isArray(rawData.jobs) && rawData.jobs.length > 0) {
+      const VALID_SR_CATS = new Set(['SR_Latest_Jobs','SR_Admit_Card','SR_Result','SR_Admission','SR_Answer_Key']);
+
       const KW_ADMIT     = ['admit card', 'hall ticket', 'call letter'];
       const KW_ANSWER    = ['answer key', 'answer sheet', 'objection'];
       const KW_RESULT    = ['result', 'merit list', 'final list', 'cut off', 'cutoff', 'scorecard', 'score card'];
@@ -276,22 +282,32 @@
       };
 
       rawData.jobs.forEach(job => {
-        const title = (job.title || '').trim();
+        const title  = (job.title || '').trim();
         if (!title) return;
-        const slug  = job.slug || __viewSlugify(title);
-        const dates = job.important_dates || {};
-        const last  = (dates.last_date || dates.last_date_to_apply || dates.closing_date || job.last_date || '').trim();
-        const item  = { slug, name: title, date: last };
+        const slug   = job.slug || __viewSlugify(title);
+        const dates  = job.important_dates || {};
+        const last   = (dates.last_date || dates.last_date_to_apply || dates.closing_date || job.last_date || '').trim();
+        const item   = { slug, name: title, date: last };
+        const srCat  = (job.sr_category || '').trim();       /* ← scraper-set field */
+        const mode   = (job.apply_mode || '').toLowerCase();
 
-        /* Offline Form — apply_mode based */
-        if ((job.apply_mode || '').toLowerCase() === 'offline') cats.SR_Offline_Form.push(item);
+        /* Offline Form — apply_mode based (can also appear in Offline section) */
+        if (mode === 'offline') cats.SR_Offline_Form.push(item);
 
-        /* Category by title keyword (priority order) */
-        if      (hasKw(title, KW_ADMIT))     cats.SR_Admit_Card.push(item);
-        else if (hasKw(title, KW_ANSWER))    cats.SR_Answer_Key.push(item);
-        else if (hasKw(title, KW_RESULT))    cats.SR_Result.push(item);
-        else if (hasKw(title, KW_ADMISSION)) cats.SR_Admission.push(item);
-        else                                 cats.SR_Latest_Jobs.push(item);
+        /* ── PRIMARY: use sr_category if valid ── */
+        if (srCat && VALID_SR_CATS.has(srCat)) {
+          cats[srCat].push(item);
+          return;   /* skip keyword fallback */
+        }
+
+        /* ── FALLBACK: keyword-based (only when sr_category absent/unknown) ── */
+        if (mode !== 'offline') {
+          if      (hasKw(title, KW_ADMIT))     cats.SR_Admit_Card.push(item);
+          else if (hasKw(title, KW_ANSWER))    cats.SR_Answer_Key.push(item);
+          else if (hasKw(title, KW_RESULT))    cats.SR_Result.push(item);
+          else if (hasKw(title, KW_ADMISSION)) cats.SR_Admission.push(item);
+          else                                 cats.SR_Latest_Jobs.push(item);
+        }
       });
 
       for (const [catKey, meta] of Object.entries(__SR_CAT_META)) {
@@ -301,7 +317,7 @@
       }
       return sections;
     }
-    /* ── END new format handler ── */
+    /* ── END fixed format handler ── */
 
     /* Original format: sarkariresult_categories object */
     const categories = (rawData.sarkariresult_data && rawData.sarkariresult_data.data) || rawData.sarkariresult_categories || rawData.data || rawData || {};
