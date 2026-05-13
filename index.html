@@ -1513,10 +1513,16 @@
         }
       } else {
         const name = row.title || humanizeSlug(rawSlug);
+        /* Strip SR/SRS links from row before rendering */
+        const _isSRx = u => !!(u && (u.includes('sarkariresult.com') || u.includes('sarkariresultshine.com')));
+        if (_isSRx(row.destUrl))        row = Object.assign({}, row, { destUrl: '' });
+        if (_isSRx(row.applyOnline))    row = Object.assign({}, row, { applyOnline: '' });
+        if (_isSRx(row.officialWebsite))row = Object.assign({}, row, { officialWebsite: '' });
+        const safeDest = row.destUrl || '';
         if (isJobItem(name)) {
-          renderJobPage(name, row.destUrl, parseJob(name), row);
+          renderJobPage(name, safeDest, parseJob(name), row);
         } else {
-          renderNonJobPage(name, row.destUrl);
+          renderNonJobPage(name, safeDest);
         }
       }
 
