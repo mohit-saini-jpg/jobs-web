@@ -11,7 +11,7 @@
     1. 404.html intercepts /jobs/<slug>/ and saves slug to sessionStorage,
        then redirects here (/jobs/index.html).
     2. This page reads the slug, restores the pretty URL with history.replaceState,
-       loads Complete_Jobs_Full_Data.json, renders the job, and injects all SEO tags.
+       loads dynamic-sections.json, renders the job, and injects all SEO tags.
 
     All SEO tags are set dynamically before the page body is visible.
   -->
@@ -246,22 +246,6 @@
     .jp-loading{padding:48px 0;text-align:center;color:#64748b;}
     .jp-error-box{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:16px 18px;color:#991b1b;font-size:.9rem;margin-bottom:16px;}
 
-    /* Key-value grid for fees */
-    .jp-kv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));}
-    .jp-kv-item{padding:10px 14px;border-right:1px solid #e9eef4;border-bottom:1px solid #e9eef4;}
-    .jp-kv-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#64748b;margin-bottom:3px;}
-    .jp-kv-val{font-size:.9rem;font-weight:700;color:#0f172a;}
-    .jp-kv-val.free{color:#16a34a;}
-    .jp-kv-val.paid{color:#1d4ed8;}
-
-    /* Detail text */
-    .jp-detail-text{padding:10px 14px;font-size:.83rem;color:#1e293b;line-height:1.7;}
-    .jp-detail-text + .jp-detail-text{border-top:1px solid #f1f5f9;}
-
-    /* Selection badges */
-    .jp-sel-badge{display:flex;align-items:center;gap:7px;padding:7px 13px;background:#f0f7ff;border:1px solid #bfdbfe;border-radius:8px;font-size:.81rem;font-weight:600;color:#1e40af;}
-    .jp-sel-badge i{color:#1d4ed8;}
-
     @media(max-width:520px){
       .jp-title{font-size:1rem;}
       .jp-btn{font-size:.76rem;padding:9px 10px;}
@@ -358,7 +342,7 @@
               <a class="jp-left-nav-item" href="/view.html?section=Teacher%20Jobs"><i class="fa-solid fa-chalkboard-user"></i>Teacher Jobs</a>
               <a class="jp-left-nav-item" href="/view.html?section=Indian%20ARMY%20jobs"><i class="fa-solid fa-star"></i>Army/Navy/AF</a>
               <a class="jp-left-nav-item" href="/view.html?section=Medical%2F%20Healthcare%20Jobs"><i class="fa-solid fa-stethoscope"></i>Medical Jobs</a>
-              <a class="jp-left-nav-item" href="/view.html?section=SR_Offline_Form"><i class="fa-solid fa-file-pen"></i>Offline Jobs</a>
+              <a class="jp-left-nav-item" href="/view.html?section=Offline%20jobs"><i class="fa-solid fa-file-pen"></i>Offline Jobs</a>
               <div class="jp-left-nav-divider">By Location</div>
               <a class="jp-left-nav-item" href="/view.html?section=Central%20jobs"><i class="fa-solid fa-flag"></i>Central Govt Jobs</a>
               <a class="jp-left-nav-item" href="/view.html?section=State%20jobs"><i class="fa-solid fa-map-location-dot"></i>State Wise Jobs</a>
@@ -374,17 +358,6 @@
               <a class="jp-left-nav-item" href="/view.html?section=Top%2020%20Jobs"><i class="fa-solid fa-fire-flame-curved"></i>Top 20 Jobs</a>
               <a class="jp-left-nav-item" href="/view.html?section=latest%20jobs"><i class="fa-solid fa-sun"></i>Latest Jobs</a>
               <a class="jp-left-nav-item" href="/view.html?section=Jobs%20with%20Last%20date"><i class="fa-solid fa-clock"></i>Closing Soon</a>
-            </nav>
-          </div>
-          <div class="jp-left-nav-card">
-            <div class="jp-left-nav-head" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);"><i class="fa-solid fa-star"></i> Sarkari Result</div>
-            <nav class="jp-left-nav-list">
-              <a class="jp-left-nav-item" href="/view.html?section=SR_Latest_Jobs"><i class="fa-solid fa-briefcase"></i>Latest Jobs</a>
-              <a class="jp-left-nav-item" href="/view.html?section=SR_Admit_Card"><i class="fa-solid fa-id-card"></i>Admit Card</a>
-              <a class="jp-left-nav-item" href="/view.html?section=SR_Result"><i class="fa-solid fa-trophy"></i>Result</a>
-              <a class="jp-left-nav-item" href="/view.html?section=SR_Admission"><i class="fa-solid fa-graduation-cap"></i>Admission</a>
-              <a class="jp-left-nav-item" href="/view.html?section=SR_Answer_Key"><i class="fa-solid fa-key"></i>Answer Key</a>
-              <a class="jp-left-nav-item" href="/view.html?section=SR_Offline_Form"><i class="fa-solid fa-file-pen"></i>Offline Form</a>
             </nav>
           </div>
         </aside>
@@ -413,20 +386,10 @@
                 <div class="jp-stat"><div class="jp-stat-icon">💻</div><div class="jp-stat-label">Apply Mode</div><div class="jp-stat-val green" id="statApplyMode">Online</div></div>
               </div>
             </div>
-
-            <!-- Main CTA -->
             <a id="btnMainCta" href="#" target="_blank" rel="noopener" class="jp-main-cta">
               <i class="fa-solid fa-arrow-up-right-from-square"></i> Apply Online / Official Website पर जाएँ
               <span class="jp-main-cta-sub">Click to visit the official recruitment portal</span>
             </a>
-
-            <!-- Short Info -->
-            <div class="jp-card" id="shortInfoCard" style="display:none;">
-              <div class="jp-sec-head" style="background:linear-gradient(135deg,#0f766e,#0891b2);"><i class="fa-solid fa-circle-info"></i> About This Recruitment</div>
-              <div class="jp-notice" id="shortInfoText" style="background:#f0f9ff;border-left:4px solid #0891b2;border-top:none;"></div>
-            </div>
-
-            <!-- Overview Table -->
             <div class="jp-card">
               <div class="jp-sec-head"><i class="fa-solid fa-table-list"></i> <span id="overviewTitle">Recruitment 2026 : Overview</span></div>
               <table class="jp-table" id="jbTable"><tbody></tbody></table>
@@ -435,52 +398,18 @@
                 <strong>ध्यान दें:</strong> आवेदन से पहले आधिकारिक वेबसाइट पर सभी जानकारी जाँचें।
               </div>
             </div>
-
-            <!-- Important Dates -->
-            <div class="jp-card" id="datesDetailCard" style="display:none;">
-              <div class="jp-sec-head" style="background:linear-gradient(135deg,#b91c1c,#dc2626);"><i class="fa-regular fa-calendar-check"></i> Important Dates</div>
-              <table class="jp-table"><tbody id="datesDetailBody"></tbody></table>
-            </div>
-
-            <!-- Application Fee -->
-            <div class="jp-card" id="feeCard" style="display:none;">
-              <div class="jp-sec-head" style="background:linear-gradient(135deg,#c2410c,#ea580c);"><i class="fa-solid fa-indian-rupee-sign"></i> Application Fee</div>
-              <div class="jp-kv-grid" id="feeGrid"></div>
-            </div>
-
-            <!-- Age Limit -->
-            <div class="jp-card" id="ageCard" style="display:none;">
-              <div class="jp-sec-head" style="background:linear-gradient(135deg,#0f766e,#0891b2);"><i class="fa-solid fa-user-clock"></i> Age Limit</div>
-              <table class="jp-table"><tbody id="ageTableBody"></tbody></table>
-            </div>
-
-            <!-- Qualification -->
-            <div class="jp-card" id="qualCard" style="display:none;">
-              <div class="jp-sec-head" style="background:linear-gradient(135deg,#4338ca,#6366f1);"><i class="fa-solid fa-graduation-cap"></i> Educational Qualification</div>
-              <div id="qualContent"></div>
-            </div>
-
-            <!-- Vacancy Details -->
             <div class="jp-card" id="vacCard" style="display:none;">
-              <div class="jp-sec-head" style="background:linear-gradient(135deg,#15803d,#16a34a);"><i class="fa-solid fa-chart-pie"></i> Vacancy Details</div>
+              <div class="jp-sec-head"><i class="fa-solid fa-chart-pie"></i> Vacancy Breakdown (Category-wise)</div>
               <div style="overflow-x:auto;">
                 <table class="jp-vac-table" id="vacTable">
-                  <thead><tr id="vacHead"><th>Category</th><th>Vacancies</th></tr></thead>
+                  <thead><tr><th>Category</th><th>Vacancies</th></tr></thead>
                   <tbody id="vacBody"></tbody>
                 </table>
               </div>
             </div>
-
-            <!-- Selection Process -->
-            <div class="jp-card" id="selCard" style="display:none;">
-              <div class="jp-sec-head" style="background:linear-gradient(135deg,#5b21b6,#7c3aed);"><i class="fa-solid fa-list-check"></i> Selection Process</div>
-              <div style="display:flex;flex-wrap:wrap;gap:8px;padding:14px;" id="selBadges"></div>
-            </div>
-
-            <!-- Important Links -->
             <div class="jp-card">
               <div class="jp-sec-head"><i class="fa-solid fa-link"></i> Important Links</div>
-              <div class="jp-actions" id="linksActions">
+              <div class="jp-actions">
                 <a id="btnApply" href="#" target="_blank" rel="noopener" class="jp-btn jp-btn-green">
                   <span><i class="fa-solid fa-pen-to-square"></i> Apply Online</span>
                   <span class="jp-btn-sub">Official Portal</span>
@@ -744,325 +673,70 @@
     }
 
     /* ── Page renderers ── */
-    function renderJobPage(name, destUrl, parsed, row) {
+    function renderJobPage(name, destUrl, parsed) {
       layoutJob.style.display = 'block';
       layoutNonJob.style.display = 'none';
 
-      /* ── Header ── */
       document.getElementById('jbTitle').textContent = name;
       document.getElementById('jbBadge').textContent = parsed.category.label;
       document.getElementById('jbBadge').style.background = parsed.category.color + '22';
       document.getElementById('jbBadge').style.color = parsed.category.color;
       document.getElementById('metaPosted').textContent = today();
       document.getElementById('metaCat').textContent = parsed.category.label;
+      document.getElementById('statOrg').textContent = parsed.org || '—';
+      document.getElementById('statPosts').textContent = parsed.vac || '—';
+      document.getElementById('statLastDate').textContent = parsed.lastDt || '—';
+      document.getElementById('statApplyMode').textContent = parsed.applyMode;
+      document.getElementById('overviewTitle').textContent = name.replace(/\s+(2025|2026|2027).*/i, '') + ' ' + parsed.year + ' : Overview';
+      document.getElementById('dateToday').textContent = today();
       document.getElementById('bcTitle').textContent = name.length > 60 ? name.slice(0, 57) + '…' : name;
 
-      /* ── Quick Stats — prefer row data over parsed ── */
-      const org      = (row && row.org)       || parsed.org || '—';
-      const totalVac = (row && row.totalVac)  || parsed.vac || 'Various';
-      const lastDate = (row && row.lastDate)  || parsed.lastDt || 'See Notification';
-      const applyMode= (row && row.applyMode) || parsed.applyMode || 'Online';
-      const salary   = (row && row.salary)    || '';
-
-      document.getElementById('statOrg').textContent      = org;
-      document.getElementById('statPosts').textContent    = totalVac;
-      document.getElementById('statLastDate').textContent = lastDate;
-      document.getElementById('statApplyMode').textContent= applyMode;
-      document.getElementById('overviewTitle').textContent= name.replace(/\s+(2025|2026|2027).*/i,'') + ' ' + parsed.year + ' : Overview';
-      document.getElementById('dateToday').textContent    = today();
-
-      if (lastDate && lastDate !== 'See Notification') {
+      if (parsed.lastDt) {
         document.getElementById('metaLastDateWrap').style.display = '';
-        document.getElementById('metaLastDate').textContent = 'Last Date: ' + lastDate;
+        document.getElementById('metaLastDate').textContent = 'Last Date: ' + parsed.lastDt;
         document.getElementById('dateLastRow').style.display = '';
-        document.getElementById('dateLastVal').textContent = lastDate;
+        document.getElementById('dateLastVal').textContent = parsed.lastDt;
+        // Urgency badge — within 7 days
         try {
-          const parts = lastDate.split(/[-\/]/);
+          const parts = parsed.lastDt.split(/[-\/]/);
           const d = new Date(parts[2], parts[1]-1, parts[0]);
           const diff = (d - Date.now()) / 864e5;
           if (diff >= 0 && diff <= 7) document.getElementById('jbUrgentBadge').style.display = '';
         } catch (_) {}
       }
+
+      // Check if new (≤ 30 days; always show for slug-based pages)
       document.getElementById('jbNewBadge').style.display = '';
 
-      /* ── SR/SRS filter helpers — used by CTA + Important Links ── */
-      function isSRUrl(u) {
-        return !!(u && (u.includes('sarkariresult.com') || u.includes('sarkariresultshine.com')));
-      }
-      function officialOnly(u) { return isSRUrl(u) ? '' : u; }
-
-      /* ── Main CTA button ── */
-      /* RULE: ONLY official links — sarkariresult.com / sarkariresultshine.com NEVER shown.
-         Priority: first non-SR/SRS link from useful_links → officialWebsiteLink → officialWebsite → applyOnline */
-      const mainCta = document.getElementById('btnMainCta');
-
-      function getFirstOfficialFromUsefulLinks(arr) {
-        if (!Array.isArray(arr)) return '';
-        for (const ul of arr) {
-          const rawLinks = ul.links || ul.url || ul.href || '';
-          const linkArr = Array.isArray(rawLinks) ? rawLinks : [rawLinks];
-          for (const rawUrl of linkArr) {
-            const href = normalizeUrl(safe(rawUrl));
-            if (href && href !== '#' && !isSRUrl(href)) return href;
-          }
-        }
-        return '';
-      }
-
-      const _ctaOfficialUrl = (
-        getFirstOfficialFromUsefulLinks((row && row.usefulLinks) || []) ||
-        officialOnly(row && row.officialWebsiteLink)                   ||
-        officialOnly(row && row.officialWebsite)                       ||
-        officialOnly(row && row.applyOnline)                           ||
-        ''
-      );
-      const finalDest = normalizeUrl(_ctaOfficialUrl) || '';
-      if (finalDest) {
-        mainCta.href = finalDest;
-        const ctaSub = mainCta.querySelector('.jp-main-cta-sub');
-        if (ctaSub) {
-          try {
-            const domain = new URL(finalDest).hostname.replace(/^www\./, '');
-            ctaSub.textContent = domain + ' पर जाएँ';
-          } catch (_) {
-            ctaSub.textContent = 'Official Website पर जाएँ';
-          }
-        }
-      } else {
-        mainCta.style.opacity = '.5'; mainCta.style.pointerEvents = 'none';
-        const ctaSub = mainCta.querySelector('.jp-main-cta-sub');
-        if (ctaSub) ctaSub.textContent = 'Link not available';
-      }
-
-      /* ── Overview Table ── */
+      // Build overview table
       const tbody = document.querySelector('#jbTable tbody');
-      const ovRows = [
-        ['Organisation',         org],
-        ['Post Name / Board',    name],
-        ['Total Vacancies',      totalVac || 'Various'],
-        ['Job Type',             safe((row && row.category) || parsed.category.label || 'Govt Job')],
-        ['Application Mode',     applyMode],
-        salary ? ['Salary / Pay Scale', salary] : null,
-        (row && row.appBegin) ? ['Application Begin',      row.appBegin]  : null,
-        { label: 'Last Date to Apply', val: lastDate, cls: 'lastdate-row' },
-        (row && row.feeLastDate) ? ['Fee Payment Last Date', row.feeLastDate] : null,
-        (row && row.examDate)    ? ['Exam Date',             row.examDate]    : null,
-        (row && row.admitDate)   ? ['Admit Card',            row.admitDate]   : null,
-        (row && row.resultDate)  ? ['Result Date',           row.resultDate]  : null,
-        ['Official Website',     'Visit links below'],
-      ].filter(Boolean);
-
-      tbody.innerHTML = ovRows.map(r => {
-        if (typeof r === 'object' && r.cls) {
-          return `<tr class="${r.cls}"><th>${r.label}</th><td>${safe(r.val)}</td></tr>`;
-        }
-        return `<tr><th>${r[0]}</th><td>${r[1]}</td></tr>`;
+      const rows = [
+        ['Organisation', parsed.org || humanizeSlug(rawSlug.split('-').slice(0,3).join('-'))],
+        ['Post Name', name],
+        ['Total Vacancies', parsed.vac || 'See Notification'],
+        ['Application Mode', parsed.applyMode],
+        ['Last Date to Apply', parsed.lastDt || 'See Notification'],
+        ['Official Website', 'Visit below'],
+      ];
+      tbody.innerHTML = rows.map(([th, td], i) => {
+        const cls = i === rows.length - 2 && parsed.lastDt ? ' class="lastdate-row"' : '';
+        return `<tr${cls}><th>${th}</th><td>${td}</td></tr>`;
       }).join('');
 
-      /* ── Short Info ── */
-      if (row && row.shortInfo) {
-        const si = document.getElementById('shortInfoCard');
-        if (si) { si.style.display = ''; document.getElementById('shortInfoText').textContent = row.shortInfo; }
+      // Buttons
+      const applyBtn = document.getElementById('btnApply');
+      const notifBtn = document.getElementById('btnNotification');
+      const webBtn   = document.getElementById('btnWebsite');
+      const mainCta  = document.getElementById('btnMainCta');
+
+      if (destUrl) {
+        applyBtn.href = destUrl; notifBtn.href = destUrl;
+        webBtn.href = destUrl;   mainCta.href = destUrl;
+      } else {
+        [applyBtn, notifBtn, webBtn, mainCta].forEach(el => { el.style.opacity = '.5'; el.style.pointerEvents = 'none'; });
       }
 
-      /* ── Important Dates card ── */
-      const dateRows = [];
-      if (row) {
-        if (row.appBegin)    dateRows.push({ l: 'Application Start',       v: row.appBegin,    red: false });
-        if (row.lastDate)    dateRows.push({ l: 'Last Date to Apply',      v: row.lastDate,    red: true  });
-        if (row.feeLastDate) dateRows.push({ l: 'Fee Payment Last Date',   v: row.feeLastDate, red: false });
-        if (row.corrDate)    dateRows.push({ l: 'Correction Last Date',    v: row.corrDate,    red: false });
-        if (row.examDate)    dateRows.push({ l: 'Exam Date',               v: row.examDate,    red: false });
-        if (row.admitDate)   dateRows.push({ l: 'Admit Card Date',         v: row.admitDate,   red: false });
-        if (row.resultDate)  dateRows.push({ l: 'Result Date',             v: row.resultDate,  red: false });
-      }
-      const datesCard = document.getElementById('datesDetailCard');
-      if (datesCard && dateRows.length > 0) {
-        datesCard.style.display = '';
-        document.getElementById('datesDetailBody').innerHTML = dateRows.map(dr =>
-          `<tr><th>${dr.l}</th><td style="${dr.red ? 'color:#dc2626;font-weight:800;' : ''}">${dr.v}</td></tr>`
-        ).join('');
-        // Also update sidebar dates
-        document.getElementById('dateLastRow').style.display = '';
-      }
-
-      /* ── Application Fee card ── */
-      const feeItems = [];
-      if (row) {
-        if (row.feeGen) feeItems.push(['General / UR',   row.feeGen]);
-        if (row.feeObc) feeItems.push(['OBC',            row.feeObc]);
-        if (row.feeEws) feeItems.push(['EWS',            row.feeEws]);
-        if (row.feeSc)  feeItems.push(['SC',             row.feeSc]);
-        if (row.feeSt)  feeItems.push(['ST',             row.feeSt]);
-        if (row.feeFem) feeItems.push(['Female',         row.feeFem]);
-        if (row.feePh)  feeItems.push(['PH / Divyang',   row.feePh]);
-      }
-      const feeCard = document.getElementById('feeCard');
-      if (feeCard && feeItems.length > 0) {
-        feeCard.style.display = '';
-        const isFree = (v) => /nil|0|free/i.test(v);
-        document.getElementById('feeGrid').innerHTML = feeItems.map(([lbl,val]) =>
-          `<div class="jp-kv-item"><div class="jp-kv-label">${lbl}</div>
-           <div class="jp-kv-val ${isFree(val)?'free':'paid'}">${val}</div></div>`
-        ).join('');
-      }
-
-      /* ── Age Limit card ── */
-      if (row && (row.minAge || row.maxAge || row.ageRelax)) {
-        const ageCard = document.getElementById('ageCard');
-        if (ageCard) {
-          ageCard.style.display = '';
-          const ageRows = [];
-          if (row.minAge)   ageRows.push(['Minimum Age', row.minAge]);
-          if (row.maxAge)   ageRows.push(['Maximum Age', row.maxAge]);
-          if (row.ageRelax) ageRows.push(['Age Relaxation', row.ageRelax]);
-          document.getElementById('ageTableBody').innerHTML = ageRows.map(([k,v])=>`<tr><th>${k}</th><td>${v}</td></tr>`).join('');
-        }
-      }
-
-      /* ── Qualification card ── */
-      if (row && (row.eduQual || row.expReqd)) {
-        const qCard = document.getElementById('qualCard');
-        if (qCard) {
-          qCard.style.display = '';
-          let qHtml = '';
-          if (row.eduQual) qHtml += `<div class="jp-detail-text"><strong>Education Qualification:</strong> ${row.eduQual}</div>`;
-          if (row.expReqd) qHtml += `<div class="jp-detail-text"><strong>Experience Required:</strong> ${row.expReqd}</div>`;
-          document.getElementById('qualContent').innerHTML = qHtml;
-        }
-      }
-
-      /* ── Selection Process card ── */
-      if (row && row.selProc) {
-        const spCard = document.getElementById('selCard');
-        if (spCard) {
-          spCard.style.display = '';
-          let steps = [];
-          if (Array.isArray(row.selProc)) steps = row.selProc;
-          else if (typeof row.selProc === 'string') steps = row.selProc.split(/[,\n;\/]/).map(s=>s.trim()).filter(Boolean);
-          if (steps.length) {
-            document.getElementById('selBadges').innerHTML = steps.map(s =>
-              `<div class="jp-sel-badge"><i class="fa-solid fa-check-circle"></i>${s.slice(0,80)}</div>`
-            ).join('');
-          }
-        }
-      }
-
-      /* ── Vacancy Details table ── */
-      const vd = (row && row.vd) || [];
-      const vacCard = document.getElementById('vacCard');
-      const vacBody = document.getElementById('vacBody');
-      if (vacCard && vd.length > 0) {
-        vacCard.style.display = '';
-        /* Detect columns present */
-        const colKeys = ['post_name','category','total','general','obc','ews','sc','st','ph','salary','eligibility'];
-        const colLabels = {post_name:'Post Name',category:'Category',total:'Total',general:'General/UR',obc:'OBC',ews:'EWS',sc:'SC',st:'ST',ph:'PH/PwD',salary:'Salary',eligibility:'Eligibility'};
-        const usedCols = colKeys.filter(k => vd.some(r => safe(r[k])));
-        const thead = document.getElementById('vacHead') || vacCard.querySelector('thead tr');
-        if (thead) thead.innerHTML = usedCols.map(k=>`<th>${colLabels[k]||k}</th>`).join('');
-        vacBody.innerHTML = vd.map(r =>
-          `<tr>${usedCols.map(k=>`<td>${safe(r[k])}</td>`).join('')}</tr>`
-        ).join('');
-      } else if (vacCard) {
-        /* Category-wise vacancy fallback */
-        const cwRows = [];
-        if (row) {
-          if (row.cwVacGen) cwRows.push(['General / UR', row.cwVacGen]);
-          if (row.cwVacObc) cwRows.push(['OBC',          row.cwVacObc]);
-          if (row.cwVacEws) cwRows.push(['EWS',          row.cwVacEws]);
-          if (row.cwVacSc)  cwRows.push(['SC',           row.cwVacSc]);
-          if (row.cwVacSt)  cwRows.push(['ST',           row.cwVacSt]);
-          if (row.cwVacPh)  cwRows.push(['PH / PwD',    row.cwVacPh]);
-        }
-        if (cwRows.length > 0) {
-          vacCard.style.display = '';
-          const thead = document.getElementById('vacHead') || vacCard.querySelector('thead tr');
-          if (thead) thead.innerHTML = '<th>Category</th><th>Vacancies</th>';
-          vacBody.innerHTML = cwRows.map(([cat,cnt])=>`<tr><td>${cat}</td><td>${cnt}</td></tr>`).join('');
-        }
-      }
-
-      /* ── Important Links card ── */
-      /* RULE: Show ONLY links from useful_links array in JSON.
-         Static field fallbacks removed. SR/SRS links always blocked. */
-
-      /* ── Smart link categorization by title keyword ── */
-      function categorizeLinkByTitle(title) {
-        const t = title.toLowerCase();
-        if (/apply\s*online|apply\s*link|registration\s*link|apply\s*form|apply\s*for\s*correction|apply\s*through\s*otr|apply\s*via|otr\s*registration|for\s*otr|sewayojan\s*reg|uppsc.*otr|apply.*sub\s*inspector|apply.*constable|apply.*manager|apply.*inspector|apply.*lucknow|apply.*noida|apply.*mains|apply.*ug|apply.*pg|apply.*re\s*open|apply.*other/i.test(t))
-          return { icon: 'fa-paper-plane',          cls: 'jp-btn-green',  sub: 'Apply Now' };
-        if (/candidate\s*login|login\s*portal|dashboard\s*login|uppsc.*dash|find.*registration/i.test(t))
-          return { icon: 'fa-right-to-bracket',     cls: 'jp-btn-green',  sub: 'Login Here' };
-        if (/admit\s*card|hall\s*ticket|call\s*letter|download\s*admit|pre\s*admit|second.*phase.*admit|tier.*admit|pet.*admit/i.test(t))
-          return { icon: 'fa-id-card',              cls: 'jp-btn-orange', sub: 'Download Now' };
-        if (/exam\s*city|exam\s*centre|slot\s*booking|self\s*slot/i.test(t))
-          return { icon: 'fa-location-dot',         cls: 'jp-btn-blue',   sub: 'Check City' };
-        if (/answer\s*key|final\s*answer\s*key|response\s*sheet|raise\s*objection|objection\s*link|for\s*answer\s*key|paper.*answer\s*key|tier.*answer\s*key|second.*answer\s*key/i.test(t))
-          return { icon: 'fa-key',                  cls: 'jp-btn-blue',   sub: 'Download Now' };
-        if (/result|merit\s*list|selection\s*list|score\s*card|cutoff|cut.?off|download.*result|first.*phase.*result|paper.*result|tier.*result|eligibility.*result|final.*result|ias.*result|ifs.*result|jee.*result|bseb.*result|upsssc.*result/i.test(t) && !/notice|pdf/i.test(t))
-          return { icon: 'fa-trophy',               cls: 'jp-btn-orange', sub: 'View Result' };
-        if (/syllabus|exam\s*pattern|previous\s*paper|practice\s*set|pgt\s*syllabus/i.test(t))
-          return { icon: 'fa-book-open',            cls: 'jp-btn-blue',   sub: 'Download Now' };
-        if (/notification|official\s*notif|download\s*notif|short\s*notice|detailed\s*advert|info\s*brochure|exam\s*notice|mains.*notice|revised.*notif|date.*notice|correction.*notif|re.*schedule|re.*open.*notice|compartment.*notice|download\s*go|download.*notice/i.test(t))
-          return { icon: 'fa-file-pdf',             cls: 'jp-btn-blue',   sub: 'View PDF' };
-        if (/counselling|seat\s*allotment|choice\s*filling|admission\s*form/i.test(t))
-          return { icon: 'fa-graduation-cap',       cls: 'jp-btn-blue',   sub: 'Counselling' };
-        if (/interview\s*letter|dv\s*schedule|joining\s*letter/i.test(t))
-          return { icon: 'fa-calendar-check',       cls: 'jp-btn-orange', sub: 'Download Now' };
-        if (/correction|edit\s*form|form\s*edit|modify.*form|how\s*to.*edit/i.test(t))
-          return { icon: 'fa-pen-to-square',        cls: 'jp-btn-blue',   sub: 'Edit Form' };
-        if (/official\s*website|official\s*portal|visit\s*website|ctet\s*official/i.test(t))
-          return { icon: 'fa-globe',                cls: 'jp-btn-red',    sub: 'Visit Now' };
-        if (/vacancy|revised.*vacancy|vacancies/i.test(t))
-          return { icon: 'fa-users',                cls: 'jp-btn-blue',   sub: 'View Details' };
-        if (/how\s*to|video|hindi.*video/i.test(t))
-          return { icon: 'fa-circle-play',          cls: 'jp-btn-red',    sub: 'Watch Now' };
-        return { icon: 'fa-link',                   cls: 'jp-btn-blue',   sub: 'Click Here' };
-      }
-
-      /* ── useful_links from JSON — ONLY source for Important Links ── */
-      const usefulLinksRaw = (row && row.usefulLinks) || [];
-
-      const linksContainer = document.getElementById('linksActions');
-      if (linksContainer) {
-        const allLinks = [];
-        const seenHrefs = new Set();
-
-        /* Render ALL useful_links — SR/SRS filtered, no static field fallbacks */
-        usefulLinksRaw.forEach(ul => {
-          const t = safe(ul.title || ul.name || '');
-          if (!t) return;
-          const rawLinks = ul.links || ul.url || ul.href || '';
-          const linkArr = Array.isArray(rawLinks) ? rawLinks : [rawLinks];
-          linkArr.forEach((rawUrl, idx) => {
-            const href = normalizeUrl(safe(rawUrl));
-            if (!href || href === '#') return;
-            if (isSRUrl(href)) return;           /* sarkariresult/sarkariresultshine — never show */
-            if (seenHrefs.has(href)) return;
-            seenHrefs.add(href);
-            const label = linkArr.length > 1 ? `${t} (${idx + 1})` : t;
-            const cat = categorizeLinkByTitle(t);
-            allLinks.push({ href, label, icon: cat.icon, cls: cat.cls, sub: cat.sub });
-          });
-        });
-
-        let linksHtml = allLinks.map(lk =>
-          `<a href="${lk.href}" target="_blank" rel="noopener" class="jp-btn ${lk.cls}">
-            <span><i class="fa-solid ${lk.icon}"></i> ${lk.label.slice(0, 55)}</span>
-            <span class="jp-btn-sub">${lk.sub}</span>
-          </a>`
-        ).join('');
-
-        /* Fallback only when useful_links completely empty */
-        if (!linksHtml) {
-          linksHtml = `<p style="color:#64748b;font-size:.83rem;padding:4px;">
-            Links not available. Please check official website.</p>`;
-        }
-
-        linksContainer.innerHTML = linksHtml;
-      }
-
-      /* ── Share buttons ── */
+      // Share buttons
       const pageUrl   = encodeURIComponent(location.href);
       const pageTitle = encodeURIComponent(name + ' | Top Sarkari Jobs');
       document.getElementById('shFb').href = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
@@ -1070,28 +744,7 @@
       document.getElementById('shWa').href = `https://wa.me/?text=${pageTitle}%20${pageUrl}`;
       document.getElementById('shTg').href = `https://t.me/share/url?url=${pageUrl}&text=${pageTitle}`;
 
-      /* ── Highlights ── */
-      const hlItems = [
-        org      ? `Organisation: ${org}` : null,
-        totalVac ? `Total Posts: ${totalVac}` : null,
-        salary   ? `Salary: ${salary.slice(0,60)}` : null,
-        lastDate ? `⚠ Last Date: ${lastDate}` : null,
-        applyMode? `Apply Mode: ${applyMode}` : null,
-      ].filter(Boolean);
-      if (hlItems.length) {
-        document.getElementById('hlList').innerHTML = hlItems.map(h =>
-          `<div class="jp-hl-item"><i class="fa-solid fa-circle-check"></i><span>${h}</span></div>`
-        ).join('');
-      }
-
-      /* ── Sidebar section link ── */
-      const secLink = document.getElementById('bcSectionLink');
-      if (row && row.secId) {
-        secLink.textContent = humanizeSlug(row.secId);
-        secLink.href = `/view.html?section=${encodeURIComponent(row.secId)}`;
-      }
-
-      /* ── SEO ── */
+      // SEO
       injectSEO(name, rawSlug, parsed);
     }
 
@@ -1119,186 +772,110 @@
       catch (_) { return null; }
     }
 
-    /* ── Convert Complete_Jobs_Full_Data.json → flat items list ── */
-    const _JOBS_CAT_META_JI = {
-      "Latest_Notifications": { id: "Latest Notifications",    title: "Latest Notifications" },
-      "10TH_Pass":            { id: "10th Pass jobs",           title: "10th Pass Jobs" },
-      "8TH_Pass":             { id: "8th Pass",                 title: "8th Pass Jobs" },
-      "12TH_Pass":            { id: "12th Pass jobs",           title: "12th Pass Jobs" },
-      "Diploma":              { id: "Diploma Jobs",              title: "Diploma Jobs" },
-      "ITI":                  { id: "ITI Jobs",                  title: "ITI Jobs" },
-      "B_Tech_BE":            { id: "B.Tech Jobs",              title: "B.Tech / B.E. Jobs" },
-      "B_Com":                { id: "B.Com Jobs",               title: "B.Com Jobs" },
-      "Any_Graduate":         { id: "Graduation jobs",          title: "Any Graduate Jobs" },
-      "Any_Post_Graduate":    { id: "Post Graduation jobs",     title: "Post Graduate Jobs" },
-      "Railway_Jobs":         { id: "Railway Jobs",             title: "Railway Jobs" },
-      "Police_Defence":       { id: "Police Jobs",              title: "Police / Defence Jobs" },
-      "Teaching_Faculty":     { id: "Teacher Jobs",             title: "Teaching / Faculty Jobs" },
-      "Bank_Jobs":            { id: "Bank Jobs",                title: "Bank Jobs" },
-      "Medical_Hospital":     { id: "Medical/ Healthcare Jobs", title: "Medical / Hospital Jobs" },
+    /* ── Convert title to slug (must match jobs-index.json key generation) ── */
+    function titleToSlug(title) {
+      return safe(title)
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, '')   // remove special chars except hyphen
+        .replace(/[\s_]+/g, '-')    // spaces → hyphens
+        .replace(/-+/g, '-')        // collapse multiple hyphens
+        .replace(/^-+|-+$/g, '');   // trim leading/trailing hyphens
+    }
+
+    /* ── CAT_META: maps jobs-index.json "cat" values → Complete_Jobs_Full_Data.json keys ── */
+    const CAT_META = {
+      '10TH_Pass':          '10TH_Pass',
+      '8TH_Pass':           '8TH_Pass',
+      '12TH_Pass':          '12TH_Pass',
+      'Diploma':            'Diploma',
+      'ITI':                'ITI',
+      'B_Tech_BE':          'B_Tech_BE',
+      'B_Com':              'B_Com',
+      'Any_Graduate':       'Any_Graduate',
+      'Any_Post_Graduate':  'Any_Post_Graduate',
+      'Railway_Jobs':       'Railway_Jobs',
+      'Police_Defence':     'Police_Defence',
+      'Teaching_Faculty':   'Teaching_Faculty',
+      'Bank_Jobs':          'Bank_Jobs',
+      'Medical_Hospital':   'Medical_Hospital',
+      'Latest_Notifications':'Latest_Notifications',
     };
 
-    /* ── Parse flat LINK.txt-style fields from a job object ── */
-    function parseFullJob(job, secId) {
+    /* ── Cache for loaded JSON files (avoid re-fetching) ── */
+    const _jsonCache = {};
+    async function fetchJSON(path) {
+      if (_jsonCache[path]) return _jsonCache[path];
+      const r = await fetch(path);
+      if (!r.ok) return null;
+      const d = await r.json();
+      _jsonCache[path] = d;
+      return d;
+    }
+
+    /* ── Parse a raw job object from Complete_Jobs_Full_Data.json ── */
+    function parseRawJob(job, catKey) {
       const bd  = job.basic_details  || {};
-      const il  = job.important_links || job.important_links_obj || {};
+      const il  = job.important_links || {};
       const id  = job.important_dates || {};
-      const fee = job.application_fee || job.application_fees || {};
+      const fee = job.application_fee || {};
       const age = job.age_limit       || {};
       const qual= job.qualification   || {};
       const vd  = job.vacancy_details || [];
       const cwv = job.category_wise_vacancy || {};
 
-      /* Title — try flat fields first (LINK.txt style), then basic_details */
       const title = safe(
-        job.title || job.post_name || bd.job_title || bd.post_name || ''
+        bd.job_title || bd.post_name || job.title || job.post_name || ''
       ).slice(0, 600);
 
-      /* Organisation */
       const org = safe(
-        job.organization || job.board_name || job.department ||
-        bd.organization_name || bd.department || ''
+        bd.organization_name || bd.department || job.organization || ''
       );
-
-      /* Total vacancy */
       const totalVac = safe(
-        job.total_vacancy || job.total_vacancies || bd.total_vacancies || ''
+        bd.total_vacancies || job.total_vacancy || job.total_vacancies || ''
       );
-
-      /* Apply mode */
-      let applyMode = safe(job.apply_mode || bd.apply_mode || bd.application_mode || 'Online');
+      let applyMode = safe(bd.application_mode || bd.apply_mode || job.apply_mode || 'Online');
       if (!applyMode || applyMode === '-') applyMode = 'Online';
+      const salary = safe(bd.salary || bd.salary_pay_scale || job.salary || '');
+      const shortInfo = safe(bd.short_information || job.short_information || '');
+      const selProc = job.selection_process || bd.selection_process || '';
+      const category = safe(bd.job_type || job.category || catKey || '');
 
-      /* ── Extract links from useful_links array by title keyword ── */
-      /* useful_links se title match karke specific links nikalte hain */
+      const lastDate    = safe(id.last_date_to_apply || id.last_date || id.application_last_date || job.last_date || '');
+      const appBegin    = safe(id.application_begin  || id.application_start  || id.start_date || '');
+      const examDate    = safe(id.exam_date          || job.exam_date || '');
+      const admitDate   = safe(id.admit_card_date    || id.admit_card || '');
+      const resultDate  = safe(id.result_date        || '');
+      const feeLastDate = safe(id.fee_payment_last_date || id.fee_last_date || '');
+      const corrDate    = safe(id.correction_last_date  || '');
+
+      const feeGen = safe(fee.general_fee || fee.general || fee.ur || '');
+      const feeObc = safe(fee.obc_fee     || fee.obc     || '');
+      const feeEws = safe(fee.ews_fee     || fee.ews     || '');
+      const feeSc  = safe(fee.sc_fee      || fee.sc      || '');
+      const feeSt  = safe(fee.st_fee      || fee.st      || '');
+      const feeFem = safe(fee.female_fee  || fee.female  || '');
+      const feePh  = safe(fee.ph_fee      || fee.ph      || fee.pwd || '');
+
+      const minAge   = safe(age.minimum_age   || '');
+      const maxAge   = safe(age.maximum_age   || age.age_details || age.age_limit || '');
+      const ageRelax = safe(age.age_relaxation || age.details    || '');
+      const eduQual  = safe(qual.education_qualification || qual.eligibility || '');
+      const expReqd  = safe(qual.experience_required     || '');
+
+      const applyOnline     = safe(il.apply_online     || il.apply_link      || '');
+      const officialWebsite = safe(il.official_website || il.visit_website   || job.official_website_link || '');
+      const notifPdf        = safe(il.official_notification || il.download_notification || il.notification_pdf || '');
+      const admitCard       = safe(il.admit_card       || '');
+      const result          = safe(il.result           || '');
+      const answerKey       = safe(il.answer_key       || il.final_answer_key || '');
+      const syllabus        = safe(il.syllabus         || '');
+      const candidateLogin  = safe(il.candidate_login  || '');
+
       const usefulLinks = Array.isArray(job.useful_links) ? job.useful_links : [];
-      function getUsefulLink(rxList) {
-        for (const ul of usefulLinks) {
-          const t = safe(ul.title || ul.name || '').toLowerCase();
-          if (rxList.some(rx => rx.test(t))) {
-            const raw = ul.links || ul.url || '';
-            const first = Array.isArray(raw) ? raw[0] : raw;
-            return safe(first);
-          }
-        }
-        return '';
-      }
 
-      /* ── Helper: filter SR/SRS URLs at parse time ── */
-      function _noSR(u) {
-        const s = safe(u);
-        if (!s) return '';
-        if (s.includes('sarkariresult.com') || s.includes('sarkariresultshine.com')) return '';
-        return s;
-      }
+      /* destUrl: prefer apply link, fallback to official site */
+      const destUrl = normalizeUrl(applyOnline || officialWebsite || '');
 
-      /* Source / apply URL — ONLY from important_links obj or useful_links, NOT source_url */
-      /* SR/SRS URLs filtered at parse time */
-      const applyOnline = safe(
-        _noSR(il.apply_online) || _noSR(il.apply_link) || _noSR(il.registration) ||
-        getUsefulLink([/apply\s*online|apply\s*link|registration\s*link|apply\s*form|apply.*otr|apply.*mains|apply.*re\s*open|apply.*other|apply.*sub|apply.*constable|apply.*manager|apply.*inspector|apply.*lucknow|apply.*noida|apply.*ug|apply.*pg/i]) ||
-        ''
-      );
-      const officialWebsite = safe(
-        _noSR(il.official_website) || _noSR(il.visit_website) ||
-        getUsefulLink([/official\s*website|official\s*portal|visit\s*website|ctet\s*official/i]) ||
-        _noSR(job.official_website_link) || ''
-      );
-      const notifPdf = safe(
-        _noSR(il.official_notification) || _noSR(il.download_notification) ||
-        _noSR(il.notification_pdf) || _noSR(il.download_pdf) ||
-        getUsefulLink([/notification|download\s*notif|short\s*notice|detailed\s*advert|info\s*brochure|exam\s*notice|download.*notice|download\s*go/i]) ||
-        _noSR(job.form_pdf_free_link) || ''
-      );
-      const candidateLogin = safe(
-        _noSR(il.candidate_login) || _noSR(il.login) ||
-        getUsefulLink([/candidate\s*login|login\s*portal|dashboard\s*login/i]) || ''
-      );
-      const admitCard = safe(
-        _noSR(il.admit_card) || _noSR(il.admit_card_link) ||
-        getUsefulLink([/admit\s*card|hall\s*ticket|call\s*letter|download\s*admit|pet\s*admit|tier.*admit|second.*admit/i]) || ''
-      );
-      const result = safe(
-        _noSR(il.result) || _noSR(il.result_link) ||
-        getUsefulLink([/^download\s*result|^result$|download.*final\s*result|merit\s*list|score\s*card|paper.*result|tier.*result|eligibility.*result|ias.*result|ifs.*result|jee.*result|bseb.*result/i]) || ''
-      );
-      const answerKey = safe(
-        _noSR(il.answer_key) || _noSR(il.final_answer_key) ||
-        getUsefulLink([/answer\s*key|final\s*answer\s*key|response\s*sheet|paper.*answer\s*key|tier.*answer\s*key|second.*answer\s*key/i]) || ''
-      );
-      const syllabus = safe(
-        _noSR(il.syllabus) || _noSR(il.syllabus_pdf) ||
-        getUsefulLink([/syllabus|exam\s*pattern|previous\s*paper|practice\s*set|pgt\s*syllabus/i]) || ''
-      );
-      const meritList = safe(
-        _noSR(il.merit_list) ||
-        getUsefulLink([/merit\s*list|selection\s*list/i]) || ''
-      );
-      const scoreCard = safe(
-        _noSR(il.score_card) ||
-        getUsefulLink([/score\s*card|cutoff|cut.?off/i]) || ''
-      );
-      const examCity = safe(
-        _noSR(il.exam_city) ||
-        getUsefulLink([/exam\s*city|exam\s*centre|slot\s*booking|check\s*exam\s*city/i]) || ''
-      );
-
-      /* Primary dest URL for main CTA — source_url (SR link) NEVER used */
-      const destUrl = normalizeUrl(
-        applyOnline || officialWebsite ||
-        _noSR(job.official_website_link) || _noSR(bd.official_website_link) || ''
-      );
-
-      /* Dates */
-      const lastDate   = safe(
-        id.last_date || id.application_last_date || id.last_date_for_apply ||
-        job.last_date || ''
-      );
-      const appBegin   = safe(
-        id.application_begin || id.application_start || id.start_date ||
-        job.application_begin || ''
-      );
-      const examDate   = safe(id.exam_date || job.exam_date || '');
-      const admitDate  = safe(id.admit_card_date || id.admit_card || '');
-      const resultDate = safe(id.result_date || '');
-      const feeLastDate= safe(id.fee_payment_last_date || id.fee_last_date || '');
-      const corrDate   = safe(id.correction_last_date || '');
-
-      /* Application fee */
-      const feeGen = safe(fee.general || fee.ur  || job.application_fee || '');
-      const feeObc = safe(fee.obc  || '');
-      const feeEws = safe(fee.ews  || '');
-      const feeSc  = safe(fee.sc   || '');
-      const feeSt  = safe(fee.st   || '');
-      const feeFem = safe(fee.female || '');
-      const feePh  = safe(fee.ph   || fee.pwd || '');
-
-      /* Age */
-      const minAge    = safe(job.minimum_age || age.minimum_age || '');
-      const maxAge    = safe(job.maximum_age || age.maximum_age || age.age_limit || '');
-      const ageRelax  = safe(job.age_relaxation || age.age_relaxation || age.details || '');
-
-      /* Qualification */
-      const eduQual   = safe(
-        job.education_qualification || job.eligibility ||
-        qual.education_qualification || qual.eligibility || ''
-      );
-      const expReqd   = safe(
-        job.experience_required || qual.experience_required || ''
-      );
-
-      /* Salary */
-      const salary    = safe(
-        job.salary || job.salary_pay_scale || bd.salary || bd.salary_pay_scale || ''
-      );
-
-      /* Selection process */
-      const selProc   = job.selection_process || bd.selection_process || '';
-
-      /* Short info */
-      const shortInfo = safe(job.short_information || job.jobs_info || bd.short_information || '');
-
-      /* Category-wise vacancy */
       const cwVacGen = safe(cwv.general || cwv.ur || '');
       const cwVacObc = safe(cwv.obc || '');
       const cwVacEws = safe(cwv.ews || '');
@@ -1306,153 +883,129 @@
       const cwVacSt  = safe(cwv.st  || '');
       const cwVacPh  = safe(cwv.ph  || '');
 
-      /* Offline form specific fields */
-      const formPdfFreeLink       = safe(job.form_pdf_free_link || '');
-      const officialNotifPdfLink  = safe(job.official_notification_pdf_link || '');
-      const officialWebsiteLink   = safe(job.official_website_link || '');
-
       return {
-        title, org, totalVac, applyMode,
-        destUrl, applyOnline, officialWebsite, notifPdf,
-        candidateLogin, admitCard, result, answerKey, syllabus,
-        meritList, scoreCard, examCity,
+        title, org, totalVac, applyMode, salary, shortInfo, selProc, category,
+        destUrl, applyOnline, officialWebsite, notifPdf, admitCard, result,
+        answerKey, syllabus, candidateLogin,
         lastDate, appBegin, examDate, admitDate, resultDate, feeLastDate, corrDate,
         feeGen, feeObc, feeEws, feeSc, feeSt, feeFem, feePh,
-        minAge, maxAge, ageRelax,
-        eduQual, expReqd,
-        salary, selProc, shortInfo,
-        usefulLinks, vd, cwVacGen, cwVacObc, cwVacEws, cwVacSc, cwVacSt, cwVacPh,
-        formPdfFreeLink, officialNotifPdfLink, officialWebsiteLink,
-        secId: secId || '',
-        slug: safe(job.slug || ''),
-        category: safe(job.category || ''),
-        fp: urlRedirectFingerprint(safe(job.source_url || officialWebsite || applyOnline)).toLowerCase()
+        minAge, maxAge, ageRelax, eduQual, expReqd,
+        usefulLinks, vd,
+        cwVacGen, cwVacObc, cwVacEws, cwVacSc, cwVacSt, cwVacPh,
+        secId: catKey || '',
+        formPdfFreeLink: safe(job.form_pdf_free_link || ''),
+        officialNotifPdfLink: safe(job.official_notification_pdf_link || ''),
+        officialWebsiteLink: safe(job.official_website_link || ''),
+        meritList: '', scoreCard: '', examCity: '',
       };
     }
 
-    async function loadAllItems() {
-      try {
-        /* Try merged_sarkari_data.json first */
-        let raw = null;
-        try {
-          const r1 = await fetch('/merged_sarkari_data.json');
-          if (r1.ok) raw = await r1.json();
-        } catch (_) {}
+    /* ── PRIMARY: Exact slug lookup via jobs-index.json + Complete_Jobs_Full_Data.json ── */
+    async function findJobBySlug(slug) {
+      if (!slug) return null;
 
-        /* Fallback to Complete_Jobs_Full_Data.json */
-        if (!raw) {
-          const r2 = await fetch('/Complete_Jobs_Full_Data.json');
-          if (!r2.ok) return [];
-          raw = await r2.json();
+      /* 1. Load jobs-index.json — exact slug → {cat, title} */
+      const idx = await fetchJSON('/jobs-index.json');
+      if (!idx) return null;
+
+      /* Try exact match first */
+      let entry = idx[slug];
+
+      /* If not found, try stripping common duplicate-disambiguation suffixes
+         (jobs-index may have slug-8th-pass, slug-bank-jobs etc for duplicate titles) */
+      if (!entry) {
+        const suffixRx = /-(8th-pass|10th-pass|12th-pass|bank-jobs|any-graduate|any-post-graduate|b-com|b-tech|diploma|iti|police|railway|teaching|medical|latest)$/i;
+        const base = slug.replace(suffixRx, '');
+        if (base !== slug) entry = idx[base];
+      }
+
+      if (!entry) return null;
+
+      const catKey = entry.cat;
+      const entryTitle = safe(entry.title);
+      if (!catKey) return null;
+
+      /* 2. Load Complete_Jobs_Full_Data.json and find the matching job in this category */
+      const fullData = await fetchJSON('/Complete_Jobs_Full_Data.json');
+      if (!fullData) return null;
+
+      const catArray = fullData[catKey];
+      if (!Array.isArray(catArray) || catArray.length === 0) return null;
+
+      /* Match by title within the category — generate slug from each job title and compare */
+      let matched = null;
+
+      /* Pass 1: exact slug match */
+      for (const job of catArray) {
+        const bd = job.basic_details || {};
+        const jobTitle = safe(bd.job_title || bd.post_name || job.title || '');
+        if (!jobTitle) continue;
+        if (titleToSlug(jobTitle) === slug) {
+          matched = job;
+          break;
         }
+      }
 
-        const out = [];
-
-        /* Handle array format */
-        if (Array.isArray(raw)) {
-          for (const job of raw) {
-            const parsed = parseFullJob(job, job.category || 'Latest Notifications');
-            if (!parsed.title) continue;
-            out.push(parsed);
-          }
-          return out;
-        }
-
-        if (typeof raw === 'object') {
-          /* ── merged_sarkari_data.json: handle sarkariresult_categories ── */
-          const srCats = (raw.sarkariresult_data && raw.sarkariresult_data.data)
-                      || raw.sarkariresult_categories || null;
-
-          if (srCats && typeof srCats === 'object') {
-            for (const [catKey, items] of Object.entries(srCats)) {
-              if (!Array.isArray(items)) continue;
-              for (const job of items) {
-                /* SR category items: {title, url, last_date, post_date} */
-                if (!job || typeof job !== 'object') continue;
-                const title = safe(job.title || job.name || '');
-                if (!title) continue;
-                const externalUrl = safe(job.url || job.link || job.source_url || '');
-                const lastDate = safe(job.last_date || '');
-                /* Build a pseudo-full job object so parseFullJob works.
-                   Spread the full original job so useful_links, important_dates,
-                   application_fee, age_limit, total_post, short_information all come through. */
-                const pseudoJob = {
-                  ...job,
-                  title,
-                  source_url: externalUrl,
-                  last_date: lastDate,
-                  category: catKey,
-                  /* Don't inject SR/SRS URL into important_links — _noSR() filters in parseFullJob */
-                  important_links: job.important_links || {},
-                  total_vacancy: job.total_vacancy || job.total_vacancies || job.total_post || '',
-                };
-                const parsed = parseFullJob(pseudoJob, catKey);
-                if (parsed.title) out.push(parsed);
-              }
-            }
-          }
-
-          /* ── merged_sarkari_data.json: sarkariresultshine_jobs ── */
-          if (Array.isArray(raw.sarkariresultshine_jobs)) {
-            for (const job of raw.sarkariresultshine_jobs) {
-              const parsed = parseFullJob(job, 'SR_Offline_Form');
-              if (parsed.title) out.push(parsed);
-            }
-          }
-
-          /* ── Complete_Jobs_Full_Data.json: known category keys ── */
-          for (const [catKey, meta] of Object.entries(_JOBS_CAT_META_JI)) {
-            const jobs = raw[catKey];
-            if (!Array.isArray(jobs)) continue;
-            for (const job of jobs) {
-              const parsed = parseFullJob(job, meta.id);
-              if (!parsed.title) continue;
-              out.push(parsed);
-            }
-          }
-
-          /* ── Any remaining array-value keys ── */
-          const handled = new Set([
-            ...Object.keys(_JOBS_CAT_META_JI),
-            'sarkariresult_categories', 'sarkariresult_data',
-            'sarkariresultshine_jobs'
-          ]);
-          for (const [key, val] of Object.entries(raw)) {
-            if (handled.has(key)) continue;
-            if (Array.isArray(val)) {
-              for (const job of val) {
-                const parsed = parseFullJob(job, key);
-                if (!parsed.title) continue;
-                out.push(parsed);
-              }
-            }
+      /* Pass 2: match against the title stored in jobs-index.json entry */
+      if (!matched && entryTitle) {
+        const entrySlug = titleToSlug(entryTitle);
+        for (const job of catArray) {
+          const bd = job.basic_details || {};
+          const jobTitle = safe(bd.job_title || bd.post_name || job.title || '');
+          if (!jobTitle) continue;
+          if (titleToSlug(jobTitle) === entrySlug || jobTitle === entryTitle) {
+            matched = job;
+            break;
           }
         }
+      }
 
-        return out;
-      } catch (_) { return []; }
+      /* Pass 3: high-precision token match (≥ 0.80) — only within correct category */
+      if (!matched) {
+        const tokens = slug.split('-').filter(t => t.length > 2);
+        let best = null, bestScore = 0;
+        for (const job of catArray) {
+          const bd = job.basic_details || {};
+          const jobTitle = safe(bd.job_title || bd.post_name || job.title || '').toLowerCase();
+          const ts = jobTitle.replace(/[^a-z0-9]+/g, '-');
+          const score = tokens.filter(t => ts.includes(t)).length / tokens.length;
+          if (score > bestScore) { bestScore = score; best = job; }
+        }
+        if (bestScore >= 0.80) matched = best;
+      }
+
+      if (!matched) return null;
+      return parseRawJob(matched, catKey);
     }
 
-    function matchBySlug(items, slug) {
-      if (!slug) return null;
-      /* Exact slug match */
-      const exact = items.find(it => it.slug && it.slug === slug);
-      if (exact) return exact;
-      /* Strip hash suffix (e.g. -bd964d) */
-      const noHash = slug.replace(/-[0-9a-f]{5,8}$/i, '');
-      const exactNoHash = items.find(it => it.slug && (it.slug === noHash || it.slug.replace(/-[0-9a-f]{5,8}$/i,'') === noHash));
-      if (exactNoHash) return exactNoHash;
-
-      /* Token-based fuzzy match on title */
-      const tokens = noHash.split('-').filter(t => t.length > 2);
+    /* ── FALLBACK: load dynamic-sections.json for items not in Complete_Jobs_Full_Data ── */
+    async function findItemInDynamicSections(slug) {
+      const data = await fetchJSON('/dynamic-sections.json');
+      if (!data) return null;
+      const tokens = slug.split('-').filter(t => t.length > 2);
       if (!tokens.length) return null;
       let best = null, bestScore = 0;
-      for (const it of items) {
-        const ts = it.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-        const score = tokens.filter(t => ts.includes(t)).length / tokens.length;
-        if (score > bestScore) { bestScore = score; best = it; }
+      for (const sec of (data.sections || [])) {
+        for (const it of (sec.items || [])) {
+          const title = safe(it.name || it.title || '');
+          if (!title) continue;
+          const ts = titleToSlug(title);
+          /* First try exact slug match */
+          if (ts === slug) {
+            return {
+              title,
+              url: normalizeUrl(safe(it.url || it.link || '')),
+              secId: safe(sec.id || sec.title),
+              destUrl: normalizeUrl(safe(it.url || it.link || '')),
+            };
+          }
+          /* High-precision fuzzy */
+          const score = tokens.filter(t => ts.includes(t)).length / tokens.length;
+          if (score > bestScore) { bestScore = score; best = { title, url: normalizeUrl(safe(it.url||it.link||'')), secId: safe(sec.id||sec.title), destUrl: normalizeUrl(safe(it.url||it.link||'')) }; }
+        }
       }
-      return bestScore >= 0.45 ? best : null;
+      /* Only return if very confident — threshold 0.80 to avoid wrong matches */
+      return bestScore >= 0.80 ? best : null;
     }
 
     /* ── Main ── */
@@ -1463,60 +1016,67 @@
         return;
       }
 
-      /* Read optional ?ref= URL passed from index.html SR section */
-      const refUrl = (() => {
-        try {
-          return new URLSearchParams(window.location.search).get('ref') || '';
-        } catch (_) { return ''; }
-      })();
+      let row = null;
 
-      let items = [];
-      try { items = await loadAllItems(); } catch (_) {}
+      /* Step 1: Try exact slug lookup via jobs-index.json → Complete_Jobs_Full_Data.json */
+      try { row = await findJobBySlug(rawSlug); } catch (_) {}
 
-      let row = matchBySlug(items, rawSlug);
-
-      /* If we found a row but it has no destUrl, use refUrl */
-      if (row && !row.destUrl && refUrl) {
-        row = Object.assign({}, row, {
-          destUrl: refUrl,
-          applyOnline: refUrl,
-          officialWebsite: refUrl
-        });
+      /* Step 2: Fallback to dynamic-sections.json */
+      if (!row) {
+        let dynItem = null;
+        try { dynItem = await findItemInDynamicSections(rawSlug); } catch (_) {}
+        if (dynItem) {
+          row = {
+            title:   dynItem.title,
+            destUrl: dynItem.url || dynItem.destUrl || '',
+            applyOnline: dynItem.url || '',
+            officialWebsite: dynItem.url || '',
+            officialWebsiteLink: dynItem.url || '',
+            secId:   dynItem.secId || '',
+            org: '', totalVac: '', applyMode: 'Online', salary: '',
+            lastDate: '', appBegin: '', shortInfo: '', selProc: '',
+            usefulLinks: [], vd: [],
+            feeGen:'', feeObc:'', feeEws:'', feeSc:'', feeSt:'', feeFem:'', feePh:'',
+            minAge:'', maxAge:'', ageRelax:'', eduQual:'', expReqd:'',
+            notifPdf:'', admitCard:'', result:'', answerKey:'', syllabus:'',
+            candidateLogin:'', meritList:'', scoreCard:'', examCity:'',
+            cwVacGen:'', cwVacObc:'', cwVacEws:'', cwVacSc:'', cwVacSt:'', cwVacPh:'',
+            formPdfFreeLink:'', officialNotifPdfLink:'',
+          };
+        }
       }
 
       if (!row) {
+        /* Final fallback: render from slug text alone (no data available) */
         const humanTitle = humanizeSlug(rawSlug);
-        if (refUrl) {
-          /* Build minimal row from slug + refUrl */
-          const parsed = parseJob(humanTitle);
-          const minRow = {
-            title: humanTitle,
-            destUrl: refUrl,
-            applyOnline: refUrl,
-            officialWebsite: refUrl,
-            org: parsed.org || '',
-            totalVac: parsed.vac || 'See Notification',
-            lastDate: parsed.lastDt || 'See Notification',
-            applyMode: parsed.applyMode || 'Online',
-            usefulLinks: [],
-            vd: []
-          };
-          renderJobPage(humanTitle, refUrl, parsed, minRow);
-        } else if (isJobItem(humanTitle)) {
+        if (isJobItem(humanTitle)) {
           renderJobPage(humanTitle, '', parseJob(humanTitle), null);
         } else {
           renderNonJobPage(humanTitle, '');
-          ['btnMainCta','btnNonJobCta'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) { el.style.display = 'none'; }
-          });
         }
+        ['btnApply', 'btnNotification', 'btnWebsite', 'btnMainCta', 'btnNonJobCta'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) { el.style.display = 'none'; }
+        });
       } else {
         const name = row.title || humanizeSlug(rawSlug);
+        const dest = row.destUrl || '';
         if (isJobItem(name)) {
-          renderJobPage(name, row.destUrl, parseJob(name), row);
+          renderJobPage(name, dest, parseJob(name), Object.assign({}, row, { destUrl: dest }));
         } else {
-          renderNonJobPage(name, row.destUrl);
+          renderNonJobPage(name, dest);
+          if (!dest) {
+            ['btnMainCta', 'btnNonJobCta'].forEach(id => {
+              const el = document.getElementById(id);
+              if (el) { el.style.display = 'none'; }
+            });
+          }
+        }
+        /* Update breadcrumb section link */
+        const secLink = document.getElementById('bcSectionLink');
+        if (secLink && row.secId) {
+          secLink.textContent = humanizeSlug(row.secId);
+          secLink.href = `/view.html?section=${encodeURIComponent(row.secId)}`;
         }
       }
 
