@@ -23,24 +23,45 @@
   }
 
 
-  /* ─── Convert Complete_Jobs_Full_Data.json → sections format ─── */
-  const JOBS_CAT_META = {
-    "Latest_Notifications": { id: "Latest Notifications",    title: "🔔 Latest Notifications",   color: "linear-gradient(135deg,#dc2626,#b91c1c)", icon: "fa-solid fa-bell" },
-    "10TH_Pass":            { id: "10th Pass jobs",           title: "📚 10th Pass Jobs",          color: "linear-gradient(135deg,#0284c7,#0369a1)", icon: "fa-solid fa-graduation-cap" },
-    "8TH_Pass":             { id: "8th Pass",                 title: "📖 8th Pass Jobs",           color: "linear-gradient(135deg,#7c3aed,#6d28d9)", icon: "fa-solid fa-book" },
-    "12TH_Pass":            { id: "12th Pass jobs",           title: "🎓 12th Pass Jobs",          color: "linear-gradient(135deg,#059669,#047857)", icon: "fa-solid fa-graduation-cap" },
-    "Diploma":              { id: "Diploma Jobs",              title: "📜 Diploma Jobs",            color: "linear-gradient(135deg,#d97706,#b45309)", icon: "fa-solid fa-scroll" },
-    "ITI":                  { id: "ITI Jobs",                  title: "🔧 ITI Jobs",               color: "linear-gradient(135deg,#0891b2,#0e7490)", icon: "fa-solid fa-wrench" },
-    "B_Tech_BE":            { id: "B.Tech Jobs",              title: "💻 B.Tech / B.E. Jobs",      color: "linear-gradient(135deg,#4f46e5,#4338ca)", icon: "fa-solid fa-microchip" },
-    "B_Com":                { id: "B.Com Jobs",               title: "💼 B.Com Jobs",              color: "linear-gradient(135deg,#0d9488,#0f766e)", icon: "fa-solid fa-chart-line" },
-    "Any_Graduate":         { id: "Graduation jobs",          title: "🎓 Any Graduate Jobs",       color: "linear-gradient(135deg,#2563eb,#1d4ed8)", icon: "fa-solid fa-university" },
-    "Any_Post_Graduate":    { id: "Post Graduation jobs",     title: "🏛️ Post Graduate Jobs",     color: "linear-gradient(135deg,#9333ea,#7e22ce)", icon: "fa-solid fa-user-tie" },
-    "Railway_Jobs":         { id: "Railway Jobs",             title: "🚂 Railway Jobs",            color: "linear-gradient(135deg,#b45309,#92400e)", icon: "fa-solid fa-train" },
-    "Police_Defence":       { id: "Police Jobs",              title: "🛡️ Police / Defence Jobs",  color: "linear-gradient(135deg,#1e40af,#1e3a8a)", icon: "fa-solid fa-shield-halved" },
-    "Teaching_Faculty":     { id: "Teacher Jobs",             title: "📝 Teaching / Faculty Jobs", color: "linear-gradient(135deg,#16a34a,#15803d)", icon: "fa-solid fa-chalkboard-user" },
-    "Bank_Jobs":            { id: "Bank Jobs",                title: "🏦 Bank Jobs",               color: "linear-gradient(135deg,#ca8a04,#a16207)", icon: "fa-solid fa-building-columns" },
-    "Medical_Hospital":     { id: "Medical/ Healthcare Jobs", title: "🏥 Medical / Hospital Jobs", color: "linear-gradient(135deg,#dc2626,#b91c1c)", icon: "fa-solid fa-stethoscope" },
-    "Last_Date_Reminder":   { id: "Last Date Reminder",        title: "⏰ Last Date Reminder",      color: "linear-gradient(135deg,#e11d48,#be123c)", icon: "fa-solid fa-clock" },
+  /* ─── merged_sarkari_data.json → category-wise sections ─── */
+  // Category field values in merged_sarkari_data.json mapped to display metadata
+  const SR_CAT_META = {
+    "SR_Latest_Jobs": {
+      id: "Latest Jobs",
+      title: "🔔 Latest Jobs",
+      color: "linear-gradient(135deg,#dc2626,#b91c1c)",
+      icon: "fa-solid fa-bell"
+    },
+    "SR_Admit_Card": {
+      id: "Admit Card",
+      title: "🪪 Admit Card",
+      color: "linear-gradient(135deg,#0284c7,#0369a1)",
+      icon: "fa-solid fa-id-card"
+    },
+    "SR_Result": {
+      id: "Result",
+      title: "📋 Result",
+      color: "linear-gradient(135deg,#059669,#047857)",
+      icon: "fa-solid fa-list-check"
+    },
+    "SR_Admission": {
+      id: "Admission",
+      title: "🎓 Admission",
+      color: "linear-gradient(135deg,#7c3aed,#6d28d9)",
+      icon: "fa-solid fa-graduation-cap"
+    },
+    "SR_Answer_Key": {
+      id: "Answer Key",
+      title: "🔑 Answer Key",
+      color: "linear-gradient(135deg,#d97706,#b45309)",
+      icon: "fa-solid fa-key"
+    },
+    "OFFLINE_FORM": {
+      id: "Offline Form",
+      title: "📝 Offline Form",
+      color: "linear-gradient(135deg,#0891b2,#0e7490)",
+      icon: "fa-solid fa-file-pen"
+    },
   };
 
   /* Slugify a job title the same way the Python generator does */
@@ -55,27 +76,52 @@
       .slice(0, 120) || "official-link";
   }
 
-  function convertJobsDataToSections(rawData) {
-    if (!rawData || typeof rawData !== "object" || Array.isArray(rawData)) return { sections: [] };
+  /**
+   * Convert merged_sarkari_data.json → sections format.
+   * Jobs are grouped STRICTLY by their "category" field value.
+   * Each SR_* category gets its own section — no cross-contamination.
+   */
+  function convertMergedDataToSections(rawData) {
+    if (!rawData || typeof rawData !== "object") return { sections: [] };
+
+    // Support both flat array and { jobs: [] } wrapper
+    const allJobs = Array.isArray(rawData)
+      ? rawData
+      : Array.isArray(rawData.jobs)
+        ? rawData.jobs
+        : [];
+
+    if (!allJobs.length) return { sections: [] };
+
+    // Group jobs strictly by category value
+    const grouped = {};
+    allJobs.forEach(job => {
+      const cat = (job.category || "").trim();
+      if (!cat || !SR_CAT_META[cat]) return; // skip unknown categories
+      if (!grouped[cat]) grouped[cat] = [];
+      grouped[cat].push(job);
+    });
+
     const sections = [];
-    for (const [catKey, meta] of Object.entries(JOBS_CAT_META)) {
-      const jobs = rawData[catKey];
+
+    // Build sections in fixed display order
+    for (const [catKey, meta] of Object.entries(SR_CAT_META)) {
+      const jobs = grouped[catKey];
       if (!Array.isArray(jobs) || !jobs.length) continue;
+
       const items = jobs.map(job => {
-        const bd    = job.basic_details || {};
-        const dates = job.important_dates || {};
-        const links = job.important_links || {};
-        const name  = (bd.job_title || "").trim();
+        const name = (job.title || job.post_name || "").trim();
         if (!name) return null;
 
-        /* Build job.html URL from slug */
-        const slug = slugifyForJob(name);
-        const url  = "job.html?slug=" + encodeURIComponent(slug) + "&section=" + encodeURIComponent(meta.id);
+        const applyMode = (job.apply_mode || "").toLowerCase();
+        const prefix = applyMode === "offline" ? "offline-" : "";
+        const slug = prefix + slugifyForJob(name);
+        const url = "job.html?slug=" + encodeURIComponent(slug) + "&section=" + encodeURIComponent(meta.id);
 
-        /* Try multiple date keys */
+        const dates = job.important_dates || {};
         const last = (
-          dates.last_date_to_apply ||
           dates.last_date ||
+          dates.last_date_to_apply ||
           dates.last_date_apply ||
           dates.closing_date ||
           ""
@@ -83,17 +129,27 @@
 
         return { slug, name, url, date: last || "" };
       }).filter(Boolean);
+
       if (!items.length) continue;
-      sections.push({ id: meta.id, title: meta.title, color: meta.color, icon: meta.icon, viewMoreType: "list", items });
+
+      sections.push({
+        id: meta.id,
+        title: meta.title,
+        color: meta.color,
+        icon: meta.icon,
+        viewMoreType: "list",
+        items
+      });
     }
+
     return { sections };
   }
 
-  /* Fetch Complete_Jobs_Full_Data.json and return it as sections format */
+  /* Fetch merged_sarkari_data.json and return it as strictly category-filtered sections */
   async function getJobsSections() {
     try {
-      const raw = await getJSON("Complete_Jobs_Full_Data.json");
-      return convertJobsDataToSections(raw);
+      const raw = await getJSON("merged_sarkari_data.json");
+      return convertMergedDataToSections(raw);
     } catch (_) { return { sections: [] }; }
   }
 
@@ -1786,12 +1842,21 @@
         searchData.push({ name: name.trim(), url: url.trim(), src });
       };
 
-      /* 1. merged_sarkari_data.json — jobs[] array */
-      if (merged && Array.isArray(merged.jobs)) {
-        merged.jobs.forEach(j => {
+      /* 1. merged_sarkari_data.json — jobs[] array, category field se strictly classify */
+      if (merged) {
+        const mergedJobs = Array.isArray(merged) ? merged : Array.isArray(merged.jobs) ? merged.jobs : [];
+        const catLabelMap = {
+          "SR_Latest_Jobs": "Latest Jobs",
+          "SR_Admit_Card":  "Admit Card",
+          "SR_Result":      "Result",
+          "SR_Admission":   "Admission",
+          "SR_Answer_Key":  "Answer Key",
+          "OFFLINE_FORM":   "Offline Form",
+        };
+        mergedJobs.forEach(j => {
           if (!j.title) return;
-          const cat = (j.apply_mode||'').toLowerCase() === 'offline' ? 'Offline Form' : categoryOf(j.title);
-          push(j.title, jobHref(j), cat);
+          const catLabel = catLabelMap[j.category] || j.category || "Latest Jobs";
+          push(j.title, jobHref(j), catLabel);
         });
       }
 
