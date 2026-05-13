@@ -257,7 +257,54 @@
   /* Build sections from merged_sarkari_data.json */
   function __buildSRSections(rawData) {
     const sections = [];
-    const categories = (rawData.sarkariresult_data && rawData.sarkariresult_data.data) || rawData.data || rawData || {};
+
+    /* ── NEW: flat jobs[] format — categorise by title keywords ── */
+    if (Array.isArray(rawData.jobs) && rawData.jobs.length > 0) {
+      const KW_ADMIT     = ['admit card', 'hall ticket', 'call letter'];
+      const KW_ANSWER    = ['answer key', 'answer sheet', 'objection'];
+      const KW_RESULT    = ['result', 'merit list', 'final list', 'cut off', 'cutoff', 'scorecard', 'score card'];
+      const KW_ADMISSION = ['admission', 'counselling', 'counseling'];
+
+      function hasKw(title, kwList) {
+        const t = title.toLowerCase();
+        return kwList.some(k => t.indexOf(k) !== -1);
+      }
+
+      const cats = {
+        SR_Latest_Jobs: [], SR_Admit_Card: [], SR_Result: [],
+        SR_Admission: [], SR_Answer_Key: [], SR_Offline_Form: []
+      };
+
+      rawData.jobs.forEach(job => {
+        const title = (job.title || '').trim();
+        if (!title) return;
+        const slug  = job.slug || __viewSlugify(title);
+        const dates = job.important_dates || {};
+        const last  = (dates.last_date || dates.last_date_to_apply || dates.closing_date || job.last_date || '').trim();
+        const item  = { slug, name: title, date: last };
+
+        /* Offline Form — apply_mode based */
+        if ((job.apply_mode || '').toLowerCase() === 'offline') cats.SR_Offline_Form.push(item);
+
+        /* Category by title keyword (priority order) */
+        if      (hasKw(title, KW_ADMIT))     cats.SR_Admit_Card.push(item);
+        else if (hasKw(title, KW_ANSWER))    cats.SR_Answer_Key.push(item);
+        else if (hasKw(title, KW_RESULT))    cats.SR_Result.push(item);
+        else if (hasKw(title, KW_ADMISSION)) cats.SR_Admission.push(item);
+        else                                 cats.SR_Latest_Jobs.push(item);
+      });
+
+      for (const [catKey, meta] of Object.entries(__SR_CAT_META)) {
+        const items = cats[catKey] || [];
+        if (!items.length) continue;
+        sections.push({ id: meta.id, title: meta.title, param: meta.param, items, _srSource: true });
+      }
+      return sections;
+    }
+    /* ── END new format handler ── */
+
+    /* Original format: sarkariresult_categories object */
+    const categories = (rawData.sarkariresult_data && rawData.sarkariresult_data.data) || rawData.sarkariresult_categories || rawData.data || rawData || {};
     for (const [catKey, meta] of Object.entries(__SR_CAT_META)) {
       const jobs = categories[catKey];
       if (!Array.isArray(jobs) || !jobs.length) continue;
