@@ -258,10 +258,9 @@
   function __buildSRSections(rawData) {
     const sections = [];
 
-    /* ── FIXED: flat jobs[] format — use sr_category field (scraper-assigned) ──
-       Priority: j.sr_category field is used first (exact category match).
-       Keyword-based fallback only used when sr_category is absent/unknown.
-       This prevents cross-category data mixing on the homepage grid and view pages.
+    /* ── flat jobs[] format — use 'category' field (as set in merged_sarkari_data.json) ──
+       JSON insertion order is fully preserved → cards appear in the same sequence
+       as the JSON file. Keyword fallback only triggers when category is absent/unknown.
     ── */
     if (Array.isArray(rawData.jobs) && rawData.jobs.length > 0) {
       const VALID_SR_CATS = new Set(['SR_Latest_Jobs','SR_Admit_Card','SR_Result','SR_Admission','SR_Answer_Key']);
@@ -288,26 +287,30 @@
         const dates  = job.important_dates || {};
         const last   = (dates.last_date || dates.last_date_to_apply || dates.closing_date || job.last_date || '').trim();
         const item   = { slug, name: title, date: last };
-        const srCat  = (job.sr_category || '').trim();       /* ← scraper-set field */
-        const mode   = (job.apply_mode || '').toLowerCase();
 
-        /* Offline Form — apply_mode based (can also appear in Offline section) */
-        if (mode === 'offline') cats.SR_Offline_Form.push(item);
+        /* ── PRIMARY: use 'category' field (as set in merged_sarkari_data.json) ── */
+        const cat = (job.category || '').trim();
 
-        /* ── PRIMARY: use sr_category if valid ── */
-        if (srCat && VALID_SR_CATS.has(srCat)) {
-          cats[srCat].push(item);
-          return;   /* skip keyword fallback */
+        /* OFFLINE_FORM category → SR_Offline_Form bucket */
+        if (cat === 'OFFLINE_FORM') {
+          cats.SR_Offline_Form.push(item);
+          return;
         }
 
-        /* ── FALLBACK: keyword-based (only when sr_category absent/unknown) ── */
-        if (mode !== 'offline') {
-          if      (hasKw(title, KW_ADMIT))     cats.SR_Admit_Card.push(item);
-          else if (hasKw(title, KW_ANSWER))    cats.SR_Answer_Key.push(item);
-          else if (hasKw(title, KW_RESULT))    cats.SR_Result.push(item);
-          else if (hasKw(title, KW_ADMISSION)) cats.SR_Admission.push(item);
-          else                                 cats.SR_Latest_Jobs.push(item);
+        /* Direct match for SR_* categories — preserves exact JSON order */
+        if (cat && VALID_SR_CATS.has(cat)) {
+          cats[cat].push(item);
+          return;
         }
+
+        /* ── FALLBACK: keyword-based (only when category field absent/unknown) ── */
+        const mode = (job.apply_mode || '').toLowerCase();
+        if (mode === 'offline') { cats.SR_Offline_Form.push(item); return; }
+        if      (hasKw(title, KW_ADMIT))     cats.SR_Admit_Card.push(item);
+        else if (hasKw(title, KW_ANSWER))    cats.SR_Answer_Key.push(item);
+        else if (hasKw(title, KW_RESULT))    cats.SR_Result.push(item);
+        else if (hasKw(title, KW_ADMISSION)) cats.SR_Admission.push(item);
+        else                                 cats.SR_Latest_Jobs.push(item);
       });
 
       for (const [catKey, meta] of Object.entries(__SR_CAT_META)) {
