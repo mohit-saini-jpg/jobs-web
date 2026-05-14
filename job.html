@@ -233,6 +233,17 @@
     .jp-qlink-item:hover{background:#f0fdf4;color:#0f766e;}
     .jp-qlink-item i{width:16px;color:#0f766e;flex-shrink:0;font-size:.8rem;}
     .jp-qlink-item span{flex:1;line-height:1.4;}
+
+    /* ── All States Card ── */
+    .jp-states-card .jp-sec-head{background:linear-gradient(135deg,#1d4ed8,#1a56db);}
+    .jp-states-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+    .jp-state-item{display:flex;align-items:center;gap:7px;padding:7px 10px;font-size:.77rem;color:#374151;text-decoration:none;border-bottom:1px solid #f1f5f9;border-right:1px solid #f1f5f9;transition:background .12s;line-height:1.3;}
+    .jp-states-grid .jp-state-item:nth-child(even){border-right:none;}
+    .jp-state-item:hover{background:#eff6ff;color:#1d4ed8;}
+    .jp-state-item .st-em{font-size:1rem;flex-shrink:0;}
+    .jp-state-item .st-name{font-weight:600;}
+    .jp-states-viewall{display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 13px;font-size:.8rem;font-weight:700;color:#1d4ed8;text-decoration:none;background:#eff6ff;border-top:1px solid #dbeafe;transition:background .12s;}
+    .jp-states-viewall:hover{background:#dbeafe;}
     .jp-social-card .jp-sec-head{background:#e11d48;}
     .jp-social-links{padding:10px 13px;display:flex;flex-direction:column;gap:6px;}
     .jp-social-link{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:7px;text-decoration:none;font-size:.8rem;font-weight:600;transition:opacity .15s;}
@@ -559,14 +570,39 @@
             </div>
           </div>
 
-          <!-- Quick Links -->
-          <div class="jp-card jp-qlinks-card">
-            <div class="jp-sec-head"><i class="fa-solid fa-bolt"></i> Quick Links</div>
-            <a class="jp-qlink-item" href="/view.html?section=latest%20jobs"><i class="fa-solid fa-fire"></i><span>Latest Sarkari Jobs</span></a>
-            <a class="jp-qlink-item" href="/view.html?section=upcoming-jobs"><i class="fa-solid fa-calendar-days"></i><span>Upcoming Jobs 2026</span></a>
-            <a class="jp-qlink-item" href="/view.html?section=Jobs%20with%20Last%20date"><i class="fa-solid fa-hourglass-end"></i><span>Closing Soon</span></a>
-            <a class="jp-qlink-item" href="/category.html?group=admit-result"><i class="fa-solid fa-id-card"></i><span>Admit Cards</span></a>
-            <a class="jp-qlink-item" href="/category.html?group=admissions"><i class="fa-solid fa-trophy"></i><span>Results</span></a>
+          <!-- All States Card — replaces old Admit & Results / Quick Links -->
+          <div class="jp-card jp-states-card">
+            <div class="jp-sec-head"><i class="fa-solid fa-map-location-dot"></i> All States Jobs</div>
+            <div class="jp-states-grid">
+              <a class="jp-state-item" href="/state-jobs.html?state=Haryana"><span class="st-em">🇮🇳</span><span class="st-name">Haryana</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Uttar+Pradesh"><span class="st-em">🌾</span><span class="st-name">Uttar Pradesh</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Rajasthan"><span class="st-em">🏜️</span><span class="st-name">Rajasthan</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Bihar"><span class="st-em">🌿</span><span class="st-name">Bihar</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Madhya+Pradesh"><span class="st-em">🏛️</span><span class="st-name">Madhya Pradesh</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Punjab"><span class="st-em">🌻</span><span class="st-name">Punjab</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Delhi"><span class="st-em">🏙️</span><span class="st-name">Delhi</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Gujarat"><span class="st-em">🦁</span><span class="st-name">Gujarat</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Maharashtra"><span class="st-em">🎡</span><span class="st-name">Maharashtra</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Karnataka"><span class="st-em">🌴</span><span class="st-name">Karnataka</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Tamil+Nadu"><span class="st-em">🏖️</span><span class="st-name">Tamil Nadu</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Andhra+Pradesh"><span class="st-em">🌊</span><span class="st-name">Andhra Pradesh</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Telangana"><span class="st-em">🌺</span><span class="st-name">Telangana</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=West+Bengal"><span class="st-em">🐯</span><span class="st-name">West Bengal</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Jharkhand"><span class="st-em">⛏️</span><span class="st-name">Jharkhand</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Chhattisgarh"><span class="st-em">🌲</span><span class="st-name">Chhattisgarh</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Odisha"><span class="st-em">🏺</span><span class="st-name">Odisha</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Assam"><span class="st-em">🍵</span><span class="st-name">Assam</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Himachal+Pradesh"><span class="st-em">🏔️</span><span class="st-name">Himachal Pradesh</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Uttarakhand"><span class="st-em">⛰️</span><span class="st-name">Uttarakhand</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Jammu+and+Kashmir"><span class="st-em">❄️</span><span class="st-name">J&amp;K</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Kerala"><span class="st-em">🌴</span><span class="st-name">Kerala</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Goa"><span class="st-em">🏝️</span><span class="st-name">Goa</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Tripura"><span class="st-em">🌿</span><span class="st-name">Tripura</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Manipur"><span class="st-em">💐</span><span class="st-name">Manipur</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Meghalaya"><span class="st-em">🌧️</span><span class="st-name">Meghalaya</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Sikkim"><span class="st-em">🏞️</span><span class="st-name">Sikkim</span></a>
+            </div>
+            <a class="jp-states-viewall" href="/category.html?group=state"><i class="fa-solid fa-map-location-dot"></i> View All States</a>
           </div>
 
           <!-- Social Follow -->
