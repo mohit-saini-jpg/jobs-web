@@ -2428,19 +2428,19 @@
         source: 'sarkariresult_categories'
       },
       {
-        key: 'SR_Admit_Card',
-        label: 'Admit Card',
-        icon: 'fa-solid fa-id-card',
-        headClass: 'blue',
-        viewUrl: 'view.html?section=SR_Admit_Card',
-        source: 'sarkariresult_categories'
-      },
-      {
         key: 'SR_Result',
         label: 'Result',
         icon: 'fa-solid fa-trophy',
         headClass: 'green',
         viewUrl: 'view.html?section=SR_Result',
+        source: 'sarkariresult_categories'
+      },
+      {
+        key: 'SR_Admit_Card',
+        label: 'Admit Card',
+        icon: 'fa-solid fa-id-card',
+        headClass: 'blue',
+        viewUrl: 'view.html?section=SR_Admit_Card',
         source: 'sarkariresult_categories'
       },
       {
@@ -2659,12 +2659,13 @@
           var item  = toSRItem(j);
           var title = j.title || '';
           var mode  = (j.apply_mode || '').toLowerCase();
-          var srCat = (j.sr_category || '').trim();   /* ← scraper-assigned category */
+          /* ── FIX: JSON mein field 'category' hai, 'sr_category' nahi ── */
+          var srCat = (j.sr_category || j.category || '').trim();
 
-          /* Offline Form — apply_mode is offline → goes to Offline section */
-          if (mode === 'offline') cat_offline.push(item);
+          /* Offline Form — category OFFLINE_FORM ya apply_mode offline → Offline section */
+          if (mode === 'offline' || srCat === 'OFFLINE_FORM') { cat_offline.push(item); return; }
 
-          /* ── PRIMARY: use sr_category field set by scraper ── */
+          /* ── PRIMARY: use sr_category / category field set by scraper ── */
           if (srCat && VALID_SR_CATS[srCat]) {
             if (srCat === 'SR_Latest_Jobs')  { cat_latest.push(item);    return; }
             if (srCat === 'SR_Admit_Card')   { cat_admit.push(item);     return; }
