@@ -476,7 +476,7 @@
       padding: 0;
       display: flex;
       align-items: stretch;
-      min-height: 30px;
+      min-height: 42px;
       position: relative;
       z-index: 10;
     }
@@ -485,8 +485,8 @@
       display: flex;
       align-items: center;
       background: #991b1b;
-      padding: 5px 14px;
-      font-size: .71rem;
+      padding: 8px 16px;
+      font-size: .82rem;
       font-weight: 900;
       letter-spacing: .06em;
       text-transform: uppercase;
@@ -509,7 +509,7 @@
       overflow: hidden;
       display: flex;
       align-items: center;
-      padding: 5px 0;
+      padding: 8px 0;
     }
     /* Two identical sets side-by-side for seamless infinite loop */
     .ticker-belt {
@@ -533,9 +533,9 @@
       gap: 6px;
       color: #fff;
       text-decoration: none;
-      font-size: .75rem;
+      font-size: .86rem;
       font-weight: 700;
-      padding-right: 40px;
+      padding-right: 44px;
       transition: opacity .15s;
       white-space: nowrap;
     }
@@ -555,8 +555,8 @@
       letter-spacing: .03em;
     }
     @media (max-width: 480px) {
-      .ticker-item { font-size: .71rem; padding-right: 28px; }
-      .ticker-label { padding: 5px 10px; font-size: .67rem; }
+      .ticker-item { font-size: .8rem; padding-right: 32px; }
+      .ticker-label { padding: 7px 12px; font-size: .75rem; }
     }
 
     /* ============================================================
@@ -1341,10 +1341,11 @@
       <p class="hero-sub">Daily Updated Jobs, Admit Card, Results, Answer Key & More</p>
 
       <div class="hero-quick-btns">
-        <a href="view.html?section=latest%20jobs" class="hero-quick-btn red-btn"><i class="fa-solid fa-bolt"></i> Latest Jobs</a>
-        <a href="category.html?group=admit-result" class="hero-quick-btn green-btn"><i class="fa-solid fa-id-card"></i> Admit Card</a>
-        <a href="category.html?group=admissions" class="hero-quick-btn accent-btn"><i class="fa-solid fa-trophy"></i> Results</a>
-        <a href="view.html?section=Top%2020%20Jobs" class="hero-quick-btn ghost-btn"><i class="fa-solid fa-medal"></i> Top 20 Jobs</a>
+        <a href="https://www.topsarkarijobs.com/view.html?section=Today%20Updates" class="hero-quick-btn red-btn"><i class="fa-solid fa-calendar-day"></i> Today Updates</a>
+        <a href="https://www.topsarkarijobs.com/view.html?section=SR_Latest_Jobs" class="hero-quick-btn red-btn"><i class="fa-solid fa-bolt"></i> Latest Jobs</a>
+        <a href="https://www.topsarkarijobs.com/view.html?section=SR_Admit_Card" class="hero-quick-btn green-btn"><i class="fa-solid fa-id-card"></i> Admit Card</a>
+        <a href="https://www.topsarkarijobs.com/view.html?section=SR_Result" class="hero-quick-btn accent-btn"><i class="fa-solid fa-trophy"></i> Results</a>
+        <a href="https://www.topsarkarijobs.com/view.html?section=Top%2020%20Jobs" class="hero-quick-btn ghost-btn"><i class="fa-solid fa-medal"></i> Top 20 Jobs</a>
       </div>
 
       <div style="position:relative;">
@@ -1684,20 +1685,20 @@
   (function initDynamicTicker() {
     'use strict';
 
-    var SECTION_KEY = 'latest jobs';   // matches section title in dynamic-sections.json (case-insensitive)
-    var MAX_JOBS    = 15;              // max items in ticker
-    var BASE_SPEED  = 45;             // base seconds for full scroll (auto-scaled by count)
+    var MAX_JOBS    = 20;              // max items in ticker
+    var BASE_SPEED  = 50;             // base seconds for full scroll (auto-scaled by count)
+    var LATEST_JOBS_URL = 'https://www.topsarkarijobs.com/view.html?section=SR_Latest_Jobs';
 
     /* ── fetch with 5-min cache via sessionStorage ── */
-    function fetchSections() {
-      var CACHE_KEY = '__ticker_cache';
+    function fetchJobs() {
+      var CACHE_KEY = '__ticker_sr_cache';
       var CACHE_TTL = 5 * 60 * 1000; // 5 minutes
       try {
         var cached = JSON.parse(sessionStorage.getItem(CACHE_KEY) || 'null');
         if (cached && (Date.now() - cached.ts) < CACHE_TTL) return Promise.resolve(cached.data);
       } catch(e) {}
 
-      return fetch('dynamic-sections.json', { cache: 'no-cache' })
+      return fetch('merged_sarkari_data.json', { cache: 'no-cache' })
         .then(function(r) {
           if (!r.ok) throw new Error('HTTP ' + r.status);
           return r.json();
@@ -1708,48 +1709,55 @@
         });
     }
 
-    /* ── find "latest jobs" section (case-insensitive) ── */
+    /* ── extract SR_Latest_Jobs items ── */
     function extractLatestJobs(json) {
-      var sections = (json && Array.isArray(json.sections)) ? json.sections : [];
-      var sec = null;
-      for (var i = 0; i < sections.length; i++) {
-        var t = (sections[i].title || sections[i].id || '').toLowerCase().trim();
-        if (t === SECTION_KEY) { sec = sections[i]; break; }
-      }
-      if (!sec) {
-        // fallback: first section whose title contains "latest"
-        for (var j = 0; j < sections.length; j++) {
-          if ((sections[j].title || '').toLowerCase().includes('latest')) { sec = sections[j]; break; }
+      var jobs = [];
+
+      /* Format 1: jobs[] array with sr_category / category field */
+      if (json && Array.isArray(json.jobs)) {
+        var allJobs = json.jobs;
+        for (var i = 0; i < allJobs.length; i++) {
+          var j = allJobs[i];
+          var cat = (j.sr_category || j.category || '').trim();
+          if (cat === 'SR_Latest_Jobs' || cat === '') {
+            /* skip if it's clearly not a latest job */
+            if (cat === '' && (j.title || '').toLowerCase().match(/admit card|result|answer key|admission/)) continue;
+            var title = (j.title || '').trim();
+            var url   = j.slug ? ('job.html?slug=' + j.slug) : (j.official_website_link || LATEST_JOBS_URL);
+            if (title) { jobs.push({ name: title, url: url }); }
+          }
         }
       }
-      if (!sec || !Array.isArray(sec.items)) return [];
 
-      /* deduplicate by name + url, limit to MAX_JOBS */
-      var seen = new Set();
+      /* Format 2: sarkariresult_categories.SR_Latest_Jobs[] */
+      if (jobs.length === 0 && json && json.sarkariresult_categories && Array.isArray(json.sarkariresult_categories.SR_Latest_Jobs)) {
+        var items = json.sarkariresult_categories.SR_Latest_Jobs;
+        for (var k = 0; k < items.length; k++) {
+          var item = items[k];
+          var name = (item.title || item.name || '').trim();
+          var link = item.slug ? ('job.html?slug=' + item.slug) : (item.url || item.source_url || LATEST_JOBS_URL);
+          if (name) jobs.push({ name: name, url: link });
+        }
+      }
+
+      /* deduplicate and limit */
+      var seen = {};
       var out = [];
-      for (var k = 0; k < sec.items.length; k++) {
-        var item = sec.items[k];
-        var name = (item.name || item.title || '').trim();
-        var url  = (item.url  || item.link  || '').trim();
-        if (!name || !url) continue;
-        var key = name.toLowerCase() + '|' + url.toLowerCase();
-        if (seen.has(key)) continue;
-        seen.add(key);
-        out.push({ name: name, url: url });
+      for (var m = 0; m < jobs.length; m++) {
+        var key = jobs[m].name.toLowerCase();
+        if (!seen[key]) { seen[key] = true; out.push(jobs[m]); }
         if (out.length >= MAX_JOBS) break;
       }
       return out;
     }
 
-    /* ── build SEO-friendly href (relative internal URLs preferred) ── */
-    function buildHref(rawUrl, name) {
-      var u = rawUrl.trim();
-      /* if it's already an absolute external URL, keep it */
+    /* ── build href ── */
+    function buildHref(rawUrl) {
+      var u = (rawUrl || '').trim();
+      if (!u || u === '#') return LATEST_JOBS_URL;
       if (/^https?:\/\//i.test(u) && !u.includes('topsarkarijobs.com')) return u;
-      /* if relative, keep as-is */
       if (!u.startsWith('http')) return u;
-      /* internal absolute → strip domain to relative */
-      return u.replace(/^https?:\/\/[^/]+/i, '') || ('view.html?section=' + encodeURIComponent(name));
+      return u.replace(/^https?:\/\/[^/]+/i, '') || LATEST_JOBS_URL;
     }
 
     /* ── render ticker belt ── */
@@ -1758,7 +1766,7 @@
       if (!track) return;
 
       if (!jobs || jobs.length === 0) {
-        track.innerHTML = '<a class="ticker-item" href="view.html?section=latest%20jobs">View Latest Sarkari Jobs 2026</a>';
+        track.innerHTML = '<a class="ticker-item" href="' + LATEST_JOBS_URL + '">View Latest Sarkari Jobs 2026</a>';
         return;
       }
 
@@ -1768,10 +1776,9 @@
         for (var i = 0; i < jobs.length; i++) {
           var a = document.createElement('a');
           a.className = 'ticker-item';
-          a.href = buildHref(jobs[i].url, jobs[i].name);
+          a.href = buildHref(jobs[i].url);
           a.textContent = jobs[i].name;
           a.setAttribute('title', jobs[i].name);
-          /* internal links: no target; external: open new tab */
           if (/^https?:\/\//i.test(jobs[i].url) && !jobs[i].url.includes('topsarkarijobs.com')) {
             a.target = '_blank'; a.rel = 'noopener noreferrer';
           }
@@ -1780,36 +1787,32 @@
         return frag;
       }
 
-      /* belt = set A + set B (seamless loop: when A scrolls out, B is already there) */
+      /* belt = set A + set B (seamless loop) */
       var belt = document.createElement('div');
       belt.className = 'ticker-belt';
       belt.id = 'tickerBelt';
-      /* two identical sets */
       belt.appendChild(buildSet());
       belt.appendChild(buildSet());
 
-      /* auto-scale speed by job count so fast phones don't zip through */
-      var duration = Math.max(20, Math.round(BASE_SPEED * (jobs.length / 10)));
+      var duration = Math.max(25, Math.round(BASE_SPEED * (jobs.length / 10)));
       belt.style.setProperty('--ticker-duration', duration + 's');
-      /* also apply via inline animation-duration for broader support */
       belt.style.animationDuration = duration + 's';
 
       track.innerHTML = '';
       track.appendChild(belt);
 
-      /* ── accessibility: pause on focus ── */
+      /* accessibility: pause on focus */
       belt.addEventListener('focusin',  function() { belt.style.animationPlayState = 'paused'; });
       belt.addEventListener('focusout', function() { belt.style.animationPlayState = 'running'; });
     }
 
     /* ── init ── */
-    fetchSections()
+    fetchJobs()
       .then(extractLatestJobs)
       .then(renderTicker)
       .catch(function(err) {
-        console.warn('[Ticker] Failed to load dynamic jobs:', err);
-        /* graceful fallback — render link to latest jobs page */
-        renderTicker([{ name: 'View Latest Sarkari Jobs 2026', url: 'view.html?section=latest%20jobs' }]);
+        console.warn('[Ticker] Failed to load jobs:', err);
+        renderTicker([{ name: 'View Latest Sarkari Jobs 2026', url: LATEST_JOBS_URL }]);
       });
   })();
   </script>
