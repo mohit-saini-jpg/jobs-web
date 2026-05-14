@@ -17,7 +17,7 @@
       'merged_sarkari_data.json',
       'dailyupdates.json',
       'Complete_Jobs_Full_Data.json',
-      'jobs.json',
+      'state-jobs-data.json',
     ],
     maxSuggest: 10,
     maxResults: 30,
@@ -148,12 +148,13 @@
     if (!window.Fuse) return;
     fuseInstance = new window.Fuse(data, {
       keys: [
-        { name: 'title',  weight: 0.5 },
-        { name: 'tags',   weight: 0.25 },
-        { name: 'cat',    weight: 0.1 },
+        { name: 'title',  weight: 0.45 },
+        { name: 'tags',   weight: 0.20 },
+        { name: 'cat',    weight: 0.10 },
         { name: 'dept',   weight: 0.08 },
-        { name: 'state',  weight: 0.04 },
-        { name: 'qual',   weight: 0.03 },
+        { name: 'state',  weight: 0.07 },
+        { name: 'qual',   weight: 0.05 },
+        { name: 'org',    weight: 0.05 },
       ],
       threshold: 0.5,          // ✅ FIX: 0.45→0.5, single word bhi match hoga
       includeScore: true,
@@ -523,51 +524,82 @@
       }
 
       /* ══════════════════════════════════════════════════════
-         4.  jobs.json  (legacy — flat arrays + sections)
+         4.  state-jobs-data.json
+         Structure: { sections:[{id, title, state, items:[{name, url, date,
+                      lastDate, qualification, board, detail}]}] }
+         Rich items with qualification, board, detail.basic_details, seo_tags.
       ══════════════════════════════════════════════════════ */
-      if (fileName === 'jobs.json') {
-        ['top_jobs','left_jobs','right_jobs','jobs','latest_jobs','items'].forEach(key => {
-          if (!Array.isArray(data[key])) return;
-          data[key].forEach(item => {
+      if (fileName === 'state-jobs-data.json') {
+        const sections = Array.isArray(data.sections) ? data.sections
+          : Array.isArray(data) ? data : [];
+
+        sections.forEach(sec => {
+          const secId    = String(sec.id    || sec.title || '').trim();
+          const secTitle = String(sec.title || sec.id    || 'State Jobs').trim();
+          const secState = String(sec.state || '').trim();
+
+          (sec.items || []).forEach(item => {
             const title = String(item.name || item.title || '').trim();
-            const href  = item.url || item.link || item.slug || '';
-            if (!title || !href) return;
+            if (!title) return;
+
+            /* href: prefer internal slug from detail, else direct url */
+            const detail    = item.detail || {};
+            const bd        = detail.basic_details || {};
+            const applyMode = (bd.application_mode || '').toLowerCase();
+            let href = item.url || item.link || '';
+
+            /* Try to build job.html link using slugified title */
+            const slug = slugifyTitle(bd.job_title || title);
+            if (slug && slug !== 'official-link') {
+              const prefix = applyMode.includes('offline') ? 'offline-' : '';
+              href = 'job.html?slug=' + encodeURIComponent(prefix + slug)
+                   + '&section=' + encodeURIComponent(secId || secTitle);
+            }
+            if (!href) return;
+
+            /* Extract qualification — item level OR detail level */
+            const qual = String(
+              item.qualification ||
+              (detail.qualification && (detail.qualification.education_qualification || '')) ||
+              bd.qualification || ''
+            ).trim();
+
+            /* Build rich tags including seo_tags array if present */
+            const seoTags = Array.isArray(detail.seo_tags)
+              ? detail.seo_tags.join(' ') : '';
+            const shortInfo = String(bd.short_information || '').slice(0, 120);
+            const board = String(item.board || bd.organization_name || '').trim();
+            const tags = [
+              title, board, secTitle, secState, qual,
+              seoTags, shortInfo, 'state jobs sarkari naukri 2026',
+            ].filter(Boolean).join(' ');
+
+            /* Last date */
+            const dates = detail.important_dates || {};
+            const lastDate = String(
+              item.lastDate || item.date ||
+              dates.last_date_to_apply || dates.last_date ||
+              dates.closing_date || ''
+            ).replace(/^Last Date:\s*/i, '').trim();
+
             extra.push({
               title, slug: href,
-              dept: item.department || item.dept || '',
-              qual: item.qualification || item.qual || '',
-              state: item.state || '',
-              cat: item.category || item.cat || 'Latest',
-              tags: [title, item.tags, item.keywords].filter(Boolean).join(' '),
-              lastDate: item.last_date || item.lastDate || '',
-              icon: item.icon || 'fa-briefcase',
-              lastUpdated: item.last_updated || item.updated_at || new Date().toISOString(),
-              sectionSource: item.section || item.source || getSectionName(href),
+              dept: board || secTitle,
+              org:  board,
+              qual,
+              state: secState || 'All India',
+              cat: 'State Jobs',
+              tags,
+              lastDate,
+              icon: 'fa-location-dot',
+              lastUpdated: item.postDate
+                ? new Date(item.postDate.split('/').reverse().join('-')).toISOString()
+                : new Date().toISOString(),
+              sectionSource: secTitle,
             });
             count++;
           });
         });
-        if (Array.isArray(data.sections)) {
-          data.sections.forEach(sec => {
-            (sec.items || []).forEach(item => {
-              const title = String(item.name || item.title || '').trim();
-              const href  = item.url || item.link || '';
-              if (!title || !href) return;
-              extra.push({
-                title, slug: href,
-                dept: sec.title || '',
-                qual: '', state: '',
-                cat: sec.category || sec.title || '',
-                tags: title + ' ' + (sec.title || ''),
-                lastDate: item.last_date || '',
-                icon: 'fa-file-alt',
-                lastUpdated: item.last_updated || sec.updated_at || new Date().toISOString(),
-                sectionSource: sec.title || getSectionName(href),
-              });
-              count++;
-            });
-          });
-        }
       }
 
     return { extra, count };
@@ -603,8 +635,9 @@
    *            Loads in background, merges silently, refreshes active search.
    */
   function loadJsonFiles() {
-    const FAST_FILES  = ['merged_sarkari_data.json', 'dailyupdates.json'];
-    const HEAVY_FILES = ['Complete_Jobs_Full_Data.json', 'jobs.json'];
+    const FAST_FILES   = ['merged_sarkari_data.json', 'dailyupdates.json'];
+    const MEDIUM_FILES = ['state-jobs-data.json'];          // ~2MB, load after fast
+    const HEAVY_FILES  = ['Complete_Jobs_Full_Data.json'];  // ~19MB, background
 
     // Phase 1: fetch fast files in parallel, mark ready when done
     Promise.allSettled(FAST_FILES.map(f => fetchAndIndex(f))).then(() => {
@@ -617,6 +650,11 @@
         if (heroInput && heroInput.value.trim().length >= 1) {
           heroInput.dispatchEvent(new Event('input'));
         }
+      });
+
+      // Phase 1.5: medium files (state-jobs-data) after fast files done
+      Promise.allSettled(MEDIUM_FILES.map(f => fetchAndIndex(f))).then(() => {
+        console.log('[smart-search] ✅ State jobs index ready. Items:', allData.length);
       });
     });
 
@@ -665,6 +703,9 @@
     const cat   = (item.cat   || '').toLowerCase();
     const dept  = (item.dept  || '').toLowerCase();
     const sec   = (item.sectionSource || '').toLowerCase();
+    const org   = (item.org   || item.dept || '').toLowerCase();
+    const state = (item.state || '').toLowerCase();
+    const qual  = (item.qual  || '').toLowerCase();
     let score = 0;
 
     // Tier 1: exact full query in title
@@ -682,12 +723,15 @@
     // Bonus: ALL meaningful words found in title
     if (meaningfulWords.length > 0 && titleMeaningfulHits === meaningfulWords.length) score += 60;
 
-    // Tier 3: meaningful words in tags/dept/cat/sec
+    // Tier 3: meaningful words in tags/dept/cat/sec/org/state/qual
     meaningfulWords.forEach(w => {
       if (tags.includes(w))  score += w.length >= 5 ? 10 : 5;
       if (cat.includes(w))   score += 8;
       if (dept.includes(w))  score += 6;
       if (sec.includes(w))   score += 5;
+      if (org.includes(w))   score += 6;
+      if (state.includes(w)) score += 7;
+      if (qual.includes(w))  score += 5;
     });
 
     // Tier 4: ALL query words (inc stop words) match in title
@@ -729,7 +773,10 @@
 
     // Apply filters
     if (filters.qual)  results = results.filter(r => (r.qual  || '').toLowerCase().includes(filters.qual.toLowerCase()));
-    if (filters.state) results = results.filter(r => (r.state || '').toLowerCase().includes(filters.state.toLowerCase()) || r.state === 'All India');
+    if (filters.state) results = results.filter(r => {
+      const rs = (r.state || '').toLowerCase();
+      return rs === 'all india' || rs.includes(filters.state.toLowerCase());
+    });
     if (filters.cat)   results = results.filter(r => (r.cat   || '').toLowerCase().includes(filters.cat.toLowerCase()));
 
     return results;
