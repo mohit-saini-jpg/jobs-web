@@ -149,6 +149,26 @@
 .nav-dd-item:hover { background: #eff6ff; color: var(--blue); }
 .nav-dd-divider { border: none; border-top: 1px solid #f1f5f9; margin: 4px 0; }
 
+/* ── Mobile Bottom Navigation Bar ── */
+.mobile-bottom-bar { display: none; }
+@media (max-width: 900px) {
+  .mobile-bottom-bar {
+    display: flex; position: fixed; bottom: 0; left: 0; right: 0;
+    background: #fff; border-top: 1px solid var(--border);
+    z-index: 200; padding: 5px 0 env(safe-area-inset-bottom, 5px);
+    box-shadow: 0 -2px 12px rgba(0,0,0,.08);
+  }
+  .mobile-bottom-bar a {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    gap: 2px; font-size: .57rem; font-weight: 700; color: #64748b;
+    text-decoration: none; padding: 4px 0;
+  }
+  .mobile-bottom-bar a i { font-size: 1.05rem; }
+  .mobile-bottom-bar a.active,
+  .mobile-bottom-bar a:hover { color: var(--blue); }
+  body { padding-bottom: 60px; }
+}
+
 /* ── Mobile Overlay + Offcanvas ── */
 .overlay {
   position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 350;
@@ -207,6 +227,7 @@
 <!-- ============================================================
      STICKY HEADER
 ============================================================ -->
+<header class="site-header" id="site-header">
 <div class="header-logo-bar">
     <a class="brand" href="/" aria-label="Top Sarkari Jobs Home">
       <picture>
@@ -310,6 +331,7 @@
 
     <a class="nav-link" href="/helpdesk.html"><i class="fa-solid fa-headset"></i> CONTACT US</a>
   </nav>
+</header><!-- /.site-header -->
 
 <!-- ============================================================
      MOBILE OVERLAY + OFFCANVAS MENU
@@ -362,3 +384,15 @@
     <a href="https://www.snapchat.com/add/topsarkarijobss?share_id=accGq-qWC1g&locale=en-IN" target="_blank" rel="noopener" style="color:#d97706;"><i class="fa-brands fa-snapchat"></i>Snapchat</a>
   </nav>
 </aside>
+
+<!-- ============================================================
+     MOBILE BOTTOM NAVIGATION BAR
+     (Shown on all pages via header.html include)
+============================================================ -->
+<nav class="mobile-bottom-bar" aria-label="Mobile navigation">
+  <a href="/"><i class="fa-solid fa-house"></i>Home</a>
+  <a href="https://www.topsarkarijobs.com/view.html?section=SR_Latest_Jobs"><i class="fa-solid fa-fire"></i>Jobs</a>
+  <a href="https://www.topsarkarijobs.com/view.html?section=SR_Admit_Card"><i class="fa-solid fa-id-card"></i>Admit Card</a>
+  <a href="https://www.topsarkarijobs.com/view.html?section=SR_Result"><i class="fa-solid fa-trophy"></i>Results</a>
+  <a href="https://www.topsarkarijobs.com/tools.html"><i class="fa-solid fa-screwdriver-wrench"></i>Tools</a>
+</nav>
