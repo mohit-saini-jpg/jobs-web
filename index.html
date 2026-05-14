@@ -476,7 +476,7 @@
       padding: 0;
       display: flex;
       align-items: stretch;
-      min-height: 42px;
+      min-height: 30px;
       position: relative;
       z-index: 10;
     }
@@ -485,8 +485,8 @@
       display: flex;
       align-items: center;
       background: #991b1b;
-      padding: 8px 16px;
-      font-size: .82rem;
+      padding: 5px 14px;
+      font-size: .71rem;
       font-weight: 900;
       letter-spacing: .06em;
       text-transform: uppercase;
@@ -509,7 +509,7 @@
       overflow: hidden;
       display: flex;
       align-items: center;
-      padding: 8px 0;
+      padding: 5px 0;
     }
     /* Two identical sets side-by-side for seamless infinite loop */
     .ticker-belt {
@@ -533,9 +533,9 @@
       gap: 6px;
       color: #fff;
       text-decoration: none;
-      font-size: .86rem;
+      font-size: .75rem;
       font-weight: 700;
-      padding-right: 44px;
+      padding-right: 40px;
       transition: opacity .15s;
       white-space: nowrap;
     }
@@ -555,8 +555,8 @@
       letter-spacing: .03em;
     }
     @media (max-width: 480px) {
-      .ticker-item { font-size: .8rem; padding-right: 32px; }
-      .ticker-label { padding: 7px 12px; font-size: .75rem; }
+      .ticker-item { font-size: .71rem; padding-right: 28px; }
+      .ticker-label { padding: 5px 10px; font-size: .67rem; }
     }
 
     /* ============================================================
@@ -687,6 +687,25 @@
     .sec-head.purple{ background: linear-gradient(90deg, #3b0764 0%, #7c3aed 100%); }
     .sec-head.teal  { background: linear-gradient(90deg, #134e4a 0%, #0d9488 100%); }
     .sec-head.brown { background: linear-gradient(90deg, #451a03 0%, #d97706 100%); }
+
+    /* ── All States Sidebar Card ── */
+    .states-sidebar-grid { display: grid; grid-template-columns: 1fr 1fr; }
+    .states-sidebar-item {
+      display: flex; align-items: center; gap: 6px; padding: 7px 10px;
+      font-size: .76rem; font-weight: 600; color: #374151; text-decoration: none;
+      border-bottom: 1px solid #f1f5f9; border-right: 1px solid #f1f5f9;
+      transition: background .12s; line-height: 1.3;
+    }
+    .states-sidebar-grid .states-sidebar-item:nth-child(even) { border-right: none; }
+    .states-sidebar-item:hover { background: #eff6ff; color: #1a56db; }
+    .states-sidebar-item .st-em { font-size: .95rem; flex-shrink: 0; }
+    .states-sidebar-viewall {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 9px 13px; font-size: .8rem; font-weight: 700;
+      color: #1a56db; text-decoration: none; background: #eff6ff;
+      border-top: 1px solid #dbeafe; transition: background .12s;
+    }
+    .states-sidebar-viewall:hover { background: #dbeafe; }
 
     /* List inside card */
     .sec-list a {
@@ -1341,11 +1360,10 @@
       <p class="hero-sub">Daily Updated Jobs, Admit Card, Results, Answer Key & More</p>
 
       <div class="hero-quick-btns">
-        <a href="https://www.topsarkarijobs.com/view.html?section=Today%20Updates" class="hero-quick-btn red-btn"><i class="fa-solid fa-calendar-day"></i> Today Updates</a>
-        <a href="https://www.topsarkarijobs.com/view.html?section=SR_Latest_Jobs" class="hero-quick-btn red-btn"><i class="fa-solid fa-bolt"></i> Latest Jobs</a>
-        <a href="https://www.topsarkarijobs.com/view.html?section=SR_Admit_Card" class="hero-quick-btn green-btn"><i class="fa-solid fa-id-card"></i> Admit Card</a>
-        <a href="https://www.topsarkarijobs.com/view.html?section=SR_Result" class="hero-quick-btn accent-btn"><i class="fa-solid fa-trophy"></i> Results</a>
-        <a href="https://www.topsarkarijobs.com/view.html?section=Top%2020%20Jobs" class="hero-quick-btn ghost-btn"><i class="fa-solid fa-medal"></i> Top 20 Jobs</a>
+        <a href="view.html?section=latest%20jobs" class="hero-quick-btn red-btn"><i class="fa-solid fa-bolt"></i> Latest Jobs</a>
+        <a href="category.html?group=admit-result" class="hero-quick-btn green-btn"><i class="fa-solid fa-id-card"></i> Admit Card</a>
+        <a href="category.html?group=admissions" class="hero-quick-btn accent-btn"><i class="fa-solid fa-trophy"></i> Results</a>
+        <a href="view.html?section=Top%2020%20Jobs" class="hero-quick-btn ghost-btn"><i class="fa-solid fa-medal"></i> Top 20 Jobs</a>
       </div>
 
       <div style="position:relative;">
@@ -1685,20 +1703,20 @@
   (function initDynamicTicker() {
     'use strict';
 
-    var MAX_JOBS    = 20;              // max items in ticker
-    var BASE_SPEED  = 50;             // base seconds for full scroll (auto-scaled by count)
-    var LATEST_JOBS_URL = 'https://www.topsarkarijobs.com/view.html?section=SR_Latest_Jobs';
+    var SECTION_KEY = 'latest jobs';   // matches section title in dynamic-sections.json (case-insensitive)
+    var MAX_JOBS    = 15;              // max items in ticker
+    var BASE_SPEED  = 45;             // base seconds for full scroll (auto-scaled by count)
 
     /* ── fetch with 5-min cache via sessionStorage ── */
-    function fetchJobs() {
-      var CACHE_KEY = '__ticker_sr_cache';
+    function fetchSections() {
+      var CACHE_KEY = '__ticker_cache';
       var CACHE_TTL = 5 * 60 * 1000; // 5 minutes
       try {
         var cached = JSON.parse(sessionStorage.getItem(CACHE_KEY) || 'null');
         if (cached && (Date.now() - cached.ts) < CACHE_TTL) return Promise.resolve(cached.data);
       } catch(e) {}
 
-      return fetch('merged_sarkari_data.json', { cache: 'no-cache' })
+      return fetch('dynamic-sections.json', { cache: 'no-cache' })
         .then(function(r) {
           if (!r.ok) throw new Error('HTTP ' + r.status);
           return r.json();
@@ -1709,55 +1727,48 @@
         });
     }
 
-    /* ── extract SR_Latest_Jobs items ── */
+    /* ── find "latest jobs" section (case-insensitive) ── */
     function extractLatestJobs(json) {
-      var jobs = [];
-
-      /* Format 1: jobs[] array with sr_category / category field */
-      if (json && Array.isArray(json.jobs)) {
-        var allJobs = json.jobs;
-        for (var i = 0; i < allJobs.length; i++) {
-          var j = allJobs[i];
-          var cat = (j.sr_category || j.category || '').trim();
-          if (cat === 'SR_Latest_Jobs' || cat === '') {
-            /* skip if it's clearly not a latest job */
-            if (cat === '' && (j.title || '').toLowerCase().match(/admit card|result|answer key|admission/)) continue;
-            var title = (j.title || '').trim();
-            var url   = j.slug ? ('job.html?slug=' + j.slug) : (j.official_website_link || LATEST_JOBS_URL);
-            if (title) { jobs.push({ name: title, url: url }); }
-          }
+      var sections = (json && Array.isArray(json.sections)) ? json.sections : [];
+      var sec = null;
+      for (var i = 0; i < sections.length; i++) {
+        var t = (sections[i].title || sections[i].id || '').toLowerCase().trim();
+        if (t === SECTION_KEY) { sec = sections[i]; break; }
+      }
+      if (!sec) {
+        // fallback: first section whose title contains "latest"
+        for (var j = 0; j < sections.length; j++) {
+          if ((sections[j].title || '').toLowerCase().includes('latest')) { sec = sections[j]; break; }
         }
       }
+      if (!sec || !Array.isArray(sec.items)) return [];
 
-      /* Format 2: sarkariresult_categories.SR_Latest_Jobs[] */
-      if (jobs.length === 0 && json && json.sarkariresult_categories && Array.isArray(json.sarkariresult_categories.SR_Latest_Jobs)) {
-        var items = json.sarkariresult_categories.SR_Latest_Jobs;
-        for (var k = 0; k < items.length; k++) {
-          var item = items[k];
-          var name = (item.title || item.name || '').trim();
-          var link = item.slug ? ('job.html?slug=' + item.slug) : (item.url || item.source_url || LATEST_JOBS_URL);
-          if (name) jobs.push({ name: name, url: link });
-        }
-      }
-
-      /* deduplicate and limit */
-      var seen = {};
+      /* deduplicate by name + url, limit to MAX_JOBS */
+      var seen = new Set();
       var out = [];
-      for (var m = 0; m < jobs.length; m++) {
-        var key = jobs[m].name.toLowerCase();
-        if (!seen[key]) { seen[key] = true; out.push(jobs[m]); }
+      for (var k = 0; k < sec.items.length; k++) {
+        var item = sec.items[k];
+        var name = (item.name || item.title || '').trim();
+        var url  = (item.url  || item.link  || '').trim();
+        if (!name || !url) continue;
+        var key = name.toLowerCase() + '|' + url.toLowerCase();
+        if (seen.has(key)) continue;
+        seen.add(key);
+        out.push({ name: name, url: url });
         if (out.length >= MAX_JOBS) break;
       }
       return out;
     }
 
-    /* ── build href ── */
-    function buildHref(rawUrl) {
-      var u = (rawUrl || '').trim();
-      if (!u || u === '#') return LATEST_JOBS_URL;
+    /* ── build SEO-friendly href (relative internal URLs preferred) ── */
+    function buildHref(rawUrl, name) {
+      var u = rawUrl.trim();
+      /* if it's already an absolute external URL, keep it */
       if (/^https?:\/\//i.test(u) && !u.includes('topsarkarijobs.com')) return u;
+      /* if relative, keep as-is */
       if (!u.startsWith('http')) return u;
-      return u.replace(/^https?:\/\/[^/]+/i, '') || LATEST_JOBS_URL;
+      /* internal absolute → strip domain to relative */
+      return u.replace(/^https?:\/\/[^/]+/i, '') || ('view.html?section=' + encodeURIComponent(name));
     }
 
     /* ── render ticker belt ── */
@@ -1766,7 +1777,7 @@
       if (!track) return;
 
       if (!jobs || jobs.length === 0) {
-        track.innerHTML = '<a class="ticker-item" href="' + LATEST_JOBS_URL + '">View Latest Sarkari Jobs 2026</a>';
+        track.innerHTML = '<a class="ticker-item" href="view.html?section=latest%20jobs">View Latest Sarkari Jobs 2026</a>';
         return;
       }
 
@@ -1776,9 +1787,10 @@
         for (var i = 0; i < jobs.length; i++) {
           var a = document.createElement('a');
           a.className = 'ticker-item';
-          a.href = buildHref(jobs[i].url);
+          a.href = buildHref(jobs[i].url, jobs[i].name);
           a.textContent = jobs[i].name;
           a.setAttribute('title', jobs[i].name);
+          /* internal links: no target; external: open new tab */
           if (/^https?:\/\//i.test(jobs[i].url) && !jobs[i].url.includes('topsarkarijobs.com')) {
             a.target = '_blank'; a.rel = 'noopener noreferrer';
           }
@@ -1787,32 +1799,36 @@
         return frag;
       }
 
-      /* belt = set A + set B (seamless loop) */
+      /* belt = set A + set B (seamless loop: when A scrolls out, B is already there) */
       var belt = document.createElement('div');
       belt.className = 'ticker-belt';
       belt.id = 'tickerBelt';
+      /* two identical sets */
       belt.appendChild(buildSet());
       belt.appendChild(buildSet());
 
-      var duration = Math.max(25, Math.round(BASE_SPEED * (jobs.length / 10)));
+      /* auto-scale speed by job count so fast phones don't zip through */
+      var duration = Math.max(20, Math.round(BASE_SPEED * (jobs.length / 10)));
       belt.style.setProperty('--ticker-duration', duration + 's');
+      /* also apply via inline animation-duration for broader support */
       belt.style.animationDuration = duration + 's';
 
       track.innerHTML = '';
       track.appendChild(belt);
 
-      /* accessibility: pause on focus */
+      /* ── accessibility: pause on focus ── */
       belt.addEventListener('focusin',  function() { belt.style.animationPlayState = 'paused'; });
       belt.addEventListener('focusout', function() { belt.style.animationPlayState = 'running'; });
     }
 
     /* ── init ── */
-    fetchJobs()
+    fetchSections()
       .then(extractLatestJobs)
       .then(renderTicker)
       .catch(function(err) {
-        console.warn('[Ticker] Failed to load jobs:', err);
-        renderTicker([{ name: 'View Latest Sarkari Jobs 2026', url: LATEST_JOBS_URL }]);
+        console.warn('[Ticker] Failed to load dynamic jobs:', err);
+        /* graceful fallback — render link to latest jobs page */
+        renderTicker([{ name: 'View Latest Sarkari Jobs 2026', url: 'view.html?section=latest%20jobs' }]);
       });
   })();
   </script>
@@ -1993,21 +2009,42 @@
           </div>
         </div>
 
-        <!-- ADMIT CARD & RESULT SIDEBAR -->
+        <!-- ALL STATES JOBS SIDEBAR -->
         <div class="sec-card">
-          <div class="sec-head red">
-            <div class="left"><i class="fa-solid fa-calendar-check"></i> ADMIT CARD & RESULT</div>
-            <a href="view.html?section=SR_Admit_Card" class="view-all-btn">View All</a>
+          <div class="sec-head blue">
+            <div class="left"><i class="fa-solid fa-map-location-dot"></i> ALL STATES JOBS</div>
+            <a href="category.html?group=state" class="view-all-btn">View All</a>
           </div>
-          <div class="sec-list">
-            <a href="view.html?section=SR_Admit_Card"><i class="fa-solid fa-id-card"></i><span>Admit Card</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="view.html?section=SR_Result"><i class="fa-solid fa-trophy"></i><span>Result</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="view.html?section=SR_Answer_Key"><i class="fa-solid fa-key"></i><span>Answer Key</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="view.html?section=SR_Admission"><i class="fa-solid fa-graduation-cap"></i><span>Admission</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="view.html?section=SR_Offline_Form"><i class="fa-solid fa-file-pen"></i><span>Offline Form</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="view.html?section=Latest%20Notifications"><i class="fa-solid fa-bell"></i><span>Latest Notifications</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="view.html?section=Last%20Date%20Reminder"><i class="fa-solid fa-clock"></i><span>Last Date Reminder</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+          <div class="states-sidebar-grid">
+            <a class="states-sidebar-item" href="state-jobs.html?state=Haryana"><span class="st-em">🇮🇳</span> Haryana</a>
+            <a class="states-sidebar-item" href="state-jobs.html?state=Uttar+Pradesh"><span class="st-em">🌾</span> Uttar Pradesh</a>
+            <a class="states-sidebar-item" href="state-jobs.html?state=Rajasthan"><span class="st-em">🏜️</span> Rajasthan</a>
+            <a class="states-sidebar-item" href="state-jobs.html?state=Bihar"><span class="st-em">🌿</span> Bihar</a>
+            <a class="states-sidebar-item" href="state-jobs.html?state=Madhya+Pradesh"><span class="st-em">🏛️</span> Madhya Pradesh</a>
+            <a class="states-sidebar-item" href="state-jobs.html?state=Punjab"><span class="st-em">🌻</span> Punjab</a>
+            <a class="states-sidebar-item" href="state-jobs.html?state=Delhi"><span class="st-em">🏙️</span> Delhi</a>
+            <a class="states-sidebar-item" href="state-jobs.html?state=Gujarat"><span class="st-em">🦁</span> Gujarat</a>
+            <a class="states-sidebar-item" href="state-jobs.html?state=Maharashtra"><span class="st-em">🎡</span> Maharashtra</a>
+            <a class="states-sidebar-item" href="state-jobs.html?state=Karnataka"><span class="st-em">🌴</span> Karnataka</a>
+            <a class="states-sidebar-item" href="state-jobs.html?state=Tamil+Nadu"><span class="st-em">🏖️</span> Tamil Nadu</a>
+            <a class="states-sidebar-item" href="state-jobs.html?state=Andhra+Pradesh"><span class="st-em">🌊</span> Andhra Pradesh</a>
+            <a class="states-sidebar-item" href="state-jobs.html?state=Telangana"><span class="st-em">🌺</span> Telangana</a>
+            <a class="states-sidebar-item" href="state-jobs.html?state=West+Bengal"><span class="st-em">🐯</span> West Bengal</a>
+            <a class="states-sidebar-item" href="state-jobs.html?state=Jharkhand"><span class="st-em">⛏️</span> Jharkhand</a>
+            <a class="states-sidebar-item" href="state-jobs.html?state=Chhattisgarh"><span class="st-em">🌲</span> Chhattisgarh</a>
+            <a class="states-sidebar-item" href="state-jobs.html?state=Odisha"><span class="st-em">🏺</span> Odisha</a>
+            <a class="states-sidebar-item" href="state-jobs.html?state=Assam"><span class="st-em">🍵</span> Assam</a>
+            <a class="states-sidebar-item" href="state-jobs.html?state=Himachal+Pradesh"><span class="st-em">🏔️</span> Himachal Pradesh</a>
+            <a class="states-sidebar-item" href="state-jobs.html?state=Uttarakhand"><span class="st-em">⛰️</span> Uttarakhand</a>
+            <a class="states-sidebar-item" href="state-jobs.html?state=Jammu+and+Kashmir"><span class="st-em">❄️</span> J&amp;K</a>
+            <a class="states-sidebar-item" href="state-jobs.html?state=Kerala"><span class="st-em">🌴</span> Kerala</a>
+            <a class="states-sidebar-item" href="state-jobs.html?state=Goa"><span class="st-em">🏝️</span> Goa</a>
+            <a class="states-sidebar-item" href="state-jobs.html?state=Tripura"><span class="st-em">🌿</span> Tripura</a>
+            <a class="states-sidebar-item" href="state-jobs.html?state=Manipur"><span class="st-em">💐</span> Manipur</a>
+            <a class="states-sidebar-item" href="state-jobs.html?state=Meghalaya"><span class="st-em">🌧️</span> Meghalaya</a>
+            <a class="states-sidebar-item" href="state-jobs.html?state=Sikkim"><span class="st-em">🏞️</span> Sikkim</a>
           </div>
+          <a class="states-sidebar-viewall" href="category.html?group=state"><i class="fa-solid fa-map-location-dot"></i> View All States</a>
         </div>
 
         <!-- JOBS BY QUAL SIDEBAR -->
