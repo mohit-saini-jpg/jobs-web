@@ -781,34 +781,51 @@
     document.getElementById('faq2A').textContent = `Eligibility varies by post. Most ${name} govt jobs require 10th/12th pass, graduation or post-graduation. Domicile/Residence certificate of ${name} is usually required. Age: 18–40 years (relaxation for reserved categories).`;
   }
 
+  // ═══ SLUG GENERATOR (matches state-job-detail.html) ═══
+  function makeSlug(title) {
+    return (title || '').toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '')
+      .slice(0, 120);
+  }
+
+  // ═══ BUILD SEO-FRIENDLY JOB DETAIL URL ═══
+  function jobDetailUrl(item, sectionId) {
+    const title = item.name || item.detail?.basic_details?.job_title || '';
+    const slug  = makeSlug(title);
+    return `state-job-detail.html?state=${encodeURIComponent(sectionId)}&slug=${encodeURIComponent(slug)}`;
+  }
+
   // ═══ LOAD JOBS FROM state-jobs-data.json ═══
   async function loadJobs() {
     const jobsList = document.getElementById('jobsList');
 
     try {
-      // Try state-jobs-data.json first (state-specific data)
-      let matchedItems = [];
-      let dataLoaded = false;
+      // Load state-jobs-data.json
+      let matchedSection = null;
 
       try {
         const r = await fetch('state-jobs-data.json');
         if (r.ok) {
           const data = await r.json();
-          // Match section by state name (exact or partial)
           const stateKey = (stateName || '').toLowerCase();
           for (const sec of (data.sections || [])) {
             if ((sec.state || '').toLowerCase() === stateKey ||
                 (sec.id || '').toLowerCase() === stateKey.replace(/ /g,'-') ||
                 (sec.title || '').toLowerCase().includes(stateKey.split(' ')[0])) {
-              matchedItems = sec.items || [];
+              matchedSection = sec;
               break;
             }
           }
-          dataLoaded = true;
         }
       } catch(e2) {}
 
-      // Fallback: try dynamic-sections.json
+      // Fallback: try dynamic-sections.json (old format, no detail pages)
+      let matchedItems = matchedSection ? (matchedSection.items || []) : [];
+      let hasDetailData = !!matchedSection;
+
       if (!matchedItems.length) {
         try {
           const info2 = STATE_DATA[stateName];
@@ -821,6 +838,7 @@
               if (secTitle.includes(sectionKeyword.split(' ')[0].toLowerCase()) ||
                   secTitle.includes((stateName || '').toLowerCase().split(' ')[0])) {
                 matchedItems = sec.items || [];
+                hasDetailData = false;
                 break;
               }
             }
@@ -836,20 +854,47 @@
             Check All Latest Govt Jobs →
           </a>
         </div>`;
+        // Update stats
+        document.getElementById('statJobs').textContent = '0';
         return;
       }
 
+      // Update stats
+      document.getElementById('statJobs').textContent = matchedItems.length + '+';
+
+      // Render job list — link to SEO detail page if detail data available
       jobsList.innerHTML = matchedItems.map((item, i) => {
         const title = item.name || item.title || 'Government Job';
-        const url   = item.url || item.link || '#';
         const date  = item.date || item.lastDate || '';
-        return `<a href="${url}">
+        const qual  = item.qualification || '';
+        const board = item.board || '';
+        const postDate = item.postDate || '';
+
+        // Use SEO detail page URL if we have rich data, else fallback to external url
+        const href = hasDetailData && matchedSection
+          ? jobDetailUrl(item, matchedSection.id)
+          : (item.url || item.link || '#');
+
+        // Detect if urgent (last date within 7 days)
+        let isUrgent = false;
+        if (item.lastDate) {
+          try {
+            const parts = item.lastDate.split('-');
+            const d = new Date(parts[2], parts[1]-1, parts[0]);
+            const diff = (d - Date.now()) / 864e5;
+            isUrgent = diff >= 0 && diff <= 7;
+          } catch(_) {}
+        }
+
+        return `<a href="${href}" ${hasDetailData ? '' : 'target="_blank" rel="noopener"'}>
           ${i < 3 ? '<span class="job-new">NEW</span>' : ''}
+          ${isUrgent ? '<span class="job-new" style="background:#dc2626;">URGENT</span>' : ''}
           <div class="job-body">
             <div class="job-title">${title}</div>
             <div class="job-meta">
               <i class="fa-solid fa-calendar" aria-hidden="true"></i> ${date || 'Apply Now'}
-              ${item.qualification ? `&nbsp;|&nbsp; <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> ${item.qualification.split(',')[0]}` : ''}
+              ${qual ? `&nbsp;|&nbsp; <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> ${qual.split(',')[0]}` : ''}
+              ${board ? `&nbsp;|&nbsp; <i class="fa-solid fa-building" aria-hidden="true"></i> ${board}` : ''}
             </div>
           </div>
           <i class="fa-solid fa-chevron-right" style="color:#d1d5db;font-size:.6rem;flex-shrink:0;margin-top:4px;"></i>
