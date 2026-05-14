@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--
+    /state-job-detail.html — State Job Detail Page
+    ================================================
+    URL pattern:  state-job-detail.html?state=haryana&slug=bpssc-havildar-instructor-122-posts
+    Reads from:   state-jobs-data.json
+    Shows full job detail: dates, fee, age, qualification, links
+  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- SEO placeholders — overwritten by JS -->
+  <title id="pageTitle">State Govt Job Detail | Top Sarkari Jobs</title>
+  <meta name="description" id="metaDesc" content="State government job detail — eligibility, last date, salary, links.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" id="canonicalTag" href="https://www.topsarkarijobs.com/state-job-detail.html">
+  <link rel="icon" type="image/x-icon" href="/image.ico">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Top Sarkari Jobs">
+  <meta property="og:image" content="https://www.topsarkarijobs.com/image.png">
+  <meta id="ogTitle"  property="og:title" content="State Govt Job | Top Sarkari Jobs">
+  <meta id="ogDesc"   property="og:description" content="State government job detail.">
+  <meta id="ogUrl"    property="og:url" content="https://www.topsarkarijobs.com/state-job-detail.html">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta id="twTitle" name="twitter:title" content="State Govt Job | Top Sarkari Jobs">
+  <meta id="twDesc"  name="twitter:description" content="State government job detail.">
+
+  <!-- Structured Data -->
+  <script type="application/ld+json" id="jobSchema">{}</script>
+  <script type="application/ld+json" id="breadcrumbSchema">{}</script>
+
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/fonts/fa/all.min.css">
+
+  <style>
+    *,*::before,*::after{box-sizing:border-box;}
+    html,body{height:100%;margin:0;}
+    html{scroll-padding-top:100px;}
+    body{display:flex;flex-direction:column;font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f4f8;}
+    main{flex:1;}
+
+    /* ── Sticky Header ── */
+    .site-header{position:sticky!important;top:0!important;z-index:500!important;background:#fff!important;box-shadow:0 2px 8px rgba(0,0,0,.1);}
+    :root{--navy:#0d2257;--blue:#1a56db;--blue2:#1e40af;--accent:#f59e0b;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;--bg:#f8fafc;--white:#ffffff;--green:#16a34a;--red:#dc2626;}
+    a{text-decoration:none;color:inherit;}
+
+    /* ── WRAPPER ── */
+    .jp-wrap{max-width:1200px;margin:0 auto;padding:12px 12px 40px;}
+    .jp-three-col{display:grid;grid-template-columns:220px 1fr 280px;gap:16px;align-items:start;}
+    @media(max-width:1024px){.jp-three-col{grid-template-columns:1fr 260px;}}
+    @media(max-width:768px){.jp-three-col{grid-template-columns:1fr;}}
+
+    /* ── Left Nav ── */
+    .jp-left-nav{position:sticky;top:100px;}
+    @media(max-width:1024px){.jp-left-nav{display:none;}}
+    .jp-left-nav-card{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px;}
+    .jp-left-nav-head{background:linear-gradient(135deg,#1d4ed8,#1d6dbc);color:#fff;font-size:.78rem;font-weight:700;padding:9px 12px;display:flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:.05em;}
+    .jp-left-nav-list{padding:6px 0;}
+    .jp-left-nav-item{display:block;padding:6px 12px;font-size:.78rem;color:#374151;text-decoration:none;border-left:3px solid transparent;transition:all .15s;line-height:1.4;}
+    .jp-left-nav-item:hover{background:#f0f7ff;color:#1d4ed8;border-left-color:#1d4ed8;}
+    .jp-left-nav-item i{width:16px;margin-right:5px;color:#94a3b8;font-size:.75rem;}
+    .jp-left-nav-divider{font-size:.68rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.08em;padding:7px 12px 3px;margin-top:3px;border-top:1px solid #f1f5f9;}
+
+    /* ── Cards ── */
+    .jp-card{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+
+    /* ── Breadcrumb ── */
+    .jp-breadcrumb{font-size:.79rem;color:#64748b;margin-bottom:10px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+    .jp-breadcrumb a{color:#1d6dbc;text-decoration:none;}
+    .jp-breadcrumb a:hover{text-decoration:underline;}
+    .jp-breadcrumb .sep{color:#cbd5e1;}
+
+    /* ── Header Card ── */
+    .jp-header-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px 18px 0;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+    .jp-badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:center;}
+    .jp-tag{display:inline-flex;align-items:center;gap:5px;background:#dbeafe;color:#1e40af;font-size:.71rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 10px;border-radius:20px;}
+    .jp-tag-new{background:#dcfce7;color:#166534;}
+    .jp-tag-state{background:#fef3c7;color:#92400e;}
+    .jp-title{font-size:1.22rem;font-weight:800;color:#0f172a;line-height:1.45;margin:0 0 10px;}
+    .jp-meta{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:.77rem;color:#64748b;padding-bottom:12px;border-bottom:1px solid #f1f5f9;}
+    .jp-meta span{display:flex;align-items:center;gap:4px;}
+    .jp-meta i{color:#94a3b8;}
+
+    /* ── Stats Bar ── */
+    .jp-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--border);}
+    @media(max-width:500px){.jp-stats{grid-template-columns:repeat(2,1fr);}}
+    .jp-stat{padding:11px 8px;text-align:center;border-right:1px solid var(--border);}
+    .jp-stat:last-child{border-right:none;}
+    .jp-stat-icon{font-size:1.1rem;margin-bottom:3px;}
+    .jp-stat-label{font-size:.65rem;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px;}
+    .jp-stat-val{font-size:.88rem;font-weight:800;color:#0f172a;}
+    .jp-stat-val.red{color:#dc2626;}
+    .jp-stat-val.blue{color:#1d4ed8;}
+    .jp-stat-val.green{color:#16a34a;}
+
+    /* ── Main CTA ── */
+    .jp-main-cta{display:block;margin:14px;padding:14px;background:linear-gradient(135deg,#16a34a,#15803d);color:#fff!important;text-decoration:none;border-radius:10px;text-align:center;font-weight:800;font-size:1rem;letter-spacing:.02em;box-shadow:0 4px 14px rgba(22,163,74,.3);transition:all .2s;}
+    .jp-main-cta:hover{filter:brightness(1.08);transform:translateY(-2px);}
+    .jp-main-cta-sub{font-size:.78rem;font-weight:600;opacity:.9;display:block;margin-top:3px;}
+
+    /* ── Section Heads ── */
+    .jp-sec-head{background:#1d6dbc;color:#fff;font-size:.86rem;font-weight:700;padding:9px 14px;display:flex;align-items:center;gap:8px;}
+
+    /* ── Tables ── */
+    .jp-table{width:100%;border-collapse:collapse;}
+    .jp-table tr:not(:last-child) td,.jp-table tr:not(:last-child) th{border-bottom:1px solid #e9eef4;}
+    .jp-table th{width:35%;background:#f8fafc;color:#374151;font-size:.82rem;font-weight:700;padding:10px 14px;text-align:left;vertical-align:top;}
+    .jp-table td{color:#1e293b;font-size:.84rem;padding:10px 14px;vertical-align:top;line-height:1.6;}
+    .jp-table tr.lastdate-row th,.jp-table tr.lastdate-row td{background:#fef2f2;}
+    .jp-table tr.lastdate-row td{color:#dc2626;font-weight:800;}
+
+    /* ── Notice ── */
+    .jp-notice{padding:11px 14px;font-size:.81rem;color:#78350f;line-height:1.65;background:#fffbeb;border-top:1px solid #fde68a;}
+    .jp-notice strong{color:#92400e;}
+
+    /* ── Short Info ── */
+    .jp-short-info{padding:12px 14px;font-size:.83rem;color:#1e293b;line-height:1.7;background:#f0f9ff;border-left:4px solid #0891b2;}
+
+    /* ── KV Grid (fee) ── */
+    .jp-kv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));}
+    .jp-kv-item{padding:10px 14px;border-right:1px solid #e9eef4;border-bottom:1px solid #e9eef4;}
+    .jp-kv-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#64748b;margin-bottom:3px;}
+    .jp-kv-val{font-size:.9rem;font-weight:700;color:#0f172a;}
+    .jp-kv-val.green{color:#16a34a;}
+    .jp-kv-val.blue{color:#1d4ed8;}
+
+    /* ── Selection badges ── */
+    .jp-sel-badges{display:flex;flex-wrap:wrap;gap:8px;padding:14px;}
+    .jp-sel-badge{display:flex;align-items:center;gap:7px;padding:7px 13px;background:#f0f7ff;border:1px solid #bfdbfe;border-radius:8px;font-size:.81rem;font-weight:600;color:#1e40af;}
+    .jp-sel-badge i{color:#1d4ed8;}
+
+    /* ── Important Links ── */
+    .jp-actions{display:flex;gap:10px;flex-wrap:wrap;padding:14px;}
+    .jp-btn{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:10px 16px;border-radius:7px;text-decoration:none;font-weight:700;font-size:.83rem;line-height:1.2;transition:all .15s;flex:1;min-width:130px;text-align:center;}
+    .jp-btn:hover{filter:brightness(1.08);transform:translateY(-1px);}
+    .jp-btn-green{background:#16a34a;color:#fff!important;}
+    .jp-btn-blue{background:#1d4ed8;color:#fff!important;}
+    .jp-btn-red{background:#dc2626;color:#fff!important;}
+    .jp-btn-orange{background:#ea580c;color:#fff!important;}
+    .jp-btn-sub{font-size:.68rem;font-weight:600;opacity:.9;}
+
+    /* ── Tips ── */
+    .jp-tips-list{padding:10px 14px 12px;margin:0 0 0 16px;}
+    .jp-tips-list li{font-size:.81rem;color:#334155;line-height:1.9;}
+
+    /* ── Right Sidebar ── */
+    .jp-right-sidebar{position:sticky;top:100px;}
+    @media(max-width:768px){.jp-right-sidebar{position:static;}}
+    .jp-date-row{display:flex;justify-content:space-between;align-items:baseline;padding:9px 13px;font-size:.82rem;border-bottom:1px solid #f1f5f9;}
+    .jp-date-row:last-child{border-bottom:none;}
+    .jp-date-label{color:#374151;font-weight:600;}
+    .jp-date-val{font-weight:700;color:#0f172a;text-align:right;font-size:.8rem;}
+    .jp-date-val.red{color:#dc2626;}
+
+    .jp-hl-list{padding:8px 13px 10px;}
+    .jp-hl-item{display:flex;align-items:flex-start;gap:7px;padding:4px 0;font-size:.81rem;color:#1e293b;line-height:1.4;}
+    .jp-hl-item i{color:#16a34a;font-size:.8rem;margin-top:3px;flex-shrink:0;}
+
+    .jp-share-btns{display:flex;gap:7px;padding:11px 13px;flex-wrap:wrap;}
+    .jp-share-btn{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:6px;text-decoration:none;font-size:.95rem;transition:opacity .15s;border:none;cursor:pointer;}
+    .jp-share-btn:hover{opacity:.82;}
+    .sh-fb{background:#1877f2;color:#fff;}
+    .sh-tw{background:#000;color:#fff;}
+    .sh-wa{background:#25d366;color:#fff;}
+    .sh-tg{background:#2aabee;color:#fff;}
+    .sh-cp{background:#64748b;color:#fff;}
+
+    .jp-qlink-item{display:flex;align-items:center;padding:7px 13px;font-size:.79rem;color:#374151;text-decoration:none;border-bottom:1px solid #f1f5f9;gap:8px;transition:background .12s;}
+    .jp-qlink-item:last-child{border-bottom:none;}
+    .jp-qlink-item:hover{background:#f0fdf4;color:#0f766e;}
+    .jp-qlink-item i{width:16px;color:#0f766e;flex-shrink:0;font-size:.8rem;}
+    .jp-qlink-item span{flex:1;line-height:1.4;}
+
+    .jp-social-links{padding:10px 13px;display:flex;flex-direction:column;gap:6px;}
+    .jp-social-link{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:7px;text-decoration:none;font-size:.8rem;font-weight:600;transition:opacity .15s;}
+    .jp-social-link:hover{opacity:.85;}
+    .jp-social-link.wa{background:#25d366;color:#fff;}
+    .jp-social-link.yt{background:#ff0000;color:#fff;}
+    .jp-social-link.tg{background:#2aabee;color:#fff;}
+    .jp-social-link i{font-size:1rem;width:18px;text-align:center;}
+
+    /* ── Loading / Error ── */
+    .jp-loading{padding:48px 0;text-align:center;color:#64748b;}
+    .jp-error-box{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:16px 18px;color:#991b1b;font-size:.9rem;margin-bottom:16px;}
+
+    /* ── Detail text ── */
+    .jp-detail-text{padding:10px 14px;font-size:.83rem;color:#1e293b;line-height:1.7;}
+
+    /* ── Vacancy table ── */
+    .jp-vac-table{width:100%;border-collapse:collapse;font-size:.82rem;}
+    .jp-vac-table th{background:#1d4ed8;color:#fff;padding:8px 12px;text-align:center;font-weight:700;}
+    .jp-vac-table td{padding:8px 12px;text-align:center;border-bottom:1px solid #e9eef4;color:#1e293b;}
+    .jp-vac-table tr:last-child td{border-bottom:none;font-weight:700;background:#f0f9ff;}
+
+    @media(max-width:520px){
+      .jp-title{font-size:1rem;}
+      .jp-btn{font-size:.76rem;padding:9px 10px;}
+      .jp-actions{gap:7px;}
+    }
+
+    /* ── Header / Nav styles (inline since no shared header.html) ── */
+    .header-logo-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;gap:10px;max-width:1280px;margin:0 auto;background:#fff;}
+    .brand{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0;}
+    .brand-logo{width:40px;height:40px;border-radius:8px;object-fit:cover;}
+    .brand-text{display:flex;flex-direction:column;}
+    .brand-title{font-size:1.1rem;font-weight:900;color:var(--navy);line-height:1.2;white-space:nowrap;}
+    .brand-title span{color:var(--accent);}
+    .brand-sub{font-size:.62rem;color:var(--muted);font-weight:600;white-space:nowrap;}
+    .header-actions{display:flex;align-items:center;gap:8px;}
+    .wa-btn-header{background:#25d366;color:#fff;border:none;border-radius:7px;padding:7px 12px;font-size:.78rem;font-weight:800;cursor:pointer;display:none;align-items:center;gap:6px;text-decoration:none;}
+    @media(min-width:1024px){.wa-btn-header{display:flex;}}
+    .icon-btn{background:none;border:none;color:var(--text);width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;}
+    .desktop-nav{display:none;align-items:center;gap:1px;padding:0 12px;background:linear-gradient(90deg,var(--navy) 0%,var(--blue2) 100%);border-bottom:3px solid var(--accent);}
+    @media(min-width:901px){.desktop-nav{display:flex;} #menuBtn{display:none!important;}}
+    .nav-link{color:rgba(255,255,255,.92);text-decoration:none;font-size:.8rem;font-weight:700;padding:10px 11px;white-space:nowrap;transition:background .15s;display:flex;align-items:center;gap:5px;}
+    .nav-link:hover,.nav-link.active{background:rgba(255,255,255,.15);color:#fff;}
+    .nav-link i{font-size:.75rem;}
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:350;}
+    .overlay[hidden]{display:none!important;}
+    .offcanvas{position:fixed;top:0;left:0;bottom:0;width:min(300px,85vw);background:#fff;z-index:360;overflow-y:auto;display:flex;flex-direction:column;}
+    .offcanvas[hidden]{display:none!important;}
+    .offcanvas-head{display:flex;align-items:center;justify-content:space-between;padding:13px 14px;background:linear-gradient(90deg,var(--navy),var(--blue2));color:#fff;border-bottom:2px solid var(--accent);}
+    .offcanvas-title{font-weight:900;font-size:.95rem;}
+    .offcanvas-close{background:rgba(255,255,255,.15);border:none;color:#fff;width:32px;height:32px;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+    .offcanvas-nav{display:flex;flex-direction:column;padding:8px;gap:2px;}
+    .offcanvas-nav a{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:7px;text-decoration:none;font-size:.82rem;font-weight:700;color:var(--text);}
+    .offcanvas-nav a:hover{background:#eff6ff;color:var(--blue);}
+    .offcanvas-nav a i{width:17px;color:var(--blue);}
+
+    /* State badge */
+    .state-badge{display:inline-flex;align-items:center;gap:5px;background:#fef3c7;color:#92400e;font-size:.71rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 10px;border-radius:20px;}
+  </style>
+</head>
+<body>
+
+<!-- ════ HEADER ════ -->
+<header class="site-header" id="site-header">
+  <div class="header-logo-bar">
+    <a class="brand" href="/" aria-label="Top Sarkari Jobs Home">
+      <picture>
+        <source srcset="/image.webp" type="image/webp">
+        <img src="/image.png" alt="Top Sarkari Jobs Logo" class="brand-logo" width="40" height="40" fetchpriority="high">
+      </picture>
+      <div class="brand-text">
+        <span class="brand-title">TOP <span>SARKARI</span> JOBS</span>
+        <span class="brand-sub">Latest Sarkari Jobs, Results, Admit Cards &amp; Online Forms – 2026</span>
+      </div>
+    </a>
+    <div class="header-actions">
+      <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" class="wa-btn-header">
+        <i class="fa-brands fa-whatsapp"></i> Join WhatsApp<small style="font-size:.64rem;opacity:.85;display:block;">Get Instant Updates</small>
+      </a>
+      <button id="menuBtn" class="icon-btn" type="button" aria-label="Open menu">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </div>
+  <nav class="desktop-nav" aria-label="Primary navigation">
+    <a class="nav-link" href="/"><i class="fa-solid fa-house"></i> HOME</a>
+    <a class="nav-link" href="/view.html?section=latest%20jobs"><i class="fa-solid fa-briefcase"></i> LATEST JOBS</a>
+    <a class="nav-link" href="/category.html?group=admit-result"><i class="fa-solid fa-id-card"></i> ADMIT CARD</a>
+    <a class="nav-link" href="/category.html?group=admissions"><i class="fa-solid fa-trophy"></i> RESULTS</a>
+    <a class="nav-link active" href="/category.html?group=state"><i class="fa-solid fa-map-location-dot"></i> STATE JOBS</a>
+    <a class="nav-link" href="/category.html?group=study-material"><i class="fa-solid fa-book-open"></i> STUDY MATERIAL</a>
+    <a class="nav-link" href="/helpdesk.html"><i class="fa-solid fa-headset"></i> CONTACT US</a>
+  </nav>
+</header>
+
+<div id="menuOverlay" class="overlay" hidden></div>
+<aside id="mobileMenu" class="offcanvas" hidden aria-label="Mobile menu">
+  <div class="offcanvas-head">
+    <div class="offcanvas-title">☰ Menu</div>
+    <button id="closeMenuBtn" class="offcanvas-close" type="button" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <nav class="offcanvas-nav">
+    <a href="/"><i class="fa-solid fa-house"></i> Home</a>
+    <a href="/view.html?section=latest%20jobs"><i class="fa-solid fa-bolt"></i> Latest Jobs</a>
+    <a href="/category.html?group=admit-result"><i class="fa-solid fa-id-card"></i> Admit Cards</a>
+    <a href="/category.html?group=admissions"><i class="fa-solid fa-trophy"></i> Results</a>
+    <a href="/category.html?group=state"><i class="fa-solid fa-map-location-dot"></i> State Jobs</a>
+    <a href="/helpdesk.html"><i class="fa-solid fa-headset"></i> Helpdesk</a>
+  </nav>
+</aside>
+
+<!-- ════ MAIN ════ -->
+<main id="main">
+  <div class="jp-wrap">
+
+    <!-- Breadcrumb -->
+    <nav class="jp-breadcrumb" aria-label="Breadcrumb">
+      <a href="/"><i class="fa-solid fa-house" style="font-size:.72rem;"></i> Home</a>
+      <span class="sep">›</span>
+      <a href="/category.html?group=state">State Jobs</a>
+      <span class="sep">›</span>
+      <a href="#" id="bcStateLink" style="color:#1d6dbc;">State</a>
+      <span class="sep">›</span>
+      <span id="bcTitle" style="color:#0f172a;">Loading…</span>
+    </nav>
+
+    <!-- Loading -->
+    <div id="jbLoading" class="jp-loading">
+      <i class="fa-solid fa-circle-notch fa-spin" style="color:#1d6dbc;font-size:1.6rem;"></i>
+      <p style="margin:12px 0 4px;font-weight:700;">Loading job details…</p>
+      <p style="font-size:.84rem;color:#94a3b8;">जानकारी लोड हो रही है…</p>
+    </div>
+
+    <!-- Error -->
+    <div id="jbError" class="jp-error-box" style="display:none;">
+      <strong>⚠ Job Not Found</strong><br>
+      Could not find the job. The link may be incorrect or the job may have been removed.<br>
+      <a href="/category.html?group=state" style="color:#1d4ed8;margin-top:8px;display:inline-block;">← Back to State Jobs</a>
+    </div>
+
+    <!-- Three-col layout -->
+    <div class="jp-three-col" id="jbThreeCol" style="display:none;">
+
+      <!-- LEFT NAV -->
+      <aside class="jp-left-nav">
+        <div class="jp-left-nav-card">
+          <div class="jp-left-nav-head"><i class="fa-solid fa-map-location-dot"></i> State Jobs</div>
+          <nav class="jp-left-nav-list">
+            <div class="jp-left-nav-divider">Popular States</div>
+            <a class="jp-left-nav-item" href="/state-jobs.html?state=Haryana"><i class="fa-solid fa-location-dot"></i>Haryana Jobs</a>
+            <a class="jp-left-nav-item" href="/state-jobs.html?state=Uttar%20Pradesh"><i class="fa-solid fa-location-dot"></i>UP Jobs</a>
+            <a class="jp-left-nav-item" href="/state-jobs.html?state=Rajasthan"><i class="fa-solid fa-location-dot"></i>Rajasthan Jobs</a>
+            <a class="jp-left-nav-item" href="/state-jobs.html?state=Bihar"><i class="fa-solid fa-location-dot"></i>Bihar Jobs</a>
+            <a class="jp-left-nav-item" href="/state-jobs.html?state=Madhya%20Pradesh"><i class="fa-solid fa-location-dot"></i>MP Jobs</a>
+            <a class="jp-left-nav-item" href="/state-jobs.html?state=Punjab"><i class="fa-solid fa-location-dot"></i>Punjab Jobs</a>
+            <a class="jp-left-nav-item" href="/state-jobs.html?state=Delhi"><i class="fa-solid fa-location-dot"></i>Delhi Jobs</a>
+            <a class="jp-left-nav-item" href="/state-jobs.html?state=Gujarat"><i class="fa-solid fa-location-dot"></i>Gujarat Jobs</a>
+            <a class="jp-left-nav-item" href="/state-jobs.html?state=Maharashtra"><i class="fa-solid fa-location-dot"></i>Maharashtra Jobs</a>
+            <a class="jp-left-nav-item" href="/state-jobs.html?state=Karnataka"><i class="fa-solid fa-location-dot"></i>Karnataka Jobs</a>
+            <div class="jp-left-nav-divider">By Category</div>
+            <a class="jp-left-nav-item" href="/view.html?section=Police%20Jobs"><i class="fa-solid fa-shield-halved"></i>Police Jobs</a>
+            <a class="jp-left-nav-item" href="/view.html?section=Teacher%20Jobs"><i class="fa-solid fa-chalkboard-user"></i>Teacher Jobs</a>
+            <a class="jp-left-nav-item" href="/view.html?section=Bank%20Jobs"><i class="fa-solid fa-building-columns"></i>Bank Jobs</a>
+            <a class="jp-left-nav-item" href="/view.html?section=Railway%20Jobs"><i class="fa-solid fa-train"></i>Railway Jobs</a>
+            <div class="jp-left-nav-divider">By Qualification</div>
+            <a class="jp-left-nav-item" href="/view.html?section=10th%20Pass%20jobs"><i class="fa-solid fa-graduation-cap"></i>10th Pass</a>
+            <a class="jp-left-nav-item" href="/view.html?section=12th%20Pass%20jobs"><i class="fa-solid fa-graduation-cap"></i>12th Pass</a>
+            <a class="jp-left-nav-item" href="/view.html?section=Graduation%20jobs"><i class="fa-solid fa-university"></i>Graduation</a>
+          </nav>
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <div id="jbContent">
+
+        <!-- Job Header Card -->
+        <div class="jp-header-card">
+          <div class="jp-badge-row">
+            <span class="jp-tag" id="jbBadge">Recruitment</span>
+            <span class="state-badge" id="jbStateBadge">📍 State</span>
+            <span class="jp-tag jp-tag-new"><i class="fa-solid fa-bolt"></i> New</span>
+          </div>
+          <h1 class="jp-title" id="jbTitle">Loading…</h1>
+          <div class="jp-meta">
+            <span><i class="fa-regular fa-calendar"></i> <span id="metaPosted">—</span></span>
+            <span><i class="fa-solid fa-map-location-dot"></i> <span id="metaState">—</span></span>
+            <span id="metaLastDateWrap" style="display:none;"><i class="fa-solid fa-hourglass-end" style="color:#dc2626;"></i> <span id="metaLastDate" style="color:#dc2626;font-weight:700;"></span></span>
+          </div>
+          <div class="jp-stats">
+            <div class="jp-stat"><div class="jp-stat-icon">🏢</div><div class="jp-stat-label">Organisation</div><div class="jp-stat-val" id="statOrg" style="font-size:.74rem;">—</div></div>
+            <div class="jp-stat"><div class="jp-stat-icon">👥</div><div class="jp-stat-label">Total Posts</div><div class="jp-stat-val blue" id="statPosts">—</div></div>
+            <div class="jp-stat"><div class="jp-stat-icon">📅</div><div class="jp-stat-label">Last Date</div><div class="jp-stat-val red" id="statLastDate">—</div></div>
+            <div class="jp-stat"><div class="jp-stat-icon">💻</div><div class="jp-stat-label">Apply Mode</div><div class="jp-stat-val green" id="statApplyMode">Online</div></div>
+          </div>
+        </div>
+
+        <!-- Main CTA -->
+        <a id="btnMainCta" href="#" target="_blank" rel="noopener" class="jp-main-cta" style="display:none;">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> Apply Online / Official Website पर जाएँ
+          <span class="jp-main-cta-sub">Click to visit the official recruitment portal</span>
+        </a>
+
+        <!-- Short Info -->
+        <div class="jp-card" id="shortInfoCard" style="display:none;">
+          <div class="jp-sec-head" style="background:linear-gradient(135deg,#0f766e,#0891b2);"><i class="fa-solid fa-circle-info"></i> About This Recruitment</div>
+          <div class="jp-short-info" id="shortInfoText"></div>
+        </div>
+
+        <!-- Overview Table -->
+        <div class="jp-card">
+          <div class="jp-sec-head"><i class="fa-solid fa-table-list"></i> <span id="overviewTitle">Job Overview</span></div>
+          <table class="jp-table"><tbody id="jbTable"></tbody></table>
+          <div class="jp-notice">
+            <strong>⚠ Important:</strong> Always verify all details on the <strong>official website</strong> before applying. Dates &amp; eligibility may change without notice.<br>
+            <strong>ध्यान दें:</strong> आवेदन से पहले आधिकारिक वेबसाइट पर सभी जानकारी जाँचें।
+          </div>
+        </div>
+
+        <!-- Important Dates -->
+        <div class="jp-card" id="datesCard" style="display:none;">
+          <div class="jp-sec-head" style="background:linear-gradient(135deg,#b91c1c,#dc2626);"><i class="fa-regular fa-calendar-check"></i> Important Dates</div>
+          <table class="jp-table"><tbody id="datesBody"></tbody></table>
+        </div>
+
+        <!-- Application Fee -->
+        <div class="jp-card" id="feeCard" style="display:none;">
+          <div class="jp-sec-head" style="background:linear-gradient(135deg,#c2410c,#ea580c);"><i class="fa-solid fa-indian-rupee-sign"></i> Application Fee</div>
+          <div id="feeContent"></div>
+        </div>
+
+        <!-- Age Limit -->
+        <div class="jp-card" id="ageCard" style="display:none;">
+          <div class="jp-sec-head" style="background:linear-gradient(135deg,#0f766e,#0891b2);"><i class="fa-solid fa-user-clock"></i> Age Limit</div>
+          <table class="jp-table"><tbody id="ageBody"></tbody></table>
+        </div>
+
+        <!-- Qualification -->
+        <div class="jp-card" id="qualCard" style="display:none;">
+          <div class="jp-sec-head" style="background:linear-gradient(135deg,#4338ca,#6366f1);"><i class="fa-solid fa-graduation-cap"></i> Educational Qualification</div>
+          <div id="qualContent"></div>
+        </div>
+
+        <!-- Vacancy Details -->
+        <div class="jp-card" id="vacCard" style="display:none;">
+          <div class="jp-sec-head" style="background:linear-gradient(135deg,#15803d,#16a34a);"><i class="fa-solid fa-chart-pie"></i> Vacancy Details</div>
+          <div style="overflow-x:auto;"><table class="jp-vac-table" id="vacTable"></table></div>
+        </div>
+
+        <!-- Selection Process -->
+        <div class="jp-card" id="selCard" style="display:none;">
+          <div class="jp-sec-head" style="background:linear-gradient(135deg,#5b21b6,#7c3aed);"><i class="fa-solid fa-list-check"></i> Selection Process</div>
+          <div class="jp-sel-badges" id="selBadges"></div>
+        </div>
+
+        <!-- Salary -->
+        <div class="jp-card" id="salCard" style="display:none;">
+          <div class="jp-sec-head" style="background:linear-gradient(135deg,#166534,#16a34a);"><i class="fa-solid fa-sack-dollar"></i> Salary / Pay Scale</div>
+          <div class="jp-detail-text" id="salContent"></div>
+        </div>
+
+        <!-- Important Links -->
+        <div class="jp-card">
+          <div class="jp-sec-head"><i class="fa-solid fa-link"></i> Important Links</div>
+          <div class="jp-actions" id="linksActions">
+            <p style="color:#64748b;font-size:.83rem;padding:4px;">Loading links…</p>
+          </div>
+        </div>
+
+        <!-- Tips -->
+        <div class="jp-card">
+          <div class="jp-sec-head" style="background:#0891b2;"><i class="fa-solid fa-lightbulb"></i> Tips for Applicants</div>
+          <ul class="jp-tips-list">
+            <li>📌 Read the official notification carefully before applying.</li>
+            <li>📌 Keep scanned photo, signature &amp; documents ready (JPG/PDF).</li>
+            <li>📌 Use Chrome or Firefox. Avoid Internet Explorer.</li>
+            <li>📌 Pay application fee via Net Banking / UPI / Debit Card.</li>
+            <li>📌 Take a printout of the confirmation page after submission.</li>
+            <li>📌 Keep checking the official website for updates on date changes.</li>
+          </ul>
+        </div>
+
+      </div><!-- /jbContent -->
+
+      <!-- RIGHT SIDEBAR -->
+      <aside class="jp-right-sidebar">
+
+        <!-- Dates -->
+        <div class="jp-card">
+          <div class="jp-sec-head" style="background:#dc2626;"><i class="fa-regular fa-calendar"></i> Important Dates</div>
+          <div id="sidebarDates">
+            <div class="jp-date-row"><span class="jp-date-label">Page Visited</span><span class="jp-date-val" id="dateToday">—</span></div>
+          </div>
+        </div>
+
+        <!-- Highlights -->
+        <div class="jp-card">
+          <div class="jp-sec-head" style="background:#1d6dbc;"><i class="fa-solid fa-star"></i> Quick Highlights</div>
+          <div class="jp-hl-list" id="hlList"></div>
+        </div>
+
+        <!-- Share -->
+        <div class="jp-card">
+          <div class="jp-sec-head" style="background:#7c3aed;"><i class="fa-solid fa-share-nodes"></i> Share This Job</div>
+          <div class="jp-share-btns">
+            <a id="shFb" href="#" target="_blank" rel="noopener" class="jp-share-btn sh-fb" title="Share on Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+            <a id="shTw" href="#" target="_blank" rel="noopener" class="jp-share-btn sh-tw" title="Share on X"><i class="fa-brands fa-x-twitter"></i></a>
+            <a id="shWa" href="#" target="_blank" rel="noopener" class="jp-share-btn sh-wa" title="Share on WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+            <a id="shTg" href="#" target="_blank" rel="noopener" class="jp-share-btn sh-tg" title="Share on Telegram"><i class="fa-brands fa-telegram"></i></a>
+            <button class="jp-share-btn sh-cp" title="Copy Link" onclick="navigator.clipboard&&navigator.clipboard.writeText(location.href).then(()=>alert('Link copied!'))"><i class="fa-solid fa-copy"></i></button>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="jp-card">
+          <div class="jp-sec-head" style="background:#0f766e;"><i class="fa-solid fa-bolt"></i> Quick Links</div>
+          <a class="jp-qlink-item" href="/view.html?section=latest%20jobs"><i class="fa-solid fa-fire"></i><span>Latest Sarkari Jobs</span></a>
+          <a class="jp-qlink-item" href="/view.html?section=upcoming-jobs"><i class="fa-solid fa-calendar-days"></i><span>Upcoming Jobs 2026</span></a>
+          <a class="jp-qlink-item" href="/category.html?group=admit-result"><i class="fa-solid fa-id-card"></i><span>Admit Cards</span></a>
+          <a class="jp-qlink-item" href="/category.html?group=admissions"><i class="fa-solid fa-trophy"></i><span>Results</span></a>
+          <a class="jp-qlink-item" href="/category.html?group=state"><i class="fa-solid fa-map-location-dot"></i><span>All State Jobs</span></a>
+        </div>
+
+        <!-- Follow Us -->
+        <div class="jp-card">
+          <div class="jp-sec-head" style="background:#e11d48;"><i class="fa-solid fa-users"></i> Follow Us</div>
+          <div class="jp-social-links">
+            <a href="https://whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" class="jp-social-link wa"><i class="fa-brands fa-whatsapp"></i> Join WhatsApp Channel</a>
+            <a href="https://www.youtube.com/@Topsarkarijobs/shorts" target="_blank" rel="noopener" class="jp-social-link yt"><i class="fa-brands fa-youtube"></i> YouTube Channel</a>
+            <a href="https://t.me/topsarkarijobs" target="_blank" rel="noopener" class="jp-social-link tg"><i class="fa-brands fa-telegram"></i> Telegram Channel</a>
+          </div>
+        </div>
+
+      </aside>
+    </div><!-- /jp-three-col -->
+  </div><!-- /jp-wrap -->
+</main>
+
+<footer style="background:#0d2257;color:rgba(255,255,255,.8);padding:20px 12px;text-align:center;font-size:.78rem;margin-top:10px;">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div style="display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin-bottom:10px;">
+      <a href="/about.html" style="color:rgba(255,255,255,.7);">About</a>
+      <a href="/helpdesk.html" style="color:rgba(255,255,255,.7);">Contact</a>
+      <a href="/privacy.html" style="color:rgba(255,255,255,.7);">Privacy</a>
+      <a href="/terms.html" style="color:rgba(255,255,255,.7);">Terms</a>
+    </div>
+    © 2026 Top Sarkari Jobs. All rights reserved.
+  </div>
+</footer>
+
+<!-- ════ MAIN SCRIPT ════ -->
+<script>
+(function() {
+'use strict';
+
+const safe = v => (v ?? '').toString().trim();
+
+// ── URL params ──
+const params   = new URLSearchParams(location.search);
+const stateId  = safe(params.get('state'));   // e.g. "haryana"
+const jobSlug  = safe(params.get('slug'));    // e.g. "bpssc-havildar-instructor-122-posts"
+const jobIndex = parseInt(params.get('idx') || '-1', 10); // numeric fallback
+
+// ── Slug generator (matches the one in state-jobs.html) ──
+function makeSlug(title) {
+  return title.toLowerCase()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, 120);
+}
+
+// ── Helpers ──
+function today() {
+  return new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+}
+function setEl(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+function setMeta(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.setAttribute('content', val);
+}
+function show(id) {
+  const el = document.getElementById(id);
+  if (el) el.style.display = '';
+}
+function hide(id) {
+  const el = document.getElementById(id);
+  if (el) el.style.display = 'none';
+}
+
+// ── Link categorisation ──
+function categorizeLink(title, url) {
+  const t = title.toLowerCase();
+  const isNotif   = /notification|download.*notif|short\s*notice|brochure|advertise|download.*pdf/i.test(t);
+  const isApply   = /apply\s*online|apply\s*link|registration\s*link|apply\s*form|apply\s*now/i.test(t);
+  const isWebsite = /official\s*website|visit\s*website|official\s*portal/i.test(t);
+  const isAdmit   = /admit\s*card|hall\s*ticket/i.test(t);
+  const isResult  = /result|merit\s*list|score\s*card/i.test(t);
+  const isAnswer  = /answer\s*key|final\s*answer/i.test(t);
+
+  // Auto-detect from URL
+  const lurl = url.toLowerCase();
+  const isPdf = lurl.endsWith('.pdf') || lurl.includes('/pdf/') || lurl.includes('pdf');
+
+  if (isApply)   return { icon:'fa-paper-plane',   cls:'jp-btn-green',  sub:'Apply Now'   };
+  if (isAdmit)   return { icon:'fa-id-card',        cls:'jp-btn-orange', sub:'Download Now'};
+  if (isResult)  return { icon:'fa-trophy',         cls:'jp-btn-orange', sub:'View Result' };
+  if (isAnswer)  return { icon:'fa-key',            cls:'jp-btn-blue',   sub:'Download Now'};
+  if (isNotif || isPdf) return { icon:'fa-file-pdf', cls:'jp-btn-blue',  sub:'View PDF'    };
+  if (isWebsite) return { icon:'fa-globe',          cls:'jp-btn-red',    sub:'Visit Now'   };
+  return             { icon:'fa-link',              cls:'jp-btn-blue',   sub:'Click Here'  };
+}
+
+// ── SEO injection ──
+function injectSEO(job, stateName, stateId) {
+  const title = safe(job.name || job.basic_details?.job_title || '');
+  const org   = safe(job.board || job.basic_details?.organization_name || '');
+  const lastDate = safe(job.lastDate || '');
+  const slug  = makeSlug(title);
+  const canonUrl = `https://www.topsarkarijobs.com/state-job-detail.html?state=${encodeURIComponent(stateId)}&slug=${encodeURIComponent(slug)}`;
+  const fullTitle = `${title} | Top Sarkari Jobs`;
+  const desc  = `${title} — Check eligibility, last date ${lastDate ? '(' + lastDate + ')' : ''}, salary and apply online. ${stateName} Govt Job 2026 on Top Sarkari Jobs.`;
+
+  document.title = fullTitle;
+  setEl('pageTitle', fullTitle);
+  setMeta('metaDesc', desc);
+  document.getElementById('canonicalTag').href = canonUrl;
+  setMeta('ogTitle', fullTitle);
+  setMeta('ogDesc',  desc);
+  setMeta('ogUrl',   canonUrl);
+  setMeta('twTitle', fullTitle);
+  setMeta('twDesc',  desc);
+
+  // JobPosting Schema
+  const bd = job.detail?.basic_details || {};
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'JobPosting',
+    title,
+    description: desc,
+    datePosted: new Date().toISOString().split('T')[0],
+    hiringOrganization: { '@type': 'Organization', name: org || stateName + ' Govt', sameAs: 'https://www.topsarkarijobs.com' },
+    jobLocation: { '@type': 'Place', address: { '@type': 'PostalAddress', addressRegion: stateName, addressCountry: 'IN' } },
+    employmentType: 'FULL_TIME',
+    url: canonUrl
+  };
+  if (lastDate) schema.validThrough = lastDate;
+  document.getElementById('jobSchema').textContent = JSON.stringify(schema);
+
+  // Breadcrumb Schema
+  document.getElementById('breadcrumbSchema').textContent = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.topsarkarijobs.com/' },
+      { '@type': 'ListItem', position: 2, name: 'State Jobs', item: 'https://www.topsarkarijobs.com/category.html?group=state' },
+      { '@type': 'ListItem', position: 3, name: stateName + ' Jobs', item: `https://www.topsarkarijobs.com/state-jobs.html?state=${encodeURIComponent(stateName)}` },
+      { '@type': 'ListItem', position: 4, name: title, item: canonUrl }
+    ]
+  });
+}
+
+// ── Main render ──
+function renderJob(job, stateName, stateId) {
+  const detail = job.detail || {};
+  const bd     = detail.basic_details || {};
+  const id     = detail.important_dates || {};
+  const fee    = detail.application_fee || {};
+  const age    = detail.age_limit || {};
+  const qual   = detail.qualification || {};
+  const sal    = detail.salary_details || {};
+  const sel    = detail.selection_process || [];
+  const vd     = detail.vacancy_details || [];
+  const il     = detail.important_links || {};
+  const si     = safe(bd.short_information || '');
+
+  const title    = safe(job.name || bd.job_title || '');
+  const org      = safe(job.board || bd.organization_name || '');
+  const postName = safe(bd.post_name || '');
+  const lastDate = safe(job.lastDate || id.last_date_to_apply || id.last_date || '');
+  const startDate= safe(id.start_date || id.notification_date || '');
+  const applyMode= safe(bd.application_mode || 'Online');
+  const advtNo   = safe(bd.advt_no || '');
+  const totalPosts = job.name.match(/[\d,]+\s*posts?/i)?.[0] || safe(postName);
+  const salary   = safe(sal.pay_scale || '');
+  const qualification = safe(qual.education_qualification || job.qualification || '');
+  const ageDetails = safe(age.age_details || age.age_limit || '');
+  const primaryUrl = safe(job.url || '');
+
+  // ── Breadcrumb & state link ──
+  document.getElementById('bcStateLink').textContent = stateName + ' Jobs';
+  document.getElementById('bcStateLink').href = `/state-jobs.html?state=${encodeURIComponent(stateName)}`;
+  document.getElementById('bcTitle').textContent = title.length > 55 ? title.slice(0, 52) + '…' : title;
+
+  // ── Badge / Header ──
+  const badge = document.getElementById('jbBadge');
+  badge.textContent = /admit\s*card/i.test(title) ? 'Admit Card'
+                    : /result/i.test(title)        ? 'Result'
+                    : /answer\s*key/i.test(title)  ? 'Answer Key'
+                    : 'Recruitment';
+
+  document.getElementById('jbStateBadge').textContent = '📍 ' + stateName;
+  setEl('jbTitle', title);
+  setEl('metaPosted', today());
+  setEl('metaState', stateName);
+  setEl('overviewTitle', org ? org + ' Recruitment 2026 : Overview' : 'Job Overview');
+
+  if (lastDate) {
+    document.getElementById('metaLastDateWrap').style.display = '';
+    document.getElementById('metaLastDate').textContent = 'Last Date: ' + lastDate;
+  }
+
+  // ── Stats ──
+  setEl('statOrg',       org || stateName + ' Govt');
+  setEl('statPosts',     totalPosts || 'Various');
+  setEl('statLastDate',  lastDate || 'See Notification');
+  setEl('statApplyMode', applyMode);
+  setEl('dateToday', today());
+
+  // ── Short Info ──
+  if (si) {
+    document.getElementById('shortInfoText').textContent = si;
+    show('shortInfoCard');
+  }
+
+  // ── Overview Table ──
+  const rows = [
+    ['Organisation',     org || stateName + ' Govt'],
+    ['Post Name',        postName || title],
+    ['Total Posts',      totalPosts || 'Various'],
+    ['State',            stateName],
+    ['Application Mode', applyMode],
+    advtNo ? ['Advertisement No.', advtNo] : null,
+    qualification ? ['Qualification', qualification] : null,
+    salary ? ['Salary / Pay Scale', salary] : null,
+    startDate ? ['Application Start', startDate] : null,
+    { label: 'Last Date to Apply', val: lastDate || 'See Notification', cls: 'lastdate-row' },
+    ['Official Website', 'Visit links below'],
+  ].filter(Boolean);
+
+  document.getElementById('jbTable').innerHTML = rows.map(r => {
+    if (typeof r === 'object' && r.cls) {
+      return `<tr class="${r.cls}"><th>${r.label}</th><td>${safe(r.val)}</td></tr>`;
+    }
+    return `<tr><th>${r[0]}</th><td>${r[1]}</td></tr>`;
+  }).join('');
+
+  // ── Important Dates ──
+  const dateRows = [];
+  if (startDate)   dateRows.push(['Application Start', startDate, false]);
+  if (lastDate)    dateRows.push(['Last Date to Apply', lastDate, true]);
+  const examDate = safe(id.exam_date || '');
+  const admitDate= safe(id.admit_card || id.admit_card_date || '');
+  const resDate  = safe(id.result_date || '');
+  if (examDate)    dateRows.push(['Exam Date', examDate, false]);
+  if (admitDate)   dateRows.push(['Admit Card', admitDate, false]);
+  if (resDate)     dateRows.push(['Result Date', resDate, false]);
+
+  if (dateRows.length > 0) {
+    document.getElementById('datesBody').innerHTML = dateRows.map(([l,v,r]) =>
+      `<tr><th>${l}</th><td style="${r?'color:#dc2626;font-weight:800;':''}">${v}</td></tr>`
+    ).join('');
+    show('datesCard');
+
+    // Sidebar dates
+    const sb = document.getElementById('sidebarDates');
+    sb.innerHTML = `<div class="jp-date-row"><span class="jp-date-label">Page Visited</span><span class="jp-date-val">${today()}</span></div>` +
+      dateRows.map(([l,v,r]) =>
+        `<div class="jp-date-row"><span class="jp-date-label">${l}</span><span class="jp-date-val${r?' red':''}">${v}</span></div>`
+      ).join('');
+  }
+
+  // ── Application Fee ──
+  const feeEntries = Object.entries(fee).filter(([,v]) => v);
+  if (feeEntries.length > 0) {
+    const isFree = v => /nil|0|free/i.test(v);
+    document.getElementById('feeContent').innerHTML = `
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));">
+        ${feeEntries.map(([k,v]) => `
+          <div class="jp-kv-item">
+            <div class="jp-kv-label">${k.replace(/_/g,' ')}</div>
+            <div class="jp-kv-val ${isFree(String(v))?'green':'blue'}">${v}</div>
+          </div>`).join('')}
+      </div>`;
+    show('feeCard');
+  } else {
+    // Show "No fee" info
+    document.getElementById('feeContent').innerHTML = `<div class="jp-detail-text" style="color:#16a34a;font-weight:700;">✅ No Application Fee (निःशुल्क)</div>`;
+    show('feeCard');
+  }
+
+  // ── Age Limit ──
+  if (ageDetails) {
+    document.getElementById('ageBody').innerHTML = `<tr><th>Age Details</th><td>${ageDetails}</td></tr>`;
+    show('ageCard');
+  }
+
+  // ── Qualification ──
+  if (qualification) {
+    document.getElementById('qualContent').innerHTML =
+      `<div class="jp-detail-text"><strong>Required Qualification:</strong> ${qualification}</div>`;
+    show('qualCard');
+  }
+
+  // ── Vacancy Details ──
+  if (Array.isArray(vd) && vd.length > 0) {
+    const keys = Object.keys(vd[0]).filter(k => vd.some(r => safe(r[k])));
+    document.getElementById('vacTable').innerHTML =
+      `<thead><tr>${keys.map(k=>`<th>${k.replace(/_/g,' ')}</th>`).join('')}</tr></thead>` +
+      `<tbody>${vd.map(r=>`<tr>${keys.map(k=>`<td>${safe(r[k])}</td>`).join('')}</tr>`).join('')}</tbody>`;
+    show('vacCard');
+  }
+
+  // ── Selection Process ──
+  const steps = Array.isArray(sel) ? sel : (typeof sel === 'string' ? sel.split(/[,;\/\n]/) : []);
+  const filteredSteps = steps.map(s=>safe(s)).filter(Boolean);
+  if (filteredSteps.length > 0) {
+    document.getElementById('selBadges').innerHTML = filteredSteps.map(s =>
+      `<div class="jp-sel-badge"><i class="fa-solid fa-check-circle"></i>${s.slice(0,90)}</div>`
+    ).join('');
+    show('selCard');
+  }
+
+  // ── Salary ──
+  if (salary) {
+    setEl('salContent', salary);
+    show('salCard');
+  }
+
+  // ── Important Links ──
+  // Only show job-relevant links (apply, notification, official website)
+  // NO sarkariresult/sarkariresultshine links
+  const isSR = u => u && (u.includes('sarkariresult.com') || u.includes('sarkariresultshine.com'));
+  const seenHrefs = new Set();
+  const allLinks = [];
+
+  // Process important_links from JSON
+  // Keys: click_here (array), notification_pdf (string)
+  const clickHereUrls = Array.isArray(il.click_here) ? il.click_here : (il.click_here ? [il.click_here] : []);
+  const notifPdfUrl   = safe(il.notification_pdf || '');
+
+  // Smart categorization of click_here URLs
+  clickHereUrls.forEach((rawUrl, idx) => {
+    const href = safe(rawUrl);
+    if (!href || isSR(href) || seenHrefs.has(href)) return;
+    seenHrefs.add(href);
+
+    // Detect link type from URL
+    const isPdf  = href.toLowerCase().includes('.pdf');
+    const lh = href.toLowerCase();
+    let label, cat;
+
+    if (isPdf) {
+      label = 'Notification PDF';
+      cat = { icon:'fa-file-pdf', cls:'jp-btn-blue', sub:'Download PDF' };
+    } else if (lh.includes('apply') || lh.includes('register') || lh.includes('signin') || lh.includes('login')) {
+      label = idx === 0 ? 'Apply Online' : `Apply Online (${idx+1})`;
+      cat = { icon:'fa-paper-plane', cls:'jp-btn-green', sub:'Apply Now' };
+    } else {
+      label = idx === 0 ? 'Click Here' : `Click Here (${idx+1})`;
+      cat = categorizeLink(label, href);
+    }
+
+    allLinks.push({ href, label, ...cat });
+  });
+
+  // Add notification_pdf if not already added
+  if (notifPdfUrl && !seenHrefs.has(notifPdfUrl) && !isSR(notifPdfUrl)) {
+    seenHrefs.add(notifPdfUrl);
+    allLinks.push({ href: notifPdfUrl, label: 'Notification PDF', icon:'fa-file-pdf', cls:'jp-btn-blue', sub:'Download PDF' });
+  }
+
+  // Add primaryUrl (item.url) as Apply Online if not already there
+  if (primaryUrl && !seenHrefs.has(primaryUrl) && !isSR(primaryUrl)) {
+    seenHrefs.add(primaryUrl);
+    const cat = categorizeLink('apply online', primaryUrl);
+    allLinks.push({ href: primaryUrl, label: 'Apply Online', icon:'fa-paper-plane', cls:'jp-btn-green', sub:'Apply Now' });
+  }
+
+  const linksHtml = allLinks.length > 0
+    ? allLinks.map(lk =>
+        `<a href="${lk.href}" target="_blank" rel="noopener" class="jp-btn ${lk.cls}">
+          <span><i class="fa-solid ${lk.icon}"></i> ${lk.label}</span>
+          <span class="jp-btn-sub">${lk.sub}</span>
+        </a>`
+      ).join('')
+    : `<p style="color:#64748b;font-size:.83rem;padding:4px;">No links available. Please check the official website.</p>`;
+
+  document.getElementById('linksActions').innerHTML = linksHtml;
+
+  // ── Main CTA ──
+  const ctaUrl = allLinks.find(l => l.cls === 'jp-btn-green')?.href || allLinks[0]?.href || '';
+  if (ctaUrl) {
+    const cta = document.getElementById('btnMainCta');
+    cta.href = ctaUrl;
+    cta.style.display = 'block';
+  }
+
+  // ── Highlights sidebar ──
+  const hlItems = [
+    org      ? `Organisation: ${org}` : null,
+    totalPosts ? `Total Posts: ${totalPosts}` : null,
+    salary   ? `Salary: ${salary.slice(0,60)}` : null,
+    lastDate ? `⚠ Last Date: ${lastDate}` : null,
+    `Apply Mode: ${applyMode}`,
+    `State: ${stateName}`,
+  ].filter(Boolean);
+  document.getElementById('hlList').innerHTML = hlItems.map(h =>
+    `<div class="jp-hl-item"><i class="fa-solid fa-circle-check"></i><span>${h}</span></div>`
+  ).join('');
+
+  // ── Share buttons ──
+  const pageUrl    = encodeURIComponent(location.href);
+  const pageTitle  = encodeURIComponent(title + ' | Top Sarkari Jobs');
+  document.getElementById('shFb').href = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
+  document.getElementById('shTw').href = `https://twitter.com/intent/tweet?text=${pageTitle}&url=${pageUrl}`;
+  document.getElementById('shWa').href = `https://wa.me/?text=${pageTitle}%20${pageUrl}`;
+  document.getElementById('shTg').href = `https://t.me/share/url?url=${pageUrl}&text=${pageTitle}`;
+
+  // ── SEO ──
+  injectSEO(job, stateName, stateId);
+
+  // ── Show layout ──
+  hide('jbLoading');
+  document.getElementById('jbThreeCol').style.display = 'grid';
+}
+
+// ── Load data & find job ──
+async function init() {
+  if (!stateId || (!jobSlug && jobIndex < 0)) {
+    hide('jbLoading');
+    show('jbError');
+    return;
+  }
+
+  let data;
+  try {
+    const res = await fetch('/state-jobs-data.json');
+    if (!res.ok) throw new Error('fetch failed');
+    data = await res.json();
+  } catch (e) {
+    hide('jbLoading');
+    show('jbError');
+    return;
+  }
+
+  // Find section matching stateId
+  const section = (data.sections || []).find(s =>
+    safe(s.id).toLowerCase() === stateId.toLowerCase() ||
+    safe(s.state).toLowerCase() === stateId.toLowerCase().replace(/-/g,' ')
+  );
+
+  if (!section || !section.items?.length) {
+    hide('jbLoading');
+    show('jbError');
+    return;
+  }
+
+  const stateName = section.state;
+
+  // Find job by slug or index
+  let job = null;
+  if (jobSlug) {
+    job = section.items.find(item => {
+      const itemSlug = makeSlug(safe(item.name || item.detail?.basic_details?.job_title || ''));
+      return itemSlug === jobSlug;
+    });
+  }
+  if (!job && jobIndex >= 0 && jobIndex < section.items.length) {
+    job = section.items[jobIndex];
+  }
+
+  if (!job) {
+    hide('jbLoading');
+    show('jbError');
+    return;
+  }
+
+  renderJob(job, stateName, stateId);
+}
+
+// ── Mobile menu ──
+document.addEventListener('DOMContentLoaded', function() {
+  const menuBtn  = document.getElementById('menuBtn');
+  const closeBtn = document.getElementById('closeMenuBtn');
+  const menu     = document.getElementById('mobileMenu');
+  const overlay  = document.getElementById('menuOverlay');
+  function open()  { if(menu&&overlay){menu.hidden=false;overlay.hidden=false;document.body.style.overflow='hidden';}}
+  function close() { if(menu&&overlay){menu.hidden=true; overlay.hidden=true; document.body.style.overflow='';}}
+  if(menuBtn)  menuBtn.addEventListener('click', open);
+  if(closeBtn) closeBtn.addEventListener('click', close);
+  if(overlay)  overlay.addEventListener('click', close);
+});
+
+init();
+})();
+</script>
+
+<script src="/script.js?v=20260514" defer></script>
+</body>
+</html>
