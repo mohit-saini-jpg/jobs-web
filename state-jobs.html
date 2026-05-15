@@ -49,6 +49,232 @@
     a { text-decoration:none; color:inherit; }
     .container { max-width:1220px; margin:0 auto; padding:0 12px; }
 
+    /* ============================================================
+       HEADER OVERRIDE — defeats styles.css global conflicts
+    ============================================================ */
+
+    /* Top utility bar */
+    .top-bar {
+      background: #0d2257 !important;
+      color: rgba(255,255,255,.85) !important;
+      font-size: .73rem !important;
+      font-weight: 600 !important;
+      padding: 5px 0 !important;
+      display: none !important;
+    }
+    @media (min-width: 768px) { .top-bar { display: block !important; } }
+    .top-bar-inner {
+      display: flex !important; align-items: center !important;
+      justify-content: space-between !important; gap: 12px !important;
+    }
+    .top-bar-social { display: flex !important; align-items: center !important; gap: 10px !important; }
+    .top-bar-social a { color: rgba(255,255,255,.8) !important; font-size: .85rem !important; text-decoration: none !important; transition: color .15s; }
+    .top-bar-social a:hover { color: #fff !important; }
+    .top-bar-social .join-wa {
+      background: #25d366 !important; color: #fff !important;
+      padding: 3px 10px !important; border-radius: 20px !important;
+      font-size: .7rem !important; font-weight: 700 !important;
+      display: flex !important; align-items: center !important; gap: 5px !important;
+    }
+
+    /* Site header — white background, NOT the blue gradient from styles.css */
+    .site-header, #site-header {
+      background: #ffffff !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,.1) !important;
+      position: sticky !important;
+      top: 0 !important;
+      z-index: 300 !important;
+      min-height: unset !important;
+    }
+
+    /* Logo bar */
+    .header-logo-bar {
+      display: flex !important; align-items: center !important;
+      justify-content: space-between !important;
+      padding: 8px 12px !important; gap: 10px !important;
+      background: #ffffff !important;
+    }
+    .brand {
+      display: flex !important; align-items: center !important;
+      gap: 8px !important; text-decoration: none !important; flex-shrink: 0 !important;
+    }
+    .brand-logo { width: 40px !important; height: 40px !important; border-radius: 8px !important; object-fit: cover !important; }
+    .brand-text { display: flex !important; flex-direction: column !important; }
+    .brand-title { font-size: 1.15rem !important; font-weight: 900 !important; color: #0d2257 !important; line-height: 1.1 !important; white-space: nowrap !important; }
+    .brand-title span { color: #f97316 !important; }
+    .brand-sub { font-size: .62rem !important; color: #64748b !important; font-weight: 600 !important; white-space: nowrap !important; }
+    @media (max-width: 480px) {
+      .brand-title { font-size: .92rem !important; }
+      .brand-sub { font-size: .55rem !important; max-width: 160px !important; overflow: hidden !important; text-overflow: ellipsis !important; }
+      .brand-logo { width: 34px !important; height: 34px !important; }
+    }
+
+    /* Header actions */
+    .header-actions { display: flex !important; align-items: center !important; gap: 8px !important; margin-left: 0 !important; }
+    .wa-btn-header {
+      background: #25d366 !important; color: #fff !important;
+      border: none !important; border-radius: 7px !important;
+      padding: 7px 12px !important; font-size: .78rem !important;
+      font-weight: 800 !important; cursor: pointer !important;
+      align-items: center !important; gap: 6px !important;
+      text-decoration: none !important; line-height: 1.3 !important;
+      display: none !important;
+    }
+    @media (min-width: 1024px) { .wa-btn-header { display: flex !important; } }
+    .wa-btn-header small { font-size: .64rem !important; opacity: .85 !important; display: block !important; }
+
+    .icon-btn {
+      background: none !important; border: none !important;
+      color: #0f172a !important; width: 36px !important; height: 36px !important;
+      border-radius: 8px !important; cursor: pointer !important;
+      font-size: 1rem !important; display: flex !important;
+      align-items: center !important; justify-content: center !important;
+    }
+    .icon-btn:hover { background: #f0f4fb !important; }
+
+    /* Desktop nav — gradient bar, NOT overridden by styles.css */
+    .desktop-nav {
+      display: none !important;
+      align-items: center !important; gap: 1px !important;
+      padding: 0 12px !important;
+      background: linear-gradient(90deg,#0d2257 0%,#1e40af 100%) !important;
+      border-bottom: 3px solid #f97316 !important;
+    }
+    @media (min-width: 901px) {
+      .desktop-nav { display: flex !important; }
+      #menuBtn { display: none !important; }
+    }
+
+    /* Nav links */
+    .nav-link {
+      color: rgba(255,255,255,.92) !important;
+      text-decoration: none !important;
+      font-size: .8rem !important; font-weight: 700 !important;
+      padding: 10px 11px !important; white-space: nowrap !important;
+      transition: background .15s !important;
+      display: flex !important; align-items: center !important;
+      gap: 5px !important;
+      background: none !important; border: none !important;
+      border-radius: 0 !important; cursor: pointer !important;
+      font-family: inherit !important;
+    }
+    .nav-link:hover, .nav-link.active {
+      background: rgba(255,255,255,.15) !important; color: #fff !important;
+    }
+    .nav-link i { font-size: .75rem !important; }
+
+    /* Dropdown */
+    .nav-dd { position: relative !important; }
+    .nav-dd-btn {
+      background: none !important; border: none !important; cursor: pointer !important;
+      display: flex !important; align-items: center !important; gap: 5px !important;
+      color: rgba(255,255,255,.92) !important; font-size: .8rem !important;
+      font-weight: 700 !important; padding: 10px 11px !important;
+      white-space: nowrap !important; font-family: inherit !important;
+      border-radius: 0 !important;
+    }
+    .nav-dd-btn:hover { background: rgba(255,255,255,.12) !important; }
+    .nav-dd-btn .fa-chevron-down { font-size: .6rem !important; transition: transform .2s !important; }
+    .nav-dd-menu {
+      position: absolute !important; top: 100% !important; left: 0 !important;
+      background: #fff !important; border: 1px solid #e2e8f0 !important;
+      border-radius: 10px !important;
+      box-shadow: 0 8px 30px rgba(0,0,0,.12) !important;
+      min-width: 220px !important; padding: 6px !important;
+      display: none !important; z-index: 400 !important;
+      visibility: visible !important; opacity: 1 !important;
+      transform: none !important; transition: none !important;
+      backdrop-filter: none !important;
+      margin-top: 0 !important;
+    }
+    .nav-dd:hover .nav-dd-menu,
+    .nav-dd-menu.open { display: block !important; visibility: visible !important; opacity: 1 !important; }
+    .nav-dd-item {
+      display: flex !important; align-items: center !important; gap: 9px !important;
+      padding: 9px 13px !important; font-size: .8rem !important; font-weight: 600 !important;
+      color: #0f172a !important; text-decoration: none !important;
+      border-radius: 7px !important; transition: all .12s !important;
+      transform: none !important;
+    }
+    .nav-dd-item i { width: 16px !important; color: #1a56db !important; font-size: .82rem !important; }
+    .nav-dd-item:hover { background: #eff6ff !important; color: #1a56db !important; transform: none !important; }
+    .nav-dd-divider { border: none !important; border-top: 1px solid #f1f5f9 !important; margin: 4px 0 !important; }
+
+    /* Offcanvas + Overlay */
+    .overlay { position:fixed !important; inset:0 !important; background:rgba(0,0,0,.5) !important; z-index:350 !important; }
+    .overlay[hidden] { display:none !important; }
+    .offcanvas {
+      position:fixed !important; top:0 !important; left:0 !important; bottom:0 !important;
+      width:min(300px,85vw) !important; background:#fff !important; z-index:360 !important;
+      overflow-y:auto !important; display:flex !important; flex-direction:column !important;
+      box-shadow:0 6px 24px rgba(0,0,0,.12) !important;
+    }
+    .offcanvas[hidden] { display:none !important; }
+    .offcanvas-head {
+      display:flex !important; align-items:center !important;
+      justify-content:space-between !important; padding:13px 14px !important;
+      background:linear-gradient(90deg,#0d2257,#1e40af) !important;
+      color:#fff !important; border-bottom:2px solid #f97316 !important; flex-shrink:0 !important;
+    }
+    .offcanvas-title { font-weight:900 !important; font-size:.95rem !important; color:#fff !important; }
+    .offcanvas-close {
+      background:rgba(255,255,255,.15) !important; border:none !important; color:#fff !important;
+      width:32px !important; height:32px !important; border-radius:7px !important;
+      cursor:pointer !important; display:flex !important; align-items:center !important;
+      justify-content:center !important; font-size:.9rem !important; font-family:inherit !important;
+    }
+    .offcanvas-nav { display:flex !important; flex-direction:column !important; padding:8px !important; gap:2px !important; }
+    .offcanvas-nav a {
+      display:flex !important; align-items:center !important; gap:9px !important;
+      padding:10px 12px !important; border-radius:7px !important;
+      text-decoration:none !important; font-size:.82rem !important; font-weight:700 !important;
+      color:#0f172a !important; transition:background .12s !important;
+      background: none !important; border: none !important;
+    }
+    .offcanvas-nav a::after { display:none !important; content:none !important; }
+    .offcanvas-nav a:hover { background:#eff6ff !important; color:#1a56db !important; }
+    .offcanvas-nav a i { width:17px !important; color:#1a56db !important; flex-shrink:0 !important; }
+    .offcanvas-section {
+      font-size:.65rem !important; font-weight:900 !important; letter-spacing:.1em !important;
+      text-transform:uppercase !important; color:#64748b !important; padding:10px 12px 3px !important;
+    }
+
+    /* Mobile Bottom Bar */
+    .mobile-bottom-bar { display:none !important; }
+    @media(max-width:900px){
+      .mobile-bottom-bar {
+        display:flex !important; position:fixed !important; bottom:0 !important;
+        left:0 !important; right:0 !important; background:#fff !important;
+        border-top:1px solid #e2e8f0 !important; z-index:200 !important;
+        padding:5px 0 env(safe-area-inset-bottom,5px) !important;
+        box-shadow:0 -2px 12px rgba(0,0,0,.08) !important;
+      }
+      .mobile-bottom-bar a {
+        flex:1 !important; display:flex !important; flex-direction:column !important;
+        align-items:center !important; gap:2px !important; font-size:.57rem !important;
+        font-weight:700 !important; color:#64748b !important;
+        text-decoration:none !important; padding:4px 0 !important;
+        background: none !important; border: none !important;
+      }
+      .mobile-bottom-bar a::after { display:none !important; content:none !important; }
+      .mobile-bottom-bar a i { font-size:1.05rem !important; }
+      .mobile-bottom-bar a.active, .mobile-bottom-bar a:hover { color:#1a56db !important; }
+      body { padding-bottom:60px !important; }
+    }
+
+    /* WhatsApp float button */
+    .wa-float {
+      position:fixed !important; bottom:70px !important; right:14px !important;
+      background:#25d366 !important; color:#fff !important;
+      width:46px !important; height:46px !important; border-radius:50% !important;
+      display:flex !important; align-items:center !important;
+      justify-content:center !important; font-size:1.4rem !important;
+      box-shadow:0 4px 14px rgba(37,211,102,.4) !important;
+      text-decoration:none !important; z-index:150 !important; transition:transform .2s !important;
+    }
+    .wa-float:hover { transform:scale(1.1) !important; }
+    @media(min-width:901px){ .wa-float { bottom:20px !important; } }
+
     /* ── HERO BANNER ── */
     .state-hero {
       background:linear-gradient(135deg,var(--navy) 0%,#1a3c8f 55%,var(--blue) 100%);
@@ -349,7 +575,7 @@
   </div>
 
   <!-- ============================================================
-       STICKY HEADER (exact same structure as homepage)
+       STICKY HEADER — exact same as homepage
   ============================================================ -->
   <header class="site-header" id="site-header">
     <div class="header-logo-bar container">
@@ -371,12 +597,12 @@
           <i class="fa-solid fa-magnifying-glass"></i>
         </button>
         <button id="menuBtn" class="icon-btn" type="button" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
-          <i class="fa-solid fa-bars" aria-hidden="true"></i>
+          <i class="fa-solid fa-bars"></i>
         </button>
       </div>
     </div>
 
-    <!-- Desktop Nav with Dropdowns (same as homepage) -->
+    <!-- Desktop Nav with Dropdowns — exact same as homepage -->
     <nav class="desktop-nav" aria-label="Primary navigation">
       <a class="nav-link" href="./"><i class="fa-solid fa-house"></i> HOME</a>
 
@@ -698,7 +924,7 @@
     <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
   </a>
 
-  <!-- Mobile Bottom Bar (exact same as homepage) -->
+  <!-- Mobile Bottom Bar — exact same as homepage -->
   <nav class="mobile-bottom-bar" aria-label="Mobile navigation">
     <a href="./"><i class="fa-solid fa-house"></i>Home</a>
     <a href="view.html?section=SR_Latest_Jobs"><i class="fa-solid fa-fire"></i>Jobs</a>
@@ -707,7 +933,7 @@
     <a href="category.html?group=state" class="active"><i class="fa-solid fa-map-location-dot"></i>States</a>
   </nav>
 
-  <!-- Mobile Menu Overlay + Offcanvas (complete — same as homepage) -->
+  <!-- Mobile Overlay + Offcanvas — complete same as homepage -->
   <div id="menuOverlay" class="overlay" hidden></div>
   <aside id="mobileMenu" class="offcanvas" hidden aria-label="Mobile navigation menu">
     <div class="offcanvas-head">
@@ -750,10 +976,10 @@
       <a href="helpdesk.html"><i class="fa-solid fa-headset"></i>Helpdesk</a>
 
       <div class="offcanvas-section">Follow Us</div>
-      <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" style="color:#25d366;"><i class="fa-brands fa-whatsapp"></i>Join WhatsApp</a>
-      <a href="https://www.youtube.com/@Topsarkarijobs/shorts" target="_blank" rel="noopener" style="color:#ff0000;"><i class="fa-brands fa-youtube"></i>YouTube Channel</a>
-      <a href="https://www.instagram.com/topsarkarijobs?igsh=bTBsdjVpaTU3M2hn" target="_blank" rel="noopener" style="color:#e1306c;"><i class="fa-brands fa-instagram"></i>Instagram</a>
-      <a href="https://www.snapchat.com/add/topsarkarijobss?share_id=accGq-qWC1g&locale=en-IN" target="_blank" rel="noopener" style="color:#d97706;"><i class="fa-brands fa-snapchat"></i>Snapchat</a>
+      <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" style="color:#25d366!important;"><i class="fa-brands fa-whatsapp"></i>Join WhatsApp</a>
+      <a href="https://www.youtube.com/@Topsarkarijobs/shorts" target="_blank" rel="noopener" style="color:#ff0000!important;"><i class="fa-brands fa-youtube"></i>YouTube Channel</a>
+      <a href="https://www.instagram.com/topsarkarijobs?igsh=bTBsdjVpaTU3M2hn" target="_blank" rel="noopener" style="color:#e1306c!important;"><i class="fa-brands fa-instagram"></i>Instagram</a>
+      <a href="https://www.snapchat.com/add/topsarkarijobss?share_id=accGq-qWC1g&locale=en-IN" target="_blank" rel="noopener" style="color:#d97706!important;"><i class="fa-brands fa-snapchat"></i>Snapchat</a>
     </nav>
   </aside>
 
