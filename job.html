@@ -159,28 +159,10 @@
     .jp-stat-val.blue{color:#1d4ed8;}
     .jp-stat-val.green{color:#16a34a;}
 
-    /* ── Important Links Table Layout ── */
-    .imp-links-table{width:100%;border-collapse:collapse;}
-    .imp-links-table tr{border-bottom:1px solid #e9eef4;}
-    .imp-links-table tr:last-child{border-bottom:none;}
-    .imp-links-table td{padding:10px 14px;vertical-align:middle;font-size:.84rem;}
-    .imp-links-table td.imp-link-name-cell{color:#1e293b;font-weight:600;width:65%;}
-    .imp-links-table td.imp-link-btn-cell{text-align:right;white-space:nowrap;}
-    .imp-link-name{display:flex;align-items:center;gap:8px;}
-    .imp-link-name i{color:#94a3b8;font-size:.8rem;width:16px;flex-shrink:0;}
-    .imp-link-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;text-decoration:none;font-weight:700;font-size:.78rem;transition:all .15s;white-space:nowrap;}
-    .imp-link-btn:hover{filter:brightness(1.1);transform:translateY(-1px);}
-    .imp-link-btn-green{background:#16a34a;color:#fff!important;}
-    .imp-link-btn-blue{background:#1d4ed8;color:#fff!important;}
-    .imp-link-btn-red{background:#dc2626;color:#fff!important;}
-    .imp-link-btn-orange{background:#ea580c;color:#fff!important;}
-    .imp-link-btn-purple{background:#7c3aed;color:#fff!important;}
-    .imp-links-empty{padding:12px 14px;color:#64748b;font-size:.83rem;}
-    @media(max-width:500px){
-      .imp-links-table td{padding:8px 10px;}
-      .imp-links-table td.imp-link-name-cell{font-size:.76rem;}
-      .imp-link-btn{font-size:.71rem;padding:5px 9px;}
-    }
+    .jp-main-cta{display:block;margin:14px;padding:14px;background:linear-gradient(135deg,#16a34a,#15803d);color:#fff!important;text-decoration:none;border-radius:10px;text-align:center;font-weight:800;font-size:1rem;letter-spacing:.02em;box-shadow:0 4px 14px rgba(22,163,74,.3);transition:all .2s;}
+    .jp-main-cta:hover{filter:brightness(1.08);transform:translateY(-2px);box-shadow:0 6px 18px rgba(22,163,74,.4);}
+    .jp-main-cta-sub{font-size:.78rem;font-weight:600;opacity:.9;display:block;margin-top:3px;}
+    .jp-main-cta i{margin-right:6px;}
 
     .jp-sec-head{background:#1d6dbc;color:#fff;font-size:.86rem;font-weight:700;padding:9px 14px;display:flex;align-items:center;gap:8px;}
     .jp-sec-head i{opacity:.85;}
@@ -443,7 +425,11 @@
               </div>
             </div>
 
-            <!-- Main CTA removed — link shown in Important Links section below -->
+            <!-- Main CTA -->
+            <a id="btnMainCta" href="#" target="_blank" rel="noopener" class="jp-main-cta">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i> Apply Online / Official Website पर जाएँ
+              <span class="jp-main-cta-sub">Click to visit the official recruitment portal</span>
+            </a>
 
             <!-- Short Info -->
             <div class="jp-card" id="shortInfoCard" style="display:none;">
@@ -503,10 +489,21 @@
             </div>
 
             <!-- Important Links -->
-            <div class="jp-card" id="impLinksCard">
+            <div class="jp-card">
               <div class="jp-sec-head"><i class="fa-solid fa-link"></i> Important Links</div>
-              <div id="linksActions">
-                <!-- Rows injected by JS -->
+              <div class="jp-actions" id="linksActions">
+                <a id="btnApply" href="#" target="_blank" rel="noopener" class="jp-btn jp-btn-green">
+                  <span><i class="fa-solid fa-pen-to-square"></i> Apply Online</span>
+                  <span class="jp-btn-sub">Official Portal</span>
+                </a>
+                <a id="btnNotification" href="#" target="_blank" rel="noopener" class="jp-btn jp-btn-blue">
+                  <span><i class="fa-solid fa-file-pdf"></i> Notification PDF</span>
+                  <span class="jp-btn-sub">Official Notification</span>
+                </a>
+                <a id="btnWebsite" href="#" target="_blank" rel="noopener" class="jp-btn jp-btn-red">
+                  <span><i class="fa-solid fa-globe"></i> Official Website</span>
+                  <span class="jp-btn-sub">Govt Portal</span>
+                </a>
               </div>
             </div>
           </div>
@@ -519,13 +516,10 @@
                 <h1 class="jp-nonjob-banner" id="nonJobTitle"></h1>
                 <div class="jp-nonjob-desc" id="nonJobDesc"></div>
               </div>
-            </div>
-            <!-- Important Links for non-job pages -->
-            <div class="jp-card" id="nonJobLinksCard">
-              <div class="jp-sec-head"><i class="fa-solid fa-link"></i> Important Links</div>
-              <div id="nonJobLinksActions">
-                <!-- Injected by JS -->
-              </div>
+              <a id="btnNonJobCta" href="#" target="_blank" rel="noopener" class="jp-nonjob-cta">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                <span id="nonJobCtaText">Visit Official Page</span>
+              </a>
             </div>
           </div>
 
@@ -827,10 +821,26 @@
       }
       document.getElementById('jbNewBadge').style.display = '';
 
-      /* ── _ctaRefUrl: needed for Important Links main entry ── */
+      /* ── Main CTA button ── */
+      const mainCta = document.getElementById('btnMainCta');
       const _ctaRefUrl = (() => {
         try { return new URLSearchParams(window.location.search).get('ref') || ''; } catch(_){ return ''; }
       })();
+      const finalDest = (row && row.destUrl) || destUrl || normalizeUrl(_ctaRefUrl) || '';
+      if (finalDest) {
+        mainCta.href = finalDest;
+        /* Show source name in sub-label */
+        const ctaSub = mainCta.querySelector('.jp-main-cta-sub');
+        if (ctaSub) {
+          const isSR = finalDest.includes('sarkariresult.com');
+          const isSS = finalDest.includes('sarkariresultshine.com');
+          ctaSub.textContent = isSR  ? 'SarkariResult.com पर जाएँ'
+                             : isSS  ? 'SarkariResultShine.com पर जाएँ'
+                             : 'Click to visit the official recruitment portal';
+        }
+      } else {
+        mainCta.style.opacity = '.5'; mainCta.style.pointerEvents = 'none';
+      }
 
       /* ── Overview Table ── */
       const tbody = document.querySelector('#jbTable tbody');
@@ -995,51 +1005,42 @@
         officialOnly(row && row.applyOnline)     ||
         officialOnly(row && row.officialWebsite) ||
         officialOnly(row && row.destUrl)         ||
-        officialOnly(_refUrl)                    ||
-        /* last resort: accept any URL including SR if nothing official found */
-        (row && row.applyOnline)     ||
-        (row && row.officialWebsite) ||
-        (row && row.destUrl)         ||
-        _refUrl                      || ''
+        officialOnly(_refUrl)                    || ''
       );
 
       /* ── Smart link categorization by title keyword ── */
       function categorizeLinkByTitle(title) {
         const t = title.toLowerCase();
         if (/apply\s*online|apply\s*link|registration\s*link|apply\s*form|apply\s*for\s*correction|apply\s*through\s*otr|apply\s*via|otr\s*registration|for\s*otr|sewayojan\s*reg|uppsc.*otr|apply.*sub\s*inspector|apply.*constable|apply.*manager|apply.*inspector|apply.*lucknow|apply.*noida|apply.*mains|apply.*ug|apply.*pg|apply.*re\s*open|apply.*other/i.test(t))
-          return { icon: 'fa-paper-plane',          cls: 'green',  btnLabel: 'Apply Now' };
+          return { icon: 'fa-paper-plane',          cls: 'jp-btn-green',  sub: 'Apply Now' };
         if (/candidate\s*login|login\s*portal|dashboard\s*login|uppsc.*dash|find.*registration/i.test(t))
-          return { icon: 'fa-right-to-bracket',     cls: 'green',  btnLabel: 'Login Here' };
+          return { icon: 'fa-right-to-bracket',     cls: 'jp-btn-green',  sub: 'Login Here' };
         if (/admit\s*card|hall\s*ticket|call\s*letter|download\s*admit|pre\s*admit|second.*phase.*admit|tier.*admit|pet.*admit/i.test(t))
-          return { icon: 'fa-id-card',              cls: 'orange', btnLabel: 'Download' };
+          return { icon: 'fa-id-card',              cls: 'jp-btn-orange', sub: 'Download Now' };
         if (/exam\s*city|exam\s*centre|slot\s*booking|self\s*slot/i.test(t))
-          return { icon: 'fa-location-dot',         cls: 'blue',   btnLabel: 'Check Here' };
+          return { icon: 'fa-location-dot',         cls: 'jp-btn-blue',   sub: 'Check City' };
         if (/answer\s*key|final\s*answer\s*key|response\s*sheet|raise\s*objection|objection\s*link|for\s*answer\s*key|paper.*answer\s*key|tier.*answer\s*key|second.*answer\s*key/i.test(t))
-          return { icon: 'fa-key',                  cls: 'blue',   btnLabel: 'Download' };
+          return { icon: 'fa-key',                  cls: 'jp-btn-blue',   sub: 'Download Now' };
         if (/result|merit\s*list|selection\s*list|score\s*card|cutoff|cut.?off|download.*result|first.*phase.*result|paper.*result|tier.*result|eligibility.*result|final.*result|ias.*result|ifs.*result|jee.*result|bseb.*result|upsssc.*result/i.test(t) && !/notice|pdf/i.test(t))
-          return { icon: 'fa-trophy',               cls: 'orange', btnLabel: 'View Result' };
+          return { icon: 'fa-trophy',               cls: 'jp-btn-orange', sub: 'View Result' };
         if (/syllabus|exam\s*pattern|previous\s*paper|practice\s*set|pgt\s*syllabus/i.test(t))
-          return { icon: 'fa-book-open',            cls: 'blue',   btnLabel: 'Download' };
+          return { icon: 'fa-book-open',            cls: 'jp-btn-blue',   sub: 'Download Now' };
         if (/notification|official\s*notif|download\s*notif|short\s*notice|detailed\s*advert|info\s*brochure|exam\s*notice|mains.*notice|revised.*notif|date.*notice|correction.*notif|re.*schedule|re.*open.*notice|compartment.*notice|download\s*go|download.*notice/i.test(t))
-          return { icon: 'fa-file-pdf',             cls: 'blue',   btnLabel: 'View PDF' };
+          return { icon: 'fa-file-pdf',             cls: 'jp-btn-blue',   sub: 'View PDF' };
         if (/counselling|seat\s*allotment|choice\s*filling|admission\s*form/i.test(t))
-          return { icon: 'fa-graduation-cap',       cls: 'blue',   btnLabel: 'Click Here' };
+          return { icon: 'fa-graduation-cap',       cls: 'jp-btn-blue',   sub: 'Counselling' };
         if (/interview\s*letter|dv\s*schedule|joining\s*letter/i.test(t))
-          return { icon: 'fa-calendar-check',       cls: 'orange', btnLabel: 'Download' };
+          return { icon: 'fa-calendar-check',       cls: 'jp-btn-orange', sub: 'Download Now' };
         if (/correction|edit\s*form|form\s*edit|modify.*form|how\s*to.*edit/i.test(t))
-          return { icon: 'fa-pen-to-square',        cls: 'blue',   btnLabel: 'Edit Form' };
+          return { icon: 'fa-pen-to-square',        cls: 'jp-btn-blue',   sub: 'Edit Form' };
         if (/official\s*website|official\s*portal|visit\s*website|ctet\s*official/i.test(t))
-          return { icon: 'fa-globe',                cls: 'red',    btnLabel: 'Visit Now' };
+          return { icon: 'fa-globe',                cls: 'jp-btn-red',    sub: 'Visit Now' };
         if (/vacancy|revised.*vacancy|vacancies/i.test(t))
-          return { icon: 'fa-users',                cls: 'blue',   btnLabel: 'View Details' };
+          return { icon: 'fa-users',                cls: 'jp-btn-blue',   sub: 'View Details' };
         if (/how\s*to|video|hindi.*video/i.test(t))
-          return { icon: 'fa-circle-play',          cls: 'red',    btnLabel: 'Watch Now' };
-        if (/download|pdf|file/i.test(t))
-          return { icon: 'fa-file-arrow-down',      cls: 'orange', btnLabel: 'Download File' };
-        if (/main\s*page|home\s*page|main\s*link/i.test(t))
-          return { icon: 'fa-house',                cls: 'blue',   btnLabel: 'Main Page' };
+          return { icon: 'fa-circle-play',          cls: 'jp-btn-red',    sub: 'Watch Now' };
         /* default */
-        return { icon: 'fa-link',                   cls: 'blue',   btnLabel: 'Click Here' };
+        return { icon: 'fa-link',                   cls: 'jp-btn-blue',   sub: 'Click Here' };
       }
 
       /* ── useful_links array from JSON (PRIMARY source) ── */
@@ -1048,20 +1049,20 @@
       /* ── Static row fields (SUPPLEMENTAL — only if useful_links missing that link) ── */
       /* officialOnly() se SR/SRS URLs filter ho jaate hain — wo Important Links mein nahi aate */
       const staticLinkDefs = [
-        { href: officialOnly(row && row.applyOnline),          label: 'Apply Online',             icon: 'fa-paper-plane',      cls: 'green',  btnLabel: 'Apply Now'    },
-        { href: officialOnly(row && row.candidateLogin),       label: 'Candidate Login',          icon: 'fa-right-to-bracket', cls: 'green',  btnLabel: 'Login Here'   },
-        { href: officialOnly(row && row.notifPdf),             label: 'Notification PDF',         icon: 'fa-file-pdf',         cls: 'blue',   btnLabel: 'View PDF'     },
-        { href: officialOnly(row && row.officialNotifPdfLink), label: 'Official Notification',    icon: 'fa-file-pdf',         cls: 'blue',   btnLabel: 'Download PDF' },
-        { href: officialOnly(row && row.formPdfFreeLink),      label: 'Download Form (Free PDF)', icon: 'fa-file-arrow-down',  cls: 'orange', btnLabel: 'Free PDF'     },
-        { href: officialOnly(row && row.admitCard),            label: 'Admit Card',               icon: 'fa-id-card',          cls: 'orange', btnLabel: 'Download'     },
-        { href: officialOnly(row && row.result),               label: 'Result',                   icon: 'fa-trophy',           cls: 'orange', btnLabel: 'View Result'  },
-        { href: officialOnly(row && row.answerKey),            label: 'Answer Key',               icon: 'fa-key',              cls: 'blue',   btnLabel: 'Download'     },
-        { href: officialOnly(row && row.syllabus),             label: 'Syllabus',                 icon: 'fa-book-open',        cls: 'blue',   btnLabel: 'Download'     },
-        { href: officialOnly(row && row.meritList),            label: 'Merit List',               icon: 'fa-list-ol',          cls: 'orange', btnLabel: 'View List'    },
-        { href: officialOnly(row && row.scoreCard),            label: 'Score Card',               icon: 'fa-chart-bar',        cls: 'orange', btnLabel: 'Download'     },
-        { href: officialOnly(row && row.examCity),             label: 'Exam City Details',        icon: 'fa-location-dot',     cls: 'blue',   btnLabel: 'Check Here'   },
-        { href: officialOnly(row && row.officialWebsite),      label: 'Official Website',         icon: 'fa-globe',            cls: 'red',    btnLabel: 'Visit Now'    },
-        { href: officialOnly(row && row.officialWebsiteLink),  label: 'Official Website',         icon: 'fa-globe',            cls: 'red',    btnLabel: 'Visit Now'    },
+        { href: officialOnly(row && row.applyOnline),          label: 'Apply Online',             icon: 'fa-paper-plane',      cls: 'jp-btn-green',  sub: 'Apply Now'    },
+        { href: officialOnly(row && row.candidateLogin),       label: 'Candidate Login',          icon: 'fa-right-to-bracket', cls: 'jp-btn-green',  sub: 'Login Here'   },
+        { href: officialOnly(row && row.notifPdf),             label: 'Notification PDF',         icon: 'fa-file-pdf',         cls: 'jp-btn-blue',   sub: 'View PDF'     },
+        { href: officialOnly(row && row.officialNotifPdfLink), label: 'Official Notification',    icon: 'fa-file-pdf',         cls: 'jp-btn-blue',   sub: 'Download PDF' },
+        { href: officialOnly(row && row.formPdfFreeLink),      label: 'Download Form (Free PDF)', icon: 'fa-file-arrow-down',  cls: 'jp-btn-orange', sub: 'Free PDF'     },
+        { href: officialOnly(row && row.admitCard),            label: 'Admit Card',               icon: 'fa-id-card',          cls: 'jp-btn-orange', sub: 'Download Now' },
+        { href: officialOnly(row && row.result),               label: 'Result',                   icon: 'fa-trophy',           cls: 'jp-btn-orange', sub: 'View Result'  },
+        { href: officialOnly(row && row.answerKey),            label: 'Answer Key',               icon: 'fa-key',              cls: 'jp-btn-blue',   sub: 'Download Now' },
+        { href: officialOnly(row && row.syllabus),             label: 'Syllabus',                 icon: 'fa-book-open',        cls: 'jp-btn-blue',   sub: 'Download Now' },
+        { href: officialOnly(row && row.meritList),            label: 'Merit List',               icon: 'fa-list-ol',          cls: 'jp-btn-orange', sub: 'View List'    },
+        { href: officialOnly(row && row.scoreCard),            label: 'Score Card',               icon: 'fa-chart-bar',        cls: 'jp-btn-orange', sub: 'Download Now' },
+        { href: officialOnly(row && row.examCity),             label: 'Exam City Details',        icon: 'fa-location-dot',     cls: 'jp-btn-blue',   sub: 'Check City'   },
+        { href: officialOnly(row && row.officialWebsite),      label: 'Official Website',         icon: 'fa-globe',            cls: 'jp-btn-red',    sub: 'Visit Now'    },
+        { href: officialOnly(row && row.officialWebsiteLink),  label: 'Official Website',         icon: 'fa-globe',            cls: 'jp-btn-red',    sub: 'Visit Now'    },
       ];
 
       const linksContainer = document.getElementById('linksActions');
@@ -1069,46 +1070,24 @@
         const allLinks = [];
         const seenHrefs = new Set();
 
-        /* ── STEP 0: Main CTA URL — pehli row ke roop mein show karo ── */
-        /* destUrl = renderJobPage ka parameter — already best URL hai run() se */
-        /* Pehle official URL try karo, fallback mein SR URL bhi accept karo */
-        const _officialMainUrl = normalizeUrl(
-          officialOnly((row && row.applyOnline)) ||
-          officialOnly((row && row.officialWebsite)) ||
-          officialOnly((row && row.officialWebsiteLink)) ||
-          officialOnly(_ctaRefUrl) || ''
-        );
-        /* Agar official nahi mila to destUrl use karo (SR bhi ho sakta hai) */
-        const _mainCtaUrl = _officialMainUrl || normalizeUrl(destUrl || '');
-        if (_mainCtaUrl && _mainCtaUrl !== '#') {
-          seenHrefs.add(_mainCtaUrl);
-          const _isSRMain = isSRUrl(_mainCtaUrl);
-          /* Determine best label for main link */
-          const _mainLabel = (row && row.applyOnline && normalizeUrl(row.applyOnline) === _mainCtaUrl)
-            ? 'Apply Online'
-            : (row && (row.officialWebsite || row.officialWebsiteLink) &&
-               (normalizeUrl(row.officialWebsite) === _mainCtaUrl || normalizeUrl(row.officialWebsiteLink) === _mainCtaUrl))
-            ? 'Official Website / Main Page'
-            : _isSRMain ? 'Apply / View Details'
-            : 'Apply Online / Main Page';
-          allLinks.push({ href: _mainCtaUrl, label: _mainLabel, icon: 'fa-arrow-up-right-from-square', cls: 'green', btnLabel: 'Click Here' });
-        }
-
         /* ── STEP 1: useful_links se SAARE links render karo (PRIMARY) ── */
+        /* Ye JSON mein jo bhi links hain wo SABHI show honge — koi filter nahi */
         usefulLinksRaw.forEach(ul => {
           const t = safe(ul.title || ul.name || '');
           if (!t) return;
+          /* links field: string ya array dono support */
           const rawLinks = ul.links || ul.url || ul.href || '';
           const linkArr = Array.isArray(rawLinks) ? rawLinks : [rawLinks];
           linkArr.forEach((rawUrl, idx) => {
             const href = normalizeUrl(safe(rawUrl));
             if (!href || href === '#') return;
-            if (isSRUrl(href)) return;
-            if (seenHrefs.has(href)) return;
+            if (isSRUrl(href)) return;         /* sarkariresult/sarkariresultshine links skip */
+            if (seenHrefs.has(href)) return;   /* duplicate href skip */
             seenHrefs.add(href);
+            /* Multiple URLs same title mein → (1), (2) suffix */
             const label = linkArr.length > 1 ? `${t} (${idx + 1})` : t;
             const cat = categorizeLinkByTitle(t);
-            allLinks.push({ href, label, icon: cat.icon, cls: cat.cls, btnLabel: cat.btnLabel });
+            allLinks.push({ href, label, icon: cat.icon, cls: cat.cls, sub: cat.sub });
           });
         });
 
@@ -1116,37 +1095,17 @@
         staticLinkDefs.forEach(ld => {
           const href = normalizeUrl(safe(ld.href));
           if (!href || href === '#') return;
-          if (seenHrefs.has(href)) return;
+          if (seenHrefs.has(href)) return;   /* already shown from useful_links */
           seenHrefs.add(href);
-          allLinks.push({ href, label: ld.label, icon: ld.icon, cls: ld.cls, btnLabel: ld.btnLabel });
+          allLinks.push({ href, label: ld.label, icon: ld.icon, cls: ld.cls, sub: ld.sub });
         });
 
-        /* ── Render as table rows: Name | Click Here button ── */
-        let linksHtml = '';
-        if (allLinks.length > 0) {
-          linksHtml = `<table class="imp-links-table" role="table" aria-label="Important Links">
-            <tbody>
-              ${allLinks.map(lk =>
-                `<tr>
-                  <td class="imp-link-name-cell">
-                    <span class="imp-link-name">
-                      <i class="fa-solid ${lk.icon}" aria-hidden="true"></i>
-                      <span>${lk.label.slice(0, 80)}</span>
-                    </span>
-                  </td>
-                  <td class="imp-link-btn-cell">
-                    <a href="${lk.href}" target="_blank" rel="noopener noreferrer"
-                       class="imp-link-btn imp-link-btn-${lk.cls}"
-                       aria-label="${lk.label}">
-                      <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
-                      ${lk.btnLabel}
-                    </a>
-                  </td>
-                </tr>`
-              ).join('')}
-            </tbody>
-          </table>`;
-        }
+        let linksHtml = allLinks.map(lk =>
+          `<a href="${lk.href}" target="_blank" rel="noopener" class="jp-btn ${lk.cls}">
+            <span><i class="fa-solid ${lk.icon}"></i> ${lk.label.slice(0, 55)}</span>
+            <span class="jp-btn-sub">${lk.sub}</span>
+          </a>`
+        ).join('');
 
         /* ── FALLBACK: agar koi bhi specific link nahi mili ── */
         if (!linksHtml && _fallbackUrl) {
@@ -1154,15 +1113,19 @@
           const isSarkariShine  = _fallbackUrl.includes('sarkariresultshine.com');
           const srcLabel = isSarkariResult ? 'SarkariResult.com'
                          : isSarkariShine  ? 'SarkariResultShine.com'
-                         : 'Official Website / Main Page';
-          linksHtml = `<table class="imp-links-table" role="table" aria-label="Important Links"><tbody>
-            <tr>
-              <td class="imp-link-name-cell"><span class="imp-link-name"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i><span>${srcLabel}</span></span></td>
-              <td class="imp-link-btn-cell"><a href="${_fallbackUrl}" target="_blank" rel="noopener noreferrer" class="imp-link-btn imp-link-btn-green" aria-label="${srcLabel}"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> Click Here</a></td>
-            </tr>
-          </tbody></table>`;
+                         : 'Official Website';
+          linksHtml =
+            `<a href="${_fallbackUrl}" target="_blank" rel="noopener" class="jp-btn jp-btn-green">
+              <span><i class="fa-solid fa-arrow-up-right-from-square"></i> Apply / View Details</span>
+              <span class="jp-btn-sub">${srcLabel}</span>
+            </a>
+            <a href="${_fallbackUrl}" target="_blank" rel="noopener" class="jp-btn jp-btn-red">
+              <span><i class="fa-solid fa-globe"></i> Official Website</span>
+              <span class="jp-btn-sub">${srcLabel}</span>
+            </a>`;
         } else if (!linksHtml) {
-          linksHtml = `<p class="imp-links-empty">Links not available. Please check official website.</p>`;
+          linksHtml = `<p style="color:#64748b;font-size:.83rem;padding:4px;">
+            Links not available. Please check official website.</p>`;
         }
 
         linksContainer.innerHTML = linksHtml;
@@ -1211,33 +1174,10 @@
       document.getElementById('nonJobBanner').style.background = typeInfo.color;
       document.getElementById('nonJobDesc').innerHTML = `<p style="margin:0 0 8px;"><strong>${typeInfo.label}</strong></p><p style="margin:0;">यह एक सरकारी संसाधन है।</p>`;
       document.getElementById('bcTitle').textContent = name.length > 60 ? name.slice(0, 57) + '…' : name;
-
-      /* ── Important Links for non-job page ── */
-      const nonJobLinksEl = document.getElementById('nonJobLinksActions');
-      if (nonJobLinksEl) {
-        const btnText = typeInfo.label.includes('PDF') ? 'Download File'
-                      : typeInfo.label.includes('Scheme') ? 'View Scheme'
-                      : typeInfo.label.includes('Result') ? 'View Result'
-                      : typeInfo.label.includes('Admit') ? 'Download'
-                      : 'Click Here';
-        const btnIcon = typeInfo.label.includes('PDF') ? 'fa-file-arrow-down'
-                      : typeInfo.label.includes('Scheme') ? 'fa-landmark'
-                      : typeInfo.label.includes('Result') ? 'fa-trophy'
-                      : typeInfo.label.includes('Admit') ? 'fa-id-card'
-                      : 'fa-arrow-up-right-from-square';
-        if (destUrl && destUrl !== '#') {
-          nonJobLinksEl.innerHTML = `<table class="imp-links-table" role="table" aria-label="Important Links"><tbody>
-            <tr>
-              <td class="imp-link-name-cell"><span class="imp-link-name"><i class="fa-solid ${btnIcon}" aria-hidden="true"></i><span>${name.slice(0,80)}</span></span></td>
-              <td class="imp-link-btn-cell"><a href="${destUrl}" target="_blank" rel="noopener noreferrer" class="imp-link-btn imp-link-btn-green" aria-label="${name}"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> ${btnText}</a></td>
-            </tr>
-          </tbody></table>`;
-        } else {
-          nonJobLinksEl.innerHTML = `<p class="imp-links-empty">Links not available. Please check official website.</p>`;
-          const nlCard = document.getElementById('nonJobLinksCard');
-          if (nlCard) nlCard.style.display = 'none';
-        }
-      }
+      const cta = document.getElementById('btnNonJobCta');
+      cta.style.background = typeInfo.color;
+      cta.href = destUrl || '#';
+      document.getElementById('nonJobCtaText').textContent = typeInfo.label.includes('PDF') ? 'Download / View PDF' : typeInfo.label.includes('Scheme') ? 'View Govt Scheme' : 'Visit Official Page';
 
       injectSEO(name, rawSlug, null);
     }
@@ -1775,7 +1715,11 @@
           renderJobPage(humanTitle, '', parseJob(humanTitle), null);
         } else {
           renderNonJobPage(humanTitle, '');
-          /* No URL — nonJobLinksCard hidden inside renderNonJobPage already */
+          /* Hide CTA only if there's truly no URL */
+          ['btnMainCta','btnNonJobCta'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) { el.style.display = 'none'; }
+          });
         }
       } else {
         const name = row.title || humanizeSlug(rawSlug);
@@ -1786,6 +1730,12 @@
         } else {
           /* Non-job page (schemes, khabar, etc.) — ALWAYS show Click Here if URL exists */
           renderNonJobPage(name, destUrl);
+          if (!destUrl) {
+            ['btnMainCta','btnNonJobCta'].forEach(id => {
+              const el = document.getElementById(id);
+              if (el) { el.style.display = 'none'; }
+            });
+          }
         }
       }
 
