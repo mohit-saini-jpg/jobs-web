@@ -653,68 +653,56 @@
    */
   function loadJsonFiles() {
     /*
-     * UPDATED LOADING STRATEGY v3.0:
+     * LOADING STRATEGY v4.0 — ONLY 4 SOURCE JSON FILES
      *
-     * Phase 1 — jobs-search-index.json (~742KB pre-built):
-     *   Contains ALL 1262+ jobs already processed with correct slugs.
-     *   Sets jsonIndexReady=true immediately. Search works in <1 second.
+     * jobs-search-index.json is SKIPPED entirely (it had wrong/stale data).
+     * All search data comes ONLY from these 4 authoritative JSON files:
      *
-     * Phase 2 — dailyupdates.json (Govt Schemes, daily items)
+     * Phase 1 (FAST) — merged_sarkari_data.json + dailyupdates.json
+     *   ~700KB total, loads in ~1s. Sets jsonIndexReady=true so search is live.
      *
-     * Phase 3 — merged_sarkari_data.json background (newest offline jobs)
+     * Phase 2 (MEDIUM) — state-jobs-data.json
+     *   Loads in background after Phase 1 is ready.
+     *
+     * Phase 3 (HEAVY) — Complete_Jobs_Full_Data.json (~11MB)
+     *   Loads in background after 2s delay. Merges silently into allData.
      */
 
-    // Phase 1: pre-built full search index
-    fetch('jobs-search-index.json')
-      .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-      .then(indexData => {
-        if (!Array.isArray(indexData)) throw new Error('bad format');
-        const extra = indexData.filter(item => item.title && item.slug).map(item => ({
-          title:         item.title,
-          slug:          item.slug,
-          dept:          item.dept          || '',
-          org:           item.dept          || '',
-          qual:          item.qual          || '',
-          state:         item.state         || 'All India',
-          cat:           item.cat           || 'Latest Job',
-          tags:          item.tags          || item.title,
-          lastDate:      item.lastDate      || '',
-          icon:          item.icon          || 'fa-briefcase',
-          lastUpdated:   item.lastUpdated   || new Date().toISOString(),
-          sectionSource: item.sectionSource || 'Jobs',
-        }));
-        mergeItems(extra, extra.length);
-        jsonIndexReady = true;
-        console.log('[smart-search] \u2705 Pre-built index loaded:', extra.length, 'jobs. Total:', allData.length);
-        loadFuse(() => {
-          buildFuse(allData);
-          const heroInput = document.getElementById('heroSearch');
-          if (heroInput && heroInput.value.trim().length >= 1) {
-            heroInput.dispatchEvent(new Event('input'));
-          }
-        });
-      })
-      .catch(err => {
-        // Fallback to individual JSON files if pre-built index missing
-        console.warn('[smart-search] Pre-built index missing, falling back:', err);
-        const FAST_FILES   = ['merged_sarkari_data.json', 'dailyupdates.json'];
-        const MEDIUM_FILES = ['state-jobs-data.json'];
-        Promise.allSettled(FAST_FILES.map(f => fetchAndIndex(f))).then(() => {
-          jsonIndexReady = true;
-          loadFuse(() => { buildFuse(allData); });
-          Promise.allSettled(MEDIUM_FILES.map(f => fetchAndIndex(f)));
-        });
-        // Heavy file in background
-        setTimeout(() => fetchAndIndex('Complete_Jobs_Full_Data.json'), 2000);
+    // Phase 1: Fast files — merged_sarkari_data.json + dailyupdates.json
+    const FAST_FILES = ['merged_sarkari_data.json', 'dailyupdates.json'];
+    Promise.allSettled(FAST_FILES.map(f => fetchAndIndex(f))).then(() => {
+      jsonIndexReady = true;
+      console.log('[smart-search] \u2705 Phase 1 done. Total:', allData.length);
+      loadFuse(() => {
+        buildFuse(allData);
+        const heroInput = document.getElementById('heroSearch');
+        if (heroInput && heroInput.value.trim().length >= 1) {
+          heroInput.dispatchEvent(new Event('input'));
+        }
       });
 
-    // Phase 2: dailyupdates — Govt Schemes / daily items not in pre-built index
-    fetchAndIndex('dailyupdates.json').then(() => {
-      console.log('[smart-search] \u2705 Daily updates merged. Total:', allData.length);
+      // Phase 2: state-jobs-data.json — loads after Phase 1
+      fetchAndIndex('state-jobs-data.json').then(() => {
+        console.log('[smart-search] \u2705 Phase 2 done (state-jobs). Total:', allData.length);
+        if (typeof buildFuse === 'function') buildFuse(allData);
+        const heroInput = document.getElementById('heroSearch');
+        if (heroInput && heroInput.value.trim().length >= 1) {
+          heroInput.dispatchEvent(new Event('input'));
+        }
+      });
     });
 
-    // Phase 3: background — any newest jobs not yet in pre-built index
-    setTimeout(() => fetchAndIndex('merged_sarkari_data.json'), 3000);
+    // Phase 3: Complete_Jobs_Full_Data.json — heavy file, background after 2s
+    setTimeout(() => {
+      fetchAndIndex('Complete_Jobs_Full_Data.json').then(() => {
+        console.log('[smart-search] \u2705 Phase 3 done (Complete_Jobs). Total:', allData.length);
+        if (typeof buildFuse === 'function') buildFuse(allData);
+        const heroInput = document.getElementById('heroSearch');
+        if (heroInput && heroInput.value.trim().length >= 1) {
+          heroInput.dispatchEvent(new Event('input'));
+        }
+      });
+    }, 2000);
   }
 
     /* ── SORT BY LAST UPDATED (descending) ─────────────────── */
