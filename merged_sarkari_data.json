@@ -1,44 +1,90 @@
 {
-  "scraped_at": "2026-05-15 09:35:43",
-  "scraper_version": "v2",
-  "total": 103,
+  "scraped_at": "2026-05-15 18:31:55",
+  "total": 97,
   "summary": {
-    "sarkariresultshine_active_jobs": 17,
+    "sarkariresultshine_active_jobs": 14,
     "sarkariresult_categories": {
-      "SR_Latest_Jobs": 26,
-      "SR_Result": 23,
-      "SR_Admit_Card": 25,
+      "SR_Latest_Jobs": 25,
+      "SR_Result": 22,
+      "SR_Admit_Card": 24,
       "SR_Admission": 8,
       "SR_Answer_Key": 4
     },
-    "sarkariresult_total": 86,
-    "opening_soon_count": 2
+    "sarkariresult_total": 83
   },
   "category_counts": {
-    "OFFLINE_FORM": 17,
-    "SR_Latest_Jobs": 26,
-    "SR_Result": 23,
-    "SR_Admit_Card": 25,
+    "OFFLINE_FORM": 14,
+    "SR_Latest_Jobs": 25,
+    "SR_Result": 22,
+    "SR_Admit_Card": 24,
     "SR_Admission": 8,
     "SR_Answer_Key": 4
   },
-  "opening_soon_jobs": [
+  "jobs": [
     {
-      "title": "Railway RRB ALP CEN 01/2026 Online Form 2026 for 11127 Post",
-      "category": "SR_Latest_Jobs",
-      "application_begin": "2026-05-15",
-      "last_date": "2026-06-14",
-      "detailed_notification_link": ""
+      "category": "OFFLINE_FORM",
+      "title": "Ambala Court Clerk Vacancy 2026, Notification Out, Apply Now -",
+      "organization": "District and Sessions Judge, Ambala (HR)",
+      "post_name": "Clerk",
+      "total_vacancy": "49",
+      "salary_pay_scale": "Rs. 25,500 per month",
+      "apply_mode": "Offline",
+      "job_location": "Haryana",
+      "important_dates": {
+        "application_start": "06-05-2026",
+        "last_date": "28-06-2026",
+        "exam_date": "",
+        "interview_date": ""
+      },
+      "application_fees": {
+        "general_obc_ews": "",
+        "sc_st": "00",
+        "female": ""
+      },
+      "minimum_age": "18",
+      "maximum_age": "42",
+      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website https://ambala.dcourts.gov.in/ Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). Also, attach a self-addressed envelope of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: The Superintendent, Office of District and Sessions Judge, Judicial Courts Complex, Ambala, Haryana",
+      "form_pdf_free_link": "https://cdnbbsr.s3waas.gov.in/s3ec01ada5e0b63ef60e2239fa8abdd4aa/uploads/2026/05/2026050648.pdf",
+      "official_website_link": "https://ambala.dcourts.gov.in/notice-category/recruitments/",
+      "official_notification_pdf_link": "https://cdnbbsr.s3waas.gov.in/s3ec01ada5e0b63ef60e2239fa8abdd4aa/uploads/2026/05/2026050648.pdf",
+      "jobs_info": "<p style=\"text-align: justify;\">Ambala Court Clerk Vacancy 2026: The District and Sessions Judge, Ambala (HR), has issued a notification for the position of Clerk. The recruitment drive comprises 49 vacancies. All eligible and interested candidates are advised to carefully read the official notification and apply before 28-05-2026, the last Date. All relevant information regarding the Ambala Court Clerk Vacancy 2026 recruitment is provided below.</p>",
+      "vacancy_details": [
+        {
+          "post_name": "Clerk",
+          "total": "49",
+          "eligibility": "Graduation Degree, English Typing : 30 wpm"
+        }
+      ]
     },
     {
-      "title": "Navy SSC Executive IT Online Form 2026 for 15 Post",
-      "category": "SR_Latest_Jobs",
-      "application_begin": "2026-05-16",
-      "last_date": "2026-06-01",
-      "detailed_notification_link": "https://doc.sarkariresults.org.in/Navy_SSC_IT_SarkariResult.Com_Advertisement_SSC_IT_Jan_27.pdf"
-    }
-  ],
-  "jobs": [
+      "category": "OFFLINE_FORM",
+      "title": "Air Force Station Gurgaon Recruitment 2026, Free AppliCation Form And Notification Out -",
+      "organization": "Indian Air Force",
+      "post_name": "Lower Division Clerk (LDC)",
+      "total_vacancy": "",
+      "salary_pay_scale": "As per the Rules",
+      "apply_mode": "Offline",
+      "job_location": "Haryana",
+      "important_dates": {
+        "application_start": "02-05-2026",
+        "last_date": "01-06-2026",
+        "exam_date": "",
+        "interview_date": ""
+      },
+      "application_fees": {
+        "general_obc_ews": "",
+        "sc_st": "00",
+        "female": ""
+      },
+      "minimum_age": "18",
+      "maximum_age": "25",
+      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website https://indianairforce.nic.in/ Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.), 2 additional photos. Also, attach a self-addressed envelope with a ₹10 stamp of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Air Officer Commanding, Air Force Station, Sohna Road, Gurugram – 122001",
+      "form_pdf_free_link": "",
+      "official_website_link": "https://indianairforce.nic.in/",
+      "official_notification_pdf_link": "https://drive.google.com/file/d/1QsybyUT9rUKZWn98MlJKCNvW8sCAaaxg/view?usp=sharing",
+      "jobs_info": "",
+      "vacancy_details": []
+    },
     {
       "category": "OFFLINE_FORM",
       "title": "KVK Ambala Driver Vacancy 2026, Free Application From & Notification -",
@@ -61,185 +107,45 @@
       },
       "minimum_age": "18",
       "maximum_age": "30",
-      "eligibility": "Driver 10th Pass + Driving License 🚀KVK Ambala Driver Vacancy 2026",
       "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). Also, attach a self-addressed envelope of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Society for Creation of Heaven on Earth, Krishi Vigyan Kendra, Village Tepla, Post Saha, District Ambala – 133104, Haryana",
-      "apply_online_link": "",
       "form_pdf_free_link": "https://cms.kvk2.in/assets/uploads/1777456739.Advertisement%20,%20Terms%20&%20Conditions%20&%20Application%20form%20for%20the%20post%20of%20Driver%20in%20Krishi%20Vigyan%20Kendra,%20Ambala.pdf",
-      "official_notification_pdf_link": "https://cms.kvk2.in/assets/uploads/1777456739.Advertisement%20,%20Terms%20&%20Conditions%20&%20Application%20form%20for%20the%20post%20of%20Driver%20in%20Krishi%20Vigyan%20Kendra,%20Ambala.pdf",
       "official_website_link": "",
+      "official_notification_pdf_link": "https://cms.kvk2.in/assets/uploads/1777456739.Advertisement%20,%20Terms%20&%20Conditions%20&%20Application%20form%20for%20the%20post%20of%20Driver%20in%20Krishi%20Vigyan%20Kendra,%20Ambala.pdf",
       "jobs_info": "<p style=\"text-align: justify;\">KVK Ambala Driver Vacancy 2026: Society for Creation of Heaven on Earth (SCHE) has issued a notification for the position of driver. The recruitment drive comprises 01 vacancy. All eligible and interested candidates are advised to carefully read the official notification and apply before 25-05-2026, the last Date. All relevant information regarding the KVK Ambala Driver Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": []
     },
     {
       "category": "OFFLINE_FORM",
-      "title": "New Delhi Municipal Council Recruitment 2026, Notification for 254 Posts -",
-      "organization": "New Delhi Municipal Council",
-      "post_name": "Teaching & Non-Teaching Consultant",
-      "total_vacancy": "254",
+      "title": "MNSS, Rai Recruitment 2026, Notification Out, Apply Now -",
+      "organization": "Motilal Nehru School of Sports, Rai",
+      "post_name": "Driver",
+      "total_vacancy": "01",
       "salary_pay_scale": "As per the Rules",
-      "apply_mode": "Offline",
-      "job_location": "New Delhi",
+      "apply_mode": "Online",
+      "job_location": "Haryana",
       "important_dates": {
-        "application_start": "06-05-2026",
-        "last_date": "21-05-2026",
+        "application_start": "04-05-2026",
+        "last_date": "24-05-2026",
         "exam_date": "",
         "interview_date": ""
       },
       "application_fees": {
         "general_obc_ews": "",
-        "sc_st": "00",
-        "female": ""
-      },
-      "minimum_age": "18",
-      "maximum_age": "65",
-      "eligibility": "",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Deputy Education Officer (Administration) Room No. 8016, 8th Floor Palika Kendra, Sansad Marg, New Delhi – 110001 Note:- The candidate should have retired from the services of the Central/Delhi/State Government, Local Bodies, Defense service, or equivalent services.",
-      "apply_online_link": "",
-      "form_pdf_free_link": "https://www.ndmc.gov.in/public_notices_new.aspx",
-      "official_notification_pdf_link": "https://www.ndmc.gov.in/public_notices_new.aspx",
-      "official_website_link": "https://ndmc.gov.in/vacancy_new.aspx",
-      "jobs_info": "",
-      "vacancy_details": []
-    },
-    {
-      "category": "OFFLINE_FORM",
-      "title": "ICAR-CIRB Hisar Recruitment 2026, Vacancy for Young Professional-II posts Salary ₹42,000 -",
-      "organization": "ICAR-Central Institute for Research on Buffaloes (ICAR-CIRB), Hisar",
-      "post_name": "Young Professional-II",
-      "total_vacancy": "",
-      "salary_pay_scale": "Rs. 42000/-",
-      "apply_mode": "Online by mail",
-      "job_location": "Haryana",
-      "important_dates": {
-        "application_start": "08-05-2026",
-        "last_date": "18-05-2026",
-        "exam_date": "",
-        "interview_date": "05-06-2026"
-      },
-      "application_fees": {
-        "general_obc_ews": "",
-        "sc_st": "00",
-        "female": ""
-      },
-      "minimum_age": "21",
-      "maximum_age": "45",
-      "eligibility": "Young Professional-II 42000/- Post Graduate in Life Sciences (with Genetics or Zoology or Biochemistry as one of the subjects)/Biotechnology/Nanotechnology/Medical Biotechnology with at least 60% marks or equivalent with one year experience in the relevant field OR BVSc & AH or Master’s Degree in any stream of Biological Sciences. 🚀ICAR-CIRB Hisar Recruitment 2026",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website………………… Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: recruitment.cirb@gmail.com",
-      "apply_online_link": "",
-      "form_pdf_free_link": "https://cirb.res.in/wp-content/uploads/2026/05/Advt.-no.-13-for-website_compressed.pdf",
-      "official_notification_pdf_link": "https://cirb.res.in/wp-content/uploads/2026/05/Advt.-no.-13-for-website_compressed.pdf",
-      "official_website_link": "https://cirb.res.in/#1515148541514-a02a1a2b-8047",
-      "jobs_info": "",
-      "vacancy_details": [
-        {
-          "post_name": "Young Professional-II",
-          "total": "42000",
-          "eligibility": "Post Graduate in Life Sciences (with Genetics or Zoology or Biochemistry as one of the subjects)/Biotechnology/Nanotechnology/Medical Biotechnology with at least 60% marks or equivalent with one year experience in the relevant field OR BVSc & AH or Master’s Degree in any stream of Biological Sciences."
-        }
-      ]
-    },
-    {
-      "category": "OFFLINE_FORM",
-      "title": "SHKM GMC Nalhar Recruitment 2026, Vacancy for Senior Resident posts, Apply Now -",
-      "organization": "S.H.K.M. Government Medical College, Nalhar",
-      "post_name": "Senior Resident",
-      "total_vacancy": "81",
-      "salary_pay_scale": "Rs. 67,700/-",
-      "apply_mode": "Offline",
-      "job_location": "Haryana",
-      "important_dates": {
-        "application_start": "08-05-2026",
-        "last_date": "18-05-2026",
-        "exam_date": "",
-        "interview_date": ""
-      },
-      "application_fees": {
-        "general_obc_ews": "",
-        "sc_st": "250",
-        "female": ""
-      },
-      "minimum_age": "22",
-      "maximum_age": "45",
-      "eligibility": "Senior Resident 81 An MBBS degree is mandatory, along with an MD/MS/DNB degree in a relevant subject. 🚀SHKM GMC Nalhar Recruitment 2026",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website https://www.gmcmewat.ac.in/ Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). Also, attach a self-addressed envelope of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Receipt & Dispatch Branch, SHKM, Govt. Medical College, Nalhar, Nuh",
-      "apply_online_link": "",
-      "form_pdf_free_link": "https://drive.google.com/file/d/1xn27tqOKq213s9uLuzWPT436pRJUZlhZ/view?usp=sharing",
-      "official_notification_pdf_link": "https://drive.google.com/file/d/1xn27tqOKq213s9uLuzWPT436pRJUZlhZ/view?usp=sharing",
-      "official_website_link": "https://www.gmcmewat.ac.in/",
-      "jobs_info": "",
-      "vacancy_details": [
-        {
-          "post_name": "Senior Resident",
-          "total": "81",
-          "eligibility": "An MBBS degree is mandatory, along with an MD/MS/DNB degree in a relevant subject."
-        }
-      ]
-    },
-    {
-      "category": "OFFLINE_FORM",
-      "title": "Pooja College of Education Kurukshetra Recruitment 2026, Free Application Form PDF -",
-      "organization": "The Pooja College of Education, Kurukshetra",
-      "post_name": "Librarian, Accountant, Computer Operator, Technical Assistant, Lab Attendant, Store Keeper, and Helper",
-      "total_vacancy": "",
-      "salary_pay_scale": "As per the Rules",
-      "apply_mode": "Offline",
-      "job_location": "Haryana",
-      "important_dates": {
-        "application_start": "09-05-2026",
-        "last_date": "19-05-2026",
-        "exam_date": "",
-        "interview_date": ""
-      },
-      "application_fees": {
-        "general_obc_ews": "",
-        "sc_st": "00",
+        "sc_st": "",
         "female": ""
       },
       "minimum_age": "18",
       "maximum_age": "42",
-      "eligibility": "Helper 10th Pass Lab Attendant 12th Pass with science Computer Operator 12Th + Computer Diploma Librarian Master’s Degree in Library Science (M.Lib) Accountant B.Com/M.Com with Accounts Knowledge & Experience Technical Assistant Degree/ Diploma in Related Field Store Keeper Bachelor’s Degree + Experience in Store / Accounts preferred 🚀Pooja College of Education Kurukshetra Recruitment 2026",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website https://poojacollegekkr.com/ Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). Also, attach a self-addressed envelope of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Pooja College of Education, Near Police Line, Opposite Sector-5, Kurukshetra, Haryana – 136131 It is mandatory to submit a copy of the application to the Office of the Dean of Colleges, Kurukshetra University, Kurukshetra",
-      "apply_online_link": "https://drive.google.com/file/d/1GACUjqh1DcuO4ieB66iHHFNDWAVVjtW0/view?usp=drive_link",
+      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Visit the official website Find and click the “Recruitment Link” or “Apply Online” link on the homepage. First, register – enter your name, email, mobile number, and password. After registering, log in and focus on the application form—specifically, the personal details, qualifications, and selection of the position. Upload required documents: Photograph (JPG, max 50KB), Signature (JPG, max 20KB), Educational Certificates, ID Proof, Caste Certificate (if applicable). Pay the",
       "form_pdf_free_link": "",
-      "official_notification_pdf_link": "",
-      "official_website_link": "https://poojacollegekkr.com/",
-      "jobs_info": "",
-      "vacancy_details": []
-    },
-    {
-      "category": "OFFLINE_FORM",
-      "title": "Yamunanagar Safai Karamchari Recruitment 2026 -",
-      "organization": "Office of Block Development & Panchayat Department",
-      "post_name": "Safai Karamchari",
-      "total_vacancy": "",
-      "salary_pay_scale": "16,000/- INR Per Month (Expected)",
-      "apply_mode": "Offline",
-      "job_location": "Haryana",
-      "important_dates": {
-        "application_start": "08-05-2026",
-        "last_date": "21-05-2026",
-        "exam_date": "",
-        "interview_date": ""
-      },
-      "application_fees": {
-        "general_obc_ews": "",
-        "sc_st": "00",
-        "female": ""
-      },
-      "minimum_age": "18",
-      "maximum_age": "55",
-      "eligibility": "Saafai Karamchari 16,000/- INR Per Month (Expected) 5th 🚀Yamunanagar Safai Karamchari Recruitment 2026",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: Given Link below Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Block Development and Panchayat Officer (BDPO) Pratap Nagar, Yamunanagar",
-      "apply_online_link": "",
-      "form_pdf_free_link": "https://drive.google.com/file/d/1TvZXdbSssgV9UC-A7yBQFhBamyhR4jqU/view?usp=drive_link",
-      "official_notification_pdf_link": "",
-      "official_website_link": "",
+      "official_website_link": "https://www.mnssrai.com/index.php",
+      "official_notification_pdf_link": "https://www.mnssrai.com/SyaRaAssets/PDF/PDF_6_333.pdf",
       "jobs_info": "",
       "vacancy_details": [
         {
-          "post_name": "Saafai Karamchari",
-          "total": "",
-          "eligibility": "5th"
+          "post_name": "Driver",
+          "total": "01",
+          "eligibility": "A middle-school pass and a Heavy Vehicle Driving License are mandatory. Three years of driving experience is required."
         }
       ]
     },
@@ -265,27 +171,25 @@
       },
       "minimum_age": "18",
       "maximum_age": "42",
-      "eligibility": "Yoga Instructor Degree Diploma In Yoga 🚀Chandigarh Ayush Yoga Instructor Vacancy 2026:",
       "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: Link Below Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). Also, attach a self-addressed envelope of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Ayushman Arogya Mandir (AYUSH), First Floor, Sector 24B, Chandigarh",
-      "apply_online_link": "",
       "form_pdf_free_link": "https://chandigarh.gov.in/sites/default/files/Updation26/ayush26-81310-0705.pdf",
-      "official_notification_pdf_link": "https://chandigarh.gov.in/sites/default/files/Updation26/ayush26-81310-0705.pdf",
       "official_website_link": "https://chandigarh.gov.in/information/public-notices",
+      "official_notification_pdf_link": "https://chandigarh.gov.in/sites/default/files/Updation26/ayush26-81310-0705.pdf",
       "jobs_info": "<p style=\"text-align: justify;\">Chandigarh Ayush Yoga Instructor Vacancy 2026: State AYUSH Society under National AYUSH Mission (NAM), U.T. Chandigarh has issued a notification for the position of Yoga Instructor. All eligible and interested candidates are advised to carefully read the official notification and apply before 22-05-2026, the last Date. All relevant information regarding the Chandigarh Ayush Yoga Instructor Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": []
     },
     {
       "category": "OFFLINE_FORM",
-      "title": "ICAR-National Research Centre on Equines, Hisar Recruitment 2026 -",
-      "organization": "ICAR-National Research Centre on Equines, Hisar",
-      "post_name": "Young Professional-II",
-      "total_vacancy": "",
-      "salary_pay_scale": "42000/-",
-      "apply_mode": "WALK-IN-INTERVIEW",
-      "job_location": "Hisar",
+      "title": "New Delhi Municipal Council Recruitment 2026, Notification for 254 Posts -",
+      "organization": "New Delhi Municipal Council",
+      "post_name": "Teaching & Non-Teaching Consultant",
+      "total_vacancy": "254",
+      "salary_pay_scale": "As per the Rules",
+      "apply_mode": "Offline",
+      "job_location": "New Delhi",
       "important_dates": {
-        "application_start": "07-05-2026",
-        "last_date": "17-05-2026",
+        "application_start": "06-05-2026",
+        "last_date": "21-05-2026",
         "exam_date": "",
         "interview_date": ""
       },
@@ -294,20 +198,146 @@
         "sc_st": "00",
         "female": ""
       },
+      "minimum_age": "18",
+      "maximum_age": "65",
+      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Deputy Education Officer (Administration) Room No. 8016, 8th Floor Palika Kendra, Sansad Marg, New Delhi – 110001 Note:- The candidate should have retired from the services of the Central/Delhi/State Government, Local Bodies, Defense service, or equivalent services.",
+      "form_pdf_free_link": "https://www.ndmc.gov.in/public_notices_new.aspx",
+      "official_website_link": "https://ndmc.gov.in/vacancy_new.aspx",
+      "official_notification_pdf_link": "https://www.ndmc.gov.in/public_notices_new.aspx",
+      "jobs_info": "",
+      "vacancy_details": []
+    },
+    {
+      "category": "OFFLINE_FORM",
+      "title": "Yamunanagar Safai Karamchari Recruitment 2026 -",
+      "organization": "Office of Block Development & Panchayat Department",
+      "post_name": "Safai Karamchari",
+      "total_vacancy": "",
+      "salary_pay_scale": "16,000/- INR Per Month (Expected)",
+      "apply_mode": "Offline",
+      "job_location": "Haryana",
+      "important_dates": {
+        "application_start": "08-05-2026",
+        "last_date": "21-05-2026",
+        "exam_date": "",
+        "interview_date": ""
+      },
+      "application_fees": {
+        "general_obc_ews": "",
+        "sc_st": "00",
+        "female": ""
+      },
+      "minimum_age": "18",
+      "maximum_age": "55",
+      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: Given Link below Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Block Development and Panchayat Officer (BDPO) Pratap Nagar, Yamunanagar",
+      "form_pdf_free_link": "https://drive.google.com/file/d/1TvZXdbSssgV9UC-A7yBQFhBamyhR4jqU/view?usp=drive_link",
+      "official_website_link": "",
+      "official_notification_pdf_link": "",
+      "jobs_info": "",
+      "vacancy_details": [
+        {
+          "post_name": "Saafai Karamchari",
+          "total": "",
+          "eligibility": "5th"
+        }
+      ]
+    },
+    {
+      "category": "OFFLINE_FORM",
+      "title": "Pooja College of Education Kurukshetra Recruitment 2026, Free Application Form PDF -",
+      "organization": "The Pooja College of Education, Kurukshetra",
+      "post_name": "Librarian, Accountant, Computer Operator, Technical Assistant, Lab Attendant, Store Keeper, and Helper",
+      "total_vacancy": "",
+      "salary_pay_scale": "As per the Rules",
+      "apply_mode": "Offline",
+      "job_location": "Haryana",
+      "important_dates": {
+        "application_start": "09-05-2026",
+        "last_date": "19-05-2026",
+        "exam_date": "",
+        "interview_date": ""
+      },
+      "application_fees": {
+        "general_obc_ews": "",
+        "sc_st": "00",
+        "female": ""
+      },
+      "minimum_age": "18",
+      "maximum_age": "42",
+      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website https://poojacollegekkr.com/ Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). Also, attach a self-addressed envelope of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Pooja College of Education, Near Police Line, Opposite Sector-5, Kurukshetra, Haryana – 136131 It is mandatory to submit a copy of the application to the Office of the Dean of Colleges, Kurukshetra University, Kurukshetra",
+      "form_pdf_free_link": "",
+      "official_website_link": "https://poojacollegekkr.com/",
+      "official_notification_pdf_link": "",
+      "jobs_info": "",
+      "vacancy_details": []
+    },
+    {
+      "category": "OFFLINE_FORM",
+      "title": "SHKM GMC Nalhar Recruitment 2026, Vacancy for Senior Resident posts, Apply Now -",
+      "organization": "S.H.K.M. Government Medical College, Nalhar",
+      "post_name": "Senior Resident",
+      "total_vacancy": "81",
+      "salary_pay_scale": "Rs. 67,700/-",
+      "apply_mode": "Offline",
+      "job_location": "Haryana",
+      "important_dates": {
+        "application_start": "08-05-2026",
+        "last_date": "18-05-2026",
+        "exam_date": "",
+        "interview_date": ""
+      },
+      "application_fees": {
+        "general_obc_ews": "",
+        "sc_st": "250",
+        "female": ""
+      },
+      "minimum_age": "22",
+      "maximum_age": "45",
+      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website https://www.gmcmewat.ac.in/ Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). Also, attach a self-addressed envelope of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Receipt & Dispatch Branch, SHKM, Govt. Medical College, Nalhar, Nuh",
+      "form_pdf_free_link": "https://drive.google.com/file/d/1xn27tqOKq213s9uLuzWPT436pRJUZlhZ/view?usp=sharing",
+      "official_website_link": "https://www.gmcmewat.ac.in/",
+      "official_notification_pdf_link": "https://drive.google.com/file/d/1xn27tqOKq213s9uLuzWPT436pRJUZlhZ/view?usp=sharing",
+      "jobs_info": "",
+      "vacancy_details": [
+        {
+          "post_name": "Senior Resident",
+          "total": "81",
+          "eligibility": "An MBBS degree is mandatory, along with an MD/MS/DNB degree in a relevant subject."
+        }
+      ]
+    },
+    {
+      "category": "OFFLINE_FORM",
+      "title": "ICAR-CIRB Hisar Recruitment 2026, Vacancy for Young Professional-II posts Salary ₹42,000 -",
+      "organization": "ICAR-Central Institute for Research on Buffaloes (ICAR-CIRB), Hisar",
+      "post_name": "Young Professional-II",
+      "total_vacancy": "",
+      "salary_pay_scale": "Rs. 42000/-",
+      "apply_mode": "Online by mail",
+      "job_location": "Haryana",
+      "important_dates": {
+        "application_start": "08-05-2026",
+        "last_date": "18-05-2026",
+        "exam_date": "",
+        "interview_date": "05-06-2026"
+      },
+      "application_fees": {
+        "general_obc_ews": "",
+        "sc_st": "00",
+        "female": ""
+      },
       "minimum_age": "21",
       "maximum_age": "45",
-      "eligibility": "Young Professional-II 42000/- M.Sc/MVSc/ M.Tech Microbiology/ Biotechnology/ Pathology/Life Sciences 🚀ICAR-National Research Centre on Equines, Hisar Recruitment 2026",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). Also, attach a self-addressed envelope of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Email: recruitment.nrce@gmail.com",
-      "apply_online_link": "",
-      "form_pdf_free_link": "http://nrce.gov.in/wp-content/uploads/2026/05/Advt-dt-07-05-26-3-7.pdf",
-      "official_notification_pdf_link": "http://nrce.gov.in/wp-content/uploads/2026/05/Advt-dt-07-05-26-3-7.pdf",
-      "official_website_link": "http://nrce.gov.in/index.php/jobs-positions/",
-      "jobs_info": "<p style=\"text-align: justify;\">ICAR-National Research Centre on Equines, Hisar Recruitment 2026: ICAR-National Research Centre on Equines, Hisar has issued a notification for the position of Young Professional-II. The recruitment drive comprises 01 vacancy. All eligible and interested candidates are advised to carefully read the official notification and apply before 17-05-2026, the last Date. All relevant information regarding the ICAR-National Research Centre on Equines, Hisar Recruitment 2026 is provided below.</p>",
+      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website………………… Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: recruitment.cirb@gmail.com",
+      "form_pdf_free_link": "https://cirb.res.in/wp-content/uploads/2026/05/Advt.-no.-13-for-website_compressed.pdf",
+      "official_website_link": "https://cirb.res.in/#1515148541514-a02a1a2b-8047",
+      "official_notification_pdf_link": "https://cirb.res.in/wp-content/uploads/2026/05/Advt.-no.-13-for-website_compressed.pdf",
+      "jobs_info": "",
       "vacancy_details": [
         {
           "post_name": "Young Professional-II",
           "total": "42000",
-          "eligibility": "M.Sc/MVSc/ M.Tech Microbiology/ Biotechnology/ Pathology/Life Sciences"
+          "eligibility": "Post Graduate in Life Sciences (with Genetics or Zoology or Biochemistry as one of the subjects)/Biotechnology/Nanotechnology/Medical Biotechnology with at least 60% marks or equivalent with one year experience in the relevant field OR BVSc & AH or Master’s Degree in any stream of Biological Sciences."
         }
       ]
     },
@@ -333,14 +363,47 @@
       },
       "minimum_age": "18",
       "maximum_age": "42",
-      "eligibility": "Qualifications shall be as per Kurukshetra University, Kurukshetra (KUK) norms",
       "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website https://www.gnkc.ac.in./ Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). Also, attach a self-addressed envelope of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Principal, Guru Nanak Khalsa College, Yamuna Nagar 135 001",
-      "apply_online_link": "",
       "form_pdf_free_link": "https://drive.google.com/file/d/1GACUjqh1DcuO4ieB66iHHFNDWAVVjtW0/view?usp=sharing",
-      "official_notification_pdf_link": "",
       "official_website_link": "https://www.gnkc.ac.in./",
+      "official_notification_pdf_link": "",
       "jobs_info": "",
       "vacancy_details": []
+    },
+    {
+      "category": "OFFLINE_FORM",
+      "title": "ICAR-National Research Centre on Equines, Hisar Recruitment 2026 -",
+      "organization": "ICAR-National Research Centre on Equines, Hisar",
+      "post_name": "Young Professional-II",
+      "total_vacancy": "",
+      "salary_pay_scale": "42000/-",
+      "apply_mode": "WALK-IN-INTERVIEW",
+      "job_location": "Hisar",
+      "important_dates": {
+        "application_start": "07-05-2026",
+        "last_date": "17-05-2026",
+        "exam_date": "",
+        "interview_date": ""
+      },
+      "application_fees": {
+        "general_obc_ews": "",
+        "sc_st": "00",
+        "female": ""
+      },
+      "minimum_age": "21",
+      "maximum_age": "45",
+      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). Also, attach a self-addressed envelope of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Email: recruitment.nrce@gmail.com",
+      "form_pdf_free_link": "http://nrce.gov.in/wp-content/uploads/2026/05/Advt-dt-07-05-26-3-7.pdf",
+      "official_website_link": "http://nrce.gov.in/index.php/jobs-positions/",
+      "official_notification_pdf_link": "http://nrce.gov.in/wp-content/uploads/2026/05/Advt-dt-07-05-26-3-7.pdf",
+      "jobs_info": "<p style=\"text-align: justify;\">ICAR-National Research Centre on Equines, Hisar Recruitment 2026: ICAR-National Research Centre on Equines, Hisar has issued a notification for the position of Young Professional-II. The recruitment drive comprises 01 vacancy. All eligible and interested candidates are advised to carefully read the official notification and apply before 17-05-2026, the last Date. All relevant information regarding the ICAR-National Research Centre on Equines, Hisar Recruitment 2026 is provided below.</p>",
+      "vacancy_details": [
+        {
+          "post_name": "Young Professional-II",
+          "total": "42000",
+          "eligibility": "M.Sc/MVSc/ M.Tech Microbiology/ Biotechnology/ Pathology/Life Sciences"
+        }
+      ]
     },
     {
       "category": "OFFLINE_FORM",
@@ -364,165 +427,27 @@
       },
       "minimum_age": "22",
       "maximum_age": "40",
-      "eligibility": "Attender 10th 🚀PNB Hoshiarpur Attender Vacancy 2026",
       "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: Visit the official website OR use the link given below Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). Also, attach a self-addressed envelope of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: The Circle Head, Punjab National Bank, Circle Office, Improvement Trust Building, Chandigarh Road, Hoshiarpur, Punjab – 146001",
-      "apply_online_link": "",
       "form_pdf_free_link": "https://drive.google.com/file/d/1GACUjqh1DcuO4ieB66iHHFNDWAVVjtW0/view?usp=drive_link",
-      "official_notification_pdf_link": "",
       "official_website_link": "https://pnb.bank.in/",
+      "official_notification_pdf_link": "",
       "jobs_info": "<p style=\"text-align: justify;\">PNB Hoshiarpur Attender Vacancy 2026: Punjab National Bank (PNB) Rural Self-Employment Training Institute (RSETI) Hoshiarpur (Punjab) has issued a notification for the position of Attender. All eligible and interested candidates are advised to carefully read the official notification and apply before 6-05-2026, the last Date. All relevant information regarding the PNB Hoshiarpur Attender Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": []
     },
     {
       "category": "OFFLINE_FORM",
-      "title": "Ambala Court Clerk Vacancy 2026, Notification Out, Apply Now -",
-      "organization": "District and Sessions Judge, Ambala (HR)",
-      "post_name": "Clerk",
-      "total_vacancy": "49",
-      "salary_pay_scale": "Rs. 25,500 per month",
-      "apply_mode": "Offline",
-      "job_location": "Haryana",
-      "important_dates": {
-        "application_start": "06-05-2026",
-        "last_date": "28-06-2026",
-        "exam_date": "",
-        "interview_date": ""
-      },
-      "application_fees": {
-        "general_obc_ews": "",
-        "sc_st": "00",
-        "female": ""
-      },
-      "minimum_age": "18",
-      "maximum_age": "42",
-      "eligibility": "Clerk 49 Graduation Degree, English Typing : 30 wpm 🚀Ambala Court Clerk Career 2026",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website https://ambala.dcourts.gov.in/ Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). Also, attach a self-addressed envelope of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: The Superintendent, Office of District and Sessions Judge, Judicial Courts Complex, Ambala, Haryana",
-      "apply_online_link": "",
-      "form_pdf_free_link": "https://cdnbbsr.s3waas.gov.in/s3ec01ada5e0b63ef60e2239fa8abdd4aa/uploads/2026/05/2026050648.pdf",
-      "official_notification_pdf_link": "https://cdnbbsr.s3waas.gov.in/s3ec01ada5e0b63ef60e2239fa8abdd4aa/uploads/2026/05/2026050648.pdf",
-      "official_website_link": "https://ambala.dcourts.gov.in/notice-category/recruitments/",
-      "jobs_info": "<p style=\"text-align: justify;\">Ambala Court Clerk Vacancy 2026: The District and Sessions Judge, Ambala (HR), has issued a notification for the position of Clerk. The recruitment drive comprises 49 vacancies. All eligible and interested candidates are advised to carefully read the official notification and apply before 28-05-2026, the last Date. All relevant information regarding the Ambala Court Clerk Vacancy 2026 recruitment is provided below.</p>",
-      "vacancy_details": [
-        {
-          "post_name": "Clerk",
-          "total": "49",
-          "eligibility": "Graduation Degree, English Typing : 30 wpm"
-        }
-      ]
-    },
-    {
-      "category": "OFFLINE_FORM",
-      "title": "MNSS, Rai Recruitment 2026, Notification Out, Apply Now -",
-      "organization": "Motilal Nehru School of Sports, Rai",
-      "post_name": "Driver",
-      "total_vacancy": "01",
-      "salary_pay_scale": "As per the Rules",
-      "apply_mode": "Online",
-      "job_location": "Haryana",
-      "important_dates": {
-        "application_start": "04-05-2026",
-        "last_date": "24-05-2026",
-        "exam_date": "",
-        "interview_date": ""
-      },
-      "application_fees": {
-        "general_obc_ews": "",
-        "sc_st": "",
-        "female": ""
-      },
-      "minimum_age": "18",
-      "maximum_age": "42",
-      "eligibility": "s, and selection of the position. Upload required documents: Photograph (JPG, max 50KB), Signature (JPG, max 20KB), Educational Certificates, ID Proof, Caste Certificate (if applicable). Pay the",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Visit the official website Find and click the “Recruitment Link” or “Apply Online” link on the homepage. First, register – enter your name, email, mobile number, and password. After registering, log in and focus on the application form—specifically, the personal details, qualifications, and selection of the position. Upload required documents: Photograph (JPG, max 50KB), Signature (JPG, max 20KB), Educational Certificates, ID Proof, Caste Certificate (if applicable). Pay the",
-      "apply_online_link": "https://mnss.sisums.net/ReCruiTmenT/index.php",
-      "form_pdf_free_link": "",
-      "official_notification_pdf_link": "https://www.mnssrai.com/SyaRaAssets/PDF/PDF_6_333.pdf",
-      "official_website_link": "https://www.mnssrai.com/index.php",
-      "jobs_info": "",
-      "vacancy_details": [
-        {
-          "post_name": "Driver",
-          "total": "01",
-          "eligibility": "A middle-school pass and a Heavy Vehicle Driving License are mandatory. Three years of driving experience is required."
-        }
-      ]
-    },
-    {
-      "category": "OFFLINE_FORM",
-      "title": "Air Force Station Delhi Recruitment 2026, Notification Out And Free AppliCation Form -",
-      "organization": "Indian Air Force",
-      "post_name": "Lower Division Clerk (LDC)",
+      "title": "Samagra Shiksha Hisar Recruitment 2026, Check Full Info & Apply -",
+      "organization": "",
+      "post_name": "Total",
       "total_vacancy": "",
-      "salary_pay_scale": "As per the Rules",
-      "apply_mode": "Offline",
-      "job_location": "Delhi",
+      "salary_pay_scale": "",
+      "apply_mode": "",
+      "job_location": "",
       "important_dates": {
-        "application_start": "02-05-2026",
-        "last_date": "01-06-2026",
-        "exam_date": "",
-        "interview_date": ""
-      },
-      "application_fees": {
-        "general_obc_ews": "",
-        "sc_st": "00",
-        "female": ""
-      },
-      "minimum_age": "18",
-      "maximum_age": "25",
-      "eligibility": "Lower Division Clerk 12th Pass + Typing 🚀Air Force Station Delhi Recruitment 2026",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website https://indianairforce.nic.in/ Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.), 2 additional photos. Also, attach a self-addressed envelope with a ₹10 stamp of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send the application form to the address. Candidates can send the application to any of the following Delhi Air Force Units: 👇👇 Air Officer Commanding Air Force Station Race Course Lok Kalyan Marg New Delhi – 110003 President Central Airmen Selection Board (CASB) Brar Square, Delhi Cantt, New Delhi – 110010 Air Officer Commanding Air Force Central Accounts Office (AFCAO) Subroto Park New Delhi – 110010",
-      "apply_online_link": "",
-      "form_pdf_free_link": "",
-      "official_notification_pdf_link": "https://drive.google.com/file/d/1QsybyUT9rUKZWn98MlJKCNvW8sCAaaxg/view?usp=sharing",
-      "official_website_link": "https://indianairforce.nic.in/",
-      "jobs_info": "",
-      "vacancy_details": []
-    },
-    {
-      "category": "OFFLINE_FORM",
-      "title": "Chandigarh AIDS Control Society Vacancy 2026, Notification Out, Free Offline Form -",
-      "organization": "Chandigarh AIDS Control Society",
-      "post_name": "Store Officer, ICTC Counselor, Assistant Director, and Deputy Director Posts",
-      "total_vacancy": "",
-      "salary_pay_scale": "21,000-/ to 50,680/- INR Per Month",
-      "apply_mode": "Offline",
-      "job_location": "Chandigarh",
-      "important_dates": {
-        "application_start": "01-05-2026",
+        "application_start": "25-05-2026",
         "last_date": "15-05-2026",
-        "exam_date": "",
-        "interview_date": ""
-      },
-      "application_fees": {
-        "general_obc_ews": "",
-        "sc_st": "00",
-        "female": ""
-      },
-      "minimum_age": "21",
-      "maximum_age": "60",
-      "eligibility": "Deputy Director (SI) Medical Degree with MD/DNB or PG in Public Health/Health Administration/Applied Epidemiology etc. + 5 Years Experience Assistant Director (CSS & GIPA) Graduate + 3 Years Experience in HIV related matters Store Officer Graduate + 3-5 Years Experience in Store Management/Inventory Control ICTC Counselor Graduate/PG in Psychology, Social Work, Sociology, Anthropology, Human Development, Nursing etc 🚀Chandigarh AIDS Control Society Opportunity 2026",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website https://chandigarhsacs.org.in/ Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Project Director, Chandigarh State AIDS Control Society, International Hostel, Madhya Marg, Near Congress Bhawan, Sector 15-A, Chandigarh",
-      "apply_online_link": "",
-      "form_pdf_free_link": "https://api.chandigarhsacs.org.in/uploads/file_url-1777299461046.pdf",
-      "official_notification_pdf_link": "https://api.chandigarhsacs.org.in/uploads/file_url-1777299461046.pdf",
-      "official_website_link": "https://chandigarhsacs.org.in/",
-      "jobs_info": "<p style=\"text-align: justify;\">Chandigarh AIDS Control Society Vacancy 2026: Chandigarh AIDS Control Society has issued a notification for the positions of Store Officer, ICTC Counselor, Assistant Director, and Deputy Director. All eligible and interested candidates are advised to carefully read the official notification and apply before 15-05-2026, the last Date. All relevant information regarding the Chandigarh AIDS Control Society Vacancy 2026 recruitment is provided below.</p>",
-      "vacancy_details": []
-    },
-    {
-      "category": "OFFLINE_FORM",
-      "title": "BRCM Law College Recruitment 2026, Notification Out for Teaching & Non-Teaching Posts -",
-      "organization": "BRCM Law College Bahal",
-      "post_name": "Teaching & Non-Teaching",
-      "total_vacancy": "09",
-      "salary_pay_scale": "As per the Rules",
-      "apply_mode": "Offline",
-      "job_location": "Haryana",
-      "important_dates": {
-        "application_start": "01-05-2026",
-        "last_date": "20-05-2026",
-        "exam_date": "",
-        "interview_date": ""
+        "exam_date": "25-05-2026",
+        "interview_date": "01/01/2026"
       },
       "application_fees": {
         "general_obc_ews": "",
@@ -531,76 +456,93 @@
       },
       "minimum_age": "18",
       "maximum_age": "42",
-      "eligibility": "s combined with adequate experience Librarian A degree or diploma in Library Science is required 🚀BRCM Law College Recruitment 2026",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). Also, attach a self-addressed envelope of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: BRCM Law College, Bahal-127028, Dist. Bhiwani, Haryana It is also mandatory to send a copy to the Dean, College Development Council, Chaudhary Bansi Lal University, Bhiwani.",
-      "apply_online_link": "",
-      "form_pdf_free_link": "https://brcmlawcollege.edu.in/wp-content/uploads/2020/08/Application-form2020-21.pdf",
+      "how_to_apply": "Download the Form: visit the official website Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). Also, attach a self-addressed envelope of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: District Project Coordinator, Samagra Shiksha, Mini Secretariat Residential Colony, Rajgarh Road, Hisar” Samagra Shiksha Hisar Recruitment 2026 Important Links 📌Read Also:- ICAR-CIRB Hisar Recruitment 2026, Vacancy for Young Professional-II posts Salary ₹42,000 Official Notification PDF Download Official Website Visit Sarkari Result WhatsApp Channel Join Now Sarkari Result Telegram Channel Join Now Disclaimer: All information provided in this post has been sourced from the official notification/official website. SarkariResultShine.com (Sarkari Result) is a free information portal. We are not responsible for any errors. Before applying, please ensure you visit the official we",
+      "form_pdf_free_link": "",
+      "official_website_link": "https://hsspp.in/",
       "official_notification_pdf_link": "",
-      "official_website_link": "https://brcmlawcollege.edu.in/about-us/career-prospects/",
       "jobs_info": "",
-      "vacancy_details": []
+      "vacancy_details": [
+        {
+          "post_name": "Educational Volunteers",
+          "total": "38",
+          "eligibility": "D.Ed. / B.Ed. with HTET or CTET Qualified"
+        }
+      ]
     },
     {
-      "category": "OFFLINE_FORM",
-      "title": "PNB Bank Rewari Security Guard-cum-Mali Recruitment 2026, Vacancy Notification Out, Apply Now -",
-      "organization": "Punjab National Bank Rural Self Employment Training Institute Manethi (Rewari)",
-      "post_name": "Security Guard-cum-Mali",
-      "total_vacancy": "",
-      "salary_pay_scale": "Rs. 16,000/-",
-      "apply_mode": "Offline",
-      "job_location": "Haryana",
+      "category": "SR_Latest_Jobs",
+      "title": "Patna High Court District Judge Online Form 2026",
+      "post_date": "2026-05-15",
+      "last_date": "2026-05-25",
+      "status": "active",
+      "slug": "sr_latest_jobs-patna-high-court-district-judge-online-form-2026-45499b",
+      "short_information": "High Court of Judicature at Patna, Bihar has Released Patna High Court District Judge Recruitment 2026 Notification. Those candidates who are interested in this Patna High Court District Judge Vacancy 2026 can Apply Online from 16/04/2026 to 25/05/2026. Read the notification for recruitment eligibility, post information, selection procedure, pay scale and all other information. High Court of Judicature at Patna, Bihar Patna High Court District Judge Recruitment 2026 Advertisement No.: BSJS/1/2026 : Short Details of Notification",
+      "application_fee": "General / OBC : Rs. 1500/- SC / ST : 75 0/- Pay the Examination Fee Through Cast at E Challan or Debit Card, Credit Card, Net Banking Patna High Court District Judge",
+      "age_limit": "Minimum Age : 35 Years Maximum Age 50 Years Age Relaxation Extra as per Patna High Court District Judge Recruitment Rules. Patna High Court District Judge Recruitment 2026:",
+      "eligibility": "",
+      "total_post": "08",
       "important_dates": {
-        "application_start": "29-04-2026",
-        "last_date": "20-05-2026",
-        "exam_date": "",
-        "interview_date": ""
+        "application_begin": "2026-04-16",
+        "last_date": "2026-05-25",
+        "admit_card": "Before Exam"
       },
-      "application_fees": {
-        "general_obc_ews": "",
-        "sc_st": "00",
-        "female": ""
-      },
-      "minimum_age": "18",
-      "maximum_age": "42",
-      "eligibility": "Security Guard-cum-Mali Must have passed the 7th grade and possess experience in agriculture or horticulture. 🚀PNB Bank Rewari Security Guard-cum-Mali Recruitment 2026",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Director, Punjab National Bank, Rural Self Employment Training Institute (RSETI) Manethi, Near Govt Industrial Training Institute, Kund, Distt Rewari – 123102 Haryana",
-      "apply_online_link": "",
-      "form_pdf_free_link": "https://drive.google.com/file/d/1TvZXdbSssgV9UC-A7yBQFhBamyhR4jqU/view?usp=drive_link",
-      "official_notification_pdf_link": "",
-      "official_website_link": "",
-      "jobs_info": "<p style=\"text-align: justify;\">PNB Bank Rewari Security Guard-cum-Mali Recruitment 2026: Punjab National Bank Rural Self Employment Training Institute Manethi (Rewari) has issued a notification for the position of Security Guard-cum-Mali. The recruitment drive comprises 01 vacancy. All eligible and interested candidates are advised to carefully read the official notification and apply before 30–04-2026, the last Date. All relevant information regarding the PNB Bank Rewari Security Guard-cum-Mali Recruitment 2026 is provided below.</p>",
-      "vacancy_details": []
-    },
-    {
-      "category": "OFFLINE_FORM",
-      "title": "PTSRS College Bhiwani Recruitment 2026, Apply For Helper, Lab Assistant and Lab Attendant Posts -",
-      "organization": "Pt. Sita Ram Shastri B.Ed. Training College, Bhiwani",
-      "post_name": "Helper, Lab Assistant, and Lab Attendant Posts",
-      "total_vacancy": "",
-      "salary_pay_scale": "As per the Rules",
-      "apply_mode": "Offline",
-      "job_location": "Haryana",
-      "important_dates": {
-        "application_start": "28-04-2026",
-        "last_date": "18-05-2026",
-        "exam_date": "",
-        "interview_date": ""
-      },
-      "application_fees": {
-        "general_obc_ews": "",
-        "sc_st": "00",
-        "female": ""
-      },
-      "minimum_age": "18",
-      "maximum_age": "42",
-      "eligibility": "Helper 10th Pass Lab Assistant 12th Pass With Science Lab Attendant 12th Pass With Science 🚀PTSRS College Bhiwani Recruitment 2026",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: The Administrator/Principal, Pt. Sita Ram Shastri B.Ed. Training College, Meham Gate, Bhiwani, Haryana – 127021 It is mandatory to submit a copy of the application to Office of the Dean of Colleges, CBLU Bhiwani By Post OR By Hand Bhiwani, Haryana – 127021",
-      "apply_online_link": "",
-      "form_pdf_free_link": "https://drive.google.com/file/d/1GACUjqh1DcuO4ieB66iHHFNDWAVVjtW0/view?usp=sharing",
-      "official_notification_pdf_link": "",
-      "official_website_link": "",
-      "jobs_info": "",
-      "vacancy_details": []
+      "tables": [
+        [
+          [
+            "Important Dates Application Begin : 16/04/2026 Last Date for Apply Online : 25/05/2026 Last Date Pay Exam Fee : 25/05/2026 Last Date Upload Photo : 22/05/2026 Exam Date: As Per Schedule Admit Card Available : Before Exam",
+            "Application Fee General / OBC : Rs. 1500/- SC / ST : 75 0/- Pay the Examination Fee Through Cast at E Challan or Debit Card, Credit Card, Net Banking"
+          ],
+          [
+            "Post Name",
+            "Total Post",
+            "Patna High Court District Judge Eligibility"
+          ],
+          [
+            "Bihar Patna High Court PHC District Judge HJS",
+            "08",
+            "Bachelor Degree in Law. Minimum 7 Year Advocate Practice. Minimum 24 Cases Each Year in Last 3 Years. More Eligibility Details Read the Notification."
+          ],
+          [
+            "Apply Online",
+            "Click Here"
+          ],
+          [
+            "How to Fill Form (Video Hindi)",
+            "Click Here"
+          ],
+          [
+            "Download Date Extended Notice",
+            "Click Here"
+          ],
+          [
+            "Download Notification",
+            "Click Here"
+          ],
+          [
+            "Sarkari Result Tools Website",
+            "Sarkari Resul t Tools"
+          ],
+          [
+            "Official Website",
+            "Patna High Court District Judge Official Website"
+          ]
+        ]
+      ],
+      "useful_links": [
+        {
+          "title": "Apply Online",
+          "links": "https://patnahighcourt.gov.in/Exam/BSJS2026/DefaultBSJS2026.aspx"
+        },
+        {
+          "title": "Download Date Extended Notice",
+          "links": "https://patnahighcourt.gov.in/getfile/MTA2MjI=-ixPaFMpZh9k="
+        },
+        {
+          "title": "Download Notification",
+          "links": "https://patnahighcourt.gov.in/Exam/BSJS2026/ADV_BSJS2026.pdf"
+        }
+      ],
+      "homepage_serial": 1
     },
     {
       "category": "SR_Latest_Jobs",
@@ -659,9 +601,7 @@
           "links": "https://www.rrbapply.gov.in/#/auth/home"
         }
       ],
-      "detailed_notification_link": "",
-      "application_opens_soon": true,
-      "homepage_serial": 1
+      "homepage_serial": 2
     },
     {
       "category": "SR_Latest_Jobs",
@@ -724,9 +664,7 @@
           "links": "https://careers.nfl.co.in/uploads/upload_datails_doc/02-NFL2026-13.05.2026-non_executive_recruitment.pdf"
         }
       ],
-      "detailed_notification_link": "https://careers.nfl.co.in/uploads/upload_datails_doc/02-NFL2026-13.05.2026-non_executive_recruitment.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 2
+      "homepage_serial": 3
     },
     {
       "category": "SR_Latest_Jobs",
@@ -778,9 +716,7 @@
           "links": "https://joinindianarmy.nic.in/Authentication.aspx"
         }
       ],
-      "detailed_notification_link": "https://doc.sarkariresults.org.in/SarkariResult.Com_Noftification_of_TES-56.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 3
+      "homepage_serial": 4
     },
     {
       "category": "SR_Latest_Jobs",
@@ -843,9 +779,7 @@
           "links": "https://sbi.bank.in/documents/77530/57941334/13052026_ADV_CRPD_SC0_2026_27_05.pdf/7b1c920a-4aec-dc05-46ed-c1ff1397ee95?t=1778655133881"
         }
       ],
-      "detailed_notification_link": "https://sbi.bank.in/documents/77530/57941334/13052026_ADV_CRPD_SC0_2026_27_05.pdf/7b1c920a-4aec-dc05-46ed-c1ff1397ee95?t=1778655133881",
-      "application_opens_soon": false,
-      "homepage_serial": 4
+      "homepage_serial": 5
     },
     {
       "category": "SR_Latest_Jobs",
@@ -936,9 +870,7 @@
           "links": "https://careers.nfl.co.in/uploads/upload_datails_doc/01-NFL2026-13.05.2026-management_trainee.pdf"
         }
       ],
-      "detailed_notification_link": "https://careers.nfl.co.in/uploads/upload_datails_doc/01-NFL2026-13.05.2026-management_trainee.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 5
+      "homepage_serial": 6
     },
     {
       "category": "SR_Latest_Jobs",
@@ -1081,9 +1013,7 @@
           "links": "https://upsssc.gov.in//Online_App/Results.aspx?ID=143&Result_Type=P&Exam_Code=3&Advt_Code=304&Dept_Code=556&Post_Code=1&OnlyIntview=No"
         }
       ],
-      "detailed_notification_link": "",
-      "application_opens_soon": false,
-      "homepage_serial": 6
+      "homepage_serial": 7
     },
     {
       "category": "SR_Latest_Jobs",
@@ -1236,9 +1166,7 @@
           "links": "https://afcat.edcil.co.in/index.html"
         }
       ],
-      "detailed_notification_link": "",
-      "application_opens_soon": false,
-      "homepage_serial": 7
+      "homepage_serial": 8
     },
     {
       "category": "SR_Latest_Jobs",
@@ -1333,9 +1261,7 @@
           "links": "https://d3u7ubx0okog7j.cloudfront.net/documents/Advertisement_03_2026_dated_05.05.2026.pdf"
         }
       ],
-      "detailed_notification_link": "https://d3u7ubx0okog7j.cloudfront.net/documents/Advertisement_03_2026_dated_05.05.2026.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 8
+      "homepage_serial": 9
     },
     {
       "category": "SR_Latest_Jobs",
@@ -1389,9 +1315,7 @@
           "links": "https://examinationservices.nic.in/ExamSysCTET/root/Home.aspx?enc=Ei4cajBkK1gZSfgr53ImFfEytN2I3LFrLvNrMJcZJNmO/XE3+xNuu3rFt9agQvt0"
         }
       ],
-      "detailed_notification_link": "",
-      "application_opens_soon": false,
-      "homepage_serial": 9
+      "homepage_serial": 10
     },
     {
       "category": "SR_Latest_Jobs",
@@ -1463,9 +1387,7 @@
           "links": "https://mppsc.mp.gov.in/uploads/advertisement/Advt_Scientific_Officer_Biology_2026_Dated_16_03_2026.pdf"
         }
       ],
-      "detailed_notification_link": "https://mppsc.mp.gov.in/uploads/advertisement/Advt_Scientific_Officer_Biology_2026_Dated_16_03_2026.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 10
+      "homepage_serial": 11
     },
     {
       "category": "SR_Latest_Jobs",
@@ -1537,9 +1459,7 @@
           "links": "https://upsssc.gov.in//AllNotifications.aspx"
         }
       ],
-      "detailed_notification_link": "",
-      "application_opens_soon": false,
-      "homepage_serial": 11
+      "homepage_serial": 12
     },
     {
       "category": "SR_Latest_Jobs",
@@ -1602,9 +1522,7 @@
           "links": "https://esb.mp.gov.in/Rulebooks/RB_2026/Hospital_Assistant_rulebook_2026_30042026.pdf"
         }
       ],
-      "detailed_notification_link": "https://esb.mp.gov.in/Rulebooks/RB_2026/Hospital_Assistant_rulebook_2026_30042026.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 13
+      "homepage_serial": 14
     },
     {
       "category": "SR_Latest_Jobs",
@@ -1674,68 +1592,6 @@
           "links": "https://www.apprenticeshipindia.gov.in/candidate-login"
         }
       ],
-      "detailed_notification_link": "https://doc.sarkariresults.org.in/SarkariResult.Com_RRC_SECR_Raipur_Apprentices_2026%20(1).pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 14
-    },
-    {
-      "category": "SR_Latest_Jobs",
-      "title": "Navy SSC Executive IT Online Form 2026 for 15 Post",
-      "post_date": "2026-05-15",
-      "last_date": "2026-06-01",
-      "status": "active",
-      "slug": "sr_latest_jobs-navy-ssc-executive-it-online-form-2026-for-15-post-031634",
-      "short_information": "Join Indian Navy (Nausena Bharti) Released SSC Executive (Information Technology) January 2027 Course Recruitment. Those candidates who are interested in this Indian Navy SSC Executive (Information Technology) Recruitment 2026 can apply online from 16 May 2026 to 01 June 2026. Read the notification for Navy Executive SSC IT January 2027 Course recruitment eligibility, post information, selection procedure, age limit, pay scale and all other information. The Indian Navy (Nausena Bharti) Indian Navy SSC Executive Information Technology Recruitment Jan 2027 Course Navy SSC IT Executive January 2026 : Short Details of Notification",
-      "application_fee": "UR / OBC / EWS : 0/- SC / ST : 0/- No Application Fee for the All Category Candidates in Indian Navy Officers Executive IT Entry Recruitment 2026. Navy SSC Executive IT",
-      "age_limit": "Details Age Between : 01/01/2002 to 01/07/2007 For Age Relaxation Details Read the Indian Navy Executive Branch Information Technology January 2027 Course Detailed Notification. Indian Navy SSC Executive IT 2026 :",
-      "eligibility": "",
-      "total_post": "15",
-      "important_dates": {
-        "application_begin": "2026-05-16",
-        "last_date": "2026-06-01"
-      },
-      "tables": [
-        [
-          [
-            "Important Dates Application Begin : 16/05/2026 Last Date for Registration : 01/06/2026 Last Date Complete Form : 01/06/2026",
-            "Application Fee UR / OBC / EWS : 0/- SC / ST : 0/- No Application Fee for the All Category Candidates in Indian Navy Officers Executive IT Entry Recruitment 2026."
-          ],
-          [
-            "Branch",
-            "Total Post",
-            "Navy Executive IT Branch Eligibility"
-          ],
-          [
-            "SSC Executive Information Technology IT Branch (January 2027)",
-            "15",
-            "Unmarried Men & Women Eligible 60% Marks in English in Class 10th or Class 12th with Minimum 60% Overall Marks (More Details Read Notification) M.SC BE / B.Tech / M.Tech in Computer Science / Computer Science & Engineering / Computer Engineering / Information Technology / Software Systems / Cyber Security / System Administration & Networking / Computer Systems & Networking / Data Analytics / Artificial Intelligence. MCA / BCA / B.SC(Computer Science / IT) More Eligibility Details Read the Notification."
-          ],
-          [
-            "Apply Online",
-            "Link Will be Activate on 16/05/2026"
-          ],
-          [
-            "Download Notification",
-            "Click Here"
-          ],
-          [
-            "Image Resizer, Age Calculator, Resume CV Maker and More",
-            "Sarkari Tools Portal"
-          ],
-          [
-            "Official Website",
-            "Join Indian Navy Official Website"
-          ]
-        ]
-      ],
-      "useful_links": [
-        {
-          "title": "Apply Online",
-          "links": "https://www.joinindiannavy.gov.in/en/account/account/state"
-        }
-      ],
-      "detailed_notification_link": "https://doc.sarkariresults.org.in/Navy_SSC_IT_SarkariResult.Com_Advertisement_SSC_IT_Jan_27.pdf",
-      "application_opens_soon": true,
       "homepage_serial": 15
     },
     {
@@ -1871,8 +1727,6 @@
           "links": "https://bpsconline.bihar.gov.in/candidate/login"
         }
       ],
-      "detailed_notification_link": "https://doc.sarkariresults.org.in/BPSC_SarkariResult.Com_SarkariResult_Advertisement-Integrated-72th-CCE-PT_BPSC-20260505.pdf",
-      "application_opens_soon": false,
       "homepage_serial": 16
     },
     {
@@ -2181,8 +2035,6 @@
           "links": "https://ibpsreg.ibps.in/upcisbapr26/"
         }
       ],
-      "detailed_notification_link": "https://doc.sarkariresults.org.in/NoticeBoard.pdf",
-      "application_opens_soon": false,
       "homepage_serial": 17
     },
     {
@@ -2516,8 +2368,6 @@
           "links": "https://sso.rajasthan.gov.in/signin"
         }
       ],
-      "detailed_notification_link": "https://doc.sarkariresults.org.in/RSSB_Teaching_Associate_SarkariResult_Com_Advt_No06_2026.pdf",
-      "application_opens_soon": false,
       "homepage_serial": 18
     },
     {
@@ -2599,8 +2449,6 @@
           "links": "https://bpssc.bihar.gov.in/Notices/Advt.%20no.-05-2026.pdf"
         }
       ],
-      "detailed_notification_link": "https://bpssc.bihar.gov.in/Notices/Advt.%20no.-05-2026.pdf",
-      "application_opens_soon": false,
       "homepage_serial": 19
     },
     {
@@ -2921,8 +2769,6 @@
           "links": "https://cdnbbsr.s3waas.gov.in/s301eee509ee2f68dc6014898c309e86bf/uploads/2026/04/202604291863555100.pdf"
         }
       ],
-      "detailed_notification_link": "https://cdnbbsr.s3waas.gov.in/s301eee509ee2f68dc6014898c309e86bf/uploads/2026/04/202604291863555100.pdf",
-      "application_opens_soon": false,
       "homepage_serial": 20
     },
     {
@@ -2995,8 +2841,6 @@
           "links": "https://upessc.up.gov.in/Notice/bab9-b117-4b45-85d1-aaba.pdf"
         }
       ],
-      "detailed_notification_link": "",
-      "application_opens_soon": false,
       "homepage_serial": 21
     },
     {
@@ -3076,88 +2920,7 @@
           "links": "https://beep.bfsissc.com/candidate_register/mkt"
         }
       ],
-      "detailed_notification_link": "https://doc.sarkariresults.org.in/UBI_notification-final-1865-april26.pdf",
-      "application_opens_soon": false,
       "homepage_serial": 22
-    },
-    {
-      "category": "SR_Latest_Jobs",
-      "title": "Reserve Bank RBI Officer Grade B Online Form 2026 for 60 Post",
-      "post_date": "2026-05-15",
-      "last_date": "2026-05-20",
-      "status": "active",
-      "slug": "sr_latest_jobs-reserve-bank-rbi-officer-grade-b-online-form-2026-for-60-post-06e40c",
-      "short_information": "Reserve Bank of India RBI has relased Officer Grade B Various Post Recruitment 2026. Those candidates Are Interested to the Following RBI Officer Grade B Recruitment 2026 Can Apply Online Form from 29/04/2026 to 20/05/2026. Read the notification for recruitment eligibility, post information, selection procedure, age limit, pay scale and all other information. Reserve Bank of India (RBI) RBI Officers Officers Grade B Recruitment 2026 RBI Officers Grade B Advt No 02/2024-25 : Short Details of Notification",
-      "application_fee": "(Tentative) General / OBC / EWS: 850/- SC / ST / PH : 100/- Pay the Examination Fee Through Debit Card, Credit Card, Net Banking or Pay Exam Fee Through E Challan Mode. RBI Officers Grade B",
-      "age_limit": "Minimum Age : 21 Years . Maximum Age : 30 Years. Age Relaxation As per RBI Officers Grade A & Grade B Recruitment Rules 2026. RBI Grade Officer B Recruitment 2026 :",
-      "eligibility": "",
-      "total_post": "60",
-      "important_dates": {
-        "application_begin": "2026-04-29",
-        "last_date": "2026-05-20",
-        "admit_card": "Before Exam"
-      },
-      "tables": [
-        [
-          [
-            "Important Dates Application Begin : 29/04/2026 Last Date for Apply Online : 20/05/2026 upto 06 PM Pay Exam Fee Last Date: 20/05/2026 Officers in Gr B (DR)- General Exam Date : Phase I : 13/06/2026 Phase II : 25/07/2026 Officers Gr B (DR)- DEPR Exam Date : Phase I : 14/06/2026 Officers Gr B (DR)- DSIM Exam Date : Phase I : 14/06/2026 Admit Card Available : Before Exam",
-            "Application Fee (Tentative) General / OBC / EWS: 850/- SC / ST / PH : 100/- Pay the Examination Fee Through Debit Card, Credit Card, Net Banking or Pay Exam Fee Through E Challan Mode."
-          ],
-          [
-            "Post Name",
-            "Total Post",
-            "RBI Officers Grade B Eligibility"
-          ],
-          [
-            "Officers Grade B General",
-            "40",
-            "Bachelor Degree in Any Stream with Minimum 60% Marks, For SC / ST / PH 50% Marks. OR Master Degree in Any Subject with 55% Marks, for SC /ST / PH Pass Only. More Details Read the Notification."
-          ],
-          [
-            "Officers Grade B DEPR",
-            "10",
-            "Master Degree in Economics OR Master Degree in Finance / PGDM / MBA. More Details Read the Notification."
-          ],
-          [
-            "Officers Grade B DSIM",
-            "10",
-            "Master Degree in Statistics / Mathematics with 55 Marks in All Semester / Year. SC / ST Candidates : 50% Marks. More Details Read the Notification."
-          ],
-          [
-            "Apply Online",
-            "Click Here"
-          ],
-          [
-            "How to Fill Form (Video Hindi)",
-            "Click Here"
-          ],
-          [
-            "Download Notification",
-            "Click Here"
-          ],
-          [
-            "Image Resizer, Typing Test Practice, Resume CV Maker, Marital Bio Data Maker and More",
-            "Sarkari Result Tools"
-          ],
-          [
-            "Official Website",
-            "RBI Official Website"
-          ]
-        ]
-      ],
-      "useful_links": [
-        {
-          "title": "Apply Online",
-          "links": "https://ibpsreg.ibps.in/rbisbmar26/"
-        },
-        {
-          "title": "Download Notification",
-          "links": "https://rbidocs.rbi.org.in/rdocs/Content/PDFs/DEPR29042026BE94DEA85E3C4753A82B191EB6A795ED.PDF"
-        }
-      ],
-      "detailed_notification_link": "https://rbidocs.rbi.org.in/rdocs/Content/PDFs/DEPR29042026BE94DEA85E3C4753A82B191EB6A795ED.PDF",
-      "application_opens_soon": false,
-      "homepage_serial": 23
     },
     {
       "category": "SR_Latest_Jobs",
@@ -3359,9 +3122,7 @@
           "links": "https://upanganwadibharti.in/"
         }
       ],
-      "detailed_notification_link": "https://upanganwadibharti.in/",
-      "application_opens_soon": false,
-      "homepage_serial": 24
+      "homepage_serial": 23
     },
     {
       "category": "SR_Latest_Jobs",
@@ -3435,9 +3196,7 @@
           "links": "https://youtu.be/OPXf8VSOfJ0"
         }
       ],
-      "detailed_notification_link": "https://doc.sarkariresults.org.in/SarkariResult.Com_SSC_Stenographer_Notification_Notice_of_adv_steno_2026.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 25
+      "homepage_serial": 24
     },
     {
       "category": "SR_Latest_Jobs",
@@ -3503,9 +3262,7 @@
           "links": "https://jactetonline.com/"
         }
       ],
-      "detailed_notification_link": "https://doc.sarkariresults.org.in/Sarkari_Result_2026_JHTET_NOTIFICATION.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 27
+      "homepage_serial": 26
     },
     {
       "category": "SR_Latest_Jobs",
@@ -3679,9 +3436,214 @@
           ]
         }
       ],
-      "detailed_notification_link": "https://rect.crpf.gov.in/Upload/Recruitment/Recruitment%20Notice%20103042026-720.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 28
+      "homepage_serial": 27
+    },
+    {
+      "category": "SR_Result",
+      "title": "CBSE Group A B C Various Post Tier II Exam Result 2026",
+      "post_date": "2026-05-15",
+      "last_date": "2025-12-22",
+      "status": "result_declared",
+      "slug": "sr_result-cbse-group-a-b-c-various-post-tier-ii-exam-result-2026-68b2a3",
+      "short_information": "Central Board of Secondary Education (CBSE) has relased Group A, Group B & Group C Exam Notification. Those candidates who are Enrolled in this CBSE Group A B C Recruitment 2025 Exam can Download Result. Read the notification for CBSE Group A B C Exam, eligibility, Vacancy Details information, Document Required, age limit, How to Apply and all other information. Central Board of Secondary Education (CBSE) CBSE Group A B C Recruitment 2025 Advt No. CBSE/Rectt.Cell/14(88)/2025 : Short Details of Notification",
+      "application_fee": "Group A: General / OBC / EWS: Rs. 1750/- Group B: General / OBC / EWS: Rs. 1050/- Group C: General / OBC / EWS: Rs. 1050/- SC / ST / Female : Rs. 250/- PH (Divyang) : Rs. 250/- Pay the Examination Fee Through Cast at E Challan or Debit Card, Credit Card, Net Banking CBSE Group A B C",
+      "age_limit": "as on 22/12/2025 Maximum Age : 35 Years (Post Wise) Age Relaxation Extra as per CBSE Group A B C Recruitment Rules. CBSE Group A B C Recruitment 2025 :",
+      "eligibility": "01/25 (A) Assistant Secretary (Pay Level – 10) 35 08 Graduation Degree in Any Stream from Any Recognized University. 02/25 (A) Assistant Professor & Assistant Director (Academics) (Pay Level – 10) 30 12 Post Graduate Degree in any discipline with 55% marks (or equivalent grade) from a recognized University/ Institute with provision of applicable concession to the respective categories 03/25 (A) Assistant Professor & Assistant Director (Training) (Pay Level – 10) 30 08 Post Graduate Degree in any discipline with 55% marks (or equivalent grade) from a recognized University/ Institute with provision of applicable concession to the respective categories 04/25 (A) Assistant Professor & Assistant Director (Skill Education) (Pay Level – 10) 30 07 Post Graduate Degree in any discipline with 55% marks (or equivalent grade) from a recognized University/ Institute with provision of applicable concession to the respective categories 05/25 (A) Accounts Officer (Pay Level – 10) 35 02 Bachelor’s degree of a recognized University/ Institution with Economics/ Commerce/ Accounts/ Finance/ Business Studies/ Cost Accounting as one of the subject. OR Bachelor’s degree of a recognized University/Institution and having SAS/JAO(C) examination conducted by any Account/Audit Services/Department of the Central/State Govt. OR Post Graduate of a recognized University/Institution with Economics/ Commerce / Accounts/ Finance/ Business Studies/ Cost Accounting as one of the subject. OR M.B.A. (Finance)/Chartered Accountant/ICWA. 06/25 (B) Superintendent (Pay Level – 6) 30 27 Bachelor’s Degree from a recognized University or equivalent. Working knowledge of Computer/Computer Applications such as Windows, MS-Office, handling of large database, Internet 07/25 (B) Junior Translation Officer (Pay Level – 6) 30 09 Master’s Degree of a Recognized University in Hindi with English as a compulsory or elective subject or as the medium of examination at the Degree Level. OR Master’s Degree of a Recognized Uni",
+      "total_post": "124",
+      "important_dates": {
+        "application_begin": "2025-12-02",
+        "last_date": "2025-12-22",
+        "admit_card": "2026-01-28"
+      },
+      "tables": [
+        [
+          [
+            "Important Dates Application Begin : 02/12/2025 Last Date for Apply Online : 22/12/2025 Last Date Pay Exam Fee : 22/12/2025 Exam Date : 31 January to 01 February 2026 Exam City Available : 17/01/2026 Admit Card Available : 28/01/2026 Answer Key Available : 12/02/2026 Result Available : 02/03/2026 Tier II Exam Date : 18-26 April 2026 Exam City Available : 08 April 2026 Admit Card Available : 15 April 2026 Tier II Result : 15 May 2026",
+            "Application Fee Group A: General / OBC / EWS: Rs. 1750/- Group B: General / OBC / EWS: Rs. 1050/- Group C: General / OBC / EWS: Rs. 1050/- SC / ST / Female : Rs. 250/- PH (Divyang) : Rs. 250/- Pay the Examination Fee Through Cast at E Challan or Debit Card, Credit Card, Net Banking"
+          ],
+          [
+            "Post Code",
+            "Post Name",
+            "Max. Age",
+            "Total Post",
+            "CBSE Group A B C Eligibility"
+          ],
+          [
+            "01/25 (A)",
+            "Assistant Secretary (Pay Level – 10)",
+            "35",
+            "08",
+            "Graduation Degree in Any Stream from Any Recognized University."
+          ],
+          [
+            "02/25 (A)",
+            "Assistant Professor & Assistant Director (Academics) (Pay Level – 10)",
+            "30",
+            "12",
+            "Post Graduate Degree in any discipline with 55% marks (or equivalent grade) from a recognized University/ Institute with provision of applicable concession to the respective categories"
+          ],
+          [
+            "03/25 (A)",
+            "Assistant Professor & Assistant Director (Training) (Pay Level – 10)",
+            "30",
+            "08",
+            "Post Graduate Degree in any discipline with 55% marks (or equivalent grade) from a recognized University/ Institute with provision of applicable concession to the respective categories"
+          ],
+          [
+            "04/25 (A)",
+            "Assistant Professor & Assistant Director (Skill Education) (Pay Level – 10)",
+            "30",
+            "07",
+            "Post Graduate Degree in any discipline with 55% marks (or equivalent grade) from a recognized University/ Institute with provision of applicable concession to the respective categories"
+          ],
+          [
+            "05/25 (A)",
+            "Accounts Officer (Pay Level – 10)",
+            "35",
+            "02",
+            "Bachelor’s degree of a recognized University/ Institution with Economics/ Commerce/ Accounts/ Finance/ Business Studies/ Cost Accounting as one of the subject. OR Bachelor’s degree of a recognized University/Institution and having SAS/JAO(C) examination conducted by any Account/Audit Services/Department of the Central/State Govt. OR Post Graduate of a recognized University/Institution with Economics/ Commerce / Accounts/ Finance/ Business Studies/ Cost Accounting as one of the subject. OR M.B.A. (Finance)/Chartered Accountant/ICWA."
+          ],
+          [
+            "06/25 (B)",
+            "Superintendent (Pay Level – 6)",
+            "30",
+            "27",
+            "Bachelor’s Degree from a recognized University or equivalent. Working knowledge of Computer/Computer Applications such as Windows, MS-Office, handling of large database, Internet"
+          ],
+          [
+            "07/25 (B)",
+            "Junior Translation Officer (Pay Level – 6)",
+            "30",
+            "09",
+            "Master’s Degree of a Recognized University in Hindi with English as a compulsory or elective subject or as the medium of examination at the Degree Level. OR Master’s Degree of a Recognized University in English with Hindi as a compulsory or elective subject or as the medium of examination at the Degree Level. OR Master’s Degree of a recognized University in any subject other than Hindi or English, with Hindi medium and English as a compulsory or elective subject or as the medium of examination at the Degree Level. OR Master’s Degree of a recognized University in any subject other than Hindi or English, with English medium and Hindi as a compulsory or elective subject or as the medium of xamination at the Degree Level. OR Master’s Degree of a recognized University in any subject other than Hindi or English, with Hindi and English as a compulsory or elective subject or either of the two as a medium of examination and the other as a compulsory or elective subject at Degree Level. AND Recognized Diploma or Certificate Course in translation from Hindi to English and vice-versa or three years’ experience in of translation work from Hindi to English and vice-versa in a Central or State Government Office, including Government of India undertaking."
+          ],
+          [
+            "08/25 (C)",
+            "Junior Accountant (Pay Level – 2)",
+            "27",
+            "16",
+            "12th Class from a recognized Board/ University/ Institution with Accountancy/ Business Studies/ Economics/ Commerce/ Entrepreneurship/ Finance/ Business Administration/ Taxation/ Cost Accounting as one of the subject AND A typing speed of 35 w.p.m. in English or 30 w.p.m. in Hindi on Computer."
+          ],
+          [
+            "09/25 (C)",
+            "Junior Assistant (Pay Level – 2)",
+            "27",
+            "35",
+            "12th Class or equivalent qualification from a recognized Board or University. A typing speed of 35 w.p.m. in English or 30 w.p.m. in Hindi on Computer (35 w.p.m. and 30 w.p.m. correspond to 10500 KDPH/ 9000 KDPH on an average of 5 key depressions for each word)"
+          ],
+          [
+            "Download Tier II Result",
+            "Click Here"
+          ],
+          [
+            "Download Tier II Result Notice",
+            "Click Here"
+          ],
+          [
+            "Download Tier II Admit Card",
+            "Click Here"
+          ],
+          [
+            "Download Tier II Exam City",
+            "Click Here"
+          ],
+          [
+            "Download Tier II Exam Date",
+            "Click Here"
+          ],
+          [
+            "Download Result",
+            "Click Here"
+          ],
+          [
+            "Download Result Notice",
+            "Click Here"
+          ],
+          [
+            "Download Answer Key",
+            "Click Here"
+          ],
+          [
+            "Download Answer Key Notice",
+            "Click Here"
+          ],
+          [
+            "Download Admit Card",
+            "Click Here"
+          ],
+          [
+            "Check Exam City",
+            "Click Here"
+          ],
+          [
+            "Exam Notice",
+            "Click Here"
+          ],
+          [
+            "Apply Online",
+            "Click Here"
+          ],
+          [
+            "Download Notification",
+            "Click Here"
+          ],
+          [
+            "Official Website",
+            "Click Here"
+          ]
+        ]
+      ],
+      "useful_links": [
+        {
+          "title": "Download Tier II Result",
+          "links": "https://examinationservices.nic.in/recsys2025/root/AuthForDwd.aspx?enc=Ei4cajBkK1gZSfgr53ImFSuabJtfdyH7GsL2cij2dPKFqA5XsHH8yMmK+6SEPU/E"
+        },
+        {
+          "title": "Download Tier II Result Notice",
+          "links": "https://www.cbse.gov.in/cbsenew/documents/DRQ2026_Tier-II_Result_notice_15052026.pdf"
+        },
+        {
+          "title": "Download Tier II Admit Card",
+          "links": "https://examinationservices.nic.in/recsys2025/downloadadmitcard/LoginDOB.aspx?enc=Ei4cajBkK1gZSfgr53ImFSuabJtfdyH7GsL2cij2dPKFqA5XsHH8yMmK+6SEPU/E"
+        },
+        {
+          "title": "Download Result",
+          "links": "https://examinationservices.nic.in/recsys2025/root/AuthForDwd.aspx?enc=Ei4cajBkK1gZSfgr53ImFSuabJtfdyH7GsL2cij2dPKFqA5XsHH8yMmK+6SEPU/E"
+        },
+        {
+          "title": "Download Result Notice",
+          "links": "https://www.cbse.gov.in/cbsenew/documents/Result_Notice_DRQ2026_02032026.pdf"
+        },
+        {
+          "title": "Download Answer Key",
+          "links": "http://cbseit.in/cbse/2026/drqkey/"
+        },
+        {
+          "title": "Download Answer Key Notice",
+          "links": "https://www.cbse.gov.in/cbsenew/documents/PUBLIC_NOTICE_KEY_CHALLANGE_DRQ2026_11022026.pdf"
+        },
+        {
+          "title": "Download Admit Card",
+          "links": "https://examinationservices.nic.in/recsys2025/downloadadmitcard/LoginDOB.aspx?enc=Ei4cajBkK1gZSfgr53ImFSuabJtfdyH7GsL2cij2dPKFqA5XsHH8yMmK+6SEPU/E"
+        },
+        {
+          "title": "Check Exam City",
+          "links": "https://examinationservices.nic.in/recsys2025/downloadadmitcard/frmAuthforCityPhaseII.aspx?enc=Ei4cajBkK1gZSfgr53ImFSuabJtfdyH7GsL2cij2dPKFqA5XsHH8yMmK+6SEPU/E"
+        },
+        {
+          "title": "Exam Notice",
+          "links": "https://www.cbse.gov.in/cbsenew/documents/Public_Notice_Announcement_DRQ2026_30122025.pdf"
+        },
+        {
+          "title": "Apply Online",
+          "links": "https://examinationservices.nic.in/recsys2025/root/Home.aspx?enc=Ei4cajBkK1gZSfgr53ImFSuabJtfdyH7GsL2cij2dPKFqA5XsHH8yMmK+6SEPU/E"
+        },
+        {
+          "title": "Download Notification",
+          "links": "https://www.cbse.gov.in/cbsenew/documents/Detailed_Advertisement_Direct_Recruitment_02122025.pdf"
+        }
+      ],
+      "homepage_serial": 1
     },
     {
       "category": "SR_Result",
@@ -3981,9 +3943,7 @@
           "links": "https://ssc.gov.in/login"
         }
       ],
-      "detailed_notification_link": "",
-      "application_opens_soon": false,
-      "homepage_serial": 1
+      "homepage_serial": 2
     },
     {
       "category": "SR_Result",
@@ -4050,9 +4010,7 @@
           ]
         }
       ],
-      "detailed_notification_link": "",
-      "application_opens_soon": false,
-      "homepage_serial": 2
+      "homepage_serial": 3
     },
     {
       "category": "SR_Result",
@@ -4264,9 +4222,7 @@
           ]
         }
       ],
-      "detailed_notification_link": "https://rrbranchi.gov.in/upload/files/pdf/04_14_24pm142384bf87cab8ba2918a287b376265c.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 3
+      "homepage_serial": 4
     },
     {
       "category": "SR_Result",
@@ -4411,9 +4367,7 @@
           ]
         }
       ],
-      "detailed_notification_link": "https://doc.sarkariresults.org.in/AIIMS_NORCET_10_Notification.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 4
+      "homepage_serial": 5
     },
     {
       "category": "SR_Result",
@@ -4507,9 +4461,7 @@
           "links": "https://cdnbbsr.s3waas.gov.in/s388a839f2f6f1427879fc33ee4acf4f66/uploads/2026/02/202602251298267010.pdf"
         }
       ],
-      "detailed_notification_link": "https://cdnbbsr.s3waas.gov.in/s388a839f2f6f1427879fc33ee4acf4f66/uploads/2026/02/202602251298267010.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 5
+      "homepage_serial": 6
     },
     {
       "category": "SR_Result",
@@ -4711,9 +4663,7 @@
           "links": "https://app.indiapost.gov.in/gdscandidate"
         }
       ],
-      "detailed_notification_link": "https://doc.sarkariresults.org.in/India_post_GDS_Notification_2026.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 6
+      "homepage_serial": 7
     },
     {
       "category": "SR_Result",
@@ -4801,9 +4751,7 @@
           "links": "https://esb.mp.gov.in/Rulebooks/RB_2026/ASI_computer_2026_RooleBook.pdf"
         }
       ],
-      "detailed_notification_link": "https://esb.mp.gov.in/Rulebooks/RB_2026/ASI_computer_2026_RooleBook.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 7
+      "homepage_serial": 8
     },
     {
       "category": "SR_Result",
@@ -4993,9 +4941,7 @@
           ]
         }
       ],
-      "detailed_notification_link": "https://www.idbi.bank.in/pdf/careers/Advertisement-Grade-A-2-year-exp-March072026.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 8
+      "homepage_serial": 9
     },
     {
       "category": "SR_Result",
@@ -5102,9 +5048,7 @@
           "links": "https://upsc.gov.in/sites/default/files/Notif-CDSE-I-2026-Engl-101225.pdf"
         }
       ],
-      "detailed_notification_link": "https://upsc.gov.in/sites/default/files/Notif-CDSE-I-2026-Engl-101225.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 9
+      "homepage_serial": 10
     },
     {
       "category": "SR_Result",
@@ -5291,9 +5235,7 @@
           ]
         }
       ],
-      "detailed_notification_link": "https://upsc.gov.in/sites/default/files/Notif-CSP-2025-Engl-220125.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 10
+      "homepage_serial": 11
     },
     {
       "category": "SR_Result",
@@ -5417,9 +5359,7 @@
           "links": "https://upsc.gov.in/sites/default/files/Notif-NDA-NA-I-2026-Engl-101225.pdf"
         }
       ],
-      "detailed_notification_link": "https://upsc.gov.in/sites/default/files/Notif-NDA-NA-I-2026-Engl-101225.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 11
+      "homepage_serial": 12
     },
     {
       "category": "SR_Result",
@@ -5605,9 +5545,7 @@
           "links": "https://www.rrbapply.gov.in/"
         }
       ],
-      "detailed_notification_link": "",
-      "application_opens_soon": false,
-      "homepage_serial": 12
+      "homepage_serial": 13
     },
     {
       "category": "SR_Result",
@@ -5706,9 +5644,7 @@
           "links": "https://g03.tcsion.com//per/g03/pub/726/EForms/image/ImageDocUpload/71161/1/4001117795.pdf"
         }
       ],
-      "detailed_notification_link": "https://g03.tcsion.com//per/g03/pub/726/EForms/image/ImageDocUpload/71161/1/4001117795.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 13
+      "homepage_serial": 14
     },
     {
       "category": "SR_Result",
@@ -5749,9 +5685,7 @@
           "links": "https://sscresult.mahahsscboard.in/"
         }
       ],
-      "detailed_notification_link": "",
-      "application_opens_soon": false,
-      "homepage_serial": 14
+      "homepage_serial": 15
     },
     {
       "category": "SR_Result",
@@ -5944,9 +5878,7 @@
           "links": "https://uppbpb.gov.in/FilesUploaded/Notice/SI-MOD2894dc0f-dcd4-4847-9243-185ad52a56f0.pdf"
         }
       ],
-      "detailed_notification_link": "",
-      "application_opens_soon": false,
-      "homepage_serial": 15
+      "homepage_serial": 16
     },
     {
       "category": "SR_Result",
@@ -6296,10 +6228,6 @@
       ],
       "useful_links": [
         {
-          "title": "Download Final Score Card / Marks",
-          "links": "https://rrb.digialm.com/EForms/configuredHtml/33015/94346/login.html"
-        },
-        {
           "title": "Download RRB Kolkata Final Result",
           "links": [
             "https://www.rrbkolkata.gov.in/file/PublishingReport_05_2024_cat%201,%202,%20&%203_07.05.2026.pdf",
@@ -6374,9 +6302,7 @@
           "links": "https://rrbahmedabad.gov.in/wp-content/uploads/2024/09/Corrigendum-3-for-CEN-05-2024.pdf"
         }
       ],
-      "detailed_notification_link": "https://doc.sarkariresults.org.in/SarkariResult.Com_RRB_NTPC_Detailed_Notification_CEN_05-2024.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 16
+      "homepage_serial": 17
     },
     {
       "category": "SR_Result",
@@ -6494,10 +6420,6 @@
       ],
       "useful_links": [
         {
-          "title": "Download Marksheet / Score Card",
-          "links": "https://apply-bpssc.com/bpssc_2_25_resultsheets/applicationIndex"
-        },
-        {
           "title": "Download Final Result",
           "links": "https://bpssc.bihar.gov.in/Notices/result%20final%2002-25.pdf"
         },
@@ -6510,9 +6432,7 @@
           "links": "https://bpssc.bihar.gov.in/Notices/EFC/Advt.%20No.-02-2025.pdf"
         }
       ],
-      "detailed_notification_link": "https://bpssc.bihar.gov.in/Notices/EFC/Advt.%20No.-02-2025.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 17
+      "homepage_serial": 18
     },
     {
       "category": "SR_Result",
@@ -6658,9 +6578,7 @@
           "links": "https://examinationservices.nic.in/jeemainx2026/root/home.aspx?enc=WPJ5WSCVWOMNiXoyyomJgDUffqDdG1LTsAPBKFcEC9VCAbchJdrRG5w+4Ch32Wrm"
         }
       ],
-      "detailed_notification_link": "https://nta.ac.in/Download/Notice/Notice_20260408213108.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 18
+      "homepage_serial": 19
     },
     {
       "category": "SR_Result",
@@ -6719,9 +6637,7 @@
           "links": "https://ofssbihar.net/Higher-Education/index.html"
         }
       ],
-      "detailed_notification_link": "https://doc.sarkariresults.org.in/SarkariResult.Com_OFSS_Bihar_Admissions2026.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 19
+      "homepage_serial": 20
     },
     {
       "category": "SR_Result",
@@ -6829,9 +6745,7 @@
           "links": "https://rssb.rajasthan.gov.in/storage/advertisement_item/1734001071.pdf"
         }
       ],
-      "detailed_notification_link": "https://rssb.rajasthan.gov.in/storage/advertisement_item/1734001071.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 20
+      "homepage_serial": 21
     },
     {
       "category": "SR_Result",
@@ -6985,165 +6899,7 @@
           "links": "https://regn.hpsc.gov.in/hcs26/Advt_22_2026_HCS_Ex_Br.pdf"
         }
       ],
-      "detailed_notification_link": "https://regn.hpsc.gov.in/hcs26/Advt_22_2026_HCS_Ex_Br.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 21
-    },
-    {
-      "category": "SR_Result",
-      "title": "Intelligence Bureau IB SA / MT Final Result 2026 for 455 Post",
-      "post_date": "2026-05-15",
-      "last_date": "2025-09-28",
-      "status": "result_declared",
-      "slug": "sr_result-intelligence-bureau-ib-sa-mt-final-result-2026-for-455-post-5075f2",
-      "short_information": "Ministry of Home Affairs MHA has released the Intelligence Bureau IB Security Assistant / Motor Transport SA / MT Recruitment 2025 Notification. Those candidates who are interested in this MHA IB SA / MT Tier I Exam can Download Result. Read the notification for MHA IB 2025 Exam, eligibility, Subject Details information, Document Required, age limit, How to Apply and all other information. Ministry of Home Affairs MHA IB Security Assistant SA / MT Recruitment 2025 MHA IB SA / MT Exam 2025: Short Details of Notification",
-      "application_fee": "General / OBC / EWS : 650/- SC / ST : 550/- All Category Female : 550/- Pay the Examination Fee Through Cast at E Challan or Debit Card, Credit Card, Net Banking MHA IB Security Assistant MT",
-      "age_limit": "Minimum Age : 18 Years Maximum Age : 27 Years Age Relaxation Extra as per MHA IB Security Assistant MT Recruitment Rules. MHA IB Security Assistant MT Recruitment 2025:",
-      "eligibility": "Read the Notification. MHA IB Security Assistant MT Exam 2025: Category Wise",
-      "total_post": "455",
-      "important_dates": {
-        "application_begin": "2025-09-06",
-        "last_date": "2025-09-28",
-        "admit_card": "2025-10-17"
-      },
-      "tables": [
-        [
-          [
-            "Important Dates Application Begin : 06/09/2025 Last Date for Apply Online : 28/09/2025 Last Date Pay Exam Fee : 28/09/2025 Exam Date : As per Schedule Admit Card Available : 17/10/2025 Final Result : 04/05/2026",
-            "Application Fee General / OBC / EWS : 650/- SC / ST : 550/- All Category Female : 550/- Pay the Examination Fee Through Cast at E Challan or Debit Card, Credit Card, Net Banking"
-          ],
-          [
-            "Post Name",
-            "Total Post",
-            "MHA IB Security Assistant MT Eligibility"
-          ],
-          [
-            "Security Assistant / Motor Transport (SA / MT) Exam",
-            "455",
-            "Class 10th Passed from Any Recognized Board Possession of valid driving license for Motor Cars (LMV) issued by the competent authority Knowledge of Motor Mechanism (The candidate should be able to remove minor defects in the vehicle) Experience of driving a Motor Car for at least one year after obtaining valid driving license Possession of domicile certificate of that State against which candidate has applied. More Eligibility Details Read the Notification."
-          ],
-          [
-            "Post Name",
-            "General",
-            "EWS",
-            "OBC",
-            "SC",
-            "ST",
-            "Total"
-          ],
-          [
-            "Security Assistant / Motor Transport (SA / MT)",
-            "219",
-            "46",
-            "90",
-            "51",
-            "49",
-            "455"
-          ],
-          [
-            "Download Final Result",
-            "Click Here"
-          ],
-          [
-            "Download Result",
-            "Click Here"
-          ],
-          [
-            "Download Admit Card",
-            "Click Here"
-          ],
-          [
-            "Apply Online",
-            "Click Here"
-          ],
-          [
-            "Download Notification",
-            "Click Here"
-          ],
-          [
-            "Official Website",
-            "Click Here"
-          ]
-        ]
-      ],
-      "useful_links": [
-        {
-          "title": "Download Final Result",
-          "links": "https://g03.tcsion.com//per/g03/pub/726/EForms/image/ImageDocUpload/71161/5/801537018.pdf"
-        },
-        {
-          "title": "Download Result",
-          "links": "https://g03.tcsion.com//per/g03/pub/726/EForms/image/ImageDocUpload/71161/3/5501527343.pdf"
-        },
-        {
-          "title": "Download Admit Card",
-          "links": "https://cdn.digialm.com/EForms/configuredHtml/1258/95554/login.html"
-        },
-        {
-          "title": "Apply Online",
-          "links": "https://cdn.digialm.com/EForms/configuredHtml/1258/95554/Index.html"
-        },
-        {
-          "title": "Download Notification",
-          "links": "https://g03.tcsion.com//per/g03/pub/726/EForms/image/ImageDocUpload/71161/1/9201385680.pdf"
-        }
-      ],
-      "detailed_notification_link": "https://g03.tcsion.com//per/g03/pub/726/EForms/image/ImageDocUpload/71161/1/9201385680.pdf",
-      "application_opens_soon": false,
       "homepage_serial": 22
-    },
-    {
-      "category": "SR_Result",
-      "title": "Maharashtra Board MSBSHSE HSC Class 12th Result 2026",
-      "post_date": "2026-05-15",
-      "last_date": "",
-      "status": "result_declared",
-      "slug": "sr_result-maharashtra-board-msbshse-hsc-class-12th-result-2026-5cde4d",
-      "short_information": "Maharashtra State Board Of Secondary & Higher Secondary Education MSBSHSE HSC Class 12 (Intermediate) Annual Board Examination Results 2026 are announced on 02/05/2026 at 12:00 PM. Those Candidates Are Enrolled and Appeared in Maharashtra State Board Of Secondary & Higher Secondary Education MSBSHSE Annual Board Examination 2026 Can Check the Result. The official result date will be announced Now. Candidates are advised to stay connected with SarkariResult.com, the official website for",
-      "application_fee": "",
-      "age_limit": "",
-      "eligibility": "",
-      "total_post": "",
-      "important_dates": {
-        "result_date": "Notified"
-      },
-      "tables": [
-        [
-          [
-            "Important Dates Maharashtra Board Exam Date : February to March 2026 Class XIIth HSC Result Declared : 02/05/2026 at 12:00 PM Class X SSC Result Declared : Notified Soon",
-            "Exam Conducted By Board of Secondary and Higher Education, Maharashtra and Its Division Pune, Nagpur, Aurangabad, Mumbai, Kolhapur, Amravati, Nashik, Latur, Kankan Are Conducted the HSC Exam 2026."
-          ],
-          [
-            "Download MSBSHSE HSC Result 2026",
-            "Click Here"
-          ],
-          [
-            "Download MSBSHSE HSC Result (Server II)",
-            "Click Here"
-          ],
-          [
-            "Image Resizer, Age Calculator, JPG to PDF and More Tools",
-            "Sarkari Result Tools"
-          ],
-          [
-            "Official Website",
-            "Maharashtra Board Official Result Website"
-          ]
-        ]
-      ],
-      "useful_links": [
-        {
-          "title": "Download MSBSHSE HSC Result 2026",
-          "links": "https://hscresult.mahahsscboard.in/"
-        },
-        {
-          "title": "Download MSBSHSE HSC Result (Server II)",
-          "links": "https://results.digilocker.gov.in/MH202612thhakweuwXII.html"
-        }
-      ],
-      "detailed_notification_link": "",
-      "application_opens_soon": false,
-      "homepage_serial": 23
     },
     {
       "category": "SR_Admit_Card",
@@ -7228,9 +6984,236 @@
           "links": "https://joinindianarmy.nic.in/latest-rally-agniveer-or.htm"
         }
       ],
-      "detailed_notification_link": "https://joinindianarmy.nic.in/latest-rally-agniveer-or.htm",
-      "application_opens_soon": false,
       "homepage_serial": 1
+    },
+    {
+      "category": "SR_Admit_Card",
+      "title": "NTA NEET UG Entrance Re Exam Date 2026",
+      "post_date": "2026-05-15",
+      "last_date": "2026-03-11",
+      "status": "admit_card_released",
+      "slug": "sr_admit_card-nta-neet-ug-entrance-re-exam-date-2026-7fd4c0",
+      "short_information": "National Testing Agency NTA has released the Information Brochure for National Eligibility Cum Entrance Test NEET UG 2026 Those Candidates are Interested to the Admsission in NEET UG 2026 Exam Can Download Re Exam Date.candidates should read the NEET UG 2026 information brochure for all the information related to the entrance exam like syllabus, eligibility, age limit, fees, Course and University List, information and other types of information and then apply. National Testing Agency (NTA) NTA National Eligibility Cum Entrance Test (NEET UG 2026) NTA NEET UG Exam 2026: Short Details of Notification",
+      "application_fee": "General : 1700 /- EWS / OBC : 1600/- SC / ST / PH : 1000 /- Out Side India : 9500/- Pay the Examination Fee Through E Challan Offline Mode or Pay the Exam Fee Through Online Debit Card, Credit Card or Net Banking Fee Mode NEET UG Eligibility 2026 Passed 10+2 Intermediate Exam with Physics, Chemistry, Biology PCB Group of Subjects in Any Recognized Board in India. For More Details Kindly See the Full Information Brochure or Read the Code Wise Eligibility Details. NEET UG 2026",
+      "age_limit": "Minimum Age : 17 Years Maximum Age : No Limit born on or before 31.12.2009 Age Relaxation Extra as per Rules.",
+      "eligibility": "Cum Entrance Test NEET UG Admissions 2026 Re Exam Date Notice | Syllabus Download Post Date / Update: 15 May 2026 | 09:49 AM Short Information : National Testing Agency NTA has released the Information Brochure for National Eligibility Cum Entrance Test NEET UG 2026 Those Candidates are Interested to the Admsission in NEET UG 2026 Exam Can Download Re Exam Date.candidates should read the NEET UG 2026 information brochure for all the information related to the entrance exam like syllabus, eligibility, age limit, fees, Course and University List, information and other types of information and then apply. National Testing Agency (NTA) NTA National Eligibility Cum Entrance Test (NEET UG 2026) NTA NEET UG Exam 2026: Short Details of Notification",
+      "total_post": "",
+      "important_dates": {
+        "application_begin": "2026-02-08",
+        "last_date": "2026-03-11",
+        "exam_date": "2026-05-03",
+        "admit_card": "Before Exam",
+        "result_date": "June 2026"
+      },
+      "tables": [
+        [
+          [
+            "Important Dates Application Begin : 08/02/2026 Last Date for Apply Online : 11/03/2026 upto 09 PM Last Date Online Payment : 11/03/2026 Correction Date : 12-14 March 2026 NEET UG 2025 Exam Date : 03/05/2026 (Cancelled) NEET UG 2025 Re Exam Date : 21/06/2026 Exam City Available : As per Schedule Admit Card Available : Before Exam Answer Key Available : As per Schedule Result Declared : June 2026",
+            "Application Fee General : 1700 /- EWS / OBC : 1600/- SC / ST / PH : 1000 /- Out Side India : 9500/- Pay the Examination Fee Through E Challan Offline Mode or Pay the Exam Fee Through Online Debit Card, Credit Card or Net Banking Fee Mode"
+          ],
+          [
+            "NEET UG Eligibility 2026 Passed 10+2 Intermediate Exam with Physics, Chemistry, Biology PCB Group of Subjects in Any Recognized Board in India. For More Details Kindly See the Full Information Brochure or Read the Code Wise Eligibility Details.",
+            "NEET UG 2026 Age Limit Minimum Age : 17 Years Maximum Age : No Limit born on or before 31.12.2009 Age Relaxation Extra as per Rules."
+          ],
+          [
+            "Download Re Exam Notice",
+            "Click Here"
+          ],
+          [
+            "Download Cancelled Notice",
+            "Click Here"
+          ],
+          [
+            "Download Answer Key",
+            "Click Here"
+          ],
+          [
+            "Download Answer Key Notice",
+            "Click Here"
+          ],
+          [
+            "Download Admit Card",
+            "Click Here"
+          ],
+          [
+            "How to Download Admit Card (Video Hindi)",
+            "Click Here"
+          ],
+          [
+            "Check Advanced Exam City Details",
+            "Click Here"
+          ],
+          [
+            "How to Check Exam City (Video Hindi)",
+            "Click Here"
+          ],
+          [
+            "For Correction / Edit Form",
+            "Click Here"
+          ],
+          [
+            "Download Correction Notice",
+            "Click Here"
+          ],
+          [
+            "Apply Online",
+            "Click Here"
+          ],
+          [
+            "How to Fill Form (Video Hindi)",
+            "Click Here"
+          ],
+          [
+            "Download Date Extended Notice",
+            "Click Here"
+          ],
+          [
+            "Download Information Brochure",
+            "Click Here"
+          ],
+          [
+            "Download Syllabus",
+            "Click Here"
+          ],
+          [
+            "Official Website",
+            "NEET UG 2026 Official Website"
+          ]
+        ]
+      ],
+      "useful_links": [
+        {
+          "title": "Download Re Exam Notice",
+          "links": "https://neet.nta.nic.in/"
+        },
+        {
+          "title": "Download Answer Key",
+          "links": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/05/202605061448997112.pdf"
+        },
+        {
+          "title": "Download Answer Key Notice",
+          "links": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/05/202605062073055515.pdf"
+        },
+        {
+          "title": "Download Admit Card",
+          "links": "https://examinationservices.nic.in/AdmitCardService/AdmitCardNeet/Login"
+        },
+        {
+          "title": "How to Check Exam City (Video Hindi)",
+          "links": "https://youtu.be/XoHIPLZaNDg"
+        },
+        {
+          "title": "For Correction / Edit Form",
+          "links": "https://examinationservices.nic.in/neetc2026/root/Home.aspx?enc=Ei4cajBkK1gZSfgr53ImFcFR+natXIEjJ1rCf6DMgOr0FO08ClwO9m4YYQvMGcVT"
+        },
+        {
+          "title": "Download Correction Notice",
+          "links": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/03/20260311404208011.pdf"
+        },
+        {
+          "title": "Apply Online",
+          "links": "https://examinationservices.nic.in/neetc2026/root/Home.aspx?enc=Ei4cajBkK1gZSfgr53ImFcFR+natXIEjJ1rCf6DMgOr0FO08ClwO9m4YYQvMGcVT"
+        },
+        {
+          "title": "Download Date Extended Notice",
+          "links": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/03/20260308653856316.pdf"
+        },
+        {
+          "title": "Download Syllabus",
+          "links": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/01/202601081066816297.pdf"
+        }
+      ],
+      "homepage_serial": 2
+    },
+    {
+      "category": "SR_Admit_Card",
+      "title": "DUVASU Mathura PVT Entrance Exam Admit Card 2026 for UGEE PGEE DEE",
+      "post_date": "2026-05-15",
+      "last_date": "2026-04-22",
+      "status": "admit_card_released",
+      "slug": "sr_admit_card-duvasu-mathura-pvt-entrance-exam-admit-card-2026-for-ugee-pgee-dee-95af14",
+      "short_information": "UP Pt. Deen Dayal Upadhyaya Pashu Chikitsa, Mathura (DUVASU) has released the Information Brochure for Mathrua PVT Admissions 2026 Those Candidates are Interested to the Admsission in DUVASU UGEE, PGEE, DEE 2026 Exam Can Download Admit Card.candidates should read the Mathura PVT 2026 information brochure for all the information related to the entrance exam like syllabus, eligibility, age limit, fees, Course and University List, information and other types of information and then apply. UP Pt. Deen Dayal Upadhyaya Pashu Chikitsa, Mathura (DUVASU) DUVASU Admission 2026 for UG | PG | Ph.D & Diploma Courses DUVASU Mathura UG Admission 2026 Short Details of Notification",
+      "application_fee": "General / OBC : 2000/- SC / ST / PH : 2000/- Pay the Examination Fee Through Debit Card, Net Banking, Credit Card or Other Fee Mode Only DUVASU Mathura UGEE 2026 Admission Details Course Name DUVASU, Mathura UG PG Admission",
+      "age_limit": ", fees, Course and University List, information and other types of information and then apply. UP Pt. Deen Dayal Upadhyaya Pashu Chikitsa, Mathura (DUVASU) DUVASU Admission 2026 for UG | PG | Ph.D & Diploma Courses DUVASU Mathura UG Admission 2026 Short Details of Notification WWW.SARKARIRESULT.COM",
+      "eligibility": ", age limit, fees, Course and University List, information and other types of information and then apply. UP Pt. Deen Dayal Upadhyaya Pashu Chikitsa, Mathura (DUVASU) DUVASU Admission 2026 for UG | PG | Ph.D & Diploma Courses DUVASU Mathura UG Admission 2026 Short Details of Notification",
+      "total_post": "",
+      "important_dates": {
+        "application_begin": "2026-02-15",
+        "last_date": "2026-04-22",
+        "exam_date": "2026-05-17",
+        "result_date": "After"
+      },
+      "tables": [
+        [
+          [
+            "Important Links Application Begin : 15/02/2026 Last Date for Apply Online : 22/04/2026 Pay Exam Fee Last Date : 22/04/2026 UGEE 2026 Exam Date : 17/05/2026 DEE 2026 Exam Date : 07/06/2026 PGEE 2026 Exam Date : 21/06/2026 Result Declared : After Exam Counseling Start : Notified Soon",
+            "Application Fee General / OBC : 2000/- SC / ST / PH : 2000/- Pay the Examination Fee Through Debit Card, Net Banking, Credit Card or Other Fee Mode Only"
+          ],
+          [
+            "Course Name",
+            "DUVASU, Mathura UG PG Admission Eligibility 2026"
+          ],
+          [
+            "B.V.Sc & A.H Programme",
+            "Passed / Appearing 10+2 Intermediate with Physics, Chemistry, Biology / Biotechnology, English"
+          ],
+          [
+            "M.V.Sc and Ph.D (Veterinary Science) Programme",
+            "Passed / Appearing B.V.Sc and AH. For Doctorate programme: M. V. Sc in the concerned subject."
+          ],
+          [
+            "B.Tech Biotechnology",
+            "Intermediate (10+2 or Equivalent) with Physics, Chemistry, Biology / Biotechnology / Mathematics and English General / OBC : 60% Marks SC / ST : 55% Marks"
+          ],
+          [
+            "Bachelor of Technology (Diary Technology)",
+            "Intermediate (10+2 or Equivalent) with Physics, Chemistry, Biology/Mathematics and English General / OBC : 60% Marks SC / ST : 55% Marks"
+          ],
+          [
+            "Bachelor of Fisheries Science",
+            "Intermediate (10+2 or Equivalent) with Physics, Chemistry, Biology/Biotechnology and English. General / OBC : 60% Marks SC / ST : 55% Marks"
+          ],
+          [
+            "M.Sc (Biotechnology) / M.V.Sc (Biotechnology) / Ph.D (Biotechnology)",
+            "For M.Sc: Bachelors degree in any branch of life sciences/ Biological Sciences as per prospectus For M. V. Sc: Bachelors degree in Veterinary Science. For M. Tech: 4 years Bachelors degree in Engineering with biology or related subject as one of the papers at the 10+2 level or later. For Doctorate: Master degree (M.Sc. or M. Tech.) in any branch of science related to Biotechnology and bioinformatics as per prospectus/ M. V. Sc. General / OBC : 60% Marks SC / ST : 55% Marks"
+          ],
+          [
+            "Diploma in Veterinary Pharmacy & Livestock Extension in Institute of Para-Veterinary Sciences",
+            "Passed / Appearing 10+2 Intermediate with Physics, Chemistry, Bio, English General / OBC : 50% Marks SC / ST : 45% Marks"
+          ],
+          [
+            "Download Admit Card",
+            "Click Here"
+          ],
+          [
+            "Apply Online",
+            "Click Here"
+          ],
+          [
+            "Download Date Extended Notice",
+            "Click Here"
+          ],
+          [
+            "Download Notification",
+            "Click Here"
+          ],
+          [
+            "Official Website",
+            "UP VET University Official Website"
+          ]
+        ]
+      ],
+      "useful_links": [
+        {
+          "title": "Download Admit Card",
+          "links": "https://www.duvasu.com/Login"
+        },
+        {
+          "title": "Apply Online",
+          "links": "https://www.duvasu.com/entrance-exam-registration/login"
+        }
+      ],
+      "homepage_serial": 3
     },
     {
       "category": "SR_Admit_Card",
@@ -7338,9 +7321,7 @@
           "links": "https://bssc.bihar.gov.in/Advertisement/4368_2022.pdf"
         }
       ],
-      "detailed_notification_link": "https://bssc.bihar.gov.in/Advertisement/4368_2022.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 2
+      "homepage_serial": 4
     },
     {
       "category": "SR_Admit_Card",
@@ -7452,9 +7433,7 @@
           "links": "https://ncert.nic.in/pdf/announcement/vacancies/nonacademicvacancy/Advt_DQ_8256_EN.pdf"
         }
       ],
-      "detailed_notification_link": "https://ncert.nic.in/pdf/announcement/vacancies/nonacademicvacancy/Advt_DQ_8256_EN.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 3
+      "homepage_serial": 5
     },
     {
       "category": "SR_Admit_Card",
@@ -7553,9 +7532,7 @@
           "links": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/Advertisement-122026-33rd-BJSE_BPSC-20260223-82eskn.pdf"
         }
       ],
-      "detailed_notification_link": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/Advertisement-122026-33rd-BJSE_BPSC-20260223-82eskn.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 5
+      "homepage_serial": 7
     },
     {
       "category": "SR_Admit_Card",
@@ -7646,9 +7623,7 @@
           "links": "https://bpssc.bihar.gov.in/Notices/Advt.%2005-2025.pdf"
         }
       ],
-      "detailed_notification_link": "https://bpssc.bihar.gov.in/Notices/Advt.%2005-2025.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 6
+      "homepage_serial": 8
     },
     {
       "category": "SR_Admit_Card",
@@ -7896,10 +7871,6 @@
       ],
       "useful_links": [
         {
-          "title": "Download Re Exam Date",
-          "links": "https://rpsc.rajasthan.gov.in/Static/PressNotes/B114D828-B68D-4618-8DB9-C2F99483F813.pdf"
-        },
-        {
           "title": "Download Final Result",
           "links": [
             "https://rpsc.rajasthan.gov.in/Static/Result/4B8FD7D282624B1FA16FD048F4D67745.pdf",
@@ -7908,16 +7879,8 @@
           ]
         },
         {
-          "title": "Download Interview Letter",
-          "links": "https://rpsc.rajasthan.gov.in/intsearch?Pie=SUB_INSPECTOR_COMB_COMP_EXAM_2021_12012023"
-        },
-        {
           "title": "Download PET Result",
           "links": "https://rpsc.rajasthan.gov.in/Static/Result/FAC889AD7D9D4E09A4367898DFDC144B.pdf"
-        },
-        {
-          "title": "Download Pre Exam Marks",
-          "links": "https://rpsc.rajasthan.gov.in/resultsearch?Frm=TYPE2C&Pie=SI_2021_09022022"
         },
         {
           "title": "Download PET Admit Card",
@@ -7964,9 +7927,7 @@
           "links": "https://rpsc.rajasthan.gov.in/Static/RecruitmentAdvertisements/7107054E6CEB463D854E675DFDAACF82.pdf"
         }
       ],
-      "detailed_notification_link": "https://rpsc.rajasthan.gov.in/Static/RecruitmentAdvertisements/7107054E6CEB463D854E675DFDAACF82.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 7
+      "homepage_serial": 9
     },
     {
       "category": "SR_Admit_Card",
@@ -8068,142 +8029,7 @@
           "links": "https://www.rrbthiruvananthapuram.gov.in/assets/pdf/Final_CEN_08_2025_Isolated_Categories_29_12_2025_Publish_English2.pdf"
         }
       ],
-      "detailed_notification_link": "https://www.rrbthiruvananthapuram.gov.in/assets/pdf/Final_CEN_08_2025_Isolated_Categories_29_12_2025_Publish_English2.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 8
-    },
-    {
-      "category": "SR_Admit_Card",
-      "title": "NTA NEET UG Entrance Exam Cancelled Notice 2026",
-      "post_date": "2026-05-15",
-      "last_date": "2026-03-11",
-      "status": "admit_card_released",
-      "slug": "sr_admit_card-nta-neet-ug-entrance-exam-cancelled-notice-2026-3a534f",
-      "short_information": "National Testing Agency NTA has released the Information Brochure for National Eligibility Cum Entrance Test NEET UG 2026 Those Candidates are Interested to the Admsission in NEET UG 2026 Exam Can Download Answer Key.candidates should read the NEET UG 2026 information brochure for all the information related to the entrance exam like syllabus, eligibility, age limit, fees, Course and University List, information and other types of information and then apply. National Testing Agency (NTA) NTA National Eligibility Cum Entrance Test (NEET UG 2026) NTA NEET UG Exam 2026: Short Details of Notification",
-      "application_fee": "General : 1700 /- EWS / OBC : 1600/- SC / ST / PH : 1000 /- Out Side India : 9500/- Pay the Examination Fee Through E Challan Offline Mode or Pay the Exam Fee Through Online Debit Card, Credit Card or Net Banking Fee Mode NEET UG Eligibility 2026 Passed 10+2 Intermediate Exam with Physics, Chemistry, Biology PCB Group of Subjects in Any Recognized Board in India. For More Details Kindly See the Full Information Brochure or Read the Code Wise Eligibility Details. NEET UG 2026",
-      "age_limit": "Minimum Age : 17 Years Maximum Age : No Limit born on or before 31.12.2009 Age Relaxation Extra as per Rules.",
-      "eligibility": "Cum Entrance Test NEET UG Admissions 2026 Cancelled Notice | Syllabus Download Post Date / Update: 12 May 2026 | 12:47 PM Short Information : National Testing Agency NTA has released the Information Brochure for National Eligibility Cum Entrance Test NEET UG 2026 Those Candidates are Interested to the Admsission in NEET UG 2026 Exam Can Download Answer Key.candidates should read the NEET UG 2026 information brochure for all the information related to the entrance exam like syllabus, eligibility, age limit, fees, Course and University List, information and other types of information and then apply. National Testing Agency (NTA) NTA National Eligibility Cum Entrance Test (NEET UG 2026) NTA NEET UG Exam 2026: Short Details of Notification",
-      "total_post": "",
-      "important_dates": {
-        "application_begin": "2026-02-08",
-        "last_date": "2026-03-11",
-        "exam_date": "2026-05-03",
-        "admit_card": "Before Exam",
-        "result_date": "June 2026"
-      },
-      "tables": [
-        [
-          [
-            "Important Dates Application Begin : 08/02/2026 Last Date for Apply Online : 11/03/2026 upto 09 PM Last Date Online Payment : 11/03/2026 Correction Date : 12-14 March 2026 NEET UG 2025 Exam Date : 03/05/2026 (Cancelled) NEET UG 2025 Re Exam Date : Notified Soon Exam City Available : As per Schedule Admit Card Available : Before Exam Answer Key Available : As per Schedule Result Declared : June 2026",
-            "Application Fee General : 1700 /- EWS / OBC : 1600/- SC / ST / PH : 1000 /- Out Side India : 9500/- Pay the Examination Fee Through E Challan Offline Mode or Pay the Exam Fee Through Online Debit Card, Credit Card or Net Banking Fee Mode"
-          ],
-          [
-            "NEET UG Eligibility 2026 Passed 10+2 Intermediate Exam with Physics, Chemistry, Biology PCB Group of Subjects in Any Recognized Board in India. For More Details Kindly See the Full Information Brochure or Read the Code Wise Eligibility Details.",
-            "NEET UG 2026 Age Limit Minimum Age : 17 Years Maximum Age : No Limit born on or before 31.12.2009 Age Relaxation Extra as per Rules."
-          ],
-          [
-            "Download Cancelled Notice",
-            "Click Here"
-          ],
-          [
-            "Download Answer Key",
-            "Click Here"
-          ],
-          [
-            "Download Answer Key Notice",
-            "Click Here"
-          ],
-          [
-            "Download Admit Card",
-            "Click Here"
-          ],
-          [
-            "How to Download Admit Card (Video Hindi)",
-            "Click Here"
-          ],
-          [
-            "Check Advanced Exam City Details",
-            "Click Here"
-          ],
-          [
-            "How to Check Exam City (Video Hindi)",
-            "Click Here"
-          ],
-          [
-            "For Correction / Edit Form",
-            "Click Here"
-          ],
-          [
-            "Download Correction Notice",
-            "Click Here"
-          ],
-          [
-            "Apply Online",
-            "Click Here"
-          ],
-          [
-            "How to Fill Form (Video Hindi)",
-            "Click Here"
-          ],
-          [
-            "Download Date Extended Notice",
-            "Click Here"
-          ],
-          [
-            "Download Information Brochure",
-            "Click Here"
-          ],
-          [
-            "Download Syllabus",
-            "Click Here"
-          ],
-          [
-            "Official Website",
-            "NEET UG 2026 Official Website"
-          ]
-        ]
-      ],
-      "useful_links": [
-        {
-          "title": "Download Answer Key",
-          "links": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/05/202605061448997112.pdf"
-        },
-        {
-          "title": "Download Answer Key Notice",
-          "links": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/05/202605062073055515.pdf"
-        },
-        {
-          "title": "Download Admit Card",
-          "links": "https://examinationservices.nic.in/AdmitCardService/AdmitCardNeet/Login"
-        },
-        {
-          "title": "How to Check Exam City (Video Hindi)",
-          "links": "https://youtu.be/XoHIPLZaNDg"
-        },
-        {
-          "title": "For Correction / Edit Form",
-          "links": "https://examinationservices.nic.in/neetc2026/root/Home.aspx?enc=Ei4cajBkK1gZSfgr53ImFcFR+natXIEjJ1rCf6DMgOr0FO08ClwO9m4YYQvMGcVT"
-        },
-        {
-          "title": "Download Correction Notice",
-          "links": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/03/20260311404208011.pdf"
-        },
-        {
-          "title": "Apply Online",
-          "links": "https://examinationservices.nic.in/neetc2026/root/Home.aspx?enc=Ei4cajBkK1gZSfgr53ImFcFR+natXIEjJ1rCf6DMgOr0FO08ClwO9m4YYQvMGcVT"
-        },
-        {
-          "title": "Download Date Extended Notice",
-          "links": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/03/20260308653856316.pdf"
-        },
-        {
-          "title": "Download Syllabus",
-          "links": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/01/202601081066816297.pdf"
-        }
-      ],
-      "detailed_notification_link": "",
-      "application_opens_soon": false,
-      "homepage_serial": 9
+      "homepage_serial": 10
     },
     {
       "category": "SR_Admit_Card",
@@ -8299,9 +8125,7 @@
           "links": "https://regn.hpsc.gov.in/pgt26cs/Advt_23_2026_PGT_CS.pdf"
         }
       ],
-      "detailed_notification_link": "https://regn.hpsc.gov.in/pgt26cs/Advt_23_2026_PGT_CS.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 10
+      "homepage_serial": 11
     },
     {
       "category": "SR_Admit_Card",
@@ -8465,9 +8289,7 @@
           "links": "https://uppsc.up.nic.in/CandidatePages/OTRAppForm/Applicant_OtrAuthentication.aspx?WEqGEem9m0+8Y4tNQqJiNYurmbKsjJR/fgSlThSTh6o=#no-back"
         }
       ],
-      "detailed_notification_link": "",
-      "application_opens_soon": false,
-      "homepage_serial": 11
+      "homepage_serial": 12
     },
     {
       "category": "SR_Admit_Card",
@@ -8608,9 +8430,7 @@
           "links": "https://upsssc.gov.in//AllNotifications.aspx"
         }
       ],
-      "detailed_notification_link": "",
-      "application_opens_soon": false,
-      "homepage_serial": 12
+      "homepage_serial": 13
     },
     {
       "category": "SR_Admit_Card",
@@ -8750,9 +8570,7 @@
           "links": "https://youtu.be/u8j9kdf6Cvg"
         }
       ],
-      "detailed_notification_link": "",
-      "application_opens_soon": false,
-      "homepage_serial": 13
+      "homepage_serial": 14
     },
     {
       "category": "SR_Admit_Card",
@@ -8850,9 +8668,7 @@
           "links": "https://bpssc.bihar.gov.in/Notices/Advt%20no.%2002-2026%20published%20Adhinayak%20havildar%20home%20guard%20quota.pdf"
         }
       ],
-      "detailed_notification_link": "https://bpssc.bihar.gov.in/Notices/Advt%20no.%2002-2026%20published%20Adhinayak%20havildar%20home%20guard%20quota.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 14
+      "homepage_serial": 15
     },
     {
       "category": "SR_Admit_Card",
@@ -8930,9 +8746,7 @@
           "links": "https://bceceboard.bihar.gov.in/pdf_Pros/PROS_ITICAT26.pdf"
         }
       ],
-      "detailed_notification_link": "https://bceceboard.bihar.gov.in/pdf_Pros/PROS_ITICAT26.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 15
+      "homepage_serial": 16
     },
     {
       "category": "SR_Admit_Card",
@@ -9008,9 +8822,7 @@
           "links": "https://jeeadv.ac.in/documents/jee-advanced-2026-syllabus.pdf"
         }
       ],
-      "detailed_notification_link": "",
-      "application_opens_soon": false,
-      "homepage_serial": 16
+      "homepage_serial": 17
     },
     {
       "category": "SR_Admit_Card",
@@ -9073,9 +8885,7 @@
           "links": "https://www.joinindiannavy.gov.in/en/account/account/state"
         }
       ],
-      "detailed_notification_link": "https://doc.sarkariresults.org.in/Advt-Agniveer-MR-MUS-02-25-English.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 17
+      "homepage_serial": 18
     },
     {
       "category": "SR_Admit_Card",
@@ -9151,9 +8961,7 @@
           "links": "https://esb.mponline.gov.in/Portal/Examinations/Vyapam/examsList.aspx"
         }
       ],
-      "detailed_notification_link": "https://doc.sarkariresults.org.in/SarkariResult.Com_Health_Nursing_2026RuleBook02_04_2026.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 18
+      "homepage_serial": 19
     },
     {
       "category": "SR_Admit_Card",
@@ -9203,9 +9011,7 @@
           ]
         }
       ],
-      "detailed_notification_link": "",
-      "application_opens_soon": false,
-      "homepage_serial": 19
+      "homepage_serial": 20
     },
     {
       "category": "SR_Admit_Card",
@@ -9569,9 +9375,7 @@
           "links": "https://upsessb.pariksha.nic.in/Agencies.aspx?uTVe3S4xVOs1PaOekpDaJg=="
         }
       ],
-      "detailed_notification_link": "https://www.sarkariresults.org.in/wp-content/uploads/2022/06/Advertisement_2022_PGT_Final_Unicode_08_06_2022.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 20
+      "homepage_serial": 21
     },
     {
       "category": "SR_Admit_Card",
@@ -9692,9 +9496,7 @@
           ]
         }
       ],
-      "detailed_notification_link": "https://www.rrbchennai.gov.in/downloads/CEN-07-2025-NTPC-UnderGraduate-English.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 21
+      "homepage_serial": 22
     },
     {
       "category": "SR_Admit_Card",
@@ -9766,9 +9568,7 @@
           "links": "https://sso.rajasthan.gov.in/signin"
         }
       ],
-      "detailed_notification_link": "",
-      "application_opens_soon": false,
-      "homepage_serial": 22
+      "homepage_serial": 23
     },
     {
       "category": "SR_Admit_Card",
@@ -9841,9 +9641,7 @@
           "links": "https://www.joinindiannavy.gov.in/files/SSR_Med_02_27_English.pdf"
         }
       ],
-      "detailed_notification_link": "https://www.joinindiannavy.gov.in/files/SSR_Med_02_27_English.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 23
+      "homepage_serial": 24
     },
     {
       "category": "SR_Admit_Card",
@@ -9928,409 +9726,7 @@
           "links": "https://www.joinindiannavy.gov.in/files/Advt_Agniveer_SSR_01_27_and_02_27_English.pdf"
         }
       ],
-      "detailed_notification_link": "https://www.joinindiannavy.gov.in/files/Advt_Agniveer_SSR_01_27_and_02_27_English.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 24
-    },
-    {
-      "category": "SR_Admit_Card",
-      "title": "NTA CUET UG Admit Card / Hall Ticket 2026",
-      "post_date": "2026-05-15",
-      "last_date": "2026-02-04",
-      "status": "admit_card_released",
-      "slug": "sr_admit_card-nta-cuet-ug-admit-card-hall-ticket-2026-a1b7d3",
-      "short_information": "National Testing Agency NTA has released the online application for Common University Entrance Test CUET UG 2026 will start from 03 January 2026 and the last date to apply will be 26 February 2026.candidates should read the CUET UG 2026 information brochure for all the information related to the entrance exam like syllabus, eligibility, age limit, fees, Course and University List, information and other types of information and then apply. National Testing Agency (NTA) NTA Common University Admission Test CUET UG 2026 NTA CUET UG Exam 2026 : Short Details of Notification",
-      "application_fee": "General : 1000 /- EWS / OBC : 900/- SC / ST / PH : 800 /- Additional Subject Charge : General : 400 /- Each Subject EWS / OBC : 375/- Each Subject SC / ST / PH : 350/- Each Subject Pay the Examination Fee Through E Challan Offline Mode or Pay the Exam Fee Through Online Debit Card, Credit Card or Net Banking Fee Mode Common University Entrance Test CUET UG",
-      "age_limit": "No Age Limit in Common University Entrance Test CUET UG 2026 For More Information Read the Information Brochure. NTA CUET UG Exam 2026 : Admission Details Exam Name NTA CUET UG",
-      "eligibility": ", age limit, fees, Course and University List, information and other types of information and then apply. National Testing Agency (NTA) NTA Common University Admission Test CUET UG 2026 NTA CUET UG Exam 2026 : Short Details of Notification",
-      "total_post": "",
-      "important_dates": {
-        "application_begin": "2026-01-03",
-        "last_date": "2026-02-04",
-        "admit_card": "2026-05-05",
-        "result_date": "Notified"
-      },
-      "tables": [
-        [
-          [
-            "Important Dates Application Begin : 03/01/2026 Last Date for Apply Online : 04/02/2026 Last Date Online Payment : 07/02/2026 Correction Date : 09-11 February 2026 Re Open Online Form : 23-26 February 2026 Update Subject Details : 17-19 April 2026 NTA CUET UG 2026 Exam Date : 11-31 May 2026 Exam City Available : 29/04/2026 Admit Card Available : 05/05/2026 Result Declared : Notified Soon",
-            "Application Fee General : 1000 /- EWS / OBC : 900/- SC / ST / PH : 800 /- Additional Subject Charge : General : 400 /- Each Subject EWS / OBC : 375/- Each Subject SC / ST / PH : 350/- Each Subject Pay the Examination Fee Through E Challan Offline Mode or Pay the Exam Fee Through Online Debit Card, Credit Card or Net Banking Fee Mode"
-          ],
-          [
-            "Exam Name",
-            "NTA CUET UG Eligibility 2026"
-          ],
-          [
-            "Common University Admission Test CUET 2026",
-            "Passed / Appearing 10+2 Intermediate Exam in Any Recognized Board in India."
-          ],
-          [
-            "Download Admit Card",
-            "Click Here"
-          ],
-          [
-            "How to Download Admit Card (Video Hindi)",
-            "Click Here"
-          ],
-          [
-            "Check Exam City Details",
-            "Click Here"
-          ],
-          [
-            "How to Check Exam City (Video Hindi)",
-            "Click Here"
-          ],
-          [
-            "Download Exam City Notice",
-            "Click Here"
-          ],
-          [
-            "For Update Subject",
-            "Click Here"
-          ],
-          [
-            "Download Update Subject Notice",
-            "Click Here"
-          ],
-          [
-            "Apply Online (Re Open)",
-            "Click Here"
-          ],
-          [
-            "Download Notice (Re Open)",
-            "Click Here"
-          ],
-          [
-            "For Correction / Edit Form",
-            "Click Here"
-          ],
-          [
-            "Download Correction Notice",
-            "Click Here"
-          ],
-          [
-            "Download Date Extended Notice",
-            "Click Here"
-          ],
-          [
-            "Download Information Brochure",
-            "Click Here"
-          ],
-          [
-            "Download Syllabus",
-            "Click Here"
-          ],
-          [
-            "Official Website",
-            "CUET UG 2026 Official Website"
-          ]
-        ]
-      ],
-      "useful_links": [
-        {
-          "title": "Download Admit Card",
-          "links": "https://examinationservices.nic.in/AdmitCardService/AcCuetUG/Login?enc=kEinmH8aTDfj7UJERQYzpuwaXWY32HbjAGdMV/iRIao="
-        },
-        {
-          "title": "Check Exam City Details",
-          "links": "https://examinationservices.nic.in/AdmitCard/AuthForCity/Login?enc=DJ8reokIYhe/x0Hlb6GKax2VPCs2uGt9Ck0e7op3wXE="
-        },
-        {
-          "title": "Apply Online (Re Open)",
-          "links": "https://cdnbbsr.s3waas.gov.in/s3d1a21da7bca4abff8b0b61b87597de73/uploads/2026/02/202602231004635159.pdf"
-        },
-        {
-          "title": "Download Notice (Re Open)",
-          "links": "https://examinationservices.nic.in/ExamSysCUETUG26/root/Home.aspx?enc=Ei4cajBkK1gZSfgr53ImFYsjZOdyj8DuPcxGBqAK2DwPXgGzSvy8OkvXqQJ0Bni9"
-        },
-        {
-          "title": "For Correction / Edit Form",
-          "links": "https://examinationservices.nic.in/ExamSysCUETUG26/root/Home.aspx?enc=Ei4cajBkK1gZSfgr53ImFYsjZOdyj8DuPcxGBqAK2DwPXgGzSvy8OkvXqQJ0Bni9"
-        },
-        {
-          "title": "Download Correction Notice",
-          "links": "https://cdnbbsr.s3waas.gov.in/s3d1a21da7bca4abff8b0b61b87597de73/uploads/2026/02/202602091678087825.pdf"
-        },
-        {
-          "title": "Download Date Extended Notice",
-          "links": "https://cdnbbsr.s3waas.gov.in/s3d1a21da7bca4abff8b0b61b87597de73/uploads/2026/01/202601301542882180.pdf"
-        },
-        {
-          "title": "Download Syllabus",
-          "links": "https://cuet.nta.nic.in/cuetug-2026-syllabus/"
-        }
-      ],
-      "detailed_notification_link": "https://examinationservices.nic.in/ExamSysCUETUG26/root/Home.aspx?enc=Ei4cajBkK1gZSfgr53ImFYsjZOdyj8DuPcxGBqAK2DwPXgGzSvy8OkvXqQJ0Bni9",
-      "application_opens_soon": false,
       "homepage_serial": 25
-    },
-    {
-      "category": "SR_Admit_Card",
-      "title": "SSC GD Constable Admit Card 2026 for 25487 Post",
-      "post_date": "2026-05-15",
-      "last_date": "2025-12-31",
-      "status": "admit_card_released",
-      "slug": "sr_admit_card-ssc-gd-constable-admit-card-2026-for-25487-post-e9a01c",
-      "short_information": "Staff Selection Commission SSC has released the notification for Constable (GD) in Central Armed Police Forces (CAPFs) and SSF, and Rifleman (GD) in Assam Rifles Examination, 2026. Those Candidate Are Enrolled with Vacancy Can Check the Exam Exam Admit Card. Before applying, candidates must read the complete advertisement in which selection procedure, exam syllabus, pattern, exam date and other information will be available. Staff Selection Commission (SSC) SSC GD Constable Recruitment 2025 SSC Constable GD Exam 2026 : Short Details of Notification",
-      "application_fee": "General / OBC / EWS : 100/- SC / ST : 0/- Exempted Female : 0/- Exempted Correction Charge : 200/- First Time Correction Charge : 500/- (Second Time) Pay the Examination Fee Through Cast at E Challan or Debit Card, Credit Card, Net Banking SSC GD Constable",
-      "age_limit": "Minimum Age : 18 Years Maximum Age : 23 Years Age Relaxation Extra as per SSC Constable (GD) in Central Armed Police Forces (CAPFs) and SSF, and Rifleman (GD) in Assam Rifles Examination, 2026 Rules. SSC GD Constable Recruitment 2025:",
-      "eligibility": "Constable (GD) in Central Armed Police Forces (CAPFs) and SSF, and Rifleman (GD) in Assam Rifles Examination, 2026 25487 Class 10th Matric Exam Passed from Any Recognized Board in India. More Eligibility Details Read the Notification. SSC GD Constable Exam 2026: Category Wise",
-      "total_post": "25487",
-      "important_dates": {
-        "application_begin": "2025-12-01",
-        "last_date": "2025-12-31"
-      },
-      "tables": [
-        [
-          [
-            "Important Dates Application Begin : 01/12/2025 Last Date for Apply Online : 31/12/2025 Last Date Pay Exam Fee : 01/01/2026 Correction Date: 10-13 January 2026 Choose Exam Week Preference: 11-15 April 2026 Week 1 Exam Schedule : 27/04/2026 to 02/05/2026 Week 2 Exam Schedule : 04-09 May 2026 Week 3 Exam Schedule : 18-23 May 2026 Week 4 Exam Schedule : 25-30 May 2026 Exam City Available : Before Exam Admit Card Available : 3 Before Exam",
-            "Application Fee General / OBC / EWS : 100/- SC / ST : 0/- Exempted Female : 0/- Exempted Correction Charge : 200/- First Time Correction Charge : 500/- (Second Time) Pay the Examination Fee Through Cast at E Challan or Debit Card, Credit Card, Net Banking"
-          ],
-          [
-            "Post Name",
-            "Total Post",
-            "SSC GD Constable Eligibility"
-          ],
-          [
-            "Constable (GD) in Central Armed Police Forces (CAPFs) and SSF, and Rifleman (GD) in Assam Rifles Examination, 2026",
-            "25487",
-            "Class 10th Matric Exam Passed from Any Recognized Board in India. More Eligibility Details Read the Notification."
-          ],
-          [
-            "Force Name",
-            "Gender",
-            "UR",
-            "EWS",
-            "OBC",
-            "SC",
-            "ST",
-            "Total"
-          ],
-          [
-            "BSF",
-            "Male",
-            "222",
-            "53",
-            "113",
-            "78",
-            "58",
-            "524"
-          ],
-          [
-            "BSF",
-            "Female",
-            "49",
-            "05",
-            "20",
-            "11",
-            "07",
-            "92"
-          ],
-          [
-            "CISF",
-            "Male",
-            "5547",
-            "1321",
-            "2958",
-            "1918",
-            "1391",
-            "13135"
-          ],
-          [
-            "CISF",
-            "Female",
-            "627",
-            "150",
-            "326",
-            "205",
-            "152",
-            "1460"
-          ],
-          [
-            "CRPF",
-            "Male",
-            "2523",
-            "598",
-            "1343",
-            "870",
-            "32",
-            "5366"
-          ],
-          [
-            "CRPF",
-            "Female",
-            "66",
-            "08",
-            "27",
-            "15",
-            "08",
-            "124"
-          ],
-          [
-            "SSB",
-            "Male",
-            "752",
-            "176",
-            "412",
-            "257",
-            "167",
-            "1764"
-          ],
-          [
-            "ITBP",
-            "Male",
-            "486",
-            "109",
-            "219",
-            "146",
-            "139",
-            "1099"
-          ],
-          [
-            "ITBP",
-            "Female",
-            "91",
-            "16",
-            "38",
-            "24",
-            "25",
-            "194"
-          ],
-          [
-            "AR",
-            "Male",
-            "658",
-            "157",
-            "278",
-            "161",
-            "302",
-            "1556"
-          ],
-          [
-            "AR",
-            "Female",
-            "71",
-            "10",
-            "25",
-            "14",
-            "30",
-            "150"
-          ],
-          [
-            "Gender",
-            "Height",
-            "Chest",
-            "Race",
-            "Time"
-          ],
-          [
-            "Male (General / OBC / SC)",
-            "170",
-            "80-85",
-            "1.6 KM",
-            "8.5 Minute"
-          ],
-          [
-            "Male ST",
-            "162.5",
-            "76-81",
-            "1.6 KM",
-            "8.5 Minute"
-          ],
-          [
-            "Female (General / OBC /SC)",
-            "157",
-            "NA",
-            "800 Meter",
-            "5 Min"
-          ],
-          [
-            "Download Admit Card",
-            "Click Here"
-          ],
-          [
-            "Check Exam Date & City Details",
-            "Click Here"
-          ],
-          [
-            "Choose Exam Week Preferences",
-            "Click Here"
-          ],
-          [
-            "How to Choose Exam Week Preferences (Video Hindi)",
-            "Click Here"
-          ],
-          [
-            "Download Week Wise Exam Notice",
-            "Click Here"
-          ],
-          [
-            "Download Postponed Notice",
-            "Click Here"
-          ],
-          [
-            "Download Syllabus",
-            "Click Here"
-          ],
-          [
-            "Download Exam Notice",
-            "Click Here"
-          ],
-          [
-            "Apply for Correction Form",
-            "Click Here"
-          ],
-          [
-            "Download Correction Form Notification",
-            "Click Here"
-          ],
-          [
-            "Apply Online",
-            "Click Here"
-          ],
-          [
-            "Download State Wise Vacancy",
-            "Click Here"
-          ],
-          [
-            "Download Notification",
-            "Click Here"
-          ],
-          [
-            "Official Website",
-            "Click Here"
-          ]
-        ]
-      ],
-      "useful_links": [
-        {
-          "title": "Download Admit Card",
-          "links": "https://ssc.gov.in/login"
-        },
-        {
-          "title": "Download Exam Notice",
-          "links": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_020126.pdf"
-        },
-        {
-          "title": "Apply for Correction Form",
-          "links": "https://ssc.gov.in/"
-        },
-        {
-          "title": "Download Correction Form Notification",
-          "links": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_090126.pdf"
-        },
-        {
-          "title": "Apply Online",
-          "links": "https://ssc.gov.in/"
-        },
-        {
-          "title": "Download Notification",
-          "links": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/notice_01122025.pdf"
-        }
-      ],
-      "detailed_notification_link": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/notice_01122025.pdf",
-      "application_opens_soon": false,
-      "homepage_serial": 26
     },
     {
       "category": "SR_Admission",
@@ -10403,8 +9799,6 @@
           ]
         }
       ],
-      "detailed_notification_link": "https://cdnbbsr.s3waas.gov.in/s388a839f2f6f1427879fc33ee4acf4f66/uploads/2026/05/202605091397132773.pdf",
-      "application_opens_soon": false,
       "homepage_serial": 1
     },
     {
@@ -10508,8 +9902,6 @@
           ]
         }
       ],
-      "detailed_notification_link": "https://doc.sarkariresults.org.in/upcatet_brochure_2026%20(1).pdf",
-      "application_opens_soon": false,
       "homepage_serial": 2
     },
     {
@@ -10594,8 +9986,6 @@
           ]
         }
       ],
-      "detailed_notification_link": "",
-      "application_opens_soon": false,
       "homepage_serial": 4
     },
     {
@@ -10695,8 +10085,6 @@
           "links": "https://aupravesh2026.cbtexam.in/"
         }
       ],
-      "detailed_notification_link": "",
-      "application_opens_soon": false,
       "homepage_serial": 5
     },
     {
@@ -10750,8 +10138,6 @@
           "links": "https://cetbed.ucanapply.com/univer/public/secure?app_id=UElZMDAwMDEwMA=="
         }
       ],
-      "detailed_notification_link": "https://doc.sarkariresults.org.in/bihar_Cet_Bed_2_year_Brochure_SarkariResult_Com.pdf",
-      "application_opens_soon": false,
       "homepage_serial": 7
     },
     {
@@ -10817,8 +10203,6 @@
           ]
         }
       ],
-      "detailed_notification_link": "",
-      "application_opens_soon": false,
       "homepage_serial": 8
     },
     {
@@ -11028,8 +10412,6 @@
           ]
         }
       ],
-      "detailed_notification_link": "",
-      "application_opens_soon": false,
       "homepage_serial": 10
     },
     {
@@ -11103,8 +10485,6 @@
           "links": "https://www.abvmucet26.co.in/"
         }
       ],
-      "detailed_notification_link": "",
-      "application_opens_soon": false,
       "homepage_serial": 11
     },
     {
@@ -11279,8 +10659,6 @@
           "links": "https://nests.tribal.gov.in/WriteReadData/RTF1984/1760076918.pdf"
         }
       ],
-      "detailed_notification_link": "",
-      "application_opens_soon": false,
       "homepage_serial": 1
     },
     {
@@ -11445,8 +10823,6 @@
           "links": "https://www.cbse.gov.in/cbsenew/documents/Detailed_Notification_KVS_NVS_2025_13112025.pdf"
         }
       ],
-      "detailed_notification_link": "https://www.cbse.gov.in/cbsenew/documents/Detailed_Notification_KVS_NVS_2025_13112025.pdf",
-      "application_opens_soon": false,
       "homepage_serial": 2
     },
     {
@@ -11539,8 +10915,6 @@
           "links": "https://esb.mponline.gov.in/Portal/Examinations/Vyapam/examsList.aspx"
         }
       ],
-      "detailed_notification_link": "https://www.sarkariresult.com/upload/MPESB_SarkariResult.Com_PAT_2026_RULEBOOK_18032026.pdf",
-      "application_opens_soon": false,
       "homepage_serial": 4
     },
     {
@@ -11639,8 +11013,6 @@
           "links": "https://cdnbbsr.s3waas.gov.in/s388a839f2f6f1427879fc33ee4acf4f66/uploads/2025/12/20260102470139941.pdf"
         }
       ],
-      "detailed_notification_link": "https://cdnbbsr.s3waas.gov.in/s388a839f2f6f1427879fc33ee4acf4f66/uploads/2025/12/20260102470139941.pdf",
-      "application_opens_soon": false,
       "homepage_serial": 5
     }
   ]
