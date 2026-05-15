@@ -648,31 +648,69 @@
    *            Loads in background, merges silently, refreshes active search.
    */
   function loadJsonFiles() {
-    const FAST_FILES   = ['merged_sarkari_data.json', 'dailyupdates.json'];
-    const MEDIUM_FILES = ['state-jobs-data.json'];          // ~2MB, load after fast
-    const HEAVY_FILES  = ['Complete_Jobs_Full_Data.json'];  // ~19MB, background
+    /*
+     * UPDATED LOADING STRATEGY v3.0:
+     *
+     * Phase 1 — jobs-search-index.json (~742KB pre-built):
+     *   Contains ALL 1262+ jobs already processed with correct slugs.
+     *   Sets jsonIndexReady=true immediately. Search works in <1 second.
+     *
+     * Phase 2 — dailyupdates.json (Govt Schemes, daily items)
+     *
+     * Phase 3 — merged_sarkari_data.json background (newest offline jobs)
+     */
 
-    // Phase 1: fetch fast files in parallel, mark ready when done
-    Promise.allSettled(FAST_FILES.map(f => fetchAndIndex(f))).then(() => {
-      jsonIndexReady = true;
-      console.log('[smart-search] ✅ Fast index ready. Items:', allData.length);
-      // Trigger initial Fuse build + search refresh
-      loadFuse(() => {
-        buildFuse(allData);
-        const heroInput = document.getElementById('heroSearch');
-        if (heroInput && heroInput.value.trim().length >= 1) {
-          heroInput.dispatchEvent(new Event('input'));
-        }
+    // Phase 1: pre-built full search index
+    fetch('jobs-search-index.json')
+      .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(indexData => {
+        if (!Array.isArray(indexData)) throw new Error('bad format');
+        const extra = indexData.filter(item => item.title && item.slug).map(item => ({
+          title:         item.title,
+          slug:          item.slug,
+          dept:          item.dept          || '',
+          org:           item.dept          || '',
+          qual:          item.qual          || '',
+          state:         item.state         || 'All India',
+          cat:           item.cat           || 'Latest Job',
+          tags:          item.tags          || item.title,
+          lastDate:      item.lastDate      || '',
+          icon:          item.icon          || 'fa-briefcase',
+          lastUpdated:   item.lastUpdated   || new Date().toISOString(),
+          sectionSource: item.sectionSource || 'Jobs',
+        }));
+        mergeItems(extra, extra.length);
+        jsonIndexReady = true;
+        console.log('[smart-search] \u2705 Pre-built index loaded:', extra.length, 'jobs. Total:', allData.length);
+        loadFuse(() => {
+          buildFuse(allData);
+          const heroInput = document.getElementById('heroSearch');
+          if (heroInput && heroInput.value.trim().length >= 1) {
+            heroInput.dispatchEvent(new Event('input'));
+          }
+        });
+      })
+      .catch(err => {
+        // Fallback to individual JSON files if pre-built index missing
+        console.warn('[smart-search] Pre-built index missing, falling back:', err);
+        const FAST_FILES   = ['merged_sarkari_data.json', 'dailyupdates.json'];
+        const MEDIUM_FILES = ['state-jobs-data.json'];
+        Promise.allSettled(FAST_FILES.map(f => fetchAndIndex(f))).then(() => {
+          jsonIndexReady = true;
+          loadFuse(() => { buildFuse(allData); });
+          Promise.allSettled(MEDIUM_FILES.map(f => fetchAndIndex(f)));
+        });
+        // Heavy file in background
+        setTimeout(() => fetchAndIndex('Complete_Jobs_Full_Data.json'), 2000);
       });
 
-      // Phase 1.5: medium files (state-jobs-data) after fast files done
-      Promise.allSettled(MEDIUM_FILES.map(f => fetchAndIndex(f))).then(() => {
-        console.log('[smart-search] ✅ State jobs index ready. Items:', allData.length);
-      });
+    // Phase 2: dailyupdates — Govt Schemes / daily items not in pre-built index
+    fetchAndIndex('dailyupdates.json').then(() => {
+      console.log('[smart-search] \u2705 Daily updates merged. Total:', allData.length);
     });
 
-    // Phase 2: fetch heavy files in background — merge silently when ready
-    HEAVY_FILES.forEach(f => fetchAndIndex(f));
+    // Phase 3: background — any newest jobs not yet in pre-built index
+    setTimeout(() => fetchAndIndex('merged_sarkari_data.json'), 3000);
   }
 
     /* ── SORT BY LAST UPDATED (descending) ─────────────────── */
