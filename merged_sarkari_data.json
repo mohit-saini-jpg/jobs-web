@@ -1,25 +1,43 @@
 {
-  "scraped_at": "2026-05-14 18:46:43",
-  "total": 104,
+  "scraped_at": "2026-05-15 08:47:51",
+  "scraper_version": "v2",
+  "total": 102,
   "summary": {
-    "sarkariresultshine_active_jobs": 20,
+    "sarkariresultshine_active_jobs": 17,
     "sarkariresult_categories": {
-      "SR_Latest_Jobs": 26,
-      "SR_Result": 22,
-      "SR_Admit_Card": 24,
+      "SR_Latest_Jobs": 25,
+      "SR_Result": 23,
+      "SR_Admit_Card": 25,
       "SR_Admission": 8,
       "SR_Answer_Key": 4
     },
-    "sarkariresult_total": 84
+    "sarkariresult_total": 85,
+    "opening_soon_count": 2
   },
   "category_counts": {
-    "OFFLINE_FORM": 20,
-    "SR_Latest_Jobs": 26,
-    "SR_Result": 22,
-    "SR_Admit_Card": 24,
+    "OFFLINE_FORM": 17,
+    "SR_Latest_Jobs": 25,
+    "SR_Result": 23,
+    "SR_Admit_Card": 25,
     "SR_Admission": 8,
     "SR_Answer_Key": 4
   },
+  "opening_soon_jobs": [
+    {
+      "title": "Railway RRB ALP CEN 01/2026 Online Form 2026 for 11127 Post",
+      "category": "SR_Latest_Jobs",
+      "application_begin": "2026-05-15",
+      "last_date": "2026-06-14",
+      "detailed_notification_link": ""
+    },
+    {
+      "title": "Navy SSC Executive IT Online Form 2026 for 15 Post",
+      "category": "SR_Latest_Jobs",
+      "application_begin": "2026-05-16",
+      "last_date": "2026-06-01",
+      "detailed_notification_link": ""
+    }
+  ],
   "jobs": [
     {
       "category": "OFFLINE_FORM",
@@ -337,41 +355,6 @@
     },
     {
       "category": "OFFLINE_FORM",
-      "title": "ICAR ATARI DEO Recruitment 2026, Notification Out Apply Now -",
-      "organization": "ICAR-Agricultural Technology Application Research Institute, Zone-I",
-      "post_name": "Data Entry Operator",
-      "total_vacancy": "",
-      "salary_pay_scale": "As per the Rules",
-      "apply_mode": "Walk-in Interview",
-      "job_location": "Ludhiana",
-      "important_dates": {
-        "application_start": "07-05-2026",
-        "last_date": "14-05-2026",
-        "exam_date": "",
-        "interview_date": ""
-      },
-      "application_fees": {
-        "general_obc_ews": "",
-        "sc_st": "00",
-        "female": ""
-      },
-      "minimum_age": "21",
-      "maximum_age": "45",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the application form from the link and keep your educational certificates ready. Ensure you have all original documents for cross-checking. Plan your visit on any day before May 14, 2026, during office hours. Reach the “ICAR – ATARI, ZONE-I PAU Campus, Near Gate No. 6, Ludhiana 141004, Punjab, INDIA” At 9:00 AM. Submit your Application at the reception/office and prepare for an on-the-spot interview.",
-      "form_pdf_free_link": "https://atariz1.org.in/pdf/Walk-in-Interview.pdf",
-      "official_website_link": "https://atariz1.org.in/",
-      "official_notification_pdf_link": "https://atariz1.org.in/pdf/Walk-in-Interview.pdf",
-      "jobs_info": "",
-      "vacancy_details": [
-        {
-          "post_name": "Data Entry Operator",
-          "total": "30000",
-          "eligibility": "Bachelor’s degree in Computer Science/Information Technology/Computer Application"
-        }
-      ]
-    },
-    {
-      "category": "OFFLINE_FORM",
       "title": "Ambala Court Clerk Vacancy 2026, Notification Out, Apply Now -",
       "organization": "District and Sessions Judge, Ambala (HR)",
       "post_name": "Clerk",
@@ -442,13 +425,13 @@
     },
     {
       "category": "OFFLINE_FORM",
-      "title": "Air Force Station Delhi Recruitment 2026, Notification Out And Free AppliCation Form -",
+      "title": "Air Force Station Gurgaon Recruitment 2026, Free AppliCation Form And Notification Out -",
       "organization": "Indian Air Force",
       "post_name": "Lower Division Clerk (LDC)",
       "total_vacancy": "",
       "salary_pay_scale": "As per the Rules",
       "apply_mode": "Offline",
-      "job_location": "Delhi",
+      "job_location": "Haryana",
       "important_dates": {
         "application_start": "02-05-2026",
         "last_date": "01-06-2026",
@@ -462,7 +445,7 @@
       },
       "minimum_age": "18",
       "maximum_age": "25",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website https://indianairforce.nic.in/ Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.), 2 additional photos. Also, attach a self-addressed envelope with a ₹10 stamp of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send the application form to the address. Candidates can send the application to any of the following Delhi Air Force Units: 👇👇 Air Officer Commanding Air Force Station Race Course Lok Kalyan Marg New Delhi – 110003 President Central Airmen Selection Board (CASB) Brar Square, Delhi Cantt, New Delhi – 110010 Air Officer Commanding Air Force Central Accounts Office (AFCAO) Subroto Park New Delhi – 110010",
+      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website https://indianairforce.nic.in/ Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.), 2 additional photos. Also, attach a self-addressed envelope with a ₹10 stamp of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Air Officer Commanding, Air Force Station, Sohna Road, Gurugram – 122001",
       "form_pdf_free_link": "",
       "official_website_link": "https://indianairforce.nic.in/",
       "official_notification_pdf_link": "https://drive.google.com/file/d/1QsybyUT9rUKZWn98MlJKCNvW8sCAaaxg/view?usp=sharing",
@@ -497,46 +480,6 @@
       "official_notification_pdf_link": "https://api.chandigarhsacs.org.in/uploads/file_url-1777299461046.pdf",
       "jobs_info": "<p style=\"text-align: justify;\">Chandigarh AIDS Control Society Vacancy 2026: Chandigarh AIDS Control Society has issued a notification for the positions of Store Officer, ICTC Counselor, Assistant Director, and Deputy Director. All eligible and interested candidates are advised to carefully read the official notification and apply before 15-05-2026, the last Date. All relevant information regarding the Chandigarh AIDS Control Society Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": []
-    },
-    {
-      "category": "OFFLINE_FORM",
-      "title": "ICAR CIRB Hisar Vacancy 2026, Notification Out, Apply Now -",
-      "organization": "ICAR – Central Institute for Research on Buffaloes",
-      "post_name": "Young Professional",
-      "total_vacancy": "02",
-      "salary_pay_scale": "Rs. 42000/-",
-      "apply_mode": "Online By Mail",
-      "job_location": "Haryana",
-      "important_dates": {
-        "application_start": "01-05-2026",
-        "last_date": "14-05-2026",
-        "exam_date": "",
-        "interview_date": "25, 26-05-2026"
-      },
-      "application_fees": {
-        "general_obc_ews": "",
-        "sc_st": "00",
-        "female": ""
-      },
-      "minimum_age": "21",
-      "maximum_age": "45",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website https://cirb.res.in/ Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). The envelope containing the application should be superscribed as “Application for the post of ___________________”. The eligible and interested candidates may send their applications in the enclosed proforma along with scanned self-attested copies of the documents to this office through email only recruitment.cirb@gmail.com to reach by 14.05.2026 positively.",
-      "form_pdf_free_link": "https://cirb.res.in/wp-content/uploads/2026/04/Advt-12-for-YPs-in-CIRB.pdf",
-      "official_website_link": "https://cirb.res.in/",
-      "official_notification_pdf_link": "https://cirb.res.in/wp-content/uploads/2026/04/Advt-12-for-YPs-in-CIRB.pdf",
-      "jobs_info": "<p style=\"text-align: justify;\">ICAR CIRB Hisar Vacancy 2026: ICAR – Central Institute for Research on Buffaloes, Hisar has issued a notification for the position of Young Professional. The recruitment drive comprises 02 vacancies. All eligible and interested candidates are advised to carefully read the official notification and apply before 14 May 2026, the last Date. All relevant information regarding the ICAR CIRB Hisar Vacancy 2026 recruitment is provided below.</p>",
-      "vacancy_details": [
-        {
-          "post_name": "NASF- funded project on ‘In Vitro Production of Oocyte and Spermatozoalike cells from Pluripotent Stem Cells of Farm Animals",
-          "total": "01",
-          "eligibility": "Postgraduate degree or equivalent in Animal Biotechnology, Biotechnology, Molecular Biology, Physiology, Animal Genetics and Breeding, Biochemistry, Reproduction, Microbiology, or Life Sciences from a recognized university."
-        },
-        {
-          "post_name": "Purchase Section",
-          "total": "01",
-          "eligibility": "Graduate in any discipline"
-        }
-      ]
     },
     {
       "category": "OFFLINE_FORM",
@@ -626,44 +569,9 @@
       "vacancy_details": []
     },
     {
-      "category": "OFFLINE_FORM",
-      "title": "Indian Army CSBO Grade 2 Recruitment 2026, Notification Out, Apply Now -",
-      "organization": "Ministry of Defence (Indian Army)",
-      "post_name": "CSBO (Civilian Switch Board Operator) Grade-II",
-      "total_vacancy": "190",
-      "salary_pay_scale": "₹21,700 – ₹69,100",
-      "apply_mode": "Offline",
-      "job_location": "All India",
-      "important_dates": {
-        "application_start": "02-05-2026",
-        "last_date": "31-05-2026",
-        "exam_date": "",
-        "interview_date": ""
-      },
-      "application_fees": {
-        "general_obc_ews": "",
-        "sc_st": "00",
-        "female": ""
-      },
-      "minimum_age": "18",
-      "maximum_age": "25",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website https://www.indianarmy.nic.in/ Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). Also, attach a self-addressed envelope of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form along with all Required Documents to the official E-mail id : sunshine.rise@nic.in",
-      "form_pdf_free_link": "https://indianarmy.nic.in/writereaddata/Documents/Advt_020526.pdf",
-      "official_website_link": "https://www.indianarmy.nic.in/",
-      "official_notification_pdf_link": "https://indianarmy.nic.in/writereaddata/Documents/Advt_020526.pdf",
-      "jobs_info": "",
-      "vacancy_details": [
-        {
-          "post_name": "CSBO Grade-II",
-          "total": "190",
-          "eligibility": "10Th + PBX Handling Experience"
-        }
-      ]
-    },
-    {
       "category": "SR_Latest_Jobs",
       "title": "Railway RRB ALP CEN 01/2026 Online Form 2026 for 11127 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-06-14",
       "status": "active",
       "slug": "sr_latest_jobs-railway-rrb-alp-cen-012026-online-form-2026-for-11127-post-97dd53",
@@ -695,7 +603,7 @@
           ],
           [
             "Apply Online",
-            "Link Will be Activate on 15/05/2026"
+            "Click Here"
           ],
           [
             "Download Detailed Notification",
@@ -711,13 +619,20 @@
           ]
         ]
       ],
-      "useful_links": [],
+      "useful_links": [
+        {
+          "title": "Apply Online",
+          "links": "https://www.rrbapply.gov.in/#/auth/home"
+        }
+      ],
+      "detailed_notification_link": "",
+      "application_opens_soon": true,
       "homepage_serial": 1
     },
     {
       "category": "SR_Latest_Jobs",
       "title": "Army 10+2 TES 56 Online Form 2026 for 90 Post January 2027 Batch",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-06-12",
       "status": "active",
       "slug": "sr_latest_jobs-army-102-tes-56-online-form-2026-for-90-post-january-2027-batch-327b9e",
@@ -764,12 +679,14 @@
           "links": "https://joinindianarmy.nic.in/Authentication.aspx"
         }
       ],
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
       "homepage_serial": 2
     },
     {
       "category": "SR_Latest_Jobs",
       "title": "SBI Trade Finance Officer TFO Online Form 2026 for 100 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-06-02",
       "status": "active",
       "slug": "sr_latest_jobs-sbi-trade-finance-officer-tfo-online-form-2026-for-100-post-0c1deb",
@@ -827,12 +744,14 @@
           "links": "https://sbi.bank.in/documents/77530/57941334/13052026_ADV_CRPD_SC0_2026_27_05.pdf/7b1c920a-4aec-dc05-46ed-c1ff1397ee95?t=1778655133881"
         }
       ],
+      "detailed_notification_link": "https://sbi.bank.in/documents/77530/57941334/13052026_ADV_CRPD_SC0_2026_27_05.pdf/7b1c920a-4aec-dc05-46ed-c1ff1397ee95?t=1778655133881",
+      "application_opens_soon": false,
       "homepage_serial": 3
     },
     {
       "category": "SR_Latest_Jobs",
       "title": "NFL Management Trainee MT Online Form 2026 for 21 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-06-12",
       "status": "active",
       "slug": "sr_latest_jobs-nfl-management-trainee-mt-online-form-2026-for-21-post-121da1",
@@ -918,12 +837,14 @@
           "links": "https://careers.nfl.co.in/uploads/upload_datails_doc/01-NFL2026-13.05.2026-management_trainee.pdf"
         }
       ],
+      "detailed_notification_link": "https://careers.nfl.co.in/uploads/upload_datails_doc/01-NFL2026-13.05.2026-management_trainee.pdf",
+      "application_opens_soon": false,
       "homepage_serial": 4
     },
     {
       "category": "SR_Latest_Jobs",
       "title": "UPSSSC Various Post Online Form 2026 Through PET 2025",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "",
       "status": "active",
       "slug": "sr_latest_jobs-upsssc-various-post-online-form-2026-through-pet-2025-57531b",
@@ -1061,12 +982,14 @@
           "links": "https://upsssc.gov.in//Online_App/Results.aspx?ID=143&Result_Type=P&Exam_Code=3&Advt_Code=304&Dept_Code=556&Post_Code=1&OnlyIntview=No"
         }
       ],
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
       "homepage_serial": 5
     },
     {
       "category": "SR_Latest_Jobs",
       "title": "Indian Air Force AFCAT 02/2026 Batch Online Form 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-06-19",
       "status": "active",
       "slug": "sr_latest_jobs-indian-air-force-afcat-022026-batch-online-form-2026-ad7cd7",
@@ -1214,12 +1137,14 @@
           "links": "https://afcat.edcil.co.in/index.html"
         }
       ],
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
       "homepage_serial": 6
     },
     {
       "category": "SR_Latest_Jobs",
       "title": "Coal India CIL Management Trainee MT Online Form 2026 for 660 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-06-11",
       "status": "active",
       "slug": "sr_latest_jobs-coal-india-cil-management-trainee-mt-online-form-2026-for-660-post-75eb44",
@@ -1309,12 +1234,14 @@
           "links": "https://d3u7ubx0okog7j.cloudfront.net/documents/Advertisement_03_2026_dated_05.05.2026.pdf"
         }
       ],
+      "detailed_notification_link": "https://d3u7ubx0okog7j.cloudfront.net/documents/Advertisement_03_2026_dated_05.05.2026.pdf",
+      "application_opens_soon": false,
       "homepage_serial": 7
     },
     {
       "category": "SR_Latest_Jobs",
       "title": "CTET September 2026 Online Form",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-06-10",
       "status": "active",
       "slug": "sr_latest_jobs-ctet-september-2026-online-form-bd964d",
@@ -1363,12 +1290,14 @@
           "links": "https://examinationservices.nic.in/ExamSysCTET/root/Home.aspx?enc=Ei4cajBkK1gZSfgr53ImFfEytN2I3LFrLvNrMJcZJNmO/XE3+xNuu3rFt9agQvt0"
         }
       ],
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
       "homepage_serial": 8
     },
     {
       "category": "SR_Latest_Jobs",
       "title": "MPPSC Scientific Officer Biology Online Form 2026 for 25 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-05-20",
       "status": "active",
       "slug": "sr_latest_jobs-mppsc-scientific-officer-biology-online-form-2026-for-25-post-c0204c",
@@ -1431,12 +1360,14 @@
           "links": "https://mppsc.mp.gov.in/uploads/advertisement/Advt_Scientific_Officer_Biology_2026_Dated_16_03_2026.pdf"
         }
       ],
+      "detailed_notification_link": "https://mppsc.mp.gov.in/uploads/advertisement/Advt_Scientific_Officer_Biology_2026_Dated_16_03_2026.pdf",
+      "application_opens_soon": false,
       "homepage_serial": 9
     },
     {
       "category": "SR_Latest_Jobs",
       "title": "UPSSSC Assistant Statistical Officer Online Form 2026 for 1565 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-05-15",
       "status": "active",
       "slug": "sr_latest_jobs-upsssc-assistant-statistical-officer-online-form-2026-for-1565-post-f231f5",
@@ -1503,12 +1434,14 @@
           "links": "https://upsssc.gov.in//AllNotifications.aspx"
         }
       ],
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
       "homepage_serial": 10
     },
     {
       "category": "SR_Latest_Jobs",
       "title": "MPESB Hospital Assistant Online Form 2026 for 1200 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-05-21",
       "status": "active",
       "slug": "sr_latest_jobs-mpesb-hospital-assistant-online-form-2026-for-1200-post-60aa16",
@@ -1566,12 +1499,14 @@
           "links": "https://esb.mp.gov.in/Rulebooks/RB_2026/Hospital_Assistant_rulebook_2026_30042026.pdf"
         }
       ],
+      "detailed_notification_link": "https://esb.mp.gov.in/Rulebooks/RB_2026/Hospital_Assistant_rulebook_2026_30042026.pdf",
+      "application_opens_soon": false,
       "homepage_serial": 12
     },
     {
       "category": "SR_Latest_Jobs",
       "title": "Railway RRC SECR Raipur Apprentices Online Form 2026 for 1644 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-06-04",
       "status": "active",
       "slug": "sr_latest_jobs-railway-rrc-secr-raipur-apprentices-online-form-2026-for-1644-post-2f0dc5",
@@ -1636,12 +1571,14 @@
           "links": "https://www.apprenticeshipindia.gov.in/candidate-login"
         }
       ],
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
       "homepage_serial": 13
     },
     {
       "category": "SR_Latest_Jobs",
       "title": "Navy SSC Executive IT Online Form 2026 for 15 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-06-01",
       "status": "active",
       "slug": "sr_latest_jobs-navy-ssc-executive-it-online-form-2026-for-15-post-031634",
@@ -1694,12 +1631,14 @@
           "links": "https://www.joinindiannavy.gov.in/en/account/account/state"
         }
       ],
+      "detailed_notification_link": "",
+      "application_opens_soon": true,
       "homepage_serial": 14
     },
     {
       "category": "SR_Latest_Jobs",
       "title": "Bihar BPSC 72 Pre Exam Online Form 2026 for 1186 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-05-31",
       "status": "active",
       "slug": "sr_latest_jobs-bihar-bpsc-72-pre-exam-online-form-2026-for-1186-post-c0ad34",
@@ -1829,12 +1768,14 @@
           "links": "https://bpsconline.bihar.gov.in/candidate/login"
         }
       ],
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
       "homepage_serial": 15
     },
     {
       "category": "SR_Latest_Jobs",
       "title": "UP Cooperative Bank Various Post Online Form 2026 for 2085 Posts",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-05-15",
       "status": "active",
       "slug": "sr_latest_jobs-up-cooperative-bank-various-post-online-form-2026-for-2085-posts-4732e4",
@@ -2137,12 +2078,14 @@
           "links": "https://ibpsreg.ibps.in/upcisbapr26/"
         }
       ],
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
       "homepage_serial": 16
     },
     {
       "category": "SR_Latest_Jobs",
       "title": "Rajasthan RSSB Teaching Associate Online Form 2026 for 3540 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-06-03",
       "status": "active",
       "slug": "sr_latest_jobs-rajasthan-rssb-teaching-associate-online-form-2026-for-3540-post-438fa4",
@@ -2470,12 +2413,14 @@
           "links": "https://sso.rajasthan.gov.in/signin"
         }
       ],
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
       "homepage_serial": 17
     },
     {
       "category": "SR_Latest_Jobs",
       "title": "BPSSC Havildar Instructor Online Form 2026 for 122 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-06-01",
       "status": "active",
       "slug": "sr_latest_jobs-bpssc-havildar-instructor-online-form-2026-for-122-post-16100a",
@@ -2551,12 +2496,14 @@
           "links": "https://bpssc.bihar.gov.in/Notices/Advt.%20no.-05-2026.pdf"
         }
       ],
+      "detailed_notification_link": "https://bpssc.bihar.gov.in/Notices/Advt.%20no.-05-2026.pdf",
+      "application_opens_soon": false,
       "homepage_serial": 18
     },
     {
       "category": "SR_Latest_Jobs",
       "title": "NTA UGC NET June 2026 Online Form for JRF and Assistant Professor",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-05-20",
       "status": "active",
       "slug": "sr_latest_jobs-nta-ugc-net-june-2026-online-form-for-jrf-and-assistant-professor-0e1674",
@@ -2871,12 +2818,14 @@
           "links": "https://cdnbbsr.s3waas.gov.in/s301eee509ee2f68dc6014898c309e86bf/uploads/2026/04/202604291863555100.pdf"
         }
       ],
+      "detailed_notification_link": "https://cdnbbsr.s3waas.gov.in/s301eee509ee2f68dc6014898c309e86bf/uploads/2026/04/202604291863555100.pdf",
+      "application_opens_soon": false,
       "homepage_serial": 19
     },
     {
       "category": "SR_Latest_Jobs",
       "title": "UPESSC UP Assistant Professor BEd Online Form 2026 for 107 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-05-27",
       "status": "active",
       "slug": "sr_latest_jobs-upessc-up-assistant-professor-bed-online-form-2026-for-107-post-f07138",
@@ -2943,12 +2892,14 @@
           "links": "https://upessc.up.gov.in/Notice/bab9-b117-4b45-85d1-aaba.pdf"
         }
       ],
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
       "homepage_serial": 20
     },
     {
       "category": "SR_Latest_Jobs",
       "title": "Union Bank of India UBI Apprentices Online Form 2026 for 1865 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-05-19",
       "status": "active",
       "slug": "sr_latest_jobs-union-bank-of-india-ubi-apprentices-online-form-2026-for-1865-post-71b493",
@@ -3022,12 +2973,14 @@
           "links": "https://beep.bfsissc.com/candidate_register/mkt"
         }
       ],
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
       "homepage_serial": 21
     },
     {
       "category": "SR_Latest_Jobs",
       "title": "Reserve Bank RBI Officer Grade B Online Form 2026 for 60 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-05-20",
       "status": "active",
       "slug": "sr_latest_jobs-reserve-bank-rbi-officer-grade-b-online-form-2026-for-60-post-06e40c",
@@ -3099,12 +3052,14 @@
           "links": "https://rbidocs.rbi.org.in/rdocs/Content/PDFs/DEPR29042026BE94DEA85E3C4753A82B191EB6A795ED.PDF"
         }
       ],
+      "detailed_notification_link": "https://rbidocs.rbi.org.in/rdocs/Content/PDFs/DEPR29042026BE94DEA85E3C4753A82B191EB6A795ED.PDF",
+      "application_opens_soon": false,
       "homepage_serial": 22
     },
     {
       "category": "SR_Latest_Jobs",
       "title": "Uttar Pradesh UP Anganwadi Worker Bharti Online Form 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "",
       "status": "active",
       "slug": "sr_latest_jobs-uttar-pradesh-up-anganwadi-worker-bharti-online-form-2026-c945b2",
@@ -3301,12 +3256,14 @@
           "links": "https://upanganwadibharti.in/"
         }
       ],
+      "detailed_notification_link": "https://upanganwadibharti.in/",
+      "application_opens_soon": false,
       "homepage_serial": 23
     },
     {
       "category": "SR_Latest_Jobs",
       "title": "SSC Stenographer Online Form 2026 for 731 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-05-15",
       "status": "active",
       "slug": "sr_latest_jobs-ssc-stenographer-online-form-2026-for-731-post-22e0b3",
@@ -3375,88 +3332,14 @@
           "links": "https://youtu.be/OPXf8VSOfJ0"
         }
       ],
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
       "homepage_serial": 24
     },
     {
       "category": "SR_Latest_Jobs",
-      "title": "SSC Combined Hindi Translators JHT Online Form 2026 for 84 Post",
-      "post_date": "2026-05-14",
-      "last_date": "2026-05-14",
-      "status": "active",
-      "slug": "sr_latest_jobs-ssc-combined-hindi-translators-jht-online-form-2026-for-84-post-ca7928",
-      "short_information": "Staff Selection Commission SSC has released the notification for Combined Hindi Translators Junior / Senior Translator Examination 2026. Students who want to appear in this exam can apply online between 23 April 2026 to 14 May 2026 through SSC website. Before applying, candidates must read the complete SSC Combined Hindi Translators advertisement in which selection procedure, exam syllabus, pattern, exam date and other information will be available. Staff Selection Commission (SSC) SSC Combined Hindi Translators Examination JHT 2026 SSC JHT 2026 Exam : Short Details of Notification",
-      "application_fee": "General / OBC / EWS : 100/- SC / ST / PH / Female : 0/- (Nil) Pay the Examination Fee Through Net Banking, Debit / Credit Card or UPI Fee Mode Only. SSC Combined Hindi Translator",
-      "age_limit": "Minimum Age : 18 Years Maximum Age : 30 Years Age Relaxation As per SSC Combined Hindi Translator 2026 Examination Recruitment Rules. SSC Junior Hindi Translator JHT Recruitment 2026 :",
-      "eligibility": "",
-      "total_post": "84",
-      "important_dates": {
-        "application_begin": "2026-04-23",
-        "last_date": "2026-05-14",
-        "admit_card": "Before Exam"
-      },
-      "tables": [
-        [
-          [
-            "Important Dates Application Begin : 23/04/2026 Last Date for Apply Online : 14/05/2026 upto 11 PM Pay Examination Fee Last Date : 15/05/2026 Correction Date : 19-20 May 20265 Exam Date Paper I : August / September 2026 Admit Card Available : Before Exam",
-            "Application Fee General / OBC / EWS : 100/- SC / ST / PH / Female : 0/- (Nil) Pay the Examination Fee Through Net Banking, Debit / Credit Card or UPI Fee Mode Only."
-          ],
-          [
-            "Code",
-            "Post Name",
-            "SSC Junior Hindi Translator Eligibility"
-          ],
-          [
-            "A",
-            "Junior Hindi Translator (JTO) in Central Secretariat Official Language Servise (CSOLS)",
-            "Master Degree in Hindi OR English with English OR Hindi as a Compulsory Subjects OR Master Degree in Any Subject with English Medium and Hindi as a Compulsory Subject in Degree Level And Recognized Diploma OR Certificate Course in Translation from Hindi to English Vice Verca or 2 Year Experience. Mote Eligibility Read the Notification."
-          ],
-          [
-            "B",
-            "Junior Translation Officer(JTO) in Armed Forces Headquarters (AFHQ)"
-          ],
-          [
-            "C",
-            "Junior Hindi Translator (JHT)/ Junior Translation Officer(JTO)/Junior Translator (JT) in various Central Government Ministries/ Departments/ Organizations"
-          ],
-          [
-            "D",
-            "Senior Hindi Translator (SHT)/Senior Translator (ST) in various Central Government Ministries/ Departments/ Organizations",
-            "Master Degree in Hindi or English with English or Hindi as a Compulsory Subjects OR Master Degree in Any Subject with English Medium and Hindi as a Compulsory Subject in Degree Level And Recognized Diploma OR Certificate Course in Translation from Hindi to English Vice Verca or 3 Year Experience. More Eligibility Read the Notification"
-          ],
-          [
-            "Apply Online",
-            "Click Here"
-          ],
-          [
-            "How to Fill Form (Video Hindi)",
-            "Click Here"
-          ],
-          [
-            "Download Notification",
-            "Click Here"
-          ],
-          [
-            "Official Website",
-            "SSC Official Website"
-          ]
-        ]
-      ],
-      "useful_links": [
-        {
-          "title": "Apply Online",
-          "links": "https://ssc.gov.in/login"
-        },
-        {
-          "title": "Download Notification",
-          "links": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_cht_2026.pdf"
-        }
-      ],
-      "homepage_serial": 26
-    },
-    {
-      "category": "SR_Latest_Jobs",
       "title": "Jharkhand JAC JHTET 2026 Online Form for Primary and Junior Level",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-05-21",
       "status": "active",
       "slug": "sr_latest_jobs-jharkhand-jac-jhtet-2026-online-form-for-primary-and-junior-level-7331e5",
@@ -3517,12 +3400,14 @@
           "links": "https://jactetonline.com/"
         }
       ],
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
       "homepage_serial": 27
     },
     {
       "category": "SR_Latest_Jobs",
       "title": "CRPF Constable Tradesman Online Form 2026 for 9175 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-05-19",
       "status": "active",
       "slug": "sr_latest_jobs-crpf-constable-tradesman-online-form-2026-for-9175-post-182259",
@@ -3691,12 +3576,316 @@
           ]
         }
       ],
+      "detailed_notification_link": "https://rect.crpf.gov.in/Upload/Recruitment/Recruitment%20Notice%20103042026-720.pdf",
+      "application_opens_soon": false,
       "homepage_serial": 28
     },
     {
       "category": "SR_Result",
+      "title": "SSC Combined Graduate Level CGL 2025 Final Result 2026",
+      "post_date": "2026-05-15",
+      "last_date": "2025-07-04",
+      "status": "result_declared",
+      "slug": "sr_result-ssc-combined-graduate-level-cgl-2025-final-result-2026-d841d8",
+      "short_information": "Staff Selection Commission SSC has released the notification for Combined Graduate Level CGL Examination 2025. Those Candidates Are Enrolled with Vacancy and Appeared in Tier II Exam Can Download the Answer Key. Before applying, candidates must read the complete advertisement in which selection procedure, exam syllabus, pattern, exam date and other information will be available. Staff Selection Commission (SSC) SSC Combined Graduate Level CGL Recruitment 2025 SSC CGL 2025 Exam : Short Details of Notification",
+      "application_fee": "General / OBC / EWS: 100/- SC / ST / PH : 0/- (Nil) All Category Female : 0/- (Exempted) Correction Fee First Time : 200/- Correction Fee Second Time : 500/- Pay the Examination Fee Through Debit Card, Credit Card, Net Banking, UPI Fee Mode Only. SSC Combined Graduate Level CGL",
+      "age_limit": "Minimum Age : 18 Years . Maximum Age : 27-32 Years (Post Wise) Age Relaxation Extra as per SSC CGL Graduate Level Exam 2025 Recruitment Rules. SSC Combined Graduate Level CGL Recruitment 2025 :",
+      "eligibility": "2025 Junior Statistical Officer Bachelor Degree in Any Stream / Subject with 60 marks in Mathematics at 10+2 Inter Level OR Bachelor Degree in Any Subject with Statistics as One the Subject in Degree level. Statistical Investigator Grade-II Bachelor Degree in Any Subject with Statistics as One of the Subjects. Research Assistant in National Human Rights Commission (NHRC) Bachelor Degree in Any Stream from Any Recognized University in India. All other Posts Bachelor Degree in Any Stream from Any Recognized University in India. SSC CGL Exam 2025 : Department Wise Post Details SSC CGL Pay Level 7 44900 to 142400 : Post Details Post Name Department Age Limit Assistant Section Officer ASO Central Secretariat Service 20-30 years Intelligence Bureau 18-30 years Ministry of Railways 20-30 years Ministry of External Affairs 20-30 years AFHQ 20-30 years Ministry of Electronics and Information Technology 18-30 years Assistant / Assistant Section Officer ASO Other Ministries/ Departments/ Organizations 18-30 years Inspector of Income Tax CBDT 18-30 years Inspector, (Central Excise) CBIC 18-30 years Inspector (Preventive Officer) CBIC 18-30 years Inspector (Examiner) CBIC 18-30 years Assistant Enforcement Officer AEO Directorate of Enforcement, Department of Revenue 18-30 years Sub Inspector SI Central Bureau of Investigation CBI 20-30 years Inspector Posts Department of Posts, Ministry of Communications 18-30 years Inspector Central Bureau of Narcotics, Ministry of Finance 18-30 Years Section Head Director General of Foreign Trade 18-30 Years SSC CGL Pay Level 6 35400 to 112400: Post Details Post Name Department Age Limit Assistant / Assistant Section Officer ASO Other Ministries/ Departments/ Organizations 18-30 years Executive Assistant CBIC 18-30 Years Research Assistant RA National Human Rights Commission (NHRC) 18-30 Years Divisional Accountant Offices under C&AG 18-30 Years Sub Inspector SI National Investigation Agency (NIA) 18-30 Years Sub-Inspector SI / Junior Intellig",
+      "total_post": "14582",
+      "important_dates": {
+        "application_begin": "2025-06-09",
+        "last_date": "2025-07-04",
+        "admit_card": "Before Exam"
+      },
+      "tables": [
+        [
+          [
+            "Important Dates Application Begin : 09/06/2025 Last Date for Apply Online : 04/07/2025 upto 11 PM Only Online Fee Payment Last Date : 05/07/2025 Correction Date : 09-11 July 2025 Exam Date Tier I : 13-30 August 2025 Admit Card Available : Before Exam Exam Date Tier II : 18-19 January 2026 Tier II Answer Key Available : 30/01/2026 Option Form Filling Last Date : 12/03/2026 Final Result Declared : 14/05/2026",
+            "Application Fee General / OBC / EWS: 100/- SC / ST / PH : 0/- (Nil) All Category Female : 0/- (Exempted) Correction Fee First Time : 200/- Correction Fee Second Time : 500/- Pay the Examination Fee Through Debit Card, Credit Card, Net Banking, UPI Fee Mode Only."
+          ],
+          [
+            "Post Name",
+            "SSC Combined Graduate Level CGL Eligibility 2025"
+          ],
+          [
+            "Junior Statistical Officer",
+            "Bachelor Degree in Any Stream / Subject with 60 marks in Mathematics at 10+2 Inter Level OR Bachelor Degree in Any Subject with Statistics as One the Subject in Degree level."
+          ],
+          [
+            "Statistical Investigator Grade-II",
+            "Bachelor Degree in Any Subject with Statistics as One of the Subjects."
+          ],
+          [
+            "Research Assistant in National Human Rights Commission (NHRC)",
+            "Bachelor Degree in Any Stream from Any Recognized University in India."
+          ],
+          [
+            "All other Posts",
+            "Bachelor Degree in Any Stream from Any Recognized University in India."
+          ],
+          [
+            "Post Name",
+            "Department",
+            "Age Limit"
+          ],
+          [
+            "Assistant Section Officer ASO",
+            "Central Secretariat Service",
+            "20-30 years"
+          ],
+          [
+            "Intelligence Bureau",
+            "18-30 years"
+          ],
+          [
+            "Ministry of Railways",
+            "20-30 years"
+          ],
+          [
+            "Ministry of External Affairs",
+            "20-30 years"
+          ],
+          [
+            "AFHQ",
+            "20-30 years"
+          ],
+          [
+            "Ministry of Electronics and Information Technology",
+            "18-30 years"
+          ],
+          [
+            "Assistant / Assistant Section Officer ASO",
+            "Other Ministries/ Departments/ Organizations",
+            "18-30 years"
+          ],
+          [
+            "Inspector of Income Tax",
+            "CBDT",
+            "18-30 years"
+          ],
+          [
+            "Inspector, (Central Excise)",
+            "CBIC",
+            "18-30 years"
+          ],
+          [
+            "Inspector (Preventive Officer)",
+            "CBIC",
+            "18-30 years"
+          ],
+          [
+            "Inspector (Examiner)",
+            "CBIC",
+            "18-30 years"
+          ],
+          [
+            "Assistant Enforcement Officer AEO",
+            "Directorate of Enforcement, Department of Revenue",
+            "18-30 years"
+          ],
+          [
+            "Sub Inspector SI",
+            "Central Bureau of Investigation CBI",
+            "20-30 years"
+          ],
+          [
+            "Inspector Posts",
+            "Department of Posts, Ministry of Communications",
+            "18-30 years"
+          ],
+          [
+            "Inspector",
+            "Central Bureau of Narcotics, Ministry of Finance",
+            "18-30 Years"
+          ],
+          [
+            "Section Head",
+            "Director General of Foreign Trade",
+            "18-30 Years"
+          ],
+          [
+            "Executive Assistant",
+            "CBIC",
+            "18-30 Years"
+          ],
+          [
+            "Research Assistant RA",
+            "National Human Rights Commission (NHRC)",
+            "18-30 Years"
+          ],
+          [
+            "Divisional Accountant",
+            "Offices under C&AG",
+            "18-30 Years"
+          ],
+          [
+            "Sub Inspector SI",
+            "National Investigation Agency (NIA)",
+            "18-30 Years"
+          ],
+          [
+            "Sub-Inspector SI / Junior Intelligence Officer JIO",
+            "Narcotics Control Bureau (MHA)",
+            "18-30 Years"
+          ],
+          [
+            "Junior Statistical Officer JSO",
+            "Ministry of Statistics & Programme Implementation.",
+            "18-32 Years"
+          ],
+          [
+            "Statistical Investigator Grade-II",
+            "Ministry of Home Affairs",
+            "18-30 Years"
+          ],
+          [
+            "Office Superintendent",
+            "CBDT",
+            "18-30 Years"
+          ],
+          [
+            "Auditor",
+            "Offices under C&AG",
+            "18-27 Years"
+          ],
+          [
+            "Offices under CGDA",
+            "18-27 Years"
+          ],
+          [
+            "Other Ministry/ Departments",
+            "18-27 Years"
+          ],
+          [
+            "Accountant",
+            "Offices under C&AG",
+            "18-27 Years"
+          ],
+          [
+            "Accountant",
+            "Controller General of Accounts",
+            "18-27 Years"
+          ],
+          [
+            "Accountant / Junior Accountant",
+            "Other Ministry/ Departments",
+            "18-27 Years"
+          ],
+          [
+            "Postal Assistant PA / Sorting Assistant SA",
+            "Department of Posts, Ministry of Communications",
+            "18-27 Years"
+          ],
+          [
+            "Senior Secretariat Assistant SSA / Upper Division Clerks UDC",
+            "Central Govt. Offices/ Ministries other than CSCS cadres.",
+            "18-27 Years"
+          ],
+          [
+            "Senior Administrative Assistant SAA",
+            "Military Engineering Services, Ministry of Defence",
+            "18-27 Years"
+          ],
+          [
+            "Tax Assistant",
+            "CBDT & CBIC",
+            "18-27 Years"
+          ],
+          [
+            "Sub Inspector SI",
+            "Central Bureau of Narcotics, Ministry of Finance",
+            "18-27 Years"
+          ],
+          [
+            "Download Final Result Dt 14/05/2026",
+            "List 1 | List 2 | List 3 | Cutoff"
+          ],
+          [
+            "Download Final Result Notice / Cutoff",
+            "Click Here"
+          ],
+          [
+            "Download Result",
+            "List 1 | List 2 | List 3 | Cutoff"
+          ],
+          [
+            "Fill Option / Preference Form",
+            "Click Here"
+          ],
+          [
+            "Download Option CUM-PREFERENCE Form Notice",
+            "Click Here"
+          ],
+          [
+            "Download Tier II Answer Key",
+            "Click Here"
+          ],
+          [
+            "Download Tier II Answer Key Notice",
+            "Click Here"
+          ],
+          [
+            "Apply Online",
+            "Click Here"
+          ],
+          [
+            "Download SSC CGL Notification",
+            "Click Here"
+          ],
+          [
+            "Download Syllabus",
+            "SSC CGL 2025 Tier I & II Syllabus"
+          ],
+          [
+            "Image Resizer, Resume CV Maker, Age Calculator and More Tools",
+            "Click Here"
+          ],
+          [
+            "Official Website",
+            "SSC Official Website"
+          ]
+        ]
+      ],
+      "useful_links": [
+        {
+          "title": "Download Final Result Dt 14/05/2026",
+          "links": [
+            "https://ssc.gov.in/api/attachment/uploads/masterData/Results/LIST_1_14052026.pdf",
+            "https://ssc.gov.in/api/attachment/uploads/masterData/Results/LIST_2_14052026.pdf",
+            "https://ssc.gov.in/api/attachment/uploads/masterData/Results/cgle_LIST-3_08042026.pdf",
+            "https://ssc.gov.in/api/attachment/uploads/masterData/Results/LIST_3_14052026.pdf"
+          ]
+        },
+        {
+          "title": "Download Final Result Notice / Cutoff",
+          "links": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/writeup_14052026.pdf"
+        },
+        {
+          "title": "Download Result",
+          "links": [
+            "https://ssc.gov.in/api/attachment/uploads/masterData/Results/cgle_LIST-1_08042026.pdf",
+            "https://ssc.gov.in/api/attachment/uploads/masterData/Results/cgle_LIST-2_08042026.pdf",
+            "https://ssc.gov.in/api/attachment/uploads/masterData/Results/cgle_LIST-3_08042026.pdf",
+            "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Write%20up_FTRA%20CGLE%20Exam%202025_08042026.pdf"
+          ]
+        },
+        {
+          "title": "Download Tier II Answer Key",
+          "links": "https://ssc.gov.in/login"
+        },
+        {
+          "title": "Apply Online",
+          "links": "https://ssc.gov.in/login"
+        }
+      ],
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
+      "homepage_serial": 1
+    },
+    {
+      "category": "SR_Result",
       "title": "CBSE Board 12th Result 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "",
       "status": "result_declared",
       "slug": "sr_result-cbse-board-12th-result-2026-8cb151",
@@ -3758,12 +3947,14 @@
           ]
         }
       ],
-      "homepage_serial": 1
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
+      "homepage_serial": 2
     },
     {
       "category": "SR_Result",
       "title": "Railway RRB Junior Engineer JE CEN 05/2025 Result 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2025-12-10",
       "status": "result_declared",
       "slug": "sr_result-railway-rrb-junior-engineer-je-cen-052025-result-2026-02a8b9",
@@ -3970,12 +4161,14 @@
           ]
         }
       ],
-      "homepage_serial": 2
+      "detailed_notification_link": "https://rrbranchi.gov.in/upload/files/pdf/04_14_24pm142384bf87cab8ba2918a287b376265c.pdf",
+      "application_opens_soon": false,
+      "homepage_serial": 3
     },
     {
       "category": "SR_Result",
       "title": "AIIMS Nursing Officer NORCET 10th Stage II Result 2026 for 2551 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-03-16",
       "status": "result_declared",
       "slug": "sr_result-aiims-nursing-officer-norcet-10th-stage-ii-result-2026-for-2551-post-6d49b4",
@@ -4115,12 +4308,14 @@
           ]
         }
       ],
-      "homepage_serial": 3
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
+      "homepage_serial": 4
     },
     {
       "category": "SR_Result",
       "title": "NTA NSSNET Result 2026 Admissions for Navayug School",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-03-18",
       "status": "result_declared",
       "slug": "sr_result-nta-nssnet-result-2026-admissions-for-navayug-school-756b69",
@@ -4209,12 +4404,14 @@
           "links": "https://cdnbbsr.s3waas.gov.in/s388a839f2f6f1427879fc33ee4acf4f66/uploads/2026/02/202602251298267010.pdf"
         }
       ],
-      "homepage_serial": 4
+      "detailed_notification_link": "https://cdnbbsr.s3waas.gov.in/s388a839f2f6f1427879fc33ee4acf4f66/uploads/2026/02/202602251298267010.pdf",
+      "application_opens_soon": false,
+      "homepage_serial": 5
     },
     {
       "category": "SR_Result",
       "title": "India Post GDS Third Result / Merit List 2026 for 28635 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-02-14",
       "status": "result_declared",
       "slug": "sr_result-india-post-gds-third-result-merit-list-2026-for-28635-post-80d291",
@@ -4411,12 +4608,14 @@
           "links": "https://app.indiapost.gov.in/gdscandidate"
         }
       ],
-      "homepage_serial": 5
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
+      "homepage_serial": 6
     },
     {
       "category": "SR_Result",
       "title": "MPESB MP Police ASI HC Computer Result 2026 for 89 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-02-19",
       "status": "result_declared",
       "slug": "sr_result-mpesb-mp-police-asi-hc-computer-result-2026-for-89-post-477d9c",
@@ -4499,12 +4698,14 @@
           "links": "https://esb.mp.gov.in/Rulebooks/RB_2026/ASI_computer_2026_RooleBook.pdf"
         }
       ],
-      "homepage_serial": 6
+      "detailed_notification_link": "https://esb.mp.gov.in/Rulebooks/RB_2026/ASI_computer_2026_RooleBook.pdf",
+      "application_opens_soon": false,
+      "homepage_serial": 7
     },
     {
       "category": "SR_Result",
       "title": "IDBI Bank JAM and Assistant Manager Result 2026 for 1300 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-03-19",
       "status": "result_declared",
       "slug": "sr_result-idbi-bank-jam-and-assistant-manager-result-2026-for-1300-post-2dfe52",
@@ -4689,12 +4890,14 @@
           ]
         }
       ],
-      "homepage_serial": 7
+      "detailed_notification_link": "https://www.idbi.bank.in/pdf/careers/Advertisement-Grade-A-2-year-exp-March072026.pdf",
+      "application_opens_soon": false,
+      "homepage_serial": 8
     },
     {
       "category": "SR_Result",
       "title": "UPSC CDS I Result 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2025-12-30",
       "status": "result_declared",
       "slug": "sr_result-upsc-cds-i-result-2026-07f774",
@@ -4796,15 +4999,17 @@
           "links": "https://upsc.gov.in/sites/default/files/Notif-CDSE-I-2026-Engl-101225.pdf"
         }
       ],
-      "homepage_serial": 8
+      "detailed_notification_link": "https://upsc.gov.in/sites/default/files/Notif-CDSE-I-2026-Engl-101225.pdf",
+      "application_opens_soon": false,
+      "homepage_serial": 9
     },
     {
       "category": "SR_Result",
-      "title": "UPSC Civil Services IAS 2025 and IFS Final Results 2026",
-      "post_date": "2026-05-14",
+      "title": "UPSC Civil Services IAS 2025 and IFS Final Result with Marks 2026",
+      "post_date": "2026-05-15",
       "last_date": "2025-02-21",
       "status": "result_declared",
-      "slug": "sr_result-upsc-civil-services-ias-2025-and-ifs-final-results-2026-40bf80",
+      "slug": "sr_result-upsc-civil-services-ias-2025-and-ifs-final-result-with-marks-2026-16835a",
       "short_information": "Union Public Service Commission (UPSC) Civil Services and Forest Service Examination 2025. Those candidates who are interested in this UPSC IAS / IFS Pre recruitment can Download Final Result. Read the notification for recruitment eligibility, post information, selection procedure, age limit, pay scale and all other information. Union Public Service Commission (UPSC) UPSC Civil Services / Forest Service IAS / IFS Recruitment 2025 UPSC Civil Services Exam 2025: Short Details of Notification",
       "application_fee": "General / OBC / EWS : 100/- SC / ST / PH : 0/- (Exempted) All Category Female : 0/- (Nil) Pay the Examination Fee Through Debit Card, Credit, Card, Net Banking or E Challan Fee Mode Only UPSC IAS / IFS Pre",
       "age_limit": "Minimum Age : 21 Years Maximum Age : 32 Years Age Relaxation Extra as per UPSC Civil Services and Forest Exam Exam 2025 Recruitment Rules UPSC Civil Services / Forest Service Recruitment 2025 :",
@@ -4878,6 +5083,10 @@
             "Armed Forces Headquarters Civil Service, Group B"
           ],
           [
+            "Download IFS Final Result Marks",
+            "Click Here"
+          ],
+          [
             "Download IFS Final Result",
             "Click Here"
           ],
@@ -4941,6 +5150,10 @@
       ],
       "useful_links": [
         {
+          "title": "Download IFS Final Result Marks",
+          "links": "https://upsc.gov.in/sites/default/files/MksRcdCndts-IFSM-25-Engl-140526.pdf"
+        },
+        {
           "title": "Download IFS Final Result",
           "links": "https://upsc.gov.in/sites/default/files/FR-IFSM-25-Engl-08052026.pdf"
         },
@@ -4975,12 +5188,14 @@
           ]
         }
       ],
-      "homepage_serial": 9
+      "detailed_notification_link": "https://upsc.gov.in/sites/default/files/Notif-CSP-2025-Engl-220125.pdf",
+      "application_opens_soon": false,
+      "homepage_serial": 10
     },
     {
       "category": "SR_Result",
       "title": "UPSC NDA I Exam Result 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2025-12-30",
       "status": "result_declared",
       "slug": "sr_result-upsc-nda-i-exam-result-2026-ab3192",
@@ -5099,12 +5314,14 @@
           "links": "https://upsc.gov.in/sites/default/files/Notif-NDA-NA-I-2026-Engl-101225.pdf"
         }
       ],
-      "homepage_serial": 10
+      "detailed_notification_link": "https://upsc.gov.in/sites/default/files/Notif-NDA-NA-I-2026-Engl-101225.pdf",
+      "application_opens_soon": false,
+      "homepage_serial": 11
     },
     {
       "category": "SR_Result",
       "title": "Railway RRB Section Controller CEN 04/2025 Result / Score Card 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2025-10-14",
       "status": "result_declared",
       "slug": "sr_result-railway-rrb-section-controller-cen-042025-result-score-card-2026-72ec6a",
@@ -5285,12 +5502,14 @@
           "links": "https://www.rrbapply.gov.in/"
         }
       ],
-      "homepage_serial": 11
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
+      "homepage_serial": 12
     },
     {
       "category": "SR_Result",
       "title": "IB Security Assistant Executive Tier II Result 2026 for 4987 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2025-08-17",
       "status": "result_declared",
       "slug": "sr_result-ib-security-assistant-executive-tier-ii-result-2026-for-4987-post-1a646f",
@@ -5384,12 +5603,14 @@
           "links": "https://g03.tcsion.com//per/g03/pub/726/EForms/image/ImageDocUpload/71161/1/4001117795.pdf"
         }
       ],
-      "homepage_serial": 12
+      "detailed_notification_link": "https://g03.tcsion.com//per/g03/pub/726/EForms/image/ImageDocUpload/71161/1/4001117795.pdf",
+      "application_opens_soon": false,
+      "homepage_serial": 13
     },
     {
       "category": "SR_Result",
       "title": "Maharashtra Board Class Xth SSC Result 2026 Today at 11:30 AM",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "",
       "status": "result_declared",
       "slug": "sr_result-maharashtra-board-class-xth-ssc-result-2026-today-at-1130-am-60702b",
@@ -5425,12 +5646,14 @@
           "links": "https://sscresult.mahahsscboard.in/"
         }
       ],
-      "homepage_serial": 13
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
+      "homepage_serial": 14
     },
     {
       "category": "SR_Result",
       "title": "UP Police Sub Inspector SI PST DV Exam Date 2026 for 4543 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2025-09-11",
       "status": "result_declared",
       "slug": "sr_result-up-police-sub-inspector-si-pst-dv-exam-date-2026-for-4543-post-262c97",
@@ -5618,12 +5841,14 @@
           "links": "https://uppbpb.gov.in/FilesUploaded/Notice/SI-MOD2894dc0f-dcd4-4847-9243-185ad52a56f0.pdf"
         }
       ],
-      "homepage_serial": 14
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
+      "homepage_serial": 15
     },
     {
       "category": "SR_Result",
       "title": "Railway RRB NTPC Graduate Level CEN 05/2025 Final Result 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2024-10-20",
       "status": "result_declared",
       "slug": "sr_result-railway-rrb-ntpc-graduate-level-cen-052025-final-result-2026-7d4d11",
@@ -5968,6 +6193,10 @@
       ],
       "useful_links": [
         {
+          "title": "Download Final Score Card / Marks",
+          "links": "https://rrb.digialm.com/EForms/configuredHtml/33015/94346/login.html"
+        },
+        {
           "title": "Download RRB Kolkata Final Result",
           "links": [
             "https://www.rrbkolkata.gov.in/file/PublishingReport_05_2024_cat%201,%202,%20&%203_07.05.2026.pdf",
@@ -6042,12 +6271,14 @@
           "links": "https://rrbahmedabad.gov.in/wp-content/uploads/2024/09/Corrigendum-3-for-CEN-05-2024.pdf"
         }
       ],
-      "homepage_serial": 15
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
+      "homepage_serial": 16
     },
     {
       "category": "SR_Result",
       "title": "Bihar Police BPSSC Range Officer of Forest Marks / Score Card 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2025-06-01",
       "status": "result_declared",
       "slug": "sr_result-bihar-police-bpssc-range-officer-of-forest-marks-score-card-2026-2f7125",
@@ -6160,6 +6391,10 @@
       ],
       "useful_links": [
         {
+          "title": "Download Marksheet / Score Card",
+          "links": "https://apply-bpssc.com/bpssc_2_25_resultsheets/applicationIndex"
+        },
+        {
           "title": "Download Final Result",
           "links": "https://bpssc.bihar.gov.in/Notices/result%20final%2002-25.pdf"
         },
@@ -6172,12 +6407,14 @@
           "links": "https://bpssc.bihar.gov.in/Notices/EFC/Advt.%20No.-02-2025.pdf"
         }
       ],
-      "homepage_serial": 16
+      "detailed_notification_link": "https://bpssc.bihar.gov.in/Notices/EFC/Advt.%20No.-02-2025.pdf",
+      "application_opens_soon": false,
+      "homepage_serial": 17
     },
     {
       "category": "SR_Result",
       "title": "NTA JEEMAIN Session II Paper 2 Result 2026 for April Exam",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-02-25",
       "status": "result_declared",
       "slug": "sr_result-nta-jeemain-session-ii-paper-2-result-2026-for-april-exam-c29898",
@@ -6318,12 +6555,14 @@
           "links": "https://examinationservices.nic.in/jeemainx2026/root/home.aspx?enc=WPJ5WSCVWOMNiXoyyomJgDUffqDdG1LTsAPBKFcEC9VCAbchJdrRG5w+4Ch32Wrm"
         }
       ],
-      "homepage_serial": 17
+      "detailed_notification_link": "https://nta.ac.in/Download/Notice/Notice_20260408213108.pdf",
+      "application_opens_soon": false,
+      "homepage_serial": 18
     },
     {
       "category": "SR_Result",
       "title": "BSEB OFSS Bihar Class 11th Admissions Merit List / Result 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-04-18",
       "status": "result_declared",
       "slug": "sr_result-bseb-ofss-bihar-class-11th-admissions-merit-list-result-2026-127a65",
@@ -6377,12 +6616,14 @@
           "links": "https://ofssbihar.net/Higher-Education/index.html"
         }
       ],
-      "homepage_serial": 18
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
+      "homepage_serial": 19
     },
     {
       "category": "SR_Result",
       "title": "Rajasthan RSSB Jail Prahari 2024 Final Result for 803 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2025-01-22",
       "status": "result_declared",
       "slug": "sr_result-rajasthan-rssb-jail-prahari-2024-final-result-for-803-post-4eafb2",
@@ -6485,12 +6726,14 @@
           "links": "https://rssb.rajasthan.gov.in/storage/advertisement_item/1734001071.pdf"
         }
       ],
-      "homepage_serial": 19
+      "detailed_notification_link": "https://rssb.rajasthan.gov.in/storage/advertisement_item/1734001071.pdf",
+      "application_opens_soon": false,
+      "homepage_serial": 20
     },
     {
       "category": "SR_Result",
       "title": "Haryana HPSC Civil Services HCS Pre Result 2026 for 102 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-02-26",
       "status": "result_declared",
       "slug": "sr_result-haryana-hpsc-civil-services-hcs-pre-result-2026-for-102-post-01cfcf",
@@ -6639,12 +6882,14 @@
           "links": "https://regn.hpsc.gov.in/hcs26/Advt_22_2026_HCS_Ex_Br.pdf"
         }
       ],
-      "homepage_serial": 20
+      "detailed_notification_link": "https://regn.hpsc.gov.in/hcs26/Advt_22_2026_HCS_Ex_Br.pdf",
+      "application_opens_soon": false,
+      "homepage_serial": 21
     },
     {
       "category": "SR_Result",
       "title": "Intelligence Bureau IB SA / MT Final Result 2026 for 455 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2025-09-28",
       "status": "result_declared",
       "slug": "sr_result-intelligence-bureau-ib-sa-mt-final-result-2026-for-455-post-5075f2",
@@ -6740,12 +6985,14 @@
           "links": "https://g03.tcsion.com//per/g03/pub/726/EForms/image/ImageDocUpload/71161/1/9201385680.pdf"
         }
       ],
-      "homepage_serial": 21
+      "detailed_notification_link": "https://g03.tcsion.com//per/g03/pub/726/EForms/image/ImageDocUpload/71161/1/9201385680.pdf",
+      "application_opens_soon": false,
+      "homepage_serial": 22
     },
     {
       "category": "SR_Result",
       "title": "Maharashtra Board MSBSHSE HSC Class 12th Result 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "",
       "status": "result_declared",
       "slug": "sr_result-maharashtra-board-msbshse-hsc-class-12th-result-2026-5cde4d",
@@ -6791,12 +7038,124 @@
           "links": "https://results.digilocker.gov.in/MH202612thhakweuwXII.html"
         }
       ],
-      "homepage_serial": 22
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
+      "homepage_serial": 23
+    },
+    {
+      "category": "SR_Admit_Card",
+      "title": "BSSC Office Attendant Mains Admit Card 2026 for 100 Post",
+      "post_date": "2026-05-15",
+      "last_date": "2022-12-24",
+      "status": "admit_card_released",
+      "slug": "sr_admit_card-bssc-office-attendant-mains-admit-card-2026-for-100-post-b8edc6",
+      "short_information": "Bihar Staff Selection Commission BSSC has released the recruitment of Senior Scientist Assistant SSA Exam 2022 for 100 posts whose advertisement is 02/2022. This is a great opportunity for the candidates who are looking for government jobs in Bihar. Those Candidates Are Enrolled with Vacancy Can Download the Result. For information related to this recruitment of Bihar BSSC, eligibility, age limit, important date, selection procedure, pay scale and all other information read the advertisement. Bihar Staff Selection Commission BSSC Bihar Senior Scientist Assistant SSA Competitive Exam 2022 BSSC SSA Advt No. : 02/2022 Short Details of Notification",
+      "application_fee": "General / OBC / EWS : 540/- SC / ST / PH : 135/- Pay the Exam Fee Through Debit Card / Credit Card / Net Banking Mode Only. BSSC Senior Scientist Assistant 2022",
+      "age_limit": "Minimum Age : 21 Years. Maximum Age : 37 Years . for Male Maximum Age : 40 Years . for Female Age Relaxation Extra as per BSSC Senior Scientist Assistant Vacancy 2022 Recruitment Rules . Bihar SSC Senior Scientist Assistant Recruitment 2022",
+      "eligibility": "",
+      "total_post": "100",
+      "important_dates": {
+        "application_begin": "2022-11-22",
+        "last_date": "2022-12-24",
+        "exam_date": "2026-05-26",
+        "admit_card": "2026-05-14"
+      },
+      "tables": [
+        [
+          [
+            "Important Dates Application Begin : 22/11/2022 Pay Exam Fee Last Date : 24/12/2022 Last Date for Apply Online : 24/12/2022 Office Attendant Mains Exam Date : 26/05/2026 Admit Card Available : 14/05/2026",
+            "Application Fee General / OBC / EWS : 540/- SC / ST / PH : 135/- Pay the Exam Fee Through Debit Card / Credit Card / Net Banking Mode Only."
+          ],
+          [
+            "Exam Name",
+            "Total Post",
+            "BSSC Senior Scientist Assistant Eligibility"
+          ],
+          [
+            "BSSC Senior Scientist Assistant",
+            "100",
+            "Bachelor Degree / Master Degree in Related Post / Trade in Any Recognized University in India."
+          ],
+          [
+            "General (UR)",
+            "EWS",
+            "BC",
+            "EBC",
+            "BC Female",
+            "SC",
+            "ST",
+            "Total"
+          ],
+          [
+            "43",
+            "08",
+            "10",
+            "18",
+            "02",
+            "18",
+            "01",
+            "100"
+          ],
+          [
+            "Download Office Attendant Mains Admit Card",
+            "Click Here"
+          ],
+          [
+            "Download Office Attendant Mains Exam Notice",
+            "Click Here"
+          ],
+          [
+            "Download Final Result",
+            "Click Here"
+          ],
+          [
+            "Apply Online",
+            "Click Here"
+          ],
+          [
+            "Download Notification",
+            "Click Here"
+          ],
+          [
+            "Resume CV Maker, Image Resizer, Typing Test Practice and More",
+            "Click Here"
+          ],
+          [
+            "BSSC Official Website",
+            "Click Here"
+          ]
+        ]
+      ],
+      "useful_links": [
+        {
+          "title": "Download Office Attendant Mains Admit Card",
+          "links": "https://bssc.bihar.gov.in/Advertisement/4368_2022.pdf"
+        },
+        {
+          "title": "Download Office Attendant Mains Exam Notice",
+          "links": "https://bssc.bihar.gov.in/Advertisement/2172_02_2022_main_notice.pdf"
+        },
+        {
+          "title": "Download Final Result",
+          "links": "https://bssc.bihar.gov.in/Advertisement/4012.pdf"
+        },
+        {
+          "title": "Apply Online",
+          "links": "https://www.onlinebssc.com/SeniorScientistAssistant/"
+        },
+        {
+          "title": "Download Notification",
+          "links": "https://bssc.bihar.gov.in/Advertisement/4368_2022.pdf"
+        }
+      ],
+      "detailed_notification_link": "https://bssc.bihar.gov.in/Advertisement/4368_2022.pdf",
+      "application_opens_soon": false,
+      "homepage_serial": 1
     },
     {
       "category": "SR_Admit_Card",
       "title": "NCERT LDC Exam Admit Card 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-01-16",
       "status": "admit_card_released",
       "slug": "sr_admit_card-ncert-ldc-exam-admit-card-2026-3fa5bd",
@@ -6903,12 +7262,14 @@
           "links": "https://ncert.nic.in/pdf/announcement/vacancies/nonacademicvacancy/Advt_DQ_8256_EN.pdf"
         }
       ],
-      "homepage_serial": 1
+      "detailed_notification_link": "https://ncert.nic.in/pdf/announcement/vacancies/nonacademicvacancy/Advt_DQ_8256_EN.pdf",
+      "application_opens_soon": false,
+      "homepage_serial": 2
     },
     {
       "category": "SR_Admit_Card",
       "title": "Bihar BPSC 33 Civil Judge PCS J Pre Exam Date 2026 for 173 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-04-30",
       "status": "admit_card_released",
       "slug": "sr_admit_card-bihar-bpsc-33-civil-judge-pcs-j-pre-exam-date-2026-for-173-post-e6ed44",
@@ -7002,12 +7363,14 @@
           "links": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/Advertisement-122026-33rd-BJSE_BPSC-20260223-82eskn.pdf"
         }
       ],
-      "homepage_serial": 3
+      "detailed_notification_link": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/Advertisement-122026-33rd-BJSE_BPSC-20260223-82eskn.pdf",
+      "application_opens_soon": false,
+      "homepage_serial": 4
     },
     {
       "category": "SR_Admit_Card",
       "title": "BPSSC Bihar Police Sub Inspector SI Mains Admit Card 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2025-10-26",
       "status": "admit_card_released",
       "slug": "sr_admit_card-bpssc-bihar-police-sub-inspector-si-mains-admit-card-2026-6707b8",
@@ -7093,12 +7456,14 @@
           "links": "https://bpssc.bihar.gov.in/Notices/Advt.%2005-2025.pdf"
         }
       ],
-      "homepage_serial": 4
+      "detailed_notification_link": "https://bpssc.bihar.gov.in/Notices/Advt.%2005-2025.pdf",
+      "application_opens_soon": false,
+      "homepage_serial": 5
     },
     {
       "category": "SR_Admit_Card",
       "title": "RPSC Rajasthan Police Sub Inspector 2021 New Exam Date 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2021-06-23",
       "status": "admit_card_released",
       "slug": "sr_admit_card-rpsc-rajasthan-police-sub-inspector-2021-new-exam-date-2026-420b1b",
@@ -7341,6 +7706,10 @@
       ],
       "useful_links": [
         {
+          "title": "Download Re Exam Date",
+          "links": "https://rpsc.rajasthan.gov.in/Static/PressNotes/B114D828-B68D-4618-8DB9-C2F99483F813.pdf"
+        },
+        {
           "title": "Download Final Result",
           "links": [
             "https://rpsc.rajasthan.gov.in/Static/Result/4B8FD7D282624B1FA16FD048F4D67745.pdf",
@@ -7349,8 +7718,16 @@
           ]
         },
         {
+          "title": "Download Interview Letter",
+          "links": "https://rpsc.rajasthan.gov.in/intsearch?Pie=SUB_INSPECTOR_COMB_COMP_EXAM_2021_12012023"
+        },
+        {
           "title": "Download PET Result",
           "links": "https://rpsc.rajasthan.gov.in/Static/Result/FAC889AD7D9D4E09A4367898DFDC144B.pdf"
+        },
+        {
+          "title": "Download Pre Exam Marks",
+          "links": "https://rpsc.rajasthan.gov.in/resultsearch?Frm=TYPE2C&Pie=SI_2021_09022022"
         },
         {
           "title": "Download PET Admit Card",
@@ -7397,12 +7774,14 @@
           "links": "https://rpsc.rajasthan.gov.in/Static/RecruitmentAdvertisements/7107054E6CEB463D854E675DFDAACF82.pdf"
         }
       ],
-      "homepage_serial": 5
+      "detailed_notification_link": "https://rpsc.rajasthan.gov.in/Static/RecruitmentAdvertisements/7107054E6CEB463D854E675DFDAACF82.pdf",
+      "application_opens_soon": false,
+      "homepage_serial": 6
     },
     {
       "category": "SR_Admit_Card",
       "title": "Railway RRB Isolated Various Post Application Status 2026 for 312 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-01-29",
       "status": "admit_card_released",
       "slug": "sr_admit_card-railway-rrb-isolated-various-post-application-status-2026-for-312-post-34f057",
@@ -7499,12 +7878,14 @@
           "links": "https://www.rrbthiruvananthapuram.gov.in/assets/pdf/Final_CEN_08_2025_Isolated_Categories_29_12_2025_Publish_English2.pdf"
         }
       ],
-      "homepage_serial": 6
+      "detailed_notification_link": "https://www.rrbthiruvananthapuram.gov.in/assets/pdf/Final_CEN_08_2025_Isolated_Categories_29_12_2025_Publish_English2.pdf",
+      "application_opens_soon": false,
+      "homepage_serial": 7
     },
     {
       "category": "SR_Admit_Card",
       "title": "NTA NEET UG Entrance Exam Cancelled Notice 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-03-11",
       "status": "admit_card_released",
       "slug": "sr_admit_card-nta-neet-ug-entrance-exam-cancelled-notice-2026-3a534f",
@@ -7630,12 +8011,14 @@
           "links": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/01/202601081066816297.pdf"
         }
       ],
-      "homepage_serial": 7
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
+      "homepage_serial": 8
     },
     {
       "category": "SR_Admit_Card",
       "title": "Haryana HPSC PGT Computer Science Admit Card 2026 for 1672 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-03-09",
       "status": "admit_card_released",
       "slug": "sr_admit_card-haryana-hpsc-pgt-computer-science-admit-card-2026-for-1672-post-834f5c",
@@ -7726,12 +8109,14 @@
           "links": "https://regn.hpsc.gov.in/pgt26cs/Advt_23_2026_PGT_CS.pdf"
         }
       ],
-      "homepage_serial": 8
+      "detailed_notification_link": "https://regn.hpsc.gov.in/pgt26cs/Advt_23_2026_PGT_CS.pdf",
+      "application_opens_soon": false,
+      "homepage_serial": 9
     },
     {
       "category": "SR_Admit_Card",
       "title": "UPPSC LT Grade Assistant Teacher Mains Admit Card 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2025-08-28",
       "status": "admit_card_released",
       "slug": "sr_admit_card-uppsc-lt-grade-assistant-teacher-mains-admit-card-2026-297f51",
@@ -7890,12 +8275,14 @@
           "links": "https://uppsc.up.nic.in/CandidatePages/OTRAppForm/Applicant_OtrAuthentication.aspx?WEqGEem9m0+8Y4tNQqJiNYurmbKsjJR/fgSlThSTh6o=#no-back"
         }
       ],
-      "homepage_serial": 9
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
+      "homepage_serial": 10
     },
     {
       "category": "SR_Admit_Card",
       "title": "UPSSSC UP Lekhpal Mains Exam City Details 2026 for 7994 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-01-28",
       "status": "admit_card_released",
       "slug": "sr_admit_card-upsssc-up-lekhpal-mains-exam-city-details-2026-for-7994-post-4a1db1",
@@ -8031,12 +8418,14 @@
           "links": "https://upsssc.gov.in//AllNotifications.aspx"
         }
       ],
-      "homepage_serial": 10
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
+      "homepage_serial": 11
     },
     {
       "category": "SR_Admit_Card",
       "title": "UPSC Civil Services IAS IFS Pre Admit Card 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-02-27",
       "status": "admit_card_released",
       "slug": "sr_admit_card-upsc-civil-services-ias-ifs-pre-admit-card-2026-b2c77a",
@@ -8171,12 +8560,14 @@
           "links": "https://youtu.be/u8j9kdf6Cvg"
         }
       ],
-      "homepage_serial": 11
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
+      "homepage_serial": 12
     },
     {
       "category": "SR_Admit_Card",
       "title": "Bihar Police BPSSC Havildar Clerk Home Guard Admit Card 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-02-05",
       "status": "admit_card_released",
       "slug": "sr_admit_card-bihar-police-bpssc-havildar-clerk-home-guard-admit-card-2026-3823e7",
@@ -8269,12 +8660,14 @@
           "links": "https://bpssc.bihar.gov.in/Notices/Advt%20no.%2002-2026%20published%20Adhinayak%20havildar%20home%20guard%20quota.pdf"
         }
       ],
-      "homepage_serial": 12
+      "detailed_notification_link": "https://bpssc.bihar.gov.in/Notices/Advt%20no.%2002-2026%20published%20Adhinayak%20havildar%20home%20guard%20quota.pdf",
+      "application_opens_soon": false,
+      "homepage_serial": 13
     },
     {
       "category": "SR_Admit_Card",
       "title": "BCECEB Bihar ITI Entrance Exam Admit Card 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-04-25",
       "status": "admit_card_released",
       "slug": "sr_admit_card-bceceb-bihar-iti-entrance-exam-admit-card-2026-21f328",
@@ -8347,12 +8740,14 @@
           "links": "https://bceceboard.bihar.gov.in/pdf_Pros/PROS_ITICAT26.pdf"
         }
       ],
-      "homepage_serial": 13
+      "detailed_notification_link": "https://bceceboard.bihar.gov.in/pdf_Pros/PROS_ITICAT26.pdf",
+      "application_opens_soon": false,
+      "homepage_serial": 14
     },
     {
       "category": "SR_Admit_Card",
       "title": "IIT JEE Advanced Admit Card 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-05-05",
       "status": "admit_card_released",
       "slug": "sr_admit_card-iit-jee-advanced-admit-card-2026-305a86",
@@ -8423,12 +8818,14 @@
           "links": "https://jeeadv.ac.in/documents/jee-advanced-2026-syllabus.pdf"
         }
       ],
-      "homepage_serial": 14
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
+      "homepage_serial": 15
     },
     {
       "category": "SR_Admit_Card",
       "title": "Indian Navy MR Musician 02/2026 Batch Admit Card 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-04-30",
       "status": "admit_card_released",
       "slug": "sr_admit_card-indian-navy-mr-musician-022026-batch-admit-card-2026-9c5eff",
@@ -8486,12 +8883,14 @@
           "links": "https://www.joinindiannavy.gov.in/en/account/account/state"
         }
       ],
-      "homepage_serial": 15
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
+      "homepage_serial": 16
     },
     {
       "category": "SR_Admit_Card",
       "title": "MPESB Nursing Officer, Sister Tutor Admit Card 2026 for 2317 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-04-20",
       "status": "admit_card_released",
       "slug": "sr_admit_card-mpesb-nursing-officer-sister-tutor-admit-card-2026-for-2317-post-a488bf",
@@ -8562,12 +8961,14 @@
           "links": "https://esb.mponline.gov.in/Portal/Examinations/Vyapam/examsList.aspx"
         }
       ],
-      "homepage_serial": 16
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
+      "homepage_serial": 17
     },
     {
       "category": "SR_Admit_Card",
       "title": "NIELIT CCC Exam Admit Card May 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "",
       "status": "admit_card_released",
       "slug": "sr_admit_card-nielit-ccc-exam-admit-card-may-2026-3592c8",
@@ -8612,12 +9013,14 @@
           ]
         }
       ],
-      "homepage_serial": 17
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
+      "homepage_serial": 18
     },
     {
       "category": "SR_Admit_Card",
       "title": "UPSESSB UP PGT 2022 Answer Key 2026 for 624 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2022-07-10",
       "status": "admit_card_released",
       "slug": "sr_admit_card-upsessb-up-pgt-2022-answer-key-2026-for-624-post-82501c",
@@ -8976,12 +9379,14 @@
           "links": "https://upsessb.pariksha.nic.in/Agencies.aspx?uTVe3S4xVOs1PaOekpDaJg=="
         }
       ],
-      "homepage_serial": 18
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
+      "homepage_serial": 19
     },
     {
       "category": "SR_Admit_Card",
       "title": "Indian Army Agniveer Rally Admit Card 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-04-10",
       "status": "admit_card_released",
       "slug": "sr_admit_card-indian-army-agniveer-rally-admit-card-2026-619d4b",
@@ -9061,12 +9466,14 @@
           "links": "https://joinindianarmy.nic.in/latest-rally-agniveer-or.htm"
         }
       ],
-      "homepage_serial": 19
+      "detailed_notification_link": "https://joinindianarmy.nic.in/latest-rally-agniveer-or.htm",
+      "application_opens_soon": false,
+      "homepage_serial": 20
     },
     {
       "category": "SR_Admit_Card",
       "title": "Railway RRB NTPC 10+2 UG Level CEN 07/2025 Exam City Details 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2025-12-04",
       "status": "admit_card_released",
       "slug": "sr_admit_card-railway-rrb-ntpc-102-ug-level-cen-072025-exam-city-details-2026-9ce140",
@@ -9182,12 +9589,14 @@
           ]
         }
       ],
-      "homepage_serial": 20
+      "detailed_notification_link": "https://www.rrbchennai.gov.in/downloads/CEN-07-2025-NTPC-UnderGraduate-English.pdf",
+      "application_opens_soon": false,
+      "homepage_serial": 21
     },
     {
       "category": "SR_Admit_Card",
       "title": "Rajasthan RSSB Lab Assistant Admit Card 2026 for 804 Post",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-02-25",
       "status": "admit_card_released",
       "slug": "sr_admit_card-rajasthan-rssb-lab-assistant-admit-card-2026-for-804-post-4f409f",
@@ -9254,12 +9663,14 @@
           "links": "https://sso.rajasthan.gov.in/signin"
         }
       ],
-      "homepage_serial": 21
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
+      "homepage_serial": 22
     },
     {
       "category": "SR_Admit_Card",
       "title": "Indian Navy SSR Medical INET 2026 Admit Card for 02/2027 Batch",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-04-06",
       "status": "admit_card_released",
       "slug": "sr_admit_card-indian-navy-ssr-medical-inet-2026-admit-card-for-022027-batch-adf982",
@@ -9327,12 +9738,14 @@
           "links": "https://www.joinindiannavy.gov.in/files/SSR_Med_02_27_English.pdf"
         }
       ],
-      "homepage_serial": 22
+      "detailed_notification_link": "https://www.joinindiannavy.gov.in/files/SSR_Med_02_27_English.pdf",
+      "application_opens_soon": false,
+      "homepage_serial": 23
     },
     {
       "category": "SR_Admit_Card",
       "title": "Indian Navy Agniveer SSR and MR INET Admit Card 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-04-06",
       "status": "admit_card_released",
       "slug": "sr_admit_card-indian-navy-agniveer-ssr-and-mr-inet-admit-card-2026-87802e",
@@ -9412,104 +9825,14 @@
           "links": "https://www.joinindiannavy.gov.in/files/Advt_Agniveer_SSR_01_27_and_02_27_English.pdf"
         }
       ],
-      "homepage_serial": 23
-    },
-    {
-      "category": "SR_Admit_Card",
-      "title": "UPPSC GIC Lecturer New Exam Date 2026 for 1516 Post",
-      "post_date": "2026-05-14",
-      "last_date": "2025-09-12",
-      "status": "admit_card_released",
-      "slug": "sr_admit_card-uppsc-gic-lecturer-new-exam-date-2026-for-1516-post-a374ae",
-      "short_information": "Uttar Pradesh Public Service Commission UPPSC has released the Recruitment Advt No : ADVT.NO.A-6/E-1/2025, G.I.C. AND SPARSH / Samekit Vishesh Madhyamik Schools Lecturer (Sociology, Economics, Civics, English, History, Hindi, Sanskrit) Candidate Those Are Enrolled with Vacancy Can Modify Application Form as per Schedule.. Read the notification for UPPSC Lecturer 2025 Exam, eligibility, Subject Details information, Document Required, age limit, How to Apply and all other information. Uttar Pradesh Public Service Commission (UPPSC) UPPSC Govt. Inter College GIC Lecturer Recruitment 2025 UPPSC Advt No. : A-6/E-1/2025 : Short Details of Notification",
-      "application_fee": "General / OBC / EWS : 125/- SC / ST : 65/- PH (Divyang) : 25/- Pay the Exam Fee Through Debit Card, Credit Card, Net Banking or UPI Fee Mode Only. UPPSC GIC Lecturer Recruitment 2025 :",
-      "age_limit": "Minimum Age : 21 Years Maximum Age : 40 Years UPPSC GIC Lecturer Recruitment A-6/E-1/2025 Age Relaxation Extra for Details Must Read the Notification. UPPSC GIC Lecturer Recruitment 2025 :",
-      "eligibility": "",
-      "total_post": "1516",
-      "important_dates": {
-        "application_begin": "2025-08-12",
-        "last_date": "2025-09-12",
-        "exam_date": "2026-06-14",
-        "admit_card": "Before Exam"
-      },
-      "tables": [
-        [
-          [
-            "Important Dates Application Begin : 12/08/2025 Last Date for Apply Online : 12/09/2025 Pay Exam Fee Last Date : 12/09/2026 Correction / Modify Form Date : 17-27 March 2026 Exam Date : 14/06/2026 Admit Card Available : Before Exam",
-            "Application Fee General / OBC / EWS : 125/- SC / ST : 65/- PH (Divyang) : 25/- Pay the Exam Fee Through Debit Card, Credit Card, Net Banking or UPI Fee Mode Only."
-          ],
-          [
-            "Exam Name",
-            "Total Post",
-            "UPPSC GIC Lecturer Recruitment Eligibility"
-          ],
-          [
-            "Pravakta Govt Inter College (Male)",
-            "777",
-            "Master Degree in Related Subject BED / Special B.Ed / M.Ed Degree Knowledge of Hindi / English Reading and Writing More & Subject Wise Eligibility Details Read the Notification"
-          ],
-          [
-            "Pravakta Govt Inter College (Female)",
-            "694"
-          ],
-          [
-            "Pravakta Sparsh Dristhibadhit Govt Inter College / Samekit Vishesh Madhyamik Vidyalaya",
-            "49"
-          ],
-          [
-            "Pradhyapak Uttar Pradesh Jail Parshikshan Vidyalaya",
-            "02"
-          ],
-          [
-            "Download New Exam Notice",
-            "Click Here"
-          ],
-          [
-            "For Edit / Modify Form",
-            "Click Here"
-          ],
-          [
-            "How to Modify / Edit Form (Video Hindi)",
-            "Click Here"
-          ],
-          [
-            "Download Modify Form Notice",
-            "Click Here"
-          ],
-          [
-            "Apply Online",
-            "Click Here"
-          ],
-          [
-            "Download Notification",
-            "Click Here"
-          ],
-          [
-            "Age Calculator, Image Resizer, JPG to PDF and Other Tools",
-            "Sarkari Result Tools"
-          ],
-          [
-            "Official Website",
-            "UPPSC Official Website"
-          ]
-        ]
-      ],
-      "useful_links": [
-        {
-          "title": "How to Modify / Edit Form (Video Hindi)",
-          "links": "https://youtu.be/0ZxyOZdSI08"
-        },
-        {
-          "title": "Apply Online",
-          "links": "https://uppsc.up.nic.in/CandidatePages/Notifications.aspx"
-        }
-      ],
+      "detailed_notification_link": "https://www.joinindiannavy.gov.in/files/Advt_Agniveer_SSR_01_27_and_02_27_English.pdf",
+      "application_opens_soon": false,
       "homepage_serial": 24
     },
     {
       "category": "SR_Admit_Card",
       "title": "NTA CUET UG Admit Card / Hall Ticket 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-02-04",
       "status": "admit_card_released",
       "slug": "sr_admit_card-nta-cuet-ug-admit-card-hall-ticket-2026-a1b7d3",
@@ -9634,12 +9957,282 @@
           "links": "https://cuet.nta.nic.in/cuetug-2026-syllabus/"
         }
       ],
+      "detailed_notification_link": "https://examinationservices.nic.in/ExamSysCUETUG26/root/Home.aspx?enc=Ei4cajBkK1gZSfgr53ImFYsjZOdyj8DuPcxGBqAK2DwPXgGzSvy8OkvXqQJ0Bni9",
+      "application_opens_soon": false,
       "homepage_serial": 25
+    },
+    {
+      "category": "SR_Admit_Card",
+      "title": "SSC GD Constable Admit Card 2026 for 25487 Post",
+      "post_date": "2026-05-15",
+      "last_date": "2025-12-31",
+      "status": "admit_card_released",
+      "slug": "sr_admit_card-ssc-gd-constable-admit-card-2026-for-25487-post-e9a01c",
+      "short_information": "Staff Selection Commission SSC has released the notification for Constable (GD) in Central Armed Police Forces (CAPFs) and SSF, and Rifleman (GD) in Assam Rifles Examination, 2026. Those Candidate Are Enrolled with Vacancy Can Check the Exam Exam Admit Card. Before applying, candidates must read the complete advertisement in which selection procedure, exam syllabus, pattern, exam date and other information will be available. Staff Selection Commission (SSC) SSC GD Constable Recruitment 2025 SSC Constable GD Exam 2026 : Short Details of Notification",
+      "application_fee": "General / OBC / EWS : 100/- SC / ST : 0/- Exempted Female : 0/- Exempted Correction Charge : 200/- First Time Correction Charge : 500/- (Second Time) Pay the Examination Fee Through Cast at E Challan or Debit Card, Credit Card, Net Banking SSC GD Constable",
+      "age_limit": "Minimum Age : 18 Years Maximum Age : 23 Years Age Relaxation Extra as per SSC Constable (GD) in Central Armed Police Forces (CAPFs) and SSF, and Rifleman (GD) in Assam Rifles Examination, 2026 Rules. SSC GD Constable Recruitment 2025:",
+      "eligibility": "Constable (GD) in Central Armed Police Forces (CAPFs) and SSF, and Rifleman (GD) in Assam Rifles Examination, 2026 25487 Class 10th Matric Exam Passed from Any Recognized Board in India. More Eligibility Details Read the Notification. SSC GD Constable Exam 2026: Category Wise",
+      "total_post": "25487",
+      "important_dates": {
+        "application_begin": "2025-12-01",
+        "last_date": "2025-12-31"
+      },
+      "tables": [
+        [
+          [
+            "Important Dates Application Begin : 01/12/2025 Last Date for Apply Online : 31/12/2025 Last Date Pay Exam Fee : 01/01/2026 Correction Date: 10-13 January 2026 Choose Exam Week Preference: 11-15 April 2026 Week 1 Exam Schedule : 27/04/2026 to 02/05/2026 Week 2 Exam Schedule : 04-09 May 2026 Week 3 Exam Schedule : 18-23 May 2026 Week 4 Exam Schedule : 25-30 May 2026 Exam City Available : Before Exam Admit Card Available : 3 Before Exam",
+            "Application Fee General / OBC / EWS : 100/- SC / ST : 0/- Exempted Female : 0/- Exempted Correction Charge : 200/- First Time Correction Charge : 500/- (Second Time) Pay the Examination Fee Through Cast at E Challan or Debit Card, Credit Card, Net Banking"
+          ],
+          [
+            "Post Name",
+            "Total Post",
+            "SSC GD Constable Eligibility"
+          ],
+          [
+            "Constable (GD) in Central Armed Police Forces (CAPFs) and SSF, and Rifleman (GD) in Assam Rifles Examination, 2026",
+            "25487",
+            "Class 10th Matric Exam Passed from Any Recognized Board in India. More Eligibility Details Read the Notification."
+          ],
+          [
+            "Force Name",
+            "Gender",
+            "UR",
+            "EWS",
+            "OBC",
+            "SC",
+            "ST",
+            "Total"
+          ],
+          [
+            "BSF",
+            "Male",
+            "222",
+            "53",
+            "113",
+            "78",
+            "58",
+            "524"
+          ],
+          [
+            "BSF",
+            "Female",
+            "49",
+            "05",
+            "20",
+            "11",
+            "07",
+            "92"
+          ],
+          [
+            "CISF",
+            "Male",
+            "5547",
+            "1321",
+            "2958",
+            "1918",
+            "1391",
+            "13135"
+          ],
+          [
+            "CISF",
+            "Female",
+            "627",
+            "150",
+            "326",
+            "205",
+            "152",
+            "1460"
+          ],
+          [
+            "CRPF",
+            "Male",
+            "2523",
+            "598",
+            "1343",
+            "870",
+            "32",
+            "5366"
+          ],
+          [
+            "CRPF",
+            "Female",
+            "66",
+            "08",
+            "27",
+            "15",
+            "08",
+            "124"
+          ],
+          [
+            "SSB",
+            "Male",
+            "752",
+            "176",
+            "412",
+            "257",
+            "167",
+            "1764"
+          ],
+          [
+            "ITBP",
+            "Male",
+            "486",
+            "109",
+            "219",
+            "146",
+            "139",
+            "1099"
+          ],
+          [
+            "ITBP",
+            "Female",
+            "91",
+            "16",
+            "38",
+            "24",
+            "25",
+            "194"
+          ],
+          [
+            "AR",
+            "Male",
+            "658",
+            "157",
+            "278",
+            "161",
+            "302",
+            "1556"
+          ],
+          [
+            "AR",
+            "Female",
+            "71",
+            "10",
+            "25",
+            "14",
+            "30",
+            "150"
+          ],
+          [
+            "Gender",
+            "Height",
+            "Chest",
+            "Race",
+            "Time"
+          ],
+          [
+            "Male (General / OBC / SC)",
+            "170",
+            "80-85",
+            "1.6 KM",
+            "8.5 Minute"
+          ],
+          [
+            "Male ST",
+            "162.5",
+            "76-81",
+            "1.6 KM",
+            "8.5 Minute"
+          ],
+          [
+            "Female (General / OBC /SC)",
+            "157",
+            "NA",
+            "800 Meter",
+            "5 Min"
+          ],
+          [
+            "Download Admit Card",
+            "Click Here"
+          ],
+          [
+            "Check Exam Date & City Details",
+            "Click Here"
+          ],
+          [
+            "Choose Exam Week Preferences",
+            "Click Here"
+          ],
+          [
+            "How to Choose Exam Week Preferences (Video Hindi)",
+            "Click Here"
+          ],
+          [
+            "Download Week Wise Exam Notice",
+            "Click Here"
+          ],
+          [
+            "Download Postponed Notice",
+            "Click Here"
+          ],
+          [
+            "Download Syllabus",
+            "Click Here"
+          ],
+          [
+            "Download Exam Notice",
+            "Click Here"
+          ],
+          [
+            "Apply for Correction Form",
+            "Click Here"
+          ],
+          [
+            "Download Correction Form Notification",
+            "Click Here"
+          ],
+          [
+            "Apply Online",
+            "Click Here"
+          ],
+          [
+            "Download State Wise Vacancy",
+            "Click Here"
+          ],
+          [
+            "Download Notification",
+            "Click Here"
+          ],
+          [
+            "Official Website",
+            "Click Here"
+          ]
+        ]
+      ],
+      "useful_links": [
+        {
+          "title": "Download Admit Card",
+          "links": "https://ssc.gov.in/login"
+        },
+        {
+          "title": "Download Exam Notice",
+          "links": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_020126.pdf"
+        },
+        {
+          "title": "Apply for Correction Form",
+          "links": "https://ssc.gov.in/"
+        },
+        {
+          "title": "Download Correction Form Notification",
+          "links": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_090126.pdf"
+        },
+        {
+          "title": "Apply Online",
+          "links": "https://ssc.gov.in/"
+        },
+        {
+          "title": "Download Notification",
+          "links": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/notice_01122025.pdf"
+        }
+      ],
+      "detailed_notification_link": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/notice_01122025.pdf",
+      "application_opens_soon": false,
+      "homepage_serial": 26
     },
     {
       "category": "SR_Admission",
       "title": "NTA ICAR AIEEA PG and PHd Admissions Online form 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-06-07",
       "status": "active",
       "slug": "sr_admission-nta-icar-aieea-pg-and-phd-admissions-online-form-2026-33c250",
@@ -9707,12 +10300,14 @@
           ]
         }
       ],
+      "detailed_notification_link": "https://cdnbbsr.s3waas.gov.in/s388a839f2f6f1427879fc33ee4acf4f66/uploads/2026/05/202605091397132773.pdf",
+      "application_opens_soon": false,
       "homepage_serial": 1
     },
     {
       "category": "SR_Admission",
       "title": "UPCATET 2026 Admissions Online Form",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-05-15",
       "status": "active",
       "slug": "sr_admission-upcatet-2026-admissions-online-form-7ae68d",
@@ -9810,12 +10405,14 @@
           ]
         }
       ],
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
       "homepage_serial": 2
     },
     {
       "category": "SR_Admission",
       "title": "ABVMU UP CAHET Entrance Test Online Form 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-06-05",
       "status": "active",
       "slug": "sr_admission-abvmu-up-cahet-entrance-test-online-form-2026-dd21e5",
@@ -9894,12 +10491,14 @@
           ]
         }
       ],
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
       "homepage_serial": 4
     },
     {
       "category": "SR_Admission",
       "title": "Allahabad University PGAT Admissions Online Form 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-05-25",
       "status": "active",
       "slug": "sr_admission-allahabad-university-pgat-admissions-online-form-2026-ba1e23",
@@ -9993,12 +10592,14 @@
           "links": "https://aupravesh2026.cbtexam.in/"
         }
       ],
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
       "homepage_serial": 5
     },
     {
       "category": "SR_Admission",
       "title": "Bihar 2 Year BEd Admissions Online Form 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-05-18",
       "status": "active",
       "slug": "sr_admission-bihar-2-year-bed-admissions-online-form-2026-68c71a",
@@ -10046,12 +10647,14 @@
           "links": "https://cetbed.ucanapply.com/univer/public/secure?app_id=UElZMDAwMDEwMA=="
         }
       ],
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
       "homepage_serial": 7
     },
     {
       "category": "SR_Admission",
       "title": "ABVMU UP GNM Entrance Test UPGET Online Form 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-05-26",
       "status": "active",
       "slug": "sr_admission-abvmu-up-gnm-entrance-test-upget-online-form-2026-b07d04",
@@ -10111,12 +10714,14 @@
           ]
         }
       ],
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
       "homepage_serial": 8
     },
     {
       "category": "SR_Admission",
       "title": "MUIT Noida and Lucknow Campus Admissions Online Form 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-07-15",
       "status": "active",
       "slug": "sr_admission-muit-noida-and-lucknow-campus-admissions-online-form-2026-29bb38",
@@ -10320,12 +10925,14 @@
           ]
         }
       ],
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
       "homepage_serial": 10
     },
     {
       "category": "SR_Admission",
       "title": "ABVMU UP Common Nursing Entrance Test UPCNET Online Form 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-05-20",
       "status": "active",
       "slug": "sr_admission-abvmu-up-common-nursing-entrance-test-upcnet-online-form-2026-42b9b5",
@@ -10393,12 +11000,14 @@
           "links": "https://www.abvmucet26.co.in/"
         }
       ],
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
       "homepage_serial": 11
     },
     {
       "category": "SR_Answer_Key",
       "title": "EMRS Teaching and Non Teaching Post Tier II Answer Key 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2025-10-28",
       "status": "answer_key_released",
       "slug": "sr_answer_key-emrs-teaching-and-non-teaching-post-tier-ii-answer-key-2026-dec5ae",
@@ -10567,12 +11176,14 @@
           "links": "https://nests.tribal.gov.in/WriteReadData/RTF1984/1760076918.pdf"
         }
       ],
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
       "homepage_serial": 1
     },
     {
       "category": "SR_Answer_Key",
       "title": "CBSE KVS / NVS Teaching and Non Teaching Post Tier II Answer Key 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2025-12-11",
       "status": "answer_key_released",
       "slug": "sr_answer_key-cbse-kvs-nvs-teaching-and-non-teaching-post-tier-ii-answer-key-2026-eb004d",
@@ -10731,12 +11342,14 @@
           "links": "https://www.cbse.gov.in/cbsenew/documents/Detailed_Notification_KVS_NVS_2025_13112025.pdf"
         }
       ],
+      "detailed_notification_link": "https://www.cbse.gov.in/cbsenew/documents/Detailed_Notification_KVS_NVS_2025_13112025.pdf",
+      "application_opens_soon": false,
       "homepage_serial": 2
     },
     {
       "category": "SR_Answer_Key",
       "title": "MP ESB Pre Agriculture Test PAT Answer Key 2026",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-04-07",
       "status": "answer_key_released",
       "slug": "sr_answer_key-mp-esb-pre-agriculture-test-pat-answer-key-2026-36968b",
@@ -10823,12 +11436,14 @@
           "links": "https://esb.mponline.gov.in/Portal/Examinations/Vyapam/examsList.aspx"
         }
       ],
+      "detailed_notification_link": "",
+      "application_opens_soon": false,
       "homepage_serial": 4
     },
     {
       "category": "SR_Answer_Key",
       "title": "NTA NCHMJEE Answer Key 2026 for Hotel Management Course",
-      "post_date": "2026-05-14",
+      "post_date": "2026-05-15",
       "last_date": "2026-03-25",
       "status": "answer_key_released",
       "slug": "sr_answer_key-nta-nchmjee-answer-key-2026-for-hotel-management-course-23ea03",
@@ -10921,6 +11536,8 @@
           "links": "https://cdnbbsr.s3waas.gov.in/s388a839f2f6f1427879fc33ee4acf4f66/uploads/2025/12/20260102470139941.pdf"
         }
       ],
+      "detailed_notification_link": "https://cdnbbsr.s3waas.gov.in/s388a839f2f6f1427879fc33ee4acf4f66/uploads/2025/12/20260102470139941.pdf",
+      "application_opens_soon": false,
       "homepage_serial": 5
     }
   ]
