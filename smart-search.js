@@ -1540,9 +1540,49 @@
    * ─────────────────────────────────────────────────────────── */
   const _seenSlugs = new Set(allData.map(d => d.slug));
 
+  /* ── BLOCKED SOURCES — jobs.json / tools.json / services.json ke items
+   * HeroSearch mein nahi aane chahiye. Yeh sirf category nav ke liye hain.
+   * ──────────────────────────────────────────────────────────────────── */
+  const BLOCKED_SOURCES = new Set([
+    'tool', 'category', 'csc service', 'service',
+    'world-news-hindi', 'news', 'international news',
+  ]);
+
+  /* URLs jo job detail page nahi hain (tools, external links, category pages) */
+  function isNonJobUrl(slug) {
+    if (!slug) return true;
+    // tools.html, tools-*.html, govt-services.html, category.html — job nahi
+    if (/\/(tools|govt-services|category|about|contact|result|admit-card|state-jobs)\b/i.test(slug)) return true;
+    // External URLs (http) jo job.html ya state-jobs-data nahi — mostly tools
+    if (/^https?:\/\//i.test(slug) && !/\bjob\.html\b/i.test(slug)) {
+      // Allow: sarkari result URLs (job details), blocked: tool sites, news sites
+      const allowedDomains = ['sarkariresult', 'topsakarijobs', 'topsarkarijobs'];
+      const isAllowed = allowedDomains.some(d => slug.includes(d));
+      if (!isAllowed) return true;
+    }
+    return false;
+  }
+
   function absorbItem(item) {
     if (!item || !item.title || !item.slug) return false;
     if (_seenSlugs.has(item.slug)) return false;
+
+    // ✅ FIX: Block non-job sources (tools, category nav, news, services)
+    const src = String(item.sectionSource || item.cat || item.dept || '').toLowerCase().trim();
+    const srcBlocked = BLOCKED_SOURCES.has(src) ||
+      src.includes('tool') || src.includes('news') || src.includes('service') ||
+      src.includes('world-news') || src === 'category';
+    if (srcBlocked) return false;
+
+    // ✅ FIX: Block non-job URLs
+    if (isNonJobUrl(item.slug)) return false;
+
+    // ✅ FIX: Items that have no meaningful job info (only category navigation items)
+    // jobs.json items have name+url but no dept/qual/lastDate — they're nav links
+    const hasJobInfo = item.dept || item.qual || item.lastDate || item.state ||
+                       (item.slug && item.slug.includes('job.html'));
+    if (!hasJobInfo) return false;
+
     _seenSlugs.add(item.slug);
     allData.push(item);
     return true;
