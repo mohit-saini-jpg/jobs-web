@@ -1521,123 +1521,45 @@
       </style>`);
   }
 
-  /* ── LIVE INDEX SYNC ─────────────────────────────────────────
-   *  window.tsjSearchIndex ko intercept karo:
-   *  script.js jab bhi .push() kare, seedha allData mein jaaye.
-   *  Polling bhi rakho as fallback.
+  /* ── FIREWALL: block window.tsjSearchIndex completely ───────
+   *  script.js pushes items from tools.json / jobs.json /
+   *  services.json into window.tsjSearchIndex.
+   *  We do NOT want any of that in search results.
+   *  Data comes ONLY from the 4 approved JSON files loaded
+   *  by loadJsonFiles() above.
+   *  We neutralise tsjSearchIndex by replacing it with a
+   *  dummy array that accepts writes but never feeds allData.
    * ─────────────────────────────────────────────────────────── */
-  const _seenSlugs = new Set(allData.map(d => d.slug));
+  function installIndexFirewall() {
+    // Replace any existing array with a silent dummy so script.js
+    // can still call .push() without errors, but nothing leaks in.
+    const dummy = Array.isArray(window.tsjSearchIndex)
+      ? window.tsjSearchIndex.slice()   // keep reference length intact
+      : [];
 
-  /* ── BLOCKED SOURCES — jobs.json / tools.json / services.json ke items
-   * HeroSearch mein nahi aane chahiye. Yeh sirf category nav ke liye hain.
-   * ──────────────────────────────────────────────────────────────────── */
-  const BLOCKED_SOURCES = new Set([
-    'tool', 'category', 'csc service', 'service',
-    'world-news-hindi', 'news', 'international news',
-  ]);
-
-  /* URLs jo job detail page nahi hain (tools, external links, category pages) */
-  function isNonJobUrl(slug) {
-    if (!slug) return true;
-    // tools.html, tools-*.html, govt-services.html, category.html — job nahi
-    if (/\/(tools|govt-services|category|about|contact|result|admit-card|state-jobs)\b/i.test(slug)) return true;
-    // External URLs (http) jo job.html ya state-jobs-data nahi — mostly tools
-    if (/^https?:\/\//i.test(slug) && !/\bjob\.html\b/i.test(slug)) {
-      // Allow: sarkari result URLs (job details), blocked: tool sites, news sites
-      const allowedDomains = ['sarkariresult', 'topsakarijobs', 'topsarkarijobs'];
-      const isAllowed = allowedDomains.some(d => slug.includes(d));
-      if (!isAllowed) return true;
-    }
-    return false;
-  }
-
-  function absorbItem(item) {
-    if (!item || !item.title || !item.slug) return false;
-    if (_seenSlugs.has(item.slug)) return false;
-
-    // ✅ FIX: Block non-job sources (tools, category nav, news, services)
-    const src = String(item.sectionSource || item.cat || item.dept || '').toLowerCase().trim();
-    const srcBlocked = BLOCKED_SOURCES.has(src) ||
-      src.includes('tool') || src.includes('news') || src.includes('service') ||
-      src.includes('world-news') || src === 'category';
-    if (srcBlocked) return false;
-
-    // ✅ FIX: Block non-job URLs
-    if (isNonJobUrl(item.slug)) return false;
-
-    // ✅ FIX: Items that have no meaningful job info (only category navigation items)
-    // jobs.json items have name+url but no dept/qual/lastDate — they're nav links
-    const hasJobInfo = item.dept || item.qual || item.lastDate || item.state ||
-                       (item.slug && item.slug.includes('job.html'));
-    if (!hasJobInfo) return false;
-
-    _seenSlugs.add(item.slug);
-    allData.push(item);
-    return true;
-  }
-
-  function installIndexProxy() {
-    // Agar tsjSearchIndex pehle se exist karta hai (script.js pehle load hua)
-    // to existing items absorb karo
-    if (Array.isArray(window.tsjSearchIndex)) {
-      let added = 0;
-      window.tsjSearchIndex.forEach(item => { if (absorbItem(item)) added++; });
-      if (added > 0) {
-        console.log('[smart-search] Absorbed', added, 'existing items. Total:', allData.length);
-      }
-    }
-
-    // Proxy array banao — script.js ke future .push() calls intercept honge
-    const _realArray = Array.isArray(window.tsjSearchIndex) ? window.tsjSearchIndex : [];
-    let _rebuildScheduled = false;
-
-    function scheduleRebuild() {
-      if (_rebuildScheduled) return;
-      _rebuildScheduled = true;
-      setTimeout(() => {
-        _rebuildScheduled = false;
-        console.log('[smart-search] Index updated. Total items:', allData.length);
-      }, 100);
-    }
-
-    window.tsjSearchIndex = new Proxy(_realArray, {
-      get(target, prop) {
-        return target[prop];
-      },
+    window.tsjSearchIndex = new Proxy(dummy, {
+      get(target, prop) { return target[prop]; },
       set(target, prop, value) {
-        target[prop] = value;
-        // Numeric index = new item pushed
-        if (!isNaN(prop)) {
-          if (absorbItem(value)) scheduleRebuild();
-        }
+        target[prop] = value;            // store silently — never touch allData
         return true;
-      }
+      },
     });
+
+    console.log('[smart-search] 🔒 tsjSearchIndex firewall active. ' +
+                'Data source: 4 approved JSON files only.');
   }
 
   /* ── INIT ───────────────────────────────────────────────── */
   function init() {
     injectStyles();
     loadFuse(() => buildFuse(allData));
-    loadJsonFiles(); // async, JSON se bhi data load karo
-    setupHeroSearch();  // heroSearch — all 3 JSON sources: title / name / job_title
+    loadJsonFiles(); // loads ONLY the 4 approved JSON files
+    setupHeroSearch();
     setupHeaderSearch();
     setupSearchPage();
 
-    // Proxy install karo — script.js ke push() seedha allData mein jayenge
-    installIndexProxy();
-
-    // Fallback polling — agar proxy miss kare
-    const pollIntervals = [300, 600, 1200, 2000, 3500, 5000, 8000];
-    let pi = 0;
-    function poll() {
-      if (!Array.isArray(window.tsjSearchIndex)) { if (++pi < pollIntervals.length) setTimeout(poll, pollIntervals[pi]); return; }
-      let added = 0;
-      window.tsjSearchIndex.forEach(item => { if (absorbItem(item)) added++; });
-      if (added > 0) console.log('[smart-search] Poll absorbed', added, 'items. Total:', allData.length);
-      if (++pi < pollIntervals.length) setTimeout(poll, pollIntervals[pi]);
-    }
-    setTimeout(poll, pollIntervals[0]);
+    // Block script.js from injecting tools/jobs/services into search
+    installIndexFirewall();
   }
 
   if (document.readyState === 'loading') {
