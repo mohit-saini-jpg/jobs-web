@@ -1770,19 +1770,22 @@
 
     let searchData = [];
     try {
-      const [dyn, jobs, tools, services, merged, daily, complete] = await Promise.all([
-        getJobsSections().catch(() => ({})),
-        getJSON("/jobs.json").catch(() => ({})),
-        getJSON("/tools.json").catch(() => ({})),
-        getJSON("/services.json").catch(() => ({})),
+      /* ── ONLY these 4 authoritative JSON files are used for search ──
+         jobs.json / tools.json / services.json are EXCLUDED intentionally.
+         ─────────────────────────────────────────────────────────────── */
+      const [merged, daily, complete, stateJobs] = await Promise.all([
         getJSON("merged_sarkari_data.json").catch(() => null),
         getJSON("dailyupdates.json").catch(() => null),
-        getJSON("Complete_Jobs_Full_Data.json").catch(() => null)
+        getJSON("Complete_Jobs_Full_Data.json").catch(() => null),
+        getJSON("state-jobs-data.json").catch(() => null)
       ]);
 
       const push = (name, url, src) => {
         if(!name || !url) return;
         if (isGarbageLink({name})) return;
+        // Block tools / services / category nav links
+        if (!url || url === '#') return;
+        if (/\/(tools|govt-services|category|about|contact|result\.html|admit-card\.html)\b/i.test(url)) return;
         searchData.push({ name: name.trim(), url: url.trim(), src });
       };
 
@@ -1799,7 +1802,12 @@
       if (daily) {
         const arr = Array.isArray(daily) ? daily : (Array.isArray(daily.sections) ? daily.sections : []);
         arr.forEach(sec => {
-          (sec.items || []).forEach(i => push(i.name || i.title, i.url || i.link || '#', sec.title || 'Update'));
+          (sec.items || []).forEach(i => {
+            const itemUrl = i.url || i.link || '';
+            // Only push job detail URLs (job.html) or valid sarkari links
+            if (!itemUrl || itemUrl === '#') return;
+            push(i.name || i.title, itemUrl, sec.title || 'Update');
+          });
         });
       }
 
@@ -1813,27 +1821,28 @@
             if (!title) return;
             const applyMode = (bd.application_mode || i.apply_mode || '').toLowerCase();
             const prefix = applyMode === 'offline' ? 'offline-' : '';
-            const slug = slugify(title);
+            const slug = i.slug || slugify(title);
             const href = slug ? 'job.html?slug=' + encodeURIComponent(prefix + slug) + '&section=' + encodeURIComponent(k.replace(/_/g,' ')) : '#';
             push(title, href, k.replace(/_/g,' '));
           });
         });
       }
 
-      /* 4. existing sources */
-      if (dyn.sections) {
-        dyn.sections.forEach(s => s.items?.forEach(i => push(i.name || i.title, i.url || i.link, s.title || "Update")));
-      }
-      [jobs.top_jobs, jobs.left_jobs, jobs.right_jobs].forEach(arr => {
-        arr?.forEach(i => push(i.name || i.title, i.url || i.link, "Category"));
-      });
-      if (tools) {
-        Object.keys(tools).forEach(k => {
-          if(Array.isArray(tools[k])) tools[k].forEach(t => push(t.name, t.url, "Tool"));
+      /* 4. state-jobs-data.json — structure: { sections: [{state, title, items:[{name,url,...}]}] } */
+      if (stateJobs && Array.isArray(stateJobs.sections)) {
+        stateJobs.sections.forEach(sec => {
+          const stateName = sec.state || sec.title || 'State Jobs';
+          (sec.items || []).forEach(item => {
+            const title = item.name || item.title || '';
+            if (!title) return;
+            // Build internal job.html link using slug
+            const slug = item.slug || slugify(title);
+            const href = slug
+              ? 'job.html?slug=' + encodeURIComponent(slug) + '&section=' + encodeURIComponent(stateName)
+              : (item.url || '#');
+            push(title, href, stateName + ' Jobs');
+          });
         });
-      }
-      if (services.services) {
-        services.services.forEach(s => push(s.name, "govt-services.html", "CSC Service"));
       }
     } catch (e) {}
 
