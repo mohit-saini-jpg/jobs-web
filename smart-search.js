@@ -90,6 +90,10 @@
     { title: 'Indian Army Agniveer Rally Admit Card 2026', dept: 'Indian Army', qual: '10th / 12th Pass', state: 'All India', cat: 'Admit Card', tags: 'Indian Army Agniveer Rally Admit Card 2026 Join Indian Army Rally Recruiting Year 2027 Agniveer GD Technical army agniveer admit card rally 2026 sarkari naukri 2026', slug: 'job.html?slug=sr_admit_card-indian-army-agniveer-rally-admit-card-2026-619d4b&section=Latest%20Jobs', lastDate: '', icon: 'fa-star', lastUpdated: '2026-05-14T00:00:00', sectionSource: 'Admit Cards' },
     { title: 'Haryana HPSC Civil Services HCS Pre Result 2026 for 102 Post', dept: 'Haryana PSC', qual: 'Graduation', state: 'Haryana', cat: 'Result', tags: 'Haryana HPSC Civil Services HCS Pre Result 2026 for 102 Post Haryana Public Service Commission HPSC HCS Civil Services haryana hpsc hcs result 2026 sarkari naukri 2026', slug: 'job.html?slug=sr_result-haryana-hpsc-civil-services-hcs-pre-result-2026-for-102-post-01cfcf&section=Latest%20Jobs', lastDate: '', icon: 'fa-location-dot', lastUpdated: '2026-05-14T00:00:00', sectionSource: 'Results' },
     { title: 'SSC Combined Hindi Translators JHT Online Form 2026 for 84 Post', dept: 'Staff Selection Commission', qual: 'Post Graduation Hindi', state: 'All India', cat: 'Latest Job', tags: 'SSC Combined Hindi Translators JHT Online Form 2026 for 84 Post Staff Selection Commission SSC Combined Hindi Translators Junior Senior ssc jht hindi translator 84 sarkari naukri 2026', slug: 'job.html?slug=sr_latest_jobs-ssc-combined-hindi-translators-jht-online-form-2026-for-84-post-ca7928&section=Latest%20Jobs', lastDate: '2026-05-14', icon: 'fa-medal', lastUpdated: '2026-05-14T00:00:00', sectionSource: 'Latest Jobs' },
+    // ✅ BPSSC entries - Bihar Police
+    { title: 'BPSSC Bihar Police Sub Inspector SI Mains Admit Card 2026', dept: 'Bihar Police BPSSC', qual: 'Graduation', state: 'Bihar', cat: 'Admit Card', tags: 'BPSSC Bihar Police Sub Inspector SI Mains Admit Card 2026 Bihar Police Subordinate Services Commission BPSSC Sub Inspector SI bpssc bihar police sub inspector admit card 2026 sarkari naukri 2026', slug: 'job.html?slug=bpssc-bihar-police-sub-inspector-si-mains-admit-card-2026', lastDate: '', icon: 'fa-shield-halved', lastUpdated: '2026-05-14T00:00:00', sectionSource: 'Admit Cards' },
+    { title: 'BPSSC Bihar Police Sub Inspector SI Online Form 2025 for 1799 Post', dept: 'Bihar Police Subordinate Services Commission', qual: 'Graduation', state: 'Bihar', cat: 'Latest Job', tags: 'BPSSC Bihar Police Sub Inspector SI Online Form 2025 Bihar Police SI 1799 bpssc bihar police sub inspector si 2025 sarkari naukri police', slug: 'job.html?slug=bpssc-bihar-police-sub-inspector-si-online-form-2025-for-1799-post', lastDate: '', icon: 'fa-shield-halved', lastUpdated: '2025-10-26T00:00:00', sectionSource: 'Latest Jobs' },
+    { title: 'BPSSC Havildar Instructor Online Form 2026 for 122 Post', dept: 'Bihar Police BPSSC', qual: '10+2', state: 'Bihar', cat: 'Latest Job', tags: 'BPSSC Havildar Instructor Online Form 2026 Bihar Police Subordinate Services Commission BPSSC Havildar Instructor bpssc havildar police 12th 122 sarkari naukri 2026', slug: 'job.html?slug=sr_latest_jobs-bpssc-havildar-instructor-online-form-2026-for-122-post-16100a&section=Latest%20Jobs', lastDate: '2026-06-01', icon: 'fa-shield-halved', lastUpdated: '2026-05-14T00:00:00', sectionSource: 'Latest Jobs' },
   ];
 
   /* ── STATE ──────────────────────────────────────────────── */
@@ -775,12 +779,13 @@
     if (meaningfulWords.length > 0 && titleMeaningfulHits === meaningfulWords.length) score += 60;
 
     // Tier 3: meaningful words in tags/dept/cat/sec/org/state/qual
+    // ✅ FIXED: Higher weights for tags (rich data source)
     meaningfulWords.forEach(w => {
-      if (tags.includes(w))  score += w.length >= 5 ? 10 : 5;
+      if (tags.includes(w))  score += w.length >= 5 ? 15 : 8;  // increased
       if (cat.includes(w))   score += 8;
-      if (dept.includes(w))  score += 6;
-      if (sec.includes(w))   score += 5;
-      if (org.includes(w))   score += 6;
+      if (dept.includes(w))  score += 8;  // increased
+      if (sec.includes(w))   score += 6;
+      if (org.includes(w))   score += 8;  // increased
       if (state.includes(w)) score += 7;
       if (qual.includes(w))  score += 5;
     });
@@ -790,8 +795,23 @@
     queryWords.forEach(w => { if (title.includes(w)) allWordsHit++; });
     if (allWordsHit === queryWords.length && queryWords.length >= 2) score += 50;
 
-    // Penalty: only stop words matched
-    if (titleMeaningfulHits === 0 && score > 0) score = Math.floor(score * 0.25);
+    // ✅ NEW Tier 4b: Partial match - even 1 meaningful word in title/tags gives score
+    // Handles "BPSSC Bihar Police Sub Inspector" when only "bpssc" or "bihar" matches
+    if (titleMeaningfulHits === 0 && meaningfulWords.length > 0) {
+      let anyTagHit = 0;
+      meaningfulWords.forEach(w => {
+        if (tags.includes(w)) anyTagHit++;
+      });
+      if (anyTagHit >= 1) score += anyTagHit * 8; // low score, will show after title matches
+    }
+
+    // ✅ NEW: Partial title match bonus - if >=1 meaningful word in title
+    if (titleMeaningfulHits >= 1 && titleMeaningfulHits < meaningfulWords.length) {
+      score += 10; // partial match bonus
+    }
+
+    // Penalty: only stop words matched AND no tag hits
+    if (titleMeaningfulHits === 0 && score > 0 && score < 20) score = Math.floor(score * 0.4);
 
     return score;
   }
@@ -804,10 +824,10 @@
     const queryWords      = q.split(/\s+/).filter(w => w.length >= 1);
     const meaningfulWords = queryWords.filter(w => w.length >= 2 && !STOP_WORDS.has(w));
 
-    // MIN_SCORE: tag-only penalty results in score ~5 (20*0.25).
-    // Require at least 15 so weak tag-only matches (e.g. BSNL JE for "upsssc junior engineer")
-    // are suppressed unless JSON is still loading (in which case lower bar avoids empty results).
-    const MIN_SCORE = jsonIndexReady ? 15 : 5;
+    // MIN_SCORE: ✅ FIXED - partial word matches bhi dikhao
+    // "BPSSC Bihar Police Sub Inspector" => agar koi bhi meaningful word mile toh show karo
+    // jsonIndexReady = false ho toh aur bhi loose rakho
+    const MIN_SCORE = jsonIndexReady ? 8 : 3;
 
     let results = allData
       .map(item => {
