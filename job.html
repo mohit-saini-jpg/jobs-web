@@ -995,7 +995,12 @@
         officialOnly(row && row.applyOnline)     ||
         officialOnly(row && row.officialWebsite) ||
         officialOnly(row && row.destUrl)         ||
-        officialOnly(_refUrl)                    || ''
+        officialOnly(_refUrl)                    ||
+        /* last resort: accept any URL including SR if nothing official found */
+        (row && row.applyOnline)     ||
+        (row && row.officialWebsite) ||
+        (row && row.destUrl)         ||
+        _refUrl                      || ''
       );
 
       /* ── Smart link categorization by title keyword ── */
@@ -1065,18 +1070,26 @@
         const seenHrefs = new Set();
 
         /* ── STEP 0: Main CTA URL — pehli row ke roop mein show karo ── */
-        /* btnMainCta hata diya gaya hai — ab ye link Important Links mein aata hai */
-        const _mainCtaUrl = normalizeUrl(
-          officialOnly((row && row.destUrl) || destUrl || _ctaRefUrl || '')
+        /* destUrl = renderJobPage ka parameter — already best URL hai run() se */
+        /* Pehle official URL try karo, fallback mein SR URL bhi accept karo */
+        const _officialMainUrl = normalizeUrl(
+          officialOnly((row && row.applyOnline)) ||
+          officialOnly((row && row.officialWebsite)) ||
+          officialOnly((row && row.officialWebsiteLink)) ||
+          officialOnly(_ctaRefUrl) || ''
         );
+        /* Agar official nahi mila to destUrl use karo (SR bhi ho sakta hai) */
+        const _mainCtaUrl = _officialMainUrl || normalizeUrl(destUrl || '');
         if (_mainCtaUrl && _mainCtaUrl !== '#') {
           seenHrefs.add(_mainCtaUrl);
+          const _isSRMain = isSRUrl(_mainCtaUrl);
           /* Determine best label for main link */
-          const _mainLabel = (row && row.applyOnline && officialOnly(row.applyOnline) === _mainCtaUrl)
+          const _mainLabel = (row && row.applyOnline && normalizeUrl(row.applyOnline) === _mainCtaUrl)
             ? 'Apply Online'
             : (row && (row.officialWebsite || row.officialWebsiteLink) &&
-               (officialOnly(row.officialWebsite) === _mainCtaUrl || officialOnly(row.officialWebsiteLink) === _mainCtaUrl))
+               (normalizeUrl(row.officialWebsite) === _mainCtaUrl || normalizeUrl(row.officialWebsiteLink) === _mainCtaUrl))
             ? 'Official Website / Main Page'
+            : _isSRMain ? 'Apply / View Details'
             : 'Apply Online / Main Page';
           allLinks.push({ href: _mainCtaUrl, label: _mainLabel, icon: 'fa-arrow-up-right-from-square', cls: 'green', btnLabel: 'Click Here' });
         }
