@@ -1608,23 +1608,41 @@
       const fpMatch = items.find(it => it.fp && noHash.endsWith(it.fp));
       if (fpMatch) return fpMatch;
 
-      /* Token-based fuzzy match on title (works for all items including dailyupdates) */
-      const tokens = noHash.split('-').filter(t => t.length > 2);
-      if (!tokens.length) return null;
-      let best = null, bestScore = 0;
-      for (const it of items) {
-        /* Normalize title for comparison — strip Hindi/Unicode, lowercase */
-        const ts = it.title.toLowerCase()
+      /* ── Normalize slug for title comparison ──
+         Convert slug back to comparable form:
+         - "and" → handle as word boundary (could be from & or literal "and")
+         - Remove common stop-words that are often dropped in slug generation
+         - Handle & symbol which becomes "and" in URLs but may be missing from generated slug */
+      function slugToNormTitle(s) {
+        return s.toLowerCase()
+          .replace(/-and-/g, '-')   /* "and" connector removal for matching */
+          .replace(/-+/g, ' ').trim();
+      }
+
+      function titleToNormSlug(t) {
+        return t.toLowerCase()
           .normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
           .replace(/[^\x00-\x7e]/g, ' ')
-          .replace(/[^a-z0-9]+/g, '-');
+          .replace(/&/g, ' and ')        /* & → and */
+          .replace(/[^a-z0-9]+/g, ' ').trim();
+      }
+
+      /* Token-based fuzzy match on title (works for all items including dailyupdates) */
+      /* Use noHash with and-normalization for better matching */
+      const normSlug = slugToNormTitle(noHash);
+      const tokens = normSlug.split(/\s+/).filter(t => t.length > 2);
+      if (!tokens.length) return null;
+
+      let best = null, bestScore = 0;
+      for (const it of items) {
+        /* Normalize title for comparison — strip Hindi/Unicode, handle & */
+        const ts = titleToNormSlug(it.title);
         const score = tokens.filter(t => ts.includes(t)).length / tokens.length;
         if (score > bestScore) { bestScore = score; best = it; }
       }
-      /* Threshold 0.6 — requires majority of slug tokens to match title.
-         Lower values (e.g. 0.35) caused wrong-job mapping when multiple jobs
-         share common tokens like "recruitment", "2026", "apply", "offline". */
-      return bestScore >= 0.6 ? best : null;
+      /* Threshold 0.55 — slightly lower to handle & vs "and" differences and long slugs.
+         Still high enough to avoid wrong-job mapping. */
+      return bestScore >= 0.55 ? best : null;
     }
 
     /* ── Main ── */
