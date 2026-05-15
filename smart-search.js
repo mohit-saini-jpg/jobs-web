@@ -208,24 +208,30 @@
   };
 
   /* Exact same slugify as script.js slugifyForJob */
+  /* ── slugifyTitle: matches script.js's slugify() exactly ──
+   * Used for Complete_Jobs_Full_Data.json, merged_sarkari_data.json,
+   * and state-jobs-data.json so URLs are identical to what script.js generates.
+   *
+   * KEY DIFFERENCES from the old NFKD version:
+   *  • '&' is removed (not converted to "and") — e.g. "Andaman & Nicobar" → "andaman-nicobar"
+   *  • '/' is removed (not converted to "-") — e.g. "CEN 01/2026" → "cen-012026"
+   *  • No NFKD normalisation (script.js doesn't use it)
+   */
   function slugifyTitle(raw) {
     return String(raw || '')
-      .normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
-      .replace(/&/g, ' and ').replace(/['']/g, '')
       .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '')
-      .replace(/-{2,}/g, '-')
-      .slice(0, 120) || 'official-link';
+      .replace(/[^a-z0-9\s-]/g, '')   // keep only letters, digits, spaces, hyphens
+      .replace(/[\s-]+/g, '-')         // collapse whitespace / hyphens → single '-'
+      .slice(0, 120)
+      .replace(/^-+|-+$/g, '') || 'official-link';
   }
 
   /* Build job.html href from a job object — same as index.html jobHref() */
   function buildJobHref(job, secId) {
     const bd = job.basic_details || {};
-    const slug = job.slug || slugifyTitle(
-      job.title || job.post_name ||
-      bd.job_title || bd.post_name || ''
-    );
+    const rawTitle = job.title || job.post_name ||
+                     bd.job_title || bd.post_name || '';
+    const slug = job.slug || slugifyTitle(rawTitle);
     if (!slug || slug === 'official-link') return job.source_url || job.url || job.link || '#';
     // Check apply_mode at top level AND inside basic_details.application_mode
     const applyMode = (job.apply_mode || bd.application_mode || '').toLowerCase();
