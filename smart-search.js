@@ -421,10 +421,32 @@
         const sections = Array.isArray(data.sections) ? data.sections
           : Array.isArray(data) ? data : [];
 
+        /* ── BLOCK non-job URLs: tools, external utilities, category nav ── */
+        const isBlockedUrl = (url) => {
+          if (!url || url === '#') return true;
+          // Block external tool/utility sites (not sarkari job pages)
+          if (/\/(tools|govt-services|category|about|contact)\b/i.test(url)) return true;
+          // Block external URLs that are clearly not job pages
+          if (/^https?:\/\//i.test(url)) {
+            // Allow only known sarkari/govt domains
+            const allowedDomains = /sarkarijob|sarkariresult|employment|naukri|rojgar|govt\.in|nic\.in|gov\.in|ssc\.nic|railway|ibps|upsc|bpsc|hpsc|rssb|crpf|army|navy|airforce|topsarkarijobs/i;
+            if (!allowedDomains.test(url)) return true;
+          }
+          return false;
+        };
+
+        /* ── BLOCK tool-like section titles ── */
+        const isToolSection = (title) => {
+          return /\b(tool|utility|converter|resizer|compressor|editor|calculator|generator|maker|checker)\b/i.test(title);
+        };
+
         sections.forEach(sec => {
           const secId    = String(sec.id    || sec.title || '').trim();
           const secTitle = String(sec.title || sec.id    || 'Update').trim();
           const secIcon  = (String(sec.icon || 'fa-bell')).replace(/^fa-solid\s+/, '');
+
+          // Skip entire tool/utility sections
+          if (isToolSection(secTitle)) return;
 
           (sec.items || []).forEach(item => {
             // dailyupdates items use 'name' as title
@@ -440,6 +462,9 @@
               href = item.url || item.link || '';
             }
             if (!href) return;
+
+            // Skip tool/utility items by URL
+            if (isBlockedUrl(href)) return;
 
             extra.push({
               title, slug: href,
