@@ -314,10 +314,15 @@
     const itemSec = String(item.sectionSource || item.dept || item.cat || '');
     if (nonJobSection.test(itemSec)) return false;
 
-    // 6. Block ALL external URLs — search index sirf internal job.html pages show kare
-    //    Real jobs: job.html?slug=... (internal)
-    //    External links (freejobalert, jagran, pdfdrive, image tools etc.) — BLOCK ALL
-    if (/^https?:\/\//i.test(slug)) return false;
+    // 6. Block external URLs that are clearly NOT job detail pages
+    //    Internal pages: job.html?slug=... — ALWAYS allow
+    //    External URLs: allow only if they look like a job page (not tools/image/pdf)
+    if (/^https?:\/\//i.test(slug)) {
+      // Block obvious non-job external pages
+      if (/image|photo|compress|convert|pdf.?tool|video|mp4|qr.?code|resizer|watermark/i.test(slug)) return false;
+      // Allow job-like external pages (freejobalert, sarkariresult, etc.)
+      // These come from dailyupdates.json sections with real job listings
+    }
 
     // 7. Block internal nav/category page links
     if (/\/(tools|govt-services|category|state-jobs\.html|about|contact|index\.html?)(\?|$)/i.test(slug)) return false;
@@ -344,7 +349,18 @@
     if (blocked > 0) console.log('[smart-search] Blocked', blocked, 'non-job items from index.');
     valid.forEach(item => {
       const key = dedupeKey(item.slug);
-      if (!seen.has(key)) { seen.add(key); allData.push(item); }
+      if (!seen.has(key)) {
+        seen.add(key);
+        // ✅ FIX: Ensure lastUpdated is always set — fallback to now so new items sort to top
+        if (!item.lastUpdated) item.lastUpdated = new Date().toISOString();
+        allData.push(item);
+      }
+    });
+    // ✅ FIX: Sort allData so newest items always at top
+    allData.sort((a, b) => {
+      const ta = a.lastUpdated ? new Date(a.lastUpdated).getTime() : 0;
+      const tb = b.lastUpdated ? new Date(b.lastUpdated).getTime() : 0;
+      return tb - ta;
     });
     // Refresh any active heroSearch with updated data
     loadFuse(() => {
@@ -485,24 +501,42 @@
         const sections = Array.isArray(data.sections) ? data.sections
           : Array.isArray(data) ? data : [];
 
-        /* WHITELIST: Only these section titles are allowed — rest are skipped */
-        const ALLOWED_SECTIONS = new Set([
-          'top headlines today',
-          'top headlines',
-          'headlines today',
-          'today headlines',
-          'latest jobs today',
-          'today jobs',
-          'new jobs today',
+        /* BLACKLIST: These non-job sections are always skipped.
+         * Baki SABHI sections allowed hain — jobs, admit cards, results, headlines sab.
+         * Pehle ka strict whitelist hata diya — isse dailyupdates.json ke results
+         * search mein nahi aa rahe the. */
+        const BLOCKED_SECTIONS = new Set([
+          'importantcsc pdf',
+          'importantcsc link',
+          'important csc pdf',
+          'important csc link',
+          'csc pdf',
+          'govt scheme',
+          'govt schemes',
+          'government scheme',
+          'yojana',
+          'yojna',
+          'khabar',
+          'latest khabar',
+          'study material',
+          'current affairs',
+          'employment news',
+          'international news',
+          'world news',
         ]);
 
         sections.forEach(sec => {
           const secTitle = String(sec.title || sec.id || '').trim();
           const secTitleLower = secTitle.toLowerCase();
 
-          // SKIP any section not in whitelist
-          if (!ALLOWED_SECTIONS.has(secTitleLower)) {
-            console.log('[smart-search] dailyupdates: Skipping section:', secTitle);
+          // SKIP only blocked non-job sections
+          if (BLOCKED_SECTIONS.has(secTitleLower)) {
+            console.log('[smart-search] dailyupdates: Skipping blocked section:', secTitle);
+            return;
+          }
+          // Also skip if section title matches non-job pattern
+          if (/csc.?(pdf|link)|govt.?scheme|yojana|yojna|khabar|study.?material|current.?affair|employment.?news|international.?news/i.test(secTitle)) {
+            console.log('[smart-search] dailyupdates: Skipping non-job section:', secTitle);
             return;
           }
 
@@ -513,27 +547,55 @@
             const title = String(item.name || item.title || '').trim();
             if (!title) return;
 
-            /* Only accept internal job.html links */
+            /* Build href: internal slug preferred, then relative URL, then external */
             let href = '';
             if (item.slug) {
               href = 'job.html?slug=' + encodeURIComponent(item.slug)
                    + '&section=' + encodeURIComponent(secId || secTitle);
             } else if (item.url && !item.url.startsWith('http')) {
               href = item.url; // relative internal URL
+            } else if (item.url) {
+              href = item.url; // external URL — allowed for job pages
+            } else if (item.link) {
+              href = item.link;
             }
-            // Skip if no internal link found
+            // Skip if no link found at all
             if (!href) return;
 
-            const duDate = item.date || item.last_date || '';
-            // Use date as lastUpdated proxy so newer daily items surface first
-            const duUpdated = item.updated_at || item.last_updated ||
-              (duDate && /\d{4}-\d{2}-\d{2}/.test(duDate) ? duDate + 'T00:00:00' : new Date().toISOString());
+            const duDate = item.date || item.lastDate || item.last_date || '';
+            
+            // ✅ FIX: lastUpdated — dailyupdates items are NEWEST data, so give them
+            // a very fresh timestamp so they appear at TOP in results.
+            // Priority: item.updated_at > item.postDate > item.date > section date > NOW
+            let duUpdated;
+            if (item.updated_at) {
+              duUpdated = item.updated_at;
+            } else if (item.postDate) {
+              // postDate format: "DD/MM/YYYY" → convert to ISO
+              const pd = String(item.postDate).split('/');
+              if (pd.length === 3) duUpdated = `${pd[2]}-${pd[1]}-${pd[0]}T00:00:00`;
+              else duUpdated = new Date().toISOString();
+            } else if (duDate && /\d{4}-\d{2}-\d{2}/.test(duDate)) {
+              duUpdated = duDate + 'T00:00:00';
+            } else {
+              // No date info → treat as today (newest)
+              duUpdated = new Date().toISOString();
+            }
+
+            // Determine category from section title
+            const catFromSec = /result/i.test(secTitle) ? 'Result'
+              : /admit.?card/i.test(secTitle) ? 'Admit Card'
+              : /answer.?key/i.test(secTitle) ? 'Answer Key'
+              : /admission/i.test(secTitle) ? 'Admission'
+              : 'Latest Job';
+
             extra.push({
               title, slug: href,
-              dept: secTitle,
-              qual: '', state: 'All India',
-              cat: 'Latest Job',
-              tags: title + ' ' + secTitle + ' sarkari naukri 2026',
+              dept: String(item.board || item.organization || item.dept || secTitle).trim(),
+              qual: String(item.qualification || '').trim(),
+              state: String(item.state || 'All India').trim(),
+              cat: catFromSec,
+              tags: title + ' ' + secTitle + ' ' + (item.board || '') + ' sarkari naukri 2026',
               lastDate: duDate,
               icon: secIcon || 'fa-bell',
               lastUpdated: duUpdated,
@@ -754,11 +816,12 @@
      *   Loads in background after 2s delay. Merges silently into allData.
      */
 
-    // Phase 1: Fast files — merged_sarkari_data.json + dailyupdates.json
-    const FAST_FILES = ['merged_sarkari_data.json', 'dailyupdates.json'];
-    Promise.allSettled(FAST_FILES.map(f => fetchAndIndex(f))).then(() => {
+    // Phase 1: FASTEST — dailyupdates.json FIRST (freshest data, ~50KB)
+    // Yeh file sabse chhoti aur sabse fresh hai — pehle load hogi taaki
+    // latest jobs search results mein sabse upar dikhein.
+    fetchAndIndex('dailyupdates.json').then(() => {
+      console.log('[smart-search] ⚡ dailyupdates loaded first. allData:', allData.length);
       jsonIndexReady = true;
-      console.log('[smart-search] \u2705 Phase 1 done. Total:', allData.length);
       loadFuse(() => {
         buildFuse(allData);
         const heroInput = document.getElementById('heroSearch');
@@ -767,14 +830,22 @@
         }
       });
 
-      // Phase 2: state-jobs-data.json — loads after Phase 1
-      fetchAndIndex('state-jobs-data.json').then(() => {
-        console.log('[smart-search] \u2705 Phase 2 done (state-jobs). Total:', allData.length);
-        if (typeof buildFuse === 'function') buildFuse(allData);
-        const heroInput = document.getElementById('heroSearch');
-        if (heroInput && heroInput.value.trim().length >= 1) {
-          heroInput.dispatchEvent(new Event('input'));
-        }
+      // Phase 2: merged_sarkari_data.json (~600KB)
+      fetchAndIndex('merged_sarkari_data.json').then(() => {
+        console.log('[smart-search] ✅ Phase 2 done (merged_sarkari). Total:', allData.length);
+        loadFuse(() => {
+          buildFuse(allData);
+          const heroInput = document.getElementById('heroSearch');
+          if (heroInput && heroInput.value.trim().length >= 1) {
+            heroInput.dispatchEvent(new Event('input'));
+          }
+        });
+
+        // Phase 3: state-jobs-data.json — loads after Phase 2
+        fetchAndIndex('state-jobs-data.json').then(() => {
+          console.log('[smart-search] ✅ Phase 3 done (state-jobs). Total:', allData.length);
+          if (typeof buildFuse === 'function') buildFuse(allData);
+        });
       });
     });
 
@@ -887,6 +958,14 @@
     // Penalty: only stop words matched AND no tag hits
     if (titleMeaningfulHits === 0 && score > 0 && score < 20) score = Math.floor(score * 0.4);
 
+    // ✅ FIX: Freshness bonus — items updated in last 3 days get score boost so they surface on top
+    if (score > 0 && item.lastUpdated) {
+      const diffDays = (Date.now() - new Date(item.lastUpdated).getTime()) / 86400000;
+      if (diffDays <= 1) score += 30;       // today/yesterday → +30
+      else if (diffDays <= 3) score += 15;  // 2-3 days → +15
+      else if (diffDays <= 7) score += 5;   // this week → +5
+    }
+
     return score;
   }
 
@@ -965,12 +1044,20 @@
     const sectionLabel = item.sectionSource || item.cat || getSectionName(item.slug);
     // Dept: show org/dept but not if it's the same as sectionSource
     const deptLabel = item.dept && item.dept !== sectionLabel ? item.dept : '';
+    
+    // ✅ NEW: Show "NEW" badge if updated within last 7 days
+    let isNew = false;
+    if (item.lastUpdated) {
+      const diffDays = (Date.now() - new Date(item.lastUpdated).getTime()) / 86400000;
+      isNew = diffDays <= 7;
+    }
+    
     return `
       <div class="tsj-result-card">
         <div class="tsj-rc-head">
           <span class="tsj-rc-icon" aria-hidden="true"><i class="fa-solid ${esc(item.icon || 'fa-briefcase')}"></i></span>
           <div class="tsj-rc-info">
-            <a class="tsj-rc-title" href="${esc(slug)}">${highlight(item.title, query)}</a>
+            <a class="tsj-rc-title" href="${esc(slug)}">${isNew ? '<span class="tsj-new-badge">NEW</span> ' : ''}${highlight(item.title, query)}</a>
             ${deptLabel ? `<div class="tsj-rc-dept">${esc(deptLabel)}</div>` : ''}
           </div>
         </div>
@@ -1207,6 +1294,15 @@
       .tsj-view-all-results:hover { background: rgba(255,255,255,.25); }
 
 
+
+      /* ── NEW badge ── */
+      .tsj-new-badge {
+        display: inline-flex; align-items: center;
+        background: #16a34a; color: #fff;
+        font-size: .58rem; font-weight: 900; padding: 1px 5px;
+        border-radius: 4px; margin-right: 3px; vertical-align: middle;
+        letter-spacing: .05em;
+      }
 
       @media (max-width: 480px) {
         #tsjDrop { border-radius: 10px; max-height: 400px; }
