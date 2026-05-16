@@ -614,14 +614,19 @@
           refreshOpenDropdown();
         });
 
-        // Phase 2: heavy file background
-        setTimeout(function() {
+        // Phase 2: heavy file — deferred to idle time, not blocking
+        var loadHeavy = function() {
           fetchAndIndex('Complete_Jobs_Full_Data.json').then(function(count) {
             console.log('[smart-search] ✅ Phase 2 done. +' + count + ' items. Total:', allData.length);
             buildFuse(allData);
             refreshOpenDropdown();
           });
-        }, 2000);
+        };
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(loadHeavy, { timeout: 8000 });
+        } else {
+          setTimeout(loadHeavy, 5000);
+        }
       })
       .catch(function(err) {
         console.error('[smart-search] Phase 1 error:', err);
@@ -800,7 +805,8 @@
       drop.style.maxHeight = '420px';
       drop.style.zIndex    = '99999';
     }
-    positionDrop();
+    // Defer initial position measurement to after first paint — avoids forced reflow
+    requestAnimationFrame(function() { requestAnimationFrame(positionDrop); });
     window.addEventListener('resize', positionDrop);
     window.addEventListener('scroll', function() {
       if (drop.classList.contains('open')) positionDrop();
@@ -1079,12 +1085,20 @@
   function init() {
     injectStyles();
     installIndexFirewall();
-    loadFuse(function(){ buildFuse(allData); });
-    loadJsonFiles();
+    // Delay JSON + Fuse.js loading until idle — not blocking LCP
+    var delayedLoad = function() {
+      loadFuse(function(){ buildFuse(allData); });
+      loadJsonFiles();
+      startAutoRefresh();
+    };
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(delayedLoad, { timeout: 3000 });
+    } else {
+      setTimeout(delayedLoad, 1500);
+    }
     setupHeroSearch();
     setupHeaderSearch();
     setupSearchPage();
-    startAutoRefresh();
     console.log('[smart-search] v3.0 initialized ✅');
   }
 
