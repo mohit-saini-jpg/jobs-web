@@ -521,6 +521,11 @@
                 <span id="nonJobCtaText">Visit Official Page</span>
               </a>
             </div>
+            <!-- Non-Job Important Links -->
+            <div class="jp-card" id="nonJobLinksCard" style="display:none;">
+              <div class="jp-sec-head"><i class="fa-solid fa-link"></i> Important Links</div>
+              <div class="jp-actions" id="nonJobLinksActions"></div>
+            </div>
           </div>
 
           <!-- Tips card -->
@@ -826,7 +831,15 @@
       const _ctaRefUrl = (() => {
         try { return new URLSearchParams(window.location.search).get('ref') || ''; } catch(_){ return ''; }
       })();
-      const finalDest = (row && row.destUrl) || destUrl || normalizeUrl(_ctaRefUrl) || '';
+      /* ── CTA: try all available official URLs in priority order ── */
+      const finalDest = normalizeUrl(
+        (row && row.destUrl) ||
+        destUrl ||
+        normalizeUrl(_ctaRefUrl) ||
+        (parsed && (parsed.applyOnline || parsed.officialWebsite || parsed.notifPdf ||
+                    parsed.officialWebsiteLink || parsed.officialNotifPdfLink || parsed.formPdfFreeLink)) ||
+        ''
+      );
       if (finalDest) {
         mainCta.href = finalDest;
         /* Show source name in sub-label */
@@ -838,6 +851,8 @@
                              : isSS  ? 'SarkariResultShine.com पर जाएँ'
                              : 'Click to visit the official recruitment portal';
         }
+        mainCta.style.opacity = '';
+        mainCta.style.pointerEvents = '';
       } else {
         mainCta.style.opacity = '.5'; mainCta.style.pointerEvents = 'none';
       }
@@ -1164,7 +1179,7 @@
       injectSEO(name, rawSlug, parsed);
     }
 
-    function renderNonJobPage(name, destUrl) {
+    function renderNonJobPage(name, destUrl, jobRow) {
       layoutJob.style.display = 'none';
       layoutNonJob.style.display = 'block';
 
@@ -1178,6 +1193,74 @@
       cta.style.background = typeInfo.color;
       cta.href = destUrl || '#';
       document.getElementById('nonJobCtaText').textContent = typeInfo.label.includes('PDF') ? 'Download / View PDF' : typeInfo.label.includes('Scheme') ? 'View Govt Scheme' : 'Visit Official Page';
+
+      /* ── Important Links for Non-Job page ── */
+      const nlCard    = document.getElementById('nonJobLinksCard');
+      const nlActions = document.getElementById('nonJobLinksActions');
+      if (nlCard && nlActions) {
+        const seenNJ = new Set();
+        const njLinks = [];
+
+        /* Helper: add link if valid & not duplicate */
+        function addNJLink(href, label, icon, cls, sub) {
+          const h = normalizeUrl(safe(href));
+          if (!h || h === '#' || isSRUrl(h) || seenNJ.has(h)) return;
+          seenNJ.add(h);
+          njLinks.push({ href: h, label, icon, cls, sub });
+        }
+
+        /* 1. From parsed row (important_links obj) via usefulLinks */
+        const rowUsefulLinks = (jobRow && jobRow.usefulLinks) || [];
+        rowUsefulLinks.forEach(ul => {
+          const t = safe(ul.title || ul.name || '');
+          if (!t) return;
+          const rawLinks = ul.links || ul.url || ul.href || '';
+          const linkArr = Array.isArray(rawLinks) ? rawLinks : [rawLinks];
+          linkArr.forEach((rawUrl, idx) => {
+            const cat = categorizeLinkByTitle(t);
+            const label = linkArr.length > 1 ? `${t} (${idx+1})` : t;
+            addNJLink(rawUrl, label, cat.icon, cat.cls, cat.sub);
+          });
+        });
+
+        /* 2. Static row fields */
+        if (jobRow) {
+          addNJLink(jobRow.applyOnline,          'Apply Online',              'fa-paper-plane',      'jp-btn-green',  'Apply Now');
+          addNJLink(jobRow.candidateLogin,       'Candidate Login',           'fa-right-to-bracket', 'jp-btn-green',  'Login Here');
+          addNJLink(jobRow.notifPdf,             'Notification PDF',          'fa-file-pdf',         'jp-btn-blue',   'View PDF');
+          addNJLink(jobRow.officialNotifPdfLink, 'Official Notification PDF', 'fa-file-pdf',         'jp-btn-blue',   'Download PDF');
+          addNJLink(jobRow.formPdfFreeLink,      'Download Form (Free PDF)',  'fa-file-arrow-down',  'jp-btn-orange', 'Free PDF');
+          addNJLink(jobRow.admitCard,            'Admit Card',                'fa-id-card',          'jp-btn-orange', 'Download Now');
+          addNJLink(jobRow.result,               'Result',                    'fa-trophy',           'jp-btn-orange', 'View Result');
+          addNJLink(jobRow.answerKey,            'Answer Key',                'fa-key',              'jp-btn-blue',   'Download Now');
+          addNJLink(jobRow.syllabus,             'Syllabus',                  'fa-book-open',        'jp-btn-blue',   'Download Now');
+          addNJLink(jobRow.officialWebsite,      'Official Website',          'fa-globe',            'jp-btn-red',    'Visit Now');
+          addNJLink(jobRow.officialWebsiteLink,  'Official Website',          'fa-globe',            'jp-btn-red',    'Visit Now');
+        }
+
+        /* 3. Fallback: destUrl itself */
+        if (destUrl) {
+          const isPdf = destUrl.toLowerCase().includes('.pdf');
+          addNJLink(destUrl,
+            isPdf ? 'Download PDF' : 'Visit Official Page',
+            isPdf ? 'fa-file-pdf'  : 'fa-globe',
+            isPdf ? 'jp-btn-blue'  : 'jp-btn-red',
+            isPdf ? 'Download Now' : 'Visit Now');
+        }
+
+        if (njLinks.length > 0) {
+          nlCard.style.display = '';
+          nlActions.innerHTML = njLinks.map(lk =>
+            `<a href="${lk.href}" target="_blank" rel="noopener" class="jp-btn ${lk.cls}">
+              <span><i class="fa-solid ${lk.icon}"></i> ${lk.label.slice(0,55)}</span>
+              <span class="jp-btn-sub">${lk.sub}</span>
+            </a>`
+          ).join('');
+        } else {
+          nlCard.style.display = '';
+          nlActions.innerHTML = `<p style="color:#64748b;font-size:.83rem;padding:4px;">Links not available. Please check official website.</p>`;
+        }
+      }
 
       injectSEO(name, rawSlug, null);
     }
@@ -1246,15 +1329,34 @@
       const _ilRaw = job.important_links || job.important_links_obj || {};
       /* Human-readable label map for known keys */
       const _IL_LABELS = {
-        click_here:          'Click Here',
-        click_here_to_apply: 'Click Here to Apply',
-        apply_online:        'Apply Online',
-        notification_pdf:    'Notification PDF',
-        download_pdf:        'Download PDF',
-        official_website:    'Official Website',
-        visit_website:       'Official Website',
-        login:               'Candidate Login',
-        result:              'Result',
+        click_here:                     'Click Here',
+        click_here_to_apply:            'Apply Online',
+        apply_online:                   'Apply Online',
+        apply_link:                     'Apply Online',
+        registration:                   'Registration Link',
+        notification_pdf:               'Notification PDF',
+        download_pdf:                   'Download PDF',
+        download_notification:          'Download Notification',
+        official_notification:          'Official Notification',
+        official_website:               'Official Website',
+        visit_website:                  'Official Website',
+        official_website_link:          'Official Website',
+        login:                          'Candidate Login',
+        candidate_login:                'Candidate Login',
+        result:                         'Result',
+        result_link:                    'Result',
+        admit_card:                     'Admit Card',
+        admit_card_link:                'Admit Card',
+        answer_key:                     'Answer Key',
+        final_answer_key:               'Answer Key',
+        syllabus:                       'Syllabus',
+        syllabus_pdf:                   'Syllabus PDF',
+        merit_list:                     'Merit List',
+        score_card:                     'Score Card',
+        exam_city:                      'Exam City Details',
+        counselling:                    'Counselling Link',
+        form_pdf_free_link:             'Download Form (Free PDF)',
+        official_notification_pdf_link: 'Official Notification PDF',
       };
       /* Build synthetic usefulLinks entries from important_links object */
       const _ilEntries = [];
@@ -1278,11 +1380,26 @@
           });
         }
       }
-      /* Merge: useful_links array first, then important_links entries
+      /* Also add top-level flat link fields (merged_sarkari / offline form jobs) */
+      const _flatFieldLinks = [];
+      const _flatFields = [
+        { key: 'form_pdf_free_link',             label: 'Download Form (Free PDF)' },
+        { key: 'official_notification_pdf_link', label: 'Official Notification PDF' },
+        { key: 'official_website_link',          label: 'Official Website' },
+      ];
+      _flatFields.forEach(({ key, label }) => {
+        const href = safe(job[key] || '');
+        if (href && /^https?:\/\//i.test(href)) {
+          _flatFieldLinks.push({ title: label, url: href });
+        }
+      });
+
+      /* Merge: useful_links array first, then important_links entries, then flat fields
          (dedup by URL is handled in the renderer via seenHrefs)          */
       const usefulLinks = [
         ...(Array.isArray(job.useful_links) ? job.useful_links : []),
-        ..._ilEntries
+        ..._ilEntries,
+        ..._flatFieldLinks
       ];
       function getUsefulLink(rxList) {
         for (const ul of usefulLinks) {
@@ -1714,7 +1831,7 @@
         } else if (isJobItem(humanTitle)) {
           renderJobPage(humanTitle, '', parseJob(humanTitle), null);
         } else {
-          renderNonJobPage(humanTitle, '');
+          renderNonJobPage(humanTitle, '', null);
           /* Hide CTA only if there's truly no URL */
           ['btnMainCta','btnNonJobCta'].forEach(id => {
             const el = document.getElementById(id);
@@ -1729,7 +1846,7 @@
           renderJobPage(name, destUrl, parseJob(name), Object.assign({}, row, { destUrl }));
         } else {
           /* Non-job page (schemes, khabar, etc.) — ALWAYS show Click Here if URL exists */
-          renderNonJobPage(name, destUrl);
+          renderNonJobPage(name, destUrl, row);
           if (!destUrl) {
             ['btnMainCta','btnNonJobCta'].forEach(id => {
               const el = document.getElementById(id);
