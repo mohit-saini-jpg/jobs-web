@@ -305,14 +305,14 @@
     const LONE_STATES = new Set(['assam','manipur','sikkim','meghalaya','tripura','nagaland','mizoram','goa','himachal','uttarakhand','chhattisgarh','jharkhand','telangana','odisha','maharashtra','gujarat','punjab','haryana','bihar','rajasthan']);
     if (LONE_STATES.has(title.toLowerCase().trim())) return false;
 
-    // 5. Block tool/utility items by title
-    if (/\b(image.?resizer|image.?quality|pdf.?tool|video.?compress|mp4.?to|photo.?edit|qr.?code|word.?to|compress.?image|convert.?image)\b/i.test(title)) return false;
+    // 5. Block non-job content by title keywords
+    const nonJobTitleRx = /\b(image.?resizer|image.?quality|pdf.?tool|video.?compress|mp4.?to|photo.?edit|qr.?code|word.?to|compress.?image|convert.?image|e.?book|ebook|helpdesk|international.?news|employment.?news|selection.?process|photo.?signature|signature.?joiner|study.?material|current.?affairs|answer.?key|syllabus|cut.?off|mock.?test|news.?hindi|world.?news|jagran|ndtv|amar.?ujala|dainik.?bhaskar)\b/i;
+    if (nonJobTitleRx.test(title)) return false;
 
-    // 6. Block external URLs that are clearly tools/utilities (not govt/sarkari)
-    if (/^https?:\/\//i.test(slug)) {
-      const allowedExternal = /sarkarijob|sarkariresult|employment|naukri|rojgar|\.gov\.in|\.nic\.in|\.edu\.in|ssc\.gov|railway\.gov|ibps|upsc\.gov|bpsc|hpsc|rssb|crpf\.gov|joinindianarmy|indiannavy|indianairforce|topsarkarijobs/i;
-      if (!allowedExternal.test(slug)) return false;
-    }
+    // 6. Block ALL external URLs — search index sirf internal job.html pages show kare
+    //    Real jobs: job.html?slug=... (internal)
+    //    External links (freejobalert, jagran, pdfdrive, image tools etc.) — BLOCK ALL
+    if (/^https?:\/\//i.test(slug)) return false;
 
     // 7. Block internal nav/category page links
     if (/\/(tools|govt-services|category|state-jobs\.html|about|contact|index\.html?)(\?|$)/i.test(slug)) return false;
