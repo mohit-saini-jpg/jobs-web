@@ -547,7 +547,11 @@
       if (fetchFailed) return;
     }
 
-    (data.sections || []).forEach((sec) => {
+    // ── PROGRESSIVE RENDERING: render first 4 sections immediately, rest on scroll ──
+    const sections = data.sections || [];
+    const INITIAL_COUNT = 4; // render above-fold sections instantly
+
+    function renderSection(sec) {
       const title = safe(sec.title) || "Updates";
       const baseColor = safe(sec.color) || "#0284c7";
       const icon = safe(sec.icon) || "fa-solid fa-briefcase";
@@ -650,7 +654,42 @@
       } else if (listWrap) {
         listWrap.classList.add("scrolled-to-end"); // no scroll needed, no shadow
       }
-    });
+    } // end renderSection()
+
+    // Render first INITIAL_COUNT sections immediately (above fold)
+    sections.slice(0, INITIAL_COUNT).forEach(renderSection);
+
+    // Render remaining sections progressively using IntersectionObserver
+    if (sections.length > INITIAL_COUNT) {
+      const remaining = sections.slice(INITIAL_COUNT);
+      let remainingIndex = 0;
+
+      // Create sentinel element at end of wrap
+      const sentinel = document.createElement("div");
+      sentinel.style.cssText = "height:1px;width:100%;";
+      wrap.appendChild(sentinel);
+
+      if ("IntersectionObserver" in window) {
+        const obs = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            // Render next batch of sections (4 at a time)
+            const batch = remaining.slice(remainingIndex, remainingIndex + 4);
+            batch.forEach(renderSection);
+            remainingIndex += 4;
+            if (remainingIndex >= remaining.length) {
+              obs.disconnect();
+              sentinel.remove();
+            }
+          });
+        }, { rootMargin: "300px" });
+        obs.observe(sentinel);
+      } else {
+        // Fallback: render all
+        remaining.forEach(renderSection);
+        sentinel.remove();
+      }
+    }
   }
 
   /* ─────────────────────────────────────────────────────────────────
@@ -787,7 +826,31 @@
     }
 
     const sections = Array.isArray(data.sections) ? data.sections : [];
-    sections.forEach(sec => buildSectionCard(sec, dailyWrap));
+    // Render first 2 immediately, rest lazily
+    const INITIAL = 2;
+    sections.slice(0, INITIAL).forEach(sec => buildSectionCard(sec, dailyWrap));
+
+    if (sections.length > INITIAL) {
+      const remaining = sections.slice(INITIAL);
+      let idx = 0;
+      const sentinel = document.createElement("div");
+      sentinel.style.cssText = "height:1px;width:100%;";
+      dailyWrap.appendChild(sentinel);
+      if ("IntersectionObserver" in window) {
+        const obs = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            remaining.slice(idx, idx + 4).forEach(sec => buildSectionCard(sec, dailyWrap));
+            idx += 4;
+            if (idx >= remaining.length) { obs.disconnect(); sentinel.remove(); }
+          });
+        }, { rootMargin: "400px" });
+        obs.observe(sentinel);
+      } else {
+        remaining.forEach(sec => buildSectionCard(sec, dailyWrap));
+        sentinel.remove();
+      }
+    }
   }
 
   // ✅ DISABLED — home-quicklinks-wrap section permanently removed from all pages
@@ -1960,7 +2023,15 @@
 
     if (page === "index.html" || page === "") {
       await renderHomepageSections();
-      await renderDailyUpdatesSections();   // ← dailyupdates.json sections (below dynamic-sections)
+      // Defer below-fold daily updates sections — not in critical path
+      var deferDailyUpdates = function() {
+        renderDailyUpdatesSections();
+      };
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(deferDailyUpdates, { timeout: 3000 });
+      } else {
+        setTimeout(deferDailyUpdates, 1500);
+      }
       removeHomeMainPageCtaLinks();
     }
     
