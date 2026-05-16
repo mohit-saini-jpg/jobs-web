@@ -48,29 +48,13 @@
   ];
 
   /* ── STATE ──────────────────────────────────────────────── */
-  let allData = [];          // merged index — title-key based, multi-source
+  let allData = [];
   let fuseInstance = null;
   let fuseLoaded = false;
   let activeIndex = -1;
   let suggestItems = [];
   let searchReady = false;
   let lastJsonHashes = {};
-  // jsonFileMeta: tracks fetchedAt timestamp per file for priority sorting
-  let jsonFileMeta = {};     // { fileName: { fetchedAt: Date.now() } }
-
-  /* ── SOURCE DISPLAY NAMES ────────────────────────────────── */
-  const SOURCE_LABELS = {
-    'dailyupdates.json':           'Daily Updates',
-    'merged_sarkari_data.json':    'Sarkari Data',
-    'Complete_Jobs_Full_Data.json':'Full Jobs Data',
-    'state-jobs-data.json':        'State Jobs',
-  };
-  const SOURCE_COLORS = {
-    'dailyupdates.json':           '#fef3c7|#b45309',  // amber
-    'merged_sarkari_data.json':    '#eff6ff|#1d4ed8',  // blue
-    'Complete_Jobs_Full_Data.json':'#f0fdf4|#16a34a',  // green
-    'state-jobs-data.json':        '#fdf4ff|#7c3aed',  // purple
-  };
 
   /* ── UTILS ──────────────────────────────────────────────── */
   function esc(s) {
@@ -158,20 +142,6 @@
     }
   }
 
-  /* ── TITLE-BASED MERGE KEY ───────────────────────────────── */
-  // Normalize title for grouping same job from different JSONs
-  function titleMergeKey(title) {
-    // Normalize + sort words alphabetically → order-independent match
-    return String(title || '')
-      .toLowerCase()
-      .replace(/[^a-z0-9\s]/g, ' ')
-      .replace(/\b(recruitment|2026|2025|2024|apply|online|offline|notification|for|and|the|of|posts?|latest|new)\b/g, '')
-      .replace(/\s+/g, ' ')
-      .trim()
-      .split(' ').filter(Boolean).sort().join(' ')
-      .slice(0, 80);
-  }
-
   /* ── URL BUILDERS ───────────────────────────────────────── */
   function buildJobHref(job, secId) {
     var bd = job.basic_details || {};
@@ -199,87 +169,24 @@
     ).trim();
   }
 
-  /* ══════════════════════════════════════════════════════════
-   * MULTI-SOURCE MERGE INTO allData
-   *
-   * Strategy:
-   *  - Group by titleMergeKey (normalized title similarity)
-   *  - Agar same title 2+ JSONs me ho → DONO sources track karo
-   *  - sources[] array har item ke sath — each: {label, fileName, slug, fetchedAt}
-   *  - allSources combine hote hain existing item me, dono show hote hain
-   *  - Duplicate slugs same source se silently drop hote hain
-   *  - Primary slug = latest fetchedAt source ka slug
-   * ══════════════════════════════════════════════════════════ */
-  function mergeItems(extra, fileName) {
+  /* ── MERGE INTO allData ─────────────────────────────────── */
+  function mergeItems(extra) {
     if (!extra.length) return false;
-
-    // Build title-key → index map for fast lookup
-    var titleKeyMap = {};
-    allData.forEach(function(d, i) {
-      var tk = d._titleKey;
-      if (tk) titleKeyMap[tk] = i;
-    });
-
+    var seen = {};
+    allData.forEach(function(d){ seen[dedupeKey(d.slug)] = true; });
     var added = 0;
-    var updated = 0;
-
     extra.forEach(function(item) {
-      if (!item.title) return;
-      if (!item.lastUpdated) item.lastUpdated = new Date().toISOString();
-
-      var tk = titleMergeKey(item.title);
-      item._titleKey = tk;
-
-      // File fetch time — for cross-JSON priority
-      var fileFetchedAt = (jsonFileMeta[fileName] || {}).fetchedAt || Date.now();
-      item._fileFetchedAt = fileFetchedAt;
-      item._sourceFile = fileName;
-
-      // Source entry for this item
-      var srcEntry = {
-        label:      SOURCE_LABELS[fileName] || fileName,
-        fileName:   fileName,
-        slug:       item.slug || '',
-        section:    item.sectionSource || item.cat || '',
-        fetchedAt:  fileFetchedAt,
-      };
-
-      if (titleKeyMap.hasOwnProperty(tk)) {
-        // ── Existing item — add source if not duplicate ──────
-        var existing = allData[titleKeyMap[tk]];
-        if (!existing.sources) existing.sources = [];
-
-        // Check if this exact source+slug already present
-        var alreadyHasSrc = existing.sources.some(function(s) {
-          return s.fileName === fileName && s.slug === item.slug;
-        });
-        if (!alreadyHasSrc) {
-          existing.sources.push(srcEntry);
-          // Update primary href to the latest-fetched source
-          existing.sources.sort(function(a,b){ return b.fetchedAt - a.fetchedAt; });
-          // Keep slug of most-recent source as primary
-          existing.slug = existing.sources[0].slug || existing.slug;
-          // Merge tags
-          if (item.tags) existing.tags = (existing.tags || '') + ' ' + item.tags;
-          updated++;
-        }
-        return;
+      if (!item.title || !item.slug) return;
+      var key = dedupeKey(item.slug);
+      if (!seen[key]) {
+        seen[key] = true;
+        if (!item.lastUpdated) item.lastUpdated = new Date().toISOString();
+        allData.push(item);
+        added++;
       }
-
-      // ── New item ─────────────────────────────────────────
-      if (!item.slug) return;  // need at least a slug for navigation
-      item.sources = [srcEntry];
-      allData.push(item);
-      titleKeyMap[tk] = allData.length - 1;
-      added++;
     });
-
-    if (added > 0 || updated > 0) {
-      // Sort: latest fetchedAt file first, then lastUpdated within same file
+    if (added > 0) {
       allData.sort(function(a, b) {
-        var fa = a._fileFetchedAt || 0;
-        var fb = b._fileFetchedAt || 0;
-        if (fb !== fa) return fb - fa;
         var ta = a.lastUpdated ? new Date(a.lastUpdated).getTime() : 0;
         var tb = b.lastUpdated ? new Date(b.lastUpdated).getTime() : 0;
         return tb - ta;
@@ -485,79 +392,37 @@
         var handledKeys = {};
         Object.keys(COMPLETE_JOBS_META).forEach(function(k){ handledKeys[k] = true; });
 
-        /* ── Category priority: lower number = shown as PRIMARY section ── */
-        /* Same job appears in multiple cats (8TH_Pass + Diploma + Any_Graduate etc) */
-        /* We pick the BEST (most specific/lowest qual) category as display label   */
-        /* All other cats get added to tags[] for searchability — not as extra cards */
-        var CAT_PRIORITY = {
-          '8TH_Pass':1, '10TH_Pass':2, '12TH_Pass':3, 'ITI':4, 'Diploma':5,
-          'B_Com':6, 'B_Tech_BE':7, 'Any_Graduate':8, 'Any_Post_Graduate':9,
-          'Teaching_Faculty':10, 'Bank_Jobs':11, 'Medical_Hospital':12,
-          'Police_Defence':13, 'Railway_Jobs':14, 'SSC_Jobs':15, 'Haryana_Jobs':16,
-          'Defence_Jobs':17, 'UPSC_Jobs':18, 'Last_Date_Reminder':19,
-          'Latest_Notifications':20,
-        };
-
-        /* STEP 1: Collect all entries grouped by titleKey (within Complete_Jobs only) */
-        var cjTitleMap = {};  /* titleKey → { bestCatKey, bestPriority, job, allCatIds[] } */
-
         Object.keys(COMPLETE_JOBS_META).forEach(function(catKey) {
-          var priority = CAT_PRIORITY[catKey] || 99;
+          var meta = COMPLETE_JOBS_META[catKey];
           (Array.isArray(data[catKey]) ? data[catKey] : []).forEach(function(job) {
             var title = getJobTitle(job);
             if (!title) return;
-            var tk = titleMergeKey(title);
-            if (!cjTitleMap[tk]) {
-              cjTitleMap[tk] = { bestCatKey: catKey, bestPriority: priority, job: job, allCatIds: [] };
-            } else if (priority < cjTitleMap[tk].bestPriority) {
-              /* Better (more specific) category found — use it as primary */
-              cjTitleMap[tk].allCatIds.push(COMPLETE_JOBS_META[cjTitleMap[tk].bestCatKey].id);
-              cjTitleMap[tk].bestCatKey = catKey;
-              cjTitleMap[tk].bestPriority = priority;
-              cjTitleMap[tk].job = job;
-            } else {
-              /* Secondary category — add to tags only */
-              cjTitleMap[tk].allCatIds.push(COMPLETE_JOBS_META[catKey].id);
-            }
+            var org  = getJobOrg(job);
+            var bd   = job.basic_details || {};
+            var href = buildJobHref(job, meta.id);
+            var dates = job.important_dates || {};
+            var lastDate = String(
+              dates.last_date_to_apply || dates.last_date || dates.closing_date || job.last_date || ''
+            ).trim();
+            extra.push({
+              title:title, slug:href,
+              dept:org,
+              qual: meta.qual || job.qualification || bd.qualification || '',
+              state: job.state || 'All India',
+              cat: meta.cat,
+              tags: [title, job.post_name||'', org, meta.id,
+                     String(job.total_vacancies||job.total_vacancy||''),
+                     String(bd.short_information||'').slice(0,100),
+                     'sarkari job 2026'].join(' '),
+              lastDate: lastDate,
+              icon: meta.icon,
+              lastUpdated: bd.last_updated || job.updated_at || job.last_updated || new Date().toISOString(),
+              sectionSource: meta.id,
+            });
           });
         });
 
-        /* STEP 2: Emit ONE entry per unique title — primary category as display */
-        Object.keys(cjTitleMap).forEach(function(tk) {
-          var grp  = cjTitleMap[tk];
-          var meta = COMPLETE_JOBS_META[grp.bestCatKey];
-          var job  = grp.job;
-          var org  = getJobOrg(job);
-          var bd   = job.basic_details || {};
-          var href = buildJobHref(job, meta.id);
-          var dates = job.important_dates || {};
-          var lastDate = String(
-            dates.last_date_to_apply || dates.last_date || dates.closing_date || job.last_date || ''
-          ).trim();
-
-          /* Combine all category names into tags for search coverage */
-          var allCatTags = grp.allCatIds.join(' ');
-
-          extra.push({
-            title: getJobTitle(job),
-            slug: href,
-            dept: org,
-            qual: meta.qual || job.qualification || bd.qualification || '',
-            state: job.state || 'All India',
-            cat: meta.cat,
-            tags: [getJobTitle(job), job.post_name||'', org, meta.id, allCatTags,
-                   String(job.total_vacancies||job.total_vacancy||''),
-                   String(bd.short_information||'').slice(0,100),
-                   'sarkari job 2026'].join(' '),
-            lastDate: lastDate,
-            icon: meta.icon,
-            lastUpdated: bd.last_updated || job.updated_at || job.last_updated || new Date().toISOString(),
-            sectionSource: meta.id,
-            _allCats: [meta.id].concat(grp.allCatIds),  /* for display in result card */
-          });
-        });
-
-        /* STEP 3: Unknown keys (not in COMPLETE_JOBS_META) */
+        // Unknown keys
         Object.keys(data).forEach(function(key) {
           if (handledKeys[key]) return;
           (Array.isArray(data[key]) ? data[key] : []).forEach(function(job) {
@@ -647,8 +512,6 @@
       });
     }
 
-    // Stamp _sourceFile on all items
-    extra.forEach(function(item){ item._sourceFile = item._sourceFile || fileName; });
     return extra;
   }
 
@@ -692,24 +555,12 @@
         console.log('[smart-search]', fileName, '→', extra.length, 'items');
 
         if (forceRefresh) {
-          // On refresh: remove old entries from this specific file, then re-add fresh data
-          allData = allData.filter(function(d) {
-            // Remove sources that came from this file
-            if (d.sources) {
-              d.sources = d.sources.filter(function(s){ return s.fileName !== fileName; });
-              if (d.sources.length === 0) return false;  // remove entry entirely if no sources left
-              // Re-pick primary slug from remaining sources
-              d.slug = d.sources[0].slug || d.slug;
-            } else if (d._sourceFile === fileName) {
-              return false;  // legacy single-source item from this file
-            }
-            return true;
-          });
+          var newSlugs = {};
+          extra.forEach(function(i){ newSlugs[dedupeKey(i.slug)] = true; });
+          allData = allData.filter(function(d){ return !newSlugs[dedupeKey(d.slug)]; });
         }
 
-        // Track when this file was fetched (for sort priority)
-        jsonFileMeta[fileName] = { fetchedAt: Date.now() };
-        var changed = mergeItems(extra, fileName);
+        var changed = mergeItems(extra);
         if (changed) {
           loadFuse(function() {
             buildFuse(allData);
@@ -851,9 +702,6 @@
       else if (diffDays <= 7) score += 5;
     }
 
-    // Boost items that appear in multiple sources (more trustworthy/relevant)
-    if (item.sources && item.sources.length > 1) score += 15 * (item.sources.length - 1);
-
     return score;
   }
 
@@ -889,15 +737,15 @@
       '#tsjDrop{background:#fff;border:1px solid #e2e8f0;border-radius:14px;box-shadow:0 16px 48px rgba(13,34,87,.18);z-index:99999;max-height:420px;overflow-y:auto;display:none;animation:tsjFadeIn .15s ease;scrollbar-width:thin}',
       '#tsjDrop.open{display:block}',
       '@keyframes tsjFadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}',
-      /* .tsj-suggest-item base now handled below with .tsj-si-main-link */
+      '.tsj-suggest-item{display:flex;align-items:center;gap:10px;padding:10px 14px;text-decoration:none;color:#0f172a;border-bottom:1px solid #f8fafc;transition:background .1s;cursor:pointer}',
       '.tsj-suggest-item:last-child{border-bottom:none}',
-      /* .tsj-suggest-item hover handled via .tsj-si-main-link below */
+      '.tsj-suggest-item:hover,.tsj-suggest-item.tsj-active{background:#eff6ff}',
       '.tsj-si-icon{width:30px;height:30px;border-radius:8px;background:#eff6ff;color:#1a56db;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0}',
       '.tsj-si-body{flex:1;overflow:hidden}',
       '.tsj-si-title{display:block;font-size:.83rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
       '.tsj-si-meta{display:block;font-size:.69rem;color:#64748b;margin-top:1px}',
       '.tsj-si-arr{color:#cbd5e1;font-size:.75rem}',
-      /* arrow hover now via .tsj-si-main-link */
+      '.tsj-suggest-item:hover .tsj-si-arr,.tsj-suggest-item.tsj-active .tsj-si-arr{color:#1a56db}',
       'mark.srch-hl{background:#fef08a;color:#92400e;border-radius:2px;padding:0 1px}',
       '.tsj-recent{padding:10px 14px;border-bottom:1px solid #f1f5f9}',
       '.tsj-recent-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;font-size:.72rem;font-weight:800;color:#475569}',
@@ -917,19 +765,6 @@
       '.tsj-b-link{background:#fff7ed;color:#c2410c}',
       '.tsj-b-other{background:#f1f5f9;color:#475569}',
       '@media(max-width:480px){#tsjDrop{border-radius:10px;max-height:360px}}',
-      /* Source badges */
-      '.tsj-src-row{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px}',
-      '.tsj-src-badge{font-size:.6rem;font-weight:700;padding:1px 6px;border-radius:8px;display:inline-block}',
-      /* Also-in compact line */
-      '.tsj-also-in{display:block;font-size:.63rem;color:#94a3b8;margin-top:2px}',
-      '.tsj-also-link{font-weight:700;text-decoration:none}',
-      '.tsj-also-link:hover{text-decoration:underline}',
-      /* Make parent item div behave */
-      '.tsj-suggest-item{border-bottom:1px solid #f1f5f9;transition:background .1s}',
-      '.tsj-suggest-item:last-child{border-bottom:none}',
-      '.tsj-suggest-item.tsj-active .tsj-si-main-link,.tsj-suggest-item:hover .tsj-si-main-link{background:#eff6ff}',
-      '.tsj-si-main-link{display:flex;align-items:center;gap:10px;padding:10px 14px;text-decoration:none;color:#0f172a}',
-      '.tsj-si-main-link:hover .tsj-si-arr,.tsj-suggest-item.tsj-active .tsj-si-arr{color:#1a56db}',
     ].join('');
     document.head.appendChild(style);
   }
@@ -1028,54 +863,14 @@
       var state   = (item.state && item.state !== 'All India') ? item.state : '';
       var bClass  = getBadgeClass(item.cat, sec);
 
-      /* Source JSON badges — compact, ONE per distinct JSON file */
-      var srcBadgesHtml = '';
-      if (item.sources && item.sources.length > 0) {
-        var seenFiles = {};
-        var badges = [];
-        item.sources.forEach(function(s) {
-          if (!seenFiles[s.fileName]) {
-            seenFiles[s.fileName] = true;
-            var col = (SOURCE_COLORS[s.fileName] || '#f1f5f9|#475569').split('|');
-            badges.push('<span class="tsj-src-badge" style="background:' + col[0] + ';color:' + col[1] + '">' + esc(s.label) + '</span>');
-          }
-        });
-        if (badges.length) srcBadgesHtml = '<span class="tsj-src-row">' + badges.join('') + '</span>';
-      }
-
-      /* "Also in" line — when job is in multiple source JSONs */
-      var alsoInHtml = '';
-      if (item.sources && item.sources.length > 1) {
-        var distinctFiles = [];
-        var seen2 = {};
-        item.sources.forEach(function(s) {
-          if (!seen2[s.fileName]) { seen2[s.fileName] = true; distinctFiles.push(s); }
-        });
-        if (distinctFiles.length > 1) {
-          alsoInHtml = '<span class="tsj-also-in">Also in: ' +
-            distinctFiles.slice(1).map(function(s) {
-              var col = (SOURCE_COLORS[s.fileName] || '#f1f5f9|#475569').split('|');
-              return '<a href="' + esc(s.slug || item.slug) + '" class="tsj-also-link" style="color:' + col[1] + '">' +
-                esc(s.label) + (s.section ? ' (' + esc(s.section) + ')' : '') + '</a>';
-            }).join(', ') + '</span>';
-        }
-      }
-
-      return '<div class="tsj-suggest-item' + active + '" data-idx="' + idx + '" role="option">' +
-        '<a class="tsj-si-main-link" href="' + esc(item.slug) + '">' +
-          '<span class="tsj-si-icon"><i class="fa-solid ' + esc(item.icon||'fa-briefcase') + '"></i></span>' +
-          '<span class="tsj-si-body">' +
-            '<span class="tsj-si-title">' + highlight(item.title, q) + '</span>' +
-            '<span class="tsj-si-meta">' +
-              (sec ? '<span class="tsj-badge-pill ' + bClass + '">' + esc(sec) + '</span>' : '') +
-              (state ? ' <span style="color:#64748b">· ' + esc(state) + '</span>' : '') +
-            '</span>' +
-            srcBadgesHtml +
-            alsoInHtml +
-          '</span>' +
-          '<span class="tsj-si-arr"><i class="fa-solid fa-arrow-right"></i></span>' +
-        '</a>' +
-      '</div>';
+      return '<a class="tsj-suggest-item' + active + '" href="' + esc(item.slug) + '" data-idx="' + idx + '" role="option">' +
+        '<span class="tsj-si-icon"><i class="fa-solid ' + esc(item.icon||'fa-briefcase') + '"></i></span>' +
+        '<span class="tsj-si-body">' +
+          '<span class="tsj-si-title">' + highlight(item.title, q) + '</span>' +
+          (sec ? '<span class="tsj-si-meta"><span class="tsj-badge-pill ' + bClass + '">' + esc(sec) + '</span>' + (state ? ' · ' + esc(state) : '') + '</span>' : '') +
+        '</span>' +
+        '<span class="tsj-si-arr"><i class="fa-solid fa-arrow-right"></i></span>' +
+        '</a>';
     }
 
     function runSuggest(q) {
@@ -1117,11 +912,10 @@
         items.forEach(function(el, i){ el.classList.toggle('tsj-active', i === activeIndex); });
       } else if (e.key === 'Enter') {
         e.preventDefault();
-        var activeEl = drop.querySelector('.tsj-suggest-item.tsj-active');
-        if (activeEl) {
+        var active = drop.querySelector('.tsj-suggest-item.tsj-active');
+        if (active) {
           saveRecent(input.value.trim());
-          var mainLink = activeEl.querySelector('.tsj-si-main-link');
-          window.location.href = mainLink ? mainLink.href : (activeEl.href || '#');
+          window.location.href = active.href;
           closeDrop();
         } else if (input.value.trim()) {
           saveRecent(input.value.trim());
@@ -1149,11 +943,10 @@
       });
     }
 
-    // Click on suggestion (now .tsj-suggest-item is a div; links inside handle nav)
+    // Click on suggestion
     drop.addEventListener('click', function(e) {
       var item = e.target.closest('.tsj-suggest-item');
-      if (item) { saveRecent(input.value.trim()); }
-      // Allow link clicks to propagate normally
+      if (item) { saveRecent(input.value.trim()); closeDrop(); }
     });
 
     // Click outside → close
@@ -1237,39 +1030,12 @@
         results.length + ' results for "<strong>' + esc(query) + '</strong>"</p>' +
         '<div style="display:flex;flex-direction:column;gap:8px">' +
         results.slice(0, 60).map(function(r) {
-          // Source badges for search page
-          var srcBadges = '';
-          if (r.sources && r.sources.length > 0) {
-            srcBadges = '<div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:4px">' +
-              r.sources.map(function(s) {
-                var col = (SOURCE_COLORS[s.fileName] || '#f1f5f9|#475569').split('|');
-                return '<span style="font-size:.6rem;font-weight:700;padding:1px 6px;border-radius:8px;background:' +
-                  col[0] + ';color:' + col[1] + '">' + esc(s.label) + '</span>';
-              }).join('') + '</div>';
-          }
-          // "Also in" compact line for multiple sources
-          var multiLinks = '';
-          if (r.sources && r.sources.length > 1) {
-            var seen3 = {}; var distinctSrc = [];
-            r.sources.forEach(function(s) {
-              if (!seen3[s.fileName]) { seen3[s.fileName] = true; distinctSrc.push(s); }
-            });
-            if (distinctSrc.length > 1) {
-              multiLinks = '<div style="font-size:.65rem;color:#94a3b8;margin-top:3px">Also in: ' +
-                distinctSrc.slice(1).map(function(s) {
-                  var col = (SOURCE_COLORS[s.fileName] || '#f1f5f9|#475569').split('|');
-                  return '<a href="' + esc(s.slug || r.slug) + '" style="color:' + col[1] + ';font-weight:700;text-decoration:none">' +
-                    esc(s.label) + (s.section ? ' (' + esc(s.section) + ')' : '') + '</a>';
-                }).join(', ') + '</div>';
-            }
-          }
           return '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:12px 14px">' +
             '<a href="' + esc(r.slug) + '" style="font-size:.86rem;font-weight:800;color:#1a56db;text-decoration:none;display:block;margin-bottom:4px">' +
             highlight(r.title, query) + '</a>' +
             '<div style="font-size:.72rem;color:#64748b">' + esc(r.sectionSource || r.cat || '') +
             (r.state && r.state !== 'All India' ? ' · ' + esc(r.state) : '') + '</div>' +
             (r.lastDate ? '<div style="font-size:.7rem;color:#be123c;margin-top:4px"><i class="fa-solid fa-clock"></i> ' + esc(r.lastDate) + '</div>' : '') +
-            srcBadges + multiLinks +
             '</div>';
         }).join('') + '</div>';
 
@@ -1319,7 +1085,7 @@
     setupHeaderSearch();
     setupSearchPage();
     startAutoRefresh();
-    console.log('[smart-search] v4.0 initialized ✅ — Multi-source search active');
+    console.log('[smart-search] v3.0 initialized ✅');
   }
 
   if (document.readyState === 'loading') {
