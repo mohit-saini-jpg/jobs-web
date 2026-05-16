@@ -1001,14 +1001,11 @@
       }
       function officialOnly(u) { return isSRUrl(u) ? '' : u; }
 
-      const _rawBd = (job && job.basic_details) || {};
-      const _bdOfficialWeb = safe(_rawBd.official_website || '');
       const _fallbackUrl = normalizeUrl(
         officialOnly(row && row.applyOnline)     ||
         officialOnly(row && row.officialWebsite) ||
         officialOnly(row && row.destUrl)         ||
-        officialOnly(_refUrl)                    ||
-        officialOnly(_bdOfficialWeb)             || ''
+        officialOnly(_refUrl)                    || ''
       );
 
       /* ── Smart link categorization by title keyword ── */
@@ -1042,21 +1039,6 @@
           return { icon: 'fa-users',                cls: 'jp-btn-blue',   sub: 'View Details' };
         if (/how\s*to|video|hindi.*video/i.test(t))
           return { icon: 'fa-circle-play',          cls: 'jp-btn-red',    sub: 'Watch Now' };
-        /* URL-detected labels — these come from _smartLabelFromUrl */
-        if (/notification\s*pdf|official\s*notification|download\s*pdf|form\s*pdf/i.test(t))
-          return { icon: 'fa-file-pdf',             cls: 'jp-btn-blue',   sub: 'View PDF' };
-        if (/^visit\s/i.test(t))
-          return { icon: 'fa-globe',                cls: 'jp-btn-red',    sub: 'Visit Now' };
-        if (/application\s*form|offline\s*form/i.test(t))
-          return { icon: 'fa-file-arrow-down',      cls: 'jp-btn-orange', sub: 'Download Form' };
-        if (/download\s*form|free\s*pdf/i.test(t))
-          return { icon: 'fa-file-arrow-down',      cls: 'jp-btn-orange', sub: 'Free Download' };
-        if (/registration/i.test(t))
-          return { icon: 'fa-user-plus',            cls: 'jp-btn-green',  sub: 'Register Now' };
-        if (/seat\s*allotment/i.test(t))
-          return { icon: 'fa-list-check',           cls: 'jp-btn-blue',   sub: 'View Allotment' };
-        if (/cut\s*off|cutoff/i.test(t))
-          return { icon: 'fa-chart-bar',            cls: 'jp-btn-orange', sub: 'View Cut Off' };
         /* default */
         return { icon: 'fa-link',                   cls: 'jp-btn-blue',   sub: 'Click Here' };
       }
@@ -1126,34 +1108,22 @@
         ).join('');
 
         /* ── FALLBACK: agar koi bhi specific link nahi mili ── */
-        /* Try harder: check job basic_details.official_website, source_url etc. */
-        if (!linksHtml) {
-          const _bd2 = (row && row._rawJob && row._rawJob.basic_details) || job.basic_details || {};
-          const _extraUrls = [
-            _fallbackUrl,
-            officialOnly(safe(_bd2.official_website || '')),
-            officialOnly(safe(job.official_website_link || '')),
-            officialOnly(safe(job.source_url || '')),
-          ].filter(u => u && u !== '#');
-          const _bestFallback = _extraUrls.find(u => !isSRUrl(u)) || _extraUrls[0] || '';
-          if (_bestFallback) {
-            const isSarkariResult = _bestFallback.includes('sarkariresult.com');
-            const isSarkariShine  = _bestFallback.includes('sarkariresultshine.com');
-            const srcLabel = isSarkariResult ? 'SarkariResult.com'
-                           : isSarkariShine  ? 'SarkariResultShine.com'
-                           : 'Official Website';
-            linksHtml =
-              `<a href="${_bestFallback}" target="_blank" rel="noopener" class="jp-btn jp-btn-green">
-                <span><i class="fa-solid fa-arrow-up-right-from-square"></i> Apply / View Details</span>
-                <span class="jp-btn-sub">${srcLabel}</span>
-              </a>
-              <a href="${_bestFallback}" target="_blank" rel="noopener" class="jp-btn jp-btn-red">
-                <span><i class="fa-solid fa-globe"></i> Official Website</span>
-                <span class="jp-btn-sub">${srcLabel}</span>
-              </a>`;
-          }
-        }
-        if (!linksHtml) {
+        if (!linksHtml && _fallbackUrl) {
+          const isSarkariResult = _fallbackUrl.includes('sarkariresult.com');
+          const isSarkariShine  = _fallbackUrl.includes('sarkariresultshine.com');
+          const srcLabel = isSarkariResult ? 'SarkariResult.com'
+                         : isSarkariShine  ? 'SarkariResultShine.com'
+                         : 'Official Website';
+          linksHtml =
+            `<a href="${_fallbackUrl}" target="_blank" rel="noopener" class="jp-btn jp-btn-green">
+              <span><i class="fa-solid fa-arrow-up-right-from-square"></i> Apply / View Details</span>
+              <span class="jp-btn-sub">${srcLabel}</span>
+            </a>
+            <a href="${_fallbackUrl}" target="_blank" rel="noopener" class="jp-btn jp-btn-red">
+              <span><i class="fa-solid fa-globe"></i> Official Website</span>
+              <span class="jp-btn-sub">${srcLabel}</span>
+            </a>`;
+        } else if (!linksHtml) {
           linksHtml = `<p style="color:#64748b;font-size:.83rem;padding:4px;">
             Links not available. Please check official website.</p>`;
         }
@@ -1274,127 +1244,40 @@
          click_here / download_pdf / visit_website / click_here_to_apply /
          URL-keyed entries etc. are ALL shown in Important Links section.   */
       const _ilRaw = job.important_links || job.important_links_obj || {};
-
-      /* ── Comprehensive KEY → Label map for ALL known important_links keys ── */
-      const _IL_KEY_LABELS = {
-        click_here:                    null,  /* URL-based detection for arrays */
-        click_here_to_apply:           'Apply Online',
-        apply_online:                  'Apply Online',
-        apply_link:                    'Apply Online',
-        apply_form:                    'Application Form',
-        apply_offline:                 'Apply Offline Form',
-        online_form_link:              'Online Form',
-        registration_link:             'Registration Link',
-        registration:                  'Registration',
-        notification_pdf:              'Notification PDF',
-        official_notification:         'Official Notification',
-        official_notification_pdf:     'Official Notification PDF',
-        download_notification:         'Download Notification',
-        download_pdf:                  'Download PDF',
-        short_notification:            'Short Notification',
-        detailed_notification:         'Detailed Notification',
-        form_pdf:                      'Application Form PDF',
-        form_pdf_free_link:            'Form PDF (Free)',
-        application_form:              'Application Form',
-        pdf_link:                      'Download PDF',
-        download_link:                 'Download Here',
-        official_website:              'Official Website',
-        official_website_link:         'Official Website',
-        visit_website:                 'Official Website',
-        website_link:                  'Official Website',
-        official_portal:               'Official Portal',
-        candidate_login:               'Candidate Login',
-        login_link:                    'Candidate Login',
-        login:                         'Candidate Login',
-        admit_card_link:               'Admit Card',
-        admit_card:                    'Admit Card',
-        hall_ticket_link:              'Hall Ticket',
-        hall_ticket:                   'Hall Ticket',
-        result_link:                   'Result',
-        result:                        'Result',
-        answer_key_link:               'Answer Key',
-        answer_key:                    'Answer Key',
-        final_answer_key:              'Final Answer Key',
-        syllabus_link:                 'Syllabus',
-        syllabus_pdf:                  'Syllabus PDF',
-        merit_list_link:               'Merit List',
-        merit_list:                    'Merit List',
-        counselling_link:              'Counselling',
-        seat_allotment_link:           'Seat Allotment',
-        score_card:                    'Score Card',
-        cut_off:                       'Cut Off',
-        exam_city:                     'Exam City / Centre',
-        interview_letter:              'Interview Letter',
-        dv_schedule:                   'DV Schedule',
-        correction_link:               'Form Correction',
-        url:                           null,  /* URL-based */
-        href:                          null,  /* URL-based */
-        link:                          null,  /* URL-based */
-        links:                         null,  /* URL-based */
+      /* Human-readable label map for known keys */
+      const _IL_LABELS = {
+        click_here:          'Click Here',
+        click_here_to_apply: 'Click Here to Apply',
+        apply_online:        'Apply Online',
+        notification_pdf:    'Notification PDF',
+        download_pdf:        'Download PDF',
+        official_website:    'Official Website',
+        visit_website:       'Official Website',
+        login:               'Candidate Login',
+        result:              'Result',
       };
-
-      /* ── Smart label from URL content ── */
-      function _smartLabelFromUrl(urlStr, keyHint) {
-        const u = urlStr.toLowerCase();
-        /* Key-based first pass */
-        if (keyHint && _IL_KEY_LABELS[keyHint] !== null && _IL_KEY_LABELS[keyHint] !== undefined)
-          return _IL_KEY_LABELS[keyHint];
-        /* URL pattern detection */
-        if (/apply|signup|register|signin|csignin|erecruitment|application/i.test(u) && !/notice|pdf|notif/i.test(u))
-          return 'Apply Online';
-        if (/notification|notice|advt|advertisement|recruitment.?notice|notice\d|notice[_-]/i.test(u) || u.endsWith('.pdf'))
-          return 'Notification PDF';
-        if (/admit.?card|hallticket|hall.?ticket|eadmit/i.test(u))
-          return 'Admit Card';
-        if (/result|merit.?list|scorecard|score.?card/i.test(u))
-          return 'Result';
-        if (/answer.?key|answerkey|response.?sheet/i.test(u))
-          return 'Answer Key';
-        if (/syllabus|exam.?pattern/i.test(u))
-          return 'Syllabus';
-        if (/counselling|seat.?allot|choice.?filling/i.test(u))
-          return 'Counselling';
-        if (/login|dashboard|candidate|portal/i.test(u))
-          return 'Candidate Login';
-        /* Generic fallback: show cleaned domain */
-        try {
-          const domain = new URL(urlStr).hostname.replace(/^www\./, '');
-          return 'Visit ' + domain;
-        } catch(_) { return 'Click Here'; }
-      }
-
-      /* ── Build synthetic usefulLinks entries from ALL important_links keys ── */
+      /* Build synthetic usefulLinks entries from important_links object */
       const _ilEntries = [];
       if (typeof _ilRaw === 'object' && !Array.isArray(_ilRaw)) {
         for (const [key, val] of Object.entries(_ilRaw)) {
           if (!val) continue;
+          /* Resolve human label: known key → label, or title-case the key */
+          const label = _IL_LABELS[key] ||
+            key.replace(/^https?_+/i, '').replace(/_/g, ' ')
+               .replace(/\b[a-z]/g, c => c.toUpperCase()).trim() ||
+            'Click Here';
           /* Val can be string or array */
           const urls = Array.isArray(val) ? val : [val];
-          urls.forEach(u => {
+          urls.forEach((u, idx) => {
             const href = safe(u);
             if (!href || !/^https?:\/\//i.test(href)) return;
-            /* Smart label: key-map first, then URL-based detection */
-            const label = _smartLabelFromUrl(href, key);
-            _ilEntries.push({ title: label, url: href });
+            _ilEntries.push({
+              title: urls.length > 1 ? `${label} (${idx + 1})` : label,
+              url:   href
+            });
           });
         }
       }
-      /* Also scan top-level job object for any link-like keys not already in important_links */
-      const _TOP_LINK_KEYS = [
-        'apply_online','apply_link','registration_link','online_form_link',
-        'notification_link','official_notification','official_notification_pdf',
-        'form_pdf','form_pdf_free_link','application_form',
-        'official_website_link','website_link',
-        'admit_card_link','hall_ticket_link','result_link','answer_key_link',
-        'syllabus_link','merit_list_link','counselling_link','seat_allotment_link',
-        'pdf_link','download_link','login_link','candidate_login',
-      ];
-      _TOP_LINK_KEYS.forEach(k => {
-        const v = safe(job[k] || '');
-        if (v && /^https?:\/\//i.test(v)) {
-          _ilEntries.push({ title: _smartLabelFromUrl(v, k), url: v });
-        }
-      });
       /* Merge: useful_links array first, then important_links entries
          (dedup by URL is handled in the renderer via seenHrefs)          */
       const usefulLinks = [
@@ -1415,20 +1298,13 @@
 
       /* Source / apply URL — ONLY from important_links obj or useful_links, NOT source_url */
       /* source_url = sarkariresult.com page, use only for main CTA fallback */
-      /* Helper: find in click_here array by URL pattern */
-      const _chArr = Array.isArray(il.click_here) ? il.click_here : (il.click_here ? [il.click_here] : []);
-      const _chApply = _chArr.find(u => /apply|signup|register|signin|erecruitment/i.test(u) && !/\.pdf$|notice|notif/i.test(u)) || '';
-      const _chOfficial = _chArr.find(u => !/pdf|notice|apply|signup|register|erecruitment/i.test(u)) || '';
       const applyOnline = safe(
         il.apply_online || il.apply_link || il.registration ||
-        il.click_here_to_apply || il.online_form_link ||
-        _chApply ||
         getUsefulLink([/apply\s*online|apply\s*link|registration\s*link|apply\s*form|apply.*otr|apply.*mains|apply.*re\s*open|apply.*other|apply.*sub|apply.*constable|apply.*manager|apply.*inspector|apply.*lucknow|apply.*noida|apply.*ug|apply.*pg/i]) ||
         ''
       );
       const officialWebsite = safe(
-        il.official_website || il.visit_website || il.official_website_link ||
-        _chOfficial ||
+        il.official_website || il.visit_website ||
         getUsefulLink([/official\s*website|official\s*portal|visit\s*website|ctet\s*official/i]) ||
         job.official_website_link || ''   /* official_website_link = real govt site, ok to use */
       );
@@ -1474,7 +1350,6 @@
       /* Primary dest URL for main CTA — use source_url as fallback only here */
       const destUrl = normalizeUrl(
         applyOnline || officialWebsite ||
-        safe(bd.official_website || '') ||
         job.source_url || job.official_website_link || bd.source_url || ''
       );
 
@@ -1785,89 +1660,20 @@
         } catch (_) { return ''; }
       })();
 
-      /* ── Helper: normalize slug for comparison (strip -and-, stop-words etc.) ── */
-      function normalizeSlugForMatch(s) {
-        return s.toLowerCase()
-          .replace(/-and-/g, '-')        /* attender-and-watchman → attender-watchman */
-          .replace(/-or-/g, '-')
-          .replace(/-the-/g, '-')
-          .replace(/-of-/g, '-')
-          .replace(/-for-/g, '-')
-          .replace(/-in-/g, '-')
-          .replace(/-to-/g, '-')
-          .replace(/-cum-/g, '-')
-          .replace(/-+/g, '-')
-          .replace(/^-|-$/g, '');
-      }
-
-      /* ── Helper: try fetching a job JSON by exact slug ── */
-      async function fetchJobBySlug(slug) {
-        try {
-          const res = await fetch('/jobs/data/' + encodeURIComponent(slug) + '.json');
-          if (!res.ok) return null;
-          const data = await res.json();
-          if (data && (data.basic_details || data.title)) {
-            const parsed = parseFullJob(data, data.category || 'Latest Notifications');
-            if (parsed) parsed.slug = slug;
-            return parsed;
-          }
-        } catch (_) {}
-        return null;
-      }
-
       /* ── PRIMARY: Fetch individual job JSON from /jobs/data/<slug>.json ── */
+      /* This is the authoritative source — exact slug match, no fuzzy logic */
       let row = null;
-
-      /* Step 1: Exact slug match */
-      row = await fetchJobBySlug(rawSlug);
-
-      /* Step 2: Slug variations — strip "and", "or", "the", "of", "for", "cum" etc. */
-      if (!row) {
-        const normSlug = normalizeSlugForMatch(rawSlug);
-        if (normSlug !== rawSlug) {
-          row = await fetchJobBySlug(normSlug);
-        }
-      }
-
-      /* Step 3: jobs-index.json fuzzy match → correct slug → fetch that file */
-      if (!row) {
-        try {
-          const idxRes = await fetch('/jobs-index.json');
-          if (idxRes.ok) {
-            const idxData = await idxRes.json();
-            if (idxData && typeof idxData === 'object') {
-              /* Normalize incoming slug for comparison */
-              const normIn = normalizeSlugForMatch(rawSlug);
-              /* Try exact key match first */
-              let foundKey = null;
-              if (idxData[rawSlug]) {
-                foundKey = rawSlug;
-              } else if (idxData[normIn]) {
-                foundKey = normIn;
-              } else {
-                /* Token-based fuzzy match on index keys */
-                const inTokens = normIn.split('-').filter(t => t.length > 2);
-                let bestKey = null, bestScore = 0;
-                for (const key of Object.keys(idxData)) {
-                  const normKey = normalizeSlugForMatch(key);
-                  const matched = inTokens.filter(t => normKey.includes(t)).length;
-                  const score = matched / inTokens.length;
-                  if (score > bestScore && score >= 0.75) {
-                    bestScore = score;
-                    bestKey = key;
-                  }
-                }
-                if (bestKey) foundKey = bestKey;
-              }
-              if (foundKey) {
-                /* foundKey is the base slug; the actual file may be the base (no suffix) */
-                const baseKey = foundKey.replace(/-(latest-notifications|bank-jobs|8th-pass|10th-pass|12th-pass|any-graduate|any-post-graduate|b-tech-be|diploma|iti|police-defence|medical-hospital|teaching-faculty|railway-jobs)$/, '');
-                row = await fetchJobBySlug(baseKey) || await fetchJobBySlug(foundKey);
-              }
-            }
+      try {
+        const directRes = await fetch('/jobs/data/' + encodeURIComponent(rawSlug) + '.json');
+        if (directRes.ok) {
+          const directData = await directRes.json();
+          if (directData && (directData.basic_details || directData.title)) {
+            row = parseFullJob(directData, directData.category || 'Latest Notifications');
+            /* Inject the slug so downstream code can use it */
+            if (row) row.slug = rawSlug;
           }
-        } catch (_) {}
-      }
+        }
+      } catch (_) {}
 
       /* ── FALLBACK: Search aggregated JSON files (fuzzy/token match) ── */
       /* Only used when individual job file is not found */
@@ -1935,21 +1741,7 @@
 
       loading.style.display = 'none';
       threeCol.style.display = 'grid';
-    })().catch(err => {
-      /* Global catch — ensure loading spinner is always hidden on any error */
-      console.error('[TSJ] Job page error:', err);
-      try {
-        document.getElementById('jbLoading').style.display = 'none';
-        const tc = document.getElementById('jbThreeCol');
-        if (tc) tc.style.display = 'grid';
-        /* Show a friendly error message instead of infinite spinner */
-        const errEl = document.getElementById('jbError');
-        if (errEl) {
-          errEl.style.display = 'block';
-          errEl.innerHTML = '<strong>⚠ Job details load नहीं हो सकी।</strong><br>Please <a href="/" style="color:#1d4ed8">Home page</a> पर जाएँ या थोड़ी देर बाद try करें।';
-        }
-      } catch(_) {}
-    });
+    })();
   })();
   </script>
 
