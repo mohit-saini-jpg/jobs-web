@@ -1655,6 +1655,60 @@
           }
         } catch (_) {}
 
+        /* ── Load state-jobs-data.json (state govt jobs with full detail.important_links) ── */
+        try {
+          const rState = await fetch('/state-jobs-data.json');
+          if (rState.ok) {
+            const stateRaw = await rState.json();
+            const stateArr = Array.isArray(stateRaw) ? stateRaw
+                           : (stateRaw.states ? stateRaw.states : []);
+            for (const stateGroup of stateArr) {
+              if (!Array.isArray(stateGroup.items)) continue;
+              const secId = safe(stateGroup.id || stateGroup.state || 'State Jobs');
+              for (const item of stateGroup.items) {
+                const title = safe(item.name || item.title || '');
+                if (!title) continue;
+                const det = (item.detail && typeof item.detail === 'object') ? item.detail : {};
+                const bd  = (det.basic_details && typeof det.basic_details === 'object') ? det.basic_details : {};
+                const il  = (det.important_links && typeof det.important_links === 'object') ? det.important_links : {};
+                const clickHereUrls = Array.isArray(il.click_here) ? il.click_here
+                                    : (il.click_here ? [il.click_here] : []);
+                const bestPortalUrl = clickHereUrls.find(u => u && !/\.pdf($|\?)/i.test(u))
+                                   || safe(il.official_website || il.visit_website || '')
+                                   || normalizeUrl(safe(item.url || ''));
+                const notifPdfUrl   = safe(il.notification_pdf || '')
+                                   || clickHereUrls.find(u => u && /\.pdf($|\?)/i.test(u)) || '';
+                const fullJob = {
+                  title,
+                  category: secId,
+                  slug: '',
+                  source_url: bestPortalUrl,
+                  official_website_link: bestPortalUrl,
+                  form_pdf_free_link: notifPdfUrl,
+                  important_links: {
+                    ...il,
+                    official_website: safe(il.official_website || bestPortalUrl),
+                    notification_pdf: notifPdfUrl,
+                  },
+                  basic_details: { ...bd, source_url: bestPortalUrl },
+                  important_dates: det.important_dates || {},
+                  application_fee: det.application_fee || {},
+                  age_limit: det.age_limit || {},
+                  qualification: det.qualification || {},
+                  salary_details: det.salary_details || {},
+                  selection_process: det.selection_process || [],
+                  short_information: safe(bd.short_information || ''),
+                  total_post: safe(item.name || '').match(/(\d+)\s*[Pp]osts?/)?.[1] || '',
+                  last_date: safe(item.lastDate || item.date || ''),
+                  useful_links: Array.isArray(det.useful_links) ? det.useful_links : [],
+                };
+                const parsed = parseFullJob(fullJob, secId);
+                if (parsed.title) dailyItems.push(parsed);
+              }
+            }
+          }
+        } catch (_) {}
+
         /* Load merged_sarkari_data.json (offline form jobs) */
         let rawMerged = null;
         try {
