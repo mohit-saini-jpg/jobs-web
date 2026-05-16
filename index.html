@@ -235,7 +235,7 @@
       display: inline-block; background: #eff6ff; color: #1e40af;
       border: 1px solid #bfdbfe; border-radius: 20px; padding: 4px 10px;
       font-size: .68rem; font-weight: 600; text-decoration: none; transition: all .15s;
-      white-space: nowrap;
+      white-space: nowrap; cursor: pointer; font-family: inherit;
     }
     .ps-tag:hover { background: #1e40af; color: #fff; border-color: #1e40af; }
 
@@ -1997,15 +1997,14 @@
             <div class="left"><i class="fa-solid fa-magnifying-glass-chart"></i> POPULAR SEARCHES</div>
           </div>
           <div class="ps-widget" style="padding:10px 12px;display:flex;flex-wrap:wrap;gap:6px;" id="popular-searches-widget">
-            <!-- Populated by seo-engine.js -->
-            <a href="search.html?q=SSC+CGL+2026" class="ps-tag">SSC CGL 2026</a>
-            <a href="search.html?q=Railway+RPF+2026" class="ps-tag">Railway RPF 2026</a>
-            <a href="search.html?q=IBPS+PO+2026" class="ps-tag">IBPS PO 2026</a>
-            <a href="search.html?q=UP+Police+2026" class="ps-tag">UP Police 2026</a>
-            <a href="search.html?q=10th+Pass+Jobs" class="ps-tag">10th Pass Jobs</a>
-            <a href="search.html?q=12th+Pass+Jobs" class="ps-tag">12th Pass Jobs</a>
-            <a href="search.html?q=Army+GD+2026" class="ps-tag">Army GD 2026</a>
-            <a href="search.html?q=UPSC+2026" class="ps-tag">UPSC 2026</a>
+            <button type="button" class="ps-tag" onclick="tsjQuickSearch('SSC CGL 2026')">SSC CGL 2026</button>
+            <button type="button" class="ps-tag" onclick="tsjQuickSearch('Railway RPF 2026')">Railway RPF 2026</button>
+            <button type="button" class="ps-tag" onclick="tsjQuickSearch('IBPS PO 2026')">IBPS PO 2026</button>
+            <button type="button" class="ps-tag" onclick="tsjQuickSearch('UP Police 2026')">UP Police 2026</button>
+            <button type="button" class="ps-tag" onclick="tsjQuickSearch('10th Pass Jobs')">10th Pass Jobs</button>
+            <button type="button" class="ps-tag" onclick="tsjQuickSearch('12th Pass Jobs')">12th Pass Jobs</button>
+            <button type="button" class="ps-tag" onclick="tsjQuickSearch('Army GD 2026')">Army GD 2026</button>
+            <button type="button" class="ps-tag" onclick="tsjQuickSearch('UPSC 2026')">UPSC 2026</button>
           </div>
         </div>
 
@@ -2256,6 +2255,21 @@
         if (!refreshing) { refreshing = true; window.location.reload(); }
       });
     });
+  }
+  </script>
+
+  <!-- Quick Search helper: Popular search tags use this to fill hero search -->
+  <script>
+  function tsjQuickSearch(query) {
+    var heroInput = document.getElementById('heroSearch');
+    var hero = document.getElementById('hero-search-section');
+    if (!heroInput) return;
+    if (hero) hero.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(function() {
+      heroInput.value = query;
+      heroInput.dispatchEvent(new Event('input'));
+      heroInput.focus();
+    }, 350);
   }
   </script>
 
