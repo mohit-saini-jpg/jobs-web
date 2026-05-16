@@ -810,52 +810,80 @@ function renderJob(job, stateName, stateId) {
   }
 
   // ── Important Links ──
-  // Only show job-relevant links (apply, notification, official website)
+  // Show ALL links from important_links obj + useful_links + static fields
   // NO sarkariresult/sarkariresultshine links
   const isSR = u => u && (u.includes('sarkariresult.com') || u.includes('sarkariresultshine.com'));
   const seenHrefs = new Set();
   const allLinks = [];
 
-  // Process important_links from JSON
-  // Keys: click_here (array), notification_pdf (string)
-  const clickHereUrls = Array.isArray(il.click_here) ? il.click_here : (il.click_here ? [il.click_here] : []);
-  const notifPdfUrl   = safe(il.notification_pdf || '');
+  function addLink(href, label, icon, cls, sub) {
+    const h = safe(href);
+    if (!h || h === '#' || isSR(h) || seenHrefs.has(h)) return;
+    seenHrefs.add(h);
+    allLinks.push({ href: h, label, icon, cls, sub });
+  }
 
-  // Smart categorization of click_here URLs
-  clickHereUrls.forEach((rawUrl, idx) => {
-    const href = safe(rawUrl);
-    if (!href || isSR(href) || seenHrefs.has(href)) return;
-    seenHrefs.add(href);
+  // ── Label map for all known important_links keys ──
+  const IL_LABELS = {
+    click_here:                     { label: 'Click Here',              icon: 'fa-arrow-up-right-from-square', cls: 'jp-btn-blue',   sub: 'Click Here' },
+    click_here_to_apply:            { label: 'Apply Online',            icon: 'fa-paper-plane',               cls: 'jp-btn-green',  sub: 'Apply Now' },
+    apply_online:                   { label: 'Apply Online',            icon: 'fa-paper-plane',               cls: 'jp-btn-green',  sub: 'Apply Now' },
+    apply_link:                     { label: 'Apply Online',            icon: 'fa-paper-plane',               cls: 'jp-btn-green',  sub: 'Apply Now' },
+    registration:                   { label: 'Registration Link',       icon: 'fa-paper-plane',               cls: 'jp-btn-green',  sub: 'Register Now' },
+    notification_pdf:               { label: 'Notification PDF',        icon: 'fa-file-pdf',                  cls: 'jp-btn-blue',   sub: 'View PDF' },
+    download_pdf:                   { label: 'Download PDF',            icon: 'fa-file-pdf',                  cls: 'jp-btn-blue',   sub: 'Download PDF' },
+    download_notification:          { label: 'Download Notification',   icon: 'fa-file-pdf',                  cls: 'jp-btn-blue',   sub: 'View PDF' },
+    official_notification:          { label: 'Official Notification',   icon: 'fa-file-pdf',                  cls: 'jp-btn-blue',   sub: 'Download PDF' },
+    official_website:               { label: 'Official Website',        icon: 'fa-globe',                     cls: 'jp-btn-red',    sub: 'Visit Now' },
+    visit_website:                  { label: 'Official Website',        icon: 'fa-globe',                     cls: 'jp-btn-red',    sub: 'Visit Now' },
+    official_website_link:          { label: 'Official Website',        icon: 'fa-globe',                     cls: 'jp-btn-red',    sub: 'Visit Now' },
+    login:                          { label: 'Candidate Login',         icon: 'fa-right-to-bracket',          cls: 'jp-btn-green',  sub: 'Login Here' },
+    candidate_login:                { label: 'Candidate Login',         icon: 'fa-right-to-bracket',          cls: 'jp-btn-green',  sub: 'Login Here' },
+    result:                         { label: 'Result',                  icon: 'fa-trophy',                    cls: 'jp-btn-orange', sub: 'View Result' },
+    result_link:                    { label: 'Result',                  icon: 'fa-trophy',                    cls: 'jp-btn-orange', sub: 'View Result' },
+    admit_card:                     { label: 'Admit Card',              icon: 'fa-id-card',                   cls: 'jp-btn-orange', sub: 'Download Now' },
+    admit_card_link:                { label: 'Admit Card',              icon: 'fa-id-card',                   cls: 'jp-btn-orange', sub: 'Download Now' },
+    answer_key:                     { label: 'Answer Key',              icon: 'fa-key',                       cls: 'jp-btn-blue',   sub: 'Download Now' },
+    final_answer_key:               { label: 'Answer Key',              icon: 'fa-key',                       cls: 'jp-btn-blue',   sub: 'Download Now' },
+    syllabus:                       { label: 'Syllabus',                icon: 'fa-book-open',                 cls: 'jp-btn-blue',   sub: 'Download Now' },
+    merit_list:                     { label: 'Merit List',              icon: 'fa-list-ol',                   cls: 'jp-btn-orange', sub: 'View List' },
+    score_card:                     { label: 'Score Card',              icon: 'fa-chart-bar',                 cls: 'jp-btn-orange', sub: 'Download Now' },
+    exam_city:                      { label: 'Exam City Details',       icon: 'fa-location-dot',              cls: 'jp-btn-blue',   sub: 'Check City' },
+    counselling:                    { label: 'Counselling Link',        icon: 'fa-graduation-cap',            cls: 'jp-btn-blue',   sub: 'Counselling' },
+    form_pdf_free_link:             { label: 'Download Form (Free PDF)',icon: 'fa-file-arrow-down',           cls: 'jp-btn-orange', sub: 'Free PDF' },
+    official_notification_pdf_link: { label: 'Official Notification PDF',icon:'fa-file-pdf',                 cls: 'jp-btn-blue',   sub: 'Download PDF' },
+  };
 
-    // Detect link type from URL
-    const isPdf  = href.toLowerCase().includes('.pdf');
-    const lh = href.toLowerCase();
-    let label, cat;
-
-    if (isPdf) {
-      label = 'Notification PDF';
-      cat = { icon:'fa-file-pdf', cls:'jp-btn-blue', sub:'Download PDF' };
-    } else if (lh.includes('apply') || lh.includes('register') || lh.includes('signin') || lh.includes('login')) {
-      label = idx === 0 ? 'Apply Online' : `Apply Online (${idx+1})`;
-      cat = { icon:'fa-paper-plane', cls:'jp-btn-green', sub:'Apply Now' };
-    } else {
-      label = idx === 0 ? 'Click Here' : `Click Here (${idx+1})`;
-      cat = categorizeLink(label, href);
+  // Process ALL keys in important_links object
+  if (typeof il === 'object' && !Array.isArray(il)) {
+    for (const [key, val] of Object.entries(il)) {
+      if (!val) continue;
+      const meta = IL_LABELS[key] || {
+        label: key.replace(/_/g,' ').replace(/\b[a-z]/g, c => c.toUpperCase()),
+        icon: 'fa-link', cls: 'jp-btn-blue', sub: 'Click Here'
+      };
+      const urls = Array.isArray(val) ? val : [val];
+      urls.forEach((rawUrl, idx) => {
+        const lbl = urls.length > 1 ? `${meta.label} (${idx+1})` : meta.label;
+        // Smarter labeling for click_here array: detect type from URL
+        let finalLabel = lbl, finalIcon = meta.icon, finalCls = meta.cls, finalSub = meta.sub;
+        if (key === 'click_here') {
+          const isPdf = rawUrl.toLowerCase().includes('.pdf');
+          const lh = rawUrl.toLowerCase();
+          if (isPdf) { finalLabel = idx===0?'Notification PDF':`Notification PDF (${idx+1})`; finalIcon='fa-file-pdf'; finalCls='jp-btn-blue'; finalSub='View PDF'; }
+          else if (lh.includes('apply')||lh.includes('register')||lh.includes('signin')) { finalLabel=idx===0?'Apply Online':`Apply Online (${idx+1})`; finalIcon='fa-paper-plane'; finalCls='jp-btn-green'; finalSub='Apply Now'; }
+          else if (lh.includes('login')) { finalLabel=idx===0?'Candidate Login':`Login (${idx+1})`; finalIcon='fa-right-to-bracket'; finalCls='jp-btn-green'; finalSub='Login Here'; }
+          else if (lh.includes('result')) { finalLabel=idx===0?'Result':`Result (${idx+1})`; finalIcon='fa-trophy'; finalCls='jp-btn-orange'; finalSub='View Result'; }
+          else { finalLabel=lbl; }
+        }
+        addLink(rawUrl, finalLabel, finalIcon, finalCls, finalSub);
+      });
     }
-
-    allLinks.push({ href, label, ...cat });
-  });
-
-  // Add notification_pdf if not already added
-  if (notifPdfUrl && !seenHrefs.has(notifPdfUrl) && !isSR(notifPdfUrl)) {
-    seenHrefs.add(notifPdfUrl);
-    allLinks.push({ href: notifPdfUrl, label: 'Notification PDF', icon:'fa-file-pdf', cls:'jp-btn-blue', sub:'Download PDF' });
   }
 
   // Add primaryUrl (item.url) as Apply Online if not already there
   if (primaryUrl && !seenHrefs.has(primaryUrl) && !isSR(primaryUrl)) {
     seenHrefs.add(primaryUrl);
-    const cat = categorizeLink('apply online', primaryUrl);
     allLinks.push({ href: primaryUrl, label: 'Apply Online', icon:'fa-paper-plane', cls:'jp-btn-green', sub:'Apply Now' });
   }
 
