@@ -60,7 +60,7 @@
   Content-Type: application/manifest+json
 
 /
-  Link: </styles.css>; rel=preload; as=style, </perf-boost.js>; rel=preload; as=script
+  Link: <https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin
   Cache-Control: public, max-age=7200, stale-while-revalidate=86400
 
 /config.json
