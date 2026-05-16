@@ -43,7 +43,14 @@
     if (jobMatch) {
       var slug = decodeURIComponent(jobMatch[1]);
       sessionStorage.setItem('__tsj_slug', slug);
-      window.location.replace('/job.html?slug=' + encodeURIComponent(slug));
+      // Forward ?ref= param if present (set by buildRedirectUrl in script.js)
+      var refParam = new URLSearchParams(window.location.search).get('ref') || '';
+      var destUrl = '/job.html?slug=' + encodeURIComponent(slug);
+      if (refParam) {
+        sessionStorage.setItem('__tsj_ref', refParam);
+        destUrl += '&ref=' + encodeURIComponent(refParam);
+      }
+      window.location.replace(destUrl);
       return;
     }
 
