@@ -89,11 +89,76 @@
     return { sections };
   }
 
+  /* ── jobs-index.json canonical slug lookup ── */
+  /* This maps normalized title → actual file slug for accurate /jobs/<slug>/ URLs */
+  let __jobsIndexCache = null;
+  async function getJobsIndex() {
+    if (__jobsIndexCache) return __jobsIndexCache;
+    try {
+      const r = await fetch("/jobs-index.json");
+      if (r.ok) __jobsIndexCache = await r.json();
+    } catch (_) {}
+    return __jobsIndexCache || {};
+  }
+
+  function normalizeForIndexLookup(s) {
+    return s.toLowerCase()
+      .replace(/&/g, " and ").replace(/[^a-z0-9]+/g, "-")
+      .replace(/-and-/g, "-").replace(/-or-/g, "-").replace(/-the-/g, "-")
+      .replace(/-of-/g, "-").replace(/-for-/g, "-").replace(/-in-/g, "-")
+      .replace(/-to-/g, "-").replace(/-cum-/g, "-")
+      .replace(/-+/g, "-").replace(/^-|-$/g, "");
+  }
+
+  function findCanonicalSlug(title, jobsIndex) {
+    if (!jobsIndex || !title) return null;
+    const normTitle = normalizeForIndexLookup(title);
+    // Try each index key (without category suffix) normalized
+    for (const key of Object.keys(jobsIndex)) {
+      // Strip category suffixes like -bank-jobs, -latest-notifications, -8th-pass etc.
+      const base = key.replace(/-(latest-notifications|bank-jobs|8th-pass|10th-pass|12th-pass|any-graduate|any-post-graduate|b-tech-be|diploma|iti|police-defence|medical-hospital|teaching-faculty|railway-jobs|8th-pass|b-com|post-graduation)$/, "");
+      const normKey = normalizeForIndexLookup(base);
+      if (normKey === normTitle) return base;
+    }
+    // Fuzzy token match
+    const tokens = normTitle.split("-").filter(t => t.length > 3);
+    if (!tokens.length) return null;
+    let bestKey = null, bestScore = 0;
+    const seen = new Set();
+    for (const key of Object.keys(jobsIndex)) {
+      const base = key.replace(/-(latest-notifications|bank-jobs|8th-pass|10th-pass|12th-pass|any-graduate|any-post-graduate|b-tech-be|diploma|iti|police-defence|medical-hospital|teaching-faculty|railway-jobs|b-com|post-graduation)$/, "");
+      if (seen.has(base)) continue;
+      seen.add(base);
+      const normKey = normalizeForIndexLookup(base);
+      const matched = tokens.filter(t => normKey.includes(t)).length;
+      const score = matched / tokens.length;
+      if (score > bestScore && score >= 0.8) { bestScore = score; bestKey = base; }
+    }
+    return bestKey;
+  }
+
   /* Fetch Complete_Jobs_Full_Data.json and return it as sections format */
   async function getJobsSections() {
     try {
-      const raw = await getJSON("Complete_Jobs_Full_Data.json");
-      return convertJobsDataToSections(raw);
+      const [raw, jobsIndex] = await Promise.all([
+        getJSON("Complete_Jobs_Full_Data.json"),
+        getJobsIndex()
+      ]);
+      /* Patch convertJobsDataToSections to use canonical slugs */
+      const sections = convertJobsDataToSections(raw);
+      /* Fix slugs in all items using jobs-index.json */
+      for (const sec of sections.sections) {
+        for (const item of sec.items) {
+          const canonical = findCanonicalSlug(item.name, jobsIndex);
+          if (canonical && canonical !== item.slug) {
+            item.slug = canonical;
+            item.url = "/jobs/" + canonical + "/";
+          } else if (item.slug) {
+            item.url = "/jobs/" + item.slug + "/";
+          }
+        }
+      }
+      return sections;
     } catch (_) { return { sections: [] }; }
   }
 
@@ -164,7 +229,13 @@
     return `view.html?url=${encodeURIComponent(u)}&name=${encodeURIComponent(name)}`;
   }
 
-  function buildRedirectUrl(targetUrl, label = "", sectionId = "") {
+  function buildRedirectUrl(targetUrl, label = "", sectionId = "", anchor = null) {
+    /* Priority 1: If anchor has data-slug (exact file slug), use it directly */
+    if (anchor) {
+      const ds = anchor.getAttribute("data-slug");
+      if (ds) return "/jobs/" + ds + "/";
+    }
+    /* Priority 2: slugify the label (title-based, may differ from file slug) */
     const slug = slugifyTitle(label || targetUrl);
     if (!slug || slug === "official-link") return "";
     return "/jobs/" + slug + "/";
@@ -233,7 +304,7 @@
         anchor.getAttribute("aria-label") ||
         anchor.getAttribute("title") ||
         safe(anchor.textContent);
-      const redirectUrl = buildRedirectUrl(normalizedHref, redirectLabel);
+      const redirectUrl = buildRedirectUrl(normalizedHref, redirectLabel, "", anchor);
       if (!redirectUrl) return;
 
       e.preventDefault();
@@ -597,10 +668,14 @@
         const a = document.createElement("a");
         a.className = "section-link";
         /* If URL is a job.html link (from slug), use directly — bypass redirect gate */
-        if (url.startsWith("job.html")) {
+        if (it.slug) {
+          /* Use exact slug → /jobs/<slug>/ — most reliable, matches /jobs/data/ file */
+          a.href = "/jobs/" + it.slug + "/";
+          a.setAttribute("data-slug", it.slug);
+          a.setAttribute("data-bypass-gate", "1");
+        } else if (url.startsWith("job.html")) {
           a.href = url;
           a.setAttribute("data-bypass-gate", "1");
-          if (it.slug) a.setAttribute("data-slug", it.slug);
         } else {
           a.href = buildRedirectUrl(url, name, sectionKey) || normalizeUrl(url);
         }
@@ -709,10 +784,14 @@
       const external = !!it.external;
       const a = document.createElement("a");
       a.className = "section-link";
-      if (url.startsWith("job.html")) {
+      if (it.slug) {
+        /* Use exact slug → /jobs/<slug>/ */
+        a.href = "/jobs/" + it.slug + "/";
+        a.setAttribute("data-slug", it.slug);
+        a.setAttribute("data-bypass-gate", "1");
+      } else if (url.startsWith("job.html")) {
         a.href = url;
         a.setAttribute("data-bypass-gate", "1");
-        if (it.slug) a.setAttribute("data-slug", it.slug);
       } else {
         a.href = buildRedirectUrl(url, name, sectionKey) || normalizeUrl(url);
       }
@@ -1768,8 +1847,7 @@
     function jobHref(j) {
       const slug = j.slug || slugify(j.title || '');
       if (!slug) return j.official_website_link || '#';
-      const prefix = (j.apply_mode||'').toLowerCase() === 'offline' ? 'offline-' : '';
-      return 'job.html?slug=' + encodeURIComponent(prefix + slug);
+      return '/jobs/' + slug + '/';
     }
 
     let searchData = [];
@@ -1826,7 +1904,7 @@
             const applyMode = (bd.application_mode || i.apply_mode || '').toLowerCase();
             const prefix = applyMode === 'offline' ? 'offline-' : '';
             const slug = i.slug || slugify(title);
-            const href = slug ? 'job.html?slug=' + encodeURIComponent(prefix + slug) + '&section=' + encodeURIComponent(k.replace(/_/g,' ')) : '#';
+            const href = slug ? '/jobs/' + slug + '/' : '#';
             push(title, href, k.replace(/_/g,' '));
           });
         });
