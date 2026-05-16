@@ -71,12 +71,19 @@
       }
 
       // Source C: Legacy ?slug= query param (backwards compatibility)
+      // Also read ?ref= param BEFORE replaceState wipes the query string
+      var _qp = new URLSearchParams(window.location.search);
       if (!slug) {
-        var qp = new URLSearchParams(window.location.search);
-        slug = qp.get('slug') || '';
+        slug = _qp.get('slug') || '';
       }
 
-      // Clean up sessionStorage
+      // ── Save ?ref= URL to sessionStorage BEFORE replaceState removes query params ──
+      var _refFromUrl = _qp.get('ref') || '';
+      if (_refFromUrl) {
+        try { sessionStorage.setItem('__tsj_ref', _refFromUrl); } catch (_) {}
+      }
+
+      // Clean up sessionStorage slug (but keep __tsj_ref for run() to read)
       try { if (slug) sessionStorage.removeItem('__tsj_slug'); } catch (_) {}
 
       /* ── 2. Restore pretty URL (no query params) ── */
@@ -1809,9 +1816,17 @@
         return;
       }
 
-      /* Read optional ?ref= URL passed from index.html SR section */
+      /* Read ?ref= URL — check sessionStorage first (saved before replaceState wiped query string),
+         then fallback to current URL params (for direct job.html?slug=...&ref=... access) */
       const refUrl = (() => {
         try {
+          // Primary: sessionStorage (set by early script before replaceState)
+          const stored = sessionStorage.getItem('__tsj_ref') || '';
+          if (stored) {
+            try { sessionStorage.removeItem('__tsj_ref'); } catch (_) {}
+            return stored;
+          }
+          // Fallback: URL param (works when page loaded directly with ?ref=)
           return new URLSearchParams(window.location.search).get('ref') || '';
         } catch (_) { return ''; }
       })();
