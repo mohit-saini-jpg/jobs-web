@@ -1,6 +1,6 @@
 # robots.txt — Top Sarkari Jobs
 # https://www.topsarkarijobs.com/robots.txt
-# Last updated: 2026-05-08
+# Last updated: 2026-05-16
 
 # ── Googlebot ──────────────────────────────
 User-agent: Googlebot
@@ -16,17 +16,40 @@ Crawl-delay: 2
 User-agent: *
 Allow: /
 
+# ── Allow clean URL paths ──────────────────
+Allow: /jobs/
+Allow: /category/
+Allow: /state-jobs/
+Allow: /section/
+Allow: /search/
+Allow: /latest-jobs/
+Allow: /results/
+Allow: /admit-card/
+Allow: /railway-jobs/
+Allow: /bank-jobs/
+Allow: /police-jobs/
+Allow: /ssc-jobs/
+Allow: /upsc-jobs/
+Allow: /teaching-jobs/
+Allow: /army-jobs/
+Allow: /10th-pass-jobs/
+Allow: /12th-pass-jobs/
+Allow: /upcoming-jobs/
+Allow: /answer-key/
+Allow: /admissions/
+
 # ── Block low-value utility paths ──────────
 Disallow: /admin/
 Disallow: /private/
 Disallow: /tmp/
 Disallow: /.gstack/
 
-# ── Block duplicate / thin content patterns ──
-Disallow: /view.html?section=&
-Disallow: /category.html?group=&
-Disallow: /state-jobs.html?state=&
-Disallow: /search.html?q=&
+# ── Block duplicate / old query-param URLs ──
+Disallow: /view.html?section=
+Disallow: /category.html?group=
+Disallow: /state-jobs.html?state=
+Disallow: /search.html?q=
+Disallow: /job.html?slug=
 
 # ── Block redirect interstitial from indexing ──
 Disallow: /redirect.html
