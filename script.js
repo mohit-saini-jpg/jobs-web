@@ -167,7 +167,11 @@
   function buildRedirectUrl(targetUrl, label = "", sectionId = "") {
     const slug = slugifyTitle(label || targetUrl);
     if (!slug || slug === "official-link") return "";
-    return "/jobs/" + slug + "/";
+    // Attach actual destination URL as ?ref= so job.html can use it
+    // even when slug-based lookup in JSON fails (e.g. dailyupdates items)
+    const dest = normalizeUrl(targetUrl);
+    const refParam = dest ? "?ref=" + encodeURIComponent(dest) : "";
+    return "/jobs/" + slug + "/" + refParam;
   }
 
   /** Redirect interstitial only for home section rows and view.html list items (not More / nav / etc.). */
