@@ -485,37 +485,79 @@
         var handledKeys = {};
         Object.keys(COMPLETE_JOBS_META).forEach(function(k){ handledKeys[k] = true; });
 
+        /* ── Category priority: lower number = shown as PRIMARY section ── */
+        /* Same job appears in multiple cats (8TH_Pass + Diploma + Any_Graduate etc) */
+        /* We pick the BEST (most specific/lowest qual) category as display label   */
+        /* All other cats get added to tags[] for searchability — not as extra cards */
+        var CAT_PRIORITY = {
+          '8TH_Pass':1, '10TH_Pass':2, '12TH_Pass':3, 'ITI':4, 'Diploma':5,
+          'B_Com':6, 'B_Tech_BE':7, 'Any_Graduate':8, 'Any_Post_Graduate':9,
+          'Teaching_Faculty':10, 'Bank_Jobs':11, 'Medical_Hospital':12,
+          'Police_Defence':13, 'Railway_Jobs':14, 'SSC_Jobs':15, 'Haryana_Jobs':16,
+          'Defence_Jobs':17, 'UPSC_Jobs':18, 'Last_Date_Reminder':19,
+          'Latest_Notifications':20,
+        };
+
+        /* STEP 1: Collect all entries grouped by titleKey (within Complete_Jobs only) */
+        var cjTitleMap = {};  /* titleKey → { bestCatKey, bestPriority, job, allCatIds[] } */
+
         Object.keys(COMPLETE_JOBS_META).forEach(function(catKey) {
-          var meta = COMPLETE_JOBS_META[catKey];
+          var priority = CAT_PRIORITY[catKey] || 99;
           (Array.isArray(data[catKey]) ? data[catKey] : []).forEach(function(job) {
             var title = getJobTitle(job);
             if (!title) return;
-            var org  = getJobOrg(job);
-            var bd   = job.basic_details || {};
-            var href = buildJobHref(job, meta.id);
-            var dates = job.important_dates || {};
-            var lastDate = String(
-              dates.last_date_to_apply || dates.last_date || dates.closing_date || job.last_date || ''
-            ).trim();
-            extra.push({
-              title:title, slug:href,
-              dept:org,
-              qual: meta.qual || job.qualification || bd.qualification || '',
-              state: job.state || 'All India',
-              cat: meta.cat,
-              tags: [title, job.post_name||'', org, meta.id,
-                     String(job.total_vacancies||job.total_vacancy||''),
-                     String(bd.short_information||'').slice(0,100),
-                     'sarkari job 2026'].join(' '),
-              lastDate: lastDate,
-              icon: meta.icon,
-              lastUpdated: bd.last_updated || job.updated_at || job.last_updated || new Date().toISOString(),
-              sectionSource: meta.id,
-            });
+            var tk = titleMergeKey(title);
+            if (!cjTitleMap[tk]) {
+              cjTitleMap[tk] = { bestCatKey: catKey, bestPriority: priority, job: job, allCatIds: [] };
+            } else if (priority < cjTitleMap[tk].bestPriority) {
+              /* Better (more specific) category found — use it as primary */
+              cjTitleMap[tk].allCatIds.push(COMPLETE_JOBS_META[cjTitleMap[tk].bestCatKey].id);
+              cjTitleMap[tk].bestCatKey = catKey;
+              cjTitleMap[tk].bestPriority = priority;
+              cjTitleMap[tk].job = job;
+            } else {
+              /* Secondary category — add to tags only */
+              cjTitleMap[tk].allCatIds.push(COMPLETE_JOBS_META[catKey].id);
+            }
           });
         });
 
-        // Unknown keys
+        /* STEP 2: Emit ONE entry per unique title — primary category as display */
+        Object.keys(cjTitleMap).forEach(function(tk) {
+          var grp  = cjTitleMap[tk];
+          var meta = COMPLETE_JOBS_META[grp.bestCatKey];
+          var job  = grp.job;
+          var org  = getJobOrg(job);
+          var bd   = job.basic_details || {};
+          var href = buildJobHref(job, meta.id);
+          var dates = job.important_dates || {};
+          var lastDate = String(
+            dates.last_date_to_apply || dates.last_date || dates.closing_date || job.last_date || ''
+          ).trim();
+
+          /* Combine all category names into tags for search coverage */
+          var allCatTags = grp.allCatIds.join(' ');
+
+          extra.push({
+            title: getJobTitle(job),
+            slug: href,
+            dept: org,
+            qual: meta.qual || job.qualification || bd.qualification || '',
+            state: job.state || 'All India',
+            cat: meta.cat,
+            tags: [getJobTitle(job), job.post_name||'', org, meta.id, allCatTags,
+                   String(job.total_vacancies||job.total_vacancy||''),
+                   String(bd.short_information||'').slice(0,100),
+                   'sarkari job 2026'].join(' '),
+            lastDate: lastDate,
+            icon: meta.icon,
+            lastUpdated: bd.last_updated || job.updated_at || job.last_updated || new Date().toISOString(),
+            sectionSource: meta.id,
+            _allCats: [meta.id].concat(grp.allCatIds),  /* for display in result card */
+          });
+        });
+
+        /* STEP 3: Unknown keys (not in COMPLETE_JOBS_META) */
         Object.keys(data).forEach(function(key) {
           if (handledKeys[key]) return;
           (Array.isArray(data[key]) ? data[key] : []).forEach(function(job) {
@@ -878,12 +920,10 @@
       /* Source badges */
       '.tsj-src-row{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px}',
       '.tsj-src-badge{font-size:.6rem;font-weight:700;padding:1px 6px;border-radius:8px;display:inline-block}',
-      /* Multi-source links panel */
-      '.tsj-multi-src{display:flex;flex-direction:column;gap:2px;margin:4px 14px 6px 54px}',
-      '.tsj-src-link{display:flex;align-items:center;gap:6px;padding:4px 8px;border-radius:6px;text-decoration:none;font-size:.68rem;cursor:pointer;transition:filter .1s}',
-      '.tsj-src-link:hover{filter:brightness(.92)}',
-      '.tsj-src-link-label{font-weight:800;flex-shrink:0}',
-      '.tsj-src-link-sec{color:#64748b;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+      /* Also-in compact line */
+      '.tsj-also-in{display:block;font-size:.63rem;color:#94a3b8;margin-top:2px}',
+      '.tsj-also-link{font-weight:700;text-decoration:none}',
+      '.tsj-also-link:hover{text-decoration:underline}',
       /* Make parent item div behave */
       '.tsj-suggest-item{border-bottom:1px solid #f1f5f9;transition:background .1s}',
       '.tsj-suggest-item:last-child{border-bottom:none}',
@@ -988,31 +1028,37 @@
       var state   = (item.state && item.state !== 'All India') ? item.state : '';
       var bClass  = getBadgeClass(item.cat, sec);
 
-      // Build source badges — show all JSON sources this job appeared in
-      var sourceBadgesHtml = '';
+      /* Source JSON badges — compact, ONE per distinct JSON file */
+      var srcBadgesHtml = '';
       if (item.sources && item.sources.length > 0) {
-        var srcHtml = item.sources.map(function(s) {
-          var col = (SOURCE_COLORS[s.fileName] || '#f1f5f9|#475569').split('|');
-          return '<span class="tsj-src-badge" style="background:' + col[0] + ';color:' + col[1] + '">' + esc(s.label) + '</span>';
-        }).join('');
-        sourceBadgesHtml = '<span class="tsj-src-row">' + srcHtml + '</span>';
+        var seenFiles = {};
+        var badges = [];
+        item.sources.forEach(function(s) {
+          if (!seenFiles[s.fileName]) {
+            seenFiles[s.fileName] = true;
+            var col = (SOURCE_COLORS[s.fileName] || '#f1f5f9|#475569').split('|');
+            badges.push('<span class="tsj-src-badge" style="background:' + col[0] + ';color:' + col[1] + '">' + esc(s.label) + '</span>');
+          }
+        });
+        if (badges.length) srcBadgesHtml = '<span class="tsj-src-row">' + badges.join('') + '</span>';
       }
 
-      // Build per-source links (if multiple sources, show clickable rows)
-      var multiSrcLinks = '';
+      /* "Also in" line — when job is in multiple source JSONs */
+      var alsoInHtml = '';
       if (item.sources && item.sources.length > 1) {
-        multiSrcLinks = '<span class="tsj-multi-src">' +
-          item.sources.map(function(s) {
-            var col = (SOURCE_COLORS[s.fileName] || '#f1f5f9|#475569').split('|');
-            var secLabel = s.section ? ' — ' + s.section : '';
-            return '<a class="tsj-src-link" href="' + esc(s.slug || item.slug) + '" ' +
-              'style="border-left:3px solid ' + col[1] + ';background:' + col[0] + '">' +
-              '<span class="tsj-src-link-label" style="color:' + col[1] + '">' + esc(s.label) + '</span>' +
-              '<span class="tsj-src-link-sec">' + esc(secLabel) + '</span>' +
-              '<i class="fa-solid fa-arrow-right" style="color:' + col[1] + ';font-size:.6rem"></i>' +
-              '</a>';
-          }).join('') +
-        '</span>';
+        var distinctFiles = [];
+        var seen2 = {};
+        item.sources.forEach(function(s) {
+          if (!seen2[s.fileName]) { seen2[s.fileName] = true; distinctFiles.push(s); }
+        });
+        if (distinctFiles.length > 1) {
+          alsoInHtml = '<span class="tsj-also-in">Also in: ' +
+            distinctFiles.slice(1).map(function(s) {
+              var col = (SOURCE_COLORS[s.fileName] || '#f1f5f9|#475569').split('|');
+              return '<a href="' + esc(s.slug || item.slug) + '" class="tsj-also-link" style="color:' + col[1] + '">' +
+                esc(s.label) + (s.section ? ' (' + esc(s.section) + ')' : '') + '</a>';
+            }).join(', ') + '</span>';
+        }
       }
 
       return '<div class="tsj-suggest-item' + active + '" data-idx="' + idx + '" role="option">' +
@@ -1024,11 +1070,11 @@
               (sec ? '<span class="tsj-badge-pill ' + bClass + '">' + esc(sec) + '</span>' : '') +
               (state ? ' <span style="color:#64748b">· ' + esc(state) + '</span>' : '') +
             '</span>' +
-            sourceBadgesHtml +
+            srcBadgesHtml +
+            alsoInHtml +
           '</span>' +
           '<span class="tsj-si-arr"><i class="fa-solid fa-arrow-right"></i></span>' +
         '</a>' +
-        multiSrcLinks +
       '</div>';
     }
 
@@ -1201,20 +1247,21 @@
                   col[0] + ';color:' + col[1] + '">' + esc(s.label) + '</span>';
               }).join('') + '</div>';
           }
-          // Per-source links if multiple
+          // "Also in" compact line for multiple sources
           var multiLinks = '';
           if (r.sources && r.sources.length > 1) {
-            multiLinks = '<div style="display:flex;flex-direction:column;gap:3px;margin-top:6px">' +
-              r.sources.map(function(s) {
-                var col = (SOURCE_COLORS[s.fileName] || '#f1f5f9|#475569').split('|');
-                return '<a href="' + esc(s.slug || r.slug) + '" style="display:flex;align-items:center;gap:6px;' +
-                  'padding:4px 8px;border-radius:6px;text-decoration:none;font-size:.68rem;' +
-                  'border-left:3px solid ' + col[1] + ';background:' + col[0] + '">' +
-                  '<span style="font-weight:800;color:' + col[1] + '">' + esc(s.label) + '</span>' +
-                  (s.section ? '<span style="color:#64748b">' + esc(s.section) + '</span>' : '') +
-                  '<i class="fa-solid fa-arrow-right" style="color:' + col[1] + ';font-size:.6rem;margin-left:auto"></i>' +
-                  '</a>';
-              }).join('') + '</div>';
+            var seen3 = {}; var distinctSrc = [];
+            r.sources.forEach(function(s) {
+              if (!seen3[s.fileName]) { seen3[s.fileName] = true; distinctSrc.push(s); }
+            });
+            if (distinctSrc.length > 1) {
+              multiLinks = '<div style="font-size:.65rem;color:#94a3b8;margin-top:3px">Also in: ' +
+                distinctSrc.slice(1).map(function(s) {
+                  var col = (SOURCE_COLORS[s.fileName] || '#f1f5f9|#475569').split('|');
+                  return '<a href="' + esc(s.slug || r.slug) + '" style="color:' + col[1] + ';font-weight:700;text-decoration:none">' +
+                    esc(s.label) + (s.section ? ' (' + esc(s.section) + ')' : '') + '</a>';
+                }).join(', ') + '</div>';
+            }
           }
           return '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:12px 14px">' +
             '<a href="' + esc(r.slug) + '" style="font-size:.86rem;font-weight:800;color:#1a56db;text-decoration:none;display:block;margin-bottom:4px">' +
