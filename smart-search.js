@@ -305,15 +305,37 @@
     const LONE_STATES = new Set(['assam','manipur','sikkim','meghalaya','tripura','nagaland','mizoram','goa','himachal','uttarakhand','chhattisgarh','jharkhand','telangana','odisha','maharashtra','gujarat','punjab','haryana','bihar','rajasthan']);
     if (LONE_STATES.has(title.toLowerCase().trim())) return false;
 
-    // 5. Block non-job content by title keywords (jobs + CSC PDF/Scheme/Yojana items)
-    const nonJobTitleRx = /\b(image.?resizer|image.?quality|pdf.?tool|video.?compress|mp4.?to|photo.?edit|qr.?code|word.?to|compress.?image|convert.?image|e.?book|ebook|helpdesk|international.?news|employment.?news|selection.?process|photo.?signature|signature.?joiner|study.?material|current.?affairs|answer.?key|syllabus|cut.?off|mock.?test|news.?hindi|world.?news|jagran|ndtv|amar.?ujala|dainik.?bhaskar|domicile|certificate.?download|yojana|yojna|tractor|draw.?list|dairy.?farming|pashu|mahostav|solar.?pump|solar.?water|refund|housing.?ews|land.?holding|subsid|sc.?farmer|csc.?pdf|csc.?link)\b/i;
-    if (nonJobTitleRx.test(title)) return false;
+    // 5. Block non-job content by title keywords
+    // FIX: \b removed for Hindi-mixed titles — e.g. 'लाडो लक्ष्मी Yojana' mein \b kaam nahi karta
+    const titleLower = title.toLowerCase();
 
-    // 5b. Block items from non-job sections (CSC PDF, Scheme, Yojana, Khabar etc.)
-    const nonJobSection = /importantcsc|csc.?pdf|csc.?link|govt.?scheme|yojana|yojna|khabar|latest.?khabar|study.?material|current.?affair|employment.?news/i;
-    const itemSec = String(item.sectionSource || item.dept || item.cat || '');
+    // 5a. Keyword list check (includes() — works for Hindi+English mixed text)
+    const NON_JOB_KW = [
+      'yojana','yojna','scheme','subsidy','e-kyc','ekyc','ration card',
+      'pan apply','pan link','pan card','e-pan','epan','nsdl pan','uti pan',
+      'tractor','draw list','dairy farming','pashu','mahostav',
+      'solar pump','solar water','refund','housing ews','land holding',
+      'sc farmer','domicile','certificate download',
+      'image resizer','image quality','pdf tool','video compress',
+      'mp4 to','photo edit','qr code','word to','compress image',
+      'convert image','ebook','e-book','helpdesk',
+      'study material','current affairs','answer key','syllabus',
+      'cut off','mock test','jagran','ndtv','amar ujala','dainik bhaskar',
+      'apply link','apply apply','application download','application link',
+      'seed subsidy','dhaincha','face rd','aadhaar face',
+      'laxmi','ladli','laado','laadli','laddo',
+    ];
+    for (const kw of NON_JOB_KW) {
+      if (titleLower.includes(kw)) return false;
+    }
+
+    // 5b. Block items from non-job sections — check ALL possible section fields
+    const nonJobSection = /importantcsc|csc.?(pdf|link)|govt.?scheme|yojana|yojna|khabar|latest.?khabar|study.?material|current.?affair|employment.?news|apply.?link/i;
+    const itemSec = String(item.sectionSource || '') + '|' + String(item.dept || '') + '|' + String(item.cat || '');
     if (nonJobSection.test(itemSec)) return false;
 
+    // 5c. Block 'Apply Link' or 'Apply APPLY' pattern (CSC link items)
+    if (/apply\s+(link|apply)/i.test(title)) return false;
     // 6. Block external URLs that are clearly NOT job detail pages
     //    Internal pages: job.html?slug=... — ALWAYS allow
     //    External URLs: allow only if they look like a job page (not tools/image/pdf)
