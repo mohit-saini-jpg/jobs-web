@@ -19,7 +19,7 @@
       'Complete_Jobs_Full_Data.json',
       'state-jobs-data.json',
     ],
-    maxSuggest: 10,
+    maxSuggest: 20,
     maxResults: 30,
     debounceMs: 200,
     recentKey: 'tsj_recent_searches',
@@ -1154,7 +1154,7 @@
       #tsjDrop {
         background: #fff; border: 1px solid #e2e8f0;
         border-radius: 14px; box-shadow: 0 16px 48px rgba(13,34,87,.18);
-        z-index: 99999; max-height: 420px; overflow-y: auto;
+        z-index: 99999; max-height: 600px; overflow-y: auto;
         display: none; animation: tsjFadeIn .15s ease;
       }
       #tsjDrop.open { display: block; }
@@ -1433,9 +1433,13 @@
 
       // Result rows: Job Title + direct job.html URL (href on the <a>)
       const rows = results.map((r, i) => renderSuggestItem(r, q, i)).join('');
-      const footer = `<a class="tsj-suggest-more" href="${CFG.searchPageUrl}?q=${encodeURIComponent(q)}">
-        <i class="fa-solid fa-magnifying-glass"></i> See all results for "${esc(q)}"
-      </a>`;
+      // Show count info instead of search.html link
+      const total = doSearch(q, {}).length;
+      const footer = total > CFG.maxSuggest
+        ? `<div class="tsj-suggest-more" style="cursor:default;">
+            <i class="fa-solid fa-list"></i> ${total} results — scroll down to see more
+           </div>`
+        : '';
       openDrop(rows + footer);
 
       // If JSON still loading — auto-refresh once it's ready
@@ -1468,11 +1472,12 @@
         if (active) {
           saveRecent(input.value.trim());
           window.location.href = active.href;  // direct job page open
+          closeDrop();
         } else if (input.value.trim()) {
+          // Enter pe results dropdown mein dikhao — search.html pe mat jaao
           saveRecent(input.value.trim());
-          window.location.href = `${CFG.searchPageUrl}?q=${encodeURIComponent(input.value.trim())}`;
+          runSuggest(input.value.trim());
         }
-        closeDrop();
       } else if (e.key === 'Escape') {
         closeDrop();
       }
@@ -1486,14 +1491,14 @@
       else showDefaultDrop();
     });
 
-    // ── Search button — go to search page ──
+    // ── Search button — show inline results (NO redirect to search.html) ──
     if (btn) {
       btn.addEventListener('click', () => {
         const q = input.value.trim();
         if (!q) return;
         saveRecent(q);
-        closeDrop();
-        window.location.href = `${CFG.searchPageUrl}?q=${encodeURIComponent(q)}`;
+        runSuggest(q);   // dropdown mein results dikhao
+        input.focus();
       });
     }
 
@@ -1523,12 +1528,28 @@
   function setupHeaderSearch() {
     const hInput = document.getElementById('headerSearch');
     const hBtn   = document.getElementById('headerSearchBtn');
+
+    function goToHeroWithQuery(q) {
+      // Header search → scroll to hero search, fill query, show results
+      const heroInput = document.getElementById('heroSearch');
+      const hero = document.getElementById('hero-search-section');
+      if (heroInput) {
+        if (hero) hero.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setTimeout(() => {
+          heroInput.value = q;
+          heroInput.dispatchEvent(new Event('input'));
+          heroInput.focus();
+        }, 350);
+      }
+    }
+
     if (hInput && hBtn) {
       hBtn.addEventListener('click', () => {
-        if (hInput.value.trim()) window.location.href = `${CFG.searchPageUrl}?q=${encodeURIComponent(hInput.value.trim())}`;
+        const q = hInput.value.trim();
+        if (q) goToHeroWithQuery(q);
       });
       hInput.addEventListener('keydown', e => {
-        if (e.key === 'Enter' && hInput.value.trim()) window.location.href = `${CFG.searchPageUrl}?q=${encodeURIComponent(hInput.value.trim())}`;
+        if (e.key === 'Enter' && hInput.value.trim()) goToHeroWithQuery(hInput.value.trim());
       });
     }
 
