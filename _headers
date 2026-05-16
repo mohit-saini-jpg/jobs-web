@@ -1,4 +1,5 @@
-# Netlify Headers for Performance & Security
+# Netlify Headers — Performance, Security & Auto Cache Busting
+
 /*
   X-Frame-Options: SAMEORIGIN
   X-XSS-Protection: 1; mode=block
@@ -6,15 +7,28 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(), microphone=(), camera=()
 
+# ✅ Service Worker: KABHI cache mat karo — hamesha fresh mile
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
+
+# HTML pages: short cache (2 hours) + revalidate karo
 /*.html
   Cache-Control: public, max-age=7200, must-revalidate
 
+# JSON data: 30 min cache (fresh data ke liye)
+/*.json
+  Cache-Control: public, max-age=1800, must-revalidate
+
+# CSS/JS: version query string se cache bust hoga — 1 saal cache
 /*.css
   Cache-Control: public, max-age=31536000, immutable
 
 /*.js
   Cache-Control: public, max-age=31536000, immutable
 
+# Images & Fonts
 /*.webp
   Cache-Control: public, max-age=15552000
 
@@ -27,9 +41,6 @@
 /fonts/*
   Cache-Control: public, max-age=31536000, immutable
   Access-Control-Allow-Origin: *
-
-/*.json
-  Cache-Control: public, max-age=1800
 
 /sitemap*.xml
   Cache-Control: public, max-age=86400
