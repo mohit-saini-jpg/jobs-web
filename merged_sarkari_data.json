@@ -1,23 +1,23 @@
 {
-  "scraped_at": "2026-05-15 18:31:55",
-  "total": 97,
+  "scraped_at": "2026-05-16 08:58:34",
+  "total": 91,
   "summary": {
-    "sarkariresultshine_active_jobs": 14,
+    "sarkariresultshine_active_jobs": 13,
     "sarkariresult_categories": {
-      "SR_Latest_Jobs": 25,
-      "SR_Result": 22,
+      "SR_Latest_Jobs": 22,
+      "SR_Result": 21,
       "SR_Admit_Card": 24,
-      "SR_Admission": 8,
+      "SR_Admission": 7,
       "SR_Answer_Key": 4
     },
-    "sarkariresult_total": 83
+    "sarkariresult_total": 78
   },
   "category_counts": {
-    "OFFLINE_FORM": 14,
-    "SR_Latest_Jobs": 25,
-    "SR_Result": 22,
+    "OFFLINE_FORM": 13,
+    "SR_Latest_Jobs": 22,
+    "SR_Result": 21,
     "SR_Admit_Card": 24,
-    "SR_Admission": 8,
+    "SR_Admission": 7,
     "SR_Answer_Key": 4
   },
   "jobs": [
@@ -37,7 +37,7 @@
         "interview_date": ""
       },
       "application_fees": {
-        "general_obc_ews": "",
+        "general_obc_ews": "50",
         "sc_st": "00",
         "female": ""
       },
@@ -58,13 +58,13 @@
     },
     {
       "category": "OFFLINE_FORM",
-      "title": "Air Force Station Gurgaon Recruitment 2026, Free AppliCation Form And Notification Out -",
+      "title": "Air Force Station Delhi Recruitment 2026, Notification Out And Free AppliCation Form -",
       "organization": "Indian Air Force",
       "post_name": "Lower Division Clerk (LDC)",
       "total_vacancy": "",
       "salary_pay_scale": "As per the Rules",
       "apply_mode": "Offline",
-      "job_location": "Haryana",
+      "job_location": "Delhi",
       "important_dates": {
         "application_start": "02-05-2026",
         "last_date": "01-06-2026",
@@ -72,13 +72,13 @@
         "interview_date": ""
       },
       "application_fees": {
-        "general_obc_ews": "",
+        "general_obc_ews": "50",
         "sc_st": "00",
         "female": ""
       },
       "minimum_age": "18",
       "maximum_age": "25",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website https://indianairforce.nic.in/ Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.), 2 additional photos. Also, attach a self-addressed envelope with a ₹10 stamp of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Air Officer Commanding, Air Force Station, Sohna Road, Gurugram – 122001",
+      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website https://indianairforce.nic.in/ Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.), 2 additional photos. Also, attach a self-addressed envelope with a ₹10 stamp of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send the application form to the address. Candidates can send the application to any of the following Delhi Air Force Units: 👇👇 Air Officer Commanding Air Force Station Race Course Lok Kalyan Marg New Delhi – 110003 President Central Airmen Selection Board (CASB) Brar Square, Delhi Cantt, New Delhi – 110010 Air Officer Commanding Air Force Central Accounts Office (AFCAO) Subroto Park New Delhi – 110010",
       "form_pdf_free_link": "",
       "official_website_link": "https://indianairforce.nic.in/",
       "official_notification_pdf_link": "https://drive.google.com/file/d/1QsybyUT9rUKZWn98MlJKCNvW8sCAaaxg/view?usp=sharing",
@@ -101,7 +101,7 @@
         "interview_date": ""
       },
       "application_fees": {
-        "general_obc_ews": "",
+        "general_obc_ews": "50",
         "sc_st": "",
         "female": ""
       },
@@ -130,7 +130,7 @@
         "interview_date": ""
       },
       "application_fees": {
-        "general_obc_ews": "",
+        "general_obc_ews": "50",
         "sc_st": "",
         "female": ""
       },
@@ -165,7 +165,7 @@
         "interview_date": ""
       },
       "application_fees": {
-        "general_obc_ews": "",
+        "general_obc_ews": "50",
         "sc_st": "00",
         "female": ""
       },
@@ -194,7 +194,7 @@
         "interview_date": ""
       },
       "application_fees": {
-        "general_obc_ews": "",
+        "general_obc_ews": "50",
         "sc_st": "00",
         "female": ""
       },
@@ -223,7 +223,7 @@
         "interview_date": ""
       },
       "application_fees": {
-        "general_obc_ews": "",
+        "general_obc_ews": "50",
         "sc_st": "00",
         "female": ""
       },
@@ -258,7 +258,7 @@
         "interview_date": ""
       },
       "application_fees": {
-        "general_obc_ews": "",
+        "general_obc_ews": "50",
         "sc_st": "00",
         "female": ""
       },
@@ -270,41 +270,6 @@
       "official_notification_pdf_link": "",
       "jobs_info": "",
       "vacancy_details": []
-    },
-    {
-      "category": "OFFLINE_FORM",
-      "title": "SHKM GMC Nalhar Recruitment 2026, Vacancy for Senior Resident posts, Apply Now -",
-      "organization": "S.H.K.M. Government Medical College, Nalhar",
-      "post_name": "Senior Resident",
-      "total_vacancy": "81",
-      "salary_pay_scale": "Rs. 67,700/-",
-      "apply_mode": "Offline",
-      "job_location": "Haryana",
-      "important_dates": {
-        "application_start": "08-05-2026",
-        "last_date": "18-05-2026",
-        "exam_date": "",
-        "interview_date": ""
-      },
-      "application_fees": {
-        "general_obc_ews": "",
-        "sc_st": "250",
-        "female": ""
-      },
-      "minimum_age": "22",
-      "maximum_age": "45",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website https://www.gmcmewat.ac.in/ Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). Also, attach a self-addressed envelope of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Receipt & Dispatch Branch, SHKM, Govt. Medical College, Nalhar, Nuh",
-      "form_pdf_free_link": "https://drive.google.com/file/d/1xn27tqOKq213s9uLuzWPT436pRJUZlhZ/view?usp=sharing",
-      "official_website_link": "https://www.gmcmewat.ac.in/",
-      "official_notification_pdf_link": "https://drive.google.com/file/d/1xn27tqOKq213s9uLuzWPT436pRJUZlhZ/view?usp=sharing",
-      "jobs_info": "",
-      "vacancy_details": [
-        {
-          "post_name": "Senior Resident",
-          "total": "81",
-          "eligibility": "An MBBS degree is mandatory, along with an MD/MS/DNB degree in a relevant subject."
-        }
-      ]
     },
     {
       "category": "OFFLINE_FORM",
@@ -322,7 +287,7 @@
         "interview_date": "05-06-2026"
       },
       "application_fees": {
-        "general_obc_ews": "",
+        "general_obc_ews": "50",
         "sc_st": "00",
         "female": ""
       },
@@ -343,6 +308,41 @@
     },
     {
       "category": "OFFLINE_FORM",
+      "title": "SHKM GMC Nalhar Recruitment 2026, Vacancy for Senior Resident posts, Apply Now -",
+      "organization": "S.H.K.M. Government Medical College, Nalhar",
+      "post_name": "Senior Resident",
+      "total_vacancy": "81",
+      "salary_pay_scale": "Rs. 67,700/-",
+      "apply_mode": "Offline",
+      "job_location": "Haryana",
+      "important_dates": {
+        "application_start": "08-05-2026",
+        "last_date": "18-05-2026",
+        "exam_date": "",
+        "interview_date": ""
+      },
+      "application_fees": {
+        "general_obc_ews": "50",
+        "sc_st": "250",
+        "female": ""
+      },
+      "minimum_age": "22",
+      "maximum_age": "45",
+      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website https://www.gmcmewat.ac.in/ Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). Also, attach a self-addressed envelope of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Receipt & Dispatch Branch, SHKM, Govt. Medical College, Nalhar, Nuh",
+      "form_pdf_free_link": "https://drive.google.com/file/d/1xn27tqOKq213s9uLuzWPT436pRJUZlhZ/view?usp=sharing",
+      "official_website_link": "https://www.gmcmewat.ac.in/",
+      "official_notification_pdf_link": "https://drive.google.com/file/d/1xn27tqOKq213s9uLuzWPT436pRJUZlhZ/view?usp=sharing",
+      "jobs_info": "",
+      "vacancy_details": [
+        {
+          "post_name": "Senior Resident",
+          "total": "81",
+          "eligibility": "An MBBS degree is mandatory, along with an MD/MS/DNB degree in a relevant subject."
+        }
+      ]
+    },
+    {
+      "category": "OFFLINE_FORM",
       "title": "Guru Nanak Khalsa College Recruitment 2026, Notification For Teaching Staff -",
       "organization": "Guru Nanak Khalsa College, Yamuna Nagar, Haryana",
       "post_name": "Teaching Staff",
@@ -357,7 +357,7 @@
         "interview_date": ""
       },
       "application_fees": {
-        "general_obc_ews": "",
+        "general_obc_ews": "50",
         "sc_st": "300",
         "female": ""
       },
@@ -386,7 +386,7 @@
         "interview_date": ""
       },
       "application_fees": {
-        "general_obc_ews": "",
+        "general_obc_ews": "50",
         "sc_st": "00",
         "female": ""
       },
@@ -421,7 +421,7 @@
         "interview_date": ""
       },
       "application_fees": {
-        "general_obc_ews": "",
+        "general_obc_ews": "50",
         "sc_st": "00",
         "female": ""
       },
@@ -435,44 +435,9 @@
       "vacancy_details": []
     },
     {
-      "category": "OFFLINE_FORM",
-      "title": "Samagra Shiksha Hisar Recruitment 2026, Check Full Info & Apply -",
-      "organization": "",
-      "post_name": "Total",
-      "total_vacancy": "",
-      "salary_pay_scale": "",
-      "apply_mode": "",
-      "job_location": "",
-      "important_dates": {
-        "application_start": "25-05-2026",
-        "last_date": "15-05-2026",
-        "exam_date": "25-05-2026",
-        "interview_date": "01/01/2026"
-      },
-      "application_fees": {
-        "general_obc_ews": "",
-        "sc_st": "00",
-        "female": ""
-      },
-      "minimum_age": "18",
-      "maximum_age": "42",
-      "how_to_apply": "Download the Form: visit the official website Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). Also, attach a self-addressed envelope of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: District Project Coordinator, Samagra Shiksha, Mini Secretariat Residential Colony, Rajgarh Road, Hisar” Samagra Shiksha Hisar Recruitment 2026 Important Links 📌Read Also:- ICAR-CIRB Hisar Recruitment 2026, Vacancy for Young Professional-II posts Salary ₹42,000 Official Notification PDF Download Official Website Visit Sarkari Result WhatsApp Channel Join Now Sarkari Result Telegram Channel Join Now Disclaimer: All information provided in this post has been sourced from the official notification/official website. SarkariResultShine.com (Sarkari Result) is a free information portal. We are not responsible for any errors. Before applying, please ensure you visit the official we",
-      "form_pdf_free_link": "",
-      "official_website_link": "https://hsspp.in/",
-      "official_notification_pdf_link": "",
-      "jobs_info": "",
-      "vacancy_details": [
-        {
-          "post_name": "Educational Volunteers",
-          "total": "38",
-          "eligibility": "D.Ed. / B.Ed. with HTET or CTET Qualified"
-        }
-      ]
-    },
-    {
       "category": "SR_Latest_Jobs",
       "title": "Patna High Court District Judge Online Form 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-05-25",
       "status": "active",
       "slug": "sr_latest_jobs-patna-high-court-district-judge-online-form-2026-45499b",
@@ -547,7 +512,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Railway RRB ALP CEN 01/2026 Online Form 2026 for 11127 Post",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-06-14",
       "status": "active",
       "slug": "sr_latest_jobs-railway-rrb-alp-cen-012026-online-form-2026-for-11127-post-97dd53",
@@ -582,6 +547,10 @@
             "Click Here"
           ],
           [
+            "Download Syllabus",
+            "Click Here"
+          ],
+          [
             "Download Detailed Notification",
             "Click Here"
           ],
@@ -606,7 +575,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "NFL Field Representative Online Form 2026 for 40 Post",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-06-12",
       "status": "active",
       "slug": "sr_latest_jobs-nfl-field-representative-online-form-2026-for-40-post-c77b3c",
@@ -669,7 +638,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Army 10+2 TES 56 Online Form 2026 for 90 Post January 2027 Batch",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-06-12",
       "status": "active",
       "slug": "sr_latest_jobs-army-102-tes-56-online-form-2026-for-90-post-january-2027-batch-327b9e",
@@ -721,7 +690,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "SBI Trade Finance Officer TFO Online Form 2026 for 100 Post",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-06-02",
       "status": "active",
       "slug": "sr_latest_jobs-sbi-trade-finance-officer-tfo-online-form-2026-for-100-post-0c1deb",
@@ -784,7 +753,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "NFL Management Trainee MT Online Form 2026 for 21 Post",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-06-12",
       "status": "active",
       "slug": "sr_latest_jobs-nfl-management-trainee-mt-online-form-2026-for-21-post-121da1",
@@ -874,128 +843,116 @@
     },
     {
       "category": "SR_Latest_Jobs",
-      "title": "UPSSSC Various Post Online Form 2026 Through PET 2025",
-      "post_date": "2026-05-15",
-      "last_date": "",
+      "title": "UPSSSC Cane Supervisor Online Form 2026 for 1182 Post",
+      "post_date": "2026-05-16",
+      "last_date": "2026-07-28",
       "status": "active",
-      "slug": "sr_latest_jobs-upsssc-various-post-online-form-2026-through-pet-2025-57531b",
-      "short_information": "Uttar Pradesh Subordinate Service Selection Commission (UPSSSC) has Released UP Various Advertisement Recruitment Notification Through UPSSSC PET 2025. Those candidates who are interested in this UPSSSC Vacancy 2026 can Apply Online as per Schedule. Read the notification for recruitment eligibility, post information, selection procedure, pay scale and all other information. Uttar Pradesh Subordinate Services Selection Commission Govt. Of Uttar Pradesh UPSSSC Latest / Upcoming Recruitment 2026 Through PET 2025 UPSSSC Latest Vacancy 2026 : Short Details of Notification",
-      "application_fee": "Details Through PET 2025 UR (General) / OBC / EWS : 25/- SC / ST / PH : 25/- Pay the Examination Fee Through Debit Card, Credit Card, Net Banking Fee Mode Only. Official Sarkari Result® : UPSSSC Latest Vacancy Through PET 2025",
-      "age_limit": "",
-      "eligibility": "",
-      "total_post": "7830",
-      "important_dates": {},
+      "slug": "sr_latest_jobs-upsssc-cane-supervisor-online-form-2026-for-1182-post-1d0b23",
+      "short_information": "Uttar Pradesh Subordinate Service Selection Commission (UPSSSC) has Released UP Ganna Parvekshak Cane Supervisor Advt No. 13-Exam/2026 Recruitment Notification. Those candidates who are interested in this UPSSSC Ganna Parvekshak Cane Supervisor Vacancy 2026 can Apply Online from 07/07/2026 to 28/07/2026. Read the notification for recruitment eligibility, post information, selection procedure, pay scale and all other information. Uttar Pradesh Subordinate Service Selection Commission (UPSSSC) Uttar Pradesh UPSSSC UP Cane Supervisor Recruitment 2026 UPSSSC Advt No. 13-Exam/2026 : Short Details of Notification",
+      "application_fee": "General / OBC / EWS : 25/- SC / ST : 25/- PH (Divyang) : 25/- Pay the Examination Fee Through Cast at E Challan or Debit Card, Credit Card, Net Banking UPSSSC Cane Supervisor",
+      "age_limit": "Minimum Age : 21 Years Maximum Age : 40 Years Age Relaxation Extra as per UPSSSC Cane Supervisor Recruitment Advt No 13-Exam/2026 Exam Rules. UPSSSC Cane Supervisor Recruitment 2026 :",
+      "eligibility": "Read the Notification. Cane Supervisor (Special) 182 UPSSSC PET Exam Qualified. B.Sc in Agriculture Passed from any Recognized University/Institute in India. CCC Passed form NIELIT. More Eligibility Details Read the Notification. UPSSSC Cane Supervisor : Category Wise",
+      "total_post": "1182",
+      "important_dates": {
+        "application_begin": "2026-07-07",
+        "last_date": "2026-07-28",
+        "admit_card": "Before Exam"
+      },
       "tables": [
         [
           [
-            "Advt No",
+            "Important Dates Application Begin : 07/07/2026 Last Date for Apply Online : 28/07/2026 Last Date Pay Exam Fee : 28/07/2026 Correction Last Date: 04/08/2026 UPSSSC Cane Supervisor Exam Date : As Per Schedule Admit Card Available : Before Exam",
+            "Application Fee General / OBC / EWS : 25/- SC / ST : 25/- PH (Divyang) : 25/- Pay the Examination Fee Through Cast at E Challan or Debit Card, Credit Card, Net Banking"
+          ],
+          [
+            "UPSSSC Cane Supervisor Recruitment 2026 : Vacancy Details Total : 1182 Post Post Name Total Post UPSSSC Cane Supervisor Eligibility Cane Supervisor 1000 UPSSSC PET Exam Qualified. B.Sc in Agriculture Passed from any Recognized University/Institute in India. CCC Passed form NIELIT. More Eligibility Details Read the Notification. Cane Supervisor (Special) 182 UPSSSC PET Exam Qualified. B.Sc in Agriculture Passed from any Recognized University/Institute in India. CCC Passed form NIELIT. More Eligibility Details Read the Notification.",
             "Post Name",
             "Total Post",
-            "Form Available",
-            "Apply Online & Eligibility Details"
-          ],
-          [
-            "13-Exam/2026",
+            "UPSSSC Cane Supervisor Eligibility",
             "Cane Supervisor",
-            "1182",
-            "07/07/2026 to 28/07/2026",
-            "Click Here"
+            "1000",
+            "UPSSSC PET Exam Qualified. B.Sc in Agriculture Passed from any Recognized University/Institute in India. CCC Passed form NIELIT. More Eligibility Details Read the Notification.",
+            "Cane Supervisor (Special)",
+            "182",
+            "UPSSSC PET Exam Qualified. B.Sc in Agriculture Passed from any Recognized University/Institute in India. CCC Passed form NIELIT. More Eligibility Details Read the Notification."
           ],
           [
-            "12-Exam/2026",
-            "Forest Guard",
-            "708",
-            "30/06/2026 to 20/07/2026",
-            "Click Here"
+            "Post Name",
+            "Total Post",
+            "UPSSSC Cane Supervisor Eligibility"
           ],
           [
-            "11-Exam/2026",
-            "Havaldar Instructor",
-            "209",
-            "19/06/2026 to 09/07/2026",
-            "Click Here"
+            "Cane Supervisor",
+            "1000",
+            "UPSSSC PET Exam Qualified. B.Sc in Agriculture Passed from any Recognized University/Institute in India. CCC Passed form NIELIT. More Eligibility Details Read the Notification."
           ],
           [
-            "10-Exam/2026",
-            "Platoon Commander / Block Organizer",
-            "295",
-            "16/06/2026 to 06/07/2026",
-            "Click Here"
+            "Cane Supervisor (Special)",
+            "182",
+            "UPSSSC PET Exam Qualified. B.Sc in Agriculture Passed from any Recognized University/Institute in India. CCC Passed form NIELIT. More Eligibility Details Read the Notification."
           ],
           [
-            "09-Exam/2026",
-            "Vidhan Bhawan Rakshak, Vidhan Bhawan Fire Guard",
-            "170",
-            "09/06/2026 to 29/06/2026",
-            "Click Here"
-          ],
-          [
-            "08-Exam/2026",
-            "Excise Constable",
-            "722",
-            "04/06/2026 to 24/06/2026",
-            "Click Here"
-          ],
-          [
-            "07-Exam/2026",
-            "Lower PCS",
-            "2285",
-            "29/05/2026 to 18/06/2026",
-            "Click Here"
-          ],
-          [
-            "06-Exam/2026",
-            "Technical Assistant Group C Exam",
-            "2759",
-            "22/05/2026 to 11/06/2026",
-            "Click Here"
-          ],
-          [
-            "05-Exam/2026",
-            "Assistant Statistical Officer ASO",
-            "929",
-            "21/04/2026 to 11/05/2026",
-            "Click Here"
-          ],
-          [
-            "04-Exam/2026",
-            "Assistant Boring Technician",
+            "UPSSSC Cane Supervisor : Category Wise Vacancy Details 2026 Post Name Gen (UR) OBC EWS SC ST Total Post Cane Supervisor 402 272 100 210 16 1000 Cane Supervisor (Special) 0 156 0 08 18 182",
+            "Post Name",
+            "Gen (UR)",
+            "OBC",
+            "EWS",
+            "SC",
+            "ST",
+            "Total Post",
+            "Cane Supervisor",
             "402",
-            "15/04/2026 to 05/05/2026",
-            "Click Here"
+            "272",
+            "100",
+            "210",
+            "16",
+            "1000",
+            "Cane Supervisor (Special)",
+            "0",
+            "156",
+            "0",
+            "08",
+            "18",
+            "182"
           ],
           [
-            "03-Exam/2026",
-            "Teacher Cadre",
-            "58",
-            "06/04/2026 to 27/04/2026",
-            "Click Here"
+            "Post Name",
+            "Gen (UR)",
+            "OBC",
+            "EWS",
+            "SC",
+            "ST",
+            "Total Post"
           ],
           [
-            "02-Exam/2026",
-            "Various Post",
-            "115",
-            "02/04/2026 to 29/04/2026",
-            "Click Here"
+            "Cane Supervisor",
+            "402",
+            "272",
+            "100",
+            "210",
+            "16",
+            "1000"
           ],
           [
-            "01-Exam/2026",
-            "Pharmacist",
-            "560",
-            "09/03/2026 to 29/03/2026",
-            "Click Here"
+            "Cane Supervisor (Special)",
+            "0",
+            "156",
+            "0",
+            "08",
+            "18",
+            "182"
           ],
           [
             "Apply Online",
+            "Link will be Activate on 07/07/2026"
+          ],
+          [
+            "Download Syllabus",
             "Click Here"
           ],
           [
-            "UPSSSC PET 2025 Result",
+            "Download Notification",
             "Click Here"
-          ],
-          [
-            "DSSSB Photo / Signature / Thumb Impression Resizer",
-            "Sarkari Result Tools"
           ],
           [
             "Official Website",
@@ -1006,11 +963,7 @@
       "useful_links": [
         {
           "title": "Apply Online",
-          "links": "https://upsssc.gov.in//AllNotifications.aspx"
-        },
-        {
-          "title": "UPSSSC PET 2025 Result",
-          "links": "https://upsssc.gov.in//Online_App/Results.aspx?ID=143&Result_Type=P&Exam_Code=3&Advt_Code=304&Dept_Code=556&Post_Code=1&OnlyIntview=No"
+          "links": "https://upsssc.gov.in//default.aspx"
         }
       ],
       "homepage_serial": 7
@@ -1018,7 +971,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Indian Air Force AFCAT 02/2026 Batch Online Form 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-06-19",
       "status": "active",
       "slug": "sr_latest_jobs-indian-air-force-afcat-022026-batch-online-form-2026-ad7cd7",
@@ -1171,7 +1124,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Coal India CIL Management Trainee MT Online Form 2026 for 660 Post",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-06-11",
       "status": "active",
       "slug": "sr_latest_jobs-coal-india-cil-management-trainee-mt-online-form-2026-for-660-post-75eb44",
@@ -1266,7 +1219,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "CTET September 2026 Online Form",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-06-10",
       "status": "active",
       "slug": "sr_latest_jobs-ctet-september-2026-online-form-bd964d",
@@ -1320,7 +1273,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "MPPSC Scientific Officer Biology Online Form 2026 for 25 Post",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-05-20",
       "status": "active",
       "slug": "sr_latest_jobs-mppsc-scientific-officer-biology-online-form-2026-for-25-post-c0204c",
@@ -1391,80 +1344,8 @@
     },
     {
       "category": "SR_Latest_Jobs",
-      "title": "UPSSSC Assistant Statistical Officer Online Form 2026 for 1565 Post",
-      "post_date": "2026-05-15",
-      "last_date": "2026-05-15",
-      "status": "active",
-      "slug": "sr_latest_jobs-upsssc-assistant-statistical-officer-online-form-2026-for-1565-post-f231f5",
-      "short_information": "Uttar Pradesh Subordinate Service Selection Commission (UPSSSC) has relased UP Assistant Statistical Officer Advt No. 05-Exam/2026 Recruitment Notification. Those candidates who are interested in this UPSSSC Vacancy 2026 can Apply Online from 21/04/2026 to 15/05/2026. Read the notification for recruitment eligibility, post information, selection procedure, Practice Test, pay scale and all other information. Uttar Pradesh Subordinate Service Selection Commission (UPSSSC) Uttar Pradesh UPSSSC UP Assistant Statistical Officer Recruitment 2026 Mains Exam UPSSSC Advt No. : 05-Exam/2026 Short Details of Notification",
-      "application_fee": "General / OBC / EWS : 25/- SC / ST : 25/- PH (Dviyang) : 25/- Pay the Examination Fee Through State Bank of India SBI I Collect Fee Mode or Pay the Exam Fee Through E Challan UPSSSC Assistant Statistical Officer Advt No 05-Exam/2026",
-      "age_limit": "Minimum Age : 21 Years Maximum Age : 40 Years Age Relaxation Extra as per UPSSSC UP Advertisement No.-05-Exam/2026, UP Assistant Statistical Officer, Uttar Pradesh Main Examination 2026 UPSSSC Assistant Statistical Officer Recruitment 2026:",
-      "eligibility": "2026 Assistant Statistical Officer ASO 1565 UPSSSC PET 2025 Score Card. Master Degree in Mathematics, Mathematical Statistics, Commerce, Economics, Statistics from Any Recognized Board in India. O Level Diploma. More Details Read the Notification. UPSSSC Assistant Statistical Officer Exam 2026 : Category Wise",
-      "total_post": "1565",
-      "important_dates": {
-        "application_begin": "2026-04-21",
-        "last_date": "2026-05-15",
-        "admit_card": "Before Exam"
-      },
-      "tables": [
-        [
-          [
-            "Important Dates Application Begin : 21/04/2026 Last Date for Registration : 15/05/2026 Fee Payment Last Date : 15/05/2026 Correction Last Date : 22/05/2026 Exam Date : As per Schedule Admit Card Available : Before Exam",
-            "Application Fee General / OBC / EWS : 25/- SC / ST : 25/- PH (Dviyang) : 25/- Pay the Examination Fee Through State Bank of India SBI I Collect Fee Mode or Pay the Exam Fee Through E Challan"
-          ],
-          [
-            "Post Name",
-            "Total Post",
-            "UPSSSC Assistant Statistical Officer Eligibility 2026"
-          ],
-          [
-            "Assistant Statistical Officer ASO",
-            "1565",
-            "UPSSSC PET 2025 Score Card. Master Degree in Mathematics, Mathematical Statistics, Commerce, Economics, Statistics from Any Recognized Board in India. O Level Diploma. More Details Read the Notification."
-          ],
-          [
-            "Post Name",
-            "General (UR)",
-            "EWS",
-            "OBC",
-            "SC",
-            "ST",
-            "Total Post"
-          ],
-          [
-            "Apply Online",
-            "Click Here"
-          ],
-          [
-            "Download Date & Vacancy Increase Notice",
-            "Click Here"
-          ],
-          [
-            "Download Notification",
-            "Click Here"
-          ],
-          [
-            "Resume CV Maker, Image Resizer, JPG to PDF Converter, Typing Test Practice, More",
-            "Sarkari Result Portal"
-          ],
-          [
-            "Official Website",
-            "UPSSSC Official Website"
-          ]
-        ]
-      ],
-      "useful_links": [
-        {
-          "title": "Apply Online",
-          "links": "https://upsssc.gov.in//AllNotifications.aspx"
-        }
-      ],
-      "homepage_serial": 12
-    },
-    {
-      "category": "SR_Latest_Jobs",
       "title": "MPESB Hospital Assistant Online Form 2026 for 1200 Post",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-05-21",
       "status": "active",
       "slug": "sr_latest_jobs-mpesb-hospital-assistant-online-form-2026-for-1200-post-60aa16",
@@ -1527,7 +1408,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Railway RRC SECR Raipur Apprentices Online Form 2026 for 1644 Post",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-06-04",
       "status": "active",
       "slug": "sr_latest_jobs-railway-rrc-secr-raipur-apprentices-online-form-2026-for-1644-post-2f0dc5",
@@ -1597,7 +1478,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Bihar BPSC 72 Pre Exam Online Form 2026 for 1186 Post",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-05-31",
       "status": "active",
       "slug": "sr_latest_jobs-bihar-bpsc-72-pre-exam-online-form-2026-for-1186-post-c0ad34",
@@ -1731,316 +1612,8 @@
     },
     {
       "category": "SR_Latest_Jobs",
-      "title": "UP Cooperative Bank Various Post Online Form 2026 for 2085 Posts",
-      "post_date": "2026-05-15",
-      "last_date": "2026-05-15",
-      "status": "active",
-      "slug": "sr_latest_jobs-up-cooperative-bank-various-post-online-form-2026-for-2085-posts-4732e4",
-      "short_information": "U.P. Co-Operative Institutional Service Board (UPCISB) has released the Combined Co-operative Banking, Non-Banking and Technical Services Examination General Notification 2026. Those Candidates are Interested to the Following Exam Can Apply Online From 25/04/2026 to 15/05/2026.candidates should read the UPCISB 2026 Notification for all the information related to the UPCISB exam like syllabus, eligibility, age limit, fees, information and other types of information and then apply. U.P. Co-Operative Institutional Service Board (UPCISB) UP Combined Co-Operative Banking, Non Banking & Technical Service Examination (General) Recruitment 2026 UPCISB Advt No. : A-2/G.R./2026 Short Details of Notification",
-      "application_fee": "",
-      "age_limit": "Minimum Age : 21 Years Maximum Age : 40 Years Age Relaxation Extra As per UP Cooperative Bank UPCISB Combined Co-operative Banking, Non-Bankingand Technical Services Examination (General Recruitment) - 2026 UPCISB Various Post Recruitment 2026 :",
-      "eligibility": "",
-      "total_post": "2085",
-      "important_dates": {
-        "application_begin": "2026-04-25",
-        "last_date": "2026-05-15",
-        "admit_card": "Before Exam"
-      },
-      "tables": [
-        [
-          [
-            "U.P. Co-Operative Institutional Service Board (UPCISB) UP Combined Co-Operative Banking, Non Banking & Technical Service Examination (General) Recruitment 2026 UPCISB Advt No. : A-2/G.R./2026 Short Details of Notification Sarkari Result : Official WWW.SARKARIRESULT.COM Important Dates Application Fee Application Begin : 25/04/2026 Last Date for Apply Online : 15/05/2026 Pay Exam Fee Last Date : 15/05/2026 Exam Date : As per Schedule Admit Card Available : Before Exam UR / OBC / EWS : 500 SC: 250/- PH : 0/- Pay the Exam Fee Through Online Debit Card / Credit Card / Net Banking /UPI Only.",
-            "Important Dates",
-            "Application Fee",
-            "Application Begin : 25/04/2026 Last Date for Apply Online : 15/05/2026 Pay Exam Fee Last Date : 15/05/2026 Exam Date : As per Schedule Admit Card Available : Before Exam",
-            "UR / OBC / EWS : 500 SC: 250/- PH : 0/- Pay the Exam Fee Through Online Debit Card / Credit Card / Net Banking /UPI Only."
-          ],
-          [
-            "Important Dates",
-            "Application Fee"
-          ],
-          [
-            "Application Begin : 25/04/2026 Last Date for Apply Online : 15/05/2026 Pay Exam Fee Last Date : 15/05/2026 Exam Date : As per Schedule Admit Card Available : Before Exam",
-            "UR / OBC / EWS : 500 SC: 250/- PH : 0/- Pay the Exam Fee Through Online Debit Card / Credit Card / Net Banking /UPI Only."
-          ],
-          [
-            "UP Cooperative Bank Various Post Notification 2026 : Age Limit Details as on 01/01/2026 Minimum Age : 21 Years Maximum Age : 40 Years Age Relaxation Extra As per UP Cooperative Bank UPCISB Combined Co-operative Banking, Non-Bankingand Technical Services Examination (General Recruitment) - 2026 UPCISB Various Post Recruitment 2026 : Vacancy Details Total : 2085 Post Post Name Total Post UP Co-Operative Bank Eligibility Manager 65 Bachelor Degree in Commerce B.Com with Minimum 55% Marks OR Bachelor Degree with One Subjects in Economics / Mathematics / Statistics with 55% Marks. O Level Exam Passed OR BE / B.Tech / BCA / MCA Degree with 55% Marks OR BBA / MBA in Banking / Finance / HR OR PG in Banking Finance / HR More Eligibility Details Read the Notification Junior Manager 486 Bachelor Degree in Commerce B.Com with 55% Marks OR Bachelor Degree in Economics / Mathematics / Statistics with 55% Marks and O Level Exam Passed OR BE / B.Tech / BCA / BBA / MBA (Banking / Finance) / MCA with 55% Marks OR PGDM in Banking Finance / HR More Eligibility Details Read the Notification Assistant / Cashier (Banking Assistant / Clerical Staff) 8 8 7 Bachelor Degree in Any Stream with Minimum 55% Marks and CCC Exam Passed. Assistant Manager Computers 10 BE / B.Tech Computer Science / Electronics and Communication OR BCA with 55% Marks. Assistant Manager General (UP Co-Operative Bank Ltd) 42 Master Degree in Commerce / Economics / Mathematics / Statistics with 55% Marks. CCC Exam Passed OR MBA / PGDM Exam Passed More Eligibility Details Read the Notification Assistant / Cashier 66 Bachelor Degree in Any Stream with 55% Marks and CCC Exam Passed. Assistant Manager General (UP Cooperative Federation Ltd) 78 BE / B.Tech Degree in Computer / Electronics Communication with 3 Year Experience. Accountant 24 Bachelor Degree in Commerce B.Com OR PG Diploma in Accountancy O Level Exam passed. Assistant Accountant (UP State Construction Cooperative Federation Ltd) 08 Bachelor Degree in Commerce with 50% Marks. CCC Exam Passed. More Eligibility Read the Notification Assistant Accountant (UP State Construction & Labour Development Cooperative Federation Ltd) 16 Bachelor Degree in Commerce B.Com with 50% Marks and CCC OR O Level OR BCA Exam Passed. Assistant Accountant (UP Upbhokta Sahkari Sangh Ltd) 08 Bachelor Degree in Commerce B.Com ORPG Diploma in Accountancy O Level Exam Passed. Assistant Accountant (UP Cooperative Union Ltd) 02 Bachelor Degree in Commerce OR PG Diploma in Accountancy O Level Exam Passed. Accounting Clerk 02 Bachelor Degree in Commerce B.Com with 50% Marks and General Knowledge of Computer. Assistant / Stenographer (District Cooperative Bank Ltd) 04 Bachelor Degree in Any stream. 80/30 Word and 80/40 WPM Hindi and English Stenographer. CCC Exam Passed. More Eligibility Read the Notification. Assistant / Stenographer (UP Cooperative Bank Ltd) 14 Bachelor Degree in Any stream. 80/30 Word and 80/40 WPM Hindi and English Stenographer. CCC Exam Passed. More Eligibility Read the Notification. Stenogr a pher (UP State Construction Co Operative Federation Ltd) 04 Bachelor Degree in Any stream. Shorthand Speed : 80 WPM (Hindi and English) Computer Typing : Hindi 30 WPM, English 40 WPm CCC Exam Passed More Eligibility Read the Notification. Stenographer (UP Cooperative Union Ltd) 01 Bachelor Degree in Any stream. CCC Exam Passed OR O Level 80/30 WPM in Hindi Stenographer and Computer Typing 80/40 WPM in English Stenographer and Computer Typing. Junior Assistant (UP State Construction Cooperative Federation Limited) 12 Bachelor Degree in Any Stream from Any Recognized University in India. Hindi Typing : 30 WPM English Typing : 40 WPM CCC Exam Passed OR O Level Exam Junior Assistant 16 Bachelor Degree in Any Stream from Any Recognized University in India. Hindi Typing : 30 WPM English Typing : 40 WPM CCC Exam Passed OR O Level Exam Junior Assistant (UP Cooperative Union Ltd) 17 Bachelor Degree in Any Stream with O Level Exam Passed OR Higher Level Certificate / Degree in Computer Hindi Typing 30 WPM, English Typing 40 WPM Assistant / Typist (District Cooperative Bank Ltd) 20 Bachelor Degree in Any Stream from ANy Recognized Board in India. Hindi Typing 30 WPM and English 40 WPM CCC Exam Passed. Assistant / Typist (UP Cooperative Bank Ltd) 31 Bachelor Degree in Any Stream from ANy Recognized Board in India. Hindi Typing 30 WPM and English 40 WPM CCC Exam Passed. Clerk / Typist 20 Bachelor Degree in Any Stream from ANy Recognized Board in India. Hindi Typing 30 WPM and English 40 WPM CCC Exam Passed. OR O Level Exam. Assistant Engineer Civil (UP State Construction Cooperative Federation Ltd) 20 BE / B.Tech Degree in Civil Engineering from Any Recognized Institute in India. Assistant Engineer AE Civil (UP State Construction & Labour Development Cooperative Federation Ltd) 12 BE / B.Tech Degree in Civil Engineering from Any Recognized Institute in India. Assistant Engineer Electrical 02 BE / B.Tech Degree in Electrical Engineering from Any Recognized Institute in India. Junior Engineer Civil (UP State Construction Cooperative Federation Ltd) 131 Diploma in Civil Engineering from Any Recognized Institute in India. OR BE / B.Tech Degree in Civil Engineering. Junior Engineer Civil (UP State Construction & Labour Development Cooperative Federation Ltd) 80 Diploma in Civil Engineering from Any Recognized Institute in India. OR BE / B.Tech Degree in Civil Engineering. Junior Engineer Electrical 07 Diploma in Electrical Engineering from Any Recognized Institute in India. OR BE / B.Tech Degree in Electrical Engineering.",
-            "UP Cooperative Bank Various Post Notification 2026 : Age Limit Details as on 01/01/2026 Minimum Age : 21 Years Maximum Age : 40 Years Age Relaxation Extra As per UP Cooperative Bank UPCISB Combined Co-operative Banking, Non-Bankingand Technical Services Examination (General Recruitment) - 2026",
-            "Post Name",
-            "Total Post",
-            "UP Co-Operative Bank Eligibility",
-            "Manager",
-            "65",
-            "Bachelor Degree in Commerce B.Com with Minimum 55% Marks OR Bachelor Degree with One Subjects in Economics / Mathematics / Statistics with 55% Marks. O Level Exam Passed OR BE / B.Tech / BCA / MCA Degree with 55% Marks OR BBA / MBA in Banking / Finance / HR OR PG in Banking Finance / HR More Eligibility Details Read the Notification",
-            "Junior Manager",
-            "486",
-            "Bachelor Degree in Commerce B.Com with 55% Marks OR Bachelor Degree in Economics / Mathematics / Statistics with 55% Marks and O Level Exam Passed OR BE / B.Tech / BCA / BBA / MBA (Banking / Finance) / MCA with 55% Marks OR PGDM in Banking Finance / HR More Eligibility Details Read the Notification",
-            "Assistant / Cashier (Banking Assistant / Clerical Staff)",
-            "8 8 7",
-            "Bachelor Degree in Any Stream with Minimum 55% Marks and CCC Exam Passed.",
-            "Assistant Manager Computers",
-            "10",
-            "BE / B.Tech Computer Science / Electronics and Communication OR BCA with 55% Marks.",
-            "Assistant Manager General (UP Co-Operative Bank Ltd)",
-            "42",
-            "Master Degree in Commerce / Economics / Mathematics / Statistics with 55% Marks. CCC Exam Passed OR MBA / PGDM Exam Passed More Eligibility Details Read the Notification",
-            "Assistant / Cashier",
-            "66",
-            "Bachelor Degree in Any Stream with 55% Marks and CCC Exam Passed.",
-            "Assistant Manager General (UP Cooperative Federation Ltd)",
-            "78",
-            "BE / B.Tech Degree in Computer / Electronics Communication with 3 Year Experience.",
-            "Accountant",
-            "24",
-            "Bachelor Degree in Commerce B.Com OR PG Diploma in Accountancy O Level Exam passed.",
-            "Assistant Accountant (UP State Construction Cooperative Federation Ltd)",
-            "08",
-            "Bachelor Degree in Commerce with 50% Marks. CCC Exam Passed. More Eligibility Read the Notification",
-            "Assistant Accountant (UP State Construction & Labour Development Cooperative Federation Ltd)",
-            "16",
-            "Bachelor Degree in Commerce B.Com with 50% Marks and CCC OR O Level OR BCA Exam Passed.",
-            "Assistant Accountant (UP Upbhokta Sahkari Sangh Ltd)",
-            "08",
-            "Bachelor Degree in Commerce B.Com ORPG Diploma in Accountancy O Level Exam Passed.",
-            "Assistant Accountant (UP Cooperative Union Ltd)",
-            "02",
-            "Bachelor Degree in Commerce OR PG Diploma in Accountancy O Level Exam Passed.",
-            "Accounting Clerk",
-            "02",
-            "Bachelor Degree in Commerce B.Com with 50% Marks and General Knowledge of Computer.",
-            "Assistant / Stenographer (District Cooperative Bank Ltd)",
-            "04",
-            "Bachelor Degree in Any stream. 80/30 Word and 80/40 WPM Hindi and English Stenographer. CCC Exam Passed. More Eligibility Read the Notification.",
-            "Assistant / Stenographer (UP Cooperative Bank Ltd)",
-            "14",
-            "Bachelor Degree in Any stream. 80/30 Word and 80/40 WPM Hindi and English Stenographer. CCC Exam Passed. More Eligibility Read the Notification.",
-            "Stenogr a pher (UP State Construction Co Operative Federation Ltd)",
-            "04",
-            "Bachelor Degree in Any stream. Shorthand Speed : 80 WPM (Hindi and English) Computer Typing : Hindi 30 WPM, English 40 WPm CCC Exam Passed More Eligibility Read the Notification.",
-            "Stenographer (UP Cooperative Union Ltd)",
-            "01",
-            "Bachelor Degree in Any stream. CCC Exam Passed OR O Level 80/30 WPM in Hindi Stenographer and Computer Typing 80/40 WPM in English Stenographer and Computer Typing.",
-            "Junior Assistant (UP State Construction Cooperative Federation Limited)",
-            "12",
-            "Bachelor Degree in Any Stream from Any Recognized University in India. Hindi Typing : 30 WPM English Typing : 40 WPM CCC Exam Passed OR O Level Exam",
-            "Junior Assistant",
-            "16",
-            "Bachelor Degree in Any Stream from Any Recognized University in India. Hindi Typing : 30 WPM English Typing : 40 WPM CCC Exam Passed OR O Level Exam",
-            "Junior Assistant (UP Cooperative Union Ltd)",
-            "17",
-            "Bachelor Degree in Any Stream with O Level Exam Passed OR Higher Level Certificate / Degree in Computer Hindi Typing 30 WPM, English Typing 40 WPM",
-            "Assistant / Typist (District Cooperative Bank Ltd)",
-            "20",
-            "Bachelor Degree in Any Stream from ANy Recognized Board in India. Hindi Typing 30 WPM and English 40 WPM CCC Exam Passed.",
-            "Assistant / Typist (UP Cooperative Bank Ltd)",
-            "31",
-            "Bachelor Degree in Any Stream from ANy Recognized Board in India. Hindi Typing 30 WPM and English 40 WPM CCC Exam Passed.",
-            "Clerk / Typist",
-            "20",
-            "Bachelor Degree in Any Stream from ANy Recognized Board in India. Hindi Typing 30 WPM and English 40 WPM CCC Exam Passed. OR O Level Exam.",
-            "Assistant Engineer Civil (UP State Construction Cooperative Federation Ltd)",
-            "20",
-            "BE / B.Tech Degree in Civil Engineering from Any Recognized Institute in India.",
-            "Assistant Engineer AE Civil (UP State Construction & Labour Development Cooperative Federation Ltd)",
-            "12",
-            "BE / B.Tech Degree in Civil Engineering from Any Recognized Institute in India.",
-            "Assistant Engineer Electrical",
-            "02",
-            "BE / B.Tech Degree in Electrical Engineering from Any Recognized Institute in India.",
-            "Junior Engineer Civil (UP State Construction Cooperative Federation Ltd)",
-            "131",
-            "Diploma in Civil Engineering from Any Recognized Institute in India. OR BE / B.Tech Degree in Civil Engineering.",
-            "Junior Engineer Civil (UP State Construction & Labour Development Cooperative Federation Ltd)",
-            "80",
-            "Diploma in Civil Engineering from Any Recognized Institute in India. OR BE / B.Tech Degree in Civil Engineering.",
-            "Junior Engineer Electrical",
-            "07",
-            "Diploma in Electrical Engineering from Any Recognized Institute in India. OR BE / B.Tech Degree in Electrical Engineering."
-          ],
-          [
-            "Post Name",
-            "Total Post",
-            "UP Co-Operative Bank Eligibility"
-          ],
-          [
-            "Manager",
-            "65",
-            "Bachelor Degree in Commerce B.Com with Minimum 55% Marks OR Bachelor Degree with One Subjects in Economics / Mathematics / Statistics with 55% Marks. O Level Exam Passed OR BE / B.Tech / BCA / MCA Degree with 55% Marks OR BBA / MBA in Banking / Finance / HR OR PG in Banking Finance / HR More Eligibility Details Read the Notification"
-          ],
-          [
-            "Junior Manager",
-            "486",
-            "Bachelor Degree in Commerce B.Com with 55% Marks OR Bachelor Degree in Economics / Mathematics / Statistics with 55% Marks and O Level Exam Passed OR BE / B.Tech / BCA / BBA / MBA (Banking / Finance) / MCA with 55% Marks OR PGDM in Banking Finance / HR More Eligibility Details Read the Notification"
-          ],
-          [
-            "Assistant / Cashier (Banking Assistant / Clerical Staff)",
-            "8 8 7",
-            "Bachelor Degree in Any Stream with Minimum 55% Marks and CCC Exam Passed."
-          ],
-          [
-            "Assistant Manager Computers",
-            "10",
-            "BE / B.Tech Computer Science / Electronics and Communication OR BCA with 55% Marks."
-          ],
-          [
-            "Assistant Manager General (UP Co-Operative Bank Ltd)",
-            "42",
-            "Master Degree in Commerce / Economics / Mathematics / Statistics with 55% Marks. CCC Exam Passed OR MBA / PGDM Exam Passed More Eligibility Details Read the Notification"
-          ],
-          [
-            "Assistant / Cashier",
-            "66",
-            "Bachelor Degree in Any Stream with 55% Marks and CCC Exam Passed."
-          ],
-          [
-            "Assistant Manager General (UP Cooperative Federation Ltd)",
-            "78",
-            "BE / B.Tech Degree in Computer / Electronics Communication with 3 Year Experience."
-          ],
-          [
-            "Accountant",
-            "24",
-            "Bachelor Degree in Commerce B.Com OR PG Diploma in Accountancy O Level Exam passed."
-          ],
-          [
-            "Assistant Accountant (UP State Construction Cooperative Federation Ltd)",
-            "08",
-            "Bachelor Degree in Commerce with 50% Marks. CCC Exam Passed. More Eligibility Read the Notification"
-          ],
-          [
-            "Assistant Accountant (UP State Construction & Labour Development Cooperative Federation Ltd)",
-            "16",
-            "Bachelor Degree in Commerce B.Com with 50% Marks and CCC OR O Level OR BCA Exam Passed."
-          ],
-          [
-            "Assistant Accountant (UP Upbhokta Sahkari Sangh Ltd)",
-            "08",
-            "Bachelor Degree in Commerce B.Com ORPG Diploma in Accountancy O Level Exam Passed."
-          ],
-          [
-            "Assistant Accountant (UP Cooperative Union Ltd)",
-            "02",
-            "Bachelor Degree in Commerce OR PG Diploma in Accountancy O Level Exam Passed."
-          ],
-          [
-            "Accounting Clerk",
-            "02",
-            "Bachelor Degree in Commerce B.Com with 50% Marks and General Knowledge of Computer."
-          ],
-          [
-            "Assistant / Stenographer (District Cooperative Bank Ltd)",
-            "04",
-            "Bachelor Degree in Any stream. 80/30 Word and 80/40 WPM Hindi and English Stenographer. CCC Exam Passed. More Eligibility Read the Notification."
-          ],
-          [
-            "Assistant / Stenographer (UP Cooperative Bank Ltd)",
-            "14",
-            "Bachelor Degree in Any stream. 80/30 Word and 80/40 WPM Hindi and English Stenographer. CCC Exam Passed. More Eligibility Read the Notification."
-          ],
-          [
-            "Stenogr a pher (UP State Construction Co Operative Federation Ltd)",
-            "04",
-            "Bachelor Degree in Any stream. Shorthand Speed : 80 WPM (Hindi and English) Computer Typing : Hindi 30 WPM, English 40 WPm CCC Exam Passed More Eligibility Read the Notification."
-          ],
-          [
-            "Stenographer (UP Cooperative Union Ltd)",
-            "01",
-            "Bachelor Degree in Any stream. CCC Exam Passed OR O Level 80/30 WPM in Hindi Stenographer and Computer Typing 80/40 WPM in English Stenographer and Computer Typing."
-          ],
-          [
-            "Junior Assistant (UP State Construction Cooperative Federation Limited)",
-            "12",
-            "Bachelor Degree in Any Stream from Any Recognized University in India. Hindi Typing : 30 WPM English Typing : 40 WPM CCC Exam Passed OR O Level Exam"
-          ],
-          [
-            "Junior Assistant",
-            "16",
-            "Bachelor Degree in Any Stream from Any Recognized University in India. Hindi Typing : 30 WPM English Typing : 40 WPM CCC Exam Passed OR O Level Exam"
-          ],
-          [
-            "Junior Assistant (UP Cooperative Union Ltd)",
-            "17",
-            "Bachelor Degree in Any Stream with O Level Exam Passed OR Higher Level Certificate / Degree in Computer Hindi Typing 30 WPM, English Typing 40 WPM"
-          ],
-          [
-            "Assistant / Typist (District Cooperative Bank Ltd)",
-            "20",
-            "Bachelor Degree in Any Stream from ANy Recognized Board in India. Hindi Typing 30 WPM and English 40 WPM CCC Exam Passed."
-          ],
-          [
-            "Assistant / Typist (UP Cooperative Bank Ltd)",
-            "31",
-            "Bachelor Degree in Any Stream from ANy Recognized Board in India. Hindi Typing 30 WPM and English 40 WPM CCC Exam Passed."
-          ],
-          [
-            "Clerk / Typist",
-            "20",
-            "Bachelor Degree in Any Stream from ANy Recognized Board in India. Hindi Typing 30 WPM and English 40 WPM CCC Exam Passed. OR O Level Exam."
-          ],
-          [
-            "Assistant Engineer Civil (UP State Construction Cooperative Federation Ltd)",
-            "20",
-            "BE / B.Tech Degree in Civil Engineering from Any Recognized Institute in India."
-          ],
-          [
-            "Assistant Engineer AE Civil (UP State Construction & Labour Development Cooperative Federation Ltd)",
-            "12",
-            "BE / B.Tech Degree in Civil Engineering from Any Recognized Institute in India."
-          ],
-          [
-            "Assistant Engineer Electrical",
-            "02",
-            "BE / B.Tech Degree in Electrical Engineering from Any Recognized Institute in India."
-          ],
-          [
-            "Junior Engineer Civil (UP State Construction Cooperative Federation Ltd)",
-            "131",
-            "Diploma in Civil Engineering from Any Recognized Institute in India. OR BE / B.Tech Degree in Civil Engineering."
-          ],
-          [
-            "Junior Engineer Civil (UP State Construction & Labour Development Cooperative Federation Ltd)",
-            "80",
-            "Diploma in Civil Engineering from Any Recognized Institute in India. OR BE / B.Tech Degree in Civil Engineering."
-          ],
-          [
-            "Junior Engineer Electrical",
-            "07",
-            "Diploma in Electrical Engineering from Any Recognized Institute in India. OR BE / B.Tech Degree in Electrical Engineering."
-          ],
-          [
-            "Apply Online",
-            "Click Here"
-          ],
-          [
-            "How to Fill Form (Video Hindi)",
-            "Click Here"
-          ],
-          [
-            "Download Notification",
-            "Click Here"
-          ],
-          [
-            "Download Syllabus",
-            "Click Here"
-          ],
-          [
-            "Official Website",
-            "UPCISB Official Website"
-          ]
-        ]
-      ],
-      "useful_links": [
-        {
-          "title": "Apply Online",
-          "links": "https://ibpsreg.ibps.in/upcisbapr26/"
-        }
-      ],
-      "homepage_serial": 17
-    },
-    {
-      "category": "SR_Latest_Jobs",
       "title": "Rajasthan RSSB Teaching Associate Online Form 2026 for 3540 Post",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-06-03",
       "status": "active",
       "slug": "sr_latest_jobs-rajasthan-rssb-teaching-associate-online-form-2026-for-3540-post-438fa4",
@@ -2373,7 +1946,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "BPSSC Havildar Instructor Online Form 2026 for 122 Post",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-06-01",
       "status": "active",
       "slug": "sr_latest_jobs-bpssc-havildar-instructor-online-form-2026-for-122-post-16100a",
@@ -2454,7 +2027,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "NTA UGC NET June 2026 Online Form for JRF and Assistant Professor",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-05-20",
       "status": "active",
       "slug": "sr_latest_jobs-nta-ugc-net-june-2026-online-form-for-jrf-and-assistant-professor-0e1674",
@@ -2774,7 +2347,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "UPESSC UP Assistant Professor BEd Online Form 2026 for 107 Post",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-05-27",
       "status": "active",
       "slug": "sr_latest_jobs-upessc-up-assistant-professor-bed-online-form-2026-for-107-post-f07138",
@@ -2846,7 +2419,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Union Bank of India UBI Apprentices Online Form 2026 for 1865 Post",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-05-19",
       "status": "active",
       "slug": "sr_latest_jobs-union-bank-of-india-ubi-apprentices-online-form-2026-for-1865-post-71b493",
@@ -2925,7 +2498,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Uttar Pradesh UP Anganwadi Worker Bharti Online Form 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "",
       "status": "active",
       "slug": "sr_latest_jobs-uttar-pradesh-up-anganwadi-worker-bharti-online-form-2026-c945b2",
@@ -3126,82 +2699,8 @@
     },
     {
       "category": "SR_Latest_Jobs",
-      "title": "SSC Stenographer Online Form 2026 for 731 Post",
-      "post_date": "2026-05-15",
-      "last_date": "2026-05-15",
-      "status": "active",
-      "slug": "sr_latest_jobs-ssc-stenographer-online-form-2026-for-731-post-22e0b3",
-      "short_information": "Staff Selection Commission SSC has released the notification for Stenographer Grade C and D Examination 2026. Students who want to appear in this exam can apply online between 24 April 2026 to 15 May 2026 through SSC website. Before applying, candidates must read the complete SSC Stenographer advertisement in which selection procedure, exam syllabus, pattern, exam date and other information will be available. Staff Selection Commission (SSC) SSC Stenographer Grade C / D Recruitment 2026 SSC Steno 2026 Exam : Short Details of Notification",
-      "application_fee": "General / OBC / EWS : 100/- SC / ST : 0/- (Nil) All Category Female : 0/- (Exempted) Correction Charge : 200/- First Time Correction Charge : 500/- Second Time Pay the Exam Fee Through Debit Card, Credit Card, Net Banking or E Challan Offline Fee Mode Only SSC Steno Grade C & D",
-      "age_limit": "Minimum Age : 18 Years Maximum Age : 27 Years for Grade D Maximum Age : 30 Year for Grade C Age Relaxation Extra as per Staff Selection Commission SSC Stenographer Examination 2026 Rules. SSC Stenographer C & D Recruitment 2026 :",
-      "eligibility": "",
-      "total_post": "731",
-      "important_dates": {
-        "application_begin": "2026-04-24",
-        "last_date": "2026-05-15"
-      },
-      "tables": [
-        [
-          [
-            "Important Dates Application Begin : 24/04/2026 Last Date for Apply Online : 15/05/2026 upto 11 PM Pay Exam Fee Last Date : 16/05/2026 Correction Date : 20-21 May 2026 CBT Exam Date: July / August 2026 Skill Test Exam Date : As per Schedule",
-            "Application Fee General / OBC / EWS : 100/- SC / ST : 0/- (Nil) All Category Female : 0/- (Exempted) Correction Charge : 200/- First Time Correction Charge : 500/- Second Time Pay the Exam Fee Through Debit Card, Credit Card, Net Banking or E Challan Offline Fee Mode Only"
-          ],
-          [
-            "Post Name",
-            "Grade",
-            "SSC Stenographer Eligibility 2026"
-          ],
-          [
-            "SSC Stenographer Examination 2026",
-            "Grade C",
-            "Passed 10+2 Intermediate Exam in Any Recognized Board in India Stenographer Group D Transcription English : 50 Minutes | Hindi 65 Minutes Stenographer Group C Transcription English : 40 Minutes | Hindi 55 Minutes"
-          ],
-          [
-            "Apply Online",
-            "Click Here"
-          ],
-          [
-            "How to Fill Form (Video Hindi)",
-            "Version I | Version II"
-          ],
-          [
-            "How to SSC OTR Registration (Video Hindi)",
-            "Click Here"
-          ],
-          [
-            "Download Notification",
-            "Click Here"
-          ],
-          [
-            "Download Syllabus",
-            "SSC Stenographer Syllabus"
-          ],
-          [
-            "SSC Signature Resizer",
-            "Sarkari Result Tools"
-          ],
-          [
-            "Official Website",
-            "SSC Official Website"
-          ]
-        ]
-      ],
-      "useful_links": [
-        {
-          "title": "Apply Online",
-          "links": "https://ssc.gov.in/login"
-        },
-        {
-          "title": "How to SSC OTR Registration (Video Hindi)",
-          "links": "https://youtu.be/OPXf8VSOfJ0"
-        }
-      ],
-      "homepage_serial": 24
-    },
-    {
-      "category": "SR_Latest_Jobs",
       "title": "Jharkhand JAC JHTET 2026 Online Form for Primary and Junior Level",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-05-21",
       "status": "active",
       "slug": "sr_latest_jobs-jharkhand-jac-jhtet-2026-online-form-for-primary-and-junior-level-7331e5",
@@ -3267,7 +2766,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "CRPF Constable Tradesman Online Form 2026 for 9175 Post",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-05-19",
       "status": "active",
       "slug": "sr_latest_jobs-crpf-constable-tradesman-online-form-2026-for-9175-post-182259",
@@ -3440,8 +2939,242 @@
     },
     {
       "category": "SR_Result",
+      "title": "RSMSSB Stenographer and PA Skill Test Result 2026 for 474 Post",
+      "post_date": "2026-05-16",
+      "last_date": "2024-03-29",
+      "status": "result_declared",
+      "slug": "sr_result-rsmssb-stenographer-and-pa-skill-test-result-2026-for-474-post-f82716",
+      "short_information": "Rajasthan Staff Selection Board RSSB / RSMSSB has released the advertisement of Stenographer /Personal Asst. Gr-II Joint Direct Recruitment Exam Vacancy 2024. Those Candidates Are Interested with Vacancy Can Download Result. For other information related to Rajasthan Steno and PA recruitment like syllabus, age limit, qualification, pay scale and all other information read the advertisement and then apply. Rajasthan Staff Selection Board (RSSB) | RSMSSB RSMSSB Rajasthan Stenographer /Personal Asst. Gr-II Recruitment 2024 RSMSSB Advt No. : 07/2024 : Short Details of Notification",
+      "application_fee": "General / OBC : 600/- OBC NCL : 400/- SC / ST : 400/- Correction Charge : 300/- This fee is for one time registration, now after paying the OTR fee once, the candidate will not have to pay the application fee again and again. Pay the Exam Fee Through Emitra CSC Center, Debit Card, Credit Card, Net Banking. RSMSSB PA & Stenographer",
+      "age_limit": "Minimum Age : 18 Years Maximum Age : 40 Years Age Relaxation Extra as per RSSB Stenographer /Personal Asst. Gr-II Joint Direct Recruitment Exam-2024 Recruitment Rules . Rajasthan Stenographer and PA Recruitment 2024 :",
+      "eligibility": "Stenographer Non TSP 194 10+2 Intermediate Exam in Any Recognized Board in India. O Level Exam Passed OR COPA / DPCS OR Degree / Diploma in Computer Science OR 10+2 with Computer As a Subject OR Polytechnic Diploma in Computer Science and Engineering OR RSCIT OR Equivalent Course. More Details Read the Notification. TSP 0 Personal Assistant Grade II Non TSP 257 10+2 Intermediate Exam in Any Recognized Board in India. O Level Exam Passed OR COPA / DPCS OR Degree / Diploma in Computer Science OR 10+2 with Computer As a Subject OR Polytechnic Diploma in Computer Science and Engineering OR RSCIT OR Equivalent Course. More Details Read the Notification. TSP 23",
+      "total_post": "474",
+      "important_dates": {
+        "application_begin": "2024-02-29",
+        "last_date": "2024-03-29",
+        "exam_date": "2024-10-05",
+        "admit_card": "2024-09-30"
+      },
+      "tables": [
+        [
+          [
+            "Important Dates Application Begin : 29/02/2024 Last Date for Apply Online : 29/03/2024 Last Date Complete Form : 29/03/2024 Exam Date : 05/10/2024 Admit Card Available : 30/09/2024 Result Available : 23/12/2024 Skill Test Exam Date : 29/06/2025 Skill Test Result : 15/05/2026",
+            "Application Fee General / OBC : 600/- OBC NCL : 400/- SC / ST : 400/- Correction Charge : 300/- This fee is for one time registration, now after paying the OTR fee once, the candidate will not have to pay the application fee again and again. Pay the Exam Fee Through Emitra CSC Center, Debit Card, Credit Card, Net Banking."
+          ],
+          [
+            "Post Name",
+            "Area",
+            "Total",
+            "RSMSSB Stenographer and PA Eligibility"
+          ],
+          [
+            "Stenographer",
+            "Non TSP",
+            "194",
+            "10+2 Intermediate Exam in Any Recognized Board in India. O Level Exam Passed OR COPA / DPCS OR Degree / Diploma in Computer Science OR 10+2 with Computer As a Subject OR Polytechnic Diploma in Computer Science and Engineering OR RSCIT OR Equivalent Course. More Details Read the Notification."
+          ],
+          [
+            "TSP",
+            "0"
+          ],
+          [
+            "Personal Assistant Grade II",
+            "Non TSP",
+            "257",
+            "10+2 Intermediate Exam in Any Recognized Board in India. O Level Exam Passed OR COPA / DPCS OR Degree / Diploma in Computer Science OR 10+2 with Computer As a Subject OR Polytechnic Diploma in Computer Science and Engineering OR RSCIT OR Equivalent Course. More Details Read the Notification."
+          ],
+          [
+            "TSP",
+            "23"
+          ],
+          [
+            "Download Skill / Typing Test Result",
+            "Non TSP | TSP"
+          ],
+          [
+            "Download Document Verification Notice",
+            "Click Here"
+          ],
+          [
+            "Download Skill Test Exam Notice",
+            "Click Here"
+          ],
+          [
+            "Download Result",
+            "Click Here"
+          ],
+          [
+            "Check Exam City / Admit Card",
+            "Click Here"
+          ],
+          [
+            "Download Exam Notice",
+            "Click Here"
+          ],
+          [
+            "Apply Online",
+            "Click Here"
+          ],
+          [
+            "Download Notification",
+            "Click Here"
+          ],
+          [
+            "Download Syllabus",
+            "Click Here"
+          ],
+          [
+            "Official Website",
+            "RSMSSB Official Website"
+          ]
+        ]
+      ],
+      "useful_links": [
+        {
+          "title": "Download Skill / Typing Test Result",
+          "links": "https://rssb.rajasthan.gov.in/storage/news_item/1778847557.pdf"
+        },
+        {
+          "title": "Download Result",
+          "links": "https://rssb.rajasthan.gov.in/storage/news_item/1734959695.pdf"
+        },
+        {
+          "title": "Check Exam City / Admit Card",
+          "links": "https://recruitment.rajasthan.gov.in/"
+        },
+        {
+          "title": "Download Exam Notice",
+          "links": "https://rsmssb.rajasthan.gov.in/Static/files/Stenographer2024_26092024.pdf"
+        },
+        {
+          "title": "Apply Online",
+          "links": "https://sso.rajasthan.gov.in/signin"
+        },
+        {
+          "title": "Download Notification",
+          "links": "https://rsmssb.rajasthan.gov.in/Static/files/FullAdv._Steno_PersnlAssitGrade_II%20_2024_26022024.pdf"
+        }
+      ],
+      "homepage_serial": 1
+    },
+    {
+      "category": "SR_Result",
+      "title": "NTA National Teachers Eligibility Test NTET Result 2026",
+      "post_date": "2026-05-16",
+      "last_date": "2026-04-07",
+      "status": "result_declared",
+      "slug": "sr_result-nta-national-teachers-eligibility-test-ntet-result-2026-84481e",
+      "short_information": "National Testing Agency NTA has released the Information Brochure for National Teachers Eligibility Test NTET 2026 Those Candidates are Interested to the NTET in National Teachers Eligibility Test (NTET) for Indian System of Medicine & Homoeopathy Exam Can Download Result.candidates should read the NSSNET 2026 information brochure for all the information related to the exam like syllabus, eligibility, age limit, fees, Course and List, information and other types of information and then apply. National Testing Agency (NTA) NTA National Teachers Eligibility Test (NTET) for Indian System of Medicine & Homoeopathy NTA NTET 2026 Exam : Short Details of Notification",
+      "application_fee": "General : 4000/- OBC NCL / EWS : 3500/- SC / ST / PH : 3000/- Pay the Examination Fee Through Debit Card, Credit Card, Net Banking, E Challan, E Wallet, Cash Card Fee Mode Only. NTA NTET 2026 : Examination Details Exam Name NTA NTET",
+      "age_limit": ", fees, Course and List, information and other types of information and then apply. National Testing Agency (NTA) NTA National Teachers",
+      "eligibility": "Read the Notification. NTA NTET 2026 for Ayush Teachers Exam District Details Uttar Pradesh: Agra, Lucknow, Varanasi & Gorakhpur Bihar: Bhagalpur & Patna Madhya Pradesh: Bhopal, Gwalior & Jabalpur New Delhi: Delhi for Other State / District Exam District Details Must Read the Information Brochure. Interested Candidate Can Read the Full NTA NTET 2026 Notification Before Apply Online. Download Mobile Apps for the Latest Admission Updates Android Apps Apple IOS Apps Some Useful",
+      "total_post": "",
+      "important_dates": {
+        "application_begin": "2026-03-11",
+        "last_date": "2026-04-07",
+        "exam_date": "2026-04-28",
+        "admit_card": "2026-04-24"
+      },
+      "tables": [
+        [
+          [
+            "Important Dates Application Begin : 11/03/2026 Last Date for Apply Online : 07/04/2026 Pay Exam Fees Last Date : 07/04/2026 Correction Date : 08-09 April 2026 NTET 2026 Exam Date : 28/04/2026 Exam City Available : 20/04/2026 Admit Card Available : 24/04/2026 Answer Key Available : 01/05/2026 Result Declared : 15/05/2026",
+            "Application Fee General : 4000/- OBC NCL / EWS : 3500/- SC / ST / PH : 3000/- Pay the Examination Fee Through Debit Card, Credit Card, Net Banking, E Challan, E Wallet, Cash Card Fee Mode Only."
+          ],
+          [
+            "Exam Name",
+            "NTA NTET Eligibility for Indian System of Medicine & Homoeopathy"
+          ],
+          [
+            "National Teachers Eligibility Test (NTET) for Indian System of Medicine & Homoeopathy 2026",
+            "Master Degree in (Ayurveda, Siddha, Unani & Homeopathy) Indian System of Medicine OR Homoeopathy. More Eligibility Details Read the Notification."
+          ],
+          [
+            "Download Result",
+            "Click Here"
+          ],
+          [
+            "Download Result Notice",
+            "Click Here"
+          ],
+          [
+            "Download Answer Key",
+            "Click Here"
+          ],
+          [
+            "Download Answer Key Notice",
+            "Click Here"
+          ],
+          [
+            "Check Exam City Details",
+            "Click Here"
+          ],
+          [
+            "Apply Online",
+            "Click Here"
+          ],
+          [
+            "How to Fill Form (Video Hindi)",
+            "Click Here"
+          ],
+          [
+            "Download Date Extended Notice",
+            "Click Here"
+          ],
+          [
+            "Download Notification",
+            "Click Here"
+          ],
+          [
+            "Download Syllabus",
+            "Click Here"
+          ],
+          [
+            "Official Website",
+            "NTA NTET Official Website"
+          ]
+        ]
+      ],
+      "useful_links": [
+        {
+          "title": "Download Result",
+          "links": "https://cnr.nic.in/Results26/Score/Login?apprefno=101662611"
+        },
+        {
+          "title": "Download Result Notice",
+          "links": "https://cdnbbsr.s3waas.gov.in/s388a839f2f6f1427879fc33ee4acf4f66/uploads/2026/05/202605151648249059.pdf"
+        },
+        {
+          "title": "Download Answer Key",
+          "links": "https://examinationservices.nic.in/examsys2026/Root/CandidateLogin.aspx?enc=Ei4cajBkK1gZSfgr53ImFfcQYiC9McmrkpnHazCdr+QqaE69AOcZvqby/7Cc6Fmm"
+        },
+        {
+          "title": "Download Answer Key Notice",
+          "links": "https://cdnbbsr.s3waas.gov.in/s388a839f2f6f1427879fc33ee4acf4f66/uploads/2026/05/20260501539687160.pdf"
+        },
+        {
+          "title": "Check Exam City Details",
+          "links": "https://examinationservices.nic.in/AdmitCard/AuthForCity/Login?enc=DJ8reokIYhe/x0Hlb6GKa0ZYy2VpzlLLO1y68J1EA1w="
+        },
+        {
+          "title": "Apply Online",
+          "links": "https://examinationservices.nic.in/examSys2026/Root/Home.aspx?appFormId=101662611"
+        },
+        {
+          "title": "Download Date Extended Notice",
+          "links": "https://nta.ac.in/Download/Notice/Notice_20260402172517.pdf"
+        },
+        {
+          "title": "Download Notification",
+          "links": "https://cdnbbsr.s3waas.gov.in/s388a839f2f6f1427879fc33ee4acf4f66/uploads/2026/03/20260311164727307.pdf"
+        }
+      ],
+      "homepage_serial": 2
+    },
+    {
+      "category": "SR_Result",
       "title": "CBSE Group A B C Various Post Tier II Exam Result 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2025-12-22",
       "status": "result_declared",
       "slug": "sr_result-cbse-group-a-b-c-various-post-tier-ii-exam-result-2026-68b2a3",
@@ -3643,12 +3376,12 @@
           "links": "https://www.cbse.gov.in/cbsenew/documents/Detailed_Advertisement_Direct_Recruitment_02122025.pdf"
         }
       ],
-      "homepage_serial": 1
+      "homepage_serial": 3
     },
     {
       "category": "SR_Result",
       "title": "SSC Combined Graduate Level CGL 2025 Final Result 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2025-07-04",
       "status": "result_declared",
       "slug": "sr_result-ssc-combined-graduate-level-cgl-2025-final-result-2026-d841d8",
@@ -3943,12 +3676,12 @@
           "links": "https://ssc.gov.in/login"
         }
       ],
-      "homepage_serial": 2
+      "homepage_serial": 4
     },
     {
       "category": "SR_Result",
       "title": "CBSE Board 12th Result 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "",
       "status": "result_declared",
       "slug": "sr_result-cbse-board-12th-result-2026-8cb151",
@@ -4010,12 +3743,12 @@
           ]
         }
       ],
-      "homepage_serial": 3
+      "homepage_serial": 5
     },
     {
       "category": "SR_Result",
       "title": "Railway RRB Junior Engineer JE CEN 05/2025 Result 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2025-12-10",
       "status": "result_declared",
       "slug": "sr_result-railway-rrb-junior-engineer-je-cen-052025-result-2026-02a8b9",
@@ -4222,12 +3955,12 @@
           ]
         }
       ],
-      "homepage_serial": 4
+      "homepage_serial": 6
     },
     {
       "category": "SR_Result",
       "title": "AIIMS Nursing Officer NORCET 10th Stage II Result 2026 for 2551 Post",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-03-16",
       "status": "result_declared",
       "slug": "sr_result-aiims-nursing-officer-norcet-10th-stage-ii-result-2026-for-2551-post-6d49b4",
@@ -4367,12 +4100,12 @@
           ]
         }
       ],
-      "homepage_serial": 5
+      "homepage_serial": 7
     },
     {
       "category": "SR_Result",
       "title": "NTA NSSNET Result 2026 Admissions for Navayug School",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-03-18",
       "status": "result_declared",
       "slug": "sr_result-nta-nssnet-result-2026-admissions-for-navayug-school-756b69",
@@ -4461,12 +4194,12 @@
           "links": "https://cdnbbsr.s3waas.gov.in/s388a839f2f6f1427879fc33ee4acf4f66/uploads/2026/02/202602251298267010.pdf"
         }
       ],
-      "homepage_serial": 6
+      "homepage_serial": 8
     },
     {
       "category": "SR_Result",
       "title": "India Post GDS Third Result / Merit List 2026 for 28635 Post",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-02-14",
       "status": "result_declared",
       "slug": "sr_result-india-post-gds-third-result-merit-list-2026-for-28635-post-80d291",
@@ -4663,12 +4396,12 @@
           "links": "https://app.indiapost.gov.in/gdscandidate"
         }
       ],
-      "homepage_serial": 7
+      "homepage_serial": 9
     },
     {
       "category": "SR_Result",
       "title": "MPESB MP Police ASI HC Computer Result 2026 for 89 Post",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-02-19",
       "status": "result_declared",
       "slug": "sr_result-mpesb-mp-police-asi-hc-computer-result-2026-for-89-post-477d9c",
@@ -4751,12 +4484,12 @@
           "links": "https://esb.mp.gov.in/Rulebooks/RB_2026/ASI_computer_2026_RooleBook.pdf"
         }
       ],
-      "homepage_serial": 8
+      "homepage_serial": 10
     },
     {
       "category": "SR_Result",
       "title": "IDBI Bank JAM and Assistant Manager Result 2026 for 1300 Post",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-03-19",
       "status": "result_declared",
       "slug": "sr_result-idbi-bank-jam-and-assistant-manager-result-2026-for-1300-post-2dfe52",
@@ -4941,12 +4674,12 @@
           ]
         }
       ],
-      "homepage_serial": 9
+      "homepage_serial": 11
     },
     {
       "category": "SR_Result",
       "title": "UPSC CDS I Result 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2025-12-30",
       "status": "result_declared",
       "slug": "sr_result-upsc-cds-i-result-2026-07f774",
@@ -5048,12 +4781,12 @@
           "links": "https://upsc.gov.in/sites/default/files/Notif-CDSE-I-2026-Engl-101225.pdf"
         }
       ],
-      "homepage_serial": 10
+      "homepage_serial": 12
     },
     {
       "category": "SR_Result",
       "title": "UPSC Civil Services IAS 2025 and IFS Final Result with Marks 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2025-02-21",
       "status": "result_declared",
       "slug": "sr_result-upsc-civil-services-ias-2025-and-ifs-final-result-with-marks-2026-16835a",
@@ -5235,12 +4968,12 @@
           ]
         }
       ],
-      "homepage_serial": 11
+      "homepage_serial": 13
     },
     {
       "category": "SR_Result",
       "title": "UPSC NDA I Exam Result 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2025-12-30",
       "status": "result_declared",
       "slug": "sr_result-upsc-nda-i-exam-result-2026-ab3192",
@@ -5359,12 +5092,12 @@
           "links": "https://upsc.gov.in/sites/default/files/Notif-NDA-NA-I-2026-Engl-101225.pdf"
         }
       ],
-      "homepage_serial": 12
+      "homepage_serial": 14
     },
     {
       "category": "SR_Result",
       "title": "Railway RRB Section Controller CEN 04/2025 Result / Score Card 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2025-10-14",
       "status": "result_declared",
       "slug": "sr_result-railway-rrb-section-controller-cen-042025-result-score-card-2026-72ec6a",
@@ -5545,12 +5278,12 @@
           "links": "https://www.rrbapply.gov.in/"
         }
       ],
-      "homepage_serial": 13
+      "homepage_serial": 15
     },
     {
       "category": "SR_Result",
       "title": "IB Security Assistant Executive Tier II Result 2026 for 4987 Post",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2025-08-17",
       "status": "result_declared",
       "slug": "sr_result-ib-security-assistant-executive-tier-ii-result-2026-for-4987-post-1a646f",
@@ -5644,12 +5377,12 @@
           "links": "https://g03.tcsion.com//per/g03/pub/726/EForms/image/ImageDocUpload/71161/1/4001117795.pdf"
         }
       ],
-      "homepage_serial": 14
+      "homepage_serial": 16
     },
     {
       "category": "SR_Result",
       "title": "Maharashtra Board Class Xth SSC Result 2026 Today at 11:30 AM",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "",
       "status": "result_declared",
       "slug": "sr_result-maharashtra-board-class-xth-ssc-result-2026-today-at-1130-am-60702b",
@@ -5685,12 +5418,12 @@
           "links": "https://sscresult.mahahsscboard.in/"
         }
       ],
-      "homepage_serial": 15
+      "homepage_serial": 17
     },
     {
       "category": "SR_Result",
       "title": "UP Police Sub Inspector SI PST DV Exam Date 2026 for 4543 Post",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2025-09-11",
       "status": "result_declared",
       "slug": "sr_result-up-police-sub-inspector-si-pst-dv-exam-date-2026-for-4543-post-262c97",
@@ -5878,12 +5611,12 @@
           "links": "https://uppbpb.gov.in/FilesUploaded/Notice/SI-MOD2894dc0f-dcd4-4847-9243-185ad52a56f0.pdf"
         }
       ],
-      "homepage_serial": 16
+      "homepage_serial": 18
     },
     {
       "category": "SR_Result",
       "title": "Railway RRB NTPC Graduate Level CEN 05/2025 Final Result 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2024-10-20",
       "status": "result_declared",
       "slug": "sr_result-railway-rrb-ntpc-graduate-level-cen-052025-final-result-2026-7d4d11",
@@ -6302,12 +6035,12 @@
           "links": "https://rrbahmedabad.gov.in/wp-content/uploads/2024/09/Corrigendum-3-for-CEN-05-2024.pdf"
         }
       ],
-      "homepage_serial": 17
+      "homepage_serial": 19
     },
     {
       "category": "SR_Result",
       "title": "Bihar Police BPSSC Range Officer of Forest Marks / Score Card 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2025-06-01",
       "status": "result_declared",
       "slug": "sr_result-bihar-police-bpssc-range-officer-of-forest-marks-score-card-2026-2f7125",
@@ -6432,12 +6165,12 @@
           "links": "https://bpssc.bihar.gov.in/Notices/EFC/Advt.%20No.-02-2025.pdf"
         }
       ],
-      "homepage_serial": 18
+      "homepage_serial": 20
     },
     {
       "category": "SR_Result",
       "title": "NTA JEEMAIN Session II Paper 2 Result 2026 for April Exam",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-02-25",
       "status": "result_declared",
       "slug": "sr_result-nta-jeemain-session-ii-paper-2-result-2026-for-april-exam-c29898",
@@ -6578,425 +6311,19 @@
           "links": "https://examinationservices.nic.in/jeemainx2026/root/home.aspx?enc=WPJ5WSCVWOMNiXoyyomJgDUffqDdG1LTsAPBKFcEC9VCAbchJdrRG5w+4Ch32Wrm"
         }
       ],
-      "homepage_serial": 19
-    },
-    {
-      "category": "SR_Result",
-      "title": "BSEB OFSS Bihar Class 11th Admissions Merit List / Result 2026",
-      "post_date": "2026-05-15",
-      "last_date": "2026-04-18",
-      "status": "result_declared",
-      "slug": "sr_result-bseb-ofss-bihar-class-11th-admissions-merit-list-result-2026-127a65",
-      "short_information": "Bihar School Examination Board (BSEB) has released the online application for OFSS Bihar 11th admission 2026 Apply Online from 08 April 2026 to 18 April 2026.candidates should read the OFSS Bihar 2026 information brochure for all the information related to the OFSS Bihar Admissions like Information Brochure, eligibility, age limit, fees, college and School List, information and other types of information and then apply. Bihar School Examination Board (BSEB) BSEB Common Application Form For Intermediate 11th Admission 2026 Bihar OFSS 11th Admission 2026 : Short Details of Notification",
-      "application_fee": "General / BC / EWS : 350/- SC / ST : 350/- Pay the Exam Fee Through Debit Card / Credit Card / Net Banking Mode. Bihar Board OFSS Class 11th: Admission Details 2026 Course Name Session OFSS Bihar 11th Admission",
-      "age_limit": "",
-      "eligibility": "",
-      "total_post": "",
-      "important_dates": {
-        "application_begin": "2026-04-08",
-        "last_date": "2026-04-18",
-        "admit_card": "Before Exam"
-      },
-      "tables": [
-        [
-          [
-            "Important Dates Application Begin : 08/04/2026 Last Date for Apply Online : 18/04/2026 Last Date Pay Exam Fee : 18/04/2026 Exam Date / Merit List : 05/05/2026 Admit Card Available : Before Exam",
-            "Application Fee General / BC / EWS : 350/- SC / ST : 350/- Pay the Exam Fee Through Debit Card / Credit Card / Net Banking Mode."
-          ],
-          [
-            "Course Name",
-            "Session",
-            "OFSS Bihar 11th Admission Eligibility"
-          ],
-          [
-            "Class 11th Intermediate",
-            "2026-2028",
-            "Class 10 High School / Matric Examination Passed in BSEB, Bihar Board / ICSE Board / CBSE Board Or Any Other State Board in India."
-          ],
-          [
-            "Download Merit List / Cutoff",
-            "Click Here"
-          ],
-          [
-            "Apply Online",
-            "Click Here"
-          ],
-          [
-            "Download Notification",
-            "Click Here"
-          ],
-          [
-            "Official Website",
-            "OFSS Bihar Official Website"
-          ]
-        ]
-      ],
-      "useful_links": [
-        {
-          "title": "Apply Online",
-          "links": "https://ofssbihar.net/Higher-Education/index.html"
-        }
-      ],
-      "homepage_serial": 20
-    },
-    {
-      "category": "SR_Result",
-      "title": "Rajasthan RSSB Jail Prahari 2024 Final Result for 803 Post",
-      "post_date": "2026-05-15",
-      "last_date": "2025-01-22",
-      "status": "result_declared",
-      "slug": "sr_result-rajasthan-rssb-jail-prahari-2024-final-result-for-803-post-4eafb2",
-      "short_information": "Rajasthan Staff Selection Board RSSB has released the detailed advertisement of Jail Prahari Recruitment 2025. Candidates who want to appear in the Jail Department Prahari Recruitment Advt No 17/2024 conducted by Rajasthan RSMSSB. Read the notification for Recruitment eligibility, post information, selection procedure, age limit, Vacancy details, and all other information. Rajasthan Staff Selection Board (RSSB) | RSMSSB RSMSSB Rajasthan Prahari Recruitment 2024 Rajasthan Prahari Advt No. : 17/2024 : Short Details of Notification",
-      "application_fee": "General / OBC : 600/- OBC NCL : 400/- SC / ST : 400/- Correction Charge : 300/- This fee is for one time registration, now after paying the OTR fee once, the candidate will not have to pay the application fee again and again. Pay the Exam Fee Through Emitra CSC Center, Debit Card, Credit Card, Net Banking. RSMSSB Jail Prahari",
-      "age_limit": "Minimum Age : 18 Years Maximum Age : 26 Years Age Relaxation Extra as per RSSB Jail Prahari Post Recruitment Exam 2024 Recruitment Rules . Rajasthan Jail Prahari Recruitment 2024 :",
-      "eligibility": "",
-      "total_post": "803",
-      "important_dates": {
-        "application_begin": "2024-12-24",
-        "last_date": "2025-01-22",
-        "admit_card": "2025-04-08"
-      },
-      "tables": [
-        [
-          [
-            "Important Dates Application Begin : 24/12/2024 Last Date for Apply Online : 22/01/2025 Complete Form Last Date : 22/01/2025 Exam Date : 12 April 2025 Exam City Available : 05/04/2025 Admit Card Available : 08/04/2025 Answer Key Available : 12/05/2025 Final Result Available : 05/05/2026",
-            "Application Fee General / OBC : 600/- OBC NCL : 400/- SC / ST : 400/- Correction Charge : 300/- This fee is for one time registration, now after paying the OTR fee once, the candidate will not have to pay the application fee again and again. Pay the Exam Fee Through Emitra CSC Center, Debit Card, Credit Card, Net Banking."
-          ],
-          [
-            "Post Name",
-            "Area",
-            "Total",
-            "RSSB Rajasthan Prahari Eligibility"
-          ],
-          [
-            "Jail Prahari",
-            "Non TSP",
-            "759",
-            "Class 10th Exam Passed from any Recognized Board in India. Note : CET Exam Not Required Running : Male 5Km in 25 Minute, Female 5 KM in 35 Minute. Male Height : 168 CMS, Chest : 81-86 CMS Female Height : 152 CMS More Details and Trade Wise Eligibility Read the Notification."
-          ],
-          [
-            "TSP",
-            "44"
-          ],
-          [
-            "Download Final Result",
-            "Non TSP | TSP | | Cutoff"
-          ],
-          [
-            "Download Question Paper",
-            "SET DG-06 | SET AX11"
-          ],
-          [
-            "Download Answer Key",
-            "SET DG-06 | SET AX11"
-          ],
-          [
-            "For Objection",
-            "Server I | Server II"
-          ],
-          [
-            "Download Admit Card",
-            "Server I | Server II"
-          ],
-          [
-            "Check Exam City Details",
-            "Click Here"
-          ],
-          [
-            "Download Admit Card Notice",
-            "Click Here"
-          ],
-          [
-            "Apply Online",
-            "Click Here"
-          ],
-          [
-            "Download Notification",
-            "Click Here"
-          ],
-          [
-            "Download Syllabus",
-            "Click Here"
-          ],
-          [
-            "Official Website",
-            "RSSB Official Website"
-          ]
-        ]
-      ],
-      "useful_links": [
-        {
-          "title": "Download Admit Card",
-          "links": [
-            "https://recruitment.rajasthan.gov.in/rectlogingetadmitcard",
-            "https://sso.rajasthan.gov.in/signin"
-          ]
-        },
-        {
-          "title": "Check Exam City Details",
-          "links": "https://recruitment.rajasthan.gov.in/knowlocationservlet"
-        },
-        {
-          "title": "Apply Online",
-          "links": "https://sso.rajasthan.gov.in/signin"
-        },
-        {
-          "title": "Download Notification",
-          "links": "https://rssb.rajasthan.gov.in/storage/advertisement_item/1734001071.pdf"
-        }
-      ],
       "homepage_serial": 21
     },
     {
-      "category": "SR_Result",
-      "title": "Haryana HPSC Civil Services HCS Pre Result 2026 for 102 Post",
-      "post_date": "2026-05-15",
-      "last_date": "2026-02-26",
-      "status": "result_declared",
-      "slug": "sr_result-haryana-hpsc-civil-services-hcs-pre-result-2026-for-102-post-01cfcf",
-      "short_information": "Haryana Public Service Commission HPSC HCS Civil Services Pre Admit Card 2026 : HPSC (Executive Branch) & Other Allied Services has issued an Civil Services HCS Examination Notification 2026. Those Candidate Are Enrolled with Vacancy Can Apply Online from 06/02/2026 to 26/02/2026. For Recruitment details, pay scale, age limit, selection prcedure, job information and all other information, read the advertisement and then apply. Haryana Public Service Commission (HPSC) Haryana HCS (Executive Branch) & Other Allied Services Recruitment 2026 HPSC HCS CSE Advt No. : 22/2026 : Short Details of Notification",
-      "application_fee": "Male General : 1000/- Haryana Reserve Category : 250/- All Category Female (Haryana) : 250/- PH (Divyang) : 0/- Pay the Exam Fee Through Debit Card, Credit Card, Net Banking Haryana Civil Services HCS",
-      "age_limit": "as on 01/01/2026 For DSP Post : Age Limit : 18-27 Years. For Other Post : Age Limit : 18-42 Years. Age Relaxation Extra as per Haryana Public Service Commission HPSC HCS (Ex. Br.) & other Allied Services 2025- 2026 Exam Rules Haryana Civil Services Exam 2026 :",
-      "eligibility": "Haryana Civil Service Various Post 2026 46 11 13 10 A : 15 B: 07 102 Bachelor Degree in Any Stream in Any Recognized University in India. HPSC Civil Services Recruitment 2026: Post Wise",
-      "total_post": "102",
-      "important_dates": {
-        "application_begin": "2026-02-06",
-        "last_date": "2026-02-26",
-        "exam_date": "2026-04-26",
-        "admit_card": "2026-04-20"
-      },
-      "tables": [
-        [
-          [
-            "Important Dates Application Begin : 06/02/2026 Last Date for Apply Online : 26/02/2026 upto 05 PM Pay Exam Fee Last Date : 26/02/2026 Pre Exam Date : 26/04/2026 Admit Card Available : 20/04/2026 Answer Key Available : 28/04/2026 Pre Result Available : 04/05/2026 Mains Exam Date : As per Schedule",
-            "Application Fee Male General : 1000/- Haryana Reserve Category : 250/- All Category Female (Haryana) : 250/- PH (Divyang) : 0/- Pay the Exam Fee Through Debit Card, Credit Card, Net Banking"
-          ],
-          [
-            "Post Name",
-            "Gen",
-            "EWS",
-            "DSC",
-            "OSC",
-            "BC",
-            "Total Post",
-            "Haryana Civil Services Eligibility"
-          ],
-          [
-            "Haryana Civil Service Various Post 2026",
-            "46",
-            "11",
-            "13",
-            "10",
-            "A : 15 B: 07",
-            "102",
-            "Bachelor Degree in Any Stream in Any Recognized University in India."
-          ],
-          [
-            "Post Name",
-            "Total Post"
-          ],
-          [
-            "Haryana Civil Service (Executive Branch)",
-            "24"
-          ],
-          [
-            "A Class Tehsildar Apprentice",
-            "03"
-          ],
-          [
-            "Assistant Employment Officer (AEO)",
-            "NA"
-          ],
-          [
-            "Excise & Taxation Officer (ETO)",
-            "27"
-          ],
-          [
-            "Deputy Superintendent of Police (DSP)",
-            "08"
-          ],
-          [
-            "District Food & Supplies Controller (DFSC)",
-            "02"
-          ],
-          [
-            "Assistant Excise & Taxation Officer (AETO)",
-            "22"
-          ],
-          [
-            "Naib Tehsildar",
-            "05"
-          ],
-          [
-            "Traffic Manager (TM)",
-            "07"
-          ],
-          [
-            "District Food & Supplies Officer (DFSO)",
-            "01"
-          ],
-          [
-            "Assistant Registrar Cooperative Societies (ARCS)",
-            "03"
-          ],
-          [
-            "Download Result",
-            "Click Here"
-          ],
-          [
-            "Download Answer Key",
-            "Click Here"
-          ],
-          [
-            "Download Answer Key Notice",
-            "Click Here"
-          ],
-          [
-            "Download Admit Card",
-            "Click Here"
-          ],
-          [
-            "Apply Online",
-            "Click Here"
-          ],
-          [
-            "How to Fill Form (Video Hindi)",
-            "Click Here"
-          ],
-          [
-            "Download Notification",
-            "Click Here"
-          ],
-          [
-            "Typing Test, Image Resizer, Resume CV Maker and More Tools",
-            "Sarkari Result Portal"
-          ],
-          [
-            "Official Website",
-            "HPSC Official Website"
-          ]
-        ]
-      ],
-      "useful_links": [
-        {
-          "title": "Download Answer Key",
-          "links": "https://regn.hpsc.gov.in/hcs26/site/login"
-        },
-        {
-          "title": "Download Answer Key Notice",
-          "links": "https://hpsc.gov.in/Portals/0/Ann_Obj_HCS_2025_28_04_2026.pdf"
-        },
-        {
-          "title": "Download Admit Card",
-          "links": "https://regn.hpsc.gov.in/hcs26/site/login"
-        },
-        {
-          "title": "Apply Online",
-          "links": "https://regn.hpsc.gov.in/hcs26/"
-        },
-        {
-          "title": "Download Notification",
-          "links": "https://regn.hpsc.gov.in/hcs26/Advt_22_2026_HCS_Ex_Br.pdf"
-        }
-      ],
-      "homepage_serial": 22
-    },
-    {
       "category": "SR_Admit_Card",
-      "title": "Indian Army Agniveer Rally Admit Card 2026",
-      "post_date": "2026-05-15",
-      "last_date": "2026-04-10",
-      "status": "admit_card_released",
-      "slug": "sr_admit_card-indian-army-agniveer-rally-admit-card-2026-619d4b",
-      "short_information": "Join Indian Army has released the Rally Recruting Year 2027 Notification. Those candidates who are Enrolled in this Army Rally Agniveer, ARO, ZRO, Agniveer Women, Sepoy Pharma, Soldier Technical Recruitment 2027 Exam can Download Admit Card. Read the notification for Army Rally Batch Exam, eligibility, Post Wise Details information, Document Required, age limit, How to Apply and all other information. Join Indian Army (Bhartiya Sena) Indian Army Agniveer Recruiting Year 2027 Army Agniveer Rally Exam 2026| Short Details of Notification",
-      "application_fee": "General / OBC / EWS : 250/- SC / ST : 250/- Pay the Examination Fee Through Debit Card / Credit Card / Net Banking. Army Agniveer Rally Recruitment 2026:",
-      "age_limit": "Details For Agniveer GD / Technical / Assistant / Tradesman : 17.5 to 22 Years (01/07/2005 to 01/07/2009) For Soldier Technical : 17.5 to 23 Years (01/07/2004 to 01/07/2009) For Sepoy Pharma : 19-25 Years (01/07/2002 to 01/01/2008) For JCO Religious Teacher : 25-34 Years as on 01/07/2027 Army Agniveer Rally Recruitment 2026-27 :",
-      "eligibility": "2026 Agniveer in General Duty GD, Technical, Assistant, Store Keeper, Tradesman (Men) Agniveer Army Recruitment Candidate must be a resident of the district from where the rally is going to apply for recruitment. Education Qualification : Class 8th, 10th, 12th Post Wise Eligibility. Physical Eligibility Group I: Height : For Agniveer Office Assistant / Store Keeper : 162 CM For All other Agniveer Post (GD, Technical / Tradesman) : 169 CM 1.6 KM Running : 5 Min 30 Second – 60 Marks Pull Ups : 10 Times – 40 Marks 9 Feet Ditch Zigzag Balance More Details Read the Army Rally Notification. Agniveer in General Duty GD (Women Military Police) (Women) Agniveer Army Recruitment Candidate must be a resident of the State from where the rally is going to apply for recruitment. Education Qualification : Class 10th Matric Exam Passed with Minimum 45% Marks and 33% in Each Subjects. Physical Eligibility Group I: Height : 162 CMS 1.6 KM Running : 7 Min 30 Second 10 Feet Long Jump 3 Feet High Jump More Details Read the Army Rally Notification. Soldier Technical Nursing Assistant Agniveer Army Recruitment Candidate must be a resident of the State from where the rally is going to apply for recruitment. Education Qualification : 10+2 Intermediate with Science with Physics, Chemistry, Biology and English with minimum 50% Marks and 40% in Each Subject OR 10+2 Intermediate in Science Stream with Physics, Chemistry, Botany, Zoology and English with 50% Marks and 40% in Each Subjects. Physical Eligibility: Height : For Eastern Uttar Pradesh : 169 CM For Western Uttar Pradesh : 170 CM S Uttarakhand : 163 CMS 1.6 KM Running : 5 Min 45 Second Pull Ups : 9 Feet Ditch Zigzag Balance More Details Read the Army Rally Notification. Sepoy Pharma Agniveer Army Recruitment Candidate must be a resident of the State from where the rally is going to apply for recruitment. Education Qualification : 10+2 Exam Passed and Qualified in D.Pharma with Minimum 55% Marks and Pharmacy Council Registration OR B.Pha",
-      "total_post": "",
-      "important_dates": {
-        "application_begin": "2026-02-13",
-        "last_date": "2026-04-10",
-        "admit_card": "2026-05-15"
-      },
-      "tables": [
-        [
-          [
-            "Important Dates Application Begin : 13/02/2026 Last Date for Apply Online : 10/04/2026 Pay Exam Fee Last Date : 10/04/2026 Agniveer Exam Date : 01-15 June 2026 Admit Card Available : 15/05/2026",
-            "Application Fee General / OBC / EWS : 250/- SC / ST : 250/- Pay the Examination Fee Through Debit Card / Credit Card / Net Banking."
-          ],
-          [
-            "Post Name",
-            "Army Agniveer Rally Eligibility 2026"
-          ],
-          [
-            "Agniveer in General Duty GD, Technical, Assistant, Store Keeper, Tradesman (Men)",
-            "Agniveer Army Recruitment Candidate must be a resident of the district from where the rally is going to apply for recruitment. Education Qualification : Class 8th, 10th, 12th Post Wise Eligibility. Physical Eligibility Group I: Height : For Agniveer Office Assistant / Store Keeper : 162 CM For All other Agniveer Post (GD, Technical / Tradesman) : 169 CM 1.6 KM Running : 5 Min 30 Second – 60 Marks Pull Ups : 10 Times – 40 Marks 9 Feet Ditch Zigzag Balance More Details Read the Army Rally Notification."
-          ],
-          [
-            "Agniveer in General Duty GD (Women Military Police) (Women)",
-            "Agniveer Army Recruitment Candidate must be a resident of the State from where the rally is going to apply for recruitment. Education Qualification : Class 10th Matric Exam Passed with Minimum 45% Marks and 33% in Each Subjects. Physical Eligibility Group I: Height : 162 CMS 1.6 KM Running : 7 Min 30 Second 10 Feet Long Jump 3 Feet High Jump More Details Read the Army Rally Notification."
-          ],
-          [
-            "Soldier Technical Nursing Assistant",
-            "Agniveer Army Recruitment Candidate must be a resident of the State from where the rally is going to apply for recruitment. Education Qualification : 10+2 Intermediate with Science with Physics, Chemistry, Biology and English with minimum 50% Marks and 40% in Each Subject OR 10+2 Intermediate in Science Stream with Physics, Chemistry, Botany, Zoology and English with 50% Marks and 40% in Each Subjects. Physical Eligibility: Height : For Eastern Uttar Pradesh : 169 CM For Western Uttar Pradesh : 170 CM S Uttarakhand : 163 CMS 1.6 KM Running : 5 Min 45 Second Pull Ups : 9 Feet Ditch Zigzag Balance More Details Read the Army Rally Notification."
-          ],
-          [
-            "Sepoy Pharma",
-            "Agniveer Army Recruitment Candidate must be a resident of the State from where the rally is going to apply for recruitment. Education Qualification : 10+2 Exam Passed and Qualified in D.Pharma with Minimum 55% Marks and Pharmacy Council Registration OR B.Pharma with 50% Marks and Registered in State Pharmacy Council . Physical Eligibility: Height : For Eastern Uttar Pradesh : 169 CM For Western Uttar Pradesh : 170 CM S Uttarakhand : 163 CMS 1.6 KM Running : 5 Min 45 Second Pull Ups : 9 Feet Ditch Zigzag Balance More Details Read the Army Rally Notification."
-          ],
-          [
-            "JCO Religious Teacher (Dharm Guru) Pandit, Pandit Gorkha, Granthi, Maulvi, Padre, Bodh Monk",
-            "Education Qualification : RT Pandit and Pandi Gorakha : Hindu Candidate with Shastri / Acharya in Sanskrit, (Karam Kand) as Main / Core Subject OR one Year Diploma in Karam Kand RT Granthi : Sikh Candidate with Bachelor Degree in Any Stream, Gyani in Punjabi RT Maulvi : Muslim Candidate : Bachelor Degree in Any Stream, Alim in Arabic or Adeeb-e-Mahir/ Urdu Mahir in Urdu RT Padre : Christian Candidate with Bachelor Degree in Any Stream RT Budhist : Budhist Candidate with Bachelor Degree in Any Stream Physical Eligibility Group I: Height : General : 160 CM , Gorkhas & Ladakhi Region : 157 CM Chest : 77 CM 1.6 Km Running : 8 Min More Details Read the Army Rally Notification."
-          ],
-          [
-            "Download Admit Card",
-            "Click Here"
-          ],
-          [
-            "Apply Online",
-            "Click Here"
-          ],
-          [
-            "Download Notification",
-            "Click Here"
-          ],
-          [
-            "Image Resizer, JPG to PDF, Age Calculator and More Tools",
-            "Click Here"
-          ],
-          [
-            "Official Website",
-            "Join Indian Army Official Website"
-          ]
-        ]
-      ],
-      "useful_links": [
-        {
-          "title": "Download Admit Card",
-          "links": "https://joinindianarmy.nic.in/"
-        },
-        {
-          "title": "Apply Online",
-          "links": "https://joinindianarmy.nic.in/"
-        },
-        {
-          "title": "Download Notification",
-          "links": "https://joinindianarmy.nic.in/latest-rally-agniveer-or.htm"
-        }
-      ],
-      "homepage_serial": 1
-    },
-    {
-      "category": "SR_Admit_Card",
-      "title": "NTA NEET UG Entrance Re Exam Date 2026",
-      "post_date": "2026-05-15",
+      "title": "NTA NEET UG Entrance Update Exam City Details 2026",
+      "post_date": "2026-05-16",
       "last_date": "2026-03-11",
       "status": "admit_card_released",
-      "slug": "sr_admit_card-nta-neet-ug-entrance-re-exam-date-2026-7fd4c0",
+      "slug": "sr_admit_card-nta-neet-ug-entrance-update-exam-city-details-2026-a1784b",
       "short_information": "National Testing Agency NTA has released the Information Brochure for National Eligibility Cum Entrance Test NEET UG 2026 Those Candidates are Interested to the Admsission in NEET UG 2026 Exam Can Download Re Exam Date.candidates should read the NEET UG 2026 information brochure for all the information related to the entrance exam like syllabus, eligibility, age limit, fees, Course and University List, information and other types of information and then apply. National Testing Agency (NTA) NTA National Eligibility Cum Entrance Test (NEET UG 2026) NTA NEET UG Exam 2026: Short Details of Notification",
       "application_fee": "General : 1700 /- EWS / OBC : 1600/- SC / ST / PH : 1000 /- Out Side India : 9500/- Pay the Examination Fee Through E Challan Offline Mode or Pay the Exam Fee Through Online Debit Card, Credit Card or Net Banking Fee Mode NEET UG Eligibility 2026 Passed 10+2 Intermediate Exam with Physics, Chemistry, Biology PCB Group of Subjects in Any Recognized Board in India. For More Details Kindly See the Full Information Brochure or Read the Code Wise Eligibility Details. NEET UG 2026",
       "age_limit": "Minimum Age : 17 Years Maximum Age : No Limit born on or before 31.12.2009 Age Relaxation Extra as per Rules.",
-      "eligibility": "Cum Entrance Test NEET UG Admissions 2026 Re Exam Date Notice | Syllabus Download Post Date / Update: 15 May 2026 | 09:49 AM Short Information : National Testing Agency NTA has released the Information Brochure for National Eligibility Cum Entrance Test NEET UG 2026 Those Candidates are Interested to the Admsission in NEET UG 2026 Exam Can Download Re Exam Date.candidates should read the NEET UG 2026 information brochure for all the information related to the entrance exam like syllabus, eligibility, age limit, fees, Course and University List, information and other types of information and then apply. National Testing Agency (NTA) NTA National Eligibility Cum Entrance Test (NEET UG 2026) NTA NEET UG Exam 2026: Short Details of Notification",
+      "eligibility": "Cum Entrance Test NEET UG Admissions 2026 Re Exam Date Notice | Update Exam City Details Post Date / Update: 15 May 2026 | 08:17 PM Short Information : National Testing Agency NTA has released the Information Brochure for National Eligibility Cum Entrance Test NEET UG 2026 Those Candidates are Interested to the Admsission in NEET UG 2026 Exam Can Download Re Exam Date.candidates should read the NEET UG 2026 information brochure for all the information related to the entrance exam like syllabus, eligibility, age limit, fees, Course and University List, information and other types of information and then apply. National Testing Agency (NTA) NTA National Eligibility Cum Entrance Test (NEET UG 2026) NTA NEET UG Exam 2026: Short Details of Notification",
       "total_post": "",
       "important_dates": {
         "application_begin": "2026-02-08",
@@ -7008,12 +6335,20 @@
       "tables": [
         [
           [
-            "Important Dates Application Begin : 08/02/2026 Last Date for Apply Online : 11/03/2026 upto 09 PM Last Date Online Payment : 11/03/2026 Correction Date : 12-14 March 2026 NEET UG 2025 Exam Date : 03/05/2026 (Cancelled) NEET UG 2025 Re Exam Date : 21/06/2026 Exam City Available : As per Schedule Admit Card Available : Before Exam Answer Key Available : As per Schedule Result Declared : June 2026",
+            "Important Dates Application Begin : 08/02/2026 Last Date for Apply Online : 11/03/2026 upto 09 PM Last Date Online Payment : 11/03/2026 Correction Date : 12-14 March 2026 NEET UG 2025 Exam Date : 03/05/2026 (Cancelled) Update Exam City Details : 15-21 May 2026 NEET UG 2025 Re Exam Date : 21/06/2026 Exam City Available : As per Schedule Admit Card Available : Before Exam Answer Key Available : As per Schedule Result Declared : June 2026",
             "Application Fee General : 1700 /- EWS / OBC : 1600/- SC / ST / PH : 1000 /- Out Side India : 9500/- Pay the Examination Fee Through E Challan Offline Mode or Pay the Exam Fee Through Online Debit Card, Credit Card or Net Banking Fee Mode"
           ],
           [
             "NEET UG Eligibility 2026 Passed 10+2 Intermediate Exam with Physics, Chemistry, Biology PCB Group of Subjects in Any Recognized Board in India. For More Details Kindly See the Full Information Brochure or Read the Code Wise Eligibility Details.",
             "NEET UG 2026 Age Limit Minimum Age : 17 Years Maximum Age : No Limit born on or before 31.12.2009 Age Relaxation Extra as per Rules."
+          ],
+          [
+            "Update Present Address and Exam City Details",
+            "Click Here"
+          ],
+          [
+            "Download Exam City Update Notice",
+            "Click Here"
           ],
           [
             "Download Re Exam Notice",
@@ -7123,12 +6458,237 @@
           "links": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/01/202601081066816297.pdf"
         }
       ],
+      "homepage_serial": 1
+    },
+    {
+      "category": "SR_Admit_Card",
+      "title": "UPSC Civil Services IAS IFS Pre Admit Card 2026",
+      "post_date": "2026-05-16",
+      "last_date": "2026-02-27",
+      "status": "admit_card_released",
+      "slug": "sr_admit_card-upsc-civil-services-ias-ifs-pre-admit-card-2026-b2c77a",
+      "short_information": "Union Public Service Commission UPSC has released the Civil Services and Forest Services IAS / IFS Pre Examination 2026. Those Candidate Are Interested to the Following Recruitment Can Apply Online from 04/02/2026 to 27/02/2026. Read the notification for recruitment eligibility, post information, selection procedure, age limit, pay scale and all other information. Union Public Service Commission (UPSC) UPSC Civil Services / Forest Service IAS / IFS Recruitment 2026 UPSC IAS 05/2026 & 06/2026 IFS Exam 2026: Short Details of Notification",
+      "application_fee": "General / OBC / EWS : 100/- SC / ST / PH : 0/- (Exempted) All Category Female : 0/- (Nil) Pay the Examination Fee Through Debit Card, Credit, Card, Net Banking or E Challan Fee Mode Only UPSC IAS / IFS Pre",
+      "age_limit": "Minimum Age : 21 Years Maximum Age : 32 Years Age Relaxation Extra as per UPSC Civil Services and Forest Exam Exam 2026 Recruitment Rules UPSC Civil Services / Forest Service Recruitment 2026 :",
+      "eligibility": "Indian Administrative Service IAS (Civil Services) 933 Bachelor Degree in Any Stream in Any Recognized University in India Indian Forest Service (IFS) 80 Bachelor Degree as one of Subject Animal Husbandry & Veterinary Science, Botany, Chemistry, Geology, Mathematics, Physics, Statistics and Zoology, Agriculture or Equivalent. Indian Administrative Service. Indian Foreign Service Indian Police Service. Indian P & T Accounts & Finance Service, Gr A Indian Audit and Accounts Service, Group A Indian Defence Accounts Service, Group A Indian Revenue Service (I.T.), Group A Indian Postal Service, Group A Indian Civil Accounts Service, Group A Indian Railway Traffic Service, Group A Pondicherry Civil Service, Group B Pondicherry Police Service, Group B Indian Trade Service, Group A (Gr. III). Indian Corporate Law Service, Group A Indian Information Service (Junior Grade), Gr A Indian Defence Accounts Service, Group A Indian Revenue Service (I.T.), Group A Indian Railway Accounts Service, Group A Indian Railway Personnel Service, Group A Indian Defence Estates Service, Group A Assistant Security Commissioner in Railway Protection Force, Gr A Indian Ordnance Factories Service, Group A Indian Revenue Service (Customs and Central Excise) Armed Forces Headquarters Civil Service, Group B How to Fill IAS / IFS Pre Online Form 2026 To apply for Civil Services and Forest Services Recruitment 2026 in UPSC, it will be mandatory for the candidate to do One Time Registration OTR. Union Public Service Commission UPSC Civil Services / Forest Service IAS / IFS Prelim Exam Latest Jobs Recruitment 2026. Candidate Can Apply Between 04/02/2026 to 27/02/2026. Candidate Read the Notification Before Apply the Recruitment Application Form in UPSC 2026. Kindly Check and Collect the All Document - Eligibility, ID Proof, Address Details, Basic Details. Kindly Ready Scan Document Related to Recruitment Exam Form - Photo, Sign, ID Proof, Etc. Before Submit the Application Form Must Check the Preview an",
+      "total_post": "1013",
+      "important_dates": {
+        "application_begin": "2026-02-04",
+        "last_date": "2026-02-27",
+        "exam_date": "2026-05-24",
+        "admit_card": "2026-05-15"
+      },
+      "tables": [
+        [
+          [
+            "Important Dates Application Begin : 04/02/2026 Last Date for Apply Online : 27/02/2026 upto 06 PM Only Last Date Pay Exam Fee : 27/02/2026 Correction Date : 28/02/2026 to 03/03/2026 UPSC IAS / IFS Pre Exam Date : 24/05/2026 Admit Card Available : 15/05/2026",
+            "Application Fee General / OBC / EWS : 100/- SC / ST / PH : 0/- (Exempted) All Category Female : 0/- (Nil) Pay the Examination Fee Through Debit Card, Credit, Card, Net Banking or E Challan Fee Mode Only"
+          ],
+          [
+            "Post Name",
+            "Total Post",
+            "UPSC Civil Services / Forest Services Exam Eligibility"
+          ],
+          [
+            "Indian Administrative Service IAS (Civil Services)",
+            "933",
+            "Bachelor Degree in Any Stream in Any Recognized University in India"
+          ],
+          [
+            "Indian Forest Service (IFS)",
+            "80",
+            "Bachelor Degree as one of Subject Animal Husbandry & Veterinary Science, Botany, Chemistry, Geology, Mathematics, Physics, Statistics and Zoology, Agriculture or Equivalent."
+          ],
+          [
+            "Indian Administrative Service.",
+            "Indian Foreign Service",
+            "Indian Police Service."
+          ],
+          [
+            "Indian P & T Accounts & Finance Service, Gr A",
+            "Indian Audit and Accounts Service, Group A",
+            "Indian Defence Accounts Service, Group A"
+          ],
+          [
+            "Indian Revenue Service (I.T.), Group A",
+            "Indian Postal Service, Group A",
+            "Indian Civil Accounts Service, Group A"
+          ],
+          [
+            "Indian Railway Traffic Service, Group A",
+            "Pondicherry Civil Service, Group B",
+            "Pondicherry Police Service, Group B"
+          ],
+          [
+            "Indian Trade Service, Group A (Gr. III).",
+            "Indian Corporate Law Service, Group A",
+            "Indian Information Service (Junior Grade), Gr A"
+          ],
+          [
+            "Indian Defence Accounts Service, Group A",
+            "Indian Revenue Service (I.T.), Group A",
+            "Indian Railway Accounts Service, Group A"
+          ],
+          [
+            "Indian Railway Personnel Service, Group A",
+            "Indian Defence Estates Service, Group A",
+            "Assistant Security Commissioner in Railway Protection Force, Gr A"
+          ],
+          [
+            "Indian Ordnance Factories Service, Group A",
+            "Indian Revenue Service (Customs and Central Excise)",
+            "Armed Forces Headquarters Civil Service, Group B"
+          ],
+          [
+            "Download Admit Card",
+            "Click Here"
+          ],
+          [
+            "For Correction / Edit Form",
+            "Click Here"
+          ],
+          [
+            "Apply Online Through OTR",
+            "Registration | Login"
+          ],
+          [
+            "How to Fill Form (Video Hindi)",
+            "Click Here"
+          ],
+          [
+            "How to UPSC OTR Registration (Video Hindi)",
+            "Version 1 | Version 2"
+          ],
+          [
+            "Download Civil Services IAS Notification",
+            "English | Hindi"
+          ],
+          [
+            "Download Forest Services IFS Notification",
+            "English | Hindi"
+          ],
+          [
+            "Photo Name & Date Maker, Image Resizer, Age Calculator, JPG to PDF and More Tools",
+            "Sarkari Result Portal"
+          ],
+          [
+            "Official Website",
+            "UPSC Official Website"
+          ]
+        ]
+      ],
+      "useful_links": [
+        {
+          "title": "Download Admit Card",
+          "links": "https://upsconline.nic.in/login"
+        },
+        {
+          "title": "For Correction / Edit Form",
+          "links": "https://upsconline.nic.in/login"
+        },
+        {
+          "title": "Apply Online Through OTR",
+          "links": [
+            "https://upsconline.nic.in/instruction",
+            "https://upsconline.nic.in/login"
+          ]
+        },
+        {
+          "title": "How to UPSC OTR Registration (Video Hindi)",
+          "links": "https://youtu.be/u8j9kdf6Cvg"
+        }
+      ],
       "homepage_serial": 2
     },
     {
       "category": "SR_Admit_Card",
+      "title": "Indian Army Agniveer Rally Admit Card 2026",
+      "post_date": "2026-05-16",
+      "last_date": "2026-04-10",
+      "status": "admit_card_released",
+      "slug": "sr_admit_card-indian-army-agniveer-rally-admit-card-2026-619d4b",
+      "short_information": "Join Indian Army has released the Rally Recruting Year 2027 Notification. Those candidates who are Enrolled in this Army Rally Agniveer, ARO, ZRO, Agniveer Women, Sepoy Pharma, Soldier Technical Recruitment 2027 Exam can Download Admit Card. Read the notification for Army Rally Batch Exam, eligibility, Post Wise Details information, Document Required, age limit, How to Apply and all other information. Join Indian Army (Bhartiya Sena) Indian Army Agniveer Recruiting Year 2027 Army Agniveer Rally Exam 2026| Short Details of Notification",
+      "application_fee": "General / OBC / EWS : 250/- SC / ST : 250/- Pay the Examination Fee Through Debit Card / Credit Card / Net Banking. Army Agniveer Rally Recruitment 2026:",
+      "age_limit": "Details For Agniveer GD / Technical / Assistant / Tradesman : 17.5 to 22 Years (01/07/2005 to 01/07/2009) For Soldier Technical : 17.5 to 23 Years (01/07/2004 to 01/07/2009) For Sepoy Pharma : 19-25 Years (01/07/2002 to 01/01/2008) For JCO Religious Teacher : 25-34 Years as on 01/07/2027 Army Agniveer Rally Recruitment 2026-27 :",
+      "eligibility": "2026 Agniveer in General Duty GD, Technical, Assistant, Store Keeper, Tradesman (Men) Agniveer Army Recruitment Candidate must be a resident of the district from where the rally is going to apply for recruitment. Education Qualification : Class 8th, 10th, 12th Post Wise Eligibility. Physical Eligibility Group I: Height : For Agniveer Office Assistant / Store Keeper : 162 CM For All other Agniveer Post (GD, Technical / Tradesman) : 169 CM 1.6 KM Running : 5 Min 30 Second – 60 Marks Pull Ups : 10 Times – 40 Marks 9 Feet Ditch Zigzag Balance More Details Read the Army Rally Notification. Agniveer in General Duty GD (Women Military Police) (Women) Agniveer Army Recruitment Candidate must be a resident of the State from where the rally is going to apply for recruitment. Education Qualification : Class 10th Matric Exam Passed with Minimum 45% Marks and 33% in Each Subjects. Physical Eligibility Group I: Height : 162 CMS 1.6 KM Running : 7 Min 30 Second 10 Feet Long Jump 3 Feet High Jump More Details Read the Army Rally Notification. Soldier Technical Nursing Assistant Agniveer Army Recruitment Candidate must be a resident of the State from where the rally is going to apply for recruitment. Education Qualification : 10+2 Intermediate with Science with Physics, Chemistry, Biology and English with minimum 50% Marks and 40% in Each Subject OR 10+2 Intermediate in Science Stream with Physics, Chemistry, Botany, Zoology and English with 50% Marks and 40% in Each Subjects. Physical Eligibility: Height : For Eastern Uttar Pradesh : 169 CM For Western Uttar Pradesh : 170 CM S Uttarakhand : 163 CMS 1.6 KM Running : 5 Min 45 Second Pull Ups : 9 Feet Ditch Zigzag Balance More Details Read the Army Rally Notification. Sepoy Pharma Agniveer Army Recruitment Candidate must be a resident of the State from where the rally is going to apply for recruitment. Education Qualification : 10+2 Exam Passed and Qualified in D.Pharma with Minimum 55% Marks and Pharmacy Council Registration OR B.Pha",
+      "total_post": "",
+      "important_dates": {
+        "application_begin": "2026-02-13",
+        "last_date": "2026-04-10",
+        "admit_card": "2026-05-15"
+      },
+      "tables": [
+        [
+          [
+            "Important Dates Application Begin : 13/02/2026 Last Date for Apply Online : 10/04/2026 Pay Exam Fee Last Date : 10/04/2026 Agniveer Exam Date : 01-15 June 2026 Admit Card Available : 15/05/2026",
+            "Application Fee General / OBC / EWS : 250/- SC / ST : 250/- Pay the Examination Fee Through Debit Card / Credit Card / Net Banking."
+          ],
+          [
+            "Post Name",
+            "Army Agniveer Rally Eligibility 2026"
+          ],
+          [
+            "Agniveer in General Duty GD, Technical, Assistant, Store Keeper, Tradesman (Men)",
+            "Agniveer Army Recruitment Candidate must be a resident of the district from where the rally is going to apply for recruitment. Education Qualification : Class 8th, 10th, 12th Post Wise Eligibility. Physical Eligibility Group I: Height : For Agniveer Office Assistant / Store Keeper : 162 CM For All other Agniveer Post (GD, Technical / Tradesman) : 169 CM 1.6 KM Running : 5 Min 30 Second – 60 Marks Pull Ups : 10 Times – 40 Marks 9 Feet Ditch Zigzag Balance More Details Read the Army Rally Notification."
+          ],
+          [
+            "Agniveer in General Duty GD (Women Military Police) (Women)",
+            "Agniveer Army Recruitment Candidate must be a resident of the State from where the rally is going to apply for recruitment. Education Qualification : Class 10th Matric Exam Passed with Minimum 45% Marks and 33% in Each Subjects. Physical Eligibility Group I: Height : 162 CMS 1.6 KM Running : 7 Min 30 Second 10 Feet Long Jump 3 Feet High Jump More Details Read the Army Rally Notification."
+          ],
+          [
+            "Soldier Technical Nursing Assistant",
+            "Agniveer Army Recruitment Candidate must be a resident of the State from where the rally is going to apply for recruitment. Education Qualification : 10+2 Intermediate with Science with Physics, Chemistry, Biology and English with minimum 50% Marks and 40% in Each Subject OR 10+2 Intermediate in Science Stream with Physics, Chemistry, Botany, Zoology and English with 50% Marks and 40% in Each Subjects. Physical Eligibility: Height : For Eastern Uttar Pradesh : 169 CM For Western Uttar Pradesh : 170 CM S Uttarakhand : 163 CMS 1.6 KM Running : 5 Min 45 Second Pull Ups : 9 Feet Ditch Zigzag Balance More Details Read the Army Rally Notification."
+          ],
+          [
+            "Sepoy Pharma",
+            "Agniveer Army Recruitment Candidate must be a resident of the State from where the rally is going to apply for recruitment. Education Qualification : 10+2 Exam Passed and Qualified in D.Pharma with Minimum 55% Marks and Pharmacy Council Registration OR B.Pharma with 50% Marks and Registered in State Pharmacy Council . Physical Eligibility: Height : For Eastern Uttar Pradesh : 169 CM For Western Uttar Pradesh : 170 CM S Uttarakhand : 163 CMS 1.6 KM Running : 5 Min 45 Second Pull Ups : 9 Feet Ditch Zigzag Balance More Details Read the Army Rally Notification."
+          ],
+          [
+            "JCO Religious Teacher (Dharm Guru) Pandit, Pandit Gorkha, Granthi, Maulvi, Padre, Bodh Monk",
+            "Education Qualification : RT Pandit and Pandi Gorakha : Hindu Candidate with Shastri / Acharya in Sanskrit, (Karam Kand) as Main / Core Subject OR one Year Diploma in Karam Kand RT Granthi : Sikh Candidate with Bachelor Degree in Any Stream, Gyani in Punjabi RT Maulvi : Muslim Candidate : Bachelor Degree in Any Stream, Alim in Arabic or Adeeb-e-Mahir/ Urdu Mahir in Urdu RT Padre : Christian Candidate with Bachelor Degree in Any Stream RT Budhist : Budhist Candidate with Bachelor Degree in Any Stream Physical Eligibility Group I: Height : General : 160 CM , Gorkhas & Ladakhi Region : 157 CM Chest : 77 CM 1.6 Km Running : 8 Min More Details Read the Army Rally Notification."
+          ],
+          [
+            "Download Admit Card",
+            "Click Here"
+          ],
+          [
+            "Apply Online",
+            "Click Here"
+          ],
+          [
+            "Download Notification",
+            "Click Here"
+          ],
+          [
+            "Image Resizer, JPG to PDF, Age Calculator and More Tools",
+            "Click Here"
+          ],
+          [
+            "Official Website",
+            "Join Indian Army Official Website"
+          ]
+        ]
+      ],
+      "useful_links": [
+        {
+          "title": "Download Admit Card",
+          "links": "https://joinindianarmy.nic.in/"
+        },
+        {
+          "title": "Apply Online",
+          "links": "https://joinindianarmy.nic.in/"
+        },
+        {
+          "title": "Download Notification",
+          "links": "https://joinindianarmy.nic.in/latest-rally-agniveer-or.htm"
+        }
+      ],
+      "homepage_serial": 3
+    },
+    {
+      "category": "SR_Admit_Card",
       "title": "DUVASU Mathura PVT Entrance Exam Admit Card 2026 for UGEE PGEE DEE",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-04-22",
       "status": "admit_card_released",
       "slug": "sr_admit_card-duvasu-mathura-pvt-entrance-exam-admit-card-2026-for-ugee-pgee-dee-95af14",
@@ -7213,12 +6773,12 @@
           "links": "https://www.duvasu.com/entrance-exam-registration/login"
         }
       ],
-      "homepage_serial": 3
+      "homepage_serial": 4
     },
     {
       "category": "SR_Admit_Card",
       "title": "BSSC Office Attendant Mains Admit Card 2026 for 100 Post",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2022-12-24",
       "status": "admit_card_released",
       "slug": "sr_admit_card-bssc-office-attendant-mains-admit-card-2026-for-100-post-b8edc6",
@@ -7321,12 +6881,12 @@
           "links": "https://bssc.bihar.gov.in/Advertisement/4368_2022.pdf"
         }
       ],
-      "homepage_serial": 4
+      "homepage_serial": 5
     },
     {
       "category": "SR_Admit_Card",
       "title": "NCERT LDC Exam Admit Card 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-01-16",
       "status": "admit_card_released",
       "slug": "sr_admit_card-ncert-ldc-exam-admit-card-2026-3fa5bd",
@@ -7433,12 +6993,12 @@
           "links": "https://ncert.nic.in/pdf/announcement/vacancies/nonacademicvacancy/Advt_DQ_8256_EN.pdf"
         }
       ],
-      "homepage_serial": 5
+      "homepage_serial": 6
     },
     {
       "category": "SR_Admit_Card",
       "title": "Bihar BPSC 33 Civil Judge PCS J Pre Exam Date 2026 for 173 Post",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-04-30",
       "status": "admit_card_released",
       "slug": "sr_admit_card-bihar-bpsc-33-civil-judge-pcs-j-pre-exam-date-2026-for-173-post-e6ed44",
@@ -7532,12 +7092,12 @@
           "links": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/Advertisement-122026-33rd-BJSE_BPSC-20260223-82eskn.pdf"
         }
       ],
-      "homepage_serial": 7
+      "homepage_serial": 8
     },
     {
       "category": "SR_Admit_Card",
       "title": "BPSSC Bihar Police Sub Inspector SI Mains Admit Card 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2025-10-26",
       "status": "admit_card_released",
       "slug": "sr_admit_card-bpssc-bihar-police-sub-inspector-si-mains-admit-card-2026-6707b8",
@@ -7623,12 +7183,12 @@
           "links": "https://bpssc.bihar.gov.in/Notices/Advt.%2005-2025.pdf"
         }
       ],
-      "homepage_serial": 8
+      "homepage_serial": 9
     },
     {
       "category": "SR_Admit_Card",
       "title": "RPSC Rajasthan Police Sub Inspector 2021 New Exam Date 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2021-06-23",
       "status": "admit_card_released",
       "slug": "sr_admit_card-rpsc-rajasthan-police-sub-inspector-2021-new-exam-date-2026-420b1b",
@@ -7927,12 +7487,12 @@
           "links": "https://rpsc.rajasthan.gov.in/Static/RecruitmentAdvertisements/7107054E6CEB463D854E675DFDAACF82.pdf"
         }
       ],
-      "homepage_serial": 9
+      "homepage_serial": 10
     },
     {
       "category": "SR_Admit_Card",
       "title": "Railway RRB Isolated Various Post Application Status 2026 for 312 Post",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-01-29",
       "status": "admit_card_released",
       "slug": "sr_admit_card-railway-rrb-isolated-various-post-application-status-2026-for-312-post-34f057",
@@ -8029,12 +7589,12 @@
           "links": "https://www.rrbthiruvananthapuram.gov.in/assets/pdf/Final_CEN_08_2025_Isolated_Categories_29_12_2025_Publish_English2.pdf"
         }
       ],
-      "homepage_serial": 10
+      "homepage_serial": 11
     },
     {
       "category": "SR_Admit_Card",
       "title": "Haryana HPSC PGT Computer Science Admit Card 2026 for 1672 Post",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-03-09",
       "status": "admit_card_released",
       "slug": "sr_admit_card-haryana-hpsc-pgt-computer-science-admit-card-2026-for-1672-post-834f5c",
@@ -8125,12 +7685,12 @@
           "links": "https://regn.hpsc.gov.in/pgt26cs/Advt_23_2026_PGT_CS.pdf"
         }
       ],
-      "homepage_serial": 11
+      "homepage_serial": 12
     },
     {
       "category": "SR_Admit_Card",
       "title": "UPPSC LT Grade Assistant Teacher Mains Admit Card 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2025-08-28",
       "status": "admit_card_released",
       "slug": "sr_admit_card-uppsc-lt-grade-assistant-teacher-mains-admit-card-2026-297f51",
@@ -8289,12 +7849,12 @@
           "links": "https://uppsc.up.nic.in/CandidatePages/OTRAppForm/Applicant_OtrAuthentication.aspx?WEqGEem9m0+8Y4tNQqJiNYurmbKsjJR/fgSlThSTh6o=#no-back"
         }
       ],
-      "homepage_serial": 12
+      "homepage_serial": 13
     },
     {
       "category": "SR_Admit_Card",
       "title": "UPSSSC UP Lekhpal Mains Exam City Details 2026 for 7994 Post",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-01-28",
       "status": "admit_card_released",
       "slug": "sr_admit_card-upsssc-up-lekhpal-mains-exam-city-details-2026-for-7994-post-4a1db1",
@@ -8430,152 +7990,12 @@
           "links": "https://upsssc.gov.in//AllNotifications.aspx"
         }
       ],
-      "homepage_serial": 13
-    },
-    {
-      "category": "SR_Admit_Card",
-      "title": "UPSC Civil Services IAS IFS Pre Admit Card 2026",
-      "post_date": "2026-05-15",
-      "last_date": "2026-02-27",
-      "status": "admit_card_released",
-      "slug": "sr_admit_card-upsc-civil-services-ias-ifs-pre-admit-card-2026-b2c77a",
-      "short_information": "Union Public Service Commission UPSC has released the Civil Services and Forest Services IAS / IFS Pre Examination 2026. Those Candidate Are Interested to the Following Recruitment Can Apply Online from 04/02/2026 to 27/02/2026. Read the notification for recruitment eligibility, post information, selection procedure, age limit, pay scale and all other information. Union Public Service Commission (UPSC) UPSC Civil Services / Forest Service IAS / IFS Recruitment 2026 UPSC IAS 05/2026 & 06/2026 IFS Exam 2026: Short Details of Notification",
-      "application_fee": "General / OBC / EWS : 100/- SC / ST / PH : 0/- (Exempted) All Category Female : 0/- (Nil) Pay the Examination Fee Through Debit Card, Credit, Card, Net Banking or E Challan Fee Mode Only UPSC IAS / IFS Pre",
-      "age_limit": "Minimum Age : 21 Years Maximum Age : 32 Years Age Relaxation Extra as per UPSC Civil Services and Forest Exam Exam 2026 Recruitment Rules UPSC Civil Services / Forest Service Recruitment 2026 :",
-      "eligibility": "Indian Administrative Service IAS (Civil Services) 933 Bachelor Degree in Any Stream in Any Recognized University in India Indian Forest Service (IFS) 80 Bachelor Degree as one of Subject Animal Husbandry & Veterinary Science, Botany, Chemistry, Geology, Mathematics, Physics, Statistics and Zoology, Agriculture or Equivalent. Indian Administrative Service. Indian Foreign Service Indian Police Service. Indian P & T Accounts & Finance Service, Gr A Indian Audit and Accounts Service, Group A Indian Defence Accounts Service, Group A Indian Revenue Service (I.T.), Group A Indian Postal Service, Group A Indian Civil Accounts Service, Group A Indian Railway Traffic Service, Group A Pondicherry Civil Service, Group B Pondicherry Police Service, Group B Indian Trade Service, Group A (Gr. III). Indian Corporate Law Service, Group A Indian Information Service (Junior Grade), Gr A Indian Defence Accounts Service, Group A Indian Revenue Service (I.T.), Group A Indian Railway Accounts Service, Group A Indian Railway Personnel Service, Group A Indian Defence Estates Service, Group A Assistant Security Commissioner in Railway Protection Force, Gr A Indian Ordnance Factories Service, Group A Indian Revenue Service (Customs and Central Excise) Armed Forces Headquarters Civil Service, Group B How to Fill IAS / IFS Pre Online Form 2026 To apply for Civil Services and Forest Services Recruitment 2026 in UPSC, it will be mandatory for the candidate to do One Time Registration OTR. Union Public Service Commission UPSC Civil Services / Forest Service IAS / IFS Prelim Exam Latest Jobs Recruitment 2026. Candidate Can Apply Between 04/02/2026 to 27/02/2026. Candidate Read the Notification Before Apply the Recruitment Application Form in UPSC 2026. Kindly Check and Collect the All Document - Eligibility, ID Proof, Address Details, Basic Details. Kindly Ready Scan Document Related to Recruitment Exam Form - Photo, Sign, ID Proof, Etc. Before Submit the Application Form Must Check the Preview an",
-      "total_post": "1013",
-      "important_dates": {
-        "application_begin": "2026-02-04",
-        "last_date": "2026-02-27",
-        "exam_date": "2026-05-24",
-        "admit_card": "Before Exam"
-      },
-      "tables": [
-        [
-          [
-            "Important Dates Application Begin : 04/02/2026 Last Date for Apply Online : 27/02/2026 upto 06 PM Only Last Date Pay Exam Fee : 27/02/2026 Correction Date : 28/02/2026 to 03/03/2026 UPSC IAS / IFS Pre Exam Date : 24/05/2026 Admit Card Available : Before Exam",
-            "Application Fee General / OBC / EWS : 100/- SC / ST / PH : 0/- (Exempted) All Category Female : 0/- (Nil) Pay the Examination Fee Through Debit Card, Credit, Card, Net Banking or E Challan Fee Mode Only"
-          ],
-          [
-            "Post Name",
-            "Total Post",
-            "UPSC Civil Services / Forest Services Exam Eligibility"
-          ],
-          [
-            "Indian Administrative Service IAS (Civil Services)",
-            "933",
-            "Bachelor Degree in Any Stream in Any Recognized University in India"
-          ],
-          [
-            "Indian Forest Service (IFS)",
-            "80",
-            "Bachelor Degree as one of Subject Animal Husbandry & Veterinary Science, Botany, Chemistry, Geology, Mathematics, Physics, Statistics and Zoology, Agriculture or Equivalent."
-          ],
-          [
-            "Indian Administrative Service.",
-            "Indian Foreign Service",
-            "Indian Police Service."
-          ],
-          [
-            "Indian P & T Accounts & Finance Service, Gr A",
-            "Indian Audit and Accounts Service, Group A",
-            "Indian Defence Accounts Service, Group A"
-          ],
-          [
-            "Indian Revenue Service (I.T.), Group A",
-            "Indian Postal Service, Group A",
-            "Indian Civil Accounts Service, Group A"
-          ],
-          [
-            "Indian Railway Traffic Service, Group A",
-            "Pondicherry Civil Service, Group B",
-            "Pondicherry Police Service, Group B"
-          ],
-          [
-            "Indian Trade Service, Group A (Gr. III).",
-            "Indian Corporate Law Service, Group A",
-            "Indian Information Service (Junior Grade), Gr A"
-          ],
-          [
-            "Indian Defence Accounts Service, Group A",
-            "Indian Revenue Service (I.T.), Group A",
-            "Indian Railway Accounts Service, Group A"
-          ],
-          [
-            "Indian Railway Personnel Service, Group A",
-            "Indian Defence Estates Service, Group A",
-            "Assistant Security Commissioner in Railway Protection Force, Gr A"
-          ],
-          [
-            "Indian Ordnance Factories Service, Group A",
-            "Indian Revenue Service (Customs and Central Excise)",
-            "Armed Forces Headquarters Civil Service, Group B"
-          ],
-          [
-            "Download Admit Card",
-            "Link Will be Activate Soon"
-          ],
-          [
-            "For Correction / Edit Form",
-            "Click Here"
-          ],
-          [
-            "Apply Online Through OTR",
-            "Registration | Login"
-          ],
-          [
-            "How to Fill Form (Video Hindi)",
-            "Click Here"
-          ],
-          [
-            "How to UPSC OTR Registration (Video Hindi)",
-            "Version 1 | Version 2"
-          ],
-          [
-            "Download Civil Services IAS Notification",
-            "English | Hindi"
-          ],
-          [
-            "Download Forest Services IFS Notification",
-            "English | Hindi"
-          ],
-          [
-            "Photo Name & Date Maker, Image Resizer, Age Calculator, JPG to PDF and More Tools",
-            "Sarkari Result Portal"
-          ],
-          [
-            "Official Website",
-            "UPSC Official Website"
-          ]
-        ]
-      ],
-      "useful_links": [
-        {
-          "title": "Download Admit Card",
-          "links": "https://upsconline.nic.in/login"
-        },
-        {
-          "title": "For Correction / Edit Form",
-          "links": "https://upsconline.nic.in/login"
-        },
-        {
-          "title": "Apply Online Through OTR",
-          "links": [
-            "https://upsconline.nic.in/instruction",
-            "https://upsconline.nic.in/login"
-          ]
-        },
-        {
-          "title": "How to UPSC OTR Registration (Video Hindi)",
-          "links": "https://youtu.be/u8j9kdf6Cvg"
-        }
-      ],
       "homepage_serial": 14
     },
     {
       "category": "SR_Admit_Card",
       "title": "Bihar Police BPSSC Havildar Clerk Home Guard Admit Card 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-02-05",
       "status": "admit_card_released",
       "slug": "sr_admit_card-bihar-police-bpssc-havildar-clerk-home-guard-admit-card-2026-3823e7",
@@ -8673,7 +8093,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "BCECEB Bihar ITI Entrance Exam Admit Card 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-04-25",
       "status": "admit_card_released",
       "slug": "sr_admit_card-bceceb-bihar-iti-entrance-exam-admit-card-2026-21f328",
@@ -8751,7 +8171,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "IIT JEE Advanced Admit Card 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-05-05",
       "status": "admit_card_released",
       "slug": "sr_admit_card-iit-jee-advanced-admit-card-2026-305a86",
@@ -8827,7 +8247,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "Indian Navy MR Musician 02/2026 Batch Admit Card 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-04-30",
       "status": "admit_card_released",
       "slug": "sr_admit_card-indian-navy-mr-musician-022026-batch-admit-card-2026-9c5eff",
@@ -8890,7 +8310,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "MPESB Nursing Officer, Sister Tutor Admit Card 2026 for 2317 Post",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-04-20",
       "status": "admit_card_released",
       "slug": "sr_admit_card-mpesb-nursing-officer-sister-tutor-admit-card-2026-for-2317-post-a488bf",
@@ -8966,7 +8386,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "NIELIT CCC Exam Admit Card May 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "",
       "status": "admit_card_released",
       "slug": "sr_admit_card-nielit-ccc-exam-admit-card-may-2026-3592c8",
@@ -9016,7 +8436,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "UPSESSB UP PGT 2022 Answer Key 2026 for 624 Post",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2022-07-10",
       "status": "admit_card_released",
       "slug": "sr_admit_card-upsessb-up-pgt-2022-answer-key-2026-for-624-post-82501c",
@@ -9380,7 +8800,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "Railway RRB NTPC 10+2 UG Level CEN 07/2025 Exam City Details 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2025-12-04",
       "status": "admit_card_released",
       "slug": "sr_admit_card-railway-rrb-ntpc-102-ug-level-cen-072025-exam-city-details-2026-9ce140",
@@ -9501,7 +8921,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "Rajasthan RSSB Lab Assistant Admit Card 2026 for 804 Post",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-02-25",
       "status": "admit_card_released",
       "slug": "sr_admit_card-rajasthan-rssb-lab-assistant-admit-card-2026-for-804-post-4f409f",
@@ -9573,7 +8993,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "Indian Navy SSR Medical INET 2026 Admit Card for 02/2027 Batch",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-04-06",
       "status": "admit_card_released",
       "slug": "sr_admit_card-indian-navy-ssr-medical-inet-2026-admit-card-for-022027-batch-adf982",
@@ -9646,7 +9066,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "Indian Navy Agniveer SSR and MR INET Admit Card 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-04-06",
       "status": "admit_card_released",
       "slug": "sr_admit_card-indian-navy-agniveer-ssr-and-mr-inet-admit-card-2026-87802e",
@@ -9731,7 +9151,7 @@
     {
       "category": "SR_Admission",
       "title": "NTA ICAR AIEEA PG and PHd Admissions Online form 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-06-07",
       "status": "active",
       "slug": "sr_admission-nta-icar-aieea-pg-and-phd-admissions-online-form-2026-33c250",
@@ -9803,111 +9223,8 @@
     },
     {
       "category": "SR_Admission",
-      "title": "UPCATET 2026 Admissions Online Form",
-      "post_date": "2026-05-15",
-      "last_date": "2026-05-15",
-      "status": "active",
-      "slug": "sr_admission-upcatet-2026-admissions-online-form-7ae68d",
-      "short_information": "Banda University of Agriculture & Technology, Banda has Released UPCATET Admissions 2026 Notification. Those candidates who are interested in this UPCATET Various UG, PG & Other Courses Admissions 2026 can Apply Online from 30/03/2026 to 15/05/2026. Read the notification for admissions eligibility, post information, selection procedure, pay scale and all other information. Banda University of Agriculture & Technology, Banda (BUAT) (Conducted University) U.P. Combined Agriculture and Technology Entrance Test 2026 UPCATET Exam 2026 : Short Details of Notification",
-      "application_fee": "General / OBC / EWS : 1350/- SC / ST : 1100/- Pay the Exam Fee Through Debit Card, Credit Card, Net Banking or Pay Offline Through E Challan Fee Mode Only UPCATET Admission 2026 :",
-      "age_limit": "as on 31/12/2026 BVSc & AH Course : 17-25 Years. Other Ug Courses : 16-22 Years. PG Courses : No Age Limit UPCATET 2026 Admissions Course List with",
-      "eligibility": "",
-      "total_post": "",
-      "important_dates": {
-        "application_begin": "2026-03-30",
-        "last_date": "2026-05-15"
-      },
-      "tables": [
-        [
-          [
-            "Important Dates Application Begin : 30/03/2026 Last Date for Apply Online : 15/05/2026 Pay Exam Fee Last Date : 15/05/2026 Correction Date : 02-15 May 2026 UPCATET 2026 Exam Date : 17-18 June 2026 Admit Card Issue : 10 June 2026 Result Declared : 24/06/2026 Counselling Start : July 2026",
-            "Application Fee General / OBC / EWS : 1350/- SC / ST : 1100/- Pay the Exam Fee Through Debit Card, Credit Card, Net Banking or Pay Offline Through E Challan Fee Mode Only"
-          ],
-          [
-            "Course Name",
-            "UPCATET Course Wise Eligibility"
-          ],
-          [
-            "B.Sc Agriculture",
-            "10+2 with PAG, PCM, PCB, PCMB"
-          ],
-          [
-            "B.Sc Forestry",
-            "Do."
-          ],
-          [
-            "B.F.S.c (Fisheries Science)",
-            "10+2 with PAG, PCB, PCMB"
-          ],
-          [
-            "B.V.Sc & AH",
-            "10+2 with PCB / PCMB with English and 50% Aggregate Marks in Each Group Subject"
-          ],
-          [
-            "B.Sc Community Science (Girls)",
-            "10+2 in Arts Stream with Home Science As a Subject / PAG /PCB/PCM/PCMB"
-          ],
-          [
-            "B.Tech Biotechnology",
-            "10+2 with PAG, PCM, PCB, PCMB"
-          ],
-          [
-            "B.Tech Agriculture",
-            "10+2 with PAG, PCM, PCMB"
-          ],
-          [
-            "B.Tech Dairy / Food Technology",
-            "10+2 with PAG, PCB, PCMB"
-          ],
-          [
-            "B.Tech Sugarcane Science and Technology",
-            "10+2 with PAG, PCB & PCM"
-          ],
-          [
-            "B.Tech Food Nutrition and Dietetics",
-            "10+2 with PHS , PCB & PCM"
-          ],
-          [
-            "Post Graduate Courses (Master Degree)",
-            "Bachelor Degree Passed / Appearing"
-          ],
-          [
-            "PHd Courses",
-            "Master Degree Passed / Appearing"
-          ],
-          [
-            "Apply Online",
-            "Registration | Login"
-          ],
-          [
-            "Download Notification",
-            "Click Here"
-          ],
-          [
-            "Image Resizer, JPG to PDF, Photo Name Date Maker, Resume CV Maker and More Tools",
-            "Click Here"
-          ],
-          [
-            "Official Website",
-            "UPCATET 2026 Offical Website"
-          ]
-        ]
-      ],
-      "useful_links": [
-        {
-          "title": "Apply Online",
-          "links": [
-            "https://onlineapp.upcatetexam.org/frm_signup.aspx",
-            "https://onlineapp.upcatetexam.org/frm_student_login.aspx"
-          ]
-        }
-      ],
-      "homepage_serial": 2
-    },
-    {
-      "category": "SR_Admission",
       "title": "ABVMU UP CAHET Entrance Test Online Form 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-06-05",
       "status": "active",
       "slug": "sr_admission-abvmu-up-cahet-entrance-test-online-form-2026-dd21e5",
@@ -9991,7 +9308,7 @@
     {
       "category": "SR_Admission",
       "title": "Allahabad University PGAT Admissions Online Form 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-05-25",
       "status": "active",
       "slug": "sr_admission-allahabad-university-pgat-admissions-online-form-2026-ba1e23",
@@ -10090,7 +9407,7 @@
     {
       "category": "SR_Admission",
       "title": "Bihar 2 Year BEd Admissions Online Form 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-05-18",
       "status": "active",
       "slug": "sr_admission-bihar-2-year-bed-admissions-online-form-2026-68c71a",
@@ -10143,7 +9460,7 @@
     {
       "category": "SR_Admission",
       "title": "ABVMU UP GNM Entrance Test UPGET Online Form 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-05-26",
       "status": "active",
       "slug": "sr_admission-abvmu-up-gnm-entrance-test-upget-online-form-2026-b07d04",
@@ -10208,7 +9525,7 @@
     {
       "category": "SR_Admission",
       "title": "MUIT Noida and Lucknow Campus Admissions Online Form 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-07-15",
       "status": "active",
       "slug": "sr_admission-muit-noida-and-lucknow-campus-admissions-online-form-2026-29bb38",
@@ -10417,7 +9734,7 @@
     {
       "category": "SR_Admission",
       "title": "ABVMU UP Common Nursing Entrance Test UPCNET Online Form 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-05-20",
       "status": "active",
       "slug": "sr_admission-abvmu-up-common-nursing-entrance-test-upcnet-online-form-2026-42b9b5",
@@ -10490,7 +9807,7 @@
     {
       "category": "SR_Answer_Key",
       "title": "EMRS Teaching and Non Teaching Post Tier II Answer Key 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2025-10-28",
       "status": "answer_key_released",
       "slug": "sr_answer_key-emrs-teaching-and-non-teaching-post-tier-ii-answer-key-2026-dec5ae",
@@ -10664,7 +9981,7 @@
     {
       "category": "SR_Answer_Key",
       "title": "CBSE KVS / NVS Teaching and Non Teaching Post Tier II Answer Key 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2025-12-11",
       "status": "answer_key_released",
       "slug": "sr_answer_key-cbse-kvs-nvs-teaching-and-non-teaching-post-tier-ii-answer-key-2026-eb004d",
@@ -10828,7 +10145,7 @@
     {
       "category": "SR_Answer_Key",
       "title": "MP ESB Pre Agriculture Test PAT Answer Key 2026",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-04-07",
       "status": "answer_key_released",
       "slug": "sr_answer_key-mp-esb-pre-agriculture-test-pat-answer-key-2026-36968b",
@@ -10920,7 +10237,7 @@
     {
       "category": "SR_Answer_Key",
       "title": "NTA NCHMJEE Answer Key 2026 for Hotel Management Course",
-      "post_date": "2026-05-15",
+      "post_date": "2026-05-16",
       "last_date": "2026-03-25",
       "status": "answer_key_released",
       "slug": "sr_answer_key-nta-nchmjee-answer-key-2026-for-hotel-management-course-23ea03",
