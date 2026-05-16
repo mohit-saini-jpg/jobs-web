@@ -15,29 +15,121 @@
     @keyframes spin { to { transform: rotate(360deg); } }
   </style>
   <script>
-    /**
-     * GitHub Pages SEO Routing — 404.html
-     * ------------------------------------
-     * GitHub Pages serves this file for any path that doesn't match a real file.
-     * We detect /jobs/<slug>/ paths and redirect to /jobs/<slug>/index.html
-     * which reads window.location.pathname to get the slug.
-     *
-     * For all other 404s (not /jobs/) we fall through to the real 404 UI.
-     */
-    (function () {
-      var path = window.location.pathname;
-      var jobMatch = path.match(/^\/jobs\/([^\/]+)\/?$/);
+  /**
+   * SEO-Friendly URL Router — Top Sarkari Jobs
+   * ============================================
+   *
+   * CLEAN URL MAP:
+   *
+   * /jobs/<slug>/               → job.html?slug=<slug>
+   * /category/<group>/          → category.html?group=<group>
+   * /results/                   → view.html?section=Sarkari+Result
+   * /admit-card/                → view.html?section=Admit+cards+Exams+Date
+   * /latest-jobs/               → view.html?section=latest+jobs
+   * /railway-jobs/              → view.html?section=Railway+Jobs
+   * /bank-jobs/                 → view.html?section=Bank+Jobs
+   * /police-jobs/               → view.html?section=Police+Jobs
+   * /ssc-jobs/                  → view.html?section=SSC+Jobs
+   * /upsc-jobs/                 → view.html?section=UPSC+Jobs
+   * /state-jobs/<state>/        → state-jobs.html?state=<state>
+   * /search/<query>/            → search.html?q=<query>
+   * /section/<section-slug>/    → view.html?section=<decoded>
+   */
+  (function () {
+    var path = window.location.pathname;
 
-      if (jobMatch) {
-        // Store the slug in sessionStorage so the destination page can read it
-        // even after the browser normalises the URL.
-        sessionStorage.setItem('__tsj_slug', decodeURIComponent(jobMatch[1]));
-        // Redirect to the static template — no query params, clean URL preserved
-        // by using history.replaceState inside the template.
-        window.location.replace('/job.html?slug=' + encodeURIComponent(decodeURIComponent(jobMatch[1])));
-      }
-      // Non-job 404 paths: let the page render the error UI below.
-    })();
+    // ── 1. Job detail page: /jobs/<slug>/ ──────────────────────────
+    var jobMatch = path.match(/^\/jobs\/([^\/]+)\/?$/);
+    if (jobMatch) {
+      var slug = decodeURIComponent(jobMatch[1]);
+      sessionStorage.setItem('__tsj_slug', slug);
+      window.location.replace('/job.html?slug=' + encodeURIComponent(slug));
+      return;
+    }
+
+    // ── 2. Category pages: /category/<group>/ ──────────────────────
+    var catMatch = path.match(/^\/category\/([^\/]+)\/?$/);
+    if (catMatch) {
+      var group = decodeURIComponent(catMatch[1]);
+      window.location.replace('/category.html?group=' + encodeURIComponent(group));
+      return;
+    }
+
+    // ── 3. State jobs: /state-jobs/<state>/ ────────────────────────
+    var stateMatch = path.match(/^\/state-jobs\/([^\/]+)\/?$/);
+    if (stateMatch) {
+      var state = decodeURIComponent(stateMatch[1]);
+      window.location.replace('/state-jobs.html?state=' + encodeURIComponent(state));
+      return;
+    }
+
+    // ── 4. Search: /search/<query>/ ─────────────────────────────────
+    var searchMatch = path.match(/^\/search\/([^\/]+)\/?$/);
+    if (searchMatch) {
+      var q = decodeURIComponent(searchMatch[1]).replace(/-/g, ' ');
+      window.location.replace('/search.html?q=' + encodeURIComponent(q));
+      return;
+    }
+
+    // ── 5. Dynamic section pages: /section/<slug>/ ─────────────────
+    var sectionMatch = path.match(/^\/section\/([^\/]+)\/?$/);
+    if (sectionMatch) {
+      var sec = decodeURIComponent(sectionMatch[1]).replace(/-/g, ' ');
+      window.location.replace('/view.html?section=' + encodeURIComponent(sec));
+      return;
+    }
+
+    // ── 6. Static shortcut clean URLs ──────────────────────────────
+    var shortcuts = {
+      '/latest-jobs/':     '/view.html?section=latest+jobs',
+      '/latest-jobs':      '/view.html?section=latest+jobs',
+      '/results/':         '/view.html?section=Sarkari+Result',
+      '/results':          '/view.html?section=Sarkari+Result',
+      '/admit-card/':      '/view.html?section=Admit+cards+Exams+Date',
+      '/admit-card':       '/view.html?section=Admit+cards+Exams+Date',
+      '/railway-jobs/':    '/view.html?section=Railway+Jobs',
+      '/railway-jobs':     '/view.html?section=Railway+Jobs',
+      '/bank-jobs/':       '/view.html?section=Bank+Jobs',
+      '/bank-jobs':        '/view.html?section=Bank+Jobs',
+      '/police-jobs/':     '/view.html?section=Police+Jobs',
+      '/police-jobs':      '/view.html?section=Police+Jobs',
+      '/ssc-jobs/':        '/view.html?section=SSC+Jobs',
+      '/ssc-jobs':         '/view.html?section=SSC+Jobs',
+      '/upsc-jobs/':       '/view.html?section=UPSC+Jobs',
+      '/upsc-jobs':        '/view.html?section=UPSC+Jobs',
+      '/teaching-jobs/':   '/view.html?section=Teacher+Jobs',
+      '/teaching-jobs':    '/view.html?section=Teacher+Jobs',
+      '/army-jobs/':       '/view.html?section=Indian+ARMY+jobs',
+      '/army-jobs':        '/view.html?section=Indian+ARMY+jobs',
+      '/10th-pass-jobs/':  '/view.html?section=10th+Pass+jobs',
+      '/10th-pass-jobs':   '/view.html?section=10th+Pass+jobs',
+      '/12th-pass-jobs/':  '/view.html?section=12th+Pass+jobs',
+      '/12th-pass-jobs':   '/view.html?section=12th+Pass+jobs',
+      '/upcoming-jobs/':   '/view.html?section=upcoming-jobs',
+      '/upcoming-jobs':    '/view.html?section=upcoming-jobs',
+      '/state-jobs/':      '/view.html?section=State+jobs',
+      '/state-jobs':       '/view.html?section=State+jobs',
+      '/central-jobs/':    '/view.html?section=Central+jobs',
+      '/central-jobs':     '/view.html?section=Central+jobs',
+      '/answer-key/':      '/category.html?group=admit-result',
+      '/answer-key':       '/category.html?group=admit-result',
+      '/admissions/':      '/category.html?group=admissions',
+      '/admissions':       '/category.html?group=admissions',
+    };
+
+    if (shortcuts[path]) {
+      window.location.replace(shortcuts[path]);
+      return;
+    }
+
+    // ── 7. Not matched — show real 404 ─────────────────────────────
+    setTimeout(function () {
+      document.querySelector('.spinner').style.display = 'none';
+      document.querySelector('p').textContent = '404 — Page Not Found';
+      document.getElementById('fallbackMsg').textContent =
+        'Page not found. Please go back or visit the home page.';
+    }, 200);
+  })();
   </script>
 </head>
 <body>
@@ -46,16 +138,5 @@
     <p style="margin:0;font-weight:600;">Loading…</p>
     <p style="margin:8px 0 0;font-size:.85rem;color:#94a3b8;" id="fallbackMsg"></p>
   </div>
-  <script>
-    // If we didn't redirect above, show a proper 404 message after a tick.
-    setTimeout(function () {
-      if (!window.location.pathname.match(/^\/jobs\//)) {
-        document.querySelector('.spinner').style.display = 'none';
-        document.getElementById('fallbackMsg').textContent =
-          'Page not found. Please go back or visit the home page.';
-        document.querySelector('p').textContent = '404 — Page Not Found';
-      }
-    }, 200);
-  </script>
 </body>
 </html>
