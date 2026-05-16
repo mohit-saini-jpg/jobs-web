@@ -519,44 +519,36 @@
         const sections = Array.isArray(data.sections) ? data.sections
           : Array.isArray(data) ? data : [];
 
-        /* BLACKLIST: These non-job sections are always skipped.
-         * Baki SABHI sections allowed hain — jobs, admit cards, results, headlines sab.
-         * Pehle ka strict whitelist hata diya — isse dailyupdates.json ke results
-         * search mein nahi aa rahe the. */
-        const BLOCKED_SECTIONS = new Set([
-          'importantcsc pdf',
-          'importantcsc link',
-          'important csc pdf',
-          'important csc link',
-          'csc pdf',
-          'govt scheme',
-          'govt schemes',
-          'government scheme',
-          'yojana',
-          'yojna',
-          'khabar',
-          'latest khabar',
-          'study material',
-          'current affairs',
-          'employment news',
-          'international news',
-          'world news',
-        ]);
+        /* dailyupdates.json SECTION FILTER
+         *
+         * PROBLEM (fixed): "Govt Scheme & Yojna" — & symbol ke karan exact match fail hota tha
+         * SOLUTION: Regex-based matching instead of exact Set lookup
+         *
+         * BLOCK pattern = non-job sections (ALL naming variations covered):
+         *   "Govt Scheme & Yojna" / "Govt Schemes" / "Government Scheme"
+         *   "ImportantCSC PDF" / "ImportantCSC link" / "Important CSC PDF"
+         *   "Khabar" / "Latest Khabar" / "Aaj Ki Khabar"
+         *   "Top 20 Jobs" / "Today Updates" (these are nav links, not job data)
+         *   "Study Material" / "Current Affairs" / "Employment News"
+         *
+         * ALLOW pattern = only job/notification sections:
+         *   "Latest Jobs" / "Today Jobs" / "Top Headlines" / "Admit Card" / "Results"
+         */
+        const NON_JOB_SEC = /importantcsc|csc.?(pdf|link)|govt.?scheme|government.?scheme|yojana|yojna|scheme.?yojna|yojna.?scheme|khabar|study.?material|current.?affair|employment.?news|international.?news|world.?news|top.?20|today.?update/i;
+        const JOB_SEC     = /latest.?job|top.?headline|headline|today.?job|new.?job|admit.?card|result|answer.?key|admission|notification|sarkari|naukri/i;
 
         sections.forEach(sec => {
           const secTitle = String(sec.title || sec.id || '').trim();
-          const secTitleLower = secTitle.toLowerCase();
 
-          // SKIP only blocked non-job sections
-          if (BLOCKED_SECTIONS.has(secTitleLower)) {
-            console.log('[smart-search] dailyupdates: Skipping blocked section:', secTitle);
+          if (NON_JOB_SEC.test(secTitle)) {
+            console.log('[smart-search] dailyupdates BLOCKED:', secTitle);
             return;
           }
-          // Also skip if section title matches non-job pattern
-          if (/csc.?(pdf|link)|govt.?scheme|yojana|yojna|khabar|study.?material|current.?affair|employment.?news|international.?news/i.test(secTitle)) {
-            console.log('[smart-search] dailyupdates: Skipping non-job section:', secTitle);
+          if (!JOB_SEC.test(secTitle)) {
+            console.log('[smart-search] dailyupdates SKIPPED (unknown):', secTitle);
             return;
           }
+          console.log('[smart-search] dailyupdates ALLOWED:', secTitle);
 
           const secId   = String(sec.id || sec.title || '').trim();
           const secIcon = (String(sec.icon || 'fa-bell')).replace(/^fa-solid\s+/, '');
