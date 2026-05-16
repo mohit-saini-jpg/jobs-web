@@ -1863,9 +1863,10 @@
       }
 
       /* ── FALLBACK: Search aggregated JSON files (fuzzy/token match) ── */
-      /* Only used when individual job file is not found */
-      let items = [];
-      if (!row) {
+      /* SKIP if refUrl already exists — no need to download 474KB JSON for dailyupdates items */
+      /* Only attempt heavy JSON search when we have NO ref URL and no direct JSON file match */
+      if (!row && !refUrl) {
+        let items = [];
         try { items = await loadAllItems(); } catch (_) {}
         row = matchBySlug(items, rawSlug);
       }
@@ -1879,59 +1880,76 @@
         });
       }
 
-      if (!row) {
-        const humanTitle = humanizeSlug(rawSlug);
-        if (refUrl) {
-          /* Build minimal row from slug + refUrl */
-          const parsed = parseJob(humanTitle);
-          const minRow = {
-            title: humanTitle,
-            destUrl: refUrl,
-            applyOnline: refUrl,
-            officialWebsite: refUrl,
-            officialWebsiteLink: refUrl,
-            org: parsed.org || '',
-            totalVac: parsed.vac || 'See Notification',
-            lastDate: parsed.lastDt || 'See Notification',
-            applyMode: parsed.applyMode || 'Online',
-            usefulLinks: [],
-            vd: []
-          };
-          renderJobPage(humanTitle, refUrl, parsed, minRow);
-        } else if (isJobItem(humanTitle)) {
-          renderJobPage(humanTitle, '', parseJob(humanTitle), null);
-        } else {
-          renderNonJobPage(humanTitle, '', null);
-          /* Hide CTA only if there's truly no URL */
-          ['btnMainCta','btnNonJobCta'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) { el.style.display = 'none'; }
-          });
-        }
-      } else {
-        const name = row.title || humanizeSlug(rawSlug);
-        const destUrl = row.destUrl || refUrl || '';
-        /* For ALL rows with a URL — render with Click Here button regardless of isJobItem */
-        if (isJobItem(name)) {
-          renderJobPage(name, destUrl, parseJob(name), Object.assign({}, row, { destUrl }));
-        } else {
-          /* Non-job page (schemes, khabar, etc.) — ALWAYS show Click Here if URL exists */
-          renderNonJobPage(name, destUrl, row);
-          if (!destUrl) {
+      /* ── Render (wrapped in try/finally so spinner ALWAYS hides) ── */
+      try {
+        if (!row) {
+          const humanTitle = humanizeSlug(rawSlug);
+          if (refUrl) {
+            /* Build minimal row from slug + refUrl */
+            const parsed = parseJob(humanTitle);
+            const minRow = {
+              title: humanTitle,
+              destUrl: refUrl,
+              applyOnline: refUrl,
+              officialWebsite: refUrl,
+              officialWebsiteLink: refUrl,
+              org: parsed.org || '',
+              totalVac: parsed.vac || 'See Notification',
+              lastDate: parsed.lastDt || 'See Notification',
+              applyMode: parsed.applyMode || 'Online',
+              usefulLinks: [],
+              vd: []
+            };
+            renderJobPage(humanTitle, refUrl, parsed, minRow);
+          } else if (isJobItem(humanTitle)) {
+            renderJobPage(humanTitle, '', parseJob(humanTitle), null);
+          } else {
+            renderNonJobPage(humanTitle, '', null);
+            /* Hide CTA only if there's truly no URL */
             ['btnMainCta','btnNonJobCta'].forEach(id => {
               const el = document.getElementById(id);
               if (el) { el.style.display = 'none'; }
             });
           }
+        } else {
+          const name = row.title || humanizeSlug(rawSlug);
+          const destUrl = row.destUrl || refUrl || '';
+          /* For ALL rows with a URL — render with Click Here button regardless of isJobItem */
+          if (isJobItem(name)) {
+            renderJobPage(name, destUrl, parseJob(name), Object.assign({}, row, { destUrl }));
+          } else {
+            /* Non-job page (schemes, khabar, etc.) — ALWAYS show Click Here if URL exists */
+            renderNonJobPage(name, destUrl, row);
+            if (!destUrl) {
+              ['btnMainCta','btnNonJobCta'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) { el.style.display = 'none'; }
+              });
+            }
+          }
         }
+      } catch (renderErr) {
+        /* If render throws for any reason, show error box */
+        try {
+          const humanTitle = humanizeSlug(rawSlug);
+          if (refUrl) {
+            /* Minimal fallback — just show CTA button with the ref URL */
+            renderNonJobPage(humanTitle, refUrl, null);
+          } else {
+            errorEl.style.display = 'block';
+          }
+        } catch (_) {
+          errorEl.style.display = 'block';
+        }
+      } finally {
+        /* ALWAYS hide spinner and show content — no matter what happened above */
+        loading.style.display = 'none';
+        threeCol.style.display = 'grid';
       }
-
-      loading.style.display = 'none';
-      threeCol.style.display = 'grid';
     })();
   })();
   </script>
 
-  <script src="/script.js?v=20260502" defer></script>
+  <script src="/script.js?v=20260516" defer></script>
 </body>
 </html>
