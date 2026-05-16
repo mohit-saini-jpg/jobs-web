@@ -21,7 +21,7 @@
     ],
     maxSuggest: 20,
     maxResults: 30,
-    debounceMs: 200,
+    debounceMs: 150,
     recentKey: 'tsj_recent_searches',
     maxRecent: 8,
     searchPageUrl: 'search.html',
@@ -384,7 +384,9 @@
     loadFuse(() => {
       buildFuse(allData);
       const heroInput = document.getElementById('heroSearch');
-      if (heroInput && heroInput.value.trim().length >= 1) {
+      const drop = document.getElementById('tsjDrop');
+      // ✅ FIX: Agar dropdown OPEN hai aur input mein text hai toh turant refresh karo
+      if (heroInput && heroInput.value.trim().length >= 1 && drop && drop.classList.contains('open')) {
         heroInput.dispatchEvent(new Event('input'));
       }
     });
@@ -534,8 +536,8 @@
          * ALLOW pattern = only job/notification sections:
          *   "Latest Jobs" / "Today Jobs" / "Top Headlines" / "Admit Card" / "Results"
          */
-        const NON_JOB_SEC = /importantcsc|csc.?(pdf|link)|govt.?scheme|government.?scheme|yojana|yojna|scheme.?yojna|yojna.?scheme|khabar|study.?material|current.?affair|employment.?news|international.?news|world.?news|top.?20|today.?update/i;
-        const JOB_SEC     = /latest.?job|top.?headline|headline|today.?job|new.?job|admit.?card|result|answer.?key|admission|notification|sarkari|naukri/i;
+        // BLOCK: Only non-job utility sections
+        const NON_JOB_SEC = /importantcsc|csc.?(pdf|link)|govt.?scheme|government.?scheme|yojana|yojna|khabar|study.?material|current.?affair|employment.?news/i;
 
         sections.forEach(sec => {
           const secTitle = String(sec.title || sec.id || '').trim();
@@ -544,10 +546,7 @@
             console.log('[smart-search] dailyupdates BLOCKED:', secTitle);
             return;
           }
-          if (!JOB_SEC.test(secTitle)) {
-            console.log('[smart-search] dailyupdates SKIPPED (unknown):', secTitle);
-            return;
-          }
+          // ✅ ALLOW: TOP Headlines Today, Top 20 Jobs, Today Updates — all have job data
           console.log('[smart-search] dailyupdates ALLOWED:', secTitle);
 
           const secId   = String(sec.id || sec.title || '').trim();
@@ -557,20 +556,19 @@
             const title = String(item.name || item.title || '').trim();
             if (!title) return;
 
-            /* Build href: internal slug preferred, then relative URL, then external */
+            /* Build href: internal slug preferred, then external job URL */
             let href = '';
             if (item.slug) {
               href = 'job.html?slug=' + encodeURIComponent(item.slug)
                    + '&section=' + encodeURIComponent(secId || secTitle);
-            } else if (item.url && !item.url.startsWith('http')) {
-              href = item.url; // relative internal URL
-            } else if (item.url) {
-              href = item.url; // external URL — allowed for job pages
-            } else if (item.link) {
+            } else if (item.url && !item.url.includes('view.html?section=')) {
+              // Allow any URL EXCEPT view.html?section= (those are category nav links, not jobs)
+              href = item.url;
+            } else if (item.link && !item.link.includes('view.html?section=')) {
               href = item.link;
             }
-            // Skip if no link found at all
-            if (!href) return;
+            // Skip pure navigation category links
+            if (!href || href === '#') return;
 
             const duDate = item.date || item.lastDate || item.last_date || '';
             
@@ -827,33 +825,34 @@
      */
 
     // Phase 1: FASTEST — dailyupdates.json FIRST (freshest data, ~50KB)
-    // Yeh file sabse chhoti aur sabse fresh hai — pehle load hogi taaki
-    // latest jobs search results mein sabse upar dikhein.
     fetchAndIndex('dailyupdates.json').then(() => {
-      console.log('[smart-search] ⚡ dailyupdates loaded first. allData:', allData.length);
+      console.log('[smart-search] ⚡ dailyupdates loaded. allData:', allData.length);
       jsonIndexReady = true;
       loadFuse(() => {
         buildFuse(allData);
+        // Refresh open dropdown
         const heroInput = document.getElementById('heroSearch');
-        if (heroInput && heroInput.value.trim().length >= 1) {
+        const drop = document.getElementById('tsjDrop');
+        if (heroInput && heroInput.value.trim().length >= 1 && drop && drop.classList.contains('open')) {
           heroInput.dispatchEvent(new Event('input'));
         }
       });
 
       // Phase 2: merged_sarkari_data.json (~600KB)
       fetchAndIndex('merged_sarkari_data.json').then(() => {
-        console.log('[smart-search] ✅ Phase 2 done (merged_sarkari). Total:', allData.length);
+        console.log('[smart-search] ✅ merged_sarkari done. Total:', allData.length);
         loadFuse(() => {
           buildFuse(allData);
           const heroInput = document.getElementById('heroSearch');
-          if (heroInput && heroInput.value.trim().length >= 1) {
+          const drop = document.getElementById('tsjDrop');
+          if (heroInput && heroInput.value.trim().length >= 1 && drop && drop.classList.contains('open')) {
             heroInput.dispatchEvent(new Event('input'));
           }
         });
 
         // Phase 3: state-jobs-data.json — loads after Phase 2
         fetchAndIndex('state-jobs-data.json').then(() => {
-          console.log('[smart-search] ✅ Phase 3 done (state-jobs). Total:', allData.length);
+          console.log('[smart-search] ✅ state-jobs done. Total:', allData.length);
           if (typeof buildFuse === 'function') buildFuse(allData);
         });
       });
@@ -987,10 +986,8 @@
     const queryWords      = q.split(/\s+/).filter(w => w.length >= 1);
     const meaningfulWords = queryWords.filter(w => w.length >= 2 && !STOP_WORDS.has(w));
 
-    // MIN_SCORE: ✅ FIXED - partial word matches bhi dikhao
-    // "BPSSC Bihar Police Sub Inspector" => agar koi bhi meaningful word mile toh show karo
-    // jsonIndexReady = false ho toh aur bhi loose rakho
-    const MIN_SCORE = jsonIndexReady ? 8 : 3;
+    // ✅ FIX: Always use low MIN_SCORE so SEED_DATA results show instantly
+    const MIN_SCORE = 3;
 
     let results = allData
       .map(item => {
@@ -1422,37 +1419,30 @@
       q = (q || '').trim();
       if (!q) { showDefaultDrop(); return; }
 
+      // ✅ FIX: SEED_DATA se turant results dikhao — JSON load ka wait mat karo
       const results = doSearch(q, {}).slice(0, CFG.maxSuggest);
       activeIndex  = -1;
       suggestItems = results;
 
       if (!results.length) {
-        openDrop(`<div class="tsj-no-suggest">No results for "<strong>${esc(q)}</strong>". Try: SSC · Railway · Bank · Police · Army</div>`);
+        // ✅ FIX: Agar SEED mein nahi mila, loading show karo aur JSON ready hone par retry karo
+        if (!jsonIndexReady) {
+          openDrop(`<div class="tsj-no-suggest"><i class="fa-solid fa-spinner fa-spin"></i> Loading job data... type karte raho</div>`);
+        } else {
+          openDrop(`<div class="tsj-no-suggest">No results for "<strong>${esc(q)}</strong>". Try: SSC · Railway · Bank · Police · Army</div>`);
+        }
         return;
       }
 
-      // Result rows: Job Title + direct job.html URL (href on the <a>)
+      // Result rows
       const rows = results.map((r, i) => renderSuggestItem(r, q, i)).join('');
-      // Show count info instead of search.html link
       const total = doSearch(q, {}).length;
       const footer = total > CFG.maxSuggest
         ? `<div class="tsj-suggest-more" style="cursor:default;">
-            <i class="fa-solid fa-list"></i> ${total} results — scroll down to see more
+            <i class="fa-solid fa-list"></i> ${total} results found — scroll to see more
            </div>`
         : '';
       openDrop(rows + footer);
-
-      // If JSON still loading — auto-refresh once it's ready
-      if (!jsonIndexReady) {
-        const savedQ = q;
-        let tries = 0;
-        (function wait() {
-          if (input.value.trim().toLowerCase() !== savedQ.toLowerCase()) return;
-          if (jsonIndexReady) { runSuggest(savedQ); }
-          else if (tries++ < 20) { setTimeout(wait, 500); }
-        })();
-      }
-    }
 
     // ── Keyboard navigation ──
     input.addEventListener('keydown', function (e) {
