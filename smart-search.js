@@ -463,69 +463,64 @@
 
       /* ══════════════════════════════════════════════════════
          2.  dailyupdates.json
-         Structure: { sections:[{id, title, icon, color, items:[{name, url}]}] }
-         Items use 'name' as the job title and 'url' as the link.
-         Some items have 'slug' for internal job.html links.
+         Structure: { sections:[{id, title, icon, items:[{name, url, slug}]}] }
+         
+         IMPORTANT: Only "TOP Headlines Today" section has real internal job links.
+         All other sections (Govt Scheme, ImportantCSC PDF, ImportantCSC link,
+         Top 20 Jobs, Today Updates) are 100% external URLs (freejobalert, jagran, 
+         pdfdrive etc.) — these must be SKIPPED entirely.
       ══════════════════════════════════════════════════════ */
       if (fileName === 'dailyupdates.json') {
-        /* Support both {sections:[]} and top-level array */
         const sections = Array.isArray(data.sections) ? data.sections
           : Array.isArray(data) ? data : [];
 
-        /* ── BLOCK non-job URLs: tools, external utilities, category nav ── */
-        const isBlockedUrl = (url) => {
-          if (!url || url === '#') return true;
-          // Block external tool/utility sites (not sarkari job pages)
-          if (/\/(tools|govt-services|category|about|contact)\b/i.test(url)) return true;
-          // Block external URLs that are clearly not job pages
-          if (/^https?:\/\//i.test(url)) {
-            // Allow only known sarkari/govt domains
-            const allowedDomains = /sarkarijob|sarkariresult|employment|naukri|rojgar|govt\.in|nic\.in|gov\.in|ssc\.nic|railway|ibps|upsc|bpsc|hpsc|rssb|crpf|army|navy|airforce|topsarkarijobs/i;
-            if (!allowedDomains.test(url)) return true;
-          }
-          return false;
-        };
-
-        /* ── BLOCK tool-like section titles ── */
-        const isToolSection = (title) => {
-          return /\b(tool|utility|converter|resizer|compressor|editor|calculator|generator|maker|checker)\b/i.test(title);
-        };
+        /* WHITELIST: Only these section titles are allowed — rest are skipped */
+        const ALLOWED_SECTIONS = new Set([
+          'top headlines today',
+          'top headlines',
+          'headlines today',
+          'today headlines',
+          'latest jobs today',
+          'today jobs',
+          'new jobs today',
+        ]);
 
         sections.forEach(sec => {
-          const secId    = String(sec.id    || sec.title || '').trim();
-          const secTitle = String(sec.title || sec.id    || 'Update').trim();
-          const secIcon  = (String(sec.icon || 'fa-bell')).replace(/^fa-solid\s+/, '');
+          const secTitle = String(sec.title || sec.id || '').trim();
+          const secTitleLower = secTitle.toLowerCase();
 
-          // Skip entire tool/utility sections
-          if (isToolSection(secTitle)) return;
+          // SKIP any section not in whitelist
+          if (!ALLOWED_SECTIONS.has(secTitleLower)) {
+            console.log('[smart-search] dailyupdates: Skipping section:', secTitle);
+            return;
+          }
+
+          const secId   = String(sec.id || sec.title || '').trim();
+          const secIcon = (String(sec.icon || 'fa-bell')).replace(/^fa-solid\s+/, '');
 
           (sec.items || []).forEach(item => {
-            // dailyupdates items use 'name' as title
             const title = String(item.name || item.title || '').trim();
             if (!title) return;
 
-            /* href: prefer internal slug → job.html, else use url/link directly */
+            /* Only accept internal job.html links */
             let href = '';
             if (item.slug) {
               href = 'job.html?slug=' + encodeURIComponent(item.slug)
                    + '&section=' + encodeURIComponent(secId || secTitle);
-            } else {
-              href = item.url || item.link || '';
+            } else if (item.url && !item.url.startsWith('http')) {
+              href = item.url; // relative internal URL
             }
+            // Skip if no internal link found
             if (!href) return;
-
-            // Skip tool/utility items by URL
-            if (isBlockedUrl(href)) return;
 
             extra.push({
               title, slug: href,
               dept: secTitle,
               qual: '', state: '',
-              cat: secTitle,
-              // Include section title in tags so searching by section name works too
-              tags: title + ' ' + secTitle + ' ' + secId + ' sarkari 2026',
+              cat: 'Latest Job',
+              tags: title + ' ' + secTitle + ' sarkari naukri 2026',
               lastDate: item.date || item.last_date || '',
-              icon: secIcon,
+              icon: secIcon || 'fa-bell',
               lastUpdated: item.updated_at || item.last_updated || new Date().toISOString(),
               sectionSource: secTitle,
             });
