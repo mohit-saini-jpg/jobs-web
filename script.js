@@ -617,20 +617,22 @@
         a.innerHTML = `<span class="t">${name}${displayDate ? ` <span class="d">| ${displayDate}</span>` : ""}</span>`;
         list.appendChild(a);
 
-        // ✅ SEARCH INDEX: smart-search.js ke liye data push karo
-        (window.tsjSearchIndex = window.tsjSearchIndex || []).push({
-          title: name,
-          slug: url,
-          dept: title,
-          qual: it.qualification || "",
-          state: it.state || "All India",
-          cat: sectionKey,
-          tags: name + " " + sectionKey + " " + title + " sarkari naukri 2026",
-          lastDate: rawDate,
-          icon: (icon.split(" ").find(c => c.startsWith("fa-") && c !== "fa-solid") || "fa-briefcase"),
-          lastUpdated: it.last_updated || it.updated_at || new Date().toISOString(),
-          sectionSource: title,
-        });
+        // ✅ SEARCH INDEX: sirf internal job.html links push karo (external nav/tools skip)
+        if (url && url.startsWith("job.html")) {
+          (window.tsjSearchIndex = window.tsjSearchIndex || []).push({
+            title: name,
+            slug: url,
+            dept: title,
+            qual: it.qualification || "",
+            state: it.state || "All India",
+            cat: sectionKey,
+            tags: name + " " + sectionKey + " " + title + " sarkari naukri 2026",
+            lastDate: rawDate,
+            icon: (icon.split(" ").find(c => c.startsWith("fa-") && c !== "fa-solid") || "fa-briefcase"),
+            lastUpdated: it.last_updated || it.updated_at || new Date().toISOString(),
+            sectionSource: title,
+          });
+        }
       });
 
       wrap.appendChild(card);
@@ -727,20 +729,22 @@
       a.innerHTML = `<span class="t">${name}${displayDate ? ` <span class="d">| ${displayDate}</span>` : ""}</span>`;
       list.appendChild(a);
 
-      // ✅ SEARCH INDEX: smart-search.js ke liye data push karo
-      (window.tsjSearchIndex = window.tsjSearchIndex || []).push({
-        title: name,
-        slug: url,
-        dept: title,
-        qual: "",
-        state: "All India",
-        cat: sectionKey,
-        tags: name + " " + sectionKey + " " + title + " sarkari naukri 2026",
-        lastDate: rawDate,
-        icon: (icon.split(" ").find(c => c.startsWith("fa-") && c !== "fa-solid") || "fa-briefcase"),
-        lastUpdated: it.last_updated || it.updated_at || new Date().toISOString(),
-        sectionSource: title,
-      });
+      // ✅ SEARCH INDEX: sirf internal job.html links push karo (external nav/tools skip)
+      if (url && url.startsWith("job.html")) {
+        (window.tsjSearchIndex = window.tsjSearchIndex || []).push({
+          title: name,
+          slug: url,
+          dept: title,
+          qual: "",
+          state: "All India",
+          cat: sectionKey,
+          tags: name + " " + sectionKey + " " + title + " sarkari naukri 2026",
+          lastDate: rawDate,
+          icon: (icon.split(" ").find(c => c.startsWith("fa-") && c !== "fa-solid") || "fa-briefcase"),
+          lastUpdated: it.last_updated || it.updated_at || new Date().toISOString(),
+          sectionSource: title,
+        });
+      }
     });
 
     wrap.appendChild(card);
