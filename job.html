@@ -1785,20 +1785,89 @@
         } catch (_) { return ''; }
       })();
 
-      /* ── PRIMARY: Fetch individual job JSON from /jobs/data/<slug>.json ── */
-      /* This is the authoritative source — exact slug match, no fuzzy logic */
-      let row = null;
-      try {
-        const directRes = await fetch('/jobs/data/' + encodeURIComponent(rawSlug) + '.json');
-        if (directRes.ok) {
-          const directData = await directRes.json();
-          if (directData && (directData.basic_details || directData.title)) {
-            row = parseFullJob(directData, directData.category || 'Latest Notifications');
-            /* Inject the slug so downstream code can use it */
-            if (row) row.slug = rawSlug;
+      /* ── Helper: normalize slug for comparison (strip -and-, stop-words etc.) ── */
+      function normalizeSlugForMatch(s) {
+        return s.toLowerCase()
+          .replace(/-and-/g, '-')        /* attender-and-watchman → attender-watchman */
+          .replace(/-or-/g, '-')
+          .replace(/-the-/g, '-')
+          .replace(/-of-/g, '-')
+          .replace(/-for-/g, '-')
+          .replace(/-in-/g, '-')
+          .replace(/-to-/g, '-')
+          .replace(/-cum-/g, '-')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '');
+      }
+
+      /* ── Helper: try fetching a job JSON by exact slug ── */
+      async function fetchJobBySlug(slug) {
+        try {
+          const res = await fetch('/jobs/data/' + encodeURIComponent(slug) + '.json');
+          if (!res.ok) return null;
+          const data = await res.json();
+          if (data && (data.basic_details || data.title)) {
+            const parsed = parseFullJob(data, data.category || 'Latest Notifications');
+            if (parsed) parsed.slug = slug;
+            return parsed;
           }
+        } catch (_) {}
+        return null;
+      }
+
+      /* ── PRIMARY: Fetch individual job JSON from /jobs/data/<slug>.json ── */
+      let row = null;
+
+      /* Step 1: Exact slug match */
+      row = await fetchJobBySlug(rawSlug);
+
+      /* Step 2: Slug variations — strip "and", "or", "the", "of", "for", "cum" etc. */
+      if (!row) {
+        const normSlug = normalizeSlugForMatch(rawSlug);
+        if (normSlug !== rawSlug) {
+          row = await fetchJobBySlug(normSlug);
         }
-      } catch (_) {}
+      }
+
+      /* Step 3: jobs-index.json fuzzy match → correct slug → fetch that file */
+      if (!row) {
+        try {
+          const idxRes = await fetch('/jobs-index.json');
+          if (idxRes.ok) {
+            const idxData = await idxRes.json();
+            if (idxData && typeof idxData === 'object') {
+              /* Normalize incoming slug for comparison */
+              const normIn = normalizeSlugForMatch(rawSlug);
+              /* Try exact key match first */
+              let foundKey = null;
+              if (idxData[rawSlug]) {
+                foundKey = rawSlug;
+              } else if (idxData[normIn]) {
+                foundKey = normIn;
+              } else {
+                /* Token-based fuzzy match on index keys */
+                const inTokens = normIn.split('-').filter(t => t.length > 2);
+                let bestKey = null, bestScore = 0;
+                for (const key of Object.keys(idxData)) {
+                  const normKey = normalizeSlugForMatch(key);
+                  const matched = inTokens.filter(t => normKey.includes(t)).length;
+                  const score = matched / inTokens.length;
+                  if (score > bestScore && score >= 0.75) {
+                    bestScore = score;
+                    bestKey = key;
+                  }
+                }
+                if (bestKey) foundKey = bestKey;
+              }
+              if (foundKey) {
+                /* foundKey is the base slug; the actual file may be the base (no suffix) */
+                const baseKey = foundKey.replace(/-(latest-notifications|bank-jobs|8th-pass|10th-pass|12th-pass|any-graduate|any-post-graduate|b-tech-be|diploma|iti|police-defence|medical-hospital|teaching-faculty|railway-jobs)$/, '');
+                row = await fetchJobBySlug(baseKey) || await fetchJobBySlug(foundKey);
+              }
+            }
+          }
+        } catch (_) {}
+      }
 
       /* ── FALLBACK: Search aggregated JSON files (fuzzy/token match) ── */
       /* Only used when individual job file is not found */
@@ -1866,7 +1935,21 @@
 
       loading.style.display = 'none';
       threeCol.style.display = 'grid';
-    })();
+    })().catch(err => {
+      /* Global catch — ensure loading spinner is always hidden on any error */
+      console.error('[TSJ] Job page error:', err);
+      try {
+        document.getElementById('jbLoading').style.display = 'none';
+        const tc = document.getElementById('jbThreeCol');
+        if (tc) tc.style.display = 'grid';
+        /* Show a friendly error message instead of infinite spinner */
+        const errEl = document.getElementById('jbError');
+        if (errEl) {
+          errEl.style.display = 'block';
+          errEl.innerHTML = '<strong>⚠ Job details load नहीं हो सकी।</strong><br>Please <a href="/" style="color:#1d4ed8">Home page</a> पर जाएँ या थोड़ी देर बाद try करें।';
+        }
+      } catch(_) {}
+    });
   })();
   </script>
 
