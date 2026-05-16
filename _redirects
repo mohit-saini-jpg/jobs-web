@@ -1,0 +1,40 @@
+# Netlify Redirects — SEO-Friendly Clean URLs
+# ============================================
+# Format: /from   /to   status_code
+
+# ── Job detail pages ──────────────────────────────────────────────
+# /jobs/<slug>/  → serves job.html (404.html handles the slug reading)
+/jobs/*   /404.html  200
+
+# ── Category pages ────────────────────────────────────────────────
+/category/*   /404.html  200
+
+# ── State jobs ────────────────────────────────────────────────────
+/state-jobs/*   /404.html  200
+
+# ── Search ────────────────────────────────────────────────────────
+/search/*   /404.html  200
+
+# ── Section pages ─────────────────────────────────────────────────
+/section/*   /404.html  200
+
+# ── Static shortcut clean URLs ────────────────────────────────────
+/latest-jobs/     /view.html?section=latest+jobs       302
+/results/         /view.html?section=Sarkari+Result    302
+/admit-card/      /view.html?section=Admit+cards+Exams+Date  302
+/railway-jobs/    /view.html?section=Railway+Jobs      302
+/bank-jobs/       /view.html?section=Bank+Jobs         302
+/police-jobs/     /view.html?section=Police+Jobs       302
+/ssc-jobs/        /view.html?section=SSC+Jobs          302
+/upsc-jobs/       /view.html?section=UPSC+Jobs         302
+/teaching-jobs/   /view.html?section=Teacher+Jobs      302
+/army-jobs/       /view.html?section=Indian+ARMY+jobs  302
+/10th-pass-jobs/  /view.html?section=10th+Pass+jobs    302
+/12th-pass-jobs/  /view.html?section=12th+Pass+jobs    302
+/upcoming-jobs/   /view.html?section=upcoming-jobs     302
+/answer-key/      /category.html?group=admit-result    302
+/admissions/      /category.html?group=admissions      302
+
+# ── Old query-param URLs → 301 permanent redirect to clean URLs ───
+# (Aapki purani links automatically clean URLs pe redirect ho jaayengi)
+/job.html   /jobs/:slug   301
