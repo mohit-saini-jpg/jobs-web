@@ -1,8 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-C4VRD1C9QS"></script>
-  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-C4VRD1C9QS');</script>
+  <!-- GTM: Delayed load after user interaction or 4s — saves ~174ms main thread -->
+  <script>
+  (function(){
+    var GTM_ID='G-C4VRD1C9QS';
+    var loaded=false;
+    function loadGTM(){
+      if(loaded)return; loaded=true;
+      var s=document.createElement('script');
+      s.async=true;
+      s.src='https://www.googletagmanager.com/gtag/js?id='+GTM_ID;
+      document.head.appendChild(s);
+      window.dataLayer=window.dataLayer||[];
+      function gtag(){dataLayer.push(arguments);}
+      window.gtag=gtag;
+      gtag('js',new Date());
+      gtag('config',GTM_ID,{send_page_view:true});
+    }
+    // Fire on first user gesture OR after 4s, whichever comes first
+    var events=['mousedown','touchstart','keydown','scroll','mousemove'];
+    function onInteract(){
+      events.forEach(function(e){document.removeEventListener(e,onInteract)});
+      loadGTM();
+    }
+    events.forEach(function(e){document.addEventListener(e,onInteract,{once:true,passive:true})});
+    setTimeout(loadGTM, 4000);
+  })();
+  </script>
 
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -167,15 +192,27 @@
   }
   </script>
 
-  <!-- Font Awesome: async load (non-blocking) -->
-  <link rel="preload" href="fonts/fa/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="fonts/fa/all.min.css"></noscript>
-
-  <!-- Google Font: async load (non-blocking) -->
+  <!-- Google Font: preconnect + display=swap (prevents FOIT / CLS) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet"></noscript>
+
+  <!-- Font Awesome: defer after DOMContentLoaded (saves ~58 KiB blocking, fixes CLS) -->
+  <script>
+  (function(){
+    function loadFA(){
+      var l=document.createElement('link');
+      l.rel='stylesheet'; l.href='fonts/fa/all.min.css';
+      l.media='print'; l.onload=function(){this.media='all';};
+      document.head.appendChild(l);
+    }
+    if(document.readyState==='loading'){
+      document.addEventListener('DOMContentLoaded',function(){setTimeout(loadFA,100);});
+    } else { setTimeout(loadFA,100); }
+  })();
+  </script>
+  <noscript><link rel="stylesheet" href="fonts/fa/all.min.css"></noscript>
 
   <style>
     /* ============================================================
@@ -200,6 +237,13 @@
       --shadow:  0 2px 12px rgba(13,34,87,.08);
       --shadow-hover: 0 6px 24px rgba(13,34,87,.14);
       --gap: 14px;
+    }
+
+    /* font-display: swap — prevents FOIT (invisible text during font load) */
+    @font-face {
+      font-family: 'Noto Sans';
+      font-display: swap;
+      src: local('Noto Sans'), local('NotoSans');
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -564,7 +608,7 @@
     /* ============================================================
        JOB CATEGORY QUICK BAR
     ============================================================ */
-    .cat-bar-wrap { background: #fff; border-bottom: 1px solid var(--border); }
+    .cat-bar-wrap { background: #fff; border-bottom: 1px solid var(--border); min-height: 110px; contain: layout style; }
     .cat-bar-hd {
       display: flex; align-items: center; justify-content: space-between;
       padding: 8px 12px 7px;
@@ -1138,6 +1182,8 @@
       border-radius: var(--radius); overflow: hidden;
       box-shadow: var(--shadow); transition: box-shadow .2s;
       display: flex; flex-direction: column;
+      content-visibility: auto;
+      contain-intrinsic-size: 0 400px;
     }
     .section-card:hover { box-shadow: var(--shadow-hover); }
     .section-head {
@@ -1218,6 +1264,20 @@
       .tools-grid { grid-template-columns: repeat(3, 1fr); }
       .two-col-sections, .two-col-grid, #dynamic-sections { grid-template-columns: 1fr; }
     }
+
+    /* ── FA Icon CLS Prevention: reserve fixed dimensions before FA loads ── */
+    /* Prevents layout shift when Font Awesome loads and icons jump in size */
+    .fa-solid, .fa-brands, .fa-regular {
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      font-style: normal;
+      line-height: 1;
+      vertical-align: -0.125em;
+    }
+    /* Hero section specific — don't let icon affect h1 line height */
+    .hero-badge .fa-solid { width: 0.875em; }
+    .hero-quick-btn .fa-solid { width: 0.875em; }
   </style>
 </head>
 
@@ -2225,10 +2285,10 @@
   </aside>
 
   <!-- Load existing script.js (handles dynamic sections from JSON) -->
-  <script src="script.js?v=20260508" defer></script>
+  <script src="script.min.js?v=20260516" defer></script>
 
   <!-- SEO Engine: Push Notifications, Recently Viewed, Share, Breadcrumb, Trending -->
-  <script src="seo-engine.js?v=20260508" defer></script>
+  <script src="seo-engine.min.js?v=20260516" defer></script>
 
   <!-- Service Worker Registration with Auto Update -->
   <script>
@@ -2303,7 +2363,7 @@
   </script>
 
   <!-- Smart Search System v2.0 -->
-  <script src="smart-search.js" defer></script>
+  <script src="smart-search.min.js" defer></script>
 
   <script>
   (function () {
