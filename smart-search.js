@@ -305,9 +305,14 @@
     const LONE_STATES = new Set(['assam','manipur','sikkim','meghalaya','tripura','nagaland','mizoram','goa','himachal','uttarakhand','chhattisgarh','jharkhand','telangana','odisha','maharashtra','gujarat','punjab','haryana','bihar','rajasthan']);
     if (LONE_STATES.has(title.toLowerCase().trim())) return false;
 
-    // 5. Block non-job content by title keywords
-    const nonJobTitleRx = /\b(image.?resizer|image.?quality|pdf.?tool|video.?compress|mp4.?to|photo.?edit|qr.?code|word.?to|compress.?image|convert.?image|e.?book|ebook|helpdesk|international.?news|employment.?news|selection.?process|photo.?signature|signature.?joiner|study.?material|current.?affairs|answer.?key|syllabus|cut.?off|mock.?test|news.?hindi|world.?news|jagran|ndtv|amar.?ujala|dainik.?bhaskar)\b/i;
+    // 5. Block non-job content by title keywords (jobs + CSC PDF/Scheme/Yojana items)
+    const nonJobTitleRx = /\b(image.?resizer|image.?quality|pdf.?tool|video.?compress|mp4.?to|photo.?edit|qr.?code|word.?to|compress.?image|convert.?image|e.?book|ebook|helpdesk|international.?news|employment.?news|selection.?process|photo.?signature|signature.?joiner|study.?material|current.?affairs|answer.?key|syllabus|cut.?off|mock.?test|news.?hindi|world.?news|jagran|ndtv|amar.?ujala|dainik.?bhaskar|domicile|certificate.?download|yojana|yojna|tractor|draw.?list|dairy.?farming|pashu|mahostav|solar.?pump|solar.?water|refund|housing.?ews|land.?holding|subsid|sc.?farmer|csc.?pdf|csc.?link)\b/i;
     if (nonJobTitleRx.test(title)) return false;
+
+    // 5b. Block items from non-job sections (CSC PDF, Scheme, Yojana, Khabar etc.)
+    const nonJobSection = /importantcsc|csc.?pdf|csc.?link|govt.?scheme|yojana|yojna|khabar|latest.?khabar|study.?material|current.?affair|employment.?news/i;
+    const itemSec = String(item.sectionSource || item.dept || item.cat || '');
+    if (nonJobSection.test(itemSec)) return false;
 
     // 6. Block ALL external URLs — search index sirf internal job.html pages show kare
     //    Real jobs: job.html?slug=... (internal)
@@ -395,9 +400,15 @@
                 + ' sarkari naukri 2026',
             lastDate,
             icon: 'fa-briefcase',
-            lastUpdated: j.updated_at || j.last_updated || j.post_date
-              ? (j.post_date ? j.post_date + 'T00:00:00' : new Date().toISOString())
-              : new Date().toISOString(),
+            lastUpdated: (() => {
+              // Priority: updated_at > last_updated > post_date > now
+              if (j.updated_at) return j.updated_at;
+              if (j.last_updated) return j.last_updated;
+              if (j.post_date) return j.post_date + 'T00:00:00';
+              // Fallback: use last_date as proxy for recency (recent deadline = recent posting)
+              if (lastDate && /\d{4}-\d{2}-\d{2}/.test(lastDate)) return lastDate + 'T00:00:00';
+              return new Date().toISOString();
+            })(),
             sectionSource: 'Latest Jobs',
           });
           count++;
@@ -513,15 +524,19 @@
             // Skip if no internal link found
             if (!href) return;
 
+            const duDate = item.date || item.last_date || '';
+            // Use date as lastUpdated proxy so newer daily items surface first
+            const duUpdated = item.updated_at || item.last_updated ||
+              (duDate && /\d{4}-\d{2}-\d{2}/.test(duDate) ? duDate + 'T00:00:00' : new Date().toISOString());
             extra.push({
               title, slug: href,
               dept: secTitle,
-              qual: '', state: '',
+              qual: '', state: 'All India',
               cat: 'Latest Job',
               tags: title + ' ' + secTitle + ' sarkari naukri 2026',
-              lastDate: item.date || item.last_date || '',
+              lastDate: duDate,
               icon: secIcon || 'fa-bell',
-              lastUpdated: item.updated_at || item.last_updated || new Date().toISOString(),
+              lastUpdated: duUpdated,
               sectionSource: secTitle,
             });
             count++;
@@ -895,10 +910,16 @@
       })
       .filter(Boolean)
       .sort((a, b) => {
+        // Primary: score descending
         if (b._score !== a._score) return b._score - a._score;
+        // Secondary: lastUpdated descending (newest data upar)
         const ta = a.lastUpdated ? new Date(a.lastUpdated).getTime() : 0;
         const tb = b.lastUpdated ? new Date(b.lastUpdated).getTime() : 0;
-        return tb - ta;
+        if (tb !== ta) return tb - ta;
+        // Tertiary: lastDate descending (upcoming deadlines upar)
+        const da = a.lastDate ? new Date(a.lastDate).getTime() : 0;
+        const db = b.lastDate ? new Date(b.lastDate).getTime() : 0;
+        return db - da;
       });
 
     // Apply filters
@@ -914,6 +935,14 @@
 
   /* ── RENDER SUGGESTION ITEM ─────────────────────────────── */
   function renderSuggestItem(item, query, idx) {
+    // Build meta line: Section · Dept · State
+    const metaParts = [];
+    if (item.sectionSource) metaParts.push(esc(item.sectionSource));
+    else if (item.cat)      metaParts.push(esc(item.cat));
+    if (item.dept && item.dept !== item.sectionSource) metaParts.push(esc(item.dept));
+    if (item.state && item.state !== 'All India') metaParts.push(esc(item.state));
+    const meta = metaParts.join(' · ');
+
     return `
       <a class="tsj-suggest-item${idx === activeIndex ? ' tsj-active' : ''}" 
          href="${esc(item.slug)}" 
@@ -923,7 +952,7 @@
         <span class="tsj-si-icon"><i class="fa-solid ${esc(item.icon || 'fa-briefcase')}"></i></span>
         <span class="tsj-si-body">
           <span class="tsj-si-title">${highlight(item.title, query)}</span>
-          ${(item.sectionSource || item.cat) ? `<span class="tsj-si-meta">${esc(item.sectionSource || item.cat)}${item.state && item.state !== 'All India' ? ' · ' + esc(item.state) : ''}</span>` : ''}
+          ${meta ? `<span class="tsj-si-meta">${meta}</span>` : ''}
         </span>
         <span class="tsj-si-arr"><i class="fa-solid fa-arrow-right"></i></span>
       </a>`;
@@ -933,14 +962,16 @@
   function renderResultCard(item, query) {
     const slug = item.slug || '#';
     const relTime = relativeTime(item.lastUpdated);
-    const sectionLabel = item.sectionSource || getSectionName(item.slug);
+    const sectionLabel = item.sectionSource || item.cat || getSectionName(item.slug);
+    // Dept: show org/dept but not if it's the same as sectionSource
+    const deptLabel = item.dept && item.dept !== sectionLabel ? item.dept : '';
     return `
       <div class="tsj-result-card">
         <div class="tsj-rc-head">
           <span class="tsj-rc-icon" aria-hidden="true"><i class="fa-solid ${esc(item.icon || 'fa-briefcase')}"></i></span>
           <div class="tsj-rc-info">
             <a class="tsj-rc-title" href="${esc(slug)}">${highlight(item.title, query)}</a>
-            ${item.dept ? `<div class="tsj-rc-dept">${esc(item.dept)}</div>` : ''}
+            ${deptLabel ? `<div class="tsj-rc-dept">${esc(deptLabel)}</div>` : ''}
           </div>
         </div>
         <div class="tsj-rc-tags">
