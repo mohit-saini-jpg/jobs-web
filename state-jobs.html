@@ -1129,525 +1129,40 @@
     document.getElementById('faq2A').textContent = `Eligibility varies by post. Most ${name} govt jobs require 10th/12th pass, graduation or post-graduation. Domicile/Residence certificate of ${name} is usually required. Age: 18–40 years (relaxation for reserved categories).`;
   }
 
-  /* ══════════════════════════════════════════════════════════════════
-     JSON-DRIVEN DYNAMIC STATE JOBS RENDERING SYSTEM  v2026-05-16
-     ─────────────────────────────────────────────────────────────────
-     • Reads state-jobs-data.json fully
-     • Extracts ALL fields: basic_details, important_dates,
-       application_fee, age_limit, qualification, vacancy_details,
-       salary_details, selection_process, how_to_apply, faq,
-       important_links, physical_eligibility, exam_pattern, syllabus
-     • Renders rich job cards WITH vacancies, salary, last date
-     • Injects dynamic detail panels for each job (expandable)
-     • Builds SEO-clean /jobs/<slug>/ links for full detail page
-     • Auto-renders any new JSON field added in future
-  ══════════════════════════════════════════════════════════════════ */
-
-  // ── Helpers ──────────────────────────────────────────────────────
-  const safe  = v => (v ?? '').toString().trim();
-  const esc   = s => safe(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  const keyLbl= k => k.replace(/_/g,' ').replace(/\b[a-z]/g,c=>c.toUpperCase());
-
-  // ── Slug Generator (matches job.html 404-router) ──────────────────
+  // ═══ SLUG GENERATOR (matches state-job-detail.html) ═══
   function makeSlug(title) {
-    return safe(title).toLowerCase()
-      .normalize('NFKD').replace(/[\u0300-\u036f]/g,'')
-      .replace(/[^\x00-\x7e]/g,' ')
-      .replace(/&/g,' and ')
-      .replace(/[^a-z0-9]+/g,'-')
-      .replace(/^-|-$/g,'')
-      .slice(0,120);
+    return (title || '').toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '')
+      .slice(0, 120);
   }
 
-  // ── Urgency check ────────────────────────────────────────────────
-  function daysLeft(dateStr) {
-    if (!dateStr) return Infinity;
-    try {
-      // Support dd-mm-yyyy, dd/mm/yyyy, yyyy-mm-dd
-      let d;
-      if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
-        d = new Date(dateStr);
-      } else {
-        const p = dateStr.split(/[-\/]/);
-        d = p[0].length === 4
-          ? new Date(+p[0], +p[1]-1, +p[2])
-          : new Date(+p[2], +p[1]-1, +p[0]);
-      }
-      return Math.floor((d - Date.now()) / 864e5);
-    } catch(_) { return Infinity; }
-  }
-
-  // ── Extract full detail from a JSON item ─────────────────────────
-  function extractDetail(item) {
-    const det  = (item.detail && typeof item.detail === 'object') ? item.detail : {};
-    const bd   = det.basic_details    || {};
-    const id   = det.important_dates  || {};
-    const fee  = det.application_fee  || det.application_fees || {};
-    const age  = det.age_limit        || {};
-    const qual = det.qualification    || {};
-    const sal  = det.salary_details   || {};
-    const il   = det.important_links  || det.important_links_obj || {};
-    const vd   = Array.isArray(det.vacancy_details) ? det.vacancy_details : [];
-    const cwv  = det.category_wise_vacancy || {};
-    const sel  = det.selection_process || [];
-    const hta  = det.how_to_apply      || [];
-    const faq  = det.faq               || [];
-    const pe   = det.physical_eligibility || {};
-    const ep   = det.exam_pattern      || {};
-    const syl  = det.syllabus          || {};
-    const inst = det.important_instructions || [];
-
-    // Title
-    const title = safe(item.name || item.title || bd.job_title || bd.post_name || '');
-    // Org
-    const org   = safe(bd.organization_name || bd.department || item.board || '');
-    // Vacancies
-    const totalVac = safe(bd.total_vacancies || item.total_vacancies || '');
-    // Last date
-    const lastDate = safe(id.last_date || id.application_last_date || item.lastDate || item.date || '');
-    // Application begin
-    const appBegin = safe(id.application_begin || id.application_start || id.start_date || '');
-    // Exam date
-    const examDate = safe(id.exam_date || '');
-    // Admit card date
-    const admitDate= safe(id.admit_card_date || id.admit_card || '');
-    // Result date
-    const resultDate=safe(id.result_date || '');
-    // Fee last date
-    const feeLast  = safe(id.fee_payment_last_date || id.fee_last_date || '');
-    // Salary
-    const salStr   = safe(sal.pay_scale || sal.details || bd.salary || bd.salary_pay_scale || item.salary || '');
-    // Apply mode
-    const applyMode= safe(bd.application_mode || bd.apply_mode || 'Online');
-    // Short info
-    const shortInfo= safe(bd.short_information || bd.jobs_info || '');
-    // Qualification
-    const eduQual  = safe(qual.education_qualification || qual.eligibility || bd.education_qualification || '');
-    // Age
-    const minAge   = safe(age.minimum_age || '');
-    const maxAge   = safe(age.maximum_age || age.age_limit || '');
-    const ageRelax = safe(age.age_relaxation || age.details || '');
-    // Fee items
-    const feeGen   = safe(fee.general || fee.ur || '');
-    const feeObc   = safe(fee.obc || '');
-    const feeEws   = safe(fee.ews || '');
-    const feeSc    = safe(fee.sc  || '');
-    const feeSt    = safe(fee.st  || '');
-    const feePh    = safe(fee.ph  || fee.pwd || '');
-
-    // Important links: build a normalised list
-    const _ilLabels = {
-      click_here:'Click Here', apply_online:'Apply Online', apply_link:'Apply Online',
-      notification_pdf:'Notification PDF', download_pdf:'Download PDF',
-      official_notification:'Official Notification', official_website:'Official Website',
-      visit_website:'Official Website', candidate_login:'Candidate Login',
-      result:'Result', admit_card:'Admit Card', answer_key:'Answer Key',
-      syllabus:'Syllabus', merit_list:'Merit List', score_card:'Score Card',
-      form_pdf_free_link:'Download Form (Free PDF)',
-    };
-    const links = [];
-    const seenLinks = new Set();
-    const addLink = (label, url) => {
-      const u = safe(url);
-      if (!u || !/^https?:\/\//i.test(u) || seenLinks.has(u)) return;
-      seenLinks.add(u);
-      links.push({ label: safe(label), url: u });
-    };
-    if (typeof il === 'object' && !Array.isArray(il)) {
-      for (const [k, v] of Object.entries(il)) {
-        if (!v) continue;
-        const lbl = _ilLabels[k] || keyLbl(k);
-        const urls = Array.isArray(v) ? v : [v];
-        urls.forEach((u,i) => addLink(urls.length>1?`${lbl} (${i+1})`:lbl, u));
-      }
-    }
-    if (Array.isArray(det.useful_links)) {
-      det.useful_links.forEach(ul => {
-        const t = safe(ul.title || ul.name || '');
-        const raw = ul.links || ul.url || ul.href || '';
-        const arr = Array.isArray(raw) ? raw : [raw];
-        arr.forEach((u,i) => addLink(arr.length>1?`${t} (${i+1})`:t, u));
-      });
-    }
-    // Also pick best apply URL from click_here array
-    const chArr = Array.isArray(il.click_here) ? il.click_here : (il.click_here ? [il.click_here] : []);
-    chArr.forEach(u => addLink('Click Here', u));
-
-    // Primary CTA URL
-    const ctaUrl = safe(
-      il.apply_online || il.apply_link ||
-      chArr.find(u => u && /apply|signin|registration|erecruitment/i.test(u)) ||
-      il.official_website || chArr[0] ||
-      item.url || item.link || ''
-    );
-
-    return {
-      title, org, totalVac, lastDate, appBegin, examDate, admitDate, resultDate, feeLast,
-      salStr, applyMode, shortInfo, eduQual,
-      minAge, maxAge, ageRelax,
-      feeGen, feeObc, feeEws, feeSc, feeSt, feePh,
-      vd, cwv, sel, hta, faq, pe, ep, syl, inst,
-      sal, links, ctaUrl, det,
-    };
-  }
-
-  // ── Link icon/colour categoriser ─────────────────────────────────
-  function catLink(label) {
-    const t = label.toLowerCase();
-    if (/apply|registration|signin|otr/i.test(t)) return { ic:'fa-paper-plane', cl:'#16a34a' };
-    if (/admit|hall.?ticket|call.?letter/i.test(t)) return { ic:'fa-id-card',    cl:'#7c3aed' };
-    if (/result|merit|score|cutoff/i.test(t))       return { ic:'fa-trophy',     cl:'#d97706' };
-    if (/answer.?key|response/i.test(t))             return { ic:'fa-key',        cl:'#0891b2' };
-    if (/syllabus|pattern/i.test(t))                 return { ic:'fa-book-open',  cl:'#4338ca' };
-    if (/pdf|notif|download/i.test(t))               return { ic:'fa-file-pdf',   cl:'#1d4ed8' };
-    if (/login|dashboard/i.test(t))                  return { ic:'fa-right-to-bracket', cl:'#059669' };
-    if (/official|website|portal/i.test(t))          return { ic:'fa-globe',      cl:'#dc2626' };
-    return { ic:'fa-link', cl:'#64748b' };
-  }
-
-  // ── Build expanded detail panel HTML ─────────────────────────────
-  function buildDetailPanel(d, slug) {
-    let html = '';
-
-    // Short Info
-    if (d.shortInfo) {
-      html += `<div class="djr-section djr-info">
-        <div class="djr-sec-head teal"><i class="fa-solid fa-circle-info"></i> About This Recruitment</div>
-        <div class="djr-notice">${esc(d.shortInfo)}</div>
-      </div>`;
-    }
-
-    // Overview table
-    const ovRows = [
-      d.org        ? ['Organisation',      d.org]        : null,
-      d.totalVac   ? ['Total Vacancies',   d.totalVac]   : null,
-      d.applyMode  ? ['Apply Mode',        d.applyMode]  : null,
-      d.salStr     ? ['Salary / Pay Scale',d.salStr]     : null,
-      d.appBegin   ? ['Apply Start',       d.appBegin]   : null,
-      d.lastDate   ? ['Last Date',         d.lastDate, true] : null,
-      d.feeLast    ? ['Fee Last Date',     d.feeLast]    : null,
-      d.examDate   ? ['Exam Date',         d.examDate]   : null,
-      d.admitDate  ? ['Admit Card',        d.admitDate]  : null,
-      d.resultDate ? ['Result Date',       d.resultDate] : null,
-    ].filter(Boolean);
-
-    if (ovRows.length) {
-      html += `<div class="djr-section">
-        <div class="djr-sec-head blue"><i class="fa-solid fa-table-list"></i> Quick Overview</div>
-        <table class="djr-table"><tbody>
-          ${ovRows.map(r => `<tr ${r[2]?'class="djr-ld-row"':''}>
-            <th>${esc(r[0])}</th><td>${esc(r[1])}</td>
-          </tr>`).join('')}
-        </tbody></table>
-      </div>`;
-    }
-
-    // Application Fee
-    const feeRows = [
-      d.feeGen ? ['General / UR', d.feeGen] : null,
-      d.feeObc ? ['OBC',          d.feeObc] : null,
-      d.feeEws ? ['EWS',          d.feeEws] : null,
-      d.feeSc  ? ['SC',           d.feeSc]  : null,
-      d.feeSt  ? ['ST',           d.feeSt]  : null,
-      d.feePh  ? ['PH / PwD',     d.feePh]  : null,
-    ].filter(Boolean);
-    if (feeRows.length) {
-      html += `<div class="djr-section">
-        <div class="djr-sec-head orange"><i class="fa-solid fa-indian-rupee-sign"></i> Application Fee</div>
-        <div class="djr-kv-grid">
-          ${feeRows.map(([l,v])=>`<div class="djr-kv-item">
-            <div class="djr-kv-label">${esc(l)}</div>
-            <div class="djr-kv-val" style="color:${/nil|0|free/i.test(v)?'#16a34a':'#1d4ed8'}">${esc(v)}</div>
-          </div>`).join('')}
-        </div>
-      </div>`;
-    }
-
-    // Age Limit
-    if (d.minAge || d.maxAge || d.ageRelax) {
-      html += `<div class="djr-section">
-        <div class="djr-sec-head teal"><i class="fa-solid fa-user-clock"></i> Age Limit</div>
-        <table class="djr-table"><tbody>
-          ${d.minAge   ? `<tr><th>Minimum Age</th><td>${esc(d.minAge)}</td></tr>` : ''}
-          ${d.maxAge   ? `<tr><th>Maximum Age</th><td>${esc(d.maxAge)}</td></tr>` : ''}
-          ${d.ageRelax ? `<tr><th>Age Relaxation</th><td>${esc(d.ageRelax)}</td></tr>` : ''}
-        </tbody></table>
-      </div>`;
-    }
-
-    // Qualification
-    if (d.eduQual) {
-      html += `<div class="djr-section">
-        <div class="djr-sec-head purple"><i class="fa-solid fa-graduation-cap"></i> Educational Qualification</div>
-        <div class="djr-detail-text">${esc(d.eduQual)}</div>
-      </div>`;
-    }
-
-    // Vacancy Details
-    if (d.vd && d.vd.length) {
-      const cols = Object.keys(d.vd[0]).filter(k => k !== 'sr' && k !== 'sno');
-      html += `<div class="djr-section">
-        <div class="djr-sec-head green"><i class="fa-solid fa-chart-pie"></i> Vacancy Details</div>
-        <div style="overflow-x:auto;">
-          <table class="djr-vac-table">
-            <thead><tr>${cols.map(c=>`<th>${esc(keyLbl(c))}</th>`).join('')}</tr></thead>
-            <tbody>${d.vd.map(r=>`<tr>${cols.map(c=>`<td>${esc(safe(r[c]))}</td>`).join('')}</tr>`).join('')}</tbody>
-          </table>
-        </div>
-      </div>`;
-    } else {
-      // Category-wise vacancy fallback
-      const cwRows = [];
-      if (d.cwv) {
-        if (d.cwv.general || d.cwv.ur) cwRows.push(['General / UR', d.cwv.general || d.cwv.ur]);
-        if (d.cwv.obc)  cwRows.push(['OBC', d.cwv.obc]);
-        if (d.cwv.ews)  cwRows.push(['EWS', d.cwv.ews]);
-        if (d.cwv.sc)   cwRows.push(['SC',  d.cwv.sc]);
-        if (d.cwv.st)   cwRows.push(['ST',  d.cwv.st]);
-        if (d.cwv.ph)   cwRows.push(['PH',  d.cwv.ph]);
-      }
-      if (cwRows.length) {
-        html += `<div class="djr-section">
-          <div class="djr-sec-head green"><i class="fa-solid fa-users"></i> Category-wise Vacancy</div>
-          <div style="overflow-x:auto;">
-            <table class="djr-vac-table">
-              <thead><tr><th>Category</th><th>Vacancies</th></tr></thead>
-              <tbody>${cwRows.map(([c,v])=>`<tr><td>${esc(c)}</td><td>${esc(v)}</td></tr>`).join('')}</tbody>
-            </table>
-          </div>
-        </div>`;
-      }
-    }
-
-    // Salary Details (extended obj)
-    const salEntries = Object.entries(d.sal || {}).filter(([,v])=>v);
-    if (salEntries.length > 0) {
-      html += `<div class="djr-section">
-        <div class="djr-sec-head green"><i class="fa-solid fa-indian-rupee-sign"></i> Salary & Pay Scale</div>
-        <div class="djr-kv-grid">
-          ${salEntries.map(([k,v])=>`<div class="djr-kv-item">
-            <div class="djr-kv-label">${esc(keyLbl(k))}</div>
-            <div class="djr-kv-val" style="color:#16a34a;">${esc(v)}</div>
-          </div>`).join('')}
-        </div>
-      </div>`;
-    }
-
-    // Physical Eligibility
-    const peEntries = Object.entries(d.pe || {}).filter(([,v])=>v);
-    if (peEntries.length) {
-      html += `<div class="djr-section">
-        <div class="djr-sec-head red"><i class="fa-solid fa-dumbbell"></i> Physical Standards</div>
-        <div class="djr-kv-grid">
-          ${peEntries.map(([k,v])=>`<div class="djr-kv-item">
-            <div class="djr-kv-label">${esc(keyLbl(k))}</div>
-            <div class="djr-kv-val">${esc(v)}</div>
-          </div>`).join('')}
-        </div>
-      </div>`;
-    }
-
-    // Exam Pattern
-    const epEntries = typeof d.ep==='object' ? Object.entries(d.ep).filter(([,v])=>v) : [];
-    if (epEntries.length) {
-      html += `<div class="djr-section">
-        <div class="djr-sec-head blue2"><i class="fa-solid fa-file-lines"></i> Exam Pattern</div>
-        <table class="djr-table"><tbody>
-          ${epEntries.map(([k,v])=>`<tr><th>${esc(keyLbl(k))}</th><td>${esc(v)}</td></tr>`).join('')}
-        </tbody></table>
-      </div>`;
-    }
-
-    // Syllabus
-    const sylEntries = typeof d.syl==='object' ? Object.entries(d.syl).filter(([,v])=>v) : [];
-    if (sylEntries.length) {
-      html += `<div class="djr-section">
-        <div class="djr-sec-head purple2"><i class="fa-solid fa-book"></i> Syllabus</div>
-        <table class="djr-table"><tbody>
-          ${sylEntries.map(([k,v])=>`<tr><th>${esc(keyLbl(k))}</th><td>${esc(v)}</td></tr>`).join('')}
-        </tbody></table>
-      </div>`;
-    } else if (typeof d.syl === 'string' && d.syl.trim()) {
-      html += `<div class="djr-section">
-        <div class="djr-sec-head purple2"><i class="fa-solid fa-book"></i> Syllabus</div>
-        <div class="djr-detail-text">${esc(d.syl)}</div>
-      </div>`;
-    }
-
-    // Selection Process
-    const selArr = Array.isArray(d.sel) ? d.sel : (typeof d.sel==='string' ? d.sel.split(/[,;\/\n]/).map(s=>s.trim()).filter(Boolean) : []);
-    if (selArr.length) {
-      html += `<div class="djr-section">
-        <div class="djr-sec-head purple"><i class="fa-solid fa-list-check"></i> Selection Process</div>
-        <div class="djr-badges">
-          ${selArr.map(s=>`<span class="djr-badge"><i class="fa-solid fa-circle-check"></i>${esc(s)}</span>`).join('')}
-        </div>
-      </div>`;
-    }
-
-    // Important Instructions
-    const instArr = Array.isArray(d.inst) ? d.inst.filter(s=>safe(s)) : [];
-    if (instArr.length) {
-      html += `<div class="djr-section">
-        <div class="djr-sec-head orange2"><i class="fa-solid fa-circle-exclamation"></i> Important Instructions</div>
-        <ul class="djr-steps">
-          ${instArr.map(s=>`<li class="djr-step"><i class="fa-solid fa-triangle-exclamation" style="color:#ea580c;"></i><span>${esc(s)}</span></li>`).join('')}
-        </ul>
-      </div>`;
-    }
-
-    // How To Apply
-    const htaArr = Array.isArray(d.hta) ? d.hta.filter(s=>safe(s)) : [];
-    if (htaArr.length) {
-      html += `<div class="djr-section">
-        <div class="djr-sec-head teal2"><i class="fa-solid fa-clipboard-list"></i> How To Apply</div>
-        <ol class="djr-steps">
-          ${htaArr.map((s,i)=>`<li class="djr-step"><span class="djr-num">${i+1}</span><span>${esc(s)}</span></li>`).join('')}
-        </ol>
-      </div>`;
-    }
-
-    // Important Links
-    if (d.links.length) {
-      html += `<div class="djr-section">
-        <div class="djr-sec-head navy"><i class="fa-solid fa-link"></i> Important Links</div>
-        <div class="djr-links">
-          ${d.links.map(lk => {
-            const cat = catLink(lk.label);
-            return `<a href="${esc(lk.url)}" target="_blank" rel="noopener" class="djr-link-btn" style="border-left:3px solid ${cat.cl};">
-              <i class="fa-solid ${cat.ic}" style="color:${cat.cl};"></i>
-              <span>${esc(lk.label.slice(0,55))}</span>
-              <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:.6rem;color:#94a3b8;margin-left:auto;"></i>
-            </a>`;
-          }).join('')}
-        </div>
-      </div>`;
-    }
-
-    // FAQ
-    const faqArr = Array.isArray(d.faq) ? d.faq.filter((f,i,a)=>f.question && a.findIndex(x=>x.question===f.question)===i) : [];
-    if (faqArr.length) {
-      html += `<div class="djr-section">
-        <div class="djr-sec-head gold"><i class="fa-solid fa-circle-question"></i> FAQ</div>
-        <div class="djr-faq">
-          ${faqArr.map((f,i)=>`
-            <div class="djr-faq-item">
-              <button class="djr-faq-q" type="button" onclick="(function(b){
-                b.classList.toggle('open');
-                b.nextElementSibling.classList.toggle('open');
-              })(this)">
-                <i class="fa-solid fa-chevron-right djr-faq-ico"></i>
-                <span>${esc(f.question || f.q || '')}</span>
-              </button>
-              <div class="djr-faq-a">${esc(f.answer || f.a || '')}</div>
-            </div>`).join('')}
-        </div>
-      </div>`;
-    }
-
-    // Full page link
-    if (slug) {
-      html += `<div style="padding:12px 14px;background:#f0f9ff;border-top:1px solid #dbeafe;text-align:center;">
-        <a href="/jobs/${esc(slug)}/" class="djr-full-btn">
-          <i class="fa-solid fa-arrow-up-right-from-square"></i> View Full Job Details Page
-        </a>
-      </div>`;
-    }
-
-    return html;
-  }
-
-  // ── Render one job row (rich card with expandable panel) ──────────
-  function renderJobRow(item, sectionId, idx) {
-    const d     = extractDetail(item);
-    const title = d.title || 'Government Job';
-    const slug  = makeSlug(title);
-    const dl    = daysLeft(d.lastDate);
-    const isUrgent = dl >= 0 && dl <= 7;
-    const isNew = idx < 3;
-
-    // Meta pills to show inline in list
-    const pills = [
-      d.totalVac  ? `<span class="djr-pill vac"><i class="fa-solid fa-users"></i>${esc(d.totalVac)} Posts</span>` : '',
-      d.lastDate  ? `<span class="djr-pill ${isUrgent?'urg':'dt'}"><i class="fa-solid fa-calendar-xmark"></i>${esc(d.lastDate)}</span>` : '',
-      d.salStr    ? `<span class="djr-pill sal"><i class="fa-solid fa-indian-rupee-sign"></i>${esc(d.salStr.slice(0,35))}</span>` : '',
-      d.applyMode ? `<span class="djr-pill mode"><i class="fa-solid fa-laptop"></i>${esc(d.applyMode)}</span>` : '',
-    ].filter(Boolean).join('');
-
-    const panelId = `djrp-${sectionId}-${idx}`;
-
-    return `
-      <div class="djr-item" id="djri-${panelId}">
-        <!-- Row Header (clickable) -->
-        <div class="djr-row" onclick="djrToggle('${panelId}')">
-          <div class="djr-row-left">
-            ${isNew    ? '<span class="job-new">NEW</span>' : ''}
-            ${isUrgent ? '<span class="job-new" style="background:#dc2626;">URGENT</span>' : ''}
-            <div class="djr-row-body">
-              <div class="djr-row-title">${esc(title)}</div>
-              ${d.org ? `<div class="djr-row-org"><i class="fa-solid fa-building" style="font-size:.6rem;"></i> ${esc(d.org)}</div>` : ''}
-              <div class="djr-pills">${pills}</div>
-            </div>
-          </div>
-          <div class="djr-row-actions">
-            ${d.ctaUrl ? `<a href="${esc(d.ctaUrl)}" target="_blank" rel="noopener" class="djr-apply-btn" onclick="event.stopPropagation()">
-              <i class="fa-solid fa-paper-plane"></i> Apply
-            </a>` : ''}
-            <button class="djr-expand-btn" type="button" id="djrb-${panelId}" aria-expanded="false" aria-label="Toggle details">
-              <i class="fa-solid fa-chevron-down djr-chev"></i>
-            </button>
-          </div>
-        </div>
-        <!-- Expandable Detail Panel -->
-        <div class="djr-panel" id="${panelId}" hidden>
-          ${buildDetailPanel(d, slug)}
-        </div>
-      </div>`;
-  }
-
-  // ── Toggle expand/collapse ────────────────────────────────────────
-  window.djrToggle = function(panelId) {
-    const panel = document.getElementById(panelId);
-    const btn   = document.getElementById('djrb-' + panelId);
-    if (!panel) return;
-    const isOpen = !panel.hidden;
-    panel.hidden = isOpen;
-    if (btn) {
-      btn.setAttribute('aria-expanded', !isOpen);
-      btn.querySelector('.djr-chev').style.transform = isOpen ? '' : 'rotate(180deg)';
-    }
-  };
-
-  // ── SLUG GENERATOR ────────────────────────────────────────────────
+  // ═══ BUILD SEO-FRIENDLY JOB DETAIL URL ═══
   function jobDetailUrl(item, sectionId) {
-    const title = item.name || (item.detail && item.detail.basic_details && item.detail.basic_details.job_title) || '';
+    const title = item.name || item.detail?.basic_details?.job_title || '';
     const slug  = makeSlug(title);
     return `state-job-detail.html?state=${encodeURIComponent(sectionId)}&slug=${encodeURIComponent(slug)}`;
   }
 
-  // ═══ LOAD JOBS FROM state-jobs-data.json ═════════════════════════
+  // ═══ LOAD JOBS FROM state-jobs-data.json ═══
   async function loadJobs() {
     const jobsList = document.getElementById('jobsList');
 
     try {
+      // Load state-jobs-data.json
       let matchedSection = null;
 
-      // ── 1. Try state-jobs-data.json (primary with full detail) ───
       try {
         const r = await fetch('state-jobs-data.json');
         if (r.ok) {
           const data = await r.json();
           const stateKey = (stateName || '').toLowerCase();
-          // Support both {sections:[]} and array [] formats
-          const sections = Array.isArray(data) ? data : (data.sections || []);
-          for (const sec of sections) {
-            const secState = safe(sec.state || sec.id || sec.title).toLowerCase();
-            if (
-              secState === stateKey ||
-              secState === stateKey.replace(/ /g,'-') ||
-              secState.replace(/-/g,' ') === stateKey ||
-              secState.includes(stateKey.split(' ')[0])
-            ) {
+          for (const sec of (data.sections || [])) {
+            if ((sec.state || '').toLowerCase() === stateKey ||
+                (sec.id || '').toLowerCase() === stateKey.replace(/ /g,'-') ||
+                (sec.title || '').toLowerCase().includes(stateKey.split(' ')[0])) {
               matchedSection = sec;
               break;
             }
@@ -1655,20 +1170,21 @@
         }
       } catch(e2) {}
 
+      // Fallback: try dynamic-sections.json (old format, no detail pages)
       let matchedItems = matchedSection ? (matchedSection.items || []) : [];
-      let hasDetailData = !!(matchedSection);
+      let hasDetailData = !!matchedSection;
 
-      // ── 2. Fallback: dynamic-sections.json ───────────────────────
       if (!matchedItems.length) {
         try {
           const info2 = STATE_DATA[stateName];
-          const kw = info2 ? info2.section.toLowerCase() : (stateName||'').toLowerCase();
+          const sectionKeyword = info2 ? info2.section.toLowerCase() : (stateName || '').toLowerCase();
           const r2 = await fetch('dynamic-sections.json');
           if (r2.ok) {
             const data2 = await r2.json();
             for (const sec of (data2.sections || [])) {
-              const st = (sec.id || sec.title || '').toLowerCase();
-              if (st.includes(kw.split(' ')[0]) || st.includes((stateName||'').toLowerCase().split(' ')[0])) {
+              const secTitle = (sec.id || sec.title || '').toLowerCase();
+              if (secTitle.includes(sectionKeyword.split(' ')[0].toLowerCase()) ||
+                  secTitle.includes((stateName || '').toLowerCase().split(' ')[0])) {
                 matchedItems = sec.items || [];
                 hasDetailData = false;
                 break;
@@ -1678,7 +1194,6 @@
         } catch(e3) {}
       }
 
-      // ── 3. No results ─────────────────────────────────────────────
       if (!matchedItems.length) {
         jobsList.innerHTML = `<div style="padding:20px 14px;text-align:center;color:var(--muted);font-size:.82rem;">
           <i class="fa-solid fa-circle-info" style="font-size:1.5rem;color:var(--blue);display:block;margin-bottom:8px;"></i>
@@ -1687,39 +1202,52 @@
             Check All Latest Govt Jobs →
           </a>
         </div>`;
+        // Update stats
         document.getElementById('statJobs').textContent = '0';
         return;
       }
 
-      // ── 4. Stats ──────────────────────────────────────────────────
+      // Update stats
       document.getElementById('statJobs').textContent = matchedItems.length + '+';
 
-      // ── 5. Render ─────────────────────────────────────────────────
-      if (hasDetailData && matchedSection) {
-        // RICH rendering: expandable cards with full JSON detail
-        const secId = matchedSection.id || makeSlug(stateName);
-        jobsList.className = 'djr-list';
-        jobsList.innerHTML = matchedItems.map((item, i) =>
-          renderJobRow(item, secId, i)
-        ).join('');
-      } else {
-        // Simple rendering: plain links (no detail data available)
-        jobsList.innerHTML = matchedItems.map((item, i) => {
-          const title = item.name || item.title || 'Government Job';
-          const date  = item.date || item.lastDate || '';
-          const href  = item.url || item.link || '#';
-          const isUrgent = daysLeft(item.lastDate) >= 0 && daysLeft(item.lastDate) <= 7;
-          return `<a href="${href}" target="_blank" rel="noopener">
-            ${i < 3 ? '<span class="job-new">NEW</span>' : ''}
-            ${isUrgent ? '<span class="job-new" style="background:#dc2626;">URGENT</span>' : ''}
-            <div class="job-body">
-              <div class="job-title">${esc(title)}</div>
-              <div class="job-meta"><i class="fa-solid fa-calendar" aria-hidden="true"></i> ${esc(date || 'Apply Now')}</div>
+      // Render job list — link to SEO detail page if detail data available
+      jobsList.innerHTML = matchedItems.map((item, i) => {
+        const title = item.name || item.title || 'Government Job';
+        const date  = item.date || item.lastDate || '';
+        const qual  = item.qualification || '';
+        const board = item.board || '';
+        const postDate = item.postDate || '';
+
+        // Use SEO detail page URL if we have rich data, else fallback to external url
+        const href = hasDetailData && matchedSection
+          ? jobDetailUrl(item, matchedSection.id)
+          : (item.url || item.link || '#');
+
+        // Detect if urgent (last date within 7 days)
+        let isUrgent = false;
+        if (item.lastDate) {
+          try {
+            const parts = item.lastDate.split('-');
+            const d = new Date(parts[2], parts[1]-1, parts[0]);
+            const diff = (d - Date.now()) / 864e5;
+            isUrgent = diff >= 0 && diff <= 7;
+          } catch(_) {}
+        }
+
+        return `<a href="${href}" ${hasDetailData ? '' : 'target="_blank" rel="noopener"'}>
+          ${i < 3 ? '<span class="job-new">NEW</span>' : ''}
+          ${isUrgent ? '<span class="job-new" style="background:#dc2626;">URGENT</span>' : ''}
+          <div class="job-body">
+            <div class="job-title">${title}</div>
+            <div class="job-meta">
+              <i class="fa-solid fa-calendar" aria-hidden="true"></i> ${date || 'Apply Now'}
+              ${qual ? `&nbsp;|&nbsp; <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> ${qual.split(',')[0]}` : ''}
+              ${board ? `&nbsp;|&nbsp; <i class="fa-solid fa-building" aria-hidden="true"></i> ${board}` : ''}
             </div>
-            <i class="fa-solid fa-chevron-right" style="color:#d1d5db;font-size:.6rem;flex-shrink:0;margin-top:4px;"></i>
-          </a>`;
-        }).join('');
-      }
+          </div>
+          <i class="fa-solid fa-chevron-right" style="color:#d1d5db;font-size:.6rem;flex-shrink:0;margin-top:4px;"></i>
+        </a>`;
+      }).join('');
 
     } catch(e) {
       jobsList.innerHTML = `<div style="padding:20px 14px;text-align:center;color:var(--muted);font-size:.82rem;">
