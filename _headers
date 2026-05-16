@@ -1,34 +1,43 @@
-# Netlify Headers — Performance, Security & Auto Cache Busting
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# _headers — Top Sarkari Jobs (Netlify)
+# ✅ Security headers (XSS, HSTS, CSP)
+# ✅ Cache-Control for max performance
+# ✅ CORS for JSON data files
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 /*
   X-Frame-Options: SAMEORIGIN
   X-XSS-Protection: 1; mode=block
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: geolocation=(), microphone=(), camera=()
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  Vary: Accept-Encoding
 
-# ✅ Service Worker: KABHI cache mat karo — hamesha fresh mile
 /sw.js
-  Cache-Control: no-cache, no-store, must-revalidate
+  Cache-Control: no-cache, no-store, must-revalidate, max-age=0
   Pragma: no-cache
   Expires: 0
+  X-Robots-Tag: noindex
 
-# HTML pages: short cache (2 hours) + revalidate karo
 /*.html
-  Cache-Control: public, max-age=7200, must-revalidate
+  Cache-Control: public, max-age=7200, stale-while-revalidate=86400, must-revalidate
 
-# JSON data: 30 min cache (fresh data ke liye)
+/*.txt
+  Cache-Control: public, max-age=86400
+  Content-Type: text/plain; charset=utf-8
+
 /*.json
-  Cache-Control: public, max-age=1800, must-revalidate
+  Cache-Control: public, max-age=1800, stale-while-revalidate=3600
+  Access-Control-Allow-Origin: *
+  Access-Control-Allow-Methods: GET
 
-# CSS/JS: version query string se cache bust hoga — 1 saal cache
 /*.css
   Cache-Control: public, max-age=31536000, immutable
 
 /*.js
   Cache-Control: public, max-age=31536000, immutable
 
-# Images & Fonts
 /*.webp
   Cache-Control: public, max-age=15552000
 
@@ -38,9 +47,30 @@
 /*.ico
   Cache-Control: public, max-age=31536000
 
-/fonts/*
+/*.woff2
   Cache-Control: public, max-age=31536000, immutable
   Access-Control-Allow-Origin: *
 
-/sitemap*.xml
+/*.xml
   Cache-Control: public, max-age=86400
+  X-Robots-Tag: noindex, nofollow
+
+/manifest.json
+  Cache-Control: public, max-age=86400
+  Content-Type: application/manifest+json
+
+/
+  Link: </styles.css>; rel=preload; as=style, </perf-boost.js>; rel=preload; as=script
+  Cache-Control: public, max-age=7200, stale-while-revalidate=86400
+
+/config.json
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+
+/redirect.html
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+
+/404.html
+  X-Robots-Tag: noindex
+  Cache-Control: public, max-age=3600
