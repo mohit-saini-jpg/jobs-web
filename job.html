@@ -1358,25 +1358,57 @@
         form_pdf_free_link:             'Download Form (Free PDF)',
         official_notification_pdf_link: 'Official Notification PDF',
       };
+      /* ── Smart URL-based title generator for generic 'click_here' links ── */
+      /* ── Smart URL-based title detection for generic link keys ── */
+      function smartTitleFromUrl(href, existingEntries) {
+        /* Fix malformed double-protocol URLs e.g. "https://https://..." */
+        const cleanHref = href.replace(/^https?:\/\/https?:\/\//i, 'https://');
+        const u = cleanHref.toLowerCase();
+        const isPdf = /\.pdf($|\?)|notification|notice|advt|advertisement|brochure|document|recruit.*notice|whatsnew/i.test(u);
+        const isApply = /apply|signin|csignin|application|registration(?!.*pdf)|erecruitment|onlineform|onlinereg|viewform|google.*form|walkin|walk-in|\/ask/i.test(u);
+        const isResult = /result|merit[_-]?list|score[_-]?card|cutoff|cut-off|selection-list/i.test(u);
+        const isAdmit = /admit|hallticket|call.?letter|eadmit/i.test(u);
+        const isAnswer = /answer[_-]?key|answerkey|response.?sheet/i.test(u);
+        const isSyllabus = /syllabus|exam.?pattern/i.test(u);
+        const alreadyHasApply = existingEntries.some(l => /^apply online$/i.test(l.title));
+        const alreadyHasNotif = existingEntries.some(l => /^(official notification|download pdf)$/i.test(l.title));
+        /* Detect root-level domain (homepage) */
+        let isHomepage = false;
+        try { const pu = new URL(cleanHref); isHomepage = (pu.pathname === '/' || pu.pathname === ''); } catch(_) {}
+        if (isAdmit)                          return 'Admit Card';
+        if (isResult)                         return 'Result';
+        if (isAnswer)                         return 'Answer Key';
+        if (isSyllabus)                       return 'Syllabus';
+        if (isApply && !alreadyHasApply)      return 'Apply Online';
+        if (isPdf  && !alreadyHasNotif)       return 'Official Notification';
+        if (isPdf)                            return 'Download PDF';
+        if (isHomepage)                       return 'Official Website';
+        /* Non-homepage portal page — label by context */
+        return alreadyHasApply ? 'Official Website' : 'Apply / Visit Portal';
+      }
+
       /* Build synthetic usefulLinks entries from important_links object */
       const _ilEntries = [];
       if (typeof _ilRaw === 'object' && !Array.isArray(_ilRaw)) {
         for (const [key, val] of Object.entries(_ilRaw)) {
           if (!val) continue;
           /* Resolve human label: known key → label, or title-case the key */
-          const label = _IL_LABELS[key] ||
+          const baseLabel = _IL_LABELS[key] ||
             key.replace(/^https?_+/i, '').replace(/_/g, ' ')
                .replace(/\b[a-z]/g, c => c.toUpperCase()).trim() ||
             'Click Here';
           /* Val can be string or array */
           const urls = Array.isArray(val) ? val : [val];
+          const isGenericKey = key === 'click_here' || baseLabel === 'Click Here';
           urls.forEach((u, idx) => {
-            const href = safe(u);
+            /* Fix malformed double-protocol URLs before processing */
+            const href = safe(u).replace(/^https?:\/\/https?:\/\//i, 'https://');
             if (!href || !/^https?:\/\//i.test(href)) return;
-            _ilEntries.push({
-              title: urls.length > 1 ? `${label} (${idx + 1})` : label,
-              url:   href
-            });
+            /* For generic keys: use URL-based smart title instead of "Click Here (N)" */
+            const label = isGenericKey
+              ? smartTitleFromUrl(href, _ilEntries)
+              : (urls.length > 1 ? `${baseLabel} (${idx + 1})` : baseLabel);
+            _ilEntries.push({ title: label, url: href });
           });
         }
       }
@@ -1464,10 +1496,15 @@
         getUsefulLink([/exam\s*city|exam\s*centre|slot\s*booking|check\s*exam\s*city/i]) || ''
       );
 
-      /* Primary dest URL for main CTA — use source_url as fallback only here */
+      /* ── Also scan click_here array for best apply/portal URL for CTA ── */
+      const _clickHereUrls = Array.isArray(il.click_here) ? il.click_here : (il.click_here ? [il.click_here] : []);
+      const _bestClickHereApply = _clickHereUrls.find(u => u && /apply|signin|csignin|registration|erecruitment/i.test(u)) || '';
+      const _bestClickHerePortal = _clickHereUrls.find(u => u && !/\.pdf($|\?)/i.test(u)) || '';
+
+      /* Primary dest URL for main CTA — also check click_here array */
       const destUrl = normalizeUrl(
-        applyOnline || officialWebsite ||
-        job.source_url || job.official_website_link || bd.source_url || ''
+        applyOnline || _bestClickHereApply || officialWebsite || _bestClickHerePortal ||
+        job.source_url || job.official_website_link || bd.source_url || bd.official_website || ''
       );
 
       /* Dates */
@@ -1611,97 +1648,99 @@
           }
         } catch (_) {}
 
-        /* Try merged_sarkari_data.json first */
-        let raw = null;
+        /* Load merged_sarkari_data.json (offline form jobs) */
+        let rawMerged = null;
         try {
           const r1 = await fetch('/merged_sarkari_data.json');
-          if (r1.ok) raw = await r1.json();
+          if (r1.ok) rawMerged = await r1.json();
         } catch (_) {}
 
-        /* Fallback to Complete_Jobs_Full_Data.json */
-        if (!raw) {
+        /* ALWAYS load Complete_Jobs_Full_Data.json — this is the primary source
+           with full important_links, useful_links, etc. for 1300+ jobs */
+        let rawFull = null;
+        try {
           const r2 = await fetch('/Complete_Jobs_Full_Data.json');
-          if (!r2.ok) return dailyItems; /* Return dailyItems even if main JSON fails */
-          raw = await r2.json();
-        }
+          if (r2.ok) rawFull = await r2.json();
+        } catch (_) {}
+
+        /* Use rawFull as primary, rawMerged as supplemental */
+        const raw = rawFull || rawMerged;
+        if (!raw) return dailyItems;
 
         const out = [...dailyItems]; /* Start with dailyupdates items */
 
-        /* Handle array format */
-        if (Array.isArray(raw)) {
-          for (const job of raw) {
-            const parsed = parseFullJob(job, job.category || 'Latest Notifications');
-            if (!parsed.title) continue;
-            out.push(parsed);
-          }
-          return out;
-        }
-
-        if (typeof raw === 'object') {
-          /* ── merged_sarkari_data.json: handle sarkariresult_categories ── */
-          const srCats = (raw.sarkariresult_data && raw.sarkariresult_data.data)
-                      || raw.sarkariresult_categories || null;
-
-          if (srCats && typeof srCats === 'object') {
-            for (const [catKey, items] of Object.entries(srCats)) {
-              if (!Array.isArray(items)) continue;
-              for (const job of items) {
-                /* SR category items: {title, url, last_date, post_date} */
-                if (!job || typeof job !== 'object') continue;
-                const title = safe(job.title || job.name || '');
-                if (!title) continue;
-                const externalUrl = safe(job.url || job.link || job.source_url || '');
-                const lastDate = safe(job.last_date || '');
-                /* Build a pseudo-full job object so parseFullJob works.
-                   Spread the full original job so useful_links, important_dates,
-                   application_fee, age_limit, total_post, short_information all come through. */
-                const pseudoJob = {
-                  ...job,
-                  title,
-                  source_url: externalUrl,
-                  last_date: lastDate,
-                  category: catKey,
-                  important_links: job.important_links || { apply_online: externalUrl, official_website: externalUrl },
-                  total_vacancy: job.total_vacancy || job.total_vacancies || job.total_post || '',
-                };
-                const parsed = parseFullJob(pseudoJob, catKey);
-                if (parsed.title) out.push(parsed);
-              }
+        /* ── Process merged_sarkari_data.json (offline/walkin jobs) ── */
+        if (rawMerged && typeof rawMerged === 'object') {
+          /* merged format: { jobs: [...] } */
+          if (Array.isArray(rawMerged.jobs)) {
+            for (const job of rawMerged.jobs) {
+              const parsed = parseFullJob(job, job.category || 'SR_Offline_Form');
+              if (parsed.title) out.push(parsed);
             }
           }
-
-          /* ── merged_sarkari_data.json: sarkariresultshine_jobs ── */
-          if (Array.isArray(raw.sarkariresultshine_jobs)) {
-            for (const job of raw.sarkariresultshine_jobs) {
+          if (Array.isArray(rawMerged.sarkariresultshine_jobs)) {
+            for (const job of rawMerged.sarkariresultshine_jobs) {
               const parsed = parseFullJob(job, 'SR_Offline_Form');
               if (parsed.title) out.push(parsed);
             }
           }
+        }
 
-          /* ── Complete_Jobs_Full_Data.json: known category keys ── */
-          for (const [catKey, meta] of Object.entries(_JOBS_CAT_META_JI)) {
-            const jobs = raw[catKey];
-            if (!Array.isArray(jobs)) continue;
-            for (const job of jobs) {
-              const parsed = parseFullJob(job, meta.id);
-              if (!parsed.title) continue;
-              out.push(parsed);
+        /* ── Process Complete_Jobs_Full_Data.json (primary - all 1300+ jobs with full data) ── */
+        if (rawFull) {
+          /* Handle array format */
+          if (Array.isArray(rawFull)) {
+            for (const job of rawFull) {
+              const parsed = parseFullJob(job, job.category || 'Latest Notifications');
+              if (parsed.title) out.push(parsed);
             }
-          }
-
-          /* ── Any remaining array-value keys ── */
-          const handled = new Set([
-            ...Object.keys(_JOBS_CAT_META_JI),
-            'sarkariresult_categories', 'sarkariresult_data',
-            'sarkariresultshine_jobs'
-          ]);
-          for (const [key, val] of Object.entries(raw)) {
-            if (handled.has(key)) continue;
-            if (Array.isArray(val)) {
-              for (const job of val) {
-                const parsed = parseFullJob(job, key);
-                if (!parsed.title) continue;
-                out.push(parsed);
+          } else if (typeof rawFull === 'object') {
+            /* Object with category keys (standard Complete_Jobs_Full_Data.json format) */
+            const handledFull = new Set();
+            /* Known category keys first */
+            for (const [catKey, meta] of Object.entries(_JOBS_CAT_META_JI)) {
+              const jobs = rawFull[catKey];
+              if (!Array.isArray(jobs)) continue;
+              handledFull.add(catKey);
+              for (const job of jobs) {
+                const parsed = parseFullJob(job, meta.id);
+                if (parsed.title) out.push(parsed);
+              }
+            }
+            /* Also handle sarkariresult_categories if present */
+            const srCats = (rawFull.sarkariresult_data && rawFull.sarkariresult_data.data)
+                        || rawFull.sarkariresult_categories || null;
+            if (srCats && typeof srCats === 'object') {
+              handledFull.add('sarkariresult_categories');
+              handledFull.add('sarkariresult_data');
+              for (const [catKey, items] of Object.entries(srCats)) {
+                if (!Array.isArray(items)) continue;
+                for (const job of items) {
+                  if (!job || typeof job !== 'object') continue;
+                  const title = safe(job.title || job.name || '');
+                  if (!title) continue;
+                  const externalUrl = safe(job.url || job.link || job.source_url || '');
+                  const pseudoJob = {
+                    ...job, title,
+                    source_url: externalUrl,
+                    category: catKey,
+                    important_links: job.important_links || { apply_online: externalUrl, official_website: externalUrl },
+                    total_vacancy: job.total_vacancy || job.total_vacancies || job.total_post || '',
+                  };
+                  const parsed = parseFullJob(pseudoJob, catKey);
+                  if (parsed.title) out.push(parsed);
+                }
+              }
+            }
+            /* Any remaining unknown array-value keys */
+            handledFull.add('sarkariresultshine_jobs');
+            for (const [key, val] of Object.entries(rawFull)) {
+              if (handledFull.has(key)) continue;
+              if (Array.isArray(val)) {
+                for (const job of val) {
+                  const parsed = parseFullJob(job, key);
+                  if (parsed.title) out.push(parsed);
+                }
               }
             }
           }
@@ -1780,17 +1819,33 @@
       /* ── PRIMARY: Fetch individual job JSON from /jobs/data/<slug>.json ── */
       /* This is the authoritative source — exact slug match, no fuzzy logic */
       let row = null;
-      try {
-        const directRes = await fetch('/jobs/data/' + encodeURIComponent(rawSlug) + '.json');
-        if (directRes.ok) {
-          const directData = await directRes.json();
-          if (directData && (directData.basic_details || directData.title)) {
-            row = parseFullJob(directData, directData.category || 'Latest Notifications');
-            /* Inject the slug so downstream code can use it */
-            if (row) row.slug = rawSlug;
+      /* ── PRIMARY: Fetch individual job JSON from /jobs/data/<slug>.json ── */
+      /* Try multiple slug variants to handle URL vs filename mismatches */
+      const _slugVariants = (() => {
+        const s = rawSlug;
+        const variants = new Set([s]);
+        /* "andaman-and-nicobar" → "andaman-nicobar" (remove lone 'and-' between words) */
+        variants.add(s.replace(/-and-/g, '-'));
+        /* "ng-and-group" → "ng-group" */
+        variants.add(s.replace(/-and-/g, '-').replace(/-and$/g, ''));
+        /* remove trailing hash suffix e.g. -bd964d */
+        variants.add(s.replace(/-[0-9a-f]{5,8}$/i, ''));
+        variants.add(s.replace(/-and-/g, '-').replace(/-[0-9a-f]{5,8}$/i, ''));
+        return [...variants].filter(Boolean);
+      })();
+      for (const slugVariant of _slugVariants) {
+        if (row) break;
+        try {
+          const directRes = await fetch('/jobs/data/' + encodeURIComponent(slugVariant) + '.json');
+          if (directRes.ok) {
+            const directData = await directRes.json();
+            if (directData && (directData.basic_details || directData.title)) {
+              row = parseFullJob(directData, directData.category || 'Latest Notifications');
+              if (row) row.slug = rawSlug;
+            }
           }
-        }
-      } catch (_) {}
+        } catch (_) {}
+      }
 
       /* ── FALLBACK: Search aggregated JSON files (fuzzy/token match) ── */
       /* Only used when individual job file is not found */
