@@ -1358,25 +1358,49 @@
         form_pdf_free_link:             'Download Form (Free PDF)',
         official_notification_pdf_link: 'Official Notification PDF',
       };
+      /* ── Smart URL-based title generator for generic 'click_here' links ── */
+      function smartTitleFromUrl(href, existingEntries) {
+        const u = (href || '').toLowerCase();
+        const existingTitles = (existingEntries || []).map(e => (e.title || '').toLowerCase());
+        function uniqueTitle(base) {
+          let t = base, n = 2;
+          while (existingTitles.includes(t.toLowerCase())) t = base + ' (' + (n++) + ')';
+          existingTitles.push(t.toLowerCase());
+          return t;
+        }
+        if (/apply|signin|csignin|registration|erecruitment/i.test(u)) return uniqueTitle('Apply Online');
+        if (/\.pdf($|\?)/i.test(u)) {
+          const alreadyHasNotif = existingEntries && existingEntries.some(l => /^(official notification|download pdf)$/i.test(l.title));
+          return uniqueTitle(alreadyHasNotif ? 'Download PDF' : 'Official Notification');
+        }
+        if (/admit|hallticket|hall.ticket/i.test(u)) return uniqueTitle('Admit Card');
+        if (/result|merit|score.?card/i.test(u)) return uniqueTitle('Result');
+        if (/syllabus|pattern/i.test(u)) return uniqueTitle('Syllabus');
+        if (/answer.?key/i.test(u)) return uniqueTitle('Answer Key');
+        return uniqueTitle('Official Website');
+      }
       /* Build synthetic usefulLinks entries from important_links object */
       const _ilEntries = [];
       if (typeof _ilRaw === 'object' && !Array.isArray(_ilRaw)) {
         for (const [key, val] of Object.entries(_ilRaw)) {
           if (!val) continue;
           /* Resolve human label: known key → label, or title-case the key */
-          const label = _IL_LABELS[key] ||
+          const baseLabel = _IL_LABELS[key] ||
             key.replace(/^https?_+/i, '').replace(/_/g, ' ')
                .replace(/\b[a-z]/g, c => c.toUpperCase()).trim() ||
             'Click Here';
           /* Val can be string or array */
           const urls = Array.isArray(val) ? val : [val];
+          const isGenericKey = key === 'click_here' || baseLabel === 'Click Here';
           urls.forEach((u, idx) => {
-            const href = safe(u);
+            /* Fix malformed double-protocol URLs before processing */
+            const href = safe(u).replace(/^https?:\/\/https?:\/\//i, 'https://');
             if (!href || !/^https?:\/\//i.test(href)) return;
-            _ilEntries.push({
-              title: urls.length > 1 ? `${label} (${idx + 1})` : label,
-              url:   href
-            });
+            /* For generic keys: use URL-based smart title instead of "Click Here (N)" */
+            const label = isGenericKey
+              ? smartTitleFromUrl(href, _ilEntries)
+              : (urls.length > 1 ? `${baseLabel} (${idx + 1})` : baseLabel);
+            _ilEntries.push({ title: label, url: href });
           });
         }
       }
@@ -1464,9 +1488,15 @@
         getUsefulLink([/exam\s*city|exam\s*centre|slot\s*booking|check\s*exam\s*city/i]) || ''
       );
 
+      /* ── Scan click_here array for best apply / portal URL ── */
+      const _clickHereUrls = Array.isArray(il.click_here) ? il.click_here
+                           : (il.click_here ? [il.click_here] : []);
+      const _bestClickHereApply  = _clickHereUrls.find(u => u && /apply|signin|csignin|registration|erecruitment/i.test(u)) || '';
+      const _bestClickHerePortal = _clickHereUrls.find(u => u && !/\.pdf($|\?)/i.test(u)) || '';
+
       /* Primary dest URL for main CTA — use source_url as fallback only here */
       const destUrl = normalizeUrl(
-        applyOnline || officialWebsite ||
+        applyOnline || _bestClickHereApply || officialWebsite || _bestClickHerePortal ||
         job.source_url || job.official_website_link || bd.source_url || ''
       );
 
@@ -1606,6 +1636,60 @@
                     fp: urlRedirectFingerprint(itemUrl).toLowerCase()
                   });
                 }
+              }
+            }
+          }
+        } catch (_) {}
+
+        /* ── Load state-jobs-data.json (state govt jobs with full detail.important_links) ── */
+        try {
+          const rState = await fetch('/state-jobs-data.json');
+          if (rState.ok) {
+            const stateRaw = await rState.json();
+            const stateArr = Array.isArray(stateRaw) ? stateRaw
+                           : (stateRaw.states ? stateRaw.states : []);
+            for (const stateGroup of stateArr) {
+              if (!Array.isArray(stateGroup.items)) continue;
+              const secId = safe(stateGroup.id || stateGroup.state || 'State Jobs');
+              for (const item of stateGroup.items) {
+                const title = safe(item.name || item.title || '');
+                if (!title) continue;
+                const det = (item.detail && typeof item.detail === 'object') ? item.detail : {};
+                const bd  = (det.basic_details && typeof det.basic_details === 'object') ? det.basic_details : {};
+                const il  = (det.important_links && typeof det.important_links === 'object') ? det.important_links : {};
+                const clickHereUrls = Array.isArray(il.click_here) ? il.click_here
+                                    : (il.click_here ? [il.click_here] : []);
+                const bestPortalUrl = clickHereUrls.find(u => u && !/\.pdf($|\?)/i.test(u))
+                                   || safe(il.official_website || il.visit_website || '')
+                                   || normalizeUrl(safe(item.url || ''));
+                const notifPdfUrl   = safe(il.notification_pdf || '')
+                                   || clickHereUrls.find(u => u && /\.pdf($|\?)/i.test(u)) || '';
+                const fullJob = {
+                  title,
+                  category: secId,
+                  slug: '',
+                  source_url: bestPortalUrl,
+                  official_website_link: bestPortalUrl,
+                  form_pdf_free_link: notifPdfUrl,
+                  important_links: {
+                    ...il,
+                    official_website: safe(il.official_website || bestPortalUrl),
+                    notification_pdf: notifPdfUrl,
+                  },
+                  basic_details: { ...bd, source_url: bestPortalUrl },
+                  important_dates: det.important_dates || {},
+                  application_fee: det.application_fee || {},
+                  age_limit: det.age_limit || {},
+                  qualification: det.qualification || {},
+                  salary_details: det.salary_details || {},
+                  selection_process: det.selection_process || [],
+                  short_information: safe(bd.short_information || ''),
+                  total_post: safe(item.name || '').match(/(\d+)\s*[Pp]osts?/)?.[1] || '',
+                  last_date: safe(item.lastDate || item.date || ''),
+                  useful_links: Array.isArray(det.useful_links) ? det.useful_links : [],
+                };
+                const parsed = parseFullJob(fullJob, secId);
+                if (parsed.title) dailyItems.push(parsed);
               }
             }
           }
