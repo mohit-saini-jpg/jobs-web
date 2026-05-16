@@ -282,11 +282,62 @@
     }
   }
 
+  /* ══════════════════════════════════════════════════════════════
+   * GLOBAL ITEM VALIDATOR
+   * Runs on EVERY item from EVERY JSON file before it enters allData.
+   * Blocks: nav/category links, tools, external non-job URLs, garbage.
+   * ══════════════════════════════════════════════════════════════ */
+  function isValidJobItem(item) {
+    const title = (item.title || '').trim();
+    const slug  = (item.slug  || '').trim();
+
+    // 1. Title must exist and be meaningful
+    if (!title || title.length < 5) return false;
+
+    // 2. Must have a URL
+    if (!slug || slug === '#') return false;
+
+    // 3. Block pure nav/category labels like "SSC Jobs", "BSC Jobs", "Assam", "Manipur"
+    const navLabelRx = /^(ssc|bsc|msc|ba|bca|bba|mca|mba|iti|diploma|b\.?tech|be|railway|police|bank|army|navy|air force|upsc|bpsc|hpsc|rpsc|mpsc|tnpsc|sarkari|central|defence|teaching|medical|haryana|punjab|rajasthan|uttar pradesh|up|bihar|gujarat|maharashtra|assam|manipur|sikkim|himachal|himachal pradesh|meghalaya|tripura|nagaland|arunachal|mizoram|jharkhand|chhattisgarh|uttarakhand|odisha|telangana|andhra|karnataka|kerala|west bengal|goa|delhi|jammu|ladakh|chandigarh|mp|hp|assistant)\s*(jobs?|pass|result|admit card|vacancy|bharti|naukri|recruitment|exam|form|notification|updates?|news)?$/i;
+    if (navLabelRx.test(title.trim())) return false;
+
+    // 4. Block titles that are ONLY a state/region name
+    const LONE_STATES = new Set(['assam','manipur','sikkim','meghalaya','tripura','nagaland','mizoram','goa','himachal','uttarakhand','chhattisgarh','jharkhand','telangana','odisha','maharashtra','gujarat','punjab','haryana','bihar','rajasthan']);
+    if (LONE_STATES.has(title.toLowerCase().trim())) return false;
+
+    // 5. Block tool/utility items by title
+    if (/\b(image.?resizer|image.?quality|pdf.?tool|video.?compress|mp4.?to|photo.?edit|qr.?code|word.?to|compress.?image|convert.?image)\b/i.test(title)) return false;
+
+    // 6. Block external URLs that are clearly tools/utilities (not govt/sarkari)
+    if (/^https?:\/\//i.test(slug)) {
+      const allowedExternal = /sarkarijob|sarkariresult|employment|naukri|rojgar|\.gov\.in|\.nic\.in|\.edu\.in|ssc\.gov|railway\.gov|ibps|upsc\.gov|bpsc|hpsc|rssb|crpf\.gov|joinindianarmy|indiannavy|indianairforce|topsarkarijobs/i;
+      if (!allowedExternal.test(slug)) return false;
+    }
+
+    // 7. Block internal nav/category page links
+    if (/\/(tools|govt-services|category|state-jobs\.html|about|contact|index\.html?)(\?|$)/i.test(slug)) return false;
+
+    // 8. Block view.html?section=... links — these are category pages not job pages
+    if (/^view\.html\?section=/i.test(slug)) return false;
+
+    // 9. Short titles (<20 chars) must contain a job-posting keyword
+    if (title.length < 20) {
+      const hasJobKeyword = /\b(20[0-9]{2}|post|form|result|admit|vacancy|bharti|recruitment|exam|notification|online|offline|apply)\b/i.test(title);
+      if (!hasJobKeyword) return false;
+    }
+
+    return true;
+  }
+
   /* ── MERGE BATCH INTO allData (deduplicated) ────────────── */
   function mergeItems(extra, totalLoaded) {
     if (!extra.length) return;
     const seen = new Set(allData.map(d => dedupeKey(d.slug)));
-    extra.forEach(item => {
+    // Run global validator on every item before merging
+    const valid = extra.filter(item => isValidJobItem(item));
+    const blocked = extra.length - valid.length;
+    if (blocked > 0) console.log('[smart-search] Blocked', blocked, 'non-job items from index.');
+    valid.forEach(item => {
       const key = dedupeKey(item.slug);
       if (!seen.has(key)) { seen.add(key); allData.push(item); }
     });
