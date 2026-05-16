@@ -556,6 +556,7 @@
       display: flex;
       align-items: center;
       padding: 8px 0;
+      contain: strict;
     }
     /* Two identical sets side-by-side for seamless infinite loop */
     .ticker-belt {
@@ -563,6 +564,7 @@
       align-items: center;
       white-space: nowrap;
       will-change: transform;
+      transform: translateZ(0); /* Force GPU compositing layer */
       animation: ticker-scroll var(--ticker-duration, 40s) linear infinite;
     }
     .ticker-belt:hover,
@@ -570,8 +572,8 @@
       animation-play-state: paused;
     }
     @keyframes ticker-scroll {
-      0%   { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
+      0%   { transform: translateX(0) translateZ(0); }
+      100% { transform: translateX(-50%) translateZ(0); }
     }
     .ticker-item {
       display: inline-flex;
@@ -1308,7 +1310,7 @@
       <a class="brand" href="./" aria-label="Top Sarkari Jobs Home">
         <picture>
           <source srcset="image.webp" type="image/webp">
-          <img src="image.png" alt="Top Sarkari Jobs Logo" class="brand-logo" width="40" height="40" fetchpriority="high">
+          <img src="logo-80.webp" alt="Top Sarkari Jobs Logo" class="brand-logo" width="40" height="40" fetchpriority="high" decoding="async">
         </picture>
         <div class="brand-text">
           <span class="brand-title">TOP <span>SARKARI</span> JOBS</span>
@@ -2472,7 +2474,8 @@
         grid.scrollBy({ left: step, behavior: 'smooth' });
       });
       grid.addEventListener('scroll', updateArrows, { passive: true });
-      updateArrows();
+      // Defer initial arrow check after first paint — avoids forced reflow on load
+      requestAnimationFrame(function() { requestAnimationFrame(updateArrows); });
     });
   })();
   </script>
