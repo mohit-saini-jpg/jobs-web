@@ -55,34 +55,102 @@
       .slice(0, 120) || "official-link";
   }
 
+  /*
+   * ══════════════════════════════════════════════════════════════════════
+   *  convertJobsDataToSections — MULTI-FORMAT FIX
+   *
+   *  Complete_Jobs_Full_Data.json ke teen possible structures handle karta hai:
+   *
+   *  Format A (Expected):
+   *    { "Railway_Jobs": [{basic_details:{job_title}, important_dates:{...}}], ... }
+   *
+   *  Format B (Flat jobs array with category field):
+   *    { "jobs": [{ "title": "...", "category": "Railway_Jobs", ... }] }
+   *
+   *  Format C (Alternative key names — title at root, different date keys):
+   *    { "Railway_Jobs": [{ "title": "...", "last_date": "...", "slug": "..." }] }
+   *
+   *  Aur cross-key aliases bhi handle karta hai, jaise:
+   *    "railway_jobs" → "Railway_Jobs", "RAILWAY_JOBS" → "Railway_Jobs"
+   * ══════════════════════════════════════════════════════════════════════
+   */
   function convertJobsDataToSections(rawData) {
     if (!rawData || typeof rawData !== "object" || Array.isArray(rawData)) return { sections: [] };
+
+    /* ── Format B: flat jobs[] array with category field ── */
+    if (Array.isArray(rawData.jobs) && rawData.jobs.length > 0) {
+      /* Group flat jobs into per-category buckets */
+      const buckets = {};
+      rawData.jobs.forEach(job => {
+        /* category field ke possible names */
+        const cat = (job.category || job.sr_category || job.cat || "").trim();
+        if (!cat) return;
+        if (!buckets[cat]) buckets[cat] = [];
+        buckets[cat].push(job);
+      });
+      /* Rebuild rawData so Format A logic below handles it */
+      rawData = buckets;
+    }
+
+    /* ── Build a normalised key lookup (case-insensitive + underscore-flexible) ── */
+    /* e.g. rawData may have "railway_jobs" but JOBS_CAT_META has "Railway_Jobs" */
+    const rawKeys = Object.keys(rawData);
+    function findRawKey(catKey) {
+      /* Exact match first */
+      if (rawData[catKey] !== undefined) return catKey;
+      /* Case-insensitive match */
+      const lower = catKey.toLowerCase();
+      for (const k of rawKeys) {
+        if (k.toLowerCase() === lower) return k;
+      }
+      return null;
+    }
+
     const sections = [];
     for (const [catKey, meta] of Object.entries(JOBS_CAT_META)) {
-      const jobs = rawData[catKey];
+      const resolvedKey = findRawKey(catKey);
+      if (!resolvedKey) continue;
+      const jobs = rawData[resolvedKey];
       if (!Array.isArray(jobs) || !jobs.length) continue;
+
       const items = jobs.map(job => {
+        /* ── Normalise job object across all formats ──
+           Format A: job.basic_details.job_title
+           Format B/C: job.title / job.name / job.post_name
+        */
         const bd    = job.basic_details || {};
         const dates = job.important_dates || {};
-        const links = job.important_links || {};
-        const name  = (bd.job_title || "").trim();
+
+        const name = (
+          bd.job_title   ||
+          bd.post_name   ||
+          job.title      ||
+          job.job_title  ||
+          job.name       ||
+          job.post_name  ||
+          ""
+        ).trim();
         if (!name) return null;
 
-        /* Build job.html URL from slug */
-        const slug = slugifyForJob(name);
-        const url  = "job.html?slug=" + encodeURIComponent(slug) + "&section=" + encodeURIComponent(meta.id);
-
-        /* Try multiple date keys */
+        /* Date: try all common field names */
         const last = (
           dates.last_date_to_apply ||
-          dates.last_date ||
-          dates.last_date_apply ||
-          dates.closing_date ||
+          dates.last_date          ||
+          dates.last_date_apply    ||
+          dates.closing_date       ||
+          job.last_date_to_apply   ||
+          job.last_date            ||
+          job.closing_date         ||
           ""
         ).trim();
 
+        /* Slug: use existing or generate */
+        const slug = job.slug || bd.slug || slugifyForJob(name);
+        const url  = "job.html?slug=" + encodeURIComponent(slug) + "&section=" + encodeURIComponent(meta.id);
+
         return { slug, name, url, date: last || "" };
       }).filter(Boolean);
+
       if (!items.length) continue;
       sections.push({ id: meta.id, title: meta.title, color: meta.color, icon: meta.icon, viewMoreType: "list", items });
     }
