@@ -686,16 +686,23 @@
     /* ── Item type detection ── */
     function isJobItem(name) {
       const n = safe(name).toLowerCase();
-      return /last\s*date/i.test(n) || /recruitment|vacancy|vacancies|apply online|online form|result|admit card|answer key|syllabus|notification/i.test(n);
+      /* Job-related keywords — covers admit card, exam city, NEET, entrance, etc. */
+      return /last\s*date/i.test(n) ||
+             /recruitment|vacancy|vacancies|apply\s*online|online\s*form|result|admit\s*card|answer\s*key|syllabus|notification/i.test(n) ||
+             /exam\s*city|exam\s*date|exam\s*pattern|entrance|neet|jee|cuet|upsc|ssc|railway|police|bank\s*job|sarkari/i.test(n) ||
+             /re\s*exam|re-exam|hall\s*ticket|call\s*letter|merit\s*list|cut\s*off|score\s*card|counselling/i.test(n);
     }
 
     function detectNonJobType(name) {
       const n = safe(name).toLowerCase();
+      /* Job-specific types FIRST — before generic news/update check */
+      if (/admit\s*card|hall\s*ticket|call\s*letter/i.test(n)) return { label: 'Admit Card', icon: 'fa-id-card', color: 'linear-gradient(135deg,#7c3aed,#5b21b6)' };
+      if (/result|merit\s*list|cut\s*off|score\s*card/i.test(n)) return { label: 'Result', icon: 'fa-trophy', color: 'linear-gradient(135deg,#b45309,#92400e)' };
+      if (/answer\s*key/i.test(n)) return { label: 'Answer Key', icon: 'fa-key', color: 'linear-gradient(135deg,#b45309,#92400e)' };
+      if (/exam\s*city|exam\s*centre|exam\s*date|entrance|neet|jee|cuet/i.test(n)) return { label: 'Exam Update', icon: 'fa-id-card', color: 'linear-gradient(135deg,#7c3aed,#5b21b6)' };
       if (/scheme|yojna|yojana/i.test(n)) return { label: 'Govt Scheme / Yojna', icon: 'fa-landmark', color: 'linear-gradient(135deg,#059669,#047857)' };
-      if (/csc|pdf|vle|digital seva/i.test(n)) return { label: 'CSC Resource', icon: 'fa-file-pdf', color: 'linear-gradient(135deg,#dc2626,#b91c1c)' };
-      if (/khabar|news|latest|update/i.test(n)) return { label: 'Latest Khabar', icon: 'fa-newspaper', color: 'linear-gradient(135deg,#ea580c,#c2410c)' };
-      if (/admit card/i.test(n)) return { label: 'Admit Card', icon: 'fa-id-card', color: 'linear-gradient(135deg,#7c3aed,#5b21b6)' };
-      if (/result/i.test(n)) return { label: 'Result', icon: 'fa-trophy', color: 'linear-gradient(135deg,#b45309,#92400e)' };
+      if (/csc|vle|digital seva/i.test(n)) return { label: 'CSC Resource', icon: 'fa-file-pdf', color: 'linear-gradient(135deg,#dc2626,#b91c1c)' };
+      if (/khabar|news/i.test(n)) return { label: 'Latest Khabar', icon: 'fa-newspaper', color: 'linear-gradient(135deg,#ea580c,#c2410c)' };
       return { label: 'Important Link', icon: 'fa-link', color: 'linear-gradient(135deg,#475569,#334155)' };
     }
 
@@ -2011,8 +2018,20 @@
         } else {
           const name = row.title || humanizeSlug(rawSlug);
           const destUrl = row.destUrl || refUrl || '';
-          /* For ALL rows with a URL — render with Click Here button regardless of isJobItem */
-          if (isJobItem(name)) {
+          /* When row found from JSON — use category field OR useful_links presence to decide layout.
+             SR_Admit_Card, SR_Result, SR_Latest_Jobs, SR_Answer_Key etc. → always JobPage
+             Only fall to nonJob if category explicitly says scheme/khabar AND no usefulLinks */
+          const rowCat = safe(row.category || row.secId || '').toLowerCase();
+          const isJobRow = rowCat.includes('sr_') ||
+                          rowCat.includes('job') ||
+                          rowCat.includes('admit') ||
+                          rowCat.includes('result') ||
+                          rowCat.includes('railway') ||
+                          rowCat.includes('bank') ||
+                          rowCat.includes('police') ||
+                          (row.usefulLinks && row.usefulLinks.length > 0) ||
+                          isJobItem(name);
+          if (isJobRow) {
             renderJobPage(name, destUrl, parseJob(name), Object.assign({}, row, { destUrl }));
             /* Inject dynamic sections (how_to_apply, faq, exam_pattern, etc.) */
             if (window.__TSJ_RENDER_EXTRA && _rawJobData) window.__TSJ_RENDER_EXTRA(_rawJobData, row);
@@ -2044,6 +2063,10 @@
         /* ALWAYS hide spinner and show content — no matter what happened above */
         loading.style.display = 'none';
         threeCol.style.display = 'grid';
+        /* Hide error box if content rendered successfully */
+        if (errorEl && errorEl.style.display !== 'block') {
+          errorEl.style.display = 'none';
+        }
       }
     })();
   })();
