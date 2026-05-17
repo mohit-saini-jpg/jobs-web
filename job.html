@@ -672,8 +672,16 @@
     function today() {
       return new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
     }
-
-    /* ── Slug from early-resolution script ── */
+    /* ── Date formatter: any input → MM/DD/YYYY ── */
+    function fmtDate(val) {
+      if (!val || typeof val !== 'string') return val;
+      var s = val.trim();
+      var m = s.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
+      if (m) return ('0'+m[2]).slice(-2)+'/'+('0'+m[3]).slice(-2)+'/'+m[1];
+      m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+      if (m) return ('0'+m[2]).slice(-2)+'/'+('0'+m[1]).slice(-2)+'/'+m[3];
+      return s;
+    }
     const rawSlug = window.__TSJ_SLUG || '';
 
     /* ── DOM refs ── */
@@ -821,16 +829,16 @@
 
       document.getElementById('statOrg').textContent      = org;
       document.getElementById('statPosts').textContent    = totalVac;
-      document.getElementById('statLastDate').textContent = lastDate;
+      document.getElementById('statLastDate').textContent = fmtDate(lastDate);
       document.getElementById('statApplyMode').textContent= applyMode;
       document.getElementById('overviewTitle').textContent= name.replace(/\s+(2025|2026|2027).*/i,'') + ' ' + parsed.year + ' : Overview';
       document.getElementById('dateToday').textContent    = today();
 
       if (lastDate && lastDate !== 'See Notification') {
         document.getElementById('metaLastDateWrap').style.display = '';
-        document.getElementById('metaLastDate').textContent = 'Last Date: ' + lastDate;
+        document.getElementById('metaLastDate').textContent = 'Last Date: ' + fmtDate(lastDate);
         document.getElementById('dateLastRow').style.display = '';
-        document.getElementById('dateLastVal').textContent = lastDate;
+        document.getElementById('dateLastVal').textContent = fmtDate(lastDate);
         try {
           const parts = lastDate.split(/[-\/]/);
           const d = new Date(parts[2], parts[1]-1, parts[0]);
@@ -880,12 +888,12 @@
         ['Job Type',             safe((row && row.category) || parsed.category.label || 'Govt Job')],
         ['Application Mode',     applyMode],
         salary ? ['Salary / Pay Scale', salary] : null,
-        (row && row.appBegin) ? ['Application Begin',      row.appBegin]  : null,
-        { label: 'Last Date to Apply', val: lastDate, cls: 'lastdate-row' },
-        (row && row.feeLastDate) ? ['Fee Payment Last Date', row.feeLastDate] : null,
-        (row && row.examDate)    ? ['Exam Date',             row.examDate]    : null,
-        (row && row.admitDate)   ? ['Admit Card',            row.admitDate]   : null,
-        (row && row.resultDate)  ? ['Result Date',           row.resultDate]  : null,
+        (row && row.appBegin) ? ['Application Begin',      fmtDate(row.appBegin)]  : null,
+        { label: 'Last Date to Apply', val: fmtDate(lastDate), cls: 'lastdate-row' },
+        (row && row.feeLastDate) ? ['Fee Payment Last Date', fmtDate(row.feeLastDate)] : null,
+        (row && row.examDate)    ? ['Exam Date',             fmtDate(row.examDate)]    : null,
+        (row && row.admitDate)   ? ['Admit Card',            fmtDate(row.admitDate)]   : null,
+        (row && row.resultDate)  ? ['Result Date',           fmtDate(row.resultDate)]  : null,
         ['Official Website',     'Visit links below'],
       ].filter(Boolean);
 
@@ -905,13 +913,13 @@
       /* ── Important Dates card ── */
       const dateRows = [];
       if (row) {
-        if (row.appBegin)    dateRows.push({ l: 'Application Start',       v: row.appBegin,    red: false });
-        if (row.lastDate)    dateRows.push({ l: 'Last Date to Apply',      v: row.lastDate,    red: true  });
-        if (row.feeLastDate) dateRows.push({ l: 'Fee Payment Last Date',   v: row.feeLastDate, red: false });
-        if (row.corrDate)    dateRows.push({ l: 'Correction Last Date',    v: row.corrDate,    red: false });
-        if (row.examDate)    dateRows.push({ l: 'Exam Date',               v: row.examDate,    red: false });
-        if (row.admitDate)   dateRows.push({ l: 'Admit Card Date',         v: row.admitDate,   red: false });
-        if (row.resultDate)  dateRows.push({ l: 'Result Date',             v: row.resultDate,  red: false });
+        if (row.appBegin)    dateRows.push({ l: 'Application Start',       v: fmtDate(row.appBegin),    red: false });
+        if (row.lastDate)    dateRows.push({ l: 'Last Date to Apply',      v: fmtDate(row.lastDate),    red: true  });
+        if (row.feeLastDate) dateRows.push({ l: 'Fee Payment Last Date',   v: fmtDate(row.feeLastDate), red: false });
+        if (row.corrDate)    dateRows.push({ l: 'Correction Last Date',    v: fmtDate(row.corrDate),    red: false });
+        if (row.examDate)    dateRows.push({ l: 'Exam Date',               v: fmtDate(row.examDate),    red: false });
+        if (row.admitDate)   dateRows.push({ l: 'Admit Card Date',         v: fmtDate(row.admitDate),   red: false });
+        if (row.resultDate)  dateRows.push({ l: 'Result Date',             v: fmtDate(row.resultDate),  red: false });
       }
       const datesCard = document.getElementById('datesDetailCard');
       if (datesCard && dateRows.length > 0) {
