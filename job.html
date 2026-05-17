@@ -114,7 +114,7 @@
     /* ── Reset & Base ── */
     *,*::before,*::after{box-sizing:border-box;}
     html,body{height:100%;margin:0;}
-    html{scroll-padding-top:100px;}
+    html{scroll-padding-top:140px;}
     body{display:flex;flex-direction:column;font-family:inherit;background:#f0f4f8;}
     main{flex:1;}
 
@@ -122,12 +122,12 @@
     .header-logo-bar{background:#fff!important;}
     .desktop-nav{position:relative;z-index:499;}
 
-    .jp-wrap{max-width:1200px;margin:0 auto;padding:12px 12px 40px;}
+    .jp-wrap{max-width:1200px;margin:0 auto;padding:14px 12px 40px;}
     .jp-three-col{display:grid;grid-template-columns:220px 1fr 280px;gap:16px;align-items:start;}
     @media(max-width:1024px){.jp-three-col{grid-template-columns:1fr 260px;}}
     @media(max-width:768px){.jp-three-col{grid-template-columns:1fr;}}
 
-    .jp-left-nav{position:sticky;top:100px;}
+    .jp-left-nav{position:sticky;top:var(--header-height,140px);}
     @media(max-width:1024px){.jp-left-nav{display:none;}}
     .jp-left-nav-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:14px;}
     .jp-left-nav-head{background:linear-gradient(135deg,#1d4ed8,#1d6dbc);color:#fff;font-size:.78rem;font-weight:700;padding:9px 12px;display:flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:.05em;}
@@ -213,7 +213,7 @@
     .jp-tips-list{padding:10px 14px 12px;margin:0;}
     .jp-tips-list li{font-size:.81rem;color:#334155;line-height:1.9;padding:0;}
 
-    .jp-right-sidebar{position:sticky;top:100px;}
+    .jp-right-sidebar{position:sticky;top:var(--header-height,140px);}
     @media(max-width:768px){.jp-right-sidebar{position:static;}}
     .jp-dates-card .jp-sec-head{background:#dc2626;}
     .jp-date-row{display:flex;justify-content:space-between;align-items:baseline;padding:9px 13px;font-size:.82rem;border-bottom:1px solid #f1f5f9;}
@@ -2075,5 +2075,36 @@
   <script src="/script.js?v=20260516" defer></script>
   <!-- JSON-Driven Dynamic Job Rendering System — PATCH -->
   <script src="/job-renderer-patch.js?v=20260516" defer></script>
+  <!-- Header height fix: dynamically update --header-height CSS variable -->
+  <script>
+  (function(){
+    function updateHeaderHeight(){
+      var h = document.getElementById('site-header');
+      if(h){
+        var ht = h.getBoundingClientRect().height;
+        if(ht > 0){
+          document.documentElement.style.setProperty('--header-height', (ht + 8) + 'px');
+          document.documentElement.style.scrollPaddingTop = (ht + 8) + 'px';
+        }
+      }
+    }
+    // Run on load and after header is likely injected
+    window.addEventListener('load', updateHeaderHeight);
+    setTimeout(updateHeaderHeight, 300);
+    setTimeout(updateHeaderHeight, 800);
+    window.addEventListener('resize', updateHeaderHeight);
+    // MutationObserver to catch dynamic header injection
+    var obs = new MutationObserver(function(){ updateHeaderHeight(); });
+    var target = document.getElementById('site-header');
+    if(target) obs.observe(target, {childList:true, subtree:true});
+    else {
+      var bodyObs = new MutationObserver(function(){
+        var t = document.getElementById('site-header');
+        if(t){ obs.observe(t, {childList:true, subtree:true}); bodyObs.disconnect(); }
+      });
+      bodyObs.observe(document.body, {childList:true, subtree:false});
+    }
+  })();
+  </script>
 </body>
 </html>
