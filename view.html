@@ -768,13 +768,11 @@
                         // Otherwise fall back to redirect hash system
                         let href;
                         if (i.slug) {
-                          // Strip any SR_* / category prefix that may have been stored in slug field
-                          // e.g. "sr_admit_card-bihar-bpsc-33..." → "bihar-bpsc-33..."
-                          const cleanSlug = i.slug.replace(/^[a-zA-Z][a-zA-Z0-9]*_[a-zA-Z0-9_]*-/i, '') || i.slug;
-                          const qs = new URLSearchParams();
-                          qs.set("slug", cleanSlug);
-                          if (sectionParam) qs.set("section", sectionParam);
-                          href = `job.html?${qs.toString()}`;
+                          // Use full original slug (with SR_* prefix intact) in /jobs/ URL format
+                          // so job.html can match it exactly in /jobs/data/<slug>.json lookup
+                          // Also pass ref URL if available so job.html can render even on fuzzy-match failure
+                          const refPart = (i.url || i.link) ? '?ref=' + encodeURIComponent(i.url || i.link) : '';
+                          href = `/jobs/${encodeURIComponent(i.slug)}/${refPart}`;
                         } else {
                           href = buildRedirectUrl(i.url || i.link, label) || (i.url || i.link || '#');
                         }
