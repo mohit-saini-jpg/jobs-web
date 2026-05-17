@@ -157,10 +157,22 @@
     return { sections };
   }
 
-  /* Fetch Complete_Jobs_Full_Data.json and return it as sections format */
+  /* ── Pre-fetch JSON immediately when script loads (NOT waiting for DOMContentLoaded)
+     This gives ~300-600ms head-start so data is ready by the time DOM is parsed.
+  ── */
+  const __jobsDataPromise = (function() {
+    if (typeof fetch === 'undefined') return Promise.resolve(null);
+    return fetch('Complete_Jobs_Full_Data.json')
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .catch(function() { return null; });
+  })();
+
+  /* Fetch Complete_Jobs_Full_Data.json — uses pre-fetched promise for speed */
   async function getJobsSections() {
     try {
-      const raw = await getJSON("Complete_Jobs_Full_Data.json");
+      const raw = await __jobsDataPromise || await getJSON("Complete_Jobs_Full_Data.json");
+      if (!raw) return { sections: [] };
+      __jsonCache.set("Complete_Jobs_Full_Data.json", Promise.resolve(raw));
       return convertJobsDataToSections(raw);
     } catch (_) { return { sections: [] }; }
   }
@@ -168,14 +180,34 @@
   // ISSUE-002: memoize JSON fetches so dynamic-sections.json (474KB) and the
   // siblings are downloaded once per page load instead of 2-3 times.
   const __jsonCache = new Map();
+
+  /* ── sessionStorage cache for Complete_Jobs_Full_Data.json (30 min) ──
+     Avoids re-downloading ~1MB JSON on every page refresh.
+  ── */
+  (function primeJobsCache() {
+    try {
+      const KEY = '__cjfd_v1', TTL = 30 * 60 * 1000;
+      const hit = JSON.parse(sessionStorage.getItem(KEY) || 'null');
+      if (hit && (Date.now() - hit.ts) < TTL) {
+        __jsonCache.set('Complete_Jobs_Full_Data.json', Promise.resolve(hit.data));
+        return;
+      }
+      // __jobsDataPromise will fetch; we save it after resolve
+      if (typeof __jobsDataPromise !== 'undefined') {
+        __jobsDataPromise.then(function(data) {
+          if (!data) return;
+          try { sessionStorage.setItem(KEY, JSON.stringify({ ts: Date.now(), data: data })); } catch(e) {}
+        });
+      }
+    } catch(e) {}
+  })();
+
   function getJSON(path) {
     if (__jsonCache.has(path)) return __jsonCache.get(path);
     const p = fetch(path).then((r) => {
       if (!r.ok) throw new Error("HTTP " + r.status + " for " + path);
       return r.json();
     });
-    // Drop the cache entry on rejection so a transient network error doesn't
-    // poison the rest of the page.
     p.catch(() => __jsonCache.delete(path));
     __jsonCache.set(path, p);
     return p;
@@ -2090,13 +2122,15 @@
     initFAQ();
 
     if (page === "index.html" || page === "") {
-      await renderHomepageSections();
-      // Defer below-fold daily updates sections — not in critical path
+      // ── SPEED FIX: render sections WITHOUT waiting for header/footer inject ──
+      // renderHomepageSections runs in parallel with injectHeaderFooter
+      renderHomepageSections();
+      // Daily updates: defer to idle time (below fold, not critical)
       var deferDailyUpdates = function() {
         renderDailyUpdatesSections();
       };
       if ('requestIdleCallback' in window) {
-        requestIdleCallback(deferDailyUpdates, { timeout: 3000 });
+        requestIdleCallback(deferDailyUpdates, { timeout: 1500 });
       } else {
         setTimeout(deferDailyUpdates, 1500);
       }
