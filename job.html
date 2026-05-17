@@ -1821,6 +1821,16 @@
       const exactNoHash = items.find(it => it.slug && (it.slug === noHash || it.slug.replace(/-[0-9a-f]{5,8}$/i,'') === noHash));
       if (exactNoHash) return exactNoHash;
 
+      /* Strip leading category prefix e.g. "sr_admit_card-bihar-bpsc-33..." → "bihar-bpsc-33..." */
+      const noPrefix = noHash.replace(/^[a-z][a-z0-9]*_[a-z0-9_]*-/i, '');
+      if (noPrefix && noPrefix !== noHash) {
+        const exactNoPrefix = items.find(it => it.slug && (
+          it.slug === noPrefix ||
+          it.slug.replace(/-[0-9a-f]{5,8}$/i,'') === noPrefix
+        ));
+        if (exactNoPrefix) return exactNoPrefix;
+      }
+
       /* Fingerprint match — matches items from dailyupdates.json via URL hash */
       const fpMatch = items.find(it => it.fp && noHash.endsWith(it.fp));
       if (fpMatch) return fpMatch;
@@ -1845,8 +1855,9 @@
       }
 
       /* Token-based fuzzy match on title (works for all items including dailyupdates) */
-      /* Use noHash with and-normalization for better matching */
-      const normSlug = slugToNormTitle(noHash);
+      /* Use noPrefix (category-stripped) slug with and-normalization for better matching */
+      const matchBase = (noPrefix && noPrefix !== noHash) ? noPrefix : noHash;
+      const normSlug = slugToNormTitle(matchBase);
       const tokens = normSlug.split(/\s+/).filter(t => t.length > 2);
       if (!tokens.length) return null;
 
@@ -1894,6 +1905,14 @@
       const _slugVariants = (() => {
         const s = rawSlug;
         const variants = new Set([s]);
+        /* Strip leading category prefix e.g. "sr_admit_card-bihar-bpsc-33..." → "bihar-bpsc-33..." */
+        /* Pattern: word_word- prefix (like SR_Admit_Card-, SR_Latest_Jobs-, etc.) */
+        const noPrefix = s.replace(/^[a-zA-Z][a-zA-Z0-9]*_[a-zA-Z0-9_]*-/i, '');
+        if (noPrefix && noPrefix !== s) {
+          variants.add(noPrefix);
+          variants.add(noPrefix.replace(/-[0-9a-f]{5,8}$/i, ''));
+          variants.add(noPrefix.replace(/-and-/g, '-'));
+        }
         /* "andaman-and-nicobar" → "andaman-nicobar" (remove lone 'and-' between words) */
         variants.add(s.replace(/-and-/g, '-'));
         /* "ng-and-group" → "ng-group" */
