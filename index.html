@@ -48,6 +48,12 @@
   <!-- Preload critical JSON data for faster card rendering -->
   <link rel="preload" href="merged_sarkari_data.json" as="fetch" crossorigin="anonymous"/>
   <link rel="preload" href="dailyupdates.json" as="fetch" crossorigin="anonymous"/>
+  <!-- PERF: shared promise for merged_sarkari_data.json — fetched only ONCE, used by ticker + section cards -->
+  <script>
+  window.__mergedDataPromise = fetch('merged_sarkari_data.json')
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .catch(function(){ return null; });
+  </script>
 
   <meta property="og:type" content="website"/>
   <meta property="og:url" content="https://www.topsarkarijobs.com/"/>
@@ -1798,20 +1804,18 @@
     var BASE_SPEED  = 50;
     var LATEST_JOBS_URL = 'https://www.topsarkarijobs.com/view.html?section=SR_Latest_Jobs';
 
-    /* ── fetch merged_sarkari_data.json with 5-min cache ── */
+    /* ── fetch merged_sarkari_data.json — reuse shared promise (no duplicate download) ── */
     function fetchJobs() {
       var CACHE_KEY = '__ticker_sr_cache';
-      var CACHE_TTL = 5 * 60 * 1000;
+      var CACHE_TTL = 15 * 60 * 1000; // 15 min
       try {
         var cached = JSON.parse(sessionStorage.getItem(CACHE_KEY) || 'null');
         if (cached && (Date.now() - cached.ts) < CACHE_TTL) return Promise.resolve(cached.data);
       } catch(e) {}
 
-      return fetch('merged_sarkari_data.json', { cache: 'no-cache' })
-        .then(function(r) {
-          if (!r.ok) throw new Error('HTTP ' + r.status);
-          return r.json();
-        })
+      // Reuse shared window.__mergedDataPromise (fetched once at page start)
+      return (window.__mergedDataPromise || fetch('merged_sarkari_data.json').then(function(r){ return r.json(); }))
+        .then(function(json) {
         .then(function(json) {
           try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: json })); } catch(e) {}
           return json;
@@ -1938,6 +1942,9 @@
         <div id="sr-dynamic-wrap">
           <div id="sr-sections-grid" class="sr-sections-grid">
             <!-- Cards rendered by inline script below -->
+            <div class="sr-card"><div class="sr-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div></div>
+            <div class="sr-card"><div class="sr-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div></div>
+            <div class="sr-card"><div class="sr-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div></div>
             <div class="sr-card"><div class="sr-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div></div>
             <div class="sr-card"><div class="sr-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div></div>
             <div class="sr-card"><div class="sr-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div></div>
@@ -2871,7 +2878,7 @@
 
     function loadData() {
       var CACHE_KEY = '__sr_merged_v1';
-      var CACHE_TTL = 5 * 60 * 1000;
+      var CACHE_TTL = 15 * 60 * 1000; // 15 min
 
       try {
         var cached = JSON.parse(sessionStorage.getItem(CACHE_KEY) || 'null');
@@ -2881,12 +2888,10 @@
         }
       } catch(e) {}
 
-      fetch(JSON_FILE, { cache: 'no-cache' })
-        .then(function(res) {
-          if (!res.ok) throw new Error('HTTP ' + res.status + ' — ' + JSON_FILE);
-          return res.json();
-        })
+      // Reuse shared window.__mergedDataPromise — NO duplicate network request
+      (window.__mergedDataPromise || fetch(JSON_FILE).then(function(r){ return r.json(); }))
         .then(function(data) {
+          if (!data) throw new Error('No data');
           try {
             sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: data }));
           } catch(e) {}
@@ -2927,7 +2932,7 @@
     var list = document.getElementById('today-sidebar-list');
     if (!list) return;
 
-    fetch('dailyupdates.json', { cache: 'no-cache' })
+    fetch('dailyupdates.json')
       .then(function(r) { return r.json(); })
       .then(function(data) {
         var items = [];
