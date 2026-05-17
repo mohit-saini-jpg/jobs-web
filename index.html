@@ -45,6 +45,9 @@
   <link rel="manifest" href="/manifest.json"/>
   <link rel="dns-prefetch" href="//fonts.googleapis.com"/>
   <link rel="dns-prefetch" href="//www.googletagmanager.com"/>
+  <!-- Preload critical JSON data for faster card rendering -->
+  <link rel="preload" href="merged_sarkari_data.json" as="fetch" crossorigin="anonymous"/>
+  <link rel="preload" href="dailyupdates.json" as="fetch" crossorigin="anonymous"/>
 
   <meta property="og:type" content="website"/>
   <meta property="og:url" content="https://www.topsarkarijobs.com/"/>
@@ -683,6 +686,9 @@
     @media (min-width: 980px) {
       .home-grid { grid-template-columns: 1fr 300px; }
     }
+    @media (min-width: 1100px) {
+      .home-grid { grid-template-columns: 1fr 320px; }
+    }
     .home-sidebar {
       position: sticky; top: 86px;
       display: flex; flex-direction: column; gap: 14px;
@@ -1168,7 +1174,26 @@
       text-align: center;
       color: var(--muted);
       font-size: .78rem;
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 8px;
     }
+    /* Skeleton shimmer for loading cards */
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    .skeleton-line {
+      height: 14px; border-radius: 6px; margin: 8px 14px;
+      background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+    .skeleton-line.short { width: 60%; }
+    .skeleton-line.medium { width: 80%; }
     .sr-section-title {
       display: flex; align-items: center; gap: 10px;
       font-size: .82rem; font-weight: 900; color: var(--navy);
@@ -1185,7 +1210,8 @@
       box-shadow: var(--shadow); transition: box-shadow .2s;
       display: flex; flex-direction: column;
       content-visibility: auto;
-      contain-intrinsic-size: 0 400px;
+      contain-intrinsic-size: 0 380px;
+      will-change: auto;
     }
     .section-card:hover { box-shadow: var(--shadow-hover); }
     .section-head {
@@ -2006,6 +2032,18 @@
       <!-- ===== SIDEBAR ===== -->
       <aside class="home-sidebar" aria-label="Quick links sidebar">
 
+        <!-- TODAY UPDATES SIDEBAR CARD -->
+        <div class="sec-card" id="today-updates-sidebar">
+          <div class="sec-head red">
+            <div class="left"><i class="fa-solid fa-calendar-day"></i> TODAY'S UPDATES</div>
+            <a href="view.html?section=Today%20Updates" class="view-all-btn">View All</a>
+          </div>
+          <div class="sec-list" id="today-sidebar-list">
+            <a href="view.html?section=Today%20Updates"><i class="fa-solid fa-bolt" style="color:var(--red);"></i><span>Loading latest updates...</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+          </div>
+          <a href="view.html?section=Today%20Updates" class="sec-more">View All Today Updates →</a>
+        </div>
+
         <!-- IMPORTANT LINKS -->
         <div class="sec-card">
           <div class="sec-head red">
@@ -2287,10 +2325,10 @@
   </aside>
 
   <!-- Load existing script.js (handles dynamic sections from JSON) -->
-  <script src="script.min.js?v=20260516" defer></script>
+  <script src="script.min.js?v=20260517" defer></script>
 
   <!-- SEO Engine: Push Notifications, Recently Viewed, Share, Breadcrumb, Trending -->
-  <script src="seo-engine.min.js?v=20260516" defer></script>
+  <script src="seo-engine.min.js?v=20260517" defer></script>
 
   <!-- Service Worker Registration with Auto Update -->
   <script>
@@ -2365,7 +2403,8 @@
   </script>
 
   <!-- Smart Search System v2.0 -->
-  <script src="smart-search.min.js" defer></script>
+  <script src="smart-search.min.js?v=20260517" defer></script>
+  <script src="perf-ultra.js" defer></script>
 
   <script>
   (function () {
@@ -2878,6 +2917,43 @@
 
 
 
+
+
+  <!-- ============================================================
+       TODAY UPDATES SIDEBAR — Loads from dailyupdates.json
+  ============================================================ -->
+  <script>
+  (function loadTodaySidebar() {
+    var list = document.getElementById('today-sidebar-list');
+    if (!list) return;
+
+    fetch('dailyupdates.json', { cache: 'no-cache' })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var items = [];
+        // Try multiple formats
+        if (Array.isArray(data)) {
+          items = data.slice(0, 6);
+        } else if (data.updates && Array.isArray(data.updates)) {
+          items = data.updates.slice(0, 6);
+        } else if (data.sections && Array.isArray(data.sections)) {
+          data.sections.forEach(function(s) {
+            if (s.items) items = items.concat(s.items.slice(0, 3));
+          });
+          items = items.slice(0, 6);
+        }
+        if (!items.length) return;
+        var html = items.map(function(item) {
+          var name = item.name || item.title || '';
+          var url  = item.url  || item.link || 'view.html?section=Today%20Updates';
+          if (!name) return '';
+          return '<a href="' + url + '"><i class="fa-solid fa-bolt" style="color:var(--red);"></i><span>' + name + '</span><i class="fa-solid fa-chevron-right arrow"></i></a>';
+        }).filter(Boolean).join('');
+        if (html) list.innerHTML = html;
+      })
+      .catch(function() {});
+  })();
+  </script>
 
 </body>
 </html>
