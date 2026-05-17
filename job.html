@@ -1829,7 +1829,21 @@
           it.slug.replace(/-[0-9a-f]{5,8}$/i,'') === noPrefix
         ));
         if (exactNoPrefix) return exactNoPrefix;
+        /* Also try: item slugs that START WITH the prefix-stripped slug */
+        const prefixMatch = items.find(it => it.slug && (
+          it.slug.replace(/-[0-9a-f]{5,8}$/i,'').endsWith(noPrefix) ||
+          it.slug.replace(/-[0-9a-f]{5,8}$/i,'').includes(noPrefix)
+        ));
+        if (prefixMatch) return prefixMatch;
       }
+
+      /* Try: slug from URL contains item slug (item slug is suffix of URL slug) */
+      const suffixMatch = items.find(it => {
+        if (!it.slug) return false;
+        const itBase = it.slug.replace(/-[0-9a-f]{5,8}$/i,'');
+        return noHash.endsWith(itBase) || noHash.includes(itBase);
+      });
+      if (suffixMatch) return suffixMatch;
 
       /* Fingerprint match — matches items from dailyupdates.json via URL hash */
       const fpMatch = items.find(it => it.fp && noHash.endsWith(it.fp));
@@ -1943,7 +1957,13 @@
       if (!row && !refUrl) {
         let items = [];
         try { items = await loadAllItems(); } catch (_) {}
+        /* Try original slug first (with full prefix like sr_admit_card-...) */
         row = matchBySlug(items, rawSlug);
+        /* If still no match, try prefix-stripped variant explicitly */
+        if (!row) {
+          const noPfx = rawSlug.replace(/^[a-zA-Z][a-zA-Z0-9]*_[a-zA-Z0-9_]*-/i, '');
+          if (noPfx && noPfx !== rawSlug) row = matchBySlug(items, noPfx);
+        }
       }
 
       /* If we found a row but it has no destUrl, use refUrl */
