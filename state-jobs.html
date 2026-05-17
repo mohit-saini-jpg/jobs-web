@@ -1151,139 +1151,193 @@
     return `state-job-detail.html?state=${encodeURIComponent(stateParam)}&slug=${encodeURIComponent(slug)}`;
   }
 
+  // ═══ PARSE postDate (DD/MM/YYYY or YYYY-MM-DD or DD-MM-YYYY) ═══
+  function parsePostDate(pd) {
+    if (!pd) return 0;
+    try {
+      const parts = pd.includes('/') ? pd.split('/') : pd.split('-');
+      if (parts.length === 3) {
+        if (parts[2].length === 4) return new Date(+parts[2], +parts[1]-1, +parts[0]).getTime(); // DD/MM/YYYY
+        if (parts[0].length === 4) return new Date(+parts[0], +parts[1]-1, +parts[2]).getTime(); // YYYY-MM-DD
+      }
+    } catch(_) {}
+    return 0;
+  }
+
+  // ═══ RENDER JOB LIST ═══
+  function renderJobList(matchedItems, matchedSection, hasDetailData) {
+    const jobsList = document.getElementById('jobsList');
+
+    // Sort: newest postDate first (JSON sequence maintain karte hue)
+    const sortedItems = [...matchedItems].sort((a, b) =>
+      parsePostDate(b.postDate) - parsePostDate(a.postDate)
+    );
+
+    document.getElementById('statJobs').textContent = sortedItems.length + '+';
+
+    jobsList.innerHTML = sortedItems.map((item, i) => {
+      const title    = item.name || item.title || 'Government Job';
+      const date     = item.date || item.lastDate || '';
+      const qual     = item.qualification || '';
+      const board    = item.board || '';
+
+      const href = hasDetailData && matchedSection
+        ? jobDetailUrl(item, matchedSection)
+        : (item.url || item.link || '#');
+
+      // Urgent: last date within 7 days
+      let isUrgent = false;
+      if (item.lastDate) {
+        try {
+          const p = item.lastDate.split('-');
+          const d = new Date(+p[2], +p[1]-1, +p[0]);
+          const diff = (d - Date.now()) / 864e5;
+          isUrgent = diff >= 0 && diff <= 7;
+        } catch(_) {}
+      }
+
+      return `<a href="${href}" ${hasDetailData ? '' : 'target="_blank" rel="noopener"'}>
+        ${i < 3 ? '<span class="job-new">NEW</span>' : ''}
+        ${isUrgent ? '<span class="job-new" style="background:#e05c00;">URGENT</span>' : ''}
+        <div class="job-body">
+          <div class="job-title">${title}</div>
+          <div class="job-meta">
+            <i class="fa-solid fa-calendar" aria-hidden="true"></i> ${date || 'Apply Now'}
+            ${qual ? `&nbsp;|&nbsp; <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> ${qual.split(',')[0]}` : ''}
+            ${board ? `&nbsp;|&nbsp; <i class="fa-solid fa-building" aria-hidden="true"></i> ${board}` : ''}
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right" style="color:#d1d5db;font-size:.6rem;flex-shrink:0;margin-top:4px;"></i>
+      </a>`;
+    }).join('');
+  }
+
+  // ═══ STATE MATCHER — strict + fuzzy ═══
+  function findStateSection(sections, stateName) {
+    if (!stateName || !sections) return null;
+    const key   = stateName.toLowerCase().trim();
+    const keyId = key.replace(/\s+/g, '-');          // "rajasthan"
+    const word1 = key.split(/\s+/)[0];               // first word
+
+    // Pass 1: exact match on state field or id
+    for (const sec of sections) {
+      const sState = (sec.state || '').toLowerCase().trim();
+      const sId    = (sec.id    || '').toLowerCase().trim();
+      if (sState === key || sId === keyId || sId === key) {
+        console.log('[StateMatcher] EXACT match:', sec.id);
+        return sec;
+      }
+    }
+    // Pass 2: title includes full state name
+    for (const sec of sections) {
+      if ((sec.title || '').toLowerCase().includes(key)) {
+        console.log('[StateMatcher] TITLE match:', sec.id);
+        return sec;
+      }
+    }
+    // Pass 3: first word match on id or state (fallback)
+    for (const sec of sections) {
+      const sState = (sec.state || '').toLowerCase();
+      const sId    = (sec.id    || '').toLowerCase();
+      if (sState.startsWith(word1) || sId.startsWith(word1)) {
+        console.log('[StateMatcher] FUZZY match:', sec.id);
+        return sec;
+      }
+    }
+    console.warn('[StateMatcher] No match for:', stateName, '| Available:', sections.map(s=>s.id).join(', '));
+    return null;
+  }
+
+  // ═══ ROBUST FETCH — tries multiple paths ═══
+  async function robustFetch(filename) {
+    const paths = [
+      filename,                                           // same folder (relative)
+      './' + filename,                                    // explicit relative
+      '/'+filename,                                       // root-relative
+      'https://www.topsarkarijobs.com/' + filename,       // absolute production
+    ];
+    for (const path of paths) {
+      try {
+        const r = await fetch(path, { cache: 'no-cache' });
+        if (r.ok) {
+          const data = await r.json();
+          console.log('[Fetch] OK:', path);
+          return data;
+        }
+        console.warn('[Fetch] HTTP error', r.status, 'for', path);
+      } catch(e) {
+        console.warn('[Fetch] Failed:', path, e.message);
+      }
+    }
+    return null;
+  }
+
   // ═══ LOAD JOBS FROM state-jobs-data.json ═══
   async function loadJobs() {
     const jobsList = document.getElementById('jobsList');
 
-    try {
-      // Load state-jobs-data.json
-      let matchedSection = null;
+    // Skeleton loader while fetching
+    jobsList.innerHTML = [1,2,3,4,5].map(()=>`
+      <div class="skel-row">
+        <div class="skeleton skel-dot"></div>
+        <div class="skel-lines">
+          <div class="skeleton skel-line" style="width:85%"></div>
+          <div class="skeleton skel-line" style="width:55%"></div>
+        </div>
+      </div>`).join('');
 
-      try {
-        const r = await fetch('state-jobs-data.json');
-        if (r.ok) {
-          const data = await r.json();
-          const stateKey = (stateName || '').toLowerCase();
-          for (const sec of (data.sections || [])) {
-            if ((sec.state || '').toLowerCase() === stateKey ||
-                (sec.id || '').toLowerCase() === stateKey.replace(/ /g,'-') ||
-                (sec.title || '').toLowerCase().includes(stateKey.split(' ')[0])) {
-              matchedSection = sec;
-              break;
-            }
-          }
-        }
-      } catch(e2) {}
+    // ── Try state-jobs-data.json first ──
+    let matchedSection  = null;
+    let matchedItems    = [];
+    let hasDetailData   = false;
 
-      // Fallback: try dynamic-sections.json (old format, no detail pages)
-      let matchedItems = matchedSection ? (matchedSection.items || []) : [];
-      let hasDetailData = !!matchedSection;
-
-      if (!matchedItems.length) {
-        try {
-          const info2 = STATE_DATA[stateName];
-          const sectionKeyword = info2 ? info2.section.toLowerCase() : (stateName || '').toLowerCase();
-          const r2 = await fetch('dynamic-sections.json');
-          if (r2.ok) {
-            const data2 = await r2.json();
-            for (const sec of (data2.sections || [])) {
-              const secTitle = (sec.id || sec.title || '').toLowerCase();
-              if (secTitle.includes(sectionKeyword.split(' ')[0].toLowerCase()) ||
-                  secTitle.includes((stateName || '').toLowerCase().split(' ')[0])) {
-                matchedItems = sec.items || [];
-                hasDetailData = false;
-                break;
-              }
-            }
-          }
-        } catch(e3) {}
+    const data = await robustFetch('state-jobs-data.json');
+    if (data && data.sections) {
+      matchedSection = findStateSection(data.sections, stateName);
+      if (matchedSection) {
+        matchedItems  = matchedSection.items || [];
+        hasDetailData = true;
       }
+    }
 
-      if (!matchedItems.length) {
-        jobsList.innerHTML = `<div style="padding:20px 14px;text-align:center;color:var(--muted);font-size:.82rem;">
-          <i class="fa-solid fa-circle-info" style="font-size:1.5rem;color:var(--blue);display:block;margin-bottom:8px;"></i>
-          No specific jobs found for this state yet.<br>
-          <a href="view.html?section=latest+jobs" style="color:var(--blue);font-weight:700;margin-top:6px;display:inline-block;">
-            Check All Latest Govt Jobs →
+    // ── Fallback: dynamic-sections.json ──
+    if (!matchedItems.length) {
+      const info2          = STATE_DATA[stateName];
+      const sectionKeyword = info2 ? info2.section : stateName;
+      const data2 = await robustFetch('dynamic-sections.json');
+      if (data2 && data2.sections) {
+        const fakeSection = findStateSection(data2.sections, sectionKeyword) ||
+                            findStateSection(data2.sections, stateName);
+        if (fakeSection) {
+          matchedItems  = fakeSection.items || [];
+          matchedSection = fakeSection;
+          hasDetailData = false;
+        }
+      }
+    }
+
+    // ── No jobs found ──
+    if (!matchedItems.length) {
+      const reason = data
+        ? `"${stateName}" ka data JSON mein nahi mila`
+        : 'state-jobs-data.json load nahi hua (server pe file check karo)';
+      console.error('[LoadJobs] Failed:', reason);
+
+      jobsList.innerHTML = `
+        <div style="padding:20px 14px;text-align:center;color:var(--muted);font-size:.82rem;">
+          <i class="fa-solid fa-triangle-exclamation" style="font-size:1.5rem;color:#f97316;display:block;margin-bottom:8px;"></i>
+          <strong style="color:var(--text);">${stateName || 'This state'} ke jobs abhi add nahi hue.</strong><br>
+          <span style="font-size:.75rem;">Niche se All Jobs check karo ya baad mein dobara try karo.</span><br>
+          <a href="view.html?section=latest+jobs" style="color:var(--blue);font-weight:700;margin-top:8px;display:inline-block;">
+            ← Check All Latest Govt Jobs
           </a>
         </div>`;
-        // Update stats
-        document.getElementById('statJobs').textContent = '0';
-        return;
-      }
-
-      // Update stats
-      document.getElementById('statJobs').textContent = matchedItems.length + '+';
-
-      // ── SORT: JSON sequence preserve karo — postDate newest-first ──
-      function parsePostDate(pd) {
-        if (!pd) return 0;
-        // Formats: DD/MM/YYYY or YYYY-MM-DD or DD-MM-YYYY
-        try {
-          const parts = pd.includes('/') ? pd.split('/') : pd.split('-');
-          if (parts.length === 3) {
-            // DD/MM/YYYY
-            if (parts[2].length === 4) return new Date(+parts[2], +parts[1]-1, +parts[0]).getTime();
-            // YYYY-MM-DD
-            if (parts[0].length === 4) return new Date(+parts[0], +parts[1]-1, +parts[2]).getTime();
-          }
-        } catch(_) {}
-        return 0;
-      }
-      const sortedItems = [...matchedItems].sort((a, b) => {
-        const da = parsePostDate(a.postDate);
-        const db = parsePostDate(b.postDate);
-        return db - da; // newest first
-      });
-
-      // Render job list — link to SEO detail page if detail data available
-      jobsList.innerHTML = sortedItems.map((item, i) => {
-        const title = item.name || item.title || 'Government Job';
-        const date  = item.date || item.lastDate || '';
-        const qual  = item.qualification || '';
-        const board = item.board || '';
-        const postDate = item.postDate || '';
-
-        // Use SEO detail page URL if we have rich data, else fallback to external url
-        const href = hasDetailData && matchedSection
-          ? jobDetailUrl(item, matchedSection)
-          : (item.url || item.link || '#');
-
-        // Detect if urgent (last date within 7 days)
-        let isUrgent = false;
-        if (item.lastDate) {
-          try {
-            const parts = item.lastDate.split('-');
-            const d = new Date(parts[2], parts[1]-1, parts[0]);
-            const diff = (d - Date.now()) / 864e5;
-            isUrgent = diff >= 0 && diff <= 7;
-          } catch(_) {}
-        }
-
-        return `<a href="${href}" ${hasDetailData ? '' : 'target="_blank" rel="noopener"'}>
-          ${i < 3 ? '<span class="job-new">NEW</span>' : ''}
-          ${isUrgent ? '<span class="job-new" style="background:#dc2626;">URGENT</span>' : ''}
-          <div class="job-body">
-            <div class="job-title">${title}</div>
-            <div class="job-meta">
-              <i class="fa-solid fa-calendar" aria-hidden="true"></i> ${date || 'Apply Now'}
-              ${qual ? `&nbsp;|&nbsp; <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> ${qual.split(',')[0]}` : ''}
-              ${board ? `&nbsp;|&nbsp; <i class="fa-solid fa-building" aria-hidden="true"></i> ${board}` : ''}
-            </div>
-          </div>
-          <i class="fa-solid fa-chevron-right" style="color:#d1d5db;font-size:.6rem;flex-shrink:0;margin-top:4px;"></i>
-        </a>`;
-      }).join('');
-
-    } catch(e) {
-      jobsList.innerHTML = `<div style="padding:20px 14px;text-align:center;color:var(--muted);font-size:.82rem;">
-        <i class="fa-solid fa-briefcase" style="font-size:1.5rem;color:var(--blue);display:block;margin-bottom:8px;"></i>
-        Click below to view all state govt jobs.<br>
-        <a href="view.html?section=latest+jobs" style="color:var(--blue);font-weight:700;margin-top:6px;display:inline-block;">
-          Browse All Govt Jobs →
-        </a>
-      </div>`;
+      document.getElementById('statJobs').textContent = '0';
+      return;
     }
+
+    // ── Render ──
+    renderJobList(matchedItems, matchedSection, hasDetailData);
   }
 
   // ═══ FILL ALL STATES SIDEBAR ═══
