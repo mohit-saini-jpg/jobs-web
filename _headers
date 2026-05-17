@@ -28,7 +28,7 @@
   Content-Type: text/plain; charset=utf-8
 
 /*.json
-  Cache-Control: public, max-age=1800, stale-while-revalidate=3600
+  Cache-Control: public, max-age=7200, stale-while-revalidate=14400
   Access-Control-Allow-Origin: *
   Access-Control-Allow-Methods: GET
 
