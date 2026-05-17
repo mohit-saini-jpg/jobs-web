@@ -553,6 +553,44 @@
     }
     .two-col-sections > .sec-card { margin-bottom:0; }
     @media(max-width:600px){ .two-col-sections { grid-template-columns:1fr; } }
+
+    /* ── RICH STATE JOB ROWS ── */
+    .state-job-row {
+      display:flex; align-items:flex-start; gap:10px;
+      padding:11px 14px; border-bottom:1px solid #f1f5f9;
+      text-decoration:none; color:var(--text);
+      transition:background .12s, transform .1s;
+      flex-wrap:nowrap;
+    }
+    .state-job-row:last-child { border-bottom:none; }
+    .state-job-row:hover { background:#f0f7ff; transform:translateX(2px); }
+    .sjr-badges {
+      display:flex; gap:4px; flex-shrink:0; flex-direction:column; align-items:flex-start;
+      margin-top:2px; min-width:0;
+    }
+    .sjr-detail-tag {
+      display:inline-flex; align-items:center; gap:3px;
+      background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe;
+      font-size:.55rem; font-weight:800; padding:2px 6px; border-radius:4px;
+      white-space:nowrap; margin-top:2px;
+    }
+    .sjr-meta-row {
+      display:flex; flex-wrap:wrap; gap:5px; margin-top:5px;
+    }
+    .sjr-chip {
+      display:inline-flex; align-items:center; gap:4px;
+      background:#f8fafc; border:1px solid #e2e8f0;
+      border-radius:5px; padding:2px 7px;
+      font-size:.67rem; font-weight:700; color:#475569;
+      white-space:nowrap;
+    }
+    .sjr-chip.red  { background:#fef2f2; border-color:#fecaca; color:#dc2626; }
+    .sjr-chip.blue { background:#eff6ff; border-color:#bfdbfe; color:#1d4ed8; }
+    .sjr-chip.green{ background:#f0fdf4; border-color:#bbf7d0; color:#16a34a; }
+    .sjr-qual {
+      font-size:.69rem; color:#7c3aed; margin-top:5px;
+      line-height:1.4; font-weight:600;
+    }
   </style>
 </head>
 
@@ -1132,6 +1170,7 @@
   // ═══ SLUG GENERATOR (matches state-job-detail.html) ═══
   function makeSlug(title) {
     return (title || '').toLowerCase()
+      .normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
       .replace(/[^\w\s-]/g, '')
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-')
@@ -1141,8 +1180,10 @@
 
   // ═══ BUILD SEO-FRIENDLY JOB DETAIL URL ═══
   function jobDetailUrl(item, sectionId) {
-    const title = item.name || item.detail?.basic_details?.job_title || '';
+    const title = item.name || (item.detail && item.detail.basic_details && item.detail.basic_details.job_title) || '';
     const slug  = makeSlug(title);
+    const stateSlug = makeSlug(sectionId);
+    // Use state-job-detail.html with ?state=&slug= params
     return `state-job-detail.html?state=${encodeURIComponent(sectionId)}&slug=${encodeURIComponent(slug)}`;
   }
 
@@ -1151,18 +1192,21 @@
     const jobsList = document.getElementById('jobsList');
 
     try {
-      // Load state-jobs-data.json
       let matchedSection = null;
 
+      // ── PRIMARY: state-jobs-data.json ──
       try {
         const r = await fetch('state-jobs-data.json');
         if (r.ok) {
           const data = await r.json();
           const stateKey = (stateName || '').toLowerCase();
-          for (const sec of (data.sections || [])) {
-            if ((sec.state || '').toLowerCase() === stateKey ||
-                (sec.id || '').toLowerCase() === stateKey.replace(/ /g,'-') ||
-                (sec.title || '').toLowerCase().includes(stateKey.split(' ')[0])) {
+          const sections = data.sections || (Array.isArray(data) ? data : []);
+          for (const sec of sections) {
+            const secState = (sec.state || sec.id || sec.title || '').toLowerCase();
+            if (secState === stateKey ||
+                secState === stateKey.replace(/ /g, '-') ||
+                secState.includes(stateKey.split(' ')[0]) ||
+                stateKey.includes(secState.split('-')[0])) {
               matchedSection = sec;
               break;
             }
@@ -1170,9 +1214,10 @@
         }
       } catch(e2) {}
 
-      // Fallback: try dynamic-sections.json (old format, no detail pages)
+      // ── FALLBACK: dynamic-sections.json ──
       let matchedItems = matchedSection ? (matchedSection.items || []) : [];
-      let hasDetailData = !!matchedSection;
+      let hasDetailData = !!(matchedSection && matchedItems.length &&
+        matchedItems.some(it => it.detail && typeof it.detail === 'object'));
 
       if (!matchedItems.length) {
         try {
@@ -1183,7 +1228,7 @@
             const data2 = await r2.json();
             for (const sec of (data2.sections || [])) {
               const secTitle = (sec.id || sec.title || '').toLowerCase();
-              if (secTitle.includes(sectionKeyword.split(' ')[0].toLowerCase()) ||
+              if (secTitle.includes(sectionKeyword.split(' ')[0]) ||
                   secTitle.includes((stateName || '').toLowerCase().split(' ')[0])) {
                 matchedItems = sec.items || [];
                 hasDetailData = false;
@@ -1197,56 +1242,71 @@
       if (!matchedItems.length) {
         jobsList.innerHTML = `<div style="padding:20px 14px;text-align:center;color:var(--muted);font-size:.82rem;">
           <i class="fa-solid fa-circle-info" style="font-size:1.5rem;color:var(--blue);display:block;margin-bottom:8px;"></i>
-          No specific jobs found for this state yet.<br>
+          No specific jobs found for <strong>${stateName}</strong> yet.<br>
           <a href="view.html?section=latest+jobs" style="color:var(--blue);font-weight:700;margin-top:6px;display:inline-block;">
             Check All Latest Govt Jobs →
           </a>
         </div>`;
-        // Update stats
         document.getElementById('statJobs').textContent = '0';
         return;
       }
 
-      // Update stats
+      // Update live stats
       document.getElementById('statJobs').textContent = matchedItems.length + '+';
 
-      // Render job list — link to SEO detail page if detail data available
+      // ── RENDER RICH JOB CARDS ──
       jobsList.innerHTML = matchedItems.map((item, i) => {
-        const title = item.name || item.title || 'Government Job';
-        const date  = item.date || item.lastDate || '';
-        const qual  = item.qualification || '';
-        const board = item.board || '';
-        const postDate = item.postDate || '';
+        const title    = item.name || item.title || 'Government Job';
+        const lastDate = item.lastDate || item.date || '';
+        const bd       = (item.detail && item.detail.basic_details) || {};
+        const vac      = item.totalPost || bd.total_vacancies || bd.total_vacancy || '';
+        const sal      = (item.detail && item.detail.salary_details && item.detail.salary_details.pay_scale) || bd.salary_pay_scale || '';
+        const applyMode= bd.application_mode || bd.apply_mode || '';
+        const org      = bd.organization_name || bd.department || '';
+        const qual     = bd.education_qualification || item.qualification || '';
 
-        // Use SEO detail page URL if we have rich data, else fallback to external url
+        // ── URL: state-job-detail.html if detail data exists ──
+        const sectionId = matchedSection ? (matchedSection.id || matchedSection.state || stateName) : stateName;
         const href = hasDetailData && matchedSection
-          ? jobDetailUrl(item, matchedSection.id)
+          ? jobDetailUrl(item, sectionId)
           : (item.url || item.link || '#');
+        const isExternal = !hasDetailData;
 
-        // Detect if urgent (last date within 7 days)
-        let isUrgent = false;
-        if (item.lastDate) {
+        // ── Urgency detection ──
+        let isUrgent = false, daysLeft = null;
+        if (lastDate) {
           try {
-            const parts = item.lastDate.split('-');
-            const d = new Date(parts[2], parts[1]-1, parts[0]);
-            const diff = (d - Date.now()) / 864e5;
-            isUrgent = diff >= 0 && diff <= 7;
+            const parts = lastDate.split(/[-\/]/);
+            const d = new Date(
+              parts[2] > 100 ? +parts[2] : +(parts[2]) + 2000,
+              +parts[1] - 1,
+              +parts[0]
+            );
+            const diff = Math.ceil((d - Date.now()) / 864e5);
+            if (diff >= 0 && diff <= 7) { isUrgent = true; daysLeft = diff; }
           } catch(_) {}
         }
 
-        return `<a href="${href}" ${hasDetailData ? '' : 'target="_blank" rel="noopener"'}>
-          ${i < 3 ? '<span class="job-new">NEW</span>' : ''}
-          ${isUrgent ? '<span class="job-new" style="background:#dc2626;">URGENT</span>' : ''}
-          <div class="job-body">
-            <div class="job-title">${title}</div>
-            <div class="job-meta">
-              <i class="fa-solid fa-calendar" aria-hidden="true"></i> ${date || 'Apply Now'}
-              ${qual ? `&nbsp;|&nbsp; <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> ${qual.split(',')[0]}` : ''}
-              ${board ? `&nbsp;|&nbsp; <i class="fa-solid fa-building" aria-hidden="true"></i> ${board}` : ''}
+        return `
+          <a href="${href}" ${isExternal ? 'target="_blank" rel="noopener"' : ''} class="state-job-row">
+            <div class="sjr-badges">
+              ${i < 3 ? '<span class="job-new">NEW</span>' : ''}
+              ${isUrgent ? `<span class="job-new" style="background:#dc2626;">⚡ ${daysLeft === 0 ? 'TODAY' : daysLeft + 'd LEFT'}</span>` : ''}
+              ${hasDetailData ? '<span class="sjr-detail-tag"><i class="fa-solid fa-file-lines"></i> Full Details</span>' : ''}
             </div>
-          </div>
-          <i class="fa-solid fa-chevron-right" style="color:#d1d5db;font-size:.6rem;flex-shrink:0;margin-top:4px;"></i>
-        </a>`;
+            <div class="job-body">
+              <div class="job-title">${title}</div>
+              <div class="sjr-meta-row">
+                ${lastDate ? `<span class="sjr-chip ${isUrgent ? 'red' : ''}"><i class="fa-solid fa-calendar-xmark"></i> Last: ${lastDate}</span>` : ''}
+                ${vac      ? `<span class="sjr-chip blue"><i class="fa-solid fa-users"></i> ${vac} Posts</span>` : ''}
+                ${sal      ? `<span class="sjr-chip green"><i class="fa-solid fa-indian-rupee-sign"></i> ${sal.slice(0,30)}</span>` : ''}
+                ${applyMode? `<span class="sjr-chip"><i class="fa-solid fa-laptop"></i> ${applyMode}</span>` : ''}
+                ${org && !vac ? `<span class="sjr-chip"><i class="fa-solid fa-building"></i> ${org.slice(0,28)}</span>` : ''}
+              </div>
+              ${qual ? `<div class="sjr-qual"><i class="fa-solid fa-graduation-cap" style="color:#7c3aed;"></i> ${qual.slice(0,70)}${qual.length > 70 ? '…' : ''}</div>` : ''}
+            </div>
+            <i class="fa-solid fa-chevron-right" style="color:#d1d5db;font-size:.6rem;flex-shrink:0;margin-top:6px;"></i>
+          </a>`;
       }).join('');
 
     } catch(e) {
