@@ -157,50 +157,44 @@
     return { sections };
   }
 
-  /* ── Pre-fetch JSON immediately when script loads (NOT waiting for DOMContentLoaded)
-     This gives ~300-600ms head-start so data is ready by the time DOM is parsed.
-  ── */
-  const __jobsDataPromise = (function() {
-    if (typeof fetch === 'undefined') return Promise.resolve(null);
-    return fetch('Complete_Jobs_Full_Data.json')
-      .then(function(r) { return r.ok ? r.json() : null; })
-      .catch(function() { return null; });
-  })();
-
-  /* Fetch Complete_Jobs_Full_Data.json — uses pre-fetched promise for speed */
-  async function getJobsSections() {
-    try {
-      const raw = await __jobsDataPromise || await getJSON("Complete_Jobs_Full_Data.json");
-      if (!raw) return { sections: [] };
-      __jsonCache.set("Complete_Jobs_Full_Data.json", Promise.resolve(raw));
-      return convertJobsDataToSections(raw);
-    } catch (_) { return { sections: [] }; }
-  }
-
-  // ISSUE-002: memoize JSON fetches so dynamic-sections.json (474KB) and the
-  // siblings are downloaded once per page load instead of 2-3 times.
+  // ISSUE-002: memoize JSON fetches — downloaded once per page load only
   const __jsonCache = new Map();
 
-  /* ── sessionStorage cache for Complete_Jobs_Full_Data.json (30 min) ──
-     Avoids re-downloading ~1MB JSON on every page refresh.
+  /* ── sessionStorage cache for Complete_Jobs_Full_Data.json (60 min) ──
+     Avoids re-downloading 18MB JSON on every page refresh.
+     PERF FIX: Do NOT pre-fetch at script load time — it competes with critical
+     resources (merged_sarkari_data.json, CSS, fonts). Load on first access only.
   ── */
-  (function primeJobsCache() {
+  const __jobsDataPromise = (function() {
     try {
-      const KEY = '__cjfd_v1', TTL = 30 * 60 * 1000;
+      const KEY = '__cjfd_v1', TTL = 60 * 60 * 1000;
       const hit = JSON.parse(sessionStorage.getItem(KEY) || 'null');
       if (hit && (Date.now() - hit.ts) < TTL) {
-        __jsonCache.set('Complete_Jobs_Full_Data.json', Promise.resolve(hit.data));
-        return;
-      }
-      // __jobsDataPromise will fetch; we save it after resolve
-      if (typeof __jobsDataPromise !== 'undefined') {
-        __jobsDataPromise.then(function(data) {
-          if (!data) return;
-          try { sessionStorage.setItem(KEY, JSON.stringify({ ts: Date.now(), data: data })); } catch(e) {}
-        });
+        const p = Promise.resolve(hit.data);
+        __jsonCache.set('Complete_Jobs_Full_Data.json', p);
+        return p;
       }
     } catch(e) {}
+    return null; // lazy — will fetch only when getJobsSections() is called
   })();
+
+  /* Fetch Complete_Jobs_Full_Data.json — lazy load, cached in sessionStorage */
+  async function getJobsSections() {
+    try {
+      let raw;
+      if (__jobsDataPromise) {
+        raw = await __jobsDataPromise;
+      } else {
+        const KEY = '__cjfd_v1', TTL = 60 * 60 * 1000;
+        raw = await getJSON('Complete_Jobs_Full_Data.json');
+        if (raw) {
+          try { sessionStorage.setItem(KEY, JSON.stringify({ ts: Date.now(), data: raw })); } catch(e) {}
+        }
+      }
+      if (!raw) return { sections: [] };
+      __jsonCache.set('Complete_Jobs_Full_Data.json', Promise.resolve(raw));
+      return convertJobsDataToSections(raw);
+    } catch (_) { return { sections: [] }; }
 
   function getJSON(path) {
     if (__jsonCache.has(path)) return __jsonCache.get(path);
