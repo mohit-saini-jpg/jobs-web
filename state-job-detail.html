@@ -424,8 +424,15 @@
     function today() {
       return new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
     }
-
-    function normalizeUrl(raw) {
+    function fmtDate(val) {
+      if (!val || typeof val !== 'string') return val;
+      var s = val.trim();
+      var m = s.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
+      if (m) return ('0'+m[2]).slice(-2)+'/'+('0'+m[3]).slice(-2)+'/'+m[1];
+      m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+      if (m) return ('0'+m[2]).slice(-2)+'/'+('0'+m[1]).slice(-2)+'/'+m[3];
+      return s;
+    }    function normalizeUrl(raw) {
       const s = safe(raw);
       if (!s) return '';
       if (/^(https?:)?\/\//i.test(s) || /^(mailto:|tel:)/i.test(s)) return s;
@@ -517,7 +524,7 @@
       const rows = [];
       const add = (label, val, isRed) => {
         if (!safe(val)) return;
-        rows.push(`<tr ${isRed?'class="lastdate-row"':''}><th>${esc(label)}</th><td>${esc(val)}</td></tr>`);
+        rows.push(`<tr ${isRed?'class="lastdate-row"':''}><th>${esc(label)}</th><td>${esc(fmtDate(val))}</td></tr>`);
       };
       add('Application Start',    id_obj.application_begin || id_obj.application_start || id_obj.start_date);
       add('Last Date to Apply',   id_obj.last_date || id_obj.application_last_date || id_obj.last_date_for_apply || extraDates?.lastDate, true);
@@ -890,14 +897,14 @@
 
       document.getElementById('statOrg').textContent       = org || '—';
       document.getElementById('statPosts').textContent     = totalVac || 'Various';
-      document.getElementById('statLastDate').textContent  = lastDate || 'See Notification';
+      document.getElementById('statLastDate').textContent  = fmtDate(lastDate) || 'See Notification';
       document.getElementById('statApplyMode').textContent = applyMode || 'Online';
 
       if (lastDate) {
         document.getElementById('sjdLastDateWrap').style.display = '';
-        document.getElementById('sjdLastDateMeta').textContent   = 'Last Date: '+lastDate;
+        document.getElementById('sjdLastDateMeta').textContent   = 'Last Date: '+fmtDate(lastDate);
         document.getElementById('sidebarLastDateRow').style.display = '';
-        document.getElementById('sidebarLastDate').textContent   = lastDate;
+        document.getElementById('sidebarLastDate').textContent   = fmtDate(lastDate);
         /* Urgency */
         try {
           const parts = lastDate.split(/[-\/]/);
@@ -925,8 +932,8 @@
         totalVac  ? ['Total Vacancies',  totalVac]  : null,
         applyMode ? ['Application Mode', applyMode] : null,
         salary    ? ['Salary / Pay Scale',salary]   : null,
-        appBegin  ? ['Application Begin',appBegin]  : null,
-        {label:'Last Date to Apply', val:lastDate||'See Notification', cls:'lastdate-row'},
+        appBegin  ? ['Application Begin', fmtDate(appBegin)]  : null,
+        {label:'Last Date to Apply', val:fmtDate(lastDate)||'See Notification', cls:'lastdate-row'},
       ].filter(Boolean);
       document.getElementById('overviewBody').innerHTML = ovRows.map(r => {
         if (r.cls) return `<tr class="${r.cls}"><th>${esc(r.label)}</th><td>${esc(r.val)}</td></tr>`;
