@@ -615,9 +615,9 @@
       if (fetchFailed) return;
     }
 
-    // ── PROGRESSIVE RENDERING: render first 4 sections immediately, rest on scroll ──
+    // ── RENDER ALL SECTIONS IMMEDIATELY — no lazy scroll needed for job cards ──
     const sections = data.sections || [];
-    const INITIAL_COUNT = 4; // render above-fold sections instantly
+    const INITIAL_COUNT = 999; // render ALL sections instantly (no lazy loading)
 
     function renderSection(sec) {
       const title = safe(sec.title) || "Updates";
@@ -895,7 +895,7 @@
 
     const sections = Array.isArray(data.sections) ? data.sections : [];
     // Render first 2 immediately, rest lazily
-    const INITIAL = 2;
+    const INITIAL = 999; // render ALL daily sections immediately
     sections.slice(0, INITIAL).forEach(sec => buildSectionCard(sec, dailyWrap));
 
     if (sections.length > INITIAL) {
