@@ -614,7 +614,7 @@
           refreshOpenDropdown();
         });
 
-        // Phase 2: heavy file — deferred to idle time, not blocking
+        // Phase 2: heavy file (18MB) — load only after user interaction OR 20sec timeout
         var loadHeavy = function() {
           fetchAndIndex('Complete_Jobs_Full_Data.json').then(function(count) {
             console.log('[smart-search] ✅ Phase 2 done. +' + count + ' items. Total:', allData.length);
@@ -622,10 +622,11 @@
             refreshOpenDropdown();
           });
         };
+        // Use requestIdleCallback with long timeout — don't block page render
         if ('requestIdleCallback' in window) {
-          requestIdleCallback(loadHeavy, { timeout: 8000 });
+          requestIdleCallback(loadHeavy, { timeout: 20000 });
         } else {
-          setTimeout(loadHeavy, 5000);
+          setTimeout(loadHeavy, 15000);
         }
       })
       .catch(function(err) {
