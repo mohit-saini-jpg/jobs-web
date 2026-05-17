@@ -60,7 +60,7 @@
     /* ── Reset & Base ── */
     *,*::before,*::after{box-sizing:border-box;}
     html,body{height:100%;margin:0;}
-    html{scroll-padding-top:100px;}
+    html{scroll-padding-top:140px;}
     body{display:flex;flex-direction:column;font-family:inherit;background:#f0f4f8;}
     main{flex:1;}
     a{text-decoration:none;}
@@ -205,7 +205,7 @@
     .dyn-gen-table tr:last-child th,.dyn-gen-table tr:last-child td{border-bottom:none;}
 
     /* Sidebar */
-    .sjd-sidebar{position:sticky;top:90px;}
+    .sjd-sidebar{position:sticky;top:var(--header-height,140px);}
     @media(max-width:768px){.sjd-sidebar{position:static;}}
     .sjd-date-row{display:flex;justify-content:space-between;align-items:baseline;padding:9px 13px;font-size:.82rem;border-bottom:1px solid #f1f5f9;}
     .sjd-date-row:last-child{border-bottom:none;}
@@ -1082,6 +1082,35 @@
       }
     })();
 
+  })();
+  </script>
+  <!-- Header height fix: dynamically update --header-height CSS variable -->
+  <script>
+  (function(){
+    function updateHeaderHeight(){
+      var h = document.getElementById('site-header');
+      if(h){
+        var ht = h.getBoundingClientRect().height;
+        if(ht > 0){
+          document.documentElement.style.setProperty('--header-height', (ht + 8) + 'px');
+          document.documentElement.style.scrollPaddingTop = (ht + 8) + 'px';
+        }
+      }
+    }
+    window.addEventListener('load', updateHeaderHeight);
+    setTimeout(updateHeaderHeight, 300);
+    setTimeout(updateHeaderHeight, 800);
+    window.addEventListener('resize', updateHeaderHeight);
+    var obs = new MutationObserver(function(){ updateHeaderHeight(); });
+    var target = document.getElementById('site-header');
+    if(target) obs.observe(target, {childList:true, subtree:true});
+    else {
+      var bodyObs = new MutationObserver(function(){
+        var t = document.getElementById('site-header');
+        if(t){ obs.observe(t, {childList:true, subtree:true}); bodyObs.disconnect(); }
+      });
+      bodyObs.observe(document.body, {childList:true, subtree:false});
+    }
   })();
   </script>
 </body>
