@@ -676,10 +676,12 @@
     function fmtDate(val) {
       if (!val || typeof val !== 'string') return val;
       var s = val.trim();
+      // YYYY-MM-DD → DD/MM/YYYY
       var m = s.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
-      if (m) return ('0'+m[2]).slice(-2)+'/'+('0'+m[3]).slice(-2)+'/'+m[1];
+      if (m) return ('0'+m[3]).slice(-2)+'/'+('0'+m[2]).slice(-2)+'/'+m[1];
+      // DD-MM-YYYY or MM-DD-YYYY (already has slashes or dashes) → DD/MM/YYYY
       m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
-      if (m) return ('0'+m[2]).slice(-2)+'/'+('0'+m[1]).slice(-2)+'/'+m[3];
+      if (m) return ('0'+m[1]).slice(-2)+'/'+('0'+m[2]).slice(-2)+'/'+m[3];
       return s;
     }
     const rawSlug = window.__TSJ_SLUG || '';
