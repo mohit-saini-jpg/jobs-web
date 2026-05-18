@@ -960,261 +960,270 @@
   })();
 
 
-  /* ══════════════════════════════════════════════════════════════════
-     SECTION 8 — OFFLINE FORM / FLAT-FIELD PATCH
-     Fixes 3 issues for offline-form jobs loaded from /jobs/data/<slug>.json:
-       1. Apply Mode shows "Online" instead of "Offline"
-       2. Last Date not showing in stats bar / sidebar
-       3. Important Links missing form_pdf_free_link, official_notification_pdf_link,
-          official_website_link even though these are present in the JSON
-     Runs AFTER patchFetch() injects dynamic sections so we don't race.
-  ══════════════════════════════════════════════════════════════════ */
+})();
 
-  /**
-   * Helper: normalise URL (same logic as job.html's normalizeUrl but standalone)
-   */
+/* ══════════════════════════════════════════════════════════════════
+   Wait for scheduleEnrichment block — keep existing Section 7 intact
+   then add new Section 8 below with the proper integration
+══════════════════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════════════════════════
+   SECTION 8 — OFFLINE / FLAT-FIELD PATCH  (Race-condition-free)
+
+   ROOT CAUSE OF FIRST-LOAD BUG:
+   - job.html inline script is NOT deferred → runs immediately (async)
+   - job-renderer-patch.js IS deferred → runs after DOM parsed
+   - On first load (no cache), job.html fetch('/jobs/data/*.json') starts
+     BEFORE the patch script runs, so patchFetch() misses the call
+   - __TSJ_RENDER_EXTRA is set by the patch, but job.html already
+     called it before the patch loaded → hook is missed
+
+   FIX STRATEGY (works every time, no race):
+   1. job.html exposes window.__TSJ_RAW_JOB  (set when JSON fetched)
+   2. job.html exposes window.__TSJ_RENDER_DONE (true after render)
+   3. job.html calls window.__TSJ_ON_RENDER_DONE(rawJob) in finally{}
+   4. This patch sets window.__TSJ_ON_RENDER_DONE as a callback.
+      - If render is ALREADY done when patch loads → run immediately
+      - If render is NOT done yet → callback fires when job.html calls it
+   This guarantees correct execution regardless of network/cache speed.
+══════════════════════════════════════════════════════════════════ */
+
+(function () {
+  'use strict';
+
+  var _safe = function (v) { return (v == null ? '' : String(v)).trim(); };
+
+  /* ── normalizeUrl (standalone, no dep on job.html scope) ── */
   function _normUrl(raw) {
-    const s = safe(raw);
+    var s = _safe(raw);
     if (!s) return '';
     if (/^(https?:)?\/\//i.test(s) || /^(mailto:|tel:)/i.test(s)) return s;
-    if (s.startsWith('#') || s.startsWith('?') || s.startsWith('/')) return s;
-    if (s.includes('.html') || s.startsWith('./') || s.startsWith('../')) return s;
+    if (s[0] === '#' || s[0] === '?' || s[0] === '/') return s;
+    if (s.indexOf('.html') !== -1 || s.slice(0,2) === './' || s.slice(0,3) === '../') return s;
     return 'https://' + s.replace(/^\/+/, '');
   }
 
-  /**
-   * Patch Apply Mode stat box and overview table row.
-   */
-  function _patchApplyMode(mode) {
-    if (!mode || mode === 'Online') return;
-    /* Stat box */
-    const statEl = document.getElementById('statApplyMode');
-    if (statEl) {
-      statEl.textContent = mode;
-      /* Change colour: Offline → orange, Online → green */
-      statEl.className = 'jp-stat-val' + (mode.toLowerCase() === 'offline' ? '' : ' green');
-      if (mode.toLowerCase() === 'offline') statEl.style.color = '#ea580c';
-    }
-    /* Overview table row */
-    document.querySelectorAll('#jbTable tbody tr').forEach(tr => {
-      const th = tr.querySelector('th');
-      if (th && /application mode/i.test(th.textContent)) {
-        const td = tr.querySelector('td');
-        if (td) td.textContent = mode;
-      }
-    });
-    /* Highlights card */
-    document.querySelectorAll('#hlList .jp-hl-item span').forEach(el => {
-      if (/apply mode/i.test(el.textContent)) el.textContent = 'Apply Mode: ' + mode;
-    });
+  /* ── Date formatter: various inputs → DD/MM/YYYY ── */
+  function _fmtDate(v) {
+    var s = _safe(v);
+    if (!s) return s;
+    var m = s.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
+    if (m) return ('0'+m[3]).slice(-2)+'/'+('0'+m[2]).slice(-2)+'/'+m[1];
+    m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+    if (m) return ('0'+m[1]).slice(-2)+'/'+('0'+m[2]).slice(-2)+'/'+m[3];
+    return s;
   }
 
-  /**
-   * Patch Last Date everywhere it should appear.
-   */
-  function _patchLastDate(lastDate) {
-    if (!lastDate || lastDate === 'See Notification' || lastDate === '—') return;
-
-    /* Format: DD/MM/YYYY from common input formats */
-    function fmt(v) {
-      if (!v || typeof v !== 'string') return v;
-      var s = v.trim();
-      var m = s.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
-      if (m) return ('0'+m[3]).slice(-2)+'/'+('0'+m[2]).slice(-2)+'/'+m[1];
-      m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
-      if (m) return ('0'+m[1]).slice(-2)+'/'+('0'+m[2]).slice(-2)+'/'+m[3];
-      return s;
-    }
-    const fmtDate = fmt(lastDate);
+  /* ─────────────────────────────────────────────────
+     PATCH 1: Apply Mode
+  ───────────────────────────────────────────────── */
+  function patchApplyMode(mode) {
+    if (!mode) return;
+    var m = _safe(mode);
+    if (!m) return;
 
     /* Stat box */
-    const statEl = document.getElementById('statLastDate');
-    if (statEl && (statEl.textContent === 'See Notification' || !statEl.textContent.trim())) {
-      statEl.textContent = fmtDate;
+    var statEl = document.getElementById('statApplyMode');
+    if (statEl) {
+      statEl.textContent = m;
+      statEl.className = 'jp-stat-val';
+      if (/offline/i.test(m)) {
+        statEl.style.color = '#ea580c';
+      } else {
+        statEl.style.color = '#16a34a';
+      }
     }
 
-    /* Sidebar last date */
-    const sidebarVal = document.getElementById('dateLastVal');
-    if (sidebarVal && (sidebarVal.textContent === '—' || !sidebarVal.textContent.trim())) {
-      sidebarVal.textContent = fmtDate;
-      const sidebarRow = document.getElementById('dateLastRow');
-      if (sidebarRow) sidebarRow.style.display = '';
+    /* Overview table */
+    var rows = document.querySelectorAll('#jbTable tbody tr');
+    for (var i = 0; i < rows.length; i++) {
+      var th = rows[i].querySelector('th');
+      if (th && /application mode/i.test(th.textContent)) {
+        var td = rows[i].querySelector('td');
+        if (td) td.textContent = m;
+        break;
+      }
     }
 
-    /* Meta last date in header */
-    const metaWrap = document.getElementById('metaLastDateWrap');
-    const metaEl   = document.getElementById('metaLastDate');
+    /* Highlights */
+    var hlItems = document.querySelectorAll('#hlList .jp-hl-item span');
+    for (var j = 0; j < hlItems.length; j++) {
+      if (/apply mode/i.test(hlItems[j].textContent)) {
+        hlItems[j].textContent = 'Apply Mode: ' + m;
+        break;
+      }
+    }
+  }
+
+  /* ─────────────────────────────────────────────────
+     PATCH 2: Last Date
+  ───────────────────────────────────────────────── */
+  function patchLastDate(lastDate) {
+    if (!lastDate) return;
+    var raw = _safe(lastDate);
+    if (!raw || /^see notification$/i.test(raw) || raw === '—') return;
+    var fmt = _fmtDate(raw);
+
+    /* Stat box */
+    var statEl = document.getElementById('statLastDate');
+    if (statEl && /^see notification$/i.test(statEl.textContent)) {
+      statEl.textContent = fmt;
+    }
+
+    /* Sidebar */
+    var sideVal = document.getElementById('dateLastVal');
+    if (sideVal && (sideVal.textContent === '—' || !sideVal.textContent.trim())) {
+      sideVal.textContent = fmt;
+    }
+    var sideRow = document.getElementById('dateLastRow');
+    if (sideRow) sideRow.style.display = '';
+
+    /* Meta bar */
+    var metaWrap = document.getElementById('metaLastDateWrap');
+    var metaEl   = document.getElementById('metaLastDate');
     if (metaWrap && metaEl && metaWrap.style.display === 'none') {
-      metaEl.textContent = 'Last Date: ' + fmtDate;
+      metaEl.textContent = 'Last Date: ' + fmt;
       metaWrap.style.display = '';
     }
 
-    /* Overview table row */
-    document.querySelectorAll('#jbTable tbody tr').forEach(tr => {
-      const th = tr.querySelector('th');
+    /* Overview table */
+    var rows = document.querySelectorAll('#jbTable tbody tr');
+    for (var i = 0; i < rows.length; i++) {
+      var th = rows[i].querySelector('th');
       if (th && /last date/i.test(th.textContent)) {
-        const td = tr.querySelector('td');
-        if (td && (td.textContent === 'See Notification' || !td.textContent.trim())) {
-          td.textContent = fmtDate;
-        }
-      }
-    });
-
-    /* Important Dates card detail */
-    document.querySelectorAll('#datesDetailBody tr').forEach(tr => {
-      const th = tr.querySelector('th');
-      if (th && /last date/i.test(th.textContent)) {
-        const td = tr.querySelector('td');
-        if (td && (td.textContent === 'See Notification' || !td.textContent.trim())) {
-          td.textContent = fmtDate;
+        var td = rows[i].querySelector('td');
+        if (td && /^see notification$/i.test(td.textContent)) {
+          td.textContent = fmt;
           td.style.color = '#dc2626';
           td.style.fontWeight = '800';
         }
+        break;
       }
-    });
+    }
 
-    /* Highlights card */
-    document.querySelectorAll('#hlList .jp-hl-item span').forEach(el => {
-      if (/last date/i.test(el.textContent)) el.textContent = '⚠ Last Date: ' + fmtDate;
-    });
-  }
+    /* Dates detail card body */
+    var dRows = document.querySelectorAll('#datesDetailBody tr');
+    for (var k = 0; k < dRows.length; k++) {
+      var dth = dRows[k].querySelector('th');
+      if (dth && /last date/i.test(dth.textContent)) {
+        var dtd = dRows[k].querySelector('td');
+        if (dtd && /^see notification$/i.test(dtd.textContent)) {
+          dtd.textContent = fmt;
+          dtd.style.color = '#dc2626';
+          dtd.style.fontWeight = '800';
+        }
+        break;
+      }
+    }
 
-  /**
-   * Patch Important Links — add missing flat-field links that job.html
-   * may have skipped (form_pdf_free_link, official_notification_pdf_link,
-   * official_website_link) when they were not in useful_links/important_links.
-   */
-  function _patchImportantLinks(rawJob) {
-    if (!rawJob) return;
-
-    const linksContainer = document.getElementById('linksActions');
-    if (!linksContainer) return;
-
-    /* Collect URLs already rendered to avoid duplicates */
-    const alreadyShown = new Set();
-    linksContainer.querySelectorAll('a[href]').forEach(a => {
-      const h = (a.getAttribute('href') || '').trim();
-      if (h && h !== '#') alreadyShown.add(h);
-    });
-
-    /* Links to add from flat fields — in priority order */
-    const toAdd = [
-      {
-        key: 'form_pdf_free_link',
-        label: 'Download Form (Free PDF)',
-        icon: 'fa-file-arrow-down',
-        cls: 'jp-btn-orange',
-        sub: 'Free PDF'
-      },
-      {
-        key: 'official_notification_pdf_link',
-        label: 'Official Notification PDF',
-        icon: 'fa-file-pdf',
-        cls: 'jp-btn-blue',
-        sub: 'Download PDF'
-      },
-      {
-        key: 'official_website_link',
-        label: 'Official Website',
-        icon: 'fa-globe',
-        cls: 'jp-btn-red',
-        sub: 'Visit Now'
-      },
-    ];
-
-    let newHtml = '';
-    toAdd.forEach(({ key, label, icon, cls, sub }) => {
-      const rawUrl = safe(rawJob[key] || '');
-      if (!rawUrl) return;
-      const href = _normUrl(rawUrl);
-      if (!href || alreadyShown.has(href)) return;
-      alreadyShown.add(href);
-      newHtml += `<a href="${href}" target="_blank" rel="noopener" class="jp-btn ${cls}">
-        <span><i class="fa-solid ${icon}"></i> ${label}</span>
-        <span class="jp-btn-sub">${sub}</span>
-      </a>`;
-    });
-
-    if (newHtml) {
-      /* Remove the placeholder "Links not available" message if present */
-      const placeholder = linksContainer.querySelector('p');
-      if (placeholder) placeholder.remove();
-      linksContainer.insertAdjacentHTML('beforeend', newHtml);
+    /* Highlights */
+    var hlItems = document.querySelectorAll('#hlList .jp-hl-item span');
+    for (var j = 0; j < hlItems.length; j++) {
+      if (/last date/i.test(hlItems[j].textContent)) {
+        hlItems[j].textContent = '⚠ Last Date: ' + fmt;
+        break;
+      }
     }
   }
 
-  /**
-   * Main offline-patch runner — called after page renders.
-   * Reads the cached raw job JSON (from patchFetch) or re-fetches it.
-   */
-  function _runOfflinePatch(rawJob) {
+  /* ─────────────────────────────────────────────────
+     PATCH 3: Important Links — flat fields
+  ───────────────────────────────────────────────── */
+  function patchImportantLinks(rawJob) {
     if (!rawJob) return;
+    var container = document.getElementById('linksActions');
+    if (!container) return;
 
-    /* 1. Apply Mode */
-    const applyMode = safe(rawJob.apply_mode || (rawJob.basic_details && rawJob.basic_details.apply_mode) || '');
-    if (applyMode) _patchApplyMode(applyMode);
+    /* Collect already-shown hrefs */
+    var shown = {};
+    var existing = container.querySelectorAll('a[href]');
+    for (var i = 0; i < existing.length; i++) {
+      var h = (existing[i].getAttribute('href') || '').trim();
+      if (h && h !== '#') shown[h] = true;
+    }
 
-    /* 2. Last Date */
-    const lastDate = safe(
-      rawJob.last_date ||
-      (rawJob.important_dates && (rawJob.important_dates.last_date || rawJob.important_dates.application_last_date)) ||
-      ''
-    );
-    if (lastDate) _patchLastDate(lastDate);
+    /* Flat-field link definitions in order */
+    var defs = [
+      { key: 'form_pdf_free_link',             label: 'Download Form (Free PDF)', icon: 'fa-file-arrow-down', cls: 'jp-btn-orange', sub: 'Free PDF'     },
+      { key: 'official_notification_pdf_link', label: 'Official Notification PDF', icon: 'fa-file-pdf',       cls: 'jp-btn-blue',   sub: 'Download PDF' },
+      { key: 'official_website_link',          label: 'Official Website',          icon: 'fa-globe',           cls: 'jp-btn-red',    sub: 'Visit Now'    },
+    ];
 
-    /* 3. Important Links — flat fields */
-    _patchImportantLinks(rawJob);
+    var newHtml = '';
+    for (var j = 0; j < defs.length; j++) {
+      var def  = defs[j];
+      var rawUrl = _safe(rawJob[def.key] || '');
+      if (!rawUrl) continue;
+      var href = _normUrl(rawUrl);
+      if (!href || shown[href]) continue;
+      shown[href] = true;
+      newHtml +=
+        '<a href="' + href + '" target="_blank" rel="noopener" class="jp-btn ' + def.cls + '">' +
+          '<span><i class="fa-solid ' + def.icon + '"></i> ' + def.label + '</span>' +
+          '<span class="jp-btn-sub">' + def.sub + '</span>' +
+        '</a>';
+    }
+
+    if (newHtml) {
+      /* Remove "Links not available" placeholder if present */
+      var placeholder = container.querySelector('p');
+      if (placeholder) placeholder.remove();
+      container.insertAdjacentHTML('beforeend', newHtml);
+    }
   }
 
-  /* ── Hook into __TSJ_RENDER_EXTRA ── */
-  /* Wrap the existing __TSJ_RENDER_EXTRA so our patch ALSO runs */
-  (function () {
-    const _existingExtra = window.__TSJ_RENDER_EXTRA;
-    window.__TSJ_RENDER_EXTRA = function (rawJobJson, parsedRow) {
-      /* Run existing dynamic sections first */
-      if (typeof _existingExtra === 'function') {
-        _existingExtra(rawJobJson, parsedRow);
-      }
-      /* Then run offline patch with a tiny delay to let DOM settle */
-      if (rawJobJson) {
-        setTimeout(function () { _runOfflinePatch(rawJobJson); }, 80);
-      }
-    };
-  })();
+  /* ─────────────────────────────────────────────────
+     MAIN: Run all patches from raw job JSON
+  ───────────────────────────────────────────────── */
+  function runAllPatches(rawJob) {
+    if (!rawJob) return;
 
-  /* ── FALLBACK: also patch via fetch interception ── */
-  /* The patchFetch() above caches the job JSON. We piggyback on it by
-     also running _runOfflinePatch when we detect a completed render.   */
-  (function patchFetchOffline() {
-    const _origFetch2 = window.fetch;
-    let _cachedRaw = null;
+    /* Apply Mode */
+    var applyMode = _safe(
+      rawJob.apply_mode ||
+      (rawJob.basic_details && rawJob.basic_details.apply_mode) ||
+      (rawJob.basic_details && rawJob.basic_details.application_mode) ||
+      ''
+    );
+    if (applyMode) patchApplyMode(applyMode);
 
-    window.fetch = async function (...args) {
-      const result = await _origFetch2.apply(this, args);
-      const url = (typeof args[0] === 'string') ? args[0] : (args[0] && args[0].url) || '';
-      if (url && url.includes('/jobs/data/') && url.endsWith('.json')) {
-        const clone = result.clone();
-        clone.json().then(data => {
-          if (data && (data.basic_details || data.title || data.form_pdf_free_link || data.official_website_link)) {
-            _cachedRaw = data;
-            /* Wait for render then patch */
-            let tries2 = 0;
-            const id2 = setInterval(() => {
-              const layout = document.getElementById('jbThreeCol');
-              const loading = document.getElementById('jbLoading');
-              if ((layout && layout.style.display !== 'none') ||
-                  (loading && loading.style.display === 'none') ||
-                  tries2 > 60) {
-                clearInterval(id2);
-                setTimeout(function () { if (_cachedRaw) _runOfflinePatch(_cachedRaw); }, 200);
-              }
-              tries2++;
-            }, 100);
-          }
-        }).catch(() => {});
-      }
-      return result;
+    /* Last Date */
+    var id = rawJob.important_dates || {};
+    var lastDate = _safe(
+      rawJob.last_date ||
+      id.last_date || id.application_last_date || id.last_date_for_apply ||
+      ''
+    );
+    if (lastDate) patchLastDate(lastDate);
+
+    /* Important Links */
+    patchImportantLinks(rawJob);
+  }
+
+  /* ─────────────────────────────────────────────────
+     INTEGRATION: Race-condition-free callback system
+     Works whether patch loads before or after render.
+  ───────────────────────────────────────────────── */
+  function integrate() {
+    /* Case 1: job.html already finished rendering (cached / fast network) */
+    if (window.__TSJ_RENDER_DONE && window.__TSJ_RAW_JOB) {
+      setTimeout(function () { runAllPatches(window.__TSJ_RAW_JOB); }, 0);
+      return;
+    }
+
+    /* Case 2: render done but no raw JSON (dailyupdates item, no /jobs/data/ file) */
+    if (window.__TSJ_RENDER_DONE && !window.__TSJ_RAW_JOB) {
+      return; /* Nothing to patch */
+    }
+
+    /* Case 3: render NOT done yet — register callback for when job.html finishes */
+    window.__TSJ_ON_RENDER_DONE = function (rawJob) {
+      /* Called from job.html's finally{} block */
+      setTimeout(function () { runAllPatches(rawJob); }, 0);
     };
-  })();
+  }
+
+  /* Run integration as soon as this deferred script executes */
+  integrate();
 
 })();
