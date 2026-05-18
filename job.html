@@ -299,8 +299,37 @@
   </style>
   <!-- Preload header.html so it's ready before script.js runs -->
   <link rel="preload" href="/header.html" as="fetch" crossorigin="anonymous"/>
-  <!-- Early header fetch — starts immediately, script.js reuses this -->
-  <script>window.__headerPromise=fetch('/header.html',{cache:'no-store'}).then(function(r){return r.ok?r.text():null;}).catch(function(){return null;});</script>
+  <!-- CRITICAL: Fetch + inject header immediately — do NOT wait for script.js defer -->
+  <script>
+  (function(){
+    // Start fetching header.html right now (before body even parses)
+    var _hp = fetch('/header.html', {cache:'no-store'})
+      .then(function(r){ return r.ok ? r.text() : null; })
+      .catch(function(){ return null; });
+    window.__headerPromise = _hp;
+
+    // Inject as soon as DOM is ready (well before script.js defer fires)
+    function _inject() {
+      var host = document.getElementById('site-header');
+      if (!host) return;
+      if (host.innerHTML.trim() !== '') return; // already injected
+      _hp.then(function(html) {
+        if (!html) return;
+        if (host.innerHTML.trim() !== '') return; // race guard
+        host.innerHTML = html;
+        // Fire menu init if script.js already loaded
+        if (typeof window.__TSJ_INIT_HEADER === 'function') {
+          window.__TSJ_INIT_HEADER();
+        }
+      });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', _inject);
+    } else {
+      _inject();
+    }
+  })();
+  </script>
 </head>
 <body>
   <header class="site-header" id="site-header"></header>
