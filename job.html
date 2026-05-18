@@ -2015,9 +2015,11 @@
       }
 
       /* ── FALLBACK: Search aggregated JSON files (fuzzy/token match) ── */
-      /* SKIP if refUrl already exists — no need to download 474KB JSON for dailyupdates items */
-      /* Only attempt heavy JSON search when we have NO ref URL and no direct JSON file match */
-      if (!row && !refUrl) {
+      /* FIX: Always attempt loadAllItems() when no direct file match found.
+         Previously skipped when refUrl existed — but offline/merged_sarkari jobs
+         pass ?ref= from index.html cards, causing empty data on first page load.
+         loadAllItems() gives full data (last_date, apply_mode, important_links). */
+      if (!row) {
         let items = [];
         try { items = await loadAllItems(); } catch (_) {}
         /* Try original slug first (with full prefix like sr_admit_card-...) */
