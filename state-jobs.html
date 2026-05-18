@@ -554,6 +554,15 @@
     .two-col-sections > .sec-card { margin-bottom:0; }
     @media(max-width:600px){ .two-col-sections { grid-template-columns:1fr; } }
   </style>
+  <!-- Header: fetch + inject immediately before script.js defer loads -->
+  <script>
+  (function(){
+    var _hp=fetch("/header.html",{cache:"no-store"}).then(function(r){return r.ok?r.text():null;}).catch(function(){return null;});
+    window.__headerPromise=_hp;
+    function _inj(){var h=document.getElementById("site-header");if(!h||h.innerHTML.trim())return;_hp.then(function(html){if(!html||h.innerHTML.trim())return;h.innerHTML=html;if(typeof window.__TSJ_INIT_HEADER==="function")window.__TSJ_INIT_HEADER();});}
+    document.readyState==="loading"?document.addEventListener("DOMContentLoaded",_inj):_inj();
+  })();
+  </script>
 </head>
 
 <body>
