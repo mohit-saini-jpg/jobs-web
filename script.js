@@ -421,19 +421,38 @@
     const footerHost = document.getElementById("site-footer");
     
     if (headerHost && (!headerHost.querySelector(".brand") || headerHost.innerHTML.trim() === "")) {
+        // Use pre-fetched promise if available (set in <head> before script.js loads)
+        // Falls back to direct fetch with retry on failure
+        let html = null;
         try {
-          const r = await fetch("/header.html", { cache: "no-store" });
-          if (r.ok) {
-              headerHost.innerHTML = await r.text();
-              if (!headerHost.classList.contains("site-header")) {
-                  headerHost.classList.add("site-header");
-              }
-              // ✅ FIX: Build mobile menu & re-init AFTER header HTML exists in DOM
-              buildMobileMenu();
-              initOffcanvas();
-              initDropdowns();
+          if (window.__headerPromise) {
+            html = await window.__headerPromise;
+            window.__headerPromise = null; // use once
           }
-        } catch (_) {}
+          if (!html) {
+            // Retry up to 3 times — protects against brief network hiccups on job pages
+            for (let attempt = 0; attempt < 3; attempt++) {
+              try {
+                if (attempt > 0) await new Promise(r => setTimeout(r, attempt * 600));
+                const r = await fetch("/header.html", { cache: "no-store" });
+                if (r.ok) { html = await r.text(); break; }
+              } catch (e) {}
+            }
+          }
+        } catch (e) {}
+
+        if (html) {
+            headerHost.innerHTML = html;
+            if (!headerHost.classList.contains("site-header")) {
+                headerHost.classList.add("site-header");
+            }
+            buildMobileMenu();
+            initOffcanvas();
+            initDropdowns();
+        } else {
+            // All attempts failed — minimal fallback so page stays usable
+            headerHost.innerHTML = '<div style="background:#1d3a6e;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;"><a href="/" style="color:#fff;font-weight:900;font-size:1.1rem;text-decoration:none;">TOP <span style="color:#f59e0b;">SARKARI</span> JOBS</a><a href="/" style="color:#fff;font-size:.85rem;text-decoration:none;">&#8592; Home</a></div>';
+        }
     }
 
     injectMobileHeaderBtns();
