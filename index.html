@@ -2684,15 +2684,22 @@
 
       /* ALL items → job.html?slug= for internal detail page */
       var href;
+      var applyModeVal = (job.apply_mode || '').toLowerCase();
       if (slug) {
         href = 'job.html?slug=' + encodeURIComponent(slug);
       } else if (job.source && job.source === 'sarkariresultshine.com') {
-        href = 'job.html?slug=' + encodeURIComponent(makeSlug(title, 'offline'));
+        /* Legacy sarkariresultshine source — clean slug, no 'offline-' prefix */
+        href = 'job.html?slug=' + encodeURIComponent(makeSlug(title, ''));
+      } else if (applyModeVal === 'offline') {
+        /* FIX: Offline/merged_sarkari jobs — clean slug, NO &ref= param.
+           ?ref= causes job.html to skip loadAllItems(), leaving last_date,
+           apply_mode, important_links empty on first page load. */
+        var offlineSlug = makeSlug(title, '');
+        href = offlineSlug ? 'job.html?slug=' + encodeURIComponent(offlineSlug) : url;
       } else {
         /* sarkariresult_categories items (SR_Latest_Jobs, SR_Admit_Card, etc.) */
         var generatedSlug = makeSlug(title, '');
         if (generatedSlug) {
-          /* Store the external URL so job.html can link out */
           href = 'job.html?slug=' + encodeURIComponent(generatedSlug) + '&ref=' + encodeURIComponent(url);
         } else {
           href = url;
