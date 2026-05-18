@@ -1015,14 +1015,14 @@
   }
 
   /* ─────────────────────────────────────────────────
-     PATCH 1: Apply Mode
+     PATCH 1: Apply Mode — ALWAYS update from JSON data
   ───────────────────────────────────────────────── */
   function patchApplyMode(mode) {
     if (!mode) return;
     var m = _safe(mode);
     if (!m) return;
 
-    /* Stat box */
+    /* Stat box — always overwrite */
     var statEl = document.getElementById('statApplyMode');
     if (statEl) {
       statEl.textContent = m;
@@ -1056,7 +1056,8 @@
   }
 
   /* ─────────────────────────────────────────────────
-     PATCH 2: Last Date
+     PATCH 2: Last Date — ALWAYS update from JSON data
+     (not just when placeholder says "See Notification")
   ───────────────────────────────────────────────── */
   function patchLastDate(lastDate) {
     if (!lastDate) return;
@@ -1064,35 +1065,35 @@
     if (!raw || /^see notification$/i.test(raw) || raw === '—') return;
     var fmt = _fmtDate(raw);
 
-    /* Stat box */
+    /* Stat box — always overwrite with real data */
     var statEl = document.getElementById('statLastDate');
-    if (statEl && /^see notification$/i.test(statEl.textContent)) {
+    if (statEl) {
       statEl.textContent = fmt;
     }
 
     /* Sidebar */
     var sideVal = document.getElementById('dateLastVal');
-    if (sideVal && (sideVal.textContent === '—' || !sideVal.textContent.trim())) {
+    if (sideVal) {
       sideVal.textContent = fmt;
     }
     var sideRow = document.getElementById('dateLastRow');
     if (sideRow) sideRow.style.display = '';
 
-    /* Meta bar */
+    /* Meta bar — show if hidden */
     var metaWrap = document.getElementById('metaLastDateWrap');
     var metaEl   = document.getElementById('metaLastDate');
-    if (metaWrap && metaEl && metaWrap.style.display === 'none') {
+    if (metaWrap && metaEl) {
       metaEl.textContent = 'Last Date: ' + fmt;
       metaWrap.style.display = '';
     }
 
-    /* Overview table */
+    /* Overview table — update "Last Date" row always */
     var rows = document.querySelectorAll('#jbTable tbody tr');
     for (var i = 0; i < rows.length; i++) {
       var th = rows[i].querySelector('th');
       if (th && /last date/i.test(th.textContent)) {
         var td = rows[i].querySelector('td');
-        if (td && /^see notification$/i.test(td.textContent)) {
+        if (td) {
           td.textContent = fmt;
           td.style.color = '#dc2626';
           td.style.fontWeight = '800';
@@ -1107,7 +1108,7 @@
       var dth = dRows[k].querySelector('th');
       if (dth && /last date/i.test(dth.textContent)) {
         var dtd = dRows[k].querySelector('td');
-        if (dtd && /^see notification$/i.test(dtd.textContent)) {
+        if (dtd) {
           dtd.textContent = fmt;
           dtd.style.color = '#dc2626';
           dtd.style.fontWeight = '800';
@@ -1127,7 +1128,7 @@
   }
 
   /* ─────────────────────────────────────────────────
-     PATCH 3: Important Links — flat fields
+     PATCH 3: Important Links — flat fields + important_links object
   ───────────────────────────────────────────────── */
   function patchImportantLinks(rawJob) {
     if (!rawJob) return;
@@ -1142,14 +1143,15 @@
       if (h && h !== '#') shown[h] = true;
     }
 
-    /* Flat-field link definitions in order */
+    var newHtml = '';
+
+    /* ── Priority 1: Flat-field link definitions ── */
     var defs = [
       { key: 'form_pdf_free_link',             label: 'Download Form (Free PDF)', icon: 'fa-file-arrow-down', cls: 'jp-btn-orange', sub: 'Free PDF'     },
       { key: 'official_notification_pdf_link', label: 'Official Notification PDF', icon: 'fa-file-pdf',       cls: 'jp-btn-blue',   sub: 'Download PDF' },
       { key: 'official_website_link',          label: 'Official Website',          icon: 'fa-globe',           cls: 'jp-btn-red',    sub: 'Visit Now'    },
     ];
 
-    var newHtml = '';
     for (var j = 0; j < defs.length; j++) {
       var def  = defs[j];
       var rawUrl = _safe(rawJob[def.key] || '');
@@ -1162,6 +1164,39 @@
           '<span><i class="fa-solid ' + def.icon + '"></i> ' + def.label + '</span>' +
           '<span class="jp-btn-sub">' + def.sub + '</span>' +
         '</a>';
+    }
+
+    /* ── Priority 2: important_links object fields ── */
+    var ilRaw = rawJob.important_links || rawJob.important_links_obj || {};
+    var ilMap = [
+      { keys: ['apply_online','apply_link','click_here_to_apply'],     label: 'Apply Online',          icon: 'fa-paper-plane',    cls: 'jp-btn-green',  sub: 'Apply Now'    },
+      { keys: ['notification_pdf','download_notification','download_pdf'], label: 'Official Notification', icon: 'fa-file-pdf',    cls: 'jp-btn-blue',   sub: 'Download PDF' },
+      { keys: ['official_website','visit_website','official_website_link'], label: 'Official Website',  icon: 'fa-globe',          cls: 'jp-btn-red',    sub: 'Visit Now'    },
+      { keys: ['result','result_link'],                                  label: 'Result',                icon: 'fa-trophy',         cls: 'jp-btn-orange', sub: 'View Now'     },
+      { keys: ['admit_card','admit_card_link'],                          label: 'Admit Card',            icon: 'fa-id-card',        cls: 'jp-btn-orange', sub: 'Download Now' },
+    ];
+
+    if (typeof ilRaw === 'object' && !Array.isArray(ilRaw)) {
+      for (var ki = 0; ki < ilMap.length; ki++) {
+        var ilDef = ilMap[ki];
+        var ilUrl = '';
+        for (var kj = 0; kj < ilDef.keys.length; kj++) {
+          var kval = ilRaw[ilDef.keys[kj]];
+          if (kval) {
+            ilUrl = _safe(Array.isArray(kval) ? kval[0] : kval);
+            if (ilUrl) break;
+          }
+        }
+        if (!ilUrl) continue;
+        var ilHref = _normUrl(ilUrl);
+        if (!ilHref || shown[ilHref]) continue;
+        shown[ilHref] = true;
+        newHtml +=
+          '<a href="' + ilHref + '" target="_blank" rel="noopener" class="jp-btn ' + ilDef.cls + '">' +
+            '<span><i class="fa-solid ' + ilDef.icon + '"></i> ' + ilDef.label + '</span>' +
+            '<span class="jp-btn-sub">' + ilDef.sub + '</span>' +
+          '</a>';
+      }
     }
 
     if (newHtml) {
