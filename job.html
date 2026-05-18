@@ -297,6 +297,10 @@
     .jp-mobile-grid a:nth-child(even){border-right:none;}
     .jp-mobile-grid a i{color:#0f766e;width:14px;font-size:.75rem;}
   </style>
+  <!-- Preload header.html so it's ready before script.js runs -->
+  <link rel="preload" href="/header.html" as="fetch" crossorigin="anonymous"/>
+  <!-- Early header fetch — starts immediately, script.js reuses this -->
+  <script>window.__headerPromise=fetch('/header.html',{cache:'no-store'}).then(function(r){return r.ok?r.text():null;}).catch(function(){return null;});</script>
 </head>
 <body>
   <header class="site-header" id="site-header"></header>
@@ -2082,9 +2086,9 @@
   })();
   </script>
 
-  <script src="/script.js?v=20260516" defer></script>
+  <script src="/script.js?v=20260517" defer></script>
   <!-- JSON-Driven Dynamic Job Rendering System — PATCH -->
-  <script src="/job-renderer-patch.js?v=20260516" defer></script>
+  <script src="/job-renderer-patch.js?v=20260517" defer></script>
   <!-- Header height fix: dynamically update --header-height CSS variable -->
   <script>
   (function(){
