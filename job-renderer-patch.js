@@ -160,6 +160,10 @@
       border-collapse: collapse;
       font-size: .82rem;
     }
+    @media (max-width: 600px) {
+      .ep-table { font-size: .76rem; }
+      .ep-table th, .ep-table td { padding: 7px 9px; }
+    }
     .ep-table th {
       background: #1d4ed8;
       color: #fff;
@@ -464,7 +468,7 @@
       const rows = ep.map((row, i) =>
         `<tr><td>${i + 1}</td>${cols.map(c => `<td>${esc(row[c] ?? '')}</td>`).join('')}</tr>`
       ).join('');
-      bodyHtml = `<div style="overflow-x:auto;"><table class="ep-table"><thead><tr>${thead}</tr></thead><tbody>${rows}</tbody></table></div>`;
+      bodyHtml = `<div class="dyn-table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%;"><table class="ep-table" style="min-width:420px;"><thead><tr>${thead}</tr></thead><tbody>${rows}</tbody></table></div>`;
     }
     // Plain object
     else if (typeof ep === 'object' && Object.keys(ep).length) {
@@ -580,18 +584,36 @@
         const rows = value.map(r =>
           `<tr>${cols.map(c => `<td>${esc(r[c] ?? '')}</td>`).join('')}</tr>`
         ).join('');
-        bodyHtml = `<div style="overflow-x:auto;"><table class="ep-table"><thead><tr>${thead}</tr></thead><tbody>${rows}</tbody></table></div>`;
+        bodyHtml = `<div class="dyn-table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%;"><table class="ep-table" style="min-width:420px;"><thead><tr>${thead}</tr></thead><tbody>${rows}</tbody></table></div>`;
       } else {
         // Array of strings
         const items = value.map(s => `<div class="dyn-tag"><i class="fa-solid fa-circle-check"></i>${esc(s)}</div>`).join('');
         bodyHtml = `<div class="dyn-tag-list">${items}</div>`;
       }
     } else if (typeof value === 'object') {
-      const rows = Object.entries(value).filter(([, v]) => v).map(([k, v]) =>
-        `<tr><th>${esc(keyToLabel(k))}</th><td>${esc(v)}</td></tr>`
-      ).join('');
-      if (!rows) return null;
-      bodyHtml = `<table class="gen-table"><tbody>${rows}</tbody></table>`;
+      const entries = Object.entries(value).filter(([, v]) => v);
+      /* Check if this is a numeric-keyed object (SR "tables" format with 0,1,2... keys) */
+      const isNumericKeys = entries.every(([k]) => !isNaN(parseInt(k)));
+      if (isNumericKeys) {
+        /* Render as a scrollable row of labelled cells */
+        const cells = entries.map(([, v]) => {
+          if (typeof v === 'object' && v !== null) {
+            /* Object cell: render as mini key-value */
+            const inner = Object.entries(v).filter(([, iv]) => iv)
+              .map(([ik, iv]) => `<div class="dyn-detail" style="padding:4px 0;border:none;font-size:.78rem;"><strong>${esc(keyToLabel(ik))}:</strong> ${esc(iv)}</div>`)
+              .join('');
+            return `<td style="padding:8px 12px;border-bottom:1px solid #e9eef4;vertical-align:top;min-width:140px;font-size:.8rem;">${inner}</td>`;
+          }
+          return `<td style="padding:8px 12px;border-bottom:1px solid #e9eef4;vertical-align:top;min-width:120px;font-size:.82rem;line-height:1.6;">${esc(String(v))}</td>`;
+        }).join('');
+        bodyHtml = `<div class="dyn-table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%;"><table class="ep-table" style="min-width:300px;"><tbody><tr>${cells}</tr></tbody></table></div>`;
+      } else {
+        const rows = entries.map(([k, v]) =>
+          `<tr><th style="white-space:normal;word-break:break-word;">${esc(keyToLabel(k))}</th><td>${esc(typeof v === 'object' ? JSON.stringify(v) : String(v))}</td></tr>`
+        ).join('');
+        if (!rows) return null;
+        bodyHtml = `<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%;"><table class="gen-table" style="min-width:280px;"><tbody>${rows}</tbody></table></div>`;
+      }
     } else if (typeof value === 'string' && value.trim()) {
       bodyHtml = `<div class="dyn-detail">${textToHtml(value)}</div>`;
     }
@@ -601,8 +623,70 @@
   }
 
 
-  /* ══════════════════════════════════════════════════════════════════
-     SECTION 4 — EXTENDED parseFullJob (PATCH)
+  /* ── 3i. SR Tables (special: array of row-objects with numeric keys 0,1,2...) ── */
+  function buildSRTablesCard(tables) {
+    /* tables can be: array of row-arrays, array of row-objects, or plain object */
+    if (!tables) return null;
+    let bodyHtml = '';
+
+    if (Array.isArray(tables) && tables.length > 0) {
+      const firstRow = tables[0];
+      /* Array of arrays */
+      if (Array.isArray(firstRow)) {
+        const headerRow = firstRow;
+        const dataRows = tables.slice(1);
+        const thead = headerRow.map(c => `<th>${esc(String(c))}</th>`).join('');
+        const tbody = dataRows.map(r =>
+          `<tr>${(Array.isArray(r) ? r : Object.values(r)).map(c => `<td>${esc(String(c ?? ''))}</td>`).join('')}</tr>`
+        ).join('');
+        bodyHtml = `<div class="dyn-table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%;"><table class="ep-table" style="min-width:360px;"><thead><tr>${thead}</tr></thead><tbody>${tbody}</tbody></table></div>`;
+      }
+      /* Array of objects with numeric keys */
+      else if (typeof firstRow === 'object') {
+        const allKeys = [...new Set(tables.flatMap(r => Object.keys(r)))];
+        const isAllNumeric = allKeys.every(k => !isNaN(parseInt(k)));
+        if (isAllNumeric) {
+          /* First row = header, rest = data */
+          const headers = Object.values(firstRow).map(v => esc(String(v ?? '')));
+          const thead = headers.map(h => `<th>${h}</th>`).join('');
+          const tbody = tables.slice(1).map(r =>
+            `<tr>${Object.values(r).map(v => `<td>${esc(String(v ?? ''))}</td>`).join('')}</tr>`
+          ).join('');
+          bodyHtml = `<div class="dyn-table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%;"><table class="ep-table" style="min-width:360px;"><thead><tr>${thead}</tr></thead><tbody>${tbody}</tbody></table></div>`;
+        } else {
+          /* Normal objects: use keys as headers */
+          const cols = allKeys;
+          const thead = cols.map(c => `<th>${esc(keyToLabel(c))}</th>`).join('');
+          const tbody = tables.map(r =>
+            `<tr>${cols.map(c => `<td>${esc(String(r[c] ?? ''))}</td>`).join('')}</tr>`
+          ).join('');
+          bodyHtml = `<div class="dyn-table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%;"><table class="ep-table" style="min-width:360px;"><thead><tr>${thead}</tr></thead><tbody>${tbody}</tbody></table></div>`;
+        }
+      }
+    } else if (typeof tables === 'object' && !Array.isArray(tables)) {
+      /* Plain object with numeric keys: treat as rows */
+      const rows = Object.values(tables);
+      if (rows.length > 0 && Array.isArray(rows[0])) {
+        const thead = rows[0].map(c => `<th>${esc(String(c))}</th>`).join('');
+        const tbody = rows.slice(1).map(r =>
+          `<tr>${(Array.isArray(r) ? r : Object.values(r)).map(c => `<td>${esc(String(c ?? ''))}</td>`).join('')}</tr>`
+        ).join('');
+        bodyHtml = `<div class="dyn-table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%;"><table class="ep-table" style="min-width:360px;"><thead><tr>${thead}</tr></thead><tbody>${tbody}</tbody></table></div>`;
+      }
+    }
+
+    if (!bodyHtml) return null;
+    return makeCard(
+      'dynSRTable',
+      'linear-gradient(135deg,#1d4ed8,#1d6dbc)',
+      'fa-solid fa-table',
+      'Important Details Table',
+      bodyHtml
+    );
+  }
+
+
+
      Adds extraction of all missing JSON fields.
      Call this from job.html's run() AFTER your existing parseFullJob().
   ══════════════════════════════════════════════════════════════════ */
@@ -647,6 +731,7 @@
       syllabusData:          job.syllabus                || bd.syllabus                || null,
       salaryDetails:         salaryDetails,
       importantInstructions: job.important_instructions  || bd.important_instructions  || null,
+      srTables:              job.tables                  || bd.tables                  || null,
 
       /* Capture any UNKNOWN top-level keys for auto-rendering */
       _unknownFields: (() => {
@@ -661,7 +746,7 @@
           'last_date','application_begin','salary','salary_pay_scale',
           'education_qualification','eligibility','experience_required',
           'official_website_link','form_pdf_free_link','official_notification_pdf_link',
-          'minimum_age','maximum_age','age_relaxation',
+          'minimum_age','maximum_age','age_relaxation','tables',
         ]);
         const extras = {};
         for (const [k, v] of Object.entries(job)) {
@@ -703,6 +788,12 @@
        before links). We build an ordered array then reverse-insert. */
 
     const cards = [];
+
+    /* 0. SR Tables (numbered-column tables from SR data) */
+    if (extras.srTables) {
+      const srTableCard = buildSRTablesCard(extras.srTables);
+      if (srTableCard) cards.push(srTableCard);
+    }
 
     /* 1. Physical Eligibility */
     const phyCard = buildPhysicalCard(extras.physicalEligibility);
