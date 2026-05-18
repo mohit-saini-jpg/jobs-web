@@ -362,8 +362,21 @@
 
   /* ── 3a. How To Apply ── */
   function buildHowToApplyCard(steps) {
-    if (!Array.isArray(steps) || !steps.length) return null;
-    const items = steps
+    /* Support both array of strings AND a single plain string */
+    let stepsArr = [];
+    if (Array.isArray(steps) && steps.length) {
+      stepsArr = steps;
+    } else if (typeof steps === 'string' && steps.trim()) {
+      /* Split by newlines or sentence-ending periods to create numbered steps */
+      const sentences = steps
+        .split(/\n+/)
+        .map(l => l.trim())
+        .filter(Boolean);
+      stepsArr = sentences.length > 1 ? sentences : [steps.trim()];
+    }
+    if (!stepsArr.length) return null;
+
+    const items = stepsArr
       .map((s, i) => `
         <li class="hta-item">
           <span class="hta-num">${i + 1}</span>
@@ -527,11 +540,17 @@
 
   /* ── 3g. Important Instructions ── */
   function buildInstructionsCard(insts) {
-    if (!Array.isArray(insts) || !insts.length) return null;
-    const filtered = insts.filter(s => safe(s));
-    if (!filtered.length) return null;
+    let instArr = [];
+    if (Array.isArray(insts) && insts.length) {
+      instArr = insts.filter(s => safe(s));
+    } else if (typeof insts === 'string' && insts.trim()) {
+      /* Split by newlines or sentence boundaries */
+      const lines = insts.split(/\n+/).map(l => l.trim()).filter(Boolean);
+      instArr = lines.length > 1 ? lines : [insts.trim()];
+    }
+    if (!instArr.length) return null;
 
-    const items = filtered.map(s => `
+    const items = instArr.map(s => `
       <li class="inst-item">
         <i class="fa-solid fa-triangle-exclamation"></i>
         <span>${esc(s)}</span>
@@ -830,41 +849,35 @@
   /**
    * Enriches a job page that was loaded from a minimal dailyupdates.json
    * item by scanning Complete_Jobs_Full_Data.json for a matching entry.
-   * If found, re-renders additional fields using our patch system.
+   * Also scans merged_sarkari_data.json for offline-form jobs that have
+   * how_to_apply as a plain string.
+   *
+   * IMPORTANT GUARDS:
+   * - Only runs when NO /jobs/data/<slug>.json was found (patchFetch would
+   *   have set _cachedJobJson and already called injectDynamicSections).
+   * - Only runs when no dyn-card has been injected yet.
+   * - Uses a HIGH similarity threshold (0.82) to prevent wrong-job matches.
    */
   async function tryEnrichFromFullData() {
     const slug = window.__TSJ_SLUG || '';
     if (!slug) return;
 
-    /* Only run if the page is visible and has minimal data
-       (no How To Apply card injected yet) */
+    /* Only run if layoutJob is visible */
     const layoutJob = document.getElementById('layoutJob');
     if (!layoutJob || layoutJob.style.display === 'none') return;
-    if (document.getElementById('dynHowToApply')) return; /* Already enriched */
 
-    /* Slug → human title for matching */
-    const humanTitle = slug.replace(/-+/g, ' ').replace(/\b[a-z]/g, c => c.toUpperCase()).trim();
+    /* GUARD: If any dyn-card already exists, enrichment already happened */
+    if (document.querySelector('.dyn-card')) return;
 
-    /* Try to load Complete_Jobs_Full_Data.json */
-    let fullData = null;
-    try {
-      const r = await fetch('/Complete_Jobs_Full_Data.json');
-      if (r.ok) fullData = await r.json();
-    } catch (_) {}
+    /* Token matching helpers */
+    const STOP_WORDS = new Set([
+      'the','and','for','are','was','were','has','have','had','will','can','may',
+      '2024','2025','2026','2027','apply','online','offline','form','now','out',
+      'notification','vacancy','vacancies','recruitment','post','posts','latest',
+      'result','admit','card','answer','key','exam','date','last',
+      'syllabus','merit','list','score','hall','ticket','call','letter','job','jobs',
+    ]);
 
-    if (!fullData) return;
-
-    /* Flatten all jobs from fullData */
-    const allJobs = [];
-    if (Array.isArray(fullData)) {
-      allJobs.push(...fullData);
-    } else if (typeof fullData === 'object') {
-      for (const val of Object.values(fullData)) {
-        if (Array.isArray(val)) allJobs.push(...val);
-      }
-    }
-
-    /* Token-based fuzzy match (same logic as job.html matchBySlug) */
     function normStr(s) {
       return safe(s).toLowerCase()
         .replace(/[^\x00-\x7e]/g, ' ')
@@ -872,20 +885,60 @@
         .replace(/[^a-z0-9]+/g, ' ')
         .trim();
     }
-    const slugNorm = normStr(slug.replace(/-/g, ' '));
-    const tokens = slugNorm.split(/\s+/).filter(t => t.length > 2);
-    if (!tokens.length) return;
 
-    let best = null, bestScore = 0;
-    for (const job of allJobs) {
+    const slugNorm = normStr(slug.replace(/-/g, ' '));
+    const tokens = slugNorm.split(/\s+/).filter(t => t.length > 3 && !STOP_WORDS.has(t));
+    if (tokens.length < 2) return; /* Not enough specific tokens to match safely */
+
+    function scoreJob(job) {
       const t = normStr(safe(
         job.title || (job.basic_details && job.basic_details.job_title) || job.post_name || ''
       ));
-      const score = tokens.filter(tk => t.includes(tk)).length / tokens.length;
-      if (score > bestScore) { bestScore = score; best = job; }
+      if (!t) return 0;
+      return tokens.filter(tk => t.includes(tk)).length / tokens.length;
     }
 
-    if (best && bestScore >= 0.55) {
+    let best = null, bestScore = 0;
+
+    /* ── STEP 1: Search merged_sarkari_data.json first (offline form jobs) ── */
+    /* These jobs have how_to_apply as plain strings and no /jobs/data/ files */
+    try {
+      const rm = await fetch('/merged_sarkari_data.json');
+      if (rm.ok) {
+        const mergedData = await rm.json();
+        const mergedJobs = (mergedData && mergedData.jobs) ? mergedData.jobs : [];
+        for (const job of mergedJobs) {
+          const sc = scoreJob(job);
+          if (sc > bestScore) { bestScore = sc; best = job; }
+        }
+      }
+    } catch (_) {}
+
+    /* ── STEP 2: If not found in merged, try Complete_Jobs_Full_Data.json ── */
+    /* HIGH threshold (0.82) — requires >82% of meaningful tokens to match */
+    if (!best || bestScore < 0.82) {
+      try {
+        const r = await fetch('/Complete_Jobs_Full_Data.json');
+        if (r.ok) {
+          const fullData = await r.json();
+          const allJobs = [];
+          if (Array.isArray(fullData)) {
+            allJobs.push(...fullData);
+          } else if (typeof fullData === 'object') {
+            for (const val of Object.values(fullData)) {
+              if (Array.isArray(val)) allJobs.push(...val);
+            }
+          }
+          for (const job of allJobs) {
+            const sc = scoreJob(job);
+            if (sc > bestScore) { bestScore = sc; best = job; }
+          }
+        }
+      } catch (_) {}
+    }
+
+    /* Inject only if score meets threshold */
+    if (best && bestScore >= 0.82) {
       injectDynamicSections(best, null);
     }
   }
