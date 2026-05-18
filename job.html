@@ -1964,6 +1964,8 @@
       /* This is the authoritative source — exact slug match, no fuzzy logic */
       let row = null;
       let _rawJobData = null; /* Store raw JSON for dynamic patch renderer */
+      window.__TSJ_RAW_JOB = null;   /* Exposed for deferred patch scripts */
+      window.__TSJ_RENDER_DONE = false; /* Set true when page fully rendered */
       /* ── PRIMARY: Fetch individual job JSON from /jobs/data/<slug>.json ── */
       /* Try multiple slug variants to handle URL vs filename mismatches */
       const _slugVariants = (() => {
@@ -1993,7 +1995,7 @@
           if (directRes.ok) {
             const directData = await directRes.json();
             if (directData && (directData.basic_details || directData.title)) {
-              _rawJobData = directData; /* Store raw JSON for dynamic sections patch */
+              _rawJobData = directData; window.__TSJ_RAW_JOB = directData; /* Store raw JSON for dynamic sections patch */
               row = parseFullJob(directData, directData.category || 'Latest Notifications');
               if (row) row.slug = rawSlug;
             }
@@ -2106,6 +2108,9 @@
         /* ALWAYS hide spinner and show content — no matter what happened above */
         loading.style.display = 'none';
         threeCol.style.display = 'grid';
+        window.__TSJ_RENDER_DONE = true;
+        /* Notify deferred patch — fire any queued offline patches */
+        if (typeof window.__TSJ_ON_RENDER_DONE === 'function') window.__TSJ_ON_RENDER_DONE(window.__TSJ_RAW_JOB);
         /* Hide error box if content rendered successfully */
         if (errorEl && errorEl.style.display !== 'block') {
           errorEl.style.display = 'none';
