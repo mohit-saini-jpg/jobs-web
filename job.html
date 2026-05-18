@@ -115,8 +115,8 @@
     *,*::before,*::after{box-sizing:border-box;}
     html,body{height:100%;margin:0;}
     html{scroll-padding-top:140px;}
-    body{display:flex;flex-direction:column;font-family:inherit;background:#f0f4f8;}
-    main{flex:1;}
+    body{display:flex;flex-direction:column;font-family:inherit;background:#f0f4f8;overflow-x:hidden;}
+    main{flex:1;min-width:0;}
 
     .site-header{position:sticky!important;top:0!important;z-index:500!important;background:#fff!important;box-shadow:0 2px 8px rgba(0,0,0,.1);}
     .header-logo-bar{background:#fff!important;}
@@ -126,6 +126,7 @@
     .jp-three-col{display:grid;grid-template-columns:220px 1fr 280px;gap:16px;align-items:start;}
     @media(max-width:1024px){.jp-three-col{grid-template-columns:1fr 260px;}}
     @media(max-width:768px){.jp-three-col{grid-template-columns:1fr;}}
+    @media(max-width:480px){.jp-wrap{padding:12px 8px 32px;}}
 
     .jp-left-nav{position:sticky;top:var(--header-height,140px);}
     @media(max-width:1024px){.jp-left-nav{display:none;}}
@@ -286,9 +287,36 @@
 
     @media(max-width:520px){
       .jp-title{font-size:1rem;}
-      .jp-btn{font-size:.76rem;padding:9px 10px;}
-      .jp-actions{gap:7px;}
+      .jp-btn{font-size:.76rem;padding:9px 10px;min-width:90px;}
+      .jp-actions{gap:6px;padding:10px;}
       .jp-main-cta{font-size:.9rem;}
+      .jp-stats{grid-template-columns:repeat(2,1fr);}
+      .jp-stat{padding:9px 6px;}
+      .jp-stat-label{font-size:.6rem;}
+      .jp-stat-val{font-size:.8rem;}
+    }
+    /* ── Global table overflow fix ── */
+    table{max-width:100%;}
+    .jp-table-wrap,
+    .jp-vac-table-wrap,
+    .dyn-table-scroll{
+      width:100%;
+      overflow-x:auto;
+      -webkit-overflow-scrolling:touch;
+      /* Subtle scroll hint on small screens */
+    }
+    @media(max-width:600px){
+      .jp-table{font-size:.78rem;}
+      .jp-table th,.jp-table td{padding:8px 10px;}
+      .jp-vac-table{font-size:.78rem;}
+      .jp-vac-table th,.jp-vac-table td{padding:7px 8px;}
+      /* Wide SR-data tables: ensure scrollable */
+      .ep-table,.gen-table{min-width:420px;}
+    }
+    /* ── Actions: 2-col on mobile when many buttons ── */
+    @media(max-width:480px){
+      .jp-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:10px;}
+      .jp-btn{flex:unset;min-width:unset;width:100%;}
     }
     .jp-mobile-links{display:none;}
     @media(max-width:768px){.jp-mobile-links{display:block;margin-bottom:14px;}}
