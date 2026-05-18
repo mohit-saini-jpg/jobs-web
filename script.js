@@ -454,6 +454,12 @@
             headerHost.innerHTML = '<div style="background:#1d3a6e;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;"><a href="/" style="color:#fff;font-weight:900;font-size:1.1rem;text-decoration:none;">TOP <span style="color:#f59e0b;">SARKARI</span> JOBS</a><a href="/" style="color:#fff;font-size:.85rem;text-decoration:none;">&#8592; Home</a></div>';
         }
     }
+    } else if (headerHost && headerHost.querySelector(".brand")) {
+        // Header already injected by early inline script — just init menus
+        buildMobileMenu();
+        initOffcanvas();
+        initDropdowns();
+    }
 
     injectMobileHeaderBtns();
 
@@ -2126,8 +2132,15 @@
     });
 
     buildMobileMenu();   // NOTE: runs again after header inject — safe, idempotent
-    safeHideOldSearchBars(); 
-    
+    safeHideOldSearchBars();
+
+    // Expose init hook for pages that inject header before script.js loads
+    window.__TSJ_INIT_HEADER = function() {
+      buildMobileMenu();
+      initOffcanvas();
+      initDropdowns();
+    };
+
     await injectHeaderFooter();  // ← buildMobileMenu() also called inside here after DOM ready
     await loadHeaderLinks();
     initOffcanvas();   // called again here as safety fallback
