@@ -959,4 +959,262 @@
     }, 100);
   })();
 
+
+  /* ══════════════════════════════════════════════════════════════════
+     SECTION 8 — OFFLINE FORM / FLAT-FIELD PATCH
+     Fixes 3 issues for offline-form jobs loaded from /jobs/data/<slug>.json:
+       1. Apply Mode shows "Online" instead of "Offline"
+       2. Last Date not showing in stats bar / sidebar
+       3. Important Links missing form_pdf_free_link, official_notification_pdf_link,
+          official_website_link even though these are present in the JSON
+     Runs AFTER patchFetch() injects dynamic sections so we don't race.
+  ══════════════════════════════════════════════════════════════════ */
+
+  /**
+   * Helper: normalise URL (same logic as job.html's normalizeUrl but standalone)
+   */
+  function _normUrl(raw) {
+    const s = safe(raw);
+    if (!s) return '';
+    if (/^(https?:)?\/\//i.test(s) || /^(mailto:|tel:)/i.test(s)) return s;
+    if (s.startsWith('#') || s.startsWith('?') || s.startsWith('/')) return s;
+    if (s.includes('.html') || s.startsWith('./') || s.startsWith('../')) return s;
+    return 'https://' + s.replace(/^\/+/, '');
+  }
+
+  /**
+   * Patch Apply Mode stat box and overview table row.
+   */
+  function _patchApplyMode(mode) {
+    if (!mode || mode === 'Online') return;
+    /* Stat box */
+    const statEl = document.getElementById('statApplyMode');
+    if (statEl) {
+      statEl.textContent = mode;
+      /* Change colour: Offline → orange, Online → green */
+      statEl.className = 'jp-stat-val' + (mode.toLowerCase() === 'offline' ? '' : ' green');
+      if (mode.toLowerCase() === 'offline') statEl.style.color = '#ea580c';
+    }
+    /* Overview table row */
+    document.querySelectorAll('#jbTable tbody tr').forEach(tr => {
+      const th = tr.querySelector('th');
+      if (th && /application mode/i.test(th.textContent)) {
+        const td = tr.querySelector('td');
+        if (td) td.textContent = mode;
+      }
+    });
+    /* Highlights card */
+    document.querySelectorAll('#hlList .jp-hl-item span').forEach(el => {
+      if (/apply mode/i.test(el.textContent)) el.textContent = 'Apply Mode: ' + mode;
+    });
+  }
+
+  /**
+   * Patch Last Date everywhere it should appear.
+   */
+  function _patchLastDate(lastDate) {
+    if (!lastDate || lastDate === 'See Notification' || lastDate === '—') return;
+
+    /* Format: DD/MM/YYYY from common input formats */
+    function fmt(v) {
+      if (!v || typeof v !== 'string') return v;
+      var s = v.trim();
+      var m = s.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
+      if (m) return ('0'+m[3]).slice(-2)+'/'+('0'+m[2]).slice(-2)+'/'+m[1];
+      m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+      if (m) return ('0'+m[1]).slice(-2)+'/'+('0'+m[2]).slice(-2)+'/'+m[3];
+      return s;
+    }
+    const fmtDate = fmt(lastDate);
+
+    /* Stat box */
+    const statEl = document.getElementById('statLastDate');
+    if (statEl && (statEl.textContent === 'See Notification' || !statEl.textContent.trim())) {
+      statEl.textContent = fmtDate;
+    }
+
+    /* Sidebar last date */
+    const sidebarVal = document.getElementById('dateLastVal');
+    if (sidebarVal && (sidebarVal.textContent === '—' || !sidebarVal.textContent.trim())) {
+      sidebarVal.textContent = fmtDate;
+      const sidebarRow = document.getElementById('dateLastRow');
+      if (sidebarRow) sidebarRow.style.display = '';
+    }
+
+    /* Meta last date in header */
+    const metaWrap = document.getElementById('metaLastDateWrap');
+    const metaEl   = document.getElementById('metaLastDate');
+    if (metaWrap && metaEl && metaWrap.style.display === 'none') {
+      metaEl.textContent = 'Last Date: ' + fmtDate;
+      metaWrap.style.display = '';
+    }
+
+    /* Overview table row */
+    document.querySelectorAll('#jbTable tbody tr').forEach(tr => {
+      const th = tr.querySelector('th');
+      if (th && /last date/i.test(th.textContent)) {
+        const td = tr.querySelector('td');
+        if (td && (td.textContent === 'See Notification' || !td.textContent.trim())) {
+          td.textContent = fmtDate;
+        }
+      }
+    });
+
+    /* Important Dates card detail */
+    document.querySelectorAll('#datesDetailBody tr').forEach(tr => {
+      const th = tr.querySelector('th');
+      if (th && /last date/i.test(th.textContent)) {
+        const td = tr.querySelector('td');
+        if (td && (td.textContent === 'See Notification' || !td.textContent.trim())) {
+          td.textContent = fmtDate;
+          td.style.color = '#dc2626';
+          td.style.fontWeight = '800';
+        }
+      }
+    });
+
+    /* Highlights card */
+    document.querySelectorAll('#hlList .jp-hl-item span').forEach(el => {
+      if (/last date/i.test(el.textContent)) el.textContent = '⚠ Last Date: ' + fmtDate;
+    });
+  }
+
+  /**
+   * Patch Important Links — add missing flat-field links that job.html
+   * may have skipped (form_pdf_free_link, official_notification_pdf_link,
+   * official_website_link) when they were not in useful_links/important_links.
+   */
+  function _patchImportantLinks(rawJob) {
+    if (!rawJob) return;
+
+    const linksContainer = document.getElementById('linksActions');
+    if (!linksContainer) return;
+
+    /* Collect URLs already rendered to avoid duplicates */
+    const alreadyShown = new Set();
+    linksContainer.querySelectorAll('a[href]').forEach(a => {
+      const h = (a.getAttribute('href') || '').trim();
+      if (h && h !== '#') alreadyShown.add(h);
+    });
+
+    /* Links to add from flat fields — in priority order */
+    const toAdd = [
+      {
+        key: 'form_pdf_free_link',
+        label: 'Download Form (Free PDF)',
+        icon: 'fa-file-arrow-down',
+        cls: 'jp-btn-orange',
+        sub: 'Free PDF'
+      },
+      {
+        key: 'official_notification_pdf_link',
+        label: 'Official Notification PDF',
+        icon: 'fa-file-pdf',
+        cls: 'jp-btn-blue',
+        sub: 'Download PDF'
+      },
+      {
+        key: 'official_website_link',
+        label: 'Official Website',
+        icon: 'fa-globe',
+        cls: 'jp-btn-red',
+        sub: 'Visit Now'
+      },
+    ];
+
+    let newHtml = '';
+    toAdd.forEach(({ key, label, icon, cls, sub }) => {
+      const rawUrl = safe(rawJob[key] || '');
+      if (!rawUrl) return;
+      const href = _normUrl(rawUrl);
+      if (!href || alreadyShown.has(href)) return;
+      alreadyShown.add(href);
+      newHtml += `<a href="${href}" target="_blank" rel="noopener" class="jp-btn ${cls}">
+        <span><i class="fa-solid ${icon}"></i> ${label}</span>
+        <span class="jp-btn-sub">${sub}</span>
+      </a>`;
+    });
+
+    if (newHtml) {
+      /* Remove the placeholder "Links not available" message if present */
+      const placeholder = linksContainer.querySelector('p');
+      if (placeholder) placeholder.remove();
+      linksContainer.insertAdjacentHTML('beforeend', newHtml);
+    }
+  }
+
+  /**
+   * Main offline-patch runner — called after page renders.
+   * Reads the cached raw job JSON (from patchFetch) or re-fetches it.
+   */
+  function _runOfflinePatch(rawJob) {
+    if (!rawJob) return;
+
+    /* 1. Apply Mode */
+    const applyMode = safe(rawJob.apply_mode || (rawJob.basic_details && rawJob.basic_details.apply_mode) || '');
+    if (applyMode) _patchApplyMode(applyMode);
+
+    /* 2. Last Date */
+    const lastDate = safe(
+      rawJob.last_date ||
+      (rawJob.important_dates && (rawJob.important_dates.last_date || rawJob.important_dates.application_last_date)) ||
+      ''
+    );
+    if (lastDate) _patchLastDate(lastDate);
+
+    /* 3. Important Links — flat fields */
+    _patchImportantLinks(rawJob);
+  }
+
+  /* ── Hook into __TSJ_RENDER_EXTRA ── */
+  /* Wrap the existing __TSJ_RENDER_EXTRA so our patch ALSO runs */
+  (function () {
+    const _existingExtra = window.__TSJ_RENDER_EXTRA;
+    window.__TSJ_RENDER_EXTRA = function (rawJobJson, parsedRow) {
+      /* Run existing dynamic sections first */
+      if (typeof _existingExtra === 'function') {
+        _existingExtra(rawJobJson, parsedRow);
+      }
+      /* Then run offline patch with a tiny delay to let DOM settle */
+      if (rawJobJson) {
+        setTimeout(function () { _runOfflinePatch(rawJobJson); }, 80);
+      }
+    };
+  })();
+
+  /* ── FALLBACK: also patch via fetch interception ── */
+  /* The patchFetch() above caches the job JSON. We piggyback on it by
+     also running _runOfflinePatch when we detect a completed render.   */
+  (function patchFetchOffline() {
+    const _origFetch2 = window.fetch;
+    let _cachedRaw = null;
+
+    window.fetch = async function (...args) {
+      const result = await _origFetch2.apply(this, args);
+      const url = (typeof args[0] === 'string') ? args[0] : (args[0] && args[0].url) || '';
+      if (url && url.includes('/jobs/data/') && url.endsWith('.json')) {
+        const clone = result.clone();
+        clone.json().then(data => {
+          if (data && (data.basic_details || data.title || data.form_pdf_free_link || data.official_website_link)) {
+            _cachedRaw = data;
+            /* Wait for render then patch */
+            let tries2 = 0;
+            const id2 = setInterval(() => {
+              const layout = document.getElementById('jbThreeCol');
+              const loading = document.getElementById('jbLoading');
+              if ((layout && layout.style.display !== 'none') ||
+                  (loading && loading.style.display === 'none') ||
+                  tries2 > 60) {
+                clearInterval(id2);
+                setTimeout(function () { if (_cachedRaw) _runOfflinePatch(_cachedRaw); }, 200);
+              }
+              tries2++;
+            }, 100);
+          }
+        }).catch(() => {});
+      }
+      return result;
+    };
+  })();
+
 })();
