@@ -174,18 +174,22 @@
     .jp-sec-head{background:#1d6dbc;color:#fff;font-size:.86rem;font-weight:700;padding:9px 14px;display:flex;align-items:center;gap:8px;}
     .jp-sec-head i{opacity:.85;}
 
-    .jp-table{width:100%;border-collapse:collapse;}
+    /* ── TABLE OVERFLOW FIX: wrap tables in scrollable container ── */
+    .jp-table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+    .jp-table{width:100%;border-collapse:collapse;table-layout:fixed;min-width:320px;}
     .jp-table tr:not(:last-child) td,.jp-table tr:not(:last-child) th{border-bottom:1px solid #e9eef4;}
-    .jp-table th{width:35%;background:#f8fafc;color:#374151;font-size:.82rem;font-weight:700;padding:10px 14px;text-align:left;vertical-align:top;}
-    .jp-table td{color:#1e293b;font-size:.84rem;padding:10px 14px;vertical-align:top;line-height:1.6;}
+    .jp-table th{width:35%;background:#f8fafc;color:#374151;font-size:.82rem;font-weight:700;padding:10px 14px;text-align:left;vertical-align:top;word-break:break-word;overflow-wrap:break-word;}
+    .jp-table td{color:#1e293b;font-size:.84rem;padding:10px 14px;vertical-align:top;line-height:1.6;word-break:break-word;overflow-wrap:break-word;}
     .jp-table tr.hl-row th,.jp-table tr.hl-row td{background:#fff7ed;}
     .jp-table tr.hl-row td{color:#b45309;font-weight:700;}
     .jp-table tr.lastdate-row th,.jp-table tr.lastdate-row td{background:#fef2f2;}
     .jp-table tr.lastdate-row td{color:#dc2626;font-weight:800;}
 
-    .jp-vac-table{width:100%;border-collapse:collapse;font-size:.82rem;}
-    .jp-vac-table th{background:#1d4ed8;color:#fff;padding:8px 12px;text-align:center;font-weight:700;}
-    .jp-vac-table td{padding:8px 12px;text-align:center;border-bottom:1px solid #e9eef4;color:#1e293b;}
+    /* ── Vacancy table: multi-column also gets overflow scroll ── */
+    .jp-vac-table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+    .jp-vac-table{width:100%;border-collapse:collapse;font-size:.82rem;min-width:400px;}
+    .jp-vac-table th{background:#1d4ed8;color:#fff;padding:8px 12px;text-align:center;font-weight:700;white-space:nowrap;}
+    .jp-vac-table td{padding:8px 12px;text-align:center;border-bottom:1px solid #e9eef4;color:#1e293b;word-break:break-word;}
     .jp-vac-table tr:last-child td{border-bottom:none;font-weight:700;background:#f0f9ff;}
 
     .jp-notice{padding:11px 14px;font-size:.81rem;color:#78350f;line-height:1.65;background:#fffbeb;border-top:1px solid #fde68a;}
@@ -480,7 +484,7 @@
             <!-- Overview Table -->
             <div class="jp-card">
               <div class="jp-sec-head"><i class="fa-solid fa-table-list"></i> <span id="overviewTitle">Recruitment 2026 : Overview</span></div>
-              <table class="jp-table" id="jbTable"><tbody></tbody></table>
+              <div class="jp-table-wrap"><table class="jp-table" id="jbTable"><tbody></tbody></table></div>
               <div class="jp-notice">
                 <strong>⚠ Important:</strong> Always verify all details on the <strong>official website</strong> before applying. Dates &amp; eligibility may change without notice.<br/>
                 <strong>ध्यान दें:</strong> आवेदन से पहले आधिकारिक वेबसाइट पर सभी जानकारी जाँचें।
@@ -490,7 +494,7 @@
             <!-- Important Dates -->
             <div class="jp-card" id="datesDetailCard" style="display:none;">
               <div class="jp-sec-head" style="background:linear-gradient(135deg,#b91c1c,#dc2626);"><i class="fa-regular fa-calendar-check"></i> Important Dates</div>
-              <table class="jp-table"><tbody id="datesDetailBody"></tbody></table>
+              <div class="jp-table-wrap"><table class="jp-table"><tbody id="datesDetailBody"></tbody></table></div>
             </div>
 
             <!-- Application Fee -->
@@ -514,7 +518,7 @@
             <!-- Vacancy Details -->
             <div class="jp-card" id="vacCard" style="display:none;">
               <div class="jp-sec-head" style="background:linear-gradient(135deg,#15803d,#16a34a);"><i class="fa-solid fa-chart-pie"></i> Vacancy Details</div>
-              <div style="overflow-x:auto;">
+              <div class="jp-vac-table-wrap">
                 <table class="jp-vac-table" id="vacTable">
                   <thead><tr id="vacHead"><th>Category</th><th>Vacancies</th></tr></thead>
                   <tbody id="vacBody"></tbody>
@@ -1374,8 +1378,13 @@
         job.total_vacancy || job.total_vacancies || bd.total_vacancies || ''
       );
 
-      /* Apply mode */
-      let applyMode = safe(job.apply_mode || bd.apply_mode || bd.application_mode || 'Online');
+      /* Apply mode — check more field variants for offline form jobs */
+      let applyMode = safe(
+        job.apply_mode || job.application_mode || job.mode ||
+        bd.apply_mode || bd.application_mode ||
+        (job.category && /offline/i.test(job.category) ? 'Offline' : '') ||
+        ''
+      );
       if (!applyMode || applyMode === '-') applyMode = 'Online';
 
       /* ── Extract links from useful_links array by title keyword ── */
@@ -1564,10 +1573,12 @@
         job.source_url || job.official_website_link || bd.source_url || bd.official_website || ''
       );
 
-      /* Dates */
+      /* Dates — try all possible field name variants */
       const lastDate   = safe(
         id.last_date || id.application_last_date || id.last_date_for_apply ||
-        job.last_date || ''
+        id.closing_date || id.last_apply_date ||
+        job.last_date || job.last_date_to_apply || job.closing_date ||
+        job.application_last_date || ''
       );
       const appBegin   = safe(
         id.application_begin || id.application_start || id.start_date ||
