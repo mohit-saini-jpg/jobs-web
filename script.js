@@ -1954,8 +1954,10 @@
     function jobHref(j) {
       const slug = j.slug || slugify(j.title || '');
       if (!slug) return j.official_website_link || '#';
-      const prefix = (j.apply_mode||'').toLowerCase() === 'offline' ? 'offline-' : '';
-      return 'job.html?slug=' + encodeURIComponent(prefix + slug);
+      /* FIX: No 'offline-' prefix — merged_sarkari_data.json jobs have no slug field,
+         so slug is generated from title. Adding 'offline-' creates a mismatch with
+         the title-derived slug used in matchBySlug(), causing wrong data on first load. */
+      return 'job.html?slug=' + encodeURIComponent(slug);
     }
 
     let searchData = [];
@@ -2009,10 +2011,9 @@
             const bd = i.basic_details || {};
             const title = bd.job_title || bd.post_name || i.title || i.name || '';
             if (!title) return;
-            const applyMode = (bd.application_mode || i.apply_mode || '').toLowerCase();
-            const prefix = applyMode === 'offline' ? 'offline-' : '';
             const slug = i.slug || slugify(title);
-            const href = slug ? 'job.html?slug=' + encodeURIComponent(prefix + slug) + '&section=' + encodeURIComponent(k.replace(/_/g,' ')) : '#';
+            /* FIX: No 'offline-' prefix — causes slug mismatch in matchBySlug() */
+            const href = slug ? 'job.html?slug=' + encodeURIComponent(slug) + '&section=' + encodeURIComponent(k.replace(/_/g,' ')) : '#';
             push(title, href, k.replace(/_/g,' '));
           });
         });
