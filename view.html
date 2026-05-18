@@ -295,7 +295,12 @@
         const slug   = job.slug || __viewSlugify(title);
         const dates  = job.important_dates || {};
         const last   = (dates.last_date || dates.last_date_to_apply || dates.closing_date || job.last_date || '').trim();
-        const item   = { slug, name: title, date: last };
+        const bd     = job.basic_details || {};
+        const org    = (job.organization || bd.organization_name || job.org || '').trim();
+        const vac    = (job.total_vacancy || bd.total_vacancies  || job.total_vacancies || '').toString().trim();
+        const applyMode = (job.apply_mode || bd.application_mode || '').trim();
+        const salary = (job.salary_pay_scale || job.salary || bd.salary || '').trim();
+        const item   = { slug, name: title, date: last, org, vac, mode: applyMode, salary };
 
         /* ── PRIMARY: use 'category' field (as set in merged_sarkari_data.json) ── */
         const cat = (job.category || '').trim();
@@ -794,12 +799,19 @@
                           dspDate = dspDate.slice(0, 37) + '…';
                         }
                         const dataSlug = i.slug ? `data-slug="${i.slug}" data-bypass-gate="1"` : '';
+                        // Build extra info badges
+                        const badges = [];
+                        if (i.org)  badges.push(`<span class="inline-flex items-center gap-1 text-slate-600"><span>🏢</span><span>${i.org.length > 40 ? i.org.slice(0,38)+'…' : i.org}</span></span>`);
+                        if (i.vac)  badges.push(`<span class="inline-flex items-center gap-1 text-blue-700 font-medium"><span>👥</span><span>Posts: ${i.vac}</span></span>`);
+                        if (i.mode) badges.push(`<span class="inline-flex items-center gap-1 ${i.mode.toLowerCase().includes('offline') ? 'text-orange-600' : 'text-green-700'} font-medium"><span>💻</span><span>${i.mode}</span></span>`);
+                        if (dspDate && dspDate !== 'Update' && dspDate !== 'Check Official Notification') badges.push(`<span class="inline-flex items-center gap-1 text-red-600 font-medium"><span>📅</span><span>Last Date: ${dspDate}</span></span>`);
+                        const badgeHtml = badges.length ? `<div class="flex flex-wrap gap-x-3 gap-y-1 mt-1.5 text-xs">${badges.join('')}</div>` : `<div class="text-xs text-slate-500 mt-1">${dspDate}</div>`;
                         return `
                         <li class="bg-white border border-slate-200 rounded-lg p-3 hover:shadow-md transition">
-                            <a href="${href}" data-redirect-label="${label}" ${dataSlug} class="block font-semibold text-sky-700 hover:underline" ${targetAttr}>
+                            <a href="${href}" data-redirect-label="${label}" ${dataSlug} class="block font-semibold text-sky-700 hover:underline text-sm leading-snug" ${targetAttr}>
                                 ${label}
                             </a>
-                            <div class="text-xs text-slate-500 mt-1">${dspDate}</div>
+                            ${badgeHtml}
                         </li>
                      `;
                      }).join('');
