@@ -239,6 +239,9 @@
     .sjd-tips-list{padding:10px 14px 12px;margin:0;}
     .sjd-tips-list li{font-size:.81rem;color:#334155;line-height:1.9;}
   </style>
+  <!-- Preload header.html so it's ready before script.js runs -->
+  <link rel="preload" href="/header.html" as="fetch" crossorigin="anonymous"/>
+  <script>window.__headerPromise=fetch('/header.html',{cache:'no-store'}).then(function(r){return r.ok?r.text():null;}).catch(function(){return null;});</script>
 </head>
 
 <body>
@@ -402,7 +405,7 @@
     </div><!-- /sjd-wrap -->
   </main>
 
-  <script src="/script.js?v=20260516" defer></script>
+  <script src="/script.js?v=20260517" defer></script>
 
   <script>
   /* ══════════════════════════════════════════════════════════════════
