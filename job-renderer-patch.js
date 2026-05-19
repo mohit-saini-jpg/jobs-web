@@ -354,6 +354,29 @@
     }
   }
 
+  /** Insert a card AFTER the Important Links card (for FAQ, so FAQ appears below Important Links) */
+  function insertAfterLinks(card) {
+    const layout = document.getElementById('layoutJob');
+    if (!layout) return;
+    const allCards = layout.querySelectorAll('.jp-card');
+    let linksCard = null;
+    for (const c of allCards) {
+      const head = c.querySelector('.jp-sec-head');
+      if (head && /important links/i.test(head.textContent)) { linksCard = c; break; }
+    }
+    if (linksCard) {
+      // Insert after Important Links (before tips card or next sibling)
+      const tipsCard = layout.querySelector('.jp-tips-card');
+      if (tipsCard) layout.insertBefore(card, tipsCard);
+      else linksCard.insertAdjacentElement('afterend', card);
+    } else {
+      // Fallback: before the tips card
+      const tipsCard = layout.querySelector('.jp-tips-card');
+      if (tipsCard) layout.insertBefore(card, tipsCard);
+      else layout.appendChild(card);
+    }
+  }
+
   /** Remove all previously injected dynamic cards (avoid duplicates on re-render) */
   function clearDynCards() {
     document.querySelectorAll('.dyn-card').forEach(el => el.remove());
@@ -831,15 +854,17 @@
       if (gc) cards.push(gc);
     }
 
-    /* 8. FAQ (always last before Important Links) */
+    /* 8. FAQ (inserted AFTER Important Links — user wants Important Links above FAQ) */
     const faqCard = buildFaqCard(extras.faq);
-    if (faqCard) cards.push(faqCard);
 
     /* Insert in correct order: we reverse then insert so they end up in right order */
     /* Since each insertBeforeLinks puts card RIGHT before links,
        inserting in order means each card goes after the previous.
        So we insert in FORWARD order to get correct sequence. */
     cards.forEach(card => insertBeforeLinks(card));
+
+    /* FAQ goes after Important Links */
+    if (faqCard) insertAfterLinks(faqCard);
   }
 
 
