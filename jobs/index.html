@@ -263,6 +263,8 @@
     .jp-mobile-grid a:nth-child(even){border-right:none;}
     .jp-mobile-grid a i{color:#0f766e;width:14px;font-size:.75rem;}
   </style>
+  <!-- GA4: Centralized Analytics -->
+  <script src="/analytics.js" defer></script>
 </head>
 <body>
   <header class="site-header" id="site-header"></header>
@@ -622,6 +624,14 @@
       document.title = fullTitle;
       const metaDescEl = document.getElementById('metaDesc');
       if (metaDescEl) metaDescEl.setAttribute('content', desc);
+
+      // GA4: fire SPA page_view + job view event
+      if (typeof window.ga4PageView === 'function') {
+        window.ga4PageView(fullTitle, '/jobs/' + slug + '/');
+      }
+      if (typeof window.ga4TrackJobView === 'function') {
+        window.ga4TrackJobView(name, 'Government Job');
+      }
 
       // Canonical
       const can = document.getElementById('canonicalTag');
