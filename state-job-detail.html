@@ -266,6 +266,8 @@
     }
   })();
   </script>
+  <!-- GA4: Centralized Analytics -->
+  <script src="/analytics.js" defer></script>
 </head>
 
 <body>
@@ -511,6 +513,14 @@
       const canEl = document.getElementById('canonicalTag');
       if (canEl) canEl.href = canonUrl;
       const ogU = document.getElementById('ogUrl'); if (ogU) ogU.setAttribute('content', canonUrl);
+
+      // GA4: SPA page_view + job view for state job detail
+      if (typeof window.ga4PageView === 'function') {
+        window.ga4PageView(fullTitle, location.pathname + location.search);
+      }
+      if (typeof window.ga4TrackJobView === 'function') {
+        window.ga4TrackJobView(title, state + ' Govt Job');
+      }
 
       const scEl = document.getElementById('jobSchema');
       if (scEl) scEl.textContent = JSON.stringify({
