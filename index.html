@@ -1782,18 +1782,18 @@
 
     var MAX_JOBS    = 40;
     var BASE_SPEED  = 80;
-    var LATEST_JOBS_URL = '/section/latest-jobs/';
+    var LATEST_JOBS_URL = '/section/latest-notifications/';
 
-    /* ── fetch Complete_Jobs_Full_Data.json for Latest_Notifications ── */
+    /* ── fetch jobs-index.json — small 309KB file with slugs ── */
     function fetchJobs() {
-      var CACHE_KEY = '__ticker_complete_cache';
+      var CACHE_KEY = '__ticker_idx_cache';
       var CACHE_TTL = 15 * 60 * 1000;
       try {
         var cached = JSON.parse(sessionStorage.getItem(CACHE_KEY) || 'null');
         if (cached && (Date.now() - cached.ts) < CACHE_TTL) return Promise.resolve(cached.data);
       } catch(e) {}
 
-      return fetch('/Complete_Jobs_Full_Data.json')
+      return fetch('/jobs-index.json')
         .then(function(r){ return r.ok ? r.json() : null; })
         .then(function(json) {
           try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: json })); } catch(e) {}
@@ -1802,41 +1802,22 @@
         .catch(function(){ return null; });
     }
 
-    /* ── extract Latest_Notifications jobs ── */
+    /* ── extract Latest_Notifications jobs from index ── */
     function extractLatestJobs(json) {
       var jobs = [];
+      if (!json || typeof json !== 'object') return Promise.resolve(jobs);
 
-      if (json && json['Latest_Notifications'] && Array.isArray(json['Latest_Notifications'])) {
-        var arr = json['Latest_Notifications'];
-        for (var i = 0; i < arr.length; i++) {
-          var job = arr[i];
-          var bd  = job.basic_details || {};
-          var title = (bd.job_title || bd.post_name || job.title || '').trim();
-          var slug  = job.slug || '';
-          var url   = slug ? ('/jobs/' + slug + '/') : LATEST_JOBS_URL;
-          if (title) jobs.push({ name: title, url: url });
-          if (jobs.length >= MAX_JOBS) break;
-        }
-      }
-
-      /* Fallback: try merged_sarkari_data.json SR_Latest_Jobs */
-      if (jobs.length === 0) {
-        return fetch('/merged_sarkari_data.json')
-          .then(function(r){ return r.ok ? r.json() : null; })
-          .then(function(mj) {
-            if (!mj) return jobs;
-            if (mj && Array.isArray(mj.jobs)) {
-              for (var k = 0; k < mj.jobs.length; k++) {
-                var j = mj.jobs[k];
-                var t = (j.title || '').trim();
-                var u = j.slug ? ('/jobs/' + j.slug + '/') : LATEST_JOBS_URL;
-                if (t) jobs.push({ name: t, url: u });
-                if (jobs.length >= MAX_JOBS) break;
-              }
-            }
-            return jobs;
-          })
-          .catch(function(){ return jobs; });
+      var slugs = Object.keys(json);
+      for (var i = 0; i < slugs.length; i++) {
+        var slug = slugs[i];
+        var entry = json[slug];
+        if ((entry.cat || '') !== 'Latest_Notifications') continue;
+        var title = (entry.title || slug.replace(/-/g,' ')).trim();
+        /* Remove trailing "-latest-notifications" from slug for clean URL */
+        var cleanSlug = slug.replace(/-latest-notifications$/, '');
+        var url = '/jobs/' + cleanSlug + '/';
+        jobs.push({ name: title, url: url });
+        if (jobs.length >= MAX_JOBS) break;
       }
 
       return Promise.resolve(jobs);
