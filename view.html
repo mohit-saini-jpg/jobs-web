@@ -217,7 +217,16 @@
     }
 
     /* ── Main entry ── */
+    /* Support both:
+       - /view.html?section=<name>  (legacy / internal)
+       - /section/<slug>/           (clean SEO URL via _redirects 200 rewrite)
+    */
     var sectionParam = qp('section');
+    if (!sectionParam) {
+      /* Extract slug from /section/<slug>/ path */
+      var pathMatch = window.location.pathname.match(/\/section\/([^/]+)\/?$/);
+      if (pathMatch) sectionParam = decodeURIComponent(pathMatch[1]);
+    }
     var urlParam     = qp('url');
     var nameParam    = qp('name');
 
@@ -236,6 +245,132 @@
     if (sectionParam) {
       show(sectionView);
       cleanifyURL(sectionParam);
+
+      /* ── SR Category slug → merged_sarkari_data.json key mapping ──
+         Clean SEO slugs (from /section/<slug>/) map to internal SR keys.
+         These sections pull data from merged_sarkari_data.json, NOT from
+         the keyword-search path below.
+      ---------------------------------------------------------------- */
+      var SR_SLUG_MAP = {
+        'latest-jobs':   { key: 'SR_Latest_Jobs',  source: 'sarkariresult_categories' },
+        'latest-govt-jobs': { key: 'SR_Latest_Jobs', source: 'sarkariresult_categories' },
+        'sr-latest-jobs': { key: 'SR_Latest_Jobs', source: 'sarkariresult_categories' },
+        'admit-card':    { key: 'SR_Admit_Card',   source: 'sarkariresult_categories' },
+        'sr-admit-card': { key: 'SR_Admit_Card',   source: 'sarkariresult_categories' },
+        'results':       { key: 'SR_Result',        source: 'sarkariresult_categories' },
+        'result':        { key: 'SR_Result',        source: 'sarkariresult_categories' },
+        'sr-result':     { key: 'SR_Result',        source: 'sarkariresult_categories' },
+        'admission':     { key: 'SR_Admission',     source: 'sarkariresult_categories' },
+        'sr-admission':  { key: 'SR_Admission',     source: 'sarkariresult_categories' },
+        'answer-key':    { key: 'SR_Answer_Key',    source: 'sarkariresult_categories' },
+        'sr-answer-key': { key: 'SR_Answer_Key',    source: 'sarkariresult_categories' },
+        'offline-form':  { key: 'sarkariresultshine_jobs', source: 'root' },
+        'sr-offline-form':{ key: 'sarkariresultshine_jobs', source: 'root' },
+        'offline-jobs':  { key: 'sarkariresultshine_jobs', source: 'root' }
+      };
+
+      /* Determine which slug we're on (from URL path /section/<slug>/ or ?section= param) */
+      var pathSlug = (window.location.pathname.match(/\/section\/([^/]+)\/?$/) || [])[1] || '';
+      var srCfg = SR_SLUG_MAP[pathSlug] || SR_SLUG_MAP[slugify(sectionParam)];
+
+      /* ── If this is an SR category section, load from merged_sarkari_data.json ── */
+      if (srCfg) {
+        var srLabel = sectionParam.replace(/-/g,' ').replace(/\b\w/g, function(c){ return c.toUpperCase(); });
+        if (pageTitle) pageTitle.textContent = srLabel + ' ' + new Date().getFullYear();
+
+        fetch('/merged_sarkari_data.json')
+          .then(function(r){ return r.ok ? r.json() : null; })
+          .catch(function(){ return null; })
+          .then(function(jsonData) {
+            var srItems = [];
+
+            if (jsonData) {
+              /* Handle flat jobs[] format */
+              if (Array.isArray(jsonData.jobs) && jsonData.jobs.length > 0) {
+                var VALID_SR_CATS = { 'SR_Latest_Jobs':true,'SR_Admit_Card':true,'SR_Result':true,'SR_Admission':true,'SR_Answer_Key':true };
+                var KW_ADMIT=['admit card','hall ticket','call letter'];
+                var KW_ANSWER=['answer key','answer sheet','objection'];
+                var KW_RESULT=['result','merit list','final list','cut off','cutoff','scorecard','score card'];
+                var KW_ADMISSION=['admission','counselling','counseling'];
+                function hasKw(t,list){ var tl=t.toLowerCase(); for(var i=0;i<list.length;i++){if(tl.indexOf(list[i])!==-1)return true;} return false; }
+
+                var buckets = { SR_Latest_Jobs:[], SR_Admit_Card:[], SR_Result:[], SR_Admission:[], SR_Answer_Key:[], sarkariresultshine_jobs:[] };
+                jsonData.jobs.forEach(function(j){
+                  var item = { title: j.title||'', url: j.official_website_link||j.official_notification_pdf_link||'#',
+                    source_url: j.official_website_link||'#', last_date: (j.important_dates&&j.important_dates.last_date)||'',
+                    apply_mode: j.apply_mode||'', slug: j.slug||'' };
+                  var mode=(j.apply_mode||'').toLowerCase();
+                  var srCat=(j.sr_category||j.category||'').trim();
+                  if(mode==='offline'||srCat==='OFFLINE_FORM'){buckets.sarkariresultshine_jobs.push(item);return;}
+                  if(srCat&&VALID_SR_CATS[srCat]){buckets[srCat].push(item);return;}
+                  if(hasKw(j.title||'',KW_ADMIT)){buckets.SR_Admit_Card.push(item);}
+                  else if(hasKw(j.title||'',KW_ANSWER)){buckets.SR_Answer_Key.push(item);}
+                  else if(hasKw(j.title||'',KW_RESULT)){buckets.SR_Result.push(item);}
+                  else if(hasKw(j.title||'',KW_ADMISSION)){buckets.SR_Admission.push(item);}
+                  else{buckets.SR_Latest_Jobs.push(item);}
+                });
+                jsonData = { sarkariresult_categories: buckets, sarkariresultshine_jobs: buckets.sarkariresultshine_jobs };
+              }
+
+              if (srCfg.source === 'root') {
+                srItems = jsonData.sarkariresultshine_jobs || [];
+              } else {
+                var cats = (jsonData.sarkariresult_data && jsonData.sarkariresult_data.data) || jsonData.sarkariresult_categories || {};
+                srItems = cats[srCfg.key] || [];
+              }
+            }
+
+            /* Normalise SR items */
+            var allItems = srItems.map(function(j){
+              return {
+                name:  (j.title||j.name||'').trim(),
+                slug:  j.slug || slugify(j.title||j.name||''),
+                date:  j.last_date || (j.important_dates&&j.important_dates.last_date) || '',
+                url:   j.source_url || j.url || j.link || '#',
+                vac:   '', salary: '', mode: j.apply_mode||''
+              };
+            }).filter(function(i){ return !!i.name; });
+
+            if (!allItems.length) {
+              sectionCards.innerHTML = '<p class="text-slate-500 text-sm py-8 text-center">No jobs found. Check back soon!</p>';
+            } else {
+              sectionCards.innerHTML = '';
+              allItems.slice(0, 60).forEach(function(item){
+                /* Build href: prefer internal job page, fallback to external URL */
+                var a = document.createElement('a');
+                var jobSlug = item.slug || slugify(item.name);
+                if (jobSlug) {
+                  a.href = '/jobs/' + jobSlug + '/';
+                } else if (item.url && item.url !== '#') {
+                  a.href = item.url;
+                  a.target = '_blank'; a.rel = 'noopener noreferrer';
+                } else {
+                  a.href = '#';
+                }
+                a.className = 'block bg-white border border-slate-200 rounded-xl p-4 hover:shadow-md hover:border-blue-300 transition-all';
+                a.setAttribute('title', item.name);
+                var titleEl = document.createElement('div');
+                titleEl.className = 'font-semibold text-slate-800 text-sm leading-snug mb-1';
+                titleEl.textContent = item.name;
+                var meta = document.createElement('div');
+                meta.className = 'flex flex-wrap gap-x-3 gap-y-1 mt-1';
+                if (item.date) {
+                  var d = document.createElement('span');
+                  d.className = 'text-xs text-blue-600 flex items-center gap-1';
+                  d.textContent = '📅 ' + item.date;
+                  meta.appendChild(d);
+                }
+                a.appendChild(titleEl); a.appendChild(meta);
+                sectionCards.appendChild(a);
+              });
+            }
+
+            if (window.__SEO_updateSection) window.__SEO_updateSection(sectionParam, allItems);
+            setupSearch(allItems);
+          });
+
+        return; /* Skip the keyword-search path below */
+      }
 
       /* Fetch jobs data */
       var dataUrls = ['/Complete_Jobs_Full_Data.json', '/dailyupdates.json', '/jobs.json'];
