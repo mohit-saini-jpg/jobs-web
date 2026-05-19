@@ -690,7 +690,10 @@
     }
     .two-col-sections > .sec-card { margin-bottom: 0; }
     @media (max-width: 600px) {
-      .two-col-sections { grid-template-columns: 1fr; }
+      .two-col-sections {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
     }
     main br { display: none; }
 
@@ -791,7 +794,12 @@
     ============================================================ */
     .two-col-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
     .two-col-grid > .sec-card { margin-bottom: 0; }
-    @media (max-width: 540px) { .two-col-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 540px) {
+      .two-col-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+    }
 
     /* ============================================================
        IMPORTANT LINKS GRID
@@ -1051,7 +1059,37 @@
     }
     #dynamic-sections:empty { display: none; }
     @media (max-width: 600px) {
-      #dynamic-sections { grid-template-columns: 1fr; }
+      #dynamic-sections {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      /* Compact section-card inside dynamic-sections on mobile */
+      #dynamic-sections .section-head {
+        padding: 8px 8px;
+        font-size: .72rem;
+      }
+
+      #dynamic-sections .section-head .left { gap: 5px; }
+
+      #dynamic-sections .section-head a {
+        font-size: .62rem;
+        padding: 3px 7px;
+      }
+
+      #dynamic-sections .section-link {
+        padding: 7px 8px;
+        font-size: .72rem;
+        gap: 5px;
+      }
+
+      #dynamic-sections .section-link .t { font-size: .72rem; }
+      #dynamic-sections .section-link .d { font-size: .60rem; }
+
+      #dynamic-sections .section-more {
+        font-size: .7rem;
+        padding: 7px 8px;
+      }
     }
     /* ============================================================
        SARKARI RESULT DYNAMIC SECTIONS
@@ -1065,7 +1103,37 @@
       gap: var(--gap);
     }
     @media (max-width: 600px) {
-      .sr-sections-grid { grid-template-columns: 1fr; }
+      .sr-sections-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      /* Compact sr-card for mobile 2-col */
+      .sr-card-head {
+        padding: 8px 8px;
+        font-size: .72rem;
+        gap: 5px;
+      }
+
+      .sr-card-head .left { gap: 5px; }
+      .sr-card-head a {
+        font-size: .62rem;
+        padding: 3px 7px;
+      }
+
+      .sr-job-link {
+        padding: 6px 8px;
+        font-size: .69rem;
+        gap: 5px;
+      }
+
+      .sr-job-date {
+        font-size: .58rem;
+        padding: 1px 4px;
+      }
+
+      .sr-card-footer { padding: 7px 8px; }
+      .sr-card-footer a { font-size: .67rem; }
     }
     .sr-card {
       background: var(--white);
@@ -1238,6 +1306,38 @@
       line-height: 1.5; word-break: break-word; white-space: normal;
     }
     .section-link:hover .t { text-decoration: underline; }
+
+    /* Mobile: compact section-link text for 2-col layout */
+    @media (max-width: 600px) {
+      .section-link { padding: 7px 8px; gap: 5px; }
+      .section-link .t { font-size: .71rem; line-height: 1.35; }
+      .section-link .d { font-size: .59rem !important; margin-left: 2px; }
+      .section-head {
+        padding: 8px 8px !important;
+        font-size: .71rem !important;
+      }
+      .section-head .left { gap: 5px !important; }
+      .section-head .left i { font-size: .76rem !important; }
+      .section-head a {
+        font-size: .61rem !important;
+        padding: 3px 7px !important;
+      }
+      .section-body .view-all {
+        font-size: .7rem;
+        padding: 7px 8px;
+      }
+      /* sec-head compact for all 2-col sec-cards */
+      .sec-head {
+        padding: 8px 8px;
+        font-size: .72rem;
+      }
+      .sec-head .left { gap: 5px; }
+      .sec-head .left i { font-size: .78rem; }
+      .sec-head .view-all-btn {
+        font-size: .61rem;
+        padding: 3px 7px;
+      }
+    }
     .section-show-more { display: none !important; }
     .section-body .view-all {
       display: flex; align-items: center; justify-content: center; gap: 6px;
@@ -1273,7 +1373,87 @@
     /* Responsive mobile tweaks */
     @media (max-width: 600px) {
       .tools-grid { grid-template-columns: repeat(3, 1fr); }
-      .two-col-sections, .two-col-grid, #dynamic-sections { grid-template-columns: 1fr; }
+
+      /* ── 2-col section cards on mobile ── */
+      .two-col-sections,
+      .two-col-grid,
+      #dynamic-sections {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      /* Tighter padding so content fits in half-width cards */
+      .two-col-sections .sec-head,
+      .two-col-grid    .sec-head,
+      #dynamic-sections .sec-head,
+      .two-col-sections .sec-card .sec-head,
+      .two-col-grid    .sec-card .sec-head {
+        padding: 8px 8px;
+        font-size: .72rem;
+        gap: 5px;
+      }
+
+      .two-col-sections .sec-head .left,
+      .two-col-grid    .sec-head .left {
+        gap: 5px;
+      }
+
+      .two-col-sections .sec-head .left i,
+      .two-col-grid    .sec-head .left i {
+        font-size: .78rem;
+      }
+
+      .two-col-sections .view-all-btn,
+      .two-col-grid    .view-all-btn {
+        font-size: .62rem;
+        padding: 3px 7px;
+      }
+
+      /* Job list rows tighter */
+      .two-col-sections .job-list a,
+      .two-col-grid    .job-list a,
+      .two-col-sections .sec-list a,
+      .two-col-grid    .sec-list a {
+        padding: 7px 8px;
+        gap: 6px;
+        font-size: .72rem;
+      }
+
+      .two-col-sections .job-title,
+      .two-col-grid    .job-title {
+        font-size: .72rem;
+        line-height: 1.35;
+      }
+
+      .two-col-sections .section-link,
+      .two-col-grid    .section-link {
+        padding: 7px 8px;
+        font-size: .72rem;
+        gap: 5px;
+      }
+
+      .two-col-sections .section-link .t,
+      .two-col-grid    .section-link .t {
+        font-size: .72rem;
+      }
+
+      .two-col-sections .section-link .d,
+      .two-col-grid    .section-link .d {
+        font-size: .60rem;
+      }
+
+      .two-col-sections .sec-more,
+      .two-col-grid    .sec-more {
+        font-size: .7rem;
+        padding: 7px 8px;
+      }
+
+      /* Khabar list */
+      .two-col-grid .khabar-list a {
+        padding: 7px 8px;
+        font-size: .71rem;
+        gap: 5px;
+      }
     }
 
     /* ── FA Icon CLS Prevention: reserve fixed dimensions before FA loads ── */
