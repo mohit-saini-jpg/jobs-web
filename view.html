@@ -272,6 +272,20 @@
     function titleCase(s){return(s||'').replace(/-/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();});}
     function qp(n){return new URLSearchParams(window.location.search).get(n)||'';}
 
+    /* ── Date formatter: YYYY-MM-DD / DD-MM-YYYY / any → DD/MM/YYYY ── */
+    function fmtDate(val){
+      if(!val||typeof val!=='string') return val||'';
+      var s=val.trim();
+      if(!s) return '';
+      // YYYY-MM-DD → DD/MM/YYYY
+      var m=s.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
+      if(m) return ('0'+m[3]).slice(-2)+'/'+('0'+m[2]).slice(-2)+'/'+m[1];
+      // DD-MM-YYYY or DD/MM/YYYY already
+      m=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+      if(m) return ('0'+m[1]).slice(-2)+'/'+('0'+m[2]).slice(-2)+'/'+m[3];
+      return s;
+    }
+
     var rawSection=qp('section');
     if(!rawSection){var pm=window.location.pathname.match(/\/section\/([^/]+)\/?$/);if(pm)rawSection=decodeURIComponent(pm[1]);}
     var currentSlug=slugify(rawSection);
@@ -345,7 +359,7 @@
       /* Last date — dedicated visible row */
       if(item.date){
         var ld=document.createElement('div');ld.className='sv-lastdate';
-        ld.innerHTML='📅 Last Date: <span class="sv-lastdate-val">'+item.date+'</span>';
+        ld.innerHTML='📅 Last Date: <span class="sv-lastdate-val">'+fmtDate(item.date)+'</span>';
         a.appendChild(ld);
       }
 
@@ -395,7 +409,7 @@
             a.href=item.slug?'/jobs/'+item.slug+'/':(item.url||'#');
             var n=document.createElement('span');n.className='sv-drop-name';n.textContent=item.name;
             var m=document.createElement('span');m.className='sv-drop-meta';
-            m.textContent=[item.date&&'Last Date: '+item.date,item.vac&&item.vac+' posts'].filter(Boolean).join(' · ');
+            m.textContent=[item.date&&'Last Date: '+fmtDate(item.date),item.vac&&item.vac+' posts'].filter(Boolean).join(' · ');
             a.appendChild(n);a.appendChild(m);svDrop.appendChild(a);
           });
         }
@@ -440,7 +454,7 @@
       return{
         name:bd.job_title||bd.post_name||job.title||job.name||'',
         slug:job.slug||slugify(bd.job_title||job.title||job.name||''),
-        date:id.last_date_to_apply||id.last_date||id.application_end_date||id.last_date_of_application||'',
+        date:fmtDate(id.last_date_to_apply||id.last_date||id.application_end_date||id.last_date_of_application||''),
         vac:bd.total_vacancies||vd.total||'',
         org:bd.organization_name||'',
         url:bd.official_website||'#'
@@ -449,7 +463,7 @@
 
     function normaliseDaily(item){return{name:item.name||item.title||'',slug:slugify(item.name||item.title||''),date:'',vac:'',org:'',url:item.url||'#'};}
 
-    function normaliseMerged(j){return{name:(j.title||j.name||'').trim(),slug:j.slug||slugify(j.title||j.name||''),date:(j.important_dates&&(j.important_dates.last_date_to_apply||j.important_dates.last_date))||j.last_date||'',vac:'',org:'',url:j.source_url||j.url||j.link||'#'};}
+    function normaliseMerged(j){return{name:(j.title||j.name||'').trim(),slug:j.slug||slugify(j.title||j.name||''),date:fmtDate((j.important_dates&&(j.important_dates.last_date_to_apply||j.important_dates.last_date))||j.last_date||''),vac:'',org:'',url:j.source_url||j.url||j.link||'#'};}
 
     var cfg=SLUG_MAP[currentSlug];
 
