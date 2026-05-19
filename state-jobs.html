@@ -563,6 +563,8 @@
     document.readyState==="loading"?document.addEventListener("DOMContentLoaded",_inj):_inj();
   })();
   </script>
+  <!-- GA4: Centralized Analytics -->
+  <script src="/analytics.js" defer></script>
 </head>
 
 <body>
@@ -1052,6 +1054,11 @@
     document.getElementById('ogDesc').content = desc;
     document.getElementById('canonicalTag').href = `https://www.topsarkarijobs.com/state-jobs.html?state=${encodeURIComponent(stateName)}`;
     document.getElementById('ogUrl').content = location.href;
+
+    // GA4: SPA page_view for state job listing
+    if (typeof window.ga4PageView === 'function') {
+      window.ga4PageView(fullTitle, location.pathname + location.search);
+    }
 
     // Schema.org BreadcrumbList + WebPage
     const schema = {
