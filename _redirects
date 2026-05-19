@@ -56,6 +56,16 @@
 /results/           /result.html                  301
 /admit-card/        /admit-card.html              301
 
+# ── 8a. SR_ ?section= → clean URL redirects (301) ──────────────
+# NOTE: /section/* catch-all above already serves view.html — these
+# just ensure any old SR_ links in Google index get 301'd to clean URLs.
+/view.html?section=SR_Latest_Jobs      /section/latest-jobs/    301
+/view.html?section=SR_Result           /section/results/        301
+/view.html?section=SR_Admit_Card       /section/admit-card/     301
+/view.html?section=SR_Admission        /section/admission/      301
+/view.html?section=SR_Answer_Key       /section/answer-key/     301
+/view.html?section=SR_Offline_Form     /section/offline-form/   301
+
 # ── 8. Old ?section= query params → clean URLs (301 permanent) ───
 # Redirects existing Google-indexed dirty URLs to clean ones
 /view.html?section=latest+jobs              /section/latest-jobs/        301
