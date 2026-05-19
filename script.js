@@ -651,20 +651,28 @@
     try { data = await getJobsSections(); }
     catch (_) { fetchFailed = true; }
 
-    wrap.innerHTML = "";
-
     // ISSUE-009: surface a visible message when the data file failed to load
     // instead of silently rendering a blank homepage.
+    // FIX: Don't clear innerHTML until data successfully loaded — prevents
+    // pre-rendered SSG cards from disappearing on slow/failed fetch.
     if (fetchFailed || !Array.isArray(data.sections) || !data.sections.length) {
-      const note = document.createElement("div");
-      note.className = "seo-block";
-      note.style.margin = "16px 0";
-      note.innerHTML = fetchFailed
-        ? "<strong>Couldn't load the latest updates.</strong><div style=\"margin-top:6px;color:var(--muted);\">Please check your connection and refresh the page.</div>"
-        : "<strong>No updates to show right now.</strong>";
-      wrap.appendChild(note);
+      if (!wrap.hasChildNodes()) {
+        // Only show error if there's no pre-rendered content already
+        const note = document.createElement("div");
+        note.className = "seo-block";
+        note.style.margin = "16px 0";
+        note.innerHTML = fetchFailed
+          ? "<strong>Couldn't load the latest updates.</strong><div style=\"margin-top:6px;color:var(--muted);\">Please check your connection and refresh the page.</div>"
+          : "<strong>No updates to show right now.</strong>";
+        wrap.appendChild(note);
+      }
       if (fetchFailed) return;
+      // If sections empty but no fetch error, keep existing pre-rendered content
+      return;
     }
+
+    // Data loaded successfully — now safe to clear and re-render
+    wrap.innerHTML = "";
 
     // ── RENDER ALL SECTIONS IMMEDIATELY — no lazy scroll needed for job cards ──
     const sections = data.sections || [];
