@@ -195,6 +195,7 @@
       __jsonCache.set('Complete_Jobs_Full_Data.json', Promise.resolve(raw));
       return convertJobsDataToSections(raw);
     } catch (_) { return { sections: [] }; }
+  }
 
   function getJSON(path) {
     if (__jsonCache.has(path)) return __jsonCache.get(path);
@@ -453,7 +454,6 @@
             // All attempts failed — minimal fallback so page stays usable
             headerHost.innerHTML = '<div style="background:#1d3a6e;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;"><a href="/" style="color:#fff;font-weight:900;font-size:1.1rem;text-decoration:none;">TOP <span style="color:#f59e0b;">SARKARI</span> JOBS</a><a href="/" style="color:#fff;font-size:.85rem;text-decoration:none;">&#8592; Home</a></div>';
         }
-    }
     } else if (headerHost && headerHost.querySelector(".brand")) {
         // Header already injected by early inline script — just init menus
         buildMobileMenu();
