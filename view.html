@@ -28,80 +28,133 @@
     #site-header .top-search,
     #site-header .search-row,
     #site-header input[type="search"] { display: none !important; }
-    .sv-wrap { max-width: 1200px; margin: 0 auto; padding: 16px 12px 32px; }
-    /* Search */
-    .sv-search-wrap { position: relative; z-index: 50; margin-bottom: 18px; }
-    .sv-search-row { display: flex; gap: 8px; }
-    .sv-search-input {
-      flex: 1; border: 2px solid #cbd5e1; border-radius: 10px;
-      padding: 12px 16px; font-size: .9rem; outline: none;
-      transition: border-color .2s; background: #fff; color: #0f172a;
+
+    /* ── Wrapper ── */
+    .sv-wrap { max-width: 1240px; margin: 0 auto; padding: 20px 16px 40px; }
+
+    /* ── Search Bar ── */
+    .sv-search-wrap { position: relative; z-index: 50; margin-bottom: 24px; }
+    .sv-search-row {
+      display: flex; align-items: stretch; gap: 0;
+      background: #fff; border: 2px solid #cbd5e1; border-radius: 14px;
+      overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.07);
+      transition: border-color .2s, box-shadow .2s;
     }
-    .sv-search-input:focus { border-color: #2563eb; }
+    .sv-search-row:focus-within {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 4px rgba(37,99,235,.12), 0 2px 12px rgba(0,0,0,.08);
+    }
+    .sv-search-icon {
+      display: flex; align-items: center; padding: 0 14px 0 16px; color: #94a3b8; font-size: 1rem; pointer-events: none;
+    }
+    .sv-search-input {
+      flex: 1; border: none; outline: none; padding: 15px 12px 15px 0;
+      font-size: .95rem; background: transparent; color: #0f172a; min-width: 0;
+    }
+    .sv-search-input::placeholder { color: #94a3b8; }
     .sv-search-btn {
-      background: #2563eb; color: #fff; border: none; border-radius: 10px;
-      padding: 12px 22px; font-size: .9rem; font-weight: 700; cursor: pointer;
-      white-space: nowrap; transition: background .2s;
+      background: #2563eb; color: #fff; border: none; border-radius: 0 12px 12px 0;
+      padding: 0 28px; font-size: .92rem; font-weight: 700; cursor: pointer;
+      white-space: nowrap; transition: background .2s; display: flex; align-items: center; gap: 7px;
+      flex-shrink: 0;
     }
     .sv-search-btn:hover { background: #1d4ed8; }
     .sv-search-dropdown {
-      position: absolute; top: 100%; left: 0; right: 0;
+      position: absolute; top: calc(100% + 4px); left: 0; right: 0;
       background: #fff; border: 1px solid #e2e8f0;
-      border-radius: 0 0 10px 10px;
-      box-shadow: 0 10px 25px rgba(0,0,0,.12);
+      border-radius: 12px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.13);
       max-height: 340px; overflow-y: auto;
-      margin-top: 2px; display: none; z-index: 200;
+      display: none; z-index: 200;
     }
     .sv-drop-item {
       display: flex; flex-direction: column;
-      padding: 10px 14px; border-bottom: 1px solid #f1f5f9;
+      padding: 10px 16px; border-bottom: 1px solid #f1f5f9;
       text-decoration: none; color: #0f172a; transition: background .12s;
     }
+    .sv-drop-item:last-child { border-bottom: none; }
     .sv-drop-item:hover { background: #eff6ff; }
     .sv-drop-name { font-size: .84rem; font-weight: 700; color: #0369a1; }
     .sv-drop-meta { font-size: .72rem; color: #64748b; margin-top: 2px; }
-    /* Title */
-    .sv-title { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0 0 14px; }
-    /* 3-col grid */
+
+    /* ── Page header row ── */
+    .sv-header-row {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 10px; margin-bottom: 16px;
+    }
+    .sv-title { font-size: 1.6rem; font-weight: 800; color: #0f172a; margin: 0; display: flex; align-items: center; gap: 10px; }
+    .sv-title-icon { background: #2563eb; color: #fff; border-radius: 10px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: .95rem; flex-shrink: 0; }
+    .sv-total-badge {
+      background: #eff6ff; color: #1d4ed8; border: 1.5px solid #bfdbfe;
+      border-radius: 20px; padding: 5px 14px; font-size: .82rem; font-weight: 700;
+      white-space: nowrap;
+    }
+
+    /* ── 3-col grid (always 3 on desktop) ── */
     .sv-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
+      gap: 14px;
+      align-items: start;
     }
-    @media (max-width: 900px) { .sv-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 560px) {
-      .sv-grid { grid-template-columns: 1fr; gap: 8px; }
-      .sv-wrap { padding: 10px 8px 24px; }
-      .sv-title { font-size: 1.2rem; }
-      .sv-search-btn { padding: 12px 14px; font-size: .82rem; }
+    @media (max-width: 860px) { .sv-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
+    @media (max-width: 540px) {
+      .sv-grid { grid-template-columns: 1fr; gap: 9px; }
+      .sv-wrap { padding: 12px 10px 28px; }
+      .sv-title { font-size: 1.15rem; }
+      .sv-search-btn { padding: 0 16px; font-size: .82rem; }
     }
-    /* Card */
+
+    /* ── Card ── */
     .sv-card {
-      background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;
-      padding: 14px; text-decoration: none; color: inherit;
-      display: flex; flex-direction: column; gap: 6px;
+      background: #fff; border: 1.5px solid #e2e8f0; border-radius: 14px;
+      padding: 16px 15px 13px; text-decoration: none; color: inherit;
+      display: flex; flex-direction: column; gap: 7px;
       transition: box-shadow .18s, border-color .18s, transform .15s;
+      position: relative; height: 100%;
     }
-    .sv-card:hover { box-shadow: 0 6px 20px rgba(37,99,235,.13); border-color: #93c5fd; transform: translateY(-2px); }
+    .sv-card:hover { box-shadow: 0 8px 24px rgba(37,99,235,.14); border-color: #93c5fd; transform: translateY(-2px); }
+
+    /* Serial number badge */
+    .sv-serial {
+      position: absolute; top: -1px; left: -1px;
+      background: #2563eb; color: #fff;
+      font-size: .65rem; font-weight: 800; line-height: 1;
+      padding: 4px 7px; border-radius: 13px 0 10px 0;
+      letter-spacing: .3px;
+    }
+
     .sv-card-title {
-      font-size: .82rem; font-weight: 700; color: #1e293b; line-height: 1.35;
+      font-size: .85rem; font-weight: 700; color: #1e293b; line-height: 1.4;
       display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+      padding-left: 2px; padding-top: 14px; /* space below serial badge */
     }
     .sv-card-meta { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 2px; }
-    .sv-badge { font-size: .67rem; font-weight: 600; padding: 2px 7px; border-radius: 20px; white-space: nowrap; }
+    .sv-badge { font-size: .67rem; font-weight: 600; padding: 3px 8px; border-radius: 20px; white-space: nowrap; }
     .sv-badge-date { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
     .sv-badge-vac  { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
     .sv-badge-org  { background: #fdf4ff; color: #7c3aed; border: 1px solid #e9d5ff; }
     .sv-badge-ext  { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
-    .sv-card-arrow { margin-top: auto; font-size: .7rem; color: #2563eb; font-weight: 600; padding-top: 4px; }
-    /* States */
+    .sv-card-arrow {
+      margin-top: auto; padding-top: 8px;
+      font-size: .75rem; color: #2563eb; font-weight: 700;
+      border-top: 1px solid #f1f5f9;
+      display: flex; align-items: center; gap: 4px;
+    }
+
+    /* ── States ── */
     .sv-empty { grid-column: 1/-1; text-align: center; padding: 48px 16px; color: #64748b; font-size: .95rem; }
     .sv-empty i { font-size: 2.5rem; color: #cbd5e1; display: block; margin-bottom: 12px; }
     .sv-spinner { grid-column: 1/-1; display: flex; justify-content: center; align-items: center; padding: 48px; color: #64748b; gap: 10px; font-size: .9rem; }
     .sv-spinner i { font-size: 1.4rem; color: #2563eb; }
-    /* Load more */
-    .sv-more-wrap { text-align: center; margin-top: 20px; }
-    .sv-more-btn { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 11px 32px; font-size: .9rem; font-weight: 700; cursor: pointer; transition: background .2s; }
+
+    /* ── Load more ── */
+    .sv-more-wrap { text-align: center; margin-top: 24px; }
+    .sv-more-btn {
+      background: #2563eb; color: #fff; border: none; border-radius: 10px;
+      padding: 13px 40px; font-size: .92rem; font-weight: 700; cursor: pointer;
+      transition: background .2s; box-shadow: 0 4px 14px rgba(37,99,235,.25);
+    }
     .sv-more-btn:hover { background: #1d4ed8; }
   </style>
 </head>
@@ -119,13 +172,20 @@
       <div class="sv-wrap">
         <div class="sv-search-wrap">
           <div class="sv-search-row">
+            <span class="sv-search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
             <input id="sv-input" type="search" class="sv-search-input"
               placeholder="Search jobs in this section..." autocomplete="off" aria-label="Search jobs" />
             <button id="sv-btn" class="sv-search-btn"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
           </div>
           <div id="sv-dropdown" class="sv-search-dropdown" role="listbox"></div>
         </div>
-        <h2 id="sv-title" class="sv-title">Jobs 2026</h2>
+        <div class="sv-header-row">
+          <h2 id="sv-title" class="sv-title">
+            <span class="sv-title-icon"><i class="fa-solid fa-bell"></i></span>
+            Jobs 2026
+          </h2>
+          <span id="sv-total" class="sv-total-badge" style="display:none;">Total Jobs: 0</span>
+        </div>
         <div id="sv-grid" class="sv-grid">
           <div class="sv-spinner"><i class="fa-solid fa-spinner fa-spin"></i> Loading jobs…</div>
         </div>
@@ -232,6 +292,7 @@
 
     document.getElementById('section-view').style.display='';
     var svTitle=document.getElementById('sv-title');
+    var svTotal=document.getElementById('sv-total');
     var svGrid=document.getElementById('sv-grid');
     var svInput=document.getElementById('sv-input');
     var svBtn=document.getElementById('sv-btn');
@@ -239,11 +300,12 @@
     var svMoreWrap=document.getElementById('sv-more-wrap');
     var svMoreBtn=document.getElementById('sv-more-btn');
 
-    svTitle.textContent=titleCase(currentSlug)+' '+new Date().getFullYear();
+    var titleLabel=titleCase(currentSlug)+' '+new Date().getFullYear();
+    if(svTitle){svTitle.innerHTML='<span class="sv-title-icon"><i class="fa-solid fa-bell"></i></span> '+titleLabel;}
 
     var PAGE_SIZE=30, allItems=[], shownCount=0;
 
-    function buildCard(item){
+    function buildCard(item, idx){
       var a=document.createElement('a');
       if(item.slug){a.href='/jobs/'+item.slug+'/';}
       else if(item.url&&item.url!=='#'&&!/^view\.html/.test(item.url)){
@@ -251,6 +313,10 @@
         if(!/topsarkarijobs\.com/.test(item.url)){a.target='_blank';a.rel='noopener noreferrer';}
       } else {a.href='#';}
       a.className='sv-card'; a.title=item.name;
+
+      /* Serial number badge */
+      var serial=document.createElement('span');serial.className='sv-serial';serial.textContent='#'+(idx+1);
+      a.appendChild(serial);
 
       var t=document.createElement('div');t.className='sv-card-title';t.textContent=item.name;
 
@@ -261,7 +327,8 @@
       badge('sv-badge-org', item.org ?item.org.slice(0,28)+(item.org.length>28?'…':''):'');
       if(a.target==='_blank')badge('sv-badge-ext','🔗 External');
 
-      var arrow=document.createElement('div');arrow.className='sv-card-arrow';arrow.textContent='View Details →';
+      var arrow=document.createElement('div');arrow.className='sv-card-arrow';
+      arrow.innerHTML='View Details <i class="fa-solid fa-arrow-right" style="font-size:.65rem;margin-left:2px;"></i>';
 
       a.appendChild(t);a.appendChild(meta);a.appendChild(arrow);
       return a;
@@ -269,13 +336,15 @@
 
     function renderPage(){
       var batch=allItems.slice(shownCount,shownCount+PAGE_SIZE);
-      batch.forEach(function(item){svGrid.appendChild(buildCard(item));});
+      batch.forEach(function(item,i){svGrid.appendChild(buildCard(item, shownCount+i));});
       shownCount+=batch.length;
       svMoreWrap.style.display=shownCount<allItems.length?'block':'none';
     }
 
     function showItems(items){
       allItems=items; shownCount=0; svGrid.innerHTML='';
+      /* Update total jobs counter */
+      if(svTotal){svTotal.textContent='Total Jobs: '+items.length;svTotal.style.display=items.length?'':'none';}
       if(!items.length){
         svGrid.innerHTML='<div class="sv-empty"><i class="fa-solid fa-folder-open"></i>No jobs found. Check back soon!</div>';
         svMoreWrap.style.display='none'; return;
