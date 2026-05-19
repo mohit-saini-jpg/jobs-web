@@ -1079,32 +1079,14 @@
 
       #dynamic-sections .section-link {
         padding: 7px 8px;
-        font-size: .72rem;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 3px;
+        gap: 5px;
       }
 
-      #dynamic-sections .section-link .t {
-        font-size: .72rem;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 3px;
-        width: 100%;
-      }
+      #dynamic-sections .section-link .t { font-size: .72rem; }
 
       #dynamic-sections .section-link .d {
-        display: inline-flex !important;
-        font-size: .62rem !important;
-        color: #fff !important;
-        background: var(--red) !important;
-        border-radius: 4px;
+        font-size: .60rem !important;
         padding: 2px 5px !important;
-        margin-left: 0 !important;
-        white-space: nowrap;
-        width: fit-content;
-        font-weight: 800;
       }
 
       #dynamic-sections .section-more {
@@ -1322,53 +1304,72 @@
     .section-list::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
     .section-list::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
     .section-list::-webkit-scrollbar-thumb:hover { background: #475569; }
+    /* ── section-link: flex row — title fills space, date badge fixed right ── */
     .section-link {
-      display: flex; align-items: flex-start;
-      padding: 9px 14px; border-bottom: 1px solid #f1f5f9;
-      text-decoration: none; color: var(--text); cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 9px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      text-decoration: none;
+      color: var(--text);
+      cursor: pointer;
       transition: background .12s, transform .1s;
-      flex-shrink: 0; box-sizing: border-box;
+      flex-shrink: 0;
+      box-sizing: border-box;
     }
     .section-link:last-child { border-bottom: none; }
     .section-link:hover { background: #f0f7ff; transform: translateX(2px); }
+
+    /* Title: takes all remaining space, wraps naturally */
     .section-link .t {
-      flex: 1; font-size: .82rem; font-weight: 700; color: var(--blue);
-      line-height: 1.5; word-break: break-word; white-space: normal;
+      flex: 1;
+      min-width: 0;
+      font-size: .82rem;
+      font-weight: 700;
+      color: var(--blue);
+      line-height: 1.45;
+      word-break: break-word;
+      white-space: normal;
     }
     .section-link:hover .t { text-decoration: underline; }
 
-    /* Mobile: compact section-link text for 2-col layout */
+    /* Date badge: fixed on right, never shrinks */
+    .section-link .d {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      flex-shrink: 0;
+      font-size: .70rem;
+      font-weight: 800;
+      color: #fff;
+      background: var(--red);
+      border-radius: 5px;
+      padding: 3px 7px;
+      white-space: nowrap;
+      margin-top: 1px;
+    }
+    .section-link .d i { font-size: .65rem; }
+
+    /* ── Mobile 2-col: tighter but same flex-row layout ── */
     @media (max-width: 600px) {
-      /* title + date stack vertically so date never overlaps text */
       .section-link {
         padding: 7px 8px;
-        flex-direction: column;
+        gap: 5px;
+        flex-wrap: wrap;           /* allow date to drop below if too narrow */
         align-items: flex-start;
-        gap: 3px;
       }
       .section-link .t {
         font-size: .72rem;
         line-height: 1.4;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 3px;
-        width: 100%;
+        flex: 1 1 55%;             /* take at least 55% of row */
+        min-width: 0;
       }
-      /* Date badge: own pill on a new line */
       .section-link .d {
-        display: inline-flex !important;
-        align-items: center;
-        gap: 3px;
-        font-size: .62rem !important;
-        font-weight: 800;
-        color: #fff !important;
-        background: var(--red) !important;
-        border-radius: 4px;
+        font-size: .60rem !important;
         padding: 2px 5px !important;
-        margin-left: 0 !important;
-        white-space: nowrap;
-        width: fit-content;
+        flex-shrink: 0;
+        margin-top: 2px;
       }
       /* Card headers compact */
       .section-head {
@@ -1478,34 +1479,18 @@
       .two-col-sections .section-link,
       .two-col-grid    .section-link {
         padding: 7px 8px;
-        font-size: .72rem;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 3px;
+        gap: 5px;
       }
 
       .two-col-sections .section-link .t,
       .two-col-grid    .section-link .t {
         font-size: .72rem;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 3px;
-        width: 100%;
       }
 
       .two-col-sections .section-link .d,
       .two-col-grid    .section-link .d {
-        display: inline-flex !important;
-        font-size: .62rem !important;
-        color: #fff !important;
-        background: var(--red) !important;
-        border-radius: 4px;
+        font-size: .60rem !important;
         padding: 2px 5px !important;
-        margin-left: 0 !important;
-        white-space: nowrap;
-        width: fit-content;
-        font-weight: 800;
       }
 
       .two-col-sections .sec-more,
