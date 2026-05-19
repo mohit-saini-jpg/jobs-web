@@ -515,14 +515,16 @@
       display: flex;
       align-items: center;
       background: #991b1b;
-      padding: 8px 16px;
-      font-size: .82rem;
+      padding: 8px 10px;
+      font-size: .9rem;
       font-weight: 900;
       letter-spacing: .06em;
       text-transform: uppercase;
       white-space: nowrap;
       z-index: 2;
       gap: 5px;
+      min-width: 36px;
+      justify-content: center;
     }
     .ticker-label::after {
       content: '';
@@ -1766,7 +1768,7 @@
   ============================================================ -->
   <!-- Dynamic Live Ticker — data pulled from dynamic-sections.json (latest jobs section) -->
   <div class="ticker-wrap" id="tickerWrap" aria-label="Latest job updates" role="marquee" aria-live="off">
-    <span class="ticker-label" aria-hidden="true"><i class="fa-solid fa-bolt"></i> LIVE</span>
+    <span class="ticker-label" aria-hidden="true"><i class="fa-solid fa-bolt"></i></span>
     <div class="ticker-track" id="tickerTrack">
       <span class="ticker-loading" aria-live="polite">Loading latest jobs…</span>
     </div>
@@ -1775,66 +1777,69 @@
   (function initDynamicTicker() {
     'use strict';
 
-    var MAX_JOBS    = 20;
-    var BASE_SPEED  = 50;
+  (function initDynamicTicker() {
+    'use strict';
+
+    var MAX_JOBS    = 40;
+    var BASE_SPEED  = 80;
     var LATEST_JOBS_URL = '/section/latest-jobs/';
 
-    /* ── fetch merged_sarkari_data.json — reuse shared promise (no duplicate download) ── */
+    /* ── fetch Complete_Jobs_Full_Data.json for Latest_Notifications ── */
     function fetchJobs() {
-      var CACHE_KEY = '__ticker_sr_cache';
-      var CACHE_TTL = 15 * 60 * 1000; // 15 min
+      var CACHE_KEY = '__ticker_complete_cache';
+      var CACHE_TTL = 15 * 60 * 1000;
       try {
         var cached = JSON.parse(sessionStorage.getItem(CACHE_KEY) || 'null');
         if (cached && (Date.now() - cached.ts) < CACHE_TTL) return Promise.resolve(cached.data);
       } catch(e) {}
 
-      // Reuse shared window.__mergedDataPromise (fetched once at page start)
-      return (window.__mergedDataPromise || fetch('merged_sarkari_data.json').then(function(r){ return r.json(); }))
-        .then(function(json) {
+      return fetch('/Complete_Jobs_Full_Data.json')
+        .then(function(r){ return r.ok ? r.json() : null; })
         .then(function(json) {
           try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: json })); } catch(e) {}
           return json;
-        });
+        })
+        .catch(function(){ return null; });
     }
 
-    /* ── extract SR_Latest_Jobs items ── */
+    /* ── extract Latest_Notifications jobs ── */
     function extractLatestJobs(json) {
       var jobs = [];
 
-      /* Format 1: jobs[] array with sr_category / category field */
-      if (json && Array.isArray(json.jobs)) {
-        for (var i = 0; i < json.jobs.length; i++) {
-          var j = json.jobs[i];
-          var cat = (j.sr_category || j.category || '').trim();
-          if (cat === 'SR_Latest_Jobs' || cat === '') {
-            if (cat === '' && (j.title || '').toLowerCase().match(/admit card|result|answer key|admission/)) continue;
-            var title = (j.title || '').trim();
-            var url   = j.slug ? ('job.html?slug=' + j.slug) : (j.official_website_link || LATEST_JOBS_URL);
-            if (title) jobs.push({ name: title, url: url });
-          }
+      if (json && json['Latest_Notifications'] && Array.isArray(json['Latest_Notifications'])) {
+        var arr = json['Latest_Notifications'];
+        for (var i = 0; i < arr.length; i++) {
+          var job = arr[i];
+          var bd  = job.basic_details || {};
+          var title = (bd.job_title || bd.post_name || job.title || '').trim();
+          var slug  = job.slug || '';
+          var url   = slug ? ('/jobs/' + slug + '/') : LATEST_JOBS_URL;
+          if (title) jobs.push({ name: title, url: url });
+          if (jobs.length >= MAX_JOBS) break;
         }
       }
 
-      /* Format 2: sarkariresult_categories.SR_Latest_Jobs[] */
-      if (jobs.length === 0 && json && json.sarkariresult_categories && Array.isArray(json.sarkariresult_categories.SR_Latest_Jobs)) {
-        var items = json.sarkariresult_categories.SR_Latest_Jobs;
-        for (var k = 0; k < items.length; k++) {
-          var item = items[k];
-          var name = (item.title || item.name || '').trim();
-          var link = item.slug ? ('job.html?slug=' + item.slug) : (item.url || item.source_url || LATEST_JOBS_URL);
-          if (name) jobs.push({ name: name, url: link });
-        }
+      /* Fallback: try merged_sarkari_data.json SR_Latest_Jobs */
+      if (jobs.length === 0) {
+        return fetch('/merged_sarkari_data.json')
+          .then(function(r){ return r.ok ? r.json() : null; })
+          .then(function(mj) {
+            if (!mj) return jobs;
+            if (mj && Array.isArray(mj.jobs)) {
+              for (var k = 0; k < mj.jobs.length; k++) {
+                var j = mj.jobs[k];
+                var t = (j.title || '').trim();
+                var u = j.slug ? ('/jobs/' + j.slug + '/') : LATEST_JOBS_URL;
+                if (t) jobs.push({ name: t, url: u });
+                if (jobs.length >= MAX_JOBS) break;
+              }
+            }
+            return jobs;
+          })
+          .catch(function(){ return jobs; });
       }
 
-      /* deduplicate and limit */
-      var seen = {};
-      var out = [];
-      for (var m = 0; m < jobs.length; m++) {
-        var key = jobs[m].name.toLowerCase();
-        if (!seen[key]) { seen[key] = true; out.push(jobs[m]); }
-        if (out.length >= MAX_JOBS) break;
-      }
-      return out;
+      return Promise.resolve(jobs);
     }
 
     /* ── build href ── */
