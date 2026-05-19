@@ -440,7 +440,7 @@
       return{
         name:bd.job_title||bd.post_name||job.title||job.name||'',
         slug:job.slug||slugify(bd.job_title||job.title||job.name||''),
-        date:id.last_date||id.application_end_date||'',
+        date:id.last_date_to_apply||id.last_date||id.application_end_date||id.last_date_of_application||'',
         vac:bd.total_vacancies||vd.total||'',
         org:bd.organization_name||'',
         url:bd.official_website||'#'
@@ -449,7 +449,7 @@
 
     function normaliseDaily(item){return{name:item.name||item.title||'',slug:slugify(item.name||item.title||''),date:'',vac:'',org:'',url:item.url||'#'};}
 
-    function normaliseMerged(j){return{name:(j.title||j.name||'').trim(),slug:j.slug||slugify(j.title||j.name||''),date:j.last_date||(j.important_dates&&j.important_dates.last_date)||'',vac:'',org:'',url:j.source_url||j.url||j.link||'#'};}
+    function normaliseMerged(j){return{name:(j.title||j.name||'').trim(),slug:j.slug||slugify(j.title||j.name||''),date:(j.important_dates&&(j.important_dates.last_date_to_apply||j.important_dates.last_date))||j.last_date||'',vac:'',org:'',url:j.source_url||j.url||j.link||'#'};}
 
     var cfg=SLUG_MAP[currentSlug];
 
