@@ -1,97 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Organization",
-        "@id": "https://www.topsarkarijobs.com/#organization",
-        "name": "Top Sarkari Jobs",
-        "url": "https://www.topsarkarijobs.com/",
-        "logo": "https://www.topsarkarijobs.com/logo.png", 
-        "description": "Latest Government Jobs, Sarkari Results, Admit Cards, Answer Keys and Online Forms in India",
-        "sameAs": [
-          "https://www.facebook.com/topsarkarijobs",
-          "https://twitter.com/topsarkarijobs",
-          "https://www.instagram.com/topsarkarijobs"
-        ],
-        "contactPoint": {
-          "@type": "ContactPoint",
-          "contactType": "customer support",
-          "email": "info@topsarkarijobs.com"
-        }
-      },
-      {
-        "@type": "WebSite",
-        "@id": "https://www.topsarkarijobs.com/#website",
-        "url": "https://www.topsarkarijobs.com/",
-        "name": "Top Sarkari Jobs",
-        "description": "Latest Sarkari Jobs 2026, Government Jobs, Results, Admit Cards & Application Forms",
-        "publisher": {
-          "@id": "https://www.topsarkarijobs.com/#organization"
-        },
-        "inLanguage": "en-IN",
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": {
-            "@type": "EntryPoint",
-            "urlTemplate": "https://www.topsarkarijobs.com/?s={search_term_string}"
-          },
-          "query-input": "required name=search_term_string"
-        }
-      },
-      {
-        "@type": "BreadcrumbList",
-        "@id": "https://www.topsarkarijobs.com/#breadcrumb",
-        "itemListElement": [
-          {
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Home",
-            "item": "https://www.topsarkarijobs.com/"
-          }
-        ]
-      },
-      {
-        "@type": "FAQPage",
-        "@id": "https://www.topsarkarijobs.com/#faq",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "How to find latest government jobs?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "You can check the latest sarkari jobs, results, admit cards and application forms on Top Sarkari Jobs website."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Are these jobs updated daily?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes, we update latest government jobs, results and admit cards on a daily basis."
-            }
-          }
-        ]
-      }
-    ]
-  }
-  </script>
+  <!--
+    view.html — SECTION LISTING PAGE (SEO-OPTIMIZED v3)
+    ====================================================
+    OLD UGLY URLs:
+      /view.html?section=latest jobs        ← Google indexes this garbage
+    NEW CLEAN URLs (via _redirects):
+      /section/latest-jobs/                 ← redirect 200 → view.html
+
+    The SEO engine (seo-engine.js) auto-generates:
+      ✅ Dynamic title + description
+      ✅ Canonical to /section/<slug>/
+      ✅ BreadcrumbList schema
+      ✅ FAQPage schema
+      ✅ ItemList schema
+      ✅ Related internal links
+      ✅ FAQ HTML block
+  -->
   <!-- GA4: Centralized Analytics -->
   <script src="/analytics.js" defer></script>
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Top Sarkari Jobs | Latest Government Jobs, Results & Admit Cards</title>
+  <title>Top Sarkari Jobs | Latest Government Jobs, Results &amp; Admit Cards</title>
   <meta name="description" content="Browse latest Sarkari Jobs, Results, Admit Cards, Answer Keys, Admissions and Online Forms by category — updated daily on Top Sarkari Jobs." />
   <meta name="keywords" content="sarkari jobs, sarkari result, govt jobs, admit card, online form, answer key, syllabus" />
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
   <link id="canonicalTag" rel="canonical" href="https://www.topsarkarijobs.com/view.html" />
-  <link rel="icon" type="image/x-icon" href="image.ico">
+  <link rel="icon" type="image/x-icon" href="/image.ico">
 
-  <!-- Open Graph / WhatsApp / Social Share -->
+  <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://www.topsarkarijobs.com/view.html" />
   <meta property="og:title" content="Top Sarkari Jobs - View" />
@@ -101,45 +40,38 @@
   <meta property="og:image:height" content="800" />
   <meta property="og:site_name" content="Top Sarkari Jobs" />
   <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Top Sarkari Jobs - View" />
   <meta name="twitter:description" content="Top Sarkari Jobs: latest government job updates, admit cards, results, answer keys, syllabus and online forms." />
   <meta name="twitter:image" content="https://www.topsarkarijobs.com/image.png" />
 
-  <link rel="stylesheet" href="styles.css" />
+  <!-- ✅ SEO ENGINE: Auto-injects all dynamic meta, schema, FAQ, related links -->
+  <script src="/seo-engine.js"></script>
+
+  <!-- Schema placeholders (overwritten by seo-engine.js) -->
+  <script type="application/ld+json" id="schema-breadcrumb">{}</script>
+  <script type="application/ld+json" id="schema-faq">{}</script>
+  <script type="application/ld+json" id="schema-itemlist">{}</script>
+
+  <link rel="stylesheet" href="/styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <link rel="stylesheet" href="fonts/fa/all.min.css">
+  <link rel="stylesheet" href="/fonts/fa/all.min.css">
 
   <style>
     html, body { height: 100%; }
     body { display: flex; flex-direction: column; }
     main { flex: 1; }
-    
-    /* Hide the search bar that comes inside the injected header */
     #site-header .search-card,
     #site-header .top-search,
     #site-header .search-row,
-    #site-header input[type="search"] {
-      display: none !important;
-    }
-
-    /* Style for the local search dropdown */
+    #site-header input[type="search"] { display: none !important; }
     #view-search-container { position: relative; z-index: 50; }
     .search-dropdown {
-       position: absolute; 
-       top: 100%; 
-       left: 0; 
-       right: 0; 
-       width: 100%;
-       background: white;
-       border: 1px solid #e2e8f0;
-       border-bottom-left-radius: 0.5rem;
-       border-bottom-right-radius: 0.5rem;
-       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-       max-height: 24rem;
-       overflow-y: auto;
-       margin-top: 0.25rem;
-       z-index: 100;
+       position: absolute; top: 100%; left: 0; right: 0; width: 100%;
+       background: white; border: 1px solid #e2e8f0;
+       border-bottom-left-radius: 0.5rem; border-bottom-right-radius: 0.5rem;
+       box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+       max-height: 24rem; overflow-y: auto; margin-top: 0.25rem; z-index: 100;
     }
     .search-result-item {
       display: flex; flex-direction: column;
@@ -148,709 +80,334 @@
     }
     .search-result-item:hover { background: #eff6ff; }
     .result-name { font-size: .84rem; font-weight: 700; color: #0369a1; }
-    .result-meta { font-size: .72rem; color: #64748b; margin-top: 2px; }
-    .search-no-results { padding: 12px 14px; font-size: .82rem; color: #64748b; }
+    .result-meta { font-size: .73rem; color: #64748b; margin-top: 2px; }
   </style>
-  <!-- Header: fetch + inject immediately before script.js defer loads -->
-  <script>
-  (function(){
-    var _hp=fetch("/header.html",{cache:"no-store"}).then(function(r){return r.ok?r.text():null;}).catch(function(){return null;});
-    window.__headerPromise=_hp;
-    function _inj(){var h=document.getElementById("site-header");if(!h||h.innerHTML.trim())return;_hp.then(function(html){if(!html||h.innerHTML.trim())return;h.innerHTML=html;if(typeof window.__TSJ_INIT_HEADER==="function")window.__TSJ_INIT_HEADER();});}
-    document.readyState==="loading"?document.addEventListener("DOMContentLoaded",_inj):_inj();
-  })();
-  </script>
 </head>
-
 <body>
   <div id="site-header"></div>
 
-  <main class="container mx-auto max-w-7xl px-4 py-6">
-
-    <div class="mb-4">
-      <a href="index.html" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-white border border-slate-200 hover:bg-slate-50 text-sm font-semibold text-slate-700 transition shadow-sm">
-        <i class="fas fa-arrow-left"></i> Back
-      </a>
-    </div>
-
+  <main>
+    <!-- URL / iframe tool view -->
     <section id="url-view" class="hidden h-full">
-      <div class="w-full bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm flex flex-col" style="height: 85vh;">
+      <div class="w-full h-full">
         <iframe id="url-iframe" title="Viewer"
-                class="w-full h-full border-0"
-                referrerpolicy="no-referrer"
-                loading="lazy"
-                sandbox="allow-forms allow-scripts allow-popups allow-downloads"></iframe>
+          style="width:100%;height:calc(100vh - 60px);border:none;"
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads allow-modals">
+        </iframe>
       </div>
     </section>
 
+    <!-- Section listing view -->
     <section id="section-view" class="hidden">
-      
-      <div class="bg-white rounded-lg border border-slate-200 p-6 shadow-sm mb-6" id="view-search-container">
-        <h2 class="text-xl font-bold text-slate-900 mb-1">Search across Top Sarkari Jobs</h2>
-        <p class="text-slate-600 text-sm mb-4">Search jobs, results, admit cards, categories, CSC services and tools.</p>
-        
-        <div class="relative w-full">
-          <div class="flex gap-2 w-full">
-            <input id="sectionSearchInput" type="search" 
-                   placeholder="Search job categories, results, admit cards…" 
-                   class="flex-1 min-w-0 px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 text-base"
-                   autocomplete="off" />
+      <div class="max-w-5xl mx-auto px-4 py-4">
+        <!-- Search bar -->
+        <div id="view-search-container" class="mb-4">
+          <div class="flex gap-2">
+            <input id="sectionSearchInput" type="search"
+              placeholder="Search jobs in this section..."
+              class="flex-1 border border-slate-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              autocomplete="off" aria-label="Search jobs" />
             <button id="sectionSearchBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition shrink-0">
-              <i class="fa-solid fa-magnifying-glass"></i> <span class="hidden sm:inline">Search</span>
+              Search
             </button>
           </div>
-          <!-- Note: script.js uses style.display to show/hide results, so we must NOT use Tailwind "hidden" class here -->
-          <div id="sectionSearchResults" class="search-dropdown" style="display:none;"></div>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-lg border border-slate-200 p-5 shadow-sm">
-        <div class="flex items-center justify-between mb-4">
-          <h2 id="page-title" class="text-2xl font-bold text-slate-900">Section</h2>
-          <div class="text-slate-600 text-sm">
-            Showing <span id="countNow" class="font-bold text-slate-900">0</span> items.
-          </div>
+          <div id="sectionSearchResults" class="search-dropdown" style="display:none;" role="listbox"></div>
         </div>
 
-        <ul id="links-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></ul>
+        <!-- Section heading — H1 injected by seo-engine.js, H2 shown visually -->
+        <h2 id="page-title" class="text-2xl font-bold text-slate-900 mb-4">Section</h2>
 
-        <div id="loading" class="mt-8 text-center text-slate-500">
-          <i class="fas fa-spinner fa-spin text-2xl"></i>
-        </div>
+        <!-- Job cards grid -->
+        <div id="section-cards" class="grid grid-cols-1 gap-3"></div>
+
+        <!-- Pagination / load more -->
+        <div id="section-pagination" class="mt-6 text-center"></div>
       </div>
     </section>
 
+    <!-- Fallback: no section param -->
     <section id="fallback" class="hidden">
-      <div class="bg-amber-50 border border-amber-200 rounded-lg p-6 text-amber-900">
+      <div class="max-w-2xl mx-auto px-4 py-8 text-center">
         <h3 class="font-bold text-lg">Pick a section</h3>
-        <p class="mt-2 text-sm">This page needs a <code>?section=</code> or <code>?url=</code> in the address bar. Try one of these instead:</p>
+        <p class="mt-2 text-sm">Browse a category:</p>
         <ul id="fallback-sections" class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-2 text-sm"></ul>
-        <p class="mt-4 text-sm"><a href="index.html" class="font-semibold underline">&larr; Back to home</a></p>
       </div>
     </section>
-
   </main>
 
   <div id="site-footer"></div>
 
-  <!-- Mobile menu elements required by script.js -->
-  <div id="menuOverlay" class="overlay" hidden></div>
-  <aside id="mobileMenu" class="offcanvas" aria-label="Mobile menu" hidden>
-    <div class="offcanvas-head">
-      <div class="offcanvas-title">Menu</div>
-      <button id="closeMenuBtn" class="icon-btn" type="button" aria-label="Close menu">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-    </div>
-    <nav class="offcanvas-nav" aria-label="Mobile primary"></nav>
-  </aside>
-
-  <script src="script.js" defer></script>
-
+  <!-- ═══════════════════════════════════════════════════════
+       VIEW PAGE CONTROLLER
+       Reads ?section= param → fetches data → renders cards
+       Calls window.__SEO_updateSection() after render
+  ═══════════════════════════════════════════════════════ -->
   <script>
-  /* ── SR (Sarkari Result) CATEGORY META ── */
-  const __SR_CAT_META = {
-    "SR_Latest_Jobs":  { id: "SR_Latest_Jobs",  title: "🔴 Latest Jobs (Sarkari Result)",  param: "SR_Latest_Jobs" },
-    "SR_Admit_Card":   { id: "SR_Admit_Card",   title: "🔵 Admit Card",                    param: "SR_Admit_Card" },
-    "SR_Result":       { id: "SR_Result",        title: "🟢 Result",                        param: "SR_Result" },
-    "SR_Admission":    { id: "SR_Admission",     title: "🟣 Admission",                     param: "SR_Admission" },
-    "SR_Answer_Key":   { id: "SR_Answer_Key",    title: "🟠 Answer Key",                    param: "SR_Answer_Key" },
-    "SR_Offline_Form": { id: "SR_Offline_Form",  title: "📋 Offline Form",                  param: "SR_Offline_Form" },
-  };
+  (function() {
+    'use strict';
 
-  /* Build sections from merged_sarkari_data.json */
-  function __buildSRSections(rawData) {
-    const sections = [];
+    /* ── DOM refs ── */
+    var urlView      = document.getElementById('url-view');
+    var sectionView  = document.getElementById('section-view');
+    var fallbackView = document.getElementById('fallback');
+    var pageTitle    = document.getElementById('page-title');
+    var sectionCards = document.getElementById('section-cards');
+    var searchInput  = document.getElementById('sectionSearchInput');
+    var searchBtn    = document.getElementById('sectionSearchBtn');
+    var searchResults= document.getElementById('sectionSearchResults');
 
-    /* ── flat jobs[] format — use 'category' field (as set in merged_sarkari_data.json) ──
-       JSON insertion order is fully preserved → cards appear in the same sequence
-       as the JSON file. Keyword fallback only triggers when category is absent/unknown.
-    ── */
-    if (Array.isArray(rawData.jobs) && rawData.jobs.length > 0) {
-      const VALID_SR_CATS = new Set(['SR_Latest_Jobs','SR_Admit_Card','SR_Result','SR_Admission','SR_Answer_Key']);
-
-      const KW_ADMIT     = ['admit card', 'hall ticket', 'call letter'];
-      const KW_ANSWER    = ['answer key', 'answer sheet', 'objection'];
-      const KW_RESULT    = ['result', 'merit list', 'final list', 'cut off', 'cutoff', 'scorecard', 'score card'];
-      const KW_ADMISSION = ['admission', 'counselling', 'counseling'];
-
-      function hasKw(title, kwList) {
-        const t = title.toLowerCase();
-        return kwList.some(k => t.indexOf(k) !== -1);
-      }
-
-      const cats = {
-        SR_Latest_Jobs: [], SR_Admit_Card: [], SR_Result: [],
-        SR_Admission: [], SR_Answer_Key: [], SR_Offline_Form: []
-      };
-
-      rawData.jobs.forEach(job => {
-        const title  = (job.title || '').trim();
-        if (!title) return;
-        const slug   = job.slug || __viewSlugify(title);
-        const dates  = job.important_dates || {};
-        const last   = (dates.last_date || dates.last_date_to_apply || dates.closing_date || job.last_date || '').trim();
-        const bd     = job.basic_details || {};
-        const org    = (job.organization || bd.organization_name || job.org || '').trim();
-        const vac    = (job.total_vacancy || bd.total_vacancies  || job.total_vacancies || '').toString().trim();
-        const applyMode = (job.apply_mode || bd.application_mode || '').trim();
-        const salary = (job.salary_pay_scale || job.salary || bd.salary || '').trim();
-        const item   = { slug, name: title, date: last, org, vac, mode: applyMode, salary };
-
-        /* ── PRIMARY: use 'category' field (as set in merged_sarkari_data.json) ── */
-        const cat = (job.category || '').trim();
-
-        /* OFFLINE_FORM category → SR_Offline_Form bucket */
-        if (cat === 'OFFLINE_FORM') {
-          cats.SR_Offline_Form.push(item);
-          return;
-        }
-
-        /* Direct match for SR_* categories — preserves exact JSON order */
-        if (cat && VALID_SR_CATS.has(cat)) {
-          cats[cat].push(item);
-          return;
-        }
-
-        /* ── FALLBACK: keyword-based (only when category field absent/unknown) ── */
-        const mode = (job.apply_mode || '').toLowerCase();
-        if (mode === 'offline') { cats.SR_Offline_Form.push(item); return; }
-        if      (hasKw(title, KW_ADMIT))     cats.SR_Admit_Card.push(item);
-        else if (hasKw(title, KW_ANSWER))    cats.SR_Answer_Key.push(item);
-        else if (hasKw(title, KW_RESULT))    cats.SR_Result.push(item);
-        else if (hasKw(title, KW_ADMISSION)) cats.SR_Admission.push(item);
-        else                                 cats.SR_Latest_Jobs.push(item);
+    function show(el) {
+      [urlView, sectionView, fallbackView].forEach(function(e) {
+        if (e) e.classList.add('hidden');
       });
-
-      for (const [catKey, meta] of Object.entries(__SR_CAT_META)) {
-        const items = cats[catKey] || [];
-        if (!items.length) continue;
-        sections.push({ id: meta.id, title: meta.title, param: meta.param, items, _srSource: true });
-      }
-      return sections;
+      if (el) el.classList.remove('hidden');
     }
-    /* ── END fixed format handler ── */
 
-    /* Original format: sarkariresult_categories object */
-    const categories = (rawData.sarkariresult_data && rawData.sarkariresult_data.data) || rawData.sarkariresult_categories || rawData.data || rawData || {};
-    for (const [catKey, meta] of Object.entries(__SR_CAT_META)) {
-      const jobs = categories[catKey];
-      if (!Array.isArray(jobs) || !jobs.length) continue;
-      const items = jobs.map(job => {
-        const title = (job.title || "").trim();
-        if (!title) return null;
-        const slug = job.slug || __viewSlugify(title);
-        const dates = job.important_dates || {};
-        const last = (
-          dates.last_date || dates.last_date_to_apply ||
-          dates.closing_date || job.last_date || ""
-        ).trim();
-        return { slug, name: title, date: last || "" };
-      }).filter(Boolean);
-      if (!items.length) continue;
-      sections.push({ id: meta.id, title: meta.title, param: meta.param, items, _srSource: true });
+    function qp(name) {
+      return new URLSearchParams(window.location.search).get(name) || '';
     }
-    return sections;
-  }
 
-  let __cachedSRDataV = null;
-  async function getSRSectionsV() {
-    if (__cachedSRDataV) return __cachedSRDataV;
-    try {
-      const resp = await fetch("merged_sarkari_data.json", { cache: "no-cache" });
-      if (!resp.ok) throw new Error("HTTP " + resp.status);
-      const raw = await resp.json();
-      __cachedSRDataV = __buildSRSections(raw);
-      return __cachedSRDataV;
-    } catch(e) {
-      console.error("[TSJ view] Failed to load merged_sarkari_data.json:", e);
-      return [];
+    /* ── Slugify ── */
+    function slugify(str) {
+      return (str || '').toLowerCase().replace(/[^\w\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');
     }
-  }
 
-  /* ── DYNAMIC DATA: Auto-fetched from Complete_Jobs_Full_Data.json ── */
-  /* Category metadata — same as script.js JOBS_CAT_META */
-  const __VIEW_CAT_META = {
-    "Latest_Notifications": { id: "Latest Notifications",    title: "🔔 Latest Notifications",   param: "Latest%20Notifications" },
-    "10TH_Pass":            { id: "10th Pass jobs",           title: "📚 10th Pass Jobs",          param: "10th%20Pass%20jobs" },
-    "8TH_Pass":             { id: "8th Pass",                 title: "📖 8th Pass Jobs",           param: "8th%20Pass" },
-    "12TH_Pass":            { id: "12th Pass jobs",           title: "🎓 12th Pass Jobs",          param: "12th%20Pass%20jobs" },
-    "Diploma":              { id: "Diploma Jobs",              title: "📜 Diploma Jobs",            param: "Diploma%20Jobs" },
-    "ITI":                  { id: "ITI Jobs",                  title: "🔧 ITI Jobs",               param: "ITI%20Jobs" },
-    "B_Tech_BE":            { id: "B.Tech Jobs",              title: "💻 B.Tech / B.E. Jobs",      param: "B.Tech%20Jobs" },
-    "B_Com":                { id: "B.Com Jobs",               title: "💼 B.Com Jobs",              param: "B.Com%20Jobs" },
-    "Any_Graduate":         { id: "Graduation jobs",          title: "🎓 Any Graduate Jobs",       param: "Graduation%20jobs" },
-    "Any_Post_Graduate":    { id: "Post Graduation jobs",     title: "🏛️ Post Graduate Jobs",     param: "Post%20Graduation%20jobs" },
-    "Railway_Jobs":         { id: "Railway Jobs",             title: "🚂 Railway Jobs",            param: "Railway%20Jobs" },
-    "Police_Defence":       { id: "Police Jobs",              title: "🛡️ Police / Defence Jobs",  param: "Police%20Jobs" },
-    "Teaching_Faculty":     { id: "Teacher Jobs",             title: "📝 Teaching / Faculty Jobs", param: "Teacher%20Jobs" },
-    "Bank_Jobs":            { id: "Bank Jobs",                title: "🏦 Bank Jobs",               param: "Bank%20Jobs" },
-    "Medical_Hospital":     { id: "Medical/ Healthcare Jobs", title: "🏥 Medical / Hospital Jobs", param: "Medical%2F%20Healthcare%20Jobs" },
-    "Last_Date_Reminder":   { id: "Last Date Reminder",       title: "⏰ Last Date Reminder",      param: "Last%20Date%20Reminder" },
-  };
-
-  /* Slugify — same logic as script.js slugifyForJob */
-  function __viewSlugify(title) {
-    return (title || "")
-      .normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
-      .replace(/&/g, " and ").replace(/[\u2018\u2019]/g, "")
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "")
-      .replace(/-{2,}/g, "-")
-      .slice(0, 120) || "official-link";
-  }
-
-  /* Build sections array from raw Complete_Jobs_Full_Data.json */
-  function __buildSectionsFromRaw(rawData) {
-    const sections = [];
-    for (const [catKey, meta] of Object.entries(__VIEW_CAT_META)) {
-      const jobs = rawData[catKey];
-      if (!Array.isArray(jobs) || !jobs.length) continue;
-      const items = jobs.map(job => {
-        const bd    = job.basic_details || {};
-        const dates = job.important_dates || {};
-        const name  = (bd.job_title || "").trim();
-        if (!name) return null;
-        const slug = __viewSlugify(name);
-        const last = (
-          dates.last_date_to_apply ||
-          dates.last_date ||
-          dates.last_date_apply ||
-          dates.closing_date || ""
-        ).trim();
-        return { slug, name, date: last || "" };
-      }).filter(Boolean);
-      if (!items.length) continue;
-      sections.push({ id: meta.id, title: meta.title, param: meta.param, items });
+    /* ── Update canonical + history to clean URL ── */
+    function cleanifyURL(sectionParam) {
+      var cleanSlug = slugify(sectionParam);
+      var cleanUrl  = 'https://www.topsarkarijobs.com/section/' + cleanSlug + '/';
+      // Update browser URL (SEO engine also handles canonical tag)
+      if (window.history && window.history.replaceState) {
+        try { window.history.replaceState({}, '', '/section/' + cleanSlug + '/'); } catch(e) {}
+      }
+      return cleanUrl;
     }
-    return { sections };
-  }
 
-  /* Memoized fetch */
-  let __cachedJobsDataV = null;
+    /* ── Render a single job card ── */
+    function renderCard(item) {
+      var a    = document.createElement('a');
+      var slug = item.slug || slugify(item.name || item.title || '');
+      a.href   = '/jobs/' + slug + '/';
+      a.className = 'block bg-white border border-slate-200 rounded-xl p-4 hover:shadow-md hover:border-blue-300 transition-all';
+      a.setAttribute('title', item.name || item.title || '');
 
-  async function getJobsSectionsV() {
-    if (__cachedJobsDataV) return __cachedJobsDataV;
-    try {
-      const resp = await fetch("Complete_Jobs_Full_Data.json", { cache: "no-cache" });
-      if (!resp.ok) throw new Error("HTTP " + resp.status);
-      const raw = await resp.json();
-      __cachedJobsDataV = __buildSectionsFromRaw(raw);
-      return __cachedJobsDataV;
-    } catch(e) {
-      console.error("[TSJ view] Failed to load Complete_Jobs_Full_Data.json:", e);
-      return { sections: [] };
+      var title = document.createElement('div');
+      title.className = 'font-semibold text-slate-800 text-sm leading-snug mb-1';
+      title.textContent = item.name || item.title || '';
+
+      var meta = document.createElement('div');
+      meta.className = 'flex flex-wrap gap-x-3 gap-y-1 mt-1';
+
+      function badge(icon, text, color) {
+        if (!text) return;
+        var span = document.createElement('span');
+        span.className = 'text-xs text-' + (color||'slate') + '-600 flex items-center gap-1';
+        span.textContent = icon + ' ' + text;
+        meta.appendChild(span);
+      }
+
+      badge('📅', item.date, 'blue');
+      badge('📋', item.vac ? item.vac + ' Posts' : '', 'green');
+      badge('💰', item.salary, 'purple');
+      badge('🖊️', item.mode, 'orange');
+
+      a.appendChild(title);
+      a.appendChild(meta);
+      return a;
     }
-  }
-  </script>
 
+    /* ── Main entry ── */
+    var sectionParam = qp('section');
+    var urlParam     = qp('url');
+    var nameParam    = qp('name');
 
+    /* ─ TOOL / iframe ─ */
+    if (urlParam) {
+      show(urlView);
+      var iframe = document.getElementById('url-iframe');
+      var toolUrl = decodeURIComponent(urlParam);
+      iframe.src  = toolUrl;
+      iframe.title = nameParam || 'Online Tool';
+      // noindex set by seo-engine.js automatically for ?url= pages
+      return;
+    }
 
-  <script>
-    (function () {
-      const urlParams = new URLSearchParams(window.location.search);
-      const sectionParam = urlParams.get("section");
-      const urlParam = urlParams.get("url");
-      const nameParam = urlParams.get("name") || "View";
+    /* ─ SECTION ─ */
+    if (sectionParam) {
+      show(sectionView);
+      cleanifyURL(sectionParam);
 
-      const urlView = document.getElementById("url-view");
-      const sectionView = document.getElementById("section-view");
-      const fallback = document.getElementById("fallback");
+      /* Fetch jobs data */
+      var dataUrls = ['/Complete_Jobs_Full_Data.json', '/dailyupdates.json', '/jobs.json'];
 
-      function show(el){ if(el) el.classList.remove("hidden"); }
+      Promise.all(dataUrls.map(function(u) {
+        return fetch(u).then(function(r) { return r.ok ? r.json() : null; }).catch(function() { return null; });
+      })).then(function(results) {
+        var allItems = [];
+        var sp = sectionParam.toLowerCase();
 
-      function safe(v) {
-        return (v ?? "").toString().trim();
-      }
-
-      function normalizeUrl(raw) {
-        const s = safe(raw);
-        if (!s) return "";
-        if (/^(https?:)?\/\//i.test(s) || /^(mailto:|tel:)/i.test(s)) return s;
-        if (s.startsWith("#") || s.startsWith("?")) return s;
-        if (s.startsWith("/") || s.includes(".html") || s.startsWith("./") || s.startsWith("../")) return s;
-        return "https://" + s.replace(/^\/+/, "");
-      }
-
-      function slugifyTitle(raw) {
-        const text = safe(raw)
-          .normalize("NFKD")
-          .replace(/[̀-ͯ]/g, "")
-          .replace(/&/g, " and ")
-          .replace(/[’']/g, "")
-          .toLowerCase();
-
-        const slug = text
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/^-+|-+$/g, "")
-          .replace(/-{2,}/g, "-")
-          .slice(0, 120);
-
-        return slug || "official-link";
-      }
-
-      function urlRedirectFingerprint(raw) {
-        const s = normalizeUrl(raw);
-        let h1 = 2166136261 >>> 0;
-        let h2 = 8159751279 >>> 0;
-        for (let i = 0; i < s.length; i++) {
-          const c = s.charCodeAt(i);
-          h1 ^= c;
-          h1 = Math.imul(h1, 16777619) >>> 0;
-          h2 = (Math.imul(h2, 1099511627) ^ c) >>> 0;
-        }
-        const alphabet = "0123456789abcdefghijklmnopqrstuvwxyz";
-        function pack(n, len) {
-          let x = n >>> 0;
-          let out = "";
-          for (let i = 0; i < len; i++) {
-            out = alphabet[x % 36] + out;
-            x = Math.floor(x / 36);
-          }
-          return out;
-        }
-        return pack(h1, 6) + pack(h2, 6);
-      }
-
-      function buildRedirectUrl(targetUrl, label) {
-        const to = safe(targetUrl);
-        if (!to) return "";
-        const qs = new URLSearchParams();
-        qs.set("slug", slugifyTitle(label || targetUrl));
-        qs.set("k", urlRedirectFingerprint(to));
-        // pass section context for breadcrumb on job.html
-        if (sectionParam) qs.set("section", sectionParam);
-        return `job.html?${qs.toString()}`;
-      }
-
-      // Update OG/Twitter meta tags so shared links show the correct title
-      function updateShareMeta(title, desc) {
-        var setMeta = function(sel, val) { var el = document.querySelector(sel); if (el) el.setAttribute('content', val); };
-        var safeTitle = title || 'Top Sarkari Jobs';
-        var safeDesc  = desc  || 'Latest government job updates, admit cards and results on Top Sarkari Jobs.';
-        document.title = safeTitle + ' | Top Sarkari Jobs';
-        setMeta('meta[property="og:title"]',       safeTitle + ' | Top Sarkari Jobs');
-        setMeta('meta[property="og:description"]', safeDesc);
-        setMeta('meta[name="twitter:title"]',      safeTitle + ' | Top Sarkari Jobs');
-        setMeta('meta[name="twitter:description"]',safeDesc);
-        setMeta('meta[property="og:url"]', window.location.href);
-        // Update canonical URL dynamically
-        var canonical = document.getElementById('canonicalTag');
-        if (canonical) canonical.setAttribute('href', window.location.href);
-        // Update description meta
-        setMeta('meta[name="description"]', safeDesc);
-        // Update keywords dynamically
-        var kwMeta = document.querySelector('meta[name="keywords"]');
-        if (kwMeta && safeTitle) {
-          kwMeta.setAttribute('content', safeTitle + ', sarkari jobs 2026, government jobs, top sarkari jobs');
-        }
-      }
-
-      // ── 1. Tool / URL View ──────────────────────────────────────────
-      if (urlParam) {
-        show(urlView);
-        const toolName = nameParam || 'Online Tool';
-        const toolUrl  = decodeURIComponent(urlParam);
-        updateShareMeta(toolName, 'Use ' + toolName + ' free on Top Sarkari Jobs.');
-
-        // Sites known to block iframe embedding (X-Frame-Options / CSP)
-        var IFRAME_BLOCKED = [
-          'imageresizer.com','tinypng.com','iloveimg.com','ilovepdf.com',
-          'photoroom.com','cutout.pro','befunky.com','cloudconvert.com',
-          'resizepixel.com','freeconvert.com','clideo.com',
-          'online-video-cutter.com','mp3cut.net','mp3joiner.com',
-          'online-voice-recorder.com','compressjpeg.com','compressnow.com',
-          'smallpdf.com','pdf2go.com','sejda.com','tools.pdf24.org',
-          'www.adobe.com','canva.com','remove.bg','cleanup.pictures',
-          'upscalepics.com','picresize.com','birme.net','bulkresizephotos.com',
-          'pdfresizer.com','lightpdf.com','freepdfconvert.com'
-        ];
-
-        function isBlocked(url) {
-          try {
-            var host = new URL(url).hostname.replace(/^www\./,'');
-            return IFRAME_BLOCKED.some(function(b){ return host === b || host.endsWith('.'+b); });
-          } catch(e){ return false; }
-        }
-
-        // Tool icon map by keyword
-        function toolIcon(name) {
-          var n = (name||'').toLowerCase();
-          if(n.includes('pdf'))      return {icon:'fa-file-pdf',   color:'#dc2626', bg:'#fff5f5'};
-          if(n.includes('image')||n.includes('photo')||n.includes('resize')||n.includes('compress')||n.includes('passport')||n.includes('background')||n.includes('crop')||n.includes('signature')) return {icon:'fa-image', color:'#1a56db', bg:'#eff6ff'};
-          if(n.includes('video')||n.includes('mp4')||n.includes('avi')||n.includes('mov')) return {icon:'fa-video', color:'#7c3aed', bg:'#faf5ff'};
-          if(n.includes('audio')||n.includes('mp3')||n.includes('music')||n.includes('voice')) return {icon:'fa-music', color:'#0891b2', bg:'#ecfeff'};
-          if(n.includes('convert')) return {icon:'fa-arrows-rotate', color:'#059669', bg:'#f0fdf4'};
-          return {icon:'fa-screwdriver-wrench', color:'#1a56db', bg:'#eff6ff'};
-        }
-
-        var iframe = document.getElementById("url-iframe");
-        var urlViewEl = document.getElementById("url-view");
-
-        // Render a branded "Open Tool" landing card
-        function showLandingCard(reason) {
-          var t = toolIcon(toolName);
-          urlViewEl.innerHTML = [
-            '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:72vh;padding:24px;text-align:center;">',
-
-              // Card
-              '<div style="background:#fff;border:1.5px solid #e2e8f0;border-radius:18px;padding:36px 32px 32px;max-width:460px;width:100%;box-shadow:0 8px 32px rgba(13,34,87,.1);">',
-
-                // Big icon
-                '<div style="width:72px;height:72px;background:'+t.bg+';border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:2rem;color:'+t.color+';margin:0 auto 18px;border:1.5px solid rgba(0,0,0,.06);">',
-                  '<i class="fa-solid '+t.icon+'"></i>',
-                '</div>',
-
-                '<h1 style="font-size:1.25rem;font-weight:900;color:#0d2257;margin-bottom:8px;">'+toolName+'</h1>',
-                '<p style="font-size:.83rem;color:#64748b;line-height:1.6;margin-bottom:8px;">Yeh tool ek alag website par hai. Security restrictions ki wajah se hum ise seedha yahan nahi dikha sakte.</p>',
-
-                // Info badge
-                '<div style="display:inline-flex;align-items:center;gap:7px;background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:8px;padding:8px 14px;font-size:.76rem;font-weight:700;margin-bottom:22px;">',
-                  '<i class="fa-solid fa-circle-info"></i> Tool new tab mein khulega — bilkul free hai',
-                '</div>',
-
-                // Main CTA button
-                '<a href="'+toolUrl+'" target="_blank" rel="noopener noreferrer" ',
-                  'style="display:inline-flex;align-items:center;justify-content:center;gap:10px;',
-                  'background:'+t.color+';color:#fff;font-size:.95rem;font-weight:800;',
-                  'padding:14px 32px;border-radius:12px;text-decoration:none;width:100%;',
-                  'box-shadow:0 4px 14px rgba(0,0,0,.15);transition:opacity .15s;margin-bottom:12px;" ',
-                  'onmouseover="this.style.opacity=\'.88\';" onmouseout="this.style.opacity=\'1\';">',
-                  '<i class="fa-solid fa-arrow-up-right-from-square"></i>',
-                  toolName+' Kholo',
-                '</a>',
-
-                // Secondary: back
-                '<a href="tools.html" ',
-                  'style="display:inline-flex;align-items:center;justify-content:center;gap:7px;',
-                  'color:#64748b;font-size:.8rem;font-weight:700;padding:10px 20px;',
-                  'border-radius:10px;border:1.5px solid #e2e8f0;text-decoration:none;width:100%;',
-                  'background:#f8fafc;" ',
-                  'onmouseover="this.style.background=\'#f1f5f9\';" onmouseout="this.style.background=\'#f8fafc\';">',
-                  '<i class="fa-solid fa-arrow-left"></i> Wapas Tools Par Jao',
-                '</a>',
-
-              '</div>',
-
-              // Trust badges row
-              '<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:20px;">',
-                '<span style="background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:4px 13px;font-size:.68rem;font-weight:700;color:#64748b;"><i class="fa-solid fa-check" style="color:#059669;"></i> 100% Free</span>',
-                '<span style="background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:4px 13px;font-size:.68rem;font-weight:700;color:#64748b;"><i class="fa-solid fa-lock" style="color:#1a56db;"></i> No Signup</span>',
-                '<span style="background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:4px 13px;font-size:.68rem;font-weight:700;color:#64748b;"><i class="fa-solid fa-bolt" style="color:#d97706;"></i> Instant</span>',
-              '</div>',
-
-            '</div>'
-          ].join('');
-        }
-
-        // If URL is in known-blocked list → show landing card immediately (no iframe attempt)
-        if (isBlocked(toolUrl)) {
-          showLandingCard('blocked');
-          return;
-        }
-
-        // Otherwise try iframe; show landing card if it errors or doesn't load within 6s
-        if (iframe) {
-          var iframeLoaded = false;
-          var timer = setTimeout(function(){
-            if(!iframeLoaded) showLandingCard('timeout');
-          }, 6000);
-
-          iframe.addEventListener('load', function(){
-            iframeLoaded = true;
-            clearTimeout(timer);
-            // Try to detect X-Frame-Options block — if contentDocument is null/about:blank after load, it was blocked
-            try {
-              var doc = iframe.contentDocument || iframe.contentWindow.document;
-              if (!doc || doc.URL === 'about:blank' || doc.body === null) {
-                showLandingCard('blocked-detected');
-              }
-            } catch(e) {
-              // Cross-origin error = loaded fine (same-origin restriction means content IS there)
+        /* ── Parse Complete_Jobs_Full_Data.json ── */
+        if (results[0]) {
+          var full = results[0];
+          var arr  = Array.isArray(full) ? full : (full.jobs || full.data || Object.values(full)[0] || []);
+          arr.forEach(function(job) {
+            var t = (job.title || job.name || '').toLowerCase();
+            if (t.indexOf(sp) !== -1 || matchCategory(job, sp)) {
+              allItems.push(normalise(job));
             }
           });
-
-          iframe.addEventListener('error', function(){
-            clearTimeout(timer);
-            showLandingCard('iframe-error');
-          });
-
-          iframe.src = toolUrl;
         }
-        return;
-      }
 
-      // 2. Section View (Has Search Bar)
-      if (sectionParam) {
-        show(sectionView);
-        const rawTitle = decodeURIComponent(sectionParam).replace(/-/g, ' ');
-        const title = rawTitle.replace(/\b\w/g, function(c){ return c.toUpperCase(); });
-        updateShareMeta(title, 'Browse ' + title + ' — latest government job updates on Top Sarkari Jobs.');
-        if(document.getElementById("page-title")) document.getElementById("page-title").textContent = title.toUpperCase();
-
-        // Render List
-        (async () => {
-             const list = document.getElementById("links-list");
-             try {
-                 // ── Check if this is a Sarkari Result (SR_*) section ──
-                 const isSRSection = sectionParam.startsWith('SR_');
-                 let sec = null;
-
-                 if (isSRSection) {
-                   // Load from merged_sarkari_data.json
-                   const srSections = await getSRSectionsV();
-                   sec = srSections.find(s => s.id === sectionParam || s.param === sectionParam);
-                   // Update page title with nice label
-                   const srTitleMap = {
-                     'SR_Latest_Jobs': 'Latest Jobs',
-                     'SR_Admit_Card':  'Admit Card',
-                     'SR_Result':      'Result',
-                     'SR_Admission':   'Admission',
-                     'SR_Answer_Key':  'Answer Key',
-                     'SR_Offline_Form': 'Offline Form',
-                   };
-                   const niceTitle = srTitleMap[sectionParam] || title;
-                   if(document.getElementById("page-title")) document.getElementById("page-title").textContent = niceTitle.toUpperCase();
-                 } else {
-                   const spLower = sectionParam.toLowerCase().replace(/[\s_-]+/g, " ").trim();
-
-                   // ── Step 1: Try dailyupdates.json first (Govt Scheme, CSC PDF/Link, Top 20 Jobs, Headlines, Latest Govt Jobs, etc.) ──
-                   try {
-                     const duResp = await fetch("dailyupdates.json", { cache: "no-cache" });
-                     if (duResp.ok) {
-                       const duData = await duResp.json();
-                       if (duData && Array.isArray(duData.sections)) {
-                         sec = duData.sections.find(s =>
-                           s.id === sectionParam ||
-                           s.title === sectionParam ||
-                           (s.id || "").toLowerCase().replace(/[\s_-]+/g, " ").trim() === spLower ||
-                           (s.title || "").toLowerCase().replace(/[\s_-]+/g, " ").trim() === spLower
-                         ) || null;
-                       }
-                     }
-                   } catch(duErr) {
-                     console.warn("[TSJ view] dailyupdates.json load failed:", duErr);
-                   }
-
-                   // ── Step 2: If not found in dailyupdates.json, try Complete_Jobs_Full_Data.json ──
-                   if (!sec) {
-                     const d = await getJobsSectionsV();
-                     sec = d.sections.find(s =>
-                       s.id === sectionParam ||
-                       s.title === sectionParam ||
-                       (s.id || "").toLowerCase().replace(/[\s_-]+/g, " ").trim() === spLower ||
-                       (s.title || "").replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FEFF}]/gu, "").replace(/[^\x00-\x7E]/g, "").trim().toLowerCase().replace(/[\s_-]+/g, " ").trim() === spLower
-                     ) || null;
-                     // NOTE: Do NOT fallback to d.sections[0] — that shows wrong data
-                   }
-                 }
-                 
-                 if(!sec || !sec.items) {
-                     document.getElementById("loading").innerHTML = `
-                       <div class="flex flex-col items-center gap-3 py-10">
-                         <i class="fas fa-inbox text-3xl text-slate-300"></i>
-                         <p class="text-slate-500 text-sm">Is category mein abhi koi data nahi mila. JSON file check karo ya baad mein try karo.</p>
-                         <button onclick="location.reload()" class="mt-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-5 rounded-lg transition">Refresh</button>
-                       </div>`;
-                 } else {
-                     document.getElementById("loading").classList.add("hidden");
-                     
-                     // Filter Garbage Link
-                     const cleanItems = sec.items.filter(i => {
-                        const t = (i.name||i.title||"").toLowerCase();
-                        return !t.includes("main home page");
-                     });
-
-                     if (!cleanItems.length) {
-                       document.getElementById("loading").innerHTML = `
-                         <div class="flex flex-col items-center gap-3 py-10">
-                           <i class="fas fa-inbox text-3xl text-slate-300"></i>
-                           <p class="text-slate-500 text-sm">Is category mein abhi koi jobs nahi hain.</p>
-                         </div>`;
-                     } else {
-
-                     document.getElementById("countNow").textContent = cleanItems.length;
-                     list.innerHTML = cleanItems.map(i => {
-                        const label = i.name || i.title || 'Open';
-                        // If item has a direct slug (from jobs-index.json), link directly to job.html?slug=
-                        // Otherwise fall back to redirect hash system
-                        let href;
-                        if (i.slug) {
-                          // Use full original slug (with SR_* prefix intact) in /jobs/ URL format
-                          // so job.html can match it exactly in /jobs/data/<slug>.json lookup
-                          // Also pass ref URL if available so job.html can render even on fuzzy-match failure
-                          const refPart = (i.url || i.link) ? '?ref=' + encodeURIComponent(i.url || i.link) : '';
-                          href = `/jobs/${encodeURIComponent(i.slug)}/${refPart}`;
-                        } else {
-                          href = buildRedirectUrl(i.url || i.link, label) || (i.url || i.link || '#');
-                        }
-                        const targetAttr = i.external ? 'target="_blank" rel="noopener"' : '';
-                        // Clean date display
-                        let dspDate = i.date || 'Update';
-                        if (dspDate.toLowerCase().includes('please refer') || dspDate.toLowerCase().includes('days from') || dspDate.toLowerCase().includes('date of publication')) {
-                          dspDate = 'Check Official Notification';
-                        } else if (dspDate.length > 40) {
-                          dspDate = dspDate.slice(0, 37) + '…';
-                        }
-                        const dataSlug = i.slug ? `data-slug="${i.slug}" data-bypass-gate="1"` : '';
-                        // Build extra info badges
-                        const badges = [];
-                        if (i.org)  badges.push(`<span class="inline-flex items-center gap-1 text-slate-600"><span>🏢</span><span>${i.org.length > 40 ? i.org.slice(0,38)+'…' : i.org}</span></span>`);
-                        if (i.vac)  badges.push(`<span class="inline-flex items-center gap-1 text-blue-700 font-medium"><span>👥</span><span>Posts: ${i.vac}</span></span>`);
-                        if (i.mode) badges.push(`<span class="inline-flex items-center gap-1 ${i.mode.toLowerCase().includes('offline') ? 'text-orange-600' : 'text-green-700'} font-medium"><span>💻</span><span>${i.mode}</span></span>`);
-                        if (dspDate && dspDate !== 'Update' && dspDate !== 'Check Official Notification') badges.push(`<span class="inline-flex items-center gap-1 text-red-600 font-medium"><span>📅</span><span>Last Date: ${dspDate}</span></span>`);
-                        const badgeHtml = badges.length ? `<div class="flex flex-wrap gap-x-3 gap-y-1 mt-1.5 text-xs">${badges.join('')}</div>` : `<div class="text-xs text-slate-500 mt-1">${dspDate}</div>`;
-                        return `
-                        <li class="bg-white border border-slate-200 rounded-lg p-3 hover:shadow-md transition">
-                            <a href="${href}" data-redirect-label="${label}" ${dataSlug} class="block font-semibold text-sky-700 hover:underline text-sm leading-snug" ${targetAttr}>
-                                ${label}
-                            </a>
-                            ${badgeHtml}
-                        </li>
-                     `;
-                     }).join('');
-                     } // end else (cleanItems.length > 0)
-                 }
-             } catch(e) {
-                console.error('[TSJ] Section render error:', e);
-                const loadEl = document.getElementById("loading");
-                if (loadEl) loadEl.innerHTML = `
-                  <div class="flex flex-col items-center gap-3 py-10">
-                    <i class="fas fa-wifi-slash text-3xl text-slate-400"></i>
-                    <p class="font-bold text-slate-700">Data load nahi ho saka.</p>
-                    <p class="text-sm text-slate-500">Connection check karo aur page refresh karo.</p>
-                    <p class="text-xs text-red-400 mt-1">${(e && e.message) ? e.message : 'Unknown error'}</p>
-                    <button onclick="location.reload()" class="mt-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-5 rounded-lg transition">Refresh</button>
-                  </div>`;
-             }        })();
-        return;
-      }
-
-      show(fallback);
-      // ISSUE-007: populate the fallback with the known sections so the user
-      // has somewhere to go instead of a dead "Nothing found" card.
-      (async () => {
-        try {
-          const d = await getJobsSectionsV();
-          const ul = document.getElementById("fallback-sections");
-          if (!ul || !Array.isArray(d.sections)) return;
-          d.sections.slice(0, 12).forEach((s) => {
-            const id = s.id || s.title;
-            if (!id) return;
-            const li = document.createElement("li");
-            const a = document.createElement("a");
-            a.className = "font-semibold text-sky-700 hover:underline";
-            a.href = "view.html?section=" + encodeURIComponent(id);
-            a.textContent = s.title || id;
-            li.appendChild(a);
-            ul.appendChild(li);
+        /* ── Parse dailyupdates.json ── */
+        if (results[1]) {
+          var du = results[1];
+          var duArr = Array.isArray(du) ? du : (du.jobs || du.updates || []);
+          duArr.forEach(function(job) {
+            var t = (job.title || '').toLowerCase();
+            if (t.indexOf(sp) !== -1 || matchCategory(job, sp)) {
+              allItems.push(normalise(job));
+            }
           });
-        } catch (_) {}
-      })();
-    })();
+        }
+
+        /* ── Parse jobs.json sections ── */
+        if (results[2] && !allItems.length) {
+          var jd = results[2];
+          ['top_jobs','left_jobs','right_jobs'].forEach(function(key) {
+            if (Array.isArray(jd[key])) {
+              jd[key].forEach(function(job) {
+                var t = (job.title || '').toLowerCase();
+                if (t.indexOf(sp) !== -1) {
+                  allItems.push(normalise(job));
+                }
+              });
+            }
+          });
+        }
+
+        /* ── Deduplicate ── */
+        var seen = {};
+        allItems = allItems.filter(function(item) {
+          var k = slugify(item.name || '');
+          if (seen[k]) return false;
+          seen[k] = true;
+          return true;
+        });
+
+        /* ── Render ── */
+        if (pageTitle) pageTitle.textContent = (sectionParam || 'Jobs').replace(/-/g,' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); }) + ' ' + new Date().getFullYear();
+
+        if (!allItems.length) {
+          sectionCards.innerHTML = '<p class="text-slate-500 text-sm py-8 text-center">No jobs found. Check back soon!</p>';
+        } else {
+          sectionCards.innerHTML = '';
+          allItems.slice(0, 60).forEach(function(item) {
+            sectionCards.appendChild(renderCard(item));
+          });
+        }
+
+        /* ── Call SEO engine with section data ── */
+        if (window.__SEO_updateSection) {
+          window.__SEO_updateSection(sectionParam, allItems);
+        }
+
+        /* ── Search box ── */
+        setupSearch(allItems);
+      });
+    } else {
+      /* No section param → show fallback with links */
+      show(fallbackView);
+      var list = document.getElementById('fallback-sections');
+      if (list) {
+        var cats = [
+          ['Latest Jobs', '/section/latest-jobs/'],
+          ['Upcoming Jobs', '/section/upcoming-jobs/'],
+          ['10th Pass Jobs', '/section/10th-pass-jobs/'],
+          ['Railway Jobs', '/section/railway-jobs/'],
+          ['Bank Jobs', '/section/bank-jobs/'],
+          ['Police Jobs', '/section/police-jobs/'],
+          ['SSC Jobs', '/section/ssc-jobs/'],
+          ['UPSC Jobs', '/section/upsc-jobs/'],
+        ];
+        cats.forEach(function(c) {
+          var li = document.createElement('li');
+          var a  = document.createElement('a');
+          a.href = c[1];
+          a.textContent = c[0];
+          a.className = 'block p-3 bg-blue-50 rounded-lg text-blue-700 font-medium hover:bg-blue-100 transition text-sm';
+          li.appendChild(a);
+          list.appendChild(li);
+        });
+      }
+    }
+
+    /* ── Helpers ── */
+    function matchCategory(job, sp) {
+      var cats = (job.categories || job.category || job.section || '');
+      if (Array.isArray(cats)) cats = cats.join(' ');
+      return (cats.toLowerCase().indexOf(sp) !== -1);
+    }
+
+    function normalise(job) {
+      return {
+        name:   job.title || job.name || '',
+        slug:   job.slug  || slugify(job.title || job.name || ''),
+        date:   job.lastDate || job.last_date || job.date || '',
+        vac:    job.totalVacancies || job.vacancies || job.posts || '',
+        salary: job.salary || '',
+        mode:   job.applyMode || job.mode || '',
+        org:    job.organization || job.org || ''
+      };
+    }
+
+    function setupSearch(items) {
+      if (!searchInput) return;
+      searchInput.addEventListener('input', function() {
+        var q = this.value.trim().toLowerCase();
+        searchResults.style.display = q.length < 2 ? 'none' : 'block';
+        if (q.length < 2) return;
+        searchResults.innerHTML = '';
+        var hits = items.filter(function(i) { return (i.name||'').toLowerCase().indexOf(q) !== -1; }).slice(0, 10);
+        hits.forEach(function(item) {
+          var a = document.createElement('a');
+          a.className = 'search-result-item';
+          a.href = '/jobs/' + item.slug + '/';
+          var name = document.createElement('span');
+          name.className = 'result-name';
+          name.textContent = item.name;
+          var meta = document.createElement('span');
+          meta.className = 'result-meta';
+          meta.textContent = [item.date && ('Last Date: ' + item.date), item.vac && (item.vac + ' posts')].filter(Boolean).join(' · ');
+          a.appendChild(name);
+          a.appendChild(meta);
+          searchResults.appendChild(a);
+        });
+        if (!hits.length) {
+          searchResults.innerHTML = '<div class="p-3 text-sm text-slate-500">No results found for "' + q + '"</div>';
+        }
+      });
+      document.addEventListener('click', function(e) {
+        if (!searchResults.contains(e.target) && e.target !== searchInput) {
+          searchResults.style.display = 'none';
+        }
+      });
+      if (searchBtn) {
+        searchBtn.addEventListener('click', function() {
+          window.location.href = '/search.html?q=' + encodeURIComponent(searchInput.value);
+        });
+      }
+    }
+  })();
   </script>
-  <script src="seo-engine.js?v=20260508" defer></script>
 
-
-</body></html>
+  <!-- Header/Footer loader -->
+  <script>
+  ['header','footer'].forEach(function(part) {
+    fetch('/' + part + '.html').then(function(r) { return r.ok ? r.text() : ''; }).then(function(html) {
+      var el = document.getElementById('site-' + part);
+      if (el && html) el.innerHTML = html;
+    }).catch(function(){});
+  });
+  </script>
+</body>
+</html>
