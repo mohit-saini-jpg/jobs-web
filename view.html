@@ -96,45 +96,57 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 14px;
       align-items: start;
+      width: 100%;
     }
     @media (max-width: 860px) { .sv-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
     @media (max-width: 540px) {
       .sv-grid { grid-template-columns: 1fr; gap: 9px; }
       .sv-wrap { padding: 12px 10px 28px; }
-      .sv-title { font-size: 1.15rem; }
-      .sv-search-btn { padding: 0 16px; font-size: .82rem; }
+      .sv-title { font-size: 1.1rem; gap: 7px; }
+      .sv-title-icon { width: 30px; height: 30px; font-size: .82rem; border-radius: 8px; }
+      .sv-search-btn { padding: 0 14px; font-size: .8rem; }
+      .sv-search-input { font-size: .88rem; padding: 13px 8px 13px 0; }
+      .sv-search-icon { padding: 0 10px 0 12px; }
+      .sv-total-badge { font-size: .78rem; padding: 4px 11px; }
     }
 
     /* ── Card ── */
     .sv-card {
       background: #fff; border: 1.5px solid #e2e8f0; border-radius: 14px;
-      padding: 16px 15px 13px; text-decoration: none; color: inherit;
+      padding: 16px 14px 13px; text-decoration: none; color: inherit;
       display: flex; flex-direction: column; gap: 7px;
       transition: box-shadow .18s, border-color .18s, transform .15s;
-      position: relative; height: 100%;
+      position: relative; min-width: 0; width: 100%; overflow: hidden;
     }
     .sv-card:hover { box-shadow: 0 8px 24px rgba(37,99,235,.14); border-color: #93c5fd; transform: translateY(-2px); }
 
     /* Serial number badge */
     .sv-serial {
-      position: absolute; top: -1px; left: -1px;
+      position: absolute; top: 0; left: 0;
       background: #2563eb; color: #fff;
-      font-size: .65rem; font-weight: 800; line-height: 1;
-      padding: 4px 7px; border-radius: 13px 0 10px 0;
-      letter-spacing: .3px;
+      font-size: .63rem; font-weight: 800; line-height: 1;
+      padding: 4px 8px; border-radius: 13px 0 10px 0;
+      letter-spacing: .3px; z-index: 1;
     }
 
     .sv-card-title {
-      font-size: .85rem; font-weight: 700; color: #1e293b; line-height: 1.4;
+      font-size: .85rem; font-weight: 700; color: #1e293b; line-height: 1.45;
       display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
-      padding-left: 2px; padding-top: 14px; /* space below serial badge */
+      padding-top: 16px; /* space for serial badge */
+      word-break: break-word;
     }
-    .sv-card-meta { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 2px; }
-    .sv-badge { font-size: .67rem; font-weight: 600; padding: 3px 8px; border-radius: 20px; white-space: nowrap; }
+    .sv-card-meta { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 3px; }
+    .sv-badge { font-size: .67rem; font-weight: 600; padding: 3px 8px; border-radius: 20px; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
     .sv-badge-date { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
     .sv-badge-vac  { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
     .sv-badge-org  { background: #fdf4ff; color: #7c3aed; border: 1px solid #e9d5ff; }
     .sv-badge-ext  { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+    /* Last date row - dedicated styling */
+    .sv-lastdate {
+      font-size: .75rem; color: #64748b; font-weight: 500;
+      display: flex; align-items: center; gap: 4px; margin-top: 2px;
+    }
+    .sv-lastdate-val { color: #dc2626; font-weight: 700; }
     .sv-card-arrow {
       margin-top: auto; padding-top: 8px;
       font-size: .75rem; color: #2563eb; font-weight: 700;
@@ -318,19 +330,30 @@
       var serial=document.createElement('span');serial.className='sv-serial';serial.textContent='#'+(idx+1);
       a.appendChild(serial);
 
+      /* Title */
       var t=document.createElement('div');t.className='sv-card-title';t.textContent=item.name;
+      a.appendChild(t);
 
+      /* Badges row: vacancies + org */
       var meta=document.createElement('div');meta.className='sv-card-meta';
       function badge(cls,text){if(!text)return;var s=document.createElement('span');s.className='sv-badge '+cls;s.textContent=text;meta.appendChild(s);}
-      badge('sv-badge-date',item.date?'📅 '+item.date:'');
-      badge('sv-badge-vac', item.vac ?'📋 '+item.vac+' Posts':'');
-      badge('sv-badge-org', item.org ?item.org.slice(0,28)+(item.org.length>28?'…':''):'');
-      if(a.target==='_blank')badge('sv-badge-ext','🔗 External');
+      badge('sv-badge-vac', item.vac ? '📋 '+item.vac+' Posts' : '');
+      badge('sv-badge-org', item.org ? item.org.slice(0,30)+(item.org.length>30?'…':'') : '');
+      if(a.target==='_blank') badge('sv-badge-ext','🔗 External');
+      if(meta.childElementCount) a.appendChild(meta);
 
+      /* Last date — dedicated visible row */
+      if(item.date){
+        var ld=document.createElement('div');ld.className='sv-lastdate';
+        ld.innerHTML='📅 Last Date: <span class="sv-lastdate-val">'+item.date+'</span>';
+        a.appendChild(ld);
+      }
+
+      /* View details arrow */
       var arrow=document.createElement('div');arrow.className='sv-card-arrow';
       arrow.innerHTML='View Details <i class="fa-solid fa-arrow-right" style="font-size:.65rem;margin-left:2px;"></i>';
+      a.appendChild(arrow);
 
-      a.appendChild(t);a.appendChild(meta);a.appendChild(arrow);
       return a;
     }
 
@@ -356,26 +379,60 @@
 
     function setupSearch(){
       if(!svInput)return;
+      var _allItems=allItems; /* reference at setup time; updated via closure below */
+
+      /* Live dropdown suggestions as user types */
       svInput.addEventListener('input',function(){
         var q=this.value.trim().toLowerCase();
         if(q.length<2){svDrop.style.display='none';return;}
         var hits=allItems.filter(function(i){return(i.name||'').toLowerCase().indexOf(q)!==-1;}).slice(0,12);
         svDrop.innerHTML='';
-        if(!hits.length){svDrop.innerHTML='<div style="padding:12px 14px;font-size:.84rem;color:#64748b;">No results for "'+q+'"</div>';}
-        else{hits.forEach(function(item){
-          var a=document.createElement('a');a.className='sv-drop-item';
-          a.href=item.slug?'/jobs/'+item.slug+'/':(item.url||'#');
-          var n=document.createElement('span');n.className='sv-drop-name';n.textContent=item.name;
-          var m=document.createElement('span');m.className='sv-drop-meta';
-          m.textContent=[item.date&&'Last Date: '+item.date,item.vac&&item.vac+' posts'].filter(Boolean).join(' · ');
-          a.appendChild(n);a.appendChild(m);svDrop.appendChild(a);
-        });}
+        if(!hits.length){
+          svDrop.innerHTML='<div style="padding:12px 14px;font-size:.84rem;color:#64748b;">No results for "'+q+'"</div>';
+        } else {
+          hits.forEach(function(item){
+            var a=document.createElement('a');a.className='sv-drop-item';
+            a.href=item.slug?'/jobs/'+item.slug+'/':(item.url||'#');
+            var n=document.createElement('span');n.className='sv-drop-name';n.textContent=item.name;
+            var m=document.createElement('span');m.className='sv-drop-meta';
+            m.textContent=[item.date&&'Last Date: '+item.date,item.vac&&item.vac+' posts'].filter(Boolean).join(' · ');
+            a.appendChild(n);a.appendChild(m);svDrop.appendChild(a);
+          });
+        }
         svDrop.style.display='block';
       });
-      document.addEventListener('click',function(e){if(!svDrop.contains(e.target)&&e.target!==svInput)svDrop.style.display='none';});
-      function goSearch(){if(svInput.value.trim())window.location.href='/search.html?q='+encodeURIComponent(svInput.value.trim());}
-      svBtn&&svBtn.addEventListener('click',goSearch);
-      svInput.addEventListener('keydown',function(e){if(e.key==='Enter')goSearch();});
+
+      /* Close dropdown when clicking outside */
+      document.addEventListener('click',function(e){
+        if(!svDrop.contains(e.target)&&e.target!==svInput) svDrop.style.display='none';
+      });
+
+      /* Filter grid on Search button click or Enter key */
+      function doSearch(){
+        var q=svInput.value.trim().toLowerCase();
+        svDrop.style.display='none';
+        if(!q){
+          /* Empty search — restore full list */
+          shownCount=0; svGrid.innerHTML='';
+          if(svTotal) svTotal.textContent='Total Jobs: '+allItems.length;
+          allItems.forEach(function(item,i){svGrid.appendChild(buildCard(item,i));});
+          svMoreWrap.style.display=allItems.length>PAGE_SIZE?'block':'none';
+          return;
+        }
+        var filtered=allItems.filter(function(i){return(i.name||'').toLowerCase().indexOf(q)!==-1;});
+        shownCount=0; svGrid.innerHTML='';
+        if(svTotal) svTotal.textContent='Total Jobs: '+filtered.length;
+        if(!filtered.length){
+          svGrid.innerHTML='<div class="sv-empty"><i class="fa-solid fa-folder-open"></i>No results for "'+svInput.value.trim()+'"</div>';
+          svMoreWrap.style.display='none';
+          return;
+        }
+        filtered.forEach(function(item,i){svGrid.appendChild(buildCard(item,i));});
+        svMoreWrap.style.display='none';
+      }
+
+      svBtn&&svBtn.addEventListener('click',doSearch);
+      svInput.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();doSearch();}});
     }
 
     function normaliseComplete(job){
