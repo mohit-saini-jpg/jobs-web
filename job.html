@@ -2057,6 +2057,106 @@
           const noPfx = rawSlug.replace(/^[a-zA-Z][a-zA-Z0-9]*_[a-zA-Z0-9_]*-/i, '');
           if (noPfx && noPfx !== rawSlug) row = matchBySlug(items, noPfx);
         }
+        /* ── UNIVERSAL RENDERER FIX: fetch raw source JSON for matched row ──
+           When row is found via loadAllItems() (merged_sarkari / dailyupdates / state-jobs),
+           _rawJobData is still null because no /jobs/data/<slug>.json was fetched.
+           We need to set window.__TSJ_RAW_JOB so universal-renderer.js gets full data
+           (how_to_apply, faq, tables, jobs_info, physical_eligibility, etc.)
+           Strategy: Try to fetch the raw source JSON for the matched row's category. */
+        if (row && !_rawJobData) {
+          try {
+            /* Determine source: SR_Result / SR categories → merged_sarkari_data.json */
+            const rowCatLower = safe(row.category || row.secId || '').toLowerCase();
+            const isFromMerged = rowCatLower.includes('sr_') || rowCatLower.includes('offline');
+            const isFromState  = rowCatLower.includes('state') || rowCatLower.includes('haryana') ||
+                                 rowCatLower.includes('bihar') || rowCatLower.includes('rajasthan') ||
+                                 rowCatLower.includes('uttar') || rowCatLower.includes('gujarat');
+
+            let rawSourceJson = null;
+
+            if (isFromMerged) {
+              try {
+                const rm = await fetch('/merged_sarkari_data.json');
+                if (rm.ok) {
+                  const md = await rm.json();
+                  const allMerged = (md && md.jobs) ? md.jobs : [];
+                  /* Find exact slug match first */
+                  rawSourceJson = allMerged.find(j => safe(j.slug) === rawSlug) || null;
+                  /* Fallback: title token match */
+                  if (!rawSourceJson && row.title) {
+                    const rt = row.title.toLowerCase();
+                    rawSourceJson = allMerged.find(j => {
+                      const jt = safe(j.title).toLowerCase();
+                      return jt && rt && (jt.includes(rt.slice(0,30)) || rt.includes(jt.slice(0,30)));
+                    }) || null;
+                  }
+                }
+              } catch (_) {}
+            }
+
+            if (!rawSourceJson && !isFromMerged) {
+              /* Try Complete_Jobs_Full_Data.json */
+              try {
+                const rc = await fetch('/Complete_Jobs_Full_Data.json');
+                if (rc.ok) {
+                  const cd = await rc.json();
+                  const allFull = [];
+                  if (Array.isArray(cd)) { allFull.push(...cd); }
+                  else if (typeof cd === 'object') {
+                    for (const val of Object.values(cd)) {
+                      if (Array.isArray(val)) allFull.push(...val);
+                    }
+                  }
+                  if (row.title) {
+                    const rt = row.title.toLowerCase().replace(/[^a-z0-9\s]/g,'').trim();
+                    rawSourceJson = allFull.find(j => {
+                      const bd = j.basic_details || {};
+                      const jt = safe(j.title || bd.job_title || '').toLowerCase().replace(/[^a-z0-9\s]/g,'').trim();
+                      return jt && rt && (jt.slice(0,50) === rt.slice(0,50) || rt.includes(jt.slice(0,40)));
+                    }) || null;
+                  }
+                }
+              } catch (_) {}
+            }
+
+            if (!rawSourceJson && isFromState) {
+              /* Try state-jobs-data.json */
+              try {
+                const rs = await fetch('/state-jobs-data.json');
+                if (rs.ok) {
+                  const sd = await rs.json();
+                  const stateArr = Array.isArray(sd) ? sd : (sd.states || []);
+                  for (const sg of stateArr) {
+                    if (!Array.isArray(sg.items)) continue;
+                    const found = sg.items.find(it => {
+                      const iname = safe(it.name || it.title || '').toLowerCase();
+                      const rt = (row.title || '').toLowerCase();
+                      return iname && rt && iname.slice(0,40) === rt.slice(0,40);
+                    });
+                    if (found && found.detail) { rawSourceJson = found.detail; break; }
+                  }
+                }
+              } catch (_) {}
+            }
+
+            /* Also try dailyupdates for non-matched → at least store minimal obj with URL */
+            if (!rawSourceJson && row.title) {
+              rawSourceJson = {
+                title: row.title,
+                basic_details: { job_title: row.title, organization_name: row.org || '' },
+                important_dates: { last_date: row.lastDate || '' },
+                category: row.category || row.secId || '',
+                important_links: { official_website: row.destUrl || row.officialWebsite || '' },
+                useful_links: row.usefulLinks || [],
+              };
+            }
+
+            if (rawSourceJson) {
+              _rawJobData = rawSourceJson;
+              window.__TSJ_RAW_JOB = rawSourceJson;
+            }
+          } catch (_) {}
+        }
       }
 
       /* If we found a row but it has no destUrl, use refUrl */
@@ -2164,6 +2264,8 @@
   <script src="/script.js?v=20260517" defer></script>
   <!-- JSON-Driven Dynamic Job Rendering System — PATCH -->
   <script src="/job-renderer-patch.js?v=20260517" defer></script>
+  <!-- Universal Dynamic JSON-to-Page Rendering System -->
+  <script src="/universal-renderer.js?v=20260518" defer></script>
   <!-- Header height fix: dynamically update --header-height CSS variable -->
   <script>
   (function(){
