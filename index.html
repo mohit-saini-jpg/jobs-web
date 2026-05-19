@@ -1,33 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- GTM: Delayed load after user interaction or 4s — saves ~174ms main thread -->
-  <script>
-  (function(){
-    var GTM_ID='G-C4VRD1C9QS';
-    var loaded=false;
-    function loadGTM(){
-      if(loaded)return; loaded=true;
-      var s=document.createElement('script');
-      s.async=true;
-      s.src='https://www.googletagmanager.com/gtag/js?id='+GTM_ID;
-      document.head.appendChild(s);
-      window.dataLayer=window.dataLayer||[];
-      function gtag(){dataLayer.push(arguments);}
-      window.gtag=gtag;
-      gtag('js',new Date());
-      gtag('config',GTM_ID,{send_page_view:true});
-    }
-    // Fire on first user gesture OR after 4s, whichever comes first
-    var events=['mousedown','touchstart','keydown','scroll','mousemove'];
-    function onInteract(){
-      events.forEach(function(e){document.removeEventListener(e,onInteract)});
-      loadGTM();
-    }
-    events.forEach(function(e){document.addEventListener(e,onInteract,{once:true,passive:true})});
-    setTimeout(loadGTM, 4000);
-  })();
-  </script>
+  <!-- GA4: Centralized Analytics -->
+  <script src="/analytics.js" defer></script>
 
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
