@@ -496,20 +496,22 @@
    */
   function extractFees(job) {
     const fee = job.application_fee || job.application_fees || {};
+    const feeIsStr = typeof fee === 'string' || (typeof job.application_fee === 'string');
+    const feeObj = (typeof fee === 'object' && !Array.isArray(fee)) ? fee : {};
     return {
-      general:       safe(fee.general || fee.ur || fee.unreserved || ''),
-      obc:           safe(fee.obc || ''),
-      ews:           safe(fee.ews || ''),
-      sc:            safe(fee.sc || ''),
-      st:            safe(fee.st || ''),
-      female:        safe(fee.female || fee.women || ''),
-      ph:            safe(fee.ph || fee.pwd || fee.divyang || ''),
-      general_obc:   safe(fee.general_obc || fee.gen_obc || ''),
-      general_obc_ews: safe(fee.general_obc_ews || fee.gen_obc_ews || fee.ur_obc_ews || ''),
-      all:           safe(fee.all || fee.all_candidates || job.application_fee_text || ''),
-      note:          safe(fee.note || fee.payment_note || fee.payment_mode || ''),
-      // Flat top-level
-      flat:          safe(job.application_fee && typeof job.application_fee === 'string' ? job.application_fee : ''),
+      general:         safe(feeObj.general || feeObj.ur || feeObj.unreserved || ''),
+      obc:             safe(feeObj.obc || ''),
+      ews:             safe(feeObj.ews || ''),
+      sc:              safe(feeObj.sc || ''),
+      st:              safe(feeObj.st || ''),
+      sc_st:           safe(feeObj.sc_st || feeObj['sc/st'] || ''),
+      female:          safe(feeObj.female || feeObj.women || ''),
+      ph:              safe(feeObj.ph || feeObj.pwd || feeObj.divyang || ''),
+      general_obc:     safe(feeObj.general_obc || feeObj.gen_obc || ''),
+      general_obc_ews: safe(feeObj.general_obc_ews || feeObj.gen_obc_ews || feeObj.ur_obc_ews || ''),
+      all:             safe(feeObj.all || feeObj.all_candidates || ''),
+      flat:            feeIsStr ? safe(typeof fee === 'string' ? fee : job.application_fee) : '',
+      note:            safe(feeObj.note || feeObj.payment_note || feeObj.payment_mode || ''),
     };
   }
 
@@ -615,11 +617,11 @@
       'source_url', 'apply_online', 'official_website', 'official_website_link',
       'form_pdf_free_link', 'official_notification_pdf_link',
       'apply_online_link', 'application_form_pdf_link', 'form_pdf_link',
-      'listing_date', 'last_updated', 'apply_process',
-      'useful_links', 'sequence', 'job_location', 'job_type',
+      'listing_date', 'last_updated', 'apply_process', 'post_date', 'status',
+      'useful_links', 'sequence', 'job_location', 'job_type', 'homepage_serial',
       'apply_mode', 'application_fees', 'minimum_age', 'maximum_age',
       'salary_pay_scale', 'total_post', 'closing_date', 'application_last_date',
-      'instructions',
+      'instructions', 'tables', // tables handled separately via extractTables()
     ]);
     const unknown = {};
     for (const [k, v] of Object.entries(job)) {
@@ -628,6 +630,11 @@
       unknown[k] = v;
     }
     return unknown;
+  }
+
+  /** Extract SR-style 'tables' field (array of array-of-arrays or array-of-objects) */
+  function extractTables(job) {
+    return job.tables || null;
   }
 
 
@@ -964,19 +971,20 @@
   /* ── 5j. Application Fee (all categories) ── */
   function buildFeeExtended(fees) {
     const ALL_FEE_KEYS = [
-      { key: 'general',         label: 'General / UR'      },
-      { key: 'obc',             label: 'OBC'               },
-      { key: 'ews',             label: 'EWS'               },
-      { key: 'sc',              label: 'SC'                },
-      { key: 'st',              label: 'ST'                },
-      { key: 'female',          label: 'Female'            },
-      { key: 'ph',              label: 'PH / Divyang'      },
-      { key: 'general_obc',     label: 'General / OBC'     },
+      { key: 'general',         label: 'General / UR'        },
+      { key: 'obc',             label: 'OBC'                 },
+      { key: 'ews',             label: 'EWS'                 },
+      { key: 'sc',              label: 'SC'                  },
+      { key: 'st',              label: 'ST'                  },
+      { key: 'sc_st',           label: 'SC / ST'             },
+      { key: 'female',          label: 'Female'              },
+      { key: 'ph',              label: 'PH / Divyang'        },
+      { key: 'general_obc',     label: 'General / OBC'       },
       { key: 'general_obc_ews', label: 'General / OBC / EWS' },
-      { key: 'all',             label: 'All Candidates'    },
-      { key: 'flat',            label: 'Application Fee'   },
+      { key: 'all',             label: 'All Candidates'      },
+      { key: 'flat',            label: 'Application Fee'     },
     ];
-    const isFree = v => /nil|0|free|no fee|exempt/i.test(v);
+    const isFree = v => /nil|^0$|free|no fee|exempt/i.test(v.trim());
 
     let hasAny = false;
     let gridHtml = '';
@@ -1080,6 +1088,64 @@
 
     if (!bodyHtml) return null;
     return makeCard(null, headBg, 'fa-solid fa-info-circle', label, bodyHtml);
+  }
+
+  /* ── 5m. SR Tables Card (merged_sarkari 'tables' field — array-of-array-of-arrays) ── */
+  function buildTablesCard(tables) {
+    if (!Array.isArray(tables) || !tables.length) return null;
+    let allHtml = '';
+
+    for (const tableGroup of tables) {
+      if (!Array.isArray(tableGroup) || !tableGroup.length) continue;
+
+      // Each tableGroup is an array of rows; each row is an array of cells
+      const firstRow = tableGroup[0];
+
+      if (Array.isArray(firstRow)) {
+        // Array-of-arrays: [[cell1, cell2], [cell1, cell2], ...]
+        // Detect if first row looks like a header (short text, no URL)
+        const isHeader = firstRow.length === 2 && firstRow.every(c =>
+          typeof c === 'string' && c.length < 80 && !/^https?:\/\//i.test(c)
+        );
+
+        let tbody = '';
+        const dataRows = isHeader ? tableGroup.slice(1) : tableGroup;
+
+        for (const row of dataRows) {
+          if (!Array.isArray(row)) continue;
+          const cells = row.map(cell => {
+            const s = safe(String(cell ?? ''));
+            // If cell looks like a URL, make it a link button
+            if (/^https?:\/\//i.test(s)) {
+              return `<td><a href="${esc(s)}" target="_blank" rel="noopener" style="color:#1d4ed8;font-weight:600;">Visit Link</a></td>`;
+            }
+            return `<td>${esc(s)}</td>`;
+          }).join('');
+          tbody += `<tr>${cells}</tr>`;
+        }
+
+        if (!tbody) continue;
+
+        let thead = '';
+        if (isHeader) {
+          thead = `<thead><tr>${firstRow.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead>`;
+        }
+
+        allHtml += `<div class="udyn-table-scroll" style="margin-bottom:8px;">` +
+          `<table class="udyn-vac-table" style="min-width:300px;">` +
+          thead + `<tbody>${tbody}</tbody>` +
+          `</table></div>`;
+      }
+    }
+
+    if (!allHtml) return null;
+    return makeCard(
+      'udyn-sr-tables',
+      'linear-gradient(135deg,#1d4ed8,#1d6dbc)',
+      'fa-solid fa-table',
+      'Important Details',
+      allHtml
+    );
   }
 
 
@@ -1271,6 +1337,13 @@
       if (c) CARDS_IN_ORDER.push({ card: c, def: SECTION_DEFS.find(d => d.id === 'udyn-faq') });
     }
 
+    // ─── 11b. SR Tables (merged_sarkari 'tables' field) ───────────────
+    const tablesData = extractTables(rawJob);
+    if (tablesData && !sectionExists('dynSRTable') && !sectionExists('udyn-sr-tables')) {
+      const c = buildTablesCard(tablesData);
+      if (c) CARDS_IN_ORDER.push({ card: c, def: { id: 'udyn-sr-tables', icon: 'fa-table', label: 'Important Details' } });
+    }
+
     // ─── 12. AUTO-RENDER: Unknown future fields ────────────────────────
     const unknownFields = extractUnknownFields(rawJob);
     for (const [k, v] of Object.entries(unknownFields)) {
@@ -1321,6 +1394,7 @@
     if (!rawJob) return;
     const bd = rawJob.basic_details || {};
     const id = rawJob.important_dates || {};
+    const age = rawJob.age_limit || {};
 
     // Organisation
     const org = safe(rawJob.organization || rawJob.board_name || rawJob.department || bd.organization_name || bd.department || '');
@@ -1364,8 +1438,8 @@
       }
     }
 
-    // Salary (stat area doesn't show salary, but overview table does)
-    const salary = safe(rawJob.salary || rawJob.salary_pay_scale || bd.salary || '');
+    // Salary — add row in overview table if missing
+    const salary = safe(rawJob.salary || rawJob.salary_pay_scale || bd.salary || bd.salary_pay_scale || '');
     if (salary) {
       const rows = document.querySelectorAll('#jbTable tbody tr');
       let hasSalRow = false;
@@ -1374,16 +1448,57 @@
         if (th && /salary/i.test(th.textContent)) { hasSalRow = true; break; }
       }
       if (!hasSalRow) {
-        // Insert salary row into overview table
         const tbody = document.querySelector('#jbTable tbody');
         if (tbody) {
           const tr = document.createElement('tr');
           tr.innerHTML = `<th>Salary / Pay Scale</th><td>${esc(salary)}</td>`;
-          // Insert before last row (Official Website)
           const lastTr = tbody.lastElementChild;
           if (lastTr) tbody.insertBefore(tr, lastTr);
           else tbody.appendChild(tr);
         }
+      }
+    }
+
+    // Age limit — populate base ageCard if not already shown
+    const minAge = safe(rawJob.minimum_age || age.minimum_age || '');
+    const maxAge = safe(rawJob.maximum_age || age.maximum_age || age.age_limit || age.age_details || '');
+    const ageRelax = safe(rawJob.age_relaxation || age.age_relaxation || age.details || '');
+    const ageCard = document.getElementById('ageCard');
+    if ((minAge || maxAge || ageRelax) && ageCard && ageCard.style.display === 'none') {
+      ageCard.style.display = '';
+      const ageRows = [];
+      if (minAge)   ageRows.push(['Minimum Age', minAge]);
+      if (maxAge)   ageRows.push(['Maximum Age', maxAge]);
+      if (ageRelax) ageRows.push(['Age Relaxation', ageRelax]);
+      const ageBody = document.getElementById('ageTableBody');
+      if (ageBody) {
+        ageBody.innerHTML = ageRows.map(([k,v]) => `<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>`).join('');
+      }
+    }
+
+    // Qualification / Eligibility — populate base qualCard if missing
+    const eduQual = safe(rawJob.education_qualification || rawJob.eligibility ||
+      (rawJob.qualification && rawJob.qualification.education_qualification) ||
+      (rawJob.qualification && rawJob.qualification.eligibility) || '');
+    const qualCard = document.getElementById('qualCard');
+    if (eduQual && qualCard && qualCard.style.display === 'none') {
+      qualCard.style.display = '';
+      const qualContent = document.getElementById('qualContent');
+      if (qualContent) {
+        qualContent.innerHTML = `<div class="jp-detail-text"><strong>Education Qualification:</strong> ${esc(eduQual)}</div>`;
+      }
+    }
+
+    // Short information — show shortInfoCard if missing
+    const shortInfo = safe(rawJob.short_information || rawJob.jobs_info || bd.short_information || '');
+    const siCard = document.getElementById('shortInfoCard');
+    const siText = document.getElementById('shortInfoText');
+    if (shortInfo && siCard && siCard.style.display === 'none' && siText) {
+      siCard.style.display = '';
+      if (isHtml(shortInfo)) {
+        siText.innerHTML = shortInfo;
+      } else {
+        siText.textContent = shortInfo;
       }
     }
   }
