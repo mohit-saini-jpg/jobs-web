@@ -1,87 +1,54 @@
 # robots.txt — Top Sarkari Jobs
-# https://www.topsarkarijobs.com/robots.txt
-# Updated: 2026-05-16
+# ==============================
+# Last updated: 2026-05-19
 
-# ── Googlebot (primary crawler) ─────────────────────────────
-User-agent: Googlebot
+User-agent: *
 Allow: /
+
+# ── Block dirty/dynamic URLs from being crawled ──
+# (They 301-redirect to clean URLs anyway, but blocking prevents wasted crawl budget)
+Disallow: /view.html?url=
+Disallow: /view.html?section=
+Disallow: /job.html?slug=
+Disallow: /category.html?group=
+Disallow: /search.html?q=
+
+# ── Block non-content pages ──
+Disallow: /404.html
+Disallow: /.github/
+Disallow: /.gstack/
+Disallow: /node_modules/
+
+# ── Allow all clean-URL pages explicitly ──
+Allow: /section/
 Allow: /jobs/
 Allow: /category/
 Allow: /state-jobs/
-Allow: /section/
 Allow: /search/
-Allow: /latest-jobs/
-Allow: /results/
-Allow: /admit-card/
-Allow: /railway-jobs/
-Allow: /bank-jobs/
-Allow: /police-jobs/
-Allow: /ssc-jobs/
-Allow: /upsc-jobs/
-Allow: /teaching-jobs/
-Allow: /army-jobs/
-Allow: /10th-pass-jobs/
-Allow: /12th-pass-jobs/
-Allow: /upcoming-jobs/
-Allow: /answer-key/
-Allow: /admissions/
-Crawl-delay: 1
 
-# ── Google Image Bot ────────────────────────────────────────
+# ── Sitemap declaration ──
+Sitemap: https://www.topsarkarijobs.com/sitemap-index.xml
+
+# ── Specific bot directives ──
+User-agent: Googlebot
+Allow: /
+
 User-agent: Googlebot-Image
 Allow: /image.png
 Allow: /image.webp
-Allow: /image.ico
-Disallow: /fonts/
+Allow: /*.png
+Allow: /*.jpg
+Allow: /*.webp
+Allow: /*.ico
 
-# ── Bingbot ─────────────────────────────────────────────────
-User-agent: Bingbot
-Allow: /
-Crawl-delay: 2
+User-agent: AhrefsBot
+Crawl-delay: 10
 
-# ── All other crawlers ──────────────────────────────────────
-User-agent: *
-Allow: /
-Crawl-delay: 5
+User-agent: SemrushBot
+Crawl-delay: 10
 
-# ── Block low-value / duplicate content ─────────────────────
-# Block query-string URLs (clean URLs preferred via /jobs/<slug>/)
-Disallow: /view.html?section=
-Disallow: /category.html?group=
-Disallow: /state-jobs.html?state=
-Disallow: /search.html?q=
-Disallow: /job.html?slug=
-Disallow: /section/
+User-agent: MJ12bot
+Disallow: /
 
-# Block internal redirector (not meant for index)
-Disallow: /redirect.html
-
-# Block build/config files
-Disallow: /config.json
-Disallow: /header_links.json
-Disallow: /services.json
-Disallow: /tools.json
-Disallow: /whatsapp.json
-Disallow: /jobs-index.json
-Disallow: /jobs-search-index.json
-
-# Block admin / private paths
-Disallow: /admin/
-Disallow: /private/
-Disallow: /tmp/
-Disallow: /.gstack/
-Disallow: /.github/
-Disallow: /.tailwind-build/
-
-# Block 404 page from indexing
-Disallow: /404.html
-Disallow: /offline.html
-
-# ── Sitemaps ────────────────────────────────────────────────
-Sitemap: https://www.topsarkarijobs.com/sitemap-index.xml
-Sitemap: https://www.topsarkarijobs.com/sitemap-pages.xml
-Sitemap: https://www.topsarkarijobs.com/sitemap-jobs.xml
-Sitemap: https://www.topsarkarijobs.com/sitemap-results.xml
-Sitemap: https://www.topsarkarijobs.com/sitemap-admitcards.xml
-Sitemap: https://www.topsarkarijobs.com/sitemap-categories.xml
-Sitemap: https://www.topsarkarijobs.com/sitemap-states.xml
+User-agent: DotBot
+Disallow: /
