@@ -1292,6 +1292,23 @@
       will-change: auto;
     }
     .section-card:hover { box-shadow: var(--shadow-hover); }
+    /* Serial number badge inside each section-link */
+    .section-link .sn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 5px;
+      margin-right: 7px;
+      background: var(--blue);
+      color: #fff;
+      font-size: .65rem;
+      font-weight: 800;
+      border-radius: 4px;
+      flex-shrink: 0;
+      line-height: 1;
+    }
     .section-head {
       display: flex; align-items: center; justify-content: space-between;
       padding: 11px 14px; color: #fff; font-size: .82rem; font-weight: 900;
