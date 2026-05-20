@@ -483,13 +483,20 @@
         .slice(0,120);
     }
 
-    /* ── URL Params — supports clean /jobs/<slug>/ and legacy ?state=&slug= ── */
+    /* ── URL Params — supports 3 sources ──
+       1. Clean path:  /jobs/<slug>/              (Netlify/CF: _redirects rewrite)
+       2. ?_path=      job.html?_path=/jobs/<slug>/ (GitHub Pages: 404.html redirect)
+       3. Legacy:      ?state=&slug=              (direct param, backward compat)
+    ── */
     const params   = new URLSearchParams(location.search);
 
-    // Extract slug from clean path: /jobs/nia-jaipur-professor-49-posts/
+    // Extract slug from path — real path first, then ?_path= fallback
     function getSlugFromPath() {
       const m = location.pathname.match(/\/jobs\/([^/]+)\/?$/i);
-      return m ? decodeURIComponent(m[1]) : '';
+      if (m) return decodeURIComponent(m[1]);
+      const fallback = params.get('_path') || '';
+      const m2 = fallback.match(/\/jobs\/([^/]+)\/?$/i);
+      return m2 ? decodeURIComponent(m2[1]) : '';
     }
 
     const stateArg = safe(params.get('state') || '');
