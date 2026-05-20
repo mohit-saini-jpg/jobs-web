@@ -1,38 +1,32 @@
 # ════════════════════════════════════════════════════════════════
 # TOP SARKARI JOBS — _redirects (Netlify / Cloudflare Pages)
 # ════════════════════════════════════════════════════════════════
-# Fixes:
-#   ✅ WWW non-WWW duplicate (enforce www)
-#   ✅ Old ?section= → clean /section/<slug>/ URLs (301 permanent)
-#   ✅ Old ?url= tool URLs → noindex + serve view.html
-#   ✅ /jobs/<slug>/ → job.html (200 rewrite, no redirect)
-#   ✅ /section/<slug>/ → view.html (200 rewrite, SEO-friendly)
+#
+# ⚠️  CRITICAL RULE: Do NOT add "/* /404.html 404" at the bottom!
+#     That wildcard intercepts ALL real files (job.html, index.html,
+#     state-jobs.html etc.) and breaks the entire site.
+#     Netlify/CF Pages serves 404.html automatically for missing routes.
+#
+# Rule order matters — more specific rules MUST come before wildcards.
 # ════════════════════════════════════════════════════════════════
 
-# ── 1. Enforce WWW (non-www → www) ───────────────────────────────
-# NOTE: This works on Netlify. For GitHub Pages, set CNAME to www
-# and redirect non-www at DNS level (Cloudflare: Redirect Rule)
-# https://topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
-
-# ── 2. Clean /section/<slug>/ → view.html (200 rewrite) ─────────
-# Googlebot indexes /section/latest-jobs/ as the canonical page
-/section/*    /view.html    200
-
-# ── 3. Job detail clean URLs → job handler (200 rewrite) ────────
+# ── 1. Job detail clean URLs → job.html (200 rewrite) ───────────
 /jobs/*       /job.html     200
 
-# ── 4. Category clean URLs ──────────────────────────────────────
+# ── 2. Clean /section/<slug>/ → view.html (200 rewrite) ─────────
+/section/*    /view.html    200
+
+# ── 3. Category clean URLs ──────────────────────────────────────
 /category/*   /category.html  200
 
-# ── 5. State job listing clean URLs /state/<name>/ ──────────────
+# ── 4. State job listing clean URLs /state/<name>/ ──────────────
 /state/        /state-jobs.html  200
 /state/*       /state-jobs.html  200
 
-# ── 6. Search ────────────────────────────────────────────────────
+# ── 5. Search ────────────────────────────────────────────────────
 /search/*     /search.html  200
 
-# ── 7. Static shortcut clean URLs (301 permanent) ────────────────
-# These are the pages Google already knows about — convert to clean
+# ── 6. Static shortcut clean URLs (301 permanent) ────────────────
 /latest-jobs/       /section/latest-jobs/        301
 /upcoming-jobs/     /section/upcoming-jobs/       301
 /offline-jobs/      /section/offline-jobs/        301
@@ -57,18 +51,13 @@
 /results/           /result.html                  301
 /admit-card/        /admit-card.html              301
 
-# ── 8a. SR_ ?section= → clean URL redirects (301) ──────────────
-# NOTE: /section/* catch-all above already serves view.html — these
-# just ensure any old SR_ links in Google index get 301'd to clean URLs.
-/view.html?section=SR_Latest_Jobs      /section/latest-jobs/    301
-/view.html?section=SR_Result           /section/results/        301
-/view.html?section=SR_Admit_Card       /section/admit-card/     301
-/view.html?section=SR_Admission        /section/admission/      301
-/view.html?section=SR_Answer_Key       /section/answer-key/     301
-/view.html?section=SR_Offline_Form     /section/offline-form/   301
-
-# ── 8. Old ?section= query params → clean URLs (301 permanent) ───
-# Redirects existing Google-indexed dirty URLs to clean ones
+# ── 7. Old ?section= query params → clean URLs (301 permanent) ───
+/view.html?section=SR_Latest_Jobs      /section/latest-jobs/          301
+/view.html?section=SR_Result           /section/results/              301
+/view.html?section=SR_Admit_Card       /section/admit-card/           301
+/view.html?section=SR_Admission        /section/admission/            301
+/view.html?section=SR_Answer_Key       /section/answer-key/           301
+/view.html?section=SR_Offline_Form     /section/offline-form/         301
 /view.html?section=latest+jobs              /section/latest-jobs/        301
 /view.html?section=latest%20jobs            /section/latest-jobs/        301
 /view.html?section=upcoming-jobs            /section/upcoming-jobs/      301
@@ -98,13 +87,6 @@
 /view.html?section=Sarkari+Result           /result.html                 301
 /view.html?section=Admit+cards+Exams+Date   /admit-card.html             301
 
-# ── 9. Old ?url= tool pages → noindex (serve view.html, seo-engine noindexes) ─
-# These were getting 1464 impressions with 0.41% CTR — just waste
-# Keep serving but seo-engine.js will set noindex automatically
-
-# ── 10. 404 fallback ─────────────────────────────────────────────
-# NOTE: Do NOT add "/* /404.html 404" here!
-# Netlify/Cloudflare Pages automatically serves 404.html for unmatched routes.
-# An explicit /* rule intercepts ALL requests — including real files like
-# job.html, state-jobs.html, index.html — breaking the entire site.
-# Just place 404.html in the root and let the CDN handle it automatically.
+# ════════════════════════════════════════════════════════════════
+# ⛔ NO WILDCARD CATCH-ALL HERE — Netlify/CF auto-serves 404.html
+# ════════════════════════════════════════════════════════════════
