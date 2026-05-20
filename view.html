@@ -265,7 +265,9 @@
       'admission':            {file:'merged',key:'SR_Admission'},
       'answer-key':           {file:'merged',key:'SR_Answer_Key'},
       'offline-form':         {file:'merged',key:'_offline'},
-      'offline-jobs':         {file:'merged',key:'_offline'}
+      'offline-jobs':         {file:'merged',key:'_offline'},
+      /* AUTO: new categories from merged_sarkari_data.json get added here */
+      'latest-jobs-new':      {file:'merged',key:'LATEST_JOBS NEW'}
     };
 
     function slugify(s){return(s||'').toLowerCase().replace(/[^\w\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');}
@@ -466,6 +468,18 @@
     function normaliseMerged(j){return{name:(j.title||j.name||'').trim(),slug:j.slug||slugify(j.title||j.name||''),date:fmtDate((j.important_dates&&(j.important_dates.last_date_to_apply||j.important_dates.last_date))||j.last_date||''),vac:'',org:'',url:j.source_url||j.url||j.link||'#'};}
 
     var cfg=SLUG_MAP[currentSlug];
+    /* ── DYNAMIC fallback: if slug not in SLUG_MAP, try matching against
+       any category key found in merged_sarkari_data.json at runtime.
+       Example: /section/latest-jobs-new/ → key 'LATEST_JOBS NEW'
+       Converts slug → uppercase with spaces: 'latest-jobs-new' → 'LATEST JOBS NEW'
+       Then also tries with underscores: 'LATEST_JOBS_NEW'
+    ── */
+    if(!cfg){
+      /* Convert slug to potential category key variants */
+      var slugUpper=currentSlug.toUpperCase().replace(/-/g,' ');
+      var slugUnder=currentSlug.toUpperCase().replace(/-/g,'_');
+      cfg={file:'merged',key:slugUpper,_dynamicFallback:true,_altKey:slugUnder};
+    }
 
     if(cfg&&cfg.file==='complete'){
       fetch('/Complete_Jobs_Full_Data.json').then(function(r){return r.ok?r.json():null;}).catch(function(){return null;})
@@ -492,27 +506,49 @@
       .then(function(jsonData){
         if(!jsonData){showItems([]);setupSearch();return;}
         if(Array.isArray(jsonData.jobs)&&jsonData.jobs.length>0){
-          var V={SR_Latest_Jobs:1,SR_Admit_Card:1,SR_Result:1,SR_Admission:1,SR_Answer_Key:1};
+          /* DYNAMIC: accept ALL category values from JSON, not just known ones */
           var KA=['admit card','hall ticket','call letter'],KN=['answer key','answer sheet','objection'],
               KR=['result','merit list','cut off','cutoff','scorecard'],KD=['admission','counselling','counseling'];
           function hk(t,l){var tl=t.toLowerCase();for(var i=0;i<l.length;i++){if(tl.indexOf(l[i])!==-1)return true;}return false;}
-          var bk={SR_Latest_Jobs:[],SR_Admit_Card:[],SR_Result:[],SR_Admission:[],SR_Answer_Key:[],_offline:[]};
+          /* Dynamic bucket map — any category key is accepted */
+          var bk={_offline:[]};
+          function getBkt(key){if(!bk[key])bk[key]=[];return bk[key];}
           jsonData.jobs.forEach(function(j){
             var item={title:j.title||'',url:j.official_website_link||'#',source_url:j.official_website_link||'#',
               last_date:(j.important_dates&&j.important_dates.last_date)||'',apply_mode:j.apply_mode||'',slug:j.slug||''};
             var mode=(j.apply_mode||'').toLowerCase(),sc=(j.sr_category||j.category||'').trim();
             if(mode==='offline'||sc==='OFFLINE_FORM'){bk._offline.push(item);return;}
-            if(sc&&V[sc]){bk[sc].push(item);return;}
-            if(hk(j.title||'',KA))bk.SR_Admit_Card.push(item);
-            else if(hk(j.title||'',KN))bk.SR_Answer_Key.push(item);
-            else if(hk(j.title||'',KR))bk.SR_Result.push(item);
-            else if(hk(j.title||'',KD))bk.SR_Admission.push(item);
-            else bk.SR_Latest_Jobs.push(item);
+            /* If category field present — use it directly (known OR unknown) */
+            if(sc){getBkt(sc).push(item);return;}
+            /* Keyword fallback when category field absent */
+            if(hk(j.title||'',KA))getBkt('SR_Admit_Card').push(item);
+            else if(hk(j.title||'',KN))getBkt('SR_Answer_Key').push(item);
+            else if(hk(j.title||'',KR))getBkt('SR_Result').push(item);
+            else if(hk(j.title||'',KD))getBkt('SR_Admission').push(item);
+            else getBkt('SR_Latest_Jobs').push(item);
           });
           jsonData={sarkariresult_categories:bk,sarkariresultshine_jobs:bk._offline};
         }
-        var srItems=cfg.key==='_offline'?(jsonData.sarkariresultshine_jobs||[]):
-          ((jsonData.sarkariresult_data&&jsonData.sarkariresult_data.data)||jsonData.sarkariresult_categories||{})[cfg.key]||[];
+        var _srCats=(jsonData.sarkariresult_data&&jsonData.sarkariresult_data.data)||jsonData.sarkariresult_categories||{};
+        var srItems;
+        if(cfg.key==='_offline'){
+          srItems=jsonData.sarkariresultshine_jobs||[];
+        } else {
+          srItems=_srCats[cfg.key]||[];
+          /* Dynamic fallback: try alt key (underscore variant) if primary empty */
+          if(!srItems.length&&cfg._altKey&&cfg._altKey!==cfg.key){
+            srItems=_srCats[cfg._altKey]||[];
+          }
+          /* Dynamic fallback: scan all keys case-insensitively */
+          if(!srItems.length&&cfg._dynamicFallback){
+            var slugNorm=currentSlug.replace(/-/g,'').toLowerCase();
+            Object.keys(_srCats).forEach(function(k){
+              if(k.replace(/[_\s]/g,'').toLowerCase()===slugNorm&&!srItems.length){
+                srItems=_srCats[k]||[];
+              }
+            });
+          }
+        }
         var items=srItems.map(normaliseMerged).filter(function(i){return!!i.name;});
         showItems(items);setupSearch();
         if(window.__SEO_updateSection)window.__SEO_updateSection(rawSection,items);
