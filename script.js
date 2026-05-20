@@ -1427,7 +1427,7 @@
           extractedState = nameClean;
         }
         if (extractedState) {
-          href = `state-jobs.html?state=${encodeURIComponent(extractedState)}`;
+          href = `/state/${extractedState.toLowerCase().replace(/ /g, '-')}/`;
         }
       }
 
@@ -2037,7 +2037,7 @@
             // Build internal job.html link using slug
             const slug = item.slug || slugify(title);
             const href = slug
-              ? 'job.html?slug=' + encodeURIComponent(slug) + '&section=' + encodeURIComponent(stateName)
+              ? '/jobs/' + slug + '/'
               : (item.url || '#');
             push(title, href, stateName + ' Jobs');
           });
