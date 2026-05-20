@@ -298,7 +298,7 @@
       <div class="sjd-error" id="sjdError" style="display:none;">
         <strong>⚠ Job Not Found</strong><br/>
         We could not find this state job. It may have been removed or the link is incorrect.<br/>
-        <a href="state-jobs.html" style="color:#1d4ed8;margin-top:8px;display:inline-block;">← Back to State Jobs</a>
+        <a href="/state/" style="color:#1d4ed8;margin-top:8px;display:inline-block;">← Back to State Jobs</a>
       </div>
 
       <!-- Main grid (hidden until loaded) -->
@@ -409,16 +409,16 @@
           <div class="sjd-card">
             <div class="sjd-head"><i class="fa-solid fa-map-location-dot"></i> All States Jobs</div>
             <div class="sjd-states-grid">
-              <a class="sjd-state-item" href="/state-jobs.html?state=Haryana"><span>🇮🇳</span> Haryana</a>
-              <a class="sjd-state-item" href="/state-jobs.html?state=Uttar+Pradesh"><span>🌾</span> Uttar Pradesh</a>
-              <a class="sjd-state-item" href="/state-jobs.html?state=Rajasthan"><span>🏜️</span> Rajasthan</a>
-              <a class="sjd-state-item" href="/state-jobs.html?state=Bihar"><span>🌿</span> Bihar</a>
-              <a class="sjd-state-item" href="/state-jobs.html?state=Madhya+Pradesh"><span>🏛️</span> Madhya Pradesh</a>
-              <a class="sjd-state-item" href="/state-jobs.html?state=Punjab"><span>🌻</span> Punjab</a>
-              <a class="sjd-state-item" href="/state-jobs.html?state=Delhi"><span>🏙️</span> Delhi</a>
-              <a class="sjd-state-item" href="/state-jobs.html?state=Gujarat"><span>🦁</span> Gujarat</a>
-              <a class="sjd-state-item" href="/state-jobs.html?state=Maharashtra"><span>🎡</span> Maharashtra</a>
-              <a class="sjd-state-item" href="/state-jobs.html?state=Karnataka"><span>🌴</span> Karnataka</a>
+              <a class="sjd-state-item" href="/state/haryana/"><span>🇮🇳</span> Haryana</a>
+              <a class="sjd-state-item" href="/state/uttar-pradesh/"><span>🌾</span> Uttar Pradesh</a>
+              <a class="sjd-state-item" href="/state/rajasthan/"><span>🏜️</span> Rajasthan</a>
+              <a class="sjd-state-item" href="/state/bihar/"><span>🌿</span> Bihar</a>
+              <a class="sjd-state-item" href="/state/madhya-pradesh/"><span>🏛️</span> Madhya Pradesh</a>
+              <a class="sjd-state-item" href="/state/punjab/"><span>🌻</span> Punjab</a>
+              <a class="sjd-state-item" href="/state/delhi/"><span>🏙️</span> Delhi</a>
+              <a class="sjd-state-item" href="/state/gujarat/"><span>🦁</span> Gujarat</a>
+              <a class="sjd-state-item" href="/state/maharashtra/"><span>🎡</span> Maharashtra</a>
+              <a class="sjd-state-item" href="/state/karnataka/"><span>🌴</span> Karnataka</a>
             </div>
             <a href="/category.html?group=state" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;font-size:.79rem;font-weight:700;color:#1d4ed8;background:#eff6ff;border-top:1px solid #dbeafe;text-decoration:none;">
               <i class="fa-solid fa-list"></i> View All States
@@ -483,10 +483,17 @@
         .slice(0,120);
     }
 
-    /* ── URL Params ── */
+    /* ── URL Params — supports clean /jobs/<slug>/ and legacy ?state=&slug= ── */
     const params   = new URLSearchParams(location.search);
+
+    // Extract slug from clean path: /jobs/nia-jaipur-professor-49-posts/
+    function getSlugFromPath() {
+      const m = location.pathname.match(/\/jobs\/([^/]+)\/?$/i);
+      return m ? decodeURIComponent(m[1]) : '';
+    }
+
     const stateArg = safe(params.get('state') || '');
-    const slugArg  = safe(params.get('slug')  || '');
+    const slugArg  = safe(getSlugFromPath() || params.get('slug') || '');
 
     /* ── DOM Refs ── */
     const loadingEl = document.getElementById('sjdLoading');
@@ -498,7 +505,7 @@
     function injectSEO(title, state) {
       const fullTitle = `${title} | ${state} Govt Jobs | Top Sarkari Jobs`;
       const desc = `${title} — ${state} government job. Check eligibility, vacancies, last date, salary and apply online on Top Sarkari Jobs.`;
-      const canonUrl = `https://www.topsarkarijobs.com/state-job-detail.html?state=${encodeURIComponent(state)}&slug=${encodeURIComponent(slugArg)}`;
+      const canonUrl = `https://www.topsarkarijobs.com/jobs/${encodeURIComponent(slugArg)}/`;
 
       document.title = fullTitle;
       ['metaDesc'].forEach(id => {
@@ -537,7 +544,7 @@
         itemListElement:[
           {'@type':'ListItem',position:1,name:'Home',item:'https://www.topsarkarijobs.com/'},
           {'@type':'ListItem',position:2,name:'State Jobs',item:'https://www.topsarkarijobs.com/category.html?group=state'},
-          {'@type':'ListItem',position:3,name:state+' Jobs',item:`https://www.topsarkarijobs.com/state-jobs.html?state=${encodeURIComponent(state)}`},
+          {'@type':'ListItem',position:3,name:state+' Jobs',item:`https://www.topsarkarijobs.com/state/${encodeURIComponent(state.toLowerCase().replace(/ /g,'-'))}/`},
           {'@type':'ListItem',position:4,name:title,item:canonUrl}
         ]
       });
@@ -931,7 +938,7 @@
       document.getElementById('sjdState').textContent    = state;
       document.getElementById('bcTitle').textContent     = title.length>60 ? title.slice(0,57)+'…' : title;
       document.getElementById('bcStateLink').textContent = state+' Jobs';
-      document.getElementById('bcStateLink').href        = `/state-jobs.html?state=${encodeURIComponent(state)}`;
+      document.getElementById('bcStateLink').href        = `/state/${state.toLowerCase().replace(/ /g, '-')}/`;
       document.getElementById('dateToday').textContent   = today();
 
       document.getElementById('statOrg').textContent       = org || '—';
