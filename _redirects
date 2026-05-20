@@ -24,8 +24,9 @@
 # ── 4. Category clean URLs ──────────────────────────────────────
 /category/*   /category.html  200
 
-# ── 5. State job pages ──────────────────────────────────────────
-/state-jobs/* /view.html    200
+# ── 5. State job listing clean URLs /state/<name>/ ──────────────
+/state/        /state-jobs.html  200
+/state/*       /state-jobs.html  200
 
 # ── 6. Search ────────────────────────────────────────────────────
 /search/*     /search.html  200
