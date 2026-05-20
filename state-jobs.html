@@ -1030,9 +1030,20 @@
     "Sikkim":            { emoji:"🏞️", code:"SK", section:"Sikkim State Jobs",        desc:"Latest Sikkim Government Jobs 2026 – SPSC, Sikkim Police, Education Dept and all state department vacancies.", capital:"Gangtok" },
   };
 
-  // ═══ READ URL PARAM ═══
+  // ═══ READ URL PARAM — supports both clean /state/rajasthan/ and ?state=Rajasthan ═══
   const params = new URLSearchParams(location.search);
-  const stateName = (params.get('state') || '').trim();
+
+  // Try clean path first: /state/rajasthan/ → "rajasthan"
+  function getStateFromPath() {
+    const m = location.pathname.match(/\/state\/([^/]+)\/?$/i);
+    if (!m) return '';
+    const slug = decodeURIComponent(m[1]);
+    // Convert slug back to title-case state name for lookup
+    return slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, ' ');
+  }
+
+  const stateFromPath = getStateFromPath();
+  const stateName = stateFromPath || (params.get('state') || '').trim();
   const info = STATE_DATA[stateName] || null;
 
   // ═══ UPDATE PAGE WITH STATE INFO ═══
@@ -1052,7 +1063,7 @@
     document.getElementById('metaDesc').content = desc;
     document.getElementById('ogTitle').content = fullTitle;
     document.getElementById('ogDesc').content = desc;
-    document.getElementById('canonicalTag').href = `https://www.topsarkarijobs.com/state-jobs.html?state=${encodeURIComponent(stateName)}`;
+    document.getElementById('canonicalTag').href = `https://www.topsarkarijobs.com/state/${encodeURIComponent(stateName.toLowerCase().replace(/ /g,'-'))}/`;
     document.getElementById('ogUrl').content = location.href;
 
     // GA4: SPA page_view for state job listing
@@ -1078,7 +1089,7 @@
           "itemListElement": [
             { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.topsarkarijobs.com/" },
             { "@type": "ListItem", "position": 2, "name": "State Wise Jobs", "item": "https://www.topsarkarijobs.com/category.html?group=state" },
-            { "@type": "ListItem", "position": 3, "name": `${name} Jobs 2026`, "item": location.href }
+            { "@type": "ListItem", "position": 3, "name": `${name} Jobs 2026`, "item": `https://www.topsarkarijobs.com/state/${encodeURIComponent(name.toLowerCase().replace(/ /g,'-'))}/` }
           ]
         },
         {
@@ -1165,9 +1176,8 @@
   function jobDetailUrl(item, section) {
     const title = item.name || item.detail?.basic_details?.job_title || '';
     const slug  = makeSlug(title);
-    // Pass section.id for URL (slug-friendly), and section.state for display
-    const stateParam = section.state || section.id || '';
-    return `state-job-detail.html?state=${encodeURIComponent(stateParam)}&slug=${encodeURIComponent(slug)}`;
+    // Clean URL: /jobs/<slug>/ — state-job-detail.html handles via _redirects rewrite
+    return `/jobs/${slug}/`;
   }
 
   // ═══ PARSE postDate (DD/MM/YYYY or YYYY-MM-DD) ═══
@@ -1277,7 +1287,7 @@
     const grid = document.getElementById('allStatesGrid');
     grid.innerHTML = Object.entries(STATE_DATA).map(([name, d]) => {
       const active = name === stateName ? ' active' : '';
-      return `<a href="state-jobs.html?state=${encodeURIComponent(name)}" class="state-pill${active}">
+      return `<a href="/state/${encodeURIComponent(name.toLowerCase().replace(/ /g,'-'))}/" class="state-pill${active}">
         <span>${d.emoji}</span> ${name}
       </a>`;
     }).join('');
