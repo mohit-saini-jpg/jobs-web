@@ -1098,7 +1098,7 @@
       }
 
       /* dynamic-sections section-link inherits global mobile styles above */
-      #dynamic-sections .section-link { padding: 7px 7px; }
+      #dynamic-sections .section-link { padding: 7px 7px 7px 32px; }
 
       #dynamic-sections .section-more {
         font-size: .7rem;
@@ -1344,13 +1344,36 @@
     /* ── section-link: title wraps, date badge inline at end ── */
     .section-link {
       display: block;
-      padding: 9px 12px;
+      position: relative;
+      padding: 9px 12px 9px 34px;
       border-bottom: 1px solid #f1f5f9;
       text-decoration: none;
       color: var(--text);
       cursor: pointer;
       transition: background .12s;
       box-sizing: border-box;
+    }
+    /* Serial number badge — top-left corner */
+    .section-link .sn-badge {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      left: 7px;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 5px;
+      background: #0284c7;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      box-shadow: 0 1px 4px rgba(2,132,199,0.4);
+      z-index: 1;
+      flex-shrink: 0;
     }
     .section-link:last-child { border-bottom: none; }
     .section-link:hover { background: #f0f7ff; }
@@ -1387,7 +1410,7 @@
     /* ── Mobile 2-col: title + date inline, auto-wrap ── */
     @media (max-width: 600px) {
       .section-link {
-        padding: 7px 6px;
+        padding: 7px 6px 7px 30px;
       }
       .section-link .t {
         font-size: .67rem;
@@ -1505,7 +1528,7 @@
 
       /* two-col section-link inherits global mobile styles above */
       .two-col-sections .section-link,
-      .two-col-grid    .section-link { padding: 7px 7px; }
+      .two-col-grid    .section-link { padding: 7px 7px 7px 32px; }
 
       .two-col-sections .sec-more,
       .two-col-grid    .sec-more {
