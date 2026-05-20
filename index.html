@@ -506,7 +506,7 @@
       padding: 0;
       display: flex;
       align-items: stretch;
-      min-height: 52px;        /* ↑ 42px → 52px — taller bar */
+      min-height: 58px;        /* ↑ 52px → 58px — taller bar for bigger font */
       position: relative;
       z-index: 10;
     }
@@ -567,9 +567,9 @@
       gap: 8px;
       color: #fff;
       text-decoration: none;
-      font-size: 1rem;         /* ↑ .86rem → 1rem */
+      font-size: 1.15rem;       /* ↑ 1rem → 1.15rem — larger text */
       font-weight: 700;
-      padding-right: 56px;     /* ↑ 44px → 56px — more gap between items */
+      padding-right: 60px;     /* ↑ 56px → 60px — more gap between items */
       transition: opacity .15s;
       white-space: nowrap;
       letter-spacing: .01em;
@@ -591,7 +591,7 @@
     }
     @media (max-width: 480px) {
       .ticker-wrap { min-height: 46px; }
-      .ticker-item { font-size: .9rem; padding-right: 40px; }
+      .ticker-item { font-size: 1rem; padding-right: 44px; }
       .ticker-label { padding: 8px 12px; font-size: .88rem; }
     }
 
@@ -2072,8 +2072,8 @@
       belt.appendChild(buildSet());
       belt.appendChild(buildSet());
 
-      /* Speed: ~120px/s — each item ~220px avg width */
-      var duration = Math.max(20, Math.round(jobs.length * 220 / 120));
+      /* Speed: ~60px/s — each item ~220px avg width (slowed down) */
+      var duration = Math.max(40, Math.round(jobs.length * 220 / 60));
       belt.style.setProperty('--ticker-duration', duration + 's');
       belt.style.animationDuration = duration + 's';
 
