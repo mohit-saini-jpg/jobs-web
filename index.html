@@ -1060,8 +1060,20 @@
       margin-bottom: 14px;
     }
     #dynamic-sections:empty { display: none; }
+    /* Daily updates sections — same 2-column grid as #dynamic-sections */
+    #daily-updates-sections {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    #daily-updates-sections:empty { display: none; }
     @media (max-width: 600px) {
       #dynamic-sections {
+        grid-template-columns: 1fr 1fr;
+        gap: 5px;
+      }
+      #daily-updates-sections {
         grid-template-columns: 1fr 1fr;
         gap: 5px;
       }
