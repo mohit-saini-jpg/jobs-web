@@ -1030,16 +1030,28 @@
     "Sikkim":            { emoji:"🏞️", code:"SK", section:"Sikkim State Jobs",        desc:"Latest Sikkim Government Jobs 2026 – SPSC, Sikkim Police, Education Dept and all state department vacancies.", capital:"Gangtok" },
   };
 
-  // ═══ READ URL PARAM — supports both clean /state/rajasthan/ and ?state=Rajasthan ═══
+  // ═══ READ STATE — supports 3 sources (priority order) ═══
+  // 1. Clean path:  /state/rajasthan/           (Netlify/Cloudflare _redirects serves state-jobs.html directly)
+  // 2. ?_path=      /state-jobs.html?_path=/state/rajasthan/  (GitHub Pages 404.html redirect fallback)
+  // 3. ?state=      /state-jobs.html?state=Rajasthan          (legacy direct param)
   const params = new URLSearchParams(location.search);
 
-  // Try clean path first: /state/rajasthan/ → "rajasthan"
+  function slugToTitle(slug) {
+    // "madhya-pradesh" → "Madhya Pradesh", "jammu-and-kashmir" → "Jammu and Kashmir"
+    return slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  }
+
   function getStateFromPath() {
+    // Source 1: real clean path (Netlify/CF Pages rewrites)
     const m = location.pathname.match(/\/state\/([^/]+)\/?$/i);
-    if (!m) return '';
-    const slug = decodeURIComponent(m[1]);
-    // Convert slug back to title-case state name for lookup
-    return slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, ' ');
+    if (m) return slugToTitle(decodeURIComponent(m[1]));
+
+    // Source 2: ?_path= param set by 404.html when GitHub Pages intercepts the request
+    const fallbackPath = params.get('_path') || '';
+    const m2 = fallbackPath.match(/\/state\/([^/]+)\/?$/i);
+    if (m2) return slugToTitle(decodeURIComponent(m2[1]));
+
+    return '';
   }
 
   const stateFromPath = getStateFromPath();
