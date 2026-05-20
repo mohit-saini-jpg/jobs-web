@@ -84,7 +84,18 @@
   <title>Sarkari Jobs by Category – Study, State, Popular & More | Top Sarkari Jobs</title>
   <meta name="description" content="Browse Top Sarkari Jobs categories with official links. Study-wise, state-wise, popular jobs, admissions, results, admit cards and more." />
   <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://www.topsarkarijobs.com/category.html" />
+  <link rel="canonical" href="https://www.topsarkarijobs.com/category.html" id="categoryCanonical"/>
+  <script>
+  // Set canonical to clean URL when served as /state/ hub
+  (function(){
+    var p = location.pathname, q = location.search;
+    var el = document.getElementById('categoryCanonical');
+    if (!el) return;
+    if (p === '/state/' || p === '/state' || q.indexOf('group=state') !== -1) {
+      el.href = 'https://www.topsarkarijobs.com/state/';
+    }
+  })();
+  </script>
   <link rel="icon" type="image/x-icon" href="image.ico">
 
   <!-- Open Graph / WhatsApp / Social Share -->
