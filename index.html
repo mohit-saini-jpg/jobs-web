@@ -23,9 +23,15 @@
   <!-- Preload critical JSON data for faster card rendering -->
   <link rel="preload" href="merged_sarkari_data.json" as="fetch" crossorigin="anonymous"/>
   <link rel="preload" href="dailyupdates.json" as="fetch" crossorigin="anonymous"/>
+  <!-- PERF: sections-index.json — 16KB lightweight index for instant card rendering (instead of 18MB Complete_Jobs_Full_Data.json) -->
+  <link rel="preload" href="sections-index.json" as="fetch" crossorigin="anonymous"/>
   <!-- PERF: shared promise for merged_sarkari_data.json — fetched only ONCE, used by ticker + section cards -->
   <script>
   window.__mergedDataPromise = fetch('merged_sarkari_data.json')
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .catch(function(){ return null; });
+  // PERF: sections-index.json — fetch starts immediately at page load (16KB vs 18MB)
+  window.__sectionsIndexPromise = fetch('sections-index.json')
     .then(function(r){ return r.ok ? r.json() : null; })
     .catch(function(){ return null; });
   </script>
@@ -2529,7 +2535,7 @@
   </aside>
 
   <!-- Load existing script.js (handles dynamic sections from JSON) -->
-  <script src="script.min.js?v=20260517" defer></script>
+  <script src="script.min.js?v=20260520" defer></script>
 
   <!-- SEO Engine: Push Notifications, Recently Viewed, Share, Breadcrumb, Trending -->
   <script src="seo-engine.min.js?v=20260517" defer></script>
