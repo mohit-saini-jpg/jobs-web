@@ -82,7 +82,19 @@
     // ── 4. State listing (new): /state/<name>/ ────────────────────
     var stateMatch = path.match(/^\/state\/([^\/]+)\/?$/);
     if (stateMatch) {
-      window.location.replace('/state-jobs.html?_path=' + encodeURIComponent(path));
+      // Convert slug → Title Case state name and pass as ?state=
+      // e.g. /state/uttar-pradesh/ → ?state=Uttar Pradesh
+      var stateSlug = decodeURIComponent(stateMatch[1]);
+      var stateName = stateSlug
+        .replace(/-/g, ' ')
+        .replace(/\b\w/g, function(c){ return c.toUpperCase(); });
+      window.location.replace('/state-jobs.html?state=' + encodeURIComponent(stateName));
+      return;
+    }
+
+    // ── 4a. State hub: /state/ → All States listing ───────────────
+    if (path === '/state/' || path === '/state') {
+      window.location.replace('/category.html?group=state');
       return;
     }
 
