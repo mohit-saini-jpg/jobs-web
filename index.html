@@ -1199,14 +1199,14 @@
       line-height: 1.5;
     }
     .sr-job-link:hover { background: #f8fafc; color: var(--blue); }
-    .sr-job-link .sr-sn {
-      display: inline-flex; align-items: center; justify-content: center;
-      min-width: 22px; height: 22px; padding: 0 4px;
-      background: var(--blue); color: #fff;
-      font-size: .68rem; font-weight: 800; border-radius: 5px;
-      flex-shrink: 0; line-height: 1; margin-right: 2px; margin-top: 1px;
+    .sr-job-link .sr-dot {
+      flex-shrink: 0;
+      margin-top: 6px;
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--border);
     }
-    .sr-job-link:hover .sr-sn { background: var(--navy); }
+    .sr-job-link:hover .sr-dot { background: var(--blue); }
 
     /* Title: block so it takes full width, date flows inline inside it */
     .sr-job-title {
@@ -1292,15 +1292,6 @@
       will-change: auto;
     }
     .section-card:hover { box-shadow: var(--shadow-hover); }
-    /* Serial number badge inside each section-link (dailyupdates cards) */
-    .section-link .sn {
-      display: inline-flex; align-items: center; justify-content: center;
-      min-width: 22px; height: 22px; padding: 0 4px;
-      background: var(--blue); color: #fff;
-      font-size: .68rem; font-weight: 800; border-radius: 5px;
-      flex-shrink: 0; line-height: 1; margin-right: 2px;
-    }
-    .section-link:hover .sn { background: var(--navy); }
     .section-head {
       display: flex; align-items: center; justify-content: space-between;
       padding: 11px 14px; color: #fff; font-size: .82rem; font-weight: 900;
@@ -2902,7 +2893,7 @@
 
     function buildCard(cfg, items) {
       var list = items.slice(0, MAX_ITEMS);
-      var liHtml = list.map(function(rawJob, idx) {
+      var liHtml = list.map(function(rawJob) {
         var job = normalizeJob(rawJob);
         if (!job) return '';
 
@@ -2915,7 +2906,7 @@
         return (
           '<li><a href="' + job.href + '" class="sr-job-link"' +
           (job.href.includes('job.html') ? '' : (job.url !== '#' ? ' target="_blank" rel="noopener"' : '')) + '>' +
-          '<span class="sr-sn">' + (idx+1) + '</span>' +
+          '<span class="sr-dot"></span>' +
           '<span class="sr-job-title">' + job.title + (dateBadge ? ' ' + dateBadge : '') + '</span>' +
           '</a></li>'
         );
