@@ -1247,6 +1247,21 @@
       text-decoration: none;
     }
     .sr-card-footer a:hover { text-decoration: underline; }
+
+    /* Sub-links row inside Upcoming Jobs (and any card with links) */
+    .sr-job-links {
+      display: flex; flex-wrap: wrap; gap: 4px 6px;
+      padding: 3px 10px 8px 22px;
+    }
+    .sr-sub-link {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: .68rem; font-weight: 700; color: var(--primary);
+      background: rgba(26,86,219,.08); border: 1px solid rgba(26,86,219,.2);
+      border-radius: 4px; padding: 2px 8px; text-decoration: none;
+      transition: background .15s, color .15s;
+      white-space: nowrap;
+    }
+    .sr-sub-link:hover { background: var(--primary); color: #fff; }
     .sr-loading {
       padding: 16px 14px;
       text-align: center;
@@ -2888,7 +2903,7 @@
         }
       }
 
-      return { title: title, lastDate: lastDate, url: url, href: href };
+      return { title: title, lastDate: lastDate, url: url, href: href, sectionsLinks: job.sections_links || [] };
     }
 
     function buildCard(cfg, items) {
@@ -2903,12 +2918,26 @@
           ? '<span class="' + dateClass + '">📅 ' + dateLabel + '</span>'
           : '';
 
+        /* Build sub-links for jobs that have sections_links (e.g. Upcoming Jobs) */
+        var subLinksHtml = '';
+        if (job.sectionsLinks && job.sectionsLinks.length > 0) {
+          var subLinks = job.sectionsLinks.slice(0, 4);
+          subLinksHtml = '<div class="sr-job-links">' +
+            subLinks.map(function(sl) {
+              return '<a href="' + sl.url + '" class="sr-sub-link" target="_blank" rel="noopener noreferrer">' + sl.text + ' <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:.6rem"></i></a>';
+            }).join('') +
+          '</div>';
+        }
+
         return (
-          '<li><a href="' + job.href + '" class="sr-job-link"' +
+          '<li>' +
+          '<a href="' + job.href + '" class="sr-job-link"' +
           (job.href.includes('job.html') ? '' : (job.url !== '#' ? ' target="_blank" rel="noopener"' : '')) + '>' +
           '<span class="sr-dot"></span>' +
           '<span class="sr-job-title">' + job.title + (dateBadge ? ' ' + dateBadge : '') + '</span>' +
-          '</a></li>'
+          '</a>' +
+          subLinksHtml +
+          '</li>'
         );
       }).filter(Boolean).join('');
 
@@ -2947,12 +2976,14 @@
            ANY unknown category is auto-detected and gets a default style.
         ------------------------------------------------------------------ */
         var KNOWN_CAT_CONFIG = {
-          'SR_Latest_Jobs':  { label: 'Latest Jobs',  icon: 'fa-solid fa-briefcase',      headClass: 'red',    viewUrl: '/section/latest-jobs/' },
-          'SR_Admit_Card':   { label: 'Admit Card',   icon: 'fa-solid fa-id-card',         headClass: 'blue',   viewUrl: '/section/admit-card/' },
-          'SR_Result':       { label: 'Result',        icon: 'fa-solid fa-trophy',          headClass: 'green',  viewUrl: '/section/results/' },
-          'SR_Admission':    { label: 'Admission',     icon: 'fa-solid fa-graduation-cap',  headClass: 'purple', viewUrl: '/section/admission/' },
-          'SR_Answer_Key':   { label: 'Answer Key',    icon: 'fa-solid fa-key',             headClass: 'orange', viewUrl: '/section/answer-key/' },
-          'OFFLINE_FORM':    { label: 'Offline Form',  icon: 'fa-solid fa-file-pen',        headClass: 'cyan',   viewUrl: '/section/offline-form/' }
+          'SR_Latest_Jobs':  { label: 'Latest Jobs',   icon: 'fa-solid fa-briefcase',      headClass: 'red',    viewUrl: '/section/latest-jobs/' },
+          'LATEST_JOBS':     { label: 'Latest Jobs',   icon: 'fa-solid fa-briefcase',      headClass: 'red',    viewUrl: '/section/latest-jobs/' },
+          'SR_Admit_Card':   { label: 'Admit Card',    icon: 'fa-solid fa-id-card',        headClass: 'blue',   viewUrl: '/section/admit-card/' },
+          'SR_Result':       { label: 'Result',         icon: 'fa-solid fa-trophy',         headClass: 'green',  viewUrl: '/section/results/' },
+          'SR_Admission':    { label: 'Admission',      icon: 'fa-solid fa-graduation-cap', headClass: 'purple', viewUrl: '/section/admission/' },
+          'SR_Answer_Key':   { label: 'Answer Key',     icon: 'fa-solid fa-key',            headClass: 'orange', viewUrl: '/section/answer-key/' },
+          'OFFLINE_FORM':    { label: 'Offline Form',   icon: 'fa-solid fa-file-pen',       headClass: 'cyan',   viewUrl: '/section/offline-form/' },
+          'UPCOMING_JOBS':   { label: 'Upcoming Jobs',  icon: 'fa-solid fa-calendar-plus',  headClass: 'teal',   viewUrl: '/section/upcoming-jobs/' }
         };
 
         /* Default style pool for unknown/new categories — cycles through colors */
@@ -2979,13 +3010,100 @@
 
         /* Map one job to the shape expected by normalizeJob() */
         function toSRItem(j) {
+          /* For UPCOMING_JOBS: extract URL from important_links or sections */
+          var primaryUrl = j.official_website_link || j.official_notification_pdf_link || '';
+          if (!primaryUrl) {
+            /* Try important_links object */
+            var il = j.important_links || {};
+            primaryUrl = il.official_website || il.apply_online || il.apply_link || il.click_here || '';
+          }
+          if (!primaryUrl && Array.isArray(j.sections)) {
+            /* Walk sections → content → table rows → cells → links */
+            outerLoop:
+            for (var si = 0; si < j.sections.length; si++) {
+              var sec = j.sections[si];
+              var contents = Array.isArray(sec.content) ? sec.content : [];
+              for (var ci = 0; ci < contents.length; ci++) {
+                var blk = contents[ci];
+                if (blk.type === 'table' && Array.isArray(blk.rows)) {
+                  for (var ri = 0; ri < blk.rows.length; ri++) {
+                    var row = blk.rows[ri];
+                    for (var ki = 0; ki < row.length; ki++) {
+                      var cell = row[ki];
+                      if (Array.isArray(cell.links)) {
+                        for (var li = 0; li < cell.links.length; li++) {
+                          var lnk = cell.links[li];
+                          if (lnk && lnk.url && lnk.url.indexOf('http') === 0) {
+                            primaryUrl = lnk.url;
+                            break outerLoop;
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+          /* Collect ALL links from sections for Upcoming Jobs card */
+          var sectionsLinks = [];
+          if (Array.isArray(j.sections)) {
+            for (var si2 = 0; si2 < j.sections.length; si2++) {
+              var sec2 = j.sections[si2];
+              var contents2 = Array.isArray(sec2.content) ? sec2.content : [];
+              for (var ci2 = 0; ci2 < contents2.length; ci2++) {
+                var blk2 = contents2[ci2];
+                if (blk2.type === 'table' && Array.isArray(blk2.rows)) {
+                  for (var ri2 = 0; ri2 < blk2.rows.length; ri2++) {
+                    var row2 = blk2.rows[ri2];
+                    /* Use first cell's text as the row label (e.g. "Apply Online", "Download Notification") */
+                    var rowLabel = (row2[0] && row2[0].text && row2[0].text.length < 50) ? row2[0].text.trim() : '';
+                    for (var ki2 = 0; ki2 < row2.length; ki2++) {
+                      var cell2 = row2[ki2];
+                      if (Array.isArray(cell2.links)) {
+                        for (var li2 = 0; li2 < cell2.links.length; li2++) {
+                          var lnk2 = cell2.links[li2];
+                          if (lnk2 && lnk2.url && lnk2.url.indexOf('http') === 0) {
+                            /* Priority: row label > cell text > link text */
+                            var lbl = rowLabel || (cell2.text && cell2.text.length < 40 ? cell2.text : '') || lnk2.text || 'Link';
+                            /* Skip generic labels like "Click Here"/"Visit Now" if we have rowLabel */
+                            if (!rowLabel && (lbl === 'Click Here' || lbl === 'Visit Now')) lbl = 'Official Link';
+                            sectionsLinks.push({ text: lbl, url: lnk2.url });
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+          /* Also add important_links keys as links */
+          var il2 = j.important_links || {};
+          var ilKeys = Object.keys(il2);
+          for (var ik = 0; ik < ilKeys.length; ik++) {
+            var ilUrl = il2[ilKeys[ik]];
+            if (ilUrl && ilUrl.indexOf('http') === 0) {
+              /* Check not already in sectionsLinks */
+              var alreadyHave = false;
+              for (var sl = 0; sl < sectionsLinks.length; sl++) {
+                if (sectionsLinks[sl].url === ilUrl) { alreadyHave = true; break; }
+              }
+              if (!alreadyHave) {
+                var ilLabel = ilKeys[ik].replace(/_/g,' ').replace(/\b\w/g, function(c){ return c.toUpperCase(); });
+                sectionsLinks.push({ text: ilLabel, url: ilUrl });
+              }
+            }
+          }
+
           return {
-            title:      j.title || '',
-            url:        j.official_website_link || j.official_notification_pdf_link || '#',
-            source_url: j.official_website_link || '#',
-            last_date:  (j.important_dates && j.important_dates.last_date) || '',
-            apply_mode: j.apply_mode || '',
-            slug:       j.slug || ''
+            title:         j.title || '',
+            url:           primaryUrl || '#',
+            source_url:    primaryUrl || '#',
+            last_date:     (j.important_dates && j.important_dates.last_date) || '',
+            apply_mode:    j.apply_mode || '',
+            slug:          j.slug || '',
+            sections_links: sectionsLinks
           };
         }
 
@@ -3032,7 +3150,7 @@
 
         /* ── Build CATEGORY_CONFIG dynamically from all buckets found ── */
         /* First add known categories in preferred order */
-        var orderedKeys = ['SR_Latest_Jobs', 'SR_Result', 'SR_Admit_Card', 'SR_Admission', 'SR_Answer_Key', 'OFFLINE_FORM'];
+        var orderedKeys = ['SR_Latest_Jobs', 'LATEST_JOBS', 'SR_Result', 'SR_Admit_Card', 'SR_Admission', 'SR_Answer_Key', 'OFFLINE_FORM', 'UPCOMING_JOBS'];
         /* Then append any NEW unknown categories */
         Object.keys(categoryBuckets).forEach(function(k) {
           if (orderedKeys.indexOf(k) === -1) orderedKeys.push(k);
