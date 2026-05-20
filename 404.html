@@ -23,6 +23,7 @@
    *
    * /jobs/<slug>/               → job.html?slug=<slug>
    * /category/<group>/          → category.html?group=<group>
+   * /state/<name>/              → state-jobs.html (reads slug from path)
    * /results/                   → view.html?section=Sarkari+Result
    * /admit-card/                → view.html?section=Admit+cards+Exams+Date
    * /latest-jobs/               → view.html?section=latest+jobs
@@ -31,7 +32,6 @@
    * /police-jobs/               → view.html?section=Police+Jobs
    * /ssc-jobs/                  → view.html?section=SSC+Jobs
    * /upsc-jobs/                 → view.html?section=UPSC+Jobs
-   * /state-jobs/<state>/        → state-jobs.html?state=<state>
    * /search/<query>/            → search.html?q=<query>
    * /section/<section-slug>/    → view.html?section=<decoded>
    */
@@ -62,11 +62,20 @@
       return;
     }
 
-    // ── 3. State jobs: /state-jobs/<state>/ ────────────────────────
-    var stateMatch = path.match(/^\/state-jobs\/([^\/]+)\/?$/);
+    // ── 3. State listing: /state/<name>/ (NEW clean URL format) ───
+    //    e.g. /state/madhya-pradesh/ → state-jobs.html (reads slug from path)
+    var stateMatch = path.match(/^\/state\/([^\/]+)\/?$/);
     if (stateMatch) {
-      var state = decodeURIComponent(stateMatch[1]);
-      window.location.replace('/state-jobs.html?state=' + encodeURIComponent(state));
+      // Pass the slug in the URL so state-jobs.html can read it via getStateFromPath()
+      window.location.replace('/state-jobs.html?_path=' + encodeURIComponent(path));
+      return;
+    }
+
+    // ── 3b. Legacy: /state-jobs/<state>/ (backward compat) ─────────
+    var legacyStateMatch = path.match(/^\/state-jobs\/([^\/]+)\/?$/);
+    if (legacyStateMatch) {
+      var legacyState = decodeURIComponent(legacyStateMatch[1]).replace(/-/g, ' ');
+      window.location.replace('/state-jobs.html?state=' + encodeURIComponent(legacyState));
       return;
     }
 
