@@ -1032,8 +1032,8 @@
 
   // ═══ READ STATE — supports 3 sources (priority order) ═══
   // 1. Clean path:  /state/rajasthan/           (Netlify/Cloudflare _redirects serves state-jobs.html directly)
-  // 2. ?_path=      /state-jobs.html?_path=/state/rajasthan/  (GitHub Pages 404.html redirect fallback)
-  // 3. ?state=      /state-jobs.html?state=Rajasthan          (legacy direct param)
+  // 2. ?state=      /state-jobs.html?state=Rajasthan  (GitHub Pages 404.html passes clean ?state= param)
+  // 3. ?_path=      /state-jobs.html?_path=/state/rajasthan/  (legacy fallback — no longer used)
   const params = new URLSearchParams(location.search);
 
   function slugToTitle(slug) {
@@ -1076,7 +1076,7 @@
     document.getElementById('ogTitle').content = fullTitle;
     document.getElementById('ogDesc').content = desc;
     document.getElementById('canonicalTag').href = `https://www.topsarkarijobs.com/state/${encodeURIComponent(stateName.toLowerCase().replace(/ /g,'-'))}/`;
-    document.getElementById('ogUrl').content = location.href;
+    document.getElementById('ogUrl').content = `https://www.topsarkarijobs.com/state/${encodeURIComponent(stateName.toLowerCase().replace(/ /g,'-'))}/`;
 
     // GA4: SPA page_view for state job listing
     if (typeof window.ga4PageView === 'function') {
@@ -1089,10 +1089,10 @@
       "@graph": [
         {
           "@type": "WebPage",
-          "@id": location.href,
+          "@id": `https://www.topsarkarijobs.com/state/${encodeURIComponent(stateName.toLowerCase().replace(/ /g,'-'))}/`,
           "name": fullTitle,
           "description": desc,
-          "url": location.href,
+          "url": `https://www.topsarkarijobs.com/state/${encodeURIComponent(stateName.toLowerCase().replace(/ /g,'-'))}/`,
           "inLanguage": "en-IN",
           "isPartOf": { "@id": "https://www.topsarkarijobs.com/#website" }
         },
