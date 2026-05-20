@@ -20,7 +20,7 @@
 /category/*   /category.html  200
 
 # ── 4. State job listing clean URLs /state/<name>/ ──────────────
-/state/        /state-jobs.html  200
+/state/        /category.html  200
 /state/*       /state-jobs.html  200
 
 # ── 5. Search ────────────────────────────────────────────────────
@@ -51,7 +51,46 @@
 /results/           /result.html                  301
 /admit-card/        /admit-card.html              301
 
-# ── 7. Old ?section= query params → clean URLs (301 permanent) ───
+# ── 7. Old ?state= query params → clean URLs (301 permanent) ─────
+# These are the SEO-critical redirects: old URLs → new clean URLs
+/state-jobs.html?state=Haryana                /state/haryana/                   301
+/state-jobs.html?state=Uttar+Pradesh          /state/uttar-pradesh/             301
+/state-jobs.html?state=Uttar%20Pradesh        /state/uttar-pradesh/             301
+/state-jobs.html?state=Rajasthan              /state/rajasthan/                 301
+/state-jobs.html?state=Bihar                  /state/bihar/                     301
+/state-jobs.html?state=Madhya+Pradesh         /state/madhya-pradesh/            301
+/state-jobs.html?state=Madhya%20Pradesh       /state/madhya-pradesh/            301
+/state-jobs.html?state=Punjab                 /state/punjab/                    301
+/state-jobs.html?state=Delhi                  /state/delhi/                     301
+/state-jobs.html?state=Gujarat                /state/gujarat/                   301
+/state-jobs.html?state=Maharashtra            /state/maharashtra/               301
+/state-jobs.html?state=Karnataka              /state/karnataka/                 301
+/state-jobs.html?state=Tamil+Nadu             /state/tamil-nadu/                301
+/state-jobs.html?state=Tamil%20Nadu           /state/tamil-nadu/                301
+/state-jobs.html?state=Andhra+Pradesh         /state/andhra-pradesh/            301
+/state-jobs.html?state=Andhra%20Pradesh       /state/andhra-pradesh/            301
+/state-jobs.html?state=Telangana              /state/telangana/                 301
+/state-jobs.html?state=West+Bengal            /state/west-bengal/               301
+/state-jobs.html?state=West%20Bengal          /state/west-bengal/               301
+/state-jobs.html?state=Jharkhand              /state/jharkhand/                 301
+/state-jobs.html?state=Chhattisgarh           /state/chhattisgarh/              301
+/state-jobs.html?state=Odisha                 /state/odisha/                    301
+/state-jobs.html?state=Assam                  /state/assam/                     301
+/state-jobs.html?state=Himachal+Pradesh       /state/himachal-pradesh/          301
+/state-jobs.html?state=Himachal%20Pradesh     /state/himachal-pradesh/          301
+/state-jobs.html?state=Uttarakhand            /state/uttarakhand/               301
+/state-jobs.html?state=Jammu+and+Kashmir      /state/jammu-and-kashmir/         301
+/state-jobs.html?state=Jammu%20and%20Kashmir  /state/jammu-and-kashmir/         301
+/state-jobs.html?state=Kerala                 /state/kerala/                    301
+/state-jobs.html?state=Goa                    /state/goa/                       301
+/state-jobs.html?state=Tripura                /state/tripura/                   301
+/state-jobs.html?state=Manipur                /state/manipur/                   301
+/state-jobs.html?state=Meghalaya              /state/meghalaya/                 301
+/state-jobs.html?state=Sikkim                 /state/sikkim/                    301
+# All States hub → clean category URL
+/category.html?group=state                    /state/                           301
+
+# ── 8. Old ?section= query params → clean URLs (301 permanent) ───
 /view.html?section=SR_Latest_Jobs      /section/latest-jobs/          301
 /view.html?section=SR_Result           /section/results/              301
 /view.html?section=SR_Admit_Card       /section/admit-card/           301
