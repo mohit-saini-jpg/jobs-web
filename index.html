@@ -2903,24 +2903,31 @@
         }
       }
 
-      return { title: title, lastDate: lastDate, url: url, href: href, sectionsLinks: job.sections_links || [] };
+      return { title: title, lastDate: lastDate, url: url, href: href, sectionsLinks: job.sections_links || [], startingDate: job.starting_date || '' };
     }
 
     function buildCard(cfg, items) {
+      var isUpcoming = cfg.key === 'UPCOMING_JOBS';
       var list = items.slice(0, MAX_ITEMS);
       var liHtml = list.map(function(rawJob) {
         var job = normalizeJob(rawJob);
         if (!job) return '';
 
-        var dateLabel = job.lastDate ? formatDate(job.lastDate) : '';
-        var dateClass = isSoon(job.lastDate) ? 'sr-job-date soon' : 'sr-job-date';
-        var dateBadge = dateLabel
-          ? '<span class="' + dateClass + '">📅 ' + dateLabel + '</span>'
-          : '';
+        /* For UPCOMING_JOBS: show Starting Date badge. For others: show Last Date badge */
+        var dateBadge = '';
+        if (isUpcoming) {
+          if (job.startingDate) {
+            dateBadge = '<span class="sr-job-date" style="background:#0d9488;color:#fff;font-size:.65rem;padding:1px 6px;border-radius:3px;margin-left:4px;white-space:nowrap;">🗓️ From ' + job.startingDate + '</span>';
+          }
+        } else {
+          var dateLabel = job.lastDate ? formatDate(job.lastDate) : '';
+          var dateClass = isSoon(job.lastDate) ? 'sr-job-date soon' : 'sr-job-date';
+          if (dateLabel) dateBadge = '<span class="' + dateClass + '">📅 ' + dateLabel + '</span>';
+        }
 
-        /* Build sub-links for jobs that have sections_links (e.g. Upcoming Jobs) */
+        /* Build sub-links ONLY for non-UPCOMING jobs (UPCOMING uses job detail page for full info) */
         var subLinksHtml = '';
-        if (job.sectionsLinks && job.sectionsLinks.length > 0) {
+        if (!isUpcoming && job.sectionsLinks && job.sectionsLinks.length > 0) {
           var subLinks = job.sectionsLinks.slice(0, 4);
           subLinksHtml = '<div class="sr-job-links">' +
             subLinks.map(function(sl) {
@@ -3103,7 +3110,31 @@
             last_date:     (j.important_dates && j.important_dates.last_date) || '',
             apply_mode:    j.apply_mode || '',
             slug:          j.slug || '',
-            sections_links: sectionsLinks
+            sections_links: sectionsLinks,
+            starting_date: (function() {
+              /* Extract Starting Date from Important Dates section list items */
+              if (!Array.isArray(j.sections)) return '';
+              for (var _si = 0; _si < j.sections.length; _si++) {
+                var _sec = j.sections[_si];
+                if (!_sec || !_sec.title || !/important\s*dates/i.test(_sec.title)) continue;
+                var _contents = Array.isArray(_sec.content) ? _sec.content : [];
+                for (var _ci = 0; _ci < _contents.length; _ci++) {
+                  var _blk = _contents[_ci];
+                  if (_blk.type === 'list' && Array.isArray(_blk.items)) {
+                    for (var _ii = 0; _ii < _blk.items.length; _ii++) {
+                      if (/starting\s*date/i.test(_blk.items[_ii])) {
+                        var _m = _blk.items[_ii].match(/:\s*(.+)$/);
+                        if (_m) {
+                          var _d = _m[1].trim().match(/(\d{2}\/\d{2}\/\d{4})/);
+                          return _d ? _d[1] : _m[1].trim().slice(0, 15);
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+              return '';
+            })()
           };
         }
 
