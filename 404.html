@@ -8,35 +8,45 @@
   <style>
     body { font-family: sans-serif; display: flex; align-items: center;
            justify-content: center; min-height: 100vh; margin: 0; background: #f0f4f8; }
-    .box { text-align: center; color: #374151; }
+    .box { text-align: center; color: #374151; max-width: 420px; padding: 24px; }
     .spinner { width: 40px; height: 40px; border: 4px solid #e2e8f0;
                border-top-color: #1d4ed8; border-radius: 50%;
                animation: spin .7s linear infinite; margin: 0 auto 16px; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .home-link { display:inline-block; margin-top:12px; color:#1d4ed8;
-                 font-size:.9rem; text-decoration:none; }
+    .home-link { display:inline-block; margin-top:14px; color:#1d4ed8;
+                 font-size:.9rem; text-decoration:none; font-weight:600; }
     .home-link:hover { text-decoration:underline; }
+    #notFoundBox { display:none; }
   </style>
   <script>
-  /**
-   * SEO-Friendly URL Router — Top Sarkari Jobs
-   * ============================================
-   * This file is served by GitHub Pages / Netlify / CF Pages for any
-   * URL that does not match a real file. It reads the path and redirects
-   * to the correct .html page. It is NOT a real 404 — it's a client-side router.
-   *
-   * CLEAN URL MAP:
-   *   /jobs/<slug>/            → /job.html?slug=<slug>
-   *   /section/<slug>/         → /view.html?section=<decoded>
-   *   /category/<group>/       → /category.html?group=<group>
-   *   /state/<name>/           → /state-jobs.html?_path=<path>
-   *   /search/<query>/         → /search.html?q=<query>
-   *   /state-jobs/<state>/     → /state-jobs.html?state=<state>  (legacy)
-   *   shortcuts (see below)    → respective pages
-   */
   (function () {
     'use strict';
-    var path = window.location.pathname;
+
+    var path  = window.location.pathname;
+    var search = window.location.search;
+
+    // ── Loop-guard ────────────────────────────────────────────────
+    // If 404.html loads for a URL that ends in .html (real file),
+    // it means _redirects /* is still cached on the CDN.
+    // Stop redirecting immediately and show a helpful message.
+    if (/\.html(\?|$)/i.test(path)) {
+      show404('CDN cache issue — please hard-refresh (Ctrl+Shift+R) or clear browser cache.');
+      return;
+    }
+
+    // ── Redirect-loop guard ───────────────────────────────────────
+    // If we've redirected from this exact path before (within 3s),
+    // the target couldn't be found — show 404 instead of looping.
+    var loopKey = '__tsj_404_' + path.replace(/\//g,'_');
+    try {
+      var lastHit = parseInt(sessionStorage.getItem(loopKey) || '0', 10);
+      if (lastHit && (Date.now() - lastHit) < 5000) {
+        sessionStorage.removeItem(loopKey);
+        show404();
+        return;
+      }
+      sessionStorage.setItem(loopKey, Date.now().toString());
+    } catch(_) {}
 
     // ── 1. Job detail: /jobs/<slug>/ ──────────────────────────────
     var jobMatch = path.match(/^\/jobs\/([^\/]+)\/?$/);
@@ -44,13 +54,13 @@
       var slug = decodeURIComponent(jobMatch[1]);
       try { sessionStorage.setItem('__tsj_slug', slug); } catch(_) {}
       var refParam = '';
-      try { refParam = new URLSearchParams(window.location.search).get('ref') || ''; } catch(_) {}
-      var destUrl = '/job.html?slug=' + encodeURIComponent(slug);
+      try { refParam = new URLSearchParams(search).get('ref') || ''; } catch(_) {}
+      var dest = '/job.html?slug=' + encodeURIComponent(slug);
       if (refParam) {
         try { sessionStorage.setItem('__tsj_ref', refParam); } catch(_) {}
-        destUrl += '&ref=' + encodeURIComponent(refParam);
+        dest += '&ref=' + encodeURIComponent(refParam);
       }
-      window.location.replace(destUrl);
+      window.location.replace(dest);
       return;
     }
 
@@ -65,13 +75,11 @@
     // ── 3. Category pages: /category/<group>/ ─────────────────────
     var catMatch = path.match(/^\/category\/([^\/]+)\/?$/);
     if (catMatch) {
-      var group = decodeURIComponent(catMatch[1]);
-      window.location.replace('/category.html?group=' + encodeURIComponent(group));
+      window.location.replace('/category.html?group=' + encodeURIComponent(decodeURIComponent(catMatch[1])));
       return;
     }
 
-    // ── 4. State listing (NEW): /state/<name>/ ────────────────────
-    //    e.g. /state/madhya-pradesh/ → state-jobs.html reads slug from ?_path=
+    // ── 4. State listing (new): /state/<name>/ ────────────────────
     var stateMatch = path.match(/^\/state\/([^\/]+)\/?$/);
     if (stateMatch) {
       window.location.replace('/state-jobs.html?_path=' + encodeURIComponent(path));
@@ -94,7 +102,7 @@
       return;
     }
 
-    // ── 6. Static shortcut clean URLs ─────────────────────────────
+    // ── 6. Static shortcuts ───────────────────────────────────────
     var shortcuts = {
       '/latest-jobs/':     '/view.html?section=latest+jobs',
       '/latest-jobs':      '/view.html?section=latest+jobs',
@@ -141,33 +149,39 @@
       '/graduation-jobs/': '/section/graduation-jobs/',
       '/graduation-jobs':  '/section/graduation-jobs/',
     };
-
     if (shortcuts[path]) {
       window.location.replace(shortcuts[path]);
       return;
     }
 
     // ── 7. Nothing matched — show real 404 ────────────────────────
-    document.getElementById('spinnerEl').style.display = 'none';
-    document.getElementById('loadingText').style.display = 'none';
-    document.getElementById('notFoundBox').style.display = 'block';
+    show404();
+
+    function show404(extraMsg) {
+      document.getElementById('spinnerEl').style.display  = 'none';
+      document.getElementById('loadingText').style.display = 'none';
+      document.getElementById('notFoundBox').style.display = 'block';
+      if (extraMsg) {
+        document.getElementById('extraMsg').textContent = extraMsg;
+      }
+    }
   })();
   </script>
   <script src="/analytics.js" defer></script>
 </head>
 <body>
   <div class="box">
-    <!-- Shown while JS redirects (default state) -->
+    <!-- Default: spinner + "Redirecting…" while JS works -->
     <div class="spinner" id="spinnerEl"></div>
-    <p id="loadingText" style="margin:0;font-weight:600;color:#374151;">Redirecting…</p>
-    <p style="margin:6px 0 0;font-size:.82rem;color:#94a3b8;" id="fallbackMsg"></p>
+    <p id="loadingText" style="margin:0;font-weight:600;">Redirecting…</p>
 
-    <!-- Shown ONLY if no route matched (true 404) -->
-    <div id="notFoundBox" style="display:none;">
-      <p style="margin:0;font-weight:700;font-size:1.1rem;">404 — Page Not Found</p>
+    <!-- Shown ONLY for true 404 or loop-detected -->
+    <div id="notFoundBox">
+      <p style="margin:0;font-weight:700;font-size:1.15rem;">404 — Page Not Found</p>
       <p style="margin:8px 0 0;font-size:.85rem;color:#6b7280;">
-        Page not found. Please go back or visit the home page.
+        The page you're looking for doesn't exist or may have been moved.
       </p>
+      <p id="extraMsg" style="margin:6px 0 0;font-size:.78rem;color:#ef4444;"></p>
       <a href="/" class="home-link">← Back to Home</a>
     </div>
   </div>
