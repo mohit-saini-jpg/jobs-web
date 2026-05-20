@@ -178,22 +178,55 @@
     return null; // lazy — will fetch only when getJobsSections() is called
   })();
 
-  /* Fetch Complete_Jobs_Full_Data.json — lazy load, cached in sessionStorage */
+  /* ── PERF: Convert sections-index.json (16KB) → sections format ── */
+  function convertSectionsIndex(indexData) {
+    if (!indexData || typeof indexData !== 'object') return { sections: [] };
+    const sections = [];
+    for (const [catKey, meta] of Object.entries(JOBS_CAT_META)) {
+      const items = indexData[catKey];
+      if (!Array.isArray(items) || !items.length) continue;
+      sections.push({
+        id: meta.id, title: meta.title, color: meta.color, icon: meta.icon,
+        viewMoreType: 'list',
+        items: items.map(item => ({
+          slug: item.slug,
+          name: item.name,
+          url: 'job.html?slug=' + encodeURIComponent(item.slug) + '&section=' + encodeURIComponent(meta.id),
+          date: item.date || ''
+        }))
+      });
+    }
+    return { sections };
+  }
+
+  /* Fetch sections-index.json (FAST: 16KB) or fallback to Complete_Jobs_Full_Data.json */
   async function getJobsSections() {
     try {
-      let raw;
-      if (__jobsDataPromise) {
-        raw = await __jobsDataPromise;
-      } else {
-        const KEY = '__cjfd_v1', TTL = 60 * 60 * 1000;
-        raw = await getJSON('Complete_Jobs_Full_Data.json');
-        if (raw) {
-          try { sessionStorage.setItem(KEY, JSON.stringify({ ts: Date.now(), data: raw })); } catch(e) {}
+      // FAST PATH: sections-index.json prefetched at page load (16KB vs 18MB)
+      if (window.__sectionsIndexPromise) {
+        const indexData = await window.__sectionsIndexPromise;
+        if (indexData) {
+          const result = convertSectionsIndex(indexData);
+          if (result.sections.length > 0) return result;
         }
       }
-      if (!raw) return { sections: [] };
-      __jsonCache.set('Complete_Jobs_Full_Data.json', Promise.resolve(raw));
-      return convertJobsDataToSections(raw);
+
+      // FALLBACK: sessionStorage cache (skip 18MB download on repeat visits)
+      if (__jobsDataPromise) {
+        const raw = await __jobsDataPromise;
+        if (!raw) return { sections: [] };
+        __jsonCache.set('Complete_Jobs_Full_Data.json', Promise.resolve(raw));
+        return convertJobsDataToSections(raw);
+      }
+
+      // SLOW PATH: Full 18MB file (first visit, no cache)
+      const raw = await getJSON('Complete_Jobs_Full_Data.json');
+      if (raw) {
+        try { sessionStorage.setItem('__cjfd_v1', JSON.stringify({ ts: Date.now(), data: raw })); } catch(e) {}
+        __jsonCache.set('Complete_Jobs_Full_Data.json', Promise.resolve(raw));
+        return convertJobsDataToSections(raw);
+      }
+      return { sections: [] };
     } catch (_) { return { sections: [] }; }
   }
 
