@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="/analytics.js" defer></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sarkari Job Details | Top Sarkari Jobs</title>
+  <meta name="description" content="Latest government job details, eligibility, important dates, application fee and official links." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" id="canonicalTag" href="https://www.topsarkarijobs.com/job.html" />
+  <link rel="icon" type="image/x-icon" href="image.ico" />
+  <link rel="apple-touch-icon" href="image.webp" />
+  <link rel="manifest" href="/manifest.json" />
+  <!-- Schema placeholders (filled by seo-engine.js) -->
+  <script type="application/ld+json" id="schemaJobPosting">{}</script>
+  <script type="application/ld+json" id="schemaBreadcrumb">{}</script>
+  <script type="application/ld+json" id="schemaFAQ">{}</script>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="fonts/fa/all.min.css" />
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* ── Page layout ── */
+    .jp-wrap { max-width: 860px; margin: 0 auto; padding: 0 12px 40px; }
+
+    /* ── Breadcrumb ── */
+    .jp-breadcrumb { font-size: .78rem; color: var(--muted, #64748b); margin: 14px 0 10px; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+    .jp-breadcrumb a { color: var(--blue, #1a56db); text-decoration: none; }
+    .jp-breadcrumb a:hover { text-decoration: underline; }
+    .jp-breadcrumb span { color: #94a3b8; }
+
+    /* ── Main card ── */
+    .jp-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 26px 28px; margin-bottom: 18px; box-shadow: 0 1px 4px rgba(0,0,0,.05); }
+    @media(max-width:600px){ .jp-card { padding: 18px 14px; } }
+
+    /* ── Badge + Title ── */
+    .jp-badge { display: inline-block; background: #eff6ff; color: #1d4ed8; font-size: .75rem; font-weight: 700; padding: 3px 12px; border-radius: 999px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: .04em; }
+    .jp-title { font-size: 1.22rem; font-weight: 800; color: #0f172a; line-height: 1.5; margin: 0 0 6px; }
+    .jp-org   { font-size: .88rem; color: #475569; margin: 0 0 18px; }
+    .jp-short { font-size: .9rem; color: #334155; line-height: 1.7; margin: 0 0 20px; }
+
+    /* ── Stats row ── */
+    .jp-stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; margin-bottom: 22px; }
+    .jp-stat { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 14px; }
+    .jp-stat-label { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #64748b; margin-bottom: 4px; }
+    .jp-stat-val   { font-size: .95rem; font-weight: 700; color: #0f172a; word-break: break-word; }
+
+    /* ── Section headers ── */
+    .jp-section-title { font-size: .95rem; font-weight: 800; color: #0f172a; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+    .jp-section-title i { color: var(--blue, #1a56db); font-size: .9rem; }
+    hr.jp-hr { border: none; border-top: 1px solid #e2e8f0; margin: 20px 0; }
+
+    /* ── Important Dates table ── */
+    .jp-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+    .jp-table th, .jp-table td { text-align: left; padding: 9px 12px; border-bottom: 1px solid #f1f5f9; }
+    .jp-table th { background: #f8fafc; font-weight: 700; color: #475569; width: 44%; }
+    .jp-table td { color: #0f172a; font-weight: 600; }
+    .jp-table tr:last-child th, .jp-table tr:last-child td { border-bottom: none; }
+
+    /* ── Fee table ── */
+    .jp-fee-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+    .jp-fee-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; }
+    .jp-fee-item .lbl { font-size: .72rem; color: #64748b; font-weight: 600; text-transform: uppercase; margin-bottom: 3px; }
+    .jp-fee-item .val { font-size: .95rem; font-weight: 700; color: #0f172a; }
+
+    /* ── Vacancy table ── */
+    .jp-vac-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+    .jp-vac-table th { background: #1e40af; color: #fff; padding: 9px 12px; text-align: left; font-weight: 700; }
+    .jp-vac-table td { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; color: #0f172a; }
+    .jp-vac-table tr:nth-child(even) td { background: #f8fafc; }
+    .jp-vac-table tr:last-child td { border-bottom: none; }
+
+    /* ── How to apply steps ── */
+    .jp-steps { padding-left: 0; list-style: none; margin: 0; counter-reset: steps; }
+    .jp-steps li { counter-increment: steps; display: flex; gap: 12px; margin-bottom: 12px; font-size: .88rem; line-height: 1.65; color: #334155; }
+    .jp-steps li::before { content: counter(steps); background: #1e40af; color: #fff; min-width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Highlights ── */
+    .jp-hl-list { padding: 0; margin: 0; list-style: none; }
+    .jp-hl-item { display: flex; gap: 8px; align-items: flex-start; padding: 7px 0; border-bottom: 1px solid #f1f5f9; font-size: .88rem; color: #334155; }
+    .jp-hl-item:last-child { border-bottom: none; }
+    .jp-hl-item i { color: #16a34a; font-size: .85rem; margin-top: 3px; flex-shrink: 0; }
+
+    /* ── FAQ ── */
+    .jp-faq { border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; }
+    .jp-faq-item { border-bottom: 1px solid #f1f5f9; }
+    .jp-faq-item:last-child { border-bottom: none; }
+    .jp-faq-q { font-size: .88rem; font-weight: 700; color: #0f172a; padding: 13px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .jp-faq-q:hover { background: #f8fafc; }
+    .jp-faq-q .arrow { font-size: .75rem; color: #64748b; transition: transform .2s; flex-shrink: 0; }
+    .jp-faq-a { font-size: .85rem; line-height: 1.7; color: #475569; padding: 0 16px 14px; display: none; }
+    .jp-faq-item.open .jp-faq-a { display: block; }
+    .jp-faq-item.open .arrow { transform: rotate(180deg); }
+
+    /* ── Important links ── */
+    .jp-links { display: flex; flex-direction: column; gap: 10px; }
+    .jp-link-btn { display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 11px 16px; text-decoration: none; color: #0f172a; font-size: .88rem; font-weight: 600; transition: background .15s, border-color .15s; gap: 10px; }
+    .jp-link-btn:hover { background: #eff6ff; border-color: #93c5fd; color: #1e40af; }
+    .jp-link-btn i { color: var(--blue, #1a56db); font-size: .9rem; flex-shrink: 0; }
+    .jp-link-btn .lbl { flex: 1; }
+    .jp-link-btn .ext { font-size: .75rem; color: #64748b; }
+
+    /* ── CTA button ── */
+    .jp-cta-wrap { text-align: center; padding: 10px 0 4px; }
+    .jp-cta-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; background: #1e40af; color: #fff; font-size: 1rem; font-weight: 700; padding: 14px 36px; border-radius: 10px; text-decoration: none; transition: background .18s; max-width: 460px; width: 100%; }
+    .jp-cta-btn:hover { background: #1d4ed8; color: #fff; }
+    .jp-cta-sub { font-size: .78rem; color: #94a3b8; margin-top: 8px; }
+
+    /* ── Notice box ── */
+    .jp-notice { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 16px; font-size: .85rem; color: #78350f; line-height: 1.65; margin-bottom: 16px; }
+    .jp-notice strong { color: #92400e; }
+
+    /* ── Error / Loading ── */
+    .jp-loading { text-align: center; padding: 60px 20px; color: #64748b; }
+    .jp-spinner { width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top-color: #1e40af; border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 16px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .jp-error-card { background: #fef2f2; border: 1px solid #fecaca; border-radius: 12px; padding: 28px; text-align: center; max-width: 500px; margin: 40px auto; }
+    .jp-error-card h2 { color: #991b1b; font-size: 1.1rem; margin: 0 0 8px; }
+    .jp-error-card p  { color: #7f1d1d; font-size: .9rem; margin: 0 0 18px; }
+    .jp-error-card a  { display: inline-block; background: #1e40af; color: #fff; padding: 10px 24px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: .9rem; }
+
+    /* ── Meta bar (last date, vacancies) ── */
+    .jp-meta-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+    .jp-meta-pill { display: inline-flex; align-items: center; gap: 5px; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 999px; padding: 4px 12px; font-size: .78rem; font-weight: 600; color: #334155; }
+    .jp-meta-pill i { color: #1e40af; font-size: .75rem; }
+    .jp-meta-pill.urgent { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
+    .jp-meta-pill.urgent i { color: #dc2626; }
+
+    /* ── Tags ── */
+    .jp-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+    .jp-tag { background: #f1f5f9; color: #475569; font-size: .73rem; font-weight: 600; padding: 3px 10px; border-radius: 6px; }
+
+    /* ── Sidebar layout on wide screens ── */
+    @media(min-width: 720px) {
+      .jp-two-col { display: grid; grid-template-columns: 1fr 280px; gap: 18px; align-items: start; }
+    }
+    .jp-sidebar { display: flex; flex-direction: column; gap: 14px; }
+    .jp-sidebar-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px 16px; }
+    .jp-sidebar-card h3 { font-size: .85rem; font-weight: 800; color: #0f172a; margin: 0 0 12px; }
+    .jp-date-list { list-style: none; padding: 0; margin: 0; }
+    .jp-date-list li { display: flex; flex-direction: column; padding: 7px 0; border-bottom: 1px solid #f1f5f9; font-size: .82rem; }
+    .jp-date-list li:last-child { border-bottom: none; }
+    .jp-date-list .dlbl { color: #64748b; font-weight: 600; font-size: .72rem; text-transform: uppercase; }
+    .jp-date-list .dval { color: #0f172a; font-weight: 700; margin-top: 2px; }
+    #dateLastRow { display: none; }
+  </style>
+</head>
+<body>
+  <header class="site-header" id="site-header"></header>
+
+  <main id="main" class="container page">
+    <div class="jp-wrap" id="jpWrap">
+
+      <!-- Breadcrumb -->
+      <nav class="jp-breadcrumb" id="jpBreadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span>›</span>
+        <a href="/jobs-index.html">Jobs</a>
+        <span>›</span>
+        <span id="bcCurrent">Job Details</span>
+      </nav>
+
+      <!-- Loading spinner -->
+      <div class="jp-loading" id="jpLoading">
+        <div class="jp-spinner"></div>
+        <p>Loading job details…<br /><small style="color:#94a3b8">जानकारी लोड हो रही है…</small></p>
+      </div>
+
+      <!-- Error state (hidden) -->
+      <div id="jpError" style="display:none;">
+        <div class="jp-error-card">
+          <h2>⚠️ Job Not Found</h2>
+          <p>This link is invalid or the job has been removed.<br />यह लिंक अमान्य है या नौकरी हटा दी गई है।</p>
+          <a href="index.html">← Go to Home</a>
+        </div>
+      </div>
+
+      <!-- Job content (hidden until loaded) -->
+      <div id="jpContent" style="display:none;">
+        <div class="jp-two-col">
+
+          <!-- ── Main column ── -->
+          <div id="jpMain">
+
+            <!-- Header card -->
+            <div class="jp-card">
+              <span class="jp-badge" id="jbCategory">Sarkari Job</span>
+              <h1 class="jp-title" id="jbTitle"></h1>
+              <p class="jp-org" id="jbOrg"></p>
+
+              <!-- Meta pills -->
+              <div class="jp-meta-bar" id="jbMetaBar"></div>
+
+              <!-- Short info -->
+              <p class="jp-short" id="jbShort"></p>
+
+              <!-- Stats grid -->
+              <div class="jp-stats" id="jbStats"></div>
+
+              <!-- SEO tags -->
+              <div class="jp-tags" id="jbTags"></div>
+
+              <!-- Notice -->
+              <div class="jp-notice">
+                <strong>⚠️ Important:</strong> Always verify all details on the <strong>official government website</strong> before applying. Dates, fees & eligibility may change.
+                <span style="display:block;margin-top:5px;"><strong>ध्यान दें:</strong> आवेदन से पहले सभी जानकारी आधिकारिक वेबसाइट पर जरूर जाँचें।</span>
+              </div>
+
+              <!-- CTA -->
+              <div class="jp-cta-wrap">
+                <a id="jbApplyBtn" href="#" target="_blank" rel="noopener noreferrer" class="jp-cta-btn">
+                  <i class="fas fa-external-link-alt"></i>
+                  <span>Apply / Official Website</span>
+                </a>
+                <p class="jp-cta-sub">आधिकारिक वेबसाइट खोलें — You will be redirected to an external site.</p>
+              </div>
+            </div>
+
+            <!-- Important Dates -->
+            <div class="jp-card" id="secDates" style="display:none;">
+              <p class="jp-section-title"><i class="fas fa-calendar-alt"></i> Important Dates — महत्वपूर्ण तिथियाँ</p>
+              <div style="overflow-x:auto;">
+                <table class="jp-table" id="jbDatesTable">
+                  <tbody id="jbDatesBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Application Fee -->
+            <div class="jp-card" id="secFee" style="display:none;">
+              <p class="jp-section-title"><i class="fas fa-rupee-sign"></i> Application Fee — आवेदन शुल्क</p>
+              <div class="jp-fee-grid" id="jbFeeGrid"></div>
+            </div>
+
+            <!-- Age Limit -->
+            <div class="jp-card" id="secAge" style="display:none;">
+              <p class="jp-section-title"><i class="fas fa-user-clock"></i> Age Limit — आयु सीमा</p>
+              <div id="jbAgeContent" style="font-size:.88rem;color:#334155;line-height:1.7;"></div>
+            </div>
+
+            <!-- Qualification -->
+            <div class="jp-card" id="secQual" style="display:none;">
+              <p class="jp-section-title"><i class="fas fa-graduation-cap"></i> Educational Qualification — शैक्षिक योग्यता</p>
+              <div id="jbQualContent" style="font-size:.88rem;color:#334155;line-height:1.7;"></div>
+            </div>
+
+            <!-- Vacancy Details -->
+            <div class="jp-card" id="secVac" style="display:none;">
+              <p class="jp-section-title"><i class="fas fa-users"></i> Vacancy Details — रिक्ति विवरण</p>
+              <div style="overflow-x:auto;">
+                <table class="jp-vac-table" id="jbVacTable">
+                  <thead><tr id="jbVacHead"></tr></thead>
+                  <tbody id="jbVacBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Salary -->
+            <div class="jp-card" id="secSalary" style="display:none;">
+              <p class="jp-section-title"><i class="fas fa-money-bill-wave"></i> Salary / Pay Scale — वेतन</p>
+              <div id="jbSalaryContent" style="font-size:.88rem;color:#334155;line-height:1.7;"></div>
+            </div>
+
+            <!-- Selection Process -->
+            <div class="jp-card" id="secSel" style="display:none;">
+              <p class="jp-section-title"><i class="fas fa-list-check"></i> Selection Process — चयन प्रक्रिया</p>
+              <ul class="jp-hl-list" id="jbSelList"></ul>
+            </div>
+
+            <!-- How to Apply -->
+            <div class="jp-card" id="secHow" style="display:none;">
+              <p class="jp-section-title"><i class="fas fa-file-alt"></i> How to Apply — आवेदन कैसे करें</p>
+              <ol class="jp-steps" id="jbStepsList"></ol>
+            </div>
+
+            <!-- Important Links -->
+            <div class="jp-card" id="secLinks" style="display:none;">
+              <p class="jp-section-title"><i class="fas fa-link"></i> Important Links — महत्वपूर्ण लिंक</p>
+              <div class="jp-links" id="jbLinksDiv"></div>
+            </div>
+
+            <!-- FAQ -->
+            <div class="jp-card" id="secFaq" style="display:none;">
+              <p class="jp-section-title"><i class="fas fa-question-circle"></i> Frequently Asked Questions</p>
+              <div class="jp-faq" id="jbFaqDiv"></div>
+            </div>
+
+          </div><!-- /jpMain -->
+
+          <!-- ── Sidebar ── -->
+          <aside class="jp-sidebar" id="jpSidebar">
+            <div class="jp-sidebar-card">
+              <h3><i class="fas fa-calendar-check" style="color:#1e40af;margin-right:6px;"></i> Key Dates</h3>
+              <ul class="jp-date-list" id="jbDateSidebar">
+                <li id="dateStartRow" style="display:none;"><span class="dlbl">Application Start</span><span class="dval" id="dateStartVal">—</span></li>
+                <li id="dateLastRow"><span class="dlbl">Last Date to Apply</span><span class="dval" id="dateLastVal">See Notification</span></li>
+                <li id="dateExamRow" style="display:none;"><span class="dlbl">Exam Date</span><span class="dval" id="dateExamVal">—</span></li>
+              </ul>
+            </div>
+
+            <div class="jp-sidebar-card" id="sideStatCard">
+              <h3><i class="fas fa-chart-bar" style="color:#1e40af;margin-right:6px;"></i> Quick Overview</h3>
+              <ul class="jp-date-list" id="jbOverviewSidebar"></ul>
+            </div>
+
+            <!-- Apply button sidebar -->
+            <div class="jp-sidebar-card" style="text-align:center;">
+              <a id="jbApplyBtnSide" href="#" target="_blank" rel="noopener noreferrer" class="jp-cta-btn" style="font-size:.88rem;padding:11px 20px;">
+                <i class="fas fa-external-link-alt"></i> Official Website
+              </a>
+            </div>
+          </aside>
+
+        </div><!-- /jp-two-col -->
+      </div><!-- /jpContent -->
+
+    </div><!-- /jp-wrap -->
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script>
+  (function () {
+    'use strict';
+
+    /* ── Helpers ── */
+    function safe(v) { return (v == null ? '' : String(v)).trim(); }
+
+    function esc(s) {
+      return safe(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function fmtDate(v) {
+      var s = safe(v);
+      if (!s) return '';
+      var m = s.match(/^(\d{4})[\-\/](\d{1,2})[\-\/](\d{1,2})$/);
+      if (m) return ('0'+m[3]).slice(-2)+'/'+('0'+m[2]).slice(-2)+'/'+m[1];
+      m = s.match(/^(\d{1,2})[\-\/\.](\d{1,2})[\-\/\.](\d{4})$/);
+      if (m) return ('0'+m[1]).slice(-2)+'/'+('0'+m[2]).slice(-2)+'/'+m[3];
+      return s;
+    }
+
+    function normalizeUrl(raw) {
+      var s = safe(raw);
+      if (!s) return '';
+      if (/^(https?:)?\/\//i.test(s) || /^(mailto:|tel:)/i.test(s)) return s;
+      if (s[0]==='#' || s[0]==='?' || s[0]==='/') return s;
+      if (s.indexOf('.html')!==-1) return s;
+      return 'https://' + s.replace(/^\/+/,'');
+    }
+
+    function slugify(t) {
+      return safe(t).toLowerCase()
+        .replace(/[^a-z0-9\s-]/g,'')
+        .replace(/\s+/g,'-')
+        .replace(/-+/g,'-')
+        .replace(/^-|-$/g,'');
+    }
+
+    /* ── Params ── */
+    var params  = new URLSearchParams(window.location.search);
+    var rawSlug = safe(params.get('slug'));
+    var section = safe(params.get('section'));
+    var refUrl  = safe(params.get('ref'));
+
+    /* Strip optional section prefix (e.g. "sr_latest_jobs-actual-slug" → "actual-slug") */
+    function cleanSlug(s) {
+      // Some slugs have "sr_sectionid-" prefix — strip it
+      // Pattern: starts with letters/digits/underscores then hyphen, try without prefix too
+      return s;
+    }
+
+    var slug = rawSlug ? cleanSlug(rawSlug) : '';
+
+    /* ── DOM refs ── */
+    var loading   = document.getElementById('jpLoading');
+    var error     = document.getElementById('jpError');
+    var content   = document.getElementById('jpContent');
+    var bcCurrent = document.getElementById('bcCurrent');
+
+    function show(el)  { el.style.display = ''; }
+    function hide(el)  { el.style.display = 'none'; }
+    function showErr() { hide(loading); show(error); }
+
+    /* ── Attempt to extract real slug from known prefixed formats ── */
+    function extractSlug(raw) {
+      if (!raw) return '';
+      var s = raw;
+      // Strip known section prefixes (e.g. "sr_latest_jobs-actual-slug")
+      var prefixes = ['sr_latest_jobs-','sr_latest_notifications-','sr_bank_jobs-','sr_railway-','sr_ssc-','sr_defence-','sr_police-','sr_teaching-','sr_engineering-','sr_medical-','sr_state_jobs-','sr_admit_card-','sr_result-'];
+      for (var i=0; i<prefixes.length; i++) {
+        if (s.startsWith(prefixes[i])) { s = s.slice(prefixes[i].length); break; }
+      }
+      // Strip trailing 6-char hex fingerprint like "-cc06bd"
+      s = s.replace(/-[0-9a-f]{6}$/, '');
+      return s;
+    }
+
+    /* ── Try fetching job data from /jobs/data/<slug>.json ── */
+    /* Multiple slug variants to try */
+    function buildSlugVariants(raw) {
+      var variants = [raw];
+      var stripped = extractSlug(raw);
+      if (stripped !== raw) variants.push(stripped);
+      // Also try with section suffix appended (e.g. slug + "-" + slugify(section))
+      if (section) {
+        var secSlug = slugify(section);
+        variants.push(raw + '-' + secSlug);
+        if (stripped !== raw) variants.push(stripped + '-' + secSlug);
+      }
+      // Deduplicate
+      return variants.filter(function(v,i,a){ return v && a.indexOf(v)===i; });
+    }
+
+    async function tryFetchJobData(slug) {
+      var variants = buildSlugVariants(slug);
+      for (var i=0; i<variants.length; i++) {
+        try {
+          var r = await fetch('/jobs/data/' + variants[i] + '.json');
+          if (r.ok) {
+            var d = await r.json();
+            return { data: d, usedSlug: variants[i] };
+          }
+        } catch(e) {}
+      }
+      return null;
+    }
+
+    /* ── Fallback: search jobs-index.json then merged data ── */
+    async function findInIndex(rawSlug) {
+      var variants = buildSlugVariants(rawSlug);
+      try {
+        var r = await fetch('/jobs-index.json');
+        if (!r.ok) return null;
+        var idx = await r.json();
+        for (var i=0; i<variants.length; i++) {
+          if (idx[variants[i]]) return { indexRow: idx[variants[i]], slug: variants[i] };
+        }
+        // partial match by title similarity
+        for (var i=0; i<variants.length; i++) {
+          var v = variants[i];
+          for (var k in idx) {
+            if (k.indexOf(v.slice(0,30)) !== -1) return { indexRow: idx[k], slug: k };
+          }
+        }
+      } catch(e) {}
+      return null;
+    }
+
+    async function searchMergedData(rawSlug) {
+      var variants = buildSlugVariants(rawSlug);
+      try {
+        var r = await fetch('/merged_sarkari_data.json');
+        if (!r.ok) return null;
+        var d = await r.json();
+        var jobs = d.jobs || [];
+        for (var i=0; i<variants.length; i++) {
+          var v = variants[i];
+          for (var j=0; j<jobs.length; j++) {
+            var jb = jobs[j];
+            var jSlug = jb.slug || slugify(jb.title || jb.name || '');
+            if (jSlug === v || jSlug.indexOf(v.slice(0,30)) !== -1) return jb;
+          }
+        }
+        // Search by title words
+        var words = variants[0].split('-').slice(0,4).join(' ');
+        for (var j=0; j<jobs.length; j++) {
+          var jb = jobs[j];
+          var t = (jb.title || jb.name || '').toLowerCase();
+          if (t.indexOf(words.replace(/-/g,' ').slice(0,20)) !== -1) return jb;
+        }
+      } catch(e) {}
+      return null;
+    }
+
+    /* ── Render functions ── */
+    function guessCategory(title) {
+      var t = title.toLowerCase();
+      if (t.includes('result'))      return 'Result';
+      if (t.includes('admit card'))  return 'Admit Card';
+      if (t.includes('answer key'))  return 'Answer Key';
+      if (t.includes('syllabus'))    return 'Syllabus';
+      if (t.includes('admission'))   return 'Admission';
+      if (t.includes('scholarship')) return 'Scholarship';
+      if (t.includes('online form') || t.includes('application')) return 'Online Form';
+      if (t.includes('notification')) return 'Notification';
+      return 'Sarkari Job';
+    }
+
+    function renderFromFullData(data, usedSlug) {
+      var bd   = data.basic_details || {};
+      var dates= data.important_dates || {};
+      var fee  = data.application_fee || {};
+      var age  = data.age_limit || {};
+      var qual = data.qualification || {};
+      var vac  = data.vacancy_details || [];
+      var catVac = data.category_wise_vacancy || {};
+      var sal  = data.salary_details || {};
+      var sel  = data.selection_process || [];
+      var how  = data.how_to_apply || [];
+      var links= data.important_links || {};
+      var faq  = data.faq || [];
+      var tags = data.seo_tags || [];
+
+      var title = safe(bd.job_title || bd.title || '');
+      var org   = safe(bd.organization_name || bd.org || '');
+      var officialUrl = normalizeUrl(bd.official_website || (links.click_here && links.click_here[0]) || '');
+      var shortInfo   = safe(bd.short_information || '');
+      var category    = guessCategory(title) || safe(data.category || '').replace(/_/g,' ');
+
+      /* Page title + canonical */
+      if (title) {
+        document.title = title + ' | Top Sarkari Jobs';
+        var meta = document.querySelector('meta[name="description"]');
+        if (meta) meta.setAttribute('content', (shortInfo || title).slice(0,160));
+        var canon = document.getElementById('canonicalTag');
+        if (canon) canon.setAttribute('href', 'https://www.topsarkarijobs.com/job.html?slug=' + encodeURIComponent(usedSlug));
+      }
+
+      /* Breadcrumb */
+      if (title) bcCurrent.textContent = title.slice(0,60) + (title.length>60?'…':'');
+
+      /* Badge + Title */
+      document.getElementById('jbCategory').textContent = category;
+      document.getElementById('jbTitle').textContent = title;
+      document.getElementById('jbOrg').textContent = org;
+
+      /* Short info */
+      if (shortInfo) document.getElementById('jbShort').textContent = shortInfo;
+
+      /* Meta pills */
+      var metaBar = document.getElementById('jbMetaBar');
+      var lastDate = safe(dates.last_date_to_apply || dates.last_date || '');
+      var totalVac = safe(bd.total_vacancies || '');
+      var applyMode= safe(bd.application_mode || '');
+      if (lastDate) {
+        var pill = document.createElement('span');
+        pill.className = 'jp-meta-pill urgent';
+        pill.innerHTML = '<i class="fas fa-clock"></i> Last Date: ' + esc(fmtDate(lastDate));
+        metaBar.appendChild(pill);
+      }
+      if (totalVac) {
+        var pill2 = document.createElement('span');
+        pill2.className = 'jp-meta-pill';
+        pill2.innerHTML = '<i class="fas fa-users"></i> Vacancies: ' + esc(totalVac);
+        metaBar.appendChild(pill2);
+      }
+      if (applyMode) {
+        var pill3 = document.createElement('span');
+        pill3.className = 'jp-meta-pill';
+        pill3.innerHTML = '<i class="fas fa-desktop"></i> ' + esc(applyMode);
+        metaBar.appendChild(pill3);
+      }
+
+      /* Stats grid */
+      var statsDiv = document.getElementById('jbStats');
+      var statItems = [
+        { label:'Total Vacancies', value: bd.total_vacancies, id:'statVac' },
+        { label:'Last Date', value: fmtDate(lastDate) || 'See Notification', id:'statLastDate' },
+        { label:'Apply Mode', value: bd.application_mode, id:'statApplyMode' },
+        { label:'Post Name', value: bd.post_name, id:'statPost' },
+        { label:'Last Updated', value: bd.last_updated, id:'statUpdated' },
+        { label:'Notification No.', value: bd.notification_number, id:'statNotif' },
+      ];
+      statItems.forEach(function(it){
+        if (!safe(it.value)) return;
+        var d = document.createElement('div');
+        d.className = 'jp-stat';
+        d.innerHTML = '<div class="jp-stat-label">' + esc(it.label) + '</div><div class="jp-stat-val" id="' + it.id + '">' + esc(it.value) + '</div>';
+        statsDiv.appendChild(d);
+      });
+
+      /* SEO Tags */
+      if (tags.length) {
+        var tagsDiv = document.getElementById('jbTags');
+        tags.slice(0,8).forEach(function(t){
+          var span = document.createElement('span');
+          span.className = 'jp-tag';
+          span.textContent = t;
+          tagsDiv.appendChild(span);
+        });
+      }
+
+      /* Apply button */
+      var applyUrl = officialUrl || '#';
+      document.getElementById('jbApplyBtn').href = applyUrl;
+      document.getElementById('jbApplyBtnSide').href = applyUrl;
+
+      /* ── Important Dates ── */
+      var dateRows = [];
+      var dateLabels = {
+        'date of advertisement': 'Advertisement Date',
+        'application_start': 'Application Start',
+        'last_date_to_apply': 'Last Date to Apply',
+        'last_date': 'Last Date',
+        'fee_payment_last_date': 'Fee Payment Last Date',
+        'exam_date': 'Exam Date',
+        'interview_date': 'Interview Date',
+        'result_date': 'Result Date',
+        'eligibility cut-off date (age, qualification, experience)': 'Eligibility Cut-off Date',
+      };
+      Object.keys(dates).forEach(function(k){
+        if (k === 'event' || k === 'date') return;
+        var v = safe(dates[k]);
+        if (!v || v === '—' || v.toLowerCase() === 'event') return;
+        var label = dateLabels[k.toLowerCase()] || k.replace(/_/g,' ').replace(/\b[a-z]/g,function(m){ return m.toUpperCase(); });
+        dateRows.push({ label: label, value: fmtDate(v) || v });
+      });
+      if (dateRows.length) {
+        show(document.getElementById('secDates'));
+        var tbody = document.getElementById('jbDatesBody');
+        dateRows.forEach(function(r){
+          var tr = document.createElement('tr');
+          tr.innerHTML = '<th>' + esc(r.label) + '</th><td>' + esc(r.value) + '</td>';
+          tbody.appendChild(tr);
+        });
+      }
+
+      /* Sidebar dates */
+      var appStart = safe(dates.application_start || '');
+      if (appStart) {
+        var el = document.getElementById('dateStartRow');
+        document.getElementById('dateStartVal').textContent = fmtDate(appStart);
+        show(el);
+      }
+      var lastDateForSide = safe(dates.last_date_to_apply || dates.last_date || '');
+      if (lastDateForSide) {
+        document.getElementById('dateLastVal').textContent = fmtDate(lastDateForSide);
+        show(document.getElementById('dateLastRow'));
+      }
+      var examDate = safe(dates.exam_date || '');
+      if (examDate && examDate !== 'N/A' && examDate !== '—') {
+        document.getElementById('dateExamVal').textContent = fmtDate(examDate);
+        show(document.getElementById('dateExamRow'));
+      }
+
+      /* Sidebar overview */
+      var overviewList = document.getElementById('jbOverviewSidebar');
+      var overviewItems = [
+        ['Vacancies', totalVac],
+        ['Apply Mode', applyMode],
+        ['Category', safe(data.category || category).replace(/_/g,' ')],
+        ['Min Age', safe(age.minimum_age || age.min_age || '')],
+        ['Max Age', safe(age.maximum_age || age.max_age || '')],
+      ];
+      overviewItems.forEach(function(it){
+        if (!safe(it[1])) return;
+        var li = document.createElement('li');
+        li.innerHTML = '<span class="dlbl">' + esc(it[0]) + '</span><span class="dval">' + esc(it[1]) + '</span>';
+        overviewList.appendChild(li);
+      });
+
+      /* ── Application Fee ── */
+      var feeItems = [
+        { label:'General / OBC / EWS', value: fee.general_obc_ews || fee.general || fee.ur },
+        { label:'SC / ST', value: fee.sc_st || fee.sc || fee.st },
+        { label:'Female', value: fee.female || fee.women },
+        { label:'PwD / ESM', value: fee.pwd || fee.esm || fee.ph },
+        { label:'Payment Mode', value: fee.payment_mode || fee.mode },
+      ];
+      var hasFee = feeItems.some(function(it){ return safe(it.value); });
+      if (hasFee) {
+        show(document.getElementById('secFee'));
+        var feeGrid = document.getElementById('jbFeeGrid');
+        feeItems.forEach(function(it){
+          if (!safe(it.value)) return;
+          var d = document.createElement('div');
+          d.className = 'jp-fee-item';
+          d.innerHTML = '<div class="lbl">' + esc(it.label) + '</div><div class="val">₹ ' + esc(it.value) + '</div>';
+          feeGrid.appendChild(d);
+        });
+      }
+
+      /* ── Age Limit ── */
+      var ageText = safe(age.details || age.age_limit || age.general || '');
+      if (!ageText && (age.minimum_age || age.maximum_age)) {
+        ageText = 'Minimum Age: ' + safe(age.minimum_age || 'As per rules') + ' Years\nMaximum Age: ' + safe(age.maximum_age || 'As per rules') + ' Years';
+      }
+      if (ageText) {
+        show(document.getElementById('secAge'));
+        document.getElementById('jbAgeContent').innerHTML = ageText.split('\n').map(function(l){ return '<p style="margin:4px 0;">' + esc(l) + '</p>'; }).join('');
+      }
+
+      /* ── Qualification ── */
+      var qualText = safe(qual.details || qual.educational_qualification || qual.qualification || '');
+      if (!qualText && typeof qual === 'string') qualText = qual;
+      if (qualText) {
+        show(document.getElementById('secQual'));
+        var qEl = document.getElementById('jbQualContent');
+        qEl.innerHTML = qualText.split('\n').filter(function(l){ return l.trim(); }).map(function(l){ return '<p style="margin:5px 0;">' + esc(l) + '</p>'; }).join('');
+      }
+
+      /* ── Vacancy Details ── */
+      if (vac && vac.length > 0) {
+        show(document.getElementById('secVac'));
+        var thead = document.getElementById('jbVacHead');
+        var tbody2 = document.getElementById('jbVacBody');
+        var keys = Object.keys(vac[0] || {});
+        // Prefer nice headers
+        var niceKeys = keys.map(function(k){ return k.replace(/_/g,' ').replace(/\b[a-z]/g,function(m){ return m.toUpperCase(); }); });
+        thead.innerHTML = niceKeys.map(function(k){ return '<th>' + esc(k) + '</th>'; }).join('');
+        vac.forEach(function(row){
+          var tr = document.createElement('tr');
+          tr.innerHTML = keys.map(function(k){ return '<td>' + esc(safe(row[k])) + '</td>'; }).join('');
+          tbody2.appendChild(tr);
+        });
+      } else if (catVac && Object.keys(catVac).length > 0) {
+        show(document.getElementById('secVac'));
+        var thead = document.getElementById('jbVacHead');
+        var tbody2 = document.getElementById('jbVacBody');
+        thead.innerHTML = '<th>Category</th><th>Posts</th>';
+        Object.keys(catVac).forEach(function(k){
+          if (!k || k.toLowerCase() === 'total') return;
+          var tr = document.createElement('tr');
+          tr.innerHTML = '<td>' + esc(k) + '</td><td>' + esc(safe(catVac[k])) + '</td>';
+          tbody2.appendChild(tr);
+        });
+        if (catVac.total) {
+          var tr = document.createElement('tr');
+          tr.innerHTML = '<td><strong>Total</strong></td><td><strong>' + esc(safe(catVac.total)) + '</strong></td>';
+          tbody2.appendChild(tr);
+        }
+      }
+
+      /* ── Salary ── */
+      var salText = safe(sal.details || sal.pay_scale || sal.salary || sal.pay_band || '');
+      if (!salText && typeof sal === 'string') salText = sal;
+      if (salText) {
+        show(document.getElementById('secSalary'));
+        document.getElementById('jbSalaryContent').innerHTML = salText.split('\n').filter(function(l){ return l.trim(); }).map(function(l){ return '<p style="margin:5px 0;">' + esc(l) + '</p>'; }).join('');
+      }
+
+      /* ── Selection Process ── */
+      var selArr = Array.isArray(sel) ? sel : (safe(sel) ? [safe(sel)] : []);
+      if (selArr.length) {
+        show(document.getElementById('secSel'));
+        var selList = document.getElementById('jbSelList');
+        selArr.forEach(function(step){
+          var li = document.createElement('li');
+          li.className = 'jp-hl-item';
+          li.innerHTML = '<i class="fas fa-check-circle"></i><span>' + esc(safe(step)) + '</span>';
+          selList.appendChild(li);
+        });
+      }
+
+      /* ── How to Apply ── */
+      var howArr = Array.isArray(how) ? how : (safe(how) ? [safe(how)] : []);
+      if (howArr.length) {
+        show(document.getElementById('secHow'));
+        var stepsList = document.getElementById('jbStepsList');
+        howArr.forEach(function(step){
+          var s = safe(step);
+          if (!s) return;
+          var li = document.createElement('li');
+          li.textContent = s;
+          stepsList.appendChild(li);
+        });
+      }
+
+      /* ── Important Links ── */
+      var linkEntries = [];
+      if (links.apply_online)        linkEntries.push({ label:'Apply Online', url: links.apply_online, icon:'fas fa-edit' });
+      if (links.notification_pdf)    linkEntries.push({ label:'Download Notification PDF', url: links.notification_pdf, icon:'fas fa-file-pdf' });
+      if (links.official_website)    linkEntries.push({ label:'Official Website', url: links.official_website, icon:'fas fa-globe' });
+      if (Array.isArray(links.click_here)) {
+        links.click_here.forEach(function(u,i){
+          if (!safe(u)) return;
+          var label = i===0 ? 'Apply / Official Link' : (i===1 ? 'Notification' : 'More Info');
+          linkEntries.push({ label:label, url:u, icon:'fas fa-external-link-alt' });
+        });
+      }
+      if (linkEntries.length) {
+        show(document.getElementById('secLinks'));
+        var linksDiv = document.getElementById('jbLinksDiv');
+        linkEntries.forEach(function(le){
+          var nu = normalizeUrl(le.url);
+          if (!nu) return;
+          var a = document.createElement('a');
+          a.href = nu;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          a.className = 'jp-link-btn';
+          a.innerHTML = '<i class="' + le.icon + '"></i><span class="lbl">' + esc(le.label) + '</span><span class="ext">↗</span>';
+          linksDiv.appendChild(a);
+        });
+      }
+
+      /* ── FAQ ── */
+      // Deduplicate FAQs by question
+      var seen = {};
+      var uniqFaq = faq.filter(function(f){
+        var q = safe(f.question);
+        if (!q || seen[q]) return false;
+        seen[q] = true;
+        return true;
+      });
+      if (uniqFaq.length) {
+        show(document.getElementById('secFaq'));
+        var faqDiv = document.getElementById('jbFaqDiv');
+        uniqFaq.slice(0,12).forEach(function(f, idx){
+          var div = document.createElement('div');
+          div.className = 'jp-faq-item';
+          div.innerHTML = '<div class="jp-faq-q">' + esc(safe(f.question)) + ' <span class="arrow">▼</span></div><div class="jp-faq-a">' + esc(safe(f.answer)) + '</div>';
+          div.querySelector('.jp-faq-q').addEventListener('click', function(){
+            div.classList.toggle('open');
+          });
+          faqDiv.appendChild(div);
+        });
+      }
+
+      /* ── SEO Engine callback ── */
+      if (window.__SEO_ENGINE_JOB_READY) {
+        try {
+          window.__SEO_ENGINE_JOB_READY({
+            title: title, slug: usedSlug, org: org,
+            datePosted: safe(dates.application_start || bd.last_updated || ''),
+            lastDate: lastDate,
+            salary: safe((sal.details || sal.pay_scale || '').match(/\d[\d,]*/g || [''])[0] || ''),
+            totalVacancies: safe(bd.total_vacancies || ''),
+            applyUrl: 'https://www.topsarkarijobs.com/job.html?slug=' + encodeURIComponent(usedSlug)
+          });
+        } catch(e) {}
+      }
+
+      /* Expose for patch script */
+      window.__TSJ_RAW_JOB = data;
+      window.__TSJ_RENDER_DONE = true;
+      if (typeof window.__TSJ_ON_RENDER_DONE === 'function') {
+        try { window.__TSJ_ON_RENDER_DONE(data); } catch(e) {}
+      }
+    }
+
+    /* ── Render from minimal index row ── */
+    function renderFromIndexRow(row, slug) {
+      var title = safe(row.title || slug.replace(/-/g,' ').replace(/\b[a-z]/g,function(m){ return m.toUpperCase(); }));
+      document.title = title + ' | Top Sarkari Jobs';
+      bcCurrent.textContent = title.slice(0,60);
+      document.getElementById('jbCategory').textContent = guessCategory(title);
+      document.getElementById('jbTitle').textContent = title;
+      document.getElementById('jbOrg').textContent = '';
+      document.getElementById('jbShort').textContent = 'Detailed information is being loaded. Check back shortly or visit the official website.';
+
+      if (row.last_date) {
+        var pill = document.createElement('span');
+        pill.className = 'jp-meta-pill urgent';
+        pill.innerHTML = '<i class="fas fa-clock"></i> Last Date: ' + esc(fmtDate(row.last_date));
+        document.getElementById('jbMetaBar').appendChild(pill);
+        document.getElementById('dateLastVal').textContent = fmtDate(row.last_date);
+        show(document.getElementById('dateLastRow'));
+      }
+
+      var applyUrl = normalizeUrl(row.url || '');
+      if (!applyUrl) applyUrl = '#';
+      document.getElementById('jbApplyBtn').href = applyUrl;
+      document.getElementById('jbApplyBtnSide').href = applyUrl;
+
+      window.__TSJ_RENDER_DONE = true;
+      if (typeof window.__TSJ_ON_RENDER_DONE === 'function') {
+        try { window.__TSJ_ON_RENDER_DONE(null); } catch(e) {}
+      }
+    }
+
+    /* ── Render from merged data job ── */
+    function renderFromMerged(job) {
+      var title = safe(job.title || job.name || '');
+      document.title = title + ' | Top Sarkari Jobs';
+      bcCurrent.textContent = title.slice(0,60);
+      document.getElementById('jbCategory').textContent = guessCategory(title);
+      document.getElementById('jbTitle').textContent = title;
+      document.getElementById('jbOrg').textContent = safe(job.organization || '');
+      document.getElementById('jbShort').textContent = safe(job.how_to_apply || '').slice(0,400);
+
+      var dates = job.important_dates || {};
+      var lastDate = safe(dates.last_date_to_apply || dates.last_date || job.last_date || '');
+      if (lastDate) {
+        var pill = document.createElement('span');
+        pill.className = 'jp-meta-pill urgent';
+        pill.innerHTML = '<i class="fas fa-clock"></i> Last Date: ' + esc(fmtDate(lastDate));
+        document.getElementById('jbMetaBar').appendChild(pill);
+        document.getElementById('dateLastVal').textContent = fmtDate(lastDate);
+        show(document.getElementById('dateLastRow'));
+      }
+      if (job.total_vacancy) {
+        var pill2 = document.createElement('span');
+        pill2.className = 'jp-meta-pill';
+        pill2.innerHTML = '<i class="fas fa-users"></i> Vacancies: ' + esc(safe(job.total_vacancy));
+        document.getElementById('jbMetaBar').appendChild(pill2);
+      }
+
+      var applyUrl = normalizeUrl(job.source_url || job.url || job.link || refUrl || '');
+      document.getElementById('jbApplyBtn').href = applyUrl || '#';
+      document.getElementById('jbApplyBtnSide').href = applyUrl || '#';
+
+      /* Stats */
+      var statsDiv = document.getElementById('jbStats');
+      var statItems = [
+        { label:'Post Name', value: job.post_name },
+        { label:'Last Date', value: fmtDate(lastDate) || 'See Notification', id:'statLastDate' },
+        { label:'Total Vacancy', value: job.total_vacancy },
+        { label:'Salary', value: job.salary_pay_scale },
+        { label:'Apply Mode', value: job.apply_mode, id:'statApplyMode' },
+        { label:'Location', value: job.job_location },
+      ];
+      statItems.forEach(function(it){
+        if (!safe(it.value)) return;
+        var d = document.createElement('div');
+        d.className = 'jp-stat';
+        d.innerHTML = '<div class="jp-stat-label">' + esc(it.label) + '</div><div class="jp-stat-val"' + (it.id?' id="'+it.id+'"':'') + '>' + esc(it.value) + '</div>';
+        statsDiv.appendChild(d);
+      });
+
+      window.__TSJ_RENDER_DONE = true;
+      if (typeof window.__TSJ_ON_RENDER_DONE === 'function') {
+        try { window.__TSJ_ON_RENDER_DONE(null); } catch(e) {}
+      }
+    }
+
+    /* ── Main ── */
+    (async function run() {
+      if (!slug) { showErr(); return; }
+
+      /* Set a partial title immediately from slug */
+      var partialTitle = extractSlug(slug).replace(/-/g,' ').replace(/\b[a-z]/g,function(m){ return m.toUpperCase(); });
+      document.title = partialTitle + ' | Top Sarkari Jobs';
+      bcCurrent.textContent = partialTitle.slice(0,60);
+
+      /* Try 1: Full data JSON */
+      var res = await tryFetchJobData(slug);
+      if (res && res.data) {
+        hide(loading);
+        show(content);
+        renderFromFullData(res.data, res.usedSlug);
+        return;
+      }
+
+      /* Try 2: jobs-index.json (minimal) */
+      var idxRes = await findInIndex(slug);
+      if (idxRes) {
+        /* Try to get full data using slug from index */
+        var res2 = await tryFetchJobData(idxRes.slug);
+        if (res2 && res2.data) {
+          hide(loading);
+          show(content);
+          renderFromFullData(res2.data, res2.usedSlug);
+          return;
+        }
+        /* Use minimal index data */
+        hide(loading);
+        show(content);
+        renderFromIndexRow(idxRes.indexRow, idxRes.slug);
+        return;
+      }
+
+      /* Try 3: merged_sarkari_data.json */
+      var merged = await searchMergedData(slug);
+      if (merged) {
+        hide(loading);
+        show(content);
+        renderFromMerged(merged);
+        return;
+      }
+
+      /* Not found — but if we have a ref URL (e.g. external link), show it */
+      if (refUrl) {
+        var nu = normalizeUrl(refUrl);
+        if (nu) {
+          // Build a basic page from the slug title + ref URL
+          var title = extractSlug(slug).replace(/-/g,' ').replace(/\b[a-z]/g,function(m){ return m.toUpperCase(); });
+          document.title = title + ' | Top Sarkari Jobs';
+          bcCurrent.textContent = title.slice(0,60);
+          document.getElementById('jbCategory').textContent = guessCategory(title);
+          document.getElementById('jbTitle').textContent = title;
+          document.getElementById('jbOrg').textContent = '';
+          document.getElementById('jbShort').textContent = 'Click below to visit the official website for complete details about this scheme/job.';
+          document.getElementById('jbApplyBtn').href = nu;
+          document.getElementById('jbApplyBtnSide').href = nu;
+          window.__TSJ_RENDER_DONE = true;
+          hide(loading);
+          show(content);
+          return;
+        }
+      }
+
+      showErr();
+    })();
+
+    /* ── FAQ toggle ── */
+    document.addEventListener('click', function(e){
+      var q = e.target.closest('.jp-faq-q');
+      if (q) {
+        var item = q.closest('.jp-faq-item');
+        if (item) item.classList.toggle('open');
+      }
+    });
+
+  })();
+  </script>
+
+  <!-- Load header/footer + patch script -->
+  <script src="script.js?v=20260520" defer></script>
+  <script src="job-renderer-patch.js?v=20260520" defer></script>
+  <script src="seo-engine.js?v=20260520" defer></script>
+</body>
+</html>
