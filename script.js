@@ -199,34 +199,83 @@
     return { sections };
   }
 
-  /* Fetch sections-index.json (FAST: 16KB) or fallback to Complete_Jobs_Full_Data.json */
+  /* Fetch sections-index.json (FAST: 16KB) OR fallback to Complete_Jobs_Full_Data.json.
+   *
+   * FIX (sections-index merge): sections-index.json mein sirf 8 categories hain.
+   * Railway, Police, Bank, Teaching etc. wahan nahi hain. Isliye ab hum:
+   *   1. sections-index.json se jo categories milti hain → fast path se lo
+   *   2. JOBS_CAT_META mein jo categories MISSING hain → Complete_Jobs_Full_Data.json se fill karo
+   *   3. Final result JOBS_CAT_META key order ke hisaab se sort karke return karo
+   * Agar sections-index available nahi → pure fallback to big JSON (old behaviour).
+   */
   async function getJobsSections() {
     try {
-      // FAST PATH: sections-index.json prefetched at page load (16KB vs 18MB)
+      // ── Helper: get raw data from cache / sessionStorage / network ──
+      async function getRawJobsData() {
+        if (__jobsDataPromise) {
+          const raw = await __jobsDataPromise;
+          if (raw) {
+            __jsonCache.set('Complete_Jobs_Full_Data.json', Promise.resolve(raw));
+            return raw;
+          }
+        }
+        // SLOW PATH: Full file (first visit, no cache)
+        const raw = await getJSON('Complete_Jobs_Full_Data.json');
+        if (raw) {
+          try { sessionStorage.setItem('__cjfd_v1', JSON.stringify({ ts: Date.now(), data: raw })); } catch(e) {}
+          __jsonCache.set('Complete_Jobs_Full_Data.json', Promise.resolve(raw));
+        }
+        return raw || null;
+      }
+
+      // ── FAST PATH: sections-index.json available ──
       if (window.__sectionsIndexPromise) {
         const indexData = await window.__sectionsIndexPromise;
         if (indexData) {
-          const result = convertSectionsIndex(indexData);
-          if (result.sections.length > 0) return result;
+          const fastResult = convertSectionsIndex(indexData);
+
+          if (fastResult.sections.length > 0) {
+            // Which JOBS_CAT_META keys are already covered by sections-index?
+            const coveredIds = new Set(fastResult.sections.map(s => s.id));
+
+            // Find categories present in JOBS_CAT_META but NOT in sections-index
+            const missingCatKeys = Object.entries(JOBS_CAT_META)
+              .filter(([, meta]) => !coveredIds.has(meta.id))
+              .map(([key]) => key);
+
+            if (missingCatKeys.length === 0) {
+              // All categories covered — return immediately (old fast path)
+              return fastResult;
+            }
+
+            // Fetch big JSON only for the missing categories
+            let extraSections = [];
+            try {
+              const raw = await getRawJobsData();
+              if (raw) {
+                const fullResult = convertJobsDataToSections(raw);
+                // Keep only the missing categories from the full result
+                extraSections = fullResult.sections.filter(sec =>
+                  missingCatKeys.some(k => JOBS_CAT_META[k] && JOBS_CAT_META[k].id === sec.id)
+                );
+              }
+            } catch (_) { /* big JSON failed — still return fast sections */ }
+
+            // Merge and sort by JOBS_CAT_META order
+            const allSections = [...fastResult.sections, ...extraSections];
+            const catOrder = Object.values(JOBS_CAT_META).map(m => m.id);
+            allSections.sort((a, b) => catOrder.indexOf(a.id) - catOrder.indexOf(b.id));
+
+            return { sections: allSections };
+          }
         }
       }
 
-      // FALLBACK: sessionStorage cache (skip 18MB download on repeat visits)
-      if (__jobsDataPromise) {
-        const raw = await __jobsDataPromise;
-        if (!raw) return { sections: [] };
-        __jsonCache.set('Complete_Jobs_Full_Data.json', Promise.resolve(raw));
-        return convertJobsDataToSections(raw);
-      }
-
-      // SLOW PATH: Full 18MB file (first visit, no cache)
-      const raw = await getJSON('Complete_Jobs_Full_Data.json');
-      if (raw) {
-        try { sessionStorage.setItem('__cjfd_v1', JSON.stringify({ ts: Date.now(), data: raw })); } catch(e) {}
-        __jsonCache.set('Complete_Jobs_Full_Data.json', Promise.resolve(raw));
-        return convertJobsDataToSections(raw);
-      }
+      // ── FALLBACK: no sections-index — use big JSON only ──
+      const raw = await getRawJobsData();
+      if (raw) return convertJobsDataToSections(raw);
       return { sections: [] };
+
     } catch (_) { return { sections: [] }; }
   }
 
