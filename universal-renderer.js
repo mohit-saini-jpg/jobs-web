@@ -455,6 +455,249 @@
 
 
   /* ══════════════════════════════════════════════════════════════════════
+     § 3b — UPCOMING_JOBS SECTIONS NORMALIZER
+     Converts the sections[] array format (used by merged_sarkari_data UPCOMING_JOBS)
+     into structured fields that the extract functions understand.
+     Called at the top of onJobRendered() before runBasePatches / injectAllSections.
+  ══════════════════════════════════════════════════════════════════════ */
+
+  /**
+   * Parse a date string like "22/05/2026" or "22/05/2026 11:59 PM" → "22/05/2026"
+   */
+  function parseDateStr(str) {
+    if (!str) return '';
+    const m = str.match(/(\d{2}\/\d{2}\/\d{4})/);
+    return m ? m[1] : str.trim();
+  }
+
+  /**
+   * Extract starting date from Important Dates list items.
+   * Looks for items like "Starting Date : 22/05/2026"
+   */
+  function extractStartingDateFromItems(items) {
+    if (!Array.isArray(items)) return '';
+    for (const item of items) {
+      if (/starting\s*date/i.test(item)) {
+        const m = item.match(/:\s*(.+)$/);
+        return m ? parseDateStr(m[1].trim()) : '';
+      }
+    }
+    return '';
+  }
+
+  /**
+   * Normalize UPCOMING_JOBS sections[] array into structured fields.
+   * Mutates the rawJob object in-place to add important_dates, application_fee,
+   * age_limit, salary_details, vacancy_details, category_wise_vacancy, etc.
+   * so that all existing extract functions work without modification.
+   */
+  function normalizeUpcomingJobsSections(rawJob) {
+    if (!rawJob || !Array.isArray(rawJob.sections) || rawJob.sections.length === 0) return rawJob;
+    // Only run for UPCOMING_JOBS category
+    if (rawJob.category !== 'UPCOMING_JOBS') return rawJob;
+
+    const sections = rawJob.sections;
+
+    // Helper: get all text from a section's content
+    function getSectionItems(sectionTitle) {
+      const sec = sections.find(s => s.title && s.title.toLowerCase() === sectionTitle.toLowerCase());
+      if (!sec || !Array.isArray(sec.content)) return [];
+      const items = [];
+      for (const blk of sec.content) {
+        if (blk.type === 'list' && Array.isArray(blk.items)) items.push(...blk.items);
+        else if (blk.type === 'paragraph' && blk.text) items.push(blk.text);
+      }
+      return items;
+    }
+
+    function getSectionRows(sectionTitle) {
+      const sec = sections.find(s => s.title && s.title.toLowerCase() === sectionTitle.toLowerCase());
+      if (!sec || !Array.isArray(sec.content)) return [];
+      for (const blk of sec.content) {
+        if (blk.type === 'table' && Array.isArray(blk.rows)) return blk.rows;
+      }
+      return [];
+    }
+
+    // Helper: parse key: value style items
+    function parseKV(items) {
+      const map = {};
+      for (const item of items) {
+        const colon = item.indexOf(':');
+        if (colon > 0) {
+          const key = item.slice(0, colon).trim().toLowerCase().replace(/\s+/g, '_');
+          const val = item.slice(colon + 1).trim();
+          map[key] = val;
+        }
+      }
+      return map;
+    }
+
+    // ── Important Dates ──
+    if (!rawJob.important_dates || Object.keys(rawJob.important_dates).length === 0) {
+      const dateItems = getSectionItems('Important Dates');
+      const kv = parseKV(dateItems);
+      const id = {};
+      if (kv['starting_date'] || kv['application_begin_date'] || kv['starting_date_(online)']) {
+        id.application_begin = kv['starting_date'] || kv['application_begin_date'] || kv['starting_date_(online)'] || '';
+      }
+      if (kv['last_date']) {
+        id.last_date = parseDateStr(kv['last_date']);
+      }
+      if (kv['correction_date']) id.correction_last_date = parseDateStr(kv['correction_date']);
+      if (kv['notification_out'] || kv['notification_date']) {
+        id.notification_date = parseDateStr(kv['notification_out'] || kv['notification_date']);
+      }
+      if (kv['exam_date']) id.exam_date = parseDateStr(kv['exam_date']);
+      // Also store raw text so existing rawText fallback works
+      if (dateItems.length > 0) id.raw = dateItems.join(' | ');
+      rawJob.important_dates = id;
+    }
+
+    // ── Application Fee ──
+    if (!rawJob.application_fee || Object.keys(rawJob.application_fee).length === 0) {
+      const feeItems = getSectionItems('Application Fees');
+      const kv = parseKV(feeItems);
+      const fee = {};
+      if (kv['for_all_candidates']) fee.all = kv['for_all_candidates'];
+      if (kv['general']) fee.general = kv['general'];
+      if (kv['obc']) fee.obc = kv['obc'];
+      if (kv['sc/st'] || kv['sc_/_st']) fee.sc_st = kv['sc/st'] || kv['sc_/_st'];
+      if (kv['payment_mode']) fee.note = 'Payment Mode: ' + kv['payment_mode'];
+      if (feeItems.length > 0 && Object.keys(fee).length === 0) {
+        fee.note = feeItems.join(' | ');
+      }
+      rawJob.application_fee = fee;
+    }
+
+    // ── Age Limit ──
+    if (!rawJob.age_limit || Object.keys(rawJob.age_limit).length === 0) {
+      const ageItems = getSectionItems('Age Limit Details');
+      const kv = parseKV(ageItems);
+      const age = {};
+      if (kv['age_limit']) age.age_limit = kv['age_limit'];
+      if (kv['minimum_age']) age.minimum_age = kv['minimum_age'];
+      if (kv['maximum_age']) age.maximum_age = kv['maximum_age'];
+      if (kv['age_relaxation']) age.age_relaxation = kv['age_relaxation'];
+      if (ageItems.length > 0 && Object.keys(age).length === 0) age.age_limit = ageItems.join(', ');
+      rawJob.age_limit = age;
+    }
+
+    // ── Pay Scale / Salary ──
+    if (!rawJob.salary_details || Object.keys(rawJob.salary_details).length === 0) {
+      const payItems = getSectionItems('Pay Scale Details');
+      if (payItems.length > 0 && !rawJob.salary) {
+        rawJob.salary = payItems.join(' | ');
+      }
+    }
+
+    // ── Selection Process ──
+    if (!rawJob.selection_process || (Array.isArray(rawJob.selection_process) && rawJob.selection_process.length === 0)) {
+      const selItems = getSectionItems('Selection Process');
+      if (selItems.length > 0) rawJob.selection_process = selItems;
+    }
+
+    // ── Category Wise Vacancy from table ──
+    if (!rawJob.category_wise_vacancy || Object.keys(rawJob.category_wise_vacancy).length === 0) {
+      const rows = getSectionRows('Category Wise Vacancies') || getSectionRows('Qualification Details');
+      // Find the header row and data row
+      for (const row of rows) {
+        const texts = row.map(c => (c.text || '').trim().toLowerCase());
+        if (texts.includes('gen') || texts.includes('general')) {
+          // This is header row - next row should have values
+          const idx = rows.indexOf(row);
+          const valRow = rows[idx + 1];
+          if (valRow && valRow.length >= 2) {
+            const cw = {};
+            for (let i = 0; i < row.length; i++) {
+              const hdr = (row[i].text || '').trim().toLowerCase();
+              const val = valRow[i] ? (valRow[i].text || '').trim() : '';
+              if (hdr === 'gen' || hdr === 'general' || hdr === 'ur') cw.general = val;
+              else if (hdr === 'obc') cw.obc = val;
+              else if (hdr === 'ews') cw.ews = val;
+              else if (hdr === 'sc') cw.sc = val;
+              else if (hdr === 'st') cw.st = val;
+              else if (hdr === 'total') cw.total = val;
+            }
+            if (Object.keys(cw).length > 0) rawJob.category_wise_vacancy = cw;
+          }
+          break;
+        }
+      }
+    }
+
+    // ── Total vacancies ──
+    if (!rawJob.total_vacancy && !rawJob.total_vacancies) {
+      // Try Overview table for "Total Posts"
+      const overviewSec = sections.find(s => s.title === 'Overview');
+      if (overviewSec && Array.isArray(overviewSec.content)) {
+        for (const blk of overviewSec.content) {
+          if (blk.type === 'table' && Array.isArray(blk.rows)) {
+            for (let ri = 0; ri < blk.rows.length; ri++) {
+              const row = blk.rows[ri];
+              for (let ci = 0; ci < row.length; ci++) {
+                if (/total\s*posts?/i.test(row[ci].text || '')) {
+                  // value in next row same column
+                  const nextRow = blk.rows[ri + 1];
+                  if (nextRow && nextRow[ci]) rawJob.total_vacancy = (nextRow[ci].text || '').trim();
+                }
+              }
+            }
+          }
+        }
+      }
+      // Also check category_wise_vacancy total
+      if (!rawJob.total_vacancy && rawJob.category_wise_vacancy && rawJob.category_wise_vacancy.total) {
+        rawJob.total_vacancy = rawJob.category_wise_vacancy.total;
+      }
+    }
+
+    // ── Exam Pattern / Written Exam ──
+    if (!rawJob.exam_pattern || Object.keys(rawJob.exam_pattern).length === 0) {
+      const epSec = sections.find(s => /written\s*exam\s*pattern|exam\s*pattern/i.test(s.title || ''));
+      if (epSec && Array.isArray(epSec.content)) {
+        const rows = [];
+        for (const blk of epSec.content) {
+          if (blk.type === 'table' && Array.isArray(blk.rows)) rows.push(...blk.rows);
+        }
+        if (rows.length > 0) {
+          // Convert table rows to array of objects
+          const subjects = [];
+          let headerRow = null;
+          for (const row of rows) {
+            const texts = row.map(c => (c.text || '').trim());
+            const isHeader = texts.some(t => /subject|questions|marks/i.test(t));
+            if (isHeader) { headerRow = texts; continue; }
+            if (headerRow && row.length >= 2 && !/^(negative|time|grand)/i.test(texts[0])) {
+              const obj = {};
+              for (let i = 0; i < headerRow.length; i++) {
+                obj[headerRow[i].toLowerCase()] = texts[i] || '';
+              }
+              subjects.push(obj);
+            }
+          }
+          const notes = [];
+          for (const blk of epSec.content) {
+            if (blk.type === 'paragraph' && blk.text) notes.push(blk.text);
+          }
+          rawJob.exam_pattern = { subjects, notes: notes.join(' | ') };
+        }
+      }
+    }
+
+    // ── Qualification ──
+    if (!rawJob.qualification || Object.keys(rawJob.qualification).length === 0) {
+      const qualItems = getSectionItems('Qualification Details');
+      if (qualItems.length > 0) {
+        rawJob.qualification = { education_qualification: qualItems.join(' ') };
+        rawJob.education_qualification = qualItems.join(' ');
+      }
+    }
+
+    return rawJob;
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════
      § 4 — FIELD EXTRACTORS
      Each function normalizes a specific JSON section across ALL formats.
   ══════════════════════════════════════════════════════════════════════ */
@@ -1615,6 +1858,8 @@
 
   function onJobRendered(rawJob) {
     if (rawJob && typeof rawJob === 'object') {
+      // Normalize UPCOMING_JOBS sections[] format → structured fields
+      try { rawJob = normalizeUpcomingJobsSections(rawJob); } catch (e) { console.warn('[Universal Renderer] Normalize error:', e); }
       // We have the raw JSON — run patches + inject sections
       try { runBasePatches(rawJob); } catch (e) { console.warn('[Universal Renderer] Patch error:', e); }
       try { injectAllSections(rawJob); } catch (e) { console.warn('[Universal Renderer] Inject error:', e); }
