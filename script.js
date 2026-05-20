@@ -146,7 +146,7 @@
 
         /* Slug: use existing or generate */
         const slug = job.slug || bd.slug || slugifyForJob(name);
-        const url  = "job.html?slug=" + encodeURIComponent(slug) + "&section=" + encodeURIComponent(meta.id);
+        const url  = "/jobs/" + slug + "/";
 
         return { slug, name, url, date: last || "" };
       }).filter(Boolean);
@@ -191,7 +191,7 @@
         items: items.map(item => ({
           slug: item.slug,
           name: item.name,
-          url: 'job.html?slug=' + encodeURIComponent(item.slug) + '&section=' + encodeURIComponent(meta.id),
+          url: '/jobs/' + item.slug + '/',
           date: item.date || ''
         }))
       });
@@ -757,7 +757,7 @@
         // Build URL: prefer explicit url/link, fallback to slug-based job.html
         let url = it.url || it.link || "";
         if (!url && it.slug) {
-          url = "job.html?slug=" + encodeURIComponent(it.slug) + "&section=" + encodeURIComponent(sectionKey);
+          url = "/jobs/" + it.slug + "/";
         }
         if (!url) return;
 
@@ -765,7 +765,7 @@
         const a = document.createElement("a");
         a.className = "section-link";
         /* If URL is a job.html link (from slug), use directly — bypass redirect gate */
-        if (url.startsWith("job.html")) {
+        if (url.startsWith("/jobs/") || url.startsWith("job.html")) {
           a.href = url;
           a.setAttribute("data-bypass-gate", "1");
           if (it.slug) a.setAttribute("data-slug", it.slug);
@@ -786,7 +786,7 @@
         list.appendChild(a);
 
         // ✅ SEARCH INDEX: sirf internal job.html links push karo (external nav/tools skip)
-        if (url && url.startsWith("job.html")) {
+        if (url && (url.startsWith("/jobs/") || url.startsWith("job.html"))) {
           (window.tsjSearchIndex = window.tsjSearchIndex || []).push({
             title: name,
             slug: url,
@@ -905,14 +905,14 @@
       const name = safe(it.name) || "Open";
       let url = it.url || it.link || "";
       if (!url && it.slug) {
-        url = "job.html?slug=" + encodeURIComponent(it.slug) + "&section=" + encodeURIComponent(sectionKey);
+        url = "/jobs/" + it.slug + "/";
       }
       if (!url) return;
 
       const external = !!it.external;
       const a = document.createElement("a");
       a.className = "section-link";
-      if (url.startsWith("job.html")) {
+      if (url.startsWith("/jobs/") || url.startsWith("job.html")) {
         a.href = url;
         a.setAttribute("data-bypass-gate", "1");
         if (it.slug) a.setAttribute("data-slug", it.slug);
@@ -933,7 +933,7 @@
       list.appendChild(a);
 
       // ✅ SEARCH INDEX: sirf internal job.html links push karo (external nav/tools skip)
-      if (url && url.startsWith("job.html")) {
+      if (url && (url.startsWith("/jobs/") || url.startsWith("job.html"))) {
         (window.tsjSearchIndex = window.tsjSearchIndex || []).push({
           title: name,
           slug: url,
@@ -1998,7 +1998,7 @@
       /* FIX: No 'offline-' prefix — merged_sarkari_data.json jobs have no slug field,
          so slug is generated from title. Adding 'offline-' creates a mismatch with
          the title-derived slug used in matchBySlug(), causing wrong data on first load. */
-      return 'job.html?slug=' + encodeURIComponent(slug);
+      return '/jobs/' + slug + '/';
     }
 
     let searchData = [];
@@ -2054,7 +2054,7 @@
             if (!title) return;
             const slug = i.slug || slugify(title);
             /* FIX: No 'offline-' prefix — causes slug mismatch in matchBySlug() */
-            const href = slug ? 'job.html?slug=' + encodeURIComponent(slug) + '&section=' + encodeURIComponent(k.replace(/_/g,' ')) : '#';
+            const href = slug ? '/jobs/' + slug + '/' : '#';
             push(title, href, k.replace(/_/g,' '));
           });
         });
