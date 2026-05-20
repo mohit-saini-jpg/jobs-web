@@ -103,4 +103,8 @@
 # Keep serving but seo-engine.js will set noindex automatically
 
 # ── 10. 404 fallback ─────────────────────────────────────────────
-/*            /404.html     404
+# NOTE: Do NOT add "/* /404.html 404" here!
+# Netlify/Cloudflare Pages automatically serves 404.html for unmatched routes.
+# An explicit /* rule intercepts ALL requests — including real files like
+# job.html, state-jobs.html, index.html — breaking the entire site.
+# Just place 404.html in the root and let the CDN handle it automatically.
