@@ -506,7 +506,7 @@
       padding: 0;
       display: flex;
       align-items: stretch;
-      min-height: 42px;
+      min-height: 52px;        /* ↑ 42px → 52px — taller bar */
       position: relative;
       z-index: 10;
     }
@@ -515,15 +515,15 @@
       display: flex;
       align-items: center;
       background: #991b1b;
-      padding: 8px 10px;
-      font-size: .9rem;
+      padding: 10px 16px;      /* ↑ more padding */
+      font-size: 1rem;         /* ↑ .9rem → 1rem */
       font-weight: 900;
       letter-spacing: .06em;
       text-transform: uppercase;
       white-space: nowrap;
       z-index: 2;
-      gap: 5px;
-      min-width: 36px;
+      gap: 6px;
+      min-width: 44px;
       justify-content: center;
     }
     .ticker-label::after {
@@ -541,7 +541,7 @@
       overflow: hidden;
       display: flex;
       align-items: center;
-      padding: 8px 0;
+      padding: 10px 0;         /* ↑ 8px → 10px */
       contain: strict;
     }
     /* Two identical sets side-by-side for seamless infinite loop */
@@ -550,8 +550,8 @@
       align-items: center;
       white-space: nowrap;
       will-change: transform;
-      transform: translateZ(0); /* Force GPU compositing layer */
-      animation: ticker-scroll var(--ticker-duration, 40s) linear infinite;
+      transform: translateZ(0);
+      animation: ticker-scroll var(--ticker-duration, 60s) linear infinite; /* ↓ speed: 40s → 60s */
     }
     .ticker-belt:hover,
     .ticker-wrap:hover .ticker-belt {
@@ -564,33 +564,35 @@
     .ticker-item {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       color: #fff;
       text-decoration: none;
-      font-size: .86rem;
+      font-size: 1rem;         /* ↑ .86rem → 1rem */
       font-weight: 700;
-      padding-right: 44px;
+      padding-right: 56px;     /* ↑ 44px → 56px — more gap between items */
       transition: opacity .15s;
       white-space: nowrap;
+      letter-spacing: .01em;
     }
     .ticker-item::before {
-      content: '●';
-      font-size: .45rem;
-      opacity: .8;
+      content: '▸';            /* ▸ arrow — more visible than tiny dot */
+      font-size: .75rem;
+      opacity: .9;
       flex-shrink: 0;
     }
     .ticker-item:hover { text-decoration: underline; opacity: .9; }
     /* Loading skeleton */
     .ticker-loading {
-      font-size: .82rem;
+      font-size: .95rem;
       font-weight: 600;
       opacity: .75;
-      padding: 8px 16px;
+      padding: 10px 16px;
       letter-spacing: .03em;
     }
     @media (max-width: 480px) {
-      .ticker-item { font-size: .8rem; padding-right: 32px; }
-      .ticker-label { padding: 7px 12px; font-size: .75rem; }
+      .ticker-wrap { min-height: 46px; }
+      .ticker-item { font-size: .9rem; padding-right: 40px; }
+      .ticker-label { padding: 8px 12px; font-size: .88rem; }
     }
 
     /* ============================================================
