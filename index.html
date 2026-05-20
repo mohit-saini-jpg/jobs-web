@@ -2930,16 +2930,28 @@
       if (Array.isArray(jsonData.jobs) && jsonData.jobs.length > 0) {
         var allJobs = jsonData.jobs;
 
-        /* Valid SR category keys */
-        var VALID_SR_CATS = {
-          'SR_Latest_Jobs': true,
-          'SR_Admit_Card':  true,
-          'SR_Result':      true,
-          'SR_Admission':   true,
-          'SR_Answer_Key':  true
+        /* ── STATIC category → display config map ────────────────────────
+           Known categories get proper labels/icons/colors.
+           ANY unknown category is auto-detected and gets a default style.
+        ------------------------------------------------------------------ */
+        var KNOWN_CAT_CONFIG = {
+          'SR_Latest_Jobs':  { label: 'Latest Jobs',  icon: 'fa-solid fa-briefcase',      headClass: 'red',    viewUrl: '/section/latest-jobs/' },
+          'SR_Admit_Card':   { label: 'Admit Card',   icon: 'fa-solid fa-id-card',         headClass: 'blue',   viewUrl: '/section/admit-card/' },
+          'SR_Result':       { label: 'Result',        icon: 'fa-solid fa-trophy',          headClass: 'green',  viewUrl: '/section/results/' },
+          'SR_Admission':    { label: 'Admission',     icon: 'fa-solid fa-graduation-cap',  headClass: 'purple', viewUrl: '/section/admission/' },
+          'SR_Answer_Key':   { label: 'Answer Key',    icon: 'fa-solid fa-key',             headClass: 'orange', viewUrl: '/section/answer-key/' },
+          'OFFLINE_FORM':    { label: 'Offline Form',  icon: 'fa-solid fa-file-pen',        headClass: 'cyan',   viewUrl: '/section/offline-form/' }
         };
 
-        /* Keyword fallback lists (used ONLY when sr_category is absent) */
+        /* Default style pool for unknown/new categories — cycles through colors */
+        var DYNAMIC_HEAD_CLASSES = ['red', 'blue', 'green', 'purple', 'orange', 'cyan', 'indigo', 'teal'];
+        var DYNAMIC_ICONS = [
+          'fa-solid fa-star', 'fa-solid fa-fire', 'fa-solid fa-bolt',
+          'fa-solid fa-flag', 'fa-solid fa-tags', 'fa-solid fa-layer-group',
+          'fa-solid fa-circle-info', 'fa-solid fa-bell'
+        ];
+
+        /* Keyword fallback lists (used ONLY when category field is absent) */
         var KW_ADMIT    = ['admit card', 'hall ticket', 'call letter'];
         var KW_ANSWER   = ['answer key', 'answer sheet', 'objection'];
         var KW_RESULT   = ['result', 'merit list', 'final list', 'cut off', 'cutoff', 'scorecard', 'score card'];
@@ -2965,63 +2977,110 @@
           };
         }
 
-        /* Categorise — strict sr_category field first, keyword fallback second */
-        var cat_latest    = [];
-        var cat_admit     = [];
-        var cat_result    = [];
-        var cat_admission = [];
-        var cat_answer    = [];
-        var cat_offline   = [];
+        /* ── DYNAMIC bucket map: key = category string, value = items[] ── */
+        var categoryBuckets = {};
+
+        /* Helper: get-or-create bucket */
+        function getBucket(key) {
+          if (!categoryBuckets[key]) categoryBuckets[key] = [];
+          return categoryBuckets[key];
+        }
 
         allJobs.forEach(function(j) {
           var item  = toSRItem(j);
           var title = j.title || '';
           var mode  = (j.apply_mode || '').toLowerCase();
-          /* ── FIX: JSON mein field 'category' hai, 'sr_category' nahi ── */
           var srCat = (j.sr_category || j.category || '').trim();
 
-          /* Offline Form — category OFFLINE_FORM ya apply_mode offline → Offline section */
-          if (mode === 'offline' || srCat === 'OFFLINE_FORM') { cat_offline.push(item); return; }
-
-          /* ── PRIMARY: use sr_category / category field set by scraper ── */
-          if (srCat && VALID_SR_CATS[srCat]) {
-            if (srCat === 'SR_Latest_Jobs')  { cat_latest.push(item);    return; }
-            if (srCat === 'SR_Admit_Card')   { cat_admit.push(item);     return; }
-            if (srCat === 'SR_Result')       { cat_result.push(item);    return; }
-            if (srCat === 'SR_Admission')    { cat_admission.push(item); return; }
-            if (srCat === 'SR_Answer_Key')   { cat_answer.push(item);    return; }
+          /* Offline Form */
+          if (mode === 'offline' || srCat === 'OFFLINE_FORM') {
+            getBucket('OFFLINE_FORM').push(item);
+            return;
           }
 
-          /* ── FALLBACK: keyword-based (only when sr_category is absent/unknown) ── */
-          if (mode !== 'offline') {
-            if (hasKw(title, KW_ADMIT)) {
-              cat_admit.push(item);
-            } else if (hasKw(title, KW_ANSWER)) {
-              cat_answer.push(item);
-            } else if (hasKw(title, KW_RESULT)) {
-              cat_result.push(item);
-            } else if (hasKw(title, KW_ADMISSION)) {
-              cat_admission.push(item);
-            } else {
-              /* Everything else → Latest Jobs */
-              cat_latest.push(item);
-            }
+          /* Known or UNKNOWN category from JSON field — accept ALL */
+          if (srCat) {
+            getBucket(srCat).push(item);
+            return;
+          }
+
+          /* ── FALLBACK: keyword-based when category field is absent ── */
+          if (hasKw(title, KW_ADMIT)) {
+            getBucket('SR_Admit_Card').push(item);
+          } else if (hasKw(title, KW_ANSWER)) {
+            getBucket('SR_Answer_Key').push(item);
+          } else if (hasKw(title, KW_RESULT)) {
+            getBucket('SR_Result').push(item);
+          } else if (hasKw(title, KW_ADMISSION)) {
+            getBucket('SR_Admission').push(item);
+          } else {
+            getBucket('SR_Latest_Jobs').push(item);
           }
         });
 
-        /* Build the expected structure */
+        /* ── Build CATEGORY_CONFIG dynamically from all buckets found ── */
+        /* First add known categories in preferred order */
+        var orderedKeys = ['SR_Latest_Jobs', 'SR_Result', 'SR_Admit_Card', 'SR_Admission', 'SR_Answer_Key', 'OFFLINE_FORM'];
+        /* Then append any NEW unknown categories */
+        Object.keys(categoryBuckets).forEach(function(k) {
+          if (orderedKeys.indexOf(k) === -1) orderedKeys.push(k);
+        });
+
+        /* Generate config for each bucket that has items */
+        var dynColorIdx = 0;
+        var dynamicConfigs = [];
+        orderedKeys.forEach(function(key) {
+          var items = categoryBuckets[key];
+          if (!items || items.length === 0) return;
+
+          var cfg;
+          if (KNOWN_CAT_CONFIG[key]) {
+            cfg = { key: key, items: items, source: 'dynamic' };
+            var knownCfg = KNOWN_CAT_CONFIG[key];
+            cfg.label     = knownCfg.label;
+            cfg.icon      = knownCfg.icon;
+            cfg.headClass = knownCfg.headClass;
+            cfg.viewUrl   = knownCfg.viewUrl;
+          } else {
+            /* Auto-generate label from key: "LATEST_JOBS NEW" → "Latest Jobs New" */
+            var autoLabel = key
+              .replace(/_/g, ' ')
+              .toLowerCase()
+              .replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+            var colorIdx = dynColorIdx % DYNAMIC_HEAD_CLASSES.length;
+            var iconIdx  = dynColorIdx % DYNAMIC_ICONS.length;
+            dynColorIdx++;
+            cfg = {
+              key:       key,
+              label:     autoLabel,
+              icon:      DYNAMIC_ICONS[iconIdx],
+              headClass: DYNAMIC_HEAD_CLASSES[colorIdx],
+              viewUrl:   '/section/' + key.toLowerCase().replace(/_/g, '-').replace(/\s+/g, '-') + '/',
+              source:    'dynamic',
+              items:     items
+            };
+          }
+          cfg.items = items;
+          dynamicConfigs.push(cfg);
+        });
+
+        /* Replace jsonData with normalized dynamic structure */
+        var srCatsNorm = {};
+        var offlineNorm = [];
+        dynamicConfigs.forEach(function(cfg) {
+          if (cfg.key === 'OFFLINE_FORM') {
+            offlineNorm = cfg.items;
+          } else {
+            srCatsNorm[cfg.key] = cfg.items;
+          }
+        });
         jsonData = {
-          sarkariresult_categories: {
-            SR_Latest_Jobs: cat_latest,
-            SR_Admit_Card:  cat_admit,
-            SR_Result:      cat_result,
-            SR_Admission:   cat_admission,
-            SR_Answer_Key:  cat_answer
-          },
-          sarkariresultshine_jobs: cat_offline
+          sarkariresult_categories: srCatsNorm,
+          sarkariresultshine_jobs:  offlineNorm,
+          __dynamicConfigs: dynamicConfigs   /* carry forward for render */
         };
       }
-      /* ── END fixed format handler ────────────────────────────────────── */
+      /* ── END fully-dynamic format handler ────────────────────────────── */
 
       /* Extract both data sources from JSON */
       var srCategories  = (jsonData.sarkariresult_data && jsonData.sarkariresult_data.data) || jsonData.sarkariresult_categories || {};
@@ -3029,19 +3088,31 @@
 
       var html = '';
 
-      CATEGORY_CONFIG.forEach(function(cfg) {
-        var items;
-        if (cfg.source === 'root') {
-          /* Offline Form — from sarkariresultshine_jobs array */
-          items = shineJobs;
-        } else {
-          /* All other cards — from sarkariresult_categories object */
-          items = srCategories[cfg.key] || [];
-        }
-        if (items.length > 0) {
-          html += buildCard(cfg, items);
-        }
-      });
+      /* ── Use dynamic configs if available, else fall back to CATEGORY_CONFIG ── */
+      var activeCfgs = jsonData.__dynamicConfigs || null;
+
+      if (activeCfgs) {
+        /* Fully dynamic path: render every category that has data */
+        activeCfgs.forEach(function(cfg) {
+          var items = cfg.items || [];
+          if (items.length > 0) {
+            html += buildCard(cfg, items);
+          }
+        });
+      } else {
+        /* Legacy path: use static CATEGORY_CONFIG */
+        CATEGORY_CONFIG.forEach(function(cfg) {
+          var items;
+          if (cfg.source === 'root') {
+            items = shineJobs;
+          } else {
+            items = srCategories[cfg.key] || [];
+          }
+          if (items.length > 0) {
+            html += buildCard(cfg, items);
+          }
+        });
+      }
 
       if (html) {
         grid.innerHTML = html;
