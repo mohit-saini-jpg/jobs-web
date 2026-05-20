@@ -719,7 +719,7 @@
         ? sec.items.filter(i => !isGarbageLink(i)).slice(0, 10)
         : [];
 
-      items.forEach((it) => {
+      items.forEach((it, _idx) => {
         const name = safe(it.name) || "Open";
         // Build URL: prefer explicit url/link, fallback to slug-based job.html
         let url = it.url || it.link || "";
@@ -749,7 +749,7 @@
         } else if (rawDate.length > 35) {
           displayDate = rawDate.slice(0, 32) + "…";
         }
-        a.innerHTML = `<span class="t">${name}${displayDate ? `<span class="d"><i class="fa-regular fa-calendar-days"></i> ${displayDate}</span>` : ""}</span>`;
+        a.innerHTML = `<span class="sn">${_idx+1}</span><span class="t">${name}${displayDate ? `<span class="d"><i class="fa-regular fa-calendar-days"></i> ${displayDate}</span>` : ""}</span>`;
         list.appendChild(a);
 
         // ✅ SEARCH INDEX: sirf internal job.html links push karo (external nav/tools skip)
@@ -868,7 +868,7 @@
       ? sec.items.filter(i => !isGarbageLink(i)).slice(0, 10)
       : [];
 
-    items.forEach((it) => {
+    items.forEach((it, _idx) => {
       const name = safe(it.name) || "Open";
       let url = it.url || it.link || "";
       if (!url && it.slug) {
@@ -896,7 +896,7 @@
       } else if (rawDate.length > 35) {
         displayDate = rawDate.slice(0, 32) + "…";
       }
-      a.innerHTML = `<span class="t">${name}${displayDate ? `<span class="d"><i class="fa-regular fa-calendar-days"></i> ${displayDate}</span>` : ""}</span>`;
+      a.innerHTML = `<span class="sn">${_idx+1}</span><span class="t">${name}${displayDate ? `<span class="d"><i class="fa-regular fa-calendar-days"></i> ${displayDate}</span>` : ""}</span>`;
       list.appendChild(a);
 
       // ✅ SEARCH INDEX: sirf internal job.html links push karo (external nav/tools skip)
