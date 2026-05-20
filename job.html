@@ -1411,6 +1411,111 @@
 
     /* ── Parse flat LINK.txt-style fields from a job object ── */
     function parseFullJob(job, secId) {
+      /* ── UPCOMING_JOBS sections[] normalization ──
+         If job has sections[] array (merged_sarkari UPCOMING_JOBS format),
+         extract structured fields so all downstream logic works correctly. */
+      if (job && Array.isArray(job.sections) && job.sections.length > 0 &&
+          (!job.important_dates || Object.keys(job.important_dates || {}).length === 0)) {
+        const _secs = job.sections;
+        function _getSecItems(title) {
+          const s = _secs.find(x => x.title && x.title.toLowerCase() === title.toLowerCase());
+          if (!s || !Array.isArray(s.content)) return [];
+          const out = [];
+          s.content.forEach(function(blk) {
+            if (blk.type === 'list' && Array.isArray(blk.items)) out.push.apply(out, blk.items);
+            else if (blk.type === 'paragraph' && blk.text) out.push(blk.text);
+          });
+          return out;
+        }
+        function _parseKV(items) {
+          const map = {};
+          items.forEach(function(item) {
+            const colon = item.indexOf(':');
+            if (colon > 0) {
+              const key = item.slice(0, colon).trim().toLowerCase().replace(/\s+/g, '_');
+              map[key] = item.slice(colon + 1).trim();
+            }
+          });
+          return map;
+        }
+        function _firstDate(str) {
+          if (!str) return '';
+          const m = str.match(/(\d{2}\/\d{2}\/\d{4})/);
+          return m ? m[1] : str.trim().slice(0, 20);
+        }
+        // Important Dates
+        const _di = _parseKV(_getSecItems('Important Dates'));
+        const _idOut = {};
+        if (_di['starting_date']) _idOut.application_begin = _firstDate(_di['starting_date']);
+        if (_di['last_date']) _idOut.last_date = _firstDate(_di['last_date']);
+        if (_di['correction_date']) _idOut.correction_last_date = _firstDate(_di['correction_date']);
+        if (_di['notification_out']) _idOut.notification_date = _firstDate(_di['notification_out']);
+        if (_di['exam_date']) _idOut.exam_date = _firstDate(_di['exam_date']);
+        const _rawDateText = _getSecItems('Important Dates').join(' | ');
+        if (_rawDateText) _idOut.raw = _rawDateText;
+        job = Object.assign({}, job, { important_dates: _idOut });
+        // Application Fee
+        const _fi = _parseKV(_getSecItems('Application Fees'));
+        const _feeOut = {};
+        if (_fi['for_all_candidates']) _feeOut.all = _fi['for_all_candidates'];
+        if (_fi['general']) _feeOut.general = _fi['general'];
+        if (_fi['obc']) _feeOut.obc = _fi['obc'];
+        if (_fi['payment_mode']) _feeOut.note = 'Payment Mode: ' + _fi['payment_mode'];
+        if (Object.keys(_feeOut).length === 0) {
+          const _allFeeItems = _getSecItems('Application Fees');
+          if (_allFeeItems.length) _feeOut.note = _allFeeItems.join(' | ');
+        }
+        job = Object.assign({}, job, { application_fee: _feeOut });
+        // Age Limit
+        const _ai = _parseKV(_getSecItems('Age Limit Details'));
+        const _ageOut = {};
+        if (_ai['age_limit']) _ageOut.age_limit = _ai['age_limit'];
+        if (_ai['minimum_age']) _ageOut.minimum_age = _ai['minimum_age'];
+        if (_ai['maximum_age']) _ageOut.maximum_age = _ai['maximum_age'];
+        job = Object.assign({}, job, { age_limit: _ageOut });
+        // Salary
+        if (!job.salary) {
+          const _pi = _getSecItems('Pay Scale Details');
+          if (_pi.length) job = Object.assign({}, job, { salary: _pi.join(' | ') });
+        }
+        // Selection Process
+        if (!job.selection_process || !job.selection_process.length) {
+          const _si2 = _getSecItems('Selection Process');
+          if (_si2.length) job = Object.assign({}, job, { selection_process: _si2 });
+        }
+        // Qualification
+        if (!job.education_qualification) {
+          const _qi = _getSecItems('Qualification Details');
+          if (_qi.length) {
+            job = Object.assign({}, job, {
+              education_qualification: _qi.join(' '),
+              qualification: { education_qualification: _qi.join(' ') }
+            });
+          }
+        }
+        // Total vacancies from Overview table
+        if (!job.total_vacancy && !job.total_vacancies) {
+          const _ovSec = _secs.find(function(s) { return s.title === 'Overview'; });
+          if (_ovSec && Array.isArray(_ovSec.content)) {
+            _ovSec.content.forEach(function(blk) {
+              if (blk.type === 'table' && Array.isArray(blk.rows)) {
+                for (let ri = 0; ri < blk.rows.length; ri++) {
+                  const row = blk.rows[ri];
+                  for (let ci = 0; ci < row.length; ci++) {
+                    if (/total\s*posts?/i.test(row[ci].text || '')) {
+                      const nextRow = blk.rows[ri + 1];
+                      if (nextRow && nextRow[ci]) {
+                        job = Object.assign({}, job, { total_vacancy: (nextRow[ci].text || '').trim() });
+                      }
+                    }
+                  }
+                }
+              }
+            });
+          }
+        }
+      }
+
       const bd  = job.basic_details  || {};
       const il  = job.important_links || job.important_links_obj || {};
       const id  = job.important_dates || {};
