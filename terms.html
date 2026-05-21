@@ -107,7 +107,14 @@
     nav a{color:#fff;margin-right:12px;font-weight:bold;text-decoration:none;}
     nav a:hover{text-decoration:underline;}
     h2{margin-top:1.2rem;}
-  </style>
+  
+    /* ── BRAND LOGO FIX: prevent title truncation on all pages ── */
+    #site-header .brand { flex: 1 1 auto !important; min-width: 0 !important; }
+    #site-header .brand-text { min-width: 0 !important; }
+    #site-header .brand-title { white-space: nowrap !important; font-size: .92rem !important; }
+    #site-header .header-actions { flex-shrink: 0 !important; }
+    #site-header .header-logo-bar { display: flex !important; align-items: center !important; }
+    </style>
   <!-- GA4: Centralized Analytics -->
   <script src="/analytics.js" defer></script>
 </head>
