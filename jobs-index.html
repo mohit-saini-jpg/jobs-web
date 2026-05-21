@@ -262,7 +262,14 @@
     .jp-mobile-grid a:hover{background:#f0fdf4;color:#0f766e;}
     .jp-mobile-grid a:nth-child(even){border-right:none;}
     .jp-mobile-grid a i{color:#0f766e;width:14px;font-size:.75rem;}
-  </style>
+  
+    /* ── BRAND LOGO FIX: prevent title truncation on all pages ── */
+    #site-header .brand { flex: 1 1 auto !important; min-width: 0 !important; }
+    #site-header .brand-text { min-width: 0 !important; }
+    #site-header .brand-title { white-space: nowrap !important; font-size: .92rem !important; }
+    #site-header .header-actions { flex-shrink: 0 !important; }
+    #site-header .header-logo-bar { display: flex !important; align-items: center !important; }
+    </style>
   <!-- Header: fetch + inject immediately before script.js defer loads -->
   <script>
   (function(){
