@@ -263,29 +263,19 @@
   </style>
   <!-- GA4: Centralized Analytics -->
   <script src="/analytics.js" defer></script>
+  <!-- Header: fetch + inject immediately before script.js defer loads -->
+  <script>
+  (function(){
+    var _hp=fetch("/header.html",{cache:"no-store"}).then(function(r){return r.ok?r.text():null;}).catch(function(){return null;});
+    window.__headerPromise=_hp;
+    function _inj(){var h=document.getElementById("site-header");if(!h||h.innerHTML.trim())return;_hp.then(function(html){if(!html||h.innerHTML.trim())return;h.innerHTML=html;if(typeof window.__TSJ_INIT_HEADER==="function")window.__TSJ_INIT_HEADER();});}
+    document.readyState==="loading"?document.addEventListener("DOMContentLoaded",_inj):_inj();
+  })();
+  </script>
 </head>
 <body>
-
-<!-- HEADER from project -->
-<div id="site-header" class="site-header">
-  <div class="header-logo-bar" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;max-width:1280px;margin:0 auto;">
-    <a class="brand" href="/" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
-      <picture>
-        <source srcset="/image.webp" type="image/webp">
-        <img src="/image.png" alt="Top Sarkari Jobs Logo" style="width:40px;height:40px;border-radius:8px;object-fit:cover;" width="40" height="40">
-      </picture>
-      <div>
-        <div style="font-size:1.1rem;font-weight:900;color:#0d2257;line-height:1.2;">TOP <span style="color:#f59e0b;">SARKARI</span> JOBS</div>
-        <div style="font-size:.6rem;color:#64748b;font-weight:600;">Latest Sarkari Jobs, Results, Admit Cards & Online Forms – 2026</div>
-      </div>
-    </a>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <a href="tools.html" style="display:inline-flex;align-items:center;gap:6px;background:#1a56db;color:#fff;padding:7px 14px;border-radius:8px;font-size:.78rem;font-weight:800;text-decoration:none;">
-        ← All Tools
-      </a>
-    </div>
-  </div>
-</div>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div id="site-header"></div>
 
 <div class="page-wrap">
 
@@ -1962,6 +1952,22 @@ function loadScript(src) {
   });
 }
 </script>
+
+  <!-- Mobile menu elements required by script.js -->
+  <div id="menuOverlay" class="overlay" hidden></div>
+  <aside id="mobileMenu" class="offcanvas" aria-label="Mobile menu" hidden>
+    <div class="offcanvas-head">
+      <div class="offcanvas-title">Menu</div>
+      <button id="closeMenuBtn" class="icon-btn" type="button" aria-label="Close menu">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <nav class="offcanvas-nav" aria-label="Mobile primary">
+      <div id="header-links-mobile"></div>
+    </nav>
+  </aside>
+
+  <div id="site-footer"></div>
 
 <script src="script.js" defer></script>
 </body>
