@@ -1346,7 +1346,7 @@
     .section-list::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
     .section-list::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
     .section-list::-webkit-scrollbar-thumb:hover { background: #475569; }
-    /* section-link: number top-left absolute, title indented, date below */
+    /* section-link: number top-left absolute, title+date inline */
     .section-link {
       display: block;
       position: relative;
@@ -1381,23 +1381,23 @@
     .section-link:last-child { border-bottom: none; }
     .section-link:hover { background: #f0f7ff; }
 
-    /* Title: block — all lines align under number box */
+    /* Title: inline so date flows at end of last word */
     .section-link .t {
-      display: block;
+      display: inline;
       font-size: .80rem;
       font-weight: 700;
       color: var(--blue);
-      line-height: 1.5;
+      line-height: 1.55;
       word-break: break-word;
     }
     .section-link:hover .t { text-decoration: underline; }
 
-    /* Date: block below title, red badge style like image */
+    /* Date: inline-flex at end of title text */
     .section-link .d {
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      margin-top: 4px;
+      margin-left: 4px;
       font-size: .63rem;
       font-weight: 800;
       color: #fff;
@@ -1405,6 +1405,7 @@
       border-radius: 4px;
       padding: 2px 7px;
       white-space: nowrap;
+      vertical-align: middle;
       line-height: 1.4;
     }
     .section-link .d i { font-size: .58rem; }
