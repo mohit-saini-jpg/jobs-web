@@ -1136,25 +1136,24 @@
       }
 
       .sr-job-link {
-        padding: 6px 7px 4px 7px;
-        gap: 5px;
+        grid-template-columns: 16px 1fr;
+        gap: 4px;
+        padding: 6px 7px;
       }
       .sr-job-title {
-        font-size: .72rem;
+        font-size: .70rem;
         font-weight: 800;
         line-height: 1.45;
       }
-      .sr-date-row {
-        padding: 0 7px 6px 7px;
-      }
       .sr-job-date {
-        font-size: .58rem !important;
+        font-size: .56rem !important;
+        margin-left: 2px;
       }
       .sr-job-link .sr-num {
-        min-width: 15px; height: 15px;
+        width: 15px; height: 15px;
         font-size: 8px;
         border-radius: 3px;
-        margin-top: 3px;
+        margin-top: 2px;
       }
 
       .sr-card-footer { padding: 7px 8px; }
@@ -1203,20 +1202,19 @@
     }
     .sr-job-list li:last-child { border-bottom: none; }
     .sr-job-link {
-      display: flex;
-      align-items: flex-start;
-      gap: 6px;
+      display: grid;
+      grid-template-columns: 20px 1fr;
+      align-items: start;
+      gap: 5px;
       padding: 8px 10px;
       text-decoration: none;
       color: var(--text);
       transition: background .15s;
-      line-height: 1.5;
     }
     .sr-job-link:hover { background: #f8fafc; color: var(--blue); }
     .sr-job-link .sr-num {
-      flex-shrink: 0;
-      min-width: 17px; height: 17px;
-      padding: 0 3px;
+      width: 17px; height: 17px;
+      padding: 0;
       background: #1a56db; color: #fff;
       font-size: 9px; font-weight: 900;
       border-radius: 4px;
@@ -1224,12 +1222,11 @@
       box-shadow: 0 1px 3px rgba(26,86,219,0.35);
       margin-top: 2px; line-height: 1;
       letter-spacing: -0.3px;
-      align-self: flex-start;
+      flex-shrink: 0;
     }
 
-    /* Title: inline with number badge */
+    /* Title: 2nd line stays under title, not under number */
     .sr-job-title {
-      flex: 1;
       min-width: 0;
       font-size: .80rem;
       font-weight: 800;
@@ -1239,22 +1236,18 @@
     }
     .sr-job-link:hover .sr-job-title { text-decoration: underline; }
 
-    /* Date row: shown below the title link */
-    .sr-date-row {
-      padding: 0 10px 7px 10px;
-      display: flex;
-      align-items: center;
-    }
-    /* Date badge */
+    /* Date badge: inline at end of title */
     .sr-job-date {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      font-size: .62rem;
+      gap: 3px;
+      font-size: .60rem;
       font-weight: 700;
-      color: #374151;
+      color: #ef4444;
       white-space: nowrap;
       line-height: 1;
+      vertical-align: middle;
+      margin-left: 3px;
     }
     .sr-job-date.soon { color: var(--green); }
     .sr-card-footer {
@@ -2984,9 +2977,8 @@
           '<a href="' + job.href + '" class="sr-job-link"' +
           (job.href.includes('job.html') ? '' : (job.url !== '#' ? ' target="_blank" rel="noopener"' : '')) + '>' +
           '<span class="sr-num">' + (listIdx+1) + '</span>' +
-          '<span class="sr-job-title">' + job.title + '</span>' +
+          '<span class="sr-job-title">' + job.title + (dateBadge ? ' ' + dateBadge : '') + '</span>' +
           '</a>' +
-          (dateBadge ? '<div class="sr-date-row">' + dateBadge + '</div>' : '') +
           subLinksHtml +
           '</li>'
         );
