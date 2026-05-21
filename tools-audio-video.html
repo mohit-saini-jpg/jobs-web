@@ -109,8 +109,51 @@
   <div id="site-footer"></div>
   <div id="menuOverlay" class="overlay" hidden></div>
   <aside id="mobileMenu" class="offcanvas" aria-label="Mobile menu" hidden>
-    <div class="offcanvas-head"><div class="offcanvas-title">☰ Menu</div><button id="closeMenuBtn" class="offcanvas-close" type="button" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button></div>
-    <nav class="offcanvas-nav" aria-label="Mobile primary"><div id="header-links-mobile"></div></nav>
+    <div class="offcanvas-head">
+      <div class="offcanvas-head-left">
+        <picture>
+          <source srcset="/image.webp" type="image/webp">
+          <img src="/image.png" alt="Logo" class="offcanvas-head-logo" width="34" height="34">
+        </picture>
+        <div class="offcanvas-head-texts">
+          <span class="offcanvas-title">TOP SARKARI JOBS</span>
+          <span class="offcanvas-sub">India's No.1 Sarkari Jobs Portal</span>
+        </div>
+      </div>
+      <button id="closeMenuBtn" class="offcanvas-close" type="button" aria-label="Close menu">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="offcanvas-search">
+      <div class="offcanvas-search-inner">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Search jobs in this section..." id="menuSearchInput" autocomplete="off">
+      </div>
+    </div>
+    <nav class="offcanvas-nav" aria-label="Mobile primary">
+      <div class="offcanvas-section">Main</div>
+      <a href="/"><span class="menu-icon-pill" style="background:#dbeafe;color:#1d4ed8;"><i class="fa-solid fa-house"></i></span>Home</a>
+      <a href="/section/latest-jobs/"><span class="menu-icon-pill" style="background:#fee2e2;color:#b91c1c;"><i class="fa-solid fa-fire"></i></span>Latest Jobs<span class="menu-badge menu-badge-red">New</span></a>
+      <a href="/section/admit-card/"><span class="menu-icon-pill" style="background:#ede9fe;color:#6d28d9;"><i class="fa-solid fa-id-card"></i></span>Admit Card<span class="menu-badge menu-badge-purple">2026</span></a>
+      <a href="/category.html?group=admissions"><span class="menu-icon-pill" style="background:#fef3c7;color:#b45309;"><i class="fa-solid fa-trophy"></i></span>Results<span class="menu-badge menu-badge-amber">Live</span></a>
+      <a href="/category.html?group=admit-result"><span class="menu-icon-pill" style="background:#fef3c7;color:#b45309;"><i class="fa-solid fa-key"></i></span>Answer Key</a>
+      <div class="offcanvas-section">Free Tools</div>
+      <a href="/tools.html" style="background:#fff8f0;border:1px solid #fed7aa;border-radius:10px;"><span class="menu-icon-pill" style="background:#ffedd5;color:#c2410c;"><i class="fa-solid fa-file-pdf"></i></span>PDF Tools<span class="menu-badge" style="background:#ffedd5;color:#c2410c;border:1px solid #fed7aa;">PDF</span></a>
+      <a href="/tools-image.html" style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;"><span class="menu-icon-pill" style="background:#e0f2fe;color:#0369a1;"><i class="fa-solid fa-image"></i></span>Image Tools<span class="menu-badge" style="background:#e0f2fe;color:#0369a1;border:1px solid #bae6fd;">IMG</span></a>
+      <a href="/tools-audio-video.html" style="background:#f5f3ff;border:1px solid #ddd6fe;border-radius:10px;"><span class="menu-icon-pill" style="background:#ede9fe;color:#7c3aed;"><i class="fa-solid fa-video"></i></span>Audio / Video Tools<span class="menu-badge" style="background:#ede9fe;color:#7c3aed;border:1px solid #ddd6fe;">AV</span></a>
+      <a href="/resume-maker.html"><span class="menu-icon-pill" style="background:#ede9fe;color:#6d28d9;"><i class="fa-solid fa-file-lines"></i></span>Resume Maker<span class="menu-badge menu-badge-purple">Free</span></a>
+      <div class="offcanvas-section">More</div>
+      <a href="/section/govt-scheme-yojna/"><span class="menu-icon-pill" style="background:#dcfce7;color:#15803d;"><i class="fa-solid fa-hand-holding-heart"></i></span>Govt Schemes<span class="menu-badge menu-badge-green">Hot</span></a>
+      <a href="/category.html?group=khabar"><span class="menu-icon-pill" style="background:#ffedd5;color:#c2410c;"><i class="fa-solid fa-newspaper"></i></span>Latest Khabar</a>
+      <a href="/category.html?group=study-material"><span class="menu-icon-pill" style="background:#f0fdf4;color:#15803d;"><i class="fa-solid fa-book-open"></i></span>Study Material</a>
+      <a href="/helpdesk.html"><span class="menu-icon-pill" style="background:#f1f5f9;color:#475569;"><i class="fa-solid fa-headset"></i></span>Helpdesk</a>
+      <div class="offcanvas-section">Follow Us</div>
+      <div class="offcanvas-social">
+        <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" class="soc-wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+        <a href="https://www.youtube.com/@Topsarkarijobs/shorts" target="_blank" rel="noopener" class="soc-yt"><i class="fa-brands fa-youtube"></i> YouTube</a>
+        <a href="https://www.instagram.com/topsarkarijobs?igsh=bTBsdjVpaTU3M2hn" target="_blank" rel="noopener" class="soc-ig"><i class="fa-brands fa-instagram"></i> Instagram</a>
+      </div>
+    </nav>
   </aside>
 
   <script>
