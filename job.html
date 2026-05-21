@@ -214,14 +214,19 @@
     .jp-btn-orange{background:#ea580c;color:#fff!important;}
     .jp-btn-sub{font-size:.68rem;font-weight:600;opacity:.9;}
 
-    .jp-nonjob-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:14px;}
-    .jp-nonjob-banner{background:linear-gradient(135deg,#7c3aed,#5b21b6);padding:20px;color:#fff;text-align:center;}
-    .jp-nonjob-banner h1{font-size:1.2rem;font-weight:800;margin:8px 0 6px;line-height:1.5;}
-    .jp-nonjob-badge{display:inline-block;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);border-radius:20px;font-size:.72rem;font-weight:700;padding:3px 12px;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;}
-    .jp-nonjob-desc{font-size:.85rem;opacity:.9;line-height:1.6;}
-    .jp-nonjob-cta{display:block;margin:16px;padding:14px;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff!important;text-decoration:none;border-radius:10px;text-align:center;font-weight:800;font-size:1rem;box-shadow:0 4px 14px rgba(124,58,237,.3);transition:all .2s;}
-    .jp-nonjob-cta:hover{filter:brightness(1.1);transform:translateY(-2px);}
-    .jp-nonjob-cta i{margin-right:6px;}
+    /* ── New Clean Non-Job Card Layout ── */
+    .jp-nonjob-card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;overflow:hidden;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.06);}
+    .jp-nonjob-banner{background:#fff;padding:28px 22px 20px;color:#1e1b4b;text-align:center;}
+    .jp-nonjob-badge{display:inline-flex;align-items:center;gap:6px;background:#f0ebff;border:1.5px solid #c4b5fd;border-radius:30px;font-size:.72rem;font-weight:700;padding:4px 14px;text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px;color:#6d28d9;}
+    .jp-nonjob-badge i{font-size:.65rem;}
+    .jp-nonjob-title{font-size:1.55rem;font-weight:900;margin:0 0 14px;line-height:1.4;color:#1e1b4b;letter-spacing:-.01em;}
+    .jp-nonjob-divider{display:flex;align-items:center;justify-content:center;gap:6px;margin:0 0 14px;}
+    .jp-nonjob-divider::before,.jp-nonjob-divider::after{content:'';display:block;width:40px;height:2px;background:#e2e8f0;border-radius:2px;}
+    .jp-nonjob-divider-dot{width:6px;height:6px;border-radius:50%;background:#7c3aed;}
+    .jp-nonjob-desc{font-size:.88rem;color:#64748b;line-height:1.65;margin:0;padding:0 8px;}
+    .jp-nonjob-cta{display:flex;align-items:center;justify-content:center;gap:10px;margin:20px 18px 22px;padding:15px 20px;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff!important;text-decoration:none;border-radius:12px;text-align:center;font-weight:800;font-size:1rem;box-shadow:0 4px 18px rgba(124,58,237,.35);transition:all .2s;}
+    .jp-nonjob-cta:hover{filter:brightness(1.08);transform:translateY(-2px);box-shadow:0 7px 22px rgba(124,58,237,.45);}
+    .jp-nonjob-cta i{font-size:.95rem;}
 
     .jp-tips-card .jp-sec-head{background:#0891b2;}
     .jp-tips-list{padding:10px 14px 12px;margin:0;}
@@ -606,13 +611,14 @@
           <div id="layoutNonJob" style="display:none;">
             <div class="jp-nonjob-card">
               <div class="jp-nonjob-banner" id="nonJobBanner">
-                <span class="jp-nonjob-badge" id="nonJobBadge">Resource</span>
-                <h1 class="jp-nonjob-banner" id="nonJobTitle"></h1>
+                <span class="jp-nonjob-badge" id="nonJobBadge"><i class="fa-solid fa-link"></i> Important Link</span>
+                <h1 class="jp-nonjob-title" id="nonJobTitle"></h1>
+                <div class="jp-nonjob-divider"><div class="jp-nonjob-divider-dot"></div></div>
                 <div class="jp-nonjob-desc" id="nonJobDesc"></div>
               </div>
               <a id="btnNonJobCta" href="#" target="_blank" rel="noopener" class="jp-nonjob-cta">
                 <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                <span id="nonJobCtaText">Visit Official Page</span>
+                <span id="nonJobCtaText">Click Here to Open Official Website</span>
               </a>
             </div>
             <!-- Non-Job Important Links -->
@@ -1313,15 +1319,94 @@
       layoutNonJob.style.display = 'block';
 
       const typeInfo = detectNonJobType(name);
-      document.getElementById('nonJobBadge').textContent = typeInfo.label;
+
+      /* Badge: icon + label based on type */
+      const badgeEl = document.getElementById('nonJobBadge');
+      const badgeIconMap = {
+        'Admit Card':        'fa-id-card',
+        'Result':            'fa-trophy',
+        'Answer Key':        'fa-key',
+        'Exam Update':       'fa-calendar-check',
+        'Govt Scheme / Yojna': 'fa-landmark',
+        'CSC Resource':      'fa-file-pdf',
+        'Latest Khabar':     'fa-newspaper',
+        'Important Link':    'fa-link',
+      };
+      const badgeIcon = badgeIconMap[typeInfo.label] || 'fa-link';
+      badgeEl.innerHTML = `<i class="fa-solid ${badgeIcon}"></i> ${typeInfo.label}`;
+
+      /* Badge color tint based on type */
+      const badgeColorMap = {
+        'Admit Card':           { bg:'#f0ebff', border:'#c4b5fd', color:'#6d28d9' },
+        'Result':               { bg:'#fef3c7', border:'#fcd34d', color:'#92400e' },
+        'Answer Key':           { bg:'#fef3c7', border:'#fcd34d', color:'#92400e' },
+        'Exam Update':          { bg:'#f0ebff', border:'#c4b5fd', color:'#6d28d9' },
+        'Govt Scheme / Yojna':  { bg:'#d1fae5', border:'#6ee7b7', color:'#065f46' },
+        'CSC Resource':         { bg:'#fee2e2', border:'#fca5a5', color:'#b91c1c' },
+        'Latest Khabar':        { bg:'#ffedd5', border:'#fdba74', color:'#c2410c' },
+        'Important Link':       { bg:'#f0ebff', border:'#c4b5fd', color:'#6d28d9' },
+      };
+      const bc = badgeColorMap[typeInfo.label] || badgeColorMap['Important Link'];
+      badgeEl.style.background = bc.bg;
+      badgeEl.style.borderColor = bc.border;
+      badgeEl.style.color = bc.color;
+
       document.getElementById('nonJobTitle').textContent = name;
-      document.getElementById('nonJobBanner').style.background = typeInfo.color;
-      document.getElementById('nonJobDesc').innerHTML = `<p style="margin:0 0 8px;"><strong>${typeInfo.label}</strong></p><p style="margin:0;">यह एक सरकारी संसाधन है।</p>`;
+
+      /* Banner always white background — color is in badge/button only */
+      document.getElementById('nonJobBanner').style.background = '#fff';
+
+      /* Smart description based on title keywords */
+      const n_lc = safe(name).toLowerCase();
+      let descText = '';
+      if (/balance\s*check|check\s*balance/i.test(n_lc)) {
+        descText = `यह ${safe(name)} की official service link है। नीचे दिए बटन पर click करके official website पर जाएं।`;
+      } else if (/scheme|yojna|yojana/i.test(n_lc)) {
+        descText = `यह एक Government Scheme का official page है। नीचे दिए बटन पर click करके official portal पर जाएं।`;
+      } else if (/admit\s*card|hall\s*ticket/i.test(n_lc)) {
+        descText = `यह ${safe(name)} की official link है। नीचे बटन पर click करके Admit Card download करें।`;
+      } else if (/result|merit\s*list/i.test(n_lc)) {
+        descText = `यह ${safe(name)} की official result link है। नीचे बटन पर click करके Result देखें।`;
+      } else if (/answer\s*key/i.test(n_lc)) {
+        descText = `यह ${safe(name)} की official Answer Key link है। नीचे बटन पर click करके Answer Key download करें।`;
+      } else {
+        descText = `यह ${safe(name)} की official service link है। नीचे दिए बटन पर click करके official website पर जाएं।`;
+      }
+      document.getElementById('nonJobDesc').innerHTML = descText;
+
       document.getElementById('bcTitle').textContent = name.length > 60 ? name.slice(0, 57) + '…' : name;
       const cta = document.getElementById('btnNonJobCta');
-      cta.style.background = typeInfo.color;
+
+      /* CTA button always purple gradient */
+      cta.style.background = 'linear-gradient(135deg,#7c3aed,#5b21b6)';
       cta.href = destUrl || '#';
-      document.getElementById('nonJobCtaText').textContent = typeInfo.label.includes('PDF') ? 'Download / View PDF' : typeInfo.label.includes('Scheme') ? 'View Govt Scheme' : 'Visit Official Page';
+
+      /* Smart button text based on title */
+      let ctaText = 'Click Here to Open Official Website';
+      if (/balance\s*check|check\s*balance/i.test(n_lc)) {
+        ctaText = `Click Here to Check ${safe(name)}`;
+      } else if (typeInfo.label.includes('PDF') || /\.pdf/i.test(destUrl || '')) {
+        ctaText = `Click Here to Download / View PDF`;
+      } else if (typeInfo.label.includes('Scheme') || /yojna|yojana/i.test(n_lc)) {
+        ctaText = `Click Here to View Govt Scheme`;
+      } else if (/admit\s*card|hall\s*ticket/i.test(n_lc)) {
+        ctaText = `Click Here to Download Admit Card`;
+      } else if (/result|merit\s*list/i.test(n_lc)) {
+        ctaText = `Click Here to Check Result`;
+      } else if (/answer\s*key/i.test(n_lc)) {
+        ctaText = `Click Here to Download Answer Key`;
+      } else if (/apply|application|form/i.test(n_lc)) {
+        ctaText = `Click Here to Apply Online`;
+      } else if (/registration|register/i.test(n_lc)) {
+        ctaText = `Click Here to Register Now`;
+      } else if (/status|track/i.test(n_lc)) {
+        ctaText = `Click Here to Check Status`;
+      } else if (/login/i.test(n_lc)) {
+        ctaText = `Click Here to Login`;
+      } else if (/download/i.test(n_lc)) {
+        ctaText = `Click Here to Download`;
+      }
+      document.getElementById('nonJobCtaText').textContent = ctaText;
 
       /* ── Important Links for Non-Job page ── */
       const nlCard    = document.getElementById('nonJobLinksCard');
