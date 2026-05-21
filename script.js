@@ -840,7 +840,7 @@
         } else if (rawDate.length > 35) {
           displayDate = rawDate.slice(0, 32) + "…";
         }
-        a.innerHTML = `<span class="sn-badge">${_idx+1}</span><span class="t">${name}</span>${displayDate ? `<span class="d"><i class="fa-regular fa-calendar-days"></i> ${displayDate}</span>` : ""}`;
+        a.innerHTML = `<span class="sn-badge">${_idx+1}</span><span class="t">${name}${displayDate ? `<span class="d"><i class="fa-regular fa-calendar-days"></i> ${displayDate}</span>` : ""}</span>`;
         list.appendChild(a);
 
         // ✅ SEARCH INDEX: sirf internal job.html links push karo (external nav/tools skip)
@@ -987,7 +987,7 @@
       } else if (rawDate.length > 35) {
         displayDate = rawDate.slice(0, 32) + "…";
       }
-      a.innerHTML = `<span class="sn-badge">${_idx+1}</span><span class="t">${name}</span>${displayDate ? `<span class="d"><i class="fa-regular fa-calendar-days"></i> ${displayDate}</span>` : ""}`;
+      a.innerHTML = `<span class="sn-badge">${_idx+1}</span><span class="t">${name}${displayDate ? `<span class="d"><i class="fa-regular fa-calendar-days"></i> ${displayDate}</span>` : ""}</span>`;
       list.appendChild(a);
 
       // ✅ SEARCH INDEX: sirf internal job.html links push karo (external nav/tools skip)
