@@ -171,41 +171,150 @@
 
 /* ── Mobile Overlay + Offcanvas ── */
 .overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 350;
+  position: fixed; inset: 0; background: rgba(0,0,0,.55);
+  z-index: 350; backdrop-filter: blur(2px);
 }
 .overlay[hidden] { display: none !important; }
+
+/* ── Offcanvas Shell ── */
 .offcanvas {
   position: fixed; top: 0; left: 0; bottom: 0;
-  width: min(300px, 85vw); background: #fff; z-index: 360;
+  width: min(320px, 88vw); background: #f8fafc; z-index: 360;
   overflow-y: auto; display: flex; flex-direction: column;
-  box-shadow: 0 6px 24px rgba(0,0,0,.12);
+  box-shadow: 4px 0 32px rgba(0,0,0,.18);
+  transition: transform .28s cubic-bezier(.4,0,.2,1);
 }
 .offcanvas[hidden] { display: none !important; }
+
+/* ── Offcanvas Header ── */
 .offcanvas-head {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 13px 14px;
-  background: linear-gradient(90deg, var(--navy), var(--blue2));
-  color: #fff; border-bottom: 2px solid var(--accent); flex-shrink: 0;
+  padding: 0 14px;
+  background: linear-gradient(135deg, var(--navy) 0%, #1e3a8a 100%);
+  color: #fff; border-bottom: 3px solid var(--accent);
+  flex-shrink: 0; min-height: 58px;
 }
-.offcanvas-title { font-weight: 900; font-size: .95rem; }
+.offcanvas-head-left { display: flex; align-items: center; gap: 10px; }
+.offcanvas-head-logo {
+  width: 34px; height: 34px; border-radius: 8px;
+  border: 2px solid rgba(255,255,255,.3); object-fit: cover;
+}
+.offcanvas-head-texts { display: flex; flex-direction: column; line-height: 1.2; }
+.offcanvas-title { font-weight: 900; font-size: .92rem; letter-spacing: .01em; }
+.offcanvas-sub { font-size: .6rem; opacity: .75; font-weight: 600; }
 .offcanvas-close {
-  background: rgba(255,255,255,.15); border: none; color: #fff;
-  width: 32px; height: 32px; border-radius: 7px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; font-size: .9rem;
+  background: rgba(255,255,255,.15); border: 1.5px solid rgba(255,255,255,.2);
+  color: #fff; width: 34px; height: 34px; border-radius: 8px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: .95rem;
+  font-family: inherit; transition: background .15s;
+}
+.offcanvas-close:hover { background: rgba(255,255,255,.28); }
+
+/* ── Search Bar in Menu ── */
+.offcanvas-search {
+  padding: 10px 12px 6px; background: #fff;
+  border-bottom: 1px solid #e8edf4;
+}
+.offcanvas-search-inner {
+  display: flex; align-items: center; gap: 8px;
+  background: #f1f5f9; border-radius: 10px; padding: 8px 12px;
+  border: 1.5px solid #e2e8f0;
+}
+.offcanvas-search-inner i { color: #94a3b8; font-size: .85rem; }
+.offcanvas-search-inner input {
+  border: none; background: transparent; font-size: .82rem;
+  font-weight: 600; color: #1e293b; outline: none; flex: 1;
   font-family: inherit;
 }
-.offcanvas-nav { display: flex; flex-direction: column; padding: 8px; gap: 2px; }
-.offcanvas-nav a {
-  display: flex; align-items: center; gap: 9px; padding: 10px 12px;
-  border-radius: 7px; text-decoration: none; font-size: .82rem; font-weight: 700;
-  color: var(--text); transition: background .12s;
-}
-.offcanvas-nav a:hover { background: #eff6ff; color: var(--blue); }
-.offcanvas-nav a i { width: 17px; color: var(--blue); }
+.offcanvas-search-inner input::placeholder { color: #94a3b8; }
+
+/* ── Nav Body ── */
+.offcanvas-nav { display: flex; flex-direction: column; padding: 8px 10px 16px; gap: 2px; flex: 1; }
+
+/* ── Section Heading ── */
 .offcanvas-section {
-  font-size: .65rem; font-weight: 900; letter-spacing: .1em;
-  text-transform: uppercase; color: var(--muted); padding: 10px 12px 3px;
+  display: flex; align-items: center; gap: 7px;
+  font-size: .62rem; font-weight: 900; letter-spacing: .12em;
+  text-transform: uppercase; padding: 14px 8px 5px;
+  color: #94a3b8;
 }
+.offcanvas-section::after {
+  content: ''; flex: 1; height: 1px; background: #e2e8f0;
+}
+
+/* ── Regular Nav Link ── */
+.offcanvas-nav > a,
+.mob-acc-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 10px;
+  text-decoration: none; font-size: .83rem; font-weight: 700;
+  color: #1e293b; transition: all .15s; cursor: pointer;
+  background: transparent; border: none; width: 100%;
+  font-family: inherit; text-align: left;
+  -webkit-tap-highlight-color: transparent;
+}
+.offcanvas-nav > a:active,
+.mob-acc-head:active { background: #e0e7ff; }
+.offcanvas-nav > a:hover,
+.mob-acc-head:hover { background: #eff6ff; color: var(--blue); }
+
+/* Icon pill */
+.menu-icon-pill {
+  width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .78rem;
+}
+
+/* ── Highlight badges on items ── */
+.menu-badge {
+  margin-left: auto; font-size: .58rem; font-weight: 800;
+  padding: 2px 7px; border-radius: 20px; letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.menu-badge-red  { background: #fee2e2; color: #b91c1c; }
+.menu-badge-green{ background: #dcfce7; color: #15803d; }
+.menu-badge-blue { background: #dbeafe; color: #1d4ed8; }
+.menu-badge-amber{ background: #fef3c7; color: #b45309; }
+.menu-badge-purple{ background: #ede9fe; color: #6d28d9; }
+
+/* chevron for accordion */
+.mob-acc-chev {
+  margin-left: auto; font-size: .65rem; color: #94a3b8;
+  transition: transform .25s; flex-shrink: 0;
+}
+.mob-acc-head.open .mob-acc-chev { transform: rotate(180deg); }
+
+/* ── Accordion Sub-items ── */
+.mob-acc-body {
+  display: none; flex-direction: column; gap: 1px;
+  padding: 3px 0 3px 14px; margin: 0 0 2px;
+}
+.mob-acc-body.open { display: flex; }
+.mob-acc-body a {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 12px; border-radius: 8px;
+  text-decoration: none; font-size: .79rem; font-weight: 600;
+  color: #334155; transition: all .12s;
+  -webkit-tap-highlight-color: transparent;
+}
+.mob-acc-body a:hover { background: #eff6ff; color: var(--blue); }
+.mob-acc-body a i { width: 16px; font-size: .78rem; color: var(--blue); flex-shrink: 0; }
+.mob-acc-body .menu-icon-pill { width: 26px; height: 26px; font-size: .72rem; }
+
+/* ── Social row in menu ── */
+.offcanvas-social {
+  display: flex; gap: 8px; padding: 10px 12px 4px; flex-wrap: wrap;
+}
+.offcanvas-social a {
+  display: flex; align-items: center; gap: 6px; padding: 7px 12px;
+  border-radius: 20px; font-size: .72rem; font-weight: 800;
+  text-decoration: none; border: 1.5px solid transparent; transition: opacity .15s;
+}
+.offcanvas-social a:hover { opacity: .82; }
+.soc-wa  { background: #dcfce7; color: #15803d; border-color: #bbf7d0; }
+.soc-yt  { background: #fee2e2; color: #b91c1c; border-color: #fecaca; }
+.soc-ig  { background: #fce7f3; color: #9d174d; border-color: #fbcfe8; }
+.soc-sc  { background: #fef9c3; color: #a16207; border-color: #fef08a; }
 </style>
 
 <!-- ============================================================
@@ -338,52 +447,245 @@
 ============================================================ -->
 <div id="menuOverlay" class="overlay" hidden></div>
 <aside id="mobileMenu" class="offcanvas" aria-label="Mobile menu" hidden>
+
+  <!-- Header -->
   <div class="offcanvas-head">
-    <div class="offcanvas-title">☰ Menu</div>
+    <div class="offcanvas-head-left">
+      <picture>
+        <source srcset="/image.webp" type="image/webp">
+        <img src="/image.png" alt="Logo" class="offcanvas-head-logo" width="34" height="34">
+      </picture>
+      <div class="offcanvas-head-texts">
+        <span class="offcanvas-title">TOP SARKARI JOBS</span>
+        <span class="offcanvas-sub">India's No.1 Sarkari Jobs Portal</span>
+      </div>
+    </div>
     <button id="closeMenuBtn" class="offcanvas-close" type="button" aria-label="Close menu">
       <i class="fa-solid fa-xmark"></i>
     </button>
   </div>
+
+  <!-- Search -->
+  <div class="offcanvas-search">
+    <div class="offcanvas-search-inner">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Search jobs, results, admit cards…" id="menuSearchInput" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- Nav -->
   <nav class="offcanvas-nav" aria-label="Mobile primary">
+
+    <!-- MAIN -->
     <div class="offcanvas-section">Main</div>
-    <a href="/"><i class="fa-solid fa-house"></i>Home</a>
-    <a href="/section/latest-jobs/"><i class="fa-solid fa-fire"></i>Latest Jobs</a>
-    <a href="/section/upcoming-jobs/"><i class="fa-solid fa-calendar-plus"></i>Upcoming Jobs</a>
-    <a href="/section/top-20-jobs/"><i class="fa-solid fa-medal"></i>Top 20 Jobs</a>
-    <a href="/section/jobs-with-last-date/"><i class="fa-solid fa-clock"></i>Last Date Near</a>
 
-    <div class="offcanvas-section">Admit / Result</div>
-    <a href="/category.html?group=admit-result"><i class="fa-solid fa-id-card"></i>Admit Cards 2026</a>
-    <a href="/category.html?group=admissions"><i class="fa-solid fa-trophy"></i>Latest Results</a>
-    <a href="/section/admit-card/"><i class="fa-solid fa-calendar-days"></i>Exam Dates</a>
-    <a href="/category.html?group=admissions"><i class="fa-solid fa-graduation-cap"></i>Admissions 2026</a>
+    <a href="/">
+      <span class="menu-icon-pill" style="background:#dbeafe;color:#1d4ed8;"><i class="fa-solid fa-house"></i></span>
+      Home
+    </a>
 
-    <div class="offcanvas-section">Categories</div>
-    <a href="/section/railway-jobs/"><i class="fa-solid fa-train"></i>Railway Jobs</a>
-    <a href="/section/police-jobs/"><i class="fa-solid fa-shield-halved"></i>Police Jobs</a>
-    <a href="/section/bank-jobs/"><i class="fa-solid fa-building-columns"></i>Bank Jobs</a>
-    <a href="/section/teaching-jobs/"><i class="fa-solid fa-chalkboard-user"></i>Teacher Jobs</a>
-    <a href="/section/army-jobs/"><i class="fa-solid fa-star"></i>Army/Navy/AF</a>
-    <a href="/section/healthcare-jobs/"><i class="fa-solid fa-stethoscope"></i>Medical Jobs</a>
-    <a href="/section/haryana-all-state-jobs/"><i class="fa-solid fa-location-dot"></i>Haryana Jobs</a>
-    <a href="/state/"><i class="fa-solid fa-map-location-dot"></i>State Wise Jobs</a>
-    <a href="/section/govt-scheme-yojna/"><i class="fa-solid fa-hand-holding-heart"></i>Govt Schemes</a>
+    <!-- Latest Jobs accordion -->
+    <button class="mob-acc-head" data-acc="acc-jobs" type="button">
+      <span class="menu-icon-pill" style="background:#fee2e2;color:#b91c1c;"><i class="fa-solid fa-fire"></i></span>
+      Latest Jobs
+      <span class="menu-badge menu-badge-red">New</span>
+      <i class="fa-solid fa-chevron-down mob-acc-chev"></i>
+    </button>
+    <div class="mob-acc-body" id="acc-jobs">
+      <a href="/section/latest-jobs/"><i class="fa-solid fa-bolt"></i> Latest Jobs 2026</a>
+      <a href="/section/upcoming-jobs/"><i class="fa-solid fa-calendar-plus"></i> Upcoming Jobs</a>
+      <a href="/section/top-20-jobs/"><i class="fa-solid fa-medal"></i> Top 20 Jobs</a>
+      <a href="/section/jobs-with-last-date/"><i class="fa-solid fa-clock"></i> Last Date Near</a>
+      <a href="/section/latest-govt-jobs/"><i class="fa-solid fa-globe"></i> All India Jobs</a>
+    </div>
 
+    <a href="/section/admit-card/">
+      <span class="menu-icon-pill" style="background:#ede9fe;color:#6d28d9;"><i class="fa-solid fa-id-card"></i></span>
+      Admit Card
+      <span class="menu-badge menu-badge-purple">2026</span>
+    </a>
+
+    <a href="/category.html?group=admissions">
+      <span class="menu-icon-pill" style="background:#fef3c7;color:#b45309;"><i class="fa-solid fa-trophy"></i></span>
+      Results
+      <span class="menu-badge menu-badge-amber">Live</span>
+    </a>
+
+    <a href="/category.html?group=admit-result">
+      <span class="menu-icon-pill" style="background:#fef3c7;color:#b45309;"><i class="fa-solid fa-key"></i></span>
+      Answer Key
+    </a>
+
+    <!-- JOBS BY CATEGORY -->
+    <div class="offcanvas-section">Jobs by Category</div>
+
+    <button class="mob-acc-head" data-acc="acc-cat" type="button">
+      <span class="menu-icon-pill" style="background:#dbeafe;color:#1d4ed8;"><i class="fa-solid fa-briefcase"></i></span>
+      Popular Categories
+      <i class="fa-solid fa-chevron-down mob-acc-chev"></i>
+    </button>
+    <div class="mob-acc-body" id="acc-cat">
+      <a href="/section/railway-jobs/"><i class="fa-solid fa-train"></i> Railway Jobs</a>
+      <a href="/section/police-jobs/"><i class="fa-solid fa-shield-halved"></i> Police Jobs</a>
+      <a href="/section/bank-jobs/"><i class="fa-solid fa-building-columns"></i> Bank Jobs</a>
+      <a href="/section/teaching-jobs/"><i class="fa-solid fa-chalkboard-user"></i> Teacher Jobs</a>
+      <a href="/section/army-jobs/"><i class="fa-solid fa-shield-halved"></i> Army / Navy / AF</a>
+      <a href="/section/healthcare-jobs/"><i class="fa-solid fa-stethoscope"></i> Medical / Health Jobs</a>
+      <a href="/section/engineering-jobs/"><i class="fa-solid fa-gear"></i> Engineering Jobs</a>
+      <a href="/category.html?group=study"><i class="fa-solid fa-graduation-cap"></i> Study Wise Jobs</a>
+      <a href="/category.html?group=popular"><i class="fa-solid fa-star"></i> Popular Categories</a>
+    </div>
+
+    <!-- State Wise accordion -->
+    <button class="mob-acc-head" data-acc="acc-state" type="button">
+      <span class="menu-icon-pill" style="background:#dcfce7;color:#15803d;"><i class="fa-solid fa-map-location-dot"></i></span>
+      State Wise Jobs
+      <i class="fa-solid fa-chevron-down mob-acc-chev"></i>
+    </button>
+    <div class="mob-acc-body" id="acc-state">
+      <a href="/section/haryana-all-state-jobs/"><i class="fa-solid fa-location-dot"></i> Haryana Jobs</a>
+      <a href="/state/uttar-pradesh/"><i class="fa-solid fa-location-dot"></i> Uttar Pradesh</a>
+      <a href="/state/rajasthan/"><i class="fa-solid fa-location-dot"></i> Rajasthan</a>
+      <a href="/state/bihar/"><i class="fa-solid fa-location-dot"></i> Bihar</a>
+      <a href="/state/madhya-pradesh/"><i class="fa-solid fa-location-dot"></i> Madhya Pradesh</a>
+      <a href="/state/gujarat/"><i class="fa-solid fa-location-dot"></i> Gujarat</a>
+      <a href="/state/maharashtra/"><i class="fa-solid fa-location-dot"></i> Maharashtra</a>
+      <a href="/state/delhi/"><i class="fa-solid fa-location-dot"></i> Delhi</a>
+      <a href="/state/"><i class="fa-solid fa-list"></i> All States →</a>
+    </div>
+
+    <!-- ADMISSIONS -->
+    <div class="offcanvas-section">Admissions</div>
+
+    <a href="/category.html?group=admissions">
+      <span class="menu-icon-pill" style="background:#ede9fe;color:#6d28d9;"><i class="fa-solid fa-graduation-cap"></i></span>
+      Admissions 2026
+    </a>
+
+    <!-- Exam accordion -->
+    <button class="mob-acc-head" data-acc="acc-exam" type="button">
+      <span class="menu-icon-pill" style="background:#fce7f3;color:#9d174d;"><i class="fa-solid fa-calendar-check"></i></span>
+      Exam Updates
+      <i class="fa-solid fa-chevron-down mob-acc-chev"></i>
+    </button>
+    <div class="mob-acc-body" id="acc-exam">
+      <a href="/section/admit-card/"><i class="fa-solid fa-id-card"></i> Admit Cards</a>
+      <a href="/category.html?group=admissions"><i class="fa-solid fa-trophy"></i> Results</a>
+      <a href="/category.html?group=admit-result"><i class="fa-solid fa-key"></i> Answer Keys</a>
+      <a href="/section/admit-card/"><i class="fa-solid fa-calendar-days"></i> Exam Dates / Schedule</a>
+      <a href="/category.html?group=admissions"><i class="fa-solid fa-list-check"></i> Merit List / Cut Off</a>
+      <a href="/category.html?group=admissions"><i class="fa-solid fa-book"></i> Syllabus / Pattern</a>
+    </div>
+
+    <!-- GOVT SCHEMES -->
+    <div class="offcanvas-section">Govt Schemes &amp; Services</div>
+
+    <a href="/section/govt-scheme-yojna/">
+      <span class="menu-icon-pill" style="background:#dcfce7;color:#15803d;"><i class="fa-solid fa-hand-holding-heart"></i></span>
+      Govt Schemes / Yojna
+      <span class="menu-badge menu-badge-green">Hot</span>
+    </a>
+
+    <a href="/section/important-csc-pdf/">
+      <span class="menu-icon-pill" style="background:#fee2e2;color:#b91c1c;"><i class="fa-solid fa-file-pdf"></i></span>
+      CSC Services &amp; PDFs
+    </a>
+
+    <!-- TOOLS & MORE -->
     <div class="offcanvas-section">Tools &amp; More</div>
-    <a href="/tools.html"><i class="fa-solid fa-screwdriver-wrench"></i>Free Tools</a>
-    <a href="/section/important-csc-pdf/"><i class="fa-solid fa-id-card"></i>CSC Services</a>
-    <a href="resume-maker.html"><i class="fa-solid fa-file-lines"></i>Resume Maker</a>
-    <a href="/category.html?group=khabar"><i class="fa-solid fa-newspaper"></i>Latest Khabar</a>
-    <a href="/category.html?group=study-material"><i class="fa-solid fa-book-open"></i>Study Material</a>
-    <a href="/helpdesk.html"><i class="fa-solid fa-headset"></i>Helpdesk</a>
 
+    <a href="/tools.html">
+      <span class="menu-icon-pill" style="background:#dbeafe;color:#1d4ed8;"><i class="fa-solid fa-screwdriver-wrench"></i></span>
+      Free Tools
+      <span class="menu-badge menu-badge-blue">Free</span>
+    </a>
+
+    <a href="/resume-maker.html">
+      <span class="menu-icon-pill" style="background:#ede9fe;color:#6d28d9;"><i class="fa-solid fa-file-lines"></i></span>
+      Resume / CV Maker
+      <span class="menu-badge menu-badge-purple">Free</span>
+    </a>
+
+    <a href="/category.html?group=khabar">
+      <span class="menu-icon-pill" style="background:#ffedd5;color:#c2410c;"><i class="fa-solid fa-newspaper"></i></span>
+      Latest Khabar
+    </a>
+
+    <a href="/category.html?group=study-material">
+      <span class="menu-icon-pill" style="background:#f0fdf4;color:#15803d;"><i class="fa-solid fa-book-open"></i></span>
+      Study Material &amp; Courses
+    </a>
+
+    <a href="/helpdesk.html">
+      <span class="menu-icon-pill" style="background:#f1f5f9;color:#475569;"><i class="fa-solid fa-headset"></i></span>
+      Helpdesk / Contact Us
+    </a>
+
+    <a href="/about.html">
+      <span class="menu-icon-pill" style="background:#f1f5f9;color:#475569;"><i class="fa-solid fa-circle-info"></i></span>
+      About Us
+    </a>
+
+    <!-- FOLLOW US -->
     <div class="offcanvas-section">Follow Us</div>
-    <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" style="color:#25d366;"><i class="fa-brands fa-whatsapp"></i>Join WhatsApp</a>
-    <a href="https://www.youtube.com/@Topsarkarijobs/shorts" target="_blank" rel="noopener" style="color:#ff0000;"><i class="fa-brands fa-youtube"></i>YouTube Channel</a>
-    <a href="https://www.instagram.com/topsarkarijobs?igsh=bTBsdjVpaTU3M2hn" target="_blank" rel="noopener" style="color:#e1306c;"><i class="fa-brands fa-instagram"></i>Instagram</a>
-    <a href="https://www.snapchat.com/add/topsarkarijobss?share_id=accGq-qWC1g&locale=en-IN" target="_blank" rel="noopener" style="color:#d97706;"><i class="fa-brands fa-snapchat"></i>Snapchat</a>
+    <div class="offcanvas-social">
+      <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" class="soc-wa">
+        <i class="fa-brands fa-whatsapp"></i> WhatsApp
+      </a>
+      <a href="https://www.youtube.com/@Topsarkarijobs/shorts" target="_blank" rel="noopener" class="soc-yt">
+        <i class="fa-brands fa-youtube"></i> YouTube
+      </a>
+      <a href="https://www.instagram.com/topsarkarijobs?igsh=bTBsdjVpaTU3M2hn" target="_blank" rel="noopener" class="soc-ig">
+        <i class="fa-brands fa-instagram"></i> Instagram
+      </a>
+      <a href="https://www.snapchat.com/add/topsarkarijobss?share_id=accGq-qWC1g&locale=en-IN" target="_blank" rel="noopener" class="soc-sc">
+        <i class="fa-brands fa-snapchat"></i> Snapchat
+      </a>
+    </div>
+
   </nav>
 </aside>
+
+<script>
+/* ── Mobile Menu: Accordion logic ── */
+(function(){
+  document.addEventListener('click', function(e){
+    const btn = e.target.closest('.mob-acc-head');
+    if(!btn) return;
+    const id  = btn.getAttribute('data-acc');
+    const body = document.getElementById(id);
+    if(!body) return;
+    const isOpen = btn.classList.contains('open');
+    /* Close all others */
+    document.querySelectorAll('.mob-acc-head.open').forEach(function(b){
+      b.classList.remove('open');
+      const ob = document.getElementById(b.getAttribute('data-acc'));
+      if(ob) ob.classList.remove('open');
+    });
+    if(!isOpen){ btn.classList.add('open'); body.classList.add('open'); }
+  });
+
+  /* Menu search filter */
+  var inp = document.getElementById('menuSearchInput');
+  if(inp){
+    inp.addEventListener('input', function(){
+      var q = this.value.trim().toLowerCase();
+      document.querySelectorAll('.offcanvas-nav > a, .mob-acc-body a').forEach(function(a){
+        var txt = a.textContent.toLowerCase();
+        a.style.display = (!q || txt.includes(q)) ? '' : 'none';
+      });
+      /* Show accordion bodies when searching */
+      if(q){
+        document.querySelectorAll('.mob-acc-body').forEach(function(b){ b.classList.add('open'); });
+        document.querySelectorAll('.mob-acc-head').forEach(function(b){ b.classList.add('open'); });
+      } else {
+        document.querySelectorAll('.mob-acc-body').forEach(function(b){ b.classList.remove('open'); });
+        document.querySelectorAll('.mob-acc-head').forEach(function(b){ b.classList.remove('open'); });
+      }
+    });
+  }
+})();
+</script>
 
 <!-- ============================================================
      MOBILE BOTTOM NAVIGATION BAR
