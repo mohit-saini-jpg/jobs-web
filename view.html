@@ -304,8 +304,10 @@
       'teaching-jobs':        {file:'complete',key:'Teaching_Faculty'},
       'teacher-jobs':         {file:'complete',key:'Teaching_Faculty'},
       'bank-jobs':            {file:'complete',key:'Bank_Jobs'},
-      'healthcare-jobs':      {file:'complete',key:'Medical_Hospital'},
-      'medical-jobs':         {file:'complete',key:'Medical_Hospital'},
+      'healthcare-jobs':           {file:'complete',key:'Medical_Hospital'},
+      'medical-jobs':              {file:'complete',key:'Medical_Hospital'},
+      'medical-healthcare-jobs':   {file:'complete',key:'Medical_Hospital'},
+      'hospital-jobs':             {file:'complete',key:'Medical_Hospital'},
       'last-date-reminder':   {file:'complete',key:'Last_Date_Reminder'},
       'latest-notifications': {file:'complete',key:'Latest_Notifications'},
       /* dailyupdates.json */
@@ -325,8 +327,14 @@
       'answer-key':           {file:'merged',key:'SR_Answer_Key'},
       'offline-form':         {file:'merged',key:'_offline'},
       'offline-jobs':         {file:'merged',key:'_offline'},
+      /* Extra slug aliases */
+      'upcoming-jobs':          {file:'merged',key:'UPCOMING_JOBS'},
+      'jobs-with-last-date':    {file:'complete',key:'Last_Date_Reminder'},
+      'last-date-jobs':         {file:'complete',key:'Last_Date_Reminder'},
+      'haryana-all-state-jobs': {file:'merged',key:'SR_Latest_Jobs'},
+      'haryana-jobs':           {file:'merged',key:'SR_Latest_Jobs'},
       /* AUTO: new categories from merged_sarkari_data.json get added here */
-      'latest-jobs-new':      {file:'merged',key:'LATEST_JOBS NEW'}
+      'latest-jobs-new':        {file:'merged',key:'LATEST_JOBS NEW'}
     };
 
     function slugify(s){return(s||'').toLowerCase().replace(/[^\w\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');}
