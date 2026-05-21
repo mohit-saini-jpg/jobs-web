@@ -447,6 +447,10 @@
     /* If header.html already injected the new menu (has mob-acc-head elements),
        do NOT overwrite it — just return. The new menu is already correct. */
     if (nav.querySelector(".mob-acc-head") || nav.querySelector(".menu-icon-pill")) return;
+    /* On index/homepage, mobileMenu is inline in HTML with full accordion menu.
+       Do NOT overwrite it with the plain fallback. */
+    const page = (location.pathname.split("/").pop() || "").toLowerCase();
+    if (page === "index.html" || page === "" || page === "/") return;
     
     nav.innerHTML = `
       <a href="index.html">Home</a>
