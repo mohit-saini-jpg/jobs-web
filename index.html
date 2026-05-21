@@ -1098,7 +1098,7 @@
       }
 
       /* dynamic-sections section-link inherits global mobile styles above */
-      #dynamic-sections .section-link { padding: 7px 7px 7px 32px; }
+      #dynamic-sections .section-link { padding: 7px 6px 7px 28px; }
 
       #dynamic-sections .section-more {
         font-size: .7rem;
@@ -1346,12 +1346,11 @@
     .section-list::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
     .section-list::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
     .section-list::-webkit-scrollbar-thumb:hover { background: #475569; }
-    /* ── section-link: flex row — title fills space, date badge fixed right ── */
-    /* ── section-link: title wraps, date badge inline at end ── */
+    /* section-link: number top-left absolute, title indented, date below */
     .section-link {
       display: block;
       position: relative;
-      padding: 9px 12px 9px 34px;
+      padding: 8px 10px 8px 32px;
       border-bottom: 1px solid #f1f5f9;
       text-decoration: none;
       color: var(--text);
@@ -1359,75 +1358,79 @@
       transition: background .12s;
       box-sizing: border-box;
     }
-    /* Serial number badge — top-left corner */
+    /* Serial number badge — top-left, fixed */
     .section-link .sn-badge {
       position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
+      top: 10px;
       left: 7px;
-      min-width: 20px;
-      height: 20px;
-      padding: 0 5px;
+      width: 18px;
+      height: 18px;
+      padding: 0;
       background: #0284c7;
       color: #fff;
-      font-size: 10px;
-      font-weight: 800;
-      border-radius: 6px;
+      font-size: 9px;
+      font-weight: 900;
+      border-radius: 4px;
       display: flex;
       align-items: center;
       justify-content: center;
       line-height: 1;
       box-shadow: 0 1px 4px rgba(2,132,199,0.4);
       z-index: 1;
-      flex-shrink: 0;
     }
     .section-link:last-child { border-bottom: none; }
     .section-link:hover { background: #f0f7ff; }
 
-    /* .t: inline so date badge flows right after last word */
+    /* Title: block — all lines align under number box */
     .section-link .t {
-      display: inline;
-      font-size: .82rem;
+      display: block;
+      font-size: .80rem;
       font-weight: 700;
       color: var(--blue);
-      line-height: 1.6;
+      line-height: 1.5;
       word-break: break-word;
     }
     .section-link:hover .t { text-decoration: underline; }
 
-    /* Date badge: inline-flex — naturally sits at end of title text */
+    /* Date: block below title, red badge style like image */
     .section-link .d {
       display: inline-flex;
       align-items: center;
-      gap: 3px;
-      font-size: .67rem;
+      gap: 4px;
+      margin-top: 4px;
+      font-size: .63rem;
       font-weight: 800;
       color: #fff;
       background: var(--red);
-      border-radius: 5px;
-      padding: 3px 7px;
+      border-radius: 4px;
+      padding: 2px 7px;
       white-space: nowrap;
-      vertical-align: middle;
-      margin-left: 5px;
-      line-height: 1;
+      line-height: 1.4;
     }
-    .section-link .d i { font-size: .60rem; }
+    .section-link .d i { font-size: .58rem; }
 
-    /* ── Mobile 2-col: title + date inline, auto-wrap ── */
+    /* ── Mobile 2-col ── */
     @media (max-width: 600px) {
       .section-link {
-        padding: 7px 6px 7px 30px;
+        padding: 7px 6px 7px 28px;
+      }
+      .section-link .sn-badge {
+        top: 9px;
+        left: 6px;
+        width: 16px;
+        height: 16px;
+        font-size: 8px;
+        border-radius: 3px;
       }
       .section-link .t {
-        font-size: .67rem;
-        line-height: 1.6;
+        font-size: .68rem;
+        line-height: 1.45;
       }
       .section-link .d {
         font-size: .57rem !important;
         padding: 2px 5px !important;
-        border-radius: 4px;
-        margin-left: 3px;
-        vertical-align: middle;
+        border-radius: 3px;
+        margin-top: 3px;
       }
       .section-head {
         padding: 7px 7px !important;
@@ -1534,7 +1537,7 @@
 
       /* two-col section-link inherits global mobile styles above */
       .two-col-sections .section-link,
-      .two-col-grid    .section-link { padding: 7px 7px 7px 32px; }
+      .two-col-grid    .section-link { padding: 7px 6px 7px 28px; }
 
       .two-col-sections .sec-more,
       .two-col-grid    .sec-more {
