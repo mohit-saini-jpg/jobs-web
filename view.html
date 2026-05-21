@@ -33,7 +33,14 @@
     .sv-wrap { max-width: 1240px; margin: 0 auto; padding: 20px 16px 40px; }
 
     /* ── Search Bar ── */
-    .sv-search-wrap { position: relative; z-index: 50; margin-bottom: 24px; }
+    .sv-search-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      margin-bottom: 24px;
+      background: #f8fafc;
+      padding: 10px 0 6px;
+    }
     .sv-search-row {
       display: flex; align-items: stretch; gap: 0;
       background: #fff; border: 2px solid #cbd5e1; border-radius: 14px;
@@ -65,7 +72,7 @@
       border-radius: 12px;
       box-shadow: 0 12px 30px rgba(0,0,0,.13);
       max-height: 340px; overflow-y: auto;
-      display: none; z-index: 200;
+      display: none; z-index: 100;
     }
     .sv-drop-item {
       display: flex; flex-direction: column;
