@@ -1057,8 +1057,18 @@
           const ageRows = [];
           if (row.minAge)   ageRows.push(['Minimum Age', row.minAge]);
           if (row.maxAge)   ageRows.push(['Maximum Age', row.maxAge]);
-          if (row.ageRelax) ageRows.push(['Age Relaxation', row.ageRelax]);
-          document.getElementById('ageTableBody').innerHTML = ageRows.map(([k,v])=>`<tr><th>${k}</th><td>${v}</td></tr>`).join('');
+          const ageBody = document.getElementById('ageTableBody');
+          if (ageBody) {
+            let ageHtml = ageRows.map(([k,v]) => '<tr><th>' + k + '</th><td>' + v + '</td></tr>').join('');
+            if (row.ageRelax) {
+              if (row.ageRelax.length > 80) {
+                ageHtml += '<tr><th style="vertical-align:top;">Age Relaxation</th><td style="font-size:0.85em;line-height:1.6;">' + row.ageRelax + '</td></tr>';
+              } else {
+                ageHtml += '<tr><th>Age Relaxation</th><td>' + row.ageRelax + '</td></tr>';
+              }
+            }
+            ageBody.innerHTML = ageHtml;
+          }
         }
       }
 
@@ -1763,9 +1773,24 @@
       const feePh  = safe(fee.ph   || fee.pwd || '');
 
       /* Age */
-      const minAge    = safe(job.minimum_age || age.minimum_age || '');
-      const maxAge    = safe(job.maximum_age || age.maximum_age || age.age_limit || '');
-      const ageRelax  = safe(job.age_relaxation || age.age_relaxation || age.details || '');
+      // Parse combined age_limit string if structured fields are missing
+      function _parseAgeLimitStr(str) {
+        if (!str) return { min: '', max: '', relax: '' };
+        // Try to extract Minimum Age, Maximum Age, Age Relaxation from combined string
+        const minMatch  = str.match(/Minimum\s+Age\s*[:\-]\s*([^,]+?)(?=Maximum Age|Age Relaxation|$)/i);
+        const maxMatch  = str.match(/Maximum\s+Age\s*[:\-]\s*([^,]+?)(?=Age Relaxation|Minimum Age|$)/i);
+        const relaxMatch = str.match(/Age\s+Relaxation\s*[:\-]\s*([\s\S]+?)(?=Minimum Age|Maximum Age|$)/i);
+        return {
+          min:   minMatch   ? minMatch[1].trim()   : '',
+          max:   maxMatch   ? maxMatch[1].trim()   : '',
+          relax: relaxMatch ? relaxMatch[1].trim() : ''
+        };
+      }
+      const _ageCombined = safe(age.age_limit || job.age_limit || '');
+      const _ageParsed   = _parseAgeLimitStr(_ageCombined);
+      const minAge    = safe(job.minimum_age  || age.minimum_age  || _ageParsed.min   || '');
+      const maxAge    = safe(job.maximum_age  || age.maximum_age  || _ageParsed.max   || '');
+      const ageRelax  = safe(job.age_relaxation || age.age_relaxation || age.details  || _ageParsed.relax || _ageCombined || '');
 
       /* Qualification */
       const eduQual   = safe(
