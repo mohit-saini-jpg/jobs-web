@@ -1098,7 +1098,7 @@
       }
 
       /* dynamic-sections section-link inherits global mobile styles above */
-      #dynamic-sections .section-link { padding: 7px 6px 7px 28px; }
+      #dynamic-sections .section-link { padding: 7px 6px 7px 27px; }
 
       #dynamic-sections .section-more {
         font-size: .7rem;
@@ -1350,7 +1350,7 @@
     .section-link {
       display: block;
       position: relative;
-      padding: 8px 10px 8px 32px;
+      padding: 8px 10px 8px 30px;
       border-bottom: 1px solid #f1f5f9;
       text-decoration: none;
       color: var(--text);
@@ -1381,9 +1381,9 @@
     .section-link:last-child { border-bottom: none; }
     .section-link:hover { background: #f0f7ff; }
 
-    /* Title: inline so date flows at end of last word */
+    /* Title: block so ALL lines wrap from padding-left edge (under number) */
     .section-link .t {
-      display: inline;
+      display: block;
       font-size: .80rem;
       font-weight: 700;
       color: var(--blue);
@@ -1392,7 +1392,7 @@
     }
     .section-link:hover .t { text-decoration: underline; }
 
-    /* Date: inline-flex at end of title text */
+    /* Date: inline-flex INSIDE .t — flows at end of title text naturally */
     .section-link .d {
       display: inline-flex;
       align-items: center;
@@ -1413,7 +1413,7 @@
     /* ── Mobile 2-col ── */
     @media (max-width: 600px) {
       .section-link {
-        padding: 7px 6px 7px 28px;
+        padding: 7px 6px 7px 27px;
       }
       .section-link .sn-badge {
         top: 9px;
@@ -1538,7 +1538,7 @@
 
       /* two-col section-link inherits global mobile styles above */
       .two-col-sections .section-link,
-      .two-col-grid    .section-link { padding: 7px 6px 7px 28px; }
+      .two-col-grid    .section-link { padding: 7px 6px 7px 27px; }
 
       .two-col-sections .sec-more,
       .two-col-grid    .sec-more {
