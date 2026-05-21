@@ -646,47 +646,6 @@
   </nav>
 </aside>
 
-<script>
-/* ── Mobile Menu: Accordion logic ── */
-(function(){
-  document.addEventListener('click', function(e){
-    const btn = e.target.closest('.mob-acc-head');
-    if(!btn) return;
-    const id  = btn.getAttribute('data-acc');
-    const body = document.getElementById(id);
-    if(!body) return;
-    const isOpen = btn.classList.contains('open');
-    /* Close all others */
-    document.querySelectorAll('.mob-acc-head.open').forEach(function(b){
-      b.classList.remove('open');
-      const ob = document.getElementById(b.getAttribute('data-acc'));
-      if(ob) ob.classList.remove('open');
-    });
-    if(!isOpen){ btn.classList.add('open'); body.classList.add('open'); }
-  });
-
-  /* Menu search filter */
-  var inp = document.getElementById('menuSearchInput');
-  if(inp){
-    inp.addEventListener('input', function(){
-      var q = this.value.trim().toLowerCase();
-      document.querySelectorAll('.offcanvas-nav > a, .mob-acc-body a').forEach(function(a){
-        var txt = a.textContent.toLowerCase();
-        a.style.display = (!q || txt.includes(q)) ? '' : 'none';
-      });
-      /* Show accordion bodies when searching */
-      if(q){
-        document.querySelectorAll('.mob-acc-body').forEach(function(b){ b.classList.add('open'); });
-        document.querySelectorAll('.mob-acc-head').forEach(function(b){ b.classList.add('open'); });
-      } else {
-        document.querySelectorAll('.mob-acc-body').forEach(function(b){ b.classList.remove('open'); });
-        document.querySelectorAll('.mob-acc-head').forEach(function(b){ b.classList.remove('open'); });
-      }
-    });
-  }
-})();
-</script>
-
 <!-- ============================================================
      MOBILE BOTTOM NAVIGATION BAR
      (Shown on all pages via header.html include)
