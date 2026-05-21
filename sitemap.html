@@ -28,7 +28,14 @@
     .sm-quick { display:flex;flex-wrap:wrap;gap:8px; }
     .sm-quick a { background:#dbeafe;color:#1e40af;padding:6px 14px;border-radius:20px;font-size:.82rem;text-decoration:none;font-weight:600; }
     .sm-quick a:hover { background:#1d4ed8;color:#fff; }
-  </style>
+  
+    /* ── BRAND LOGO FIX: prevent title truncation on all pages ── */
+    #site-header .brand { flex: 1 1 auto !important; min-width: 0 !important; }
+    #site-header .brand-text { min-width: 0 !important; }
+    #site-header .brand-title { white-space: nowrap !important; font-size: .92rem !important; }
+    #site-header .header-actions { flex-shrink: 0 !important; }
+    #site-header .header-logo-bar { display: flex !important; align-items: center !important; }
+    </style>
   <!-- GA4: Centralized Analytics -->
   <script src="/analytics.js" defer></script>
 </head>
