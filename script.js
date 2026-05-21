@@ -444,6 +444,9 @@
   function buildMobileMenu() {
     const nav = document.querySelector(".offcanvas-nav");
     if (!nav) return;
+    /* If header.html already injected the new menu (has mob-acc-head elements),
+       do NOT overwrite it — just return. The new menu is already correct. */
+    if (nav.querySelector(".mob-acc-head") || nav.querySelector(".menu-icon-pill")) return;
     
     nav.innerHTML = `
       <a href="index.html">Home</a>
@@ -645,6 +648,65 @@
       safeHideOldSearchBars(); 
     });
     window.__closeMenu = close;
+
+    /* ── Mobile Menu Accordion ── */
+    initMobileAccordion();
+
+    /* ── Mobile Menu Search Filter ── */
+    initMenuSearch();
+  }
+
+  function initMobileAccordion() {
+    /* Remove old listeners by replacing with fresh ones via event delegation on menu */
+    const menu = document.getElementById("mobileMenu");
+    if (!menu || menu._accInit) return;
+    menu._accInit = true;
+
+    menu.addEventListener("click", function(e) {
+      const btn = e.target.closest(".mob-acc-head");
+      if (!btn) return;
+      e.stopPropagation();
+      const id   = btn.getAttribute("data-acc");
+      const body = document.getElementById(id);
+      if (!body) return;
+      const isOpen = btn.classList.contains("open");
+      /* Close all other accordions */
+      menu.querySelectorAll(".mob-acc-head.open").forEach(function(b) {
+        if (b !== btn) {
+          b.classList.remove("open");
+          const ob = document.getElementById(b.getAttribute("data-acc"));
+          if (ob) ob.classList.remove("open");
+        }
+      });
+      /* Toggle current */
+      btn.classList.toggle("open", !isOpen);
+      body.classList.toggle("open", !isOpen);
+    });
+  }
+
+  function initMenuSearch() {
+    const menu = document.getElementById("mobileMenu");
+    if (!menu) return;
+    const inp = menu.querySelector("#menuSearchInput");
+    if (!inp || inp._searchInit) return;
+    inp._searchInit = true;
+
+    inp.addEventListener("input", function() {
+      const q = this.value.trim().toLowerCase();
+      menu.querySelectorAll(".offcanvas-nav > a").forEach(function(a) {
+        a.style.display = (!q || a.textContent.toLowerCase().includes(q)) ? "" : "none";
+      });
+      menu.querySelectorAll(".mob-acc-body a").forEach(function(a) {
+        a.style.display = (!q || a.textContent.toLowerCase().includes(q)) ? "" : "none";
+      });
+      /* Open all accordions while searching, close when cleared */
+      menu.querySelectorAll(".mob-acc-body").forEach(function(b) {
+        b.classList.toggle("open", !!q);
+      });
+      menu.querySelectorAll(".mob-acc-head").forEach(function(b) {
+        b.classList.toggle("open", !!q);
+      });
+    });
   }
 
   function initDropdowns() {
