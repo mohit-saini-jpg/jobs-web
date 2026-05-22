@@ -229,4 +229,97 @@
     boot();
   }
 
+
+/* ═══════════════════════════════════════════════════════════════
+     GA4 CONVERSION EVENTS (AN-1)
+     Added: Apply Button, WhatsApp Join, Contact Form, Resume Download, Job Share
+  ═══════════════════════════════════════════════════════════════ */
+
+  /* ─── 1. Apply Button Click → generate_lead ─────────────────── */
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('a, button');
+    if (!btn) return;
+    var text = (btn.textContent || btn.innerText || btn.getAttribute('aria-label') || '').trim().toLowerCase();
+    var href = btn.getAttribute('href') || '';
+    if (/apply\s*(now|online|here)?/i.test(text) || /apply/i.test(btn.id || '') || btn.id === 'btnApply') {
+      gtag('event', 'generate_lead', {
+        event_category: 'Apply',
+        job_name:     document.title.replace(' | Top Sarkari Jobs', '').trim(),
+        job_section:  (location.pathname.split('/')[1] || 'unknown'),
+        apply_url:    href || location.href,
+        send_to:      GA_ID
+      });
+    }
+  });
+
+  /* ─── 2. WhatsApp Join Click → join_group ────────────────────── */
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest('a[href]');
+    if (!el) return;
+    var href = el.getAttribute('href') || '';
+    if (href.includes('whatsapp.com') || href.includes('wa.me') || /whatsapp/i.test(el.textContent)) {
+      gtag('event', 'join_group', {
+        event_category: 'WhatsApp',
+        channel_name:   (el.textContent || '').trim().slice(0, 100) || 'WhatsApp Channel',
+        send_to:        GA_ID
+      });
+    }
+  });
+
+  /* ─── 3. Contact Form Submit → form_submit ───────────────────── */
+  document.addEventListener('submit', function (e) {
+    var form = e.target;
+    if (form.id === 'contactForm' || form.closest('#contact-section') ||
+        /contact/i.test(form.id || form.className || '')) {
+      gtag('event', 'form_submit', {
+        event_category: 'Contact',
+        form_name:      'contact_form',
+        page_path:      getPath(),
+        send_to:        GA_ID
+      });
+    }
+  });
+
+  /* ─── 4. Resume Download → generate_lead ────────────────────── */
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('button, a');
+    if (!btn) return;
+    var text = (btn.textContent || '').trim().toLowerCase();
+    var id   = (btn.id || '').toLowerCase();
+    if (/download.*pdf|pdf.*download|download.*resume/i.test(text) ||
+        id === 'btndownload' || id === 'downloadpdf' || id === 'btn-download') {
+      var tmpl = (document.querySelector('input[name="template"]:checked') ||
+                  document.querySelector('[data-template]') || {});
+      gtag('event', 'generate_lead', {
+        event_category:    'Resume',
+        resume_template:   tmpl.value || tmpl.dataset?.template || 'default',
+        action:            'download',
+        page_path:         getPath(),
+        send_to:           GA_ID
+      });
+    }
+  });
+
+  /* ─── 5. Job Share → share ───────────────────────────────────── */
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('button, a');
+    if (!btn) return;
+    var text = (btn.textContent || btn.getAttribute('aria-label') || '').trim().toLowerCase();
+    var id   = (btn.id || '').toLowerCase();
+    if (/share/i.test(text) || /share/i.test(id) || btn.dataset?.action === 'share') {
+      var method = btn.href
+        ? (btn.href.includes('whatsapp') ? 'whatsapp'
+          : btn.href.includes('twitter') || btn.href.includes('x.com') ? 'twitter'
+          : btn.href.includes('facebook') ? 'facebook'
+          : btn.href.includes('telegram') ? 'telegram' : 'link')
+        : 'native';
+      gtag('event', 'share', {
+        method:       method,
+        content_type: 'job',
+        item_id:      window.__TSJ_SLUG || document.title.replace(' | Top Sarkari Jobs','').trim().slice(0,100),
+        send_to:      GA_ID
+      });
+    }
+  });
+
 })();
