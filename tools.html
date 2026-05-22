@@ -348,7 +348,10 @@
       <div class="offcanvas-head-left">
         <picture>
           <source srcset="/image.webp" type="image/webp">
-          <img src="/image.png" alt="Logo" class="offcanvas-head-logo" width="34" height="34">
+          <picture>
+            <source srcset="/image.webp" type="image/webp">
+            <img src="/image.png" alt="Logo" class="offcanvas-head-logo" width="34" height="34" decoding="async">
+          </picture>
         </picture>
         <div class="offcanvas-head-texts">
           <span class="offcanvas-title">TOP SARKARI JOBS</span>
