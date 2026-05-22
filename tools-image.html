@@ -16,7 +16,13 @@
 <meta property="og:image" content="https://www.topsarkarijobs.com/image.png">
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="fonts/fa/all.min.css">
+  <!-- Font Awesome: async load (saves ~100 KiB render-blocking) -->
+  <script>
+    (function(){var l=document.createElement("link");l.rel="preload";l.as="style";
+    l.href="/fonts/fa/all.min.css";l.onload=function(){this.onload=null;this.rel="stylesheet"};
+    document.head.appendChild(l);})();
+  </script>
+  <noscript><link rel="stylesheet" href="/fonts/fa/all.min.css"></noscript>
 <link rel="stylesheet" href="styles.css">
 
 <style>
@@ -847,7 +853,7 @@ TOOLS.imageResizer = {
       <div class="drop-sub">JPG, PNG, WEBP, GIF support</div>
     </div>
     <div class="preview-wrap" id="irPreview">
-      <img id="irImg" class="preview-img" src="" alt="">
+      <img id="irImg" class="preview-img" src="" alt="" loading="lazy" decoding="async">
       <div class="preview-info">
         <span class="preview-chip" id="irOrigSize">-</span>
         <span class="preview-chip" id="irOrigDim">-</span>
@@ -984,7 +990,7 @@ TOOLS.compressImage = {
       <!-- IMAGE INFO BAR -->
       <div id="ciInfoBar" style="display:none;margin-top:10px;padding:10px 12px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:9px;">
         <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;">
-          <img id="ciThumb" style="width:44px;height:44px;object-fit:cover;border-radius:7px;border:1.5px solid #bfdbfe;" src="" alt="">
+          <img id="ciThumb" style="width:44px;height:44px;object-fit:cover;border-radius:7px;border:1.5px solid #bfdbfe;" src="" alt="" loading="lazy" decoding="async">
           <div style="flex:1;min-width:0;">
             <div style="font-size:.78rem;font-weight:800;color:#0d2257;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="ciFileName">-</div>
             <div style="font-size:.71rem;color:#64748b;margin-top:2px;">
@@ -1624,7 +1630,7 @@ TOOLS.resizeToKB = {
       <div class="drop-sub">JPG, PNG support</div>
     </div>
     <div class="preview-wrap" id="rkPreview">
-      <img id="rkImg" class="preview-img" src="" alt="">
+      <img id="rkImg" class="preview-img" src="" alt="" loading="lazy" decoding="async">
       <div class="preview-info"><span class="preview-chip" id="rkOrig">-</span></div>
     </div>
     <div class="form-row">
@@ -1959,7 +1965,7 @@ TOOLS.sigResizer = {
       <div class="drop-text">Signature image yahan drop karein</div>
     </div>
     <div class="preview-wrap" id="srPreview">
-      <img id="srImg" class="preview-img" src="" alt="">
+      <img id="srImg" class="preview-img" src="" alt="" loading="lazy" decoding="async">
       <div class="preview-info"><span class="preview-chip" id="srOrig">-</span></div>
     </div>
     <div class="form-row">
@@ -2221,7 +2227,7 @@ TOOLS.jpgToPng = {
       <div class="drop-text">JPG image yahan drop karein</div>
     </div>
     <div class="preview-wrap" id="j2pPreview">
-      <img id="j2pImg" class="preview-img" src="" alt="">
+      <img id="j2pImg" class="preview-img" src="" alt="" loading="lazy" decoding="async">
       <div class="preview-info"><span class="preview-chip" id="j2pOrig">-</span></div>
     </div>
     <div class="btn-bar">
@@ -2243,7 +2249,7 @@ TOOLS.pngToJpg = {
       <div class="drop-text">PNG image yahan drop karein</div>
     </div>
     <div class="preview-wrap" id="p2jPreview">
-      <img id="p2jImg" class="preview-img" src="" alt="">
+      <img id="p2jImg" class="preview-img" src="" alt="" loading="lazy" decoding="async">
       <div class="preview-info"><span class="preview-chip" id="p2jOrig">-</span></div>
     </div>
     <div class="form-row">
@@ -2295,7 +2301,7 @@ TOOLS.webpToJpg = {
       <div class="drop-text">WEBP image yahan drop karein</div>
     </div>
     <div class="preview-wrap" id="w2jPreview">
-      <img id="w2jImg" class="preview-img" src="" alt="">
+      <img id="w2jImg" class="preview-img" src="" alt="" loading="lazy" decoding="async">
       <div class="preview-info"><span class="preview-chip" id="w2jOrig">-</span></div>
     </div>
     <div class="btn-bar">
@@ -2322,7 +2328,7 @@ TOOLS.heicToJpg = {
       <strong>Alternatively:</strong> Agar file display ho rahi hai, to conversion hogi!
     </div>
     <div class="preview-wrap" id="h2jPreview">
-      <img id="h2jImg" class="preview-img" src="" alt="">
+      <img id="h2jImg" class="preview-img" src="" alt="" loading="lazy" decoding="async">
       <div class="preview-info"><span class="preview-chip" id="h2jOrig">-</span></div>
     </div>
     <div class="btn-bar">
@@ -2681,7 +2687,7 @@ TOOLS.convertAnyFormat = {
     </div>
 
     <div class="preview-wrap" id="cafPreview">
-      <img id="cafImg" class="preview-img" src="" alt="">
+      <img id="cafImg" class="preview-img" src="" alt="" loading="lazy" decoding="async">
       <div class="preview-info">
         <span class="preview-chip" id="cafOrigName">-</span>
         <span class="preview-chip" id="cafOrigSize">-</span>
