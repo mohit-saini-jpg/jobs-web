@@ -106,7 +106,13 @@
   <link rel="stylesheet" href="styles.css" />
 
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="fonts/fa/all.min.css">
+  <!-- Font Awesome: async load (saves ~100 KiB render-blocking) -->
+  <script>
+    (function(){var l=document.createElement("link");l.rel="preload";l.as="style";
+    l.href="/fonts/fa/all.min.css";l.onload=function(){this.onload=null;this.rel="stylesheet"};
+    document.head.appendChild(l);})();
+  </script>
+  <noscript><link rel="stylesheet" href="/fonts/fa/all.min.css"></noscript>
 
   <!-- ✅ CSC Services page ONLY: hide search section if present -->
   <style>
