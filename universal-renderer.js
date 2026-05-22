@@ -448,27 +448,50 @@
     const fee = job.application_fee || {};
     const feeIsStr = typeof fee === 'string';
     const feeObj = (typeof fee === 'object' && !Array.isArray(fee)) ? fee : {};
+
+    // ── FEE_MAP: canonical key → display label ───────────────────────
+    // Includes underscore-prefixed variants (general_fee, sc_fee, etc.)
     const FEE_MAP = [
       ['general',         'General / UR'],
+      ['general_fee',     'General'],
       ['ur',              'UR'],
+      ['ur_fee',          'UR'],
       ['obc',             'OBC'],
+      ['obc_fee',         'OBC'],
       ['ews',             'EWS'],
+      ['ews_fee',         'EWS'],
       ['sc',              'SC'],
+      ['sc_fee',          'SC'],
       ['st',              'ST'],
+      ['st_fee',          'ST'],
       ['sc_st',           'SC / ST'],
+      ['sc_st_fee',       'SC / ST'],
       ['female',          'Female / Women'],
+      ['female_fee',      'Female / Women'],
+      ['women',           'Women'],
       ['ph',              'PH / PwD'],
+      ['ph_fee',          'PH / PwD'],
       ['pwd',             'PwD'],
+      ['pwd_fee',         'PwD'],
       ['divyang',         'Divyang'],
+      ['divyang_fee',     'Divyang'],
       ['general_obc',     'General / OBC'],
       ['gen_obc',         'Gen / OBC'],
       ['general_obc_ews', 'General / OBC / EWS'],
       ['gen_obc_ews',     'Gen / OBC / EWS'],
       ['ur_obc_ews',      'UR / OBC / EWS'],
       ['all',             'All Candidates'],
+      ['all_fee',         'All Candidates'],
       ['all_candidates',  'All Candidates'],
     ];
-    const usedKeys = new Set(FEE_MAP.map(([k]) => k).concat(['note','payment_note','payment_mode']));
+
+    // Keys to skip when scanning remaining object entries
+    const usedKeys = new Set(
+      FEE_MAP.map(([k]) => k).concat([
+        'note', 'payment_note', 'payment_mode',
+        'details', 'detail', 'instructions', 'info', 'description',
+      ])
+    );
     const items = [];
 
     for (const [k, label] of FEE_MAP) {
@@ -501,18 +524,27 @@
       }
     }
 
-    // Remaining object keys
+    // Remaining object keys — SKIP "details"-type keys (handled as note below)
     if (!feeIsStr) {
       for (const [k, v] of Object.entries(feeObj)) {
         if (usedKeys.has(k) || !hasContent(v)) continue;
-        items.push({ label: keyToLabel(k), val: safe(v) });
+        const vStr = safe(v);
+        // If value is long paragraph text, treat as note rather than grid item
+        if (vStr.length > 80 || /pay|through|mode|banking|card|challan|fee|online/i.test(vStr)) continue;
+        items.push({ label: keyToLabel(k), val: vStr });
       }
     }
 
-    // Payment note: from object OR extracted from string
+    // ── Payment / details note ────────────────────────────────────────
+    // Priority: explicit note keys → details key → extracted from string
     let note = '';
     if (!feeIsStr) {
+      // Check explicit note keys first
       note = safe(feeObj.note || feeObj.payment_note || feeObj.payment_mode || '');
+      // Then check "details" / "instructions" / "description" keys
+      if (!note) {
+        note = safe(feeObj.details || feeObj.detail || feeObj.instructions || feeObj.info || feeObj.description || '');
+      }
     } else {
       const feeStr = safe(fee);
       const noteMatch = feeStr.match(/Pay (?:the )?(?:Examination|Exam) Fee[^.!]+[.!]?/i)
@@ -690,6 +722,21 @@
     if (typeof value === 'object') {
       const pairs = Object.entries(value).filter(([, v]) => hasContent(v));
       if (!pairs.length) return '<span style="color:#94a3b8;">—</span>';
+
+      // ── Generic safeguard: if object is "details-only" or all values are long
+      //    paragraph text, render as full-width body blocks, NOT a grid. ──────
+      const isDetailsOnly = pairs.length === 1 && pairs[0][0] === 'details';
+      const allLong = pairs.every(([, v]) => typeof v === 'string' && v.trim().length > 120);
+      if (isDetailsOnly || allLong) {
+        return pairs.map(([k, v]) => {
+          const text = safe(v);
+          const prefix = pairs.length > 1
+            ? `<strong>${esc(keyToLabel(k))}:</strong><br>` : '';
+          if (isHtml(text)) return `<div class="udyn-html-body" style="padding:0;">${prefix}${text}</div>`;
+          return `<div style="margin-bottom:8px;white-space:pre-line;">${prefix}${esc(text)}</div>`;
+        }).join('');
+      }
+
       if (depth > 2) {
         // Avoid extreme nesting — render flat
         return pairs.map(([k, v]) => `<strong>${esc(keyToLabel(k))}:</strong> ${deepRender(v, depth+1)}`).join('<br>');
@@ -748,24 +795,43 @@
   /* ── 6b. Application Fee ── */
   function cardFee(data) {
     const { items, note } = data;
-    if (!items.length) return null;
+    if (!items.length && !note) return null;
     const isFree = v => /nil|^0\/?-?$|free|no fee|exempt/i.test(v.trim());
 
-    // Single item with long text → show as notice block, not grid
-    if (items.length === 1 && items[0].val.length > 60) {
-      const noteHtml = note ? `<div class="udyn-grid-note">${esc(note)}</div>` : '';
-      return makeCard('udyn-fee','linear-gradient(135deg,#c2410c,#ea580c)',
-        'fa-solid fa-indian-rupee-sign','Application Fee',
-        `<div class="udyn-notice" style="padding:12px 14px;font-size:.83rem;color:#1e293b;line-height:1.75;white-space:pre-line;">${esc(items[0].val)}</div>${noteHtml}`);
+    // Safeguard: separate any long-text values out of the grid
+    const LONG_THRESHOLD = 80;
+    const gridItems = [];
+    const extraNotes = [];
+    for (const item of items) {
+      if (item.val.length > LONG_THRESHOLD || /pay|through|mode|banking|card|challan/i.test(item.val)) {
+        extraNotes.push(item.val);
+      } else {
+        gridItems.push(item);
+      }
     }
 
-    const gridHtml = items.map(({ label, val }) =>
+    // Build combined note text (explicit note + any overflow long values)
+    const allNoteText = [note, ...extraNotes].filter(Boolean).join('\n');
+    const noteHtml = allNoteText
+      ? `<div class="udyn-grid-note"><i class="fa-solid fa-circle-info" style="margin-right:5px;"></i><span style="white-space:pre-line;">${esc(allNoteText)}</span></div>`
+      : '';
+
+    // Single long item with no grid candidates → show as notice block, not grid
+    if (!gridItems.length) {
+      const textContent = allNoteText || (items[0] && items[0].val) || '';
+      if (!textContent) return null;
+      return makeCard('udyn-fee','linear-gradient(135deg,#c2410c,#ea580c)',
+        'fa-solid fa-indian-rupee-sign','Application Fee',
+        `<div class="udyn-notice" style="padding:12px 14px;font-size:.83rem;color:#1e293b;line-height:1.75;white-space:pre-line;">${esc(textContent)}</div>`);
+    }
+
+    const gridHtml = gridItems.map(({ label, val }) =>
       `<div class="udyn-grid-item">` +
         `<div class="udyn-grid-label">${esc(label)}</div>` +
         `<div class="udyn-grid-val" style="${isFree(val) ? 'color:#16a34a;' : 'color:#1d4ed8;'}">${esc(val)}</div>` +
       `</div>`
     ).join('');
-    const noteHtml = note ? `<div class="udyn-grid-note"><i class="fa-solid fa-circle-info" style="margin-right:5px;"></i>${esc(note)}</div>` : '';
+
     return makeCard('udyn-fee','linear-gradient(135deg,#c2410c,#ea580c)',
       'fa-solid fa-indian-rupee-sign','Application Fee',
       `<div class="udyn-grid" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr));">${gridHtml}</div>${noteHtml}`);
@@ -789,20 +855,66 @@
   }
 
   /* ── 6d. Physical Eligibility ── */
+
+  /** True if a string value is "long paragraph text" (not a short measurement) */
+  function _isLongText(s) {
+    return typeof s === 'string' && s.trim().length > 120;
+  }
+
   function cardPhysical(pe) {
     if (!hasContent(pe)) return null;
     let html = '';
+
     if (typeof pe === 'object' && !Array.isArray(pe)) {
       const pairs = Object.entries(pe).filter(([, v]) => hasContent(v));
       if (!pairs.length) return null;
-      html = `<div class="udyn-grid">${pairs.map(([k, v]) =>
-        `<div class="udyn-grid-item"><div class="udyn-grid-label">${esc(keyToLabel(k))}</div><div class="udyn-grid-val">${deepRender(v, 1)}</div></div>`
-      ).join('')}</div>`;
+
+      // ── "details-only" object: { details: "long text..." } ──────────
+      // Also catches objects where every value is a long paragraph string.
+      const isDetailsOnly  = pairs.length === 1 && pairs[0][0] === 'details';
+      const hasLongDetails = pairs.some(([k, v]) =>
+        (k === 'details' || k === 'detail') && _isLongText(safe(v))
+      );
+      const allValuesAreLongText = pairs.every(([, v]) => _isLongText(safe(v)));
+
+      if (isDetailsOnly || hasLongDetails || allValuesAreLongText) {
+        // Render each value as a full-width readable content block
+        html = pairs.map(([k, v]) => {
+          const text = safe(v);
+          const heading = pairs.length > 1
+            ? `<div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#64748b;margin-bottom:5px;">${esc(keyToLabel(k))}</div>`
+            : '';
+          if (isHtml(text)) {
+            return `<div class="udyn-html-body">${heading}${text}</div>`;
+          }
+          return `<div class="udyn-detail">${heading}${textToHtml(text)}</div>`;
+        }).join('');
+      } else {
+        // Mixed object: put short key-value pairs in grid, long text below
+        const gridPairs  = pairs.filter(([, v]) => !_isLongText(safe(v)));
+        const detailPairs = pairs.filter(([, v]) =>  _isLongText(safe(v)));
+
+        if (gridPairs.length) {
+          html += `<div class="udyn-grid">${gridPairs.map(([k, v]) =>
+            `<div class="udyn-grid-item"><div class="udyn-grid-label">${esc(keyToLabel(k))}</div><div class="udyn-grid-val">${deepRender(v, 1)}</div></div>`
+          ).join('')}</div>`;
+        }
+        if (detailPairs.length) {
+          html += detailPairs.map(([k, v]) => {
+            const text = safe(v);
+            const heading = `<div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#64748b;margin-bottom:5px;">${esc(keyToLabel(k))}</div>`;
+            if (isHtml(text)) return `<div class="udyn-html-body">${heading}${text}</div>`;
+            return `<div class="udyn-detail">${heading}${textToHtml(text)}</div>`;
+          }).join('');
+        }
+      }
     } else if (typeof pe === 'string') {
       html = `<div class="udyn-detail">${textToHtml(pe)}</div>`;
     } else {
       html = `<div class="udyn-detail">${deepRender(pe, 0)}</div>`;
     }
+
+    if (!html) return null;
     return makeCard('udyn-physical','linear-gradient(135deg,#be123c,#e11d48)',
       'fa-solid fa-dumbbell','Physical Eligibility / Standards', html);
   }
