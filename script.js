@@ -695,21 +695,106 @@
     if (!inp || inp._searchInit) return;
     inp._searchInit = true;
 
-    inp.addEventListener("input", function() {
+    /* ── Build / reuse job search results container below the search box ── */
+    let jobResultsBox = menu.querySelector("#menuJobResults");
+    if (!jobResultsBox) {
+      jobResultsBox = document.createElement("div");
+      jobResultsBox.id = "menuJobResults";
+      jobResultsBox.style.cssText = [
+        "display:none",
+        "max-height:260px",
+        "overflow-y:auto",
+        "background:#fff",
+        "border-top:1px solid #e2e8f0",
+        "padding:4px 0"
+      ].join(";");
+      const searchWrap = menu.querySelector(".offcanvas-search");
+      if (searchWrap) searchWrap.after(jobResultsBox);
+    }
+
+    /* ── Load job data once (lazy) ── */
+    let jobSearchData = null;
+    async function ensureJobData() {
+      if (jobSearchData) return jobSearchData;
+      jobSearchData = [];
+      try {
+        const [merged, complete] = await Promise.all([
+          getJSON("merged_sarkari_data.json").catch(() => null),
+          getJSON("Complete_Jobs_Full_Data.json").catch(() => null)
+        ]);
+        const slugify = t => (t || "").toLowerCase().replace(/[^a-z0-9\s-]/g, "").replace(/[\s-]+/g, "-").slice(0, 120).replace(/^-+|-+$/g, "");
+        if (merged && Array.isArray(merged.jobs)) {
+          merged.jobs.forEach(j => {
+            if (!j.title) return;
+            const slug = j.slug || slugify(j.title);
+            jobSearchData.push({ name: j.title.trim(), href: slug ? "/jobs/" + slug + "/" : "#" });
+          });
+        }
+        if (complete && typeof complete === "object") {
+          Object.keys(complete).forEach(k => {
+            if (!Array.isArray(complete[k])) return;
+            complete[k].forEach(i => {
+              const bd = i.basic_details || {};
+              const title = bd.job_title || bd.post_name || i.title || i.name || "";
+              if (!title) return;
+              const slug = i.slug || slugify(title);
+              jobSearchData.push({ name: title.trim(), href: slug ? "/jobs/" + slug + "/" : "#" });
+            });
+          });
+        }
+        /* Deduplicate by name */
+        const seen = new Set();
+        jobSearchData = jobSearchData.filter(j => {
+          if (seen.has(j.name)) return false;
+          seen.add(j.name); return true;
+        });
+      } catch (_) {}
+      return jobSearchData;
+    }
+
+    inp.addEventListener("input", async function() {
       const q = this.value.trim().toLowerCase();
+
+      /* ── 1. Filter nav links (same as before) ── */
       menu.querySelectorAll(".offcanvas-nav > a").forEach(function(a) {
         a.style.display = (!q || a.textContent.toLowerCase().includes(q)) ? "" : "none";
       });
       menu.querySelectorAll(".mob-acc-body a").forEach(function(a) {
         a.style.display = (!q || a.textContent.toLowerCase().includes(q)) ? "" : "none";
       });
-      /* Open all accordions while searching, close when cleared */
       menu.querySelectorAll(".mob-acc-body").forEach(function(b) {
         b.classList.toggle("open", !!q);
       });
       menu.querySelectorAll(".mob-acc-head").forEach(function(b) {
         b.classList.toggle("open", !!q);
       });
+
+      /* ── 2. Search job titles ── */
+      if (!q || q.length < 2) {
+        jobResultsBox.style.display = "none";
+        jobResultsBox.innerHTML = "";
+        return;
+      }
+
+      const data = await ensureJobData();
+      const tokens = q.split(/\s+/).filter(t => t.length);
+      const hits = data.filter(j => tokens.every(t => j.name.toLowerCase().includes(t))).slice(0, 12);
+
+      jobResultsBox.innerHTML = "";
+      if (!hits.length) {
+        jobResultsBox.innerHTML = '<div style="padding:10px 16px;font-size:.78rem;color:#94a3b8;text-align:center;">No job found. Try: SSC, Railway, Bank…</div>';
+      } else {
+        hits.forEach(h => {
+          const a = document.createElement("a");
+          a.href = h.href;
+          a.style.cssText = "display:flex;align-items:center;gap:9px;padding:9px 14px;font-size:.78rem;font-weight:600;color:#1e293b;text-decoration:none;border-bottom:1px solid #f1f5f9;transition:background .12s;";
+          a.innerHTML = `<i class="fa-solid fa-briefcase" style="color:#2563eb;font-size:.72rem;flex-shrink:0;"></i><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${h.name}</span>`;
+          a.addEventListener("mouseover", () => { a.style.background = "#eff6ff"; });
+          a.addEventListener("mouseout", () => { a.style.background = ""; });
+          jobResultsBox.appendChild(a);
+        });
+      }
+      jobResultsBox.style.display = "block";
     });
   }
 

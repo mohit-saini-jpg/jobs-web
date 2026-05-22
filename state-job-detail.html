@@ -238,7 +238,14 @@
     /* Tips */
     .sjd-tips-list{padding:10px 14px 12px;margin:0;}
     .sjd-tips-list li{font-size:.81rem;color:#334155;line-height:1.9;}
-  </style>
+  
+    /* ── BRAND LOGO FIX: prevent title truncation on all pages ── */
+    #site-header .brand { flex: 1 1 auto !important; min-width: 0 !important; }
+    #site-header .brand-text { min-width: 0 !important; }
+    #site-header .brand-title { white-space: nowrap !important; font-size: .92rem !important; }
+    #site-header .header-actions { flex-shrink: 0 !important; }
+    #site-header .header-logo-bar { display: flex !important; align-items: center !important; }
+    </style>
   <!-- Preload header.html so it's ready before script.js runs -->
   <link rel="preload" href="/header.html" as="fetch" crossorigin="anonymous"/>
   <!-- CRITICAL: Fetch + inject header immediately — do NOT wait for script.js defer -->

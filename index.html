@@ -344,13 +344,13 @@
       padding: 8px 12px; gap: 10px;
     }
     .brand {
-      display: flex; align-items: center; gap: 8px; text-decoration: none; flex-shrink: 0;
+      display: flex; align-items: center; gap: 8px; text-decoration: none; flex: 1 1 auto; min-width: 0;
     }
-    .brand-logo { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; }
-    .brand-text { display: flex; flex-direction: column; }
-    .brand-title { font-size: 1.15rem; font-weight: 900; color: var(--navy); line-height: 1.1; }
+    .brand-logo { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
+    .brand-text { display: flex; flex-direction: column; min-width: 0; }
+    .brand-title { font-size: 1.15rem; font-weight: 900; color: var(--navy); line-height: 1.1; white-space: nowrap; }
     .brand-title span { color: var(--accent); }
-    .brand-sub { font-size: .62rem; color: var(--muted); font-weight: 600; }
+    .brand-sub { font-size: .62rem; color: var(--muted); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
     .header-search-wrap { flex: 1; max-width: 500px; display: none; }
     @media (min-width: 768px) { .header-search-wrap { display: block; } }
@@ -367,7 +367,7 @@
     }
     .header-search-box button:hover { background: var(--navy); }
 
-    .header-actions { display: flex; align-items: center; gap: 8px; }
+    .header-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
     .wa-btn-header {
       background: #25d366; color: #fff; border: none; border-radius: 7px;
       padding: 7px 12px; font-size: .78rem; font-weight: 800; cursor: pointer;

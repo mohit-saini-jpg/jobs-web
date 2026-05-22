@@ -556,7 +556,14 @@
     }
     .two-col-sections > .sec-card { margin-bottom:0; }
     @media(max-width:600px){ .two-col-sections { grid-template-columns:1fr; } }
-  </style>
+  
+    /* ── BRAND LOGO FIX: prevent title truncation on all pages ── */
+    #site-header .brand { flex: 1 1 auto !important; min-width: 0 !important; }
+    #site-header .brand-text { min-width: 0 !important; }
+    #site-header .brand-title { white-space: nowrap !important; font-size: .92rem !important; }
+    #site-header .header-actions { flex-shrink: 0 !important; }
+    #site-header .header-logo-bar { display: flex !important; align-items: center !important; }
+    </style>
   <!-- Header: fetch + inject immediately before script.js defer loads -->
   <script>
   (function(){

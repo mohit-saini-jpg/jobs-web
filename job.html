@@ -353,7 +353,14 @@
       #linksActions .jp-btn{flex:1;flex-direction:row;justify-content:center;gap:10px;padding:14px 16px;font-size:.88rem;border-radius:8px;}
       #linksActions .jp-btn-sub{display:none;}
     }
-  </style>
+  
+    /* ── BRAND LOGO FIX: prevent title truncation on all pages ── */
+    #site-header .brand { flex: 1 1 auto !important; min-width: 0 !important; }
+    #site-header .brand-text { min-width: 0 !important; }
+    #site-header .brand-title { white-space: nowrap !important; font-size: .92rem !important; }
+    #site-header .header-actions { flex-shrink: 0 !important; }
+    #site-header .header-logo-bar { display: flex !important; align-items: center !important; }
+    </style>
   <!-- Preload header.html so it's ready before script.js runs -->
   <link rel="preload" href="/header.html" as="fetch" crossorigin="anonymous"/>
   <!-- CRITICAL: Fetch + inject header immediately — do NOT wait for script.js defer -->

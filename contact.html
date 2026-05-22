@@ -111,7 +111,14 @@
     form input,form textarea{width:100%;padding:8px;margin-top:4px;border:1px solid #e2e8f0;border-radius:4px;}
     form button{margin-top:12px;padding:10px 16px;background:#0284c7;color:#fff;border:none;border-radius:6px;font-weight:bold;cursor:pointer;}
     form button:hover{background:#0369a1;}
-  </style>
+  
+    /* ── BRAND LOGO FIX: prevent title truncation on all pages ── */
+    #site-header .brand { flex: 1 1 auto !important; min-width: 0 !important; }
+    #site-header .brand-text { min-width: 0 !important; }
+    #site-header .brand-title { white-space: nowrap !important; font-size: .92rem !important; }
+    #site-header .header-actions { flex-shrink: 0 !important; }
+    #site-header .header-logo-bar { display: flex !important; align-items: center !important; }
+    </style>
   <!-- GA4: Centralized Analytics -->
   <script src="/analytics.js" defer></script>
 </head>

@@ -1,0 +1,35 @@
+<!--
+  ══════════════════════════════════════════════════════════════
+  HYBRID DYNAMICCACHE MANAGER — Page Integration Snippet
+  Add this block ONCE, right before </body> in every .html page.
+  ══════════════════════════════════════════════════════════════
+-->
+
+<!-- 1. Cache Manager (registers SW, handles lifecycle, refresh) -->
+<script src="/cache-manager.js" defer></script>
+
+<!--
+  2. How to fetch job data with guaranteed fresh results
+  ────────────────────────────────────────────────────────────
+  BEFORE (cached, may serve stale data):
+    const jobs = await fetch('/jobs/Complete_Jobs_Full_Data.json').then(r=>r.json());
+
+  AFTER (always network-fresh, bypasses SW):
+    const jobs = await CacheManager.fetchJobData('/jobs/Complete_Jobs_Full_Data.json');
+
+  3. Listen for background refresh events:
+  ────────────────────────────────────────────────────────────
+  document.addEventListener('cache:refresh', async () => {
+    const jobs = await CacheManager.fetchJobData('/api/latest-jobs.json');
+    renderJobs(jobs);
+  });
+
+  4. Clear HTML page cache after a deploy:
+  ────────────────────────────────────────────────────────────
+  await CacheManager.clearPageCache();
+
+  5. Check storage usage (useful for admin/debug):
+  ────────────────────────────────────────────────────────────
+  const stats = await CacheManager.getCacheStats();
+  console.table(stats);
+-->

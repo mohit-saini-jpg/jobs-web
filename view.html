@@ -33,7 +33,14 @@
     .sv-wrap { max-width: 1240px; margin: 0 auto; padding: 20px 16px 40px; }
 
     /* ── Search Bar ── */
-    .sv-search-wrap { position: relative; z-index: 50; margin-bottom: 24px; }
+    .sv-search-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      margin-bottom: 24px;
+      background: #f8fafc;
+      padding: 10px 0 6px;
+    }
     .sv-search-row {
       display: flex; align-items: stretch; gap: 0;
       background: #fff; border: 2px solid #cbd5e1; border-radius: 14px;
@@ -65,7 +72,7 @@
       border-radius: 12px;
       box-shadow: 0 12px 30px rgba(0,0,0,.13);
       max-height: 340px; overflow-y: auto;
-      display: none; z-index: 200;
+      display: none; z-index: 100;
     }
     .sv-drop-item {
       display: flex; flex-direction: column;
@@ -211,6 +218,13 @@
     .mob-acc-body a i { width: 16px !important; font-size: .78rem !important; color: #1a56db !important; flex-shrink: 0 !important; }
     .menu-icon-pill { width: 30px !important; height: 30px !important; border-radius: 8px !important; flex-shrink: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important; font-size: .78rem !important; }
     .menu-badge { font-size: .58rem !important; font-weight: 800 !important; padding: 2px 7px !important; border-radius: 20px !important; letter-spacing: .04em !important; text-transform: uppercase !important; }
+
+    /* ── BRAND LOGO FIX: prevent title truncation on all pages ── */
+    #site-header .brand { flex: 1 1 auto !important; min-width: 0 !important; }
+    #site-header .brand-text { min-width: 0 !important; }
+    #site-header .brand-title { white-space: nowrap !important; font-size: .92rem !important; }
+    #site-header .header-actions { flex-shrink: 0 !important; }
+    #site-header .header-logo-bar { display: flex !important; align-items: center !important; }
     </style>
   <!-- Header prefetch -->
   <script>
@@ -297,8 +311,10 @@
       'teaching-jobs':        {file:'complete',key:'Teaching_Faculty'},
       'teacher-jobs':         {file:'complete',key:'Teaching_Faculty'},
       'bank-jobs':            {file:'complete',key:'Bank_Jobs'},
-      'healthcare-jobs':      {file:'complete',key:'Medical_Hospital'},
-      'medical-jobs':         {file:'complete',key:'Medical_Hospital'},
+      'healthcare-jobs':           {file:'complete',key:'Medical_Hospital'},
+      'medical-jobs':              {file:'complete',key:'Medical_Hospital'},
+      'medical-healthcare-jobs':   {file:'complete',key:'Medical_Hospital'},
+      'hospital-jobs':             {file:'complete',key:'Medical_Hospital'},
       'last-date-reminder':   {file:'complete',key:'Last_Date_Reminder'},
       'latest-notifications': {file:'complete',key:'Latest_Notifications'},
       /* dailyupdates.json */
@@ -318,8 +334,14 @@
       'answer-key':           {file:'merged',key:'SR_Answer_Key'},
       'offline-form':         {file:'merged',key:'_offline'},
       'offline-jobs':         {file:'merged',key:'_offline'},
+      /* Extra slug aliases */
+      'upcoming-jobs':          {file:'merged',key:'UPCOMING_JOBS'},
+      'jobs-with-last-date':    {file:'complete',key:'Last_Date_Reminder'},
+      'last-date-jobs':         {file:'complete',key:'Last_Date_Reminder'},
+      'haryana-all-state-jobs': {file:'merged',key:'SR_Latest_Jobs'},
+      'haryana-jobs':           {file:'merged',key:'SR_Latest_Jobs'},
       /* AUTO: new categories from merged_sarkari_data.json get added here */
-      'latest-jobs-new':      {file:'merged',key:'LATEST_JOBS NEW'}
+      'latest-jobs-new':        {file:'merged',key:'LATEST_JOBS NEW'}
     };
 
     function slugify(s){return(s||'').toLowerCase().replace(/[^\w\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');}
