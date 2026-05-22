@@ -475,16 +475,51 @@
       const v = safe(feeObj[k]);
       if (v) items.push({ label, val: v });
     }
+
+    // ── String format: "General/OBC: 100/- SC/ST: 0/- Pay fee via..." ──
     if (!items.length && feeIsStr) {
-      const v = safe(typeof fee === 'string' ? fee : job.application_fee);
-      if (v) items.push({ label: 'Application Fee', val: v });
+      const feeStr = safe(fee);
+      if (feeStr) {
+        // Smart parser: split by "label : amount" patterns
+        const segRegex = /(.+?)\s*:\s*(?:Rs\.?\s*)?(\d[\d,]*\/-?|0\/-?|Nil|Free|Exempted|No Fee)/gi;
+        let m;
+        while ((m = segRegex.exec(feeStr)) !== null) {
+          let label = m[1]
+            .replace(/^\s*\([^)]*\)\s*/, '') // strip leading (Nil)/(Exempted) from prev
+            .trim();
+          // Skip if label is too long or looks like a payment-mode sentence
+          if (label.length > 90) continue;
+          if (/pay the|through|mode only|debit card|credit card|net banking|e.?challan/i.test(label)) continue;
+          const val = m[2].trim();
+          if (label && val) items.push({ label, val });
+        }
+
+        // Fallback: push as single block if parser got nothing
+        if (!items.length) {
+          items.push({ label: 'Application Fee', val: feeStr });
+        }
+      }
     }
-    // Remaining keys
-    for (const [k, v] of Object.entries(feeObj)) {
-      if (usedKeys.has(k) || !hasContent(v)) continue;
-      items.push({ label: keyToLabel(k), val: safe(v) });
+
+    // Remaining object keys
+    if (!feeIsStr) {
+      for (const [k, v] of Object.entries(feeObj)) {
+        if (usedKeys.has(k) || !hasContent(v)) continue;
+        items.push({ label: keyToLabel(k), val: safe(v) });
+      }
     }
-    const note = safe(feeObj.note || feeObj.payment_note || feeObj.payment_mode || '');
+
+    // Payment note: from object OR extracted from string
+    let note = '';
+    if (!feeIsStr) {
+      note = safe(feeObj.note || feeObj.payment_note || feeObj.payment_mode || '');
+    } else {
+      const feeStr = safe(fee);
+      const noteMatch = feeStr.match(/Pay (?:the )?(?:Examination|Exam) Fee[^.!]+[.!]?/i)
+                     || feeStr.match(/Pay[^.]+(?:Net Banking|Debit Card|E.?Challan)[^.]*\.?/i);
+      if (noteMatch) note = noteMatch[0].trim();
+    }
+
     return { items, note };
   }
 
@@ -714,17 +749,26 @@
   function cardFee(data) {
     const { items, note } = data;
     if (!items.length) return null;
-    const isFree = v => /nil|^0$|free|no fee|exempt/i.test(v.trim());
+    const isFree = v => /nil|^0\/?-?$|free|no fee|exempt/i.test(v.trim());
+
+    // Single item with long text → show as notice block, not grid
+    if (items.length === 1 && items[0].val.length > 60) {
+      const noteHtml = note ? `<div class="udyn-grid-note">${esc(note)}</div>` : '';
+      return makeCard('udyn-fee','linear-gradient(135deg,#c2410c,#ea580c)',
+        'fa-solid fa-indian-rupee-sign','Application Fee',
+        `<div class="udyn-notice" style="padding:12px 14px;font-size:.83rem;color:#1e293b;line-height:1.75;white-space:pre-line;">${esc(items[0].val)}</div>${noteHtml}`);
+    }
+
     const gridHtml = items.map(({ label, val }) =>
       `<div class="udyn-grid-item">` +
         `<div class="udyn-grid-label">${esc(label)}</div>` +
         `<div class="udyn-grid-val" style="${isFree(val) ? 'color:#16a34a;' : 'color:#1d4ed8;'}">${esc(val)}</div>` +
       `</div>`
     ).join('');
-    const noteHtml = note ? `<div class="udyn-grid-note">${esc(note)}</div>` : '';
+    const noteHtml = note ? `<div class="udyn-grid-note"><i class="fa-solid fa-circle-info" style="margin-right:5px;"></i>${esc(note)}</div>` : '';
     return makeCard('udyn-fee','linear-gradient(135deg,#c2410c,#ea580c)',
       'fa-solid fa-indian-rupee-sign','Application Fee',
-      `<div class="udyn-grid">${gridHtml}</div>${noteHtml}`);
+      `<div class="udyn-grid" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr));">${gridHtml}</div>${noteHtml}`);
   }
 
   /* ── 6c. Vacancy Details ── */
