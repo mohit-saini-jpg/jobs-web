@@ -80,3 +80,22 @@
 /404.html
   X-Robots-Tag: noindex
   Cache-Control: public, max-age=3600
+
+# ── Mini JSON files (optimized homepage data) ───────────────────
+/merged-mini.json
+  Cache-Control: public, max-age=3600, stale-while-revalidate=7200
+  Access-Control-Allow-Origin: *
+  Content-Encoding: identity
+  Vary: Accept-Encoding
+
+/sections-mini.json
+  Cache-Control: public, max-age=3600, stale-while-revalidate=7200
+  Access-Control-Allow-Origin: *
+
+/ticker-mini.json
+  Cache-Control: public, max-age=3600, stale-while-revalidate=7200
+  Access-Control-Allow-Origin: *
+
+/daily-mini.json
+  Cache-Control: public, max-age=1800, stale-while-revalidate=3600
+  Access-Control-Allow-Origin: *
