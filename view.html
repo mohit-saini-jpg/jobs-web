@@ -9,15 +9,56 @@
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
   <link id="canonicalTag" rel="canonical" href="https://www.topsarkarijobs.com/view.html" />
   <link rel="icon" type="image/x-icon" href="/image.ico">
+  <!-- Open Graph -->
   <meta property="og:type" content="website" />
+  <meta id="ogUrl" property="og:url" content="https://www.topsarkarijobs.com/view.html" />
+  <meta id="ogTitle" property="og:title" content="Top Sarkari Jobs | Latest Government Jobs" />
+  <meta id="ogDesc" property="og:description" content="Browse latest Sarkari Jobs, Results, Admit Cards, Answer Keys and Online Forms — updated daily." />
   <meta property="og:image" content="https://www.topsarkarijobs.com/image.png" />
+  <meta property="og:image:width" content="800" />
+  <meta property="og:image:height" content="800" />
   <meta property="og:site_name" content="Top Sarkari Jobs" />
+  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <script src="/seo-engine.js"></script>
+  <meta id="twTitle" name="twitter:title" content="Top Sarkari Jobs | Latest Government Jobs" />
+  <meta id="twDesc" name="twitter:description" content="Browse latest Sarkari Jobs, Results, Admit Cards, Answer Keys and Online Forms — updated daily." />
+  <meta name="twitter:image" content="https://www.topsarkarijobs.com/image.png" />
+  <!-- Hreflang -->
+  <link id="hreflangEn" rel="alternate" hreflang="en" href="https://www.topsarkarijobs.com/view.html" />
+  <link id="hreflangEnIN" rel="alternate" hreflang="en-IN" href="https://www.topsarkarijobs.com/view.html" />
+  <link id="hreflangDef" rel="alternate" hreflang="x-default" href="https://www.topsarkarijobs.com/view.html" />
+  <script>
+  // Dynamically set canonical, OG, Twitter, hreflang based on clean URL
+  (function(){
+    var base = 'https://www.topsarkarijobs.com';
+    var path = location.pathname; // e.g. /section/railway-jobs/
+    var cleanUrl = base + path;
+    // Section name from path e.g. "railway-jobs" → "Railway Jobs"
+    var seg = path.replace(/^\/section\/|\/$/g,'').replace(/-/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();});
+    var title = seg ? seg + ' 2026 – Latest Vacancies | Top Sarkari Jobs' : 'Top Sarkari Jobs | Latest Government Jobs';
+    var desc  = seg ? 'Find latest ' + seg + ' notifications, vacancies, results and admit cards 2026 on Top Sarkari Jobs.' : 'Browse latest Sarkari Jobs, Results, Admit Cards, Answer Keys and Online Forms — updated daily.';
+    // Canonical
+    var can = document.getElementById('canonicalTag'); if(can) can.href = cleanUrl;
+    // OG
+    var ogU=document.getElementById('ogUrl'); if(ogU) ogU.content=cleanUrl;
+    var ogT=document.getElementById('ogTitle'); if(ogT) ogT.content=title;
+    var ogD=document.getElementById('ogDesc'); if(ogD) ogD.content=desc;
+    // Twitter
+    var twT=document.getElementById('twTitle'); if(twT) twT.content=title;
+    var twD=document.getElementById('twDesc'); if(twD) twD.content=desc;
+    // Hreflang
+    ['hreflangEn','hreflangEnIN','hreflangDef'].forEach(function(id){
+      var el=document.getElementById(id); if(el) el.href=cleanUrl;
+    });
+  })();
+  </script>
+  <!-- seo-engine.js removed: loaded as deferred minified version below (line ~775) -->
   <script type="application/ld+json" id="schema-breadcrumb">{}</script>
   <script type="application/ld+json" id="schema-faq">{}</script>
   <script type="application/ld+json" id="schema-itemlist">{}</script>
-  <link rel="stylesheet" href="/styles.css" />
+  <!-- styles.css: async load (non-blocking) -->
+  <link rel="preload" href="/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="/styles.css"></noscript>
   <!-- Font Awesome: async load (saves ~100 KiB render-blocking) -->
   <script>
     (function(){var l=document.createElement("link");l.rel="preload";l.as="style";
@@ -241,10 +282,12 @@
     document.readyState==="loading"?document.addEventListener("DOMContentLoaded",_inj):_inj();
   })();
   </script>
+
+  <style>.skip-link{position:absolute;transform:translateY(-100%);background:#000;color:#fff;padding:8px 16px;z-index:9999;transition:transform .3s;text-decoration:none;}.skip-link:focus{transform:translateY(0);}</style>
 </head>
 <body>
   <div id="site-header"></div>
-  <main>
+  <main id="main-content">
     <!-- iFrame tool -->
     <section id="url-view" style="display:none;height:calc(100vh - 60px);">
       <iframe id="url-iframe" title="Viewer" style="width:100%;height:100%;border:none;"
@@ -678,7 +721,10 @@
       <div class="offcanvas-head-left">
         <picture>
           <source srcset="/image.webp" type="image/webp">
-          <img src="/image.png" alt="Logo" class="offcanvas-head-logo" width="34" height="34">
+          <picture>
+            <source srcset="/image.webp" type="image/webp">
+            <img src="/image.png" alt="Logo" class="offcanvas-head-logo" width="34" height="34" decoding="async">
+          </picture>
         </picture>
         <div class="offcanvas-head-texts">
           <span class="offcanvas-title">TOP SARKARI JOBS</span>
