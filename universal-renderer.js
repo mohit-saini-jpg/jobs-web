@@ -115,11 +115,18 @@
     .udyn-sal-val{color:#16a34a}
     /* ── Responsive ── */
     @media(max-width:600px){
-      .udyn-vac-table{font-size:.75rem}
-      .udyn-vac-table th,.udyn-vac-table td{padding:7px 8px}
-      .udyn-gen-table{font-size:.78rem}
-      .udyn-gen-table th,.udyn-gen-table td{padding:8px 10px}
-      .udyn-link-row{flex-wrap:wrap}
+      .udyn-vac-table{font-size:.72rem}
+      .udyn-vac-table th,.udyn-vac-table td{padding:6px 7px}
+      .udyn-gen-table{font-size:.76rem}
+      .udyn-gen-table th,.udyn-gen-table td{padding:7px 9px;word-break:break-word}
+      .udyn-link-row{flex-wrap:wrap;gap:6px}
+      .udyn-link-label{min-width:unset;width:100%;font-size:.79rem}
+      .udyn-link-btn{width:100%;justify-content:center;padding:7px 12px;font-size:.8rem}
+      .udyn-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+      .udyn-head{font-size:.82rem;padding:8px 12px}
+      .udyn-table-scroll{-webkit-overflow-scrolling:touch;overflow-x:auto}
+      .udyn-step{padding:8px 10px;font-size:.8rem}
+      .udyn-step-num{min-width:22px;height:22px;font-size:.68rem}
     }
     /* ── Nav TOC ── */
     .jp-left-nav-item.udyn-toc-link{color:#374151}
@@ -304,8 +311,28 @@
     }
 
     // ── Also hunt URLs recursively in useful_links ────────────────────
+    // Format: [{title: "Apply Online", links: "https://..."}, ...]
     if (job.useful_links) {
-      collectUrlsDeep(job.useful_links, job._udyn_links);
+      if (Array.isArray(job.useful_links)) {
+        for (const item of job.useful_links) {
+          if (!item) continue;
+          const label = safe(item.title || item.name || item.label || '');
+          const rawLinks = item.links || item.link || item.url || '';
+          const urls = Array.isArray(rawLinks) ? rawLinks : [rawLinks];
+          for (const u of urls) {
+            const url = safe(u);
+            if (isUrl(url)) {
+              job._udyn_links.push({
+                label: label || smartLinkLabel('link', url, 0),
+                url,
+                type: classifyLinkKey(label || 'link', url)
+              });
+            }
+          }
+        }
+      } else {
+        collectUrlsDeep(job.useful_links, job._udyn_links);
+      }
     }
 
     // ── Deduplicate links ─────────────────────────────────────────────
@@ -516,6 +543,10 @@
     return job.tables || null;
   }
 
+  function exTextSections(job) {
+    return job.text_sections || null;
+  }
+
   function exQualification(job) {
     const q = job.qualification || {};
     const flat = safe(job.education_qualification || job.eligibility || '');
@@ -548,7 +579,7 @@
     'form_pdf_link','form_pdf_link','listing_date','last_updated','apply_process',
     'post_date','status','useful_links','sequence','job_location','job_type',
     'homepage_serial','closing_date','application_last_date','instructions',
-    'tables','sections','id','name','url','date','lastDate','postDate',
+    'tables','sections','text_sections','id','name','url','date','lastDate','postDate',
     'board','detail','_udyn_links','state','items',
   ]);
 
@@ -883,28 +914,120 @@
   }
 
   /* ── 6m. SR Tables (merged_sarkari 'tables' field) ── */
+  /* Handles BOTH formats:
+     Format A (object): { table_name: "...", rows: [["col1","col2"],[...]] }
+     Format B (array-of-arrays): [["col1","col2"],[...]]
+  */
+  function renderTableRows(rows) {
+    if (!Array.isArray(rows) || !rows.length) return '';
+    // Detect if first row is a header row (all strings, no URLs)
+    const firstRow = rows[0];
+    const looksLikeHeader = Array.isArray(firstRow) &&
+      firstRow.every(c => typeof c === 'string' && !isUrl(c));
+
+    let header = '', dataRows = rows;
+
+    if (looksLikeHeader) {
+      // Smart header: if row has only 2 cells AND looks like a "Post Name / Eligibility" label pair,
+      // treat as header only if next rows have same or more columns
+      const nextRow = rows[1];
+      const nextCols = Array.isArray(nextRow) ? nextRow.length : 0;
+      if (nextCols >= firstRow.length) {
+        header = `<thead><tr>${firstRow.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead>`;
+        dataRows = rows.slice(1);
+      }
+    }
+
+    const body = dataRows.filter(Array.isArray).map((row, ri) => {
+      // Detect if this row is itself a sub-header (all non-URL strings, distinct from data)
+      const isSubHeader = row.every(c => typeof c === 'string' && !isUrl(c) && c.length < 120) &&
+                          ri > 0 && row.length <= (dataRows[ri-1] || row).length;
+      if (isSubHeader && !header) {
+        // Render as a colored sub-header row
+        return `<tr style="background:#e0f2fe;"><td colspan="99" style="font-weight:700;color:#0369a1;padding:8px 12px;">${row.map(c => esc(c)).join(' &nbsp;|&nbsp; ')}</td></tr>`;
+      }
+      return `<tr>${row.map(cell => {
+        const s = safe(String(cell ?? ''));
+        if (!s) return '<td>—</td>';
+        if (isUrl(s)) {
+          const btnClass = isPdf(s) ? 'udyn-link-pdf' : 'udyn-link-apply';
+          const btnText  = isPdf(s) ? '<i class="fa-solid fa-file-pdf"></i> PDF' : '<i class="fa-solid fa-arrow-up-right-from-square"></i> Link';
+          return `<td><a href="${esc(s)}" target="_blank" rel="noopener" class="udyn-link-btn ${btnClass}" style="font-size:.75rem;padding:4px 10px;">${btnText}</a></td>`;
+        }
+        return `<td>${esc(s)}</td>`;
+      }).join('')}</tr>`;
+    }).join('');
+
+    if (!body) return '';
+    return `<div class="udyn-table-scroll" style="margin-bottom:10px;">
+      <table class="udyn-vac-table">${header}<tbody>${body}</tbody></table>
+    </div>`;
+  }
+
   function cardTables(tables) {
     if (!Array.isArray(tables) || !tables.length) return null;
     let allHtml = '';
+
     for (const group of tables) {
-      if (!Array.isArray(group) || !group.length) continue;
-      if (Array.isArray(group[0])) {
-        // Array-of-arrays
-        const isHeader = group[0].length === 2 && group[0].every(c => typeof c === 'string' && c.length < 80 && !isUrl(c));
-        const header = isHeader ? `<thead><tr>${group[0].map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead>` : '';
-        const dataRows = isHeader ? group.slice(1) : group;
-        const body = dataRows.filter(Array.isArray).map(row =>
-          `<tr>${row.map(cell => {
-            const s = safe(String(cell ?? ''));
-            return isUrl(s) ? `<td><a href="${esc(s)}" target="_blank" rel="noopener" style="color:#1d4ed8;font-weight:600;">Click Here</a></td>` : `<td>${esc(s)}</td>`;
-          }).join('')}</tr>`
-        ).join('');
-        if (body) allHtml += `<div class="udyn-table-scroll" style="margin-bottom:8px;"><table class="udyn-vac-table">${header}<tbody>${body}</tbody></table></div>`;
+      // ── Format A: Object with table_name + rows ──────────────────────
+      if (group && typeof group === 'object' && !Array.isArray(group)) {
+        const tname = safe(group.table_name || '');
+        const rows  = group.rows;
+        if (!Array.isArray(rows) || !rows.length) continue;
+
+        // Table name as a section heading inside the card
+        const heading = tname
+          ? `<div style="padding:8px 14px 4px;font-size:.78rem;font-weight:700;color:#1d4ed8;background:#f0f7ff;border-bottom:1px solid #dbeafe;letter-spacing:.01em;">${esc(tname)}</div>`
+          : '';
+        const tableHtml = renderTableRows(rows);
+        if (tableHtml) allHtml += heading + tableHtml;
+      }
+      // ── Format B: Direct array-of-arrays ─────────────────────────────
+      else if (Array.isArray(group) && group.length && Array.isArray(group[0])) {
+        const tableHtml = renderTableRows(group);
+        if (tableHtml) allHtml += tableHtml;
       }
     }
+
     if (!allHtml) return null;
     return makeCard('udyn-sr-tables','linear-gradient(135deg,#1d4ed8,#1d6dbc)',
-      'fa-solid fa-table','Important Details', allHtml);
+      'fa-solid fa-table','Vacancy / Important Details', allHtml);
+  }
+
+  /* ── 6m2. SR Text Sections (merged_sarkari 'text_sections' field) ── */
+  /* Format: [{ section: "How to Fill Form...", content: "Step1 | Step2 | ..." }] */
+  function cardTextSections(textSections) {
+    if (!Array.isArray(textSections) || !textSections.length) return null;
+    let allHtml = '';
+
+    for (const sec of textSections) {
+      if (!sec || typeof sec !== 'object') continue;
+      const heading = safe(sec.section || sec.title || '');
+      const content = safe(sec.content || sec.text || sec.description || '');
+      if (!content) continue;
+
+      // Heading for this section
+      const headHtml = heading
+        ? `<div style="padding:8px 14px 5px;font-size:.82rem;font-weight:700;color:#0f766e;background:#f0fdf4;border-bottom:1px solid #bbf7d0;">${esc(heading)}</div>`
+        : '';
+
+      // Split by pipe | or newlines to render as numbered steps
+      const steps = content.split(/\s*\|\s*|\n+/).map(s => s.trim()).filter(Boolean);
+      let bodyHtml = '';
+      if (steps.length > 1) {
+        bodyHtml = `<ul class="udyn-steps-list">${steps.map((s, i) =>
+          `<li class="udyn-step"><span class="udyn-step-num">${i+1}</span><span>${esc(s)}</span></li>`
+        ).join('')}</ul>`;
+      } else {
+        bodyHtml = `<div class="udyn-detail">${esc(content)}</div>`;
+      }
+
+      allHtml += headHtml + bodyHtml;
+    }
+
+    if (!allHtml) return null;
+    return makeCard('udyn-text-sections','linear-gradient(135deg,#0f766e,#059669)',
+      'fa-solid fa-clipboard-list','How To Apply / Instructions', allHtml);
   }
 
   /* ── 6n. Important Links (FULLY REBUILT — zero missing links) ── */
@@ -1252,6 +1375,8 @@
     { id: 'udyn-how-to-apply',       icon: 'fa-clipboard-list',     label: 'How To Apply'           },
     { id: 'udyn-instructions',       icon: 'fa-circle-exclamation', label: 'Important Instructions' },
     { id: 'udyn-faq',                icon: 'fa-circle-question',    label: 'FAQ'                    },
+    { id: 'udyn-text-sections',      icon: 'fa-clipboard-list',     label: 'How To Apply'           },
+    { id: 'udyn-sr-tables',          icon: 'fa-table',              label: 'Vacancy Details'        },
     { id: 'udyn-imp-links',          icon: 'fa-link',               label: 'Important Links'        },
   ];
 
@@ -1342,9 +1467,13 @@
     const faqs = exFaq(rawJob);
     if (hasContent(faqs) && !sectionExists('dynFaq')) push(cardFaq(faqs), 'udyn-faq');
 
-    // ── 15. SR Tables ─────────────────────────────────────────────────
+    // ── 15. SR Tables (merged_sarkari 'tables' field) ─────────────────
     const tables = exTables(rawJob);
-    if (tables && !sectionExists('udyn-sr-tables')) push(cardTables(tables), null);
+    if (tables && !sectionExists('udyn-sr-tables')) push(cardTables(tables), 'udyn-sr-tables');
+
+    // ── 15b. SR Text Sections (merged_sarkari 'text_sections' field) ──
+    const textSections = exTextSections(rawJob);
+    if (textSections && !sectionExists('udyn-text-sections')) push(cardTextSections(textSections), 'udyn-text-sections');
 
     // ── 16. Unknown future fields (auto-rendered recursively) ─────────
     const unknown = exUnknown(rawJob);
