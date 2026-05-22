@@ -111,24 +111,24 @@
   <script>
   var DATA={
     convert:[
-      {name:'JPG to PDF',       desc:'Convert JPG/PNG images to PDF',          url:'https://www.ilovepdf.com/jpg_to_pdf',          icon:'fa-file-pdf',          b:'badge-hot',  bl:'Most Used'},
-      {name:'Word to PDF',      desc:'Convert DOCX Word file to PDF',           url:'https://www.ilovepdf.com/word_to_pdf',         icon:'fa-file-word',         b:'badge-pop',  bl:'Popular'},
-      {name:'Excel to PDF',     desc:'Convert Excel spreadsheet to PDF',        url:'https://www.ilovepdf.com/excel_to_pdf',        icon:'fa-file-excel',        b:'badge-free', bl:'Free'},
-      {name:'PPT to PDF',       desc:'Convert PowerPoint to PDF',               url:'https://www.ilovepdf.com/powerpoint_to_pdf',   icon:'fa-file-powerpoint',   b:'badge-free', bl:'Free'},
-      {name:'HTML to PDF',      desc:'Convert web page HTML to PDF',            url:'https://www.ilovepdf.com/html_to_pdf',         icon:'fa-code',              b:'badge-free', bl:'Free'},
+      {name:'JPG to PDF',       desc:'Convert JPG/PNG images to PDF',          url:'/tools/pdf/jpg-to-pdf.html',          icon:'fa-file-pdf',          b:'badge-hot',  bl:'Most Used'},
+      {name:'Word to PDF',      desc:'Convert DOCX Word file to PDF',          url:'/tools/pdf/word-to-pdf.html',         icon:'fa-file-word',         b:'badge-pop',  bl:'Popular'},
+      {name:'Excel to PDF',     desc:'Convert Excel spreadsheet to PDF',       url:'/tools/pdf/excel-to-pdf.html',        icon:'fa-file-excel',        b:'badge-free', bl:'Free'},
+      {name:'PPT to PDF',       desc:'Convert PowerPoint to PDF',              url:'/tools/pdf/ppt-to-pdf.html',          icon:'fa-file-powerpoint',   b:'badge-free', bl:'Free'},
+      {name:'HTML to PDF',      desc:'Convert web page HTML to PDF',           url:'/tools/pdf/html-to-pdf.html',         icon:'fa-code',              b:'badge-free', bl:'Free'},
     ],
     organize:[
-      {name:'Merge PDF',        desc:'Combine multiple PDFs into one file',     url:'https://www.ilovepdf.com/merge_pdf',           icon:'fa-file-circle-plus',  b:'badge-hot',  bl:'Most Used'},
-      {name:'Split PDF',        desc:'Split PDF into separate pages/files',     url:'https://www.ilovepdf.com/split_pdf',           icon:'fa-scissors',          b:'badge-pop',  bl:'Popular'},
-      {name:'Rotate PDF',       desc:'Rotate pages in PDF to correct angle',    url:'https://www.ilovepdf.com/rotate_pdf',          icon:'fa-rotate',            b:'badge-free', bl:'Free'},
-      {name:'Reorder PDF',      desc:'Rearrange pages inside PDF',              url:'https://www.ilovepdf.com/pdf_to_pdf',          icon:'fa-arrow-up-short-wide',b:'badge-free', bl:'Free'},
+      {name:'Merge PDF',        desc:'Combine multiple PDFs into one file',    url:'/tools/pdf/merge-pdf.html',           icon:'fa-file-circle-plus',  b:'badge-hot',  bl:'Most Used'},
+      {name:'Split PDF',        desc:'Split PDF into separate pages/files',    url:'/tools/pdf/split-pdf.html',           icon:'fa-scissors',          b:'badge-pop',  bl:'Popular'},
+      {name:'Rotate PDF',       desc:'Rotate pages in PDF to correct angle',   url:'/tools/pdf/rotate-pdf.html',          icon:'fa-rotate',            b:'badge-free', bl:'Free'},
+      {name:'Reorder PDF',      desc:'Rearrange pages inside PDF',             url:'/tools/pdf/reorder-pdf.html',         icon:'fa-arrow-up-short-wide',b:'badge-free', bl:'Free'},
     ],
     edit:[
-      {name:'Compress PDF',     desc:'Reduce PDF file size for upload',         url:'https://www.ilovepdf.com/compress_pdf',        icon:'fa-file-zipper',       b:'badge-hot',  bl:'Must Use'},
-      {name:'Unlock PDF',       desc:'Remove PDF password protection',          url:'https://www.ilovepdf.com/unlock_pdf',          icon:'fa-lock-open',         b:'badge-pop',  bl:'Popular'},
-      {name:'PDF to JPG',       desc:'Convert PDF pages to images',             url:'https://www.ilovepdf.com/pdf_to_jpg',          icon:'fa-image',             b:'badge-free', bl:'Free'},
-      {name:'Add Watermark',    desc:'Add text/image watermark to PDF',         url:'https://www.ilovepdf.com/watermark_pdf',       icon:'fa-stamp',             b:'badge-free', bl:'Free'},
-      {name:'Sign PDF',         desc:'Add digital signature to PDF',            url:'https://www.ilovepdf.com/sign_pdf',            icon:'fa-pen-nib',           b:'badge-free', bl:'Free'},
+      {name:'Compress PDF',     desc:'Reduce PDF file size for upload',        url:'/tools/pdf/compress-pdf.html',        icon:'fa-file-zipper',       b:'badge-hot',  bl:'Must Use'},
+      {name:'Unlock PDF',       desc:'Remove PDF password protection',         url:'/tools/pdf/pdf-unlock.html',          icon:'fa-lock-open',         b:'badge-pop',  bl:'Popular'},
+      {name:'PDF to JPG',       desc:'Convert PDF pages to images',            url:'/tools/pdf/pdf-to-jpg.html',          icon:'fa-image',             b:'badge-free', bl:'Free'},
+      {name:'Add Watermark',    desc:'Add text/image watermark to PDF',        url:'/tools/pdf/add-watermark.html',       icon:'fa-stamp',             b:'badge-free', bl:'Free'},
+      {name:'Sign PDF',         desc:'Add digital signature to PDF',           url:'/tools/pdf/sign-pdf.html',            icon:'fa-pen-nib',           b:'badge-free', bl:'Free'},
     ]
   };
   function render(id,list){
@@ -136,7 +136,7 @@
     list.forEach(function(t){
       var a=document.createElement('a');
       a.className='tc';
-      a.href='view.html?url='+encodeURIComponent(t.url)+'&name='+encodeURIComponent(t.name);
+      a.href=t.url;
       a.title=t.name;
       a.innerHTML='<div class="tc-icon"><i class="fa-solid '+t.icon+'"></i></div>'
         +'<div class="tc-name">'+t.name+'</div>'
