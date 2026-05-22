@@ -110,6 +110,7 @@
     .udyn-link-pdf{background:#dc2626;color:#fff}
     .udyn-link-website{background:#1d4ed8;color:#fff}
     .udyn-link-login{background:#7c3aed;color:#fff}
+    .udyn-link-video{background:#dc2626;color:#fff}
     .udyn-link-default{background:#475569;color:#fff}
     /* ── Salary ── */
     .udyn-sal-val{color:#16a34a}
@@ -311,24 +312,30 @@
     }
 
     // ── Also hunt URLs recursively in useful_links ────────────────────
-    // Format: [{title: "Apply Online", links: "https://..."}, ...]
+    // Format: [{title: "Apply Online", links: "https://..." OR ["url1","url2"]}, ...]
     if (job.useful_links) {
       if (Array.isArray(job.useful_links)) {
         for (const item of job.useful_links) {
           if (!item) continue;
           const label = safe(item.title || item.name || item.label || '');
+          // links can be a string OR an array of strings
           const rawLinks = item.links || item.link || item.url || '';
           const urls = Array.isArray(rawLinks) ? rawLinks : [rawLinks];
-          for (const u of urls) {
+          urls.forEach((u, idx) => {
             const url = safe(u);
-            if (isUrl(url)) {
-              job._udyn_links.push({
-                label: label || smartLinkLabel('link', url, 0),
-                url,
-                type: classifyLinkKey(label || 'link', url)
-              });
-            }
-          }
+            if (!isUrl(url)) return;
+            // Skip YouTube / video links
+            if (/youtu\.?be|youtube\.com/i.test(url)) return;
+            // For arrays with multiple URLs, append index suffix to label
+            const finalLabel = urls.length > 1
+              ? (label ? `${label} (${idx + 1})` : smartLinkLabel('link', url, idx + 1))
+              : (label || smartLinkLabel('link', url, 0));
+            job._udyn_links.push({
+              label: finalLabel,
+              url,
+              type: classifyLinkKey(label || 'link', url)
+            });
+          });
         }
       } else {
         collectUrlsDeep(job.useful_links, job._udyn_links);
@@ -350,13 +357,15 @@
   function classifyLinkKey(key, url) {
     const k = safe(key).toLowerCase();
     const u = safe(url).toLowerCase();
-    if (/apply|register|registration|login|form|apply_online/i.test(k)) return 'apply';
+    if (/apply|register|registration|form|apply_online/i.test(k)) return 'apply';
     if (/login/i.test(k)) return 'login';
     if (/notification|advt|advertisement|pdf|syllabus|admit|result/i.test(k)) return 'pdf';
     if (/official|website|home/i.test(k)) return 'website';
+    if (/video|youtube|youtu\.be|watch/i.test(k) || /youtu\.?be|youtube/i.test(u)) return 'video';
     // Guess from URL
     if (isPdf(u)) return 'pdf';
-    if (/login|apply|register|form|candidate|exam\.aspx|online/i.test(u)) return 'apply';
+    if (/youtu\.?be|youtube/i.test(u)) return 'video';
+    if (/login|apply|register|form|candidate|exam\\.aspx|online/i.test(u)) return 'apply';
     return 'default';
   }
 
@@ -914,54 +923,88 @@
   }
 
   /* ── 6m. SR Tables (merged_sarkari 'tables' field) ── */
-  /* Handles BOTH formats:
-     Format A (object): { table_name: "...", rows: [["col1","col2"],[...]] }
-     Format B (array-of-arrays): [["col1","col2"],[...]]
-  */
+  /*
+   * renderTableRows — Smart renderer for mixed-column-count row arrays.
+   *
+   * Problem: A single 'rows' array often contains MULTIPLE logical sub-tables
+   * concatenated together (e.g. a 2-col eligibility table followed by a 4-col
+   * district-vacancy table). Naively treating the first row as header breaks
+   * layout when column counts change mid-array.
+   *
+   * Solution: Split rows into sub-groups wherever column count changes, then
+   * render each sub-group as its own table with its own header detection.
+   */
   function renderTableRows(rows) {
     if (!Array.isArray(rows) || !rows.length) return '';
-    // Detect if first row is a header row (all strings, no URLs)
-    const firstRow = rows[0];
-    const looksLikeHeader = Array.isArray(firstRow) &&
-      firstRow.every(c => typeof c === 'string' && !isUrl(c));
 
-    let header = '', dataRows = rows;
-
-    if (looksLikeHeader) {
-      // Smart header: if row has only 2 cells AND looks like a "Post Name / Eligibility" label pair,
-      // treat as header only if next rows have same or more columns
-      const nextRow = rows[1];
-      const nextCols = Array.isArray(nextRow) ? nextRow.length : 0;
-      if (nextCols >= firstRow.length) {
-        header = `<thead><tr>${firstRow.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead>`;
-        dataRows = rows.slice(1);
+    /* ── Step 1: Split into sub-tables by column-count boundary ── */
+    const subTables = [];
+    let cur = [], curCols = -1;
+    for (const row of rows) {
+      if (!Array.isArray(row)) continue;
+      if (row.length !== curCols) {
+        if (cur.length) subTables.push(cur);
+        cur = [row]; curCols = row.length;
+      } else {
+        cur.push(row);
       }
     }
+    if (cur.length) subTables.push(cur);
 
-    const body = dataRows.filter(Array.isArray).map((row, ri) => {
-      // Detect if this row is itself a sub-header (all non-URL strings, distinct from data)
-      const isSubHeader = row.every(c => typeof c === 'string' && !isUrl(c) && c.length < 120) &&
-                          ri > 0 && row.length <= (dataRows[ri-1] || row).length;
-      if (isSubHeader && !header) {
-        // Render as a colored sub-header row
-        return `<tr style="background:#e0f2fe;"><td colspan="99" style="font-weight:700;color:#0369a1;padding:8px 12px;">${row.map(c => esc(c)).join(' &nbsp;|&nbsp; ')}</td></tr>`;
+    /* ── Step 2: Render each sub-table ── */
+    let html = '';
+    for (const st of subTables) {
+      if (!st.length) continue;
+
+      /* Header detection: first row all strings/no URLs, next row same col count */
+      const firstRow = st[0];
+      const nextRow  = st[1];
+      const isHeader = nextRow &&
+        firstRow.every(c => typeof c === 'string' && !isUrl(c) && c.length < 120) &&
+        nextRow.length >= firstRow.length;
+
+      const headerHtml = isHeader
+        ? `<thead><tr>${firstRow.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead>`
+        : '';
+      const dataRows = isHeader ? st.slice(1) : st;
+
+      /* Single-row, single-col-count sub-table with no data rows after header → render as KV row */
+      if (isHeader && dataRows.length === 0) continue;
+
+      /* Special case: 1 data row only + 2 cols → render as key-value pair in gen-table style */
+      const isKV = !isHeader && st.length === 1 && st[0].length === 2;
+
+      const bodyHtml = dataRows.map(row => {
+        const cells = row.map(cell => {
+          const s = safe(String(cell ?? ''));
+          if (!s) return '<td>—</td>';
+          if (isUrl(s)) {
+            const isp = isPdf(s);
+            return `<td><a href="${esc(s)}" target="_blank" rel="noopener"
+              class="udyn-link-btn ${isp ? 'udyn-link-pdf' : 'udyn-link-apply'}"
+              style="font-size:.75rem;padding:4px 10px;display:inline-flex;align-items:center;gap:4px;">
+              <i class="${isp ? 'fa-solid fa-file-pdf' : 'fa-solid fa-arrow-up-right-from-square'}"></i>
+              ${isp ? 'PDF' : 'Link'}</a></td>`;
+          }
+          return `<td>${esc(s)}</td>`;
+        }).join('');
+        return `<tr>${cells}</tr>`;
+      }).join('');
+
+      if (!bodyHtml && !headerHtml) continue;
+
+      if (isKV) {
+        /* Render as compact KV using gen-table style */
+        html += `<table class="udyn-gen-table" style="margin-bottom:0;">
+          <tbody><tr><th>${esc(st[0][0])}</th><td>${esc(st[0][1])}</td></tr></tbody>
+        </table>`;
+      } else {
+        html += `<div class="udyn-table-scroll" style="margin-bottom:10px;">
+          <table class="udyn-vac-table">${headerHtml}<tbody>${bodyHtml}</tbody></table>
+        </div>`;
       }
-      return `<tr>${row.map(cell => {
-        const s = safe(String(cell ?? ''));
-        if (!s) return '<td>—</td>';
-        if (isUrl(s)) {
-          const btnClass = isPdf(s) ? 'udyn-link-pdf' : 'udyn-link-apply';
-          const btnText  = isPdf(s) ? '<i class="fa-solid fa-file-pdf"></i> PDF' : '<i class="fa-solid fa-arrow-up-right-from-square"></i> Link';
-          return `<td><a href="${esc(s)}" target="_blank" rel="noopener" class="udyn-link-btn ${btnClass}" style="font-size:.75rem;padding:4px 10px;">${btnText}</a></td>`;
-        }
-        return `<td>${esc(s)}</td>`;
-      }).join('')}</tr>`;
-    }).join('');
-
-    if (!body) return '';
-    return `<div class="udyn-table-scroll" style="margin-bottom:10px;">
-      <table class="udyn-vac-table">${header}<tbody>${body}</tbody></table>
-    </div>`;
+    }
+    return html;
   }
 
   function cardTables(tables) {
@@ -969,20 +1012,18 @@
     let allHtml = '';
 
     for (const group of tables) {
-      // ── Format A: Object with table_name + rows ──────────────────────
+      /* ── Format A: Object { table_name, rows } (merged_sarkari format) ── */
       if (group && typeof group === 'object' && !Array.isArray(group)) {
         const tname = safe(group.table_name || '');
         const rows  = group.rows;
         if (!Array.isArray(rows) || !rows.length) continue;
-
-        // Table name as a section heading inside the card
         const heading = tname
-          ? `<div style="padding:8px 14px 4px;font-size:.78rem;font-weight:700;color:#1d4ed8;background:#f0f7ff;border-bottom:1px solid #dbeafe;letter-spacing:.01em;">${esc(tname)}</div>`
+          ? `<div style="padding:9px 14px 5px;font-size:.8rem;font-weight:700;color:#1d4ed8;background:#f0f7ff;border-bottom:1px solid #dbeafe;line-height:1.4;">${esc(tname)}</div>`
           : '';
         const tableHtml = renderTableRows(rows);
-        if (tableHtml) allHtml += heading + tableHtml;
+        if (tableHtml) allHtml += `<div style="margin-bottom:2px;">${heading}${tableHtml}</div>`;
       }
-      // ── Format B: Direct array-of-arrays ─────────────────────────────
+      /* ── Format B: Direct array-of-arrays ── */
       else if (Array.isArray(group) && group.length && Array.isArray(group[0])) {
         const tableHtml = renderTableRows(group);
         if (tableHtml) allHtml += tableHtml;
@@ -1006,22 +1047,23 @@
       const content = safe(sec.content || sec.text || sec.description || '');
       if (!content) continue;
 
-      // Heading for this section
       const headHtml = heading
-        ? `<div style="padding:8px 14px 5px;font-size:.82rem;font-weight:700;color:#0f766e;background:#f0fdf4;border-bottom:1px solid #bbf7d0;">${esc(heading)}</div>`
+        ? `<div style="padding:9px 14px 5px;font-size:.82rem;font-weight:700;color:#0f766e;background:#f0fdf4;border-bottom:1px solid #bbf7d0;">${esc(heading)}</div>`
         : '';
 
-      // Split by pipe | or newlines to render as numbered steps
+      /* Split by pipe | or newlines → numbered steps */
       const steps = content.split(/\s*\|\s*|\n+/).map(s => s.trim()).filter(Boolean);
       let bodyHtml = '';
       if (steps.length > 1) {
         bodyHtml = `<ul class="udyn-steps-list">${steps.map((s, i) =>
-          `<li class="udyn-step"><span class="udyn-step-num">${i+1}</span><span>${esc(s)}</span></li>`
+          `<li class="udyn-step">
+            <span class="udyn-step-num">${i+1}</span>
+            <span>${esc(s)}</span>
+          </li>`
         ).join('')}</ul>`;
       } else {
         bodyHtml = `<div class="udyn-detail">${esc(content)}</div>`;
       }
-
       allHtml += headHtml + bodyHtml;
     }
 
@@ -1038,9 +1080,9 @@
     const ORDER = { apply: 0, login: 1, pdf: 2, website: 3, default: 4 };
     const sorted = [...links].sort((a, b) => (ORDER[a.type] || 4) - (ORDER[b.type] || 4));
 
-    const typeStyle = { apply: 'udyn-link-apply', login: 'udyn-link-login', pdf: 'udyn-link-pdf', website: 'udyn-link-website', default: 'udyn-link-default' };
-    const typeLabel = { apply: 'Apply Now', login: 'Login', pdf: 'Download PDF', website: 'Visit Website', default: 'Click Here' };
-    const typeIcon  = { apply: 'fa-solid fa-pen-to-square', login: 'fa-solid fa-right-to-bracket', pdf: 'fa-solid fa-file-pdf', website: 'fa-solid fa-globe', default: 'fa-solid fa-link' };
+    const typeStyle = { apply: 'udyn-link-apply', login: 'udyn-link-login', pdf: 'udyn-link-pdf', website: 'udyn-link-website', video: 'udyn-link-video', default: 'udyn-link-default' };
+    const typeLabel = { apply: 'Apply Now', login: 'Login', pdf: 'Download PDF', website: 'Visit Website', video: 'Watch Video', default: 'Click Here' };
+    const typeIcon  = { apply: 'fa-solid fa-pen-to-square', login: 'fa-solid fa-right-to-bracket', pdf: 'fa-solid fa-file-pdf', website: 'fa-solid fa-globe', video: 'fa-brands fa-youtube', default: 'fa-solid fa-link' };
 
     const rows = sorted.map(({ label, url, type }) =>
       `<li class="udyn-link-row">` +
