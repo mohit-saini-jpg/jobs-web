@@ -15,7 +15,7 @@
 'use strict';
 
 // ─── Version & Cache Names ────────────────────────────────────────────────────
-const CACHE_VERSION      = 'v3';
+const CACHE_VERSION      = 'v4'; // v4: precaches mini JSON files
 const CACHE_STATIC       = `static-assets-${CACHE_VERSION}`;
 const CACHE_PAGES        = `html-pages-${CACHE_VERSION}`;
 const CACHE_IMAGES       = `images-${CACHE_VERSION}`;
@@ -38,6 +38,10 @@ const OFFLINE_PAGE = '/offline.html';
 // Only critical shell assets — keep small for fast SW activation
 const PRECACHE_STATIC = [
   '/all.min.css',
+  '/sections-mini.json',
+  '/merged-mini.json',
+  '/ticker-mini.json',
+  '/daily-mini.json',
 ];
 
 const PRECACHE_PAGES = [
@@ -445,8 +449,12 @@ function shouldHandle(request) {
   return cdnWhitelist.some(h => url.hostname.endsWith(h));
 }
 
+const MINI_JSON_FILES = ['/merged-mini.json','/sections-mini.json','/ticker-mini.json','/daily-mini.json'];
+
 function isJobData(url, request) {
-  // JSON job data files — always network-only
+  // Mini JSON files are cached via PRECACHE_STATIC — skip network-only for them
+  if (MINI_JSON_FILES.includes(url.pathname)) return false;
+  // All other JSON job data files — always network-only
   if (url.pathname.endsWith('.json') && !url.pathname.includes('manifest')) return true;
   // API endpoints
   if (url.pathname.startsWith('/api/')) return true;
