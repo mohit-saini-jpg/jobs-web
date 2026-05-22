@@ -89,6 +89,9 @@
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
   <meta name="keywords" content="sarkari result 2026, government exam results, SSC result, railway result, IBPS result, police result, sarkari naukri result"/>
   <link rel="canonical" href="https://www.topsarkarijobs.com/result.html" />
+  <link rel="alternate" hreflang="en" href="https://www.topsarkarijobs.com/result.html" />
+  <link rel="alternate" hreflang="en-IN" href="https://www.topsarkarijobs.com/result.html" />
+  <link rel="alternate" hreflang="x-default" href="https://www.topsarkarijobs.com/result.html" />
   <link rel="icon" type="image/x-icon" href="image.ico">
 
   <!-- Open Graph / WhatsApp / Social Share -->
@@ -106,7 +109,9 @@
   <meta name="twitter:description" content="Latest Sarkari Results 2026. Check SSC, Railway, Banking, UPSC and State PSC results updated daily." />
   <meta name="twitter:image" content="https://www.topsarkarijobs.com/image.png" />
 
-  <link rel="stylesheet" href="styles.css" />
+  <!-- styles.css: async load (non-blocking) -->
+  <link rel="preload" href="/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="/styles.css"></noscript>
   <!-- Font Awesome: async load (saves ~100 KiB render-blocking) -->
   <script>
     (function(){var l=document.createElement("link");l.rel="preload";l.as="style";
