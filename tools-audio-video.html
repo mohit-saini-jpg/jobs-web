@@ -111,25 +111,17 @@
   <script>
   var DATA={
     vconvert:[
-      {name:'MP4 to MP3',       desc:'Extract audio from video as MP3',          url:'https://cloudconvert.com/mp4-to-mp3',          icon:'fa-music',             b:'badge-hot',  bl:'Most Used'},
-      {name:'MP4 to AVI',       desc:'Convert MP4 video to AVI format',          url:'https://cloudconvert.com/mp4-to-avi',          icon:'fa-film',              b:'badge-free', bl:'Free'},
-      {name:'MP4 to GIF',       desc:'Convert video clip to animated GIF',       url:'https://cloudconvert.com/mp4-to-gif',          icon:'fa-image',             b:'badge-pop',  bl:'Popular'},
-      {name:'AVI to MP4',       desc:'Convert AVI file to MP4 format',           url:'https://cloudconvert.com/avi-to-mp4',          icon:'fa-arrows-rotate',     b:'badge-free', bl:'Free'},
-      {name:'MOV to MP4',       desc:'Convert iPhone MOV video to MP4',          url:'https://cloudconvert.com/mov-to-mp4',          icon:'fa-mobile-screen',     b:'badge-free', bl:'Free'},
-      {name:'MKV to MP4',       desc:'Convert MKV to MP4 format',                url:'https://cloudconvert.com/mkv-to-mp4',          icon:'fa-film',              b:'badge-free', bl:'Free'},
+      {name:'Video to MP3',     desc:'Video se MP3 audio extract karein',       url:'/tools/av/video-to-mp3.html',     icon:'fa-music',        b:'badge-hot',  bl:'Most Used'},
+      {name:'Video Convert',    desc:'Video format convert karein',             url:'/tools/av/video-convert.html',    icon:'fa-film',         b:'badge-pop',  bl:'Popular'},
+      {name:'Video Compress',   desc:'Video file size kam karein',              url:'/tools/av/video-compress.html',   icon:'fa-file-zipper',  b:'badge-hot',  bl:'Must Use'},
+      {name:'Video Trim',       desc:'Video ko cut/trim karein',                url:'/tools/av/video-trim.html',       icon:'fa-scissors',     b:'badge-free', bl:'Free'},
+      {name:'Screen Recorder',  desc:'Browser mein screen record karein',       url:'/tools/av/screen-recorder.html',  icon:'fa-display',      b:'badge-free', bl:'Free'},
     ],
-    vedit:[
-      {name:'Compress Video',   desc:'Reduce video file size without quality loss',url:'https://www.freeconvert.com/video-compressor',icon:'fa-file-zipper',      b:'badge-hot',  bl:'Must Use'},
-      {name:'Trim/Cut Video',   desc:'Cut video to specific duration',             url:'https://online-video-cutter.com/',            icon:'fa-scissors',          b:'badge-pop',  bl:'Popular'},
-      {name:'Merge Videos',     desc:'Join multiple videos into one',              url:'https://www.freeconvert.com/video-merger',    icon:'fa-layer-group',       b:'badge-free', bl:'Free'},
-      {name:'Add Subtitles',    desc:'Add subtitle text to video',                 url:'https://www.clideo.com/add-subtitles-to-video',icon:'fa-closed-captioning',b:'badge-free', bl:'Free'},
-    ],
+    vedit:[],
     audio:[
-      {name:'MP3 Cutter',       desc:'Cut and trim MP3 audio files',               url:'https://mp3cut.net/',                        icon:'fa-scissors',          b:'badge-hot',  bl:'Most Used'},
-      {name:'MP3 Joiner',       desc:'Join/merge multiple MP3 files',              url:'https://mp3joiner.com/',                     icon:'fa-layer-group',       b:'badge-pop',  bl:'Popular'},
-      {name:'Audio Converter',  desc:'Convert between audio formats',              url:'https://cloudconvert.com/audio-converter',   icon:'fa-arrows-rotate',     b:'badge-free', bl:'Free'},
-      {name:'Compress Audio',   desc:'Reduce audio file size',                     url:'https://www.freeconvert.com/audio-compressor',icon:'fa-file-zipper',      b:'badge-free', bl:'Free'},
-      {name:'Voice Recorder',   desc:'Record audio directly in browser',           url:'https://online-voice-recorder.com/',         icon:'fa-microphone',        b:'badge-free', bl:'Free'},
+      {name:'Audio Convert',    desc:'Audio format convert karein',             url:'/tools/av/audio-convert.html',    icon:'fa-arrows-rotate',b:'badge-free', bl:'Free'},
+      {name:'Audio Merge',      desc:'Multiple audio files merge karein',       url:'/tools/av/audio-merge.html',      icon:'fa-layer-group',  b:'badge-pop',  bl:'Popular'},
+      {name:'Audio Trim',       desc:'Audio file trim/cut karein',              url:'/tools/av/audio-trim.html',       icon:'fa-scissors',     b:'badge-hot',  bl:'Most Used'},
     ]
   };
   function render(id,list){
@@ -137,7 +129,7 @@
     list.forEach(function(t){
       var a=document.createElement('a');
       a.className='tc';
-      a.href='view.html?url='+encodeURIComponent(t.url)+'&name='+encodeURIComponent(t.name);
+      a.href=t.url;
       a.title=t.name;
       a.innerHTML='<div class="tc-icon"><i class="fa-solid '+t.icon+'"></i></div>'
         +'<div class="tc-name">'+t.name+'</div>'
