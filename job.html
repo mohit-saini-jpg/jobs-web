@@ -26,10 +26,16 @@
         content="Full details of this government job — post name, vacancies, salary, last date, qualification and apply mode." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" id="canonicalTag" href="https://www.topsarkarijobs.com/" />
+  <!-- Hreflang: set dynamically based on current URL -->
+  <link id="hreflangEn" rel="alternate" hreflang="en" href="https://www.topsarkarijobs.com/" />
+  <link id="hreflangEnIN" rel="alternate" hreflang="en-IN" href="https://www.topsarkarijobs.com/" />
+  <link id="hreflangDef" rel="alternate" hreflang="x-default" href="https://www.topsarkarijobs.com/" />
 
   <!-- ── Favicon & assets ── -->
   <link rel="icon" type="image/x-icon" href="/image.ico" />
-  <link rel="stylesheet" href="/styles.css" />
+  <!-- styles.css: async load (non-blocking) -->
+  <link rel="preload" href="/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="/styles.css"></noscript>
   <!-- Font Awesome: async load (saves ~100 KiB render-blocking) -->
   <script>
     (function(){var l=document.createElement("link");l.rel="preload";l.as="style";
@@ -113,6 +119,10 @@
       if (can) can.href = canonUrl;
       var ogUrl = document.getElementById('ogUrl');
       if (ogUrl) ogUrl.setAttribute('content', canonUrl);
+      // Update hreflang tags
+      ['hreflangEn','hreflangEnIN','hreflangDef'].forEach(function(id){
+        var el = document.getElementById(id); if (el) el.href = canonUrl;
+      });
     })();
   </script>
 
@@ -523,7 +533,7 @@
                 <span class="jp-tag jp-tag-new" id="jbNewBadge" style="display:none;"><i class="fa-solid fa-bolt"></i> New</span>
                 <span class="jp-tag jp-tag-urgent" id="jbUrgentBadge" style="display:none;"><i class="fa-solid fa-fire"></i> Last Few Days!</span>
               </div>
-              <h1 class="jp-title" id="jbTitle">Job Title</h1>
+              <h1 class="jp-title" id="jbTitle" aria-live="polite">Loading...</h1>
               <div class="jp-meta">
                 <span><i class="fa-regular fa-calendar"></i> <span id="metaPosted">Posted</span></span>
                 <span><i class="fa-solid fa-tag"></i> <span id="metaCat">Government Job</span></span>
@@ -625,7 +635,7 @@
             <div class="jp-nonjob-card">
               <div class="jp-nonjob-banner" id="nonJobBanner">
                 <span class="jp-nonjob-badge" id="nonJobBadge"><i class="fa-solid fa-link"></i> Important Link</span>
-                <h1 class="jp-nonjob-title" id="nonJobTitle"></h1>
+                <div class="jp-nonjob-title" id="nonJobTitle" role="heading" aria-level="2"></div>
                 <div class="jp-nonjob-divider"><div class="jp-nonjob-divider-dot"></div></div>
                 <div class="jp-nonjob-desc" id="nonJobDesc"></div>
               </div>
