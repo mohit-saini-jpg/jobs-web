@@ -4,6 +4,28 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Free Resume / CV Maker 2026 – Top Sarkari Jobs</title>
+  <meta name="description" content="Free Resume/CV maker — Professional resume 2 minute mein banao. ATS-friendly templates, PDF download." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://www.topsarkarijobs.com/resume-maker/" />
+  <link rel="icon" type="image/x-icon" href="/image.ico">
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.topsarkarijobs.com/resume-maker/" />
+  <meta property="og:title" content="Free Resume / CV Maker 2026 – Top Sarkari Jobs" />
+  <meta property="og:description" content="Free Resume/CV maker — Professional resume 2 minute mein banao. ATS-friendly templates, PDF download." />
+  <meta property="og:image" content="https://www.topsarkarijobs.com/image.png" />
+  <meta property="og:image:width" content="800" />
+  <meta property="og:image:height" content="800" />
+  <meta property="og:site_name" content="Top Sarkari Jobs" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Free Resume / CV Maker 2026 – Top Sarkari Jobs" />
+  <meta name="twitter:description" content="Free Resume/CV maker — Professional resume 2 minute mein banao. ATS-friendly templates, PDF download." />
+  <meta name="twitter:image" content="https://www.topsarkarijobs.com/image.png" />
+  <!-- Hreflang -->
+  <link rel="alternate" hreflang="en" href="https://www.topsarkarijobs.com/resume-maker/" />
+  <link rel="alternate" hreflang="en-IN" href="https://www.topsarkarijobs.com/resume-maker/" />
+  <link rel="alternate" hreflang="x-default" href="https://www.topsarkarijobs.com/resume-maker/" />
   <!-- Font Awesome: async load from CDN -->
   <script>
     (function(){var l=document.createElement("link");l.rel="preload";l.as="style";
@@ -232,11 +254,14 @@
     #site-header .brand-title { white-space: nowrap !important; font-size: .92rem !important; }
     #site-header .header-actions { flex-shrink: 0 !important; }
     #site-header .header-logo-bar { display: flex !important; align-items: center !important; }
+    .skip-link { position:absolute; transform:translateY(-100%); background:#000; color:#fff; padding:8px 16px; z-index:9999; transition:transform .3s; text-decoration:none; }
+    .skip-link:focus { transform:translateY(0); }
     </style>
   <!-- GA4: Centralized Analytics -->
   <script src="/analytics.js" defer></script>
 </head>
 <body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
 
 <header class="site-header">
   <div class="hdr-inner">
@@ -274,7 +299,7 @@
   </div>
 </section>
 
-<main class="page">
+<main id="main-content" class="page">
   <div class="grid">
     <div>
       <div id="formSection">
@@ -308,18 +333,18 @@
             <div class="ph-grid">
               <div>
                 <div class="row">
-                  <div class="fld"><label>Full Name <span class="req">*</span></label><input type="text" id="f_name" placeholder="e.g. Rahul Kumar"></div>
-                  <div class="fld"><label>Mobile No. <span class="req">*</span></label><input type="text" id="f_contact" placeholder="e.g. 9876543210"></div>
+                  <div class="fld"><label for="f_name">Full Name <span class="req">*</span></label><input type="text" id="f_name" placeholder="e.g. Rahul Kumar" aria-required="true"></div>
+                  <div class="fld"><label for="f_contact">Mobile No. <span class="req">*</span></label><input type="text" id="f_contact" placeholder="e.g. 9876543210" aria-required="true"></div>
                 </div>
                 <div class="row">
-                  <div class="fld"><label>Email Address</label><input type="email" id="f_email" placeholder="e.g. rahul@gmail.com"></div>
-                  <div class="fld"><label>Date of Birth</label><input type="text" id="f_dob" placeholder="e.g. 01-01-2000"></div>
+                  <div class="fld"><label for="f_email">Email Address</label><input type="email" id="f_email" placeholder="e.g. rahul@gmail.com"></div>
+                  <div class="fld"><label for="f_dob">Date of Birth</label><input type="text" id="f_dob" placeholder="e.g. 01-01-2000"></div>
                 </div>
               </div>
               <div class="ph-col">
                 <img id="phPrev" src="" alt="" class="ph-prev" loading="lazy" decoding="async">
                 <div class="ph-zone" id="phZone">
-                  <input type="file" accept="image/*" onchange="handlePhoto(this)">
+                  <input type="file" accept="image/*" aria-label="Upload Passport Photo" onchange="handlePhoto(this)">
                   <i class="fa-solid fa-camera"></i>
                   <p>Upload Photo</p>
                 </div>
@@ -327,20 +352,20 @@
               </div>
             </div>
             <div class="row">
-              <div class="fld"><label>Father's Name</label><input type="text" id="f_fname" placeholder="Father's name"></div>
-              <div class="fld"><label>Mother's Name</label><input type="text" id="f_mname" placeholder="Mother's name"></div>
+              <div class="fld"><label for="f_fname">Father's Name</label><input type="text" id="f_fname" placeholder="Father's name"></div>
+              <div class="fld"><label for="f_mname">Mother's Name</label><input type="text" id="f_mname" placeholder="Mother's name"></div>
             </div>
             <div class="row three">
-              <div class="fld"><label>Nationality</label><input type="text" id="f_nationality" placeholder="e.g. Indian"></div>
-              <div class="fld"><label>Gender</label><select id="f_gender"><option value="">-- Select --</option><option>Male</option><option>Female</option><option>Other</option></select></div>
-              <div class="fld"><label>Marital Status</label><select id="f_marital"><option value="">-- Select --</option><option>Married</option><option>Unmarried</option></select></div>
+              <div class="fld"><label for="f_nationality">Nationality</label><input type="text" id="f_nationality" placeholder="e.g. Indian"></div>
+              <div class="fld"><label for="f_gender">Gender</label><select id="f_gender"><option value="">-- Select --</option><option>Male</option><option>Female</option><option>Other</option></select></div>
+              <div class="fld"><label for="f_marital">Marital Status</label><select id="f_marital"><option value="">-- Select --</option><option>Married</option><option>Unmarried</option></select></div>
             </div>
             <div class="row">
-              <div class="fld"><label>Languages Known</label><input type="text" id="f_language" placeholder="e.g. Hindi, English"></div>
-              <div class="fld"><label>Hobbies</label><input type="text" id="f_hobbies" placeholder="e.g. Reading, Cricket"></div>
+              <div class="fld"><label for="f_language">Languages Known</label><input type="text" id="f_language" placeholder="e.g. Hindi, English"></div>
+              <div class="fld"><label for="f_hobbies">Hobbies</label><input type="text" id="f_hobbies" placeholder="e.g. Reading, Cricket"></div>
             </div>
             <div class="row full">
-              <div class="fld"><label>Address</label><textarea id="f_address" placeholder="Full address"></textarea></div>
+              <div class="fld"><label for="f_address">Address</label><textarea id="f_address" placeholder="Full address"></textarea></div>
             </div>
           </div>
         </div>
@@ -361,15 +386,15 @@
           <div class="f-body">
             <div class="sec-lbl"><i class="fa-solid fa-list-check"></i> Choose preset or write your own</div>
             <div id="objList">
-              <div class="obj-opt"><input type="radio" name="obj" value="1"><span>Secure a responsible career opportunity to fully utilize my talent and skills while making a significant contribution to the success of the company.</span></div>
-              <div class="obj-opt"><input type="radio" name="obj" value="2"><span>Self-motivated and hardworking fresher seeking an opportunity to work in a challenging environment to prove my skills in the growth of the organization.</span></div>
-              <div class="obj-opt"><input type="radio" name="obj" value="3"><span>To seek a position in a professionally managed organization where conceptual and functional skills are effectively utilized, contributing to organizational and personal growth.</span></div>
-              <div class="obj-opt"><input type="radio" name="obj" value="4"><span>To make a good position in a reputed company and work enthusiastically in a team, providing steady career growth along with job satisfaction.</span></div>
-              <div class="obj-opt"><input type="radio" name="obj" value="5"><span>To contribute my best to the organization and utilize my skills to perform the job to the best of my ability with zeal and willingness to learn.</span></div>
-              <div class="obj-opt"><input type="radio" name="obj" value="6"><span>Experienced professional seeking a senior role to apply domain knowledge, mentor teams, and deliver measurable results aligned with organizational goals.</span></div>
+              <div class="obj-opt"><input type="radio" name="obj" value="1" aria-label="Objective option 1: Secure a responsible career opportunity"><span>Secure a responsible career opportunity to fully utilize my talent and skills while making a significant contribution to the success of the company.</span></div>
+              <div class="obj-opt"><input type="radio" name="obj" value="2" aria-label="Objective option 2: Self-motivated fresher seeking opportunity"><span>Self-motivated and hardworking fresher seeking an opportunity to work in a challenging environment to prove my skills in the growth of the organization.</span></div>
+              <div class="obj-opt"><input type="radio" name="obj" value="3" aria-label="Objective option 3: Professionally managed organization"><span>To seek a position in a professionally managed organization where conceptual and functional skills are effectively utilized, contributing to organizational and personal growth.</span></div>
+              <div class="obj-opt"><input type="radio" name="obj" value="4" aria-label="Objective option 4: Good position in reputed company"><span>To make a good position in a reputed company and work enthusiastically in a team, providing steady career growth along with job satisfaction.</span></div>
+              <div class="obj-opt"><input type="radio" name="obj" value="5" aria-label="Objective option 5: Contribute best to organization"><span>To contribute my best to the organization and utilize my skills to perform the job to the best of my ability with zeal and willingness to learn.</span></div>
+              <div class="obj-opt"><input type="radio" name="obj" value="6" aria-label="Objective option 6: Experienced professional seeking senior role"><span>Experienced professional seeking a senior role to apply domain knowledge, mentor teams, and deliver measurable results aligned with organizational goals.</span></div>
             </div>
             <div class="row full" style="margin-top:12px">
-              <div class="fld"><label>Or write your own objective</label><textarea id="f_objective" placeholder="Write a custom career objective..."></textarea></div>
+              <div class="fld"><label for="f_objective">Or write your own objective</label><textarea id="f_objective" placeholder="Write a custom career objective..."></textarea></div>
             </div>
           </div>
         </div>
