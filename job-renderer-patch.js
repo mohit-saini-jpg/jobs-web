@@ -754,7 +754,7 @@
       syllabusData:          job.syllabus                || bd.syllabus                || null,
       salaryDetails:         salaryDetails,
       importantInstructions: job.important_instructions  || bd.important_instructions  || null,
-      srTables:              job.tables                  || bd.tables                  || null,
+      /* srTables: handled by universal-renderer.js — do NOT duplicate here */
 
       /* Capture any UNKNOWN top-level keys for auto-rendering */
       _unknownFields: (() => {
@@ -769,7 +769,7 @@
           'last_date','application_begin','salary','salary_pay_scale',
           'education_qualification','eligibility','experience_required',
           'official_website_link','form_pdf_free_link','official_notification_pdf_link',
-          'minimum_age','maximum_age','age_relaxation','tables',
+          'minimum_age','maximum_age','age_relaxation','tables','text_sections','useful_links',
         ]);
         const extras = {};
         for (const [k, v] of Object.entries(job)) {
@@ -812,11 +812,7 @@
 
     const cards = [];
 
-    /* 0. SR Tables (numbered-column tables from SR data) */
-    if (extras.srTables) {
-      const srTableCard = buildSRTablesCard(extras.srTables);
-      if (srTableCard) cards.push(srTableCard);
-    }
+    /* NOTE: SR Tables (tables field) are handled by universal-renderer.js */
 
     /* 1. Physical Eligibility */
     const phyCard = buildPhysicalCard(extras.physicalEligibility);
