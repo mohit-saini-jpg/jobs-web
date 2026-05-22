@@ -1,0 +1,62 @@
+name: Auto-Update Jobs + Mini JSON
+
+on:
+  # TRIGGER 1: Jab bhi koi JSON file update ho
+  push:
+    paths:
+      - 'Complete_Jobs_Full_Data.json'
+      - 'merged_sarkari_data.json'
+      - 'dailyupdates.json'
+      - 'sections-index.json'
+
+  # TRIGGER 2: Manual "Run workflow" button from GitHub Actions tab
+  workflow_dispatch:
+
+  # TRIGGER 3: Har roz raat 12 baje IST (18:30 UTC)
+  schedule:
+    - cron: '30 18 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # ── Step 1: Job files + jobs-index.json ──────────────────
+      - name: Generate job HTML files + index
+        run: python3 .github/workflows/generate_jobs.py
+
+      # ── Step 2: Mini JSON files (AUTO from same source data) ──
+      - name: Generate mini JSON files (homepage speed)
+        run: python3 .github/workflows/generate_mini.py
+
+      # ── Step 3: Sitemap ───────────────────────────────────────
+      - name: Generate sitemap
+        run: |
+          if [ -f sitemap-generator.js ]; then
+            node sitemap-generator.js && echo "Sitemap updated"
+          else
+            echo "No sitemap-generator.js, skipping"
+          fi
+
+      # ── Step 4: Commit all changes ────────────────────────────
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Add all generated files
+          git add jobs-index.json jobs/data/
+          git add sections-mini.json ticker-mini.json merged-mini.json daily-mini.json
+          git add sitemap-jobs.xml sitemap-index.xml sitemap.xml 2>/dev/null || true
+
+          # Only commit if something changed
+          git diff --staged --quiet && echo "No changes to commit" && exit 0
+
+          git commit -m "Auto: jobs + mini JSON updated $(date +'%Y-%m-%d %H:%M UTC')"
+          git pull --rebase origin main
+          git push
