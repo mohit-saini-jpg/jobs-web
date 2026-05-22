@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Free PDF Tools – JPG to PDF, Merge, Compress | Top Sarkari Jobs</title>
-  <meta name="description" content="Free online PDF tools for government job aspirants. Convert JPG to PDF, merge PDFs, compress, split, unlock, rotate and more. No signup needed. 100% in-browser.">
-  <meta name="keywords" content="jpg to pdf free, merge pdf online, compress pdf, split pdf, unlock pdf, pdf tools, top sarkari jobs tools">
+  <title>Free Online Tools – PDF, Image, Audio/Video | Top Sarkari Jobs</title>
+  <meta name="description" content="Free online tools for government job aspirants. Convert JPG to PDF, resize images, compress video, merge PDFs and more. No signup needed, 100% in-browser.">
+  <meta name="keywords" content="free online tools, jpg to pdf free, image resize, compress pdf, mp4 to mp3, top sarkari jobs tools">
   <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://www.topsarkarijobs.com/tools-pdf.html">
+  <link rel="canonical" href="https://www.topsarkarijobs.com/tools.html">
   <link rel="icon" type="image/x-icon" href="image.ico">
-
-  <!-- PDF-lib CDN -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-  <!-- JSZip for ZIP downloads -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.topsarkarijobs.com/tools.html">
+  <meta property="og:title" content="Free Online Tools – Top Sarkari Jobs">
+  <meta property="og:description" content="PDF, Image, Audio/Video tools — free, no signup, 100% in-browser.">
+  <meta property="og:image" content="https://www.topsarkarijobs.com/image.png">
 
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="fonts/fa/all.min.css">
@@ -21,10 +21,6 @@
 
   <style>
     :root {
-      --red:    #dc2626;
-      --red2:   #991b1b;
-      --red3:   #fef2f2;
-      --red4:   #fecaca;
       --navy:   #0d2257;
       --blue:   #1a56db;
       --text:   #0f172a;
@@ -32,285 +28,171 @@
       --line:   #e2e8f0;
       --bg:     #f8fafc;
       --white:  #ffffff;
+      --red:    #dc2626;
+      --red3:   #fff5f5;
       --green:  #059669;
       --orange: #d97706;
     }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Nunito', system-ui, sans-serif; background: var(--bg); color: var(--text); }
     a { text-decoration: none; color: inherit; }
-    img, svg { display: block; }
 
-    .page-wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px 40px; }
+    .page-wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px 48px; }
 
     /* HERO */
     .hero {
-      background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 55%, #ef4444 100%);
+      background: linear-gradient(135deg, #0d2257 0%, #1a56db 55%, #3b82f6 100%);
       border-radius: 16px;
-      padding: 28px 24px;
-      margin: 20px 0 22px;
+      padding: 30px 24px;
+      margin: 20px 0 24px;
       position: relative;
       overflow: hidden;
     }
-    .hero::before {
-      content: '';
-      position: absolute;
-      right: -40px; top: -40px;
-      width: 200px; height: 200px;
-      border-radius: 50%;
-      background: rgba(255,255,255,.06);
+    .hero::before { content:''; position:absolute; right:-40px; top:-40px; width:200px; height:200px; border-radius:50%; background:rgba(255,255,255,.06); }
+    .hero::after  { content:''; position:absolute; right:60px; bottom:-60px; width:140px; height:140px; border-radius:50%; background:rgba(255,255,255,.04); }
+    .hero-inner { position:relative; z-index:1; }
+    .breadcrumb { display:flex; align-items:center; gap:5px; font-size:.71rem; color:rgba(255,255,255,.7); margin-bottom:12px; }
+    .breadcrumb a { color:rgba(255,255,255,.8); }
+    .breadcrumb i { font-size:.5rem; }
+    .hero-icon { width:52px; height:52px; background:rgba(255,255,255,.15); border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; margin-bottom:12px; border:1px solid rgba(255,255,255,.2); }
+    .hero h1 { font-family:'Baloo 2',sans-serif; font-size:1.65rem; font-weight:900; color:#fff; margin-bottom:8px; }
+    .hero h1 span { color:#fbbf24; }
+    .hero p { font-size:.83rem; color:rgba(255,255,255,.85); max-width:520px; line-height:1.65; margin-bottom:16px; }
+    .hero-badges { display:flex; flex-wrap:wrap; gap:7px; }
+    .hbadge { background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.25); padding:3px 12px; border-radius:20px; font-size:.67rem; font-weight:800; color:#fff; display:flex; align-items:center; gap:4px; }
+
+    /* CATEGORY CARDS */
+    .cat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:28px; }
+    @media(max-width:640px){ .cat-grid { grid-template-columns:1fr; gap:12px; } }
+    @media(max-width:900px) and (min-width:641px){ .cat-grid { grid-template-columns:repeat(2,1fr); } }
+
+    .cat-card {
+      display:flex; flex-direction:column; border-radius:15px; overflow:hidden;
+      border:2px solid var(--line); background:var(--white);
+      box-shadow:0 2px 10px rgba(13,34,87,.06); transition:all .2s;
+      text-decoration:none; color:inherit;
     }
-    .hero::after {
-      content: '';
-      position: absolute;
-      right: 60px; bottom: -60px;
-      width: 140px; height: 140px;
-      border-radius: 50%;
-      background: rgba(255,255,255,.04);
+    .cat-card:hover { transform:translateY(-4px); box-shadow:0 8px 28px rgba(13,34,87,.12); }
+    .cat-card:hover .cat-card-head { filter:brightness(1.08); }
+
+    .cat-card-head {
+      padding:22px 20px 18px;
+      display:flex; flex-direction:column; align-items:flex-start; gap:10px;
+      transition:filter .2s;
     }
-    .hero-inner { position: relative; z-index: 1; }
-    .breadcrumb { display: flex; align-items: center; gap: 5px; font-size: .71rem; color: rgba(255,255,255,.7); margin-bottom: 12px; }
-    .breadcrumb a { color: rgba(255,255,255,.8); }
-    .breadcrumb i { font-size: .5rem; }
-    .hero-icon { width: 52px; height: 52px; background: rgba(255,255,255,.15); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 12px; border: 1px solid rgba(255,255,255,.2); }
-    .hero h1 { font-family: 'Baloo 2', sans-serif; font-size: 1.65rem; font-weight: 900; color: #fff; margin-bottom: 8px; }
-    .hero h1 span { color: #fbbf24; }
-    .hero p { font-size: .82rem; color: rgba(255,255,255,.85); max-width: 500px; line-height: 1.65; margin-bottom: 16px; }
-    .hero-badges { display: flex; flex-wrap: wrap; gap: 7px; }
-    .hbadge { background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25); padding: 3px 12px; border-radius: 20px; font-size: .67rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 4px; }
+    .cat-card-head.red    { background:linear-gradient(135deg,#991b1b,#dc2626); }
+    .cat-card-head.green  { background:linear-gradient(135deg,#065f46,#059669); }
+    .cat-card-head.purple { background:linear-gradient(135deg,#4c1d95,#7c3aed); }
 
-    /* NAV PILLS */
-    .nav-pills { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 22px; }
-    .npill { display: inline-flex; align-items: center; gap: 6px; font-size: .78rem; font-weight: 800; padding: 6px 14px; border-radius: 9px; border: 1.5px solid var(--line); background: var(--white); color: var(--blue); transition: all .15s; cursor: pointer; }
-    .npill:hover, .npill.active { background: #eff6ff; border-color: var(--blue); }
-    .npill.red { color: var(--red); border-color: var(--red4); background: var(--red3); }
+    .cat-icon { width:48px; height:48px; background:rgba(255,255,255,.2); border:1px solid rgba(255,255,255,.25); border-radius:13px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; color:#fff; }
+    .cat-title { font-family:'Baloo 2',sans-serif; font-size:1.15rem; font-weight:900; color:#fff; }
+    .cat-desc { font-size:.78rem; color:rgba(255,255,255,.82); line-height:1.5; }
+    .cat-count-badge { display:inline-flex; align-items:center; gap:5px; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.25); border-radius:20px; padding:3px 12px; font-size:.67rem; font-weight:800; color:#fff; }
 
-    /* SECTION CARD */
-    .section-card { background: var(--white); border: 1px solid var(--line); border-radius: 15px; padding: 20px; margin-bottom: 22px; box-shadow: 0 2px 10px rgba(13,34,87,.05); }
-    .sec-hd { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 2px solid #f1f5f9; }
-    .sec-icon { width: 36px; height: 36px; background: var(--red3); color: var(--red); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: .9rem; }
-    .sec-title { font-family: 'Baloo 2', sans-serif; font-size: 1rem; font-weight: 900; color: var(--navy); }
-    .sec-count { margin-left: auto; font-size: .68rem; font-weight: 800; color: var(--muted); background: var(--bg); padding: 3px 11px; border-radius: 20px; border: 1px solid var(--line); }
-
-    /* TOOL GRID */
-    .tool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(185px, 1fr)); gap: 12px; }
-    @media(max-width: 480px) { .tool-grid { grid-template-columns: repeat(2, 1fr); } }
-
-    /* TOOL CARD */
-    .tool-card { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 15px; border-radius: 12px; background: var(--white); border: 1.5px solid var(--line); cursor: pointer; transition: all .18s; user-select: none; }
-    .tool-card:hover { background: var(--red3); border-color: var(--red); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(220,38,38,.1); }
-    .tool-card.active-tool { border-color: var(--red); background: var(--red3); box-shadow: 0 0 0 3px rgba(220,38,38,.15); }
-    .tc-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--red3); color: var(--red); display: flex; align-items: center; justify-content: center; font-size: .95rem; flex-shrink: 0; border: 1px solid rgba(220,38,38,.12); transition: all .18s; }
-    .tool-card:hover .tc-icon, .tool-card.active-tool .tc-icon { background: var(--red); color: #fff; }
-    .tc-name { font-size: .83rem; font-weight: 900; color: var(--navy); line-height: 1.3; font-family: 'Baloo 2', sans-serif; }
-    .tc-desc { font-size: .71rem; color: var(--muted); line-height: 1.4; }
-    .tc-badge { display: inline-flex; align-items: center; gap: 4px; font-size: .62rem; font-weight: 800; padding: 2px 8px; border-radius: 20px; margin-top: auto; }
-    .b-hot  { color: var(--red);    background: var(--red3);  border: 1px solid var(--red4); }
-    .b-pop  { color: var(--orange); background: #fffbeb;      border: 1px solid #fde68a; }
-    .b-free { color: var(--green);  background: #f0fdf4;      border: 1px solid #bbf7d0; }
-
-    /* TOOL PANEL */
-    .tool-panel {
-      background: var(--white);
-      border: 1.5px solid var(--red4);
-      border-radius: 16px;
-      padding: 24px;
-      margin-bottom: 24px;
-      box-shadow: 0 4px 24px rgba(220,38,38,.08);
-      display: none;
+    .cat-card-body { padding:16px 18px; display:flex; flex-direction:column; gap:10px; flex:1; }
+    .tool-list { display:flex; flex-direction:column; gap:6px; }
+    .tool-list-item { display:flex; align-items:center; gap:8px; font-size:.78rem; color:#334155; font-weight:600; }
+    .tool-list-item i { width:14px; color:var(--blue); font-size:.72rem; flex-shrink:0; }
+    .cat-card-cta {
+      display:inline-flex; align-items:center; justify-content:center; gap:7px;
+      padding:9px 18px; border-radius:9px; font-size:.8rem; font-weight:800;
+      border:2px solid var(--line); color:var(--blue); background:var(--bg);
+      transition:all .15s; margin-top:auto;
     }
-    .tool-panel.visible { display: block; }
-    .panel-hd { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
-    .panel-hd-icon { width: 44px; height: 44px; background: var(--red); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: #fff; flex-shrink: 0; }
-    .panel-title { font-family: 'Baloo 2', sans-serif; font-size: 1.15rem; font-weight: 900; color: var(--navy); }
-    .panel-desc { font-size: .78rem; color: var(--muted); }
-    .panel-close { margin-left: auto; background: var(--bg); border: 1px solid var(--line); color: var(--muted); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: .9rem; transition: all .15s; }
-    .panel-close:hover { background: var(--red3); color: var(--red); border-color: var(--red4); }
+    .cat-card:hover .cat-card-cta { background:#eff6ff; border-color:var(--blue); }
+    .cat-card.green-border .cat-card-cta { color:#059669; }
+    .cat-card.green-border:hover .cat-card-cta { background:#f0fdf4; border-color:#059669; }
+    .cat-card.purple-border .cat-card-cta { color:#7c3aed; }
+    .cat-card.purple-border:hover .cat-card-cta { background:#faf5ff; border-color:#7c3aed; }
 
-    /* DROP ZONE */
-    .drop-zone {
-      border: 2px dashed var(--red4);
-      border-radius: 12px;
-      background: var(--red3);
-      padding: 32px 20px;
-      text-align: center;
-      cursor: pointer;
-      transition: all .2s;
-      position: relative;
-    }
-    .drop-zone:hover, .drop-zone.drag-over { border-color: var(--red); background: #fee2e2; }
-    .drop-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
-    .drop-icon { font-size: 2rem; color: var(--red); margin-bottom: 10px; }
-    .drop-text { font-size: .88rem; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
-    .drop-sub { font-size: .73rem; color: var(--muted); }
+    /* STATS BAR */
+    .stats-bar { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:26px; }
+    .stat-pill { display:flex; align-items:center; gap:8px; background:var(--white); border:1.5px solid var(--line); border-radius:12px; padding:12px 18px; flex:1; min-width:140px; }
+    .stat-icon { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:.9rem; flex-shrink:0; }
+    .stat-icon.blue   { background:#dbeafe; color:#1d4ed8; }
+    .stat-icon.red    { background:#fee2e2; color:#b91c1c; }
+    .stat-icon.green  { background:#dcfce7; color:#15803d; }
+    .stat-icon.purple { background:#ede9fe; color:#6d28d9; }
+    .stat-num { font-family:'Baloo 2',sans-serif; font-size:1.1rem; font-weight:900; color:var(--navy); line-height:1; }
+    .stat-lbl { font-size:.7rem; color:var(--muted); font-weight:700; }
 
-    /* FILE LIST */
-    .file-list { margin: 14px 0; display: flex; flex-direction: column; gap: 7px; }
-    .file-item { display: flex; align-items: center; gap: 10px; background: var(--bg); border: 1px solid var(--line); border-radius: 9px; padding: 9px 12px; font-size: .78rem; }
-    .file-item i { color: var(--red); font-size: .85rem; }
-    .file-name { flex: 1; font-weight: 700; color: var(--navy); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .file-size { color: var(--muted); font-size: .7rem; flex-shrink: 0; }
-    .file-remove { background: none; border: none; color: var(--muted); cursor: pointer; font-size: .8rem; flex-shrink: 0; padding: 2px 5px; border-radius: 5px; }
-    .file-remove:hover { color: var(--red); background: var(--red3); }
+    /* SECTION HEADING */
+    .sec-heading { font-family:'Baloo 2',sans-serif; font-size:1rem; font-weight:900; color:var(--navy); margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+    .sec-heading::after { content:''; flex:1; height:2px; background:#f1f5f9; border-radius:2px; }
 
-    /* OPTIONS */
-    .opts-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0; align-items: flex-end; }
-    .opt-group { display: flex; flex-direction: column; gap: 4px; }
-    .opt-label { font-size: .71rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
-    .opt-select, .opt-input {
-      background: var(--bg);
-      border: 1.5px solid var(--line);
-      border-radius: 8px;
-      padding: 7px 11px;
-      font-size: .8rem;
-      font-weight: 700;
-      color: var(--text);
-      font-family: inherit;
-      outline: none;
-    }
-    .opt-select:focus, .opt-input:focus { border-color: var(--red); }
-    .opt-input { min-width: 120px; }
+    /* POPULAR TOOLS GRID */
+    .pop-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(175px,1fr)); gap:11px; margin-bottom:28px; }
+    @media(max-width:480px){ .pop-grid { grid-template-columns:repeat(2,1fr); } }
+    .pop-card { display:flex; flex-direction:column; gap:7px; padding:14px; border-radius:12px; background:var(--white); border:1.5px solid var(--line); text-decoration:none; color:inherit; transition:all .18s; }
+    .pop-card:hover { transform:translateY(-2px); box-shadow:0 6px 18px rgba(13,34,87,.09); border-color:#93c5fd; background:#f0f9ff; }
+    .pop-card-icon { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:.9rem; flex-shrink:0; }
+    .pop-card-name { font-size:.81rem; font-weight:800; color:var(--navy); line-height:1.3; }
+    .pop-card-desc { font-size:.71rem; color:var(--muted); line-height:1.4; }
+    .pop-badge { display:inline-flex; align-items:center; gap:4px; font-size:.62rem; font-weight:700; padding:2px 8px; border-radius:20px; margin-top:auto; width:fit-content; }
+    .badge-hot    { color:#dc2626; background:#fff5f5; border:1px solid #fecaca; }
+    .badge-pop    { color:#d97706; background:#fffbeb; border:1px solid #fde68a; }
+    .badge-free   { color:#059669; background:#f0fdf4; border:1px solid #bbf7d0; }
+    .badge-purple { color:#7c3aed; background:#faf5ff; border:1px solid #ddd6fe; }
 
-    /* BUTTONS */
-    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
-    .btn-process {
-      background: var(--red);
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      padding: 11px 22px;
-      font-size: .85rem;
-      font-weight: 900;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      font-family: 'Baloo 2', sans-serif;
-      transition: all .15s;
-    }
-    .btn-process:hover { background: var(--red2); transform: translateY(-1px); }
-    .btn-process:disabled { background: var(--muted); cursor: not-allowed; transform: none; }
-    .btn-clear { background: var(--bg); border: 1.5px solid var(--line); color: var(--muted); border-radius: 10px; padding: 11px 16px; font-size: .83rem; font-weight: 700; cursor: pointer; font-family: inherit; }
-    .btn-clear:hover { border-color: var(--red4); color: var(--red); }
+    /* SEO BOX */
+    .seo-box { background:var(--white); border:1px solid var(--line); border-radius:14px; padding:20px; margin-bottom:16px; }
+    .seo-box h2 { font-family:'Baloo 2',sans-serif; font-size:.95rem; font-weight:900; color:var(--navy); margin-bottom:7px; }
+    .seo-box p  { font-size:.79rem; color:var(--muted); line-height:1.75; }
 
-    /* PROGRESS */
-    .progress-wrap { margin: 14px 0; display: none; }
-    .progress-bar { height: 8px; background: var(--line); border-radius: 20px; overflow: hidden; }
-    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--red), #f87171); border-radius: 20px; transition: width .3s; width: 0; }
-    .progress-text { font-size: .72rem; font-weight: 700; color: var(--muted); margin-top: 5px; }
+    /* skip link */
+    .skip-link { position:absolute; top:-40px; left:8px; background:var(--blue); color:#fff; padding:6px 14px; border-radius:0 0 8px 8px; font-size:.8rem; font-weight:700; z-index:9999; }
+    .skip-link:focus { top:0; }
 
-    /* RESULT */
-    .result-box { background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 12px; padding: 16px; margin-top: 14px; display: none; }
-    .result-box.error { background: var(--red3); border-color: var(--red4); }
-    .result-hd { display: flex; align-items: center; gap: 8px; font-size: .88rem; font-weight: 900; color: #065f46; margin-bottom: 10px; font-family: 'Baloo 2', sans-serif; }
-    .result-hd.err { color: var(--red2); }
-    .result-hd i { font-size: 1rem; }
-    .btn-download { background: var(--green); color: #fff; border: none; border-radius: 9px; padding: 10px 20px; font-size: .83rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 7px; font-family: 'Baloo 2', sans-serif; transition: all .15s; }
-    .btn-download:hover { background: #047857; }
+    /* offcanvas / mobile menu (copied from rest of site) */
+    .offcanvas { position:fixed; top:0; right:0; width:82vw; max-width:340px; height:100vh; background:#fff; z-index:10000; box-shadow:-4px 0 30px rgba(13,34,87,.15); display:flex; flex-direction:column; overflow:hidden; transition:transform .28s cubic-bezier(.4,0,.2,1); transform:translateX(100%); }
+    .offcanvas[hidden] { transform:translateX(100%); display:flex !important; }
+    .offcanvas.open { transform:translateX(0); }
+    .overlay { position:fixed; inset:0; background:rgba(13,34,87,.35); z-index:9999; display:none; }
+    .overlay.open { display:block; }
+    .offcanvas-head { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid #e2e8f0; flex-shrink:0; }
+    .offcanvas-head-left { display:flex; align-items:center; gap:10px; }
+    .offcanvas-head-logo { border-radius:8px; }
+    .offcanvas-title { font-family:'Baloo 2',sans-serif; font-size:.88rem; font-weight:900; color:#0d2257; }
+    .offcanvas-sub { font-size:.66rem; color:#64748b; }
+    .offcanvas-close { background:none; border:none; font-size:1.1rem; color:#64748b; cursor:pointer; padding:4px 8px; }
+    .offcanvas-search { padding:10px 12px; border-bottom:1px solid #f1f5f9; flex-shrink:0; }
+    .offcanvas-search-inner { display:flex; align-items:center; gap:8px; background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:9px; padding:7px 12px; }
+    .offcanvas-search-inner i { color:#94a3b8; font-size:.82rem; }
+    .offcanvas-search-inner input { border:none; background:none; outline:none; font-size:.8rem; flex:1; color:#0f172a; }
+    .offcanvas-nav { flex:1; overflow-y:auto; padding:8px 12px 20px; display:flex; flex-direction:column; gap:2px; }
+    .offcanvas-section { font-size:.63rem; font-weight:900; color:#94a3b8; text-transform:uppercase; letter-spacing:.08em; padding:12px 4px 4px; }
+    .offcanvas-nav > a { display:flex !important; align-items:center !important; gap:10px !important; padding:9px 10px !important; border-radius:9px !important; text-decoration:none !important; font-size:.82rem !important; font-weight:700 !important; color:#1e293b !important; transition:all .12s !important; }
+    .offcanvas-nav > a:hover { background:#eff6ff !important; color:#1a56db !important; }
+    .offcanvas-nav > a::after { display:none !important; content:none !important; }
+    .mob-acc-head { display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:9px; background:none; border:none; width:100%; font-family:inherit; font-size:.82rem; font-weight:700; color:#1e293b; cursor:pointer; transition:all .12s; }
+    .mob-acc-head:hover { background:#f8fafc; }
+    .mob-acc-chev { margin-left:auto; font-size:.7rem; color:#94a3b8; transition:transform .2s; }
+    .mob-acc-body { display:none !important; flex-direction:column !important; gap:1px !important; padding:3px 0 3px 14px !important; margin:0 0 2px !important; }
+    .mob-acc-body.open { display:flex !important; }
+    .mob-acc-body a { display:flex !important; align-items:center !important; gap:9px !important; padding:8px 12px !important; border-radius:8px !important; text-decoration:none !important; font-size:.79rem !important; font-weight:600 !important; color:#334155 !important; transition:all .12s !important; justify-content:flex-start !important; text-align:left !important; }
+    .mob-acc-body a:hover { background:#eff6ff !important; color:#1a56db !important; }
+    .mob-acc-body a i { width:16px !important; font-size:.78rem !important; color:#1a56db !important; flex-shrink:0 !important; }
+    .menu-icon-pill { width:30px !important; height:30px !important; border-radius:8px !important; flex-shrink:0 !important; display:flex !important; align-items:center !important; justify-content:center !important; font-size:.78rem !important; }
+    .menu-badge { font-size:.58rem !important; font-weight:800 !important; padding:2px 7px !important; border-radius:20px !important; letter-spacing:.04em !important; text-transform:uppercase !important; }
+    .menu-badge-red    { background:#fee2e2 !important; color:#b91c1c !important; }
+    .menu-badge-blue   { background:#dbeafe !important; color:#1d4ed8 !important; }
+    .menu-badge-green  { background:#dcfce7 !important; color:#15803d !important; }
+    .menu-badge-purple { background:#ede9fe !important; color:#6d28d9 !important; }
+    .menu-badge-amber  { background:#fef3c7 !important; color:#b45309 !important; }
+    .offcanvas-social { display:flex; flex-direction:column; gap:6px; margin-top:6px; }
+    .offcanvas-social a { display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:9px; font-size:.8rem; font-weight:700; text-decoration:none; }
+    .soc-wa { background:#f0fdf4; color:#15803d; } .soc-yt { background:#fff5f5; color:#b91c1c; }
+    .soc-ig { background:#fdf4ff; color:#9333ea; } .soc-sc { background:#fefce8; color:#ca8a04; }
 
-    /* IMAGE PREVIEW GRID */
-    .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px; margin: 12px 0; }
-    .preview-img { border-radius: 8px; overflow: hidden; border: 1.5px solid var(--line); aspect-ratio: 1; position: relative; }
-    .preview-img img { width: 100%; height: 100%; object-fit: cover; }
-    .preview-img .img-rm { position: absolute; top: 3px; right: 3px; background: rgba(0,0,0,.5); color: #fff; border: none; width: 20px; height: 20px; border-radius: 4px; font-size: .6rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-
-    /* PAGE RANGE INPUT */
-    .range-hint { font-size: .7rem; color: var(--muted); margin-top: 3px; }
-
-    /* CANVAS for PDF render */
-    #pdf-preview-canvas { display: none; }
-
-    /* ORDER LIST */
-    .order-list { display: flex; flex-direction: column; gap: 6px; margin: 12px 0; }
-    .order-item { display: flex; align-items: center; gap: 10px; background: var(--bg); border: 1px solid var(--line); border-radius: 9px; padding: 8px 12px; cursor: grab; user-select: none; }
-    .order-item:active { cursor: grabbing; opacity: .8; }
-    .order-handle { color: var(--muted); font-size: .85rem; }
-    .order-num { font-size: .72rem; font-weight: 900; background: var(--red3); color: var(--red); width: 22px; height: 22px; border-radius: 5px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .order-name { flex: 1; font-size: .78rem; font-weight: 700; color: var(--navy); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-    /* SIGNATURE PAD */
-    .sig-wrap { border: 2px solid var(--line); border-radius: 10px; overflow: hidden; background: #fff; position: relative; }
-    .sig-wrap canvas { display: block; touch-action: none; cursor: crosshair; }
-    .sig-tools { display: flex; gap: 8px; padding: 8px; background: var(--bg); border-bottom: 1px solid var(--line); flex-wrap: wrap; align-items: center; }
-    .sig-color { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--line); cursor: pointer; transition: transform .15s; }
-    .sig-color:hover, .sig-color.active { transform: scale(1.2); border-color: var(--navy); }
-    .sig-clear { background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 7px; padding: 4px 10px; font-size: .72rem; font-weight: 700; cursor: pointer; font-family: inherit; }
-    .sig-clear:hover { border-color: var(--red4); color: var(--red); }
-
-    /* WATERMARK PREVIEW */
-    .wm-preview { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: #fafafa; display: flex; align-items: center; justify-content: center; min-height: 100px; font-size: 2rem; font-weight: 900; opacity: .25; letter-spacing: 4px; text-transform: uppercase; color: var(--red); margin: 10px 0; }
-
-    /* SEO BLOCK */
-    .seo-block { background: var(--white); border: 1px solid var(--line); border-radius: 12px; padding: 18px; margin-bottom: 20px; }
-    .seo-block h2 { font-family: 'Baloo 2', sans-serif; font-size: .95rem; font-weight: 900; color: var(--navy); margin-bottom: 6px; }
-    .seo-block p { font-size: .79rem; color: var(--muted); line-height: 1.7; }
-
-    /* SPINNER */
-    .spinner { width: 18px; height: 18px; border: 2.5px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; display: inline-block; vertical-align: middle; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* DRAG REORDER */
-    .order-item.drag-over-item { border-color: var(--red); background: var(--red3); }
-
-    /* Compress level */
-    .compress-visual { display: flex; gap: 6px; flex-wrap: wrap; margin: 10px 0; }
-    .clevel { flex: 1; min-width: 80px; border: 2px solid var(--line); border-radius: 9px; padding: 10px 8px; text-align: center; cursor: pointer; transition: all .15s; }
-    .clevel:hover { border-color: var(--red4); }
-    .clevel.selected { border-color: var(--red); background: var(--red3); }
-    .clevel-name { font-size: .8rem; font-weight: 900; color: var(--navy); font-family: 'Baloo 2', sans-serif; }
-    .clevel-desc { font-size: .65rem; color: var(--muted); margin-top: 2px; }
-    .clevel-icon { font-size: 1.2rem; margin-bottom: 5px; }
-  
-    /* ── Offcanvas nav link alignment fix ── */
-    .offcanvas-nav > a {
-      display: flex !important; align-items: center !important; gap: 10px !important;
-      padding: 10px 12px !important; border-radius: 10px !important;
-      text-decoration: none !important; font-size: .83rem !important; font-weight: 700 !important;
-      color: #1e293b !important; transition: all .15s !important; cursor: pointer !important;
-      background: transparent !important; border: none !important;
-      width: 100% !important; font-family: inherit !important;
-      text-align: left !important; justify-content: flex-start !important;
-      -webkit-tap-highlight-color: transparent !important;
-    }
-    .offcanvas-nav > a:hover { background: #eff6ff !important; color: #1a56db !important; }
-    .offcanvas-nav > a::after { display: none !important; content: none !important; }
-    .mob-acc-head {
-      display: flex !important; align-items: center !important; gap: 10px !important;
-      padding: 10px 12px !important; border-radius: 10px !important;
-      text-decoration: none !important; font-size: .83rem !important; font-weight: 700 !important;
-      color: #1e293b !important; transition: all .15s !important; cursor: pointer !important;
-      background: none !important; border: none !important;
-      width: 100% !important; font-family: inherit !important;
-      text-align: left !important; justify-content: flex-start !important;
-      -webkit-tap-highlight-color: transparent !important;
-    }
-    .mob-acc-head:hover { background: #eff6ff !important; color: #1a56db !important; }
-    .mob-acc-chev { margin-left: auto !important; font-size: .65rem !important; color: #94a3b8 !important; transition: transform .25s !important; flex-shrink: 0 !important; }
-    .mob-acc-head.open .mob-acc-chev { transform: rotate(180deg) !important; }
-    .mob-acc-body { display: none !important; flex-direction: column !important; gap: 1px !important; padding: 3px 0 3px 14px !important; margin: 0 0 2px !important; }
-    .mob-acc-body.open { display: flex !important; }
-    .mob-acc-body a {
-      display: flex !important; align-items: center !important; gap: 9px !important;
-      padding: 8px 12px !important; border-radius: 8px !important;
-      text-decoration: none !important; font-size: .79rem !important; font-weight: 600 !important;
-      color: #334155 !important; transition: all .12s !important;
-      justify-content: flex-start !important; text-align: left !important;
-    }
-    .mob-acc-body a:hover { background: #eff6ff !important; color: #1a56db !important; }
-    .mob-acc-body a i { width: 16px !important; font-size: .78rem !important; color: #1a56db !important; flex-shrink: 0 !important; }
-    .menu-icon-pill { width: 30px !important; height: 30px !important; border-radius: 8px !important; flex-shrink: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important; font-size: .78rem !important; }
-    .menu-badge { font-size: .58rem !important; font-weight: 800 !important; padding: 2px 7px !important; border-radius: 20px !important; letter-spacing: .04em !important; text-transform: uppercase !important; }
-    
-    /* ── BRAND LOGO FIX: prevent title truncation on all pages ── */
-    #site-header .brand { flex: 1 1 auto !important; min-width: 0 !important; }
-    #site-header .brand-text { min-width: 0 !important; }
-    #site-header .brand-title { white-space: nowrap !important; font-size: .92rem !important; }
-    #site-header .header-actions { flex-shrink: 0 !important; }
-    #site-header .header-logo-bar { display: flex !important; align-items: center !important; }
-    </style>
+    #site-header .brand { flex:1 1 auto !important; min-width:0 !important; }
+    #site-header .brand-text { min-width:0 !important; }
+    #site-header .brand-title { white-space:nowrap !important; font-size:.92rem !important; }
+    #site-header .header-actions { flex-shrink:0 !important; }
+    #site-header .header-logo-bar { display:flex !important; align-items:center !important; }
+  </style>
   <!-- GA4: Centralized Analytics -->
   <script src="/analytics.js" defer></script>
-  <!-- Header: fetch + inject immediately before script.js defer loads -->
+  <!-- Header inject -->
   <script>
   (function(){
     var _hp=fetch("/header.html",{cache:"no-store"}).then(function(r){return r.ok?r.text():null;}).catch(function(){return null;});
@@ -332,16 +214,14 @@
       <div class="breadcrumb">
         <a href="/">Home</a>
         <i class="fa-solid fa-chevron-right"></i>
-        <a href="tools.html">Free Tools</a>
-        <i class="fa-solid fa-chevron-right"></i>
-        <span style="color:#fff;">PDF Tools</span>
+        <span style="color:#fff;">Free Tools</span>
       </div>
-      <div class="hero-icon"><i class="fa-solid fa-file-pdf" style="color:#fff;"></i></div>
-      <h1>Free <span>PDF Tools</span> Online</h1>
-      <p>Convert JPG to PDF, merge, compress, split and edit PDF files — 100% free, no signup, no watermark. All processing done <strong style="color:#fbbf24;">right in your browser</strong>.</p>
+      <div class="hero-icon"><i class="fa-solid fa-screwdriver-wrench" style="color:#fff;"></i></div>
+      <h1>Free <span>Online Tools</span></h1>
+      <p>PDF tools, Image tools, Audio &amp; Video tools — all 100% free, no signup required. Everything runs <strong style="color:#fbbf24;">right in your browser</strong>.</p>
       <div class="hero-badges">
         <span class="hbadge"><i class="fa-solid fa-check"></i> 100% Free</span>
-        <span class="hbadge"><i class="fa-solid fa-ban"></i> No Watermark</span>
+        <span class="hbadge"><i class="fa-solid fa-ban"></i> No Signup</span>
         <span class="hbadge"><i class="fa-solid fa-shield-halved"></i> Private</span>
         <span class="hbadge"><i class="fa-solid fa-mobile"></i> Mobile OK</span>
         <span class="hbadge"><i class="fa-solid fa-bolt"></i> In-Browser</span>
@@ -349,1657 +229,109 @@
     </div>
   </div>
 
-  <!-- NAV PILLS -->
-  <div class="nav-pills">
-    <a href="tools.html" class="npill"><i class="fa-solid fa-arrow-left"></i> All Tools</a>
-    <a href="tools-image.html" class="npill"><i class="fa-solid fa-image"></i> Image Tools</a>
-    <a href="tools-audio-video.html" class="npill"><i class="fa-solid fa-video"></i> Audio/Video</a>
-  </div>
-
-  <!-- ACTIVE TOOL PANEL (shown when tool clicked) -->
-  <div class="tool-panel" id="toolPanel">
-    <div class="panel-hd">
-      <div class="panel-hd-icon" id="panelIcon"><i class="fa-solid fa-file-pdf"></i></div>
-      <div>
-        <div class="panel-title" id="panelTitle">Tool Name</div>
-        <div class="panel-desc" id="panelDesc">Tool description</div>
-      </div>
-      <button class="panel-close" onclick="closePanel()" title="Close"><i class="fa-solid fa-xmark"></i></button>
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="stat-pill">
+      <div class="stat-icon blue"><i class="fa-solid fa-tools"></i></div>
+      <div><div class="stat-num">40+</div><div class="stat-lbl">Total Tools</div></div>
     </div>
-    <div id="panelContent"></div>
-  </div>
-
-  <!-- SECTION 1: Convert to PDF -->
-  <div class="section-card">
-    <div class="sec-hd">
-      <div class="sec-icon"><i class="fa-solid fa-file-pdf"></i></div>
-      <span class="sec-title">Convert to PDF</span>
-      <span class="sec-count">5 Tools</span>
+    <div class="stat-pill">
+      <div class="stat-icon red"><i class="fa-solid fa-file-pdf"></i></div>
+      <div><div class="stat-num">14</div><div class="stat-lbl">PDF Tools</div></div>
     </div>
-    <div class="tool-grid">
-      <div class="tool-card" onclick="openTool('jpg2pdf')">
-        <div class="tc-icon"><i class="fa-solid fa-file-pdf"></i></div>
-        <div class="tc-name">JPG to PDF</div>
-        <div class="tc-desc">Convert JPG/PNG images to PDF</div>
-        <span class="tc-badge b-hot"><i class="fa-solid fa-star"></i> Most Used</span>
-      </div>
-      <div class="tool-card" onclick="openTool('word2pdf')">
-        <div class="tc-icon"><i class="fa-solid fa-file-word"></i></div>
-        <div class="tc-name">Word to PDF</div>
-        <div class="tc-desc">Convert DOCX Word file to PDF</div>
-        <span class="tc-badge b-pop"><i class="fa-solid fa-star"></i> Popular</span>
-      </div>
-      <div class="tool-card" onclick="openTool('excel2pdf')">
-        <div class="tc-icon"><i class="fa-solid fa-file-excel"></i></div>
-        <div class="tc-name">Excel to PDF</div>
-        <div class="tc-desc">Convert Excel spreadsheet to PDF</div>
-        <span class="tc-badge b-free"><i class="fa-solid fa-star"></i> Free</span>
-      </div>
-      <div class="tool-card" onclick="openTool('ppt2pdf')">
-        <div class="tc-icon"><i class="fa-solid fa-file-powerpoint"></i></div>
-        <div class="tc-name">PPT to PDF</div>
-        <div class="tc-desc">Convert PowerPoint to PDF</div>
-        <span class="tc-badge b-free"><i class="fa-solid fa-star"></i> Free</span>
-      </div>
-      <div class="tool-card" onclick="openTool('html2pdf')">
-        <div class="tc-icon"><i class="fa-solid fa-code"></i></div>
-        <div class="tc-name">HTML to PDF</div>
-        <div class="tc-desc">Convert web page / HTML to PDF</div>
-        <span class="tc-badge b-free"><i class="fa-solid fa-star"></i> Free</span>
-      </div>
+    <div class="stat-pill">
+      <div class="stat-icon green"><i class="fa-solid fa-image"></i></div>
+      <div><div class="stat-num">14</div><div class="stat-lbl">Image Tools</div></div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-icon purple"><i class="fa-solid fa-video"></i></div>
+      <div><div class="stat-num">15</div><div class="stat-lbl">Audio/Video Tools</div></div>
     </div>
   </div>
 
-  <!-- SECTION 2: Merge, Split & Organize -->
-  <div class="section-card">
-    <div class="sec-hd">
-      <div class="sec-icon"><i class="fa-solid fa-file-circle-plus"></i></div>
-      <span class="sec-title">Merge, Split & Organize</span>
-      <span class="sec-count">4 Tools</span>
-    </div>
-    <div class="tool-grid">
-      <div class="tool-card" onclick="openTool('merge')">
-        <div class="tc-icon"><i class="fa-solid fa-file-circle-plus"></i></div>
-        <div class="tc-name">Merge PDF</div>
-        <div class="tc-desc">Combine multiple PDFs into one file</div>
-        <span class="tc-badge b-hot"><i class="fa-solid fa-star"></i> Most Used</span>
+  <!-- CATEGORY CARDS -->
+  <div class="sec-heading"><i class="fa-solid fa-layer-group" style="color:#1a56db;"></i> Tool Categories</div>
+  <div class="cat-grid">
+
+    <!-- PDF Tools -->
+    <a href="tools-pdf.html" class="cat-card">
+      <div class="cat-card-head red">
+        <div class="cat-icon"><i class="fa-solid fa-file-pdf"></i></div>
+        <div class="cat-title">PDF Tools</div>
+        <div class="cat-desc">Convert, merge, compress, split &amp; edit PDF files instantly</div>
+        <span class="cat-count-badge"><i class="fa-solid fa-screwdriver-wrench"></i> 14 Tools</span>
       </div>
-      <div class="tool-card" onclick="openTool('split')">
-        <div class="tc-icon"><i class="fa-solid fa-scissors"></i></div>
-        <div class="tc-name">Split PDF</div>
-        <div class="tc-desc">Split PDF into separate pages/files</div>
-        <span class="tc-badge b-pop"><i class="fa-solid fa-star"></i> Popular</span>
+      <div class="cat-card-body">
+        <div class="tool-list">
+          <div class="tool-list-item"><i class="fa-solid fa-circle-check"></i> JPG to PDF</div>
+          <div class="tool-list-item"><i class="fa-solid fa-circle-check"></i> Merge PDF</div>
+          <div class="tool-list-item"><i class="fa-solid fa-circle-check"></i> Compress PDF</div>
+          <div class="tool-list-item"><i class="fa-solid fa-circle-check"></i> Split / Rotate / Unlock PDF</div>
+          <div class="tool-list-item"><i class="fa-solid fa-circle-check"></i> Word / Excel / PPT to PDF</div>
+        </div>
+        <div class="cat-card-cta">
+          <i class="fa-solid fa-arrow-right"></i> Open PDF Tools
+        </div>
       </div>
-      <div class="tool-card" onclick="openTool('rotate')">
-        <div class="tc-icon"><i class="fa-solid fa-rotate"></i></div>
-        <div class="tc-name">Rotate PDF</div>
-        <div class="tc-desc">Rotate pages in PDF to correct angle</div>
-        <span class="tc-badge b-free"><i class="fa-solid fa-star"></i> Free</span>
+    </a>
+
+    <!-- Image Tools -->
+    <a href="tools-image.html" class="cat-card green-border">
+      <div class="cat-card-head green">
+        <div class="cat-icon"><i class="fa-solid fa-image"></i></div>
+        <div class="cat-title">Image Tools</div>
+        <div class="cat-desc">Resize, compress, convert &amp; edit images for govt forms</div>
+        <span class="cat-count-badge"><i class="fa-solid fa-screwdriver-wrench"></i> 14 Tools</span>
       </div>
-      <div class="tool-card" onclick="openTool('reorder')">
-        <div class="tc-icon"><i class="fa-solid fa-arrow-up-short-wide"></i></div>
-        <div class="tc-name">Reorder PDF</div>
-        <div class="tc-desc">Rearrange pages inside PDF</div>
-        <span class="tc-badge b-free"><i class="fa-solid fa-star"></i> Free</span>
+      <div class="cat-card-body">
+        <div class="tool-list">
+          <div class="tool-list-item"><i class="fa-solid fa-circle-check"></i> Compress Image</div>
+          <div class="tool-list-item"><i class="fa-solid fa-circle-check"></i> Resize to KB</div>
+          <div class="tool-list-item"><i class="fa-solid fa-circle-check"></i> Passport Photo Maker</div>
+          <div class="tool-list-item"><i class="fa-solid fa-circle-check"></i> JPG ↔ PNG ↔ WebP Convert</div>
+          <div class="tool-list-item"><i class="fa-solid fa-circle-check"></i> Background Remover</div>
+        </div>
+        <div class="cat-card-cta" style="color:#059669;">
+          <i class="fa-solid fa-arrow-right"></i> Open Image Tools
+        </div>
       </div>
-    </div>
+    </a>
+
+    <!-- Audio/Video Tools -->
+    <a href="tools-audio-video.html" class="cat-card purple-border">
+      <div class="cat-card-head purple">
+        <div class="cat-icon"><i class="fa-solid fa-video"></i></div>
+        <div class="cat-title">Audio &amp; Video</div>
+        <div class="cat-desc">Convert, compress, trim &amp; extract audio/video online</div>
+        <span class="cat-count-badge"><i class="fa-solid fa-screwdriver-wrench"></i> 15 Tools</span>
+      </div>
+      <div class="cat-card-body">
+        <div class="tool-list">
+          <div class="tool-list-item"><i class="fa-solid fa-circle-check"></i> MP4 to MP3</div>
+          <div class="tool-list-item"><i class="fa-solid fa-circle-check"></i> Compress Video</div>
+          <div class="tool-list-item"><i class="fa-solid fa-circle-check"></i> Trim / Cut Video</div>
+          <div class="tool-list-item"><i class="fa-solid fa-circle-check"></i> Video Format Convert</div>
+          <div class="tool-list-item"><i class="fa-solid fa-circle-check"></i> MP3 Cutter / Joiner</div>
+        </div>
+        <div class="cat-card-cta" style="color:#7c3aed;">
+          <i class="fa-solid fa-arrow-right"></i> Open AV Tools
+        </div>
+      </div>
+    </a>
+
   </div>
 
-  <!-- SECTION 3: Compress, Unlock & Edit -->
-  <div class="section-card">
-    <div class="sec-hd">
-      <div class="sec-icon"><i class="fa-solid fa-file-zipper"></i></div>
-      <span class="sec-title">Compress, Unlock & Edit</span>
-      <span class="sec-count">5 Tools</span>
-    </div>
-    <div class="tool-grid">
-      <div class="tool-card" onclick="openTool('compress')">
-        <div class="tc-icon"><i class="fa-solid fa-file-zipper"></i></div>
-        <div class="tc-name">Compress PDF</div>
-        <div class="tc-desc">Reduce PDF file size for upload</div>
-        <span class="tc-badge b-hot"><i class="fa-solid fa-star"></i> Must Use</span>
-      </div>
-      <div class="tool-card" onclick="openTool('unlock')">
-        <div class="tc-icon"><i class="fa-solid fa-lock-open"></i></div>
-        <div class="tc-name">Unlock PDF</div>
-        <div class="tc-desc">Remove PDF password protection</div>
-        <span class="tc-badge b-pop"><i class="fa-solid fa-star"></i> Popular</span>
-      </div>
-      <div class="tool-card" onclick="openTool('pdf2jpg')">
-        <div class="tc-icon"><i class="fa-solid fa-image"></i></div>
-        <div class="tc-name">PDF to JPG</div>
-        <div class="tc-desc">Convert PDF pages to images</div>
-        <span class="tc-badge b-free"><i class="fa-solid fa-star"></i> Free</span>
-      </div>
-      <div class="tool-card" onclick="openTool('watermark')">
-        <div class="tc-icon"><i class="fa-solid fa-stamp"></i></div>
-        <div class="tc-name">Add Watermark</div>
-        <div class="tc-desc">Add text watermark to PDF</div>
-        <span class="tc-badge b-free"><i class="fa-solid fa-star"></i> Free</span>
-      </div>
-      <div class="tool-card" onclick="openTool('sign')">
-        <div class="tc-icon"><i class="fa-solid fa-pen-nib"></i></div>
-        <div class="tc-name">Sign PDF</div>
-        <div class="tc-desc">Draw & add signature to PDF</div>
-        <span class="tc-badge b-free"><i class="fa-solid fa-star"></i> Free</span>
-      </div>
-    </div>
+  <!-- POPULAR TOOLS -->
+  <div class="sec-heading"><i class="fa-solid fa-fire" style="color:#dc2626;"></i> Most Used Tools</div>
+  <div class="pop-grid" id="popularGrid"></div>
+
+  <!-- SEO BOX -->
+  <div class="seo-box">
+    <h2>Free Tools for Govt Job Forms &amp; Documents</h2>
+    <p>Government job applications often require specific file formats — PDFs under 200KB, passport size photos in JPEG, signature images under 50KB, etc. Our free tools help you meet every requirement without any watermark, account, or software installation. All processing happens 100% in your browser, so your files never leave your device.</p>
   </div>
 
-  <!-- SEO -->
-  <div class="seo-block">
-    <h2>PDF Tools for Govt Job Applications</h2>
-    <p>Many government job forms require documents in PDF format with specific size limits. Use these free in-browser tools to convert your photos to PDF, merge multiple documents, compress PDF size for upload, and more — all without any watermark, signup, or upload to any server. Your files never leave your device.</p>
-  </div>
-
-</div>
-
-<!-- FOOTER -->
-<div id="site-footer" class="site-footer">
-  <script src="footer.html" defer></script>
-</div>
-
-<!-- Hidden canvas for PDF to JPG -->
-<canvas id="pdf-preview-canvas"></canvas>
-
-<script>
-// ===================================================
-// STATE
-// ===================================================
-var state = {
-  currentTool: null,
-  files: [],
-  imageFiles: [],
-  signatureData: null,
-  sigCtx: null,
-  sigCanvas: null,
-  sigDrawing: false,
-  sigColor: '#000000',
-  reorderPages: [],
-  compressLevel: 'medium'
-};
-
-// Tool configs
-var TOOLS = {
-  jpg2pdf:  { icon:'fa-file-pdf',          title:'JPG / PNG to PDF',        desc:'Select multiple images to convert to a PDF document' },
-  word2pdf: { icon:'fa-file-word',         title:'Word to PDF',             desc:'Convert DOCX Word file to PDF (via browser print)' },
-  excel2pdf:{ icon:'fa-file-excel',        title:'Excel to PDF',            desc:'Convert Excel/CSV to a PDF table' },
-  ppt2pdf:  { icon:'fa-file-powerpoint',   title:'PPT to PDF',              desc:'Convert PowerPoint slides to PDF' },
-  html2pdf: { icon:'fa-code',              title:'HTML / URL to PDF',       desc:'Paste HTML code or a URL to convert to PDF' },
-  merge:    { icon:'fa-file-circle-plus',  title:'Merge PDF',               desc:'Combine multiple PDF files into one document' },
-  split:    { icon:'fa-scissors',          title:'Split PDF',               desc:'Split a PDF into individual pages or a page range' },
-  rotate:   { icon:'fa-rotate',            title:'Rotate PDF',              desc:'Rotate all or selected pages in a PDF' },
-  reorder:  { icon:'fa-arrow-up-short-wide',title:'Reorder PDF Pages',      desc:'Drag to reorder pages, then save as new PDF' },
-  compress: { icon:'fa-file-zipper',       title:'Compress PDF',            desc:'Reduce PDF file size — ideal for government form uploads' },
-  unlock:   { icon:'fa-lock-open',         title:'Unlock PDF',              desc:'Remove password protection from a PDF file' },
-  pdf2jpg:  { icon:'fa-image',             title:'PDF to JPG Images',       desc:'Convert each PDF page to a JPG image' },
-  watermark:{ icon:'fa-stamp',             title:'Add Watermark to PDF',    desc:'Add custom text watermark to all pages of a PDF' },
-  sign:     { icon:'fa-pen-nib',           title:'Sign PDF',                desc:'Draw your signature and add it to a PDF page' },
-};
-
-// ===================================================
-// PANEL OPEN / CLOSE
-// ===================================================
-function openTool(id) {
-  state.currentTool = id;
-  state.files = [];
-  state.imageFiles = [];
-  var t = TOOLS[id];
-
-  // Update header
-  document.getElementById('panelIcon').innerHTML = '<i class="fa-solid ' + t.icon + '"></i>';
-  document.getElementById('panelTitle').textContent = t.title;
-  document.getElementById('panelDesc').textContent = t.desc;
-
-  // Build content
-  document.getElementById('panelContent').innerHTML = buildContent(id);
-
-  // Show panel
-  var panel = document.getElementById('toolPanel');
-  panel.classList.add('visible');
-  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-  // Highlight card
-  document.querySelectorAll('.tool-card').forEach(c => c.classList.remove('active-tool'));
-  event.currentTarget.classList.add('active-tool');
-
-  // Post-render init
-  afterRender(id);
-}
-
-function closePanel() {
-  document.getElementById('toolPanel').classList.remove('visible');
-  document.getElementById('panelContent').innerHTML = '';
-  document.querySelectorAll('.tool-card').forEach(c => c.classList.remove('active-tool'));
-  state.currentTool = null;
-}
-
-// ===================================================
-// CONTENT BUILDERS
-// ===================================================
-function buildContent(id) {
-  switch(id) {
-    case 'jpg2pdf':   return buildJpg2Pdf();
-    case 'word2pdf':  return buildWord2Pdf();
-    case 'excel2pdf': return buildExcel2Pdf();
-    case 'ppt2pdf':   return buildPpt2Pdf();
-    case 'html2pdf':  return buildHtml2Pdf();
-    case 'merge':     return buildMerge();
-    case 'split':     return buildSplit();
-    case 'rotate':    return buildRotate();
-    case 'reorder':   return buildReorder();
-    case 'compress':  return buildCompress();
-    case 'unlock':    return buildUnlock();
-    case 'pdf2jpg':   return buildPdf2Jpg();
-    case 'watermark': return buildWatermark();
-    case 'sign':      return buildSign();
-  }
-}
-
-function dropZoneHtml(accept, multi, id) {
-  id = id || 'fileInput';
-  multi = multi ? 'multiple' : '';
-  return `
-    <div class="drop-zone" id="dropZone_${id}" onclick="document.getElementById('${id}').click()">
-      <input type="file" id="${id}" accept="${accept}" ${multi} style="display:none">
-      <div class="drop-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-      <div class="drop-text">Click to select file${multi?'s':''} or drag & drop</div>
-      <div class="drop-sub">Accepted: ${accept}</div>
-    </div>
-    <div class="file-list" id="fileList_${id}"></div>`;
-}
-
-function resultHtml() {
-  return `
-    <div class="progress-wrap" id="progressWrap">
-      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-      <div class="progress-text" id="progressText">Processing...</div>
-    </div>
-    <div class="result-box" id="resultBox">
-      <div class="result-hd" id="resultHd"><i class="fa-solid fa-circle-check"></i> Done!</div>
-      <div id="resultContent"></div>
-    </div>`;
-}
-
-// --- JPG to PDF ---
-function buildJpg2Pdf() {
-  return `
-    <p style="font-size:.8rem;color:var(--muted);margin-bottom:12px;">Select one or more JPG/PNG images. They will be converted to a single PDF, one image per page.</p>
-    <div class="drop-zone" id="dropZone_img" onclick="document.getElementById('imgInput').click()">
-      <input type="file" id="imgInput" accept="image/jpeg,image/png,image/gif,image/webp" multiple style="display:none">
-      <div class="drop-icon"><i class="fa-regular fa-images"></i></div>
-      <div class="drop-text">Click or drag images here</div>
-      <div class="drop-sub">JPG, PNG, GIF, WEBP accepted</div>
-    </div>
-    <div class="preview-grid" id="imgPreviewGrid"></div>
-    <div class="opts-row">
-      <div class="opt-group">
-        <span class="opt-label">Page Size</span>
-        <select class="opt-select" id="jpgPageSize">
-          <option value="A4">A4 (Default)</option>
-          <option value="LETTER">Letter</option>
-          <option value="A3">A3</option>
-        </select>
-      </div>
-      <div class="opt-group">
-        <span class="opt-label">Orientation</span>
-        <select class="opt-select" id="jpgOrientation">
-          <option value="portrait">Portrait</option>
-          <option value="landscape">Landscape</option>
-        </select>
-      </div>
-      <div class="opt-group">
-        <span class="opt-label">Margin (px)</span>
-        <input class="opt-input" type="number" id="jpgMargin" value="20" min="0" max="100" style="width:90px;">
-      </div>
-    </div>
-    <div class="btn-row">
-      <button class="btn-process" onclick="doJpg2Pdf()"><i class="fa-solid fa-file-pdf"></i> Convert to PDF</button>
-      <button class="btn-clear" onclick="clearImgs()">Clear</button>
-    </div>
-    ${resultHtml()}`;
-}
-
-// --- Word to PDF ---
-function buildWord2Pdf() {
-  return `
-    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:.78rem;color:#92400e;">
-      <i class="fa-solid fa-triangle-exclamation"></i> <strong>Note:</strong> Word to PDF conversion in browser has limitations. For complex DOCX files, we extract text and format it. For best results, use Microsoft Word's built-in export or LibreOffice.
-    </div>
-    ${dropZoneHtml('.docx,.doc', false, 'wordInput')}
-    <div class="btn-row">
-      <button class="btn-process" onclick="doWord2Pdf()"><i class="fa-solid fa-file-pdf"></i> Convert to PDF</button>
-    </div>
-    ${resultHtml()}`;
-}
-
-// --- Excel to PDF ---
-function buildExcel2Pdf() {
-  return `
-    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:.78rem;color:#92400e;">
-      <i class="fa-solid fa-triangle-exclamation"></i> <strong>Note:</strong> We render your Excel/CSV data as a formatted PDF table in the browser. Complex formulas and charts won't be rendered.
-    </div>
-    ${dropZoneHtml('.xlsx,.xls,.csv', false, 'excelInput')}
-    <div class="btn-row">
-      <button class="btn-process" onclick="doExcel2Pdf()"><i class="fa-solid fa-file-pdf"></i> Convert to PDF</button>
-    </div>
-    ${resultHtml()}`;
-}
-
-// --- PPT to PDF ---
-function buildPpt2Pdf() {
-  return `
-    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:.78rem;color:#92400e;">
-      <i class="fa-solid fa-triangle-exclamation"></i> <strong>Note:</strong> PowerPoint conversion in browser extracts text content. For rich visuals, use the Print > Save as PDF option in PowerPoint or LibreOffice Impress.
-    </div>
-    ${dropZoneHtml('.pptx,.ppt', false, 'pptInput')}
-    <div class="btn-row">
-      <button class="btn-process" onclick="doPpt2Pdf()"><i class="fa-solid fa-file-pdf"></i> Convert to PDF</button>
-    </div>
-    ${resultHtml()}`;
-}
-
-// --- HTML to PDF ---
-function buildHtml2Pdf() {
-  return `
-    <p style="font-size:.8rem;color:var(--muted);margin-bottom:12px;">Paste your HTML code below and it will be rendered and saved as PDF using your browser's print engine.</p>
-    <textarea id="htmlInput" style="width:100%;height:180px;border:1.5px solid var(--line);border-radius:10px;padding:12px;font-size:.78rem;font-family:monospace;resize:vertical;outline:none;" placeholder="Paste HTML here, e.g. &lt;h1&gt;Hello&lt;/h1&gt;&lt;p&gt;This is a paragraph.&lt;/p&gt;"></textarea>
-    <div class="opts-row" style="margin-top:8px;">
-      <div class="opt-group">
-        <span class="opt-label">Or enter URL</span>
-        <input class="opt-input" type="url" id="htmlUrl" placeholder="https://example.com" style="min-width:250px;">
-      </div>
-    </div>
-    <div class="btn-row">
-      <button class="btn-process" onclick="doHtml2Pdf()"><i class="fa-solid fa-file-pdf"></i> Convert to PDF</button>
-    </div>
-    ${resultHtml()}`;
-}
-
-// --- Merge ---
-function buildMerge() {
-  return `
-    <p style="font-size:.8rem;color:var(--muted);margin-bottom:12px;">Select two or more PDF files. They will be merged in the order shown (drag to reorder).</p>
-    <div class="drop-zone" id="dropZone_pdf" onclick="document.getElementById('mergeInput').click()">
-      <input type="file" id="mergeInput" accept=".pdf,application/pdf" multiple style="display:none">
-      <div class="drop-icon"><i class="fa-solid fa-file-circle-plus"></i></div>
-      <div class="drop-text">Click or drag PDF files here</div>
-      <div class="drop-sub">Multiple PDF files accepted</div>
-    </div>
-    <div class="order-list" id="mergeOrderList"></div>
-    <div class="btn-row">
-      <button class="btn-process" onclick="doMerge()"><i class="fa-solid fa-file-circle-plus"></i> Merge PDFs</button>
-      <button class="btn-clear" onclick="clearFiles('mergeInput')">Clear</button>
-    </div>
-    ${resultHtml()}`;
-}
-
-// --- Split ---
-function buildSplit() {
-  return `
-    <p style="font-size:.8rem;color:var(--muted);margin-bottom:12px;">Upload a PDF to split. Choose to extract all pages or a specific range.</p>
-    ${dropZoneHtml('.pdf,application/pdf', false, 'splitInput')}
-    <div class="opts-row">
-      <div class="opt-group">
-        <span class="opt-label">Split Mode</span>
-        <select class="opt-select" id="splitMode" onchange="toggleSplitRange()">
-          <option value="all">All pages (separate files)</option>
-          <option value="range">Page range</option>
-          <option value="every">Every N pages</option>
-        </select>
-      </div>
-      <div class="opt-group" id="splitRangeGroup" style="display:none;">
-        <span class="opt-label">Pages (e.g. 1-3, 5, 7-9)</span>
-        <input class="opt-input" type="text" id="splitRange" placeholder="1-3, 5">
-        <div class="range-hint">Use commas for multiple ranges</div>
-      </div>
-      <div class="opt-group" id="splitEveryGroup" style="display:none;">
-        <span class="opt-label">Every N pages</span>
-        <input class="opt-input" type="number" id="splitEvery" value="1" min="1" style="width:80px;">
-      </div>
-    </div>
-    <div class="btn-row">
-      <button class="btn-process" onclick="doSplit()"><i class="fa-solid fa-scissors"></i> Split PDF</button>
-    </div>
-    ${resultHtml()}`;
-}
-
-// --- Rotate ---
-function buildRotate() {
-  return `
-    ${dropZoneHtml('.pdf,application/pdf', false, 'rotateInput')}
-    <div class="opts-row">
-      <div class="opt-group">
-        <span class="opt-label">Rotation</span>
-        <select class="opt-select" id="rotateDeg">
-          <option value="90">90° Clockwise</option>
-          <option value="180">180° (Upside Down)</option>
-          <option value="270">90° Counter-Clockwise</option>
-        </select>
-      </div>
-      <div class="opt-group">
-        <span class="opt-label">Pages</span>
-        <select class="opt-select" id="rotatePages">
-          <option value="all">All Pages</option>
-          <option value="odd">Odd Pages Only</option>
-          <option value="even">Even Pages Only</option>
-          <option value="first">First Page Only</option>
-          <option value="last">Last Page Only</option>
-        </select>
-      </div>
-    </div>
-    <div class="btn-row">
-      <button class="btn-process" onclick="doRotate()"><i class="fa-solid fa-rotate"></i> Rotate PDF</button>
-    </div>
-    ${resultHtml()}`;
-}
-
-// --- Reorder ---
-function buildReorder() {
-  return `
-    <p style="font-size:.8rem;color:var(--muted);margin-bottom:12px;">Upload a PDF, then drag and drop pages to reorder them.</p>
-    ${dropZoneHtml('.pdf,application/pdf', false, 'reorderInput')}
-    <div id="reorderList" class="order-list"></div>
-    <div class="btn-row">
-      <button class="btn-process" onclick="doReorder()"><i class="fa-solid fa-arrow-up-short-wide"></i> Save Reordered PDF</button>
-    </div>
-    ${resultHtml()}`;
-}
-
-// --- Compress ---
-function buildCompress() {
-  return `
-    ${dropZoneHtml('.pdf,application/pdf', false, 'compressInput')}
-    <p style="font-size:.78rem;font-weight:800;color:var(--navy);margin:12px 0 6px;">Compression Level</p>
-    <div class="compress-visual">
-      <div class="clevel selected" onclick="setCompress('low',this)">
-        <div class="clevel-icon">🪶</div>
-        <div class="clevel-name">Low</div>
-        <div class="clevel-desc">Minimal, best quality</div>
-      </div>
-      <div class="clevel" onclick="setCompress('medium',this)">
-        <div class="clevel-icon">⚖️</div>
-        <div class="clevel-name">Medium</div>
-        <div class="clevel-desc">Balanced (Recommended)</div>
-      </div>
-      <div class="clevel" onclick="setCompress('high',this)">
-        <div class="clevel-icon">🗜️</div>
-        <div class="clevel-name">High</div>
-        <div class="clevel-desc">Smallest size</div>
-      </div>
-    </div>
-    <div class="btn-row">
-      <button class="btn-process" onclick="doCompress()"><i class="fa-solid fa-file-zipper"></i> Compress PDF</button>
-    </div>
-    ${resultHtml()}`;
-}
-
-// --- Unlock ---
-function buildUnlock() {
-  return `
-    <p style="font-size:.8rem;color:var(--muted);margin-bottom:12px;">Upload a password-protected PDF and enter the password to unlock it.</p>
-    ${dropZoneHtml('.pdf,application/pdf', false, 'unlockInput')}
-    <div class="opts-row">
-      <div class="opt-group">
-        <span class="opt-label">PDF Password</span>
-        <input class="opt-input" type="password" id="unlockPass" placeholder="Enter PDF password" style="min-width:200px;">
-      </div>
-    </div>
-    <div class="btn-row">
-      <button class="btn-process" onclick="doUnlock()"><i class="fa-solid fa-lock-open"></i> Unlock PDF</button>
-    </div>
-    ${resultHtml()}`;
-}
-
-// --- PDF to JPG ---
-function buildPdf2Jpg() {
-  return `
-    ${dropZoneHtml('.pdf,application/pdf', false, 'p2jInput')}
-    <div class="opts-row">
-      <div class="opt-group">
-        <span class="opt-label">Pages</span>
-        <select class="opt-select" id="p2jPages">
-          <option value="all">All Pages</option>
-          <option value="first">First Page Only</option>
-          <option value="range">Page Range</option>
-        </select>
-      </div>
-      <div class="opt-group" id="p2jRangeGroup" style="display:none;">
-        <span class="opt-label">Range (e.g. 1-3)</span>
-        <input class="opt-input" type="text" id="p2jRange" placeholder="1-3">
-      </div>
-      <div class="opt-group">
-        <span class="opt-label">Scale / Quality</span>
-        <select class="opt-select" id="p2jScale">
-          <option value="1">Normal (72dpi)</option>
-          <option value="2" selected>High (144dpi)</option>
-          <option value="3">Very High (216dpi)</option>
-        </select>
-      </div>
-    </div>
-    <div class="btn-row">
-      <button class="btn-process" onclick="doPdf2Jpg()"><i class="fa-solid fa-images"></i> Convert to JPG</button>
-    </div>
-    <div id="p2jPreviews" style="margin-top:14px;"></div>
-    ${resultHtml()}`;
-}
-
-// --- Watermark ---
-function buildWatermark() {
-  return `
-    ${dropZoneHtml('.pdf,application/pdf', false, 'wmInput')}
-    <div class="opts-row">
-      <div class="opt-group">
-        <span class="opt-label">Watermark Text</span>
-        <input class="opt-input" type="text" id="wmText" placeholder="e.g. CONFIDENTIAL" value="CONFIDENTIAL" style="min-width:200px;">
-      </div>
-      <div class="opt-group">
-        <span class="opt-label">Font Size</span>
-        <input class="opt-input" type="number" id="wmSize" value="60" min="10" max="200" style="width:80px;">
-      </div>
-      <div class="opt-group">
-        <span class="opt-label">Opacity (0-1)</span>
-        <input class="opt-input" type="number" id="wmOpacity" value="0.2" min="0.05" max="1" step="0.05" style="width:80px;">
-      </div>
-      <div class="opt-group">
-        <span class="opt-label">Color</span>
-        <input type="color" id="wmColor" value="#dc2626" style="width:44px;height:36px;border:1.5px solid var(--line);border-radius:8px;cursor:pointer;">
-      </div>
-      <div class="opt-group">
-        <span class="opt-label">Position</span>
-        <select class="opt-select" id="wmPos">
-          <option value="center">Center (Diagonal)</option>
-          <option value="top">Top</option>
-          <option value="bottom">Bottom</option>
-          <option value="tl">Top Left</option>
-          <option value="tr">Top Right</option>
-        </select>
-      </div>
-    </div>
-    <div class="btn-row">
-      <button class="btn-process" onclick="doWatermark()"><i class="fa-solid fa-stamp"></i> Add Watermark</button>
-    </div>
-    ${resultHtml()}`;
-}
-
-// --- Sign ---
-function buildSign() {
-  return `
-    ${dropZoneHtml('.pdf,application/pdf', false, 'signInput')}
-    <p style="font-size:.8rem;font-weight:800;color:var(--navy);margin:14px 0 6px;">Draw Your Signature</p>
-    <div class="sig-wrap">
-      <div class="sig-tools">
-        <span style="font-size:.72rem;font-weight:700;color:var(--muted);">Color:</span>
-        ${['#000000','#1a56db','#dc2626','#059669'].map(c=>`<div class="sig-color${c==='#000000'?' active':''}" style="background:${c};" onclick="setSigColor('${c}',this)" title="${c}"></div>`).join('')}
-        <span style="font-size:.72rem;font-weight:700;color:var(--muted);margin-left:auto;">Width:</span>
-        <input type="range" id="sigWidth" min="1" max="8" value="3" style="width:70px;">
-        <button class="sig-clear" onclick="clearSig()">Clear</button>
-      </div>
-      <canvas id="sigCanvas" width="600" height="150" style="width:100%;height:150px;background:#fff;"></canvas>
-    </div>
-    <div class="opts-row" style="margin-top:12px;">
-      <div class="opt-group">
-        <span class="opt-label">Place on Page</span>
-        <select class="opt-select" id="signPage">
-          <option value="last">Last Page</option>
-          <option value="first">First Page</option>
-          <option value="all">All Pages</option>
-        </select>
-      </div>
-      <div class="opt-group">
-        <span class="opt-label">Position</span>
-        <select class="opt-select" id="signPos">
-          <option value="br">Bottom Right</option>
-          <option value="bl">Bottom Left</option>
-          <option value="tr">Top Right</option>
-          <option value="tl">Top Left</option>
-          <option value="center">Center</option>
-        </select>
-      </div>
-      <div class="opt-group">
-        <span class="opt-label">Signature Width</span>
-        <input class="opt-input" type="number" id="signWidth" value="150" min="50" max="400" style="width:90px;">
-      </div>
-    </div>
-    <div class="btn-row">
-      <button class="btn-process" onclick="doSign()"><i class="fa-solid fa-pen-nib"></i> Add Signature to PDF</button>
-    </div>
-    ${resultHtml()}`;
-}
-
-// ===================================================
-// AFTER RENDER HOOKS
-// ===================================================
-function afterRender(id) {
-  // Set up file inputs
-  ['imgInput','wordInput','excelInput','pptInput','mergeInput','splitInput','rotateInput','reorderInput','compressInput','unlockInput','p2jInput','wmInput','signInput'].forEach(function(fid) {
-    var el = document.getElementById(fid);
-    if (!el) return;
-    el.addEventListener('change', function() {
-      handleFileSelect(fid, Array.from(this.files));
-    });
-  });
-
-  // Drag drop for drop zones
-  document.querySelectorAll('.drop-zone').forEach(function(dz) {
-    dz.addEventListener('dragover', function(e) { e.preventDefault(); dz.classList.add('drag-over'); });
-    dz.addEventListener('dragleave', function() { dz.classList.remove('drag-over'); });
-    dz.addEventListener('drop', function(e) {
-      e.preventDefault();
-      dz.classList.remove('drag-over');
-      var inp = dz.querySelector('input[type=file]');
-      if (inp) {
-        var files = Array.from(e.dataTransfer.files);
-        handleFileSelect(inp.id, files);
-      }
-    });
-  });
-
-  // Signature
-  if (id === 'sign') {
-    initSignaturePad();
-  }
-
-  // Split mode toggle
-  if (id === 'split') {
-    var sm = document.getElementById('splitMode');
-    if (sm) sm.addEventListener('change', toggleSplitRange);
-  }
-
-  // PDF to JPG pages toggle
-  if (id === 'pdf2jpg') {
-    var pp = document.getElementById('p2jPages');
-    if (pp) pp.addEventListener('change', function() {
-      document.getElementById('p2jRangeGroup').style.display = this.value === 'range' ? '' : 'none';
-    });
-  }
-}
-
-// ===================================================
-// FILE HANDLING
-// ===================================================
-function handleFileSelect(inputId, files) {
-  if (!files || !files.length) return;
-
-  if (inputId === 'imgInput') {
-    state.imageFiles = files;
-    renderImagePreviews(files);
-  } else if (inputId === 'mergeInput') {
-    state.files = files;
-    renderOrderList('mergeOrderList', files);
-  } else if (inputId === 'reorderInput') {
-    if (files[0]) loadReorderPdf(files[0]);
-  } else {
-    state.files = [files[0]];
-    renderFileList('fileList_' + inputId, [files[0]]);
-  }
-}
-
-function renderFileList(containerId, files) {
-  var el = document.getElementById(containerId);
-  if (!el) return;
-  el.innerHTML = files.map(function(f, i) {
-    return `<div class="file-item">
-      <i class="fa-solid fa-file-pdf"></i>
-      <span class="file-name">${esc(f.name)}</span>
-      <span class="file-size">${fmtSize(f.size)}</span>
-    </div>`;
-  }).join('');
-}
-
-function renderImagePreviews(files) {
-  var grid = document.getElementById('imgPreviewGrid');
-  if (!grid) return;
-  grid.innerHTML = '';
-  files.forEach(function(f, i) {
-    var url = URL.createObjectURL(f);
-    var div = document.createElement('div');
-    div.className = 'preview-img';
-    div.innerHTML = `<img src="${url}" loading="lazy"><button class="img-rm" onclick="removeImg(${i})" title="Remove"><i class="fa-solid fa-xmark"></i></button>`;
-    grid.appendChild(div);
-  });
-}
-
-function renderOrderList(containerId, files) {
-  var el = document.getElementById(containerId);
-  if (!el) return;
-  el.innerHTML = files.map(function(f, i) {
-    return `<div class="order-item" draggable="true" data-index="${i}">
-      <i class="fa-solid fa-grip-vertical order-handle"></i>
-      <div class="order-num">${i+1}</div>
-      <span class="order-name">${esc(f.name)}</span>
-      <span class="file-size">${fmtSize(f.size)}</span>
-    </div>`;
-  }).join('');
-  setupDragSort(containerId, 'files');
-}
-
-function removeImg(i) {
-  var arr = Array.from(state.imageFiles);
-  arr.splice(i, 1);
-  state.imageFiles = arr;
-  renderImagePreviews(arr);
-}
-
-function clearImgs() {
-  state.imageFiles = [];
-  var g = document.getElementById('imgPreviewGrid');
-  if (g) g.innerHTML = '';
-  var inp = document.getElementById('imgInput');
-  if (inp) inp.value = '';
-}
-
-function clearFiles(inputId) {
-  state.files = [];
-  var el = document.getElementById(inputId);
-  if (el) el.value = '';
-  var ol = document.getElementById('mergeOrderList');
-  if (ol) ol.innerHTML = '';
-}
-
-// ===================================================
-// DRAG SORT
-// ===================================================
-function setupDragSort(containerId, target) {
-  var el = document.getElementById(containerId);
-  if (!el) return;
-  var dragged;
-  el.addEventListener('dragstart', function(e) {
-    dragged = e.target.closest('.order-item');
-    setTimeout(function() { if(dragged) dragged.style.opacity = '.4'; }, 0);
-  });
-  el.addEventListener('dragend', function(e) {
-    if(dragged) dragged.style.opacity = '';
-    el.querySelectorAll('.order-item').forEach(function(i) { i.classList.remove('drag-over-item'); });
-  });
-  el.addEventListener('dragover', function(e) {
-    e.preventDefault();
-    var over = e.target.closest('.order-item');
-    if (over && over !== dragged) {
-      el.querySelectorAll('.order-item').forEach(function(i) { i.classList.remove('drag-over-item'); });
-      over.classList.add('drag-over-item');
-    }
-  });
-  el.addEventListener('drop', function(e) {
-    e.preventDefault();
-    var over = e.target.closest('.order-item');
-    if (over && over !== dragged) {
-      var items = Array.from(el.querySelectorAll('.order-item'));
-      var fi = items.indexOf(dragged);
-      var ti = items.indexOf(over);
-      if (fi < ti) over.after(dragged); else over.before(dragged);
-
-      // Update order
-      if (target === 'files') {
-        var newItems = Array.from(el.querySelectorAll('.order-item'));
-        var newFiles = newItems.map(function(item) { return state.files[parseInt(item.dataset.index)]; });
-        state.files = newFiles;
-        // Re-render with new indices
-        renderOrderList(containerId, state.files);
-      } else if (target === 'pages') {
-        var newItems2 = Array.from(el.querySelectorAll('.order-item'));
-        var newPages = newItems2.map(function(item) { return state.reorderPages[parseInt(item.dataset.index)]; });
-        state.reorderPages = newPages;
-        renderPageOrder();
-      }
-    }
-  });
-}
-
-// ===================================================
-// REORDER PDF
-// ===================================================
-async function loadReorderPdf(file) {
-  try {
-    var bytes = await readFile(file);
-    var pdf = await PDFLib.PDFDocument.load(bytes);
-    var count = pdf.getPageCount();
-    state.reorderPages = Array.from({length: count}, function(_, i) { return i; });
-    renderPageOrder();
-    renderFileList('fileList_reorderInput', [file]);
-  } catch(e) {
-    showError(e.message);
-  }
-}
-
-function renderPageOrder() {
-  var el = document.getElementById('reorderList');
-  if (!el) return;
-  el.innerHTML = state.reorderPages.map(function(p, i) {
-    return `<div class="order-item" draggable="true" data-index="${i}">
-      <i class="fa-solid fa-grip-vertical order-handle"></i>
-      <div class="order-num">${i+1}</div>
-      <span class="order-name">Page ${p+1}</span>
-    </div>`;
-  }).join('');
-  setupDragSort('reorderList', 'pages');
-}
-
-// ===================================================
-// COMPRESS LEVEL
-// ===================================================
-function setCompress(level, el) {
-  state.compressLevel = level;
-  document.querySelectorAll('.clevel').forEach(function(c) { c.classList.remove('selected'); });
-  el.classList.add('selected');
-}
-
-// ===================================================
-// SPLIT RANGE TOGGLE
-// ===================================================
-function toggleSplitRange() {
-  var mode = document.getElementById('splitMode').value;
-  document.getElementById('splitRangeGroup').style.display = mode === 'range' ? '' : 'none';
-  document.getElementById('splitEveryGroup').style.display = mode === 'every' ? '' : 'none';
-}
-
-// ===================================================
-// SIGNATURE PAD
-// ===================================================
-function initSignaturePad() {
-  var canvas = document.getElementById('sigCanvas');
-  if (!canvas) return;
-  state.sigCanvas = canvas;
-  var ctx = canvas.getContext('2d');
-  state.sigCtx = ctx;
-  ctx.strokeStyle = state.sigColor;
-  ctx.lineWidth = 3;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-
-  function getPos(e) {
-    var rect = canvas.getBoundingClientRect();
-    var scaleX = canvas.width / rect.width;
-    var scaleY = canvas.height / rect.height;
-    if (e.touches) {
-      return { x: (e.touches[0].clientX - rect.left) * scaleX, y: (e.touches[0].clientY - rect.top) * scaleY };
-    }
-    return { x: (e.clientX - rect.left) * scaleX, y: (e.clientY - rect.top) * scaleY };
-  }
-
-  canvas.addEventListener('mousedown', function(e) {
-    state.sigDrawing = true;
-    var p = getPos(e);
-    ctx.beginPath();
-    ctx.moveTo(p.x, p.y);
-  });
-  canvas.addEventListener('mousemove', function(e) {
-    if (!state.sigDrawing) return;
-    var p = getPos(e);
-    var w = document.getElementById('sigWidth');
-    ctx.lineWidth = w ? parseInt(w.value) : 3;
-    ctx.strokeStyle = state.sigColor;
-    ctx.lineTo(p.x, p.y);
-    ctx.stroke();
-  });
-  canvas.addEventListener('mouseup', function() { state.sigDrawing = false; });
-  canvas.addEventListener('mouseleave', function() { state.sigDrawing = false; });
-  canvas.addEventListener('touchstart', function(e) {
-    e.preventDefault();
-    state.sigDrawing = true;
-    var p = getPos(e);
-    ctx.beginPath();
-    ctx.moveTo(p.x, p.y);
-  }, {passive: false});
-  canvas.addEventListener('touchmove', function(e) {
-    e.preventDefault();
-    if (!state.sigDrawing) return;
-    var p = getPos(e);
-    ctx.lineTo(p.x, p.y);
-    ctx.stroke();
-  }, {passive: false});
-  canvas.addEventListener('touchend', function() { state.sigDrawing = false; });
-}
-
-function setSigColor(color, el) {
-  state.sigColor = color;
-  document.querySelectorAll('.sig-color').forEach(function(c) { c.classList.remove('active'); });
-  el.classList.add('active');
-  if (state.sigCtx) state.sigCtx.strokeStyle = color;
-}
-
-function clearSig() {
-  if (state.sigCtx && state.sigCanvas) {
-    state.sigCtx.clearRect(0, 0, state.sigCanvas.width, state.sigCanvas.height);
-  }
-}
-
-// ===================================================
-// HELPERS
-// ===================================================
-function readFile(f) {
-  return new Promise(function(res, rej) {
-    var r = new FileReader();
-    r.onload = function() { res(r.result); };
-    r.onerror = rej;
-    r.readAsArrayBuffer(f);
-  });
-}
-
-function readFileAsDataURL(f) {
-  return new Promise(function(res, rej) {
-    var r = new FileReader();
-    r.onload = function() { res(r.result); };
-    r.onerror = rej;
-    r.readAsDataURL(f);
-  });
-}
-
-function readFileAsText(f) {
-  return new Promise(function(res, rej) {
-    var r = new FileReader();
-    r.onload = function() { res(r.result); };
-    r.onerror = rej;
-    r.readAsText(f);
-  });
-}
-
-function fmtSize(bytes) {
-  if (bytes < 1024) return bytes + ' B';
-  if (bytes < 1048576) return (bytes/1024).toFixed(1) + ' KB';
-  return (bytes/1048576).toFixed(2) + ' MB';
-}
-
-function esc(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function showProgress(pct, msg) {
-  var pw = document.getElementById('progressWrap');
-  if (pw) pw.style.display = '';
-  var pf = document.getElementById('progressFill');
-  if (pf) pf.style.width = pct + '%';
-  var pt = document.getElementById('progressText');
-  if (pt) pt.textContent = msg || 'Processing...';
-}
-
-function hideProgress() {
-  var pw = document.getElementById('progressWrap');
-  if (pw) pw.style.display = 'none';
-}
-
-function showResult(downloadUrl, filename, extra) {
-  hideProgress();
-  var rb = document.getElementById('resultBox');
-  if (!rb) return;
-  rb.style.display = '';
-  rb.classList.remove('error');
-  var hd = document.getElementById('resultHd');
-  if (hd) { hd.className = 'result-hd'; hd.innerHTML = '<i class="fa-solid fa-circle-check"></i> Done! Your file is ready.'; }
-  var rc = document.getElementById('resultContent');
-  if (rc) {
-    rc.innerHTML = (extra || '') + `<button class="btn-download" onclick="downloadFile('${downloadUrl}','${filename}')">
-      <i class="fa-solid fa-download"></i> Download ${filename}
-    </button>`;
-  }
-}
-
-function showResultMultiple(downloads, extra) {
-  hideProgress();
-  var rb = document.getElementById('resultBox');
-  if (!rb) return;
-  rb.style.display = '';
-  rb.classList.remove('error');
-  var hd = document.getElementById('resultHd');
-  if (hd) { hd.className = 'result-hd'; hd.innerHTML = '<i class="fa-solid fa-circle-check"></i> Done! ' + downloads.length + ' file(s) ready.'; }
-  var rc = document.getElementById('resultContent');
-  if (rc) {
-    rc.innerHTML = (extra || '') + downloads.map(function(d) {
-      return `<button class="btn-download" onclick="downloadFile('${d.url}','${d.name}')" style="margin-bottom:6px;">
-        <i class="fa-solid fa-download"></i> ${d.name}
-      </button>`;
-    }).join('');
-  }
-}
-
-function showError(msg) {
-  hideProgress();
-  var rb = document.getElementById('resultBox');
-  if (!rb) return;
-  rb.style.display = '';
-  rb.classList.add('error');
-  var hd = document.getElementById('resultHd');
-  if (hd) { hd.className = 'result-hd err'; hd.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Error'; }
-  var rc = document.getElementById('resultContent');
-  if (rc) rc.innerHTML = '<p style="font-size:.8rem;color:var(--red2);">' + esc(msg) + '</p>';
-}
-
-function downloadFile(url, name) {
-  var a = document.createElement('a');
-  a.href = url;
-  a.download = name;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-}
-
-function pdfToBlob(bytes) {
-  return URL.createObjectURL(new Blob([bytes], {type: 'application/pdf'}));
-}
-
-// ===================================================
-// PAGE SIZE MAP
-// ===================================================
-var PAGE_SIZES = {
-  A4:     [595.28, 841.89],
-  LETTER: [612, 792],
-  A3:     [841.89, 1190.55],
-};
-
-// ===================================================
-// TOOL IMPLEMENTATIONS
-// ===================================================
-
-// 1. JPG to PDF
-async function doJpg2Pdf() {
-  if (!state.imageFiles || !state.imageFiles.length) { showError('Please select at least one image.'); return; }
-  showProgress(10, 'Creating PDF...');
-  try {
-    var pdfDoc = await PDFLib.PDFDocument.create();
-    var sizeKey = document.getElementById('jpgPageSize').value;
-    var orientation = document.getElementById('jpgOrientation').value;
-    var margin = parseInt(document.getElementById('jpgMargin').value) || 0;
-    var ps = PAGE_SIZES[sizeKey] || PAGE_SIZES.A4;
-    var pw = orientation === 'landscape' ? ps[1] : ps[0];
-    var ph = orientation === 'landscape' ? ps[0] : ps[1];
-
-    var total = state.imageFiles.length;
-    for (var i = 0; i < total; i++) {
-      showProgress(10 + Math.round((i/total)*80), 'Embedding image ' + (i+1) + ' of ' + total + '...');
-      var bytes = await readFile(state.imageFiles[i]);
-      var imgData = new Uint8Array(bytes);
-      var img;
-      var type = state.imageFiles[i].type;
-      if (type === 'image/png') {
-        img = await pdfDoc.embedPng(imgData);
-      } else {
-        img = await pdfDoc.embedJpg(imgData);
-      }
-      var page = pdfDoc.addPage([pw, ph]);
-      var iw = img.width, ih = img.height;
-      var aw = pw - margin*2, ah = ph - margin*2;
-      var ratio = Math.min(aw/iw, ah/ih);
-      var dw = iw * ratio, dh = ih * ratio;
-      var x = margin + (aw - dw) / 2;
-      var y = margin + (ah - dh) / 2;
-      page.drawImage(img, { x, y, width: dw, height: dh });
-    }
-    showProgress(95, 'Saving PDF...');
-    var pdfBytes = await pdfDoc.save();
-    var url = pdfToBlob(pdfBytes);
-    showResult(url, 'converted.pdf', `<p style="font-size:.78rem;color:var(--green);margin-bottom:8px;">${total} image(s) → ${fmtSize(pdfBytes.length)} PDF</p>`);
-  } catch(e) {
-    showError('Error: ' + e.message);
-  }
-}
-
-// 2. Word to PDF (browser-based text extraction via print)
-async function doWord2Pdf() {
-  var inp = document.getElementById('wordInput');
-  if (!state.files || !state.files[0]) { showError('Please select a DOCX file.'); return; }
-  showProgress(20, 'Processing Word file...');
-  try {
-    // Use mammoth.js via CDN if available, else show print dialog
-    if (typeof mammoth === 'undefined') {
-      // Load mammoth
-      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js');
-    }
-    showProgress(50, 'Extracting content...');
-    var ab = await readFile(state.files[0]);
-    var result = await mammoth.convertToHtml({arrayBuffer: ab});
-    showProgress(80, 'Creating PDF...');
-    var html = result.value;
-    // Use window.print approach - open in new window
-    var w = window.open('', '_blank');
-    w.document.write(`<!DOCTYPE html><html><head><title>Word to PDF</title>
-      <style>body{font-family:Times New Roman,serif;font-size:12pt;margin:2.5cm;line-height:1.5;}
-      h1,h2,h3{color:#000;}img{max-width:100%;}
-      @media print{@page{margin:2cm;}}</style></head>
-      <body>${html}<script>window.onload=function(){window.print();}<\/script></body></html>`);
-    w.document.close();
-    hideProgress();
-    var rb = document.getElementById('resultBox');
-    rb.style.display = '';
-    rb.classList.remove('error');
-    document.getElementById('resultHd').innerHTML = '<i class="fa-solid fa-circle-check"></i> Print dialog opened!';
-    document.getElementById('resultContent').innerHTML = '<p style="font-size:.78rem;color:#065f46;">Choose "Save as PDF" in the print dialog to download your PDF.</p>';
-  } catch(e) {
-    showError('Error: ' + e.message + '. Try opening the DOCX in Word and using File > Export to PDF.');
-  }
-}
-
-// 3. Excel to PDF
-async function doExcel2Pdf() {
-  if (!state.files || !state.files[0]) { showError('Please select a file.'); return; }
-  showProgress(20, 'Reading file...');
-  try {
-    var file = state.files[0];
-    var name = file.name.toLowerCase();
-    var tableHtml = '';
-
-    if (name.endsWith('.csv')) {
-      var text = await readFileAsText(file);
-      var rows = text.split('\n').map(function(r) { return r.split(','); });
-      tableHtml = buildTableHtml(rows);
-    } else {
-      // Excel - use SheetJS
-      if (typeof XLSX === 'undefined') {
-        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
-      }
-      showProgress(50, 'Parsing Excel...');
-      var ab = await readFile(file);
-      var wb = XLSX.read(ab, {type:'array'});
-      var wsName = wb.SheetNames[0];
-      var ws = wb.Sheets[wsName];
-      var data = XLSX.utils.sheet_to_json(ws, {header:1});
-      tableHtml = buildTableHtml(data);
-    }
-    showProgress(80, 'Creating PDF...');
-    var w = window.open('', '_blank');
-    w.document.write(`<!DOCTYPE html><html><head><title>Excel to PDF</title>
-      <style>body{font-family:Arial,sans-serif;font-size:10pt;margin:1.5cm;}
-      table{border-collapse:collapse;width:100%;}th,td{border:1px solid #999;padding:5px 8px;text-align:left;}
-      th{background:#f1f5f9;font-weight:bold;}tr:nth-child(even){background:#f8fafc;}
-      @media print{@page{margin:1.5cm;size:A4 landscape;}}</style></head>
-      <body><h2 style="margin-bottom:10px;">${esc(file.name)}</h2>${tableHtml}
-      <script>window.onload=function(){window.print();}<\/script></body></html>`);
-    w.document.close();
-    hideProgress();
-    var rb = document.getElementById('resultBox');
-    rb.style.display = '';
-    rb.classList.remove('error');
-    document.getElementById('resultHd').innerHTML = '<i class="fa-solid fa-circle-check"></i> Print dialog opened!';
-    document.getElementById('resultContent').innerHTML = '<p style="font-size:.78rem;color:#065f46;">Choose "Save as PDF" in the print dialog.</p>';
-  } catch(e) {
-    showError('Error: ' + e.message);
-  }
-}
-
-function buildTableHtml(rows) {
-  if (!rows || !rows.length) return '<p>No data found.</p>';
-  var html = '<table>';
-  rows.forEach(function(row, ri) {
-    html += '<tr>';
-    row.forEach(function(cell) {
-      var tag = ri === 0 ? 'th' : 'td';
-      html += `<${tag}>${esc(String(cell || ''))}</${tag}>`;
-    });
-    html += '</tr>';
-  });
-  return html + '</table>';
-}
-
-// 4. PPT to PDF
-async function doPpt2Pdf() {
-  if (!state.files || !state.files[0]) { showError('Please select a PPT/PPTX file.'); return; }
-  showProgress(30, 'Extracting slides...');
-  try {
-    // Use PptxGenJS alternative: extract via JSZip since PPTX is a ZIP
-    if (typeof JSZip === 'undefined') {
-      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');
-    }
-    var ab = await readFile(state.files[0]);
-    var zip = await JSZip.loadAsync(ab);
-    showProgress(60, 'Reading slides...');
-    var slides = [];
-    // Find slide XML files
-    var slideFiles = Object.keys(zip.files).filter(function(f) {
-      return f.match(/^ppt\/slides\/slide\d+\.xml$/);
-    }).sort(function(a,b) {
-      var na = parseInt(a.match(/\d+/)); var nb = parseInt(b.match(/\d+/));
-      return na - nb;
-    });
-    for (var sf of slideFiles) {
-      var xml = await zip.files[sf].async('text');
-      // Extract text nodes
-      var text = xml.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-      slides.push(text.substring(0, 1000));
-    }
-    showProgress(85, 'Generating PDF view...');
-    if (!slides.length) throw new Error('No slides found. File may not be a valid PPTX.');
-    var html = slides.map(function(s, i) {
-      return `<div style="page-break-after:always;border:2px solid #e2e8f0;border-radius:8px;padding:30px;margin:20px 0;min-height:300px;background:#fff;">
-        <div style="color:#1a56db;font-size:10pt;font-weight:bold;margin-bottom:12px;">Slide ${i+1}</div>
-        <p style="font-size:11pt;line-height:1.6;color:#0f172a;">${esc(s)}</p>
-      </div>`;
-    }).join('');
-    var w = window.open('', '_blank');
-    w.document.write(`<!DOCTYPE html><html><head><title>PPT to PDF</title>
-      <style>body{font-family:Arial,sans-serif;font-size:11pt;margin:1cm;background:#f8fafc;}
-      @media print{@page{margin:1cm;}body{background:#fff;}}</style></head>
-      <body><h2>Slides from: ${esc(state.files[0].name)}</h2>${html}
-      <script>window.onload=function(){window.print();}<\/script></body></html>`);
-    w.document.close();
-    hideProgress();
-    var rb = document.getElementById('resultBox');
-    rb.style.display = '';
-    rb.classList.remove('error');
-    document.getElementById('resultHd').innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + slides.length + ' slide(s) extracted!';
-    document.getElementById('resultContent').innerHTML = '<p style="font-size:.78rem;color:#065f46;">Choose "Save as PDF" in the print dialog.</p>';
-  } catch(e) {
-    showError('Error: ' + e.message);
-  }
-}
-
-// 5. HTML to PDF
-function doHtml2Pdf() {
-  var html = document.getElementById('htmlInput').value;
-  var url = document.getElementById('htmlUrl').value;
-  if (!html && !url) { showError('Please enter HTML code or a URL.'); return; }
-  showProgress(30, 'Preparing...');
-  try {
-    if (url) {
-      // Open URL in new tab with print
-      var w = window.open(url, '_blank');
-      setTimeout(function() { if(w) w.print(); }, 2000);
-    } else {
-      var w = window.open('', '_blank');
-      w.document.write(`<!DOCTYPE html><html><head><title>HTML to PDF</title>
-        <style>body{font-family:Arial,sans-serif;margin:2cm;}@media print{@page{margin:2cm;}}</style></head>
-        <body>${html}<script>window.onload=function(){window.print();}<\/script></body></html>`);
-      w.document.close();
-    }
-    hideProgress();
-    var rb = document.getElementById('resultBox');
-    rb.style.display = '';
-    rb.classList.remove('error');
-    document.getElementById('resultHd').innerHTML = '<i class="fa-solid fa-circle-check"></i> Ready!';
-    document.getElementById('resultContent').innerHTML = '<p style="font-size:.78rem;color:#065f46;">A new window opened. Choose "Save as PDF" in the print dialog.</p>';
-  } catch(e) {
-    showError('Error: ' + e.message);
-  }
-}
-
-// 6. Merge PDF
-async function doMerge() {
-  if (!state.files || state.files.length < 2) { showError('Please select at least 2 PDF files.'); return; }
-  showProgress(10, 'Merging PDFs...');
-  try {
-    var merged = await PDFLib.PDFDocument.create();
-    var total = state.files.length;
-    for (var i = 0; i < total; i++) {
-      showProgress(10 + Math.round((i/total)*80), 'Processing file ' + (i+1) + ' of ' + total + '...');
-      var bytes = await readFile(state.files[i]);
-      var pdf = await PDFLib.PDFDocument.load(new Uint8Array(bytes));
-      var pages = await merged.copyPages(pdf, pdf.getPageIndices());
-      pages.forEach(function(p) { merged.addPage(p); });
-    }
-    showProgress(95, 'Saving...');
-    var out = await merged.save();
-    showResult(pdfToBlob(out), 'merged.pdf',
-      `<p style="font-size:.78rem;color:var(--green);margin-bottom:8px;">${total} files merged → ${fmtSize(out.length)} PDF</p>`);
-  } catch(e) {
-    showError('Error: ' + e.message);
-  }
-}
-
-// 7. Split PDF
-async function doSplit() {
-  if (!state.files || !state.files[0]) { showError('Please select a PDF file.'); return; }
-  showProgress(20, 'Loading PDF...');
-  try {
-    var bytes = await readFile(state.files[0]);
-    var srcPdf = await PDFLib.PDFDocument.load(new Uint8Array(bytes));
-    var total = srcPdf.getPageCount();
-    var mode = document.getElementById('splitMode').value;
-    var downloads = [];
-    showProgress(40, 'Splitting...');
-
-    if (mode === 'all') {
-      for (var i = 0; i < total; i++) {
-        var newDoc = await PDFLib.PDFDocument.create();
-        var [p] = await newDoc.copyPages(srcPdf, [i]);
-        newDoc.addPage(p);
-        var out = await newDoc.save();
-        downloads.push({ url: pdfToBlob(out), name: 'page_' + (i+1) + '.pdf' });
-        showProgress(40 + Math.round((i/total)*55), 'Page ' + (i+1) + '...');
-      }
-    } else if (mode === 'range') {
-      var rangeStr = document.getElementById('splitRange').value;
-      var indices = parsePageRange(rangeStr, total);
-      if (!indices.length) throw new Error('Invalid page range.');
-      var newDoc = await PDFLib.PDFDocument.create();
-      var pages = await newDoc.copyPages(srcPdf, indices);
-      pages.forEach(function(p) { newDoc.addPage(p); });
-      var out = await newDoc.save();
-      downloads.push({ url: pdfToBlob(out), name: 'split_range.pdf' });
-    } else {
-      var n = parseInt(document.getElementById('splitEvery').value) || 1;
-      var part = 1;
-      for (var i = 0; i < total; i += n) {
-        var end = Math.min(i + n, total);
-        var indices = [];
-        for (var j = i; j < end; j++) indices.push(j);
-        var newDoc = await PDFLib.PDFDocument.create();
-        var pages = await newDoc.copyPages(srcPdf, indices);
-        pages.forEach(function(p) { newDoc.addPage(p); });
-        var out = await newDoc.save();
-        downloads.push({ url: pdfToBlob(out), name: 'part_' + (part++) + '.pdf' });
-      }
-    }
-    showProgress(98, 'Done!');
-    if (downloads.length === 1) {
-      showResult(downloads[0].url, downloads[0].name);
-    } else {
-      showResultMultiple(downloads);
-    }
-  } catch(e) {
-    showError('Error: ' + e.message);
-  }
-}
-
-function parsePageRange(str, total) {
-  var indices = [];
-  str.split(',').forEach(function(part) {
-    part = part.trim();
-    if (part.includes('-')) {
-      var parts = part.split('-');
-      var s = parseInt(parts[0]) - 1;
-      var e = parseInt(parts[1]) - 1;
-      for (var i = Math.max(0,s); i <= Math.min(total-1, e); i++) indices.push(i);
-    } else {
-      var n = parseInt(part) - 1;
-      if (n >= 0 && n < total) indices.push(n);
-    }
-  });
-  return [...new Set(indices)].sort(function(a,b){return a-b;});
-}
-
-// 8. Rotate PDF
-async function doRotate() {
-  if (!state.files || !state.files[0]) { showError('Please select a PDF file.'); return; }
-  showProgress(20, 'Loading PDF...');
-  try {
-    var bytes = await readFile(state.files[0]);
-    var pdf = await PDFLib.PDFDocument.load(new Uint8Array(bytes));
-    var deg = parseInt(document.getElementById('rotateDeg').value);
-    var mode = document.getElementById('rotatePages').value;
-    var total = pdf.getPageCount();
-    showProgress(50, 'Rotating pages...');
-    for (var i = 0; i < total; i++) {
-      var doIt = false;
-      if (mode === 'all') doIt = true;
-      else if (mode === 'odd') doIt = (i % 2 === 0);
-      else if (mode === 'even') doIt = (i % 2 === 1);
-      else if (mode === 'first') doIt = (i === 0);
-      else if (mode === 'last') doIt = (i === total - 1);
-      if (doIt) {
-        var page = pdf.getPage(i);
-        var cur = page.getRotation().angle;
-        page.setRotation(PDFLib.degrees((cur + deg) % 360));
-      }
-    }
-    showProgress(90, 'Saving...');
-    var out = await pdf.save();
-    showResult(pdfToBlob(out), 'rotated.pdf');
-  } catch(e) {
-    showError('Error: ' + e.message);
-  }
-}
-
-// 9. Reorder PDF
-async function doReorder() {
-  if (!state.files || !state.files[0]) { showError('Please select a PDF file.'); return; }
-  if (!state.reorderPages.length) { showError('Please upload a PDF to reorder pages.'); return; }
-  showProgress(30, 'Creating reordered PDF...');
-  try {
-    var bytes = await readFile(state.files[0]);
-    var srcPdf = await PDFLib.PDFDocument.load(new Uint8Array(bytes));
-    var newDoc = await PDFLib.PDFDocument.create();
-    var pages = await newDoc.copyPages(srcPdf, state.reorderPages);
-    pages.forEach(function(p) { newDoc.addPage(p); });
-    showProgress(85, 'Saving...');
-    var out = await newDoc.save();
-    showResult(pdfToBlob(out), 'reordered.pdf');
-  } catch(e) {
-    showError('Error: ' + e.message);
-  }
-}
-
-// 10. Compress PDF
-async function doCompress() {
-  if (!state.files || !state.files[0]) { showError('Please select a PDF file.'); return; }
-  showProgress(20, 'Loading PDF...');
-  try {
-    var origSize = state.files[0].size;
-    var bytes = await readFile(state.files[0]);
-    var pdf = await PDFLib.PDFDocument.load(new Uint8Array(bytes), { updateMetadata: false });
-    showProgress(60, 'Compressing...');
-    var saveOpts = {};
-    if (state.compressLevel === 'high') {
-      saveOpts = { useObjectStreams: true, addDefaultPage: false, objectsPerTick: 50 };
-    } else if (state.compressLevel === 'medium') {
-      saveOpts = { useObjectStreams: true };
-    }
-    var out = await pdf.save(saveOpts);
-    var newSize = out.length;
-    var saved = Math.max(0, origSize - newSize);
-    var pct = origSize > 0 ? Math.round((saved/origSize)*100) : 0;
-    showResult(pdfToBlob(out), 'compressed.pdf',
-      `<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;">
-        <span style="font-size:.75rem;font-weight:700;color:var(--muted);">Original: <strong>${fmtSize(origSize)}</strong></span>
-        <span style="font-size:.75rem;font-weight:700;color:var(--muted);">Compressed: <strong>${fmtSize(newSize)}</strong></span>
-        <span style="font-size:.75rem;font-weight:700;color:var(--green);">Saved: ${pct}%</span>
-      </div>`);
-  } catch(e) {
-    showError('Error: ' + e.message);
-  }
-}
-
-// 11. Unlock PDF
-async function doUnlock() {
-  if (!state.files || !state.files[0]) { showError('Please select a PDF file.'); return; }
-  showProgress(20, 'Loading PDF...');
-  try {
-    var pass = document.getElementById('unlockPass').value;
-    var bytes = await readFile(state.files[0]);
-    var pdf = await PDFLib.PDFDocument.load(new Uint8Array(bytes), {
-      password: pass || undefined,
-      ignoreEncryption: !pass
-    });
-    showProgress(70, 'Removing encryption...');
-    // Remove security settings
-    var out = await pdf.save();
-    showResult(pdfToBlob(out), 'unlocked.pdf',
-      '<p style="font-size:.78rem;color:var(--green);margin-bottom:8px;">PDF unlocked successfully!</p>');
-  } catch(e) {
-    if (e.message && e.message.toLowerCase().includes('password')) {
-      showError('Incorrect password. Please enter the correct PDF password.');
-    } else if (e.message && e.message.toLowerCase().includes('encrypt')) {
-      showError('This PDF uses advanced encryption that cannot be removed in-browser. The password may be required.');
-    } else {
-      showError('Error: ' + e.message);
-    }
-  }
-}
-
-// 12. PDF to JPG
-async function doPdf2Jpg() {
-  if (!state.files || !state.files[0]) { showError('Please select a PDF file.'); return; }
-  showProgress(10, 'Loading PDF...');
-  try {
-    // Use pdf.js from CDN
-    if (typeof pdfjsLib === 'undefined') {
-      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
-      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    }
-    var bytes = await readFile(state.files[0]);
-    var typedArr = new Uint8Array(bytes);
-    var pdf = await pdfjsLib.getDocument({data: typedArr}).promise;
-    var total = pdf.numPages;
-    var mode = document.getElementById('p2jPages').value;
-    var scale = parseFloat(document.getElementById('p2jScale').value) || 2;
-    var pageNums = [];
-    if (mode === 'first') {
-      pageNums = [1];
-    } else if (mode === 'range') {
-      var rangeStr = document.getElementById('p2jRange').value;
-      pageNums = parsePageRange(rangeStr, total).map(function(i) { return i+1; });
-      if (!pageNums.length) pageNums = [1];
-    } else {
-      for (var i = 1; i <= total; i++) pageNums.push(i);
-    }
-
-    var downloads = [];
-    var previewHtml = '<div class="preview-grid" style="margin:12px 0;">';
-    for (var pi = 0; pi < pageNums.length; pi++) {
-      showProgress(10 + Math.round((pi/pageNums.length)*85), 'Rendering page ' + pageNums[pi] + '...');
-      var page = await pdf.getPage(pageNums[pi]);
-      var vp = page.getViewport({scale: scale});
-      var canvas = document.createElement('canvas');
-      canvas.width = vp.width;
-      canvas.height = vp.height;
-      var ctx = canvas.getContext('2d');
-      await page.render({canvasContext: ctx, viewport: vp}).promise;
-      var dataUrl = canvas.toDataURL('image/jpeg', 0.92);
-      downloads.push({ url: dataUrl, name: 'page_' + pageNums[pi] + '.jpg' });
-      previewHtml += `<div class="preview-img"><img src="${dataUrl}"></div>`;
-    }
-    previewHtml += '</div>';
-    document.getElementById('p2jPreviews').innerHTML = previewHtml;
-    showProgress(98, 'Done!');
-    if (downloads.length === 1) {
-      showResult(downloads[0].url, downloads[0].name);
-    } else {
-      showResultMultiple(downloads);
-    }
-  } catch(e) {
-    showError('Error: ' + e.message);
-  }
-}
-
-// 13. Watermark PDF
-async function doWatermark() {
-  if (!state.files || !state.files[0]) { showError('Please select a PDF file.'); return; }
-  var wmText = document.getElementById('wmText').value.trim();
-  if (!wmText) { showError('Please enter watermark text.'); return; }
-  showProgress(20, 'Loading PDF...');
-  try {
-    var bytes = await readFile(state.files[0]);
-    var pdf = await PDFLib.PDFDocument.load(new Uint8Array(bytes));
-    var font = await pdf.embedFont(PDFLib.StandardFonts.HelveticaBold);
-    var pages = pdf.getPages();
-    var wmSize = parseInt(document.getElementById('wmSize').value) || 60;
-    var opacity = parseFloat(document.getElementById('wmOpacity').value) || 0.2;
-    var color = hexToRgb(document.getElementById('wmColor').value);
-    var pos = document.getElementById('wmPos').value;
-    showProgress(50, 'Adding watermark...');
-    pages.forEach(function(page) {
-      var { width, height } = page.getSize();
-      var textWidth = font.widthOfTextAtSize(wmText, wmSize);
-      var x, y, rotate = 0;
-      if (pos === 'center') {
-        x = width / 2 - textWidth / 2;
-        y = height / 2;
-        rotate = PDFLib.degrees(45);
-      } else if (pos === 'top') {
-        x = width / 2 - textWidth / 2;
-        y = height - wmSize - 20;
-      } else if (pos === 'bottom') {
-        x = width / 2 - textWidth / 2;
-        y = 20;
-      } else if (pos === 'tl') {
-        x = 20; y = height - wmSize - 20;
-      } else if (pos === 'tr') {
-        x = width - textWidth - 20; y = height - wmSize - 20;
-      }
-      page.drawText(wmText, {
-        x, y,
-        size: wmSize,
-        font,
-        color: PDFLib.rgb(color.r/255, color.g/255, color.b/255),
-        opacity,
-        rotate: rotate || PDFLib.degrees(0),
-      });
-    });
-    showProgress(90, 'Saving...');
-    var out = await pdf.save();
-    showResult(pdfToBlob(out), 'watermarked.pdf');
-  } catch(e) {
-    showError('Error: ' + e.message);
-  }
-}
-
-function hexToRgb(hex) {
-  var r = parseInt(hex.slice(1,3),16);
-  var g = parseInt(hex.slice(3,5),16);
-  var b = parseInt(hex.slice(5,7),16);
-  return {r,g,b};
-}
-
-// 14. Sign PDF
-async function doSign() {
-  if (!state.files || !state.files[0]) { showError('Please select a PDF file.'); return; }
-  if (!state.sigCanvas) { showError('Signature pad not initialized.'); return; }
-  // Check if canvas is empty
-  var ctx = state.sigCtx;
-  var blank = document.createElement('canvas');
-  blank.width = state.sigCanvas.width;
-  blank.height = state.sigCanvas.height;
-  if (state.sigCanvas.toDataURL() === blank.toDataURL()) {
-    showError('Please draw your signature first.');
-    return;
-  }
-  showProgress(20, 'Loading PDF...');
-  try {
-    var bytes = await readFile(state.files[0]);
-    var pdf = await PDFLib.PDFDocument.load(new Uint8Array(bytes));
-    var sigDataUrl = state.sigCanvas.toDataURL('image/png');
-    var sigImgBytes = dataURLtoBytes(sigDataUrl);
-    var sigImg = await pdf.embedPng(sigImgBytes);
-    var pages = pdf.getPages();
-    var pageSel = document.getElementById('signPage').value;
-    var pos = document.getElementById('signPos').value;
-    var sigW = parseInt(document.getElementById('signWidth').value) || 150;
-    var sigH = Math.round(sigW * state.sigCanvas.height / state.sigCanvas.width);
-    var targetPages = [];
-    if (pageSel === 'first') targetPages = [pages[0]];
-    else if (pageSel === 'last') targetPages = [pages[pages.length-1]];
-    else targetPages = pages;
-    showProgress(60, 'Placing signature...');
-    targetPages.forEach(function(page) {
-      var {width, height} = page.getSize();
-      var x, y;
-      var pad = 20;
-      if (pos === 'br') { x = width - sigW - pad; y = pad; }
-      else if (pos === 'bl') { x = pad; y = pad; }
-      else if (pos === 'tr') { x = width - sigW - pad; y = height - sigH - pad; }
-      else if (pos === 'tl') { x = pad; y = height - sigH - pad; }
-      else { x = (width - sigW)/2; y = (height - sigH)/2; }
-      page.drawImage(sigImg, { x, y, width: sigW, height: sigH });
-    });
-    showProgress(90, 'Saving...');
-    var out = await pdf.save();
-    showResult(pdfToBlob(out), 'signed.pdf');
-  } catch(e) {
-    showError('Error: ' + e.message);
-  }
-}
-
-function dataURLtoBytes(dataUrl) {
-  var arr = dataUrl.split(',');
-  var bstr = atob(arr[1]);
-  var n = bstr.length;
-  var u8 = new Uint8Array(n);
-  for (var i = 0; i < n; i++) u8[i] = bstr.charCodeAt(i);
-  return u8;
-}
-
-// ===================================================
-// SCRIPT LOADER
-// ===================================================
-function loadScript(src) {
-  return new Promise(function(res, rej) {
-    if (document.querySelector('script[src="'+src+'"]')) { res(); return; }
-    var s = document.createElement('script');
-    s.src = src;
-    s.onload = res;
-    s.onerror = function() { rej(new Error('Failed to load: ' + src)); };
-    document.head.appendChild(s);
-  });
-}
-</script>
-
+</div><!-- /.page-wrap -->
 
   <div id="site-footer"></div>
 
@@ -2024,7 +356,7 @@ function loadScript(src) {
     <div class="offcanvas-search">
       <div class="offcanvas-search-inner">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" placeholder="Search jobs, results, admit cardsâ¦" id="menuSearchInput" autocomplete="off">
+        <input type="text" placeholder="Search jobs, results, admit cards…" id="menuSearchInput" autocomplete="off">
       </div>
     </div>
     <nav class="offcanvas-nav" aria-label="Mobile primary">
@@ -2070,7 +402,7 @@ function loadScript(src) {
         <a href="/state/bihar/"><i class="fa-solid fa-location-dot"></i> Bihar</a>
         <a href="/state/madhya-pradesh/"><i class="fa-solid fa-location-dot"></i> Madhya Pradesh</a>
         <a href="/state/delhi/"><i class="fa-solid fa-location-dot"></i> Delhi</a>
-        <a href="/state/"><i class="fa-solid fa-list"></i> All States â</a>
+        <a href="/state/"><i class="fa-solid fa-list"></i> All States →</a>
       </div>
       <div class="offcanvas-section">Admissions</div>
       <a href="/category.html?group=admissions"><span class="menu-icon-pill" style="background:#ede9fe;color:#6d28d9;"><i class="fa-solid fa-graduation-cap"></i></span>Admissions 2026</a>
@@ -2103,6 +435,38 @@ function loadScript(src) {
     </nav>
   </aside>
 
+<script>
+var POPULAR = [
+  { name:'JPG to PDF',        desc:'Images ko PDF mein convert karein',     url:'tools-pdf.html',           icon:'fa-file-pdf',        color:'#dc2626', bg:'#fff5f5', badge:'badge-hot',  bl:'Most Used' },
+  { name:'Compress PDF',      desc:'PDF size kam karein upload ke liye',    url:'tools-pdf.html',           icon:'fa-file-zipper',     color:'#dc2626', bg:'#fff5f5', badge:'badge-hot',  bl:'Must Use'  },
+  { name:'Merge PDF',         desc:'Multiple PDFs ek file mein joinen',     url:'tools-pdf.html',           icon:'fa-file-circle-plus',color:'#dc2626', bg:'#fff5f5', badge:'badge-pop',  bl:'Popular'   },
+  { name:'Resize to KB',      desc:'Image ko exact KB size pe resize karein',url:'tools-image.html',        icon:'fa-compress',        color:'#059669', bg:'#f0fdf4', badge:'badge-hot',  bl:'Most Used' },
+  { name:'Passport Photo',    desc:'Passport/ID size photo banayein',       url:'tools-image.html',         icon:'fa-id-badge',        color:'#059669', bg:'#f0fdf4', badge:'badge-hot',  bl:'Govt Forms'},
+  { name:'Compress Image',    desc:'JPEG/PNG image ko compress karein',     url:'tools-image.html',         icon:'fa-image',           color:'#059669', bg:'#f0fdf4', badge:'badge-pop',  bl:'Popular'   },
+  { name:'MP4 to MP3',        desc:'Video se audio extract karein',         url:'tools-audio-video.html',   icon:'fa-music',           color:'#7c3aed', bg:'#faf5ff', badge:'badge-hot',  bl:'Most Used' },
+  { name:'Compress Video',    desc:'Video file size reduce karein',         url:'tools-audio-video.html',   icon:'fa-file-zipper',     color:'#7c3aed', bg:'#faf5ff', badge:'badge-pop',  bl:'Popular'   },
+  { name:'Background Remove', desc:'Image ka background hatayein',          url:'tools-image.html',         icon:'fa-wand-magic-sparkles',color:'#059669',bg:'#f0fdf4',badge:'badge-free', bl:'Free'      },
+  { name:'PDF to JPG',        desc:'PDF pages ko images mein convert karein',url:'tools-pdf.html',          icon:'fa-file-image',      color:'#dc2626', bg:'#fff5f5', badge:'badge-free', bl:'Free'      },
+  { name:'Signature Resize',  desc:'Signature image resize karein forms ke liye',url:'tools-image.html',   icon:'fa-pen-nib',         color:'#059669', bg:'#f0fdf4', badge:'badge-pop',  bl:'Govt Use'  },
+  { name:'MP3 Cutter',        desc:'Audio file trim/cut karein',            url:'tools-audio-video.html',   icon:'fa-scissors',        color:'#7c3aed', bg:'#faf5ff', badge:'badge-free', bl:'Free'      },
+];
+
+(function(){
+  var g = document.getElementById('popularGrid');
+  POPULAR.forEach(function(t){
+    var a = document.createElement('a');
+    a.className = 'pop-card';
+    a.href = t.url;
+    a.title = t.name;
+    a.innerHTML =
+      '<div class="pop-card-icon" style="background:'+t.bg+';color:'+t.color+';border:1px solid '+t.bg+';"><i class="fa-solid '+t.icon+'"></i></div>'+
+      '<div class="pop-card-name">'+t.name+'</div>'+
+      '<div class="pop-card-desc">'+t.desc+'</div>'+
+      '<span class="pop-badge '+t.badge+'"><i class="fa-solid fa-star"></i> '+t.bl+'</span>';
+    g.appendChild(a);
+  });
+})();
+</script>
 <script src="script.js" defer></script>
 </body>
 </html>
