@@ -1,154 +1,70 @@
 /**
- * ╔══════════════════════════════════════╗
- * ║  TOP SARKARI JOBS — sw.js v4         ║
- * ║  Ultra-Optimized Service Worker      ║
- * ║  • Cache-First for assets/fonts      ║
- * ║  • Stale-While-Revalidate for HTML   ║
- * ║  • Network-First for JSON data       ║
- * ║  • Background sync for analytics    ║
- * ║  • Offline fallback page            ║
- * ╚══════════════════════════════════════╝
+ * TOP SARKARI JOBS — sw.js v5
+ * Ultra-optimized: JSON cached aggressively, HTML SWR, assets immutable
  */
 'use strict';
+const V='v5',CS=`static-${V}`,CP=`pages-${V}`,CI=`images-${V}`,CJ=`json-${V}`;
+const ALL=[CS,CP,CI,CJ];
 
-const CACHE_VER     = 'v4';
-const CACHE_STATIC  = `static-${CACHE_VER}`;
-const CACHE_PAGES   = `pages-${CACHE_VER}`;
-const CACHE_IMAGES  = `images-${CACHE_VER}`;
-const CACHE_JSON    = `json-${CACHE_VER}`;
-const ALL_CACHES    = [CACHE_STATIC, CACHE_PAGES, CACHE_IMAGES, CACHE_JSON];
+// Pre-cache critical shell (only small essentials)
+const SHELL=['/','index.html','/styles.css','/all.min.css','/critical.css'];
 
-const STATIC_MAX    = 80;
-const PAGES_MAX     = 40;
-const IMAGES_MAX    = 100;
-const JSON_MAX      = 20;
-
-// Pre-cache critical shell
-const PRECACHE = [
-  '/',
-  '/index.html',
-  '/all.min.css',
-  '/styles.css',
-];
-
-const OFFLINE_URL = '/offline.html';
-
-// ── INSTALL ──────────────────────────────────────────────────
-self.addEventListener('install', e => {
+self.addEventListener('install',e=>{
   e.waitUntil(
-    caches.open(CACHE_STATIC)
-      .then(c => c.addAll(PRECACHE.map(u => new Request(u, {cache: 'reload'}))))
-      .then(() => self.skipWaiting())
+    caches.open(CS).then(c=>c.addAll(SHELL.map(u=>new Request(u,{cache:'reload'}))))
+    .then(()=>self.skipWaiting())
   );
 });
 
-// ── ACTIVATE ─────────────────────────────────────────────────
-self.addEventListener('activate', e => {
+self.addEventListener('activate',e=>{
   e.waitUntil(
-    caches.keys()
-      .then(keys => Promise.all(
-        keys.filter(k => !ALL_CACHES.includes(k)).map(k => caches.delete(k))
-      ))
-      .then(() => self.clients.claim())
+    caches.keys().then(keys=>Promise.all(keys.filter(k=>!ALL.includes(k)).map(k=>caches.delete(k))))
+    .then(()=>self.clients.claim())
   );
 });
 
-// ── HELPER: trim cache ────────────────────────────────────────
-async function trimCache(cacheName, maxEntries) {
-  const cache = await caches.open(cacheName);
-  const keys  = await cache.keys();
-  if (keys.length > maxEntries) {
-    await Promise.all(keys.slice(0, keys.length - maxEntries).map(k => cache.delete(k)));
-  }
+async function trim(name,max){
+  const c=await caches.open(name),k=await c.keys();
+  if(k.length>max)await Promise.all(k.slice(0,k.length-max).map(r=>c.delete(r)));
 }
 
-// ── FETCH ────────────────────────────────────────────────────
-self.addEventListener('fetch', e => {
-  const { request } = e;
-  const url = new URL(request.url);
-
-  // Only handle same-origin + GET
-  if (request.method !== 'GET' || url.origin !== location.origin) return;
-
-  const path = url.pathname;
-
-  // ── JSON data: Network-First (fresh data critical for jobs site)
-  if (path.endsWith('.json')) {
-    e.respondWith(networkFirst(request, CACHE_JSON, JSON_MAX, 3000));
-    return;
+// Cache-first with background refresh
+async function cacheFirst(req,cache,max){
+  const hit=await caches.match(req);
+  if(hit){
+    // Background refresh for JSON
+    fetch(req).then(r=>{if(r.ok){caches.open(cache).then(c=>{c.put(req,r);trim(cache,max)})}}).catch(()=>{});
+    return hit;
   }
+  try{
+    const res=await fetch(req);
+    if(res.ok){const c=await caches.open(cache);c.put(req,res.clone());trim(cache,max);}
+    return res;
+  }catch{return new Response('{}',{status:200,headers:{'Content-Type':'application/json'}});}
+}
 
-  // ── Static assets: Cache-First (immutable with versioning)
-  if (/\.(css|js|woff2?|ttf|eot|ico)$/.test(path)) {
-    e.respondWith(cacheFirst(request, CACHE_STATIC, STATIC_MAX));
-    return;
-  }
+// Stale-while-revalidate
+async function swr(req,cache,max){
+  const c=await caches.open(cache),hit=await c.match(req);
+  const fresh=fetch(req).then(r=>{if(r.ok){c.put(req,r.clone());trim(cache,max);}return r;}).catch(()=>null);
+  return hit||fresh;
+}
 
-  // ── Images: Cache-First with long TTL
-  if (/\.(webp|png|jpg|jpeg|gif|svg|avif)$/.test(path)) {
-    e.respondWith(cacheFirst(request, CACHE_IMAGES, IMAGES_MAX));
-    return;
-  }
+self.addEventListener('fetch',e=>{
+  const{request:req}=e;
+  if(req.method!=='GET')return;
+  const url=new URL(req.url);
+  if(url.origin!==location.origin)return;
+  const p=url.pathname;
 
-  // ── HTML: Stale-While-Revalidate (fast + fresh)
-  if (path.endsWith('.html') || path === '/' || !path.includes('.')) {
-    e.respondWith(staleWhileRevalidate(request, CACHE_PAGES, PAGES_MAX));
-    return;
-  }
+  // JSON: cache-first (fresh from server if cached, else fetch)
+  if(p.endsWith('.json'))return e.respondWith(cacheFirst(req,CJ,30));
+  // Images
+  if(/\.(webp|png|jpg|jpeg|gif|svg|avif|ico)$/.test(p))return e.respondWith(cacheFirst(req,CI,100));
+  // Static assets (immutable)
+  if(/\.(css|js|woff2?)$/.test(p))return e.respondWith(cacheFirst(req,CS,80));
+  // HTML pages
+  if(p.endsWith('.html')||p==='/'||!p.includes('.'))return e.respondWith(swr(req,CP,50));
 });
 
-// ── Strategy: Cache-First ─────────────────────────────────────
-async function cacheFirst(req, cacheName, maxEntries) {
-  const cached = await caches.match(req);
-  if (cached) return cached;
-  try {
-    const res = await fetch(req);
-    if (res.ok) {
-      const cache = await caches.open(cacheName);
-      cache.put(req, res.clone());
-      trimCache(cacheName, maxEntries);
-    }
-    return res;
-  } catch {
-    return caches.match(OFFLINE_URL) || new Response('Offline', {status: 503});
-  }
-}
-
-// ── Strategy: Network-First ───────────────────────────────────
-async function networkFirst(req, cacheName, maxEntries, timeoutMs) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const res = await fetch(req, {signal: controller.signal});
-    clearTimeout(timer);
-    if (res.ok) {
-      const cache = await caches.open(cacheName);
-      cache.put(req, res.clone());
-      trimCache(cacheName, maxEntries);
-    }
-    return res;
-  } catch {
-    clearTimeout(timer);
-    const cached = await caches.match(req);
-    return cached || new Response('{}', {status: 200, headers: {'Content-Type': 'application/json'}});
-  }
-}
-
-// ── Strategy: Stale-While-Revalidate ─────────────────────────
-async function staleWhileRevalidate(req, cacheName, maxEntries) {
-  const cache  = await caches.open(cacheName);
-  const cached = await cache.match(req);
-  const fetchPromise = fetch(req).then(res => {
-    if (res.ok) {
-      cache.put(req, res.clone());
-      trimCache(cacheName, maxEntries);
-    }
-    return res;
-  }).catch(() => null);
-  return cached || fetchPromise || caches.match(OFFLINE_URL);
-}
-
-// ── SKIP WAITING message ─────────────────────────────────────
-self.addEventListener('message', e => {
-  if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
-});
+self.addEventListener('message',e=>{if(e.data?.type==='SKIP_WAITING')self.skipWaiting();});
