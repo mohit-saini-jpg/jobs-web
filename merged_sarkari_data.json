@@ -1,9 +1,9 @@
 {
-  "scraped_at": "2026-05-22 13:25:33",
-  "total": 178,
+  "scraped_at": "2026-05-22 14:18:06",
+  "total": 176,
   "summary": {
     "sarkariresultshine_offline_jobs_top30": 25,
-    "sarkariresultshine_latest_jobs_top100": 62,
+    "sarkariresultshine_latest_jobs_top100": 61,
     "sarkariresult_categories": {
       "SR_Latest_Jobs": 24,
       "SR_Result": 20,
@@ -12,17 +12,17 @@
       "SR_Answer_Key": 3
     },
     "sarkariresult_total": 75,
-    "sarkarinetwork_upcoming_jobs": 16
+    "sarkarinetwork_upcoming_jobs": 15
   },
   "category_counts": {
     "OFFLINE_FORM": 25,
-    "LATEST_JOBS NEW": 62,
+    "LATEST_JOBS NEW": 61,
     "SR_Latest_Jobs": 24,
     "SR_Result": 20,
     "SR_Admit_Card": 23,
     "SR_Admission": 5,
     "SR_Answer_Key": 3,
-    "UPCOMING_JOBS": 16
+    "UPCOMING_JOBS": 15
   },
   "jobs": [
     {
@@ -1094,7 +1094,7 @@
           "eligibility": "Degree in Law (LLB), Enrolled as an Advocate with Bar Council."
         }
       ],
-      "sequence": 2
+      "sequence": 3
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1134,7 +1134,7 @@
           "eligibility": "10th Passed (55% Marks), ITI / Apprenticeship / Experience."
         }
       ],
-      "sequence": 6
+      "sequence": 7
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1168,7 +1168,7 @@
       "official_website_link": "",
       "jobs_info": "",
       "vacancy_details": [],
-      "sequence": 7
+      "sequence": 8
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1233,7 +1233,7 @@
           "eligibility": "10th Pass + ITI Electrician"
         }
       ],
-      "sequence": 8
+      "sequence": 9
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -3473,46 +3473,6 @@
       "sequence": 90
     },
     {
-      "category": "LATEST_JOBS NEW",
-      "title": "Yamunanagar Safai Karamchari Recruitment 2026 -",
-      "listing_date": "",
-      "organization": "Office of Block Development & Panchayat Department",
-      "post_name": "Safai Karamchari",
-      "total_vacancy": "",
-      "salary_pay_scale": "16,000/- INR Per Month (Expected)",
-      "apply_mode": "Offline",
-      "job_location": "Haryana",
-      "important_dates": {
-        "application_start": "08-05-2026",
-        "last_date": "21-05-2026",
-        "exam_date": "",
-        "interview_date": ""
-      },
-      "application_fees": {
-        "general_obc_ews": "",
-        "sc_st": "00",
-        "female": ""
-      },
-      "minimum_age": "18",
-      "maximum_age": "55",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: Given Link below Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Block Development and Panchayat Officer (BDPO) Pratap Nagar, Yamunanagar",
-      "form_pdf_free_link": "",
-      "application_form_pdf_link": "",
-      "form_pdf_link": "https://drive.google.com/file/d/1TvZXdbSssgV9UC-A7yBQFhBamyhR4jqU/view?usp=drive_link",
-      "apply_online_link": "",
-      "official_notification_pdf_link": "",
-      "official_website_link": "",
-      "jobs_info": "",
-      "vacancy_details": [
-        {
-          "post_name": "Saafai Karamchari",
-          "total": "",
-          "eligibility": "5th"
-        }
-      ],
-      "sequence": 91
-    },
-    {
       "category": "SR_Latest_Jobs",
       "title": "SSC Combined Graduate Level CGL Online Form 2026 for 12256 Post",
       "post_date": "2026-05-22",
@@ -4023,10 +3983,6 @@
             "https://upanganwadibharti.in/workernew/users/registration.php",
             "https://upanganwadibharti.in/workernew/users/login.php"
           ]
-        },
-        {
-          "title": "How to Fill Form (Video Hindi)",
-          "links": "https://youtu.be/xryTOzUU0ZI"
         },
         {
           "title": "Download Notification",
@@ -5013,10 +4969,6 @@
           "links": "https://ibpsreg.ibps.in/sbiaapr26/"
         },
         {
-          "title": "How to Fill Form (Video Hindi)",
-          "links": "https://youtu.be/7Yb_EsuW6K0"
-        },
-        {
           "title": "Official Website",
           "links": "https://sbi.bank.in/web/careers/current-openings"
         }
@@ -5237,10 +5189,6 @@
             "https://www.apprenticeshipindia.gov.in/apprenticeship/opportunity",
             "https://nats.education.gov.in/student_type.php"
           ]
-        },
-        {
-          "title": "How to Fill Form (Video Hindi)",
-          "links": "https://youtu.be/Ld0G7fE_pfU"
         },
         {
           "title": "Official Website",
@@ -5612,10 +5560,6 @@
           "links": "https://www.rrbapply.gov.in/#/auth/home"
         },
         {
-          "title": "How to Fill Form (Video Hindi)",
-          "links": "https://youtu.be/IwWzI22eeKU"
-        },
-        {
           "title": "Official Website",
           "links": "https://indianrailways.gov.in/"
         }
@@ -5811,10 +5755,6 @@
         {
           "title": "Apply Online",
           "links": "https://examinationservices.nic.in/ExamSysCTET/root/Home.aspx?enc=Ei4cajBkK1gZSfgr53ImFfEytN2I3LFrLvNrMJcZJNmO/XE3+xNuu3rFt9agQvt0"
-        },
-        {
-          "title": "How to Fill Form (Video Hindi)",
-          "links": "https://youtu.be/LlB4xGSsqDY"
         },
         {
           "title": "Download CTET September 2026 Information Brochure",
@@ -6559,10 +6499,6 @@
           ]
         },
         {
-          "title": "How to Check Answer Key (Video Hindi)",
-          "links": "https://youtu.be/uyJyJ-LV8TQ"
-        },
-        {
           "title": "Download Answer Key Notice (Technician Grade I)",
           "links": "https://www.rrbranchi.gov.in/upload/files/pdf/05_21_18pme8a2ceb861269ba9bf78279468fba6ca.pdf"
         },
@@ -6936,10 +6872,6 @@
         {
           "title": "Download Admit Card",
           "links": "https://uppsc.up.nic.in/CandidatePages/AdmitCard/AdmitCard_New.aspx?/8bFzGHgwwTFMai3JQ+K3Bs0O6859Z9AS8bETbXQJjhNiKVH/IJoMSChX5fc6nRwZEYvGPZM/Ea1Yc5hVcTDZjyzLb54Rq2kqdU+1V1eRmoSs9n/VpovVyKHOVKSXbKVdXUc7gag5usvluv/8deN2Q=="
-        },
-        {
-          "title": "How to Check Result (Video Hindi)",
-          "links": "https://youtu.be/JKpQ8xxpdmw"
         },
         {
           "title": "Download Answer Key",
@@ -8156,10 +8088,6 @@
           "links": "https://app.indiapost.gov.in/gdscandidate"
         },
         {
-          "title": "How to Fill Form (Video Hindi)",
-          "links": "https://youtu.be/Kvv9QMqFdCo"
-        },
-        {
           "title": "GDS Official Website",
           "links": "https://indiapostgdsonline.gov.in/"
         }
@@ -8741,10 +8669,6 @@
         {
           "title": "Download Admit Card",
           "links": "https://upsconline.nic.in/login"
-        },
-        {
-          "title": "How to Download Admit Card (Video Hindi)",
-          "links": "https://youtu.be/StW2OG0dS1M"
         },
         {
           "title": "Apply Online",
@@ -9379,10 +9303,6 @@
           "links": "https://imu.cbexams.com/IMU_AxDSite/Mainsite"
         },
         {
-          "title": "How to Fill Form (Video Hindi)",
-          "links": "https://youtu.be/OJrxp8ucmX4"
-        },
-        {
           "title": "Download Notification",
           "links": "https://www.imu.edu.in/imunew/uploads/files/admissions/2026/Prospectus_2026-27_06022026.pdf"
         },
@@ -9486,10 +9406,6 @@
           "links": "https://upsssc.gov.in/upssscadmitcard/admitCard.aspx?ID=MAIN"
         },
         {
-          "title": "How to Download Admit Card (Video Hindi)",
-          "links": "https://youtu.be/G4TRSt-3-Rs"
-        },
-        {
           "title": "Download Admit Card Notice",
           "links": "https://upsssc.gov.in//ViewPdf.aspx?56uRvjplxwbkhB8hag3YBQsDfAwJC2Ro/BeFjKZgsZk="
         },
@@ -9501,10 +9417,6 @@
           ]
         },
         {
-          "title": "How to Check Exam City (Video Hindi)",
-          "links": "https://youtu.be/sQBNTJlGQls"
-        },
-        {
           "title": "For Pay Mains Exam Fee",
           "links": "https://upsssc.gov.in/Interface/Authentication.aspx?NO/WElvPxNJJ/MszfbTUoiya6+j+60nloRK/wJ+Hma/peo+LypGARxykN88mZ0GWnpIBcPHGPx6XKnMmy76dwCXeE3KYnOjOH3riGr1fN9P9B2Efupj9zX0CKJSMG6ToGn9MH0ABA3Sd9Ni7A20mRA=="
         },
@@ -9514,10 +9426,6 @@
             "https://upsssc.gov.in/Online_App/Results.aspx?ID=89&Result_Type=P&Exam_Code=3&Advt_Code=304&Dept_Code=556&Post_Code=1&OnlyIntview=No",
             "https://upsssc.gov.in/ResultsDire.aspx"
           ]
-        },
-        {
-          "title": "How to Check Result (Video Hindi)",
-          "links": "https://youtu.be/hjESrVQ1B-E"
         },
         {
           "title": "For Correction / Edit Form",
@@ -9610,10 +9518,6 @@
         {
           "title": "Check Advanced Exam City Details",
           "links": "https://examinationservices.nic.in/AdmitCard/AuthForCity/Login?enc=DJ8reokIYhe/x0Hlb6GKa5XSzGUPsZIi2LhCU/OXDNg="
-        },
-        {
-          "title": "How to Check Exam City (Video Hindi)",
-          "links": "https://youtu.be/XoHIPLZaNDg"
         },
         {
           "title": "For Correction / Edit Form",
@@ -9746,16 +9650,8 @@
           "links": "https://upsconline.nic.in/login"
         },
         {
-          "title": "How to Download Admit Card (Video Hindi)",
-          "links": "https://youtu.be/LzeiVCq6VEE"
-        },
-        {
           "title": "Apply Online Through OTR",
           "links": "https://upsconline.nic.in/instruction"
-        },
-        {
-          "title": "How to UPSC OTR Registration (Video Hindi)",
-          "links": "https://youtu.be/u8j9kdf6Cvg"
         },
         {
           "title": "Official Website",
@@ -10209,10 +10105,6 @@
         {
           "title": "Apply Online",
           "links": "https://bpsconline.bihar.gov.in/candidate/login"
-        },
-        {
-          "title": "How to BPSC OTR Registration (Video Hindi)",
-          "links": "https://youtu.be/osB86ktoLxo"
         },
         {
           "title": "Download Notification",
@@ -11103,10 +10995,6 @@
           "links": "https://ssc.gov.in/login"
         },
         {
-          "title": "How to Choose Exam Week Preferences (Video Hindi)",
-          "links": "https://youtu.be/bvXfXEr0m40"
-        },
-        {
           "title": "Download Postponed Notice",
           "links": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/notice_17022026.pdf"
         },
@@ -11699,10 +11587,6 @@
           ]
         },
         {
-          "title": "How to Download (Video Hindi)",
-          "links": "https://youtu.be/TfiP5o3GIro"
-        },
-        {
           "title": "Apply Online",
           "links": "https://jeeadv.nic.in/Applicant/"
         },
@@ -11951,10 +11835,6 @@
         {
           "title": "Download Admit Card",
           "links": "https://cdn.digialm.com//EForms/configuredHtml/1258/97829/login.html"
-        },
-        {
-          "title": "How to Download Admit Card",
-          "links": "https://youtu.be/I9aPh6W0MSQ"
         },
         {
           "title": "Download Answer Key February 2025 Exam",
@@ -12734,570 +12614,6 @@
                       {
                         "text": "Click Here",
                         "url": "https://bseh.org.in/home"
-                      }
-                    ]
-                  }
-                ]
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "category": "UPCOMING_JOBS",
-      "title": "UPSSSC Agriculture Tech. Assistant Online Form | Big Update 2026",
-      "slug": "upsssc-agriculture-tech-assistant-online-form-big-update-2026",
-      "important_links": {
-        "official_website": "https://upsssc.gov.in/Default.aspx"
-      },
-      "sections": [
-        {
-          "title": "Overview",
-          "content": [
-            {
-              "type": "paragraph",
-              "text": "UPSSSC Agriculture Technical Assistant Vacancy 2026 : Get complete details about UPSSSC Agriculture Technical Assistant Recruitment 2026, including recruitment updates, total vacancies, important dates, application fees, eligibility criteria, age limit, selection process, salary, syllabus, exam pattern, admit card, answer key, result, and more."
-            },
-            {
-              "type": "table",
-              "rows": [
-                [
-                  {
-                    "text": "Form Mode",
-                    "links": []
-                  },
-                  {
-                    "text": "Job State",
-                    "links": []
-                  },
-                  {
-                    "text": "Total Posts",
-                    "links": []
-                  },
-                  {
-                    "text": "Job Type",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Online Form",
-                    "links": []
-                  },
-                  {
-                    "text": "Uttar Pradesh",
-                    "links": []
-                  },
-                  {
-                    "text": "2759 Posts",
-                    "links": []
-                  },
-                  {
-                    "text": "Permanent",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Uttar Pradesh Subordinate Service Selection Commission (UPSSSC) Agriculture Technical Assistant Recruitment 2026 Advt. No. : 06-Exam/2026 Short Details",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Important Dates",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Notification Out : 24/03/2026 Starting Date : 22/05/2026 Last Date : 11/06/2026 11:59 PM Correction Date : Upto 18/06/2026",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Application Fees",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "For All Candidates : 25/- Payment Mode : Online Mode",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Age Limit Details",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Age Limit : 21-40 Years Age Limit as on : 01/07/2026 The Age Relaxation Extra as per Rules.",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Selection Process",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Shortlisting (PET 2025 Score) Written Examination Medical Examination Document Verification",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Pay Scale Details",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Level-4 : Rs. 25,500-81,100/-",
-                    "links": []
-                  }
-                ]
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Important Dates",
-          "content": [
-            {
-              "type": "list",
-              "items": [
-                "Notification Out : 24/03/2026",
-                "Starting Date : 22/05/2026",
-                "Last Date : 11/06/2026 11:59 PM",
-                "Correction Date : Upto 18/06/2026"
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Application Fees",
-          "content": [
-            {
-              "type": "list",
-              "items": [
-                "For All Candidates : 25/-",
-                "Payment Mode : Online Mode"
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Age Limit Details",
-          "content": [
-            {
-              "type": "list",
-              "items": [
-                "Age Limit : 21-40 Years",
-                "Age Limit as on : 01/07/2026",
-                "The Age Relaxation Extra as per Rules."
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Selection Process",
-          "content": [
-            {
-              "type": "list",
-              "items": [
-                "Shortlisting (PET 2025 Score)",
-                "Written Examination",
-                "Medical Examination",
-                "Document Verification"
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Pay Scale Details",
-          "content": [
-            {
-              "type": "list",
-              "items": [
-                "Level-4 : Rs. 25,500-81,100/-"
-              ]
-            },
-            {
-              "type": "table",
-              "rows": [
-                [
-                  {
-                    "text": "Qualification Details",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Post Name",
-                    "links": []
-                  },
-                  {
-                    "text": "Qualification",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Agriculture Technical Assistant (AGTA)",
-                    "links": []
-                  },
-                  {
-                    "text": "Bachelor’s Degree in Agriculture or related fields such as Agriculture Science / Horticulture / Forestry / Agricultural Engineering / Home Science, etc., UP PET 2025 Exam Passed.",
-                    "links": []
-                  }
-                ]
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Qualification Details",
-          "content": [
-            {
-              "type": "paragraph",
-              "text": "Bachelor’s Degree in Agriculture or related fields such as Agriculture Science / Horticulture / Forestry / Agricultural Engineering / Home Science, etc., UP PET 2025 Exam Passed."
-            },
-            {
-              "type": "table",
-              "rows": [
-                [
-                  {
-                    "text": "Category Wise Vacancies",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Gen",
-                    "links": []
-                  },
-                  {
-                    "text": "EWS",
-                    "links": []
-                  },
-                  {
-                    "text": "OBC",
-                    "links": []
-                  },
-                  {
-                    "text": "SC",
-                    "links": []
-                  },
-                  {
-                    "text": "ST",
-                    "links": []
-                  },
-                  {
-                    "text": "Total",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "1692",
-                    "links": []
-                  },
-                  {
-                    "text": "275",
-                    "links": []
-                  },
-                  {
-                    "text": "573",
-                    "links": []
-                  },
-                  {
-                    "text": "213",
-                    "links": []
-                  },
-                  {
-                    "text": "06",
-                    "links": []
-                  },
-                  {
-                    "text": "2759",
-                    "links": []
-                  }
-                ]
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Category Wise Vacancies",
-          "content": [
-            {
-              "type": "paragraph",
-              "text": "1692"
-            },
-            {
-              "type": "paragraph",
-              "text": "275"
-            },
-            {
-              "type": "paragraph",
-              "text": "573"
-            },
-            {
-              "type": "paragraph",
-              "text": "213"
-            },
-            {
-              "type": "paragraph",
-              "text": "06"
-            },
-            {
-              "type": "paragraph",
-              "text": "2759"
-            },
-            {
-              "type": "table",
-              "rows": [
-                [
-                  {
-                    "text": "Written Exam Pattern",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Negative Marking : 1/4th Mark Time Duration : 02 Hours",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Subject",
-                    "links": []
-                  },
-                  {
-                    "text": "Questions",
-                    "links": []
-                  },
-                  {
-                    "text": "Marks",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Crop Science",
-                    "links": []
-                  },
-                  {
-                    "text": "25",
-                    "links": []
-                  },
-                  {
-                    "text": "25",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Biotechnology, Plant Breeding & Crop Physiology",
-                    "links": []
-                  },
-                  {
-                    "text": "10",
-                    "links": []
-                  },
-                  {
-                    "text": "10",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Soil & Water Conservation",
-                    "links": []
-                  },
-                  {
-                    "text": "15",
-                    "links": []
-                  },
-                  {
-                    "text": "15",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Agriculture Extension",
-                    "links": []
-                  },
-                  {
-                    "text": "05",
-                    "links": []
-                  },
-                  {
-                    "text": "05",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Agriculture Economics & Schemes",
-                    "links": []
-                  },
-                  {
-                    "text": "05",
-                    "links": []
-                  },
-                  {
-                    "text": "05",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Dairy & Animal Husbandry",
-                    "links": []
-                  },
-                  {
-                    "text": "05",
-                    "links": []
-                  },
-                  {
-                    "text": "05",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Computer & IT Knowledge",
-                    "links": []
-                  },
-                  {
-                    "text": "15",
-                    "links": []
-                  },
-                  {
-                    "text": "15",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "General Knowledge (UP State)",
-                    "links": []
-                  },
-                  {
-                    "text": "20",
-                    "links": []
-                  },
-                  {
-                    "text": "20",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Grand Total",
-                    "links": []
-                  },
-                  {
-                    "text": "100",
-                    "links": []
-                  },
-                  {
-                    "text": "100",
-                    "links": []
-                  }
-                ]
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Written Exam Pattern",
-          "content": [
-            {
-              "type": "paragraph",
-              "text": "Negative Marking : 1/4th Mark"
-            },
-            {
-              "type": "paragraph",
-              "text": "Time Duration : 02 Hours"
-            },
-            {
-              "type": "table",
-              "rows": [
-                [
-                  {
-                    "text": "Important Related Links",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Source Title",
-                    "links": []
-                  },
-                  {
-                    "text": "Issue Date",
-                    "links": []
-                  },
-                  {
-                    "text": "Source Link",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Fill Online Form",
-                    "links": []
-                  },
-                  {
-                    "text": "22/05/2026",
-                    "links": []
-                  },
-                  {
-                    "text": "Coming Soon",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Full Notification",
-                    "links": []
-                  },
-                  {
-                    "text": "24/03/2026",
-                    "links": []
-                  },
-                  {
-                    "text": "Download",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Official Website",
-                    "links": []
-                  },
-                  {
-                    "text": "24/03/2026",
-                    "links": []
-                  },
-                  {
-                    "text": "Visit Now",
-                    "links": [
-                      {
-                        "text": "Visit Now",
-                        "url": "https://upsssc.gov.in/Default.aspx"
                       }
                     ]
                   }
