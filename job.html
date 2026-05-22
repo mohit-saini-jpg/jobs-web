@@ -30,7 +30,13 @@
   <!-- ── Favicon & assets ── -->
   <link rel="icon" type="image/x-icon" href="/image.ico" />
   <link rel="stylesheet" href="/styles.css" />
-  <link rel="stylesheet" href="/fonts/fa/all.min.css" />
+  <!-- Font Awesome: async load (saves ~100 KiB render-blocking) -->
+  <script>
+    (function(){var l=document.createElement("link");l.rel="preload";l.as="style";
+    l.href="/fonts/fa/all.min.css";l.onload=function(){this.onload=null;this.rel="stylesheet"};
+    document.head.appendChild(l);})();
+  </script>
+  <noscript><link rel="stylesheet" href="/fonts/fa/all.min.css"></noscript>
 
   <!-- ── Open Graph ── -->
   <meta property="og:type" content="article" />
