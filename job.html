@@ -1145,7 +1145,7 @@
       const _feePayMode = (row && row.payMode) ? row.payMode : 'Online';
       if (feeCard && _feeItems.length > 0) {
         feeCard.style.display = '';
-        const isFree = (v) => /nil|0|free/i.test(String(v));
+        const isFree = (v) => /^(free|nil|₹\s*0|rs\.?\s*0\/?-?|0\/-?)$/i.test(String(v).trim()) || /free\s*\/\s*₹\s*0/i.test(String(v));
         const _nonPortal = _feeItems.filter(([l]) => !/portal/i.test(l));
         const _portal    = _feeItems.filter(([l]) => /portal/i.test(l));
         const _rows      = [..._nonPortal, ..._portal];
@@ -2021,8 +2021,8 @@
           out.push(['Portal Charges', pm[1].trim().replace(/\/?-?$/, '/-')]);
         }
 
-        /* Step 3: Free/Nil/No fee */
-        if (!out.length && /nil|free|no\s*fee|zero|0\/\-/i.test(s)) {
+        /* Step 3: Free/Nil/No fee — only if ENTIRE string is about free fee */
+        if (!out.length && /^\s*(nil|free|no\s*fee|zero|₹\s*0|rs\.?\s*0|0\/\-)/i.test(s)) {
           out.push(['All Category', 'Free / ₹0']);
         }
 
