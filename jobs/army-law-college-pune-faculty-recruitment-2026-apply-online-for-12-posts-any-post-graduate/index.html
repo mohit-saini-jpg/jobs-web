@@ -71,62 +71,18 @@
     </div>
   </noscript>
 
-  <!-- Loading indicator while job.html initialises -->
-  <div id="__tsj_loader" style="display:flex;align-items:center;justify-content:center;
-       min-height:100vh;background:#f0f4f8;font-family:sans-serif;">
-    <div style="text-align:center">
-      <div style="width:40px;height:40px;border:4px solid #e2e8f0;border-top-color:#1d4ed8;
-           border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px"></div>
-      <p style="color:#374151;font-weight:600;margin:0">Loading job details…</p>
-      <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
-    </div>
-  </div>
-
   <!--
-    Load job.html's scripts — they read window.__TSJ_SLUG and render
-    the full interactive job page, replacing the loader above.
+    Instantly load the full interactive job page.
+    Google already has all SEO data from the static HEAD above.
+    Users get the full job.html experience via instant redirect.
   -->
   <script>
   (function() {
-    // job.html inline scripts expect these sessionStorage values
+    // Save slug so job.html IIFE picks it up correctly
     try { sessionStorage.setItem('__tsj_slug', window.__TSJ_SLUG); } catch(_) {}
-
-    // Dynamically load job.html body content via fetch and inject
-    fetch('/job.html')
-      .then(function(r) { return r.text(); })
-      .then(function(html) {
-        // Extract only the <body> content from job.html to avoid duplicate <head>
-        var bodyMatch = html.match(/<body[^>]*>([\s\S]*)<\/body>/i);
-        if (bodyMatch) {
-          var loader = document.getElementById('__tsj_loader');
-          if (loader) loader.remove();
-          // Create a container and inject body HTML
-          var wrapper = document.createElement('div');
-          wrapper.innerHTML = bodyMatch[1];
-          // Move all children to document body
-          while (wrapper.firstChild) {
-            document.body.appendChild(wrapper.firstChild);
-          }
-          // Re-execute inline scripts from job.html body
-          Array.from(document.body.querySelectorAll('script')).forEach(function(oldScript) {
-            if (oldScript.hasAttribute('data-executed')) return;
-            var s = document.createElement('script');
-            if (oldScript.src) {
-              s.src = oldScript.src;
-              if (oldScript.defer) s.defer = true;
-              if (oldScript.async) s.async = true;
-            } else {
-              s.textContent = oldScript.textContent;
-            }
-            oldScript.setAttribute('data-executed', '1');
-            oldScript.parentNode.replaceChild(s, oldScript);
-          });
-        }
-      })
-      .catch(function(e) {
-        // Fallback: full page redirect to job.html with slug param
-        window.location.href = '/job.html?slug=' + encodeURIComponent(window.__TSJ_SLUG);
-      });
+    // Instant seamless redirect — URL stays as /jobs/<slug>/ (replaceState already done above)
+    // job.html reads __TSJ_SLUG from sessionStorage and renders the full page
+    window.location.replace('/job.html?slug=' + encodeURIComponent(window.__TSJ_SLUG));
   })();
   </script>
 </body>
