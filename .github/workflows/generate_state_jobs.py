@@ -1,18 +1,14 @@
 """
 generate_state_jobs.py — state-jobs-data.json ko per-state files mein split karta hai
 ========================================================================================
-Jab bhi state-jobs-data.json push ho → ye script:
-  1. state/data/<state-id>.json — har state ke liye alag file (e.g. state/data/delhi.json)
-  2. state-jobs-index.json       — fast index (state-id → state-name, item count, items[])
-  3. state-jobs-mini.json        — ultra-light version (sirf state IDs + titles + counts)
-  4. Purani stale files          — auto delete
-
-Performance impact:
-  Before: state-jobs.html → 2.2 MB state-jobs-data.json fetch karta tha (ALWAYS)
-  After:  state-jobs.html → 3-5 KB state-jobs-mini.json + sirf 1 state ki file (~15-80 KB)
+Output:
+  state/data/<state-id>.json       — state-jobs.html ke liye (direct fetch path)
+  state/<state-id>/data/<id>.json  — GitHub folder structure ke andar bhi
+  state-jobs-mini.json             — 3KB lightweight list
+  state-jobs-index.json            — full index
 """
 
-import json, re, os
+import json, os
 
 SRC        = "state-jobs-data.json"
 DEST       = "state/data"
@@ -25,11 +21,10 @@ with open(SRC, encoding="utf-8") as f:
 
 sections = data.get("sections", [])
 if not isinstance(sections, list):
-    print("ERROR: 'sections' array not found in state-jobs-data.json")
+    print("ERROR: 'sections' array not found")
     exit(1)
 
-print(f"Total sections (states): {len(sections)}")
-
+print(f"Total sections: {len(sections)}")
 os.makedirs(DEST, exist_ok=True)
 existing_files = set(os.listdir(DEST))
 
@@ -40,49 +35,52 @@ written    = 0
 total_jobs = 0
 
 for section in sections:
-    state_id    = (section.get("id", "") or "").strip()
-    state_name  = (section.get("state", "") or "").strip()
+    state_id      = (section.get("id", "") or "").strip()
+    state_name    = (section.get("state", "") or "").strip()
     section_title = (section.get("title", "") or state_name).strip()
-    items       = section.get("items", []) or []
+    items         = section.get("items", []) or []
 
     if not state_id or not state_name:
-        print(f"  WARN: Section missing id/state — skipping: {section}")
         continue
 
-    fname = f"{state_id}.json"
-
-    # Individual state file — full data
+    fname      = f"{state_id}.json"
     state_data = {
         "id":    state_id,
         "state": state_name,
         "title": section_title,
         "items": items,
     }
-    with open(os.path.join(DEST, fname), "w", encoding="utf-8") as f:
-        json.dump(state_data, f, ensure_ascii=False, separators=(",", ":"))
+    json_bytes = json.dumps(state_data, ensure_ascii=False, separators=(",", ":"))
 
-    # Index entry — full items (for state-jobs.html lazy load)
+    # Path 1: state/data/<id>.json  (state-jobs.html fetch karta hai)
+    with open(os.path.join(DEST, fname), "w", encoding="utf-8") as f:
+        f.write(json_bytes)
+
+    # Path 2: state/<id>/data/<id>.json  (GitHub folder structure)
+    sub_data_dir = os.path.join("state", state_id, "data")
+    os.makedirs(sub_data_dir, exist_ok=True)
+    with open(os.path.join(sub_data_dir, fname), "w", encoding="utf-8") as f:
+        f.write(json_bytes)
+
+    print(f"  {state_id}: {len(items)} jobs → state/data/ + state/{state_id}/data/")
+
     index[state_id] = {
         "state": state_name,
         "title": section_title,
         "count": len(items),
-        "items": items,  # Full items for API-style access
+        "items": items,
     }
-
-    # Mini entry — sirf metadata (homepage / dropdown ke liye)
     mini_items.append({
         "id":    state_id,
         "state": state_name,
         "title": section_title,
         "count": len(items),
     })
-
     new_files.add(fname)
     written   += 1
     total_jobs += len(items)
-    print(f"  {state_id}: {len(items)} jobs")
 
-# Stale files delete karo
+# Stale cleanup
 stale = existing_files - new_files
 for fname in stale:
     try:
@@ -90,18 +88,14 @@ for fname in stale:
     except Exception:
         pass
 
-# Full index write (state-jobs-index.json) — each state's full items
 with open(INDEX_FILE, "w", encoding="utf-8") as f:
     json.dump(index, f, ensure_ascii=False, separators=(",", ":"))
 
-# Mini JSON write — sirf state list with counts (state-jobs-mini.json)
 mini_data = {"sections": mini_items, "total": total_jobs}
 with open(MINI_FILE, "w", encoding="utf-8") as f:
     json.dump(mini_data, f, ensure_ascii=False, separators=(",", ":"))
 
 print(f"\nDone!")
-print(f"  Written : {written} state files → {DEST}/")
+print(f"  Written : {written} state files")
 print(f"  Deleted : {len(stale)} stale files")
 print(f"  Total jobs: {total_jobs}")
-print(f"  Index   : {INDEX_FILE}")
-print(f"  Mini    : {MINI_FILE}")
