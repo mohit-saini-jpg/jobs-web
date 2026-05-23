@@ -1,0 +1,57 @@
+# robots.txt — Top Sarkari Jobs
+# ==============================
+# Last updated: 2026-05-19
+
+User-agent: *
+Allow: /
+
+# ── Block dirty/dynamic URLs from being crawled ──
+# (They 301-redirect to clean URLs anyway, but blocking prevents wasted crawl budget)
+Disallow: /view.html?url=
+Disallow: /view.html?section=
+Disallow: /job.html?slug=
+Disallow: /category.html?group=
+Disallow: /search.html?q=
+
+# ── Block non-content pages ──
+Disallow: /404.html
+Disallow: /.github/
+Disallow: /.gstack/
+Disallow: /node_modules/
+
+# ── Block duplicate -latest-notifications URLs (duplicate content fix) ──
+Disallow: /jobs/*-latest-notifications/
+
+# ── Allow all clean-URL pages explicitly ──
+Allow: /section/
+Allow: /jobs/
+Allow: /category/
+Allow: /state-jobs/
+Allow: /search/
+
+# ── Sitemap declaration ──
+Sitemap: https://www.topsarkarijobs.com/sitemap-index.xml
+
+# ── Specific bot directives ──
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /image.png
+Allow: /image.webp
+Allow: /*.png
+Allow: /*.jpg
+Allow: /*.webp
+Allow: /*.ico
+
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Crawl-delay: 10
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /

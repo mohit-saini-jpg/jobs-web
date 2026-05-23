@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Offline – Top Sarkari Jobs</title>
+  <meta name="robots" content="noindex"/>
+  <link rel="manifest" href="/manifest.json"/>
+  <meta name="theme-color" content="#0d2257"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { height: 100%; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(160deg, #0a1a4a 0%, #0d2257 60%, #1a3a8f 100%);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+    }
+    .container { max-width: 400px; width: 100%; }
+
+    .icon-wrap {
+      width: 96px; height: 96px; border-radius: 22px;
+      background: rgba(255,255,255,0.1);
+      border: 2px solid rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 48px; margin: 0 auto 24px;
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    h1 { font-size: 26px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.5px; }
+    p { font-size: 15px; color: rgba(255,255,255,0.7); line-height: 1.6; margin-bottom: 28px; }
+
+    .btn-primary {
+      display: inline-block; padding: 14px 32px;
+      background: linear-gradient(135deg, #f5a623 0%, #e8920f 100%);
+      color: #0d2257; border: none; border-radius: 50px;
+      font-size: 15px; font-weight: 800; cursor: pointer;
+      box-shadow: 0 4px 16px rgba(245,166,35,0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+      margin-bottom: 12px;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(245,166,35,0.5); }
+    .btn-primary:active { transform: scale(0.97); }
+
+    .status {
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px; font-size: 13px; color: rgba(255,255,255,0.5);
+      margin-bottom: 24px;
+    }
+    .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #e74c3c;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+    .dot.online { background: #2ecc71; animation: none; }
+
+    .cached-section {
+      margin-top: 20px; text-align: left;
+      background: rgba(255,255,255,0.07);
+      border-radius: 16px; padding: 16px;
+    }
+    .cached-section h3 {
+      font-size: 13px; text-transform: uppercase; letter-spacing: 1px;
+      color: rgba(255,255,255,0.5); margin-bottom: 12px;
+    }
+    .cached-link {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.85); text-decoration: none;
+      font-size: 14px; transition: color 0.2s;
+    }
+    .cached-link:last-child { border-bottom: none; }
+    .cached-link:hover { color: #f5a623; }
+    .cached-link::before { content: '📄'; font-size: 16px; }
+
+    .tips { margin-top: 20px; font-size: 12px; color: rgba(255,255,255,0.4); line-height: 1.8; }
+  </style>
+
+  <!-- ══ PWA INSTALL SYSTEM v4.0 ══════════════════════════════════ -->
+  <link rel="manifest" href="/manifest.json"/>
+  <meta name="theme-color" content="#0d2257" media="(prefers-color-scheme: light)"/>
+  <meta name="theme-color" content="#0a1a4a" media="(prefers-color-scheme: dark)"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="TopSarkariJobs"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="application-name" content="Top Sarkari Jobs"/>
+  <meta name="msapplication-TileColor" content="#0d2257"/>
+  <meta name="msapplication-TileImage" content="/icons/icon-144x144.png"/>
+  <meta name="msapplication-tap-highlight" content="no"/>
+  <link rel="apple-touch-icon" href="/icons/icon-180x180.png"/>
+  <link rel="apple-touch-icon" sizes="57x57"   href="/icons/apple-touch-icon-57x57.png"/>
+  <link rel="apple-touch-icon" sizes="60x60"   href="/icons/apple-touch-icon-60x60.png"/>
+  <link rel="apple-touch-icon" sizes="72x72"   href="/icons/apple-touch-icon-72x72.png"/>
+  <link rel="apple-touch-icon" sizes="76x76"   href="/icons/apple-touch-icon-76x76.png"/>
+  <link rel="apple-touch-icon" sizes="114x114" href="/icons/apple-touch-icon-114x114.png"/>
+  <link rel="apple-touch-icon" sizes="120x120" href="/icons/apple-touch-icon-120x120.png"/>
+  <link rel="apple-touch-icon" sizes="144x144" href="/icons/apple-touch-icon-144x144.png"/>
+  <link rel="apple-touch-icon" sizes="152x152" href="/icons/apple-touch-icon-152x152.png"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon-180x180.png"/>
+  <link rel="apple-touch-startup-image" media="(device-width:430px)and(device-height:932px)and(-webkit-device-pixel-ratio:3)" href="/splash/splash-1290x2796.png"/>
+  <link rel="apple-touch-startup-image" media="(device-width:393px)and(device-height:852px)and(-webkit-device-pixel-ratio:3)" href="/splash/splash-1179x2556.png"/>
+  <link rel="apple-touch-startup-image" media="(device-width:390px)and(device-height:844px)and(-webkit-device-pixel-ratio:3)" href="/splash/splash-1170x2532.png"/>
+  <link rel="apple-touch-startup-image" media="(device-width:375px)and(device-height:812px)and(-webkit-device-pixel-ratio:3)" href="/splash/splash-1125x2436.png"/>
+  <link rel="apple-touch-startup-image" media="(device-width:414px)and(device-height:896px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-828x1792.png"/>
+  <link rel="apple-touch-startup-image" media="(device-width:375px)and(device-height:667px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-750x1334.png"/>
+  <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
+  <script src="/pwa-install.js?v=6.0" defer></script>
+  <!-- ══ END PWA ════════════════════════════════════════════════════ -->
+</head>
+<body>
+  <div class="container">
+    <div class="icon-wrap">📡</div>
+    <h1>You're Offline</h1>
+
+    <div class="status">
+      <div class="dot" id="status-dot"></div>
+      <span id="status-text">No internet connection</span>
+    </div>
+
+    <p>
+      Don't worry! Previously visited pages are available.<br/>
+      Check your connection and try refreshing.
+    </p>
+
+    <button class="btn-primary" onclick="tryReload()">
+      🔄 Try Again
+    </button>
+
+    <div id="cached-pages" style="display:none" class="cached-section">
+      <h3>📚 Available Offline</h3>
+      <div id="cached-list"></div>
+    </div>
+
+    <div class="tips">
+      💡 Install our app for a better offline experience<br/>
+      — works like a native app on your device!
+    </div>
+  </div>
+
+  <script>
+    // Check connection status
+    function updateStatus() {
+      const dot  = document.getElementById('status-dot');
+      const text = document.getElementById('status-text');
+      if (navigator.onLine) {
+        dot.className = 'dot online';
+        text.textContent = 'Connection restored! Reloading…';
+        setTimeout(() => { window.location.href = document.referrer || '/'; }, 1500);
+      }
+    }
+
+    window.addEventListener('online', updateStatus);
+    updateStatus();
+
+    function tryReload() {
+      if (navigator.onLine) {
+        window.location.href = document.referrer || '/';
+      } else {
+        document.getElementById('status-text').textContent = 'Still offline. Please check your Wi-Fi or mobile data.';
+        setTimeout(() => {
+          document.getElementById('status-text').textContent = 'No internet connection';
+        }, 3000);
+      }
+    }
+
+    // Show cached pages from service worker
+    if ('caches' in window) {
+      caches.keys().then(function(names) {
+        const pageCacheName = names.find(n => n.includes('tsj-pages'));
+        if (!pageCacheName) return;
+        return caches.open(pageCacheName).then(c => c.keys());
+      }).then(function(keys) {
+        if (!keys || !keys.length) return;
+
+        const container = document.getElementById('cached-pages');
+        const list      = document.getElementById('cached-list');
+        const labels = {
+          '/': '🏠 Home – Top Sarkari Jobs',
+          '/index.html': '🏠 Home – Top Sarkari Jobs',
+          '/result.html': '📊 Results 2026',
+          '/admit-card.html': '🎫 Admit Cards',
+          '/search.html': '🔍 Search Jobs',
+          '/category.html': '📁 Job Categories',
+          '/about.html': 'ℹ️ About Us',
+          '/contact.html': '📞 Contact',
+        };
+
+        const links = keys
+          .map(k => k.url.replace(location.origin, ''))
+          .filter(path => !path.includes('?') && path !== location.pathname)
+          .slice(0, 8)
+          .map(path => {
+            const label = labels[path] || path;
+            return `<a class="cached-link" href="${path}">${label}</a>`;
+          });
+
+        if (links.length) {
+          list.innerHTML = links.join('');
+          container.style.display = 'block';
+        }
+      }).catch(() => {});
+    }
+  </script>
+</body>
+</html>

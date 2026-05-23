@@ -1,0 +1,276 @@
+{
+  "image": [
+    {
+      "name": "Photo Background Remove",
+      "url": "https://www.photoroom.com/tools/background-remover",
+      "icon": "fas fa-eraser"
+    },
+    {
+      "name": "Image Resizer",
+      "url": "https://image.pi7.org/resize-image-pixel",
+      "icon": "fas fa-compress"
+    },
+     {
+      "name": "Add Name & Date to Photos ",
+      "url": "https://image.pi7.org/add-name-and-date-on-photo",
+      "icon": "fas fa-id-card"
+    },
+    {
+      "name": "Photo-Signature-Joiner",
+      "url": "https://image.pi7.org/merge-photo-and-signature",
+      "icon": "fas fa-id-card"
+    },
+    {
+      "name": "Image Compress According Size in KB",
+      "url": "https://image.pi7.org/reduce-image-size-in-kb",
+      "icon": "fas fa-compress"
+    },
+    {
+      "name": "Image to 50KB",
+      "url": "https://image.pi7.org/compress-image-to-50kb",
+      "icon": "fas fa-compress"
+    },
+    {
+      "name": "Image to 100kb",
+      "url": "https://image.pi7.org/compress-image-to-100kb",
+      "icon": "fas fa-compress"
+    },
+    {
+      "name": "Image to PDF",
+      "url": "https://image.pi7.org/image-to-pdf",
+      "icon": "fas fa-file-pdf"
+    },
+    {
+      "name": "Image Quality Increase",
+      "url": "https://picsart.com/ai-image-enhancer/",
+      "icon": "fas fa-magic"
+    },
+    {
+      "name": "Passport Size Photo",
+      "url": "https://image.pi7.org/passport-size-photo",
+      "icon": "fas fa-id-card"
+    },
+    {
+      "name": "6x4 Size Image",
+      "url": "https://image.pi7.org/resize-image-to-4x6",
+      "icon": "fas fa-arrows-alt"
+    },
+    {
+      "name": "Image Crop",
+      "url": "https://image.pi7.org/crop-image",
+      "icon": "fas fa-crop"
+    },
+    {
+      "name": "Image Resize According Size in KB & Pixel OR INCH OR centimeter",
+      "url": "https://miniimagesvideos.com/resize_image_online",
+      "icon": "fas fa-expand-arrows-alt"
+    },
+    {
+      "name": "Image Merge",
+      "url": "https://pinetools.com/merge-images",
+      "icon": "fas fa-object-group"
+    },
+    {
+      "name": "Image Converting JPG, JPEG, HEIC & PNG",
+      "url": "https://www.simpleimageresizer.com/image-converter",
+      "icon": "fas fa-exchange-alt"
+    },
+    {
+      "name": "Image to Word",
+      "url": "https://jpgtoexcel.com/jpg-to-word",
+      "icon": "fas fa-file-word"
+    },
+    {
+      "name": "Image to Excel",
+      "url": "https://pdfpro.com/pdf-to-excel",
+      "icon": "fas fa-file-excel"
+    },
+    {
+      "name": "Image to Power Point (PPT)",
+      "url": "https://www.pdfgear.com/pdf-to-pptx/",
+      "icon": "fas fa-file-powerpoint"
+    },
+    {
+      "name": "DOC to JPG ",
+      "url": "https://imageresizer.com/jpg-to-doc",
+      "icon": "fas fa-file-alt"
+    },
+    {
+      "name": "Image to Text",
+      "url": "https://www.cardscanner.co/image-to-text",
+      "icon": "fas fa-font"
+    },
+    {
+      "name": "Image to Add Watermark OR Signature",
+      "url": "https://watermarkimage.com/en",
+      "icon": "fas fa-water"
+    },
+    {
+      "name": "Image to Video",
+      "url": "https://clideo.com/editor/",
+      "icon": "fas fa-video"
+    },
+    {
+      "name": "Text to Audio",
+      "url": "https://luvvoice.com/",
+      "icon": "fas fa-volume-up"
+    },
+    {
+      "name": "HEIC to PNG",
+      "url": "https://www.simpleimageresizer.com/image-converter/heic-to-png",
+      "icon": "fas fa-exchange-alt"
+    },
+    {
+      "name": "Text to qr-Code",
+      "url": "https://www.websiteplanet.com/webtools/free-qr-code-generator/",
+      "icon": "fa-solid fa-qrcode",
+      "external": true
+    }
+  ],
+  "pdf": [
+    {
+      "name": "PDF to JPG",
+      "url": "https://pdf.pi7.org/pdf-to-jpg",
+      "icon": "fas fa-image"
+    },
+        {
+      "name": "PDF Page Size Crop",
+      "url": "https://pdf.pi7.org/crop-pdf",
+      "icon": "fas fa-crop"
+    },
+    {
+      "name": "PDF resize (50KB,100KB,500KB आदि) सेट करें।",
+      "url": "https://pdf.pi7.org/pdf-resize-in-kb",
+      "icon": "fas fa-compress"
+    },
+        {
+      "name": "PDF Crop",
+      "url": "https://pdf.pi7.org/crop-pdf",
+      "icon": "fas fa-file-word"
+    },
+    {
+      "name": "PDF to 200kb",
+      "url": "https://pdf.pi7.org/compress-pdf-to-200kb",
+      "icon": "fas fa-image"
+    },
+    {
+      "name": "PDF Merge",
+      "url": "https://pdf.pi7.org/merge-pdf",
+      "icon": "fas fa-object-group"
+    },
+    {
+      "name": "Page add In PDF",
+      "url": "https://www.pdfgear.com/add-pages-to-pdf/",
+      "icon": "fas fa-object-group"
+    },
+    {
+      "name": "PDF 1000KB (1MB)",
+      "url": "https://pdf.pi7.org/compress-pdf-to-1mb",
+      "icon": "fas fa-object-group"
+    },
+    {
+      "name": "PDF Editor",
+      "url": "https://pdf.pi7.org/pdf-editor",
+      "icon": "fas fa-object-group"
+    },
+    {
+      "name": "PDF Brightness Increase",
+      "url": "https://konfuzio.com/tools/adjust-contrast",
+      "icon": "fas fa-image"
+    },
+    {
+      "name": "PDF to Word",
+      "url": "https://pdf.pi7.org/pdf-to-word",
+      "icon": "fas fa-file-word"
+    },
+    {
+      "name": "PDF to Add Watermark OR Signature",
+      "url": "https://watermark-pdf.cocodoc.com/",
+      "icon": "fas fa-signature"
+    },
+    {
+      "name": "PDF Page Remove",
+      "url": "https://pdf.pi7.org/remove-pdf-page",
+      "icon": "fas fa-trash"
+    },
+    {
+      "name": "PDF Add Page Number",
+      "url": "https://pdf.pi7.org/add-page-number-to-pdf",
+      "icon": "fas fa-list-ol"
+    },
+    {
+      "name": "PDF Rotate",
+      "url": "https://pdf.pi7.org/rotate-pdf",
+      "icon": "fas fa-undo"
+    },
+    {
+      "name": "PDF Lock",
+      "url": "https://pdfpro.com/password-protect-pdf",
+      "icon": "fas fa-lock"
+    },
+    {
+      "name": "Unlock PDF",
+      "url": "https://pdf.pi7.org/remove-pdf-password",
+      "icon": "fas fa-unlock"
+    },
+    {
+      "name": "PDF to Excel",
+      "url": "https://jpgtoexcel.com/pdf-to-excel",
+      "icon": "fas fa-file-excel"
+    },
+    {
+      "name": "PDF to PowerPoint",
+      "url": "https://www.pdfgear.com/pdf-to-ppt/",
+      "icon": "fas fa-file-powerpoint"
+    }
+  ],
+  "video": [
+    {
+      "name": "YouTube Video Download",
+      "url": "https://vidssave.com/yt",
+      "icon": "fab fa-youtube"
+    },
+    {
+      "name": "Audio Cutter",
+      "url": "https://online-video-cutter.com/merge-videos",
+      "icon": "fas fa-cut",
+       "external": true
+    },
+    {
+      "name": "Audio Merge",
+      "url": "https://online-video-cutter.com/merge-videos",
+      "icon": "fas fa-link",
+       "external": true
+    },
+    {
+      "name": "Audio-to-Text",
+      "url": "https://online-video-cutter.com/merge-videos",
+      "icon": "fas fa-link",
+       "external": true
+    },
+    {
+      "name": "Video Cutter",
+      "url": "https://online-video-cutter.com/merge-videos",
+      "icon": "fas fa-scissors",
+       "external": true
+    },
+    {
+      "name": "Video Merge",
+      "url": "https://online-video-cutter.com/merge-videos",
+      "icon": "fas fa-object-group",
+       "external": true
+    },
+    {
+      "name": "Remove Audio from Video",
+      "url": "https://www.audioremover.com/",
+      "icon": "fas fa-object-group",
+       "external": true
+    },
+    {
+      "name": "video to text",
+      "url": "https://elevenlabs.io/video-to-text",
+      "icon": "fas fa-object-group",
+       "external": true
+    }
+  ]
+}
