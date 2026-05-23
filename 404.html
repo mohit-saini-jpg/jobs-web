@@ -3,8 +3,142 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Redirecting… | Top Sarkari Jobs</title>
-  <meta name="robots" content="noindex, nofollow" />
+
+  <!--
+    404.html — GitHub Pages SPA Router + SEO-Smart Job Page Renderer
+    ================================================================
+    GitHub Pages serves this file for ANY URL that has no matching file.
+    
+    For /jobs/<slug>/ URLs:
+      - Sets robots: index, follow (NOT noindex)
+      - Injects correct canonical, title, JobPosting schema immediately
+      - Fetches job.html via XHR and replaces entire document (seamless rewrite)
+      - Googlebot sees a fully rendered job page, not a redirect
+    
+    For all other clean URLs (/section/, /category/, /state/, /search/):
+      - JS redirects to the correct .html page (existing behavior unchanged)
+  -->
+
+  <!-- ── Default meta for non-job pages (overwritten immediately by JS for /jobs/) ── -->
+  <title id="pageTitle">Top Sarkari Jobs | Latest Government Jobs 2026</title>
+  <meta name="robots" id="metaRobots" content="noindex, nofollow" />
+  <link rel="canonical" id="canonicalTag" href="https://www.topsarkarijobs.com/" />
+  <meta name="description" id="metaDesc" content="Latest Sarkari Jobs 2026 – Government job notifications, admit cards, results updated daily." />
+
+  <!-- OG / Twitter placeholders -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Top Sarkari Jobs" />
+  <meta property="og:image" content="https://www.topsarkarijobs.com/image.png" />
+  <meta id="ogTitle" property="og:title" content="Sarkari Job | Top Sarkari Jobs" />
+  <meta id="ogDesc"  property="og:description" content="Latest government job details on Top Sarkari Jobs." />
+  <meta id="ogUrl"   property="og:url" content="https://www.topsarkarijobs.com/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta id="twTitle" name="twitter:title" content="Sarkari Job | Top Sarkari Jobs" />
+  <meta id="twDesc"  name="twitter:description" content="Latest government job details." />
+
+  <!-- Structured Data placeholders — overwritten by JS for /jobs/ pages -->
+  <script type="application/ld+json" id="jobSchema">{}</script>
+  <script type="application/ld+json" id="breadcrumbSchema">{}</script>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       PHASE 1 — SYNCHRONOUS HEAD SCRIPT
+       Runs immediately. For /jobs/<slug>/ URLs:
+         1. Flips robots to index,follow
+         2. Sets correct canonical
+         3. Injects derived title
+         4. Seeds JobPosting + BreadcrumbList schema
+       All BEFORE body renders — Googlebot sees correct SEO immediately.
+  ══════════════════════════════════════════════════════════════════ -->
+  <script>
+  (function () {
+    'use strict';
+
+    var path   = window.location.pathname;
+    var search = window.location.search;
+
+    /* ── Helper: human-readable title from slug ── */
+    function humanSlug(s) {
+      var clean = s.replace(/-[0-9a-f]{6}$/i, '');                    // strip hash suffix e.g. -c2181b
+      clean = clean.replace(/^[a-z][a-z0-9]*_[a-z0-9_]*-/i, '');     // strip sr_latest_jobs- prefix
+      return clean.replace(/[-_]+/g, ' ').replace(/\b\w/g, function(c){ return c.toUpperCase(); });
+    }
+
+    /* ── Is this a /jobs/<slug>/ URL? ── */
+    var jobMatch = path.match(/^\/jobs\/([^\/]+)\/?$/);
+
+    if (jobMatch) {
+      var slug     = decodeURIComponent(jobMatch[1]);
+      var canonUrl = 'https://www.topsarkarijobs.com/jobs/' + slug + '/';
+      var jobName  = humanSlug(slug);
+      var titleStr = jobName + ' | Top Sarkari Jobs';
+      var descStr  = jobName + ' – Check eligibility, vacancies, last date, salary and apply online at Top Sarkari Jobs. Government of India recruitment 2026.';
+      var today    = new Date().toISOString().split('T')[0];
+
+      /* 1. robots → index, follow (CRITICAL for Google) */
+      var rm = document.getElementById('metaRobots');
+      if (rm) rm.setAttribute('content', 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1');
+
+      /* 2. Canonical */
+      var can = document.getElementById('canonicalTag');
+      if (can) can.href = canonUrl;
+
+      /* 3. hreflang */
+      ['en','en-IN','x-default'].forEach(function(lang) {
+        var el = document.createElement('link');
+        el.rel = 'alternate'; el.setAttribute('hreflang', lang); el.href = canonUrl;
+        document.head.appendChild(el);
+      });
+
+      /* 4. Title */
+      document.title = titleStr;
+      var pt = document.getElementById('pageTitle');
+      if (pt) pt.textContent = titleStr;
+
+      /* 5. Meta description */
+      var md = document.getElementById('metaDesc');
+      if (md) md.setAttribute('content', descStr.slice(0, 300));
+
+      /* 6. OG / Twitter */
+      function setMeta(id, val) { var el = document.getElementById(id); if (el) el.setAttribute('content', val); }
+      setMeta('ogTitle', titleStr); setMeta('twTitle', titleStr);
+      setMeta('ogDesc',  descStr.slice(0,300)); setMeta('twDesc', descStr.slice(0,300));
+      setMeta('ogUrl',   canonUrl);
+
+      /* 7. Minimal JobPosting schema — valid for Rich Results even before full render */
+      var jobSchemaEl = document.getElementById('jobSchema');
+      if (jobSchemaEl) {
+        jobSchemaEl.textContent = JSON.stringify({
+          '@context': 'https://schema.org', '@type': 'JobPosting',
+          'name': jobName, 'title': jobName,
+          'description': descStr + ' Visit topsarkarijobs.com for complete details and direct application link for this government job notification 2026.',
+          'datePosted': today, 'employmentType': 'FULL_TIME', 'url': canonUrl,
+          'hiringOrganization': { '@type': 'Organization', 'name': 'Government of India' },
+          'jobLocation': { '@type': 'Place', 'address': { '@type': 'PostalAddress', 'addressCountry': 'IN', 'addressRegion': 'India' } }
+        });
+      }
+
+      /* 8. Minimal BreadcrumbList schema */
+      var bcSchemaEl = document.getElementById('breadcrumbSchema');
+      if (bcSchemaEl) {
+        bcSchemaEl.textContent = JSON.stringify({
+          '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+          'itemListElement': [
+            { '@type': 'ListItem', 'position': 1, 'name': 'Home',        'item': 'https://www.topsarkarijobs.com/' },
+            { '@type': 'ListItem', 'position': 2, 'name': 'Latest Jobs', 'item': 'https://www.topsarkarijobs.com/section/latest-jobs/' },
+            { '@type': 'ListItem', 'position': 3, 'name': jobName,       'item': canonUrl }
+          ]
+        });
+      }
+
+      /* 9. Expose slug for Phase 2 */
+      window.__TSJ_SLUG_FROM_404 = slug;
+      window.__TSJ_CANONICAL     = canonUrl;
+
+    } /* end if jobMatch */
+
+  })();
+  </script>
+
   <style>
     body { font-family: sans-serif; display: flex; align-items: center;
            justify-content: center; min-height: 100vh; margin: 0; background: #f0f4f8; }
@@ -17,33 +151,98 @@
                  font-size:.9rem; text-decoration:none; font-weight:600; }
     .home-link:hover { text-decoration:underline; }
     #notFoundBox { display:none; }
-  
-    /* ── BRAND LOGO FIX: prevent title truncation on all pages ── */
-    #site-header .brand { flex: 1 1 auto !important; min-width: 0 !important; }
-    #site-header .brand-text { min-width: 0 !important; }
-    #site-header .brand-title { white-space: nowrap !important; font-size: .92rem !important; }
-    #site-header .header-actions { flex-shrink: 0 !important; }
-    #site-header .header-logo-bar { display: flex !important; align-items: center !important; }
-    </style>
+  </style>
+
+  <script src="/analytics.js" defer></script>
+
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json"/>
+  <meta name="theme-color" content="#0d2257" media="(prefers-color-scheme: light)"/>
+  <meta name="theme-color" content="#0a1a4a" media="(prefers-color-scheme: dark)"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="TopSarkariJobs"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="application-name" content="Top Sarkari Jobs"/>
+  <meta name="msapplication-TileColor" content="#0d2257"/>
+  <meta name="msapplication-TileImage" content="/icons/icon-144x144.png"/>
+  <meta name="msapplication-tap-highlight" content="no"/>
+  <link rel="apple-touch-icon" href="/icons/icon-180x180.png"/>
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
+  <script src="/pwa-install.js?v=6.0" defer></script>
+</head>
+<body>
+  <div class="box" id="loadingBox">
+    <div class="spinner" id="spinnerEl"></div>
+    <p id="loadingText" style="margin:0;font-weight:600;">Loading…</p>
+    <div id="notFoundBox">
+      <p style="margin:0;font-weight:700;font-size:1.15rem;">404 — Page Not Found</p>
+      <p style="margin:8px 0 0;font-size:.85rem;color:#6b7280;">
+        The page you're looking for doesn't exist or may have been moved.
+      </p>
+      <p id="extraMsg" style="margin:6px 0 0;font-size:.78rem;color:#ef4444;"></p>
+      <a href="/" class="home-link">← Back to Home</a>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       PHASE 2 — BODY SCRIPT
+       After body is parsed, fetch job.html and do a full document
+       rewrite so the user (and Googlebot) sees the complete job page
+       at the correct clean URL — no visible redirect, no flash.
+  ══════════════════════════════════════════════════════════════════ -->
   <script>
   (function () {
     'use strict';
 
-    var path  = window.location.pathname;
+    var path   = window.location.pathname;
     var search = window.location.search;
 
-    // ── Loop-guard ────────────────────────────────────────────────
-    // If 404.html loads for a URL that ends in .html (real file),
-    // it means _redirects /* is still cached on the CDN.
-    // Stop redirecting immediately and show a helpful message.
+    /* ════════════════════════════════════════════════════
+       A. JOB PAGES — full document rewrite via fetch
+    ════════════════════════════════════════════════════ */
+    var slug = window.__TSJ_SLUG_FROM_404;
+    if (slug) {
+
+      /* Restore the clean URL in browser address bar */
+      var cleanPath = '/jobs/' + slug + '/';
+      try {
+        if (window.location.pathname !== cleanPath) {
+          window.history.replaceState(null, '', cleanPath);
+        }
+      } catch(_) {}
+
+      /* Save slug for job.html's own IIFE to pick up */
+      try { sessionStorage.setItem('__tsj_slug', slug); } catch(_) {}
+
+      /* Fetch job.html and replace entire document */
+      fetch('/job.html')
+        .then(function(r) {
+          if (!r.ok) throw new Error('job.html fetch failed: ' + r.status);
+          return r.text();
+        })
+        .then(function(html) {
+          /* Full document rewrite — replaces everything including <head> */
+          document.open();
+          document.write(html);
+          document.close();
+        })
+        .catch(function(err) {
+          console.error('[TSJ 404] job.html fetch error:', err);
+          show404('Could not load job page. Please try refreshing.');
+        });
+
+      return; /* Stop — don't run redirect logic below */
+    }
+
+    /* ════════════════════════════════════════════════════
+       LOOP GUARD (for non-job pages)
+    ════════════════════════════════════════════════════ */
     if (/\.html(\?|$)/i.test(path)) {
-      show404('CDN cache issue — please hard-refresh (Ctrl+Shift+R) or clear browser cache.');
+      show404('CDN cache issue — please hard-refresh (Ctrl+Shift+R).');
       return;
     }
 
-    // ── Redirect-loop guard ───────────────────────────────────────
-    // If we've redirected from this exact path before (within 3s),
-    // the target couldn't be found — show 404 instead of looping.
     var loopKey = '__tsj_404_' + path.replace(/\//g,'_');
     try {
       var lastHit = parseInt(sessionStorage.getItem(loopKey) || '0', 10);
@@ -55,23 +254,9 @@
       sessionStorage.setItem(loopKey, Date.now().toString());
     } catch(_) {}
 
-    // ── 1. Job detail: /jobs/<slug>/ ──────────────────────────────
-    var jobMatch = path.match(/^\/jobs\/([^\/]+)\/?$/);
-    if (jobMatch) {
-      var slug = decodeURIComponent(jobMatch[1]);
-      try { sessionStorage.setItem('__tsj_slug', slug); } catch(_) {}
-      var refParam = '';
-      try { refParam = new URLSearchParams(search).get('ref') || ''; } catch(_) {}
-      var dest = '/job.html?slug=' + encodeURIComponent(slug);
-      if (refParam) {
-        try { sessionStorage.setItem('__tsj_ref', refParam); } catch(_) {}
-        dest += '&ref=' + encodeURIComponent(refParam);
-      }
-      window.location.replace(dest);
-      return;
-    }
-
-    // ── 2. Section pages: /section/<slug>/ ────────────────────────
+    /* ════════════════════════════════════════════════════
+       B. SECTION PAGES  /section/<slug>/
+    ════════════════════════════════════════════════════ */
     var sectionMatch = path.match(/^\/section\/([^\/]+)\/?$/);
     if (sectionMatch) {
       var sec = decodeURIComponent(sectionMatch[1]).replace(/-/g, ' ');
@@ -79,49 +264,48 @@
       return;
     }
 
-    // ── 3. Category pages: /category/<group>/ ─────────────────────
+    /* ════════════════════════════════════════════════════
+       C. CATEGORY PAGES  /category/<group>/
+    ════════════════════════════════════════════════════ */
     var catMatch = path.match(/^\/category\/([^\/]+)\/?$/);
     if (catMatch) {
       window.location.replace('/category.html?group=' + encodeURIComponent(decodeURIComponent(catMatch[1])));
       return;
     }
 
-    // ── 4. State listing (new): /state/<name>/ ────────────────────
+    /* ════════════════════════════════════════════════════
+       D. STATE PAGES  /state/<name>/
+    ════════════════════════════════════════════════════ */
     var stateMatch = path.match(/^\/state\/([^\/]+)\/?$/);
     if (stateMatch) {
-      // Convert slug → Title Case state name and pass as ?state=
-      // e.g. /state/uttar-pradesh/ → ?state=Uttar Pradesh
-      var stateSlug = decodeURIComponent(stateMatch[1]);
-      var stateName = stateSlug
-        .replace(/-/g, ' ')
-        .replace(/\b\w/g, function(c){ return c.toUpperCase(); });
+      var stateName = decodeURIComponent(stateMatch[1]).replace(/-/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();});
       window.location.replace('/state-jobs.html?state=' + encodeURIComponent(stateName));
       return;
     }
-
-    // ── 4a. State hub: /state/ → All States listing ───────────────
     if (path === '/state/' || path === '/state') {
       window.location.replace('/category.html?group=state');
       return;
     }
-
-    // ── 4b. State listing (legacy): /state-jobs/<state>/ ──────────
     var legacyStateMatch = path.match(/^\/state-jobs\/([^\/]+)\/?$/);
     if (legacyStateMatch) {
-      var legacyState = decodeURIComponent(legacyStateMatch[1]).replace(/-/g, ' ');
+      var legacyState = decodeURIComponent(legacyStateMatch[1]).replace(/-/g,' ');
       window.location.replace('/state-jobs.html?state=' + encodeURIComponent(legacyState));
       return;
     }
 
-    // ── 5. Search: /search/<query>/ ───────────────────────────────
+    /* ════════════════════════════════════════════════════
+       E. SEARCH  /search/<query>/
+    ════════════════════════════════════════════════════ */
     var searchMatch = path.match(/^\/search\/([^\/]+)\/?$/);
     if (searchMatch) {
-      var q = decodeURIComponent(searchMatch[1]).replace(/-/g, ' ');
+      var q = decodeURIComponent(searchMatch[1]).replace(/-/g,' ');
       window.location.replace('/search.html?q=' + encodeURIComponent(q));
       return;
     }
 
-    // ── 6. Static shortcuts ───────────────────────────────────────
+    /* ════════════════════════════════════════════════════
+       F. STATIC SHORTCUTS
+    ════════════════════════════════════════════════════ */
     var shortcuts = {
       '/latest-jobs/':     '/view.html?section=latest+jobs',
       '/latest-jobs':      '/view.html?section=latest+jobs',
@@ -173,70 +357,19 @@
       return;
     }
 
-    // ── 7. Nothing matched — show real 404 ────────────────────────
+    /* ════════════════════════════════════════════════════
+       G. NOTHING MATCHED — show real 404
+    ════════════════════════════════════════════════════ */
     show404();
 
     function show404(extraMsg) {
-      document.getElementById('spinnerEl').style.display  = 'none';
+      document.getElementById('spinnerEl').style.display   = 'none';
       document.getElementById('loadingText').style.display = 'none';
       document.getElementById('notFoundBox').style.display = 'block';
-      if (extraMsg) {
-        document.getElementById('extraMsg').textContent = extraMsg;
-      }
+      if (extraMsg) document.getElementById('extraMsg').textContent = extraMsg;
     }
+
   })();
   </script>
-  <script src="/analytics.js" defer></script>
-
-  <!-- ══ PWA INSTALL SYSTEM v4.0 ══════════════════════════════════ -->
-  <link rel="manifest" href="/manifest.json"/>
-  <meta name="theme-color" content="#0d2257" media="(prefers-color-scheme: light)"/>
-  <meta name="theme-color" content="#0a1a4a" media="(prefers-color-scheme: dark)"/>
-  <meta name="apple-mobile-web-app-capable" content="yes"/>
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <meta name="apple-mobile-web-app-title" content="TopSarkariJobs"/>
-  <meta name="mobile-web-app-capable" content="yes"/>
-  <meta name="application-name" content="Top Sarkari Jobs"/>
-  <meta name="msapplication-TileColor" content="#0d2257"/>
-  <meta name="msapplication-TileImage" content="/icons/icon-144x144.png"/>
-  <meta name="msapplication-tap-highlight" content="no"/>
-  <link rel="apple-touch-icon" href="/icons/icon-180x180.png"/>
-  <link rel="apple-touch-icon" sizes="57x57"   href="/icons/apple-touch-icon-57x57.png"/>
-  <link rel="apple-touch-icon" sizes="60x60"   href="/icons/apple-touch-icon-60x60.png"/>
-  <link rel="apple-touch-icon" sizes="72x72"   href="/icons/apple-touch-icon-72x72.png"/>
-  <link rel="apple-touch-icon" sizes="76x76"   href="/icons/apple-touch-icon-76x76.png"/>
-  <link rel="apple-touch-icon" sizes="114x114" href="/icons/apple-touch-icon-114x114.png"/>
-  <link rel="apple-touch-icon" sizes="120x120" href="/icons/apple-touch-icon-120x120.png"/>
-  <link rel="apple-touch-icon" sizes="144x144" href="/icons/apple-touch-icon-144x144.png"/>
-  <link rel="apple-touch-icon" sizes="152x152" href="/icons/apple-touch-icon-152x152.png"/>
-  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon-180x180.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:430px)and(device-height:932px)and(-webkit-device-pixel-ratio:3)" href="/splash/splash-1290x2796.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:393px)and(device-height:852px)and(-webkit-device-pixel-ratio:3)" href="/splash/splash-1179x2556.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:390px)and(device-height:844px)and(-webkit-device-pixel-ratio:3)" href="/splash/splash-1170x2532.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:375px)and(device-height:812px)and(-webkit-device-pixel-ratio:3)" href="/splash/splash-1125x2436.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:414px)and(device-height:896px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-828x1792.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:375px)and(device-height:667px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-750x1334.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
-  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
-  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
-  <script src="/pwa-install.js?v=6.0" defer></script>
-  <!-- ══ END PWA ════════════════════════════════════════════════════ -->
-</head>
-<body>
-  <div class="box">
-    <!-- Default: spinner + "Redirecting…" while JS works -->
-    <div class="spinner" id="spinnerEl"></div>
-    <p id="loadingText" style="margin:0;font-weight:600;">Redirecting…</p>
-
-    <!-- Shown ONLY for true 404 or loop-detected -->
-    <div id="notFoundBox">
-      <p style="margin:0;font-weight:700;font-size:1.15rem;">404 — Page Not Found</p>
-      <p style="margin:8px 0 0;font-size:.85rem;color:#6b7280;">
-        The page you're looking for doesn't exist or may have been moved.
-      </p>
-      <p id="extraMsg" style="margin:6px 0 0;font-size:.78rem;color:#ef4444;"></p>
-      <a href="/" class="home-link">← Back to Home</a>
-    </div>
-  </div>
 </body>
 </html>
