@@ -16,7 +16,7 @@ Note: jobs/data/ mein already Complete_Jobs_Full_Data.json ki files hain.
 import json, re, os
 
 SRC        = "merged_sarkari_data.json"
-DEST       = "jobs/data"          # ← Same folder as Complete_Jobs_Full_Data split
+DEST       = "sarkari/data"
 INDEX_FILE = "sarkari-index.json"
 MINI_FILE  = "merged-sarkari-mini.json"
 

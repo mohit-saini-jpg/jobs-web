@@ -73,6 +73,8 @@ jobs:
 
           # state-jobs split files
           git add state-jobs-index.json state/data/ state-jobs-mini.json
+          # state/<id>/data/ subfolders — har state ka apna data folder
+          find state -path "*/data/*.json" -not -path "state/data/*" -exec git add {} \; 2>/dev/null || true
 
           # Sitemap
           git add sitemap-jobs.xml sitemap-index.xml sitemap.xml 2>/dev/null || true
