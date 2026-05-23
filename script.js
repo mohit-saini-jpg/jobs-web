@@ -982,8 +982,9 @@
           a.href = buildRedirectUrl(url, name, sectionKey) || normalizeUrl(url);
         }
         a.setAttribute("data-redirect-label", name);
+        a.setAttribute("title", name);
+        a.setAttribute("aria-label", name);
         if (external) { a.target = "_blank"; a.rel = "noopener"; }
-        // Clean date: truncate long/unclear dates to keep layout clean
         const rawDate = safe(it.date || "");
         let displayDate = rawDate;
         if (rawDate.toLowerCase().includes("please refer") || rawDate.toLowerCase().includes("days from") || rawDate.toLowerCase().includes("date of publication")) {
@@ -1129,6 +1130,8 @@
         a.href = buildRedirectUrl(url, name, sectionKey) || normalizeUrl(url);
       }
       a.setAttribute("data-redirect-label", name);
+      a.setAttribute("title", name);
+      a.setAttribute("aria-label", name);
       if (external) { a.target = "_blank"; a.rel = "noopener"; }
 
       const rawDate = safe(it.date || "");
