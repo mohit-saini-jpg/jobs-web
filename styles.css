@@ -301,10 +301,10 @@ a:hover{ text-decoration:underline; }
 .offcanvas-head .icon-btn { background: rgba(255,255,255,0.2); color: #fff; width: 36px; height: 36px; border:none; border-radius:12px; display:grid; place-items:center; cursor:pointer;}
 
 .offcanvas-nav { padding: 20px 24px; overflow: auto; display: flex; flex-direction: column; }
-.offcanvas-nav > a, .offcanvas-group > a, #header-links-mobile > a { width: 100%; padding: 14px 18px; border-radius: 12px; background: #f8fafc; border: 1px solid transparent; font-weight: 700; font-size: 15px; color: var(--text); display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; transition: all 0.2s ease; text-decoration: none; }
+.offcanvas-nav > a, .offcanvas-group > a, #header-links-mobile > a { width: 100%; padding: 10px 12px; border-radius: 10px; background: transparent; border: none; font-weight: 700; font-size: .83rem; color: var(--text); display: flex; align-items: center; justify-content: flex-start; gap: 10px; margin-bottom: 2px; transition: all 0.15s ease; text-decoration: none; text-align: left; }
 .offcanvas-nav > a:last-child, .offcanvas-group > a:last-child, #header-links-mobile > a:last-child { margin-bottom: 0; }
-.offcanvas-nav > a:hover, .offcanvas-group > a:hover, #header-links-mobile > a:hover { background: #f0f9ff; border-color: rgba(14, 165, 233, 0.2); color: #0284c7; transform: translateX(4px); }
-.offcanvas-nav > a::after, .offcanvas-group > a::after, #header-links-mobile > a::after { content: "\f054"; font-family: "Font Awesome 6 Free"; font-weight: 900; font-size: 12px; color: #cbd5e1; transition: color 0.2s; }
+.offcanvas-nav > a:hover, .offcanvas-group > a:hover, #header-links-mobile > a:hover { background: #eff6ff; color: #1a56db; }
+.offcanvas-nav > a::after, .offcanvas-group > a::after, #header-links-mobile > a::after { display: none; content: none; }
 .offcanvas-nav > a:hover::after, .offcanvas-group > a:hover::after, #header-links-mobile > a:hover::after { color: #0ea5e9; }
 
 .offcanvas-group { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(0,0,0,0.06); }
@@ -660,10 +660,10 @@ a:hover{ text-decoration:underline; }
 .offcanvas-head .icon-btn { background: rgba(255,255,255,0.2); color: #fff; width: 36px; height: 36px; border:none; border-radius:12px; display:grid; place-items:center; cursor:pointer;}
 
 .offcanvas-nav { padding: 20px 24px; overflow: auto; display: flex; flex-direction: column; }
-.offcanvas-nav > a, .offcanvas-group > a, #header-links-mobile > a { width: 100%; padding: 14px 18px; border-radius: 12px; background: #f8fafc; border: 1px solid transparent; font-weight: 700; font-size: 15px; color: var(--text); display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; transition: all 0.2s ease; text-decoration: none; }
+.offcanvas-nav > a, .offcanvas-group > a, #header-links-mobile > a { width: 100%; padding: 10px 12px; border-radius: 10px; background: transparent; border: none; font-weight: 700; font-size: .83rem; color: var(--text); display: flex; align-items: center; justify-content: flex-start; gap: 10px; margin-bottom: 2px; transition: all 0.15s ease; text-decoration: none; text-align: left; }
 .offcanvas-nav > a:last-child, .offcanvas-group > a:last-child, #header-links-mobile > a:last-child { margin-bottom: 0; }
-.offcanvas-nav > a:hover, .offcanvas-group > a:hover, #header-links-mobile > a:hover { background: #f0f9ff; border-color: rgba(14, 165, 233, 0.2); color: #0284c7; transform: translateX(4px); }
-.offcanvas-nav > a::after, .offcanvas-group > a::after, #header-links-mobile > a::after { content: "\f054"; font-family: "Font Awesome 6 Free"; font-weight: 900; font-size: 12px; color: #cbd5e1; transition: color 0.2s; }
+.offcanvas-nav > a:hover, .offcanvas-group > a:hover, #header-links-mobile > a:hover { background: #eff6ff; color: #1a56db; }
+.offcanvas-nav > a::after, .offcanvas-group > a::after, #header-links-mobile > a::after { display: none; content: none; }
 .offcanvas-nav > a:hover::after, .offcanvas-group > a:hover::after, #header-links-mobile > a:hover::after { color: #0ea5e9; }
 
 .offcanvas-group { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(0,0,0,0.06); }
