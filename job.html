@@ -221,14 +221,44 @@
     .jp-notice{padding:11px 14px;font-size:.81rem;color:#78350f;line-height:1.65;background:#fffbeb;border-top:1px solid #fde68a;}
     .jp-notice strong{color:#92400e;}
 
-    .jp-actions{display:flex;gap:10px;flex-wrap:wrap;padding:14px;}
-    .jp-btn{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:10px 16px;border-radius:7px;text-decoration:none;font-weight:700;font-size:.83rem;line-height:1.2;transition:all .15s;flex:1;min-width:110px;text-align:center;border:none;cursor:pointer;}
-    .jp-btn:hover{filter:brightness(1.08);transform:translateY(-1px);}
-    .jp-btn-green{background:#16a34a;color:#fff!important;}
-    .jp-btn-blue{background:#1d4ed8;color:#fff!important;}
-    .jp-btn-red{background:#dc2626;color:#fff!important;}
-    .jp-btn-orange{background:#ea580c;color:#fff!important;}
-    .jp-btn-sub{font-size:.68rem;font-weight:600;opacity:.9;}
+    /* Important Links — Image 4 icon grid style */
+    .jp-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px;}
+    .jp-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:5px;padding:12px 6px 10px;border-radius:12px;text-decoration:none;
+      font-weight:700;font-size:.72rem;line-height:1.3;transition:all .18s;
+      text-align:center;border:none;cursor:pointer;color:#333!important;
+      background:#f8fafc;box-shadow:0 1px 4px rgba(0,0,0,.08);
+      word-break:break-word;min-height:80px;}
+    .jp-btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.13);}
+    .jp-btn:active{transform:scale(.97);}
+    .jp-btn-icon{width:42px;height:42px;border-radius:10px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.1rem;margin-bottom:2px;flex-shrink:0;}
+    .jp-btn-green .jp-btn-icon{background:#dcfce7;color:#16a34a;}
+    .jp-btn-blue  .jp-btn-icon{background:#dbeafe;color:#1d4ed8;}
+    .jp-btn-red   .jp-btn-icon{background:#fee2e2;color:#dc2626;}
+    .jp-btn-orange .jp-btn-icon{background:#ffedd5;color:#ea580c;}
+    .jp-btn-purple .jp-btn-icon{background:#ede9fe;color:#7c3aed;}
+    .jp-btn-teal .jp-btn-icon{background:#ccfbf1;color:#0f766e;}
+    .jp-btn-pink .jp-btn-icon{background:#fce7f3;color:#be185d;}
+    .jp-btn-indigo .jp-btn-icon{background:#e0e7ff;color:#4338ca;}
+    .jp-btn-yellow .jp-btn-icon{background:#fef9c3;color:#a16207;}
+    .jp-btn-green{background:#f0fdf4;}
+    .jp-btn-blue{background:#eff6ff;}
+    .jp-btn-red{background:#fff5f5;}
+    .jp-btn-orange{background:#fff7ed;}
+    .jp-btn-purple{background:#faf5ff;}
+    .jp-btn-teal{background:#f0fdfa;}
+    .jp-btn-pink{background:#fdf2f8;}
+    .jp-btn-indigo{background:#eef2ff;}
+    .jp-btn-yellow{background:#fefce8;}
+    .jp-btn-label{font-size:.71rem;font-weight:700;color:#1e293b;line-height:1.3;}
+    .jp-btn-sub{font-size:.63rem;color:#64748b;font-weight:500;margin-top:1px;}
+    @media(max-width:360px){
+      .jp-actions{grid-template-columns:repeat(2,1fr);gap:8px;padding:10px;}
+      .jp-btn{padding:10px 4px 8px;min-height:72px;}
+      .jp-btn-icon{width:36px;height:36px;font-size:.95rem;}
+    }
 
     /* ── New Clean Non-Job Card Layout ── */
     .jp-nonjob-card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;overflow:hidden;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.06);}
@@ -300,12 +330,23 @@
     .jp-error-box{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:16px 18px;color:#991b1b;font-size:.9rem;margin-bottom:16px;}
 
     /* Key-value grid for fees */
-    .jp-kv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));}
-    .jp-kv-item{padding:10px 14px;border-right:1px solid #e9eef4;border-bottom:1px solid #e9eef4;}
-    .jp-kv-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#64748b;margin-bottom:3px;}
-    .jp-kv-val{font-size:.9rem;font-weight:700;color:#0f172a;}
-    .jp-kv-val.free{color:#16a34a;}
-    .jp-kv-val.paid{color:#1d4ed8;}
+    /* Application Fee Table — Image 3 style */
+    .jp-fee-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+    .jp-fee-table{width:100%;border-collapse:collapse;min-width:280px;}
+    .jp-fee-table thead tr{background:#c2410c;}
+    .jp-fee-table thead th{color:#fff;font-size:.78rem;font-weight:700;padding:10px 12px;text-align:left;white-space:nowrap;}
+    .jp-fee-table tbody tr{border-bottom:1px solid #f0f0f0;}
+    .jp-fee-table tbody tr:last-child{border-bottom:none;}
+    .jp-fee-table tbody tr:nth-child(even){background:#fff8f5;}
+    .jp-fee-table tbody td{font-size:.82rem;padding:10px 12px;vertical-align:middle;color:#1e293b;line-height:1.4;}
+    .jp-fee-table .fee-cat{font-weight:600;color:#374151;}
+    .jp-fee-table .fee-amt{font-weight:800;color:#c2410c;white-space:nowrap;}
+    .jp-fee-table .fee-amt.free{color:#16a34a;}
+    .jp-fee-table .fee-pay{font-size:.76rem;color:#555;line-height:1.5;}
+    .jp-fee-table .fee-pay .fee-pay-ico{display:inline-block;margin-right:4px;color:#1d4ed8;}
+    @media(max-width:400px){
+      .jp-fee-table thead th,.jp-fee-table tbody td{padding:8px 8px;font-size:.76rem;}
+    }
 
     /* Detail text */
     .jp-detail-text{padding:10px 14px;font-size:.83rem;color:#1e293b;line-height:1.7;}
@@ -317,8 +358,7 @@
 
     @media(max-width:520px){
       .jp-title{font-size:.95rem;line-height:1.4;}
-      .jp-btn{font-size:.76rem;padding:9px 10px;min-width:90px;}
-      .jp-actions{gap:6px;padding:10px;}
+      /* jp-btn mobile handled by grid above */
       .jp-main-cta{font-size:.88rem;margin:10px;padding:12px 10px;letter-spacing:0;}
       .jp-main-cta-sub{font-size:.73rem;}
       .jp-stat{padding:8px 4px;}
@@ -349,9 +389,7 @@
     }
     /* ── Actions: responsive on mobile ── */
     @media(max-width:480px){
-      .jp-actions{display:flex;flex-direction:column;gap:8px;padding:12px;}
-      .jp-btn{flex:unset;min-width:unset;width:100%;padding:13px 16px;font-size:.85rem;flex-direction:row;justify-content:center;gap:8px;}
-      .jp-btn-sub{font-size:.72rem;}
+      /* jp-btn grid on mobile */
     }
     .jp-mobile-links{display:none;}
     @media(max-width:768px){.jp-mobile-links{display:block;margin-bottom:14px;}}
@@ -365,9 +403,7 @@
     .jp-mobile-grid a i{color:#0f766e;width:14px;font-size:.75rem;}
     /* Mobile: Important Links section full-width prominent buttons */
     @media(max-width:768px){
-      #linksActions.jp-actions{display:flex;flex-direction:column;gap:8px;padding:12px;}
-      #linksActions .jp-btn{flex:1;flex-direction:row;justify-content:center;gap:10px;padding:14px 16px;font-size:.88rem;border-radius:8px;}
-      #linksActions .jp-btn-sub{display:none;}
+      /* linksActions uses grid layout from .jp-actions */
     }
   
     /* ── BRAND LOGO FIX: prevent title truncation on all pages ── */
@@ -612,7 +648,12 @@
             <!-- Application Fee -->
             <div class="jp-card" id="feeCard" style="display:none;">
               <div class="jp-sec-head" style="background:linear-gradient(135deg,#c2410c,#ea580c);"><i class="fa-solid fa-indian-rupee-sign"></i> Application Fee</div>
-              <div class="jp-kv-grid" id="feeGrid"></div>
+              <div class="jp-fee-wrap">
+                <table class="jp-fee-table">
+                  <thead><tr><th>Category</th><th>Application Fee</th><th>Payment Mode</th></tr></thead>
+                  <tbody id="feeGrid"></tbody>
+                </table>
+              </div>
             </div>
 
             <!-- Age Limit -->
@@ -649,16 +690,19 @@
               <div class="jp-sec-head"><i class="fa-solid fa-link"></i> Important Links</div>
               <div class="jp-actions" id="linksActions">
                 <a id="btnApply" href="#" target="_blank" rel="noopener" class="jp-btn jp-btn-green">
-                  <span><i class="fa-solid fa-pen-to-square"></i> Apply Online</span>
-                  <span class="jp-btn-sub">Official Portal</span>
+                  <div class="jp-btn-icon"><i class="fa-solid fa-pen-to-square"></i></div>
+                  <div class="jp-btn-label">Apply Online</div>
+                  <div class="jp-btn-sub">Official Portal</div>
                 </a>
                 <a id="btnNotification" href="#" target="_blank" rel="noopener" class="jp-btn jp-btn-blue">
-                  <span><i class="fa-solid fa-file-pdf"></i> Notification PDF</span>
-                  <span class="jp-btn-sub">Official Notification</span>
+                  <div class="jp-btn-icon"><i class="fa-solid fa-file-pdf"></i></div>
+                  <div class="jp-btn-label">Notification PDF</div>
+                  <div class="jp-btn-sub">Official Notification</div>
                 </a>
                 <a id="btnWebsite" href="#" target="_blank" rel="noopener" class="jp-btn jp-btn-red">
-                  <span><i class="fa-solid fa-globe"></i> Official Website</span>
-                  <span class="jp-btn-sub">Govt Portal</span>
+                  <div class="jp-btn-icon"><i class="fa-solid fa-globe"></i></div>
+                  <div class="jp-btn-label">Official Website</div>
+                  <div class="jp-btn-sub">Govt Portal</div>
                 </a>
               </div>
             </div>
@@ -1106,9 +1150,17 @@
       if (feeCard && feeItems.length > 0) {
         feeCard.style.display = '';
         const isFree = (v) => /nil|0|free/i.test(v);
+        // Payment mode from JSON
+        const paymentMode = (row && row.feeMode) ? row.feeMode :
+          (row && row.feeOnline) ? 'Online (Debit / Credit Card / UPI / Net Banking)' :
+          'Online / Offline';
+        const payIco = '<span class="fee-pay-ico"><i class="fa-solid fa-credit-card"></i></span>';
         document.getElementById('feeGrid').innerHTML = feeItems.map(([lbl,val]) =>
-          `<div class="jp-kv-item"><div class="jp-kv-label">${lbl}</div>
-           <div class="jp-kv-val ${isFree(val)?'free':'paid'}">${val}</div></div>`
+          `<tr>
+            <td class="fee-cat">${lbl}</td>
+            <td class="fee-amt ${isFree(val)?'free':''}">${isFree(val)?'Free / ₹0':val}</td>
+            <td class="fee-pay">${payIco}${paymentMode}</td>
+          </tr>`
         ).join('');
       }
 
@@ -1246,6 +1298,12 @@
           return { icon: 'fa-users',                cls: 'jp-btn-blue',   sub: 'View Details' };
         if (/how\s*to|video|hindi.*video/i.test(t))
           return { icon: 'fa-circle-play',          cls: 'jp-btn-red',    sub: 'Watch Now' };
+        if (/previous.*paper|model.*paper|sample.*paper/i.test(t))
+          return { icon: 'fa-file-lines',            cls: 'jp-btn-indigo', sub: 'Download PDF' };
+        if (/important.*date|date.*schedule|schedule/i.test(t))
+          return { icon: 'fa-calendar-days',         cls: 'jp-btn-purple', sub: 'View Dates' };
+        if (/help|support|contact|helpdesk/i.test(t))
+          return { icon: 'fa-headset',               cls: 'jp-btn-teal',   sub: 'Get Help' };
         /* default */
         return { icon: 'fa-link',                   cls: 'jp-btn-blue',   sub: 'Click Here' };
       }
@@ -1307,10 +1365,12 @@
           allLinks.push({ href, label: ld.label, icon: ld.icon, cls: ld.cls, sub: ld.sub });
         });
 
+        /* Icon grid style — Image 4 */
         let linksHtml = allLinks.map(lk =>
           `<a href="${lk.href}" target="_blank" rel="noopener" class="jp-btn ${lk.cls}">
-            <span><i class="fa-solid ${lk.icon}"></i> ${lk.label.slice(0, 55)}</span>
-            <span class="jp-btn-sub">${lk.sub}</span>
+            <div class="jp-btn-icon"><i class="fa-solid ${lk.icon}"></i></div>
+            <div class="jp-btn-label">${lk.label.slice(0, 30)}</div>
+            <div class="jp-btn-sub">${lk.sub}</div>
           </a>`
         ).join('');
 
@@ -1323,12 +1383,14 @@
                          : 'Official Website';
           linksHtml =
             `<a href="${_fallbackUrl}" target="_blank" rel="noopener" class="jp-btn jp-btn-green">
-              <span><i class="fa-solid fa-arrow-up-right-from-square"></i> Apply / View Details</span>
-              <span class="jp-btn-sub">${srcLabel}</span>
+              <div class="jp-btn-icon"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
+              <div class="jp-btn-label">Apply / View</div>
+              <div class="jp-btn-sub">${srcLabel}</div>
             </a>
             <a href="${_fallbackUrl}" target="_blank" rel="noopener" class="jp-btn jp-btn-red">
-              <span><i class="fa-solid fa-globe"></i> Official Website</span>
-              <span class="jp-btn-sub">${srcLabel}</span>
+              <div class="jp-btn-icon"><i class="fa-solid fa-globe"></i></div>
+              <div class="jp-btn-label">Official Website</div>
+              <div class="jp-btn-sub">${srcLabel}</div>
             </a>`;
         } else if (!linksHtml) {
           linksHtml = `<p style="color:#64748b;font-size:.83rem;padding:4px;">
