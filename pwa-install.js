@@ -16,10 +16,10 @@
     themeColor:     '#0d2257',
     accentColor:    '#f5a623',
     whiteColor:     '#ffffff',
-    installDelay:   4000,     // ms before showing install banner
-    iosBannerDelay: 3000,
-    dismissDays:    7,        // days to hide after dismiss
-    storageKey:     'tsj_pwa_',
+    installDelay:   5000,     // ms before showing install banner
+    iosBannerDelay: 5000,
+    dismissDays:    1,        // days to hide after dismiss
+    storageKey:     'tsj_pwa4_',
     vapidKey:       'YOUR_VAPID_PUBLIC_KEY_HERE', // Replace with actual VAPID key
   };
 
@@ -202,60 +202,146 @@
   font-size: 14px; cursor: pointer; text-align: center;
 }
 
-/* ── iOS Guide ────────────────────────────────────────────────── */
+/* ── iOS Guide Overlay ────────────────────────────────────────── */
+#tsj-ios-overlay {
+  position: fixed; inset: 0; z-index: 999990;
+  background: rgba(0,0,0,0.6);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+#tsj-ios-overlay.visible { opacity: 1; pointer-events: all; }
+
+/* ── iOS Guide Panel ──────────────────────────────────────────── */
 #tsj-ios-guide {
   position: fixed; bottom: 0; left: 0; right: 0;
-  z-index: 999991; padding: 0 16px env(safe-area-inset-bottom, 16px);
+  z-index: 999991;
+  padding: 0 0 env(safe-area-inset-bottom, 0px);
   transform: translateY(110%);
   transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 #tsj-ios-guide.visible { transform: translateY(0); }
+
 #tsj-ios-inner {
-  background: #fff; border-radius: 20px;
-  padding: 20px; box-shadow: 0 -4px 30px rgba(0,0,0,0.2);
+  background: #ffffff !important;
+  border-radius: 24px 24px 0 0;
+  padding: 8px 20px 28px;
+  box-shadow: 0 -8px 40px rgba(0,0,0,0.25);
+  position: relative;
 }
+
+.tsj-ios-handle {
+  width: 40px; height: 4px; border-radius: 2px;
+  background: #dde; margin: 0 auto 16px;
+}
+
+.tsj-ios-header {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.tsj-ios-app-icon {
+  width: 52px; height: 52px; border-radius: 12px;
+  background: linear-gradient(135deg, #0d2257, #1a3a8f);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; flex-shrink: 0;
+}
+.tsj-ios-header-text h4 {
+  font-size: 15px; font-weight: 700; color: #0d2257;
+  margin: 0 0 2px;
+}
+.tsj-ios-header-text p {
+  font-size: 12px; color: #888; margin: 0;
+}
+
 .tsj-ios-close {
-  position: absolute; top: 14px; right: 18px;
-  background: #eee; border: none; border-radius: 50%;
-  width: 28px; height: 28px; cursor: pointer;
-  font-size: 14px; display: flex; align-items: center; justify-content: center;
+  position: absolute; top: 16px; right: 16px;
+  background: #f0f0f0; border: none; border-radius: 50%;
+  width: 30px; height: 30px; cursor: pointer;
+  font-size: 15px; font-weight: 700; color: #666;
+  display: flex; align-items: center; justify-content: center;
+  line-height: 1;
 }
+
 .tsj-ios-step {
-  display: flex; align-items: flex-start; gap: 12px; margin: 10px 0;
+  display: flex; align-items: center; gap: 14px;
+  padding: 10px 14px; margin-bottom: 8px;
+  background: #f7f9ff; border-radius: 14px;
+  border: 1px solid #e8eef8;
 }
 .tsj-ios-num {
-  width: 26px; height: 26px; border-radius: 50%;
+  width: 28px; height: 28px; border-radius: 50%;
   background: #0d2257; color: #fff;
   display: flex; align-items: center; justify-content: center;
-  font-size: 13px; font-weight: 700; flex-shrink: 0;
+  font-size: 13px; font-weight: 800; flex-shrink: 0;
 }
-.tsj-ios-arrow {
-  text-align: center; margin-top: 12px;
+.tsj-ios-step-text {
+  font-size: 13px; color: #333; line-height: 1.4;
+}
+.tsj-ios-step-text strong { color: #0d2257; }
+.tsj-ios-step-icon { font-size: 20px; flex-shrink: 0; margin-left: auto; }
+
+.tsj-ios-done {
+  text-align: center; margin-top: 14px;
+  font-size: 13px; font-weight: 600; color: #2e7d32;
+  background: #e8f5e9; border-radius: 10px; padding: 10px;
+}
+
+.tsj-ios-arrow-down {
+  text-align: center; margin-top: 10px; font-size: 22px;
   animation: tsj-bounce 1s infinite;
 }
 @keyframes tsj-bounce {
   0%,100% { transform: translateY(0); }
-  50% { transform: translateY(6px); }
+  50% { transform: translateY(5px); }
 }
 
-/* ── Floating Install Button ──────────────────────────────────── */
+/* ── Floating Install Button (Yellow/Black — Image Style) ────── */
 #tsj-fab {
-  position: fixed; bottom: calc(80px + env(safe-area-inset-bottom, 0px));
-  right: 16px; z-index: 999980;
-  background: linear-gradient(135deg, #f5a623 0%, #e8920f 100%);
-  color: #fff; border: none; border-radius: 50px;
-  padding: 12px 18px; font-size: 13px; font-weight: 700;
-  display: flex; align-items: center; gap: 8px;
-  box-shadow: 0 4px 20px rgba(245,166,35,0.5);
-  cursor: pointer; transition: all 0.3s;
-  transform: translateY(20px); opacity: 0;
-  animation: tsj-fab-in 0.5s 5s forwards;
+  position: fixed;
+  bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+  left: 50%; transform: translateX(-50%) translateY(100px);
+  z-index: 999980;
+  background: #f5c800;
+  color: #111; border: none;
+  border-radius: 50px;
+  padding: 0; 
+  display: flex; align-items: center;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.35);
+  cursor: pointer; transition: transform 0.3s, box-shadow 0.2s;
+  opacity: 0;
+  animation: tsj-fab-in 0.6s 5s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 92vw;
 }
 @keyframes tsj-fab-in {
-  to { transform: translateY(0); opacity: 1; }
+  to { transform: translateX(-50%) translateY(0); opacity: 1; }
 }
-#tsj-fab:hover { transform: translateY(-2px) scale(1.03); }
-#tsj-fab svg { width: 16px; height: 16px; fill: currentColor; }
+#tsj-fab:active { transform: translateX(-50%) scale(0.97); }
+
+#tsj-fab .fab-text-wrap {
+  display: flex; flex-direction: column;
+  padding: 8px 14px 8px 16px;
+  line-height: 1.25;
+}
+#tsj-fab .fab-top-text {
+  font-size: 9px; font-weight: 700; color: #111;
+  letter-spacing: 0.2px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+#tsj-fab .fab-main-text {
+  font-size: 13px; font-weight: 900; color: #111;
+  letter-spacing: -0.2px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+#tsj-fab .fab-icon-wrap {
+  background: #111; color: #f5c800;
+  width: 46px; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+  min-height: 46px;
+}
 
 /* ── Toast ────────────────────────────────────────────────────── */
 #tsj-toast {
@@ -333,12 +419,19 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  #tsj-install-sheet, #tsj-ios-inner {
+  #tsj-install-sheet {
     background: #1a1a2e; color: #eee;
   }
   .tsj-feature { background: #252545; color: #ddd; }
   .tsj-sheet-info h3 { color: #eee; }
   .tsj-sheet-info p, .tsj-ratings { color: #aaa; }
+  /* iOS guide always stays white — easier to read instructions */
+  #tsj-ios-inner {
+    background: #ffffff !important; color: #333 !important;
+  }
+  .tsj-ios-step { background: #f7f9ff !important; }
+  .tsj-ios-header-text h4 { color: #0d2257 !important; }
+  .tsj-ios-step-text { color: #333 !important; }
 }
     `;
     const style = document.createElement('style');
@@ -466,52 +559,129 @@
   // iOS INSTALL GUIDE
   // ══════════════════════════════════════════════════════════════════════════
   function buildIOSGuide() {
-    const el = document.createElement('div');
-    el.id = 'tsj-ios-guide';
+    // Same overlay as Android
+    const overlay = document.createElement('div');
+    overlay.id = 'tsj-ios-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:999990;background:rgba(0,0,0,0.6);opacity:0;pointer-events:none;transition:opacity 0.3s';
+    document.body.appendChild(overlay);
 
-    const shareIcon = isIPad
-      ? '⬆️ Share (top right)'
-      : '⬆️ Share button (bottom center)';
+    // Use same bottom sheet style as Android
+    const wrapper = document.createElement('div');
+    wrapper.id = 'tsj-ios-guide';
+    wrapper.style.cssText = 'position:fixed;inset:0;z-index:999991;display:flex;align-items:flex-end;justify-content:center;pointer-events:none;';
 
-    el.innerHTML = `
-      <div id="tsj-ios-inner" style="position:relative">
-        <button class="tsj-ios-close" id="tsj-ios-close">✕</button>
-        <div style="font-weight:700;font-size:16px;color:#0d2257;margin-bottom:12px">
-          📲 Add to Home Screen
+    wrapper.innerHTML = `
+      <div id="tsj-ios-inner" style="
+        background:#fff;
+        border-radius:24px 24px 0 0;
+        padding:0 0 env(safe-area-inset-bottom,16px);
+        width:100%; max-width:540px;
+        transform:translateY(100%);
+        transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+        box-shadow:0 -8px 40px rgba(13,34,87,0.25);
+        pointer-events:all;
+      ">
+        <!-- Handle -->
+        <div style="width:40px;height:4px;border-radius:2px;background:#dde;margin:12px auto 0"></div>
+
+        <!-- Header -->
+        <div style="display:flex;align-items:center;gap:14px;padding:16px 20px 12px">
+          <div style="width:60px;height:60px;border-radius:14px;background:linear-gradient(135deg,#0d2257,#1a3a8f);display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0;box-shadow:0 4px 12px rgba(13,34,87,0.3)">🏛️</div>
+          <div>
+            <div style="font-size:17px;font-weight:700;color:#0d2257;margin:0 0 3px">Top Sarkari Jobs</div>
+            <div style="font-size:13px;color:#666;margin:0">Free App • iPhone pe install karo</div>
+            <div style="display:flex;align-items:center;gap:4px;font-size:12px;color:#f5a623;margin-top:4px">★★★★★ <span style="color:#888;font-size:11px">4.8 • Free • iOS App</span></div>
+          </div>
         </div>
-        <div style="font-size:13px;color:#555;margin-bottom:14px">
-          Install Top Sarkari Jobs as an iPhone app — no App Store needed!
+
+        <!-- Features -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:4px 20px 14px">
+          <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;background:#f0f4fb;font-size:12px;color:#333;font-weight:500">⚡ Instant Loading</div>
+          <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;background:#f0f4fb;font-size:12px;color:#333;font-weight:500">📡 Works Offline</div>
+          <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;background:#f0f4fb;font-size:12px;color:#333;font-weight:500">🔔 Job Alerts</div>
+          <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;background:#f0f4fb;font-size:12px;color:#333;font-weight:500">🏠 Home Screen</div>
         </div>
-        <div class="tsj-ios-step">
-          <div class="tsj-ios-num">1</div>
-          <div style="font-size:13px;color:#333">Tap the <strong>${shareIcon}</strong> in Safari</div>
+
+        <!-- Steps -->
+        <div style="padding:0 20px;margin-bottom:12px">
+          <div style="font-size:12px;font-weight:700;color:#0d2257;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px">📲 3 Steps mein install karo:</div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#f7f9ff;border-radius:12px;border:1px solid #e8eef8;margin-bottom:8px">
+            <div style="width:26px;height:26px;border-radius:50%;background:#0d2257;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0">1</div>
+            <div style="font-size:13px;color:#333">Safari mein <strong style="color:#0d2257">Share ⬆️</strong> button tap karo (bottom)</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#f7f9ff;border-radius:12px;border:1px solid #e8eef8;margin-bottom:8px">
+            <div style="width:26px;height:26px;border-radius:50%;background:#0d2257;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0">2</div>
+            <div style="font-size:13px;color:#333"><strong style="color:#0d2257">"Add to Home Screen"</strong> pe tap karo</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#f7f9ff;border-radius:12px;border:1px solid #e8eef8">
+            <div style="width:26px;height:26px;border-radius:50%;background:#0d2257;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0">3</div>
+            <div style="font-size:13px;color:#333">Top right mein <strong style="color:#0d2257">"Add"</strong> tap karo ✅</div>
+          </div>
         </div>
-        <div class="tsj-ios-step">
-          <div class="tsj-ios-num">2</div>
-          <div style="font-size:13px;color:#333">Scroll down and tap <strong>"Add to Home Screen"</strong></div>
+
+        <!-- Buttons -->
+        <div style="padding:0 20px 20px;display:flex;flex-direction:column;gap:10px">
+          <button id="tsj-ios-open-safari" style="
+            display:block;width:100%;padding:15px;
+            background:linear-gradient(135deg,#0d2257,#1a3a8f);
+            color:#fff;border:none;border-radius:14px;
+            font-size:16px;font-weight:700;cursor:pointer;
+            box-shadow:0 4px 16px rgba(13,34,87,0.35);
+          ">⬆️ Safari mein khole aur Install karo</button>
+          <button id="tsj-ios-close" style="
+            display:block;width:100%;padding:12px;
+            background:transparent;color:#888;
+            border:none;font-size:14px;cursor:pointer;
+          ">Baad mein karenge</button>
         </div>
-        <div class="tsj-ios-step">
-          <div class="tsj-ios-num">3</div>
-          <div style="font-size:13px;color:#333">Tap <strong>"Add"</strong> in the top right corner</div>
-        </div>
-        <div class="tsj-ios-arrow">☝️ Done! App added to your iPhone home screen</div>
       </div>
     `;
 
-    document.body.appendChild(el);
+    document.body.appendChild(wrapper);
 
-    document.getElementById('tsj-ios-close').addEventListener('click', function () {
+    function closeGuide() {
       dismiss('ios_guide');
-      el.classList.remove('visible');
+      document.getElementById('tsj-ios-inner').style.transform = 'translateY(100%)';
+      overlay.style.opacity = '0';
+      overlay.style.pointerEvents = 'none';
+      setTimeout(function() {
+        wrapper.style.display = 'none';
+        overlay.style.display = 'none';
+      }, 400);
+    }
+
+    overlay.addEventListener('click', closeGuide);
+    document.getElementById('tsj-ios-close').addEventListener('click', closeGuide);
+
+    // Safari open button - opens current page in Safari if on other browser
+    document.getElementById('tsj-ios-open-safari').addEventListener('click', function() {
+      if (isSafari) {
+        // Already in Safari - show tip
+        this.textContent = '⬆️ Tap Share button below ↓';
+        this.style.background = '#2e7d32';
+        setTimeout(closeGuide, 2000);
+      } else {
+        // Open in Safari
+        window.location.href = 'x-web-search://?q=' + encodeURIComponent(location.href);
+        setTimeout(function() {
+          window.open(location.href, '_blank');
+        }, 500);
+      }
     });
 
-    return el;
+    return wrapper;
   }
 
   function showIOSGuide() {
     if (isDismissed('ios_guide')) return;
-    const el = document.getElementById('tsj-ios-guide') || buildIOSGuide();
-    requestAnimationFrame(() => el.classList.add('visible'));
+    const existing = document.getElementById('tsj-ios-guide');
+    if (!existing) buildIOSGuide();
+    const el = document.getElementById('tsj-ios-inner');
+    const ov = document.getElementById('tsj-ios-overlay');
+    requestAnimationFrame(() => {
+      if (ov) { ov.style.opacity='1'; ov.style.pointerEvents='all'; }
+      if (el) el.style.transform = 'translateY(0)';
+    });
     trackEvent('ios_guide_shown');
   }
 
@@ -524,8 +694,11 @@
     fab.id = 'tsj-fab';
     fab.setAttribute('aria-label', 'Install App');
     fab.innerHTML = `
-      <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-      Install App
+      <div class="fab-text-wrap">
+        <span class="fab-top-text">Govt: नौकरी सिर्फ एक क्लिक दूर</span>
+        <span class="fab-main-text">⬇ INSTALL App</span>
+      </div>
+      <div class="fab-icon-wrap">⬇</div>
     `;
     fab.addEventListener('click', function () {
       if (isIOS || isIPad) { showIOSGuide(); }
@@ -745,14 +918,15 @@
       }, CONFIG.installDelay);
     });
 
-    // iOS: show guide in Safari (not Chrome/Firefox on iOS)
-    if ((isIOS || isIPad) && isSafari) {
+    // iOS: show guide on ALL iOS browsers
+    if (isIOS || isIPad) {
+      // Always show FAB immediately on iOS
+      setTimeout(function() { buildFAB(); }, 1000);
+
       setTimeout(function () {
         if (!isDismissed('ios_guide') && !retrieve('installed')) {
           showIOSGuide();
           trackEvent('ios_guide_triggered');
-        } else {
-          showFAB();
         }
       }, CONFIG.iosBannerDelay);
     }
@@ -766,12 +940,9 @@
       trackEvent('pwa_app_installed');
     });
 
-    // Always show FAB after delay if no prompt appeared (fallback)
+    // Always show FAB after delay — for everyone
     setTimeout(function () {
-      if (!deferredPrompt && !(isIOS || isIPad)) {
-        // Desktop: show FAB as info/guide
-        buildFAB();
-      }
+      buildFAB();
     }, 8000);
   }
 
