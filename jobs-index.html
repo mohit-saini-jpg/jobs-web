@@ -101,62 +101,41 @@
       var ogUrl = document.getElementById('ogUrl');
       if (ogUrl) ogUrl.setAttribute('content', canonUrl);
 
-      /* ── 5. Derive human-readable title from slug & set <title> immediately ── */
+      /* ── 5. Derive readable title from slug & set <title> synchronously for crawlers ── */
       function humanSlug(s) {
-        // Strip trailing hash ID like "-c2181b" or "-a1b2c3" (6 hex chars)
         var clean = s.replace(/-[0-9a-f]{6}$/i, '');
-        // Replace hyphens/underscores with spaces, title-case each word
+        clean = clean.replace(/^[a-z][a-z0-9]*_[a-z0-9_]*-/i, '');
         return clean.replace(/[-_]+/g, ' ').replace(/\b\w/g, function(c){ return c.toUpperCase(); });
       }
-
       if (slug) {
         var derivedTitle = humanSlug(slug) + ' | Top Sarkari Jobs';
         var pageTitleEl = document.getElementById('pageTitle');
         if (pageTitleEl) pageTitleEl.textContent = derivedTitle;
         document.title = derivedTitle;
-
-        // Also set OG title immediately
-        var ogT = document.getElementById('ogTitle');
-        if (ogT) ogT.setAttribute('content', derivedTitle);
-        var twT = document.getElementById('twTitle');
-        if (twT) twT.setAttribute('content', derivedTitle);
+        var ogT = document.getElementById('ogTitle'); if (ogT) ogT.setAttribute('content', derivedTitle);
+        var twT = document.getElementById('twTitle'); if (twT) twT.setAttribute('content', derivedTitle);
       }
 
-      /* ── 6. Pre-populate minimal JobPosting schema for crawlers (overwritten by injectSEO later) ── */
-      var today = new Date().toISOString().split('T')[0];
+      /* ── 6. Pre-populate minimal JobPosting schema for Googlebot (overwritten by injectSEO later) ── */
+      var todayIso = new Date().toISOString().split('T')[0];
       var jobSchemaEl = document.getElementById('jobSchema');
       if (jobSchemaEl && slug) {
         var jobName = humanSlug(slug);
         jobSchemaEl.textContent = JSON.stringify({
-          '@context': 'https://schema.org',
-          '@type': 'JobPosting',
-          'name': jobName,
-          'title': jobName,
+          '@context': 'https://schema.org', '@type': 'JobPosting',
+          'name': jobName, 'title': jobName,
           'description': jobName + ' – Check eligibility, vacancies, last date, salary and apply online at Top Sarkari Jobs. Government of India recruitment 2026. Apply now for this central/state government job posting.',
-          'datePosted': today,
-          'employmentType': 'FULL_TIME',
-          'url': canonUrl,
-          'hiringOrganization': {
-            '@type': 'Organization',
-            'name': 'Government of India'
-          },
-          'jobLocation': {
-            '@type': 'Place',
-            'address': {
-              '@type': 'PostalAddress',
-              'addressCountry': 'IN',
-              'addressRegion': 'India'
-            }
-          }
+          'datePosted': todayIso, 'employmentType': 'FULL_TIME', 'url': canonUrl,
+          'hiringOrganization': { '@type': 'Organization', 'name': 'Government of India' },
+          'jobLocation': { '@type': 'Place', 'address': { '@type': 'PostalAddress', 'addressCountry': 'IN', 'addressRegion': 'India' } }
         });
       }
 
-      /* ── 7. Pre-populate minimal BreadcrumbList for crawlers ── */
+      /* ── 7. Pre-populate minimal BreadcrumbList for Googlebot ── */
       var bcSchemaEl = document.getElementById('breadcrumbSchema');
       if (bcSchemaEl && slug) {
         bcSchemaEl.textContent = JSON.stringify({
-          '@context': 'https://schema.org',
-          '@type': 'BreadcrumbList',
+          '@context': 'https://schema.org', '@type': 'BreadcrumbList',
           'itemListElement': [
             { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://www.topsarkarijobs.com/' },
             { '@type': 'ListItem', 'position': 2, 'name': 'Latest Jobs', 'item': 'https://www.topsarkarijobs.com/section/latest-jobs/' },
@@ -773,109 +752,90 @@
       const canonUrl = 'https://www.topsarkarijobs.com/jobs/' + slug + '/';
       const fullTitle = safe(name) + ' | Top Sarkari Jobs';
 
-      // Build rich description (≥200 chars) — Fix #2
+      // FIX #2: Rich description ≥200 chars with all key details
       const org = (parsed && parsed.org) ? parsed.org : 'Government of India';
-      const vacs = (parsed && parsed.vac) ? parsed.vac + ' vacancies' : '';
+      const vacs = (parsed && parsed.vac) ? parsed.vac + ' vacancies. ' : '';
       const qual = (parsed && parsed.qualification) ? 'Qualification: ' + parsed.qualification + '. ' : '';
-      const lastDt = (parsed && parsed.lastDt) ? 'Last date to apply: ' + parsed.lastDt + '.' : '';
-      const applyMode = (parsed && parsed.applyMode) ? parsed.applyMode + ' application.' : '';
-      const descParts = [safe(name), org ? '– ' + org : '', vacs, qual, lastDt, applyMode,
-        'Check eligibility, salary, admit card and apply online on Top Sarkari Jobs.'].filter(Boolean).join(' ');
-      const desc = descParts.length >= 200 ? descParts
-        : descParts + ' Visit topsarkarijobs.com for complete details and direct application link for this government job notification 2026.';
+      const lastDt = (parsed && parsed.lastDt) ? 'Last date: ' + parsed.lastDt + '. ' : '';
+      const applyMode = (parsed && parsed.applyMode) ? parsed.applyMode + ' application. ' : '';
+      let desc = safe(name) + ' – ' + org + '. ' + vacs + qual + lastDt + applyMode +
+        'Check eligibility, salary, admit card and apply online on Top Sarkari Jobs.';
+      if (desc.length < 200) desc += ' Visit topsarkarijobs.com for complete details and direct application link for this government job notification 2026.';
 
       // <title> and meta description
       document.title = fullTitle;
       const metaDescEl = document.getElementById('metaDesc');
       if (metaDescEl) metaDescEl.setAttribute('content', desc.slice(0, 300));
 
-      // GA4: fire SPA page_view + job view event
-      if (typeof window.ga4PageView === 'function') {
-        window.ga4PageView(fullTitle, '/jobs/' + slug + '/');
-      }
-      if (typeof window.ga4TrackJobView === 'function') {
-        window.ga4TrackJobView(name, 'Government Job');
-      }
+      // GA4
+      if (typeof window.ga4PageView === 'function') window.ga4PageView(fullTitle, '/jobs/' + slug + '/');
+      if (typeof window.ga4TrackJobView === 'function') window.ga4TrackJobView(name, 'Government Job');
 
       // Canonical
       const can = document.getElementById('canonicalTag');
-      if (can) can.href = canonUrl;
+      // FIX #8: -latest-notifications slug → canonical to clean version
+      if (can) can.href = slug.endsWith('-latest-notifications')
+        ? 'https://www.topsarkarijobs.com/jobs/' + slug.replace(/-latest-notifications$/, '') + '/'
+        : canonUrl;
 
       // OG / Twitter
       const setMeta = (id, val) => { const el = document.getElementById(id); if (el) el.setAttribute('content', val); };
       setMeta('ogTitle', fullTitle); setMeta('twTitle', fullTitle);
-      setMeta('ogDesc',  desc.slice(0, 300)); setMeta('twDesc', desc.slice(0, 300));
-      setMeta('ogUrl',   canonUrl);
+      setMeta('ogDesc', desc.slice(0, 300)); setMeta('twDesc', desc.slice(0, 300));
+      setMeta('ogUrl', canonUrl);
 
-      // Fix #9: Use actual date from parsed JSON, not today's date (avoids artificial freshness)
+      // FIX #9: normaliseDate — use actual posting date from parsed JSON, not today
       function normaliseDate(raw) {
         if (!raw) return null;
-        // Already ISO format e.g. "2026-05-14"
         if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
-        // "14 May 2026" or "14-05-2026" or "14/05/2026"
         const months = {jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
         const m1 = raw.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
-        if (m1) return m1[3] + '-' + String(m1[2]).padStart(2,'0') + '-' + String(m1[1]).padStart(2,'0');
+        if (m1) return m1[3]+'-'+String(m1[2]).padStart(2,'0')+'-'+String(m1[1]).padStart(2,'0');
         const m2 = raw.match(/(\d{1,2})\s+([a-zA-Z]+)\s+(\d{4})/);
-        if (m2) { const mo = months[m2[2].slice(0,3).toLowerCase()]; if (mo) return m2[3] + '-' + String(mo).padStart(2,'0') + '-' + String(m2[1]).padStart(2,'0'); }
+        if (m2) { const mo = months[m2[2].slice(0,3).toLowerCase()]; if (mo) return m2[3]+'-'+String(mo).padStart(2,'0')+'-'+String(m2[1]).padStart(2,'0'); }
         return null;
       }
       const datePosted = (parsed && (parsed.applicationStartDate || parsed.lastUpdated || parsed.datePosted))
         ? (normaliseDate(parsed.applicationStartDate || parsed.lastUpdated || parsed.datePosted) || new Date().toISOString().split('T')[0])
         : new Date().toISOString().split('T')[0];
 
-      // JobPosting schema — Fix #2
+      // FIX #2: Full JobPosting schema with all required + recommended fields
       const schemaEl = document.getElementById('jobSchema');
       if (schemaEl && parsed) {
         const jobSchema = {
           '@context': 'https://schema.org',
           '@type': 'JobPosting',
-          'name': safe(name),           // Fix #2a: "name" required by Google
+          'name': safe(name),          // FIX #2a: Google requires "name"
           'title': safe(name),
           'description': desc,
           'identifier': { '@type': 'PropertyValue', name: 'Top Sarkari Jobs', value: slug },
-          'datePosted': datePosted,     // Fix #9: real date not today
+          'datePosted': datePosted,    // FIX #9: real date
           'hiringOrganization': {
             '@type': 'Organization',
             'name': parsed.org || 'Government of India'
-            // sameAs removed — Fix #2c: don't point to our site as hiring org
+            // FIX #2c: sameAs removed — must not point to our job board
           },
           'jobLocation': {
             '@type': 'Place',
-            'address': {
-              '@type': 'PostalAddress',
-              'addressCountry': 'IN',
-              'addressRegion': 'India'   // Fix #2d
-            }
+            'address': { '@type': 'PostalAddress', 'addressCountry': 'IN', 'addressRegion': 'India' }
           },
           'employmentType': 'FULL_TIME',
           'url': canonUrl
         };
         if (parsed.lastDt) jobSchema.validThrough = parsed.lastDt;
         if (parsed.vac) jobSchema.totalJobOpenings = parseInt(parsed.vac.replace(/,/g, ''), 10);
-        // Fix #2e: baseSalary if salary data exists
-        if (parsed.salary || parsed.salaryMin || parsed.pay) {
-          const salStr = parsed.salary || parsed.salaryMin || parsed.pay || '';
+        // FIX #2e: baseSalary if salary data exists
+        const salStr = parsed.salary || parsed.salaryMin || parsed.pay || '';
+        if (salStr) {
           const salNum = parseInt(('' + salStr).replace(/[^0-9]/g, ''), 10);
-          if (salNum > 0) {
-            jobSchema.baseSalary = {
-              '@type': 'MonetaryAmount',
-              'currency': 'INR',
-              'value': { '@type': 'QuantitativeValue', 'value': salNum, 'unitText': 'MONTH' }
-            };
-          }
+          if (salNum > 0) jobSchema.baseSalary = { '@type': 'MonetaryAmount', 'currency': 'INR', 'value': { '@type': 'QuantitativeValue', 'value': salNum, 'unitText': 'MONTH' } };
         }
-        // Fix #2f: educationRequirements
-        if (parsed.qualification) {
-          jobSchema.educationRequirements = {
-            '@type': 'EducationalOccupationalCredential',
-            'credentialCategory': parsed.qualification
-          };
-        }
+        // FIX #2f: educationRequirements
+        if (parsed.qualification) jobSchema.educationRequirements = { '@type': 'EducationalOccupationalCredential', 'credentialCategory': parsed.qualification };
         schemaEl.textContent = JSON.stringify(jobSchema);
       }
 
-      // Breadcrumb schema — Fix #4: clean URL for item 2
+      // FIX #4: BreadcrumbList — clean URL for item 2 (not view.html?section=)
       const bcEl = document.getElementById('breadcrumbSchema');
       if (bcEl) {
         bcEl.textContent = JSON.stringify({
@@ -889,19 +849,12 @@
         });
       }
 
-      // Fix #10: hreflang tags for job detail pages
+      // FIX #10: hreflang tags for geo-targeting consistency
       ['en', 'en-IN', 'x-default'].forEach(function(lang) {
         var el = document.querySelector('link[hreflang="' + lang + '"]');
         if (!el) { el = document.createElement('link'); el.rel = 'alternate'; el.setAttribute('hreflang', lang); document.head.appendChild(el); }
         el.href = canonUrl;
       });
-
-      // Fix #8: if slug ends in -latest-notifications, set canonical to version without it
-      if (slug.endsWith('-latest-notifications')) {
-        const cleanSlug = slug.replace(/-latest-notifications$/, '');
-        const cleanCanon = 'https://www.topsarkarijobs.com/jobs/' + cleanSlug + '/';
-        if (can) can.href = cleanCanon;
-      }
     }
 
     /* ── Page renderers ── */
