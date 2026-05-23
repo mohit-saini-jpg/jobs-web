@@ -1,1024 +1,419 @@
 /**
- * ╔══════════════════════════════════════════════════════════════════╗
- * ║   TOP SARKARI JOBS — PWA INSTALL SYSTEM v4.0                    ║
- * ║   Android · iOS · Desktop · Windows PWA                         ║
- * ║   beforeinstallprompt · iOS Smart Banner · TWA Detection        ║
- * ╚══════════════════════════════════════════════════════════════════╝
+ * TOP SARKARI JOBS — PWA Install System v6.0
+ * iOS Fix: touchstart + pointer-events + no overlay black bug
+ * FAB: auto-fold to left after 8s
  */
-
-(function TSJ_PWA() {
+(function () {
   'use strict';
 
-  // ─── Config ────────────────────────────────────────────────────────────────
-  const CONFIG = {
-    appName:        'Top Sarkari Jobs',
-    appShortName:   'TopSarkariJobs',
-    themeColor:     '#0d2257',
-    accentColor:    '#f5a623',
-    whiteColor:     '#ffffff',
-    installDelay:   5000,     // ms before showing install banner
-    iosBannerDelay: 5000,
-    dismissDays:    1,        // days to hide after dismiss
-    storageKey:     'tsj_pwa4_',
-    vapidKey:       'YOUR_VAPID_PUBLIC_KEY_HERE', // Replace with actual VAPID key
-  };
+  var ua          = navigator.userAgent;
+  var isIOS       = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+  var isIPad      = /iPad/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var isSafari    = /Safari/.test(ua) && !/Chrome/.test(ua) && !/CriOS/.test(ua);
+  var isAndroid   = /Android/i.test(ua);
+  var isStandalone = window.navigator.standalone === true ||
+                     window.matchMedia('(display-mode: standalone)').matches;
 
-  // ─── State ─────────────────────────────────────────────────────────────────
-  let deferredPrompt = null;
-  const ua = navigator.userAgent;
-  const isAndroid    = /Android/i.test(ua);
-  const isIOS        = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
-  const isIPad       = /iPad/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  const isWindows    = /Windows/.test(ua);
-  const isMac        = /Macintosh/.test(ua) && !isIPad;
-  const isSafari     = /Safari/.test(ua) && !/Chrome/.test(ua);
-  const isChrome     = /Chrome/.test(ua) && !/Edge/.test(ua);
-  const isEdge       = /Edg\//.test(ua);
-  const isStandalone = window.matchMedia('(display-mode: standalone)').matches
-                    || window.navigator.standalone === true
-                    || document.referrer.includes('android-app://');
-  const isTWA        = document.referrer.startsWith('android-app://') || 
-                       (new URLSearchParams(location.search)).get('twa') === '1';
+  var SK = 'tsj6_'; // storage key prefix — v6 resets old dismissals
+  var deferredPrompt = null;
+  var fabEl = null;
+  var isFolded = false;
+  var foldTimer = null;
 
-  // ─── Storage Helpers ────────────────────────────────────────────────────────
-  function store(key, val) {
-    try { localStorage.setItem(CONFIG.storageKey + key, JSON.stringify(val)); } catch {}
+  /* ── Storage ── */
+  function save(k, v)  { try { localStorage.setItem(SK+k, JSON.stringify(v)); } catch(e){} }
+  function load(k)     { try { return JSON.parse(localStorage.getItem(SK+k)); } catch(e){ return null; } }
+  function wasDismissed(k) {
+    var t = load(k+'_at');
+    return t && (Date.now() - t) < 86400000; // 1 day
   }
-  function retrieve(key) {
-    try { return JSON.parse(localStorage.getItem(CONFIG.storageKey + key)); } catch { return null; }
-  }
-  function isDismissed(key) {
-    const t = retrieve(key + '_dismissed');
-    if (!t) return false;
-    return (Date.now() - t) < CONFIG.dismissDays * 86400000;
-  }
-  function dismiss(key) {
-    store(key + '_dismissed', Date.now());
-  }
+  function setDismissed(k) { save(k+'_at', Date.now()); }
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // SERVICE WORKER REGISTRATION
-  // ══════════════════════════════════════════════════════════════════════════
-  function registerServiceWorker() {
-    if (!('serviceWorker' in navigator)) return;
-
-    window.addEventListener('load', function () {
-      navigator.serviceWorker.register('/sw.js?v=4.0').then(function (reg) {
-        console.log('[PWA] SW registered, scope:', reg.scope);
-
-        // Auto-update: when new SW found, activate immediately
-        reg.addEventListener('updatefound', function () {
-          const newWorker = reg.installing;
-          newWorker.addEventListener('statechange', function () {
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              newWorker.postMessage({ type: 'SKIP_WAITING' });
-              showUpdateToast();
-            }
-          });
-        });
-
-        // Schedule background sync for job data
-        if ('SyncManager' in window) {
-          reg.sync.register('sync-jobs-data').catch(() => {});
-        }
-
-        // Periodic background sync (Chrome 80+)
-        if ('periodicSync' in reg) {
-          reg.periodicSync.register('tsj-daily-sync', {
-            minInterval: 24 * 60 * 60 * 1000
-          }).catch(() => {});
-        }
-
-        // Store reg globally for push notifications
-        window._tsjSWReg = reg;
-
-      }).catch(function (err) {
-        console.warn('[PWA] SW registration failed:', err);
-      });
-
-      // Reload on controller change
-      let refreshing = false;
-      navigator.serviceWorker.addEventListener('controllerchange', function () {
-        if (!refreshing) { refreshing = true; window.location.reload(); }
-      });
-
-      // Listen for messages from SW
-      navigator.serviceWorker.addEventListener('message', function (event) {
-        const { type } = event.data || {};
-        if (type === 'JOBS_SYNCED') {
-          showToast('✅ Jobs data updated in background!', 3000);
-        }
-      });
+  /* ── iOS tap fix: use touchend for reliable iOS clicks ── */
+  function onTap(el, fn) {
+    var moved = false;
+    el.addEventListener('touchstart', function(e){ moved = false; }, {passive:true});
+    el.addEventListener('touchmove',  function(e){ moved = true;  }, {passive:true});
+    el.addEventListener('touchend',   function(e){
+      if (!moved) { e.preventDefault(); fn(e); }
     });
+    el.addEventListener('click', fn); // desktop fallback
   }
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // CSS INJECTION
-  // ══════════════════════════════════════════════════════════════════════════
+  /* ══════════════════════════════════════════
+     STYLES
+  ══════════════════════════════════════════ */
   function injectStyles() {
-    const css = `
-/* ── TSJ PWA Install UI ─────────────────────────────────────── */
-#tsj-pwa-overlay {
-  position: fixed; inset: 0; z-index: 999990;
-  background: rgba(0,0,0,0.55); backdrop-filter: blur(4px);
-  display: flex; align-items: flex-end; justify-content: center;
-  padding: 0 0 env(safe-area-inset-bottom, 0);
-  opacity: 0; transition: opacity 0.3s ease;
-  pointer-events: none;
-}
-#tsj-pwa-overlay.visible { opacity: 1; pointer-events: all; }
+    var css = [
+      /* FAB */
+      '#tsj-fab{position:fixed;bottom:calc(70px + env(safe-area-inset-bottom,0px));left:50%;',
+      'transform:translateX(-50%) translateY(120px);z-index:2147483647;',
+      'background:#f5c800;color:#111;border:none;border-radius:50px;padding:0;',
+      'display:flex;align-items:center;overflow:hidden;white-space:nowrap;',
+      'box-shadow:0 4px 20px rgba(0,0,0,0.3);cursor:pointer;',
+      'opacity:0;max-width:92vw;',
+      'transition:transform .5s cubic-bezier(.34,1.2,.64,1),left .5s,opacity .5s,border-radius .4s;',
+      '-webkit-tap-highlight-color:transparent;}',
 
-#tsj-install-sheet {
-  background: #fff; border-radius: 24px 24px 0 0;
-  padding: 0 0 env(safe-area-inset-bottom, 16px);
-  width: 100%; max-width: 540px;
-  transform: translateY(100%);
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 -8px 40px rgba(13,34,87,0.25);
-  overflow: hidden;
-}
-#tsj-pwa-overlay.visible #tsj-install-sheet {
-  transform: translateY(0);
-}
+      '#tsj-fab.show{transform:translateX(-50%) translateY(0);opacity:1;}',
 
-.tsj-sheet-handle {
-  width: 40px; height: 4px; border-radius: 2px;
-  background: #dde; margin: 12px auto 0;
-}
+      '#tsj-fab.folded{left:0!important;transform:translateX(0) translateY(0)!important;',
+      'border-radius:0 50px 50px 0!important;}',
+      '#tsj-fab.folded .tsj-fab-txt{display:none;}',
+      '#tsj-fab.folded .tsj-fab-ico{width:46px;height:46px;}',
 
-.tsj-sheet-header {
-  display: flex; align-items: center; gap: 14px;
-  padding: 16px 20px 12px;
-}
-.tsj-sheet-icon {
-  width: 60px; height: 60px; border-radius: 14px;
-  background: linear-gradient(135deg, #0d2257 0%, #1a3a8f 100%);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 30px; flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(13,34,87,0.3);
-}
-.tsj-sheet-info h3 {
-  font-size: 17px; font-weight: 700; color: #0d2257; margin: 0 0 3px;
-}
-.tsj-sheet-info p {
-  font-size: 13px; color: #666; margin: 0; line-height: 1.4;
-}
-.tsj-ratings {
-  display: flex; align-items: center; gap: 4px;
-  font-size: 12px; color: #f5a623; margin-top: 4px;
-}
+      '.tsj-fab-txt{display:flex;flex-direction:column;padding:8px 14px 8px 16px;line-height:1.3;}',
+      '.tsj-fab-top{font-size:9px;font-weight:700;color:#111;}',
+      '.tsj-fab-main{font-size:13px;font-weight:900;color:#111;}',
+      '.tsj-fab-ico{background:#111;color:#f5c800;width:46px;min-height:46px;',
+      'display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}',
 
-.tsj-features {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 8px; padding: 4px 20px 14px;
-}
-.tsj-feature {
-  display: flex; align-items: center; gap: 8px;
-  padding: 10px 12px; border-radius: 10px;
-  background: #f0f4fb; font-size: 12px; color: #333; font-weight: 500;
-}
-.tsj-feature-icon { font-size: 18px; flex-shrink: 0; }
+      /* iOS Guide */
+      '#tsj-ios{position:fixed;bottom:0;left:0;right:0;z-index:2147483647;',
+      'background:#fff;border-radius:24px 24px 0 0;',
+      'padding:0 0 env(safe-area-inset-bottom,12px);',
+      'box-shadow:0 -6px 32px rgba(13,34,87,0.25);',
+      'transform:translateY(110%);transition:transform .4s cubic-bezier(.34,1.1,.64,1);',
+      'pointer-events:all;-webkit-overflow-scrolling:touch;}',
+      '#tsj-ios.show{transform:translateY(0);}',
 
-.tsj-sheet-actions {
-  padding: 0 20px 20px;
-  display: flex; flex-direction: column; gap: 10px;
-}
-.tsj-btn-install {
-  display: block; width: 100%; padding: 15px;
-  background: linear-gradient(135deg, #0d2257 0%, #1a3a8f 100%);
-  color: #fff; border: none; border-radius: 14px;
-  font-size: 16px; font-weight: 700; letter-spacing: 0.3px;
-  cursor: pointer; text-align: center;
-  box-shadow: 0 4px 16px rgba(13,34,87,0.35);
-  transition: transform 0.15s, box-shadow 0.15s;
-}
-.tsj-btn-install:active {
-  transform: scale(0.98); box-shadow: 0 2px 8px rgba(13,34,87,0.25);
-}
-.tsj-btn-later {
-  display: block; width: 100%; padding: 12px;
-  background: transparent; color: #888;
-  border: none; border-radius: 14px;
-  font-size: 14px; cursor: pointer; text-align: center;
-}
+      /* Android sheet */
+      '#tsj-ov{position:fixed;inset:0;z-index:2147483640;',
+      'background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .3s;}',
+      '#tsj-ov.show{opacity:1;pointer-events:all;}',
+      '#tsj-sheet{position:fixed;bottom:0;left:0;right:0;z-index:2147483641;',
+      'background:#fff;border-radius:24px 24px 0 0;',
+      'padding:0 0 env(safe-area-inset-bottom,16px);',
+      'transform:translateY(100%);transition:transform .4s cubic-bezier(.34,1.56,.64,1);',
+      'box-shadow:0 -8px 40px rgba(13,34,87,0.25);}',
+      '#tsj-sheet.show{transform:translateY(0);}',
 
-/* ── iOS Guide Overlay ────────────────────────────────────────── */
-#tsj-ios-overlay {
-  position: fixed; inset: 0; z-index: 999990;
-  background: rgba(0,0,0,0.6);
-  opacity: 0; pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-#tsj-ios-overlay.visible { opacity: 1; pointer-events: all; }
+      /* Shared */
+      '.tsj-handle{width:40px;height:4px;border-radius:2px;background:#dde;margin:12px auto 0;}',
+      '.tsj-hdr{display:flex;align-items:center;gap:14px;padding:14px 20px 10px;',
+      'border-bottom:1px solid #f0f4f8;}',
+      '.tsj-app-ico{width:58px;height:58px;border-radius:14px;',
+      'background:linear-gradient(135deg,#0d2257,#1a3a8f);',
+      'display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;}',
+      '.tsj-app-name{font-size:16px;font-weight:700;color:#0d2257;}',
+      '.tsj-app-sub{font-size:12px;color:#888;margin-top:2px;}',
+      '.tsj-stars{font-size:11px;color:#f5a623;margin-top:2px;}',
+      '.tsj-close{width:30px;height:30px;border-radius:50%;background:#f0f0f0;',
+      'border:none;font-size:14px;color:#555;cursor:pointer;margin-left:auto;flex-shrink:0;',
+      'display:flex;align-items:center;justify-content:center;',
+      '-webkit-tap-highlight-color:transparent;}',
+      '.tsj-feats{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px 20px;}',
+      '.tsj-feat{display:flex;align-items:center;gap:8px;padding:10px 12px;',
+      'border-radius:10px;background:#f0f4fb;font-size:12px;font-weight:500;color:#333;}',
+      '.tsj-steps{padding:0 20px 12px;}',
+      '.tsj-step-lbl{font-size:11px;font-weight:700;color:#0d2257;',
+      'text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;}',
+      '.tsj-step{display:flex;align-items:center;gap:12px;padding:10px 14px;',
+      'background:#f7f9ff;border-radius:12px;border:1px solid #e8eef8;margin-bottom:8px;}',
+      '.tsj-step-n{width:26px;height:26px;border-radius:50%;background:#0d2257;color:#fff;',
+      'display:flex;align-items:center;justify-content:center;font-size:12px;',
+      'font-weight:800;flex-shrink:0;}',
+      '.tsj-step-t{font-size:13px;color:#333;line-height:1.4;}',
+      '.tsj-step-t b{color:#0d2257;}',
+      '.tsj-actions{padding:4px 20px 16px;display:flex;flex-direction:column;gap:8px;}',
+      '.tsj-btn-primary{display:block;width:100%;padding:15px;',
+      'background:linear-gradient(135deg,#0d2257,#1a3a8f);color:#fff;',
+      'border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;',
+      'box-shadow:0 4px 14px rgba(13,34,87,0.3);',
+      '-webkit-tap-highlight-color:transparent;text-align:center;}',
+      '.tsj-btn-later{display:block;width:100%;padding:11px;background:transparent;',
+      'color:#999;border:none;font-size:13px;cursor:pointer;',
+      '-webkit-tap-highlight-color:transparent;}',
+    ].join('');
 
-/* ── iOS Guide Panel ──────────────────────────────────────────── */
-#tsj-ios-guide {
-  position: fixed; bottom: 0; left: 0; right: 0;
-  z-index: 999991;
-  padding: 0 0 env(safe-area-inset-bottom, 0px);
-  transform: translateY(110%);
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-#tsj-ios-guide.visible { transform: translateY(0); }
-
-#tsj-ios-inner {
-  background: #ffffff !important;
-  border-radius: 24px 24px 0 0;
-  padding: 8px 20px 28px;
-  box-shadow: 0 -8px 40px rgba(0,0,0,0.25);
-  position: relative;
-}
-
-.tsj-ios-handle {
-  width: 40px; height: 4px; border-radius: 2px;
-  background: #dde; margin: 0 auto 16px;
-}
-
-.tsj-ios-header {
-  display: flex; align-items: center; gap: 12px;
-  margin-bottom: 16px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid #f0f0f0;
-}
-.tsj-ios-app-icon {
-  width: 52px; height: 52px; border-radius: 12px;
-  background: linear-gradient(135deg, #0d2257, #1a3a8f);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 26px; flex-shrink: 0;
-}
-.tsj-ios-header-text h4 {
-  font-size: 15px; font-weight: 700; color: #0d2257;
-  margin: 0 0 2px;
-}
-.tsj-ios-header-text p {
-  font-size: 12px; color: #888; margin: 0;
-}
-
-.tsj-ios-close {
-  position: absolute; top: 16px; right: 16px;
-  background: #f0f0f0; border: none; border-radius: 50%;
-  width: 30px; height: 30px; cursor: pointer;
-  font-size: 15px; font-weight: 700; color: #666;
-  display: flex; align-items: center; justify-content: center;
-  line-height: 1;
-}
-
-.tsj-ios-step {
-  display: flex; align-items: center; gap: 14px;
-  padding: 10px 14px; margin-bottom: 8px;
-  background: #f7f9ff; border-radius: 14px;
-  border: 1px solid #e8eef8;
-}
-.tsj-ios-num {
-  width: 28px; height: 28px; border-radius: 50%;
-  background: #0d2257; color: #fff;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 13px; font-weight: 800; flex-shrink: 0;
-}
-.tsj-ios-step-text {
-  font-size: 13px; color: #333; line-height: 1.4;
-}
-.tsj-ios-step-text strong { color: #0d2257; }
-.tsj-ios-step-icon { font-size: 20px; flex-shrink: 0; margin-left: auto; }
-
-.tsj-ios-done {
-  text-align: center; margin-top: 14px;
-  font-size: 13px; font-weight: 600; color: #2e7d32;
-  background: #e8f5e9; border-radius: 10px; padding: 10px;
-}
-
-.tsj-ios-arrow-down {
-  text-align: center; margin-top: 10px; font-size: 22px;
-  animation: tsj-bounce 1s infinite;
-}
-@keyframes tsj-bounce {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(5px); }
-}
-
-/* ── Floating Install Button (Yellow/Black — Foldable) ────────── */
-#tsj-fab {
-  position: fixed;
-  bottom: calc(72px + env(safe-area-inset-bottom, 0px));
-  left: 50%;
-  transform: translateX(-50%) translateY(120px);
-  z-index: 999980;
-  background: #f5c800;
-  color: #111; border: none;
-  border-radius: 50px;
-  padding: 0;
-  display: flex; align-items: center;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.35);
-  cursor: pointer;
-  transition: transform 0.5s cubic-bezier(0.34,1.2,0.64,1),
-              left 0.5s ease,
-              width 0.5s ease,
-              border-radius 0.4s ease,
-              opacity 0.5s ease,
-              box-shadow 0.3s ease;
-  opacity: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  max-width: 92vw;
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* State: visible (center bottom) */
-#tsj-fab.tsj-fab-visible {
-  transform: translateX(-50%) translateY(0);
-  opacity: 1;
-}
-
-/* State: folded (left side, small pill) */
-#tsj-fab.tsj-fab-folded {
-  left: -6px !important;
-  transform: translateX(0) translateY(0) !important;
-  border-radius: 0 50px 50px 0 !important;
-  box-shadow: 4px 4px 16px rgba(0,0,0,0.3);
-  opacity: 1;
-}
-#tsj-fab.tsj-fab-folded .fab-text-wrap { display: none !important; }
-#tsj-fab.tsj-fab-folded .fab-icon-wrap {
-  width: 46px; height: 46px; border-radius: 0 50px 50px 0;
-  font-size: 22px;
-}
-
-#tsj-fab .fab-text-wrap {
-  display: flex; flex-direction: column;
-  padding: 8px 14px 8px 16px;
-  line-height: 1.25;
-  transition: opacity 0.3s;
-}
-#tsj-fab .fab-top-text {
-  font-size: 9px; font-weight: 700; color: #111;
-  letter-spacing: 0.2px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-}
-#tsj-fab .fab-main-text {
-  font-size: 13px; font-weight: 900; color: #111;
-  letter-spacing: -0.2px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-}
-#tsj-fab .fab-icon-wrap {
-  background: #111; color: #f5c800;
-  width: 46px; height: 100%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 20px; flex-shrink: 0;
-  min-height: 46px;
-  transition: all 0.4s;
-}
-
-/* ── Toast ────────────────────────────────────────────────────── */
-#tsj-toast {
-  position: fixed; bottom: calc(90px + env(safe-area-inset-bottom, 0px));
-  left: 50%; transform: translateX(-50%) translateY(20px);
-  background: rgba(13,34,87,0.95); color: #fff;
-  padding: 10px 20px; border-radius: 50px;
-  font-size: 13px; font-weight: 500;
-  z-index: 999995; opacity: 0;
-  transition: all 0.3s; pointer-events: none;
-  white-space: nowrap; max-width: 90vw;
-}
-#tsj-toast.show {
-  opacity: 1; transform: translateX(-50%) translateY(0);
-}
-
-/* ── Update Banner ────────────────────────────────────────────── */
-#tsj-update-banner {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 999992;
-  background: #0d2257; color: #fff;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 16px; font-size: 13px;
-  transform: translateY(-100%); transition: transform 0.3s;
-}
-#tsj-update-banner.visible { transform: translateY(0); }
-#tsj-update-reload {
-  background: #f5a623; color: #0d2257;
-  border: none; border-radius: 6px;
-  padding: 6px 12px; font-weight: 700; font-size: 12px; cursor: pointer;
-}
-
-/* ── Splash Screen ────────────────────────────────────────────── */
-#tsj-splash {
-  position: fixed; inset: 0; z-index: 999999;
-  background: linear-gradient(160deg, #0a1a4a 0%, #0d2257 50%, #1a3a8f 100%);
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  transition: opacity 0.5s 0.3s, transform 0.5s 0.3s;
-}
-#tsj-splash.hide {
-  opacity: 0; transform: scale(1.05); pointer-events: none;
-}
-#tsj-splash.gone { display: none; }
-.tsj-splash-logo {
-  width: 96px; height: 96px; border-radius: 22px;
-  background: #fff; display: flex; align-items: center;
-  justify-content: center; font-size: 48px;
-  margin-bottom: 20px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-  animation: tsj-logo-pulse 1.5s ease-in-out infinite alternate;
-}
-@keyframes tsj-logo-pulse {
-  from { box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
-  to   { box-shadow: 0 12px 48px rgba(245,166,35,0.4); }
-}
-.tsj-splash-name {
-  color: #fff; font-size: 22px; font-weight: 800; letter-spacing: 0.5px;
-  margin-bottom: 6px;
-}
-.tsj-splash-tagline {
-  color: rgba(255,255,255,0.65); font-size: 13px; letter-spacing: 0.3px;
-}
-.tsj-splash-loader {
-  margin-top: 40px; width: 120px; height: 3px;
-  background: rgba(255,255,255,0.15); border-radius: 2px; overflow: hidden;
-}
-.tsj-splash-bar {
-  height: 100%; border-radius: 2px;
-  background: linear-gradient(90deg, #f5a623, #ffcc70);
-  animation: tsj-load 1.8s ease-in-out forwards;
-}
-@keyframes tsj-load {
-  from { width: 0%; }
-  to   { width: 100%; }
-}
-
-@media (prefers-color-scheme: dark) {
-  #tsj-install-sheet {
-    background: #1a1a2e; color: #eee;
-  }
-  .tsj-feature { background: #252545; color: #ddd; }
-  .tsj-sheet-info h3 { color: #eee; }
-  .tsj-sheet-info p, .tsj-ratings { color: #aaa; }
-  /* iOS guide always stays white — easier to read instructions */
-  #tsj-ios-inner {
-    background: #ffffff !important; color: #333 !important;
-  }
-  .tsj-ios-step { background: #f7f9ff !important; }
-  .tsj-ios-header-text h4 { color: #0d2257 !important; }
-  .tsj-ios-step-text { color: #333 !important; }
-}
-    `;
-    const style = document.createElement('style');
-    style.id = 'tsj-pwa-styles';
-    style.textContent = css;
-    document.head.appendChild(style);
+    var s = document.createElement('style');
+    s.id = 'tsj-pwa-css';
+    s.textContent = css;
+    document.head.appendChild(s);
   }
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // SPLASH SCREEN (standalone/TWA only or first launch)
-  // ══════════════════════════════════════════════════════════════════════════
-  function showSplash() {
-    if (!isStandalone && !isTWA) return;
-    const el = document.createElement('div');
-    el.id = 'tsj-splash';
-    el.innerHTML = `
-      <div class="tsj-splash-logo">🏛️</div>
-      <div class="tsj-splash-name">Top Sarkari Jobs</div>
-      <div class="tsj-splash-tagline">India's No.1 Govt Jobs Platform</div>
-      <div class="tsj-splash-loader"><div class="tsj-splash-bar"></div></div>
-    `;
-    document.body.insertBefore(el, document.body.firstChild);
-
-    // Hide after 2s
-    setTimeout(() => {
-      el.classList.add('hide');
-      setTimeout(() => {
-        el.classList.add('gone');
-      }, 600);
-    }, 1800);
-  }
-
-  // ══════════════════════════════════════════════════════════════════════════
-  // INSTALL SHEET (Android / Desktop)
-  // ══════════════════════════════════════════════════════════════════════════
-  function buildInstallSheet() {
-    const overlay = document.createElement('div');
-    overlay.id = 'tsj-pwa-overlay';
-    overlay.setAttribute('role', 'dialog');
-    overlay.setAttribute('aria-modal', 'true');
-    overlay.setAttribute('aria-label', 'Install Top Sarkari Jobs App');
-
-    const platformLabel = isAndroid ? 'Android App' : isWindows ? 'Windows App' : isMac ? 'Mac App' : 'Desktop App';
-    const platformHint  = isAndroid ? 'Works offline · No Play Store needed' : 'Install as desktop app · Works offline';
-
-    overlay.innerHTML = `
-      <div id="tsj-install-sheet">
-        <div class="tsj-sheet-handle"></div>
-        <div class="tsj-sheet-header">
-          <div class="tsj-sheet-icon">🏛️</div>
-          <div class="tsj-sheet-info">
-            <h3>${CONFIG.appName}</h3>
-            <p>${platformHint}</p>
-            <div class="tsj-ratings">★★★★★ <span style="color:#888;font-size:11px">4.8 • Free • ${platformLabel}</span></div>
-          </div>
-        </div>
-        <div class="tsj-features">
-          <div class="tsj-feature"><span class="tsj-feature-icon">⚡</span>Instant Loading</div>
-          <div class="tsj-feature"><span class="tsj-feature-icon">📡</span>Works Offline</div>
-          <div class="tsj-feature"><span class="tsj-feature-icon">🔔</span>Job Alerts</div>
-          <div class="tsj-feature"><span class="tsj-feature-icon">🏠</span>Home Screen</div>
-        </div>
-        <div class="tsj-sheet-actions">
-          <button class="tsj-btn-install" id="tsj-install-btn">
-            📲 Install Free App
-          </button>
-          <button class="tsj-btn-later" id="tsj-later-btn">Maybe later</button>
-        </div>
-      </div>
-    `;
-
-    document.body.appendChild(overlay);
-
-    // Close on overlay click
-    overlay.addEventListener('click', function (e) {
-      if (e.target === overlay) hideInstallSheet();
-    });
-
-    document.getElementById('tsj-later-btn').addEventListener('click', function () {
-      dismiss('install_sheet');
-      hideInstallSheet();
-      showFAB(); // Show FAB as fallback
-    });
-
-    document.getElementById('tsj-install-btn').addEventListener('click', triggerInstall);
-
-    return overlay;
-  }
-
-  function showInstallSheet() {
-    if (isDismissed('install_sheet')) { showFAB(); return; }
-    const overlay = document.getElementById('tsj-pwa-overlay') || buildInstallSheet();
-    requestAnimationFrame(() => {
-      overlay.classList.add('visible');
-    });
-  }
-
-  function hideInstallSheet() {
-    const overlay = document.getElementById('tsj-pwa-overlay');
-    if (overlay) overlay.classList.remove('visible');
-  }
-
-  async function triggerInstall() {
-    if (!deferredPrompt) {
-      showToast('Use browser menu → "Add to Home Screen"', 4000);
-      hideInstallSheet();
-      return;
-    }
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    deferredPrompt = null;
-    hideInstallSheet();
-    if (outcome === 'accepted') {
-      store('installed', true);
-      showToast('🎉 App installed successfully!', 3000);
-      trackEvent('pwa_installed');
-    } else {
-      dismiss('install_sheet');
-      showFAB();
-      trackEvent('pwa_dismissed');
-    }
-  }
-
-  // ══════════════════════════════════════════════════════════════════════════
-  // iOS INSTALL GUIDE
-  // ══════════════════════════════════════════════════════════════════════════
+  /* ══════════════════════════════════════════
+     iOS GUIDE (no overlay — prevents black fade)
+  ══════════════════════════════════════════ */
   function buildIOSGuide() {
-    // NO overlay on iOS — causes black fade bug
-    const el = document.createElement('div');
-    el.id = 'tsj-ios-guide';
-    el.style.cssText = [
-      'position:fixed',
-      'bottom:0', 'left:0', 'right:0',
-      'z-index:999999',
-      'background:#fff',
-      'border-radius:24px 24px 0 0',
-      'padding:0 0 env(safe-area-inset-bottom,16px)',
-      'box-shadow:0 -8px 40px rgba(13,34,87,0.3)',
-      'transform:translateY(110%)',
-      'transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1)',
-      'will-change:transform',
-      '-webkit-overflow-scrolling:touch',
-    ].join(';');
-
-    el.innerHTML = `
-      <!-- Handle bar -->
-      <div style="width:40px;height:4px;border-radius:2px;background:#dde;margin:12px auto 4px"></div>
-
-      <!-- Header -->
-      <div style="display:flex;align-items:center;gap:14px;padding:12px 20px 10px;border-bottom:1px solid #f0f4f8">
-        <div style="width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#0d2257,#1a3a8f);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">🏛️</div>
-        <div style="flex:1;min-width:0">
-          <div style="font-size:16px;font-weight:700;color:#0d2257">Top Sarkari Jobs</div>
-          <div style="font-size:12px;color:#666;margin-top:2px">Free App • No App Store needed!</div>
-          <div style="font-size:11px;color:#f5a623;margin-top:2px">★★★★★ 4.8 • Free</div>
-        </div>
-        <button id="tsj-ios-close-x" style="width:28px;height:28px;border-radius:50%;background:#f0f0f0;border:none;font-size:14px;color:#666;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;-webkit-tap-highlight-color:transparent">✕</button>
-      </div>
-
-      <!-- Steps -->
-      <div style="padding:14px 20px 10px">
-        <div style="font-size:11px;font-weight:700;color:#0d2257;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px">📲 3 Steps mein install karo:</div>
-
-        <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#f7f9ff;border-radius:12px;border:1px solid #e8eef8;margin-bottom:8px">
-          <div style="width:26px;height:26px;border-radius:50%;background:#0d2257;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0">1</div>
-          <div style="font-size:13px;color:#333;line-height:1.4">Safari mein neeche <strong style="color:#0d2257">Share ⬆️</strong> button tap karo</div>
-        </div>
-
-        <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#f7f9ff;border-radius:12px;border:1px solid #e8eef8;margin-bottom:8px">
-          <div style="width:26px;height:26px;border-radius:50%;background:#0d2257;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0">2</div>
-          <div style="font-size:13px;color:#333;line-height:1.4"><strong style="color:#0d2257">"Add to Home Screen"</strong> pe tap karo</div>
-        </div>
-
-        <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#f7f9ff;border-radius:12px;border:1px solid #e8eef8">
-          <div style="width:26px;height:26px;border-radius:50%;background:#0d2257;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0">3</div>
-          <div style="font-size:13px;color:#333;line-height:1.4">Top right mein <strong style="color:#0d2257">"Add"</strong> tap karo ✅</div>
-        </div>
-      </div>
-
-      <!-- Action buttons -->
-      <div style="padding:8px 20px 16px;display:flex;flex-direction:column;gap:10px">
-        <button id="tsj-ios-safari-btn" style="
-          display:block;width:100%;padding:15px;
-          background:linear-gradient(135deg,#0d2257 0%,#1a3a8f 100%);
-          color:#fff;border:none;border-radius:14px;
-          font-size:15px;font-weight:700;cursor:pointer;
-          -webkit-tap-highlight-color:transparent;
-          box-shadow:0 4px 14px rgba(13,34,87,0.3);
-        ">⬆️ Safari se Install karo</button>
-        <button id="tsj-ios-later-btn" style="
-          display:block;width:100%;padding:11px;
-          background:transparent;color:#999;
-          border:none;font-size:13px;cursor:pointer;
-          -webkit-tap-highlight-color:transparent;
-        ">Baad mein karenge</button>
-      </div>
-    `;
+    var el = document.createElement('div');
+    el.id = 'tsj-ios';
+    el.innerHTML = [
+      '<div class="tsj-handle"></div>',
+      '<div class="tsj-hdr">',
+        '<div class="tsj-app-ico">🏛️</div>',
+        '<div>',
+          '<div class="tsj-app-name">Top Sarkari Jobs</div>',
+          '<div class="tsj-app-sub">Free App • No App Store needed!</div>',
+          '<div class="tsj-stars">★★★★★ 4.8 Free</div>',
+        '</div>',
+        '<button class="tsj-close" id="tsj-ios-x">✕</button>',
+      '</div>',
+      '<div class="tsj-steps">',
+        '<div class="tsj-step-lbl">📲 3 Steps mein install karo:</div>',
+        '<div class="tsj-step"><div class="tsj-step-n">1</div>',
+          '<div class="tsj-step-t">Safari mein neeche <b>Share ⬆️</b> tap karo</div></div>',
+        '<div class="tsj-step"><div class="tsj-step-n">2</div>',
+          '<div class="tsj-step-t"><b>"Add to Home Screen"</b> tap karo</div></div>',
+        '<div class="tsj-step"><div class="tsj-step-n">3</div>',
+          '<div class="tsj-step-t">Upar right mein <b>"Add"</b> tap karo ✅</div></div>',
+      '</div>',
+      '<div class="tsj-actions">',
+        '<button class="tsj-btn-primary" id="tsj-ios-ok">⬆️ Samajh gaya, Install karta hun</button>',
+        '<button class="tsj-btn-later" id="tsj-ios-later">Baad mein</button>',
+      '</div>',
+    ].join('');
 
     document.body.appendChild(el);
 
-    function closeGuide() {
-      el.style.transform = 'translateY(110%)';
-      setTimeout(function() { el.style.display = 'none'; }, 420);
-      dismiss('ios_guide');
+    function closeIOS() {
+      el.classList.remove('show');
+      setDismissed('ios');
     }
 
-    // Close X button
-    document.getElementById('tsj-ios-close-x').addEventListener('click', function(e) {
-      e.stopPropagation();
-      closeGuide();
-    });
-
-    // Later button
-    document.getElementById('tsj-ios-later-btn').addEventListener('click', function(e) {
-      e.stopPropagation();
-      closeGuide();
-    });
-
-    // Safari install button
-    document.getElementById('tsj-ios-safari-btn').addEventListener('click', function(e) {
-      e.stopPropagation();
-      var btn = this;
-      if (isSafari) {
-        btn.textContent = '⬆️ Ab Share button tap karo (neeche)';
-        btn.style.background = 'linear-gradient(135deg,#1b5e20,#2e7d32)';
-        setTimeout(closeGuide, 3000);
-      } else {
-        // Not Safari — guide them to open in Safari
-        btn.textContent = 'Safari mein open ho raha hai...';
-        setTimeout(function() {
-          window.location.href = location.href;
-        }, 300);
-      }
+    onTap(document.getElementById('tsj-ios-x'),     closeIOS);
+    onTap(document.getElementById('tsj-ios-later'), closeIOS);
+    onTap(document.getElementById('tsj-ios-ok'), function() {
+      var btn = document.getElementById('tsj-ios-ok');
+      btn.textContent = '⬆️ Ab neeche Share button tap karo';
+      btn.style.background = 'linear-gradient(135deg,#1b5e20,#388e3c)';
+      setTimeout(closeIOS, 2500);
     });
 
     return el;
   }
 
   function showIOSGuide() {
-    if (isDismissed('ios_guide')) return;
-    if (!document.getElementById('tsj-ios-guide')) buildIOSGuide();
-    var el = document.getElementById('tsj-ios-guide');
-    if (!el) return;
+    if (wasDismissed('ios') || isStandalone) return;
+    var el = document.getElementById('tsj-ios') || buildIOSGuide();
     el.style.display = '';
-    // Double rAF for iOS reliable animation
     requestAnimationFrame(function() {
       requestAnimationFrame(function() {
-        el.style.transform = 'translateY(0)';
+        el.classList.add('show');
       });
     });
-    trackEvent('ios_guide_shown');
   }
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // FLOATING ACTION BUTTON
-  // ══════════════════════════════════════════════════════════════════════════
+  /* ══════════════════════════════════════════
+     ANDROID / DESKTOP SHEET
+  ══════════════════════════════════════════ */
+  function buildSheet() {
+    var ov = document.createElement('div');
+    ov.id = 'tsj-ov';
+    document.body.appendChild(ov);
+
+    var sh = document.createElement('div');
+    sh.id = 'tsj-sheet';
+    sh.innerHTML = [
+      '<div class="tsj-handle"></div>',
+      '<div class="tsj-hdr">',
+        '<div class="tsj-app-ico">🏛️</div>',
+        '<div>',
+          '<div class="tsj-app-name">Top Sarkari Jobs</div>',
+          '<div class="tsj-app-sub">Works offline • No Play Store needed</div>',
+          '<div class="tsj-stars">★★★★★ 4.8 • Free • '+(isAndroid?'Android':'Desktop')+' App</div>',
+        '</div>',
+        '<button class="tsj-close" id="tsj-sh-x">✕</button>',
+      '</div>',
+      '<div class="tsj-feats">',
+        '<div class="tsj-feat">⚡ Instant Loading</div>',
+        '<div class="tsj-feat">📡 Works Offline</div>',
+        '<div class="tsj-feat">🔔 Job Alerts</div>',
+        '<div class="tsj-feat">🏠 Home Screen</div>',
+      '</div>',
+      '<div class="tsj-actions">',
+        '<button class="tsj-btn-primary" id="tsj-sh-install">📲 Install Free App</button>',
+        '<button class="tsj-btn-later" id="tsj-sh-later">Maybe later</button>',
+      '</div>',
+    ].join('');
+    document.body.appendChild(sh);
+
+    function closeSheet() {
+      sh.classList.remove('show');
+      ov.classList.remove('show');
+      setDismissed('sheet');
+    }
+
+    onTap(ov, closeSheet);
+    onTap(document.getElementById('tsj-sh-x'),     closeSheet);
+    onTap(document.getElementById('tsj-sh-later'), function(){ closeSheet(); showFAB(); });
+    onTap(document.getElementById('tsj-sh-install'), function() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(function(r) {
+          deferredPrompt = null;
+          closeSheet();
+          if (r.outcome === 'accepted') {
+            save('installed', 1);
+            removeFAB();
+          } else {
+            showFAB();
+          }
+        });
+      } else {
+        closeSheet();
+        showFAB();
+      }
+    });
+  }
+
+  function showSheet() {
+    if (wasDismissed('sheet') || load('installed') || isStandalone) { showFAB(); return; }
+    if (!document.getElementById('tsj-sh-install')) buildSheet();
+    requestAnimationFrame(function() {
+      document.getElementById('tsj-ov').classList.add('show');
+      document.getElementById('tsj-sheet').classList.add('show');
+    });
+  }
+
+  /* ══════════════════════════════════════════
+     FAB — Floating Button with auto-fold
+  ══════════════════════════════════════════ */
   function buildFAB() {
     if (document.getElementById('tsj-fab')) return;
-    var fab = document.createElement('button');
-    fab.id = 'tsj-fab';
-    fab.setAttribute('aria-label', 'Install App');
-    fab.innerHTML = [
-      '<div class="fab-text-wrap">',
-        '<span class="fab-top-text">Govt: नौकरी सिर्फ एक क्लिक दूर</span>',
-        '<span class="fab-main-text">⬇ INSTALL App</span>',
+    fabEl = document.createElement('button');
+    fabEl.id = 'tsj-fab';
+    fabEl.setAttribute('aria-label', 'Install App');
+    fabEl.innerHTML = [
+      '<div class="tsj-fab-txt">',
+        '<span class="tsj-fab-top">Govt: \u0928\u094c\u0915\u0930\u0940 \u0938\u093f\u0930\u094d\u092b \u090f\u0915 \u0915\u094d\u0932\u093f\u0915 \u0926\u0942\u0930</span>',
+        '<span class="tsj-fab-main">\u2b07 INSTALL App</span>',
       '</div>',
-      '<div class="fab-icon-wrap">⬇</div>',
+      '<div class="tsj-fab-ico">\u2b07</div>',
     ].join('');
 
-    var isFolded = false;
-    var foldTimer = null;
-
-    function expandFAB() {
-      isFolded = false;
-      fab.classList.remove('tsj-fab-folded');
-      fab.style.left = '50%';
-      // Re-fold after 8s of inactivity
-      clearTimeout(foldTimer);
-      foldTimer = setTimeout(foldFAB, 8000);
-    }
-
-    function foldFAB() {
-      isFolded = true;
-      fab.classList.add('tsj-fab-folded');
-      clearTimeout(foldTimer);
-    }
-
-    fab.addEventListener('click', function(e) {
-      e.stopPropagation();
+    onTap(fabEl, function() {
       if (isFolded) {
-        // First click = expand only
-        expandFAB();
-        return;
+        // Expand
+        isFolded = false;
+        fabEl.classList.remove('folded');
+        fabEl.style.left = '50%';
+        clearTimeout(foldTimer);
+        foldTimer = setTimeout(foldFAB, 8000);
+      } else {
+        // Open install
+        clearTimeout(foldTimer);
+        if (isIOS || isIPad) { showIOSGuide(); }
+        else { showSheet(); }
       }
-      // Second click = open install
-      clearTimeout(foldTimer);
-      if (isIOS || isIPad) { showIOSGuide(); }
-      else { showInstallSheet(); }
     });
 
-    document.body.appendChild(fab);
+    document.body.appendChild(fabEl);
 
-    // Show after 5s, then auto-fold after 8s more
+    // Show after 5s, fold after 8s
     setTimeout(function() {
-      fab.classList.add('tsj-fab-visible');
+      fabEl.classList.add('show');
       foldTimer = setTimeout(foldFAB, 8000);
     }, 5000);
   }
 
-  function showFAB() {
-    buildFAB();
+  function foldFAB() {
+    if (!fabEl) return;
+    isFolded = true;
+    fabEl.style.left = '0';
+    fabEl.classList.add('folded');
   }
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // TOAST
-  // ══════════════════════════════════════════════════════════════════════════
-  function showToast(msg, duration = 3000) {
-    let toast = document.getElementById('tsj-toast');
-    if (!toast) {
-      toast = document.createElement('div');
-      toast.id = 'tsj-toast';
-      document.body.appendChild(toast);
-    }
-    toast.textContent = msg;
-    toast.classList.add('show');
-    clearTimeout(toast._timer);
-    toast._timer = setTimeout(() => toast.classList.remove('show'), duration);
+  function showFAB() { buildFAB(); }
+
+  function removeFAB() {
+    if (fabEl) { fabEl.remove(); fabEl = null; }
   }
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // UPDATE TOAST
-  // ══════════════════════════════════════════════════════════════════════════
-  function showUpdateToast() {
-    let banner = document.getElementById('tsj-update-banner');
-    if (!banner) {
-      banner = document.createElement('div');
-      banner.id = 'tsj-update-banner';
-      banner.innerHTML = `
-        <span>🔄 New version available!</span>
-        <button id="tsj-update-reload">Update Now</button>
-      `;
-      document.body.appendChild(banner);
-      document.getElementById('tsj-update-reload').addEventListener('click', () => {
-        window.location.reload();
+  /* ══════════════════════════════════════════
+     SERVICE WORKER
+  ══════════════════════════════════════════ */
+  function registerSW() {
+    if (!('serviceWorker' in navigator)) return;
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/sw.js?v=4.0').then(function(reg) {
+        reg.addEventListener('updatefound', function() {
+          var nw = reg.installing;
+          nw.addEventListener('statechange', function() {
+            if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+              nw.postMessage({ type: 'SKIP_WAITING' });
+            }
+          });
+        });
+        setInterval(function(){ reg.update(); }, 30*60*1000);
+        window._tsjSWReg = reg;
+      }).catch(function(){});
+
+      var refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', function() {
+        if (!refreshing) { refreshing = true; location.reload(); }
       });
-    }
-    requestAnimationFrame(() => banner.classList.add('visible'));
+    });
   }
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // PUSH NOTIFICATIONS
-  // ══════════════════════════════════════════════════════════════════════════
-  async function requestPushPermission() {
-    if (!('Notification' in window) || !('PushManager' in window)) return;
-    if (Notification.permission === 'granted') return;
-    if (Notification.permission === 'denied') return;
-
-    const permission = await Notification.requestPermission();
-    if (permission === 'granted') {
-      subscribeToPush();
-    }
-  }
-
-  async function subscribeToPush() {
-    try {
-      const reg = window._tsjSWReg || await navigator.serviceWorker.ready;
-      const subscription = await reg.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(CONFIG.vapidKey)
-      });
-      // Send subscription to your backend
-      // await sendSubscriptionToServer(subscription);
-      console.log('[PWA] Push subscription:', JSON.stringify(subscription));
-    } catch (e) {
-      console.warn('[PWA] Push subscription failed:', e.message);
-    }
-  }
-
-  function urlBase64ToUint8Array(base64String) {
-    const padding = '='.repeat((4 - base64String.length % 4) % 4);
-    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-    const rawData = window.atob(base64);
-    const outputArray = new Uint8Array(rawData.length);
-    for (let i = 0; i < rawData.length; ++i) {
-      outputArray[i] = rawData.charCodeAt(i);
-    }
-    return outputArray;
-  }
-
-  // ══════════════════════════════════════════════════════════════════════════
-  // ANALYTICS HELPER
-  // ══════════════════════════════════════════════════════════════════════════
-  function trackEvent(name, params = {}) {
-    try {
-      if (typeof gtag === 'function') {
-        gtag('event', name, { event_category: 'PWA', ...params });
-      }
-    } catch {}
-  }
-
-  // ══════════════════════════════════════════════════════════════════════════
-  // META TAGS FOR iOS
-  // ══════════════════════════════════════════════════════════════════════════
+  /* ══════════════════════════════════════════
+     iOS META TAGS
+  ══════════════════════════════════════════ */
   function injectIOSMeta() {
-    const metas = [
-      ['apple-mobile-web-app-capable',          'yes'],
-      ['apple-mobile-web-app-status-bar-style', 'black-translucent'],
-      ['apple-mobile-web-app-title',            CONFIG.appShortName],
-      ['mobile-web-app-capable',                'yes'],
-      ['application-name',                      CONFIG.appName],
-      ['msapplication-TileColor',               CONFIG.themeColor],
-      ['msapplication-TileImage',               '/icons/icon-144x144.png'],
-      ['msapplication-tap-highlight',           'no'],
-      ['format-detection',                      'telephone=no'],
+    var metas = [
+      ['apple-mobile-web-app-capable','yes'],
+      ['apple-mobile-web-app-status-bar-style','black-translucent'],
+      ['apple-mobile-web-app-title','TopSarkariJobs'],
+      ['mobile-web-app-capable','yes'],
     ];
-
-    metas.forEach(([name, content]) => {
-      if (!document.querySelector(`meta[name="${name}"]`)) {
-        const m = document.createElement('meta');
-        m.name = name;
-        m.content = content;
-        document.head.appendChild(m);
+    metas.forEach(function(m) {
+      if (!document.querySelector('meta[name="'+m[0]+'"]')) {
+        var el = document.createElement('meta');
+        el.name = m[0]; el.content = m[1];
+        document.head.appendChild(el);
       }
     });
-
-    // Apple touch icons
-    const iconSizes = [57, 60, 72, 76, 114, 120, 144, 152, 180];
-    iconSizes.forEach(size => {
-      if (!document.querySelector(`link[rel="apple-touch-icon"][sizes="${size}x${size}"]`)) {
-        const link = document.createElement('link');
-        link.rel = 'apple-touch-icon';
-        link.sizes = `${size}x${size}`;
-        link.href = `/icons/apple-touch-icon-${size}x${size}.png`;
-        document.head.appendChild(link);
-      }
-    });
-
-    // Default apple-touch-icon
-    if (!document.querySelector('link[rel="apple-touch-icon"]:not([sizes])')) {
-      const link = document.createElement('link');
-      link.rel = 'apple-touch-icon';
-      link.href = '/icons/icon-180x180.png';
-      document.head.appendChild(link);
-    }
-
-    // iOS Splash screens
-    const splashScreens = [
-      { media: '(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)', href: '/splash/splash-1290x2796.png' },
-      { media: '(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)', href: '/splash/splash-1179x2556.png' },
-      { media: '(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)', href: '/splash/splash-1170x2532.png' },
-      { media: '(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)', href: '/splash/splash-1125x2436.png' },
-      { media: '(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)', href: '/splash/splash-828x1792.png' },
-      { media: '(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)', href: '/splash/splash-750x1334.png' },
-      { media: '(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)', href: '/splash/splash-1536x2048.png' },
-    ];
-
-    splashScreens.forEach(({ media, href }) => {
-      if (!document.querySelector(`link[rel="apple-touch-startup-image"][media="${media}"]`)) {
-        const link = document.createElement('link');
-        link.rel = 'apple-touch-startup-image';
-        link.media = media;
-        link.href = href;
-        document.head.appendChild(link);
-      }
-    });
-
-    // Theme color meta
-    if (!document.querySelector('meta[name="theme-color"]')) {
-      const m = document.createElement('meta');
-      m.name = 'theme-color';
-      m.content = CONFIG.themeColor;
-      document.head.appendChild(m);
-    }
   }
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // ANDROID TWA DETECTION
-  // ══════════════════════════════════════════════════════════════════════════
-  function handleTWA() {
-    if (isTWA) {
-      document.documentElement.classList.add('tsj-twa');
-      // In TWA mode, hide browser-specific UI
-      store('is_twa', true);
-      trackEvent('twa_launch');
-    }
-  }
-
-  // ══════════════════════════════════════════════════════════════════════════
-  // MAIN INIT
-  // ══════════════════════════════════════════════════════════════════════════
+  /* ══════════════════════════════════════════
+     INIT
+  ══════════════════════════════════════════ */
   function init() {
-    // Already installed as app — don't show prompts
-    if (isStandalone) {
-      showSplash();
-      handleTWA();
-      // Request push permissions after brief delay in standalone
-      setTimeout(requestPushPermission, 5000);
-      return;
-    }
+    if (isStandalone) return; // already installed, do nothing
 
     injectStyles();
     injectIOSMeta();
+    registerSW();
 
-    // Capture beforeinstallprompt (Android/Desktop Chrome/Edge)
-    window.addEventListener('beforeinstallprompt', function (e) {
+    // Android / Desktop: capture install prompt
+    window.addEventListener('beforeinstallprompt', function(e) {
       e.preventDefault();
       deferredPrompt = e;
-      trackEvent('pwa_prompt_available', { platform: isAndroid ? 'android' : 'desktop' });
-
-      setTimeout(function () {
-        if (!isDismissed('install_sheet') && !retrieve('installed')) {
-          showInstallSheet();
-          trackEvent('pwa_sheet_shown');
+      setTimeout(function() {
+        if (!wasDismissed('sheet') && !load('installed')) {
+          showSheet();
         } else {
           showFAB();
         }
-      }, CONFIG.installDelay);
+      }, 5000);
     });
 
-    // iOS: show guide + FAB on ALL iOS browsers
+    // iOS
     if (isIOS || isIPad) {
-      // Build FAB early — it self-shows after 5s
-      buildFAB();
-
-      // Show iOS guide popup after delay
-      setTimeout(function () {
-        if (!isDismissed('ios_guide') && !retrieve('installed')) {
+      buildFAB(); // FAB shows itself after 5s
+      setTimeout(function() {
+        if (!wasDismissed('ios') && !load('installed')) {
           showIOSGuide();
-          trackEvent('ios_guide_triggered');
         }
-      }, CONFIG.iosBannerDelay);
+      }, 5000);
     }
 
-    // Track install
-    window.addEventListener('appinstalled', function () {
-      store('installed', true);
+    // Desktop fallback (no beforeinstallprompt)
+    setTimeout(function() {
+      if (!deferredPrompt && !isIOS && !isIPad) {
+        buildFAB();
+      }
+    }, 9000);
+
+    window.addEventListener('appinstalled', function() {
+      save('installed', 1);
+      removeFAB();
       deferredPrompt = null;
-      hideInstallSheet();
-      showToast('🎉 App installed! Open from your home screen.', 4000);
-      trackEvent('pwa_app_installed');
     });
-
-    // Android/Desktop: build FAB (self-shows after 5s)
-    if (!isIOS && !isIPad) {
-      buildFAB();
-    }
   }
 
-  // ── Public API ─────────────────────────────────────────────────────────────
-  window.TSJ_PWA = {
-    showInstall:     showInstallSheet,
-    showIOSGuide:    showIOSGuide,
-    requestPush:     requestPushPermission,
-    showToast:       showToast,
-    isStandalone:    isStandalone,
-    isAndroid:       isAndroid,
-    isIOS:           isIOS,
-    isTWA:           isTWA,
-  };
-
-  // ── Boot ───────────────────────────────────────────────────────────────────
-  registerServiceWorker();
+  // Public API
+  window.TSJ_PWA = { showIOSGuide: showIOSGuide, showSheet: showSheet };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
