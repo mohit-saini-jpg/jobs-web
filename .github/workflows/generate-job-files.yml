@@ -1,14 +1,15 @@
 name: Auto-Update Jobs
 
 on:
+  # TRIGGER 1: Jab bhi Complete_Jobs_Full_Data.json GitHub pe update ho
   push:
     paths:
       - 'Complete_Jobs_Full_Data.json'
-      - 'merged_sarkari_data.json'
-      - 'state-jobs-data.json'
 
+  # TRIGGER 2: GitHub Actions tab se manual "Run workflow" button
   workflow_dispatch:
 
+  # TRIGGER 3: Har roz raat 12 baje automatic (India time = UTC+5:30, so 18:30 UTC)
   schedule:
     - cron: '30 18 * * *'
 
@@ -22,19 +23,9 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # ── Step 1: Complete_Jobs_Full_Data.json → jobs/data/<category>/<slug>.json ──
-      - name: Generate job files (category subfolders)
+      - name: Run job file generator
         run: python3 .github/workflows/generate_jobs.py
 
-      # ── Step 2: merged_sarkari_data.json → sarkari/data/<slug>.json ──
-      - name: Generate sarkari job files
-        run: python3 .github/workflows/generate_sarkari.py
-
-      # ── Step 3: state-jobs-data.json → state/data/<state-id>.json ──
-      - name: Generate state job files
-        run: python3 .github/workflows/generate_state_jobs.py
-
-      # ── Step 4: Sitemap ──────────────────────────────────────────────
       - name: Generate sitemap
         run: |
           if [ -f sitemap-generator.js ]; then
@@ -43,42 +34,12 @@ jobs:
             echo "No sitemap-generator.js, skipping"
           fi
 
-      # ── Step 5: Commit all ───────────────────────────────────────────
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          # Complete_Jobs — category subfolders
-          git add jobs-index.json
-          git add "jobs/data/latest-notifications/"
-          git add "jobs/data/b-tech-be/"
-          git add "jobs/data/diploma/"
-          git add "jobs/data/any-graduate/"
-          git add "jobs/data/any-post-graduate/"
-          git add "jobs/data/teaching-faculty/"
-          git add "jobs/data/medical-hospital/"
-          git add "jobs/data/12th-pass/"
-          git add "jobs/data/10th-pass/"
-          git add "jobs/data/iti/"
-          git add "jobs/data/police-defence/"
-          git add "jobs/data/bank-jobs/"
-          git add "jobs/data/railway-jobs/"
-          git add "jobs/data/b-com/"
-          git add "jobs/data/8th-pass/"
-          git add "jobs/data/last-date-reminder/"
-
-          # merged_sarkari split files
-          git add sarkari-index.json sarkari/data/ merged-sarkari-mini.json
-
-          # state-jobs split files
-          git add state-jobs-index.json state/data/ state-jobs-mini.json
-          # state/<id>/data/ subfolders — har state ka apna data folder
-          find state -path "*/data/*.json" -not -path "state/data/*" -exec git add {} \; 2>/dev/null || true
-
-          # Sitemap
+          git add jobs-index.json jobs/data/
           git add sitemap-jobs.xml sitemap-index.xml sitemap.xml 2>/dev/null || true
-
           git diff --staged --quiet && echo "No changes" && exit 0
           git commit -m "Auto: jobs updated $(date +'%Y-%m-%d %H:%M UTC')"
           git pull --rebase origin main

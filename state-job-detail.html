@@ -1077,24 +1077,12 @@
       let matchedSectionId = stateArg;
 
       try {
-        /* OPTIMIZED: 2.2MB state-jobs-data.json ki jagah sirf is state ki file (~15-200KB) */
+        const r = await fetch('state-jobs-data.json');
+        if (!r.ok) throw new Error('fetch failed');
+        const data = await r.json();
+
         const stateKey = stateArg.toLowerCase();
-        const stateId  = stateKey.replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-        let sections = [];
-        try {
-          const rs = await fetch('/state/data/' + stateId + '.json');
-          if (rs.ok) {
-            const sd = await rs.json();
-            sections = sd.sections || (sd.id ? [sd] : []);
-          }
-        } catch (_) {}
-        /* Fallback: full file agar per-state file na mile */
-        if (!sections.length) {
-          const r = await fetch('/state-jobs-data.json');
-          if (!r.ok) throw new Error('fetch failed');
-          const data = await r.json();
-          sections = data.sections || (Array.isArray(data) ? data : []);
-        }
+        const sections = data.sections || (Array.isArray(data) ? data : []);
 
         /* Find matching state section */
         for (const sec of sections) {
