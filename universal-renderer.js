@@ -690,6 +690,11 @@
     if (typeof value === 'object') {
       const pairs = Object.entries(value).filter(([, v]) => hasContent(v));
       if (!pairs.length) return '<span style="color:#94a3b8;">—</span>';
+      /* Single "details"/"description" key with long text → plain paragraph */
+      if (pairs.length === 1 && /^(details?|description|note|info|text|content)$/i.test(pairs[0][0])) {
+        const txt = safe(String(pairs[0][1]));
+        return `<div style="font-size:.88rem;color:#1e293b;line-height:1.85;">${esc(txt).replace(/\n/g,'<br>')}</div>`;
+      }
       if (depth > 2) {
         // Avoid extreme nesting — render flat
         return pairs.map(([k, v]) => `<strong>${esc(keyToLabel(k))}:</strong> ${deepRender(v, depth+1)}`).join('<br>');
@@ -792,14 +797,41 @@
   function cardPhysical(pe) {
     if (!hasContent(pe)) return null;
     let html = '';
+
     if (typeof pe === 'object' && !Array.isArray(pe)) {
       const pairs = Object.entries(pe).filter(([, v]) => hasContent(v));
       if (!pairs.length) return null;
-      html = `<div class="udyn-grid">${pairs.map(([k, v]) =>
-        `<div class="udyn-grid-item"><div class="udyn-grid-label">${esc(keyToLabel(k))}</div><div class="udyn-grid-val">${deepRender(v, 1)}</div></div>`
-      ).join('')}</div>`;
+
+      /* If only 1 key and it's "details" / "description" / "note" — show as full-width text */
+      if (pairs.length === 1 && /^(details?|description|note|info|text|content)$/i.test(pairs[0][0])) {
+        const val = safe(pairs[0][1]);
+        html = `
+          <div style="padding:16px 20px;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #f0f0f0;">
+              <i class="fa-regular fa-file-lines" style="color:#1d4ed8;font-size:1.1rem;"></i>
+              <span style="font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#1d4ed8;">DETAILS</span>
+            </div>
+            <div style="font-size:.9rem;color:#1e293b;line-height:1.85;word-break:break-word;">${esc(val).replace(/\n/g,'<br>')}</div>
+          </div>`;
+      } else {
+        /* Multiple keys — try to detect if values are short (grid) or long (stacked rows) */
+        const hasLongVal = pairs.some(([, v]) => safe(String(v)).length > 60);
+        if (hasLongVal) {
+          /* Stacked two-col table layout for long values */
+          html = `<table class="udyn-gen-table">${pairs.map(([k, v]) =>
+            `<tr><th style="width:30%;vertical-align:top;">${esc(keyToLabel(k))}</th>` +
+            `<td style="line-height:1.7;">${deepRender(v, 1)}</td></tr>`
+          ).join('')}</table>`;
+        } else {
+          /* Short values — compact grid */
+          html = `<div class="udyn-grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr));">${pairs.map(([k, v]) =>
+            `<div class="udyn-grid-item"><div class="udyn-grid-label">${esc(keyToLabel(k))}</div><div class="udyn-grid-val">${deepRender(v, 1)}</div></div>`
+          ).join('')}</div>`;
+        }
+      }
     } else if (typeof pe === 'string') {
-      html = `<div class="udyn-detail">${textToHtml(pe)}</div>`;
+      /* Plain string — full width paragraph */
+      html = `<div style="padding:16px 20px;font-size:.9rem;color:#1e293b;line-height:1.85;">${esc(pe).replace(/\n/g,'<br>')}</div>`;
     } else {
       html = `<div class="udyn-detail">${deepRender(pe, 0)}</div>`;
     }
