@@ -1077,7 +1077,7 @@
       let matchedSectionId = stateArg;
 
       try {
-        const r = await fetch('/chunks/state/index.json') /* PERF FIX: 136KB vs 2.2MB */;
+        const r = await fetch('state-jobs-data.json');
         if (!r.ok) throw new Error('fetch failed');
         const data = await r.json();
 
@@ -1180,7 +1180,5 @@
     }
   })();
   </script>
-  <script src="/chunks/chunk-loader.js" defer></script>
-  <script src="/perf-fixes.js" defer></script>
 </body>
 </html>

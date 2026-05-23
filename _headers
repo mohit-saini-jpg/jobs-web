@@ -29,18 +29,6 @@
   Cache-Control: public, max-age=86400
   Content-Type: text/plain; charset=utf-8
 
-/chunks/*
-  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
-  Access-Control-Allow-Origin: *
-  Access-Control-Allow-Methods: GET
-  Vary: Accept-Encoding
-
-/chunks/*.js
-  Cache-Control: public, max-age=31536000, immutable
-
-/perf-fixes.js
-  Cache-Control: public, max-age=86400, stale-while-revalidate=86400
-
 /*.json
   Cache-Control: public, max-age=7200, stale-while-revalidate=14400
   Access-Control-Allow-Origin: *
@@ -92,3 +80,14 @@
 /404.html
   X-Robots-Tag: noindex
   Cache-Control: public, max-age=3600
+
+/merged_sarkari_slim.json
+  Cache-Control: public, max-age=3600, stale-while-revalidate=14400
+  Access-Control-Allow-Origin: *
+  Access-Control-Allow-Methods: GET
+
+/analytics.min.js
+  Cache-Control: public, max-age=31536000, immutable
+
+/perf-boost.min.js
+  Cache-Control: public, max-age=31536000, immutable
