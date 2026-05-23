@@ -1139,36 +1139,28 @@
         document.getElementById('dateLastRow').style.display = '';
       }
 
-      /* ── Application Fee card ── */
-      const feeItems = [];
-      if (row) {
-        if (row.feeGen) feeItems.push(['General / UR',   row.feeGen]);
-        if (row.feeObc) feeItems.push(['OBC',            row.feeObc]);
-        if (row.feeEws) feeItems.push(['EWS',            row.feeEws]);
-        if (row.feeSc)  feeItems.push(['SC',             row.feeSc]);
-        if (row.feeSt)  feeItems.push(['ST',             row.feeSt]);
-        if (row.feeFem) feeItems.push(['Female',         row.feeFem]);
-        if (row.feePh)  feeItems.push(['PH / Divyang',   row.feePh]);
-      }
+      /* ── Application Fee card — uses smart parsed feeItems from row ── */
       const feeCard = document.getElementById('feeCard');
-      if (feeCard && feeItems.length > 0) {
+      const _feeItems = (row && row.feeItems && row.feeItems.length) ? row.feeItems : [];
+      const _feePayMode = (row && row.payMode) ? row.payMode : 'Online';
+      if (feeCard && _feeItems.length > 0) {
         feeCard.style.display = '';
         const isFree = (v) => /nil|0|free/i.test(String(v));
-        // Sort: portal charges last
-        const _nonPortal = feeItems.filter(([l]) => !/portal/i.test(l));
-        const _portal    = feeItems.filter(([l]) => /portal/i.test(l));
+        const _nonPortal = _feeItems.filter(([l]) => !/portal/i.test(l));
+        const _portal    = _feeItems.filter(([l]) => /portal/i.test(l));
         const _rows      = [..._nonPortal, ..._portal];
         const _payIco    = `<span class="fee-pay-ico"><i class="fa-solid fa-credit-card"></i></span>`;
         document.getElementById('feeGrid').innerHTML = _rows.map(([lbl, val], i) => {
           const _free    = isFree(val);
           const _cls     = _free ? 'free' : /portal/i.test(lbl) ? 'portal' : '';
           const _display = _free ? 'Free / ₹0' : val;
-          // Payment mode cell: only first row, spans all rows
           const _payCell = i === 0
-            ? `<td class="fee-pay" rowspan="${_rows.length}">${_payIco}<div>${_payMode}</div></td>`
+            ? `<td class="fee-pay" rowspan="${_rows.length}">${_payIco}<div>${_feePayMode}</div></td>`
             : '';
           return `<tr><td class="fee-cat">${lbl}</td><td class="fee-amt ${_cls}">${_display}</td>${_payCell}</tr>`;
         }).join('');
+      } else if (feeCard) {
+        feeCard.style.display = 'none';
       }
 
       /* ── Age Limit card ── */
@@ -2194,6 +2186,8 @@
         meritList, scoreCard, examCity,
         lastDate, appBegin, examDate, admitDate, resultDate, feeLastDate, corrDate,
         feeGen, feeObc, feeEws, feeSc, feeSt, feeFem, feePh,
+        feeItems: feeItems_raw,
+        payMode: _payMode,
         minAge, maxAge, ageRelax,
         eduQual, expReqd,
         salary, selProc, shortInfo,
