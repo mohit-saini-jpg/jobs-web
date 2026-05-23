@@ -19,6 +19,9 @@ Disallow: /.github/
 Disallow: /.gstack/
 Disallow: /node_modules/
 
+# ── Block duplicate -latest-notifications URLs (duplicate content fix) ──
+Disallow: /jobs/*-latest-notifications/
+
 # ── Allow all clean-URL pages explicitly ──
 Allow: /section/
 Allow: /jobs/
