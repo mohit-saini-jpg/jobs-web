@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- GA4: Centralized Analytics -->
+  <script src="/analytics.js" defer></script>
+
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Top Sarkari Jobs 2026 – Latest Government Jobs, Results, Admit Cards | India No.1</title>
@@ -15,24 +18,20 @@
   <link rel="icon" type="image/x-icon" href="image.ico"/>
   <link rel="apple-touch-icon" href="image.webp"/>
   <link rel="manifest" href="/manifest.json"/>
-  <!-- Preload hero image if it exists (LCP element) -->
-  <link rel="preload" href="logo-80.webp" as="image" fetchpriority="high"/>
   <link rel="dns-prefetch" href="//fonts.googleapis.com"/>
   <link rel="dns-prefetch" href="//www.googletagmanager.com"/>
   <!-- Preload critical JSON data for faster card rendering -->
-  <link rel="preload" href="merged-mini.json" as="fetch" crossorigin="anonymous" fetchpriority="high"/>
-  <!-- dailyupdates.json loaded lazily after page load -->
+  <link rel="preload" href="merged_sarkari_data.json" as="fetch" crossorigin="anonymous"/>
+  <link rel="preload" href="dailyupdates.json" as="fetch" crossorigin="anonymous"/>
   <!-- PERF: sections-index.json — 16KB lightweight index for instant card rendering (instead of 18MB Complete_Jobs_Full_Data.json) -->
-  <link rel="preload" href="sections-mini.json" as="fetch" crossorigin="anonymous" fetchpriority="high"/>
-  <!-- Preload main script so it's ready when defer fires -->
-  <link rel="preload" href="script.min.js?v=20260520" as="script"/>
+  <link rel="preload" href="sections-index.json" as="fetch" crossorigin="anonymous"/>
   <!-- PERF: shared promise for merged_sarkari_data.json — fetched only ONCE, used by ticker + section cards -->
-  <!-- PERF: Mini JSON fetches — 97% smaller than originals, same UI result -->
   <script>
-  window.__mergedDataPromise = fetch('merged-mini.json')
+  window.__mergedDataPromise = fetch('merged_sarkari_data.json')
     .then(function(r){ return r.ok ? r.json() : null; })
     .catch(function(){ return null; });
-  window.__sectionsIndexPromise = fetch('sections-mini.json')
+  // PERF: sections-index.json — fetch starts immediately at page load (16KB vs 18MB)
+  window.__sectionsIndexPromise = fetch('sections-index.json')
     .then(function(r){ return r.ok ? r.json() : null; })
     .catch(function(){ return null; });
   </script>
@@ -189,8 +188,20 @@
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet"></noscript>
 
-  <!-- Font Awesome: non-blocking load via media=print trick (no render-blocking, no CLS delay) -->
-  <link rel="preload" href="fonts/fa/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <!-- Font Awesome: defer after DOMContentLoaded (saves ~58 KiB blocking, fixes CLS) -->
+  <script>
+  (function(){
+    function loadFA(){
+      var l=document.createElement('link');
+      l.rel='stylesheet'; l.href='fonts/fa/all.min.css';
+      l.media='print'; l.onload=function(){this.media='all';};
+      document.head.appendChild(l);
+    }
+    if(document.readyState==='loading'){
+      document.addEventListener('DOMContentLoaded',function(){setTimeout(loadFA,100);});
+    } else { setTimeout(loadFA,100); }
+  })();
+  </script>
   <noscript><link rel="stylesheet" href="fonts/fa/all.min.css"></noscript>
 
   <style>
@@ -218,13 +229,10 @@
       --gap: 14px;
     }
 
-    /* font-display: swap — prevents FOIT. size-adjust reduces CLS from font swap */
+    /* font-display: swap — prevents FOIT (invisible text during font load) */
     @font-face {
       font-family: 'Noto Sans';
       font-display: swap;
-      font-style: normal;
-      font-weight: 400 900;
-      size-adjust: 100%; /* Match system font metrics to reduce layout shift */
       src: local('Noto Sans'), local('NotoSans');
     }
 
@@ -462,7 +470,6 @@
     #heroSearch {
       flex: 1; padding: 12px 15px; border: none; outline: none;
       font-size: .9rem; background: #fff; color: var(--text);
-      height: 46px; /* Explicit height prevents CLS */
     }
     #heroSearchBtn {
       padding: 12px 20px; background: var(--accent); color: #fff;
@@ -1586,34 +1593,7 @@
     /* Hero section specific — don't let icon affect h1 line height */
     .hero-badge .fa-solid { width: 0.875em; }
     .hero-quick-btn .fa-solid { width: 0.875em; }
-  
-    /* ── PERF: Prevent CLS from Font Awesome icon load ── */
-    /* Reserve space for icons before FA stylesheet loads */
-    .nav-link i, .nav-dd-btn i, .cbi-icon i, .sec-head i, .hero-badge i {
-      display: inline-block;
-      width: 1em; height: 1em;
-      vertical-align: middle;
-    }
-    /* FA icon placeholders — pure CSS spinner (no FA dependency) */
-    @keyframes css-spin { to { transform: rotate(360deg); } }
-    .css-spinner {
-      display: inline-block;
-      width: 20px; height: 20px;
-      border: 2.5px solid rgba(255,255,255,0.3);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: css-spin 0.8s linear infinite;
-    }
-    /* Contain ticker to prevent layout shifts */
-    .ticker-wrap { contain: layout style; }
-    /* Sidebar cards: reserved height to prevent CLS */
-    #today-updates-sidebar { min-height: 280px; }
-    /* Search suggestions: prevent layout shift */
-    #searchSuggest { contain: layout; }
-    /* Reserve height for dynamic sections so page doesn't jump */
-    #sr-dynamic-wrap { min-height: 420px; contain: layout; }
-    #dynamic-sections { min-height: 200px; }
-</style>
+  </style>
 </head>
 
 <body>
@@ -2094,7 +2074,7 @@
   <div class="ticker-wrap" id="tickerWrap" aria-label="Latest job updates" role="marquee" aria-live="off">
     <span class="ticker-label" aria-hidden="true"><i class="fa-solid fa-bolt"></i></span>
     <div class="ticker-track" id="tickerTrack">
-      <span class="ticker-loading" aria-live="polite">⚡ Loading latest jobs…</span>
+      <span class="ticker-loading" aria-live="polite">Loading latest jobs…</span>
     </div>
   </div>
   <script>
@@ -2104,7 +2084,7 @@
     var MAX_JOBS    = 40;
     var LATEST_JOBS_URL = '/section/latest-notifications/';
 
-    /* ── fetch ticker-mini.json — 9KB pre-filtered ticker data ── */
+    /* ── fetch jobs-index.json — small 309KB file with slugs ── */
     function fetchJobs() {
       var CACHE_KEY = '__ticker_idx_cache';
       var CACHE_TTL = 15 * 60 * 1000;
@@ -2113,7 +2093,7 @@
         if (cached && (Date.now() - cached.ts) < CACHE_TTL) return Promise.resolve(cached.data);
       } catch(e) {}
 
-      return fetch('/ticker-mini.json')
+      return fetch('/jobs-index.json')
         .then(function(r){ return r.ok ? r.json() : null; })
         .then(function(json) {
           try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: json })); } catch(e) {}
@@ -2122,17 +2102,18 @@
         .catch(function(){ return null; });
     }
 
-    /* ── extract Latest_Notifications jobs from mini ticker index ── */
+    /* ── extract Latest_Notifications jobs from index ── */
     function extractLatestJobs(json) {
       var jobs = [];
       if (!json || typeof json !== 'object') return Promise.resolve(jobs);
 
-      // ticker-mini.json already filtered to Latest_Notifications only
       var slugs = Object.keys(json);
       for (var i = 0; i < slugs.length; i++) {
         var slug = slugs[i];
         var entry = json[slug];
+        if ((entry.cat || '') !== 'Latest_Notifications') continue;
         var title = (entry.title || slug.replace(/-/g,' ')).trim();
+        /* Remove trailing "-latest-notifications" from slug for clean URL */
         var cleanSlug = slug.replace(/-latest-notifications$/, '');
         var url = '/jobs/' + cleanSlug + '/';
         jobs.push({ name: title, url: url });
@@ -2222,19 +2203,18 @@
         ============================================================ -->
         <div id="sr-dynamic-wrap">
           <div id="sr-sections-grid" class="sr-sections-grid">
-            <!-- Skeleton cards — no FA dependency, no CLS -->
-            <div class="sr-card"><div class="skeleton-line"></div><div class="skeleton-line medium"></div><div class="skeleton-line short"></div><div class="skeleton-line medium"></div><div class="skeleton-line short"></div></div>
-            <div class="sr-card"><div class="skeleton-line"></div><div class="skeleton-line medium"></div><div class="skeleton-line short"></div><div class="skeleton-line medium"></div><div class="skeleton-line short"></div></div>
-            <div class="sr-card"><div class="skeleton-line"></div><div class="skeleton-line medium"></div><div class="skeleton-line short"></div><div class="skeleton-line medium"></div><div class="skeleton-line short"></div></div>
-            <div class="sr-card"><div class="skeleton-line"></div><div class="skeleton-line medium"></div><div class="skeleton-line short"></div><div class="skeleton-line medium"></div><div class="skeleton-line short"></div></div>
-            <div class="sr-card"><div class="skeleton-line"></div><div class="skeleton-line medium"></div><div class="skeleton-line short"></div><div class="skeleton-line medium"></div><div class="skeleton-line short"></div></div>
-            <div class="sr-card"><div class="skeleton-line"></div><div class="skeleton-line medium"></div><div class="skeleton-line short"></div><div class="skeleton-line medium"></div><div class="skeleton-line short"></div></div>
+            <!-- Cards rendered by inline script below -->
+            <div class="sr-card"><div class="sr-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div></div>
+            <div class="sr-card"><div class="sr-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div></div>
+            <div class="sr-card"><div class="sr-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div></div>
+            <div class="sr-card"><div class="sr-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div></div>
+            <div class="sr-card"><div class="sr-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div></div>
+            <div class="sr-card"><div class="sr-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div></div>
           </div>
         </div>
 
         <!-- DYNAMIC SECTIONS: script.js renders section cards here in 2-col grid -->
-        <!-- loading="lazy" pattern: section cards use content-visibility:auto -->
-        <div id="dynamic-sections" class="dynamic-sections-row" style="contain-intrinsic-size:0 600px;"></div>
+        <div id="dynamic-sections" class="dynamic-sections-row"></div>
 
 
 
@@ -2673,28 +2653,13 @@
   <script src="script.min.js?v=20260520" defer></script>
 
   <!-- SEO Engine: Push Notifications, Recently Viewed, Share, Breadcrumb, Trending -->
-  <!-- Load with requestIdleCallback for better TBT -->
-  <script>
-  (function(){
-    function loadSeoEngine(){
-      var s=document.createElement('script');
-      s.src='seo-engine.min.js?v=20260517';
-      s.async=true;
-      document.body.appendChild(s);
-    }
-    if('requestIdleCallback' in window){
-      requestIdleCallback(loadSeoEngine,{timeout:3000});
-    } else {
-      setTimeout(loadSeoEngine,1000);
-    }
-  })();
-  </script>
+  <script src="seo-engine.min.js?v=20260517" defer></script>
 
   <!-- Service Worker Registration with Auto Update -->
   <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
-      navigator.serviceWorker.register('/sw.js?v=20260522').then(function(reg) {
+      navigator.serviceWorker.register('/sw.js?v=20260516').then(function(reg) {
         // ✅ Jab bhi naya SW available ho, turant activate karo
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -2733,7 +2698,7 @@
   }
   </script>
 
-  <!-- Remove "Open official link" — optimized: single run after script.js, no persistent observer -->
+  <!-- Remove "Open official link" from dynamic cards after render -->
   <script>
   (function removeOpenLink() {
     function cleanLinks() {
@@ -2743,46 +2708,28 @@
         }
       });
     }
-    // Single MutationObserver with disconnect after first render (no persistent overhead)
-    document.addEventListener('DOMContentLoaded', function() {
-      var obs = new MutationObserver(function() {
+    // Run after script.js renders dynamic sections (observe DOM changes)
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
         cleanLinks();
-        // Disconnect after 3 seconds — sections are all rendered by then
-        setTimeout(function(){ obs.disconnect(); }, 3000);
+        var obs = new MutationObserver(cleanLinks);
+        var target = document.getElementById('dynamic-sections');
+        if (target) obs.observe(target, { childList: true, subtree: true });
+        setTimeout(cleanLinks, 1500);
       });
+    } else {
+      cleanLinks();
+      var obs = new MutationObserver(cleanLinks);
       var target = document.getElementById('dynamic-sections');
-      if (target) obs.observe(target, { childList: true, subtree: false });
-    });
+      if (target) obs.observe(target, { childList: true, subtree: true });
+      setTimeout(cleanLinks, 1500);
+    }
   })();
   </script>
 
-  <!-- Smart Search System v2.0 — loaded after first interaction to save TBT -->
-  <script>
-  (function(){
-    var loaded=false;
-    function loadSearch(){
-      if(loaded) return; loaded=true;
-      var s=document.createElement('script');
-      s.src='smart-search.min.js?v=20260517';
-      s.async=true;
-      document.body.appendChild(s);
-    }
-    // Load on first user interaction or after 2s idle, whichever first
-    ['click','touchstart','keydown','mousemove','scroll'].forEach(function(ev){
-      document.addEventListener(ev, loadSearch, {once:true, passive:true});
-    });
-    // Fallback: load after 2s even without interaction
-    setTimeout(loadSearch, 2000);
-  })();
-  </script>
-  <script>
-  // perf-ultra: load on idle
-  if('requestIdleCallback' in window){
-    requestIdleCallback(function(){
-      var s=document.createElement('script');s.src='perf-ultra.js';document.body.appendChild(s);
-    },{timeout:4000});
-  } else { setTimeout(function(){var s=document.createElement('script');s.src='perf-ultra.js';document.body.appendChild(s);},2000); }
-  </script>
+  <!-- Smart Search System v2.0 -->
+  <script src="smart-search.min.js?v=20260517" defer></script>
+  <script src="perf-ultra.js" defer></script>
 
   <script>
   (function () {
@@ -2944,7 +2891,7 @@
     'use strict';
 
     /* ── Config ──────────────────────────────────────────── */
-    var JSON_FILE = 'merged-mini.json';
+    var JSON_FILE = 'merged_sarkari_data.json';
     var MAX_ITEMS = 8;
 
     /*
@@ -3527,7 +3474,7 @@
   <!-- ============================================================
        HERO SEARCH — handled by smart-search.js → setupHeroSearch()
        Searches all 3 JSON files:
-         merged-mini.json  → jobs[].title
+         merged_sarkari_data.json  → jobs[].title
          dailyupdates.json         → sections[].items[].name
          Complete_Jobs_Full_Data.json → basic_details.job_title
   ============================================================ -->
@@ -3544,7 +3491,7 @@
     var list = document.getElementById('today-sidebar-list');
     if (!list) return;
 
-    fetch('daily-mini.json')
+    fetch('dailyupdates.json')
       .then(function(r) { return r.json(); })
       .then(function(data) {
         var items = [];
@@ -3572,7 +3519,5 @@
   })();
   </script>
 
-  <!-- GA4: Centralized Analytics — moved to end for faster FCP -->
-  <script src="/analytics.js" defer></script>
 </body>
 </html>
