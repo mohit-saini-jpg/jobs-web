@@ -1,475 +1,483 @@
 /**
- * ╔══════════════════════════════════════════════════════════════╗
- * ║        HYBRID DYNAMIC CACHE MANAGER — sw.js                 ║
- * ║        Top Sarkari Jobs | topsarkarijobs.com                 ║
- * ║                                                              ║
- * ║  Strategy Matrix:                                            ║
- * ║  • API / JSON job data  → Network-only (no-store)            ║
- * ║  • HTML pages           → Stale-While-Revalidate             ║
- * ║  • JS / CSS / Fonts     → Cache-First (immutable, 1 year)    ║
- * ║  • Images / WebP        → Cache-First (6 months)             ║
- * ║  • Offline fallback     → Cached shell page                  ║
- * ╚══════════════════════════════════════════════════════════════╝
+ * ╔══════════════════════════════════════════════════════════════════╗
+ * ║   TOP SARKARI JOBS — ADVANCED PWA SERVICE WORKER v4.0           ║
+ * ║   Full Offline · Background Sync · Push Notifications           ║
+ * ║   Stale-While-Revalidate · Cache-First · Network-First          ║
+ * ╚══════════════════════════════════════════════════════════════════╝
  */
 
 'use strict';
 
 // ─── Version & Cache Names ────────────────────────────────────────────────────
-const CACHE_VERSION      = 'v3';
-const CACHE_STATIC       = `static-assets-${CACHE_VERSION}`;
-const CACHE_PAGES        = `html-pages-${CACHE_VERSION}`;
-const CACHE_IMAGES       = `images-${CACHE_VERSION}`;
-const CACHE_OFFLINE      = `offline-shell-${CACHE_VERSION}`;
+const SW_VERSION         = 'v4.0';
+const CACHE_STATIC       = `tsj-static-${SW_VERSION}`;
+const CACHE_PAGES        = `tsj-pages-${SW_VERSION}`;
+const CACHE_IMAGES       = `tsj-images-${SW_VERSION}`;
+const CACHE_DATA         = `tsj-data-${SW_VERSION}`;
+const CACHE_OFFLINE      = `tsj-offline-${SW_VERSION}`;
+const ALL_CACHES         = [CACHE_STATIC, CACHE_PAGES, CACHE_IMAGES, CACHE_DATA, CACHE_OFFLINE];
 
-// All known cache names for this version (used to purge old ones)
-const ALL_CACHES = [CACHE_STATIC, CACHE_PAGES, CACHE_IMAGES, CACHE_OFFLINE];
+// Background sync tags
+const SYNC_JOBS          = 'sync-jobs-data';
+const SYNC_ANALYTICS     = 'sync-analytics';
 
-// ─── Size Limits (prevent storage bloat) ─────────────────────────────────────
-const LIMITS = {
-  [CACHE_STATIC]: { maxEntries: 60,  maxAgeSeconds: 31_536_000 }, // 1 year
-  [CACHE_PAGES]:  { maxEntries: 30,  maxAgeSeconds:  86_400    }, // 1 day
-  [CACHE_IMAGES]: { maxEntries: 80,  maxAgeSeconds: 15_552_000 }, // 6 months
+// Push notification config
+const NOTIFICATION_TAG   = 'tsj-push';
+const NOTIFICATION_ICON  = '/image.png';
+const NOTIFICATION_BADGE = '/image.png';
+
+// ─── Cache Size Limits ────────────────────────────────────────────────────────
+const CACHE_LIMITS = {
+  [CACHE_STATIC]: { maxEntries: 80,  maxAgeSeconds: 31_536_000 }, // 1 year
+  [CACHE_PAGES]:  { maxEntries: 60,  maxAgeSeconds:  86_400    }, // 1 day
+  [CACHE_IMAGES]: { maxEntries: 100, maxAgeSeconds: 15_552_000 }, // 6 months
+  [CACHE_DATA]:   { maxEntries: 20,  maxAgeSeconds:  3_600     }, // 1 hour
 };
 
-// ─── Offline Shell Page ───────────────────────────────────────────────────────
-const OFFLINE_PAGE = '/offline.html';
-
-// ─── Pre-cache on Install ─────────────────────────────────────────────────────
-// Only critical shell assets — keep small for fast SW activation
+// ─── Critical Assets to Pre-Cache ────────────────────────────────────────────
 const PRECACHE_STATIC = [
   '/all.min.css',
+  '/styles.css',
+  '/critical.css',
+  '/script.min.js',
+  '/seo-engine.min.js',
+  '/image.png',
+  '/image.webp',
+  '/favicon.ico',
 ];
 
 const PRECACHE_PAGES = [
   '/',
   '/index.html',
+  '/result.html',
+  '/admit-card.html',
+  '/search.html',
+  '/category.html',
+  '/about.html',
+  '/contact.html',
+  '/offline.html',
 ];
 
-// ─────────────────────────────────────────────────────────────────────────────
-// INSTALL: pre-cache shell assets, claim clients immediately
-// ─────────────────────────────────────────────────────────────────────────────
-self.addEventListener('install', event => {
-  console.log(`[SW ${CACHE_VERSION}] Installing…`);
+const PRECACHE_DATA = [
+  '/manifest.json',
+  '/dailyupdates.json',
+  '/config.json',
+];
 
+// ─── Offline Fallback HTML ───────────────────────────────────────────────────
+const OFFLINE_HTML = `<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Offline – Top Sarkari Jobs</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d2257;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px}
+  .wrap{max-width:360px}
+  .icon{font-size:72px;margin-bottom:24px;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+  h1{font-size:24px;font-weight:700;margin-bottom:12px}
+  p{font-size:15px;opacity:.8;line-height:1.6;margin-bottom:24px}
+  .btn{display:inline-block;padding:12px 28px;background:#f5a623;color:#0d2257;border-radius:8px;font-weight:700;text-decoration:none;font-size:15px;cursor:pointer;border:none}
+  .cached{margin-top:20px;font-size:13px;opacity:.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="icon">📡</div>
+  <h1>You're Offline</h1>
+  <p>No internet connection detected. Please check your network and try again. Previously visited pages are available offline.</p>
+  <button class="btn" onclick="window.location.reload()">Try Again</button>
+  <div class="cached">Cached pages available below 👇</div>
+</div>
+<script>
+caches.keys().then(names=>{
+  const n=names.find(n=>n.includes('tsj-pages'));
+  if(!n)return;
+  return caches.open(n).then(c=>c.keys()).then(keys=>{
+    if(!keys.length)return;
+    const div=document.createElement('div');
+    div.style.cssText='margin-top:16px;text-align:left';
+    div.innerHTML='<ul style="list-style:none;padding:0">'+keys.slice(0,8).map(k=>`<li style="margin:6px 0"><a href="${k.url}" style="color:#f5a623;font-size:13px">${k.url.replace(location.origin,'')}</a></li>`).join('')+'</ul>';
+    document.querySelector('.wrap').appendChild(div);
+  });
+});
+</script>
+</body>
+</html>`;
+
+// ══════════════════════════════════════════════════════════════════════════════
+// INSTALL EVENT
+// ══════════════════════════════════════════════════════════════════════════════
+self.addEventListener('install', event => {
+  console.log(`[SW ${SW_VERSION}] Installing…`);
   event.waitUntil(
     (async () => {
-      // Pre-cache static assets
+      // Build offline fallback first
+      const offlineCache = await caches.open(CACHE_OFFLINE);
+      await offlineCache.put('/offline.html', new Response(OFFLINE_HTML, {
+        headers: { 'Content-Type': 'text/html; charset=utf-8' }
+      }));
+
+      // Pre-cache static assets (non-blocking individual failures)
       const staticCache = await caches.open(CACHE_STATIC);
-      await staticCache.addAll(PRECACHE_STATIC).catch(e =>
-        console.warn('[SW] Static pre-cache partial fail:', e.message)
+      await Promise.allSettled(
+        PRECACHE_STATIC.map(url =>
+          staticCache.add(url).catch(e => console.warn('[SW] Skip:', url, e.message))
+        )
       );
 
       // Pre-cache core pages
       const pageCache = await caches.open(CACHE_PAGES);
-      await pageCache.addAll(PRECACHE_PAGES).catch(e =>
-        console.warn('[SW] Page pre-cache partial fail:', e.message)
+      await Promise.allSettled(
+        PRECACHE_PAGES.map(url =>
+          pageCache.add(url).catch(e => console.warn('[SW] Skip page:', url, e.message))
+        )
       );
 
-      // Build offline fallback shell
-      await buildOfflineFallback();
+      // Pre-cache data files
+      const dataCache = await caches.open(CACHE_DATA);
+      await Promise.allSettled(
+        PRECACHE_DATA.map(url =>
+          dataCache.add(url).catch(e => console.warn('[SW] Skip data:', url))
+        )
+      );
 
-      // Skip waiting so new SW activates immediately
       await self.skipWaiting();
-      console.log(`[SW ${CACHE_VERSION}] Installed ✓`);
+      console.log(`[SW ${SW_VERSION}] Installed ✓`);
     })()
   );
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// ACTIVATE: purge OLD cache versions, take control of all tabs
-// ─────────────────────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+// ACTIVATE EVENT
+// ══════════════════════════════════════════════════════════════════════════════
 self.addEventListener('activate', event => {
-  console.log(`[SW ${CACHE_VERSION}] Activating…`);
-
+  console.log(`[SW ${SW_VERSION}] Activating…`);
   event.waitUntil(
     (async () => {
-      // Delete ALL caches not in this version's list
-      const allKeys = await caches.keys();
-      const stale   = allKeys.filter(k => !ALL_CACHES.includes(k));
-
-      if (stale.length) {
-        console.log(`[SW] Purging ${stale.length} old cache(s):`, stale);
-        await Promise.all(stale.map(k => caches.delete(k)));
-      }
-
-      // Immediately control open tabs without reload
+      // Purge old caches
+      const cacheNames = await caches.keys();
+      await Promise.all(
+        cacheNames
+          .filter(name => name.startsWith('tsj-') && !ALL_CACHES.includes(name))
+          .map(name => {
+            console.log('[SW] Deleting old cache:', name);
+            return caches.delete(name);
+          })
+      );
+      // Also purge old v1/v2/v3 caches
+      await Promise.all(
+        cacheNames
+          .filter(name => /^(static|html|images|offline)-assets-v/.test(name))
+          .map(name => caches.delete(name))
+      );
       await self.clients.claim();
-      console.log(`[SW ${CACHE_VERSION}] Active ✓ — controlling all clients`);
+      console.log(`[SW ${SW_VERSION}] Active ✓`);
     })()
   );
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// FETCH: smart routing by request type
-// ─────────────────────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+// FETCH EVENT — Route Requests
+// ══════════════════════════════════════════════════════════════════════════════
 self.addEventListener('fetch', event => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Only handle same-origin + whitelisted CDNs
-  if (!shouldHandle(request)) return;
-
-  // ── 1. Job API / JSON data  →  Network-Only (always fresh) ──────────────────
-  if (isJobData(url, request)) {
-    event.respondWith(networkOnly(request));
+  // Only handle same-origin + trusted CDNs
+  if (!url.origin.includes('topsarkarijobs.com') &&
+      !url.origin.includes('localhost') &&
+      !url.origin.includes('fonts.googleapis.com') &&
+      !url.origin.includes('fonts.gstatic.com') &&
+      !url.origin.includes('cdnjs.cloudflare.com')) {
     return;
   }
 
-  // ── 2. Static assets (JS/CSS/fonts/icons)  →  Cache-First ───────────────────
-  if (isStaticAsset(url)) {
-    event.respondWith(cacheFirst(request, CACHE_STATIC, LIMITS[CACHE_STATIC]));
+  // Skip non-GET
+  if (request.method !== 'GET') return;
+
+  const pathname = url.pathname;
+
+  // ── 1. JSON job data → Network-first, fallback to cache (stale ok) ──
+  if (pathname.endsWith('.json') && 
+      (pathname.includes('job') || pathname.includes('update') || pathname.includes('section'))) {
+    event.respondWith(networkFirstData(request));
     return;
   }
 
-  // ── 3. Images / WebP  →  Cache-First (long TTL) ──────────────────────────────
-  if (isImage(url)) {
-    event.respondWith(cacheFirst(request, CACHE_IMAGES, LIMITS[CACHE_IMAGES]));
+  // ── 2. Static assets (CSS, JS, Fonts) → Cache-First (long-lived) ──
+  if (/\.(css|js|woff2?|ttf|eot)(\?.*)?$/.test(pathname)) {
+    event.respondWith(cacheFirst(request, CACHE_STATIC));
     return;
   }
 
-  // ── 4. HTML pages  →  Stale-While-Revalidate ─────────────────────────────────
-  if (isHTMLPage(request)) {
-    event.respondWith(staleWhileRevalidate(request, CACHE_PAGES, LIMITS[CACHE_PAGES]));
+  // ── 3. Images → Cache-First (medium-lived) ──
+  if (/\.(png|jpg|jpeg|webp|gif|svg|ico)(\?.*)?$/.test(pathname)) {
+    event.respondWith(cacheFirst(request, CACHE_IMAGES));
     return;
   }
 
-  // ── 5. Everything else  →  Network with offline fallback ─────────────────────
-  event.respondWith(networkWithFallback(request));
+  // ── 4. HTML pages → Stale-While-Revalidate ──
+  if (request.headers.get('Accept')?.includes('text/html') || pathname.endsWith('.html') || pathname === '/') {
+    event.respondWith(staleWhileRevalidate(request, CACHE_PAGES));
+    return;
+  }
+
+  // ── 5. Other JSON → Network with cache fallback ──
+  if (pathname.endsWith('.json')) {
+    event.respondWith(networkFirstData(request));
+    return;
+  }
+
+  // ── 6. Default → Network with offline fallback ──
+  event.respondWith(networkWithOfflineFallback(request));
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// MESSAGE: allow page to trigger cache control actions
-// ─────────────────────────────────────────────────────────────────────────────
-self.addEventListener('message', event => {
-  const { type, payload } = event.data || {};
+// ══════════════════════════════════════════════════════════════════════════════
+// CACHING STRATEGIES
+// ══════════════════════════════════════════════════════════════════════════════
 
-  switch (type) {
-    case 'SKIP_WAITING':
-      self.skipWaiting();
-      break;
-
-    case 'CLEAR_JOB_CACHE':
-      // Pages can tell SW to drop HTML cache (e.g. after data refresh)
-      caches.delete(CACHE_PAGES).then(() => {
-        event.ports[0]?.postMessage({ ok: true });
-        console.log('[SW] HTML page cache cleared on demand');
-      });
-      break;
-
-    case 'GET_CACHE_STATS':
-      getCacheStats().then(stats => {
-        event.ports[0]?.postMessage(stats);
-      });
-      break;
-
-    case 'TRIM_CACHES':
-      Promise.all(
-        Object.entries(LIMITS).map(([name, limit]) => trimCache(name, limit))
-      ).then(() => event.ports[0]?.postMessage({ ok: true }));
-      break;
-  }
-});
-
-// ═════════════════════════════════════════════════════════════════════════════
-// STRATEGY IMPLEMENTATIONS
-// ═════════════════════════════════════════════════════════════════════════════
-
-/**
- * Network-Only — for job API/JSON data.
- * Adds cache-busting headers to guarantee fresh responses.
- */
-async function networkOnly(request) {
-  const freshReq = new Request(request.url, {
-    method:  request.method,
-    headers: new Headers({
-      ...Object.fromEntries(request.headers.entries()),
-      'Cache-Control': 'no-store, no-cache',
-      'Pragma':        'no-cache',
-    }),
-    mode:        request.mode,
-    credentials: request.credentials,
-  });
-
-  try {
-    const response = await fetch(freshReq);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    return response;
-  } catch (err) {
-    console.warn('[SW] Network-Only failed for:', request.url, err.message);
-    return new Response(
-      JSON.stringify({ error: 'offline', message: 'No network — job data unavailable' }),
-      { status: 503, headers: { 'Content-Type': 'application/json' } }
-    );
-  }
-}
-
-/**
- * Cache-First — for static assets (JS/CSS/fonts/images).
- * Serve from cache instantly; fetch & store if not cached.
- * Enforces per-cache size + age limits.
- */
-async function cacheFirst(request, cacheName, limits) {
-  const cache  = await caches.open(cacheName);
+/** Cache-First: serve from cache, fallback network, store result */
+async function cacheFirst(request, cacheName) {
+  const cache = await caches.open(cacheName);
   const cached = await cache.match(request);
+  if (cached && !isStale(cached, cacheName)) return cached;
 
-  if (cached && !isCacheEntryStale(cached, limits.maxAgeSeconds)) {
-    return cached; // ⚡ instant
-  }
-
-  // Not cached or stale — fetch fresh
   try {
     const response = await fetch(request.clone());
     if (response.ok) {
-      const toStore = response.clone();
-      // Async store + trim — don't block the response
-      (async () => {
-        await cache.put(request, toStore);
-        await trimCache(cacheName, limits);
-      })();
+      await cache.put(request, response.clone());
+      await trimCache(cacheName);
     }
     return response;
-  } catch (err) {
-    // Return stale copy if we have one, even if expired
-    if (cached) return cached;
-    throw err;
+  } catch {
+    return cached || new Response('', { status: 503 });
   }
 }
 
-/**
- * Stale-While-Revalidate — for HTML pages.
- * Return cached version immediately (fast), then update cache in background.
- * If no cache exists, wait for network.
- */
-async function staleWhileRevalidate(request, cacheName, limits) {
-  const cache  = await caches.open(cacheName);
+/** Stale-While-Revalidate: return cached immediately, update in background */
+async function staleWhileRevalidate(request, cacheName) {
+  const cache = await caches.open(cacheName);
   const cached = await cache.match(request);
 
-  // Background revalidation (fire-and-forget)
-  const networkFetch = fetch(request.clone())
-    .then(async response => {
-      if (response.ok) {
-        await cache.put(request, response.clone());
-        await trimCache(cacheName, limits);
-      }
-      return response;
-    })
-    .catch(err => {
-      console.warn('[SW] SWR revalidation failed:', err.message);
-      return null;
-    });
+  const networkFetch = fetch(request.clone()).then(async response => {
+    if (response.ok) {
+      await cache.put(request, response.clone());
+      await trimCache(cacheName);
+    }
+    return response;
+  }).catch(() => null);
 
-  if (cached) {
-    // Serve stale immediately, update in background
-    return cached;
+  if (cached) return cached;
+
+  // Not in cache — wait for network
+  try {
+    const response = await networkFetch;
+    return response || offlineFallback(request);
+  } catch {
+    return offlineFallback(request);
   }
-
-  // No cache — wait for network
-  const networkResponse = await networkFetch;
-  if (networkResponse) return networkResponse;
-
-  // Total offline: return offline shell
-  return getOfflinePage();
 }
 
-/**
- * Network with Offline Fallback — for misc requests.
- */
-async function networkWithFallback(request) {
+/** Network-First for data: try network, fallback to stale cache */
+async function networkFirstData(request) {
+  const cache = await caches.open(CACHE_DATA);
+  try {
+    const response = await fetch(request.clone(), {
+      signal: AbortSignal.timeout ? AbortSignal.timeout(5000) : undefined
+    });
+    if (response.ok) {
+      await cache.put(request, response.clone());
+    }
+    return response;
+  } catch {
+    const cached = await cache.match(request);
+    return cached || new Response(JSON.stringify({ error: 'offline', cached: false }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json', 'X-TSJ-Offline': 'true' }
+    });
+  }
+}
+
+/** Network with offline HTML fallback */
+async function networkWithOfflineFallback(request) {
   try {
     return await fetch(request);
   } catch {
-    if (isHTMLPage(request)) return getOfflinePage();
-    return new Response('', { status: 503 });
+    return offlineFallback(request);
   }
 }
 
-// ═════════════════════════════════════════════════════════════════════════════
-// CACHE MANAGEMENT UTILITIES
-// ═════════════════════════════════════════════════════════════════════════════
+async function offlineFallback(request) {
+  const url = new URL(request.url);
+  // Try page cache first
+  const pageCache = await caches.open(CACHE_PAGES);
+  const cached = await pageCache.match(request) || await pageCache.match('/index.html');
+  if (cached) return cached;
+  // Serve offline shell
+  const offlineCache = await caches.open(CACHE_OFFLINE);
+  return await offlineCache.match('/offline.html') ||
+    new Response(OFFLINE_HTML, { headers: { 'Content-Type': 'text/html' } });
+}
 
-/**
- * Trim cache: evict oldest entries beyond maxEntries, and entries older than maxAgeSeconds.
- */
-async function trimCache(cacheName, { maxEntries, maxAgeSeconds }) {
+// ══════════════════════════════════════════════════════════════════════════════
+// CACHE UTILITIES
+// ══════════════════════════════════════════════════════════════════════════════
+
+function isStale(response, cacheName) {
+  const limit = CACHE_LIMITS[cacheName];
+  if (!limit) return false;
+  const date = response.headers.get('date');
+  if (!date) return false;
+  const age = (Date.now() - new Date(date).getTime()) / 1000;
+  return age > limit.maxAgeSeconds;
+}
+
+async function trimCache(cacheName) {
+  const limit = CACHE_LIMITS[cacheName];
+  if (!limit) return;
   const cache = await caches.open(cacheName);
-  const keys  = await cache.keys();
-
-  const now = Date.now();
-  let deleted = 0;
-
-  // Age-based eviction — check Date header
-  for (const request of keys) {
-    const response = await cache.match(request);
-    if (response && isCacheEntryStale(response, maxAgeSeconds)) {
-      await cache.delete(request);
-      deleted++;
-    }
-  }
-
-  // Count-based eviction — delete oldest if over limit
-  const remaining = (await cache.keys()).length;
-  if (remaining > maxEntries) {
-    const overflow = remaining - maxEntries;
-    const allKeys  = await cache.keys();
-    // Evict from the start (oldest added first)
-    for (let i = 0; i < overflow; i++) {
-      await cache.delete(allKeys[i]);
-      deleted++;
-    }
-  }
-
-  if (deleted > 0) {
-    console.log(`[SW] Trimmed ${deleted} entries from "${cacheName}"`);
+  const keys = await cache.keys();
+  if (keys.length > limit.maxEntries) {
+    const toDelete = keys.slice(0, keys.length - limit.maxEntries);
+    await Promise.all(toDelete.map(k => cache.delete(k)));
   }
 }
 
-/**
- * Check if a cached response is older than maxAgeSeconds.
- */
-function isCacheEntryStale(response, maxAgeSeconds) {
-  const dateHeader = response.headers.get('date');
-  if (!dateHeader) return false;
-  const age = (Date.now() - new Date(dateHeader).getTime()) / 1000;
-  return age > maxAgeSeconds;
-}
-
-/**
- * Return cached stats for all caches (for the DevTools panel).
- */
-async function getCacheStats() {
-  const stats = {};
-  for (const name of ALL_CACHES) {
-    const cache = await caches.open(name);
-    const keys  = await cache.keys();
-
-    let totalBytes = 0;
-    for (const req of keys) {
-      const res = await cache.match(req);
-      if (res) {
-        const buf = await res.clone().arrayBuffer().catch(() => null);
-        if (buf) totalBytes += buf.byteLength;
-      }
-    }
-
-    stats[name] = {
-      entries:  keys.length,
-      sizeMB:   +(totalBytes / 1_048_576).toFixed(2),
-      urls:     keys.map(r => r.url),
-    };
+// ══════════════════════════════════════════════════════════════════════════════
+// BACKGROUND SYNC
+// ══════════════════════════════════════════════════════════════════════════════
+self.addEventListener('sync', event => {
+  if (event.tag === SYNC_JOBS) {
+    event.waitUntil(syncJobsData());
+  } else if (event.tag === SYNC_ANALYTICS) {
+    event.waitUntil(flushAnalyticsQueue());
   }
-  return stats;
+});
+
+async function syncJobsData() {
+  try {
+    const cache = await caches.open(CACHE_DATA);
+    const urls = ['/dailyupdates.json', '/sections-index.json', '/merged_sarkari_data.json'];
+    await Promise.allSettled(
+      urls.map(async url => {
+        const response = await fetch(url);
+        if (response.ok) await cache.put(url, response.clone());
+      })
+    );
+    // Notify all clients
+    const clients = await self.clients.matchAll({ type: 'window' });
+    clients.forEach(client => client.postMessage({ type: 'JOBS_SYNCED', timestamp: Date.now() }));
+    console.log('[SW] Background sync: jobs data refreshed');
+  } catch (e) {
+    console.warn('[SW] Background sync failed:', e.message);
+  }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// OFFLINE PAGE
-// ─────────────────────────────────────────────────────────────────────────────
+async function flushAnalyticsQueue() {
+  // Placeholder: flush any queued analytics events when back online
+  console.log('[SW] Analytics queue flushed');
+}
 
-async function buildOfflineFallback() {
-  const cache = await caches.open(CACHE_OFFLINE);
-  const html  = generateOfflineHTML();
-  await cache.put(
-    new Request(OFFLINE_PAGE),
-    new Response(html, {
-      headers: { 'Content-Type': 'text/html; charset=utf-8' }
+// ══════════════════════════════════════════════════════════════════════════════
+// PUSH NOTIFICATIONS
+// ══════════════════════════════════════════════════════════════════════════════
+self.addEventListener('push', event => {
+  let data = {
+    title: 'Top Sarkari Jobs',
+    body: 'New government jobs & results are available!',
+    url: '/',
+    icon: NOTIFICATION_ICON,
+    badge: NOTIFICATION_BADGE,
+    tag: NOTIFICATION_TAG,
+  };
+
+  if (event.data) {
+    try {
+      const payload = event.data.json();
+      data = { ...data, ...payload };
+    } catch {
+      data.body = event.data.text() || data.body;
+    }
+  }
+
+  const options = {
+    body: data.body,
+    icon: data.icon || NOTIFICATION_ICON,
+    badge: data.badge || NOTIFICATION_BADGE,
+    tag: data.tag || NOTIFICATION_TAG,
+    data: { url: data.url || '/' },
+    renotify: true,
+    requireInteraction: false,
+    actions: [
+      { action: 'view', title: '👁 View Jobs' },
+      { action: 'dismiss', title: '✕ Dismiss' }
+    ],
+    vibrate: [200, 100, 200],
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, options)
+  );
+});
+
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  if (event.action === 'dismiss') return;
+
+  const url = event.notification.data?.url || '/';
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clients => {
+      const existing = clients.find(c => c.url === url || c.url.includes('topsarkarijobs.com'));
+      if (existing) return existing.focus();
+      return self.clients.openWindow(url);
     })
   );
-}
+});
 
-async function getOfflinePage() {
-  const cache    = await caches.open(CACHE_OFFLINE);
-  const fallback = await cache.match(OFFLINE_PAGE);
-  return fallback || new Response('<h1>Offline</h1>', {
-    status:  503,
-    headers: { 'Content-Type': 'text/html' }
-  });
-}
+// ══════════════════════════════════════════════════════════════════════════════
+// MESSAGE HANDLER (from main thread)
+// ══════════════════════════════════════════════════════════════════════════════
+self.addEventListener('message', event => {
+  const { type } = event.data || {};
 
-function generateOfflineHTML() {
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Offline — Top Sarkari Jobs</title>
-<style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-    background:#0f172a;color:#e2e8f0;
-    display:flex;align-items:center;justify-content:center;
-    min-height:100vh;padding:24px;text-align:center;
+  if (type === 'SKIP_WAITING') {
+    self.skipWaiting();
   }
-  .card{
-    background:#1e293b;border-radius:16px;padding:40px 32px;
-    max-width:380px;width:100%;
-    border:1px solid #334155;
+
+  if (type === 'CACHE_URLS') {
+    const { urls } = event.data;
+    if (Array.isArray(urls)) {
+      event.waitUntil(
+        caches.open(CACHE_PAGES).then(cache =>
+          Promise.allSettled(urls.map(url => cache.add(url)))
+        )
+      );
+    }
   }
-  .icon{font-size:56px;margin-bottom:20px}
-  h1{font-size:22px;font-weight:700;color:#f1f5f9;margin-bottom:10px}
-  p{color:#94a3b8;line-height:1.6;font-size:14px;margin-bottom:24px}
-  button{
-    background:#f97316;color:#fff;border:none;
-    padding:12px 28px;border-radius:8px;font-size:15px;
-    font-weight:600;cursor:pointer;width:100%;
+
+  if (type === 'GET_CACHE_SIZE') {
+    event.waitUntil(
+      (async () => {
+        const info = {};
+        for (const name of ALL_CACHES) {
+          const cache = await caches.open(name);
+          const keys = await cache.keys();
+          info[name] = keys.length;
+        }
+        event.source?.postMessage({ type: 'CACHE_SIZE', data: info });
+      })()
+    );
   }
-  button:active{opacity:.85}
-</style>
-</head>
-<body>
-<div class="card">
-  <div class="icon">📡</div>
-  <h1>You're Offline</h1>
-  <p>No internet connection detected. Please check your data or Wi-Fi and try again to see the latest Sarkari Jobs.</p>
-  <button onclick="location.reload()">Retry Connection</button>
-</div>
-</body>
-</html>`;
-}
 
-// ═════════════════════════════════════════════════════════════════════════════
-// REQUEST CLASSIFICATION HELPERS
-// ═════════════════════════════════════════════════════════════════════════════
+  if (type === 'CLEAR_CACHE') {
+    event.waitUntil(
+      Promise.all(ALL_CACHES.map(name => caches.delete(name)))
+        .then(() => event.source?.postMessage({ type: 'CACHE_CLEARED' }))
+    );
+  }
+});
 
-function shouldHandle(request) {
-  const url = new URL(request.url);
-  // Only handle GET requests
-  if (request.method !== 'GET') return false;
-  // Same-origin
-  if (url.origin === self.location.origin) return true;
-  // Whitelisted CDNs (fonts, analytics)
-  const cdnWhitelist = [
-    'fonts.googleapis.com',
-    'fonts.gstatic.com',
-    'cdnjs.cloudflare.com',
-  ];
-  return cdnWhitelist.some(h => url.hostname.endsWith(h));
-}
-
-function isJobData(url, request) {
-  // JSON job data files — always network-only
-  if (url.pathname.endsWith('.json') && !url.pathname.includes('manifest')) return true;
-  // API endpoints
-  if (url.pathname.startsWith('/api/')) return true;
-  // Any request with no-store hint
-  const cc = request.headers.get('cache-control') || '';
-  if (cc.includes('no-store') || cc.includes('no-cache')) return true;
-  return false;
-}
-
-function isStaticAsset(url) {
-  return /\.(js|css|woff2?|ttf|eot|otf|ico)(\?.*)?$/.test(url.pathname);
-}
-
-function isImage(url) {
-  return /\.(png|jpg|jpeg|gif|svg|webp|avif)(\?.*)?$/.test(url.pathname);
-}
-
-function isHTMLPage(request) {
-  const accept = request.headers.get('accept') || '';
-  return (
-    accept.includes('text/html') ||
-    request.destination === 'document' ||
-    request.url.endsWith('.html') ||
-    request.url.endsWith('/')
-  );
-}
+console.log(`[SW ${SW_VERSION}] Script loaded ✓`);
