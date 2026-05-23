@@ -24,19 +24,13 @@
   <title id="pageTitle">Sarkari Job Details | Top Sarkari Jobs</title>
   <meta name="description" id="metaDesc"
         content="Full details of this government job — post name, vacancies, salary, last date, qualification and apply mode." />
-  <meta name="robots" content="index, follow" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
   <link rel="canonical" id="canonicalTag" href="https://www.topsarkarijobs.com/" />
 
   <!-- ── Favicon & assets ── -->
   <link rel="icon" type="image/x-icon" href="/image.ico" />
   <link rel="stylesheet" href="/styles.css" />
-  <!-- Font Awesome: async load (saves ~100 KiB render-blocking) -->
-  <script>
-    (function(){var l=document.createElement("link");l.rel="preload";l.as="style";
-    l.href="/fonts/fa/all.min.css";l.onload=function(){this.onload=null;this.rel="stylesheet"};
-    document.head.appendChild(l);})();
-  </script>
-  <noscript><link rel="stylesheet" href="/fonts/fa/all.min.css"></noscript>
+  <link rel="stylesheet" href="/fonts/fa/all.min.css" />
 
   <!-- ── Open Graph ── -->
   <meta property="og:type" content="article" />
@@ -106,6 +100,70 @@
       if (can) can.href = canonUrl;
       var ogUrl = document.getElementById('ogUrl');
       if (ogUrl) ogUrl.setAttribute('content', canonUrl);
+
+      /* ── 5. Derive human-readable title from slug & set <title> immediately ── */
+      function humanSlug(s) {
+        // Strip trailing hash ID like "-c2181b" or "-a1b2c3" (6 hex chars)
+        var clean = s.replace(/-[0-9a-f]{6}$/i, '');
+        // Replace hyphens/underscores with spaces, title-case each word
+        return clean.replace(/[-_]+/g, ' ').replace(/\b\w/g, function(c){ return c.toUpperCase(); });
+      }
+
+      if (slug) {
+        var derivedTitle = humanSlug(slug) + ' | Top Sarkari Jobs';
+        var pageTitleEl = document.getElementById('pageTitle');
+        if (pageTitleEl) pageTitleEl.textContent = derivedTitle;
+        document.title = derivedTitle;
+
+        // Also set OG title immediately
+        var ogT = document.getElementById('ogTitle');
+        if (ogT) ogT.setAttribute('content', derivedTitle);
+        var twT = document.getElementById('twTitle');
+        if (twT) twT.setAttribute('content', derivedTitle);
+      }
+
+      /* ── 6. Pre-populate minimal JobPosting schema for crawlers (overwritten by injectSEO later) ── */
+      var today = new Date().toISOString().split('T')[0];
+      var jobSchemaEl = document.getElementById('jobSchema');
+      if (jobSchemaEl && slug) {
+        var jobName = humanSlug(slug);
+        jobSchemaEl.textContent = JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'JobPosting',
+          'name': jobName,
+          'title': jobName,
+          'description': jobName + ' – Check eligibility, vacancies, last date, salary and apply online at Top Sarkari Jobs. Government of India recruitment 2026. Apply now for this central/state government job posting.',
+          'datePosted': today,
+          'employmentType': 'FULL_TIME',
+          'url': canonUrl,
+          'hiringOrganization': {
+            '@type': 'Organization',
+            'name': 'Government of India'
+          },
+          'jobLocation': {
+            '@type': 'Place',
+            'address': {
+              '@type': 'PostalAddress',
+              'addressCountry': 'IN',
+              'addressRegion': 'India'
+            }
+          }
+        });
+      }
+
+      /* ── 7. Pre-populate minimal BreadcrumbList for crawlers ── */
+      var bcSchemaEl = document.getElementById('breadcrumbSchema');
+      if (bcSchemaEl && slug) {
+        bcSchemaEl.textContent = JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          'itemListElement': [
+            { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://www.topsarkarijobs.com/' },
+            { '@type': 'ListItem', 'position': 2, 'name': 'Latest Jobs', 'item': 'https://www.topsarkarijobs.com/section/latest-jobs/' },
+            { '@type': 'ListItem', 'position': 3, 'name': humanSlug(slug), 'item': canonUrl }
+          ]
+        });
+      }
     })();
   </script>
 
@@ -113,7 +171,7 @@
     /* ── Reset & Base ── */
     *,*::before,*::after{box-sizing:border-box;}
     html,body{height:100%;margin:0;}
-    html{scroll-padding-top:140px;}
+    html{scroll-padding-top:100px;}
     body{display:flex;flex-direction:column;font-family:inherit;background:#f0f4f8;}
     main{flex:1;}
 
@@ -121,12 +179,12 @@
     .header-logo-bar{background:#fff!important;}
     .desktop-nav{position:relative;z-index:499;}
 
-    .jp-wrap{max-width:1200px;margin:0 auto;padding:24px 12px 40px;}
+    .jp-wrap{max-width:1200px;margin:0 auto;padding:12px 12px 40px;}
     .jp-three-col{display:grid;grid-template-columns:220px 1fr 280px;gap:16px;align-items:start;}
     @media(max-width:1024px){.jp-three-col{grid-template-columns:1fr 260px;}}
     @media(max-width:768px){.jp-three-col{grid-template-columns:1fr;}}
 
-    .jp-left-nav{position:sticky;top:var(--header-height,140px);}
+    .jp-left-nav{position:sticky;top:100px;}
     @media(max-width:1024px){.jp-left-nav{display:none;}}
     .jp-left-nav-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:14px;}
     .jp-left-nav-head{background:linear-gradient(135deg,#1d4ed8,#1d6dbc);color:#fff;font-size:.78rem;font-weight:700;padding:9px 12px;display:flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:.05em;}
@@ -212,7 +270,7 @@
     .jp-tips-list{padding:10px 14px 12px;margin:0;}
     .jp-tips-list li{font-size:.81rem;color:#334155;line-height:1.9;padding:0;}
 
-    .jp-right-sidebar{position:sticky;top:var(--header-height,140px);}
+    .jp-right-sidebar{position:sticky;top:100px;}
     @media(max-width:768px){.jp-right-sidebar{position:static;}}
     .jp-dates-card .jp-sec-head{background:#dc2626;}
     .jp-date-row{display:flex;justify-content:space-between;align-items:baseline;padding:9px 13px;font-size:.82rem;border-bottom:1px solid #f1f5f9;}
@@ -269,6 +327,46 @@
     .jp-mobile-grid a:nth-child(even){border-right:none;}
     .jp-mobile-grid a i{color:#0f766e;width:14px;font-size:.75rem;}
   
+    /* ── Offcanvas nav link alignment fix ── */
+    .offcanvas-nav > a {
+      display: flex !important; align-items: center !important; gap: 10px !important;
+      padding: 10px 12px !important; border-radius: 10px !important;
+      text-decoration: none !important; font-size: .83rem !important; font-weight: 700 !important;
+      color: #1e293b !important; transition: all .15s !important; cursor: pointer !important;
+      background: transparent !important; border: none !important;
+      width: 100% !important; font-family: inherit !important;
+      text-align: left !important; justify-content: flex-start !important;
+      -webkit-tap-highlight-color: transparent !important;
+    }
+    .offcanvas-nav > a:hover { background: #eff6ff !important; color: #1a56db !important; }
+    .offcanvas-nav > a::after { display: none !important; content: none !important; }
+    .mob-acc-head {
+      display: flex !important; align-items: center !important; gap: 10px !important;
+      padding: 10px 12px !important; border-radius: 10px !important;
+      text-decoration: none !important; font-size: .83rem !important; font-weight: 700 !important;
+      color: #1e293b !important; transition: all .15s !important; cursor: pointer !important;
+      background: none !important; border: none !important;
+      width: 100% !important; font-family: inherit !important;
+      text-align: left !important; justify-content: flex-start !important;
+      -webkit-tap-highlight-color: transparent !important;
+    }
+    .mob-acc-head:hover { background: #eff6ff !important; color: #1a56db !important; }
+    .mob-acc-chev { margin-left: auto !important; font-size: .65rem !important; color: #94a3b8 !important; transition: transform .25s !important; flex-shrink: 0 !important; }
+    .mob-acc-head.open .mob-acc-chev { transform: rotate(180deg) !important; }
+    .mob-acc-body { display: none !important; flex-direction: column !important; gap: 1px !important; padding: 3px 0 3px 14px !important; margin: 0 0 2px !important; }
+    .mob-acc-body.open { display: flex !important; }
+    .mob-acc-body a {
+      display: flex !important; align-items: center !important; gap: 9px !important;
+      padding: 8px 12px !important; border-radius: 8px !important;
+      text-decoration: none !important; font-size: .79rem !important; font-weight: 600 !important;
+      color: #334155 !important; transition: all .12s !important;
+      justify-content: flex-start !important; text-align: left !important;
+    }
+    .mob-acc-body a:hover { background: #eff6ff !important; color: #1a56db !important; }
+    .mob-acc-body a i { width: 16px !important; font-size: .78rem !important; color: #1a56db !important; flex-shrink: 0 !important; }
+    .menu-icon-pill { width: 30px !important; height: 30px !important; border-radius: 8px !important; flex-shrink: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important; font-size: .78rem !important; }
+    .menu-badge { font-size: .58rem !important; font-weight: 800 !important; padding: 2px 7px !important; border-radius: 20px !important; letter-spacing: .04em !important; text-transform: uppercase !important; }
+    
     /* ── BRAND LOGO FIX: prevent title truncation on all pages ── */
     #site-header .brand { flex: 1 1 auto !important; min-width: 0 !important; }
     #site-header .brand-text { min-width: 0 !important; }
@@ -276,7 +374,9 @@
     #site-header .header-actions { flex-shrink: 0 !important; }
     #site-header .header-logo-bar { display: flex !important; align-items: center !important; }
     </style>
-  <!-- Header: fetch + inject immediately before script.js defer loads -->
+  <!-- GA4: Centralized Analytics -->
+  <script src="/analytics.js" defer></script>
+  <!-- Header prefetch -->
   <script>
   (function(){
     var _hp=fetch("/header.html",{cache:"no-store"}).then(function(r){return r.ok?r.text():null;}).catch(function(){return null;});
@@ -285,8 +385,6 @@
     document.readyState==="loading"?document.addEventListener("DOMContentLoaded",_inj):_inj();
   })();
   </script>
-  <!-- GA4: Centralized Analytics -->
-  <script src="/analytics.js" defer></script>
 
   <!-- ══ PWA INSTALL SYSTEM v4.0 ══════════════════════════════════ -->
   <link rel="manifest" href="/manifest.json"/>
@@ -674,12 +772,30 @@
     function injectSEO(name, slug, parsed) {
       const canonUrl = 'https://www.topsarkarijobs.com/jobs/' + slug + '/';
       const fullTitle = safe(name) + ' | Top Sarkari Jobs';
-      const desc = safe(name) + ' — Check eligibility, vacancies, last date, salary and apply online on Top Sarkari Jobs.';
+
+      // Build rich description (≥200 chars) — Fix #2
+      const org = (parsed && parsed.org) ? parsed.org : 'Government of India';
+      const vacs = (parsed && parsed.vac) ? parsed.vac + ' vacancies' : '';
+      const qual = (parsed && parsed.qualification) ? 'Qualification: ' + parsed.qualification + '. ' : '';
+      const lastDt = (parsed && parsed.lastDt) ? 'Last date to apply: ' + parsed.lastDt + '.' : '';
+      const applyMode = (parsed && parsed.applyMode) ? parsed.applyMode + ' application.' : '';
+      const descParts = [safe(name), org ? '– ' + org : '', vacs, qual, lastDt, applyMode,
+        'Check eligibility, salary, admit card and apply online on Top Sarkari Jobs.'].filter(Boolean).join(' ');
+      const desc = descParts.length >= 200 ? descParts
+        : descParts + ' Visit topsarkarijobs.com for complete details and direct application link for this government job notification 2026.';
 
       // <title> and meta description
       document.title = fullTitle;
       const metaDescEl = document.getElementById('metaDesc');
-      if (metaDescEl) metaDescEl.setAttribute('content', desc);
+      if (metaDescEl) metaDescEl.setAttribute('content', desc.slice(0, 300));
+
+      // GA4: fire SPA page_view + job view event
+      if (typeof window.ga4PageView === 'function') {
+        window.ga4PageView(fullTitle, '/jobs/' + slug + '/');
+      }
+      if (typeof window.ga4TrackJobView === 'function') {
+        window.ga4TrackJobView(name, 'Government Job');
+      }
 
       // Canonical
       const can = document.getElementById('canonicalTag');
@@ -688,45 +804,103 @@
       // OG / Twitter
       const setMeta = (id, val) => { const el = document.getElementById(id); if (el) el.setAttribute('content', val); };
       setMeta('ogTitle', fullTitle); setMeta('twTitle', fullTitle);
-      setMeta('ogDesc',  desc);      setMeta('twDesc',  desc);
+      setMeta('ogDesc',  desc.slice(0, 300)); setMeta('twDesc', desc.slice(0, 300));
       setMeta('ogUrl',   canonUrl);
 
-      // JobPosting schema
+      // Fix #9: Use actual date from parsed JSON, not today's date (avoids artificial freshness)
+      function normaliseDate(raw) {
+        if (!raw) return null;
+        // Already ISO format e.g. "2026-05-14"
+        if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+        // "14 May 2026" or "14-05-2026" or "14/05/2026"
+        const months = {jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
+        const m1 = raw.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+        if (m1) return m1[3] + '-' + String(m1[2]).padStart(2,'0') + '-' + String(m1[1]).padStart(2,'0');
+        const m2 = raw.match(/(\d{1,2})\s+([a-zA-Z]+)\s+(\d{4})/);
+        if (m2) { const mo = months[m2[2].slice(0,3).toLowerCase()]; if (mo) return m2[3] + '-' + String(mo).padStart(2,'0') + '-' + String(m2[1]).padStart(2,'0'); }
+        return null;
+      }
+      const datePosted = (parsed && (parsed.applicationStartDate || parsed.lastUpdated || parsed.datePosted))
+        ? (normaliseDate(parsed.applicationStartDate || parsed.lastUpdated || parsed.datePosted) || new Date().toISOString().split('T')[0])
+        : new Date().toISOString().split('T')[0];
+
+      // JobPosting schema — Fix #2
       const schemaEl = document.getElementById('jobSchema');
       if (schemaEl && parsed) {
         const jobSchema = {
           '@context': 'https://schema.org',
           '@type': 'JobPosting',
-          title: safe(name),
-          description: desc,
-          identifier: { '@type': 'PropertyValue', name: 'Top Sarkari Jobs', value: slug },
-          datePosted: new Date().toISOString().split('T')[0],
-          hiringOrganization: {
+          'name': safe(name),           // Fix #2a: "name" required by Google
+          'title': safe(name),
+          'description': desc,
+          'identifier': { '@type': 'PropertyValue', name: 'Top Sarkari Jobs', value: slug },
+          'datePosted': datePosted,     // Fix #9: real date not today
+          'hiringOrganization': {
             '@type': 'Organization',
-            name: parsed.org || 'Government of India',
-            sameAs: 'https://www.topsarkarijobs.com'
+            'name': parsed.org || 'Government of India'
+            // sameAs removed — Fix #2c: don't point to our site as hiring org
           },
-          jobLocation: { '@type': 'Place', address: { '@type': 'PostalAddress', addressCountry: 'IN' } },
-          employmentType: 'FULL_TIME',
-          url: canonUrl
+          'jobLocation': {
+            '@type': 'Place',
+            'address': {
+              '@type': 'PostalAddress',
+              'addressCountry': 'IN',
+              'addressRegion': 'India'   // Fix #2d
+            }
+          },
+          'employmentType': 'FULL_TIME',
+          'url': canonUrl
         };
         if (parsed.lastDt) jobSchema.validThrough = parsed.lastDt;
         if (parsed.vac) jobSchema.totalJobOpenings = parseInt(parsed.vac.replace(/,/g, ''), 10);
+        // Fix #2e: baseSalary if salary data exists
+        if (parsed.salary || parsed.salaryMin || parsed.pay) {
+          const salStr = parsed.salary || parsed.salaryMin || parsed.pay || '';
+          const salNum = parseInt(('' + salStr).replace(/[^0-9]/g, ''), 10);
+          if (salNum > 0) {
+            jobSchema.baseSalary = {
+              '@type': 'MonetaryAmount',
+              'currency': 'INR',
+              'value': { '@type': 'QuantitativeValue', 'value': salNum, 'unitText': 'MONTH' }
+            };
+          }
+        }
+        // Fix #2f: educationRequirements
+        if (parsed.qualification) {
+          jobSchema.educationRequirements = {
+            '@type': 'EducationalOccupationalCredential',
+            'credentialCategory': parsed.qualification
+          };
+        }
         schemaEl.textContent = JSON.stringify(jobSchema);
       }
 
-      // Breadcrumb schema
+      // Breadcrumb schema — Fix #4: clean URL for item 2
       const bcEl = document.getElementById('breadcrumbSchema');
       if (bcEl) {
         bcEl.textContent = JSON.stringify({
           '@context': 'https://schema.org',
           '@type': 'BreadcrumbList',
-          itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.topsarkarijobs.com/' },
-            { '@type': 'ListItem', position: 2, name: 'Jobs', item: 'https://www.topsarkarijobs.com/view.html?section=latest%20jobs' },
-            { '@type': 'ListItem', position: 3, name: safe(name), item: canonUrl }
+          'itemListElement': [
+            { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://www.topsarkarijobs.com/' },
+            { '@type': 'ListItem', 'position': 2, 'name': 'Latest Jobs', 'item': 'https://www.topsarkarijobs.com/section/latest-jobs/' },
+            { '@type': 'ListItem', 'position': 3, 'name': safe(name), 'item': canonUrl }
           ]
         });
+      }
+
+      // Fix #10: hreflang tags for job detail pages
+      ['en', 'en-IN', 'x-default'].forEach(function(lang) {
+        var el = document.querySelector('link[hreflang="' + lang + '"]');
+        if (!el) { el = document.createElement('link'); el.rel = 'alternate'; el.setAttribute('hreflang', lang); document.head.appendChild(el); }
+        el.href = canonUrl;
+      });
+
+      // Fix #8: if slug ends in -latest-notifications, set canonical to version without it
+      if (slug.endsWith('-latest-notifications')) {
+        const cleanSlug = slug.replace(/-latest-notifications$/, '');
+        const cleanCanon = 'https://www.topsarkarijobs.com/jobs/' + cleanSlug + '/';
+        if (can) can.href = cleanCanon;
       }
     }
 
@@ -830,267 +1004,37 @@
       catch (_) { return null; }
     }
 
-    /* ── Convert title to slug (must match jobs-index.json key generation) ── */
-    function titleToSlug(title) {
-      return safe(title)
-        .toLowerCase()
-        .replace(/&/g, ' and ')     // & → and (IMPORTANT: before removing special chars)
-        .replace(/[^\w\s-]/g, '')   // remove special chars except hyphen
-        .replace(/[\s_]+/g, '-')    // spaces → hyphens
-        .replace(/-+/g, '-')        // collapse multiple hyphens
-        .replace(/^-+|-+$/g, '');   // trim leading/trailing hyphens
-    }
-
-    /* ── CAT_META: maps jobs-index.json "cat" values → Complete_Jobs_Full_Data.json keys ── */
-    const CAT_META = {
-      '10TH_Pass':          '10TH_Pass',
-      '8TH_Pass':           '8TH_Pass',
-      '12TH_Pass':          '12TH_Pass',
-      'Diploma':            'Diploma',
-      'ITI':                'ITI',
-      'B_Tech_BE':          'B_Tech_BE',
-      'B_Com':              'B_Com',
-      'Any_Graduate':       'Any_Graduate',
-      'Any_Post_Graduate':  'Any_Post_Graduate',
-      'Railway_Jobs':       'Railway_Jobs',
-      'Police_Defence':     'Police_Defence',
-      'Teaching_Faculty':   'Teaching_Faculty',
-      'Bank_Jobs':          'Bank_Jobs',
-      'Medical_Hospital':   'Medical_Hospital',
-      'Latest_Notifications':'Latest_Notifications',
-    };
-
-    /* ── Cache for loaded JSON files (avoid re-fetching) ── */
-    const _jsonCache = {};
-    async function fetchJSON(path) {
-      if (_jsonCache[path]) return _jsonCache[path];
-      const r = await fetch(path);
-      if (!r.ok) return null;
-      const d = await r.json();
-      _jsonCache[path] = d;
-      return d;
-    }
-
-    /* ── Parse a raw job object from Complete_Jobs_Full_Data.json ── */
-    function parseRawJob(job, catKey) {
-      const bd  = job.basic_details  || {};
-      const il  = job.important_links || {};
-      const id  = job.important_dates || {};
-      const fee = job.application_fee || {};
-      const age = job.age_limit       || {};
-      const qual= job.qualification   || {};
-      const vd  = job.vacancy_details || [];
-      const cwv = job.category_wise_vacancy || {};
-
-      const title = safe(
-        bd.job_title || bd.post_name || job.title || job.post_name || ''
-      ).slice(0, 600);
-
-      const org = safe(
-        bd.organization_name || bd.department || job.organization || ''
-      );
-      const totalVac = safe(
-        bd.total_vacancies || job.total_vacancy || job.total_vacancies || ''
-      );
-      let applyMode = safe(bd.application_mode || bd.apply_mode || job.apply_mode || 'Online');
-      if (!applyMode || applyMode === '-') applyMode = 'Online';
-      const salary = safe(bd.salary || bd.salary_pay_scale || job.salary || '');
-      const shortInfo = safe(bd.short_information || job.short_information || '');
-      const selProc = job.selection_process || bd.selection_process || '';
-      const category = safe(bd.job_type || job.category || catKey || '');
-
-      const lastDate    = safe(id.last_date_to_apply || id.last_date || id.application_last_date || job.last_date || '');
-      const appBegin    = safe(id.application_begin  || id.application_start  || id.start_date || '');
-      const examDate    = safe(id.exam_date          || job.exam_date || '');
-      const admitDate   = safe(id.admit_card_date    || id.admit_card || '');
-      const resultDate  = safe(id.result_date        || '');
-      const feeLastDate = safe(id.fee_payment_last_date || id.fee_last_date || '');
-      const corrDate    = safe(id.correction_last_date  || '');
-
-      const feeGen = safe(fee.general_fee || fee.general || fee.ur || '');
-      const feeObc = safe(fee.obc_fee     || fee.obc     || '');
-      const feeEws = safe(fee.ews_fee     || fee.ews     || '');
-      const feeSc  = safe(fee.sc_fee      || fee.sc      || '');
-      const feeSt  = safe(fee.st_fee      || fee.st      || '');
-      const feeFem = safe(fee.female_fee  || fee.female  || '');
-      const feePh  = safe(fee.ph_fee      || fee.ph      || fee.pwd || '');
-
-      const minAge   = safe(age.minimum_age   || '');
-      const maxAge   = safe(age.maximum_age   || age.age_details || age.age_limit || '');
-      const ageRelax = safe(age.age_relaxation || age.details    || '');
-      const eduQual  = safe(qual.education_qualification || qual.eligibility || '');
-      const expReqd  = safe(qual.experience_required     || '');
-
-      const applyOnline     = safe(il.apply_online     || il.apply_link      || '');
-      const officialWebsite = safe(il.official_website || il.visit_website   || job.official_website_link || '');
-      const notifPdf        = safe(il.official_notification || il.download_notification || il.notification_pdf || '');
-      const admitCard       = safe(il.admit_card       || '');
-      const result          = safe(il.result           || '');
-      const answerKey       = safe(il.answer_key       || il.final_answer_key || '');
-      const syllabus        = safe(il.syllabus         || '');
-      const candidateLogin  = safe(il.candidate_login  || '');
-
-      /* ── Convert important_links keys → usefulLinks entries ──
-         Handles click_here arrays, apply_online, notification_pdf etc.
-         so ALL links from JSON appear in Important Links section */
-      const _IL_LABELS = {
-        click_here: 'Click Here', click_here_to_apply: 'Click Here to Apply',
-        apply_online: 'Apply Online', notification_pdf: 'Notification PDF',
-        download_pdf: 'Download PDF', official_website: 'Official Website',
-        visit_website: 'Official Website', login: 'Candidate Login', result: 'Result',
-      };
-      const _ilEntries = [];
-      if (typeof il === 'object' && !Array.isArray(il)) {
-        for (const [key, val] of Object.entries(il)) {
-          if (!val) continue;
-          const label = _IL_LABELS[key] ||
-            key.replace(/_/g, ' ').replace(/\b[a-z]/g, c => c.toUpperCase()).trim() || 'Click Here';
-          const urls = Array.isArray(val) ? val : [val];
-          urls.forEach((u, idx) => {
-            const href = safe(u);
-            if (!href || !/^https?:\/\//i.test(href)) return;
-            _ilEntries.push({ title: urls.length > 1 ? `${label} (${idx + 1})` : label, url: href });
+    async function loadAllItems() {
+      const r = await fetch('/dynamic-sections.json');
+      if (!r.ok) return [];
+      const data = await r.json();
+      const out = [];
+      for (const sec of (data.sections || [])) {
+        for (const it of (sec.items || [])) {
+          const u = it.url || it.link || '';
+          if (!u) continue;
+          out.push({
+            url:   normalizeUrl(u),
+            title: safe(it.name || it.title || '').slice(0, 600),
+            secId: safe(sec.id || sec.title),
+            fp:    urlRedirectFingerprint(u).toLowerCase()
           });
         }
       }
-      const usefulLinks = [
-        ...(Array.isArray(job.useful_links) ? job.useful_links : []),
-        ..._ilEntries
-      ];
-
-      /* destUrl: prefer apply link, fallback to official site */
-      const destUrl = normalizeUrl(applyOnline || officialWebsite || '');
-
-      const cwVacGen = safe(cwv.general || cwv.ur || '');
-      const cwVacObc = safe(cwv.obc || '');
-      const cwVacEws = safe(cwv.ews || '');
-      const cwVacSc  = safe(cwv.sc  || '');
-      const cwVacSt  = safe(cwv.st  || '');
-      const cwVacPh  = safe(cwv.ph  || '');
-
-      return {
-        title, org, totalVac, applyMode, salary, shortInfo, selProc, category,
-        destUrl, applyOnline, officialWebsite, notifPdf, admitCard, result,
-        answerKey, syllabus, candidateLogin,
-        lastDate, appBegin, examDate, admitDate, resultDate, feeLastDate, corrDate,
-        feeGen, feeObc, feeEws, feeSc, feeSt, feeFem, feePh,
-        minAge, maxAge, ageRelax, eduQual, expReqd,
-        usefulLinks, vd,
-        cwVacGen, cwVacObc, cwVacEws, cwVacSc, cwVacSt, cwVacPh,
-        secId: catKey || '',
-        formPdfFreeLink: safe(job.form_pdf_free_link || ''),
-        officialNotifPdfLink: safe(job.official_notification_pdf_link || ''),
-        officialWebsiteLink: safe(job.official_website_link || ''),
-        meritList: '', scoreCard: '', examCity: '',
-      };
+      return out;
     }
 
-    /* ── PRIMARY: Exact slug lookup via jobs-index.json + Complete_Jobs_Full_Data.json ── */
-    async function findJobBySlug(slug) {
+    function matchBySlug(items, slug) {
       if (!slug) return null;
-
-      /* 1. Load jobs-index.json — exact slug → {cat, title} */
-      const idx = await fetchJSON('/jobs-index.json');
-      if (!idx) return null;
-
-      /* Try exact match first */
-      let entry = idx[slug];
-
-      /* If not found, try stripping common duplicate-disambiguation suffixes
-         (jobs-index may have slug-8th-pass, slug-bank-jobs etc for duplicate titles) */
-      if (!entry) {
-        const suffixRx = /-(8th-pass|10th-pass|12th-pass|bank-jobs|any-graduate|any-post-graduate|b-com|b-tech|diploma|iti|police|railway|teaching|medical|latest)$/i;
-        const base = slug.replace(suffixRx, '');
-        if (base !== slug) entry = idx[base];
-      }
-
-      if (!entry) return null;
-
-      const catKey = entry.cat;
-      const entryTitle = safe(entry.title);
-      if (!catKey) return null;
-
-      /* 2. Load Complete_Jobs_Full_Data.json and find the matching job in this category */
-      const fullData = await fetchJSON('/Complete_Jobs_Full_Data.json');
-      if (!fullData) return null;
-
-      const catArray = fullData[catKey];
-      if (!Array.isArray(catArray) || catArray.length === 0) return null;
-
-      /* Match by title within the category — generate slug from each job title and compare */
-      let matched = null;
-
-      /* Pass 1: exact slug match */
-      for (const job of catArray) {
-        const bd = job.basic_details || {};
-        const jobTitle = safe(bd.job_title || bd.post_name || job.title || '');
-        if (!jobTitle) continue;
-        if (titleToSlug(jobTitle) === slug) {
-          matched = job;
-          break;
-        }
-      }
-
-      /* Pass 2: match against the title stored in jobs-index.json entry */
-      if (!matched && entryTitle) {
-        const entrySlug = titleToSlug(entryTitle);
-        for (const job of catArray) {
-          const bd = job.basic_details || {};
-          const jobTitle = safe(bd.job_title || bd.post_name || job.title || '');
-          if (!jobTitle) continue;
-          if (titleToSlug(jobTitle) === entrySlug || jobTitle === entryTitle) {
-            matched = job;
-            break;
-          }
-        }
-      }
-
-      /* Pass 3: high-precision token match (≥ 0.80) — only within correct category */
-      if (!matched) {
-        const tokens = slug.split('-').filter(t => t.length > 2);
-        let best = null, bestScore = 0;
-        for (const job of catArray) {
-          const bd = job.basic_details || {};
-          const jobTitle = safe(bd.job_title || bd.post_name || job.title || '').toLowerCase();
-          const ts = jobTitle.replace(/[^a-z0-9]+/g, '-');
-          const score = tokens.filter(t => ts.includes(t)).length / tokens.length;
-          if (score > bestScore) { bestScore = score; best = job; }
-        }
-        if (bestScore >= 0.80) matched = best;
-      }
-
-      if (!matched) return null;
-      return parseRawJob(matched, catKey);
-    }
-
-    /* ── FALLBACK: load dynamic-sections.json for items not in Complete_Jobs_Full_Data ── */
-    async function findItemInDynamicSections(slug) {
-      const data = await fetchJSON('/dynamic-sections.json');
-      if (!data) return null;
       const tokens = slug.split('-').filter(t => t.length > 2);
       if (!tokens.length) return null;
       let best = null, bestScore = 0;
-      for (const sec of (data.sections || [])) {
-        for (const it of (sec.items || [])) {
-          const title = safe(it.name || it.title || '');
-          if (!title) continue;
-          const ts = titleToSlug(title);
-          /* First try exact slug match */
-          if (ts === slug) {
-            return {
-              title,
-              url: normalizeUrl(safe(it.url || it.link || '')),
-              secId: safe(sec.id || sec.title),
-              destUrl: normalizeUrl(safe(it.url || it.link || '')),
-            };
-          }
-          /* High-precision fuzzy */
-          const score = tokens.filter(t => ts.includes(t)).length / tokens.length;
-          if (score > bestScore) { bestScore = score; best = { title, url: normalizeUrl(safe(it.url||it.link||'')), secId: safe(sec.id||sec.title), destUrl: normalizeUrl(safe(it.url||it.link||'')) }; }
-        }
+      for (const it of items) {
+        const ts = it.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        const score = tokens.filter(t => ts.includes(t)).length / tokens.length;
+        if (score > bestScore) { bestScore = score; best = it; }
       }
-      /* Only return if very confident — threshold 0.80 to avoid wrong matches */
-      return bestScore >= 0.80 ? best : null;
+      return bestScore >= 0.55 ? best : null;
     }
 
     /* ── Main ── */
@@ -1101,41 +1045,16 @@
         return;
       }
 
-      let row = null;
+      let items = [];
+      try { items = await loadAllItems(); } catch (_) {}
 
-      /* Step 1: Try exact slug lookup via jobs-index.json → Complete_Jobs_Full_Data.json */
-      try { row = await findJobBySlug(rawSlug); } catch (_) {}
-
-      /* Step 2: Fallback to dynamic-sections.json */
-      if (!row) {
-        let dynItem = null;
-        try { dynItem = await findItemInDynamicSections(rawSlug); } catch (_) {}
-        if (dynItem) {
-          row = {
-            title:   dynItem.title,
-            destUrl: dynItem.url || dynItem.destUrl || '',
-            applyOnline: dynItem.url || '',
-            officialWebsite: dynItem.url || '',
-            officialWebsiteLink: dynItem.url || '',
-            secId:   dynItem.secId || '',
-            org: '', totalVac: '', applyMode: 'Online', salary: '',
-            lastDate: '', appBegin: '', shortInfo: '', selProc: '',
-            usefulLinks: [], vd: [],
-            feeGen:'', feeObc:'', feeEws:'', feeSc:'', feeSt:'', feeFem:'', feePh:'',
-            minAge:'', maxAge:'', ageRelax:'', eduQual:'', expReqd:'',
-            notifPdf:'', admitCard:'', result:'', answerKey:'', syllabus:'',
-            candidateLogin:'', meritList:'', scoreCard:'', examCity:'',
-            cwVacGen:'', cwVacObc:'', cwVacEws:'', cwVacSc:'', cwVacSt:'', cwVacPh:'',
-            formPdfFreeLink:'', officialNotifPdfLink:'',
-          };
-        }
-      }
+      let row = matchBySlug(items, rawSlug);
 
       if (!row) {
-        /* Final fallback: render from slug text alone (no data available) */
+        // Fallback: render from slug alone
         const humanTitle = humanizeSlug(rawSlug);
         if (isJobItem(humanTitle)) {
-          renderJobPage(humanTitle, '', parseJob(humanTitle), null);
+          renderJobPage(humanTitle, '', parseJob(humanTitle));
         } else {
           renderNonJobPage(humanTitle, '');
         }
@@ -1144,25 +1063,18 @@
           if (el) { el.style.display = 'none'; }
         });
       } else {
+        const dest = validateUrl(row.url);
+        if (!dest) { loading.style.display = 'none'; errorEl.style.display = 'block'; return; }
         const name = row.title || humanizeSlug(rawSlug);
-        const dest = row.destUrl || '';
         if (isJobItem(name)) {
-          renderJobPage(name, dest, parseJob(name), Object.assign({}, row, { destUrl: dest }));
+          renderJobPage(name, dest, parseJob(name));
         } else {
           renderNonJobPage(name, dest);
-          if (!dest) {
-            ['btnMainCta', 'btnNonJobCta'].forEach(id => {
-              const el = document.getElementById(id);
-              if (el) { el.style.display = 'none'; }
-            });
-          }
         }
-        /* Update breadcrumb section link */
+        // Update breadcrumb section link
         const secLink = document.getElementById('bcSectionLink');
-        if (secLink && row.secId) {
-          secLink.textContent = humanizeSlug(row.secId);
-          secLink.href = `/view.html?section=${encodeURIComponent(row.secId)}`;
-        }
+        secLink.textContent = humanizeSlug(row.secId || 'Jobs');
+        secLink.href = row.secId ? `/view.html?section=${encodeURIComponent(row.secId)}` : '#';
       }
 
       loading.style.display = 'none';
@@ -1171,22 +1083,109 @@
   })();
   </script>
 
-  <script src="/script.js?v=20260502" defer></script>
-  <!-- Header height fix -->
-  <script>
-  (function(){
-    function updateHeaderHeight(){
-      var h=document.getElementById('site-header');
-      if(h){var ht=h.getBoundingClientRect().height;if(ht>0){document.documentElement.style.setProperty('--header-height',(ht+8)+'px');document.documentElement.style.scrollPaddingTop=(ht+8)+'px';}}
-    }
-    window.addEventListener('load',updateHeaderHeight);
-    setTimeout(updateHeaderHeight,300);setTimeout(updateHeaderHeight,800);
-    window.addEventListener('resize',updateHeaderHeight);
-    var obs=new MutationObserver(function(){updateHeaderHeight();});
-    var t=document.getElementById('site-header');
-    if(t)obs.observe(t,{childList:true,subtree:true});
-    else{var bo=new MutationObserver(function(){var t2=document.getElementById('site-header');if(t2){obs.observe(t2,{childList:true,subtree:true});bo.disconnect();}});bo.observe(document.body,{childList:true,subtree:false});}
-  })();
-  </script>
+  <div id="site-footer"></div>
+
+    <!-- Mobile offcanvas menu (new modern design) -->
+  <div id="menuOverlay" class="overlay" hidden></div>
+  <aside id="mobileMenu" class="offcanvas" aria-label="Mobile menu" hidden>
+    <div class="offcanvas-head">
+      <div class="offcanvas-head-left">
+        <picture>
+          <source srcset="/image.webp" type="image/webp">
+          <img src="/image.png" alt="Logo" class="offcanvas-head-logo" width="34" height="34">
+        </picture>
+        <div class="offcanvas-head-texts">
+          <span class="offcanvas-title">TOP SARKARI JOBS</span>
+          <span class="offcanvas-sub">India's No.1 Sarkari Jobs Portal</span>
+        </div>
+      </div>
+      <button id="closeMenuBtn" class="offcanvas-close" type="button" aria-label="Close menu">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="offcanvas-search">
+      <div class="offcanvas-search-inner">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Search jobs, results, admit cards…" id="menuSearchInput" autocomplete="off">
+      </div>
+    </div>
+    <nav class="offcanvas-nav" aria-label="Mobile primary">
+      <div class="offcanvas-section">Main</div>
+      <a href="/"><span class="menu-icon-pill" style="background:#dbeafe;color:#1d4ed8;"><i class="fa-solid fa-house"></i></span>Home</a>
+      <button class="mob-acc-head" data-acc="acc-jobs" type="button">
+        <span class="menu-icon-pill" style="background:#fee2e2;color:#b91c1c;"><i class="fa-solid fa-fire"></i></span>
+        Latest Jobs<span class="menu-badge menu-badge-red">New</span><i class="fa-solid fa-chevron-down mob-acc-chev"></i>
+      </button>
+      <div class="mob-acc-body" id="acc-jobs">
+        <a href="/section/latest-jobs/"><i class="fa-solid fa-bolt"></i> Latest Jobs 2026</a>
+        <a href="/section/upcoming-jobs/"><i class="fa-solid fa-calendar-plus"></i> Upcoming Jobs</a>
+        <a href="/section/top-20-jobs/"><i class="fa-solid fa-medal"></i> Top 20 Jobs</a>
+        <a href="/section/jobs-with-last-date/"><i class="fa-solid fa-clock"></i> Last Date Near</a>
+        <a href="/section/latest-govt-jobs/"><i class="fa-solid fa-globe"></i> All India Jobs</a>
+      </div>
+      <a href="/section/admit-card/"><span class="menu-icon-pill" style="background:#ede9fe;color:#6d28d9;"><i class="fa-solid fa-id-card"></i></span>Admit Card<span class="menu-badge menu-badge-purple">2026</span></a>
+      <a href="/category.html?group=admissions"><span class="menu-icon-pill" style="background:#fef3c7;color:#b45309;"><i class="fa-solid fa-trophy"></i></span>Results<span class="menu-badge menu-badge-amber">Live</span></a>
+      <a href="/category.html?group=admit-result"><span class="menu-icon-pill" style="background:#fef3c7;color:#b45309;"><i class="fa-solid fa-key"></i></span>Answer Key</a>
+      <div class="offcanvas-section">Jobs by Category</div>
+      <button class="mob-acc-head" data-acc="acc-cat" type="button">
+        <span class="menu-icon-pill" style="background:#dbeafe;color:#1d4ed8;"><i class="fa-solid fa-briefcase"></i></span>
+        Popular Categories<i class="fa-solid fa-chevron-down mob-acc-chev"></i>
+      </button>
+      <div class="mob-acc-body" id="acc-cat">
+        <a href="/section/railway-jobs/"><i class="fa-solid fa-train"></i> Railway Jobs</a>
+        <a href="/section/police-jobs/"><i class="fa-solid fa-shield-halved"></i> Police Jobs</a>
+        <a href="/section/bank-jobs/"><i class="fa-solid fa-building-columns"></i> Bank Jobs</a>
+        <a href="/section/teaching-jobs/"><i class="fa-solid fa-chalkboard-user"></i> Teacher Jobs</a>
+        <a href="/section/army-jobs/"><i class="fa-solid fa-shield-halved"></i> Army / Navy / AF</a>
+        <a href="/section/healthcare-jobs/"><i class="fa-solid fa-stethoscope"></i> Medical Jobs</a>
+        <a href="/category.html?group=study"><i class="fa-solid fa-graduation-cap"></i> Study Wise Jobs</a>
+        <a href="/category.html?group=popular"><i class="fa-solid fa-star"></i> All Categories</a>
+      </div>
+      <button class="mob-acc-head" data-acc="acc-state" type="button">
+        <span class="menu-icon-pill" style="background:#dcfce7;color:#15803d;"><i class="fa-solid fa-map-location-dot"></i></span>
+        State Wise Jobs<i class="fa-solid fa-chevron-down mob-acc-chev"></i>
+      </button>
+      <div class="mob-acc-body" id="acc-state">
+        <a href="/section/haryana-all-state-jobs/"><i class="fa-solid fa-location-dot"></i> Haryana Jobs</a>
+        <a href="/state/uttar-pradesh/"><i class="fa-solid fa-location-dot"></i> Uttar Pradesh</a>
+        <a href="/state/rajasthan/"><i class="fa-solid fa-location-dot"></i> Rajasthan</a>
+        <a href="/state/bihar/"><i class="fa-solid fa-location-dot"></i> Bihar</a>
+        <a href="/state/madhya-pradesh/"><i class="fa-solid fa-location-dot"></i> Madhya Pradesh</a>
+        <a href="/state/delhi/"><i class="fa-solid fa-location-dot"></i> Delhi</a>
+        <a href="/state/"><i class="fa-solid fa-list"></i> All States →</a>
+      </div>
+      <div class="offcanvas-section">Admissions</div>
+      <a href="/category.html?group=admissions"><span class="menu-icon-pill" style="background:#ede9fe;color:#6d28d9;"><i class="fa-solid fa-graduation-cap"></i></span>Admissions 2026</a>
+      <button class="mob-acc-head" data-acc="acc-exam" type="button">
+        <span class="menu-icon-pill" style="background:#fce7f3;color:#9d174d;"><i class="fa-solid fa-calendar-check"></i></span>
+        Exam Updates<i class="fa-solid fa-chevron-down mob-acc-chev"></i>
+      </button>
+      <div class="mob-acc-body" id="acc-exam">
+        <a href="/section/admit-card/"><i class="fa-solid fa-id-card"></i> Admit Cards</a>
+        <a href="/category.html?group=admissions"><i class="fa-solid fa-trophy"></i> Results</a>
+        <a href="/category.html?group=admit-result"><i class="fa-solid fa-key"></i> Answer Keys</a>
+        <a href="/category.html?group=admissions"><i class="fa-solid fa-book"></i> Syllabus / Pattern</a>
+      </div>
+      <div class="offcanvas-section">Govt Schemes &amp; Services</div>
+      <a href="/section/govt-scheme-yojna/"><span class="menu-icon-pill" style="background:#dcfce7;color:#15803d;"><i class="fa-solid fa-hand-holding-heart"></i></span>Govt Schemes / Yojna<span class="menu-badge menu-badge-green">Hot</span></a>
+      <a href="/section/important-csc-pdf/"><span class="menu-icon-pill" style="background:#fee2e2;color:#b91c1c;"><i class="fa-solid fa-file-pdf"></i></span>CSC Services &amp; PDFs</a>
+      <div class="offcanvas-section">Tools &amp; More</div>
+      <a href="/tools.html"><span class="menu-icon-pill" style="background:#dbeafe;color:#1d4ed8;"><i class="fa-solid fa-screwdriver-wrench"></i></span>Free Tools<span class="menu-badge menu-badge-blue">Free</span></a>
+      <a href="/resume-maker.html"><span class="menu-icon-pill" style="background:#ede9fe;color:#6d28d9;"><i class="fa-solid fa-file-lines"></i></span>Resume / CV Maker<span class="menu-badge menu-badge-purple">Free</span></a>
+      <a href="/category.html?group=khabar"><span class="menu-icon-pill" style="background:#ffedd5;color:#c2410c;"><i class="fa-solid fa-newspaper"></i></span>Latest Khabar</a>
+      <a href="/category.html?group=study-material"><span class="menu-icon-pill" style="background:#f0fdf4;color:#15803d;"><i class="fa-solid fa-book-open"></i></span>Study Material &amp; Courses</a>
+      <a href="/helpdesk.html"><span class="menu-icon-pill" style="background:#f1f5f9;color:#475569;"><i class="fa-solid fa-headset"></i></span>Helpdesk / Contact Us</a>
+      <div class="offcanvas-section">Follow Us</div>
+      <div class="offcanvas-social">
+        <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" class="soc-wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+        <a href="https://www.youtube.com/@Topsarkarijobs/shorts" target="_blank" rel="noopener" class="soc-yt"><i class="fa-brands fa-youtube"></i> YouTube</a>
+        <a href="https://www.instagram.com/topsarkarijobs?igsh=bTBsdjVpaTU3M2hn" target="_blank" rel="noopener" class="soc-ig"><i class="fa-brands fa-instagram"></i> Instagram</a>
+        <a href="https://www.snapchat.com/add/topsarkarijobss?share_id=accGq-qWC1g&locale=en-IN" target="_blank" rel="noopener" class="soc-sc"><i class="fa-brands fa-snapchat"></i> Snapchat</a>
+      </div>
+    </nav>
+  </aside>
+
+  <script src="/script.js?v=20260520" defer></script>
+  <script src="/seo-engine.min.js?v=20260517" defer></script>
 </body>
 </html>
