@@ -1967,14 +1967,87 @@
       const feeLastDate= safe(id.fee_payment_last_date || id.fee_last_date || '');
       const corrDate   = safe(id.correction_last_date || '');
 
-      /* Application fee */
-      const feeGen = safe(fee.general || fee.ur  || job.application_fee || '');
-      const feeObc = safe(fee.obc  || '');
-      const feeEws = safe(fee.ews  || '');
-      const feeSc  = safe(fee.sc   || '');
-      const feeSt  = safe(fee.st   || '');
-      const feeFem = safe(fee.female || '');
-      const feePh  = safe(fee.ph   || fee.pwd || '');
+      /* Application fee — handles BOTH object and string formats */
+      const _feeStr  = typeof job.application_fee === 'string' ? job.application_fee : '';
+      const _feeObj  = typeof fee === 'object' && fee !== null ? fee : {};
+
+      /* Smart string parser for flat fee text like:
+         "General : 560/- OBC/SC/ST : 310/- Pay via Debit Card..." */
+      function parseFeeString(str) {
+        if (!str) return [];
+        const items = [];
+        // Common patterns: "Category : Amount/-" or "Category Fee: Amount"
+        const patterns = [
+          // "General / Other State : 560/-"
+          { re: /General\s*[\/&,]?\s*(?:Other\s*State|UR|OBC)?\s*[:\-]\s*([\d,]+\s*\/?-?)/i, lbl: 'General / UR' },
+          { re: /General\s*[:\-]\s*([\d,]+\s*\/?-?)/i, lbl: 'General / UR' },
+          { re: /UR\s*[:\-]\s*([\d,]+\s*\/?-?)/i, lbl: 'General / UR' },
+          { re: /OBC\s*[:\-]\s*([\d,]+\s*\/?-?)/i, lbl: 'OBC' },
+          { re: /EWS\s*[:\-]\s*([\d,]+\s*\/?-?)/i, lbl: 'EWS' },
+          { re: /SC\s*[:\-]\s*([\d,]+\s*\/?-?)/i, lbl: 'SC' },
+          { re: /ST\s*[:\-]\s*([\d,]+\s*\/?-?)/i, lbl: 'ST' },
+          { re: /(?:OBC|SC|ST)\s*\/\s*(?:SC|ST)\s*[:\-]\s*([\d,]+\s*\/?-?)/i, lbl: 'OBC / SC / ST' },
+          { re: /Female\s*[:\-]\s*([\d,]+\s*\/?-?)/i, lbl: 'Female' },
+          { re: /(?:PH|PWD|Divyang|Disabled)\s*[:\-]\s*([\d,]+\s*\/?-?)/i, lbl: 'PH / Divyang' },
+          { re: /Portal\s*Charge[s]?\s*[:\-]\s*(Rs\.?\s*[\d,]+\s*\/?-?)/i, lbl: 'Portal Charges' },
+          { re: /(?:All\s*Category|All\s*Candidates?)\s*[:\-]\s*([\d,]+\s*\/?-?)/i, lbl: 'All Category' },
+          { re: /(?:Nil|Free|No\s*Fee)/i, lbl: 'All Category', fixed: 'Free / ₹0' },
+        ];
+        // Also try splitting on common delimiters for multi-category strings
+        // e.g. "General / Other State : 560/- OBC / SC / ST : 310/-"
+        const seen = new Set();
+        patterns.forEach(({ re, lbl, fixed }) => {
+          const m = str.match(re);
+          if (m && !seen.has(lbl)) {
+            seen.add(lbl);
+            items.push([lbl, fixed || m[1].trim()]);
+          }
+        });
+        return items;
+      }
+
+      let feeItems_raw = [];
+      // Priority 1: structured object fields
+      if (_feeObj.general_fee || _feeObj.general || _feeObj.ur) {
+        if (_feeObj.general_fee) feeItems_raw.push(['General / UR', _feeObj.general_fee]);
+        else if (_feeObj.general || _feeObj.ur) feeItems_raw.push(['General / UR', _feeObj.general || _feeObj.ur]);
+        if (_feeObj.obc)     feeItems_raw.push(['OBC',          _feeObj.obc]);
+        if (_feeObj.ews)     feeItems_raw.push(['EWS',          _feeObj.ews]);
+        if (_feeObj.sc)      feeItems_raw.push(['SC',           _feeObj.sc]);
+        if (_feeObj.st)      feeItems_raw.push(['ST',           _feeObj.st]);
+        if (_feeObj.female)  feeItems_raw.push(['Female',       _feeObj.female]);
+        if (_feeObj.ph || _feeObj.pwd) feeItems_raw.push(['PH / Divyang', _feeObj.ph || _feeObj.pwd]);
+        if (_feeObj.pwd_fee && _feeObj.pwd_fee !== (_feeObj.ph || _feeObj.pwd)) feeItems_raw.push(['PH / PWD', _feeObj.pwd_fee]);
+      }
+      // Priority 2: details string inside object
+      if (!feeItems_raw.length && _feeObj.details) {
+        feeItems_raw = parseFeeString(_feeObj.details);
+        if (!feeItems_raw.length) feeItems_raw.push(['Fee Details', _feeObj.details.slice(0, 120)]);
+      }
+      // Priority 3: flat string application_fee
+      if (!feeItems_raw.length && _feeStr) {
+        feeItems_raw = parseFeeString(_feeStr);
+        if (!feeItems_raw.length) feeItems_raw.push(['Fee Details', _feeStr.slice(0, 150)]);
+      }
+
+      // Extract payment mode from fee string or object
+      const _payMode = (() => {
+        const src = _feeStr || (_feeObj.payment_mode) || (_feeObj.mode) || '';
+        if (/debit|credit|net.?bank|upi|online/i.test(src))
+          return 'Online (Debit / Credit Card / UPI / Net Banking)';
+        if (/challan|offline/i.test(src)) return 'Online / E-Challan';
+        if (/cash/i.test(src)) return 'Cash / Offline';
+        return 'Online';
+      })();
+
+      // Legacy compat vars (used by row object below)
+      const feeGen = feeItems_raw.find(([l])=>l.includes('General'))?.[1] || '';
+      const feeObc = feeItems_raw.find(([l])=>l==='OBC')?.[1] || '';
+      const feeEws = feeItems_raw.find(([l])=>l==='EWS')?.[1] || '';
+      const feeSc  = feeItems_raw.find(([l])=>l==='SC')?.[1] || '';
+      const feeSt  = feeItems_raw.find(([l])=>l==='ST')?.[1] || '';
+      const feeFem = feeItems_raw.find(([l])=>l==='Female')?.[1] || '';
+      const feePh  = feeItems_raw.find(([l])=>l.includes('PH'))?.[1] || '';
 
       /* Age */
       // Parse combined age_limit string if structured fields are missing
