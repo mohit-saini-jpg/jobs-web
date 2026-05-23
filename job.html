@@ -535,7 +535,7 @@
       </div>
 
       <!-- Error -->
-      <div class="jp-error-box" id="jbError" style="display:none;">
+      <div class="jp-error-box" id="jbError" style="display:none;" aria-hidden="true">
         <strong>⚠ Job Not Found</strong><br />
         We could not find the job you're looking for. It may have been removed or the link is incorrect.<br />
         <a href="/" style="color:#1d4ed8;margin-top:8px;display:inline-block;">← Back to Home</a>
@@ -2784,10 +2784,8 @@
         window.__TSJ_RENDER_DONE = true;
         /* Notify deferred patch — fire any queued offline patches */
         if (typeof window.__TSJ_ON_RENDER_DONE === 'function') window.__TSJ_ON_RENDER_DONE(window.__TSJ_RAW_JOB);
-        /* Hide error box if content rendered successfully */
-        if (errorEl && errorEl.style.display !== 'block') {
-          errorEl.style.display = 'none';
-        }
+        /* ALWAYS hide error box — it should only show if explicitly set in catch block */
+        if (errorEl) errorEl.style.display = 'none';
       }
     })();
   })();
