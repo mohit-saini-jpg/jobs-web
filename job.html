@@ -2710,12 +2710,28 @@
             renderJobPage(humanTitle, '', parseJob(humanTitle), null);
             if (window.__TSJ_RENDER_EXTRA && _rawJobData) window.__TSJ_RENDER_EXTRA(_rawJobData, null);
           } else {
-            renderNonJobPage(humanTitle, '', null);
-            /* Hide CTA only if there's truly no URL */
-            ['btnMainCta','btnNonJobCta'].forEach(id => {
-              const el = document.getElementById(id);
-              if (el) { el.style.display = 'none'; }
-            });
+            /* Auto-detect known govt service URLs from slug keywords */
+            const _slugLc = rawSlug.toLowerCase();
+            let _autoUrl = '';
+            if (/stolen.*mobile|mobile.*block|ceir/i.test(_slugLc))
+              _autoUrl = 'https://sancharsaathi.gov.in/Home/ceir-services.jsp';
+            else if (/tafcop|mobile.*number.*name|fraud.*mobile/i.test(_slugLc))
+              _autoUrl = 'https://tafcop.sancharsaathi.gov.in/telecomUser/';
+            else if (/sanchar.*saathi|sancharsaathi/i.test(_slugLc))
+              _autoUrl = 'https://sancharsaathi.gov.in/';
+            else if (/digilocker/i.test(_slugLc))
+              _autoUrl = 'https://www.digilocker.gov.in/';
+            else if (/umang/i.test(_slugLc))
+              _autoUrl = 'https://web.umang.gov.in/';
+            else if (/csc.*digital|digital.*seva/i.test(_slugLc))
+              _autoUrl = 'https://digitalseva.csc.gov.in/';
+            renderNonJobPage(humanTitle, _autoUrl, null);
+            if (!_autoUrl) {
+              ['btnMainCta','btnNonJobCta'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) { el.style.display = 'none'; }
+              });
+            }
           }
         } else {
           const name = row.title || humanizeSlug(rawSlug);
