@@ -81,7 +81,7 @@ for (const section of sections) {
     if (!slug || slug.length < 3 || seenSlugs.has(slug)) continue;
     seenSlugs.add(slug);
     jobUrls.push({
-      loc: `${SITE}/view.html?section=${encodeURIComponent(section.id || section.title || '')}&name=${encodeURIComponent(name)}`,
+      loc: `${SITE}/jobs/${slug}/`,
       lastmod: TODAY,
       changefreq: 'daily',
       priority: '0.8'

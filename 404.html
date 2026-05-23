@@ -215,22 +215,8 @@
       /* Save slug for job.html's own IIFE to pick up */
       try { sessionStorage.setItem('__tsj_slug', slug); } catch(_) {}
 
-      /* Fetch job.html and replace entire document */
-      fetch('/job.html')
-        .then(function(r) {
-          if (!r.ok) throw new Error('job.html fetch failed: ' + r.status);
-          return r.text();
-        })
-        .then(function(html) {
-          /* Full document rewrite — replaces everything including <head> */
-          document.open();
-          document.write(html);
-          document.close();
-        })
-        .catch(function(err) {
-          console.error('[TSJ 404] job.html fetch error:', err);
-          show404('Could not load job page. Please try refreshing.');
-        });
+      /* Redirect to job.html — slug already saved in sessionStorage above */
+      window.location.replace('/job.html?slug=' + encodeURIComponent(slug));
 
       return; /* Stop — don't run redirect logic below */
     }
