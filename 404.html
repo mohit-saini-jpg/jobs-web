@@ -1,24 +1,208 @@
 <!DOCTYPE html>
 <html lang="en">
-<head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>Redirecting… | Top Sarkari Jobs</title> <meta name="robots" content="noindex, nofollow" /> <style>body{font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f0f4f8}.box{text-align:center;color:#374151;max-width:420px;padding:24px}.spinner{width:40px;height:40px;border:4px solid #e2e8f0;border-top-color:#1d4ed8;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 16px}@keyframes spin{to{transform:rotate(360deg)}}.home-link{display:inline-block;margin-top:14px;color:#1d4ed8;font-size:.9rem;text-decoration:none;font-weight:600}.home-link:hover{text-decoration:underline}#notFoundBox{display:none}#site-header .brand{flex:1 1 auto!important;min-width:0!important}#site-header .brand-text{min-width:0!important}#site-header .brand-title{white-space:nowrap!important;font-size:.92rem!important}#site-header .header-actions{flex-shrink:0!important}#site-header .header-logo-bar{display:flex!important;align-items:center!important}</style> <script>(function(){'use strict';var path=window.location.pathname;var search=window.location.search;if(/\.html(\?|$)/i.test(path)){show404('CDN cache issue — please hard-refresh (Ctrl+Shift+R) or clear browser cache.');return;}
-var loopKey='__tsj_404_'+path.replace(/\//g,'_');try{var lastHit=parseInt(sessionStorage.getItem(loopKey)||'0',10);if(lastHit&&(Date.now()-lastHit)<5000){sessionStorage.removeItem(loopKey);show404();return;}
-sessionStorage.setItem(loopKey,Date.now().toString());}catch(_){}
-var jobMatch=path.match(/^\/jobs\/([^\/]+)\/?$/);if(jobMatch){var slug=decodeURIComponent(jobMatch[1]);try{sessionStorage.setItem('__tsj_slug',slug);}catch(_){}
-var refParam='';try{refParam=new URLSearchParams(search).get('ref')||'';}catch(_){}
-var dest='/job.html?slug='+encodeURIComponent(slug);if(refParam){try{sessionStorage.setItem('__tsj_ref',refParam);}catch(_){}
-dest+='&ref='+encodeURIComponent(refParam);}
-window.location.replace(dest);return;}
-var sectionMatch=path.match(/^\/section\/([^\/]+)\/?$/);if(sectionMatch){var sec=decodeURIComponent(sectionMatch[1]).replace(/-/g,' ');window.location.replace('/view.html?section='+encodeURIComponent(sec));return;}
-var catMatch=path.match(/^\/category\/([^\/]+)\/?$/);if(catMatch){window.location.replace('/category.html?group='+encodeURIComponent(decodeURIComponent(catMatch[1])));return;}
-var stateMatch=path.match(/^\/state\/([^\/]+)\/?$/);if(stateMatch){var stateSlug=decodeURIComponent(stateMatch[1]);var stateName=stateSlug.replace(/-/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();});window.location.replace('/state-jobs.html?state='+encodeURIComponent(stateName));return;}
-if(path==='/state/'||path==='/state'){window.location.replace('/category.html?group=state');return;}
-var legacyStateMatch=path.match(/^\/state-jobs\/([^\/]+)\/?$/);if(legacyStateMatch){var legacyState=decodeURIComponent(legacyStateMatch[1]).replace(/-/g,' ');window.location.replace('/state-jobs.html?state='+encodeURIComponent(legacyState));return;}
-var searchMatch=path.match(/^\/search\/([^\/]+)\/?$/);if(searchMatch){var q=decodeURIComponent(searchMatch[1]).replace(/-/g,' ');window.location.replace('/search.html?q='+encodeURIComponent(q));return;}
-var shortcuts={'/latest-jobs/':'/view.html?section=latest+jobs','/latest-jobs':'/view.html?section=latest+jobs','/results/':'/view.html?section=Sarkari+Result','/results':'/view.html?section=Sarkari+Result','/admit-card/':'/view.html?section=Admit+cards+Exams+Date','/admit-card':'/view.html?section=Admit+cards+Exams+Date','/railway-jobs/':'/view.html?section=Railway+Jobs','/railway-jobs':'/view.html?section=Railway+Jobs','/bank-jobs/':'/view.html?section=Bank+Jobs','/bank-jobs':'/view.html?section=Bank+Jobs','/police-jobs/':'/view.html?section=Police+Jobs','/police-jobs':'/view.html?section=Police+Jobs','/ssc-jobs/':'/view.html?section=SSC+Jobs','/ssc-jobs':'/view.html?section=SSC+Jobs','/upsc-jobs/':'/view.html?section=UPSC+Jobs','/upsc-jobs':'/view.html?section=UPSC+Jobs','/teaching-jobs/':'/view.html?section=Teacher+Jobs','/teaching-jobs':'/view.html?section=Teacher+Jobs','/army-jobs/':'/view.html?section=Indian+ARMY+jobs','/army-jobs':'/view.html?section=Indian+ARMY+jobs','/10th-pass-jobs/':'/view.html?section=10th+Pass+jobs','/10th-pass-jobs':'/view.html?section=10th+Pass+jobs','/12th-pass-jobs/':'/view.html?section=12th+Pass+jobs','/12th-pass-jobs':'/view.html?section=12th+Pass+jobs','/upcoming-jobs/':'/view.html?section=upcoming-jobs','/upcoming-jobs':'/view.html?section=upcoming-jobs','/state-jobs/':'/view.html?section=State+jobs','/state-jobs':'/view.html?section=State+jobs','/central-jobs/':'/view.html?section=Central+jobs','/central-jobs':'/view.html?section=Central+jobs','/answer-key/':'/category.html?group=admit-result','/answer-key':'/category.html?group=admit-result','/admissions/':'/category.html?group=admissions','/admissions':'/category.html?group=admissions','/haryana-jobs/':'/section/haryana-all-state-jobs/','/haryana-jobs':'/section/haryana-all-state-jobs/','/iti-jobs/':'/section/iti-jobs/','/iti-jobs':'/section/iti-jobs/','/diploma-jobs/':'/section/diploma-jobs/','/diploma-jobs':'/section/diploma-jobs/','/8th-pass-jobs/':'/section/8th-pass/','/8th-pass-jobs':'/section/8th-pass/','/graduation-jobs/':'/section/graduation-jobs/','/graduation-jobs':'/section/graduation-jobs/',};if(shortcuts[path]){window.location.replace(shortcuts[path]);return;}
-show404();function show404(extraMsg){document.getElementById('spinnerEl').style.display='none';document.getElementById('loadingText').style.display='none';document.getElementById('notFoundBox').style.display='block';if(extraMsg){document.getElementById('extraMsg').textContent=extraMsg;}}})();</script> <script src="/analytics.js" defer></script>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Redirecting… | Top Sarkari Jobs</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <style>
+    body { font-family: sans-serif; display: flex; align-items: center;
+           justify-content: center; min-height: 100vh; margin: 0; background: #f0f4f8; }
+    .box { text-align: center; color: #374151; max-width: 420px; padding: 24px; }
+    .spinner { width: 40px; height: 40px; border: 4px solid #e2e8f0;
+               border-top-color: #1d4ed8; border-radius: 50%;
+               animation: spin .7s linear infinite; margin: 0 auto 16px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .home-link { display:inline-block; margin-top:14px; color:#1d4ed8;
+                 font-size:.9rem; text-decoration:none; font-weight:600; }
+    .home-link:hover { text-decoration:underline; }
+    #notFoundBox { display:none; }
+  
+    /* ── BRAND LOGO FIX: prevent title truncation on all pages ── */
+    #site-header .brand { flex: 1 1 auto !important; min-width: 0 !important; }
+    #site-header .brand-text { min-width: 0 !important; }
+    #site-header .brand-title { white-space: nowrap !important; font-size: .92rem !important; }
+    #site-header .header-actions { flex-shrink: 0 !important; }
+    #site-header .header-logo-bar { display: flex !important; align-items: center !important; }
+    </style>
+  <script>
+  (function () {
+    'use strict';
+
+    var path  = window.location.pathname;
+    var search = window.location.search;
+
+    // ── Loop-guard ────────────────────────────────────────────────
+    // If 404.html loads for a URL that ends in .html (real file),
+    // it means _redirects /* is still cached on the CDN.
+    // Stop redirecting immediately and show a helpful message.
+    if (/\.html(\?|$)/i.test(path)) {
+      show404('CDN cache issue — please hard-refresh (Ctrl+Shift+R) or clear browser cache.');
+      return;
+    }
+
+    // ── Redirect-loop guard ───────────────────────────────────────
+    // If we've redirected from this exact path before (within 3s),
+    // the target couldn't be found — show 404 instead of looping.
+    var loopKey = '__tsj_404_' + path.replace(/\//g,'_');
+    try {
+      var lastHit = parseInt(sessionStorage.getItem(loopKey) || '0', 10);
+      if (lastHit && (Date.now() - lastHit) < 5000) {
+        sessionStorage.removeItem(loopKey);
+        show404();
+        return;
+      }
+      sessionStorage.setItem(loopKey, Date.now().toString());
+    } catch(_) {}
+
+    // ── 1. Job detail: /jobs/<slug>/ ──────────────────────────────
+    var jobMatch = path.match(/^\/jobs\/([^\/]+)\/?$/);
+    if (jobMatch) {
+      var slug = decodeURIComponent(jobMatch[1]);
+      try { sessionStorage.setItem('__tsj_slug', slug); } catch(_) {}
+      var refParam = '';
+      try { refParam = new URLSearchParams(search).get('ref') || ''; } catch(_) {}
+      var dest = '/job.html?slug=' + encodeURIComponent(slug);
+      if (refParam) {
+        try { sessionStorage.setItem('__tsj_ref', refParam); } catch(_) {}
+        dest += '&ref=' + encodeURIComponent(refParam);
+      }
+      window.location.replace(dest);
+      return;
+    }
+
+    // ── 2. Section pages: /section/<slug>/ ────────────────────────
+    var sectionMatch = path.match(/^\/section\/([^\/]+)\/?$/);
+    if (sectionMatch) {
+      var sec = decodeURIComponent(sectionMatch[1]).replace(/-/g, ' ');
+      window.location.replace('/view.html?section=' + encodeURIComponent(sec));
+      return;
+    }
+
+    // ── 3. Category pages: /category/<group>/ ─────────────────────
+    var catMatch = path.match(/^\/category\/([^\/]+)\/?$/);
+    if (catMatch) {
+      window.location.replace('/category.html?group=' + encodeURIComponent(decodeURIComponent(catMatch[1])));
+      return;
+    }
+
+    // ── 4. State listing (new): /state/<name>/ ────────────────────
+    var stateMatch = path.match(/^\/state\/([^\/]+)\/?$/);
+    if (stateMatch) {
+      // Convert slug → Title Case state name and pass as ?state=
+      // e.g. /state/uttar-pradesh/ → ?state=Uttar Pradesh
+      var stateSlug = decodeURIComponent(stateMatch[1]);
+      var stateName = stateSlug
+        .replace(/-/g, ' ')
+        .replace(/\b\w/g, function(c){ return c.toUpperCase(); });
+      window.location.replace('/state-jobs.html?state=' + encodeURIComponent(stateName));
+      return;
+    }
+
+    // ── 4a. State hub: /state/ → All States listing ───────────────
+    if (path === '/state/' || path === '/state') {
+      window.location.replace('/category.html?group=state');
+      return;
+    }
+
+    // ── 4b. State listing (legacy): /state-jobs/<state>/ ──────────
+    var legacyStateMatch = path.match(/^\/state-jobs\/([^\/]+)\/?$/);
+    if (legacyStateMatch) {
+      var legacyState = decodeURIComponent(legacyStateMatch[1]).replace(/-/g, ' ');
+      window.location.replace('/state-jobs.html?state=' + encodeURIComponent(legacyState));
+      return;
+    }
+
+    // ── 5. Search: /search/<query>/ ───────────────────────────────
+    var searchMatch = path.match(/^\/search\/([^\/]+)\/?$/);
+    if (searchMatch) {
+      var q = decodeURIComponent(searchMatch[1]).replace(/-/g, ' ');
+      window.location.replace('/search.html?q=' + encodeURIComponent(q));
+      return;
+    }
+
+    // ── 6. Static shortcuts ───────────────────────────────────────
+    var shortcuts = {
+      '/latest-jobs/':     '/view.html?section=latest+jobs',
+      '/latest-jobs':      '/view.html?section=latest+jobs',
+      '/results/':         '/view.html?section=Sarkari+Result',
+      '/results':          '/view.html?section=Sarkari+Result',
+      '/admit-card/':      '/view.html?section=Admit+cards+Exams+Date',
+      '/admit-card':       '/view.html?section=Admit+cards+Exams+Date',
+      '/railway-jobs/':    '/view.html?section=Railway+Jobs',
+      '/railway-jobs':     '/view.html?section=Railway+Jobs',
+      '/bank-jobs/':       '/view.html?section=Bank+Jobs',
+      '/bank-jobs':        '/view.html?section=Bank+Jobs',
+      '/police-jobs/':     '/view.html?section=Police+Jobs',
+      '/police-jobs':      '/view.html?section=Police+Jobs',
+      '/ssc-jobs/':        '/view.html?section=SSC+Jobs',
+      '/ssc-jobs':         '/view.html?section=SSC+Jobs',
+      '/upsc-jobs/':       '/view.html?section=UPSC+Jobs',
+      '/upsc-jobs':        '/view.html?section=UPSC+Jobs',
+      '/teaching-jobs/':   '/view.html?section=Teacher+Jobs',
+      '/teaching-jobs':    '/view.html?section=Teacher+Jobs',
+      '/army-jobs/':       '/view.html?section=Indian+ARMY+jobs',
+      '/army-jobs':        '/view.html?section=Indian+ARMY+jobs',
+      '/10th-pass-jobs/':  '/view.html?section=10th+Pass+jobs',
+      '/10th-pass-jobs':   '/view.html?section=10th+Pass+jobs',
+      '/12th-pass-jobs/':  '/view.html?section=12th+Pass+jobs',
+      '/12th-pass-jobs':   '/view.html?section=12th+Pass+jobs',
+      '/upcoming-jobs/':   '/view.html?section=upcoming-jobs',
+      '/upcoming-jobs':    '/view.html?section=upcoming-jobs',
+      '/state-jobs/':      '/view.html?section=State+jobs',
+      '/state-jobs':       '/view.html?section=State+jobs',
+      '/central-jobs/':    '/view.html?section=Central+jobs',
+      '/central-jobs':     '/view.html?section=Central+jobs',
+      '/answer-key/':      '/category.html?group=admit-result',
+      '/answer-key':       '/category.html?group=admit-result',
+      '/admissions/':      '/category.html?group=admissions',
+      '/admissions':       '/category.html?group=admissions',
+      '/haryana-jobs/':    '/section/haryana-all-state-jobs/',
+      '/haryana-jobs':     '/section/haryana-all-state-jobs/',
+      '/iti-jobs/':        '/section/iti-jobs/',
+      '/iti-jobs':         '/section/iti-jobs/',
+      '/diploma-jobs/':    '/section/diploma-jobs/',
+      '/diploma-jobs':     '/section/diploma-jobs/',
+      '/8th-pass-jobs/':   '/section/8th-pass/',
+      '/8th-pass-jobs':    '/section/8th-pass/',
+      '/graduation-jobs/': '/section/graduation-jobs/',
+      '/graduation-jobs':  '/section/graduation-jobs/',
+    };
+    if (shortcuts[path]) {
+      window.location.replace(shortcuts[path]);
+      return;
+    }
+
+    // ── 7. Nothing matched — show real 404 ────────────────────────
+    show404();
+
+    function show404(extraMsg) {
+      document.getElementById('spinnerEl').style.display  = 'none';
+      document.getElementById('loadingText').style.display = 'none';
+      document.getElementById('notFoundBox').style.display = 'block';
+      if (extraMsg) {
+        document.getElementById('extraMsg').textContent = extraMsg;
+      }
+    }
+  })();
+  </script>
+  <script src="/analytics.js" defer></script>
 </head>
-<body> <div class="box"> <div class="spinner" id="spinnerEl"></div> <p id="loadingText" style="margin:0;font-weight:600;">Redirecting…</p> <div id="notFoundBox"> <p style="margin:0;font-weight:700;font-size:1.15rem;">404 — Page Not Found</p> <p style="margin:8px 0 0;font-size:.85rem;color:#6b7280;">
+<body>
+  <div class="box">
+    <!-- Default: spinner + "Redirecting…" while JS works -->
+    <div class="spinner" id="spinnerEl"></div>
+    <p id="loadingText" style="margin:0;font-weight:600;">Redirecting…</p>
+
+    <!-- Shown ONLY for true 404 or loop-detected -->
+    <div id="notFoundBox">
+      <p style="margin:0;font-weight:700;font-size:1.15rem;">404 — Page Not Found</p>
+      <p style="margin:8px 0 0;font-size:.85rem;color:#6b7280;">
         The page you're looking for doesn't exist or may have been moved.
-      </p> <p id="extraMsg" style="margin:6px 0 0;font-size:.78rem;color:#ef4444;"></p> <a href="/" class="home-link">← Back to Home</a> </div> </div>
+      </p>
+      <p id="extraMsg" style="margin:6px 0 0;font-size:.78rem;color:#ef4444;"></p>
+      <a href="/" class="home-link">← Back to Home</a>
+    </div>
+  </div>
 </body>
 </html>

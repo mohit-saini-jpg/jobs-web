@@ -15,7 +15,7 @@
 'use strict';
 
 // ─── Version & Cache Names ────────────────────────────────────────────────────
-const CACHE_VERSION      = 'v4';
+const CACHE_VERSION      = 'v3';
 const CACHE_STATIC       = `static-assets-${CACHE_VERSION}`;
 const CACHE_PAGES        = `html-pages-${CACHE_VERSION}`;
 const CACHE_IMAGES       = `images-${CACHE_VERSION}`;
@@ -38,9 +38,6 @@ const OFFLINE_PAGE = '/offline.html';
 // Only critical shell assets — keep small for fast SW activation
 const PRECACHE_STATIC = [
   '/all.min.css',
-  '/logo-80.webp',
-  '/merged_sarkari_slim.json',
-  '/sections-index.json',
 ];
 
 const PRECACHE_PAGES = [

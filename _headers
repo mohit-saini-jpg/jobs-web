@@ -80,14 +80,3 @@
 /404.html
   X-Robots-Tag: noindex
   Cache-Control: public, max-age=3600
-
-/merged_sarkari_slim.json
-  Cache-Control: public, max-age=3600, stale-while-revalidate=14400
-  Access-Control-Allow-Origin: *
-  Access-Control-Allow-Methods: GET
-
-/analytics.min.js
-  Cache-Control: public, max-age=31536000, immutable
-
-/perf-boost.min.js
-  Cache-Control: public, max-age=31536000, immutable
