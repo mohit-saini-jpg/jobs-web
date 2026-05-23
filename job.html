@@ -2066,11 +2066,25 @@
           }
         } catch (_) {}
 
-        /* Load merged_sarkari_data.json (offline form jobs) */
+        /* Load sarkari-index.json (split from merged_sarkari_data.json — faster!) */
         let rawMerged = null;
         try {
-          const r1 = await fetch('/merged_sarkari_data.json');
-          if (r1.ok) rawMerged = await r1.json();
+          /* sarkari-index.json sirf 36 KB hai vs 791 KB merged_sarkari_data.json */
+          const r1 = await fetch('/sarkari-index.json');
+          if (r1.ok) {
+            const idx = await r1.json();
+            /* Index format: { slug: { cat, title, last_date, org } }
+               job.html ko bas list chahiye taaki title-match ho sake,
+               full detail jobs/data/<slug>.json se milegi */
+            const fakeJobs = Object.entries(idx).map(([slug, meta]) => ({
+              slug,
+              category:     meta.cat,
+              title:        meta.title,
+              organization: meta.org || "",
+              important_dates: { last_date: meta.last_date || "" },
+            }));
+            rawMerged = { jobs: fakeJobs };
+          }
         } catch (_) {}
 
         /* ALWAYS load Complete_Jobs_Full_Data.json — this is the primary source
@@ -2295,19 +2309,56 @@
         variants.add(s.replace(/-and-/g, '-').replace(/-[0-9a-f]{5,8}$/i, ''));
         return [...variants].filter(Boolean);
       })();
-      for (const slugVariant of _slugVariants) {
-        if (row) break;
-        try {
-          const directRes = await fetch('/jobs/data/' + encodeURIComponent(slugVariant) + '.json');
-          if (directRes.ok) {
-            const directData = await directRes.json();
-            if (directData && (directData.basic_details || directData.title)) {
-              _rawJobData = directData; window.__TSJ_RAW_JOB = directData; /* Store raw JSON for dynamic sections patch */
-              row = parseFullJob(directData, directData.category || 'Latest Notifications');
-              if (row) row.slug = rawSlug;
+      /* ── OPTIMIZED: jobs-index.json se cat_folder lookup karo, fir direct subfolder fetch ── */
+      let _catFolderHint = null;
+      try {
+        const idxRes = await fetch('/jobs-index.json');
+        if (idxRes.ok) {
+          const idx = await idxRes.json();
+          /* Try all slug variants against index */
+          for (const sv of _slugVariants) {
+            if (idx[sv] && idx[sv].cat_folder) {
+              _catFolderHint = idx[sv].cat_folder;
+              break;
             }
           }
-        } catch (_) {}
+        }
+      } catch (_) {}
+
+      for (const slugVariant of _slugVariants) {
+        if (row) break;
+        /* Build fetch paths: category subfolder first (if known), then flat fallback */
+        const pathsToTry = [];
+        if (_catFolderHint) {
+          pathsToTry.push('/jobs/data/' + _catFolderHint + '/' + encodeURIComponent(slugVariant) + '.json');
+        }
+        /* Also try all known category folders as fallback */
+        const _allFolders = ['latest-notifications','b-tech-be','diploma','any-graduate',
+          'any-post-graduate','teaching-faculty','medical-hospital','12th-pass','10th-pass',
+          'iti','police-defence','bank-jobs','railway-jobs','b-com','8th-pass','last-date-reminder'];
+        for (const folder of _allFolders) {
+          if (folder !== _catFolderHint) {
+            pathsToTry.push('/jobs/data/' + folder + '/' + encodeURIComponent(slugVariant) + '.json');
+          }
+        }
+        /* Legacy flat path fallback (backward compat during migration) */
+        pathsToTry.push('/jobs/data/' + encodeURIComponent(slugVariant) + '.json');
+
+        for (const fetchPath of pathsToTry) {
+          if (row) break;
+          try {
+            const directRes = await fetch(fetchPath);
+            if (directRes.ok) {
+              const directData = await directRes.json();
+              if (directData && (directData.basic_details || directData.title)) {
+                _rawJobData = directData; window.__TSJ_RAW_JOB = directData;
+                row = parseFullJob(directData, directData.category || 'Latest Notifications');
+                if (row) row.slug = rawSlug;
+                break;
+              }
+            }
+          } catch (_) {}
+        }
       }
 
       /* ── FALLBACK: Search aggregated JSON files (fuzzy/token match) ── */
@@ -2344,19 +2395,37 @@
 
             if (isFromMerged) {
               try {
-                const rm = await fetch('/merged_sarkari_data.json');
-                if (rm.ok) {
-                  const md = await rm.json();
-                  const allMerged = (md && md.jobs) ? md.jobs : [];
-                  /* Find exact slug match first */
-                  rawSourceJson = allMerged.find(j => safe(j.slug) === rawSlug) || null;
-                  /* Fallback: title token match */
-                  if (!rawSourceJson && row.title) {
+                /* OPTIMIZED: Pehle sarkari/data/<slug>.json try karo — sirf 1 job file ~3KB */
+                const slugToTry = row.slug || rawSlug;
+                let fetched = false;
+                if (slugToTry) {
+                  try {
+                    const rs = await fetch('/sarkari/data/' + slugToTry + '.json');
+                    if (rs.ok) {
+                      rawSourceJson = await rs.json();
+                      fetched = true;
+                    }
+                  } catch (_) {}
+                }
+                /* Fallback: title match via merged-sarkari-mini.json (58KB vs 791KB) */
+                if (!fetched && row.title) {
+                  const rm = await fetch('/merged-sarkari-mini.json');
+                  if (rm.ok) {
+                    const md = await rm.json();
+                    const allMerged = (md && md.jobs) ? md.jobs : [];
                     const rt = row.title.toLowerCase();
-                    rawSourceJson = allMerged.find(j => {
+                    const matched = allMerged.find(function(j) {
                       const jt = safe(j.title).toLowerCase();
                       return jt && rt && (jt.includes(rt.slice(0,30)) || rt.includes(jt.slice(0,30)));
                     }) || null;
+                    if (matched && matched.slug) {
+                      /* Found slug — fetch full detail file */
+                      try {
+                        const rd = await fetch('/sarkari/data/' + matched.slug + '.json');
+                        if (rd.ok) rawSourceJson = await rd.json();
+                      } catch (_) {}
+                    }
+                    if (!rawSourceJson) rawSourceJson = matched;
                   }
                 }
               } catch (_) {}
