@@ -625,7 +625,7 @@
       });
 
     } else if(cfg&&cfg.file==='merged'){
-      fetch('/merged_sarkari_data.json').then(function(r){return r.ok?r.json():null;}).catch(function(){return null;})
+      fetch('/chunks/merged/listing.json') /* PERF FIX */.then(function(r){return r.ok?r.json():null;}).catch(function(){return null;})
       .then(function(jsonData){
         if(!jsonData){showItems([]);setupSearch();return;}
         if(Array.isArray(jsonData.jobs)&&jsonData.jobs.length>0){
@@ -819,5 +819,7 @@
 
   <script src="/script.js?v=20260520" defer></script>
   <script src="/seo-engine.min.js?v=20260517" defer></script>
+  <script src="/chunks/chunk-loader.js" defer></script>
+  <script src="/perf-fixes.js" defer></script>
 </body>
 </html>

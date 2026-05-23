@@ -1,0 +1,199 @@
+{
+  "generated_at": "2026-05-23T05:59:26.391404Z",
+  "scraped_at": "2026-05-22 17:35:04",
+  "total": 174,
+  "chunks": {},
+  "categories": {
+    "OFFLINE_FORM": {
+      "slug": "offline-form",
+      "path": "chunks/merged/category/offline-form.json",
+      "size": 15720,
+      "count": 25,
+      "pages": [
+        {
+          "page": 1,
+          "path": "chunks/merged/category/offline-form/page-1.json",
+          "size": 39663
+        },
+        {
+          "page": 2,
+          "path": "chunks/merged/category/offline-form/page-2.json",
+          "size": 8699
+        }
+      ]
+    },
+    "LATEST_JOBS NEW": {
+      "slug": "latest-jobs-new",
+      "path": "chunks/merged/category/latest-jobs-new.json",
+      "size": 36203,
+      "count": 59,
+      "pages": [
+        {
+          "page": 1,
+          "path": "chunks/merged/category/latest-jobs-new/page-1.json",
+          "size": 37649
+        },
+        {
+          "page": 2,
+          "path": "chunks/merged/category/latest-jobs-new/page-2.json",
+          "size": 35924
+        },
+        {
+          "page": 3,
+          "path": "chunks/merged/category/latest-jobs-new/page-3.json",
+          "size": 34840
+        }
+      ]
+    },
+    "SR_Latest_Jobs": {
+      "slug": "sr-latest-jobs",
+      "path": "chunks/merged/category/sr-latest-jobs.json",
+      "size": 10600,
+      "count": 24,
+      "pages": [
+        {
+          "page": 1,
+          "path": "chunks/merged/category/sr-latest-jobs/page-1.json",
+          "size": 62522
+        },
+        {
+          "page": 2,
+          "path": "chunks/merged/category/sr-latest-jobs/page-2.json",
+          "size": 18544
+        }
+      ]
+    },
+    "SR_Result": {
+      "slug": "sr-result",
+      "path": "chunks/merged/category/sr-result.json",
+      "size": 8651,
+      "count": 20,
+      "pages": [
+        {
+          "page": 1,
+          "path": "chunks/merged/category/sr-result/page-1.json",
+          "size": 99230
+        }
+      ]
+    },
+    "SR_Admit_Card": {
+      "slug": "sr-admit-card",
+      "path": "chunks/merged/category/sr-admit-card.json",
+      "size": 10109,
+      "count": 23,
+      "pages": [
+        {
+          "page": 1,
+          "path": "chunks/merged/category/sr-admit-card/page-1.json",
+          "size": 89599
+        },
+        {
+          "page": 2,
+          "path": "chunks/merged/category/sr-admit-card/page-2.json",
+          "size": 12241
+        }
+      ]
+    },
+    "SR_Admission": {
+      "slug": "sr-admission",
+      "path": "chunks/merged/category/sr-admission.json",
+      "size": 2208,
+      "count": 5,
+      "pages": [
+        {
+          "page": 1,
+          "path": "chunks/merged/category/sr-admission/page-1.json",
+          "size": 18267
+        }
+      ]
+    },
+    "SR_Answer_Key": {
+      "slug": "sr-answer-key",
+      "path": "chunks/merged/category/sr-answer-key.json",
+      "size": 1346,
+      "count": 3,
+      "pages": [
+        {
+          "page": 1,
+          "path": "chunks/merged/category/sr-answer-key/page-1.json",
+          "size": 12024
+        }
+      ]
+    },
+    "UPCOMING_JOBS": {
+      "slug": "upcoming-jobs",
+      "path": "chunks/merged/category/upcoming-jobs.json",
+      "size": 6723,
+      "count": 15,
+      "pages": [
+        {
+          "page": 1,
+          "path": "chunks/merged/category/upcoming-jobs/page-1.json",
+          "size": 76022
+        }
+      ]
+    }
+  },
+  "listing": {
+    "path": "chunks/merged/listing.json",
+    "size": 91238,
+    "count": 174
+  },
+  "detail_count": 174,
+  "pages": [
+    {
+      "page": 1,
+      "path": "chunks/merged/pages/page-1.json",
+      "size": 12408,
+      "count": 20
+    },
+    {
+      "page": 2,
+      "path": "chunks/merged/pages/page-2.json",
+      "size": 12554,
+      "count": 20
+    },
+    {
+      "page": 3,
+      "path": "chunks/merged/pages/page-3.json",
+      "size": 11529,
+      "count": 20
+    },
+    {
+      "page": 4,
+      "path": "chunks/merged/pages/page-4.json",
+      "size": 12898,
+      "count": 20
+    },
+    {
+      "page": 5,
+      "path": "chunks/merged/pages/page-5.json",
+      "size": 9713,
+      "count": 20
+    },
+    {
+      "page": 6,
+      "path": "chunks/merged/pages/page-6.json",
+      "size": 8730,
+      "count": 20
+    },
+    {
+      "page": 7,
+      "path": "chunks/merged/pages/page-7.json",
+      "size": 8754,
+      "count": 20
+    },
+    {
+      "page": 8,
+      "path": "chunks/merged/pages/page-8.json",
+      "size": 8741,
+      "count": 20
+    },
+    {
+      "page": 9,
+      "path": "chunks/merged/pages/page-9.json",
+      "size": 6277,
+      "count": 14
+    }
+  ]
+}

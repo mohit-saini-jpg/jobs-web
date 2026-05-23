@@ -38,6 +38,10 @@ const OFFLINE_PAGE = '/offline.html';
 // Only critical shell assets — keep small for fast SW activation
 const PRECACHE_STATIC = [
   '/all.min.css',
+  '/chunks/merged/listing.json',
+  '/chunks/merged/category/latest-jobs-new.json',
+  '/chunks/state/index.json',
+  '/chunks/chunk-loader.js',
 ];
 
 const PRECACHE_PAGES = [
@@ -447,6 +451,9 @@ function shouldHandle(request) {
 
 function isJobData(url, request) {
   // JSON job data files — always network-only
+  // ✅ PERF FIX: Chunk files use stable URLs → allow Cache-First caching
+  if (url.pathname.startsWith('/chunks/')) return false;
+
   if (url.pathname.endsWith('.json') && !url.pathname.includes('manifest')) return true;
   // API endpoints
   if (url.pathname.startsWith('/api/')) return true;

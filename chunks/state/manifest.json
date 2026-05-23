@@ -1,0 +1,181 @@
+{
+  "generated_at": "2026-05-23T05:59:26.483926Z",
+  "total_states": 34,
+  "states": {
+    "andaman-and-nicobar": {
+      "path": "chunks/state/andaman-and-nicobar.json",
+      "size": 461,
+      "count": 1
+    },
+    "andhra-pradesh": {
+      "path": "chunks/state/andhra-pradesh.json",
+      "size": 3976,
+      "count": 16
+    },
+    "arunachal-pradesh": {
+      "path": "chunks/state/arunachal-pradesh.json",
+      "size": 636,
+      "count": 2
+    },
+    "assam": {
+      "path": "chunks/state/assam.json",
+      "size": 3306,
+      "count": 14
+    },
+    "bihar": {
+      "path": "chunks/state/bihar.json",
+      "size": 2407,
+      "count": 9
+    },
+    "chandigarh": {
+      "path": "chunks/state/chandigarh.json",
+      "size": 1511,
+      "count": 6
+    },
+    "chhattisgarh": {
+      "path": "chunks/state/chhattisgarh.json",
+      "size": 4285,
+      "count": 17
+    },
+    "dadra-and-nagar-haveli": {
+      "path": "chunks/state/dadra-and-nagar-haveli.json",
+      "size": 409,
+      "count": 1
+    },
+    "daman-and-diu": {
+      "path": "chunks/state/daman-and-diu.json",
+      "size": 624,
+      "count": 2
+    },
+    "delhi": {
+      "path": "chunks/state/delhi.json",
+      "size": 19740,
+      "count": 83
+    },
+    "goa": {
+      "path": "chunks/state/goa.json",
+      "size": 1012,
+      "count": 4
+    },
+    "gujarat": {
+      "path": "chunks/state/gujarat.json",
+      "size": 9256,
+      "count": 33
+    },
+    "haryana": {
+      "path": "chunks/state/haryana.json",
+      "size": 3621,
+      "count": 15
+    },
+    "himachal-pradesh": {
+      "path": "chunks/state/himachal-pradesh.json",
+      "size": 1051,
+      "count": 4
+    },
+    "jammu-and-kashmir": {
+      "path": "chunks/state/jammu-and-kashmir.json",
+      "size": 1867,
+      "count": 8
+    },
+    "jharkhand": {
+      "path": "chunks/state/jharkhand.json",
+      "size": 1294,
+      "count": 5
+    },
+    "karnataka": {
+      "path": "chunks/state/karnataka.json",
+      "size": 6327,
+      "count": 26
+    },
+    "kerala": {
+      "path": "chunks/state/kerala.json",
+      "size": 5386,
+      "count": 22
+    },
+    "madhya-pradesh": {
+      "path": "chunks/state/madhya-pradesh.json",
+      "size": 4922,
+      "count": 20
+    },
+    "maharashtra": {
+      "path": "chunks/state/maharashtra.json",
+      "size": 10326,
+      "count": 45
+    },
+    "meghalaya": {
+      "path": "chunks/state/meghalaya.json",
+      "size": 1059,
+      "count": 4
+    },
+    "mizoram": {
+      "path": "chunks/state/mizoram.json",
+      "size": 2859,
+      "count": 12
+    },
+    "nagaland": {
+      "path": "chunks/state/nagaland.json",
+      "size": 934,
+      "count": 3
+    },
+    "odisha": {
+      "path": "chunks/state/odisha.json",
+      "size": 11096,
+      "count": 45
+    },
+    "puducherry": {
+      "path": "chunks/state/puducherry.json",
+      "size": 296,
+      "count": 1
+    },
+    "punjab": {
+      "path": "chunks/state/punjab.json",
+      "size": 2304,
+      "count": 9
+    },
+    "rajasthan": {
+      "path": "chunks/state/rajasthan.json",
+      "size": 4286,
+      "count": 17
+    },
+    "sikkim": {
+      "path": "chunks/state/sikkim.json",
+      "size": 540,
+      "count": 2
+    },
+    "tamil-nadu": {
+      "path": "chunks/state/tamil-nadu.json",
+      "size": 7403,
+      "count": 30
+    },
+    "telangana": {
+      "path": "chunks/state/telangana.json",
+      "size": 6951,
+      "count": 29
+    },
+    "tripura": {
+      "path": "chunks/state/tripura.json",
+      "size": 1090,
+      "count": 4
+    },
+    "uttar-pradesh": {
+      "path": "chunks/state/uttar-pradesh.json",
+      "size": 9341,
+      "count": 37
+    },
+    "uttarakhand": {
+      "path": "chunks/state/uttarakhand.json",
+      "size": 3749,
+      "count": 15
+    },
+    "west-bengal": {
+      "path": "chunks/state/west-bengal.json",
+      "size": 4524,
+      "count": 19
+    }
+  },
+  "index": {
+    "path": "chunks/state/index.json",
+    "size": 138897
+  },
+  "detail_count": 560
+}

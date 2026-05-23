@@ -2014,7 +2014,7 @@
 
         /* ── Load state-jobs-data.json (state govt jobs with full detail.important_links) ── */
         try {
-          const rState = await fetch('/state-jobs-data.json');
+          const rState = await fetch('/chunks/state/index.json') /* PERF FIX: 136KB vs 2.2MB */;
           if (rState.ok) {
             const stateRaw = await rState.json();
             const stateArr = Array.isArray(stateRaw) ? stateRaw
@@ -2069,7 +2069,7 @@
         /* Load merged_sarkari_data.json (offline form jobs) */
         let rawMerged = null;
         try {
-          const r1 = await fetch('/merged_sarkari_data.json');
+          const r1 = await fetch('/chunks/merged/listing.json') /* PERF FIX: 89KB vs 792KB */;
           if (r1.ok) rawMerged = await r1.json();
         } catch (_) {}
 
@@ -2344,7 +2344,7 @@
 
             if (isFromMerged) {
               try {
-                const rm = await fetch('/merged_sarkari_data.json');
+                const rm = await fetch('/chunks/merged/listing.json') /* PERF FIX: 89KB vs 792KB */;
                 if (rm.ok) {
                   const md = await rm.json();
                   const allMerged = (md && md.jobs) ? md.jobs : [];
@@ -2390,7 +2390,7 @@
             if (!rawSourceJson && isFromState) {
               /* Try state-jobs-data.json */
               try {
-                const rs = await fetch('/state-jobs-data.json');
+                const rs = await fetch('/chunks/state/index.json') /* PERF FIX: 136KB vs 2.2MB */;
                 if (rs.ok) {
                   const sd = await rs.json();
                   const stateArr = Array.isArray(sd) ? sd : (sd.states || []);
@@ -2565,5 +2565,7 @@
     }
   })();
   </script>
+  <script src="/chunks/chunk-loader.js" defer></script>
+  <script src="/perf-fixes.js" defer></script>
 </body>
 </html>

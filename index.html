@@ -21,13 +21,16 @@
   <link rel="dns-prefetch" href="//fonts.googleapis.com"/>
   <link rel="dns-prefetch" href="//www.googletagmanager.com"/>
   <!-- Preload critical JSON data for faster card rendering -->
-  <link rel="preload" href="merged_sarkari_data.json" as="fetch" crossorigin="anonymous"/>
+  <!-- PERF FIX: Replaced 792KB preload with 89KB chunk -->
+  <link rel="preload" href="/chunks/merged/listing.json" as="fetch" crossorigin="anonymous"/>
+  <link rel="preload" href="/chunks/merged/category/latest-jobs-new.json" as="fetch" crossorigin="anonymous"/>
   <link rel="preload" href="dailyupdates.json" as="fetch" crossorigin="anonymous"/>
   <!-- PERF: sections-index.json — 16KB lightweight index for instant card rendering (instead of 18MB Complete_Jobs_Full_Data.json) -->
   <link rel="preload" href="sections-index.json" as="fetch" crossorigin="anonymous"/>
   <!-- PERF: shared promise for merged_sarkari_data.json — fetched only ONCE, used by ticker + section cards -->
   <script>
-  window.__mergedDataPromise = fetch('merged_sarkari_data.json')
+  // PERF FIX: Use chunked data (89KB) instead of 792KB monolith
+  window.__mergedDataPromise = fetch('/chunks/merged/listing.json')
     .then(function(r){ return r.ok ? r.json() : null; })
     .catch(function(){ return null; });
   // PERF: sections-index.json — fetch starts immediately at page load (16KB vs 18MB)
@@ -3519,5 +3522,8 @@
   })();
   </script>
 
+  <!-- PERF FIX: Chunked JSON loader + performance fixes -->
+  <script src="/chunks/chunk-loader.js" defer></script>
+  <script src="/perf-fixes.js" defer></script>
 </body>
 </html>
