@@ -986,13 +986,11 @@
         a.setAttribute("aria-label", name);
         if (external) { a.target = "_blank"; a.rel = "noopener"; }
         const rawDate = safe(it.date || "");
-        let displayDate = rawDate;
-        if (rawDate.toLowerCase().includes("please refer") || rawDate.toLowerCase().includes("days from") || rawDate.toLowerCase().includes("date of publication")) {
-          displayDate = "Check Official Notification";
-        } else if (rawDate.length > 35) {
-          displayDate = rawDate.slice(0, 32) + "…";
-        }
-        a.innerHTML = `<span class="sn-badge">${_idx+1}</span><span class="t">${name}${displayDate ? `<span class="d"><i class="fa-regular fa-calendar-days"></i> ${displayDate}</span>` : ""}</span>`;
+        const dateBadge = formatDateBadge(rawDate);
+        const dateHTML = dateBadge
+          ? `<span class="d ${dateBadge.colorClass}"><i class="fa-regular fa-calendar-days"></i> ${dateBadge.display}</span>`
+          : "";
+        a.innerHTML = `<span class="sn-badge">${_idx+1}</span><span class="t">${name}${dateHTML}</span>`;
         list.appendChild(a);
 
         // ✅ SEARCH INDEX: sirf internal job.html links push karo (external nav/tools skip)
@@ -1135,13 +1133,11 @@
       if (external) { a.target = "_blank"; a.rel = "noopener"; }
 
       const rawDate = safe(it.date || "");
-      let displayDate = rawDate;
-      if (rawDate.toLowerCase().includes("please refer") || rawDate.toLowerCase().includes("days from") || rawDate.toLowerCase().includes("date of publication")) {
-        displayDate = "Check Official Notification";
-      } else if (rawDate.length > 35) {
-        displayDate = rawDate.slice(0, 32) + "…";
-      }
-      a.innerHTML = `<span class="sn-badge">${_idx+1}</span><span class="t">${name}${displayDate ? `<span class="d"><i class="fa-regular fa-calendar-days"></i> ${displayDate}</span>` : ""}</span>`;
+      const dateBadge = formatDateBadge(rawDate);
+      const dateHTML = dateBadge
+        ? `<span class="d ${dateBadge.colorClass}"><i class="fa-regular fa-calendar-days"></i> ${dateBadge.display}</span>`
+        : "";
+      a.innerHTML = `<span class="sn-badge">${_idx+1}</span><span class="t">${name}${dateHTML}</span>`;
       list.appendChild(a);
 
       // ✅ SEARCH INDEX: sirf internal job.html links push karo (external nav/tools skip)
