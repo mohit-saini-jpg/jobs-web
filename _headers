@@ -63,8 +63,22 @@
   Cache-Control: public, max-age=31536000, immutable
 
 # ── JavaScript ────────────────────────────────────────────────────────
+# NOTE: Do NOT use immutable for JS — updates won't reach users who have it cached.
+# Short cache + must-revalidate so browser checks for new version on each visit.
 /*.js
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=3600, must-revalidate
+
+# Key renderer files — no cache so fixes reach users instantly
+/universal-renderer.js
+  Cache-Control: no-cache, must-revalidate
+/script.js
+  Cache-Control: no-cache, must-revalidate
+/seo-engine.js
+  Cache-Control: no-cache, must-revalidate
+/seo-engine.min.js
+  Cache-Control: no-cache, must-revalidate
+/analytics.js
+  Cache-Control: no-cache, must-revalidate
 
 # ── PWA Icons ─────────────────────────────────────────────────────────
 /icons/*.png
