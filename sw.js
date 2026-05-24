@@ -9,7 +9,7 @@
 'use strict';
 
 // ─── Version & Cache Names ────────────────────────────────────────────────────
-const SW_VERSION         = 'v4.0';
+const SW_VERSION         = 'v4.1';
 const CACHE_STATIC       = `tsj-static-${SW_VERSION}`;
 const CACHE_PAGES        = `tsj-pages-${SW_VERSION}`;
 const CACHE_IMAGES       = `tsj-images-${SW_VERSION}`;
@@ -31,7 +31,7 @@ const CACHE_LIMITS = {
   [CACHE_STATIC]: { maxEntries: 80,  maxAgeSeconds: 31_536_000 }, // 1 year
   [CACHE_PAGES]:  { maxEntries: 60,  maxAgeSeconds:  86_400    }, // 1 day
   [CACHE_IMAGES]: { maxEntries: 100, maxAgeSeconds: 15_552_000 }, // 6 months
-  [CACHE_DATA]:   { maxEntries: 20,  maxAgeSeconds:  3_600     }, // 1 hour
+  [CACHE_DATA]:   { maxEntries: 20,  maxAgeSeconds:    300     }, // 5 min — fresh data
 };
 
 // ─── Critical Assets to Pre-Cache ────────────────────────────────────────────
@@ -60,7 +60,6 @@ const PRECACHE_PAGES = [
 
 const PRECACHE_DATA = [
   '/manifest.json',
-  '/dailyupdates.json',
   '/config.json',
 ];
 
@@ -283,6 +282,19 @@ async function staleWhileRevalidate(request, cacheName) {
 
 /** Network-First for data: try network, fallback to stale cache */
 async function networkFirstData(request) {
+  const url = new URL(request.url);
+  // Main data files: ALWAYS from network, never serve stale
+  const noCacheFiles = [
+    'Complete_Jobs_Full_Data.json','sections-index.json',
+    'dailyupdates.json','merged_sarkari_data.json',
+    'state-jobs-data.json','jobs-index.json','jobs-search-index.json'
+  ];
+  if (noCacheFiles.some(f => url.pathname.includes(f))) {
+    try {
+      const resp = await fetch(request, { cache: 'no-store' });
+      if (resp.ok) return resp;
+    } catch(e) {}
+  }
   const cache = await caches.open(CACHE_DATA);
   try {
     const response = await fetch(request.clone(), {
