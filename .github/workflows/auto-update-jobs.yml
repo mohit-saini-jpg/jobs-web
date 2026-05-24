@@ -1,0 +1,95 @@
+name: 🔄 Auto Update Jobs + Sitemap + Google Notify
+
+# ═══════════════════════════════════════════════════════════
+# TRIGGERS — Kab run hoga yeh workflow
+# ═══════════════════════════════════════════════════════════
+on:
+  # 1. Jab bhi koi bhi JSON file update ho → automatic trigger
+  push:
+    paths:
+      - 'Complete_Jobs_Full_Data.json'
+      - 'merged_sarkari_data.json'
+      - 'dailyupdates.json'
+      - 'state-jobs-data.json'
+
+  # 2. Har roz raat 12:30 baje India time (UTC 19:00)
+  schedule:
+    - cron: '0 19 * * *'
+
+  # 3. GitHub Actions tab se manually "Run workflow" button
+  workflow_dispatch:
+
+# ═══════════════════════════════════════════════════════════
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      # Step 1: Repo checkout
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Step 2: Node.js setup (for sitemap generator)
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Step 3: Python setup (for job file generator)
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # Step 4: Generate jobs/data/<slug>.json + jobs/<slug>/index.html from all 4 JSON files
+      - name: 🏗️ Generate static job pages (all 4 JSON sources)
+        run: python3 .github/workflows/generate_jobs.py
+
+      # Step 5: Regenerate sitemap-jobs.xml with new job URLs
+      - name: 🗺️ Regenerate sitemap-jobs.xml
+        run: node .github/workflows/generate_sitemap.js
+
+      # Step 6: Commit and push all changes
+      - name: 📤 Commit & Push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Stage all generated files
+          git add jobs/data/
+          git add jobs/
+          git add jobs-index.json
+          git add sitemap-jobs.xml
+          git add sitemap-index.xml
+          git add sitemap.xml
+          git add sitemap-sections.xml 2>/dev/null || true
+          
+          # Check if anything changed
+          if git diff --staged --quiet; then
+            echo "✅ No changes to commit"
+            exit 0
+          fi
+          
+          COUNT=$(git diff --staged --name-only | wc -l)
+          git commit -m "🤖 Auto: $COUNT files updated — $(date +'%Y-%m-%d %H:%M UTC')"
+          git pull --rebase origin main
+          git push
+          echo "✅ Changes pushed successfully"
+
+      # Step 7: Ping Google + Bing via IndexNow (notifies new URLs immediately)
+      - name: 📡 Notify Google & Bing (IndexNow)
+        run: node .github/workflows/indexnow-ping.js
+        continue-on-error: true
+
+      # Step 8: Ping Google Sitemap (backup notification)
+      - name: 🔔 Ping Google Sitemap
+        run: |
+          curl -s "https://www.google.com/ping?sitemap=https://www.topsarkarijobs.com/sitemap-index.xml" \
+            -o /dev/null -w "Google ping status: %{http_code}\n" || true
+          curl -s "https://www.bing.com/ping?sitemap=https://www.topsarkarijobs.com/sitemap-index.xml" \
+            -o /dev/null -w "Bing ping status: %{http_code}\n" || true
+        continue-on-error: true
