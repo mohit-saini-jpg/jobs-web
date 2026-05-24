@@ -828,8 +828,7 @@
     .job-meta { font-size: .7rem; color: var(--muted); margin-top: 2px; }
     .job-date { display: none; }
 
-    /* section-link .d — smart color badges (overridden by d-green/d-orange/d-red below) */
-    .section-link .d { font-size: .68rem; font-weight: 800; color: var(--red); white-space: nowrap; display: inline; margin-left: 4px; }
+    
 
     /* View more link */
     .sec-more {
@@ -1461,30 +1460,9 @@
     }
     .section-link:hover .t { text-decoration: underline; }
 
-    /* Date: inline-flex INSIDE .t — smart color badge */
-    .section-link .d {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      margin-left: 4px;
-      font-size: .63rem;
-      font-weight: 800;
-      color: #fff;
-      background: #6b7280;
-      border-radius: 4px;
-      padding: 2px 7px;
-      white-space: nowrap;
-      vertical-align: middle;
-      line-height: 1.4;
-    }
-    .section-link .d i { font-size: .58rem; }
+    
     /* Smart urgency colors — override background above */
-    .section-link .d.d-green   { background: #16a34a !important; color: #fff !important; }
-    .section-link .d.d-orange  { background: #ea580c !important; color: #fff !important; }
-    .section-link .d.d-red     { background: #dc2626 !important; color: #fff !important; animation: pulse-red 1.2s infinite; }
-    .section-link .d.d-expired { background: #9ca3af !important; color: #fff !important; text-decoration: line-through; }
-    .section-link .d.d-grey    { background: #6b7280 !important; color: #fff !important; }
-    @keyframes pulse-red { 0%,100%{opacity:1} 50%{opacity:.65} }
+     50%{opacity:.65} }
 
     /* ── Mobile 2-col ── */
     @media (max-width: 600px) {
@@ -1510,7 +1488,7 @@
         margin-top: 3px;
         /* Keep smart colors on mobile */
       }
-      .section-link .d.d-green  { background: #16a34a !important; }
+      
       .section-link .d.d-orange { background: #ea580c !important; }
       .section-link .d.d-red    { background: #dc2626 !important; }
       .section-head {
@@ -1649,6 +1627,35 @@
     .hero-quick-btn .fa-solid { width: 0.875em; }
   
 
+  
+    /* ── Smart Date Badge — unified for ALL card types ─────────────────
+       Works with sections-index, Complete_Jobs, merged_sarkari, dailyupdates
+    ─────────────────────────────────────────────────────────────────── */
+    .section-link .d {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      margin-left: 4px;
+      font-size: .62rem;
+      font-weight: 800;
+      color: #fff;
+      background: #6b7280;
+      border-radius: 4px;
+      padding: 2px 7px;
+      white-space: nowrap;
+      vertical-align: middle;
+      line-height: 1.5;
+    }
+    .section-link .d i { font-size: .55rem; }
+    .section-link .d.d-green   { background: #16a34a !important; }
+    .section-link .d.d-orange  { background: #ea580c !important; }
+    .section-link .d.d-red     { background: #dc2626 !important; animation: tsj-pulse 1.2s ease-in-out infinite; }
+    .section-link .d.d-expired { background: #9ca3af !important; opacity: .8; }
+    .section-link .d.d-grey    { background: #6b7280 !important; }
+    @keyframes tsj-pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
+    @media (max-width:600px) {
+      .section-link .d { font-size:.57rem !important; padding:2px 5px !important; }
+    }
   </style>
 
   <!-- ══ PWA INSTALL SYSTEM v4.0 ══════════════════════════════════ -->
