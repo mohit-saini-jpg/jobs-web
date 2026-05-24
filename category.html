@@ -128,6 +128,10 @@
   <!-- styles.css: async load (non-blocking) -->
   <link rel="preload" href="/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="/styles.css"></noscript>
+    <!-- FA font preloads -->
+  <link rel="preload" href="/fonts/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin>
   <!-- Font Awesome: async load (saves ~100 KiB render-blocking) -->
   <script>
     (function(){var l=document.createElement("link");l.rel="preload";l.as="style";

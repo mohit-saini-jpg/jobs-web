@@ -231,6 +231,10 @@
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet"></noscript>
 
+  <!-- Font Awesome: woff2 preload hints — browser fetches fonts early, icons appear sooner -->
+  <link rel="preload" href="fonts/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin>
   <!-- Font Awesome: defer after DOMContentLoaded (saves ~58 KiB blocking, fixes CLS) -->
   <script>
   (function(){
@@ -1706,8 +1710,8 @@
     <div class="header-logo-bar container">
       <a class="brand" href="./" aria-label="Top Sarkari Jobs Home">
         <picture>
-          <source srcset="image.webp" type="image/webp">
-          <img src="logo-80.webp" alt="Top Sarkari Jobs Logo" class="brand-logo" width="40" height="40" fetchpriority="high" decoding="async">
+          <source srcset="image-40x40.webp 1x, image-80x80.webp 2x" type="image/webp">
+          <img src="image.png" alt="Top Sarkari Jobs Logo" class="brand-logo" width="40" height="40" fetchpriority="high" decoding="async">
         </picture>
         <div class="brand-text">
           <span class="brand-title">TOP <span>SARKARI</span> JOBS</span>
@@ -2595,7 +2599,7 @@
           <div class="footer-title">Important Links</div>
           <div class="footer-links-list">
             <a href="/section/latest-jobs/">Latest Jobs</a>
-            <a href="category.html?group=admit-result">Admit Card</a>
+            <a href="category.html?group=admit-result">Admit Card Results</a>
             <a href="category.html?group=admissions">Results</a>
             <a href="category.html?group=admit-result">Answer Key</a>
             <a href="/section/syllabus/">Syllabus</a>
@@ -2639,7 +2643,7 @@
     <div class="offcanvas-head">
       <div class="offcanvas-head-left">
         <picture>
-          <source srcset="/image.webp" type="image/webp">
+          <source srcset="/image-40x40.webp 1x, /image-80x80.webp 2x" type="image/webp">
           <img src="/image.png" alt="Logo" class="offcanvas-head-logo" width="34" height="34">
         </picture>
         <div class="offcanvas-head-texts">
