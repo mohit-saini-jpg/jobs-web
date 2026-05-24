@@ -3020,36 +3020,27 @@
     /* ── Helpers ─────────────────────────────────────────── */
     function formatDate(dateStr) {
       if (!dateStr) return '';
-      /* Handle DD-MM-YYYY format (e.g. "28-06-2026") */
-      var dmyMatch = dateStr.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
-      if (dmyMatch) {
-        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        return dmyMatch[1] + ' ' + months[parseInt(dmyMatch[2], 10) - 1] + ' ' + dmyMatch[3];
-      }
-      try {
-        var d = new Date(dateStr);
-        if (isNaN(d.getTime())) return dateStr;
-        var day   = d.getDate();
-        var month = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
-        var year  = d.getFullYear();
-        return day + ' ' + month + ' ' + year;
-      } catch(e) { return dateStr; }
+      var dy=0,mo=0,yr=0,m;
+      var MO={jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
+      m=dateStr.match(/^(\d{4})-(\d{2})-(\d{2})/); if(m){yr=+m[1];mo=+m[2];dy=+m[3];}
+      if(!yr){m=dateStr.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/);if(m){dy=+m[1];mo=+m[2];yr=+m[3];}}
+      if(!yr){m=dateStr.match(/(\d{1,2})\s+([A-Za-z]{3})\.?\s+(\d{4})/);if(m){var x=MO[m[2].slice(0,3).toLowerCase()];if(x){dy=+m[1];mo=x;yr=+m[3];}}}
+      if(!yr||!mo||!dy) return dateStr;
+      return String(dy).padStart(2,'0')+'/'+String(mo).padStart(2,'0')+'/'+yr;
     }
 
-    function isSoon(dateStr) {
-      if (!dateStr) return false;
-      try {
-        var d;
-        var dmyMatch = dateStr.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
-        if (dmyMatch) {
-          d = new Date(dmyMatch[3] + '-' + dmyMatch[2] + '-' + dmyMatch[1]);
-        } else {
-          d = new Date(dateStr);
-        }
-        var now  = new Date();
-        var diff = (d - now) / (1000 * 60 * 60 * 24);
-        return diff >= 0 && diff <= 7;
-      } catch(e) { return false; }
+    function isSoon(dateStr) { return urgencyClass(dateStr) !== 'd-green'; }
+    function urgencyClass(dateStr) {
+      if (!dateStr) return 'd-grey';
+      var dy=0,mo=0,yr=0,m;
+      var MO={jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
+      m=dateStr.match(/^(\d{4})-(\d{2})-(\d{2})/); if(m){yr=+m[1];mo=+m[2];dy=+m[3];}
+      if(!yr){m=dateStr.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/);if(m){dy=+m[1];mo=+m[2];yr=+m[3];}}
+      if(!yr){m=dateStr.match(/(\d{1,2})\s+([A-Za-z]{3})\.?\s+(\d{4})/);if(m){var x=MO[m[2].slice(0,3).toLowerCase()];if(x){dy=+m[1];mo=x;yr=+m[3];}}}
+      if(!yr||!mo||!dy) return 'd-grey';
+      var today=new Date();today.setHours(0,0,0,0);
+      var diff=Math.ceil((new Date(yr,mo-1,dy)-today)/86400000);
+      return diff<0?'d-expired':diff<=3?'d-red':diff<=7?'d-orange':'d-green';
     }
 
     /* Normalise one job item — handles both sarkariresult & sarkariresultshine formats */
@@ -3126,12 +3117,13 @@
         var dateBadge = '';
         if (isUpcoming) {
           if (job.startingDate) {
-            dateBadge = '<span class="sr-job-date" style="background:#0d9488;color:#fff;font-size:.65rem;padding:1px 6px;border-radius:3px;margin-left:4px;white-space:nowrap;">🗓️ From ' + job.startingDate + '</span>';
+            var _sd=formatDate(job.startingDate)||job.startingDate;
+            dateBadge = '<span class="d d-green"><i class="fa-regular fa-calendar-days"></i> From ' + _sd + '</span>';
           }
         } else {
           var dateLabel = job.lastDate ? formatDate(job.lastDate) : '';
-          var dateClass = isSoon(job.lastDate) ? 'sr-job-date soon' : 'sr-job-date';
-          if (dateLabel) dateBadge = '<span class="' + dateClass + '"><i class="fa-regular fa-calendar-days" style="font-size:.68rem;color:#ef4444;"></i> ' + dateLabel + '</span>';
+          var _uc = urgencyClass(job.lastDate);
+          if (dateLabel) dateBadge = '<span class="d ' + _uc + '"><i class="fa-regular fa-calendar-days"></i> ' + dateLabel + '</span>';
         }
 
         /* Build sub-links ONLY for non-UPCOMING jobs (UPCOMING uses job detail page for full info) */
@@ -3147,10 +3139,10 @@
 
         return (
           '<li class="sr-job-item">' +
-          '<a href="' + job.href + '" class="sr-job-link"' +
+          '<a href="' + job.href + '" class="sr-job-link section-link"' +
           (job.href.includes('job.html') ? '' : (job.url !== '#' ? ' target="_blank" rel="noopener"' : '')) + '>' +
-          '<span class="sr-num">' + (listIdx+1) + '</span>' +
-          '<span class="sr-job-title">' + job.title + (dateBadge ? ' ' + dateBadge : '') + '</span>' +
+          '<span class="sn-badge">' + (listIdx+1) + '</span>' +
+          '<span class="t">' + job.title + (dateBadge ? ' ' + dateBadge : '') + '</span>' +
           '</a>' +
           subLinksHtml +
           '</li>'
