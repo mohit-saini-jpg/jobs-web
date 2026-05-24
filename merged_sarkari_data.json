@@ -1,9 +1,9 @@
 {
-  "scraped_at": "2026-05-24 09:52:29",
-  "total": 176,
+  "scraped_at": "2026-05-24 12:29:38",
+  "total": 174,
   "summary": {
     "sarkariresultshine_offline_jobs_top30": 25,
-    "sarkariresultshine_latest_jobs_top100": 56,
+    "sarkariresultshine_latest_jobs_top100": 54,
     "sarkariresult_categories": {
       "SR_Latest_Jobs": 23,
       "SR_Result": 21,
@@ -16,7 +16,7 @@
   },
   "category_counts": {
     "OFFLINE_FORM": 25,
-    "LATEST_JOBS NEW": 56,
+    "LATEST_JOBS NEW": 54,
     "SR_Latest_Jobs": 23,
     "SR_Result": 21,
     "SR_Admit_Card": 24,
@@ -1118,6 +1118,46 @@
     },
     {
       "category": "LATEST_JOBS NEW",
+      "title": "Navy 10+2 (B.Tech) Cadet Entry January 2027, Check Details, Apply Online -",
+      "listing_date": "",
+      "organization": "",
+      "post_name": "Total",
+      "total_vacancy": "",
+      "salary_pay_scale": "",
+      "apply_mode": "",
+      "job_location": "",
+      "important_dates": {
+        "application_start": "29-05-2026",
+        "last_date": "18-06-2026",
+        "exam_date": "02/07/2007",
+        "interview_date": ""
+      },
+      "application_fees": {
+        "general_obc_ews": "",
+        "sc_st": "00",
+        "female": ""
+      },
+      "minimum_age": "",
+      "maximum_age": "",
+      "how_to_apply": "Visit the official website https://www.joinindiannavy.gov.in/ Find and click the “Recruitment Link” or “Apply Online” link on the homepage. First, register – enter your name, email, mobile number, and password. After registering, log in and focus on the application form—specifically, the personal details, qualifications, and selection of the position. Upload required documents: Photograph (JPG, max 50KB), Signature (JPG, max 20KB), Educational Certificates, ID Proof, Caste Certificate (if applicable). Pay the",
+      "form_pdf_free_link": "",
+      "application_form_pdf_link": "",
+      "form_pdf_link": "",
+      "apply_online_link": "https://www.joinindiannavy.gov.in/",
+      "official_notification_pdf_link": "https://www.joinindiannavy.gov.in/files/Advertisement_10+2_B.Tech_Jan_27.pdf",
+      "official_website_link": "https://www.joinindiannavy.gov.in/",
+      "jobs_info": "",
+      "vacancy_details": [
+        {
+          "post_name": "Technical Branch (Mechanical Engineering)",
+          "total": "30",
+          "eligibility": "12th with PCM (70% Marks), Appeared in JEEMAIN 2026, Only Unmarried Candidates are Eligible"
+        }
+      ],
+      "sequence": 2
+    },
+    {
+      "category": "LATEST_JOBS NEW",
       "title": "Film and Television Institute of India Vacancy 2026, Apply Online for Teaching & Non-Teaching Posts -",
       "listing_date": "",
       "organization": "",
@@ -1294,7 +1334,7 @@
           "eligibility": "MBBS with Psychiatry PG"
         }
       ],
-      "sequence": 2
+      "sequence": 3
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1328,7 +1368,7 @@
       "official_website_link": "https://itiharyana.gov.in/en",
       "jobs_info": "",
       "vacancy_details": [],
-      "sequence": 3
+      "sequence": 4
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1428,7 +1468,7 @@
           "eligibility": "Diploma in Computer Applications with 6 months of experience"
         }
       ],
-      "sequence": 4
+      "sequence": 5
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1462,7 +1502,7 @@
       "official_website_link": "https://hkrnl.itiharyana.gov.in/",
       "jobs_info": "",
       "vacancy_details": [],
-      "sequence": 5
+      "sequence": 6
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1496,7 +1536,7 @@
       "official_website_link": "https://hkrnl.itiharyana.gov.in/",
       "jobs_info": "<p style=\"text-align: justify;\">HKRN Accounts cum Office Assistant Vacancy 2026: The Haryana Kaushal Rozgar Nigam has released a notification for the HKRN Accounts cum Office Assistant Vacancy 2026posts. All interested and eligible candidates must read the HKRN Accounts cum Office Assistant Vacancy 2026 notification carefully and submit their applications before the prescribed deadline. See all information related to the HKRN Accounts cum Office Assistant Vacancy 2026post on the official website https://hkrnl.itiharyana.gov.in/. All the details associated with the HKRN Accounts cum Office Assistant Vacancy 2026 are given below.</p>",
       "vacancy_details": [],
-      "sequence": 6
+      "sequence": 7
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1530,7 +1570,7 @@
       "official_website_link": "",
       "jobs_info": "<p style=\"text-align: justify;\">Grih Kalyan Kendra Delhi Vacancy 2026: Grih Kalyan Kendra (HQ) under the aegis of the Ministry of Personnel, Public Grievances and Pensions, Department of Personnel and Training has issued a notification for the position of various. All eligible and interested candidates are advised to carefully read the official notification and apply before 17-06-2026, the last Date. All relevant information regarding the Grih Kalyan Kendra Delhi Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 9
+      "sequence": 10
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -3416,139 +3456,6 @@
       "jobs_info": "<p style=\"text-align: justify;\">KVK Ambala Driver Vacancy 2026: Society for Creation of Heaven on Earth (SCHE) has issued a notification for the position of driver. The recruitment drive comprises 01 vacancy. All eligible and interested candidates are advised to carefully read the official notification and apply before 25-05-2026, the last Date. All relevant information regarding the KVK Ambala Driver Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": [],
       "sequence": 83
-    },
-    {
-      "category": "LATEST_JOBS NEW",
-      "title": "Indian Air Force AFCAT 02/2026 Recruitment 2026 -",
-      "listing_date": "",
-      "organization": "Indian Air Force",
-      "post_name": "AFCAT/NCC Special Entry Recruitment 2026",
-      "total_vacancy": "142",
-      "salary_pay_scale": "Level-10 (Rs. 56100-177500/-)",
-      "apply_mode": "Online",
-      "job_location": "All India",
-      "important_dates": {
-        "application_start": "20-05-2026",
-        "last_date": "19-06-2026",
-        "exam_date": "01-07-2027",
-        "interview_date": ""
-      },
-      "application_fees": {
-        "general_obc_ews": "",
-        "sc_st": "550",
-        "female": ""
-      },
-      "minimum_age": "",
-      "maximum_age": "",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Visit the official website https://afcat.edcil.co.in/ Find and click the “Recruitment Link” or “Apply Online” link on the homepage. First, register – enter your name, email, mobile number, and password. After registering, log in and focus on the application form—specifically, the personal details, qualifications, and selection of the position. Upload required documents: Photograph (JPG, max 50KB), Signature (JPG, max 20KB), Educational Certificates, ID Proof, Caste Certificate (if applicable). Pay the",
-      "form_pdf_free_link": "",
-      "application_form_pdf_link": "",
-      "form_pdf_link": "",
-      "apply_online_link": "https://cdn.digialm.com/EForms/configuredHtml/1258/96171/login.html",
-      "official_notification_pdf_link": "https://afcat.edcil.co.in/",
-      "official_website_link": "https://afcat.edcil.co.in/",
-      "jobs_info": "",
-      "vacancy_details": [],
-      "sequence": 84
-    },
-    {
-      "category": "LATEST_JOBS NEW",
-      "title": "KUK UG and Integrated Course Admission Form 2026, Notification & Apply Online -",
-      "listing_date": "",
-      "organization": "Kurukshetra University, Kurukshetra (KUK)",
-      "post_name": "",
-      "total_vacancy": "",
-      "salary_pay_scale": "",
-      "apply_mode": "Online",
-      "job_location": "Haryana",
-      "important_dates": {
-        "application_start": "07/05/2026",
-        "last_date": "31/05/2026",
-        "exam_date": "",
-        "interview_date": ""
-      },
-      "application_fees": {
-        "general_obc_ews": "1200",
-        "sc_st": "",
-        "female": ""
-      },
-      "minimum_age": "",
-      "maximum_age": "",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Visit the official website https://kuk.ac.in/ Find and click the “Recruitment Link” or “Apply Online” link on the homepage. First, register – enter your name, email, mobile number, and password. After registering, log in and focus on the application form—specifically, the personal details, qualifications, and selection of the position. Upload required documents: Photograph (JPG, max 50KB), Signature (JPG, max 20KB), Educational Certificates, ID Proof, Caste Certificate (if applicable). Pay the",
-      "form_pdf_free_link": "",
-      "application_form_pdf_link": "",
-      "form_pdf_link": "",
-      "apply_online_link": "https://iums.kuk.ac.in/anon_admissionHome.htm",
-      "official_notification_pdf_link": "https://iums.kuk.ac.in/anon_admissionHome.htm",
-      "official_website_link": "https://iums.kuk.ac.in/anon_admissionHome.htm",
-      "jobs_info": "",
-      "vacancy_details": [],
-      "sequence": 86
-    },
-    {
-      "category": "LATEST_JOBS NEW",
-      "title": "Amritsar GNDU Non-Teaching Vacancy 2026, Apply Online for Security Guard, Clerk & Other Posts -",
-      "listing_date": "",
-      "organization": "Guru Nanak Dev University, Amritsar (Punjab)",
-      "post_name": "Non-Teaching positions",
-      "total_vacancy": "41",
-      "salary_pay_scale": "Rs. 18000/- to 50000/-",
-      "apply_mode": "Online",
-      "job_location": "Punjab",
-      "important_dates": {
-        "application_start": "07-05-2026",
-        "last_date": "28-05-2026",
-        "exam_date": "",
-        "interview_date": ""
-      },
-      "application_fees": {
-        "general_obc_ews": "",
-        "sc_st": "",
-        "female": ""
-      },
-      "minimum_age": "",
-      "maximum_age": "",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Visit the official website https://digital.gndu.ac.in/ Find and click the “Recruitment Link” or “Apply Online” link on the homepage. First, register – enter your name, email, mobile number, and password. After registering, log in and focus on the application form—specifically, the personal details, qualifications, and selection of the position. Upload required documents: Photograph (JPG, max 50KB), Signature (JPG, max 20KB), Educational Certificates, ID Proof, Caste Certificate (if applicable). Pay the",
-      "form_pdf_free_link": "",
-      "application_form_pdf_link": "",
-      "form_pdf_link": "",
-      "apply_online_link": "https://eservices.gndu.ac.in/recruitment/",
-      "official_notification_pdf_link": "https://digital.gndu.ac.in/pdf/news/Advt._No._4_20260507102444479.pdf",
-      "official_website_link": "https://digital.gndu.ac.in/",
-      "jobs_info": "<p style=\"text-align: justify;\">Amritsar GNDU Non-Teaching Vacancy 2026: Guru Nanak Dev University, Amritsar (Punjab) has issued a notification for various Non-Teaching positions. The recruitment drive comprises 41 vacancies. All eligible and interested candidates are advised to carefully read the official notification and apply before 28-05-2026, the last Date. All relevant information regarding the Amritsar GNDU Non-Teaching Vacancy 2026 recruitment is provided below.</p>",
-      "vacancy_details": [
-        {
-          "post_name": "Consultant (Taxation)",
-          "total": "01",
-          "eligibility": "Chartered Accountant with 05 Years Experience, 10th Class Passed with Punjabi Subject."
-        },
-        {
-          "post_name": "Estimator",
-          "total": "01",
-          "eligibility": "ITI in Civil Draftsman / Diploma in Civil or Architectural Assistantship, 10th Class Passed with Punjabi Subject."
-        },
-        {
-          "post_name": "Physiotherapist",
-          "total": "01",
-          "eligibility": "Degree in Physiotherapy, 10th Class Passed with Punjabi Subject."
-        },
-        {
-          "post_name": "Watch & Ward Supervisor",
-          "total": "02",
-          "eligibility": "Ex- Junior Commissioned Officer, not below the rank of a Subedar-Major or a retired Police Officer not below the rank of an Inspector. These qualifications may be relaxed to the rank of a Subedar for in-service candidates with at least two years of experience in the University, 10th Class Passed with Punjabi Subject."
-        },
-        {
-          "post_name": "Clerk (Junior DEO)",
-          "total": "25",
-          "eligibility": "BCA/B.Sc. (IT)/B.Sc. (Computer Science) OR Graduation with Computer Science as an Elective Subject OR Graduation with (50% marks) and PGDCA OR B.Tech./BE in any Stream with Computers Science Subject OR Master’s degree in Computer Science/ Computer Application / IT, 10th Class Passed with Punjabi Subject."
-        },
-        {
-          "post_name": "Security Guard",
-          "total": "11",
-          "eligibility": "Ex-Servicemen, 10th Class Passed with Punjabi Subject."
-        }
-      ],
-      "sequence": 87
     },
     {
       "category": "SR_Latest_Jobs",
