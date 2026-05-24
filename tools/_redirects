@@ -49,7 +49,12 @@
 /top-20-jobs/       /section/top-20-jobs/         301
 /graduation-jobs/   /section/graduation-jobs/     301
 /results/           /result.html                  301
+/result/            /result.html                  301
 /admit-card/        /admit-card.html              301
+/admit-cards/       /admit-card.html              301
+/contact/           /contact.html                 301
+/about/             /about.html                   301
+/terms/             /terms.html                   301
 
 # ── 7. Old ?state= query params → clean URLs (301 permanent) ─────
 # These are the SEO-critical redirects: old URLs → new clean URLs

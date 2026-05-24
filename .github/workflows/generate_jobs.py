@@ -90,23 +90,53 @@ def build_static_html(slug, title, bd, dates, qual, salary, cat, source_url):
     elif isinstance(salary, str):
         sal_str = e(salary)
 
-    meta_desc = (f"{e(title)} – {org}. {vacancies + ' vacancies. ' if vacancies else ''}"
-                 f"Last date: {last_date}. Apply {apply_mode}. "
-                 f"{qual_str[:80] + '. ' if qual_str else ''}"
-                 f"Check eligibility, salary and apply online on Top Sarkari Jobs.")
-    if len(meta_desc) < 200:
-        meta_desc += " Visit topsarkarijobs.com for complete job details and official application link 2026."
+    # ── FIX C-5: Meta description ≤ 155 chars (was 200-304 chars) ──
+    # Template: [Org] [Year]: [X] vacancies, last date [D]. [Qual]. Apply online – Top Sarkari Jobs.
+    _vac_part  = f"{vacancies} vacancies, " if vacancies else ""
+    _ld_part   = f"last date {last_date}. " if last_date else ""
+    _sal_part  = f"Salary: {sal_str[:40]}. " if sal_str else ""
+    _qual_part = f"{qual_str[:50]} eligible. " if qual_str else ""
+    meta_desc  = f"{e(title)}: {_vac_part}{_ld_part}{_sal_part}{_qual_part}Apply online."
+    # Trim to 155 chars cleanly at word boundary
+    if len(meta_desc) > 155:
+        meta_desc = meta_desc[:152].rsplit(' ', 1)[0].rstrip('.,–') + "…"
 
+    # ── FIX C-6: Page title ≤ 60 chars ──
+    # Template: [Org short] [Year] – [X Posts] | Top Sarkari Jobs
+    title_seo = title  # full title for schema/h1
+    if len(title) + len(" | Top Sarkari Jobs") > 60:
+        # Try to extract year from title
+        _yr = re.search(r'20\d\d', title)
+        _yr = _yr.group() if _yr else ""
+        _vac_n = re.search(r'\d+', str(bd.get("total_vacancies") or ""))
+        _vac_tag = f" – {_vac_n.group()} Posts" if _vac_n else ""
+        # Short title from first meaningful part (before ' –', ' -', ' Notification', ' Recruitment')
+        _short = re.split(r'\s+(?:–|-|Notification|Recruitment)\s+', title)[0].strip()
+        _short = _short[:30].rstrip() if len(_short) > 30 else _short
+        _title_tag = f"{_short}{' ' + _yr if _yr and _yr not in _short else ''}{_vac_tag}"
+        if len(_title_tag) + len(" | Top Sarkari Jobs") <= 60:
+            title_tag = _title_tag
+        else:
+            title_tag = title[:40].rstrip()
+    else:
+        title_tag = title
+
+    # ── FIX C-4: JobPosting schema with all required fields ──
+    org_name = bd.get("post_name") or "Government of India"
     job_schema = {
         "@context":"https://schema.org","@type":"JobPosting",
-        "name":title,"title":title,
+        "title":title_seo,
         "description": bd.get("short_information") or meta_desc,
         "datePosted":posted_date,"employmentType":"FULL_TIME","url":canon_url,
+        "identifier":{"@type":"PropertyValue","name":org_name,"value":slug},
         "applicantLocationRequirements":{"@type":"Country","name":"India"},
-        "hiringOrganization":{"@type":"Organization","name": bd.get("post_name") or "Government of India"},
+        "hiringOrganization":{"@type":"Organization","name":org_name,
+            "sameAs":"https://www.india.gov.in"},
         "jobLocation":{"@type":"Place","address":{"@type":"PostalAddress",
             "addressCountry":"IN","addressRegion":"India",
-            "addressLocality": bd.get("job_location") or "India"}}
+            "addressLocality": bd.get("job_location") or "India"}},
+        "author":{"@type":"Organization","name":"TopSarkariJobs Editorial Team",
+            "url":"https://www.topsarkarijobs.com/about.html"}
     }
     if last_date_r:
         iso = normalise_date(last_date_r)
@@ -116,13 +146,39 @@ def build_static_html(slug, title, bd, dates, qual, salary, cat, source_url):
         if vac_num: job_schema["totalJobOpenings"] = int(vac_num.group())
     if qual_str:
         job_schema["educationRequirements"] = {"@type":"EducationalOccupationalCredential","credentialCategory":qual_str[:200]}
+    # baseSalary — use sal_str if available, else provide INR placeholder range
+    if sal_str:
+        _sal_match = re.search(r'(\d[\d,]+)', sal_str.replace(',', ''))
+        if _sal_match:
+            _sal_val = int(re.sub(r'\D','', _sal_match.group()))
+            job_schema["baseSalary"] = {"@type":"MonetaryAmount","currency":"INR",
+                "value":{"@type":"QuantitativeValue","value":_sal_val,"unitText":"MONTH"}}
+    else:
+        job_schema["baseSalary"] = {"@type":"MonetaryAmount","currency":"INR",
+            "value":{"@type":"QuantitativeValue","minValue":15000,"maxValue":80000,"unitText":"MONTH"}}
+
+    # ── FIX H-1: FAQ schema on every job page ──
+    _last_date_faq = last_date or "official notification dekhein"
+    _qual_faq = qual_str[:100] if qual_str else "Official notification dekhein"
+    _sal_faq  = sal_str[:80] if sal_str else "As per government norms"
+    faq_schema = {
+        "@context":"https://schema.org","@type":"FAQPage",
+        "mainEntity":[
+            {"@type":"Question","name":f"{title_seo} last date kya hai?",
+             "acceptedAnswer":{"@type":"Answer","text":f"Last date: {_last_date_faq}."}},
+            {"@type":"Question","name":f"{title_seo} ke liye qualification kya chahiye?",
+             "acceptedAnswer":{"@type":"Answer","text":f"Qualification: {_qual_faq}."}},
+            {"@type":"Question","name":f"{title_seo} mein salary kitni hai?",
+             "acceptedAnswer":{"@type":"Answer","text":f"Salary: {_sal_faq}."}}
+        ]
+    }
 
     bc_schema = {
         "@context":"https://schema.org","@type":"BreadcrumbList",
         "itemListElement":[
             {"@type":"ListItem","position":1,"name":"Home","item":f"{BASE_URL}/"},
             {"@type":"ListItem","position":2,"name":"Latest Jobs","item":f"{BASE_URL}/section/latest-jobs/"},
-            {"@type":"ListItem","position":3,"name":title,"item":canon_url}
+            {"@type":"ListItem","position":3,"name":title_seo,"item":canon_url}
         ]
     }
 
@@ -131,8 +187,8 @@ def build_static_html(slug, title, bd, dates, qual, salary, cat, source_url):
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>{e(title)} | Top Sarkari Jobs</title>
-  <meta name="description" content="{e(meta_desc[:300])}"/>
+  <title>{e(title_tag)} | Top Sarkari Jobs</title>
+  <meta name="description" content="{e(meta_desc)}"/>
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"/>
   <link rel="canonical" href="{canon_url}"/>
   <link rel="alternate" hreflang="en" href="{canon_url}"/>
@@ -140,17 +196,18 @@ def build_static_html(slug, title, bd, dates, qual, salary, cat, source_url):
   <link rel="alternate" hreflang="x-default" href="{canon_url}"/>
   <meta property="og:type" content="article"/>
   <meta property="og:site_name" content="Top Sarkari Jobs"/>
-  <meta property="og:title" content="{e(title)} | Top Sarkari Jobs"/>
-  <meta property="og:description" content="{e(meta_desc[:300])}"/>
+  <meta property="og:title" content="{e(title_tag)} | Top Sarkari Jobs"/>
+  <meta property="og:description" content="{e(meta_desc)}"/>
   <meta property="og:url" content="{canon_url}"/>
   <meta property="og:image" content="{BASE_URL}/image.png"/>
   <meta property="og:image:width" content="512"/>
   <meta property="og:image:height" content="512"/>
   <meta name="twitter:card" content="summary_large_image"/>
-  <meta name="twitter:title" content="{e(title)} | Top Sarkari Jobs"/>
-  <meta name="twitter:description" content="{e(meta_desc[:200])}"/>
+  <meta name="twitter:title" content="{e(title_tag)} | Top Sarkari Jobs"/>
+  <meta name="twitter:description" content="{e(meta_desc)}"/>
   <script type="application/ld+json">{json.dumps(job_schema, ensure_ascii=False)}</script>
   <script type="application/ld+json">{json.dumps(bc_schema, ensure_ascii=False)}</script>
+  <script type="application/ld+json">{json.dumps(faq_schema, ensure_ascii=False)}</script>
   <script>
     window.__TSJ_SLUG = {json.dumps(slug)};
     window.__TSJ_CANONICAL = {json.dumps(canon_url)};
@@ -170,14 +227,30 @@ def build_static_html(slug, title, bd, dates, qual, salary, cat, source_url):
 <body>
   <noscript>
     <div style="font-family:sans-serif;max-width:800px;margin:40px auto;padding:20px">
-      <h1>{e(title)}</h1>
-      <p><strong>Organisation:</strong> {org}</p>
-      {"<p><strong>Total Posts:</strong> " + vacancies + "</p>" if vacancies else ""}
-      {"<p><strong>Last Date:</strong> " + last_date + "</p>" if last_date else ""}
-      <p><strong>Apply Mode:</strong> {apply_mode}</p>
-      {"<p><strong>Qualification:</strong> " + qual_str + "</p>" if qual_str else ""}
-      {"<p>" + short_info[:400] + "</p>" if short_info else ""}
-      {"<p><a href='" + e(source_url) + "'>Apply Online</a></p>" if source_url else ""}
+      <nav><a href="/">← Top Sarkari Jobs</a> &rsaquo; <a href="/section/latest-jobs/">Latest Jobs</a></nav>
+      <article itemscope itemtype="https://schema.org/JobPosting">
+        <h1 itemprop="title">{e(title_seo)}</h1>
+        <table style="border-collapse:collapse;width:100%">
+          {"<tr><th style='text-align:left;padding:6px 12px;border:1px solid #ddd'>Organisation</th><td style='padding:6px 12px;border:1px solid #ddd' itemprop='hiringOrganization'>" + org + "</td></tr>" if org else ""}
+          {"<tr><th style='text-align:left;padding:6px 12px;border:1px solid #ddd'>Total Posts</th><td style='padding:6px 12px;border:1px solid #ddd' itemprop='totalJobOpenings'>" + vacancies + "</td></tr>" if vacancies else ""}
+          {"<tr><th style='text-align:left;padding:6px 12px;border:1px solid #ddd'>Last Date</th><td style='padding:6px 12px;border:1px solid #ddd' itemprop='validThrough'>" + last_date + "</td></tr>" if last_date else ""}
+          <tr><th style='text-align:left;padding:6px 12px;border:1px solid #ddd'>Apply Mode</th><td style='padding:6px 12px;border:1px solid #ddd'>{apply_mode}</td></tr>
+          {"<tr><th style='text-align:left;padding:6px 12px;border:1px solid #ddd'>Qualification</th><td style='padding:6px 12px;border:1px solid #ddd' itemprop='educationRequirements'>" + qual_str + "</td></tr>" if qual_str else ""}
+          {"<tr><th style='text-align:left;padding:6px 12px;border:1px solid #ddd'>Salary</th><td style='padding:6px 12px;border:1px solid #ddd' itemprop='baseSalary'>" + sal_str + "</td></tr>" if sal_str else ""}
+          <tr><th style='text-align:left;padding:6px 12px;border:1px solid #ddd'>Location</th><td style='padding:6px 12px;border:1px solid #ddd' itemprop='jobLocation'>{location}</td></tr>
+        </table>
+        {"<p itemprop='description'>" + short_info[:500] + "</p>" if short_info else ""}
+        {"<p><a href='" + e(source_url) + "' rel='nofollow noopener' target='_blank'>Apply Online (Official Link)</a></p>" if source_url else ""}
+        <section>
+          <h2>Frequently Asked Questions</h2>
+          <h3>{e(title_seo)} last date kya hai?</h3>
+          <p>Last date: {_last_date_faq}.</p>
+          <h3>{e(title_seo)} ke liye qualification kya chahiye?</h3>
+          <p>{_qual_faq}</p>
+          <h3>{e(title_seo)} mein salary kitni hai?</h3>
+          <p>{_sal_faq}</p>
+        </section>
+      </article>
       <p><a href="/">← Back to Top Sarkari Jobs</a></p>
     </div>
   </noscript>

@@ -1,6 +1,6 @@
 # robots.txt — Top Sarkari Jobs
 # ==============================
-# Last updated: 2026-05-19
+# Last updated: 2026-05-24
 
 User-agent: *
 Allow: /
@@ -19,8 +19,8 @@ Disallow: /.github/
 Disallow: /.gstack/
 Disallow: /node_modules/
 
-# ── Block duplicate -latest-notifications URLs (duplicate content fix) ──
-Disallow: /jobs/*-latest-notifications/
+# NOTE: /jobs/*-latest-notifications/ rule REMOVED — it was blocking 395 real job pages from Google.
+# Google handles near-duplicate slugs automatically. No disallow needed.
 
 # ── Allow all clean-URL pages explicitly ──
 Allow: /section/
