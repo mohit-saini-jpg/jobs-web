@@ -1636,6 +1636,15 @@
     /* Hero section specific — don't let icon affect h1 line height */
     .hero-badge .fa-solid { width: 0.875em; }
     .hero-quick-btn .fa-solid { width: 0.875em; }
+  
+  /* ── Smart Date Badge Colors ───────────────────────────────────────── */
+  .section-card .d { display:inline-flex;align-items:center;gap:3px;font-size:0.7rem;font-weight:700;padding:2px 7px;border-radius:20px;margin-top:3px;white-space:nowrap; }
+  .section-card .d.d-green   { background:#16a34a;color:#fff; }
+  .section-card .d.d-orange  { background:#ea580c;color:#fff; }
+  .section-card .d.d-red     { background:#dc2626;color:#fff;animation:pulse-red 1s infinite; }
+  .section-card .d.d-expired { background:#6b7280;color:#fff; }
+  .section-card .d.d-grey    { background:#6b7280;color:#fff; }
+  @keyframes pulse-red { 0%,100%{opacity:1} 50%{opacity:0.7} }
   </style>
 
   <!-- ══ PWA INSTALL SYSTEM v4.0 ══════════════════════════════════ -->
