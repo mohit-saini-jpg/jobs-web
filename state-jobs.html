@@ -1311,7 +1311,23 @@
     }).join('');
   }
 
-  // ═══ LOAD JOBS — inline data first, no server fetch needed ═══
+  // ═══ MERGE items from two sources, dedup by name, keep freshest postDate ═══
+  function mergeItems(inlineItems, freshItems) {
+    const map = new Map();
+    // inline items first (baseline)
+    for (const item of inlineItems) {
+      const key = (item.name || '').trim().toLowerCase();
+      if (key) map.set(key, item);
+    }
+    // fresh items override/add (they may have newer postDate and detail)
+    for (const item of freshItems) {
+      const key = (item.name || '').trim().toLowerCase();
+      if (key) map.set(key, item); // override with fresh data
+    }
+    return Array.from(map.values());
+  }
+
+  // ═══ LOAD JOBS — inline data first, then upgrade with fresh JSON ═══
   function loadJobs() {
     const jobsList = document.getElementById('jobsList');
 
@@ -1324,7 +1340,9 @@
     // We pass the section so jobDetailUrl can generate the slug URL
     const hasDetailData = !!matchedSection; // always true if section found
 
-    if (!matchedItems.length) {
+    if (matchedItems.length) {
+      renderJobList(matchedItems, matchedSection, hasDetailData);
+    } else {
       jobsList.innerHTML = `
         <div style="padding:20px 14px;text-align:center;color:var(--muted);font-size:.82rem;">
           <i class="fa-solid fa-circle-info" style="font-size:1.5rem;color:var(--blue);display:block;margin-bottom:8px;"></i>
@@ -1334,10 +1352,25 @@
           </a>
         </div>`;
       document.getElementById('statJobs').textContent = '0';
-      return;
     }
 
-    renderJobList(matchedItems, matchedSection, hasDetailData);
+    // ── Step 2: Fetch fresh JSON and re-render with merged data ──
+    fetch('state-jobs-data.json')
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (!data) return;
+        const sections = data.sections || (Array.isArray(data) ? data : []);
+        const freshSection = findStateSection(sections, stateName);
+        if (!freshSection) return;
+        const freshItems = freshSection.items || [];
+        if (!freshItems.length) return;
+        // Merge: fresh data overrides inline (has newer postDates + detail objects)
+        const merged = mergeItems(matchedItems, freshItems);
+        // Use freshSection as matchedSection for URL generation
+        renderJobList(merged, freshSection || matchedSection, true);
+        document.getElementById('statJobs').textContent = merged.length + '+';
+      })
+      .catch(() => { /* silently ignore — inline data already shown */ });
   }
 
   // ═══ FILL ALL STATES SIDEBAR ═══
