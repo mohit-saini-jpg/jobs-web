@@ -314,6 +314,16 @@
   .section-card .d.d-expired { background:#6b7280;color:#fff; }
   .section-card .d.d-grey    { background:#6b7280;color:#fff; }
   @keyframes pulse-red { 0%,100%{opacity:1} 50%{opacity:0.7} }
+  
+    /* ── Smart Date Badge ─────────────────────────────────────────────── */
+    .section-link .d { display:inline-flex;align-items:center;gap:3px;margin-left:4px;font-size:.62rem;font-weight:800;color:#fff;background:#6b7280;border-radius:4px;padding:2px 7px;white-space:nowrap;vertical-align:middle;line-height:1.5; }
+    .section-link .d i { font-size:.55rem; }
+    .section-link .d.d-green   { background:#16a34a !important; }
+    .section-link .d.d-orange  { background:#ea580c !important; }
+    .section-link .d.d-red     { background:#dc2626 !important; animation:tsj-pulse 1.2s ease-in-out infinite; }
+    .section-link .d.d-expired { background:#9ca3af !important; opacity:.8; }
+    .section-link .d.d-grey    { background:#6b7280 !important; }
+    @keyframes tsj-pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
   </style>
   <!-- Header prefetch -->
   <script>
