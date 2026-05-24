@@ -110,20 +110,19 @@
 
 # ── JSON Data Files ───────────────────────────────────────────────────
 /*.json
-  Cache-Control: public, max-age=7200, stale-while-revalidate=14400
+  Cache-Control: public, max-age=300, stale-while-revalidate=600
   Access-Control-Allow-Origin: *
   Access-Control-Allow-Methods: GET
 
 /sections-index.json
-  Cache-Control: public, max-age=3600, stale-while-revalidate=7200
+  Cache-Control: no-cache, no-store, must-revalidate, max-age=0
+  Pragma: no-cache
 
 /dailyupdates.json
+  Cache-Control: no-cache, no-store, must-revalidate, max-age=0
+  Pragma: no-cache
   Cache-Control: public, max-age=1800, stale-while-revalidate=3600
 
-/merged_sarkari_data.json
-  Cache-Control: public, max-age=3600, stale-while-revalidate=7200
-
-# ── Text / Sitemap ────────────────────────────────────────────────────
 /*.txt
   Cache-Control: public, max-age=86400
   Content-Type: text/plain; charset=utf-8
@@ -139,3 +138,32 @@
 /config.json
   X-Robots-Tag: noindex, nofollow
   Cache-Control: no-store
+
+# ── Data JSONs — NO CACHE (update karte hi fresh data mile) ────────────
+/Complete_Jobs_Full_Data.json
+  Cache-Control: no-cache, no-store, must-revalidate, max-age=0
+  Pragma: no-cache
+
+/sections-index.json
+  Cache-Control: no-cache, no-store, must-revalidate, max-age=0
+  Pragma: no-cache
+
+/dailyupdates.json
+  Cache-Control: no-cache, no-store, must-revalidate, max-age=0
+  Pragma: no-cache
+
+/merged_sarkari_data.json
+  Cache-Control: no-cache, no-store, must-revalidate, max-age=0
+  Pragma: no-cache
+
+/state-jobs-data.json
+  Cache-Control: no-cache, no-store, must-revalidate, max-age=0
+  Pragma: no-cache
+
+/jobs-index.json
+  Cache-Control: no-cache, no-store, must-revalidate, max-age=0
+  Pragma: no-cache
+
+/jobs-search-index.json
+  Cache-Control: no-cache, no-store, must-revalidate, max-age=0
+  Pragma: no-cache
