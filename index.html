@@ -591,23 +591,16 @@
       display: flex;
       align-items: center;
       background: #991b1b;
-      padding: 10px 18px;
+      padding: 10px 16px;
       font-size: 1rem;
       font-weight: 900;
       letter-spacing: .06em;
       text-transform: uppercase;
       white-space: nowrap;
       z-index: 2;
-      gap: 7px;
-      min-width: 130px;
+      gap: 6px;
+      min-width: 44px;
       justify-content: center;
-      border-right: 3px solid rgba(255,255,255,.15);
-    }
-    .ticker-label-text {
-      display: inline;
-    }
-    @media (max-width: 480px) {
-      .ticker-label-text { display: none; }
     }
     .ticker-label::after {
       content: '';
@@ -624,8 +617,7 @@
       overflow: hidden;
       display: flex;
       align-items: center;
-      padding: 10px 0;         /* ↑ 8px → 10px */
-      contain: strict;
+      padding: 10px 0;
     }
     /* Two identical sets side-by-side for seamless infinite loop */
     .ticker-belt {
@@ -636,8 +628,7 @@
       transform: translateZ(0);
       animation: ticker-scroll var(--ticker-duration, 90s) linear infinite;
     }
-    .ticker-belt:hover,
-    .ticker-wrap:hover .ticker-belt {
+    .ticker-belt:hover {
       animation-play-state: paused;
     }
     @keyframes ticker-scroll {
@@ -1682,8 +1673,7 @@
     @keyframes tsj-pulse{0%,100%{opacity:1}50%{opacity:.6}}
     @media (prefers-reduced-motion: reduce) {
       .section-link .d.d-red { animation: none; }
-      .ticker-belt { animation: none !important; }
-      * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+      /* ticker-belt animation intentionally kept running */
     }
   </style>
 
@@ -2198,7 +2188,7 @@
   ============================================================ -->
   <!-- Dynamic Live Ticker — data pulled from dynamic-sections.json (latest jobs section) -->
   <div class="ticker-wrap" id="tickerWrap" aria-label="Latest job updates" role="marquee" aria-live="off">
-    <span class="ticker-label" aria-hidden="true"><i class="fa-solid fa-bolt"></i> <span class="ticker-label-text">LATEST JOBS</span></span>
+    <span class="ticker-label" aria-hidden="true"><i class="fa-solid fa-bolt"></i></span>
     <div class="ticker-track" id="tickerTrack">
       <span class="ticker-loading" aria-live="polite">Loading latest jobs…</span>
     </div>
