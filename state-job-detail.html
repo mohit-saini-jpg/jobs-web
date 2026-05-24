@@ -835,11 +835,8 @@
 
       function addLink(href, title) {
         const h = normalizeUrl(href);
-        if (!h || h==='#') return;
-        // Normalize for dedup: strip trailing slash
-        const hDedup = h.replace(/\/+$/, '').toLowerCase();
-        if (seenHrefs.has(hDedup)) return;
-        seenHrefs.add(hDedup);
+        if (!h || h==='#' || seenHrefs.has(h)) return;
+        seenHrefs.add(h);
         const {cls, icon} = categorize(title);
         allLinks.push({href:h, title:title.slice(0,55), cls, icon});
       }
@@ -860,17 +857,7 @@
         for (const [key, val] of Object.entries(il_obj)) {
           const label = LABELS[key] || keyToLabel(key);
           const urls  = Array.isArray(val) ? val : [val];
-          urls.forEach((u, idx) => {
-            // For click_here arrays: auto-label by URL type (PDF vs website)
-            let finalLabel = label;
-            if (key === 'click_here' && urls.length > 1) {
-              const isPdf = /\.pdf($|\?)/i.test(u);
-              finalLabel = isPdf ? 'Notification PDF' : 'Official Website';
-            } else if (urls.length > 1) {
-              finalLabel = `${label} (${idx + 1})`;
-            }
-            addLink(u, finalLabel);
-          });
+          urls.forEach((u,idx) => addLink(u, urls.length>1?`${label} (${idx+1})`:label));
         }
       }
 
