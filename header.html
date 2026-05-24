@@ -67,19 +67,20 @@
 .brand-text { display: flex; flex-direction: column; min-width: 0; }
 .brand-title {
   font-size: 1.15rem; font-weight: 900; color: var(--navy); line-height: 1.2;
-  white-space: nowrap;
+  white-space: nowrap; overflow: visible;
 }
 .brand-title span { color: var(--accent); }
 .brand-sub {
   font-size: .62rem; color: var(--muted); font-weight: 600;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: none; /* FIX: remove max-width that was truncating subtitle */
 }
 /* Logo bar solid white background — prevents content bleed-through on mobile */
 .header-logo-bar { background: var(--white); }
-/* Mobile: shrink font so full title fits */
+/* Mobile: keep font readable, allow brand to take available space */
 @media (max-width: 480px) {
   .brand-title { font-size: .92rem; white-space: nowrap; }
-  .brand-sub { font-size: .55rem; max-width: 160px; }
+  .brand-sub { font-size: .55rem; }
   .brand-logo { width: 34px; height: 34px; }
 }
 /* ── Header Actions ── */
@@ -352,7 +353,7 @@
       <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" class="wa-btn-header">
         <i class="fa-brands fa-whatsapp"></i> Join WhatsApp Channel<small>Get Instant Updates</small>
       </a>
-      <button class="icon-btn" id="mobileSearchBtn" type="button" aria-label="Search" style="display:none;">
+      <button class="icon-btn" id="mobileSearchBtn" type="button" aria-label="Search" style="display:flex;">
         <i class="fa-solid fa-magnifying-glass"></i>
       </button>
       <button id="menuBtn" class="icon-btn" type="button" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
