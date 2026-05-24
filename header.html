@@ -12,6 +12,10 @@ html, body {
   box-sizing: border-box;
 }
 *, *::before, *::after { box-sizing: border-box; }
+a, button, [role="button"] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
 
 /* ── CSS Variables (shared across header) ── */
 :root {
@@ -104,7 +108,7 @@ html, body {
 
 .icon-btn {
   background: none; border: none; color: var(--text);
-  width: 36px; height: 36px; border-radius: 8px; cursor: pointer;
+  width: 44px; height: 44px; border-radius: 8px; cursor: pointer;
   font-size: 1rem; display: flex; align-items: center; justify-content: center;
   font-family: inherit;
 }
@@ -163,18 +167,18 @@ html, body {
   .mobile-bottom-bar {
     display: flex; position: fixed; bottom: 0; left: 0; right: 0;
     background: #fff; border-top: 1px solid var(--border);
-    z-index: 200; padding: 5px 0 env(safe-area-inset-bottom, 5px);
+    z-index: 200; padding: 5px 0 max(5px, env(safe-area-inset-bottom, 5px));
     box-shadow: 0 -2px 12px rgba(0,0,0,.08);
   }
   .mobile-bottom-bar a {
     flex: 1; display: flex; flex-direction: column; align-items: center;
     gap: 2px; font-size: .57rem; font-weight: 700; color: #595959;
-    text-decoration: none; padding: 4px 0;
+    text-decoration: none; padding: 6px 0; min-height: 48px; justify-content: center;
   }
   .mobile-bottom-bar a i { font-size: 1.05rem; }
   .mobile-bottom-bar a.active,
   .mobile-bottom-bar a:hover { color: var(--blue); }
-  body { padding-bottom: 60px; }
+  body { padding-bottom: max(60px, calc(60px + env(safe-area-inset-bottom, 0px))); }
 }
 
 /* ── Mobile Overlay + Offcanvas ── */
@@ -188,6 +192,7 @@ html, body {
 .offcanvas {
   position: fixed; top: 0; left: 0; bottom: 0;
   width: min(320px, 88vw); background: #f8fafc; z-index: 360;
+  padding-left: env(safe-area-inset-left, 0px);
   overflow-y: auto; display: flex; flex-direction: column;
   box-shadow: 4px 0 32px rgba(0,0,0,.18);
   transition: transform .28s cubic-bezier(.4,0,.2,1);
@@ -230,7 +235,7 @@ html, body {
 }
 .offcanvas-search-inner i { color: #94a3b8; font-size: .85rem; }
 .offcanvas-search-inner input {
-  border: none; background: transparent; font-size: .82rem;
+  border: none; background: transparent; font-size: 1rem;
   font-weight: 600; color: #1e293b; outline: none; flex: 1;
   font-family: inherit;
 }
@@ -300,7 +305,7 @@ html, body {
 .mob-acc-body.open { display: flex; }
 .mob-acc-body a {
   display: flex; align-items: center; gap: 9px;
-  padding: 8px 12px; border-radius: 8px;
+  padding: 10px 12px; border-radius: 8px; min-height: 44px;
   text-decoration: none; font-size: .79rem; font-weight: 600;
   color: #334155; transition: all .12s;
   -webkit-tap-highlight-color: transparent;

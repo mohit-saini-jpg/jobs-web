@@ -196,9 +196,17 @@
       .sv-title { font-size: 1.1rem; gap: 7px; }
       .sv-title-icon { width: 30px; height: 30px; font-size: .82rem; border-radius: 8px; }
       .sv-search-btn { padding: 0 14px; font-size: .8rem; }
-      .sv-search-input { font-size: .88rem; padding: 13px 8px 13px 0; }
+      .sv-search-input { font-size: 1rem; padding: 13px 8px 13px 0; }
       .sv-search-icon { padding: 0 10px 0 12px; }
       .sv-total-badge { font-size: .78rem; padding: 4px 11px; }
+      .sv-card:hover { transform: none; } /* disable hover transform on touch */
+    }
+    /* Safe area + reduced motion */
+    .sv-wrap { padding-bottom: max(28px, env(safe-area-inset-bottom, 28px)); }
+    @media (prefers-reduced-motion: reduce) {
+      .sv-card { transition: none; }
+      .sv-card:hover { transform: none; box-shadow: none; }
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
     }
 
     /* ── Card ── */

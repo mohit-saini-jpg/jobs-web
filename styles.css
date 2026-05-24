@@ -160,6 +160,11 @@ a:hover{ text-decoration:underline; }
 /* ── SCROLLABLE JOB LIST ── */
 /* Each item height = 58px (padding 10px top+bottom + ~18px title + ~14px date + 16px border)
    5 items + 4 gaps (8px) = 5×58 + 4×8 = 290 + 32 = 322px */
+a, button, [role="button"], input, select, textarea {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
 :root { --sl-item-h: 58px; --sl-gap: 8px; --sl-visible: 5; }
 
 .section-list{
@@ -325,7 +330,7 @@ a:hover{ text-decoration:underline; }
   .brand-subtitle { display: none; }
 
   /* Mobile: reduce side gutters so content fits the screen */
-  .container{ width: calc(100% - 20px); }
+  .container{ width: calc(100% - 16px); max-width: 100%; }
   
   /* Restores perfect 2-row header layout */
   .header-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; gap: 4px; flex-wrap: nowrap; }
@@ -391,7 +396,7 @@ a:hover{ text-decoration:underline; }
 .modal-body{ padding:14px; }
 .modal-form .form-row{ display:flex; flex-direction:column; gap:6px; margin-bottom:12px; }
 .modal-form label{ font-weight:900; font-size:13px; color:var(--text); }
-.modal-form input, .modal-form textarea{ border:1px solid var(--line); border-radius:12px; padding:10px 12px; font-size:14px; outline:none; }
+.modal-form input, .modal-form textarea{ border:1px solid var(--line); border-radius:12px; padding:10px 12px; font-size:16px; outline:none; }
 .modal-form input:focus, .modal-form textarea:focus{ border-color: rgba(14,165,233,.65); }
 .modal-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }/* ✅ Header - Forces Blue Theme Always */
 .site-header, #site-header {
@@ -749,7 +754,7 @@ a:hover{ text-decoration:underline; }
 .modal-body{ padding:14px; }
 .modal-form .form-row{ display:flex; flex-direction:column; gap:6px; margin-bottom:12px; }
 .modal-form label{ font-weight:900; font-size:13px; color:var(--text); }
-.modal-form input, .modal-form textarea{ border:1px solid var(--line); border-radius:12px; padding:10px 12px; font-size:14px; outline:none; }
+.modal-form input, .modal-form textarea{ border:1px solid var(--line); border-radius:12px; padding:10px 12px; font-size:16px; outline:none; }
 .modal-form input:focus, .modal-form textarea:focus{ border-color: rgba(14,165,233,.65); }
 .modal-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }
 
@@ -856,4 +861,13 @@ a:hover{ text-decoration:underline; }
 /* Hide mobile-bottom-search on desktop (matches existing JS-injected behavior) */
 @media (min-width: 981px) {
   .mobile-bottom-search { display: none !important; }
+}
+
+/* ── Accessibility: reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

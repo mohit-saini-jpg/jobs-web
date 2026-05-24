@@ -167,6 +167,26 @@ html, body { overflow-x: hidden; max-width: 100%; }
     #site-header .brand-title { white-space: nowrap !important; font-size: .92rem !important; }
     #site-header .header-actions { flex-shrink: 0 !important; }
     #site-header .header-logo-bar { display: flex !important; align-items: center !important; }
+
+    /* ── Mobile: tap highlight + touch delay fix ── */
+    a, button, [role="button"], input { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+
+    /* ── Category grid mobile ── */
+    .sv-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    @media (min-width: 540px) { .sv-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 768px) { .sv-grid { grid-template-columns: repeat(4, 1fr); } }
+    @media (max-width: 360px) { .sv-grid { grid-template-columns: 1fr 1fr; gap: 6px; } }
+
+    /* iOS input zoom fix (min font 16px) */
+    input, textarea, select { font-size: 1rem !important; }
+
+    /* Safe area bottom padding */
+    main { padding-bottom: max(20px, env(safe-area-inset-bottom, 20px)); }
+
+    /* prefers-reduced-motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
     </style>
   <!-- Header: fetch + inject immediately before script.js defer loads -->
   <script>
