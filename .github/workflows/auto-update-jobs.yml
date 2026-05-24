@@ -76,8 +76,16 @@ jobs:
           
           COUNT=$(git diff --staged --name-only | wc -l)
           git commit -m "🤖 Auto: $COUNT files updated — $(date +'%Y-%m-%d %H:%M UTC')"
-          git pull --rebase origin main
-          git push
+          
+          # Pull latest with merge strategy — resolve conflicts by keeping our generated files
+          git fetch origin main
+          git merge origin/main \
+            -X ours \
+            --no-edit \
+            -m "🤖 Merge: keeping auto-generated files" \
+            2>/dev/null || true
+          
+          git push origin main
           echo "✅ Changes pushed successfully"
 
       # Step 7: Ping Google + Bing via IndexNow (notifies new URLs immediately)
