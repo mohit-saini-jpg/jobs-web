@@ -428,6 +428,35 @@ for d in stale_dirs:
 with open(INDEX, 'w', encoding='utf-8') as f:
     json.dump(index, f, ensure_ascii=False, separators=(',',':'))
 
+
+# ── Regenerate sections-index.json (used by homepage cards) ──
+print("\nRegenerating sections-index.json...")
+sections_index = {}
+SINDEX_CATS = [
+    'Latest_Notifications','10TH_Pass','8TH_Pass','12TH_Pass',
+    'Diploma','ITI','B_Tech_BE','B_Com','Any_Graduate','Any_Post_Graduate',
+    'Railway_Jobs','Police_Defence','Teaching_Faculty','Bank_Jobs','Medical_Hospital'
+]
+if os.path.exists(SRC):
+    with open(SRC, encoding='utf-8') as f:
+        full_data = json.load(f)
+    for cat in SINDEX_CATS:
+        jobs_list = full_data.get(cat, [])
+        cat_items = []
+        for job in jobs_list:
+            bd_s = job.get('basic_details', {}) or {}
+            dates_s = job.get('important_dates', {}) or {}
+            title_s = (bd_s.get('job_title') or '').strip()
+            if not title_s: continue
+            slug_s = slugify(title_s)
+            last_dt = (dates_s.get('last_date_to_apply') or dates_s.get('closing_date') or '')
+            cat_items.append({'slug': slug_s, 'name': title_s, 'date': normalise_date(last_dt) or ''})
+        if cat_items:
+            sections_index[cat] = cat_items
+    with open('sections-index.json', 'w', encoding='utf-8') as f:
+        json.dump(sections_index, f, ensure_ascii=False, separators=(',',':'))
+    print(f"  sections-index.json: {sum(len(v) for v in sections_index.values())} jobs across {len(sections_index)} categories")
+
 print(f"\n✅ DONE!")
 print(f"  Total jobs written : {written}")
 print(f"  JSON files deleted : {len(stale_json)}")
