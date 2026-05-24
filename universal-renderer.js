@@ -1013,10 +1013,28 @@
   function renderTableRows(rows) {
     if (!Array.isArray(rows) || !rows.length) return '';
 
+    /* ── Pre-pass: detect the "normal" column count (most common among rows with ≥2 cols) ── */
+    /* Some scrapers produce a flattened "mega-row" that concatenates all data into one row  */
+    /* with 10x the normal column count. We detect and skip these anomalous rows.           */
+    const colCounts = {};
+    for (const row of rows) {
+      if (!Array.isArray(row) || row.length < 2) continue;
+      colCounts[row.length] = (colCounts[row.length] || 0) + 1;
+    }
+    const colEntries = Object.entries(colCounts).sort((a, b) => b[1] - a[1]);
+    const normalCols = colEntries.length ? parseInt(colEntries[0][0]) : 0;
+    /* A row is anomalous if it has >3x the normal column count AND there are other rows */
+    const totalRows = rows.filter(r => Array.isArray(r) && r.length >= 2).length;
+    const cleanRows = rows.filter(row => {
+      if (!Array.isArray(row)) return false;
+      if (normalCols > 0 && totalRows > 1 && row.length > normalCols * 3) return false; // skip flattened mega-row
+      return true;
+    });
+
     /* ── Step 1: Split into sub-tables by column-count boundary ── */
     const subTables = [];
     let cur = [], curCols = -1;
-    for (const row of rows) {
+    for (const row of cleanRows) {
       if (!Array.isArray(row)) continue;
       if (row.length !== curCols) {
         if (cur.length) subTables.push(cur);
