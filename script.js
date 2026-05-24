@@ -167,7 +167,7 @@
   ── */
   const __jobsDataPromise = (function() {
     try {
-      const KEY = '__cjfd_v1', TTL = 60 * 60 * 1000;
+      const KEY = '__cjfd_v1', TTL = 5 * 60 * 1000; // 5 min — refreshes when JSON updated
       const hit = JSON.parse(sessionStorage.getItem(KEY) || 'null');
       if (hit && (Date.now() - hit.ts) < TTL) {
         const p = Promise.resolve(hit.data);
