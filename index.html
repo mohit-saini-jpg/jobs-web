@@ -2197,19 +2197,19 @@
   (function initDynamicTicker() {
     'use strict';
 
-    var MAX_JOBS    = 40;
+    var MAX_JOBS    = 50;
     var LATEST_JOBS_URL = '/section/latest-jobs/';
 
-    /* ── fetch jobs-index.json — small 309KB file with slugs ── */
+    /* ── fetch sections-index.json — same source as /section/latest-jobs/ ── */
     function fetchJobs() {
-      var CACHE_KEY = '__ticker_idx_cache';
+      var CACHE_KEY = '__ticker_sec_cache';
       var CACHE_TTL = 15 * 60 * 1000;
       try {
         var cached = JSON.parse(sessionStorage.getItem(CACHE_KEY) || 'null');
         if (cached && (Date.now() - cached.ts) < CACHE_TTL) return Promise.resolve(cached.data);
       } catch(e) {}
 
-      return fetch('/jobs-index.json')
+      return fetch('/sections-index.json')
         .then(function(r){ return r.ok ? r.json() : null; })
         .then(function(json) {
           try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: json })); } catch(e) {}
@@ -2218,34 +2218,28 @@
         .catch(function(){ return null; });
     }
 
-    /* ── extract Latest_Notifications jobs from index ── */
+    /* ── extract Latest_Notifications jobs (same as /section/latest-jobs/) ── */
     function extractLatestJobs(json) {
       var jobs = [];
       if (!json || typeof json !== 'object') return Promise.resolve(jobs);
 
-      var slugs = Object.keys(json);
-      for (var i = 0; i < slugs.length; i++) {
-        var slug = slugs[i];
-        var entry = json[slug];
-        if ((entry.cat || '') !== 'Latest_Notifications') continue;
-        var title = (entry.title || slug.replace(/-/g,' ')).trim();
-        /* Remove trailing "-latest-notifications" from slug for clean URL */
-        var cleanSlug = slug.replace(/-latest-notifications$/, '');
-        var url = '/jobs/' + cleanSlug + '/';
-        jobs.push({ name: title, url: url });
-        if (jobs.length >= MAX_JOBS) break;
+      var items = json['Latest_Notifications'] || [];
+      for (var i = 0; i < items.length && jobs.length < MAX_JOBS; i++) {
+        var item = items[i];
+        if (!item || !item.name) continue;
+        jobs.push({
+          name: item.name,
+          url:  '/jobs/' + (item.slug || '') + '/'
+        });
       }
-
       return Promise.resolve(jobs);
     }
 
     /* ── build href ── */
     function buildHref(rawUrl) {
       var u = (rawUrl || '').trim();
-      if (!u || u === '#') return LATEST_JOBS_URL;
-      if (/^https?:\/\//i.test(u) && !u.includes('topsarkarijobs.com')) return u;
-      if (!u.startsWith('http')) return u;
-      return u.replace(/^https?:\/\/[^/]+/i, '') || LATEST_JOBS_URL;
+      if (!u || u === '#' || u === '/jobs//') return LATEST_JOBS_URL;
+      return u;
     }
 
     /* ── render ticker belt ── */
@@ -2266,9 +2260,6 @@
           a.href = buildHref(jobs[i].url);
           a.textContent = jobs[i].name;
           a.setAttribute('title', jobs[i].name);
-          if (/^https?:\/\//i.test(jobs[i].url) && !jobs[i].url.includes('topsarkarijobs.com')) {
-            a.target = '_blank'; a.rel = 'noopener noreferrer';
-          }
           frag.appendChild(a);
         }
         return frag;
@@ -2280,8 +2271,8 @@
       belt.appendChild(buildSet());
       belt.appendChild(buildSet());
 
-      /* Speed: ~30px/s — each item ~220px avg width (very slow) */
-      var duration = Math.max(60, Math.round(jobs.length * 220 / 30));
+      /* Speed: ~60px/s — smooth scroll */
+      var duration = Math.max(60, Math.round(jobs.length * 220 / 60));
       belt.style.setProperty('--ticker-duration', duration + 's');
       belt.style.animationDuration = duration + 's';
 
@@ -2297,7 +2288,7 @@
       .then(extractLatestJobs)
       .then(renderTicker)
       .catch(function(err) {
-        console.warn('[Ticker] Failed to load jobs:', err);
+        console.warn('[Ticker] Failed:', err);
         renderTicker([{ name: 'View Latest Sarkari Jobs 2026', url: LATEST_JOBS_URL }]);
       });
   })();
