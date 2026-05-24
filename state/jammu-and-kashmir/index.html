@@ -1392,18 +1392,19 @@
   // ═══ RENDER JOB LIST ═══
   function renderJobList(matchedItems, matchedSection, hasDetailData) {
     const jobsList = document.getElementById('jobsList');
-    const sortedItems = [...matchedItems].sort((a, b) =>
-      parsePostDate(b.postDate) - parsePostDate(a.postDate)
-    );
-    document.getElementById('statJobs').textContent = sortedItems.length + '+';
-    jobsList.innerHTML = sortedItems.map((item, i) => {
+    // Preserve original JSON array order — no sorting applied
+    const displayItems = matchedItems;
+    document.getElementById('statJobs').textContent = displayItems.length + '+';
+    jobsList.innerHTML = displayItems.map((item, i) => {
       const title = item.name || item.title || 'Government Job';
       const date  = item.date || item.lastDate || '';
       const qual  = item.qualification || '';
       const board = item.board || '';
-      const href  = hasDetailData && matchedSection
-        ? jobDetailUrl(item, matchedSection)
-        : (item.url || item.link || '#');
+      // Use item.url directly if available (opens in new tab), else detail page
+      const href  = (item.url && item.url.trim())
+        ? item.url.trim()
+        : (hasDetailData && matchedSection ? jobDetailUrl(item, matchedSection) : '#');
+      const isExternal = !!(item.url && item.url.trim());
       let isUrgent = false;
       if (item.lastDate) {
         try {
@@ -1412,7 +1413,7 @@
           isUrgent = (d - Date.now()) / 864e5 <= 7 && (d - Date.now()) >= 0;
         } catch(_) {}
       }
-      return `<a href="${href}" ${hasDetailData ? '' : 'target="_blank" rel="noopener"'}>
+      return `<a href="${href}" ${isExternal ? 'target="_blank" rel="noopener"' : ''}>
         ${i < 3 ? '<span class="job-new">NEW</span>' : ''}
         ${isUrgent ? '<span class="job-new" style="background:#e05c00;">URGENT</span>' : ''}
         <div class="job-body">
