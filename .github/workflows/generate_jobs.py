@@ -435,7 +435,8 @@ sections_index = {}
 SINDEX_CATS = [
     'Latest_Notifications','10TH_Pass','8TH_Pass','12TH_Pass',
     'Diploma','ITI','B_Tech_BE','B_Com','Any_Graduate','Any_Post_Graduate',
-    'Railway_Jobs','Police_Defence','Teaching_Faculty','Bank_Jobs','Medical_Hospital'
+    'Railway_Jobs','Police_Defence','Teaching_Faculty','Bank_Jobs','Medical_Hospital',
+    'Last_Date_Reminder'
 ]
 if os.path.exists(SRC):
     with open(SRC, encoding='utf-8') as f:
