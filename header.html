@@ -5,6 +5,14 @@
             offcanvas mobile menu, overlay
 ============================================================ */
 
+/* ── Global: prevent horizontal scroll on ALL pages ── */
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+*, *::before, *::after { box-sizing: border-box; }
+
 /* ── CSS Variables (shared across header) ── */
 :root {
   --navy:   #0d2257;
