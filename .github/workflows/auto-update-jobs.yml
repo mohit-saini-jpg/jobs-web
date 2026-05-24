@@ -63,6 +63,7 @@ jobs:
           git add jobs/data/
           git add jobs/
           git add jobs-index.json
+          git add sections-index.json
           git add sitemap-jobs.xml
           git add sitemap-index.xml
           git add sitemap.xml
