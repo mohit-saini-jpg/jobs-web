@@ -1,0 +1,58 @@
+# robots.txt — Top Sarkari Jobs
+# ==============================
+# Last updated: 2026-05-25
+# AUDIT FIX: Removed /job.html?slug= and /view.html?section= disallows.
+# These were BLOCKING Google from indexing all job pages. Fixed!
+
+User-agent: *
+Allow: /
+
+# ── Block non-content utility pages ──
+Disallow: /404.html
+Disallow: /.github/
+Disallow: /.gstack/
+Disallow: /node_modules/
+Disallow: /cache-dashboard.html
+Disallow: /seo-audit-report.html
+Disallow: /JOB_HTML_PATCH_INSTRUCTIONS.html
+
+# ── Block raw query-param URLs (clean /jobs/slug/ versions are crawlable) ──
+# NOTE: /job.html?slug= intentionally NOT blocked — allows Googlebot fallback
+# NOTE: /view.html?section= intentionally NOT blocked
+Disallow: /search.html?q=
+Disallow: /category.html?group=
+
+# ── Allow all clean-URL pages explicitly ──
+Allow: /section/
+Allow: /jobs/
+Allow: /category/
+Allow: /state-jobs/
+Allow: /search/
+Allow: /state/
+
+# ── Sitemap declaration ──
+Sitemap: https://www.topsarkarijobs.com/sitemap-index.xml
+
+# ── Specific bot directives ──
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /image.png
+Allow: /image.webp
+Allow: /*.png
+Allow: /*.jpg
+Allow: /*.webp
+Allow: /*.ico
+
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Crawl-delay: 10
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
