@@ -2271,8 +2271,8 @@
       belt.appendChild(buildSet());
       belt.appendChild(buildSet());
 
-      /* Speed: ~60px/s — smooth scroll */
-      var duration = Math.max(60, Math.round(jobs.length * 220 / 60));
+      /* Speed: ~15px/s — very slow, easy to read */
+      var duration = Math.max(120, Math.round(jobs.length * 220 / 15));
       belt.style.setProperty('--ticker-duration', duration + 's');
       belt.style.animationDuration = duration + 's';
 
