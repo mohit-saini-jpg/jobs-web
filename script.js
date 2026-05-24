@@ -1,909 +1,2450 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <script src="/analytics.js" defer></script>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Top Sarkari Jobs | Latest Government Jobs, Results &amp; Admit Cards</title>
-  <meta name="description" content="Browse latest Sarkari Jobs, Results, Admit Cards, Answer Keys, Admissions and Online Forms by category — updated daily on Top Sarkari Jobs." />
-  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-  <link id="canonicalTag" rel="canonical" href="#" />
-  <link rel="icon" type="image/x-icon" href="/image.ico">
-  <!-- Open Graph -->
-  <meta property="og:type" content="website" />
-  <meta id="ogUrl" property="og:url" content="https://www.topsarkarijobs.com/" />
-  <meta id="ogTitle" property="og:title" content="Top Sarkari Jobs | Latest Government Jobs" />
-  <meta id="ogDesc" property="og:description" content="Browse latest Sarkari Jobs, Results, Admit Cards, Answer Keys and Online Forms — updated daily." />
-  <meta property="og:image" content="https://www.topsarkarijobs.com/image.png" />
-  <meta property="og:image:width" content="800" />
-  <meta property="og:image:height" content="800" />
-  <meta property="og:site_name" content="Top Sarkari Jobs" />
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta id="twTitle" name="twitter:title" content="Top Sarkari Jobs | Latest Government Jobs" />
-  <meta id="twDesc" name="twitter:description" content="Browse latest Sarkari Jobs, Results, Admit Cards, Answer Keys and Online Forms — updated daily." />
-  <meta name="twitter:image" content="https://www.topsarkarijobs.com/image.png" />
-  <!-- Hreflang -->
-  <link id="hreflangEn" rel="alternate" hreflang="en" href="#" />
-  <link id="hreflangEnIN" rel="alternate" hreflang="en-IN" href="#" />
-  <link id="hreflangDef" rel="alternate" hreflang="x-default" href="#" />
-  <script>
-  // Dynamically set canonical, OG, Twitter, hreflang based on clean URL
-  (function(){
-    var base = 'https://www.topsarkarijobs.com';
-    var path = location.pathname; // e.g. /section/railway-jobs/
-    var cleanUrl = base + path;
-    // Section name from path e.g. "railway-jobs" → "Railway Jobs"
-    var seg = path.replace(/^\/section\/|\/$/g,'').replace(/-/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();});
-    var title = seg ? seg + ' 2026 – Latest Vacancies | Top Sarkari Jobs' : 'Top Sarkari Jobs | Latest Government Jobs';
-    var desc  = seg ? 'Find latest ' + seg + ' notifications, vacancies, results and admit cards 2026 on Top Sarkari Jobs.' : 'Browse latest Sarkari Jobs, Results, Admit Cards, Answer Keys and Online Forms — updated daily.';
-    // Canonical
-    var can = document.getElementById('canonicalTag'); if(can) can.href = cleanUrl;
-    // OG
-    var ogU=document.getElementById('ogUrl'); if(ogU) ogU.content=cleanUrl;
-    var ogT=document.getElementById('ogTitle'); if(ogT) ogT.content=title;
-    var ogD=document.getElementById('ogDesc'); if(ogD) ogD.content=desc;
-    // Twitter
-    var twT=document.getElementById('twTitle'); if(twT) twT.content=title;
-    var twD=document.getElementById('twDesc'); if(twD) twD.content=desc;
-    // Hreflang
-    ['hreflangEn','hreflangEnIN','hreflangDef'].forEach(function(id){
-      var el=document.getElementById(id); if(el) el.href=cleanUrl;
-    });
-    // BreadcrumbList schema — injected synchronously for Googlebot
-    var bcEl = document.getElementById('schema-breadcrumb');
-    if (bcEl && seg) {
-      bcEl.textContent = JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'BreadcrumbList',
-        'itemListElement': [
-          {'@type':'ListItem','position':1,'name':'Home','item':'https://www.topsarkarijobs.com/'},
-          {'@type':'ListItem','position':2,'name':seg,'item':cleanUrl}
-        ]
+(() => {
+  "use strict";
+
+  // ✅ SEARCH INDEX: smart-search.js is array ko monitor karta hai
+  // Pehle se exist kare to use karo, nahi to nayi array banao
+  window.tsjSearchIndex = window.tsjSearchIndex || [];
+
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
+  const isToolsPage = location.pathname.includes("tools");
+
+  const safe = (v) => (v ?? "").toString().trim();
+
+  /* ── Smart Date Badge: Universal parser for ALL JSON date formats ──
+     "2026-06-02" | "02-06-2026" | "2 Jun 2026" | "From 27/05/2026"
+  ── */
+  function formatDateBadge(raw) {
+    if (!raw || typeof raw !== 'string') return null;
+    raw = raw.trim();
+    if (!raw) return null;
+    const hasFrom = /^From\s+/i.test(raw);
+    if (hasFrom) raw = raw.replace(/^From\s+/i, '');
+    if (/please refer|days from|date of pub|see notif|check off/i.test(raw))
+      return { display: 'Check Notification', colorClass: 'd-grey' };
+    if (/walk.?in|walkin/i.test(raw))
+      return { display: 'Walk-in', colorClass: 'd-grey' };
+    const MO = {jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
+    let d=0,mo=0,yr=0,m;
+    m=raw.match(/^(\d{4})-(\d{2})-(\d{2})/); if(m){yr=+m[1];mo=+m[2];d=+m[3];}
+    if(!yr){m=raw.match(/^(\d{1,2})[\-\/](\d{1,2})[\-\/](\d{4})/);if(m){d=+m[1];mo=+m[2];yr=+m[3];}}
+    if(!yr){m=raw.match(/(\d{1,2})\s+([A-Za-z]{3})\.?\s+(\d{4})/);if(m){const x=MO[m[2].slice(0,3).toLowerCase()];if(x){d=+m[1];mo=x;yr=+m[3];}}}
+    if(!yr){m=raw.match(/([A-Za-z]{3})\s+(\d{1,2})[,.]?\s+(\d{4})/);if(m){const x=MO[m[1].slice(0,3).toLowerCase()];if(x){mo=x;d=+m[2];yr=+m[3];}}}
+    if(!yr||!mo||!d) return {display:(hasFrom?'From ':'')+raw.slice(0,18),colorClass:'d-grey'};
+    const display=(hasFrom?'From ':'')+String(d).padStart(2,'0')+'/'+String(mo).padStart(2,'0')+'/'+yr;
+    const today=new Date();today.setHours(0,0,0,0);
+    const diff=Math.ceil((new Date(yr,mo-1,d)-today)/86400000);
+    return {display,colorClass:diff<0?'d-expired':diff<=3?'d-red':diff<=7?'d-orange':'d-green'};
+  }
+
+  // Safely handles internal absolute URLs
+  function normalizeUrl(raw) {
+    const s = safe(raw);
+    if (!s) return "";
+    if (/^(https?:)?\/\//i.test(s) || /^(mailto:|tel:)/i.test(s)) return s;
+    if (s.startsWith("#") || s.startsWith("?")) return s;
+    if (s.startsWith("/") || s.includes(".html") || s.startsWith("./") || s.startsWith("../")) return s;
+    return "https://" + s.replace(/^\/+/, "");
+  }
+
+
+  /* ─── Convert Complete_Jobs_Full_Data.json → sections format ─── */
+  const JOBS_CAT_META = {
+    "Latest_Notifications": { id: "Latest Notifications",    title: "🔔 Latest Notifications",   color: "linear-gradient(135deg,#dc2626,#b91c1c)", icon: "fa-solid fa-bell" },
+    "10TH_Pass":            { id: "10th Pass jobs",           title: "📚 10th Pass Jobs",          color: "linear-gradient(135deg,#0284c7,#0369a1)", icon: "fa-solid fa-graduation-cap" },
+    "8TH_Pass":             { id: "8th Pass",                 title: "📖 8th Pass Jobs",           color: "linear-gradient(135deg,#7c3aed,#6d28d9)", icon: "fa-solid fa-book" },
+    "12TH_Pass":            { id: "12th Pass jobs",           title: "🎓 12th Pass Jobs",          color: "linear-gradient(135deg,#059669,#047857)", icon: "fa-solid fa-graduation-cap" },
+    "Diploma":              { id: "Diploma Jobs",              title: "📜 Diploma Jobs",            color: "linear-gradient(135deg,#d97706,#b45309)", icon: "fa-solid fa-scroll" },
+    "ITI":                  { id: "ITI Jobs",                  title: "🔧 ITI Jobs",               color: "linear-gradient(135deg,#0891b2,#0e7490)", icon: "fa-solid fa-wrench" },
+    "B_Tech_BE":            { id: "B.Tech Jobs",              title: "💻 B.Tech / B.E. Jobs",      color: "linear-gradient(135deg,#4f46e5,#4338ca)", icon: "fa-solid fa-microchip" },
+    "B_Com":                { id: "B.Com Jobs",               title: "💼 B.Com Jobs",              color: "linear-gradient(135deg,#0d9488,#0f766e)", icon: "fa-solid fa-chart-line" },
+    "Any_Graduate":         { id: "Graduation jobs",          title: "🎓 Any Graduate Jobs",       color: "linear-gradient(135deg,#2563eb,#1d4ed8)", icon: "fa-solid fa-university" },
+    "Any_Post_Graduate":    { id: "Post Graduation jobs",     title: "🏛️ Post Graduate Jobs",     color: "linear-gradient(135deg,#9333ea,#7e22ce)", icon: "fa-solid fa-user-tie" },
+    "Railway_Jobs":         { id: "Railway Jobs",             title: "🚂 Railway Jobs",            color: "linear-gradient(135deg,#b45309,#92400e)", icon: "fa-solid fa-train" },
+    "Police_Defence":       { id: "Police Jobs",              title: "🛡️ Police / Defence Jobs",  color: "linear-gradient(135deg,#1e40af,#1e3a8a)", icon: "fa-solid fa-shield-halved" },
+    "Teaching_Faculty":     { id: "Teacher Jobs",             title: "📝 Teaching / Faculty Jobs", color: "linear-gradient(135deg,#16a34a,#15803d)", icon: "fa-solid fa-chalkboard-user" },
+    "Bank_Jobs":            { id: "Bank Jobs",                title: "🏦 Bank Jobs",               color: "linear-gradient(135deg,#ca8a04,#a16207)", icon: "fa-solid fa-building-columns" },
+    "Medical_Hospital":     { id: "Medical/ Healthcare Jobs", title: "🏥 Medical / Hospital Jobs", color: "linear-gradient(135deg,#dc2626,#b91c1c)", icon: "fa-solid fa-stethoscope" },
+    "Last_Date_Reminder":   { id: "Last Date Reminder",        title: "⏰ Last Date Reminder",      color: "linear-gradient(135deg,#e11d48,#be123c)", icon: "fa-solid fa-clock" },
+  };
+
+  /* Slugify a job title the same way the Python generator does */
+  function slugifyForJob(title) {
+    return title
+      .normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/&/g, " and ").replace(/['']/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .replace(/-{2,}/g, "-")
+      .slice(0, 120) || "official-link";
+  }
+
+  /*
+   * ══════════════════════════════════════════════════════════════════════
+   *  convertJobsDataToSections — MULTI-FORMAT FIX
+   *
+   *  Complete_Jobs_Full_Data.json ke teen possible structures handle karta hai:
+   *
+   *  Format A (Expected):
+   *    { "Railway_Jobs": [{basic_details:{job_title}, important_dates:{...}}], ... }
+   *
+   *  Format B (Flat jobs array with category field):
+   *    { "jobs": [{ "title": "...", "category": "Railway_Jobs", ... }] }
+   *
+   *  Format C (Alternative key names — title at root, different date keys):
+   *    { "Railway_Jobs": [{ "title": "...", "last_date": "...", "slug": "..." }] }
+   *
+   *  Aur cross-key aliases bhi handle karta hai, jaise:
+   *    "railway_jobs" → "Railway_Jobs", "RAILWAY_JOBS" → "Railway_Jobs"
+   * ══════════════════════════════════════════════════════════════════════
+   */
+  function convertJobsDataToSections(rawData) {
+    if (!rawData || typeof rawData !== "object" || Array.isArray(rawData)) return { sections: [] };
+
+    /* ── Format B: flat jobs[] array with category field ── */
+    if (Array.isArray(rawData.jobs) && rawData.jobs.length > 0) {
+      /* Group flat jobs into per-category buckets */
+      const buckets = {};
+      rawData.jobs.forEach(job => {
+        /* category field ke possible names */
+        const cat = (job.category || job.sr_category || job.cat || "").trim();
+        if (!cat) return;
+        if (!buckets[cat]) buckets[cat] = [];
+        buckets[cat].push(job);
+      });
+      /* Rebuild rawData so Format A logic below handles it */
+      rawData = buckets;
+    }
+
+    /* ── Build a normalised key lookup (case-insensitive + underscore-flexible) ── */
+    /* e.g. rawData may have "railway_jobs" but JOBS_CAT_META has "Railway_Jobs" */
+    const rawKeys = Object.keys(rawData);
+    function findRawKey(catKey) {
+      /* Exact match first */
+      if (rawData[catKey] !== undefined) return catKey;
+      /* Case-insensitive match */
+      const lower = catKey.toLowerCase();
+      for (const k of rawKeys) {
+        if (k.toLowerCase() === lower) return k;
+      }
+      return null;
+    }
+
+    const sections = [];
+    for (const [catKey, meta] of Object.entries(JOBS_CAT_META)) {
+      const resolvedKey = findRawKey(catKey);
+      if (!resolvedKey) continue;
+      const jobs = rawData[resolvedKey];
+      if (!Array.isArray(jobs) || !jobs.length) continue;
+
+      const items = jobs.map(job => {
+        /* ── Normalise job object across all formats ──
+           Format A: job.basic_details.job_title
+           Format B/C: job.title / job.name / job.post_name
+        */
+        const bd    = job.basic_details || {};
+        const dates = job.important_dates || {};
+
+        const name = (
+          bd.job_title   ||
+          bd.post_name   ||
+          job.title      ||
+          job.job_title  ||
+          job.name       ||
+          job.post_name  ||
+          ""
+        ).trim();
+        if (!name) return null;
+
+        /* Date: try all common field names */
+        const last = (
+          dates.last_date_to_apply ||
+          dates.last_date          ||
+          dates.last_date_apply    ||
+          dates.closing_date       ||
+          job.last_date_to_apply   ||
+          job.last_date            ||
+          job.closing_date         ||
+          ""
+        ).trim();
+
+        /* Slug: use existing or generate */
+        const slug = job.slug || bd.slug || slugifyForJob(name);
+        const url  = "/jobs/" + slug + "/";
+
+        return { slug, name, url, date: last || "" };
+      }).filter(Boolean);
+
+      if (!items.length) continue;
+      sections.push({ id: meta.id, title: meta.title, color: meta.color, icon: meta.icon, viewMoreType: "list", items });
+    }
+    return { sections };
+  }
+
+  // ISSUE-002: memoize JSON fetches — downloaded once per page load only
+  const __jsonCache = new Map();
+
+  /* ── sessionStorage cache for Complete_Jobs_Full_Data.json (60 min) ──
+     Avoids re-downloading 18MB JSON on every page refresh.
+     PERF FIX: Do NOT pre-fetch at script load time — it competes with critical
+     resources (merged_sarkari_data.json, CSS, fonts). Load on first access only.
+  ── */
+  const __jobsDataPromise = (function() {
+    try {
+      const KEY = '__cjfd_v1', TTL = 5 * 60 * 1000;
+      const hit = JSON.parse(sessionStorage.getItem(KEY) || 'null');
+      if (hit && (Date.now() - hit.ts) < TTL) {
+        const p = Promise.resolve(hit.data);
+        __jsonCache.set('Complete_Jobs_Full_Data.json', p);
+        return p;
+      }
+    } catch(e) {}
+    return null; // lazy — will fetch only when getJobsSections() is called
+  })();
+
+  /* ── PERF: Convert sections-index.json (16KB) → sections format ── */
+  function convertSectionsIndex(indexData) {
+    if (!indexData || typeof indexData !== 'object') return { sections: [] };
+    const sections = [];
+    for (const [catKey, meta] of Object.entries(JOBS_CAT_META)) {
+      const items = indexData[catKey];
+      if (!Array.isArray(items) || !items.length) continue;
+      sections.push({
+        id: meta.id, title: meta.title, color: meta.color, icon: meta.icon,
+        viewMoreType: 'list',
+        items: items.map(item => ({
+          slug: item.slug,
+          name: item.name,
+          url: '/jobs/' + item.slug + '/',
+          date: item.date || ''
+        }))
       });
     }
-    // WebPage schema — helps Google understand page type
-    var wpSchemaEl = document.getElementById('schema-itemlist');
-    if (wpSchemaEl && seg) {
-      wpSchemaEl.textContent = JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'WebPage',
-        'name': title,
-        'description': desc,
-        'url': cleanUrl,
-        'isPartOf': {'@id':'https://www.topsarkarijobs.com/#website'},
-        'breadcrumb': {
-          '@type': 'BreadcrumbList',
-          'itemListElement': [
-            {'@type':'ListItem','position':1,'name':'Home','item':'https://www.topsarkarijobs.com/'},
-            {'@type':'ListItem','position':2,'name':seg,'item':cleanUrl}
-          ]
+    return { sections };
+  }
+
+  /* ─── getJobsSections — MERGE FIX ────────────────────────────────────────
+   *
+   * PROBLEM: sections-index.json mein sirf 8 categories hain:
+   *   Latest_Notifications, 10TH_Pass, 8TH_Pass, 12TH_Pass,
+   *   Diploma, ITI, B_Tech_BE, B_Com
+   *
+   *   Railway_Jobs, Police_Defence, Bank_Jobs, Teaching_Faculty,
+   *   Any_Graduate, Any_Post_Graduate, Medical_Hospital, Last_Date_Reminder
+   *   — sections-index mein NAHI hain.
+   *
+   * FIX:
+   *   1. sections-index.json se 8 fast categories instantly render karo
+   *   2. JOBS_CAT_META ke baaki missing category keys detect karo
+   *   3. Complete_Jobs_Full_Data.json se sirf unhe fetch+merge karo
+   *   4. JOBS_CAT_META key order se sort karke return karo
+   * ─────────────────────────────────────────────────────────────────────── */
+  async function getJobsSections() {
+    try {
+      // Helper: fetch + cache Complete_Jobs_Full_Data.json
+      async function getBigJSON() {
+        if (__jobsDataPromise) {
+          const raw = await __jobsDataPromise;
+          if (raw) {
+            __jsonCache.set('Complete_Jobs_Full_Data.json', Promise.resolve(raw));
+            return raw;
+          }
         }
+        const raw = await getJSON('Complete_Jobs_Full_Data.json');
+        if (raw) {
+          try { sessionStorage.setItem('__cjfd_v1', JSON.stringify({ ts: Date.now(), data: raw })); } catch(e) {}
+          __jsonCache.set('Complete_Jobs_Full_Data.json', Promise.resolve(raw));
+        }
+        return raw || null;
+      }
+
+      // JOBS_CAT_META mein defined order (sort key)
+      const catOrder = Object.keys(JOBS_CAT_META);
+
+      // sections-index.json available hai?
+      if (window.__sectionsIndexPromise) {
+        const indexData = await window.__sectionsIndexPromise;
+        if (indexData) {
+          const fastResult = convertSectionsIndex(indexData);
+
+          // sections-index mein present category ids
+          const coveredIds = new Set(fastResult.sections.map(s => s.id));
+
+          // Missing categories: JOBS_CAT_META mein hain lekin sections-index mein nahi
+          const missingKeys = catOrder.filter(k =>
+            JOBS_CAT_META[k] && !coveredIds.has(JOBS_CAT_META[k].id)
+          );
+
+          // Sab covered? Sirf fast data return karo
+          if (missingKeys.length === 0) {
+            return fastResult;
+          }
+
+          // Missing categories ke liye Complete_Jobs_Full_Data.json fetch karo
+          let extraSections = [];
+          try {
+            const raw = await getBigJSON();
+            if (raw) {
+              const fullResult = convertJobsDataToSections(raw);
+              // Sirf missing categories rakhon
+              const missingIds = new Set(missingKeys.map(k => JOBS_CAT_META[k].id));
+              extraSections = fullResult.sections.filter(s => missingIds.has(s.id));
+            }
+          } catch(_) { /* big JSON fail — fast sections hi return karo */ }
+
+          // Merge + JOBS_CAT_META order se sort
+          const merged = [...fastResult.sections, ...extraSections];
+          merged.sort((a, b) => {
+            const ai = catOrder.findIndex(k => JOBS_CAT_META[k].id === a.id);
+            const bi = catOrder.findIndex(k => JOBS_CAT_META[k].id === b.id);
+            return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+          });
+
+          return { sections: merged };
+        }
+      }
+
+      // FALLBACK: sections-index unavailable — pure big JSON
+      const raw = await getBigJSON();
+      if (raw) return convertJobsDataToSections(raw);
+      return { sections: [] };
+
+    } catch (_) { return { sections: [] }; }
+  }
+
+  function getJSON(path) {
+    if (__jsonCache.has(path)) return __jsonCache.get(path);
+    const p = fetch(path).then((r) => {
+      if (!r.ok) throw new Error("HTTP " + r.status + " for " + path);
+      return r.json();
+    });
+    p.catch(() => __jsonCache.delete(path));
+    __jsonCache.set(path, p);
+    return p;
+  }
+
+  function slugifyTitle(raw) {
+    const text = safe(raw)
+      .normalize("NFKD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/&/g, " and ")
+      .replace(/[’']/g, "")
+      .toLowerCase();
+
+    const slug = text
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .replace(/-{2,}/g, "-")
+      .slice(0, 120);
+
+    return slug || "official-link";
+  }
+
+  /** 12-char base36 fingerprint; must match redirect.html resolver (dynamic-sections.json lookup). */
+  function urlRedirectFingerprint(raw) {
+    const s = normalizeUrl(raw);
+    let h1 = 2166136261 >>> 0;
+    let h2 = 8159751279 >>> 0;
+    for (let i = 0; i < s.length; i++) {
+      const c = s.charCodeAt(i);
+      h1 ^= c;
+      h1 = Math.imul(h1, 16777619) >>> 0;
+      h2 = (Math.imul(h2, 1099511627) ^ c) >>> 0;
+    }
+    const alphabet = "0123456789abcdefghijklmnopqrstuvwxyz";
+    function pack(n, len) {
+      let x = n >>> 0;
+      let out = "";
+      for (let i = 0; i < len; i++) {
+        out = alphabet[x % 36] + out;
+        x = Math.floor(x / 36);
+      }
+      return out;
+    }
+    return pack(h1, 6) + pack(h2, 6);
+  }
+
+  function isGarbageLink(item) {
+    const text = (item.name || item.title || "").toLowerCase();
+    return text.includes("main home page") || text.includes("website ka main");
+  }
+
+  function openInternal(url, name) {
+    const u = normalizeUrl(url);
+    return `view.html?url=${encodeURIComponent(u)}&name=${encodeURIComponent(name)}`;
+  }
+
+  function buildRedirectUrl(targetUrl, label = "", sectionId = "") {
+    const slug = slugifyTitle(label || targetUrl);
+    if (!slug || slug === "official-link") return "";
+    // Attach actual destination URL as ?ref= so job.html can use it
+    // even when slug-based lookup in JSON fails (e.g. dailyupdates items)
+    const dest = normalizeUrl(targetUrl);
+    const refParam = dest ? "?ref=" + encodeURIComponent(dest) : "";
+    return "/jobs/" + slug + "/" + refParam;
+  }
+
+  /** Redirect interstitial only for home section rows and view.html list items (not More / nav / etc.). */
+  function isRedirectGatedLink(anchor) {
+    if (!anchor || anchor.closest(".view-all")) return false;
+    if (page === "index.html" || page === "") {
+      return !!(anchor.closest("#dynamic-sections") && anchor.classList.contains("section-link"));
+    }
+    if (page === "view.html") {
+      return !!anchor.closest("#links-list");
+    }
+    return false;
+  }
+
+  function shouldBypassRedirect(anchor, href) {
+    if (!anchor || !href) return true;
+    if (anchor.closest(".site-header") || anchor.closest("#mobileMenu")) return true;
+    if (anchor.hasAttribute("download")) return true;
+    // Skip redirect gate for direct job.html links (have data-bypass-gate or data-slug)
+    if (anchor.hasAttribute("data-bypass-gate") || anchor.hasAttribute("data-slug")) return true;
+
+    const raw = href.trim();
+    if (!raw || raw === "#" || raw.startsWith("#")) return true;
+    if (/^(javascript:|data:|blob:)/i.test(raw)) return true;
+
+    let resolved;
+    try {
+      resolved = new URL(raw, location.href);
+    } catch (_) {
+      return true;
+    }
+
+    if (resolved.origin === location.origin && resolved.pathname.toLowerCase().endsWith("/redirect.html")) {
+      return true;
+    }
+    return false;
+  }
+
+  function installGlobalRedirectGate() {
+    if (page === "redirect.html") return;
+    if (window.__redirectGateInstalled) return;
+    window.__redirectGateInstalled = true;
+
+    document.addEventListener("click", (e) => {
+      const anchor = e.target.closest("a[href]");
+      if (!anchor) return;
+
+      if (e.defaultPrevented) return;
+      if (e.button !== 0) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+      const href = anchor.getAttribute("href") || "";
+      if (shouldBypassRedirect(anchor, href)) return;
+      if (!isRedirectGatedLink(anchor)) return;
+
+      const normalizedHref = normalizeUrl(href);
+      if (!normalizedHref) return;
+      if (/^(mailto:|tel:)/i.test(normalizedHref)) return;
+
+      const target = (anchor.getAttribute("target") || "").trim().toLowerCase();
+      const redirectLabel =
+        anchor.getAttribute("data-redirect-label") ||
+        anchor.getAttribute("aria-label") ||
+        anchor.getAttribute("title") ||
+        safe(anchor.textContent);
+      const redirectUrl = buildRedirectUrl(normalizedHref, redirectLabel);
+      if (!redirectUrl) return;
+
+      e.preventDefault();
+
+      if (target && target !== "_self") {
+        window.open(redirectUrl, target, "noopener");
+        return;
+      }
+      window.location.href = redirectUrl;
+    }, true);
+  }
+
+  window.goBack = () => {
+    if (window.history.length > 1) window.history.back();
+    else window.location.href = "index.html";
+  };
+
+  function buildMobileMenu() {
+    const nav = document.querySelector(".offcanvas-nav");
+    if (!nav) return;
+    /* If header.html already injected the new menu (has mob-acc-head elements),
+       do NOT overwrite it — just return. The new menu is already correct. */
+    if (nav.querySelector(".mob-acc-head") || nav.querySelector(".menu-icon-pill")) return;
+    /* On index/homepage, mobileMenu is inline in HTML with full accordion menu.
+       Do NOT overwrite it with the plain fallback. */
+    const page = (location.pathname.split("/").pop() || "").toLowerCase();
+    if (page === "index.html" || page === "" || page === "/") return;
+    
+    nav.innerHTML = `
+      <a href="index.html">Home</a>
+      <a href="view.html?section=results">Results</a>
+      <a href="govt-services.html">CSC Services</a>
+      <a href="tools.html">Tools</a>
+      <a href="helpdesk.html">Helpdesk</a>
+
+      <div class="offcanvas-group">
+        <div class="offcanvas-group-title">Jobs</div>
+        <a href="category.html?group=study">Study wise jobs</a>
+        <a href="category.html?group=popular">Popular job categories</a>
+        <a href="category.html?group=state">State wise jobs</a>
+      </div>
+
+      <div class="offcanvas-group">
+        <div class="offcanvas-group-title">Admissions</div>
+        <a href="category.html?group=admissions">Admissions</a>
+        <a href="category.html?group=admit-result">Admit Card / Result / Answer Key / Syllabus</a>
+      </div>
+
+      <div class="offcanvas-group">
+        <div class="offcanvas-group-title">More</div>
+        <a href="category.html?group=khabar">Latest Khabar</a>
+        <a href="category.html?group=study-material">Study Material & Top Courses</a>
+      </div>
+
+      <div class="offcanvas-cta" id="header-links-mobile"></div>
+    `;
+  }
+
+  // ✅ MOBILE HEADER BUTTON INJECTION
+  function injectMobileHeaderBtns() {
+    if (window.innerWidth > 980) return;
+    const headerHost = document.getElementById("site-header") || document.querySelector(".site-header");
+    if (!headerHost) return;
+
+    const headerRow = headerHost.querySelector('.header-row');
+    const headerActions = headerHost.querySelector('.header-actions');
+    
+    if (headerRow && headerActions && !document.getElementById('mobile-header-btns')) {
+        const btns = document.createElement('div');
+        btns.id = 'mobile-header-btns';
+        btns.className = 'mobile-header-btns';
+        btns.innerHTML = `
+          <div class="mhb-row">
+             <a href="helpdesk.html" class="mhb-btn">Helpdesk</a>
+             <a href="index.html" class="mhb-btn">Home</a>
+          </div>
+          <a href="tools.html" class="mhb-btn mhb-full">Tools</a>
+        `;
+        headerRow.insertBefore(btns, headerActions);
+    }
+  }
+
+  // ✅ SEARCH HIDER: Only hides truly duplicate/old search bars, never the main ones
+  function safeHideOldSearchBars() {
+    // DO NOT hide #siteSearchInput or #sectionSearchInput - these are the main search bars
+    // that need to work on BOTH mobile and desktop. Hiding them breaks search functionality.
+    // This function is intentionally left as a no-op to prevent search bars from being hidden.
+  }
+
+  async function injectHeaderFooter() {
+    let headerHost = document.getElementById("site-header");
+    if (!headerHost) headerHost = document.querySelector(".site-header");
+
+    const footerHost = document.getElementById("site-footer");
+    
+    if (headerHost && (!headerHost.querySelector(".brand") || headerHost.innerHTML.trim() === "")) {
+        // Use pre-fetched promise if available (set in <head> before script.js loads)
+        // Falls back to direct fetch with retry on failure
+        let html = null;
+        try {
+          if (window.__headerPromise) {
+            html = await window.__headerPromise;
+            window.__headerPromise = null; // use once
+          }
+          if (!html) {
+            // Retry up to 3 times — protects against brief network hiccups on job pages
+            for (let attempt = 0; attempt < 3; attempt++) {
+              try {
+                if (attempt > 0) await new Promise(r => setTimeout(r, attempt * 600));
+                const r = await fetch("/header.html", { cache: "no-store" });
+                if (r.ok) { html = await r.text(); break; }
+              } catch (e) {}
+            }
+          }
+        } catch (e) {}
+
+        if (html) {
+            headerHost.innerHTML = html;
+            if (!headerHost.classList.contains("site-header")) {
+                headerHost.classList.add("site-header");
+            }
+            buildMobileMenu();
+            initOffcanvas();
+            initDropdowns();
+        } else {
+            // All attempts failed — minimal fallback so page stays usable
+            headerHost.innerHTML = '<div style="background:#1d3a6e;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;"><a href="/" style="color:#fff;font-weight:900;font-size:1.1rem;text-decoration:none;">TOP <span style="color:#f59e0b;">SARKARI</span> JOBS</a><a href="/" style="color:#fff;font-size:.85rem;text-decoration:none;">&#8592; Home</a></div>';
+        }
+    } else if (headerHost && headerHost.querySelector(".brand")) {
+        // Header already injected by early inline script — just init menus
+        buildMobileMenu();
+        initOffcanvas();
+        initDropdowns();
+    }
+
+    injectMobileHeaderBtns();
+
+    if (footerHost && footerHost.innerHTML.trim() === "") {
+        try {
+          const r = await fetch("/footer.html", { cache: "no-store" });
+          if (r.ok) {
+              footerHost.innerHTML = await r.text();
+              if (!footerHost.classList.contains("site-footer")) footerHost.classList.add("site-footer");
+          }
+        } catch (_) {}
+    }
+  }
+
+  async function loadHeaderLinks() {
+    let data = { header_links: [], social_links: [] };
+    try { data = await getJSON("/header_links.json"); } catch (_) {}
+
+    const desktop = $("#header-links");
+    const mobile = $("#header-links-mobile");
+    const footerSocial = $("#footer-social-links");
+
+    const links = Array.isArray(data.header_links) ? data.header_links : [];
+    const socials = Array.isArray(data.social_links) ? data.social_links : [];
+
+    if (desktop) {
+      desktop.innerHTML = "";
+      links.forEach((l) => {
+        const a = document.createElement("a");
+        a.className = "nav-link";
+        a.href = normalizeUrl(l.link || l.url || "#");
+        if (l.external) { a.target = "_blank"; a.rel = "noopener"; }
+        a.textContent = l.name || "Link";
+        desktop.appendChild(a);
       });
     }
-    // Page title set synchronously
-    if (seg) document.title = title;
-  })();
-  </script>
-  <!-- seo-engine.js removed: loaded as deferred minified version below (line ~775) -->
-  <script type="application/ld+json" id="schema-breadcrumb">{}</script>
-  <script type="application/ld+json" id="schema-faq">{}</script>
-  <script type="application/ld+json" id="schema-itemlist">{}</script>
-  <!-- styles.css: async load (non-blocking) -->
-  <link rel="preload" href="/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="/styles.css"></noscript>
-  <!-- Font Awesome: async load (saves ~100 KiB render-blocking) -->
-  <script>
-    (function(){var l=document.createElement("link");l.rel="preload";l.as="style";
-    l.href="/fonts/fa/all.min.css";l.onload=function(){this.onload=null;this.rel="stylesheet"};
-    document.head.appendChild(l);})();
-  </script>
-  <noscript><link rel="stylesheet" href="/fonts/fa/all.min.css"></noscript>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; }
-    html, body { height: 100%; margin: 0; }
-    body { display: flex; flex-direction: column; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f1f5f9; }
-    main { flex: 1; }
-    #site-header .search-card,
-    #site-header .top-search,
-    #site-header .search-row,
-    #site-header input[type="search"] { display: none !important; }
 
-    /* ── Wrapper ── */
-    .sv-wrap { max-width: 1240px; margin: 0 auto; padding: 20px 16px 40px; }
-
-    /* ── Search Bar ── */
-    .sv-search-wrap {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      margin-bottom: 24px;
-      background: #f8fafc;
-      padding: 10px 0 6px;
-    }
-    .sv-search-row {
-      display: flex; align-items: stretch; gap: 0;
-      background: #fff; border: 2px solid #cbd5e1; border-radius: 14px;
-      overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.07);
-      transition: border-color .2s, box-shadow .2s;
-    }
-    .sv-search-row:focus-within {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 4px rgba(37,99,235,.12), 0 2px 12px rgba(0,0,0,.08);
-    }
-    .sv-search-icon {
-      display: flex; align-items: center; padding: 0 14px 0 16px; color: #94a3b8; font-size: 1rem; pointer-events: none;
-    }
-    .sv-search-input {
-      flex: 1; border: none; outline: none; padding: 15px 12px 15px 0;
-      font-size: .95rem; background: transparent; color: #0f172a; min-width: 0;
-    }
-    .sv-search-input::placeholder { color: #94a3b8; }
-    .sv-search-btn {
-      background: #2563eb; color: #fff; border: none; border-radius: 0 12px 12px 0;
-      padding: 0 28px; font-size: .92rem; font-weight: 700; cursor: pointer;
-      white-space: nowrap; transition: background .2s; display: flex; align-items: center; gap: 7px;
-      flex-shrink: 0;
-    }
-    .sv-search-btn:hover { background: #1d4ed8; }
-    .sv-search-dropdown {
-      position: absolute; top: calc(100% + 4px); left: 0; right: 0;
-      background: #fff; border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      box-shadow: 0 12px 30px rgba(0,0,0,.13);
-      max-height: 340px; overflow-y: auto;
-      display: none; z-index: 100;
-    }
-    .sv-drop-item {
-      display: flex; flex-direction: column;
-      padding: 10px 16px; border-bottom: 1px solid #f1f5f9;
-      text-decoration: none; color: #0f172a; transition: background .12s;
-    }
-    .sv-drop-item:last-child { border-bottom: none; }
-    .sv-drop-item:hover { background: #eff6ff; }
-    .sv-drop-name { font-size: .84rem; font-weight: 700; color: #0369a1; }
-    .sv-drop-meta { font-size: .72rem; color: #64748b; margin-top: 2px; }
-
-    /* ── Page header row ── */
-    .sv-header-row {
-      display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap; gap: 10px; margin-bottom: 16px;
-    }
-    .sv-title { font-size: 1.6rem; font-weight: 800; color: #0f172a; margin: 0; display: flex; align-items: center; gap: 10px; }
-    .sv-title-icon { background: #2563eb; color: #fff; border-radius: 10px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: .95rem; flex-shrink: 0; }
-    .sv-total-badge {
-      background: #eff6ff; color: #1d4ed8; border: 1.5px solid #bfdbfe;
-      border-radius: 20px; padding: 5px 14px; font-size: .82rem; font-weight: 700;
-      white-space: nowrap;
+    if (mobile) {
+      mobile.innerHTML = "";
+      links.forEach((l) => {
+        const a = document.createElement("a");
+        a.href = normalizeUrl(l.link || l.url || "#");
+        if (l.external) { a.target = "_blank"; a.rel = "noopener"; }
+        a.textContent = l.name || "Link";
+        mobile.appendChild(a);
+      });
     }
 
-    /* ── 3-col grid (always 3 on desktop) ── */
-    .sv-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      align-items: start;
-      width: 100%;
+    if (footerSocial) {
+      footerSocial.innerHTML = "";
+      socials.forEach((s) => {
+        const a = document.createElement("a");
+        a.className = "nav-link";
+        a.href = normalizeUrl(s.url || "#");
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.textContent = s.name || "Social";
+        footerSocial.appendChild(a);
+      });
     }
-    @media (max-width: 860px) { .sv-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
-    @media (max-width: 540px) {
-      .sv-grid { grid-template-columns: 1fr; gap: 9px; }
-      .sv-wrap { padding: 12px 10px 28px; }
-      .sv-title { font-size: 1.1rem; gap: 7px; }
-      .sv-title-icon { width: 30px; height: 30px; font-size: .82rem; border-radius: 8px; }
-      .sv-search-btn { padding: 0 14px; font-size: .8rem; }
-      .sv-search-input { font-size: .88rem; padding: 13px 8px 13px 0; }
-      .sv-search-icon { padding: 0 10px 0 12px; }
-      .sv-total-badge { font-size: .78rem; padding: 4px 11px; }
-    }
+  }
 
-    /* ── Card ── */
-    .sv-card {
-      background: #fff; border: 1.5px solid #e2e8f0; border-radius: 14px;
-      padding: 16px 14px 13px; text-decoration: none; color: inherit;
-      display: flex; flex-direction: column; gap: 7px;
-      transition: box-shadow .18s, border-color .18s, transform .15s;
-      position: relative; min-width: 0; width: 100%; overflow: hidden;
-    }
-    .sv-card:hover { box-shadow: 0 8px 24px rgba(37,99,235,.14); border-color: #93c5fd; transform: translateY(-2px); }
+  function initOffcanvas() {
+    const btn = $("#menuBtn");
+    const closeBtn = $("#closeMenuBtn");
+    const menu = $("#mobileMenu");
+    const overlay = $("#menuOverlay");
+    if (!btn || !closeBtn || !menu || !overlay) return;
 
-    /* Serial number badge — matches homepage sn-badge style */
-    .sv-serial {
-      position: absolute; top: 8px; left: 8px;
-      min-width: 22px; height: 22px; padding: 0 6px;
-      background: #0284c7; color: #fff;
-      font-size: 11px; font-weight: 800; line-height: 1;
-      border-radius: 7px;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 1px 4px rgba(2,132,199,0.4);
-      z-index: 1; letter-spacing: 0;
-    }
-
-    .sv-card-title {
-      font-size: .85rem; font-weight: 700; color: #1e293b; line-height: 1.45;
-      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
-      padding-top: 20px; /* space for serial badge */
-      word-break: break-word;
-    }
-    .sv-card-meta { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 3px; }
-    .sv-badge { font-size: .67rem; font-weight: 600; padding: 3px 8px; border-radius: 20px; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
-    .sv-badge-date { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
-    .sv-badge-vac  { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
-    .sv-badge-org  { background: #fdf4ff; color: #7c3aed; border: 1px solid #e9d5ff; }
-    .sv-badge-ext  { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
-    /* Last date row - dedicated styling */
-    .sv-lastdate {
-      font-size: .75rem; color: #64748b; font-weight: 500;
-      display: flex; align-items: center; gap: 4px; margin-top: 2px;
-    }
-    .sv-lastdate-val { color: #dc2626; font-weight: 700; }
-    .sv-card-arrow {
-      margin-top: auto; padding-top: 8px;
-      font-size: .75rem; color: #2563eb; font-weight: 700;
-      border-top: 1px solid #f1f5f9;
-      display: flex; align-items: center; gap: 4px;
-    }
-
-    /* ── States ── */
-    .sv-empty { grid-column: 1/-1; text-align: center; padding: 48px 16px; color: #64748b; font-size: .95rem; }
-    .sv-empty i { font-size: 2.5rem; color: #cbd5e1; display: block; margin-bottom: 12px; }
-    .sv-spinner { grid-column: 1/-1; display: flex; justify-content: center; align-items: center; padding: 48px; color: #64748b; gap: 10px; font-size: .9rem; }
-    .sv-spinner i { font-size: 1.4rem; color: #2563eb; }
-
-    /* ── Load more ── */
-    .sv-more-wrap { text-align: center; margin-top: 24px; }
-    .sv-more-btn {
-      background: #2563eb; color: #fff; border: none; border-radius: 10px;
-      padding: 13px 40px; font-size: .92rem; font-weight: 700; cursor: pointer;
-      transition: background .2s; box-shadow: 0 4px 14px rgba(37,99,235,.25);
-    }
-    .sv-more-btn:hover { background: #1d4ed8; }
-  
-    /* ── Offcanvas nav link alignment fix ── */
-    .offcanvas-nav > a {
-      display: flex !important; align-items: center !important; gap: 10px !important;
-      padding: 10px 12px !important; border-radius: 10px !important;
-      text-decoration: none !important; font-size: .83rem !important; font-weight: 700 !important;
-      color: #1e293b !important; transition: all .15s !important; cursor: pointer !important;
-      background: transparent !important; border: none !important;
-      width: 100% !important; font-family: inherit !important;
-      text-align: left !important; justify-content: flex-start !important;
-      -webkit-tap-highlight-color: transparent !important;
-    }
-    .offcanvas-nav > a:hover { background: #eff6ff !important; color: #1a56db !important; }
-    .offcanvas-nav > a::after { display: none !important; content: none !important; }
-    .mob-acc-head {
-      display: flex !important; align-items: center !important; gap: 10px !important;
-      padding: 10px 12px !important; border-radius: 10px !important;
-      text-decoration: none !important; font-size: .83rem !important; font-weight: 700 !important;
-      color: #1e293b !important; transition: all .15s !important; cursor: pointer !important;
-      background: none !important; border: none !important;
-      width: 100% !important; font-family: inherit !important;
-      text-align: left !important; justify-content: flex-start !important;
-      -webkit-tap-highlight-color: transparent !important;
-    }
-    .mob-acc-head:hover { background: #eff6ff !important; color: #1a56db !important; }
-    .mob-acc-chev { margin-left: auto !important; font-size: .65rem !important; color: #94a3b8 !important; transition: transform .25s !important; flex-shrink: 0 !important; }
-    .mob-acc-head.open .mob-acc-chev { transform: rotate(180deg) !important; }
-    .mob-acc-body { display: none !important; flex-direction: column !important; gap: 1px !important; padding: 3px 0 3px 14px !important; margin: 0 0 2px !important; }
-    .mob-acc-body.open { display: flex !important; }
-    .mob-acc-body a {
-      display: flex !important; align-items: center !important; gap: 9px !important;
-      padding: 8px 12px !important; border-radius: 8px !important;
-      text-decoration: none !important; font-size: .79rem !important; font-weight: 600 !important;
-      color: #334155 !important; transition: all .12s !important;
-      justify-content: flex-start !important; text-align: left !important;
-    }
-    .mob-acc-body a:hover { background: #eff6ff !important; color: #1a56db !important; }
-    .mob-acc-body a i { width: 16px !important; font-size: .78rem !important; color: #1a56db !important; flex-shrink: 0 !important; }
-    .menu-icon-pill { width: 30px !important; height: 30px !important; border-radius: 8px !important; flex-shrink: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important; font-size: .78rem !important; }
-    .menu-badge { font-size: .58rem !important; font-weight: 800 !important; padding: 2px 7px !important; border-radius: 20px !important; letter-spacing: .04em !important; text-transform: uppercase !important; }
-
-    /* ── BRAND LOGO FIX: prevent title truncation on all pages ── */
-    #site-header .brand { flex: 1 1 auto !important; min-width: 0 !important; }
-    #site-header .brand-text { min-width: 0 !important; }
-    #site-header .brand-title { white-space: nowrap !important; font-size: .92rem !important; }
-    #site-header .header-actions { flex-shrink: 0 !important; }
-    #site-header .header-logo-bar { display: flex !important; align-items: center !important; }
+    const close = () => {
+      menu.hidden = true;
+      overlay.hidden = true;
+      btn.setAttribute("aria-expanded", "false");
+      document.body.style.overflow = "";
+    };
     
-  /* ── Smart Date Badge Colors ───────────────────────────────────────── */
-  .section-card .d { display:inline-flex;align-items:center;gap:3px;font-size:0.7rem;font-weight:700;padding:2px 7px;border-radius:20px;margin-top:3px;white-space:nowrap; }
-  .section-card .d.d-green   { background:#16a34a;color:#fff; }
-  .section-card .d.d-orange  { background:#ea580c;color:#fff; }
-  .section-card .d.d-red     { background:#dc2626;color:#fff;animation:pulse-red 1s infinite; }
-  .section-card .d.d-expired { background:#6b7280;color:#fff; }
-  .section-card .d.d-grey    { background:#6b7280;color:#fff; }
-  @keyframes pulse-red { 0%,100%{opacity:1} 50%{opacity:0.7} }
-  
-    /* ── Smart Date Badge ─────────────────────────────────────────────── */
-    .section-link .d { display:inline-flex;align-items:center;gap:3px;margin-left:4px;font-size:.62rem;font-weight:800;color:#fff;background:#6b7280;border-radius:4px;padding:2px 7px;white-space:nowrap;vertical-align:middle;line-height:1.5; }
-    .section-link .d i { font-size:.55rem; }
-    .section-link .d.d-green   { background:#16a34a !important; }
-    .section-link .d.d-orange  { background:#ea580c !important; }
-    .section-link .d.d-red     { background:#dc2626 !important; animation:tsj-pulse 1.2s ease-in-out infinite; }
-    .section-link .d.d-expired { background:#9ca3af !important; opacity:.8; }
-    .section-link .d.d-grey    { background:#6b7280 !important; }
-    @keyframes tsj-pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
-  </style>
-  <!-- Header prefetch -->
-  <script>
-  (function(){
-    var _hp=fetch("/header.html",{cache:"no-store"}).then(function(r){return r.ok?r.text():null;}).catch(function(){return null;});
-    window.__headerPromise=_hp;
-    function _inj(){var h=document.getElementById("site-header");if(!h||h.innerHTML.trim())return;_hp.then(function(html){if(!html||h.innerHTML.trim())return;h.innerHTML=html;if(typeof window.__TSJ_INIT_HEADER==="function")window.__TSJ_INIT_HEADER();});}
-    document.readyState==="loading"?document.addEventListener("DOMContentLoaded",_inj):_inj();
-  })();
-  </script>
-
-  <style>.skip-link{position:absolute;transform:translateY(-100%);background:#000;color:#fff;padding:8px 16px;z-index:9999;transition:transform .3s;text-decoration:none;}.skip-link:focus{transform:translateY(0);}</style>
-
-  <!-- ══ PWA INSTALL SYSTEM v4.0 ══════════════════════════════════ -->
-  <link rel="manifest" href="/manifest.json"/>
-  <meta name="theme-color" content="#0d2257" media="(prefers-color-scheme: light)"/>
-  <meta name="theme-color" content="#0a1a4a" media="(prefers-color-scheme: dark)"/>
-  <meta name="apple-mobile-web-app-capable" content="yes"/>
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <meta name="apple-mobile-web-app-title" content="TopSarkariJobs"/>
-  <meta name="mobile-web-app-capable" content="yes"/>
-  <meta name="application-name" content="Top Sarkari Jobs"/>
-  <meta name="msapplication-TileColor" content="#0d2257"/>
-  <meta name="msapplication-TileImage" content="/icons/icon-144x144.png"/>
-  <meta name="msapplication-tap-highlight" content="no"/>
-  <link rel="apple-touch-icon" href="/icons/icon-180x180.png"/>
-  <link rel="apple-touch-icon" sizes="57x57"   href="/icons/apple-touch-icon-57x57.png"/>
-  <link rel="apple-touch-icon" sizes="60x60"   href="/icons/apple-touch-icon-60x60.png"/>
-  <link rel="apple-touch-icon" sizes="72x72"   href="/icons/apple-touch-icon-72x72.png"/>
-  <link rel="apple-touch-icon" sizes="76x76"   href="/icons/apple-touch-icon-76x76.png"/>
-  <link rel="apple-touch-icon" sizes="114x114" href="/icons/apple-touch-icon-114x114.png"/>
-  <link rel="apple-touch-icon" sizes="120x120" href="/icons/apple-touch-icon-120x120.png"/>
-  <link rel="apple-touch-icon" sizes="144x144" href="/icons/apple-touch-icon-144x144.png"/>
-  <link rel="apple-touch-icon" sizes="152x152" href="/icons/apple-touch-icon-152x152.png"/>
-  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon-180x180.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:430px)and(device-height:932px)and(-webkit-device-pixel-ratio:3)" href="/splash/splash-1290x2796.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:393px)and(device-height:852px)and(-webkit-device-pixel-ratio:3)" href="/splash/splash-1179x2556.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:390px)and(device-height:844px)and(-webkit-device-pixel-ratio:3)" href="/splash/splash-1170x2532.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:375px)and(device-height:812px)and(-webkit-device-pixel-ratio:3)" href="/splash/splash-1125x2436.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:414px)and(device-height:896px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-828x1792.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:375px)and(device-height:667px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-750x1334.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
-  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
-  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
-  <script src="/pwa-install.js?v=6.0" defer></script>
-  <!-- ══ END PWA ════════════════════════════════════════════════════ -->
-</head>
-<body>
-  <div id="site-header"></div>
-  <main id="main-content">
-    <!-- iFrame tool -->
-    <section id="url-view" style="display:none;height:calc(100vh - 60px);">
-      <iframe id="url-iframe" title="Viewer" style="width:100%;height:100%;border:none;"
-        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads allow-modals"></iframe>
-    </section>
-
-    <!-- Section listing -->
-    <section id="section-view" style="display:none;">
-      <div class="sv-wrap">
-        <div class="sv-search-wrap">
-          <div class="sv-search-row">
-            <span class="sv-search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
-            <input id="sv-input" type="search" class="sv-search-input"
-              placeholder="Search jobs in this section..." autocomplete="off" aria-label="Search jobs" />
-            <button id="sv-btn" class="sv-search-btn"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
-          </div>
-          <div id="sv-dropdown" class="sv-search-dropdown" role="listbox"></div>
-        </div>
-        <div class="sv-header-row">
-          <h2 id="sv-title" class="sv-title">
-            <span class="sv-title-icon"><i class="fa-solid fa-bell"></i></span>
-            Jobs 2026
-          </h2>
-          <span id="sv-total" class="sv-total-badge" style="display:none;">Total Jobs: 0</span>
-        </div>
-        <div id="sv-grid" class="sv-grid">
-          <div class="sv-spinner"><i class="fa-solid fa-spinner fa-spin"></i> Loading jobs…</div>
-        </div>
-        <div class="sv-more-wrap" id="sv-more-wrap" style="display:none;">
-          <button class="sv-more-btn" id="sv-more-btn">Load More Jobs</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- Fallback -->
-    <section id="fallback-view" style="display:none;">
-      <div style="max-width:600px;margin:48px auto;padding:0 16px;text-align:center;">
-        <i class="fa-solid fa-list-check" style="font-size:2.5rem;color:#cbd5e1;"></i>
-        <h3 style="margin:12px 0 6px;font-size:1.1rem;font-weight:700;">Choose a Section</h3>
-        <div id="fallback-links" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;text-align:left;"></div>
-      </div>
-    </section>
-  </main>
-  <div id="site-footer"></div>
-
-  <script>
-  (function(){
-    'use strict';
-
-    var SLUG_MAP = {
-      /* Complete_Jobs_Full_Data.json */
-      '10th-pass-jobs':       {file:'complete',key:'10TH_Pass'},
-      '10th-pass':            {file:'complete',key:'10TH_Pass'},
-      '8th-pass':             {file:'complete',key:'8TH_Pass'},
-      '8th-pass-jobs':        {file:'complete',key:'8TH_Pass'},
-      '12th-pass-jobs':       {file:'complete',key:'12TH_Pass'},
-      '12th-pass':            {file:'complete',key:'12TH_Pass'},
-      'diploma-jobs':         {file:'complete',key:'Diploma'},
-      'iti-jobs':             {file:'complete',key:'ITI'},
-      'btech-jobs':           {file:'complete',key:'B_Tech_BE'},
-      'b-tech-jobs':          {file:'complete',key:'B_Tech_BE'},
-      'bcom-jobs':            {file:'complete',key:'B_Com'},
-      'graduation-jobs':      {file:'complete',key:'Any_Graduate'},
-      'any-graduate':         {file:'complete',key:'Any_Graduate'},
-      'ba-pass':              {file:'complete',key:'Any_Graduate'},
-      'post-graduation-jobs': {file:'complete',key:'Any_Post_Graduate'},
-      'railway-jobs':         {file:'complete',key:'Railway_Jobs'},
-      'police-jobs':          {file:'complete',key:'Police_Defence'},
-      'army-jobs':            {file:'complete',key:'Police_Defence'},
-      'teaching-jobs':        {file:'complete',key:'Teaching_Faculty'},
-      'teacher-jobs':         {file:'complete',key:'Teaching_Faculty'},
-      'bank-jobs':            {file:'complete',key:'Bank_Jobs'},
-      'healthcare-jobs':           {file:'complete',key:'Medical_Hospital'},
-      'medical-jobs':              {file:'complete',key:'Medical_Hospital'},
-      'medical-healthcare-jobs':   {file:'complete',key:'Medical_Hospital'},
-      'hospital-jobs':             {file:'complete',key:'Medical_Hospital'},
-      'last-date-reminder':   {file:'complete',key:'Last_Date_Reminder'},
-      'latest-notifications': {file:'complete',key:'Latest_Notifications'},
-      /* dailyupdates.json */
-      'govt-scheme-yojna':    {file:'daily',key:'Govt Scheme Yojna'},
-      'important-csc-pdf':    {file:'daily',key:'Important CSC PDF'},
-      'important-csc-link':   {file:'daily',key:'Important CSC Link'},
-      'top-20-jobs':          {file:'daily',key:'Top 20 Jobs'},
-      'today-updates':        {file:'daily',key:'Today Updates'},
-      'top-headlines':        {file:'daily',key:'TOP Headlines Today'},
-      /* merged_sarkari_data.json */
-      'latest-jobs':          {file:'merged',key:'SR_Latest_Jobs'},
-      'latest-govt-jobs':     {file:'merged',key:'SR_Latest_Jobs'},
-      'admit-card':           {file:'merged',key:'SR_Admit_Card'},
-      'results':              {file:'merged',key:'SR_Result'},
-      'result':               {file:'merged',key:'SR_Result'},
-      'admission':            {file:'merged',key:'SR_Admission'},
-      'answer-key':           {file:'merged',key:'SR_Answer_Key'},
-      'offline-form':         {file:'merged',key:'_offline'},
-      'offline-jobs':         {file:'merged',key:'_offline'},
-      /* Extra slug aliases */
-      'upcoming-jobs':          {file:'merged',key:'UPCOMING_JOBS'},
-      'jobs-with-last-date':    {file:'complete',key:'Last_Date_Reminder'},
-      'last-date-jobs':         {file:'complete',key:'Last_Date_Reminder'},
-      'haryana-all-state-jobs': {file:'merged',key:'SR_Latest_Jobs'},
-      'haryana-jobs':           {file:'merged',key:'SR_Latest_Jobs'},
-      /* AUTO: new categories from merged_sarkari_data.json get added here */
-      'latest-jobs-new':        {file:'merged',key:'LATEST_JOBS NEW'}
+    const open = () => {
+      menu.hidden = false;
+      overlay.hidden = false;
+      btn.setAttribute("aria-expanded", "true");
+      document.body.style.overflow = "hidden";
     };
 
-    function slugify(s){return(s||'').toLowerCase().replace(/[^\w\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');}
-    function titleCase(s){return(s||'').replace(/-/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();});}
-    function qp(n){return new URLSearchParams(window.location.search).get(n)||'';}
+    btn.addEventListener("click", open);
+    closeBtn.addEventListener("click", close);
+    overlay.addEventListener("click", close);
+    menu.addEventListener("click", (e) => {
+      if (e.target.closest("a")) close();
+    });
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 980) close();
+      safeHideOldSearchBars(); 
+    });
+    window.__closeMenu = close;
 
-    /* ── Date formatter: YYYY-MM-DD / DD-MM-YYYY / any → DD/MM/YYYY ── */
-    function fmtDate(val){
-      if(!val||typeof val!=='string') return val||'';
-      var s=val.trim();
-      if(!s) return '';
-      // YYYY-MM-DD → DD/MM/YYYY
-      var m=s.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
-      if(m) return ('0'+m[3]).slice(-2)+'/'+('0'+m[2]).slice(-2)+'/'+m[1];
-      // DD-MM-YYYY or DD/MM/YYYY already
-      m=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
-      if(m) return ('0'+m[1]).slice(-2)+'/'+('0'+m[2]).slice(-2)+'/'+m[3];
-      return s;
-    }
+    /* ── Mobile Menu Accordion ── */
+    initMobileAccordion();
 
-    var rawSection=qp('section');
-    if(!rawSection){var pm=window.location.pathname.match(/\/section\/([^/]+)\/?$/);if(pm)rawSection=decodeURIComponent(pm[1]);}
-    var currentSlug=slugify(rawSection);
+    /* ── Mobile Menu Search Filter ── */
+    initMenuSearch();
+  }
 
-    if(rawSection&&window.history&&window.history.replaceState){
-      try{window.history.replaceState({},'','/section/'+currentSlug+'/');}catch(e){}
-    }
+  function initMobileAccordion() {
+    /* Remove old listeners by replacing with fresh ones via event delegation on menu */
+    const menu = document.getElementById("mobileMenu");
+    if (!menu || menu._accInit) return;
+    menu._accInit = true;
 
-    var urlParam=qp('url');
-    if(urlParam){
-      document.getElementById('url-view').style.display='';
-      document.getElementById('url-iframe').src=decodeURIComponent(urlParam);
-      return;
-    }
-
-    if(!rawSection){
-      document.getElementById('fallback-view').style.display='';
-      var fl=document.getElementById('fallback-links');
-      [['Latest Jobs','/section/latest-jobs/'],['10th Pass Jobs','/section/10th-pass-jobs/'],
-       ['12th Pass Jobs','/section/12th-pass-jobs/'],['Railway Jobs','/section/railway-jobs/'],
-       ['Bank Jobs','/section/bank-jobs/'],['Police Jobs','/section/police-jobs/'],
-       ['Admit Card','/section/admit-card/'],['Results','/section/results/']
-      ].forEach(function(c){
-        var a=document.createElement('a');a.href=c[1];a.textContent=c[0];
-        a.style.cssText='display:block;padding:10px 14px;background:#eff6ff;border-radius:8px;color:#1d4ed8;font-weight:600;font-size:.88rem;text-decoration:none;';
-        fl.appendChild(a);
+    menu.addEventListener("click", function(e) {
+      const btn = e.target.closest(".mob-acc-head");
+      if (!btn) return;
+      e.stopPropagation();
+      const id   = btn.getAttribute("data-acc");
+      const body = document.getElementById(id);
+      if (!body) return;
+      const isOpen = btn.classList.contains("open");
+      /* Close all other accordions */
+      menu.querySelectorAll(".mob-acc-head.open").forEach(function(b) {
+        if (b !== btn) {
+          b.classList.remove("open");
+          const ob = document.getElementById(b.getAttribute("data-acc"));
+          if (ob) ob.classList.remove("open");
+        }
       });
-      return;
+      /* Toggle current */
+      btn.classList.toggle("open", !isOpen);
+      body.classList.toggle("open", !isOpen);
+    });
+  }
+
+  function initMenuSearch() {
+    const menu = document.getElementById("mobileMenu");
+    if (!menu) return;
+    const inp = menu.querySelector("#menuSearchInput");
+    if (!inp || inp._searchInit) return;
+    inp._searchInit = true;
+
+    /* ── Build / reuse job search results container below the search box ── */
+    let jobResultsBox = menu.querySelector("#menuJobResults");
+    if (!jobResultsBox) {
+      jobResultsBox = document.createElement("div");
+      jobResultsBox.id = "menuJobResults";
+      jobResultsBox.style.cssText = [
+        "display:none",
+        "max-height:260px",
+        "overflow-y:auto",
+        "background:#fff",
+        "border-top:1px solid #e2e8f0",
+        "padding:4px 0"
+      ].join(";");
+      const searchWrap = menu.querySelector(".offcanvas-search");
+      if (searchWrap) searchWrap.after(jobResultsBox);
     }
 
-    document.getElementById('section-view').style.display='';
-    var svTitle=document.getElementById('sv-title');
-    var svTotal=document.getElementById('sv-total');
-    var svGrid=document.getElementById('sv-grid');
-    var svInput=document.getElementById('sv-input');
-    var svBtn=document.getElementById('sv-btn');
-    var svDrop=document.getElementById('sv-dropdown');
-    var svMoreWrap=document.getElementById('sv-more-wrap');
-    var svMoreBtn=document.getElementById('sv-more-btn');
-
-    var titleLabel=titleCase(currentSlug)+' '+new Date().getFullYear();
-    if(svTitle){svTitle.innerHTML='<span class="sv-title-icon"><i class="fa-solid fa-bell"></i></span> '+titleLabel;}
-
-    var PAGE_SIZE=30, allItems=[], shownCount=0;
-
-    function buildCard(item, idx){
-      var a=document.createElement('a');
-      if(item.slug){a.href='/jobs/'+item.slug+'/';}
-      else if(item.url&&item.url!=='#'&&!/^view\.html/.test(item.url)){
-        a.href=item.url;
-        if(!/topsarkarijobs\.com/.test(item.url)){a.target='_blank';a.rel='noopener noreferrer';}
-      } else {a.href='#';}
-      a.className='sv-card'; a.title=item.name;
-
-      /* Serial number badge */
-      var serial=document.createElement('span');serial.className='sv-serial';serial.textContent=(idx+1);
-      a.appendChild(serial);
-
-      /* Title */
-      var t=document.createElement('div');t.className='sv-card-title';t.textContent=item.name;
-      a.appendChild(t);
-
-      /* Badges row: vacancies + org */
-      var meta=document.createElement('div');meta.className='sv-card-meta';
-      function badge(cls,text){if(!text)return;var s=document.createElement('span');s.className='sv-badge '+cls;s.textContent=text;meta.appendChild(s);}
-      badge('sv-badge-vac', item.vac ? '📋 '+item.vac+' Posts' : '');
-      badge('sv-badge-org', item.org ? item.org.slice(0,30)+(item.org.length>30?'…':'') : '');
-      if(a.target==='_blank') badge('sv-badge-ext','🔗 External');
-      if(meta.childElementCount) a.appendChild(meta);
-
-      /* Last date — dedicated visible row */
-      if(item.date){
-        var ld=document.createElement('div');ld.className='sv-lastdate';
-        ld.innerHTML='📅 Last Date: <span class="sv-lastdate-val">'+fmtDate(item.date)+'</span>';
-        a.appendChild(ld);
-      }
-
-      /* View details arrow */
-      var arrow=document.createElement('div');arrow.className='sv-card-arrow';
-      arrow.innerHTML='View Details <i class="fa-solid fa-arrow-right" style="font-size:.65rem;margin-left:2px;"></i>';
-      a.appendChild(arrow);
-
-      return a;
-    }
-
-    function renderPage(){
-      var batch=allItems.slice(shownCount,shownCount+PAGE_SIZE);
-      batch.forEach(function(item,i){svGrid.appendChild(buildCard(item, shownCount+i));});
-      shownCount+=batch.length;
-      svMoreWrap.style.display=shownCount<allItems.length?'block':'none';
-    }
-
-    function showItems(items){
-      allItems=items; shownCount=0; svGrid.innerHTML='';
-      /* Update total jobs counter */
-      if(svTotal){svTotal.textContent='Total Jobs: '+items.length;svTotal.style.display=items.length?'':'none';}
-      if(!items.length){
-        svGrid.innerHTML='<div class="sv-empty"><i class="fa-solid fa-folder-open"></i>No jobs found. Check back soon!</div>';
-        svMoreWrap.style.display='none'; return;
-      }
-      renderPage();
-    }
-
-    svMoreBtn&&svMoreBtn.addEventListener('click',renderPage);
-
-    function setupSearch(){
-      if(!svInput)return;
-      var _allItems=allItems; /* reference at setup time; updated via closure below */
-
-      /* Live dropdown suggestions as user types */
-      svInput.addEventListener('input',function(){
-        var q=this.value.trim().toLowerCase();
-        if(q.length<2){svDrop.style.display='none';return;}
-        var hits=allItems.filter(function(i){return(i.name||'').toLowerCase().indexOf(q)!==-1;}).slice(0,12);
-        svDrop.innerHTML='';
-        if(!hits.length){
-          svDrop.innerHTML='<div style="padding:12px 14px;font-size:.84rem;color:#64748b;">No results for "'+q+'"</div>';
-        } else {
-          hits.forEach(function(item){
-            var a=document.createElement('a');a.className='sv-drop-item';
-            a.href=item.slug?'/jobs/'+item.slug+'/':(item.url||'#');
-            var n=document.createElement('span');n.className='sv-drop-name';n.textContent=item.name;
-            var m=document.createElement('span');m.className='sv-drop-meta';
-            m.textContent=[item.date&&'Last Date: '+fmtDate(item.date),item.vac&&item.vac+' posts'].filter(Boolean).join(' · ');
-            a.appendChild(n);a.appendChild(m);svDrop.appendChild(a);
+    /* ── Load job data once (lazy) ── */
+    let jobSearchData = null;
+    async function ensureJobData() {
+      if (jobSearchData) return jobSearchData;
+      jobSearchData = [];
+      try {
+        const [merged, complete] = await Promise.all([
+          getJSON("merged_sarkari_data.json").catch(() => null),
+          getJSON("Complete_Jobs_Full_Data.json").catch(() => null)
+        ]);
+        const slugify = t => (t || "").toLowerCase().replace(/[^a-z0-9\s-]/g, "").replace(/[\s-]+/g, "-").slice(0, 120).replace(/^-+|-+$/g, "");
+        if (merged && Array.isArray(merged.jobs)) {
+          merged.jobs.forEach(j => {
+            if (!j.title) return;
+            const slug = j.slug || slugify(j.title);
+            jobSearchData.push({ name: j.title.trim(), href: slug ? "/jobs/" + slug + "/" : "#" });
           });
         }
-        svDrop.style.display='block';
-      });
-
-      /* Close dropdown when clicking outside */
-      document.addEventListener('click',function(e){
-        if(!svDrop.contains(e.target)&&e.target!==svInput) svDrop.style.display='none';
-      });
-
-      /* Filter grid on Search button click or Enter key */
-      function doSearch(){
-        var q=svInput.value.trim().toLowerCase();
-        svDrop.style.display='none';
-        if(!q){
-          /* Empty search — restore full list */
-          shownCount=0; svGrid.innerHTML='';
-          if(svTotal) svTotal.textContent='Total Jobs: '+allItems.length;
-          allItems.forEach(function(item,i){svGrid.appendChild(buildCard(item,i));});
-          svMoreWrap.style.display=allItems.length>PAGE_SIZE?'block':'none';
-          return;
-        }
-        var filtered=allItems.filter(function(i){return(i.name||'').toLowerCase().indexOf(q)!==-1;});
-        shownCount=0; svGrid.innerHTML='';
-        if(svTotal) svTotal.textContent='Total Jobs: '+filtered.length;
-        if(!filtered.length){
-          svGrid.innerHTML='<div class="sv-empty"><i class="fa-solid fa-folder-open"></i>No results for "'+svInput.value.trim()+'"</div>';
-          svMoreWrap.style.display='none';
-          return;
-        }
-        filtered.forEach(function(item,i){svGrid.appendChild(buildCard(item,i));});
-        svMoreWrap.style.display='none';
-      }
-
-      svBtn&&svBtn.addEventListener('click',doSearch);
-      svInput.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();doSearch();}});
-    }
-
-    function normaliseComplete(job){
-      var bd=job.basic_details||{};var id=job.important_dates||{};var vd=job.vacancy_details||{};
-      return{
-        name:bd.job_title||bd.post_name||job.title||job.name||'',
-        slug:job.slug||slugify(bd.job_title||job.title||job.name||''),
-        date:fmtDate(id.last_date_to_apply||id.last_date||id.application_end_date||id.last_date_of_application||''),
-        vac:bd.total_vacancies||vd.total||'',
-        org:bd.organization_name||'',
-        url:bd.official_website||'#'
-      };
-    }
-
-    function normaliseDaily(item){return{name:item.name||item.title||'',slug:slugify(item.name||item.title||''),date:'',vac:'',org:'',url:item.url||'#'};}
-
-    function normaliseMerged(j){return{name:(j.title||j.name||'').trim(),slug:j.slug||slugify(j.title||j.name||''),date:fmtDate((j.important_dates&&(j.important_dates.last_date_to_apply||j.important_dates.last_date))||j.last_date||''),vac:'',org:'',url:j.source_url||j.url||j.link||'#'};}
-
-    var cfg=SLUG_MAP[currentSlug];
-    /* ── DYNAMIC fallback: if slug not in SLUG_MAP, try matching against
-       any category key found in merged_sarkari_data.json at runtime.
-       Example: /section/latest-jobs-new/ → key 'LATEST_JOBS NEW'
-       Converts slug → uppercase with spaces: 'latest-jobs-new' → 'LATEST JOBS NEW'
-       Then also tries with underscores: 'LATEST_JOBS_NEW'
-    ── */
-    if(!cfg){
-      /* Convert slug to potential category key variants */
-      var slugUpper=currentSlug.toUpperCase().replace(/-/g,' ');
-      var slugUnder=currentSlug.toUpperCase().replace(/-/g,'_');
-      cfg={file:'merged',key:slugUpper,_dynamicFallback:true,_altKey:slugUnder};
-    }
-
-    if(cfg&&cfg.file==='complete'){
-      fetch('/Complete_Jobs_Full_Data.json').then(function(r){return r.ok?r.json():null;}).catch(function(){return null;})
-      .then(function(data){
-        var arr=(data&&data[cfg.key])||[];
-        var items=arr.map(normaliseComplete).filter(function(i){return!!i.name;});
-        showItems(items);setupSearch();
-        if(window.__SEO_updateSection)window.__SEO_updateSection(rawSection,items);
-      });
-
-    } else if(cfg&&cfg.file==='daily'){
-      fetch('/dailyupdates.json').then(function(r){return r.ok?r.json():null;}).catch(function(){return null;})
-      .then(function(data){
-        var sections=(data&&data.sections)||(Array.isArray(data)?data:[]);
-        var rawItems=[];
-        sections.forEach(function(s){if(s.id===cfg.key)rawItems=rawItems.concat(s.items||[]);});
-        var items=rawItems.map(normaliseDaily).filter(function(i){return!!i.name;});
-        showItems(items);setupSearch();
-        if(window.__SEO_updateSection)window.__SEO_updateSection(rawSection,items);
-      });
-
-    } else if(cfg&&cfg.file==='merged'){
-      fetch('/merged_sarkari_data.json').then(function(r){return r.ok?r.json():null;}).catch(function(){return null;})
-      .then(function(jsonData){
-        if(!jsonData){showItems([]);setupSearch();return;}
-        if(Array.isArray(jsonData.jobs)&&jsonData.jobs.length>0){
-          /* DYNAMIC: accept ALL category values from JSON, not just known ones */
-          var KA=['admit card','hall ticket','call letter'],KN=['answer key','answer sheet','objection'],
-              KR=['result','merit list','cut off','cutoff','scorecard'],KD=['admission','counselling','counseling'];
-          function hk(t,l){var tl=t.toLowerCase();for(var i=0;i<l.length;i++){if(tl.indexOf(l[i])!==-1)return true;}return false;}
-          /* Dynamic bucket map — any category key is accepted */
-          var bk={_offline:[]};
-          function getBkt(key){if(!bk[key])bk[key]=[];return bk[key];}
-          jsonData.jobs.forEach(function(j){
-            var item={title:j.title||'',url:j.official_website_link||'#',source_url:j.official_website_link||'#',
-              last_date:(j.important_dates&&j.important_dates.last_date)||'',apply_mode:j.apply_mode||'',slug:j.slug||''};
-            var mode=(j.apply_mode||'').toLowerCase(),sc=(j.sr_category||j.category||'').trim();
-            if(mode==='offline'||sc==='OFFLINE_FORM'){bk._offline.push(item);return;}
-            /* If category field present — use it directly (known OR unknown) */
-            if(sc){getBkt(sc).push(item);return;}
-            /* Keyword fallback when category field absent */
-            if(hk(j.title||'',KA))getBkt('SR_Admit_Card').push(item);
-            else if(hk(j.title||'',KN))getBkt('SR_Answer_Key').push(item);
-            else if(hk(j.title||'',KR))getBkt('SR_Result').push(item);
-            else if(hk(j.title||'',KD))getBkt('SR_Admission').push(item);
-            else getBkt('SR_Latest_Jobs').push(item);
-          });
-          jsonData={sarkariresult_categories:bk,sarkariresultshine_jobs:bk._offline};
-        }
-        var _srCats=(jsonData.sarkariresult_data&&jsonData.sarkariresult_data.data)||jsonData.sarkariresult_categories||{};
-        var srItems;
-        if(cfg.key==='_offline'){
-          srItems=jsonData.sarkariresultshine_jobs||[];
-        } else {
-          srItems=_srCats[cfg.key]||[];
-          /* Dynamic fallback: try alt key (underscore variant) if primary empty */
-          if(!srItems.length&&cfg._altKey&&cfg._altKey!==cfg.key){
-            srItems=_srCats[cfg._altKey]||[];
-          }
-          /* Dynamic fallback: scan all keys case-insensitively */
-          if(!srItems.length&&cfg._dynamicFallback){
-            var slugNorm=currentSlug.replace(/-/g,'').toLowerCase();
-            Object.keys(_srCats).forEach(function(k){
-              if(k.replace(/[_\s]/g,'').toLowerCase()===slugNorm&&!srItems.length){
-                srItems=_srCats[k]||[];
-              }
-            });
-          }
-        }
-        var items=srItems.map(normaliseMerged).filter(function(i){return!!i.name;});
-        showItems(items);setupSearch();
-        if(window.__SEO_updateSection)window.__SEO_updateSection(rawSection,items);
-      });
-
-    } else {
-      /* Keyword fallback across all files */
-      var sp=currentSlug.replace(/-/g,' ').toLowerCase();
-      Promise.all([
-        fetch('/Complete_Jobs_Full_Data.json').then(function(r){return r.ok?r.json():null;}).catch(function(){return null;}),
-        fetch('/dailyupdates.json').then(function(r){return r.ok?r.json():null;}).catch(function(){return null;})
-      ]).then(function(res){
-        var found=[];
-        if(res[0]&&typeof res[0]==='object'){
-          Object.values(res[0]).forEach(function(sec){
-            if(!Array.isArray(sec))return;
-            sec.forEach(function(job){
-              var bd=job.basic_details||{};
-              var t=(bd.job_title||bd.post_name||'').toLowerCase();
-              if(t.indexOf(sp)!==-1)found.push(normaliseComplete(job));
+        if (complete && typeof complete === "object") {
+          Object.keys(complete).forEach(k => {
+            if (!Array.isArray(complete[k])) return;
+            complete[k].forEach(i => {
+              const bd = i.basic_details || {};
+              const title = bd.job_title || bd.post_name || i.title || i.name || "";
+              if (!title) return;
+              const slug = i.slug || slugify(title);
+              jobSearchData.push({ name: title.trim(), href: slug ? "/jobs/" + slug + "/" : "#" });
             });
           });
         }
-        if(res[1]){
-          var sects=(res[1].sections||(Array.isArray(res[1])?res[1]:[]));
-          sects.forEach(function(s){
-            if((s.id||'').toLowerCase().indexOf(sp)!==-1)
-              (s.items||[]).forEach(function(i){found.push(normaliseDaily(i));});
-          });
-        }
-        var seen={};
-        found=found.filter(function(i){var k=slugify(i.name);if(!k||seen[k])return false;seen[k]=true;return true;});
-        showItems(found);setupSearch();
-        if(window.__SEO_updateSection)window.__SEO_updateSection(rawSection,found);
-      });
+        /* Deduplicate by name */
+        const seen = new Set();
+        jobSearchData = jobSearchData.filter(j => {
+          if (seen.has(j.name)) return false;
+          seen.add(j.name); return true;
+        });
+      } catch (_) {}
+      return jobSearchData;
     }
 
-  })();
-  </script>
+    inp.addEventListener("input", async function() {
+      const q = this.value.trim().toLowerCase();
 
-  <div id="site-footer"></div>
+      /* ── 1. Filter nav links (same as before) ── */
+      menu.querySelectorAll(".offcanvas-nav > a").forEach(function(a) {
+        a.style.display = (!q || a.textContent.toLowerCase().includes(q)) ? "" : "none";
+      });
+      menu.querySelectorAll(".mob-acc-body a").forEach(function(a) {
+        a.style.display = (!q || a.textContent.toLowerCase().includes(q)) ? "" : "none";
+      });
+      menu.querySelectorAll(".mob-acc-body").forEach(function(b) {
+        b.classList.toggle("open", !!q);
+      });
+      menu.querySelectorAll(".mob-acc-head").forEach(function(b) {
+        b.classList.toggle("open", !!q);
+      });
 
-    <!-- Mobile offcanvas menu (new modern design) -->
-  <div id="menuOverlay" class="overlay" hidden></div>
-  <aside id="mobileMenu" class="offcanvas" aria-label="Mobile menu" hidden>
-    <div class="offcanvas-head">
-      <div class="offcanvas-head-left">
-        <picture>
-          <source srcset="/image.webp" type="image/webp">
-          <picture>
-            <source srcset="/image.webp" type="image/webp">
-            <img src="/image.png" alt="Logo" class="offcanvas-head-logo" width="34" height="34" decoding="async">
-          </picture>
-        </picture>
-        <div class="offcanvas-head-texts">
-          <span class="offcanvas-title">TOP SARKARI JOBS</span>
-          <span class="offcanvas-sub">India's No.1 Sarkari Jobs Portal</span>
+      /* ── 2. Search job titles ── */
+      if (!q || q.length < 2) {
+        jobResultsBox.style.display = "none";
+        jobResultsBox.innerHTML = "";
+        return;
+      }
+
+      const data = await ensureJobData();
+      const tokens = q.split(/\s+/).filter(t => t.length);
+      const hits = data.filter(j => tokens.every(t => j.name.toLowerCase().includes(t))).slice(0, 12);
+
+      jobResultsBox.innerHTML = "";
+      if (!hits.length) {
+        jobResultsBox.innerHTML = '<div style="padding:10px 16px;font-size:.78rem;color:#94a3b8;text-align:center;">No job found. Try: SSC, Railway, Bank…</div>';
+      } else {
+        hits.forEach(h => {
+          const a = document.createElement("a");
+          a.href = h.href;
+          a.style.cssText = "display:flex;align-items:center;gap:9px;padding:9px 14px;font-size:.78rem;font-weight:600;color:#1e293b;text-decoration:none;border-bottom:1px solid #f1f5f9;transition:background .12s;";
+          a.innerHTML = `<i class="fa-solid fa-briefcase" style="color:#2563eb;font-size:.72rem;flex-shrink:0;"></i><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${h.name}</span>`;
+          a.addEventListener("mouseover", () => { a.style.background = "#eff6ff"; });
+          a.addEventListener("mouseout", () => { a.style.background = ""; });
+          jobResultsBox.appendChild(a);
+        });
+      }
+      jobResultsBox.style.display = "block";
+    });
+  }
+
+  function initDropdowns() {
+    const dds = $$("[data-dd]");
+    if (!dds.length) return;
+    const canHover = () => window.matchMedia("(hover:hover) and (pointer:fine)").matches;
+    const timers = new WeakMap();
+
+    const setOpen = (dd, open) => {
+      const btn = $(".nav-dd-btn", dd);
+      const menu = $(".nav-dd-menu", dd);
+      if (!btn || !menu) return;
+      if (open) {
+        menu.classList.add("open");
+        btn.setAttribute("aria-expanded", "true");
+      } else {
+        menu.classList.remove("open");
+        btn.setAttribute("aria-expanded", "false");
+      }
+    };
+
+    const clearTimer = (dd) => {
+      const t = timers.get(dd);
+      if (t) clearTimeout(t);
+      timers.delete(dd);
+    };
+    const closeAll = () => {
+      dds.forEach((dd) => { clearTimer(dd); setOpen(dd, false); });
+    };
+    const scheduleClose = (dd) => {
+      clearTimer(dd);
+      timers.set(dd, setTimeout(() => setOpen(dd, false), 180));
+    };
+
+    dds.forEach((dd) => {
+      const btn = $(".nav-dd-btn", dd);
+      const menu = $(".nav-dd-menu", dd);
+      if (!btn || !menu) return;
+
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const isOpen = menu.classList.contains("open");
+        closeAll();
+        if (!isOpen) setOpen(dd, true);
+      });
+      btn.addEventListener("mouseenter", () => {
+        if (!canHover()) return;
+        clearTimer(dd);
+        closeAll();
+        setOpen(dd, true);
+      });
+      btn.addEventListener("mouseleave", () => {
+        if (!canHover()) return;
+        scheduleClose(dd);
+      });
+      menu.addEventListener("mouseenter", () => {
+        if (!canHover()) return;
+        clearTimer(dd);
+        setOpen(dd, true);
+      });
+      menu.addEventListener("mouseleave", () => {
+        if (!canHover()) return;
+        scheduleClose(dd);
+      });
+    });
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest("[data-dd]")) closeAll();
+    });
+  }
+
+  function initFAQ() {
+    $$(".faq-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const expanded = btn.getAttribute("aria-expanded") === "true";
+        $$(".faq-btn").forEach((b) => {
+          b.setAttribute("aria-expanded", "false");
+          const p = b.parentElement.querySelector(".faq-panel");
+          if (p) p.hidden = true;
+        });
+        if (!expanded) {
+          btn.setAttribute("aria-expanded", "true");
+          const p = btn.parentElement.querySelector(".faq-panel");
+          if (p) p.hidden = false;
+        }
+      });
+    });
+  }
+
+  async function renderHomepageSections() {
+    const wrap = $("#dynamic-sections");
+    if (!wrap) return;
+
+    let data = { sections: [] };
+    let fetchFailed = false;
+    try { data = await getJobsSections(); }
+    catch (_) { fetchFailed = true; }
+
+    // ISSUE-009: surface a visible message when the data file failed to load
+    // instead of silently rendering a blank homepage.
+    // FIX: Don't clear innerHTML until data successfully loaded — prevents
+    // pre-rendered SSG cards from disappearing on slow/failed fetch.
+    if (fetchFailed || !Array.isArray(data.sections) || !data.sections.length) {
+      if (!wrap.hasChildNodes()) {
+        // Only show error if there's no pre-rendered content already
+        const note = document.createElement("div");
+        note.className = "seo-block";
+        note.style.margin = "16px 0";
+        note.innerHTML = fetchFailed
+          ? "<strong>Couldn't load the latest updates.</strong><div style=\"margin-top:6px;color:var(--muted);\">Please check your connection and refresh the page.</div>"
+          : "<strong>No updates to show right now.</strong>";
+        wrap.appendChild(note);
+      }
+      if (fetchFailed) return;
+      // If sections empty but no fetch error, keep existing pre-rendered content
+      return;
+    }
+
+    // Data loaded successfully — now safe to clear and re-render
+    wrap.innerHTML = "";
+
+    // ── RENDER ALL SECTIONS IMMEDIATELY — no lazy scroll needed for job cards ──
+    const sections = data.sections || [];
+    const INITIAL_COUNT = 999; // render ALL sections instantly (no lazy loading)
+
+    function renderSection(sec) {
+      const title = safe(sec.title) || "Updates";
+      const baseColor = safe(sec.color) || "#0284c7";
+      const icon = safe(sec.icon) || "fa-solid fa-briefcase";
+
+      const bgStyle = baseColor.includes("gradient") 
+        ? `background: ${baseColor};` 
+        : `background-color: ${baseColor}; background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(0, 0, 0, 0.15) 100%);`;
+
+      const sectionKey = safe(sec.id) || safe(sec.title);
+      let moreHref = "";
+      if (safe(sec.viewMoreUrl)) {
+        moreHref = openInternal(sec.viewMoreUrl, title);
+      } else if (safe(sec.viewMoreType).toLowerCase() === "list" && sectionKey) {
+        moreHref = `view.html?section=${encodeURIComponent(sectionKey)}`;
+      }
+
+      const card = document.createElement("article");
+      card.className = "section-card";
+      card.innerHTML = `
+        <div class="section-head" style="${bgStyle} text-shadow: 0 1px 2px rgba(0,0,0,0.15); border-bottom: 1px solid rgba(0,0,0,0.05);">
+          <div class="left">
+            <i class="${icon}"></i>
+            <span>${title}</span>
+          </div>
+          ${moreHref ? `<a class="view-all-head" href="${moreHref}">View All</a>` : ""}
         </div>
-      </div>
-      <button id="closeMenuBtn" class="offcanvas-close" type="button" aria-label="Close menu">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-    </div>
-    <div class="offcanvas-search">
-      <div class="offcanvas-search-inner">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" placeholder="Search jobs, results, admit cards…" id="menuSearchInput" autocomplete="off">
-      </div>
-    </div>
-    <nav class="offcanvas-nav" aria-label="Mobile primary">
-      <div class="offcanvas-section">Main</div>
-      <a href="/"><span class="menu-icon-pill" style="background:#dbeafe;color:#1d4ed8;"><i class="fa-solid fa-house"></i></span>Home</a>
-      <button class="mob-acc-head" data-acc="acc-jobs" type="button">
-        <span class="menu-icon-pill" style="background:#fee2e2;color:#b91c1c;"><i class="fa-solid fa-fire"></i></span>
-        Latest Jobs<span class="menu-badge menu-badge-red">New</span><i class="fa-solid fa-chevron-down mob-acc-chev"></i>
-      </button>
-      <div class="mob-acc-body" id="acc-jobs">
-        <a href="/section/latest-jobs/"><i class="fa-solid fa-bolt"></i> Latest Jobs 2026</a>
-        <a href="/section/upcoming-jobs/"><i class="fa-solid fa-calendar-plus"></i> Upcoming Jobs</a>
-        <a href="/section/top-20-jobs/"><i class="fa-solid fa-medal"></i> Top 20 Jobs</a>
-        <a href="/section/jobs-with-last-date/"><i class="fa-solid fa-clock"></i> Last Date Near</a>
-        <a href="/section/latest-govt-jobs/"><i class="fa-solid fa-globe"></i> All India Jobs</a>
-      </div>
-      <a href="/section/admit-card/"><span class="menu-icon-pill" style="background:#ede9fe;color:#6d28d9;"><i class="fa-solid fa-id-card"></i></span>Admit Card<span class="menu-badge menu-badge-purple">2026</span></a>
-      <a href="/category.html?group=admissions"><span class="menu-icon-pill" style="background:#fef3c7;color:#b45309;"><i class="fa-solid fa-trophy"></i></span>Results<span class="menu-badge menu-badge-amber">Live</span></a>
-      <a href="/category.html?group=admit-result"><span class="menu-icon-pill" style="background:#fef3c7;color:#b45309;"><i class="fa-solid fa-key"></i></span>Answer Key</a>
-      <div class="offcanvas-section">Jobs by Category</div>
-      <button class="mob-acc-head" data-acc="acc-cat" type="button">
-        <span class="menu-icon-pill" style="background:#dbeafe;color:#1d4ed8;"><i class="fa-solid fa-briefcase"></i></span>
-        Popular Categories<i class="fa-solid fa-chevron-down mob-acc-chev"></i>
-      </button>
-      <div class="mob-acc-body" id="acc-cat">
-        <a href="/section/railway-jobs/"><i class="fa-solid fa-train"></i> Railway Jobs</a>
-        <a href="/section/police-jobs/"><i class="fa-solid fa-shield-halved"></i> Police Jobs</a>
-        <a href="/section/bank-jobs/"><i class="fa-solid fa-building-columns"></i> Bank Jobs</a>
-        <a href="/section/teaching-jobs/"><i class="fa-solid fa-chalkboard-user"></i> Teacher Jobs</a>
-        <a href="/section/army-jobs/"><i class="fa-solid fa-shield-halved"></i> Army / Navy / AF</a>
-        <a href="/section/healthcare-jobs/"><i class="fa-solid fa-stethoscope"></i> Medical Jobs</a>
-        <a href="/category.html?group=study"><i class="fa-solid fa-graduation-cap"></i> Study Wise Jobs</a>
-        <a href="/category.html?group=popular"><i class="fa-solid fa-star"></i> All Categories</a>
-      </div>
-      <button class="mob-acc-head" data-acc="acc-state" type="button">
-        <span class="menu-icon-pill" style="background:#dcfce7;color:#15803d;"><i class="fa-solid fa-map-location-dot"></i></span>
-        State Wise Jobs<i class="fa-solid fa-chevron-down mob-acc-chev"></i>
-      </button>
-      <div class="mob-acc-body" id="acc-state">
-        <a href="/section/haryana-all-state-jobs/"><i class="fa-solid fa-location-dot"></i> Haryana Jobs</a>
-        <a href="/state/uttar-pradesh/"><i class="fa-solid fa-location-dot"></i> Uttar Pradesh</a>
-        <a href="/state/rajasthan/"><i class="fa-solid fa-location-dot"></i> Rajasthan</a>
-        <a href="/state/bihar/"><i class="fa-solid fa-location-dot"></i> Bihar</a>
-        <a href="/state/madhya-pradesh/"><i class="fa-solid fa-location-dot"></i> Madhya Pradesh</a>
-        <a href="/state/delhi/"><i class="fa-solid fa-location-dot"></i> Delhi</a>
-        <a href="/state/"><i class="fa-solid fa-list"></i> All States →</a>
-      </div>
-      <div class="offcanvas-section">Admissions</div>
-      <a href="/category.html?group=admissions"><span class="menu-icon-pill" style="background:#ede9fe;color:#6d28d9;"><i class="fa-solid fa-graduation-cap"></i></span>Admissions 2026</a>
-      <button class="mob-acc-head" data-acc="acc-exam" type="button">
-        <span class="menu-icon-pill" style="background:#fce7f3;color:#9d174d;"><i class="fa-solid fa-calendar-check"></i></span>
-        Exam Updates<i class="fa-solid fa-chevron-down mob-acc-chev"></i>
-      </button>
-      <div class="mob-acc-body" id="acc-exam">
-        <a href="/section/admit-card/"><i class="fa-solid fa-id-card"></i> Admit Cards</a>
-        <a href="/category.html?group=admissions"><i class="fa-solid fa-trophy"></i> Results</a>
-        <a href="/category.html?group=admit-result"><i class="fa-solid fa-key"></i> Answer Keys</a>
-        <a href="/category.html?group=admissions"><i class="fa-solid fa-book"></i> Syllabus / Pattern</a>
-      </div>
-      <div class="offcanvas-section">Govt Schemes &amp; Services</div>
-      <a href="/section/govt-scheme-yojna/"><span class="menu-icon-pill" style="background:#dcfce7;color:#15803d;"><i class="fa-solid fa-hand-holding-heart"></i></span>Govt Schemes / Yojna<span class="menu-badge menu-badge-green">Hot</span></a>
-      <a href="/section/important-csc-pdf/"><span class="menu-icon-pill" style="background:#fee2e2;color:#b91c1c;"><i class="fa-solid fa-file-pdf"></i></span>CSC Services &amp; PDFs</a>
-      <div class="offcanvas-section">Tools &amp; More</div>
-      <a href="/tools.html"><span class="menu-icon-pill" style="background:#dbeafe;color:#1d4ed8;"><i class="fa-solid fa-screwdriver-wrench"></i></span>Free Tools<span class="menu-badge menu-badge-blue">Free</span></a>
-      <a href="/resume-maker.html"><span class="menu-icon-pill" style="background:#ede9fe;color:#6d28d9;"><i class="fa-solid fa-file-lines"></i></span>Resume / CV Maker<span class="menu-badge menu-badge-purple">Free</span></a>
-      <a href="/category.html?group=khabar"><span class="menu-icon-pill" style="background:#ffedd5;color:#c2410c;"><i class="fa-solid fa-newspaper"></i></span>Latest Khabar</a>
-      <a href="/category.html?group=study-material"><span class="menu-icon-pill" style="background:#f0fdf4;color:#15803d;"><i class="fa-solid fa-book-open"></i></span>Study Material &amp; Courses</a>
-      <a href="/helpdesk.html"><span class="menu-icon-pill" style="background:#f1f5f9;color:#475569;"><i class="fa-solid fa-headset"></i></span>Helpdesk / Contact Us</a>
-      <div class="offcanvas-section">Follow Us</div>
-      <div class="offcanvas-social">
-        <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" class="soc-wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
-        <a href="https://www.youtube.com/@Topsarkarijobs/shorts" target="_blank" rel="noopener" class="soc-yt"><i class="fa-brands fa-youtube"></i> YouTube</a>
-        <a href="https://www.instagram.com/topsarkarijobs?igsh=bTBsdjVpaTU3M2hn" target="_blank" rel="noopener" class="soc-ig"><i class="fa-brands fa-instagram"></i> Instagram</a>
-        <a href="https://www.snapchat.com/add/topsarkarijobss?share_id=accGq-qWC1g&locale=en-IN" target="_blank" rel="noopener" class="soc-sc"><i class="fa-brands fa-snapchat"></i> Snapchat</a>
-      </div>
-    </nav>
-  </aside>
+        <div class="section-body">
+          <div class="section-list-wrap">
+            <div class="section-list"></div>
+          </div>
+          ${moreHref ? `<a class="view-all" href="${moreHref}">More <i class="fa-solid fa-arrow-right"></i></a>` : ""}
+        </div>
+      `;
 
-  <script src="/script.js?v=20260520" defer></script>
-  <script src="/seo-engine.min.js?v=20260517" defer></script>
-</body>
-</html>
+      const list = $(".section-list", card);
+      const listWrap = $(".section-list-wrap", card);
+      const items = Array.isArray(sec.items)
+        ? sec.items.filter(i => !isGarbageLink(i)).slice(0, 10)
+        : [];
+
+      items.forEach((it, _idx) => {
+        const name = safe(it.name) || "Open";
+        // Build URL: prefer explicit url/link, fallback to slug-based job.html
+        let url = it.url || it.link || "";
+        if (!url && it.slug) {
+          url = "/jobs/" + it.slug + "/";
+        }
+        if (!url) return;
+
+        const external = !!it.external;
+        const a = document.createElement("a");
+        a.className = "section-link";
+        /* If URL is a job.html link (from slug), use directly — bypass redirect gate */
+        if (url.startsWith("/jobs/") || url.startsWith("job.html")) {
+          a.href = url;
+          a.setAttribute("data-bypass-gate", "1");
+          if (it.slug) a.setAttribute("data-slug", it.slug);
+        } else {
+          a.href = buildRedirectUrl(url, name, sectionKey) || normalizeUrl(url);
+        }
+        a.setAttribute("data-redirect-label", name);
+        a.setAttribute("title", name);
+        a.setAttribute("aria-label", name);
+        if (external) { a.target = "_blank"; a.rel = "noopener"; }
+        const rawDate = safe(it.date || "");
+        const _db1 = formatDateBadge(rawDate);
+        const _dh1 = _db1 ? `<span class="d ${_db1.colorClass}"><i class="fa-regular fa-calendar-days"></i> ${_db1.display}</span>` : "";
+        a.innerHTML = `<span class="sn-badge">${_idx+1}</span><span class="t">${name}${_dh1}</span>`;
+        list.appendChild(a);
+
+        // ✅ SEARCH INDEX: sirf internal job.html links push karo (external nav/tools skip)
+        if (url && (url.startsWith("/jobs/") || url.startsWith("job.html"))) {
+          (window.tsjSearchIndex = window.tsjSearchIndex || []).push({
+            title: name,
+            slug: url,
+            dept: title,
+            qual: it.qualification || "",
+            state: it.state || "All India",
+            cat: sectionKey,
+            tags: name + " " + sectionKey + " " + title + " sarkari naukri 2026",
+            lastDate: rawDate,
+            icon: (icon.split(" ").find(c => c.startsWith("fa-") && c !== "fa-solid") || "fa-briefcase"),
+            lastUpdated: it.last_updated || it.updated_at || new Date().toISOString(),
+            sectionSource: title,
+          });
+        }
+      });
+
+      wrap.appendChild(card);
+
+      // Scroll-end shadow detection — hide bottom fade when scrolled to end
+      if (items.length > 5 && listWrap) {
+        list.addEventListener("scroll", () => {
+          const atEnd = list.scrollHeight - list.scrollTop <= list.clientHeight + 8;
+          listWrap.classList.toggle("scrolled-to-end", atEnd);
+        }, { passive: true });
+      } else if (listWrap) {
+        listWrap.classList.add("scrolled-to-end"); // no scroll needed, no shadow
+      }
+    } // end renderSection()
+
+    // Render first INITIAL_COUNT sections immediately (above fold)
+    sections.slice(0, INITIAL_COUNT).forEach(renderSection);
+
+    // Render remaining sections progressively using IntersectionObserver
+    if (sections.length > INITIAL_COUNT) {
+      const remaining = sections.slice(INITIAL_COUNT);
+      let remainingIndex = 0;
+
+      // Create sentinel element at end of wrap
+      const sentinel = document.createElement("div");
+      sentinel.style.cssText = "height:1px;width:100%;";
+      wrap.appendChild(sentinel);
+
+      if ("IntersectionObserver" in window) {
+        const obs = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            // Render next batch of sections (4 at a time)
+            const batch = remaining.slice(remainingIndex, remainingIndex + 4);
+            batch.forEach(renderSection);
+            remainingIndex += 4;
+            if (remainingIndex >= remaining.length) {
+              obs.disconnect();
+              sentinel.remove();
+            }
+          });
+        }, { rootMargin: "300px" });
+        obs.observe(sentinel);
+      } else {
+        // Fallback: render all
+        remaining.forEach(renderSection);
+        sentinel.remove();
+      }
+    }
+  }
+
+  /* ─────────────────────────────────────────────────────────────────
+     renderDailyUpdatesSections()
+     Loads dailyupdates.json and appends each section as a section-card
+     BELOW the existing #dynamic-sections cards.
+     • Fully automatic: add/remove sections in JSON → auto updates homepage.
+     • Uses a separate container #daily-updates-sections so it never
+       overwrites the jobs cards above.
+  ───────────────────────────────────────────────────────────────── */
+  function buildSectionCard(sec, wrap) {
+    const title     = safe(sec.title) || "Updates";
+    const baseColor = safe(sec.color) || "#0284c7";
+    const icon      = safe(sec.icon)  || "fa-solid fa-briefcase";
+
+    const bgStyle = baseColor.includes("gradient")
+      ? `background: ${baseColor};`
+      : `background-color: ${baseColor}; background-image: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(0,0,0,0.15) 100%);`;
+
+    const sectionKey = safe(sec.id) || safe(sec.title);
+    let moreHref = "";
+    if (safe(sec.viewMoreUrl)) {
+      moreHref = openInternal(sec.viewMoreUrl, title);
+    } else if (safe(sec.viewMoreType).toLowerCase() === "list" && sectionKey) {
+      moreHref = `view.html?section=${encodeURIComponent(sectionKey)}`;
+    }
+
+    const card = document.createElement("article");
+    card.className = "section-card";
+    card.innerHTML = `
+      <div class="section-head" style="${bgStyle} text-shadow: 0 1px 2px rgba(0,0,0,0.15); border-bottom: 1px solid rgba(0,0,0,0.05);">
+        <div class="left">
+          <i class="${icon}"></i>
+          <span>${title}</span>
+        </div>
+        ${moreHref ? `<a class="view-all-head" href="${moreHref}">View All</a>` : ""}
+      </div>
+      <div class="section-body">
+        <div class="section-list-wrap">
+          <div class="section-list"></div>
+        </div>
+        ${moreHref ? `<a class="view-all" href="${moreHref}">More <i class="fa-solid fa-arrow-right"></i></a>` : ""}
+      </div>
+    `;
+
+    const list     = $(".section-list", card);
+    const listWrap = $(".section-list-wrap", card);
+    const items = Array.isArray(sec.items)
+      ? sec.items.filter(i => !isGarbageLink(i)).slice(0, 10)
+      : [];
+
+    items.forEach((it, _idx) => {
+      const name = safe(it.name) || "Open";
+      let url = it.url || it.link || "";
+      if (!url && it.slug) {
+        url = "/jobs/" + it.slug + "/";
+      }
+      if (!url) return;
+
+      const external = !!it.external;
+      const a = document.createElement("a");
+      a.className = "section-link";
+      if (url.startsWith("/jobs/") || url.startsWith("job.html")) {
+        a.href = url;
+        a.setAttribute("data-bypass-gate", "1");
+        if (it.slug) a.setAttribute("data-slug", it.slug);
+      } else {
+        a.href = buildRedirectUrl(url, name, sectionKey) || normalizeUrl(url);
+      }
+      a.setAttribute("data-redirect-label", name);
+      a.setAttribute("title", name);
+      a.setAttribute("aria-label", name);
+      if (external) { a.target = "_blank"; a.rel = "noopener"; }
+
+      const rawDate = safe(it.date || "");
+      const _db2 = formatDateBadge(rawDate);
+      const _dh2 = _db2 ? `<span class="d ${_db2.colorClass}"><i class="fa-regular fa-calendar-days"></i> ${_db2.display}</span>` : "";
+      a.innerHTML = `<span class="sn-badge">${_idx+1}</span><span class="t">${name}${_dh2}</span>`;
+      list.appendChild(a);
+
+      // ✅ SEARCH INDEX: sirf internal job.html links push karo (external nav/tools skip)
+      if (url && (url.startsWith("/jobs/") || url.startsWith("job.html"))) {
+        (window.tsjSearchIndex = window.tsjSearchIndex || []).push({
+          title: name,
+          slug: url,
+          dept: title,
+          qual: "",
+          state: "All India",
+          cat: sectionKey,
+          tags: name + " " + sectionKey + " " + title + " sarkari naukri 2026",
+          lastDate: rawDate,
+          icon: (icon.split(" ").find(c => c.startsWith("fa-") && c !== "fa-solid") || "fa-briefcase"),
+          lastUpdated: it.last_updated || it.updated_at || new Date().toISOString(),
+          sectionSource: title,
+        });
+      }
+    });
+
+    wrap.appendChild(card);
+
+    if (items.length > 5 && listWrap) {
+      list.addEventListener("scroll", () => {
+        const atEnd = list.scrollHeight - list.scrollTop <= list.clientHeight + 8;
+        listWrap.classList.toggle("scrolled-to-end", atEnd);
+      }, { passive: true });
+    } else if (listWrap) {
+      listWrap.classList.add("scrolled-to-end");
+    }
+  }
+
+  async function renderDailyUpdatesSections() {
+    // Only run on homepage
+    if (!(page === "index.html" || page === "")) return;
+
+    // Find or create the daily-updates container (placed right after #dynamic-sections)
+    let dailyWrap = document.getElementById("daily-updates-sections");
+    if (!dailyWrap) {
+      const dynSec = document.getElementById("dynamic-sections");
+      if (!dynSec) return;
+      dailyWrap = document.createElement("div");
+      dailyWrap.id = "daily-updates-sections";
+      dailyWrap.className = "dynamic-sections-row";
+      dynSec.parentNode.insertBefore(dailyWrap, dynSec.nextSibling);
+    }
+    dailyWrap.innerHTML = "";
+
+    let data;
+    try {
+      data = await getJSON("dailyupdates.json");
+    } catch (_) {
+      return; // silently skip if file not found
+    }
+
+    const sections = Array.isArray(data.sections) ? data.sections : [];
+    // Render first 2 immediately, rest lazily
+    const INITIAL = 999; // render ALL daily sections immediately
+    sections.slice(0, INITIAL).forEach(sec => buildSectionCard(sec, dailyWrap));
+
+    if (sections.length > INITIAL) {
+      const remaining = sections.slice(INITIAL);
+      let idx = 0;
+      const sentinel = document.createElement("div");
+      sentinel.style.cssText = "height:1px;width:100%;";
+      dailyWrap.appendChild(sentinel);
+      if ("IntersectionObserver" in window) {
+        const obs = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            remaining.slice(idx, idx + 4).forEach(sec => buildSectionCard(sec, dailyWrap));
+            idx += 4;
+            if (idx >= remaining.length) { obs.disconnect(); sentinel.remove(); }
+          });
+        }, { rootMargin: "400px" });
+        obs.observe(sentinel);
+      } else {
+        remaining.forEach(sec => buildSectionCard(sec, dailyWrap));
+        sentinel.remove();
+      }
+    }
+  }
+
+  // ✅ DISABLED — home-quicklinks-wrap section permanently removed from all pages
+  async function renderHomeQuickLinks() { return; }
+  async function _renderHomeQuickLinks_bak() {
+    const isHome = (page === "index.html" || page === "");
+    
+    let wrap = document.getElementById("home-quicklinks-wrap");
+    let host = document.getElementById("home-links");
+    
+    if (!wrap) {
+      wrap = document.createElement("section");
+      wrap.id = "home-quicklinks-wrap";
+      wrap.className = "home-quicklinks"; // Wrapper is always visible for grid/search
+      
+      host = document.createElement("div");
+      host.id = "home-links";
+      // ✅ Pill boxes display natively on desktop. On mobile inner pages, they hide!
+      host.className = isHome ? "home-links" : "home-links hidden-on-inner";
+      wrap.appendChild(host);
+      
+      const mainEl = document.getElementById("main") || document.querySelector("main") || document.body;
+      if (mainEl && mainEl.parentNode) {
+          mainEl.parentNode.insertBefore(wrap, mainEl);
+      }
+    }
+
+    if (!document.getElementById("home-quicklinks-style")) {
+      const style = document.createElement("style");
+      style.id = "home-quicklinks-style";
+      style.textContent = `
+        .home-quicklinks { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 24px 0 0; }
+        
+        /* DESKTOP VIEW */
+        .home-links { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; }
+        
+        .home-link-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          padding: 8px 16px;
+          border-radius: 99px;
+          color: #fff;
+          font-weight: 700;
+          font-size: 14px;
+          text-decoration: none;
+          line-height: 1.2;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+          border: 1px solid rgba(255,255,255,0.2);
+          white-space: nowrap;
+          transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+        }
+        .home-link-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+          filter: brightness(1.05);
+        }
+        .home-link-btn:active { transform: translateY(0); }
+        
+        /* ✅ PREMIUM MOBILE APP OVERRIDES */
+        @media (max-width: 980px) {
+          .home-quicklinks { padding-top: 16px; padding-bottom: 6px; }
+          .hidden-on-inner { display: none !important; }
+          
+          /* The 4-Column Grid */
+          .mobile-nav-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: 1fr;
+            gap: 8px;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 12px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 24px rgba(2, 132, 199, 0.06);
+          }
+          .grid-nav-btn {
+            background: #ffffff;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 800;
+            text-align: center;
+            padding: 12px 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.3;
+            text-decoration: none;
+            word-break: break-word;
+            transition: transform 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            border: 1px solid #e2e8f0;
+          }
+          .grid-nav-btn:active { transform: scale(0.95); }
+          
+          /* UNIFORM OUTLINE ROW THEMES (As requested) */
+          .grid-nav-btn.solid-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 10px rgba(37,99,235,0.25); border: 1px solid #1e40af; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
+          .grid-nav-btn.outline-blue { background: #f0f9ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-weight: 800; }
+          
+          .grid-nav-btn.outline-purple { background: #faf5ff; color: #7e22ce; border: 1px solid #e9d5ff; font-weight: 800; }
+          .grid-nav-btn.outline-orange { background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; font-weight: 800; }
+          .grid-nav-btn.solid-green { background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 10px rgba(16,185,129,0.25); border: 1px solid #047857; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
+
+          /* ✅ PERFECT 3D EMBOSSED PILLS: Flex-grow automatically stretches to lock together! */
+          .home-links { 
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 6px; 
+            justify-content: center; 
+            align-content: stretch;
+            padding: 0 6px; 
+            margin-bottom: 0px; 
+          }
+          .home-link-btn { 
+            flex: 1 1 auto; 
+            padding: 10px 12px; 
+            font-size: 13px; 
+            text-align: center;
+            justify-content: center;
+            margin: 0;
+            min-width: 28%; 
+            border-radius: 12px;
+            /* Beautiful 3D bevel from your reference */
+            box-shadow: inset 0px 4px 6px rgba(255,255,255,0.35), inset 0px -4px 6px rgba(0,0,0,0.25), 0 4px 6px rgba(0,0,0,0.15);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+            border: none;
+            letter-spacing: 0.2px;
+          }
+          
+          /* Custom Bottom Search exactly like screenshot */
+           .mobile-bottom-search {
+           background: #ffffff;
+           border: 1px solid #e2e8f0;
+           padding: 20px 14px;
+           margin-top: 6px;
+           margin-bottom: 6px;
+           border-radius: 16px;
+           text-align: center;
+           box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+           }
+          .mobile-bottom-search h3 {
+            font-size: 15px;
+            font-weight: 900;
+            margin: 0 0 14px;
+            color: #0f172a;
+            letter-spacing: -0.2px;
+          }
+          .mbs-row {
+            display: flex;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #f8fafc;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+          }
+          .mbs-row input {
+            flex: 1;
+            height: 46px;
+            border: none;
+            background: transparent;
+            padding: 0 14px;
+            font-size: 14px;
+            outline: none;
+            color: #0f172a;
+          }
+          .mbs-row input:focus { background: #fff; border-color: #0ea5e9; }
+          .mbs-row button {
+            background: linear-gradient(135deg, #0ea5e9, #4f46e5);
+            color: #fff;
+            border: none;
+            padding: 0 20px;
+            font-weight: 800;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    let data = null;
+    try { data = await getJSON("/header_links.json"); } catch (_) {}
+
+    let waLink = "https://whatsapp.com/channel/0029VaA2aD4FCCoW3q8y6x25";
+    if (data && data.header_links) {
+        const waObj = data.header_links.find(l => safe(l.name).toLowerCase().includes("whatsapp"));
+        if (waObj && (waObj.url || waObj.link)) waLink = waObj.url || waObj.link;
+    }
+    
+    // ✅ INJECT CUSTOM APP GRID (Matching Exact Uniform Outlines & Link)
+    if (wrap && !document.getElementById("mobile-nav-grid")) {
+        const mobileNavWrap = document.createElement("div");
+        mobileNavWrap.id = "mobile-nav-grid";
+        mobileNavWrap.className = "mobile-nav-grid";
+
+        const mLinks = [
+            // Row 1 (Blue)
+            { name: "Latest Jobs", url: "view.html?section=latest%20jobs", cls: "outline-blue" },
+            { name: "Study wise jobs", url: "category.html?group=study", cls: "outline-blue" },
+            { name: "Categories wise jobs", url: "category.html?group=popular", cls: "outline-blue" },
+            { name: "State wise Jobs", url: "category.html?group=state", cls: "outline-blue" },
+            
+            // Row 2 (Purple)
+            { name: "Admissions", url: "category.html?group=admissions", cls: "outline-purple" },
+            { name: "Resume/CV Maker", url: "resume-maker.html" }, 
+            { name: "CSC Services", url: "govt-services.html", cls: "outline-purple" },
+            { name: "Study Material", url: "category.html?group=study-material", cls: "outline-purple" },
+            
+            // Row 3 (Orange + Solid Green WhatsApp)
+            { name: "Results", url: "view.html?section=results", cls: "outline-orange" },
+            { name: "Admit Card", url: "category.html?group=admit-result", cls: "outline-orange" },
+            { name: "Latest Khabar", url: "category.html?group=khabar", cls: "outline-orange" },
+            { name: "Join WhatsApp", url: waLink, cls: "solid-green" } 
+        ];
+
+        mLinks.forEach(l => {
+            const a = document.createElement("a");
+            a.className = `grid-nav-btn ${l.cls}`;
+            a.href = l.url;
+            a.innerHTML = l.name;
+            mobileNavWrap.appendChild(a);
+        });
+
+        wrap.insertBefore(mobileNavWrap, wrap.firstChild);
+    }
+
+    // Process pill links (Will be hidden automatically on inner pages by CSS)
+    const links = Array.isArray(data?.home_links) ? data.home_links : [];
+    if (links.length) {
+      
+      const excludeList = [
+          "latest jobs", "study wise", "categories wise", "popular categories", "state wise",
+          "admissions", "admission", "resume", "cv maker", "csc", "study material",
+          "results", "result", "admit card", "khabar", "helpdesk", "home", "tools", "whatsapp"
+      ];
+
+      // ✅ BRAND NEW PREMIUM APP COLORS FOR PILLS (iOS Inspired Gradients)
+      const premiumGradients = [
+          "linear-gradient(135deg, #3b82f6, #2563eb)", // Blue
+          "linear-gradient(135deg, #8b5cf6, #7c3aed)", // Violet
+          "linear-gradient(135deg, #10b981, #059669)", // Emerald
+          "linear-gradient(135deg, #f59e0b, #d97706)", // Amber
+          "linear-gradient(135deg, #ec4899, #db2777)", // Pink
+          "linear-gradient(135deg, #0ea5e9, #0284c7)", // Sky
+          "linear-gradient(135deg, #f43f5e, #e11d48)", // Rose
+          "linear-gradient(135deg, #6366f1, #4f46e5)"  // Indigo
+      ];
+
+      let validLinks = [];
+      links.forEach((l) => {
+        let name = safe(l?.name);
+        if (name.includes("लाडो लक्ष्मी योजना: पैसा आया है या नहीं आया यहाँ से चेक करें")) {
+            name = "लाडो लक्ष्मी योजना: पैसा आया है या नहीं - यहाँ से चेक करें";
+        }
+        const nLower = name.toLowerCase().trim();
+        if (excludeList.some(ex => nLower.includes(ex))) return;
+        
+        const url = safe(l?.url || l?.link);
+        if (!name || !url) return;
+        
+        validLinks.push({ ...l, name: name, url: url });
+      });
+
+      // 1. Extract Top Headlines so it's always forced to the #1 top position
+      let topHeadlineIndex = validLinks.findIndex(l => l.name.toLowerCase().includes("headlines"));
+      let topHeadline = null;
+      if (topHeadlineIndex > -1) {
+          topHeadline = validLinks.splice(topHeadlineIndex, 1)[0];
+      }
+
+      // 2. Pair shuffling algorithm (mixes long and short names so flex automatically wraps them beautifully)
+      validLinks.sort((a, b) => a.name.length - b.name.length);
+      let mixedLinks = [];
+      let left = 0; let right = validLinks.length - 1;
+      while (left <= right) {
+          if (left === right) { mixedLinks.push(validLinks[left]); break; }
+          mixedLinks.push(validLinks[right]); 
+          mixedLinks.push(validLinks[left]);  
+          right--; left++;
+      }
+
+      const finalLinks = topHeadline ? [topHeadline, ...mixedLinks] : mixedLinks;
+
+      host.innerHTML = "";
+      finalLinks.forEach((l, index) => {
+        const a = document.createElement("a");
+        a.className = "home-link-btn";
+        a.href = normalizeUrl(l.url);
+        if (l.external) { a.target = "_blank"; a.rel = "noopener"; }
+        
+        // Top Headlines gets special bright red, the rest use our beautiful new palette
+        if (l.name.toLowerCase().includes("headlines")) {
+             a.style.background = "linear-gradient(135deg, #ef4444, #dc2626)";
+             a.style.width = "100%"; 
+        } else {
+             a.style.background = premiumGradients[index % premiumGradients.length];
+        }
+        
+        const icon = safe(l.icon);
+        if (icon) a.innerHTML = `<i class="${icon}"></i><span>${l.name}</span>`;
+        else a.textContent = l.name;
+        host.appendChild(a);
+      });
+    }
+
+    // ✅ INJECT PERFECT BOTTOM SEARCH BAR
+    if (wrap && !document.getElementById("mobile-bottom-search")) {
+        const mbs = document.createElement("div");
+        mbs.id = "mobile-bottom-search";
+        mbs.className = "mobile-bottom-search";
+        mbs.innerHTML = `
+            <h3>Search Sarkari नौकरियाँ - Just Click Below</h3>
+            <div class="mbs-row">
+                <input id="mobileBottomSearchInput" type="search" placeholder="Search job categories, results, admit cards..." autocomplete="off" />
+                <button type="button" id="mobileBottomSearchBtn"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+            </div>
+            <div id="mobileBottomSearchResults" class="search-results" style="margin-top: 10px; text-align: left;"></div>
+        `;
+        wrap.appendChild(mbs);
+    }
+  }
+
+  function removeHomeMainPageCtaLinks() {
+    if (!(page === "index.html" || page === "")) return;
+    const wrap = document.getElementById("dynamic-sections");
+    if (!wrap) return;
+
+    const needles = [
+      "╰┈➤🏠Website का Main Home Page खोलने के लिए यहाँ क्लिक करें",
+      "Website का Main Home Page खोलने के लिए यहाँ क्लिक करें",
+      "Main Home Page खोलने के लिए यहाँ क्लिक करें",
+      "Website का Main Home Page",
+    ];
+
+    const els = Array.from(wrap.querySelectorAll("a, button"));
+    els.forEach((el) => {
+      const t = safe(el.textContent).replace(/\s+/g, " ");
+      if (!t) return;
+      if (needles.some((n) => t.includes(n))) el.remove();
+    });
+  }
+
+  // Category Pages
+  async function initCategoryPage() {
+    if (page !== "category.html") return;
+    const params = new URLSearchParams(location.search || "");
+    const group = safe(params.get("group")).toLowerCase();
+
+    const titleEl = $("#categoryTitle") || $("h1");
+    let gridEl = $("#categoryGrid") || $(".section-list");
+    const emptyEl = $("#categoryEmpty");
+
+    if (!gridEl) {
+      const main = $("#main") || $("main") || document.body;
+      const wrap = document.createElement("div");
+      wrap.className = "section-list";
+      main.appendChild(wrap);
+      gridEl = wrap;
+    }
+
+    const groupMeta = { study: "Study wise jobs", popular: "Popular job categories", state: "State wise jobs", admissions: "Admissions", "admit-result": "Admit Card / Result", khabar: "Latest Khabar", "study-material": "Study Material & Top Courses" };
+    if (titleEl) titleEl.textContent = groupMeta[group] || "Browse Categories";
+
+    // ISSUE-006: with no/unknown group, render a directory of valid groups
+    // instead of a blank page.
+    if (!group || !(group in groupMeta)) {
+      gridEl.innerHTML = "";
+      Object.entries(groupMeta).forEach(([slug, label]) => {
+        const a = document.createElement("a");
+        a.className = "section-link";
+        a.href = "category.html?group=" + encodeURIComponent(slug);
+        a.innerHTML = `<div class="t">${label}</div><div class="d">Browse this category</div>`;
+        gridEl.appendChild(a);
+      });
+      const desc = $("#categoryDesc");
+      if (desc) desc.textContent = "Pick a category to see related government jobs, admit cards, results and study material.";
+      return;
+    }
+
+    let data;
+    try { data = await getJSON("/jobs.json"); } catch (_) {
+      gridEl.innerHTML = "";
+      return;
+    }
+
+    const top = Array.isArray(data.top_jobs) ? data.top_jobs : [];
+    const left = Array.isArray(data.left_jobs) ? data.left_jobs : [];
+    const right = Array.isArray(data.right_jobs) ? data.right_jobs : [];
+
+    const isHeader = (x) => x && typeof x === "object" && safe(x.title) && !safe(x.name);
+    const isItem = (x) => x && typeof x === "object" && safe(x.name) && safe(x.url);
+
+    function sliceBetween(arr, startIncludes, endIncludes) {
+      const startIdx = arr.findIndex(x => isHeader(x) && safe(x.title).toLowerCase().includes(startIncludes));
+      if (startIdx < 0) return [];
+      let endIdx = arr.length;
+      if (endIncludes) {
+        const ei = arr.findIndex((x, i) => i > startIdx && isHeader(x) && safe(x.title).toLowerCase().includes(endIncludes));
+        if (ei >= 0) endIdx = ei;
+      }
+      return arr.slice(startIdx + 1, endIdx).filter(isItem);
+    }
+
+    let items = [];
+    if (group === "study") items = sliceBetween(top, "study wise", "popular");
+    else if (group === "popular") items = sliceBetween(top, "popular", null);
+    else if (group === "state") items = sliceBetween(left, "state wise", "admit");
+    else if (group === "admit-result") items = sliceBetween(left, "admit", null);
+    else if (group === "admissions") items = sliceBetween(right, "admissions", "govt scheme");
+    else if (group === "khabar") items = sliceBetween(right, "latest khabar", "study material");
+    else if (group === "study-material") items = sliceBetween(right, "study material", "tools");
+
+    // Filter Garbage
+    items = items.filter(i => !isGarbageLink(i));
+
+    gridEl.innerHTML = "";
+    items.forEach((it) => {
+      const a = document.createElement("a");
+      a.className = "section-link";
+
+      // ✅ FIX: State wise jobs → state-jobs.html?state=StateName (not view.html?section=...)
+      let href = safe(it.url);
+      if (group === "state") {
+        // Extract state name from the item name or url
+        // Item name example: "Delhi State Jobs", "Gujarat State Jobs"
+        // URL example: view.html?section=Delhi%20State%20Jobs
+        let extractedState = "";
+        // Try from URL param first
+        try {
+          const urlObj = new URL(href, location.href);
+          const sec = urlObj.searchParams.get("section") || "";
+          if (sec) {
+            // "Delhi State Jobs" → "Delhi", "Haryana All State Jobs" → "Haryana"
+            extractedState = sec.replace(/\s+(all\s+)?state\s+jobs?/gi, '').replace(/\s+govt\s+jobs?/gi,'').trim();
+          }
+        } catch(_) {}
+        // If not from URL, try from item name
+        if (!extractedState) {
+          const nameClean = safe(it.name).replace(/\s+(all\s+)?state\s+jobs?/gi,'').replace(/\s+govt\s+jobs?/gi,'').trim();
+          extractedState = nameClean;
+        }
+        if (extractedState) {
+          href = `/state/${extractedState.toLowerCase().replace(/ /g, '-')}/`;
+        }
+      }
+
+      a.href = href;
+      if (it.external) { a.target = "_blank"; a.rel = "noopener"; }
+      a.innerHTML = `<div class="t">${safe(it.name)}</div><div class="d">Open official link</div>`;
+      gridEl.appendChild(a);
+    });
+
+    const mainContainer = $("#main") || $("main") || document.body;
+    let seoBox = document.getElementById("dynamic-seo-box");
+    if (seoBox) seoBox.remove(); 
+
+    let seoHTML = "";
+
+    if (group === "study") {
+      seoHTML = `
+        <section class="seo-block" aria-label="Guides" style="margin-top: 24px;">
+          <h2>Government Exam Study Resources 2026 – Free Study Material, Syllabus, Mock Tests & Preparation Strategy</h2>
+          <p>Preparing for a Sarkari Job in India requires more than just hard work — it requires the right strategy, authentic study material, structured revision plan, and consistent practice. The Study section of Top Sarkari Jobs is designed to be your complete preparation hub for all major Government Exams 2026 including UPSC, SSC, Railway, Banking, State PSC, Police, Defence, CUET, JEE, NEET and other competitive exams.</p>
+          <p>Yahan par aapko milega free study material, official syllabus guidance, trusted government learning portals, previous year question papers, conceptual video lectures, and structured preparation roadmap — sab ek hi jagah par. This page is not just about downloading PDFs. It is about building strong conceptual clarity, analytical ability and exam confidence.</p>
+          
+          <div class="seo-grid">
+            <div class="seo-card">
+              <h3>Why Structured Study Resources Matter</h3>
+              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">Government exams in India are highly competitive. Lakhs of candidates apply every year for limited vacancies. Random preparation se selection mushkil hota hai. Structured preparation se success possible hoti hai. Most exams test:</p>
+              <ul style="list-style-type: disc; margin-left: 18px; color: var(--muted); line-height: 1.6; font-size: 13px;">
+                <li>Conceptual clarity & Analytical reasoning</li>
+                <li>Current affairs awareness</li>
+                <li>Time management & Accuracy under pressure</li>
+              </ul>
+            </div>
+            <div class="seo-card">
+              <h3>Start with NCERT – Foundation</h3>
+              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">Almost every major competitive exam is linked to NCERT concepts (History, Geography, Polity, Economics, General Science). For UPSC and State PSC, Class 6–12 is mandatory.</p>
+              <p style="font-size: 13px; margin-top: 8px; font-weight: 600;">👉 <a href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">ncert.nic.in/textbook.php</a></p>
+            </div>
+            <div class="seo-card">
+              <h3>SWAYAM & NPTEL – Online Courses</h3>
+              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">SWAYAM offers free courses by IIT/IIM professors for Gen Studies, Economics, etc.</p>
+              <p style="font-size: 13px; margin-bottom: 8px; font-weight: 600;">👉 <a href="https://swayam.gov.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">swayam.gov.in</a></p>
+              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">NPTEL offers technical & analytical lectures (Aptitude, Reasoning, Engineering).</p>
+              <p style="font-size: 13px; font-weight: 600;">👉 <a href="https://nptel.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">nptel.ac.in</a></p>
+            </div>
+            <div class="seo-card">
+              <h3>National Digital Library (NDLI)</h3>
+              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">Access academic books, research material, and previous year papers.</p>
+              <p style="font-size: 13px; margin-bottom: 8px; font-weight: 600;">👉 <a href="https://ndl.iitkgp.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">ndl.iitkgp.ac.in</a></p>
+            </div>
+          </div>
+          <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line);">
+            <h3 style="font-size: 16px; font-weight: 900; margin-bottom: 8px;">Smart Study Plan & Syllabus Strategy</h3>
+            <p style="font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 8px;">Always download the official syllabus (e.g., from <a href="https://upsc.gov.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">upsc.gov.in</a> or <a href="https://nta.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">nta.ac.in</a>). Avoid studying from too many sources, ignoring past papers, and following unverified PDFs.</p>
+            <ul style="list-style-type: decimal; margin-left: 18px; color: var(--muted); line-height: 1.6; font-size: 14px;">
+              <li>Complete NCERT (Foundation)</li>
+              <li>Download official syllabus & create timetable</li>
+              <li>Take SWAYAM/NPTEL lectures</li>
+              <li>Solve previous year question papers & weekly mock tests</li>
+            </ul>
+            <p style="font-size: 14px; font-weight: 700; color: #0ea5e9; margin-top: 10px;">Preparation smart honi chahiye, sirf hard work se selection nahi hota.</p>
+          </div>
+        </section>`;
+    } else if (group === "popular") {
+      seoHTML = `
+        <section class="seo-block" aria-label="Guides" style="margin-top: 24px;">
+          <h2>Popular Government Exams 2026 – Most Applied Sarkari Jobs in India</h2>
+          <p>Every year, millions of aspirants apply for popular government exams in India. These exams offer job security, stable salary, pension benefits, and long-term career growth. The Popular section of Top Sarkari Jobs highlights the most searched, most competitive and high-demand Sarkari exams in India for 2026.</p>
+          <div class="seo-grid">
+            <div class="seo-card">
+              <h3>UPSC Civil Services Examination</h3>
+              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">Recruits for IAS, IPS, IFS and other Group A services. Prep: NCERT foundation, daily newspaper, analytical writing, mock tests.</p>
+              <p style="font-size: 13px; margin-bottom: 4px; font-weight: 600;">Official: 👉 <a href="https://upsc.gov.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">upsc.gov.in</a></p>
+            </div>
+            <div class="seo-card">
+              <h3>NTA Conducted Exams</h3>
+              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">NTA conducts CUET (UG), JEE Main, NEET UG, UGC NET, CSIR NET.</p>
+              <p style="font-size: 13px; margin-bottom: 4px; font-weight: 600;">Official: 👉 <a href="https://nta.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">nta.ac.in</a></p>
+            </div>
+            <div class="seo-card">
+              <h3>SSC & Railway Exams</h3>
+              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">SSC (CGL, CHSL, MTS) and RRB (NTPC, Group D, ALP) require quantitative aptitude, english, general awareness, speed & accuracy.</p>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>NCERT Books:</strong> 👉 <a href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">ncert.nic.in/textbook.php</a></p>
+            </div>
+            <div class="seo-card">
+              <h3>Banking Exams (IBPS / SBI / RBI)</h3>
+              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">Popular for urban postings and structured promotions. Requires strong quantitative aptitude and reasoning.</p>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>Concept lectures:</strong> 👉 <a href="https://nptel.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">nptel.ac.in</a></p>
+            </div>
+          </div>
+        </section>`;
+    } else if (group === "state") {
+      seoHTML = `
+        <section class="seo-block" aria-label="Guides" style="margin-top: 24px;">
+          <h2>State Wise Sarkari Jobs 2026 – State PSC, Police & Local Recruitment Updates</h2>
+          <p>India has 28 states and each state conducts its own recruitment for administrative, police, teaching and technical posts. This section helps candidates explore State PSC Notifications, State Police Recruitment, State Teaching Jobs, and State Level Group B & C Vacancies.</p>
+          <div class="seo-grid">
+            <div class="seo-card">
+              <h3>Why State Jobs Are Important</h3>
+              <ul style="list-style-type: disc; margin-left: 18px; color: var(--muted); line-height: 1.6; font-size: 13px;">
+                <li>Local posting & Language advantage</li>
+                <li>Stable career & Regional growth</li>
+              </ul>
+            </div>
+            <div class="seo-card">
+              <h3>Official Government Portals</h3>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>Civil Services:</strong> 👉 <a href="https://upsc.gov.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">upsc.gov.in</a></p>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>National Exams:</strong> 👉 <a href="https://nta.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">nta.ac.in</a></p>
+              <p style="font-size: 13px; color: var(--muted);">Always verify notifications from official sources.</p>
+            </div>
+            <div class="seo-card">
+              <h3>State Exam Preparation Strategy</h3>
+              <p style="font-size: 13px; margin-bottom: 4px;">1. NCERT foundation: 👉 <a href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">ncert.nic.in</a></p>
+              <p style="font-size: 13px; margin-bottom: 4px;">2. State specific history: 👉 <a href="https://ndl.iitkgp.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">ndl.iitkgp.ac.in</a></p>
+              <p style="font-size: 13px; margin-bottom: 4px;">3. Concept lectures: 👉 <a href="https://swayam.gov.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">swayam.gov.in</a></p>
+            </div>
+            <div class="seo-card">
+              <h3>Subjects Common in State Exams</h3>
+              <ul style="list-style-type: disc; margin-left: 18px; color: var(--muted); line-height: 1.6; font-size: 13px;">
+                <li>State History & Geography</li>
+                <li>Indian Polity & Current Affairs</li>
+              </ul>
+              <p style="font-size: 13px; margin-top: 8px; color: var(--muted);">Preparation must combine local + national knowledge.</p>
+            </div>
+          </div>
+        </section>`;
+    } else if (group === "admissions") {
+      seoHTML = `
+        <section class="seo-block" aria-label="Guides" style="margin-top: 24px;">
+          <h2>University Admissions 2026 – Entrance Exams, Eligibility & Preparation Resources</h2>
+          <p>This section covers national and university-level entrance examinations. Students searching for CUET 2026, JEE Main 2026, NEET UG 2026, UGC NET, or Central University Admissions will find verified and structured guidance here.</p>
+          <div class="seo-grid">
+            <div class="seo-card">
+              <h3>National Testing Agency (NTA)</h3>
+              <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">NTA conducts major national entrance exams. Candidates must track deadlines, download admit cards, and review correction notices.</p>
+              <p style="font-size: 13px; margin-top: 8px; font-weight: 600;">👉 <a href="https://nta.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">nta.ac.in</a></p>
+            </div>
+            <div class="seo-card">
+              <h3>Academic Preparation Resources</h3>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>NCERT:</strong> 👉 <a href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">ncert.nic.in/textbook.php</a></p>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>SWAYAM:</strong> 👉 <a href="https://swayam.gov.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">swayam.gov.in</a></p>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>NPTEL:</strong> 👉 <a href="https://nptel.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">nptel.ac.in</a></p>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>NDLI:</strong> 👉 <a href="https://ndl.iitkgp.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">ndl.iitkgp.ac.in</a></p>
+            </div>
+          </div>
+          <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line);">
+            <h3 style="font-size: 16px; font-weight: 900; margin-bottom: 8px;">Admission Preparation Strategy</h3>
+            <p style="font-size: 14px; color: var(--muted);">Follow official syllabus, practice mock tests, revise fundamentals, and track official announcements. Avoid relying on unverified portals.</p>
+          </div>
+        </section>`;
+    } else if (group === "admit-result") {
+      seoHTML = `
+        <section class="seo-block" aria-label="Guides" style="margin-top: 24px;">
+          <h2>Sarkari Admit Card & Result 2026 – Official Download Links & Verification Guide</h2>
+          <p>This section provides verified links for Sarkari Result 2026, Government Exam Admit Cards, Scorecards, and Merit Lists.</p>
+          <div class="seo-grid">
+            <div class="seo-card">
+              <h3>Official Portals</h3>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>NTA:</strong> 👉 <a href="https://nta.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">nta.ac.in</a></p>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>UPSC:</strong> 👉 <a href="https://upsc.gov.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">upsc.gov.in</a></p>
+              <p style="font-size: 13px; margin-top: 8px; color: var(--muted);">Always use official websites only.</p>
+            </div>
+            <div class="seo-card">
+              <h3>Between Admit Card & Exam</h3>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>NCERT:</strong> 👉 <a href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">ncert.nic.in/textbook.php</a></p>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>Concept courses:</strong> 👉 <a href="https://swayam.gov.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">swayam.gov.in</a></p>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>Advanced practice:</strong> 👉 <a href="https://ndl.iitkgp.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">ndl.iitkgp.ac.in</a></p>
+            </div>
+            <div class="seo-card">
+              <h3>After Result Declaration</h3>
+              <ul style="list-style-type: disc; margin-left: 18px; color: var(--muted); line-height: 1.6; font-size: 13px;">
+                <li>Check cut-off</li>
+                <li>Download scorecard</li>
+                <li>Prepare for next stage</li>
+              </ul>
+            </div>
+          </div>
+        </section>`;
+    } else if (group === "khabar") {
+      seoHTML = `
+        <section class="seo-block" aria-label="Guides" style="margin-top: 24px;">
+          <h2>Latest Government Exam News 2026 – Official Notifications & Updates</h2>
+          <p>Stay updated with exam date changes, application extensions, correction windows, and result announcements.</p>
+          <div class="seo-grid">
+            <div class="seo-card">
+              <h3>Trusted Sources</h3>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>NTA Official:</strong> 👉 <a href="https://nta.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">nta.ac.in</a></p>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>UPSC Official:</strong> 👉 <a href="https://upsc.gov.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">upsc.gov.in</a></p>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>Educational portal:</strong> 👉 <a href="https://swayam.gov.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">swayam.gov.in</a></p>
+            </div>
+            <div class="seo-card">
+              <h3>Why News Section Matters</h3>
+              <p style="font-size: 13px; color: var(--muted);">Timely information helps avoid missed deadlines. Never rely on rumors.</p>
+            </div>
+          </div>
+        </section>`;
+    } else if (group === "study-material") {
+      seoHTML = `
+        <section class="seo-block" aria-label="Guides" style="margin-top: 24px;">
+          <h2>Free Study Material for Government Exams – Download PDFs & Online Courses</h2>
+          <p>This page is dedicated exclusively to preparation material.</p>
+          <div class="seo-grid">
+            <div class="seo-card">
+              <h3>Foundation & Online Learning</h3>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>NCERT Textbooks:</strong> 👉 <a href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">ncert.nic.in/textbook.php</a></p>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>SWAYAM:</strong> 👉 <a href="https://swayam.gov.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">swayam.gov.in</a></p>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>NPTEL:</strong> 👉 <a href="https://nptel.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">nptel.ac.in</a></p>
+            </div>
+            <div class="seo-card">
+              <h3>Research & Reference Library</h3>
+              <p style="font-size: 13px; margin-bottom: 4px;"><strong>National Digital Library:</strong> 👉 <a href="https://ndl.iitkgp.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">ndl.iitkgp.ac.in</a></p>
+            </div>
+            <div class="seo-card">
+              <h3>Complete Preparation Ecosystem</h3>
+              <ul style="list-style-type: disc; margin-left: 18px; color: var(--muted); line-height: 1.6; font-size: 13px;">
+                <li>Learn basics from NCERT</li>
+                <li>Deepen understanding via SWAYAM</li>
+                <li>Improve analytical skills through NPTEL</li>
+                <li>Practice using NDLI materials</li>
+                <li>Track official updates via <a href="https://nta.ac.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">NTA</a> & <a href="https://upsc.gov.in" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">UPSC</a></li>
+              </ul>
+            </div>
+          </div>
+        </section>`;
+    }
+
+    if (seoHTML) {
+      seoBox = document.createElement("div");
+      seoBox.id = "dynamic-seo-box";
+      seoBox.innerHTML = seoHTML;
+      mainContainer.appendChild(seoBox);
+    }
+  }
+
+  // Tools Page
+  async function initToolsPage() {
+    if (!isToolsPage) return;
+
+    const categoriesView = $("#categories-view");
+    const toolsView = $("#tools-view");
+    const toolsGrid = $("#tools-grid");
+    const toolsTitle = $("#tools-title span") || $("#tools-title");
+    const backBtn = $("#back-button");
+    const categoryButtons = $$(".category-button");
+
+    if (!categoriesView || !toolsView || !toolsGrid || !categoryButtons.length) return;
+
+    const fallbackData = {
+      image: [
+         { name: "Image Resizer", url: "https://imageresizer.com/", icon: "fa-solid fa-compress", external: true },
+         { name: "Compress Image", url: "https://tinypng.com/", icon: "fa-solid fa-file-image", external: true },
+         { name: "Passport Photo Maker", url: "https://www.cutout.pro/passport-photo-maker", icon: "fa-solid fa-id-card", external: true }
+      ],
+      pdf: [
+         { name: "JPG to PDF", url: "https://www.ilovepdf.com/jpg_to_pdf", icon: "fa-solid fa-file-pdf", external: true },
+         { name: "Compress PDF", url: "https://www.ilovepdf.com/compress_pdf", icon: "fa-solid fa-file-zipper", external: true },
+         { name: "Merge PDF", url: "https://www.ilovepdf.com/merge_pdf", icon: "fa-solid fa-file-circle-plus", external: true }
+      ],
+      video: [
+         { name: "Video Compressor", url: "https://www.freeconvert.com/video-compressor", icon: "fa-solid fa-video", external: true },
+         { name: "MP4 to MP3", url: "https://cloudconvert.com/mp4-to-mp3", icon: "fa-solid fa-music", external: true }
+      ]
+    };
+
+    let toolsData = fallbackData;
+    try {
+      const json = await getJSON("/tools.json");
+      if (json && Object.keys(json).length > 0) toolsData = json;
+    } catch (_) {}
+
+    const showCategories = () => {
+      toolsView.classList.add("hidden");
+      categoriesView.classList.remove("hidden");
+      if(history.pushState) history.pushState(null, null, location.pathname);
+      window.scrollTo({ top: 0, behavior: "instant" });
+    };
+
+    const showTools = (categoryKey) => {
+      const list = Array.isArray(toolsData[categoryKey]) ? toolsData[categoryKey] : [];
+      const titleMap = { image: "Image Tools", pdf: "PDF Tools", video: "Video/Audio Tools" };
+      if (toolsTitle) toolsTitle.textContent = titleMap[categoryKey] || "Tools";
+
+      toolsGrid.innerHTML = "";
+      if (!list.length) {
+        toolsGrid.innerHTML = `<div class="col-span-full p-4 text-center text-gray-600">No tools found.</div>`;
+      } else {
+        list.forEach((t) => {
+          const name = safe(t.name) || "Open Tool";
+          const url = t.url || t.link || "";
+          if (!url) return;
+          const isExternal = t.external === true;
+          const a = document.createElement("a");
+          a.className = "p-4 rounded-lg bg-white border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition duration-300 flex items-start gap-3 text-left";
+          a.href = isExternal ? normalizeUrl(url) : openInternal(url, name);
+          if (isExternal) { a.target = "_blank"; a.rel = "noopener"; }
+
+          const iconClass = safe(t.icon) || "fas fa-wand-magic-sparkles";
+          a.innerHTML = `
+            <div class="mt-0.5 text-xl text-blue-600"><i class="${iconClass}"></i></div>
+            <div><div class="font-semibold text-gray-800">${name}</div><div class="text-sm text-gray-500 mt-1">Open tool</div></div>
+          `;
+          toolsGrid.appendChild(a);
+        });
+      }
+
+      categoriesView.classList.add("hidden");
+      toolsView.classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "instant" });
+    };
+
+    if (backBtn) backBtn.addEventListener("click", showCategories);
+
+    categoryButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const key = safe(btn.getAttribute("data-category"));
+        if (!key) return;
+        showTools(key);
+      });
+    });
+
+    const params = new URLSearchParams(location.search);
+    const cat = params.get("cat");
+    if (cat && toolsData[cat]) {
+      showTools(cat);
+    } else {
+      showCategories();
+    }
+  }
+
+  // CSC Services 
+  const CSC_TABLE = "csc_service_requests";
+  let cscSupabase = null;
+
+  async function ensureSupabaseClient() {
+    if (cscSupabase) return cscSupabase;
+
+    if (!window.supabase) {
+      await new Promise((resolve, reject) => {
+        const s = document.createElement("script");
+        s.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+        s.async = true;
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      }).catch(() => null);
+    }
+
+    if (!window.supabase) return null;
+
+    try {
+      const r = await fetch("/config.json", { cache: "no-store" });
+      if (!r.ok) return null;
+      const config = await r.json();
+      if (!config?.supabase?.url || !config?.supabase?.anonKey) return null;
+
+      cscSupabase = window.supabase.createClient(config.supabase.url, config.supabase.anonKey);
+      return cscSupabase;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function initCscModal() {
+    const modal = $("#cscModal");
+    const overlay = $("#cscModalOverlay");
+    const closeBtn = $("#cscModalClose");
+    const closeBtn2 = $("#cscCloseBtn");
+    const form = $("#cscRequestForm");
+
+    if (!modal || !overlay || !closeBtn || !form) return;
+
+    const serviceNameEl = $("#cscServiceName");
+    let currentService = { name: "", url: "" };
+
+    const close = () => {
+      modal.hidden = true;
+      overlay.hidden = true;
+      document.body.style.overflow = "";
+    };
+
+    const open = (service) => {
+      currentService = service || { name: "", url: "" };
+      if (serviceNameEl) serviceNameEl.textContent = currentService.name || "Service";
+
+      modal.hidden = false;
+      overlay.hidden = false;
+      document.body.style.overflow = "hidden";
+
+      const first = $("input, textarea", form);
+      if (first) setTimeout(() => first.focus(), 50);
+    };
+
+    window.__openCscModal = open;
+
+    overlay.addEventListener("click", close);
+    closeBtn.addEventListener("click", close);
+    if (closeBtn2) closeBtn2.addEventListener("click", close);
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !modal.hidden) close();
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const fullName = safe($("#cscFullName")?.value);
+      const phone = safe($("#cscPhone")?.value);
+      const state = safe($("#cscState")?.value);
+      const msg = safe($("#cscMessage")?.value);
+
+      if (!fullName || !phone || phone.length < 8) {
+        alert("Please fill all fields correctly.");
+        return;
+      }
+
+      const sb = await ensureSupabaseClient();
+      if (!sb) {
+        alert("Submission system is temporarily unavailable. Please try again later.");
+        return;
+      }
+
+      const serviceText = [
+        safe(currentService.name) ? safe(currentService.name) : "-",
+        state ? `State: ${state}` : "",
+        currentService.url ? `Link: ${normalizeUrl(currentService.url)}` : "",
+        msg ? `Details: ${msg}` : "",
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+      try {
+        const { error } = await sb.from(CSC_TABLE).insert([
+          {
+            name: fullName,
+            phone: phone,
+            service: serviceText,
+            created_at: new Date().toISOString(),
+          },
+        ]);
+
+        if (error) {
+          console.error("Supabase insert error:", error);
+          alert("Failed to submit your request. Please try again.");
+          return;
+        }
+
+        alert("Request submitted successfully. We will contact you soon.");
+        form.reset();
+        close();
+      } catch (err) {
+        console.error("Submit error:", err);
+        alert("Could not submit your request. Please check your connection and try again.");
+      }
+    });
+  }
+
+  async function renderServicesPage() {
+    if (page !== "govt-services.html") return;
+
+    const list = $("#servicesList");
+    if (!list) return;
+
+    let data = null;
+    try { data = await getJSON("/services.json"); } catch (_) {}
+
+    const services = (data && (data.services || data)) || [];
+    list.innerHTML = "";
+
+    if (!Array.isArray(services) || !services.length) {
+      list.innerHTML = `<div class="seo-block"><strong>No services found.</strong><p>Please check services.json.</p></div>`;
+      return;
+    }
+
+    services.forEach((s) => {
+      const name = safe(s.name || s.service).replace("ceck", "check");
+      const url = s.url || s.link || "";
+      if (!name) return;
+
+      const a = document.createElement("a");
+      a.className = "section-link csc-service-link";
+      a.href = "#";
+      a.setAttribute("role", "button");
+      a.innerHTML = `
+        <div class="t">${name}</div>
+        <div class="d">Click to fill details & submit request</div>
+      `;
+
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (typeof window.__openCscModal === "function") {
+          window.__openCscModal({ name, url });
+        }
+      });
+
+      list.appendChild(a);
+    });
+  }
+
+  // ✅ GLOBAL LIVE SEARCH ENGINE (Works instantly on 1 letter!)
+  async function initGlobalLiveSearch() {
+    const inputs = [];
+    
+    // heroSearch handled by inline heroSearchInit() in index.html (richer UI)
+    // Do NOT add it here to avoid double-binding.
+
+    const homeInput = document.getElementById("siteSearchInput");
+    if (homeInput) inputs.push({ input: homeInput, resultsId: "searchResults" });
+    
+    const sectionInput = document.getElementById("sectionSearchInput");
+    if (sectionInput) inputs.push({ input: sectionInput, resultsId: "sectionSearchResults" });
+    
+    const mobileBottomInput = document.getElementById("mobileBottomSearchInput");
+    if (mobileBottomInput) inputs.push({ input: mobileBottomInput, resultsId: "mobileBottomSearchResults" });
+
+    if (!inputs.length) return;
+
+    /* ── keyword category helper ── */
+    const KW = {
+      'Admit Card' : ['admit card','hall ticket','call letter'],
+      'Answer Key' : ['answer key','answer sheet','objection'],
+      'Result'     : ['result','merit list','cut off','cutoff','scorecard'],
+      'Admission'  : ['admission','counselling','counseling']
+    };
+    function categoryOf(title) {
+      const t = title.toLowerCase();
+      for (const [cat, words] of Object.entries(KW))
+        if (words.some(w => t.includes(w))) return cat;
+      return 'Latest Job';
+    }
+    function slugify(t) {
+      return t.toLowerCase().replace(/[^a-z0-9\s-]/g,'').replace(/[\s-]+/g,'-').slice(0,120).replace(/^-+|-+$/g,'');
+    }
+    function jobHref(j) {
+      const slug = j.slug || slugify(j.title || '');
+      if (!slug) return j.official_website_link || '#';
+      /* FIX: No 'offline-' prefix — merged_sarkari_data.json jobs have no slug field,
+         so slug is generated from title. Adding 'offline-' creates a mismatch with
+         the title-derived slug used in matchBySlug(), causing wrong data on first load. */
+      return '/jobs/' + slug + '/';
+    }
+
+    let searchData = [];
+    try {
+      /* ── ONLY these 4 authoritative JSON files are used for search ──
+         jobs.json / tools.json / services.json are EXCLUDED intentionally.
+         ─────────────────────────────────────────────────────────────── */
+      const [merged, daily, complete, stateJobs] = await Promise.all([
+        getJSON("merged_sarkari_data.json").catch(() => null),
+        getJSON("dailyupdates.json").catch(() => null),
+        getJSON("Complete_Jobs_Full_Data.json").catch(() => null),
+        getJSON("state-jobs-data.json").catch(() => null)
+      ]);
+
+      const push = (name, url, src) => {
+        if(!name || !url) return;
+        if (isGarbageLink({name})) return;
+        // Block tools / services / category nav links
+        if (!url || url === '#') return;
+        if (/\/(tools|govt-services|category|about|contact|result\.html|admit-card\.html)\b/i.test(url)) return;
+        searchData.push({ name: name.trim(), url: url.trim(), src });
+      };
+
+      /* 1. merged_sarkari_data.json — jobs[] array */
+      if (merged && Array.isArray(merged.jobs)) {
+        merged.jobs.forEach(j => {
+          if (!j.title) return;
+          const cat = (j.apply_mode||'').toLowerCase() === 'offline' ? 'Offline Form' : categoryOf(j.title);
+          push(j.title, jobHref(j), cat);
+        });
+      }
+
+      /* 2. dailyupdates.json */
+      if (daily) {
+        const arr = Array.isArray(daily) ? daily : (Array.isArray(daily.sections) ? daily.sections : []);
+        arr.forEach(sec => {
+          (sec.items || []).forEach(i => {
+            const itemUrl = i.url || i.link || '';
+            // Only push job detail URLs (job.html) or valid sarkari links
+            if (!itemUrl || itemUrl === '#') return;
+            push(i.name || i.title, itemUrl, sec.title || 'Update');
+          });
+        });
+      }
+
+      /* 3. Complete_Jobs_Full_Data.json — title lives in basic_details.job_title */
+      if (complete && typeof complete === 'object') {
+        Object.keys(complete).forEach(k => {
+          if (!Array.isArray(complete[k])) return;
+          complete[k].forEach(i => {
+            const bd = i.basic_details || {};
+            const title = bd.job_title || bd.post_name || i.title || i.name || '';
+            if (!title) return;
+            const slug = i.slug || slugify(title);
+            /* FIX: No 'offline-' prefix — causes slug mismatch in matchBySlug() */
+            const href = slug ? '/jobs/' + slug + '/' : '#';
+            push(title, href, k.replace(/_/g,' '));
+          });
+        });
+      }
+
+      /* 4. state-jobs-data.json — structure: { sections: [{state, title, items:[{name,url,...}]}] } */
+      if (stateJobs && Array.isArray(stateJobs.sections)) {
+        stateJobs.sections.forEach(sec => {
+          const stateName = sec.state || sec.title || 'State Jobs';
+          (sec.items || []).forEach(item => {
+            const title = item.name || item.title || '';
+            if (!title) return;
+            // Build internal job.html link using slug
+            const slug = item.slug || slugify(title);
+            const href = slug
+              ? '/jobs/' + slug + '/'
+              : (item.url || '#');
+            push(title, href, stateName + ' Jobs');
+          });
+        });
+      }
+    } catch (e) {}
+
+    inputs.forEach(({ input, resultsId }) => {
+      const resultsWrap = document.getElementById(resultsId);
+      if (!resultsWrap) return;
+
+      const performSearch = () => {
+        const query = input.value.toLowerCase().trim();
+        if (query.length < 1) {
+          resultsWrap.innerHTML = "";
+          resultsWrap.style.display = "none";
+          return;
+        }
+
+        const tokens = query.split(/\s+/).filter(t => t.length);
+        const matches = searchData.filter(item => {
+          const hay = (item.name + " " + item.src).toLowerCase();
+          return tokens.every(t => hay.includes(t));
+        }).slice(0, 10);
+
+        resultsWrap.innerHTML = "";
+        /* use .suggest-item for #searchSuggest, .search-result-item for others */
+        const isSuggest = resultsWrap.id === "searchSuggest";
+        if (matches.length > 0) {
+          resultsWrap.style.display = "block";
+          if (isSuggest) resultsWrap.classList.add("open");
+          matches.forEach(m => {
+            let href = normalizeUrl(m.url);
+            const isExternal = href.startsWith("http") && !href.includes(location.hostname);
+            const a = document.createElement("a");
+            a.className = isSuggest ? "suggest-item" : "search-result-item";
+            a.href = href;
+            if (isExternal) { a.target = "_blank"; a.rel = "noopener"; }
+            if (isSuggest) {
+              a.innerHTML = `<i class="fa-solid fa-circle-dot" style="color:var(--blue);min-width:16px;font-size:.8rem;"></i><span style="flex:1;min-width:0;"><span style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${m.name}</span><span style="font-size:.7rem;color:var(--muted);font-weight:400;">${m.src}</span></span>`;
+            } else {
+              a.innerHTML = `<div class="result-name">${m.name}</div><div class="result-meta">${m.src}</div>`;
+            }
+            resultsWrap.appendChild(a);
+          });
+        } else {
+          resultsWrap.style.display = "block";
+          if (isSuggest) resultsWrap.classList.add("open");
+          resultsWrap.innerHTML = isSuggest
+            ? `<div class="suggest-item" style="color:var(--muted);justify-content:center;">No results found. Try SSC, Railway, Bank, Admit Card…</div>`
+            : `<div class="search-no-results">No matches found.</div>`;
+        }
+      };
+
+      input.addEventListener("input", performSearch);
+      input.addEventListener("focus", () => { if(input.value.length >= 1) resultsWrap.style.display="block"; });
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") { e.preventDefault(); performSearch(); }
+      });
+
+      // ISSUE-008: wire the visible Search button so clicking it actually
+      // runs the search (was previously inert).
+      const btnId = input.id === "siteSearchInput" ? "siteSearchBtn"
+                  : input.id === "sectionSearchInput" ? "sectionSearchBtn"
+                  : input.id === "heroSearch" ? "heroSearchBtn"
+                  : input.id === "mobileBottomSearchInput" ? "mobileBottomSearchBtn"
+                  : null;
+      const btn = btnId ? document.getElementById(btnId) : null;
+      if (btn && !btn.dataset.qaBound) {
+        btn.dataset.qaBound = "1";
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          if (!input.value.trim()) { input.focus(); return; }
+          performSearch();
+        });
+      }
+
+      document.addEventListener("click", (e) => {
+        if (btn && btn.contains(e.target)) return;
+        if (!input.contains(e.target) && !resultsWrap.contains(e.target)) {
+          resultsWrap.style.display = "none";
+          resultsWrap.classList.remove("open");
+        }
+      });
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") { resultsWrap.style.display = "none"; resultsWrap.classList.remove("open"); resultsWrap.innerHTML = ""; }
+      });
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    installGlobalRedirectGate();
+
+    // ✅ Remove home-quicklinks-wrap from DOM immediately (all pages)
+    const qlWrap = document.getElementById("home-quicklinks-wrap");
+    if (qlWrap) qlWrap.remove();
+    // Also remove any injected home-links or mobile-nav-grid
+    ["home-links", "mobile-nav-grid", "mobile-bottom-search", "home-quicklinks-style"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.remove();
+    });
+
+    buildMobileMenu();   // NOTE: runs again after header inject — safe, idempotent
+    safeHideOldSearchBars();
+
+    // Expose init hook for pages that inject header before script.js loads
+    window.__TSJ_INIT_HEADER = function() {
+      buildMobileMenu();
+      initOffcanvas();
+      initDropdowns();
+    };
+
+    await injectHeaderFooter();  // ← buildMobileMenu() also called inside here after DOM ready
+    await loadHeaderLinks();
+    initOffcanvas();   // called again here as safety fallback
+    initDropdowns();   // called again here as safety fallback
+    initFAQ();
+
+    if (page === "index.html" || page === "") {
+      // ── SPEED FIX: render sections WITHOUT waiting for header/footer inject ──
+      // renderHomepageSections runs in parallel with injectHeaderFooter
+      renderHomepageSections();
+      // Daily updates: defer to idle time (below fold, not critical)
+      var deferDailyUpdates = function() {
+        renderDailyUpdatesSections();
+      };
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(deferDailyUpdates, { timeout: 1500 });
+      } else {
+        setTimeout(deferDailyUpdates, 1500);
+      }
+      removeHomeMainPageCtaLinks();
+    }
+    
+    // renderHomeQuickLinks() — PERMANENTLY DISABLED (removed from all pages)
+    await initCategoryPage();
+    await initToolsPage();
+    
+    if (page === "govt-services.html") {
+      ensureSupabaseClient().catch(() => {});
+    }
+    initCscModal();
+    await renderServicesPage();
+    
+    await initGlobalLiveSearch();
+  });
+})();
