@@ -591,23 +591,16 @@
       display: flex;
       align-items: center;
       background: #991b1b;
-      padding: 10px 18px;
+      padding: 10px 16px;
       font-size: 1rem;
       font-weight: 900;
       letter-spacing: .06em;
       text-transform: uppercase;
       white-space: nowrap;
       z-index: 2;
-      gap: 7px;
-      min-width: 130px;
+      gap: 6px;
+      min-width: 44px;
       justify-content: center;
-      border-right: 3px solid rgba(255,255,255,.15);
-    }
-    .ticker-label-text {
-      display: inline;
-    }
-    @media (max-width: 480px) {
-      .ticker-label-text { display: none; }
     }
     .ticker-label::after {
       content: '';
@@ -2198,7 +2191,7 @@
   ============================================================ -->
   <!-- Dynamic Live Ticker — data pulled from dynamic-sections.json (latest jobs section) -->
   <div class="ticker-wrap" id="tickerWrap" aria-label="Latest job updates" role="marquee" aria-live="off">
-    <span class="ticker-label" aria-hidden="true"><i class="fa-solid fa-bolt"></i> <span class="ticker-label-text">LATEST JOBS</span></span>
+    <span class="ticker-label" aria-hidden="true"><i class="fa-solid fa-bolt"></i></span>
     <div class="ticker-track" id="tickerTrack">
       <span class="ticker-loading" aria-live="polite">Loading latest jobs…</span>
     </div>
