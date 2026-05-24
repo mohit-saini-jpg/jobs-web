@@ -617,8 +617,7 @@
       overflow: hidden;
       display: flex;
       align-items: center;
-      padding: 10px 0;         /* ↑ 8px → 10px */
-      contain: strict;
+      padding: 10px 0;
     }
     /* Two identical sets side-by-side for seamless infinite loop */
     .ticker-belt {
@@ -629,8 +628,7 @@
       transform: translateZ(0);
       animation: ticker-scroll var(--ticker-duration, 90s) linear infinite;
     }
-    .ticker-belt:hover,
-    .ticker-wrap:hover .ticker-belt {
+    .ticker-belt:hover {
       animation-play-state: paused;
     }
     @keyframes ticker-scroll {
@@ -1675,8 +1673,7 @@
     @keyframes tsj-pulse{0%,100%{opacity:1}50%{opacity:.6}}
     @media (prefers-reduced-motion: reduce) {
       .section-link .d.d-red { animation: none; }
-      .ticker-belt { animation: none !important; }
-      * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+      /* ticker-belt animation intentionally kept running */
     }
   </style>
 
