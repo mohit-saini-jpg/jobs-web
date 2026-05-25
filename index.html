@@ -3156,8 +3156,10 @@
         }
 
         /* Build sub-links ONLY for non-UPCOMING jobs (UPCOMING uses job detail page for full info) */
+        /* Also skip for STATE_JOBS/CENTRAL_JOBS/ADMISSIONS — they use job detail page */
+        var noSubLinks = isUpcoming || cat === 'STATE_JOBS' || cat === 'CENTRAL_JOBS' || cat === 'ADMISSIONS';
         var subLinksHtml = '';
-        if (!isUpcoming && job.sectionsLinks && job.sectionsLinks.length > 0) {
+        if (!noSubLinks && job.sectionsLinks && job.sectionsLinks.length > 0) {
           var subLinks = job.sectionsLinks.slice(0, 4);
           subLinksHtml = '<div class="sr-job-links">' +
             subLinks.map(function(sl) {
@@ -3220,7 +3222,11 @@
           'SR_Admission':    { label: 'Admission',      icon: 'fa-solid fa-graduation-cap', headClass: 'purple', viewUrl: '/section/admission/' },
           'SR_Answer_Key':   { label: 'Answer Key',     icon: 'fa-solid fa-key',            headClass: 'orange', viewUrl: '/section/answer-key/' },
           'OFFLINE_FORM':    { label: 'Offline Form',   icon: 'fa-solid fa-file-pen',       headClass: 'cyan',   viewUrl: '/section/offline-form/' },
-          'UPCOMING_JOBS':   { label: 'Upcoming Jobs',  icon: 'fa-solid fa-calendar-plus',  headClass: 'teal',   viewUrl: '/section/upcoming-jobs/' }
+          'UPCOMING_JOBS':   { label: 'Upcoming Jobs',  icon: 'fa-solid fa-calendar-plus',  headClass: 'teal',   viewUrl: '/section/upcoming-jobs/' },
+          'STATE_JOBS':      { label: 'State Jobs',     icon: 'fa-solid fa-map-location-dot', headClass: 'blue',   viewUrl: '/section/state-jobs/' },
+          'CENTRAL_JOBS':    { label: 'Central Jobs',   icon: 'fa-solid fa-landmark',         headClass: 'green',  viewUrl: '/section/central-jobs/' },
+          'ADMISSIONS':      { label: 'Admissions',     icon: 'fa-solid fa-graduation-cap',   headClass: 'purple', viewUrl: '/section/admissions/' },
+          'LATEST_JOBS NEW': { label: 'Latest Jobs',    icon: 'fa-solid fa-fire',             headClass: 'red',    viewUrl: '/section/latest-jobs/' }
         };
 
         /* Default style pool for unknown/new categories — cycles through colors */
@@ -3411,7 +3417,7 @@
 
         /* ── Build CATEGORY_CONFIG dynamically from all buckets found ── */
         /* First add known categories in preferred order */
-        var orderedKeys = ['SR_Latest_Jobs', 'LATEST_JOBS', 'SR_Result', 'SR_Admit_Card', 'SR_Admission', 'SR_Answer_Key', 'OFFLINE_FORM', 'UPCOMING_JOBS'];
+        var orderedKeys = ['SR_Latest_Jobs', 'LATEST_JOBS NEW', 'STATE_JOBS', 'CENTRAL_JOBS', 'SR_Result', 'SR_Admit_Card', 'ADMISSIONS', 'SR_Admission', 'SR_Answer_Key', 'OFFLINE_FORM', 'UPCOMING_JOBS'];
         /* Then append any NEW unknown categories */
         Object.keys(categoryBuckets).forEach(function(k) {
           if (orderedKeys.indexOf(k) === -1) orderedKeys.push(k);
