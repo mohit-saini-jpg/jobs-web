@@ -489,15 +489,56 @@
     showPrompt:   showPrompt,
     getToken:     function() { return sg(SK.TOKEN); },
 
+    // Test with a REAL job page URL (not section URL)
     testNotification: function(category) {
-      var cat = CATEGORIES[category || 'latest-jobs'] || CATEGORIES['latest-jobs'];
-      if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-        navigator.serviceWorker.controller.postMessage({
-          type: 'SHOW_TEST_NOTIFICATION',
-          payload: { title: cat.emoji + ' Test: ' + cat.label,
-                     body: 'Push notification working!', url: cat.url, category: category || 'latest-jobs' }
+      var cat  = CATEGORIES[category || 'latest-jobs'] || CATEGORIES['latest-jobs'];
+      var site = 'https://www.topsarkarijobs.com';
+      
+      // Map category to data key in merged_sarkari_data.json
+      var catDataKey = {
+        'latest-jobs': 'SR_Latest_Jobs',
+        'result':      'SR_Result',
+        'admit-card':  'SR_Admit_Card',
+        'answer-key':  'SR_Answer_Key',
+        'admission':   'SR_Admission',
+      }[category || 'latest-jobs'] || 'SR_Latest_Jobs';
+
+      // Fetch a real job from merged_sarkari_data.json
+      fetch('/merged_sarkari_data.json', { cache: 'default' })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          var jobs  = (d.jobs || []).filter(function(j) {
+            return j.category === catDataKey && j.slug;
+          });
+          // Pick latest job (index 0)
+          var job   = jobs[0] || null;
+          var slug  = job ? job.slug : null;
+          var title = job ? (job.title || '').slice(0, 65) : (cat.label + ' Update');
+          var url   = slug ? (site + '/jobs/' + slug + '/') : cat.url;
+
+          if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+              type: 'SHOW_TEST_NOTIFICATION',
+              payload: {
+                title:    cat.emoji + ' ' + title,
+                body:     'Abhi apply karein — last date miss mat karo!',
+                url:      url,
+                category: category || 'latest-jobs',
+              }
+            });
+          }
+        })
+        .catch(function() {
+          // Fallback if fetch fails
+          if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+              type: 'SHOW_TEST_NOTIFICATION',
+              payload: { title: cat.emoji + ' Test: ' + cat.label,
+                         body: 'Push notification working!',
+                         url: cat.url, category: category || 'latest-jobs' }
+            });
+          }
         });
-      }
     },
 
     // For already-subscribed users — init FCM to receive foreground messages

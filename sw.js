@@ -67,7 +67,8 @@ self.addEventListener('install', e => {
       caches.open(CACHE_OFFLN).then(c  =>
         c.put('offline', new Response(OFFLINE_HTML, {headers:{'Content-Type':'text/html'}}))
       ),
-    ]).then(() => self.skipWaiting())
+    ])
+    // FIXED: Removed auto-skipWaiting → prevents forced page reload
   );
 });
 
