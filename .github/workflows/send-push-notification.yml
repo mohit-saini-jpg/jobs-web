@@ -1,0 +1,109 @@
+# TOP SARKARI JOBS — Auto Push Notification
+# Triggers when dailyupdates.json or merged_sarkari_data.json changes
+# Also supports manual dispatch from GitHub Actions UI
+#
+# SECRETS needed in GitHub → Settings → Secrets → Actions:
+#   FIREBASE_SERVICE_ACCOUNT_JSON  — Content of serviceAccountKey.json
+
+name: Send Push Notifications
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'dailyupdates.json'
+      - 'merged_sarkari_data.json'
+
+  workflow_dispatch:
+    inputs:
+      category:
+        description: 'Category'
+        required: true
+        type: choice
+        options: [latest-jobs, result, admit-card, admission, answer-key]
+      title:
+        description: 'Title'
+        required: true
+        default: '🔔 New Update on Top Sarkari Jobs!'
+      body:
+        description: 'Body'
+        required: true
+        default: 'Nayi sarkari vacancy aa gayi. Abhi check karo!'
+      job_url:
+        description: 'Job URL (optional)'
+        required: false
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 2 }
+
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+
+      - run: npm install firebase-admin
+
+      - name: Detect + Send
+        env:
+          SA_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            CAT="${{ inputs.category }}"
+            TITLE="${{ inputs.title }}"
+            BODY="${{ inputs.body }}"
+            JURL="${{ inputs.job_url }}"
+          else
+            CAT="latest-jobs"
+            TITLE=$(node -e "try{const d=require('./dailyupdates.json');const s=(d.sections||[d])[0];const i=(s.items||[])[0];console.log(i?.name||i?.title||'New Govt Jobs 2026');}catch(e){console.log('New Govt Jobs 2026');}" 2>/dev/null || echo "New Sarkari Jobs 2026")
+            TITLE="🔴 $TITLE"
+            BODY="Nayi sarkari vacancy! Abhi apply karein. Last date miss mat karo."
+            JURL="https://www.topsarkarijobs.com/section/latest-jobs/"
+          fi
+
+          node << SCRIPT
+          const admin = require('firebase-admin');
+          const sa = JSON.parse(process.env.SA_JSON);
+          admin.initializeApp({ credential: admin.credential.cert(sa) });
+          const msg = admin.messaging();
+          const cat  = '${CAT}';
+          const site = 'https://www.topsarkarijobs.com';
+          const catUrls = {
+            'latest-jobs': site+'/section/latest-jobs/',
+            'result':      site+'/section/results/',
+            'admit-card':  site+'/section/admit-card/',
+            'admission':   site+'/section/admission/',
+            'answer-key':  site+'/section/answer-key/',
+          };
+          const url = '${JURL}' || catUrls[cat] || site+'/';
+          msg.send({
+            topic: 'tsj-'+cat,
+            webpush:{
+              notification:{
+                title:'${TITLE}', body:'${BODY}',
+                icon: site+'/icons/icon-192x192.png',
+                badge: site+'/icons/icon-96x96.png',
+                tag:'tsj-'+cat, renotify:true,
+              },
+              fcmOptions:{ link: url },
+            },
+            android:{
+              priority:'high',
+              notification:{ title:'${TITLE}', body:'${BODY}', color:'#0d2257', channelId:'tsj_jobs' },
+              data:{ url, category:cat },
+            },
+            data:{ title:'${TITLE}', body:'${BODY}', url, category:cat },
+          }).then(id => {
+            console.log('Sent! ID:', id, '| Topic: tsj-'+cat);
+          }).catch(err => {
+            console.error('Failed:', err.message);
+          });
+          SCRIPT
+
+      - name: Summary
+        run: |
+          echo "### ✅ Push Notification Sent" >> $GITHUB_STEP_SUMMARY
+          echo "- **Time:** $(date -u '+%Y-%m-%d %H:%M UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "- **Trigger:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
