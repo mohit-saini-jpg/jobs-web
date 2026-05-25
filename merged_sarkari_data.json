@@ -1,23 +1,23 @@
 {
-  "scraped_at": "2026-05-24 21:42:01",
-  "total": 170,
+  "scraped_at": "2026-05-25 09:04:25",
+  "total": 167,
   "summary": {
-    "sarkariresultshine_offline_jobs_top30": 24,
-    "sarkariresultshine_latest_jobs_top100": 51,
+    "sarkariresultshine_offline_jobs_top30": 23,
+    "sarkariresultshine_latest_jobs_top100": 50,
     "sarkariresult_categories": {
-      "SR_Latest_Jobs": 23,
+      "SR_Latest_Jobs": 22,
       "SR_Result": 21,
       "SR_Admit_Card": 24,
       "SR_Admission": 6,
       "SR_Answer_Key": 3
     },
-    "sarkariresult_total": 77,
+    "sarkariresult_total": 76,
     "sarkarinetwork_upcoming_jobs": 18
   },
   "category_counts": {
-    "OFFLINE_FORM": 24,
-    "LATEST_JOBS NEW": 51,
-    "SR_Latest_Jobs": 23,
+    "OFFLINE_FORM": 23,
+    "LATEST_JOBS NEW": 50,
+    "SR_Latest_Jobs": 22,
     "SR_Result": 21,
     "SR_Admit_Card": 24,
     "SR_Admission": 6,
@@ -25,6 +25,101 @@
     "UPCOMING_JOBS": 18
   },
   "jobs": [
+    {
+      "category": "OFFLINE_FORM",
+      "title": "FC College Hisar Vacancy 2026, Apply For Teaching & Non-Teaching Posts -",
+      "listing_date": "25 May. 2026",
+      "organization": "",
+      "post_name": "Eligibility",
+      "total_vacancy": "",
+      "salary_pay_scale": "",
+      "apply_mode": "",
+      "job_location": "",
+      "important_dates": {
+        "application_start": "24-05-2026",
+        "last_date": "10-06-2026",
+        "exam_date": "",
+        "interview_date": "25-06-2026"
+      },
+      "application_fees": {
+        "general_obc_ews": "",
+        "sc_st": "1",
+        "female": ""
+      },
+      "minimum_age": "18",
+      "maximum_age": "42",
+      "how_to_apply": "Download the Form: visit the official website Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Address: The Principal, Fateh Chand College for Women, Near Red Square Market, Hisar – 125001 FC College Hisar Vacancy 2026",
+      "form_pdf_free_link": "https://drive.google.com/file/d/1GACUjqh1DcuO4ieB66iHHFNDWAVVjtW0/view?usp=drive_link",
+      "application_form_pdf_link": "",
+      "form_pdf_link": "",
+      "apply_online_link": "",
+      "official_notification_pdf_link": "",
+      "official_website_link": "https://fcchisar.com/",
+      "jobs_info": "<p style=\"text-align: justify;\">FC College Hisar Vacancy 2026: The Fateh Chand College for Women, Hisar has issued a notification for the position of Various Non-Teaching. The recruitment drive comprises 42 vacancies. All eligible and interested candidates are advised to carefully read the official notification and apply before 10 June 2026, the last Date. All relevant information regarding the FC College Hisar Vacancy 2026recruitment is provided below.</p>",
+      "vacancy_details": [
+        {
+          "post_name": "Electrician-cum-Gen. Operator",
+          "total": "10",
+          "eligibility": "25-06-2026"
+        },
+        {
+          "post_name": "Library Attendants (Female)",
+          "total": "",
+          "eligibility": "25-06-2026"
+        },
+        {
+          "post_name": "Sweepers (Male/Female)",
+          "total": "8",
+          "eligibility": "25-06-2026"
+        },
+        {
+          "post_name": "Mali (Male)",
+          "total": "8",
+          "eligibility": "25-06-2026"
+        },
+        {
+          "post_name": "Plumber (Male)",
+          "total": "10",
+          "eligibility": "25-06-2026"
+        },
+        {
+          "post_name": "Chowkidar (Male/Female)",
+          "total": "8",
+          "eligibility": "25-06-2026"
+        },
+        {
+          "post_name": "Lab Attendants (Female)",
+          "total": "12",
+          "eligibility": "25-06-2026"
+        },
+        {
+          "post_name": "Peon (Male)",
+          "total": "10",
+          "eligibility": "26-06-2026"
+        },
+        {
+          "post_name": "Library Restorer (Female)",
+          "total": "12",
+          "eligibility": "26-06-2026"
+        },
+        {
+          "post_name": "Tabla Vadak",
+          "total": "",
+          "eligibility": "26-06-2026"
+        },
+        {
+          "post_name": "Computer Hardware Technician",
+          "total": "",
+          "eligibility": "26-06-2026"
+        },
+        {
+          "post_name": "Clerks",
+          "total": "",
+          "eligibility": "26-06-2026"
+        }
+      ],
+      "sequence": 1
+    },
     {
       "category": "OFFLINE_FORM",
       "title": "DPHCL Recruitment 2026, Free Application Form & Apply -",
@@ -123,7 +218,7 @@
           "eligibility": "Diploma in Computer Applications with 6 months of experience"
         }
       ],
-      "sequence": 2
+      "sequence": 4
     },
     {
       "category": "OFFLINE_FORM",
@@ -157,7 +252,7 @@
       "official_website_link": "",
       "jobs_info": "<p style=\"text-align: justify;\">Grih Kalyan Kendra Delhi Vacancy 2026: Grih Kalyan Kendra (HQ) under the aegis of the Ministry of Personnel, Public Grievances and Pensions, Department of Personnel and Training has issued a notification for the position of various. All eligible and interested candidates are advised to carefully read the official notification and apply before 17-06-2026, the last Date. All relevant information regarding the Grih Kalyan Kendra Delhi Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 3
+      "sequence": 5
     },
     {
       "category": "OFFLINE_FORM",
@@ -197,7 +292,7 @@
           "eligibility": "Ph.D/MD or equivalent degree with at least one research article published in a reputed and indexed journal."
         }
       ],
-      "sequence": 4
+      "sequence": 6
     },
     {
       "category": "OFFLINE_FORM",
@@ -292,7 +387,7 @@
           "eligibility": "10th Pass + Driving License"
         }
       ],
-      "sequence": 5
+      "sequence": 7
     },
     {
       "category": "OFFLINE_FORM",
@@ -326,7 +421,7 @@
       "official_website_link": "https://militaryliteraturefestival.com/vacancy-sevadar-cum-safaiwala-may-2026.php",
       "jobs_info": "<p style=\"text-align: justify;\">MLF Chandigarh Recruitment 2026: Military Literature Festival Association Chandigarh has issued a notification for the position of Sevadar cum Safaiwala. The recruitment drive comprises one vacancy. All eligible and interested candidates are advised to carefully read the official notification and apply before 31-05-2026, the last Date. All relevant information regarding the MLF Chandigarh Recruitment 2026 is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 7
+      "sequence": 9
     },
     {
       "category": "OFFLINE_FORM",
@@ -360,7 +455,7 @@
       "official_website_link": "https://www.irctc.com/new-openings.php",
       "jobs_info": "",
       "vacancy_details": [],
-      "sequence": 8
+      "sequence": 10
     },
     {
       "category": "OFFLINE_FORM",
@@ -394,7 +489,7 @@
       "official_website_link": "https://www.idsj.org/vacancies",
       "jobs_info": "<p style=\"text-align: justify;\">IDS Jaipur Vacancy 2026: The Institute of Development Studies (IDS), Jaipur, has issued a notification for the positions of Driver, Junior Office Assistant (JOA), and Class IV. All eligible and interested candidates are advised to carefully read the official notification and apply before 30 May, the last Date. All relevant information regarding the IDS Jaipur Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 12
+      "sequence": 14
     },
     {
       "category": "OFFLINE_FORM",
@@ -479,7 +574,7 @@
           "eligibility": "Relevant Trade Qualification"
         }
       ],
-      "sequence": 13
+      "sequence": 15
     },
     {
       "category": "OFFLINE_FORM",
@@ -513,7 +608,7 @@
       "official_website_link": "",
       "jobs_info": "<p style=\"text-align: justify;\">Army Canteen Danapur Cantt Vacancy 2026: The Unit Run Canteen (URC), HQ Jharkhand & Bihar Sub Area, Danapur Cantt has issued a notification for the position of Various. The recruitment drive comprises 27 vacancies. All eligible and interested candidates are advised to carefully read the official notification and apply before 25 May 2026, the last Date. All relevant information regarding the Army Canteen Danapur Cantt Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 14
+      "sequence": 16
     },
     {
       "category": "OFFLINE_FORM",
@@ -547,7 +642,7 @@
       "official_website_link": "https://electricityombudsmandelhi.co.in/vacancies",
       "jobs_info": "<p style=\"text-align: justify;\">Electricity Ombudsman Delhi Vacancy 2026: The Office of the Electricity Ombudsman, Govt. of NCT Delhi has issued a notification for the position of Personal Assistant. The recruitment drive comprises one vacancy. All eligible and interested candidates are advised to carefully read the official notification and apply before 17 June 2026, the last Date. All relevant information regarding the Electricity Ombudsman Delhi Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 15
+      "sequence": 17
     },
     {
       "category": "OFFLINE_FORM",
@@ -581,7 +676,7 @@
       "official_website_link": "https://haryanaakademi.ac.in/",
       "jobs_info": "",
       "vacancy_details": [],
-      "sequence": 16
+      "sequence": 18
     },
     {
       "category": "OFFLINE_FORM",
@@ -615,7 +710,7 @@
       "official_website_link": "https://www.echs.gov.in/",
       "jobs_info": "<p style=\"text-align: justify;\">ECHS Hisar Vacancy 2026: Ex-Servicemen Contributory Health Scheme invite applications to engage following Medical Officer and Non Medical Staffs on contractual basis in ECHS Polyclinics under AOR of ECHS Cell, Station Headquarters Hisar for a period of 11 months for civil and one year renewable for additional period of one year for ESMs/till attaining age subject to performance of candidates/other conditions according to the criteria as mentioned against each posts.</p>",
       "vacancy_details": [],
-      "sequence": 18
+      "sequence": 20
     },
     {
       "category": "OFFLINE_FORM",
@@ -655,7 +750,7 @@
           "eligibility": "D.Ed. / B.Ed. with HTET or CTET Qualified"
         }
       ],
-      "sequence": 19
+      "sequence": 21
     },
     {
       "category": "OFFLINE_FORM",
@@ -695,7 +790,7 @@
           "eligibility": "D.Ed. / B.Ed. with HTET or CTET Qualified"
         }
       ],
-      "sequence": 20
+      "sequence": 22
     },
     {
       "category": "OFFLINE_FORM",
@@ -735,7 +830,7 @@
           "eligibility": "D.Ed. / B.Ed. with HTET or CTET Qualified"
         }
       ],
-      "sequence": 21
+      "sequence": 23
     },
     {
       "category": "OFFLINE_FORM",
@@ -769,7 +864,7 @@
       "official_website_link": "",
       "jobs_info": "<p style=\"text-align: justify;\">Charkhi Dadri Safai Karmchari Vacancy 2026: Applications are invited for the vacant post of Safai Karmchari in Gram Panchayat Baund Kalan. The applicant must be a resident of the same village. If, in any case, a sufficient number of people are not available in a particular village for the cleaning work, then permission will also be given to employ a resident of a nearby village under the scheme. The applicant, whether male or female, must be physically capable and healthy and should be between 18 and 55 years of age. The applicant can submit his/her application on any working day at the Block Development and Panchayat Officer Office, Baund, from 18.05.2026 to 01.06.2026 (office hours: 09:00 AM to 05:00 PM).</p>",
       "vacancy_details": [],
-      "sequence": 22
+      "sequence": 24
     },
     {
       "category": "OFFLINE_FORM",
@@ -803,7 +898,7 @@
       "official_website_link": "https://www.svsu.ac.in/index.php",
       "jobs_info": "",
       "vacancy_details": [],
-      "sequence": 23
+      "sequence": 25
     },
     {
       "category": "OFFLINE_FORM",
@@ -837,7 +932,7 @@
       "official_website_link": "http://nrce.gov.in/index.php/jobs-positions/",
       "jobs_info": "<p style=\"text-align: justify;\">ICAR-NRCE Hisar Project Assistant Recruitment 2026: ICAR-National Research Centre on Equines, Hisar, has issued a notification for the Project Assistant position. The recruitment drive comprises one vacancy. All eligible and interested candidates are advised to carefully read the official notification and apply before 22-05-2026, the last Date. All relevant information regarding the ICAR-NRCE Hisar Project Assistant Recruitment 2026 is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 24
+      "sequence": 26
     },
     {
       "category": "OFFLINE_FORM",
@@ -892,7 +987,7 @@
           "eligibility": "10th Pass with ITI in Plumber Trade"
         }
       ],
-      "sequence": 25
+      "sequence": 27
     },
     {
       "category": "OFFLINE_FORM",
@@ -926,7 +1021,7 @@
       "official_website_link": "",
       "jobs_info": "<p style=\"text-align: justify;\">KVK Ambala Driver Vacancy 2026: Society for Creation of Heaven on Earth (SCHE) has issued a notification for the position of driver. The recruitment drive comprises 01 vacancy. All eligible and interested candidates are advised to carefully read the official notification and apply before 25-05-2026, the last Date. All relevant information regarding the KVK Ambala Driver Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 26
+      "sequence": 28
     },
     {
       "category": "OFFLINE_FORM",
@@ -966,7 +1061,7 @@
           "eligibility": "Assistant Engineer / IT / Mechanical / Electrical / Materials / Signal Posts: Relevant Engineering Degree + Valid GATE Score (2023/2024/2025)Assistant Medical Officer: MBBS Degree + Medical RegistrationAssistant Traffic Manager / Assistant Personnel Officer / Assistant Deputy General Manager: Graduation + MBA + Valid CAT ScoreAssistant Financial Advisor: CA / CMA Qualification"
         }
       ],
-      "sequence": 27
+      "sequence": 29
     },
     {
       "category": "OFFLINE_FORM",
@@ -1000,87 +1095,102 @@
       "official_website_link": "https://ndmc.gov.in/vacancy_new.aspx",
       "jobs_info": "",
       "vacancy_details": [],
-      "sequence": 28
-    },
-    {
-      "category": "OFFLINE_FORM",
-      "title": "ICAR-CIRB Hisar Recruitment 2026, Vacancy for Young Professional-II posts Salary ₹42,000 -",
-      "listing_date": "09 May. 2026",
-      "organization": "ICAR-Central Institute for Research on Buffaloes (ICAR-CIRB), Hisar",
-      "post_name": "Young Professional-II",
-      "total_vacancy": "",
-      "salary_pay_scale": "Rs. 42000/-",
-      "apply_mode": "Online by mail",
-      "job_location": "Haryana",
-      "important_dates": {
-        "application_start": "08-05-2026",
-        "last_date": "18-05-2026",
-        "exam_date": "",
-        "interview_date": "05-06-2026"
-      },
-      "application_fees": {
-        "general_obc_ews": "",
-        "sc_st": "00",
-        "female": ""
-      },
-      "minimum_age": "21",
-      "maximum_age": "45",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website………………… Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: recruitment.cirb@gmail.com",
-      "form_pdf_free_link": "https://cirb.res.in/wp-content/uploads/2026/05/Advt.-no.-13-for-website_compressed.pdf",
-      "application_form_pdf_link": "",
-      "form_pdf_link": "",
-      "apply_online_link": "",
-      "official_notification_pdf_link": "https://cirb.res.in/wp-content/uploads/2026/05/Advt.-no.-13-for-website_compressed.pdf",
-      "official_website_link": "https://cirb.res.in/#1515148541514-a02a1a2b-8047",
-      "jobs_info": "",
-      "vacancy_details": [
-        {
-          "post_name": "Young Professional-II",
-          "total": "42000",
-          "eligibility": "Post Graduate in Life Sciences (with Genetics or Zoology or Biochemistry as one of the subjects)/Biotechnology/Nanotechnology/Medical Biotechnology with at least 60% marks or equivalent with one year experience in the relevant field OR BVSc & AH or Master’s Degree in any stream of Biological Sciences."
-        }
-      ],
-      "sequence": 29
-    },
-    {
-      "category": "OFFLINE_FORM",
-      "title": "SHKM GMC Nalhar Recruitment 2026, Vacancy for Senior Resident posts, Apply Now -",
-      "listing_date": "09 May. 2026",
-      "organization": "S.H.K.M. Government Medical College, Nalhar",
-      "post_name": "Senior Resident",
-      "total_vacancy": "81",
-      "salary_pay_scale": "Rs. 67,700/-",
-      "apply_mode": "Offline",
-      "job_location": "Haryana",
-      "important_dates": {
-        "application_start": "08-05-2026",
-        "last_date": "18-05-2026",
-        "exam_date": "",
-        "interview_date": ""
-      },
-      "application_fees": {
-        "general_obc_ews": "",
-        "sc_st": "250",
-        "female": ""
-      },
-      "minimum_age": "22",
-      "maximum_age": "45",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Download the Form: visit the official website https://www.gmcmewat.ac.in/ Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). Also, attach a self-addressed envelope of size 25 cm x 10 cm. The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Receipt & Dispatch Branch, SHKM, Govt. Medical College, Nalhar, Nuh",
-      "form_pdf_free_link": "",
-      "application_form_pdf_link": "",
-      "form_pdf_link": "",
-      "apply_online_link": "",
-      "official_notification_pdf_link": "https://drive.google.com/file/d/1xn27tqOKq213s9uLuzWPT436pRJUZlhZ/view?usp=sharing",
-      "official_website_link": "https://www.gmcmewat.ac.in/",
-      "jobs_info": "",
-      "vacancy_details": [
-        {
-          "post_name": "Senior Resident",
-          "total": "81",
-          "eligibility": "An MBBS degree is mandatory, along with an MD/MS/DNB degree in a relevant subject."
-        }
-      ],
       "sequence": 30
+    },
+    {
+      "category": "LATEST_JOBS NEW",
+      "title": "FC College Hisar Vacancy 2026, Apply For Teaching & Non-Teaching Posts -",
+      "listing_date": "",
+      "organization": "",
+      "post_name": "Eligibility",
+      "total_vacancy": "",
+      "salary_pay_scale": "",
+      "apply_mode": "",
+      "job_location": "",
+      "important_dates": {
+        "application_start": "24-05-2026",
+        "last_date": "10-06-2026",
+        "exam_date": "",
+        "interview_date": "25-06-2026"
+      },
+      "application_fees": {
+        "general_obc_ews": "",
+        "sc_st": "1",
+        "female": ""
+      },
+      "minimum_age": "18",
+      "maximum_age": "42",
+      "how_to_apply": "Download the Form: visit the official website Fill the form in BLOCK CAPITAL letters carefully, and provide accurate personal, educational, and professional details. Attach all documents: Include Self-attested copies of educational certificates, experience letters, Fee Receipt , and age proof (Aadhar, PAN, etc.). The envelope containing the application should be superscribed as “Application for the post of ___________________”. Send Application Form: Address: The Principal, Fateh Chand College for Women, Near Red Square Market, Hisar – 125001 FC College Hisar Vacancy 2026",
+      "form_pdf_free_link": "https://drive.google.com/file/d/1GACUjqh1DcuO4ieB66iHHFNDWAVVjtW0/view?usp=drive_link",
+      "application_form_pdf_link": "",
+      "form_pdf_link": "",
+      "apply_online_link": "",
+      "official_notification_pdf_link": "",
+      "official_website_link": "https://fcchisar.com/",
+      "jobs_info": "<p style=\"text-align: justify;\">FC College Hisar Vacancy 2026: The Fateh Chand College for Women, Hisar has issued a notification for the position of Various Non-Teaching. The recruitment drive comprises 42 vacancies. All eligible and interested candidates are advised to carefully read the official notification and apply before 10 June 2026, the last Date. All relevant information regarding the FC College Hisar Vacancy 2026recruitment is provided below.</p>",
+      "vacancy_details": [
+        {
+          "post_name": "Electrician-cum-Gen. Operator",
+          "total": "10",
+          "eligibility": "25-06-2026"
+        },
+        {
+          "post_name": "Library Attendants (Female)",
+          "total": "",
+          "eligibility": "25-06-2026"
+        },
+        {
+          "post_name": "Sweepers (Male/Female)",
+          "total": "8",
+          "eligibility": "25-06-2026"
+        },
+        {
+          "post_name": "Mali (Male)",
+          "total": "8",
+          "eligibility": "25-06-2026"
+        },
+        {
+          "post_name": "Plumber (Male)",
+          "total": "10",
+          "eligibility": "25-06-2026"
+        },
+        {
+          "post_name": "Chowkidar (Male/Female)",
+          "total": "8",
+          "eligibility": "25-06-2026"
+        },
+        {
+          "post_name": "Lab Attendants (Female)",
+          "total": "12",
+          "eligibility": "25-06-2026"
+        },
+        {
+          "post_name": "Peon (Male)",
+          "total": "10",
+          "eligibility": "26-06-2026"
+        },
+        {
+          "post_name": "Library Restorer (Female)",
+          "total": "12",
+          "eligibility": "26-06-2026"
+        },
+        {
+          "post_name": "Tabla Vadak",
+          "total": "",
+          "eligibility": "26-06-2026"
+        },
+        {
+          "post_name": "Computer Hardware Technician",
+          "total": "",
+          "eligibility": "26-06-2026"
+        },
+        {
+          "post_name": "Clerks",
+          "total": "",
+          "eligibility": "26-06-2026"
+        }
+      ],
+      "sequence": 2
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1120,7 +1230,7 @@
           "eligibility": "PG Degree in English / Hindi / History / Political Science / Sociology / Music and Special B.Ed."
         }
       ],
-      "sequence": 3
+      "sequence": 6
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1160,7 +1270,7 @@
           "eligibility": "Degree in Agriculture and Computer Course “O” Level, UP PET 2025 Exam Passed."
         }
       ],
-      "sequence": 5
+      "sequence": 8
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1200,7 +1310,7 @@
           "eligibility": "Bachelor’s Degree in Agriculture or related fields such as Agriculture Science / Horticulture / Forestry / Agricultural Engineering / Home Science, etc., UP PET 2025 Exam Passed."
         }
       ],
-      "sequence": 7
+      "sequence": 10
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1240,7 +1350,7 @@
           "eligibility": "12th with PCM (70% Marks), Appeared in JEEMAIN 2026, Only Unmarried Candidates are Eligible"
         }
       ],
-      "sequence": 8
+      "sequence": 11
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1420,7 +1530,7 @@
           "eligibility": "MBBS with Psychiatry PG"
         }
       ],
-      "sequence": 9
+      "sequence": 12
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1454,7 +1564,7 @@
       "official_website_link": "https://itiharyana.gov.in/en",
       "jobs_info": "",
       "vacancy_details": [],
-      "sequence": 10
+      "sequence": 13
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1554,7 +1664,7 @@
           "eligibility": "Diploma in Computer Applications with 6 months of experience"
         }
       ],
-      "sequence": 11
+      "sequence": 14
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1588,7 +1698,7 @@
       "official_website_link": "https://hkrnl.itiharyana.gov.in/",
       "jobs_info": "",
       "vacancy_details": [],
-      "sequence": 12
+      "sequence": 15
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1622,7 +1732,7 @@
       "official_website_link": "https://hkrnl.itiharyana.gov.in/",
       "jobs_info": "<p style=\"text-align: justify;\">HKRN Accounts cum Office Assistant Vacancy 2026: The Haryana Kaushal Rozgar Nigam has released a notification for the HKRN Accounts cum Office Assistant Vacancy 2026posts. All interested and eligible candidates must read the HKRN Accounts cum Office Assistant Vacancy 2026 notification carefully and submit their applications before the prescribed deadline. See all information related to the HKRN Accounts cum Office Assistant Vacancy 2026post on the official website https://hkrnl.itiharyana.gov.in/. All the details associated with the HKRN Accounts cum Office Assistant Vacancy 2026 are given below.</p>",
       "vacancy_details": [],
-      "sequence": 13
+      "sequence": 16
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1656,7 +1766,7 @@
       "official_website_link": "",
       "jobs_info": "<p style=\"text-align: justify;\">Grih Kalyan Kendra Delhi Vacancy 2026: Grih Kalyan Kendra (HQ) under the aegis of the Ministry of Personnel, Public Grievances and Pensions, Department of Personnel and Training has issued a notification for the position of various. All eligible and interested candidates are advised to carefully read the official notification and apply before 17-06-2026, the last Date. All relevant information regarding the Grih Kalyan Kendra Delhi Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 16
+      "sequence": 19
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1696,7 +1806,7 @@
           "eligibility": "Any Graduation Degree, English Typing : 30 wpm, Computer Knowledge."
         }
       ],
-      "sequence": 17
+      "sequence": 20
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1736,7 +1846,7 @@
           "eligibility": "Degree in Law (LLB), Enrolled as an Advocate with Bar Council."
         }
       ],
-      "sequence": 21
+      "sequence": 24
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1776,7 +1886,7 @@
           "eligibility": "10th Passed (55% Marks), ITI / Apprenticeship / Experience."
         }
       ],
-      "sequence": 25
+      "sequence": 28
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1810,7 +1920,7 @@
       "official_website_link": "",
       "jobs_info": "",
       "vacancy_details": [],
-      "sequence": 26
+      "sequence": 29
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1875,7 +1985,7 @@
           "eligibility": "10th Pass + ITI Electrician"
         }
       ],
-      "sequence": 27
+      "sequence": 30
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1915,7 +2025,7 @@
           "eligibility": "Ph.D/MD or equivalent degree with at least one research article published in a reputed and indexed journal."
         }
       ],
-      "sequence": 28
+      "sequence": 31
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2010,7 +2120,7 @@
           "eligibility": "10th Pass + Driving License"
         }
       ],
-      "sequence": 29
+      "sequence": 32
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2050,7 +2160,7 @@
           "eligibility": "B.A L.L.B. Knowledge of Hindi upto Matric Standard; and who has held an assignment involving legal work for a period of not less than ten years; OR Has practiced at the bar for a period of not less than five years"
         }
       ],
-      "sequence": 31
+      "sequence": 34
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2084,7 +2194,7 @@
       "official_website_link": "https://militaryliteraturefestival.com/vacancy-sevadar-cum-safaiwala-may-2026.php",
       "jobs_info": "<p style=\"text-align: justify;\">MLF Chandigarh Recruitment 2026: Military Literature Festival Association Chandigarh has issued a notification for the position of Sevadar cum Safaiwala. The recruitment drive comprises one vacancy. All eligible and interested candidates are advised to carefully read the official notification and apply before 31-05-2026, the last Date. All relevant information regarding the MLF Chandigarh Recruitment 2026 is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 32
+      "sequence": 35
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2118,7 +2228,7 @@
       "official_website_link": "https://www.irctc.com/new-openings.php",
       "jobs_info": "",
       "vacancy_details": [],
-      "sequence": 34
+      "sequence": 37
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2158,7 +2268,7 @@
           "eligibility": "Update Soon"
         }
       ],
-      "sequence": 35
+      "sequence": 38
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2192,7 +2302,7 @@
       "official_website_link": "https://hal-india.co.in/",
       "jobs_info": "<p style=\"text-align: justify;\">HAL Apprentice Vacancy 2026: Hindustan Aeronautics Limited (HAL) has issued a notification for the position of ITI Apprentice. All eligible and interested candidates are advised to carefully read the official notification and apply before 03-06-2026, the last Date. All relevant information regarding the HAL Apprentice Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 37
+      "sequence": 40
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2232,7 +2342,7 @@
           "eligibility": "Any Graduate"
         }
       ],
-      "sequence": 43
+      "sequence": 46
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2272,7 +2382,7 @@
           "eligibility": "Any Graduate"
         }
       ],
-      "sequence": 45
+      "sequence": 48
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2306,7 +2416,7 @@
       "official_website_link": "https://dpcc.delhi.gov.in/",
       "jobs_info": "<p style=\"text-align: justify;\">Delhi DPCC Trainee Vacancy 2026: Delhi Pollution Control Committee (DPCC), Department of Environment, Government of NCT of Delhi has issued a notification for the position of Trainees. The recruitment drive comprises 150 vacancies. All eligible and interested candidates are advised to carefully read the official notification and apply before 05-06-2026, the last Date. All relevant information regarding the Delhi DPCC Trainee Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 47
+      "sequence": 50
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2340,7 +2450,7 @@
       "official_website_link": "https://www.idsj.org/vacancies",
       "jobs_info": "<p style=\"text-align: justify;\">IDS Jaipur Vacancy 2026: The Institute of Development Studies (IDS), Jaipur, has issued a notification for the positions of Driver, Junior Office Assistant (JOA), and Class IV. All eligible and interested candidates are advised to carefully read the official notification and apply before 30 May, the last Date. All relevant information regarding the IDS Jaipur Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 48
+      "sequence": 51
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2374,7 +2484,7 @@
       "official_website_link": "https://navodaya.gov.in/nvs/nvs-school/CHANDIGARH/en/home/index.html",
       "jobs_info": "<p style=\"text-align: justify;\">NVS Jaipur Counselors Vacancy 2026: Navodaya Vidyalaya Samiti, Regional Office, Jaipur, has issued a notification for the position of Counselors (Male/Female). All eligible and interested candidates are advised to carefully read the official notification and apply before 28 May 2026, the last Date. All relevant information regarding the NVS Jaipur Counselors Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 49
+      "sequence": 52
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2408,7 +2518,7 @@
       "official_website_link": "https://navodaya.gov.in/nvs/nvs-school/CHANDIGARH/en/home/index.html",
       "jobs_info": "<p style=\"text-align: justify;\">NVS Patna Counselors Vacancy 2026: Navodaya Vidyalaya Samiti, Regional Office, Patna, has issued a notification for the position of Counselors (Male/Female). All eligible and interested candidates are advised to carefully read the official notification and apply before 24 May 2026, the last Date. All relevant information regarding the NVS Patna Counselors Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 50
+      "sequence": 53
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2442,7 +2552,7 @@
       "official_website_link": "https://navodaya.gov.in/nvs/nvs-school/CHANDIGARH/en/home/index.html",
       "jobs_info": "<p style=\"text-align: justify;\">NVS Chandigarh Counselors Vacancy 2026: Navodaya Vidyalaya Samiti, Regional Office, Chandigarh, has issued a notification for the position of Counselors (Male/Female). All eligible and interested candidates are advised to carefully read the official notification and apply before 24 May 2026, the last Date. All relevant information regarding the NVS Chandigarh Counselors Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 51
+      "sequence": 54
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2527,7 +2637,7 @@
           "eligibility": "Relevant Trade Qualification"
         }
       ],
-      "sequence": 52
+      "sequence": 55
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2561,7 +2671,7 @@
       "official_website_link": "",
       "jobs_info": "<p style=\"text-align: justify;\">Army Canteen Danapur Cantt Vacancy 2026: The Unit Run Canteen (URC), HQ Jharkhand & Bihar Sub Area, Danapur Cantt has issued a notification for the position of Various. The recruitment drive comprises 27 vacancies. All eligible and interested candidates are advised to carefully read the official notification and apply before 25 May 2026, the last Date. All relevant information regarding the Army Canteen Danapur Cantt Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 53
+      "sequence": 56
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2595,7 +2705,7 @@
       "official_website_link": "https://www.niist.res.in/recruitment-post-multi-tasking-staff-vide-advt-no012026-0",
       "jobs_info": "<p style=\"text-align: justify;\">CSIR NIIST MTS Vacancy 2026: CSIR – National Institute for Interdisciplinary Science and Technology has issued a notification for the position of Multi-Tasking Staff (MTS). The recruitment drive comprises 02 vacancies. All eligible and interested candidates are advised to carefully read the official notification and apply before 15 June 2026, the last Date. All relevant information regarding the CSIR NIIST MTS Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 54
+      "sequence": 57
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2629,7 +2739,7 @@
       "official_website_link": "https://electricityombudsmandelhi.co.in/vacancies",
       "jobs_info": "<p style=\"text-align: justify;\">Electricity Ombudsman Delhi Vacancy 2026: The Office of the Electricity Ombudsman, Govt. of NCT Delhi has issued a notification for the position of Personal Assistant. The recruitment drive comprises one vacancy. All eligible and interested candidates are advised to carefully read the official notification and apply before 17 June 2026, the last Date. All relevant information regarding the Electricity Ombudsman Delhi Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 55
+      "sequence": 58
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2674,7 +2784,7 @@
           "eligibility": "10th Pass + ITI in Related Field"
         }
       ],
-      "sequence": 56
+      "sequence": 59
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2708,7 +2818,7 @@
       "official_website_link": "https://haryanaakademi.ac.in/",
       "jobs_info": "",
       "vacancy_details": [],
-      "sequence": 60
+      "sequence": 63
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2742,7 +2852,7 @@
       "official_website_link": "https://ignouadmission.samarth.edu.in/index.php/site/programmes",
       "jobs_info": "",
       "vacancy_details": [],
-      "sequence": 63
+      "sequence": 66
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2792,7 +2902,7 @@
           "eligibility": "12th Pass + CET"
         }
       ],
-      "sequence": 64
+      "sequence": 67
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2826,7 +2936,7 @@
       "official_website_link": "https://www.echs.gov.in/",
       "jobs_info": "<p style=\"text-align: justify;\">ECHS Hisar Vacancy 2026: Ex-Servicemen Contributory Health Scheme invite applications to engage following Medical Officer and Non Medical Staffs on contractual basis in ECHS Polyclinics under AOR of ECHS Cell, Station Headquarters Hisar for a period of 11 months for civil and one year renewable for additional period of one year for ESMs/till attaining age subject to performance of candidates/other conditions according to the criteria as mentioned against each posts.</p>",
       "vacancy_details": [],
-      "sequence": 65
+      "sequence": 68
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2866,7 +2976,7 @@
           "eligibility": "D.Ed. / B.Ed. with HTET or CTET Qualified"
         }
       ],
-      "sequence": 66
+      "sequence": 69
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2906,7 +3016,7 @@
           "eligibility": "D.Ed. / B.Ed. with HTET or CTET Qualified"
         }
       ],
-      "sequence": 67
+      "sequence": 70
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2946,7 +3056,7 @@
           "eligibility": "D.Ed. / B.Ed. with HTET or CTET Qualified"
         }
       ],
-      "sequence": 68
+      "sequence": 71
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2980,7 +3090,7 @@
       "official_website_link": "",
       "jobs_info": "<p style=\"text-align: justify;\">Charkhi Dadri Safai Karmchari Vacancy 2026: Applications are invited for the vacant post of Safai Karmchari in Gram Panchayat Baund Kalan. The applicant must be a resident of the same village. If, in any case, a sufficient number of people are not available in a particular village for the cleaning work, then permission will also be given to employ a resident of a nearby village under the scheme. The applicant, whether male or female, must be physically capable and healthy and should be between 18 and 55 years of age. The applicant can submit his/her application on any working day at the Block Development and Panchayat Officer Office, Baund, from 18.05.2026 to 01.06.2026 (office hours: 09:00 AM to 05:00 PM).</p>",
       "vacancy_details": [],
-      "sequence": 71
+      "sequence": 74
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -3014,7 +3124,7 @@
       "official_website_link": "https://www.svsu.ac.in/index.php",
       "jobs_info": "",
       "vacancy_details": [],
-      "sequence": 72
+      "sequence": 75
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -3048,7 +3158,7 @@
       "official_website_link": "https://cup.edu.in/",
       "jobs_info": "",
       "vacancy_details": [],
-      "sequence": 73
+      "sequence": 76
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -3082,7 +3192,7 @@
       "official_website_link": "http://nrce.gov.in/index.php/jobs-positions/",
       "jobs_info": "<p style=\"text-align: justify;\">ICAR-NRCE Hisar Project Assistant Recruitment 2026: ICAR-National Research Centre on Equines, Hisar, has issued a notification for the Project Assistant position. The recruitment drive comprises one vacancy. All eligible and interested candidates are advised to carefully read the official notification and apply before 22-05-2026, the last Date. All relevant information regarding the ICAR-NRCE Hisar Project Assistant Recruitment 2026 is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 74
+      "sequence": 77
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -3137,7 +3247,7 @@
           "eligibility": "10th Pass with ITI in Plumber Trade"
         }
       ],
-      "sequence": 75
+      "sequence": 78
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -3171,7 +3281,7 @@
       "official_website_link": "https://hkrnl.itiharyana.gov.in/",
       "jobs_info": "",
       "vacancy_details": [],
-      "sequence": 76
+      "sequence": 79
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -3211,7 +3321,7 @@
           "eligibility": "12th (Senior Secondary) from a recognized Board/University/Institution. Minimum 60% marks for General, 55% for SC/ST. Ability to read/speak English, Hindi, and/or the local language."
         }
       ],
-      "sequence": 77
+      "sequence": 80
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -3251,80 +3361,12 @@
           "eligibility": "ITI / Engg. Diploma in Related Field."
         }
       ],
-      "sequence": 78
-    },
-    {
-      "category": "LATEST_JOBS NEW",
-      "title": "HBSE 10th Re-Check and Re-Evaluation Form 2026, Apply Now -",
-      "listing_date": "",
-      "organization": "Board of School Education, Haryana",
-      "post_name": "",
-      "total_vacancy": "",
-      "salary_pay_scale": "",
-      "apply_mode": "Online",
-      "job_location": "",
-      "important_dates": {
-        "application_start": "14-05-2026",
-        "last_date": "22-05-2026",
-        "exam_date": "",
-        "interview_date": ""
-      },
-      "application_fees": {
-        "general_obc_ews": "",
-        "sc_st": "",
-        "female": ""
-      },
-      "minimum_age": "",
-      "maximum_age": "",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Visit the official website Find and click the “Recruitment Link” or “Apply Online” link on the homepage. First, register – enter your name, email, mobile number, and password. After registering, log in and focus on the application form—specifically, the personal details, qualifications, and selection of the position. Upload required documents: Photograph (JPG, max 50KB), Signature (JPG, max 20KB), Educational Certificates, ID Proof, Caste Certificate (if applicable). Pay the",
-      "form_pdf_free_link": "",
-      "application_form_pdf_link": "",
-      "form_pdf_link": "",
-      "apply_online_link": "https://bseh.org.in/home",
-      "official_notification_pdf_link": "https://bseh.org.in/home",
-      "official_website_link": "https://bseh.org.in/home",
-      "jobs_info": "",
-      "vacancy_details": [],
-      "sequence": 80
-    },
-    {
-      "category": "LATEST_JOBS NEW",
-      "title": "MDU UG & Integrated Course Admission Form 2026, Apply Online -",
-      "listing_date": "",
-      "organization": "Maharishi Dayanand University (MADU), Rohtak",
-      "post_name": "",
-      "total_vacancy": "",
-      "salary_pay_scale": "",
-      "apply_mode": "Online",
-      "job_location": "",
-      "important_dates": {
-        "application_start": "11/05/2026",
-        "last_date": "26-05-2026",
-        "exam_date": "22/06/2026",
-        "interview_date": ""
-      },
-      "application_fees": {
-        "general_obc_ews": "1600",
-        "sc_st": "",
-        "female": ""
-      },
-      "minimum_age": "",
-      "maximum_age": "",
-      "how_to_apply": "Eligible/Interested candidates can apply using the link given below. Visit the official website Find and click the “Recruitment Link” or “Apply Online” link on the homepage. First, register – enter your name, email, mobile number, and password. After registering, log in and focus on the application form—specifically, the personal details, qualifications, and selection of the position. Upload required documents: Photograph (JPG, max 50KB), Signature (JPG, max 20KB), Educational Certificates, ID Proof, Caste Certificate (if applicable). Pay the",
-      "form_pdf_free_link": "",
-      "application_form_pdf_link": "",
-      "form_pdf_link": "",
-      "apply_online_link": "https://mduadmission.samarth.edu.in/",
-      "official_notification_pdf_link": "https://mdu.ac.in/UpFiles/UpPdfFiles/2026/May/4_05-11-2026_20-33-13_Prospectus%20for%204%20year%20UG,ITEP%20&%205%20year%20Integrated%20Program%202026-27.pdf",
-      "official_website_link": "https://mdu.ac.in/",
-      "jobs_info": "",
-      "vacancy_details": [],
-      "sequence": 82
+      "sequence": 81
     },
     {
       "category": "SR_Latest_Jobs",
       "title": "NALCO Non Executive Various Post Online Form 2026 for 268 Posts",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-06-10",
       "status": "active",
       "slug": "sr_latest_jobs-nalco-non-executive-various-post-online-form-2026-for-268-posts-d22bb8",
@@ -3483,324 +3525,8 @@
     },
     {
       "category": "SR_Latest_Jobs",
-      "title": "NTA UGC NET June 2026 Online Form for JRF and Assistant Professor",
-      "post_date": "2026-05-24",
-      "last_date": "2026-05-24",
-      "status": "active",
-      "slug": "sr_latest_jobs-nta-ugc-net-june-2026-online-form-for-jrf-and-assistant-professor-0e1674",
-      "short_information": "National Testing Agency (NTA) has released the University Grant Commission UGC National Eligibility Test NET Assistant Professor / JRF June 2026 Examination online application Form 2026 will start from 29 April 2026 and the last date to apply will be 24 May 2026. candidates should read the NTA UGC NET June 2026 information brochure for all the information related to the NET / JRF exam like syllabus, eligibility, age limit, fees, Subject Details, information and other types of information and then apply. National Testing Agency (NTA) NTA UGC National Eligibility Test NET / JRF June 2026 NTA UGC NET JRF June 2026 Exam : Short Details of Notification",
-      "application_fee": "General : 1150/- EWS / OBC : 600/- SC / ST / PH : 325/- Pay the Examination Fee Through Debit Card, Credit Card, Net Banking, E Challan UGC NET JRF June 2026 Not:",
-      "age_limit": "",
-      "eligibility": "",
-      "total_post": "",
-      "important_dates": {
-        "application_begin": "2026-04-29",
-        "last_date": "2026-05-24"
-      },
-      "tables": [
-        {
-          "table_name": "UGC NET JRF June 2026 Not: Age Limit Details JRF : Maximum Age : 31 Years NET : No Age Limit Age Relaxation Extra as Per UGC NET June 2026 Exam Rules",
-          "rows": [
-            [
-              "S No.",
-              "Subject Name",
-              "S No.",
-              "Subject Name"
-            ],
-            [
-              "1",
-              "Adult Education/ Continuing Education/ Andragogy/ Non-Formal Education.",
-              "44",
-              "Maithili"
-            ],
-            [
-              "2",
-              "Anthropology",
-              "45",
-              "Malayalam"
-            ],
-            [
-              "3",
-              "Arab Culture and Islamic Studies",
-              "46",
-              "Management (including Business Admn. Mgt./Marketing / Marketing Mgt. / Industrial Relations and Personnel Mgt. / Personnel Mgt. / Financial Mgt. /Co-operative Management)"
-            ],
-            [
-              "4",
-              "Arabic",
-              "47",
-              "Manipuri"
-            ],
-            [
-              "5",
-              "Archaeology",
-              "48",
-              "Marathi"
-            ],
-            [
-              "6",
-              "Assamese",
-              "49",
-              "Mass Communication and Journalism"
-            ],
-            [
-              "7",
-              "Bengali",
-              "50",
-              "Museology & Conservation"
-            ],
-            [
-              "8",
-              "Bodo",
-              "51",
-              "Music"
-            ],
-            [
-              "9",
-              "Buddhist, Jaina, Gandhian and Peace Studies",
-              "52",
-              "Nepali"
-            ],
-            [
-              "10",
-              "Chinese",
-              "53",
-              "Oriya"
-            ],
-            [
-              "11",
-              "Commerce",
-              "54",
-              "Pali"
-            ],
-            [
-              "12",
-              "Comparative Literature",
-              "55",
-              "Performing Art - Dance/Drama/Theatre"
-            ],
-            [
-              "13",
-              "Comparative Study of Religions",
-              "56",
-              "Persian"
-            ],
-            [
-              "14",
-              "Computer Science and Applications",
-              "57",
-              "Philosophy"
-            ],
-            [
-              "15",
-              "Criminology",
-              "58",
-              "Physical Education"
-            ],
-            [
-              "16",
-              "Defence and Strategic Studies",
-              "59",
-              "Political Science"
-            ],
-            [
-              "17",
-              "Dogri",
-              "60",
-              "Politics including International Relations/International Studies including Defence /Strategic Studies, West Asian Studies, Southeast Asian Studies, African Studies, South Asian Studies, Soviet Studies, American Studies."
-            ],
-            [
-              "18",
-              "Economics / Rural Economics /Co-operation / Demography / Development Planning /Development Studies / Econometrics/ Applied Economics / Development Economics /Business Economics",
-              "61",
-              "Population Studies"
-            ],
-            [
-              "19",
-              "Education",
-              "62",
-              "Prakrit"
-            ],
-            [
-              "20",
-              "Electronic Science",
-              "63",
-              "Psychology"
-            ],
-            [
-              "21",
-              "English",
-              "64",
-              "Public Administration"
-            ],
-            [
-              "22",
-              "Environmental Sciences",
-              "65",
-              "Punjabi"
-            ],
-            [
-              "23",
-              "Folk Literature",
-              "66",
-              "Rajasthani"
-            ],
-            [
-              "24",
-              "Forensic Science",
-              "67",
-              "Russian"
-            ],
-            [
-              "25",
-              "French (French Version)",
-              "68",
-              "Sanskrit"
-            ],
-            [
-              "26",
-              "Geography",
-              "69",
-              "Sanskrit traditional subjects (including Jyotisha/Sidhanta Jyotish/ Navya Vyakarna/ Vyakarna/ Mimansa/ Navya Nyaya/ Sankhya Yoga/ Tulanatmaka Darsan/ Shukla Yajurveda/ Madhav Vedant/ Dharmasasta/ Sahitya/ Puranotihasa /Agama)."
-            ],
-            [
-              "27",
-              "German",
-              "70",
-              "Santali"
-            ],
-            [
-              "28",
-              "Gujarati",
-              "71",
-              "Sindhi"
-            ],
-            [
-              "29",
-              "Hindi",
-              "72",
-              "Social Medicine & Community Health"
-            ],
-            [
-              "30",
-              "Hindu Studies",
-              "73",
-              "Social Work"
-            ],
-            [
-              "31",
-              "History",
-              "74",
-              "Sociology"
-            ],
-            [
-              "32",
-              "Home Science",
-              "75",
-              "Spanish"
-            ],
-            [
-              "33",
-              "Human Rights and Duties",
-              "76",
-              "Tamil"
-            ],
-            [
-              "34",
-              "Indian Culture",
-              "77",
-              "Telugu"
-            ],
-            [
-              "35",
-              "Indian Knowledge System",
-              "78",
-              "Tourism Administration and Management."
-            ],
-            [
-              "36",
-              "Japanese",
-              "79",
-              "Tribal and Regional Language/Literature"
-            ],
-            [
-              "37",
-              "Kannada",
-              "80",
-              "Urdu"
-            ],
-            [
-              "38",
-              "Kashmiri",
-              "81",
-              "Visual Art (including Drawing & Painting/Sculpture Graphics/Applied Art/ History of Art)"
-            ],
-            [
-              "39",
-              "Konkani",
-              "82",
-              "Women Studies"
-            ],
-            [
-              "40",
-              "Labour Welfare / Personnel Management / Industrial Relations/ Labour and Social Welfare / Human Resource Management",
-              "83",
-              "Yoga"
-            ],
-            [
-              "41",
-              "Law",
-              "84",
-              "Disaster Management"
-            ],
-            [
-              "42",
-              "Library and Information Science",
-              "85",
-              "Ayurveda Biology"
-            ],
-            [
-              "43",
-              "Linguistics",
-              "86",
-              "NA"
-            ],
-            [
-              "Remove Photo Background, PDF Merge, PDF Split, PDF Compress, Resume",
-              "Tools"
-            ],
-            [
-              "Official Website",
-              "UGC NET Official Website"
-            ]
-          ]
-        }
-      ],
-      "text_sections": [],
-      "useful_links": [
-        {
-          "title": "Apply Online",
-          "links": "https://examinationservices.nic.in/ExamSys26Part2/Root/Home.aspx?enc=Ei4cajBkK1gZSfgr53ImFV/yIzhTZHBze3wooSg9Djgija2T1vzGc16BomrI4u26"
-        },
-        {
-          "title": "Download Date Extended Notice",
-          "links": "https://cdnbbsr.s3waas.gov.in/s301eee509ee2f68dc6014898c309e86bf/uploads/2026/05/202605231648511527.pdf"
-        },
-        {
-          "title": "Download Notification",
-          "links": "https://cdnbbsr.s3waas.gov.in/s301eee509ee2f68dc6014898c309e86bf/uploads/2026/04/202604291863555100.pdf"
-        },
-        {
-          "title": "Official Website",
-          "links": "https://ugcnet.nta.nic.in/"
-        }
-      ],
-      "homepage_serial": 2
-    },
-    {
-      "category": "SR_Latest_Jobs",
       "title": "Rajasthan RSSB Computer Instructor Online Form 2026 for 3951 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-06-23",
       "status": "active",
       "slug": "sr_latest_jobs-rajasthan-rssb-computer-instructor-online-form-2026-for-3951-post-0d751d",
@@ -3872,7 +3598,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Navy 10+2 BTech Entry January 2027 Batch Online Form 2026 for 60 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-06-18",
       "status": "active",
       "slug": "sr_latest_jobs-navy-102-btech-entry-january-2027-batch-online-form-2026-for-60-post-c2181b",
@@ -3936,7 +3662,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "UPSSSC Technical Assistant Group C Online Form 2026 for 2759 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-06-11",
       "status": "active",
       "slug": "sr_latest_jobs-upsssc-technical-assistant-group-c-online-form-2026-for-2759-post-74de8e",
@@ -4010,7 +3736,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "SSC Combined Graduate Level CGL Online Form 2026 for 12256 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-06-22",
       "status": "active",
       "slug": "sr_latest_jobs-ssc-combined-graduate-level-cgl-online-form-2026-for-12256-post-e2bc3f",
@@ -4252,7 +3978,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Uttar Pradesh UP Anganwadi Worker Bharti Online Form 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "",
       "status": "active",
       "slug": "sr_latest_jobs-uttar-pradesh-up-anganwadi-worker-bharti-online-form-2026-c945b2",
@@ -4529,7 +4255,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Jharkhand JAC JHTET 2026 Online Form for Primary and Junior Level",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-06-02",
       "status": "active",
       "slug": "sr_latest_jobs-jharkhand-jac-jhtet-2026-online-form-for-primary-and-junior-level-7331e5",
@@ -4579,7 +4305,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "UPSC CDS II Online Form 2026 for 451 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-06-09",
       "status": "active",
       "slug": "sr_latest_jobs-upsc-cds-ii-online-form-2026-for-451-post-3e42ed",
@@ -4647,7 +4373,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "UPSC NDA II Online Form 2026 for 394 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-06-09",
       "status": "active",
       "slug": "sr_latest_jobs-upsc-nda-ii-online-form-2026-for-394-post-7e6b15",
@@ -4773,7 +4499,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Indian Air Force AFCAT 02/2026 Batch Online Form 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-06-19",
       "status": "active",
       "slug": "sr_latest_jobs-indian-air-force-afcat-022026-batch-online-form-2026-ad7cd7",
@@ -4956,7 +4682,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Railway RRC SECR Nagpur Apprentices Online Form 2026 for 1079 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-06-18",
       "status": "active",
       "slug": "sr_latest_jobs-railway-rrc-secr-nagpur-apprentices-online-form-2026-for-1079-post-1affc1",
@@ -5018,7 +4744,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Railway RRC SECR Bilaspur Apprentices Online Form 2026 for 1191 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-06-11",
       "status": "active",
       "slug": "sr_latest_jobs-railway-rrc-secr-bilaspur-apprentices-online-form-2026-for-1191-post-facf94",
@@ -5069,7 +4795,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "State Bank of India SBI Apprentices Online Form 2026 for 7150 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-06-08",
       "status": "active",
       "slug": "sr_latest_jobs-state-bank-of-india-sbi-apprentices-online-form-2026-for-7150-post-cc06bd",
@@ -5138,7 +4864,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Bank of Baroda BOB Apprentices Online Form 2026 for 5000 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-06-08",
       "status": "active",
       "slug": "sr_latest_jobs-bank-of-baroda-bob-apprentices-online-form-2026-for-5000-post-715d0a",
@@ -5360,7 +5086,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "BPSSC ASI Technical Online Form 2026 for 22 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-06-21",
       "status": "active",
       "slug": "sr_latest_jobs-bpssc-asi-technical-online-form-2026-for-22-post-21d126",
@@ -5414,7 +5140,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Railway RRB Technician CEN 02/2026 Online Form 2026 for 6565 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-07-29",
       "status": "active",
       "slug": "sr_latest_jobs-railway-rrb-technician-cen-022026-online-form-2026-for-6565-post-36c5ed",
@@ -5477,7 +5203,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Railway RRB ALP CEN 01/2026 Online Form 2026 for 11127 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-06-14",
       "status": "active",
       "slug": "sr_latest_jobs-railway-rrb-alp-cen-012026-online-form-2026-for-11127-post-97dd53",
@@ -5537,7 +5263,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "NFL Field Representative Online Form 2026 for 40 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-06-12",
       "status": "active",
       "slug": "sr_latest_jobs-nfl-field-representative-online-form-2026-for-40-post-c77b3c",
@@ -5592,7 +5318,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Army 10+2 TES 56 Online Form 2026 for 90 Post January 2027 Batch",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-06-12",
       "status": "active",
       "slug": "sr_latest_jobs-army-102-tes-56-online-form-2026-for-90-post-january-2027-batch-327b9e",
@@ -5628,7 +5354,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "SBI Trade Finance Officer TFO Online Form 2026 for 100 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-06-02",
       "status": "active",
       "slug": "sr_latest_jobs-sbi-trade-finance-officer-tfo-online-form-2026-for-100-post-0c1deb",
@@ -5683,7 +5409,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "CTET September 2026 Online Form",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-06-10",
       "status": "active",
       "slug": "sr_latest_jobs-ctet-september-2026-online-form-bd964d",
@@ -5742,7 +5468,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Bihar BPSC 72 Pre Exam Online Form 2026 for 1186 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-05-31",
       "status": "active",
       "slug": "sr_latest_jobs-bihar-bpsc-72-pre-exam-online-form-2026-for-1186-post-c0ad34",
@@ -5865,7 +5591,7 @@
     {
       "category": "SR_Result",
       "title": "Indian Navy Civilian Entrance Test INCET 01/2024 Result 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2024-08-02",
       "status": "result_declared",
       "slug": "sr_result-indian-navy-civilian-entrance-test-incet-012024-result-2026-8c5089",
@@ -5995,7 +5721,7 @@
     {
       "category": "SR_Result",
       "title": "BSEB Class 10th Matric Compartment Result 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "",
       "status": "result_declared",
       "slug": "sr_result-bseb-class-10th-matric-compartment-result-2026-580dbc",
@@ -6066,7 +5792,7 @@
     {
       "category": "SR_Result",
       "title": "Bihar Board BSEB Class 12th Inter Compartment Result 2026 Direct Link",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "",
       "status": "result_declared",
       "slug": "sr_result-bihar-board-bseb-class-12th-inter-compartment-result-2026-direct-link-83c654",
@@ -6122,7 +5848,7 @@
     {
       "category": "SR_Result",
       "title": "NTA NCHMJEE Result / Score Card 2026 for Hotel Management Course",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-03-25",
       "status": "result_declared",
       "slug": "sr_result-nta-nchmjee-result-score-card-2026-for-hotel-management-course-ab7e5c",
@@ -6204,7 +5930,7 @@
     {
       "category": "SR_Result",
       "title": "MPPSC State Service Exam SSE Pre Result 2026 for 155 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-02-09",
       "status": "result_declared",
       "slug": "sr_result-mppsc-state-service-exam-sse-pre-result-2026-for-155-post-29cc58",
@@ -6341,7 +6067,7 @@
     {
       "category": "SR_Result",
       "title": "RPSC Rajasthan Police Sub Inspector Telecom PET Result 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2024-12-27",
       "status": "result_declared",
       "slug": "sr_result-rpsc-rajasthan-police-sub-inspector-telecom-pet-result-2026-f3a656",
@@ -6409,7 +6135,7 @@
     {
       "category": "SR_Result",
       "title": "Railway RRB Technician CEN 02/2025 Result 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2025-08-07",
       "status": "result_declared",
       "slug": "sr_result-railway-rrb-technician-cen-022025-result-2026-0a1b68",
@@ -6590,7 +6316,7 @@
     {
       "category": "SR_Result",
       "title": "Delhi DSSSB Latest and Old Result 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "",
       "status": "result_declared",
       "slug": "sr_result-delhi-dsssb-latest-and-old-result-2026-5d5df4",
@@ -6669,7 +6395,7 @@
     {
       "category": "SR_Result",
       "title": "MPESB MP Police Sub Inspector SI Subedar Phase II Mains Result 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2025-11-10",
       "status": "result_declared",
       "slug": "sr_result-mpesb-mp-police-sub-inspector-si-subedar-phase-ii-mains-result-2026-70975e",
@@ -6745,7 +6471,7 @@
     {
       "category": "SR_Result",
       "title": "UPSSSC UP Pharmacist Eligibility Result 2026 for 560 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-03-29",
       "status": "result_declared",
       "slug": "sr_result-upsssc-up-pharmacist-eligibility-result-2026-for-560-post-64d48c",
@@ -6828,7 +6554,7 @@
     {
       "category": "SR_Result",
       "title": "UPPSC LT Grade Assistant Teacher Mains Admit Card 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2025-08-28",
       "status": "result_declared",
       "slug": "sr_result-uppsc-lt-grade-assistant-teacher-mains-admit-card-2026-297f51",
@@ -6945,7 +6671,7 @@
     {
       "category": "SR_Result",
       "title": "RSMSSB Stenographer and PA Skill Test Result 2026 for 474 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2024-03-29",
       "status": "result_declared",
       "slug": "sr_result-rsmssb-stenographer-and-pa-skill-test-result-2026-for-474-post-f82716",
@@ -7046,7 +6772,7 @@
     {
       "category": "SR_Result",
       "title": "NTA National Teachers Eligibility Test NTET Result 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-04-07",
       "status": "result_declared",
       "slug": "sr_result-nta-national-teachers-eligibility-test-ntet-result-2026-84481e",
@@ -7124,7 +6850,7 @@
     {
       "category": "SR_Result",
       "title": "CBSE Group A B C Various Post Tier II Exam Result 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2025-12-22",
       "status": "result_declared",
       "slug": "sr_result-cbse-group-a-b-c-various-post-tier-ii-exam-result-2026-68b2a3",
@@ -7276,7 +7002,7 @@
     {
       "category": "SR_Result",
       "title": "SSC Combined Graduate Level CGL 2025 Final Result 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2025-07-04",
       "status": "result_declared",
       "slug": "sr_result-ssc-combined-graduate-level-cgl-2025-final-result-2026-d841d8",
@@ -7543,7 +7269,7 @@
     {
       "category": "SR_Result",
       "title": "CBSE Board 12th Result 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "",
       "status": "result_declared",
       "slug": "sr_result-cbse-board-12th-result-2026-8cb151",
@@ -7610,7 +7336,7 @@
     {
       "category": "SR_Result",
       "title": "Railway RRB Junior Engineer JE CEN 05/2025 CBT II Exam Date 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2025-12-10",
       "status": "result_declared",
       "slug": "sr_result-railway-rrb-junior-engineer-je-cen-052025-cbt-ii-exam-date-2026-e72c08",
@@ -7771,7 +7497,7 @@
     {
       "category": "SR_Result",
       "title": "AIIMS Nursing Officer NORCET 10th Stage II Result 2026 for 2551 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-03-16",
       "status": "result_declared",
       "slug": "sr_result-aiims-nursing-officer-norcet-10th-stage-ii-result-2026-for-2551-post-6d49b4",
@@ -7897,7 +7623,7 @@
     {
       "category": "SR_Result",
       "title": "NTA NSSNET Result 2026 Admissions for Navayug School",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-03-18",
       "status": "result_declared",
       "slug": "sr_result-nta-nssnet-result-2026-admissions-for-navayug-school-756b69",
@@ -7972,7 +7698,7 @@
     {
       "category": "SR_Result",
       "title": "India Post GDS Third Result / Merit List 2026 for 28635 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-02-14",
       "status": "result_declared",
       "slug": "sr_result-india-post-gds-third-result-merit-list-2026-for-28635-post-80d291",
@@ -8151,7 +7877,7 @@
     {
       "category": "SR_Result",
       "title": "MPESB MP Police ASI HC Computer Result 2026 for 89 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-02-19",
       "status": "result_declared",
       "slug": "sr_result-mpesb-mp-police-asi-hc-computer-result-2026-for-89-post-477d9c",
@@ -8224,7 +7950,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "Bihar BCECEB DCECE Admissions Test Admit Card 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-04-21",
       "status": "admit_card_released",
       "slug": "sr_admit_card-bihar-bceceb-dcece-admissions-test-admit-card-2026-748d69",
@@ -8294,7 +8020,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "UPSESSB UP TGT 2022 Exam City Details 2026 for 3539 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2022-07-10",
       "status": "admit_card_released",
       "slug": "sr_admit_card-upsessb-up-tgt-2022-exam-city-details-2026-for-3539-post-99290c",
@@ -8605,7 +8331,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "CSBC Prohibition Constable, Jail Warden Admit Card 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2025-11-05",
       "status": "admit_card_released",
       "slug": "sr_admit_card-csbc-prohibition-constable-jail-warden-admit-card-2026-025850",
@@ -8718,7 +8444,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "RPSC School Lectuer PGT Teacher Exam City / Admit Card 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2025-09-12",
       "status": "admit_card_released",
       "slug": "sr_admit_card-rpsc-school-lectuer-pgt-teacher-exam-city-admit-card-2026-d1019b",
@@ -8863,7 +8589,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "UPBED Entrance Exam Admit Card 2026 for 2 year Course UP BEd JEE",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-04-30",
       "status": "admit_card_released",
       "slug": "sr_admit_card-upbed-entrance-exam-admit-card-2026-for-2-year-course-up-bed-jee-37c287",
@@ -8924,7 +8650,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "UPPSC Assistant Professor GDC Pre Admit Card 2026 for 1253 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2025-10-06",
       "status": "admit_card_released",
       "slug": "sr_admit_card-uppsc-assistant-professor-gdc-pre-admit-card-2026-for-1253-post-f2cdd8",
@@ -8984,7 +8710,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "MPESB MP Police Subedar Stenographer ASI Skill Test Admit Card 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2025-10-17",
       "status": "admit_card_released",
       "slug": "sr_admit_card-mpesb-mp-police-subedar-stenographer-asi-skill-test-admit-card-2026-3d9a3d",
@@ -9069,7 +8795,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "MPESB Van Rakshak, Jail Prahari New Exam Date 2026 for 1679 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-04-30",
       "status": "admit_card_released",
       "slug": "sr_admit_card-mpesb-van-rakshak-jail-prahari-new-exam-date-2026-for-1679-post-843eb1",
@@ -9156,7 +8882,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "CSBC Bihar Police Constable Operator Exam Date 2026 for 993 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-03-31",
       "status": "admit_card_released",
       "slug": "sr_admit_card-csbc-bihar-police-constable-operator-exam-date-2026-for-993-post-006d63",
@@ -9273,7 +8999,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "CSBC Bihar Police Constable Special Branch Exam Date 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-03-05",
       "status": "admit_card_released",
       "slug": "sr_admit_card-csbc-bihar-police-constable-special-branch-exam-date-2026-1af8ba",
@@ -9375,7 +9101,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "Allahabad High Court UP HJS 2023 Mains Exam Date 2026 for 83 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2024-05-15",
       "status": "admit_card_released",
       "slug": "sr_admit_card-allahabad-high-court-up-hjs-2023-mains-exam-date-2026-for-83-post-24550f",
@@ -9469,7 +9195,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "Indian Maritime University IMU CET Admit Card 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-04-24",
       "status": "admit_card_released",
       "slug": "sr_admit_card-indian-maritime-university-imu-cet-admit-card-2026-deefbc",
@@ -9551,7 +9277,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "UPSSSC UP Lekhpal Mains Answer Key 2026 for 7994 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-01-28",
       "status": "admit_card_released",
       "slug": "sr_admit_card-upsssc-up-lekhpal-mains-answer-key-2026-for-7994-post-d9ef7b",
@@ -9672,7 +9398,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "NTA NEET UG Fee Refund Online Form 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-03-11",
       "status": "admit_card_released",
       "slug": "sr_admit_card-nta-neet-ug-fee-refund-online-form-2026-c2dde5",
@@ -9772,7 +9498,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "UPSC Civil Services IAS IFS Pre Admit Card 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-02-27",
       "status": "admit_card_released",
       "slug": "sr_admit_card-upsc-civil-services-ias-ifs-pre-admit-card-2026-b2c77a",
@@ -9894,7 +9620,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "Indian Army Agniveer Rally Admit Card 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-04-10",
       "status": "admit_card_released",
       "slug": "sr_admit_card-indian-army-agniveer-rally-admit-card-2026-619d4b",
@@ -9959,7 +9685,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "DUVASU Mathura PVT Entrance Exam Admit Card 2026 for UGEE PGEE DEE",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-04-22",
       "status": "admit_card_released",
       "slug": "sr_admit_card-duvasu-mathura-pvt-entrance-exam-admit-card-2026-for-ugee-pgee-dee-95af14",
@@ -10000,7 +9726,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "BSSC Office Attendant Mains Admit Card 2026 for 100 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2022-12-24",
       "status": "admit_card_released",
       "slug": "sr_admit_card-bssc-office-attendant-mains-admit-card-2026-for-100-post-b8edc6",
@@ -10085,7 +9811,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "NCERT LDC Exam Answer Key 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-01-16",
       "status": "admit_card_released",
       "slug": "sr_admit_card-ncert-ldc-exam-answer-key-2026-92f647",
@@ -10162,7 +9888,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "UP Police Sub Inspector SI PST DV Exam Date 2026 for 4543 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2025-09-11",
       "status": "admit_card_released",
       "slug": "sr_admit_card-up-police-sub-inspector-si-pst-dv-exam-date-2026-for-4543-post-262c97",
@@ -10272,7 +9998,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "Bihar BPSC 33 Civil Judge PCS J Pre Exam Date 2026 for 173 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-04-30",
       "status": "admit_card_released",
       "slug": "sr_admit_card-bihar-bpsc-33-civil-judge-pcs-j-pre-exam-date-2026-for-173-post-e6ed44",
@@ -10351,7 +10077,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "BPSSC Bihar Police Sub Inspector SI Mains Admit Card 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2025-10-26",
       "status": "admit_card_released",
       "slug": "sr_admit_card-bpssc-bihar-police-sub-inspector-si-mains-admit-card-2026-6707b8",
@@ -10422,7 +10148,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "RPSC Rajasthan Police Sub Inspector 2021 New Exam Date 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2021-06-23",
       "status": "admit_card_released",
       "slug": "sr_admit_card-rpsc-rajasthan-police-sub-inspector-2021-new-exam-date-2026-420b1b",
@@ -10694,7 +10420,7 @@
     {
       "category": "SR_Admit_Card",
       "title": "Railway RRB NTPC 10+2 UG Level CEN 07/2025 Exam City Details 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2025-12-04",
       "status": "admit_card_released",
       "slug": "sr_admit_card-railway-rrb-ntpc-102-ug-level-cen-072025-exam-city-details-2026-9ce140",
@@ -10788,7 +10514,7 @@
     {
       "category": "SR_Admission",
       "title": "SWD UP IAS PCS Free Coaching Admissions Online Form 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-06-18",
       "status": "active",
       "slug": "sr_admission-swd-up-ias-pcs-free-coaching-admissions-online-form-2026-1adad0",
@@ -10866,7 +10592,7 @@
     {
       "category": "SR_Admission",
       "title": "Delhi University DU PG Admissions Online Form 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-06-07",
       "status": "active",
       "slug": "sr_admission-delhi-university-du-pg-admissions-online-form-2026-7e3044",
@@ -10971,7 +10697,7 @@
     {
       "category": "SR_Admission",
       "title": "NTA ICAR AIEEA PG and PHd Admissions Online form 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-06-07",
       "status": "active",
       "slug": "sr_admission-nta-icar-aieea-pg-and-phd-admissions-online-form-2026-33c250",
@@ -11044,7 +10770,7 @@
     {
       "category": "SR_Admission",
       "title": "ABVMU UP CAHET Entrance Test Online Form 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-06-05",
       "status": "active",
       "slug": "sr_admission-abvmu-up-cahet-entrance-test-online-form-2026-dd21e5",
@@ -11123,7 +10849,7 @@
     {
       "category": "SR_Admission",
       "title": "Allahabad University PGAT Admissions Online Form 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-05-25",
       "status": "active",
       "slug": "sr_admission-allahabad-university-pgat-admissions-online-form-2026-ba1e23",
@@ -11210,7 +10936,7 @@
     {
       "category": "SR_Admission",
       "title": "ABVMU UP GNM Entrance Test UPGET Online Form 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-05-26",
       "status": "active",
       "slug": "sr_admission-abvmu-up-gnm-entrance-test-upget-online-form-2026-b07d04",
@@ -11267,7 +10993,7 @@
     {
       "category": "SR_Answer_Key",
       "title": "IIT JEE Advanced Question Paper and Answer Key 2026",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-05-05",
       "status": "answer_key_released",
       "slug": "sr_answer_key-iit-jee-advanced-question-paper-and-answer-key-2026-14fb3f",
@@ -11357,7 +11083,7 @@
     {
       "category": "SR_Answer_Key",
       "title": "DSSSB Delhi Answer Key 2026 April May",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "",
       "status": "answer_key_released",
       "slug": "sr_answer_key-dsssb-delhi-answer-key-2026-april-may-e109a0",
@@ -11639,7 +11365,7 @@
     {
       "category": "SR_Answer_Key",
       "title": "MPESB Nursing Officer, Sister Tutor Answer Key 2026 for 2317 Post",
-      "post_date": "2026-05-24",
+      "post_date": "2026-05-25",
       "last_date": "2026-04-20",
       "status": "answer_key_released",
       "slug": "sr_answer_key-mpesb-nursing-officer-sister-tutor-answer-key-2026-for-2317-post-cef398",
