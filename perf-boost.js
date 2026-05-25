@@ -372,26 +372,9 @@
      11. SERVICE WORKER REGISTRATION
   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
   function registerSW() {
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function () {
-        navigator.serviceWorker.register('/sw.js', { scope: '/' })
-          .then(function (reg) {
-            reg.addEventListener('updatefound', function () {
-              var newWorker = reg.installing;
-              newWorker.addEventListener('statechange', function () {
-                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  // Notify user of update
-                  var bar = document.createElement('div');
-                  bar.style.cssText = 'position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:#1d4ed8;color:#fff;padding:10px 20px;border-radius:8px;z-index:10000;font-size:13px;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,.3);';
-                  bar.innerHTML = '🔄 New version available! <button onclick="location.reload()" style="background:#fff;color:#1d4ed8;border:none;padding:4px 10px;border-radius:4px;margin-left:8px;cursor:pointer;font-weight:700;">Refresh</button>';
-                  document.body.appendChild(bar);
-                  setTimeout(function () { if (bar.parentNode) bar.parentNode.removeChild(bar); }, 8000);
-                }
-              });
-            });
-          }).catch(function (e) { console.warn('SW registration failed:', e); });
-      });
-    }
+    // FIXED: SW registration moved to pwa-install.js only.
+    // Multiple registrations caused repeated reload/refresh loops.
+    // perf-boost no longer registers SW.
   }
 
   /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

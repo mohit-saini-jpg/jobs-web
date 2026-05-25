@@ -77,7 +77,8 @@ self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys()
       .then(keys => Promise.all(keys.filter(k => !ALL_CACHES.includes(k)).map(k => caches.delete(k))))
-      .then(() => self.clients.claim())
+      // FIXED: Removed clients.claim() - caused page reload on SW activate
+      // Pages get new SW on next natural navigation instead
   );
 });
 

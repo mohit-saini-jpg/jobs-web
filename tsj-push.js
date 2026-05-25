@@ -97,8 +97,13 @@
   function regSW() {
     if (_swReg) return Promise.resolve(_swReg);
     if (!('serviceWorker' in navigator)) return Promise.reject('no SW');
-    return navigator.serviceWorker.register('/sw.js', { scope: '/' })
-      .then(function(r) { _swReg = r; r.update(); return r; });
+    // FIXED: Use existing SW registration — do NOT register again
+    // pwa-install.js already registers /sw.js
+    // Multiple registrations caused page refresh loop
+    return navigator.serviceWorker.ready.then(function(r) {
+      _swReg = r;
+      return r;
+    });
   }
 
   function getToken(m) {
