@@ -175,7 +175,14 @@
   function canShowPrompt() {
     if (sg(SK.SUBSCRIBED)) return false;
     if (!canPush && !(isIOS && isSafari)) return false;
-    if (Notification.permission === 'denied') return false;
+    // If denied — show unblock instructions banner instead
+    if (Notification.permission === 'denied') {
+      var lastUnblock = sg('tsj_unblock_shown');
+      if (!lastUnblock || Date.now() - lastUnblock > 7 * 86400000) {
+        setTimeout(function() { showUnblockBanner(); }, 5000);
+      }
+      return false;
+    }
     var dis = sg(SK.DISMISSED);
     if (dis && Date.now() - dis < 3 * 86400000) return false;
     var ask = sg(SK.ASKED);
