@@ -3157,7 +3157,7 @@
 
         /* Build sub-links ONLY for non-UPCOMING jobs (UPCOMING uses job detail page for full info) */
         /* Also skip for STATE_JOBS/CENTRAL_JOBS/ADMISSIONS — they use job detail page */
-        var noSubLinks = isUpcoming || cat === 'STATE_JOBS' || cat === 'CENTRAL_JOBS' || cat === 'ADMISSIONS';
+        var noSubLinks = isUpcoming || cfg.key === 'STATE_JOBS' || cfg.key === 'CENTRAL_JOBS' || cfg.key === 'ADMISSIONS';
         var subLinksHtml = '';
         if (!noSubLinks && job.sectionsLinks && job.sectionsLinks.length > 0) {
           var subLinks = job.sectionsLinks.slice(0, 4);
@@ -3521,7 +3521,7 @@
     }
 
     function loadData() {
-      var CACHE_KEY = '__sr_merged_v1';
+      var CACHE_KEY = '__sr_merged_v3'; // bumped to clear old cache
       var CACHE_TTL = 15 * 60 * 1000; // 15 min
 
       try {
