@@ -1,0 +1,15 @@
+# Top Sarkari Jobs — URL Redirects
+# Works on Netlify + Cloudflare Pages
+# Static files take priority — these are fallbacks only
+
+# Section pages (static files exist for main sections, this handles any others)
+/section/*    /view.html    200
+
+# Jobs pages  
+/jobs/*       /job.html     200
+
+# State jobs routing
+/state-jobs/* /view.html    200
+
+# Category routing
+/category/*   /category.html  200

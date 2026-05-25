@@ -47,3 +47,26 @@
     X-XSS-Protection = "1; mode=block"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+
+# ── Section URL routing ──────────────────────────────────────────────────────
+# /section/* served by static section/[slug]/index.html files
+# Fallback: any unmatched /section/* → view.html (200, not 302)
+[[redirects]]
+  from = "/section/*"
+  to   = "/view.html"
+  status = 200
+  force  = false   # Only applies if static file not found
+
+# /jobs/* static pages
+[[redirects]]
+  from = "/jobs/*"
+  to   = "/job.html"
+  status = 200
+  force  = false
+
+# /state-jobs/* routing
+[[redirects]]
+  from = "/state-jobs/*"
+  to   = "/view.html"
+  status = 200
+  force  = false

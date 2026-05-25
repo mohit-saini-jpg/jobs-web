@@ -339,10 +339,9 @@
         window._tsjSWReg = reg;
       }).catch(function(){});
 
-      var refreshing = false;
-      navigator.serviceWorker.addEventListener('controllerchange', function() {
-        if (!refreshing) { refreshing = true; location.reload(); }
-      });
+      // AUDIT FIX: Removed auto-reload on controllerchange.
+      // Old code caused page to refresh every time SW updated — bad UX.
+      // SW update happens silently; user gets new version on next natural navigation.
     });
   }
 
