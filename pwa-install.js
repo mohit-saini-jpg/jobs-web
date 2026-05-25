@@ -326,7 +326,7 @@
   function registerSW() {
     if (!('serviceWorker' in navigator)) return;
     window.addEventListener('load', function() {
-      navigator.serviceWorker.register('/sw.js?v=4.0').then(function(reg) {
+      navigator.serviceWorker.register('/sw.js').then(function(reg) {
         reg.addEventListener('updatefound', function() {
           var nw = reg.installing;
           nw.addEventListener('statechange', function() {
