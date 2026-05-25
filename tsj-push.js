@@ -1,15 +1,13 @@
 /**
- * ╔══════════════════════════════════════════════════════════════════════╗
- * ║  TOP SARKARI JOBS — FCM Push Notification System v3.0               ║
- * ║  Firebase Cloud Messaging V1 | Project: job-portal-750e0           ║
- * ║  FIXED: Mobile prompt · Android Chrome · SW conflict · Timing      ║
- * ╚══════════════════════════════════════════════════════════════════════╝
+ * TOP SARKARI JOBS — Push Notification System v4.0
+ * Firebase Cloud Messaging V1 | job-portal-750e0
+ * FIXED: Prompt always shows | Auto rotate job notifications | Bell button
  */
 (function () {
   'use strict';
 
-  // ── Config ────────────────────────────────────────────────────────
-  var FCM_CONFIG = {
+  // ── Firebase Config ───────────────────────────────────────────────
+  var FCM = {
     apiKey:            "AIzaSyBb4R2TlJgowhHAsROO9Lue5ztI_BtF1xY",
     authDomain:        "job-portal-750e0.firebaseapp.com",
     projectId:         "job-portal-750e0",
@@ -21,463 +19,396 @@
     tokenEndpoint:     "https://cykkclkfimmqbahanidg.supabase.co/functions/v1/save-push-token",
   };
 
-  var CATEGORIES = {
-    'latest-jobs': { label:'Latest Jobs',  url:'https://www.topsarkarijobs.com/section/latest-jobs/', emoji:'💼', color:'#1a56db' },
-    'result':      { label:'Results',      url:'https://www.topsarkarijobs.com/section/results/',     emoji:'🏆', color:'#16a34a' },
-    'admit-card':  { label:'Admit Card',   url:'https://www.topsarkarijobs.com/section/admit-card/',  emoji:'🎫', color:'#d97706' },
-    'admission':   { label:'Admission',    url:'https://www.topsarkarijobs.com/section/admission/',   emoji:'🎓', color:'#7c3aed' },
-    'answer-key':  { label:'Answer Key',   url:'https://www.topsarkarijobs.com/section/answer-key/',  emoji:'🔑', color:'#be185d' },
+  var SITE = 'https://www.topsarkarijobs.com';
+
+  var CATS = {
+    'latest-jobs': { label:'Latest Jobs',  url: SITE+'/section/latest-jobs/', emoji:'💼', color:'#1a56db', dataKey:'SR_Latest_Jobs'  },
+    'result':      { label:'Results',      url: SITE+'/section/results/',     emoji:'🏆', color:'#16a34a', dataKey:'SR_Result'       },
+    'admit-card':  { label:'Admit Card',   url: SITE+'/section/admit-card/',  emoji:'🎫', color:'#d97706', dataKey:'SR_Admit_Card'   },
+    'admission':   { label:'Admission',    url: SITE+'/section/admission/',   emoji:'🎓', color:'#7c3aed', dataKey:'SR_Admission'    },
+    'answer-key':  { label:'Answer Key',   url: SITE+'/section/answer-key/',  emoji:'🔑', color:'#be185d', dataKey:'SR_Answer_Key'   },
   };
 
-  var SK = {
-    TOKEN:      'tsj_fcm_token_v3',
-    SUBSCRIBED: 'tsj_push_sub_v3',
-    ASKED:      'tsj_push_asked_v3',
-    DISMISSED:  'tsj_push_dis_v3',
-  };
+  // ── Storage — v4 keys (clears all old keys on load) ───────────────
+  var V = 'tsj_v4_';
+  var SK = { TOKEN:'tsj_v4_token', SUB:'tsj_v4_sub', ASKED:'tsj_v4_asked', DIS:'tsj_v4_dis', JOBS:'tsj_v4_jobs', IDX:'tsj_v4_idx' };
 
-  // ── Storage ───────────────────────────────────────────────────────
+  // Clear ALL old version keys on first run
+  (function clearOldKeys() {
+    var oldPrefixes = ['tsj_push_', 'tsj_fcm_token', 'tsj_fcm_token_v', 'tsj_push_sub_v', 'tsj_push_asked_v', 'tsj_push_dis_v', 'tsj_unblock_shown', 'tsj_v3_'];
+    try {
+      var toRemove = [];
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (k && oldPrefixes.some(function(p){ return k.indexOf(p) === 0; })) {
+          toRemove.push(k);
+        }
+      }
+      toRemove.forEach(function(k){ localStorage.removeItem(k); });
+      if (toRemove.length) console.log('[TSJPush] Cleared', toRemove.length, 'old keys');
+    } catch(e) {}
+  })();
+
   function sg(k)   { try { return JSON.parse(localStorage.getItem(k)); } catch(e) { return null; } }
   function ss(k,v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e) {} }
 
-  // ── Device detection ──────────────────────────────────────────────
-  var ua         = navigator.userAgent || '';
-  var isIOS      = /iPad|iPhone|iPod/i.test(ua) && !window.MSStream;
-  var isAndroid  = /Android/i.test(ua);
-  var isMobile   = isIOS || isAndroid || /Mobile/i.test(ua);
-  var isSafari   = /^((?!chrome|android).)*safari/i.test(ua);
-  // iOS Safari does NOT support Web Push (except iOS 16.4+ PWA mode)
-  var canPush    = 'Notification' in window && 'serviceWorker' in navigator && 'PushManager' in window;
+  // ── Device Detection ──────────────────────────────────────────────
+  var ua       = navigator.userAgent || '';
+  var isIOS    = /iPad|iPhone|iPod/i.test(ua) && !window.MSStream;
+  var isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
+  var canPush  = 'Notification' in window && 'serviceWorker' in navigator && 'PushManager' in window;
 
   // ── State ─────────────────────────────────────────────────────────
-  var _messaging = null, _initialized = false, _swReg = null;
+  var _msg = null, _ready = false, _swReg = null;
+  var _jobCache = null;   // cached merged_sarkari_data jobs
+  var _jobIdx   = 0;      // current rotation index
 
   // ══════════════════════════════════════════════════════════════════
-  // SERVICE WORKER — register once, reuse
-  // ══════════════════════════════════════════════════════════════════
-  function registerSW() {
-    if (_swReg) return Promise.resolve(_swReg);
-    if (!('serviceWorker' in navigator)) return Promise.reject('SW not supported');
-    // Use exact path, no version query string (pwa-install.js also registers same)
-    return navigator.serviceWorker.register('/sw.js', { scope: '/' })
-      .then(function(reg) {
-        _swReg = reg;
-        reg.update();
-        return reg;
-      });
-  }
-
-  // ══════════════════════════════════════════════════════════════════
-  // FIREBASE SDK — lazy load
+  // FIREBASE INIT
   // ══════════════════════════════════════════════════════════════════
   function loadFirebase() {
-    return new Promise(function(resolve, reject) {
-      if (window.firebase && window.firebase.messaging) return resolve(window.firebase);
-      // Load both scripts sequentially
+    return new Promise(function(res, rej) {
+      if (window.firebase && window.firebase.messaging) return res(window.firebase);
       var s1 = document.createElement('script');
       s1.src = 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js';
       s1.onload = function() {
         var s2 = document.createElement('script');
         s2.src = 'https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js';
-        s2.onload  = function() { resolve(window.firebase); };
-        s2.onerror = function() { reject(new Error('FCM SDK load failed')); };
+        s2.onload  = function() { res(window.firebase); };
+        s2.onerror = function() { rej(new Error('FCM load failed')); };
         document.head.appendChild(s2);
       };
-      s1.onerror = function() { reject(new Error('Firebase SDK load failed')); };
+      s1.onerror = function() { rej(new Error('Firebase load failed')); };
       document.head.appendChild(s1);
     });
   }
 
   function initFCM() {
-    if (_initialized) return Promise.resolve(_messaging);
+    if (_ready) return Promise.resolve(_msg);
     return loadFirebase().then(function(fb) {
-      if (!fb.apps.length) fb.initializeApp(FCM_CONFIG);
-      _messaging   = fb.messaging();
-      _initialized = true;
-      _messaging.onMessage(function(payload) { showForegroundToast(payload); });
-      return _messaging;
+      if (!fb.apps.length) fb.initializeApp(FCM);
+      _msg   = fb.messaging();
+      _ready = true;
+      _msg.onMessage(function(p) { showFgToast(p); });
+      return _msg;
     });
   }
 
-  // ══════════════════════════════════════════════════════════════════
-  // GET FCM TOKEN
-  // ══════════════════════════════════════════════════════════════════
-  function getFCMToken(messaging) {
-    return navigator.serviceWorker.ready.then(function(swReg) {
-      return messaging.getToken({
-        vapidKey: FCM_CONFIG.vapidKey,
-        serviceWorkerRegistration: swReg,
-      });
-    }).then(function(token) {
-      if (!token) { console.warn('[TSJPush] No token — check VAPID key'); return null; }
-      var stored = sg(SK.TOKEN);
-      if (stored !== token) {
-        ss(SK.TOKEN, token);
-        // Save token to backend (best effort)
-        fetch(FCM_CONFIG.tokenEndpoint, {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            token:      token,
-            categories: Object.keys(CATEGORIES),
-            ua:         ua.slice(0, 120),
-            url:        location.href,
-            ts:         Date.now(),
-          }),
-        }).catch(function() {});
+  function regSW() {
+    if (_swReg) return Promise.resolve(_swReg);
+    if (!('serviceWorker' in navigator)) return Promise.reject('no SW');
+    return navigator.serviceWorker.register('/sw.js', { scope: '/' })
+      .then(function(r) { _swReg = r; r.update(); return r; });
+  }
+
+  function getToken(m) {
+    return navigator.serviceWorker.ready.then(function(sw) {
+      return m.getToken({ vapidKey: FCM.vapidKey, serviceWorkerRegistration: sw });
+    }).then(function(t) {
+      if (!t) return null;
+      if (sg(SK.TOKEN) !== t) {
+        ss(SK.TOKEN, t);
+        fetch(FCM.tokenEndpoint, {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ token:t, categories:Object.keys(CATS), ua:ua.slice(0,100), url:location.href, ts:Date.now() })
+        }).catch(function(){});
       }
-      return token;
-    }).catch(function(err) {
-      console.warn('[TSJPush] getToken error:', err.message);
-      return null;
-    });
+      return t;
+    }).catch(function(e){ console.warn('[TSJPush]', e.message); return null; });
   }
 
   // ══════════════════════════════════════════════════════════════════
-  // SUBSCRIBE — request permission + get token
+  // SUBSCRIBE
   // ══════════════════════════════════════════════════════════════════
   function subscribe() {
-    if (!canPush) {
-      // iOS Safari — show instructions
-      if (isIOS && isSafari) { showIOSInstructions(); return Promise.resolve(null); }
-      return Promise.reject('Push not supported');
-    }
-
-    return Notification.requestPermission().then(function(perm) {
-      if (perm !== 'granted') {
-        ss(SK.DISMISSED, Date.now());
-        showDeniedHelp();
-        return null;
-      }
-      return registerSW()
+    if (!canPush) { if (isIOS) showIOSGuide(); return Promise.resolve(null); }
+    return Notification.requestPermission().then(function(p) {
+      if (p !== 'granted') { ss(SK.DIS, Date.now()); showBlockedBanner(); return null; }
+      return regSW()
         .then(function() { return initFCM(); })
-        .then(function(msg)   { return getFCMToken(msg); })
-        .then(function(token) {
-          ss(SK.SUBSCRIBED, !!token);
-          if (token) showSuccessToast();
-          return token;
+        .then(function(m)  { return getToken(m); })
+        .then(function(t)  {
+          ss(SK.SUB, !!t);
+          if (t) { showSuccessToast(); startLocalRotation(); }
+          return t;
         });
     });
   }
 
   function unsubscribe() {
-    ss(SK.SUBSCRIBED, false);
-    ss(SK.TOKEN, null);
-    if (!_messaging) return Promise.resolve();
-    return _messaging.deleteToken().catch(function() {});
+    ss(SK.SUB, false); ss(SK.TOKEN, null);
+    stopLocalRotation();
+    return (_msg ? _msg.deleteToken().catch(function(){}) : Promise.resolve());
   }
 
   // ══════════════════════════════════════════════════════════════════
-  // PROMPT UI — Fixed for mobile
-  // FIXES: bottom position above bottom nav, larger touch targets,
-  //        shows sooner (5s not 30s on mobile), z-index above all
+  // LOCAL JOB ROTATION — auto notification every 5 min
+  // Rotates through real job pages from merged_sarkari_data.json
+  // Works on: PC browser, Mobile browser, PWA installed app
   // ══════════════════════════════════════════════════════════════════
-  function canShowPrompt() {
-    if (sg(SK.SUBSCRIBED)) return false;
-    if (!canPush && !(isIOS && isSafari)) return false;
-    // If denied — show unblock instructions banner instead
-    if (Notification.permission === 'denied') {
-      var lastUnblock = sg('tsj_unblock_shown');
-      if (!lastUnblock || Date.now() - lastUnblock > 7 * 86400000) {
-        setTimeout(function() { showUnblockBanner(); }, 5000);
+  var _rotateTimer = null;
+  var ROTATE_MS    = 5 * 60 * 1000; // 5 minutes
+
+  function startLocalRotation() {
+    if (!sg(SK.SUB)) return;
+    stopLocalRotation();
+    // Load job data first
+    loadJobData().then(function() {
+      // Send first notification after 30 seconds
+      setTimeout(function() {
+        if (sg(SK.SUB)) sendNextJobNotif();
+      }, 30000);
+      // Then every 5 minutes
+      _rotateTimer = setInterval(function() {
+        if (document.hidden) return; // Skip if tab/app not visible
+        if (sg(SK.SUB)) sendNextJobNotif();
+      }, ROTATE_MS);
+    });
+  }
+
+  function stopLocalRotation() {
+    if (_rotateTimer) { clearInterval(_rotateTimer); _rotateTimer = null; }
+  }
+
+  function loadJobData() {
+    if (_jobCache && _jobCache.length) return Promise.resolve(_jobCache);
+    return fetch('/merged_sarkari_data.json', { cache: 'default' })
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        // Build flat list of all jobs with slugs — all categories
+        var jobs = (d.jobs || []).filter(function(j) { return j.slug && j.title; });
+        // Sort: SR_Latest_Jobs first, then others
+        jobs.sort(function(a,b) {
+          var order = ['SR_Latest_Jobs','SR_Admit_Card','SR_Result','SR_Answer_Key','SR_Admission'];
+          return order.indexOf(a.category) - order.indexOf(b.category);
+        });
+        _jobCache = jobs;
+        // Restore last index
+        var saved = sg(SK.IDX) || 0;
+        _jobIdx   = (saved < jobs.length) ? saved : 0;
+        return jobs;
+      })
+      .catch(function() { _jobCache = []; return []; });
+  }
+
+  function sendNextJobNotif() {
+    loadJobData().then(function(jobs) {
+      if (!jobs.length) return;
+
+      // Get current job
+      var job   = jobs[_jobIdx % jobs.length];
+      var slug  = job.slug;
+      var title = (job.title || '').trim();
+      var catKey= getCatKey(job.category);
+      var cat   = CATS[catKey] || CATS['latest-jobs'];
+      var url   = SITE + '/jobs/' + slug + '/';
+
+      // Short title for notification
+      var short = title.length > 62 ? title.slice(0,59)+'...' : title;
+      var notifTitle = cat.emoji + ' ' + short;
+      var notifBody  = getBody(catKey, title);
+
+      // Advance index for next time
+      _jobIdx = (_jobIdx + 1) % jobs.length;
+      ss(SK.IDX, _jobIdx);
+
+      // Show via SW (works even when page not visible)
+      if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({
+          type: 'SHOW_JOB_NOTIFICATION',
+          payload: { title: notifTitle, body: notifBody, url: url, category: catKey, slug: slug }
+        });
       }
-      return false;
-    }
-    var dis = sg(SK.DISMISSED);
+    });
+  }
+
+  function getCatKey(dataCategory) {
+    var map = { 'SR_Latest_Jobs':'latest-jobs','SR_Result':'result','SR_Admit_Card':'admit-card','SR_Answer_Key':'answer-key','SR_Admission':'admission' };
+    return map[dataCategory] || 'latest-jobs';
+  }
+
+  function getBody(catKey, title) {
+    var t = title.slice(0, 80);
+    if (catKey === 'result')     return t + ' — Result aa gaya! Abhi check karo.';
+    if (catKey === 'admit-card') return t + ' — Admit Card jari! Download karo.';
+    if (catKey === 'answer-key') return t + ' — Answer Key out!';
+    if (catKey === 'admission')  return t + ' — Admission open!';
+    return t + ' — Abhi apply karein! Last date miss mat karo.';
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  // FOREGROUND TOAST (user is on site)
+  // ══════════════════════════════════════════════════════════════════
+  function showFgToast(payload) {
+    var d   = payload.data || payload.notification || {};
+    var url = d.url || (CATS[d.category]||{}).url || '/';
+    var cat = CATS[d.category] || { emoji:'🔔', color:'#1a56db', label:'Update' };
+    _toast(d.title||'🔔 Top Sarkari Jobs', d.body||'Nayi update!', cat, url, 7000);
+  }
+
+  function showSuccessToast() {
+    _toast('Notifications ON! 🎉', 'Latest Jobs, Results, Admit Card ki instant alert milegi!',
+           { emoji:'✅', color:'#16a34a', label:'' }, null, 5000);
+  }
+
+  function _toast(title, body, cat, url, dur) {
+    injectCSS('tsj-tc', toastCSS());
+    var old = document.getElementById('tsj-t');
+    if (old) old.remove();
+    var t = document.createElement('div');
+    t.id  = 'tsj-t';
+    t.setAttribute('role', 'alert');
+    t.innerHTML =
+      '<div class="ti" style="background:'+cat.color+'">'+cat.emoji+'</div>'+
+      '<div class="tb"><div class="tt">'+esc(title)+'</div><div class="tx">'+esc(body)+'</div></div>'+
+      '<button class="tc" aria-label="Close">✕</button>';
+    if (url) t.addEventListener('click', function(e){ if(!e.target.classList.contains('tc')) location.href=url; });
+    t.querySelector('.tc').addEventListener('click', function(e){ e.stopPropagation(); rmEl(t); });
+    document.body.appendChild(t);
+    raf2(function(){ t.classList.add('ts'); });
+    setTimeout(function(){ rmEl(t); }, dur||6000);
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  // PROMPT — Shows 3s on mobile, 6s on desktop. Always fresh check.
+  // ══════════════════════════════════════════════════════════════════
+  function canPrompt() {
+    if (sg(SK.SUB)) return false;
+    if (!canPush && !(isIOS)) return false;
+    if (typeof Notification !== 'undefined' && Notification.permission === 'denied') return false;
+    // Allow if never asked OR asked more than 1 day ago
+    var asked = sg(SK.ASKED);
+    if (asked && Date.now() - asked < 86400000) return false;
+    // Allow if not dismissed OR dismissed more than 3 days ago
+    var dis = sg(SK.DIS);
     if (dis && Date.now() - dis < 3 * 86400000) return false;
-    var ask = sg(SK.ASKED);
-    if (ask && Date.now() - ask < 86400000) return false;
     return true;
   }
 
   function showPrompt() {
-    if (!canShowPrompt()) return;
+    if (!canPrompt()) {
+      // Show unblock banner if blocked
+      if (typeof Notification !== 'undefined' && Notification.permission === 'denied') {
+        showBlockedBanner();
+      }
+      return;
+    }
     ss(SK.ASKED, Date.now());
-
-    injectCSS('tsj-pp-css', getPromptCSS());
+    injectCSS('tsj-pc', promptCSS());
 
     var el = document.createElement('div');
-    el.id  = 'tsj-push-prompt';
-    el.setAttribute('role', 'dialog');
-    el.setAttribute('aria-modal', 'true');
-    el.setAttribute('aria-label', 'Enable job alerts');
-
+    el.id  = 'tsj-pp';
+    el.setAttribute('role','dialog');
     el.innerHTML =
-      '<button class="pp-close" id="tsjPpClose" aria-label="Close">✕</button>' +
-      '<div class="pp-head">' +
-        '<div class="pp-bell">🔔</div>' +
-        '<div class="pp-title">Instant Sarkari Job Alerts!</div>' +
-        '<div class="pp-sub">Latest Jobs · Results · Admit Card · Answer Key — seedha mobile notification mein!</div>' +
-      '</div>' +
-      '<div class="pp-cats">' +
-        Object.entries(CATEGORIES).map(function(e) {
-          return '<span class="pp-cat" style="border-color:' + e[1].color + ';color:' + e[1].color + '">' +
-            e[1].emoji + ' ' + e[1].label + '</span>';
-        }).join('') +
-      '</div>' +
-      '<button class="pp-allow" id="tsjPpAllow">🔔 Allow Notifications</button>' +
-      '<button class="pp-later" id="tsjPpLater">Abhi Nahi</button>';
+      '<button class="ppc" id="ppc">✕</button>'+
+      '<div class="pph">'+
+        '<div style="font-size:36px;margin-bottom:6px">🔔</div>'+
+        '<div class="ppt">Instant Sarkari Job Alerts!</div>'+
+        '<div class="pps">Latest Jobs · Results · Admit Card · Answer Key — seedha notification mein!</div>'+
+      '</div>'+
+      '<div class="ppcs">'+
+        Object.entries(CATS).map(function(e){
+          return '<span class="ppc2" style="border-color:'+e[1].color+';color:'+e[1].color+'">'+e[1].emoji+' '+e[1].label+'</span>';
+        }).join('')+
+      '</div>'+
+      '<button class="ppa" id="ppa">🔔 Allow Notifications</button>'+
+      '<button class="ppl" id="ppl">Abhi Nahi</button>';
 
     document.body.appendChild(el);
+    raf2(function(){ el.classList.add('pps2'); });
 
-    // Animate in
-    requestAnimationFrame(function() {
-      requestAnimationFrame(function() { el.classList.add('pp-show'); });
-    });
-
-    function closePrompt(dismissed) {
-      if (dismissed) ss(SK.DISMISSED, Date.now());
-      el.classList.remove('pp-show');
-      setTimeout(function() { if (el.parentNode) el.remove(); }, 400);
+    function close(dis) {
+      if (dis) ss(SK.DIS, Date.now());
+      el.classList.remove('pps2');
+      setTimeout(function(){ rmEl(el); }, 400);
     }
 
-    document.getElementById('tsjPpClose').addEventListener('click', function() { closePrompt(true); });
-    document.getElementById('tsjPpLater').addEventListener('click', function() { closePrompt(false); });
-    document.getElementById('tsjPpAllow').addEventListener('click', function() {
-      closePrompt(false);
-      subscribe();
-    });
-
-    // Touch outside to close
-    el.addEventListener('click', function(e) {
-      if (e.target === el) closePrompt(false);
-    });
+    document.getElementById('ppc').addEventListener('click', function(){ close(true); });
+    document.getElementById('ppl').addEventListener('click', function(){ close(false); });
+    document.getElementById('ppa').addEventListener('click', function(){ close(false); subscribe(); });
   }
 
-  // iOS Safari — show "Add to Home Screen" instructions
-  function showIOSInstructions() {
-    injectCSS('tsj-ios-css', getIOSCSS());
+  // ── Persistent Bell Button (always visible, tap to subscribe) ─────
+  function addBellButton() {
+    if (sg(SK.SUB)) return; // Already subscribed
+    if (document.getElementById('tsj-bell')) return;
+    injectCSS('tsj-bc', bellCSS());
+    var b = document.createElement('button');
+    b.id  = 'tsj-bell';
+    b.setAttribute('aria-label', 'Enable job notifications');
+    b.title = 'Job Alerts Enable Karo';
+    b.innerHTML = '🔔';
+    b.addEventListener('click', function() {
+      rmEl(b);
+      if (canPrompt()) showPrompt();
+      else subscribe();
+    });
+    document.body.appendChild(b);
+  }
+
+  // ── Blocked Banner ────────────────────────────────────────────────
+  function showBlockedBanner() {
+    if (document.getElementById('tsj-bl')) return;
+    injectCSS('tsj-blc', blockedCSS());
     var el = document.createElement('div');
-    el.id  = 'tsj-ios-prompt';
+    el.id  = 'tsj-bl';
+    var isChrome = /Chrome/i.test(ua) && !/Edg/i.test(ua);
+    var step = isChrome
+      ? 'Chrome: Address bar 🔒 → Permissions → Notifications → <b>Allow</b> → Reload'
+      : 'Browser Settings → Notifications → topsarkarijobs.com → <b>Allow</b>';
     el.innerHTML =
-      '<button class="ios-close" id="tsjIosClose">✕</button>' +
-      '<div class="ios-icon">📲</div>' +
-      '<div class="ios-title">iOS pe Notifications Kaise Enable Karein</div>' +
-      '<div class="ios-steps">' +
-        '<div class="ios-step"><span class="ios-num">1</span>Safari mein neeche <strong>Share button</strong> tap karein <span class="ios-icon2">⬆️</span></div>' +
-        '<div class="ios-step"><span class="ios-num">2</span><strong>"Add to Home Screen"</strong> select karein</div>' +
-        '<div class="ios-step"><span class="ios-num">3</span>Home Screen se app open karein → notifications milenge</div>' +
-      '</div>' +
-      '<button class="ios-ok" id="tsjIosOk">Samajh Gaya!</button>';
+      '<span style="font-size:22px">🔔</span>'+
+      '<div class="blt"><div class="bln">Job Alerts Block Hain</div>'+
+      '<div class="bls">'+step+'</div></div>'+
+      '<button class="blc" id="blc">✕</button>';
     document.body.appendChild(el);
-    requestAnimationFrame(function() {
-      requestAnimationFrame(function() { el.classList.add('ios-show'); });
-    });
-    function closeIOS() {
-      el.classList.remove('ios-show');
-      setTimeout(function() { if (el.parentNode) el.remove(); }, 400);
-      ss(SK.DISMISSED, Date.now());
-    }
-    document.getElementById('tsjIosClose').addEventListener('click', closeIOS);
-    document.getElementById('tsjIosOk').addEventListener('click', closeIOS);
+    raf2(function(){ el.classList.add('bls2'); });
+    document.getElementById('blc').addEventListener('click', function(){ rmEl(el); });
+    setTimeout(function(){ rmEl(el); }, 12000);
   }
 
-  // Show help when permission is denied
-  function showDeniedHelp() {
-    injectCSS('tsj-toast-css', getToastCSS());
-    var t = document.createElement('div');
-    t.id  = 'tsj-fg-toast';
-    t.innerHTML =
-      '<div class="tt-icon" style="background:#dc2626">⚠️</div>' +
-      '<div class="tt-body">' +
-        '<div class="tt-title">Notification Block Hai</div>' +
-        '<div class="tt-text">Browser Settings → Notifications → topsarkarijobs.com → Allow karein</div>' +
-      '</div>' +
-      '<button class="tt-x" aria-label="Close">✕</button>';
-    t.querySelector('.tt-x').addEventListener('click', function() { rmToast(t); });
-    appendToast(t);
-    setTimeout(function() { rmToast(t); }, 8000);
-  }
-
-  // ══════════════════════════════════════════════════════════════════
-  // FOREGROUND TOAST — shows when user is on site
-  // ══════════════════════════════════════════════════════════════════
-  function showForegroundToast(payload) {
-    var d    = payload.data || payload.notification || {};
-    var title = d.title || '🔔 Top Sarkari Jobs';
-    var body  = d.body  || 'Nayi update aa gayi!';
-    var url   = d.url   || (CATEGORIES[d.category] || {}).url || '/';
-    var cat   = CATEGORIES[d.category] || { emoji:'🔔', color:'#1a56db', label:'Update' };
-
-    injectCSS('tsj-toast-css', getToastCSS());
-    var t = document.createElement('div');
-    t.id  = 'tsj-fg-toast';
-    t.setAttribute('role', 'alert');
-    t.setAttribute('aria-live', 'polite');
-    t.innerHTML =
-      '<div class="tt-icon" style="background:' + cat.color + '">' + cat.emoji + '</div>' +
-      '<div class="tt-body">' +
-        '<div class="tt-title">' + esc(title) + '</div>' +
-        '<div class="tt-text">'  + esc(body)  + '</div>' +
-        '<div class="tt-cat">'   + esc(cat.label) + '</div>' +
-      '</div>' +
-      '<button class="tt-x" aria-label="Close">✕</button>';
-    t.addEventListener('click', function(e) {
-      if (!e.target.classList.contains('tt-x')) location.href = url;
-    });
-    t.querySelector('.tt-x').addEventListener('click', function(e) {
-      e.stopPropagation(); rmToast(t);
-    });
-    appendToast(t);
-    setTimeout(function() { rmToast(t); }, 7000);
-  }
-
-  function showSuccessToast() {
-    injectCSS('tsj-toast-css', getToastCSS());
-    var t = document.createElement('div');
-    t.id  = 'tsj-fg-toast';
-    t.setAttribute('role', 'status');
-    t.innerHTML =
-      '<div class="tt-icon" style="background:#16a34a">✅</div>' +
-      '<div class="tt-body">' +
-        '<div class="tt-title">Notifications ON! 🎉</div>' +
-        '<div class="tt-text">Latest Jobs, Results, Admit Card ki instant alert milegi!</div>' +
-      '</div>' +
-      '<button class="tt-x" aria-label="Close">✕</button>';
-    t.querySelector('.tt-x').addEventListener('click', function() { rmToast(t); });
-    appendToast(t);
-    setTimeout(function() { rmToast(t); }, 6000);
-  }
-
-  function appendToast(t) {
-    var old = document.getElementById('tsj-fg-toast');
-    if (old) old.remove();
-    document.body.appendChild(t);
-    requestAnimationFrame(function() {
-      requestAnimationFrame(function() { t.classList.add('tt-show'); });
-    });
-  }
-
-  function rmToast(el) {
-    if (!el || !el.parentNode) return;
-    el.classList.remove('tt-show');
-    setTimeout(function() { if (el.parentNode) el.remove(); }, 400);
-  }
-
-  function esc(s) {
-    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  // ── iOS Guide ─────────────────────────────────────────────────────
+  function showIOSGuide() {
+    injectCSS('tsj-ic', iosCSS());
+    var el = document.createElement('div');
+    el.id  = 'tsj-ios';
+    el.innerHTML =
+      '<button style="position:absolute;top:10px;right:14px;background:#f1f5f9;border:none;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:14px" id="iosc">✕</button>'+
+      '<div style="font-size:36px;text-align:center;margin-bottom:8px">📲</div>'+
+      '<div style="font-size:.95rem;font-weight:800;color:#0f172a;text-align:center;margin-bottom:12px">iOS pe Notifications Enable Karo</div>'+
+      '<div style="font-size:.78rem;color:#475569;line-height:1.7">'+
+        '1️⃣ Safari neeche <b>Share ⬆️</b> tap karo<br>'+
+        '2️⃣ <b>"Add to Home Screen"</b> select karo<br>'+
+        '3️⃣ Home Screen se app open karo → Notifications milenge'+
+      '</div>'+
+      '<button style="display:block;width:100%;margin-top:16px;padding:12px;background:#1a56db;color:#fff;border:none;border-radius:10px;font-size:.88rem;font-weight:700;cursor:pointer" id="iook">Samajh Gaya!</button>';
+    document.body.appendChild(el);
+    raf2(function(){ el.classList.add('iosh'); });
+    function closeIOS(){ el.classList.remove('iosh'); setTimeout(function(){ rmEl(el); },400); ss(SK.DIS,Date.now()); }
+    document.getElementById('iosc').addEventListener('click', closeIOS);
+    document.getElementById('iook').addEventListener('click', closeIOS);
   }
 
   // ══════════════════════════════════════════════════════════════════
-  // CSS INJECTION
+  // CSS
   // ══════════════════════════════════════════════════════════════════
-  function injectCSS(id, css) {
-    if (document.getElementById(id)) return;
-    var s = document.createElement('style');
-    s.id  = id;
-    s.textContent = css;
-    document.head.appendChild(s);
-  }
+  function toastCSS() { return '#tsj-t{position:fixed;top:70px;right:10px;left:10px;z-index:2147483647;background:#fff;border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.2);display:flex;align-items:center;gap:10px;padding:13px 11px;cursor:pointer;transform:translateY(-160%);opacity:0;transition:transform .35s cubic-bezier(.34,1.2,.64,1),opacity .3s;max-width:420px;margin:0 auto;-webkit-tap-highlight-color:transparent}@media(min-width:600px){#tsj-t{left:auto;width:350px}}#tsj-t.ts{transform:translateY(0);opacity:1}.ti{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0;color:#fff}.tb{flex:1;overflow:hidden;min-width:0}.tt{font-size:.83rem;font-weight:800;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}.tx{font-size:.74rem;color:#475569;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.tc{background:none;border:none;cursor:pointer;color:#94a3b8;font-size:17px;padding:5px;min-width:30px;min-height:30px;display:flex;align-items:center;justify-content:center;border-radius:50%}.tc:hover{background:#f1f5f9}'; }
 
-  function getToastCSS() {
-    return [
-      '#tsj-fg-toast{',
-        'position:fixed;top:72px;right:12px;left:12px;',  /* Mobile: full width near top */
-        'z-index:2147483647;background:#fff;border-radius:14px;',
-        'box-shadow:0 8px 32px rgba(0,0,0,.22);',
-        'display:flex;align-items:center;gap:12px;',
-        'padding:14px 12px;cursor:pointer;',
-        'transform:translateY(-150%);opacity:0;',
-        'transition:transform .35s cubic-bezier(.34,1.2,.64,1),opacity .3s;',
-        '-webkit-tap-highlight-color:transparent;',
-        'max-width:400px;margin:0 auto;',
-      '}',
-      '@media(min-width:600px){#tsj-fg-toast{left:auto;width:360px;}}',
-      '#tsj-fg-toast.tt-show{transform:translateY(0);opacity:1}',
-      '.tt-icon{width:44px;height:44px;border-radius:12px;display:flex;',
-        'align-items:center;justify-content:center;font-size:22px;',
-        'flex-shrink:0;color:#fff;}',
-      '.tt-body{flex:1;overflow:hidden;min-width:0}',
-      '.tt-title{font-size:.85rem;font-weight:800;color:#0f172a;',
-        'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}',
-      '.tt-text{font-size:.76rem;color:#475569;line-height:1.4;',
-        'display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}',
-      '.tt-cat{font-size:.66rem;font-weight:700;color:#94a3b8;',
-        'text-transform:uppercase;letter-spacing:.04em;margin-top:3px;}',
-      '.tt-x{background:none;border:none;cursor:pointer;color:#94a3b8;',
-        'font-size:18px;padding:6px;flex-shrink:0;line-height:1;',
-        'min-width:32px;min-height:32px;display:flex;align-items:center;justify-content:center;',
-        'border-radius:50%;}',
-      '.tt-x:hover,.tt-x:active{background:#f1f5f9;color:#475569}',
-    ].join('');
-  }
+  function promptCSS() { return '#tsj-pp{position:fixed;bottom:calc(68px + env(safe-area-inset-bottom,0px));left:50%;width:calc(100% - 20px);max-width:380px;transform:translateX(-50%) translateY(130%);opacity:0;z-index:2147483645;background:#fff;border-radius:20px;box-shadow:0 -4px 40px rgba(0,0,0,.18),0 8px 40px rgba(0,0,0,.12);padding:20px 16px 16px;transition:transform .4s cubic-bezier(.34,1.2,.64,1),opacity .3s}#tsj-pp.pps2{transform:translateX(-50%) translateY(0);opacity:1}.ppc{position:absolute;top:10px;right:12px;background:none;border:none;cursor:pointer;color:#94a3b8;font-size:17px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%}.pph{text-align:center;margin-bottom:12px}.ppt{font-size:.95rem;font-weight:800;color:#0f172a;margin-bottom:5px;line-height:1.3}.pps{font-size:.74rem;color:#64748b;line-height:1.5}.ppcs{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:14px}.ppc2{font-size:.66rem;font-weight:700;padding:3px 9px;border-radius:20px;border:1.5px solid;background:#fff;white-space:nowrap}.ppa{display:block;width:100%;padding:13px;background:linear-gradient(135deg,#1a56db,#0d2257);color:#fff;border:none;border-radius:11px;font-size:.88rem;font-weight:700;cursor:pointer;margin-bottom:9px;min-height:48px;-webkit-tap-highlight-color:transparent}.ppa:active{opacity:.9}.ppl{display:block;width:100%;background:none;border:none;cursor:pointer;color:#94a3b8;font-size:.78rem;padding:8px;min-height:40px}'; }
 
-  function getPromptCSS() {
-    // bottom: calc(70px + safe-area) — above mobile bottom nav bar
-    return [
-      '#tsj-push-prompt{',
-        'position:fixed;',
-        'bottom:calc(68px + env(safe-area-inset-bottom,0px));',
-        'left:12px;right:12px;',
-        'z-index:2147483645;',
-        'background:#fff;border-radius:20px;',
-        'box-shadow:0 -4px 40px rgba(0,0,0,.18),0 8px 40px rgba(0,0,0,.15);',
-        'padding:20px 16px 16px;',
-        'transform:translateY(120%);opacity:0;',
-        'transition:transform .4s cubic-bezier(.34,1.2,.64,1),opacity .3s;',
-        'max-width:420px;margin:0 auto;',
-        'left:50%;transform:translateX(-50%) translateY(120%);width:calc(100% - 24px);',
-      '}',
-      '@media(min-width:600px){',
-        '#tsj-push-prompt{width:380px;left:50%;transform:translateX(-50%) translateY(120%);}',
-        '#tsj-push-prompt.pp-show{transform:translateX(-50%) translateY(0)!important;}',
-      '}',
-      '#tsj-push-prompt.pp-show{transform:translateX(-50%) translateY(0);opacity:1}',
-      '.pp-close{position:absolute;top:10px;right:12px;background:none;border:none;',
-        'cursor:pointer;color:#94a3b8;font-size:18px;',
-        'min-width:36px;min-height:36px;display:flex;align-items:center;',
-        'justify-content:center;border-radius:50%;',
-        '-webkit-tap-highlight-color:transparent;}',
-      '.pp-close:hover,.pp-close:active{background:#f1f5f9;color:#475569}',
-      '.pp-head{text-align:center;margin-bottom:14px}',
-      '.pp-bell{font-size:36px;margin-bottom:6px}',
-      '.pp-title{font-size:1rem;font-weight:800;color:#0f172a;margin-bottom:5px;line-height:1.3}',
-      '.pp-sub{font-size:.76rem;color:#64748b;line-height:1.5}',
-      '.pp-cats{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:14px}',
-      '.pp-cat{font-size:.68rem;font-weight:700;padding:4px 10px;border-radius:20px;',
-        'border:1.5px solid;background:#fff;white-space:nowrap;}',
-      '.pp-allow{display:block;width:100%;padding:14px;',
-        'background:linear-gradient(135deg,#1a56db,#0d2257);color:#fff;',
-        'border:none;border-radius:12px;font-size:.9rem;font-weight:700;',
-        'cursor:pointer;margin-bottom:10px;',
-        'min-height:48px;', /* Touch target */
-        '-webkit-tap-highlight-color:transparent;}',
-      '.pp-allow:active{opacity:.9}',
-      '.pp-later{display:block;width:100%;background:none;border:none;',
-        'cursor:pointer;color:#94a3b8;font-size:.8rem;',
-        'padding:8px;min-height:40px;', /* Touch target */
-        '-webkit-tap-highlight-color:transparent;}',
-    ].join('');
-  }
+  function bellCSS() { return '#tsj-bell{position:fixed;bottom:calc(80px + env(safe-area-inset-bottom,0px));right:14px;z-index:2147483644;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#1a56db,#0d2257);color:#fff;font-size:22px;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(26,86,219,.45);display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;animation:bellring 3s ease-in-out infinite}@keyframes bellring{0%,90%,100%{transform:rotate(0)}93%{transform:rotate(-15deg)}96%{transform:rotate(15deg)}99%{transform:rotate(-8deg)}}'; }
 
-  function getIOSCSS() {
-    return [
-      '#tsj-ios-prompt{',
-        'position:fixed;bottom:0;left:0;right:0;',
-        'z-index:2147483647;background:#fff;',
-        'border-radius:20px 20px 0 0;',
-        'box-shadow:0 -4px 40px rgba(0,0,0,.2);',
-        'padding:24px 20px calc(20px + env(safe-area-inset-bottom,0px));',
-        'transform:translateY(100%);opacity:0;',
-        'transition:transform .4s cubic-bezier(.34,1.2,.64,1),opacity .3s;',
-      '}',
-      '#tsj-ios-prompt.ios-show{transform:translateY(0);opacity:1}',
-      '.ios-close{position:absolute;top:12px;right:16px;background:#f1f5f9;',
-        'border:none;border-radius:50%;width:32px;height:32px;',
-        'cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}',
-      '.ios-icon{font-size:40px;text-align:center;margin-bottom:8px}',
-      '.ios-title{font-size:.95rem;font-weight:800;color:#0f172a;text-align:center;margin-bottom:14px}',
-      '.ios-steps{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}',
-      '.ios-step{display:flex;align-items:flex-start;gap:10px;font-size:.8rem;color:#475569;line-height:1.5}',
-      '.ios-num{background:#1a56db;color:#fff;border-radius:50%;',
-        'min-width:22px;height:22px;display:flex;align-items:center;',
-        'justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0;}',
-      '.ios-icon2{font-size:1.1em}',
-      '.ios-ok{display:block;width:100%;padding:14px;',
-        'background:#1a56db;color:#fff;border:none;border-radius:12px;',
-        'font-size:.9rem;font-weight:700;cursor:pointer;}',
-    ].join('');
-  }
+  function blockedCSS() { return '#tsj-bl{position:fixed;bottom:calc(68px + env(safe-area-inset-bottom,0px));left:10px;right:10px;max-width:420px;margin:0 auto;z-index:2147483644;background:#1e3a5f;color:#fff;border-radius:14px;box-shadow:0 4px 24px rgba(0,0,0,.25);display:flex;align-items:center;gap:10px;padding:12px 13px;transform:translateY(140%);opacity:0;transition:transform .4s cubic-bezier(.34,1.2,.64,1),opacity .3s}@media(min-width:600px){#tsj-bl{left:50%;transform:translateX(-50%) translateY(140%);width:400px}}#tsj-bl.bls2{transform:translateY(0);opacity:1}@media(min-width:600px){#tsj-bl.bls2{transform:translateX(-50%) translateY(0)}}.blt{flex:1;min-width:0}.bln{font-size:.82rem;font-weight:800;margin-bottom:3px}.bls{font-size:.72rem;opacity:.85;line-height:1.4}.bls b{color:#fbbf24}.blc{background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:50%;min-width:28px;min-height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}'; }
+
+  function iosCSS() { return '#tsj-ios{position:fixed;bottom:0;left:0;right:0;z-index:2147483647;background:#fff;border-radius:20px 20px 0 0;box-shadow:0 -4px 40px rgba(0,0,0,.2);padding:24px 20px calc(20px + env(safe-area-inset-bottom,0px));transform:translateY(100%);opacity:0;transition:transform .4s cubic-bezier(.34,1.2,.64,1),opacity .3s}#tsj-ios.iosh{transform:translateY(0);opacity:1}'; }
+
+  // ══════════════════════════════════════════════════════════════════
+  // HELPERS
+  // ══════════════════════════════════════════════════════════════════
+  function injectCSS(id, css) { if (!document.getElementById(id)) { var s=document.createElement('style'); s.id=id; s.textContent=css; document.head.appendChild(s); } }
+  function rmEl(el)  { if (el && el.parentNode) { el.classList.remove('ts','pps2','bls2','iosh'); setTimeout(function(){ if(el.parentNode) el.remove(); }, 400); } }
+  function raf2(fn)  { requestAnimationFrame(function(){ requestAnimationFrame(fn); }); }
+  function esc(s)    { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
   // ══════════════════════════════════════════════════════════════════
   // PUBLIC API
@@ -485,94 +416,68 @@
   window.TSJPush = {
     subscribe:    subscribe,
     unsubscribe:  unsubscribe,
-    isSubscribed: function() { return !!sg(SK.SUBSCRIBED); },
+    isSubscribed: function() { return !!sg(SK.SUB); },
     showPrompt:   showPrompt,
     getToken:     function() { return sg(SK.TOKEN); },
 
-    // Test with a REAL job page URL (not section URL)
+    // Test: sends notification for latest real job page
     testNotification: function(category) {
-      var cat  = CATEGORIES[category || 'latest-jobs'] || CATEGORIES['latest-jobs'];
-      var site = 'https://www.topsarkarijobs.com';
-      
-      // Map category to data key in merged_sarkari_data.json
-      var catDataKey = {
-        'latest-jobs': 'SR_Latest_Jobs',
-        'result':      'SR_Result',
-        'admit-card':  'SR_Admit_Card',
-        'answer-key':  'SR_Answer_Key',
-        'admission':   'SR_Admission',
-      }[category || 'latest-jobs'] || 'SR_Latest_Jobs';
-
-      // Fetch a real job from merged_sarkari_data.json
-      fetch('/merged_sarkari_data.json', { cache: 'default' })
-        .then(function(r) { return r.json(); })
-        .then(function(d) {
-          var jobs  = (d.jobs || []).filter(function(j) {
-            return j.category === catDataKey && j.slug;
-          });
-          // Pick latest job (index 0)
-          var job   = jobs[0] || null;
-          var slug  = job ? job.slug : null;
-          var title = job ? (job.title || '').slice(0, 65) : (cat.label + ' Update');
-          var url   = slug ? (site + '/jobs/' + slug + '/') : cat.url;
-
-          if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+      var catKey = category || 'latest-jobs';
+      var cat    = CATS[catKey] || CATS['latest-jobs'];
+      fetch('/merged_sarkari_data.json', { cache:'default' })
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+          var jobs = (d.jobs||[]).filter(function(j){ return j.category===cat.dataKey && j.slug && j.title; });
+          var job  = jobs[0];
+          var url  = job ? SITE+'/jobs/'+job.slug+'/' : cat.url;
+          var titl = job ? (job.title||'').slice(0,62) : cat.label+' Alert';
+          if (navigator.serviceWorker && navigator.serviceWorker.controller) {
             navigator.serviceWorker.controller.postMessage({
-              type: 'SHOW_TEST_NOTIFICATION',
-              payload: {
-                title:    cat.emoji + ' ' + title,
-                body:     'Abhi apply karein — last date miss mat karo!',
-                url:      url,
-                category: category || 'latest-jobs',
-              }
+              type:'SHOW_JOB_NOTIFICATION',
+              payload:{ title:cat.emoji+' '+titl, body:getBody(catKey,titl), url:url, category:catKey }
             });
           }
-        })
-        .catch(function() {
-          // Fallback if fetch fails
-          if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+        }).catch(function(){
+          if (navigator.serviceWorker && navigator.serviceWorker.controller) {
             navigator.serviceWorker.controller.postMessage({
-              type: 'SHOW_TEST_NOTIFICATION',
-              payload: { title: cat.emoji + ' Test: ' + cat.label,
-                         body: 'Push notification working!',
-                         url: cat.url, category: category || 'latest-jobs' }
+              type:'SHOW_JOB_NOTIFICATION',
+              payload:{ title:cat.emoji+' Test: '+cat.label, body:'Push working!', url:cat.url, category:catKey }
             });
           }
         });
     },
 
-    // For already-subscribed users — init FCM to receive foreground messages
     init: function() {
-      if (!sg(SK.SUBSCRIBED)) return;
-      registerSW().then(function() { return initFCM(); }).catch(function() {});
+      if (!sg(SK.SUB)) return;
+      regSW().then(function(){ return initFCM(); }).catch(function(){});
+      startLocalRotation();
     },
   };
 
   // ══════════════════════════════════════════════════════════════════
-  // AUTO INIT — Mobile optimized timing
+  // AUTO INIT
   // ══════════════════════════════════════════════════════════════════
-  function autoInit() {
-    // Already subscribed → init FCM for foreground messages
-    if (sg(SK.SUBSCRIBED)) {
-      setTimeout(function() { window.TSJPush.init(); }, 2000);
+  function boot() {
+    // If already subscribed — init FCM + start rotation
+    if (sg(SK.SUB)) {
+      setTimeout(function() { window.TSJPush.init(); }, 1000);
     }
 
-    // Show prompt timing:
-    // Mobile: 8 seconds (user still on page)
-    // Desktop: 15 seconds
-    var delay = isMobile ? 8000 : 15000;
+    // Show bell button after 2 seconds (always visible if not subscribed)
+    setTimeout(addBellButton, 2000);
+
+    // Show prompt:
+    // Mobile: 4 seconds | Desktop: 8 seconds
+    var delay = isMobile ? 4000 : 8000;
     setTimeout(function() {
-      if (canShowPrompt()) showPrompt();
+      if (!sg(SK.SUB)) showPrompt();
     }, delay);
   }
 
-  // Start after DOM ready + small delay to not block page render
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-      setTimeout(autoInit, 500);
-    });
+    document.addEventListener('DOMContentLoaded', function(){ setTimeout(boot, 300); });
   } else {
-    setTimeout(autoInit, 500);
+    setTimeout(boot, 300);
   }
 
 })();

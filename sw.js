@@ -213,7 +213,7 @@ self.addEventListener('message', e => {
       );
     }
   }
-  if (type === 'SHOW_TEST_NOTIFICATION') {
+  if (type === 'SHOW_JOB_NOTIFICATION' || type === 'SHOW_TEST_NOTIFICATION') {
     const d = e.data.payload || {};
     e.waitUntil(
       self.registration.showNotification(d.title || '🔔 Test Alert', {
