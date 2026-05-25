@@ -487,6 +487,7 @@
       'results':              {file:'merged',key:'SR_Result'},
       'result':               {file:'merged',key:'SR_Result'},
       'admission':            {file:'merged',key:'SR_Admission'},
+      'admissions':           {file:'merged',key:'SR_Admission'},
       'answer-key':           {file:'merged',key:'SR_Answer_Key'},
       'offline-form':         {file:'merged',key:'_offline'},
       'offline-jobs':         {file:'merged',key:'_offline'},
@@ -497,7 +498,24 @@
       'haryana-all-state-jobs': {file:'merged',key:'SR_Latest_Jobs'},
       'haryana-jobs':           {file:'merged',key:'SR_Latest_Jobs'},
       /* AUTO: new categories from merged_sarkari_data.json get added here */
-      'latest-jobs-new':        {file:'merged',key:'LATEST_JOBS NEW'}
+      'latest-jobs-new':        {file:'merged',key:'LATEST_JOBS NEW'},
+      'admission-form':         {file:'merged',key:'SR_Admission'},
+      /* ── Result aliases ── */
+      'sarkari-result':         {file:'merged',key:'SR_Result'},
+      'exam-result':            {file:'merged',key:'SR_Result'},
+      /* ── Admit Card aliases ── */
+      'hall-ticket':            {file:'merged',key:'SR_Admit_Card'},
+      'call-letter':            {file:'merged',key:'SR_Admit_Card'},
+      /* ── Jobs aliases ── */
+      'ssc-jobs':               {file:'complete',key:'Latest_Notifications'},
+      'upsc-jobs':              {file:'complete',key:'Latest_Notifications'},
+      'central-jobs':           {file:'complete',key:'Latest_Notifications'},
+      'state-jobs':             {file:'merged',key:'SR_Latest_Jobs'},
+      'defence-jobs':           {file:'complete',key:'Police_Defence'},
+      'army-navy-airforce':     {file:'complete',key:'Police_Defence'},
+      'online-form':            {file:'merged',key:'SR_Latest_Jobs'},
+      'exam-dates':             {file:'merged',key:'SR_Admit_Card'},
+      'syllabus':               {file:'merged',key:'SR_Latest_Jobs'}
     };
 
     function slugify(s){return(s||'').toLowerCase().replace(/[^\w\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');}

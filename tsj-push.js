@@ -22,11 +22,11 @@
   var SITE = 'https://www.topsarkarijobs.com';
 
   var CATS = {
-    'latest-jobs': { label:'Latest Jobs',  url: SITE+'/section/latest-jobs/', emoji:'💼', color:'#1a56db', dataKey:'SR_Latest_Jobs'  },
-    'result':      { label:'Results',      url: SITE+'/section/results/',     emoji:'🏆', color:'#16a34a', dataKey:'SR_Result'       },
-    'admit-card':  { label:'Admit Card',   url: SITE+'/section/admit-card/',  emoji:'🎫', color:'#d97706', dataKey:'SR_Admit_Card'   },
-    'admission':   { label:'Admission',    url: SITE+'/section/admission/',   emoji:'🎓', color:'#7c3aed', dataKey:'SR_Admission'    },
-    'answer-key':  { label:'Answer Key',   url: SITE+'/section/answer-key/',  emoji:'🔑', color:'#be185d', dataKey:'SR_Answer_Key'   },
+    'latest-jobs': { label:'Latest Jobs',  url: SITE+'/section/latest-jobs/',  emoji:'💼', color:'#1a56db', dataKey:'SR_Latest_Jobs'  },
+    'result':      { label:'Results',      url: SITE+'/section/results/',      emoji:'🏆', color:'#16a34a', dataKey:'SR_Result'       },
+    'admit-card':  { label:'Admit Card',   url: SITE+'/section/admit-card/',   emoji:'🎫', color:'#d97706', dataKey:'SR_Admit_Card'   },
+    'admission':   { label:'Admission',    url: SITE+'/section/admissions/',   emoji:'🎓', color:'#7c3aed', dataKey:'SR_Admission'    },
+    'answer-key':  { label:'Answer Key',   url: SITE+'/section/answer-key/',   emoji:'🔑', color:'#be185d', dataKey:'SR_Answer_Key'   },
   };
 
   // ── Storage — v4 keys (clears all old keys on load) ───────────────
@@ -180,18 +180,34 @@
     return fetch('/merged_sarkari_data.json', { cache: 'default' })
       .then(function(r) { return r.json(); })
       .then(function(d) {
-        // Build flat list of all jobs with slugs — all categories
-        var jobs = (d.jobs || []).filter(function(j) { return j.slug && j.title; });
-        // Sort: SR_Latest_Jobs first, then others
-        jobs.sort(function(a,b) {
-          var order = ['SR_Latest_Jobs','SR_Admit_Card','SR_Result','SR_Answer_Key','SR_Admission'];
-          return order.indexOf(a.category) - order.indexOf(b.category);
+        // Only jobs that have slug AND their /jobs/[slug]/ page exists
+        // Categories mapped to section pages:
+        // SR_Latest_Jobs  → /section/latest-jobs/
+        // SR_Result       → /section/results/
+        // SR_Admit_Card   → /section/admit-card/
+        // SR_Admission    → /section/admissions/
+        // SR_Answer_Key   → /section/answer-key/
+        var validCats = ['SR_Latest_Jobs','SR_Result','SR_Admit_Card','SR_Answer_Key','SR_Admission'];
+        var jobs = (d.jobs || []).filter(function(j) {
+          return j.slug && j.title && validCats.indexOf(j.category) !== -1;
         });
-        _jobCache = jobs;
-        // Restore last index
+        // Interleave categories so rotation shows variety
+        // e.g. latest-job, result, admit-card, answer-key, latest-job, result...
+        var buckets = {};
+        validCats.forEach(function(cat) {
+          buckets[cat] = jobs.filter(function(j){ return j.category === cat; });
+        });
+        var interleaved = [];
+        var maxLen = Math.max.apply(null, validCats.map(function(c){ return (buckets[c]||[]).length; }));
+        for (var i = 0; i < maxLen; i++) {
+          validCats.forEach(function(cat) {
+            if (buckets[cat] && buckets[cat][i]) interleaved.push(buckets[cat][i]);
+          });
+        }
+        _jobCache = interleaved.length ? interleaved : jobs;
         var saved = sg(SK.IDX) || 0;
-        _jobIdx   = (saved < jobs.length) ? saved : 0;
-        return jobs;
+        _jobIdx   = (saved < _jobCache.length) ? saved : 0;
+        return _jobCache;
       })
       .catch(function() { _jobCache = []; return []; });
   }
@@ -200,12 +216,14 @@
     loadJobData().then(function(jobs) {
       if (!jobs.length) return;
 
-      // Get current job
+      // Get current job — skip if no slug
       var job   = jobs[_jobIdx % jobs.length];
       var slug  = job.slug;
+      if (!slug) { _jobIdx = (_jobIdx + 1) % jobs.length; return; }
       var title = (job.title || '').trim();
       var catKey= getCatKey(job.category);
       var cat   = CATS[catKey] || CATS['latest-jobs'];
+      // Always use individual job detail page URL
       var url   = SITE + '/jobs/' + slug + '/';
 
       // Short title for notification
@@ -434,7 +452,8 @@
         .then(function(d){
           var jobs = (d.jobs||[]).filter(function(j){ return j.category===cat.dataKey && j.slug && j.title; });
           var job  = jobs[0];
-          var url  = job ? SITE+'/jobs/'+job.slug+'/' : cat.url;
+          // Always open individual job page, not section page
+          var url  = job ? (SITE+'/jobs/'+job.slug+'/') : cat.url;
           var titl = job ? (job.title||'').slice(0,62) : cat.label+' Alert';
           if (navigator.serviceWorker && navigator.serviceWorker.controller) {
             navigator.serviceWorker.controller.postMessage({
