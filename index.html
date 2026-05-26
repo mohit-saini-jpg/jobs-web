@@ -3104,9 +3104,20 @@
       var href;
       var applyModeVal = (job.apply_mode || '').toLowerCase();
       var officialWebUrl = j.official_website_link || j.official_website || '';
-      /* LATEST_JOBS NEW: no slug → link to official website directly */
-      if (!slug && officialWebUrl && j.category === 'LATEST_JOBS NEW') {
-        href = officialWebUrl;
+      /* No-slug categories: use official_website or generate slug from title */
+      var noSlugCats = ['LATEST_JOBS NEW', 'OFFLINE_FORM', 'STATE_JOBS', 'CENTRAL_JOBS', 'ADMISSIONS'];
+      if (!slug && noSlugCats.indexOf(j.category) !== -1) {
+        if (officialWebUrl) {
+          href = officialWebUrl;
+        } else {
+          /* Generate slug from title as fallback */
+          var genSlug = (title || '').toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/[\s-]+/g, '-')
+            .slice(0, 100)
+            .replace(/^-+|-+$/g, '');
+          href = genSlug ? 'job.html?slug=' + encodeURIComponent(genSlug) : '#';
+        }
       } else if (slug) {
         href = 'job.html?slug=' + encodeURIComponent(slug);
       } else if (job.source && job.source === 'sarkariresultshine.com') {
@@ -3517,7 +3528,7 @@
     }
 
     function loadData() {
-      var CACHE_KEY = '__sr_merged_v7'; // bumped - removed LATEST_JOBS NEW duplicate
+      var CACHE_KEY = '__sr_merged_v8'; // bumped - removed LATEST_JOBS NEW duplicate
       var CACHE_TTL = 15 * 60 * 1000; // 15 min
 
       try {
