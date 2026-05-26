@@ -77,6 +77,8 @@
     "STATE_JOBS":        { id: "State Jobs",        title: "🗺️ State Govt Jobs",     color: "linear-gradient(135deg,#9333ea,#a855f7)", icon: "fa-solid fa-map-location-dot" },
     "CENTRAL_JOBS":      { id: "Central Jobs",      title: "🏛️ Central Govt Jobs",  color: "linear-gradient(135deg,#0f766e,#0d9488)", icon: "fa-solid fa-landmark" },
     "ADMISSIONS":        { id: "Admissions",        title: "📚 Admissions 2026",      color: "linear-gradient(135deg,#be123c,#e11d48)", icon: "fa-solid fa-school" },
+    "LATEST_JOBS NEW":   { id: "Latest Jobs New",   title: "🔥 Latest Jobs New",        color: "linear-gradient(135deg,#dc2626,#b91c1c)", icon: "fa-solid fa-fire" },
+    "OFFLINE_FORM":      { id: "Offline Form",       title: "📄 Offline Form Jobs",      color: "linear-gradient(135deg,#475569,#334155)", icon: "fa-solid fa-file-pen" },
   };
 
   /* Slugify a job title the same way the Python generator does */
@@ -385,8 +387,9 @@
         const slug = job.slug || slugifyForJob(name);
         const url = slug ? '/jobs/' + slug + '/' : '#';
         const dates = job.important_dates || {};
-        const lastDate = (dates.last_date || dates.last_date_to_apply || job.last_date || '').trim();
-        return { slug, name, url, date: lastDate };
+        const lastDate = (dates.last_date_to_apply || dates.last_date || job.last_date || '').trim();
+        const org = (job.organization || job.board_name || '').trim();
+        return { slug, name, url, date: lastDate, org };
       }).filter(Boolean);
       if (!items.length) continue;
       sections.push({ id: meta.id, title: meta.title, color: meta.color, icon: meta.icon, viewMoreType: 'list', items });
