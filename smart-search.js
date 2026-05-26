@@ -1,62 +1,254 @@
 /**
  * ============================================================
- * TOP SARKARI JOBS – SMART SEARCH SYSTEM v3.0
- * Features:
- *   ✅ Promise.all() parallel preload — first load se kaam kare
- *   ✅ Cache busting — timestamp + no-store so purana cache na aaye
- *   ✅ dailyupdates.json — ALL sections searchable (non-job bhi)
- *   ✅ Auto-refresh — har 5 min me background reload
- *   ✅ Change detection — naya data milne par index replace ho
- *   ✅ Dedup by URL — duplicate entries remove
- *   ✅ Instant typing results — debounce 150ms
- *   ✅ Direct page navigation on click
- *   ✅ Mobile friendly & lightweight
+ * TOP SARKARI JOBS – INTELLIGENT PRIORITY SEARCH v4.0
+ * ============================================================
+ * PRIORITY SYSTEM:
+ *   P1 (1000+) — Exact Job Title Match → Job Detail Page
+ *   P2 (600+)  — All Query Words in Title → Job Detail Page
+ *   P3 (400+)  — Partial Title Match (60%+ words) → Job Detail
+ *   P4 (200+)  — SEO Tags / Organization / Post Name Match
+ *   P5 (100+)  — Category / Section / State Page
+ *   P6 (<100)  — Generic / Unrelated
+ *
+ * QUERY TYPE DETECTION:
+ *   SPECIFIC → "SSC GD", "Haryana Police" → Job Detail Pages First
+ *   GENERAL  → "10th Pass", "Admit Card"  → Category/Section Pages
+ *
+ * DATA SOURCES (Auto-detected):
+ *   merged_sarkari_data.json — LATEST_JOBS NEW, STATE_JOBS etc
+ *   Complete_Jobs_Full_Data.json — qualification-wise jobs
+ *   state-jobs-data.json — state-wise jobs
+ *   Education_Jobs.json — education/exam entries
+ *   dailyupdates.json — daily updates
  * ============================================================
  */
 (function () {
   'use strict';
 
-  /* ── CONFIG ─────────────────────────────────────────────── */
-  const CFG = {
-    fuseJs: 'https://cdnjs.cloudflare.com/ajax/libs/fuse.js/7.0.0/fuse.min.js',
-    jsonFiles: [
-      'dailyupdates.json',
-      'merged_sarkari_data.json',
-      'state-jobs-data.json',
-      'Complete_Jobs_Full_Data.json',
-    ],
-    maxSuggest: 18,
-    debounceMs: 150,
-    recentKey: 'tsj_recent_v3',
+  /* ══════════════════════════════════════════════════════════
+   * CONFIG
+   * ══════════════════════════════════════════════════════════ */
+  var CFG = {
+    maxSuggest: 10,
+    debounceMs: 120,
+    recentKey: 'tsj_recent_v4',
     maxRecent: 8,
-    refreshIntervalMs: 15 * 60 * 1000,   // AUDIT FIX: 5min → 15min (saves repeated downloads)
-    // cacheBust REMOVED — browser + CDN cache handles freshness via _headers TTLs
+    refreshIntervalMs: 15 * 60 * 1000,
   };
 
-  /* ── TRENDING TAGS ──────────────────────────────────────── */
-  const TRENDING = [
-    { label: 'Railway Jobs',   q: 'railway',    icon: 'fa-train' },
-    { label: 'Police Jobs',    q: 'police',     icon: 'fa-shield-halved' },
-    { label: 'Haryana Jobs',   q: 'haryana',    icon: 'fa-location-dot' },
-    { label: '10th Pass Jobs', q: '10th pass',  icon: 'fa-certificate' },
-    { label: 'Admit Card',     q: 'admit card', icon: 'fa-id-card' },
-    { label: 'SSC CGL',        q: 'ssc cgl',    icon: 'fa-medal' },
-    { label: 'Bank Jobs',      q: 'bank',       icon: 'fa-building-columns' },
-    { label: 'Army Jobs',      q: 'army',       icon: 'fa-star' },
-    { label: 'Results',        q: 'result',     icon: 'fa-trophy' },
-    { label: 'ITI Jobs',       q: 'iti',        icon: 'fa-tools' },
+  /* ══════════════════════════════════════════════════════════
+   * QUERY TYPE DETECTION
+   * Determines whether query is SPECIFIC (job search) or
+   * GENERAL (category/qualification/section search)
+   * ══════════════════════════════════════════════════════════ */
+  var GENERAL_KEYWORDS = {
+    '10th':1,'10th pass':1,'tenth':1,'matric':1,
+    '12th':1,'12th pass':1,'intermediate':1,'inter':1,
+    '8th':1,'8th pass':1,'eighth':1,
+    'graduate':1,'graduation':1,'degree':1,'any graduate':1,
+    'diploma':1,'iti':1,'btech':1,'b.tech':1,'mba':1,'mca':1,'bca':1,
+    'post graduate':1,'pg':1,'m.sc':1,'m.a':1,'m.com':1,
+    'admit card':1,'admit':1,'hall ticket':1,'call letter':1,
+    'result':1,'results':1,'merit list':1,'cut off':1,'cutoff':1,
+    'answer key':1,'answer sheet':1,'objection':1,
+    'admission':1,'counselling':1,'counseling':1,
+    'sarkari result':1,'sarkari naukri':1,'govt job':1,'government job':1,
+    'haryana jobs':1,'up jobs':1,'rajasthan jobs':1,'bihar jobs':1,
+    'state jobs':1,'central jobs':1,'upcoming jobs':1,'offline form':1,
+    'latest jobs':1,'new jobs':1,'today jobs':1,
+    'scheme':1,'yojna':1,'yojana':1,'pm scheme':1,
+  };
+
+  var SPECIFIC_PATTERNS = [
+    /\b(ssc|upsc|rrb|rrc|rpf|bsf|crpf|cisf|ssb|itbp|nda|cds|afcat)\b/i,
+    /\b(constable|si|sub inspector|inspector|aso|mts|chsl|cgl|cpo|je|ae)\b/i,
+    /\b(railway|airforce|navy|army|paramilitary|police|ntpc|group.?d|group.?c)\b/i,
+    /\b(aiims|pgi|esic|nhi|cghs|drdo|isro|barc|hal|bhel|ongc|sail|bel)\b/i,
+    /\b(clerk|steno|typist|accountant|assistant|officer|engineer|technician)\b/i,
+    /\b(teacher|pgt|tgt|prt|lecturer|professor|principal|head master)\b/i,
+    /\b(bank|ibps|sbi|rbi|nabard|po|so|probationary)\b/i,
+    /\b(haryana police|haryana staff|hssc|hpsc|htet|hptet)\b/i,
+    /\b(vacancy|recruitment|bharti|notification|post|posts)\b/i,
   ];
 
-  /* ── STATE ──────────────────────────────────────────────── */
-  let allData = [];
-  let fuseInstance = null;
-  let fuseLoaded = false;
-  let activeIndex = -1;
-  let suggestItems = [];
-  let searchReady = false;
-  let lastJsonHashes = {};
+  function detectQueryType(q) {
+    var lower = q.toLowerCase().trim();
+    // Check general keywords first
+    if (GENERAL_KEYWORDS[lower]) return 'GENERAL';
+    var words = lower.split(/\s+/);
+    if (words.length === 1) {
+      var w = words[0];
+      if (GENERAL_KEYWORDS[w]) return 'GENERAL';
+      if (/^(admit|result|answer|scheme|yojna|offline|upcoming|latest|state|central)$/i.test(w)) return 'GENERAL';
+      if (/^(10th|12th|8th|iti|diploma|btech|graduate|pg|mba)$/i.test(w)) return 'GENERAL';
+    }
+    // Check specific patterns
+    for (var i = 0; i < SPECIFIC_PATTERNS.length; i++) {
+      if (SPECIFIC_PATTERNS[i].test(lower)) return 'SPECIFIC';
+    }
+    // Multi-word with state + keyword = SPECIFIC (e.g. "Haryana Police")
+    if (words.length >= 2) {
+      var stateWords = ['haryana','delhi','punjab','rajasthan','bihar','up','gujarat','maharashtra',
+                        'karnataka','tamil','kerala','bengal','assam','odisha','jharkhand',
+                        'chhattisgarh','uttarakhand','himachal','jammu','kashmir','mp','andhra',
+                        'telangana','manipur','meghalaya','sikkim','tripura','nagaland','mizoram'];
+      var hasState = stateWords.some(function(s){ return lower.indexOf(s) !== -1; });
+      var hasJobWord = /constable|police|patwari|teacher|clerk|engineer|nurse|driver|guard|peon|conductor|instructor/i.test(lower);
+      if (hasState && hasJobWord) return 'SPECIFIC';
+    }
+    // Default: if query >= 3 chars and not matching general → treat as SPECIFIC
+    return q.length >= 3 ? 'SPECIFIC' : 'GENERAL';
+  }
 
-  /* ── UTILS ──────────────────────────────────────────────── */
+  /* ══════════════════════════════════════════════════════════
+   * STOP WORDS — removed from scoring to avoid noise
+   * ══════════════════════════════════════════════════════════ */
+  var STOP = {
+    'recruitment':1,'2026':1,'2025':1,'2024':1,'apply':1,'online':1,'offline':1,
+    'now':1,'out':1,'notification':1,'for':1,'and':1,'the':1,'of':1,'to':1,
+    'in':1,'a':1,'an':1,'is':1,'are':1,'with':1,'posts':1,'post':1,'grade':1,
+    'form':1,'exam':1,'test':1,'board':1,'india':1,'all':1,'bharti':1,
+    'vacancy':1,'vacancies':1,'latest':1,'new':1,'official':1,'download':1,
+    'check':1,'full':1,'details':1,'info':1,'information':1,'released':1,
+    'notification':1,'sarkari':1,'naukri':1,'free':1,'link':1,
+  };
+
+  /* ══════════════════════════════════════════════════════════
+   * SCORING ENGINE — Priority-based
+   * ══════════════════════════════════════════════════════════ */
+  function scoreItem(item, q, queryWords, meaningfulWords, qType) {
+    var title  = (item.title  || '').toLowerCase();
+    var tags   = (item.tags   || '').toLowerCase();
+    var dept   = (item.dept   || '').toLowerCase();
+    var cat    = (item.cat    || '').toLowerCase();
+    var sec    = (item.sectionSource || '').toLowerCase();
+    var state  = (item.state  || '').toLowerCase();
+    var postN  = (item.postName || '').toLowerCase();
+    var isJobDetail = item.isJobDetail === true;
+    var score  = 0;
+
+    /* ── P1: EXACT TITLE MATCH (highest priority) ── */
+    if (title === q) {
+      score += 1500;
+    } else if (title.indexOf(q) === 0) {
+      /* Title starts with exact query */
+      score += 1000;
+    } else if (title.indexOf(q) !== -1) {
+      /* Title contains exact query substring */
+      score += 600;
+    }
+
+    /* ── P2: ALL meaningful words in title ── */
+    if (meaningfulWords.length >= 1) {
+      var titleWordHits = meaningfulWords.filter(function(w){ return title.indexOf(w) !== -1; });
+      var hitRatio = titleWordHits.length / meaningfulWords.length;
+
+      if (hitRatio === 1 && meaningfulWords.length >= 2) {
+        score += 400; // ALL words match
+      } else if (hitRatio >= 0.75) {
+        score += 200;
+      } else if (hitRatio >= 0.5) {
+        score += 100;
+      }
+
+      /* Word-length weighted scoring */
+      titleWordHits.forEach(function(w) {
+        if (w.length >= 6) score += 50;
+        else if (w.length >= 4) score += 30;
+        else score += 15;
+      });
+    }
+
+    /* ── P3: EXACT FIRST WORD MATCH (title starts with query word) ── */
+    if (queryWords.length > 0 && title.indexOf(queryWords[0]) === 0) {
+      score += 80;
+    }
+
+    /* ── P4: SEO TAGS exact match (very high value) ── */
+    if (item.seoTags) {
+      var seoArr = Array.isArray(item.seoTags) ? item.seoTags : [item.seoTags];
+      seoArr.forEach(function(tag) {
+        var t = (tag || '').toLowerCase();
+        if (t === q) score += 500;
+        else if (t.indexOf(q) !== -1) score += 200;
+        else {
+          meaningfulWords.forEach(function(w) {
+            if (t.indexOf(w) !== -1) score += 60;
+          });
+        }
+      });
+    }
+
+    /* ── P5: Organization / Post Name match ── */
+    if (dept) {
+      if (dept.indexOf(q) !== -1) score += 250;
+      else meaningfulWords.forEach(function(w){ if (dept.indexOf(w) !== -1) score += 40; });
+    }
+    if (postN) {
+      if (postN.indexOf(q) !== -1) score += 200;
+      else meaningfulWords.forEach(function(w){ if (postN.indexOf(w) !== -1) score += 35; });
+    }
+
+    /* ── P6: Tags / Category / State ── */
+    meaningfulWords.forEach(function(w) {
+      if (tags.indexOf(w)  !== -1) score += w.length >= 5 ? 20 : 10;
+      if (cat.indexOf(w)   !== -1) score += 8;
+      if (sec.indexOf(w)   !== -1) score += 6;
+      if (state.indexOf(w) !== -1) score += 12; // State is useful
+    });
+
+    /* ── QUERY TYPE MODIFIERS ── */
+    if (qType === 'SPECIFIC') {
+      /* For specific queries: massively boost job detail pages */
+      if (isJobDetail) score = Math.round(score * 1.8);
+      /* Penalize category/section pages in specific searches */
+      if (item.isCategory || item.isSection) score = Math.round(score * 0.3);
+    } else {
+      /* For general queries: boost category/section pages */
+      if (item.isCategory || item.isSection) score = Math.round(score * 1.5);
+      if (isJobDetail) score = Math.round(score * 0.7);
+    }
+
+    /* ── RECENCY BOOST ── */
+    if (score > 0 && item.lastUpdated) {
+      try {
+        var diffDays = (Date.now() - new Date(item.lastUpdated).getTime()) / 86400000;
+        if (diffDays <= 1)  score += 50;
+        else if (diffDays <= 3)  score += 30;
+        else if (diffDays <= 7)  score += 15;
+        else if (diffDays <= 30) score += 5;
+      } catch(e) {}
+    }
+
+    /* ── ACTIVE JOB BOOST (has future last date) ── */
+    if (score > 0 && item.lastDate) {
+      try {
+        var parts = item.lastDate.split(/[\/\-]/);
+        var ld;
+        if (parts[2] && parts[2].length === 4) {
+          ld = new Date(parts[2] + '-' + parts[1] + '-' + parts[0]);
+        } else {
+          ld = new Date(item.lastDate);
+        }
+        if (!isNaN(ld.getTime()) && ld > Date.now()) score += 40;
+      } catch(e) {}
+    }
+
+    return score;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+   * STATE
+   * ══════════════════════════════════════════════════════════ */
+  var allData     = [];
+  var activeIndex = -1;
+  var suggestItems = [];
+  var searchReady = false;
+  var lastJsonHashes = {};
+
+  /* ══════════════════════════════════════════════════════════
+   * UTILS
+   * ══════════════════════════════════════════════════════════ */
   function esc(s) {
     return String(s || '').replace(/[&<>"]/g, function(c) {
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
@@ -64,76 +256,46 @@
   }
 
   function debounce(fn, ms) {
-    var t; return function() {
-      var args = arguments, ctx = this;
-      clearTimeout(t); t = setTimeout(function(){ fn.apply(ctx, args); }, ms);
+    var t, ctx = this;
+    return function() {
+      var args = arguments;
+      clearTimeout(t);
+      t = setTimeout(function(){ fn.apply(ctx, args); }, ms);
     };
   }
 
   function highlight(text, query) {
-    if (!query || !text) return esc(text);
+    if (!text || !query) return esc(text);
     var words = query.trim().split(/\s+/).filter(function(w){ return w.length > 1; });
-    var result = esc(text);
+    var out = esc(text);
     words.forEach(function(w) {
-      var rx = new RegExp('(' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
-      result = result.replace(rx, '<mark class="srch-hl">$1</mark>');
+      var re = new RegExp('(' + w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
+      out = out.replace(re, '<mark class="srch-hl">$1</mark>');
     });
-    return result;
+    return out;
   }
 
   function slugifyTitle(raw) {
-    return String(raw || '')
-      .toLowerCase()
+    return (raw || '').toLowerCase()
       .replace(/[^a-z0-9\s-]/g, '')
       .replace(/[\s-]+/g, '-')
-      .slice(0, 120)
-      .replace(/^-+|-+$/g, '') || 'official-link';
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 100);
   }
 
-  /* ── RECENT SEARCHES ────────────────────────────────────── */
   function getRecent() {
     try { return JSON.parse(localStorage.getItem(CFG.recentKey) || '[]'); } catch(e) { return []; }
   }
+
   function saveRecent(q) {
     if (!q || q.length < 2) return;
     var list = getRecent().filter(function(r){ return r.toLowerCase() !== q.toLowerCase(); });
     list.unshift(q);
-    list = list.slice(0, CFG.maxRecent);
-    try { localStorage.setItem(CFG.recentKey, JSON.stringify(list)); } catch(e) {}
+    try { localStorage.setItem(CFG.recentKey, JSON.stringify(list.slice(0, CFG.maxRecent))); } catch(e) {}
   }
 
-  /* ── FUSE.JS ────────────────────────────────────────────── */
-  function loadFuse(cb) {
-    if (window.Fuse) { cb(); return; }
-    var s = document.createElement('script');
-    s.src = CFG.fuseJs;
-    s.onload = cb;
-    s.onerror = cb;
-    document.head.appendChild(s);
-  }
-
-  function buildFuse(data) {
-    if (!window.Fuse) return;
-    fuseInstance = new window.Fuse(data, {
-      keys: [
-        { name: 'title', weight: 0.45 },
-        { name: 'tags',  weight: 0.25 },
-        { name: 'dept',  weight: 0.10 },
-        { name: 'cat',   weight: 0.08 },
-        { name: 'state', weight: 0.07 },
-        { name: 'qual',  weight: 0.05 },
-      ],
-      threshold: 0.5,
-      includeScore: true,
-      ignoreLocation: true,
-      minMatchCharLength: 1,
-    });
-    fuseLoaded = true;
-  }
-
-  /* ── DEDUP KEY ──────────────────────────────────────────── */
   function dedupeKey(slug) {
-    if (!slug) return slug;
+    if (!slug) return '';
     try {
       var u = new URL(slug, 'https://x.com');
       return (u.searchParams.get('slug') || u.pathname).toLowerCase().trim();
@@ -142,7 +304,26 @@
     }
   }
 
-  /* ── URL BUILDERS ───────────────────────────────────────── */
+  function quickHash(data) {
+    var str = JSON.stringify(data).slice(0, 8000);
+    var h = 0;
+    for (var i = 0; i < str.length; i++) {
+      h = (Math.imul(31, h) + str.charCodeAt(i)) | 0;
+    }
+    return h;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+   * URL BUILDER
+   * ══════════════════════════════════════════════════════════ */
+  function buildJobUrl(title, applyMode, secId) {
+    var slug = slugifyTitle(title);
+    if (!slug || slug === 'official-link') return null;
+    var prefix = (applyMode || '').toLowerCase() === 'offline' ? 'offline-' : '';
+    var url = '/jobs/' + prefix + slug + '/';
+    return url;
+  }
+
   function buildJobHref(job, secId) {
     var bd = job.basic_details || {};
     var rawTitle = job.title || job.post_name || bd.job_title || bd.post_name || '';
@@ -150,8 +331,7 @@
     if (!slug || slug === 'official-link') return job.source_url || job.url || job.link || '#';
     var applyMode = (job.apply_mode || bd.application_mode || '').toLowerCase();
     var prefix = applyMode === 'offline' ? 'offline-' : '';
-    return 'job.html?slug=' + encodeURIComponent(prefix + slug) +
-           (secId ? '&section=' + encodeURIComponent(secId) : '');
+    return '/jobs/' + prefix + slug + '/';
   }
 
   function getJobTitle(job) {
@@ -169,9 +349,11 @@
     ).trim();
   }
 
-  /* ── MERGE INTO allData ─────────────────────────────────── */
+  /* ══════════════════════════════════════════════════════════
+   * MERGE INTO allData (dedup)
+   * ══════════════════════════════════════════════════════════ */
   function mergeItems(extra) {
-    if (!extra.length) return false;
+    if (!extra || !extra.length) return false;
     var seen = {};
     allData.forEach(function(d){ seen[dedupeKey(d.slug)] = true; });
     var added = 0;
@@ -185,273 +367,264 @@
         added++;
       }
     });
-    if (added > 0) {
-      allData.sort(function(a, b) {
-        var ta = a.lastUpdated ? new Date(a.lastUpdated).getTime() : 0;
-        var tb = b.lastUpdated ? new Date(b.lastUpdated).getTime() : 0;
-        return tb - ta;
-      });
-      return true;
-    }
-    return false;
+    return added > 0;
   }
 
-  /* ── COMPLETE_JOBS META ─────────────────────────────────── */
+  /* ══════════════════════════════════════════════════════════
+   * CATEGORY / SECTION PAGES (General query targets)
+   * ══════════════════════════════════════════════════════════ */
+  var CAT_PAGES = [
+    { title:'10th Pass Jobs 2026', slug:'/section/10th-pass-jobs/', cat:'Qualification', tags:'10th pass matric 10 tenth class pass sarkari job', icon:'fa-certificate', isCategory:true, isSection:true, state:'All India' },
+    { title:'12th Pass Jobs 2026', slug:'/section/12th-pass-jobs/', cat:'Qualification', tags:'12th pass intermediate inter 12 class pass sarkari', icon:'fa-certificate', isCategory:true, isSection:true, state:'All India' },
+    { title:'8th Pass Jobs 2026', slug:'/section/8th-pass-jobs/', cat:'Qualification', tags:'8th pass eighth 8 class pass sarkari job', icon:'fa-certificate', isCategory:true, isSection:true, state:'All India' },
+    { title:'ITI Pass Jobs 2026', slug:'/section/iti-jobs/', cat:'Qualification', tags:'iti pass diploma technical trade vocational', icon:'fa-tools', isCategory:true, isSection:true, state:'All India' },
+    { title:'Diploma Jobs 2026', slug:'/section/diploma-jobs/', cat:'Qualification', tags:'diploma polytechnic technical engineering pass', icon:'fa-scroll', isCategory:true, isSection:true, state:'All India' },
+    { title:'Graduate Jobs 2026', slug:'/section/graduation-jobs/', cat:'Qualification', tags:'graduate graduation degree any graduate bsc ba bcom', icon:'fa-graduation-cap', isCategory:true, isSection:true, state:'All India' },
+    { title:'Post Graduate Jobs 2026', slug:'/section/post-graduation-jobs/', cat:'Qualification', tags:'post graduate pg msc ma mcom mba mca masters degree', icon:'fa-graduation-cap', isCategory:true, isSection:true, state:'All India' },
+    { title:'B.Tech / BE Jobs 2026', slug:'/section/btech-jobs/', cat:'Qualification', tags:'btech be engineering b.tech b.e technical degree', icon:'fa-microchip', isCategory:true, isSection:true, state:'All India' },
+    { title:'Admit Card 2026', slug:'/section/admit-card/', cat:'Admit Card', tags:'admit card hall ticket call letter download exam', icon:'fa-id-card', isCategory:true, isSection:true, state:'All India' },
+    { title:'Results 2026', slug:'/section/results/', cat:'Result', tags:'result merit list cut off cutoff scorecard declared', icon:'fa-trophy', isCategory:true, isSection:true, state:'All India' },
+    { title:'Answer Key 2026', slug:'/section/answer-key/', cat:'Answer Key', tags:'answer key sheet objection challenge download pdf', icon:'fa-key', isCategory:true, isSection:true, state:'All India' },
+    { title:'Admission / Counselling 2026', slug:'/section/admissions/', cat:'Admission', tags:'admission counselling counseling form apply college university', icon:'fa-graduation-cap', isCategory:true, isSection:true, state:'All India' },
+    { title:'Railway Jobs 2026', slug:'/section/railway-jobs/', cat:'Railway', tags:'railway rrb rrc ntpc group d c technician loco pilot station master', icon:'fa-train', isCategory:true, isSection:true, state:'All India' },
+    { title:'Bank Jobs 2026', slug:'/section/bank-jobs/', cat:'Bank', tags:'bank sbi ibps rbi nabard po clerk so probationary officer', icon:'fa-building-columns', isCategory:true, isSection:true, state:'All India' },
+    { title:'Police Jobs 2026', slug:'/section/police-jobs/', cat:'Police', tags:'police constable si sub inspector inspector crpf bsf cisf ssb rpf', icon:'fa-shield-halved', isCategory:true, isSection:true, state:'All India' },
+    { title:'Army / Defence Jobs 2026', slug:'/section/army-jobs/', cat:'Defence', tags:'army navy airforce defence nda cds afcat soldier soldier recruitment', icon:'fa-star', isCategory:true, isSection:true, state:'All India' },
+    { title:'Teaching Jobs 2026', slug:'/section/teaching-jobs/', cat:'Teaching', tags:'teacher pgt tgt prt lecturer professor principal hm headmaster tet ctet', icon:'fa-chalkboard-user', isCategory:true, isSection:true, state:'All India' },
+    { title:'Medical / Healthcare Jobs 2026', slug:'/section/healthcare-jobs/', cat:'Medical', tags:'medical nurse doctor aiims esic cghs pgi hospital health pharmacy lab', icon:'fa-stethoscope', isCategory:true, isSection:true, state:'All India' },
+    { title:'SSC Jobs 2026', slug:'/section/ssc-jobs/', cat:'SSC', tags:'ssc cgl chsl mts cpo je gd constable stenographer exam', icon:'fa-medal', isCategory:true, isSection:true, state:'All India' },
+    { title:'UPSC Jobs 2026', slug:'/section/upsc-jobs/', cat:'UPSC', tags:'upsc ias ips ifs civil services combined medical engineering exam', icon:'fa-landmark', isCategory:true, isSection:true, state:'All India' },
+    { title:'State Jobs 2026', slug:'/section/state-jobs/', cat:'State', tags:'state government haryana delhi punjab rajasthan bihar up mp jobs', icon:'fa-map-location-dot', isCategory:true, isSection:true, state:'All India' },
+    { title:'Central Government Jobs 2026', slug:'/section/central-jobs/', cat:'Central', tags:'central government psu public sector bank railway defence ministry', icon:'fa-flag', isCategory:true, isSection:true, state:'All India' },
+    { title:'Upcoming Jobs 2026', slug:'/section/upcoming-jobs/', cat:'Upcoming', tags:'upcoming jobs future notification coming soon expected calendar', icon:'fa-calendar-plus', isCategory:true, isSection:true, state:'All India' },
+    { title:'Offline Form Jobs 2026', slug:'/section/offline-form/', cat:'Offline', tags:'offline form application send post district recruitment', icon:'fa-file-pen', isCategory:true, isSection:true, state:'All India' },
+    { title:'Latest Jobs New 2026', slug:'/section/latest-jobs-new/', cat:'Latest Jobs', tags:'latest new jobs 2026 today recent notification', icon:'fa-fire', isCategory:true, isSection:true, state:'All India' },
+    { title:'Latest Government Jobs 2026', slug:'/section/latest-jobs/', cat:'Latest Jobs', tags:'latest government sarkari naukri jobs 2026 today', icon:'fa-briefcase', isCategory:true, isSection:true, state:'All India' },
+    { title:'Haryana Jobs 2026', slug:'/section/haryana-all-state-jobs/', cat:'State', tags:'haryana jobs hpsc hssc htet haryana police patwari haryana govt', icon:'fa-location-dot', isCategory:true, isSection:true, state:'Haryana' },
+    { title:'CBSE / ICSE 10th Board Result 2026', slug:'/education-detail.html?section=cbse-icse-10th', cat:'Education', tags:'cbse icse 10th board result class 10 matric result', icon:'fa-book-open', isCategory:true, state:'All India' },
+    { title:'CBSE / ICSE 12th Board Result 2026', slug:'/education-detail.html?section=cbse-icse-12th', cat:'Education', tags:'cbse icse 12th board result class 12 intermediate result', icon:'fa-graduation-cap', isCategory:true, state:'All India' },
+    { title:'GATE / JEE Engineering Exam', slug:'/education-detail.html?section=all-india-engineering', cat:'Education', tags:'gate jee engineering entrance exam iit nit admission', icon:'fa-microchip', isCategory:true, state:'All India' },
+    { title:'NEET / AIIMS Medical Entrance', slug:'/education-detail.html?section=all-india-medical', cat:'Education', tags:'neet aiims medical entrance exam mbbs bds admission', icon:'fa-stethoscope', isCategory:true, state:'All India' },
+    { title:'CAT / MAT Management Entrance', slug:'/education-detail.html?section=all-india-management', cat:'Education', tags:'cat mat xat management mba entrance exam iim', icon:'fa-chart-line', isCategory:true, state:'All India' },
+  ];
+
+  /* ══════════════════════════════════════════════════════════
+   * COMPLETE_JOBS META — qualification-wise categories
+   * ══════════════════════════════════════════════════════════ */
   var COMPLETE_JOBS_META = {
-    Latest_Notifications: { id:'Latest Notifications',   icon:'fa-bell',             qual:'',               cat:'Latest'      },
-    '10TH_Pass':          { id:'10th Pass Jobs',          icon:'fa-graduation-cap',   qual:'10th Pass',      cat:'State Jobs'  },
-    '8TH_Pass':           { id:'8th Pass Jobs',           icon:'fa-book',             qual:'8th Pass',       cat:'State Jobs'  },
-    '12TH_Pass':          { id:'12th Pass Jobs',          icon:'fa-graduation-cap',   qual:'12th Pass',      cat:'State Jobs'  },
-    Diploma:              { id:'Diploma Jobs',            icon:'fa-scroll',           qual:'Diploma',        cat:'Others'      },
-    ITI:                  { id:'ITI Jobs',                icon:'fa-tools',            qual:'ITI',            cat:'ITI Jobs'    },
-    B_Tech_BE:            { id:'B.Tech Jobs',             icon:'fa-microchip',        qual:'B.Tech',         cat:'Engineering' },
-    B_Com:                { id:'B.Com Jobs',              icon:'fa-chart-line',       qual:'B.Com',          cat:'Others'      },
-    Any_Graduate:         { id:'Graduation Jobs',         icon:'fa-university',       qual:'Graduation',     cat:'Others'      },
-    Any_Post_Graduate:    { id:'Post Graduation Jobs',    icon:'fa-user-tie',         qual:'Post Graduation',cat:'Others'      },
-    Railway_Jobs:         { id:'Railway Jobs',            icon:'fa-train',            qual:'',               cat:'Railway'     },
-    Police_Defence:       { id:'Police Jobs',             icon:'fa-shield-halved',    qual:'',               cat:'Police'      },
-    Teaching_Faculty:     { id:'Teaching Jobs',           icon:'fa-chalkboard-user',  qual:'B.Ed',           cat:'Teaching'    },
-    Bank_Jobs:            { id:'Bank Jobs',               icon:'fa-building-columns', qual:'Graduation',     cat:'Bank'        },
-    Medical_Hospital:     { id:'Medical Jobs',            icon:'fa-stethoscope',      qual:'',               cat:'Medical'     },
-    Last_Date_Reminder:   { id:'Last Date Reminder',      icon:'fa-clock',            qual:'',               cat:'Latest'      },
-    SSC_Jobs:             { id:'SSC Jobs',                icon:'fa-medal',            qual:'',               cat:'SSC'         },
-    UPSC_Jobs:            { id:'UPSC Jobs',               icon:'fa-graduation-cap',   qual:'Graduation',     cat:'UPSC'        },
-    Haryana_Jobs:         { id:'Haryana Jobs',            icon:'fa-location-dot',     qual:'',               cat:'State Jobs'  },
-    Defence_Jobs:         { id:'Defence Jobs',            icon:'fa-star',             qual:'',               cat:'Defence'     },
+    '10TH_Pass':            { id:'10th-pass-jobs',       cat:'10th Pass',       qual:'10th Pass',          icon:'fa-certificate',       label:'10th Pass Jobs' },
+    '8TH_Pass':             { id:'8th-pass-jobs',        cat:'8th Pass',        qual:'8th Pass',           icon:'fa-certificate',       label:'8th Pass Jobs' },
+    '12TH_Pass':            { id:'12th-pass-jobs',       cat:'12th Pass',       qual:'12th Pass',          icon:'fa-certificate',       label:'12th Pass Jobs' },
+    'Diploma':              { id:'diploma-jobs',         cat:'Diploma',         qual:'Diploma',            icon:'fa-scroll',            label:'Diploma Jobs' },
+    'ITI':                  { id:'iti-jobs',             cat:'ITI',             qual:'ITI',                icon:'fa-tools',             label:'ITI Jobs' },
+    'B_Tech_BE':            { id:'btech-jobs',           cat:'B.Tech/BE',       qual:'B.Tech/BE',          icon:'fa-microchip',         label:'B.Tech Jobs' },
+    'B_Com':                { id:'bcom-jobs',            cat:'B.Com',           qual:'B.Com',              icon:'fa-calculator',        label:'B.Com Jobs' },
+    'Any_Graduate':         { id:'graduation-jobs',      cat:'Graduate',        qual:'Any Graduate',       icon:'fa-graduation-cap',    label:'Graduate Jobs' },
+    'Any_Post_Graduate':    { id:'post-graduation-jobs', cat:'Post Graduate',   qual:'Post Graduate',      icon:'fa-graduation-cap',    label:'PG Jobs' },
+    'Railway_Jobs':         { id:'railway-jobs',         cat:'Railway',         qual:'',                   icon:'fa-train',             label:'Railway Jobs' },
+    'Police_Defence':       { id:'police-jobs',          cat:'Police/Defence',  qual:'',                   icon:'fa-shield-halved',     label:'Police Jobs' },
+    'Teaching_Faculty':     { id:'teaching-jobs',        cat:'Teaching',        qual:'',                   icon:'fa-chalkboard-user',   label:'Teaching Jobs' },
+    'Bank_Jobs':            { id:'bank-jobs',            cat:'Bank',            qual:'',                   icon:'fa-building-columns',  label:'Bank Jobs' },
+    'Medical_Hospital':     { id:'healthcare-jobs',      cat:'Medical',         qual:'',                   icon:'fa-stethoscope',       label:'Medical Jobs' },
+    'Latest_Notifications': { id:'latest-notifications', cat:'Latest Jobs',     qual:'',                   icon:'fa-bell',              label:'Latest Notifications' },
+    'Last_Date_Reminder':   { id:'jobs-with-last-date',  cat:'Expiring Soon',   qual:'',                   icon:'fa-clock',             label:'Jobs by Last Date' },
   };
 
   /* ══════════════════════════════════════════════════════════
-   * PROCESS ONE JSON FILE
-   *
-   * KEY FIX for dailyupdates.json:
-   * Ab SABHI sections include hain — Govt Scheme, CSC PDF,
-   * CSC Link, Top 20 Jobs, Today Updates, sab kuch searchable hai.
-   * name + url dono index me aate hain.
+   * JSON PROCESSOR — Converts each JSON file → allData items
    * ══════════════════════════════════════════════════════════ */
   function processJsonFile(data, fileName) {
     var extra = [];
+    var now   = new Date().toISOString();
 
-    /* ── 1. dailyupdates.json ─────────────────────────────── */
-    if (fileName === 'dailyupdates.json') {
-      var sections = Array.isArray(data.sections) ? data.sections
-        : Array.isArray(data) ? data : [];
+    /* ── merged_sarkari_data.json ── */
+    if (fileName === 'merged_sarkari_data.json') {
+      var jobs = Array.isArray(data.jobs) ? data.jobs : [];
+      jobs.forEach(function(j) {
+        var title = getJobTitle(j);
+        if (!title || title.length < 4) return;
 
-      function getSectionIcon(secTitle) {
-        var t = (secTitle || '').toLowerCase();
-        if (t.indexOf('scheme') >= 0 || t.indexOf('yojna') >= 0 || t.indexOf('yojana') >= 0) return 'fa-seedling';
-        if (t.indexOf('pdf') >= 0) return 'fa-file-pdf';
-        if (t.indexOf('link') >= 0 || t.indexOf('csc') >= 0) return 'fa-link';
-        if (t.indexOf('job') >= 0 || t.indexOf('naukri') >= 0) return 'fa-briefcase';
-        if (t.indexOf('result') >= 0) return 'fa-trophy';
-        if (t.indexOf('admit') >= 0) return 'fa-id-card';
-        if (t.indexOf('headline') >= 0 || t.indexOf('top') >= 0) return 'fa-newspaper';
-        return 'fa-bell';
-      }
+        var org   = getJobOrg(j);
+        var url   = buildJobUrl(title, j.apply_mode, j.category) || j.apply_online_link || j.official_website_link || '#';
+        var dates = j.important_dates || {};
+        var lastDate = dates.last_date_to_apply || dates.last_date || '';
+        var postDate = j.listing_date || '';
 
-      function getCatFromSection(secTitle) {
-        var t = (secTitle || '').toLowerCase();
-        if (t.indexOf('result') >= 0)               return 'Result';
-        if (t.indexOf('admit') >= 0)                return 'Admit Card';
-        if (t.indexOf('answer key') >= 0)           return 'Answer Key';
-        if (t.indexOf('admission') >= 0)            return 'Admission';
-        if (t.indexOf('scheme') >= 0 || t.indexOf('yojna') >= 0) return 'Govt Scheme';
-        if (t.indexOf('pdf') >= 0)                  return 'PDF';
-        if (t.indexOf('link') >= 0 || t.indexOf('csc') >= 0) return 'Important Link';
-        if (t.indexOf('job') >= 0 || t.indexOf('naukri') >= 0) return 'Latest Job';
-        return 'Update';
-      }
+        // Section source display label
+        var catLabel = {
+          'LATEST_JOBS NEW': 'Latest Jobs New',
+          'SR_Latest_Jobs':  'Latest Jobs',
+          'STATE_JOBS':      'State Jobs',
+          'CENTRAL_JOBS':    'Central Jobs',
+          'ADMISSIONS':      'Admissions',
+          'UPCOMING_JOBS':   'Upcoming Jobs',
+          'OFFLINE_FORM':    'Offline Form',
+          'SR_Admit_Card':   'Admit Card',
+          'SR_Result':       'Result',
+          'SR_Admission':    'Admission',
+          'SR_Answer_Key':   'Answer Key',
+        }[j.category] || j.category || 'Latest Jobs';
 
+        var lu = now;
+        if (postDate) {
+          var p = postDate.split('-');
+          if (p.length === 3 && p[0].length === 4) lu = postDate + 'T00:00:00';
+        }
+
+        extra.push({
+          title:         title,
+          slug:          url,
+          dept:          org,
+          postName:      j.post_name || '',
+          qual:          '',
+          state:         j.job_location || 'All India',
+          cat:           catLabel,
+          tags:          [title, org, j.post_name||'', catLabel, j.job_location||'',
+                          j.category||'', 'sarkari job 2026'].join(' '),
+          lastDate:      lastDate,
+          icon:          'fa-briefcase',
+          lastUpdated:   lu,
+          sectionSource: catLabel,
+          isJobDetail:   true,
+        });
+      });
+    }
+
+    /* ── Education_Jobs.json ── */
+    if (fileName === 'Education_Jobs.json') {
+      var sections = Array.isArray(data.sections) ? data.sections : [];
       sections.forEach(function(sec) {
         var secTitle = String(sec.title || sec.id || '').trim();
         var secId    = String(sec.id    || sec.title || '').trim();
-        var secIcon  = String(sec.icon || '').replace(/^fa-solid\s+/, '') || getSectionIcon(secTitle);
-        var cat      = getCatFromSection(secTitle);
 
-        console.log('[smart-search] dailyupdates section:', secTitle, '— Items:', (sec.items || []).length);
+        (sec.items || []).forEach(function(item) {
+          var title = String(item.name || item.examName || '').trim();
+          if (!title || title.length < 4) return;
+
+          var detail  = item.detail || {};
+          var seoTags = Array.isArray(detail.seo_tags) ? detail.seo_tags : [];
+          var href    = '/education-detail.html?section=' + encodeURIComponent(secId) +
+                        '&slug=' + encodeURIComponent(slugifyTitle(title));
+
+          var lu = now;
+          if (item.postDate) {
+            var parts = item.postDate.split('/');
+            if (parts.length === 3) lu = parts[2]+'-'+parts[1]+'-'+parts[0]+'T00:00:00';
+          }
+
+          extra.push({
+            title:         title,
+            slug:          href,
+            dept:          item.category || secTitle,
+            postName:      item.examName || '',
+            qual:          '',
+            state:         'All India',
+            cat:           secTitle,
+            seoTags:       seoTags,
+            tags:          [title, secTitle, item.category||'', seoTags.join(' '),
+                            'education exam result 2026'].join(' '),
+            lastDate:      item.date ? item.date.replace(/Post Date:\s*/i,'') : '',
+            icon:          'fa-graduation-cap',
+            lastUpdated:   lu,
+            sectionSource: secTitle,
+            isJobDetail:   false,
+          });
+        });
+      });
+    }
+
+    /* ── dailyupdates.json ── */
+    if (fileName === 'dailyupdates.json') {
+      var sects = Array.isArray(data.sections) ? data.sections
+                : Array.isArray(data) ? data : [];
+      sects.forEach(function(sec) {
+        var secId    = String(sec.id    || sec.title || '').trim();
+        var secTitle = String(sec.title || sec.id    || '').trim();
+
+        function getSectionIcon(t) {
+          var tl = t.toLowerCase();
+          if (/result|merit|score/.test(tl)) return 'fa-trophy';
+          if (/admit|hall|call/.test(tl))    return 'fa-id-card';
+          if (/answer|key|objection/.test(tl)) return 'fa-key';
+          if (/scheme|yojna|yojana/.test(tl)) return 'fa-indian-rupee-sign';
+          if (/csc|pdf|link/.test(tl))        return 'fa-file-pdf';
+          return 'fa-bell';
+        }
 
         (sec.items || []).forEach(function(item) {
           var title = String(item.name || item.title || '').trim();
-          if (!title || title.length < 5) return;
-
-          var url = item.url || item.link || '';
-          if (!url || url === '#') return;
-
-          // Skip pure navigation links
-          if (/^view\.html\?section=/i.test(url)) return;
-
-          // Build href
-          var href = url;
-          if (item.slug) {
-            href = 'job.html?slug=' + encodeURIComponent(item.slug)
-                 + '&section=' + encodeURIComponent(secId);
-          }
-
-          var lastDate = item.date || item.lastDate || item.last_date || '';
-
-          var lastUpdated = new Date().toISOString();
-          if (item.updated_at) {
-            lastUpdated = item.updated_at;
-          } else if (item.postDate) {
-            var pd = String(item.postDate).split('/');
-            if (pd.length === 3) lastUpdated = pd[2] + '-' + pd[1] + '-' + pd[0] + 'T00:00:00';
-          } else if (lastDate && /\d{4}-\d{2}-\d{2}/.test(lastDate)) {
-            lastUpdated = lastDate + 'T00:00:00';
-          }
-
-          var tags = [
-            title, secTitle,
-            item.board || '',
-            item.organization || '',
-            item.qualification || '',
-            cat, 'sarkari'
-          ].filter(Boolean).join(' ');
+          if (!title || title.length < 4) return;
+          var href = item.url || item.link || '#';
+          if (!href || href === '#') return;
 
           extra.push({
-            title: title,
-            slug: href,
-            dept: String(item.board || item.organization || secTitle).trim(),
-            qual: String(item.qualification || '').trim(),
-            state: String(item.state || 'All India').trim(),
-            cat: cat,
-            tags: tags,
-            lastDate: lastDate,
-            icon: secIcon,
-            lastUpdated: lastUpdated,
+            title:         title,
+            slug:          href,
+            dept:          secTitle,
+            postName:      '',
+            qual:          '',
+            state:         'All India',
+            cat:           secTitle,
+            tags:          [title, secTitle, 'sarkari update 2026'].join(' '),
+            lastDate:      '',
+            icon:          getSectionIcon(secTitle),
+            lastUpdated:   now,
             sectionSource: secTitle,
-          });
-        });
-      });
-
-      console.log('[smart-search] dailyupdates.json — Total extracted:', extra.length);
-    }
-
-    /* ── 2. merged_sarkari_data.json ────────────────────── */
-    if (fileName === 'merged_sarkari_data.json') {
-      var mainJobs = Array.isArray(data.jobs) ? data.jobs : [];
-      mainJobs.forEach(function(j) {
-        var title = getJobTitle(j);
-        if (!title) return;
-        var org   = getJobOrg(j);
-        var href  = buildJobHref(j, 'Latest Jobs');
-        if (!href || href === '#') return;
-        var dates    = j.important_dates || {};
-        var lastDate = String(dates.last_date || dates.last_date_to_apply || j.last_date || '').trim();
-        var applyMode = (j.apply_mode || '').toLowerCase();
-
-        extra.push({
-          title: title,
-          slug: href,
-          dept: org || String(j.short_information || '').slice(0, 80),
-          qual: j.qualification || j.eligibility || '',
-          state: j.job_location || j.state || 'All India',
-          cat: applyMode === 'offline' ? 'Offline Form' : 'Latest Job',
-          tags: [title, org, j.post_name || '',
-                 String(j.total_vacancy || ''),
-                 String(j.short_information || '').slice(0, 150),
-                 'sarkari naukri 2026'].join(' '),
-          lastDate: lastDate,
-          icon: 'fa-briefcase',
-          lastUpdated: j.updated_at || j.last_updated || j.post_date
-            || (lastDate ? lastDate + 'T00:00:00' : new Date().toISOString()),
-          sectionSource: 'Latest Jobs',
-        });
-      });
-
-      // sarkariresult_categories
-      var srCats = data.sarkariresult_categories || {};
-      var SR_META = {
-        SR_Latest_Jobs: { cat:'Latest Job',  icon:'fa-briefcase',      label:'SR Latest Jobs' },
-        SR_Admit_Card:  { cat:'Admit Card',  icon:'fa-id-card',        label:'Admit Card'     },
-        SR_Result:      { cat:'Result',      icon:'fa-trophy',         label:'Result'         },
-        SR_Admission:   { cat:'Admission',   icon:'fa-graduation-cap', label:'Admission'      },
-        SR_Answer_Key:  { cat:'Answer Key',  icon:'fa-key',            label:'Answer Key'     },
-      };
-      Object.keys(srCats).forEach(function(key) {
-        var m = SR_META[key] || { cat:key, icon:'fa-circle-dot', label:key };
-        (Array.isArray(srCats[key]) ? srCats[key] : []).forEach(function(item) {
-          var title = String(item.title || item.name || '').trim();
-          var href  = item.url || item.link || item.source_url || '';
-          if (!title || !href) return;
-          extra.push({
-            title:title, slug:href,
-            dept: item.org || item.organization || '',
-            qual:'', state:'', cat:m.cat,
-            tags: title + ' ' + m.cat + ' sarkari result 2026',
-            lastDate: item.last_date || '',
-            icon: m.icon,
-            lastUpdated: item.updated_at || new Date().toISOString(),
-            sectionSource: m.label,
+            isJobDetail:   false,
           });
         });
       });
     }
 
-    /* ── 3. Complete_Jobs_Full_Data.json ────────────────── */
+    /* ── Complete_Jobs_Full_Data.json ── */
     if (fileName === 'Complete_Jobs_Full_Data.json') {
       if (data && typeof data === 'object' && !Array.isArray(data)) {
-        var handledKeys = {};
-        Object.keys(COMPLETE_JOBS_META).forEach(function(k){ handledKeys[k] = true; });
+        Object.keys(data).forEach(function(catKey) {
+          var meta = COMPLETE_JOBS_META[catKey] || {
+            id: catKey.toLowerCase().replace(/_/g, '-'),
+            cat: catKey.replace(/_/g, ' '),
+            qual: '',
+            icon: 'fa-briefcase',
+            label: catKey.replace(/_/g, ' '),
+          };
 
-        Object.keys(COMPLETE_JOBS_META).forEach(function(catKey) {
-          var meta = COMPLETE_JOBS_META[catKey];
           (Array.isArray(data[catKey]) ? data[catKey] : []).forEach(function(job) {
             var title = getJobTitle(job);
             if (!title) return;
-            var org  = getJobOrg(job);
-            var bd   = job.basic_details || {};
-            var href = buildJobHref(job, meta.id);
+            var org   = getJobOrg(job);
+            var bd    = job.basic_details || {};
+            var href  = buildJobHref(job, meta.id);
             var dates = job.important_dates || {};
             var lastDate = String(
-              dates.last_date_to_apply || dates.last_date || dates.closing_date || job.last_date || ''
+              dates.last_date_to_apply || dates.last_date || dates.closing_date || ''
             ).trim();
-            extra.push({
-              title:title, slug:href,
-              dept:org,
-              qual: meta.qual || job.qualification || bd.qualification || '',
-              state: job.state || 'All India',
-              cat: meta.cat,
-              tags: [title, job.post_name||'', org, meta.id,
-                     String(job.total_vacancies||job.total_vacancy||''),
-                     String(bd.short_information||'').slice(0,100),
-                     'sarkari job 2026'].join(' '),
-              lastDate: lastDate,
-              icon: meta.icon,
-              lastUpdated: bd.last_updated || job.updated_at || job.last_updated || new Date().toISOString(),
-              sectionSource: meta.id,
-            });
-          });
-        });
 
-        // Unknown keys
-        Object.keys(data).forEach(function(key) {
-          if (handledKeys[key]) return;
-          (Array.isArray(data[key]) ? data[key] : []).forEach(function(job) {
-            var title = getJobTitle(job);
-            if (!title) return;
-            var label = key.replace(/_/g, ' ');
-            var dates = job.important_dates || {};
             extra.push({
-              title:title, slug: buildJobHref(job, label),
-              dept: getJobOrg(job),
-              qual: job.qualification || '',
-              state: job.state || 'All India',
-              cat: label,
-              tags: title + ' ' + getJobOrg(job) + ' ' + label + ' sarkari naukri',
-              lastDate: String(dates.last_date || job.last_date || ''),
-              icon: 'fa-briefcase',
-              lastUpdated: job.updated_at || job.last_updated || new Date().toISOString(),
-              sectionSource: label,
+              title:         title,
+              slug:          href,
+              dept:          org,
+              postName:      bd.post_name || job.post_name || '',
+              qual:          meta.qual || job.qualification || '',
+              state:         job.state || 'All India',
+              cat:           meta.cat,
+              tags:          [title, org, meta.id, meta.qual||'',
+                              String(bd.short_information||'').slice(0,80),
+                              'sarkari job 2026'].join(' '),
+              lastDate:      lastDate,
+              icon:          meta.icon,
+              lastUpdated:   bd.last_updated || job.updated_at || now,
+              sectionSource: meta.label,
+              isJobDetail:   true,
             });
           });
         });
       }
     }
 
-    /* ── 4. state-jobs-data.json ────────────────────────── */
+    /* ── state-jobs-data.json ── */
     if (fileName === 'state-jobs-data.json') {
       var sections2 = Array.isArray(data.sections) ? data.sections
-        : Array.isArray(data) ? data : [];
-
+                    : Array.isArray(data) ? data : [];
       sections2.forEach(function(sec) {
         var secId    = String(sec.id    || sec.title || '').trim();
         var secTitle = String(sec.title || sec.id    || 'State Jobs').trim();
@@ -461,52 +634,48 @@
           var title = String(item.name || item.title || '').trim();
           if (!title) return;
 
-          var detail   = item.detail || {};
-          var bd       = detail.basic_details || {};
-          var applyMode= (bd.application_mode || '').toLowerCase();
-          var href     = item.url || item.link || '';
-
-          var slug = slugifyTitle(bd.job_title || title);
+          var detail    = item.detail || {};
+          var bd        = detail.basic_details || {};
+          var applyMode = (bd.application_mode || '').toLowerCase();
+          var href      = item.url || item.link || '';
+          var slug      = slugifyTitle(bd.job_title || title);
           if (slug && slug !== 'official-link') {
             var prefix = applyMode.indexOf('offline') >= 0 ? 'offline-' : '';
-            href = 'job.html?slug=' + encodeURIComponent(prefix + slug)
-                 + '&section=' + encodeURIComponent(secId || secTitle);
+            href = '/jobs/' + prefix + slug + '/';
           }
           if (!href) return;
 
-          var qual = String(
-            item.qualification ||
-            (detail.qualification && (detail.qualification.education_qualification || '')) ||
-            bd.qualification || ''
-          ).trim();
+          var seoTags  = Array.isArray(detail.seo_tags) ? detail.seo_tags : [];
+          var board    = String(item.board || bd.organization_name || '').trim();
+          var dates2   = detail.important_dates || {};
+          var lastDate = String(item.lastDate || item.date ||
+            dates2.last_date_to_apply || dates2.last_date || '')
+            .replace(/^Last Date:\s*/i, '').trim();
 
-          var seoTags = Array.isArray(detail.seo_tags) ? detail.seo_tags.join(' ') : '';
-          var board   = String(item.board || bd.organization_name || '').trim();
-          var dates2  = detail.important_dates || {};
-          var lastDate= String(
-            item.lastDate || item.date ||
-            dates2.last_date_to_apply || dates2.last_date || ''
-          ).replace(/^Last Date:\s*/i, '').trim();
-
-          var luStr = new Date().toISOString();
+          var lu = now;
           if (item.postDate) {
             var p = item.postDate.split('/');
-            if (p.length === 3) luStr = p[2] + '-' + p[1] + '-' + p[0] + 'T00:00:00';
+            if (p.length === 3) lu = p[2]+'-'+p[1]+'-'+p[0]+'T00:00:00';
           }
 
           extra.push({
-            title:title, slug:href,
-            dept: board || secTitle,
-            qual: qual,
-            state: secState || 'All India',
-            cat: 'State Jobs',
-            tags: [title, board, secTitle, secState, qual, seoTags,
-                   String(bd.short_information||'').slice(0,100),
-                   'state jobs sarkari naukri 2026'].join(' '),
-            lastDate: lastDate,
-            icon: 'fa-location-dot',
-            lastUpdated: luStr,
+            title:         title,
+            slug:          href,
+            dept:          board || secTitle,
+            postName:      bd.post_name || item.post_name || '',
+            qual:          item.qualification || bd.qualification || '',
+            state:         secState || 'All India',
+            cat:           'State Jobs',
+            seoTags:       seoTags,
+            tags:          [title, board, secTitle, secState,
+                            seoTags.join(' '),
+                            String(bd.short_information||'').slice(0,80),
+                            'state jobs sarkari naukri 2026'].join(' '),
+            lastDate:      lastDate,
+            icon:          'fa-location-dot',
+            lastUpdated:   lu,
             sectionSource: secTitle,
+            isJobDetail:   true,
           });
         });
       });
@@ -516,291 +685,284 @@
   }
 
   /* ══════════════════════════════════════════════════════════
-   * SMART FETCH — AUDIT FIX
-   * Uses browser default cache (respects _headers TTLs from CDN)
-   * stale-while-revalidate: serve cached → fetch fresh in background
+   * MAIN SEARCH FUNCTION
    * ══════════════════════════════════════════════════════════ */
-  function cacheBustFetch(fileName) {
-    return fetch(fileName, {
-      cache: 'default',
-    }).then(function(r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status + ' for ' + fileName);
-      return r.json();
+  function doSearch(query) {
+    var q = (query || '').trim().toLowerCase();
+    if (!q) return [];
+
+    var qType = detectQueryType(q);
+    var queryWords = q.split(/\s+/).filter(function(w){ return w.length >= 1; });
+    var meaningfulWords = queryWords.filter(function(w){ return w.length >= 2 && !STOP[w]; });
+    var MIN_SCORE = 5;
+
+    var results = allData
+      .map(function(item) {
+        var s = scoreItem(item, q, queryWords, meaningfulWords, qType);
+        if (s >= MIN_SCORE) {
+          var c = Object.assign({}, item);
+          c._score = s;
+          c._qType = qType;
+          return c;
+        }
+        return null;
+      })
+      .filter(Boolean);
+
+    /* Sort: score desc, then recency desc */
+    results.sort(function(a, b) {
+      if (b._score !== a._score) return b._score - a._score;
+      var ta = a.lastUpdated ? new Date(a.lastUpdated).getTime() : 0;
+      var tb = b.lastUpdated ? new Date(b.lastUpdated).getTime() : 0;
+      return tb - ta;
     });
+
+    /* Dedup by URL */
+    var seen = {};
+    results = results.filter(function(r) {
+      var k = dedupeKey(r.slug);
+      if (seen[k]) return false;
+      seen[k] = true;
+      return true;
+    });
+
+    return results;
   }
 
-  /* ── SIMPLE HASH for change detection ───────────────────── */
-  function quickHash(data) {
-    var str = JSON.stringify(data).slice(0, 5000);
-    var h = 0;
-    for (var i = 0; i < str.length; i++) {
-      h = (Math.imul(31, h) + str.charCodeAt(i)) | 0;
-    }
-    return h;
-  }
-
-  /* ── FETCH + PROCESS + MERGE ONE FILE ───────────────────── */
+  /* ══════════════════════════════════════════════════════════
+   * FETCH + INDEX ONE FILE
+   * ══════════════════════════════════════════════════════════ */
   function fetchAndIndex(fileName, forceRefresh) {
-    return cacheBustFetch(fileName)
+    return fetch(fileName, { cache: 'default' })
+      .then(function(r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
       .then(function(data) {
         var hash = quickHash(data);
-        if (!forceRefresh && lastJsonHashes[fileName] === hash) {
-          console.log('[smart-search] No change:', fileName);
-          return 0;
-        }
+        if (!forceRefresh && lastJsonHashes[fileName] === hash) return 0;
         lastJsonHashes[fileName] = hash;
-
         var extra = processJsonFile(data, fileName);
-        console.log('[smart-search]', fileName, '→', extra.length, 'items');
-
         if (forceRefresh) {
           var newSlugs = {};
           extra.forEach(function(i){ newSlugs[dedupeKey(i.slug)] = true; });
           allData = allData.filter(function(d){ return !newSlugs[dedupeKey(d.slug)]; });
         }
-
-        var changed = mergeItems(extra);
-        if (changed) {
-          loadFuse(function() {
-            buildFuse(allData);
-            refreshOpenDropdown();
-          });
-        }
+        mergeItems(extra);
+        console.log('[search-v4]', fileName, '→', extra.length, 'items | total:', allData.length);
         return extra.length;
       })
       .catch(function(err) {
-        console.warn('[smart-search] ❌ Failed:', fileName, err.message);
+        console.warn('[search-v4] Failed:', fileName, err.message);
         return 0;
       });
   }
 
-  /* ── REFRESH OPEN DROPDOWN ──────────────────────────────── */
-  function refreshOpenDropdown() {
-    var heroInput = document.getElementById('heroSearch');
-    var drop = document.getElementById('tsjDrop');
-    if (heroInput && heroInput.value.trim().length >= 1 &&
-        drop && drop.classList.contains('open')) {
-      heroInput.dispatchEvent(new Event('input'));
-    }
-  }
-
   /* ══════════════════════════════════════════════════════════
-   * MAIN LOADER — Promise.all() parallel
-   *
-   * Phase 1 (FAST): dailyupdates + merged_sarkari + state-jobs
-   *   parallel load via Promise.all() → ~1-2 sec
-   *
-   * Phase 2 (HEAVY): Complete_Jobs_Full_Data.json (~18MB)
-   *   background after 2 sec
+   * LOADER — Phase 1 fast, Phase 2 heavy
    * ══════════════════════════════════════════════════════════ */
   function loadJsonFiles() {
-    console.log('[smart-search] 🚀 Starting parallel JSON load...');
+    /* Phase 1: fast files */
+    var fastFiles = ['merged_sarkari_data.json', 'state-jobs-data.json', 'dailyupdates.json'];
 
-    var fastFiles = [
-      'dailyupdates.json',
-      'merged_sarkari_data.json',
-      'state-jobs-data.json',
-    ];
+    /* Always add category pages first — zero cost */
+    mergeItems(CAT_PAGES.map(function(p) {
+      return Object.assign({ lastUpdated: new Date().toISOString() }, p);
+    }));
 
-    Promise.all(fastFiles.map(function(f){ return fetchAndIndex(f); }))
-      .then(function(counts) {
+    Promise.all(fastFiles.map(fetchAndIndex))
+      .then(function() {
         searchReady = true;
-        var total = counts.reduce(function(a,b){ return a+b; }, 0);
-        console.log('[smart-search] ✅ Phase 1 done. Items:', total, 'allData:', allData.length);
+        refreshOpenDropdown();
 
-        loadFuse(function() {
-          buildFuse(allData);
-          refreshOpenDropdown();
-        });
+        /* Phase 2: Education_Jobs (medium) */
+        setTimeout(function() {
+          fetchAndIndex('Education_Jobs.json').then(refreshOpenDropdown);
+        }, 1500);
 
-        // AUDIT FIX: Phase 2 heavy file (22MB) — ONLY load on search page
-        // On homepage/job pages this file is not needed → saves 22MB per visit
-        var isSearchPage = !!document.getElementById('searchPageResults') ||
-                           window.location.href.indexOf('search.html') >= 0;
-        var userStartedSearch = false;
-        if (!isSearchPage) {
-          // Listen for user typing 3+ chars in search box before loading
-          document.addEventListener('input', function onSearchInput(e) {
-            if (e.target && e.target.id === 'heroSearch' && e.target.value.length >= 3) {
-              userStartedSearch = true;
-              document.removeEventListener('input', onSearchInput);
-              loadHeavy();
-            }
-          }, { passive: true });
+        /* Phase 3: Complete_Jobs (heavy ~22MB) — only on user interaction */
+        var heavyLoaded = false;
+        function loadHeavy() {
+          if (heavyLoaded) return;
+          heavyLoaded = true;
+          fetchAndIndex('Complete_Jobs_Full_Data.json').then(function() {
+            refreshOpenDropdown();
+            console.log('[search-v4] Phase 3 done. Total:', allData.length);
+          });
         }
 
-        var loadHeavy = function() {
-          if (!isSearchPage && !userStartedSearch) return; // Skip on non-search pages
-          fetchAndIndex('Complete_Jobs_Full_Data.json').then(function(count) {
-            console.log('[smart-search] ✅ Phase 2 done. +' + count + ' items. Total:', allData.length);
-            buildFuse(allData);
-            refreshOpenDropdown();
-          });
-        };
-        // Use requestIdleCallback with long timeout — don't block page render
-        if (isSearchPage) {
-          if ('requestIdleCallback' in window) {
-            requestIdleCallback(loadHeavy, { timeout: 20000 });
-          } else {
-            setTimeout(loadHeavy, 15000);
+        /* Trigger heavy load on first real typing */
+        document.addEventListener('input', function onType(e) {
+          if (e.target && (e.target.id === 'heroSearch' || e.target.id === 'headerSearch')) {
+            if ((e.target.value || '').length >= 2) {
+              document.removeEventListener('input', onType);
+              setTimeout(loadHeavy, 200);
+            }
           }
+        }, { passive: true });
+
+        /* Also load on idle after 20s */
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(loadHeavy, { timeout: 25000 });
+        } else {
+          setTimeout(loadHeavy, 20000);
         }
       })
       .catch(function(err) {
-        console.error('[smart-search] Phase 1 error:', err);
         searchReady = true;
+        console.error('[search-v4] Phase 1 error:', err);
       });
   }
 
   /* ══════════════════════════════════════════════════════════
-   * AUTO-REFRESH — AUDIT FIX: Smart refresh (15min, visibility-aware)
-   * Only refreshes fast small files. NOT the 22MB Complete_Jobs file.
-   * Skips refresh when tab is hidden (user not looking at page)
+   * AUTO REFRESH
    * ══════════════════════════════════════════════════════════ */
   function startAutoRefresh() {
     var lastRefresh = Date.now();
-
     function doRefresh() {
-      if (document.hidden) return; // Skip — tab not visible
-      if (Date.now() - lastRefresh < CFG.refreshIntervalMs) return; // Respect interval
+      if (document.hidden) return;
+      if (Date.now() - lastRefresh < CFG.refreshIntervalMs) return;
       lastRefresh = Date.now();
-
-      // Only refresh small fast files — NOT Complete_Jobs_Full_Data.json (22MB)
-      var fastFiles = ['dailyupdates.json', 'merged_sarkari_data.json'];
-      Promise.all(fastFiles.map(function(f){ return fetchAndIndex(f, true); }))
-        .then(function(counts) {
-          var anyChanged = counts.some(function(c){ return c > 0; });
-          if (anyChanged) {
-            buildFuse(allData);
-          }
+      ['merged_sarkari_data.json', 'dailyupdates.json'].forEach(function(f) {
+        fetchAndIndex(f, true).then(function(n) {
+          if (n > 0) refreshOpenDropdown();
         });
-      // REMOVED: Complete_Jobs_Full_Data.json auto-refresh (was 22MB every 5min)
+      });
     }
-
-    // Check when user returns to tab
     document.addEventListener('visibilitychange', doRefresh, { passive: true });
-    // Also check periodically (doRefresh guards against too-frequent calls)
     setInterval(doRefresh, CFG.refreshIntervalMs);
   }
 
-  /* ── SEARCH ENGINE ──────────────────────────────────────── */
-  var STOP_WORDS = {
-    'recruitment':1,'2026':1,'2025':1,'2024':1,'apply':1,'online':1,'offline':1,'now':1,'out':1,
-    'notification':1,'for':1,'and':1,'the':1,'of':1,'to':1,'in':1,'a':1,'an':1,'is':1,'are':1,'with':1,
-    'posts':1,'post':1,'grade':1,'form':1,'exam':1,'test':1,'board':1,'india':1,'all':1,'bharti':1,
-    'vacancy':1,'vacancies':1,'jobs':1,'job':1,'latest':1,'new':1,'official':1,'download':1,
-  };
-
-  function scoreItem(item, q, queryWords, meaningfulWords) {
-    var title = (item.title || '').toLowerCase();
-    var tags  = (item.tags  || '').toLowerCase();
-    var cat   = (item.cat   || '').toLowerCase();
-    var dept  = (item.dept  || '').toLowerCase();
-    var sec   = (item.sectionSource || '').toLowerCase();
-    var state = (item.state || '').toLowerCase();
-    var score = 0;
-
-    if (title.indexOf(q) >= 0) score += 200;
-    else if (queryWords.length > 0 && title.indexOf(queryWords[0]) === 0) score += 80;
-
-    var titleHits = 0;
-    meaningfulWords.forEach(function(w) {
-      if (title.indexOf(w) >= 0) {
-        score += w.length >= 5 ? 40 : (w.length >= 3 ? 20 : 8);
-        titleHits++;
-      }
-    });
-    if (meaningfulWords.length > 0 && titleHits === meaningfulWords.length) score += 60;
-
-    meaningfulWords.forEach(function(w) {
-      if (tags.indexOf(w) >= 0)  score += w.length >= 5 ? 18 : 10;
-      if (dept.indexOf(w) >= 0)  score += 10;
-      if (cat.indexOf(w) >= 0)   score += 8;
-      if (sec.indexOf(w) >= 0)   score += 6;
-      if (state.indexOf(w) >= 0) score += 7;
-    });
-
-    var allHit = queryWords.every(function(w){ return title.indexOf(w) >= 0; });
-    if (allHit && queryWords.length >= 2) score += 50;
-
-    if (titleHits >= 1 && titleHits < meaningfulWords.length) score += 10;
-    if (titleHits === 0 && score > 0 && score < 20) score = Math.floor(score * 0.5);
-
-    if (score > 0 && item.lastUpdated) {
-      var diffDays = (Date.now() - new Date(item.lastUpdated).getTime()) / 86400000;
-      if (diffDays <= 1) score += 30;
-      else if (diffDays <= 3) score += 15;
-      else if (diffDays <= 7) score += 5;
+  function refreshOpenDropdown() {
+    var inp  = document.getElementById('heroSearch');
+    var drop = document.getElementById('tsjDrop');
+    if (inp && inp.value.trim().length >= 1 && drop && drop.classList.contains('open')) {
+      inp.dispatchEvent(new Event('input'));
     }
-
-    return score;
   }
 
-  function doSearch(query) {
-    var q = (query || '').trim().toLowerCase();
-    if (!q) return [];
-
-    var queryWords = q.split(/\s+/).filter(function(w){ return w.length >= 1; });
-    var meaningfulWords = queryWords.filter(function(w){ return w.length >= 2 && !STOP_WORDS[w]; });
-    var MIN_SCORE = 3;
-
-    return allData
-      .map(function(item) {
-        var s = scoreItem(item, q, queryWords, meaningfulWords);
-        if (s >= MIN_SCORE) { var c = Object.assign({}, item); c._score = s; return c; }
-        return null;
-      })
-      .filter(Boolean)
-      .sort(function(a, b) {
-        if (b._score !== a._score) return b._score - a._score;
-        var ta = a.lastUpdated ? new Date(a.lastUpdated).getTime() : 0;
-        var tb = b.lastUpdated ? new Date(b.lastUpdated).getTime() : 0;
-        return tb - ta;
-      });
-  }
-
-  /* ── INJECT CSS ─────────────────────────────────────────── */
+  /* ══════════════════════════════════════════════════════════
+   * INJECT CSS
+   * ══════════════════════════════════════════════════════════ */
   function injectStyles() {
     if (document.getElementById('tsj-search-styles')) return;
     var style = document.createElement('style');
     style.id = 'tsj-search-styles';
     style.textContent = [
-      '#tsjDrop{background:#fff;border:1px solid #e2e8f0;border-radius:14px;box-shadow:0 16px 48px rgba(13,34,87,.18);z-index:99999;max-height:420px;overflow-y:auto;display:none;animation:tsjFadeIn .15s ease;scrollbar-width:thin}',
+      /* Dropdown container */
+      '#tsjDrop{background:#fff;border:1px solid #e2e8f0;border-radius:14px;box-shadow:0 16px 48px rgba(13,34,87,.18);z-index:99999;max-height:440px;overflow-y:auto;display:none;animation:tsjFadeIn .14s ease;scrollbar-width:thin;scrollbar-color:#cbd5e1 transparent}',
       '#tsjDrop.open{display:block}',
+      '#tsjDrop::-webkit-scrollbar{width:4px}#tsjDrop::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:4px}',
       '@keyframes tsjFadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}',
-      '.tsj-suggest-item{display:flex;align-items:center;gap:10px;padding:10px 14px;text-decoration:none;color:#0f172a;border-bottom:1px solid #f8fafc;transition:background .1s;cursor:pointer}',
+      /* Result item */
+      '.tsj-suggest-item{display:flex;align-items:center;gap:10px;padding:9px 13px;text-decoration:none;color:#0f172a;border-bottom:1px solid #f8fafc;transition:background .1s;cursor:pointer;position:relative}',
       '.tsj-suggest-item:last-child{border-bottom:none}',
       '.tsj-suggest-item:hover,.tsj-suggest-item.tsj-active{background:#eff6ff}',
-      '.tsj-si-icon{width:30px;height:30px;border-radius:8px;background:#eff6ff;color:#1a56db;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0}',
-      '.tsj-si-body{flex:1;overflow:hidden}',
-      '.tsj-si-title{display:block;font-size:.83rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
-      '.tsj-si-meta{display:block;font-size:.69rem;color:#64748b;margin-top:1px}',
-      '.tsj-si-arr{color:#cbd5e1;font-size:.75rem}',
-      '.tsj-suggest-item:hover .tsj-si-arr,.tsj-suggest-item.tsj-active .tsj-si-arr{color:#1a56db}',
-      'mark.srch-hl{background:#fef08a;color:#92400e;border-radius:2px;padding:0 1px}',
-      '.tsj-recent{padding:10px 14px;border-bottom:1px solid #f1f5f9}',
-      '.tsj-recent-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;font-size:.72rem;font-weight:800;color:#475569}',
-      '.tsj-clear-btn{background:none;border:1px solid #e2e8f0;border-radius:6px;padding:2px 8px;font-size:.68rem;color:#94a3b8;cursor:pointer;font-family:inherit}',
-      '.tsj-clear-btn:hover{color:#ef4444;border-color:#ef4444}',
-      '.tsj-recent-tags{display:flex;flex-wrap:wrap;gap:5px}',
-      '.tsj-recent-tag{background:#f8fafc;color:#475569;border:1px solid #e2e8f0;border-radius:6px;padding:4px 10px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .12s}',
-      '.tsj-recent-tag:hover{background:#eff6ff;color:#1a56db;border-color:#bfdbfe}',
-      '.tsj-loading-msg{padding:12px 14px;font-size:.8rem;color:#64748b;text-align:center}',
-      '.tsj-no-suggest{padding:14px;font-size:.82rem;color:#94a3b8;text-align:center}',
-      '.tsj-suggest-footer{display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 14px;font-size:.75rem;font-weight:700;color:#64748b;border-top:1px solid #f1f5f9;background:#fafbfc}',
-      '.tsj-badge-pill{display:inline-block;font-size:.62rem;font-weight:700;padding:1px 6px;border-radius:10px;margin-right:2px}',
+      /* Priority badge strip — left color bar */
+      '.tsj-suggest-item.tsj-p1::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#16a34a;border-radius:2px 0 0 2px}',
+      '.tsj-suggest-item.tsj-p2::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#1d4ed8;border-radius:2px 0 0 2px}',
+      '.tsj-suggest-item.tsj-p3::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#7c3aed;border-radius:2px 0 0 2px}',
+      /* Icon */
+      '.tsj-si-icon{width:32px;height:32px;border-radius:8px;background:#eff6ff;color:#1a56db;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0}',
+      '.tsj-si-icon.ico-green{background:#dcfce7;color:#16a34a}',
+      '.tsj-si-icon.ico-orange{background:#fff7ed;color:#ea580c}',
+      '.tsj-si-icon.ico-purple{background:#f5f3ff;color:#7c3aed}',
+      '.tsj-si-icon.ico-red{background:#fff1f2;color:#be123c}',
+      '.tsj-si-icon.ico-teal{background:#f0fdfa;color:#0d9488}',
+      /* Body */
+      '.tsj-si-body{flex:1;min-width:0;overflow:hidden}',
+      '.tsj-si-title{display:block;font-size:.83rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#0f172a}',
+      '.tsj-si-meta{display:flex;align-items:center;gap:5px;margin-top:2px;flex-wrap:wrap}',
+      '.tsj-badge-pill{display:inline-block;font-size:.6rem;font-weight:700;padding:1px 6px;border-radius:10px;white-space:nowrap}',
       '.tsj-b-job{background:#eff6ff;color:#1d4ed8}',
       '.tsj-b-result{background:#f0fdf4;color:#16a34a}',
       '.tsj-b-admit{background:#fef3c7;color:#b45309}',
-      '.tsj-b-scheme{background:#fdf4ff;color:#7c3aed}',
-      '.tsj-b-link{background:#fff7ed;color:#c2410c}',
-      '.tsj-b-other{background:#f1f5f9;color:#475569}',
-      '@media(max-width:480px){#tsjDrop{border-radius:10px;max-height:360px}}',
+      '.tsj-b-edu{background:#f5f3ff;color:#7c3aed}',
+      '.tsj-b-state{background:#fff7ed;color:#c2410c}',
+      '.tsj-b-cat{background:#f1f5f9;color:#475569}',
+      '.tsj-b-date{background:#fff1f2;color:#be123c;font-size:.58rem}',
+      '.tsj-si-arr{color:#cbd5e1;font-size:.72rem;flex-shrink:0}',
+      '.tsj-suggest-item:hover .tsj-si-arr,.tsj-suggest-item.tsj-active .tsj-si-arr{color:#1a56db}',
+      /* Highlight */
+      'mark.srch-hl{background:#fef08a;color:#92400e;border-radius:2px;padding:0 1px;font-style:normal}',
+      /* Section headers inside dropdown */
+      '.tsj-drop-section-hd{padding:5px 13px 3px;font-size:.62rem;font-weight:800;color:#94a3b8;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid #f1f5f9;background:#fafbfc}',
+      /* Recent / Trending */
+      '.tsj-recent{padding:10px 13px 8px}',
+      '.tsj-recent-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;font-size:.7rem;font-weight:800;color:#475569}',
+      '.tsj-clear-btn{background:none;border:1px solid #e2e8f0;border-radius:6px;padding:2px 8px;font-size:.66rem;color:#94a3b8;cursor:pointer;font-family:inherit}',
+      '.tsj-clear-btn:hover{color:#ef4444;border-color:#ef4444}',
+      '.tsj-chip-wrap{display:flex;flex-wrap:wrap;gap:5px}',
+      '.tsj-chip{background:#f8fafc;color:#475569;border:1px solid #e2e8f0;border-radius:20px;padding:4px 10px;font-size:.7rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .12s;white-space:nowrap}',
+      '.tsj-chip:hover{background:#eff6ff;color:#1a56db;border-color:#bfdbfe}',
+      /* Loading / empty */
+      '.tsj-loading-msg,.tsj-no-suggest{padding:14px;font-size:.8rem;color:#64748b;text-align:center}',
+      /* Footer */
+      '.tsj-drop-footer{display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 13px;font-size:.72rem;font-weight:700;color:#64748b;border-top:1px solid #f1f5f9;background:#fafbfc;border-radius:0 0 14px 14px}',
+      /* Query type indicator */
+      '.tsj-qtype-tag{display:inline-flex;align-items:center;gap:3px;font-size:.6rem;font-weight:700;padding:1px 7px;border-radius:10px;background:#f0fdf4;color:#16a34a}',
+      '.tsj-qtype-tag.specific{background:#eff6ff;color:#1d4ed8}',
+      '@media(max-width:480px){#tsjDrop{border-radius:10px;max-height:380px}.tsj-si-title{font-size:.79rem}}',
     ].join('');
     document.head.appendChild(style);
   }
 
-  /* ── HERO SEARCH SETUP ──────────────────────────────────── */
+  /* ══════════════════════════════════════════════════════════
+   * RENDER HELPERS
+   * ══════════════════════════════════════════════════════════ */
+  function getIconClass(item) {
+    var cat = ((item.cat || '') + ' ' + (item.sectionSource || '')).toLowerCase();
+    if (/result|merit|score/.test(cat))  return 'ico-green';
+    if (/admit|hall|call/.test(cat))     return 'ico-orange';
+    if (/education|exam|gate|neet|board/.test(cat)) return 'ico-purple';
+    if (/state|haryana|delhi|punjab/.test(cat))     return 'ico-teal';
+    if (/police|army|defence|crpf|bsf/.test(cat))  return 'ico-red';
+    return '';
+  }
+
+  function getBadgeClass(item) {
+    var c = ((item.cat||'')+(item.sectionSource||'')).toLowerCase();
+    if (/result/.test(c))  return 'tsj-b-result';
+    if (/admit/.test(c))   return 'tsj-b-admit';
+    if (/education|exam/.test(c)) return 'tsj-b-edu';
+    if (/state/.test(c))   return 'tsj-b-state';
+    if (/category|section|filter/.test(c)) return 'tsj-b-cat';
+    return 'tsj-b-job';
+  }
+
+  function getPriorityClass(score) {
+    if (score >= 600) return ' tsj-p1';
+    if (score >= 200) return ' tsj-p2';
+    if (score >= 80)  return ' tsj-p3';
+    return '';
+  }
+
+  function renderItem(item, q, idx) {
+    var pClass  = getPriorityClass(item._score || 0);
+    var icClass = getIconClass(item);
+    var bdClass = getBadgeClass(item);
+    var sec     = esc(item.sectionSource || item.cat || '');
+    var state   = (item.state && item.state !== 'All India') ? ' · ' + esc(item.state) : '';
+    var dateHtml = item.lastDate
+      ? '<span class="tsj-badge-pill tsj-b-date"><i class="fa-solid fa-clock" style="font-size:.55rem"></i> ' + esc(item.lastDate) + '</span>'
+      : '';
+
+    return '<a class="tsj-suggest-item' + pClass + '" href="' + esc(item.slug) + '" data-idx="' + idx + '" role="option">' +
+      '<span class="tsj-si-icon ' + icClass + '"><i class="fa-solid ' + esc(item.icon || 'fa-briefcase') + '"></i></span>' +
+      '<span class="tsj-si-body">' +
+        '<span class="tsj-si-title">' + highlight(item.title, q) + '</span>' +
+        '<span class="tsj-si-meta">' +
+          (sec ? '<span class="tsj-badge-pill ' + bdClass + '">' + sec + state + '</span>' : '') +
+          dateHtml +
+        '</span>' +
+      '</span>' +
+      '<span class="tsj-si-arr"><i class="fa-solid fa-arrow-right"></i></span>' +
+      '</a>';
+  }
+
+  /* ══════════════════════════════════════════════════════════
+   * HERO SEARCH SETUP
+   * ══════════════════════════════════════════════════════════ */
   function setupHeroSearch() {
     var input = document.getElementById('heroSearch');
     var btn   = document.getElementById('heroSearchBtn');
@@ -808,12 +970,12 @@
 
     injectStyles();
 
-    // Remove old elements
+    /* Remove old dropdown if any */
     ['searchSuggest','heroSearchResults'].forEach(function(id) {
-      var el = document.getElementById(id);
-      if (el) el.remove();
+      var el = document.getElementById(id); if (el) el.remove();
     });
 
+    /* Create dropdown */
     var drop = document.getElementById('tsjDrop');
     if (!drop) {
       drop = document.createElement('div');
@@ -822,35 +984,33 @@
       document.body.appendChild(drop);
     }
 
+    /* Position dropdown below search box */
     function positionDrop() {
-      var rect = (input.closest('.hero-search-box') || input).getBoundingClientRect();
-      drop.style.position  = 'fixed';
-      drop.style.top       = (rect.bottom + 5) + 'px';
-      drop.style.left      = rect.left + 'px';
-      drop.style.width     = rect.width + 'px';
-      drop.style.maxHeight = '420px';
-      drop.style.zIndex    = '99999';
+      var box  = input.closest('.hero-search-box') || input;
+      var rect = box.getBoundingClientRect();
+      drop.style.cssText = 'position:fixed;top:'+(rect.bottom+5)+'px;left:'+rect.left+'px;width:'+rect.width+'px;max-height:440px;z-index:99999';
     }
-    // Defer initial position measurement to after first paint — avoids forced reflow
-    requestAnimationFrame(function() { requestAnimationFrame(positionDrop); });
-    window.addEventListener('resize', positionDrop);
-    window.addEventListener('scroll', function() {
-      if (drop.classList.contains('open')) positionDrop();
-    }, true);
+    requestAnimationFrame(function(){ requestAnimationFrame(positionDrop); });
+    window.addEventListener('resize', positionDrop, { passive: true });
+    window.addEventListener('scroll', function(){ if(drop.classList.contains('open')) positionDrop(); }, true);
 
     function openDrop(html) {
       positionDrop();
       drop.innerHTML = html;
       drop.classList.add('open');
-      drop.querySelectorAll('.tsj-recent-tag').forEach(function(b) {
-        b.addEventListener('click', function() { input.value = b.dataset.q; runSuggest(b.dataset.q); });
+      /* Bind chip clicks */
+      drop.querySelectorAll('.tsj-chip').forEach(function(b) {
+        b.addEventListener('click', function() {
+          input.value = b.dataset.q;
+          runSuggest(b.dataset.q);
+        });
       });
       var clearBtn = drop.querySelector('#tsjClearRecent');
       if (clearBtn) {
         clearBtn.addEventListener('click', function(e) {
           e.stopPropagation();
           try { localStorage.removeItem(CFG.recentKey); } catch(e2) {}
-          openDrop('<div class="tsj-no-suggest">Type karo search karne ke liye…</div>');
+          showDefaultDrop();
         });
       }
     }
@@ -858,79 +1018,109 @@
     function closeDrop() {
       drop.classList.remove('open');
       drop.innerHTML = '';
-      activeIndex  = -1;
+      activeIndex = -1;
       suggestItems = [];
     }
 
+    /* TRENDING chips */
+    var TRENDING = [
+      {label:'SSC GD',        q:'SSC GD'},
+      {label:'Railway Jobs',  q:'railway'},
+      {label:'10th Pass',     q:'10th pass'},
+      {label:'Police',        q:'police constable'},
+      {label:'Admit Card',    q:'admit card'},
+      {label:'Result',        q:'result'},
+      {label:'Bank Jobs',     q:'bank'},
+      {label:'UPSC',          q:'upsc'},
+      {label:'Haryana Jobs',  q:'haryana'},
+      {label:'Army',          q:'army'},
+    ];
+
     function showDefaultDrop() {
       var recent = getRecent();
-      if (!recent.length) {
-        openDrop('<div class="tsj-no-suggest">Jobs, Results, Admit Cards, Schemes search karo…</div>');
-        return;
+      var html = '';
+      if (recent.length) {
+        html += '<div class="tsj-recent">' +
+          '<div class="tsj-recent-hd"><span><i class="fa-solid fa-clock-rotate-left"></i> Recent Searches</span>' +
+          '<button type="button" id="tsjClearRecent" class="tsj-clear-btn">Clear</button></div>' +
+          '<div class="tsj-chip-wrap">' +
+          recent.map(function(r){ return '<button class="tsj-chip" type="button" data-q="'+esc(r)+'">'+esc(r)+'</button>'; }).join('') +
+          '</div></div>';
       }
-      openDrop(
-        '<div class="tsj-recent">' +
-        '<div class="tsj-recent-hd"><span><i class="fa-solid fa-clock-rotate-left"></i> Recent Searches</span>' +
-        '<button type="button" id="tsjClearRecent" class="tsj-clear-btn">Clear</button></div>' +
-        '<div class="tsj-recent-tags">' +
-        recent.map(function(r){ return '<button class="tsj-recent-tag" type="button" data-q="'+esc(r)+'">'+esc(r)+'</button>'; }).join('') +
-        '</div></div>');
+      html += '<div class="tsj-recent" style="border-top:'+(recent.length?'1px solid #f1f5f9':'none')+'">' +
+        '<div class="tsj-recent-hd"><span><i class="fa-solid fa-fire" style="color:#ea580c"></i> Trending Searches</span></div>' +
+        '<div class="tsj-chip-wrap">' +
+        TRENDING.map(function(t){ return '<button class="tsj-chip" type="button" data-q="'+esc(t.q)+'">'+esc(t.label)+'</button>'; }).join('') +
+        '</div></div>';
+      openDrop(html);
     }
 
-    function getBadgeClass(cat, sec) {
-      var c = ((cat||'') + ' ' + (sec||'')).toLowerCase();
-      if (c.indexOf('job')+c.indexOf('latest')+c.indexOf('railway')+c.indexOf('bank')+c.indexOf('police')+c.indexOf('ssc')+c.indexOf('state') > -6) {
-        if (/job|latest|railway|bank|police|ssc|state|upsc|defence|teaching|medical|naukri/.test(c)) return 'tsj-b-job';
-      }
-      if (/result/.test(c)) return 'tsj-b-result';
-      if (/admit/.test(c)) return 'tsj-b-admit';
-      if (/scheme|yojna|yojana/.test(c)) return 'tsj-b-scheme';
-      if (/link|pdf|csc|update/.test(c)) return 'tsj-b-link';
-      return 'tsj-b-other';
-    }
-
-    function renderSuggestItem(item, q, idx) {
-      var active  = idx === activeIndex ? ' tsj-active' : '';
-      var sec     = item.sectionSource || item.cat || '';
-      var state   = (item.state && item.state !== 'All India') ? item.state : '';
-      var bClass  = getBadgeClass(item.cat, sec);
-
-      return '<a class="tsj-suggest-item' + active + '" href="' + esc(item.slug) + '" data-idx="' + idx + '" role="option">' +
-        '<span class="tsj-si-icon"><i class="fa-solid ' + esc(item.icon||'fa-briefcase') + '"></i></span>' +
-        '<span class="tsj-si-body">' +
-          '<span class="tsj-si-title">' + highlight(item.title, q) + '</span>' +
-          (sec ? '<span class="tsj-si-meta"><span class="tsj-badge-pill ' + bClass + '">' + esc(sec) + '</span>' + (state ? ' · ' + esc(state) : '') + '</span>' : '') +
-        '</span>' +
-        '<span class="tsj-si-arr"><i class="fa-solid fa-arrow-right"></i></span>' +
-        '</a>';
-    }
-
+    /* MAIN SUGGEST RUNNER */
     function runSuggest(q) {
       q = (q || '').trim();
       if (!q) { showDefaultDrop(); return; }
 
-      var results = doSearch(q).slice(0, CFG.maxSuggest);
-      activeIndex  = -1;
-      suggestItems = results;
-
-      if (!results.length) {
-        if (!searchReady) {
-          openDrop('<div class="tsj-loading-msg"><i class="fa-solid fa-spinner fa-spin"></i> Job data load ho raha hai…</div>');
-        } else {
-          openDrop('<div class="tsj-no-suggest">No results for "<strong>' + esc(q) + '</strong>"<br><small>Try: SSC · Railway · Bank · Police · Result · Haryana</small></div>');
-        }
+      if (!searchReady) {
+        openDrop('<div class="tsj-loading-msg"><i class="fa-solid fa-spinner fa-spin"></i> Job data load ho raha hai…</div>');
         return;
       }
 
-      var total = doSearch(q).length;
-      var footer = total > CFG.maxSuggest
-        ? '<div class="tsj-suggest-footer"><i class="fa-solid fa-list"></i> ' + total + ' results found</div>'
-        : '';
+      var qType   = detectQueryType(q);
+      var allRes  = doSearch(q);
+      var shown   = allRes.slice(0, CFG.maxSuggest);
+      suggestItems = shown;
+      activeIndex  = -1;
 
-      openDrop(results.map(function(r, i){ return renderSuggestItem(r, q, i); }).join('') + footer);
+      if (!shown.length) {
+        openDrop('<div class="tsj-no-suggest">No results for "<strong>' + esc(q) + '</strong>"<br><small>Try: SSC · Railway · Police · Bank · Result · Haryana</small></div>');
+        return;
+      }
+
+      /* Separate job detail pages vs category pages for SPECIFIC queries */
+      var jobItems  = shown.filter(function(r){ return r.isJobDetail; });
+      var catItems  = shown.filter(function(r){ return !r.isJobDetail; });
+
+      var html = '';
+
+      /* Query type indicator */
+      html += '<div style="padding:5px 13px 4px;background:#fafbfc;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:6px">' +
+        '<span style="font-size:.67rem;font-weight:700;color:#94a3b8">Search:</span>' +
+        '<span class="tsj-qtype-tag '+(qType==='SPECIFIC'?'specific':'')+'">' +
+        '<i class="fa-solid '+(qType==='SPECIFIC'?'fa-bullseye':'fa-filter')+'"></i> ' +
+        (qType==='SPECIFIC' ? 'Job Search' : 'Category Search') +
+        '</span></div>';
+
+      if (qType === 'SPECIFIC') {
+        /* SPECIFIC: Job pages first, then category pages */
+        if (jobItems.length) {
+          html += '<div class="tsj-drop-section-hd"><i class="fa-solid fa-briefcase"></i> Job Detail Pages</div>';
+          html += jobItems.slice(0, 8).map(function(r, i){ return renderItem(r, q, i); }).join('');
+        }
+        if (catItems.length) {
+          html += '<div class="tsj-drop-section-hd"><i class="fa-solid fa-filter"></i> Category Pages</div>';
+          html += catItems.slice(0, 3).map(function(r, i){ return renderItem(r, q, jobItems.length + i); }).join('');
+        }
+      } else {
+        /* GENERAL: Category pages first, then jobs */
+        if (catItems.length) {
+          html += '<div class="tsj-drop-section-hd"><i class="fa-solid fa-filter"></i> Category & Section Pages</div>';
+          html += catItems.slice(0, 5).map(function(r, i){ return renderItem(r, q, i); }).join('');
+        }
+        if (jobItems.length) {
+          html += '<div class="tsj-drop-section-hd"><i class="fa-solid fa-briefcase"></i> Related Jobs</div>';
+          html += jobItems.slice(0, 5).map(function(r, i){ return renderItem(r, q, catItems.length + i); }).join('');
+        }
+      }
+
+      var total = allRes.length;
+      if (total > CFG.maxSuggest) {
+        html += '<div class="tsj-drop-footer"><i class="fa-solid fa-list"></i> ' + total + ' results found · Refine your search</div>';
+      }
+
+      openDrop(html);
     }
 
-    // Keyboard navigation
+    /* Keyboard navigation */
     input.addEventListener('keydown', function(e) {
       var items = drop.querySelectorAll('.tsj-suggest-item');
       if (e.key === 'ArrowDown') {
@@ -946,20 +1136,17 @@
         e.preventDefault();
         var active = drop.querySelector('.tsj-suggest-item.tsj-active');
         if (active) {
-          saveRecent(input.value.trim());
-          window.location.href = active.href;
-          closeDrop();
+          saveRecent(input.value.trim()); window.location.href = active.href; closeDrop();
         } else if (input.value.trim()) {
-          saveRecent(input.value.trim());
-          runSuggest(input.value.trim());
+          saveRecent(input.value.trim()); runSuggest(input.value.trim());
         }
       } else if (e.key === 'Escape') {
         closeDrop();
       }
     });
 
-    var debouncedSuggest = debounce(function(q) { runSuggest(q); }, CFG.debounceMs);
-    input.addEventListener('input', function() { debouncedSuggest(this.value); });
+    var dSuggest = debounce(function(q){ runSuggest(q); }, CFG.debounceMs);
+    input.addEventListener('input', function(){ dSuggest(this.value); });
     input.addEventListener('focus', function() {
       if (this.value.trim().length >= 1) runSuggest(this.value);
       else showDefaultDrop();
@@ -968,36 +1155,32 @@
     if (btn) {
       btn.addEventListener('click', function() {
         var q = input.value.trim();
-        if (!q) return;
-        saveRecent(q);
-        runSuggest(q);
-        input.focus();
+        if (q) { saveRecent(q); runSuggest(q); input.focus(); }
       });
     }
 
-    // Click on suggestion
     drop.addEventListener('click', function(e) {
       var item = e.target.closest('.tsj-suggest-item');
       if (item) { saveRecent(input.value.trim()); closeDrop(); }
     });
 
-    // Click outside → close
     document.addEventListener('click', function(e) {
       var box = input.closest('.hero-search-box') || input.parentElement;
       if (!drop.contains(e.target) && !box.contains(e.target)) closeDrop();
     });
 
-    // Mobile button
     var mobileBtn = document.getElementById('mobileSearchBtn');
     if (mobileBtn) {
       mobileBtn.addEventListener('click', function() {
         var hero = document.getElementById('hero-search-section');
-        if (hero) { hero.scrollIntoView({ behavior: 'smooth', block: 'start' }); setTimeout(function(){ input.focus(); }, 400); }
+        if (hero) { hero.scrollIntoView({ behavior:'smooth', block:'start' }); setTimeout(function(){ input.focus(); }, 400); }
       });
     }
   }
 
-  /* ── HEADER SEARCH ──────────────────────────────────────── */
+  /* ══════════════════════════════════════════════════════════
+   * HEADER SEARCH
+   * ══════════════════════════════════════════════════════════ */
   function setupHeaderSearch() {
     var hInput = document.getElementById('headerSearch');
     var hBtn   = document.getElementById('headerSearchBtn');
@@ -1006,7 +1189,7 @@
       var heroInput = document.getElementById('heroSearch');
       var hero = document.getElementById('hero-search-section');
       if (heroInput) {
-        if (hero) hero.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (hero) hero.scrollIntoView({ behavior:'smooth', block:'start' });
         setTimeout(function() {
           heroInput.value = q;
           heroInput.dispatchEvent(new Event('input'));
@@ -1016,8 +1199,8 @@
     }
 
     if (hInput && hBtn) {
-      hBtn.addEventListener('click', function() { if (hInput.value.trim()) goToHero(hInput.value.trim()); });
-      hInput.addEventListener('keydown', function(e) {
+      hBtn.addEventListener('click', function(){ if(hInput.value.trim()) goToHero(hInput.value.trim()); });
+      hInput.addEventListener('keydown', function(e){
         if (e.key === 'Enter' && hInput.value.trim()) goToHero(hInput.value.trim());
       });
     }
@@ -1028,14 +1211,43 @@
         var heroInput = document.getElementById('heroSearch');
         if (heroInput) {
           var hero = document.getElementById('hero-search-section');
-          if (hero) hero.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          if (hero) hero.scrollIntoView({ behavior:'smooth', block:'start' });
           setTimeout(function(){ heroInput.focus(); }, 350);
         }
       });
     }
   }
 
-  /* ── SEARCH PAGE HANDLER ────────────────────────────────── */
+  /* ══════════════════════════════════════════════════════════
+   * MENU SEARCH SETUP
+   * ══════════════════════════════════════════════════════════ */
+  function setupMenuSearch() {
+    var menuInput = document.getElementById('menuSearchInput');
+    if (!menuInput) return;
+    menuInput.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' && this.value.trim()) {
+        var q = this.value.trim();
+        saveRecent(q);
+        var heroInput = document.getElementById('heroSearch');
+        var hero = document.getElementById('hero-search-section');
+        if (heroInput && hero) {
+          document.getElementById('mobileMenu') && (document.getElementById('mobileMenu').hidden = true);
+          document.getElementById('menuOverlay') && (document.getElementById('menuOverlay').hidden = true);
+          document.body.style.overflow = '';
+          hero.scrollIntoView({ behavior:'smooth', block:'start' });
+          setTimeout(function(){
+            heroInput.value = q;
+            heroInput.dispatchEvent(new Event('input'));
+            heroInput.focus();
+          }, 400);
+        }
+      }
+    });
+  }
+
+  /* ══════════════════════════════════════════════════════════
+   * SEARCH PAGE HANDLER
+   * ══════════════════════════════════════════════════════════ */
   function setupSearchPage() {
     var container = document.getElementById('searchPageResults');
     if (!container) return;
@@ -1070,17 +1282,6 @@
             (r.lastDate ? '<div style="font-size:.7rem;color:#be123c;margin-top:4px"><i class="fa-solid fa-clock"></i> ' + esc(r.lastDate) + '</div>' : '') +
             '</div>';
         }).join('') + '</div>';
-
-      if (pageInput) {
-        pageInput.addEventListener('keydown', function(e) {
-          if (e.key === 'Enter' && pageInput.value.trim()) {
-            var nq = pageInput.value.trim();
-            history.replaceState(null, '', 'search.html?q=' + encodeURIComponent(nq));
-            saveRecent(nq);
-            renderPage(nq);
-          }
-        });
-      }
     }
 
     if (q) {
@@ -1092,295 +1293,58 @@
         var checkReady = setInterval(function() {
           if (searchReady) { clearInterval(checkReady); renderPage(q); }
         }, 200);
-        setTimeout(function() { clearInterval(checkReady); renderPage(q); }, 10000);
+        setTimeout(function(){ clearInterval(checkReady); renderPage(q); }, 10000);
       }
     }
   }
 
-  /* ── BLOCK tsjSearchIndex ───────────────────────────────── */
-  function installIndexFirewall() {
-    var dummy = Array.isArray(window.tsjSearchIndex) ? window.tsjSearchIndex.slice() : [];
-    window.tsjSearchIndex = new Proxy(dummy, {
-      get: function(t,p){ return t[p]; },
-      set: function(t,p,v){ t[p]=v; return true; },
-    });
-    console.log('[smart-search] 🔒 tsjSearchIndex firewall active.');
-  }
+  /* ══════════════════════════════════════════════════════════
+   * EXTERNAL API — window.tsjSearch
+   * ══════════════════════════════════════════════════════════ */
+  window.tsjSearch = {
+    search: doSearch,
+    go: function(q) {
+      var heroInput = document.getElementById('heroSearch');
+      var hero = document.getElementById('hero-search-section');
+      if (!heroInput) return;
+      if (hero) hero.scrollIntoView({ behavior:'smooth', block:'start' });
+      setTimeout(function() {
+        heroInput.value = q;
+        heroInput.dispatchEvent(new Event('input'));
+        heroInput.focus();
+      }, 350);
+    },
+    getData: function(){ return allData; },
+    getCount: function(){ return allData.length; },
+    isReady: function(){ return searchReady; },
+  };
 
+  /* ── Legacy alias ── */
+  window.__SEO_updateSection = function(){};
+  window.tsjSearchIndex = window.tsjSearch;
 
-  /* ── MENU SEARCH (Offcanvas) ────────────────────────────── */
-  function setupMenuSearch() {
-    var input = document.getElementById('menuSearchInput');
-    if (!input) return;
-
-    // Create dedicated dropdown for menu (inside offcanvas, not fixed)
-    var dropId = 'tsjMenuDrop';
-    var drop = document.getElementById(dropId);
-    if (!drop) {
-      drop = document.createElement('div');
-      drop.id = dropId;
-      drop.setAttribute('role', 'listbox');
-      // Insert right after the search box
-      var searchWrap = input.closest('.offcanvas-search');
-      if (searchWrap) {
-        searchWrap.style.position = 'relative';
-        searchWrap.appendChild(drop);
-      } else {
-        input.parentElement.appendChild(drop);
-      }
-    }
-
-    // Styles for menu dropdown
-    var styleId = 'tsj-menu-drop-css';
-    if (!document.getElementById(styleId)) {
-      var s = document.createElement('style');
-      s.id = styleId;
-      s.textContent = [
-        '#tsjMenuDrop{',
-          'position:absolute;top:100%;left:0;right:0;',
-          'background:#fff;border:1px solid #e2e8f0;',
-          'border-radius:0 0 12px 12px;',
-          'box-shadow:0 8px 24px rgba(13,34,87,.15);',
-          'z-index:99999;max-height:360px;',
-          'overflow-y:auto;display:none;',
-          'scrollbar-width:thin;',
-        '}',
-        '#tsjMenuDrop.open{display:block}',
-        '#tsjMenuDrop .tsj-suggest-item{',
-          'display:flex;align-items:center;gap:10px;',
-          'padding:10px 14px;text-decoration:none;',
-          'color:#0f172a;border-bottom:1px solid #f8fafc;',
-          'transition:background .1s;cursor:pointer;',
-        '}',
-        '#tsjMenuDrop .tsj-suggest-item:last-child{border-bottom:none}',
-        '#tsjMenuDrop .tsj-suggest-item:hover,',
-        '#tsjMenuDrop .tsj-suggest-item.tsj-active{background:#eff6ff}',
-        '#tsjMenuDrop .tsj-si-icon{',
-          'width:30px;height:30px;border-radius:8px;',
-          'background:#eff6ff;color:#1a56db;',
-          'display:flex;align-items:center;justify-content:center;',
-          'font-size:.78rem;flex-shrink:0;',
-        '}',
-        '#tsjMenuDrop .tsj-si-body{flex:1;overflow:hidden;min-width:0}',
-        '#tsjMenuDrop .tsj-si-title{',
-          'display:block;font-size:.80rem;font-weight:700;',
-          'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;',
-        '}',
-        '#tsjMenuDrop .tsj-si-meta{',
-          'display:block;font-size:.68rem;color:#64748b;margin-top:1px;',
-        '}',
-        '#tsjMenuDrop .tsj-badge-pill{',
-          'display:inline-block;font-size:.60rem;font-weight:700;',
-          'padding:1px 6px;border-radius:10px;margin-right:2px;',
-        '}',
-        '#tsjMenuDrop .tsj-b-job{background:#eff6ff;color:#1d4ed8}',
-        '#tsjMenuDrop .tsj-b-result{background:#f0fdf4;color:#16a34a}',
-        '#tsjMenuDrop .tsj-b-admit{background:#fef3c7;color:#b45309}',
-        '#tsjMenuDrop .tsj-b-other{background:#f1f5f9;color:#475569}',
-        '#tsjMenuDrop .tsj-no-suggest{',
-          'padding:14px;font-size:.80rem;color:#94a3b8;text-align:center;',
-        '}',
-        '#tsjMenuDrop .tsj-suggest-footer{',
-          'padding:9px 14px;font-size:.74rem;font-weight:700;',
-          'color:#64748b;border-top:1px solid #f1f5f9;',
-          'background:#fafbfc;text-align:center;',
-        '}',
-        '#tsjMenuDrop .tsj-recent{padding:10px 14px;border-bottom:1px solid #f1f5f9}',
-        '#tsjMenuDrop .tsj-recent-hd{',
-          'display:flex;align-items:center;justify-content:space-between;',
-          'margin-bottom:7px;font-size:.72rem;font-weight:800;color:#475569;',
-        '}',
-        '#tsjMenuDrop .tsj-clear-btn{',
-          'background:none;border:1px solid #e2e8f0;border-radius:6px;',
-          'padding:2px 8px;font-size:.68rem;color:#94a3b8;cursor:pointer;font-family:inherit;',
-        '}',
-        '#tsjMenuDrop .tsj-clear-btn:hover{color:#ef4444;border-color:#ef4444}',
-        '#tsjMenuDrop .tsj-recent-tags{display:flex;flex-wrap:wrap;gap:5px}',
-        '#tsjMenuDrop .tsj-recent-tag{',
-          'background:#f8fafc;color:#475569;border:1px solid #e2e8f0;',
-          'border-radius:6px;padding:4px 10px;font-size:.72rem;font-weight:600;',
-          'cursor:pointer;font-family:inherit;transition:all .12s;',
-        '}',
-        '#tsjMenuDrop .tsj-recent-tag:hover{background:#eff6ff;color:#1a56db;border-color:#bfdbfe}',
-        '#tsjMenuDrop mark.srch-hl{background:#fef08a;color:#92400e;border-radius:2px;padding:0 1px}',
-      ].join('');
-      document.head.appendChild(s);
-    }
-
-    var menuActiveIdx = -1;
-    var menuItems = [];
-
-    function openMenuDrop(html) {
-      drop.innerHTML = html;
-      drop.classList.add('open');
-      // Bind recent tags
-      drop.querySelectorAll('.tsj-recent-tag').forEach(function(b) {
-        b.addEventListener('click', function() {
-          input.value = b.dataset.q;
-          runMenuSuggest(b.dataset.q);
-        });
-      });
-      var clearBtn = drop.querySelector('#tsjMenuClearRecent');
-      if (clearBtn) {
-        clearBtn.addEventListener('click', function(e) {
-          e.stopPropagation();
-          try { localStorage.removeItem(CFG.recentKey); } catch(e2) {}
-          openMenuDrop('<div class="tsj-no-suggest">Search karo…</div>');
-        });
-      }
-    }
-
-    function closeMenuDrop() {
-      drop.classList.remove('open');
-      drop.innerHTML = '';
-      menuActiveIdx = -1;
-      menuItems = [];
-    }
-
-    function showMenuDefaultDrop() {
-      var recent = getRecent();
-      if (!recent.length) {
-        openMenuDrop('<div class="tsj-no-suggest">Jobs, Results, Admit Cards search karo…</div>');
-        return;
-      }
-      openMenuDrop(
-        '<div class="tsj-recent">' +
-        '<div class="tsj-recent-hd"><span><i class="fa-solid fa-clock-rotate-left"></i> Recent</span>' +
-        '<button type="button" id="tsjMenuClearRecent" class="tsj-clear-btn">Clear</button></div>' +
-        '<div class="tsj-recent-tags">' +
-        recent.map(function(r) {
-          return '<button class="tsj-recent-tag" type="button" data-q="' + esc(r) + '">' + esc(r) + '</button>';
-        }).join('') +
-        '</div></div>'
-      );
-    }
-
-    function getBadgeClassMenu(cat) {
-      var c = (cat || '').toLowerCase();
-      if (/result/.test(c)) return 'tsj-b-result';
-      if (/admit/.test(c)) return 'tsj-b-admit';
-      return 'tsj-b-job';
-    }
-
-    function renderMenuItem(item, q, idx) {
-      var active = idx === menuActiveIdx ? ' tsj-active' : '';
-      var sec    = item.sectionSource || item.cat || '';
-      var bClass = getBadgeClassMenu(sec);
-      return '<a class="tsj-suggest-item' + active + '" href="' + esc(item.slug) + '" data-idx="' + idx + '" role="option">' +
-        '<span class="tsj-si-icon"><i class="fa-solid ' + esc(item.icon || 'fa-briefcase') + '"></i></span>' +
-        '<span class="tsj-si-body">' +
-          '<span class="tsj-si-title">' + highlight(item.title, q) + '</span>' +
-          (sec ? '<span class="tsj-si-meta"><span class="tsj-badge-pill ' + bClass + '">' + esc(sec) + '</span></span>' : '') +
-        '</span>' +
-        '</a>';
-    }
-
-    function runMenuSuggest(q) {
-      q = (q || '').trim();
-      if (!q) { showMenuDefaultDrop(); return; }
-      var results = doSearch(q).slice(0, 8); // max 8 in menu
-      menuActiveIdx = -1;
-      menuItems = results;
-
-      if (!results.length) {
-        openMenuDrop(
-          '<div class="tsj-no-suggest">No results for "<strong>' + esc(q) + '</strong>"</div>'
-        );
-        return;
-      }
-
-      var total  = doSearch(q).length;
-      var footer = total > 8
-        ? '<div class="tsj-suggest-footer"><i class="fa-solid fa-list"></i> ' + total + ' results — type more to filter</div>'
-        : '';
-      openMenuDrop(results.map(function(r, i) { return renderMenuItem(r, q, i); }).join('') + footer);
-    }
-
-    // Keyboard navigation
-    input.addEventListener('keydown', function(e) {
-      var items = drop.querySelectorAll('.tsj-suggest-item');
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        menuActiveIdx = Math.min(menuActiveIdx + 1, items.length - 1);
-        items.forEach(function(el, i) { el.classList.toggle('tsj-active', i === menuActiveIdx); });
-        if (items[menuActiveIdx]) items[menuActiveIdx].scrollIntoView({ block: 'nearest' });
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        menuActiveIdx = Math.max(menuActiveIdx - 1, -1);
-        items.forEach(function(el, i) { el.classList.toggle('tsj-active', i === menuActiveIdx); });
-      } else if (e.key === 'Enter') {
-        e.preventDefault();
-        var activeEl = drop.querySelector('.tsj-suggest-item.tsj-active');
-        if (activeEl) {
-          saveRecent(input.value.trim());
-          window.location.href = activeEl.href;
-          closeMenuDrop();
-        } else if (input.value.trim()) {
-          saveRecent(input.value.trim());
-          window.location.href = 'search.html?q=' + encodeURIComponent(input.value.trim());
-          closeMenuDrop();
-        }
-      } else if (e.key === 'Escape') {
-        closeMenuDrop();
-        input.blur();
-      }
-    });
-
-    var debouncedMenuSuggest = debounce(function(q) { runMenuSuggest(q); }, CFG.debounceMs);
-
-    input.addEventListener('input', function() {
-      // Hide menu nav items when typing (show search results instead)
-      var nav = document.getElementById('mobileMenu')?.querySelector('.offcanvas-nav');
-      if (nav) nav.style.display = this.value.trim() ? 'none' : '';
-      debouncedMenuSuggest(this.value);
-    });
-
-    input.addEventListener('focus', function() {
-      if (this.value.trim().length >= 1) runMenuSuggest(this.value);
-      else showMenuDefaultDrop();
-    });
-
-    // Click on suggestion → navigate
-    drop.addEventListener('click', function(e) {
-      var item = e.target.closest('.tsj-suggest-item');
-      if (item) {
-        saveRecent(input.value.trim());
-        closeMenuDrop();
-      }
-    });
-
-    // Click outside → close
-    document.addEventListener('click', function(e) {
-      if (!drop.contains(e.target) && e.target !== input) closeMenuDrop();
-    });
-  }
-
-  /* ── INIT ───────────────────────────────────────────────── */
+  /* ══════════════════════════════════════════════════════════
+   * INIT
+   * ══════════════════════════════════════════════════════════ */
   function init() {
-    injectStyles();
-    installIndexFirewall();
-    // Delay JSON + Fuse.js loading until idle — not blocking LCP
-    var delayedLoad = function() {
-      loadFuse(function(){ buildFuse(allData); });
-      loadJsonFiles();
-      startAutoRefresh();
-    };
-    if ('requestIdleCallback' in window) {
-      requestIdleCallback(delayedLoad, { timeout: 3000 });
+    loadJsonFiles();
+    startAutoRefresh();
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        setupHeroSearch();
+        setupHeaderSearch();
+        setupMenuSearch();
+        setupSearchPage();
+      });
     } else {
-      setTimeout(delayedLoad, 1500);
+      setupHeroSearch();
+      setupHeaderSearch();
+      setupMenuSearch();
+      setupSearchPage();
     }
-    setupHeroSearch();
-    setupHeaderSearch();
-    setupMenuSearch();
-    setupSearchPage();
-    console.log('[smart-search] v3.0 initialized ✅');
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
+  init();
 
 })();
