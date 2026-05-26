@@ -289,10 +289,8 @@
             JOBS_CAT_META[k] && !coveredIds.has(JOBS_CAT_META[k].id)
           );
 
-          // Sab covered? Sirf fast data return karo
-          if (missingKeys.length === 0) {
-            return fastResult;
-          }
+          // Always continue to merge merged_sarkari_data.json sections
+          // even when Complete_Jobs categories are all covered
 
           // Missing categories ke liye Complete_Jobs_Full_Data.json fetch karo
           let extraSections = [];
