@@ -3103,10 +3103,10 @@
       /* ALL items → job.html?slug= for internal detail page */
       var href;
       var applyModeVal = (job.apply_mode || '').toLowerCase();
-      var officialWebUrl = j.official_website_link || j.official_website || '';
+      var officialWebUrl = job.official_website_link || job.official_website || '';
       /* No-slug categories: use official_website or generate slug from title */
       var noSlugCats = ['LATEST_JOBS NEW', 'OFFLINE_FORM', 'STATE_JOBS', 'CENTRAL_JOBS', 'ADMISSIONS'];
-      if (!slug && noSlugCats.indexOf(j.category) !== -1) {
+      if (!slug && noSlugCats.indexOf(job.category) !== -1) {
         if (officialWebUrl) {
           href = officialWebUrl;
         } else {
@@ -3348,11 +3348,14 @@
 
           return {
             title:         j.title || '',
-            url:           primaryUrl || officialWebsite || '#',
+            url:           primaryUrl || j.official_website_link || '#',
             source_url:    primaryUrl || '#',
             last_date:     j.last_date || (j.important_dates && j.important_dates.last_date) || '',
             apply_mode:    j.apply_mode || '',
             slug:          j.slug || '',
+            category:      j.sr_category || j.category || '',
+            official_website_link: j.official_website_link || '',
+            official_website: j.official_website_link || '',
             sections_links: sectionsLinks,
             starting_date: (function() {
               /* Extract Starting Date from Important Dates section list items */
