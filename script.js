@@ -67,6 +67,16 @@
     "Bank_Jobs":            { id: "Bank Jobs",                title: "🏦 Bank Jobs",               color: "linear-gradient(135deg,#ca8a04,#a16207)", icon: "fa-solid fa-building-columns" },
     "Medical_Hospital":     { id: "Medical/ Healthcare Jobs", title: "🏥 Medical / Hospital Jobs", color: "linear-gradient(135deg,#dc2626,#b91c1c)", icon: "fa-solid fa-stethoscope" },
     "Last_Date_Reminder":   { id: "Last Date Reminder",        title: "⏰ Last Date Reminder",      color: "linear-gradient(135deg,#e11d48,#be123c)", icon: "fa-solid fa-clock" },
+    // ── merged_sarkari_data.json categories ──
+    "SR_Latest_Jobs":    { id: "SR Latest Jobs",   title: "📋 Latest Online Forms", color: "linear-gradient(135deg,#0369a1,#0284c7)", icon: "fa-solid fa-file-pen" },
+    "SR_Result":         { id: "SR Result",         title: "🏆 Sarkari Result",       color: "linear-gradient(135deg,#047857,#059669)", icon: "fa-solid fa-trophy" },
+    "SR_Admit_Card":     { id: "SR Admit Card",     title: "🪪 Admit Card 2026",      color: "linear-gradient(135deg,#6d28d9,#7c3aed)", icon: "fa-solid fa-id-card" },
+    "SR_Admission":      { id: "SR Admission",      title: "🎓 Admission 2026",       color: "linear-gradient(135deg,#0e7490,#0891b2)", icon: "fa-solid fa-graduation-cap" },
+    "SR_Answer_Key":     { id: "SR Answer Key",     title: "🔑 Answer Key 2026",      color: "linear-gradient(135deg,#b45309,#d97706)", icon: "fa-solid fa-key" },
+    "UPCOMING_JOBS":     { id: "Upcoming Jobs",     title: "📅 Upcoming Jobs",        color: "linear-gradient(135deg,#15803d,#16a34a)", icon: "fa-solid fa-calendar-plus" },
+    "STATE_JOBS":        { id: "State Jobs",        title: "🗺️ State Govt Jobs",     color: "linear-gradient(135deg,#9333ea,#a855f7)", icon: "fa-solid fa-map-location-dot" },
+    "CENTRAL_JOBS":      { id: "Central Jobs",      title: "🏛️ Central Govt Jobs",  color: "linear-gradient(135deg,#0f766e,#0d9488)", icon: "fa-solid fa-landmark" },
+    "ADMISSIONS":        { id: "Admissions",        title: "📚 Admissions 2026",      color: "linear-gradient(135deg,#be123c,#e11d48)", icon: "fa-solid fa-school" },
   };
 
   /* Slugify a job title the same way the Python generator does */
@@ -294,17 +304,44 @@
             }
           } catch(_) { /* big JSON fail — fast sections hi return karo */ }
 
-          // Merge + JOBS_CAT_META order se sort
-          const merged = [...fastResult.sections, ...extraSections];
-          merged.sort((a, b) => {
+          // Also load merged_sarkari_data.json sections (SR_Latest_Jobs, SR_Result etc.)
+          let mergedSarkariSections = [];
+          try {
+            const mergedData = await (window.__mergedDataPromise || getJSON('merged_sarkari_data.json'));
+            if (mergedData) {
+              mergedSarkariSections = convertMergedDataToSections(mergedData);
+            }
+          } catch(_) {}
+
+          // Merge: sections-index + extraSections from big JSON + merged_sarkari sections
+          // Deduplicate by id
+          const allSections = [...fastResult.sections, ...extraSections, ...mergedSarkariSections];
+          const seenIds = new Set();
+          const deduped = allSections.filter(s => {
+            if (seenIds.has(s.id)) return false;
+            seenIds.add(s.id);
+            return true;
+          });
+
+          // Sort by JOBS_CAT_META order
+          deduped.sort((a, b) => {
             const ai = catOrder.findIndex(k => JOBS_CAT_META[k].id === a.id);
             const bi = catOrder.findIndex(k => JOBS_CAT_META[k].id === b.id);
             return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
           });
 
-          return { sections: merged };
+          return { sections: deduped };
         }
       }
+
+      // FALLBACK: sections-index unavailable — try merged_sarkari_data.json first
+      try {
+        const mergedData = await (window.__mergedDataPromise || getJSON('merged_sarkari_data.json'));
+        if (mergedData) {
+          const mergedSecs = convertMergedDataToSections(mergedData);
+          if (mergedSecs.length > 0) return { sections: mergedSecs };
+        }
+      } catch(_) {}
 
       // FALLBACK: sections-index unavailable — pure big JSON
       const raw = await getBigJSON();
@@ -323,6 +360,38 @@
     p.catch(() => __jsonCache.delete(path));
     __jsonCache.set(path, p);
     return p;
+  }
+
+  /* ── convertMergedDataToSections: merged_sarkari_data.json → sections format ──
+     Categories: SR_Latest_Jobs, SR_Result, SR_Admit_Card, SR_Admission,
+                 SR_Answer_Key, UPCOMING_JOBS, STATE_JOBS, CENTRAL_JOBS, ADMISSIONS
+  ── */
+  function convertMergedDataToSections(mergedData) {
+    if (!mergedData || !Array.isArray(mergedData.jobs)) return [];
+    const buckets = {};
+    mergedData.jobs.forEach(job => {
+      const cat = (job.category || '').trim();
+      if (!cat || !JOBS_CAT_META[cat]) return;
+      if (!buckets[cat]) buckets[cat] = [];
+      buckets[cat].push(job);
+    });
+    const sections = [];
+    for (const [catKey, meta] of Object.entries(JOBS_CAT_META)) {
+      const jobs = buckets[catKey];
+      if (!jobs || !jobs.length) continue;
+      const items = jobs.slice(0, 15).map(job => {
+        const name = (job.title || job.post_name || '').trim();
+        if (!name) return null;
+        const slug = job.slug || slugifyForJob(name);
+        const url = slug ? '/jobs/' + slug + '/' : '#';
+        const dates = job.important_dates || {};
+        const lastDate = (dates.last_date || dates.last_date_to_apply || job.last_date || '').trim();
+        return { slug, name, url, date: lastDate };
+      }).filter(Boolean);
+      if (!items.length) continue;
+      sections.push({ id: meta.id, title: meta.title, color: meta.color, icon: meta.icon, viewMoreType: 'list', items });
+    }
+    return sections;
   }
 
   function slugifyTitle(raw) {
