@@ -514,8 +514,6 @@
       /* ── Jobs aliases ── */
       'ssc-jobs':               {file:'complete',key:'Latest_Notifications'},
       'upsc-jobs':              {file:'complete',key:'Latest_Notifications'},
-      'central-jobs':           {file:'complete',key:'Latest_Notifications'},
-      'state-jobs':             {file:'merged',key:'SR_Latest_Jobs'},
       'defence-jobs':           {file:'complete',key:'Police_Defence'},
       'army-navy-airforce':     {file:'complete',key:'Police_Defence'},
       'online-form':            {file:'merged',key:'SR_Latest_Jobs'},
@@ -722,22 +720,15 @@
     function normaliseDaily(item){return{name:item.name||item.title||'',slug:slugify(item.name||item.title||''),date:'',vac:'',org:'',url:item.url||'#'};}
 
     function normaliseMerged(j){
-      /* Support both old sarkariresult format and new merged_sarkari_data.json format */
       var url=j.apply_online_link||j.official_website_link||j.source_url||j.url||j.link||'#';
       var dates=j.important_dates||{};
       var lastDate=dates.last_date_to_apply||dates.last_date||dates.application_end||j.last_date||'';
-      var vac=j.total_vacancy||j.vacancies||j.posts||'';
-      var org=j.organization||j.org||j.department||'';
-      /* Build slug from title for internal job page linking */
-      var rawTitle=j.title||j.name||'';
-      var slug=j.slug||'';
-      /* Check if a /jobs/{slug}/ page likely exists by matching jobs-index */
       return{
-        name:rawTitle.trim(),
-        slug:slug,
+        name:(j.title||j.name||'').trim(),
+        slug:j.slug||'',
         date:fmtDate(lastDate),
-        vac:vac,
-        org:org,
+        vac:j.total_vacancy||j.vacancies||j.posts||'',
+        org:j.organization||j.org||j.department||'',
         url:url
       };
     }
@@ -789,12 +780,9 @@
           var bk={_offline:[]};
           function getBkt(key){if(!bk[key])bk[key]=[];return bk[key];}
           jsonData.jobs.forEach(function(j){
-            /* Pass full job object so normaliseMerged gets all fields */
             var mode=(j.apply_mode||'').toLowerCase(),sc=(j.sr_category||j.category||'').trim();
             if(mode==='offline'||sc==='OFFLINE_FORM'){bk._offline.push(j);return;}
-            /* If category field present — use it directly (known OR unknown) */
             if(sc){getBkt(sc).push(j);return;}
-            /* Keyword fallback when category field absent */
             if(hk(j.title||'',KA))getBkt('SR_Admit_Card').push(j);
             else if(hk(j.title||'',KN))getBkt('SR_Answer_Key').push(j);
             else if(hk(j.title||'',KR))getBkt('SR_Result').push(j);
