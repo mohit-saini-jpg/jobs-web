@@ -3103,7 +3103,11 @@
       /* ALL items → job.html?slug= for internal detail page */
       var href;
       var applyModeVal = (job.apply_mode || '').toLowerCase();
-      if (slug) {
+      var officialWebUrl = j.official_website_link || j.official_website || '';
+      /* LATEST_JOBS NEW: no slug → link to official website directly */
+      if (!slug && officialWebUrl && j.category === 'LATEST_JOBS NEW') {
+        href = officialWebUrl;
+      } else if (slug) {
         href = 'job.html?slug=' + encodeURIComponent(slug);
       } else if (job.source && job.source === 'sarkariresultshine.com') {
         /* Legacy sarkariresultshine source — clean slug, no 'offline-' prefix */
@@ -3218,7 +3222,7 @@
           'STATE_JOBS':      { label: 'State Jobs',     icon: 'fa-solid fa-map-location-dot', headClass: 'blue',   viewUrl: '/section/state-jobs/' },
           'CENTRAL_JOBS':    { label: 'Central Jobs',   icon: 'fa-solid fa-landmark',         headClass: 'green',  viewUrl: '/section/central-jobs/' },
           'ADMISSIONS':      { label: 'Admissions',     icon: 'fa-solid fa-graduation-cap',   headClass: 'purple', viewUrl: '/section/admissions/' },
-          'LATEST_JOBS NEW': { label: 'Latest Notifications', icon: 'fa-solid fa-bell', headClass: 'red',    viewUrl: '/section/latest-notifications/' }
+          'LATEST_JOBS NEW': { label: 'Latest Jobs New',   icon: 'fa-solid fa-fire',  headClass: 'red',    viewUrl: '/section/latest-jobs/' }
         };
 
         /* Default style pool for unknown/new categories — cycles through colors */
@@ -3333,7 +3337,7 @@
 
           return {
             title:         j.title || '',
-            url:           primaryUrl || '#',
+            url:           primaryUrl || officialWebsite || '#',
             source_url:    primaryUrl || '#',
             last_date:     j.last_date || (j.important_dates && j.important_dates.last_date) || '',
             apply_mode:    j.apply_mode || '',
@@ -3513,7 +3517,7 @@
     }
 
     function loadData() {
-      var CACHE_KEY = '__sr_merged_v5'; // bumped - removed LATEST_JOBS NEW duplicate
+      var CACHE_KEY = '__sr_merged_v7'; // bumped - removed LATEST_JOBS NEW duplicate
       var CACHE_TTL = 15 * 60 * 1000; // 15 min
 
       try {
