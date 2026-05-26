@@ -326,7 +326,7 @@
   function registerSW() {
     if (!('serviceWorker' in navigator)) return;
     window.addEventListener('load', function() {
-      navigator.serviceWorker.register('/sw.js').then(function(reg) {
+      navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).then(function(reg) {
         reg.addEventListener('updatefound', function() {
           // FIXED: Removed SKIP_WAITING postMessage.
           // Auto-activating new SW caused page reload/refresh loop.

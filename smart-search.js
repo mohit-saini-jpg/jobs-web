@@ -1107,6 +1107,254 @@
     console.log('[smart-search] 🔒 tsjSearchIndex firewall active.');
   }
 
+
+  /* ── MENU SEARCH (Offcanvas) ────────────────────────────── */
+  function setupMenuSearch() {
+    var input = document.getElementById('menuSearchInput');
+    if (!input) return;
+
+    // Create dedicated dropdown for menu (inside offcanvas, not fixed)
+    var dropId = 'tsjMenuDrop';
+    var drop = document.getElementById(dropId);
+    if (!drop) {
+      drop = document.createElement('div');
+      drop.id = dropId;
+      drop.setAttribute('role', 'listbox');
+      // Insert right after the search box
+      var searchWrap = input.closest('.offcanvas-search');
+      if (searchWrap) {
+        searchWrap.style.position = 'relative';
+        searchWrap.appendChild(drop);
+      } else {
+        input.parentElement.appendChild(drop);
+      }
+    }
+
+    // Styles for menu dropdown
+    var styleId = 'tsj-menu-drop-css';
+    if (!document.getElementById(styleId)) {
+      var s = document.createElement('style');
+      s.id = styleId;
+      s.textContent = [
+        '#tsjMenuDrop{',
+          'position:absolute;top:100%;left:0;right:0;',
+          'background:#fff;border:1px solid #e2e8f0;',
+          'border-radius:0 0 12px 12px;',
+          'box-shadow:0 8px 24px rgba(13,34,87,.15);',
+          'z-index:99999;max-height:360px;',
+          'overflow-y:auto;display:none;',
+          'scrollbar-width:thin;',
+        '}',
+        '#tsjMenuDrop.open{display:block}',
+        '#tsjMenuDrop .tsj-suggest-item{',
+          'display:flex;align-items:center;gap:10px;',
+          'padding:10px 14px;text-decoration:none;',
+          'color:#0f172a;border-bottom:1px solid #f8fafc;',
+          'transition:background .1s;cursor:pointer;',
+        '}',
+        '#tsjMenuDrop .tsj-suggest-item:last-child{border-bottom:none}',
+        '#tsjMenuDrop .tsj-suggest-item:hover,',
+        '#tsjMenuDrop .tsj-suggest-item.tsj-active{background:#eff6ff}',
+        '#tsjMenuDrop .tsj-si-icon{',
+          'width:30px;height:30px;border-radius:8px;',
+          'background:#eff6ff;color:#1a56db;',
+          'display:flex;align-items:center;justify-content:center;',
+          'font-size:.78rem;flex-shrink:0;',
+        '}',
+        '#tsjMenuDrop .tsj-si-body{flex:1;overflow:hidden;min-width:0}',
+        '#tsjMenuDrop .tsj-si-title{',
+          'display:block;font-size:.80rem;font-weight:700;',
+          'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;',
+        '}',
+        '#tsjMenuDrop .tsj-si-meta{',
+          'display:block;font-size:.68rem;color:#64748b;margin-top:1px;',
+        '}',
+        '#tsjMenuDrop .tsj-badge-pill{',
+          'display:inline-block;font-size:.60rem;font-weight:700;',
+          'padding:1px 6px;border-radius:10px;margin-right:2px;',
+        '}',
+        '#tsjMenuDrop .tsj-b-job{background:#eff6ff;color:#1d4ed8}',
+        '#tsjMenuDrop .tsj-b-result{background:#f0fdf4;color:#16a34a}',
+        '#tsjMenuDrop .tsj-b-admit{background:#fef3c7;color:#b45309}',
+        '#tsjMenuDrop .tsj-b-other{background:#f1f5f9;color:#475569}',
+        '#tsjMenuDrop .tsj-no-suggest{',
+          'padding:14px;font-size:.80rem;color:#94a3b8;text-align:center;',
+        '}',
+        '#tsjMenuDrop .tsj-suggest-footer{',
+          'padding:9px 14px;font-size:.74rem;font-weight:700;',
+          'color:#64748b;border-top:1px solid #f1f5f9;',
+          'background:#fafbfc;text-align:center;',
+        '}',
+        '#tsjMenuDrop .tsj-recent{padding:10px 14px;border-bottom:1px solid #f1f5f9}',
+        '#tsjMenuDrop .tsj-recent-hd{',
+          'display:flex;align-items:center;justify-content:space-between;',
+          'margin-bottom:7px;font-size:.72rem;font-weight:800;color:#475569;',
+        '}',
+        '#tsjMenuDrop .tsj-clear-btn{',
+          'background:none;border:1px solid #e2e8f0;border-radius:6px;',
+          'padding:2px 8px;font-size:.68rem;color:#94a3b8;cursor:pointer;font-family:inherit;',
+        '}',
+        '#tsjMenuDrop .tsj-clear-btn:hover{color:#ef4444;border-color:#ef4444}',
+        '#tsjMenuDrop .tsj-recent-tags{display:flex;flex-wrap:wrap;gap:5px}',
+        '#tsjMenuDrop .tsj-recent-tag{',
+          'background:#f8fafc;color:#475569;border:1px solid #e2e8f0;',
+          'border-radius:6px;padding:4px 10px;font-size:.72rem;font-weight:600;',
+          'cursor:pointer;font-family:inherit;transition:all .12s;',
+        '}',
+        '#tsjMenuDrop .tsj-recent-tag:hover{background:#eff6ff;color:#1a56db;border-color:#bfdbfe}',
+        '#tsjMenuDrop mark.srch-hl{background:#fef08a;color:#92400e;border-radius:2px;padding:0 1px}',
+      ].join('');
+      document.head.appendChild(s);
+    }
+
+    var menuActiveIdx = -1;
+    var menuItems = [];
+
+    function openMenuDrop(html) {
+      drop.innerHTML = html;
+      drop.classList.add('open');
+      // Bind recent tags
+      drop.querySelectorAll('.tsj-recent-tag').forEach(function(b) {
+        b.addEventListener('click', function() {
+          input.value = b.dataset.q;
+          runMenuSuggest(b.dataset.q);
+        });
+      });
+      var clearBtn = drop.querySelector('#tsjMenuClearRecent');
+      if (clearBtn) {
+        clearBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          try { localStorage.removeItem(CFG.recentKey); } catch(e2) {}
+          openMenuDrop('<div class="tsj-no-suggest">Search karo…</div>');
+        });
+      }
+    }
+
+    function closeMenuDrop() {
+      drop.classList.remove('open');
+      drop.innerHTML = '';
+      menuActiveIdx = -1;
+      menuItems = [];
+    }
+
+    function showMenuDefaultDrop() {
+      var recent = getRecent();
+      if (!recent.length) {
+        openMenuDrop('<div class="tsj-no-suggest">Jobs, Results, Admit Cards search karo…</div>');
+        return;
+      }
+      openMenuDrop(
+        '<div class="tsj-recent">' +
+        '<div class="tsj-recent-hd"><span><i class="fa-solid fa-clock-rotate-left"></i> Recent</span>' +
+        '<button type="button" id="tsjMenuClearRecent" class="tsj-clear-btn">Clear</button></div>' +
+        '<div class="tsj-recent-tags">' +
+        recent.map(function(r) {
+          return '<button class="tsj-recent-tag" type="button" data-q="' + esc(r) + '">' + esc(r) + '</button>';
+        }).join('') +
+        '</div></div>'
+      );
+    }
+
+    function getBadgeClassMenu(cat) {
+      var c = (cat || '').toLowerCase();
+      if (/result/.test(c)) return 'tsj-b-result';
+      if (/admit/.test(c)) return 'tsj-b-admit';
+      return 'tsj-b-job';
+    }
+
+    function renderMenuItem(item, q, idx) {
+      var active = idx === menuActiveIdx ? ' tsj-active' : '';
+      var sec    = item.sectionSource || item.cat || '';
+      var bClass = getBadgeClassMenu(sec);
+      return '<a class="tsj-suggest-item' + active + '" href="' + esc(item.slug) + '" data-idx="' + idx + '" role="option">' +
+        '<span class="tsj-si-icon"><i class="fa-solid ' + esc(item.icon || 'fa-briefcase') + '"></i></span>' +
+        '<span class="tsj-si-body">' +
+          '<span class="tsj-si-title">' + highlight(item.title, q) + '</span>' +
+          (sec ? '<span class="tsj-si-meta"><span class="tsj-badge-pill ' + bClass + '">' + esc(sec) + '</span></span>' : '') +
+        '</span>' +
+        '</a>';
+    }
+
+    function runMenuSuggest(q) {
+      q = (q || '').trim();
+      if (!q) { showMenuDefaultDrop(); return; }
+      var results = doSearch(q).slice(0, 8); // max 8 in menu
+      menuActiveIdx = -1;
+      menuItems = results;
+
+      if (!results.length) {
+        openMenuDrop(
+          '<div class="tsj-no-suggest">No results for "<strong>' + esc(q) + '</strong>"</div>'
+        );
+        return;
+      }
+
+      var total  = doSearch(q).length;
+      var footer = total > 8
+        ? '<div class="tsj-suggest-footer"><i class="fa-solid fa-list"></i> ' + total + ' results — type more to filter</div>'
+        : '';
+      openMenuDrop(results.map(function(r, i) { return renderMenuItem(r, q, i); }).join('') + footer);
+    }
+
+    // Keyboard navigation
+    input.addEventListener('keydown', function(e) {
+      var items = drop.querySelectorAll('.tsj-suggest-item');
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        menuActiveIdx = Math.min(menuActiveIdx + 1, items.length - 1);
+        items.forEach(function(el, i) { el.classList.toggle('tsj-active', i === menuActiveIdx); });
+        if (items[menuActiveIdx]) items[menuActiveIdx].scrollIntoView({ block: 'nearest' });
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        menuActiveIdx = Math.max(menuActiveIdx - 1, -1);
+        items.forEach(function(el, i) { el.classList.toggle('tsj-active', i === menuActiveIdx); });
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        var activeEl = drop.querySelector('.tsj-suggest-item.tsj-active');
+        if (activeEl) {
+          saveRecent(input.value.trim());
+          window.location.href = activeEl.href;
+          closeMenuDrop();
+        } else if (input.value.trim()) {
+          saveRecent(input.value.trim());
+          window.location.href = 'search.html?q=' + encodeURIComponent(input.value.trim());
+          closeMenuDrop();
+        }
+      } else if (e.key === 'Escape') {
+        closeMenuDrop();
+        input.blur();
+      }
+    });
+
+    var debouncedMenuSuggest = debounce(function(q) { runMenuSuggest(q); }, CFG.debounceMs);
+
+    input.addEventListener('input', function() {
+      // Hide menu nav items when typing (show search results instead)
+      var nav = document.getElementById('mobileMenu')?.querySelector('.offcanvas-nav');
+      if (nav) nav.style.display = this.value.trim() ? 'none' : '';
+      debouncedMenuSuggest(this.value);
+    });
+
+    input.addEventListener('focus', function() {
+      if (this.value.trim().length >= 1) runMenuSuggest(this.value);
+      else showMenuDefaultDrop();
+    });
+
+    // Click on suggestion → navigate
+    drop.addEventListener('click', function(e) {
+      var item = e.target.closest('.tsj-suggest-item');
+      if (item) {
+        saveRecent(input.value.trim());
+        closeMenuDrop();
+      }
+    });
+
+    // Click outside → close
+    document.addEventListener('click', function(e) {
+      if (!drop.contains(e.target) && e.target !== input) closeMenuDrop();
+    });
+  }
+
   /* ── INIT ───────────────────────────────────────────────── */
   function init() {
     injectStyles();
@@ -1124,6 +1372,7 @@
     }
     setupHeroSearch();
     setupHeaderSearch();
+    setupMenuSearch();
     setupSearchPage();
     console.log('[smart-search] v3.0 initialized ✅');
   }

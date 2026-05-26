@@ -1118,7 +1118,7 @@
       display: flex; align-items: center; justify-content: center; font-size: .95rem; font-family: inherit;
     }
     .offcanvas-close:hover { background: rgba(255,255,255,.28); }
-    .offcanvas-search { padding: 10px 12px 6px; background: #fff; border-bottom: 1px solid #e8edf4; }
+    .offcanvas-search { padding: 10px 12px 6px; background: #fff; border-bottom: 1px solid #e8edf4; position: relative; }
     .offcanvas-search-inner { display: flex; align-items: center; gap: 8px; background: #f1f5f9; border-radius: 10px; padding: 8px 12px; border: 1.5px solid #e2e8f0; }
     .offcanvas-search-inner i { color: #94a3b8; font-size: .85rem; }
     .offcanvas-search-inner input { border: none; background: transparent; font-size: .82rem; font-weight: 600; color: #1e293b; outline: none; flex: 1; font-family: inherit; }
@@ -1714,7 +1714,8 @@
   <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
-  <script src="/pwa-install.js?v=6.0" defer></script>
+  <script src="/tsj-menu.js"></script>
+<script src="/pwa-install.js?v=6.0" defer></script>
   <!-- ══ END PWA ════════════════════════════════════════════════════ -->
 </head>
 
@@ -2884,17 +2885,8 @@
     }
 
     // Menu search filter
-    var menuSearchInp = document.getElementById('menuSearchInput');
-    if (menuSearchInp && !menuSearchInp._initDone) {
-      menuSearchInp._initDone = true;
-      menuSearchInp.addEventListener('input', function() {
-        var q = this.value.trim().toLowerCase();
-        document.querySelectorAll('.offcanvas-nav > a').forEach(function(a) { a.style.display = (!q || a.textContent.toLowerCase().includes(q)) ? '' : 'none'; });
-        document.querySelectorAll('.mob-acc-body a').forEach(function(a) { a.style.display = (!q || a.textContent.toLowerCase().includes(q)) ? '' : 'none'; });
-        document.querySelectorAll('.mob-acc-body').forEach(function(b) { b.classList.toggle('open', !!q); });
-        document.querySelectorAll('.mob-acc-head').forEach(function(b) { b.classList.toggle('open', !!q); });
-      });
-    }
+    // Menu search is now handled by smart-search.js setupMenuSearch()
+    // Nav filtering removed — smart-search shows job suggestions inline
 
     // ---- Desktop nav dropdowns ----
     document.querySelectorAll('[data-dd]').forEach(function (dd) {
@@ -3078,7 +3070,7 @@
 
       var title = (
         job.title || job.job_title || job.name || ''
-      ).replace(/ -\s*$/, '').trim();
+      ).replace(/ -\s*$/, '').replace(/\s*-\s*$/, '').trim();
       if (!title) return null;
 
       /* Date: sarkariresult uses last_date directly;
@@ -3343,7 +3335,7 @@
             title:         j.title || '',
             url:           primaryUrl || '#',
             source_url:    primaryUrl || '#',
-            last_date:     (j.important_dates && j.important_dates.last_date) || '',
+            last_date:     j.last_date || (j.important_dates && j.important_dates.last_date) || '',
             apply_mode:    j.apply_mode || '',
             slug:          j.slug || '',
             sections_links: sectionsLinks,
@@ -3417,7 +3409,7 @@
 
         /* ── Build CATEGORY_CONFIG dynamically from all buckets found ── */
         /* First add known categories in preferred order */
-        var orderedKeys = ['SR_Latest_Jobs', 'LATEST_JOBS NEW', 'STATE_JOBS', 'CENTRAL_JOBS', 'SR_Result', 'SR_Admit_Card', 'ADMISSIONS', 'SR_Admission', 'SR_Answer_Key', 'OFFLINE_FORM', 'UPCOMING_JOBS'];
+        var orderedKeys = ['LATEST_JOBS NEW', 'SR_Latest_Jobs', 'STATE_JOBS', 'CENTRAL_JOBS', 'SR_Result', 'SR_Admit_Card', 'ADMISSIONS', 'SR_Admission', 'SR_Answer_Key', 'OFFLINE_FORM', 'UPCOMING_JOBS'];
         /* Then append any NEW unknown categories */
         Object.keys(categoryBuckets).forEach(function(k) {
           if (orderedKeys.indexOf(k) === -1) orderedKeys.push(k);
@@ -3521,7 +3513,7 @@
     }
 
     function loadData() {
-      var CACHE_KEY = '__sr_merged_v3'; // bumped to clear old cache
+      var CACHE_KEY = '__sr_merged_v4'; // bumped - removed LATEST_JOBS NEW duplicate
       var CACHE_TTL = 15 * 60 * 1000; // 15 min
 
       try {
@@ -3605,5 +3597,6 @@
   </script>
 
 <script src="/tsj-push.js?v=4.0"></script>
+<script src="/tsj-version.js" defer></script>
 </body>
 </html>
