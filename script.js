@@ -303,18 +303,10 @@
             }
           } catch(_) { /* big JSON fail — fast sections hi return karo */ }
 
-          // Also load merged_sarkari_data.json sections (SR_Latest_Jobs, SR_Result etc.)
-          let mergedSarkariSections = [];
-          try {
-            const mergedData = await (window.__mergedDataPromise || getJSON('merged_sarkari_data.json'));
-            if (mergedData) {
-              mergedSarkariSections = convertMergedDataToSections(mergedData);
-            }
-          } catch(_) {}
-
-          // Merge: sections-index + extraSections from big JSON + merged_sarkari sections
-          // Deduplicate by id
-          const allSections = [...fastResult.sections, ...extraSections, ...mergedSarkariSections];
+          // Merge: sections-index + extraSections from big JSON only
+          // NOTE: SR_* categories (Latest Jobs, Result, Admit Card etc.) are already shown
+          // in #sr-sections-grid by the inline script — do NOT add them here to avoid duplicates
+          const allSections = [...fastResult.sections, ...extraSections];
           const seenIds = new Set();
           const deduped = allSections.filter(s => {
             if (seenIds.has(s.id)) return false;
@@ -333,14 +325,7 @@
         }
       }
 
-      // FALLBACK: sections-index unavailable — try merged_sarkari_data.json first
-      try {
-        const mergedData = await (window.__mergedDataPromise || getJSON('merged_sarkari_data.json'));
-        if (mergedData) {
-          const mergedSecs = convertMergedDataToSections(mergedData);
-          if (mergedSecs.length > 0) return { sections: mergedSecs };
-        }
-      } catch(_) {}
+      // FALLBACK: sections-index unavailable — use Complete_Jobs only
 
       // FALLBACK: sections-index unavailable — pure big JSON
       const raw = await getBigJSON();
@@ -379,7 +364,7 @@
       const jobs = buckets[catKey];
       if (!jobs || !jobs.length) continue;
       const items = jobs.slice(0, 15).map(job => {
-        const name = (job.title || job.post_name || '').trim();
+        const name = (job.title || job.post_name || '').trim().replace(/[\s\-,|]+$/, '').trim();
         if (!name) return null;
         const slug = job.slug || slugifyForJob(name);
         const url = slug ? '/jobs/' + slug + '/' : '#';
