@@ -102,7 +102,21 @@
     .edu-mi-label { font-size:.72rem; font-weight:700; color:#1a56db; text-transform:uppercase; letter-spacing:.03em; margin-bottom:4px; }
     .edu-mi-text { font-size:.8rem; color:#374151; line-height:1.6; }
 
-    /* ── Important Links Buttons ── */
+    /* ── Important Links Table ── */
+    .edu-links-table-wrap { padding:10px 14px; overflow-x:auto; }
+    .edu-links-tbl { width:100%; border-collapse:collapse; font-size:.78rem; }
+    .edu-links-tbl thead th { background:linear-gradient(135deg,#1a56db,#1e40af); color:#fff; padding:8px 12px; text-align:left; font-weight:700; }
+    .edu-links-tbl tbody tr:nth-child(even) td { background:#f8faff; }
+    .edu-links-tbl tbody tr:hover td { background:#eff6ff; }
+    .edu-links-tbl tbody td { padding:8px 12px; border-bottom:1px solid #f1f5f9; color:#1e293b; line-height:1.5; vertical-align:middle; }
+    .edu-links-tbl tbody tr:last-child td { border-bottom:none; }
+    .edu-link-btn { display:inline-flex; align-items:center; gap:5px; padding:5px 12px; border-radius:6px; font-size:.73rem; font-weight:700; text-decoration:none; transition:opacity .15s; white-space:nowrap; }
+    .edu-link-btn:hover { opacity:.82; }
+    .edu-link-btn-green  { background:#059669; color:#fff; }
+    .edu-link-btn-blue   { background:#1a56db; color:#fff; }
+    .edu-link-btn-orange { background:#f97316; color:#fff; }
+    .edu-link-btn-red    { background:#dc2626; color:#fff; }
+    /* fallback buttons (old style) */
     .edu-links-wrap { padding:12px 14px; display:flex; flex-wrap:wrap; gap:8px; }
     .edu-btn { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:8px; font-size:.75rem; font-weight:700; text-decoration:none; transition:opacity .15s; }
     .edu-btn:hover { opacity:.85; }
@@ -328,25 +342,40 @@
 
           function categorizeLinkBtn(label) {
             const l = label.toLowerCase();
-            if (/apply|register|form/i.test(l)) return 'edu-btn-green';
-            if (/result|merit|score/i.test(l))  return 'edu-btn-orange';
-            if (/admit|hall|call/i.test(l))      return 'edu-btn-orange';
-            if (/notif|pdf|download/i.test(l))   return 'edu-btn-blue';
-            if (/website|portal|official/i.test(l)) return 'edu-btn-red';
-            return 'edu-btn-blue';
+            if (/apply|register|form/i.test(l)) return 'edu-link-btn-green';
+            if (/result|merit|score/i.test(l))  return 'edu-link-btn-orange';
+            if (/admit|hall|call/i.test(l))      return 'edu-link-btn-orange';
+            if (/notif|pdf|download/i.test(l))   return 'edu-link-btn-blue';
+            if (/website|portal|official/i.test(l)) return 'edu-link-btn-red';
+            return 'edu-link-btn-blue';
           }
 
-          html += `<div class="edu-links-wrap">`;
+          // Render as proper table with S.No, Name, Link columns
+          html += `<div class="edu-links-table-wrap">
+            <table class="edu-links-tbl">
+              <thead>
+                <tr>
+                  <th style="width:50px;">S.No</th>
+                  <th>Name / Description</th>
+                  <th style="width:130px;">Link</th>
+                </tr>
+              </thead>
+              <tbody>`;
+          let sno = 1;
           links.forEach(lnk => {
             const href  = safe(lnk.url || lnk.href || '#');
-            const label = safe(lnk.label || lnk.title || lnk.text || 'Link');
+            const label = safe(lnk.label || lnk.title || lnk.text || 'Official Link');
             const cls   = categorizeLinkBtn(label);
             if (!href || href === '#') return;
-            html += `<a href="${esc(href)}" class="edu-btn ${cls}" target="_blank" rel="noopener noreferrer">
-              <i class="fa-solid fa-arrow-up-right-from-square"></i> ${esc(label.slice(0,50))}
-            </a>`;
+            html += `<tr>
+              <td style="text-align:center;font-weight:700;color:#1a56db;">${sno++}</td>
+              <td>${esc(label)}</td>
+              <td><a href="${esc(href)}" class="edu-link-btn ${cls}" target="_blank" rel="noopener noreferrer">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> Open
+              </a></td>
+            </tr>`;
           });
-          html += `</div>`;
+          html += `</tbody></table></div>`;
         }
       });
       return html;
@@ -422,6 +451,63 @@
         }
         html += `<div class="edu-card-body">${bodyHtml}</div></div>`;
       });
+
+      // Render top-level important_links from item.detail.important_links
+      const topLinks = detail.important_links || {};
+      const structLinks = topLinks.structured_links || [];
+      const clickHereLinks = topLinks.click_here || [];
+
+      // Build unified links array - prefer structured_links, else fallback to click_here
+      let allLinks = [];
+      if (structLinks.length) {
+        allLinks = structLinks.map((l, i) => ({
+          label: l.label || ('Link ' + (i+1)),
+          url: l.url || l.href || ''
+        }));
+      } else if (clickHereLinks.length) {
+        allLinks = clickHereLinks.map((u, i) => ({
+          label: 'Official Link ' + (i+1),
+          url: u
+        }));
+      }
+
+      if (allLinks.length) {
+        function categorizeLinkBtnTop(label) {
+          const l = label.toLowerCase();
+          if (/apply|register|form/i.test(l)) return 'edu-link-btn-green';
+          if (/result|merit|score/i.test(l))  return 'edu-link-btn-orange';
+          if (/admit|hall|call/i.test(l))      return 'edu-link-btn-orange';
+          if (/notif|pdf|download/i.test(l))   return 'edu-link-btn-blue';
+          if (/website|portal|official/i.test(l)) return 'edu-link-btn-red';
+          return 'edu-link-btn-blue';
+        }
+        let linksHtml = `<div class="edu-card">
+          <div class="edu-card-head" style="background:linear-gradient(135deg,#1a56db,#1e40af);">
+            <i class="fa-solid fa-link"></i> Important Links
+          </div>
+          <div class="edu-card-body">
+            <div class="edu-links-table-wrap">
+              <table class="edu-links-tbl">
+                <thead><tr>
+                  <th style="width:50px;">S.No</th>
+                  <th>Name / Description</th>
+                  <th style="width:130px;">Link</th>
+                </tr></thead>
+                <tbody>`;
+        allLinks.forEach((lnk, idx) => {
+          if (!lnk.url || lnk.url === '#') return;
+          const cls = categorizeLinkBtnTop(lnk.label);
+          linksHtml += `<tr>
+            <td style="text-align:center;font-weight:700;color:#1a56db;">${idx+1}</td>
+            <td>${esc(lnk.label)}</td>
+            <td><a href="${esc(lnk.url)}" class="edu-link-btn ${cls}" target="_blank" rel="noopener noreferrer">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i> Open
+            </a></td>
+          </tr>`;
+        });
+        linksHtml += `</tbody></table></div></div></div>`;
+        html += linksHtml;
+      }
 
       return html;
     }

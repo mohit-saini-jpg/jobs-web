@@ -13,3 +13,6 @@
 
 # Category routing
 /category/*   /category.html  200
+
+# Education routing
+/education/*   /education-detail.html   200
