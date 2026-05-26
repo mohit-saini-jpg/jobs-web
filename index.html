@@ -3337,19 +3337,16 @@
       var applyModeVal = (job.apply_mode || '').toLowerCase();
       var officialWebUrl = job.official_website_link || job.official_website || '';
       /* No-slug categories: use official_website or generate slug from title */
+      /* LATEST_JOBS NEW / no-slug categories — always generate slug from title for internal page */
       var noSlugCats = ['LATEST_JOBS NEW', 'OFFLINE_FORM', 'STATE_JOBS', 'CENTRAL_JOBS', 'ADMISSIONS'];
       if (!slug && noSlugCats.indexOf(job.category) !== -1) {
-        if (officialWebUrl) {
-          href = officialWebUrl;
-        } else {
-          /* Generate slug from title as fallback */
-          var genSlug = (title || '').toLowerCase()
-            .replace(/[^a-z0-9\s-]/g, '')
-            .replace(/[\s-]+/g, '-')
-            .slice(0, 100)
-            .replace(/^-+|-+$/g, '');
-          href = genSlug ? 'job.html?slug=' + encodeURIComponent(genSlug) : '#';
-        }
+        /* Generate slug from title → /jobs/{slug}/ detail page */
+        var genSlug = (title || '').toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, '')
+          .replace(/[\s-]+/g, '-')
+          .slice(0, 100)
+          .replace(/^-+|-+$/g, '');
+        href = genSlug ? '/jobs/' + genSlug + '/' : (officialWebUrl || '#');
       } else if (slug) {
         href = 'job.html?slug=' + encodeURIComponent(slug);
       } else if (job.source && job.source === 'sarkariresultshine.com') {
