@@ -1321,7 +1321,33 @@
 
   /* ── Legacy alias ── */
   window.__SEO_updateSection = function(){};
-  window.tsjSearchIndex = window.tsjSearch;
+
+  /* tsjSearchIndex: array-compatible shim so script.js can .push() items into search index */
+  var _tsjLegacyQueue = Array.isArray(window.tsjSearchIndex) ? window.tsjSearchIndex : [];
+  window.tsjSearchIndex = {
+    push: function(item) {
+      if (!item || !item.title) return;
+      /* Merge into allData so search finds these items too */
+      var key = dedupeKey(item.slug || '');
+      if (!key) return;
+      var seen = {};
+      allData.forEach(function(d){ seen[dedupeKey(d.slug||'')] = true; });
+      if (!seen[key]) {
+        item.lastUpdated = item.lastUpdated || new Date().toISOString();
+        item.isJobDetail = true;
+        allData.push(item);
+      }
+    },
+    search: doSearch,
+    go: window.tsjSearch.go,
+    getData: function(){ return allData; },
+    getCount: function(){ return allData.length; },
+    isReady: function(){ return searchReady; },
+  };
+  /* Flush any items queued before smart-search loaded */
+  if (_tsjLegacyQueue.length) {
+    _tsjLegacyQueue.forEach(function(item){ window.tsjSearchIndex.push(item); });
+  }
 
   /* ══════════════════════════════════════════════════════════
    * INIT
