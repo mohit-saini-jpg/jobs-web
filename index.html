@@ -3218,7 +3218,7 @@
           'STATE_JOBS':      { label: 'State Jobs',     icon: 'fa-solid fa-map-location-dot', headClass: 'blue',   viewUrl: '/section/state-jobs/' },
           'CENTRAL_JOBS':    { label: 'Central Jobs',   icon: 'fa-solid fa-landmark',         headClass: 'green',  viewUrl: '/section/central-jobs/' },
           'ADMISSIONS':      { label: 'Admissions',     icon: 'fa-solid fa-graduation-cap',   headClass: 'purple', viewUrl: '/section/admissions/' },
-          'LATEST_JOBS NEW': { label: 'Latest Jobs',    icon: 'fa-solid fa-fire',             headClass: 'red',    viewUrl: '/section/latest-jobs/' }
+          'LATEST_JOBS NEW': { label: 'Latest Notifications', icon: 'fa-solid fa-bell', headClass: 'red',    viewUrl: '/section/latest-notifications/' }
         };
 
         /* Default style pool for unknown/new categories — cycles through colors */
@@ -3409,7 +3409,7 @@
 
         /* ── Build CATEGORY_CONFIG dynamically from all buckets found ── */
         /* First add known categories in preferred order */
-        var orderedKeys = ['LATEST_JOBS NEW', 'SR_Latest_Jobs', 'STATE_JOBS', 'CENTRAL_JOBS', 'SR_Result', 'SR_Admit_Card', 'ADMISSIONS', 'SR_Admission', 'SR_Answer_Key', 'OFFLINE_FORM', 'UPCOMING_JOBS'];
+        var orderedKeys = ['SR_Latest_Jobs', 'SR_Result', 'SR_Admit_Card', 'SR_Admission', 'SR_Answer_Key', 'UPCOMING_JOBS', 'OFFLINE_FORM', 'LATEST_JOBS NEW', 'STATE_JOBS', 'CENTRAL_JOBS', 'ADMISSIONS'];
         /* Then append any NEW unknown categories */
         Object.keys(categoryBuckets).forEach(function(k) {
           if (orderedKeys.indexOf(k) === -1) orderedKeys.push(k);
@@ -3513,7 +3513,7 @@
     }
 
     function loadData() {
-      var CACHE_KEY = '__sr_merged_v4'; // bumped - removed LATEST_JOBS NEW duplicate
+      var CACHE_KEY = '__sr_merged_v5'; // bumped - removed LATEST_JOBS NEW duplicate
       var CACHE_TTL = 15 * 60 * 1000; // 15 min
 
       try {
