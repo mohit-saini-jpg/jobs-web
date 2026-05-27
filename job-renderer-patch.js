@@ -347,10 +347,8 @@
     if (linksCard) {
       layout.insertBefore(card, linksCard);
     } else {
-      // Before the tips card
-      const tipsCard = layout.querySelector('.jp-tips-card');
-      if (tipsCard) layout.insertBefore(card, tipsCard);
-      else layout.appendChild(card);
+      // jp-tips-card removed — append at end
+      layout.appendChild(card);
     }
   }
 
@@ -366,14 +364,10 @@
     }
     if (linksCard) {
       // Insert after Important Links (before tips card or next sibling)
-      const tipsCard = layout.querySelector('.jp-tips-card');
-      if (tipsCard) layout.insertBefore(card, tipsCard);
-      else linksCard.insertAdjacentElement('afterend', card);
+      linksCard.insertAdjacentElement('afterend', card);
     } else {
-      // Fallback: before the tips card
-      const tipsCard = layout.querySelector('.jp-tips-card');
-      if (tipsCard) layout.insertBefore(card, tipsCard);
-      else layout.appendChild(card);
+      // jp-tips-card removed — append at end
+      layout.appendChild(card);
     }
   }
 

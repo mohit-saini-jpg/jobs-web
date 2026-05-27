@@ -1328,9 +1328,8 @@
     }
     if (linksCard) layout.insertBefore(card, linksCard);
     else {
-      const tips = layout.querySelector('.jp-tips-card');
-      if (tips) layout.insertBefore(card, tips);
-      else layout.appendChild(card);
+      /* jp-tips-card removed — append at end of layout */
+      layout.appendChild(card);
     }
   }
 
