@@ -616,10 +616,13 @@
 
         let html = '';
 
+        /* ── Hoist item to outer scope so injectEduPS() can access it ── */
+        var item = null;
+
         if (slugArg) {
           // Find item by slug
           const items = section.items || [];
-          const item  = items.find(it => {
+          item = items.find(it => {
             const itSlug = makeSlug(it.name || it.examName || '');
             return itSlug === slugArg;
           });
@@ -634,6 +637,7 @@
               showError('Item not found. Please go back and try again.');
               return;
             }
+            item = partial; // assign so injectEduPS() sees it
             html = renderDetail(partial, section.title);
           } else {
             html = renderDetail(item, section.title);

@@ -262,6 +262,32 @@
     .sv-spinner { grid-column: 1/-1; display: flex; justify-content: center; align-items: center; padding: 48px; color: #64748b; gap: 10px; font-size: .9rem; }
     .sv-spinner i { font-size: 1.4rem; color: #2563eb; }
 
+    /* ── Set as Preferred Source on Google ── */
+    .sv-preferred-card {
+      background: #fff; border: 1px solid #e2e8f0; border-radius: 10px;
+      margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.05); overflow: hidden;
+    }
+    .sv-preferred-head {
+      background: linear-gradient(135deg,#1a56db,#1e40af);
+      color: #fff; font-size: .86rem; font-weight: 700;
+      padding: 9px 14px; display: flex; align-items: center; gap: 7px;
+    }
+    .sv-preferred-body { padding: 12px 14px; }
+    .sv-preferred-desc { font-size: .8rem; color: #475569; margin: 0 0 10px; line-height: 1.5; }
+    .sv-preferred-table { width: 100%; border-collapse: collapse; font-size: .78rem; }
+    .sv-preferred-table th {
+      background: #f1f5f9; color: #64748b; font-weight: 600;
+      padding: 5px 8px; text-align: left; border-bottom: 1px solid #e2e8f0;
+    }
+    .sv-preferred-table td { padding: 6px 8px; border-bottom: 1px solid #f1f5f9; color: #1e293b; vertical-align: middle; }
+    .sv-preferred-table tr:last-child td { border-bottom: none; }
+    .sv-ps-badge {
+      display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: .72rem; font-weight: 700;
+    }
+    .sv-ps-badge.online  { background: #dcfce7; color: #15803d; }
+    .sv-ps-badge.offline { background: #fee2e2; color: #b91c1c; }
+    .sv-preferred-org { font-size: .73rem; color: #94a3b8; margin: 8px 0 0; text-align: right; }
+
     /* ── Load more ── */
     .sv-more-wrap { text-align: center; margin-top: 24px; }
     .sv-more-btn {
@@ -432,6 +458,25 @@
     <!-- Section listing -->
     <section id="section-view" style="display:none;">
       <div class="sv-wrap">
+        <!-- Set as Preferred Source on Google -->
+        <div class="sv-preferred-card" id="svPreferredCard" style="display:none;">
+          <div class="sv-preferred-head"><i class="fa-solid fa-google"></i>&nbsp; Set as Preferred Source on Google</div>
+          <div class="sv-preferred-body">
+            <p class="sv-preferred-desc" id="svPsDesc">Top Sarkari Jobs — Get latest government job notifications, results, admit cards and more.</p>
+            <div style="overflow-x:auto;">
+              <table class="sv-preferred-table">
+                <thead><tr><th>Page Type</th><th>Category</th><th>Year</th><th>Mode</th></tr></thead>
+                <tbody><tr>
+                  <td><span class="sv-ps-badge online" id="svPsPageType">Jobs Portal</span></td>
+                  <td id="svPsCategory">Sarkari Jobs</td>
+                  <td>2026</td>
+                  <td id="svPsMode">Online</td>
+                </tr></tbody>
+              </table>
+            </div>
+            <p class="sv-preferred-org">Top Sarkari Jobs — India No.1 Sarkari Jobs Portal</p>
+          </div>
+        </div>
         <div class="sv-search-wrap">
           <div class="sv-search-row">
             <span class="sv-search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
@@ -633,6 +678,44 @@
 
     var titleLabel=titleCase(currentSlug)+' '+new Date().getFullYear();
     if(svTitle){svTitle.innerHTML='<span class="sv-title-icon"><i class="fa-solid fa-bell"></i></span> '+titleLabel;}
+
+    /* ── Set as Preferred Source on Google ── */
+    (function populateSvPreferredCard(){
+      var card=document.getElementById('svPreferredCard');
+      if(!card)return;
+      var slug=currentSlug||'';
+      var catLabel=titleCase(slug)||'Sarkari Jobs';
+      /* Determine mode: offline/walkin/online */
+      var mode='Online';
+      if(/offline/i.test(slug)) mode='Offline';
+      else if(/walkin|walk-in/i.test(slug)) mode='Walk-in';
+      /* Determine page type label */
+      var pageType='Sarkari Jobs';
+      if(/admit-card|hall-ticket|call-letter|exam-date/i.test(slug)) pageType='Admit Card';
+      else if(/result|merit-list|cut-off|score-card/i.test(slug)) pageType='Result';
+      else if(/answer-key|syllabus/i.test(slug)) pageType='Answer Key';
+      else if(/admission|admissions/i.test(slug)) pageType='Admission';
+      else if(/scheme|yojna/i.test(slug)) pageType='Govt Scheme';
+      else if(/csc|pdf/i.test(slug)) pageType='CSC Resource';
+      else if(/railway/i.test(slug)) pageType='Railway Jobs';
+      else if(/bank/i.test(slug)) pageType='Bank Jobs';
+      else if(/police|defence|army/i.test(slug)) pageType='Police / Defence';
+      else if(/teaching|teacher|faculty/i.test(slug)) pageType='Teaching Jobs';
+      else if(/medical|hospital|healthcare/i.test(slug)) pageType='Medical Jobs';
+      else if(/state/i.test(slug)) pageType='State Govt Jobs';
+      else if(/central/i.test(slug)) pageType='Central Govt Jobs';
+      else if(/upcoming/i.test(slug)) pageType='Upcoming Jobs';
+      /* Populate */
+      var descEl=document.getElementById('svPsDesc');
+      if(descEl) descEl.textContent=catLabel+' 2026 — Get latest government job notifications, eligibility, vacancies, results and admit cards at Top Sarkari Jobs.';
+      var ptEl=document.getElementById('svPsPageType');
+      if(ptEl){ ptEl.textContent=pageType; ptEl.className='sv-ps-badge '+(mode==='Offline'?'offline':'online'); }
+      var catEl=document.getElementById('svPsCategory');
+      if(catEl) catEl.textContent=catLabel;
+      var modeEl=document.getElementById('svPsMode');
+      if(modeEl) modeEl.textContent=mode+' Form';
+      card.style.display='';
+    })();
 
     var PAGE_SIZE=30, allItems=[], shownCount=0;
 
