@@ -1438,16 +1438,66 @@ input, textarea, select { font-size: 1rem !important; }
         if (si) { si.style.display = ''; document.getElementById('shortInfoText').textContent = row.shortInfo; }
       }
 
-      /* ── Set as Preferred Source on Google — Unified Engine ── */
-      if (window.TSJPreferredSource) {
-        window.TSJPreferredSource.populate({
-          isJob   : true,
-          title   : name,
-          slug    : rawSlug,
-          row     : row,
-          parsed  : parsed,
-        });
-      }
+      /* ── Set as Preferred Source on Google ── */
+      (function populatePreferredSource() {
+        const psCard = document.getElementById('preferredSourceCard');
+        if (!psCard) return;
+
+        /* ── Description: short info truncated to 160 chars ── */
+        const titleText = safe(name || '');
+        const rawDesc = (row && row.shortInfo) || '';
+        let desc;
+        if (rawDesc && rawDesc.length > 20) {
+          desc = rawDesc.length > 160 ? rawDesc.substring(0, 157) + '...' : rawDesc;
+        } else {
+          desc = titleText + ' — Get eligibility, vacancies, last date, salary & apply online at Top Sarkari Jobs.';
+        }
+        const psDesc = document.getElementById('psDesc');
+        if (psDesc) psDesc.textContent = desc;
+
+        /* ── Form Mode ── */
+        let formMode = applyMode || '';
+        if (!formMode) {
+          const slugLc = (window.__TSJ_SLUG || '').toLowerCase();
+          formMode = slugLc.includes('offline') ? 'Offline'
+                   : (slugLc.includes('walkin') || slugLc.includes('walk-in')) ? 'Walk-in'
+                   : 'Online';
+        }
+        const fmEl = document.getElementById('psFormMode');
+        if (fmEl) {
+          const fmLc = formMode.toLowerCase();
+          const cls = fmLc.includes('offline') ? 'offline' : fmLc.includes('walk') ? 'walkin' : 'online';
+          fmEl.innerHTML = '<span class="jp-ps-badge ' + cls + '">' + safe(formMode) + ' Form</span>';
+        }
+
+        /* ── Job State ── */
+        const jobLoc = (row && row.jobLocation) || 'All India';
+        const locEl = document.getElementById('psJobState');
+        if (locEl) locEl.textContent = safe(jobLoc);
+
+        /* ── Total Posts ── */
+        const postsRaw = totalVac || (row && row.totalVac) || 'See Notification';
+        const postsText = (postsRaw && !postsRaw.toLowerCase().includes('post') && !postsRaw.toLowerCase().includes('see'))
+                        ? postsRaw + ' Posts' : postsRaw;
+        const postsEl = document.getElementById('psTotalPosts');
+        if (postsEl) postsEl.textContent = safe(postsText);
+
+        /* ── Job Type ── */
+        const jobTypeRaw = (row && row.jobType) || (parsed && parsed.category && parsed.category.label) || 'Govt Job';
+        const jobTypeShort = jobTypeRaw.length > 18 ? jobTypeRaw.substring(0, 16) + '..' : jobTypeRaw;
+        const jtEl = document.getElementById('psJobType');
+        if (jtEl) jtEl.textContent = safe(jobTypeShort);
+
+        /* ── Organisation ── */
+        const orgEl = document.getElementById('psOrgName');
+        if (orgEl) {
+          const orgRaw = safe(org || '');
+          orgEl.textContent = orgRaw.length > 60 ? orgRaw.substring(0, 58) + '..' : orgRaw;
+          orgEl.title = orgRaw; /* full name on hover */
+        }
+
+        psCard.style.display = '';
+      })();
 
       /* ── Internal Linking + Freshness — populate related links & last updated ── */
       (function populateRelatedLinks() {
@@ -2148,15 +2198,47 @@ input, textarea, select { font-size: 1rem !important; }
 
       injectSEO(name, rawSlug, null);
 
-      /* ── Set as Preferred Source on Google (non-job) — Unified Engine ── */
-      if (window.TSJPreferredSource) {
-        window.TSJPreferredSource.populate({
-          isJob   : false,
-          title   : name,
-          slug    : rawSlug,
-          row     : jobRow || null,
-        });
-      }
+      /* ── Set as Preferred Source on Google (non-job pages) ── */
+      (function populatePreferredSourceNonJob() {
+        const psCard = document.getElementById('preferredSourceCardNJ');
+        if (!psCard) return;
+
+        /* Description */
+        const psDesc = document.getElementById('psDescNJ');
+        if (psDesc) {
+          const nm = safe(name || '');
+          psDesc.textContent = nm + ' — Get complete details, official links, download PDF and latest updates at Top Sarkari Jobs.';
+        }
+
+        /* Form Mode */
+        const fmEl = document.getElementById('psFormModeNJ');
+        if (fmEl) {
+          const slugLc = (window.__TSJ_SLUG || '').toLowerCase();
+          const fm = slugLc.includes('offline') ? 'Offline'
+                   : (slugLc.includes('pdf') || slugLc.includes('download')) ? 'Download'
+                   : 'Online';
+          const cls = fm === 'Offline' ? 'offline' : 'online';
+          fmEl.innerHTML = '<span class="jp-ps-badge ' + cls + '">' + fm + ' Link</span>';
+        }
+
+        /* Job State */
+        const locEl = document.getElementById('psJobStateNJ');
+        if (locEl) locEl.textContent = 'All India';
+
+        /* Total Posts */
+        const postsEl = document.getElementById('psTotalPostsNJ');
+        if (postsEl) postsEl.textContent = 'See Notification';
+
+        /* Job Type — safe check for typeInfo null */
+        const jtEl = document.getElementById('psJobTypeNJ');
+        if (jtEl) jtEl.textContent = (typeInfo && typeInfo.label) || 'Govt Service';
+
+        /* Org */
+        const orgEl = document.getElementById('psOrgNameNJ');
+        if (orgEl) orgEl.textContent = 'Top Sarkari Jobs';
+
+        psCard.style.display = '';
+      })();
     }
 
     /* ── Data loading ── */
@@ -3361,8 +3443,6 @@ input, textarea, select { font-size: 1rem !important; }
   })();
   </script>
 
-  <!-- Unified Preferred Source Engine — must load before render scripts -->
-  <script src="/preferred-source-engine.js?v=20260527"></script>
   <script src="/script.min.js?v=20260527" defer></script>
   <!-- JSON-Driven Dynamic Job Rendering System — PATCH -->
   <script src="/job-renderer-patch.js?v=20260522" defer></script>
