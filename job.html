@@ -533,15 +533,24 @@ input, textarea, select { font-size: 1rem !important; }
     /* ── Set as Preferred Source on Google ── */
     .jp-preferred-source-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.04);overflow:hidden;}
     .jp-preferred-source-card .jp-sec-head{background:linear-gradient(135deg,#1a56db,#1e40af);font-size:.86rem;}
-    .jp-ps-desc{font-size:.83rem;color:#374151;line-height:1.7;padding:10px 14px 8px;border-bottom:1px solid #f1f5f9;}
-    .jp-ps-table{width:100%;border-collapse:collapse;font-size:.81rem;}
-    .jp-ps-table th{background:#f8fafc;color:#475569;font-weight:700;font-size:.76rem;text-transform:uppercase;letter-spacing:.04em;padding:7px 12px;border-bottom:1px solid #e2e8f0;text-align:left;}
-    .jp-ps-table td{padding:7px 12px;color:#1e293b;border-bottom:1px solid #f1f5f9;vertical-align:top;}
-    .jp-ps-table tr:last-child td{border-bottom:none;}
-    .jp-ps-badge{display:inline-block;padding:2px 9px;border-radius:12px;font-size:.75rem;font-weight:700;}
+    .jp-ps-desc{font-size:.82rem;color:#374151;line-height:1.65;padding:10px 14px 8px;border-bottom:1px solid #f1f5f9;margin:0;}
+    .jp-ps-table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+    .jp-ps-table{width:100%;border-collapse:collapse;font-size:.81rem;min-width:300px;table-layout:fixed;}
+    .jp-ps-table th{background:#f8fafc;color:#475569;font-weight:700;font-size:.73rem;text-transform:uppercase;letter-spacing:.04em;padding:8px 10px;border-bottom:1px solid #e2e8f0;text-align:left;white-space:nowrap;width:25%;}
+    .jp-ps-table td{padding:8px 10px;color:#1e293b;vertical-align:middle;font-size:.81rem;width:25%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .jp-ps-org-row{display:flex;align-items:baseline;gap:6px;padding:6px 14px 8px;border-top:1px solid #f1f5f9;background:#f8fafc;}
+    .jp-ps-org-label{font-size:.72rem;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;}
+    .jp-ps-org-val{font-size:.78rem;color:#1e293b;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .jp-ps-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.74rem;font-weight:700;white-space:nowrap;}
     .jp-ps-badge.online{background:#dcfce7;color:#166534;}
     .jp-ps-badge.offline{background:#fef3c7;color:#92400e;}
     .jp-ps-badge.walkin{background:#e0e7ff;color:#3730a3;}
+    @media(max-width:640px){
+      .jp-ps-table{min-width:280px;}
+      .jp-ps-table th,.jp-ps-table td{padding:7px 8px;font-size:.75rem;}
+      .jp-ps-desc{font-size:.79rem;padding:8px 10px;}
+      .jp-ps-org-row{padding:5px 10px 7px;}
+    }
 
     /* ── Internal Linking — Related Jobs Sidebar ── */
     .jp-related-card .jp-sec-head{background:linear-gradient(135deg,#0f766e,#0891b2);}
@@ -783,7 +792,7 @@ input, textarea, select { font-size: 1rem !important; }
             <div class="jp-card jp-preferred-source-card" id="preferredSourceCard" style="display:none;">
               <div class="jp-sec-head"><i class="fa-solid fa-google" style="color:#fff;"></i>&nbsp; Set as Preferred Source on Google</div>
               <p class="jp-ps-desc" id="psDesc"></p>
-              <div style="overflow-x:auto;">
+              <div class="jp-ps-table-wrap">
                 <table class="jp-ps-table">
                   <thead>
                     <tr>
@@ -793,18 +802,19 @@ input, textarea, select { font-size: 1rem !important; }
                       <th>Job Type</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody id="psTableBody">
                     <tr>
                       <td id="psFormMode">—</td>
                       <td id="psJobState">All India</td>
                       <td id="psTotalPosts">—</td>
                       <td id="psJobType">—</td>
                     </tr>
-                    <tr>
-                      <td colspan="4" id="psOrgName" style="color:#64748b;font-size:.79rem;font-style:italic;"></td>
-                    </tr>
                   </tbody>
                 </table>
+              </div>
+              <div class="jp-ps-org-row">
+                <span class="jp-ps-org-label">Organisation:</span>
+                <span id="psOrgName" class="jp-ps-org-val">—</span>
               </div>
             </div>
 
@@ -900,7 +910,7 @@ input, textarea, select { font-size: 1rem !important; }
             <div class="jp-card jp-preferred-source-card" id="preferredSourceCardNJ" style="display:none;">
               <div class="jp-sec-head"><i class="fa-solid fa-google" style="color:#fff;"></i>&nbsp; Set as Preferred Source on Google</div>
               <p class="jp-ps-desc" id="psDescNJ"></p>
-              <div style="overflow-x:auto;">
+              <div class="jp-ps-table-wrap">
                 <table class="jp-ps-table">
                   <thead>
                     <tr><th>Form Mode</th><th>Job State</th><th>Total Posts</th><th>Job Type</th></tr>
@@ -912,9 +922,12 @@ input, textarea, select { font-size: 1rem !important; }
                       <td id="psTotalPostsNJ">—</td>
                       <td id="psJobTypeNJ">—</td>
                     </tr>
-                    <tr><td colspan="4" id="psOrgNameNJ" style="color:#64748b;font-size:.79rem;font-style:italic;"></td></tr>
                   </tbody>
                 </table>
+              </div>
+              <div class="jp-ps-org-row">
+                <span class="jp-ps-org-label">Source:</span>
+                <span id="psOrgNameNJ" class="jp-ps-org-val">Top Sarkari Jobs</span>
               </div>
             </div>
 
@@ -1429,23 +1442,26 @@ input, textarea, select { font-size: 1rem !important; }
       (function populatePreferredSource() {
         const psCard = document.getElementById('preferredSourceCard');
         if (!psCard) return;
-        /* Description: job's short info text */
-        /* Description: job short info OR auto-generated from title */
-        const jobTitle = document.getElementById('jbTitle');
-        const titleText = jobTitle ? jobTitle.textContent : '';
-        const desc = (row && row.shortInfo) || 
-                     (titleText && titleText !== 'Loading...' ? 
-                      titleText + ' — Get complete details, eligibility, last date, syllabus and apply online at Top Sarkari Jobs. Government of India recruitment 2026.' : 
-                      '');
+
+        /* ── Description: short info truncated to 160 chars ── */
+        const titleText = safe(name || '');
+        const rawDesc = (row && row.shortInfo) || '';
+        let desc;
+        if (rawDesc && rawDesc.length > 20) {
+          desc = rawDesc.length > 160 ? rawDesc.substring(0, 157) + '...' : rawDesc;
+        } else {
+          desc = titleText + ' — Get eligibility, vacancies, last date, salary & apply online at Top Sarkari Jobs.';
+        }
         const psDesc = document.getElementById('psDesc');
-        if (psDesc) { psDesc.textContent = desc; }
-        /* Form Mode */
-        /* Form Mode from applyMode OR from slug keyword */
+        if (psDesc) psDesc.textContent = desc;
+
+        /* ── Form Mode ── */
         let formMode = applyMode || '';
         if (!formMode) {
           const slugLc = (window.__TSJ_SLUG || '').toLowerCase();
-          formMode = slugLc.includes('offline') ? 'Offline' : 
-                     slugLc.includes('walkin') || slugLc.includes('walk-in') ? 'Walk-in' : 'Online';
+          formMode = slugLc.includes('offline') ? 'Offline'
+                   : (slugLc.includes('walkin') || slugLc.includes('walk-in')) ? 'Walk-in'
+                   : 'Online';
         }
         const fmEl = document.getElementById('psFormMode');
         if (fmEl) {
@@ -1453,26 +1469,33 @@ input, textarea, select { font-size: 1rem !important; }
           const cls = fmLc.includes('offline') ? 'offline' : fmLc.includes('walk') ? 'walkin' : 'online';
           fmEl.innerHTML = '<span class="jp-ps-badge ' + cls + '">' + safe(formMode) + ' Form</span>';
         }
-        /* Job State */
+
+        /* ── Job State ── */
         const jobLoc = (row && row.jobLocation) || 'All India';
         const locEl = document.getElementById('psJobState');
         if (locEl) locEl.textContent = safe(jobLoc);
-        /* Total Posts */
-        const postsEl = document.getElementById('psTotalPosts');
-        /* Total posts - clean display */
+
+        /* ── Total Posts ── */
         const postsRaw = totalVac || (row && row.totalVac) || 'See Notification';
-        const postsText = postsRaw && !postsRaw.toLowerCase().includes('post') && !postsRaw.toLowerCase().includes('see') 
-                          ? postsRaw + ' Posts' : postsRaw;
+        const postsText = (postsRaw && !postsRaw.toLowerCase().includes('post') && !postsRaw.toLowerCase().includes('see'))
+                        ? postsRaw + ' Posts' : postsRaw;
+        const postsEl = document.getElementById('psTotalPosts');
         if (postsEl) postsEl.textContent = safe(postsText);
-        /* Job Type */
-        const jobTypeRaw = (row && row.jobType) || parsed.category.label || 'Government Job';
-        const jobTypeShort = jobTypeRaw.length > 30 ? jobTypeRaw.substring(0, 30) + '...' : jobTypeRaw;
+
+        /* ── Job Type ── */
+        const jobTypeRaw = (row && row.jobType) || (parsed && parsed.category && parsed.category.label) || 'Govt Job';
+        const jobTypeShort = jobTypeRaw.length > 18 ? jobTypeRaw.substring(0, 16) + '..' : jobTypeRaw;
         const jtEl = document.getElementById('psJobType');
         if (jtEl) jtEl.textContent = safe(jobTypeShort);
-        /* Org name */
+
+        /* ── Organisation ── */
         const orgEl = document.getElementById('psOrgName');
-        if (orgEl) orgEl.textContent = safe(org || '');
-        /* Show the card */
+        if (orgEl) {
+          const orgRaw = safe(org || '');
+          orgEl.textContent = orgRaw.length > 60 ? orgRaw.substring(0, 58) + '..' : orgRaw;
+          orgEl.title = orgRaw; /* full name on hover */
+        }
+
         psCard.style.display = '';
       })();
 
@@ -2179,19 +2202,41 @@ input, textarea, select { font-size: 1rem !important; }
       (function populatePreferredSourceNonJob() {
         const psCard = document.getElementById('preferredSourceCardNJ');
         if (!psCard) return;
-        /* Show the card with non-job info */
+
+        /* Description */
         const psDesc = document.getElementById('psDescNJ');
-        if (psDesc) psDesc.textContent = safe(name) + ' — Get complete details, official links, download PDF and latest updates on Top Sarkari Jobs. India No.1 Sarkari Jobs Portal.';
+        if (psDesc) {
+          const nm = safe(name || '');
+          psDesc.textContent = nm + ' — Get complete details, official links, download PDF and latest updates at Top Sarkari Jobs.';
+        }
+
+        /* Form Mode */
         const fmEl = document.getElementById('psFormModeNJ');
-        if (fmEl) fmEl.innerHTML = '<span class="jp-ps-badge online">Online Link</span>';
+        if (fmEl) {
+          const slugLc = (window.__TSJ_SLUG || '').toLowerCase();
+          const fm = slugLc.includes('offline') ? 'Offline'
+                   : (slugLc.includes('pdf') || slugLc.includes('download')) ? 'Download'
+                   : 'Online';
+          const cls = fm === 'Offline' ? 'offline' : 'online';
+          fmEl.innerHTML = '<span class="jp-ps-badge ' + cls + '">' + fm + ' Link</span>';
+        }
+
+        /* Job State */
         const locEl = document.getElementById('psJobStateNJ');
         if (locEl) locEl.textContent = 'All India';
+
+        /* Total Posts */
         const postsEl = document.getElementById('psTotalPostsNJ');
         if (postsEl) postsEl.textContent = 'See Notification';
+
+        /* Job Type — safe check for typeInfo null */
         const jtEl = document.getElementById('psJobTypeNJ');
-        if (jtEl) jtEl.textContent = typeInfo.label || 'Important Update';
+        if (jtEl) jtEl.textContent = (typeInfo && typeInfo.label) || 'Govt Service';
+
+        /* Org */
         const orgEl = document.getElementById('psOrgNameNJ');
-        if (orgEl) orgEl.textContent = "Top Sarkari Jobs — India's No.1 Sarkari Jobs Portal";
+        if (orgEl) orgEl.textContent = 'Top Sarkari Jobs';
+
         psCard.style.display = '';
       })();
     }

@@ -150,11 +150,14 @@
     .edu-ps-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.04);overflow:hidden;}
     .edu-ps-head{background:linear-gradient(135deg,#1a56db,#1e40af);color:#fff;font-size:.86rem;font-weight:700;padding:9px 14px;display:flex;align-items:center;gap:8px;}
     .edu-ps-desc{font-size:.83rem;color:#374151;line-height:1.7;padding:10px 14px 8px;border-bottom:1px solid #f1f5f9;}
-    .edu-ps-table{width:100%;border-collapse:collapse;font-size:.81rem;}
-    .edu-ps-table th{background:#f8fafc;color:#475569;font-weight:700;font-size:.76rem;text-transform:uppercase;letter-spacing:.04em;padding:7px 12px;border-bottom:1px solid #e2e8f0;text-align:left;}
-    .edu-ps-table td{padding:7px 12px;color:#1e293b;border-bottom:1px solid #f1f5f9;vertical-align:top;}
+    .edu-ps-table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+    .edu-ps-table{width:100%;border-collapse:collapse;font-size:.80rem;min-width:320px;}
+    .edu-ps-table th{background:#f8fafc;color:#475569;font-weight:700;font-size:.73rem;text-transform:uppercase;letter-spacing:.04em;padding:7px 10px;border-bottom:1px solid #e2e8f0;text-align:left;white-space:nowrap;}
+    .edu-ps-table td{padding:7px 10px;color:#1e293b;border-bottom:1px solid #f1f5f9;vertical-align:middle;font-size:.79rem;}
     .edu-ps-table tr:last-child td{border-bottom:none;}
-    .edu-ps-badge{display:inline-block;padding:2px 9px;border-radius:12px;font-size:.75rem;font-weight:700;background:#dcfce7;color:#166534;}
+    .edu-ps-org{font-size:.73rem;color:#64748b;font-style:italic;padding:5px 14px 8px;margin:0;border-top:1px solid #f1f5f9;}
+    .edu-ps-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.73rem;font-weight:700;background:#dcfce7;color:#166534;white-space:nowrap;}
+    @media(max-width:640px){.edu-ps-table th,.edu-ps-table td{padding:6px 8px;font-size:.74rem;}}
 </style>
   <script type="application/ld+json" id="eduSchema">{}</script>
   <script>
@@ -651,20 +654,41 @@
 
         /* ── Set as Preferred Source on Google ── */
         (function injectEduPS() {
-          var _psTitle = (section && section.title) || sectionId || 'Education';
+          var _secTitle = (section && section.title) || sectionId || 'Education';
+          var _isItem = !!(slugArg && item);
+          var _itemName = _isItem ? (item.name || item.examName || _secTitle) : '';
+          var _itemDate = _isItem ? (item.date || item.postDate || '2026') : '2026';
+          var _itemCat  = _isItem ? (item.category || 'Board / University') : 'Board / University';
+
+          /* Description */
+          var _desc = _isItem
+            ? esc(_itemName) + ' — ' + esc(_secTitle) + ' Education 2026. Get complete details, important dates, result, admit card and more at Top Sarkari Jobs.'
+            : esc(_secTitle) + ' Education 2026 — Get complete details, official notifications, results, admit cards and exam dates at Top Sarkari Jobs.';
+
+          /* Table rows */
+          var _tableRows = _isItem
+            ? '<tr>' +
+              '<td><span class="edu-ps-badge">Education</span></td>' +
+              '<td>' + esc(_itemName.length > 35 ? _itemName.substring(0,35)+'...' : _itemName) + '</td>' +
+              '<td>' + esc(_itemDate) + '</td>' +
+              '<td>' + esc(_itemCat) + '</td>' +
+              '</tr>'
+            : '<tr>' +
+              '<td><span class="edu-ps-badge">Education</span></td>' +
+              '<td>' + esc(_secTitle) + '</td>' +
+              '<td>2026</td>' +
+              '<td>State / Board Results</td>' +
+              '</tr>';
+
           var psHtml = '<div class="edu-ps-card">' +
             '<div class="edu-ps-head"><i class="fa-solid fa-google"></i>&nbsp; Set as Preferred Source on Google</div>' +
-            '<p class="edu-ps-desc">' + esc(_psTitle) + ' Education Results 2026 — Get complete details, official notifications, exam dates and more at Top Sarkari Jobs.</p>' +
-            '<div style="overflow-x:auto;"><table class="edu-ps-table">' +
-            '<thead><tr><th>Page Type</th><th>State / Board</th><th>Year</th><th>Category</th></tr></thead>' +
-            '<tbody><tr>' +
-            '<td><span class="edu-ps-badge">Education</span></td>' +
-            '<td>' + esc((section && section.title) || sectionId || 'Education') + '</td>' +
-            '<td>2026</td>' +
-            '<td>Board / University</td>' +
-            '</tr>' +
-            '<tr><td colspan="4" style="color:#64748b;font-size:.79rem;font-style:italic;">Top Sarkari Jobs — Indias No.1 Sarkari Jobs Portal</td></tr>' +
-            '</tbody></table></div></div>';
+            '<p class="edu-ps-desc">' + _desc + '</p>' +
+            '<div class="edu-ps-table-wrap"><table class="edu-ps-table">' +
+            '<thead><tr><th>Page Type</th><th>' + (_isItem ? 'Exam / Notification' : 'State / Board') + '</th><th>Date / Year</th><th>Category</th></tr></thead>' +
+            '<tbody>' + _tableRows + '</tbody>' +
+            '</table></div>' +
+            '<p class="edu-ps-org">Top Sarkari Jobs — India No.1 Sarkari Jobs Portal</p>' +
+            '</div>';
           html = psHtml + html;
         })();
         loadingEl.style.display = 'none';
