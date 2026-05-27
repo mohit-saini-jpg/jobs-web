@@ -679,43 +679,14 @@
     var titleLabel=titleCase(currentSlug)+' '+new Date().getFullYear();
     if(svTitle){svTitle.innerHTML='<span class="sv-title-icon"><i class="fa-solid fa-bell"></i></span> '+titleLabel;}
 
-    /* ── Set as Preferred Source on Google ── */
-    (function populateSvPreferredCard(){
-      var card=document.getElementById('svPreferredCard');
-      if(!card)return;
-      var slug=currentSlug||'';
-      var catLabel=titleCase(slug)||'Sarkari Jobs';
-      /* Determine mode: offline/walkin/online */
-      var mode='Online';
-      if(/offline/i.test(slug)) mode='Offline';
-      else if(/walkin|walk-in/i.test(slug)) mode='Walk-in';
-      /* Determine page type label */
-      var pageType='Sarkari Jobs';
-      if(/admit-card|hall-ticket|call-letter|exam-date/i.test(slug)) pageType='Admit Card';
-      else if(/result|merit-list|cut-off|score-card/i.test(slug)) pageType='Result';
-      else if(/answer-key|syllabus/i.test(slug)) pageType='Answer Key';
-      else if(/admission|admissions/i.test(slug)) pageType='Admission';
-      else if(/scheme|yojna/i.test(slug)) pageType='Govt Scheme';
-      else if(/csc|pdf/i.test(slug)) pageType='CSC Resource';
-      else if(/railway/i.test(slug)) pageType='Railway Jobs';
-      else if(/bank/i.test(slug)) pageType='Bank Jobs';
-      else if(/police|defence|army/i.test(slug)) pageType='Police / Defence';
-      else if(/teaching|teacher|faculty/i.test(slug)) pageType='Teaching Jobs';
-      else if(/medical|hospital|healthcare/i.test(slug)) pageType='Medical Jobs';
-      else if(/state/i.test(slug)) pageType='State Govt Jobs';
-      else if(/central/i.test(slug)) pageType='Central Govt Jobs';
-      else if(/upcoming/i.test(slug)) pageType='Upcoming Jobs';
-      /* Populate */
-      var descEl=document.getElementById('svPsDesc');
-      if(descEl) descEl.textContent=catLabel+' 2026 — Get latest government job notifications, eligibility, vacancies, results and admit cards at Top Sarkari Jobs.';
-      var ptEl=document.getElementById('svPsPageType');
-      if(ptEl){ ptEl.textContent=pageType; ptEl.className='sv-ps-badge '+(mode==='Offline'?'offline':'online'); }
-      var catEl=document.getElementById('svPsCategory');
-      if(catEl) catEl.textContent=catLabel;
-      var modeEl=document.getElementById('svPsMode');
-      if(modeEl) modeEl.textContent=mode+' Form';
-      card.style.display='';
-    })();
+    /* ── Set as Preferred Source on Google — Unified Engine ── */
+    if (window.TSJPreferredSource) {
+      window.TSJPreferredSource.populateSection({ slug: currentSlug });
+    } else {
+      /* Fallback: show card with minimal info until engine loads */
+      var _c=document.getElementById('svPreferredCard');
+      if(_c){ _c.style.display=''; }
+    }
 
     var PAGE_SIZE=30, allItems=[], shownCount=0;
 
@@ -773,6 +744,10 @@
       allItems=items; shownCount=0; svGrid.innerHTML='';
       /* Update total jobs counter */
       if(svTotal){svTotal.textContent='Total Jobs: '+items.length;svTotal.style.display=items.length?'':'none';}
+      /* Update preferred source card with real count */
+      if(window.TSJPreferredSource && items.length>0){
+        window.TSJPreferredSource.populateSection({slug:currentSlug,count:items.length});
+      }
       if(!items.length){
         svGrid.innerHTML='<div class="sv-empty"><i class="fa-solid fa-folder-open"></i>No jobs found. Check back soon!</div>';
         svMoreWrap.style.display='none'; return;
@@ -1114,6 +1089,8 @@
     </nav>
   </aside>
 
+  <!-- Unified Preferred Source Engine -->
+  <script src="/preferred-source-engine.js?v=20260527"></script>
   <script src="/script.js?v=20260520" defer></script>
   <script src="/seo-engine.min.js?v=20260517" defer></script>
 <script src="/tsj-push.js?v=4.0" defer></script>
