@@ -16,9 +16,15 @@
     s.textContent = `
     /* ── PSR Card Shell ── */
     .psr-card{background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;overflow:hidden;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
-    .psr-head{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;font-size:.9rem;font-weight:800;gap:8px;}
-    .psr-head-left{display:flex;align-items:center;gap:8px;font-size:.9rem;}
-    .psr-head-right{font-size:.7rem;font-weight:600;background:rgba(255,255,255,.18);padding:3px 10px;border-radius:20px;white-space:nowrap;}
+    .psr-head{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;font-size:.88rem;font-weight:800;gap:6px;flex-wrap:nowrap;}
+    .psr-head-left{display:flex;align-items:center;gap:6px;font-size:.82rem;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
+    .psr-head-right{font-size:.65rem;font-weight:700;background:rgba(255,255,255,.2);padding:3px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
+    @media(max-width:480px){
+      .psr-head{padding:8px 10px;gap:5px;}
+      .psr-head-left{font-size:.76rem;}
+      .psr-head-right{font-size:.6rem;padding:2px 7px;}
+      .psr-subhead{font-size:.65rem;padding:4px 10px;}
+    }
     .psr-subhead{background:linear-gradient(90deg,#fbbf24,#f59e0b);color:#1c1917;font-size:.72rem;font-weight:800;text-align:center;padding:5px 12px;letter-spacing:.06em;text-transform:uppercase;}
     .psr-section-label{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#fff;padding:5px 14px;display:flex;align-items:center;gap:6px;}
     /* ── Dual-column tables (Basic Info + Important Info) ── */
