@@ -798,10 +798,30 @@
       if (jobSearchData) return jobSearchData;
       jobSearchData = [];
       try {
-        const [merged, complete] = await Promise.all([
-          getJSON("merged_sarkari_data.json").catch(() => null),
-          getJSON("Complete_Jobs_Full_Data.json").catch(() => null)
-        ]);
+        /* Smart loading: full chunk for category pages, summary for homepage */
+        const _catPath = location.pathname;
+        const _FULL_CHUNK_MAP = {
+          '/category/admissions/': '/data/admissions.json',
+          '/category/admit-result/': '/data/sr-admit-card.json',
+          '/section/latest-jobs/': '/data/sr-latest-jobs.json',
+          '/section/results/': '/data/sr-result.json',
+          '/section/admit-card/': '/data/sr-admit-card.json',
+          '/section/answer-key/': '/data/sr-answer-key.json',
+          '/section/state-jobs/': '/data/state-jobs.json',
+          '/section/central-jobs/': '/data/central-jobs.json',
+          '/section/upcoming-jobs/': '/data/upcoming-jobs.json',
+          '/section/latest-jobs-new/': '/data/latest-jobs-new.json',
+          '/section/offline-form/': '/data/offline-form.json',
+          '/section/admission/': '/data/sr-admission.json',
+          '/section/admissions/': '/data/admissions.json',
+        };
+        const _chunkUrl = _FULL_CHUNK_MAP[_catPath] || '/data/merged-summary.json';
+        let _mergedRaw = await getJSON(_chunkUrl).catch(() => null);
+        /* If chunk format {category, jobs:[]}, normalize to full merged format */
+        if (_mergedRaw && Array.isArray(_mergedRaw.jobs) && !_mergedRaw.scraped_at) {
+          _mergedRaw = { jobs: _mergedRaw.jobs };
+        }
+        const [merged, complete] = [_mergedRaw, await getJSON("Complete_Jobs_Full_Data.json").catch(() => null)];
         const slugify = t => (t || "").toLowerCase().replace(/[^a-z0-9\s-]/g, "").replace(/[\s-]+/g, "-").slice(0, 120).replace(/^-+|-+$/g, "");
         if (merged && Array.isArray(merged.jobs)) {
           merged.jobs.forEach(j => {
@@ -2291,7 +2311,7 @@
          jobs.json / tools.json / services.json are EXCLUDED intentionally.
          ─────────────────────────────────────────────────────────────── */
       const [merged, daily, complete, stateJobs] = await Promise.all([
-        getJSON("merged_sarkari_data.json").catch(() => null),
+        getJSON("/data/merged-summary.json").catch(() => null),
         getJSON("dailyupdates.json").catch(() => null),
         getJSON("Complete_Jobs_Full_Data.json").catch(() => null),
         getJSON("state-jobs-data.json").catch(() => null)

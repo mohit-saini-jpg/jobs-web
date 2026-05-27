@@ -2,50 +2,654 @@
 <html lang="en">
 <head>
   <base href="/">
+  <!--
+    education-detail.html — Education Jobs Detail Page
+    ═══════════════════════════════════════════════════
+    Reads: Education_Jobs.json
+    URL:   /education/haryana/?slug=ap-class-10-result-2026
+           /education/haryana/  (shows section list)
+
+    Renders item.detail sections dynamically:
+      paragraph → text block
+      table     → responsive table
+      list      → bullet/numbered list
+      merged_info → key-value info cards
+      important_links → action buttons
+  -->
+
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Nagaland Education 2026 | Top Sarkari Jobs</title>
-  <meta name="description" content="Nagaland Education notifications, results, admit cards and exam updates 2026."/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title id="pageTitle">Education Details | Top Sarkari Jobs</title>
+  <meta id="metaDesc" name="description" content="Education news, results, admit cards and exam updates for all states."/>
   <meta name="robots" content="index, follow"/>
-  <link rel="canonical" href="https://www.topsarkarijobs.com/education/nagaland/"/>
-  <link rel="icon" type="image/x-icon" href="image.ico"/>
-  <meta property="og:title" content="Nagaland Education 2026 | Top Sarkari Jobs"/>
-  <meta property="og:description" content="Nagaland Education notifications 2026 on Top Sarkari Jobs."/>
-  <meta property="og:image" content="https://www.topsarkarijobs.com/image.png"/>
-  <meta property="og:type" content="website"/>
-  <meta property="og:url" content="https://www.topsarkarijobs.com/education/nagaland/"/>
+  <link id="canonicalTag" rel="canonical" href="https://www.topsarkarijobs.com/education-detail.html"/>
+
+  <link rel="icon" type="image/x-icon" href="/image.ico"/>
+  <link rel="stylesheet" href="/styles.css"/>
+  <link rel="preload" href="/fonts/fa/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"/>
+  <noscript><link rel="stylesheet" href="/fonts/fa/all.min.css"/></noscript>
+
+  <meta property="og:type" content="article"/>
   <meta property="og:site_name" content="Top Sarkari Jobs"/>
-  <meta name="twitter:card" content="summary"/>
-  <script type="application/ld+json">{
-    "@context":"https://schema.org",
-    "@type":"WebPage",
-    "name":"Nagaland Education 2026 | Top Sarkari Jobs",
-    "url":"https://www.topsarkarijobs.com/education/nagaland/"
-  }</script>
-  <link rel="preload" href="fonts/fa/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"/>
-  <noscript><link rel="stylesheet" href="fonts/fa/all.min.css"/></noscript>
-  <link rel="preload" href="/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'"/>
-  <noscript><link rel="stylesheet" href="/styles.css"/></noscript>
+  <meta property="og:image" content="https://www.topsarkarijobs.com/image.png"/>
+  <meta id="ogTitle" property="og:title" content="Education Details | Top Sarkari Jobs"/>
+  <meta id="ogDesc"  property="og:description" content="Education news and exam updates on Top Sarkari Jobs."/>
+  <meta id="ogUrl"   property="og:url" content="https://www.topsarkarijobs.com/education-detail.html"/>
+
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta id="twTitle" name="twitter:title" content="Education Details | Top Sarkari Jobs"/>
+  <meta id="twDesc"  name="twitter:description" content="Education news and exam updates on Top Sarkari Jobs."/>
+
+  <style>
+    /* ── Page Layout ── */
+    .edu-wrap { max-width: 860px; margin: 0 auto; padding: 12px 10px 40px; }
+
+    /* ── Breadcrumb ── */
+    .edu-bc { font-size:.75rem; color:var(--muted); margin-bottom:12px; display:flex; flex-wrap:wrap; gap:4px; align-items:center; }
+    .edu-bc a { color:var(--blue); text-decoration:none; }
+    .edu-bc a:hover { text-decoration:underline; }
+    .edu-bc i { font-size:.6rem; color:#9ca3af; }
+
+    /* ── Section List (when no slug) ── */
+    .edu-list-card { background:#fff; border-radius:12px; box-shadow:var(--shadow); margin-bottom:10px; overflow:hidden; }
+    .edu-list-head { background:linear-gradient(135deg,#1a56db,#1e40af); color:#fff; padding:10px 14px; font-size:.85rem; font-weight:700; display:flex; align-items:center; gap:8px; }
+    .edu-list-item { display:flex; align-items:flex-start; gap:10px; padding:10px 14px; border-bottom:1px solid #f1f5f9; text-decoration:none; color:inherit; transition:background .15s; }
+    .edu-list-item:last-child { border-bottom:none; }
+    .edu-list-item:hover { background:#f8faff; }
+    .edu-list-num { background:var(--blue); color:#fff; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; font-size:.65rem; font-weight:700; flex-shrink:0; margin-top:1px; }
+    .edu-list-title { font-size:.82rem; font-weight:600; color:#1e293b; line-height:1.4; }
+    .edu-list-date { font-size:.7rem; color:var(--muted); margin-top:2px; }
+    .edu-list-badge { font-size:.62rem; background:#eff6ff; color:#1d4ed8; border-radius:4px; padding:1px 5px; font-weight:600; white-space:nowrap; margin-top:4px; display:inline-block; }
+
+    /* ── Detail Page Header ── */
+    .edu-hdr { background:linear-gradient(135deg,#1a56db,#1e40af); border-radius:12px; padding:16px; color:#fff; margin-bottom:14px; }
+    .edu-hdr-title { font-size:1rem; font-weight:800; line-height:1.4; margin-bottom:6px; }
+    .edu-hdr-meta { font-size:.72rem; opacity:.85; display:flex; flex-wrap:wrap; gap:10px; }
+    .edu-hdr-meta span { display:flex; align-items:center; gap:4px; }
+
+    /* ── Short Info Box ── */
+    .edu-short-info { background:#f0f9ff; border-left:4px solid #0891b2; border-radius:0 8px 8px 0; padding:12px 14px; font-size:.82rem; color:#1e293b; line-height:1.65; margin-bottom:14px; }
+
+    /* ── Cards ── */
+    .edu-card { background:#fff; border-radius:12px; box-shadow:var(--shadow); margin-bottom:12px; overflow:hidden; }
+    .edu-card-head { padding:10px 14px; color:#fff; font-size:.82rem; font-weight:700; display:flex; align-items:center; gap:8px; }
+    .edu-card-body { padding:0; }
+
+    /* ── Table ── */
+    .edu-table { width:100%; border-collapse:collapse; font-size:.78rem; }
+    .edu-table th { background:#f8faff; color:#374151; font-weight:700; padding:8px 12px; text-align:left; border-bottom:1px solid #e5e7eb; width:42%; }
+    .edu-table td { padding:8px 12px; color:#1e293b; border-bottom:1px solid #f1f5f9; line-height:1.5; }
+    .edu-table tr:last-child th, .edu-table tr:last-child td { border-bottom:none; }
+    .edu-table-scroll { overflow-x:auto; }
+    .edu-table-full { width:100%; border-collapse:collapse; font-size:.78rem; }
+    .edu-table-full thead th { background:linear-gradient(135deg,#1a56db,#1e40af); color:#fff; padding:8px 12px; text-align:left; font-weight:700; }
+    .edu-table-full tbody td { padding:8px 12px; border-bottom:1px solid #f1f5f9; color:#1e293b; line-height:1.5; }
+    .edu-table-full tbody tr:hover td { background:#f8faff; }
+    .edu-table-full tbody tr:last-child td { border-bottom:none; }
+
+    /* ── Paragraph ── */
+    .edu-para { font-size:.82rem; color:#374151; line-height:1.7; padding:10px 14px; border-bottom:1px solid #f1f5f9; }
+    .edu-para:last-child { border-bottom:none; }
+
+    /* ── List ── */
+    .edu-ul { padding:10px 14px 10px 30px; margin:0; }
+    .edu-ul li { font-size:.8rem; color:#374151; padding:4px 0; line-height:1.55; }
+    .edu-ol { padding:10px 14px 10px 30px; margin:0; }
+    .edu-ol li { font-size:.8rem; color:#374151; padding:4px 0; line-height:1.55; }
+
+    /* ── Merged Info ── */
+    .edu-mi-item { padding:10px 14px; border-bottom:1px solid #f1f5f9; }
+    .edu-mi-item:last-child { border-bottom:none; }
+    .edu-mi-label { font-size:.72rem; font-weight:700; color:#1a56db; text-transform:uppercase; letter-spacing:.03em; margin-bottom:4px; }
+    .edu-mi-text { font-size:.8rem; color:#374151; line-height:1.6; }
+
+    /* ── Important Links Table ── */
+    .edu-links-table-wrap { padding:10px 14px; overflow-x:auto; }
+    .edu-links-tbl { width:100%; border-collapse:collapse; font-size:.78rem; }
+    .edu-links-tbl thead th { background:linear-gradient(135deg,#1a56db,#1e40af); color:#fff; padding:8px 12px; text-align:left; font-weight:700; }
+    .edu-links-tbl tbody tr:nth-child(even) td { background:#f8faff; }
+    .edu-links-tbl tbody tr:hover td { background:#eff6ff; }
+    .edu-links-tbl tbody td { padding:8px 12px; border-bottom:1px solid #f1f5f9; color:#1e293b; line-height:1.5; vertical-align:middle; }
+    .edu-links-tbl tbody tr:last-child td { border-bottom:none; }
+    .edu-link-btn { display:inline-flex; align-items:center; gap:5px; padding:5px 12px; border-radius:6px; font-size:.73rem; font-weight:700; text-decoration:none; transition:opacity .15s; white-space:nowrap; }
+    .edu-link-btn:hover { opacity:.82; }
+    .edu-link-btn-green  { background:#059669; color:#fff; }
+    .edu-link-btn-blue   { background:#1a56db; color:#fff; }
+    .edu-link-btn-orange { background:#f97316; color:#fff; }
+    .edu-link-btn-red    { background:#dc2626; color:#fff; }
+    /* fallback buttons (old style) */
+    .edu-links-wrap { padding:12px 14px; display:flex; flex-wrap:wrap; gap:8px; }
+    .edu-btn { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:8px; font-size:.75rem; font-weight:700; text-decoration:none; transition:opacity .15s; }
+    .edu-btn:hover { opacity:.85; }
+    .edu-btn-green  { background:#059669; color:#fff; }
+    .edu-btn-blue   { background:#1a56db; color:#fff; }
+    .edu-btn-orange { background:#f97316; color:#fff; }
+    .edu-btn-red    { background:#dc2626; color:#fff; }
+
+    /* ── Notice ── */
+    .edu-notice { background:#fef3c7; border:1px solid #fbbf24; border-radius:8px; padding:10px 14px; font-size:.75rem; color:#78350f; margin-bottom:14px; display:flex; gap:8px; align-items:flex-start; }
+
+    /* ── Loading / Error ── */
+    .edu-loading { text-align:center; padding:40px 20px; color:var(--muted); font-size:.9rem; }
+    .edu-error { background:#fff1f2; border:1px solid #fca5a5; border-radius:10px; padding:20px; text-align:center; color:#991b1b; font-size:.85rem; }
+
+    /* ── Section Title ── */
+    .edu-sec-title { font-size:.88rem; font-weight:700; color:#1e293b; padding:10px 14px 6px; border-bottom:1px solid #f1f5f9; display:flex; align-items:center; gap:6px; }
+    .edu-sec-title i { color:var(--blue); }
+
+    /* ── Back Button ── */
+    .edu-back-btn { display:inline-flex; align-items:center; gap:6px; font-size:.78rem; color:var(--blue); text-decoration:none; background:#eff6ff; padding:6px 12px; border-radius:8px; margin-bottom:12px; font-weight:600; }
+    .edu-back-btn:hover { background:#dbeafe; }
+
+    @media(max-width:600px) {
+      .edu-hdr-title { font-size:.88rem; }
+      .edu-table th { width:38%; }
+    }
+  </style>
+  <script type="application/ld+json" id="eduSchema">{}</script>
+  <script>
+  /* Education page schema — injected at runtime */
+  (function(){
+    var path = location.pathname;
+    var secM = path.match(/\/education\/([^\/]+)\/?/);
+    if (!secM) return;
+    var sectionId = decodeURIComponent(secM[1]);
+    var label = sectionId.replace(/-/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();});
+    var canonUrl = 'https://www.topsarkarijobs.com/education/' + sectionId + '/';
+    var el = document.getElementById('eduSchema');
+    if (el) el.textContent = JSON.stringify({
+      '@context':'https://schema.org','@type':'WebPage',
+      'name': label + ' Education Results 2026 | Top Sarkari Jobs',
+      'description': 'Latest ' + label + ' education results, admit cards, recruitment 2026. Check results, dates and more.',
+      'url': canonUrl,
+      'breadcrumb': {
+        '@type':'BreadcrumbList',
+        'itemListElement':[
+          {'@type':'ListItem','position':1,'name':'Home','item':'https://www.topsarkarijobs.com/'},
+          {'@type':'ListItem','position':2,'name':'Education','item':'https://www.topsarkarijobs.com/education/'},
+          {'@type':'ListItem','position':3,'name':label,'item':canonUrl}
+        ]
+      }
+    });
+  })();
+  </script>
 </head>
 <body>
+
+  <!-- Header -->
   <div id="headerPlaceholder"></div>
   <script>
-    fetch("/header.html",{cache:"no-store"}).then(r=>r.ok?r.text():null).catch(()=>null)
-      .then(h=>{if(h){var d=document.getElementById("headerPlaceholder");if(d)d.outerHTML=h;}});
+    var _hp = fetch('/header.html',{cache:'no-store'}).then(function(r){return r.ok?r.text():null;}).catch(function(){return null;});
+    _hp.then(function(h){if(h){var d=document.getElementById('headerPlaceholder');if(d)d.outerHTML=h;}});
   </script>
-  <script>
-    // Redirect to education-detail page for this section
-    /* Already at clean URL /education/nagaland/ */
-    // window.location.replace used to redirect here — now served directly
-  </script>
-  <main style="padding:40px 20px;text-align:center;">
-    <p>Loading Nagaland Education...</p>
-    <a href="/education/nagaland/">Click here if not redirected</a>
+
+  <main>
+    <div class="edu-wrap">
+
+      <!-- Breadcrumb -->
+      <nav class="edu-bc" id="edBreadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <i class="fa-solid fa-chevron-right"></i>
+        <a href="/education-detail.html">Education</a>
+        <i class="fa-solid fa-chevron-right"></i>
+        <span id="bcSection">Loading…</span>
+      </nav>
+
+      <!-- Back Button -->
+      <a href="javascript:history.back()" class="edu-back-btn" id="edBackBtn">
+        <i class="fa-solid fa-arrow-left"></i> Back
+      </a>
+
+      <!-- Loading state -->
+      <div class="edu-loading" id="edLoading">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size:2rem;color:var(--blue);"></i>
+        <p>Loading education details…</p>
+      </div>
+
+      <!-- Error state -->
+      <div class="edu-error" id="edError" style="display:none;">
+        <i class="fa-solid fa-triangle-exclamation" style="font-size:2rem;margin-bottom:8px;display:block;"></i>
+        <strong>Could not load data.</strong><br/>
+        <span id="edErrorMsg">Please try again later.</span>
+      </div>
+
+      <!-- Content container -->
+      <div id="edContent" style="display:none;"></div>
+
+    </div>
   </main>
+
+  <!-- Footer -->
   <div id="footerPlaceholder"></div>
   <script>
-    fetch("/footer.html",{cache:"no-store"}).then(r=>r.ok?r.text():null).catch(()=>null)
-      .then(h=>{if(h){var d=document.getElementById("footerPlaceholder");if(d)d.outerHTML=h;}});
+    fetch('/footer.html',{cache:'no-store'}).then(function(r){return r.ok?r.text():null;}).catch(function(){return null;})
+      .then(function(h){if(h){var d=document.getElementById('footerPlaceholder');if(d)d.outerHTML=h;}});
   </script>
+
+  <script>
+  (() => {
+    'use strict';
+
+    const safe = v => (v ?? '').toString().trim();
+    const esc  = s => safe(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+    /* ── URL normalisation: /education/section-id/ → read section from path ── */
+    (function normalizeEduUrl() {
+      var pathM = location.pathname.match(/^\/education\/([^\/]+)\/?$/);
+      if (pathM && !location.search) {
+        /* Clean path — nothing to do, section extracted from path below */
+      } else if (pathM && location.search) {
+        /* Has both path and query — normalize to just path */
+        try { window.history.replaceState({},'', '/education/' + pathM[1] + '/' + location.search); } catch(_){}
+      }
+    })();
+    const params  = new URLSearchParams(location.search);
+    /* Read section from clean URL path /education/{sectionId}/ or legacy ?section= param */
+    var _pathSec = (function(){ var m = location.pathname.match(/^\/education\/([^\/]+)\/?$/); return m ? decodeURIComponent(m[1]) : ''; })();
+    const sectionId = _pathSec || safe(params.get('section') || '');
+    /* Update canonical to clean URL */
+    (function(){
+      var can = document.getElementById('canonicalTag') || document.querySelector('link[rel="canonical"]');
+      if (can && sectionId) {
+        var slug = safe(params.get('slug') || '');
+        var cleanUrl = 'https://www.topsarkarijobs.com/education/' + encodeURIComponent(sectionId) + '/';
+        if (slug) cleanUrl += '?slug=' + encodeURIComponent(slug);
+        can.href = cleanUrl;
+        try { window.history.replaceState({}, '', '/education/' + encodeURIComponent(sectionId) + '/' + (slug ? '?slug=' + encodeURIComponent(slug) : '')); } catch(_){}
+      }
+    })();
+    const slugArg   = safe(params.get('slug') || '');
+
+    const loadingEl = document.getElementById('edLoading');
+    const errorEl   = document.getElementById('edError');
+    const contentEl = document.getElementById('edContent');
+    const bcSection = document.getElementById('bcSection');
+
+    function showError(msg) {
+      loadingEl.style.display = 'none';
+      errorEl.style.display   = '';
+      document.getElementById('edErrorMsg').textContent = msg;
+    }
+
+    function makeSlug(title) {
+      return safe(title).toLowerCase()
+        .replace(/[^\w\s-]/g,'')
+        .replace(/\s+/g,'-')
+        .replace(/-+/g,'-')
+        .replace(/^-|-$/g,'')
+        .slice(0,120);
+    }
+
+    /* ── Render Section List (no slug) ── */
+    function renderSectionList(section) {
+      const title = section.title || section.id || 'Education';
+      const items = section.items || [];
+
+      document.title = title + ' Education | Top Sarkari Jobs';
+      bcSection.textContent = title;
+
+      let html = `
+        <h1 style="font-size:1rem;font-weight:800;color:#1e293b;margin-bottom:14px;padding-left:2px;">
+          <i class="fa-solid fa-graduation-cap" style="color:var(--blue);"></i> ${esc(title)} – Education Updates
+        </h1>
+        <div class="edu-notice">
+          <i class="fa-solid fa-circle-info" style="flex-shrink:0;margin-top:1px;"></i>
+          <span>Click on any item below to view full details including important dates, links and more.</span>
+        </div>
+        <div class="edu-list-card">
+          <div class="edu-list-head">
+            <i class="fa-solid fa-list"></i> ${esc(title)} Education (${items.length} Items)
+          </div>`;
+
+      items.forEach((item, idx) => {
+        const slug = makeSlug(item.name || item.examName || '');
+        const url  = `/education/${encodeURIComponent(sectionId)}/?slug=${encodeURIComponent(slug)}`;
+        const date = safe(item.date || item.postDate || '');
+        const cat  = safe(item.category || '');
+        html += `
+          <a href="${url}" class="edu-list-item">
+            <span class="edu-list-num">${idx+1}</span>
+            <div>
+              <div class="edu-list-title">${esc(item.name || item.examName || 'Untitled')}</div>
+              ${date ? `<div class="edu-list-date"><i class="fa-regular fa-calendar" style="color:var(--blue);"></i> ${esc(date)}</div>` : ''}
+              ${cat  ? `<span class="edu-list-badge">${esc(cat)}</span>` : ''}
+            </div>
+          </a>`;
+      });
+
+      html += `</div>`;
+      return html;
+    }
+
+    /* ── Render Content Blocks ── */
+    function renderContent(blocks) {
+      let html = '';
+      blocks.forEach(block => {
+        const type = (block.type || '').toLowerCase();
+
+        if (type === 'paragraph') {
+          const text = safe(block.text || '');
+          if (text) html += `<div class="edu-para">${esc(text)}</div>`;
+
+        } else if (type === 'table') {
+          const rows = block.rows || [];
+          if (!rows.length) return;
+
+          // First row might be headers if block.headers is empty
+          let headers = block.headers || [];
+          let dataRows = rows;
+          if (!headers.length && rows.length > 0 && rows[0].length) {
+            // Check if first row looks like header (no numbers/dates)
+            headers = rows[0];
+            dataRows = rows.slice(1);
+          }
+
+          // 2-col table (key-value): use th/td layout
+          if (headers.length === 2 || (dataRows.length && dataRows[0].length === 2)) {
+            html += `<div class="edu-table-scroll"><table class="edu-table"><tbody>`;
+            dataRows.forEach(row => {
+              if (row.length >= 2) {
+                html += `<tr><th>${esc(row[0])}</th><td>${esc(row[1])}</td></tr>`;
+              }
+            });
+            html += `</tbody></table></div>`;
+          } else {
+            // Multi-col table
+            html += `<div class="edu-table-scroll"><table class="edu-table-full"><thead><tr>`;
+            headers.forEach(h => { html += `<th>${esc(h)}</th>`; });
+            html += `</tr></thead><tbody>`;
+            dataRows.forEach(row => {
+              html += `<tr>`;
+              row.forEach(cell => { html += `<td>${esc(cell)}</td>`; });
+              html += `</tr>`;
+            });
+            html += `</tbody></table></div>`;
+          }
+
+        } else if (type === 'list') {
+          const listItems = block.items || [];
+          if (!listItems.length) return;
+          const tag = (block.style || 'unordered') === 'ordered' ? 'ol' : 'ul';
+          const cls = tag === 'ol' ? 'edu-ol' : 'edu-ul';
+          html += `<${tag} class="${cls}">`;
+          listItems.forEach(li => { html += `<li>${esc(li)}</li>`; });
+          html += `</${tag}>`;
+
+        } else if (type === 'merged_info') {
+          const items = block.items || [];
+          items.forEach(mi => {
+            const label = safe(mi.label || '');
+            const text  = safe(mi.text  || '');
+            if (!label && !text) return;
+            html += `<div class="edu-mi-item">`;
+            if (label) html += `<div class="edu-mi-label">${esc(label)}</div>`;
+            if (text)  html += `<div class="edu-mi-text">${esc(text)}</div>`;
+            html += `</div>`;
+          });
+
+        } else if (type === 'important_links') {
+          const links = block.links || [];
+          if (!links.length) return;
+
+          function categorizeLinkBtn(label) {
+            const l = label.toLowerCase();
+            if (/apply|register|form/i.test(l)) return 'edu-link-btn-green';
+            if (/result|merit|score/i.test(l))  return 'edu-link-btn-orange';
+            if (/admit|hall|call/i.test(l))      return 'edu-link-btn-orange';
+            if (/notif|pdf|download/i.test(l))   return 'edu-link-btn-blue';
+            if (/website|portal|official/i.test(l)) return 'edu-link-btn-red';
+            return 'edu-link-btn-blue';
+          }
+
+          // Render as proper table with S.No, Name, Link columns
+          html += `<div class="edu-links-table-wrap">
+            <table class="edu-links-tbl">
+              <thead>
+                <tr>
+                  <th style="width:50px;">S.No</th>
+                  <th>Name / Description</th>
+                  <th style="width:130px;">Link</th>
+                </tr>
+              </thead>
+              <tbody>`;
+          let sno = 1;
+          links.forEach(lnk => {
+            const href  = safe(lnk.url || lnk.href || '#');
+            const label = safe(lnk.label || lnk.title || lnk.text || 'Official Link');
+            const cls   = categorizeLinkBtn(label);
+            if (!href || href === '#') return;
+            html += `<tr>
+              <td style="text-align:center;font-weight:700;color:#1a56db;">${sno++}</td>
+              <td>${esc(label)}</td>
+              <td><a href="${esc(href)}" class="edu-link-btn ${cls}" target="_blank" rel="noopener noreferrer">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> Open
+              </a></td>
+            </tr>`;
+          });
+          html += `</tbody></table></div>`;
+        }
+      });
+      return html;
+    }
+
+    /* ── Render Detail View ── */
+    function renderDetail(item, sectionTitle) {
+      const detail = item.detail || {};
+      const title  = safe(detail.title || item.name || item.examName || 'Education Detail');
+      const shortInfo = safe(detail.short_info || '');
+      const sections  = detail.sections || [];
+
+      document.title = title + ' | Top Sarkari Jobs';
+      bcSection.textContent = title.slice(0, 50) + (title.length > 50 ? '…' : '');
+
+      // Update meta
+      const metaDesc = document.getElementById('metaDesc');
+      if (metaDesc) metaDesc.setAttribute('content', shortInfo.slice(0, 160) || title);
+      const ogTitle = document.getElementById('ogTitle');
+      if (ogTitle) ogTitle.setAttribute('content', title + ' | Top Sarkari Jobs');
+
+      let html = '';
+
+      // Header
+      const postDate = safe(item.postDate || item.date || '');
+      const category = safe(item.category || sectionTitle || '');
+      html += `
+        <div class="edu-hdr">
+          <div class="edu-hdr-title">${esc(title)}</div>
+          <div class="edu-hdr-meta">
+            ${category ? `<span><i class="fa-solid fa-tag"></i> ${esc(category)}</span>` : ''}
+            ${postDate ? `<span><i class="fa-regular fa-calendar"></i> ${esc(postDate)}</span>` : ''}
+          </div>
+        </div>`;
+
+      // Short Info
+      if (shortInfo) {
+        html += `<div class="edu-short-info">${esc(shortInfo)}</div>`;
+      }
+
+      // Notice
+      html += `
+        <div class="edu-notice">
+          <i class="fa-solid fa-triangle-exclamation" style="flex-shrink:0;margin-top:1px;"></i>
+          <span><strong>Important:</strong> Always verify details on the official website before applying. Dates &amp; eligibility may change without notice.</span>
+        </div>`;
+
+      // Official link (top)
+      const officialUrl = safe(item.url || '');
+      if (officialUrl && officialUrl.startsWith('http')) {
+        html += `
+          <div class="edu-card" style="margin-bottom:12px;">
+            <div class="edu-links-wrap">
+              <a href="${esc(officialUrl)}" class="edu-btn edu-btn-green" target="_blank" rel="noopener noreferrer">
+                <i class="fa-solid fa-globe"></i> Official Website / Portal
+              </a>
+            </div>
+          </div>`;
+      }
+
+      // Render each section from detail.sections (in sequence order)
+      sections.forEach(sec => {
+        const heading  = safe(sec.heading || '');
+        const contents = sec.content || [];
+        if (!contents.length) return;
+
+        const bodyHtml = renderContent(contents);
+        if (!bodyHtml.trim()) return;
+
+        html += `<div class="edu-card">`;
+        if (heading) {
+          html += `<div class="edu-sec-title"><i class="fa-solid fa-circle-dot"></i> ${esc(heading)}</div>`;
+        }
+        html += `<div class="edu-card-body">${bodyHtml}</div></div>`;
+      });
+
+      // Render top-level important_links from item.detail.important_links
+      const topLinks = detail.important_links || {};
+      const structLinks = topLinks.structured_links || [];
+      const clickHereLinks = topLinks.click_here || [];
+
+      // Build unified links array - prefer structured_links, else fallback to click_here
+      let allLinks = [];
+      if (structLinks.length) {
+        allLinks = structLinks.map((l, i) => ({
+          label: l.label || ('Link ' + (i+1)),
+          url: l.url || l.href || ''
+        }));
+      } else if (clickHereLinks.length) {
+        allLinks = clickHereLinks.map((u, i) => ({
+          label: 'Official Link ' + (i+1),
+          url: u
+        }));
+      }
+
+      if (allLinks.length) {
+        function categorizeLinkBtnTop(label) {
+          const l = label.toLowerCase();
+          if (/apply|register|form/i.test(l)) return 'edu-link-btn-green';
+          if (/result|merit|score/i.test(l))  return 'edu-link-btn-orange';
+          if (/admit|hall|call/i.test(l))      return 'edu-link-btn-orange';
+          if (/notif|pdf|download/i.test(l))   return 'edu-link-btn-blue';
+          if (/website|portal|official/i.test(l)) return 'edu-link-btn-red';
+          return 'edu-link-btn-blue';
+        }
+        let linksHtml = `<div class="edu-card">
+          <div class="edu-card-head" style="background:linear-gradient(135deg,#1a56db,#1e40af);">
+            <i class="fa-solid fa-link"></i> Important Links
+          </div>
+          <div class="edu-card-body">
+            <div class="edu-links-table-wrap">
+              <table class="edu-links-tbl">
+                <thead><tr>
+                  <th style="width:50px;">S.No</th>
+                  <th>Name / Description</th>
+                  <th style="width:130px;">Link</th>
+                </tr></thead>
+                <tbody>`;
+        allLinks.forEach((lnk, idx) => {
+          if (!lnk.url || lnk.url === '#') return;
+          const cls = categorizeLinkBtnTop(lnk.label);
+          linksHtml += `<tr>
+            <td style="text-align:center;font-weight:700;color:#1a56db;">${idx+1}</td>
+            <td>${esc(lnk.label)}</td>
+            <td><a href="${esc(lnk.url)}" class="edu-link-btn ${cls}" target="_blank" rel="noopener noreferrer">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i> Open
+            </a></td>
+          </tr>`;
+        });
+        linksHtml += `</tbody></table></div></div></div>`;
+        html += linksHtml;
+      }
+
+      return html;
+    }
+
+    /* ── Main Load ── */
+    fetch('/Education_Jobs.json')
+      .then(r => {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(data => {
+        const allSections = data.sections || [];
+
+        // Find the section matching sectionId
+        const section = allSections.find(s => s.id === sectionId || s.title === sectionId);
+
+        if (!section) {
+          if (!sectionId) {
+            // No section param: show all sections list
+            bcSection.textContent = 'All Education';
+            let html = `<h1 style="font-size:1rem;font-weight:800;color:#1e293b;margin-bottom:14px;padding-left:2px;">
+              <i class="fa-solid fa-graduation-cap" style="color:var(--blue);"></i> Education State Wise – All Sections
+            </h1>`;
+            allSections.forEach(sec => {
+              html += `<a href="/education/${encodeURIComponent(sec.id)}/" class="edu-list-item" style="display:flex;background:#fff;border-radius:10px;box-shadow:var(--shadow);margin-bottom:8px;padding:12px 14px;text-decoration:none;color:inherit;align-items:center;gap:10px;">
+                <i class="fa-solid fa-graduation-cap" style="color:var(--blue);font-size:1.1rem;"></i>
+                <div>
+                  <div class="edu-list-title">${esc(sec.title)}</div>
+                  <div class="edu-list-date">${sec.items ? sec.items.length + ' items' : ''}</div>
+                </div>
+                <i class="fa-solid fa-chevron-right" style="margin-left:auto;color:#d1d5db;font-size:.7rem;"></i>
+              </a>`;
+            });
+            loadingEl.style.display = 'none';
+            contentEl.innerHTML = html;
+            contentEl.style.display = '';
+            return;
+          }
+          showError('Section "' + sectionId + '" not found in Education_Jobs.json.');
+          return;
+        }
+
+        let html = '';
+
+        if (slugArg) {
+          // Find item by slug
+          const items = section.items || [];
+          const item  = items.find(it => {
+            const itSlug = makeSlug(it.name || it.examName || '');
+            return itSlug === slugArg;
+          });
+
+          if (!item) {
+            // Try partial match
+            const partial = items.find(it => {
+              const itSlug = makeSlug(it.name || it.examName || '');
+              return itSlug.includes(slugArg) || slugArg.includes(itSlug.slice(0,20));
+            });
+            if (!partial) {
+              showError('Item not found. Please go back and try again.');
+              return;
+            }
+            html = renderDetail(partial, section.title);
+          } else {
+            html = renderDetail(item, section.title);
+          }
+
+          // Add "Back to section" link at bottom
+          html += `
+            <div style="margin-top:16px;text-align:center;">
+              <a href="/education/${encodeURIComponent(sectionId)}/" class="edu-back-btn">
+                <i class="fa-solid fa-arrow-left"></i> Back to ${esc(section.title)} List
+              </a>
+            </div>`;
+        } else {
+          // Show section item list
+          html = renderSectionList(section);
+        }
+
+        loadingEl.style.display = 'none';
+        contentEl.innerHTML = html;
+        contentEl.style.display = '';
+      })
+      .catch(err => {
+        showError('Failed to load Education_Jobs.json: ' + err.message);
+      });
+
+  })();
+  </script>
+
+  <!-- External scripts -->
+  <script src="/tsj-menu.js" defer></script>
 </body>
 </html>

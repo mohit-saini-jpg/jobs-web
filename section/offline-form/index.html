@@ -842,7 +842,7 @@
             return(d&&Array.isArray(d.jobs))?{jobs:d.jobs}:d;
           });
         }).catch(function(){return null;});
-      }()).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;})
+      }())
       .then(function(jsonData){
         if(!jsonData){showItems([]);setupSearch();return;}
         if(Array.isArray(jsonData.jobs)&&jsonData.jobs.length>0){

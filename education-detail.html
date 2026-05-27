@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <base href="/">
   <!--
     education-detail.html — Education Jobs Detail Page
     ═══════════════════════════════════════════════════
@@ -563,7 +564,7 @@
     }
 
     /* ── Main Load ── */
-    fetch('Education_Jobs.json')
+    fetch('/Education_Jobs.json')
       .then(r => {
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.json();
