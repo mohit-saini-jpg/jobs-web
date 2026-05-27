@@ -3364,7 +3364,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
 
         /* Build sub-links ONLY for non-UPCOMING jobs (UPCOMING uses job detail page for full info) */
         /* Also skip for STATE_JOBS/CENTRAL_JOBS/ADMISSIONS — they use job detail page */
-        var noSubLinks = isUpcoming || cfg.key === 'STATE_JOBS' || cfg.key === 'CENTRAL_JOBS' || cfg.key === 'ADMISSIONS';
+        var noSubLinks = isUpcoming || cfg.key === 'STATE_JOBS' || cfg.key === 'CENTRAL_JOBS' || cfg.key === 'ADMISSIONS' || cfg.key === 'LATEST_JOBS NEW' || cfg.key === 'OFFLINE_FORM' || cfg.key === 'SR_Latest_Jobs' || cfg.key === 'SR_Result' || cfg.key === 'SR_Admit_Card' || cfg.key === 'SR_Admission' || cfg.key === 'SR_Answer_Key';
         var subLinksHtml = '';
         if (!noSubLinks && job.sectionsLinks && job.sectionsLinks.length > 0) {
           var subLinks = job.sectionsLinks.slice(0, 4);
