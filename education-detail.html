@@ -5,8 +5,8 @@
     education-detail.html — Education Jobs Detail Page
     ═══════════════════════════════════════════════════
     Reads: Education_Jobs.json
-    URL:   education-detail.html?section=haryana&slug=ap-class-10-result-2026
-           education-detail.html?section=haryana  (shows section list)
+    URL:   /education/haryana/?slug=ap-class-10-result-2026
+           /education/haryana/  (shows section list)
 
     Renders item.detail sections dynamically:
       paragraph → text block
@@ -145,6 +145,33 @@
       .edu-table th { width:38%; }
     }
   </style>
+  <script type="application/ld+json" id="eduSchema">{}</script>
+  <script>
+  /* Education page schema — injected at runtime */
+  (function(){
+    var path = location.pathname;
+    var secM = path.match(/\/education\/([^\/]+)\/?/);
+    if (!secM) return;
+    var sectionId = decodeURIComponent(secM[1]);
+    var label = sectionId.replace(/-/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();});
+    var canonUrl = 'https://www.topsarkarijobs.com/education/' + sectionId + '/';
+    var el = document.getElementById('eduSchema');
+    if (el) el.textContent = JSON.stringify({
+      '@context':'https://schema.org','@type':'WebPage',
+      'name': label + ' Education Results 2026 | Top Sarkari Jobs',
+      'description': 'Latest ' + label + ' education results, admit cards, recruitment 2026. Check results, dates and more.',
+      'url': canonUrl,
+      'breadcrumb': {
+        '@type':'BreadcrumbList',
+        'itemListElement':[
+          {'@type':'ListItem','position':1,'name':'Home','item':'https://www.topsarkarijobs.com/'},
+          {'@type':'ListItem','position':2,'name':'Education','item':'https://www.topsarkarijobs.com/education/'},
+          {'@type':'ListItem','position':3,'name':label,'item':canonUrl}
+        ]
+      }
+    });
+  })();
+  </script>
 </head>
 <body>
 
@@ -205,8 +232,31 @@
     const safe = v => (v ?? '').toString().trim();
     const esc  = s => safe(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
+    /* ── URL normalisation: /education/section-id/ → read section from path ── */
+    (function normalizeEduUrl() {
+      var pathM = location.pathname.match(/^\/education\/([^\/]+)\/?$/);
+      if (pathM && !location.search) {
+        /* Clean path — nothing to do, section extracted from path below */
+      } else if (pathM && location.search) {
+        /* Has both path and query — normalize to just path */
+        try { window.history.replaceState({},'', '/education/' + pathM[1] + '/' + location.search); } catch(_){}
+      }
+    })();
     const params  = new URLSearchParams(location.search);
-    const sectionId = safe(params.get('section') || '');
+    /* Read section from clean URL path /education/{sectionId}/ or legacy ?section= param */
+    var _pathSec = (function(){ var m = location.pathname.match(/^\/education\/([^\/]+)\/?$/); return m ? decodeURIComponent(m[1]) : ''; })();
+    const sectionId = _pathSec || safe(params.get('section') || '');
+    /* Update canonical to clean URL */
+    (function(){
+      var can = document.getElementById('canonicalTag') || document.querySelector('link[rel="canonical"]');
+      if (can && sectionId) {
+        var slug = safe(params.get('slug') || '');
+        var cleanUrl = 'https://www.topsarkarijobs.com/education/' + encodeURIComponent(sectionId) + '/';
+        if (slug) cleanUrl += '?slug=' + encodeURIComponent(slug);
+        can.href = cleanUrl;
+        try { window.history.replaceState({}, '', '/education/' + encodeURIComponent(sectionId) + '/' + (slug ? '?slug=' + encodeURIComponent(slug) : '')); } catch(_){}
+      }
+    })();
     const slugArg   = safe(params.get('slug') || '');
 
     const loadingEl = document.getElementById('edLoading');
@@ -252,7 +302,7 @@
 
       items.forEach((item, idx) => {
         const slug = makeSlug(item.name || item.examName || '');
-        const url  = `education-detail.html?section=${encodeURIComponent(sectionId)}&slug=${encodeURIComponent(slug)}`;
+        const url  = `/education/${encodeURIComponent(sectionId)}/?slug=${encodeURIComponent(slug)}`;
         const date = safe(item.date || item.postDate || '');
         const cat  = safe(item.category || '');
         html += `
@@ -532,7 +582,7 @@
               <i class="fa-solid fa-graduation-cap" style="color:var(--blue);"></i> Education State Wise – All Sections
             </h1>`;
             allSections.forEach(sec => {
-              html += `<a href="education-detail.html?section=${encodeURIComponent(sec.id)}" class="edu-list-item" style="display:flex;background:#fff;border-radius:10px;box-shadow:var(--shadow);margin-bottom:8px;padding:12px 14px;text-decoration:none;color:inherit;align-items:center;gap:10px;">
+              html += `<a href="/education/${encodeURIComponent(sec.id)}/" class="edu-list-item" style="display:flex;background:#fff;border-radius:10px;box-shadow:var(--shadow);margin-bottom:8px;padding:12px 14px;text-decoration:none;color:inherit;align-items:center;gap:10px;">
                 <i class="fa-solid fa-graduation-cap" style="color:var(--blue);font-size:1.1rem;"></i>
                 <div>
                   <div class="edu-list-title">${esc(sec.title)}</div>
@@ -578,7 +628,7 @@
           // Add "Back to section" link at bottom
           html += `
             <div style="margin-top:16px;text-align:center;">
-              <a href="education-detail.html?section=${encodeURIComponent(sectionId)}" class="edu-back-btn">
+              <a href="/education/${encodeURIComponent(sectionId)}/" class="edu-back-btn">
                 <i class="fa-solid fa-arrow-left"></i> Back to ${esc(section.title)} List
               </a>
             </div>`;

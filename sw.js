@@ -147,6 +147,23 @@ self.addEventListener('fetch', e => {
   }
 
   // ── JSON data: Stale-While-Revalidate (fast + fresh) ─────────────
+  // ── Data chunks — cache 10min (short-lived, frequently updated) ──
+  if (path.startsWith('/data/') && path.endsWith('.json')) {
+    e.respondWith(
+      caches.open(CACHE.data).then(function(cache) {
+        return cache.match(req).then(function(cached) {
+          var fetchPromise = fetch(req).then(function(res) {
+            if (res.ok) cache.put(req, res.clone());
+            return res;
+          });
+          // Stale-while-revalidate: return cache immediately, update in background
+          return cached || fetchPromise;
+        });
+      })
+    );
+    return;
+  }
+
   if (path.endsWith('.json')) {
     e.respondWith(staleWhileRevalidateData(req));
     return;

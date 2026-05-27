@@ -1,39 +1,58 @@
 # robots.txt — Top Sarkari Jobs
 # ==============================
-# Last updated: 2026-05-25
-# AUDIT FIX: Removed /job.html?slug= and /view.html?section= disallows.
-# These were BLOCKING Google from indexing all job pages. Fixed!
+# Last updated: 2026-05-27
+# SEO Clean URL Architecture implemented
 
 User-agent: *
 Allow: /
 
-# ── Block non-content utility pages ──
+# Block internal utility pages
 Disallow: /404.html
-Disallow: /.github/
-Disallow: /.gstack/
-Disallow: /node_modules/
 Disallow: /cache-dashboard.html
 Disallow: /seo-audit-report.html
 Disallow: /JOB_HTML_PATCH_INSTRUCTIONS.html
+Disallow: /.github/
+Disallow: /node_modules/
 
-# ── Block raw query-param URLs (clean /jobs/slug/ versions are crawlable) ──
-# NOTE: /job.html?slug= intentionally NOT blocked — allows Googlebot fallback
-# NOTE: /view.html?section= intentionally NOT blocked
+# Block raw template files (clean URL versions are indexed instead)
+Disallow: /view.html
+Disallow: /job.html
+Disallow: /state-jobs.html
+Disallow: /education-detail.html
+Disallow: /category.html
+Disallow: /search.html
+
+# Block query parameter URLs (clean /section/, /state/, /education/ are indexed)
+Disallow: /view.html?
+Disallow: /state-jobs.html?
+Disallow: /education-detail.html?
+Disallow: /category.html?
+Disallow: /job.html?
 Disallow: /search.html?q=
-Disallow: /category.html?group=
 
-# ── Allow all clean-URL pages explicitly ──
+# Allow all clean-URL hierarchies
 Allow: /section/
+Allow: /data/
 Allow: /jobs/
-Allow: /category/
-Allow: /state-jobs/
-Allow: /search/
 Allow: /state/
+Allow: /education/
+Allow: /category/
+Allow: /search/
+Allow: /about/
+Allow: /contact/
+Allow: /terms/
+Allow: /privacy/
+Allow: /helpdesk/
+Allow: /sitemap/
+Allow: /resume-maker/
+Allow: /tools/
+Allow: /govt-services/
 
-# ── Sitemap declaration ──
-Sitemap: https://www.topsarkarijobs.com/sitemap-index.xml
+# Sitemap
+Sitemap: https://www.topsarkarijobs.com/sitemap.xml
+Sitemap: https://www.topsarkarijobs.com/sitemap-jobs.xml
 
-# ── Specific bot directives ──
+# Bot crawl rate limits
 User-agent: Googlebot
 Allow: /
 

@@ -6,6 +6,25 @@
 
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <style id="tsj-critical-inline">
+/* Critical CSS — Above the fold only — Top Sarkari Jobs */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#0d2257;--blue:#1a56db;--blue2:#1e40af;--accent:#f97316;--red:#dc2626;--green:#059669;--purple:#7c3aed;--teal:#0d9488;--yellow:#d97706;--text:#0f172a;--muted:#4a5568;--border:#e2e8f0;--bg:#f0f4fb;--white:#fff;--radius:10px;--shadow:0 2px 12px rgba(13,34,87,.08)}
+html{font-size:14px;scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh}
+.skip-link{position:absolute;left:-999px;top:-999px;background:#fff;color:var(--blue);padding:8px 16px;font-weight:700;text-decoration:none;z-index:9999}
+.skip-link:focus{left:0;top:0}
+.top-bar{background:var(--navy);color:rgba(255,255,255,.9);padding:5px 0;font-size:.72rem;font-weight:600}
+.container{max-width:1280px;margin:0 auto;padding:0 12px}
+.top-bar-inner{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.site-header{background:var(--white);box-shadow:var(--shadow);position:sticky;top:0;z-index:900}
+.header-inner{display:flex;align-items:center;gap:8px;padding:8px 0}
+.brand-title{font-size:1.15rem;font-weight:900;color:var(--navy);line-height:1.1}
+.hero-section{background:linear-gradient(135deg,#0d2257 0%,#1a56db 100%);padding:28px 0 20px;color:#fff;text-align:center}
+.hero-h1{font-size:1.5rem;font-weight:900;line-height:1.25;margin-bottom:5px}
+.hero-h1 span{color:#fbbf24}
+  </style>
+
   <title>Top Sarkari Jobs 2026 – Latest Government Jobs, Results, Admit Cards | India No.1</title>
   <meta name="description" content="Top Sarkari Jobs 2026: Latest government job notifications, admit cards, results, answer keys, online forms. SSC, Railway, IBPS Banking, Police, Defence, UPSC & State PSC jobs updated daily. 10th, 12th, ITI, Graduation pass jobs."/>
   <meta name="keywords" content="sarkari jobs 2026, government jobs 2026, sarkari result, admit card 2026, online form, SSC CGL 2026, railway jobs 2026, bank jobs 2026, police jobs 2026, UPSC 2026, 10th pass jobs, 12th pass jobs, ITI jobs, sarkari naukri"/>
@@ -22,13 +41,13 @@
   <link rel="dns-prefetch" href="//fonts.googleapis.com"/>
   <link rel="dns-prefetch" href="//www.googletagmanager.com"/>
   <!-- Preload critical JSON data for faster card rendering -->
-  <link rel="preload" href="merged_sarkari_data.json" as="fetch" crossorigin="anonymous"/>
+  <link rel="preload" href="/data/merged-summary.json" as="fetch" crossorigin="anonymous"/>
   <link rel="preload" href="dailyupdates.json" as="fetch" crossorigin="anonymous"/>
   <!-- PERF: sections-index.json — 16KB lightweight index for instant card rendering (instead of 18MB Complete_Jobs_Full_Data.json) -->
   <link rel="preload" href="sections-index.json" as="fetch" crossorigin="anonymous"/>
   <!-- PERF: shared promise for merged_sarkari_data.json — fetched only ONCE, used by ticker + section cards -->
   <script>
-  window.__mergedDataPromise = fetch('merged_sarkari_data.json')
+  window.__mergedDataPromise = fetch('/data/merged-summary.json')
     .then(function(r){ return r.ok ? r.json() : null; })
     .catch(function(){ return null; });
   // PERF: sections-index.json — fetch starts immediately at page load (16KB vs 18MB)
@@ -1686,7 +1705,7 @@
   <!-- ══ PWA INSTALL SYSTEM v4.0 ══════════════════════════════════ -->
   <link rel="manifest" href="/manifest.json"/>
   <meta name="theme-color" content="#0d2257" media="(prefers-color-scheme: light)"/>
-  <meta name="theme-color" content="#0a1a4a" media="(prefers-color-scheme: dark)"/>
+  
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="TopSarkariJobs"/>
@@ -1714,7 +1733,7 @@
   <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
-  <script src="/tsj-menu.js"></script>
+  <script src="/tsj-menu.js" defer></script>
 <script src="/pwa-install.js?v=6.0" defer></script>
   <!-- ══ END PWA ════════════════════════════════════════════════════ -->
 </head>
@@ -1746,7 +1765,7 @@
       <a class="brand" href="./" aria-label="Top Sarkari Jobs Home">
         <picture>
           <source srcset="image-40x40.webp 1x, image-80x80.webp 2x" type="image/webp">
-          <img src="image.png" alt="Top Sarkari Jobs Logo" class="brand-logo" width="40" height="40" decoding="async">
+          <img src="image.webp" alt="Top Sarkari Jobs Logo" class="brand-logo" width="40" height="40" decoding="async" fetchpriority="high" loading="eager">
         </picture>
         <div class="brand-text">
           <span class="brand-title">TOP <span>SARKARI</span> JOBS</span>
@@ -1785,9 +1804,9 @@
           <a role="menuitem" href="/section/top-20-jobs/" class="nav-dd-item"><i class="fa-solid fa-medal"></i> Top 20 Jobs</a>
           <a role="menuitem" href="/section/latest-govt-jobs/" class="nav-dd-item"><i class="fa-solid fa-globe"></i> All India Jobs</a>
           <hr class="nav-dd-divider">
-          <a role="menuitem" href="category.html?group=study" class="nav-dd-item"><i class="fa-solid fa-graduation-cap"></i> Study Wise</a>
-          <a role="menuitem" href="category.html?group=popular" class="nav-dd-item"><i class="fa-solid fa-star"></i> Popular Categories</a>
-          <a role="menuitem" href="category.html?group=state" class="nav-dd-item"><i class="fa-solid fa-map-location-dot"></i> State Wise</a>
+          <a role="menuitem" href="/category/study/" class="nav-dd-item"><i class="fa-solid fa-graduation-cap"></i> Study Wise</a>
+          <a role="menuitem" href="/category/popular/" class="nav-dd-item"><i class="fa-solid fa-star"></i> Popular Categories</a>
+          <a role="menuitem" href="/state/" class="nav-dd-item"><i class="fa-solid fa-map-location-dot"></i> State Wise</a>
         </div>
       </div>
 
@@ -1796,10 +1815,10 @@
           <i class="fa-solid fa-id-card"></i> ADMIT CARD <i class="fa-solid fa-chevron-down"></i>
         </button>
         <div class="nav-dd-menu" role="menu" id="dd-menu-admit">
-          <a role="menuitem" href="category.html?group=admit-result" class="nav-dd-item"><i class="fa-solid fa-id-card"></i> Admit Cards 2026</a>
-          <a role="menuitem" href="category.html?group=admissions" class="nav-dd-item"><i class="fa-solid fa-trophy"></i> Latest Results</a>
+          <a role="menuitem" href="/category/admit-result/" class="nav-dd-item"><i class="fa-solid fa-id-card"></i> Admit Cards 2026</a>
+          <a role="menuitem" href="/category/admissions/" class="nav-dd-item"><i class="fa-solid fa-trophy"></i> Latest Results</a>
           <a role="menuitem" href="/section/admit-card/" class="nav-dd-item"><i class="fa-solid fa-calendar-days"></i> Exam Dates</a>
-          <a role="menuitem" href="category.html?group=admissions" class="nav-dd-item"><i class="fa-solid fa-graduation-cap"></i> Admissions 2026</a>
+          <a role="menuitem" href="/category/admissions/" class="nav-dd-item"><i class="fa-solid fa-graduation-cap"></i> Admissions 2026</a>
         </div>
       </div>
 
@@ -1808,9 +1827,9 @@
           <i class="fa-solid fa-trophy"></i> RESULTS <i class="fa-solid fa-chevron-down"></i>
         </button>
         <div class="nav-dd-menu" role="menu" id="dd-menu-results">
-          <a role="menuitem" href="category.html?group=admissions" class="nav-dd-item"><i class="fa-solid fa-trophy"></i> Latest Results</a>
-          <a role="menuitem" href="category.html?group=admit-result" class="nav-dd-item"><i class="fa-solid fa-key"></i> Answer Key</a>
-          <a role="menuitem" href="category.html?group=admissions" class="nav-dd-item"><i class="fa-solid fa-list-check"></i> Merit List</a>
+          <a role="menuitem" href="/category/admissions/" class="nav-dd-item"><i class="fa-solid fa-trophy"></i> Latest Results</a>
+          <a role="menuitem" href="/category/admit-result/" class="nav-dd-item"><i class="fa-solid fa-key"></i> Answer Key</a>
+          <a role="menuitem" href="/category/admissions/" class="nav-dd-item"><i class="fa-solid fa-list-check"></i> Merit List</a>
         </div>
       </div>
 
@@ -1831,7 +1850,7 @@
         <div class="nav-dd-menu" role="menu" id="dd-menu-state">
           <a role="menuitem" href="/section/haryana-all-state-jobs/" class="nav-dd-item"><i class="fa-solid fa-location-dot"></i> Haryana Jobs</a>
           <a role="menuitem" href="/section/state-jobs/" class="nav-dd-item"><i class="fa-solid fa-map-location-dot"></i> All State Jobs</a>
-          <a role="menuitem" href="category.html?group=state" class="nav-dd-item"><i class="fa-solid fa-list"></i> State Wise Jobs</a>
+          <a role="menuitem" href="/state/" class="nav-dd-item"><i class="fa-solid fa-list"></i> State Wise Jobs</a>
         </div>
       </div>
 
@@ -1840,13 +1859,13 @@
           <i class="fa-solid fa-book-open"></i> STUDY MATERIAL <i class="fa-solid fa-chevron-down"></i>
         </button>
         <div class="nav-dd-menu" role="menu" id="dd-menu-study">
-          <a role="menuitem" href="category.html?group=study-material" class="nav-dd-item"><i class="fa-solid fa-book-open"></i> Study Material & Courses</a>
-          <a role="menuitem" href="category.html?group=khabar" class="nav-dd-item"><i class="fa-solid fa-newspaper"></i> Latest Khabar</a>
-          <a role="menuitem" href="resume-maker.html" class="nav-dd-item"><i class="fa-solid fa-file-lines"></i> Resume Maker</a>
+          <a role="menuitem" href="/category/study-material/" class="nav-dd-item"><i class="fa-solid fa-book-open"></i> Study Material & Courses</a>
+          <a role="menuitem" href="/category/khabar/" class="nav-dd-item"><i class="fa-solid fa-newspaper"></i> Latest Khabar</a>
+          <a role="menuitem" href="/resume-maker/" class="nav-dd-item"><i class="fa-solid fa-file-lines"></i> Resume Maker</a>
         </div>
       </div>
 
-      <a class="nav-link" href="helpdesk.html"><i class="fa-solid fa-headset"></i> CONTACT US</a>
+      <a class="nav-link" href="/helpdesk/"><i class="fa-solid fa-headset"></i> CONTACT US</a>
     </nav>
   </header>
 
@@ -1884,7 +1903,7 @@
   <div class="cat-bar-wrap" id="browseCatWrap">
     <div class="cat-bar-hd">
       <span><i class="fa-solid fa-th-large"></i> &nbsp;BROWSE JOBS BY CATEGORY</span>
-      <a href="category.html?group=popular">View All</a>
+      <a href="/category/popular/">View All</a>
     </div>
     <div class="cat-bar-carousel-wrap">
       <button class="cbg-arrow prev" id="browsePrev" aria-label="Scroll left"><i class="fa-solid fa-chevron-left"></i></button>
@@ -1928,7 +1947,7 @@
           <small class="cbi-count">55+ Jobs</small>
         </a>
 
-        <a href="category.html?group=popular" class="cbi" style="color:var(--blue);font-weight:800;">
+        <a href="/category/popular/" class="cbi" style="color:var(--blue);font-weight:800;">
           <div class="cbi-icon" style="background:#eff6ff;color:#1a56db;"><i class="fa-solid fa-grid-2-plus"></i></div>
           <span>View All</span>
           <small class="cbi-count">500+ Jobs</small>
@@ -1943,7 +1962,7 @@
   <div class="cat-bar-wrap">
     <div class="cat-bar-hd">
       <span><i class="fa-solid fa-th-large"></i> &nbsp;Jobs by Qualification</span>
-      <a href="category.html?group=study">View All</a>
+      <a href="/category/study/">View All</a>
     </div>
     <div class="cat-bar-carousel-wrap">
       <button class="cbg-arrow prev" aria-label="Scroll left"><i class="fa-solid fa-chevron-left"></i></button>
@@ -1985,7 +2004,7 @@
         <div class="cbi-icon" style="background:#fdf4ff;color:#a21caf;"><i class="fa-solid fa-user-tie"></i></div>
         <span>Post Graduation</span>
       </a>
-      <a href="category.html?group=study" class="cbi" style="color:var(--blue);font-weight:800;">
+      <a href="/category/study/" class="cbi" style="color:var(--blue);font-weight:800;">
         <div class="cbi-icon" style="background:#eff6ff;color:var(--blue);"><i class="fa-solid fa-ellipsis"></i></div>
         <span>All Categories</span>
       </a>
@@ -1995,17 +2014,17 @@
     <!-- Special Sections row -->
     <div class="cat-bar-hd" style="border-top:1px solid rgba(255,255,255,.12);">
       <span><i class="fa-solid fa-star"></i> &nbsp;Special Sections</span>
-      <a href="category.html?group=popular">View All</a>
+      <a href="/category/popular/">View All</a>
     </div>
     <div class="cat-bar-carousel-wrap">
       <button class="cbg-arrow prev" aria-label="Scroll left"><i class="fa-solid fa-chevron-left"></i></button>
       <button class="cbg-arrow next" aria-label="Scroll right"><i class="fa-solid fa-chevron-right"></i></button>
     <div class="cat-bar-grid">
-      <a href="https://www.topsarkarijobs.com/govt-services.html" class="cbi">
+      <a href="/govt-services/" class="cbi">
         <div class="cbi-icon" style="background:#eff6ff;color:#1a56db;"><i class="fa-solid fa-building-flag"></i></div>
         <span>CSC Service</span>
       </a>
-      <a href="https://www.topsarkarijobs.com/category.html?group=admit-result" class="cbi">
+      <a href="/category/admit-result/" class="cbi">
         <div class="cbi-icon" style="background:#ecfdf5;color:#059669;"><i class="fa-solid fa-calendar-check"></i></div>
         <span>Admit cards &amp; Exams Date</span>
       </a>
@@ -2018,19 +2037,19 @@
         <span>CSC PDF</span>
         <span class="cbi-count">Important</span>
       </a>
-      <a href="https://www.topsarkarijobs.com/redirect.html?job=important-csc-link&k=5fhb1122kh9b" class="cbi">
+      <a href="https://www.topsarkarijobs.com/section/important-csc-pdf/" class="cbi">
         <div class="cbi-icon" style="background:#fff1f2;color:#be123c;"><i class="fa-solid fa-link"></i></div>
         <span>Important CSC Link</span>
       </a>
-      <a href="https://www.topsarkarijobs.com/tools.html" class="cbi">
+      <a href="/tools/" class="cbi">
         <div class="cbi-icon" style="background:#f0fdfa;color:#0d9488;"><i class="fa-solid fa-screwdriver-wrench"></i></div>
         <span>Tools</span>
       </a>
-      <a href="https://www.topsarkarijobs.com/category.html?group=khabar" class="cbi">
+      <a href="/category/khabar/" class="cbi">
         <div class="cbi-icon" style="background:#fff0e6;color:#ea580c;"><i class="fa-solid fa-newspaper"></i></div>
         <span>Latest Khabar</span>
       </a>
-      <a href="https://www.topsarkarijobs.com/category.html?group=study-material" class="cbi">
+      <a href="/category/study-material/" class="cbi">
         <div class="cbi-icon" style="background:#f0fdfa;color:#0d9488;"><i class="fa-solid fa-book-open"></i></div>
         <span>Study Material &amp; Top Courses</span>
       </a>
@@ -2040,7 +2059,7 @@
     <!-- State Wise Jobs row -->
     <div class="cat-bar-hd" style="border-top:1px solid rgba(255,255,255,.12);">
       <span><i class="fa-solid fa-map-location-dot"></i> &nbsp;State Wise Jobs</span>
-      <a href="category.html?group=state">View All</a>
+      <a href="/state/">View All</a>
     </div>
     <div class="cat-bar-carousel-wrap">
       <button class="cbg-arrow prev" aria-label="Scroll left"><i class="fa-solid fa-chevron-left"></i></button>
@@ -2181,7 +2200,7 @@
         <span>Sikkim</span>
         <span class="cbi-count">SK Jobs</span>
       </a>
-      <a href="category.html?group=state" class="cbi" style="color:var(--blue);font-weight:800;">
+      <a href="/state/" class="cbi" style="color:var(--blue);font-weight:800;">
         <div class="cbi-icon" style="background:#eff6ff;color:#1a56db;"><i class="fa-solid fa-map-location-dot"></i></div>
         <span>All States</span>
         <span class="cbi-count">View All</span>
@@ -2197,7 +2216,7 @@
   <div class="cat-bar-wrap" id="educationCatWrap">
     <div class="cat-bar-hd">
       <span><i class="fa-solid fa-graduation-cap"></i> &nbsp;Education State Wise</span>
-      <a href="education-jobs.html">View All</a>
+      <a href="/education/">View All</a>
     </div>
     <div class="cat-bar-carousel-wrap">
       <button class="cbg-arrow prev" aria-label="Scroll left"><i class="fa-solid fa-chevron-left"></i></button>
@@ -2206,137 +2225,137 @@
 
       
       <!-- ── STATES FIRST ── -->
-      <a href="education-detail.html?section=haryana" class="cbi">
+      <a href="/education/haryana/" class="cbi">
         <div class="cbi-icon" style="background:#eff6ff;color:#1d4ed8;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">HR</div>
         <span style="line-height:1.25;">Haryana<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=uttar-pradesh" class="cbi">
+      <a href="/education/uttar-pradesh/" class="cbi">
         <div class="cbi-icon" style="background:#fef3c7;color:#d97706;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">UP</div>
         <span style="line-height:1.25;">Uttar Pradesh<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=rajasthan" class="cbi">
+      <a href="/education/rajasthan/" class="cbi">
         <div class="cbi-icon" style="background:#fff0e6;color:#c2410c;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">RJ</div>
         <span style="line-height:1.25;">Rajasthan<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=bihar" class="cbi">
+      <a href="/education/bihar/" class="cbi">
         <div class="cbi-icon" style="background:#f0fdf4;color:#16a34a;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">BR</div>
         <span style="line-height:1.25;">Bihar<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=madhya-pradesh" class="cbi">
+      <a href="/education/madhya-pradesh/" class="cbi">
         <div class="cbi-icon" style="background:#f5f3ff;color:#7c3aed;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">MP</div>
         <span style="line-height:1.25;">Madhya Pradesh<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=punjab" class="cbi">
+      <a href="/education/punjab/" class="cbi">
         <div class="cbi-icon" style="background:#ecfdf5;color:#059669;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">PB</div>
         <span style="line-height:1.25;">Punjab<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=delhi" class="cbi">
+      <a href="/education/delhi/" class="cbi">
         <div class="cbi-icon" style="background:#fff1f2;color:#be123c;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">DL</div>
         <span style="line-height:1.25;">Delhi<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=gujarat" class="cbi">
+      <a href="/education/gujarat/" class="cbi">
         <div class="cbi-icon" style="background:#fff0e6;color:#c2410c;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">GJ</div>
         <span style="line-height:1.25;">Gujarat<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=maharashtra" class="cbi">
+      <a href="/education/maharashtra/" class="cbi">
         <div class="cbi-icon" style="background:#fdf4ff;color:#a21caf;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">MH</div>
         <span style="line-height:1.25;">Maharashtra<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=karnataka" class="cbi">
+      <a href="/education/karnataka/" class="cbi">
         <div class="cbi-icon" style="background:#f0fdfa;color:#0d9488;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">KA</div>
         <span style="line-height:1.25;">Karnataka<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=tamil-nadu" class="cbi">
+      <a href="/education/tamil-nadu/" class="cbi">
         <div class="cbi-icon" style="background:#fef3c7;color:#b45309;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">TN</div>
         <span style="line-height:1.25;">Tamil Nadu<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=andhra-pradesh" class="cbi">
+      <a href="/education/andhra-pradesh/" class="cbi">
         <div class="cbi-icon" style="background:#eff6ff;color:#0369a1;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">AP</div>
         <span style="line-height:1.25;">Andhra Pradesh<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=telangana" class="cbi">
+      <a href="/education/telangana/" class="cbi">
         <div class="cbi-icon" style="background:#fff1f2;color:#9f1239;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">TS</div>
         <span style="line-height:1.25;">Telangana<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=west-bengal" class="cbi">
+      <a href="/education/west-bengal/" class="cbi">
         <div class="cbi-icon" style="background:#f0fdf4;color:#166534;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">WB</div>
         <span style="line-height:1.25;">West Bengal<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=jharkhand" class="cbi">
+      <a href="/education/jharkhand/" class="cbi">
         <div class="cbi-icon" style="background:#fef3c7;color:#d97706;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">JH</div>
         <span style="line-height:1.25;">Jharkhand<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=chhattisgarh" class="cbi">
+      <a href="/education/chhattisgarh/" class="cbi">
         <div class="cbi-icon" style="background:#f5f3ff;color:#7c3aed;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">CG</div>
         <span style="line-height:1.25;">Chhattisgarh<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=odisha" class="cbi">
+      <a href="/education/odisha/" class="cbi">
         <div class="cbi-icon" style="background:#fff0e6;color:#c2410c;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">OD</div>
         <span style="line-height:1.25;">Odisha<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=kerala" class="cbi">
+      <a href="/education/kerala/" class="cbi">
         <div class="cbi-icon" style="background:#f0fdf4;color:#16a34a;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">KL</div>
         <span style="line-height:1.25;">Kerala<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=assam" class="cbi">
+      <a href="/education/assam/" class="cbi">
         <div class="cbi-icon" style="background:#ecfdf5;color:#059669;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">AS</div>
         <span style="line-height:1.25;">Assam<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=himachal-pradesh" class="cbi">
+      <a href="/education/himachal-pradesh/" class="cbi">
         <div class="cbi-icon" style="background:#f0fdfa;color:#0d9488;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">HP</div>
         <span style="line-height:1.25;">Himachal Pradesh<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=uttarakhand" class="cbi">
+      <a href="/education/uttarakhand/" class="cbi">
         <div class="cbi-icon" style="background:#eff6ff;color:#1d4ed8;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">UK</div>
         <span style="line-height:1.25;">Uttarakhand<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=jammu-and-kashmir" class="cbi">
+      <a href="/education/jammu-and-kashmir/" class="cbi">
         <div class="cbi-icon" style="background:#fff1f2;color:#be123c;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">JK</div>
         <span style="line-height:1.25;">J&amp;K<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=goa" class="cbi">
+      <a href="/education/goa/" class="cbi">
         <div class="cbi-icon" style="background:#fdf4ff;color:#a21caf;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">GA</div>
         <span style="line-height:1.25;">Goa<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=tripura" class="cbi">
+      <a href="/education/tripura/" class="cbi">
         <div class="cbi-icon" style="background:#fff7ed;color:#ea580c;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">TR</div>
         <span style="line-height:1.25;">Tripura<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=manipur" class="cbi">
+      <a href="/education/manipur/" class="cbi">
         <div class="cbi-icon" style="background:#fdf4ff;color:#9333ea;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">MN</div>
         <span style="line-height:1.25;">Manipur<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=meghalaya" class="cbi">
+      <a href="/education/meghalaya/" class="cbi">
         <div class="cbi-icon" style="background:#f0fdfa;color:#0891b2;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">ML</div>
         <span style="line-height:1.25;">Meghalaya<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=sikkim" class="cbi">
+      <a href="/education/sikkim/" class="cbi">
         <div class="cbi-icon" style="background:#f0fdf4;color:#15803d;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">SK</div>
         <span style="line-height:1.25;">Sikkim<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=arunachal-pradesh" class="cbi">
+      <a href="/education/arunachal-pradesh/" class="cbi">
         <div class="cbi-icon" style="background:#f5f3ff;color:#6d28d9;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">AR</div>
         <span style="line-height:1.25;">Arunachal Pradesh<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=nagaland" class="cbi">
+      <a href="/education/nagaland/" class="cbi">
         <div class="cbi-icon" style="background:#fff0e6;color:#c2410c;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">NL</div>
         <span style="line-height:1.25;">Nagaland<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=mizoram" class="cbi">
+      <a href="/education/mizoram/" class="cbi">
         <div class="cbi-icon" style="background:#fef3c7;color:#b45309;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">MZ</div>
         <span style="line-height:1.25;">Mizoram<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=puducherry" class="cbi">
+      <a href="/education/puducherry/" class="cbi">
         <div class="cbi-icon" style="background:#eff6ff;color:#0369a1;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">PY</div>
         <span style="line-height:1.25;">Puducherry<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
-      <a href="education-detail.html?section=chandigarh" class="cbi">
+      <a href="/education/chandigarh/" class="cbi">
         <div class="cbi-icon" style="background:#f0fdfa;color:#0d9488;font-size:.72rem;font-weight:800;letter-spacing:-.5px;">CH</div>
         <span style="line-height:1.25;">Chandigarh<br><span style="font-size:.58rem;font-weight:600;color:var(--blue);">Education</span></span>
       </a>
 
       <!-- ── ALL INDIA CATEGORIES ── -->
-      <a href="education-detail.html?section=all-india-engineering" class="cbi">
+      <a href="/education/all-india-engineering/" class="cbi">
         <div class="cbi-icon" style="background:#eff6ff;"><svg viewBox="0 0 40 40" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
   <rect x="4" y="8" width="32" height="22" rx="3" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
   <path d="M13 20l-4 3 4 3" stroke="#1d4ed8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -2347,7 +2366,7 @@
         <span>All India Engineering</span>
         <span class="cbi-count">GATE, JEE</span>
       </a>
-      <a href="education-detail.html?section=all-india-medical" class="cbi">
+      <a href="/education/all-india-medical/" class="cbi">
         <div class="cbi-icon" style="background:#fff1f2;"><svg viewBox="0 0 40 40" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
   <circle cx="20" cy="20" r="15" fill="#ffe4e6" stroke="#be123c" stroke-width="2"/>
   <rect x="17" y="12" width="6" height="16" rx="3" fill="#be123c"/>
@@ -2356,7 +2375,7 @@
         <span>All India Medical</span>
         <span class="cbi-count">NEET, AIIMS</span>
       </a>
-      <a href="education-detail.html?section=all-india-management" class="cbi">
+      <a href="/education/all-india-management/" class="cbi">
         <div class="cbi-icon" style="background:#f5f3ff;"><svg viewBox="0 0 40 40" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
   <rect x="4" y="30" width="7" height="7" rx="1.5" fill="#7c3aed" opacity=".4" stroke="#7c3aed" stroke-width="1.5"/>
   <rect x="14" y="22" width="7" height="15" rx="1.5" fill="#7c3aed" opacity=".6" stroke="#7c3aed" stroke-width="1.5"/>
@@ -2369,7 +2388,7 @@
         <span>All India Management</span>
         <span class="cbi-count">CAT, MAT</span>
       </a>
-      <a href="education-detail.html?section=other-all-india-entrance" class="cbi">
+      <a href="/education/other-all-india-entrance/" class="cbi">
         <div class="cbi-icon" style="background:#fef3c7;"><svg viewBox="0 0 40 40" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
   <rect x="7" y="4" width="22" height="28" rx="3" fill="#fef9c3" stroke="#d97706" stroke-width="2"/>
   <line x1="12" y1="12" x2="24" y2="12" stroke="#d97706" stroke-width="2" stroke-linecap="round"/>
@@ -2382,7 +2401,7 @@
         <span>All India Entrance</span>
         <span class="cbi-count">Other Exams</span>
       </a>
-      <a href="education-detail.html?section=other-all-india-exams" class="cbi">
+      <a href="/education/other-all-india-exams/" class="cbi">
         <div class="cbi-icon" style="background:#ecfdf5;"><svg viewBox="0 0 40 40" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
   <rect x="6" y="4" width="28" height="32" rx="3" fill="#d1fae5" stroke="#059669" stroke-width="2"/>
   <line x1="11" y1="12" x2="29" y2="12" stroke="#059669" stroke-width="2" stroke-linecap="round"/>
@@ -2394,7 +2413,7 @@
         <span>All India Exams</span>
         <span class="cbi-count">Central Exams</span>
       </a>
-      <a href="education-detail.html?section=cbse-icse-10th" class="cbi">
+      <a href="/education/cbse-icse-10th/" class="cbi">
         <div class="cbi-icon" style="background:#fff0e6;"><svg viewBox="0 0 40 40" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
   <path d="M5 10C5 10 12 8 20 10C28 8 35 10 35 10V32C35 32 28 30 20 32C12 30 5 32 5 32V10Z" fill="#ffedd5" stroke="#c2410c" stroke-width="2" stroke-linejoin="round"/>
   <line x1="20" y1="10" x2="20" y2="32" stroke="#c2410c" stroke-width="2"/>
@@ -2408,7 +2427,7 @@
         <span>CBSE/ICSE 10th</span>
         <span class="cbi-count">Board Results</span>
       </a>
-      <a href="education-detail.html?section=cbse-icse-12th" class="cbi">
+      <a href="/education/cbse-icse-12th/" class="cbi">
         <div class="cbi-icon" style="background:#f0fdf4;"><svg viewBox="0 0 40 40" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
   <path d="M20 6L4 15l16 9 16-9-16-9z" fill="#bbf7d0" stroke="#16a34a" stroke-width="2" stroke-linejoin="round"/>
   <path d="M10 19v8c0 3 4.5 6 10 6s10-3 10-6v-8" stroke="#16a34a" stroke-width="2" stroke-linecap="round"/>
@@ -2441,7 +2460,7 @@
 
     /* ── fetch sections-index.json — same source as /section/latest-jobs/ ── */
     function fetchJobs() {
-      var CACHE_KEY = '__ticker_sec_cache';
+      var CACHE_KEY = '__ticker_sec_v2';
       var CACHE_TTL = 15 * 60 * 1000;
       try {
         var cached = JSON.parse(sessionStorage.getItem(CACHE_KEY) || 'null');
@@ -2571,30 +2590,30 @@
           <div class="sec-card" style="margin-bottom:0;">
             <div class="sec-head brown">
               <div class="left"><i class="fa-solid fa-book-open"></i> STUDY MATERIAL</div>
-              <a href="category.html?group=study-material" class="view-all-btn">View All</a>
+              <a href="/category/study-material/" class="view-all-btn">View All</a>
             </div>
             <div class="sec-list">
-              <a href="category.html?group=study-material"><i class="fa-solid fa-newspaper"></i><span>Current Affairs</span><span class="badge" style="background:var(--green);">New</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-              <a href="category.html?group=study-material"><i class="fa-solid fa-book"></i><span>Academic E-Book Download</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-              <a href="category.html?group=study-material"><i class="fa-solid fa-file-pdf"></i><span>E-Book Download</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-              <a href="category.html?group=study-material"><i class="fa-solid fa-star"></i><span>Best Books for Competitive</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="/category/study-material/"><i class="fa-solid fa-newspaper"></i><span>Current Affairs</span><span class="badge" style="background:var(--green);">New</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="/category/study-material/"><i class="fa-solid fa-book"></i><span>Academic E-Book Download</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="/category/study-material/"><i class="fa-solid fa-file-pdf"></i><span>E-Book Download</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+              <a href="/category/study-material/"><i class="fa-solid fa-star"></i><span>Best Books for Competitive</span><i class="fa-solid fa-chevron-right arrow"></i></a>
             </div>
-            <a href="category.html?group=study-material" class="sec-more">View All Tools →</a>
+            <a href="/category/study-material/" class="sec-more">View All Tools →</a>
           </div>
 
           <div class="sec-card" style="margin-bottom:0;">
             <div class="sec-head orange">
               <div class="left"><i class="fa-solid fa-newspaper"></i> LATEST KHABAR</div>
-              <a href="category.html?group=khabar" class="view-all-btn">Read All</a>
+              <a href="/category/khabar/" class="view-all-btn">Read All</a>
             </div>
             <div class="khabar-list">
-              <a href="category.html?group=khabar"><span class="khabar-badge">NEW</span><span>Jobs Khabar</span><i class="fa-solid fa-chevron-right" style="margin-left:auto;color:#d1d5db;font-size:.6rem;"></i></a>
-              <a href="category.html?group=khabar"><span class="khabar-badge">NEW</span><span>Employment News</span><i class="fa-solid fa-chevron-right" style="margin-left:auto;color:#d1d5db;font-size:.6rem;"></i></a>
-              <a href="category.html?group=khabar"><span class="khabar-badge">NEW</span><span>State Wise Khabar</span><i class="fa-solid fa-chevron-right" style="margin-left:auto;color:#d1d5db;font-size:.6rem;"></i></a>
-              <a href="category.html?group=khabar"><span class="khabar-badge">NEW</span><span>International News</span><i class="fa-solid fa-chevron-right" style="margin-left:auto;color:#d1d5db;font-size:.6rem;"></i></a>
-              <a href="category.html?group=khabar"><span class="khabar-badge">NEW</span><span>India Khabar</span><i class="fa-solid fa-chevron-right" style="margin-left:auto;color:#d1d5db;font-size:.6rem;"></i></a>
+              <a href="/category/khabar/"><span class="khabar-badge">NEW</span><span>Jobs Khabar</span><i class="fa-solid fa-chevron-right" style="margin-left:auto;color:#d1d5db;font-size:.6rem;"></i></a>
+              <a href="/category/khabar/"><span class="khabar-badge">NEW</span><span>Employment News</span><i class="fa-solid fa-chevron-right" style="margin-left:auto;color:#d1d5db;font-size:.6rem;"></i></a>
+              <a href="/category/khabar/"><span class="khabar-badge">NEW</span><span>State Wise Khabar</span><i class="fa-solid fa-chevron-right" style="margin-left:auto;color:#d1d5db;font-size:.6rem;"></i></a>
+              <a href="/category/khabar/"><span class="khabar-badge">NEW</span><span>International News</span><i class="fa-solid fa-chevron-right" style="margin-left:auto;color:#d1d5db;font-size:.6rem;"></i></a>
+              <a href="/category/khabar/"><span class="khabar-badge">NEW</span><span>India Khabar</span><i class="fa-solid fa-chevron-right" style="margin-left:auto;color:#d1d5db;font-size:.6rem;"></i></a>
             </div>
-            <a href="category.html?group=khabar" class="sec-more">Read All News →</a>
+            <a href="/category/khabar/" class="sec-more">Read All News →</a>
           </div>
         </div>
 
@@ -2602,15 +2621,15 @@
         <div class="sec-card">
           <div class="sec-head teal">
             <div class="left"><i class="fa-solid fa-screwdriver-wrench"></i> FREE TOOLS & CSC SERVICES</div>
-            <a href="tools.html" class="view-all-btn">View All Schemes</a>
+            <a href="/tools/" class="view-all-btn">View All Schemes</a>
           </div>
           <div class="tools-grid">
-            <a href="tools.html" class="tool-btn"><i class="fa-solid fa-image" style="color:var(--blue);"></i><span>Image Tool</span><small style="font-size:.6rem;color:var(--muted);">Compress, Convert</small></a>
-            <a href="tools.html" class="tool-btn"><i class="fa-solid fa-file-pdf" style="color:var(--red);"></i><span>PDF Tools</span><small style="font-size:.6rem;color:var(--muted);">Merge, Split, Lock</small></a>
+            <a href="/tools/" class="tool-btn"><i class="fa-solid fa-image" style="color:var(--blue);"></i><span>Image Tool</span><small style="font-size:.6rem;color:var(--muted);">Compress, Convert</small></a>
+            <a href="/tools/" class="tool-btn"><i class="fa-solid fa-file-pdf" style="color:var(--red);"></i><span>PDF Tools</span><small style="font-size:.6rem;color:var(--muted);">Merge, Split, Lock</small></a>
             <a href="/section/important-csc-pdf/" class="tool-btn"><i class="fa-solid fa-id-badge" style="color:var(--green);"></i><span>CSC Services</span><small style="font-size:.6rem;color:var(--muted);">VLE, CSC, Digi Pay</small></a>
-            <a href="resume-maker.html" class="tool-btn"><i class="fa-solid fa-file-lines" style="color:var(--purple);"></i><span>Resume Maker</span><small style="font-size:.6rem;color:var(--muted);">Create Resume</small></a>
+            <a href="/resume-maker/" class="tool-btn"><i class="fa-solid fa-file-lines" style="color:var(--purple);"></i><span>Resume Maker</span><small style="font-size:.6rem;color:var(--muted);">Create Resume</small></a>
             <a href="/section/important-csc-pdf/" class="tool-btn"><i class="fa-solid fa-link" style="color:var(--accent);"></i><span>Important CSC Link</span><small style="font-size:.6rem;color:var(--muted);">Govt Services</small></a>
-            <a href="helpdesk.html" class="tool-btn"><i class="fa-solid fa-headset" style="color:var(--teal);"></i><span>Helpdesk</span><small style="font-size:.6rem;color:var(--muted);">Support & Help</small></a>
+            <a href="/helpdesk/" class="tool-btn"><i class="fa-solid fa-headset" style="color:var(--teal);"></i><span>Helpdesk</span><small style="font-size:.6rem;color:var(--muted);">Support & Help</small></a>
           </div>
         </div>
 
@@ -2634,7 +2653,7 @@
           </div>
           <div class="faq-item">
             <button type="button" class="faq-btn" aria-expanded="false"><span>How to check Sarkari Result 2026?</span><i class="fas fa-chevron-down"></i></button>
-            <div class="faq-panel" hidden>Visit our <a href="category.html?group=admissions" style="color:var(--blue);">Results page</a> for the latest sarkari results including Railway, SSC, Police, Bank and State Govt results.</div>
+            <div class="faq-panel" hidden>Visit our <a href="/category/admissions/" style="color:var(--blue);">Results page</a> for the latest sarkari results including Railway, SSC, Police, Bank and State Govt results.</div>
           </div>
           <div class="faq-item">
             <button type="button" class="faq-btn" aria-expanded="false"><span>Are there jobs for 10th / 12th pass candidates?</span><i class="fas fa-chevron-down"></i></button>
@@ -2727,7 +2746,7 @@
         <div class="sec-card">
           <div class="sec-head blue">
             <div class="left"><i class="fa-solid fa-map-location-dot"></i> ALL STATES JOBS</div>
-            <a href="category.html?group=state" class="view-all-btn">View All</a>
+            <a href="/state/" class="view-all-btn">View All</a>
           </div>
           <div class="states-sidebar-grid">
             <a class="states-sidebar-item" href="/state/haryana/"><span class="st-em">🇮🇳</span> Haryana</a>
@@ -2758,14 +2777,14 @@
             <a class="states-sidebar-item" href="/state/meghalaya/"><span class="st-em">🌧️</span> Meghalaya</a>
             <a class="states-sidebar-item" href="/state/sikkim/"><span class="st-em">🏞️</span> Sikkim</a>
           </div>
-          <a class="states-sidebar-viewall" href="category.html?group=state"><i class="fa-solid fa-map-location-dot"></i> View All States</a>
+          <a class="states-sidebar-viewall" href="/state/"><i class="fa-solid fa-map-location-dot"></i> View All States</a>
         </div>
 
         <!-- JOBS BY QUAL SIDEBAR -->
         <div class="sec-card">
           <div class="sec-head orange">
             <div class="left"><i class="fa-solid fa-graduation-cap"></i> JOBS BY QUAL.</div>
-            <a href="category.html?group=study" class="view-all-btn">View All</a>
+            <a href="/category/study/" class="view-all-btn">View All</a>
           </div>
           <div class="sec-list">
             <a href="/section/8th-pass/"><i class="fa-solid fa-school"></i><span>8th Pass</span><i class="fa-solid fa-chevron-right arrow"></i></a>
@@ -2790,9 +2809,9 @@
             <a href="/section/army-jobs/"><i class="fa-solid fa-star"></i><span>Army Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
             <a href="/section/teaching-jobs/"><i class="fa-solid fa-chalkboard-user"></i><span>Teaching Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
             <a href="/section/haryana-all-state-jobs/"><i class="fa-solid fa-location-dot"></i><span>Haryana Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="category.html?group=state"><i class="fa-solid fa-map-location-dot"></i><span>All State Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+            <a href="/state/"><i class="fa-solid fa-map-location-dot"></i><span>All State Jobs</span><i class="fa-solid fa-chevron-right arrow"></i></a>
           </div>
-          <a href="category.html?group=popular" class="sec-more">View All Categories →</a>
+          <a href="/category/popular/" class="sec-more">View All Categories →</a>
         </div>
 
         <!-- TOOLS & SERVICES SIDEBAR -->
@@ -2801,12 +2820,12 @@
             <div class="left"><i class="fa-solid fa-screwdriver-wrench"></i> TOOLS & SERVICES</div>
           </div>
           <div class="sec-list">
-            <a href="tools.html"><i class="fa-solid fa-image"></i><span>Photo & PDF Tools</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+            <a href="/tools/"><i class="fa-solid fa-image"></i><span>Photo & PDF Tools</span><i class="fa-solid fa-chevron-right arrow"></i></a>
             <a href="/section/important-csc-pdf/"><i class="fa-solid fa-id-card"></i><span>CSC Services</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="resume-maker.html"><i class="fa-solid fa-file-lines"></i><span>Resume Maker</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="helpdesk.html"><i class="fa-solid fa-headset"></i><span>Helpdesk</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+            <a href="/resume-maker/"><i class="fa-solid fa-file-lines"></i><span>Resume Maker</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+            <a href="/helpdesk/"><i class="fa-solid fa-headset"></i><span>Helpdesk</span><i class="fa-solid fa-chevron-right arrow"></i></a>
           </div>
-          <a href="tools.html" class="sec-more">View All Schemes →</a>
+          <a href="/tools/" class="sec-more">View All Schemes →</a>
         </div>
 
         <!-- FOLLOW US -->
@@ -2846,20 +2865,20 @@
         <div>
           <div class="footer-title">Useful Links</div>
           <div class="footer-links-list">
-            <a href="about.html">About Us</a>
-            <a href="helpdesk.html">Contact Us</a>
-            <a href="privacy.html">Privacy Policy</a>
-            <a href="disclaimer.html">Disclaimer</a>
-            <a href="terms.html">Terms & Conditions</a>
+            <a href="/about/">About Us</a>
+            <a href="/helpdesk/">Contact Us</a>
+            <a href="/privacy/">Privacy Policy</a>
+            <a href="/disclaimer/">Disclaimer</a>
+            <a href="/terms/">Terms & Conditions</a>
           </div>
         </div>
         <div>
           <div class="footer-title">Important Links</div>
           <div class="footer-links-list">
             <a href="/section/latest-jobs/">Latest Jobs</a>
-            <a href="category.html?group=admit-result">Admit Card Results</a>
-            <a href="category.html?group=admissions">Results</a>
-            <a href="category.html?group=admit-result">Answer Key</a>
+            <a href="/category/admit-result/">Admit Card Results</a>
+            <a href="/category/admissions/">Results</a>
+            <a href="/category/admit-result/">Answer Key</a>
             <a href="/section/syllabus/">Syllabus</a>
           </div>
         </div>
@@ -2887,7 +2906,7 @@
     <a href="/section/latest-jobs/"><i class="fa-solid fa-fire"></i>Jobs</a>
     <a href="/section/admit-card/"><i class="fa-solid fa-id-card"></i>Admit Card</a>
     <a href="/section/results/"><i class="fa-solid fa-trophy"></i>Results</a>
-    <a href="https://www.topsarkarijobs.com/tools.html"><i class="fa-solid fa-screwdriver-wrench"></i>Tools</a>
+    <a href="/tools/"><i class="fa-solid fa-screwdriver-wrench"></i>Tools</a>
   </nav>
 
   <!-- WhatsApp float -->
@@ -2902,7 +2921,7 @@
       <div class="offcanvas-head-left">
         <picture>
           <source srcset="/image-40x40.webp 1x, /image-80x80.webp 2x" type="image/webp">
-          <img src="/image.png" alt="Logo" class="offcanvas-head-logo" width="34" height="34">
+          <img loading="lazy" src="/image.png" alt="Logo" class="offcanvas-head-logo" width="34" height="34">
         </picture>
         <div class="offcanvas-head-texts">
           <span class="offcanvas-title">TOP SARKARI JOBS</span>
@@ -2934,8 +2953,8 @@
         <a href="/section/latest-govt-jobs/"><i class="fa-solid fa-globe"></i> All India Jobs</a>
       </div>
       <a href="/section/admit-card/"><span class="menu-icon-pill" style="background:#ede9fe;color:#6d28d9;"><i class="fa-solid fa-id-card"></i></span>Admit Card<span class="menu-badge menu-badge-purple">2026</span></a>
-      <a href="/category.html?group=admissions"><span class="menu-icon-pill" style="background:#fef3c7;color:#b45309;"><i class="fa-solid fa-trophy"></i></span>Results<span class="menu-badge menu-badge-amber">Live</span></a>
-      <a href="/category.html?group=admit-result"><span class="menu-icon-pill" style="background:#fef3c7;color:#b45309;"><i class="fa-solid fa-key"></i></span>Answer Key</a>
+      <a href="/category/admissions/"><span class="menu-icon-pill" style="background:#fef3c7;color:#b45309;"><i class="fa-solid fa-trophy"></i></span>Results<span class="menu-badge menu-badge-amber">Live</span></a>
+      <a href="/category/admit-result/"><span class="menu-icon-pill" style="background:#fef3c7;color:#b45309;"><i class="fa-solid fa-key"></i></span>Answer Key</a>
       <div class="offcanvas-section">Jobs by Category</div>
       <button class="mob-acc-head" data-acc="acc-cat" type="button">
         <span class="menu-icon-pill" style="background:#dbeafe;color:#1d4ed8;"><i class="fa-solid fa-briefcase"></i></span>
@@ -2948,8 +2967,8 @@
         <a href="/section/teaching-jobs/"><i class="fa-solid fa-chalkboard-user"></i> Teacher Jobs</a>
         <a href="/section/army-jobs/"><i class="fa-solid fa-shield-halved"></i> Army / Navy / AF</a>
         <a href="/section/healthcare-jobs/"><i class="fa-solid fa-stethoscope"></i> Medical Jobs</a>
-        <a href="/category.html?group=study"><i class="fa-solid fa-graduation-cap"></i> Study Wise Jobs</a>
-        <a href="/category.html?group=popular"><i class="fa-solid fa-star"></i> All Categories</a>
+        <a href="/category/study/"><i class="fa-solid fa-graduation-cap"></i> Study Wise Jobs</a>
+        <a href="/category/popular/"><i class="fa-solid fa-star"></i> All Categories</a>
       </div>
       <button class="mob-acc-head" data-acc="acc-state" type="button">
         <span class="menu-icon-pill" style="background:#dcfce7;color:#15803d;"><i class="fa-solid fa-map-location-dot"></i></span>
@@ -2965,26 +2984,26 @@
         <a href="/state/"><i class="fa-solid fa-list"></i> All States →</a>
       </div>
       <div class="offcanvas-section">Admissions</div>
-      <a href="/category.html?group=admissions"><span class="menu-icon-pill" style="background:#ede9fe;color:#6d28d9;"><i class="fa-solid fa-graduation-cap"></i></span>Admissions 2026</a>
+      <a href="/category/admissions/"><span class="menu-icon-pill" style="background:#ede9fe;color:#6d28d9;"><i class="fa-solid fa-graduation-cap"></i></span>Admissions 2026</a>
       <button class="mob-acc-head" data-acc="acc-exam" type="button">
         <span class="menu-icon-pill" style="background:#fce7f3;color:#9d174d;"><i class="fa-solid fa-calendar-check"></i></span>
         Exam Updates<i class="fa-solid fa-chevron-down mob-acc-chev"></i>
       </button>
       <div class="mob-acc-body" id="acc-exam">
         <a href="/section/admit-card/"><i class="fa-solid fa-id-card"></i> Admit Cards</a>
-        <a href="/category.html?group=admissions"><i class="fa-solid fa-trophy"></i> Results</a>
-        <a href="/category.html?group=admit-result"><i class="fa-solid fa-key"></i> Answer Keys</a>
-        <a href="/category.html?group=admissions"><i class="fa-solid fa-book"></i> Syllabus / Pattern</a>
+        <a href="/category/admissions/"><i class="fa-solid fa-trophy"></i> Results</a>
+        <a href="/category/admit-result/"><i class="fa-solid fa-key"></i> Answer Keys</a>
+        <a href="/category/admissions/"><i class="fa-solid fa-book"></i> Syllabus / Pattern</a>
       </div>
       <div class="offcanvas-section">Govt Schemes &amp; Services</div>
       <a href="/section/govt-scheme-yojna/"><span class="menu-icon-pill" style="background:#dcfce7;color:#15803d;"><i class="fa-solid fa-hand-holding-heart"></i></span>Govt Schemes / Yojna<span class="menu-badge menu-badge-green">Hot</span></a>
       <a href="/section/important-csc-pdf/"><span class="menu-icon-pill" style="background:#fee2e2;color:#b91c1c;"><i class="fa-solid fa-file-pdf"></i></span>CSC Services &amp; PDFs</a>
       <div class="offcanvas-section">Tools &amp; More</div>
-      <a href="/tools.html"><span class="menu-icon-pill" style="background:#dbeafe;color:#1d4ed8;"><i class="fa-solid fa-screwdriver-wrench"></i></span>Free Tools<span class="menu-badge menu-badge-blue">Free</span></a>
-      <a href="/resume-maker.html"><span class="menu-icon-pill" style="background:#ede9fe;color:#6d28d9;"><i class="fa-solid fa-file-lines"></i></span>Resume / CV Maker<span class="menu-badge menu-badge-purple">Free</span></a>
-      <a href="/category.html?group=khabar"><span class="menu-icon-pill" style="background:#ffedd5;color:#c2410c;"><i class="fa-solid fa-newspaper"></i></span>Latest Khabar</a>
-      <a href="/category.html?group=study-material"><span class="menu-icon-pill" style="background:#f0fdf4;color:#15803d;"><i class="fa-solid fa-book-open"></i></span>Study Material &amp; Courses</a>
-      <a href="/helpdesk.html"><span class="menu-icon-pill" style="background:#f1f5f9;color:#475569;"><i class="fa-solid fa-headset"></i></span>Helpdesk / Contact Us</a>
+      <a href="/tools/"><span class="menu-icon-pill" style="background:#dbeafe;color:#1d4ed8;"><i class="fa-solid fa-screwdriver-wrench"></i></span>Free Tools<span class="menu-badge menu-badge-blue">Free</span></a>
+      <a href="/resume-maker/"><span class="menu-icon-pill" style="background:#ede9fe;color:#6d28d9;"><i class="fa-solid fa-file-lines"></i></span>Resume / CV Maker<span class="menu-badge menu-badge-purple">Free</span></a>
+      <a href="/category/khabar/"><span class="menu-icon-pill" style="background:#ffedd5;color:#c2410c;"><i class="fa-solid fa-newspaper"></i></span>Latest Khabar</a>
+      <a href="/category/study-material/"><span class="menu-icon-pill" style="background:#f0fdf4;color:#15803d;"><i class="fa-solid fa-book-open"></i></span>Study Material &amp; Courses</a>
+      <a href="/helpdesk/"><span class="menu-icon-pill" style="background:#f1f5f9;color:#475569;"><i class="fa-solid fa-headset"></i></span>Helpdesk / Contact Us</a>
       <div class="offcanvas-section">Follow Us</div>
       <div class="offcanvas-social">
         <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" class="soc-wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
@@ -3202,7 +3221,7 @@
     'use strict';
 
     /* ── Config ──────────────────────────────────────────── */
-    var JSON_FILE = 'merged_sarkari_data.json';
+    var JSON_FILE = '/data/merged-summary.json';
     var MAX_ITEMS = 8;
 
     /*
@@ -3760,7 +3779,7 @@
     }
 
     function loadData() {
-      var CACHE_KEY = '__sr_merged_v8'; // bumped - removed LATEST_JOBS NEW duplicate
+      var CACHE_KEY = '__sr_merged_v9'; // bumped - removed LATEST_JOBS NEW duplicate
       var CACHE_TTL = 15 * 60 * 1000; // 15 min
 
       try {

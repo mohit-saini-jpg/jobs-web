@@ -5,150 +5,150 @@
       "color": "#60a5fa"
     },
     {
-    "name": "8th Pass Jobs",
-    "url": "view.html?section=8th%20Pass"
-  },
-  {
-    "name": "10th Pass Jobs",
-    "url": "view.html?section=10th%20Pass%20jobs"
-  },
-  {
-    "name": "12th Pass Jobs",
-    "url": "view.html?section=12th%20Pass%20jobs"
-  },
-  {
-    "name": "Diploma Jobs",
-    "url": "view.html?section=Diploma%20Jobs"
-  },
-  {
-    "name": "ITI Pass Jobs",
-    "url": "view.html?section=ITI%20Pass%20jobs"
-  },
-  {
-    "name": "Graduate Jobs",
-    "url": "view.html?section=Graduation%20jobs"
-  },
-  {
-    "name": "Post Graduate Jobs",
-    "url": "view.html?section=Post%20Graduation%20jobs"
-  },
-  {
-    "name": "B.A Jobs",
-    "url": "https://www.freejobalert.com/search-jobs/bcom-government-jobs/"
-  },
-  {
-    "name": "B.Com Jobs",
-    "url": "https://www.freejobalert.com/search-jobs/bcom-government-jobs/"
-  },
-  {
-    "name": "BSC Jobs",
-    "url": "https://www.freejobalert.com/search-jobs/bsc-government-jobs/"
-  },
-  {
-    "name": "Foreign jobs",
-    "url": "https://www.placementindia.com/international/"
-  },
-  {
-    "name": "B.Tech/B.E Jobs",
-    "url": "view.html?section=B.Tech%20Jobs"
-  },
-  {
-    "name": "LLB Jobs",
-    "url": "https://www.freejobalert.com/search-jobs/llb-government-jobs/"
-  },
-  {
-    "name": "B.Arch Jobs",
-    "url": "https://www.freejobalert.com/search-jobs/barch-government-jobs/"
-  },
-  {
-    "name": "GNM/Nursing Jobs",
-    "url": "https://www.freejobalert.com/search-jobs/gnm-government-jobs/"
-  },
-  {
-    "name": "B Pharma Jobs",
-    "url": "https://www.freejobalert.com/search-jobs/bpharma-government-jobs/",
-    "external": true
-  },
-  {
-    "name": "MA Jobs",
-    "url": "https://www.freejobalert.com/search-jobs/ma-government-jobs/"
-  },
-  {
-    "name": "M.COM Jobs",
-    "url": "https://www.freejobalert.com/search-jobs/mcom-government-jobs/"
-  },
-  {
-    "name": "MSC Jobs",
-    "url": "https://www.freejobalert.com/search-jobs/msc-government-jobs/",
-    "external": true
-  },
-  {
-    "name": "PG Diploma Jobs",
-    "url": "https://www.freejobalert.com/search-jobs/pg-diploma-government-jobs/"
-  },
-  {
-    "name": "MBA Jobs",
-    "url": "https://www.freejobalert.com/search-jobs/mba-pgdm-government-jobs/"
-  },
-  {
-    "name": "M.Tech jobs",
-    "url": "https://www.freshersnow.com/m-tech-jobs/"
-  },
-  {
-    "name": "MBBS Jobs",
-    "url": "https://www.freejobalert.com/search-jobs/mbbs-government-jobs/"
-  },
-  {
-    "name": "LLM Jobs",
-    "url": "https://www.freejobalert.com/search-jobs/llm-government-jobs/"
-  },
-  {
-    "name": "CA Jobs",
-    "url": "https://www.freejobalert.com/search-jobs/ca-government-jobs/"
-  },
-  {
-    "name": "MD/MS Govt Jobs",
-    "url": "https://www.freshersnow.com/md-govt-jobs/"
-  },
-  {
-    "name": "Ph.D Jobs",
-    "url": "https://www.freejobalert.com/search-jobs/mphil-phd-government-jobs/"
-  },
-  {
-    "name": "Internships For Students",
-    "url": "https://www.freshersnow.com/internship-jobs/"
-  },
-  {
-    "name": "Engineering Jobs by State",
-    "url": "https://www.freejobalert.com/engineering-jobs/"
-  },
-  {
-    "name": "Engineering Jobs by Company",
-    "url": "https://www.freshersnow.com/engineering-govt-jobs/"
-  },
-  {
-    "name": "🔰 More Jobs By education",
-    "url": "https://www.freejobalert.com/search-jobs/jobs-by-education/"
-  },
+      "name": "8th Pass Jobs",
+      "url": "/section/8th-pass-jobs/"
+    },
+    {
+      "name": "10th Pass Jobs",
+      "url": "/section/10th-pass-jobs/"
+    },
+    {
+      "name": "12th Pass Jobs",
+      "url": "/section/12th-pass-jobs/"
+    },
+    {
+      "name": "Diploma Jobs",
+      "url": "/section/diploma-jobs/"
+    },
+    {
+      "name": "ITI Pass Jobs",
+      "url": "/section/iti-jobs/"
+    },
+    {
+      "name": "Graduate Jobs",
+      "url": "/section/graduation-jobs/"
+    },
+    {
+      "name": "Post Graduate Jobs",
+      "url": "/section/post-graduation-jobs/"
+    },
+    {
+      "name": "B.A Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/bcom-government-jobs/"
+    },
+    {
+      "name": "B.Com Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/bcom-government-jobs/"
+    },
+    {
+      "name": "BSC Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/bsc-government-jobs/"
+    },
+    {
+      "name": "Foreign jobs",
+      "url": "https://www.placementindia.com/international/"
+    },
+    {
+      "name": "B.Tech/B.E Jobs",
+      "url": "/section/btech-jobs/"
+    },
+    {
+      "name": "LLB Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/llb-government-jobs/"
+    },
+    {
+      "name": "B.Arch Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/barch-government-jobs/"
+    },
+    {
+      "name": "GNM/Nursing Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/gnm-government-jobs/"
+    },
+    {
+      "name": "B Pharma Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/bpharma-government-jobs/",
+      "external": true
+    },
+    {
+      "name": "MA Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/ma-government-jobs/"
+    },
+    {
+      "name": "M.COM Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/mcom-government-jobs/"
+    },
+    {
+      "name": "MSC Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/msc-government-jobs/",
+      "external": true
+    },
+    {
+      "name": "PG Diploma Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/pg-diploma-government-jobs/"
+    },
+    {
+      "name": "MBA Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/mba-pgdm-government-jobs/"
+    },
+    {
+      "name": "M.Tech jobs",
+      "url": "https://www.freshersnow.com/m-tech-jobs/"
+    },
+    {
+      "name": "MBBS Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/mbbs-government-jobs/"
+    },
+    {
+      "name": "LLM Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/llm-government-jobs/"
+    },
+    {
+      "name": "CA Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/ca-government-jobs/"
+    },
+    {
+      "name": "MD/MS Govt Jobs",
+      "url": "https://www.freshersnow.com/md-govt-jobs/"
+    },
+    {
+      "name": "Ph.D Jobs",
+      "url": "https://www.freejobalert.com/search-jobs/mphil-phd-government-jobs/"
+    },
+    {
+      "name": "Internships For Students",
+      "url": "https://www.freshersnow.com/internship-jobs/"
+    },
+    {
+      "name": "Engineering Jobs by State",
+      "url": "https://www.freejobalert.com/engineering-jobs/"
+    },
+    {
+      "name": "Engineering Jobs by Company",
+      "url": "https://www.freshersnow.com/engineering-govt-jobs/"
+    },
+    {
+      "name": "🔰 More Jobs By education",
+      "url": "https://www.freejobalert.com/search-jobs/jobs-by-education/"
+    },
     {
       "title": "⭐ Popular Jobs Categories",
       "color": "#dc7ec7"
     },
     {
       "name": "Railway Jobs",
-      "url": "view.html?section=Railway%20Jobs"
+      "url": "/section/railway-jobs/"
     },
     {
       "name": "Police Job",
-      "url": "view.html?section=Police%20Jobs"
+      "url": "/section/police-jobs/"
     },
     {
       "name": "Bank Jobs",
-      "url": "view.html?section=Bank%20jobs"
+      "url": "/section/bank-jobs/"
     },
     {
       "name": "Teaching Jobs",
-      "url": "view.html?section=Teacher%20Jobs"
+      "url": "/section/teaching-jobs/"
     },
     {
       "name": "SSC Jobs",
@@ -184,7 +184,7 @@
     },
     {
       "name": "Private Govt Jos",
-      "url": "https://www.mysarkarinaukri.com/find/private-jobs?s=&page=1" 
+      "url": "https://www.mysarkarinaukri.com/find/private-jobs?s=&page=1"
     },
     {
       "name": "No Exam Jobs",
@@ -510,7 +510,7 @@
       "name": "Answer Key Jobs",
       "url": "https://www.topsarkarijobs.com/section/answer-key/"
     },
-     {
+    {
       "name": "Previous-papers",
       "url": "https://www.freejobalert.com/previous-papers/"
     },
@@ -526,11 +526,11 @@
       "name": "Exam-Pattern",
       "url": "https://www.freejobalert.com/exam-pattern/"
     },
-     {
+    {
       "name": "Selection Process Jobs",
       "url": "https://www.freejobalert.com/selection-process/"
     },
-     {
+    {
       "name": "Mock Test",
       "url": "https://www.mockers.in/"
     },
@@ -569,7 +569,7 @@
       "name": "10-12th Board Results",
       "url": "https://sarkariresult.com.im/category/board-result/"
     },
-   {
+    {
       "name": "College Admission",
       "url": "https://www.collegeadmission.in/list/college-admission-information"
     },

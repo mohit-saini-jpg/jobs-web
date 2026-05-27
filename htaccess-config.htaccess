@@ -1,14 +1,10 @@
-# .htaccess — Top Sarkari Jobs
-# Upload this file to your website root (public_html or www folder)
-# Last updated: 2026-05-07
+# .htaccess — Top Sarkari Jobs — SEO Clean URLs
+# Upload to public_html root
+# Last updated: 2026-05-26
 
 Options -Indexes
 RewriteEngine On
 RewriteBase /
-
-# =====================================================================
-# 1. FORCE WWW + HTTPS (pick one block based on your setup)
-# =====================================================================
 
 # Force HTTPS
 RewriteCond %{HTTPS} off
@@ -18,140 +14,149 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 RewriteCond %{HTTP_HOST} !^www\. [NC]
 RewriteRule ^(.*)$ https://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
+# =====================================================================
+# STATIC PAGES — .html → clean URL 301 redirects
+# =====================================================================
+RewriteRule ^about\.html$                /about/                [L,R=301]
+RewriteRule ^contact\.html$              /contact/              [L,R=301]
+RewriteRule ^terms\.html$                /terms/                [L,R=301]
+RewriteRule ^privacy\.html$              /privacy/              [L,R=301]
+RewriteRule ^disclaimer\.html$           /disclaimer/           [L,R=301]
+RewriteRule ^helpdesk\.html$             /helpdesk/             [L,R=301]
+RewriteRule ^sitemap\.html$              /sitemap/              [L,R=301]
+RewriteRule ^resume-maker\.html$         /resume-maker/         [L,R=301]
+RewriteRule ^tools\.html$                /tools/                [L,R=301]
+RewriteRule ^govt-services\.html$        /govt-services/        [L,R=301]
+RewriteRule ^education-jobs\.html$       /education/            [L,R=301]
+RewriteRule ^education-detail\.html$     /education/            [L,R=301]
+RewriteRule ^result\.html$               /section/results/      [L,R=301]
+RewriteRule ^admit-card\.html$           /section/admit-card/   [L,R=301]
+RewriteRule ^search\.html$               /search/               [L,R=301]
+RewriteRule ^jobs-index\.html$           /section/latest-jobs/  [L,R=301]
 
 # =====================================================================
-# 2. CLEAN URL REWRITES (SEO Friendly URLs → Internal Query Params)
-#    These let Google index clean URLs while your JS still works
+# view.html?section= → /section/{slug}/ 301 redirects
 # =====================================================================
+RewriteCond %{QUERY_STRING} ^section=latest.jobs$ [NC]
+RewriteRule ^view\.html$  /section/latest-jobs/  [L,R=301]
 
-# Latest Jobs
-RewriteRule ^latest-sarkari-jobs/?$         view.html?section=latest+jobs [L,QSA]
-RewriteRule ^latest-sarkari-jobs/2026/?$    view.html?section=latest+jobs [L,QSA]
+RewriteCond %{QUERY_STRING} ^section=SR_Latest_Jobs$
+RewriteRule ^view\.html$  /section/latest-jobs/  [L,R=301]
 
-# Upcoming Jobs
-RewriteRule ^upcoming-government-jobs/?$    view.html?section=upcoming-jobs [L,QSA]
+RewriteCond %{QUERY_STRING} ^section=Latest.Govt.Jobs$ [NC]
+RewriteRule ^view\.html$  /section/latest-govt-jobs/ [L,R=301]
 
-# All India Jobs
-RewriteRule ^all-india-government-jobs/?$   view.html?section=Latest+Govt+Jobs [L,QSA]
+RewriteCond %{QUERY_STRING} ^section=results$ [NC]
+RewriteRule ^view\.html$  /section/results/      [L,R=301]
 
-# Jobs with Last Date
-RewriteRule ^jobs-with-last-date/?$         view.html?section=Jobs+with+Last+date [L,QSA]
+RewriteCond %{QUERY_STRING} ^section=SR_Result$
+RewriteRule ^view\.html$  /section/results/      [L,R=301]
 
-# Top 20 Jobs
-RewriteRule ^top-20-sarkari-jobs/?$         view.html?section=Top+20+Jobs [L,QSA]
+RewriteCond %{QUERY_STRING} ^section=admit.card$ [NC]
+RewriteRule ^view\.html$  /section/admit-card/   [L,R=301]
 
-# Qualification-wise
-RewriteRule ^8th-pass-jobs/?$               view.html?section=8th+Pass [L,QSA]
-RewriteRule ^10th-pass-jobs/?$              view.html?section=10th+Pass+jobs [L,QSA]
-RewriteRule ^12th-pass-jobs/?$              view.html?section=12th+Pass+jobs [L,QSA]
-RewriteRule ^iti-pass-jobs/?$               view.html?section=ITI+Pass+jobs [L,QSA]
-RewriteRule ^diploma-jobs/?$                view.html?section=Diploma+Jobs [L,QSA]
-RewriteRule ^btech-jobs/?$                  view.html?section=B.Tech+Jobs [L,QSA]
-RewriteRule ^graduation-jobs/?$             view.html?section=Graduation+jobs [L,QSA]
-RewriteRule ^post-graduation-jobs/?$        view.html?section=Post+Graduation+jobs [L,QSA]
+RewriteCond %{QUERY_STRING} ^section=SR_Admit_Card$
+RewriteRule ^view\.html$  /section/admit-card/   [L,R=301]
 
-# Department-wise
-RewriteRule ^railway-jobs/?$                view.html?section=Railway+Jobs [L,QSA]
-RewriteRule ^bank-jobs/?$                   view.html?section=Bank+Jobs [L,QSA]
-RewriteRule ^police-jobs/?$                 view.html?section=Police+Jobs [L,QSA]
-RewriteRule ^teacher-jobs/?$                view.html?section=Teacher+Jobs [L,QSA]
-RewriteRule ^army-navy-airforce-jobs/?$     view.html?section=Indian+ARMY+jobs [L,QSA]
-RewriteRule ^government-schemes-yojna/?$    view.html?section=Govt+Scheme+Yojna [L,QSA]
+RewriteCond %{QUERY_STRING} ^section=answer.key$ [NC]
+RewriteRule ^view\.html$  /section/answer-key/   [L,R=301]
 
-# Central / State
-RewriteRule ^central-government-jobs/?$     view.html?section=Central+jobs [L,QSA]
-RewriteRule ^state-government-jobs/?$       view.html?section=State+jobs [L,QSA]
-RewriteRule ^haryana-government-jobs/?$     view.html?section=Haryana+All+State+Jobs [L,QSA]
+RewriteCond %{QUERY_STRING} ^section=SR_Answer_Key$
+RewriteRule ^view\.html$  /section/answer-key/   [L,R=301]
 
-# Category pages
-RewriteRule ^admit-card-result/?$           category.html?group=admit-result [L,QSA]
-RewriteRule ^admissions/?$                  category.html?group=admissions [L,QSA]
-RewriteRule ^latest-khabar/?$               category.html?group=khabar [L,QSA]
-RewriteRule ^study-material/?$              category.html?group=study-material [L,QSA]
-RewriteRule ^study-wise-jobs/?$             category.html?group=study [L,QSA]
-RewriteRule ^popular-job-categories/?$      category.html?group=popular [L,QSA]
-RewriteRule ^state-wise-jobs/?$             category.html?group=state [L,QSA]
+RewriteCond %{QUERY_STRING} ^section=railway.jobs$ [NC]
+RewriteRule ^view\.html$  /section/railway-jobs/ [L,R=301]
 
-# State-specific jobs
-RewriteRule ^haryana-jobs/?$                state-jobs.html?state=Haryana [L,QSA]
-RewriteRule ^up-jobs/?$                     state-jobs.html?state=Uttar+Pradesh [L,QSA]
-RewriteRule ^rajasthan-jobs/?$              state-jobs.html?state=Rajasthan [L,QSA]
-RewriteRule ^bihar-jobs/?$                  state-jobs.html?state=Bihar [L,QSA]
-RewriteRule ^mp-jobs/?$                     state-jobs.html?state=Madhya+Pradesh [L,QSA]
-RewriteRule ^maharashtra-jobs/?$            state-jobs.html?state=Maharashtra [L,QSA]
-RewriteRule ^punjab-jobs/?$                 state-jobs.html?state=Punjab [L,QSA]
+RewriteCond %{QUERY_STRING} ^section=bank.jobs$ [NC]
+RewriteRule ^view\.html$  /section/bank-jobs/    [L,R=301]
 
+RewriteCond %{QUERY_STRING} ^section=police.jobs$ [NC]
+RewriteRule ^view\.html$  /section/police-jobs/  [L,R=301]
 
-# =====================================================================
-# 3. SECURITY HEADERS
-# =====================================================================
-<IfModule mod_headers.c>
-  Header always set X-Content-Type-Options "nosniff"
-  Header always set X-Frame-Options "SAMEORIGIN"
-  Header always set Referrer-Policy "strict-origin-when-cross-origin"
-  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
-</IfModule>
+RewriteCond %{QUERY_STRING} ^section=teacher.jobs$ [NC]
+RewriteRule ^view\.html$  /section/teaching-jobs/ [L,R=301]
 
+RewriteCond %{QUERY_STRING} ^section=upcoming.jobs$ [NC]
+RewriteRule ^view\.html$  /section/upcoming-jobs/ [L,R=301]
+
+RewriteCond %{QUERY_STRING} ^section=central.jobs$ [NC]
+RewriteRule ^view\.html$  /section/central-jobs/ [L,R=301]
+
+RewriteCond %{QUERY_STRING} ^section=state.jobs$ [NC]
+RewriteRule ^view\.html$  /section/state-jobs/   [L,R=301]
+
+RewriteCond %{QUERY_STRING} ^section=admissions$ [NC]
+RewriteRule ^view\.html$  /section/admissions/   [L,R=301]
+
+RewriteCond %{QUERY_STRING} ^section=admission$ [NC]
+RewriteRule ^view\.html$  /section/admission/    [L,R=301]
+
+RewriteCond %{QUERY_STRING} ^section=haryana.all.state.jobs$ [NC]
+RewriteRule ^view\.html$  /section/haryana-jobs/ [L,R=301]
+
+# Catch-all: any remaining view.html?section= → /section/ (strip section param)
+RewriteCond %{QUERY_STRING} ^section=(.+)$
+RewriteRule ^view\.html$  /section/%1/           [L,R=301,NE]
 
 # =====================================================================
-# 4. CACHE CONTROL (Critical for performance)
+# state-jobs.html?state= → /state/{slug}/ 301 redirects  
 # =====================================================================
-<IfModule mod_expires.c>
-  ExpiresActive On
-
-  # HTML — short cache (content changes daily)
-  ExpiresByType text/html                     "access plus 1 hour"
-
-  # CSS & JavaScript — long cache (use versioned filenames like styles.css?v=20260507)
-  ExpiresByType text/css                      "access plus 1 year"
-  ExpiresByType application/javascript        "access plus 1 year"
-  ExpiresByType text/javascript               "access plus 1 year"
-
-  # Images
-  ExpiresByType image/png                     "access plus 30 days"
-  ExpiresByType image/jpeg                    "access plus 30 days"
-  ExpiresByType image/gif                     "access plus 30 days"
-  ExpiresByType image/svg+xml                 "access plus 30 days"
-  ExpiresByType image/webp                    "access plus 30 days"
-  ExpiresByType image/x-icon                  "access plus 1 year"
-
-  # Fonts
-  ExpiresByType font/woff                     "access plus 1 year"
-  ExpiresByType font/woff2                    "access plus 1 year"
-  ExpiresByType font/ttf                      "access plus 1 year"
-  ExpiresByType application/font-woff         "access plus 1 year"
-
-  # JSON data files — moderate cache (jobs update frequently)
-  ExpiresByType application/json              "access plus 4 hours"
-
-  # XML (sitemap)
-  ExpiresByType application/xml               "access plus 1 day"
-  ExpiresByType text/xml                      "access plus 1 day"
-</IfModule>
-
+RewriteCond %{QUERY_STRING} ^state=Andhra.Pradesh$
+RewriteRule ^state-jobs\.html$  /state/andhra-pradesh/ [L,R=301]
+RewriteCond %{QUERY_STRING} ^state=Uttar.Pradesh$
+RewriteRule ^state-jobs\.html$  /state/uttar-pradesh/  [L,R=301]
+RewriteCond %{QUERY_STRING} ^state=Madhya.Pradesh$
+RewriteRule ^state-jobs\.html$  /state/madhya-pradesh/ [L,R=301]
+RewriteCond %{QUERY_STRING} ^state=Tamil.Nadu$
+RewriteRule ^state-jobs\.html$  /state/tamil-nadu/     [L,R=301]
+RewriteCond %{QUERY_STRING} ^state=West.Bengal$
+RewriteRule ^state-jobs\.html$  /state/west-bengal/    [L,R=301]
+RewriteCond %{QUERY_STRING} ^state=Himachal.Pradesh$
+RewriteRule ^state-jobs\.html$  /state/himachal-pradesh/ [L,R=301]
+RewriteCond %{QUERY_STRING} ^state=Jammu.and.Kashmir$
+RewriteRule ^state-jobs\.html$  /state/jammu-and-kashmir/ [L,R=301]
+RewriteCond %{QUERY_STRING} ^state=([A-Za-z]+)$
+RewriteRule ^state-jobs\.html$  /state/%1/             [L,R=301,NE]
 
 # =====================================================================
-# 5. GZIP COMPRESSION
+# education-detail.html?section= → /education/{slug}/
 # =====================================================================
-<IfModule mod_deflate.c>
-  AddOutputFilterByType DEFLATE text/html
-  AddOutputFilterByType DEFLATE text/css
-  AddOutputFilterByType DEFLATE application/javascript
-  AddOutputFilterByType DEFLATE text/javascript
-  AddOutputFilterByType DEFLATE application/json
-  AddOutputFilterByType DEFLATE text/xml
-  AddOutputFilterByType DEFLATE application/xml
-  AddOutputFilterByType DEFLATE image/svg+xml
-  AddOutputFilterByType DEFLATE font/woff2
-  AddOutputFilterByType DEFLATE font/ttf
-</IfModule>
-
+RewriteCond %{QUERY_STRING} ^section=(.+)$
+RewriteRule ^education-detail\.html$  /education/%1/ [L,R=301,NE]
 
 # =====================================================================
-# 6. CORS HEADERS FOR FONTS
+# category.html?group= → /category/{group}/
 # =====================================================================
-<IfModule mod_headers.c>
-  <FilesMatch "\.(woff|woff2|ttf|eot)$">
-    Header set Access-Control-Allow-Origin "*"
-  </FilesMatch>
-</IfModule>
+RewriteCond %{QUERY_STRING} ^group=state$
+RewriteRule ^category\.html$  /state/          [L,R=301]
+RewriteCond %{QUERY_STRING} ^group=(.+)$
+RewriteRule ^category\.html$  /category/%1/    [L,R=301,NE]
+
+# =====================================================================
+# SPA CLEAN URL REWRITES (serve template, keep clean URL)
+# =====================================================================
+RewriteRule ^section/(.+)/?$      view.html           [L,QSA]
+RewriteRule ^jobs/(.+)/?$         job.html            [L,QSA]
+RewriteRule ^state/(.+)/?$        state-jobs.html     [L,QSA]
+RewriteRule ^education/(.+)/?$    education-detail.html [L,QSA]
+RewriteRule ^category/(.+)/?$     category.html       [L,QSA]
+RewriteRule ^search/(.*)$         search.html         [L,QSA]
+RewriteRule ^about/?$             about.html          [L]
+RewriteRule ^contact/?$           contact.html        [L]
+RewriteRule ^terms/?$             terms.html          [L]
+RewriteRule ^privacy/?$           privacy.html        [L]
+RewriteRule ^disclaimer/?$        disclaimer.html     [L]
+RewriteRule ^helpdesk/?$          helpdesk.html       [L]
+RewriteRule ^sitemap/?$           sitemap.html        [L]
+RewriteRule ^resume-maker/?$      resume-maker.html   [L]
+RewriteRule ^tools/?$             tools.html          [L]
+RewriteRule ^govt-services/?$     govt-services.html  [L]
+
+# =====================================================================
+# CANONICAL / NO TRAILING SLASH enforcement
+# =====================================================================
+# Remove double slashes
+RewriteCond %{REQUEST_URI} ^(.*)//(.*)$
+RewriteRule . %1/%2 [R=301,L]
+
+ErrorDocument 404 /404.html

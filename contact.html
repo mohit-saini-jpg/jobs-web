@@ -83,15 +83,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contact – Top Sarkari Jobs</title>
   <meta name="description" content="Contact Top Sarkari Jobs for feedback, corrections, or partnership inquiries.">
-  <link rel="canonical" href="https://www.topsarkarijobs.com/contact.html">
-  <link rel="alternate" hreflang="en" href="https://www.topsarkarijobs.com/contact.html" />
-  <link rel="alternate" hreflang="en-IN" href="https://www.topsarkarijobs.com/contact.html" />
-  <link rel="alternate" hreflang="x-default" href="https://www.topsarkarijobs.com/contact.html" />
+  <link rel="canonical" href="https://www.topsarkarijobs.com/contact/">
+  <link rel="alternate" hreflang="en" href="https://www.topsarkarijobs.com/contact/" />
+  <link rel="alternate" hreflang="en-IN" href="https://www.topsarkarijobs.com/contact/" />
+  <link rel="alternate" hreflang="x-default" href="https://www.topsarkarijobs.com/contact/" />
   <link rel="icon" type="image/x-icon" href="image.ico">
 
   <!-- Open Graph / WhatsApp / Social Share -->
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://www.topsarkarijobs.com/contact.html" />
+  <meta property="og:url" content="https://www.topsarkarijobs.com/contact/" />
   <meta property="og:title" content="Contact Us - Top Sarkari Jobs" />
   <meta property="og:description" content="Contact Top Sarkari Jobs for any questions, feedback or support." />
   <meta property="og:image" content="https://www.topsarkarijobs.com/image.png" />
@@ -160,19 +160,29 @@ html, body { overflow-x: hidden; max-width: 100%; }
   <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
-  <script src="/tsj-menu.js"></script>
+  <script src="/tsj-menu.js" defer></script>
 <script src="/pwa-install.js?v=6.0" defer></script>
   <!-- ══ END PWA ════════════════════════════════════════════════════ -->
+  <script>
+  /* Auto-update canonical to clean URL when served via SPA rewrite */
+  (function(){
+    var can = document.querySelector('link[rel="canonical"]');
+    var cleanPath = window.location.pathname;
+    if (can && cleanPath && cleanPath !== '/' && !cleanPath.endsWith('.html')) {
+      can.href = 'https://www.topsarkarijobs.com' + cleanPath;
+    }
+  })();
+  </script>
 </head>
 <body>
   <header>
     <div class="container">
       <h1>Contact Us</h1>
       <nav>
-        <a href="index.html">Home</a>
-        <a href="about.html">About</a>
-        <a href="privacy.html">Privacy</a>
-        <a href="terms.html">Terms</a>
+        <a href="/">Home</a>
+        <a href="/about/">About</a>
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
       </nav>
     </div>
   </header>

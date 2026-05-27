@@ -1,12 +1,12 @@
 # ══════════════════════════════════════════════════════════════
 # netlify.toml — Top Sarkari Jobs
-# Static HTML site — NO build command needed
+# SEO Clean URL Architecture — All routes configured
 # ══════════════════════════════════════════════════════════════
 
 [build]
   publish = "."
 
-# No build command — ye pure static HTML site hai
+# No build command — pure static HTML site
 
 [[headers]]
   for = "/sw.js"
@@ -26,20 +26,6 @@
     Cache-Control = "no-cache, no-store, must-revalidate"
 
 [[headers]]
-  for = "/.well-known/assetlinks.json"
-  [headers.values]
-    Cache-Control = "public, max-age=3600"
-    Content-Type = "application/json"
-    Access-Control-Allow-Origin = "*"
-
-[[headers]]
-  for = "/.well-known/apple-app-site-association"
-  [headers.values]
-    Cache-Control = "public, max-age=3600"
-    Content-Type = "application/json"
-    Access-Control-Allow-Origin = "*"
-
-[[headers]]
   for = "/*"
   [headers.values]
     X-Frame-Options = "SAMEORIGIN"
@@ -48,25 +34,201 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
 
-# ── Section URL routing ──────────────────────────────────────────────────────
-# /section/* served by static section/[slug]/index.html files
-# Fallback: any unmatched /section/* → view.html (200, not 302)
-[[redirects]]
-  from = "/section/*"
-  to   = "/view.html"
-  status = 200
-  force  = false   # Only applies if static file not found
 
-# /jobs/* static pages
+[[headers]]
+  for = "/data/*.json"
+  [headers.values]
+    Cache-Control = "public, max-age=600, stale-while-revalidate=3600"
+    Access-Control-Allow-Origin = "*"
+
+# ═══════════════════════════════════════════════════════════════
+# 301 PERMANENT REDIRECTS — Old .html URLs → Clean URLs
+# These run BEFORE the 200 rewrites below
+# ═══════════════════════════════════════════════════════════════
+
+# Static pages
 [[redirects]]
-  from = "/jobs/*"
-  to   = "/job.html"
+  from = "/about.html"
+  to   = "/about/"
+  status = 301
+
+[[redirects]]
+  from = "/contact.html"
+  to   = "/contact/"
+  status = 301
+
+[[redirects]]
+  from = "/terms.html"
+  to   = "/terms/"
+  status = 301
+
+[[redirects]]
+  from = "/privacy.html"
+  to   = "/privacy/"
+  status = 301
+
+[[redirects]]
+  from = "/disclaimer.html"
+  to   = "/disclaimer/"
+  status = 301
+
+[[redirects]]
+  from = "/helpdesk.html"
+  to   = "/helpdesk/"
+  status = 301
+
+[[redirects]]
+  from = "/sitemap.html"
+  to   = "/sitemap/"
+  status = 301
+
+[[redirects]]
+  from = "/resume-maker.html"
+  to   = "/resume-maker/"
+  status = 301
+
+[[redirects]]
+  from = "/tools.html"
+  to   = "/tools/"
+  status = 301
+
+[[redirects]]
+  from = "/govt-services.html"
+  to   = "/govt-services/"
+  status = 301
+
+[[redirects]]
+  from = "/education-jobs.html"
+  to   = "/education/"
+  status = 301
+
+[[redirects]]
+  from = "/education-detail.html"
+  to   = "/education/"
+  status = 301
+
+[[redirects]]
+  from = "/result.html"
+  to   = "/section/results/"
+  status = 301
+
+[[redirects]]
+  from = "/admit-card.html"
+  to   = "/section/admit-card/"
+  status = 301
+
+[[redirects]]
+  from = "/search.html"
+  to   = "/search/"
+  status = 301
+
+[[redirects]]
+  from = "/jobs-index.html"
+  to   = "/section/latest-jobs/"
+  status = 301
+
+# ═══════════════════════════════════════════════════════════════
+# 200 REWRITES — Clean URLs served by SPA templates
+# Static files take priority (force = false)
+# ═══════════════════════════════════════════════════════════════
+
+# /section/* — served by static section/[slug]/index.html first,
+#              falls back to view.html if no static file found
+[[redirects]]
+  from   = "/section/*"
+  to     = "/view.html"
   status = 200
   force  = false
 
-# /state-jobs/* routing
+# /jobs/* — job detail pages
 [[redirects]]
-  from = "/state-jobs/*"
-  to   = "/view.html"
+  from   = "/jobs/*"
+  to     = "/job.html"
+  status = 200
+  force  = false
+
+# /state/* — state job pages (served by static state/[slug]/index.html)
+[[redirects]]
+  from   = "/state/*"
+  to     = "/state-jobs.html"
+  status = 200
+  force  = false
+
+# /education/* — education pages (served by static education/[slug]/index.html)
+[[redirects]]
+  from   = "/education/*"
+  to     = "/education-detail.html"
+  status = 200
+  force  = false
+
+# /category/* — category hub pages
+[[redirects]]
+  from   = "/category/*"
+  to     = "/category.html"
+  status = 200
+  force  = false
+
+# /search/* — search pages
+[[redirects]]
+  from   = "/search/*"
+  to     = "/search.html"
+  status = 200
+  force  = false
+
+# Static clean URL pages
+[[redirects]]
+  from = "/about/"
+  to   = "/about.html"
+  status = 200
+
+[[redirects]]
+  from = "/contact/"
+  to   = "/contact.html"
+  status = 200
+
+[[redirects]]
+  from = "/terms/"
+  to   = "/terms.html"
+  status = 200
+
+[[redirects]]
+  from = "/privacy/"
+  to   = "/privacy.html"
+  status = 200
+
+[[redirects]]
+  from = "/disclaimer/"
+  to   = "/disclaimer.html"
+  status = 200
+
+[[redirects]]
+  from = "/helpdesk/"
+  to   = "/helpdesk.html"
+  status = 200
+
+[[redirects]]
+  from = "/sitemap/"
+  to   = "/sitemap.html"
+  status = 200
+
+[[redirects]]
+  from = "/resume-maker/"
+  to   = "/resume-maker.html"
+  status = 200
+
+[[redirects]]
+  from = "/tools/"
+  to   = "/tools.html"
+  status = 200
+
+[[redirects]]
+  from = "/govt-services/"
+  to   = "/govt-services.html"
+  status = 200
+
+# Legacy state-jobs/* routing (backward compatibility)
+[[redirects]]
+  from   = "/state-jobs/*"
+  to     = "/state-jobs.html"
   status = 200
   force  = false

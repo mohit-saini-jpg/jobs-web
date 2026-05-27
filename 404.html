@@ -169,7 +169,7 @@
   <meta name="msapplication-tap-highlight" content="no"/>
   <link rel="apple-touch-icon" href="/icons/icon-180x180.png"/>
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
-  <script src="/tsj-menu.js"></script>
+  <script src="/tsj-menu.js" defer></script>
 <script src="/pwa-install.js?v=6.0" defer></script>
 </head>
 <body>
@@ -287,7 +287,7 @@
       return;
     }
     if (path === '/state/' || path === '/state') {
-      window.location.replace('/category.html?group=state');
+      window.location.replace('/state/');
       return;
     }
     var legacyStateMatch = path.match(/^\/state-jobs\/([^\/]+)\/?$/);
@@ -317,58 +317,58 @@
        F. STATIC SHORTCUTS
     ════════════════════════════════════════════════════ */
     var shortcuts = {
-      '/latest-jobs/':     '/view.html?section=latest-jobs',
-      '/latest-jobs':      '/view.html?section=latest-jobs',
-      '/results/':         '/view.html?section=results',
-      '/results':          '/view.html?section=results',
-      '/admit-card/':      '/view.html?section=admit-card',
-      '/admit-card':       '/view.html?section=admit-card',
-      '/railway-jobs/':    '/view.html?section=railway-jobs',
-      '/railway-jobs':     '/view.html?section=railway-jobs',
-      '/bank-jobs/':       '/view.html?section=bank-jobs',
-      '/bank-jobs':        '/view.html?section=bank-jobs',
-      '/police-jobs/':     '/view.html?section=police-jobs',
-      '/police-jobs':      '/view.html?section=police-jobs',
-      '/ssc-jobs/':        '/view.html?section=ssc-jobs',
-      '/ssc-jobs':         '/view.html?section=ssc-jobs',
-      '/upsc-jobs/':       '/view.html?section=upsc-jobs',
-      '/upsc-jobs':        '/view.html?section=upsc-jobs',
-      '/teaching-jobs/':   '/view.html?section=teaching-jobs',
-      '/teaching-jobs':    '/view.html?section=teaching-jobs',
-      '/army-jobs/':       '/view.html?section=army-jobs',
-      '/army-jobs':        '/view.html?section=army-jobs',
-      '/10th-pass-jobs/':  '/view.html?section=10th-pass-jobs',
-      '/10th-pass-jobs':   '/view.html?section=10th-pass-jobs',
-      '/12th-pass-jobs/':  '/view.html?section=12th-pass-jobs',
-      '/12th-pass-jobs':   '/view.html?section=12th-pass-jobs',
-      '/upcoming-jobs/':   '/view.html?section=upcoming-jobs',
-      '/upcoming-jobs':    '/view.html?section=upcoming-jobs',
-      '/state-jobs/':      '/view.html?section=state-jobs',
-      '/state-jobs':       '/view.html?section=state-jobs',
-      '/central-jobs/':    '/view.html?section=central-jobs',
-      '/central-jobs':     '/view.html?section=central-jobs',
-      '/answer-key/':      '/view.html?section=answer-key',
-      '/answer-key':       '/view.html?section=answer-key',
-      '/admissions/':      '/view.html?section=admissions',
-      '/admissions':       '/view.html?section=admissions',
-      '/admission/':       '/view.html?section=admission',
-      '/admission':        '/view.html?section=admission',
-      '/haryana-jobs/':    '/view.html?section=haryana-all-state-jobs',
-      '/haryana-jobs':     '/view.html?section=haryana-all-state-jobs',
-      '/iti-jobs/':        '/view.html?section=iti-jobs',
-      '/iti-jobs':         '/view.html?section=iti-jobs',
-      '/diploma-jobs/':    '/view.html?section=diploma-jobs',
-      '/diploma-jobs':     '/view.html?section=diploma-jobs',
-      '/8th-pass-jobs/':   '/view.html?section=8th-pass',
-      '/8th-pass-jobs':    '/view.html?section=8th-pass',
-      '/graduation-jobs/': '/view.html?section=graduation-jobs',
-      '/graduation-jobs':  '/view.html?section=graduation-jobs',
-      '/medical-jobs/':    '/view.html?section=medical-jobs',
-      '/medical-jobs':     '/view.html?section=medical-jobs',
-      '/defence-jobs/':    '/view.html?section=defence-jobs',
-      '/defence-jobs':     '/view.html?section=defence-jobs',
-      '/latest-govt-jobs/':'/view.html?section=latest-govt-jobs',
-      '/latest-govt-jobs': '/view.html?section=latest-govt-jobs',
+      '/latest-jobs/':     '/section/latest-jobs/',
+      '/latest-jobs':      '/section/latest-jobs/',
+      '/results/':         '/section/results/',
+      '/results':          '/section/results/',
+      '/admit-card/':      '/section/admit-card/',
+      '/admit-card':       '/section/admit-card/',
+      '/railway-jobs/':    '/section/railway-jobs/',
+      '/railway-jobs':     '/section/railway-jobs/',
+      '/bank-jobs/':       '/section/bank-jobs/',
+      '/bank-jobs':        '/section/bank-jobs/',
+      '/police-jobs/':     '/section/police-jobs/',
+      '/police-jobs':      '/section/police-jobs/',
+      '/ssc-jobs/':        '/section/ssc-jobs/',
+      '/ssc-jobs':         '/section/ssc-jobs/',
+      '/upsc-jobs/':       '/section/upsc-jobs/',
+      '/upsc-jobs':        '/section/upsc-jobs/',
+      '/teaching-jobs/':   '/section/teaching-jobs/',
+      '/teaching-jobs':    '/section/teaching-jobs/',
+      '/army-jobs/':       '/section/army-jobs/',
+      '/army-jobs':        '/section/army-jobs/',
+      '/10th-pass-jobs/':  '/section/10th-pass-jobs/',
+      '/10th-pass-jobs':   '/section/10th-pass-jobs/',
+      '/12th-pass-jobs/':  '/section/12th-pass-jobs/',
+      '/12th-pass-jobs':   '/section/12th-pass-jobs/',
+      '/upcoming-jobs/':   '/section/upcoming-jobs/',
+      '/upcoming-jobs':    '/section/upcoming-jobs/',
+      '/state-jobs/':      '/section/state-jobs/',
+      '/state-jobs':       '/section/state-jobs/',
+      '/central-jobs/':    '/section/central-jobs/',
+      '/central-jobs':     '/section/central-jobs/',
+      '/answer-key/':      '/section/answer-key/',
+      '/answer-key':       '/section/answer-key/',
+      '/admissions/':      '/section/admissions/',
+      '/admissions':       '/section/admissions/',
+      '/admission/':       '/section/admission/',
+      '/admission':        '/section/admission/',
+      '/haryana-jobs/':    '/section/haryana-jobs/',
+      '/haryana-jobs':     '/section/haryana-jobs/',
+      '/iti-jobs/':        '/section/iti-jobs/',
+      '/iti-jobs':         '/section/iti-jobs/',
+      '/diploma-jobs/':    '/section/diploma-jobs/',
+      '/diploma-jobs':     '/section/diploma-jobs/',
+      '/8th-pass-jobs/':   '/section/8th-pass-jobs/',
+      '/8th-pass-jobs':    '/section/8th-pass-jobs/',
+      '/graduation-jobs/': '/section/graduation-jobs/',
+      '/graduation-jobs':  '/section/graduation-jobs/',
+      '/medical-jobs/':    '/section/medical-jobs/',
+      '/medical-jobs':     '/section/medical-jobs/',
+      '/defence-jobs/':    '/section/defence-jobs/',
+      '/defence-jobs':     '/section/defence-jobs/',
+      '/latest-govt-jobs/':'/section/latest-govt-jobs/',
+      '/latest-govt-jobs': '/section/latest-govt-jobs/',
     };;
     if (shortcuts[path]) {
       window.location.replace(shortcuts[path]);

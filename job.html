@@ -167,7 +167,38 @@
       /* ── 7. Pre-populate minimal BreadcrumbList for Googlebot ── */
       var bcSchemaEl = document.getElementById('breadcrumbSchema');
       if (bcSchemaEl && slug) {
-        bcSchemaEl.textContent = JSON.stringify({
+        bcSc
+      /* 8b. FAQPage schema — increases CTR by 20-30% via rich snippets */
+      (function() {
+        var faqEl = document.getElementById('faqSchema');
+        if (!faqEl) {
+          faqEl = document.createElement('script');
+          faqEl.type = 'application/ld+json';
+          faqEl.id = 'faqSchema';
+          document.head.appendChild(faqEl);
+        }
+        var jn = humanSlug(slug);
+        faqEl.textContent = JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          'mainEntity': [
+            { '@type': 'Question',
+              'name': 'How to apply for ' + jn + '?',
+              'acceptedAnswer': { '@type': 'Answer', 'text': 'Visit the official website, check eligibility, fill the online application form, upload documents and submit before the last date. Full details available on Top Sarkari Jobs.' }
+            },
+            { '@type': 'Question',
+              'name': 'What is the last date for ' + jn + '?',
+              'acceptedAnswer': { '@type': 'Answer', 'text': 'Check the official notification on Top Sarkari Jobs for the exact application deadline and important dates for ' + jn + '.' }
+            },
+            { '@type': 'Question',
+              'name': 'What is the eligibility for ' + jn + '?',
+              'acceptedAnswer': { '@type': 'Answer', 'text': 'Educational qualification, age limit and other eligibility criteria are mentioned in the official notification. Visit Top Sarkari Jobs for complete details of ' + jn + '.' }
+            }
+          ]
+        });
+      })();
+
+hemaEl.textContent = JSON.stringify({
           '@context': 'https://schema.org', '@type': 'BreadcrumbList',
           'itemListElement': [
             { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://www.topsarkarijobs.com/' },
@@ -568,7 +599,7 @@ input, textarea, select { font-size: 1rem !important; }
   <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
-  <script src="/tsj-menu.js"></script>
+  <script src="/tsj-menu.js" defer></script>
 <script src="/pwa-install.js?v=6.0" defer></script>
   <!-- ══ END PWA ════════════════════════════════════════════════════ -->
 </head>
@@ -604,8 +635,8 @@ input, textarea, select { font-size: 1rem !important; }
             <a href="/section/teaching-jobs/"><i class="fa-solid fa-chalkboard-user"></i>Teacher Jobs</a>
             <a href="/section/10th-pass-jobs/"><i class="fa-solid fa-graduation-cap"></i>10th Pass</a>
             <a href="/section/12th-pass-jobs/"><i class="fa-solid fa-graduation-cap"></i>12th Pass</a>
-            <a href="/category.html?group=admit-result"><i class="fa-solid fa-id-card"></i>Admit Cards</a>
-            <a href="/category.html?group=admissions"><i class="fa-solid fa-trophy"></i>Results</a>
+            <a href="/category/admit-result/"><i class="fa-solid fa-id-card"></i>Admit Cards</a>
+            <a href="/category/admissions/"><i class="fa-solid fa-trophy"></i>Results</a>
             <a href="/section/army-jobs/"><i class="fa-solid fa-star"></i>Army/Navy/AF</a>
             <a href="/section/state-jobs/"><i class="fa-solid fa-map-location-dot"></i>State Jobs</a>
           </div>
@@ -660,8 +691,8 @@ input, textarea, select { font-size: 1rem !important; }
           <div class="jp-left-nav-card">
             <div class="jp-left-nav-head" style="background:linear-gradient(135deg,#dc2626,#b91c1c);"><i class="fa-regular fa-calendar-check"></i> Admit &amp; Results</div>
             <nav class="jp-left-nav-list">
-              <a class="jp-left-nav-item" href="/category.html?group=admit-result"><i class="fa-solid fa-id-card"></i>Admit Cards</a>
-              <a class="jp-left-nav-item" href="/category.html?group=admissions"><i class="fa-solid fa-trophy"></i>Latest Results</a>
+              <a class="jp-left-nav-item" href="/category/admit-result/"><i class="fa-solid fa-id-card"></i>Admit Cards</a>
+              <a class="jp-left-nav-item" href="/category/admissions/"><i class="fa-solid fa-trophy"></i>Latest Results</a>
               <a class="jp-left-nav-item" href="/section/upcoming-jobs/"><i class="fa-solid fa-calendar-days"></i>Upcoming Jobs</a>
               <a class="jp-left-nav-item" href="/section/top-20-jobs/"><i class="fa-solid fa-fire-flame-curved"></i>Top 20 Jobs</a>
               <a class="jp-left-nav-item" href="/section/latest-jobs/"><i class="fa-solid fa-sun"></i>Latest Jobs</a>
@@ -869,35 +900,35 @@ input, textarea, select { font-size: 1rem !important; }
           <div class="jp-card jp-states-card">
             <div class="jp-sec-head"><i class="fa-solid fa-map-location-dot"></i> All States Jobs</div>
             <div class="jp-states-grid">
-              <a class="jp-state-item" href="/state-jobs.html?state=Haryana"><span class="st-em">🇮🇳</span><span class="st-name">Haryana</span></a>
-              <a class="jp-state-item" href="/state-jobs.html?state=Uttar+Pradesh"><span class="st-em">🌾</span><span class="st-name">Uttar Pradesh</span></a>
-              <a class="jp-state-item" href="/state-jobs.html?state=Rajasthan"><span class="st-em">🏜️</span><span class="st-name">Rajasthan</span></a>
-              <a class="jp-state-item" href="/state-jobs.html?state=Bihar"><span class="st-em">🌿</span><span class="st-name">Bihar</span></a>
-              <a class="jp-state-item" href="/state-jobs.html?state=Madhya+Pradesh"><span class="st-em">🏛️</span><span class="st-name">Madhya Pradesh</span></a>
-              <a class="jp-state-item" href="/state-jobs.html?state=Punjab"><span class="st-em">🌻</span><span class="st-name">Punjab</span></a>
-              <a class="jp-state-item" href="/state-jobs.html?state=Delhi"><span class="st-em">🏙️</span><span class="st-name">Delhi</span></a>
-              <a class="jp-state-item" href="/state-jobs.html?state=Gujarat"><span class="st-em">🦁</span><span class="st-name">Gujarat</span></a>
-              <a class="jp-state-item" href="/state-jobs.html?state=Maharashtra"><span class="st-em">🎡</span><span class="st-name">Maharashtra</span></a>
-              <a class="jp-state-item" href="/state-jobs.html?state=Karnataka"><span class="st-em">🌴</span><span class="st-name">Karnataka</span></a>
-              <a class="jp-state-item" href="/state-jobs.html?state=Tamil+Nadu"><span class="st-em">🏖️</span><span class="st-name">Tamil Nadu</span></a>
-              <a class="jp-state-item" href="/state-jobs.html?state=Andhra+Pradesh"><span class="st-em">🌊</span><span class="st-name">Andhra Pradesh</span></a>
-              <a class="jp-state-item" href="/state-jobs.html?state=Telangana"><span class="st-em">🌺</span><span class="st-name">Telangana</span></a>
-              <a class="jp-state-item" href="/state-jobs.html?state=West+Bengal"><span class="st-em">🐯</span><span class="st-name">West Bengal</span></a>
-              <a class="jp-state-item" href="/state-jobs.html?state=Jharkhand"><span class="st-em">⛏️</span><span class="st-name">Jharkhand</span></a>
-              <a class="jp-state-item" href="/state-jobs.html?state=Chhattisgarh"><span class="st-em">🌲</span><span class="st-name">Chhattisgarh</span></a>
-              <a class="jp-state-item" href="/state-jobs.html?state=Odisha"><span class="st-em">🏺</span><span class="st-name">Odisha</span></a>
-              <a class="jp-state-item" href="/state-jobs.html?state=Assam"><span class="st-em">🍵</span><span class="st-name">Assam</span></a>
-              <a class="jp-state-item" href="/state-jobs.html?state=Himachal+Pradesh"><span class="st-em">🏔️</span><span class="st-name">Himachal Pradesh</span></a>
-              <a class="jp-state-item" href="/state-jobs.html?state=Uttarakhand"><span class="st-em">⛰️</span><span class="st-name">Uttarakhand</span></a>
-              <a class="jp-state-item" href="/state-jobs.html?state=Jammu+and+Kashmir"><span class="st-em">❄️</span><span class="st-name">J&amp;K</span></a>
-              <a class="jp-state-item" href="/state-jobs.html?state=Kerala"><span class="st-em">🌴</span><span class="st-name">Kerala</span></a>
-              <a class="jp-state-item" href="/state-jobs.html?state=Goa"><span class="st-em">🏝️</span><span class="st-name">Goa</span></a>
-              <a class="jp-state-item" href="/state-jobs.html?state=Tripura"><span class="st-em">🌿</span><span class="st-name">Tripura</span></a>
-              <a class="jp-state-item" href="/state-jobs.html?state=Manipur"><span class="st-em">💐</span><span class="st-name">Manipur</span></a>
-              <a class="jp-state-item" href="/state-jobs.html?state=Meghalaya"><span class="st-em">🌧️</span><span class="st-name">Meghalaya</span></a>
-              <a class="jp-state-item" href="/state-jobs.html?state=Sikkim"><span class="st-em">🏞️</span><span class="st-name">Sikkim</span></a>
+              <a class="jp-state-item" href="/state/haryana/"><span class="st-em">🇮🇳</span><span class="st-name">Haryana</span></a>
+              <a class="jp-state-item" href="/state/uttar-pradesh/"><span class="st-em">🌾</span><span class="st-name">Uttar Pradesh</span></a>
+              <a class="jp-state-item" href="/state/rajasthan/"><span class="st-em">🏜️</span><span class="st-name">Rajasthan</span></a>
+              <a class="jp-state-item" href="/state/bihar/"><span class="st-em">🌿</span><span class="st-name">Bihar</span></a>
+              <a class="jp-state-item" href="/state/madhya-pradesh/"><span class="st-em">🏛️</span><span class="st-name">Madhya Pradesh</span></a>
+              <a class="jp-state-item" href="/state/punjab/"><span class="st-em">🌻</span><span class="st-name">Punjab</span></a>
+              <a class="jp-state-item" href="/state/delhi/"><span class="st-em">🏙️</span><span class="st-name">Delhi</span></a>
+              <a class="jp-state-item" href="/state/gujarat/"><span class="st-em">🦁</span><span class="st-name">Gujarat</span></a>
+              <a class="jp-state-item" href="/state/maharashtra/"><span class="st-em">🎡</span><span class="st-name">Maharashtra</span></a>
+              <a class="jp-state-item" href="/state/karnataka/"><span class="st-em">🌴</span><span class="st-name">Karnataka</span></a>
+              <a class="jp-state-item" href="/state/tamil-nadu/"><span class="st-em">🏖️</span><span class="st-name">Tamil Nadu</span></a>
+              <a class="jp-state-item" href="/state/andhra-pradesh/"><span class="st-em">🌊</span><span class="st-name">Andhra Pradesh</span></a>
+              <a class="jp-state-item" href="/state/telangana/"><span class="st-em">🌺</span><span class="st-name">Telangana</span></a>
+              <a class="jp-state-item" href="/state/west-bengal/"><span class="st-em">🐯</span><span class="st-name">West Bengal</span></a>
+              <a class="jp-state-item" href="/state/jharkhand/"><span class="st-em">⛏️</span><span class="st-name">Jharkhand</span></a>
+              <a class="jp-state-item" href="/state/chhattisgarh/"><span class="st-em">🌲</span><span class="st-name">Chhattisgarh</span></a>
+              <a class="jp-state-item" href="/state/odisha/"><span class="st-em">🏺</span><span class="st-name">Odisha</span></a>
+              <a class="jp-state-item" href="/state/assam/"><span class="st-em">🍵</span><span class="st-name">Assam</span></a>
+              <a class="jp-state-item" href="/state/himachal-pradesh/"><span class="st-em">🏔️</span><span class="st-name">Himachal Pradesh</span></a>
+              <a class="jp-state-item" href="/state/uttarakhand/"><span class="st-em">⛰️</span><span class="st-name">Uttarakhand</span></a>
+              <a class="jp-state-item" href="/state/jammu-and-kashmir/"><span class="st-em">❄️</span><span class="st-name">J&amp;K</span></a>
+              <a class="jp-state-item" href="/state/kerala/"><span class="st-em">🌴</span><span class="st-name">Kerala</span></a>
+              <a class="jp-state-item" href="/state/goa/"><span class="st-em">🏝️</span><span class="st-name">Goa</span></a>
+              <a class="jp-state-item" href="/state/tripura/"><span class="st-em">🌿</span><span class="st-name">Tripura</span></a>
+              <a class="jp-state-item" href="/state/manipur/"><span class="st-em">💐</span><span class="st-name">Manipur</span></a>
+              <a class="jp-state-item" href="/state/meghalaya/"><span class="st-em">🌧️</span><span class="st-name">Meghalaya</span></a>
+              <a class="jp-state-item" href="/state/sikkim/"><span class="st-em">🏞️</span><span class="st-name">Sikkim</span></a>
             </div>
-            <a class="jp-states-viewall" href="/category.html?group=state"><i class="fa-solid fa-map-location-dot"></i> View All States</a>
+            <a class="jp-states-viewall" href="/state/"><i class="fa-solid fa-map-location-dot"></i> View All States</a>
           </div>
 
           <!-- Social Follow -->
@@ -3022,7 +3053,7 @@ input, textarea, select { font-size: 1rem !important; }
   })();
   </script>
 
-  <script src="/script.js?v=20260522" defer></script>
+  <script src="/script.min.js?v=20260527" defer></script>
   <!-- JSON-Driven Dynamic Job Rendering System — PATCH -->
   <script src="/job-renderer-patch.js?v=20260522" defer></script>
   <!-- Universal Dynamic JSON-to-Page Rendering System -->
@@ -3058,7 +3089,7 @@ input, textarea, select { font-size: 1rem !important; }
     }
   })();
   </script>
-<script src="/tsj-push.js?v=4.0"></script>
+<script src="/tsj-push.js?v=4.0" defer></script>
 <script src="/tsj-version.js" defer></script>
 </body>
 </html>

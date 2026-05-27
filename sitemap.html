@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HTML Sitemap – All Government Jobs | Top Sarkari Jobs 2026</title>
   <meta name="description" content="Complete HTML sitemap for Top Sarkari Jobs. Browse all latest government job categories, state jobs, railway jobs, bank jobs, results and admit cards — 2026.">
-  <link rel="canonical" href="https://www.topsarkarijobs.com/sitemap.html">
+  <link rel="canonical" href="/sitemap/">
   <link rel="icon" type="image/x-icon" href="/image.ico">
   <link rel="stylesheet" href="/styles.css">
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
     {"@type":"ListItem","position":1,"name":"Home","item":"https://www.topsarkarijobs.com/"},
-    {"@type":"ListItem","position":2,"name":"Sitemap","item":"https://www.topsarkarijobs.com/sitemap.html"}
+    {"@type":"ListItem","position":2,"name":"Sitemap","item":"https://www.topsarkarijobs.com/sitemap/"}
   ]}
   </script>
   <style>
@@ -72,6 +72,16 @@
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
   <script src="/pwa-install.js?v=6.0" defer></script>
   <!-- ══ END PWA ════════════════════════════════════════════════════ -->
+  <script>
+  /* Auto-update canonical to clean URL when served via SPA rewrite */
+  (function(){
+    var can = document.querySelector('link[rel="canonical"]');
+    var cleanPath = window.location.pathname;
+    if (can && cleanPath && cleanPath !== '/' && !cleanPath.endsWith('.html')) {
+      can.href = 'https://www.topsarkarijobs.com' + cleanPath;
+    }
+  })();
+  </script>
 </head>
 <body>
   <div class="sm-wrap">
@@ -94,7 +104,7 @@
         <a href="/army-jobs/">⚔️ Army Jobs</a>
         <a href="/10th-pass-jobs/">📖 10th Pass</a>
         <a href="/12th-pass-jobs/">🎓 12th Pass</a>
-        <a href="/search.html">🔍 Search</a>
+        <a href="/search/">🔍 Search</a>
       </div>
     </div>
 
@@ -515,11 +525,11 @@
     <div class="sm-section">
       <h2>📄 Information Pages</h2>
       <ul class="sm-links">
-        <li><a href="/about.html">About Us</a></li>
-        <li><a href="/contact.html">Contact Us</a></li>
-        <li><a href="/privacy.html">Privacy Policy</a></li>
-        <li><a href="/terms.html">Terms of Service</a></li>
-        <li><a href="/helpdesk.html">Helpdesk</a></li>
+        <li><a href="/about/">About Us</a></li>
+        <li><a href="/contact/">Contact Us</a></li>
+        <li><a href="/privacy/">Privacy Policy</a></li>
+        <li><a href="/terms/">Terms of Service</a></li>
+        <li><a href="/helpdesk/">Helpdesk</a></li>
       </ul>
     </div>
   </div>

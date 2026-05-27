@@ -1713,10 +1713,10 @@
   function onJobRendered(rawJob) {
     let job = rawJob;
     if (job && typeof job === 'object') {
-      try { job = normalizeUpcomingJobsSections(job); } catch(e) { console.warn('[UR] normalize sections:', e); }
+      try { job = normalizeUpcomingJobsSections(job); } catch(e) {  }
       job = normalize(job);
-      try { runBasePatches(job); } catch(e) { console.warn('[UR] patch:', e); }
-      try { injectAllSections(job); } catch(e) { console.warn('[UR] inject:', e); }
+      try { runBasePatches(job); } catch(e) {  }
+      try { injectAllSections(job); } catch(e) {  }
     } else {
       setTimeout(findAndEnrichFromFullData, 200);
     }

@@ -5,349 +5,97 @@
   <!-- Homepage -->
   <url>
     <loc>https://www.topsarkarijobs.com/</loc>
-    <lastmod>2026-05-23</lastmod>
+    <lastmod>2026-05-26</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
-  <!-- Result Page -->
+  <!-- Core Sections -->
   <url>
-    <loc>https://www.topsarkarijobs.com/result.html</loc>
-    <lastmod>2026-05-23</lastmod>
+    <loc>https://www.topsarkarijobs.com/section/latest-jobs/</loc>
+    <lastmod>2026-05-26</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.9</priority>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://www.topsarkarijobs.com/section/results/</loc>
+    <lastmod>2026-05-26</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.92</priority>
+  </url>
+  <url>
+    <loc>https://www.topsarkarijobs.com/section/admit-card/</loc>
+    <lastmod>2026-05-26</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.92</priority>
+  </url>
+  <url>
+    <loc>https://www.topsarkarijobs.com/section/answer-key/</loc>
+    <lastmod>2026-05-26</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.88</priority>
+  </url>
+  <url>
+    <loc>https://www.topsarkarijobs.com/section/admissions/</loc>
+    <lastmod>2026-05-26</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.88</priority>
+  </url>
+  <url>
+    <loc>https://www.topsarkarijobs.com/section/upcoming-jobs/</loc>
+    <lastmod>2026-05-26</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.90</priority>
   </url>
 
-  <!-- Admit Card Page -->
+  <!-- Static Pages (clean URLs) -->
   <url>
-    <loc>https://www.topsarkarijobs.com/admit-card.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-
-  <!-- Search Page -->
-  <url>
-    <loc>https://www.topsarkarijobs.com/search.html</loc>
-    <lastmod>2026-05-23</lastmod>
+    <loc>https://www.topsarkarijobs.com/search/</loc>
+    <lastmod>2026-05-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
-
-  <!-- Govt Services -->
   <url>
-    <loc>https://www.topsarkarijobs.com/govt-services.html</loc>
-    <lastmod>2026-05-23</lastmod>
+    <loc>https://www.topsarkarijobs.com/resume-maker/</loc>
+    <lastmod>2026-05-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.topsarkarijobs.com/govt-services/</loc>
+    <lastmod>2026-05-26</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- Resume Maker -->
-  <url>
-    <loc>https://www.topsarkarijobs.com/resume-maker.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- Tools Pages -->
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.topsarkarijobs.com/tools-image.html</loc>
-    <lastmod>2026-05-23</lastmod>
+    <loc>https://www.topsarkarijobs.com/education/</loc>
+    <lastmod>2026-05-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://www.topsarkarijobs.com/tools/</loc>
+    <lastmod>2026-05-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://www.topsarkarijobs.com/tools-pdf.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools-audio-video.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-
-  <!-- Helpdesk -->
-  <url>
-    <loc>https://www.topsarkarijobs.com/helpdesk.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-
-  <!-- About -->
-  <url>
-    <loc>https://www.topsarkarijobs.com/about.html</loc>
-    <lastmod>2026-05-23</lastmod>
+    <loc>https://www.topsarkarijobs.com/helpdesk/</loc>
+    <lastmod>2026-05-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
   </url>
-
-  <!-- Contact -->
   <url>
-    <loc>https://www.topsarkarijobs.com/contact.html</loc>
-    <lastmod>2026-05-23</lastmod>
+    <loc>https://www.topsarkarijobs.com/about/</loc>
+    <lastmod>2026-05-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
   </url>
-
-  <!-- Privacy Policy -->
   <url>
-    <loc>https://www.topsarkarijobs.com/privacy.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <loc>https://www.topsarkarijobs.com/sitemap/</loc>
+    <lastmod>2026-05-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
   </url>
 
-  <!-- Terms -->
-  <url>
-    <loc>https://www.topsarkarijobs.com/terms.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/image/background-remove.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/image/bulk-image-resize.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/image/compress-image.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/image/convert-any-format.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/image/crop-image.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/image/heic-to-jpg.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/image/image-resizer.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/image/image-to-pdf.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/image/jpg-to-png.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/image/passport-photo.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/image/photo-editor.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/image/png-to-jpg.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/image/resize-to-kb.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/image/signature-resizer.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/image/webp-to-jpg.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/pdf/add-watermark.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/pdf/compress-pdf.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/pdf/excel-to-pdf.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/pdf/html-to-pdf.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/pdf/jpg-to-pdf.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/pdf/merge-pdf.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/pdf/pdf-lock.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/pdf/pdf-to-jpg.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/pdf/pdf-to-word.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/pdf/pdf-unlock.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/pdf/ppt-to-pdf.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/pdf/reorder-pdf.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/pdf/rotate-pdf.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/pdf/sign-pdf.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/pdf/split-pdf.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/pdf/word-to-pdf.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/av/audio-convert.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/av/audio-merge.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/av/audio-trim.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/av/screen-recorder.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/av/video-compress.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/av/video-convert.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/av/video-to-mp3.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://www.topsarkarijobs.com/tools/av/video-trim.html</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
 </urlset>

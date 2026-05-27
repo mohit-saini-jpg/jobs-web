@@ -218,7 +218,7 @@
       var hasTime = !deadline || deadline.timeRemaining() > 1;
       if (!hasTime) break;
       var task = taskQueue.shift();
-      try { task.fn(); } catch (e) { console.warn('Task error:', e); }
+      try { task.fn(); } catch (e) {  }
     }
     if (taskQueue.length) {
       taskScheduled = true;

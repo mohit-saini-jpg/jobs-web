@@ -518,7 +518,7 @@
 
   window.goBack = () => {
     if (window.history.length > 1) window.history.back();
-    else window.location.href = "index.html";
+    else window.location.href = "/";
   };
 
   function buildMobileMenu() {
@@ -533,29 +533,29 @@
     if (page === "index.html" || page === "" || page === "/") return;
     
     nav.innerHTML = `
-      <a href="index.html">Home</a>
-      <a href="view.html?section=results">Results</a>
-      <a href="govt-services.html">CSC Services</a>
-      <a href="tools.html">Tools</a>
-      <a href="helpdesk.html">Helpdesk</a>
+      <a href="/">Home</a>
+      <a href="/section/results/">Results</a>
+      <a href="/govt-services/">CSC Services</a>
+      <a href="/tools/">Tools</a>
+      <a href="/helpdesk/">Helpdesk</a>
 
       <div class="offcanvas-group">
         <div class="offcanvas-group-title">Jobs</div>
-        <a href="category.html?group=study">Study wise jobs</a>
-        <a href="category.html?group=popular">Popular job categories</a>
-        <a href="category.html?group=state">State wise jobs</a>
+        <a href="/category/study">Study wise jobs</a>
+        <a href="/category/popular">Popular job categories</a>
+        <a href="/category/state">State wise jobs</a>
       </div>
 
       <div class="offcanvas-group">
         <div class="offcanvas-group-title">Admissions</div>
-        <a href="category.html?group=admissions">Admissions</a>
-        <a href="category.html?group=admit-result">Admit Card / Result / Answer Key / Syllabus</a>
+        <a href="/category/admissions">Admissions</a>
+        <a href="/category/admit-result">Admit Card / Result / Answer Key / Syllabus</a>
       </div>
 
       <div class="offcanvas-group">
         <div class="offcanvas-group-title">More</div>
-        <a href="category.html?group=khabar">Latest Khabar</a>
-        <a href="category.html?group=study-material">Study Material & Top Courses</a>
+        <a href="/category/khabar">Latest Khabar</a>
+        <a href="/category/study-material">Study Material & Top Courses</a>
       </div>
 
       <div class="offcanvas-cta" id="header-links-mobile"></div>
@@ -577,10 +577,10 @@
         btns.className = 'mobile-header-btns';
         btns.innerHTML = `
           <div class="mhb-row">
-             <a href="helpdesk.html" class="mhb-btn">Helpdesk</a>
-             <a href="index.html" class="mhb-btn">Home</a>
+             <a href="/helpdesk/" class="mhb-btn">Helpdesk</a>
+             <a href="/" class="mhb-btn">Home</a>
           </div>
-          <a href="tools.html" class="mhb-btn mhb-full">Tools</a>
+          <a href="/tools/" class="mhb-btn mhb-full">Tools</a>
         `;
         headerRow.insertBefore(btns, headerActions);
     }
@@ -1014,7 +1014,7 @@
       if (safe(sec.viewMoreUrl)) {
         moreHref = openInternal(sec.viewMoreUrl, title);
       } else if (safe(sec.viewMoreType).toLowerCase() === "list" && sectionKey) {
-        moreHref = `view.html?section=${encodeURIComponent(sectionKey)}`;
+        moreHref = `/section/${sectionKey.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}/`;
       }
 
       const card = document.createElement("article");
@@ -1160,7 +1160,7 @@
     if (safe(sec.viewMoreUrl)) {
       moreHref = openInternal(sec.viewMoreUrl, title);
     } else if (safe(sec.viewMoreType).toLowerCase() === "list" && sectionKey) {
-      moreHref = `view.html?section=${encodeURIComponent(sectionKey)}`;
+      moreHref = `/section/${sectionKey.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}/`;
     }
 
     const card = document.createElement("article");
@@ -1499,7 +1499,7 @@
 
         const mLinks = [
             // Row 1 (Blue)
-            { name: "Latest Jobs", url: "view.html?section=latest%20jobs", cls: "outline-blue" },
+            { name: "Latest Jobs", url: "/section/latest-jobs/", cls: "outline-blue" },
             { name: "Study wise jobs", url: "category.html?group=study", cls: "outline-blue" },
             { name: "Categories wise jobs", url: "category.html?group=popular", cls: "outline-blue" },
             { name: "State wise Jobs", url: "category.html?group=state", cls: "outline-blue" },
@@ -1511,7 +1511,7 @@
             { name: "Study Material", url: "category.html?group=study-material", cls: "outline-purple" },
             
             // Row 3 (Orange + Solid Green WhatsApp)
-            { name: "Results", url: "view.html?section=results", cls: "outline-orange" },
+            { name: "Results", url: "/section/results/", cls: "outline-orange" },
             { name: "Admit Card", url: "category.html?group=admit-result", cls: "outline-orange" },
             { name: "Latest Khabar", url: "category.html?group=khabar", cls: "outline-orange" },
             { name: "Join WhatsApp", url: waLink, cls: "solid-green" } 
@@ -1672,7 +1672,7 @@
       Object.entries(groupMeta).forEach(([slug, label]) => {
         const a = document.createElement("a");
         a.className = "section-link";
-        a.href = "category.html?group=" + encodeURIComponent(slug);
+        a.href = "/category/" + encodeURIComponent(slug);
         a.innerHTML = `<div class="t">${label}</div><div class="d">Browse this category</div>`;
         gridEl.appendChild(a);
       });
@@ -1727,7 +1727,7 @@
       if (group === "state") {
         // Extract state name from the item name or url
         // Item name example: "Delhi State Jobs", "Gujarat State Jobs"
-        // URL example: view.html?section=Delhi%20State%20Jobs
+        // URL example: /state/delhi/
         let extractedState = "";
         // Try from URL param first
         try {

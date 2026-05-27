@@ -6,11 +6,11 @@
   <title>Free Resume / CV Maker 2026 – ATS Friendly | Top Sarkari Jobs</title>
   <meta name="description" content="Create a professional ATS-friendly resume in 2 minutes online for free. Download as PDF. Perfect for SSC, Railway, Bank and government job applications." />
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-  <link rel="canonical" href="https://www.topsarkarijobs.com/resume-maker.html" />
+  <link rel="canonical" href="/resume-maker/" />
   <link rel="icon" type="image/x-icon" href="/image.ico">
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://www.topsarkarijobs.com/resume-maker.html" />
+  <meta property="og:url" content="https://www.topsarkarijobs.com/resume-maker/" />
   <meta property="og:title" content="Free Resume / CV Maker 2026 – ATS Friendly | Top Sarkari Jobs" />
   <meta property="og:description" content="Create a professional ATS-friendly resume in 2 minutes online for free. Download as PDF. Perfect for SSC, Railway, Bank and government job applications." />
   <meta property="og:image" content="https://www.topsarkarijobs.com/image.png" />
@@ -23,9 +23,9 @@
   <meta name="twitter:description" content="Create a professional ATS-friendly resume in 2 minutes online for free. Download as PDF. Perfect for SSC, Railway, Bank and government job applications." />
   <meta name="twitter:image" content="https://www.topsarkarijobs.com/image.png" />
   <!-- Hreflang -->
-  <link rel="alternate" hreflang="en" href="https://www.topsarkarijobs.com/resume-maker.html" />
-  <link rel="alternate" hreflang="en-IN" href="https://www.topsarkarijobs.com/resume-maker.html" />
-  <link rel="alternate" hreflang="x-default" href="https://www.topsarkarijobs.com/resume-maker.html" />
+  <link rel="alternate" hreflang="en" href="/resume-maker/" />
+  <link rel="alternate" hreflang="en-IN" href="/resume-maker/" />
+  <link rel="alternate" hreflang="x-default" href="/resume-maker/" />
   <!-- Font Awesome: async load from CDN -->
   <script>
     (function(){var l=document.createElement("link");l.rel="preload";l.as="style";
@@ -291,7 +291,7 @@
   <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
-  <script src="/tsj-menu.js"></script>
+  <script src="/tsj-menu.js" defer></script>
 <script src="/pwa-install.js?v=6.0" defer></script>
   <!-- ══ END PWA ════════════════════════════════════════════════════ -->
   <script type="application/ld+json">
@@ -301,7 +301,7 @@
     "name": "Free Resume / CV Maker",
     "applicationCategory": "BusinessApplication",
     "operatingSystem": "Any",
-    "url": "https://www.topsarkarijobs.com/resume-maker.html",
+    "url": "https://www.topsarkarijobs.com/resume-maker/",
     "description": "Free ATS-friendly resume and CV maker for government job applicants. Create professional resumes in 2 minutes with PDF download. No signup needed.",
     "offers": {
       "@type": "Offer",
@@ -335,7 +335,7 @@
     "@type": "BreadcrumbList",
     "itemListElement": [
       {"@type":"ListItem","position":1,"name":"Home","item":"https://www.topsarkarijobs.com/"},
-      {"@type":"ListItem","position":2,"name":"Resume Maker","item":"https://www.topsarkarijobs.com/resume-maker.html"}
+      {"@type":"ListItem","position":2,"name":"Resume Maker","item":"https://www.topsarkarijobs.com/resume-maker/"}
     ]
   }
   </script>
@@ -362,6 +362,16 @@
     ]
   }
   </script>
+  <script>
+  /* Auto-update canonical to clean URL when served via SPA rewrite */
+  (function(){
+    var can = document.querySelector('link[rel="canonical"]');
+    var cleanPath = window.location.pathname;
+    if (can && cleanPath && cleanPath !== '/' && !cleanPath.endsWith('.html')) {
+      can.href = 'https://www.topsarkarijobs.com' + cleanPath;
+    }
+  })();
+  </script>
 </head>
 <body>
 <a href="#main-content" class="skip-link">Skip to main content</a>
@@ -379,12 +389,12 @@
   </div>
   <nav class="nav-bar">
     <a class="nav-link" href="./"><i class="fa-solid fa-house"></i> HOME</a>
-    <a class="nav-link" href="view.html?section=latest%20jobs"><i class="fa-solid fa-briefcase"></i> LATEST JOBS</a>
-    <a class="nav-link" href="category.html?group=admit-result"><i class="fa-solid fa-id-card"></i> ADMIT CARD</a>
-    <a class="nav-link" href="category.html?group=admissions"><i class="fa-solid fa-trophy"></i> RESULTS</a>
-    <a class="nav-link" href="view.html?section=Govt%20Scheme%20Yojna"><i class="fa-solid fa-hand-holding-heart"></i> GOVT SCHEMES</a>
-    <a class="nav-link cur" href="resume-maker.html"><i class="fa-solid fa-file-lines"></i> RESUME MAKER</a>
-    <a class="nav-link" href="helpdesk.html"><i class="fa-solid fa-headset"></i> CONTACT</a>
+    <a class="nav-link" href="/section/latest-jobs/"><i class="fa-solid fa-briefcase"></i> LATEST JOBS</a>
+    <a class="nav-link" href="/category/admit-result/"><i class="fa-solid fa-id-card"></i> ADMIT CARD</a>
+    <a class="nav-link" href="/category/admissions/"><i class="fa-solid fa-trophy"></i> RESULTS</a>
+    <a class="nav-link" href="/section/govt-scheme-yojna/"><i class="fa-solid fa-hand-holding-heart"></i> GOVT SCHEMES</a>
+    <a class="nav-link cur" href="/resume-maker/"><i class="fa-solid fa-file-lines"></i> RESUME MAKER</a>
+    <a class="nav-link" href="/helpdesk/"><i class="fa-solid fa-headset"></i> CONTACT</a>
   </nav>
 </header>
 
@@ -623,31 +633,31 @@
       <div class="s-card">
         <div class="s-head red"><i class="fa-solid fa-link"></i> IMPORTANT LINKS</div>
         <div class="s-list">
-          <a href="view.html?section=latest%20jobs"><i class="fa-solid fa-briefcase"></i><span>Latest Jobs</span><i class="fa-solid fa-chevron-right arr"></i></a>
-          <a href="category.html?group=admit-result"><i class="fa-solid fa-id-card"></i><span>Admit Card</span><i class="fa-solid fa-chevron-right arr"></i></a>
-          <a href="category.html?group=admissions"><i class="fa-solid fa-trophy"></i><span>Results</span><i class="fa-solid fa-chevron-right arr"></i></a>
-          <a href="view.html?section=Govt%20Scheme%20Yojna"><i class="fa-solid fa-hand-holding-heart"></i><span>Govt Schemes</span><i class="fa-solid fa-chevron-right arr"></i></a>
-          <a href="view.html?section=Haryana%20All%20State%20Jobs"><i class="fa-solid fa-location-dot"></i><span>Haryana Jobs</span><i class="fa-solid fa-chevron-right arr"></i></a>
+          <a href="/section/latest-jobs/"><i class="fa-solid fa-briefcase"></i><span>Latest Jobs</span><i class="fa-solid fa-chevron-right arr"></i></a>
+          <a href="/category/admit-result/"><i class="fa-solid fa-id-card"></i><span>Admit Card</span><i class="fa-solid fa-chevron-right arr"></i></a>
+          <a href="/category/admissions/"><i class="fa-solid fa-trophy"></i><span>Results</span><i class="fa-solid fa-chevron-right arr"></i></a>
+          <a href="/section/govt-scheme-yojna/"><i class="fa-solid fa-hand-holding-heart"></i><span>Govt Schemes</span><i class="fa-solid fa-chevron-right arr"></i></a>
+          <a href="/section/haryana-jobs/"><i class="fa-solid fa-location-dot"></i><span>Haryana Jobs</span><i class="fa-solid fa-chevron-right arr"></i></a>
         </div>
-        <a href="category.html?group=popular" class="s-more">View All →</a>
+        <a href="/category/popular/" class="s-more">View All →</a>
       </div>
       <div class="s-card">
         <div class="s-head blue"><i class="fa-solid fa-fire-flame-curved"></i> TRENDING JOBS</div>
         <div class="s-list">
-          <a href="view.html?section=Railway%20Jobs"><i class="fa-solid fa-train"></i><span>Railway Jobs</span><i class="fa-solid fa-chevron-right arr"></i></a>
-          <a href="view.html?section=Bank%20Jobs"><i class="fa-solid fa-building-columns"></i><span>Bank Jobs</span><i class="fa-solid fa-chevron-right arr"></i></a>
-          <a href="view.html?section=Police%20Jobs"><i class="fa-solid fa-shield-halved"></i><span>Police Jobs</span><i class="fa-solid fa-chevron-right arr"></i></a>
-          <a href="view.html?section=Teacher%20Jobs"><i class="fa-solid fa-chalkboard-user"></i><span>Teaching Jobs</span><i class="fa-solid fa-chevron-right arr"></i></a>
-          <a href="view.html?section=Indian%20ARMY%20jobs"><i class="fa-solid fa-star"></i><span>Army Jobs</span><i class="fa-solid fa-chevron-right arr"></i></a>
+          <a href="/section/railway-jobs/"><i class="fa-solid fa-train"></i><span>Railway Jobs</span><i class="fa-solid fa-chevron-right arr"></i></a>
+          <a href="/section/bank-jobs/"><i class="fa-solid fa-building-columns"></i><span>Bank Jobs</span><i class="fa-solid fa-chevron-right arr"></i></a>
+          <a href="/section/police-jobs/"><i class="fa-solid fa-shield-halved"></i><span>Police Jobs</span><i class="fa-solid fa-chevron-right arr"></i></a>
+          <a href="/section/teaching-jobs/"><i class="fa-solid fa-chalkboard-user"></i><span>Teaching Jobs</span><i class="fa-solid fa-chevron-right arr"></i></a>
+          <a href="/section/army-jobs/"><i class="fa-solid fa-star"></i><span>Army Jobs</span><i class="fa-solid fa-chevron-right arr"></i></a>
         </div>
-        <a href="view.html?section=latest%20jobs" class="s-more">View All Jobs →</a>
+        <a href="/section/latest-jobs/" class="s-more">View All Jobs →</a>
       </div>
       <div class="s-card">
         <div class="s-head teal"><i class="fa-solid fa-screwdriver-wrench"></i> TOOLS</div>
         <div class="s-list">
-          <a href="tools.html"><i class="fa-solid fa-image"></i><span>Photo &amp; PDF Tools</span><i class="fa-solid fa-chevron-right arr"></i></a>
-          <a href="resume-maker.html"><i class="fa-solid fa-file-lines" style="color:#7c3aed"></i><span>Resume Maker</span><i class="fa-solid fa-chevron-right arr"></i></a>
-          <a href="helpdesk.html"><i class="fa-solid fa-headset"></i><span>Helpdesk</span><i class="fa-solid fa-chevron-right arr"></i></a>
+          <a href="/tools/"><i class="fa-solid fa-image"></i><span>Photo &amp; PDF Tools</span><i class="fa-solid fa-chevron-right arr"></i></a>
+          <a href="/resume-maker/"><i class="fa-solid fa-file-lines" style="color:#7c3aed"></i><span>Resume Maker</span><i class="fa-solid fa-chevron-right arr"></i></a>
+          <a href="/helpdesk/"><i class="fa-solid fa-headset"></i><span>Helpdesk</span><i class="fa-solid fa-chevron-right arr"></i></a>
         </div>
       </div>
       <div class="s-card">
@@ -672,9 +682,9 @@
       <div class="ft-t">Quick Links</div>
       <div class="ft-links">
         <a href="./">Home</a>
-        <a href="view.html?section=latest%20jobs">Latest Jobs</a>
-        <a href="category.html?group=admit-result">Admit Card</a>
-        <a href="resume-maker.html">Resume Maker</a>
+        <a href="/section/latest-jobs/">Latest Jobs</a>
+        <a href="/category/admit-result/">Admit Card</a>
+        <a href="/resume-maker/">Resume Maker</a>
       </div>
     </div>
     <div>

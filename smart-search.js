@@ -749,11 +749,11 @@
           allData = allData.filter(function(d){ return !newSlugs[dedupeKey(d.slug)]; });
         }
         mergeItems(extra);
-        console.log('[search-v4]', fileName, '→', extra.length, 'items | total:', allData.length);
+        
         return extra.length;
       })
       .catch(function(err) {
-        console.warn('[search-v4] Failed:', fileName, err.message);
+        
         return 0;
       });
   }
@@ -787,7 +787,7 @@
           heavyLoaded = true;
           fetchAndIndex('Complete_Jobs_Full_Data.json').then(function() {
             refreshOpenDropdown();
-            console.log('[search-v4] Phase 3 done. Total:', allData.length);
+            
           });
         }
 
