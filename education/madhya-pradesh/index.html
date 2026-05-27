@@ -651,14 +651,15 @@
 
         /* ── Set as Preferred Source on Google ── */
         (function injectEduPS() {
+          var _psTitle = (section && section.title) || sectionId || 'Education';
           var psHtml = '<div class="edu-ps-card">' +
             '<div class="edu-ps-head"><i class="fa-solid fa-google"></i>&nbsp; Set as Preferred Source on Google</div>' +
-            '<p class="edu-ps-desc">' + esc(title || sectionId) + ' Education Results 2026 — Get complete details, official notifications, exam dates and more at Top Sarkari Jobs.</p>' +
+            '<p class="edu-ps-desc">' + esc(_psTitle) + ' Education Results 2026 — Get complete details, official notifications, exam dates and more at Top Sarkari Jobs.</p>' +
             '<div style="overflow-x:auto;"><table class="edu-ps-table">' +
             '<thead><tr><th>Page Type</th><th>State / Board</th><th>Year</th><th>Category</th></tr></thead>' +
             '<tbody><tr>' +
             '<td><span class="edu-ps-badge">Education</span></td>' +
-            '<td>' + esc(title || sectionId) + '</td>' +
+            '<td>' + esc((section && section.title) || sectionId || 'Education') + '</td>' +
             '<td>2026</td>' +
             '<td>Board / University</td>' +
             '</tr>' +
