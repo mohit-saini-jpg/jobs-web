@@ -871,3 +871,53 @@ a, button, [role="button"], input, select, textarea {
     scroll-behavior: auto !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════
+   MOBILE TABLE FIX — Responsive scrollable tables
+   ═══════════════════════════════════════════════════ */
+.udyn-table-scroll,
+.dyn-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* Prevent vertical text break on ALL tables */
+table th,
+table td {
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Mobile-specific table rules */
+@media (max-width: 640px) {
+  .udyn-gen-table,
+  .gen-table,
+  .udyn-vac-table,
+  .ep-table {
+    font-size: .79rem;
+  }
+
+  .udyn-gen-table th,
+  .gen-table th {
+    width: 38%;
+    max-width: 130px;
+    padding: 7px 8px;
+    font-size: .76rem;
+  }
+
+  .udyn-gen-table td,
+  .gen-table td {
+    padding: 7px 8px;
+    font-size: .79rem;
+  }
+
+  /* Vacancy/multi-col tables - horizontal scroll */
+  .udyn-vac-table,
+  .ep-table {
+    min-width: 340px;
+  }
+}

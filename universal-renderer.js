@@ -52,9 +52,9 @@
     .udyn-head i{opacity:.85}
     .udyn-body{}
     /* ── Generic two-col table ── */
-    .udyn-gen-table{width:100%;border-collapse:collapse;font-size:.82rem}
-    .udyn-gen-table th{width:36%;background:#f8fafc;color:#374151;font-weight:700;padding:9px 14px;text-align:left;vertical-align:top;border-bottom:1px solid #e9eef4;word-break:break-word}
-    .udyn-gen-table td{padding:9px 14px;color:#1e293b;font-size:.83rem;line-height:1.65;border-bottom:1px solid #e9eef4;vertical-align:top;word-break:break-word}
+    .udyn-gen-table{width:100%;border-collapse:collapse;font-size:.82rem;min-width:280px}
+    .udyn-gen-table th{width:36%;max-width:140px;background:#f8fafc;color:#374151;font-weight:700;padding:8px 12px;text-align:left;vertical-align:top;border-bottom:1px solid #e9eef4;word-break:break-word;white-space:normal}
+    .udyn-gen-table td{padding:8px 12px;color:#1e293b;font-size:.83rem;line-height:1.65;border-bottom:1px solid #e9eef4;vertical-align:top;word-break:break-word;white-space:normal;overflow-wrap:break-word}
     .udyn-gen-table tr:last-child th,.udyn-gen-table tr:last-child td{border-bottom:none}
     /* ── Multi-col table (vacancy/exam) ── */
     .udyn-table-scroll{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -702,7 +702,7 @@
       const rows = pairs.map(([k, v]) =>
         `<tr><th>${esc(keyToLabel(k))}</th><td>${deepRender(v, depth+1)}</td></tr>`
       ).join('');
-      return `<table class="udyn-gen-table">${rows}</table>`;
+      return `<div class="udyn-table-scroll"><table class="udyn-gen-table">${rows}</table></div>`;
     }
 
     return esc(String(value));
@@ -818,7 +818,7 @@
         const hasLongVal = pairs.some(([, v]) => safe(String(v)).length > 60);
         if (hasLongVal) {
           /* Stacked two-col table layout for long values */
-          html = `<table class="udyn-gen-table">${pairs.map(([k, v]) =>
+          html = `<div class="udyn-table-scroll"><table class="udyn-gen-table">${pairs.map(([k, v]) =>
             `<tr><th style="width:30%;vertical-align:top;">${esc(keyToLabel(k))}</th>` +
             `<td style="line-height:1.7;">${deepRender(v, 1)}</td></tr>`
           ).join('')}</table>`;
@@ -1089,9 +1089,9 @@
 
       if (isKV) {
         /* Render as compact KV using gen-table style */
-        html += `<table class="udyn-gen-table" style="margin-bottom:0;">
+        html += `<div class="udyn-table-scroll"><table class="udyn-gen-table" style="margin-bottom:0;">
           <tbody><tr><th>${esc(st[0][0])}</th><td>${esc(st[0][1])}</td></tr></tbody>
-        </table>`;
+        </table></div>`;
       } else {
         html += `<div class="udyn-table-scroll" style="margin-bottom:10px;">
           <table class="udyn-vac-table">${headerHtml}<tbody>${bodyHtml}</tbody></table>

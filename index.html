@@ -74,163 +74,115 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
   <meta name="twitter:image" content="https://www.topsarkarijobs.com/image.png"/>
 
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Organization",
-        "@id": "https://www.topsarkarijobs.com/#organization",
-        "name": "Top Sarkari Jobs",
-        "url": "https://www.topsarkarijobs.com/",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://www.topsarkarijobs.com/image.png",
-          "width": 512,
-          "height": 512
-        },
-        "description": "India's No.1 platform for latest Government Jobs, Sarkari Results, Admit Cards, Answer Keys and Online Forms",
-        "sameAs": [
-          "https://www.facebook.com/topsarkarijobs",
-          "https://twitter.com/topsarkarijobs",
-          "https://www.instagram.com/topsarkarijobs",
-          "https://www.youtube.com/@topsarkarijobs"
-        ],
-        "contactPoint": {
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://www.topsarkarijobs.com/#organization",
+      "name": "Top Sarkari Jobs",
+      "alternateName": "TSJ",
+      "url": "https://www.topsarkarijobs.com/",
+      "logo": {
+        "@type": "ImageObject",
+        "@id": "https://www.topsarkarijobs.com/#logo",
+        "url": "https://www.topsarkarijobs.com/image.webp",
+        "contentUrl": "https://www.topsarkarijobs.com/image.webp",
+        "width": 512,
+        "height": 512,
+        "caption": "Top Sarkari Jobs"
+      },
+      "image": {
+        "@id": "https://www.topsarkarijobs.com/#logo"
+      },
+      "description": "India No.1 platform for latest Government Jobs, Sarkari Naukri, Results, Admit Cards, Answer Keys and Admissions 2026. Updated daily.",
+      "foundingDate": "2020",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "IN",
+        "addressLocality": "India"
+      },
+      "contactPoint": [
+        {
           "@type": "ContactPoint",
           "contactType": "customer support",
-          "email": "info@topsarkarijobs.com",
+          "url": "https://www.topsarkarijobs.com/contact/",
           "areaServed": "IN",
           "availableLanguage": ["Hindi", "English"]
         }
+      ],
+      "sameAs": [
+        "https://www.facebook.com/topsarkarijobs",
+        "https://www.instagram.com/topsarkarijobs",
+        "https://twitter.com/topsarkarijobs",
+        "https://www.youtube.com/@topsarkarijobs",
+        "https://whatsapp.com/channel/topsarkarijobs"
+      ],
+      "knowsAbout": [
+        "Government Jobs India",
+        "Sarkari Naukri",
+        "SSC Jobs",
+        "Railway Jobs",
+        "Bank Jobs",
+        "UPSC Jobs",
+        "State Government Jobs"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://www.topsarkarijobs.com/#website",
+      "url": "https://www.topsarkarijobs.com/",
+      "name": "Top Sarkari Jobs",
+      "description": "Latest Sarkari Jobs, Results, Admit Cards and Online Forms 2026",
+      "publisher": {
+        "@id": "https://www.topsarkarijobs.com/#organization"
       },
-      {
-        "@type": "WebSite",
-        "@id": "https://www.topsarkarijobs.com/#website",
-        "url": "https://www.topsarkarijobs.com/",
-        "name": "Top Sarkari Jobs",
-        "description": "Latest Sarkari Jobs 2026, Government Jobs, Results, Admit Cards & Application Forms — Updated Daily",
-        "publisher": { "@id": "https://www.topsarkarijobs.com/#organization" },
-        "inLanguage": "en-IN",
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": {
-            "@type": "EntryPoint",
-            "urlTemplate": "https://www.topsarkarijobs.com/search.html?q={search_term_string}"
-          },
-          "query-input": "required name=search_term_string"
-        }
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://www.topsarkarijobs.com/search/?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
       },
-      {
-        "@type": "WebPage",
-        "@id": "https://www.topsarkarijobs.com/#webpage",
-        "url": "https://www.topsarkarijobs.com/",
-        "name": "Top Sarkari Jobs 2026 – Latest Government Jobs, Results, Admit Cards",
-        "description": "Latest Sarkari Jobs 2026: SSC, Railway, Banking, Police, UPSC, Defence & State Government Jobs updated daily.",
-        "isPartOf": { "@id": "https://www.topsarkarijobs.com/#website" },
-        "about": { "@id": "https://www.topsarkarijobs.com/#organization" },
-        "dateModified": "2026-05-23",
-        "breadcrumb": {
-          "@type": "BreadcrumbList",
-          "itemListElement": [{ "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.topsarkarijobs.com/" }]
-        }
+      "inLanguage": ["hi", "en"],
+      "copyrightYear": "2026",
+      "copyrightHolder": {
+        "@id": "https://www.topsarkarijobs.com/#organization"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://www.topsarkarijobs.com/#webpage",
+      "url": "https://www.topsarkarijobs.com/",
+      "name": "Top Sarkari Jobs — India No.1 Sarkari Jobs Portal 2026",
+      "isPartOf": {
+        "@id": "https://www.topsarkarijobs.com/#website"
       },
-      {
-        "@type": "FAQPage",
-        "@id": "https://www.topsarkarijobs.com/#faq",
-        "mainEntity": [
+      "about": {
+        "@id": "https://www.topsarkarijobs.com/#organization"
+      },
+      "description": "Latest Government Jobs, SSC, Railway, Bank, Police, Teaching Jobs 2026. Get Admit Cards, Results, Answer Keys. Daily Updated.",
+      "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
           {
-            "@type": "Question",
-            "name": "How to find latest Sarkari Jobs 2026?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Visit Top Sarkari Jobs daily for the latest government job notifications. Use the search bar to find jobs by qualification (8th pass, 10th pass, 12th pass, ITI, graduation), department (SSC, Railway, Bank, Police) or state. Also join our WhatsApp channel for instant alerts."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Are government job notifications updated daily?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. We update all government job notifications, admit cards, and results daily. New vacancies from SSC, Railway RRB, IBPS, UPSC, Police departments are added every day."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "How to check Sarkari Result 2026?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Visit our Results page at topsarkarijobs.com/result.html for the latest sarkari results including Railway, SSC, Police, Bank and State Govt results. Results are updated daily."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Are there government jobs for 10th and 12th pass candidates?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes! Railway, Police, Defence, Postal and various state departments regularly release vacancies for 10th pass and 12th pass candidates. Check our dedicated qualification-wise sections on the homepage."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "How to download Admit Card 2026?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Visit topsarkarijobs.com/admit-card.html for the latest admit card download links. Find your exam's admit card and click on the official link to download it from the official website."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Which is the best website for Sarkari Jobs in India?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Top Sarkari Jobs (topsarkarijobs.com) is India's No.1 platform for latest government job notifications covering SSC, Railway, Banking, UPSC, Police, Defence, Teaching and all state PSC jobs — updated daily."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What is the age limit for central government jobs in India?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "For most central government jobs, the minimum age is 18 years and the maximum age is 25–32 years depending on the post. SC/ST candidates get 5 years relaxation, OBC candidates get 3 years, and PwD candidates get 10 years. UPSC Civil Services allows up to 32 years for General, 35 for OBC, and 37 for SC/ST candidates."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What documents are needed for government job applications?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Common documents required for Sarkari job applications include: Class 10th and 12th marksheets, graduation certificate, caste certificate (for reserved category), domicile/residence proof, Aadhaar card, recent passport-size photographs, and a valid email ID and mobile number. Always check the official notification for post-specific requirements."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What is the salary for SSC CGL posts?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "SSC CGL 2026 salary varies by post: Group B posts (Inspector, Assistant Section Officer) receive Pay Level 7 (₹44,900–₹1,42,400) and Group C posts (Tax Assistant, Data Entry Operator) receive Pay Level 4–6 (₹25,500–₹1,12,400). In-hand salary ranges from ₹35,000–₹75,000 per month after allowances."
-            }
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://www.topsarkarijobs.com/"
           }
         ]
       },
-      {
-        "@type": "ItemList",
-        "@id": "https://www.topsarkarijobs.com/#job-categories",
-        "name": "Government Job Categories 2026",
-        "description": "Browse government jobs by category, qualification and state",
-        "itemListElement": [
-          { "@type": "ListItem", "position": 1, "name": "SSC Jobs 2026", "url": "/section/latest-govt-jobs/" },
-          { "@type": "ListItem", "position": 2, "name": "Railway Jobs 2026", "url": "/section/railway-jobs/" },
-          { "@type": "ListItem", "position": 3, "name": "Bank Jobs 2026", "url": "/section/bank-jobs/" },
-          { "@type": "ListItem", "position": 4, "name": "Police Jobs 2026", "url": "/section/police-jobs/" },
-          { "@type": "ListItem", "position": 5, "name": "Army Jobs 2026", "url": "/section/army-jobs/" },
-          { "@type": "ListItem", "position": 6, "name": "Teaching Jobs 2026", "url": "/section/teaching-jobs/" },
-          { "@type": "ListItem", "position": 7, "name": "10th Pass Jobs 2026", "url": "/section/10th-pass-jobs/" },
-          { "@type": "ListItem", "position": 8, "name": "12th Pass Jobs 2026", "url": "/section/12th-pass-jobs/" }
-        ]
+      "inLanguage": "hi",
+      "potentialAction": {
+        "@type": "ReadAction",
+        "target": ["https://www.topsarkarijobs.com/"]
       }
-    ]
-  }
-  </script>
+    }
+  ]
+}
+</script>
   
   <script type="application/ld+json">
   {

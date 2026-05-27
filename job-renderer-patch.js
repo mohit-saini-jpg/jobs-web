@@ -228,6 +228,7 @@
       width: 100%;
       border-collapse: collapse;
       font-size: .82rem;
+      min-width: 280px;
     }
     .gen-table th {
       width: 35%;
@@ -493,7 +494,7 @@
         `<tr><th>${esc(keyToLabel(k))}</th><td>${esc(v)}</td></tr>`
       ).join('');
       if (!rows) return null;
-      bodyHtml = `<table class="gen-table"><tbody>${rows}</tbody></table>`;
+      bodyHtml = `<div class="dyn-table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%;"><table class="gen-table"><tbody>${rows}</tbody></table></div>`;
     }
     // String
     else if (typeof ep === 'string' && ep.trim()) {
@@ -523,7 +524,7 @@
         `<tr><th>${esc(keyToLabel(k))}</th><td>${esc(v)}</td></tr>`
       ).join('');
       if (!rows) return null;
-      bodyHtml = `<table class="gen-table"><tbody>${rows}</tbody></table>`;
+      bodyHtml = `<div class="dyn-table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%;"><table class="gen-table"><tbody>${rows}</tbody></table></div>`;
     } else if (typeof syl === 'string' && syl.trim()) {
       bodyHtml = `<div class="dyn-detail">${textToHtml(syl)}</div>`;
     }

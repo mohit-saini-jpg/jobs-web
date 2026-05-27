@@ -542,6 +542,16 @@ input, textarea, select { font-size: 1rem !important; }
     .jp-ps-badge.online{background:#dcfce7;color:#166534;}
     .jp-ps-badge.offline{background:#fef3c7;color:#92400e;}
     .jp-ps-badge.walkin{background:#e0e7ff;color:#3730a3;}
+
+    /* ── Internal Linking — Related Jobs Sidebar ── */
+    .jp-related-card .jp-sec-head{background:linear-gradient(135deg,#0f766e,#0891b2);}
+    .jp-related-list{list-style:none;padding:8px 0;margin:0;}
+    .jp-related-list li{border-bottom:1px solid #f1f5f9;}
+    .jp-related-list li:last-child{border-bottom:none;}
+    .jp-related-list a{display:block;padding:7px 14px;font-size:.79rem;color:#1d4ed8;text-decoration:none;line-height:1.5;transition:background .15s;}
+    .jp-related-list a:hover{background:#f0f9ff;color:#0c4a6e;}
+    .jp-related-list a i{font-size:.7rem;margin-right:4px;opacity:.7;}
+    .jp-last-updated{font-size:.74rem;color:#64748b;padding:6px 14px 8px;border-top:1px solid #f1f5f9;}
 </style>
   <!-- Preload header.html so it's ready before script.js runs -->
   <link rel="preload" href="/header.html" as="fetch" crossorigin="anonymous"/>
@@ -720,6 +730,20 @@ input, textarea, select { font-size: 1rem !important; }
               <a class="jp-left-nav-item" href="/section/answer-key/"><i class="fa-solid fa-key"></i>Answer Key</a>
               <a class="jp-left-nav-item" href="/section/offline-jobs/"><i class="fa-solid fa-file-pen"></i>Offline Form</a>
             </nav>
+          </div>
+
+          <!-- Related Jobs & Internal Links -->
+          <div class="jp-card jp-related-card" id="relatedLinksCard">
+            <div class="jp-sec-head"><i class="fa-solid fa-link"></i> Related Jobs & Quick Links</div>
+            <ul class="jp-related-list" id="relatedLinksList">
+              <!-- Populated by JS based on job category -->
+              <li><a href="/section/latest-jobs/" title="Latest Government Jobs 2026"><i class="fa-solid fa-arrow-right"></i>Latest Sarkari Jobs 2026</a></li>
+              <li><a href="/section/upcoming-jobs/" title="Upcoming Government Jobs 2026"><i class="fa-solid fa-arrow-right"></i>Upcoming Govt Jobs 2026</a></li>
+              <li><a href="/section/results/" title="Sarkari Result 2026"><i class="fa-solid fa-arrow-right"></i>Sarkari Result 2026</a></li>
+              <li><a href="/section/admit-card/" title="Admit Card Download 2026"><i class="fa-solid fa-arrow-right"></i>Admit Card 2026</a></li>
+              <li><a href="/section/answer-key/" title="Answer Key 2026"><i class="fa-solid fa-arrow-right"></i>Answer Key 2026</a></li>
+            </ul>
+            <div class="jp-last-updated" id="lastUpdatedDisplay"></div>
           </div>
         </aside>
 
@@ -1163,40 +1187,115 @@ input, textarea, select { font-size: 1rem !important; }
         ? (normaliseDate(parsed.applicationStartDate || parsed.lastUpdated || parsed.datePosted) || new Date().toISOString().split('T')[0])
         : new Date().toISOString().split('T')[0];
 
-      // FIX #2: Full JobPosting schema
+      // UPGRADED: Full JobPosting schema with all Google Preferred Source signals
       const schemaEl = document.getElementById('jobSchema');
       if (schemaEl && parsed) {
+        const todayFull = new Date().toISOString().split('T')[0];
+
+        /* ── Employment type from applyMode / category ── */
+        let empType = 'FULL_TIME';
+        const catLc = (parsed.category && parsed.category.label || '').toLowerCase();
+        if (catLc.includes('contract') || catLc.includes('temporary')) empType = 'CONTRACTOR';
+        else if (catLc.includes('apprentice') || catLc.includes('trainee')) empType = 'INTERN';
+        else if (catLc.includes('part')) empType = 'PART_TIME';
+
+        /* ── Job location from parsed data ── */
+        const locRegion = parsed.jobLocation || 'India';
+        const locAddr = {
+          '@type': 'PostalAddress',
+          'addressCountry': 'IN',
+          'addressRegion': locRegion.includes(',') ? locRegion.split(',')[0].trim() : locRegion
+        };
+
+        /* ── Hiring org with logo ── */
+        const hiringOrg = {
+          '@type': 'Organization',
+          'name': safe(parsed.org || 'Government of India'),
+          'sameAs': 'https://www.india.gov.in/'
+        };
+
+        /* ── Valid through: parse lastDt to ISO ── */
+        let validThrough = null;
+        if (parsed.lastDt) {
+          const vt = normaliseDate(parsed.lastDt);
+          if (vt) validThrough = vt + 'T23:59:59';
+        }
+
         const jobSchema = {
           '@context': 'https://schema.org',
           '@type': 'JobPosting',
-          'name': safe(name),        // FIX #2a: "name" required by Google
+          '@id': canonUrl + '#job',
+          'mainEntityOfPage': {
+            '@type': 'WebPage',
+            '@id': canonUrl
+          },
+          'name': safe(name),
           'title': safe(name),
           'description': desc,
-          'identifier': { '@type': 'PropertyValue', name: 'Top Sarkari Jobs', value: slug },
-          'datePosted': datePosted,  // FIX #9: real date
-          'hiringOrganization': {
-            '@type': 'Organization',
-            'name': parsed.org || 'Government of India'
-            // FIX #2c: sameAs removed — must not point to our job board
+          'identifier': {
+            '@type': 'PropertyValue',
+            'name': 'Top Sarkari Jobs',
+            'value': slug
           },
+          'datePosted': datePosted,
+          'dateModified': todayFull,
+          'hiringOrganization': hiringOrg,
           'jobLocation': {
             '@type': 'Place',
-            'address': { '@type': 'PostalAddress', 'addressCountry': 'IN', 'addressRegion': 'India' }
+            'address': locAddr
           },
-          'employmentType': 'FULL_TIME',
-          'applicantLocationRequirements': {'@type':'Country','name':'India'},
-          'url': canonUrl
+          'employmentType': empType,
+          'applicantLocationRequirements': {
+            '@type': 'Country',
+            'name': 'India'
+          },
+          'jobLocationType': 'TELECOMMUTE',
+          'directApply': false,
+          'url': canonUrl,
+          'sameAs': canonUrl
         };
-        if (parsed.lastDt) jobSchema.validThrough = parsed.lastDt;
-        if (parsed.vac) jobSchema.totalJobOpenings = parseInt(parsed.vac.replace(/,/g, ''), 10);
-        // FIX #2e: baseSalary
+
+        /* ── Optional fields ── */
+        if (validThrough) jobSchema.validThrough = validThrough;
+
+        if (parsed.vac) {
+          const vacNum = parseInt(('' + parsed.vac).replace(/[^0-9]/g,''), 10);
+          if (vacNum > 0) jobSchema.totalJobOpenings = vacNum;
+        }
+
         const salStr = parsed.salary || parsed.salaryMin || parsed.pay || '';
         if (salStr) {
-          const salNum = parseInt(('' + salStr).replace(/[^0-9]/g, ''), 10);
-          if (salNum > 0) jobSchema.baseSalary = { '@type': 'MonetaryAmount', 'currency': 'INR', 'value': { '@type': 'QuantitativeValue', 'value': salNum, 'unitText': 'MONTH' } };
+          const salNum = parseInt(('' + salStr).replace(/[^0-9]/g,''), 10);
+          if (salNum > 0) jobSchema.baseSalary = {
+            '@type': 'MonetaryAmount',
+            'currency': 'INR',
+            'value': { '@type': 'QuantitativeValue', 'value': salNum, 'unitText': 'MONTH' }
+          };
         }
-        // FIX #2f: educationRequirements
-        if (parsed.qualification) jobSchema.educationRequirements = { '@type': 'EducationalOccupationalCredential', 'credentialCategory': parsed.qualification };
+
+        if (parsed.qualification) jobSchema.educationRequirements = {
+          '@type': 'EducationalOccupationalCredential',
+          'credentialCategory': parsed.qualification
+        };
+
+        if (parsed.applyMode && parsed.applyMode.toLowerCase().includes('online')) {
+          jobSchema.directApply = true;
+        }
+
+        /* ── Publisher (our site) ── */
+        jobSchema.publisher = {
+          '@type': 'Organization',
+          '@id': 'https://www.topsarkarijobs.com/#organization',
+          'name': 'Top Sarkari Jobs',
+          'url': 'https://www.topsarkarijobs.com/',
+          'logo': {
+            '@type': 'ImageObject',
+            'url': 'https://www.topsarkarijobs.com/image.webp',
+            'width': 512,
+            'height': 512
+          }
+        };
+
         schemaEl.textContent = JSON.stringify(jobSchema);
       }
 
@@ -1375,6 +1474,123 @@ input, textarea, select { font-size: 1rem !important; }
         if (orgEl) orgEl.textContent = safe(org || '');
         /* Show the card */
         psCard.style.display = '';
+      })();
+
+      /* ── Internal Linking + Freshness — populate related links & last updated ── */
+      (function populateRelatedLinks() {
+        var listEl = document.getElementById('relatedLinksList');
+        var lastUpdEl = document.getElementById('lastUpdatedDisplay');
+        if (!listEl) return;
+
+        /* Category-based link map */
+        var CAT_LINKS = {
+          'Railway': [
+            ['/section/railway-jobs/', 'Railway Jobs 2026', 'RRB, DFCCIL, Metro'],
+            ['/section/latest-jobs/', 'Latest Sarkari Railway Jobs'],
+            ['/section/admit-card/', 'Railway Admit Card 2026'],
+            ['/section/results/', 'Railway Result 2026'],
+          ],
+          'Bank': [
+            ['/section/bank-jobs/', 'Bank Jobs 2026', 'SBI, PNB, RBI, IBPS'],
+            ['/section/latest-jobs/', 'Latest Bank Sarkari Jobs'],
+            ['/section/admit-card/', 'Bank Exam Admit Card 2026'],
+            ['/section/results/', 'Bank Result 2026'],
+          ],
+          'Police': [
+            ['/section/police-jobs/', 'Police & Defence Jobs 2026'],
+            ['/section/army-jobs/', 'Indian Army Jobs 2026'],
+            ['/section/latest-jobs/', 'Latest Police Sarkari Jobs'],
+            ['/section/results/', 'Police Exam Result 2026'],
+          ],
+          'Teaching': [
+            ['/section/teaching-jobs/', 'Teaching & Faculty Jobs 2026'],
+            ['/section/12th-pass-jobs/', '12th Pass Govt Jobs 2026'],
+            ['/section/latest-jobs/', 'Latest Teaching Jobs'],
+            ['/section/results/', 'Teaching Exam Result 2026'],
+          ],
+          'Medical': [
+            ['/section/medical-jobs/', 'Medical & Hospital Jobs 2026'],
+            ['/section/any-graduate/', 'Graduate Level Govt Jobs'],
+            ['/section/latest-jobs/', 'Latest Medical Sarkari Jobs'],
+            ['/section/results/', 'Medical Exam Result 2026'],
+          ],
+          '10TH': [
+            ['/section/10th-pass-jobs/', '10th Pass Govt Jobs 2026'],
+            ['/section/8th-pass-jobs/', '8th Pass Govt Jobs 2026'],
+            ['/section/iti-jobs/', 'ITI Jobs 2026'],
+            ['/section/latest-jobs/', 'Latest 10th Pass Sarkari Jobs'],
+          ],
+          '12TH': [
+            ['/section/12th-pass-jobs/', '12th Pass Govt Jobs 2026'],
+            ['/section/diploma-jobs/', 'Diploma Jobs 2026'],
+            ['/section/latest-jobs/', 'Latest 12th Pass Sarkari Jobs'],
+            ['/section/upcoming-jobs/', 'Upcoming Govt Jobs 2026'],
+          ],
+          'Graduate': [
+            ['/section/graduation-jobs/', 'Graduation Level Govt Jobs 2026'],
+            ['/section/any-graduate/', 'Any Graduate Govt Jobs 2026'],
+            ['/section/btech-jobs/', 'B.Tech / B.E. Jobs 2026'],
+            ['/section/latest-jobs/', 'Latest Graduate Sarkari Jobs'],
+          ],
+          'DEFAULT': [
+            ['/section/latest-jobs/', 'Latest Sarkari Jobs 2026'],
+            ['/section/upcoming-jobs/', 'Upcoming Govt Jobs 2026'],
+            ['/section/central-jobs/', 'Central Govt Jobs 2026'],
+            ['/section/state-jobs/', 'State Govt Jobs 2026'],
+            ['/section/results/', 'Sarkari Result 2026'],
+          ]
+        };
+
+        /* Determine category from parsed data */
+        var catKey = 'DEFAULT';
+        var catLabel = (parsed && parsed.category && parsed.category.label) || '';
+        var slug = window.__TSJ_SLUG || '';
+        var combined = (catLabel + ' ' + slug).toLowerCase();
+
+        if (combined.includes('railway') || combined.includes('rrb') || combined.includes('metro'))
+          catKey = 'Railway';
+        else if (combined.includes('bank') || combined.includes('sbi') || combined.includes('rbi') || combined.includes('ibps'))
+          catKey = 'Bank';
+        else if (combined.includes('police') || combined.includes('army') || combined.includes('defence') || combined.includes('cisf') || combined.includes('crpf'))
+          catKey = 'Police';
+        else if (combined.includes('teach') || combined.includes('faculty') || combined.includes('tgt') || combined.includes('pgt'))
+          catKey = 'Teaching';
+        else if (combined.includes('medical') || combined.includes('hospital') || combined.includes('mbbs') || combined.includes('nurse'))
+          catKey = 'Medical';
+        else if (combined.includes('10th') || combined.includes('iti') || combined.includes('matric'))
+          catKey = '10TH';
+        else if (combined.includes('12th') || combined.includes('intermediate') || combined.includes('diploma'))
+          catKey = '12TH';
+        else if (combined.includes('graduate') || combined.includes('b.tech') || combined.includes('b.com') || combined.includes('graduation'))
+          catKey = 'Graduate';
+
+        var links = CAT_LINKS[catKey] || CAT_LINKS['DEFAULT'];
+
+        /* Always add these at end */
+        var alwaysLinks = [
+          ['/section/last-date-reminder/', 'Last Date Reminder'],
+          ['/section/offline-form/', 'Offline Forms 2026'],
+        ];
+
+        /* Build HTML */
+        var html = links.map(function(l) {
+          var title = l[2] ? l[0] + ' | ' + l[2] : l[1];
+          return '<li><a href="' + l[0] + '" title="' + l[1] + '">' +
+                 '<i class="fa-solid fa-angle-right"></i>' + l[1] + '</a></li>';
+        }).join('');
+        html += alwaysLinks.map(function(l) {
+          return '<li><a href="' + l[0] + '" title="' + l[1] + '">' +
+                 '<i class="fa-solid fa-angle-right"></i>' + l[1] + '</a></li>';
+        }).join('');
+
+        listEl.innerHTML = html;
+
+        /* Last Updated display */
+        if (lastUpdEl) {
+          var lastUpd = (row && row._updated) || '';
+          var dispDate = lastUpd || new Date().toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'});
+          lastUpdEl.innerHTML = '<i class="fa-regular fa-clock" style="margin-right:4px;"></i>Last Updated: <strong>' + dispDate + '</strong>';
+        }
       })();
 
       /* ── Important Dates card ── */
