@@ -255,6 +255,62 @@
       border-top: 1px solid #f1f5f9;
       display: flex; align-items: center; gap: 4px;
     }
+    /* sv-card-title-link: title as clickable link */
+    .sv-card-title-link {
+      font-size: .85rem; font-weight: 700; color: #1e293b; line-height: 1.45;
+      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+      padding-top: 20px; word-break: break-word;
+      text-decoration: none;
+    }
+    .sv-card-title-link:hover { color: #2563eb; text-decoration: underline; }
+    /* Sub-type badge */
+    .sv-subtype-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: .63rem; font-weight: 700; padding: 3px 8px; border-radius: 20px;
+      position: absolute; top: 8px; right: 8px;
+      white-space: nowrap; letter-spacing: .02em; text-transform: uppercase;
+    }
+    .sv-subtype-badge i { font-size: .6rem; }
+    /* JOB types */
+    .st-govt    { background: #dbeafe; color: #1d4ed8; }
+    .st-private { background: #f3f4f6; color: #374151; }
+    .st-appren  { background: #fef3c7; color: #92400e; }
+    .st-walkin  { background: #d1fae5; color: #065f46; }
+    .st-teach   { background: #ede9fe; color: #5b21b6; }
+    .st-bank    { background: #fef9c3; color: #713f12; }
+    .st-rail    { background: #fee2e2; color: #991b1b; }
+    .st-def     { background: #dbeafe; color: #1e40af; }
+    .st-over    { background: #d1fae5; color: #047857; }
+    /* NON-JOB types */
+    .st-result  { background: #f0fdf4; color: #15803d; }
+    .st-admit   { background: #ede9fe; color: #6d28d9; }
+    .st-ans     { background: #fff7ed; color: #c2410c; }
+    .st-syll    { background: #e0f2fe; color: #0369a1; }
+    .st-adm     { background: #fce7f3; color: #9d174d; }
+    .st-schol   { background: #fef3c7; color: #b45309; }
+    .st-yoj     { background: #dcfce7; color: #15803d; }
+    .st-scheme  { background: #eff6ff; color: #1d4ed8; }
+    .st-loan    { background: #fdf4ff; color: #7c3aed; }
+    .st-merit   { background: #f0fdf4; color: #166534; }
+    .st-news    { background: #fafafa; color: #374151; border: 1px solid #e5e7eb; }
+    .st-exam    { background: #fff1f2; color: #be123c; }
+    .st-counsel { background: #ecfdf5; color: #065f46; }
+    .st-reg     { background: #eff6ff; color: #1e40af; }
+    .st-ppp     { background: #fdf4ff; color: #7c3aed; }
+    /* Action links row */
+    .sv-links-row {
+      display: flex; flex-wrap: wrap; gap: 5px;
+      padding-top: 8px; margin-top: 4px; border-top: 1px solid #f1f5f9;
+    }
+    .sv-link-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: .68rem; font-weight: 600; padding: 4px 9px;
+      border-radius: 6px; text-decoration: none; white-space: nowrap;
+      background: #f0f9ff; color: #0369a1; border: 1px solid #bae6fd;
+      transition: background .15s, color .15s;
+    }
+    .sv-link-btn:hover { background: #0369a1; color: #fff; }
+    .sv-link-btn i { font-size: .6rem; }
 
     /* ── States ── */
     .sv-empty { grid-column: 1/-1; text-align: center; padding: 48px 16px; color: #64748b; font-size: .95rem; }
@@ -296,6 +352,18 @@
       transition: background .2s; box-shadow: 0 4px 14px rgba(37,99,235,.25);
     }
     .sv-more-btn:hover { background: #1d4ed8; }
+    /* Filter bar */
+    .sv-filter-bar {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      padding: 10px 0 14px; overflow-x: auto;
+    }
+    .sv-ftab {
+      padding: 6px 14px; border-radius: 20px; border: 1.5px solid #e2e8f0;
+      background: #fff; color: #475569; font-size: .76rem; font-weight: 600;
+      cursor: pointer; white-space: nowrap; transition: all .15s;
+    }
+    .sv-ftab:hover { border-color: #2563eb; color: #2563eb; }
+    .sv-ftab.active { background: #2563eb; color: #fff; border-color: #2563eb; }
   
     /* ── Offcanvas nav link alignment fix ── */
     .offcanvas-nav > a {
@@ -492,6 +560,18 @@
             Jobs 2026
           </h2>
           <span id="sv-total" class="sv-total-badge" style="display:none;">Total Jobs: 0</span>
+        </div>
+        <!-- Filter tabs for entry_type / sub_type -->
+        <div class="sv-filter-bar" id="sv-filter-bar" style="display:none;">
+          <button class="sv-ftab active" data-filter="all">All</button>
+          <button class="sv-ftab" data-filter="job">📋 Jobs</button>
+          <button class="sv-ftab" data-filter="result">🏆 Result</button>
+          <button class="sv-ftab" data-filter="admit">🪪 Admit Card</button>
+          <button class="sv-ftab" data-filter="answer">🔑 Answer Key</button>
+          <button class="sv-ftab" data-filter="syllabus">📖 Syllabus</button>
+          <button class="sv-ftab" data-filter="admission">🎓 Admission</button>
+          <button class="sv-ftab" data-filter="scheme">📋 Scheme/Yojana</button>
+          <button class="sv-ftab" data-filter="other">📰 Others</button>
         </div>
         <div id="sv-grid" class="sv-grid">
           <div class="sv-spinner"><i class="fa-solid fa-spinner fa-spin"></i> Loading jobs…</div>
@@ -719,47 +799,99 @@
 
     var PAGE_SIZE=30, allItems=[], shownCount=0;
 
+    /* Sub-type icon/color config for LATEST_JOBS NEW */
+    var _ST_CFG={
+      /* JOB types */
+      'Government Job': {icon:'fa-solid fa-landmark',       cls:'st-govt',   label:'Govt Job'},
+      'Private Job':    {icon:'fa-solid fa-building',        cls:'st-private',label:'Private'},
+      'Apprentice':     {icon:'fa-solid fa-graduation-cap', cls:'st-appren', label:'Apprentice'},
+      'Walk-in':        {icon:'fa-solid fa-person-walking', cls:'st-walkin', label:'Walk-in'},
+      'Teaching':       {icon:'fa-solid fa-chalkboard-user',cls:'st-teach',  label:'Teaching'},
+      'Bank Job':       {icon:'fa-solid fa-building-columns',cls:'st-bank',  label:'Bank Job'},
+      'Railway':        {icon:'fa-solid fa-train',           cls:'st-rail',  label:'Railway'},
+      'Defense':        {icon:'fa-solid fa-shield-halved',   cls:'st-def',   label:'Defence'},
+      'Overseas Job':   {icon:'fa-solid fa-earth-asia',      cls:'st-over',  label:'Overseas'},
+      /* NON-JOB types */
+      'Result':         {icon:'fa-solid fa-trophy',          cls:'st-result',label:'Result'},
+      'Admit Card':     {icon:'fa-solid fa-id-card',         cls:'st-admit', label:'Admit Card'},
+      'Answer Key':     {icon:'fa-solid fa-key',             cls:'st-ans',   label:'Answer Key'},
+      'Syllabus':       {icon:'fa-solid fa-book-open',       cls:'st-syll',  label:'Syllabus'},
+      'Admission':      {icon:'fa-solid fa-graduation-cap', cls:'st-adm',   label:'Admission'},
+      'Scholarship':    {icon:'fa-solid fa-award',           cls:'st-schol', label:'Scholarship'},
+      'Yojana':         {icon:'fa-solid fa-hand-holding-heart',cls:'st-yoj', label:'Yojana'},
+      'Scheme':         {icon:'fa-solid fa-clipboard-list', cls:'st-scheme',label:'Scheme'},
+      'Loan':           {icon:'fa-solid fa-hand-holding-dollar',cls:'st-loan',label:'Loan'},
+      'Merit List':     {icon:'fa-solid fa-list-ol',         cls:'st-merit', label:'Merit List'},
+      'News Update':    {icon:'fa-solid fa-newspaper',       cls:'st-news',  label:'News'},
+      'Exam Date':      {icon:'fa-solid fa-calendar-days',  cls:'st-exam',  label:'Exam Date'},
+      'Counseling':     {icon:'fa-solid fa-comments',        cls:'st-counsel',label:'Counseling'},
+      'Registration':   {icon:'fa-solid fa-file-signature', cls:'st-reg',   label:'Registration'},
+      'PPP/BPL/Family ID Updates':{icon:'fa-solid fa-users',cls:'st-ppp',   label:'PPP/BPL'}
+    };
+    var _LK_ICON={'Apply Online':'fa-solid fa-arrow-up-right-from-square','Official Notification':'fa-solid fa-file-pdf',
+      'Download Form':'fa-solid fa-file-pdf','Download':'fa-solid fa-download','Official Website':'fa-solid fa-globe',
+      'Admit Card':'fa-solid fa-id-card','Result':'fa-solid fa-trophy','Answer Key':'fa-solid fa-key',
+      'Syllabus':'fa-solid fa-book','Login':'fa-solid fa-right-to-bracket'};
+
     function buildCard(item, idx){
-      var a=document.createElement('a');
-      /* Generate slug from name if no slug available — job detail pages exist for all merged_sarkari jobs */
+      var wrap=document.createElement('div');
+      wrap.className='sv-card';
+
       var resolvedSlug=item.slug||((item.name||'').toLowerCase().replace(/[^a-z0-9\s-]/g,'').replace(/[\s-]+/g,'-').replace(/^-+|-+$/g,'').slice(0,100));
-      if(resolvedSlug){
-        a.href='/jobs/'+resolvedSlug+'/';
-      } else if(item.url&&item.url!=='#'){
-        a.href=item.url;
-        if(!/topsarkarijobs\.com/.test(item.url)){a.target='_blank';a.rel='noopener noreferrer';}
-      } else {a.href='#';}
-      a.className='sv-card'; a.title=item.name;
+      var detailHref=resolvedSlug?'/jobs/'+resolvedSlug+'/':'#';
 
-      /* Serial number badge */
+      /* Serial */
       var serial=document.createElement('span');serial.className='sv-serial';serial.textContent=(idx+1);
-      a.appendChild(serial);
+      wrap.appendChild(serial);
 
-      /* Title */
-      var t=document.createElement('div');t.className='sv-card-title';t.textContent=item.name;
-      a.appendChild(t);
+      /* Sub-type badge */
+      var stCfg=_ST_CFG[item.sub_type]||_ST_CFG[item.entry_type]||null;
+      if(stCfg){
+        var stb=document.createElement('span');
+        stb.className='sv-subtype-badge '+stCfg.cls;
+        stb.innerHTML='<i class="'+stCfg.icon+'"></i> '+stCfg.label;
+        wrap.appendChild(stb);
+      }
 
-      /* Badges row: vacancies + org */
+      /* Title — links to detail page */
+      var ta=document.createElement('a');ta.href=detailHref;ta.className='sv-card-title-link';ta.textContent=item.name;
+      wrap.appendChild(ta);
+
+      /* Meta row: vacancy + org + listing date */
       var meta=document.createElement('div');meta.className='sv-card-meta';
       function badge(cls,text){if(!text)return;var s=document.createElement('span');s.className='sv-badge '+cls;s.textContent=text;meta.appendChild(s);}
-      badge('sv-badge-vac', item.vac ? '📋 '+item.vac+' Posts' : '');
-      badge('sv-badge-org', item.org ? item.org.slice(0,30)+(item.org.length>30?'…':'') : '');
-      if(a.target==='_blank') badge('sv-badge-ext','🔗 External');
-      if(meta.childElementCount) a.appendChild(meta);
+      badge('sv-badge-vac', item.vac?'📋 '+item.vac+' Posts':'');
+      badge('sv-badge-org', item.org?item.org.slice(0,28)+(item.org.length>28?'…':''):'');
+      if(item.listing_date) badge('sv-badge-date','🗓 '+item.listing_date);
+      if(meta.childElementCount) wrap.appendChild(meta);
 
-      /* Last date — dedicated visible row */
+      /* Last date */
       if(item.date){
         var ld=document.createElement('div');ld.className='sv-lastdate';
         ld.innerHTML='📅 Last Date: <span class="sv-lastdate-val">'+fmtDate(item.date)+'</span>';
-        a.appendChild(ld);
+        wrap.appendChild(ld);
       }
 
-      /* View details arrow */
-      var arrow=document.createElement('div');arrow.className='sv-card-arrow';
-      arrow.innerHTML='View Details <i class="fa-solid fa-arrow-right" style="font-size:.65rem;margin-left:2px;"></i>';
-      a.appendChild(arrow);
+      /* Action links row from all_links */
+      if(item.all_links&&item.all_links.length>0){
+        var linksDiv=document.createElement('div');linksDiv.className='sv-links-row';
+        item.all_links.slice(0,4).forEach(function(lk){
+          var icon=_LK_ICON[lk.text]||'fa-solid fa-arrow-up-right-from-square';
+          var la=document.createElement('a');
+          la.href=lk.url;la.target='_blank';la.rel='noopener noreferrer';
+          la.className='sv-link-btn';
+          la.innerHTML='<i class="'+icon+'"></i> '+lk.text;
+          linksDiv.appendChild(la);
+        });
+        wrap.appendChild(linksDiv);
+      } else {
+        /* Fallback: view details */
+        var arrow=document.createElement('div');arrow.className='sv-card-arrow';
+        arrow.innerHTML='View Details <i class="fa-solid fa-arrow-right" style="font-size:.65rem;margin-left:2px;"></i>';
+        wrap.appendChild(arrow);
+      }
 
-      return a;
+      return wrap;
     }
 
     function renderPage(){
@@ -770,9 +902,19 @@
     }
 
     function showItems(items){
-      allItems=items; shownCount=0; svGrid.innerHTML='';
+      _baseItems=items; allItems=items; shownCount=0; svGrid.innerHTML='';
+      /* Show filter bar when we have items */
+      var filterBar=document.getElementById('sv-filter-bar');
+      if(filterBar&&items.length>0){
+        filterBar.style.display='flex';
+        /* reset active filter */
+        filterBar.querySelectorAll('.sv-ftab').forEach(function(b){b.classList.remove('active');});
+        var allTab=filterBar.querySelector('[data-filter="all"]');
+        if(allTab)allTab.classList.add('active');
+        _activeFilter='all';
+      }
       /* Update total jobs counter */
-      if(svTotal){svTotal.textContent='Total Jobs: '+items.length;svTotal.style.display=items.length?'':'none';}
+      if(svTotal){svTotal.textContent='Total: '+items.length;svTotal.style.display=items.length?'':'none';}
       if(!items.length){
         svGrid.innerHTML='<div class="sv-empty"><i class="fa-solid fa-folder-open"></i>No jobs found. Check back soon!</div>';
         svMoreWrap.style.display='none'; return;
@@ -781,6 +923,45 @@
     }
 
     svMoreBtn&&svMoreBtn.addEventListener('click',renderPage);
+
+    /* ── Filter tabs logic ── */
+    var _JOB_SUBTYPES=['Government Job','Private Job','Apprentice','Walk-in','Teaching','Bank Job','Railway','Defense','Overseas Job'];
+    var _FILTER_MAP={
+      'all':null,
+      'job':function(i){return _JOB_SUBTYPES.indexOf(i.sub_type)!==-1;},
+      'result':function(i){return i.sub_type==='Result';},
+      'admit':function(i){return i.sub_type==='Admit Card';},
+      'answer':function(i){return i.sub_type==='Answer Key';},
+      'syllabus':function(i){return i.sub_type==='Syllabus';},
+      'admission':function(i){return i.sub_type==='Admission'||i.sub_type==='Scholarship';},
+      'scheme':function(i){return i.sub_type==='Yojana'||i.sub_type==='Scheme'||i.sub_type==='Loan'||i.sub_type==='PPP/BPL/Family ID Updates';},
+      'other':function(i){
+        var known=['Government Job','Private Job','Apprentice','Walk-in','Teaching','Bank Job','Railway','Defense','Overseas Job',
+          'Result','Admit Card','Answer Key','Syllabus','Admission','Scholarship','Yojana','Scheme','Loan','PPP/BPL/Family ID Updates'];
+        return known.indexOf(i.sub_type)===-1;
+      }
+    };
+    var _activeFilter='all';
+    var _baseItems=[];
+    function applyFilter(filter){
+      _activeFilter=filter;
+      var fn=_FILTER_MAP[filter];
+      var filtered=fn?_baseItems.filter(fn):_baseItems;
+      shownCount=0;svGrid.innerHTML='';
+      if(svTotal)svTotal.textContent='Total: '+filtered.length;
+      allItems=filtered;
+      renderPage();
+    }
+    var filterBar=document.getElementById('sv-filter-bar');
+    if(filterBar){
+      filterBar.querySelectorAll('.sv-ftab').forEach(function(btn){
+        btn.addEventListener('click',function(){
+          filterBar.querySelectorAll('.sv-ftab').forEach(function(b){b.classList.remove('active');});
+          this.classList.add('active');
+          applyFilter(this.getAttribute('data-filter'));
+        });
+      });
+    }
 
     function setupSearch(){
       if(!svInput)return;
@@ -859,14 +1040,43 @@
       var url=j.apply_online_link||j.official_website_link||j.source_url||j.url||j.link||'#';
       var dates=j.important_dates||{};
       var lastDate=dates.last_date_to_apply||dates.last_date||dates.application_end||j.last_date||'';
+      /* Build clean links from all_links or important_links */
+      var _AL_LABEL={'apply online':'Apply Online','apply now':'Apply Online',
+        'official notification pdf':'Official Notification','official notification':'Official Notification',
+        'download':'Download','form pdf free':'Download Form','formmpdf free':'Download Form',
+        'official website':'Official Website','visit':'Official Website',
+        'admit card':'Admit Card','result':'Result','answer key':'Answer Key','syllabus':'Syllabus','login':'Login'};
+      var allLinks=[];
+      if(Array.isArray(j.all_links)&&j.all_links.length>0){
+        j.all_links.forEach(function(lk){
+          var lkUrl=(lk.url||'').trim();
+          if(!lkUrl||lkUrl.indexOf('http')!==0)return;
+          var rawLbl=(lk.label||lk.title||'').toLowerCase().trim();
+          var lbl=_AL_LABEL[rawLbl]||(lk.title||lk.label||'').trim()||'Link';
+          allLinks.push({text:lbl,url:lkUrl});
+        });
+      } else {
+        /* fallback: important_links object */
+        var _il=j.important_links||{};
+        Object.keys(_il).forEach(function(k){
+          var v=(_il[k]||'').trim();
+          if(!v||v.indexOf('http')!==0)return;
+          var lbl=_AL_LABEL[k.replace(/_/g,' ').toLowerCase()]||(k.replace(/_/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();}));
+          allLinks.push({text:lbl,url:v});
+        });
+      }
       return{
-        name:(j.title||j.name||'').trim(),
+        name:(j.title||j.name||'').trim().replace(/\s*-\s*$/,'').trim(),
         slug:j.slug||'',
         date:fmtDate(lastDate),
         listing_date:j.listing_date||'',
         vac:j.total_vacancy||j.vacancies||j.posts||'',
         org:j.organization||j.org||j.department||'',
-        url:url
+        url:url,
+        entry_type:j.entry_type||'',
+        sub_type:j.sub_type||'',
+        apply_mode:j.apply_mode||'',
+        all_links:allLinks
       };
     }
 

@@ -3528,13 +3528,36 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
               }
             }
           }
-          /* Also add important_links keys as links */
+          /* LATEST_JOBS NEW: use all_links array (primary, clean labels) */
+          if (Array.isArray(j.all_links) && j.all_links.length > 0) {
+            var _AL_LABEL = {
+              'apply online':'Apply Online','apply now':'Apply Online',
+              'official notification pdf':'Official Notification','official notification':'Official Notification',
+              'download':'Download','form pdf free':'Download Form','formmpdf free':'Download Form',
+              'official website':'Official Website','visit':'Official Website',
+              'admit card':'Admit Card','result':'Result','answer key':'Answer Key',
+              'syllabus':'Syllabus','login':'Login'
+            };
+            j.all_links.forEach(function(lk) {
+              var lkUrl = (lk.url || '').trim();
+              if (!lkUrl || lkUrl.indexOf('http') !== 0) return;
+              var already = false;
+              for (var si2 = 0; si2 < sectionsLinks.length; si2++) {
+                if (sectionsLinks[si2].url === lkUrl) { already = true; break; }
+              }
+              if (!already) {
+                var rawLbl = (lk.label || lk.title || '').toLowerCase().trim();
+                var lbl = _AL_LABEL[rawLbl] || (lk.title || lk.label || '').trim() || 'Link';
+                sectionsLinks.push({ text: lbl, url: lkUrl });
+              }
+            });
+          } else {
+          /* Fallback: important_links object */
           var il2 = j.important_links || {};
           var ilKeys = Object.keys(il2);
           for (var ik = 0; ik < ilKeys.length; ik++) {
             var ilUrl = il2[ilKeys[ik]];
             if (ilUrl && ilUrl.indexOf('http') === 0) {
-              /* Check not already in sectionsLinks */
               var alreadyHave = false;
               for (var sl = 0; sl < sectionsLinks.length; sl++) {
                 if (sectionsLinks[sl].url === ilUrl) { alreadyHave = true; break; }
@@ -3544,6 +3567,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
                 sectionsLinks.push({ text: ilLabel, url: ilUrl });
               }
             }
+          }
           }
 
           return {
