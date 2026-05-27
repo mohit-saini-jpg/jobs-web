@@ -1499,6 +1499,9 @@ input, textarea, select { font-size: 1rem !important; }
         psCard.style.display = '';
       })();
 
+      /* Expose row data for preferred-source-renderer */
+      window.__TSJ_ROW = row;
+
       /* ── Internal Linking + Freshness — populate related links & last updated ── */
       (function populateRelatedLinks() {
         var listEl = document.getElementById('relatedLinksList');
@@ -2195,6 +2198,9 @@ input, textarea, select { font-size: 1rem !important; }
           nlActions.innerHTML = `<p style="color:#64748b;font-size:.83rem;padding:4px;">Links not available. Please check official website.</p>`;
         }
       }
+
+      /* Expose row data for preferred-source-renderer */
+      window.__TSJ_ROW = jobRow;
 
       injectSEO(name, rawSlug, null);
 
@@ -3435,6 +3441,8 @@ input, textarea, select { font-size: 1rem !important; }
         threeCol.style.display = 'grid';
         window.__TSJ_RENDER_DONE = true;
         /* Notify deferred patch — fire any queued offline patches */
+        /* Expose row for preferred-source-renderer.js */
+        window.__TSJ_ROW = window.__TSJ_ROW || null;
         if (typeof window.__TSJ_ON_RENDER_DONE === 'function') window.__TSJ_ON_RENDER_DONE(window.__TSJ_RAW_JOB);
         /* ALWAYS hide error box — it should only show if explicitly set in catch block */
         if (errorEl) errorEl.style.display = 'none';
@@ -3448,6 +3456,8 @@ input, textarea, select { font-size: 1rem !important; }
   <script src="/job-renderer-patch.js?v=20260522" defer></script>
   <!-- Universal Dynamic JSON-to-Page Rendering System -->
   <script src="/universal-renderer.js?v=20260524b" defer></script>
+  <!-- Preferred Source on Google — Full Rich Details Renderer -->
+  <script src="/preferred-source-renderer.js?v=20260527" defer></script>
   <!-- Header height fix: dynamically update --header-height CSS variable -->
   <script>
   (function(){
