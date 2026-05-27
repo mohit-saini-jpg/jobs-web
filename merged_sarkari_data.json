@@ -1,34 +1,34 @@
 {
-  "scraped_at": "2026-05-26 20:59:12",
-  "total": 247,
+  "scraped_at": "2026-05-27 10:22:53",
+  "total": 245,
   "summary": {
     "sarkariresultshine_offline_jobs_top30": 21,
     "sarkariresultshine_latest_jobs_top100": 48,
     "sarkariresult_categories": {
       "SR_Latest_Jobs": 22,
       "SR_Result": 21,
-      "SR_Admit_Card": 21,
-      "SR_Admission": 6,
+      "SR_Admit_Card": 22,
+      "SR_Admission": 5,
       "SR_Answer_Key": 5
     },
     "sarkariresult_total": 75,
     "upcoming_jobs": 18,
-    "state_jobs_active": 36,
+    "state_jobs_active": 35,
     "central_jobs_active": 26,
-    "admissions_active": 23
+    "admissions_active": 22
   },
   "category_counts": {
     "OFFLINE_FORM": 21,
     "LATEST_JOBS NEW": 48,
     "SR_Latest_Jobs": 22,
     "SR_Result": 21,
-    "SR_Admit_Card": 21,
-    "SR_Admission": 6,
+    "SR_Admit_Card": 22,
+    "SR_Admission": 5,
     "SR_Answer_Key": 5,
     "UPCOMING_JOBS": 18,
-    "STATE_JOBS": 36,
+    "STATE_JOBS": 35,
     "CENTRAL_JOBS": 26,
-    "ADMISSIONS": 23
+    "ADMISSIONS": 22
   },
   "jobs": [
     {
@@ -1393,7 +1393,7 @@
           "eligibility": "Used Water Expert: B.E. / B.Tech / B.Sc in Civil / Environmental / Chemical / Public Health Engineering AND M.Tech / M.E./M.Sc. in Environmental / Public Health / Structural / Chemical / Sanitary / Water Resource Engineering. Preference: Candidates holding a PhD will be given preference."
         }
       ],
-      "sequence": 13
+      "sequence": 15
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1458,7 +1458,7 @@
           "eligibility": "10th & 12th passed"
         }
       ],
-      "sequence": 14
+      "sequence": 16
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1503,7 +1503,7 @@
           "eligibility": "Graduate in the Social Science Discipline with a minimum 55% marks. Preference will be given to candidates with a four-year degree program (e.g., B.Tech). Relevant research/industrial experience and technical knowledge (R & Python Language) will be preferred."
         }
       ],
-      "sequence": 15
+      "sequence": 17
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1543,7 +1543,7 @@
           "eligibility": "Laboratory Technician 12th Science with a DMLT Diploma with Exp orB.Sc. in Medical Lab Technology (MLT), Microbiology, Biotechnology, or Life Sciences."
         }
       ],
-      "sequence": 17
+      "sequence": 19
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1583,7 +1583,7 @@
           "eligibility": "Candidates must possess a Master’s degree in a relevant subject from a recognized university with at least 55% marks. They must also have passed the UGC/CSIR NET or SLET/SET exam.However, Ph.D. holders are exempted from NET/SLET/SET as per UGC regulations.SC/ST and PWD candidates will be given a 5% relaxation in their Master’s degree."
         }
       ],
-      "sequence": 18
+      "sequence": 20
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1623,7 +1623,7 @@
           "eligibility": "D.Ed. / B.Ed. with HTET or CTET Qualified"
         }
       ],
-      "sequence": 19
+      "sequence": 21
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1718,7 +1718,7 @@
           "eligibility": "26-06-2026"
         }
       ],
-      "sequence": 20
+      "sequence": 22
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1758,7 +1758,7 @@
           "eligibility": "PG Degree in English / Hindi / History / Political Science / Sociology / Music and Special B.Ed."
         }
       ],
-      "sequence": 24
+      "sequence": 26
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1798,7 +1798,7 @@
           "eligibility": "Degree in Agriculture and Computer Course “O” Level, UP PET 2025 Exam Passed."
         }
       ],
-      "sequence": 26
+      "sequence": 28
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1838,7 +1838,7 @@
           "eligibility": "Bachelor’s Degree in Agriculture or related fields such as Agriculture Science / Horticulture / Forestry / Agricultural Engineering / Home Science, etc., UP PET 2025 Exam Passed."
         }
       ],
-      "sequence": 28
+      "sequence": 30
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -1878,7 +1878,7 @@
           "eligibility": "12th with PCM (70% Marks), Appeared in JEEMAIN 2026, Only Unmarried Candidates are Eligible"
         }
       ],
-      "sequence": 29
+      "sequence": 31
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2058,7 +2058,7 @@
           "eligibility": "MBBS with Psychiatry PG"
         }
       ],
-      "sequence": 30
+      "sequence": 32
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2092,7 +2092,7 @@
       "official_website_link": "https://itiharyana.gov.in/en",
       "jobs_info": "",
       "vacancy_details": [],
-      "sequence": 31
+      "sequence": 33
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2192,7 +2192,7 @@
           "eligibility": "Diploma in Computer Applications with 6 months of experience"
         }
       ],
-      "sequence": 32
+      "sequence": 34
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2226,7 +2226,7 @@
       "official_website_link": "https://hkrnl.itiharyana.gov.in/",
       "jobs_info": "",
       "vacancy_details": [],
-      "sequence": 33
+      "sequence": 35
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2260,7 +2260,7 @@
       "official_website_link": "https://hkrnl.itiharyana.gov.in/",
       "jobs_info": "<p style=\"text-align: justify;\">HKRN Accounts cum Office Assistant Vacancy 2026: The Haryana Kaushal Rozgar Nigam has released a notification for the HKRN Accounts cum Office Assistant Vacancy 2026posts. All interested and eligible candidates must read the HKRN Accounts cum Office Assistant Vacancy 2026 notification carefully and submit their applications before the prescribed deadline. See all information related to the HKRN Accounts cum Office Assistant Vacancy 2026post on the official website https://hkrnl.itiharyana.gov.in/. All the details associated with the HKRN Accounts cum Office Assistant Vacancy 2026 are given below.</p>",
       "vacancy_details": [],
-      "sequence": 34
+      "sequence": 36
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2294,7 +2294,7 @@
       "official_website_link": "",
       "jobs_info": "<p style=\"text-align: justify;\">Grih Kalyan Kendra Delhi Vacancy 2026: Grih Kalyan Kendra (HQ) under the aegis of the Ministry of Personnel, Public Grievances and Pensions, Department of Personnel and Training has issued a notification for the position of various. All eligible and interested candidates are advised to carefully read the official notification and apply before 17-06-2026, the last Date. All relevant information regarding the Grih Kalyan Kendra Delhi Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 37
+      "sequence": 39
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2334,7 +2334,7 @@
           "eligibility": "Any Graduation Degree, English Typing : 30 wpm, Computer Knowledge."
         }
       ],
-      "sequence": 38
+      "sequence": 40
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2374,7 +2374,7 @@
           "eligibility": "Degree in Law (LLB), Enrolled as an Advocate with Bar Council."
         }
       ],
-      "sequence": 42
+      "sequence": 44
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2414,7 +2414,7 @@
           "eligibility": "10th Passed (55% Marks), ITI / Apprenticeship / Experience."
         }
       ],
-      "sequence": 46
+      "sequence": 48
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2448,7 +2448,7 @@
       "official_website_link": "",
       "jobs_info": "",
       "vacancy_details": [],
-      "sequence": 47
+      "sequence": 49
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2513,7 +2513,7 @@
           "eligibility": "10th Pass + ITI Electrician"
         }
       ],
-      "sequence": 48
+      "sequence": 50
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2553,7 +2553,7 @@
           "eligibility": "Ph.D/MD or equivalent degree with at least one research article published in a reputed and indexed journal."
         }
       ],
-      "sequence": 49
+      "sequence": 51
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2648,7 +2648,7 @@
           "eligibility": "10th Pass + Driving License"
         }
       ],
-      "sequence": 50
+      "sequence": 52
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2688,7 +2688,7 @@
           "eligibility": "B.A L.L.B. Knowledge of Hindi upto Matric Standard; and who has held an assignment involving legal work for a period of not less than ten years; OR Has practiced at the bar for a period of not less than five years"
         }
       ],
-      "sequence": 52
+      "sequence": 54
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2722,7 +2722,7 @@
       "official_website_link": "https://militaryliteraturefestival.com/vacancy-sevadar-cum-safaiwala-may-2026.php",
       "jobs_info": "<p style=\"text-align: justify;\">MLF Chandigarh Recruitment 2026: Military Literature Festival Association Chandigarh has issued a notification for the position of Sevadar cum Safaiwala. The recruitment drive comprises one vacancy. All eligible and interested candidates are advised to carefully read the official notification and apply before 31-05-2026, the last Date. All relevant information regarding the MLF Chandigarh Recruitment 2026 is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 53
+      "sequence": 55
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2756,7 +2756,7 @@
       "official_website_link": "https://www.irctc.com/new-openings.php",
       "jobs_info": "",
       "vacancy_details": [],
-      "sequence": 55
+      "sequence": 57
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2796,7 +2796,7 @@
           "eligibility": "Update Soon"
         }
       ],
-      "sequence": 56
+      "sequence": 58
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2830,7 +2830,7 @@
       "official_website_link": "https://hal-india.co.in/",
       "jobs_info": "<p style=\"text-align: justify;\">HAL Apprentice Vacancy 2026: Hindustan Aeronautics Limited (HAL) has issued a notification for the position of ITI Apprentice. All eligible and interested candidates are advised to carefully read the official notification and apply before 03-06-2026, the last Date. All relevant information regarding the HAL Apprentice Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 58
+      "sequence": 60
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2870,7 +2870,7 @@
           "eligibility": "Any Graduate"
         }
       ],
-      "sequence": 64
+      "sequence": 66
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2910,7 +2910,7 @@
           "eligibility": "Any Graduate"
         }
       ],
-      "sequence": 66
+      "sequence": 68
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2944,7 +2944,7 @@
       "official_website_link": "https://dpcc.delhi.gov.in/",
       "jobs_info": "<p style=\"text-align: justify;\">Delhi DPCC Trainee Vacancy 2026: Delhi Pollution Control Committee (DPCC), Department of Environment, Government of NCT of Delhi has issued a notification for the position of Trainees. The recruitment drive comprises 150 vacancies. All eligible and interested candidates are advised to carefully read the official notification and apply before 05-06-2026, the last Date. All relevant information regarding the Delhi DPCC Trainee Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 68
+      "sequence": 70
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -2978,7 +2978,7 @@
       "official_website_link": "https://www.idsj.org/vacancies",
       "jobs_info": "<p style=\"text-align: justify;\">IDS Jaipur Vacancy 2026: The Institute of Development Studies (IDS), Jaipur, has issued a notification for the positions of Driver, Junior Office Assistant (JOA), and Class IV. All eligible and interested candidates are advised to carefully read the official notification and apply before 30 May, the last Date. All relevant information regarding the IDS Jaipur Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 69
+      "sequence": 71
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -3012,7 +3012,7 @@
       "official_website_link": "https://navodaya.gov.in/nvs/nvs-school/CHANDIGARH/en/home/index.html",
       "jobs_info": "<p style=\"text-align: justify;\">NVS Jaipur Counselors Vacancy 2026: Navodaya Vidyalaya Samiti, Regional Office, Jaipur, has issued a notification for the position of Counselors (Male/Female). All eligible and interested candidates are advised to carefully read the official notification and apply before 28 May 2026, the last Date. All relevant information regarding the NVS Jaipur Counselors Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 70
+      "sequence": 72
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -3046,7 +3046,7 @@
       "official_website_link": "https://navodaya.gov.in/nvs/nvs-school/CHANDIGARH/en/home/index.html",
       "jobs_info": "<p style=\"text-align: justify;\">NVS Patna Counselors Vacancy 2026: Navodaya Vidyalaya Samiti, Regional Office, Patna, has issued a notification for the position of Counselors (Male/Female). All eligible and interested candidates are advised to carefully read the official notification and apply before 24 May 2026, the last Date. All relevant information regarding the NVS Patna Counselors Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 71
+      "sequence": 73
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -3080,7 +3080,7 @@
       "official_website_link": "https://navodaya.gov.in/nvs/nvs-school/CHANDIGARH/en/home/index.html",
       "jobs_info": "<p style=\"text-align: justify;\">NVS Chandigarh Counselors Vacancy 2026: Navodaya Vidyalaya Samiti, Regional Office, Chandigarh, has issued a notification for the position of Counselors (Male/Female). All eligible and interested candidates are advised to carefully read the official notification and apply before 24 May 2026, the last Date. All relevant information regarding the NVS Chandigarh Counselors Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 72
+      "sequence": 74
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -3165,7 +3165,7 @@
           "eligibility": "Relevant Trade Qualification"
         }
       ],
-      "sequence": 73
+      "sequence": 75
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -3199,7 +3199,7 @@
       "official_website_link": "",
       "jobs_info": "<p style=\"text-align: justify;\">Army Canteen Danapur Cantt Vacancy 2026: The Unit Run Canteen (URC), HQ Jharkhand & Bihar Sub Area, Danapur Cantt has issued a notification for the position of Various. The recruitment drive comprises 27 vacancies. All eligible and interested candidates are advised to carefully read the official notification and apply before 25 May 2026, the last Date. All relevant information regarding the Army Canteen Danapur Cantt Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 74
+      "sequence": 76
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -3233,7 +3233,7 @@
       "official_website_link": "https://www.niist.res.in/recruitment-post-multi-tasking-staff-vide-advt-no012026-0",
       "jobs_info": "<p style=\"text-align: justify;\">CSIR NIIST MTS Vacancy 2026: CSIR – National Institute for Interdisciplinary Science and Technology has issued a notification for the position of Multi-Tasking Staff (MTS). The recruitment drive comprises 02 vacancies. All eligible and interested candidates are advised to carefully read the official notification and apply before 15 June 2026, the last Date. All relevant information regarding the CSIR NIIST MTS Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 75
+      "sequence": 77
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -3267,7 +3267,7 @@
       "official_website_link": "https://electricityombudsmandelhi.co.in/vacancies",
       "jobs_info": "<p style=\"text-align: justify;\">Electricity Ombudsman Delhi Vacancy 2026: The Office of the Electricity Ombudsman, Govt. of NCT Delhi has issued a notification for the position of Personal Assistant. The recruitment drive comprises one vacancy. All eligible and interested candidates are advised to carefully read the official notification and apply before 17 June 2026, the last Date. All relevant information regarding the Electricity Ombudsman Delhi Vacancy 2026 recruitment is provided below.</p>",
       "vacancy_details": [],
-      "sequence": 76
+      "sequence": 78
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -3312,7 +3312,7 @@
           "eligibility": "10th Pass + ITI in Related Field"
         }
       ],
-      "sequence": 77
+      "sequence": 79
     },
     {
       "category": "LATEST_JOBS NEW",
@@ -3346,12 +3346,12 @@
       "official_website_link": "https://haryanaakademi.ac.in/",
       "jobs_info": "",
       "vacancy_details": [],
-      "sequence": 81
+      "sequence": 83
     },
     {
       "category": "SR_Latest_Jobs",
       "title": "NALCO Non Executive Various Post Online Form 2026 for 268 Posts",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-06-10",
       "status": "active",
       "slug": "sr_latest_jobs-nalco-non-executive-various-post-online-form-2026-for-268-posts-d22bb8",
@@ -3511,7 +3511,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Rajasthan RSSB Computer Instructor Online Form 2026 for 3951 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-06-23",
       "status": "active",
       "slug": "sr_latest_jobs-rajasthan-rssb-computer-instructor-online-form-2026-for-3951-post-0d751d",
@@ -3579,7 +3579,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Navy 10+2 BTech Entry January 2027 Batch Online Form 2026 for 60 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-06-18",
       "status": "active",
       "slug": "sr_latest_jobs-navy-102-btech-entry-january-2027-batch-online-form-2026-for-60-post-c2181b",
@@ -3643,7 +3643,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "UPSSSC Technical Assistant Group C Online Form 2026 for 2759 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-06-11",
       "status": "active",
       "slug": "sr_latest_jobs-upsssc-technical-assistant-group-c-online-form-2026-for-2759-post-74de8e",
@@ -3717,7 +3717,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "SSC Combined Graduate Level CGL Online Form 2026 for 12256 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-06-22",
       "status": "active",
       "slug": "sr_latest_jobs-ssc-combined-graduate-level-cgl-online-form-2026-for-12256-post-e2bc3f",
@@ -3959,7 +3959,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Uttar Pradesh UP Anganwadi Worker Bharti Online Form 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "",
       "status": "active",
       "slug": "sr_latest_jobs-uttar-pradesh-up-anganwadi-worker-bharti-online-form-2026-c945b2",
@@ -4236,7 +4236,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Jharkhand JAC JHTET 2026 Online Form for Primary and Junior Level",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-06-02",
       "status": "active",
       "slug": "sr_latest_jobs-jharkhand-jac-jhtet-2026-online-form-for-primary-and-junior-level-7331e5",
@@ -4286,7 +4286,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "UPSC CDS II Online Form 2026 for 451 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-06-09",
       "status": "active",
       "slug": "sr_latest_jobs-upsc-cds-ii-online-form-2026-for-451-post-3e42ed",
@@ -4354,7 +4354,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "UPSC NDA II Online Form 2026 for 394 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-06-09",
       "status": "active",
       "slug": "sr_latest_jobs-upsc-nda-ii-online-form-2026-for-394-post-7e6b15",
@@ -4480,7 +4480,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Indian Air Force AFCAT 02/2026 Batch Online Form 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-06-19",
       "status": "active",
       "slug": "sr_latest_jobs-indian-air-force-afcat-022026-batch-online-form-2026-ad7cd7",
@@ -4663,7 +4663,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Railway RRC SECR Nagpur Apprentices Online Form 2026 for 1079 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-06-18",
       "status": "active",
       "slug": "sr_latest_jobs-railway-rrc-secr-nagpur-apprentices-online-form-2026-for-1079-post-1affc1",
@@ -4725,7 +4725,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Railway RRC SECR Bilaspur Apprentices Online Form 2026 for 1191 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-06-11",
       "status": "active",
       "slug": "sr_latest_jobs-railway-rrc-secr-bilaspur-apprentices-online-form-2026-for-1191-post-facf94",
@@ -4776,7 +4776,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "State Bank of India SBI Apprentices Online Form 2026 for 7150 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-06-08",
       "status": "active",
       "slug": "sr_latest_jobs-state-bank-of-india-sbi-apprentices-online-form-2026-for-7150-post-cc06bd",
@@ -4845,7 +4845,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Bank of Baroda BOB Apprentices Online Form 2026 for 5000 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-06-08",
       "status": "active",
       "slug": "sr_latest_jobs-bank-of-baroda-bob-apprentices-online-form-2026-for-5000-post-715d0a",
@@ -5067,7 +5067,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "BPSSC ASI Technical Online Form 2026 for 22 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-06-21",
       "status": "active",
       "slug": "sr_latest_jobs-bpssc-asi-technical-online-form-2026-for-22-post-21d126",
@@ -5121,7 +5121,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Railway RRB Technician CEN 02/2026 Online Form 2026 for 6565 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-07-29",
       "status": "active",
       "slug": "sr_latest_jobs-railway-rrb-technician-cen-022026-online-form-2026-for-6565-post-36c5ed",
@@ -5184,7 +5184,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Railway RRB ALP CEN 01/2026 Online Form 2026 for 11127 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-06-14",
       "status": "active",
       "slug": "sr_latest_jobs-railway-rrb-alp-cen-012026-online-form-2026-for-11127-post-97dd53",
@@ -5244,7 +5244,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "NFL Field Representative Online Form 2026 for 40 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-06-12",
       "status": "active",
       "slug": "sr_latest_jobs-nfl-field-representative-online-form-2026-for-40-post-c77b3c",
@@ -5299,7 +5299,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Army 10+2 TES 56 Online Form 2026 for 90 Post January 2027 Batch",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-06-12",
       "status": "active",
       "slug": "sr_latest_jobs-army-102-tes-56-online-form-2026-for-90-post-january-2027-batch-327b9e",
@@ -5335,7 +5335,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "SBI Trade Finance Officer TFO Online Form 2026 for 100 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-06-02",
       "status": "active",
       "slug": "sr_latest_jobs-sbi-trade-finance-officer-tfo-online-form-2026-for-100-post-0c1deb",
@@ -5390,7 +5390,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "CTET September 2026 Online Form",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-06-10",
       "status": "active",
       "slug": "sr_latest_jobs-ctet-september-2026-online-form-bd964d",
@@ -5449,7 +5449,7 @@
     {
       "category": "SR_Latest_Jobs",
       "title": "Bihar BPSC 72 Pre Exam Online Form 2026 for 1186 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-05-31",
       "status": "active",
       "slug": "sr_latest_jobs-bihar-bpsc-72-pre-exam-online-form-2026-for-1186-post-c0ad34",
@@ -5572,7 +5572,7 @@
     {
       "category": "SR_Result",
       "title": "UPSSSC UP Pollution Control Board Various Post Eligibility Result 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-04-29",
       "status": "result_declared",
       "slug": "sr_result-upsssc-up-pollution-control-board-various-post-eligibility-result-2026-f041e0",
@@ -5685,7 +5685,7 @@
     {
       "category": "SR_Result",
       "title": "Railway RRB NTPC 10+2 Under Graduate Level Final Result 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2024-10-27",
       "status": "result_declared",
       "slug": "sr_result-railway-rrb-ntpc-102-under-graduate-level-final-result-2026-6f5455",
@@ -6074,7 +6074,7 @@
     {
       "category": "SR_Result",
       "title": "DRDO CEPTAM 11 Tier I Result",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-01-11",
       "status": "result_declared",
       "slug": "sr_result-drdo-ceptam-11-tier-i-result-f80537",
@@ -6152,7 +6152,7 @@
     {
       "category": "SR_Result",
       "title": "Reserve Bank RBI Assistant Pre Result 2026 for 650 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-03-10",
       "status": "result_declared",
       "slug": "sr_result-reserve-bank-rbi-assistant-pre-result-2026-for-650-post-b92dbc",
@@ -6231,7 +6231,7 @@
     {
       "category": "SR_Result",
       "title": "Indian Navy Civilian Entrance Test INCET 01/2024 Result 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2024-08-02",
       "status": "result_declared",
       "slug": "sr_result-indian-navy-civilian-entrance-test-incet-012024-result-2026-8c5089",
@@ -6361,7 +6361,7 @@
     {
       "category": "SR_Result",
       "title": "BSEB Class 10th Matric Compartment Result 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "",
       "status": "result_declared",
       "slug": "sr_result-bseb-class-10th-matric-compartment-result-2026-580dbc",
@@ -6432,7 +6432,7 @@
     {
       "category": "SR_Result",
       "title": "Bihar Board BSEB Class 12th Inter Compartment Result 2026 Direct Link",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "",
       "status": "result_declared",
       "slug": "sr_result-bihar-board-bseb-class-12th-inter-compartment-result-2026-direct-link-83c654",
@@ -6488,7 +6488,7 @@
     {
       "category": "SR_Result",
       "title": "NTA NCHMJEE Result / Score Card 2026 for Hotel Management Course",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-03-25",
       "status": "result_declared",
       "slug": "sr_result-nta-nchmjee-result-score-card-2026-for-hotel-management-course-ab7e5c",
@@ -6570,7 +6570,7 @@
     {
       "category": "SR_Result",
       "title": "MPPSC State Service Exam SSE Pre Result 2026 for 155 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-02-09",
       "status": "result_declared",
       "slug": "sr_result-mppsc-state-service-exam-sse-pre-result-2026-for-155-post-29cc58",
@@ -6707,7 +6707,7 @@
     {
       "category": "SR_Result",
       "title": "RPSC Rajasthan Police Sub Inspector Telecom PET Result 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2024-12-27",
       "status": "result_declared",
       "slug": "sr_result-rpsc-rajasthan-police-sub-inspector-telecom-pet-result-2026-f3a656",
@@ -6775,7 +6775,7 @@
     {
       "category": "SR_Result",
       "title": "Railway RRB Technician CEN 02/2025 Result 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2025-08-07",
       "status": "result_declared",
       "slug": "sr_result-railway-rrb-technician-cen-022025-result-2026-0a1b68",
@@ -6956,7 +6956,7 @@
     {
       "category": "SR_Result",
       "title": "Delhi DSSSB Latest and Old Result 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "",
       "status": "result_declared",
       "slug": "sr_result-delhi-dsssb-latest-and-old-result-2026-5d5df4",
@@ -7035,7 +7035,7 @@
     {
       "category": "SR_Result",
       "title": "MPESB MP Police Sub Inspector SI Subedar Phase II Mains Result 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2025-11-10",
       "status": "result_declared",
       "slug": "sr_result-mpesb-mp-police-sub-inspector-si-subedar-phase-ii-mains-result-2026-70975e",
@@ -7111,7 +7111,7 @@
     {
       "category": "SR_Result",
       "title": "UPSSSC UP Pharmacist New Exam Date 2026 for 560 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-03-29",
       "status": "result_declared",
       "slug": "sr_result-upsssc-up-pharmacist-new-exam-date-2026-for-560-post-e4846f",
@@ -7194,7 +7194,7 @@
     {
       "category": "SR_Result",
       "title": "UPPSC LT Grade Assistant Teacher Mains Admit Card 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2025-08-28",
       "status": "result_declared",
       "slug": "sr_result-uppsc-lt-grade-assistant-teacher-mains-admit-card-2026-297f51",
@@ -7311,7 +7311,7 @@
     {
       "category": "SR_Result",
       "title": "RSMSSB Stenographer and PA Skill Test Result 2026 for 474 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2024-03-29",
       "status": "result_declared",
       "slug": "sr_result-rsmssb-stenographer-and-pa-skill-test-result-2026-for-474-post-f82716",
@@ -7412,7 +7412,7 @@
     {
       "category": "SR_Result",
       "title": "NTA National Teachers Eligibility Test NTET Result 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-04-07",
       "status": "result_declared",
       "slug": "sr_result-nta-national-teachers-eligibility-test-ntet-result-2026-84481e",
@@ -7490,7 +7490,7 @@
     {
       "category": "SR_Result",
       "title": "CBSE Group A B C Various Post Tier II Exam Result 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2025-12-22",
       "status": "result_declared",
       "slug": "sr_result-cbse-group-a-b-c-various-post-tier-ii-exam-result-2026-68b2a3",
@@ -7642,7 +7642,7 @@
     {
       "category": "SR_Result",
       "title": "SSC Combined Graduate Level CGL 2025 Final Result 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2025-07-04",
       "status": "result_declared",
       "slug": "sr_result-ssc-combined-graduate-level-cgl-2025-final-result-2026-d841d8",
@@ -7909,7 +7909,7 @@
     {
       "category": "SR_Result",
       "title": "CBSE Board 12th Result 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "",
       "status": "result_declared",
       "slug": "sr_result-cbse-board-12th-result-2026-8cb151",
@@ -7976,7 +7976,7 @@
     {
       "category": "SR_Result",
       "title": "Railway RRB Junior Engineer JE CEN 05/2025 CBT II Exam Date 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2025-12-10",
       "status": "result_declared",
       "slug": "sr_result-railway-rrb-junior-engineer-je-cen-052025-cbt-ii-exam-date-2026-e72c08",
@@ -8136,8 +8136,201 @@
     },
     {
       "category": "SR_Admit_Card",
+      "title": "UP Polytechnic JEECUP Admissions Admit Card 2026",
+      "post_date": "2026-05-27",
+      "last_date": "2026-05-10",
+      "status": "admit_card_released",
+      "slug": "sr_admit_card-up-polytechnic-jeecup-admissions-admit-card-2026-016474",
+      "short_information": "UP Joint Entrance Examination has released the online application for JEECUP admission 2026 will start from 15 January 2026 and the last date to apply will be 10 May 2026.candidates should read the JEECUP 2026 information brochure for all the information related to the entrance exam like syllabus, eligibility, age limit, fees, college and course List, information and other types of information and then apply. UP Joint Entrance Examination JEECUP 2026 Online Form Uttar Pradesh Polytechnic Diploma Admission 2026 UPJEE Exam 2026 : Short Details of Notification",
+      "application_fee": "Gen / OBC / EWS : 300/- SC / ST : 200/- Pay the Examination Fee Through Debit / Credit Card / Net Banking / Mobile Wallet / Cash Card or Offline E Challan Fee Mode JEECUP UPJEE",
+      "age_limit": "",
+      "eligibility": ", age limit, fees, college and course List, information and other types of information and then apply. UP Joint Entrance Examination JEECUP 2026 Online Form Uttar Pradesh Polytechnic Diploma Admission 2026 UPJEE Exam 2026 : Short Details of Notification",
+      "total_post": "",
+      "important_dates": {
+        "last_date": "2026-05-10",
+        "admit_card": "2026-05-27",
+        "result_date": "June 2026"
+      },
+      "tables": [
+        {
+          "table_name": "JEECUP UPJEE Notification 2026 : Age Limit as on 01/07/2026 Minimum Age : 14 Years. Maximum Age : NA Candidate Date of Birth for Admission 2026 Should be on or Before 01/07/2012.",
+          "rows": [
+            [
+              "Group",
+              "Course Name",
+              "Duration",
+              "UPJEE JEECUP 2026 Eligibility"
+            ],
+            [
+              "A",
+              "Diploma in Engineering",
+              "3 Yr",
+              "Class 10 Exam Passed with 35% Marks, PCM 50% Marks"
+            ],
+            [
+              "B",
+              "Diploma in Agriculture Engineering",
+              "3 Yr",
+              "Class 10 Exam with Agriculture Subject, PCM & Agriculture 50% Marks"
+            ],
+            [
+              "C",
+              "Fashion Designing and Garments Technology",
+              "3 Yr",
+              "Class 10 Exam Passed with 35% Marks"
+            ],
+            [
+              "C",
+              "Home Science",
+              "2 Yr",
+              "Class 10 Exam Passed with 35% Marks"
+            ],
+            [
+              "C",
+              "Textile Design",
+              "3 Yr",
+              "Class 10 Exam Passed with 35% Marks"
+            ],
+            [
+              "C",
+              "Textile Design (Printing)",
+              "3 Yr",
+              "Class 10 Exam Passed with 35% Marks"
+            ],
+            [
+              "D",
+              "Modern Officer Management and Secretarial Service",
+              "2 Yr",
+              "Passed 10+2 (Intermediate) Exam and Hindi and English Subject in High School and Intermediate Level Exam"
+            ],
+            [
+              "D",
+              "Library and Information Science",
+              "2 Yr",
+              "Passed 10+2 (Intermediate) Exam"
+            ],
+            [
+              "E",
+              "Diploma in Pharmacy",
+              "2 Yr",
+              "10+2 Exam in Science Stream with 50% Marks"
+            ],
+            [
+              "F",
+              "PG Diploma in Biotechnology",
+              "1 Yr",
+              "B.Sc. Degree in Biology, Chemistry or Bio Chemistry Subjects"
+            ],
+            [
+              "G",
+              "PG Diploma in Computer Application,",
+              "2 Yr",
+              "Bachelor Degree in Any Stream in Any Recognized University in India."
+            ],
+            [
+              "G",
+              "PG Diploma in Marketing and Sales Management, PG Diploma in Customer One Year Service Management",
+              "1 Yr"
+            ],
+            [
+              "G",
+              "PG Diploma in Tourism and Travel Management, Beauty and Health Care, Advertising and Public Relation, Textile Design, Fashion Technology",
+              "1 Yr."
+            ],
+            [
+              "G",
+              "PG Diploma in Mass Communication, Computer Hardware and Networking, Web Designing, Accountancy with Computerized Account and Taxation, Retail Management",
+              "1 Yr."
+            ],
+            [
+              "H",
+              "Diploma in Hotel Management and Catering",
+              "3 Yr",
+              "10+2 Exam (Intermediate) with 50% Marks"
+            ],
+            [
+              "I",
+              "Diploma in Aircraft, Maintenance Engineering",
+              "3 Yr",
+              "10+2 Exam (Intermediate) with PCM Group Subjects with 50% Marks in Physics or Chemistry Subjects"
+            ],
+            [
+              "I",
+              "Diploma in Aircraft, Maintenance Engineering (Avionics)",
+              "3 Yr",
+              "10+2 Exam ( Intermediate ) with PCM Group Subjects with 50% Marks in Physics or Chemistry Subjects"
+            ],
+            [
+              "J",
+              "PG Diploma in Information Technology",
+              "1 Yr",
+              "Diploma in Engineering (Any Branch)"
+            ],
+            [
+              "K",
+              "Diploma in Engineering (Lateral Entry)",
+              "2 Yr",
+              "10+2 Exam with Science Stream or Class 10 Exam with ITI Certificate"
+            ],
+            [
+              "L",
+              "Post Diploma in Industry Safety",
+              "1 Yr",
+              "BE / B.Tech Degree in Any Stream with 2 Year Experience OR Diploma in Engineering with 5 Year Experience."
+            ],
+            [
+              "Download Admit Card",
+              "Link Will be Activate Today"
+            ],
+            [
+              "Official Website",
+              "UPJEE 2026 Official Website"
+            ]
+          ]
+        }
+      ],
+      "text_sections": [
+        {
+          "section": "How to Fill UPJEE JEECUP Polytechnic Admission 2026",
+          "content": "Photo Instruction : Upload Color Passport Size Photo with Candidates Name and Photo Taken Date (Photo Not Be Older Than 3 Month) | Thumb Impression : Uploaded Left Hand Thumb Impression | Signature Instruction : Candidates Signature in Running Hand (Capital Letter Signature Not Accepted) | No Need to Send Confirmation Page to JEECUP 2026 | For More Details Must Read the Notification."
+        }
+      ],
+      "useful_links": [
+        {
+          "title": "Download Admit Card",
+          "links": "https://jeecup.admissions.nic.in/"
+        },
+        {
+          "title": "For Mock Test Practice",
+          "links": "https://exam.jeecuppolytechnic2026.com/candidate/startTest/NA/MTI5MDkwODE%3D"
+        },
+        {
+          "title": "Download New Exam Date Notice",
+          "links": "https://cdnbbsr.s3waas.gov.in/s325db67c5657914454081c6a18e93d6dd/uploads/2026/05/20260512375048631.pdf"
+        },
+        {
+          "title": "Apply Online",
+          "links": "https://admissions.nic.in/JEECUP/Applicant/root/Home.aspx?enc=89xw0ctRCXfaXHy3CACizC/iTtGlQ2gr3PqkYz7lYP3WNix3RnTHPpSWAVqmrvvIBdko3G7a8E156H8okrXF3g=="
+        },
+        {
+          "title": "Apply Online for UPJEE Post Diploma in Industrial Safety Only",
+          "links": "https://admissions.nic.in/JEECUP/Applicant/root/Home.aspx?enc=89xw0ctRCXfaXHy3CACizC/iTtGlQ2gr3PqkYz7lYP3WNix3RnTHPpSWAVqmrvvIVaUuzkP4uhCBnw6Q3jPegg=="
+        },
+        {
+          "title": "Download Date Extended Notice",
+          "links": "https://cdnbbsr.s3waas.gov.in/s325db67c5657914454081c6a18e93d6dd/uploads/2026/04/202604301156108716.pdf"
+        },
+        {
+          "title": "Download Notification",
+          "links": "https://cdnbbsr.s3waas.gov.in/s325db67c5657914454081c6a18e93d6dd/uploads/2026/01/202601151456353479.pdf"
+        }
+      ],
+      "homepage_serial": 1
+    },
+    {
+      "category": "SR_Admit_Card",
       "title": "CSBC Bihar Police Constable Operator New Exam Date 2026 for 993 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-03-31",
       "status": "admit_card_released",
       "slug": "sr_admit_card-csbc-bihar-police-constable-operator-new-exam-date-2026-for-993-post-cc8abc",
@@ -8249,12 +8442,12 @@
           "links": "http://csbc.bih.nic.in/Default.htm"
         }
       ],
-      "homepage_serial": 3
+      "homepage_serial": 4
     },
     {
       "category": "SR_Admit_Card",
       "title": "LIC HFL Junior Assistant Admit Card 2026 for 180 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-04-30",
       "status": "admit_card_released",
       "slug": "sr_admit_card-lic-hfl-junior-assistant-admit-card-2026-for-180-post-55947f",
@@ -8401,12 +8594,12 @@
           "links": "https://www.lichousing.com/careers"
         }
       ],
-      "homepage_serial": 4
+      "homepage_serial": 5
     },
     {
       "category": "SR_Admit_Card",
       "title": "All India Bar Exam AIBE 21th XXI Admit Card 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-04-30",
       "status": "admit_card_released",
       "slug": "sr_admit_card-all-india-bar-exam-aibe-21th-xxi-admit-card-2026-0f8e4f",
@@ -8473,12 +8666,12 @@
           "links": "https://www.allindiabarexamination.com/"
         }
       ],
-      "homepage_serial": 5
+      "homepage_serial": 6
     },
     {
       "category": "SR_Admit_Card",
       "title": "Bihar BCECEB DCECE Admissions Test Admit Card 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-04-21",
       "status": "admit_card_released",
       "slug": "sr_admit_card-bihar-bceceb-dcece-admissions-test-admit-card-2026-748d69",
@@ -8543,12 +8736,12 @@
           "links": "https://bceceboard.bihar.gov.in/"
         }
       ],
-      "homepage_serial": 6
+      "homepage_serial": 7
     },
     {
       "category": "SR_Admit_Card",
       "title": "UPSESSB UP TGT 2022 Exam City Details 2026 for 3539 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2022-07-10",
       "status": "admit_card_released",
       "slug": "sr_admit_card-upsessb-up-tgt-2022-exam-city-details-2026-for-3539-post-99290c",
@@ -8854,12 +9047,12 @@
           "links": "http://www.upsessb.org"
         }
       ],
-      "homepage_serial": 7
+      "homepage_serial": 8
     },
     {
       "category": "SR_Admit_Card",
       "title": "CSBC Prohibition Constable, Jail Warden Admit Card 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2025-11-05",
       "status": "admit_card_released",
       "slug": "sr_admit_card-csbc-prohibition-constable-jail-warden-admit-card-2026-025850",
@@ -8967,12 +9160,12 @@
           "links": "http://csbc.bih.nic.in/Default.htm"
         }
       ],
-      "homepage_serial": 8
+      "homepage_serial": 9
     },
     {
       "category": "SR_Admit_Card",
       "title": "RPSC School Lectuer PGT Teacher Exam City / Admit Card 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2025-09-12",
       "status": "admit_card_released",
       "slug": "sr_admit_card-rpsc-school-lectuer-pgt-teacher-exam-city-admit-card-2026-d1019b",
@@ -9108,12 +9301,12 @@
           "links": "https://rpsc.rajasthan.gov.in/news"
         }
       ],
-      "homepage_serial": 9
+      "homepage_serial": 10
     },
     {
       "category": "SR_Admit_Card",
       "title": "UPBED Entrance Exam Admit Card 2026 for 2 year Course UP BEd JEE",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-04-30",
       "status": "admit_card_released",
       "slug": "sr_admit_card-upbed-entrance-exam-admit-card-2026-for-2-year-course-up-bed-jee-37c287",
@@ -9169,12 +9362,12 @@
           "links": "https://bujhansi.ac.in/upbedjee.html"
         }
       ],
-      "homepage_serial": 10
+      "homepage_serial": 11
     },
     {
       "category": "SR_Admit_Card",
       "title": "UPPSC Assistant Professor GDC Pre Admit Card 2026 for 1253 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2025-10-06",
       "status": "admit_card_released",
       "slug": "sr_admit_card-uppsc-assistant-professor-gdc-pre-admit-card-2026-for-1253-post-f2cdd8",
@@ -9229,12 +9422,12 @@
           "links": "https://uppsc.up.nic.in/"
         }
       ],
-      "homepage_serial": 11
+      "homepage_serial": 12
     },
     {
       "category": "SR_Admit_Card",
       "title": "MPESB MP Police Subedar Stenographer ASI Skill Test Admit Card 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2025-10-17",
       "status": "admit_card_released",
       "slug": "sr_admit_card-mpesb-mp-police-subedar-stenographer-asi-skill-test-admit-card-2026-3d9a3d",
@@ -9314,12 +9507,12 @@
           "links": "https://esb.mp.gov.in/e_default.html"
         }
       ],
-      "homepage_serial": 13
+      "homepage_serial": 14
     },
     {
       "category": "SR_Admit_Card",
       "title": "MPESB Van Rakshak, Jail Prahari New Exam Date 2026 for 1679 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-04-30",
       "status": "admit_card_released",
       "slug": "sr_admit_card-mpesb-van-rakshak-jail-prahari-new-exam-date-2026-for-1679-post-843eb1",
@@ -9401,12 +9594,12 @@
           "links": "https://esb.mp.gov.in/e_default.html"
         }
       ],
-      "homepage_serial": 14
+      "homepage_serial": 15
     },
     {
       "category": "SR_Admit_Card",
       "title": "CSBC Bihar Police Constable Special Branch Exam Date 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-03-05",
       "status": "admit_card_released",
       "slug": "sr_admit_card-csbc-bihar-police-constable-special-branch-exam-date-2026-1af8ba",
@@ -9503,12 +9696,12 @@
           "links": "http://csbc.bih.nic.in/Default.htm"
         }
       ],
-      "homepage_serial": 15
+      "homepage_serial": 16
     },
     {
       "category": "SR_Admit_Card",
       "title": "Allahabad High Court UP HJS 2023 Mains Exam Date 2026 for 83 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2024-05-15",
       "status": "admit_card_released",
       "slug": "sr_admit_card-allahabad-high-court-up-hjs-2023-mains-exam-date-2026-for-83-post-24550f",
@@ -9597,12 +9790,12 @@
           "links": "https://www.allahabadhighcourt.in/calendar/itemWiseList.jsp?group=7"
         }
       ],
-      "homepage_serial": 16
+      "homepage_serial": 17
     },
     {
       "category": "SR_Admit_Card",
       "title": "Indian Army Agniveer Rally Admit Card 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-04-10",
       "status": "admit_card_released",
       "slug": "sr_admit_card-indian-army-agniveer-rally-admit-card-2026-619d4b",
@@ -9662,12 +9855,12 @@
           "links": "https://joinindianarmy.nic.in/latest-rally-agniveer-or.htm"
         }
       ],
-      "homepage_serial": 17
+      "homepage_serial": 18
     },
     {
       "category": "SR_Admit_Card",
       "title": "NTA NEET UG Fee Refund Online Form 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-03-11",
       "status": "admit_card_released",
       "slug": "sr_admit_card-nta-neet-ug-fee-refund-online-form-2026-c2dde5",
@@ -9762,12 +9955,12 @@
           "links": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/01/202601081066816297.pdf"
         }
       ],
-      "homepage_serial": 18
+      "homepage_serial": 19
     },
     {
       "category": "SR_Admit_Card",
       "title": "DUVASU Mathura PVT Entrance Exam Admit Card 2026 for UGEE PGEE DEE",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-04-22",
       "status": "admit_card_released",
       "slug": "sr_admit_card-duvasu-mathura-pvt-entrance-exam-admit-card-2026-for-ugee-pgee-dee-95af14",
@@ -9803,12 +9996,12 @@
           "links": "https://www.upvetuniv.edu.in/"
         }
       ],
-      "homepage_serial": 19
+      "homepage_serial": 20
     },
     {
       "category": "SR_Admit_Card",
       "title": "BSSC Office Attendant Mains Admit Card 2026 for 100 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2022-12-24",
       "status": "admit_card_released",
       "slug": "sr_admit_card-bssc-office-attendant-mains-admit-card-2026-for-100-post-b8edc6",
@@ -9888,12 +10081,12 @@
           "links": "https://bssc.bihar.gov.in/NoticeBoard.htm"
         }
       ],
-      "homepage_serial": 20
+      "homepage_serial": 21
     },
     {
       "category": "SR_Admit_Card",
       "title": "RPSC Rajasthan Police Sub Inspector 2021 New Exam Date 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2021-06-23",
       "status": "admit_card_released",
       "slug": "sr_admit_card-rpsc-rajasthan-police-sub-inspector-2021-new-exam-date-2026-420b1b",
@@ -10160,12 +10353,12 @@
           "links": "https://rpsc.rajasthan.gov.in/news"
         }
       ],
-      "homepage_serial": 21
+      "homepage_serial": 22
     },
     {
       "category": "SR_Admit_Card",
       "title": "Railway RRB NTPC 10+2 UG Level CEN 07/2025 Exam City Details 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2025-12-04",
       "status": "admit_card_released",
       "slug": "sr_admit_card-railway-rrb-ntpc-102-ug-level-cen-072025-exam-city-details-2026-9ce140",
@@ -10254,12 +10447,12 @@
           "links": "https://indianrailways.gov.in/"
         }
       ],
-      "homepage_serial": 22
+      "homepage_serial": 23
     },
     {
       "category": "SR_Admit_Card",
       "title": "NTA CUET UG Admit Card / Hall Ticket 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-02-04",
       "status": "admit_card_released",
       "slug": "sr_admit_card-nta-cuet-ug-admit-card-hall-ticket-2026-a1b7d3",
@@ -10344,12 +10537,12 @@
           "links": "https://cuet.nta.nic.in/"
         }
       ],
-      "homepage_serial": 23
+      "homepage_serial": 24
     },
     {
       "category": "SR_Admit_Card",
       "title": "SSC GD Constable Admit Card 2026 for 25487 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2025-12-31",
       "status": "admit_card_released",
       "slug": "sr_admit_card-ssc-gd-constable-admit-card-2026-for-25487-post-e9a01c",
@@ -10563,12 +10756,12 @@
           "links": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/notice_01122025.pdf"
         }
       ],
-      "homepage_serial": 24
+      "homepage_serial": 25
     },
     {
       "category": "SR_Admission",
       "title": "SWD UP IAS PCS Free Coaching Admissions Online Form 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-06-18",
       "status": "active",
       "slug": "sr_admission-swd-up-ias-pcs-free-coaching-admissions-online-form-2026-1adad0",
@@ -10646,7 +10839,7 @@
     {
       "category": "SR_Admission",
       "title": "Delhi University DU PG Admissions Online Form 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-06-07",
       "status": "active",
       "slug": "sr_admission-delhi-university-du-pg-admissions-online-form-2026-7e3044",
@@ -10751,7 +10944,7 @@
     {
       "category": "SR_Admission",
       "title": "NTA ICAR AIEEA PG and PHd Admissions Online form 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-06-07",
       "status": "active",
       "slug": "sr_admission-nta-icar-aieea-pg-and-phd-admissions-online-form-2026-33c250",
@@ -10824,7 +11017,7 @@
     {
       "category": "SR_Admission",
       "title": "ABVMU UP CAHET Entrance Test Online Form 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-06-05",
       "status": "active",
       "slug": "sr_admission-abvmu-up-cahet-entrance-test-online-form-2026-dd21e5",
@@ -10903,7 +11096,7 @@
     {
       "category": "SR_Admission",
       "title": "Allahabad University PGAT Admissions Online Form 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-05-28",
       "status": "active",
       "slug": "sr_admission-allahabad-university-pgat-admissions-online-form-2026-ba1e23",
@@ -10988,66 +11181,9 @@
       "homepage_serial": 8
     },
     {
-      "category": "SR_Admission",
-      "title": "ABVMU UP GNM Entrance Test UPGET Online Form 2026",
-      "post_date": "2026-05-26",
-      "last_date": "2026-05-26",
-      "status": "active",
-      "slug": "sr_admission-abvmu-up-gnm-entrance-test-upget-online-form-2026-b07d04",
-      "short_information": "Atal Bihari Vajpayee Medical University (ABVMU), Uttar Pradesh has released the UP GNM Entrance Test UPGET Notification 2026. Those Candidates are Interested to the Following Exam Can Apply Online From 29/04/2026 to 26/05/2026.candidates should read the UPGET 2026 information brochure for all the information related to the UPGET exam like syllabus, eligibility, age limit, fees, GNM Nursing Courses, information and other types of information and then apply. Atal Bihari Vajpayee Medical University, Uttar Pradesh Uttar Pradesh UP GNM Entrance Test 2026 (UPGET 2026) ABVMU UPGET 2026 Exam : Short Details of Notification",
-      "application_fee": "General / OBC / EWS: 3000/- SC / ST / PH : 2000/- Pay the Exam Fee Through Debit Card, Credit Card, Net Banking Only. UP GNM Entrance Test UPGET",
-      "age_limit": "",
-      "eligibility": "",
-      "total_post": "",
-      "important_dates": {
-        "application_begin": "2026-04-29",
-        "last_date": "2026-05-26",
-        "exam_date": "2026-06-16",
-        "admit_card": "2026-06-09"
-      },
-      "tables": [
-        {
-          "table_name": "UP GNM Entrance Test UPGET Notification 2026 : Age Limit as on 31/12/2026 Minimum Age : 17 Years. Maximum Age : NA Age Relaxation Extra as per ABVMU, Lucknow UP GNM Entrance Test UPGET 2026 Admissions Rules.",
-          "rows": [
-            [
-              "Course",
-              "UP GNM Entrance Test UPGET 2026 Eligibility"
-            ],
-            [
-              "GNM Course 3 Year",
-              "10+2 Intermediate with English 40% Marks. 10+2 Intermediate with English 40% Marks in Vocational ANM Course. Registered ANM with Passing Marks. More Eligibility Details Read the Notification."
-            ],
-            [
-              "Download Information Brochure",
-              "English | Hindi"
-            ],
-            [
-              "Official Website",
-              "ABVMU Official Website"
-            ]
-          ]
-        }
-      ],
-      "text_sections": [],
-      "useful_links": [
-        {
-          "title": "Apply Online",
-          "links": [
-            "https://www.abvmucet26.co.in/entrance2026/registration?form=6",
-            "https://www.abvmucet26.co.in/entrance2026/login?form=6"
-          ]
-        },
-        {
-          "title": "Official Website",
-          "links": "https://abvmuup.edu.in/"
-        }
-      ],
-      "homepage_serial": 11
-    },
-    {
       "category": "SR_Answer_Key",
       "title": "IIT JEE Advanced Question Paper and Answer Key 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-05-05",
       "status": "answer_key_released",
       "slug": "sr_answer_key-iit-jee-advanced-question-paper-and-answer-key-2026-14fb3f",
@@ -11163,7 +11299,7 @@
     {
       "category": "SR_Answer_Key",
       "title": "UPSSSC UP Lekhpal Mains Answer Key 2026 for 7994 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-01-28",
       "status": "answer_key_released",
       "slug": "sr_answer_key-upsssc-up-lekhpal-mains-answer-key-2026-for-7994-post-d9ef7b",
@@ -11288,7 +11424,7 @@
     {
       "category": "SR_Answer_Key",
       "title": "DSSSB Delhi Answer Key 2026 April May",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "",
       "status": "answer_key_released",
       "slug": "sr_answer_key-dsssb-delhi-answer-key-2026-april-may-e109a0",
@@ -11570,7 +11706,7 @@
     {
       "category": "SR_Answer_Key",
       "title": "NCERT LDC Exam Answer Key 2026",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-01-16",
       "status": "answer_key_released",
       "slug": "sr_answer_key-ncert-ldc-exam-answer-key-2026-92f647",
@@ -11647,7 +11783,7 @@
     {
       "category": "SR_Answer_Key",
       "title": "MPESB Nursing Officer, Sister Tutor Answer Key 2026 for 2317 Post",
-      "post_date": "2026-05-26",
+      "post_date": "2026-05-27",
       "last_date": "2026-04-20",
       "status": "answer_key_released",
       "slug": "sr_answer_key-mpesb-nursing-officer-sister-tutor-answer-key-2026-for-2317-post-cef398",
@@ -40034,450 +40170,6 @@
       "sequence": 52
     },
     {
-      "category": "STATE_JOBS",
-      "title": "CSIR-CCMB Technician, Driver Online Form",
-      "slug": "csir-ccmb-technician-driver-online-form",
-      "last_date": "2026-05-26",
-      "status": "active",
-      "important_links": {
-        "apply_online": "https://ccmb.res.in/jobs/",
-        "official_website": "https://ccmb.res.in/"
-      },
-      "sections": [
-        {
-          "title": "Set as Preferred Source on Google",
-          "content": [
-            {
-              "type": "paragraph",
-              "text": "CSIR-CCMB Tech. Officer, Technician, Driver Vacancy 2026 : Get complete details about Technical Officer, Technician, Driver Recruitment 2026, including recruitment updates, total vacancies, important dates, application fees, eligibility criteria, age limit, selection process, salary, syllabus, exam pattern, admit card, answer key, result, and more."
-            },
-            {
-              "type": "table",
-              "rows": [
-                [
-                  {
-                    "text": "Form Mode",
-                    "links": []
-                  },
-                  {
-                    "text": "Job Location",
-                    "links": []
-                  },
-                  {
-                    "text": "Total Posts",
-                    "links": []
-                  },
-                  {
-                    "text": "Job Type",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Online, Offline",
-                    "links": []
-                  },
-                  {
-                    "text": "Hyderabad",
-                    "links": []
-                  },
-                  {
-                    "text": "28 Posts",
-                    "links": []
-                  },
-                  {
-                    "text": "Permanent",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "CSIR-Centre for Cellular and Molecular Biology, Hyderabad (Telangana) Technical Officer, Technician, Driver Recruitment 2026 Advt. No. : 03/2026 & 04/2026 Short Details",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Important Dates",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Notification Out : 28/04/2026 Starting Date : 28/04/2026 Last Date : 26/05/2026 11:59 PM Send Hard Copy : Upto 05/06/2026 06 PM",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Application Fees",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Gen / OBC / EWS : 500/- SC / ST / All Females : 0/- ESM / PH (Divyang) : 0/- Payment Mode : Online Mode",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Age Limit Details",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "For Driver Post : 18-27 Years Technical Officer : 18-30 Years Technician (Gr. II) : 18-28 Years The Age Limit as on : 26/05/2026 The Age Relaxation Extra as per Rules.",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Selection Process",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Written Exam Skill Test (Post Wise) Medical Examination Document Verification",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Pay Scale Details",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Technical Officer : Level-07 (Rs. 91,070/-) Technician : Level-02 (Rs. 39,970/-) Driver : Level-02 (Rs. 39,970/-)",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Post Wise Qualification",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Technical Officer : M.Sc. in Hospitality Administration/ Management (55% Marks). Technician : 10th Passed, ITI / Experience in Relevant Trade. Driver : 10th Passed, Valid LMV & HMV License with 03 Years Driving Experience.",
-                    "links": []
-                  }
-                ]
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Important Dates",
-          "content": [
-            {
-              "type": "list",
-              "items": [
-                "Notification Out : 28/04/2026",
-                "Starting Date : 28/04/2026",
-                "Last Date : 26/05/2026 11:59 PM",
-                "Send Hard Copy : Upto 05/06/2026 06 PM"
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Application Fees",
-          "content": [
-            {
-              "type": "list",
-              "items": [
-                "Gen / OBC / EWS : 500/-",
-                "SC / ST / All Females : 0/-",
-                "ESM / PH (Divyang) : 0/-",
-                "Payment Mode : Online Mode"
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Age Limit Details",
-          "content": [
-            {
-              "type": "list",
-              "items": [
-                "For Driver Post : 18-27 Years",
-                "Technical Officer : 18-30 Years",
-                "Technician (Gr. II) : 18-28 Years",
-                "The Age Limit as on : 26/05/2026",
-                "The Age Relaxation Extra as per Rules."
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Selection Process",
-          "content": [
-            {
-              "type": "list",
-              "items": [
-                "Written Exam",
-                "Skill Test (Post Wise)",
-                "Medical Examination",
-                "Document Verification"
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Pay Scale Details",
-          "content": [
-            {
-              "type": "list",
-              "items": [
-                "Technical Officer : Level-07 (Rs. 91,070/-)",
-                "Technician : Level-02 (Rs. 39,970/-)",
-                "Driver : Level-02 (Rs. 39,970/-)"
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Post Wise Qualification",
-          "content": [
-            {
-              "type": "list",
-              "items": [
-                "Technical Officer : M.Sc. in Hospitality Administration/ Management (55% Marks).",
-                "Technician : 10th Passed, ITI / Experience in Relevant Trade.",
-                "Driver : 10th Passed, Valid LMV & HMV License with 03 Years Driving Experience."
-              ]
-            },
-            {
-              "type": "table",
-              "rows": [
-                [
-                  {
-                    "text": "Post Wise Vacancies",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Post Name",
-                    "links": []
-                  },
-                  {
-                    "text": "Total",
-                    "links": []
-                  },
-                  {
-                    "text": "Post Name",
-                    "links": []
-                  },
-                  {
-                    "text": "Total",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Technical Officer",
-                    "links": []
-                  },
-                  {
-                    "text": "04",
-                    "links": []
-                  },
-                  {
-                    "text": "Technician (Gr. II)",
-                    "links": []
-                  },
-                  {
-                    "text": "23",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Driver",
-                    "links": []
-                  },
-                  {
-                    "text": "01",
-                    "links": []
-                  },
-                  {
-                    "text": "Grand Total Post",
-                    "links": []
-                  },
-                  {
-                    "text": "28",
-                    "links": []
-                  }
-                ]
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Post Wise Vacancies",
-          "content": [
-            {
-              "type": "paragraph",
-              "text": "Post Name"
-            },
-            {
-              "type": "paragraph",
-              "text": "Total"
-            },
-            {
-              "type": "paragraph",
-              "text": "Technical Officer"
-            },
-            {
-              "type": "paragraph",
-              "text": "Technician (Gr. II)"
-            },
-            {
-              "type": "paragraph",
-              "text": "Driver"
-            },
-            {
-              "type": "paragraph",
-              "text": "Grand Total Post"
-            },
-            {
-              "type": "table",
-              "rows": [
-                [
-                  {
-                    "text": "Send Application To",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Send Application Printout along with Required Document To The Section Officer (Recruitment Section), CSIR-Centre for Cellular and Molecular Biology, Uppal Road, Habsiguda, Hyderabad – 500007, Telangana The candidates should mention on the top of the envelope “APPLICATION FOR THE POST OF ————- (Post Code: —————)”",
-                    "links": []
-                  }
-                ]
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Send Application To",
-          "content": [
-            {
-              "type": "paragraph",
-              "text": "Send Application Printout along with Required Document To"
-            },
-            {
-              "type": "paragraph",
-              "text": "The Section Officer (Recruitment Section), CSIR-Centre for Cellular and Molecular Biology, Uppal Road, Habsiguda, Hyderabad – 500007, Telangana"
-            },
-            {
-              "type": "paragraph",
-              "text": "The candidates should mention on the top of the envelope “APPLICATION FOR THE POST OF ————- (Post Code: —————)”"
-            },
-            {
-              "type": "table",
-              "rows": [
-                [
-                  {
-                    "text": "Important Related Links",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Source Title",
-                    "links": []
-                  },
-                  {
-                    "text": "Issue Date",
-                    "links": []
-                  },
-                  {
-                    "text": "Source Link",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Fill Online Form",
-                    "links": []
-                  },
-                  {
-                    "text": "28/04/2026",
-                    "links": []
-                  },
-                  {
-                    "text": "Apply Now",
-                    "links": [
-                      {
-                        "text": "Apply Now",
-                        "url": "https://ccmb.res.in/jobs/"
-                      }
-                    ]
-                  }
-                ],
-                [
-                  {
-                    "text": "Notification (Technician, Driver)",
-                    "links": []
-                  },
-                  {
-                    "text": "28/04/2026",
-                    "links": []
-                  },
-                  {
-                    "text": "Download",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Notification (Technical Officer)",
-                    "links": []
-                  },
-                  {
-                    "text": "28/04/2026",
-                    "links": []
-                  },
-                  {
-                    "text": "Download",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Official Website",
-                    "links": []
-                  },
-                  {
-                    "text": "28/04/2026",
-                    "links": []
-                  },
-                  {
-                    "text": "Visit Now",
-                    "links": [
-                      {
-                        "text": "Visit Now",
-                        "url": "https://ccmb.res.in/"
-                      }
-                    ]
-                  }
-                ]
-              ]
-            }
-          ]
-        }
-      ],
-      "sequence": 56
-    },
-    {
       "category": "CENTRAL_JOBS",
       "title": "NCCBM Various Vacancies Offline Form 2026",
       "slug": "nccbm-various-vacancies-offline-form-2026",
@@ -65535,272 +65227,6 @@
         }
       ],
       "sequence": 17
-    },
-    {
-      "category": "ADMISSIONS",
-      "title": "UP GNM Entrance Test 2026 Online Form",
-      "slug": "up-gnm-entrance-test-2026-online-form",
-      "last_date": "2026-05-26",
-      "status": "active",
-      "important_links": {
-        "apply_online": "https://www.abvmucet26.co.in/",
-        "full_notification": "https://cet26.blr1.cdn.digitaloceanspaces.com/docs/ENGLISH%20GNM%20Information%20Bulletin.pdf",
-        "official_website": "https://abvmuup.edu.in/"
-      },
-      "sections": [
-        {
-          "title": "Set as Preferred Source on Google",
-          "content": [
-            {
-              "type": "paragraph",
-              "text": "UP GNM Entrance Test 2026 : Get complete details about UP GNM Entrance Test 2026, including admission updates, important dates, application fees, eligibility criteria, syllabus, exam pattern, admit card, answer key, result, and more."
-            },
-            {
-              "type": "table",
-              "rows": [
-                [
-                  {
-                    "text": "Atal Bihari Vajpayee Medical University, Uttar Pradesh Uttar Pradesh GNM Entrance Examination (UPGET) 2026 ABVMU UPGET Exam 2026 : Short Details of Notification",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Important Dates",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Notification Out : 29/04/2026 Starting Date : 29/04/2026 Last Date : 26/05/2026 11:59 PM Correction Date : 19-26 May 2026 Exam Date : 16/06/2026 Admit Card : 09/06/2026",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Application Fees",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Gen / OBC / EWS : 3000/- SC / ST / PH : 2000/- Payment Mode : Online Mode",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Age Limit Details",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Age Limit : Min. 17 Years Age Limit as on : 31/12/2026",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Selection Process",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Online Written Test Counseling Document Verification Fees Deposit and Admission",
-                    "links": []
-                  }
-                ]
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Important Dates",
-          "content": [
-            {
-              "type": "list",
-              "items": [
-                "Notification Out : 29/04/2026",
-                "Starting Date : 29/04/2026",
-                "Last Date : 26/05/2026 11:59 PM",
-                "Correction Date : 19-26 May 2026",
-                "Exam Date : 16/06/2026",
-                "Admit Card : 09/06/2026"
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Application Fees",
-          "content": [
-            {
-              "type": "list",
-              "items": [
-                "Gen / OBC / EWS : 3000/-",
-                "SC / ST / PH : 2000/-",
-                "Payment Mode : Online Mode"
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Age Limit Details",
-          "content": [
-            {
-              "type": "list",
-              "items": [
-                "Age Limit : Min. 17 Years",
-                "Age Limit as on : 31/12/2026"
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Selection Process",
-          "content": [
-            {
-              "type": "list",
-              "items": [
-                "Online Written Test",
-                "Counseling",
-                "Document Verification",
-                "Fees Deposit and Admission"
-              ]
-            },
-            {
-              "type": "table",
-              "rows": [
-                [
-                  {
-                    "text": "Qualification Details",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Course Name",
-                    "links": []
-                  },
-                  {
-                    "text": "Qualification",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "GNM Course (3 Years)",
-                    "links": []
-                  },
-                  {
-                    "text": "12th Passed with English 40% Marks.",
-                    "links": []
-                  }
-                ]
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Qualification Details",
-          "content": [
-            {
-              "type": "list",
-              "items": [
-                "12th Passed with English 40% Marks."
-              ]
-            },
-            {
-              "type": "table",
-              "rows": [
-                [
-                  {
-                    "text": "Important Related Links",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Source Title",
-                    "links": []
-                  },
-                  {
-                    "text": "Issue Date",
-                    "links": []
-                  },
-                  {
-                    "text": "Source Link",
-                    "links": []
-                  }
-                ],
-                [
-                  {
-                    "text": "Fill Online Form",
-                    "links": []
-                  },
-                  {
-                    "text": "29/04/2026",
-                    "links": []
-                  },
-                  {
-                    "text": "Apply Now",
-                    "links": [
-                      {
-                        "text": "Apply Now",
-                        "url": "https://www.abvmucet26.co.in/"
-                      }
-                    ]
-                  }
-                ],
-                [
-                  {
-                    "text": "Full Notification",
-                    "links": []
-                  },
-                  {
-                    "text": "29/04/2026",
-                    "links": []
-                  },
-                  {
-                    "text": "English | Hindi",
-                    "links": [
-                      {
-                        "text": "English",
-                        "url": "https://cet26.blr1.cdn.digitaloceanspaces.com/docs/ENGLISH%20GNM%20Information%20Bulletin.pdf"
-                      },
-                      {
-                        "text": "Hindi",
-                        "url": "https://cet26.blr1.cdn.digitaloceanspaces.com/docs/HINDI%20GNM%20Information%20Bulletin.pdf"
-                      }
-                    ]
-                  }
-                ],
-                [
-                  {
-                    "text": "Official Website",
-                    "links": []
-                  },
-                  {
-                    "text": "29/04/2026",
-                    "links": []
-                  },
-                  {
-                    "text": "Visit Now",
-                    "links": [
-                      {
-                        "text": "Visit Now",
-                        "url": "https://abvmuup.edu.in/"
-                      }
-                    ]
-                  }
-                ]
-              ]
-            }
-          ]
-        }
-      ],
-      "sequence": 19
     },
     {
       "category": "ADMISSIONS",
