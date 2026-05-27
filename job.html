@@ -1331,11 +1331,23 @@ input, textarea, select { font-size: 1rem !important; }
         const psCard = document.getElementById('preferredSourceCard');
         if (!psCard) return;
         /* Description: job's short info text */
-        const desc = (row && row.shortInfo) || '';
+        /* Description: job short info OR auto-generated from title */
+        const jobTitle = document.getElementById('jbTitle');
+        const titleText = jobTitle ? jobTitle.textContent : '';
+        const desc = (row && row.shortInfo) || 
+                     (titleText && titleText !== 'Loading...' ? 
+                      titleText + ' — Get complete details, eligibility, last date, syllabus and apply online at Top Sarkari Jobs. Government of India recruitment 2026.' : 
+                      '');
         const psDesc = document.getElementById('psDesc');
-        if (psDesc && desc) { psDesc.textContent = desc; }
+        if (psDesc) { psDesc.textContent = desc; }
         /* Form Mode */
-        const formMode = applyMode || 'Online';
+        /* Form Mode from applyMode OR from slug keyword */
+        let formMode = applyMode || '';
+        if (!formMode) {
+          const slugLc = (window.__TSJ_SLUG || '').toLowerCase();
+          formMode = slugLc.includes('offline') ? 'Offline' : 
+                     slugLc.includes('walkin') || slugLc.includes('walk-in') ? 'Walk-in' : 'Online';
+        }
         const fmEl = document.getElementById('psFormMode');
         if (fmEl) {
           const fmLc = formMode.toLowerCase();
@@ -1348,7 +1360,11 @@ input, textarea, select { font-size: 1rem !important; }
         if (locEl) locEl.textContent = safe(jobLoc);
         /* Total Posts */
         const postsEl = document.getElementById('psTotalPosts');
-        if (postsEl) postsEl.textContent = safe(totalVac || 'Various') + (totalVac && !totalVac.toLowerCase().includes('post') ? ' Posts' : '');
+        /* Total posts - clean display */
+        const postsRaw = totalVac || (row && row.totalVac) || 'See Notification';
+        const postsText = postsRaw && !postsRaw.toLowerCase().includes('post') && !postsRaw.toLowerCase().includes('see') 
+                          ? postsRaw + ' Posts' : postsRaw;
+        if (postsEl) postsEl.textContent = safe(postsText);
         /* Job Type */
         const jobTypeRaw = (row && row.jobType) || parsed.category.label || 'Government Job';
         const jobTypeShort = jobTypeRaw.length > 30 ? jobTypeRaw.substring(0, 30) + '...' : jobTypeRaw;
@@ -1949,7 +1965,7 @@ input, textarea, select { font-size: 1rem !important; }
         if (!psCard) return;
         /* Show the card with non-job info */
         const psDesc = document.getElementById('psDescNJ');
-        if (psDesc) psDesc.textContent = name + ' — Get complete details, official links and important updates at Top Sarkari Jobs.';
+        if (psDesc) psDesc.textContent = safe(name) + ' — Get complete details, official links, download PDF and latest updates on Top Sarkari Jobs. India's No.1 Sarkari Jobs Portal.';
         const fmEl = document.getElementById('psFormModeNJ');
         if (fmEl) fmEl.innerHTML = '<span class="jp-ps-badge online">Online Link</span>';
         const locEl = document.getElementById('psJobStateNJ');
