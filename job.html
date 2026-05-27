@@ -389,9 +389,7 @@ input, textarea, select { font-size: 1rem !important; }
     .jp-nonjob-cta:hover{filter:brightness(1.08);transform:translateY(-2px);box-shadow:0 7px 22px rgba(124,58,237,.45);}
     .jp-nonjob-cta i{font-size:.95rem;}
 
-    .jp-tips-card .jp-sec-head{background:#0891b2;}
-    .jp-tips-list{padding:10px 14px 12px;margin:0;}
-    .jp-tips-list li{font-size:.81rem;color:#334155;line-height:1.9;padding:0;}
+    /* jp-tips-card CSS removed */
 
     .jp-right-sidebar{position:sticky;top:var(--header-height,140px);}
     @media(max-width:768px){.jp-right-sidebar{position:static;}}
@@ -531,7 +529,20 @@ input, textarea, select { font-size: 1rem !important; }
     #site-header .brand-title { white-space: nowrap !important; font-size: .92rem !important; }
     #site-header .header-actions { flex-shrink: 0 !important; }
     #site-header .header-logo-bar { display: flex !important; align-items: center !important; }
-    </style>
+    
+    /* ── Set as Preferred Source on Google ── */
+    .jp-preferred-source-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.04);overflow:hidden;}
+    .jp-preferred-source-card .jp-sec-head{background:linear-gradient(135deg,#1a56db,#1e40af);font-size:.86rem;}
+    .jp-ps-desc{font-size:.83rem;color:#374151;line-height:1.7;padding:10px 14px 8px;border-bottom:1px solid #f1f5f9;}
+    .jp-ps-table{width:100%;border-collapse:collapse;font-size:.81rem;}
+    .jp-ps-table th{background:#f8fafc;color:#475569;font-weight:700;font-size:.76rem;text-transform:uppercase;letter-spacing:.04em;padding:7px 12px;border-bottom:1px solid #e2e8f0;text-align:left;}
+    .jp-ps-table td{padding:7px 12px;color:#1e293b;border-bottom:1px solid #f1f5f9;vertical-align:top;}
+    .jp-ps-table tr:last-child td{border-bottom:none;}
+    .jp-ps-badge{display:inline-block;padding:2px 9px;border-radius:12px;font-size:.75rem;font-weight:700;}
+    .jp-ps-badge.online{background:#dcfce7;color:#166534;}
+    .jp-ps-badge.offline{background:#fef3c7;color:#92400e;}
+    .jp-ps-badge.walkin{background:#e0e7ff;color:#3730a3;}
+</style>
   <!-- Preload header.html so it's ready before script.js runs -->
   <link rel="preload" href="/header.html" as="fetch" crossorigin="anonymous"/>
   <!-- CRITICAL: Fetch + inject header immediately — do NOT wait for script.js defer -->
@@ -743,6 +754,36 @@ input, textarea, select { font-size: 1rem !important; }
               <span class="jp-main-cta-sub">Click to visit the official recruitment portal</span>
             </a>
 
+
+            <!-- Preferred Source on Google -->
+            <div class="jp-card jp-preferred-source-card" id="preferredSourceCard" style="display:none;">
+              <div class="jp-sec-head"><i class="fa-solid fa-google" style="color:#fff;"></i>&nbsp; Set as Preferred Source on Google</div>
+              <p class="jp-ps-desc" id="psDesc"></p>
+              <div style="overflow-x:auto;">
+                <table class="jp-ps-table">
+                  <thead>
+                    <tr>
+                      <th>Form Mode</th>
+                      <th>Job State</th>
+                      <th>Total Posts</th>
+                      <th>Job Type</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td id="psFormMode">—</td>
+                      <td id="psJobState">All India</td>
+                      <td id="psTotalPosts">—</td>
+                      <td id="psJobType">—</td>
+                    </tr>
+                    <tr>
+                      <td colspan="4" id="psOrgName" style="color:#64748b;font-size:.79rem;font-style:italic;"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
             <!-- Short Info -->
             <div class="jp-card" id="shortInfoCard" style="display:none;">
               <div class="jp-sec-head" style="background:linear-gradient(135deg,#0f766e,#0891b2);"><i class="fa-solid fa-circle-info"></i> About This Recruitment</div>
@@ -830,6 +871,29 @@ input, textarea, select { font-size: 1rem !important; }
 
           <!-- NON-JOB layout -->
           <div id="layoutNonJob" style="display:none;">
+
+            <!-- Preferred Source on Google (non-job) -->
+            <div class="jp-card jp-preferred-source-card" id="preferredSourceCardNJ" style="display:none;">
+              <div class="jp-sec-head"><i class="fa-solid fa-google" style="color:#fff;"></i>&nbsp; Set as Preferred Source on Google</div>
+              <p class="jp-ps-desc" id="psDescNJ"></p>
+              <div style="overflow-x:auto;">
+                <table class="jp-ps-table">
+                  <thead>
+                    <tr><th>Form Mode</th><th>Job State</th><th>Total Posts</th><th>Job Type</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td id="psFormModeNJ">—</td>
+                      <td id="psJobStateNJ">All India</td>
+                      <td id="psTotalPostsNJ">—</td>
+                      <td id="psJobTypeNJ">—</td>
+                    </tr>
+                    <tr><td colspan="4" id="psOrgNameNJ" style="color:#64748b;font-size:.79rem;font-style:italic;"></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
             <div class="jp-nonjob-card">
               <div class="jp-nonjob-banner" id="nonJobBanner">
                 <span class="jp-nonjob-badge" id="nonJobBadge"><i class="fa-solid fa-link"></i> Important Link</span>
@@ -849,18 +913,7 @@ input, textarea, select { font-size: 1rem !important; }
             </div>
           </div>
 
-          <!-- Tips card -->
-          <div class="jp-card jp-tips-card">
-            <div class="jp-sec-head"><i class="fa-solid fa-lightbulb"></i> Tips for Applicants</div>
-            <ul class="jp-tips-list">
-              <li>📌 Read the official notification carefully before applying.</li>
-              <li>📌 Keep scanned photo, signature &amp; documents ready (JPG/PDF).</li>
-              <li>📌 Use Chrome or Firefox. Avoid Internet Explorer.</li>
-              <li>📌 Pay application fee via Net Banking / UPI / Debit Card.</li>
-              <li>📌 Take a printout of the confirmation page after submission.</li>
-              <li>📌 Keep checking the official website for updates on date changes.</li>
-            </ul>
-          </div>
+          <!-- Tips card removed -->
         </div>
 
         <!-- RIGHT SIDEBAR -->
@@ -1272,6 +1325,41 @@ input, textarea, select { font-size: 1rem !important; }
         const si = document.getElementById('shortInfoCard');
         if (si) { si.style.display = ''; document.getElementById('shortInfoText').textContent = row.shortInfo; }
       }
+
+      /* ── Set as Preferred Source on Google ── */
+      (function populatePreferredSource() {
+        const psCard = document.getElementById('preferredSourceCard');
+        if (!psCard) return;
+        /* Description: job's short info text */
+        const desc = (row && row.shortInfo) || '';
+        const psDesc = document.getElementById('psDesc');
+        if (psDesc && desc) { psDesc.textContent = desc; }
+        /* Form Mode */
+        const formMode = applyMode || 'Online';
+        const fmEl = document.getElementById('psFormMode');
+        if (fmEl) {
+          const fmLc = formMode.toLowerCase();
+          const cls = fmLc.includes('offline') ? 'offline' : fmLc.includes('walk') ? 'walkin' : 'online';
+          fmEl.innerHTML = '<span class="jp-ps-badge ' + cls + '">' + safe(formMode) + ' Form</span>';
+        }
+        /* Job State */
+        const jobLoc = (row && row.jobLocation) || 'All India';
+        const locEl = document.getElementById('psJobState');
+        if (locEl) locEl.textContent = safe(jobLoc);
+        /* Total Posts */
+        const postsEl = document.getElementById('psTotalPosts');
+        if (postsEl) postsEl.textContent = safe(totalVac || 'Various') + (totalVac && !totalVac.toLowerCase().includes('post') ? ' Posts' : '');
+        /* Job Type */
+        const jobTypeRaw = (row && row.jobType) || parsed.category.label || 'Government Job';
+        const jobTypeShort = jobTypeRaw.length > 30 ? jobTypeRaw.substring(0, 30) + '...' : jobTypeRaw;
+        const jtEl = document.getElementById('psJobType');
+        if (jtEl) jtEl.textContent = safe(jobTypeShort);
+        /* Org name */
+        const orgEl = document.getElementById('psOrgName');
+        if (orgEl) orgEl.textContent = safe(org || '');
+        /* Show the card */
+        psCard.style.display = '';
+      })();
 
       /* ── Important Dates card ── */
       const dateRows = [];
@@ -1854,6 +1942,26 @@ input, textarea, select { font-size: 1rem !important; }
       }
 
       injectSEO(name, rawSlug, null);
+
+      /* ── Set as Preferred Source on Google (non-job pages) ── */
+      (function populatePreferredSourceNonJob() {
+        const psCard = document.getElementById('preferredSourceCardNJ');
+        if (!psCard) return;
+        /* Show the card with non-job info */
+        const psDesc = document.getElementById('psDescNJ');
+        if (psDesc) psDesc.textContent = name + ' — Get complete details, official links and important updates at Top Sarkari Jobs.';
+        const fmEl = document.getElementById('psFormModeNJ');
+        if (fmEl) fmEl.innerHTML = '<span class="jp-ps-badge online">Online Link</span>';
+        const locEl = document.getElementById('psJobStateNJ');
+        if (locEl) locEl.textContent = 'All India';
+        const postsEl = document.getElementById('psTotalPostsNJ');
+        if (postsEl) postsEl.textContent = 'See Notification';
+        const jtEl = document.getElementById('psJobTypeNJ');
+        if (jtEl) jtEl.textContent = typeInfo.label || 'Important Update';
+        const orgEl = document.getElementById('psOrgNameNJ');
+        if (orgEl) orgEl.textContent = 'Top Sarkari Jobs — India's No.1 Sarkari Jobs Portal';
+        psCard.style.display = '';
+      })();
     }
 
     /* ── Data loading ── */
@@ -2428,6 +2536,10 @@ input, textarea, select { font-size: 1rem !important; }
       /* Short info */
       const shortInfo = safe(job.short_information || job.jobs_info || bd.short_information || '');
 
+      /* Job Type & Location — for Preferred Source card */
+      const jobType     = safe(bd.job_type || job.job_type || '');
+      const jobLocation = safe(bd.job_location || job.job_location || 'All India');
+
       /* Category-wise vacancy */
       const cwVacGen = safe(cwv.general || cwv.ur || '');
       const cwVacObc = safe(cwv.obc || '');
@@ -2458,7 +2570,8 @@ input, textarea, select { font-size: 1rem !important; }
         secId: secId || '',
         slug: safe(job.slug || ''),
         category: safe(job.category || ''),
-        fp: urlRedirectFingerprint(safe(job.source_url || officialWebsite || applyOnline)).toLowerCase()
+        fp: urlRedirectFingerprint(safe(job.source_url || officialWebsite || applyOnline)).toLowerCase(),
+        jobType, jobLocation
       };
     }
 
