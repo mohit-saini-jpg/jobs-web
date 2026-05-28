@@ -2319,14 +2319,24 @@ input, textarea, select { font-size: 1rem !important; }
       document.getElementById('nonJobCtaText').textContent = ctaText;
 
       /* ── Pre-process all_links from raw LJN job BEFORE rendering ── */
-      const _rawLJNPre = (jobRow && jobRow._rawLJN) || null;
-      if (_rawLJNPre && Array.isArray(_rawLJNPre.all_links)) {
-        const _hiMap = {'ऑनलाइन आवेदन करें':'Apply Online','आवेदन करें':'Apply Online','नोटिफिकेशन':'Notification PDF','आधिकारिक वेबसाइट':'Official Website','डाउनलोड':'Download PDF','अधिसूचना':'Notification PDF','प्रवेश पत्र':'Admit Card','उत्तर कुंजी':'Answer Key'};
+      const _hiMapNJ = {'ऑनलाइन आवेदन करें':'Apply Online','आवेदन करें':'Apply Online','नोटिफिकेशन':'Notification PDF','आधिकारिक वेबसाइट':'Official Website','डाउनलोड':'Download PDF','अधिसूचना':'Notification PDF','प्रवेश पत्र':'Admit Card','उत्तर कुंजी':'Answer Key'};
+      const _rawLJNPre = (jobRow && jobRow._rawLJN) || window.__tsjRawLJNJob || null;
+      // Also check window.__latestJobsNewCache for the matching raw job
+      if (!_rawLJNPre && window.__latestJobsNewCache && jobRow && jobRow.title) {
+        const _ljnMatch = window.__latestJobsNewCache.find(function(j) {
+          return j.title && j.title.slice(0,40) === jobRow.title.slice(0,40);
+        });
+        if (_ljnMatch) window.__tsjRawLJNJob = _ljnMatch;
+      }
+      const _rawLJNFinal = _rawLJNPre || window.__tsjRawLJNJob;
+      if (_rawLJNFinal && Array.isArray(_rawLJNFinal.all_links)) {
         if (!jobRow.usefulLinks) jobRow.usefulLinks = [];
-        _rawLJNPre.all_links.forEach(function(lk) {
+        _rawLJNFinal.all_links.forEach(function(lk) {
           if (!lk.url) return;
-          var txt = _hiMap[lk.title||lk.label||''] || lk.title || lk.label || 'Apply Online';
-          jobRow.usefulLinks.push({title: txt, links: lk.url});
+          var txt = _hiMapNJ[lk.title||lk.label||''] || lk.title || lk.label || 'Apply Online';
+          // Avoid duplicate
+          var alreadyHas = jobRow.usefulLinks.some(function(u){ return u.links===lk.url||u.href===lk.url; });
+          if (!alreadyHas) jobRow.usefulLinks.push({title: txt, links: lk.url});
         });
       }
 
@@ -3158,6 +3168,7 @@ input, textarea, select { font-size: 1rem !important; }
         destUrl:(dedupLinks[0]&&(dedupLinks[0].links||dedupLinks[0].href||dedupLinks[0].url))||'',
         refUrl:(dedupLinks[0]&&(dedupLinks[0].links||dedupLinks[0].href||dedupLinks[0].url))||'',
         fp:'', jobType:safe(job.sub_type||job.entry_type||'Govt Job'),
+        subType:safe(job.entry_type||job.sub_type||''),
         jobLocation:safe(job.job_location||'All India'),
       };
     }
@@ -3323,10 +3334,11 @@ input, textarea, select { font-size: 1rem !important; }
 
         /* ── Process data/latest-jobs-new.json (LATEST_JOBS NEW section) ── */
         if (rawLatestNew && Array.isArray(rawLatestNew.jobs)) {
+          // Cache raw jobs for renderNonJobPage lookup
+          window.__latestJobsNewCache = rawLatestNew.jobs;
           for (const job of rawLatestNew.jobs) {
             const pj = parseLJNJob(job);
             if (pj && pj.title) {
-              // Store raw job reference for renderNonJobPage about section
               pj._rawLJN = job;
               out.push(pj);
             }
@@ -3723,7 +3735,9 @@ input, textarea, select { font-size: 1rem !important; }
           const rowCat = safe(row.category || row.secId || '').toLowerCase();
           // For LATEST_JOBS NEW: check entry_type — NON_JOB should go to nonJobPage
           const _isLJNNonJob = (row.category === 'LATEST_JOBS NEW') &&
-                               (row.subType === 'NON_JOB' || !row.totalVac);
+                               (row.subType === 'NON_JOB' ||
+                                row.jobType === 'NON_JOB' ||
+                                !row.totalVac);
           const isJobRow = !_isLJNNonJob && (
                           rowCat.includes('sr_') ||
                           rowCat.includes('job') ||
