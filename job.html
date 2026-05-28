@@ -3069,6 +3069,48 @@ input, textarea, select { font-size: 1rem !important; }
       };
     }
 
+    /* ── parseLJNJob: parse LATEST_JOBS NEW item ── */
+    function parseLJNJob(job) {
+      if (!job || !job.title) return null;
+      var lnks = job.important_links || {};
+      var allLnks = Array.isArray(job.all_links) ? job.all_links : [];
+      var usefulLinks = [];
+      allLnks.forEach(function(lk){ if(lk.url) usefulLinks.push({text:lk.title||lk.label||'Link',href:lk.url}); });
+      if(lnks.apply_online) usefulLinks.push({text:'Apply Online',href:lnks.apply_online});
+      if(lnks.official_notification) usefulLinks.push({text:'Notification PDF',href:lnks.official_notification});
+      if(lnks.official_website) usefulLinks.push({text:'Official Website',href:lnks.official_website});
+      if(job.official_website_link) usefulLinks.push({text:'Official Website',href:job.official_website_link});
+      if(job.apply_online_link) usefulLinks.push({text:'Apply Online',href:job.apply_online_link});
+      if(job.form_pdf_free_link||job.official_notification_pdf_link)
+        usefulLinks.push({text:'Notification PDF',href:job.form_pdf_free_link||job.official_notification_pdf_link});
+      var seen=new Set();
+      var dedupLinks=usefulLinks.filter(function(l){if(!l.href||seen.has(l.href))return false;seen.add(l.href);return true;});
+      var dates = job.important_dates || {};
+      var titleClean = safe(job.title||'').replace(/\s*-\s*$/,'');
+      var genSlug = titleClean.toLowerCase().replace(/[^a-z0-9\s-]/g,'').replace(/[\s-]+/g,'-').replace(/^-+|-+$/g,'').slice(0,100);
+      var howArr = null;
+      if(job.how_to_apply){
+        if(Array.isArray(job.how_to_apply)) howArr = job.how_to_apply;
+        else if(typeof job.how_to_apply==='string') howArr = job.how_to_apply.split(/[\n;]/).map(function(x){return x.trim();}).filter(Boolean);
+      }
+      return {
+        title:titleClean, slug:genSlug,
+        category:job.category||'LATEST_JOBS NEW',
+        org:safe(job.organization||''), totalVac:safe(job.total_vacancy||''),
+        lastDate:safe(dates.last_date||dates.application_end||''),
+        appBegin:safe(dates.application_start||dates.application_begin||''),
+        applyMode:safe(job.apply_mode||''), salary:'',
+        minAge:safe(job.minimum_age||''), maxAge:safe(job.maximum_age||''), ageRelax:'',
+        shortInfo:safe(job.short_info||job.description||''),
+        howToApply:howArr, faqData:null, seoTags:null,
+        usefulLinks:dedupLinks,
+        destUrl:(dedupLinks[0]&&dedupLinks[0].href)||'',
+        refUrl:(dedupLinks[0]&&dedupLinks[0].href)||'',
+        fp:'', jobType:safe(job.sub_type||job.entry_type||'Govt Job'),
+        jobLocation:safe(job.job_location||'All India'),
+      };
+    }
+
     async function loadAllItems() {
       try {
         /* ── ALWAYS load dailyupdates.json (section-cards source) ── */
@@ -3190,6 +3232,13 @@ input, textarea, select { font-size: 1rem !important; }
           if (r1.ok) rawMerged = await r1.json();
         } catch (_) {}
 
+        /* Load data/latest-jobs-new.json for LATEST_JOBS NEW detail pages */
+        let rawLatestNew = null;
+        try {
+          const rln = await fetch('/data/latest-jobs-new.json');
+          if (rln.ok) rawLatestNew = await rln.json();
+        } catch (_) {}
+
         /* ALWAYS load Complete_Jobs_Full_Data.json — this is the primary source
            with full important_links, useful_links, etc. for 1300+ jobs */
         let rawFull = null;
@@ -3218,6 +3267,15 @@ input, textarea, select { font-size: 1rem !important; }
               const parsed = parseFullJob(job, 'SR_Offline_Form');
               if (parsed.title) out.push(parsed);
             }
+          }
+        }
+
+        /* ── Process data/latest-jobs-new.json (LATEST_JOBS NEW section) ── */
+        if (rawLatestNew && Array.isArray(rawLatestNew.jobs)) {
+          for (const job of rawLatestNew.jobs) {
+            // Skip if already in out (from rawMerged)
+            const pj = parseLJNJob(job);
+            if (pj && pj.title) out.push(pj);
           }
         }
 
