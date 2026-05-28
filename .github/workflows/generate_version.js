@@ -54,17 +54,24 @@ console.log('│  Built   : ' + builtISO.slice(0,19).padEnd(29) + '│');
 console.log('│  Files   : version.json + sw.js         │');
 console.log('└─────────────────────────────────────────┘');
 
-// ── 4. Update tsj-version.js ?v= param in index.html ─────────────────
-// This ensures the version-check script itself is never cached stale
-const indexPath = path.resolve(process.cwd(), 'index.html');
-if (fs.existsSync(indexPath)) {
-  let indexContent = fs.readFileSync(indexPath, 'utf8');
-  const updated = indexContent.replace(
-    /(<script src="\/tsj-version\.js)[^"]*(")/g,
+// ── 4. Update tsj-version.js ?v= param in ALL HTML files ─────────────
+const htmlFiles = ['index.html', 'job.html', 'state-job-detail.html'];
+htmlFiles.forEach(filename => {
+  const filePath = path.resolve(process.cwd(), filename);
+  if (!fs.existsSync(filePath)) return;
+  let fileContent = fs.readFileSync(filePath, 'utf8');
+  // Update tsj-version.js version param
+  const updated = fileContent.replace(
+    /(<script[^>]+src="\/tsj-version\.js)[^"]*(")/g,
     `$1?v=${version}$2`
   );
-  if (updated !== indexContent) {
-    fs.writeFileSync(indexPath, updated);
-    console.log('✅ index.html tsj-version.js param ->', version);
+  // Also add ?v= if missing entirely
+  const updated2 = updated.replace(
+    /(<script[^>]+src="\/tsj-version\.js")(?!\?)/g,
+    `$1?v=${version}`
+  );
+  if (updated2 !== fileContent) {
+    fs.writeFileSync(filePath, updated2);
+    console.log(`✅ ${filename} tsj-version.js param ->`, version);
   }
-}
+});
