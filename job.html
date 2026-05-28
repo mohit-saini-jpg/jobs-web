@@ -2318,6 +2318,29 @@ input, textarea, select { font-size: 1rem !important; }
       }
       document.getElementById('nonJobCtaText').textContent = ctaText;
 
+      /* ── Direct link injection for LATEST_JOBS NEW NON_JOB pages ── */
+      if (jobRow && jobRow.category === 'LATEST_JOBS NEW' && Array.isArray(jobRow.usefulLinks)) {
+        // Directly add Apply Online buttons from usefulLinks — bypass complex forEach
+        const _directLinks = jobRow.usefulLinks.slice(0, 5);
+        if (_directLinks.length > 0 && document.getElementById('nonJobLinksActions')) {
+          const _nlActEl = document.getElementById('nonJobLinksActions');
+          const _nlCardEl = document.getElementById('nonJobLinksCard');
+          if (_nlCardEl) _nlCardEl.style.display = '';
+          _nlActEl.innerHTML = _directLinks.map(function(lk) {
+            const href = lk.links || lk.url || lk.href || '';
+            if (!href) return '';
+            const txt = lk.title || lk.name || 'Apply Online';
+            const isApply = /apply|online|aaveden/i.test(txt) || /apply|aaveden/i.test(txt);
+            const cls = isApply ? 'jp-btn-green' : 'jp-btn-blue';
+            const icon = isApply ? 'fa-paper-plane' : 'fa-link';
+            return '<a href="' + href + '" target="_blank" rel="noopener" class="jp-btn ' + cls + '">' +
+              '<div class="jp-btn-icon"><i class="fa-solid ' + icon + '"></i></div>' +
+              '<div class="jp-btn-label">' + txt.slice(0,30) + '</div>' +
+              '<div class="jp-btn-sub">Apply Now</div></a>';
+          }).filter(Boolean).join('');
+        }
+      }
+
       /* ── Pre-process all_links from raw LJN job BEFORE rendering ── */
       const _hiMapNJ = {'ऑनलाइन आवेदन करें':'Apply Online','आवेदन करें':'Apply Online','नोटिफिकेशन':'Notification PDF','आधिकारिक वेबसाइट':'Official Website','डाउनलोड':'Download PDF','अधिसूचना':'Notification PDF','प्रवेश पत्र':'Admit Card','उत्तर कुंजी':'Answer Key'};
       const _rawLJNPre = (jobRow && jobRow._rawLJN) || window.__tsjRawLJNJob || null;
