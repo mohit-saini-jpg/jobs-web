@@ -1816,12 +1816,13 @@ input, textarea, select { font-size: 1rem !important; }
         }
         const faqList = document.getElementById('jpFaqList');
         if (faqList) {
-          faqList.innerHTML = _faqData.map(function(f) {
+          faqList.innerHTML = _faqData.map(function(f, fi) {
+            var fqId = 'jpfaq-' + fi;
             return '<div class="qs-faq-item">' +
-              '<div class="qs-faq-q" onclick="var a=this.nextElementSibling;var o=a.classList.toggle('open');this.classList.toggle('open',o);">' +
+              '<div class="qs-faq-q" onclick="var a=document.getElementById(\'jpfa-'+fi+'\');var o=a.classList.toggle(\'open\');this.classList.toggle(\'open\',o);">' +
               '<span>Q. ' + esc(safe(f.question||f.q||'')) + '</span>' +
               '<i class="fa-solid fa-chevron-down qs-faq-icon"></i></div>' +
-              '<div class="qs-faq-a">' + esc(safe(f.answer||f.a||'')) + '</div>' +
+              '<div class="qs-faq-a" id="jpfa-' + fi + '">' + esc(safe(f.answer||f.a||'')) + '</div>' +
               '</div>';
           }).join('');
         }
