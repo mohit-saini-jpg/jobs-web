@@ -1872,14 +1872,15 @@ input, textarea, select { font-size: 1rem !important; }
             '<div id="jpFaqList"></div>';
           // Insert FAQ BEFORE Important Links (after How To Apply)
           // Order: How To Apply → FAQ → Important Links → SEO Tags → Disclaimer
+          // Insert FAQ AFTER Important Links
           const _mainLinksCard = document.getElementById('mainLinksCard');
           if (_mainLinksCard && _mainLinksCard.parentNode) {
-            _mainLinksCard.parentNode.insertBefore(faqCard, _mainLinksCard);
+            _mainLinksCard.parentNode.insertBefore(faqCard, _mainLinksCard.nextSibling);
           } else {
             const linksEl = document.getElementById('linksActions');
             const linksCard2 = linksEl ? linksEl.closest('.jp-card') : null;
             if (linksCard2 && linksCard2.parentNode) {
-              linksCard2.parentNode.insertBefore(faqCard, linksCard2);
+              linksCard2.parentNode.insertBefore(faqCard, linksCard2.nextSibling);
             }
           }
         }
