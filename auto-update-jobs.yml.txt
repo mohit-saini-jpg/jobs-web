@@ -1,0 +1,109 @@
+# ══════════════════════════════════════════════════════════════════════
+# TOP SARKARI JOBS — Auto Update Jobs + Sitemap + Cache Bust
+# Zero-Stale Cache Engine v7.0 — GitHub Optimized
+# ══════════════════════════════════════════════════════════════════════
+
+name: 🔄 Auto Update Jobs + Sitemap + Cache Bust
+
+on:
+  push:
+    paths:
+      - 'Complete_Jobs_Full_Data.json'
+      - 'merged_sarkari_data.json'
+      - 'dailyupdates.json'
+      - 'state-jobs-data.json'
+
+  schedule:
+    - cron: '0 19 * * *'  # Daily 12:30 AM IST
+
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # ── STEP 1: Bump version — CRITICAL for Zero-Stale Cache Engine ──
+      - name: 🔖 Bump version.json + sw.js (Zero-Stale Cache Engine)
+        run: |
+          node .github/workflows/generate_version.js
+          echo "✅ Version bumped — users will get new content automatically"
+
+      # ── STEP 2: Generate static job pages ────────────────────────────
+      - name: 🏗️ Generate static job pages
+        run: python3 .github/workflows/generate_jobs.py
+
+      # ── STEP 3: Regenerate sitemaps ──────────────────────────────────
+      - name: 🗺️ Regenerate sitemap-jobs.xml
+        run: node .github/workflows/generate_sitemap.js
+
+      # ── STEP 4: Commit everything ─────────────────────────────────────
+      - name: 📤 Commit & Push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Stage generated files + version files
+          git add version.json
+          git add sw.js
+          git add jobs/data/ || true
+          git add jobs/ || true
+          git add jobs-index.json || true
+          git add sections-index.json || true
+          git add sitemap-jobs.xml || true
+          git add sitemap-index.xml || true
+          git add sitemap.xml || true
+          git add sitemap-sections.xml 2>/dev/null || true
+
+          if git diff --staged --quiet; then
+            echo "✅ No changes to commit"
+            exit 0
+          fi
+
+          COUNT=$(git diff --staged --name-only | wc -l)
+          VERSION=$(node -e "console.log(require('./version.json').version)")
+          git commit -m "🤖 Auto v${VERSION}: ${COUNT} files updated — $(date +'%Y-%m-%d %H:%M UTC')"
+
+          git fetch origin main
+          git merge origin/main -X ours --no-edit -m "🤖 Merge: keeping auto-generated files" 2>/dev/null || true
+
+          git push origin main
+          echo "✅ Changes pushed — Zero-Stale Cache Engine will notify all users"
+
+      # ── STEP 5: Ping search engines ──────────────────────────────────
+      - name: 📡 Notify Google & Bing (IndexNow)
+        run: node .github/workflows/indexnow-ping.js
+        continue-on-error: true
+
+      - name: 🔔 Ping Google Sitemap
+        run: |
+          curl -s "https://www.google.com/ping?sitemap=https://www.topsarkarijobs.com/sitemap-index.xml" \
+            -o /dev/null -w "Google: %{http_code}\n" || true
+          curl -s "https://www.bing.com/ping?sitemap=https://www.topsarkarijobs.com/sitemap-index.xml" \
+            -o /dev/null -w "Bing: %{http_code}\n" || true
+        continue-on-error: true
+
+      - name: 📊 Summary
+        run: |
+          VERSION=$(node -e "console.log(require('./version.json').version)")
+          echo "### ✅ Zero-Stale Cache Engine — Deploy Complete" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version:** \`${VERSION}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Time (IST):** $(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M')" >> $GITHUB_STEP_SUMMARY
+          echo "- **Cache Status:** All user browsers will auto-update within 5 minutes" >> $GITHUB_STEP_SUMMARY
