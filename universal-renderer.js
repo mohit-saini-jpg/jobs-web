@@ -1534,6 +1534,12 @@
       queue.push({ card, def });
       if (def) toc.push(def);
     }
+    function pushAppend(card, defId) {
+      if (!card) return;
+      const def = defFor(defId);
+      queue.push({ card, def, append: true });
+      if (def) toc.push(def);
+    }
 
     // ── 1. Jobs Info ──────────────────────────────────────────────────
     const jobsInfo = exJobsInfo(rawJob);
@@ -1600,7 +1606,7 @@
 
     // ── 14. FAQ ───────────────────────────────────────────────────────
     const faqs = exFaq(rawJob);
-    if (hasContent(faqs) && !sectionExists('dynFaq') && !window.__TSJ_PSR_DISABLED) push(cardFaq(faqs), 'udyn-faq');
+    if (hasContent(faqs) && !sectionExists('dynFaq')) pushAppend(cardFaq(faqs), 'udyn-faq');
 
     // ── 15. SR Tables (merged_sarkari 'tables' field) ─────────────────
     const tables = exTables(rawJob);
