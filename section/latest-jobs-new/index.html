@@ -872,24 +872,7 @@
         wrap.appendChild(ld);
       }
 
-      /* Action links row from all_links */
-      if(item.all_links&&item.all_links.length>0){
-        var linksDiv=document.createElement('div');linksDiv.className='sv-links-row';
-        item.all_links.slice(0,4).forEach(function(lk){
-          var icon=_LK_ICON[lk.text]||'fa-solid fa-arrow-up-right-from-square';
-          var la=document.createElement('a');
-          la.href=lk.url;la.target='_blank';la.rel='noopener noreferrer';
-          la.className='sv-link-btn';
-          la.innerHTML='<i class="'+icon+'"></i> '+lk.text;
-          linksDiv.appendChild(la);
-        });
-        wrap.appendChild(linksDiv);
-      } else {
-        /* Fallback: view details */
-        var arrow=document.createElement('div');arrow.className='sv-card-arrow';
-        arrow.innerHTML='View Details <i class="fa-solid fa-arrow-right" style="font-size:.65rem;margin-left:2px;"></i>';
-        wrap.appendChild(arrow);
-      }
+      /* No action links — card is fully clickable, shows only title + last_date */
 
       return wrap;
     }

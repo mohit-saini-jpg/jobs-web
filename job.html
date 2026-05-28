@@ -3112,8 +3112,8 @@ input, textarea, select { font-size: 1rem !important; }
         shortInfo:safe(job.short_info||job.description||''),
         howToApply:howArr, faqData:null, seoTags:null,
         usefulLinks:dedupLinks,
-        destUrl:(dedupLinks[0]&&dedupLinks[0].href)||'',
-        refUrl:(dedupLinks[0]&&dedupLinks[0].href)||'',
+        destUrl:(dedupLinks[0]&&(dedupLinks[0].links||dedupLinks[0].href||dedupLinks[0].url))||'',
+        refUrl:(dedupLinks[0]&&(dedupLinks[0].links||dedupLinks[0].href||dedupLinks[0].url))||'',
         fp:'', jobType:safe(job.sub_type||job.entry_type||'Govt Job'),
         jobLocation:safe(job.job_location||'All India'),
       };
