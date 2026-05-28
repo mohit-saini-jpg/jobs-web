@@ -1600,7 +1600,7 @@
 
     // ── 14. FAQ ───────────────────────────────────────────────────────
     const faqs = exFaq(rawJob);
-    if (hasContent(faqs) && !sectionExists('dynFaq')) push(cardFaq(faqs), 'udyn-faq');
+    if (hasContent(faqs) && !sectionExists('dynFaq') && !window.__TSJ_PSR_DISABLED) push(cardFaq(faqs), 'udyn-faq');
 
     // ── 15. SR Tables (merged_sarkari 'tables' field) ─────────────────
     const tables = exTables(rawJob);
