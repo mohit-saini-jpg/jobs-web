@@ -2318,6 +2318,18 @@ input, textarea, select { font-size: 1rem !important; }
       }
       document.getElementById('nonJobCtaText').textContent = ctaText;
 
+      /* ── Pre-process all_links from raw LJN job BEFORE rendering ── */
+      const _rawLJNPre = (jobRow && jobRow._rawLJN) || null;
+      if (_rawLJNPre && Array.isArray(_rawLJNPre.all_links)) {
+        const _hiMap = {'ऑनलाइन आवेदन करें':'Apply Online','आवेदन करें':'Apply Online','नोटिफिकेशन':'Notification PDF','आधिकारिक वेबसाइट':'Official Website','डाउनलोड':'Download PDF','अधिसूचना':'Notification PDF','प्रवेश पत्र':'Admit Card','उत्तर कुंजी':'Answer Key'};
+        if (!jobRow.usefulLinks) jobRow.usefulLinks = [];
+        _rawLJNPre.all_links.forEach(function(lk) {
+          if (!lk.url) return;
+          var txt = _hiMap[lk.title||lk.label||''] || lk.title || lk.label || 'Apply Online';
+          jobRow.usefulLinks.push({title: txt, links: lk.url});
+        });
+      }
+
       /* ── Important Links for Non-Job page ── */
       const nlCard    = document.getElementById('nonJobLinksCard');
       const nlActions = document.getElementById('nonJobLinksActions');
@@ -2333,7 +2345,7 @@ input, textarea, select { font-size: 1rem !important; }
           njLinks.push({ href: h, label, icon, cls, sub });
         }
 
-        /* 1. From parsed row (important_links obj) via usefulLinks */
+        /* 1. From parsed row (important_links obj) via usefulLinks — now includes all_links */
         const rowUsefulLinks = (jobRow && jobRow.usefulLinks) || [];
         rowUsefulLinks.forEach(ul => {
           const t = safe(ul.title || ul.name || '');
@@ -2412,18 +2424,7 @@ input, textarea, select { font-size: 1rem !important; }
             if (nlcEl && nlcEl.parentNode) nlcEl.parentNode.insertBefore(aboutCard, nlcEl);
           }
         }
-        // Also add all_links from raw job to nonJobLinksCard
-        if (Array.isArray(_rawLJN.all_links)) {
-          const labelMapHi = {'ऑनलाइन आवेदन करें':'Apply Online','आवेदन करें':'Apply Online','नोटिफिकेशन':'Notification PDF','आधिकारिक वेबसाइट':'Official Website','डाउनलोड':'Download PDF','अधिसूचना':'Notification PDF'};
-          _rawLJN.all_links.forEach(function(lk) {
-            if (!lk.url) return;
-            var txt = labelMapHi[lk.title||lk.label||''] || lk.title || lk.label || 'Apply Online';
-            if (jobRow) {
-              if (!jobRow.usefulLinks) jobRow.usefulLinks = [];
-              jobRow.usefulLinks.push({title:txt, links:lk.url});
-            }
-          });
-        }
+        // all_links already processed above before nlCard render
       }
 
       /* Expose row data for preferred-source-renderer */
