@@ -643,6 +643,18 @@
             html = renderDetail(item, section.title);
           }
 
+          // Expose item data for preferred-source-renderer v4
+          if (item) {
+            var rawForPSR = item.detail || item;
+            rawForPSR = Object.assign({}, rawForPSR);
+            if (!rawForPSR.title && !rawForPSR.name) rawForPSR.title = item.name || item.examName || '';
+            if (!rawForPSR.category) rawForPSR.category = item.category || section.title || 'Education';
+            if (!rawForPSR.short_information && item.short_info) rawForPSR.short_information = item.short_info;
+            window.__TSJ_RAW_JOB = rawForPSR;
+            window.__TSJ_RENDER_DONE = true;
+            if (typeof window.__TSJ_ON_RENDER_DONE === 'function') window.__TSJ_ON_RENDER_DONE(rawForPSR);
+          }
+
           // Add "Back to section" link at bottom
           html += `
             <div style="margin-top:16px;text-align:center;">
@@ -708,5 +720,7 @@
 
   <!-- External scripts -->
   <script src="/tsj-menu.js" defer></script>
+  <!-- Preferred Source on Google — Full Rich Details Renderer v4 -->
+  <script src="/preferred-source-renderer.js?v=20260528v4" defer></script>
 </body>
 </html>
