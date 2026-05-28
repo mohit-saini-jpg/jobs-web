@@ -167,38 +167,7 @@
       /* ── 7. Pre-populate minimal BreadcrumbList for Googlebot ── */
       var bcSchemaEl = document.getElementById('breadcrumbSchema');
       if (bcSchemaEl && slug) {
-        bcSc
-      /* 8b. FAQPage schema — increases CTR by 20-30% via rich snippets */
-      (function() {
-        var faqEl = document.getElementById('faqSchema');
-        if (!faqEl) {
-          faqEl = document.createElement('script');
-          faqEl.type = 'application/ld+json';
-          faqEl.id = 'faqSchema';
-          document.head.appendChild(faqEl);
-        }
-        var jn = humanSlug(slug);
-        faqEl.textContent = JSON.stringify({
-          '@context': 'https://schema.org',
-          '@type': 'FAQPage',
-          'mainEntity': [
-            { '@type': 'Question',
-              'name': 'How to apply for ' + jn + '?',
-              'acceptedAnswer': { '@type': 'Answer', 'text': 'Visit the official website, check eligibility, fill the online application form, upload documents and submit before the last date. Full details available on Top Sarkari Jobs.' }
-            },
-            { '@type': 'Question',
-              'name': 'What is the last date for ' + jn + '?',
-              'acceptedAnswer': { '@type': 'Answer', 'text': 'Check the official notification on Top Sarkari Jobs for the exact application deadline and important dates for ' + jn + '.' }
-            },
-            { '@type': 'Question',
-              'name': 'What is the eligibility for ' + jn + '?',
-              'acceptedAnswer': { '@type': 'Answer', 'text': 'Educational qualification, age limit and other eligibility criteria are mentioned in the official notification. Visit Top Sarkari Jobs for complete details of ' + jn + '.' }
-            }
-          ]
-        });
-      })();
-
-hemaEl.textContent = JSON.stringify({
+        bcSchemaEl.textContent = JSON.stringify({
           '@context': 'https://schema.org', '@type': 'BreadcrumbList',
           'itemListElement': [
             { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://www.topsarkarijobs.com/' },
@@ -312,7 +281,7 @@ input, textarea, select { font-size: 1rem !important; }
     .jp-main-cta-sub{font-size:.78rem;font-weight:600;opacity:.9;display:block;margin-top:3px;white-space:normal;}
     .jp-main-cta i{margin-right:6px;}
 
-    .jp-sec-head{background:#1d4ed8;color:#fff;font-size:.86rem;font-weight:700;padding:9px 14px;display:flex;align-items:center;gap:8px;}
+    .jp-sec-head{background:#1d6dbc;color:#fff;font-size:.86rem;font-weight:700;padding:9px 14px;display:flex;align-items:center;gap:8px;}
     .jp-sec-head i{opacity:.85;}
 
     /* ── TABLE OVERFLOW FIX: wrap tables in scrollable container ── */
@@ -389,7 +358,9 @@ input, textarea, select { font-size: 1rem !important; }
     .jp-nonjob-cta:hover{filter:brightness(1.08);transform:translateY(-2px);box-shadow:0 7px 22px rgba(124,58,237,.45);}
     .jp-nonjob-cta i{font-size:.95rem;}
 
-    /* jp-tips-card CSS removed */
+    .jp-tips-card .jp-sec-head{background:#0891b2;}
+    .jp-tips-list{padding:10px 14px 12px;margin:0;}
+    .jp-tips-list li{font-size:.81rem;color:#334155;line-height:1.9;padding:0;}
 
     .jp-right-sidebar{position:sticky;top:var(--header-height,140px);}
     @media(max-width:768px){.jp-right-sidebar{position:static;}}
@@ -529,39 +500,7 @@ input, textarea, select { font-size: 1rem !important; }
     #site-header .brand-title { white-space: nowrap !important; font-size: .92rem !important; }
     #site-header .header-actions { flex-shrink: 0 !important; }
     #site-header .header-logo-bar { display: flex !important; align-items: center !important; }
-    
-    /* ── Set as Preferred Source on Google ── */
-    .jp-preferred-source-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.04);overflow:hidden;}
-    .jp-preferred-source-card .jp-sec-head{background:linear-gradient(135deg,#1a56db,#1e40af);font-size:.86rem;}
-    .jp-ps-desc{font-size:.82rem;color:#374151;line-height:1.65;padding:10px 14px 8px;border-bottom:1px solid #f1f5f9;margin:0;}
-    .jp-ps-table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
-    .jp-ps-table{width:100%;border-collapse:collapse;font-size:.81rem;min-width:300px;table-layout:fixed;}
-    .jp-ps-table th{background:#f8fafc;color:#475569;font-weight:700;font-size:.73rem;text-transform:uppercase;letter-spacing:.04em;padding:8px 10px;border-bottom:1px solid #e2e8f0;text-align:left;white-space:nowrap;width:25%;}
-    .jp-ps-table td{padding:8px 10px;color:#1e293b;vertical-align:middle;font-size:.81rem;width:25%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-    .jp-ps-org-row{display:flex;align-items:baseline;gap:6px;padding:6px 14px 8px;border-top:1px solid #f1f5f9;background:#f8fafc;}
-    .jp-ps-org-label{font-size:.72rem;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;}
-    .jp-ps-org-val{font-size:.78rem;color:#1e293b;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-    .jp-ps-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.74rem;font-weight:700;white-space:nowrap;}
-    .jp-ps-badge.online{background:#dcfce7;color:#166534;}
-    .jp-ps-badge.offline{background:#fef3c7;color:#92400e;}
-    .jp-ps-badge.walkin{background:#e0e7ff;color:#3730a3;}
-    @media(max-width:640px){
-      .jp-ps-table{min-width:280px;}
-      .jp-ps-table th,.jp-ps-table td{padding:7px 8px;font-size:.75rem;}
-      .jp-ps-desc{font-size:.79rem;padding:8px 10px;}
-      .jp-ps-org-row{padding:5px 10px 7px;}
-    }
-
-    /* ── Internal Linking — Related Jobs Sidebar ── */
-    .jp-related-card .jp-sec-head{background:linear-gradient(135deg,#0f766e,#0891b2);}
-    .jp-related-list{list-style:none;padding:8px 0;margin:0;}
-    .jp-related-list li{border-bottom:1px solid #f1f5f9;}
-    .jp-related-list li:last-child{border-bottom:none;}
-    .jp-related-list a{display:block;padding:7px 14px;font-size:.79rem;color:#1d4ed8;text-decoration:none;line-height:1.5;transition:background .15s;}
-    .jp-related-list a:hover{background:#f0f9ff;color:#0c4a6e;}
-    .jp-related-list a i{font-size:.7rem;margin-right:4px;opacity:.7;}
-    .jp-last-updated{font-size:.74rem;color:#64748b;padding:6px 14px 8px;border-top:1px solid #f1f5f9;}
-</style>
+    </style>
   <!-- Preload header.html so it's ready before script.js runs -->
   <link rel="preload" href="/header.html" as="fetch" crossorigin="anonymous"/>
   <!-- CRITICAL: Fetch + inject header immediately — do NOT wait for script.js defer -->
@@ -629,7 +568,7 @@ input, textarea, select { font-size: 1rem !important; }
   <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
-  <script src="/tsj-menu.js" defer></script>
+  <script src="/tsj-menu.js"></script>
 <script src="/pwa-install.js?v=6.0" defer></script>
   <!-- ══ END PWA ════════════════════════════════════════════════════ -->
 </head>
@@ -665,8 +604,8 @@ input, textarea, select { font-size: 1rem !important; }
             <a href="/section/teaching-jobs/"><i class="fa-solid fa-chalkboard-user"></i>Teacher Jobs</a>
             <a href="/section/10th-pass-jobs/"><i class="fa-solid fa-graduation-cap"></i>10th Pass</a>
             <a href="/section/12th-pass-jobs/"><i class="fa-solid fa-graduation-cap"></i>12th Pass</a>
-            <a href="/category/admit-result/"><i class="fa-solid fa-id-card"></i>Admit Cards</a>
-            <a href="/category/admissions/"><i class="fa-solid fa-trophy"></i>Results</a>
+            <a href="/category.html?group=admit-result"><i class="fa-solid fa-id-card"></i>Admit Cards</a>
+            <a href="/category.html?group=admissions"><i class="fa-solid fa-trophy"></i>Results</a>
             <a href="/section/army-jobs/"><i class="fa-solid fa-star"></i>Army/Navy/AF</a>
             <a href="/section/state-jobs/"><i class="fa-solid fa-map-location-dot"></i>State Jobs</a>
           </div>
@@ -721,8 +660,8 @@ input, textarea, select { font-size: 1rem !important; }
           <div class="jp-left-nav-card">
             <div class="jp-left-nav-head" style="background:linear-gradient(135deg,#dc2626,#b91c1c);"><i class="fa-regular fa-calendar-check"></i> Admit &amp; Results</div>
             <nav class="jp-left-nav-list">
-              <a class="jp-left-nav-item" href="/category/admit-result/"><i class="fa-solid fa-id-card"></i>Admit Cards</a>
-              <a class="jp-left-nav-item" href="/category/admissions/"><i class="fa-solid fa-trophy"></i>Latest Results</a>
+              <a class="jp-left-nav-item" href="/category.html?group=admit-result"><i class="fa-solid fa-id-card"></i>Admit Cards</a>
+              <a class="jp-left-nav-item" href="/category.html?group=admissions"><i class="fa-solid fa-trophy"></i>Latest Results</a>
               <a class="jp-left-nav-item" href="/section/upcoming-jobs/"><i class="fa-solid fa-calendar-days"></i>Upcoming Jobs</a>
               <a class="jp-left-nav-item" href="/section/top-20-jobs/"><i class="fa-solid fa-fire-flame-curved"></i>Top 20 Jobs</a>
               <a class="jp-left-nav-item" href="/section/latest-jobs/"><i class="fa-solid fa-sun"></i>Latest Jobs</a>
@@ -739,20 +678,6 @@ input, textarea, select { font-size: 1rem !important; }
               <a class="jp-left-nav-item" href="/section/answer-key/"><i class="fa-solid fa-key"></i>Answer Key</a>
               <a class="jp-left-nav-item" href="/section/offline-jobs/"><i class="fa-solid fa-file-pen"></i>Offline Form</a>
             </nav>
-          </div>
-
-          <!-- Related Jobs & Internal Links -->
-          <div class="jp-card jp-related-card" id="relatedLinksCard">
-            <div class="jp-sec-head"><i class="fa-solid fa-link"></i> Related Jobs & Quick Links</div>
-            <ul class="jp-related-list" id="relatedLinksList">
-              <!-- Populated by JS based on job category -->
-              <li><a href="/section/latest-jobs/" title="Latest Government Jobs 2026"><i class="fa-solid fa-arrow-right"></i>Latest Sarkari Jobs 2026</a></li>
-              <li><a href="/section/upcoming-jobs/" title="Upcoming Government Jobs 2026"><i class="fa-solid fa-arrow-right"></i>Upcoming Govt Jobs 2026</a></li>
-              <li><a href="/section/results/" title="Sarkari Result 2026"><i class="fa-solid fa-arrow-right"></i>Sarkari Result 2026</a></li>
-              <li><a href="/section/admit-card/" title="Admit Card Download 2026"><i class="fa-solid fa-arrow-right"></i>Admit Card 2026</a></li>
-              <li><a href="/section/answer-key/" title="Answer Key 2026"><i class="fa-solid fa-arrow-right"></i>Answer Key 2026</a></li>
-            </ul>
-            <div class="jp-last-updated" id="lastUpdatedDisplay"></div>
           </div>
         </aside>
 
@@ -786,37 +711,6 @@ input, textarea, select { font-size: 1rem !important; }
               <i class="fa-solid fa-arrow-up-right-from-square"></i> Apply Online / Official Website पर जाएँ
               <span class="jp-main-cta-sub">Click to visit the official recruitment portal</span>
             </a>
-
-
-            <!-- Preferred Source on Google -->
-            <div class="jp-card jp-preferred-source-card" id="preferredSourceCard" style="display:none;">
-              <div class="jp-sec-head"><i class="fa-solid fa-google" style="color:#fff;"></i>&nbsp; Set as Preferred Source on Google</div>
-              <p class="jp-ps-desc" id="psDesc"></p>
-              <div class="jp-ps-table-wrap">
-                <table class="jp-ps-table">
-                  <thead>
-                    <tr>
-                      <th>Form Mode</th>
-                      <th>Job State</th>
-                      <th>Total Posts</th>
-                      <th>Job Type</th>
-                    </tr>
-                  </thead>
-                  <tbody id="psTableBody">
-                    <tr>
-                      <td id="psFormMode">—</td>
-                      <td id="psJobState">All India</td>
-                      <td id="psTotalPosts">—</td>
-                      <td id="psJobType">—</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div class="jp-ps-org-row">
-                <span class="jp-ps-org-label">Organisation:</span>
-                <span id="psOrgName" class="jp-ps-org-val">—</span>
-              </div>
-            </div>
 
             <!-- Short Info -->
             <div class="jp-card" id="shortInfoCard" style="display:none;">
@@ -880,49 +774,31 @@ input, textarea, select { font-size: 1rem !important; }
               <div style="display:flex;flex-wrap:wrap;gap:8px;padding:14px;" id="selBadges"></div>
             </div>
 
-            <!-- How To Apply -->
-            <div class="jp-card" id="howCard" style="display:none;">
-              <div class="jp-sec-head" style="background:linear-gradient(135deg,#0369a1,#0284c7);"><i class="fa-solid fa-clipboard-list"></i> How To Apply</div>
-              <div id="howContent" style="padding:12px 14px;font-size:.82rem;color:#1e293b;line-height:1.65;"></div>
-            </div>
-
             <!-- Important Links -->
-            <div class="jp-card" id="mainLinksCard">
+            <div class="jp-card">
               <div class="jp-sec-head"><i class="fa-solid fa-link"></i> Important Links</div>
               <div class="jp-actions" id="linksActions">
-                <!-- Static buttons hidden by default — renderJobPage sets linksContainer.innerHTML -->
+                <a id="btnApply" href="#" target="_blank" rel="noopener" class="jp-btn jp-btn-green">
+                  <div class="jp-btn-icon"><i class="fa-solid fa-pen-to-square"></i></div>
+                  <div class="jp-btn-label">Apply Online</div>
+                  <div class="jp-btn-sub">Official Portal</div>
+                </a>
+                <a id="btnNotification" href="#" target="_blank" rel="noopener" class="jp-btn jp-btn-blue">
+                  <div class="jp-btn-icon"><i class="fa-solid fa-file-pdf"></i></div>
+                  <div class="jp-btn-label">Notification PDF</div>
+                  <div class="jp-btn-sub">Official Notification</div>
+                </a>
+                <a id="btnWebsite" href="#" target="_blank" rel="noopener" class="jp-btn jp-btn-red">
+                  <div class="jp-btn-icon"><i class="fa-solid fa-globe"></i></div>
+                  <div class="jp-btn-label">Official Website</div>
+                  <div class="jp-btn-sub">Govt Portal</div>
+                </a>
               </div>
             </div>
           </div>
 
           <!-- NON-JOB layout -->
           <div id="layoutNonJob" style="display:none;">
-
-            <!-- Preferred Source on Google (non-job) -->
-            <div class="jp-card jp-preferred-source-card" id="preferredSourceCardNJ" style="display:none;">
-              <div class="jp-sec-head"><i class="fa-solid fa-google" style="color:#fff;"></i>&nbsp; Set as Preferred Source on Google</div>
-              <p class="jp-ps-desc" id="psDescNJ"></p>
-              <div class="jp-ps-table-wrap">
-                <table class="jp-ps-table">
-                  <thead>
-                    <tr><th>Form Mode</th><th>Job State</th><th>Total Posts</th><th>Job Type</th></tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td id="psFormModeNJ">—</td>
-                      <td id="psJobStateNJ">All India</td>
-                      <td id="psTotalPostsNJ">—</td>
-                      <td id="psJobTypeNJ">—</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div class="jp-ps-org-row">
-                <span class="jp-ps-org-label">Source:</span>
-                <span id="psOrgNameNJ" class="jp-ps-org-val">Top Sarkari Jobs</span>
-              </div>
-            </div>
-
             <div class="jp-nonjob-card">
               <div class="jp-nonjob-banner" id="nonJobBanner">
                 <span class="jp-nonjob-badge" id="nonJobBadge"><i class="fa-solid fa-link"></i> Important Link</span>
@@ -942,7 +818,18 @@ input, textarea, select { font-size: 1rem !important; }
             </div>
           </div>
 
-          <!-- Tips card removed -->
+          <!-- Tips card -->
+          <div class="jp-card jp-tips-card">
+            <div class="jp-sec-head"><i class="fa-solid fa-lightbulb"></i> Tips for Applicants</div>
+            <ul class="jp-tips-list">
+              <li>📌 Read the official notification carefully before applying.</li>
+              <li>📌 Keep scanned photo, signature &amp; documents ready (JPG/PDF).</li>
+              <li>📌 Use Chrome or Firefox. Avoid Internet Explorer.</li>
+              <li>📌 Pay application fee via Net Banking / UPI / Debit Card.</li>
+              <li>📌 Take a printout of the confirmation page after submission.</li>
+              <li>📌 Keep checking the official website for updates on date changes.</li>
+            </ul>
+          </div>
         </div>
 
         <!-- RIGHT SIDEBAR -->
@@ -982,35 +869,35 @@ input, textarea, select { font-size: 1rem !important; }
           <div class="jp-card jp-states-card">
             <div class="jp-sec-head"><i class="fa-solid fa-map-location-dot"></i> All States Jobs</div>
             <div class="jp-states-grid">
-              <a class="jp-state-item" href="/state/haryana/"><span class="st-em">🇮🇳</span><span class="st-name">Haryana</span></a>
-              <a class="jp-state-item" href="/state/uttar-pradesh/"><span class="st-em">🌾</span><span class="st-name">Uttar Pradesh</span></a>
-              <a class="jp-state-item" href="/state/rajasthan/"><span class="st-em">🏜️</span><span class="st-name">Rajasthan</span></a>
-              <a class="jp-state-item" href="/state/bihar/"><span class="st-em">🌿</span><span class="st-name">Bihar</span></a>
-              <a class="jp-state-item" href="/state/madhya-pradesh/"><span class="st-em">🏛️</span><span class="st-name">Madhya Pradesh</span></a>
-              <a class="jp-state-item" href="/state/punjab/"><span class="st-em">🌻</span><span class="st-name">Punjab</span></a>
-              <a class="jp-state-item" href="/state/delhi/"><span class="st-em">🏙️</span><span class="st-name">Delhi</span></a>
-              <a class="jp-state-item" href="/state/gujarat/"><span class="st-em">🦁</span><span class="st-name">Gujarat</span></a>
-              <a class="jp-state-item" href="/state/maharashtra/"><span class="st-em">🎡</span><span class="st-name">Maharashtra</span></a>
-              <a class="jp-state-item" href="/state/karnataka/"><span class="st-em">🌴</span><span class="st-name">Karnataka</span></a>
-              <a class="jp-state-item" href="/state/tamil-nadu/"><span class="st-em">🏖️</span><span class="st-name">Tamil Nadu</span></a>
-              <a class="jp-state-item" href="/state/andhra-pradesh/"><span class="st-em">🌊</span><span class="st-name">Andhra Pradesh</span></a>
-              <a class="jp-state-item" href="/state/telangana/"><span class="st-em">🌺</span><span class="st-name">Telangana</span></a>
-              <a class="jp-state-item" href="/state/west-bengal/"><span class="st-em">🐯</span><span class="st-name">West Bengal</span></a>
-              <a class="jp-state-item" href="/state/jharkhand/"><span class="st-em">⛏️</span><span class="st-name">Jharkhand</span></a>
-              <a class="jp-state-item" href="/state/chhattisgarh/"><span class="st-em">🌲</span><span class="st-name">Chhattisgarh</span></a>
-              <a class="jp-state-item" href="/state/odisha/"><span class="st-em">🏺</span><span class="st-name">Odisha</span></a>
-              <a class="jp-state-item" href="/state/assam/"><span class="st-em">🍵</span><span class="st-name">Assam</span></a>
-              <a class="jp-state-item" href="/state/himachal-pradesh/"><span class="st-em">🏔️</span><span class="st-name">Himachal Pradesh</span></a>
-              <a class="jp-state-item" href="/state/uttarakhand/"><span class="st-em">⛰️</span><span class="st-name">Uttarakhand</span></a>
-              <a class="jp-state-item" href="/state/jammu-and-kashmir/"><span class="st-em">❄️</span><span class="st-name">J&amp;K</span></a>
-              <a class="jp-state-item" href="/state/kerala/"><span class="st-em">🌴</span><span class="st-name">Kerala</span></a>
-              <a class="jp-state-item" href="/state/goa/"><span class="st-em">🏝️</span><span class="st-name">Goa</span></a>
-              <a class="jp-state-item" href="/state/tripura/"><span class="st-em">🌿</span><span class="st-name">Tripura</span></a>
-              <a class="jp-state-item" href="/state/manipur/"><span class="st-em">💐</span><span class="st-name">Manipur</span></a>
-              <a class="jp-state-item" href="/state/meghalaya/"><span class="st-em">🌧️</span><span class="st-name">Meghalaya</span></a>
-              <a class="jp-state-item" href="/state/sikkim/"><span class="st-em">🏞️</span><span class="st-name">Sikkim</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Haryana"><span class="st-em">🇮🇳</span><span class="st-name">Haryana</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Uttar+Pradesh"><span class="st-em">🌾</span><span class="st-name">Uttar Pradesh</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Rajasthan"><span class="st-em">🏜️</span><span class="st-name">Rajasthan</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Bihar"><span class="st-em">🌿</span><span class="st-name">Bihar</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Madhya+Pradesh"><span class="st-em">🏛️</span><span class="st-name">Madhya Pradesh</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Punjab"><span class="st-em">🌻</span><span class="st-name">Punjab</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Delhi"><span class="st-em">🏙️</span><span class="st-name">Delhi</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Gujarat"><span class="st-em">🦁</span><span class="st-name">Gujarat</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Maharashtra"><span class="st-em">🎡</span><span class="st-name">Maharashtra</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Karnataka"><span class="st-em">🌴</span><span class="st-name">Karnataka</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Tamil+Nadu"><span class="st-em">🏖️</span><span class="st-name">Tamil Nadu</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Andhra+Pradesh"><span class="st-em">🌊</span><span class="st-name">Andhra Pradesh</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Telangana"><span class="st-em">🌺</span><span class="st-name">Telangana</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=West+Bengal"><span class="st-em">🐯</span><span class="st-name">West Bengal</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Jharkhand"><span class="st-em">⛏️</span><span class="st-name">Jharkhand</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Chhattisgarh"><span class="st-em">🌲</span><span class="st-name">Chhattisgarh</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Odisha"><span class="st-em">🏺</span><span class="st-name">Odisha</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Assam"><span class="st-em">🍵</span><span class="st-name">Assam</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Himachal+Pradesh"><span class="st-em">🏔️</span><span class="st-name">Himachal Pradesh</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Uttarakhand"><span class="st-em">⛰️</span><span class="st-name">Uttarakhand</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Jammu+and+Kashmir"><span class="st-em">❄️</span><span class="st-name">J&amp;K</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Kerala"><span class="st-em">🌴</span><span class="st-name">Kerala</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Goa"><span class="st-em">🏝️</span><span class="st-name">Goa</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Tripura"><span class="st-em">🌿</span><span class="st-name">Tripura</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Manipur"><span class="st-em">💐</span><span class="st-name">Manipur</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Meghalaya"><span class="st-em">🌧️</span><span class="st-name">Meghalaya</span></a>
+              <a class="jp-state-item" href="/state-jobs.html?state=Sikkim"><span class="st-em">🏞️</span><span class="st-name">Sikkim</span></a>
             </div>
-            <a class="jp-states-viewall" href="/state/"><i class="fa-solid fa-map-location-dot"></i> View All States</a>
+            <a class="jp-states-viewall" href="/category.html?group=state"><i class="fa-solid fa-map-location-dot"></i> View All States</a>
           </div>
 
           <!-- Social Follow -->
@@ -1192,115 +1079,40 @@ input, textarea, select { font-size: 1rem !important; }
         ? (normaliseDate(parsed.applicationStartDate || parsed.lastUpdated || parsed.datePosted) || new Date().toISOString().split('T')[0])
         : new Date().toISOString().split('T')[0];
 
-      // UPGRADED: Full JobPosting schema with all Google Preferred Source signals
+      // FIX #2: Full JobPosting schema
       const schemaEl = document.getElementById('jobSchema');
       if (schemaEl && parsed) {
-        const todayFull = new Date().toISOString().split('T')[0];
-
-        /* ── Employment type from applyMode / category ── */
-        let empType = 'FULL_TIME';
-        const catLc = (parsed.category && parsed.category.label || '').toLowerCase();
-        if (catLc.includes('contract') || catLc.includes('temporary')) empType = 'CONTRACTOR';
-        else if (catLc.includes('apprentice') || catLc.includes('trainee')) empType = 'INTERN';
-        else if (catLc.includes('part')) empType = 'PART_TIME';
-
-        /* ── Job location from parsed data ── */
-        const locRegion = parsed.jobLocation || 'India';
-        const locAddr = {
-          '@type': 'PostalAddress',
-          'addressCountry': 'IN',
-          'addressRegion': locRegion.includes(',') ? locRegion.split(',')[0].trim() : locRegion
-        };
-
-        /* ── Hiring org with logo ── */
-        const hiringOrg = {
-          '@type': 'Organization',
-          'name': safe(parsed.org || 'Government of India'),
-          'sameAs': 'https://www.india.gov.in/'
-        };
-
-        /* ── Valid through: parse lastDt to ISO ── */
-        let validThrough = null;
-        if (parsed.lastDt) {
-          const vt = normaliseDate(parsed.lastDt);
-          if (vt) validThrough = vt + 'T23:59:59';
-        }
-
         const jobSchema = {
           '@context': 'https://schema.org',
           '@type': 'JobPosting',
-          '@id': canonUrl + '#job',
-          'mainEntityOfPage': {
-            '@type': 'WebPage',
-            '@id': canonUrl
-          },
-          'name': safe(name),
+          'name': safe(name),        // FIX #2a: "name" required by Google
           'title': safe(name),
           'description': desc,
-          'identifier': {
-            '@type': 'PropertyValue',
-            'name': 'Top Sarkari Jobs',
-            'value': slug
+          'identifier': { '@type': 'PropertyValue', name: 'Top Sarkari Jobs', value: slug },
+          'datePosted': datePosted,  // FIX #9: real date
+          'hiringOrganization': {
+            '@type': 'Organization',
+            'name': parsed.org || 'Government of India'
+            // FIX #2c: sameAs removed — must not point to our job board
           },
-          'datePosted': datePosted,
-          'dateModified': todayFull,
-          'hiringOrganization': hiringOrg,
           'jobLocation': {
             '@type': 'Place',
-            'address': locAddr
+            'address': { '@type': 'PostalAddress', 'addressCountry': 'IN', 'addressRegion': 'India' }
           },
-          'employmentType': empType,
-          'applicantLocationRequirements': {
-            '@type': 'Country',
-            'name': 'India'
-          },
-          'jobLocationType': 'TELECOMMUTE',
-          'directApply': false,
-          'url': canonUrl,
-          'sameAs': canonUrl
+          'employmentType': 'FULL_TIME',
+          'applicantLocationRequirements': {'@type':'Country','name':'India'},
+          'url': canonUrl
         };
-
-        /* ── Optional fields ── */
-        if (validThrough) jobSchema.validThrough = validThrough;
-
-        if (parsed.vac) {
-          const vacNum = parseInt(('' + parsed.vac).replace(/[^0-9]/g,''), 10);
-          if (vacNum > 0) jobSchema.totalJobOpenings = vacNum;
-        }
-
+        if (parsed.lastDt) jobSchema.validThrough = parsed.lastDt;
+        if (parsed.vac) jobSchema.totalJobOpenings = parseInt(parsed.vac.replace(/,/g, ''), 10);
+        // FIX #2e: baseSalary
         const salStr = parsed.salary || parsed.salaryMin || parsed.pay || '';
         if (salStr) {
-          const salNum = parseInt(('' + salStr).replace(/[^0-9]/g,''), 10);
-          if (salNum > 0) jobSchema.baseSalary = {
-            '@type': 'MonetaryAmount',
-            'currency': 'INR',
-            'value': { '@type': 'QuantitativeValue', 'value': salNum, 'unitText': 'MONTH' }
-          };
+          const salNum = parseInt(('' + salStr).replace(/[^0-9]/g, ''), 10);
+          if (salNum > 0) jobSchema.baseSalary = { '@type': 'MonetaryAmount', 'currency': 'INR', 'value': { '@type': 'QuantitativeValue', 'value': salNum, 'unitText': 'MONTH' } };
         }
-
-        if (parsed.qualification) jobSchema.educationRequirements = {
-          '@type': 'EducationalOccupationalCredential',
-          'credentialCategory': parsed.qualification
-        };
-
-        if (parsed.applyMode && parsed.applyMode.toLowerCase().includes('online')) {
-          jobSchema.directApply = true;
-        }
-
-        /* ── Publisher (our site) ── */
-        jobSchema.publisher = {
-          '@type': 'Organization',
-          '@id': 'https://www.topsarkarijobs.com/#organization',
-          'name': 'Top Sarkari Jobs',
-          'url': 'https://www.topsarkarijobs.com/',
-          'logo': {
-            '@type': 'ImageObject',
-            'url': 'https://www.topsarkarijobs.com/image.webp',
-            'width': 512,
-            'height': 512
-          }
-        };
-
+        // FIX #2f: educationRequirements
+        if (parsed.qualification) jobSchema.educationRequirements = { '@type': 'EducationalOccupationalCredential', 'credentialCategory': parsed.qualification };
         schemaEl.textContent = JSON.stringify(jobSchema);
       }
 
@@ -1405,21 +1217,9 @@ input, textarea, select { font-size: 1rem !important; }
         ['Organisation',         org],
         ['Post Name / Board',    name],
         ['Total Vacancies',      totalVac || 'Various'],
-        ['Job Type', (function() {
-          const raw = safe((row && row.category) || parsed.category.label || 'Govt Job');
-          // Humanize category IDs: "12TH_Pass" → "12th Pass", "Latest_Notifications" → "Latest Jobs"
-          const _catMap = {
-            '10TH_Pass':'10th Pass Jobs','8TH_Pass':'8th Pass Jobs','12TH_Pass':'12th Pass Jobs',
-            'Diploma':'Diploma Jobs','ITI':'ITI Jobs','B_Tech_BE':'B.Tech/BE Jobs',
-            'B_Com':'B.Com Jobs','Any_Graduate':'Graduate Jobs','Any_Post_Graduate':'Post Graduate Jobs',
-            'Railway_Jobs':'Railway Jobs','Police_Defence':'Police/Defence Jobs',
-            'Teaching_Faculty':'Teaching Jobs','Bank_Jobs':'Bank Jobs','Medical_Hospital':'Medical Jobs',
-            'Latest_Notifications':'Latest Govt Jobs','Last_Date_Reminder':'Jobs Closing Soon',
-          };
-          return _catMap[raw] || raw.replace(/_/g,' ').replace(/(\d+)(TH|ND|RD|ST)/gi,(m,n,s)=>n+s.toLowerCase());
-        })()],
+        ['Job Type',             safe((row && row.category) || parsed.category.label || 'Govt Job')],
         ['Application Mode',     applyMode],
-        // Salary shown in dedicated Salary card below — skip from Overview
+        salary ? ['Salary / Pay Scale', salary] : null,
         (row && row.appBegin) ? ['Application Begin',      fmtDate(row.appBegin)]  : null,
         { label: 'Last Date to Apply', val: fmtDate(lastDate), cls: 'lastdate-row' },
         (row && row.feeLastDate) ? ['Fee Payment Last Date', fmtDate(row.feeLastDate)] : null,
@@ -1442,238 +1242,6 @@ input, textarea, select { font-size: 1rem !important; }
         if (si) { si.style.display = ''; document.getElementById('shortInfoText').textContent = row.shortInfo; }
       }
 
-      /* ── Set as Preferred Source on Google ── */
-      (function populatePreferredSource() {
-        const psCard = document.getElementById('preferredSourceCard');
-        if (!psCard) return;
-
-        /* ── Description: short info truncated to 160 chars ── */
-        const titleText = safe(name || '');
-        const rawDesc = (row && row.shortInfo) || '';
-        let desc;
-        if (rawDesc && rawDesc.length > 20) {
-          desc = rawDesc.length > 160 ? rawDesc.substring(0, 157) + '...' : rawDesc;
-        } else {
-          desc = titleText + ' — Get eligibility, vacancies, last date, salary & apply online at Top Sarkari Jobs.';
-        }
-        const psDesc = document.getElementById('psDesc');
-        if (psDesc) psDesc.textContent = desc;
-
-        /* ── Form Mode ── */
-        let formMode = applyMode || '';
-        if (!formMode) {
-          const slugLc = (window.__TSJ_SLUG || '').toLowerCase();
-          formMode = slugLc.includes('offline') ? 'Offline'
-                   : (slugLc.includes('walkin') || slugLc.includes('walk-in')) ? 'Walk-in'
-                   : 'Online';
-        }
-        const fmEl = document.getElementById('psFormMode');
-        if (fmEl) {
-          const fmLc = formMode.toLowerCase();
-          const cls = fmLc.includes('offline') ? 'offline' : fmLc.includes('walk') ? 'walkin' : 'online';
-          fmEl.innerHTML = '<span class="jp-ps-badge ' + cls + '">' + safe(formMode) + ' Form</span>';
-        }
-
-        /* ── Job State ── */
-        const jobLoc = (row && row.jobLocation) || 'All India';
-        const locEl = document.getElementById('psJobState');
-        if (locEl) locEl.textContent = safe(jobLoc);
-
-        /* ── Total Posts ── */
-        const postsRaw = totalVac || (row && row.totalVac) || 'See Notification';
-        const postsText = (postsRaw && !postsRaw.toLowerCase().includes('post') && !postsRaw.toLowerCase().includes('see'))
-                        ? postsRaw + ' Posts' : postsRaw;
-        const postsEl = document.getElementById('psTotalPosts');
-        if (postsEl) postsEl.textContent = safe(postsText);
-
-        /* ── Job Type ── */
-        const jobTypeRaw = (row && row.jobType) || (parsed && parsed.category && parsed.category.label) || 'Govt Job';
-        const jobTypeShort = jobTypeRaw.length > 18 ? jobTypeRaw.substring(0, 16) + '..' : jobTypeRaw;
-        const jtEl = document.getElementById('psJobType');
-        if (jtEl) jtEl.textContent = safe(jobTypeShort);
-
-        /* ── Organisation ── */
-        const orgEl = document.getElementById('psOrgName');
-        if (orgEl) {
-          const orgRaw = safe(org || '');
-          orgEl.textContent = orgRaw.length > 60 ? orgRaw.substring(0, 58) + '..' : orgRaw;
-          orgEl.title = orgRaw; /* full name on hover */
-        }
-
-        psCard.style.display = '';
-      })();
-
-      /* ── Extra Important Links (from useful_links not in native buttons) ── */
-      // Check if there are useful_links that need a separate "Important Links" row-style card
-      // (The native card above handles Apply/PDF/Website buttons)
-      // We don't need a second card — the dynamic buttons are added inside linksActions above
-      // Prevent duplicate by checking if extra links card already exists
-      if (document.getElementById('extraLinksCard')) {
-        document.getElementById('extraLinksCard').remove();
-      }
-
-      /* ── SEO Tags card ── */
-      const _seoTagsData = (row && row.seoTags) || (window.__tsjRawJob && Array.isArray(window.__tsjRawJob.seo_tags) ? window.__tsjRawJob.seo_tags : null);
-      if (_seoTagsData && Array.isArray(_seoTagsData) && _seoTagsData.length) {
-        let tagsCard = document.getElementById('seoTagsCard');
-        if (!tagsCard) {
-          tagsCard = document.createElement('div');
-          tagsCard.id = 'seoTagsCard';
-          tagsCard.className = 'jp-card';
-          tagsCard.innerHTML =
-            '<div class="jp-sec-head" style="background:linear-gradient(135deg,#475569,#64748b);"><i class="fa-solid fa-tags"></i> SEO Tags</div>' +
-            '<div id="seoTagsWrap" style="display:flex;flex-wrap:wrap;gap:6px;padding:12px 14px;"></div>';
-          // Insert before linksActions parent card
-          // Insert SEO tags after FAQ card (or after links if FAQ not yet rendered)
-          const _insertAfter = document.getElementById('jpFaqCard') || 
-                               document.getElementById('linksActions')?.closest('.jp-card');
-          if (_insertAfter && _insertAfter.parentNode) {
-            _insertAfter.parentNode.insertBefore(tagsCard, _insertAfter.nextSibling);
-          }
-        }
-        const wrap = document.getElementById('seoTagsWrap');
-        if (wrap) {
-          wrap.innerHTML = _seoTagsData.map(t =>
-            '<span style="font-size:.68rem;background:#eff6ff;color:#1d4ed8;border-radius:20px;padding:3px 10px;font-weight:600;">' + safe(String(t||'')) + '</span>'
-          ).join('');
-        }
-      }
-
-      /* ── Important Notice disclaimer ── */
-      if (!document.getElementById('jpDisclaimerCard')) {
-        const disc = document.createElement('div');
-        disc.id = 'jpDisclaimerCard';
-        disc.style.cssText = 'background:#fef3c7;border:1px solid #fbbf24;border-radius:8px;padding:10px 14px;font-size:.75rem;color:#78350f;margin-bottom:14px;display:flex;gap:8px;align-items:flex-start;';
-        disc.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="flex-shrink:0;margin-top:1px;"></i><span><strong>Important:</strong> Always verify all details on the official website before applying. Dates &amp; eligibility may change without notice.</span>';
-        // Insert disclaimer after SEO tags (or after FAQ, or after links)
-        const _discAfter = document.getElementById('seoTagsCard') ||
-                           document.getElementById('jpFaqCard') ||
-                           document.getElementById('linksActions')?.closest('.jp-card');
-        if (_discAfter && _discAfter.parentNode) {
-          _discAfter.parentNode.insertBefore(disc, _discAfter.nextSibling);
-        }
-      }
-
-      /* Expose row data for preferred-source-renderer */
-      window.__TSJ_ROW = row;
-
-      /* ── Internal Linking + Freshness — populate related links & last updated ── */
-      (function populateRelatedLinks() {
-        var listEl = document.getElementById('relatedLinksList');
-        var lastUpdEl = document.getElementById('lastUpdatedDisplay');
-        if (!listEl) return;
-
-        /* Category-based link map */
-        var CAT_LINKS = {
-          'Railway': [
-            ['/section/railway-jobs/', 'Railway Jobs 2026', 'RRB, DFCCIL, Metro'],
-            ['/section/latest-jobs/', 'Latest Sarkari Railway Jobs'],
-            ['/section/admit-card/', 'Railway Admit Card 2026'],
-            ['/section/results/', 'Railway Result 2026'],
-          ],
-          'Bank': [
-            ['/section/bank-jobs/', 'Bank Jobs 2026', 'SBI, PNB, RBI, IBPS'],
-            ['/section/latest-jobs/', 'Latest Bank Sarkari Jobs'],
-            ['/section/admit-card/', 'Bank Exam Admit Card 2026'],
-            ['/section/results/', 'Bank Result 2026'],
-          ],
-          'Police': [
-            ['/section/police-jobs/', 'Police & Defence Jobs 2026'],
-            ['/section/army-jobs/', 'Indian Army Jobs 2026'],
-            ['/section/latest-jobs/', 'Latest Police Sarkari Jobs'],
-            ['/section/results/', 'Police Exam Result 2026'],
-          ],
-          'Teaching': [
-            ['/section/teaching-jobs/', 'Teaching & Faculty Jobs 2026'],
-            ['/section/12th-pass-jobs/', '12th Pass Govt Jobs 2026'],
-            ['/section/latest-jobs/', 'Latest Teaching Jobs'],
-            ['/section/results/', 'Teaching Exam Result 2026'],
-          ],
-          'Medical': [
-            ['/section/medical-jobs/', 'Medical & Hospital Jobs 2026'],
-            ['/section/any-graduate/', 'Graduate Level Govt Jobs'],
-            ['/section/latest-jobs/', 'Latest Medical Sarkari Jobs'],
-            ['/section/results/', 'Medical Exam Result 2026'],
-          ],
-          '10TH': [
-            ['/section/10th-pass-jobs/', '10th Pass Govt Jobs 2026'],
-            ['/section/8th-pass-jobs/', '8th Pass Govt Jobs 2026'],
-            ['/section/iti-jobs/', 'ITI Jobs 2026'],
-            ['/section/latest-jobs/', 'Latest 10th Pass Sarkari Jobs'],
-          ],
-          '12TH': [
-            ['/section/12th-pass-jobs/', '12th Pass Govt Jobs 2026'],
-            ['/section/diploma-jobs/', 'Diploma Jobs 2026'],
-            ['/section/latest-jobs/', 'Latest 12th Pass Sarkari Jobs'],
-            ['/section/upcoming-jobs/', 'Upcoming Govt Jobs 2026'],
-          ],
-          'Graduate': [
-            ['/section/graduation-jobs/', 'Graduation Level Govt Jobs 2026'],
-            ['/section/any-graduate/', 'Any Graduate Govt Jobs 2026'],
-            ['/section/btech-jobs/', 'B.Tech / B.E. Jobs 2026'],
-            ['/section/latest-jobs/', 'Latest Graduate Sarkari Jobs'],
-          ],
-          'DEFAULT': [
-            ['/section/latest-jobs/', 'Latest Sarkari Jobs 2026'],
-            ['/section/upcoming-jobs/', 'Upcoming Govt Jobs 2026'],
-            ['/section/central-jobs/', 'Central Govt Jobs 2026'],
-            ['/section/state-jobs/', 'State Govt Jobs 2026'],
-            ['/section/results/', 'Sarkari Result 2026'],
-          ]
-        };
-
-        /* Determine category from parsed data */
-        var catKey = 'DEFAULT';
-        var catLabel = (parsed && parsed.category && parsed.category.label) || '';
-        var slug = window.__TSJ_SLUG || '';
-        var combined = (catLabel + ' ' + slug).toLowerCase();
-
-        if (combined.includes('railway') || combined.includes('rrb') || combined.includes('metro'))
-          catKey = 'Railway';
-        else if (combined.includes('bank') || combined.includes('sbi') || combined.includes('rbi') || combined.includes('ibps'))
-          catKey = 'Bank';
-        else if (combined.includes('police') || combined.includes('army') || combined.includes('defence') || combined.includes('cisf') || combined.includes('crpf'))
-          catKey = 'Police';
-        else if (combined.includes('teach') || combined.includes('faculty') || combined.includes('tgt') || combined.includes('pgt'))
-          catKey = 'Teaching';
-        else if (combined.includes('medical') || combined.includes('hospital') || combined.includes('mbbs') || combined.includes('nurse'))
-          catKey = 'Medical';
-        else if (combined.includes('10th') || combined.includes('iti') || combined.includes('matric'))
-          catKey = '10TH';
-        else if (combined.includes('12th') || combined.includes('intermediate') || combined.includes('diploma'))
-          catKey = '12TH';
-        else if (combined.includes('graduate') || combined.includes('b.tech') || combined.includes('b.com') || combined.includes('graduation'))
-          catKey = 'Graduate';
-
-        var links = CAT_LINKS[catKey] || CAT_LINKS['DEFAULT'];
-
-        /* Always add these at end */
-        var alwaysLinks = [
-          ['/section/last-date-reminder/', 'Last Date Reminder'],
-          ['/section/offline-form/', 'Offline Forms 2026'],
-        ];
-
-        /* Build HTML */
-        var html = links.map(function(l) {
-          var title = l[2] ? l[0] + ' | ' + l[2] : l[1];
-          return '<li><a href="' + l[0] + '" title="' + l[1] + '">' +
-                 '<i class="fa-solid fa-angle-right"></i>' + l[1] + '</a></li>';
-        }).join('');
-        html += alwaysLinks.map(function(l) {
-          return '<li><a href="' + l[0] + '" title="' + l[1] + '">' +
-                 '<i class="fa-solid fa-angle-right"></i>' + l[1] + '</a></li>';
-        }).join('');
-
-        listEl.innerHTML = html;
-
-        /* Last Updated display */
-        if (lastUpdEl) {
-          var lastUpd = (row && row._updated) || '';
-          var dispDate = lastUpd || new Date().toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'});
-          lastUpdEl.innerHTML = '<i class="fa-regular fa-clock" style="margin-right:4px;"></i>Last Updated: <strong>' + dispDate + '</strong>';
-        }
-      })();
-
       /* ── Important Dates card ── */
       const dateRows = [];
       if (row) {
@@ -1684,41 +1252,11 @@ input, textarea, select { font-size: 1rem !important; }
         if (row.examDate)    dateRows.push({ l: 'Exam Date',               v: fmtDate(row.examDate),    red: false });
         if (row.admitDate)   dateRows.push({ l: 'Admit Card Date',         v: fmtDate(row.admitDate),   red: false });
         if (row.resultDate)  dateRows.push({ l: 'Result Date',             v: fmtDate(row.resultDate),  red: false });
-        // Add any extra date fields from raw JSON (notification date etc.) skipping 'event' garbage
-        const _SKIP_DATE_KEYS = new Set([
-          'event','last_date_to_apply','last_date','application_begin','application_start_date',
-          'exam_date','admit_card_date','result_date','last_date_fee_pay','correction_last_date'
-        ]);
-        for (const [k, v] of Object.entries(_rawDates)) {
-          const kNorm = k.toLowerCase().replace(/\s+/g,'_');
-          if (_SKIP_DATE_KEYS.has(k) || _SKIP_DATE_KEYS.has(kNorm)) continue;
-          // Skip keys that contain 'last_date' or 'last date'
-          if (/last.?date/i.test(k)) continue;
-          const vStr = String(v||'').trim();
-          if (!vStr || /^date$/i.test(vStr) || /^\s*$/.test(vStr)) continue;
-          const label = k.replace(/_/g,' ').replace(/\b./g, c => c.toUpperCase()).trim();
-          const formatted = fmtDate(vStr) || vStr;
-          if (!dateRows.some(r => r.v === formatted || r.l.toLowerCase() === label.toLowerCase())) {
-            dateRows.push({ l: label, v: formatted, red: false });
-          }
-        }
       }
-      // Deduplicate dateRows by value (keep first occurrence)
-      const _seenDateVals = new Set();
-      const _seenDateLabels = new Set();
-      const dateRowsDedup = dateRows.filter(dr => {
-        const vKey = String(dr.v||'').toLowerCase().trim();
-        const lKey = String(dr.l||'').toLowerCase().replace(/<[^>]+>/g,'').trim();
-        if (!vKey || vKey === 'see notification') return true; // keep these
-        if (_seenDateVals.has(vKey) || _seenDateLabels.has(lKey)) return false;
-        _seenDateVals.add(vKey);
-        _seenDateLabels.add(lKey);
-        return true;
-      });
       const datesCard = document.getElementById('datesDetailCard');
-      if (datesCard && dateRowsDedup.length > 0) {
+      if (datesCard && dateRows.length > 0) {
         datesCard.style.display = '';
-        document.getElementById('datesDetailBody').innerHTML = dateRowsDedup.map(dr =>
+        document.getElementById('datesDetailBody').innerHTML = dateRows.map(dr =>
           `<tr><th>${dr.l}</th><td style="${dr.red ? 'color:#dc2626;font-weight:800;' : ''}">${dr.v}</td></tr>`
         ).join('');
         // Also update sidebar dates
@@ -1750,28 +1288,22 @@ input, textarea, select { font-size: 1rem !important; }
       }
 
       /* ── Age Limit card ── */
-      const _ageRaw = (window.__tsjRawJob && window.__tsjRawJob.age_limit) || {};
-      const _ageDetails = safe(_ageRaw.age_details || ''); // "Min: 18 years, Max: 35 years"
-      const _ageFullDetails = safe(_ageRaw.details || ''); // Full relaxation text
-      if (row && (row.minAge || row.maxAge || row.ageRelax || _ageDetails)) {
+      if (row && (row.minAge || row.maxAge || row.ageRelax)) {
         const ageCard = document.getElementById('ageCard');
         if (ageCard) {
           ageCard.style.display = '';
+          const ageRows = [];
+          if (row.minAge)   ageRows.push(['Minimum Age', row.minAge]);
+          if (row.maxAge)   ageRows.push(['Maximum Age', row.maxAge]);
           const ageBody = document.getElementById('ageTableBody');
           if (ageBody) {
-            let ageHtml = '';
-            // Show age_details summary if available
-            if (_ageDetails) {
-              ageHtml += '<tr><th>Age Details</th><td>' + esc(_ageDetails) + '</td></tr>';
-            } else {
-              if (row.minAge) ageHtml += '<tr><th>Minimum Age</th><td>' + esc(row.minAge) + '</td></tr>';
-              if (row.maxAge) ageHtml += '<tr><th>Maximum Age</th><td>' + esc(row.maxAge) + '</td></tr>';
-            }
-            // Show full relaxation details if different from age_details
-            if (_ageFullDetails && _ageFullDetails !== _ageDetails) {
-              ageHtml += '<tr><th style="vertical-align:top;">Age Relaxation</th><td style="font-size:.82rem;line-height:1.6;">' + esc(_ageFullDetails) + '</td></tr>';
-            } else if (row.ageRelax && row.ageRelax !== _ageDetails && row.ageRelax !== _ageFullDetails) {
-              ageHtml += '<tr><th style="vertical-align:top;">Age Relaxation</th><td style="font-size:.82rem;line-height:1.6;">' + esc(row.ageRelax) + '</td></tr>';
+            let ageHtml = ageRows.map(([k,v]) => '<tr><th>' + k + '</th><td>' + v + '</td></tr>').join('');
+            if (row.ageRelax) {
+              if (row.ageRelax.length > 80) {
+                ageHtml += '<tr><th style="vertical-align:top;">Age Relaxation</th><td style="font-size:0.85em;line-height:1.6;">' + row.ageRelax + '</td></tr>';
+              } else {
+                ageHtml += '<tr><th>Age Relaxation</th><td>' + row.ageRelax + '</td></tr>';
+              }
             }
             ageBody.innerHTML = ageHtml;
           }
@@ -1818,14 +1350,9 @@ input, textarea, select { font-size: 1rem !important; }
         const usedCols = colKeys.filter(k => vd.some(r => safe(r[k])));
         const thead = document.getElementById('vacHead') || vacCard.querySelector('thead tr');
         if (thead) thead.innerHTML = usedCols.map(k=>`<th>${colLabels[k]||k}</th>`).join('');
-        vacBody.innerHTML = vd
-          .filter(r => {
-            // Filter out aggregate 'Total' rows
-            const pn = safe(r.post_name || r['Post Name'] || r.name || '').toLowerCase();
-            return pn !== 'total' && pn !== 'grand total' && pn !== 'total posts';
-          })
-          .map(r => `<tr>${usedCols.map(k=>`<td>${safe(r[k])}</td>`).join('')}</tr>`)
-          .join('');
+        vacBody.innerHTML = vd.map(r =>
+          `<tr>${usedCols.map(k=>`<td>${safe(r[k])}</td>`).join('')}</tr>`
+        ).join('');
       } else if (vacCard) {
         /* Category-wise vacancy fallback */
         const cwRows = [];
@@ -1842,72 +1369,6 @@ input, textarea, select { font-size: 1rem !important; }
           const thead = document.getElementById('vacHead') || vacCard.querySelector('thead tr');
           if (thead) thead.innerHTML = '<th>Category</th><th>Vacancies</th>';
           vacBody.innerHTML = cwRows.map(([cat,cnt])=>`<tr><td>${cat}</td><td>${cnt}</td></tr>`).join('');
-        }
-      }
-
-      /* ── FAQ card ── */
-      const _faqData = (row && row.faqData) || (window.__tsjRawJob && (window.__tsjRawJob.faq || (window.__tsjRawJob.basic_details||{}).faq));
-      if (_faqData && Array.isArray(_faqData) && _faqData.length) {
-        let faqCard = document.getElementById('jpFaqCard');
-        if (!faqCard) {
-          faqCard = document.createElement('div');
-          faqCard.id = 'jpFaqCard';
-          faqCard.className = 'jp-card';
-          faqCard.innerHTML =
-            '<div class="jp-sec-head" style="background:linear-gradient(135deg,#374151,#1f2937);"><i class="fa-solid fa-circle-question"></i> FAQ</div>' +
-            '<div id="jpFaqList"></div>';
-          // Insert FAQ BEFORE Important Links (after How To Apply)
-          // Order: How To Apply → FAQ → Important Links → SEO Tags → Disclaimer
-          // Insert FAQ AFTER Important Links
-          const _mainLinksCard = document.getElementById('mainLinksCard');
-          if (_mainLinksCard && _mainLinksCard.parentNode) {
-            _mainLinksCard.parentNode.insertBefore(faqCard, _mainLinksCard.nextSibling);
-          } else {
-            const linksEl = document.getElementById('linksActions');
-            const linksCard2 = linksEl ? linksEl.closest('.jp-card') : null;
-            if (linksCard2 && linksCard2.parentNode) {
-              linksCard2.parentNode.insertBefore(faqCard, linksCard2.nextSibling);
-            }
-          }
-        }
-        const faqList = document.getElementById('jpFaqList');
-        if (faqList) {
-          faqList.innerHTML = _faqData.map(function(f, fi) {
-            var fqId = 'jpfaq-' + fi;
-            return '<div class="qs-faq-item">' +
-              '<div class="qs-faq-q" onclick="var a=document.getElementById(\'jpfa-'+fi+'\');var o=a.classList.toggle(\'open\');this.classList.toggle(\'open\',o);">' +
-              '<span>' + esc(safe(f.question||f.q||'').replace(/^Q\d+\.\s*/i,'Q. ')) + '</span>' +
-              '<i class="fa-solid fa-chevron-down qs-faq-icon"></i></div>' +
-              '<div class="qs-faq-a" id="jpfa-' + fi + '">' + esc(safe(f.answer||f.a||'')) + '</div>' +
-              '</div>';
-          }).join('');
-        }
-      }
-
-      /* ── How To Apply card ── */
-      const _howData = (row && row.howToApply) || (window.__tsjRawJob && (window.__tsjRawJob.how_to_apply || (window.__tsjRawJob.basic_details||{}).how_to_apply));
-      if (_howData) {
-        const howCard = document.getElementById('howCard');
-        const howContent = document.getElementById('howContent');
-        if (howCard && howContent) {
-          howCard.style.display = '';
-          let steps = [];
-          if (Array.isArray(_howData)) steps = _howData;
-          else if (typeof _howData === 'string') steps = _howData.split(/[\n;]/).map(s=>s.trim()).filter(Boolean);
-          function _mdLinks(text) {
-            // Convert markdown [label](url) to <a> tags
-            return esc(text).replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener" style="color:#1d4ed8;font-weight:600;">$1</a>');
-          }
-          if (steps.length > 0) {
-            howContent.innerHTML = steps.map((s, i) =>
-              `<div style="display:flex;gap:10px;margin-bottom:8px;align-items:flex-start;">
-                <span style="background:#0369a1;color:#fff;border-radius:50%;width:20px;height:20px;min-width:20px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;margin-top:1px;">${i+1}</span>
-                <span>${_mdLinks(s)}</span>
-              </div>`
-            ).join('');
-          } else {
-            howContent.textContent = typeof _howData === 'string' ? _howData : '';
-          }
         }
       }
 
@@ -2100,11 +1561,7 @@ input, textarea, select { font-size: 1rem !important; }
         const SKIP = new Set([
           'overview','important dates','application fees','age limit details',
           'selection process','qualification details','pay scale details',
-          'total post & qualification','post wise vacancies',
-          // Skip sections already rendered natively by renderJobPage
-          'important links','important related links','how to apply','how to fill',
-          'faq','frequently asked questions','seo tags','short information',
-          'important notice','notice','disclaimer'
+          'total post & qualification','post wise vacancies'
         ]);
 
         // Only show links with actual URLs (official links only)
@@ -2174,12 +1631,7 @@ input, textarea, select { font-size: 1rem !important; }
         let extraHTML = '';
         rawJob.sections.forEach(function(sec) {
           if (!sec || !sec.title) return;
-          const secTitleLower = sec.title.toLowerCase();
-          if (SKIP.has(secTitleLower)) return;
-          // Skip Set as Preferred Source section
-          if (/set as preferred|preferred source|google.*source/i.test(sec.title)) return;
-          // Skip purely link-based sections (handled by Important Links card)
-          if (/important.*link|useful.*link/i.test(sec.title)) return;
+          if (SKIP.has(sec.title.toLowerCase())) return;
           if (!Array.isArray(sec.content) || !sec.content.length) return;
 
           // Skip if content is only empty
@@ -2211,8 +1663,6 @@ input, textarea, select { font-size: 1rem !important; }
     function renderNonJobPage(name, destUrl, jobRow) {
       layoutJob.style.display = 'none';
       layoutNonJob.style.display = 'block';
-      // Store raw LJN job for about section / links
-      window.__tsjRawLJNJob = (jobRow && jobRow._rawLJN) || null;
 
       const typeInfo = detectNonJobType(name);
 
@@ -2304,57 +1754,10 @@ input, textarea, select { font-size: 1rem !important; }
       }
       document.getElementById('nonJobCtaText').textContent = ctaText;
 
-      /* ── Direct link injection for LATEST_JOBS NEW NON_JOB pages ── */
-      var _ljnLinksInjected = false;
-      if (jobRow && jobRow.category === 'LATEST_JOBS NEW' && Array.isArray(jobRow.usefulLinks)) {
-        // Directly add Apply Online buttons from usefulLinks — bypass complex forEach
-        const _directLinks = jobRow.usefulLinks.slice(0, 5);
-        if (_directLinks.length > 0 && document.getElementById('nonJobLinksActions')) {
-          const _nlActEl = document.getElementById('nonJobLinksActions');
-          const _nlCardEl = document.getElementById('nonJobLinksCard');
-          if (_nlCardEl) _nlCardEl.style.display = '';
-          _nlActEl.innerHTML = _directLinks.map(function(lk) {
-            const href = lk.links || lk.url || lk.href || '';
-            if (!href) return '';
-            const txt = lk.title || lk.name || 'Apply Online';
-            const isApply = /apply|online|aaveden/i.test(txt);
-            const cls = isApply ? 'jp-btn-green' : 'jp-btn-blue';
-            const icon = isApply ? 'fa-paper-plane' : 'fa-link';
-            return '<a href="' + href + '" target="_blank" rel="noopener" class="jp-btn ' + cls + '">' +
-              '<div class="jp-btn-icon"><i class="fa-solid ' + icon + '"></i></div>' +
-              '<div class="jp-btn-label">' + txt.slice(0,30) + '</div>' +
-              '<div class="jp-btn-sub">Apply Now</div></a>';
-          }).filter(Boolean).join('');
-          _ljnLinksInjected = true; // skip njLinks block below
-        }
-      }
-
-      /* ── Pre-process all_links from raw LJN job BEFORE rendering ── */
-      const _hiMapNJ = {'ऑनलाइन आवेदन करें':'Apply Online','आवेदन करें':'Apply Online','नोटिफिकेशन':'Notification PDF','आधिकारिक वेबसाइट':'Official Website','डाउनलोड':'Download PDF','अधिसूचना':'Notification PDF','प्रवेश पत्र':'Admit Card','उत्तर कुंजी':'Answer Key'};
-      const _rawLJNPre = (jobRow && jobRow._rawLJN) || window.__tsjRawLJNJob || null;
-      // Also check window.__latestJobsNewCache for the matching raw job
-      if (!_rawLJNPre && window.__latestJobsNewCache && jobRow && jobRow.title) {
-        const _ljnMatch = window.__latestJobsNewCache.find(function(j) {
-          return j.title && j.title.slice(0,40) === jobRow.title.slice(0,40);
-        });
-        if (_ljnMatch) window.__tsjRawLJNJob = _ljnMatch;
-      }
-      const _rawLJNFinal = _rawLJNPre || window.__tsjRawLJNJob;
-      if (_rawLJNFinal && Array.isArray(_rawLJNFinal.all_links)) {
-        if (!jobRow.usefulLinks) jobRow.usefulLinks = [];
-        _rawLJNFinal.all_links.forEach(function(lk) {
-          if (!lk.url) return;
-          var txt = _hiMapNJ[lk.title||lk.label||''] || lk.title || lk.label || 'Apply Online';
-          // Avoid duplicate
-          var alreadyHas = jobRow.usefulLinks.some(function(u){ return u.links===lk.url||u.href===lk.url; });
-          if (!alreadyHas) jobRow.usefulLinks.push({title: txt, links: lk.url});
-        });
-      }
-
       /* ── Important Links for Non-Job page ── */
       const nlCard    = document.getElementById('nonJobLinksCard');
       const nlActions = document.getElementById('nonJobLinksActions');
-      if (nlCard && nlActions && !_ljnLinksInjected) {
+      if (nlCard && nlActions) {
         const seenNJ = new Set();
         const njLinks = [];
 
@@ -2366,7 +1769,7 @@ input, textarea, select { font-size: 1rem !important; }
           njLinks.push({ href: h, label, icon, cls, sub });
         }
 
-        /* 1. From parsed row (important_links obj) via usefulLinks — now includes all_links */
+        /* 1. From parsed row (important_links obj) via usefulLinks */
         const rowUsefulLinks = (jobRow && jobRow.usefulLinks) || [];
         rowUsefulLinks.forEach(ul => {
           const t = safe(ul.title || ul.name || '');
@@ -2419,81 +1822,7 @@ input, textarea, select { font-size: 1rem !important; }
         }
       }
 
-      /* ── About This / details_page_content paragraphs ── */
-      const _rawLJN = window.__tsjRawLJNJob;
-      if (_rawLJN && _rawLJN.details_page_content) {
-        const dpc = _rawLJN.details_page_content;
-        const paras = (dpc.paragraphs || []).filter(p => p && p.length > 30 && !/Read Also/i.test(p));
-        if (paras.length) {
-          // Inject about card before nonJobLinksCard
-          let aboutCard = document.getElementById('ljnAboutCard');
-          if (!aboutCard) {
-            aboutCard = document.createElement('div');
-            aboutCard.id = 'ljnAboutCard';
-            aboutCard.className = 'jp-card';
-            const aHead = document.createElement('div');
-            aHead.className = 'jp-sec-head';
-            aHead.style.background = 'linear-gradient(135deg,#0f172a,#1e40af)';
-            aHead.innerHTML = '<i class="fa-solid fa-circle-info"></i> About This';
-            aboutCard.appendChild(aHead);
-            const aBody = document.createElement('div');
-            aBody.style.cssText = 'padding:12px 14px;font-size:.82rem;color:#1e293b;line-height:1.7;';
-            aBody.innerHTML = paras.map(p => '<p style="margin-bottom:8px;">' + safe(p) + '</p>').join('');
-            aboutCard.appendChild(aBody);
-            // Insert before nonJobLinksCard
-            const nlcEl = document.getElementById('nonJobLinksCard');
-            if (nlcEl && nlcEl.parentNode) nlcEl.parentNode.insertBefore(aboutCard, nlcEl);
-          }
-        }
-        // all_links already processed above before nlCard render
-      }
-
-      /* Expose row data for preferred-source-renderer */
-      window.__TSJ_ROW = jobRow;
-
       injectSEO(name, rawSlug, null);
-
-      /* ── Set as Preferred Source on Google (non-job pages) ── */
-      (function populatePreferredSourceNonJob() {
-        const psCard = document.getElementById('preferredSourceCardNJ');
-        if (!psCard) return;
-
-        /* Description */
-        const psDesc = document.getElementById('psDescNJ');
-        if (psDesc) {
-          const nm = safe(name || '');
-          psDesc.textContent = nm + ' — Get complete details, official links, download PDF and latest updates at Top Sarkari Jobs.';
-        }
-
-        /* Form Mode */
-        const fmEl = document.getElementById('psFormModeNJ');
-        if (fmEl) {
-          const slugLc = (window.__TSJ_SLUG || '').toLowerCase();
-          const fm = slugLc.includes('offline') ? 'Offline'
-                   : (slugLc.includes('pdf') || slugLc.includes('download')) ? 'Download'
-                   : 'Online';
-          const cls = fm === 'Offline' ? 'offline' : 'online';
-          fmEl.innerHTML = '<span class="jp-ps-badge ' + cls + '">' + fm + ' Link</span>';
-        }
-
-        /* Job State */
-        const locEl = document.getElementById('psJobStateNJ');
-        if (locEl) locEl.textContent = 'All India';
-
-        /* Total Posts */
-        const postsEl = document.getElementById('psTotalPostsNJ');
-        if (postsEl) postsEl.textContent = 'See Notification';
-
-        /* Job Type — safe check for typeInfo null */
-        const jtEl = document.getElementById('psJobTypeNJ');
-        if (jtEl) jtEl.textContent = (typeInfo && typeInfo.label) || 'Govt Service';
-
-        /* Org */
-        const orgEl = document.getElementById('psOrgNameNJ');
-        if (orgEl) orgEl.textContent = 'Top Sarkari Jobs';
-
-        psCard.style.display = '';
-      })();
     }
 
     /* ── Data loading ── */
@@ -2653,7 +1982,7 @@ input, textarea, select { font-size: 1rem !important; }
 
       /* Total vacancy */
       const totalVac = safe(
-        job.total_vacancy || job.total_post || job.total_vacancies || bd.total_vacancies || bd.total_vacancy || ''
+        job.total_vacancy || job.total_vacancies || bd.total_vacancies || ''
       );
 
       /* Apply mode — check more field variants for offline form jobs */
@@ -3042,35 +2371,24 @@ input, textarea, select { font-size: 1rem !important; }
           relax: relaxMatch ? relaxMatch[1].trim() : ''
         };
       }
-      const _ageCombined = safe(age.age_limit || age.age_details || job.age_limit || '');
-      // For Complete_Jobs: age_details = "Min: 18 years, Max: 44 years"
-      const _ageDetailsStr = safe(age.age_details || '');
-      const _ageParsedSrc  = _ageDetailsStr || _ageCombined;
-      const _ageParsed     = _parseAgeLimitStr(_ageParsedSrc);
-      // Extract clean min/max numbers only — not full strings
-      const _minRaw = safe(job.minimum_age || age.minimum_age || _ageParsed.min || '');
-      const _maxRaw = safe(job.maximum_age || age.maximum_age || _ageParsed.max || '');
-      // minAge/maxAge should be short values like "18 years", not full strings
-      const minAge  = _minRaw.length < 25 ? _minRaw : '';
-      const maxAge  = _maxRaw.length < 25 ? _maxRaw : '';
-      const ageRelax = safe(job.age_relaxation || age.age_relaxation || age.details || _ageParsed.relax || '');
+      const _ageCombined = safe(age.age_limit || job.age_limit || '');
+      const _ageParsed   = _parseAgeLimitStr(_ageCombined);
+      const minAge    = safe(job.minimum_age  || age.minimum_age  || _ageParsed.min   || '');
+      const maxAge    = safe(job.maximum_age  || age.maximum_age  || _ageParsed.max   || '');
+      const ageRelax  = safe(job.age_relaxation || age.age_relaxation || age.details  || _ageParsed.relax || _ageCombined || '');
 
       /* Qualification */
       const eduQual   = safe(
         job.education_qualification || job.eligibility ||
-        qual.education_qualification || qual.eligibility ||
-        qual.details || age.details || ''
+        qual.education_qualification || qual.eligibility || ''
       );
       const expReqd   = safe(
         job.experience_required || qual.experience_required || ''
       );
 
       /* Salary */
-      const _salDet = job.salary_details || {};
-      const _salRaw = safe(_salDet.pay_scale || _salDet.salary || _salDet.details || '');
-      // Dedup: if pay_scale === details, show only once
-      const salary = safe(
-        job.salary || job.salary_pay_scale || bd.salary || bd.salary_pay_scale || _salRaw
+      const salary    = safe(
+        job.salary || job.salary_pay_scale || bd.salary || bd.salary_pay_scale || ''
       );
 
       /* Selection process */
@@ -3078,19 +2396,6 @@ input, textarea, select { font-size: 1rem !important; }
 
       /* Short info */
       const shortInfo = safe(job.short_information || job.jobs_info || bd.short_information || '');
-
-      /* Job Type & Location — for Preferred Source card */
-      const _jobTypeCatMap = {
-        '10TH_Pass':'10th Pass Jobs','8TH_Pass':'8th Pass Jobs','12TH_Pass':'12th Pass Jobs',
-        'Diploma':'Diploma Jobs','ITI':'ITI Jobs','B_Tech_BE':'B.Tech/BE Jobs',
-        'Any_Graduate':'Graduate Jobs','Any_Post_Graduate':'Post Graduate Jobs',
-        'Latest_Notifications':'Central Govt Jobs','Railway_Jobs':'Railway Jobs',
-        'Police_Defence':'Police/Defence Jobs','Teaching_Faculty':'Teaching Jobs',
-        'Bank_Jobs':'Bank Jobs','Medical_Hospital':'Medical/Healthcare Jobs'
-      };
-      const _rawJobType = safe(bd.job_type || job.job_type || job.category || '');
-      const jobType = _jobTypeCatMap[_rawJobType] || _rawJobType.replace(/_/g,' ').replace(/[a-z]/g,c=>c.toUpperCase());
-      const jobLocation = safe(bd.job_location || job.job_location || 'All India');
 
       /* Category-wise vacancy */
       const cwVacGen = safe(cwv.general || cwv.ur || '');
@@ -3122,65 +2427,7 @@ input, textarea, select { font-size: 1rem !important; }
         secId: secId || '',
         slug: safe(job.slug || ''),
         category: safe(job.category || ''),
-        fp: urlRedirectFingerprint(safe(job.source_url || officialWebsite || applyOnline)).toLowerCase(),
-        jobType, jobLocation,
-        howToApply: job.how_to_apply || bd.how_to_apply || null,
-        faqData: job.faq || bd.faq || null,
-        seoTags: Array.isArray(job.seo_tags) ? job.seo_tags : (bd.seo_tags ? bd.seo_tags : null),
-        salary: safe(job.salary || job.salary_pay_scale || bd.salary || bd.salary_pay_scale ||
-          (job.salary_details ? (job.salary_details.pay_scale || job.salary_details.salary || '') : '') || ''),
-        vacancyDetails: Array.isArray(job.vacancy_details) ? job.vacancy_details : vd,
-      };
-    }
-
-    /* ── parseLJNJob: parse LATEST_JOBS NEW item ── */
-    function parseLJNJob(job) {
-      if (!job || !job.title) return null;
-      var lnks = job.important_links || {};
-      var allLnks = Array.isArray(job.all_links) ? job.all_links : [];
-      var usefulLinks = [];
-      // Map Hindi labels to English
-      var labelMap = {'ऑनलाइन आवेदन करें':'Apply Online','आवेदन करें':'Apply Online','नोटिफिकेशन':'Notification PDF','डाउनलोड':'Download PDF','आधिकारिक वेबसाइट':'Official Website','परिणाम':'Result','अधिसूचना':'Notification PDF','प्रवेश पत्र':'Admit Card','उत्तर कुंजी':'Answer Key'};
-      allLnks.forEach(function(lk){
-        if(!lk.url) return;
-        var txt = lk.title||lk.label||'';
-        txt = labelMap[txt] || txt || 'Apply Online';
-        // Use {title, links} format — same as parseFullJob usefulLinks
-        usefulLinks.push({title:txt, links:lk.url});
-      });
-      if(lnks.apply_online) usefulLinks.push({title:'Apply Online',links:lnks.apply_online});
-      if(lnks.official_notification) usefulLinks.push({title:'Notification PDF',links:lnks.official_notification});
-      if(lnks.official_website) usefulLinks.push({title:'Official Website',links:lnks.official_website});
-      if(job.official_website_link) usefulLinks.push({title:'Official Website',links:job.official_website_link});
-      if(job.apply_online_link) usefulLinks.push({title:'Apply Online',links:job.apply_online_link});
-      if(job.form_pdf_free_link||job.official_notification_pdf_link)
-        usefulLinks.push({title:'Notification PDF',links:job.form_pdf_free_link||job.official_notification_pdf_link});
-      var seen=new Set();
-      var dedupLinks=usefulLinks.filter(function(l){if(!l.links||seen.has(l.links))return false;seen.add(l.links);return true;});
-      var dates = job.important_dates || {};
-      var titleClean = safe(job.title||'').replace(/\s*-\s*$/,'');
-      var genSlug = titleClean.toLowerCase().replace(/[^a-z0-9\s-]/g,'').replace(/[\s-]+/g,'-').replace(/^-+|-+$/g,'').slice(0,100);
-      var howArr = null;
-      if(job.how_to_apply){
-        if(Array.isArray(job.how_to_apply)) howArr = job.how_to_apply;
-        else if(typeof job.how_to_apply==='string') howArr = job.how_to_apply.split(/[\n;]/).map(function(x){return x.trim();}).filter(Boolean);
-      }
-      return {
-        title:titleClean, slug:genSlug,
-        category:job.category||'LATEST_JOBS NEW',
-        org:safe(job.organization||''), totalVac:safe(job.total_vacancy||''),
-        lastDate:safe(dates.last_date||dates.application_end||''),
-        appBegin:safe(dates.application_start||dates.application_begin||''),
-        applyMode:safe(job.apply_mode||''), salary:'',
-        minAge:safe(job.minimum_age||''), maxAge:safe(job.maximum_age||''), ageRelax:'',
-        shortInfo:safe(job.short_info||job.description||''),
-        howToApply:howArr, faqData:null, seoTags:null,
-        usefulLinks:dedupLinks,
-        destUrl:(dedupLinks[0]&&(dedupLinks[0].links||dedupLinks[0].href||dedupLinks[0].url))||'',
-        refUrl:(dedupLinks[0]&&(dedupLinks[0].links||dedupLinks[0].href||dedupLinks[0].url))||'',
-        fp:'', jobType:safe(job.sub_type||job.entry_type||'Govt Job'),
-        subType:safe(job.entry_type||job.sub_type||''),
-        jobLocation:safe(job.job_location||'All India'),
+        fp: urlRedirectFingerprint(safe(job.source_url || officialWebsite || applyOnline)).toLowerCase()
       };
     }
 
@@ -3305,13 +2552,6 @@ input, textarea, select { font-size: 1rem !important; }
           if (r1.ok) rawMerged = await r1.json();
         } catch (_) {}
 
-        /* Load data/latest-jobs-new.json for LATEST_JOBS NEW detail pages */
-        let rawLatestNew = null;
-        try {
-          const rln = await fetch('/data/latest-jobs-new.json');
-          if (rln.ok) rawLatestNew = await rln.json();
-        } catch (_) {}
-
         /* ALWAYS load Complete_Jobs_Full_Data.json — this is the primary source
            with full important_links, useful_links, etc. for 1300+ jobs */
         let rawFull = null;
@@ -3339,19 +2579,6 @@ input, textarea, select { font-size: 1rem !important; }
             for (const job of rawMerged.sarkariresultshine_jobs) {
               const parsed = parseFullJob(job, 'SR_Offline_Form');
               if (parsed.title) out.push(parsed);
-            }
-          }
-        }
-
-        /* ── Process data/latest-jobs-new.json (LATEST_JOBS NEW section) ── */
-        if (rawLatestNew && Array.isArray(rawLatestNew.jobs)) {
-          // Cache raw jobs for renderNonJobPage lookup
-          window.__latestJobsNewCache = rawLatestNew.jobs;
-          for (const job of rawLatestNew.jobs) {
-            const pj = parseLJNJob(job);
-            if (pj && pj.title) {
-              pj._rawLJN = job;
-              out.push(pj);
             }
           }
         }
@@ -3744,17 +2971,7 @@ input, textarea, select { font-size: 1rem !important; }
              SR_Admit_Card, SR_Result, SR_Latest_Jobs, SR_Answer_Key etc. → always JobPage
              Only fall to nonJob if category explicitly says scheme/khabar AND no usefulLinks */
           const rowCat = safe(row.category || row.secId || '').toLowerCase();
-          // For LATEST_JOBS NEW: check entry_type — NON_JOB should go to nonJobPage
-          // LJN NON_JOB = scheme/yojana/khabar — NOT actual job vacancy
-          // Real jobs (recruitment, vacancy, admit card, result) → renderJobPage
-          const _isRealJobTitle = /recruitment|vacancy|vacancies|apply.*online|notification.*out|result|admit.*card|answer.*key|syllabus|last.*date|form.*out|\d+\s*post/i.test(name);
-          const _hasRealJobLinks = row.usefulLinks && row.usefulLinks.some(function(l){ return l.title && /apply.*online|notification|admit.*card|result|answer.*key/i.test(l.title); });
-          const _isLJNNonJob = (row.category === 'LATEST_JOBS NEW') &&
-                               (row.subType === 'NON_JOB' || row.jobType === 'NON_JOB' || !row.totalVac) &&
-                               !_isRealJobTitle &&
-                               !_hasRealJobLinks;
-          const isJobRow = !_isLJNNonJob && (
-                          rowCat.includes('sr_') ||
+          const isJobRow = rowCat.includes('sr_') ||
                           rowCat.includes('job') ||
                           rowCat.includes('admit') ||
                           rowCat.includes('result') ||
@@ -3762,7 +2979,7 @@ input, textarea, select { font-size: 1rem !important; }
                           rowCat.includes('bank') ||
                           rowCat.includes('police') ||
                           (row.usefulLinks && row.usefulLinks.length > 0) ||
-                          isJobItem(name));
+                          isJobItem(name);
           if (isJobRow) {
             renderJobPage(name, destUrl, parseJob(name), Object.assign({}, row, { destUrl }));
             /* Inject dynamic sections (how_to_apply, faq, exam_pattern, etc.) */
@@ -3797,8 +3014,6 @@ input, textarea, select { font-size: 1rem !important; }
         threeCol.style.display = 'grid';
         window.__TSJ_RENDER_DONE = true;
         /* Notify deferred patch — fire any queued offline patches */
-        /* Expose row for preferred-source-renderer.js */
-        window.__TSJ_ROW = window.__TSJ_ROW || null;
         if (typeof window.__TSJ_ON_RENDER_DONE === 'function') window.__TSJ_ON_RENDER_DONE(window.__TSJ_RAW_JOB);
         /* ALWAYS hide error box — it should only show if explicitly set in catch block */
         if (errorEl) errorEl.style.display = 'none';
@@ -3807,19 +3022,11 @@ input, textarea, select { font-size: 1rem !important; }
   })();
   </script>
 
-  <script src="/script.min.js?v=20260527" defer></script>
+  <script src="/script.js?v=20260522" defer></script>
   <!-- JSON-Driven Dynamic Job Rendering System — PATCH -->
   <script src="/job-renderer-patch.js?v=20260522" defer></script>
   <!-- Universal Dynamic JSON-to-Page Rendering System -->
   <script src="/universal-renderer.js?v=20260524b" defer></script>
-  <!-- Preferred Source on Google — Full Rich Details Renderer -->
-  <script>
-// Disable PSR duplicate injection on job.html — native sections handle all content
-window.__TSJ_PSR_DISABLED = true;
-// Suppress universal-renderer's duplicate Important Links card
-window.__TSJ_SUPPRESS_UDYN_LINKS = true;
-</script>
-<script src="/preferred-source-renderer.js?v=20260527" defer></script>
   <!-- Header height fix: dynamically update --header-height CSS variable -->
   <script>
   (function(){
@@ -3851,7 +3058,7 @@ window.__TSJ_SUPPRESS_UDYN_LINKS = true;
     }
   })();
   </script>
-<script src="/tsj-push.js?v=4.0" defer></script>
-<script src="/tsj-version.js?v=20260528104737" defer></script>
+<script src="/tsj-push.js?v=4.0"></script>
+<script src="/tsj-version.js" defer></script>
 </body>
 </html>
