@@ -887,7 +887,7 @@ input, textarea, select { font-size: 1rem !important; }
             </div>
 
             <!-- Important Links -->
-            <div class="jp-card">
+            <div class="jp-card" id="mainLinksCard">
               <div class="jp-sec-head"><i class="fa-solid fa-link"></i> Important Links</div>
               <div class="jp-actions" id="linksActions">
                 <a id="btnApply" href="#" target="_blank" rel="noopener" class="jp-btn jp-btn-green">
@@ -1419,9 +1419,21 @@ input, textarea, select { font-size: 1rem !important; }
         ['Organisation',         org],
         ['Post Name / Board',    name],
         ['Total Vacancies',      totalVac || 'Various'],
-        ['Job Type',             safe((row && row.category) || parsed.category.label || 'Govt Job')],
+        ['Job Type', (function() {
+          const raw = safe((row && row.category) || parsed.category.label || 'Govt Job');
+          // Humanize category IDs: "12TH_Pass" → "12th Pass", "Latest_Notifications" → "Latest Jobs"
+          const _catMap = {
+            '10TH_Pass':'10th Pass Jobs','8TH_Pass':'8th Pass Jobs','12TH_Pass':'12th Pass Jobs',
+            'Diploma':'Diploma Jobs','ITI':'ITI Jobs','B_Tech_BE':'B.Tech/BE Jobs',
+            'B_Com':'B.Com Jobs','Any_Graduate':'Graduate Jobs','Any_Post_Graduate':'Post Graduate Jobs',
+            'Railway_Jobs':'Railway Jobs','Police_Defence':'Police/Defence Jobs',
+            'Teaching_Faculty':'Teaching Jobs','Bank_Jobs':'Bank Jobs','Medical_Hospital':'Medical Jobs',
+            'Latest_Notifications':'Latest Govt Jobs','Last_Date_Reminder':'Jobs Closing Soon',
+          };
+          return _catMap[raw] || raw.replace(/_/g,' ').replace(/(\d+)(TH|ND|RD|ST)/gi,(m,n,s)=>n+s.toLowerCase());
+        })()],
         ['Application Mode',     applyMode],
-        salary ? ['Salary / Pay Scale', salary] : null,
+        // Salary shown in dedicated Salary card below — skip from Overview
         (row && row.appBegin) ? ['Application Begin',      fmtDate(row.appBegin)]  : null,
         { label: 'Last Date to Apply', val: fmtDate(lastDate), cls: 'lastdate-row' },
         (row && row.feeLastDate) ? ['Fee Payment Last Date', fmtDate(row.feeLastDate)] : null,
@@ -1504,6 +1516,15 @@ input, textarea, select { font-size: 1rem !important; }
 
         psCard.style.display = '';
       })();
+
+      /* ── Extra Important Links (from useful_links not in native buttons) ── */
+      // Check if there are useful_links that need a separate "Important Links" row-style card
+      // (The native card above handles Apply/PDF/Website buttons)
+      // We don't need a second card — the dynamic buttons are added inside linksActions above
+      // Prevent duplicate by checking if extra links card already exists
+      if (document.getElementById('extraLinksCard')) {
+        document.getElementById('extraLinksCard').remove();
+      }
 
       /* ── SEO Tags card ── */
       const _seoTagsData = (row && row.seoTags) || (window.__tsjRawJob && Array.isArray(window.__tsjRawJob.seo_tags) ? window.__tsjRawJob.seo_tags : null);
@@ -1678,20 +1699,40 @@ input, textarea, select { font-size: 1rem !important; }
         if (row.admitDate)   dateRows.push({ l: 'Admit Card Date',         v: fmtDate(row.admitDate),   red: false });
         if (row.resultDate)  dateRows.push({ l: 'Result Date',             v: fmtDate(row.resultDate),  red: false });
         // Add any extra date fields from raw JSON (notification date etc.) skipping 'event' garbage
-        const _SKIP_DATE_KEYS = new Set(['event','last_date_to_apply','application_begin','application_start_date','exam_date','admit_card_date','result_date','last_date_fee_pay','correction_last_date']);
+        const _SKIP_DATE_KEYS = new Set([
+          'event','last_date_to_apply','last_date','application_begin','application_start_date',
+          'exam_date','admit_card_date','result_date','last_date_fee_pay','correction_last_date'
+        ]);
         for (const [k, v] of Object.entries(_rawDates)) {
-          if (_SKIP_DATE_KEYS.has(k) || !v || /^date$/i.test(String(v).trim())) continue;
-          const label = k.replace(/_/g,' ').replace(/[a-z]/g, c=>c.toUpperCase());
-          const formatted = fmtDate(String(v));
-          if (formatted && !dateRows.some(r => r.v === formatted)) {
+          const kNorm = k.toLowerCase().replace(/\s+/g,'_');
+          if (_SKIP_DATE_KEYS.has(k) || _SKIP_DATE_KEYS.has(kNorm)) continue;
+          // Skip keys that contain 'last_date' or 'last date'
+          if (/last.?date/i.test(k)) continue;
+          const vStr = String(v||'').trim();
+          if (!vStr || /^date$/i.test(vStr) || /^\s*$/.test(vStr)) continue;
+          const label = k.replace(/_/g,' ').replace(/\b./g, c => c.toUpperCase()).trim();
+          const formatted = fmtDate(vStr) || vStr;
+          if (!dateRows.some(r => r.v === formatted || r.l.toLowerCase() === label.toLowerCase())) {
             dateRows.push({ l: label, v: formatted, red: false });
           }
         }
       }
+      // Deduplicate dateRows by value (keep first occurrence)
+      const _seenDateVals = new Set();
+      const _seenDateLabels = new Set();
+      const dateRowsDedup = dateRows.filter(dr => {
+        const vKey = String(dr.v||'').toLowerCase().trim();
+        const lKey = String(dr.l||'').toLowerCase().replace(/<[^>]+>/g,'').trim();
+        if (!vKey || vKey === 'see notification') return true; // keep these
+        if (_seenDateVals.has(vKey) || _seenDateLabels.has(lKey)) return false;
+        _seenDateVals.add(vKey);
+        _seenDateLabels.add(lKey);
+        return true;
+      });
       const datesCard = document.getElementById('datesDetailCard');
-      if (datesCard && dateRows.length > 0) {
+      if (datesCard && dateRowsDedup.length > 0) {
         datesCard.style.display = '';
-        document.getElementById('datesDetailBody').innerHTML = dateRows.map(dr =>
+        document.getElementById('datesDetailBody').innerHTML = dateRowsDedup.map(dr =>
           `<tr><th>${dr.l}</th><td style="${dr.red ? 'color:#dc2626;font-weight:800;' : ''}">${dr.v}</td></tr>`
         ).join('');
         // Also update sidebar dates
@@ -1723,22 +1764,28 @@ input, textarea, select { font-size: 1rem !important; }
       }
 
       /* ── Age Limit card ── */
-      if (row && (row.minAge || row.maxAge || row.ageRelax)) {
+      const _ageRaw = (window.__tsjRawJob && window.__tsjRawJob.age_limit) || {};
+      const _ageDetails = safe(_ageRaw.age_details || ''); // "Min: 18 years, Max: 35 years"
+      const _ageFullDetails = safe(_ageRaw.details || ''); // Full relaxation text
+      if (row && (row.minAge || row.maxAge || row.ageRelax || _ageDetails)) {
         const ageCard = document.getElementById('ageCard');
         if (ageCard) {
           ageCard.style.display = '';
-          const ageRows = [];
-          if (row.minAge)   ageRows.push(['Minimum Age', row.minAge]);
-          if (row.maxAge)   ageRows.push(['Maximum Age', row.maxAge]);
           const ageBody = document.getElementById('ageTableBody');
           if (ageBody) {
-            let ageHtml = ageRows.map(([k,v]) => '<tr><th>' + k + '</th><td>' + v + '</td></tr>').join('');
-            if (row.ageRelax) {
-              if (row.ageRelax.length > 80) {
-                ageHtml += '<tr><th style="vertical-align:top;">Age Relaxation</th><td style="font-size:0.85em;line-height:1.6;">' + row.ageRelax + '</td></tr>';
-              } else {
-                ageHtml += '<tr><th>Age Relaxation</th><td>' + row.ageRelax + '</td></tr>';
-              }
+            let ageHtml = '';
+            // Show age_details summary if available
+            if (_ageDetails) {
+              ageHtml += '<tr><th>Age Details</th><td>' + esc(_ageDetails) + '</td></tr>';
+            } else {
+              if (row.minAge) ageHtml += '<tr><th>Minimum Age</th><td>' + esc(row.minAge) + '</td></tr>';
+              if (row.maxAge) ageHtml += '<tr><th>Maximum Age</th><td>' + esc(row.maxAge) + '</td></tr>';
+            }
+            // Show full relaxation details if different from age_details
+            if (_ageFullDetails && _ageFullDetails !== _ageDetails) {
+              ageHtml += '<tr><th style="vertical-align:top;">Age Relaxation</th><td style="font-size:.82rem;line-height:1.6;">' + esc(_ageFullDetails) + '</td></tr>';
+            } else if (row.ageRelax && row.ageRelax !== _ageDetails && row.ageRelax !== _ageFullDetails) {
+              ageHtml += '<tr><th style="vertical-align:top;">Age Relaxation</th><td style="font-size:.82rem;line-height:1.6;">' + esc(row.ageRelax) + '</td></tr>';
             }
             ageBody.innerHTML = ageHtml;
           }
@@ -1785,9 +1832,14 @@ input, textarea, select { font-size: 1rem !important; }
         const usedCols = colKeys.filter(k => vd.some(r => safe(r[k])));
         const thead = document.getElementById('vacHead') || vacCard.querySelector('thead tr');
         if (thead) thead.innerHTML = usedCols.map(k=>`<th>${colLabels[k]||k}</th>`).join('');
-        vacBody.innerHTML = vd.map(r =>
-          `<tr>${usedCols.map(k=>`<td>${safe(r[k])}</td>`).join('')}</tr>`
-        ).join('');
+        vacBody.innerHTML = vd
+          .filter(r => {
+            // Filter out aggregate 'Total' rows
+            const pn = safe(r.post_name || r['Post Name'] || r.name || '').toLowerCase();
+            return pn !== 'total' && pn !== 'grand total' && pn !== 'total posts';
+          })
+          .map(r => `<tr>${usedCols.map(k=>`<td>${safe(r[k])}</td>`).join('')}</tr>`)
+          .join('');
       } else if (vacCard) {
         /* Category-wise vacancy fallback */
         const cwRows = [];
@@ -1836,7 +1888,7 @@ input, textarea, select { font-size: 1rem !important; }
             var fqId = 'jpfaq-' + fi;
             return '<div class="qs-faq-item">' +
               '<div class="qs-faq-q" onclick="var a=document.getElementById(\'jpfa-'+fi+'\');var o=a.classList.toggle(\'open\');this.classList.toggle(\'open\',o);">' +
-              '<span>Q. ' + esc(safe(f.question||f.q||'')) + '</span>' +
+              '<span>' + esc(safe(f.question||f.q||'').replace(/^Q\d+\.\s*/i,'Q. ')) + '</span>' +
               '<i class="fa-solid fa-chevron-down qs-faq-icon"></i></div>' +
               '<div class="qs-faq-a" id="jpfa-' + fi + '">' + esc(safe(f.answer||f.a||'')) + '</div>' +
               '</div>';
@@ -1854,11 +1906,15 @@ input, textarea, select { font-size: 1rem !important; }
           let steps = [];
           if (Array.isArray(_howData)) steps = _howData;
           else if (typeof _howData === 'string') steps = _howData.split(/[\n;]/).map(s=>s.trim()).filter(Boolean);
+          function _mdLinks(text) {
+            // Convert markdown [label](url) to <a> tags
+            return esc(text).replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener" style="color:#1d4ed8;font-weight:600;">$1</a>');
+          }
           if (steps.length > 0) {
             howContent.innerHTML = steps.map((s, i) =>
               `<div style="display:flex;gap:10px;margin-bottom:8px;align-items:flex-start;">
                 <span style="background:#0369a1;color:#fff;border-radius:50%;width:20px;height:20px;min-width:20px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;margin-top:1px;">${i+1}</span>
-                <span>${safe(s)}</span>
+                <span>${_mdLinks(s)}</span>
               </div>`
             ).join('');
           } else {
@@ -2056,7 +2112,11 @@ input, textarea, select { font-size: 1rem !important; }
         const SKIP = new Set([
           'overview','important dates','application fees','age limit details',
           'selection process','qualification details','pay scale details',
-          'total post & qualification','post wise vacancies'
+          'total post & qualification','post wise vacancies',
+          // Skip sections already rendered natively by renderJobPage
+          'important links','important related links','how to apply','how to fill',
+          'faq','frequently asked questions','seo tags','short information',
+          'important notice','notice','disclaimer'
         ]);
 
         // Only show links with actual URLs (official links only)
@@ -2126,7 +2186,12 @@ input, textarea, select { font-size: 1rem !important; }
         let extraHTML = '';
         rawJob.sections.forEach(function(sec) {
           if (!sec || !sec.title) return;
-          if (SKIP.has(sec.title.toLowerCase())) return;
+          const secTitleLower = sec.title.toLowerCase();
+          if (SKIP.has(secTitleLower)) return;
+          // Skip Set as Preferred Source section
+          if (/set as preferred|preferred source|google.*source/i.test(sec.title)) return;
+          // Skip purely link-based sections (handled by Important Links card)
+          if (/important.*link|useful.*link/i.test(sec.title)) return;
           if (!Array.isArray(sec.content) || !sec.content.length) return;
 
           // Skip if content is only empty
@@ -2912,14 +2977,17 @@ input, textarea, select { font-size: 1rem !important; }
         };
       }
       const _ageCombined = safe(age.age_limit || age.age_details || job.age_limit || '');
-      const _ageParsed   = _parseAgeLimitStr(_ageCombined);
-      // age_details = "Min: 18 years, Max: 44 years" — parse it
+      // For Complete_Jobs: age_details = "Min: 18 years, Max: 44 years"
       const _ageDetailsStr = safe(age.age_details || '');
-      const _minFromDetails = _ageDetailsStr.match(/Min(?:imum)?\s*(?:Age)?\s*[:\-]?\s*([\d]+\s*(?:years?)?)/i);
-      const _maxFromDetails = _ageDetailsStr.match(/Max(?:imum)?\s*(?:Age)?\s*[:\-]?\s*([\d]+\s*(?:years?)?)/i);
-      const minAge    = safe(job.minimum_age  || age.minimum_age  || _ageParsed.min   || (_minFromDetails && _minFromDetails[1]) || '');
-      const maxAge    = safe(job.maximum_age  || age.maximum_age  || _ageParsed.max   || (_maxFromDetails && _maxFromDetails[1]) || '');
-      const ageRelax  = safe(job.age_relaxation || age.age_relaxation || age.details || _ageParsed.relax || _ageCombined || '');
+      const _ageParsedSrc  = _ageDetailsStr || _ageCombined;
+      const _ageParsed     = _parseAgeLimitStr(_ageParsedSrc);
+      // Extract clean min/max numbers only — not full strings
+      const _minRaw = safe(job.minimum_age || age.minimum_age || _ageParsed.min || '');
+      const _maxRaw = safe(job.maximum_age || age.maximum_age || _ageParsed.max || '');
+      // minAge/maxAge should be short values like "18 years", not full strings
+      const minAge  = _minRaw.length < 25 ? _minRaw : '';
+      const maxAge  = _maxRaw.length < 25 ? _maxRaw : '';
+      const ageRelax = safe(job.age_relaxation || age.age_relaxation || age.details || _ageParsed.relax || '');
 
       /* Qualification */
       const eduQual   = safe(
@@ -2933,9 +3001,10 @@ input, textarea, select { font-size: 1rem !important; }
 
       /* Salary */
       const _salDet = job.salary_details || {};
-      const salary    = safe(
-        job.salary || job.salary_pay_scale || bd.salary || bd.salary_pay_scale ||
-        _salDet.pay_scale || _salDet.salary || _salDet.details || ''
+      const _salRaw = safe(_salDet.pay_scale || _salDet.salary || _salDet.details || '');
+      // Dedup: if pay_scale === details, show only once
+      const salary = safe(
+        job.salary || job.salary_pay_scale || bd.salary || bd.salary_pay_scale || _salRaw
       );
 
       /* Selection process */
@@ -2945,7 +3014,16 @@ input, textarea, select { font-size: 1rem !important; }
       const shortInfo = safe(job.short_information || job.jobs_info || bd.short_information || '');
 
       /* Job Type & Location — for Preferred Source card */
-      const jobType     = safe(bd.job_type || job.job_type || '');
+      const _jobTypeCatMap = {
+        '10TH_Pass':'10th Pass Jobs','8TH_Pass':'8th Pass Jobs','12TH_Pass':'12th Pass Jobs',
+        'Diploma':'Diploma Jobs','ITI':'ITI Jobs','B_Tech_BE':'B.Tech/BE Jobs',
+        'Any_Graduate':'Graduate Jobs','Any_Post_Graduate':'Post Graduate Jobs',
+        'Latest_Notifications':'Central Govt Jobs','Railway_Jobs':'Railway Jobs',
+        'Police_Defence':'Police/Defence Jobs','Teaching_Faculty':'Teaching Jobs',
+        'Bank_Jobs':'Bank Jobs','Medical_Hospital':'Medical/Healthcare Jobs'
+      };
+      const _rawJobType = safe(bd.job_type || job.job_type || job.category || '');
+      const jobType = _jobTypeCatMap[_rawJobType] || _rawJobType.replace(/_/g,' ').replace(/[a-z]/g,c=>c.toUpperCase());
       const jobLocation = safe(bd.job_location || job.job_location || 'All India');
 
       /* Category-wise vacancy */
