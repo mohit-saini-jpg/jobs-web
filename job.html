@@ -3075,16 +3075,24 @@ input, textarea, select { font-size: 1rem !important; }
       var lnks = job.important_links || {};
       var allLnks = Array.isArray(job.all_links) ? job.all_links : [];
       var usefulLinks = [];
-      allLnks.forEach(function(lk){ if(lk.url) usefulLinks.push({text:lk.title||lk.label||'Link',href:lk.url}); });
-      if(lnks.apply_online) usefulLinks.push({text:'Apply Online',href:lnks.apply_online});
-      if(lnks.official_notification) usefulLinks.push({text:'Notification PDF',href:lnks.official_notification});
-      if(lnks.official_website) usefulLinks.push({text:'Official Website',href:lnks.official_website});
-      if(job.official_website_link) usefulLinks.push({text:'Official Website',href:job.official_website_link});
-      if(job.apply_online_link) usefulLinks.push({text:'Apply Online',href:job.apply_online_link});
+      // Map Hindi labels to English
+      var labelMap = {'ऑनलाइन आवेदन करें':'Apply Online','आवेदन करें':'Apply Online','नोटिफिकेशन':'Notification PDF','डाउनलोड':'Download PDF','आधिकारिक वेबसाइट':'Official Website','परिणाम':'Result','अधिसूचना':'Notification PDF','प्रवेश पत्र':'Admit Card','उत्तर कुंजी':'Answer Key'};
+      allLnks.forEach(function(lk){
+        if(!lk.url) return;
+        var txt = lk.title||lk.label||'';
+        txt = labelMap[txt] || txt || 'Apply Online';
+        // Use {title, links} format — same as parseFullJob usefulLinks
+        usefulLinks.push({title:txt, links:lk.url});
+      });
+      if(lnks.apply_online) usefulLinks.push({title:'Apply Online',links:lnks.apply_online});
+      if(lnks.official_notification) usefulLinks.push({title:'Notification PDF',links:lnks.official_notification});
+      if(lnks.official_website) usefulLinks.push({title:'Official Website',links:lnks.official_website});
+      if(job.official_website_link) usefulLinks.push({title:'Official Website',links:job.official_website_link});
+      if(job.apply_online_link) usefulLinks.push({title:'Apply Online',links:job.apply_online_link});
       if(job.form_pdf_free_link||job.official_notification_pdf_link)
-        usefulLinks.push({text:'Notification PDF',href:job.form_pdf_free_link||job.official_notification_pdf_link});
+        usefulLinks.push({title:'Notification PDF',links:job.form_pdf_free_link||job.official_notification_pdf_link});
       var seen=new Set();
-      var dedupLinks=usefulLinks.filter(function(l){if(!l.href||seen.has(l.href))return false;seen.add(l.href);return true;});
+      var dedupLinks=usefulLinks.filter(function(l){if(!l.links||seen.has(l.links))return false;seen.add(l.links);return true;});
       var dates = job.important_dates || {};
       var titleClean = safe(job.title||'').replace(/\s*-\s*$/,'');
       var genSlug = titleClean.toLowerCase().replace(/[^a-z0-9\s-]/g,'').replace(/[\s-]+/g,'-').replace(/^-+|-+$/g,'').slice(0,100);
