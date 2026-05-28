@@ -102,21 +102,16 @@
     .udyn-inst-item i{color:#ea580c;flex-shrink:0;margin-top:3px}
     /* ── Important Links ── */
     .udyn-links-list{list-style:none;margin:0;padding:0}
-    .udyn-link-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #f1f5f9;font-size:.83rem;flex-wrap:wrap}
+    .udyn-link-row{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid #f1f5f9;font-size:.83rem}
     .udyn-link-row:last-child{border-bottom:none}
-    .udyn-link-label{color:#374151;font-weight:600;flex:1 1 160px;min-width:0;word-break:break-word;overflow-wrap:anywhere;line-height:1.4;display:flex;align-items:center;gap:4px}
-    .udyn-link-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:6px;font-size:.78rem;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;max-width:100%}
+    .udyn-link-label{color:#374151;font-weight:600;flex:1;min-width:120px}
+    .udyn-link-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:6px;font-size:.78rem;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0}
     .udyn-link-apply{background:#16a34a;color:#fff}
     .udyn-link-pdf{background:#dc2626;color:#fff}
     .udyn-link-website{background:#1d4ed8;color:#fff}
     .udyn-link-login{background:#7c3aed;color:#fff}
     .udyn-link-video{background:#dc2626;color:#fff}
     .udyn-link-default{background:#475569;color:#fff}
-    .udyn-link-apply:hover{background:#15803d}
-    .udyn-link-pdf:hover{background:#b91c1c}
-    .udyn-link-website:hover{background:#1e3a8a}
-    .udyn-link-login:hover{background:#6d28d9}
-    .udyn-link-default:hover{background:#334155}
     /* ── Salary ── */
     .udyn-sal-val{color:#16a34a}
     /* ── Responsive ── */
@@ -125,9 +120,9 @@
       .udyn-vac-table th,.udyn-vac-table td{padding:6px 7px}
       .udyn-gen-table{font-size:.76rem}
       .udyn-gen-table th,.udyn-gen-table td{padding:7px 9px;word-break:break-word}
-      .udyn-link-row{flex-wrap:wrap;gap:6px;padding:10px 12px}
-      .udyn-link-label{flex:1 1 100%;min-width:unset;width:100%;font-size:.79rem}
-      .udyn-link-btn{width:100%;justify-content:center;padding:9px 12px;font-size:.82rem;border-radius:8px}
+      .udyn-link-row{flex-wrap:wrap;gap:6px}
+      .udyn-link-label{min-width:unset;width:100%;font-size:.79rem}
+      .udyn-link-btn{width:100%;justify-content:center;padding:7px 12px;font-size:.8rem}
       .udyn-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
       .udyn-head{font-size:.82rem;padding:8px 12px}
       .udyn-table-scroll{-webkit-overflow-scrolling:touch;overflow-x:auto}
@@ -266,8 +261,7 @@
       job.application_fee = job.application_fees;
     }
 
-    // ── UNIVERSAL LINK DETECTION ──────────────────────────────────────
-    // Step 1: Hardcoded known flat-field links (merged_sarkari format)
+    // ── Collect ALL URLs from flat merged-sarkari link fields ─────────
     const MERGED_LINK_MAP = {
       apply_online_link:              { label: 'Apply Online',            type: 'apply'   },
       form_pdf_free_link:             { label: 'Application Form (Free)', type: 'pdf'     },
@@ -277,10 +271,6 @@
       official_website_link:          { label: 'Official Website',        type: 'website' },
       apply_online:                   { label: 'Apply Online',            type: 'apply'   },
       source_url:                     { label: 'Source / Apply Link',     type: 'apply'   },
-      notification_pdf:               { label: 'Official Notification PDF', type: 'pdf'   },
-      official_website:               { label: 'Official Website',        type: 'website' },
-      download_link:                  { label: 'Download Link',           type: 'pdf'     },
-      apply_link:                     { label: 'Apply Online',            type: 'apply'   },
     };
 
     // Build or augment important_links_obj (our canonical link store)
@@ -293,88 +283,7 @@
       }
     }
 
-    // Step 2: DYNAMIC universal scan — find ALL top-level fields that contain a URL
-    // This catches any custom key names not in MERGED_LINK_MAP
-    const NON_LINK_KEYS = new Set([
-      'basic_details','important_dates','application_fee','application_fees',
-      'age_limit','qualification','vacancy_details','category_wise_vacancy',
-      'salary_details','selection_process','exam_pattern','syllabus',
-      'physical_eligibility','physical_standards','how_to_apply','important_instructions',
-      'important_links','important_links_obj','faq','faqs','seo_tags','category',
-      'slug','title','post_name','organization','board_name','department',
-      'total_vacancy','total_vacancies','total_post','apply_mode','application_mode','mode',
-      'last_date','last_date_to_apply','application_begin','exam_date',
-      'salary','salary_pay_scale','minimum_age','maximum_age','age_relaxation',
-      'education_qualification','eligibility','experience_required',
-      'short_information','jobs_info','listing_date','last_updated','apply_process',
-      'post_date','status','sequence','job_location','job_type',
-      'homepage_serial','closing_date','application_last_date','instructions',
-      'tables','sections','text_sections','id','name','date','lastDate','postDate',
-      'board','detail','state','items','_udyn_links','jobs_info',
-      'how_to_apply','vacancy_details','category_wise_vacancy','notification_number',
-    ]);
-    // Keys already handled by MERGED_LINK_MAP
-    const ALREADY_HANDLED = new Set(Object.keys(MERGED_LINK_MAP));
-
-    for (const [k, v] of Object.entries(job)) {
-      if (NON_LINK_KEYS.has(k) || ALREADY_HANDLED.has(k) || k.startsWith('_')) continue;
-      if (typeof v === 'string' && isUrl(v)) {
-        const type = classifyLinkKey(k, v);
-        const label = smartLinkLabel(k, v, 0);
-        job._udyn_links.push({ label, url: v, type });
-      }
-    }
-
-    // Step 3: dailyupdates.json items format { name, url } — treat url as primary link
-    // Each section item has: { name: "Title", url: "https://..." }
-    if (job.url && isUrl(safe(job.url)) && !job.important_links) {
-      const itemUrl = safe(job.url);
-      const itemName = safe(job.name || job.title || '');
-      const type = classifyLinkKey(itemName, itemUrl);
-      job._udyn_links.push({
-        label: itemName || smartLinkLabel('link', itemUrl, 0),
-        url: itemUrl,
-        type
-      });
-    }
-
-    // Step 4: Deep recursive scan for URLs in ANY remaining field not yet handled
-    // This is the ultimate fallback to catch completely custom/future field names
-    const _alreadyCollected = new Set(job._udyn_links.map(l => l.url));
-    function _deepScanForLinks(obj, parentKey, depth) {
-      if (!obj || depth > 4) return;
-      if (typeof obj === 'string') {
-        if (isUrl(obj) && !_alreadyCollected.has(obj)) {
-          // Skip non-link keys (dates, text fields, etc.)
-          const pk = safe(parentKey).toLowerCase();
-          if (/date|time|age|fee|salary|text|info|title|name|org|dept|board|desc|detail|step|rule|instruction|category|mode|type|location|address|status|note|phone|email|fax|pin|format|sequence|serial/i.test(pk)) return;
-          _alreadyCollected.add(obj);
-          job._udyn_links.push({
-            label: smartLinkLabel(parentKey, obj, 0),
-            url: obj,
-            type: classifyLinkKey(parentKey, obj)
-          });
-        }
-        return;
-      }
-      if (Array.isArray(obj)) {
-        obj.forEach((item, i) => _deepScanForLinks(item, parentKey, depth + 1));
-        return;
-      }
-      if (typeof obj === 'object') {
-        for (const [k, v] of Object.entries(obj)) {
-          // Skip already-handled top-level keys and internal keys
-          if (depth === 0 && (NON_LINK_KEYS.has(k) || ALREADY_HANDLED.has(k) || k.startsWith('_'))) continue;
-          _deepScanForLinks(v, k, depth + 1);
-        }
-      }
-    }
-    // Run deep scan on important_links only (already processed at top level above)
-    // Also run on any top-level objects that might have nested URLs
-    const DEEP_SCAN_KEYS = ['useful_links','all_links','links','extra_links','related_links','more_links'];
-    for (const key of DEEP_SCAN_KEYS) {
-      if (job[key]) _deepScanForLinks(job[key], key, 1);
-    }
+    // ── Parse important_links dict ────────────────────────────────────
     // Handles: { click_here: [url1, url2], notification_pdf: url, login: url, … }
     const il = job.important_links;
     if (il && typeof il === 'object' && !Array.isArray(il)) {
@@ -433,22 +342,6 @@
       }
     }
 
-    // ── Parse all_links array ─────────────────────────────────────────
-    // Format: [{ label, title, url }, ...]
-    if (Array.isArray(job.all_links)) {
-      for (const item of job.all_links) {
-        if (!item || typeof item !== 'object') continue;
-        const url = safe(item.url || item.link || item.href || '');
-        const label = safe(item.label || item.title || item.text || item.name || '');
-        if (!isUrl(url)) continue;
-        job._udyn_links.push({
-          label: label || smartLinkLabel('link', url, 0),
-          url,
-          type: classifyLinkKey(label || 'link', url)
-        });
-      }
-    }
-
     // ── Deduplicate links ─────────────────────────────────────────────
     const seen = new Set();
     job._udyn_links = job._udyn_links.filter(l => {
@@ -478,10 +371,10 @@
 
   /** Generate a smart human-readable label for a link */
   function smartLinkLabel(key, url, index) {
-    if (/notification.?pdf|official.?notif/i.test(key)) return 'Official Notification PDF';
+    const k = safe(key).toLowerCase().replace(/_/g,' ');
+    if (/notification_pdf|official_notif/i.test(key)) return 'Official Notification PDF';
     if (/login/i.test(key)) return 'Candidate Login';
-    if (/click.?here.?to.?apply|apply.?now/i.test(key)) return 'Apply Online';
-    if (/click.?here/i.test(key)) {
+    if (/click_here/i.test(key)) {
       // Guess from URL content
       if (/login|candidate/i.test(url)) return 'Candidate Login / Apply Online';
       if (isPdf(url)) return 'Download Notification PDF';
@@ -489,23 +382,11 @@
       if (index > 1) return `Link ${index}`;
       return 'Apply / Official Link';
     }
-    if (/apply.?link|apply.?online|apply.?form/i.test(key)) return 'Apply Online';
-    if (/^apply$/i.test(key.trim())) return 'Apply Online';
     if (/apply/i.test(key)) return 'Apply Online';
-    if (/visit.?web/i.test(key)) return 'Visit Official Website';
-    if (/official.?web|official.?site/i.test(key)) return 'Official Website';
+    if (/official/i.test(key)) return 'Official Website';
     if (/notification|advt|advertisement/i.test(key)) return 'Official Notification';
-    if (/download/i.test(key)) return isPdf(url) ? 'Download PDF' : 'Download Link';
     if (/pdf/i.test(key) || isPdf(url)) return 'Download PDF';
     if (/website|home/i.test(key)) return 'Official Website';
-    if (/official/i.test(key)) return 'Official Website';
-    // link_1, link_2, link1, link2 etc.
-    const linkNum = key.match(/link[_\s]?(\d+)/i);
-    if (linkNum) return `Link ${linkNum[1]}`;
-    // Domain-style keys: aiimsgorakhpur_edu_in → AIIMS Gorakhpur (Official)
-    if (/_edu_in$|_gov_in$|_nic_in$|_org_in$/i.test(key)) {
-      return keyToLabel(key.replace(/_(edu|gov|nic|org)_in$/i, '')) + ' (Official)';
-    }
     return keyToLabel(key);
   }
 
@@ -743,7 +624,7 @@
     'post_date','status','useful_links','sequence','job_location','job_type',
     'homepage_serial','closing_date','application_last_date','instructions',
     'tables','sections','text_sections','id','name','url','date','lastDate','postDate',
-    'board','detail','_udyn_links','state','items','all_links',
+    'board','detail','_udyn_links','state','items',
   ]);
 
   function exUnknown(job) {
@@ -1289,53 +1170,26 @@
   function cardLinks(links) {
     if (!links || !links.length) return null;
 
-    // Sort: apply first, then login, then pdf, then website, then others
-    const ORDER = { apply: 0, login: 1, pdf: 2, website: 3, video: 4, default: 5 };
-    const sorted = [...links].sort((a, b) => (ORDER[a.type] ?? 5) - (ORDER[b.type] ?? 5));
+    // Sort: apply first, then pdf, then website, then others
+    const ORDER = { apply: 0, login: 1, pdf: 2, website: 3, default: 4 };
+    const sorted = [...links].sort((a, b) => (ORDER[a.type] || 4) - (ORDER[b.type] || 4));
 
-    const typeStyle = {
-      apply:   'udyn-link-apply',
-      login:   'udyn-link-login',
-      pdf:     'udyn-link-pdf',
-      website: 'udyn-link-website',
-      video:   'udyn-link-video',
-      default: 'udyn-link-default'
-    };
-    const typeLabel = {
-      apply:   'Apply Now',
-      login:   'Login',
-      pdf:     'Download PDF',
-      website: 'Visit Website',
-      video:   'Watch Video',
-      default: 'Click Here'
-    };
-    const typeIcon = {
-      apply:   'fa-solid fa-paper-plane',
-      login:   'fa-solid fa-right-to-bracket',
-      pdf:     'fa-solid fa-file-pdf',
-      website: 'fa-solid fa-globe',
-      video:   'fa-brands fa-youtube',
-      default: 'fa-solid fa-link'
-    };
+    const typeStyle = { apply: 'udyn-link-apply', login: 'udyn-link-login', pdf: 'udyn-link-pdf', website: 'udyn-link-website', video: 'udyn-link-video', default: 'udyn-link-default' };
+    const typeLabel = { apply: 'Apply Now', login: 'Login', pdf: 'Download PDF', website: 'Visit Website', video: 'Watch Video', default: 'Click Here' };
+    const typeIcon  = { apply: 'fa-solid fa-pen-to-square', login: 'fa-solid fa-right-to-bracket', pdf: 'fa-solid fa-file-pdf', website: 'fa-solid fa-globe', video: 'fa-brands fa-youtube', default: 'fa-solid fa-link' };
 
-    const rows = sorted.map(({ label, url, type }) => {
-      const t = type in typeStyle ? type : 'default';
-      const linkText = esc(label || typeLabel[t]);
-      return `<li class="udyn-link-row">` +
-        `<span class="udyn-link-label">` +
-          `<i class="${typeIcon[t]}" style="margin-right:6px;color:#64748b;flex-shrink:0;"></i>` +
-          `<span>${linkText}</span>` +
-        `</span>` +
-        `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer" ` +
-           `class="udyn-link-btn ${typeStyle[t]}" title="${linkText}">` +
-          `<i class="${typeIcon[t]}"></i>${typeLabel[t]}` +
+    const rows = sorted.map(({ label, url, type }) =>
+      `<li class="udyn-link-row">` +
+        `<span class="udyn-link-label"><i class="${typeIcon[type] || typeIcon.default}" style="margin-right:6px;color:#64748b;"></i>${esc(label)}</span>` +
+        `<a href="${esc(url)}" target="_blank" rel="noopener" class="udyn-link-btn ${typeStyle[type] || typeStyle.default}">` +
+          `<i class="${typeIcon[type] || typeIcon.default}"></i>${typeLabel[type] || typeLabel.default}` +
         `</a>` +
-      `</li>`;
-    }).join('');
+      `</li>`
+    ).join('');
 
-    return makeCard('udyn-imp-links', 'linear-gradient(135deg,#1d4ed8,#1e40af)',
-      'fa-solid fa-link', 'Important Links',
-      `<div class="udyn-table-scroll"><ul class="udyn-links-list">${rows}</ul></div>`);
+    return makeCard('udyn-imp-links','linear-gradient(135deg,#1d4ed8,#1e40af)',
+      'fa-solid fa-link','Important Links',
+      `<ul class="udyn-links-list">${rows}</ul>`);
   }
 
   /* ── 6o. Generic unknown field card (deep recursive) ── */
