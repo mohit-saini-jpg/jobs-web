@@ -536,3 +536,55 @@ print(f"  Total jobs written : {written}")
 print(f"  JSON files deleted : {len(stale_json)}")
 print(f"  HTML dirs deleted  : {len(stale_dirs)}")
 print(f"  Index entries      : {len(index)}")
+
+# ── Rebuild section data JSON files from merged_sarkari_data.json ──────────────
+print("\nRebuilding section data JSON files...")
+if os.path.exists(MERGED):
+    with open(MERGED, encoding='utf-8') as f:
+        merged_data = json.load(f)
+    merged_jobs = merged_data.get('jobs', [])
+
+    FILE_MAP = {
+        'SR_Latest_Jobs':  'data/sr-latest-jobs.json',
+        'SR_Result':       'data/sr-result.json',
+        'SR_Admit_Card':   'data/sr-admit-card.json',
+        'SR_Admission':    'data/sr-admission.json',
+        'SR_Answer_Key':   'data/sr-answer-key.json',
+        'UPCOMING_JOBS':   'data/upcoming-jobs.json',
+        'STATE_JOBS':      'data/state-jobs.json',
+        'CENTRAL_JOBS':    'data/central-jobs.json',
+        'ADMISSIONS':      'data/admissions.json',
+        'LATEST_JOBS NEW': 'data/latest-jobs-new.json',
+        'OFFLINE_FORM':    'data/offline-form.json',
+    }
+
+    # Group by category
+    from collections import defaultdict
+    cats_map = defaultdict(list)
+    for j in merged_jobs:
+        cats_map[j.get('category', '?')].append(j)
+
+    os.makedirs('data', exist_ok=True)
+
+    for cat, filepath in FILE_MAP.items():
+        items = cats_map.get(cat, [])
+        items.sort(key=lambda x: x.get('homepage_serial', x.get('sequence', 999)))
+        out = {'jobs': items}
+        with open(filepath, 'w', encoding='utf-8') as f:
+            json.dump(out, f, ensure_ascii=False, separators=(',', ':'))
+        top = items[0]['title'][:55] if items else '-'
+        print(f"  {filepath}: {len(items)} items | #1={top}")
+
+    # Also rebuild merged-summary.json (top 8 per category for homepage cards)
+    summary_jobs = []
+    for cat, items in cats_map.items():
+        items.sort(key=lambda x: x.get('homepage_serial', x.get('sequence', 999)))
+        summary_jobs.extend(items[:8])
+
+    summary = {'scraped_at': merged_data.get('scraped_at', ''), 'jobs': summary_jobs}
+    with open('data/merged-summary.json', 'w', encoding='utf-8') as f:
+        json.dump(summary, f, ensure_ascii=False, separators=(',', ':'))
+    print(f"  data/merged-summary.json: {len(summary_jobs)} jobs (top 8 per category)")
+    print("✅ Section data files rebuilt.")
+else:
+    print(f"  SKIP: {MERGED} not found")
