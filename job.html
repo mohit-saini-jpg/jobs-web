@@ -3759,10 +3759,14 @@ input, textarea, select { font-size: 1rem !important; }
              Only fall to nonJob if category explicitly says scheme/khabar AND no usefulLinks */
           const rowCat = safe(row.category || row.secId || '').toLowerCase();
           // For LATEST_JOBS NEW: check entry_type — NON_JOB should go to nonJobPage
+          // LJN NON_JOB = scheme/yojana/khabar — NOT actual job vacancy
+          // Real jobs (recruitment, vacancy, admit card, result) → renderJobPage
+          const _isRealJobTitle = /recruitment|vacancy|vacancies|apply.*online|notification.*out|result|admit.*card|answer.*key|syllabus|last.*date|form.*out|\d+\s*post/i.test(name);
+          const _hasRealJobLinks = row.usefulLinks && row.usefulLinks.some(function(l){ return l.title && /apply.*online|notification|admit.*card|result|answer.*key/i.test(l.title); });
           const _isLJNNonJob = (row.category === 'LATEST_JOBS NEW') &&
-                               (row.subType === 'NON_JOB' ||
-                                row.jobType === 'NON_JOB' ||
-                                !row.totalVac);
+                               (row.subType === 'NON_JOB' || row.jobType === 'NON_JOB' || !row.totalVac) &&
+                               !_isRealJobTitle &&
+                               !_hasRealJobLinks;
           const isJobRow = !_isLJNNonJob && (
                           rowCat.includes('sr_') ||
                           rowCat.includes('job') ||
@@ -3862,6 +3866,6 @@ window.__TSJ_SUPPRESS_UDYN_LINKS = true;
   })();
   </script>
 <script src="/tsj-push.js?v=4.0" defer></script>
-<script src="/tsj-version.js?v=20260528101440" defer></script>
+<script src="/tsj-version.js?v=20260528103815" defer></script>
 </body>
 </html>
