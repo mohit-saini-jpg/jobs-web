@@ -1517,12 +1517,11 @@ input, textarea, select { font-size: 1rem !important; }
             '<div class="jp-sec-head" style="background:linear-gradient(135deg,#475569,#64748b);"><i class="fa-solid fa-tags"></i> SEO Tags</div>' +
             '<div id="seoTagsWrap" style="display:flex;flex-wrap:wrap;gap:6px;padding:12px 14px;"></div>';
           // Insert before linksActions parent card
-          const linksActions = document.getElementById('linksActions');
-          if (linksActions) {
-            const linksCard = linksActions.closest('.jp-card');
-            if (linksCard && linksCard.parentNode) {
-              linksCard.parentNode.insertBefore(tagsCard, linksCard.nextSibling);
-            }
+          // Insert SEO tags after FAQ card (or after links if FAQ not yet rendered)
+          const _insertAfter = document.getElementById('jpFaqCard') || 
+                               document.getElementById('linksActions')?.closest('.jp-card');
+          if (_insertAfter && _insertAfter.parentNode) {
+            _insertAfter.parentNode.insertBefore(tagsCard, _insertAfter.nextSibling);
           }
         }
         const wrap = document.getElementById('seoTagsWrap');
@@ -1539,12 +1538,12 @@ input, textarea, select { font-size: 1rem !important; }
         disc.id = 'jpDisclaimerCard';
         disc.style.cssText = 'background:#fef3c7;border:1px solid #fbbf24;border-radius:8px;padding:10px 14px;font-size:.75rem;color:#78350f;margin-bottom:14px;display:flex;gap:8px;align-items:flex-start;';
         disc.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="flex-shrink:0;margin-top:1px;"></i><span><strong>Important:</strong> Always verify all details on the official website before applying. Dates &amp; eligibility may change without notice.</span>';
-        const linksActions = document.getElementById('linksActions');
-        if (linksActions) {
-          const linksCard = linksActions.closest('.jp-card');
-          if (linksCard && linksCard.parentNode) {
-            linksCard.parentNode.insertBefore(disc, linksCard.nextSibling);
-          }
+        // Insert disclaimer after SEO tags (or after FAQ, or after links)
+        const _discAfter = document.getElementById('seoTagsCard') ||
+                           document.getElementById('jpFaqCard') ||
+                           document.getElementById('linksActions')?.closest('.jp-card');
+        if (_discAfter && _discAfter.parentNode) {
+          _discAfter.parentNode.insertBefore(disc, _discAfter.nextSibling);
         }
       }
 
@@ -1678,6 +1677,16 @@ input, textarea, select { font-size: 1rem !important; }
         if (row.examDate)    dateRows.push({ l: 'Exam Date',               v: fmtDate(row.examDate),    red: false });
         if (row.admitDate)   dateRows.push({ l: 'Admit Card Date',         v: fmtDate(row.admitDate),   red: false });
         if (row.resultDate)  dateRows.push({ l: 'Result Date',             v: fmtDate(row.resultDate),  red: false });
+        // Add any extra date fields from raw JSON (notification date etc.) skipping 'event' garbage
+        const _SKIP_DATE_KEYS = new Set(['event','last_date_to_apply','application_begin','application_start_date','exam_date','admit_card_date','result_date','last_date_fee_pay','correction_last_date']);
+        for (const [k, v] of Object.entries(_rawDates)) {
+          if (_SKIP_DATE_KEYS.has(k) || !v || /^date$/i.test(String(v).trim())) continue;
+          const label = k.replace(/_/g,' ').replace(/[a-z]/g, c=>c.toUpperCase());
+          const formatted = fmtDate(String(v));
+          if (formatted && !dateRows.some(r => r.v === formatted)) {
+            dateRows.push({ l: label, v: formatted, red: false });
+          }
+        }
       }
       const datesCard = document.getElementById('datesDetailCard');
       if (datesCard && dateRows.length > 0) {
@@ -1809,9 +1818,16 @@ input, textarea, select { font-size: 1rem !important; }
           faqCard.innerHTML =
             '<div class="jp-sec-head" style="background:linear-gradient(135deg,#374151,#1f2937);"><i class="fa-solid fa-circle-question"></i> FAQ</div>' +
             '<div id="jpFaqList"></div>';
-          const howCardEl = document.getElementById('howCard');
-          if (howCardEl && howCardEl.parentNode) {
-            howCardEl.parentNode.insertBefore(faqCard, howCardEl);
+          // Insert FAQ AFTER Important Links (before SEO tags)
+          const linksEl = document.getElementById('linksActions');
+          const linksCard2 = linksEl ? linksEl.closest('.jp-card') : null;
+          if (linksCard2 && linksCard2.parentNode) {
+            linksCard2.parentNode.insertBefore(faqCard, linksCard2.nextSibling);
+          } else {
+            const howCardEl = document.getElementById('howCard');
+            if (howCardEl && howCardEl.parentNode) {
+              howCardEl.parentNode.insertBefore(faqCard, howCardEl);
+            }
           }
         }
         const faqList = document.getElementById('jpFaqList');
@@ -2506,7 +2522,7 @@ input, textarea, select { font-size: 1rem !important; }
 
       /* Total vacancy */
       const totalVac = safe(
-        job.total_vacancy || job.total_vacancies || bd.total_vacancies || ''
+        job.total_vacancy || job.total_post || job.total_vacancies || bd.total_vacancies || bd.total_vacancy || ''
       );
 
       /* Apply mode — check more field variants for offline form jobs */
@@ -2895,16 +2911,21 @@ input, textarea, select { font-size: 1rem !important; }
           relax: relaxMatch ? relaxMatch[1].trim() : ''
         };
       }
-      const _ageCombined = safe(age.age_limit || job.age_limit || '');
+      const _ageCombined = safe(age.age_limit || age.age_details || job.age_limit || '');
       const _ageParsed   = _parseAgeLimitStr(_ageCombined);
-      const minAge    = safe(job.minimum_age  || age.minimum_age  || _ageParsed.min   || '');
-      const maxAge    = safe(job.maximum_age  || age.maximum_age  || _ageParsed.max   || '');
-      const ageRelax  = safe(job.age_relaxation || age.age_relaxation || age.details  || _ageParsed.relax || _ageCombined || '');
+      // age_details = "Min: 18 years, Max: 44 years" — parse it
+      const _ageDetailsStr = safe(age.age_details || '');
+      const _minFromDetails = _ageDetailsStr.match(/Min(?:imum)?\s*(?:Age)?\s*[:\-]?\s*([\d]+\s*(?:years?)?)/i);
+      const _maxFromDetails = _ageDetailsStr.match(/Max(?:imum)?\s*(?:Age)?\s*[:\-]?\s*([\d]+\s*(?:years?)?)/i);
+      const minAge    = safe(job.minimum_age  || age.minimum_age  || _ageParsed.min   || (_minFromDetails && _minFromDetails[1]) || '');
+      const maxAge    = safe(job.maximum_age  || age.maximum_age  || _ageParsed.max   || (_maxFromDetails && _maxFromDetails[1]) || '');
+      const ageRelax  = safe(job.age_relaxation || age.age_relaxation || age.details || _ageParsed.relax || _ageCombined || '');
 
       /* Qualification */
       const eduQual   = safe(
         job.education_qualification || job.eligibility ||
-        qual.education_qualification || qual.eligibility || ''
+        qual.education_qualification || qual.eligibility ||
+        qual.details || age.details || ''
       );
       const expReqd   = safe(
         job.experience_required || qual.experience_required || ''
@@ -2914,7 +2935,7 @@ input, textarea, select { font-size: 1rem !important; }
       const _salDet = job.salary_details || {};
       const salary    = safe(
         job.salary || job.salary_pay_scale || bd.salary || bd.salary_pay_scale ||
-        _salDet.pay_scale || _salDet.salary || ''
+        _salDet.pay_scale || _salDet.salary || _salDet.details || ''
       );
 
       /* Selection process */
