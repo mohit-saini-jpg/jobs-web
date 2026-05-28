@@ -7,6 +7,8 @@
  */
 (function () {
   'use strict';
+  // job.html sets this flag to use its native section cards instead
+  if (window.__TSJ_PSR_DISABLED) return;
 
   /* ── CSS ─────────────────────────────────────────────────────────── */
   const CSS_ID = 'tsj-psr-styles';

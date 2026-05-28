@@ -478,7 +478,11 @@
 
   <script src="/script.js?v=20260517" defer></script>
   <!-- Preferred Source on Google — Full Rich Details Renderer -->
-  <script src="/preferred-source-renderer.js?v=20260527" defer></script>
+  <script>
+// state-job-detail.html uses native makeCard() sections — PSR not needed
+window.__TSJ_PSR_DISABLED = true;
+</script>
+<script src="/preferred-source-renderer.js?v=20260527" defer></script>
 
   <script>
   /* ══════════════════════════════════════════════════════════════════
@@ -1148,12 +1152,31 @@
         'age_limit','qualification','vacancy_details','category_wise_vacancy',
         'important_links','important_links_obj','useful_links','salary_details',
         'selection_process','how_to_apply','faq','physical_eligibility',
-        'exam_pattern','syllabus','important_instructions','short_information',
+        'exam_pattern','syllabus','important_instructions','short_information','seo_tags','category',
       ]);
       for (const [k,v] of Object.entries(det)) {
         if (!KNOWN_KEYS.has(k) && v && typeof v !== 'function') {
           sections.push(buildGenericCard(k, v));
         }
+      }
+
+      /* ── SEO Tags card ── */
+      const seoTagsArr = det.seo_tags || bd.seo_tags || null;
+      if (seoTagsArr && Array.isArray(seoTagsArr) && seoTagsArr.length) {
+        const tc = document.createElement('div');
+        tc.className = 'sjd-card';
+        const th = document.createElement('div');
+        th.className = 'sjd-head';
+        th.style.background = 'linear-gradient(135deg,#475569,#64748b)';
+        th.innerHTML = '<i class="fa-solid fa-tags"></i> SEO Tags';
+        tc.appendChild(th);
+        const tb = document.createElement('div');
+        tb.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;padding:12px 14px;';
+        tb.innerHTML = seoTagsArr.map(t =>
+          `<span style="font-size:.68rem;background:#eff6ff;color:#1d4ed8;border-radius:20px;padding:3px 10px;font-weight:600;">${esc(safe(t))}</span>`
+        ).join('');
+        tc.appendChild(tb);
+        sections.push(tc);
       }
 
       sections.filter(Boolean).forEach(card => host.appendChild(card));

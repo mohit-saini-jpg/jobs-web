@@ -312,7 +312,7 @@ input, textarea, select { font-size: 1rem !important; }
     .jp-main-cta-sub{font-size:.78rem;font-weight:600;opacity:.9;display:block;margin-top:3px;white-space:normal;}
     .jp-main-cta i{margin-right:6px;}
 
-    .jp-sec-head{background:#1d6dbc;color:#fff;font-size:.86rem;font-weight:700;padding:9px 14px;display:flex;align-items:center;gap:8px;}
+    .jp-sec-head{background:#1d4ed8;color:#fff;font-size:.86rem;font-weight:700;padding:9px 14px;display:flex;align-items:center;gap:8px;}
     .jp-sec-head i{opacity:.85;}
 
     /* ── TABLE OVERFLOW FIX: wrap tables in scrollable container ── */
@@ -878,6 +878,12 @@ input, textarea, select { font-size: 1rem !important; }
             <div class="jp-card" id="selCard" style="display:none;">
               <div class="jp-sec-head" style="background:linear-gradient(135deg,#5b21b6,#7c3aed);"><i class="fa-solid fa-list-check"></i> Selection Process</div>
               <div style="display:flex;flex-wrap:wrap;gap:8px;padding:14px;" id="selBadges"></div>
+            </div>
+
+            <!-- How To Apply -->
+            <div class="jp-card" id="howCard" style="display:none;">
+              <div class="jp-sec-head" style="background:linear-gradient(135deg,#0369a1,#0284c7);"><i class="fa-solid fa-clipboard-list"></i> How To Apply</div>
+              <div id="howContent" style="padding:12px 14px;font-size:.82rem;color:#1e293b;line-height:1.65;"></div>
             </div>
 
             <!-- Important Links -->
@@ -1499,6 +1505,48 @@ input, textarea, select { font-size: 1rem !important; }
         psCard.style.display = '';
       })();
 
+      /* ── SEO Tags card ── */
+      if (row && row.seoTags && Array.isArray(row.seoTags) && row.seoTags.length) {
+        let tagsCard = document.getElementById('seoTagsCard');
+        if (!tagsCard) {
+          tagsCard = document.createElement('div');
+          tagsCard.id = 'seoTagsCard';
+          tagsCard.className = 'jp-card';
+          tagsCard.innerHTML =
+            '<div class="jp-sec-head" style="background:linear-gradient(135deg,#475569,#64748b);"><i class="fa-solid fa-tags"></i> SEO Tags</div>' +
+            '<div id="seoTagsWrap" style="display:flex;flex-wrap:wrap;gap:6px;padding:12px 14px;"></div>';
+          // Insert before linksActions parent card
+          const linksActions = document.getElementById('linksActions');
+          if (linksActions) {
+            const linksCard = linksActions.closest('.jp-card');
+            if (linksCard && linksCard.parentNode) {
+              linksCard.parentNode.insertBefore(tagsCard, linksCard.nextSibling);
+            }
+          }
+        }
+        const wrap = document.getElementById('seoTagsWrap');
+        if (wrap) {
+          wrap.innerHTML = row.seoTags.map(t =>
+            '<span style="font-size:.68rem;background:#eff6ff;color:#1d4ed8;border-radius:20px;padding:3px 10px;font-weight:600;">' + safe(String(t||'')) + '</span>'
+          ).join('');
+        }
+      }
+
+      /* ── Important Notice disclaimer ── */
+      if (!document.getElementById('jpDisclaimerCard')) {
+        const disc = document.createElement('div');
+        disc.id = 'jpDisclaimerCard';
+        disc.style.cssText = 'background:#fef3c7;border:1px solid #fbbf24;border-radius:8px;padding:10px 14px;font-size:.75rem;color:#78350f;margin-bottom:14px;display:flex;gap:8px;align-items:flex-start;';
+        disc.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="flex-shrink:0;margin-top:1px;"></i><span><strong>Important:</strong> Always verify all details on the official website before applying. Dates &amp; eligibility may change without notice.</span>';
+        const linksActions = document.getElementById('linksActions');
+        if (linksActions) {
+          const linksCard = linksActions.closest('.jp-card');
+          if (linksCard && linksCard.parentNode) {
+            linksCard.parentNode.insertBefore(disc, linksCard.nextSibling);
+          }
+        }
+      }
+
       /* Expose row data for preferred-source-renderer */
       window.__TSJ_ROW = row;
 
@@ -1746,6 +1794,28 @@ input, textarea, select { font-size: 1rem !important; }
           const thead = document.getElementById('vacHead') || vacCard.querySelector('thead tr');
           if (thead) thead.innerHTML = '<th>Category</th><th>Vacancies</th>';
           vacBody.innerHTML = cwRows.map(([cat,cnt])=>`<tr><td>${cat}</td><td>${cnt}</td></tr>`).join('');
+        }
+      }
+
+      /* ── How To Apply card ── */
+      if (row && row.howToApply) {
+        const howCard = document.getElementById('howCard');
+        const howContent = document.getElementById('howContent');
+        if (howCard && howContent) {
+          howCard.style.display = '';
+          let steps = [];
+          if (Array.isArray(row.howToApply)) steps = row.howToApply;
+          else if (typeof row.howToApply === 'string') steps = row.howToApply.split(/[\n;]/).map(s=>s.trim()).filter(Boolean);
+          if (steps.length > 0) {
+            howContent.innerHTML = steps.map((s, i) =>
+              `<div style="display:flex;gap:10px;margin-bottom:8px;align-items:flex-start;">
+                <span style="background:#0369a1;color:#fff;border-radius:50%;width:20px;height:20px;min-width:20px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;margin-top:1px;">${i+1}</span>
+                <span>${safe(s)}</span>
+              </div>`
+            ).join('');
+          } else {
+            howContent.textContent = row.howToApply;
+          }
         }
       }
 
@@ -3457,7 +3527,11 @@ input, textarea, select { font-size: 1rem !important; }
   <!-- Universal Dynamic JSON-to-Page Rendering System -->
   <script src="/universal-renderer.js?v=20260524b" defer></script>
   <!-- Preferred Source on Google — Full Rich Details Renderer -->
-  <script src="/preferred-source-renderer.js?v=20260527" defer></script>
+  <script>
+// Disable PSR duplicate injection on job.html — native sections handle all content
+window.__TSJ_PSR_DISABLED = true;
+</script>
+<script src="/preferred-source-renderer.js?v=20260527" defer></script>
   <!-- Header height fix: dynamically update --header-height CSS variable -->
   <script>
   (function(){
