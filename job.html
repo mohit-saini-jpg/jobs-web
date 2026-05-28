@@ -2770,10 +2770,22 @@ input, textarea, select { font-size: 1rem !important; }
         }
       });
 
-      /* Merge: useful_links array first, then important_links entries, then flat fields
+      /* ── Parse all_links array → usefulLinks format ── */
+      const _allLinksEntries = [];
+      if (Array.isArray(job.all_links)) {
+        const _hiMap = {'ऑनलाइन आवेदन करें':'Apply Online','आवेदन करें':'Apply Online','नोटिफिकेशन':'Notification PDF','आधिकारिक वेबसाइट':'Official Website','डाउनलोड':'Download PDF','अधिसूचना':'Notification PDF','प्रवेश पत्र':'Admit Card','उत्तर कुंजी':'Answer Key'};
+        job.all_links.forEach(function(lk) {
+          if (!lk || !lk.url) return;
+          const txt = _hiMap[lk.label||lk.title||''] || lk.label || lk.title || lk.text || 'Apply Online';
+          _allLinksEntries.push({ title: txt, url: lk.url });
+        });
+      }
+
+      /* Merge: useful_links array first, then all_links, then important_links entries, then flat fields
          (dedup by URL is handled in the renderer via seenHrefs)          */
       const usefulLinks = [
         ...(Array.isArray(job.useful_links) ? job.useful_links : []),
+        ..._allLinksEntries,
         ..._ilEntries,
         ..._flatFieldLinks
       ];
