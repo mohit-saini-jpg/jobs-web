@@ -342,6 +342,22 @@
       }
     }
 
+    // ── Parse all_links array ─────────────────────────────────────────
+    // Format: [{ label, title, url }, ...]
+    if (Array.isArray(job.all_links)) {
+      for (const item of job.all_links) {
+        if (!item || typeof item !== 'object') continue;
+        const url = safe(item.url || item.link || item.href || '');
+        const label = safe(item.label || item.title || item.text || item.name || '');
+        if (!isUrl(url)) continue;
+        job._udyn_links.push({
+          label: label || smartLinkLabel('link', url, 0),
+          url,
+          type: classifyLinkKey(label || 'link', url)
+        });
+      }
+    }
+
     // ── Deduplicate links ─────────────────────────────────────────────
     const seen = new Set();
     job._udyn_links = job._udyn_links.filter(l => {
@@ -624,7 +640,7 @@
     'post_date','status','useful_links','sequence','job_location','job_type',
     'homepage_serial','closing_date','application_last_date','instructions',
     'tables','sections','text_sections','id','name','url','date','lastDate','postDate',
-    'board','detail','_udyn_links','state','items',
+    'board','detail','_udyn_links','state','items','all_links',
   ]);
 
   function exUnknown(job) {
