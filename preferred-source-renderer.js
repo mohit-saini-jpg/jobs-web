@@ -283,6 +283,10 @@
     // Useful links from row
     const usefulLinks = (row && row.usefulLinks) || [];
 
+    // _udyn_links: already-normalized link list built by universal-renderer.js normalize()
+    // Contains ALL URLs extracted from important_links, useful_links, flat fields, click_here arrays, etc.
+    const udynLinks = Array.isArray(j._udyn_links) ? j._udyn_links : [];
+
     return {
       title, org, dept, postName, totalVac, salary, applyMode, jobLoc, category,
       minAge, maxAge, ageRelax, eduQual, shortInfo, howToApply, selProc,
@@ -290,7 +294,7 @@
       appBegin, lastDate, feeDate, examDate, admitDate, resultDate, corrDate,
       feeItems, payMode,
       applyUrl, notifUrl, websiteUrl, admitUrl, resultUrl, answerUrl, syllUrl, formPdf,
-      vacRows, cwRows, usefulLinks
+      vacRows, cwRows, usefulLinks, udynLinks
     };
   }
 
@@ -371,7 +375,7 @@
     /* ── SECTION 2: Tri-col — Eligibility + Fee + Important Links ── */
     const hasElig = hasVal(d.eduQual) || hasVal(d.minAge) || hasVal(d.maxAge);
     const hasFee  = d.feeItems.length > 0;
-    const hasLinks= hasVal(d.applyUrl) || hasVal(d.notifUrl) || hasVal(d.websiteUrl) || hasVal(d.admitUrl) || hasVal(d.resultUrl) || hasVal(d.answerUrl) || hasVal(d.syllUrl) || hasVal(d.formPdf) || d.usefulLinks.length;
+    const hasLinks= hasVal(d.applyUrl) || hasVal(d.notifUrl) || hasVal(d.websiteUrl) || hasVal(d.admitUrl) || hasVal(d.resultUrl) || hasVal(d.answerUrl) || hasVal(d.syllUrl) || hasVal(d.formPdf) || d.usefulLinks.length || d.udynLinks.length;
 
     if (hasElig || hasFee || hasLinks) {
       const tri = el('div', 'psr-tri');
@@ -432,7 +436,19 @@
         seenUrls.add(lk.url);
         linkHtml += `<a href="${lk.url}" target="_blank" rel="noopener" class="psr-link-btn ${lk.cls}"><i class="fa-solid ${lk.icon}"></i> ${lk.label}</a>`;
       }
-      // useful_links
+      // Merge in udynLinks (full normalized link list from universal-renderer) — avoids duplicates
+      const typeToClass = { apply: 'psr-link-green', pdf: 'psr-link-blue', website: 'psr-link-red', login: 'psr-link-purple', default: 'psr-link-blue' };
+      const typeToIcon  = { apply: 'fa-pen-to-square', pdf: 'fa-file-pdf', website: 'fa-globe', login: 'fa-user-lock', default: 'fa-arrow-up-right-from-square' };
+      for (const ul of d.udynLinks.slice(0, 12)) {
+        const hu = safe(ul.url);
+        if (!hu || !hu.startsWith('http') || seenUrls.has(hu)) continue;
+        seenUrls.add(hu);
+        const t = safe(ul.label || 'Link').slice(0, 35);
+        const cls  = typeToClass[ul.type] || 'psr-link-blue';
+        const icon = typeToIcon[ul.type]  || 'fa-arrow-up-right-from-square';
+        linkHtml += `<a href="${hu}" target="_blank" rel="noopener" class="psr-link-btn ${cls}"><i class="fa-solid ${icon}"></i> ${t}</a>`;
+      }
+      // useful_links from row (legacy fallback)
       for (const ul of d.usefulLinks.slice(0, 6)) {
         const rawLinks = ul.links || ul.url || ul.href || '';
         const urls = Array.isArray(rawLinks) ? rawLinks : [rawLinks];

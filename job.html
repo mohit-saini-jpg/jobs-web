@@ -712,6 +712,9 @@ input, textarea, select { font-size: 1rem !important; }
               <span class="jp-main-cta-sub">Click to visit the official recruitment portal</span>
             </a>
 
+            <!-- Preferred Source on Google placeholder (filled by preferred-source-renderer.js) -->
+            <div id="preferredSourceCard" style="display:none;"></div>
+
             <!-- Short Info -->
             <div class="jp-card" id="shortInfoCard" style="display:none;">
               <div class="jp-sec-head" style="background:linear-gradient(135deg,#0f766e,#0891b2);"><i class="fa-solid fa-circle-info"></i> About This Recruitment</div>
@@ -3027,6 +3030,8 @@ input, textarea, select { font-size: 1rem !important; }
   <script src="/job-renderer-patch.js?v=20260522" defer></script>
   <!-- Universal Dynamic JSON-to-Page Rendering System -->
   <script src="/universal-renderer.js?v=20260524b" defer></script>
+  <!-- Preferred Source on Google — Full Rich Details Renderer -->
+  <script src="/preferred-source-renderer.js?v=20260527" defer></script>
   <!-- Header height fix: dynamically update --header-height CSS variable -->
   <script>
   (function(){
