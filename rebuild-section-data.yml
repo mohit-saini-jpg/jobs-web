@@ -1,0 +1,123 @@
+# ══════════════════════════════════════════════════════════════════════
+# REBUILD SECTION DATA — merged_sarkari_data.json se sab files rebuild
+# Manually run karo ya merged_sarkari_data.json push pe auto-trigger
+# ══════════════════════════════════════════════════════════════════════
+
+name: 🔁 Rebuild Section Data from merged_sarkari_data.json
+
+on:
+  # Jab bhi merged_sarkari_data.json push ho
+  push:
+    paths:
+      - 'merged_sarkari_data.json'
+
+  # Manual trigger bhi — GitHub Actions > Run workflow
+  workflow_dispatch:
+
+  # Daily 1:30 AM IST (8 PM UTC) — ensure fresh data daily
+  schedule:
+    - cron: '0 20 * * *'
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 🔖 Bump version (cache bust)
+        run: node .github/workflows/generate_version.js
+
+      - name: 🔁 Rebuild all section data JSON files
+        run: |
+          python3 << 'PYEOF'
+          import json, os
+          from collections import defaultdict
+
+          print("Reading merged_sarkari_data.json...")
+          with open('merged_sarkari_data.json', encoding='utf-8') as f:
+              raw = json.load(f)
+
+          jobs = raw.get('jobs', [])
+          print(f"Total jobs: {len(jobs)}")
+
+          FILE_MAP = {
+              'SR_Latest_Jobs':  'data/sr-latest-jobs.json',
+              'SR_Result':       'data/sr-result.json',
+              'SR_Admit_Card':   'data/sr-admit-card.json',
+              'SR_Admission':    'data/sr-admission.json',
+              'SR_Answer_Key':   'data/sr-answer-key.json',
+              'UPCOMING_JOBS':   'data/upcoming-jobs.json',
+              'STATE_JOBS':      'data/state-jobs.json',
+              'CENTRAL_JOBS':    'data/central-jobs.json',
+              'ADMISSIONS':      'data/admissions.json',
+              'LATEST_JOBS NEW': 'data/latest-jobs-new.json',
+              'OFFLINE_FORM':    'data/offline-form.json',
+          }
+
+          cats = defaultdict(list)
+          for j in jobs:
+              cats[j.get('category','?')].append(j)
+
+          os.makedirs('data', exist_ok=True)
+
+          for cat, filepath in FILE_MAP.items():
+              items = cats.get(cat, [])
+              items.sort(key=lambda x: x.get('homepage_serial', x.get('sequence', 999)))
+              with open(filepath, 'w', encoding='utf-8') as f:
+                  json.dump({'jobs': items}, f, ensure_ascii=False, separators=(',',':'))
+              top = items[0]['title'][:60] if items else '-'
+              print(f"  {filepath}: {len(items)} | #1={top}")
+
+          # Rebuild merged-summary.json (top 8 per category — homepage cards)
+          summary_jobs = []
+          for cat, items in cats.items():
+              items.sort(key=lambda x: x.get('homepage_serial', x.get('sequence', 999)))
+              summary_jobs.extend(items[:8])
+
+          summary = {'scraped_at': raw.get('scraped_at',''), 'jobs': summary_jobs}
+          with open('data/merged-summary.json', 'w', encoding='utf-8') as f:
+              json.dump(summary, f, ensure_ascii=False, separators=(',',':'))
+          print(f"  data/merged-summary.json: {len(summary_jobs)} jobs (top 8 per cat)")
+          print("✅ Done!")
+          PYEOF
+
+      - name: 📤 Commit & Push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add data/ version.json sw.js index.html
+
+          if git diff --staged --quiet; then
+            echo "✅ No changes"
+            exit 0
+          fi
+
+          VERSION=$(node -e "console.log(require('./version.json').version)")
+          SCRAPED=$(python3 -c "import json; d=json.load(open('merged_sarkari_data.json')); print(d.get('scraped_at','')[:10])")
+          git commit -m "🔁 Section data rebuilt v${VERSION} | scraped: ${SCRAPED}"
+          git push origin main
+          echo "✅ Pushed — Zero-Stale Engine will notify users"
+
+      - name: 📊 Summary
+        run: |
+          echo "### ✅ Section Data Rebuild Complete" >> $GITHUB_STEP_SUMMARY
+          echo "| File | Jobs |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|------|" >> $GITHUB_STEP_SUMMARY
+          for f in data/sr-latest-jobs.json data/sr-result.json data/sr-admit-card.json data/upcoming-jobs.json data/state-jobs.json data/central-jobs.json data/merged-summary.json; do
+            if [ -f "$f" ]; then
+              COUNT=$(python3 -c "import json; d=json.load(open('$f')); print(len(d.get('jobs',[])))")
+              echo "| \`$f\` | $COUNT |" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
