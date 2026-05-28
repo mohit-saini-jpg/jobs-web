@@ -1,10 +1,11 @@
-name: 🔄 Auto Update Jobs + Sitemap + Google Notify
+# ══════════════════════════════════════════════════════════════════════
+# TOP SARKARI JOBS — Auto Update Jobs + Sitemap + Cache Bust
+# Zero-Stale Cache Engine v7.0 — GitHub Optimized
+# ══════════════════════════════════════════════════════════════════════
 
-# ═══════════════════════════════════════════════════════════
-# TRIGGERS — Kab run hoga yeh workflow
-# ═══════════════════════════════════════════════════════════
+name: 🔄 Auto Update Jobs + Sitemap + Cache Bust
+
 on:
-  # 1. Jab bhi koi bhi JSON file update ho → automatic trigger
   push:
     paths:
       - 'Complete_Jobs_Full_Data.json'
@@ -12,14 +13,11 @@ on:
       - 'dailyupdates.json'
       - 'state-jobs-data.json'
 
-  # 2. Har roz raat 12:30 baje India time (UTC 19:00)
   schedule:
-    - cron: '0 19 * * *'
+    - cron: '0 19 * * *'  # Daily 12:30 AM IST
 
-  # 3. GitHub Actions tab se manually "Run workflow" button
   workflow_dispatch:
 
-# ═══════════════════════════════════════════════════════════
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -27,78 +25,85 @@ jobs:
       contents: write
 
     steps:
-      # Step 1: Repo checkout
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # Step 2: Node.js setup (for sitemap generator)
       - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      # Step 3: Python setup (for job file generator)
       - name: 🐍 Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      # Step 4: Generate jobs/data/<slug>.json + jobs/<slug>/index.html from all 4 JSON files
-      - name: 🏗️ Generate static job pages (all 4 JSON sources)
+      # ── STEP 1: Bump version — CRITICAL for Zero-Stale Cache Engine ──
+      - name: 🔖 Bump version.json + sw.js (Zero-Stale Cache Engine)
+        run: |
+          node -e "const fs=require('fs');const now=new Date();const pad=n=>String(n).padStart(2,'0');const v=[now.getUTCFullYear(),pad(now.getUTCMonth()+1),pad(now.getUTCDate()),pad(now.getUTCHours()),pad(now.getUTCMinutes()),pad(now.getUTCSeconds())].join('');fs.writeFileSync('version.json',JSON.stringify({version:v,built:now.toISOString(),site:'topsarkarijobs.com'},null,2)+'\n');let sw=fs.readFileSync('sw.js','utf8');sw=sw.replace(/^const SW_VERSION\s*=\s*[^;]+;.*$/m,'const SW_VERSION = \'' + v + '\'; // auto-updated');fs.writeFileSync('sw.js',sw);let ix=fs.readFileSync('index.html','utf8');ix=ix.replace(/(tsj-version\.js\?v=)[^\"]+/,'\$1'+v);fs.writeFileSync('index.html',ix);console.log('Bumped:',v);"
+          echo "✅ Version bumped"
+
+      # ── STEP 2: Generate static job pages ────────────────────────────
+      - name: 🏗️ Generate static job pages
         run: python3 .github/workflows/generate_jobs.py
 
-      # Step 5: Regenerate sitemap-jobs.xml with new job URLs
+      # ── STEP 3: Regenerate sitemaps ──────────────────────────────────
       - name: 🗺️ Regenerate sitemap-jobs.xml
         run: node .github/workflows/generate_sitemap.js
 
-      # Step 6: Commit and push all changes
+      # ── STEP 4: Commit everything ─────────────────────────────────────
       - name: 📤 Commit & Push changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # Stage all generated files
-          git add jobs/data/
-          git add jobs/
-          git add jobs-index.json
-          git add sections-index.json
-          git add sitemap-jobs.xml
-          git add sitemap-index.xml
-          git add sitemap.xml
+
+          # Stage generated files + version files
+          git add version.json
+          git add sw.js
+          git add jobs/data/ || true
+          git add jobs/ || true
+          git add jobs-index.json || true
+          git add sections-index.json || true
+          git add sitemap-jobs.xml || true
+          git add sitemap-index.xml || true
+          git add sitemap.xml || true
           git add sitemap-sections.xml 2>/dev/null || true
-          
-          # Check if anything changed
+
           if git diff --staged --quiet; then
             echo "✅ No changes to commit"
             exit 0
           fi
-          
-          COUNT=$(git diff --staged --name-only | wc -l)
-          git commit -m "🤖 Auto: $COUNT files updated — $(date +'%Y-%m-%d %H:%M UTC')"
-          
-          # Pull latest with merge strategy — resolve conflicts by keeping our generated files
-          git fetch origin main
-          git merge origin/main \
-            -X ours \
-            --no-edit \
-            -m "🤖 Merge: keeping auto-generated files" \
-            2>/dev/null || true
-          
-          git push origin main
-          echo "✅ Changes pushed successfully"
 
-      # Step 7: Ping Google + Bing via IndexNow (notifies new URLs immediately)
+          COUNT=$(git diff --staged --name-only | wc -l)
+          VERSION=$(node -e "console.log(require('./version.json').version)")
+          git commit -m "🤖 Auto v${VERSION}: ${COUNT} files updated — $(date +'%Y-%m-%d %H:%M UTC')"
+
+          git fetch origin main
+          git merge origin/main -X ours --no-edit -m "🤖 Merge: keeping auto-generated files" 2>/dev/null || true
+
+          git push origin main
+          echo "✅ Changes pushed — Zero-Stale Cache Engine will notify all users"
+
+      # ── STEP 5: Ping search engines ──────────────────────────────────
       - name: 📡 Notify Google & Bing (IndexNow)
         run: node .github/workflows/indexnow-ping.js
         continue-on-error: true
 
-      # Step 8: Ping Google Sitemap (backup notification)
       - name: 🔔 Ping Google Sitemap
         run: |
           curl -s "https://www.google.com/ping?sitemap=https://www.topsarkarijobs.com/sitemap-index.xml" \
-            -o /dev/null -w "Google ping status: %{http_code}\n" || true
+            -o /dev/null -w "Google: %{http_code}\n" || true
           curl -s "https://www.bing.com/ping?sitemap=https://www.topsarkarijobs.com/sitemap-index.xml" \
-            -o /dev/null -w "Bing ping status: %{http_code}\n" || true
+            -o /dev/null -w "Bing: %{http_code}\n" || true
         continue-on-error: true
+
+      - name: 📊 Summary
+        run: |
+          VERSION=$(node -e "console.log(require('./version.json').version)")
+          echo "### ✅ Zero-Stale Cache Engine — Deploy Complete" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version:** \`${VERSION}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Time (IST):** $(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M')" >> $GITHUB_STEP_SUMMARY
+          echo "- **Cache Status:** All user browsers will auto-update within 5 minutes" >> $GITHUB_STEP_SUMMARY
