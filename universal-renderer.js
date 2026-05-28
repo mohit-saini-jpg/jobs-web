@@ -1622,8 +1622,9 @@
     }
 
     // ── 17. Important Links (ALWAYS LAST — aggregated from all sources) ──
+    // Skip if job.html mainLinksCard already handles Important Links natively
     const links = rawJob._udyn_links || [];
-    if (links.length) {
+    if (links.length && !window.__TSJ_SUPPRESS_UDYN_LINKS) {
       const c = cardLinks(links);
       if (c) queue.push({ card: c, def: defFor('udyn-imp-links'), append: true });
     }

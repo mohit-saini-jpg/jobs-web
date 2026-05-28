@@ -1870,15 +1870,16 @@ input, textarea, select { font-size: 1rem !important; }
           faqCard.innerHTML =
             '<div class="jp-sec-head" style="background:linear-gradient(135deg,#374151,#1f2937);"><i class="fa-solid fa-circle-question"></i> FAQ</div>' +
             '<div id="jpFaqList"></div>';
-          // Insert FAQ AFTER Important Links (before SEO tags)
-          const linksEl = document.getElementById('linksActions');
-          const linksCard2 = linksEl ? linksEl.closest('.jp-card') : null;
-          if (linksCard2 && linksCard2.parentNode) {
-            linksCard2.parentNode.insertBefore(faqCard, linksCard2.nextSibling);
+          // Insert FAQ BEFORE Important Links (after How To Apply)
+          // Order: How To Apply → FAQ → Important Links → SEO Tags → Disclaimer
+          const _mainLinksCard = document.getElementById('mainLinksCard');
+          if (_mainLinksCard && _mainLinksCard.parentNode) {
+            _mainLinksCard.parentNode.insertBefore(faqCard, _mainLinksCard);
           } else {
-            const howCardEl = document.getElementById('howCard');
-            if (howCardEl && howCardEl.parentNode) {
-              howCardEl.parentNode.insertBefore(faqCard, howCardEl);
+            const linksEl = document.getElementById('linksActions');
+            const linksCard2 = linksEl ? linksEl.closest('.jp-card') : null;
+            if (linksCard2 && linksCard2.parentNode) {
+              linksCard2.parentNode.insertBefore(faqCard, linksCard2);
             }
           }
         }
@@ -3669,6 +3670,8 @@ input, textarea, select { font-size: 1rem !important; }
   <script>
 // Disable PSR duplicate injection on job.html — native sections handle all content
 window.__TSJ_PSR_DISABLED = true;
+// Suppress universal-renderer's duplicate Important Links card
+window.__TSJ_SUPPRESS_UDYN_LINKS = true;
 </script>
 <script src="/preferred-source-renderer.js?v=20260527" defer></script>
   <!-- Header height fix: dynamically update --header-height CSS variable -->
