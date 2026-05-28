@@ -21,7 +21,7 @@
 // VERSION — Auto-updated by GitHub Actions on every deploy
 // Do NOT manually edit this line — it is replaced by CI/CD
 // ══════════════════════════════════════════════════════════════
-const SW_VERSION = '20260528095656'; // auto-updated by generate_version.js
+const SW_VERSION = '20260528100118'; // auto-updated by generate_version.js
 
 // ══════════════════════════════════════════════════════════════
 // CACHE NAMES — version-stamped, old ones auto-deleted
