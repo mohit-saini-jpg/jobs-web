@@ -1506,7 +1506,8 @@ input, textarea, select { font-size: 1rem !important; }
       })();
 
       /* ── SEO Tags card ── */
-      if (row && row.seoTags && Array.isArray(row.seoTags) && row.seoTags.length) {
+      const _seoTagsData = (row && row.seoTags) || (window.__tsjRawJob && Array.isArray(window.__tsjRawJob.seo_tags) ? window.__tsjRawJob.seo_tags : null);
+      if (_seoTagsData && Array.isArray(_seoTagsData) && _seoTagsData.length) {
         let tagsCard = document.getElementById('seoTagsCard');
         if (!tagsCard) {
           tagsCard = document.createElement('div');
@@ -1526,7 +1527,7 @@ input, textarea, select { font-size: 1rem !important; }
         }
         const wrap = document.getElementById('seoTagsWrap');
         if (wrap) {
-          wrap.innerHTML = row.seoTags.map(t =>
+          wrap.innerHTML = _seoTagsData.map(t =>
             '<span style="font-size:.68rem;background:#eff6ff;color:#1d4ed8;border-radius:20px;padding:3px 10px;font-weight:600;">' + safe(String(t||'')) + '</span>'
           ).join('');
         }
@@ -1797,15 +1798,45 @@ input, textarea, select { font-size: 1rem !important; }
         }
       }
 
+      /* ── FAQ card ── */
+      const _faqData = (row && row.faqData) || (window.__tsjRawJob && (window.__tsjRawJob.faq || (window.__tsjRawJob.basic_details||{}).faq));
+      if (_faqData && Array.isArray(_faqData) && _faqData.length) {
+        let faqCard = document.getElementById('jpFaqCard');
+        if (!faqCard) {
+          faqCard = document.createElement('div');
+          faqCard.id = 'jpFaqCard';
+          faqCard.className = 'jp-card';
+          faqCard.innerHTML =
+            '<div class="jp-sec-head" style="background:linear-gradient(135deg,#374151,#1f2937);"><i class="fa-solid fa-circle-question"></i> FAQ</div>' +
+            '<div id="jpFaqList"></div>';
+          const howCardEl = document.getElementById('howCard');
+          if (howCardEl && howCardEl.parentNode) {
+            howCardEl.parentNode.insertBefore(faqCard, howCardEl);
+          }
+        }
+        const faqList = document.getElementById('jpFaqList');
+        if (faqList) {
+          faqList.innerHTML = _faqData.map(function(f) {
+            return '<div class="qs-faq-item">' +
+              '<div class="qs-faq-q" onclick="var a=this.nextElementSibling;var o=a.classList.toggle('open');this.classList.toggle('open',o);">' +
+              '<span>Q. ' + esc(safe(f.question||f.q||'')) + '</span>' +
+              '<i class="fa-solid fa-chevron-down qs-faq-icon"></i></div>' +
+              '<div class="qs-faq-a">' + esc(safe(f.answer||f.a||'')) + '</div>' +
+              '</div>';
+          }).join('');
+        }
+      }
+
       /* ── How To Apply card ── */
-      if (row && row.howToApply) {
+      const _howData = (row && row.howToApply) || (window.__tsjRawJob && (window.__tsjRawJob.how_to_apply || (window.__tsjRawJob.basic_details||{}).how_to_apply));
+      if (_howData) {
         const howCard = document.getElementById('howCard');
         const howContent = document.getElementById('howContent');
         if (howCard && howContent) {
           howCard.style.display = '';
           let steps = [];
-          if (Array.isArray(row.howToApply)) steps = row.howToApply;
-          else if (typeof row.howToApply === 'string') steps = row.howToApply.split(/[\n;]/).map(s=>s.trim()).filter(Boolean);
+          if (Array.isArray(_howData)) steps = _howData;
+          else if (typeof _howData === 'string') steps = _howData.split(/[\n;]/).map(s=>s.trim()).filter(Boolean);
           if (steps.length > 0) {
             howContent.innerHTML = steps.map((s, i) =>
               `<div style="display:flex;gap:10px;margin-bottom:8px;align-items:flex-start;">
@@ -1814,7 +1845,7 @@ input, textarea, select { font-size: 1rem !important; }
               </div>`
             ).join('');
           } else {
-            howContent.textContent = row.howToApply;
+            howContent.textContent = typeof _howData === 'string' ? _howData : '';
           }
         }
       }
@@ -2879,8 +2910,10 @@ input, textarea, select { font-size: 1rem !important; }
       );
 
       /* Salary */
+      const _salDet = job.salary_details || {};
       const salary    = safe(
-        job.salary || job.salary_pay_scale || bd.salary || bd.salary_pay_scale || ''
+        job.salary || job.salary_pay_scale || bd.salary || bd.salary_pay_scale ||
+        _salDet.pay_scale || _salDet.salary || ''
       );
 
       /* Selection process */
@@ -2924,7 +2957,13 @@ input, textarea, select { font-size: 1rem !important; }
         slug: safe(job.slug || ''),
         category: safe(job.category || ''),
         fp: urlRedirectFingerprint(safe(job.source_url || officialWebsite || applyOnline)).toLowerCase(),
-        jobType, jobLocation
+        jobType, jobLocation,
+        howToApply: job.how_to_apply || bd.how_to_apply || null,
+        faqData: job.faq || bd.faq || null,
+        seoTags: Array.isArray(job.seo_tags) ? job.seo_tags : (bd.seo_tags ? bd.seo_tags : null),
+        salary: safe(job.salary || job.salary_pay_scale || bd.salary || bd.salary_pay_scale ||
+          (job.salary_details ? (job.salary_details.pay_scale || job.salary_details.salary || '') : '') || ''),
+        vacancyDetails: Array.isArray(job.vacancy_details) ? job.vacancy_details : vd,
       };
     }
 
