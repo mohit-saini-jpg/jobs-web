@@ -2319,6 +2319,7 @@ input, textarea, select { font-size: 1rem !important; }
       document.getElementById('nonJobCtaText').textContent = ctaText;
 
       /* ── Direct link injection for LATEST_JOBS NEW NON_JOB pages ── */
+      var _ljnLinksInjected = false;
       if (jobRow && jobRow.category === 'LATEST_JOBS NEW' && Array.isArray(jobRow.usefulLinks)) {
         // Directly add Apply Online buttons from usefulLinks — bypass complex forEach
         const _directLinks = jobRow.usefulLinks.slice(0, 5);
@@ -2330,7 +2331,7 @@ input, textarea, select { font-size: 1rem !important; }
             const href = lk.links || lk.url || lk.href || '';
             if (!href) return '';
             const txt = lk.title || lk.name || 'Apply Online';
-            const isApply = /apply|online|aaveden/i.test(txt) || /apply|aaveden/i.test(txt);
+            const isApply = /apply|online|aaveden/i.test(txt);
             const cls = isApply ? 'jp-btn-green' : 'jp-btn-blue';
             const icon = isApply ? 'fa-paper-plane' : 'fa-link';
             return '<a href="' + href + '" target="_blank" rel="noopener" class="jp-btn ' + cls + '">' +
@@ -2338,6 +2339,7 @@ input, textarea, select { font-size: 1rem !important; }
               '<div class="jp-btn-label">' + txt.slice(0,30) + '</div>' +
               '<div class="jp-btn-sub">Apply Now</div></a>';
           }).filter(Boolean).join('');
+          _ljnLinksInjected = true; // skip njLinks block below
         }
       }
 
@@ -2366,7 +2368,7 @@ input, textarea, select { font-size: 1rem !important; }
       /* ── Important Links for Non-Job page ── */
       const nlCard    = document.getElementById('nonJobLinksCard');
       const nlActions = document.getElementById('nonJobLinksActions');
-      if (nlCard && nlActions) {
+      if (nlCard && nlActions && !_ljnLinksInjected) {
         const seenNJ = new Set();
         const njLinks = [];
 
@@ -3860,6 +3862,6 @@ window.__TSJ_SUPPRESS_UDYN_LINKS = true;
   })();
   </script>
 <script src="/tsj-push.js?v=4.0" defer></script>
-<script src="/tsj-version.js?v=20260528095656" defer></script>
+<script src="/tsj-version.js?v=20260528101440" defer></script>
 </body>
 </html>
