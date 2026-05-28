@@ -2395,7 +2395,20 @@ input, textarea, select { font-size: 1rem !important; }
           addNJLink(jobRow.officialWebsiteLink,  'Official Website',          'fa-globe',            'jp-btn-red',    'Visit Now');
         }
 
-        /* 3. Fallback: destUrl itself */
+        /* 3. dailyupdates.json items — flat url field */
+        if (jobRow && jobRow.url) {
+          const du = safe(jobRow.url);
+          if (du && /^https?:\/\//i.test(du)) {
+            const isPdfDu = du.toLowerCase().includes('.pdf');
+            addNJLink(du,
+              jobRow.name || jobRow.title || (isPdfDu ? 'Download PDF' : 'Visit Official Link'),
+              isPdfDu ? 'fa-file-pdf' : 'fa-globe',
+              isPdfDu ? 'jp-btn-blue' : 'jp-btn-red',
+              isPdfDu ? 'Download Now' : 'Visit Now');
+          }
+        }
+
+        /* 4. Fallback: destUrl itself */
         if (destUrl) {
           const isPdf = destUrl.toLowerCase().includes('.pdf');
           addNJLink(destUrl,
@@ -2677,9 +2690,13 @@ input, textarea, select { font-size: 1rem !important; }
         click_here_to_apply:            'Apply Online',
         apply_online:                   'Apply Online',
         apply_link:                     'Apply Online',
+        apply:                          'Apply Online',
+        apply_now:                      'Apply Online',
+        apply_form:                     'Apply Online',
         registration:                   'Registration Link',
         notification_pdf:               'Notification PDF',
         download_pdf:                   'Download PDF',
+        download:                       'Download',
         download_notification:          'Download Notification',
         official_notification:          'Official Notification',
         official_website:               'Official Website',
@@ -2701,6 +2718,11 @@ input, textarea, select { font-size: 1rem !important; }
         counselling:                    'Counselling Link',
         form_pdf_free_link:             'Download Form (Free PDF)',
         official_notification_pdf_link: 'Official Notification PDF',
+        link_1:                         'Link 1',
+        link_2:                         'Link 2',
+        link_3:                         'Link 3',
+        link_4:                         'Link 4',
+        link_5:                         'Link 5',
       };
       /* ── Smart URL-based title generator for generic 'click_here' links ── */
       /* ── Smart URL-based title detection for generic link keys ── */
@@ -2736,11 +2758,22 @@ input, textarea, select { font-size: 1rem !important; }
       if (typeof _ilRaw === 'object' && !Array.isArray(_ilRaw)) {
         for (const [key, val] of Object.entries(_ilRaw)) {
           if (!val) continue;
-          /* Resolve human label: known key → label, or title-case the key */
-          const baseLabel = _IL_LABELS[key] ||
-            key.replace(/^https?_+/i, '').replace(/_/g, ' ')
-               .replace(/\b[a-z]/g, c => c.toUpperCase()).trim() ||
-            'Click Here';
+          /* Resolve human label: check known map first */
+          let baseLabel = _IL_LABELS[key];
+          if (!baseLabel) {
+            // link_N pattern
+            const linkNum = key.match(/^link[_\s]?(\d+)$/i);
+            if (linkNum) {
+              baseLabel = `Link ${linkNum[1]}`;
+            // domain-style key: aiimsgorakhpur_edu_in → AIIMS Gorakhpur (Official)
+            } else if (/_edu_in$|_gov_in$|_nic_in$|_org_in$/i.test(key)) {
+              const domainPart = key.replace(/_(edu|gov|nic|org)_in$/i, '');
+              baseLabel = domainPart.replace(/_/g, ' ').replace(/\b[a-z]/g, c => c.toUpperCase()).trim() + ' (Official)';
+            } else {
+              baseLabel = key.replace(/^https?_+/i, '').replace(/_/g, ' ')
+                 .replace(/\b[a-z]/g, c => c.toUpperCase()).trim() || 'Click Here';
+            }
+          }
           /* Val can be string or array */
           const urls = Array.isArray(val) ? val : [val];
           const isGenericKey = key === 'click_here' || baseLabel === 'Click Here';
@@ -2756,12 +2789,20 @@ input, textarea, select { font-size: 1rem !important; }
           });
         }
       }
-      /* Also add top-level flat link fields (merged_sarkari / offline form jobs) */
+      /* Also add top-level flat link fields (merged_sarkari / offline form / any json) */
       const _flatFieldLinks = [];
       const _flatFields = [
+        { key: 'apply_online_link',              label: 'Apply Online' },
         { key: 'form_pdf_free_link',             label: 'Download Form (Free PDF)' },
+        { key: 'application_form_pdf_link',      label: 'Application Form PDF' },
+        { key: 'form_pdf_link',                  label: 'Form PDF' },
         { key: 'official_notification_pdf_link', label: 'Official Notification PDF' },
         { key: 'official_website_link',          label: 'Official Website' },
+        { key: 'official_website',               label: 'Official Website' },
+        { key: 'notification_pdf',               label: 'Notification PDF' },
+        { key: 'download_link',                  label: 'Download Link' },
+        { key: 'apply_link',                     label: 'Apply Online' },
+        { key: 'source_url',                     label: 'Apply / Source Link' },
       ];
       _flatFields.forEach(({ key, label }) => {
         const href = safe(job[key] || '');
