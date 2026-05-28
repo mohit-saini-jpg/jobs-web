@@ -2225,6 +2225,8 @@ input, textarea, select { font-size: 1rem !important; }
     function renderNonJobPage(name, destUrl, jobRow) {
       layoutJob.style.display = 'none';
       layoutNonJob.style.display = 'block';
+      // Store raw LJN job for about section / links
+      window.__tsjRawLJNJob = (jobRow && jobRow._rawLJN) || null;
 
       const typeInfo = detectNonJobType(name);
 
@@ -2381,6 +2383,46 @@ input, textarea, select { font-size: 1rem !important; }
         } else {
           nlCard.style.display = '';
           nlActions.innerHTML = `<p style="color:#64748b;font-size:.83rem;padding:4px;">Links not available. Please check official website.</p>`;
+        }
+      }
+
+      /* ── About This / details_page_content paragraphs ── */
+      const _rawLJN = window.__tsjRawLJNJob;
+      if (_rawLJN && _rawLJN.details_page_content) {
+        const dpc = _rawLJN.details_page_content;
+        const paras = (dpc.paragraphs || []).filter(p => p && p.length > 30 && !/Read Also/i.test(p));
+        if (paras.length) {
+          // Inject about card before nonJobLinksCard
+          let aboutCard = document.getElementById('ljnAboutCard');
+          if (!aboutCard) {
+            aboutCard = document.createElement('div');
+            aboutCard.id = 'ljnAboutCard';
+            aboutCard.className = 'jp-card';
+            const aHead = document.createElement('div');
+            aHead.className = 'jp-sec-head';
+            aHead.style.background = 'linear-gradient(135deg,#0f172a,#1e40af)';
+            aHead.innerHTML = '<i class="fa-solid fa-circle-info"></i> About This';
+            aboutCard.appendChild(aHead);
+            const aBody = document.createElement('div');
+            aBody.style.cssText = 'padding:12px 14px;font-size:.82rem;color:#1e293b;line-height:1.7;';
+            aBody.innerHTML = paras.map(p => '<p style="margin-bottom:8px;">' + safe(p) + '</p>').join('');
+            aboutCard.appendChild(aBody);
+            // Insert before nonJobLinksCard
+            const nlcEl = document.getElementById('nonJobLinksCard');
+            if (nlcEl && nlcEl.parentNode) nlcEl.parentNode.insertBefore(aboutCard, nlcEl);
+          }
+        }
+        // Also add all_links from raw job to nonJobLinksCard
+        if (Array.isArray(_rawLJN.all_links)) {
+          const labelMapHi = {'ऑनलाइन आवेदन करें':'Apply Online','आवेदन करें':'Apply Online','नोटिफिकेशन':'Notification PDF','आधिकारिक वेबसाइट':'Official Website','डाउनलोड':'Download PDF','अधिसूचना':'Notification PDF'};
+          _rawLJN.all_links.forEach(function(lk) {
+            if (!lk.url) return;
+            var txt = labelMapHi[lk.title||lk.label||''] || lk.title || lk.label || 'Apply Online';
+            if (jobRow) {
+              if (!jobRow.usefulLinks) jobRow.usefulLinks = [];
+              jobRow.usefulLinks.push({title:txt, links:lk.url});
+            }
+          });
         }
       }
 
@@ -3281,9 +3323,12 @@ input, textarea, select { font-size: 1rem !important; }
         /* ── Process data/latest-jobs-new.json (LATEST_JOBS NEW section) ── */
         if (rawLatestNew && Array.isArray(rawLatestNew.jobs)) {
           for (const job of rawLatestNew.jobs) {
-            // Skip if already in out (from rawMerged)
             const pj = parseLJNJob(job);
-            if (pj && pj.title) out.push(pj);
+            if (pj && pj.title) {
+              // Store raw job reference for renderNonJobPage about section
+              pj._rawLJN = job;
+              out.push(pj);
+            }
           }
         }
 
@@ -3675,7 +3720,11 @@ input, textarea, select { font-size: 1rem !important; }
              SR_Admit_Card, SR_Result, SR_Latest_Jobs, SR_Answer_Key etc. → always JobPage
              Only fall to nonJob if category explicitly says scheme/khabar AND no usefulLinks */
           const rowCat = safe(row.category || row.secId || '').toLowerCase();
-          const isJobRow = rowCat.includes('sr_') ||
+          // For LATEST_JOBS NEW: check entry_type — NON_JOB should go to nonJobPage
+          const _isLJNNonJob = (row.category === 'LATEST_JOBS NEW') &&
+                               (row.subType === 'NON_JOB' || !row.totalVac);
+          const isJobRow = !_isLJNNonJob && (
+                          rowCat.includes('sr_') ||
                           rowCat.includes('job') ||
                           rowCat.includes('admit') ||
                           rowCat.includes('result') ||
@@ -3683,7 +3732,7 @@ input, textarea, select { font-size: 1rem !important; }
                           rowCat.includes('bank') ||
                           rowCat.includes('police') ||
                           (row.usefulLinks && row.usefulLinks.length > 0) ||
-                          isJobItem(name);
+                          isJobItem(name));
           if (isJobRow) {
             renderJobPage(name, destUrl, parseJob(name), Object.assign({}, row, { destUrl }));
             /* Inject dynamic sections (how_to_apply, faq, exam_pattern, etc.) */
