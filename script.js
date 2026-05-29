@@ -8,6 +8,9 @@
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
+  // Clean URL routing support: /category/study/ → treat as category.html
+  const _pathSegs = location.pathname.split("/").filter(Boolean);
+  const isCategoryCleanUrl = _pathSegs[0] === "category" && _pathSegs.length >= 1;
   const isToolsPage = location.pathname.includes("tools");
 
   const safe = (v) => (v ?? "").toString().trim();
@@ -1705,9 +1708,20 @@
 
   // Category Pages
   async function initCategoryPage() {
-    if (page !== "category.html") return;
-    const params = new URLSearchParams(location.search || "");
-    const group = safe(params.get("group")).toLowerCase();
+    if (page !== "category.html" && !isCategoryCleanUrl) return;
+
+    // Support both:
+    //   /category.html?group=study       (old URL)
+    //   /category/study/                 (clean URL)
+    let group;
+    if (isCategoryCleanUrl) {
+      // /category/study/ → group = "study"
+      // /category/       → group = ""
+      group = safe(_pathSegs[1] || "").toLowerCase();
+    } else {
+      const params = new URLSearchParams(location.search || "");
+      group = safe(params.get("group")).toLowerCase();
+    }
 
     const titleEl = $("#categoryTitle") || $("h1");
     let gridEl = $("#categoryGrid") || $(".section-list");
@@ -1742,7 +1756,10 @@
 
     let data;
     try { data = await getJSON("/jobs.json"); } catch (_) {
-      gridEl.innerHTML = "";
+      gridEl.innerHTML = `<div style="color:#c00;background:#fff3f3;border:1px solid #fcc;padding:14px 16px;border-radius:8px;font-size:.95rem;">
+        <strong>⚠️ Data load failed.</strong><br>
+        <span style="color:#555;font-size:.85rem;">/jobs.json could not be fetched. Please check that the file exists on the server.</span>
+      </div>`;
       return;
     }
 
