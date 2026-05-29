@@ -1176,13 +1176,20 @@
       ]).then(function(res){
         var found=[];
         if(res[0]&&typeof res[0]==='object'){
-          Object.values(res[0]).forEach(function(sec){
-            if(!Array.isArray(sec))return;
-            sec.forEach(function(job){
-              var bd=job.basic_details||{};
-              var t=(bd.job_title||bd.post_name||'').toLowerCase();
-              if(t.indexOf(sp)!==-1)found.push(normaliseComplete(job));
-            });
+          // Handle NEW nested format: {freejobalert_categories:{...}, sarkari_data:{...}}
+          var _cjAll=[];
+          var _fj=(res[0].freejobalert_categories)||{};
+          Object.values(_fj).forEach(function(arr){if(Array.isArray(arr))_cjAll=_cjAll.concat(arr);});
+          // Also add sarkari_data.jobs if present
+          if(res[0].sarkari_data&&Array.isArray(res[0].sarkari_data.jobs)){
+            _cjAll=_cjAll.concat(res[0].sarkari_data.jobs);
+          }
+          // Fallback: old flat format
+          if(!_cjAll.length){Object.values(res[0]).forEach(function(sec){if(Array.isArray(sec))_cjAll=_cjAll.concat(sec);});}
+          _cjAll.forEach(function(job){
+            var bd=job.basic_details||{};
+            var t=(bd.job_title||bd.post_name||job.title||'').toLowerCase();
+            if(t.indexOf(sp)!==-1)found.push(normaliseComplete(job));
           });
         }
         if(res[1]){

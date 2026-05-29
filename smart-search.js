@@ -866,8 +866,8 @@
    * ══════════════════════════════════════════════════════════ */
   function loadJsonFiles() {
     /* Phase 1: fast files */
-    // SINGLE SOURCE: Load only Complete_Jobs_Full_Data.json (contains everything)
-    var fastFiles = ['Complete_Jobs_Full_Data.json'];
+    // Load Complete_Jobs_Full_Data.json (main data) + dailyupdates.json (manual ROW 3)
+    var fastFiles = ['Complete_Jobs_Full_Data.json', 'dailyupdates.json'];
 
     /* Always add category pages first — zero cost */
     mergeItems(CAT_PAGES.map(function(p) {
@@ -898,7 +898,7 @@
       if (document.hidden) return;
       if (Date.now() - lastRefresh < CFG.refreshIntervalMs) return;
       lastRefresh = Date.now();
-      ['Complete_Jobs_Full_Data.json'].forEach(function(f) {
+      ['Complete_Jobs_Full_Data.json', 'dailyupdates.json'].forEach(function(f) {
         fetchAndIndex(f, true).then(function(n) {
           if (n > 0) refreshOpenDropdown();
         });

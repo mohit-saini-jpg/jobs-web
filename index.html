@@ -3944,16 +3944,15 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
     var list = document.getElementById('today-sidebar-list');
     if (!list) return;
 
-    // SINGLE SOURCE: Extract today updates from Complete_Jobs_Full_Data.json
-    (window.__mergedDataPromise || fetch('Complete_Jobs_Full_Data.json').then(function(r){return r.json();}))
+    fetch('dailyupdates.json')
+      .then(function(r) { return r.json(); })
       .then(function(data) {
         var items = [];
-        // Extract from sarkari_data.jobs (latest jobs)
-        if (data && data.jobs && Array.isArray(data.jobs)) {
-          items = data.jobs.slice(0, 6).map(function(j){ return {name: j.title, url: '/data/jobs/'+(j.slug||j.title.toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,80))+'/', date: (j.important_dates||{}).last_date||''}; });
-        } else if (data && data.sarkari_data && Array.isArray(data.sarkari_data.jobs)) {
-          items = data.sarkari_data.jobs.slice(0, 6).map(function(j){ return {name: j.title, url: '/data/jobs/'+(j.slug||j.title.toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,80))+'/', date: (j.important_dates||{}).last_date||''}; });
-        } else if (data && data.sections && Array.isArray(data.sections)) {
+        if (Array.isArray(data)) {
+          items = data.slice(0, 6);
+        } else if (data.updates && Array.isArray(data.updates)) {
+          items = data.updates.slice(0, 6);
+        } else if (data.sections && Array.isArray(data.sections)) {
           data.sections.forEach(function(s) {
             if (s.items) items = items.concat(s.items.slice(0, 3));
           });
@@ -3973,7 +3972,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
   </script>
 
 <script src="/tsj-push.js?v=4.0" defer></script>
-<script src="/tsj-version.js?v=20260529125530" defer></script>
+<script src="/tsj-version.js?v=20260528113521" defer></script>
 
 <script>
 /* Auto lazy-load all images not already marked */

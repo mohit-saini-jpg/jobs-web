@@ -2550,61 +2550,25 @@ input, textarea, select { font-size: 1rem !important; }
           if (parsed.title) out.push(parsed);
         }
 
-        /* ── Process Complete_Jobs_Full_Data.json (primary - all 1300+ jobs with full data) ── */
-        if (rawFull) {
-          /* Handle array format */
-          if (Array.isArray(rawFull)) {
-            for (const job of rawFull) {
-              const parsed = parseFullJob(job, job.category || 'Latest Notifications');
+        /* ── Process Complete_Jobs_Full_Data.json (NESTED FORMAT: freejobalert_categories + sarkari_data) ── */
+        if (rawFull && typeof rawFull === 'object') {
+          /* NEW FORMAT: {freejobalert_categories:{10TH_Pass:[...],...}, sarkari_data:{jobs:[...]}, ...} */
+          const fj = rawFull.freejobalert_categories || {};
+          for (const [catKey, jobs] of Object.entries(fj)) {
+            if (!Array.isArray(jobs)) continue;
+            for (const job of jobs) {
+              const parsed = parseFullJob(job, catKey);
               if (parsed.title) out.push(parsed);
             }
-          } else if (typeof rawFull === 'object') {
-            /* Object with category keys (standard Complete_Jobs_Full_Data.json format) */
-            const handledFull = new Set();
-            /* Known category keys first */
+          }
+          /* OLD FLAT FORMAT fallback: {10TH_Pass:[...], 12TH_Pass:[...], ...} */
+          if (!rawFull.freejobalert_categories) {
             for (const [catKey, meta] of Object.entries(_JOBS_CAT_META_JI)) {
               const jobs = rawFull[catKey];
               if (!Array.isArray(jobs)) continue;
-              handledFull.add(catKey);
               for (const job of jobs) {
                 const parsed = parseFullJob(job, meta.id);
                 if (parsed.title) out.push(parsed);
-              }
-            }
-            /* Also handle sarkariresult_categories if present */
-            const srCats = (rawFull.sarkariresult_data && rawFull.sarkariresult_data.data)
-                        || rawFull.sarkariresult_categories || null;
-            if (srCats && typeof srCats === 'object') {
-              handledFull.add('sarkariresult_categories');
-              handledFull.add('sarkariresult_data');
-              for (const [catKey, items] of Object.entries(srCats)) {
-                if (!Array.isArray(items)) continue;
-                for (const job of items) {
-                  if (!job || typeof job !== 'object') continue;
-                  const title = safe(job.title || job.name || '');
-                  if (!title) continue;
-                  const externalUrl = safe(job.url || job.link || job.source_url || '');
-                  const pseudoJob = {
-                    ...job, title,
-                    source_url: externalUrl,
-                    category: catKey,
-                    important_links: job.important_links || { apply_online: externalUrl, official_website: externalUrl },
-                    total_vacancy: job.total_vacancy || job.total_vacancies || job.total_post || '',
-                  };
-                  const parsed = parseFullJob(pseudoJob, catKey);
-                  if (parsed.title) out.push(parsed);
-                }
-              }
-            }
-            /* Any remaining unknown array-value keys */
-            handledFull.add('sarkariresultshine_jobs');
-            for (const [key, val] of Object.entries(rawFull)) {
-              if (handledFull.has(key)) continue;
-              if (Array.isArray(val)) {
-                for (const job of val) {
-                  const parsed = parseFullJob(job, key);
-                  if (parsed.title) out.push(parsed);
-                }
               }
             }
           }
@@ -2818,9 +2782,12 @@ input, textarea, select { font-size: 1rem !important; }
                   const allFull = [];
                   if (Array.isArray(cd)) { allFull.push(...cd); }
                   else if (typeof cd === 'object') {
-                    for (const val of Object.values(cd)) {
-                      if (Array.isArray(val)) allFull.push(...val);
-                    }
+                    // Handle NEW nested format
+                    const _fj2 = cd.freejobalert_categories || {};
+                    Object.values(_fj2).forEach(function(v){ if(Array.isArray(v)) allFull.push(...v); });
+                    if (cd.sarkari_data && Array.isArray(cd.sarkari_data.jobs)) allFull.push(...cd.sarkari_data.jobs);
+                    // Fallback: old flat format
+                    if (!allFull.length) { for (const val of Object.values(cd)) { if (Array.isArray(val)) allFull.push(...val); } }
                   }
                   if (row.title) {
                     const rt = row.title.toLowerCase().replace(/[^a-z0-9\s]/g,'').trim();

@@ -125,6 +125,12 @@
   function convertJobsDataToSections(rawData) {
     if (!rawData || typeof rawData !== "object" || Array.isArray(rawData)) return { sections: [] };
 
+    /* ── NEW FORMAT (Complete_Jobs_Full_Data.json v2): nested structure ── */
+    /* {freejobalert_categories:{10TH_Pass:[...]}, sarkari_data:{jobs:[...]}, ...} */
+    if (rawData.freejobalert_categories && typeof rawData.freejobalert_categories === 'object') {
+      rawData = rawData.freejobalert_categories;
+    }
+
     /* ── Format B: flat jobs[] array with category field ── */
     if (Array.isArray(rawData.jobs) && rawData.jobs.length > 0) {
       /* Group flat jobs into per-category buckets */
@@ -1332,19 +1338,7 @@
 
     let data;
     try {
-      // SINGLE SOURCE: Get updates from Complete_Jobs_Full_Data.json sarkari_data
-      const _fullData = await getJSON("Complete_Jobs_Full_Data.json");
-      if (_fullData && _fullData.sarkari_data && Array.isArray(_fullData.sarkari_data.jobs)) {
-        const _slugify = t => (t||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,120);
-        const _items = _fullData.sarkari_data.jobs.slice(0,30).map(j => ({
-          name: (j.title||'').trim(),
-          url: '/data/jobs/' + (_slugify(j.title||'')) + '/',
-          date: ((j.important_dates||{}).last_date||'')
-        })).filter(i => i.name);
-        data = { sections: [{ id: 'latest', title: 'Latest Updates', items: _items }] };
-      } else {
-        data = { sections: [] };
-      }
+      data = await getJSON("dailyupdates.json");
     } catch (_) {
       return; // silently skip if file not found
     }
@@ -2381,11 +2375,14 @@
 
     let searchData = [];
     try {
-      /* ── ONLY these 4 authoritative JSON files are used for search ──
-         jobs.json / tools.json / services.json are EXCLUDED intentionally.
+      /* ── Authoritative sources for search ──
+         Complete_Jobs_Full_Data.json = scraped data
+         dailyupdates.json = manual ROW 3 sections (Govt Scheme, CSC PDF, etc.)
          ─────────────────────────────────────────────────────────────── */
-      // SINGLE SOURCE: Load everything from Complete_Jobs_Full_Data.json
-      const complete = await getJSON("Complete_Jobs_Full_Data.json").catch(() => null);
+      const [complete, daily] = await Promise.all([
+        getJSON("Complete_Jobs_Full_Data.json").catch(() => null),
+        getJSON("dailyupdates.json").catch(() => null),
+      ]);
 
       const push = (name, url, src) => {
         if(!name || !url) return;
@@ -2440,6 +2437,19 @@
             const slug = item.slug || slugify(title);
             const href = slug ? '/data/jobs/' + slug + '/' : (item.url || '#');
             push(title, href, sec.title || 'Education');
+          });
+        });
+      }
+
+      /* 5. dailyupdates.json — manual ROW 3 sections (Govt Scheme, CSC PDF, etc.) */
+      if (daily && daily.sections && Array.isArray(daily.sections)) {
+        daily.sections.forEach(sec => {
+          const secTitle = sec.title || sec.id || 'Update';
+          (sec.items || []).forEach(i => {
+            const name = i.name || i.title || '';
+            const url  = i.url  || i.link  || '#';
+            if (!name || !url || url === '#') return;
+            push(name, url, secTitle);
           });
         });
       }
