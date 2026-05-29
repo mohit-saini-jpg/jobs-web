@@ -1957,6 +1957,18 @@
     });
     document.head.appendChild(faqEl);
 
+    // ── 8. SET window.__TSJ_SHARE_TEXT for Smart Share feature ──────────
+    var shareLines = [];
+    if (title)         shareLines.push('🔔 *' + title + ' Notification Out!*');
+    if (vacancies)     shareLines.push('📋 Posts: *' + vacancies + ' Vacancies*');
+    if (qualification) shareLines.push('🎓 Qualification: ' + qualification);
+    if (salary)        shareLines.push('💰 Salary: ' + salary.replace('Rs.','₹').replace('Rs ','₹'));
+    if (lastDate)      shareLines.push('📅 Last Date: *' + lastDate + '*');
+    if (org)           shareLines.push('🏢 By: ' + org);
+    shareLines.push('✅ Apply Now 👉 ' + canonicalUrl);
+    shareLines.push('📢 Share karo dosto ke saath!');
+    window.__TSJ_SHARE_TEXT = shareLines.join('\n');
+
     console.log('TSJ SEO: injected for ' + title);
   }
 
