@@ -310,11 +310,25 @@ html, body { overflow-x: hidden; max-width: 100%; }
       'admit-cards':     { h1: 'Admit Cards 2026 — Hall Ticket Download',      desc: 'Download latest Admit Cards 2026 — Railway, SSC, Bank, Police, UPSC hall tickets.' },
       'answer-keys':     { h1: 'Answer Keys 2026 — Official Answer Keys',      desc: 'Download latest official Answer Keys 2026 — SSC, Railway, Bank, Police and more.' },
       'admissions':      { h1: 'Admissions 2026 — Latest Admission Notifications', desc: 'Latest University, College and Institute Admissions 2026 — UG, PG, Diploma courses.' },
+      // ── Clean URL group slugs (e.g. /category/study/) ──
+      'study':           { h1: 'Qualification Wise Government Jobs 2026',      desc: 'Find latest Sarkari Naukri by your educational qualification — from 5th Pass to Ph.D. Updated daily with new vacancies.' },
+      'popular':         { h1: 'Popular Government Job Categories 2026',       desc: 'Browse popular Sarkari Job categories — Railway, Bank, SSC, UPSC, Police, Teaching and more.' },
+      'state':           { h1: 'State Wise Government Jobs 2026',              desc: 'Browse State Government Jobs by state — RPSC, UPPSC, MPPSC, BPSC and more.' },
+      'admit-result':    { h1: 'Admit Card & Result 2026',                     desc: 'Download Admit Cards and check Sarkari Results 2026 — Railway, SSC, Bank, Police and more.' },
+      'khabar':          { h1: 'Latest Sarkari Khabar 2026',                   desc: 'Latest Sarkari news, notifications, and updates 2026.' },
+      'study-material':  { h1: 'Study Material & Top Courses 2026',            desc: 'Free study material, mock tests, previous year papers, and top online courses for Government Exams 2026.' },
     };
     var DEFAULT = { h1: 'Government Job Categories 2026', desc: 'Browse government job categories — Railway, Bank, SSC, UPSC, Police, Teaching and more.' };
 
-    var path = location.pathname; // e.g. /category/railway-jobs/
-    var seg = path.replace(/^\/category\/|\/$/g,'').toLowerCase().trim();
+    var path = location.pathname; // e.g. /category/study/ or /category/railway-jobs/
+    // Extract the segment after /category/
+    var seg = path.replace(/^\/category\//, '').replace(/\/$/, '').toLowerCase().trim();
+    // Fallback: strip all leading slashes and split
+    if (!seg && path.includes('category')) {
+      var parts = path.split('/').filter(Boolean);
+      var ci = parts.indexOf('category');
+      seg = (ci >= 0 && parts[ci+1]) ? parts[ci+1].toLowerCase().trim() : '';
+    }
     var data = CATEGORY_MAP[seg] || DEFAULT;
 
     var h1El   = document.getElementById('categoryTitle');
