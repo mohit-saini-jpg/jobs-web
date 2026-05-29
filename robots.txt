@@ -1,7 +1,7 @@
 # robots.txt — Top Sarkari Jobs
 # ==============================
-# Last updated: 2026-05-27
-# SEO Clean URL Architecture implemented
+# Last updated: 2026-05-28
+# v5.0 SEO Clean URL Architecture: /data/jobs/{slug}/
 
 User-agent: *
 Allow: /
@@ -9,12 +9,11 @@ Allow: /
 # Block internal utility pages
 Disallow: /404.html
 Disallow: /cache-dashboard.html
-Disallow: /seo-audit-report.html
 Disallow: /JOB_HTML_PATCH_INSTRUCTIONS.html
 Disallow: /.github/
 Disallow: /node_modules/
 
-# Block raw template files (clean URL versions are indexed instead)
+# Block raw template files (clean URL /data/jobs/{slug}/ indexed instead)
 Disallow: /view.html
 Disallow: /job.html
 Disallow: /state-jobs.html
@@ -22,18 +21,19 @@ Disallow: /education-detail.html
 Disallow: /category.html
 Disallow: /search.html
 
-# Block query parameter URLs (clean /section/, /state/, /education/ are indexed)
+# Block query param URLs
 Disallow: /view.html?
 Disallow: /state-jobs.html?
-Disallow: /education-detail.html?
-Disallow: /category.html?
 Disallow: /job.html?
 Disallow: /search.html?q=
 
+# Block duplicate job pages in old /jobs/ directory (canonical is /data/jobs/)
+Disallow: /jobs/
+
 # Allow all clean-URL hierarchies
+Allow: /data/jobs/
 Allow: /section/
 Allow: /data/
-Allow: /jobs/
 Allow: /state/
 Allow: /education/
 Allow: /category/
@@ -48,9 +48,10 @@ Allow: /resume-maker/
 Allow: /tools/
 Allow: /govt-services/
 
-# Sitemap
+# Sitemaps
 Sitemap: https://www.topsarkarijobs.com/sitemap.xml
 Sitemap: https://www.topsarkarijobs.com/sitemap-jobs.xml
+Sitemap: https://www.topsarkarijobs.com/sitemap-education.xml
 
 # Bot crawl rate limits
 User-agent: Googlebot

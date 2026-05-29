@@ -2494,7 +2494,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
         if (!item || !item.name) continue;
         jobs.push({
           name: item.name,
-          url:  '/jobs/' + (item.slug || '') + '/'
+          url:  '/data/jobs/' + (item.slug || '') + '/'
         });
       }
       return Promise.resolve(jobs);
@@ -2503,7 +2503,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
     /* ── build href ── */
     function buildHref(rawUrl) {
       var u = (rawUrl || '').trim();
-      if (!u || u === '#' || u === '/jobs//') return LATEST_JOBS_URL;
+      if (!u || u === '#' || u === '/data/jobs//') return LATEST_JOBS_URL;
       return u;
     }
 
@@ -3366,13 +3366,13 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
       /* LATEST_JOBS NEW / no-slug categories — always generate slug from title for internal page */
       var noSlugCats = ['LATEST_JOBS NEW', 'OFFLINE_FORM', 'STATE_JOBS', 'CENTRAL_JOBS', 'ADMISSIONS'];
       if (!slug && noSlugCats.indexOf(job.category) !== -1) {
-        /* Generate slug from title → /jobs/{slug}/ detail page */
+        /* Generate slug from title → /data/jobs/{slug}/ detail page */
         var genSlug = (title || '').toLowerCase()
           .replace(/[^a-z0-9\s-]/g, '')
           .replace(/[\s-]+/g, '-')
           .slice(0, 100)
           .replace(/^-+|-+$/g, '');
-        href = genSlug ? '/jobs/' + genSlug + '/' : (officialWebUrl || '#');
+        href = genSlug ? '/data/jobs/' + genSlug + '/' : (officialWebUrl || '#');
       } else if (slug) {
         href = 'job.html?slug=' + encodeURIComponent(slug);
       } else if (job.source && job.source === 'sarkariresultshine.com') {

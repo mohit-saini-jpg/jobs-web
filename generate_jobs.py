@@ -1,590 +1,1029 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
-generate_jobs.py — Saare 4 JSON sources se job pages generate karta hai
-=========================================================================
-Sources:
-  1. Complete_Jobs_Full_Data.json  — main job database
-  2. merged_sarkari_data.json      — sr_ prefix + non-sr jobs
-  3. state-jobs-data.json          — state-wise jobs
-  4. dailyupdates.json             — daily updates (Top 20 + Today Updates)
+generate_jobs.py  —  TopSarkariJobs Master Build Pipeline  v5.0
+================================================================
+ARCHITECTURE:
+  ✅ ONE MASTER DATA SOURCE  (merge → dedupe → normalise)
+  ✅ ONE HTML PER JOB         /data/jobs/{slug}/index.html
+  ✅ ZERO DUPLICATE HTML
+  ✅ CATEGORY/STATE/EDUCATION = listing only (NO full HTML)
+  ✅ SINGLE RENDER ENGINE     (preferred-source-renderer.js)
+  ✅ FULL SEO (canonical, meta, schemas: Job/FAQ/Breadcrumb/Article)
+  ✅ SITEMAP includes ONLY /data/jobs/{slug}/
 
-Output per job:
-  - jobs/data/<slug>.json          — job data file
-  - jobs/<slug>/index.html         — static HTML (Google directly indexes!)
-  - jobs-index.json                — fast lookup index
+SOURCES merged:
+  1. Complete_Jobs_Full_Data.json   — main category-wise job DB
+  2. Education_Jobs.json            — state + entrance exam jobs
+  3. Qualification_Wise_Jobs.json   — qual-filtered jobs with full detail
+  4. merged_sarkari_data.json       — sr_ prefix + misc categories
+  5. state-jobs-data.json           — state-wise listing
+  6. dailyupdates.json              — Top 20 + Today Updates
+
+OUTPUT:
+  data/jobs/{slug}/index.html   — ONE canonical HTML per job
+  data/jobs/{slug}.json         — raw JSON data (for renderer)
+  data-jobs-index.json          — fast slug→meta lookup
+  sitemap-jobs.xml              — jobs-only sitemap
+  sections-index.json           — category listing (no dup HTML)
+  data/merged-summary.json      — homepage card data
 """
 
-import json, re, os, html as html_mod
+import json, re, os, html as html_mod, shutil
 from datetime import date
+from collections import defaultdict
 
-SRC      = "Complete_Jobs_Full_Data.json"
-MERGED   = "merged_sarkari_data.json"
-STATE    = "state-jobs-data.json"
-DAILY    = "dailyupdates.json"
-DEST     = "jobs/data"
-JOBS_DIR = "jobs"
-INDEX    = "jobs-index.json"
-BASE_URL = "https://www.topsarkarijobs.com"
-TODAY    = date.today().isoformat()
+# ══════════════════════════════════════════════════════════════════
+#  CONSTANTS
+# ══════════════════════════════════════════════════════════════════
+BASE_URL   = "https://www.topsarkarijobs.com"
+TODAY      = date.today().isoformat()
 
-VALID_CATS = {
-    "Latest_Notifications","10TH_Pass","8TH_Pass","12TH_Pass",
-    "Diploma","ITI","B_Tech_BE","B_Com","Any_Graduate",
-    "Any_Post_Graduate","Railway_Jobs","Police_Defence",
-    "Teaching_Faculty","Bank_Jobs","Medical_Hospital",
-}
+# Source files
+SRC_MAIN   = "Complete_Jobs_Full_Data.json"
+SRC_EDU    = "Education_Jobs.json"
+SRC_QUAL   = "Qualification_Wise_Jobs.json"
+SRC_MERGED = "merged_sarkari_data.json"
+SRC_STATE  = "state-jobs-data.json"
+SRC_DAILY  = "dailyupdates.json"
 
+# Output paths (ALL job HTML/JSON go here — NEVER in /state/, /category/, /education/)
+JOBS_HTML_DIR  = "data/jobs"   # data/jobs/{slug}/index.html
+JOBS_DATA_DIR  = "data/jobs"   # data/jobs/{slug}.json  (same dir, different names)
+JOBS_INDEX     = "data-jobs-index.json"
+SITEMAP_FILE   = "sitemap-jobs.xml"
+SECTIONS_INDEX = "sections-index.json"
+
+# Category labels for SEO
 CAT_LABELS = {
-    "Latest_Notifications":"Latest Jobs","10TH_Pass":"10th Pass Jobs",
-    "8TH_Pass":"8th Pass Jobs","12TH_Pass":"12th Pass Jobs",
-    "Diploma":"Diploma Jobs","ITI":"ITI Jobs","B_Tech_BE":"B.Tech / BE Jobs",
-    "B_Com":"B.Com Jobs","Any_Graduate":"Graduation Jobs",
-    "Any_Post_Graduate":"Post Graduation Jobs","Railway_Jobs":"Railway Jobs",
-    "Police_Defence":"Defence Jobs","Teaching_Faculty":"Teaching Jobs",
-    "Bank_Jobs":"Bank Jobs","Medical_Hospital":"Medical Jobs",
+    "Latest_Notifications" : "Latest Sarkari Jobs",
+    "10TH_Pass"            : "10th Pass Govt Jobs",
+    "8TH_Pass"             : "8th Pass Govt Jobs",
+    "12TH_Pass"            : "12th Pass Govt Jobs",
+    "Diploma"              : "Diploma Govt Jobs",
+    "ITI"                  : "ITI Govt Jobs",
+    "B_Tech_BE"            : "B.Tech / BE Govt Jobs",
+    "B_Com"                : "B.Com Govt Jobs",
+    "Any_Graduate"         : "Graduate Govt Jobs",
+    "Any_Post_Graduate"    : "Post Graduate Govt Jobs",
+    "Railway_Jobs"         : "Railway Sarkari Jobs",
+    "Police_Defence"       : "Police & Defence Jobs",
+    "Teaching_Faculty"     : "Teaching & Faculty Jobs",
+    "Bank_Jobs"            : "Bank Sarkari Jobs",
+    "Medical_Hospital"     : "Medical & Hospital Jobs",
+    "Last_Date_Reminder"   : "Last Date Reminder Jobs",
+    "OFFLINE_FORM"         : "Offline Form Jobs",
+    "STATE_JOBS"           : "State Govt Jobs",
+    "Education"            : "Education Jobs",
+    "Qualification"        : "Qualification-wise Jobs",
 }
 
+VALID_CATS = set(CAT_LABELS.keys())
+
+# ══════════════════════════════════════════════════════════════════
+#  STEP 1 — UTILITIES
+# ══════════════════════════════════════════════════════════════════
 def slugify(text):
-    text = str(text).lower()
-    text = re.sub(r'[^a-z0-9\s-]', '', text)
-    text = re.sub(r'[\s-]+', '-', text)
-    return text[:120].strip('-') or 'job'
+    text = str(text or "").lower().strip()
+    text = re.sub(r"[^a-z0-9\s\-]", "", text)
+    text = re.sub(r"[\s\-]+", "-", text)
+    return text[:120].strip("-") or "job"
 
 def e(s):
-    return html_mod.escape(str(s or ''), quote=True)
+    return html_mod.escape(str(s or ""), quote=True)
 
 def normalise_date(raw):
-    if not raw: return None
+    if not raw:
+        return None
     raw = str(raw).strip()
-    if re.match(r'^\d{4}-\d{2}-\d{2}$', raw): return raw
+    if re.match(r"^\d{4}-\d{2}-\d{2}$", raw):
+        return raw
     months = {"jan":1,"feb":2,"mar":3,"apr":4,"may":5,"jun":6,
-              "jul":7,"aug":8,"sep":9,"oct":10,"nov":11,"dec":12}
-    m1 = re.search(r'(\d{1,2})[-/](\d{1,2})[-/](\d{4})', raw)
-    if m1: return f"{m1.group(3)}-{int(m1.group(2)):02d}-{int(m1.group(1)):02d}"
-    m2 = re.search(r'(\d{1,2})\s+([a-zA-Z]+)\s+(\d{4})', raw)
+               "jul":7,"aug":8,"sep":9,"oct":10,"nov":11,"dec":12}
+    m1 = re.search(r"(\d{1,2})[-/](\d{1,2})[-/](\d{4})", raw)
+    if m1:
+        return f"{m1.group(3)}-{int(m1.group(2)):02d}-{int(m1.group(1)):02d}"
+    m2 = re.search(r"(\d{1,2})\s+([a-zA-Z]+)\s+(\d{4})", raw)
     if m2:
         mo = months.get(m2.group(2)[:3].lower())
-        if mo: return f"{m2.group(3)}-{mo:02d}-{int(m2.group(1)):02d}"
+        if mo:
+            return f"{m2.group(3)}-{mo:02d}-{int(m2.group(1)):02d}"
     return None
 
-def build_static_html(slug, title, bd, dates, qual, salary, cat, source_url):
-    canon_url  = f"{BASE_URL}/jobs/{slug}/"
+def safe_str(v, max_len=None):
+    s = str(v or "").strip()
+    if max_len and len(s) > max_len:
+        s = s[:max_len].rsplit(" ", 1)[0].rstrip(".,–")
+    return s
+
+def load_json(path):
+    if not os.path.exists(path):
+        print(f"  ⚠️  NOT FOUND: {path}")
+        return None
+    try:
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as ex:
+        print(f"  ❌ ERROR reading {path}: {ex}")
+        return None
+
+# ══════════════════════════════════════════════════════════════════
+#  STEP 2 — NORMALISED JOB RECORD
+# ══════════════════════════════════════════════════════════════════
+def make_normalised(
+        title, slug, category="Latest_Notifications",
+        org="", vacancies="", last_date="", post_date="",
+        apply_mode="Online", location="India",
+        short_info="", source_url="",
+        education=None, state=None, tags=None,
+        raw_detail=None):
+    """
+    Returns a normalised job dict that is the canonical single truth.
+    raw_detail carries the full original JSON for the renderer.
+    """
+    nd = normalise_date(last_date)
+    return {
+        "slug"        : slug,
+        "id"          : slug,
+        "title"       : title,
+        "category"    : category,
+        "org"         : org or "",
+        "vacancies"   : safe_str(vacancies),
+        "lastDate"    : nd or last_date or "",
+        "postDate"    : normalise_date(post_date) or post_date or TODAY,
+        "applyMode"   : apply_mode or "Online",
+        "location"    : location or "India",
+        "shortInfo"   : short_info or "",
+        "sourceUrl"   : source_url or "",
+        "education"   : education or [],
+        "state"       : state or [],
+        "tags"        : tags or [],
+        "detail"      : raw_detail or {},   # full JSON for renderer
+    }
+
+# ══════════════════════════════════════════════════════════════════
+#  STEP 3 — MERGE ALL SOURCES
+# ══════════════════════════════════════════════════════════════════
+def merge_all_sources():
+    """
+    Read all 6 JSON sources, normalise each record, return flat list.
+    Priority for duplicate resolution: slug → title+lastDate.
+    """
+    all_records = []
+
+    # ── SOURCE 1: Complete_Jobs_Full_Data.json ──────────────────────
+    print("\n[1] Loading Complete_Jobs_Full_Data.json …")
+    cjf = load_json(SRC_MAIN)
+    if cjf:
+        for cat, jobs in cjf.items():
+            if not isinstance(jobs, list):
+                continue
+            for job in jobs:
+                bd    = job.get("basic_details") or {}
+                dates = job.get("important_dates") or {}
+                title = safe_str(bd.get("job_title"))
+                if not title:
+                    continue
+                slug  = slugify(title)
+                nd    = (dates.get("last_date_to_apply") or dates.get("closing_date") or "")
+                rec = make_normalised(
+                    title     = title,
+                    slug      = slug,
+                    category  = cat if cat in VALID_CATS else "Latest_Notifications",
+                    org       = safe_str(bd.get("organization_name") or bd.get("post_name")),
+                    vacancies = safe_str(bd.get("total_vacancies") or bd.get("total_vacancy")),
+                    last_date = nd,
+                    post_date = safe_str(bd.get("last_updated")),
+                    apply_mode= safe_str(bd.get("application_mode") or "Online"),
+                    location  = safe_str(bd.get("job_location") or "India"),
+                    short_info= safe_str(bd.get("short_information")),
+                    source_url= safe_str((job.get("important_links") or [{}])[0].get("links", [""])[0]
+                                         if isinstance(job.get("important_links"), list) and job.get("important_links") else ""),
+                    tags      = _extract_tags(cat, title, bd.get("job_location", "")),
+                    raw_detail= job,
+                )
+                all_records.append(rec)
+        print(f"   → {sum(len(v) for v in cjf.values() if isinstance(v,list))} jobs loaded")
+
+    # ── SOURCE 2: Qualification_Wise_Jobs.json ──────────────────────
+    print("[2] Loading Qualification_Wise_Jobs.json …")
+    qwj = load_json(SRC_QUAL)
+    if qwj:
+        cnt = 0
+        for sec in qwj.get("sections", []):
+            for item in sec.get("items", []):
+                name = safe_str(item.get("name") or item.get("title"))
+                if not name:
+                    continue
+                detail  = item.get("detail") or {}
+                if isinstance(detail, str):
+                    try: detail = json.loads(detail)
+                    except: detail = {}
+                bd    = detail.get("basic_details") or {}
+                dates = detail.get("important_dates") or {}
+                slug  = slugify(name)
+                nd    = safe_str(dates.get("last_date_to_apply") or item.get("lastDate") or "")
+                rec = make_normalised(
+                    title     = name,
+                    slug      = slug,
+                    category  = "Qualification",
+                    org       = safe_str(bd.get("post_name") or bd.get("organization_name")),
+                    vacancies = safe_str(bd.get("total_vacancies") or ""),
+                    last_date = nd,
+                    post_date = safe_str(item.get("postDate") or bd.get("last_updated")),
+                    apply_mode= safe_str(bd.get("application_mode") or "Online"),
+                    location  = safe_str(bd.get("job_location") or "India"),
+                    short_info= safe_str(bd.get("short_information") or item.get("qualification")),
+                    source_url= safe_str(item.get("url") or ""),
+                    tags      = _extract_tags("Qualification", name, ""),
+                    raw_detail= detail if detail else item,
+                )
+                all_records.append(rec)
+                cnt += 1
+        print(f"   → {cnt} jobs loaded")
+
+    # ── SOURCE 3: Education_Jobs.json ───────────────────────────────
+    print("[3] Loading Education_Jobs.json …")
+    edj = load_json(SRC_EDU)
+    if edj:
+        cnt = 0
+        for sec in edj.get("sections", []):
+            state_name = safe_str(sec.get("title") or sec.get("state") or "India")
+            for item in sec.get("items", []):
+                name = safe_str(item.get("name") or item.get("title"))
+                if not name:
+                    continue
+                detail = item.get("detail") or {}
+                if isinstance(detail, str):
+                    try: detail = json.loads(detail)
+                    except: detail = {}
+                bd    = (detail.get("basic_details") if detail else {}) or {}
+                dates = (detail.get("important_dates") if detail else {}) or {}
+                slug  = slugify(name)
+                nd    = safe_str(dates.get("last_date_to_apply") or item.get("lastDate") or "")
+                rec = make_normalised(
+                    title     = name,
+                    slug      = slug,
+                    category  = "Education",
+                    org       = safe_str(bd.get("post_name") or bd.get("organization_name") or state_name),
+                    vacancies = safe_str(bd.get("total_vacancies") or ""),
+                    last_date = nd,
+                    post_date = safe_str(item.get("postDate") or bd.get("last_updated")),
+                    location  = state_name,
+                    short_info= safe_str(bd.get("short_information") or item.get("category")),
+                    source_url= safe_str(item.get("url") or ""),
+                    state     = [state_name] if state_name and state_name != "India" else [],
+                    tags      = _extract_tags("Education", name, state_name),
+                    raw_detail= detail if detail else item,
+                )
+                all_records.append(rec)
+                cnt += 1
+        print(f"   → {cnt} jobs loaded")
+
+    # ── SOURCE 4: merged_sarkari_data.json ─────────────────────────
+    print("[4] Loading merged_sarkari_data.json …")
+    msd = load_json(SRC_MERGED)
+    if msd:
+        merged_jobs = msd.get("jobs", []) if isinstance(msd, dict) else (msd if isinstance(msd, list) else [])
+        cnt = 0
+        for job in merged_jobs:
+            title = safe_str(job.get("title"))
+            if not title:
+                continue
+            existing_slug = safe_str(job.get("slug"))
+            slug = existing_slug if existing_slug else slugify(title)
+            imp_dates = job.get("important_dates") or {}
+            if isinstance(imp_dates, str):
+                imp_dates = {}
+            nd = safe_str(job.get("last_date") or imp_dates.get("last_date") or "")
+            # Find best source URL
+            src_url = (job.get("apply_online_link") or job.get("official_website_link")
+                       or job.get("official_notification_pdf_link") or "")
+            if not src_url:
+                for lnk in (job.get("useful_links") or []):
+                    if isinstance(lnk, dict):
+                        href = lnk.get("links") or lnk.get("url") or ""
+                        if isinstance(href, list): href = href[0] if href else ""
+                        if str(href).startswith("http"):
+                            src_url = str(href)
+                            break
+            cat = safe_str(job.get("category") or "Latest_Notifications")
+            if cat not in VALID_CATS:
+                cat = "Latest_Notifications"
+            rec = make_normalised(
+                title     = title,
+                slug      = slug,
+                category  = cat,
+                org       = safe_str(job.get("organization") or job.get("post_name")),
+                vacancies = safe_str(job.get("total_vacancy") or job.get("total_vacancies") or ""),
+                last_date = nd,
+                post_date = safe_str(job.get("listing_date") or job.get("post_date") or imp_dates.get("application_begin") or ""),
+                apply_mode= safe_str(job.get("apply_mode") or "Online"),
+                location  = safe_str(job.get("job_location") or "India"),
+                short_info= safe_str(job.get("short_information") or job.get("jobs_info")),
+                source_url= src_url,
+                tags      = _extract_tags(cat, title, job.get("job_location", "")),
+                raw_detail= job,
+            )
+            all_records.append(rec)
+            cnt += 1
+        print(f"   → {cnt} jobs loaded")
+
+    # ── SOURCE 5: state-jobs-data.json ─────────────────────────────
+    print("[5] Loading state-jobs-data.json …")
+    sjd = load_json(SRC_STATE)
+    if sjd:
+        cnt = 0
+        for sec in sjd.get("sections", []):
+            state_name = safe_str(sec.get("state") or sec.get("title") or "India")
+            for item in sec.get("items", []):
+                name = safe_str(item.get("name") or item.get("title"))
+                if not name:
+                    continue
+                slug    = safe_str(item.get("slug")) or slugify(name)
+                detail  = item.get("detail") or {}
+                if isinstance(detail, str):
+                    try: detail = json.loads(detail)
+                    except: detail = {}
+                bd_raw    = (detail.get("basic_details") or {}) if detail else {}
+                dates_raw = (detail.get("important_dates") or {}) if detail else {}
+                if isinstance(bd_raw, str): bd_raw = {}
+                if isinstance(dates_raw, str): dates_raw = {}
+                nd = safe_str(item.get("lastDate") or dates_raw.get("last_date_to_apply") or "")
+                rec = make_normalised(
+                    title     = name,
+                    slug      = slug,
+                    category  = "STATE_JOBS",
+                    org       = safe_str(bd_raw.get("post_name") or bd_raw.get("organization_name") or state_name),
+                    vacancies = safe_str(bd_raw.get("total_vacancies") or ""),
+                    last_date = nd,
+                    post_date = safe_str(item.get("postDate") or item.get("date") or bd_raw.get("last_updated") or ""),
+                    apply_mode= safe_str(bd_raw.get("application_mode") or "Online"),
+                    location  = f"{state_name}, India",
+                    short_info= safe_str(bd_raw.get("short_information")),
+                    source_url= safe_str(item.get("url") or ""),
+                    state     = [state_name],
+                    tags      = _extract_tags("STATE_JOBS", name, state_name),
+                    raw_detail= detail if detail else item,
+                )
+                all_records.append(rec)
+                cnt += 1
+        print(f"   → {cnt} jobs loaded")
+
+    # ── SOURCE 6: dailyupdates.json (Top 20 + Today Updates only) ──
+    print("[6] Loading dailyupdates.json …")
+    DAILY_SECS = {"Top 20 Jobs", "Today Updates"}
+    dju = load_json(SRC_DAILY)
+    if dju:
+        cnt = 0
+        for sec in dju.get("sections", []):
+            if sec.get("title") not in DAILY_SECS:
+                continue
+            for item in sec.get("items", []):
+                name = safe_str(item.get("name") or item.get("title"))
+                if not name:
+                    continue
+                slug = slugify(name)
+                rec = make_normalised(
+                    title     = name,
+                    slug      = slug,
+                    category  = "Latest_Notifications",
+                    post_date = safe_str(item.get("date") or ""),
+                    last_date = safe_str(item.get("lastDate") or item.get("date") or ""),
+                    location  = "India",
+                    source_url= safe_str(item.get("url") or item.get("link") or ""),
+                    tags      = _extract_tags("Latest_Notifications", name, ""),
+                    raw_detail= item,
+                )
+                all_records.append(rec)
+                cnt += 1
+        print(f"   → {cnt} jobs loaded")
+
+    return all_records
+
+
+def _extract_tags(category, title, location):
+    """
+    Build comprehensive tags list from available signals.
+    """
+    tags = []
+    t = title.lower()
+    l = (location or "").lower()
+
+    # Education level tags
+    if "10th" in t or "matric" in t or "ssc" in t:      tags.append("10th")
+    if "12th" in t or "inter" in t or "higher secondary" in t: tags.append("12th")
+    if "graduate" in t or "graduation" in t:              tags.append("graduate")
+    if "post graduate" in t or "pg " in t:                tags.append("post-graduate")
+    if "iti" in t:                                         tags.append("iti")
+    if "diploma" in t:                                     tags.append("diploma")
+    if "b.tech" in t or "b tech" in t or "btech" in t or "be " in t: tags.append("btech")
+    if "mbbs" in t or "medical" in t:                     tags.append("medical")
+
+    # Job type tags
+    if "railway" in t or "rrb" in t or "rrc" in t:       tags.append("railway")
+    if "bank" in t or "sbi" in t or "nabard" in t:        tags.append("bank")
+    if "police" in t or "constable" in t:                 tags.append("police")
+    if "army" in t or "navy" in t or "air force" in t or "defence" in t: tags.append("defence")
+    if "teacher" in t or "faculty" in t or "lecturer" in t: tags.append("teaching")
+    if "admit card" in t:                                  tags.append("admit-card")
+    if "result" in t:                                      tags.append("result")
+    if "answer key" in t:                                  tags.append("answer-key")
+    if "admission" in t:                                   tags.append("admission")
+    if "apprentice" in t:                                  tags.append("apprentice")
+
+    # Category tags
+    cat_tag_map = {
+        "Railway_Jobs": "railway", "Bank_Jobs": "bank",
+        "Police_Defence": "police", "Teaching_Faculty": "teaching",
+        "Medical_Hospital": "medical", "10TH_Pass": "10th",
+        "12TH_Pass": "12th", "8TH_Pass": "8th",
+    }
+    if category in cat_tag_map:
+        t2 = cat_tag_map[category]
+        if t2 not in tags:
+            tags.append(t2)
+
+    # Location / state tags
+    STATES = ["haryana","rajasthan","up","uttar pradesh","bihar","maharashtra",
+               "mp","madhya pradesh","gujarat","karnataka","tamil","andhra",
+               "telangana","odisha","assam","punjab","kerala","jharkhand",
+               "chhattisgarh","uttarakhand","himachal","jammu","delhi"]
+    for st in STATES:
+        if st in l or st in t:
+            tags.append(st.replace(" ", "-"))
+            break
+
+    tags.append("latest")
+    return list(dict.fromkeys(tags))   # preserve order, remove dups
+
+
+# ══════════════════════════════════════════════════════════════════
+#  STEP 4 — ADVANCED DEDUPLICATION
+# ══════════════════════════════════════════════════════════════════
+def deduplicate(records):
+    """
+    Priority:
+      1. Slug-level dedup (keep first occurrence — Complete_Jobs first)
+      2. title + lastDate dedup (fuzzy: normalised lower title)
+    Returns clean list.
+    """
+    seen_slugs   = {}   # slug → index
+    seen_titledt = {}   # (normalised_title, lastDate) → index
+    unique = []
+
+    for rec in records:
+        slug = rec["slug"]
+        key2 = (re.sub(r"\s+", " ", rec["title"].lower().strip()), rec["lastDate"])
+
+        if slug in seen_slugs:
+            # Slug collision — enrich existing with any missing detail
+            existing = unique[seen_slugs[slug]]
+            if not existing["detail"] and rec["detail"]:
+                existing["detail"] = rec["detail"]
+            continue
+
+        if key2 in seen_titledt and key2[0]:
+            existing = unique[seen_titledt[key2]]
+            if not existing["detail"] and rec["detail"]:
+                existing["detail"] = rec["detail"]
+            # Keep slug mapping to this existing record
+            seen_slugs[slug] = seen_titledt[key2]
+            continue
+
+        idx = len(unique)
+        unique.append(rec)
+        seen_slugs[slug]  = idx
+        if key2[0]:
+            seen_titledt[key2] = idx
+
+    print(f"\n  Deduplication: {len(records)} raw → {len(unique)} unique records")
+    return unique
+
+
+# ══════════════════════════════════════════════════════════════════
+#  STEP 5 — SEO HTML GENERATOR  (central, single render engine)
+# ══════════════════════════════════════════════════════════════════
+def build_job_html(rec):
+    """
+    Generate a complete, SEO-optimised index.html for one job.
+    The JS renderer (preferred-source-renderer.js) handles dynamic
+    section expansion from the paired .json file.
+    """
+    slug       = rec["slug"]
+    title      = rec["title"]
+    canon_url  = f"{BASE_URL}/data/jobs/{slug}/"
+    cat        = rec["category"]
     cat_label  = CAT_LABELS.get(cat, "Government Jobs")
-    org        = e(bd.get("post_name") or bd.get("job_title") or "Government of India")
-    vacancies  = e(bd.get("total_vacancies") or bd.get("total_vacancy") or "")
-    last_date_r= dates.get("last_date_to_apply") or dates.get("last_date") or ""
-    last_date  = e(last_date_r)
-    apply_mode = e(bd.get("application_mode") or "Online")
-    location   = e(bd.get("job_location") or "India")
-    short_info = e(bd.get("short_information") or "")
-    posted_date= normalise_date(bd.get("last_updated") or dates.get("date of notification") or "") or TODAY
+    org        = e(rec["org"] or "Government of India")
+    vacancies  = e(rec["vacancies"] or "")
+    last_date  = e(rec["lastDate"] or "")
+    apply_mode = e(rec["applyMode"] or "Online")
+    location   = e(rec["location"] or "India")
+    short_info = e(rec["shortInfo"] or "")
+    post_date  = rec["postDate"] or TODAY
 
-    qual_str = ""
-    if isinstance(qual, dict):
-        qual_str = e(qual.get("essential_qualification") or qual.get("qualification") or "")
-    elif isinstance(qual, str):
-        qual_str = e(qual)
+    # Derive from raw detail if available
+    detail    = rec.get("detail") or {}
+    bd        = detail.get("basic_details") or {}
+    salary_d  = detail.get("salary_details") or {}
+    qual_d    = detail.get("qualification") or {}
 
-    sal_str = ""
-    if isinstance(salary, dict):
-        sal_str = e(salary.get("pay_scale") or salary.get("salary") or "")
-    elif isinstance(salary, str):
-        sal_str = e(salary)
+    sal_str   = ""
+    if isinstance(salary_d, dict):
+        sal_str = e(salary_d.get("pay_scale") or salary_d.get("salary") or "")
+    elif isinstance(salary_d, str):
+        sal_str = e(salary_d)
 
-    # ── FIX C-5: Meta description ≤ 155 chars (was 200-304 chars) ──
-    # Template: [Org] [Year]: [X] vacancies, last date [D]. [Qual]. Apply online – Top Sarkari Jobs.
-    _vac_part  = f"{vacancies} vacancies, " if vacancies else ""
-    _ld_part   = f"last date {last_date}. " if last_date else ""
-    _sal_part  = f"Salary: {sal_str[:40]}. " if sal_str else ""
-    _qual_part = f"{qual_str[:50]} eligible. " if qual_str else ""
-    meta_desc  = f"{e(title)}: {_vac_part}{_ld_part}{_sal_part}{_qual_part}Apply online."
-    # Trim to 155 chars cleanly at word boundary
+    qual_str  = ""
+    if isinstance(qual_d, dict):
+        qual_str = e(qual_d.get("essential_qualification") or qual_d.get("qualification") or "")
+    elif isinstance(qual_d, str):
+        qual_str = e(qual_d)
+
+    # ── Meta description ≤ 155 chars ──
+    _vac   = f"{vacancies} vacancies, " if vacancies else ""
+    _ld    = f"last date {last_date}. " if last_date else ""
+    _sal   = f"Salary: {sal_str[:40]}. " if sal_str else ""
+    _qual  = f"{qual_str[:50]} eligible. " if qual_str else ""
+    meta_desc = f"{e(title)}: {_vac}{_ld}{_sal}{_qual}Apply online – TopSarkariJobs."
     if len(meta_desc) > 155:
-        meta_desc = meta_desc[:152].rsplit(' ', 1)[0].rstrip('.,–') + "…"
+        meta_desc = meta_desc[:152].rsplit(" ", 1)[0].rstrip(".,–") + "…"
 
-    # ── FIX C-6: Page title ≤ 60 chars ──
-    # Template: [Org short] [Year] – [X Posts] | Top Sarkari Jobs
-    title_seo = title  # full title for schema/h1
-    if len(title) + len(" | Top Sarkari Jobs") > 60:
-        # Try to extract year from title
-        _yr = re.search(r'20\d\d', title)
-        _yr = _yr.group() if _yr else ""
-        _vac_n = re.search(r'\d+', str(bd.get("total_vacancies") or ""))
-        _vac_tag = f" – {_vac_n.group()} Posts" if _vac_n else ""
-        # Short title from first meaningful part (before ' –', ' -', ' Notification', ' Recruitment')
-        _short = re.split(r'\s+(?:–|-|Notification|Recruitment)\s+', title)[0].strip()
-        _short = _short[:30].rstrip() if len(_short) > 30 else _short
-        _title_tag = f"{_short}{' ' + _yr if _yr and _yr not in _short else ''}{_vac_tag}"
-        if len(_title_tag) + len(" | Top Sarkari Jobs") <= 60:
-            title_tag = _title_tag
-        else:
-            title_tag = title[:40].rstrip()
-    else:
-        title_tag = title
+    # ── SEO Title ≤ 60 chars ──
+    _yr   = re.search(r"20\d\d", title)
+    _yr   = _yr.group() if _yr else ""
+    _vn   = re.search(r"\d+", rec["vacancies"]) if rec["vacancies"] else None
+    _vtag = f" – {_vn.group()} Posts" if _vn else ""
+    _short = re.split(r"\s+(?:–|-|Notification|Recruitment)\s+", title)[0].strip()
+    _short = _short[:30].rstrip() if len(_short) > 30 else _short
+    title_tag = f"{_short}{' '+_yr if _yr and _yr not in _short else ''}{_vtag}"
+    if len(title_tag) + len(" | Top Sarkari Jobs") > 60:
+        title_tag = title[:40].rstrip()
+    full_title_tag = f"{title_tag} | Top Sarkari Jobs"
 
-    # ── FIX C-4: JobPosting schema with all required fields ──
-    org_name = bd.get("post_name") or "Government of India"
-    job_schema = {
-        "@context":"https://schema.org","@type":"JobPosting",
-        "title":title_seo,
-        "description": bd.get("short_information") or meta_desc,
-        "datePosted":posted_date,"employmentType":"FULL_TIME","url":canon_url,
-        "identifier":{"@type":"PropertyValue","name":org_name,"value":slug},
-        "applicantLocationRequirements":{"@type":"Country","name":"India"},
-        "hiringOrganization":{"@type":"Organization","name":org_name,
-            "sameAs":"https://www.india.gov.in"},
-        "jobLocation":{"@type":"Place","address":{"@type":"PostalAddress",
-            "addressCountry":"IN","addressRegion":"India",
-            "addressLocality": bd.get("job_location") or "India"}},
-        "author":{"@type":"Organization","name":"TopSarkariJobs Editorial Team",
-            "url":"https://www.topsarkarijobs.com/about.html"}
+    # ── JSON-LD: JobPosting schema ──
+    org_name    = rec["org"] or bd.get("organization_name") or "Government of India"
+    job_schema  = {
+        "@context"   : "https://schema.org",
+        "@type"      : "JobPosting",
+        "title"      : title,
+        "description": rec["shortInfo"] or meta_desc,
+        "datePosted" : post_date,
+        "employmentType": "FULL_TIME",
+        "url"        : canon_url,
+        "identifier" : {"@type":"PropertyValue","name":org_name,"value":slug},
+        "applicantLocationRequirements": {"@type":"Country","name":"India"},
+        "hiringOrganization": {
+            "@type" : "Organization",
+            "name"  : org_name,
+            "sameAs": "https://www.india.gov.in"
+        },
+        "jobLocation": {
+            "@type"  : "Place",
+            "address": {
+                "@type"           : "PostalAddress",
+                "addressCountry"  : "IN",
+                "addressRegion"   : "India",
+                "addressLocality" : rec["location"] or "India",
+            }
+        },
+        "author": {
+            "@type": "Organization",
+            "name" : "TopSarkariJobs Editorial Team",
+            "url"  : "https://www.topsarkarijobs.com/about.html"
+        }
     }
-    if last_date_r:
-        iso = normalise_date(last_date_r)
-        if iso: job_schema["validThrough"] = iso
-    if vacancies:
-        vac_num = re.search(r'\d+', str(vacancies))
-        if vac_num: job_schema["totalJobOpenings"] = int(vac_num.group())
+    if rec["lastDate"]:
+        iso = normalise_date(rec["lastDate"])
+        if iso:
+            job_schema["validThrough"] = iso
+    if rec["vacancies"]:
+        vn = re.search(r"\d+", rec["vacancies"])
+        if vn:
+            job_schema["totalJobOpenings"] = int(vn.group())
     if qual_str:
-        job_schema["educationRequirements"] = {"@type":"EducationalOccupationalCredential","credentialCategory":qual_str[:200]}
-    # baseSalary — use sal_str if available, else provide INR placeholder range
+        job_schema["educationRequirements"] = {
+            "@type"              : "EducationalOccupationalCredential",
+            "credentialCategory" : qual_str[:200]
+        }
     if sal_str:
-        _sal_match = re.search(r'(\d[\d,]+)', sal_str.replace(',', ''))
-        if _sal_match:
-            _sal_val = int(re.sub(r'\D','', _sal_match.group()))
-            job_schema["baseSalary"] = {"@type":"MonetaryAmount","currency":"INR",
-                "value":{"@type":"QuantitativeValue","value":_sal_val,"unitText":"MONTH"}}
+        _sm = re.search(r"(\d[\d,]+)", sal_str.replace(",",""))
+        if _sm:
+            _sv = int(re.sub(r"\D","", _sm.group()))
+            job_schema["baseSalary"] = {
+                "@type":"MonetaryAmount","currency":"INR",
+                "value":{"@type":"QuantitativeValue","value":_sv,"unitText":"MONTH"}
+            }
     else:
-        job_schema["baseSalary"] = {"@type":"MonetaryAmount","currency":"INR",
-            "value":{"@type":"QuantitativeValue","minValue":15000,"maxValue":80000,"unitText":"MONTH"}}
+        job_schema["baseSalary"] = {
+            "@type":"MonetaryAmount","currency":"INR",
+            "value":{"@type":"QuantitativeValue","minValue":15000,"maxValue":80000,"unitText":"MONTH"}
+        }
 
-    # ── FIX H-1: FAQ schema on every job page ──
-    _last_date_faq = last_date or "official notification dekhein"
-    _qual_faq = qual_str[:100] if qual_str else "Official notification dekhein"
-    _sal_faq  = sal_str[:80] if sal_str else "As per government norms"
+    # ── JSON-LD: FAQ schema ──
+    _ld_faq  = last_date or "official notification dekhein"
+    _q_faq   = qual_str[:100] if qual_str else "official notification dekhein"
+    _s_faq   = sal_str[:80]   if sal_str  else "as per government norms"
     faq_schema = {
-        "@context":"https://schema.org","@type":"FAQPage",
-        "mainEntity":[
-            {"@type":"Question","name":f"{title_seo} last date kya hai?",
-             "acceptedAnswer":{"@type":"Answer","text":f"Last date: {_last_date_faq}."}},
-            {"@type":"Question","name":f"{title_seo} ke liye qualification kya chahiye?",
-             "acceptedAnswer":{"@type":"Answer","text":f"Qualification: {_qual_faq}."}},
-            {"@type":"Question","name":f"{title_seo} mein salary kitni hai?",
-             "acceptedAnswer":{"@type":"Answer","text":f"Salary: {_sal_faq}."}}
+        "@context"   : "https://schema.org",
+        "@type"      : "FAQPage",
+        "mainEntity" : [
+            {"@type":"Question","name":f"{title} last date kya hai?",
+             "acceptedAnswer":{"@type":"Answer","text":f"Last date: {_ld_faq}."}},
+            {"@type":"Question","name":f"{title} ke liye qualification kya chahiye?",
+             "acceptedAnswer":{"@type":"Answer","text":f"Qualification: {_q_faq}."}},
+            {"@type":"Question","name":f"{title} mein salary kitni hai?",
+             "acceptedAnswer":{"@type":"Answer","text":f"Salary: {_s_faq}."}},
+            {"@type":"Question","name":f"How to apply for {title}?",
+             "acceptedAnswer":{"@type":"Answer","text":f"Visit official website or apply online at {canon_url}"}},
         ]
     }
 
+    # ── JSON-LD: BreadcrumbList schema ──
     bc_schema = {
-        "@context":"https://schema.org","@type":"BreadcrumbList",
-        "itemListElement":[
+        "@context"        : "https://schema.org",
+        "@type"           : "BreadcrumbList",
+        "itemListElement" : [
             {"@type":"ListItem","position":1,"name":"Home","item":f"{BASE_URL}/"},
-            {"@type":"ListItem","position":2,"name":"Latest Jobs","item":f"{BASE_URL}/section/latest-jobs/"},
-            {"@type":"ListItem","position":3,"name":title_seo,"item":canon_url}
+            {"@type":"ListItem","position":2,"name":cat_label,"item":f"{BASE_URL}/section/{cat.lower().replace('_','-')}/"},
+            {"@type":"ListItem","position":3,"name":title,"item":canon_url},
         ]
     }
+
+    # ── JSON-LD: Article schema ──
+    article_schema = {
+        "@context"       : "https://schema.org",
+        "@type"          : "Article",
+        "headline"       : title,
+        "description"    : rec["shortInfo"] or meta_desc,
+        "datePublished"  : post_date,
+        "dateModified"   : TODAY,
+        "url"            : canon_url,
+        "image"          : f"{BASE_URL}/image.ico",
+        "author"         : {"@type":"Organization","name":"TopSarkariJobs","url":BASE_URL},
+        "publisher"      : {
+            "@type" : "Organization",
+            "name"  : "Top Sarkari Jobs",
+            "url"   : BASE_URL,
+            "logo"  : {"@type":"ImageObject","url":f"{BASE_URL}/image.ico"}
+        },
+        "mainEntityOfPage": {"@type":"WebPage","@id":canon_url},
+    }
+
+    # ── Tags / keywords ──
+    keywords = ", ".join(rec.get("tags", []) + [title[:60]])
 
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>{e(title_tag)} | Top Sarkari Jobs</title>
+  <title>{e(full_title_tag)}</title>
   <meta name="description" content="{e(meta_desc)}"/>
+  <meta name="keywords" content="{e(keywords)}"/>
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"/>
   <link rel="canonical" href="{canon_url}"/>
-  <link rel="alternate" hreflang="en" href="{canon_url}"/>
-  <link rel="alternate" hreflang="en-IN" href="{canon_url}"/>
+  <link rel="alternate" hreflang="en"     href="{canon_url}"/>
+  <link rel="alternate" hreflang="en-IN"  href="{canon_url}"/>
   <link rel="alternate" hreflang="x-default" href="{canon_url}"/>
-  <meta property="og:type" content="article"/>
-  <meta property="og:site_name" content="Top Sarkari Jobs"/>
-  <meta property="og:title" content="{e(title_tag)} | Top Sarkari Jobs"/>
+  <!-- Open Graph -->
+  <meta property="og:type"        content="article"/>
+  <meta property="og:site_name"   content="Top Sarkari Jobs"/>
+  <meta property="og:title"       content="{e(full_title_tag)}"/>
   <meta property="og:description" content="{e(meta_desc)}"/>
-  <meta property="og:url" content="{canon_url}"/>
-  <meta property="og:image" content="{BASE_URL}/image.png"/>
-  <meta property="og:image:width" content="512"/>
-  <meta property="og:image:height" content="512"/>
-  <meta name="twitter:card" content="summary_large_image"/>
-  <meta name="twitter:title" content="{e(title_tag)} | Top Sarkari Jobs"/>
+  <meta property="og:url"         content="{canon_url}"/>
+  <meta property="og:image"       content="{BASE_URL}/image.ico"/>
+  <meta property="og:locale"      content="en_IN"/>
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary"/>
+  <meta name="twitter:title"       content="{e(full_title_tag)}"/>
   <meta name="twitter:description" content="{e(meta_desc)}"/>
-  <script type="application/ld+json">{json.dumps(job_schema, ensure_ascii=False)}</script>
-  <script type="application/ld+json">{json.dumps(bc_schema, ensure_ascii=False)}</script>
-  <script type="application/ld+json">{json.dumps(faq_schema, ensure_ascii=False)}</script>
-  <script>
-    window.__TSJ_SLUG = {json.dumps(slug)};
-    window.__TSJ_CANONICAL = {json.dumps(canon_url)};
-    try {{
-      if (window.location.pathname !== '/jobs/{slug}/') {{
-        window.history.replaceState(null, '', '/jobs/{slug}/');
-      }}
-    }} catch(_) {{}}
-  </script>
-  <link rel="icon" type="image/x-icon" href="/image.ico"/>
-  <link rel="stylesheet" href="/styles.css"/>
-  <link rel="stylesheet" href="/fonts/fa/all.min.css"/>
-  <link rel="manifest" href="/manifest.json"/>
-  <meta name="theme-color" content="#0d2257"/>
-  <script src="/analytics.js" defer></script>
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="dns-prefetch" href="//www.topsarkarijobs.com"/>
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/all.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous"/>
+  <!-- JSON-LD Schemas -->
+  <script type="application/ld+json">{json.dumps(job_schema,    ensure_ascii=False, separators=(',',':'))}</script>
+  <script type="application/ld+json">{json.dumps(faq_schema,    ensure_ascii=False, separators=(',',':'))}</script>
+  <script type="application/ld+json">{json.dumps(bc_schema,     ensure_ascii=False, separators=(',',':'))}</script>
+  <script type="application/ld+json">{json.dumps(article_schema,ensure_ascii=False, separators=(',',':'))}</script>
 </head>
 <body>
-  <noscript>
-    <div style="font-family:sans-serif;max-width:800px;margin:40px auto;padding:20px">
-      <nav><a href="/">← Top Sarkari Jobs</a> &rsaquo; <a href="/section/latest-jobs/">Latest Jobs</a></nav>
-      <article itemscope itemtype="https://schema.org/JobPosting">
-        <h1 itemprop="title">{e(title_seo)}</h1>
-        <table style="border-collapse:collapse;width:100%">
-          {"<tr><th style='text-align:left;padding:6px 12px;border:1px solid #ddd'>Organisation</th><td style='padding:6px 12px;border:1px solid #ddd' itemprop='hiringOrganization'>" + org + "</td></tr>" if org else ""}
-          {"<tr><th style='text-align:left;padding:6px 12px;border:1px solid #ddd'>Total Posts</th><td style='padding:6px 12px;border:1px solid #ddd' itemprop='totalJobOpenings'>" + vacancies + "</td></tr>" if vacancies else ""}
-          {"<tr><th style='text-align:left;padding:6px 12px;border:1px solid #ddd'>Last Date</th><td style='padding:6px 12px;border:1px solid #ddd' itemprop='validThrough'>" + last_date + "</td></tr>" if last_date else ""}
-          <tr><th style='text-align:left;padding:6px 12px;border:1px solid #ddd'>Apply Mode</th><td style='padding:6px 12px;border:1px solid #ddd'>{apply_mode}</td></tr>
-          {"<tr><th style='text-align:left;padding:6px 12px;border:1px solid #ddd'>Qualification</th><td style='padding:6px 12px;border:1px solid #ddd' itemprop='educationRequirements'>" + qual_str + "</td></tr>" if qual_str else ""}
-          {"<tr><th style='text-align:left;padding:6px 12px;border:1px solid #ddd'>Salary</th><td style='padding:6px 12px;border:1px solid #ddd' itemprop='baseSalary'>" + sal_str + "</td></tr>" if sal_str else ""}
-          <tr><th style='text-align:left;padding:6px 12px;border:1px solid #ddd'>Location</th><td style='padding:6px 12px;border:1px solid #ddd' itemprop='jobLocation'>{location}</td></tr>
-        </table>
-        {"<p itemprop='description'>" + short_info[:500] + "</p>" if short_info else ""}
-        {"<p><a href='" + e(source_url) + "' rel='nofollow noopener' target='_blank'>Apply Online (Official Link)</a></p>" if source_url else ""}
-        <section>
-          <h2>Frequently Asked Questions</h2>
-          <h3>{e(title_seo)} last date kya hai?</h3>
-          <p>Last date: {_last_date_faq}.</p>
-          <h3>{e(title_seo)} ke liye qualification kya chahiye?</h3>
-          <p>{_qual_faq}</p>
-          <h3>{e(title_seo)} mein salary kitni hai?</h3>
-          <p>{_sal_faq}</p>
-        </section>
-      </article>
-      <p><a href="/">← Back to Top Sarkari Jobs</a></p>
+  <!-- HEADER -->
+  <div id="header-placeholder"></div>
+
+  <!-- MAIN CONTENT -->
+  <main id="main-content" data-slug="{e(slug)}" data-json="/data/jobs/{e(slug)}.json">
+
+    <!-- Static SEO content — rendered by preferred-source-renderer.js -->
+    <div id="psr-v4-root">
+      <!-- Hero -->
+      <section class="job-hero" itemscope itemtype="https://schema.org/JobPosting">
+        <h1 itemprop="title">{e(title)}</h1>
+        <p class="job-org"  itemprop="hiringOrganization">{org}</p>
+        <div class="job-meta-strip">
+          {f'<span class="jm-badge jm-vacancies"><i class="fa fa-users"></i> {vacancies} Posts</span>' if vacancies else ""}
+          {f'<span class="jm-badge jm-lastdate"><i class="fa fa-calendar"></i> Last Date: {last_date}</span>' if last_date else ""}
+          {f'<span class="jm-badge jm-mode"><i class="fa fa-laptop"></i> {apply_mode}</span>' if apply_mode else ""}
+          {f'<span class="jm-badge jm-location"><i class="fa fa-map-marker"></i> {location}</span>' if location else ""}
+        </div>
+        {f'<p class="job-short-info" itemprop="description">{short_info}</p>' if short_info else ""}
+      </section>
+
+      <!-- Breadcrumbs -->
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+        <ol>
+          <li><a href="/">Home</a></li>
+          <li><a href="/section/{cat.lower().replace('_','-')}/">{e(cat_label)}</a></li>
+          <li aria-current="page">{e(title[:60])}</li>
+        </ol>
+      </nav>
+
+      <!-- Dynamic renderer target — JS fills this -->
+      <div id="psr-v4-card" role="main"></div>
     </div>
-  </noscript>
-  <script>
-  (function() {{
-    try {{ sessionStorage.setItem('__tsj_slug', window.__TSJ_SLUG); }} catch(_) {{}}
-    window.location.replace('/job.html?slug=' + encodeURIComponent(window.__TSJ_SLUG));
-  }})();
-  </script>
+
+  </main>
+
+  <!-- FOOTER -->
+  <div id="footer-placeholder"></div>
+
+  <!-- Single render engine -->
+  <script src="/preferred-source-renderer.js?v=5.0" defer></script>
+  <script src="/seo-engine.js?v=5.0"               defer></script>
+  <script src="/analytics.js"                       defer></script>
+  <script src="/sw-register.js"                     defer></script>
+
 </body>
-</html>"""
+</html>
+"""
 
-# ═══════════════════════════════════════
-# MAIN PROCESSING
-# ═══════════════════════════════════════
-os.makedirs(DEST, exist_ok=True)
 
-existing_json = set(os.listdir(DEST))
-existing_dirs = set(d for d in os.listdir(JOBS_DIR)
-                    if os.path.isdir(os.path.join(JOBS_DIR, d)) and d != 'data')
+# ══════════════════════════════════════════════════════════════════
+#  STEP 6 — WRITE FILES
+# ══════════════════════════════════════════════════════════════════
+def write_job_files(records):
+    """
+    For each deduplicated record:
+      • data/jobs/{slug}/index.html  — static SEO HTML
+      • data/jobs/{slug}.json        — full JSON for renderer
+    Returns (index dict, written count, skipped count)
+    """
+    os.makedirs(JOBS_HTML_DIR, exist_ok=True)
+    index   = {}
+    written = 0
+    skipped = 0
 
-index      = {}
-new_files  = set()
-new_dirs   = set()
-written    = 0
-skipped    = 0
-seen_slugs = {}
-
-# ── SOURCE 1: Complete_Jobs_Full_Data.json ──
-if os.path.exists(SRC):
-    print(f"Loading {SRC}...")
-    with open(SRC, encoding='utf-8') as f:
-        data = json.load(f)
-
-    for cat, jobs in data.items():
-        if not isinstance(jobs, list): continue
-        if cat not in VALID_CATS:
-            print(f"  SKIP unknown category: {cat}")
+    for rec in records:
+        slug = rec["slug"]
+        if not slug:
+            skipped += 1
             continue
-        for job in jobs:
-            bd    = job.get("basic_details", {}) or {}
-            dates = job.get("important_dates", {}) or {}
-            qual  = job.get("qualification") or {}
-            sal   = job.get("salary_details") or {}
-            title = (bd.get("job_title") or "").strip()
-            url   = (job.get("source_url") or "").strip()
-            if not title: skipped += 1; continue
 
-            slug = slugify(title)
-            fname = f"{slug}.json"
-            if slug in seen_slugs and seen_slugs[slug] != cat:
-                slug = f"{slug}-{cat.lower().replace('_','-')}"
-                fname = f"{slug}.json"
-            seen_slugs[slug] = cat
-            job["category"] = cat
+        # ── Write JSON data file ──
+        json_path = os.path.join(JOBS_DATA_DIR, f"{slug}.json")
+        json_out = dict(rec)
+        # Flatten detail fields for renderer compatibility
+        if rec.get("detail"):
+            for k, v in rec["detail"].items():
+                if k not in json_out:
+                    json_out[k] = v
+        with open(json_path, "w", encoding="utf-8") as f:
+            json.dump(json_out, f, ensure_ascii=False, separators=(",", ":"))
 
-            with open(os.path.join(DEST, fname), 'w', encoding='utf-8') as f:
-                json.dump(job, f, ensure_ascii=False, separators=(',',':'))
-            new_files.add(fname)
+        # ── Write HTML file ──
+        html_dir  = os.path.join(JOBS_HTML_DIR, slug)
+        html_path = os.path.join(html_dir, "index.html")
+        os.makedirs(html_dir, exist_ok=True)
 
-            slug_dir = os.path.join(JOBS_DIR, slug)
-            os.makedirs(slug_dir, exist_ok=True)
-            with open(os.path.join(slug_dir, "index.html"), 'w', encoding='utf-8') as f:
-                f.write(build_static_html(slug, title, bd, dates, qual, sal, cat, url))
-            new_dirs.add(slug)
-
-            last_date = (dates.get("last_date_to_apply") or "").strip()
-            index[slug] = {"cat":cat,"title":title[:120],"last_date":last_date[:30],"url":url}
+        html_content = build_job_html(rec)
+        # Only overwrite if content changed (save I/O on re-runs)
+        existing = None
+        if os.path.exists(html_path):
+            with open(html_path, encoding="utf-8") as f:
+                existing = f.read()
+        if existing != html_content:
+            with open(html_path, "w", encoding="utf-8") as f:
+                f.write(html_content)
             written += 1
-
-    print(f"  Complete_Jobs_Full_Data: {written} jobs")
-
-# ── SOURCE 2: merged_sarkari_data.json ──
-if os.path.exists(MERGED):
-    print(f"\nLoading {MERGED}...")
-    with open(MERGED, encoding='utf-8') as f:
-        mdata = json.load(f)
-    merged_jobs = mdata.get("jobs", []) if isinstance(mdata, dict) else mdata
-    mc = 0
-    for job in merged_jobs:
-        existing_slug = (job.get("slug") or "").strip()
-        title = (job.get("title") or "").strip()
-        if not title: continue
-
-        if existing_slug:
-            slug = existing_slug
         else:
-            slug = slugify(title)
-        if not slug or slug in new_dirs: continue
+            skipped += 1
 
-        imp_dates = job.get("important_dates") or {}
-        if isinstance(imp_dates, str): imp_dates = {}
-
-        bd = {
-            "job_title":        title,
-            "post_name":        job.get("post_name") or job.get("organization") or "",
-            "total_vacancies":  str(job.get("total_post") or job.get("total_vacancy") or ""),
-            "application_mode": job.get("apply_mode") or "Online",
-            "job_location":     job.get("job_location") or "India",
-            "short_information":job.get("short_information") or job.get("jobs_info") or "",
-            "last_updated":     job.get("post_date") or job.get("listing_date") or imp_dates.get("application_begin") or "",
+        # ── Index entry ──
+        index[slug] = {
+            "title"    : rec["title"][:120],
+            "cat"      : rec["category"],
+            "lastDate" : rec["lastDate"][:30] if rec["lastDate"] else "",
+            "location" : rec["location"][:80],
+            "tags"     : rec["tags"],
+            "url"      : f"/data/jobs/{slug}/",
         }
-        dates = {
-            "last_date_to_apply": job.get("last_date") or imp_dates.get("last_date") or "",
-            "date of notification": job.get("post_date") or job.get("listing_date") or "",
-        }
-        # Source URL from useful_links
-        useful_links = job.get("useful_links") or []
-        source_url = job.get("apply_online_link") or job.get("official_website_link") or ""
-        if not source_url and isinstance(useful_links, list):
-            for lnk in useful_links:
-                if isinstance(lnk, dict):
-                    href = lnk.get("links") or lnk.get("url") or ""
-                    if isinstance(href, list): href = href[0] if href else ""
-                    href = str(href).strip()
-                    if href.startswith("http"): source_url = href; break
 
-        cat = "Latest_Notifications"
-        fname = slug + ".json"
-        job["slug"] = slug; job["category"] = cat
-        with open(os.path.join(DEST, fname), 'w', encoding='utf-8') as f:
-            json.dump(job, f, ensure_ascii=False, separators=(',',':'))
-        new_files.add(fname)
-
-        slug_dir = os.path.join(JOBS_DIR, slug)
-        os.makedirs(slug_dir, exist_ok=True)
-        with open(os.path.join(slug_dir, "index.html"), 'w', encoding='utf-8') as f:
-            f.write(build_static_html(slug, title, bd, dates, {}, {}, cat, source_url))
-        new_dirs.add(slug)
-
-        last_date = dates.get("last_date_to_apply","").strip()
-        index[slug] = {"cat":cat,"title":title[:120],"last_date":last_date[:30],"url":source_url}
-        written += 1; mc += 1
-    print(f"  merged_sarkari_data: {mc} jobs")
-
-# ── SOURCE 3: state-jobs-data.json ──
-if os.path.exists(STATE):
-    print(f"\nLoading {STATE}...")
-    with open(STATE, encoding='utf-8') as f:
-        sdata = json.load(f)
-    sc = 0
-    for sec in sdata.get("sections", []):
-        state_name = sec.get("state") or sec.get("title") or "India"
-        for item in sec.get("items", []):
-            name = (item.get("name") or item.get("title") or "").strip()
-            if not name: continue
-            slug = item.get("slug") or slugify(name)
-            if not slug or slug in new_dirs: continue
-
-            detail = item.get("detail") or {}
-            if isinstance(detail, str):
-                try: detail = json.loads(detail)
-                except: detail = {}
-
-            bd_raw = detail.get("basic_details", {}) if detail else {}
-            dates_raw = detail.get("important_dates", {}) if detail else {}
-            if isinstance(bd_raw, str): bd_raw = {}
-            if isinstance(dates_raw, str): dates_raw = {}
-
-            bd = {
-                "job_title":        name,
-                "post_name":        bd_raw.get("post_name") or name,
-                "total_vacancies":  str(bd_raw.get("total_vacancies") or ""),
-                "application_mode": bd_raw.get("application_mode") or "Online",
-                "job_location":     f"{state_name}, India",
-                "short_information":bd_raw.get("short_information") or "",
-                "last_updated":     item.get("postDate") or item.get("date") or "",
-            }
-            dates = {
-                "last_date_to_apply": item.get("lastDate") or dates_raw.get("last_date_to_apply") or "",
-                "date of notification": item.get("postDate") or "",
-            }
-            source_url = item.get("url") or ""
-            cat = "Latest_Notifications"
-            fname = slug + ".json"
-            job_rec = {"title":name,"slug":slug,"category":cat,
-                       "basic_details":bd,"important_dates":dates,"source_url":source_url,"state":state_name}
-            if detail: job_rec.update(detail)
-            with open(os.path.join(DEST, fname), 'w', encoding='utf-8') as f:
-                json.dump(job_rec, f, ensure_ascii=False, separators=(',',':'))
-            new_files.add(fname)
-
-            slug_dir = os.path.join(JOBS_DIR, slug)
-            os.makedirs(slug_dir, exist_ok=True)
-            qual_raw = detail.get("qualification", {}) if detail else {}
-            sal_raw  = detail.get("salary_details", {}) if detail else {}
-            with open(os.path.join(slug_dir, "index.html"), 'w', encoding='utf-8') as f:
-                f.write(build_static_html(slug, name, bd, dates, qual_raw, sal_raw, cat, source_url))
-            new_dirs.add(slug)
-
-            last_date = dates.get("last_date_to_apply","").strip()
-            index[slug] = {"cat":cat,"title":name[:120],"last_date":last_date[:30],"url":source_url}
-            written += 1; sc += 1
-    print(f"  state-jobs-data: {sc} jobs")
-
-# ── SOURCE 4: dailyupdates.json (Top 20 Jobs + Today Updates only) ──
-DAILY_JOB_SECTIONS = {"Top 20 Jobs", "Today Updates"}
-if os.path.exists(DAILY):
-    print(f"\nLoading {DAILY}...")
-    with open(DAILY, encoding='utf-8') as f:
-        ddata = json.load(f)
-    dc = 0
-    secs = ddata.get("sections", []) if isinstance(ddata, dict) else []
-    for sec in secs:
-        if sec.get("title") not in DAILY_JOB_SECTIONS: continue
-        for item in sec.get("items", []):
-            name = (item.get("name") or item.get("title") or "").strip()
-            ext_url = (item.get("url") or item.get("link") or "").strip()
-            if not name: continue
-            slug = slugify(name)
-            if not slug or slug in new_dirs: continue
-
-            bd = {"job_title":name,"post_name":name,"total_vacancies":"",
-                  "application_mode":"Online","job_location":"India",
-                  "short_information":"","last_updated":item.get("date") or ""}
-            dates = {"last_date_to_apply": item.get("lastDate") or item.get("date") or ""}
-            cat = "Latest_Notifications"
-            fname = slug + ".json"
-            with open(os.path.join(DEST, fname), 'w', encoding='utf-8') as f:
-                json.dump({"title":name,"slug":slug,"category":cat,
-                           "basic_details":bd,"important_dates":dates,
-                           "source_url":ext_url}, f, ensure_ascii=False, separators=(',',':'))
-            new_files.add(fname)
-
-            slug_dir = os.path.join(JOBS_DIR, slug)
-            os.makedirs(slug_dir, exist_ok=True)
-            with open(os.path.join(slug_dir, "index.html"), 'w', encoding='utf-8') as f:
-                f.write(build_static_html(slug, name, bd, dates, {}, {}, cat, ext_url))
-            new_dirs.add(slug)
-
-            index[slug] = {"cat":cat,"title":name[:120],"last_date":"","url":ext_url}
-            written += 1; dc += 1
-    print(f"  dailyupdates: {dc} jobs")
-
-# ── Cleanup stale files ──
-stale_json = existing_json - new_files
-for f in stale_json:
-    try: os.remove(os.path.join(DEST, f))
-    except: pass
-
-import shutil
-stale_dirs = existing_dirs - new_dirs
-for d in stale_dirs:
-    try: shutil.rmtree(os.path.join(JOBS_DIR, d))
-    except: pass
-
-# ── Write jobs-index.json ──
-with open(INDEX, 'w', encoding='utf-8') as f:
-    json.dump(index, f, ensure_ascii=False, separators=(',',':'))
+    return index, written, skipped
 
 
-# ── Regenerate sections-index.json (used by homepage cards) ──
-print("\nRegenerating sections-index.json...")
-sections_index = {}
-SINDEX_CATS = [
-    'Latest_Notifications','10TH_Pass','8TH_Pass','12TH_Pass',
-    'Diploma','ITI','B_Tech_BE','B_Com','Any_Graduate','Any_Post_Graduate',
-    'Railway_Jobs','Police_Defence','Teaching_Faculty','Bank_Jobs','Medical_Hospital',
-    'Last_Date_Reminder'
-]
-if os.path.exists(SRC):
-    with open(SRC, encoding='utf-8') as f:
-        full_data = json.load(f)
-    for cat in SINDEX_CATS:
-        jobs_list = full_data.get(cat, [])
-        cat_items = []
-        for job in jobs_list:
-            bd_s = job.get('basic_details', {}) or {}
-            dates_s = job.get('important_dates', {}) or {}
-            title_s = (bd_s.get('job_title') or '').strip()
-            if not title_s: continue
-            slug_s = slugify(title_s)
-            last_dt = (dates_s.get('last_date_to_apply') or dates_s.get('closing_date') or '')
-            cat_items.append({'slug': slug_s, 'name': title_s, 'date': normalise_date(last_dt) or ''})
-        if cat_items:
-            sections_index[cat] = cat_items
-    with open('sections-index.json', 'w', encoding='utf-8') as f:
-        json.dump(sections_index, f, ensure_ascii=False, separators=(',',':'))
-    print(f"  sections-index.json: {sum(len(v) for v in sections_index.values())} jobs across {len(sections_index)} categories")
+# ══════════════════════════════════════════════════════════════════
+#  STEP 7 — SECTIONS INDEX (listing only — no duplicate HTML)
+# ══════════════════════════════════════════════════════════════════
+def build_sections_index(records):
+    """
+    Build sections-index.json: category → [{slug, name, date, url}]
+    Category pages use this to LIST jobs without generating HTML.
+    NO duplicate detail pages.
+    """
+    by_cat = defaultdict(list)
+    for rec in records:
+        by_cat[rec["category"]].append({
+            "slug"  : rec["slug"],
+            "name"  : rec["title"],
+            "date"  : rec["lastDate"],
+            "url"   : f"/data/jobs/{rec['slug']}/",
+            "org"   : rec["org"],
+            "vac"   : rec["vacancies"],
+        })
 
-print(f"\n✅ DONE!")
-print(f"  Total jobs written : {written}")
-print(f"  JSON files deleted : {len(stale_json)}")
-print(f"  HTML dirs deleted  : {len(stale_dirs)}")
-print(f"  Index entries      : {len(index)}")
+    with open(SECTIONS_INDEX, "w", encoding="utf-8") as f:
+        json.dump(by_cat, f, ensure_ascii=False, separators=(",", ":"))
 
-# ── Rebuild section data JSON files from merged_sarkari_data.json ──────────────
-print("\nRebuilding section data JSON files...")
-if os.path.exists(MERGED):
-    with open(MERGED, encoding='utf-8') as f:
-        merged_data = json.load(f)
-    merged_jobs = merged_data.get('jobs', [])
+    total = sum(len(v) for v in by_cat.values())
+    print(f"\n  sections-index.json: {total} entries across {len(by_cat)} categories")
+    return by_cat
+
+
+# ══════════════════════════════════════════════════════════════════
+#  STEP 8 — SITEMAP (jobs only — /data/jobs/{slug}/)
+# ══════════════════════════════════════════════════════════════════
+def build_sitemap(records):
+    """
+    Sitemap includes ONLY /data/jobs/{slug}/ — no category pages,
+    no state pages, no duplicate pages.
+    """
+    lines = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"',
+        '        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">',
+    ]
+    for rec in records:
+        slug     = rec["slug"]
+        lastmod  = rec["postDate"] or TODAY
+        priority = "0.9" if rec["category"] == "Latest_Notifications" else "0.8"
+        lines.append(f"""  <url>
+    <loc>{BASE_URL}/data/jobs/{slug}/</loc>
+    <lastmod>{lastmod}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>{priority}</priority>
+  </url>""")
+    lines.append("</urlset>")
+
+    with open(SITEMAP_FILE, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines))
+    print(f"  {SITEMAP_FILE}: {len(records)} URLs")
+
+
+# ══════════════════════════════════════════════════════════════════
+#  STEP 9 — CLEANUP STALE FILES
+# ══════════════════════════════════════════════════════════════════
+def cleanup_stale(records):
+    """Remove job JSON/HTML that no longer exist in source data."""
+    if not os.path.isdir(JOBS_DATA_DIR):
+        return
+    live_slugs = {rec["slug"] for rec in records}
+
+    # JSON files
+    removed_json = 0
+    for f in os.listdir(JOBS_DATA_DIR):
+        if f.endswith(".json"):
+            slug = f[:-5]
+            if slug not in live_slugs:
+                try:
+                    os.remove(os.path.join(JOBS_DATA_DIR, f))
+                    removed_json += 1
+                except: pass
+
+    # HTML dirs
+    removed_html = 0
+    for d in os.listdir(JOBS_HTML_DIR):
+        full_path = os.path.join(JOBS_HTML_DIR, d)
+        if os.path.isdir(full_path) and d not in live_slugs:
+            try:
+                shutil.rmtree(full_path)
+                removed_html += 1
+            except: pass
+
+    if removed_json or removed_html:
+        print(f"  Cleanup: {removed_json} stale JSON, {removed_html} stale HTML dirs removed")
+
+
+# ══════════════════════════════════════════════════════════════════
+#  STEP 10 — REBUILD data/ SECTION JSON FILES
+# ══════════════════════════════════════════════════════════════════
+def rebuild_section_data_files(records):
+    """
+    Rebuild data/sr-*.json, data/state-jobs.json etc from merged data.
+    These feed the homepage and section listing pages.
+    """
+    os.makedirs("data", exist_ok=True)
 
     FILE_MAP = {
-        'SR_Latest_Jobs':  'data/sr-latest-jobs.json',
-        'SR_Result':       'data/sr-result.json',
-        'SR_Admit_Card':   'data/sr-admit-card.json',
-        'SR_Admission':    'data/sr-admission.json',
-        'SR_Answer_Key':   'data/sr-answer-key.json',
-        'UPCOMING_JOBS':   'data/upcoming-jobs.json',
-        'STATE_JOBS':      'data/state-jobs.json',
-        'CENTRAL_JOBS':    'data/central-jobs.json',
-        'ADMISSIONS':      'data/admissions.json',
-        'LATEST_JOBS NEW': 'data/latest-jobs-new.json',
-        'OFFLINE_FORM':    'data/offline-form.json',
+        "Latest_Notifications" : "data/latest-jobs-new.json",
+        "STATE_JOBS"           : "data/state-jobs.json",
+        "OFFLINE_FORM"         : "data/offline-form.json",
+        "Railway_Jobs"         : "data/railway-jobs.json",
+        "Bank_Jobs"            : "data/bank-jobs.json",
+        "Police_Defence"       : "data/defence-jobs.json",
+        "Teaching_Faculty"     : "data/teaching-jobs.json",
+        "Medical_Hospital"     : "data/medical-jobs.json",
+        "10TH_Pass"            : "data/10th-pass-jobs.json",
+        "12TH_Pass"            : "data/12th-pass-jobs.json",
+        "Any_Graduate"         : "data/graduate-jobs.json",
     }
 
-    # Group by category
-    from collections import defaultdict
-    cats_map = defaultdict(list)
-    for j in merged_jobs:
-        cats_map[j.get('category', '?')].append(j)
-
-    os.makedirs('data', exist_ok=True)
+    by_cat = defaultdict(list)
+    for rec in records:
+        by_cat[rec["category"]].append({
+            "slug"     : rec["slug"],
+            "title"    : rec["title"],
+            "org"      : rec["org"],
+            "vacancies": rec["vacancies"],
+            "lastDate" : rec["lastDate"],
+            "location" : rec["location"],
+            "url"      : f"/data/jobs/{rec['slug']}/",
+            "tags"     : rec["tags"],
+        })
 
     for cat, filepath in FILE_MAP.items():
-        items = cats_map.get(cat, [])
-        items.sort(key=lambda x: x.get('homepage_serial', x.get('sequence', 999)))
-        out = {'jobs': items}
-        with open(filepath, 'w', encoding='utf-8') as f:
-            json.dump(out, f, ensure_ascii=False, separators=(',', ':'))
-        top = items[0]['title'][:55] if items else '-'
-        print(f"  {filepath}: {len(items)} items | #1={top}")
+        items = by_cat.get(cat, [])
+        with open(filepath, "w", encoding="utf-8") as f:
+            json.dump({"category": cat, "total": len(items), "jobs": items},
+                      f, ensure_ascii=False, separators=(",", ":"))
+        print(f"  {filepath}: {len(items)} items")
 
-    # Also rebuild merged-summary.json (top 8 per category for homepage cards)
+    # merged-summary.json — top 10 per category for homepage cards
     summary_jobs = []
-    for cat, items in cats_map.items():
-        items.sort(key=lambda x: x.get('homepage_serial', x.get('sequence', 999)))
-        summary_jobs.extend(items[:8])
+    for cat, items in by_cat.items():
+        summary_jobs.extend(items[:10])
+    with open("data/merged-summary.json", "w", encoding="utf-8") as f:
+        json.dump({"generated": TODAY, "total": len(summary_jobs), "jobs": summary_jobs},
+                  f, ensure_ascii=False, separators=(",", ":"))
+    print(f"  data/merged-summary.json: {len(summary_jobs)} items (top 10 per category)")
 
-    summary = {'scraped_at': merged_data.get('scraped_at', ''), 'jobs': summary_jobs}
-    with open('data/merged-summary.json', 'w', encoding='utf-8') as f:
-        json.dump(summary, f, ensure_ascii=False, separators=(',', ':'))
-    print(f"  data/merged-summary.json: {len(summary_jobs)} jobs (top 8 per category)")
-    print("✅ Section data files rebuilt.")
-else:
-    print(f"  SKIP: {MERGED} not found")
+
+# ══════════════════════════════════════════════════════════════════
+#  MAIN ENTRY POINT
+# ══════════════════════════════════════════════════════════════════
+def main():
+    print("=" * 65)
+    print("  TOP SARKARI JOBS — Master Build Pipeline v5.0")
+    print(f"  Run date: {TODAY}")
+    print("=" * 65)
+
+    # 1. Merge all sources
+    raw_records = merge_all_sources()
+    print(f"\n  Total raw records: {len(raw_records)}")
+
+    # 2. Deduplicate
+    records = deduplicate(raw_records)
+
+    # 3. Write job HTML + JSON files
+    print("\n[7] Writing job files …")
+    os.makedirs(JOBS_HTML_DIR, exist_ok=True)
+    index, written, skipped = write_job_files(records)
+    print(f"  Written (new/changed): {written} | Skipped (unchanged): {skipped}")
+
+    # 4. Write master index
+    print("\n[8] Writing index …")
+    with open(JOBS_INDEX, "w", encoding="utf-8") as f:
+        json.dump(index, f, ensure_ascii=False, separators=(",", ":"))
+    print(f"  {JOBS_INDEX}: {len(index)} entries")
+
+    # 5. Build sections index (listing only — no dup HTML)
+    print("\n[9] Building sections index …")
+    build_sections_index(records)
+
+    # 6. Build sitemap
+    print("\n[10] Building sitemap …")
+    build_sitemap(records)
+
+    # 7. Cleanup stale files
+    print("\n[11] Cleaning up stale files …")
+    cleanup_stale(records)
+
+    # 8. Rebuild section data files
+    print("\n[12] Rebuilding section data JSON files …")
+    rebuild_section_data_files(records)
+
+    print("\n" + "=" * 65)
+    print(f"  ✅ DONE!")
+    print(f"  Total unique jobs  : {len(records)}")
+    print(f"  HTML pages written : {written}")
+    print(f"  HTML pages skipped : {skipped} (unchanged)")
+    print(f"  Index entries      : {len(index)}")
+    print(f"  Sitemap URLs       : {len(records)}")
+    print("=" * 65)
+
+
+if __name__ == "__main__":
+    main()

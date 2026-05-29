@@ -63,14 +63,14 @@ jobs:
           # Stage generated files + version files
           git add version.json
           git add sw.js
-          git add jobs/data/ || true
-          git add jobs/ || true
-          git add jobs-index.json || true
+          git add data/jobs/ || true
+          git add data-jobs-index.json || true
           git add sections-index.json || true
           git add sitemap-jobs.xml || true
           git add sitemap-index.xml || true
           git add sitemap.xml || true
           git add sitemap-sections.xml 2>/dev/null || true
+          git add data/*.json || true
 
           if git diff --staged --quiet; then
             echo "✅ No changes to commit"

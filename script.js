@@ -183,7 +183,7 @@
 
         /* Slug: use existing or generate */
         const slug = job.slug || bd.slug || slugifyForJob(name);
-        const url  = "/jobs/" + slug + "/";
+        const url  = "/data/jobs/" + slug + "/";
 
         return { slug, name, url, date: last || "" };
       }).filter(Boolean);
@@ -228,7 +228,7 @@
         items: items.map(item => ({
           slug: item.slug,
           name: item.name,
-          url: '/jobs/' + item.slug + '/',
+          url: '/data/jobs/' + item.slug + '/',
           date: item.date || ''
         }))
       });
@@ -367,7 +367,7 @@
         const name = (job.title || job.post_name || '').trim().replace(/[\s\-,|]+$/, '').trim();
         if (!name) return null;
         const slug = job.slug || slugifyForJob(name);
-        const url = slug ? '/jobs/' + slug + '/' : '#';
+        const url = slug ? '/data/jobs/' + slug + '/' : '#';
         const dates = job.important_dates || {};
         const lastDate = (dates.last_date_to_apply || dates.last_date || job.last_date || '').trim();
         const org = (job.organization || job.board_name || '').trim();
@@ -437,7 +437,7 @@
     // even when slug-based lookup in JSON fails (e.g. dailyupdates items)
     const dest = normalizeUrl(targetUrl);
     const refParam = dest ? "?ref=" + encodeURIComponent(dest) : "";
-    return "/jobs/" + slug + "/" + refParam;
+    return "/data/jobs/" + slug + "/";
   }
 
   /** Redirect interstitial only for home section rows and view.html list items (not More / nav / etc.). */
@@ -827,7 +827,7 @@
           merged.jobs.forEach(j => {
             if (!j.title) return;
             const slug = j.slug || slugify(j.title);
-            jobSearchData.push({ name: j.title.trim(), href: slug ? "/jobs/" + slug + "/" : "#" });
+            jobSearchData.push({ name: j.title.trim(), href: slug ? "/data/jobs/" + slug + "/" : "#" });
           });
         }
         if (complete && typeof complete === "object") {
@@ -838,7 +838,7 @@
               const title = bd.job_title || bd.post_name || i.title || i.name || "";
               if (!title) return;
               const slug = i.slug || slugify(title);
-              jobSearchData.push({ name: title.trim(), href: slug ? "/jobs/" + slug + "/" : "#" });
+              jobSearchData.push({ name: title.trim(), href: slug ? "/data/jobs/" + slug + "/" : "#" });
             });
           });
         }
@@ -1066,7 +1066,7 @@
         // Build URL: prefer explicit url/link, fallback to slug-based job.html
         let url = it.url || it.link || "";
         if (!url && it.slug) {
-          url = "/jobs/" + it.slug + "/";
+          url = "/data/jobs/" + it.slug + "/";
         }
         if (!url) return;
 
@@ -1074,7 +1074,7 @@
         const a = document.createElement("a");
         a.className = "section-link";
         /* If URL is a job.html link (from slug), use directly — bypass redirect gate */
-        if (url.startsWith("/jobs/") || url.startsWith("job.html")) {
+        if (url.startsWith("/data/jobs/") || url.startsWith("job.html")) {
           a.href = url;
           a.setAttribute("data-bypass-gate", "1");
           if (it.slug) a.setAttribute("data-slug", it.slug);
@@ -1092,7 +1092,7 @@
         list.appendChild(a);
 
         // ✅ SEARCH INDEX: sirf internal job.html links push karo (external nav/tools skip)
-        if (url && (url.startsWith("/jobs/") || url.startsWith("job.html"))) {
+        if (url && (url.startsWith("/data/jobs/") || url.startsWith("job.html"))) {
           (window.tsjSearchIndex = window.tsjSearchIndex || []).push({
             title: name,
             slug: url,
@@ -1211,14 +1211,14 @@
       const name = safe(it.name) || "Open";
       let url = it.url || it.link || "";
       if (!url && it.slug) {
-        url = "/jobs/" + it.slug + "/";
+        url = "/data/jobs/" + it.slug + "/";
       }
       if (!url) return;
 
       const external = !!it.external;
       const a = document.createElement("a");
       a.className = "section-link";
-      if (url.startsWith("/jobs/") || url.startsWith("job.html")) {
+      if (url.startsWith("/data/jobs/") || url.startsWith("job.html")) {
         a.href = url;
         a.setAttribute("data-bypass-gate", "1");
         if (it.slug) a.setAttribute("data-slug", it.slug);
@@ -1237,7 +1237,7 @@
       list.appendChild(a);
 
       // ✅ SEARCH INDEX: sirf internal job.html links push karo (external nav/tools skip)
-      if (url && (url.startsWith("/jobs/") || url.startsWith("job.html"))) {
+      if (url && (url.startsWith("/data/jobs/") || url.startsWith("job.html"))) {
         (window.tsjSearchIndex = window.tsjSearchIndex || []).push({
           title: name,
           slug: url,
@@ -2302,7 +2302,7 @@
       /* FIX: No 'offline-' prefix — merged_sarkari_data.json jobs have no slug field,
          so slug is generated from title. Adding 'offline-' creates a mismatch with
          the title-derived slug used in matchBySlug(), causing wrong data on first load. */
-      return '/jobs/' + slug + '/';
+      return '/data/jobs/' + slug + '/';
     }
 
     let searchData = [];
@@ -2358,7 +2358,7 @@
             if (!title) return;
             const slug = i.slug || slugify(title);
             /* FIX: No 'offline-' prefix — causes slug mismatch in matchBySlug() */
-            const href = slug ? '/jobs/' + slug + '/' : '#';
+            const href = slug ? '/data/jobs/' + slug + '/' : '#';
             push(title, href, k.replace(/_/g,' '));
           });
         });
@@ -2374,7 +2374,7 @@
             // Build internal job.html link using slug
             const slug = item.slug || slugify(title);
             const href = slug
-              ? '/jobs/' + slug + '/'
+              ? '/data/jobs/' + slug + '/'
               : (item.url || '#');
             push(title, href, stateName + ' Jobs');
           });

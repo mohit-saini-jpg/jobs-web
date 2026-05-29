@@ -1,0 +1,111 @@
+name: 🚀 TopSarkariJobs — Full Build Pipeline
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "*.json"
+      - "generate_jobs.py"
+      - ".github/workflows/build.yml"
+  workflow_dispatch:
+  schedule:
+    # Run daily at 5:30 AM IST (00:00 UTC)
+    - cron: "0 0 * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Merge → Dedupe → Generate → Deploy
+
+    steps:
+      # ── 1. Checkout ──────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── 2. Python setup ──────────────────────────────────────────
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      # ── 3. Node.js setup (for sitemap-auto.js) ───────────────────
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # ── 4. Validate source JSON files ────────────────────────────
+      - name: Validate JSON sources
+        run: |
+          echo "Validating JSON files…"
+          for f in Complete_Jobs_Full_Data.json Education_Jobs.json Qualification_Wise_Jobs.json merged_sarkari_data.json state-jobs-data.json dailyupdates.json; do
+            if [ -f "$f" ]; then
+              python3 -c "import json; json.load(open('$f'))" && echo "  ✅ $f" || echo "  ❌ $f INVALID"
+            else
+              echo "  ⚠️  $f NOT FOUND (skipped)"
+            fi
+          done
+
+      # ── 5. STEP 1-4: Merge + Dedupe + Generate HTML/JSON ─────────
+      - name: Run Master Build Pipeline (generate_jobs.py)
+        run: |
+          echo "=== Running generate_jobs.py ==="
+          python3 generate_jobs.py
+          echo "=== Build complete ==="
+
+      # ── 6. STEP 19: Generate sitemap ─────────────────────────────
+      - name: Generate sitemap-jobs.xml
+        run: node sitemap-auto.js
+
+      # ── 7. Count generated files ─────────────────────────────────
+      - name: Report stats
+        run: |
+          echo "=== Build Stats ==="
+          if [ -f "data-jobs-index.json" ]; then
+            echo "  Job pages: $(python3 -c "import json; d=json.load(open('data-jobs-index.json')); print(len(d))")"
+          fi
+          if [ -d "data/jobs" ]; then
+            echo "  HTML files: $(find data/jobs -name 'index.html' | wc -l)"
+            echo "  JSON files: $(find data/jobs -name '*.json' ! -name 'index.html' | wc -l)"
+          fi
+          if [ -f "sitemap-jobs.xml" ]; then
+            echo "  Sitemap URLs: $(grep -c '<loc>' sitemap-jobs.xml || echo 0)"
+          fi
+
+      # ── 8. Commit generated files ────────────────────────────────
+      - name: Commit and push generated files
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "  ℹ️  No changes to commit."
+          else
+            CHANGED=$(git diff --staged --stat | tail -1)
+            git commit -m "🤖 Auto-build: ${CHANGED} [skip ci]"
+            git push
+            echo "  ✅ Changes pushed."
+          fi
+
+      # ── 9. IndexNow ping (notify Google/Bing of new pages) ───────
+      - name: IndexNow ping (new pages)
+        if: success()
+        run: |
+          if [ -f ".github/workflows/indexnow-ping.js" ]; then
+            node .github/workflows/indexnow-ping.js || true
+          fi
+
+      # ── 10. Generate version.json ─────────────────────────────────
+      - name: Update version.json
+        run: |
+          python3 -c "
+          import json, datetime
+          v = {'build': datetime.datetime.utcnow().isoformat(), 'pipeline': '5.0'}
+          open('version.json','w').write(json.dumps(v))
+          print('  version.json updated')
+          "
+          git add version.json
+          git diff --staged --quiet || git commit -m "⚙️ Update version [skip ci]" && git push || true
