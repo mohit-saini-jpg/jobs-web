@@ -64,11 +64,11 @@
     }
 
     /* ── Is this a /jobs/<slug>/ URL? ── */
-    var jobMatch = path.match(/^\/data\/jobs\/([^\/]+)\/?$/) || path.match(/^\/jobs\/([^\/]+)\/?$/);
+    var jobMatch = path.match(/^\/jobs\/([^\/]+)\/?$/);
 
     if (jobMatch) {
       var slug     = decodeURIComponent(jobMatch[1]);
-      var canonUrl = 'https://www.topsarkarijobs.com/data/jobs/' + slug + '/';
+      var canonUrl = 'https://www.topsarkarijobs.com/jobs/' + slug + '/';
       var jobName  = humanSlug(slug);
       var titleStr = jobName + ' | Top Sarkari Jobs';
       var descStr  = jobName + ' – Check eligibility, vacancies, last date, salary and apply online at Top Sarkari Jobs. Government of India recruitment 2026.';
@@ -206,7 +206,7 @@
     if (slug) {
 
       /* Restore the clean URL in browser address bar */
-      var cleanPath = '/data/jobs/' + slug + '/';
+      var cleanPath = '/jobs/' + slug + '/';
       try {
         if (window.location.pathname !== cleanPath) {
           window.history.replaceState(null, '', cleanPath);
@@ -217,7 +217,7 @@
       try { sessionStorage.setItem('__tsj_slug', slug); } catch(_) {}
 
       /* Redirect to job.html — slug already saved in sessionStorage above */
-      window.location.replace('/data/jobs/' + slug + '/');
+      window.location.replace('/job.html?slug=' + encodeURIComponent(slug));
 
       return; /* Stop — don't run redirect logic below */
     }

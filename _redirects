@@ -274,8 +274,3 @@
 /govt-services/                               /govt-services.html                           200
 # ── Data chunks — serve directly (no rewrite) ──
 /data/*.json  /data/:splat  200
-
-# ── New v5.0: /data/jobs/{slug}/ — serve static index.html directly ──
-# Static HTML exists, no rewrite needed — GitHub Pages serves index.html
-# Old /jobs/* → new /data/jobs/*
-/jobs/:slug/   /data/jobs/:slug/   301

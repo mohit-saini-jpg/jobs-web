@@ -8,9 +8,6 @@
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
-  // Clean URL routing support: /category/study/ → treat as category.html
-  const _pathSegs = location.pathname.split("/").filter(Boolean);
-  const isCategoryCleanUrl = _pathSegs[0] === "category" && _pathSegs.length >= 1;
   const isToolsPage = location.pathname.includes("tools");
 
   const safe = (v) => (v ?? "").toString().trim();
@@ -54,41 +51,33 @@
 
   /* ─── Convert Complete_Jobs_Full_Data.json → sections format ─── */
   const JOBS_CAT_META = {
-    // ── ROW 1: SR_ categories (merged_sarkari_data.json) ──
-    "SR_Latest_Jobs":    { id: "SR Latest Jobs",   title: "Latest Jobs",          color: "linear-gradient(135deg,#0369a1,#0284c7)", icon: "fa-solid fa-briefcase",        viewUrl: "/section/latest-jobs/"      },
-    "SR_Result":         { id: "SR Result",         title: "Result",               color: "linear-gradient(135deg,#047857,#059669)", icon: "fa-solid fa-trophy",           viewUrl: "/section/results/"          },
-    "SR_Admit_Card":     { id: "SR Admit Card",     title: "Admit Card",           color: "linear-gradient(135deg,#6d28d9,#7c3aed)", icon: "fa-solid fa-id-card",          viewUrl: "/section/admit-card/"       },
-    "SR_Admission":      { id: "SR Admission",      title: "Admission",            color: "linear-gradient(135deg,#0e7490,#0891b2)", icon: "fa-solid fa-graduation-cap",   viewUrl: "/section/admission/"        },
-    "SR_Answer_Key":     { id: "SR Answer Key",     title: "Answer Key",           color: "linear-gradient(135deg,#b45309,#d97706)", icon: "fa-solid fa-key",              viewUrl: "/section/answer-key/"       },
-    "OFFLINE_FORM":      { id: "Offline Form",      title: "Offline Form",         color: "linear-gradient(135deg,#475569,#334155)", icon: "fa-solid fa-file-pen",         viewUrl: "/section/offline-form/"     },
-    "UPCOMING_JOBS":     { id: "Upcoming Jobs",     title: "Upcoming Jobs",        color: "linear-gradient(135deg,#15803d,#16a34a)", icon: "fa-solid fa-calendar-plus",    viewUrl: "/section/upcoming-jobs/"    },
-    "LATEST_JOBS NEW":   { id: "Latest Jobs New",   title: "Latest Jobs New",      color: "linear-gradient(135deg,#dc2626,#b91c1c)", icon: "fa-solid fa-fire",             viewUrl: "/section/latest-jobs-new/"  },
-    "STATE_JOBS":        { id: "State Jobs",        title: "State Jobs",           color: "linear-gradient(135deg,#9333ea,#a855f7)", icon: "fa-solid fa-map-location-dot", viewUrl: "/section/state-jobs/"       },
-    "CENTRAL_JOBS":      { id: "Central Jobs",      title: "Central Jobs",         color: "linear-gradient(135deg,#0f766e,#0d9488)", icon: "fa-solid fa-landmark",         viewUrl: "/section/central-jobs/"     },
-    "ADMISSIONS":        { id: "Admissions",        title: "Admissions",           color: "linear-gradient(135deg,#be123c,#e11d48)", icon: "fa-solid fa-school",           viewUrl: "/section/admissions/"       },
-    // ── ROW 2: Complete_Jobs_Full_Data.json categories ──
-    "Latest_Notifications": { id: "Latest Notifications", title: "Latest Notifications",  color: "linear-gradient(135deg,#dc2626,#b91c1c)", icon: "fa-solid fa-bell",             viewUrl: "/section/latest-notifications/" },
-    "10TH_Pass":         { id: "10th Pass jobs",    title: "10th Pass Jobs",       color: "linear-gradient(135deg,#0284c7,#0369a1)", icon: "fa-solid fa-graduation-cap",   viewUrl: "/section/10th-pass-jobs/"   },
-    "8TH_Pass":          { id: "8th Pass",           title: "8th Pass Jobs",        color: "linear-gradient(135deg,#7c3aed,#6d28d9)", icon: "fa-solid fa-book",             viewUrl: "/section/8th-pass-jobs/"    },
-    "12TH_Pass":         { id: "12th Pass jobs",    title: "12th Pass Jobs",       color: "linear-gradient(135deg,#059669,#047857)", icon: "fa-solid fa-graduation-cap",   viewUrl: "/section/12th-pass-jobs/"   },
-    "Diploma":           { id: "Diploma Jobs",       title: "Diploma Jobs",         color: "linear-gradient(135deg,#d97706,#b45309)", icon: "fa-solid fa-scroll",           viewUrl: "/section/diploma-jobs/"     },
-    "ITI":               { id: "ITI Jobs",           title: "ITI Jobs",             color: "linear-gradient(135deg,#0891b2,#0e7490)", icon: "fa-solid fa-wrench",           viewUrl: "/section/iti-jobs/"         },
-    "B_Tech_BE":         { id: "B.Tech Jobs",        title: "B.Tech / B.E. Jobs",   color: "linear-gradient(135deg,#4f46e5,#4338ca)", icon: "fa-solid fa-microchip",        viewUrl: "/section/btech-jobs/"       },
-    "B_Com":             { id: "B.Com Jobs",         title: "B.Com Jobs",           color: "linear-gradient(135deg,#0d9488,#0f766e)", icon: "fa-solid fa-chart-line",       viewUrl: "/section/b-com/"            },
-    "Any_Graduate":      { id: "Graduation jobs",   title: "Any Graduate Jobs",    color: "linear-gradient(135deg,#2563eb,#1d4ed8)", icon: "fa-solid fa-graduation-cap",   viewUrl: "/section/graduation-jobs/"  },
-    "Any_Post_Graduate": { id: "Post Graduation jobs", title: "Post Graduate Jobs", color: "linear-gradient(135deg,#9333ea,#7e22ce)", icon: "fa-solid fa-user-tie",         viewUrl: "/section/post-graduation-jobs/" },
-    "Railway_Jobs":      { id: "Railway Jobs",       title: "Railway Jobs",         color: "linear-gradient(135deg,#b45309,#92400e)", icon: "fa-solid fa-train",            viewUrl: "/section/railway-jobs/"     },
-    "Police_Defence":    { id: "Police Jobs",        title: "Police / Defence Jobs",color: "linear-gradient(135deg,#1e40af,#1e3a8a)", icon: "fa-solid fa-shield-halved",    viewUrl: "/section/police-jobs/"      },
-    "Teaching_Faculty":  { id: "Teacher Jobs",       title: "Teaching / Faculty Jobs", color: "linear-gradient(135deg,#16a34a,#15803d)", icon: "fa-solid fa-chalkboard-user", viewUrl: "/section/teaching-jobs/"   },
-    "Bank_Jobs":         { id: "Bank Jobs",          title: "Bank Jobs",            color: "linear-gradient(135deg,#ca8a04,#a16207)", icon: "fa-solid fa-building-columns", viewUrl: "/section/bank-jobs/"        },
-    "Medical_Hospital":  { id: "Medical Jobs",       title: "Medical / Hospital Jobs", color: "linear-gradient(135deg,#dc2626,#b91c1c)", icon: "fa-solid fa-stethoscope",   viewUrl: "/section/healthcare-jobs/"  },
-    "Last_Date_Reminder":{ id: "Last Date Reminder", title: "Last Date Reminder",   color: "linear-gradient(135deg,#e11d48,#be123c)", icon: "fa-solid fa-clock",            viewUrl: "/section/last-date-reminder/" },
-    // ── ROW 3: dailyupdates.json categories ──
-    "Govt_Scheme_Yojna": { id: "Govt Scheme Yojna",  title: "Govt Scheme & Yojna", color: "linear-gradient(135deg,#16a34a,#15803d)", icon: "fa-solid fa-hand-holding-heart", viewUrl: "/section/govt-scheme-yojna/" },
-    "Important_CSC_PDF": { id: "Important CSC PDF",  title: "Important CSC PDF",   color: "linear-gradient(135deg,#dc2626,#b91c1c)", icon: "fa-solid fa-file-pdf",         viewUrl: "/section/important-csc-pdf/" },
-    "Important_CSC_Link":{ id: "Important CSC Link", title: "Important CSC Link",  color: "linear-gradient(135deg,#0369a1,#0284c7)", icon: "fa-solid fa-link",             viewUrl: "/section/important-csc-link/" },
-    "Top_20_Jobs":       { id: "Top 20 Jobs",         title: "Top 20 Jobs",          color: "linear-gradient(135deg,#9333ea,#7e22ce)", icon: "fa-solid fa-medal",            viewUrl: "/section/top-20-jobs/"      },
-    "Today_Updates":     { id: "TOP Headlines Today", title: "Today Updates",        color: "linear-gradient(135deg,#b45309,#92400e)", icon: "fa-solid fa-newspaper",        viewUrl: "/section/today-updates/"    },
+    "Latest_Notifications": { id: "Latest Notifications",    title: "Latest Notifications",  color: "linear-gradient(135deg,#dc2626,#b91c1c)", icon: "fa-solid fa-bell" },
+    "10TH_Pass":            { id: "10th Pass jobs",           title: "10th Pass Jobs",         color: "linear-gradient(135deg,#0284c7,#0369a1)", icon: "fa-solid fa-graduation-cap" },
+    "8TH_Pass":             { id: "8th Pass",                 title: "8th Pass Jobs",          color: "linear-gradient(135deg,#7c3aed,#6d28d9)", icon: "fa-solid fa-book" },
+    "12TH_Pass":            { id: "12th Pass jobs",           title: "12th Pass Jobs",         color: "linear-gradient(135deg,#059669,#047857)", icon: "fa-solid fa-graduation-cap" },
+    "Diploma":              { id: "Diploma Jobs",             title: "Diploma Jobs",           color: "linear-gradient(135deg,#d97706,#b45309)", icon: "fa-solid fa-scroll" },
+    "ITI":                  { id: "ITI Jobs",                 title: "ITI Jobs",               color: "linear-gradient(135deg,#0891b2,#0e7490)", icon: "fa-solid fa-wrench" },
+    "B_Tech_BE":            { id: "B.Tech Jobs",              title: "B.Tech / B.E. Jobs",     color: "linear-gradient(135deg,#4f46e5,#4338ca)", icon: "fa-solid fa-microchip" },
+    "B_Com":                { id: "B.Com Jobs",               title: "B.Com Jobs",             color: "linear-gradient(135deg,#0d9488,#0f766e)", icon: "fa-solid fa-chart-line" },
+    "Any_Graduate":         { id: "Graduation jobs",          title: "Any Graduate Jobs",      color: "linear-gradient(135deg,#2563eb,#1d4ed8)", icon: "fa-solid fa-graduation-cap" },
+    "Any_Post_Graduate":    { id: "Post Graduation jobs",     title: "Post Graduate Jobs",     color: "linear-gradient(135deg,#9333ea,#7e22ce)", icon: "fa-solid fa-user-tie" },
+    "Railway_Jobs":         { id: "Railway Jobs",             title: "Railway Jobs",           color: "linear-gradient(135deg,#b45309,#92400e)", icon: "fa-solid fa-train" },
+    "Police_Defence":       { id: "Police Jobs",              title: "Police / Defence Jobs",  color: "linear-gradient(135deg,#1e40af,#1e3a8a)", icon: "fa-solid fa-shield-halved" },
+    "Teaching_Faculty":     { id: "Teacher Jobs",             title: "Teaching / Faculty Jobs",color: "linear-gradient(135deg,#16a34a,#15803d)", icon: "fa-solid fa-chalkboard-user" },
+    "Bank_Jobs":            { id: "Bank Jobs",                title: "Bank Jobs",              color: "linear-gradient(135deg,#ca8a04,#a16207)", icon: "fa-solid fa-building-columns" },
+    "Medical_Hospital":     { id: "Medical Jobs",             title: "Medical / Hospital Jobs",color: "linear-gradient(135deg,#dc2626,#b91c1c)", icon: "fa-solid fa-stethoscope" },
+    "Last_Date_Reminder":   { id: "Last Date Reminder",       title: "Last Date Reminder",     color: "linear-gradient(135deg,#e11d48,#be123c)", icon: "fa-solid fa-clock" },
+    "SR_Latest_Jobs":       { id: "SR Latest Jobs",           title: "Latest Jobs",    color: "linear-gradient(135deg,#0369a1,#0284c7)", icon: "fa-solid fa-file-pen" },
+    "SR_Result":            { id: "SR Result",                title: "Result",         color: "linear-gradient(135deg,#047857,#059669)", icon: "fa-solid fa-trophy" },
+    "SR_Admit_Card":        { id: "SR Admit Card",            title: "Admit Card",        color: "linear-gradient(135deg,#6d28d9,#7c3aed)", icon: "fa-solid fa-id-card" },
+    "SR_Admission":         { id: "SR Admission",             title: "Admission",         color: "linear-gradient(135deg,#0e7490,#0891b2)", icon: "fa-solid fa-graduation-cap" },
+    "SR_Answer_Key":        { id: "SR Answer Key",            title: "Answer Key",        color: "linear-gradient(135deg,#b45309,#d97706)", icon: "fa-solid fa-key" },
+    "UPCOMING_JOBS":        { id: "Upcoming Jobs",            title: "Upcoming Jobs",          color: "linear-gradient(135deg,#15803d,#16a34a)", icon: "fa-solid fa-calendar-plus" },
+    "STATE_JOBS":           { id: "State Jobs",               title: "State Jobs",        color: "linear-gradient(135deg,#9333ea,#a855f7)", icon: "fa-solid fa-map-location-dot" },
+    "CENTRAL_JOBS":         { id: "Central Jobs",             title: "Central Jobs",      color: "linear-gradient(135deg,#0f766e,#0d9488)", icon: "fa-solid fa-landmark" },
+    "ADMISSIONS":           { id: "Admissions",               title: "Admissions",        color: "linear-gradient(135deg,#be123c,#e11d48)", icon: "fa-solid fa-school" },
+    "LATEST_JOBS NEW":      { id: "Latest Jobs New",          title: "Latest Jobs New",        color: "linear-gradient(135deg,#dc2626,#b91c1c)", icon: "fa-solid fa-fire" },
+    "OFFLINE_FORM":         { id: "Offline Form",             title: "Offline Form",      color: "linear-gradient(135deg,#475569,#334155)", icon: "fa-solid fa-file-pen" },
   };
 
   /* Slugify a job title the same way the Python generator does */
@@ -194,7 +183,7 @@
 
         /* Slug: use existing or generate */
         const slug = job.slug || bd.slug || slugifyForJob(name);
-        const url  = "/data/jobs/" + slug + "/";
+        const url  = "/jobs/" + slug + "/";
 
         return { slug, name, url, date: last || "" };
       }).filter(Boolean);
@@ -230,30 +219,16 @@
   function convertSectionsIndex(indexData) {
     if (!indexData || typeof indexData !== 'object') return { sections: [] };
     const sections = [];
-    // Daily categories — inke items ka url direct link hai, /data/jobs/ nahi
-    const DAILY_CATS = new Set(['Govt_Scheme_Yojna','Important_CSC_PDF','Important_CSC_Link','Top_20_Jobs','Today_Updates']);
-    // ✅ FIX: These are rendered by #sr-sections-grid — skip here to avoid duplicates
-    const SR_GRID_KEYS = new Set([
-      'SR_Latest_Jobs','SR_Result','SR_Admit_Card','SR_Admission','SR_Answer_Key',
-      'OFFLINE_FORM','UPCOMING_JOBS','LATEST_JOBS NEW','STATE_JOBS','CENTRAL_JOBS','ADMISSIONS'
-    ]);
     for (const [catKey, meta] of Object.entries(JOBS_CAT_META)) {
-      if (SR_GRID_KEYS.has(catKey)) continue; // skip — already in sr-sections-grid
-      const rawItems = indexData[catKey];
-      // Only include categories that have real data in sections-index
-      // Empty ones will be filled from Complete_Jobs_Full_Data.json in getJobsSections
-      if (!Array.isArray(rawItems) || !rawItems.length) {
-        continue;
-      }
-      const isDaily = DAILY_CATS.has(catKey);
+      const items = indexData[catKey];
+      if (!Array.isArray(items) || !items.length) continue;
       sections.push({
         id: meta.id, title: meta.title, color: meta.color, icon: meta.icon,
-        viewMoreUrl: meta.viewUrl || '',
         viewMoreType: 'list',
-        items: rawItems.map(item => ({
-          slug: item.slug || '',
+        items: items.map(item => ({
+          slug: item.slug,
           name: item.name,
-          url: isDaily ? (item.url || '#') : '/data/jobs/' + item.slug + '/',
+          url: '/jobs/' + item.slug + '/',
           date: item.date || ''
         }))
       });
@@ -305,30 +280,33 @@
         if (indexData) {
           const fastResult = convertSectionsIndex(indexData);
 
-          // FIX: sections with empty items need data from Complete_Jobs
-          const emptyIds = new Set(fastResult.sections.filter(s => !s.items || s.items.length === 0).map(s => s.id));
+          // sections-index mein present category ids
+          const coveredIds = new Set(fastResult.sections.map(s => s.id));
 
-          // Always fetch Complete_Jobs for categories that have no data yet
+          // Missing categories: JOBS_CAT_META mein hain lekin sections-index mein nahi
+          const missingKeys = catOrder.filter(k =>
+            JOBS_CAT_META[k] && !coveredIds.has(JOBS_CAT_META[k].id)
+          );
+
+          // Always continue to merge merged_sarkari_data.json sections
+          // even when Complete_Jobs categories are all covered
+
+          // Missing categories ke liye Complete_Jobs_Full_Data.json fetch karo
           let extraSections = [];
           try {
             const raw = await getBigJSON();
             if (raw) {
               const fullResult = convertJobsDataToSections(raw);
-              // Keep sections that can fill empty slots
-              extraSections = fullResult.sections.filter(s => emptyIds.has(s.id));
+              // Sirf missing categories rakhon
+              const missingIds = new Set(missingKeys.map(k => JOBS_CAT_META[k].id));
+              extraSections = fullResult.sections.filter(s => missingIds.has(s.id));
             }
           } catch(_) { /* big JSON fail — fast sections hi return karo */ }
 
-          // Merge: for empty slots, replace with data from Complete_Jobs
-          const extraById = new Map(extraSections.map(s => [s.id, s]));
-          const mergedSections = fastResult.sections.map(s => {
-            if ((!s.items || s.items.length === 0) && extraById.has(s.id)) {
-              return extraById.get(s.id); // replace empty slot with real data
-            }
-            return s;
-          });
-
-          const allSections = mergedSections;
+          // Merge: sections-index + extraSections from big JSON only
+          // NOTE: SR_* categories (Latest Jobs, Result, Admit Card etc.) are already shown
+          // in #sr-sections-grid by the inline script — do NOT add them here to avoid duplicates
+          const allSections = [...fastResult.sections, ...extraSections];
           const seenIds = new Set();
           const deduped = allSections.filter(s => {
             if (seenIds.has(s.id)) return false;
@@ -343,15 +321,7 @@
             return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
           });
 
-          // ✅ FIX: Remove categories already rendered by #sr-sections-grid inline script
-          // These 11 categories are handled by merged_sarkari_data.json inline render
-          const SR_GRID_IDS = new Set([
-            'SR Latest Jobs', 'SR Result', 'SR Admit Card', 'SR Admission', 'SR Answer Key',
-            'Offline Form', 'Upcoming Jobs', 'Latest Jobs New', 'State Jobs', 'Central Jobs', 'Admissions'
-          ]);
-          const finalSections = deduped.filter(s => !SR_GRID_IDS.has(s.id));
-
-          return { sections: finalSections };
+          return { sections: deduped };
         }
       }
 
@@ -359,16 +329,7 @@
 
       // FALLBACK: sections-index unavailable — pure big JSON
       const raw = await getBigJSON();
-      if (raw) {
-        const result = convertJobsDataToSections(raw);
-        // ✅ FIX: Also exclude SR_GRID categories in fallback path
-        const SR_GRID_IDS = new Set([
-          'SR Latest Jobs', 'SR Result', 'SR Admit Card', 'SR Admission', 'SR Answer Key',
-          'Offline Form', 'Upcoming Jobs', 'Latest Jobs New', 'State Jobs', 'Central Jobs', 'Admissions'
-        ]);
-        result.sections = result.sections.filter(s => !SR_GRID_IDS.has(s.id));
-        return result;
-      }
+      if (raw) return convertJobsDataToSections(raw);
       return { sections: [] };
 
     } catch (_) { return { sections: [] }; }
@@ -406,7 +367,7 @@
         const name = (job.title || job.post_name || '').trim().replace(/[\s\-,|]+$/, '').trim();
         if (!name) return null;
         const slug = job.slug || slugifyForJob(name);
-        const url = slug ? '/data/jobs/' + slug + '/' : '#';
+        const url = slug ? '/jobs/' + slug + '/' : '#';
         const dates = job.important_dates || {};
         const lastDate = (dates.last_date_to_apply || dates.last_date || job.last_date || '').trim();
         const org = (job.organization || job.board_name || '').trim();
@@ -476,7 +437,7 @@
     // even when slug-based lookup in JSON fails (e.g. dailyupdates items)
     const dest = normalizeUrl(targetUrl);
     const refParam = dest ? "?ref=" + encodeURIComponent(dest) : "";
-    return "/data/jobs/" + slug + "/";
+    return "/jobs/" + slug + "/" + refParam;
   }
 
   /** Redirect interstitial only for home section rows and view.html list items (not More / nav / etc.). */
@@ -866,7 +827,7 @@
           merged.jobs.forEach(j => {
             if (!j.title) return;
             const slug = j.slug || slugify(j.title);
-            jobSearchData.push({ name: j.title.trim(), href: slug ? "/data/jobs/" + slug + "/" : "#" });
+            jobSearchData.push({ name: j.title.trim(), href: slug ? "/jobs/" + slug + "/" : "#" });
           });
         }
         if (complete && typeof complete === "object") {
@@ -877,7 +838,7 @@
               const title = bd.job_title || bd.post_name || i.title || i.name || "";
               if (!title) return;
               const slug = i.slug || slugify(title);
-              jobSearchData.push({ name: title.trim(), href: slug ? "/data/jobs/" + slug + "/" : "#" });
+              jobSearchData.push({ name: title.trim(), href: slug ? "/jobs/" + slug + "/" : "#" });
             });
           });
         }
@@ -1100,15 +1061,12 @@
         ? sec.items.filter(i => !isGarbageLink(i)).slice(0, 10)
         : [];
 
-      // Skip empty sections — don't render placeholder cards
-      if (items.length === 0) return;
-
       items.forEach((it, _idx) => {
         const name = safe(it.name) || "Open";
         // Build URL: prefer explicit url/link, fallback to slug-based job.html
         let url = it.url || it.link || "";
         if (!url && it.slug) {
-          url = "/data/jobs/" + it.slug + "/";
+          url = "/jobs/" + it.slug + "/";
         }
         if (!url) return;
 
@@ -1116,7 +1074,7 @@
         const a = document.createElement("a");
         a.className = "section-link";
         /* If URL is a job.html link (from slug), use directly — bypass redirect gate */
-        if (url.startsWith("/data/jobs/") || url.startsWith("job.html")) {
+        if (url.startsWith("/jobs/") || url.startsWith("job.html")) {
           a.href = url;
           a.setAttribute("data-bypass-gate", "1");
           if (it.slug) a.setAttribute("data-slug", it.slug);
@@ -1134,7 +1092,7 @@
         list.appendChild(a);
 
         // ✅ SEARCH INDEX: sirf internal job.html links push karo (external nav/tools skip)
-        if (url && (url.startsWith("/data/jobs/") || url.startsWith("job.html"))) {
+        if (url && (url.startsWith("/jobs/") || url.startsWith("job.html"))) {
           (window.tsjSearchIndex = window.tsjSearchIndex || []).push({
             title: name,
             slug: url,
@@ -1253,14 +1211,14 @@
       const name = safe(it.name) || "Open";
       let url = it.url || it.link || "";
       if (!url && it.slug) {
-        url = "/data/jobs/" + it.slug + "/";
+        url = "/jobs/" + it.slug + "/";
       }
       if (!url) return;
 
       const external = !!it.external;
       const a = document.createElement("a");
       a.className = "section-link";
-      if (url.startsWith("/data/jobs/") || url.startsWith("job.html")) {
+      if (url.startsWith("/jobs/") || url.startsWith("job.html")) {
         a.href = url;
         a.setAttribute("data-bypass-gate", "1");
         if (it.slug) a.setAttribute("data-slug", it.slug);
@@ -1279,7 +1237,7 @@
       list.appendChild(a);
 
       // ✅ SEARCH INDEX: sirf internal job.html links push karo (external nav/tools skip)
-      if (url && (url.startsWith("/data/jobs/") || url.startsWith("job.html"))) {
+      if (url && (url.startsWith("/jobs/") || url.startsWith("job.html"))) {
         (window.tsjSearchIndex = window.tsjSearchIndex || []).push({
           title: name,
           slug: url,
@@ -1708,20 +1666,9 @@
 
   // Category Pages
   async function initCategoryPage() {
-    if (page !== "category.html" && !isCategoryCleanUrl) return;
-
-    // Support both:
-    //   /category.html?group=study       (old URL)
-    //   /category/study/                 (clean URL)
-    let group;
-    if (isCategoryCleanUrl) {
-      // /category/study/ → group = "study"
-      // /category/       → group = ""
-      group = safe(_pathSegs[1] || "").toLowerCase();
-    } else {
-      const params = new URLSearchParams(location.search || "");
-      group = safe(params.get("group")).toLowerCase();
-    }
+    if (page !== "category.html") return;
+    const params = new URLSearchParams(location.search || "");
+    const group = safe(params.get("group")).toLowerCase();
 
     const titleEl = $("#categoryTitle") || $("h1");
     let gridEl = $("#categoryGrid") || $(".section-list");
@@ -1756,10 +1703,7 @@
 
     let data;
     try { data = await getJSON("/jobs.json"); } catch (_) {
-      gridEl.innerHTML = `<div style="color:#c00;background:#fff3f3;border:1px solid #fcc;padding:14px 16px;border-radius:8px;font-size:.95rem;">
-        <strong>⚠️ Data load failed.</strong><br>
-        <span style="color:#555;font-size:.85rem;">/jobs.json could not be fetched. Please check that the file exists on the server.</span>
-      </div>`;
+      gridEl.innerHTML = "";
       return;
     }
 
@@ -2358,7 +2302,7 @@
       /* FIX: No 'offline-' prefix — merged_sarkari_data.json jobs have no slug field,
          so slug is generated from title. Adding 'offline-' creates a mismatch with
          the title-derived slug used in matchBySlug(), causing wrong data on first load. */
-      return '/data/jobs/' + slug + '/';
+      return '/jobs/' + slug + '/';
     }
 
     let searchData = [];
@@ -2414,7 +2358,7 @@
             if (!title) return;
             const slug = i.slug || slugify(title);
             /* FIX: No 'offline-' prefix — causes slug mismatch in matchBySlug() */
-            const href = slug ? '/data/jobs/' + slug + '/' : '#';
+            const href = slug ? '/jobs/' + slug + '/' : '#';
             push(title, href, k.replace(/_/g,' '));
           });
         });
@@ -2430,7 +2374,7 @@
             // Build internal job.html link using slug
             const slug = item.slug || slugify(title);
             const href = slug
-              ? '/data/jobs/' + slug + '/'
+              ? '/jobs/' + slug + '/'
               : (item.url || '#');
             push(title, href, stateName + ' Jobs');
           });

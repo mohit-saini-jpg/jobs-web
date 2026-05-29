@@ -724,7 +724,7 @@
       /* Generate slug from name if no slug available — job detail pages exist for all merged_sarkari jobs */
       var resolvedSlug=item.slug||((item.name||'').toLowerCase().replace(/[^a-z0-9\s-]/g,'').replace(/[\s-]+/g,'-').replace(/^-+|-+$/g,'').slice(0,100));
       if(resolvedSlug){
-        a.href='/data/jobs/'+resolvedSlug+'/';
+        a.href='/jobs/'+resolvedSlug+'/';
       } else if(item.url&&item.url!=='#'){
         a.href=item.url;
         if(!/topsarkarijobs\.com/.test(item.url)){a.target='_blank';a.rel='noopener noreferrer';}
@@ -1114,7 +1114,6 @@
     </nav>
   </aside>
 
-  <script src="/filtering-system.js?v=5.0" defer></script>
   <script src="/script.js?v=20260520" defer></script>
   <script src="/seo-engine.min.js?v=20260517" defer></script>
 <script src="/tsj-push.js?v=4.0" defer></script>

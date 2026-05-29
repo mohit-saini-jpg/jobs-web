@@ -46,15 +46,14 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
   <link rel="preconnect" href="https://cykkclkfimmqbahanidg.supabase.co" crossorigin>
   <link rel="dns-prefetch" href="//cykkclkfimmqbahanidg.supabase.co"/>
   <!-- Preload critical JSON data for faster card rendering -->
-  <!-- PERF: shared promise for merged_sarkari_data.json — fetched only ONCE -->
-  <link rel="preload" href="merged_sarkari_data.json" as="fetch" crossorigin="anonymous"/>
+  <link rel="preload" href="/data/merged-summary.json" as="fetch" crossorigin="anonymous"/>
   <link rel="preload" href="script.min.js?v=20260526" as="script"/>
   <link rel="preload" href="dailyupdates.json" as="fetch" crossorigin="anonymous"/>
   <!-- PERF: sections-index.json — 16KB lightweight index for instant card rendering (instead of 18MB Complete_Jobs_Full_Data.json) -->
   <link rel="preload" href="sections-index.json" as="fetch" crossorigin="anonymous"/>
   <!-- PERF: shared promise for merged_sarkari_data.json — fetched only ONCE, used by ticker + section cards -->
   <script>
-  window.__mergedDataPromise = fetch('merged_sarkari_data.json')
+  window.__mergedDataPromise = fetch('/data/merged-summary.json')
     .then(function(r){ return r.ok ? r.json() : null; })
     .catch(function(){ return null; });
   // PERF: sections-index.json — fetch starts immediately at page load (16KB vs 18MB)
@@ -3023,8 +3022,6 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
   </aside>
 
   <!-- Load existing script.js (handles dynamic sections from JSON) -->
-  <!-- v5.0: Job Filter Engine -->
-  <script src="/filtering-system.js?v=5.0" defer></script>
   <script src="script.min.js?v=20260526" defer></script>
 
   <!-- SEO Engine: Push Notifications, Recently Viewed, Share, Breadcrumb, Trending -->
@@ -3231,7 +3228,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
     'use strict';
 
     /* ── Config ──────────────────────────────────────────── */
-    var JSON_FILE = 'merged_sarkari_data.json'; // FIX: root file has proper sr_category fields
+    var JSON_FILE = '/data/merged-summary.json';
     var MAX_ITEMS = 8;
 
     /*
@@ -3445,7 +3442,6 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
         );
       }).filter(Boolean).join('');
 
-      // If no items, don't render an empty card
       if (!liHtml) return '';
 
       return (
@@ -3492,31 +3488,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
           'STATE_JOBS':      { label: 'State Jobs',     icon: 'fa-solid fa-map-location-dot', headClass: 'blue',   viewUrl: '/section/state-jobs/' },
           'CENTRAL_JOBS':    { label: 'Central Jobs',   icon: 'fa-solid fa-landmark',         headClass: 'green',  viewUrl: '/section/central-jobs/' },
           'ADMISSIONS':      { label: 'Admissions',     icon: 'fa-solid fa-graduation-cap',   headClass: 'purple', viewUrl: '/section/admissions/' },
-          'LATEST_JOBS NEW': { label: 'Latest Jobs New',      icon: 'fa-solid fa-fire',                headClass: 'red',    viewUrl: '/section/latest-jobs-new/' },
-          /* Qualification-based */
-          'Latest_Notifications': { label: '🔔 Latest Notifications', icon: 'fa-solid fa-bell',              headClass: 'red',    viewUrl: '/section/latest-notifications/' },
-          '10TH_Pass':     { label: '📚 10th Pass Jobs',   icon: 'fa-solid fa-graduation-cap',  headClass: 'blue',   viewUrl: '/section/10th-pass-jobs/' },
-          '8TH_Pass':      { label: '📖 8th Pass Jobs',    icon: 'fa-solid fa-book',             headClass: 'purple', viewUrl: '/section/8th-pass-jobs/' },
-          '12TH_Pass':     { label: '🎓 12th Pass Jobs',   icon: 'fa-solid fa-graduation-cap',  headClass: 'green',  viewUrl: '/section/12th-pass-jobs/' },
-          'Diploma':       { label: '📜 Diploma Jobs',     icon: 'fa-solid fa-scroll',           headClass: 'orange', viewUrl: '/section/diploma-jobs/' },
-          'ITI':           { label: '🔧 ITI Jobs',         icon: 'fa-solid fa-wrench',           headClass: 'cyan',   viewUrl: '/section/iti-jobs/' },
-          'B_Tech_BE':     { label: '💻 B.Tech / B.E. Jobs',icon: 'fa-solid fa-microchip',       headClass: 'blue',   viewUrl: '/section/btech-jobs/' },
-          'B_Com':         { label: '💼 B.Com Jobs',       icon: 'fa-solid fa-chart-line',       headClass: 'teal',   viewUrl: '/section/b-com/' },
-          'Any_Graduate':  { label: '🎓 Any Graduate Jobs',icon: 'fa-solid fa-graduation-cap',  headClass: 'blue',   viewUrl: '/section/graduation-jobs/' },
-          'Any_Post_Graduate': { label: '🏛️ Post Graduate Jobs', icon: 'fa-solid fa-user-tie',  headClass: 'purple', viewUrl: '/section/post-graduation-jobs/' },
-          /* Category-based */
-          'Railway_Jobs':  { label: '🚂 Railway Jobs',     icon: 'fa-solid fa-train',            headClass: 'orange', viewUrl: '/section/railway-jobs/' },
-          'Police_Defence':{ label: '🛡️ Police / Defence Jobs', icon: 'fa-solid fa-shield-halved', headClass: 'blue', viewUrl: '/section/police-jobs/' },
-          'Teaching_Faculty': { label: '📝 Teaching / Faculty Jobs', icon: 'fa-solid fa-chalkboard-user', headClass: 'green', viewUrl: '/section/teaching-jobs/' },
-          'Bank_Jobs':     { label: '🏦 Bank Jobs',        icon: 'fa-solid fa-building-columns', headClass: 'orange', viewUrl: '/section/bank-jobs/' },
-          'Medical_Hospital': { label: '🏥 Medical / Hospital Jobs', icon: 'fa-solid fa-stethoscope', headClass: 'red', viewUrl: '/section/healthcare-jobs/' },
-          'Last_Date_Reminder': { label: '⏰ Last Date Reminder', icon: 'fa-solid fa-clock',     headClass: 'red',    viewUrl: '/section/last-date-reminder/' },
-          /* Daily updates / CSC */
-          'Govt_Scheme_Yojna': { label: 'Govt Scheme & Yojna', icon: 'fa-solid fa-hand-holding-heart', headClass: 'green', viewUrl: '/section/govt-scheme-yojna/' },
-          'Important_CSC_PDF': { label: 'Important CSC PDF',    icon: 'fa-solid fa-file-pdf',    headClass: 'red',    viewUrl: '/section/important-csc-pdf/' },
-          'Important_CSC_Link':{ label: 'Important CSC Link',   icon: 'fa-solid fa-link',         headClass: 'blue',   viewUrl: '/section/important-csc-link/' },
-          'Top_20_Jobs':   { label: 'Top 20 Jobs',        icon: 'fa-solid fa-medal',             headClass: 'purple', viewUrl: '/section/top-20-jobs/' },
-          'Today_Updates': { label: 'Today Updates',      icon: 'fa-solid fa-newspaper',         headClass: 'orange', viewUrl: '/section/today-updates/' }
+          'LATEST_JOBS NEW': { label: 'Latest Jobs New',   icon: 'fa-solid fa-fire',  headClass: 'red',    viewUrl: '/section/latest-jobs-new/' }
         };
 
         /* Default style pool for unknown/new categories — cycles through colors */
@@ -3734,20 +3706,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
 
         /* ── Build CATEGORY_CONFIG dynamically from all buckets found ── */
         /* First add known categories in preferred order */
-        var orderedKeys = [
-          /* ROW 1 — SR: Latest Jobs, Result, Admit Card, Admission, Answer Key, Offline Form */
-          'SR_Latest_Jobs', 'SR_Result', 'SR_Admit_Card', 'SR_Admission', 'SR_Answer_Key', 'OFFLINE_FORM',
-          /* ROW 2 — Core */
-          'UPCOMING_JOBS', 'LATEST_JOBS NEW', 'STATE_JOBS', 'CENTRAL_JOBS', 'ADMISSIONS',
-          /* ROW 3 — Notifications + Qualification */
-          'Latest_Notifications', '10TH_Pass', '8TH_Pass', '12TH_Pass', 'Diploma', 'ITI',
-          'B_Tech_BE', 'B_Com', 'Any_Graduate', 'Any_Post_Graduate',
-          /* ROW 4 — Job Category */
-          'Railway_Jobs', 'Police_Defence', 'Teaching_Faculty', 'Bank_Jobs', 'Medical_Hospital',
-          'Last_Date_Reminder',
-          /* ROW 5 — Daily / CSC / Specials */
-          'Govt_Scheme_Yojna', 'Important_CSC_PDF', 'Important_CSC_Link', 'Top_20_Jobs', 'Today_Updates'
-        ];
+        var orderedKeys = ['SR_Latest_Jobs', 'SR_Result', 'SR_Admit_Card', 'SR_Admission', 'SR_Answer_Key', 'UPCOMING_JOBS', 'OFFLINE_FORM', 'LATEST_JOBS NEW', 'STATE_JOBS', 'CENTRAL_JOBS', 'ADMISSIONS'];
         /* Then append any NEW unknown categories */
         Object.keys(categoryBuckets).forEach(function(k) {
           if (orderedKeys.indexOf(k) === -1) orderedKeys.push(k);
@@ -3758,7 +3717,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
         var dynamicConfigs = [];
         orderedKeys.forEach(function(key) {
           var items = categoryBuckets[key];
-          if (!items || items.length === 0) return; // skip empty — no data available
+          if (!items || items.length === 0) return;
 
           var cfg;
           if (KNOWN_CAT_CONFIG[key]) {
@@ -3819,7 +3778,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
       var activeCfgs = jsonData.__dynamicConfigs || null;
 
       if (activeCfgs) {
-        /* Fully dynamic path: render every category that has items */
+        /* Fully dynamic path: render every category that has data */
         activeCfgs.forEach(function(cfg) {
           var items = cfg.items || [];
           if (items.length > 0) {
@@ -3844,31 +3803,14 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
       if (html) {
         grid.innerHTML = html;
       } else {
-        // ✅ FIX: Even if html empty, still show the grid — render all cards with placeholders
-        console.warn('[SR] No data found, rendering placeholder cards. Keys in JSON:', Object.keys(jsonData));
-        // Build placeholder cards for all known categories in order
-        var placeholderHtml = '';
-        // ✅ FIX: Only placeholder for dynamic-sections cards (not sr-sections-grid cards)
-        var orderedKeysForPlaceholder = [
-          'Latest_Notifications', '10TH_Pass', '8TH_Pass', '12TH_Pass', 'Diploma', 'ITI',
-          'B_Tech_BE', 'B_Com', 'Any_Graduate', 'Any_Post_Graduate',
-          'Railway_Jobs', 'Police_Defence', 'Teaching_Faculty', 'Bank_Jobs', 'Medical_Hospital',
-          'Last_Date_Reminder', 'Govt_Scheme_Yojna', 'Important_CSC_PDF', 'Important_CSC_Link',
-          'Top_20_Jobs', 'Today_Updates'
-        ];
-        orderedKeysForPlaceholder.forEach(function(key) {
-          if (KNOWN_CAT_CONFIG[key]) {
-            var kc = KNOWN_CAT_CONFIG[key];
-            var cfg = { key: key, label: kc.label, icon: kc.icon, headClass: kc.headClass, viewUrl: kc.viewUrl };
-            placeholderHtml += buildCard(cfg, []);
-          }
-        });
-        if (placeholderHtml) grid.innerHTML = placeholderHtml;
+        console.warn('[SR] No data found. Keys in JSON:', Object.keys(jsonData), '| sarkariresult_data:', jsonData.sarkariresult_data ? Object.keys(jsonData.sarkariresult_data) : 'missing');
+        var wrap = document.getElementById('sr-dynamic-wrap');
+        if (wrap) wrap.style.display = 'none';
       }
     }
 
     function loadData() {
-      var CACHE_KEY = '__sr_merged_v12'; // bumped - 2026-05-29 fixed JSON_FILE path
+      var CACHE_KEY = '__sr_merged_v11'; // bumped - 2026-05-28 sequence fix
       var CACHE_TTL = 15 * 60 * 1000; // 15 min
 
       try {
@@ -3952,7 +3894,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
   </script>
 
 <script src="/tsj-push.js?v=4.0" defer></script>
-<script src="/tsj-version.js?v=20260529145828" defer></script>
+<script src="/tsj-version.js?v=20260528113521" defer></script>
 
 <script>
 /* Auto lazy-load all images not already marked */
