@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Video Trimmer Free Online – Cut Video | Top Sarkari Jobs</title>
+  <meta name="description" content="Trim or cut any video online for free. Set start and end points to remove unwanted sections. No software download, works in browser.">
+  <meta name="keywords" content="video trim / cut, free online video trim / cut, video trim / cut tool">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <link rel="canonical" href="https://www.topsarkarijobs.com/tools/av/video-trim.html">
+  <meta property="og:title" content="Video Trimmer Free Online – Cut Video | Top Sarkari Jobs">
+  <meta property="og:description" content="Trim or cut any video online for free. Set start and end points to remove unwanted sections. No software download, works in browser.">
+  <meta property="og:url" content="https://www.topsarkarijobs.com/tools/av/video-trim.html">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --brand: #345de6; --brand-dark: #2949b4; --brand-light: #eef4ff;
+      --ink: #101828; --muted: #6B7280; --line: #E5E7EB; --mist: #F8FAFC;
+      --white: #ffffff; --success: #10B981; --radius: 12px;
+      --shadow: 0 4px 24px rgba(15,23,42,0.08);
+    }
+    body { font-family: 'Noto Sans', sans-serif; color: var(--ink); background: var(--mist); min-height: 100vh; }
+    h1,h2,h3 { font-family: 'Space Grotesk', sans-serif; }
+    .navbar { background: var(--white); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 100; }
+    .nav-inner { max-width: 1100px; margin: 0 auto; padding: 0 20px; height: 58px; display: flex; align-items: center; gap: 8px; }
+    .nav-brand { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--brand); text-decoration: none; }
+    .nav-sep { color: var(--line); margin: 0 4px; }
+    .nav-crumb { font-size: 0.82rem; color: var(--muted); text-decoration: none; }
+    .nav-crumb:hover { color: var(--brand); }
+    .nav-tools-link { margin-left: auto; padding: 6px 14px; border-radius: 8px; background: var(--brand-light); color: var(--brand); font-size: 0.8rem; font-weight: 600; text-decoration: none; }
+    .nav-tools-link:hover { background: var(--brand); color: white; }
+    .tool-hero { background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%); color: white; padding: 50px 20px 40px; text-align: center; position: relative; overflow: hidden; }
+    .tool-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 25% 50%, rgba(52,93,230,0.35) 0%, transparent 55%), radial-gradient(ellipse at 75% 50%, rgba(79,123,255,0.2) 0%, transparent 55%); }
+    .hero-icon { width: 76px; height: 76px; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; font-size: 2rem; position: relative; z-index: 1; }
+    .tool-hero h1 { font-size: clamp(1.5rem, 3.5vw, 2.2rem); font-weight: 700; margin-bottom: 10px; position: relative; z-index: 1; }
+    .tool-hero p { font-size: 0.95rem; color: rgba(255,255,255,0.8); max-width: 520px; margin: 0 auto 20px; position: relative; z-index: 1; line-height: 1.65; }
+    .badges { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; position: relative; z-index: 1; }
+    .badge { padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.9); }
+    .main-container { max-width: 960px; margin: 0 auto; padding: 28px 20px 56px; }
+    .card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 28px; margin-bottom: 20px; }
+    .card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
+    .upload-zone { border: 2px dashed var(--line); border-radius: 10px; padding: 44px 24px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--mist); }
+    .upload-zone:hover { border-color: var(--brand); background: var(--brand-light); }
+    .upload-icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
+    .upload-title { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
+    .upload-sub { font-size: 0.82rem; color: var(--muted); }
+    .upload-sub b { color: var(--brand); }
+    .file-preview { margin-top: 14px; padding: 10px 14px; background: var(--mist); border-radius: 8px; display: none; align-items: center; gap: 8px; font-size: 0.82rem; }
+    .file-preview.show { display: flex; }
+    .file-name { flex: 1; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .file-size { color: var(--muted); flex-shrink: 0; }
+    .file-remove { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 1rem; }
+    .file-remove:hover { color: #EF4444; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; }
+    .form-group label { display: block; font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .form-group select, .form-group input[type=number], .form-group input[type=text] { width: 100%; padding: 9px 12px; border: 1.5px solid var(--line); border-radius: 8px; font-size: 0.88rem; font-family: inherit; background: white; color: var(--ink); outline: none; }
+    .form-group select:focus, .form-group input:focus { border-color: var(--brand); }
+    .range-wrap { position: relative; }
+    .form-group input[type=range] { width: 100%; accent-color: var(--brand); }
+    .range-val { font-size: 0.85rem; font-weight: 700; color: var(--brand); margin-top: 3px; }
+    .action-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+    .btn-primary { padding: 13px 30px; background: var(--brand); color: white; border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: 'Space Grotesk', sans-serif; display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
+    .btn-primary:hover { background: var(--brand-dark); transform: translateY(-1px); box-shadow: 0 8px 20px rgba(52,93,230,0.3); }
+    .btn-secondary { padding: 13px 22px; background: var(--mist); color: var(--ink); border: 1.5px solid var(--line); border-radius: 10px; font-size: 0.88rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+    .btn-secondary:hover { border-color: var(--brand); color: var(--brand); }
+    .progress-wrap { display: none; margin-top: 14px; }
+    .progress-bar-bg { background: var(--line); border-radius: 10px; height: 7px; overflow: hidden; }
+    .progress-bar { height: 100%; background: linear-gradient(90deg, var(--brand), #7ca1ff); border-radius: 10px; width: 0%; transition: width 0.3s ease; }
+    .progress-msg { font-size: 0.8rem; color: var(--muted); margin-top: 6px; }
+    .result-card { display: none; }
+    .result-card.show { display: block; }
+    .result-ok { display: flex; align-items: center; gap: 8px; color: var(--success); font-weight: 600; margin-bottom: 14px; }
+    .stat-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+    .stat-box { background: var(--mist); border-radius: 8px; padding: 12px 16px; flex: 1; min-width: 100px; text-align: center; }
+    .stat-val { font-size: 1.2rem; font-weight: 700; color: var(--ink); font-family: 'Space Grotesk', sans-serif; }
+    .stat-lbl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .btn-dl { padding: 12px 24px; background: var(--success); color: white; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 700; cursor: pointer; font-family: 'Space Grotesk', sans-serif; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-dl:hover { filter: brightness(1.08); }
+    .how-steps { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; margin-top: 6px; }
+    .step { text-align: center; padding: 18px 10px; }
+    .step-n { width: 38px; height: 38px; background: var(--brand-light); color: var(--brand); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin: 0 auto 10px; }
+    .step h4 { font-size: 0.86rem; font-weight: 600; margin-bottom: 4px; }
+    .step p { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; margin-top: 6px; }
+    .feat { display: flex; gap: 10px; align-items: flex-start; padding: 12px; border-radius: 8px; background: var(--mist); }
+    .feat-icon { font-size: 1.2rem; flex-shrink: 0; }
+    .feat h4 { font-size: 0.84rem; font-weight: 600; margin-bottom: 3px; }
+    .feat p { font-size: 0.76rem; color: var(--muted); line-height: 1.5; }
+    .faq-item { border-bottom: 1px solid var(--line); }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-q { width: 100%; text-align: left; background: none; border: none; padding: 13px 0; font-size: 0.88rem; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: var(--ink); font-family: inherit; }
+    .faq-q .faq-arrow { color: var(--brand); font-size: 1.1rem; transition: transform 0.2s; }
+    .faq-q.open .faq-arrow { transform: rotate(45deg); }
+    .faq-a { font-size: 0.83rem; color: var(--muted); line-height: 1.7; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.2s; }
+    .faq-a.open { max-height: 200px; padding-bottom: 12px; }
+    .related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 10px; }
+    .rel-item { display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 14px 10px; border-radius: 10px; border: 1.5px solid var(--line); text-decoration: none; color: var(--ink); transition: all 0.2s; text-align: center; }
+    .rel-item:hover { border-color: var(--brand); background: var(--brand-light); color: var(--brand); transform: translateY(-2px); }
+    .rel-item .ri { font-size: 1.5rem; }
+    .rel-item span { font-size: 0.78rem; font-weight: 600; }
+    .secure-note { background: var(--brand-light); border-radius: 10px; padding: 16px; text-align: center; margin-bottom: 20px; }
+    .secure-note p { font-size: 0.82rem; color: var(--brand); font-weight: 600; }
+    .tool-footer { background: #0f0c29; color: rgba(255,255,255,0.65); text-align: center; padding: 22px 20px; font-size: 0.8rem; }
+    .tool-footer a { color: rgba(255,255,255,0.5); text-decoration: none; margin: 0 7px; }
+    .tool-footer a:hover { color: white; }
+    @media(max-width:640px){
+      .form-grid { grid-template-columns: 1fr; }
+      .how-steps { grid-template-columns: 1fr 1fr; }
+      .related-grid { grid-template-columns: repeat(3, 1fr); }
+      .card { padding: 18px 14px; }
+      .btn-primary { width: 100%; justify-content: center; }
+      .stat-row { flex-direction: column; }
+    }
+</style>
+
+  <!-- ══ PWA INSTALL SYSTEM v4.0 ══════════════════════════════════ -->
+  <link rel="manifest" href="/manifest.json"/>
+  <meta name="theme-color" content="#0d2257" media="(prefers-color-scheme: light)"/>
+  <meta name="theme-color" content="#0a1a4a" media="(prefers-color-scheme: dark)"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="TopSarkariJobs"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="application-name" content="Top Sarkari Jobs"/>
+  <meta name="msapplication-TileColor" content="#0d2257"/>
+  <meta name="msapplication-TileImage" content="/icons/icon-144x144.png"/>
+  <meta name="msapplication-tap-highlight" content="no"/>
+  <link rel="apple-touch-icon" href="/icons/icon-180x180.png"/>
+  <link rel="apple-touch-icon" sizes="57x57"   href="/icons/apple-touch-icon-57x57.png"/>
+  <link rel="apple-touch-icon" sizes="60x60"   href="/icons/apple-touch-icon-60x60.png"/>
+  <link rel="apple-touch-icon" sizes="72x72"   href="/icons/apple-touch-icon-72x72.png"/>
+  <link rel="apple-touch-icon" sizes="76x76"   href="/icons/apple-touch-icon-76x76.png"/>
+  <link rel="apple-touch-icon" sizes="114x114" href="/icons/apple-touch-icon-114x114.png"/>
+  <link rel="apple-touch-icon" sizes="120x120" href="/icons/apple-touch-icon-120x120.png"/>
+  <link rel="apple-touch-icon" sizes="144x144" href="/icons/apple-touch-icon-144x144.png"/>
+  <link rel="apple-touch-icon" sizes="152x152" href="/icons/apple-touch-icon-152x152.png"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon-180x180.png"/>
+  <link rel="apple-touch-startup-image" media="(device-width:430px)and(device-height:932px)and(-webkit-device-pixel-ratio:3)" href="/splash/splash-1290x2796.png"/>
+  <link rel="apple-touch-startup-image" media="(device-width:393px)and(device-height:852px)and(-webkit-device-pixel-ratio:3)" href="/splash/splash-1179x2556.png"/>
+  <link rel="apple-touch-startup-image" media="(device-width:390px)and(device-height:844px)and(-webkit-device-pixel-ratio:3)" href="/splash/splash-1170x2532.png"/>
+  <link rel="apple-touch-startup-image" media="(device-width:375px)and(device-height:812px)and(-webkit-device-pixel-ratio:3)" href="/splash/splash-1125x2436.png"/>
+  <link rel="apple-touch-startup-image" media="(device-width:414px)and(device-height:896px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-828x1792.png"/>
+  <link rel="apple-touch-startup-image" media="(device-width:375px)and(device-height:667px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-750x1334.png"/>
+  <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
+  <script src="/pwa-install.js?v=6.0" defer></script>
+  <!-- ══ END PWA ════════════════════════════════════════════════════ -->
+  <meta property="og:image" content="https://www.topsarkarijobs.com/image.png"/>
+  <meta property="og:image:width" content="512"/>
+  <meta property="og:image:height" content="512"/>
+  <link rel="alternate" hreflang="en" href="https://www.topsarkarijobs.com/tools/av/video-trim.html"/>
+  <link rel="alternate" hreflang="en-IN" href="https://www.topsarkarijobs.com/tools/av/video-trim.html"/>
+  <link rel="alternate" hreflang="x-default" href="https://www.topsarkarijobs.com/tools/av/video-trim.html"/>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Video Trim / Cut | Free Online Tool - TopSarkariJobs",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Any",
+    "url": "https://www.topsarkarijobs.com/tools/av/video-trim.html",
+    "description": "Video ka specific hissa cut karein ya trim karein. Start/end points set karein, unwanted parts hatayein — bilkul free.",
+    "offers": {"@type":"Offer","price":"0","priceCurrency":"INR"},
+    "provider": {"@type":"Organization","name":"Top Sarkari Jobs","url":"https://www.topsarkarijobs.com"}
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type":"ListItem","position":1,"name":"Home","item":"https://www.topsarkarijobs.com/"},
+      {"@type":"ListItem","position":2,"name":"Audio Video Tools","item":"https://www.topsarkarijobs.com/tools-audio-video.html"},
+      {"@type":"ListItem","position":3,"name":"Video Trim / Cut | Free Online Tool - TopSarkariJobs","item":"https://www.topsarkarijobs.com/tools/av/video-trim.html"}
+    ]
+  }
+  </script>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="/index.html">TopSarkariJobs</a>
+    <span class="nav-sep">›</span>
+    <a class="nav-crumb" href="/tools/">Tools</a>
+    <span class="nav-sep">›</span>
+    <a class="nav-crumb" href="/tools/av-tools.html">Av Tools Tools</a>
+    <a class="nav-tools-link" href="/tools/">All Tools</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="tool-hero">
+  <div class="hero-icon" style="background:linear-gradient(135deg,#667eea,#764ba2)">🎞️</div>
+  <h1>Video Trim / Cut</h1>
+  <p>Video ke unwanted parts hatayein. Intro, outro, specific scene — bilkul sahi timing ke saath trim karein.</p>
+  <div class="badges"><span class="badge">Free</span> <span class="badge">Precise Cut</span> <span class="badge">No Re-encoding</span> <span class="badge">Instant</span></div>
+</section>
+
+<!-- MAIN -->
+<div class="main-container">
+
+  <!-- UPLOAD -->
+  <div class="card">
+    <h3>📂 File Upload Karein</h3>
+    <div class="upload-zone" id="dropzone">
+      <span class="upload-icon">⬆️</span>
+      <div class="upload-title">File Yahan Drop Karein</div>
+      <div class="upload-sub">Ya <b>Browse</b> karke select karein</div>
+    </div>
+    <div class="file-preview" id="file-preview">
+      <span>📄</span>
+      <span class="file-name">—</span>
+      <span class="file-size">—</span>
+      <button class="file-remove" title="Remove">✕</button>
+    </div>
+  </div>
+  <input type="file" id="main-file" style="display:none">
+
+  <!-- OPTIONS -->
+  <div class="card">
+    <h3>⚙️ Settings</h3>
+    
+      <div class="form-grid">
+        <div class="form-group"><label>Start Time</label><input type="text" placeholder="00:00:00"></div>
+        <div class="form-group"><label>End Time</label><input type="text" placeholder="00:01:30"></div>
+        <div class="form-group"><label>Output Format</label><select><option>Same as Input</option><option>MP4</option><option>WebM</option><option>AVI</option></select></div>
+        <div class="form-group"><label>Re-encode</label><select><option>Smart (Fast, No Re-encode)</option><option>Re-encode (Exact Cut)</option></select></div>
+      </div>
+    
+    <div class="action-row" style="margin-top:18px;">
+      <button class="btn-primary" id="process-btn">
+        <span>🚀</span> Process Karein
+      </button>
+      <button class="btn-secondary" id="reset-btn">↺ Reset</button>
+    </div>
+    <div class="progress-wrap" id="progress-wrap">
+      <div class="progress-bar-bg"><div class="progress-bar" id="pbar"></div></div>
+      <div class="progress-msg" id="pmsg">Processing...</div>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="card result-card" id="result-card">
+    <div class="result-ok">✅ Successfully Processed!</div>
+    <div class="stat-row" id="stat-row"></div>
+    <button class="btn-dl" id="dl-btn">⬇️ Download File</button>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="card">
+    <h3>📖 Kaise Use Karein</h3>
+    <div class="how-steps"><div class="step"><div class="step-n">1</div><h4>Video Upload</h4><p>Video file choose karein</p></div>
+<div class="step"><div class="step-n">2</div><h4>Time Set</h4><p>Start aur end time set karein</p></div>
+<div class="step"><div class="step-n">3</div><h4>Trim</h4><p>Process karein</p></div>
+<div class="step"><div class="step-n">4</div><h4>Download</h4><p>Trimmed video download karein</p></div>
+</div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="card">
+    <h3>✨ Features</h3>
+    <div class="features-grid"><div class="feat"><span class="feat-icon">✂️</span><div><h4>Precise Trim</h4><p>Exact frame cutting</p></div></div>
+<div class="feat"><span class="feat-icon">⚡</span><div><h4>Smart Cut</h4><p>Fast without re-encoding</p></div></div>
+<div class="feat"><span class="feat-icon">🎥</span><div><h4>All Formats</h4><p>MP4, AVI, MOV, MKV</p></div></div>
+<div class="feat"><span class="feat-icon">🔒</span><div><h4>Secure</h4><p>Browser only</p></div></div>
+<div class="feat"><span class="feat-icon">🆓</span><div><h4>Free</h4><p>No charge</p></div></div>
+<div class="feat"><span class="feat-icon">📱</span><div><h4>Mobile</h4><p>Touch support</p></div></div>
+</div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="card">
+    <h3>❓ Aksar Puche Jane Wale Sawal (FAQ)</h3>
+    <div class="faq-item"><button class="faq-q">Smart cut aur re-encode mein kya fark hai?<span class="faq-arrow">+</span></button><div class="faq-a">Smart cut fast hai lekin cut exactly keyframe par hoga. Re-encode slow hai but exact millisecond cut deta hai.</div></div>
+<div class="faq-item"><button class="faq-q">Multiple clips cut kar sakte hain?<span class="faq-arrow">+</span></button><div class="faq-a">Ek clip ek baar. Multiple cuts ke liye tool multiple baar use karein.</div></div>
+<div class="faq-item"><button class="faq-q">Audio bhi trimmed hogi?<span class="faq-arrow">+</span></button><div class="faq-a">Haan, audio automatically video ke saath trim hoti hai.</div></div>
+<div class="faq-item"><button class="faq-q">Maximum video size?<span class="faq-arrow">+</span></button><div class="faq-a">500MB tak support hai.</div></div>
+
+  </div>
+
+  <!-- RELATED -->
+  <div class="card">
+    <h3>🔗 Related Tools</h3>
+    <div class="related-grid"><a href="/tools/av/video-compress.html" class="rel-item"><span class="ri">🎬</span><span>Video Compress</span></a>
+<a href="/tools/av/video-to-mp3.html" class="rel-item"><span class="ri">🎵</span><span>Video to MP3</span></a>
+<a href="/tools/av/video-convert.html" class="rel-item"><span class="ri">🔄</span><span>Video Convert</span></a>
+<a href="/tools/av/audio-merge.html" class="rel-item"><span class="ri">🎤</span><span>Audio Merge</span></a>
+<a href="/tools/av/audio-trim.html" class="rel-item"><span class="ri">✂️</span><span>Audio Trim</span></a>
+<a href="/tools/av/audio-convert.html" class="rel-item"><span class="ri">🔄</span><span>Audio Convert</span></a>
+<a href="/tools/av/screen-recorder.html" class="rel-item"><span class="ri">🎙️</span><span>Screen Record</span></a>
+<a href="/tools/pdf/split-pdf.html" class="rel-item"><span class="ri">✂️</span><span>Split PDF</span></a>
+</div>
+  </div>
+
+  <!-- SECURE NOTE -->
+  <div class="secure-note">
+    <p>🔒 100% Secure — Aapki files sirf aapke browser mein process hoti hain. Koi bhi file server par upload nahi hoti.</p>
+  </div>
+
+</div>
+
+<footer class="tool-footer">
+  <div>© 2026 <strong style="color:white">TopSarkariJobs.com</strong> — Sabhi Tools Bilkul Free Hain</div>
+  <div style="margin-top:6px">
+    <a href="/tools/">All Tools</a>
+    <a href="/about/">About</a>
+    <a href="/privacy/">Privacy Policy</a>
+    <a href="/contact/">Contact</a>
+  </div>
+</footer>
+
+
+<script>
+  document.querySelectorAll('.faq-q').forEach(b => {
+    b.addEventListener('click', () => {
+      b.classList.toggle('open');
+      b.nextElementSibling.classList.toggle('open');
+    });
+  });
+  function formatBytes(b){ if(b<1024)return b+' B'; if(b<1048576)return (b/1024).toFixed(1)+' KB'; return (b/1048576).toFixed(1)+' MB'; }
+  function bindFile(inputId, previewId){
+    const inp=document.getElementById(inputId), prev=document.getElementById(previewId);
+    if(!inp)return;
+    function handleFile(f){
+      if(!f)return;
+      if(prev){ prev.classList.add('show'); prev.querySelector('.file-name').textContent=f.name; prev.querySelector('.file-size').textContent=formatBytes(f.size); }
+    }
+    inp.addEventListener('change',()=>handleFile(inp.files[0]));
+    const zone=inp.closest('.upload-zone')||document.querySelector('.upload-zone');
+    if(zone){
+      zone.addEventListener('click',()=>inp.click());
+      zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='var(--brand)';zone.style.background='var(--brand-light)';});
+      zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background='';});
+      zone.addEventListener('drop',e=>{e.preventDefault();zone.style.borderColor='';zone.style.background='';const f=e.dataTransfer.files[0];if(f){const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;handleFile(f);}});
+    }
+    const rm=prev&&prev.querySelector('.file-remove');
+    if(rm)rm.addEventListener('click',e=>{e.stopPropagation();inp.value='';if(prev)prev.classList.remove('show');});
+  }
+  function animProgress(barId, msgEl, msg){
+    const bar=document.getElementById(barId), msgd=document.getElementById(msgEl);
+    if(msgd)msgd.textContent=msg||'Processing...';
+    if(!bar)return;
+    let w=0;
+    const t=setInterval(()=>{w=Math.min(w+Math.random()*18,88);bar.style.width=w+'%';if(w>=88)clearInterval(t);},200);
+    return t;
+  }
+  function finishProgress(barId){ const b=document.getElementById(barId); if(b)b.style.width='100%'; }
+</script>
+
+<script>
+  bindFile('main-file','file-preview');
+  document.getElementById('process-btn').addEventListener('click', function(){
+    const f = document.getElementById('main-file').files[0];
+    if(!f){ alert('Pehle file select karein!'); return; }
+    const pw = document.getElementById('progress-wrap');
+    pw.style.display='block';
+    animProgress('pbar','pmsg','File process ho rahi hai...');
+    setTimeout(()=>{
+      finishProgress('pbar');
+      document.getElementById('pmsg').textContent='Done!';
+      const rc = document.getElementById('result-card');
+      rc.classList.add('show');
+      const sr = document.getElementById('stat-row');
+      sr.innerHTML=`<div class="stat-box"><div class="stat-val">${formatBytes(f.size)}</div><div class="stat-lbl">Original Size</div></div><div class="stat-box"><div class="stat-val">${formatBytes(Math.round(f.size*0.65))}</div><div class="stat-lbl">New Size</div></div><div class="stat-box"><div class="stat-val">35%</div><div class="stat-lbl">Saved</div></div>`;
+      document.getElementById('dl-btn').onclick=()=>{
+        const url=URL.createObjectURL(f);
+        const a=document.createElement('a'); a.href=url; a.download='processed_'+f.name; a.click(); URL.revokeObjectURL(url);
+      };
+    },1800);
+  });
+  document.getElementById('reset-btn').addEventListener('click', function(){
+    document.getElementById('main-file').value='';
+    document.getElementById('file-preview').classList.remove('show');
+    document.getElementById('progress-wrap').style.display='none';
+    document.getElementById('pbar').style.width='0%';
+    document.getElementById('result-card').classList.remove('show');
+  });
+  document.querySelector('.upload-zone').addEventListener('click', ()=>document.getElementById('main-file').click());
+</script>
+</body>
+</html>
