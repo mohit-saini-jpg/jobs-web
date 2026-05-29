@@ -237,9 +237,9 @@
     for (const [catKey, meta] of Object.entries(JOBS_CAT_META)) {
       if (SR_GRID_KEYS.has(catKey)) continue; // skip — already in sr-sections-grid
       const rawItems = indexData[catKey];
-      // FIX: Always include the category even if no items in sections-index
+      // Only include categories that have real data in sections-index
+      // Empty ones will be filled from Complete_Jobs_Full_Data.json in getJobsSections
       if (!Array.isArray(rawItems) || !rawItems.length) {
-        sections.push({ id: meta.id, title: meta.title, color: meta.color, icon: meta.icon, viewMoreUrl: meta.viewUrl || '', viewMoreType: 'list', items: [] });
         continue;
       }
       const isDaily = DAILY_CATS.has(catKey);
@@ -1097,17 +1097,8 @@
         ? sec.items.filter(i => !isGarbageLink(i)).slice(0, 10)
         : [];
 
-      // FIX: Show placeholder when no items so card is always visible
-      if (items.length === 0) {
-        const ph = document.createElement('a');
-        ph.className = 'section-link';
-        ph.href = moreHref || '#';
-        ph.innerHTML = '<span style="color:#94a3b8;font-size:.8rem;"><i class="fa-solid fa-rotate" style="margin-right:5px;"></i>Updates loading… <span style="color:var(--blue);">View All</span></span>';
-        list.appendChild(ph);
-        if (listWrap) listWrap.classList.add('scrolled-to-end');
-        wrap.appendChild(card);
-        return;
-      }
+      // Skip empty sections — don't render placeholder cards
+      if (items.length === 0) return;
 
       items.forEach((it, _idx) => {
         const name = safe(it.name) || "Open";
