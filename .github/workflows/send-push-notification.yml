@@ -1,5 +1,5 @@
 # TOP SARKARI JOBS — Auto Push Notification
-# Triggers when Complete_Jobs_Full_Data.json changes
+# Triggers when dailyupdates.json or merged_sarkari_data.json changes
 # Also supports manual dispatch from GitHub Actions UI
 #
 # SECRETS needed in GitHub → Settings → Secrets → Actions:
@@ -11,7 +11,8 @@ on:
   push:
     branches: [main]
     paths:
-      - 'Complete_Jobs_Full_Data.json'
+      - 'dailyupdates.json'
+      - 'merged_sarkari_data.json'
 
   workflow_dispatch:
     inputs:
@@ -56,7 +57,7 @@ jobs:
             JURL="${{ inputs.job_url }}"
           else
             CAT="latest-jobs"
-            TITLE=$(node -e "try{const d=require('./Complete_Jobs_Full_Data.json');const j=((d.sarkari_data&&d.sarkari_data.jobs)||[])[0];console.log(j&&j.title?j.title.slice(0,62):'New Govt Jobs 2026');}catch(e){console.log('New Sarkari Jobs 2026');}" 2>/dev/null || echo "New Sarkari Jobs 2026")
+            TITLE=$(node -e "try{const d=require('./dailyupdates.json');const s=(d.sections||[d])[0];const i=(s.items||[])[0];console.log(i?.name||i?.title||'New Govt Jobs 2026');}catch(e){console.log('New Govt Jobs 2026');}" 2>/dev/null || echo "New Sarkari Jobs 2026")
             TITLE="🔴 $TITLE"
             BODY="Nayi sarkari vacancy! Abhi apply karein. Last date miss mat karo."
             JURL="https://www.topsarkarijobs.com/section/latest-jobs/"

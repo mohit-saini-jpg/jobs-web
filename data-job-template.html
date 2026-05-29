@@ -2495,80 +2495,153 @@ input, textarea, select { font-size: 1rem !important; }
           }
         } catch (_) {}
 
-        /* ── SINGLE SOURCE: Load Complete_Jobs_Full_Data.json for state jobs + sarkari jobs ── */
+        /* ── Load state-jobs-data.json (state govt jobs with full detail.important_links) ── */
+        try {
+          const rState = await fetch('/state-jobs-data.json');
+          if (rState.ok) {
+            const stateRaw = await rState.json();
+            const stateArr = Array.isArray(stateRaw) ? stateRaw
+                           : (stateRaw.states ? stateRaw.states : []);
+            for (const stateGroup of stateArr) {
+              if (!Array.isArray(stateGroup.items)) continue;
+              const secId = safe(stateGroup.id || stateGroup.state || 'State Jobs');
+              for (const item of stateGroup.items) {
+                const title = safe(item.name || item.title || '');
+                if (!title) continue;
+                const det = (item.detail && typeof item.detail === 'object') ? item.detail : {};
+                const bd  = (det.basic_details && typeof det.basic_details === 'object') ? det.basic_details : {};
+                const il  = (det.important_links && typeof det.important_links === 'object') ? det.important_links : {};
+                const clickHereUrls = Array.isArray(il.click_here) ? il.click_here
+                                    : (il.click_here ? [il.click_here] : []);
+                const bestPortalUrl = clickHereUrls.find(u => u && !/\.pdf($|\?)/i.test(u))
+                                   || safe(il.official_website || il.visit_website || '')
+                                   || normalizeUrl(safe(item.url || ''));
+                const notifPdfUrl   = safe(il.notification_pdf || '')
+                                   || clickHereUrls.find(u => u && /\.pdf($|\?)/i.test(u)) || '';
+                const fullJob = {
+                  title,
+                  category: secId,
+                  slug: '',
+                  source_url: bestPortalUrl,
+                  official_website_link: bestPortalUrl,
+                  form_pdf_free_link: notifPdfUrl,
+                  important_links: {
+                    ...il,
+                    official_website: safe(il.official_website || bestPortalUrl),
+                    notification_pdf: notifPdfUrl,
+                  },
+                  basic_details: { ...bd, source_url: bestPortalUrl },
+                  important_dates: det.important_dates || {},
+                  application_fee: det.application_fee || {},
+                  age_limit: det.age_limit || {},
+                  qualification: det.qualification || {},
+                  salary_details: det.salary_details || {},
+                  selection_process: det.selection_process || [],
+                  short_information: safe(bd.short_information || ''),
+                  total_post: safe(item.name || '').match(/(\d+)\s*[Pp]osts?/)?.[1] || '',
+                  last_date: safe(item.lastDate || item.date || ''),
+                  useful_links: Array.isArray(det.useful_links) ? det.useful_links : [],
+                };
+                const parsed = parseFullJob(fullJob, secId);
+                if (parsed.title) dailyItems.push(parsed);
+              }
+            }
+          }
+        } catch (_) {}
+
+        /* Load merged_sarkari_data.json (offline form jobs) */
+        let rawMerged = null;
+        try {
+          const r1 = await fetch('/merged_sarkari_data.json');
+          if (r1.ok) rawMerged = await r1.json();
+        } catch (_) {}
+
+        /* ALWAYS load Complete_Jobs_Full_Data.json — this is the primary source
+           with full important_links, useful_links, etc. for 1300+ jobs */
         let rawFull = null;
         try {
           const r2 = await fetch('/Complete_Jobs_Full_Data.json');
           if (r2.ok) rawFull = await r2.json();
         } catch (_) {}
 
-        if (!rawFull) return dailyItems;
+        /* Use rawFull as primary, rawMerged as supplemental */
+        const raw = rawFull || rawMerged;
+        if (!raw) return dailyItems;
 
-        /* ── Extract state_jobs and add to items pool ── */
-        const stateSections = (rawFull.state_jobs && rawFull.state_jobs.sections) || [];
-        for (const stateGroup of stateSections) {
-          if (!Array.isArray(stateGroup.items)) continue;
-          const secId = safe(stateGroup.id || stateGroup.state || 'State Jobs');
-          for (const item of stateGroup.items) {
-            const title = safe(item.name || item.title || '');
-            if (!title) continue;
-            const det = (item.detail && typeof item.detail === 'object') ? item.detail : {};
-            const bd  = (det.basic_details && typeof det.basic_details === 'object') ? det.basic_details : {};
-            const il  = (det.important_links && typeof det.important_links === 'object') ? det.important_links : {};
-            const clickHereUrls = Array.isArray(il.click_here) ? il.click_here
-                                : (il.click_here ? [il.click_here] : []);
-            const bestPortalUrl = clickHereUrls.find(u => u && !/\.pdf($|\?)/i.test(u))
-                               || safe(il.official_website || il.visit_website || '')
-                               || normalizeUrl(safe(item.url || ''));
-            const notifPdfUrl   = safe(il.notification_pdf || '')
-                               || clickHereUrls.find(u => u && /\.pdf($|\?)/i.test(u)) || '';
-            const fullJob = {
-              title, category: secId, slug: '',
-              source_url: bestPortalUrl, official_website_link: bestPortalUrl,
-              form_pdf_free_link: notifPdfUrl,
-              important_links: { ...il, official_website: safe(il.official_website || bestPortalUrl), notification_pdf: notifPdfUrl },
-              basic_details: { ...bd, source_url: bestPortalUrl },
-              important_dates: det.important_dates || {}, application_fee: det.application_fee || {},
-              age_limit: det.age_limit || {}, qualification: det.qualification || {},
-              salary_details: det.salary_details || {}, selection_process: det.selection_process || [],
-              short_information: safe(bd.short_information || ''),
-              total_post: safe(item.name || '').match(/(\d+)\s*[Pp]osts?/)?.[1] || '',
-              last_date: safe(item.lastDate || item.date || ''),
-              useful_links: Array.isArray(det.useful_links) ? det.useful_links : [],
-            };
-            const parsed = parseFullJob(fullJob, secId);
-            if (parsed.title) dailyItems.push(parsed);
-          }
-        }
+        const out = [...dailyItems]; /* Start with dailyupdates items */
 
-        const out = [...dailyItems]; /* State + daily items */
-
-        /* ── Extract sarkari_data.jobs (offline/walkin/latest) ── */
-        const skJobs = (rawFull.sarkari_data && rawFull.sarkari_data.jobs) || [];
-        for (const job of skJobs) {
-          const parsed = parseFullJob(job, job.category || 'SR_Offline_Form');
-          if (parsed.title) out.push(parsed);
-        }
-
-        /* ── Process Complete_Jobs_Full_Data.json (NESTED FORMAT: freejobalert_categories + sarkari_data) ── */
-        if (rawFull && typeof rawFull === 'object') {
-          /* NEW FORMAT: {freejobalert_categories:{10TH_Pass:[...],...}, sarkari_data:{jobs:[...]}, ...} */
-          const fj = rawFull.freejobalert_categories || {};
-          for (const [catKey, jobs] of Object.entries(fj)) {
-            if (!Array.isArray(jobs)) continue;
-            for (const job of jobs) {
-              const parsed = parseFullJob(job, catKey);
+        /* ── Process merged_sarkari_data.json (offline/walkin jobs) ── */
+        if (rawMerged && typeof rawMerged === 'object') {
+          /* merged format: { jobs: [...] } */
+          if (Array.isArray(rawMerged.jobs)) {
+            for (const job of rawMerged.jobs) {
+              const parsed = parseFullJob(job, job.category || 'SR_Offline_Form');
               if (parsed.title) out.push(parsed);
             }
           }
-          /* OLD FLAT FORMAT fallback: {10TH_Pass:[...], 12TH_Pass:[...], ...} */
-          if (!rawFull.freejobalert_categories) {
+          if (Array.isArray(rawMerged.sarkariresultshine_jobs)) {
+            for (const job of rawMerged.sarkariresultshine_jobs) {
+              const parsed = parseFullJob(job, 'SR_Offline_Form');
+              if (parsed.title) out.push(parsed);
+            }
+          }
+        }
+
+        /* ── Process Complete_Jobs_Full_Data.json (primary - all 1300+ jobs with full data) ── */
+        if (rawFull) {
+          /* Handle array format */
+          if (Array.isArray(rawFull)) {
+            for (const job of rawFull) {
+              const parsed = parseFullJob(job, job.category || 'Latest Notifications');
+              if (parsed.title) out.push(parsed);
+            }
+          } else if (typeof rawFull === 'object') {
+            /* Object with category keys (standard Complete_Jobs_Full_Data.json format) */
+            const handledFull = new Set();
+            /* Known category keys first */
             for (const [catKey, meta] of Object.entries(_JOBS_CAT_META_JI)) {
               const jobs = rawFull[catKey];
               if (!Array.isArray(jobs)) continue;
+              handledFull.add(catKey);
               for (const job of jobs) {
                 const parsed = parseFullJob(job, meta.id);
                 if (parsed.title) out.push(parsed);
+              }
+            }
+            /* Also handle sarkariresult_categories if present */
+            const srCats = (rawFull.sarkariresult_data && rawFull.sarkariresult_data.data)
+                        || rawFull.sarkariresult_categories || null;
+            if (srCats && typeof srCats === 'object') {
+              handledFull.add('sarkariresult_categories');
+              handledFull.add('sarkariresult_data');
+              for (const [catKey, items] of Object.entries(srCats)) {
+                if (!Array.isArray(items)) continue;
+                for (const job of items) {
+                  if (!job || typeof job !== 'object') continue;
+                  const title = safe(job.title || job.name || '');
+                  if (!title) continue;
+                  const externalUrl = safe(job.url || job.link || job.source_url || '');
+                  const pseudoJob = {
+                    ...job, title,
+                    source_url: externalUrl,
+                    category: catKey,
+                    important_links: job.important_links || { apply_online: externalUrl, official_website: externalUrl },
+                    total_vacancy: job.total_vacancy || job.total_vacancies || job.total_post || '',
+                  };
+                  const parsed = parseFullJob(pseudoJob, catKey);
+                  if (parsed.title) out.push(parsed);
+                }
+              }
+            }
+            /* Any remaining unknown array-value keys */
+            handledFull.add('sarkariresultshine_jobs');
+            for (const [key, val] of Object.entries(rawFull)) {
+              if (handledFull.has(key)) continue;
+              if (Array.isArray(val)) {
+                for (const job of val) {
+                  const parsed = parseFullJob(job, key);
+                  if (parsed.title) out.push(parsed);
+                }
               }
             }
           }
@@ -2754,11 +2827,10 @@ input, textarea, select { font-size: 1rem !important; }
 
             if (isFromMerged) {
               try {
-                // SINGLE SOURCE: use rawFull already loaded
-                const rm = { ok: !!rawFull };
+                const rm = await fetch('/merged_sarkari_data.json');
                 if (rm.ok) {
-                  const md = rawFull;
-                  const allMerged = (md && md.sarkari_data && md.sarkari_data.jobs) ? md.sarkari_data.jobs : (md && md.jobs ? md.jobs : []);
+                  const md = await rm.json();
+                  const allMerged = (md && md.jobs) ? md.jobs : [];
                   /* Find exact slug match first */
                   rawSourceJson = allMerged.find(j => safe(j.slug) === rawSlug) || null;
                   /* Fallback: title token match */
@@ -2782,12 +2854,9 @@ input, textarea, select { font-size: 1rem !important; }
                   const allFull = [];
                   if (Array.isArray(cd)) { allFull.push(...cd); }
                   else if (typeof cd === 'object') {
-                    // Handle NEW nested format
-                    const _fj2 = cd.freejobalert_categories || {};
-                    Object.values(_fj2).forEach(function(v){ if(Array.isArray(v)) allFull.push(...v); });
-                    if (cd.sarkari_data && Array.isArray(cd.sarkari_data.jobs)) allFull.push(...cd.sarkari_data.jobs);
-                    // Fallback: old flat format
-                    if (!allFull.length) { for (const val of Object.values(cd)) { if (Array.isArray(val)) allFull.push(...val); } }
+                    for (const val of Object.values(cd)) {
+                      if (Array.isArray(val)) allFull.push(...val);
+                    }
                   }
                   if (row.title) {
                     const rt = row.title.toLowerCase().replace(/[^a-z0-9\s]/g,'').trim();
@@ -2802,12 +2871,12 @@ input, textarea, select { font-size: 1rem !important; }
             }
 
             if (!rawSourceJson && isFromState) {
-              /* SINGLE SOURCE: Use rawFull state_jobs */
+              /* Try state-jobs-data.json */
               try {
-                const rs = { ok: !!rawFull };
+                const rs = await fetch('/state-jobs-data.json');
                 if (rs.ok) {
-                  const sd = (rawFull && rawFull.state_jobs) ? rawFull.state_jobs : rawFull;
-                  const stateArr = Array.isArray(sd) ? sd : (sd.sections || sd.states || []);
+                  const sd = await rs.json();
+                  const stateArr = Array.isArray(sd) ? sd : (sd.states || []);
                   for (const sg of stateArr) {
                     if (!Array.isArray(sg.items)) continue;
                     const found = sg.items.find(it => {

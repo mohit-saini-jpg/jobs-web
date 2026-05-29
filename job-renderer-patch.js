@@ -1010,8 +1010,7 @@
     /* ── STEP 1: Search merged_sarkari_data.json first (offline form jobs) ── */
     /* These jobs have how_to_apply as plain strings and no /jobs/data/ files */
     try {
-      // SINGLE SOURCE: Complete_Jobs_Full_Data.json
-      const rm = await fetch('/Complete_Jobs_Full_Data.json');
+      const rm = await fetch('/merged_sarkari_data.json');
       if (rm.ok) {
         const mergedData = await rm.json();
         const mergedJobs = (mergedData && mergedData.jobs) ? mergedData.jobs : [];

@@ -125,12 +125,6 @@
   function convertJobsDataToSections(rawData) {
     if (!rawData || typeof rawData !== "object" || Array.isArray(rawData)) return { sections: [] };
 
-    /* ── NEW FORMAT (Complete_Jobs_Full_Data.json v2): nested structure ── */
-    /* {freejobalert_categories:{10TH_Pass:[...]}, sarkari_data:{jobs:[...]}, ...} */
-    if (rawData.freejobalert_categories && typeof rawData.freejobalert_categories === 'object') {
-      rawData = rawData.freejobalert_categories;
-    }
-
     /* ── Format B: flat jobs[] array with category field ── */
     if (Array.isArray(rawData.jobs) && rawData.jobs.length > 0) {
       /* Group flat jobs into per-category buckets */
@@ -861,35 +855,29 @@
           '/section/admissions/': '/data/admissions.json',
         };
         const _chunkUrl = _FULL_CHUNK_MAP[_catPath] || '/data/merged-summary.json';
-        // SINGLE SOURCE: Load from Complete_Jobs_Full_Data.json
-        const complete = await getJSON("Complete_Jobs_Full_Data.json").catch(() => null);
+        let _mergedRaw = await getJSON(_chunkUrl).catch(() => null);
+        /* If chunk format {category, jobs:[]}, normalize to full merged format */
+        if (_mergedRaw && Array.isArray(_mergedRaw.jobs) && !_mergedRaw.scraped_at) {
+          _mergedRaw = { jobs: _mergedRaw.jobs };
+        }
+        const [merged, complete] = [_mergedRaw, await getJSON("Complete_Jobs_Full_Data.json").catch(() => null)];
         const slugify = t => (t || "").toLowerCase().replace(/[^a-z0-9\s-]/g, "").replace(/[\s-]+/g, "-").slice(0, 120).replace(/^-+|-+$/g, "");
-        if (complete && typeof complete === "object") {
-          // sarkari_data.jobs
-          ((complete.sarkari_data && complete.sarkari_data.jobs) || []).forEach(j => {
+        if (merged && Array.isArray(merged.jobs)) {
+          merged.jobs.forEach(j => {
             if (!j.title) return;
             const slug = j.slug || slugify(j.title);
             jobSearchData.push({ name: j.title.trim(), href: slug ? "/data/jobs/" + slug + "/" : "#" });
           });
-          // freejobalert_categories
-          const fj = complete.freejobalert_categories || {};
-          Object.keys(fj).forEach(k => {
-            if (!Array.isArray(fj[k])) return;
-            fj[k].forEach(i => {
+        }
+        if (complete && typeof complete === "object") {
+          Object.keys(complete).forEach(k => {
+            if (!Array.isArray(complete[k])) return;
+            complete[k].forEach(i => {
               const bd = i.basic_details || {};
               const title = bd.job_title || bd.post_name || i.title || i.name || "";
               if (!title) return;
               const slug = i.slug || slugify(title);
               jobSearchData.push({ name: title.trim(), href: slug ? "/data/jobs/" + slug + "/" : "#" });
-            });
-          });
-          // state_jobs.sections
-          ((complete.state_jobs && complete.state_jobs.sections) || []).forEach(sec => {
-            (sec.items || []).forEach(item => {
-              const title = item.name || item.title || '';
-              if (!title) return;
-              const slug = item.slug || slugify(title);
-              jobSearchData.push({ name: title.trim(), href: slug ? "/data/jobs/" + slug + "/" : (item.url || '#') });
             });
           });
         }
@@ -2375,81 +2363,76 @@
 
     let searchData = [];
     try {
-      /* ── Authoritative sources for search ──
-         Complete_Jobs_Full_Data.json = scraped data
-         dailyupdates.json = manual ROW 3 sections (Govt Scheme, CSC PDF, etc.)
+      /* ── ONLY these 4 authoritative JSON files are used for search ──
+         jobs.json / tools.json / services.json are EXCLUDED intentionally.
          ─────────────────────────────────────────────────────────────── */
-      const [complete, daily] = await Promise.all([
-        getJSON("Complete_Jobs_Full_Data.json").catch(() => null),
+      const [merged, daily, complete, stateJobs] = await Promise.all([
+        getJSON("/data/merged-summary.json").catch(() => null),
         getJSON("dailyupdates.json").catch(() => null),
+        getJSON("Complete_Jobs_Full_Data.json").catch(() => null),
+        getJSON("state-jobs-data.json").catch(() => null)
       ]);
 
       const push = (name, url, src) => {
         if(!name || !url) return;
         if (isGarbageLink({name})) return;
+        // Block tools / services / category nav links
         if (!url || url === '#') return;
         if (/\/(tools|govt-services|category|about|contact|result\.html|admit-card\.html)\b/i.test(url)) return;
         searchData.push({ name: name.trim(), url: url.trim(), src });
       };
 
-      if (complete && typeof complete === 'object') {
-        /* 1. sarkari_data.jobs — Latest Jobs, Result, Admit Card etc */
-        const skJobs = (complete.sarkari_data && complete.sarkari_data.jobs) || [];
-        skJobs.forEach(j => {
+      /* 1. merged_sarkari_data.json — jobs[] array */
+      if (merged && Array.isArray(merged.jobs)) {
+        merged.jobs.forEach(j => {
           if (!j.title) return;
           const cat = (j.apply_mode||'').toLowerCase() === 'offline' ? 'Offline Form' : categoryOf(j.title);
           push(j.title, jobHref(j), cat);
         });
+      }
 
-        /* 2. freejobalert_categories — qualification-wise jobs */
-        const fj = complete.freejobalert_categories || {};
-        Object.keys(fj).forEach(k => {
-          if (!Array.isArray(fj[k])) return;
-          fj[k].forEach(i => {
-            const bd = i.basic_details || {};
-            const title = bd.job_title || bd.post_name || i.title || i.name || '';
-            if (!title) return;
-            const slug = i.slug || slugify(title);
-            const href = slug ? '/data/jobs/' + slug + '/' : '#';
-            push(title, href, k.replace(/_/g,' '));
-          });
-        });
-
-        /* 3. state_jobs.sections — state-wise jobs */
-        const stateJobs = (complete.state_jobs && complete.state_jobs.sections) || [];
-        stateJobs.forEach(sec => {
-          const stateName = sec.state || sec.title || 'State Jobs';
-          (sec.items || []).forEach(item => {
-            const title = item.name || item.title || '';
-            if (!title) return;
-            const slug = item.slug || slugify(title);
-            const href = slug ? '/data/jobs/' + slug + '/' : (item.url || '#');
-            push(title, href, stateName + ' Jobs');
-          });
-        });
-
-        /* 4. education_jobs.sections — education/exam items */
-        const eduSections = (complete.education_jobs && complete.education_jobs.sections) || [];
-        eduSections.forEach(sec => {
-          (sec.items || []).forEach(item => {
-            const title = item.name || item.title || '';
-            if (!title) return;
-            const slug = item.slug || slugify(title);
-            const href = slug ? '/data/jobs/' + slug + '/' : (item.url || '#');
-            push(title, href, sec.title || 'Education');
+      /* 2. dailyupdates.json */
+      if (daily) {
+        const arr = Array.isArray(daily) ? daily : (Array.isArray(daily.sections) ? daily.sections : []);
+        arr.forEach(sec => {
+          (sec.items || []).forEach(i => {
+            const itemUrl = i.url || i.link || '';
+            // Only push job detail URLs (job.html) or valid sarkari links
+            if (!itemUrl || itemUrl === '#') return;
+            push(i.name || i.title, itemUrl, sec.title || 'Update');
           });
         });
       }
 
-      /* 5. dailyupdates.json — manual ROW 3 sections (Govt Scheme, CSC PDF, etc.) */
-      if (daily && daily.sections && Array.isArray(daily.sections)) {
-        daily.sections.forEach(sec => {
-          const secTitle = sec.title || sec.id || 'Update';
-          (sec.items || []).forEach(i => {
-            const name = i.name || i.title || '';
-            const url  = i.url  || i.link  || '#';
-            if (!name || !url || url === '#') return;
-            push(name, url, secTitle);
+      /* 3. Complete_Jobs_Full_Data.json — title lives in basic_details.job_title */
+      if (complete && typeof complete === 'object') {
+        Object.keys(complete).forEach(k => {
+          if (!Array.isArray(complete[k])) return;
+          complete[k].forEach(i => {
+            const bd = i.basic_details || {};
+            const title = bd.job_title || bd.post_name || i.title || i.name || '';
+            if (!title) return;
+            const slug = i.slug || slugify(title);
+            /* FIX: No 'offline-' prefix — causes slug mismatch in matchBySlug() */
+            const href = slug ? '/data/jobs/' + slug + '/' : '#';
+            push(title, href, k.replace(/_/g,' '));
+          });
+        });
+      }
+
+      /* 4. state-jobs-data.json — structure: { sections: [{state, title, items:[{name,url,...}]}] } */
+      if (stateJobs && Array.isArray(stateJobs.sections)) {
+        stateJobs.sections.forEach(sec => {
+          const stateName = sec.state || sec.title || 'State Jobs';
+          (sec.items || []).forEach(item => {
+            const title = item.name || item.title || '';
+            if (!title) return;
+            // Build internal job.html link using slug
+            const slug = item.slug || slugify(title);
+            const href = slug
+              ? '/data/jobs/' + slug + '/'
+              : (item.url || '#');
+            push(title, href, stateName + ' Jobs');
           });
         });
       }

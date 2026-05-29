@@ -41,8 +41,7 @@ jobs:
       - name: Validate JSON sources
         run: |
           echo "Validating JSON files…"
-          # Only check Complete_Jobs_Full_Data.json (generated files are derived from it)
-          for f in Complete_Jobs_Full_Data.json merged_sarkari_data.json state-jobs-data.json Education_Jobs.json Qualification_Wise_Jobs.json dailyupdates.json; do
+          for f in Complete_Jobs_Full_Data.json Education_Jobs.json Qualification_Wise_Jobs.json merged_sarkari_data.json state-jobs-data.json dailyupdates.json; do
             if [ -f "$f" ]; then
               python3 -c "import json; json.load(open('$f'))" && echo "  ✅ $f" || echo "  ❌ $f INVALID"
             else

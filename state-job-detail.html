@@ -1195,8 +1195,7 @@
       let matchedSectionId = stateArg;
 
       try {
-        // SINGLE SOURCE: Load state_jobs from Complete_Jobs_Full_Data.json
-        const r = await fetch('Complete_Jobs_Full_Data.json');
+        const r = await fetch('state-jobs-data.json');
         if (!r.ok) throw new Error('fetch failed');
         const data = await r.json();
 

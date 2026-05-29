@@ -46,7 +46,7 @@ jobs:
           const msg  = admin.messaging();
           const SITE = 'https://www.topsarkarijobs.com';
 
-          // Category config — maps to Complete_Jobs_Full_Data.json sarkari_data.jobs category keys
+          // Category config — maps to merged_sarkari_data.json category keys
           const CAT_MAP = {
             'latest-jobs': {
               dataKey: 'SR_Latest_Jobs',
@@ -93,8 +93,7 @@ jobs:
           // Load data files
           let mergedJobs = [];
           let sectionsIdx = {};
-          // SINGLE SOURCE: extract from Complete_Jobs_Full_Data.json
-          try { const cj=JSON.parse(fs.readFileSync('Complete_Jobs_Full_Data.json','utf8')); mergedJobs=(cj.sarkari_data&&cj.sarkari_data.jobs)||cj.jobs||[]; } catch(e){}
+          try { mergedJobs = JSON.parse(fs.readFileSync('merged_sarkari_data.json','utf8')).jobs || []; } catch(e){}
           try { sectionsIdx = JSON.parse(fs.readFileSync('sections-index.json','utf8')); } catch(e){}
 
           // Pick category — rotate every 10 min

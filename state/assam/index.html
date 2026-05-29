@@ -1449,12 +1449,12 @@
       renderJobList(matchedItems, matchedSection, !!matchedSection);
     }
 
-    // SINGLE SOURCE: Load state_jobs from Complete_Jobs_Full_Data.json
-    fetch('/Complete_Jobs_Full_Data.json', {cache: 'no-store'})
+    // Always fetch latest JSON from server — auto-updates when state-jobs-data.json changes on GitHub
+    fetch('/state-jobs-data.json?v=' + Date.now(), {cache: 'no-store'})
       .then(r => r.ok ? r.json() : null)
       .then(data => {
-        if (data && data.state_jobs && data.state_jobs.sections) {
-          tryRender(data.state_jobs);
+        if (data && data.sections) {
+          tryRender(data);
         } else {
           tryRender(INLINE_JOBS_DATA);
         }

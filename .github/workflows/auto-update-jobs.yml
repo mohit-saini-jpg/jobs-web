@@ -9,7 +9,9 @@ on:
   push:
     paths:
       - 'Complete_Jobs_Full_Data.json'
-      - 'Complete_Jobs_Full_Data.json'
+      - 'merged_sarkari_data.json'
+      - 'dailyupdates.json'
+      - 'state-jobs-data.json'
 
   schedule:
     - cron: '0 19 * * *'  # Daily 12:30 AM IST
