@@ -1716,6 +1716,250 @@
      Race-condition-free 4-way callback system.
   ═══════════════════════════════════════════════════════════════════════ */
 
+  /* ═══════════════════════════════════════════════════════════════════════
+     § 14 — injectSEO(job)
+     Auto-injects: document.title, meta description, canonical, OG tags,
+     JobPosting JSON-LD schema, FAQPage JSON-LD schema
+     Called after job data is normalized and ready.
+  ═══════════════════════════════════════════════════════════════════════ */
+  function injectSEO(job) {
+    if (!job || typeof job !== 'object') return;
+
+    // ── Helper: safely get string ───────────────────────────────────────
+    function s(v) { return (v && typeof v === 'string') ? v.trim() : (v ? String(v).trim() : ''); }
+
+    // ── Field resolution (handles all 4 JSON source variations) ─────────
+    var title       = s(job.title || job.post_name || (job.basic_details && job.basic_details.job_title) || '');
+    var org         = s(job.organization || job.board_name || job.department ||
+                        (job.basic_details && (job.basic_details.organization_name || job.basic_details.department || job.basic_details.board)) || '');
+    var slug        = s(job.slug || job.url || '');
+    var vacancies   = s(job.total_vacancy || job.total_vacancies ||
+                        (job.basic_details && (job.basic_details.total_vacancies || job.basic_details.total_posts)) || '');
+    var salary      = s(job.salary || job.salary_pay_scale ||
+                        (job.basic_details && (job.basic_details.salary || job.basic_details.salary_pay_scale)) || '');
+    var qualification = s(job.education_qualification || job.eligibility ||
+                          (job.basic_details && (job.basic_details.education_qualification || job.basic_details.eligibility)) || '');
+    var lastDate    = s((job.important_dates && (job.important_dates.last_date || job.important_dates.last_date_to_apply)) ||
+                        job.last_date_to_apply || job.last_date ||
+                        (job.basic_details && job.basic_details.last_date) || '');
+    var datePosted  = s((job.important_dates && (job.important_dates.notification_date || job.important_dates.application_begin)) ||
+                        job.date_posted || job.notification_date ||
+                        (job.basic_details && job.basic_details.notification_date) || '');
+    var applyMode   = s(job.apply_mode || (job.basic_details && job.basic_details.application_mode) || 'Online');
+    var officialSite = s(job.official_website || job.official_website_link || 'https://ssc.gov.in');
+    var faqs        = Array.isArray(job.faqs) ? job.faqs : [];
+
+    // ── Derived values ───────────────────────────────────────────────────
+    // Extract year from lastDate or fallback to current year
+    var yearMatch = lastDate.match(/\b(20\d{2})\b/);
+    var year      = yearMatch ? yearMatch[1] : String(new Date().getFullYear());
+
+    // Canonical URL
+    var canonicalUrl = slug
+      ? 'https://www.topsarkarijobs.com/jobs/' + slug + '/'
+      : 'https://www.topsarkarijobs.com/';
+
+    // ── Convert Indian date "DD Mon YYYY" → ISO "YYYY-MM-DD" ────────────
+    function toISO(dateStr) {
+      if (!dateStr) return '';
+      // Already ISO
+      if (/^\d{4}-\d{2}-\d{2}/.test(dateStr)) return dateStr.substring(0, 10);
+      var months = {jan:'01',feb:'02',mar:'03',apr:'04',may:'05',jun:'06',
+                    jul:'07',aug:'08',sep:'09',oct:'10',nov:'11',dec:'12'};
+      var m = dateStr.match(/(\d{1,2})[\/\-\s]([A-Za-z]+)[\/\-\s,\s]*(\d{4})/);
+      if (m) {
+        var mon = months[m[2].toLowerCase().substring(0,3)] || '01';
+        return m[3] + '-' + mon + '-' + m[1].padStart(2,'0');
+      }
+      // DD/MM/YYYY
+      var m2 = dateStr.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+      if (m2) return m2[3] + '-' + m2[2].padStart(2,'0') + '-' + m2[1].padStart(2,'0');
+      return '';
+    }
+
+    var datePostedISO = toISO(datePosted) || new Date().toISOString().substring(0,10);
+    var validThroughISO = toISO(lastDate);
+    if (validThroughISO) validThroughISO += 'T23:59:59+05:30';
+
+    // ── Parse salary min/max ─────────────────────────────────────────────
+    function parseSalary(str) {
+      if (!str) return { min: null, max: null };
+      var nums = str.replace(/,/g,'').match(/\d{4,}/g);
+      if (!nums || nums.length === 0) return { min: null, max: null };
+      var n = nums.map(Number).sort((a,b)=>a-b);
+      return { min: n[0], max: n[n.length-1] };
+    }
+    var sal = parseSalary(salary);
+
+    // ── 1. PAGE TITLE ────────────────────────────────────────────────────
+    var pageTitle = title
+      ? title + ' ' + year + (vacancies ? ' – ' + vacancies + ' Posts' : '') +
+        (applyMode ? ' | Apply ' + applyMode : '') + ' | Top Sarkari Jobs'
+      : 'Top Sarkari Jobs | Latest Government Jobs';
+    document.title = pageTitle;
+
+    // ── 2. META DESCRIPTION ──────────────────────────────────────────────
+    var rawDesc = (title || 'Sarkari Job') + ' ' + year + ': ' +
+      (vacancies ? vacancies + ' vacancies. ' : '') +
+      (lastDate ? 'Last date: ' + lastDate + '. ' : '') +
+      (qualification ? 'Qualification: ' + qualification + '. ' : '') +
+      (salary ? 'Salary: ' + salary + '. ' : '') +
+      'Apply at topsarkarijobs.com.';
+    var metaDesc = rawDesc.length > 155 ? rawDesc.substring(0, 152) + '...' : rawDesc;
+
+    function setMeta(selector, attr, value) {
+      var el = document.querySelector(selector);
+      if (!el) {
+        el = document.createElement('meta');
+        var parts = selector.match(/\[([a-z:]+)="([^"]+)"\]/);
+        if (parts) { el.setAttribute(parts[1], parts[2]); }
+        document.head.appendChild(el);
+      }
+      el.setAttribute(attr, value);
+    }
+
+    setMeta('meta[name="description"]', 'content', metaDesc);
+
+    // ── 3. CANONICAL ─────────────────────────────────────────────────────
+    var canEl = document.getElementById('canonicalTag') || document.querySelector('link[rel="canonical"]');
+    if (!canEl) {
+      canEl = document.createElement('link');
+      canEl.rel = 'canonical';
+      document.head.appendChild(canEl);
+    }
+    canEl.href = canonicalUrl;
+
+    // ── 4. OG TAGS ───────────────────────────────────────────────────────
+    var ogMap = {
+      'ogUrl':   ['og:url',         'property', canonicalUrl],
+      'ogTitle': ['og:title',       'property', title + ' ' + year + (vacancies ? ' – ' + vacancies + ' Posts' : '') + ' | Top Sarkari Jobs'],
+      'ogDesc':  ['og:description', 'property', metaDesc],
+      'twTitle': ['twitter:title',  'name',     title + ' ' + year + (vacancies ? ' – ' + vacancies + ' Vacancies' : '') + ' | Apply Now'],
+      'twDesc':  ['twitter:description','name', metaDesc]
+    };
+    for (var id in ogMap) {
+      var info = ogMap[id];
+      var ogEl = document.getElementById(id);
+      if (ogEl) {
+        ogEl.content = info[2];
+      } else {
+        setMeta('meta[' + info[1] + '="' + info[0] + '"]', 'content', info[2]);
+      }
+    }
+
+    // ── 5. REMOVE OLD ld+json schemas (dedup-safe) ───────────────────────
+    document.querySelectorAll('script[type="application/ld+json"][data-tsj-seo]').forEach(function(el){ el.remove(); });
+
+    // ── 6. JOBPOSTING JSON-LD ────────────────────────────────────────────
+    var jpSchema = {
+      '@context': 'https://schema.org/',
+      '@type': 'JobPosting',
+      'title': title,
+      'description': (title || 'Sarkari Job') + ' ' + year + ': ' +
+        (vacancies ? vacancies + ' vacancies for ' : '') +
+        (qualification || 'eligible candidates') + '. ' +
+        (lastDate ? 'Last date to apply: ' + lastDate + '. ' : '') +
+        (salary ? 'Pay scale: ' + salary + '. ' : '') +
+        'Apply online at topsarkarijobs.com.',
+      'datePosted': datePostedISO,
+      'employmentType': 'FULL_TIME',
+      'industry': 'Government / Public Sector',
+      'occupationalCategory': 'Government Administrative Services',
+      'totalJobOpenings': vacancies ? parseInt(vacancies.replace(/,/g,'')) || vacancies : undefined,
+      'hiringOrganization': {
+        '@type': 'Organization',
+        'name': org || 'Government of India',
+        'sameAs': officialSite
+      },
+      'jobLocation': {
+        '@type': 'Place',
+        'address': {
+          '@type': 'PostalAddress',
+          'addressCountry': 'IN',
+          'addressRegion': s(job.state || job.location || 'All India')
+        }
+      },
+      'url': canonicalUrl,
+      'applyUrl': officialSite
+    };
+
+    if (validThroughISO) jpSchema.validThrough = validThroughISO;
+    if (qualification)   jpSchema.educationRequirements = { '@type': 'EducationalOccupationalCredential', 'credentialCategory': qualification };
+    if (sal.min || sal.max) {
+      jpSchema.baseSalary = {
+        '@type': 'MonetaryAmount',
+        'currency': 'INR',
+        'value': {
+          '@type': 'QuantitativeValue',
+          'minValue': sal.min || sal.max,
+          'maxValue': sal.max || sal.min,
+          'unitText': 'MONTH'
+        }
+      };
+    }
+
+    // Remove undefined keys
+    jpSchema = JSON.parse(JSON.stringify(jpSchema));
+
+    var jpEl = document.createElement('script');
+    jpEl.type = 'application/ld+json';
+    jpEl.setAttribute('data-tsj-seo', 'jobposting');
+    jpEl.textContent = JSON.stringify(jpSchema);
+    document.head.appendChild(jpEl);
+
+    // ── 7. FAQPAGE JSON-LD ───────────────────────────────────────────────
+    var faqItems = [];
+
+    if (faqs.length > 0) {
+      // Use job.faqs if available
+      faqItems = faqs.map(function(f) {
+        return {
+          '@type': 'Question',
+          'name': s(f.question || f.q || f.name || ''),
+          'acceptedAnswer': { '@type': 'Answer', 'text': s(f.answer || f.a || f.text || '') }
+        };
+      }).filter(function(f){ return f.name && f.acceptedAnswer.text; });
+    }
+
+    // Auto-generate 4 standard FAQs if not enough real ones
+    if (faqItems.length < 2) {
+      faqItems = [
+        {
+          '@type': 'Question',
+          'name': 'What is the last date for ' + (title || 'this job') + '?',
+          'acceptedAnswer': { '@type': 'Answer', 'text': lastDate ? 'The last date to apply for ' + title + ' is ' + lastDate + '. Apply before the deadline on ssc.gov.in.' : 'Please check the official notification for the last date.' }
+        },
+        {
+          '@type': 'Question',
+          'name': 'How many vacancies are in ' + (title || 'this recruitment') + '?',
+          'acceptedAnswer': { '@type': 'Answer', 'text': vacancies ? 'There are total ' + vacancies + ' vacancies in ' + title + ' ' + year + '.' : 'Please refer to the official notification for vacancy details.' }
+        },
+        {
+          '@type': 'Question',
+          'name': 'What is the qualification required for ' + (title || 'this job') + '?',
+          'acceptedAnswer': { '@type': 'Answer', 'text': qualification ? 'The required qualification for ' + title + ' is ' + qualification + '.' : 'Please check the official notification for eligibility criteria.' }
+        },
+        {
+          '@type': 'Question',
+          'name': 'What is the salary for ' + (title || 'this post') + '?',
+          'acceptedAnswer': { '@type': 'Answer', 'text': salary ? 'The pay scale for ' + title + ' is ' + salary + ' per month (as per 7th Pay Commission).' : 'Please refer to the official notification for salary details.' }
+        }
+      ];
+    }
+
+    var faqEl = document.createElement('script');
+    faqEl.type = 'application/ld+json';
+    faqEl.setAttribute('data-tsj-seo', 'faqpage');
+    faqEl.textContent = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      'mainEntity': faqItems
+    });
+    document.head.appendChild(faqEl);
+
+    console.log('TSJ SEO: injected for ' + title);
+  }
+
   function onJobRendered(rawJob) {
     let job = rawJob;
     if (job && typeof job === 'object') {
@@ -1723,6 +1967,7 @@
       job = normalize(job);
       try { runBasePatches(job); } catch(e) {  }
       try { injectAllSections(job); } catch(e) {  }
+      try { injectSEO(job); } catch(e) { console.warn('TSJ SEO inject error:', e); }
     } else {
       setTimeout(findAndEnrichFromFullData, 200);
     }

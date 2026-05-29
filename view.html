@@ -28,61 +28,120 @@
   <link id="hreflangEnIN" rel="alternate" hreflang="en-IN" href="#" />
   <link id="hreflangDef" rel="alternate" hreflang="x-default" href="#" />
   <script>
-  // Dynamically set canonical, OG, Twitter, hreflang based on clean URL
+  // ── TSJ VIEW SEO v2.0 — Dynamic Title, Meta, Canonical, OG, Schemas ──
   (function(){
     var base = 'https://www.topsarkarijobs.com';
-    var path = location.pathname; // e.g. /section/railway-jobs/
+    var path = location.pathname;
     var cleanUrl = base + path;
-    // Section name from path e.g. "railway-jobs" → "Railway Jobs"
-    var seg = path.replace(/^\/section\/|\/$/g,'').replace(/-/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();});
-    var title = seg ? seg + ' 2026 – Latest Vacancies | Top Sarkari Jobs' : 'Top Sarkari Jobs | Latest Government Jobs';
-    var desc  = seg ? 'Find latest ' + seg + ' notifications, vacancies, results and admit cards 2026 on Top Sarkari Jobs.' : 'Browse latest Sarkari Jobs, Results, Admit Cards, Answer Keys and Online Forms — updated daily.';
-    // Canonical
+
+    var rawSeg = path.replace(/^\/+|\/+$/g,'');
+    var parts  = rawSeg.split('/').filter(Boolean);
+    var leafSlug = parts[parts.length - 1] || '';
+    var seg = leafSlug.replace(/-/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();});
+
+    var SECTION_META = {
+      'results':       { t: 'Sarkari Results 2026 – Check Latest Exam Results | Top Sarkari Jobs',              d: 'Check latest Sarkari exam results 2026 — SSC, Railway, Banking, UPSC, State PSC and more. Updated daily on Top Sarkari Jobs.' },
+      'admit-card':    { t: 'Admit Card 2026 – Download Latest Hall Tickets | Top Sarkari Jobs',                d: 'Download latest admit cards and hall tickets 2026 for SSC, Railway, UPSC, Banking and State govt exams. Free download at Top Sarkari Jobs.' },
+      'answer-key':    { t: 'Answer Key 2026 – Latest Govt Exam Answer Keys | Top Sarkari Jobs',                d: 'Download official answer keys 2026 for SSC, Railway, UPSC and other central/state govt exams. Raise objections before deadline.' },
+      'syllabus':      { t: 'Syllabus 2026 – Download Latest Exam Syllabus & Pattern | Top Sarkari Jobs',       d: 'Download latest exam syllabus and paper pattern 2026 for SSC, Railway, Banking, UPSC, State PSC exams. Start your preparation today.' },
+      'railway-jobs':  { t: 'Railway Jobs 2026 – RRB, RRC Recruitment Notifications | Top Sarkari Jobs',        d: 'Latest Railway recruitment notifications 2026 — RRB NTPC, Group D, ALP, JE, RRC and more. Check eligibility, salary and apply online.' },
+      'bank-jobs':     { t: 'Bank Jobs 2026 – IBPS, SBI, RBI Recruitment | Top Sarkari Jobs',                   d: 'Latest Bank recruitment notifications 2026 — IBPS PO, Clerk, SBI, RBI, RRB and more. Check vacancies, salary and apply online.' },
+      'ssc-jobs':      { t: 'SSC Jobs 2026 – SSC CGL, CHSL, MTS Recruitment | Top Sarkari Jobs',               d: 'Latest SSC recruitment notifications 2026 — CGL, CHSL, MTS, GD, CPO and more. Apply online at topsarkarijobs.com.' },
+      'upsc-jobs':     { t: 'UPSC Jobs 2026 – Civil Services, NDA, CDS Recruitment | Top Sarkari Jobs',         d: 'Latest UPSC recruitment notifications 2026 — Civil Services, NDA, CDS, CAPF, IES and more. Check eligibility and apply.' },
+      'defence-jobs':  { t: 'Defence Jobs 2026 – Army, Navy, Air Force Recruitment | Top Sarkari Jobs',         d: 'Latest Defence recruitment notifications 2026 — Indian Army, Navy, Air Force, NDA, CDS and more. Check vacancies and apply.' },
+      'police-jobs':   { t: 'Police Jobs 2026 – Constable, SI Recruitment | Top Sarkari Jobs',                  d: 'Latest Police recruitment 2026 — Constable, Sub Inspector, CISF, BSF, CRPF, SSB and state police notifications.' },
+      'teaching-jobs': { t: 'Teaching Jobs 2026 – Teacher Recruitment Notifications | Top Sarkari Jobs',        d: 'Latest Teacher recruitment notifications 2026 — KVS, NVS, CTET, TET, DSSSB, state TET and more. Apply online.' },
+      'graduation':    { t: 'Graduation Jobs 2026 – Govt Jobs for Graduates | Top Sarkari Jobs',                d: 'Latest government job notifications 2026 for graduation pass candidates. Check vacancies, salary and last date to apply.' },
+      '12th-pass':     { t: '12th Pass Govt Jobs 2026 – Latest Sarkari Naukri | Top Sarkari Jobs',              d: 'Latest government job notifications 2026 for 12th pass / Intermediate candidates. Apply online for central and state jobs.' },
+      '10th-pass':     { t: '10th Pass Govt Jobs 2026 – Matric Pass Sarkari Naukri | Top Sarkari Jobs',         d: 'Latest government job notifications 2026 for 10th pass / Matric candidates. Check vacancies, salary and apply online.' }
+    };
+
+    var metaEntry = SECTION_META[leafSlug] || null;
+    var year = new Date().getFullYear();
+    var title, desc;
+
+    if (leafSlug === '') {
+      title = 'Top Sarkari Jobs | Latest Government Jobs ' + year;
+      desc  = 'Browse latest Sarkari Jobs, Results, Admit Cards, Answer Keys and Online Forms — updated daily on Top Sarkari Jobs.';
+    } else if (metaEntry) {
+      title = metaEntry.t;
+      desc  = metaEntry.d;
+    } else {
+      title = seg + ' ' + year + ' – Latest Govt Jobs & Vacancies | Top Sarkari Jobs';
+      desc  = 'Find latest ' + seg + ' notifications, vacancies, results and admit cards ' + year + '. Updated daily on Top Sarkari Jobs.';
+    }
+
+    document.title = title;
+
+    var metaDescEl = document.querySelector('meta[name="description"]');
+    if (!metaDescEl) { metaDescEl = document.createElement('meta'); metaDescEl.name = 'description'; document.head.appendChild(metaDescEl); }
+    metaDescEl.content = desc;
+
     var can = document.getElementById('canonicalTag'); if(can) can.href = cleanUrl;
-    // OG
-    var ogU=document.getElementById('ogUrl'); if(ogU) ogU.content=cleanUrl;
+    var ogU=document.getElementById('ogUrl');   if(ogU) ogU.content=cleanUrl;
     var ogT=document.getElementById('ogTitle'); if(ogT) ogT.content=title;
-    var ogD=document.getElementById('ogDesc'); if(ogD) ogD.content=desc;
-    // Twitter
+    var ogD=document.getElementById('ogDesc');  if(ogD) ogD.content=desc;
     var twT=document.getElementById('twTitle'); if(twT) twT.content=title;
-    var twD=document.getElementById('twDesc'); if(twD) twD.content=desc;
-    // Hreflang
+    var twD=document.getElementById('twDesc');  if(twD) twD.content=desc;
     ['hreflangEn','hreflangEnIN','hreflangDef'].forEach(function(id){
       var el=document.getElementById(id); if(el) el.href=cleanUrl;
     });
-    // BreadcrumbList schema — injected synchronously for Googlebot
+
+    // BreadcrumbList — multi-level support
     var bcEl = document.getElementById('schema-breadcrumb');
-    if (bcEl && seg) {
-      bcEl.textContent = JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'BreadcrumbList',
-        'itemListElement': [
-          {'@type':'ListItem','position':1,'name':'Home','item':'https://www.topsarkarijobs.com/'},
-          {'@type':'ListItem','position':2,'name':seg,'item':cleanUrl}
-        ]
+    if (bcEl) {
+      var bcItems = [{'@type':'ListItem','position':1,'name':'Home','item':'https://www.topsarkarijobs.com/'}];
+      var cumUrl = base;
+      parts.forEach(function(p,i){
+        cumUrl += '/' + p;
+        var name = p.replace(/-/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();});
+        bcItems.push({'@type':'ListItem','position':i+2,'name':name,'item':cumUrl+'/'});
       });
+      bcEl.textContent = JSON.stringify({'@context':'https://schema.org','@type':'BreadcrumbList','itemListElement':bcItems});
     }
-    // WebPage schema — helps Google understand page type
+
+    // FAQPage schema — section-specific
+    var FAQ_DB = {
+      'railway-jobs':  [{q:'What are the latest Railway jobs in 2026?',a:'Latest Railway recruitment notifications 2026 include RRB NTPC, RRC Group D, ALP, JE and various other posts. Check topsarkarijobs.com for daily updates.'},{q:'What is the qualification for Railway jobs?',a:'Railway jobs require qualifications ranging from 10th pass (Group D) to Graduation or Engineering degree (JE/ALP) depending on the post.'},{q:'How to apply for Railway recruitment 2026?',a:'Visit the official RRB/RRC website or topsarkarijobs.com for direct apply links. Registration is done through the Railway Recruitment Board portal.'},{q:'What is the salary in Railway jobs?',a:'Railway job salaries range from Rs. 18,000 to Rs. 1,42,400 per month depending on the post and pay level (7th Pay Commission).'}],
+      'bank-jobs':     [{q:'What are the latest Bank jobs in 2026?',a:'Latest Bank recruitment 2026 includes IBPS PO, IBPS Clerk, SBI PO, SBI Clerk, RBI Grade B, IBPS RRB and various PSU bank notifications.'},{q:'What is the eligibility for Bank jobs?',a:'Most bank jobs require Graduation in any discipline. Some posts like RBI Grade B require specific educational qualifications.'},{q:'How to apply for Bank recruitment 2026?',a:'Apply through official portals like ibps.in, sbi.co.in, rbi.org.in or get direct links at topsarkarijobs.com.'},{q:'What is the salary in Bank PO?',a:'Bank PO salary starts from Rs. 52,000 per month (IBPS PO) and Bank Clerk from Rs. 36,000 per month including all allowances.'}],
+      'ssc-jobs':      [{q:'What are the latest SSC jobs in 2026?',a:'Latest SSC notifications 2026 include SSC CGL, SSC CHSL, SSC MTS, SSC GD Constable, SSC CPO and SSC JE recruitment.'},{q:'What is the qualification for SSC CGL?',a:"SSC CGL requires Graduation (Bachelor's Degree) from any recognized university. Some posts may require specific degrees."},{q:'What is SSC CGL salary?',a:'SSC CGL salary ranges from Rs. 25,500 to Rs. 1,51,100 per month as per 7th Pay Commission, depending on the post.'},{q:'How to apply for SSC recruitment 2026?',a:'Apply online at ssc.gov.in. You can also find direct links, eligibility details and important dates at topsarkarijobs.com.'}],
+      'results':       [{q:'How to check Sarkari exam results 2026?',a:"Visit the official exam conducting body's website or topsarkarijobs.com for direct result links. Results are published after the exam."},{q:'Where are SSC results declared?',a:'SSC results are declared on ssc.gov.in. Check topsarkarijobs.com for direct links and result status.'},{q:'How long after exam are results published?',a:'Results are typically published 1-3 months after the exam depending on the recruitment board and post.'},{q:'What is next step after result?',a:'After result declaration, selected candidates are called for document verification / interview. Check official notifications for further process.'}],
+      'admit-card':    [{q:'How to download Sarkari exam admit card 2026?',a:'Visit the official website of the recruiting body or topsarkarijobs.com for direct admit card download links. Use registration number and DOB to login.'},{q:'What documents are needed for admit card download?',a:'Typically Registration Number/Application Number and Date of Birth or Password are required to download the admit card.'},{q:'What if I lost my admit card?',a:'Re-download the admit card from the official website before the exam date using your registration credentials.'},{q:'When is admit card released before exam?',a:'Admit cards are generally released 2-4 weeks before the exam date. Check topsarkarijobs.com for real-time updates.'}],
+      'teaching-jobs': [{q:'What are latest Teaching jobs 2026?',a:'Latest teaching recruitment 2026 includes KVS, NVS, DSSSB, CTET, state TET and various state teacher recruitment board notifications.'},{q:'What is the qualification for Teacher jobs?',a:'Teacher jobs require B.Ed / D.El.Ed along with subject graduation. CTET/TET qualification is mandatory for central government schools.'},{q:'What is the salary of a government teacher?',a:'Government teacher salary ranges from Rs. 35,400 to Rs. 1,12,400 per month as per 7th Pay Commission, depending on the level and state.'}],
+      'defence-jobs':  [{q:'What are latest Defence jobs 2026?',a:'Latest Defence recruitment 2026 includes NDA, CDS, Indian Army, Navy, Air Force, AFCAT, Agniveer and various technical entry schemes.'},{q:'What is the age limit for Defence jobs?',a:'Age limit varies: NDA (16.5-19.5 years), CDS (20-25 years), Agniveer (17.5-23 years). Check official notifications for exact limits.'},{q:'What is the salary in Defence jobs?',a:'Defence salary includes pay, MSP, allowances totaling Rs. 56,100 to Rs. 2,50,000+ per month depending on rank and service.'}]
+    };
+
+    var faqData = FAQ_DB[leafSlug] || null;
+    var faqEl   = document.getElementById('schema-faq');
+    if (faqEl) {
+      var faqItems;
+      if (faqData && faqData.length > 0) {
+        faqItems = faqData.map(function(f){return {'@type':'Question','name':f.q,'acceptedAnswer':{'@type':'Answer','text':f.a}};});
+      } else if (seg) {
+        faqItems = [
+          {'@type':'Question','name':'What are the latest '+seg+' notifications in '+year+'?','acceptedAnswer':{'@type':'Answer','text':'Find all latest '+seg+' recruitment notifications, vacancies and results '+year+' at topsarkarijobs.com — updated daily.'}},
+          {'@type':'Question','name':'How to apply for '+seg+' '+year+'?','acceptedAnswer':{'@type':'Answer','text':'Visit topsarkarijobs.com for direct apply links, eligibility details, important dates and complete notification for '+seg+' '+year+'.'}},
+          {'@type':'Question','name':'What is the last date to apply for '+seg+'?','acceptedAnswer':{'@type':'Answer','text':'Last dates vary by notification. Check individual job listings at topsarkarijobs.com for accurate deadlines for '+seg+' '+year+'.'}},
+          {'@type':'Question','name':'What is the eligibility for '+seg+'?','acceptedAnswer':{'@type':'Answer','text':'Eligibility varies by post. Check topsarkarijobs.com for complete eligibility criteria, age limit and qualification details for '+seg+' '+year+'.'}}
+        ];
+      }
+      if (faqItems) {
+        faqEl.textContent = JSON.stringify({'@context':'https://schema.org','@type':'FAQPage','mainEntity':faqItems});
+      }
+    }
+
+    // WebPage schema
     var wpSchemaEl = document.getElementById('schema-itemlist');
-    if (wpSchemaEl && seg) {
+    if (wpSchemaEl) {
       wpSchemaEl.textContent = JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'WebPage',
-        'name': title,
-        'description': desc,
-        'url': cleanUrl,
-        'isPartOf': {'@id':'https://www.topsarkarijobs.com/#website'},
-        'breadcrumb': {
-          '@type': 'BreadcrumbList',
-          'itemListElement': [
-            {'@type':'ListItem','position':1,'name':'Home','item':'https://www.topsarkarijobs.com/'},
-            {'@type':'ListItem','position':2,'name':seg,'item':cleanUrl}
-          ]
-        }
+        '@context':'https://schema.org','@type':'WebPage','name':title,'description':desc,'url':cleanUrl,
+        'isPartOf':{'@id':'https://www.topsarkarijobs.com/#website'},
+        'breadcrumb':{'@type':'BreadcrumbList','itemListElement':[
+          {'@type':'ListItem','position':1,'name':'Home','item':'https://www.topsarkarijobs.com/'},
+          {'@type':'ListItem','position':2,'name':seg||'Home','item':cleanUrl}
+        ]}
       });
     }
-    // Page title set synchronously
-    if (seg) document.title = title;
   })();
   </script>
   <!-- seo-engine.js removed: loaded as deferred minified version below (line ~775) -->
