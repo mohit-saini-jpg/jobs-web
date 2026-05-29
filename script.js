@@ -229,7 +229,13 @@
     const sections = [];
     // Daily categories — inke items ka url direct link hai, /data/jobs/ nahi
     const DAILY_CATS = new Set(['Govt_Scheme_Yojna','Important_CSC_PDF','Important_CSC_Link','Top_20_Jobs','Today_Updates']);
+    // ✅ FIX: These are rendered by #sr-sections-grid — skip here to avoid duplicates
+    const SR_GRID_KEYS = new Set([
+      'SR_Latest_Jobs','SR_Result','SR_Admit_Card','SR_Admission','SR_Answer_Key',
+      'OFFLINE_FORM','UPCOMING_JOBS','LATEST_JOBS NEW','STATE_JOBS','CENTRAL_JOBS','ADMISSIONS'
+    ]);
     for (const [catKey, meta] of Object.entries(JOBS_CAT_META)) {
+      if (SR_GRID_KEYS.has(catKey)) continue; // skip — already in sr-sections-grid
       const rawItems = indexData[catKey];
       // FIX: Always include the category even if no items in sections-index
       if (!Array.isArray(rawItems) || !rawItems.length) {
@@ -334,7 +340,15 @@
             return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
           });
 
-          return { sections: deduped };
+          // ✅ FIX: Remove categories already rendered by #sr-sections-grid inline script
+          // These 11 categories are handled by merged_sarkari_data.json inline render
+          const SR_GRID_IDS = new Set([
+            'SR Latest Jobs', 'SR Result', 'SR Admit Card', 'SR Admission', 'SR Answer Key',
+            'Offline Form', 'Upcoming Jobs', 'Latest Jobs New', 'State Jobs', 'Central Jobs', 'Admissions'
+          ]);
+          const finalSections = deduped.filter(s => !SR_GRID_IDS.has(s.id));
+
+          return { sections: finalSections };
         }
       }
 
@@ -342,7 +356,16 @@
 
       // FALLBACK: sections-index unavailable — pure big JSON
       const raw = await getBigJSON();
-      if (raw) return convertJobsDataToSections(raw);
+      if (raw) {
+        const result = convertJobsDataToSections(raw);
+        // ✅ FIX: Also exclude SR_GRID categories in fallback path
+        const SR_GRID_IDS = new Set([
+          'SR Latest Jobs', 'SR Result', 'SR Admit Card', 'SR Admission', 'SR Answer Key',
+          'Offline Form', 'Upcoming Jobs', 'Latest Jobs New', 'State Jobs', 'Central Jobs', 'Admissions'
+        ]);
+        result.sections = result.sections.filter(s => !SR_GRID_IDS.has(s.id));
+        return result;
+      }
       return { sections: [] };
 
     } catch (_) { return { sections: [] }; }
