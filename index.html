@@ -3846,9 +3846,8 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
         console.warn('[SR] No data found, rendering placeholder cards. Keys in JSON:', Object.keys(jsonData));
         // Build placeholder cards for all known categories in order
         var placeholderHtml = '';
+        // ✅ FIX: Only placeholder for dynamic-sections cards (not sr-sections-grid cards)
         var orderedKeysForPlaceholder = [
-          'SR_Latest_Jobs', 'SR_Result', 'SR_Admit_Card', 'SR_Admission', 'SR_Answer_Key', 'OFFLINE_FORM',
-          'UPCOMING_JOBS', 'LATEST_JOBS NEW', 'STATE_JOBS', 'CENTRAL_JOBS', 'ADMISSIONS',
           'Latest_Notifications', '10TH_Pass', '8TH_Pass', '12TH_Pass', 'Diploma', 'ITI',
           'B_Tech_BE', 'B_Com', 'Any_Graduate', 'Any_Post_Graduate',
           'Railway_Jobs', 'Police_Defence', 'Teaching_Faculty', 'Bank_Jobs', 'Medical_Hospital',
