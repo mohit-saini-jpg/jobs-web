@@ -177,7 +177,7 @@
 
   function loadJobData() {
     if (_jobCache && _jobCache.length) return Promise.resolve(_jobCache);
-    return fetch('/merged_sarkari_data.json', { cache: 'default' })
+    return fetch('/Complete_Jobs_Full_Data.json', { cache: 'default' })
       .then(function(r) { return r.json(); })
       .then(function(d) {
         // Only jobs that have slug AND their /jobs/[slug]/ page exists
@@ -188,7 +188,8 @@
         // SR_Admission    → /section/admissions/
         // SR_Answer_Key   → /section/answer-key/
         var validCats = ['SR_Latest_Jobs','SR_Result','SR_Admit_Card','SR_Answer_Key','SR_Admission'];
-        var jobs = (d.jobs || []).filter(function(j) {
+        // SINGLE SOURCE: Extract from Complete_Jobs_Full_Data.json sarkari_data.jobs
+        var jobs = ((d.sarkari_data && d.sarkari_data.jobs) || d.jobs || []).filter(function(j) {
           return j.slug && j.title && validCats.indexOf(j.category) !== -1;
         });
         // Interleave categories so rotation shows variety
@@ -447,10 +448,10 @@
     testNotification: function(category) {
       var catKey = category || 'latest-jobs';
       var cat    = CATS[catKey] || CATS['latest-jobs'];
-      fetch('/merged_sarkari_data.json', { cache:'default' })
+      fetch('/Complete_Jobs_Full_Data.json', { cache:'default' })
         .then(function(r){ return r.json(); })
         .then(function(d){
-          var jobs = (d.jobs||[]).filter(function(j){ return j.category===cat.dataKey && j.slug && j.title; });
+          var jobs = ((d.sarkari_data&&d.sarkari_data.jobs)||d.jobs||[]).filter(function(j){ return j.category===cat.dataKey && j.slug && j.title; });
           var job  = jobs[0];
           // Always open individual job page, not section page
           var url  = job ? (SITE+'/jobs/'+job.slug+'/') : cat.url;

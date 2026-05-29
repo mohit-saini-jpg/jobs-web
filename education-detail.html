@@ -577,12 +577,14 @@
     }
 
     /* ── Main Load ── */
-    fetch('/Education_Jobs.json')
+    // SINGLE SOURCE: Load education_jobs from Complete_Jobs_Full_Data.json
+    fetch('/Complete_Jobs_Full_Data.json')
       .then(r => {
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.json();
       })
-      .then(data => {
+      .then(raw => {
+        const data = (raw && raw.education_jobs) ? raw.education_jobs : raw;
         const allSections = data.sections || [];
 
         // Find the section matching sectionId

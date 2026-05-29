@@ -1,15 +1,15 @@
 # ══════════════════════════════════════════════════════════════════════
-# REBUILD SECTION DATA — merged_sarkari_data.json se sab files rebuild
-# Manually run karo ya merged_sarkari_data.json push pe auto-trigger
+# REBUILD SECTION DATA — Complete_Jobs_Full_Data.json se sab files rebuild
+# Manually run karo ya Complete_Jobs_Full_Data.json push pe auto-trigger
 # ══════════════════════════════════════════════════════════════════════
 
-name: 🔁 Rebuild Section Data from merged_sarkari_data.json
+name: 🔁 Rebuild Section Data from Complete_Jobs_Full_Data.json
 
 on:
-  # Jab bhi merged_sarkari_data.json push ho
+  # Jab bhi Complete_Jobs_Full_Data.json push ho
   push:
     paths:
-      - 'merged_sarkari_data.json'
+      - 'Complete_Jobs_Full_Data.json'
 
   # Manual trigger bhi — GitHub Actions > Run workflow
   workflow_dispatch:
@@ -44,8 +44,8 @@ jobs:
           import json, os
           from collections import defaultdict
 
-          print("Reading merged_sarkari_data.json...")
-          with open('merged_sarkari_data.json', encoding='utf-8') as f:
+          print("Reading Complete_Jobs_Full_Data.json...")
+          with open('Complete_Jobs_Full_Data.json', encoding='utf-8') as f:
               raw = json.load(f)
 
           jobs = raw.get('jobs', [])
@@ -105,7 +105,7 @@ jobs:
           fi
 
           VERSION=$(node -e "console.log(require('./version.json').version)")
-          SCRAPED=$(python3 -c "import json; d=json.load(open('merged_sarkari_data.json')); print(d.get('scraped_at','')[:10])")
+          SCRAPED=$(python3 -c "import json; d=json.load(open('Complete_Jobs_Full_Data.json')); print(d.get('generated_at','')[:10] if d.get('generated_at') else d.get('scraped_at','')[:10])")
           git commit -m "🔁 Section data rebuilt v${VERSION} | scraped: ${SCRAPED}"
           git push origin main
           echo "✅ Pushed — Zero-Stale Engine will notify users"

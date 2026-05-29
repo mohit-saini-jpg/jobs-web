@@ -493,9 +493,30 @@
     // ── Main: fetch JSON ─────────────────────────────────────────
     if(!qualId){ showError('Invalid URL — qualification not found.'); return; }
 
-    fetch('/Qualification_Wise_Jobs.json')
+    // SINGLE SOURCE: Load qualification data from Complete_Jobs_Full_Data.json
+    fetch('/Complete_Jobs_Full_Data.json')
       .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
-      .then(function(data){
+      .then(function(raw){
+        // Build sections from freejobalert_categories
+        var fj = (raw && raw.freejobalert_categories) ? raw.freejobalert_categories : {};
+        var CAT_IDS = {'10TH_Pass':'10th-pass','8TH_Pass':'8th-pass','12TH_Pass':'12th-pass','Diploma':'diploma','ITI':'iti','B_Tech_BE':'b-tech-be','B_Com':'b-com','Any_Graduate':'any-graduate','Any_Post_Graduate':'any-post-graduate','Railway_Jobs':'railway-jobs','Police_Defence':'police-defence','Teaching_Faculty':'teaching-faculty','Bank_Jobs':'bank-jobs','Medical_Hospital':'medical-hospital','Last_Date_Reminder':'last-date-reminder','Latest_Notifications':'latest-notifications','4th_Pass':'4th-pass','5th_Pass':'5th-pass','6th_Pass':'6th-pass','7th_Pass':'7th-pass','9th_Pass':'9th-pass','Intermediate':'intermediate','GNM':'gnm','ANM':'anm','D_Pharm':'dpharm','DMLT':'dmlt','D_El_Ed':'deled','D_P_Ed':'d-p-ed','DLT':'dlt','VHSE':'vhse','B_Sc':'bsc','BCA':'bca','MA':'ma','BBA':'bba','LLB':'llb','B_Ed':'bed','MBBS':'mbbs','B_Pharma':'bpharma','BAMS':'bams','BDS':'bds','MBA_PGDM':'mba--pgdm','M_A':'ma','M_Com':'mcom','M_Sc':'msc','M_E_MTech':'me--mtech','MCA':'mca','M_Ed':'med','MS_MD':'ms--md','M_Pharma':'mpharma','CA':'ca','CS':'cs','ICWA':'icwa','MPhil_PhD':'mphil--phd'};
+        var CAT_NAMES = {'10TH_Pass':'10th Pass Jobs 2026','8TH_Pass':'8th Pass Jobs 2026','12TH_Pass':'12th Pass Jobs 2026','Diploma':'Diploma Jobs 2026','ITI':'ITI Jobs 2026','B_Tech_BE':'B.Tech / B.E Jobs 2026','B_Com':'B.Com Jobs 2026','Any_Graduate':'Any Graduate Jobs 2026','Any_Post_Graduate':'Any Post Graduate Jobs 2026','Railway_Jobs':'Railway Jobs 2026','Police_Defence':'Police / Defence Jobs 2026','Teaching_Faculty':'Teaching / Faculty Jobs 2026','Bank_Jobs':'Bank Jobs 2026','Medical_Hospital':'Medical / Hospital Jobs 2026','Last_Date_Reminder':'Last Date Reminder','Latest_Notifications':'Latest Notifications','4th_Pass':'4th Pass Jobs 2026','5th_Pass':'5th Pass Jobs 2026','6th_Pass':'6th Pass Jobs 2026','7th_Pass':'7th Pass Jobs 2026','9th_Pass':'9th Pass Jobs 2026','Intermediate':'Intermediate Jobs 2026','GNM':'GNM Jobs 2026','ANM':'ANM Jobs 2026','D_Pharm':'D.Pharm Jobs 2026','DMLT':'DMLT Jobs 2026','D_El_Ed':'D.El.Ed Jobs 2026','D_P_Ed':'D.P.Ed Jobs 2026','DLT':'DLT Jobs 2026','VHSE':'VHSE Jobs 2026','B_Sc':'B.Sc Jobs 2026','BCA':'BCA Jobs 2026','MA':'M.A Jobs 2026','BBA':'BBA Jobs 2026','LLB':'LLB Jobs 2026','B_Ed':'B.Ed Jobs 2026','MBBS':'MBBS Jobs 2026','B_Pharma':'B.Pharma Jobs 2026','BAMS':'BAMS Jobs 2026','BDS':'BDS Jobs 2026','MBA_PGDM':'MBA/PGDM Jobs 2026','M_A':'M.A Jobs 2026','M_Com':'M.Com Jobs 2026','M_Sc':'M.Sc Jobs 2026','M_E_MTech':'M.E/M.Tech Jobs 2026','MCA':'MCA Jobs 2026','M_Ed':'M.Ed Jobs 2026','MS_MD':'MS/MD Jobs 2026','M_Pharma':'M.Pharma Jobs 2026','CA':'CA Jobs 2026','CS':'CS Jobs 2026','ICWA':'ICWA Jobs 2026','MPhil_PhD':'M.Phil/PhD Jobs 2026'};
+        function slugify(t){return((t||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,120));}
+        var builtSections = Object.keys(fj).map(function(catKey){
+          var jobs = Array.isArray(fj[catKey]) ? fj[catKey] : [];
+          var items = jobs.map(function(job){
+            var bd=job.basic_details||{};
+            var title=(bd.job_title||bd.post_name||'').trim();
+            if(!title)return null;
+            var dates=job.important_dates||{};
+            var lastDate=dates.last_date_to_apply||dates.last_date||'';
+            var links=job.important_links||{};
+            var applyUrl=typeof links.apply_online==='string'?links.apply_online:(Array.isArray(links.apply_online)&&links.apply_online[0]?links.apply_online[0]:'');
+            return {name:title,url:applyUrl||'',date:lastDate?'Last Date: '+lastDate:'',lastDate:lastDate,qualification:(job.qualification&&job.qualification.education_qualification)||'',postDate:bd.post_date||'',board:bd.organization_name||'',detail:{important_dates:job.important_dates,application_fee:job.application_fee,age_limit:job.age_limit,qualification:job.qualification,important_links:job.important_links,seo_tags:job.seo_tags}};
+          }).filter(Boolean);
+          return {id:CAT_IDS[catKey]||catKey.toLowerCase().replace(/_/g,'-'),title:CAT_NAMES[catKey]||catKey.replace(/_/g,' ')+' Jobs 2026',category:catKey,type:'qualification',items:items};
+        }).filter(function(s){return s.items.length>0;});
+        var data = {sections: builtSections};
         var sections = data.sections || [];
         var section  = sections.find(function(s){ return s.id === qualId; });
         if(!section){ throw new Error('Qualification "' + qualId + '" not found.'); }

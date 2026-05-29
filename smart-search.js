@@ -576,10 +576,113 @@
       });
     }
 
-    /* ── Complete_Jobs_Full_Data.json ── */
+    /* ── Complete_Jobs_Full_Data.json — SINGLE SOURCE (handles all sub-sources) ── */
     if (fileName === 'Complete_Jobs_Full_Data.json') {
       if (data && typeof data === 'object' && !Array.isArray(data)) {
+        // 1. Process freejobalert_categories (qualification-wise)
+        var fj = data.freejobalert_categories || {};
+        Object.keys(fj).forEach(function(catKey) {
+          var meta = COMPLETE_JOBS_META[catKey] || {
+            id: catKey.toLowerCase().replace(/_/g, '-'),
+            cat: catKey.replace(/_/g, ' '),
+            qual: '',
+            icon: 'fa-briefcase',
+            label: catKey.replace(/_/g, ' '),
+          };
+          (Array.isArray(fj[catKey]) ? fj[catKey] : []).forEach(function(job) {
+            var title = getJobTitle(job);
+            if (!title) return;
+            var org   = getJobOrg(job);
+            var bd    = job.basic_details || {};
+            var href  = buildJobHref(job, meta.id);
+            var dates = job.important_dates || {};
+            var lastDate = String(dates.last_date_to_apply || dates.last_date || '').trim();
+            extra.push({
+              title: title, slug: href, dept: org, postName: bd.post_name || job.post_name || '',
+              qual: meta.qual || '', state: job.state || 'All India', cat: meta.cat,
+              tags: [title, org, meta.id, meta.qual||'', String(bd.short_information||'').slice(0,80), 'sarkari job 2026'].join(' '),
+              lastDate: lastDate, icon: meta.icon, lastUpdated: bd.last_updated || now,
+              sectionSource: meta.label, isJobDetail: true,
+            });
+          });
+        });
+
+        // 2. Process sarkari_data.jobs
+        var skJobs = (data.sarkari_data && Array.isArray(data.sarkari_data.jobs)) ? data.sarkari_data.jobs : [];
+        skJobs.forEach(function(j) {
+          var title = getJobTitle(j);
+          if (!title || title.length < 4) return;
+          var org   = getJobOrg(j);
+          var url   = buildJobUrl(title, j.apply_mode, j.category) || j.apply_online_link || '#';
+          var dates = j.important_dates || {};
+          var lastDate = dates.last_date_to_apply || dates.last_date || '';
+          var catLabel = {'LATEST_JOBS NEW':'Latest Jobs New','SR_Latest_Jobs':'Latest Jobs','STATE_JOBS':'State Jobs','CENTRAL_JOBS':'Central Jobs','ADMISSIONS':'Admissions','UPCOMING_JOBS':'Upcoming Jobs','OFFLINE_FORM':'Offline Form','SR_Admit_Card':'Admit Card','SR_Result':'Result','SR_Admission':'Admission','SR_Answer_Key':'Answer Key'}[j.category] || j.category || 'Latest Jobs';
+          extra.push({
+            title: title, slug: url, dept: org, postName: j.post_name || '',
+            qual: '', state: j.job_location || 'All India', cat: catLabel,
+            tags: [title, org, j.post_name||'', catLabel, j.job_location||'', 'sarkari job 2026'].join(' '),
+            lastDate: lastDate, icon: 'fa-briefcase', lastUpdated: j.listing_date || now,
+            sectionSource: catLabel, isJobDetail: true,
+          });
+        });
+
+        // 3. Process education_jobs.sections
+        var eduSecs = (data.education_jobs && Array.isArray(data.education_jobs.sections)) ? data.education_jobs.sections : [];
+        eduSecs.forEach(function(sec) {
+          var secTitle = String(sec.title || sec.id || '').trim();
+          var secId    = String(sec.id    || sec.title || '').trim();
+          (sec.items || []).forEach(function(item) {
+            var title = String(item.name || item.examName || '').trim();
+            if (!title || title.length < 4) return;
+            var href = '/education-detail.html?section=' + encodeURIComponent(secId) + '&slug=' + encodeURIComponent(slugifyTitle(title));
+            var lu = now;
+            if (item.postDate) { var parts = item.postDate.split('/'); if (parts.length === 3) lu = parts[2]+'-'+parts[1]+'-'+parts[0]+'T00:00:00'; }
+            var detail = item.detail || {};
+            var seoTags = Array.isArray(detail.seo_tags) ? detail.seo_tags : [];
+            extra.push({
+              title: title, slug: href, dept: item.category || secTitle, postName: item.examName || '',
+              qual: '', state: 'All India', cat: secTitle, seoTags: seoTags,
+              tags: [title, secTitle, item.category||'', seoTags.join(' '), 'education exam 2026'].join(' '),
+              lastDate: item.date ? item.date.replace(/Post Date:\s*/i,'') : '', icon: 'fa-graduation-cap',
+              lastUpdated: lu, sectionSource: secTitle, isJobDetail: false,
+            });
+          });
+        });
+
+        // 4. Process state_jobs.sections
+        var stateSecs = (data.state_jobs && Array.isArray(data.state_jobs.sections)) ? data.state_jobs.sections : [];
+        stateSecs.forEach(function(sec) {
+          var secId    = String(sec.id    || sec.title || '').trim();
+          var secTitle = String(sec.title || sec.id    || 'State Jobs').trim();
+          var secState = String(sec.state || '').trim();
+          (sec.items || []).forEach(function(item) {
+            var title = String(item.name || item.title || '').trim();
+            if (!title) return;
+            var detail    = item.detail || {};
+            var bd        = detail.basic_details || {};
+            var applyMode = (bd.application_mode || '').toLowerCase();
+            var href      = item.url || item.link || '';
+            var slug      = slugifyTitle(bd.job_title || title);
+            if (slug && slug !== 'official-link') { href = '/data/jobs/' + slug + '/'; }
+            if (!href) return;
+            var seoTags  = Array.isArray(detail.seo_tags) ? detail.seo_tags : [];
+            var board    = String(item.board || bd.organization_name || '').trim();
+            var dates2   = detail.important_dates || {};
+            var lastDate = String(item.lastDate || item.date || dates2.last_date_to_apply || dates2.last_date || '').replace(/^Last Date:\s*/i, '').trim();
+            var lu = now;
+            if (item.postDate) { var p = item.postDate.split('/'); if (p.length === 3) lu = p[2]+'-'+p[1]+'-'+p[0]+'T00:00:00'; }
+            extra.push({
+              title: title, slug: href, dept: board || secTitle, postName: bd.post_name || '',
+              qual: item.qualification || bd.qualification || '', state: secState || 'All India', cat: 'State Jobs',
+              seoTags: seoTags, tags: [title, board, secTitle, secState, seoTags.join(' '), 'state jobs 2026'].join(' '),
+              lastDate: lastDate, icon: 'fa-location-dot', lastUpdated: lu, sectionSource: secTitle, isJobDetail: true,
+            });
+          });
+        });
+
+        // 5. Legacy: direct array keys (backward compat)
         Object.keys(data).forEach(function(catKey) {
+          if (['generated_at','sources','total_records','sarkari_data','education_jobs','state_jobs','scraper_errors','freejobalert_categories'].indexOf(catKey) >= 0) return;
           var meta = COMPLETE_JOBS_META[catKey] || {
             id: catKey.toLowerCase().replace(/_/g, '-'),
             cat: catKey.replace(/_/g, ' '),
@@ -763,7 +866,8 @@
    * ══════════════════════════════════════════════════════════ */
   function loadJsonFiles() {
     /* Phase 1: fast files */
-    var fastFiles = ['merged_sarkari_data.json', 'state-jobs-data.json', 'dailyupdates.json'];
+    // SINGLE SOURCE: Load only Complete_Jobs_Full_Data.json (contains everything)
+    var fastFiles = ['Complete_Jobs_Full_Data.json'];
 
     /* Always add category pages first — zero cost */
     mergeItems(CAT_PAGES.map(function(p) {
@@ -775,38 +879,9 @@
         searchReady = true;
         refreshOpenDropdown();
 
-        /* Phase 2: Education_Jobs (medium) */
-        setTimeout(function() {
-          fetchAndIndex('Education_Jobs.json').then(refreshOpenDropdown);
-        }, 1500);
+        /* Phase 2: already loaded in Phase 1 (Complete_Jobs_Full_Data.json contains everything) */
 
-        /* Phase 3: Complete_Jobs (heavy ~22MB) — only on user interaction */
-        var heavyLoaded = false;
-        function loadHeavy() {
-          if (heavyLoaded) return;
-          heavyLoaded = true;
-          fetchAndIndex('Complete_Jobs_Full_Data.json').then(function() {
-            refreshOpenDropdown();
-            
-          });
-        }
-
-        /* Trigger heavy load on first real typing */
-        document.addEventListener('input', function onType(e) {
-          if (e.target && (e.target.id === 'heroSearch' || e.target.id === 'headerSearch')) {
-            if ((e.target.value || '').length >= 2) {
-              document.removeEventListener('input', onType);
-              setTimeout(loadHeavy, 200);
-            }
-          }
-        }, { passive: true });
-
-        /* Also load on idle after 20s */
-        if ('requestIdleCallback' in window) {
-          requestIdleCallback(loadHeavy, { timeout: 25000 });
-        } else {
-          setTimeout(loadHeavy, 20000);
-        }
+        /* Phase 3: all data already loaded from Complete_Jobs_Full_Data.json in Phase 1 */
       })
       .catch(function(err) {
         searchReady = true;
@@ -823,7 +898,7 @@
       if (document.hidden) return;
       if (Date.now() - lastRefresh < CFG.refreshIntervalMs) return;
       lastRefresh = Date.now();
-      ['merged_sarkari_data.json', 'dailyupdates.json'].forEach(function(f) {
+      ['Complete_Jobs_Full_Data.json'].forEach(function(f) {
         fetchAndIndex(f, true).then(function(n) {
           if (n > 0) refreshOpenDropdown();
         });

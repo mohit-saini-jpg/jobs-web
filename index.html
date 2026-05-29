@@ -47,16 +47,37 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
   <link rel="dns-prefetch" href="//cykkclkfimmqbahanidg.supabase.co"/>
   <!-- Preload critical JSON data for faster card rendering -->
   <!-- PERF: shared promise for merged_sarkari_data.json — fetched only ONCE -->
-  <link rel="preload" href="merged_sarkari_data.json" as="fetch" crossorigin="anonymous"/>
+  <link rel="preload" href="Complete_Jobs_Full_Data.json" as="fetch" crossorigin="anonymous"/>
   <link rel="preload" href="script.min.js?v=20260526" as="script"/>
-  <link rel="preload" href="dailyupdates.json" as="fetch" crossorigin="anonymous"/>
   <!-- PERF: sections-index.json — 16KB lightweight index for instant card rendering (instead of 18MB Complete_Jobs_Full_Data.json) -->
   <link rel="preload" href="sections-index.json" as="fetch" crossorigin="anonymous"/>
   <!-- PERF: shared promise for merged_sarkari_data.json — fetched only ONCE, used by ticker + section cards -->
   <script>
-  window.__mergedDataPromise = fetch('merged_sarkari_data.json')
+  // SINGLE SOURCE: Load from Complete_Jobs_Full_Data.json and adapt to merged format
+  window.__mergedDataPromise = fetch('Complete_Jobs_Full_Data.json')
     .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(d){
+      if(!d || !d.sarkari_data) return null;
+      var sk = d.sarkari_data;
+      function slugify(t){ return ((t||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,120)); }
+      // Build sarkariresult_categories arrays from jobs[]
+      var srCats = {};
+      (sk.jobs||[]).forEach(function(j){
+        var cat = j.category||'';
+        if(cat.indexOf('SR_')===0){
+          if(!srCats[cat]) srCats[cat]=[];
+          var title=(j.title||'').trim(), slug=j.slug||slugify(title);
+          var dates=j.important_dates||{}, last_date=dates.last_date||dates.last_date_to_apply||'';
+          srCats[cat].push({title:title, url:slug?'/data/jobs/'+slug+'/':'', last_date:last_date, apply_mode:j.apply_mode||'', category:cat});
+        }
+      });
+      return {scraped_at:sk.scraped_at, total:sk.total, jobs:sk.jobs, summary:{sarkariresult_categories:srCats, upcoming_jobs:(sk.summary&&sk.summary.upcoming_jobs)||0}};
+    })
     .catch(function(){ return null; });
+  // Cache the full data for other uses
+  window.__completeJobsDataPromise = window.__mergedDataPromise ? 
+    fetch('Complete_Jobs_Full_Data.json').then(function(r){return r.ok?r.json():null;}).catch(function(){return null;}) : 
+    Promise.resolve(null);
   // PERF: sections-index.json — fetch starts immediately at page load (16KB vs 18MB)
   window.__sectionsIndexPromise = fetch('sections-index.json')
     .then(function(r){ return r.ok ? r.json() : null; })
@@ -3231,7 +3252,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
     'use strict';
 
     /* ── Config ──────────────────────────────────────────── */
-    var JSON_FILE = 'merged_sarkari_data.json'; // FIX: root file has proper sr_category fields
+    var JSON_FILE = 'Complete_Jobs_Full_Data.json'; // SINGLE SOURCE: Complete_Jobs_Full_Data.json
     var MAX_ITEMS = 8;
 
     /*
@@ -3923,16 +3944,16 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
     var list = document.getElementById('today-sidebar-list');
     if (!list) return;
 
-    fetch('dailyupdates.json')
-      .then(function(r) { return r.json(); })
+    // SINGLE SOURCE: Extract today updates from Complete_Jobs_Full_Data.json
+    (window.__mergedDataPromise || fetch('Complete_Jobs_Full_Data.json').then(function(r){return r.json();}))
       .then(function(data) {
         var items = [];
-        // Try multiple formats
-        if (Array.isArray(data)) {
-          items = data.slice(0, 6);
-        } else if (data.updates && Array.isArray(data.updates)) {
-          items = data.updates.slice(0, 6);
-        } else if (data.sections && Array.isArray(data.sections)) {
+        // Extract from sarkari_data.jobs (latest jobs)
+        if (data && data.jobs && Array.isArray(data.jobs)) {
+          items = data.jobs.slice(0, 6).map(function(j){ return {name: j.title, url: '/data/jobs/'+(j.slug||j.title.toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,80))+'/', date: (j.important_dates||{}).last_date||''}; });
+        } else if (data && data.sarkari_data && Array.isArray(data.sarkari_data.jobs)) {
+          items = data.sarkari_data.jobs.slice(0, 6).map(function(j){ return {name: j.title, url: '/data/jobs/'+(j.slug||j.title.toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,80))+'/', date: (j.important_dates||{}).last_date||''}; });
+        } else if (data && data.sections && Array.isArray(data.sections)) {
           data.sections.forEach(function(s) {
             if (s.items) items = items.concat(s.items.slice(0, 3));
           });

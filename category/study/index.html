@@ -225,13 +225,17 @@
     }
 
     // ── Fetch JSON ─────────────────────────────────────────────────
-    fetch('/Qualification_Wise_Jobs.json')
+    // SINGLE SOURCE: Complete_Jobs_Full_Data.json
+    fetch('/Complete_Jobs_Full_Data.json')
       .then(function(r){
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.json();
       })
-      .then(function(data){
-        var sections = data.sections || [];
+      .then(function(raw){
+        var fj = (raw && raw.freejobalert_categories) ? raw.freejobalert_categories : {};
+        var CAT_IDS = {'10TH_Pass':'10th-pass','8TH_Pass':'8th-pass','12TH_Pass':'12th-pass','Diploma':'diploma','ITI':'iti','B_Tech_BE':'b-tech-be','B_Com':'b-com','Any_Graduate':'any-graduate','Any_Post_Graduate':'any-post-graduate','Railway_Jobs':'railway-jobs','Police_Defence':'police-defence','Teaching_Faculty':'teaching-faculty','Bank_Jobs':'bank-jobs','Medical_Hospital':'medical-hospital','Last_Date_Reminder':'last-date-reminder','Latest_Notifications':'latest-notifications','4th_Pass':'4th-pass','5th_Pass':'5th-pass','6th_Pass':'6th-pass','7th_Pass':'7th-pass','9th_Pass':'9th-pass','Intermediate':'intermediate','GNM':'gnm','ANM':'anm','D_Pharm':'dpharm','DMLT':'dmlt','D_El_Ed':'deled','D_P_Ed':'d-p-ed','B_Sc':'bsc','BCA':'bca','MA':'ma','BBA':'bba','LLB':'llb','B_Ed':'bed','MBBS':'mbbs','B_Pharma':'bpharma','BAMS':'bams','BDS':'bds','MBA_PGDM':'mba--pgdm','M_A':'ma','M_Com':'mcom','M_Sc':'msc','M_E_MTech':'me--mtech','MCA':'mca','M_Ed':'med','MS_MD':'ms--md','M_Pharma':'mpharma','CA':'ca','CS':'cs','ICWA':'icwa','MPhil_PhD':'mphil--phd'};
+        var CAT_NAMES = {'10TH_Pass':'10th Pass','8TH_Pass':'8th Pass','12TH_Pass':'12th Pass','Diploma':'Diploma','ITI':'ITI','B_Tech_BE':'B.Tech/B.E','B_Com':'B.Com','Any_Graduate':'Any Graduate','Any_Post_Graduate':'Any Post Graduate','Railway_Jobs':'Railway Jobs','Police_Defence':'Police/Defence','Teaching_Faculty':'Teaching/Faculty','Bank_Jobs':'Bank Jobs','Medical_Hospital':'Medical/Hospital','Last_Date_Reminder':'Last Date Reminder','Latest_Notifications':'Latest Notifications','4th_Pass':'4th Pass','5th_Pass':'5th Pass','6th_Pass':'6th Pass','7th_Pass':'7th Pass','9th_Pass':'9th Pass','Intermediate':'Intermediate','GNM':'GNM','ANM':'ANM','D_Pharm':'D.Pharm','DMLT':'DMLT','D_El_Ed':'D.El.Ed','D_P_Ed':'D.P.Ed','B_Sc':'B.Sc','BCA':'BCA','MA':'M.A','BBA':'BBA','LLB':'LLB','B_Ed':'B.Ed','MBBS':'MBBS','B_Pharma':'B.Pharma','BAMS':'BAMS','BDS':'BDS','MBA_PGDM':'MBA/PGDM','M_A':'M.A','M_Com':'M.Com','M_Sc':'M.Sc','M_E_MTech':'M.E/M.Tech','MCA':'MCA','M_Ed':'M.Ed','MS_MD':'MS/MD','M_Pharma':'M.Pharma','CA':'CA','CS':'CS','ICWA':'ICWA','MPhil_PhD':'M.Phil/PhD'};
+        var sections = Object.keys(fj).filter(function(k){return Array.isArray(fj[k])&&fj[k].length>0;}).map(function(k){return{id:CAT_IDS[k]||k.toLowerCase().replace(/_/g,'-'),title:CAT_NAMES[k]||k.replace(/_/g,' '),category:k,items:fj[k]};});
         if (!sections.length) throw new Error('No qualification sections found.');
         render(sections);
       })

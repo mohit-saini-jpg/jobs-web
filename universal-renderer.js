@@ -1677,10 +1677,11 @@
     let best = null, bestScore = 0;
 
     try {
-      const r = await fetch('/merged_sarkari_data.json');
+      // SINGLE SOURCE: Complete_Jobs_Full_Data.json
+      const r = await fetch('/Complete_Jobs_Full_Data.json');
       if (r.ok) {
         const d = await r.json();
-        const jobs = (d && d.jobs) ? d.jobs : (Array.isArray(d) ? d : []);
+        const jobs = (d && d.sarkari_data && d.sarkari_data.jobs) ? d.sarkari_data.jobs : (d && d.jobs ? d.jobs : (Array.isArray(d) ? d : []));
         for (const job of jobs) {
           const sc = scoreMatch(safe(job.title || job.post_name || ''), tokens);
           if (sc > bestScore) { bestScore = sc; best = job; }
