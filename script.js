@@ -227,16 +227,21 @@
   function convertSectionsIndex(indexData) {
     if (!indexData || typeof indexData !== 'object') return { sections: [] };
     const sections = [];
+    // Daily categories — inke items ka url direct link hai, /data/jobs/ nahi
+    const DAILY_CATS = new Set(['Govt_Scheme_Yojna','Important_CSC_PDF','Important_CSC_Link','Top_20_Jobs','Today_Updates']);
     for (const [catKey, meta] of Object.entries(JOBS_CAT_META)) {
       const items = indexData[catKey];
       if (!Array.isArray(items) || !items.length) continue;
+      const isDaily = DAILY_CATS.has(catKey);
       sections.push({
         id: meta.id, title: meta.title, color: meta.color, icon: meta.icon,
+        viewMoreUrl: meta.viewUrl || '',
         viewMoreType: 'list',
         items: items.map(item => ({
-          slug: item.slug,
+          slug: item.slug || '',
           name: item.name,
-          url: '/data/jobs/' + item.slug + '/',
+          // Daily items: use their own url (external links); job items: /data/jobs/
+          url: isDaily ? (item.url || '#') : '/data/jobs/' + item.slug + '/',
           date: item.date || ''
         }))
       });

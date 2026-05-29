@@ -30,6 +30,34 @@ OUTPUT:
 """
 
 import json, re, os, html as html_mod, shutil
+
+# Load job.html template once at startup
+_JOB_TEMPLATE = None
+def _get_template():
+    global _JOB_TEMPLATE
+    if _JOB_TEMPLATE is None:
+        tpl_path = 'data-job-template.html'
+        if not os.path.exists(tpl_path):
+            tpl_path = 'job.html'
+        if os.path.exists(tpl_path):
+            raw = open(tpl_path, encoding='utf-8').read()
+            # Fix paths for /data/jobs/ if using raw job.html
+            if '/jobs/data/' in raw:
+                raw = raw.replace(
+                    "fetch('/jobs/data/' + encodeURIComponent(slugVariant) + '.json')",
+                    "fetch('/data/jobs/' + encodeURIComponent(slugVariant) + '.json')"
+                )
+                raw = raw.replace("var cleanPath = '/jobs/' + slug + '/';",
+                                  "var cleanPath = '/data/jobs/' + slug + '/';")
+                raw = raw.replace("'https://www.topsarkarijobs.com/jobs/' + slug + '/'",
+                                  "'https://www.topsarkarijobs.com/data/jobs/' + slug + '/'")
+                # Add /data/jobs/ to slug path extraction
+                raw = raw.replace(
+                    "var m = window.location.pathname.match(/\\/jobs\\/([^\\/]+)\\/?$/);",
+                    "var m = window.location.pathname.match(/\\/data\\/jobs\\/([^\\/]+)\\/?$/) || window.location.pathname.match(/\\/jobs\\/([^\\/]+)\\/?$/);"
+                )
+            _JOB_TEMPLATE = raw
+    return _JOB_TEMPLATE
 from datetime import date
 from collections import defaultdict
 
@@ -543,6 +571,49 @@ def deduplicate(records):
 #  STEP 5 — SEO HTML GENERATOR  (central, single render engine)
 # ══════════════════════════════════════════════════════════════════
 def build_job_html(rec):
+    """Generate job page using job.html as template with correct SEO meta."""
+    slug    = rec["slug"]
+    title   = rec["title"]
+    canon   = f"{BASE_URL}/data/jobs/{slug}/"
+    
+    template = _get_template()
+    if not template:
+        # Fallback to old method if template not available
+        return _build_job_html_fallback(rec)
+    
+    # SEO title
+    short = title[:45].rstrip()
+    seo_title = f"{short} | Top Sarkari Jobs"
+    
+    # Meta description
+    last_date = rec["lastDate"]
+    ld_str = f"Last Date: {last_date}. " if last_date else ""
+    meta_desc = f"{title[:80]}. {ld_str}Check eligibility, vacancies & apply online at TopSarkariJobs."
+    if len(meta_desc) > 155:
+        meta_desc = meta_desc[:152] + "…"
+    
+    html = template
+    html = re.sub(r'<link rel="canonical" id="canonicalTag" href="[^"]*"',
+                  f'<link rel="canonical" id="canonicalTag" href="{canon}"',
+                  html, count=1)
+    html = re.sub(r'<title id="pageTitle">[^<]*</title>',
+                  f'<title id="pageTitle">{e(seo_title)}</title>',
+                  html, count=1)
+    html = re.sub(r'<meta name="description" id="metaDesc"\s+content="[^"]*"',
+                  f'<meta name="description" id="metaDesc" content="{e(meta_desc)}"',
+                  html, count=1)
+    html = re.sub(r'<meta id="ogUrl"\s+property="og:url" content="[^"]*"',
+                  f'<meta id="ogUrl" property="og:url" content="{canon}"',
+                  html, count=1)
+    html = re.sub(r'<meta id="ogTitle" property="og:title" content="[^"]*"',
+                  f'<meta id="ogTitle" property="og:title" content="{e(seo_title)}"',
+                  html, count=1)
+    return html
+
+
+def _build_job_html_fallback(rec):
+    """Original fallback HTML generator"""
+    slug    = rec["slug"]
     """
     Generate a complete, SEO-optimised index.html for one job.
     The JS renderer (preferred-source-renderer.js) handles dynamic
