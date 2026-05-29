@@ -3444,7 +3444,10 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
         );
       }).filter(Boolean).join('');
 
-      if (!liHtml) return '';
+      // ✅ FIX: When no items available, show placeholder instead of hiding the card
+      if (!liHtml) {
+        liHtml = '<li class="sr-job-item" style="padding:10px 12px;color:#94a3b8;font-size:.8rem;"><i class="fa-solid fa-rotate" style="margin-right:5px;"></i>Updates loading… <a href="' + cfg.viewUrl + '" style="color:var(--blue);">View All</a></li>';
+      }
 
       return (
         '<div class="sr-card">' +
@@ -3755,8 +3758,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
         var dynColorIdx = 0;
         var dynamicConfigs = [];
         orderedKeys.forEach(function(key) {
-          var items = categoryBuckets[key];
-          if (!items || items.length === 0) return;
+          var items = categoryBuckets[key] || []; // ✅ FIX: always include card even if no data
 
           var cfg;
           if (KNOWN_CAT_CONFIG[key]) {
@@ -3817,12 +3819,10 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
       var activeCfgs = jsonData.__dynamicConfigs || null;
 
       if (activeCfgs) {
-        /* Fully dynamic path: render every category that has data */
+        /* Fully dynamic path: render every category (always, even if empty) */
         activeCfgs.forEach(function(cfg) {
           var items = cfg.items || [];
-          if (items.length > 0) {
-            html += buildCard(cfg, items);
-          }
+          html += buildCard(cfg, items); // ✅ FIX: always render, empty cards show placeholder
         });
       } else {
         /* Legacy path: use static CATEGORY_CONFIG */
@@ -3833,18 +3833,35 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
           } else {
             items = srCategories[cfg.key] || [];
           }
-          if (items.length > 0) {
-            html += buildCard(cfg, items);
-          }
+          // ✅ FIX: always render card, even if empty (shows placeholder)
+          html += buildCard(cfg, items);
         });
       }
 
       if (html) {
         grid.innerHTML = html;
       } else {
-        console.warn('[SR] No data found. Keys in JSON:', Object.keys(jsonData), '| sarkariresult_data:', jsonData.sarkariresult_data ? Object.keys(jsonData.sarkariresult_data) : 'missing');
-        var wrap = document.getElementById('sr-dynamic-wrap');
-        if (wrap) wrap.style.display = 'none';
+        // ✅ FIX: Even if html empty, still show the grid — render all cards with placeholders
+        console.warn('[SR] No data found, rendering placeholder cards. Keys in JSON:', Object.keys(jsonData));
+        // Build placeholder cards for all known categories in order
+        var placeholderHtml = '';
+        var orderedKeysForPlaceholder = [
+          'SR_Latest_Jobs', 'SR_Result', 'SR_Admit_Card', 'SR_Admission', 'SR_Answer_Key', 'OFFLINE_FORM',
+          'UPCOMING_JOBS', 'LATEST_JOBS NEW', 'STATE_JOBS', 'CENTRAL_JOBS', 'ADMISSIONS',
+          'Latest_Notifications', '10TH_Pass', '8TH_Pass', '12TH_Pass', 'Diploma', 'ITI',
+          'B_Tech_BE', 'B_Com', 'Any_Graduate', 'Any_Post_Graduate',
+          'Railway_Jobs', 'Police_Defence', 'Teaching_Faculty', 'Bank_Jobs', 'Medical_Hospital',
+          'Last_Date_Reminder', 'Govt_Scheme_Yojna', 'Important_CSC_PDF', 'Important_CSC_Link',
+          'Top_20_Jobs', 'Today_Updates'
+        ];
+        orderedKeysForPlaceholder.forEach(function(key) {
+          if (KNOWN_CAT_CONFIG[key]) {
+            var kc = KNOWN_CAT_CONFIG[key];
+            var cfg = { key: key, label: kc.label, icon: kc.icon, headClass: kc.headClass, viewUrl: kc.viewUrl };
+            placeholderHtml += buildCard(cfg, []);
+          }
+        });
+        if (placeholderHtml) grid.innerHTML = placeholderHtml;
       }
     }
 

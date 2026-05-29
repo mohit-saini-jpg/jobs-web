@@ -230,17 +230,20 @@
     // Daily categories — inke items ka url direct link hai, /data/jobs/ nahi
     const DAILY_CATS = new Set(['Govt_Scheme_Yojna','Important_CSC_PDF','Important_CSC_Link','Top_20_Jobs','Today_Updates']);
     for (const [catKey, meta] of Object.entries(JOBS_CAT_META)) {
-      const items = indexData[catKey];
-      if (!Array.isArray(items) || !items.length) continue;
+      const rawItems = indexData[catKey];
+      // FIX: Always include the category even if no items in sections-index
+      if (!Array.isArray(rawItems) || !rawItems.length) {
+        sections.push({ id: meta.id, title: meta.title, color: meta.color, icon: meta.icon, viewMoreUrl: meta.viewUrl || '', viewMoreType: 'list', items: [] });
+        continue;
+      }
       const isDaily = DAILY_CATS.has(catKey);
       sections.push({
         id: meta.id, title: meta.title, color: meta.color, icon: meta.icon,
         viewMoreUrl: meta.viewUrl || '',
         viewMoreType: 'list',
-        items: items.map(item => ({
+        items: rawItems.map(item => ({
           slug: item.slug || '',
           name: item.name,
-          // Daily items: use their own url (external links); job items: /data/jobs/
           url: isDaily ? (item.url || '#') : '/data/jobs/' + item.slug + '/',
           date: item.date || ''
         }))
@@ -293,33 +296,30 @@
         if (indexData) {
           const fastResult = convertSectionsIndex(indexData);
 
-          // sections-index mein present category ids
-          const coveredIds = new Set(fastResult.sections.map(s => s.id));
+          // FIX: sections with empty items need data from Complete_Jobs
+          const emptyIds = new Set(fastResult.sections.filter(s => !s.items || s.items.length === 0).map(s => s.id));
 
-          // Missing categories: JOBS_CAT_META mein hain lekin sections-index mein nahi
-          const missingKeys = catOrder.filter(k =>
-            JOBS_CAT_META[k] && !coveredIds.has(JOBS_CAT_META[k].id)
-          );
-
-          // Always continue to merge merged_sarkari_data.json sections
-          // even when Complete_Jobs categories are all covered
-
-          // Missing categories ke liye Complete_Jobs_Full_Data.json fetch karo
+          // Always fetch Complete_Jobs for categories that have no data yet
           let extraSections = [];
           try {
             const raw = await getBigJSON();
             if (raw) {
               const fullResult = convertJobsDataToSections(raw);
-              // Sirf missing categories rakhon
-              const missingIds = new Set(missingKeys.map(k => JOBS_CAT_META[k].id));
-              extraSections = fullResult.sections.filter(s => missingIds.has(s.id));
+              // Keep sections that can fill empty slots
+              extraSections = fullResult.sections.filter(s => emptyIds.has(s.id));
             }
           } catch(_) { /* big JSON fail — fast sections hi return karo */ }
 
-          // Merge: sections-index + extraSections from big JSON only
-          // NOTE: SR_* categories (Latest Jobs, Result, Admit Card etc.) are already shown
-          // in #sr-sections-grid by the inline script — do NOT add them here to avoid duplicates
-          const allSections = [...fastResult.sections, ...extraSections];
+          // Merge: for empty slots, replace with data from Complete_Jobs
+          const extraById = new Map(extraSections.map(s => [s.id, s]));
+          const mergedSections = fastResult.sections.map(s => {
+            if ((!s.items || s.items.length === 0) && extraById.has(s.id)) {
+              return extraById.get(s.id); // replace empty slot with real data
+            }
+            return s;
+          });
+
+          const allSections = mergedSections;
           const seenIds = new Set();
           const deduped = allSections.filter(s => {
             if (seenIds.has(s.id)) return false;
@@ -1073,6 +1073,18 @@
       const items = Array.isArray(sec.items)
         ? sec.items.filter(i => !isGarbageLink(i)).slice(0, 10)
         : [];
+
+      // FIX: Show placeholder when no items so card is always visible
+      if (items.length === 0) {
+        const ph = document.createElement('a');
+        ph.className = 'section-link';
+        ph.href = moreHref || '#';
+        ph.innerHTML = '<span style="color:#94a3b8;font-size:.8rem;"><i class="fa-solid fa-rotate" style="margin-right:5px;"></i>Updates loading… <span style="color:var(--blue);">View All</span></span>';
+        list.appendChild(ph);
+        if (listWrap) listWrap.classList.add('scrolled-to-end');
+        wrap.appendChild(card);
+        return;
+      }
 
       items.forEach((it, _idx) => {
         const name = safe(it.name) || "Open";
