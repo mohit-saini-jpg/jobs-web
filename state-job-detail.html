@@ -477,8 +477,12 @@
   </main>
 
   <script src="/script.js?v=20260517" defer></script>
-  <!-- Preferred Source on Google — Full Rich Details Renderer v4 -->
-<script src="/preferred-source-renderer.js?v=20260528v4" defer></script>
+  <!-- Preferred Source on Google — Full Rich Details Renderer -->
+  <script>
+// state-job-detail.html uses native makeCard() sections — PSR not needed
+window.__TSJ_PSR_DISABLED = true;
+</script>
+<script src="/preferred-source-renderer.js?v=20260527" defer></script>
 
   <script>
   /* ══════════════════════════════════════════════════════════════════
