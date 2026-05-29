@@ -2494,71 +2494,55 @@ input, textarea, select { font-size: 1rem !important; }
           }
         } catch (_) {}
 
-        /* ── SINGLE SOURCE: Load Complete_Jobs_Full_Data.json for state + sarkari jobs ── */
+        /* ── SINGLE SOURCE: Load Complete_Jobs_Full_Data.json for state jobs + sarkari jobs ── */
         let rawFull = null;
         try {
           const r2 = await fetch('/Complete_Jobs_Full_Data.json');
           if (r2.ok) rawFull = await r2.json();
         } catch (_) {}
 
-        /* ── Extract state_jobs ── */
-        try {
-          const rState = { ok: !!rawFull };
-          if (rState.ok) {
-            const stateRaw = (rawFull && rawFull.state_jobs) ? rawFull.state_jobs : rawFull;
-            const stateArr = Array.isArray(stateRaw) ? stateRaw
-                           : (stateRaw.sections ? stateRaw.sections : (stateRaw.states ? stateRaw.states : []));
-            for (const stateGroup of stateArr) {
-              if (!Array.isArray(stateGroup.items)) continue;
-              const secId = safe(stateGroup.id || stateGroup.state || 'State Jobs');
-              for (const item of stateGroup.items) {
-                const title = safe(item.name || item.title || '');
-                if (!title) continue;
-                const det = (item.detail && typeof item.detail === 'object') ? item.detail : {};
-                const bd  = (det.basic_details && typeof det.basic_details === 'object') ? det.basic_details : {};
-                const il  = (det.important_links && typeof det.important_links === 'object') ? det.important_links : {};
-                const clickHereUrls = Array.isArray(il.click_here) ? il.click_here
-                                    : (il.click_here ? [il.click_here] : []);
-                const bestPortalUrl = clickHereUrls.find(u => u && !/\.pdf($|\?)/i.test(u))
-                                   || safe(il.official_website || il.visit_website || '')
-                                   || normalizeUrl(safe(item.url || ''));
-                const notifPdfUrl   = safe(il.notification_pdf || '')
-                                   || clickHereUrls.find(u => u && /\.pdf($|\?)/i.test(u)) || '';
-                const fullJob = {
-                  title,
-                  category: secId,
-                  slug: '',
-                  source_url: bestPortalUrl,
-                  official_website_link: bestPortalUrl,
-                  form_pdf_free_link: notifPdfUrl,
-                  important_links: {
-                    ...il,
-                    official_website: safe(il.official_website || bestPortalUrl),
-                    notification_pdf: notifPdfUrl,
-                  },
-                  basic_details: { ...bd, source_url: bestPortalUrl },
-                  important_dates: det.important_dates || {},
-                  application_fee: det.application_fee || {},
-                  age_limit: det.age_limit || {},
-                  qualification: det.qualification || {},
-                  salary_details: det.salary_details || {},
-                  selection_process: det.selection_process || [],
-                  short_information: safe(bd.short_information || ''),
-                  total_post: safe(item.name || '').match(/(\d+)\s*[Pp]osts?/)?.[1] || '',
-                  last_date: safe(item.lastDate || item.date || ''),
-                  useful_links: Array.isArray(det.useful_links) ? det.useful_links : [],
-                };
-                const parsed = parseFullJob(fullJob, secId);
-                if (parsed.title) dailyItems.push(parsed);
-              }
-            }
-          }
-        } catch (_) {}
-
         if (!rawFull) return dailyItems;
+
+        /* ── Extract state_jobs and add to items pool ── */
+        const stateSections = (rawFull.state_jobs && rawFull.state_jobs.sections) || [];
+        for (const stateGroup of stateSections) {
+          if (!Array.isArray(stateGroup.items)) continue;
+          const secId = safe(stateGroup.id || stateGroup.state || 'State Jobs');
+          for (const item of stateGroup.items) {
+            const title = safe(item.name || item.title || '');
+            if (!title) continue;
+            const det = (item.detail && typeof item.detail === 'object') ? item.detail : {};
+            const bd  = (det.basic_details && typeof det.basic_details === 'object') ? det.basic_details : {};
+            const il  = (det.important_links && typeof det.important_links === 'object') ? det.important_links : {};
+            const clickHereUrls = Array.isArray(il.click_here) ? il.click_here
+                                : (il.click_here ? [il.click_here] : []);
+            const bestPortalUrl = clickHereUrls.find(u => u && !/\.pdf($|\?)/i.test(u))
+                               || safe(il.official_website || il.visit_website || '')
+                               || normalizeUrl(safe(item.url || ''));
+            const notifPdfUrl   = safe(il.notification_pdf || '')
+                               || clickHereUrls.find(u => u && /\.pdf($|\?)/i.test(u)) || '';
+            const fullJob = {
+              title, category: secId, slug: '',
+              source_url: bestPortalUrl, official_website_link: bestPortalUrl,
+              form_pdf_free_link: notifPdfUrl,
+              important_links: { ...il, official_website: safe(il.official_website || bestPortalUrl), notification_pdf: notifPdfUrl },
+              basic_details: { ...bd, source_url: bestPortalUrl },
+              important_dates: det.important_dates || {}, application_fee: det.application_fee || {},
+              age_limit: det.age_limit || {}, qualification: det.qualification || {},
+              salary_details: det.salary_details || {}, selection_process: det.selection_process || [],
+              short_information: safe(bd.short_information || ''),
+              total_post: safe(item.name || '').match(/(\d+)\s*[Pp]osts?/)?.[1] || '',
+              last_date: safe(item.lastDate || item.date || ''),
+              useful_links: Array.isArray(det.useful_links) ? det.useful_links : [],
+            };
+            const parsed = parseFullJob(fullJob, secId);
+            if (parsed.title) dailyItems.push(parsed);
+          }
+        }
+
         const out = [...dailyItems]; /* State + daily items */
 
-        /* ── Extract sarkari_data.jobs ── */
+        /* ── Extract sarkari_data.jobs (offline/walkin/latest) ── */
         const skJobs = (rawFull.sarkari_data && rawFull.sarkari_data.jobs) || [];
         for (const job of skJobs) {
           const parsed = parseFullJob(job, job.category || 'SR_Offline_Form');
@@ -2769,6 +2753,7 @@ input, textarea, select { font-size: 1rem !important; }
 
             if (isFromMerged) {
               try {
+                // SINGLE SOURCE: use rawFull already loaded
                 const rm = { ok: !!rawFull };
                 if (rm.ok) {
                   const md = rawFull;
@@ -2816,7 +2801,7 @@ input, textarea, select { font-size: 1rem !important; }
             }
 
             if (!rawSourceJson && isFromState) {
-              /* Try state-jobs-data.json */
+              /* SINGLE SOURCE: Use rawFull state_jobs */
               try {
                 const rs = { ok: !!rawFull };
                 if (rs.ok) {
