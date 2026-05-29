@@ -1957,17 +1957,93 @@
     });
     document.head.appendChild(faqEl);
 
-    // ── 8. SET window.__TSJ_SHARE_TEXT for Smart Share feature ──────────
-    var shareLines = [];
-    if (title)         shareLines.push('🔔 *' + title + ' Notification Out!*');
-    if (vacancies)     shareLines.push('📋 Posts: *' + vacancies + ' Vacancies*');
-    if (qualification) shareLines.push('🎓 Qualification: ' + qualification);
-    if (salary)        shareLines.push('💰 Salary: ' + salary.replace('Rs.','₹').replace('Rs ','₹'));
-    if (lastDate)      shareLines.push('📅 Last Date: *' + lastDate + '*');
-    if (org)           shareLines.push('🏢 By: ' + org);
-    shareLines.push('✅ Apply Now 👉 ' + canonicalUrl);
-    shareLines.push('📢 Share karo dosto ke saath!');
-    window.__TSJ_SHARE_TEXT = shareLines.join('\n');
+    // ── 8+9. BUILD RICH SHARE TEXT + UPDATE ALL SHARE BUTTONS ─────────
+    // Reads job fields from passed object OR falls back to rendered DOM elements
+    // (job.html renders data into statOrg, statPosts etc — we read those as fallback)
+    (function buildAndApplyShareText() {
+      function getEl(id) {
+        var el = document.getElementById(id);
+        return el ? el.textContent.trim() : '';
+      }
+
+      // Resolve each field with DOM fallback
+      var shareTitle = title ||
+        document.title.replace(' | Top Sarkari Jobs','').trim();
+
+      var shareOrg = org || getEl('statOrg');
+      if (shareOrg === '—') shareOrg = '';
+
+      var shareVac = vacancies || getEl('statPosts');
+      if (shareVac === '—' || shareVac === 'Various' || shareVac === '—') shareVac = '';
+
+      var shareLastDate = lastDate || getEl('statLastDate');
+      if (shareLastDate === '—') shareLastDate = '';
+      shareLastDate = shareLastDate.replace(/^Last Date:\s*/i, '').trim();
+
+      var shareQual = qualification || '';
+      var shareSalary = salary || '';
+      if (shareSalary) shareSalary = shareSalary.replace('Rs.','\u20b9').replace('Rs ','\u20b9');
+
+      // Build formatted lines
+      var shareLines = [];
+      if (shareTitle)    shareLines.push('\uD83D\uDD14 *' + shareTitle + ' Notification Out!*');
+      if (shareVac)      shareLines.push('\uD83D\uDCCB Posts: *' + shareVac + ' Vacancies*');
+      if (shareQual)     shareLines.push('\uD83C\uDF93 Qualification: ' + shareQual);
+      if (shareSalary)   shareLines.push('\uD83D\uDCB0 Salary: ' + shareSalary);
+      if (shareLastDate) shareLines.push('\uD83D\uDCC5 Last Date: *' + shareLastDate + '*');
+      if (shareOrg)      shareLines.push('\uD83C\uDFE2 By: ' + shareOrg);
+      shareLines.push('\u2705 Apply Now \uD83D\uDC49 ' + canonicalUrl);
+      shareLines.push('\uD83D\uDCE2 Share karo dosto ke saath!');
+
+      window.__TSJ_SHARE_TEXT = shareLines.join('\n');
+
+      // Apply to share buttons — runs immediately + with retries
+      // (job.html may reset buttons 100-300ms after page render)
+      function applyToButtons() {
+        var richText = window.__TSJ_SHARE_TEXT;
+        if (!richText) return;
+        var pageUrl = encodeURIComponent(canonicalUrl);
+        var richEnc = encodeURIComponent(richText);
+
+        var waEl = document.getElementById('shWa');
+        if (waEl) { waEl.href = 'https://wa.me/?text=' + richEnc; waEl.removeAttribute('onclick'); }
+
+        var tgEl = document.getElementById('shTg');
+        if (tgEl) { tgEl.href = 'https://t.me/share/url?url=' + pageUrl + '&text=' + richEnc; tgEl.removeAttribute('onclick'); }
+
+        var twLines = shareLines.slice(0, 4).join('\n');
+        if (twLines.length > 240) twLines = twLines.substring(0, 237) + '...';
+        var twEl = document.getElementById('shTw');
+        if (twEl) { twEl.href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(twLines); twEl.removeAttribute('onclick'); }
+
+        var fbEl = document.getElementById('shFb');
+        if (fbEl) { fbEl.href = 'https://www.facebook.com/sharer/sharer.php?u=' + pageUrl; }
+
+        var cpEl = document.getElementById('shCp') || document.querySelector('.sh-cp');
+        if (cpEl && !cpEl._tsjSharePatched) {
+          cpEl._tsjSharePatched = true;
+          cpEl.removeAttribute('onclick');
+          cpEl.addEventListener('click', function(e) {
+            e.preventDefault();
+            var t = window.__TSJ_SHARE_TEXT || richText;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(t);
+            } else {
+              var ta = document.createElement('textarea');
+              ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
+              document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+              document.body.removeChild(ta);
+            }
+          });
+        }
+      }
+
+      // Run immediately, then retry after job.html finishes its own DOM updates
+      applyToButtons();
+      setTimeout(applyToButtons, 300);
+      setTimeout(applyToButtons, 800);
+      setTimeout(applyToButtons, 1500);
+    })();
 
     console.log('TSJ SEO: injected for ' + title);
   }

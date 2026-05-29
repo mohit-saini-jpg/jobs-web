@@ -3490,7 +3490,31 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
           'STATE_JOBS':      { label: 'State Jobs',     icon: 'fa-solid fa-map-location-dot', headClass: 'blue',   viewUrl: '/section/state-jobs/' },
           'CENTRAL_JOBS':    { label: 'Central Jobs',   icon: 'fa-solid fa-landmark',         headClass: 'green',  viewUrl: '/section/central-jobs/' },
           'ADMISSIONS':      { label: 'Admissions',     icon: 'fa-solid fa-graduation-cap',   headClass: 'purple', viewUrl: '/section/admissions/' },
-          'LATEST_JOBS NEW': { label: 'Latest Jobs New',   icon: 'fa-solid fa-fire',  headClass: 'red',    viewUrl: '/section/latest-jobs-new/' }
+          'LATEST_JOBS NEW': { label: 'Latest Jobs New',      icon: 'fa-solid fa-fire',                headClass: 'red',    viewUrl: '/section/latest-jobs-new/' },
+          /* Qualification-based */
+          'Latest_Notifications': { label: '🔔 Latest Notifications', icon: 'fa-solid fa-bell',              headClass: 'red',    viewUrl: '/section/latest-notifications/' },
+          '10TH_Pass':     { label: '📚 10th Pass Jobs',   icon: 'fa-solid fa-graduation-cap',  headClass: 'blue',   viewUrl: '/section/10th-pass-jobs/' },
+          '8TH_Pass':      { label: '📖 8th Pass Jobs',    icon: 'fa-solid fa-book',             headClass: 'purple', viewUrl: '/section/8th-pass-jobs/' },
+          '12TH_Pass':     { label: '🎓 12th Pass Jobs',   icon: 'fa-solid fa-graduation-cap',  headClass: 'green',  viewUrl: '/section/12th-pass-jobs/' },
+          'Diploma':       { label: '📜 Diploma Jobs',     icon: 'fa-solid fa-scroll',           headClass: 'orange', viewUrl: '/section/diploma-jobs/' },
+          'ITI':           { label: '🔧 ITI Jobs',         icon: 'fa-solid fa-wrench',           headClass: 'cyan',   viewUrl: '/section/iti-jobs/' },
+          'B_Tech_BE':     { label: '💻 B.Tech / B.E. Jobs',icon: 'fa-solid fa-microchip',       headClass: 'blue',   viewUrl: '/section/btech-jobs/' },
+          'B_Com':         { label: '💼 B.Com Jobs',       icon: 'fa-solid fa-chart-line',       headClass: 'teal',   viewUrl: '/section/b-com/' },
+          'Any_Graduate':  { label: '🎓 Any Graduate Jobs',icon: 'fa-solid fa-graduation-cap',  headClass: 'blue',   viewUrl: '/section/graduation-jobs/' },
+          'Any_Post_Graduate': { label: '🏛️ Post Graduate Jobs', icon: 'fa-solid fa-user-tie',  headClass: 'purple', viewUrl: '/section/post-graduation-jobs/' },
+          /* Category-based */
+          'Railway_Jobs':  { label: '🚂 Railway Jobs',     icon: 'fa-solid fa-train',            headClass: 'orange', viewUrl: '/section/railway-jobs/' },
+          'Police_Defence':{ label: '🛡️ Police / Defence Jobs', icon: 'fa-solid fa-shield-halved', headClass: 'blue', viewUrl: '/section/police-jobs/' },
+          'Teaching_Faculty': { label: '📝 Teaching / Faculty Jobs', icon: 'fa-solid fa-chalkboard-user', headClass: 'green', viewUrl: '/section/teaching-jobs/' },
+          'Bank_Jobs':     { label: '🏦 Bank Jobs',        icon: 'fa-solid fa-building-columns', headClass: 'orange', viewUrl: '/section/bank-jobs/' },
+          'Medical_Hospital': { label: '🏥 Medical / Hospital Jobs', icon: 'fa-solid fa-stethoscope', headClass: 'red', viewUrl: '/section/healthcare-jobs/' },
+          'Last_Date_Reminder': { label: '⏰ Last Date Reminder', icon: 'fa-solid fa-clock',     headClass: 'red',    viewUrl: '/section/last-date-reminder/' },
+          /* Daily updates / CSC */
+          'Govt_Scheme_Yojna': { label: 'Govt Scheme & Yojna', icon: 'fa-solid fa-hand-holding-heart', headClass: 'green', viewUrl: '/section/govt-scheme-yojna/' },
+          'Important_CSC_PDF': { label: 'Important CSC PDF',    icon: 'fa-solid fa-file-pdf',    headClass: 'red',    viewUrl: '/section/important-csc-pdf/' },
+          'Important_CSC_Link':{ label: 'Important CSC Link',   icon: 'fa-solid fa-link',         headClass: 'blue',   viewUrl: '/section/important-csc-link/' },
+          'Top_20_Jobs':   { label: 'Top 20 Jobs',        icon: 'fa-solid fa-medal',             headClass: 'purple', viewUrl: '/section/top-20-jobs/' },
+          'Today_Updates': { label: 'Today Updates',      icon: 'fa-solid fa-newspaper',         headClass: 'orange', viewUrl: '/section/today-updates/' }
         };
 
         /* Default style pool for unknown/new categories — cycles through colors */
@@ -3708,7 +3732,20 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
 
         /* ── Build CATEGORY_CONFIG dynamically from all buckets found ── */
         /* First add known categories in preferred order */
-        var orderedKeys = ['SR_Latest_Jobs', 'SR_Result', 'SR_Admit_Card', 'SR_Admission', 'SR_Answer_Key', 'UPCOMING_JOBS', 'OFFLINE_FORM', 'LATEST_JOBS NEW', 'STATE_JOBS', 'CENTRAL_JOBS', 'ADMISSIONS'];
+        var orderedKeys = [
+          /* ROW 1 — SR: Latest Jobs, Result, Admit Card, Admission, Answer Key, Offline Form */
+          'SR_Latest_Jobs', 'SR_Result', 'SR_Admit_Card', 'SR_Admission', 'SR_Answer_Key', 'OFFLINE_FORM',
+          /* ROW 2 — Core */
+          'UPCOMING_JOBS', 'LATEST_JOBS NEW', 'STATE_JOBS', 'CENTRAL_JOBS', 'ADMISSIONS',
+          /* ROW 3 — Notifications + Qualification */
+          'Latest_Notifications', '10TH_Pass', '8TH_Pass', '12TH_Pass', 'Diploma', 'ITI',
+          'B_Tech_BE', 'B_Com', 'Any_Graduate', 'Any_Post_Graduate',
+          /* ROW 4 — Job Category */
+          'Railway_Jobs', 'Police_Defence', 'Teaching_Faculty', 'Bank_Jobs', 'Medical_Hospital',
+          'Last_Date_Reminder',
+          /* ROW 5 — Daily / CSC / Specials */
+          'Govt_Scheme_Yojna', 'Important_CSC_PDF', 'Important_CSC_Link', 'Top_20_Jobs', 'Today_Updates'
+        ];
         /* Then append any NEW unknown categories */
         Object.keys(categoryBuckets).forEach(function(k) {
           if (orderedKeys.indexOf(k) === -1) orderedKeys.push(k);
