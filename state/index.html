@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>State Government Jobs 2026 – All State Sarkari Naukri | Top Sarkari Jobs</title>
+<meta name="description" content="Latest state government jobs 2026 – Haryana, UP, Rajasthan, Bihar, MP, Delhi, Gujarat, Maharashtra, Karnataka and all state vacancies updated daily."/>
+<meta name="robots" content="index, follow"/>
+<link rel="canonical" href="https://www.topsarkarijobs.com/state/"/>
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="Top Sarkari Jobs"/>
+<meta property="og:title" content="State Government Jobs 2026 | Top Sarkari Jobs"/>
+<meta property="og:description" content="Latest state government jobs 2026 – all states updated daily."/>
+<meta property="og:url" content="https://www.topsarkarijobs.com/state/"/>
+<link rel="icon" type="image/x-icon" href="/image.ico"/>
+<link rel="stylesheet" href="/styles.css"/>
+<link rel="stylesheet" href="/fonts/fa/all.min.css"/>
+<link rel="manifest" href="/manifest.json"/>
+<meta name="theme-color" content="#0d2257"/>
+<script src="/analytics.js" defer></script>
+<script src="/tsj-menu.js" defer></script>
+<style>
+.state-hero{background:linear-gradient(135deg,#0d2257,#1a3a7c);color:#fff;padding:28px 20px 24px;border-radius:12px;margin-bottom:24px;}
+.state-hero h1{font-size:clamp(1.3rem,3vw,1.8rem);margin:0 0 8px;font-weight:700;}
+.state-hero p{margin:0;opacity:.85;font-size:.95rem;}
+.state-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
+.state-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.state-card-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:linear-gradient(135deg,#1a56db,#1e3a8a);}
+.state-card-head h2{margin:0;font-size:.9rem;font-weight:700;color:#fff;flex:1;}
+.state-card-head .s-count{background:rgba(255,255,255,.2);color:#fff;font-size:.72rem;padding:2px 8px;border-radius:12px;white-space:nowrap;}
+.state-list{list-style:none;margin:0;padding:0;}
+.state-job-link{display:flex;align-items:flex-start;gap:8px;padding:8px 12px;border-bottom:1px solid #f0f4f8;text-decoration:none;color:#1a202c;transition:background .15s;}
+.state-job-link:hover{background:#f8fafc;}
+.state-job-link:last-child{border-bottom:none;}
+.sj-num{min-width:18px;height:18px;border-radius:50%;background:#e2e8f0;font-size:9px;font-weight:700;color:#475569;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sj-info{flex:1;min-width:0;}
+.sj-name{font-size:.78rem;font-weight:600;line-height:1.4;color:#1a202c;}
+.sj-date{font-size:.68rem;color:#64748b;margin-top:2px;}
+.state-footer{padding:8px 12px;border-top:1px solid #f0f4f8;text-align:right;}
+.state-footer a{font-size:.75rem;color:#1a56db;font-weight:600;text-decoration:none;}
+.state-footer a:hover{text-decoration:underline;}
+.state-filter{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.state-filter input{flex:1;min-width:200px;padding:10px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:.9rem;outline:none;}
+.state-filter input:focus{border-color:#1a56db;box-shadow:0 0 0 3px rgba(26,86,219,.1);}
+.loading-text{text-align:center;padding:40px;color:#64748b;font-size:.95rem;}
+.state-count-bar{font-size:.82rem;color:#64748b;margin-bottom:12px;}
+@media(max-width:600px){.state-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div id="header-placeholder"></div>
+<main id="main-content">
+<div class="container">
+<nav class="breadcrumb" aria-label="breadcrumb" style="font-size:.85rem;color:#666;margin-bottom:16px;">
+<a href="/" style="color:#0d2257;text-decoration:none;">Home</a> &rsaquo; <span>State Jobs</span>
+</nav>
+
+<div class="state-hero">
+<h1><i class="fa-solid fa-map-location-dot"></i> State Government Jobs 2026</h1>
+<p>Latest sarkari naukri from all states — Haryana, UP, Bihar, Rajasthan, MP, Delhi & more. Updated daily.</p>
+</div>
+
+<div class="state-filter">
+<input type="text" id="stateSearch" placeholder="&#128269; Search state or job name..." oninput="filterStates(this.value)"/>
+</div>
+
+<div class="state-count-bar" id="countBar">Loading state jobs...</div>
+<div class="state-grid" id="stateGrid">
+<div class="loading-text"><i class="fa-solid fa-spinner fa-spin"></i> Loading state jobs...</div>
+</div>
+</div>
+</main>
+<div id="footer-placeholder"></div>
+<script src="/tsj-menu.js" defer></script>
+<script>
+(function(){
+  var grid = document.getElementById('stateGrid');
+  var countBar = document.getElementById('countBar');
+  var allCards = [];
+
+  var STATE_COLORS = [
+    '#1a56db','#9b1c1c','#14532d','#713f12','#1e3a5f',
+    '#7c3aed','#0284c7','#059669','#dc2626','#ca8a04'
+  ];
+
+  function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  function buildCard(sec, colorIdx) {
+    var color = STATE_COLORS[colorIdx % STATE_COLORS.length];
+    var items = sec.items || [];
+    var stateSlug = sec.id || '';
+    var stateName = (sec.state || sec.title || '').replace(/ Govt Jobs \d+/,'').replace(/ Government Jobs \d+/,'').trim();
+    var stateUrl = '/state/' + stateSlug + '/';
+
+    var li = '';
+    for (var i = 0; i < Math.min(items.length, 8); i++) {
+      var item = items[i];
+      var name = item.name || item.title || '';
+      if (!name) continue;
+      var href = item.slug ? '/jobs/' + item.slug + '/' : (item.url && item.url.startsWith('http') ? item.url : stateUrl);
+      var date = item.date || item.lastDate || '';
+      li += '<li><a href="' + esc(href) + '" class="state-job-link" target="' + (href.startsWith('/') ? '_self' : '_blank') + '" rel="noopener">'
+        + '<span class="sj-num">' + (i+1) + '</span>'
+        + '<span class="sj-info"><span class="sj-name">' + esc(name.slice(0,80)) + '</span>'
+        + (date ? '<span class="sj-date">' + esc(date.slice(0,20)) + '</span>' : '')
+        + '</span></a></li>';
+    }
+    if (!li) li = '<li><a href="' + esc(stateUrl) + '" class="state-job-link"><span class="sj-num">→</span><span class="sj-info"><span class="sj-name">View all ' + esc(stateName) + ' jobs</span></span></a></li>';
+
+    return '<div class="state-card" data-state="' + esc(stateName.toLowerCase()) + '" data-content="' + esc((items.map(function(i){return i.name||'';}).join(' ')).toLowerCase()) + '">'
+      + '<div class="state-card-head" style="background:linear-gradient(135deg,' + color + ',#0d2257)">'
+      + '<h2><i class="fa-solid fa-location-dot" style="margin-right:6px;"></i>' + esc(stateName) + '</h2>'
+      + '<span class="s-count">' + items.length + ' Jobs</span>'
+      + '</div>'
+      + '<ul class="state-list">' + li + '</ul>'
+      + '<div class="state-footer"><a href="' + esc(stateUrl) + '">View All ' + esc(stateName) + ' Jobs &rarr;</a></div>'
+      + '</div>';
+  }
+
+  function render(sections) {
+    if (!sections || !sections.length) {
+      grid.innerHTML = '<div class="loading-text">No state jobs found.</div>';
+      return;
+    }
+    var html = '';
+    var totalJobs = 0;
+    allCards = [];
+    sections.forEach(function(sec, i) {
+      var card = buildCard(sec, i);
+      html += card;
+      allCards.push({sec: sec, html: card, idx: i});
+      totalJobs += (sec.items||[]).length;
+    });
+    grid.innerHTML = html;
+    countBar.textContent = sections.length + ' states | ' + totalJobs + ' total vacancies';
+  }
+
+  window.filterStates = function(query) {
+    query = query.toLowerCase().trim();
+    if (!query) {
+      render(allCards.map(function(c){return c.sec;}));
+      return;
+    }
+    var filtered = allCards.filter(function(c) {
+      var stateName = (c.sec.state || c.sec.title || '').toLowerCase();
+      var content = (c.sec.items||[]).map(function(i){return (i.name||'').toLowerCase();}).join(' ');
+      return stateName.includes(query) || content.includes(query);
+    });
+    grid.innerHTML = filtered.map(function(c){return buildCard(c.sec, c.idx);}).join('');
+    countBar.textContent = filtered.length + ' states matching "' + query + '"';
+  };
+
+  // Load from Complete_Jobs_Full_Data.json
+  var CK = '__tsj_state_v2', TL = 15*60*1000;
+  try {
+    var ca = JSON.parse(sessionStorage.getItem(CK)||'null');
+    if (ca && ca.v===2 && (Date.now()-ca.ts)<TL) { render(ca.d); return; }
+  } catch(e){}
+
+  function gj(u){ return fetch(u,{cache:'default'}).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;}); }
+
+  gj('/data/Complete_Jobs_Full_Data.json')
+    .then(function(d){return d || gj('/Complete_Jobs_Full_Data.json');})
+    .then(function(d) {
+      var sections = (d && d.state_jobs && d.state_jobs.sections) || [];
+      if (!sections.length) {
+        // Fallback: try sections-index or show error
+        grid.innerHTML = '<div class="loading-text">State jobs data not available. <a href="/">Go Home</a></div>';
+        return;
+      }
+      render(sections);
+      try { sessionStorage.setItem(CK, JSON.stringify({ts:Date.now(),v:2,d:sections})); } catch(e){}
+    })
+    .catch(function(){
+      grid.innerHTML = '<div class="loading-text">Failed to load. <a href="javascript:location.reload()">Retry</a></div>';
+    });
+})();
+</script>
+</body>
+</html>
