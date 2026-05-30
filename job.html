@@ -218,6 +218,31 @@ input, textarea, select { font-size: 1rem !important; }
 
     /* Content area must not overflow grid cell */
     #jbContent{min-width:0;overflow:hidden;}
+    /* Extra sections (STATE_JOBS / CENTRAL_JOBS / ADMISSIONS) */
+    #jbExtraSections{margin-top:16px;}
+    .jp-extra-section{background:#fff;border:1px solid #e2e8f0;border-radius:12px;
+      margin-bottom:14px;overflow:hidden;}
+    .jp-extra-title{font-size:.88rem;font-weight:800;color:#0f172a;
+      background:#f8fafc;border-bottom:1px solid #e2e8f0;
+      padding:10px 16px;margin:0;}
+    .jp-extra-body{padding:12px 16px;}
+    .jp-extra-list{margin:0;padding:0 0 0 18px;list-style:disc;}
+    .jp-extra-list li{font-size:.80rem;color:#334155;padding:3px 0;line-height:1.5;}
+    .jp-extra-para{font-size:.80rem;color:#334155;margin:4px 0;line-height:1.5;}
+    .jp-extra-table{width:100%;font-size:.78rem;}
+    .jp-extra-table th,.jp-th-row td{background:#f1f5f9;font-weight:700;color:#0f172a;
+      padding:7px 10px;border:1px solid #e2e8f0;}
+    .jp-extra-table td{padding:6px 10px;border:1px solid #e2e8f0;color:#374151;vertical-align:top;}
+    .jp-tr-even td{background:#f8fafc;}
+    .jp-cell-link{font-size:.72rem;color:#1a56db;font-weight:600;
+      text-decoration:none;white-space:nowrap;}
+    .jp-cell-link:hover{text-decoration:underline;}
+    .jp-extra-links{display:flex;flex-wrap:wrap;gap:8px;padding:6px 0;}
+    .jp-link-btn{display:inline-flex;align-items:center;gap:5px;
+      padding:6px 14px;background:#1a56db;color:#fff;border-radius:8px;
+      font-size:.78rem;font-weight:700;text-decoration:none;
+      border:none;cursor:pointer;transition:background .2s;}
+    .jp-link-btn:hover{background:#1e40af;}
     #layoutJob,#layoutNonJob{min-width:0;}
 
     .jp-breadcrumb{font-size:.79rem;color:#595959;margin-bottom:10px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
@@ -543,6 +568,7 @@ input, textarea, select { font-size: 1rem !important; }
   <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
+  <script src="/tsj-menu.js?v=20260530144412" defer></script>
   <script src="/pwa-install.js?v=6.0" defer></script>
   <!-- ══ END PWA ════════════════════════════════════════════════════ -->
 </head>
@@ -1526,6 +1552,110 @@ input, textarea, select { font-size: 1rem !important; }
         secLink.href = `/view.html?section=${encodeURIComponent(row.secId)}`;
       }
 
+      /* ── Extra Sections (STATE_JOBS / CENTRAL_JOBS / ADMISSIONS rich data) ── */
+      (function renderExtraSections() {
+        const rawJob = window.__tsjRawJob;
+        if (!rawJob || !Array.isArray(rawJob.sections) || !rawJob.sections.length) return;
+
+        // Skip sections already shown as standard cards
+        const SKIP = new Set([
+          'overview','important dates','application fees','age limit details',
+          'selection process','qualification details','pay scale details',
+          'total post & qualification','post wise vacancies'
+        ]);
+
+        // Only show links with actual URLs (official links only)
+        function renderLinks(rows) {
+          // Find "Important Related Links" table
+          let html = '';
+          rows.forEach(function(row) {
+            if (!Array.isArray(row)) return;
+            row.forEach(function(cell) {
+              if (!cell || !Array.isArray(cell.links)) return;
+              cell.links.forEach(function(lk) {
+                if (lk && lk.url && lk.text) {
+                  html += '<a href="' + lk.url + '" target="_blank" rel="noopener noreferrer" class="jp-link-btn">' +
+                    '<i class="fa-solid fa-arrow-up-right-from-square"></i> ' + lk.text + '</a>';
+                }
+              });
+            });
+          });
+          return html;
+        }
+
+        function renderContent(contentArr) {
+          let html = '';
+          contentArr.forEach(function(blk) {
+            if (blk.type === 'list' && Array.isArray(blk.items)) {
+              html += '<ul class="jp-extra-list">';
+              blk.items.forEach(function(item) {
+                if (item && item.trim()) html += '<li>' + item + '</li>';
+              });
+              html += '</ul>';
+            } else if (blk.type === 'paragraph' && blk.text && blk.text.trim()) {
+              html += '<p class="jp-extra-para">' + blk.text + '</p>';
+            } else if (blk.type === 'table' && Array.isArray(blk.rows)) {
+              // Check if this is Important Related Links
+              const firstCell = ((blk.rows[0]||[])[0]||{}).text || '';
+              if (/important.*related.*link/i.test(firstCell)) {
+                const lHtml = renderLinks(blk.rows);
+                if (lHtml) html += '<div class="jp-extra-links">' + lHtml + '</div>';
+                return;
+              }
+              // Normal table
+              html += '<div class="jp-table-wrap"><table class="jp-table jp-extra-table"><tbody>';
+              blk.rows.forEach(function(row, ri) {
+                if (!Array.isArray(row)) return;
+                const tag = ri === 0 ? 'th' : 'td';
+                const cls = ri === 0 ? ' class="jp-th-row"' : (ri % 2 === 0 ? ' class="jp-tr-even"' : '');
+                html += '<tr' + cls + '>';
+                row.forEach(function(cell) {
+                  const txt = (cell && cell.text) ? cell.text : '';
+                  // Render any links in cell
+                  const links = (cell && Array.isArray(cell.links)) ? cell.links : [];
+                  const linkHtml = links.filter(function(l){ return l && l.url; }).map(function(l) {
+                    return '<a href="' + l.url + '" target="_blank" rel="noopener noreferrer" ' +
+                      'class="jp-cell-link">' + (l.text || 'Link') + ' <i class="fa-solid fa-external-link-alt" style="font-size:.7em"></i></a>';
+                  }).join(' ');
+                  html += '<' + tag + '>' + (txt || '') + (linkHtml ? '<br>' + linkHtml : '') + '</' + tag + '>';
+                });
+                html += '</tr>';
+              });
+              html += '</tbody></table></div>';
+            }
+          });
+          return html;
+        }
+
+        // Build extra sections HTML
+        let extraHTML = '';
+        rawJob.sections.forEach(function(sec) {
+          if (!sec || !sec.title) return;
+          if (SKIP.has(sec.title.toLowerCase())) return;
+          if (!Array.isArray(sec.content) || !sec.content.length) return;
+
+          // Skip if content is only empty
+          const bodyHtml = renderContent(sec.content);
+          if (!bodyHtml.trim()) return;
+
+          extraHTML +=
+            '<div class="jp-extra-section">' +
+              '<h3 class="jp-extra-title">' + sec.title + '</h3>' +
+              '<div class="jp-extra-body">' + bodyHtml + '</div>' +
+            '</div>';
+        });
+
+        if (!extraHTML) return;
+
+        // Inject after linksActions container
+        const wrap = document.getElementById('jbContent');
+        if (!wrap) return;
+        const div = document.createElement('div');
+        div.id = 'jbExtraSections';
+        div.innerHTML = extraHTML;
+        wrap.appendChild(div);
+      })();
+
       /* ── SEO ── */
       injectSEO(name, rawSlug, parsed);
     }
@@ -1725,6 +1855,9 @@ input, textarea, select { font-size: 1rem !important; }
       /* ── UPCOMING_JOBS sections[] normalization ──
          If job has sections[] array (merged_sarkari UPCOMING_JOBS format),
          extract structured fields so all downstream logic works correctly. */
+      // Store raw job for extra sections rendering
+      window.__tsjRawJob = job;
+
       if (job && Array.isArray(job.sections) && job.sections.length > 0 &&
           (!job.important_dates || Object.keys(job.important_dates || {}).length === 0)) {
         const _secs = job.sections;
@@ -2360,7 +2493,7 @@ input, textarea, select { font-size: 1rem !important; }
 
         /* ── Load state-jobs-data.json (state govt jobs with full detail.important_links) ── */
         try {
-          const rState = await fetch('/state-jobs-data.json');
+          const rState = await fetch('/data/Complete_Jobs_Full_Data.json').then(r=>r.ok?r.json().then(d=>({sections:(d.state_jobs||{}).sections||[]})):null);
           if (rState.ok) {
             const stateRaw = await rState.json();
             const stateArr = Array.isArray(stateRaw) ? stateRaw
@@ -2415,7 +2548,7 @@ input, textarea, select { font-size: 1rem !important; }
         /* Load merged_sarkari_data.json (offline form jobs) */
         let rawMerged = null;
         try {
-          const r1 = await fetch('/merged_sarkari_data.json');
+          const r1 = await fetch('/data/Complete_Jobs_Full_Data.json').then(r=>r.ok?r.json().then(d=>({jobs:(d.sarkari_data||{}).jobs||[]})):null);
           if (r1.ok) rawMerged = await r1.json();
         } catch (_) {}
 
@@ -2690,7 +2823,7 @@ input, textarea, select { font-size: 1rem !important; }
 
             if (isFromMerged) {
               try {
-                const rm = await fetch('/merged_sarkari_data.json');
+                const rm = await fetch('/data/Complete_Jobs_Full_Data.json').then(r=>r.ok?r.json().then(d=>({jobs:(d.sarkari_data||{}).jobs||[]})):null);
                 if (rm.ok) {
                   const md = await rm.json();
                   const allMerged = (md && md.jobs) ? md.jobs : [];
@@ -2736,7 +2869,7 @@ input, textarea, select { font-size: 1rem !important; }
             if (!rawSourceJson && isFromState) {
               /* Try state-jobs-data.json */
               try {
-                const rs = await fetch('/state-jobs-data.json');
+                const rs = await fetch('/data/Complete_Jobs_Full_Data.json').then(r=>r.ok?r.json().then(d=>({sections:(d.state_jobs||{}).sections||[]})):null);
                 if (rs.ok) {
                   const sd = await rs.json();
                   const stateArr = Array.isArray(sd) ? sd : (sd.states || []);
@@ -2925,5 +3058,7 @@ input, textarea, select { font-size: 1rem !important; }
     }
   })();
   </script>
+<script src="/tsj-push.js?v=20260530144412"></script>
+<script src="/tsj-version.js"?v=20260530023112 defer></script>
 </body>
 </html>
