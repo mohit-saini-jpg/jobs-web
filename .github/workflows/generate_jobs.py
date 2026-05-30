@@ -808,6 +808,15 @@ JOBS_DIR.mkdir(exist_ok=True)
 generated = skipped = errors = 0
 index = {}
 
+# FORCE_REGEN=1 or FORCE_REGENERATE=true → regenerate ALL existing pages
+# GitHub Actions workflow passes FORCE_REGENERATE; CLI can use FORCE_REGEN=1
+import os as _os
+_fr1 = _os.environ.get('FORCE_REGEN', '0').strip() == '1'
+_fr2 = _os.environ.get('FORCE_REGENERATE', 'false').strip().lower() in ('1', 'true', 'yes')
+FORCE_REGEN = _fr1 or _fr2
+if FORCE_REGEN:
+    print("   ⚡ FORCE_REGEN — all existing pages will be regenerated")
+
 for job in all_jobs:
     slug = job.get('slug', '')
     if not slug: continue
@@ -816,8 +825,8 @@ for job in all_jobs:
     out_html = out_dir / 'index.html'
     out_json = DEST / f'{slug}.json'
 
-    # Skip existing pages (preserve manually edited pages)
-    if out_html.exists():
+    # Skip existing pages UNLESS force regen is set
+    if out_html.exists() and not FORCE_REGEN:
         skipped += 1
     else:
         try:
