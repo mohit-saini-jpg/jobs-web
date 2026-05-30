@@ -1,172 +1,232 @@
-# TOP SARKARI JOBS — Auto Individual Job Notifications
-# Har 10 min mein ek INDIVIDUAL JOB PAGE ka notification
-# URL: https://www.topsarkarijobs.com/jobs/[slug]/
-# NOT section pages — actual job detail pages
+# ══════════════════════════════════════════════════════════════════════
+# WORKFLOW 4: auto-job-notifications.yml — Smart FCM Push (Every 10 Min)
+# UPGRADE: Dedup via GitHub Actions cache (no re-notify for 4 hrs)
+# UPGRADE: process.env instead of shell interpolation (apostrophe safe)
+# UPGRADE: Tries both CJ file locations
+# ══════════════════════════════════════════════════════════════════════
 
-name: Auto Job Notifications (Every 10 Min)
+name: 🔔 Auto Job Notifications (Every 10 Min)
 
 on:
   schedule:
-    - cron: '0,10,20,30,40,50 4-17 * * *'  # 9:30 AM–11 PM IST
+    - cron: '0,10,20,30,40,50 4-17 * * *'   # 9:30 AM–11 PM IST
 
   workflow_dispatch:
     inputs:
       category:
-        description: 'Category'
+        description: 'Category to notify'
         required: false
         type: choice
         options: ['', 'latest-jobs', 'result', 'admit-card', 'answer-key', 'admission']
       force_slug:
         description: 'Specific job slug (optional)'
         required: false
+        type: string
 
 jobs:
   send-job-notification:
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    permissions:
+      contents: read
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: '20' }
-      - run: npm install firebase-admin
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
-      - name: Pick Real Job & Send Notification
+      - name: 🟢 Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 📦 Install firebase-admin
+        run: npm install firebase-admin
+
+      # ── P5 FIX: Restore dedup cache (last 40 sent slugs) ─────────
+      - name: 🗂️ Restore sent-slugs dedup cache
+        id: cache-restore
+        uses: actions/cache/restore@v4
+        with:
+          path: /tmp/tsj-sent-slugs.json
+          key: tsj-sent-slugs-${{ github.run_id }}
+          restore-keys: |
+            tsj-sent-slugs-
+
+      # ── Pick job + send notification (all via process.env) ────────
+      - name: 🔔 Pick Job & Send Notification
+        id: send
         env:
-          SA_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+          SA_JSON:        ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
           FORCE_CATEGORY: ${{ inputs.category }}
-          FORCE_SLUG: ${{ inputs.force_slug }}
+          FORCE_SLUG:     ${{ inputs.force_slug }}
         run: |
           node << 'SCRIPT'
           const admin = require('firebase-admin');
           const fs    = require('fs');
 
-          // Init Firebase
-          admin.initializeApp({ credential: admin.credential.cert(JSON.parse(process.env.SA_JSON)) });
+          // ── Init Firebase ──
+          let sa;
+          try {
+            sa = JSON.parse(process.env.SA_JSON);
+          } catch(e) {
+            console.error('❌ FIREBASE_SERVICE_ACCOUNT_JSON parse failed:', e.message);
+            process.exit(1);
+          }
+          admin.initializeApp({ credential: admin.credential.cert(sa) });
           const msg  = admin.messaging();
           const SITE = 'https://www.topsarkarijobs.com';
 
-          // Category config — maps to merged_sarkari_data.json category keys
+          // ── Category config ──
           const CAT_MAP = {
             'latest-jobs': {
-              dataKey: 'SR_Latest_Jobs',
-              fallbackKey: 'Latest_Notifications',  // sections-index.json
-              topic:  'tsj-latest-jobs',
-              emoji:  '💼',
-              action: '💼 Apply Now',
-              body:   (t) => `${t.slice(0,80)} — Abhi apply karein! Last date miss mat karo.`,
+              dataKey:     'SR_Latest_Jobs',
+              fallbackKey: 'Latest_Notifications',
+              topic:       'tsj-latest-jobs',
+              emoji:       '💼',
+              action:      '💼 Apply Now',
+              body:        (t) => `${t.slice(0,80)} — Abhi apply karein! Last date miss mat karo.`,
             },
             'result': {
-              dataKey: 'SR_Result',
+              dataKey:     'SR_Result',
               fallbackKey: null,
-              topic:  'tsj-result',
-              emoji:  '🏆',
-              action: '🏆 Result Dekho',
-              body:   (t) => `${t.slice(0,80)} — Result aa gaya! Roll no. check karo.`,
+              topic:       'tsj-result',
+              emoji:       '🏆',
+              action:      '🏆 Result Dekho',
+              body:        (t) => `${t.slice(0,80)} — Result aa gaya! Roll no. check karo.`,
             },
             'admit-card': {
-              dataKey: 'SR_Admit_Card',
+              dataKey:     'SR_Admit_Card',
               fallbackKey: null,
-              topic:  'tsj-admit-card',
-              emoji:  '🎫',
-              action: '🎫 Download Karo',
-              body:   (t) => `${t.slice(0,80)} — Admit Card jari! Abhi download karo.`,
+              topic:       'tsj-admit-card',
+              emoji:       '🎫',
+              action:      '🎫 Download Karo',
+              body:        (t) => `${t.slice(0,80)} — Admit Card jari! Abhi download karo.`,
             },
             'answer-key': {
-              dataKey: 'SR_Answer_Key',
+              dataKey:     'SR_Answer_Key',
               fallbackKey: null,
-              topic:  'tsj-answer-key',
-              emoji:  '🔑',
-              action: '🔑 Dekho',
-              body:   (t) => `${t.slice(0,80)} — Answer Key jari!`,
+              topic:       'tsj-answer-key',
+              emoji:       '🔑',
+              action:      '🔑 Dekho',
+              body:        (t) => `${t.slice(0,80)} — Answer Key jari!`,
             },
             'admission': {
-              dataKey: 'SR_Admission',
+              dataKey:     'SR_Admission',
               fallbackKey: null,
-              topic:  'tsj-admission',
-              emoji:  '🎓',
-              action: '🎓 Dekho',
-              body:   (t) => `${t.slice(0,80)} — Admission form open!`,
+              topic:       'tsj-admission',
+              emoji:       '🎓',
+              action:      '🎓 Dekho',
+              body:        (t) => `${t.slice(0,80)} — Admission form open!`,
             },
           };
 
-          // Load data files
+          // ── P5 FIX: Load dedup cache ──
+          const DEDUP_FILE = '/tmp/tsj-sent-slugs.json';
+          let sentSlugs = [];
+          try {
+            if (fs.existsSync(DEDUP_FILE)) {
+              sentSlugs = JSON.parse(fs.readFileSync(DEDUP_FILE, 'utf8'));
+              if (!Array.isArray(sentSlugs)) sentSlugs = [];
+            }
+          } catch(e) { sentSlugs = []; }
+          console.log(`📋 Dedup cache: ${sentSlugs.length} recently sent slugs`);
+
+          // ── P3 FIX: Load CJ from both locations ──
           let mergedJobs = [];
           let sectionsIdx = {};
-          try { mergedJobs = JSON.parse(fs.readFileSync('merged_sarkari_data.json','utf8')).jobs || []; } catch(e){}
-          try { sectionsIdx = JSON.parse(fs.readFileSync('sections-index.json','utf8')); } catch(e){}
+          const cjPaths = ['data/Complete_Jobs_Full_Data.json', 'Complete_Jobs_Full_Data.json'];
+          for (const p of cjPaths) {
+            try {
+              if (fs.existsSync(p)) {
+                const cj = JSON.parse(fs.readFileSync(p, 'utf8'));
+                mergedJobs = (cj.sarkari_data && cj.sarkari_data.jobs) || [];
+                if (mergedJobs.length) { console.log(`✅ Loaded CJ from ${p}: ${mergedJobs.length} jobs`); break; }
+              }
+            } catch(e) {}
+          }
+          try { sectionsIdx = JSON.parse(fs.readFileSync('sections-index.json', 'utf8')); } catch(e) {}
 
-          // Pick category — rotate every 10 min
+          // ── Pick category (rotate every 10 min) ──
           const catKeys = Object.keys(CAT_MAP);
           const tick    = Math.floor(Date.now() / 600000);
           let   catKey  = process.env.FORCE_CATEGORY || catKeys[tick % catKeys.length];
           if (!CAT_MAP[catKey]) catKey = 'latest-jobs';
           const cat = CAT_MAP[catKey];
 
-          // Pick job from merged_sarkari_data (has proper slugs → /jobs/[slug]/)
+          // ── Pick job ──
           let jobSlug  = '';
           let jobTitle = '';
           let jobUrl   = '';
 
           if (process.env.FORCE_SLUG) {
             jobSlug  = process.env.FORCE_SLUG;
-            jobTitle = jobSlug.replace(/-/g,' ').replace(/\b\w/g, c=>c.toUpperCase());
+            jobTitle = jobSlug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
             jobUrl   = `${SITE}/jobs/${jobSlug}/`;
           } else {
-            // Get jobs with slugs for this category
             let items = mergedJobs.filter(j => j.category === cat.dataKey && j.slug && j.slug.length > 5);
-            
-            // Fallback to sections-index Latest_Notifications
+
             if (!items.length && cat.fallbackKey && sectionsIdx[cat.fallbackKey]) {
               items = sectionsIdx[cat.fallbackKey]
                 .filter(i => i.slug && i.slug.length > 5)
-                .map(i => ({ slug: i.slug, title: i.name || i.title || '' }));
+                .map(i => ({ slug: i.slug, title: i.name || '' }));
             }
 
             if (!items.length) {
-              // Last fallback: any Latest_Notifications
               items = (sectionsIdx['Latest_Notifications'] || [])
                 .filter(i => i.slug && i.slug.length > 5)
                 .map(i => ({ slug: i.slug, title: i.name || '' }));
             }
 
             if (!items.length) {
-              console.log('No items found for:', catKey);
+              console.log('⚠️ No items found for category:', catKey);
               process.exit(0);
             }
 
-            // Rotate index — different job each 10 min, no repeats for hours
-            const idx = tick % items.length;
-            const job = items[idx];
-            jobSlug   = job.slug;
-            jobTitle  = (job.title || jobSlug.replace(/-/g,' ')).trim();
-            // ALWAYS use /jobs/[slug]/ — individual job detail page
-            jobUrl    = `${SITE}/jobs/${jobSlug}/`;
+            // ── P5 FIX: Filter out recently sent slugs ──
+            const fresh = items.filter(i => !sentSlugs.includes(i.slug));
+            const pool  = fresh.length > 0 ? fresh : items; // fallback if all sent
+
+            if (fresh.length === 0) {
+              console.log('⚠️ All items recently sent — using oldest item anyway');
+            }
+
+            const job    = pool[tick % pool.length];
+            jobSlug      = job.slug;
+            jobTitle     = (job.title || jobSlug.replace(/-/g, ' ')).trim();
+            jobUrl       = `${SITE}/jobs/${jobSlug}/`;
           }
 
-          // Build notification
-          const shortTitle  = jobTitle.length > 62 ? jobTitle.slice(0,59)+'...' : jobTitle;
-          const notifTitle  = `${cat.emoji} ${shortTitle}`;
-          const notifBody   = cat.body(jobTitle);
+          // ── Update dedup cache ──
+          sentSlugs.push(jobSlug);
+          sentSlugs = [...new Set(sentSlugs)].slice(-40); // keep last 40 unique
+          try {
+            fs.writeFileSync(DEDUP_FILE, JSON.stringify(sentSlugs));
+          } catch(e) {}
+
+          // ── Build notification ──
+          const shortTitle = jobTitle.length > 62 ? jobTitle.slice(0, 59) + '...' : jobTitle;
+          const notifTitle = `${cat.emoji} ${shortTitle}`;
+          const notifBody  = cat.body(jobTitle);
 
           const message = {
             topic: cat.topic,
             webpush: {
               notification: {
-                title:    notifTitle,
-                body:     notifBody,
-                icon:     `${SITE}/icons/icon-192x192.png`,
-                badge:    `${SITE}/icons/icon-96x96.png`,
-                tag:      `tsj-${catKey}`,
-                renotify: true,
+                title:              notifTitle,
+                body:               notifBody,
+                icon:               `${SITE}/icons/icon-192x192.png`,
+                badge:              `${SITE}/icons/icon-96x96.png`,
+                tag:                `tsj-${catKey}`,
+                renotify:           true,
                 requireInteraction: false,
-                vibrate:  [150, 80, 150],
-                actions:  [
+                vibrate:            [150, 80, 150],
+                actions: [
                   { action: 'view',    title: cat.action },
                   { action: 'dismiss', title: '✕ Baad Mein' },
                 ],
               },
-              // CRITICAL: link in fcmOptions ensures click opens job URL
               fcmOptions: { link: jobUrl },
             },
             android: {
@@ -181,11 +241,10 @@ jobs:
               },
               data: { url: jobUrl, category: catKey, title: notifTitle, body: notifBody },
             },
-            // Data payload — sw.js reads this for notification click routing
             data: {
               title:    notifTitle,
               body:     notifBody,
-              url:      jobUrl,    // ← Individual job page URL
+              url:      jobUrl,
               category: catKey,
               slug:     jobSlug,
             },
@@ -194,18 +253,29 @@ jobs:
           msg.send(message)
             .then(id => {
               console.log('✅ Notification sent!');
-              console.log('   Category:', catKey, '→', cat.topic);
-              console.log('   Job Title:', shortTitle);
-              console.log('   Job URL:', jobUrl);   // Should be /jobs/[slug]/
-              console.log('   FCM ID:', id);
+              console.log(`   Category: ${catKey} → ${cat.topic}`);
+              console.log(`   Title: ${shortTitle}`);
+              console.log(`   URL: ${jobUrl}`);
+              console.log(`   FCM ID: ${id}`);
             })
             .catch(err => {
               console.warn('⚠️ Send result:', err.message);
-              console.log('   (Normal if 0 subscribers — will work after users subscribe)');
+              console.log('   (Normal if 0 subscribers)');
             });
           SCRIPT
 
-      - name: Summary
+      # ── P5 FIX: Save dedup cache ──────────────────────────────────
+      - name: 💾 Save sent-slugs dedup cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: /tmp/tsj-sent-slugs.json
+          key: tsj-sent-slugs-${{ github.run_id }}
+
+      - name: 📊 Summary
         run: |
           echo "### 🔔 Auto Job Notification" >> $GITHUB_STEP_SUMMARY
+          echo "- **Trigger:** \`${{ github.event_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Category:** \`${{ inputs.category || 'auto-rotate' }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Time (IST):** $(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M')" >> $GITHUB_STEP_SUMMARY
+          echo "- **Dedup:** Last 40 slugs cached, no repeat within ~4 hours" >> $GITHUB_STEP_SUMMARY

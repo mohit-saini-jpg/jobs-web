@@ -15,10 +15,10 @@
  *   GENERAL  → "10th Pass", "Admit Card"  → Category/Section Pages
  *
  * DATA SOURCES (Auto-detected):
- *   merged_sarkari_data.json — LATEST_JOBS NEW, STATE_JOBS etc
+ *   Complete_Jobs_Full_Data.json sarkari_data — LATEST_JOBS NEW, STATE_JOBS etc
  *   Complete_Jobs_Full_Data.json — qualification-wise jobs
- *   state-jobs-data.json — state-wise jobs
- *   Education_Jobs.json — education/exam entries
+ *   Complete_Jobs_Full_Data.json state_jobs — state-wise jobs
+ *   Complete_Jobs_Full_Data.json education_jobs — education/exam entries
  *   dailyupdates.json — daily updates
  * ============================================================
  */
@@ -438,7 +438,7 @@
     var now   = new Date().toISOString();
 
     /* ── merged_sarkari_data.json ── */
-    if (fileName === 'merged_sarkari_data.json') {
+    if (false && fileName === 'merged_sarkari_data_REMOVED') {
       var jobs = Array.isArray(data.jobs) ? data.jobs : [];
       jobs.forEach(function(j) {
         var title = getJobTitle(j);
@@ -491,7 +491,7 @@
     }
 
     /* ── Education_Jobs.json ── */
-    if (fileName === 'Education_Jobs.json') {
+    if (false && fileName === 'Education_Jobs_REMOVED') {
       var sections = Array.isArray(data.sections) ? data.sections : [];
       sections.forEach(function(sec) {
         var secTitle = String(sec.title || sec.id || '').trim();
@@ -579,7 +579,9 @@
     /* ── Complete_Jobs_Full_Data.json ── */
     if (fileName === 'Complete_Jobs_Full_Data.json') {
       if (data && typeof data === 'object' && !Array.isArray(data)) {
-        Object.keys(data).forEach(function(catKey) {
+        // NEW structure: data.freejobalert_categories[cat] = [job, ...]
+        var cats = data.freejobalert_categories || {};
+        Object.keys(cats).forEach(function(catKey) {
           var meta = COMPLETE_JOBS_META[catKey] || {
             id: catKey.toLowerCase().replace(/_/g, '-'),
             cat: catKey.replace(/_/g, ' '),
@@ -588,41 +590,71 @@
             label: catKey.replace(/_/g, ' '),
           };
 
-          (Array.isArray(data[catKey]) ? data[catKey] : []).forEach(function(job) {
-            var title = getJobTitle(job);
+          (Array.isArray(cats[catKey]) ? cats[catKey] : []).forEach(function(job) {
+            var bd = job.basic_details || {};
+            var title = (bd.job_title || '').trim();
             if (!title) return;
-            var org   = getJobOrg(job);
-            var bd    = job.basic_details || {};
-            var href  = buildJobHref(job, meta.id);
+            var org = (bd.organization_name || '').trim();
+            var slug = slugifyTitle(title);
+            var href = slug && slug !== 'official-link' ? '/jobs/' + slug + '/' : '';
+            if (!href) return;
             var dates = job.important_dates || {};
             var lastDate = String(
-              dates.last_date_to_apply || dates.last_date || dates.closing_date || ''
+              dates.last_date_to_apply || dates.last_date || dates['Last Date to Apply'] || ''
             ).trim();
 
             extra.push({
               title:         title,
               slug:          href,
               dept:          org,
-              postName:      bd.post_name || job.post_name || '',
-              qual:          meta.qual || job.qualification || '',
-              state:         job.state || 'All India',
+              postName:      bd.post_name || '',
+              qual:          meta.qual || '',
+              state:         'All India',
               cat:           meta.cat,
               tags:          [title, org, meta.id, meta.qual||'',
                               String(bd.short_information||'').slice(0,80),
                               'sarkari job 2026'].join(' '),
               lastDate:      lastDate,
               icon:          meta.icon,
-              lastUpdated:   bd.last_updated || job.updated_at || now,
+              lastUpdated:   bd.last_updated || now,
               sectionSource: meta.label,
               isJobDetail:   true,
             });
           });
         });
+
+        // Also index sarkari_data jobs
+        var sarkariJobs = (data.sarkari_data && data.sarkari_data.jobs) || [];
+        sarkariJobs.forEach(function(job) {
+          var title = (job.title || '').trim();
+          if (!title) return;
+          var slug = slugifyTitle(title);
+          var href = slug && slug !== 'official-link' ? '/jobs/' + slug + '/' : '';
+          if (!href) return;
+          var dates = job.important_dates || {};
+          var lastDate = String(dates['Last Date'] || dates.last_date || '').trim();
+          extra.push({
+            title:         title,
+            slug:          href,
+            dept:          job.organization || '',
+            postName:      job.post_name || '',
+            qual:          '',
+            state:         job.job_location || 'All India',
+            cat:           job.category || 'Latest Jobs',
+            tags:          [title, job.organization||'', job.category||'', 'sarkari job 2026'].join(' '),
+            lastDate:      lastDate,
+            icon:          'fa-briefcase',
+            lastUpdated:   job.listing_date || now,
+            sectionSource: 'Latest Jobs',
+            isJobDetail:   true,
+          });
+        });
       }
+      return extra;
     }
 
     /* ── state-jobs-data.json ── */
-    if (fileName === 'state-jobs-data.json') {
+    if (false && fileName === 'state-jobs-data_REMOVED') {
       var sections2 = Array.isArray(data.sections) ? data.sections
                     : Array.isArray(data) ? data : [];
       sections2.forEach(function(sec) {
@@ -763,7 +795,7 @@
    * ══════════════════════════════════════════════════════════ */
   function loadJsonFiles() {
     /* Phase 1: fast files */
-    var fastFiles = ['merged_sarkari_data.json', 'state-jobs-data.json', 'dailyupdates.json'];
+    var fastFiles = ['dailyupdates.json'];  // Only lightweight file in phase 1
 
     /* Always add category pages first — zero cost */
     mergeItems(CAT_PAGES.map(function(p) {
@@ -775,12 +807,7 @@
         searchReady = true;
         refreshOpenDropdown();
 
-        /* Phase 2: Education_Jobs (medium) */
-        setTimeout(function() {
-          fetchAndIndex('Education_Jobs.json').then(refreshOpenDropdown);
-        }, 1500);
-
-        /* Phase 3: Complete_Jobs (heavy ~22MB) — only on user interaction */
+        /* Phase 2/3: Complete_Jobs_Full_Data is the main source — load on user interaction */
         var heavyLoaded = false;
         function loadHeavy() {
           if (heavyLoaded) return;
@@ -823,7 +850,7 @@
       if (document.hidden) return;
       if (Date.now() - lastRefresh < CFG.refreshIntervalMs) return;
       lastRefresh = Date.now();
-      ['merged_sarkari_data.json', 'dailyupdates.json'].forEach(function(f) {
+      ['dailyupdates.json'].forEach(function(f) {
         fetchAndIndex(f, true).then(function(n) {
           if (n > 0) refreshOpenDropdown();
         });

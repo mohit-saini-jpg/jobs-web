@@ -177,7 +177,7 @@
 
   function loadJobData() {
     if (_jobCache && _jobCache.length) return Promise.resolve(_jobCache);
-    return fetch('/merged_sarkari_data.json', { cache: 'default' })
+    return fetch('/data/Complete_Jobs_Full_Data.json', { cache: 'default' })
       .then(function(r) { return r.json(); })
       .then(function(d) {
         // Only jobs that have slug AND their /jobs/[slug]/ page exists
@@ -447,7 +447,7 @@
     testNotification: function(category) {
       var catKey = category || 'latest-jobs';
       var cat    = CATS[catKey] || CATS['latest-jobs'];
-      fetch('/merged_sarkari_data.json', { cache:'default' })
+      fetch('/data/Complete_Jobs_Full_Data.json', { cache:'default' })
         .then(function(r){ return r.json(); })
         .then(function(d){
           var jobs = (d.jobs||[]).filter(function(j){ return j.category===cat.dataKey && j.slug && j.title; });

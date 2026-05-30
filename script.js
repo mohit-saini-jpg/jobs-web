@@ -119,14 +119,17 @@
       /* Group flat jobs into per-category buckets */
       const buckets = {};
       rawData.jobs.forEach(job => {
-        /* category field ke possible names */
         const cat = (job.category || job.sr_category || job.cat || "").trim();
         if (!cat) return;
         if (!buckets[cat]) buckets[cat] = [];
         buckets[cat].push(job);
       });
-      /* Rebuild rawData so Format A logic below handles it */
       rawData = buckets;
+    }
+
+    /* ── NEW FORMAT: Complete_Jobs_Full_Data.json has freejobalert_categories key ── */
+    if (rawData.freejobalert_categories && typeof rawData.freejobalert_categories === 'object') {
+      rawData = rawData.freejobalert_categories;
     }
 
     /* ── Build a normalised key lookup (case-insensitive + underscore-flexible) ── */
@@ -200,7 +203,7 @@
   /* ── sessionStorage cache for Complete_Jobs_Full_Data.json (60 min) ──
      Avoids re-downloading 18MB JSON on every page refresh.
      PERF FIX: Do NOT pre-fetch at script load time — it competes with critical
-     resources (merged_sarkari_data.json, CSS, fonts). Load on first access only.
+     resources (Complete_Jobs_Full_Data.json, CSS, fonts). Load on first access only.
   ── */
   const __jobsDataPromise = (function() {
     try {
@@ -799,29 +802,9 @@
       jobSearchData = [];
       try {
         /* Smart loading: full chunk for category pages, summary for homepage */
-        const _catPath = location.pathname;
-        const _FULL_CHUNK_MAP = {
-          '/category/admissions/': '/data/admissions.json',
-          '/category/admit-result/': '/data/sr-admit-card.json',
-          '/section/latest-jobs/': '/data/sr-latest-jobs.json',
-          '/section/results/': '/data/sr-result.json',
-          '/section/admit-card/': '/data/sr-admit-card.json',
-          '/section/answer-key/': '/data/sr-answer-key.json',
-          '/section/state-jobs/': '/data/state-jobs.json',
-          '/section/central-jobs/': '/data/central-jobs.json',
-          '/section/upcoming-jobs/': '/data/upcoming-jobs.json',
-          '/section/latest-jobs-new/': '/data/latest-jobs-new.json',
-          '/section/offline-form/': '/data/offline-form.json',
-          '/section/admission/': '/data/sr-admission.json',
-          '/section/admissions/': '/data/admissions.json',
-        };
-        const _chunkUrl = _FULL_CHUNK_MAP[_catPath] || '/data/merged-summary.json';
-        let _mergedRaw = await getJSON(_chunkUrl).catch(() => null);
-        /* If chunk format {category, jobs:[]}, normalize to full merged format */
-        if (_mergedRaw && Array.isArray(_mergedRaw.jobs) && !_mergedRaw.scraped_at) {
-          _mergedRaw = { jobs: _mergedRaw.jobs };
-        }
-        const [merged, complete] = [_mergedRaw, await getJSON("Complete_Jobs_Full_Data.json").catch(() => null)];
+        // All data comes from Complete_Jobs_Full_Data.json only
+        const complete = await getJSON("/data/Complete_Jobs_Full_Data.json").catch(() => null);
+        const merged = complete ? { jobs: (complete.sarkari_data || {}).jobs || [] } : null;
         const slugify = t => (t || "").toLowerCase().replace(/[^a-z0-9\s-]/g, "").replace(/[\s-]+/g, "-").slice(0, 120).replace(/^-+|-+$/g, "");
         if (merged && Array.isArray(merged.jobs)) {
           merged.jobs.forEach(j => {
@@ -2310,12 +2293,15 @@
       /* ── ONLY these 4 authoritative JSON files are used for search ──
          jobs.json / tools.json / services.json are EXCLUDED intentionally.
          ─────────────────────────────────────────────────────────────── */
-      const [merged, daily, complete, stateJobs] = await Promise.all([
-        getJSON("/data/merged-summary.json").catch(() => null),
+      const [cjData, daily] = await Promise.all([
+        getJSON("/data/Complete_Jobs_Full_Data.json").catch(() => null),
         getJSON("dailyupdates.json").catch(() => null),
-        getJSON("Complete_Jobs_Full_Data.json").catch(() => null),
-        getJSON("state-jobs-data.json").catch(() => null)
       ]);
+      const complete = cjData;
+      // sarkari_data.jobs contains SR_Latest_Jobs, SR_Result, SR_Admit_Card etc.
+      const merged = cjData ? { jobs: (cjData.sarkari_data || {}).jobs || [] } : null;
+      // state_jobs.sections contains all state jobs
+      const stateJobs = cjData ? { sections: (cjData.state_jobs || {}).sections || [] } : null;
 
       const push = (name, url, src) => {
         if(!name || !url) return;
@@ -2348,16 +2334,16 @@
         });
       }
 
-      /* 3. Complete_Jobs_Full_Data.json — title lives in basic_details.job_title */
-      if (complete && typeof complete === 'object') {
-        Object.keys(complete).forEach(k => {
-          if (!Array.isArray(complete[k])) return;
-          complete[k].forEach(i => {
+      /* 3. Complete_Jobs_Full_Data.json — freejobalert_categories */
+      if (complete && complete.freejobalert_categories) {
+        const cats = complete.freejobalert_categories;
+        Object.keys(cats).forEach(k => {
+          if (!Array.isArray(cats[k])) return;
+          cats[k].forEach(i => {
             const bd = i.basic_details || {};
             const title = bd.job_title || bd.post_name || i.title || i.name || '';
             if (!title) return;
             const slug = i.slug || slugify(title);
-            /* FIX: No 'offline-' prefix — causes slug mismatch in matchBySlug() */
             const href = slug ? '/jobs/' + slug + '/' : '#';
             push(title, href, k.replace(/_/g,' '));
           });

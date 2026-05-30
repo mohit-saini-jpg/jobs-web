@@ -577,7 +577,7 @@
     }
 
     /* ── Main Load ── */
-    fetch('/Education_Jobs.json')
+    fetch('/data/Complete_Jobs_Full_Data.json').then(r=>r.ok?r.json().then(d=>({sections:(d.education_jobs||{}).sections||[]})).catch(()=>null):null)
       .then(r => {
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.json();
@@ -707,6 +707,6 @@
   </script>
 
   <!-- External scripts -->
-  <script src="/tsj-menu.js" defer></script>
+  <script src="/tsj-menu.js"?v=20260530023112 defer></script>
 </body>
 </html>

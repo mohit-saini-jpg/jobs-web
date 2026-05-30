@@ -20,7 +20,6 @@
 /result.html                                  /section/results/                             301
 /admit-card.html                              /section/admit-card/                          301
 /search.html                                  /search/                                      301
-/search.html                                  /search/                                      301
 /jobs-index.html                              /section/latest-jobs/                         301
 
 # ── view.html?section= → /section/{slug}/ (301 permanent) ─────

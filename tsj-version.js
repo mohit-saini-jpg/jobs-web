@@ -1,37 +1,76 @@
 /**
  * ╔══════════════════════════════════════════════════════════════════╗
- * ║   ZERO-STALE CACHE ENGINE — Version & Update System v7.0       ║
+ * ║   ZERO-STALE CACHE ENGINE — Version & Update System v8.0       ║
  * ║   Top Sarkari Jobs | topsarkarijobs.com                        ║
  * ║                                                                  ║
+ * ║   ✅ Boot-time version check BEFORE any data fetch              ║
+ * ║   ✅ sessionStorage cleared instantly on version mismatch       ║
+ * ║   ✅ DATA_SCHEMA_VER='8' — one-time wipe of all v7 stale data  ║
  * ║   ✅ Fetches version.json every 5 min (no-store)               ║
  * ║   ✅ Auto-detects new deploy → shows toast → auto-reloads      ║
  * ║   ✅ Clears ALL stale localStorage/sessionStorage               ║
- * ║   ✅ Handles SW registration, update detection & takeover       ║
- * ║   ✅ Handles waiting SW → forces skipWaiting immediately        ║
- * ║   ✅ Fires on tab visibility change (catches bg tab updates)    ║
- * ║   ✅ Safe storage cleanup (no QuotaExceededError)               ║
+ * ║   ✅ SW registration with updateViaCache:'none'                 ║
+ * ║   ✅ Reload loop guard: 10s minimum between reloads             ║
+ * ║   ✅ iOS Safari safe: updateViaCache in try/catch               ║
  * ╚══════════════════════════════════════════════════════════════════╝
  */
 (function ZeroStaleEngine() {
   'use strict';
 
-  // ── Config ─────────────────────────────────────────────────────────
+  // ── Config ──────────────────────────────────────────────────────────
   var VERSION_URL      = '/version.json';
-  var CHECK_INTERVAL   = 5 * 60 * 1000; // 5 minutes
+  var CHECK_INTERVAL   = 5 * 60 * 1000;  // 5 minutes
   var LS_VER_KEY       = 'tsj_site_version';
   var LS_DATA_VER_KEY  = 'tsj_data_version';
-  var DATA_SCHEMA_VER  = '7'; // Bump when JSON structure changes
+  var DATA_SCHEMA_VER  = '8';             // RC-4 FIX: bumped from 7 → clears all v7 stale data
   var SW_URL           = '/sw.js';
   var KNOWN_VERSION    = null;
   var _checkTimer      = null;
   var _toastShown      = false;
+  var _lastReload      = 0;               // RC-7 FIX: reload loop guard
 
-  // ── Step 1: Storage Cleanup — clear stale cache on schema change ───
+  // ── STEP 0: RC-4 FIX — Boot-time version check ─────────────────────
+  // Runs synchronously BEFORE any data fetch starts.
+  // If version mismatch detected → clear sessionStorage NOW so data
+  // fetches that follow always get fresh JSON.
+  (function bootVersionCheck() {
+    try {
+      var savedVer = localStorage.getItem(LS_VER_KEY);
+      if (savedVer) {
+        // We have a saved version — fetch the current one immediately
+        // Use XMLHttpRequest (synchronous-ish path on DOMContentLoaded)
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', VERSION_URL + '?_t=' + Date.now(), false); // sync
+        xhr.setRequestHeader('Cache-Control', 'no-store');
+        xhr.setRequestHeader('Pragma', 'no-cache');
+        try {
+          xhr.send();
+          if (xhr.status === 200) {
+            var data = JSON.parse(xhr.responseText);
+            if (data && data.version && String(data.version) !== savedVer) {
+              // Version mismatch — clear sessionStorage IMMEDIATELY
+              // so the data fetches below get fresh content
+              sessionStorage.clear();
+              localStorage.setItem(LS_VER_KEY, String(data.version));
+              KNOWN_VERSION = String(data.version);
+              console.log('[TSJ-ZSCE v8] Boot check: version changed, sessionStorage cleared');
+            } else if (data && data.version) {
+              KNOWN_VERSION = String(data.version);
+            }
+          }
+        } catch (xhrErr) {
+          // Sync XHR failed (CORS, etc.) — async check will catch it
+        }
+      }
+    } catch (e) {}
+  })();
+
+  // ── Step 1: Storage Cleanup — clear stale data on schema change ────
   (function cleanStaleStorage() {
     try {
       var savedVer = localStorage.getItem(LS_DATA_VER_KEY);
       if (savedVer !== DATA_SCHEMA_VER) {
-        // Collect all tsj_/sr_/ticker keys
+        // Wipe all tsj_ / __sr_ / __tsj_ / __ticker / __cjfd / __sections / __daily keys
         var toRemove = [];
         for (var i = 0; i < localStorage.length; i++) {
           var k = localStorage.key(i);
@@ -40,37 +79,37 @@
             k.startsWith('__sr_') ||
             k.startsWith('__tsj_') ||
             k.startsWith('__ticker') ||
-            k.startsWith('__cjfd')
+            k.startsWith('__cjfd') ||
+            k.startsWith('__sections') ||
+            k.startsWith('__daily')
           )) {
             toRemove.push(k);
           }
         }
         toRemove.forEach(function(k) { localStorage.removeItem(k); });
-        // Clear ALL sessionStorage (JSON caches live here)
         sessionStorage.clear();
         localStorage.setItem(LS_DATA_VER_KEY, DATA_SCHEMA_VER);
-        console.log('[TSJ-ZSCE] Storage reset — schema bumped to v' + DATA_SCHEMA_VER);
+        console.log('[TSJ-ZSCE v8] Storage reset — schema bumped to v' + DATA_SCHEMA_VER);
       }
     } catch (e) {}
   })();
 
-  // ── Step 2: Safe sessionStorage setter ────────────────────────────
-  // Prevents QuotaExceededError on mobile devices
+  // ── Step 2: Safe sessionStorage setter ─────────────────────────────
   window.__tsjSSSet = function(key, value, maxKB) {
     maxKB = maxKB || 300;
     try {
       var str = JSON.stringify(value);
       if (str.length > maxKB * 1024) {
-        console.warn('[TSJ-ZSCE] ' + key + ' too large (' + Math.round(str.length / 1024) + 'KB), skipping');
+        console.warn('[TSJ-ZSCE v8] ' + key + ' too large (' + Math.round(str.length / 1024) + 'KB), skipping');
         return false;
       }
       sessionStorage.setItem(key, str);
       return true;
     } catch (e) {
-      // QuotaExceededError — clear old keys and retry
       try {
         var oldKeys = Object.keys(sessionStorage).filter(function(k) {
-          return k.startsWith('__sr_') || k.startsWith('__tsj_') || k.startsWith('__cjfd');
+          return k.startsWith('__sr_') || k.startsWith('__tsj_') || k.startsWith('__cjfd') ||
+                 k.startsWith('__sections') || k.startsWith('__daily');
         });
         oldKeys.forEach(function(k) { sessionStorage.removeItem(k); });
         sessionStorage.setItem(key, JSON.stringify(value));
@@ -79,7 +118,9 @@
     }
   };
 
-  // ── Step 3: Fetch version.json (always fresh, never cached) ───────
+  // ── Step 3: Fetch version.json (always fresh, RC-3 safe) ───────────
+  // Uses ?_t= cache buster + no-store header
+  // SW matches by pathname '/version.json' so ?_t= variant is also caught
   function fetchVersion() {
     return fetch(VERSION_URL + '?_t=' + Date.now(), {
       cache  : 'no-store',
@@ -89,35 +130,34 @@
     .catch(function() { return null; });
   }
 
-  // ── Step 4: Clear all caches (SW + browser) ───────────────────────
+  // ── Step 4: Clear all caches (SW + browser) ────────────────────────
   function clearAllCaches(callback) {
-    // Tell SW to nuke its caches
     if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
       navigator.serviceWorker.controller.postMessage({ type: 'CLEAR_ALL_CACHES' });
     }
-    // Clear JS-side caches
     try { sessionStorage.clear(); } catch (e) {}
-    // Clear tsj_ localStorage keys
     try {
       var toRemove = [];
       for (var i = 0; i < localStorage.length; i++) {
         var k = localStorage.key(i);
-        if (k && (k.startsWith('tsj_') || k.startsWith('__sr_') || k.startsWith('__tsj_') || k.startsWith('__cjfd'))) {
+        if (k && (
+          k.startsWith('tsj_') || k.startsWith('__sr_') ||
+          k.startsWith('__tsj_') || k.startsWith('__cjfd') ||
+          k.startsWith('__sections') || k.startsWith('__daily')
+        )) {
           toRemove.push(k);
         }
       }
       toRemove.forEach(function(k) { localStorage.removeItem(k); });
     } catch (e) {}
-
     if (typeof callback === 'function') callback();
   }
 
-  // ── Step 5: Show update toast with auto-reload countdown ──────────
+  // ── Step 5: Show update toast with countdown ───────────────────────
   function showUpdateToast(newVer) {
     if (_toastShown || document.getElementById('tsj-update-toast')) return;
     _toastShown = true;
 
-    // Inject animation styles
     if (!document.getElementById('tsj-toast-style')) {
       var style = document.createElement('style');
       style.id = 'tsj-toast-style';
@@ -156,7 +196,6 @@
         '</button>',
         '<button id="tsj-toast-close" style="background:none;border:none;color:rgba(255,255,255,.5);cursor:pointer;font-size:18px;padding:0 2px;margin-left:4px;line-height:1;flex-shrink:0;">✕</button>',
       '</div>',
-      // Countdown bar
       '<div style="height:3px;background:rgba(255,255,255,.15);border-radius:0 0 12px 12px;overflow:hidden;margin:0 -14px;">',
         '<div id="tsj-toast-bar" style="height:100%;background:#f5a623;width:100%;animation:tsjCountdown 8s linear forwards;"></div>',
       '</div>',
@@ -164,33 +203,25 @@
 
     document.body.appendChild(toast);
 
-    // Update Now button
     document.getElementById('tsj-toast-update').addEventListener('click', function() {
       clearAllCaches(function() { location.reload(true); });
     });
 
-    // Close button
-    document.getElementById('tsj-toast-close').addEventListener('click', function() {
-      toast.remove();
-      _toastShown = false;
-    });
-
-    // Auto-reload after 8 seconds
     var autoReload = setTimeout(function() {
       if (document.getElementById('tsj-update-toast')) {
         clearAllCaches(function() { location.reload(true); });
       }
     }, 8000);
 
-    // Cancel auto-reload if user closes toast
     document.getElementById('tsj-toast-close').addEventListener('click', function() {
+      toast.remove();
+      _toastShown = false;
       clearTimeout(autoReload);
     });
   }
 
-  // ── Step 6: Version check logic ────────────────────────────────────
+  // ── Step 6: Version check logic (mid-session polling) ──────────────
   function checkVersion() {
-    // Skip check if tab not visible (save bandwidth on bg tabs)
     if (typeof document.hidden !== 'undefined' && document.hidden) return;
 
     fetchVersion().then(function(data) {
@@ -198,95 +229,88 @@
       var newVer = String(data.version);
 
       if (!KNOWN_VERSION) {
-        // First check — record current version
         KNOWN_VERSION = newVer;
         try { localStorage.setItem(LS_VER_KEY, newVer); } catch (e) {}
         return;
       }
 
       if (newVer !== KNOWN_VERSION) {
-        console.log('[TSJ-ZSCE] New deploy detected: ' + KNOWN_VERSION + ' → ' + newVer);
+        console.log('[TSJ-ZSCE v8] New deploy: ' + KNOWN_VERSION + ' → ' + newVer);
         KNOWN_VERSION = newVer;
         try { localStorage.setItem(LS_VER_KEY, newVer); } catch (e) {}
 
-        // Tell SW to clear its caches too
         if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
           navigator.serviceWorker.controller.postMessage({ type: 'CLEAR_ALL_CACHES' });
         }
-        // Clear JS-side sessionStorage caches
         try { sessionStorage.clear(); } catch (e) {}
 
-        // Show toast (auto-reloads in 8s)
         showUpdateToast(newVer);
       }
     });
   }
 
-  // ── Step 7: Service Worker registration & lifecycle handling ───────
+  // ── Step 7: Service Worker registration ────────────────────────────
   if ('serviceWorker' in navigator) {
-    // Listen for SW messages
     navigator.serviceWorker.addEventListener('message', function(e) {
       var type = (e.data || {}).type;
 
-      // SW_UPDATED = new SW just took control
       if (type === 'SW_UPDATED') {
-        console.log('[TSJ-ZSCE] SW activated v' + e.data.version);
-        // Clear JS caches and reload
-        try { sessionStorage.clear(); } catch (err) {}
-        // Small delay to let SW settle before reload
-        setTimeout(function() {
-          location.reload(true);
-        }, 400);
+        console.log('[TSJ-ZSCE v8] SW activated v' + e.data.version);
+        // RC-7 FIX: only reload if enough time has passed (prevent reload loops)
+        var now = Date.now();
+        if (now - _lastReload > 10000) {
+          _lastReload = now;
+          try { sessionStorage.clear(); } catch (err) {}
+          // 800ms delay — enough for SW to fully settle after clients.claim()
+          setTimeout(function() {
+            location.reload(true);
+          }, 800);
+        } else {
+          console.log('[TSJ-ZSCE v8] Reload suppressed (too recent)');
+        }
       }
 
-      // Caches were cleared by SW
       if (type === 'CACHES_CLEARED') {
-        console.log('[TSJ-ZSCE] SW caches cleared');
+        console.log('[TSJ-ZSCE v8] SW caches cleared');
       }
     });
 
-    // Register or update SW
-    navigator.serviceWorker.register(SW_URL, {
-      scope     : '/',
-      updateViaCache: 'none', // CRITICAL: browser must always re-fetch sw.js
-    })
-    .then(function(reg) {
-      console.log('[TSJ-ZSCE] SW registered, scope:', reg.scope);
+    // RC-8 FIX: iOS Safari safe registration (updateViaCache in try/catch)
+    var swOpts = { scope: '/' };
+    try { swOpts.updateViaCache = 'none'; } catch (e) {}
 
-      // Force immediate SW update check
+    navigator.serviceWorker.register(SW_URL, swOpts)
+    .then(function(reg) {
+      console.log('[TSJ-ZSCE v8] SW registered, scope:', reg.scope);
       reg.update().catch(function() {});
 
-      // If there's already a waiting SW → force it to activate NOW
       if (reg.waiting) {
-        console.log('[TSJ-ZSCE] Waiting SW found → forcing activation');
+        console.log('[TSJ-ZSCE v8] Waiting SW found → forcing activation');
         reg.waiting.postMessage({ type: 'SKIP_WAITING' });
       }
 
-      // Watch for new SW installation
       reg.addEventListener('updatefound', function() {
         var installing = reg.installing;
         if (!installing) return;
-
         installing.addEventListener('statechange', function() {
-          if (installing.state === 'installed') {
-            if (reg.active) {
-              // New SW installed but waiting → force it
-              console.log('[TSJ-ZSCE] New SW installed → forcing skipWaiting');
-              installing.postMessage({ type: 'SKIP_WAITING' });
-            }
+          if (installing.state === 'installed' && reg.active) {
+            console.log('[TSJ-ZSCE v8] New SW installed → forcing skipWaiting');
+            installing.postMessage({ type: 'SKIP_WAITING' });
           }
         });
       });
     })
     .catch(function(err) {
-      console.warn('[TSJ-ZSCE] SW registration failed:', err);
+      console.warn('[TSJ-ZSCE v8] SW registration failed:', err);
     });
 
-    // Detect when SW controller changes (= new SW took over)
+    // Detect SW controller change (new SW took over)
     navigator.serviceWorker.addEventListener('controllerchange', function() {
-      console.log('[TSJ-ZSCE] SW controller changed → reloading');
-      // Don't reload if user triggered it manually
-      if (!_toastShown) {
+      console.log('[TSJ-ZSCE v8] SW controller changed → reloading');
+      // RC-7 FIX: only reload if toast not shown AND enough time has passed
+      var now = Date.now();
+      if (!_toastShown && (now - _lastReload > 10000)) {
+        _lastReload = now;
         try { sessionStorage.clear(); } catch (e) {}
         location.reload(true);
       }
@@ -294,12 +318,9 @@
   }
 
   // ── Step 8: Start version polling ──────────────────────────────────
-  // First check after 3 seconds (don't block page load)
   setTimeout(checkVersion, 3000);
-  // Then every 5 minutes
   _checkTimer = setInterval(checkVersion, CHECK_INTERVAL);
 
-  // Also check when tab becomes visible again (catches updates while bg)
   document.addEventListener('visibilitychange', function() {
     if (!document.hidden) checkVersion();
   });
@@ -308,16 +329,10 @@
   window.TSJVersion = {
     check      : checkVersion,
     getVersion : function() { return KNOWN_VERSION; },
-    forceUpdate: function() {
-      clearAllCaches(function() { location.reload(true); });
-    },
-    clearCache : function() {
-      clearAllCaches(function() {
-        console.log('[TSJ-ZSCE] Cache cleared');
-      });
-    },
+    forceUpdate: function() { clearAllCaches(function() { location.reload(true); }); },
+    clearCache : function() { clearAllCaches(function() { console.log('[TSJ-ZSCE v8] Cache cleared'); }); },
   };
 
-  console.log('[TSJ-ZSCE] Zero-Stale Cache Engine v7.0 initialized');
+  console.log('[TSJ-ZSCE] Zero-Stale Cache Engine v8.0 initialized');
 
 })();

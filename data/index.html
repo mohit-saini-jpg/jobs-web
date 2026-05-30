@@ -32,7 +32,8 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
   <title>Top Sarkari Jobs 2026 – Latest Government Jobs, Results, Admit Cards | India No.1</title>
   <meta name="description" content="Top Sarkari Jobs 2026: Latest government job notifications, admit cards, results, answer keys, online forms. SSC, Railway, IBPS Banking, Police, Defence, UPSC & State PSC jobs updated daily. 10th, 12th, ITI, Graduation pass jobs."/>
   <meta name="keywords" content="sarkari jobs 2026, government jobs 2026, sarkari result, admit card 2026, online form, SSC CGL 2026, railway jobs 2026, bank jobs 2026, police jobs 2026, UPSC 2026, 10th pass jobs, 12th pass jobs, ITI jobs, sarkari naukri"/>
-  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"/>
+  <meta name="robots" content="noindex, nofollow"/>
+  <meta name="robots-orig" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"/>
   <meta name="author" content="Top Sarkari Jobs"/>
   <meta name="language" content="en-IN"/>
   <meta name="geo.region" content="IN"/>
@@ -46,19 +47,18 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
   <link rel="preconnect" href="https://cykkclkfimmqbahanidg.supabase.co" crossorigin>
   <link rel="dns-prefetch" href="//cykkclkfimmqbahanidg.supabase.co"/>
   <!-- Preload critical JSON data for faster card rendering -->
-  <link rel="preload" href="/data/merged-summary.json" as="fetch" crossorigin="anonymous"/>
+  <link rel="preload" href="/data/Complete_Jobs_Full_Data.json" as="fetch" crossorigin="anonymous"/>
   <link rel="preload" href="script.min.js?v=20260526" as="script"/>
   <link rel="preload" href="dailyupdates.json" as="fetch" crossorigin="anonymous"/>
   <!-- PERF: sections-index.json — 16KB lightweight index for instant card rendering (instead of 18MB Complete_Jobs_Full_Data.json) -->
   <link rel="preload" href="sections-index.json" as="fetch" crossorigin="anonymous"/>
   <!-- PERF: shared promise for merged_sarkari_data.json — fetched only ONCE, used by ticker + section cards -->
   <script>
-  window.__mergedDataPromise = fetch('/data/merged-summary.json')
-    .then(function(r){ return r.ok ? r.json() : null; })
+  window.__mergedDataPromise = fetch('/data/Complete_Jobs_Full_Data.json')
+    .then(function(r){ return r.ok ? r.json().then(function(d){ return {jobs:(d.sarkari_data||{}).jobs||[], _cjData:d}; }) : null; })
     .catch(function(){ return null; });
   // PERF: sections-index.json — fetch starts immediately at page load (16KB vs 18MB)
   window.__sectionsIndexPromise = fetch('sections-index.json')
-    .then(function(r){ return r.ok ? r.json() : null; })
     .catch(function(){ return null; });
   </script>
 
@@ -1691,8 +1691,8 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
   <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
-  <script src="/tsj-menu.js" defer></script>
-<script src="/pwa-install.js?v=6.0" defer></script>
+  <script src="/tsj-menu.js?v=20260530060357" defer></script>
+  <script src="/pwa-install.js?v=6.0" defer></script>
   <!-- ══ END PWA ════════════════════════════════════════════════════ -->
 
   <script type="application/ld+json">
@@ -3228,7 +3228,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
     'use strict';
 
     /* ── Config ──────────────────────────────────────────── */
-    var JSON_FILE = '/data/merged-summary.json';
+    var JSON_FILE = '/data/Complete_Jobs_Full_Data.json';
     var MAX_ITEMS = 8;
 
     /*
@@ -3893,8 +3893,8 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
   })();
   </script>
 
-<script src="/tsj-push.js?v=4.0" defer></script>
-<script src="/tsj-version.js?v=20260528081756" defer></script>
+<script src="/tsj-push.js?v=20260530060357" defer></script>
+<script src="/tsj-version.js?v=20260530060357" defer></script>
 
 <script>
 /* Auto lazy-load all images not already marked */

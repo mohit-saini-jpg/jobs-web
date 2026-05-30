@@ -1677,7 +1677,8 @@
     let best = null, bestScore = 0;
 
     try {
-      const r = await fetch('/merged_sarkari_data.json');
+      // merged_sarkari_data.json removed — this renderer is disabled on static pages
+    const r = { ok: false }; // disabled
       if (r.ok) {
         const d = await r.json();
         const jobs = (d && d.jobs) ? d.jobs : (Array.isArray(d) ? d : []);

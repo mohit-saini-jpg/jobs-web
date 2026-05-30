@@ -1,26 +1,19 @@
 # ══════════════════════════════════════════════════════════════════════
-# REBUILD SECTION DATA — merged_sarkari_data.json se sab files rebuild
-# Manually run karo ya merged_sarkari_data.json push pe auto-trigger
+# WORKFLOW 3: rebuild-section-data.yml — Emergency Manual Rebuild
+# TRIGGER: workflow_dispatch ONLY (no push/schedule — avoids race condition)
+# Section data rebuild is normally handled by auto-update-jobs.yml Step 7
+# Use this ONLY for emergency manual rebuild
 # ══════════════════════════════════════════════════════════════════════
 
-name: 🔁 Rebuild Section Data from merged_sarkari_data.json
+name: 🔁 Rebuild Section Data (Manual Emergency)
 
 on:
-  # Jab bhi merged_sarkari_data.json push ho
-  push:
-    paths:
-      - 'merged_sarkari_data.json'
-
-  # Manual trigger bhi — GitHub Actions > Run workflow
   workflow_dispatch:
-
-  # Daily 1:30 AM IST (8 PM UTC) — ensure fresh data daily
-  schedule:
-    - cron: '0 20 * * *'
 
 jobs:
   rebuild:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: write
 
@@ -28,28 +21,51 @@ jobs:
       - name: 📥 Checkout
         uses: actions/checkout@v4
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 1
 
-      - name: 🐍 Setup Python
+      - name: 🐍 Setup Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: 🔖 Bump version (cache bust)
+      - name: 🟢 Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 🔖 Bump version
         run: node .github/workflows/generate_version.js
 
-      - name: 🔁 Rebuild all section data JSON files
+      - name: 🔁 Rebuild all section data from Complete_Jobs_Full_Data.json
         run: |
           python3 << 'PYEOF'
-          import json, os
+          import json, re, os
           from collections import defaultdict
+          from pathlib import Path
 
-          print("Reading merged_sarkari_data.json...")
-          with open('merged_sarkari_data.json', encoding='utf-8') as f:
-              raw = json.load(f)
+          CJ_PATH = 'data/Complete_Jobs_Full_Data.json'
+          if not os.path.exists(CJ_PATH):
+              CJ_PATH = 'Complete_Jobs_Full_Data.json'
+          if not os.path.exists(CJ_PATH):
+              print("❌ Complete_Jobs_Full_Data.json not found!")
+              exit(1)
 
-          jobs = raw.get('jobs', [])
-          print(f"Total jobs: {len(jobs)}")
+          print(f"📖 Reading {CJ_PATH}...")
+          with open(CJ_PATH, encoding='utf-8') as f:
+              cj = json.load(f)
+
+          sarkari_jobs = cj.get('sarkari_data', {}).get('jobs', [])
+          fj_cats = cj.get('freejobalert_categories', {})
+          if not fj_cats:
+              OLD_CATS = {'10TH_Pass','8TH_Pass','12TH_Pass','Diploma','ITI','B_Tech_BE',
+                          'B_Com','Any_Graduate','Any_Post_Graduate','Railway_Jobs',
+                          'Police_Defence','Teaching_Faculty','Bank_Jobs','Medical_Hospital',
+                          'Last_Date_Reminder','Latest_Notifications'}
+              fj_cats = {k: v for k, v in cj.items() if k in OLD_CATS and isinstance(v, list)}
+
+          print(f"   sarkari jobs: {len(sarkari_jobs)} | fj categories: {len(fj_cats)}")
+          os.makedirs('data', exist_ok=True)
 
           FILE_MAP = {
               'SR_Latest_Jobs':  'data/sr-latest-jobs.json',
@@ -66,38 +82,74 @@ jobs:
           }
 
           cats = defaultdict(list)
-          for j in jobs:
-              cats[j.get('category','?')].append(j)
-
-          os.makedirs('data', exist_ok=True)
+          for j in sarkari_jobs:
+              cats[j.get('category', '?')].append(j)
 
           for cat, filepath in FILE_MAP.items():
-              items = cats.get(cat, [])
-              items.sort(key=lambda x: x.get('homepage_serial', x.get('sequence', 999)))
+              items = sorted(cats.get(cat, []),
+                             key=lambda x: x.get('homepage_serial', x.get('sequence', 999)))
               with open(filepath, 'w', encoding='utf-8') as f:
-                  json.dump({'jobs': items}, f, ensure_ascii=False, separators=(',',':'))
-              top = items[0]['title'][:60] if items else '-'
-              print(f"  {filepath}: {len(items)} | #1={top}")
+                  json.dump({'jobs': items}, f, ensure_ascii=False, separators=(',', ':'))
+              print(f"  {filepath}: {len(items)}")
 
-          # Rebuild merged-summary.json (top 8 per category — homepage cards)
-          summary_jobs = []
+          summary = []
           for cat, items in cats.items():
-              items.sort(key=lambda x: x.get('homepage_serial', x.get('sequence', 999)))
-              summary_jobs.extend(items[:8])
-
-          summary = {'scraped_at': raw.get('scraped_at',''), 'jobs': summary_jobs}
+              summary.extend(sorted(items, key=lambda x: x.get('sequence',999))[:8])
           with open('data/merged-summary.json', 'w', encoding='utf-8') as f:
-              json.dump(summary, f, ensure_ascii=False, separators=(',',':'))
-          print(f"  data/merged-summary.json: {len(summary_jobs)} jobs (top 8 per cat)")
-          print("✅ Done!")
+              json.dump({'jobs': summary}, f, ensure_ascii=False, separators=(',', ':'))
+
+          def slugify(t):
+              import unicodedata
+              t = unicodedata.normalize('NFKD', str(t)).encode('ascii','ignore').decode()
+              t = t.replace('&',' and ').lower()
+              t = re.sub(r'[^a-z0-9]+','-',t).strip('-')
+              return t[:120] or 'job'
+
+          def norm_date(d):
+              if not d: return ''
+              d = str(d).strip()
+              m = re.match(r'^(\d{1,2})[-/](\d{1,2})[-/](\d{4})', d)
+              if m: return f"{m.group(3)}-{int(m.group(2)):02d}-{int(m.group(1)):02d}"
+              m = re.match(r'^(\d{4})-(\d{2})-(\d{2})', d)
+              return d[:10] if m else ''
+
+          sindex = {}
+          for cat, jobs in fj_cats.items():
+              items = []
+              for job in jobs:
+                  bd = job.get('basic_details', {})
+                  title = bd.get('job_title','').strip()
+                  if not title: continue
+                  dates = job.get('important_dates', {})
+                  ld = dates.get('last_date_to_apply') or dates.get('last_date') or ''
+                  items.append((norm_date(ld), {'slug':slugify(title),'name':title,'date':ld,
+                                                'org':bd.get('organization_name',''),
+                                                'vac':str(bd.get('total_vacancies',''))}))
+              items.sort(key=lambda x: x[0], reverse=True)
+              if items: sindex[cat] = [x[1] for x in items]
+
+          for cat, items in cats.items():
+              if cat in sindex: continue
+              si = [{'slug':slugify(j.get('title','')), 'name':j.get('title',''),
+                     'date':j.get('important_dates',{}).get('Last Date',''),
+                     'org':j.get('organization',''), 'vac':str(j.get('total_vacancy',''))}
+                    for j in items if j.get('title','').strip()]
+              if si: sindex[cat] = si
+
+          with open('sections-index.json', 'w', encoding='utf-8') as f:
+              json.dump(sindex, f, ensure_ascii=False, separators=(',', ':'))
+          total = sum(len(v) for v in sindex.values())
+          print(f"  sections-index.json: {len(sindex)} cats, {total} items")
+          print("✅ Emergency section rebuild complete")
           PYEOF
 
-      - name: 📤 Commit & Push
+      - name: 📤 Commit & Push (rebase-safe)
         run: |
-          git config user.name "github-actions[bot]"
+          git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add data/ version.json sw.js index.html
+          git add data/ sections-index.json version.json sw.js
+          git add -u '*.html' 2>/dev/null || true
 
           if git diff --staged --quiet; then
             echo "✅ No changes"
@@ -105,19 +157,21 @@ jobs:
           fi
 
           VERSION=$(node -e "console.log(require('./version.json').version)")
-          SCRAPED=$(python3 -c "import json; d=json.load(open('merged_sarkari_data.json')); print(d.get('scraped_at','')[:10])")
-          git commit -m "🔁 Section data rebuilt v${VERSION} | scraped: ${SCRAPED}"
+          git commit -m "🔁 Emergency section rebuild v${VERSION} [skip ci]"
+          git fetch origin main
+          git rebase origin/main || (git rebase --abort && git merge origin/main -X ours --no-edit)
           git push origin main
-          echo "✅ Pushed — Zero-Stale Engine will notify users"
+          echo "✅ Pushed"
 
       - name: 📊 Summary
         run: |
-          echo "### ✅ Section Data Rebuild Complete" >> $GITHUB_STEP_SUMMARY
-          echo "| File | Jobs |" >> $GITHUB_STEP_SUMMARY
-          echo "|------|------|" >> $GITHUB_STEP_SUMMARY
-          for f in data/sr-latest-jobs.json data/sr-result.json data/sr-admit-card.json data/upcoming-jobs.json data/state-jobs.json data/central-jobs.json data/merged-summary.json; do
-            if [ -f "$f" ]; then
-              COUNT=$(python3 -c "import json; d=json.load(open('$f')); print(len(d.get('jobs',[])))")
-              echo "| \`$f\` | $COUNT |" >> $GITHUB_STEP_SUMMARY
-            fi
+          VERSION=$(node -e "console.log(require('./version.json').version)" 2>/dev/null || echo "unknown")
+          echo "### 🔁 Emergency Section Rebuild" >> $GITHUB_STEP_SUMMARY
+          echo "- **Trigger:** Manual \`workflow_dispatch\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version:** \`${VERSION}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Time (IST):** $(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M')" >> $GITHUB_STEP_SUMMARY
+          echo "- **Note:** Normally handled by auto-update-jobs.yml Step 7" >> $GITHUB_STEP_SUMMARY
+          for f in data/sr-latest-jobs.json data/sr-result.json data/merged-summary.json; do
+            [ -f "$f" ] && COUNT=$(python3 -c "import json; d=json.load(open('$f')); print(len(d.get('jobs',[])))" 2>/dev/null || echo '?')
+            echo "| \`$f\` | ${COUNT} |" >> $GITHUB_STEP_SUMMARY
           done

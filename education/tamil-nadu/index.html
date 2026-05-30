@@ -5,7 +5,7 @@
   <!--
     education-detail.html — Education Jobs Detail Page
     ═══════════════════════════════════════════════════
-    Reads: Education_Jobs.json
+    Reads: /data/Complete_Jobs_Full_Data.json (education_jobs section)
     URL:   /education/haryana/?slug=ap-class-10-result-2026
            /education/haryana/  (shows section list)
 
@@ -577,7 +577,7 @@
     }
 
     /* ── Main Load ── */
-    fetch('/Education_Jobs.json')
+    fetch('/data/Complete_Jobs_Full_Data.json').then(function(r){return r.ok?r.json().then(function(d){return {sections:(d.education_jobs||{}).sections||[]};}).catch(function(){return null;}):null;})
       .then(r => {
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.json();
@@ -610,7 +610,7 @@
             contentEl.style.display = '';
             return;
           }
-          showError('Section "' + sectionId + '" not found in Education_Jobs.json.');
+          showError('Section "' + sectionId + '" not found in Complete_Jobs_Full_Data.json (education_jobs).');
           return;
         }
 
@@ -700,13 +700,13 @@
         contentEl.style.display = '';
       })
       .catch(err => {
-        showError('Failed to load Education_Jobs.json: ' + err.message);
+        showError('Failed to load Complete_Jobs_Full_Data.json (education_jobs): ' + err.message);
       });
 
   })();
   </script>
 
   <!-- External scripts -->
-  <script src="/tsj-menu.js" defer></script>
+  <script src="/tsj-menu.js"?v=20260530023112 defer></script>
 </body>
 </html>

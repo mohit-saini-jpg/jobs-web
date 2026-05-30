@@ -4,14 +4,14 @@
   <script src="/analytics.js" defer></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Top Sarkari Jobs | Latest Government Jobs, Results &amp; Admit Cards</title>
+  <title id="pageTitle">Latest Jobs 2026 – Latest Vacancies | Top Sarkari Jobs</title>
   <meta name="description" content="Browse latest Sarkari Jobs, Results, Admit Cards, Answer Keys, Admissions and Online Forms by category — updated daily on Top Sarkari Jobs." />
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-  <link id="canonicalTag" rel="canonical" href="#" />
+  <link id="canonicalTag" rel="canonical" href="https://www.topsarkarijobs.com/section/medical-hospital/"/>
   <link rel="icon" type="image/x-icon" href="/image.ico">
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta id="ogUrl" property="og:url" content="https://www.topsarkarijobs.com/" />
+  <meta id="ogUrl" property="og:url" content="https://www.topsarkarijobs.com/section/latest-jobs/"/>
   <meta id="ogTitle" property="og:title" content="Top Sarkari Jobs | Latest Government Jobs" />
   <meta id="ogDesc" property="og:description" content="Browse latest Sarkari Jobs, Results, Admit Cards, Answer Keys and Online Forms — updated daily." />
   <meta property="og:image" content="https://www.topsarkarijobs.com/image.png" />
@@ -24,9 +24,9 @@
   <meta id="twDesc" name="twitter:description" content="Browse latest Sarkari Jobs, Results, Admit Cards, Answer Keys and Online Forms — updated daily." />
   <meta name="twitter:image" content="https://www.topsarkarijobs.com/image.png" />
   <!-- Hreflang -->
-  <link id="hreflangEn" rel="alternate" hreflang="en" href="#" />
-  <link id="hreflangEnIN" rel="alternate" hreflang="en-IN" href="#" />
-  <link id="hreflangDef" rel="alternate" hreflang="x-default" href="#" />
+  <link id="hreflangEn" rel="alternate" hreflang="en" href="https://www.topsarkarijobs.com/section/latest-jobs/"/>
+  <link id="hreflangEnIN" rel="alternate" hreflang="en-IN" href="https://www.topsarkarijobs.com/section/latest-jobs/"/>
+  <link id="hreflangDef" rel="alternate" hreflang="x-default" href="https://www.topsarkarijobs.com/section/latest-jobs/"/>
   <script>
   // Dynamically set canonical, OG, Twitter, hreflang based on clean URL
   (function(){
@@ -415,33 +415,17 @@
   <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
-  <script src="/tsj-menu.js" defer></script>
-<script src="/pwa-install.js?v=6.0" defer></script>
+  <script src="/tsj-menu.js?v=20260530060357" defer></script>
+  <script src="/pwa-install.js?v=6.0" defer></script>
   <!-- ══ END PWA ════════════════════════════════════════════════════ -->
 
   <script>
-  /* ── Preload the relevant data chunk based on URL slug ── */
+  /* ── Preload Complete_Jobs_Full_Data.json — single data source ── */
   (function(){
-    var CHUNK_MAP={
-      'latest-jobs':'/data/sr-latest-jobs.json',
-      'results':'/data/sr-result.json',
-      'admit-card':'/data/sr-admit-card.json',
-      'admission':'/data/sr-admission.json',
-      'admissions':'/data/sr-admission.json',
-      'answer-key':'/data/sr-answer-key.json',
-      'upcoming-jobs':'/data/upcoming-jobs.json',
-      'state-jobs':'/data/state-jobs.json',
-      'central-jobs':'/data/central-jobs.json',
-      'latest-jobs-new':'/data/latest-jobs-new.json',
-      'offline-form':'/data/offline-form.json',
-    };
-    var m=location.pathname.match(/\/section\/([^\/]+)/);
-    if(!m)return;
-    var slug=m[1];
-    var url=CHUNK_MAP[slug];
-    if(!url)return;
     var link=document.createElement('link');
-    link.rel='preload';link.as='fetch';link.href=url;link.crossOrigin='anonymous';
+    link.rel='preload';link.as='fetch';
+    link.href='/data/Complete_Jobs_Full_Data.json';
+    link.crossOrigin='anonymous';
     document.head.appendChild(link);
   })();
   </script>
@@ -570,37 +554,37 @@
       'top-20-jobs':          {file:'daily',key:'Top 20 Jobs'},
       'today-updates':        {file:'daily',key:'Today Updates'},
       'top-headlines':        {file:'daily',key:'TOP Headlines Today'},
-      /* ── merged_sarkari_data.json — Result / Admit Card / Admission / Answer Key ── */
-      'latest-jobs':          {file:'merged',key:'SR_Latest_Jobs'},
-      'latest-govt-jobs':     {file:'merged',key:'SR_Latest_Jobs'},
-      'online-form':          {file:'merged',key:'SR_Latest_Jobs'},
-      'admit-card':           {file:'merged',key:'SR_Admit_Card'},
-      'hall-ticket':          {file:'merged',key:'SR_Admit_Card'},
-      'call-letter':          {file:'merged',key:'SR_Admit_Card'},
-      'exam-dates':           {file:'merged',key:'SR_Admit_Card'},
-      'results':              {file:'merged',key:'SR_Result'},
-      'result':               {file:'merged',key:'SR_Result'},
-      'sarkari-result':       {file:'merged',key:'SR_Result'},
-      'exam-result':          {file:'merged',key:'SR_Result'},
-      'admission':            {file:'merged',key:'SR_Admission'},
-      'admissions':           {file:'merged',key:'SR_Admission'},
-      'admission-form':       {file:'merged',key:'SR_Admission'},
-      'answer-key':           {file:'merged',key:'SR_Answer_Key'},
-      'syllabus':             {file:'merged',key:'SR_Answer_Key'},
-      'offline-form':         {file:'merged',key:'_offline'},
-      'offline-form-2026':    {file:'merged',key:'_offline'},
-      'offline-jobs':         {file:'merged',key:'_offline'},
-      /* ── merged_sarkari_data.json — Special categories ── */
-      'upcoming-jobs':        {file:'merged',key:'UPCOMING_JOBS'},
-      'latest-jobs-new':      {file:'merged',key:'LATEST_JOBS NEW'},
-      'state-jobs':           {file:'merged',key:'STATE_JOBS'},
-      'state-jobs-2026':      {file:'merged',key:'STATE_JOBS'},
-      'state-psc-jobs':       {file:'merged',key:'STATE_JOBS'},
-      'haryana-jobs':         {file:'merged',key:'STATE_JOBS'},
-      'haryana-all-state-jobs':{file:'merged',key:'STATE_JOBS'},
-      'up-jobs':              {file:'merged',key:'STATE_JOBS'},
-      'central-jobs':         {file:'merged',key:'CENTRAL_JOBS'},
-      'central-govt-jobs':    {file:'merged',key:'CENTRAL_JOBS'},
+      /* ── Complete_Jobs_Full_Data.json sarkari_data — Result / Admit Card / Admission / Answer Key ── */
+      'latest-jobs':          {file:'sarkari',key:'SR_Latest_Jobs'},
+      'latest-govt-jobs':     {file:'sarkari',key:'SR_Latest_Jobs'},
+      'online-form':          {file:'sarkari',key:'SR_Latest_Jobs'},
+      'admit-card':           {file:'sarkari',key:'SR_Admit_Card'},
+      'hall-ticket':          {file:'sarkari',key:'SR_Admit_Card'},
+      'call-letter':          {file:'sarkari',key:'SR_Admit_Card'},
+      'exam-dates':           {file:'sarkari',key:'SR_Admit_Card'},
+      'results':              {file:'sarkari',key:'SR_Result'},
+      'result':               {file:'sarkari',key:'SR_Result'},
+      'sarkari-result':       {file:'sarkari',key:'SR_Result'},
+      'exam-result':          {file:'sarkari',key:'SR_Result'},
+      'admission':            {file:'sarkari',key:'SR_Admission'},
+      'admissions':           {file:'sarkari',key:'ADMISSIONS'},
+      'admission-form':       {file:'sarkari',key:'SR_Admission'},
+      'answer-key':           {file:'sarkari',key:'SR_Answer_Key'},
+      'syllabus':             {file:'sarkari',key:'SR_Answer_Key'},
+      'offline-form':         {file:'sarkari',key:'OFFLINE_FORM'},
+      'offline-form-2026':    {file:'sarkari',key:'OFFLINE_FORM'},
+      'offline-jobs':         {file:'sarkari',key:'OFFLINE_FORM'},
+      /* ── Complete_Jobs_Full_Data.json sarkari_data — Special categories ── */
+      'upcoming-jobs':        {file:'sarkari',key:'UPCOMING_JOBS'},
+      'latest-jobs-new':      {file:'sarkari',key:'LATEST_JOBS NEW'},
+      'state-jobs':           {file:'sarkari',key:'STATE_JOBS'},
+      'state-jobs-2026':      {file:'sarkari',key:'STATE_JOBS'},
+      'state-psc-jobs':       {file:'sarkari',key:'STATE_JOBS'},
+      'haryana-jobs':         {file:'sarkari',key:'STATE_JOBS'},
+      'haryana-all-state-jobs':{file:'sarkari',key:'STATE_JOBS'},
+      'up-jobs':              {file:'sarkari',key:'STATE_JOBS'},
+      'central-jobs':         {file:'sarkari',key:'CENTRAL_JOBS'},
+      'central-govt-jobs':    {file:'sarkari',key:'CENTRAL_JOBS'},
       /* ── SSC / UPSC — map to Latest Notifications (comprehensive list) ── */
       'ssc-jobs':             {file:'complete',key:'Latest_Notifications'},
       'upsc-jobs':            {file:'complete',key:'Latest_Notifications'}
@@ -842,13 +826,15 @@
 
     function normaliseComplete(job){
       var bd=job.basic_details||{};var id=job.important_dates||{};var vd=job.vacancy_details||{};
+      var title=bd.job_title||bd.post_name||job.title||job.name||'';
+      var sl=job.slug||slugify(title);
       return{
-        name:bd.job_title||bd.post_name||job.title||job.name||'',
-        slug:job.slug||slugify(bd.job_title||job.title||job.name||''),
+        name:title,
+        slug:sl,
         date:fmtDate(id.last_date_to_apply||id.last_date||id.application_end_date||id.last_date_of_application||''),
         vac:bd.total_vacancies||vd.total||'',
         org:bd.organization_name||'',
-        url:bd.official_website||'#',
+        url:sl?'/jobs/'+sl+'/':'#',
         _updated:bd.last_updated||''
       };
     }
@@ -872,7 +858,7 @@
 
     var cfg=SLUG_MAP[currentSlug];
     /* ── DYNAMIC fallback: if slug not in SLUG_MAP, try matching against
-       any category key found in merged_sarkari_data.json at runtime.
+       any category key found in Complete_Jobs_Full_Data.json (sarkari_data) at runtime.
        Example: /section/latest-jobs-new/ → key 'LATEST_JOBS NEW'
        Converts slug → uppercase with spaces: 'latest-jobs-new' → 'LATEST JOBS NEW'
        Then also tries with underscores: 'LATEST_JOBS_NEW'
@@ -885,11 +871,21 @@
     }
 
     if(cfg&&cfg.file==='complete'){
-      fetch('/Complete_Jobs_Full_Data.json').then(function(r){return r.ok?r.json():null;}).catch(function(){return null;})
+      /* Use sections-index.json — lightweight, pre-normalised, proper /jobs/{slug}/ URLs */
+      fetch('/sections-index.json').then(function(r){return r.ok?r.json():null;}).catch(function(){return null;})
       .then(function(data){
         var arr=(data&&data[cfg.key])||[];
-        var items=arr.map(normaliseComplete).filter(function(i){return!!i.name;});
-        /* JSON order from Complete_Jobs_Full_Data.json preserved exactly */
+        /* sections-index items already have {slug, name, date, org, vac} */
+        var items=arr.map(function(item){
+          return{
+            name: item.name||'',
+            slug: item.slug||'',
+            date: item.date||'',
+            vac:  item.vac||'',
+            org:  item.org||'',
+            url:  item.slug ? '/jobs/'+item.slug+'/' : '#'
+          };
+        }).filter(function(i){return!!i.name;});
         showItems(items);setupSearch();
         if(window.__SEO_updateSection)window.__SEO_updateSection(rawSection,items);
       });
@@ -905,24 +901,23 @@
         if(window.__SEO_updateSection)window.__SEO_updateSection(rawSection,items);
       });
 
-    } else if(cfg&&cfg.file==='merged'){
+    } else if(cfg&&cfg.file==='sarkari'){
+      /* Read directly from Complete_Jobs_Full_Data.json sarkari_data section */
       (function(){
-        var CM={'SR_Latest_Jobs':'/data/sr-latest-jobs.json',
-          'SR_Result':'/data/sr-result.json',
-          'SR_Admit_Card':'/data/sr-admit-card.json',
-          'SR_Admission':'/data/sr-admission.json',
-          'SR_Answer_Key':'/data/sr-answer-key.json',
-          'UPCOMING_JOBS':'/data/upcoming-jobs.json',
-          'STATE_JOBS':'/data/state-jobs.json',
-          'CENTRAL_JOBS':'/data/central-jobs.json',
-          'ADMISSIONS':'/data/admissions.json',
-          'LATEST_JOBS NEW':'/data/latest-jobs-new.json',
-          '_offline':'/data/offline-form.json',
-          'OFFLINE_FORM':'/data/offline-form.json'};
-        return fetch(CM[cfg.key]||'/data/merged-summary.json').then(function(r){
+        return fetch('/data/Complete_Jobs_Full_Data.json').then(function(r){
           if(!r.ok)return null;
           return r.json().then(function(d){
-            return(d&&Array.isArray(d.jobs))?{jobs:d.jobs}:d;
+            var sarJobs = (d && d.sarkari_data && Array.isArray(d.sarkari_data.jobs)) ? d.sarkari_data.jobs : [];
+            // Filter by category key
+            var key = cfg.key;
+            var filtered = sarJobs.filter(function(j){ return (j.category||'').trim() === key; });
+            // Also handle _offline via apply_mode
+            if(key === '_offline' || key === 'OFFLINE_FORM'){
+              filtered = sarJobs.filter(function(j){
+                return (j.category||'').trim() === 'OFFLINE_FORM' || (j.apply_mode||'').toLowerCase() === 'offline';
+              });
+            }
+            return {jobs: filtered, sarkari_data: {jobs: sarJobs}};
           });
         }).catch(function(){return null;});
       }())
@@ -978,12 +973,13 @@
       /* Keyword fallback across all files */
       var sp=currentSlug.replace(/-/g,' ').toLowerCase();
       Promise.all([
-        fetch('/Complete_Jobs_Full_Data.json').then(function(r){return r.ok?r.json():null;}).catch(function(){return null;}),
+        fetch('/data/Complete_Jobs_Full_Data.json').then(function(r){return r.ok?r.json():null;}).catch(function(){return null;}),
         fetch('/dailyupdates.json').then(function(r){return r.ok?r.json():null;}).catch(function(){return null;})
       ]).then(function(res){
         var found=[];
         if(res[0]&&typeof res[0]==='object'){
-          Object.values(res[0]).forEach(function(sec){
+          var cats=res[0].freejobalert_categories||{};
+          Object.values(cats).forEach(function(sec){
             if(!Array.isArray(sec))return;
             sec.forEach(function(job){
               var bd=job.basic_details||{};
@@ -1116,7 +1112,7 @@
 
   <script src="/script.js?v=20260520" defer></script>
   <script src="/seo-engine.min.js?v=20260517" defer></script>
-<script src="/tsj-push.js?v=4.0" defer></script>
-<script src="/tsj-version.js" defer></script>
+<script src="/tsj-push.js?v=20260530060357" defer></script>
+<script src="/tsj-version.js"?v=20260530023112 defer></script>
 </body>
 </html>

@@ -6,8 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Top Sarkari Jobs | Latest Government Jobs, Results &amp; Admit Cards</title>
   <meta name="description" content="Browse latest Sarkari Jobs, Results, Admit Cards, Answer Keys, Admissions and Online Forms by category — updated daily on Top Sarkari Jobs." />
-  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-  <link id="canonicalTag" rel="canonical" href="#" />
+  <meta name="robots" content="noindex, nofollow"/>
+  <meta name="robots" data-orig=" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <link rel="canonical" href="https://www.topsarkarijobs.com/section/latest-jobs/"/>
   <link rel="icon" type="image/x-icon" href="/image.ico">
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
@@ -389,8 +390,8 @@
   <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
-  <script src="/tsj-menu.js" defer></script>
-<script src="/pwa-install.js?v=6.0" defer></script>
+  <script src="/tsj-menu.js?v=20260530060357" defer></script>
+  <script src="/pwa-install.js?v=6.0" defer></script>
   <!-- ══ END PWA ════════════════════════════════════════════════════ -->
 </head>
 <body>
@@ -734,7 +735,7 @@
 
     var cfg=SLUG_MAP[currentSlug];
     /* ── DYNAMIC fallback: if slug not in SLUG_MAP, try matching against
-       any category key found in merged_sarkari_data.json at runtime.
+       any category key found in Complete_Jobs_Full_Data.json (sarkari_data) at runtime.
        Example: /section/latest-jobs-new/ → key 'LATEST_JOBS NEW'
        Converts slug → uppercase with spaces: 'latest-jobs-new' → 'LATEST JOBS NEW'
        Then also tries with underscores: 'LATEST_JOBS_NEW'
@@ -771,26 +772,30 @@
       (function(){
       /* ── Load only the needed category chunk (saves 1.9 MB!) ── */
       var CHUNK_MAP={
-        'SR_Latest_Jobs':'/data/sr-latest-jobs.json',
-        'SR_Result':'/data/sr-result.json',
-        'SR_Admit_Card':'/data/sr-admit-card.json',
-        'SR_Admission':'/data/sr-admission.json',
-        'SR_Answer_Key':'/data/sr-answer-key.json',
-        'UPCOMING_JOBS':'/data/upcoming-jobs.json',
-        'STATE_JOBS':'/data/state-jobs.json',
-        'CENTRAL_JOBS':'/data/central-jobs.json',
-        'ADMISSIONS':'/data/admissions.json',
-        'LATEST_JOBS NEW':'/data/latest-jobs-new.json',
-        '_offline':'/data/offline-form.json',
-        'OFFLINE_FORM':'/data/offline-form.json'
+        // All data served from Complete_Jobs_Full_Data.json sarkari_data
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
       };
-      var chunkUrl=CHUNK_MAP[cfg.key]||'/merged_sarkari_data.json';
+      var chunkUrl=CHUNK_MAP[cfg.key]||'/data/Complete_Jobs_Full_Data.json';
       return fetch(chunkUrl).then(function(r){
         if(!r.ok)return null;
         return r.json().then(function(d){
-          /* Chunk format: {category, jobs:[]} — normalize to merged format */
+          /* Complete_Jobs_Full_Data.json — extract sarkari_data.jobs */
+          if(d&&d.sarkari_data&&Array.isArray(d.sarkari_data.jobs)){
+            var key=cfg.key;
+            var filtered=d.sarkari_data.jobs.filter(function(j){return(j.category||'').trim()===key;});
+            return{jobs:filtered,sarkari_data:{jobs:d.sarkari_data.jobs}};
+          }
           if(d&&Array.isArray(d.jobs))return{jobs:d.jobs};
-          /* Fallback: full merged format */
           return d;
         });
       }).catch(function(){return null;});
@@ -988,7 +993,7 @@
 
   <script src="/script.min.js?v=20260527" defer></script>
   <script src="/seo-engine.min.js?v=20260517" defer></script>
-<script src="/tsj-push.js?v=4.0" defer></script>
-<script src="/tsj-version.js" defer></script>
+<script src="/tsj-push.js?v=20260530060357" defer></script>
+<script src="/tsj-version.js"?v=20260530023112 defer></script>
 </body>
 </html>

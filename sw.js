@@ -1,27 +1,27 @@
 /**
  * ╔══════════════════════════════════════════════════════════════════╗
- * ║   ZERO-STALE CACHE ENGINE v7.0 — GitHub Optimized              ║
+ * ║   ZERO-STALE CACHE ENGINE v8.0 — GitHub Optimized              ║
  * ║   Top Sarkari Jobs | topsarkarijobs.com                        ║
  * ║                                                                  ║
- * ║   ✅ Auto version bump on every GitHub deploy                   ║
+ * ║   ✅ SW_VERSION replaced by generate_version.js on every deploy ║
  * ║   ✅ skipWaiting + clients.claim — instant takeover             ║
  * ║   ✅ Auto delete ALL old caches on activate                     ║
  * ║   ✅ Smart per-resource strategy (HTML/JSON/JS/CSS)             ║
- * ║   ✅ Stale-While-Revalidate for JSON data                       ║
- * ║   ✅ Cache-First for versioned JS/CSS (immutable)               ║
- * ║   ✅ Network-First for HTML pages                               ║
- * ║   ✅ Data cache size limit (no 2.8GB bloat)                     ║
- * ║   ✅ Age-based cache eviction for JSON                          ║
- * ║   ✅ Auto-notifies all open tabs on SW update                   ║
+ * ║   ✅ dailyupdates.json → Network First (always fresh)           ║
+ * ║   ✅ sections-index.json → SWR 10-min TTL (small/critical)      ║
+ * ║   ✅ /data/*.json → SWR 30-min TTL                              ║
+ * ║   ✅ version.json (any ?nc=* variant) → Always network          ║
+ * ║   ✅ 500ms delay before SW_UPDATED message (race condition fix)  ║
+ * ║   ✅ Push notifications fully preserved                         ║
  * ╚══════════════════════════════════════════════════════════════════╝
  */
 'use strict';
 
 // ══════════════════════════════════════════════════════════════
-// VERSION — Auto-updated by GitHub Actions on every deploy
-// Do NOT manually edit this line — it is replaced by CI/CD
+// VERSION — Replaced by generate_version.js on every deploy
+// Do NOT manually edit — CI/CD replaces this line
 // ══════════════════════════════════════════════════════════════
-const SW_VERSION = '20260529215122'; // auto-updated by generate_version.js
+const SW_VERSION = '20260530060357'; // auto-updated by generate_version.js
 
 // ══════════════════════════════════════════════════════════════
 // CACHE NAMES — version-stamped, old ones auto-deleted
@@ -40,10 +40,12 @@ const ALL_CACHES = Object.values(CACHE);
 const SITE               = 'https://www.topsarkarijobs.com';
 const NOTIF_ICON         = '/icons/icon-192x192.png';
 const NOTIF_BADGE        = '/icons/icon-96x96.png';
-const DATA_CACHE_MAX     = 25;              // max JSON entries cached
-const DATA_MAX_AGE_MS    = 60 * 60 * 1000; // 1 hour max age for JSON
+const DATA_CACHE_MAX     = 30;                    // max JSON entries cached (was 25)
+const DATA_MAX_AGE_MS    = 30 * 60 * 1000;        // 30 min for /data/*.json (was 1hr)
+const JSON_MAX_AGE_MS    = 15 * 60 * 1000;        // 15 min for other JSON
+const SECTIONS_MAX_AGE_MS = 10 * 60 * 1000;       // 10 min for sections-index.json
 
-// Critical files to precache on install (keep tiny — only essentials)
+// Critical files to precache on install
 const PRECACHE_STATIC = [
   '/styles.css',
   '/script.min.js',
@@ -78,7 +80,7 @@ self.addEventListener('install', e => {
     Promise.allSettled([
       caches.open(CACHE.static).then(c =>
         Promise.allSettled(PRECACHE_STATIC.map(url =>
-          c.add(url).catch(() => {}) // fail silently per file
+          c.add(url).catch(() => {})
         ))
       ),
       caches.open(CACHE.offline).then(c =>
@@ -87,15 +89,13 @@ self.addEventListener('install', e => {
         }))
       ),
     ])
-    .then(() => {
-      // ✅ CRITICAL: Skip waiting → new SW activates WITHOUT waiting for old tabs to close
-      return self.skipWaiting();
-    })
+    .then(() => self.skipWaiting())
   );
 });
 
 // ══════════════════════════════════════════════════════════════
 // ACTIVATE — delete ALL stale caches, claim all clients
+// RC-7 FIX: 500ms delay before SW_UPDATED message
 // ══════════════════════════════════════════════════════════════
 self.addEventListener('activate', e => {
   e.waitUntil(
@@ -103,16 +103,17 @@ self.addEventListener('activate', e => {
       .then(keys => {
         const stale = keys.filter(k => !ALL_CACHES.includes(k));
         if (stale.length) {
-          console.log(`[SW v7] Deleting ${stale.length} old caches:`, stale);
+          console.log(`[SW v8] Deleting ${stale.length} old caches:`, stale);
         }
         return Promise.all(stale.map(k => caches.delete(k)));
       })
+      .then(() => self.clients.claim())  // claim FIRST
       .then(() => {
-        // ✅ CRITICAL: Take control of ALL open pages immediately
-        return self.clients.claim();
+        // RC-7 FIX: Wait 500ms after clients.claim() before sending SW_UPDATED
+        // This ensures the new SW has fully claimed all clients before reload
+        return new Promise(resolve => setTimeout(resolve, 500));
       })
       .then(() => {
-        // Notify all open tabs → they will reload automatically
         return self.clients.matchAll({ type: 'window' }).then(clients => {
           clients.forEach(c => c.postMessage({
             type   : 'SW_UPDATED',
@@ -130,19 +131,15 @@ self.addEventListener('fetch', e => {
   const { request: req } = e;
   const url = new URL(req.url);
 
-  // Skip non-GET requests
   if (req.method !== 'GET') return;
-
-  // Skip browser extensions
   if (url.protocol === 'chrome-extension:' || url.protocol === 'moz-extension:') return;
-
-  // Skip all external origins (analytics, firebase, supabase, fonts, CDN)
   if (url.hostname !== self.location.hostname) return;
 
   const path = url.pathname;
 
-  // ── 1. version.json — ALWAYS fresh from network (never cache)
-  if (path === '/version.json') {
+  // ── 1. version.json (ANY variant incl ?nc=*, ?_t=*) — ALWAYS network
+  //    RC-3 FIX: match by pathname, not full URL
+  if (url.pathname === '/version.json') {
     e.respondWith(
       fetch(req, { cache: 'no-store' })
         .catch(() => new Response('{}', {
@@ -152,13 +149,25 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // ── 2. sw.js — NEVER intercept the service worker itself
+  // ── 2. sw.js — NEVER intercept
   if (path === '/sw.js') {
     e.respondWith(fetch(req, { cache: 'no-store' }));
     return;
   }
 
-  // ── 3. HTML pages — Network First (always try fresh, fallback to cache)
+  // ── 3. dailyupdates.json — RC-6 FIX: Network First (always fresh!)
+  if (path === '/dailyupdates.json' || path.endsWith('/dailyupdates.json')) {
+    e.respondWith(networkFirstJSON(req));
+    return;
+  }
+
+  // ── 4. sections-index.json — SWR with 10-min TTL (small/critical)
+  if (path === '/sections-index.json' || path.endsWith('/sections-index.json')) {
+    e.respondWith(staleWhileRevalidate(req, CACHE.data, SECTIONS_MAX_AGE_MS));
+    return;
+  }
+
+  // ── 5. HTML pages — Network First
   if (
     req.headers.get('accept')?.includes('text/html') ||
     path.endsWith('.html') ||
@@ -169,31 +178,31 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // ── 4. /data/*.json — Stale-While-Revalidate (instant + background refresh)
+  // ── 6. /data/*.json — SWR with 30-min TTL
   if (path.startsWith('/data/') && path.endsWith('.json')) {
-    e.respondWith(staleWhileRevalidate(req, CACHE.data));
+    e.respondWith(staleWhileRevalidate(req, CACHE.data, DATA_MAX_AGE_MS));
     return;
   }
 
-  // ── 5. All other JSON files — Stale-While-Revalidate with age limit
+  // ── 7. All other JSON files — SWR with 15-min TTL
   if (path.endsWith('.json')) {
-    e.respondWith(staleWhileRevalidate(req, CACHE.data));
+    e.respondWith(staleWhileRevalidate(req, CACHE.data, JSON_MAX_AGE_MS));
     return;
   }
 
-  // ── 6. Versioned JS/CSS (has ?v= param) — Cache First (immutable)
+  // ── 8. Versioned JS/CSS (has ?v= param) — Cache First (immutable)
   if (url.searchParams.has('v') && (path.endsWith('.js') || path.endsWith('.css'))) {
     e.respondWith(cacheFirstStatic(req));
     return;
   }
 
-  // ── 7. Unversioned JS/CSS — Network First (may change on redeploy)
+  // ── 9. Unversioned JS/CSS — Network First
   if (path.endsWith('.js') || path.endsWith('.css')) {
     e.respondWith(networkFirstStatic(req));
     return;
   }
 
-  // ── 8. Images — Fetch only, NO caching (prevents storage bloat)
+  // ── 10. Images — Fetch only, no caching
   if (path.match(/\.(png|jpg|jpeg|gif|webp|svg|ico|avif)$/i)) {
     e.respondWith(
       fetch(req).catch(() => new Response('', { status: 408, statusText: 'Offline' }))
@@ -201,40 +210,57 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // ── 9. Fonts — Cache First (fonts rarely change)
+  // ── 11. Fonts — Cache First
   if (path.match(/\.(woff2?|ttf|eot)$/i)) {
     e.respondWith(cacheFirstStatic(req));
     return;
   }
 
-  // ── 10. Everything else — Network First
+  // ── 12. Everything else — Network First
   e.respondWith(networkFirstHTML(req));
 });
 
 // ══════════════════════════════════════════════════════════════
+// STRATEGY: Network First → JSON (for dailyupdates.json)
+// Always network, fallback to cache only if offline
+// ══════════════════════════════════════════════════════════════
+async function networkFirstJSON(req) {
+  try {
+    const res = await fetch(req, { cache: 'no-cache' });
+    if (res.ok) {
+      const cache = await caches.open(CACHE.data);
+      const headers = new Headers(res.headers);
+      headers.set('sw-cached-at', Date.now().toString());
+      const stamped = new Response(await res.clone().blob(), {
+        status: res.status, statusText: res.statusText, headers,
+      });
+      cache.put(req, stamped);
+    }
+    return res;
+  } catch (_) {
+    const cached = await caches.match(req);
+    return cached || new Response('{}', { headers: { 'Content-Type': 'application/json' } });
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
 // STRATEGY: Network First → HTML pages
-// Always tries network, falls back to cache, then offline page
 // ══════════════════════════════════════════════════════════════
 async function networkFirstHTML(req) {
   try {
     const res = await fetch(req, { cache: 'no-cache' });
     if (res.ok || res.status === 304) {
       const cache = await caches.open(CACHE.pages);
-      cache.put(req, res.clone()); // background update
+      cache.put(req, res.clone());
     }
     return res;
   } catch (_) {
-    // Network failed → try cache
     const cached = await caches.match(req);
     if (cached) return cached;
-
-    // Try root page as fallback for sub-paths
     if (req.url !== `${self.location.origin}/`) {
       const rootCached = await caches.match('/');
       if (rootCached) return rootCached;
     }
-
-    // Last resort: offline page
     const offline = await caches.match('offline', { cacheName: CACHE.offline });
     return offline || new Response(OFFLINE_HTML, {
       headers: { 'Content-Type': 'text/html; charset=utf-8' }
@@ -260,61 +286,51 @@ async function networkFirstStatic(req) {
 }
 
 // ══════════════════════════════════════════════════════════════
-// STRATEGY: Stale-While-Revalidate → JSON data files
-// Returns cached immediately, updates cache in background
-// Evicts entries older than DATA_MAX_AGE_MS
+// STRATEGY: Stale-While-Revalidate — JSON data files
+// maxAgeMs parameter allows per-resource TTL
 // ══════════════════════════════════════════════════════════════
-async function staleWhileRevalidate(req, cacheName) {
+async function staleWhileRevalidate(req, cacheName, maxAgeMs) {
   const cache  = await caches.open(cacheName);
   const cached = await cache.match(req);
 
-  // Always fetch fresh in background
   const fetchPromise = fetch(req, { cache: 'no-cache' })
     .then(async res => {
       if (res.ok) {
-        // Clone with timestamp header for age tracking
         const headers = new Headers(res.headers);
         headers.set('sw-cached-at', Date.now().toString());
         const stamped = new Response(await res.clone().blob(), {
-          status : res.status,
-          statusText: res.statusText,
-          headers,
+          status: res.status, statusText: res.statusText, headers,
         });
         await cache.put(req, stamped);
-        await trimCache(cache, DATA_CACHE_MAX, DATA_MAX_AGE_MS);
+        await trimCache(cache, DATA_CACHE_MAX, maxAgeMs);
       }
       return res;
     })
     .catch(() => null);
 
-  // Check cache age
   if (cached) {
     const cachedAt = parseInt(cached.headers.get('sw-cached-at') || '0', 10);
     const age = Date.now() - cachedAt;
 
-    if (age < DATA_MAX_AGE_MS) {
-      // Fresh enough — return cached, update silently in bg
-      fetchPromise; // fire & forget
+    if (age < maxAgeMs) {
+      fetchPromise; // fire & forget background update
       return cached;
     }
-    // Stale — wait for network but return cache if network fails
+    // Stale — wait for network, fallback to cache
     const fresh = await fetchPromise;
     return fresh || cached;
   }
 
-  // No cache — must wait for network
   return (await fetchPromise) ||
     new Response('{}', { headers: { 'Content-Type': 'application/json' } });
 }
 
 // ══════════════════════════════════════════════════════════════
-// STRATEGY: Cache First → Versioned JS/CSS (immutable)
-// These files have ?v=XXX so a new version = new URL = cache miss
+// STRATEGY: Cache First → Versioned JS/CSS
 // ══════════════════════════════════════════════════════════════
 async function cacheFirstStatic(req) {
   const cached = await caches.match(req);
   if (cached) return cached;
-
   try {
     const res = await fetch(req);
     if (res.ok) {
@@ -328,13 +344,10 @@ async function cacheFirstStatic(req) {
 
 // ══════════════════════════════════════════════════════════════
 // CACHE TRIM — Prevent storage bloat
-// Removes entries over limit + entries older than maxAge
 // ══════════════════════════════════════════════════════════════
 async function trimCache(cache, maxEntries, maxAgeMs) {
   try {
     const keys = await cache.keys();
-
-    // Delete expired entries first
     for (const key of keys) {
       const resp = await cache.match(key);
       if (resp) {
@@ -344,8 +357,6 @@ async function trimCache(cache, maxEntries, maxAgeMs) {
         }
       }
     }
-
-    // Then trim by count
     const remaining = await cache.keys();
     if (remaining.length > maxEntries) {
       const toDelete = remaining.slice(0, remaining.length - maxEntries);
@@ -355,7 +366,7 @@ async function trimCache(cache, maxEntries, maxAgeMs) {
 }
 
 // ══════════════════════════════════════════════════════════════
-// PUSH NOTIFICATIONS
+// PUSH NOTIFICATIONS — preserved exactly
 // ══════════════════════════════════════════════════════════════
 const CAT_ACTIONS = {
   'latest-jobs' : [{ action: 'view', title: '💼 Apply Now'    }, { action: 'dismiss', title: '✕' }],
@@ -412,19 +423,16 @@ self.addEventListener('notificationclick', e => {
 self.addEventListener('message', e => {
   const { type } = e.data || {};
 
-  // Manual skip waiting (from update detection)
   if (type === 'SKIP_WAITING') {
     self.skipWaiting();
     return;
   }
 
-  // Version query
   if (type === 'GET_VERSION') {
     e.source?.postMessage({ type: 'SW_VERSION', version: SW_VERSION });
     return;
   }
 
-  // Manual full cache clear
   if (type === 'CLEAR_ALL_CACHES') {
     e.waitUntil(
       caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))))
@@ -435,7 +443,6 @@ self.addEventListener('message', e => {
     return;
   }
 
-  // Push notification tests
   if (type === 'SHOW_JOB_NOTIFICATION' || type === 'SHOW_TEST_NOTIFICATION') {
     const d = e.data.payload || {};
     e.waitUntil(

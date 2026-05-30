@@ -1,15 +1,17 @@
 /**
- * ULTRA PERFORMANCE PATCH — Top Sarkari Jobs
- * Load this file with: <script src="perf-ultra.js" defer></script>
- * ✅ Lazy loads Font Awesome icons after paint
- * ✅ IntersectionObserver for below-fold cards
- * ✅ Reduces layout shift
- * ✅ Preloads next JSON on idle
+ * ULTRA PERFORMANCE PATCH v8.0 — Top Sarkari Jobs
+ * Load: <script src="perf-ultra.js" defer></script>
+ *
+ * ✅ Lazy loads images below fold (IntersectionObserver)
+ * ✅ Passive scroll listeners (layout shift reduction)
+ * ✅ Idle prefetch: sections-index.json + dailyupdates.json (fresh, not missing files)
+ * ✅ Respects data-saver mode + online status
+ * ✅ RC-8 FIX: no more jobs-index.json / jobs-search-index.json (may not exist)
  */
 (function() {
   'use strict';
 
-  // 1) Lazy load images below fold
+  // ── 1. Lazy load images below fold ───────────────────────────────────
   if ('IntersectionObserver' in window) {
     var imgObs = new IntersectionObserver(function(entries) {
       entries.forEach(function(e) {
@@ -26,19 +28,29 @@
     });
   }
 
-  // 2) Preload JSON data files on idle (so next page visit is instant)
+  // ── 2. Idle prefetch — only files that DEFINITELY exist ──────────────
+  // RC-8 FIX: removed jobs-index.json + jobs-search-index.json (may be missing)
+  // Use { cache: 'reload' } so the SW/browser always fetches fresh copies
   if ('requestIdleCallback' in window) {
     requestIdleCallback(function() {
-      var files = ['jobs-index.json', 'jobs-search-index.json'];
+      // Respect data saver and offline state
+      if (!navigator.onLine) return;
+      if (navigator.connection && navigator.connection.saveData) return;
+
+      var files = [
+        '/sections-index.json',   // ~16KB — homepage cards (changes on every deploy)
+        '/dailyupdates.json',     // ~5KB  — today's sidebar (changes daily)
+      ];
+
       files.forEach(function(f) {
         try {
-          fetch(f, { cache: 'force-cache', priority: 'low' }).catch(function(){});
+          fetch(f, { cache: 'reload', priority: 'low' }).catch(function() {});
         } catch(e) {}
       });
     }, { timeout: 5000 });
   }
 
-  // 3) Add passive event listeners for scroll performance
+  // ── 3. Passive scroll listener ───────────────────────────────────────
   var passiveSupported = false;
   try {
     var opts = Object.defineProperty({}, 'passive', {
@@ -48,7 +60,7 @@
     window.removeEventListener('testPassive', null, opts);
   } catch(e) {}
 
-  // 4) Reduce paint on scroll — throttle non-critical updates
+  // Throttle non-critical scroll updates
   var ticking = false;
   document.addEventListener('scroll', function() {
     if (!ticking) {

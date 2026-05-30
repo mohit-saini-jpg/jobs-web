@@ -956,7 +956,7 @@
   /**
    * Enriches a job page that was loaded from a minimal dailyupdates.json
    * item by scanning Complete_Jobs_Full_Data.json for a matching entry.
-   * Also scans merged_sarkari_data.json for offline-form jobs that have
+   * Also scans Complete_Jobs_Full_Data.json sarkari_data for offline-form jobs that have
    * how_to_apply as a plain string.
    *
    * IMPORTANT GUARDS:
@@ -1007,19 +1007,7 @@
 
     let best = null, bestScore = 0;
 
-    /* ── STEP 1: Search merged_sarkari_data.json first (offline form jobs) ── */
-    /* These jobs have how_to_apply as plain strings and no /jobs/data/ files */
-    try {
-      const rm = await fetch('/merged_sarkari_data.json');
-      if (rm.ok) {
-        const mergedData = await rm.json();
-        const mergedJobs = (mergedData && mergedData.jobs) ? mergedData.jobs : [];
-        for (const job of mergedJobs) {
-          const sc = scoreJob(job);
-          if (sc > bestScore) { bestScore = sc; best = job; }
-        }
-      }
-    } catch (_) {}
+    /* ── STEP 1: merged_sarkari_data.json removed — using Complete_Jobs_Full_Data.json only ── */
 
     /* ── STEP 2: If not found in merged, try Complete_Jobs_Full_Data.json ── */
     /* HIGH threshold (0.82) — requires >82% of meaningful tokens to match */
