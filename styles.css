@@ -921,3 +921,174 @@ table td {
     min-width: 340px;
   }
 }
+
+/* ══════════════════════════════════════════════════════
+   JOB DETAIL PAGE STYLES — generate_jobs.py generated pages
+   ══════════════════════════════════════════════════════ */
+
+/* Breadcrumb */
+.breadcrumb { font-size:.85rem; color:#666; margin-bottom:1.2rem; }
+.breadcrumb a { color:#0d2257; text-decoration:none; }
+.breadcrumb a:hover { text-decoration:underline; }
+
+/* Job Hero Card */
+.job-hero-card {
+  background: linear-gradient(135deg, #0d2257 0%, #1a3a7c 100%);
+  color: #fff;
+  border-radius: 14px;
+  padding: 1.6rem 1.8rem 1.4rem;
+  margin-bottom: 1.4rem;
+  box-shadow: 0 4px 20px rgba(13,34,87,.18);
+}
+.job-hero-card h1 {
+  font-size: clamp(1.05rem, 2.5vw, 1.45rem);
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 0 0 .7rem;
+  color: #fff;
+}
+.job-org {
+  font-size: .9rem;
+  opacity: .85;
+  margin: 0 0 .9rem;
+}
+.job-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-top: .6rem;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .35rem .7rem;
+  border-radius: 20px;
+  font-size: .78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.badge-posts  { background: rgba(255,255,255,.18); color: #fff; }
+.badge-date   { background: rgba(245,166,35,.25); color: #ffd27a; }
+.badge-mode   { background: rgba(34,197,94,.2); color: #86efac; }
+
+/* Job Section Cards */
+.job-card {
+  border: 1px solid #e8ecf4;
+  border-radius: 12px;
+  margin-bottom: 1.2rem;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,.06);
+}
+.job-card-head {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  padding: .9rem 1.2rem;
+  color: #fff;
+  font-weight: 700;
+}
+.job-card-head h2 {
+  font-size: 1rem;
+  margin: 0;
+  color: #fff;
+}
+.job-card-head i { font-size: 1rem; }
+.job-card-body { padding: 1rem 1.2rem; }
+.job-text-block { font-size: .9rem; line-height: 1.65; }
+
+/* Info Table */
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.info-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .88rem;
+}
+.info-table th, .info-table td {
+  padding: .55rem .8rem;
+  border: 1px solid #e2e8f0;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.5;
+}
+.info-table th {
+  background: #f0f4ff;
+  font-weight: 600;
+  color: #0d2257;
+  white-space: nowrap;
+  width: 40%;
+}
+.info-table td { color: #333; }
+.info-table tr:nth-child(even) td { background: #fafbff; }
+
+/* Job list */
+.job-list { margin: 0; padding-left: 1.4rem; }
+.job-list li { padding: .25rem 0; font-size: .9rem; line-height: 1.6; }
+
+/* Important Links */
+.links-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+  padding: .2rem 0;
+}
+.link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .55rem 1.1rem;
+  border-radius: 8px;
+  font-size: .84rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity .2s, transform .15s;
+  white-space: nowrap;
+}
+.link-btn:hover { opacity: .88; transform: translateY(-1px); text-decoration: none; }
+.btn-green  { background: #16a34a; color: #fff; }
+.btn-blue   { background: #1d4ed8; color: #fff; }
+.btn-purple { background: #7c3aed; color: #fff; }
+.btn-orange { background: #ea580c; color: #fff; }
+.btn-yellow { background: #ca8a04; color: #fff; }
+.btn-grey   { background: #475569; color: #fff; }
+
+/* FAQ */
+.faq-list { display: flex; flex-direction: column; gap: .8rem; }
+.faq-item {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.faq-q {
+  padding: .8rem 1rem;
+  margin: 0;
+  font-size: .9rem;
+  font-weight: 600;
+  color: #0d2257;
+  background: #f8faff;
+  display: flex;
+  align-items: flex-start;
+  gap: .5rem;
+  line-height: 1.45;
+}
+.faq-q i { color: #7c3aed; margin-top: .1rem; flex-shrink: 0; }
+.faq-a { padding: .7rem 1rem; }
+.faq-a p { margin: 0; font-size: .88rem; color: #444; line-height: 1.6; }
+
+/* About section */
+#about-recruitment .job-card-body p {
+  margin-bottom: .7rem;
+  font-size: .9rem;
+  line-height: 1.7;
+  color: #333;
+}
+#about-recruitment .job-card-body p:last-child { margin-bottom: 0; }
+
+/* Mobile responsive */
+@media (max-width: 600px) {
+  .job-hero-card { padding: 1.2rem 1rem 1rem; }
+  .job-card-body { padding: .8rem; }
+  .link-btn { font-size: .78rem; padding: .5rem .8rem; }
+  .info-table th { width: 35%; font-size: .82rem; }
+  .info-table td { font-size: .82rem; }
+}

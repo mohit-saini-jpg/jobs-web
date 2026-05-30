@@ -257,6 +257,7 @@
 # ── SPA routing rewrites (200 = serve template, URL unchanged) ──
 /section/*                                    /view.html                                    200
 /jobs/*                                       /job.html                                     200
+/state/                                       /state-jobs.html                              200
 /state/*                                      /state-jobs.html                              200
 /education/*                                  /education-detail.html                        200
 /category/*                                   /category.html                                200
