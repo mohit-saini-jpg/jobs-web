@@ -577,11 +577,9 @@
     }
 
     /* ── Main Load ── */
-    fetch('/data/Complete_Jobs_Full_Data.json').then(function(r){return r.ok?r.json().then(function(d){return {sections:(d.education_jobs||{}).sections||[]};}).catch(function(){return null;}):null;})
-      .then(r => {
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        return r.json();
-      })
+    fetch('/data/Complete_Jobs_Full_Data.json')
+      .then(function(r) { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+      .then(function(cj) { return { sections: (cj.education_jobs||{}).sections||[] }; })
       .then(data => {
         const allSections = data.sections || [];
 
