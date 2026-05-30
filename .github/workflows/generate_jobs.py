@@ -369,75 +369,120 @@ def build_html(slug, job):
   <meta name="theme-color" content="#0d2257"/>
   <script src="/analytics.js" defer></script>
   <style>
-    /* ── Vacancy Table: Horizontal Scroll Fix ── */
+    /* ══ Vacancy Table: Proper Horizontal Scroll - No Character Breaking ══ */
+
+    /* Wrapper: enables horizontal scroll */
     .table-scroll {{
       width: 100%;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
       display: block;
-      border-radius: 6px;
-      margin-bottom: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      border: 1px solid #d1fae5;
     }}
+
+    /* Table itself: fixed layout OFF so columns size to content */
     .table-scroll table.info-table {{
-      width: 100%;
-      min-width: 480px;
       border-collapse: collapse;
-      font-size: 13px;
+      font-size: 13.5px;
       table-layout: auto;
+      /* KEY FIX: do NOT set width:100% — let content dictate width for scroll */
+      white-space: nowrap;   /* prevent ALL column wrapping — scroll instead */
     }}
+
+    /* Header row */
     .table-scroll table.info-table thead tr {{
-      background: linear-gradient(135deg, #0f766e, #0d9488);
+      background: linear-gradient(135deg, #059669, #047857);
       color: #fff;
     }}
     .table-scroll table.info-table thead th {{
-      padding: 10px 12px;
+      padding: 11px 16px;
       text-align: left;
-      white-space: nowrap;
       font-weight: 600;
-      border: 1px solid rgba(255,255,255,0.2);
+      font-size: 13px;
+      border: 1px solid rgba(255,255,255,0.25);
+      white-space: nowrap;
     }}
+
+    /* Body rows */
     .table-scroll table.info-table tbody tr:nth-child(even) {{
-      background: #f0fdf9;
+      background: #f0fdf4;
     }}
     .table-scroll table.info-table tbody tr:hover {{
-      background: #ccfbf1;
+      background: #dcfce7;
     }}
-    .table-scroll table.info-table td,
-    .table-scroll table.info-table th {{
-      padding: 9px 12px;
+
+    /* All cells */
+    .table-scroll table.info-table td {{
+      padding: 10px 16px;
       border: 1px solid #d1fae5;
-      vertical-align: top;
-      line-height: 1.45;
-      word-break: break-word;
+      vertical-align: middle;
+      font-size: 13px;
+      color: #1f2937;
+      /* Allow long text cells (eligibility) to wrap but keep words intact */
+      white-space: normal;
+      word-break: normal;
+      overflow-wrap: normal;
+      min-width: 100px;
     }}
+
+    /* Department / Post name column — wider */
     .table-scroll table.info-table td:first-child {{
       font-weight: 500;
-      min-width: 160px;
+      min-width: 200px;
+      white-space: normal;
+      word-break: normal;
     }}
+
+    /* Number columns (UR, OBC, SC, ST, Total) — tight, no wrap */
+    .table-scroll table.info-table td:not(:first-child):not(:last-child) {{
+      text-align: center;
+      min-width: 55px;
+      white-space: nowrap;
+    }}
+
+    /* Last column (eligibility / total) */
+    .table-scroll table.info-table td:last-child {{
+      min-width: 140px;
+      white-space: normal;
+      word-break: normal;
+    }}
+
+    /* Table note heading above table */
     .table-note {{
       font-size: 12.5px;
-      color: #374151;
-      background: #f0fdf4;
-      border-left: 3px solid #059669;
-      padding: 8px 12px;
-      margin-bottom: 8px;
-      border-radius: 0 4px 4px 0;
+      font-weight: 600;
+      color: #065f46;
+      background: #ecfdf5;
+      border-left: 4px solid #059669;
+      padding: 10px 14px;
+      margin-bottom: 10px;
+      border-radius: 0 6px 6px 0;
       line-height: 1.5;
+      white-space: normal;
+      word-break: normal;
     }}
-    /* Mobile: show scroll hint shadow */
+
+    /* Scroll hint: fading right edge on mobile */
     @media (max-width: 640px) {{
       .table-scroll {{
-        box-shadow: inset -8px 0 8px -4px rgba(0,0,0,0.08);
+        /* Gradient hint that table continues to the right */
+        background:
+          linear-gradient(to right, white 30%, rgba(255,255,255,0)) left,
+          linear-gradient(to left,  white 30%, rgba(255,255,255,0)) right,
+          radial-gradient(farthest-side at 0 50%, rgba(0,0,0,0.12), transparent) left,
+          radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,0.12), transparent) right;
+        background-repeat: no-repeat;
+        background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+        background-attachment: local, local, scroll, scroll;
       }}
       .table-scroll table.info-table {{
-        font-size: 12px;
+        font-size: 12.5px;
       }}
       .table-scroll table.info-table td,
-      .table-scroll table.info-table th {{
-        padding: 7px 9px;
-      }}
-      .table-scroll table.info-table td:first-child {{
-        min-width: 120px;
+      .table-scroll table.info-table thead th {{
+        padding: 8px 12px;
       }}
     }}
   </style>
