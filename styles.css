@@ -1092,3 +1092,112 @@ table td {
   .info-table th { width: 35%; font-size: .82rem; }
   .info-table td { font-size: .82rem; }
 }
+
+/* ══════════════════════════════════════════════════════
+   VACANCY TABLE FIX — Horizontal Scroll, No Word Break
+   ══════════════════════════════════════════════════════ */
+
+/* Override global word-break for info-table (vacancy tables) */
+.table-scroll {
+  width: 100%;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+  display: block;
+  margin-bottom: 14px;
+  border-radius: 8px;
+  border: 1px solid #d1fae5;
+}
+
+/* Multi-column vacancy table — let content set width, scroll triggers naturally */
+.table-scroll table.info-table {
+  width: auto !important;       /* NOT 100% — content drives width → scroll works */
+  min-width: 100%;              /* at least full width when few cols */
+  border-collapse: collapse;
+  table-layout: auto !important;
+}
+
+/* CRITICAL: override global word-break: break-word for info-table cells */
+.table-scroll table.info-table th,
+.table-scroll table.info-table td {
+  white-space: nowrap !important;      /* keep all words on one line → scroll */
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+  padding: 9px 14px;
+  border: 1px solid #e2e8f0;
+  vertical-align: middle;
+}
+
+/* Header row styling */
+.table-scroll table.info-table thead th,
+.table-scroll table.info-table tr:first-child td {
+  background: linear-gradient(90deg, #059669, #047857) !important;
+  color: #fff !important;
+  font-weight: 600;
+  font-size: 13px;
+  width: auto !important;          /* remove the 35%/40% fixed width */
+}
+
+/* Allow text wrapping ONLY for long text columns (dept name, eligibility) */
+.table-scroll table.info-table td:first-child {
+  white-space: normal !important;
+  min-width: 160px;
+  max-width: 260px;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+}
+.table-scroll table.info-table td:last-child {
+  white-space: normal !important;
+  min-width: 100px;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+}
+
+/* Number/count columns — tight, no wrap */
+.table-scroll table.info-table td:not(:first-child):not(:last-child) {
+  text-align: center;
+  min-width: 50px;
+  white-space: nowrap !important;
+}
+
+/* Zebra striping */
+.table-scroll table.info-table tbody tr:nth-child(even) td {
+  background: #f0fdf4;
+}
+.table-scroll table.info-table tbody tr:hover td {
+  background: #dcfce7;
+}
+
+/* Table caption / note */
+.table-note {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #065f46;
+  background: #ecfdf5;
+  border-left: 4px solid #059669;
+  padding: 9px 14px;
+  margin: 8px 0;
+  border-radius: 0 6px 6px 0;
+  line-height: 1.55;
+  white-space: normal;
+}
+
+/* Mobile scroll hint */
+@media (max-width: 640px) {
+  .table-scroll {
+    box-shadow: inset -6px 0 8px -6px rgba(0,0,0,0.12);
+  }
+  .table-scroll table.info-table th,
+  .table-scroll table.info-table td {
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+  .table-scroll table.info-table td:first-child {
+    min-width: 130px;
+    max-width: 200px;
+  }
+  /* Override mobile width:35% fix */
+  .table-scroll table.info-table th {
+    width: auto !important;
+    font-size: 12px !important;
+  }
+}
