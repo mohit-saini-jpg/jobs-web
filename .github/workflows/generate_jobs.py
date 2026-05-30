@@ -99,30 +99,78 @@ def normalize_title(t):
 
 # ─── Section renderer ─────────────────────────────────────────────────────────
 def render_tables(tables_data):
-    """Render 'tables' key: list of {table_name, rows} objects where rows is list of lists."""
+    """Render 'tables' key: list of {table_name, rows} objects where rows is list of lists.
+    Auto-detects mid-table header rows (different column count or looks like a header)
+    and splits them into separate sub-tables for clean display.
+    """
     if not tables_data or not isinstance(tables_data, list): return ''
     html = ''
+
     for tbl in tables_data:
         if not isinstance(tbl, dict): continue
         tname = tbl.get('table_name', '')
         rows  = tbl.get('rows', [])
         if not rows: continue
-        # table_name as a heading paragraph
+
+        # Show table caption
         name_html = f'<p class="table-note"><strong>{esc(tname)}</strong></p>' if tname else ''
-        # First row = header
-        header_row = rows[0] if rows else []
-        body_rows  = rows[1:]
-        thead = ''
-        if header_row:
-            ths = ''.join(f'<th>{esc(str(c))}</th>' for c in header_row)
+        html += name_html
+
+        # ── Smart split: detect sub-table boundaries ──────────────────
+        # A row is a "new header" if:
+        #   (a) Its column count differs from current header, OR
+        #   (b) All its cells look like labels (no pure digit cells)
+        def looks_like_header(row, current_cols):
+            if not row: return False
+            col_count = len(row)
+            # Different column count from previous table → definitely new header
+            if current_cols is not None and col_count != current_cols:
+                return True
+            # All values are non-numeric strings → likely a header row
+            all_text = all(not str(c).strip().isdigit() for c in row)
+            return all_text
+
+        # Split rows into sub-tables
+        sub_tables = []   # list of (header_row, body_rows)
+        current_header = None
+        current_body   = []
+        current_cols   = None
+
+        for i, row in enumerate(rows):
+            if i == 0:
+                # First row is always the first header
+                current_header = row
+                current_cols   = len(row)
+                current_body   = []
+            elif looks_like_header(row, current_cols):
+                # Save previous sub-table
+                if current_header is not None:
+                    sub_tables.append((current_header, current_body))
+                current_header = row
+                current_cols   = len(row)
+                current_body   = []
+            else:
+                current_body.append(row)
+
+        # Save last sub-table
+        if current_header is not None:
+            sub_tables.append((current_header, current_body))
+
+        # ── Render each sub-table ──────────────────────────────────────
+        for (hdr, body) in sub_tables:
+            if not hdr: continue
+            ths   = ''.join(f'<th>{esc(str(c))}</th>' for c in hdr)
             thead = f'<thead><tr>{ths}</tr></thead>'
-        tbody_inner = ''
-        for row in body_rows:
-            if not row: continue
-            tds = ''.join(f'<td>{esc(str(c))}</td>' for c in row)
-            tbody_inner += f'<tr>{tds}</tr>'
-        tbody = f'<tbody>{tbody_inner}</tbody>' if tbody_inner else ''
-        html += f'{name_html}<div class="table-scroll"><table class="info-table">{thead}{tbody}</table></div>'
+            tbody_inner = ''
+            for row in body:
+                if not row: continue
+                # Pad short rows to match header width
+                padded = list(row) + [''] * (len(hdr) - len(row))
+                tds = ''.join(f'<td>{esc(str(c))}</td>' for c in padded[:len(hdr)])
+                tbody_inner += f'<tr>{tds}</tr>'
+            tbody = f'<tbody>{tbody_inner}</tbody>' if tbody_inner else ''
+            html += f'<div class="table-scroll"><table class="info-table">{thead}{tbody}</table></div>'
+
     return html
 
 def render_section(data):
@@ -369,122 +417,127 @@ def build_html(slug, job):
   <meta name="theme-color" content="#0d2257"/>
   <script src="/analytics.js" defer></script>
   <style>
-    /* ══ Vacancy Table: Proper Horizontal Scroll - No Character Breaking ══ */
+    /* ══ Vacancy Table: Multi-table horizontal scroll ══ */
 
-    /* Wrapper: enables horizontal scroll */
     .table-scroll {{
       width: 100%;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
       display: block;
+      margin-bottom: 14px;
       border-radius: 8px;
-      margin-bottom: 16px;
       border: 1px solid #d1fae5;
     }}
 
-    /* Table itself: fixed layout OFF so columns size to content */
+    /* Table: let content set width → scroll triggers naturally */
     .table-scroll table.info-table {{
       border-collapse: collapse;
       font-size: 13.5px;
       table-layout: auto;
-      /* KEY FIX: do NOT set width:100% — let content dictate width for scroll */
-      white-space: nowrap;   /* prevent ALL column wrapping — scroll instead */
+      /* Do NOT set width:100% — content determines width */
     }}
 
-    /* Header row */
+    /* Header */
     .table-scroll table.info-table thead tr {{
-      background: linear-gradient(135deg, #059669, #047857);
+      background: linear-gradient(90deg, #059669 0%, #047857 100%);
       color: #fff;
     }}
     .table-scroll table.info-table thead th {{
-      padding: 11px 16px;
+      padding: 10px 14px;
       text-align: left;
       font-weight: 600;
       font-size: 13px;
-      border: 1px solid rgba(255,255,255,0.25);
-      white-space: nowrap;
+      border: 1px solid rgba(255,255,255,0.2);
+      white-space: nowrap;      /* headers never break */
     }}
 
     /* Body rows */
-    .table-scroll table.info-table tbody tr:nth-child(even) {{
-      background: #f0fdf4;
-    }}
-    .table-scroll table.info-table tbody tr:hover {{
-      background: #dcfce7;
-    }}
+    .table-scroll table.info-table tbody tr:nth-child(odd)  {{ background: #fff; }}
+    .table-scroll table.info-table tbody tr:nth-child(even) {{ background: #f0fdf4; }}
+    .table-scroll table.info-table tbody tr:hover {{ background: #dcfce7; transition: background .15s; }}
 
-    /* All cells */
+    /* All body cells */
     .table-scroll table.info-table td {{
-      padding: 10px 16px;
+      padding: 9px 14px;
       border: 1px solid #d1fae5;
       vertical-align: middle;
       font-size: 13px;
       color: #1f2937;
-      /* Allow long text cells (eligibility) to wrap but keep words intact */
+      /* KEY: normal word wrap — words stay whole, no character split */
       white-space: normal;
       word-break: normal;
-      overflow-wrap: normal;
-      min-width: 100px;
+      overflow-wrap: break-word;
     }}
 
-    /* Department / Post name column — wider */
+    /* First column: dept/post name — wider, left-aligned */
     .table-scroll table.info-table td:first-child {{
       font-weight: 500;
-      min-width: 200px;
-      white-space: normal;
-      word-break: normal;
+      min-width: 180px;
+      max-width: 280px;
     }}
 
-    /* Number columns (UR, OBC, SC, ST, Total) — tight, no wrap */
-    .table-scroll table.info-table td:not(:first-child):not(:last-child) {{
+    /* Number/count columns (UR, OBC, SC, ST etc.) — narrow, centered */
+    .table-scroll table.info-table td:not(:first-child) {{
       text-align: center;
-      min-width: 55px;
+      min-width: 52px;
       white-space: nowrap;
     }}
 
-    /* Last column (eligibility / total) */
+    /* Last column (Total / Eligibility) — can be wider */
     .table-scroll table.info-table td:last-child {{
-      min-width: 140px;
+      text-align: left;
+      min-width: 80px;
       white-space: normal;
-      word-break: normal;
     }}
 
-    /* Table note heading above table */
+    /* Caption above each sub-table */
     .table-note {{
       font-size: 12.5px;
       font-weight: 600;
       color: #065f46;
       background: #ecfdf5;
       border-left: 4px solid #059669;
-      padding: 10px 14px;
-      margin-bottom: 10px;
+      padding: 9px 14px;
+      margin: 10px 0 8px;
       border-radius: 0 6px 6px 0;
-      line-height: 1.5;
-      white-space: normal;
-      word-break: normal;
+      line-height: 1.55;
     }}
 
-    /* Scroll hint: fading right edge on mobile */
+    /* Mobile */
     @media (max-width: 640px) {{
+      /* Scroll shadow hint */
       .table-scroll {{
-        /* Gradient hint that table continues to the right */
-        background:
-          linear-gradient(to right, white 30%, rgba(255,255,255,0)) left,
-          linear-gradient(to left,  white 30%, rgba(255,255,255,0)) right,
-          radial-gradient(farthest-side at 0 50%, rgba(0,0,0,0.12), transparent) left,
-          radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,0.12), transparent) right;
-        background-repeat: no-repeat;
-        background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
-        background-attachment: local, local, scroll, scroll;
+        box-shadow: inset -6px 0 10px -6px rgba(0,0,0,0.15);
       }}
-      .table-scroll table.info-table {{
-        font-size: 12.5px;
-      }}
+      .table-scroll table.info-table {{ font-size: 12px; }}
       .table-scroll table.info-table td,
-      .table-scroll table.info-table thead th {{
-        padding: 8px 12px;
-      }}
+      .table-scroll table.info-table thead th {{ padding: 7px 10px; }}
+      .table-scroll table.info-table td:first-child {{ min-width: 130px; max-width: 200px; }}
+      .table-scroll table.info-table td:not(:first-child) {{ min-width: 42px; }}
     }}
+
+    /* ══ Skeleton Loading — for homepage/section card lists ══ */
+    .tsj-skeleton {{
+      display: block;
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: tsj-shimmer 1.4s infinite;
+      border-radius: 6px;
+    }}
+    @keyframes tsj-shimmer {{
+      0%   {{ background-position: 200% 0; }}
+      100% {{ background-position: -200% 0; }}
+    }}
+    .tsj-skeleton-card {{
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.08);
+      padding: 14px 16px;
+      margin-bottom: 10px;
+    }}
+    .tsj-skeleton-title  {{ height: 16px; width: 75%; margin-bottom: 10px; }}
+    .tsj-skeleton-sub    {{ height: 12px; width: 50%; margin-bottom: 6px; }}
+    .tsj-skeleton-badge  {{ height: 12px; width: 30%; }}
   </style>
 </head>
 <body>
@@ -691,12 +744,18 @@ def build_sections_index(all_jobs):
     for job in all_jobs:
         cat = job.get('category', '')
         if not cat: continue
+        # Include enough data so homepage JS renders cards WITHOUT extra fetches
         buckets[cat].append((
             normalise_date(job.get('last_date', '')),
-            {'slug': job['slug'], 'name': job['title'],
-             'date': job.get('last_date', ''),
-             'org': job.get('organization', ''),
-             'vac': job.get('total_vacancies', '')}
+            {
+                'slug':  job['slug'],
+                'name':  job['title'],
+                'date':  job.get('last_date', ''),
+                'org':   job.get('organization', ''),
+                'vac':   str(job.get('total_vacancies', '') or ''),
+                'mode':  job.get('application_mode', 'Online'),
+                'status': job.get('status', 'active'),
+            }
         ))
     result = {}
     for cat, items in buckets.items():
