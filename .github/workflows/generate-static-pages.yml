@@ -52,12 +52,12 @@ jobs:
       - name: ⏱️ Record start time
         run: echo "START_TIME=$(date +%s)" >> $GITHUB_ENV
 
-      - name: 🏗️ Generate static pages (scripts/generate_pages.py)
+      - name: 🏗️ Generate static pages
         env:
           FORCE_REGENERATE: ${{ inputs.force_regenerate }}
         run: |
           echo "FORCE_REGENERATE=${FORCE_REGENERATE}"
-          python3 scripts/generate_pages.py
+          python3 .github/workflows/generate_jobs.py
           echo "PAGES_GENERATED=$(find jobs -name 'index.html' 2>/dev/null | wc -l)" >> $GITHUB_ENV
 
       - name: 🔍 Run SEO fixes
