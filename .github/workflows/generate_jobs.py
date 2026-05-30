@@ -76,6 +76,16 @@ def is_blocked(url):
     u = url.strip().lower()
     return any(d in u for d in BLOCKED_DOMAINS)
 
+def sanitize_url(url):
+    """Remove AWS presigned URL params — they expire & trigger secret scanners"""
+    if not url or not isinstance(url, str): return url
+    url = url.strip()
+    if 'X-Amz-' in url or 'x-amz-' in url:
+        # Strip everything from ? onward (presigned params)
+        base = url.split('?')[0]
+        return base if base.startswith('http') else ''
+    return url
+
 def fmt_date(d):
     nd = normalise_date(d)
     if nd:
@@ -395,10 +405,12 @@ def extract_all_jobs(cj):
             if isinstance(raw_links, dict):
                 for k, v in raw_links.items():
                     if k == 'click_here' and isinstance(v, list):
-                        filtered = [u for u in v if isinstance(u, str) and not is_blocked(u)]
+                        filtered = [sanitize_url(u) for u in v if isinstance(u, str) and not is_blocked(u)]
+                        filtered = [u for u in filtered if u]
                         if filtered: clean_links[k] = filtered
                     elif isinstance(v, str) and not is_blocked(v):
-                        clean_links[k] = v
+                        sv = sanitize_url(v)
+                        if sv: clean_links[k] = sv
 
             add_job({
                 'slug': slugify(title), 'title': title,
