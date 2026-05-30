@@ -568,8 +568,8 @@ input, textarea, select { font-size: 1rem !important; }
   <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
-  <script src="/tsj-menu.js?v=20260530144412" defer></script>
-  <script src="/pwa-install.js?v=6.0" defer></script>
+  <script src="/tsj-menu.js"></script>
+<script src="/pwa-install.js?v=6.0" defer></script>
   <!-- ══ END PWA ════════════════════════════════════════════════════ -->
 </head>
 <body>
@@ -711,6 +711,9 @@ input, textarea, select { font-size: 1rem !important; }
               <i class="fa-solid fa-arrow-up-right-from-square"></i> Apply Online / Official Website पर जाएँ
               <span class="jp-main-cta-sub">Click to visit the official recruitment portal</span>
             </a>
+
+            <!-- Preferred Source on Google placeholder (filled by preferred-source-renderer.js) -->
+            <div id="preferredSourceCard" style="display:none;"></div>
 
             <!-- Short Info -->
             <div class="jp-card" id="shortInfoCard" style="display:none;">
@@ -2493,7 +2496,7 @@ input, textarea, select { font-size: 1rem !important; }
 
         /* ── Load state-jobs-data.json (state govt jobs with full detail.important_links) ── */
         try {
-          const rState = await fetch('/data/Complete_Jobs_Full_Data.json').then(r=>r.ok?r.json().then(d=>({sections:(d.state_jobs||{}).sections||[]})):null);
+          const rState = await fetch('/state-jobs-data.json');
           if (rState.ok) {
             const stateRaw = await rState.json();
             const stateArr = Array.isArray(stateRaw) ? stateRaw
@@ -2548,7 +2551,7 @@ input, textarea, select { font-size: 1rem !important; }
         /* Load merged_sarkari_data.json (offline form jobs) */
         let rawMerged = null;
         try {
-          const r1 = await fetch('/data/Complete_Jobs_Full_Data.json').then(r=>r.ok?r.json().then(d=>({jobs:(d.sarkari_data||{}).jobs||[]})):null);
+          const r1 = await fetch('/merged_sarkari_data.json');
           if (r1.ok) rawMerged = await r1.json();
         } catch (_) {}
 
@@ -2823,7 +2826,7 @@ input, textarea, select { font-size: 1rem !important; }
 
             if (isFromMerged) {
               try {
-                const rm = await fetch('/data/Complete_Jobs_Full_Data.json').then(r=>r.ok?r.json().then(d=>({jobs:(d.sarkari_data||{}).jobs||[]})):null);
+                const rm = await fetch('/merged_sarkari_data.json');
                 if (rm.ok) {
                   const md = await rm.json();
                   const allMerged = (md && md.jobs) ? md.jobs : [];
@@ -2869,7 +2872,7 @@ input, textarea, select { font-size: 1rem !important; }
             if (!rawSourceJson && isFromState) {
               /* Try state-jobs-data.json */
               try {
-                const rs = await fetch('/data/Complete_Jobs_Full_Data.json').then(r=>r.ok?r.json().then(d=>({sections:(d.state_jobs||{}).sections||[]})):null);
+                const rs = await fetch('/state-jobs-data.json');
                 if (rs.ok) {
                   const sd = await rs.json();
                   const stateArr = Array.isArray(sd) ? sd : (sd.states || []);
@@ -3027,6 +3030,8 @@ input, textarea, select { font-size: 1rem !important; }
   <script src="/job-renderer-patch.js?v=20260522" defer></script>
   <!-- Universal Dynamic JSON-to-Page Rendering System -->
   <script src="/universal-renderer.js?v=20260524b" defer></script>
+  <!-- Preferred Source on Google — Full Rich Details Renderer -->
+  <script src="/preferred-source-renderer.js?v=20260528v4" defer></script>
   <!-- Header height fix: dynamically update --header-height CSS variable -->
   <script>
   (function(){
@@ -3058,7 +3063,7 @@ input, textarea, select { font-size: 1rem !important; }
     }
   })();
   </script>
-<script src="/tsj-push.js?v=20260530144412"></script>
-<script src="/tsj-version.js"?v=20260530023112 defer></script>
+<script src="/tsj-push.js?v=4.0"></script>
+<script src="/tsj-version.js" defer></script>
 </body>
 </html>
