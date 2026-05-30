@@ -368,6 +368,79 @@ def build_html(slug, job):
   <link rel="manifest" href="/manifest.json"/>
   <meta name="theme-color" content="#0d2257"/>
   <script src="/analytics.js" defer></script>
+  <style>
+    /* ── Vacancy Table: Horizontal Scroll Fix ── */
+    .table-scroll {{
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      display: block;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }}
+    .table-scroll table.info-table {{
+      width: 100%;
+      min-width: 480px;
+      border-collapse: collapse;
+      font-size: 13px;
+      table-layout: auto;
+    }}
+    .table-scroll table.info-table thead tr {{
+      background: linear-gradient(135deg, #0f766e, #0d9488);
+      color: #fff;
+    }}
+    .table-scroll table.info-table thead th {{
+      padding: 10px 12px;
+      text-align: left;
+      white-space: nowrap;
+      font-weight: 600;
+      border: 1px solid rgba(255,255,255,0.2);
+    }}
+    .table-scroll table.info-table tbody tr:nth-child(even) {{
+      background: #f0fdf9;
+    }}
+    .table-scroll table.info-table tbody tr:hover {{
+      background: #ccfbf1;
+    }}
+    .table-scroll table.info-table td,
+    .table-scroll table.info-table th {{
+      padding: 9px 12px;
+      border: 1px solid #d1fae5;
+      vertical-align: top;
+      line-height: 1.45;
+      word-break: break-word;
+    }}
+    .table-scroll table.info-table td:first-child {{
+      font-weight: 500;
+      min-width: 160px;
+    }}
+    .table-note {{
+      font-size: 12.5px;
+      color: #374151;
+      background: #f0fdf4;
+      border-left: 3px solid #059669;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      border-radius: 0 4px 4px 0;
+      line-height: 1.5;
+    }}
+    /* Mobile: show scroll hint shadow */
+    @media (max-width: 640px) {{
+      .table-scroll {{
+        box-shadow: inset -8px 0 8px -4px rgba(0,0,0,0.08);
+      }}
+      .table-scroll table.info-table {{
+        font-size: 12px;
+      }}
+      .table-scroll table.info-table td,
+      .table-scroll table.info-table th {{
+        padding: 7px 9px;
+      }}
+      .table-scroll table.info-table td:first-child {{
+        min-width: 120px;
+      }}
+    }}
+  </style>
 </head>
 <body>
 <div id="header-placeholder"></div>
