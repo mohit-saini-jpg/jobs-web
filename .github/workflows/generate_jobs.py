@@ -98,11 +98,58 @@ def normalize_title(t):
     return re.sub(r'[^a-z0-9]', '', str(t).lower().strip())
 
 # ─── Section renderer ─────────────────────────────────────────────────────────
+def render_tables(tables_data):
+    """Render 'tables' key: list of {table_name, rows} objects where rows is list of lists."""
+    if not tables_data or not isinstance(tables_data, list): return ''
+    html = ''
+    for tbl in tables_data:
+        if not isinstance(tbl, dict): continue
+        tname = tbl.get('table_name', '')
+        rows  = tbl.get('rows', [])
+        if not rows: continue
+        # table_name as a heading paragraph
+        name_html = f'<p class="table-note"><strong>{esc(tname)}</strong></p>' if tname else ''
+        # First row = header
+        header_row = rows[0] if rows else []
+        body_rows  = rows[1:]
+        thead = ''
+        if header_row:
+            ths = ''.join(f'<th>{esc(str(c))}</th>' for c in header_row)
+            thead = f'<thead><tr>{ths}</tr></thead>'
+        tbody_inner = ''
+        for row in body_rows:
+            if not row: continue
+            tds = ''.join(f'<td>{esc(str(c))}</td>' for c in row)
+            tbody_inner += f'<tr>{tds}</tr>'
+        tbody = f'<tbody>{tbody_inner}</tbody>' if tbody_inner else ''
+        html += f'{name_html}<div class="table-scroll"><table class="info-table">{thead}{tbody}</table></div>'
+    return html
+
 def render_section(data):
     if not data: return ''
     if isinstance(data, str):
         return f'<div class="job-text-block">{esc(data)}</div>'
     if isinstance(data, list):
+        # Check if it's a list of dicts with vacancy-style keys (vacancy_details)
+        if all(isinstance(i, dict) for i in data if i):
+            # Render as a proper table using keys as headers
+            all_keys = []
+            seen = set()
+            for item in data:
+                if isinstance(item, dict):
+                    for k in item:
+                        if k not in seen:
+                            all_keys.append(k)
+                            seen.add(k)
+            if all_keys:
+                ths = ''.join(f'<th>{esc(str(k).replace("_"," ").title())}</th>' for k in all_keys)
+                thead = f'<thead><tr>{ths}</tr></thead>'
+                tbody_rows = ''
+                for item in data:
+                    if isinstance(item, dict):
+                        tds = ''.join(f'<td>{esc(str(item.get(k, "")))}</td>' for k in all_keys)
+                        tbody_rows += f'<tr>{tds}</tr>'
+                return f'<div class="table-scroll"><table class="info-table">{thead}<tbody>{tbody_rows}</tbody></table></div>'
         items = ''.join(f'<li>{esc(str(i))}</li>' for i in data if i)
         return f'<ul class="job-list">{items}</ul>' if items else ''
     if isinstance(data, dict):
@@ -229,6 +276,19 @@ def build_html(slug, job):
         <i class="fa-solid {icon}"></i><h2>{label}</h2>
       </div>
       <div class="job-card-body">{rendered}</div>
+    </section>'''
+
+    # Render 'tables' key (array of {table_name, rows} objects)
+    raw_tables = job.get('tables')
+    if raw_tables:
+        tables_rendered = render_tables(raw_tables)
+        if tables_rendered:
+            sections_html += f'''
+    <section class="job-card" id="vacancy-eligibility">
+      <div class="job-card-head" style="background:linear-gradient(135deg,#059669,#047857)">
+        <i class="fa-solid fa-users"></i><h2>Vacancy &amp; Eligibility Details</h2>
+      </div>
+      <div class="job-card-body">{tables_rendered}</div>
     </section>'''
 
     # Important links (filtered)
