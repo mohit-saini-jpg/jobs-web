@@ -20,11 +20,6 @@ on:
       - 'analytics.js'
       - 'perf-ultra.js'
       - 'styles.css'
-    paths-ignore:
-      - 'data/**'
-      - 'jobs/**'
-      - 'scripts/**'
-      - '.github/**'
 
   workflow_dispatch:
 
