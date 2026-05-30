@@ -97,9 +97,9 @@
       var item = items[i];
       var name = item.name || item.title || '';
       if (!name) continue;
-      var href = item.slug ? '/jobs/' + item.slug + '/' : (item.url && item.url.startsWith('http') ? item.url : stateUrl);
+      var href = stateUrl; // All job clicks → state detail page which lists all jobs
       var date = item.date || item.lastDate || '';
-      li += '<li><a href="' + esc(href) + '" class="state-job-link" target="' + (href.startsWith('/') ? '_self' : '_blank') + '" rel="noopener">'
+      li += '<li><a href="' + esc(href) + '" class="state-job-link" target="_self" rel="noopener">'
         + '<span class="sj-num">' + (i+1) + '</span>'
         + '<span class="sj-info"><span class="sj-name">' + esc(name.slice(0,80)) + '</span>'
         + (date ? '<span class="sj-date">' + esc(date.slice(0,20)) + '</span>' : '')
@@ -109,7 +109,7 @@
 
     return '<div class="state-card" data-state="' + esc(stateName.toLowerCase()) + '" data-content="' + esc((items.map(function(i){return i.name||'';}).join(' ')).toLowerCase()) + '">'
       + '<div class="state-card-head" style="background:linear-gradient(135deg,' + color + ',#0d2257)">'
-      + '<h2><i class="fa-solid fa-location-dot" style="margin-right:6px;"></i>' + esc(stateName) + '</h2>'
+      + '<h2><a href="' + esc(stateUrl) + '" style="color:#fff;text-decoration:none;"><i class="fa-solid fa-location-dot" style="margin-right:6px;"></i>' + esc(stateName) + '</a></h2>'
       + '<span class="s-count">' + items.length + ' Jobs</span>'
       + '</div>'
       + '<ul class="state-list">' + li + '</ul>'
