@@ -97,127 +97,263 @@ def fmt_date(d):
 def normalize_title(t):
     return re.sub(r'[^a-z0-9]', '', str(t).lower().strip())
 
-# ─── Section renderer ─────────────────────────────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════════════════
+# MASTER RENDER SYSTEM — 100% JSON coverage, single universal renderer
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def render_value(v, depth=0):
+    """Render ANY JSON value — string/int/list/dict — to HTML. Zero data loss."""
+    if v is None or v == '' or v == {} or v == []: return ''
+    if isinstance(v, bool):
+        return f'<span class="val-flag">{"Yes" if v else "No"}</span>'
+    if isinstance(v, (int, float)):
+        return f'<span>{esc(str(v))}</span>'
+    if isinstance(v, str):
+        v = v.strip()
+        if not v: return ''
+        # Strip HTML tags from jobs_info
+        v = re.sub(r'<[^>]+>', ' ', v)
+        v = re.sub(r'\s{2,}', ' ', v).strip()
+        if not v: return ''
+        if v.startswith('http'):
+            sv = sanitize_url(v)
+            if sv and not is_blocked(sv):
+                lbl = sv[:60] + ('…' if len(sv) > 60 else '')
+                return f'<a href="{esc(sv)}" class="inline-link" target="_blank" rel="noopener noreferrer">{esc(lbl)}</a>'
+            return ''
+        lines = [l.strip() for l in v.split('\n') if l.strip()]
+        if len(lines) > 1:
+            return ''.join(f'<p class="text-block">{esc(l)}</p>' for l in lines)
+        return f'<p class="text-block">{esc(v)}</p>'
+    if isinstance(v, list):
+        if not v: return ''
+        # List of dicts with keys → responsive table
+        if any(isinstance(i, dict) and i for i in v):
+            dicts = [i for i in v if isinstance(i, dict) and i]
+            if dicts: return render_list_of_dicts_as_table(dicts)
+        # Mixed list → ul
+        items = []
+        for item in v:
+            r = render_value(item, depth+1)
+            if r: items.append(f'<li>{r}</li>')
+        return f'<ul class="data-list">{"".join(items)}</ul>' if items else ''
+    if isinstance(v, dict):
+        if not v: return ''
+        if 'pattern_table' in v and isinstance(v['pattern_table'], list):
+            other = {k: val for k, val in v.items() if k != 'pattern_table'}
+            parts = []
+            if other: parts.append(render_kv_table(other, depth))
+            parts.append(render_list_of_dicts_as_table(v['pattern_table']))
+            return ''.join(parts)
+        return render_kv_table(v, depth)
+    return esc(str(v))
+
+
+def render_kv_table(d, depth=0):
+    """Render dict as two-column key-value table."""
+    if not d: return ''
+    rows = ''
+    for k, v in d.items():
+        if v is None or v == '' or v == {} or v == []: continue
+        kl = str(k).replace('_',' ').title()
+        vr = render_value(v, depth+1)
+        if not vr: continue
+        rows += f'<tr><th>{esc(kl)}</th><td>{vr}</td></tr>'
+    return f'<div class="table-scroll"><table class="info-table kv-table"><tbody>{rows}</tbody></table></div>' if rows else ''
+
+
+def render_list_of_dicts_as_table(lst):
+    """Render list-of-dicts as responsive multi-column table."""
+    if not lst: return ''
+    all_keys = []
+    seen = set()
+    for item in lst:
+        if isinstance(item, dict):
+            for k in item.keys():
+                if k not in seen:
+                    all_keys.append(k)
+                    seen.add(k)
+    if not all_keys: return ''
+    ths = ''.join(f'<th>{esc(str(k))}</th>' for k in all_keys)
+    rows = ''
+    for item in lst:
+        if not isinstance(item, dict): continue
+        tds = ''
+        for k in all_keys:
+            v = item.get(k, '')
+            cell = render_value(v) if v not in ('', None) else ''
+            tds += f'<td>{cell}</td>'
+        rows += f'<tr>{tds}</tr>'
+    return f'<div class="table-scroll"><table class="info-table multi-col"><thead><tr>{ths}</tr></thead><tbody>{rows}</tbody></table></div>'
+
+
 def render_tables(tables_data):
-    """Render 'tables' key: list of {table_name, rows} objects where rows is list of lists.
-    Auto-detects mid-table header rows (different column count or looks like a header)
-    and splits them into separate sub-tables for clean display.
-    """
+    """Render sarkari_data 'tables' key — list of {{table_name, rows}} with auto sub-table split."""
     if not tables_data or not isinstance(tables_data, list): return ''
     html = ''
-
     for tbl in tables_data:
         if not isinstance(tbl, dict): continue
         tname = tbl.get('table_name', '')
         rows  = tbl.get('rows', [])
         if not rows: continue
+        if tname:
+            html += f'<p class="table-note"><strong>{esc(tname)}</strong></p>'
 
-        # Show table caption
-        name_html = f'<p class="table-note"><strong>{esc(tname)}</strong></p>' if tname else ''
-        html += name_html
-
-        # ── Smart split: detect sub-table boundaries ──────────────────
-        # A row is a "new header" if:
-        #   (a) Its column count differs from current header, OR
-        #   (b) All its cells look like labels (no pure digit cells)
         def looks_like_header(row, current_cols):
             if not row: return False
-            col_count = len(row)
-            # Different column count from previous table → definitely new header
-            if current_cols is not None and col_count != current_cols:
-                return True
-            # All values are non-numeric strings → likely a header row
-            all_text = all(not str(c).strip().isdigit() for c in row)
-            return all_text
+            if current_cols is not None and len(row) != current_cols: return True
+            return all(not str(c).strip().isdigit() for c in row)
 
-        # Split rows into sub-tables
-        sub_tables = []   # list of (header_row, body_rows)
-        current_header = None
-        current_body   = []
-        current_cols   = None
-
+        sub_tables = []
+        cur_hdr, cur_body, cur_cols = None, [], None
         for i, row in enumerate(rows):
             if i == 0:
-                # First row is always the first header
-                current_header = row
-                current_cols   = len(row)
-                current_body   = []
-            elif looks_like_header(row, current_cols):
-                # Save previous sub-table
-                if current_header is not None:
-                    sub_tables.append((current_header, current_body))
-                current_header = row
-                current_cols   = len(row)
-                current_body   = []
+                cur_hdr, cur_cols, cur_body = row, len(row), []
+            elif looks_like_header(row, cur_cols):
+                if cur_hdr is not None: sub_tables.append((cur_hdr, cur_body))
+                cur_hdr, cur_cols, cur_body = row, len(row), []
             else:
-                current_body.append(row)
+                cur_body.append(row)
+        if cur_hdr is not None: sub_tables.append((cur_hdr, cur_body))
 
-        # Save last sub-table
-        if current_header is not None:
-            sub_tables.append((current_header, current_body))
-
-        # ── Render each sub-table ──────────────────────────────────────
         for (hdr, body) in sub_tables:
             if not hdr: continue
-            ths   = ''.join(f'<th>{esc(str(c))}</th>' for c in hdr)
-            thead = f'<thead><tr>{ths}</tr></thead>'
+            ths = ''.join(f'<th>{esc(str(c))}</th>' for c in hdr)
             tbody_inner = ''
             for row in body:
                 if not row: continue
-                # Pad short rows to match header width
                 padded = list(row) + [''] * (len(hdr) - len(row))
                 tds = ''.join(f'<td>{esc(str(c))}</td>' for c in padded[:len(hdr)])
                 tbody_inner += f'<tr>{tds}</tr>'
             tbody = f'<tbody>{tbody_inner}</tbody>' if tbody_inner else ''
-            html += f'<div class="table-scroll"><table class="info-table">{thead}{tbody}</table></div>'
-
+            html += f'<div class="table-scroll"><table class="info-table"><thead><tr>{ths}</tr></thead>{tbody}</table></div>'
     return html
 
+
+def render_sarkari_sections(sections):
+    """Render sarkari_data 'sections' array: paragraph/list/table content."""
+    if not sections: return ''
+    html = ''
+    SKIP_TITLES = {'Set as Preferred Source on Google', 'Also Read :'}
+    for sec in sections:
+        title_s = sec.get('title', '').strip()
+        if title_s in SKIP_TITLES: continue
+        content_items = sec.get('content', [])
+        if not content_items: continue
+        body = ''
+        for c in content_items:
+            ctype = c.get('type', '')
+            if ctype == 'paragraph':
+                text = re.sub(r'<[^>]+>', ' ', c.get('text','')).strip()
+                if text: body += f'<p class="text-block">{esc(text)}</p>'
+            elif ctype == 'list':
+                items = c.get('items', [])
+                if isinstance(items, list):
+                    lis = ''.join(f'<li>{esc(str(i))}</li>' for i in items if i)
+                    if lis: body += f'<ul class="data-list">{lis}</ul>'
+            elif ctype == 'table':
+                rows_raw = c.get('rows', [])
+                if rows_raw:
+                    header = rows_raw[0] if rows_raw else []
+                    data_rows = rows_raw[1:]
+                    def cell_html(cell):
+                        if isinstance(cell, dict):
+                            t = esc(cell.get('text',''))
+                            for lnk in cell.get('links', []):
+                                url = lnk.get('url','') if isinstance(lnk, dict) else str(lnk)
+                                sv = sanitize_url(url)
+                                if sv and not is_blocked(sv):
+                                    t += f' <a href="{esc(sv)}" class="inline-link" target="_blank" rel="noopener noreferrer">↗</a>'
+                            return t
+                        return esc(str(cell))
+                    ths = ''.join(f'<th>{cell_html(c)}</th>' for c in header)
+                    trs = ''.join(f'<tr>{"".join(f"<td>{cell_html(c)}</td>" for c in row)}</tr>' for row in data_rows)
+                    body += f'<div class="table-scroll"><table class="info-table multi-col"><thead><tr>{ths}</tr></thead><tbody>{trs}</tbody></table></div>'
+        if body:
+            sec_id = re.sub(r'[^a-z0-9]+', '-', title_s.lower()).strip('-')
+            html += f'''
+    <section class="job-card" id="sec-{sec_id}">
+      <div class="job-card-head" style="background:linear-gradient(135deg,#334155,#1e293b)">
+        <i class="fa-solid fa-file-lines"></i><h2>{esc(title_s)}</h2>
+      </div>
+      <div class="job-card-body">{body}</div>
+    </section>'''
+    return html
+
+
+def render_important_links(job):
+    """Render ALL clickable URLs from every link-related field."""
+    LINK_MAP = {
+        'apply_online':                ('Apply Online',             'btn-green',  'fa-pen-to-square'),
+        'apply_online_link':           ('Apply Online',             'btn-green',  'fa-pen-to-square'),
+        'login':                       ('Login / Apply',            'btn-green',  'fa-right-to-bracket'),
+        'notification_pdf':            ('Download Notification',    'btn-blue',   'fa-file-pdf'),
+        'official_notification_pdf':   ('Official Notification',    'btn-blue',   'fa-file-pdf'),
+        'official_notification_pdf_link':('Official Notification',  'btn-blue',   'fa-file-pdf'),
+        'official_website':            ('Official Website',         'btn-grey',   'fa-globe'),
+        'official_website_link':       ('Official Website',         'btn-grey',   'fa-globe'),
+        'result':                      ('View Result',              'btn-purple', 'fa-trophy'),
+        'admit_card':                  ('Admit Card',               'btn-orange', 'fa-id-card'),
+        'answer_key':                  ('Answer Key',               'btn-yellow', 'fa-key'),
+        'form_pdf_link':               ('Application Form PDF',     'btn-blue',   'fa-file-pdf'),
+        'form_pdf_free_link':          ('Free Application Form',    'btn-teal',   'fa-file-pdf'),
+        'application_form_pdf_link':   ('Application Form',         'btn-blue',   'fa-file'),
+        'click_here':                  ('Click Here',               'btn-grey',   'fa-arrow-up-right-from-square'),
+    }
+    seen_urls = set()
+    html = ''
+
+    def add_link(url, lbl, cls, ico):
+        nonlocal html
+        sv = sanitize_url(str(url or ''))
+        if not sv or is_blocked(sv) or sv in seen_urls: return
+        seen_urls.add(sv)
+        html += f'<a href="{esc(sv)}" class="link-btn {cls}" target="_blank" rel="noopener noreferrer"><i class="fa-solid {ico}"></i> {lbl}</a>\n'
+
+    # important_links dict
+    il = job.get('important_links', {})
+    if isinstance(il, dict):
+        for k, v in il.items():
+            lbl, cls, ico = LINK_MAP.get(k, ('Link', 'btn-grey', 'fa-link'))
+            if k == 'click_here':
+                if isinstance(v, list):
+                    for u in v: add_link(u, lbl, cls, ico)
+                elif isinstance(v, str): add_link(v, lbl, cls, ico)
+            elif isinstance(v, str): add_link(v, lbl, cls, ico)
+            elif isinstance(v, list):
+                for u in v: add_link(u, lbl, cls, ico)
+
+    # all_links [{label/title, url}]
+    for lnk in job.get('all_links', []):
+        if isinstance(lnk, dict):
+            add_link(lnk.get('url',''), lnk.get('title') or lnk.get('label','Link'), 'btn-grey', 'fa-link')
+
+    # useful_links [{title, links}]
+    for lnk in job.get('useful_links', []):
+        if isinstance(lnk, dict):
+            add_link(lnk.get('links','') or lnk.get('url',''), lnk.get('title','Link'), 'btn-grey', 'fa-link')
+
+    # Direct URL fields
+    for field, (lbl, cls, ico) in LINK_MAP.items():
+        if field in ('click_here',): continue
+        url = job.get(field, '')
+        if isinstance(url, str): add_link(url, lbl, cls, ico)
+
+    # basic_details.official_website (pipe-separated)
+    ow = job.get('official_website', '')
+    if ow:
+        for u in re.split(r'[\|,;\s]+', ow):
+            u = u.strip()
+            if u.startswith('http'): add_link(u, 'Official Website', 'btn-grey', 'fa-globe')
+
+    if not html:
+        html = '<p class="muted-note">Official notification ke liye upar di gayi information dekhein.</p>'
+    return html
+
+
+# render_section kept as alias for backward compat
 def render_section(data):
-    if not data: return ''
-    if isinstance(data, str):
-        return f'<div class="job-text-block">{esc(data)}</div>'
-    if isinstance(data, list):
-        # Check if it's a list of dicts with vacancy-style keys (vacancy_details)
-        if all(isinstance(i, dict) for i in data if i):
-            # Render as a proper table using keys as headers
-            all_keys = []
-            seen = set()
-            for item in data:
-                if isinstance(item, dict):
-                    for k in item:
-                        if k not in seen:
-                            all_keys.append(k)
-                            seen.add(k)
-            if all_keys:
-                ths = ''.join(f'<th>{esc(str(k).replace("_"," ").title())}</th>' for k in all_keys)
-                thead = f'<thead><tr>{ths}</tr></thead>'
-                tbody_rows = ''
-                for item in data:
-                    if isinstance(item, dict):
-                        tds = ''.join(f'<td>{esc(str(item.get(k, "")))}</td>' for k in all_keys)
-                        tbody_rows += f'<tr>{tds}</tr>'
-                return f'<div class="table-scroll"><table class="info-table">{thead}<tbody>{tbody_rows}</tbody></table></div>'
-        items = ''.join(f'<li>{esc(str(i))}</li>' for i in data if i)
-        return f'<ul class="job-list">{items}</ul>' if items else ''
-    if isinstance(data, dict):
-        rows = ''
-        for k, v in data.items():
-            if v is None or v == '' or v == {} or v == []: continue
-            kl = str(k).replace('_', ' ').title()
-            if isinstance(v, (dict, list)):
-                vh = render_section(v)
-            else:
-                vs = str(v)
-                if vs.startswith('http') and not is_blocked(vs):
-                    vh = f'<a href="{esc(vs)}" target="_blank" rel="noopener noreferrer">{esc(vs[:60])}</a>'
-                elif vs.startswith('http'):
-                    continue
-                else:
-                    vh = esc(vs)
-            rows += f'<tr><th>{esc(kl)}</th><td>{vh}</td></tr>'
-        return f'<div class="table-scroll"><table class="info-table"><tbody>{rows}</tbody></table></div>' if rows else ''
-    return ''
+    return render_value(data)
 
 # ─── HTML page builder ────────────────────────────────────────────────────────
 def build_html(slug, job):
@@ -403,39 +539,72 @@ def build_html(slug, job):
             sections_html += _card('vacancy-eligibility', 'Vacancy &amp; Eligibility Details',
                 'fa-users', 'linear-gradient(135deg,#059669,#047857)', tables_rendered)
 
-    # Important links (filtered)
-    links = job.get('important_links', {})
-    links_html = ''
-    LINK_MAP = {
-        'apply_online': ('Apply Online', 'btn-green', 'fa-pen-to-square'),
-        'apply_online_link': ('Apply Online', 'btn-green', 'fa-pen-to-square'),
-        'notification_pdf': ('Download Notification', 'btn-blue', 'fa-file-pdf'),
-        'official_notification_pdf': ('Official Notification', 'btn-blue', 'fa-file-pdf'),
-        'official_website': ('Official Website', 'btn-grey', 'fa-globe'),
-        'result': ('View Result', 'btn-purple', 'fa-trophy'),
-        'admit_card': ('Admit Card', 'btn-orange', 'fa-id-card'),
-        'answer_key': ('Answer Key', 'btn-yellow', 'fa-key'),
-        'click_here': ('Click Here', 'btn-grey', 'fa-arrow-up-right-from-square'),
-    }
-    if isinstance(links, dict):
-        for k, v in links.items():
-            if k == 'click_here' and isinstance(v, list):
-                for url in v:
-                    if url and isinstance(url, str) and url.startswith('http') and not is_blocked(url):
-                        lbl, cls, ico = LINK_MAP['click_here']
-                        links_html += f'<a href="{esc(url)}" class="link-btn {cls}" target="_blank" rel="noopener noreferrer"><i class="fa-solid {ico}"></i> {lbl}</a>\n'
-            elif isinstance(v, str) and v.startswith('http') and not is_blocked(v):
-                lbl, cls, ico = LINK_MAP.get(k, ('Link', 'btn-grey', 'fa-link'))
-                links_html += f'<a href="{esc(v)}" class="link-btn {cls}" target="_blank" rel="noopener noreferrer"><i class="fa-solid {ico}"></i> {lbl}</a>\n'
-    if not links_html:
-        links_html = '<p>Official notification ke liye upar di gayi information dekhein.</p>'
+    # ── 16b. sarkari 'sections' array (paragraph/list/table content) ─────────
+    sections_html += render_sarkari_sections(job.get('sections', []))
+
+    # ── 16c. text_sections [{section, content}] ──────────────────────────────
+    for ts in job.get('text_sections', []):
+        if not isinstance(ts, dict): continue
+        ts_title = ts.get('section', '').strip()
+        ts_body  = ts.get('content', '').strip()
+        if ts_title and ts_body:
+            ts_id = re.sub(r'[^a-z0-9]+', '-', ts_title.lower()).strip('-')
+            rendered_body = render_value(ts_body)
+            if rendered_body:
+                sections_html += _card(f'ts-{ts_id}', ts_title,
+                    'fa-file-lines', 'linear-gradient(135deg,#334155,#1e293b)', rendered_body)
+
+    # ── 16d. notification_number / dept / selection_process_brief (meta) ─────
+    _meta = {}
+    if job.get('notification_number'): _meta['Notification Number'] = job['notification_number']
+    if job.get('department'):          _meta['Department']           = job['department']
+    if job.get('job_type'):            _meta['Job Type']             = job['job_type']
+    if job.get('job_category'):        _meta['Job Category']         = job['job_category']
+    if job.get('selection_process_brief'): _meta['Selection Brief']  = job['selection_process_brief']
+    if _meta:
+        meta_rows = ''.join(
+            f'<tr><th>{esc(k)}</th><td>{esc(str(v))}</td></tr>'
+            for k, v in _meta.items()
+        )
+        sections_html += _card('job-meta', 'Job Details', 'fa-circle-info',
+            'linear-gradient(135deg,#0369a1,#0284c7)',
+            f'<div class="table-scroll"><table class="info-table kv-table"><tbody>{meta_rows}</tbody></table></div>')
+
+    # ── Important Links — ALL sources ────────────────────────────────────────
+    links_html = render_important_links(job)
+
+    # ── FAQ ───────────────────────────────────────────────────────────────────
+    faq_items_render = []
+    _json_faq = job.get('faq', [])
+    if isinstance(_json_faq, list):
+        for f in _json_faq:
+            if isinstance(f, dict):
+                q = str(f.get('question','')).strip()
+                a = str(f.get('answer','')).strip()
+                if q and a: faq_items_render.append((q, a))
+
+    if len(faq_items_render) < 4:
+        faq_items_render = [
+            (f'{title} last date kya hai?', f'Last date: {last_date}. Official notification zaroor dekhein.'),
+            (f'{title} ke liye eligibility kya hai?', 'Qualification ke liye official notification dekhein.'),
+            (f'{title} mein total vacancies kitni hain?', f'Total {posts} posts hain.'),
+            (f'{title} apply kaise karein?', f'{mode} mode mein apply karein. Official website par jakar form fill karein.'),
+            (f'{org} ki official website kya hai?', 'Important Links section mein official website ka link diya gaya hai.'),
+            (f'{title} ka selection process kya hai?', 'Written Test / Interview / Document Verification. Official notification dekhein.'),
+        ]
 
     faq_html = '\n'.join(
-        f'<div class="faq-item"><h3 class="faq-q"><i class="fa-solid fa-circle-question"></i> {q}</h3>'
-        f'<div class="faq-a"><p>{a}</p></div></div>'
-        for q, a in faq_items
+        f'<div class="faq-item"><h3 class="faq-q"><i class="fa-solid fa-circle-question"></i> {esc(q)}</h3>'
+        f'<div class="faq-a"><p>{esc(a)}</p></div></div>'
+        for q, a in faq_items_render[:8]
         if q and a
     )
+
+    # Update faq_schema with actual faq items
+    faq_schema['mainEntity'] = [
+        {'@type': 'Question', 'name': q, 'acceptedAnswer': {'@type': 'Answer', 'text': a}}
+        for q, a in faq_items_render[:6]
+    ]
 
     # SEO Content — 200-300 words auto-generated
     _sel = ''
@@ -713,27 +882,27 @@ def extract_all_jobs(cj):
         seen_keys.add(key2)
         all_jobs.append(job)
 
-    # 1. freejobalert_categories (new format) OR flat top-level keys (old format)
+    # 1. freejobalert_categories — ALL fields extracted
     fj_cats = cj.get('freejobalert_categories')
     if not fj_cats:
-        # Old flat format: root keys ARE the categories
         OLD_CATS = {'10TH_Pass','8TH_Pass','12TH_Pass','Diploma','ITI','B_Tech_BE',
                     'B_Com','Any_Graduate','Any_Post_Graduate','Railway_Jobs',
                     'Police_Defence','Teaching_Faculty','Bank_Jobs','Medical_Hospital',
                     'Last_Date_Reminder','Latest_Notifications'}
         fj_cats = {k: v for k, v in cj.items() if k in OLD_CATS and isinstance(v, list)}
+
     for cat, jobs in fj_cats.items():
         if not isinstance(jobs, list): continue
         for job in jobs:
-            bd    = job.get('basic_details', {})
+            bd = job.get('basic_details', {}) or {}
             title = bd.get('job_title', '').strip()
             if not title: continue
-            dates = job.get('important_dates', {})
+            dates = job.get('important_dates', {}) or {}
             last_date = (dates.get('last_date_to_apply') or dates.get('last_date') or
                          dates.get('Last Date to Apply') or dates.get('Last Date') or '')
-            notif_date = dates.get('notification date') or bd.get('last_updated', '')
-            # Filter important_links
-            raw_links = job.get('important_links', {})
+
+            # ALL important_links — preserve full structure, only sanitize URLs
+            raw_links = job.get('important_links', {}) or {}
             clean_links = {}
             if isinstance(raw_links, dict):
                 for k, v in raw_links.items():
@@ -744,64 +913,137 @@ def extract_all_jobs(cj):
                     elif isinstance(v, str) and not is_blocked(v):
                         sv = sanitize_url(v)
                         if sv: clean_links[k] = sv
+                    elif isinstance(v, list):
+                        filtered = [sanitize_url(u) for u in v if isinstance(u, str) and not is_blocked(u)]
+                        filtered = [u for u in filtered if u]
+                        if filtered: clean_links[k] = filtered
 
             add_job({
-                'slug': slugify(title), 'title': title,
-                'organization': bd.get('organization_name', ''),
-                'post_name': bd.get('post_name', ''),
-                'total_vacancies': str(bd.get('total_vacancies', '')),
-                'application_mode': bd.get('application_mode', ''),
-                'job_type': bd.get('job_type', ''),
-                'short_info': bd.get('short_information', ''),
-                'last_date': last_date, 'last_updated': bd.get('last_updated', ''),
-                'notification_date': notif_date, 'category': cat,
-                'source': 'freejobalert',
+                # Identity
+                'slug': slugify(title), 'title': title, 'source': 'freejobalert', 'category': cat,
+                # basic_details — ALL 14 fields
+                'organization':             bd.get('organization_name', ''),
+                'department':               bd.get('department', ''),
+                'post_name':                bd.get('post_name', ''),
+                'total_vacancies':          str(bd.get('total_vacancies', '')),
+                'notification_number':      bd.get('notification_number', ''),
+                'application_mode':         bd.get('application_mode', 'Online'),
+                'job_type':                 bd.get('job_type', ''),
+                'job_category':             bd.get('job_category', ''),
+                'job_location':             bd.get('job_location', ''),
+                'official_website':         bd.get('official_website', ''),
+                'short_info':               bd.get('short_information', ''),
+                'last_updated':             bd.get('last_updated', ''),
+                'selection_process_brief':  bd.get('selection_process_brief', ''),
+                # Dates
+                'last_date': last_date,
+                'notification_date': dates.get('notification date') or bd.get('last_updated', ''),
                 'important_dates': dates,
-                'application_fee': job.get('application_fee', {}),
-                'age_limit': job.get('age_limit', {}),
-                'qualification': job.get('qualification', {}),
-                'vacancy_details': job.get('vacancy_details', {}),
-                'category_wise_vacancy': job.get('category_wise_vacancy', {}),
-                'salary_details': job.get('salary_details', {}),
-                'selection_process': job.get('selection_process', {}),
-                'exam_pattern': job.get('exam_pattern', {}),
-                'syllabus': job.get('syllabus', {}),
-                'physical_eligibility': job.get('physical_eligibility', {}),
-                'how_to_apply': job.get('how_to_apply', {}),
-                'important_instructions': job.get('important_instructions', {}),
+                # Content sections — COMPLETE, no truncation
+                'application_fee':          job.get('application_fee', {}),
+                'age_limit':                job.get('age_limit', {}),
+                'qualification':            job.get('qualification', {}),
+                'vacancy_details':          job.get('vacancy_details', []),
+                'category_wise_vacancy':    job.get('category_wise_vacancy', {}),
+                'salary_details':           job.get('salary_details', {}),
+                'selection_process':        job.get('selection_process', []),
+                'exam_pattern':             job.get('exam_pattern', {}),
+                'syllabus':                 job.get('syllabus', {}),
+                'physical_eligibility':     job.get('physical_eligibility', {}),
+                'how_to_apply':             job.get('how_to_apply', []),
+                'important_instructions':   job.get('important_instructions', []),
+                'faq':                      job.get('faq', []),
+                'seo_tags':                 job.get('seo_tags', []),
+                # Links
                 'important_links': clean_links,
-                'faq': job.get('faq', {}), 'seo_tags': job.get('seo_tags', {}),
+                'all_links': [], 'useful_links': [],
+                # Sarkari fields (empty for freejobalert)
+                'tables': None, 'sections': [], 'text_sections': [],
+                'jobs_info': '', 'salary_pay_scale': '',
+                'minimum_age': '', 'maximum_age': '',
+                'status': 'active', 'post_date': '',
             })
 
-    # 2. sarkari_data
+    # 2. sarkari_data — ALL fields extracted
     for job in cj.get('sarkari_data', {}).get('jobs', []):
         title = job.get('title', '').strip()
         if not title: continue
-        imp_links = {}
-        for key in ['apply_online_link', 'official_website_link', 'official_notification_pdf_link']:
-            url = job.get(key, '')
+
+        # Merge ALL link sources
+        raw_links = {}
+        for field in ['apply_online_link', 'official_website_link', 'official_notification_pdf_link',
+                      'form_pdf_link', 'form_pdf_free_link', 'application_form_pdf_link']:
+            url = job.get(field, '')
             if url and not is_blocked(url):
-                imp_links[key.replace('_link', '').replace('_pdf', '')] = url
+                key = field.replace('_link','').replace('_pdf','')
+                raw_links[key] = sanitize_url(url)
+        il = job.get('important_links', {})
+        if isinstance(il, dict):
+            for k, v in il.items():
+                if isinstance(v, str) and v.startswith('http') and not is_blocked(v):
+                    raw_links.setdefault(k, sanitize_url(v))
+                elif isinstance(v, list):
+                    filtered = [sanitize_url(u) for u in v if isinstance(u, str) and not is_blocked(u)]
+                    if filtered: raw_links.setdefault(k, filtered)
+
+        imp_dates = job.get('important_dates', {}) or {}
+        last_date = ''
+        if isinstance(imp_dates, dict):
+            last_date = (imp_dates.get('last_date') or imp_dates.get('Last Date') or
+                         imp_dates.get('last_date_to_apply') or job.get('last_date',''))
+        else:
+            last_date = job.get('last_date', '')
+            imp_dates = {}
+
         add_job({
-            'slug': slugify(title), 'title': title,
-            'organization': job.get('organization', ''),
-            'post_name': job.get('post_name', ''),
-            'total_vacancies': str(job.get('total_vacancy', '')),
-            'application_mode': job.get('apply_mode', ''),
-            'job_type': '', 'short_info': job.get('jobs_info', ''),
-            'last_date': job.get('important_dates', {}).get('Last Date', ''),
-            'last_updated': job.get('listing_date', ''),
-            'notification_date': '', 'category': job.get('category', 'LATEST_JOBS NEW'),
-            'source': 'sarkari',
-            'important_dates': job.get('important_dates', {}),
-            'application_fee': {}, 'age_limit': {},
-            'qualification': {}, 'vacancy_details': {},
-            'category_wise_vacancy': {},
-            'salary_details': {'salary': job.get('salary_pay_scale', '')},
-            'selection_process': {}, 'exam_pattern': {}, 'syllabus': {},
-            'physical_eligibility': {}, 'how_to_apply': {},
-            'important_instructions': {}, 'important_links': imp_links,
-            'faq': {}, 'seo_tags': {},
+            'slug': job.get('slug') or slugify(title), 'title': title,
+            'source': 'sarkari', 'category': job.get('category', ''),
+            # Identity
+            'organization':         job.get('organization', ''),
+            'department':           '',
+            'post_name':            job.get('post_name', ''),
+            'total_vacancies':      str(job.get('total_post') or job.get('total_vacancy') or ''),
+            'notification_number':  '',
+            'application_mode':     job.get('apply_mode', 'Online'),
+            'job_type':             '',
+            'job_category':         '',
+            'job_location':         job.get('job_location', ''),
+            'official_website':     job.get('official_website_link', ''),
+            'short_info':           re.sub(r'<[^>]+>', ' ', str(job.get('short_information') or job.get('jobs_info') or '')).strip(),
+            'last_updated':         job.get('listing_date', ''),
+            'selection_process_brief': '',
+            'last_date':            last_date,
+            'notification_date':    '',
+            'important_dates':      imp_dates,
+            # Content
+            'application_fee':      job.get('application_fee') or job.get('application_fees') or {},
+            'age_limit':            job.get('age_limit', {}),
+            'qualification':        job.get('eligibility') or {},
+            'vacancy_details':      job.get('vacancy_details', []),
+            'category_wise_vacancy':{},
+            'salary_details':       {'pay_scale': job.get('salary_pay_scale','')} if job.get('salary_pay_scale') else {},
+            'selection_process':    [],
+            'exam_pattern':         {},
+            'syllabus':             {},
+            'physical_eligibility': {},
+            'how_to_apply':         job.get('how_to_apply', []),
+            'important_instructions': [],
+            'faq':                  job.get('faq', []),
+            'seo_tags':             [],
+            # Links — ALL sources
+            'important_links':      raw_links,
+            'all_links':            job.get('all_links', []),
+            'useful_links':         job.get('useful_links', []),
+            # Sarkari-specific rich fields
+            'tables':               job.get('tables'),
+            'sections':             job.get('sections', []),
+            'text_sections':        job.get('text_sections', []),
+            'jobs_info':            job.get('jobs_info', ''),
+            'salary_pay_scale':     job.get('salary_pay_scale', ''),
+            'minimum_age':          str(job.get('minimum_age', '')),
+            'maximum_age':          str(job.get('maximum_age', '')),
+            'status':               job.get('status', 'active'),
+            'post_date':            job.get('post_date', ''),
         })
 
     # 3. dailyupdates.json — Top 20 Jobs + Today Updates sections only
