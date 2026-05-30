@@ -138,7 +138,7 @@ jobs:
               top = items[0]['title'][:50] if items else '-'
               print(f"  {filepath}: {len(items)} | #1={top}")
 
-          # ── merged-summary.json (top 8 per cat for homepage SR cards) ──
+          # ── merged-summary.json (compat file — generated from CJ, NOT fetched by frontend) ──
           summary = []
           for cat, items in cats.items():
               items.sort(key=lambda x: x.get('homepage_serial', x.get('sequence', 999)))

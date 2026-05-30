@@ -27,7 +27,25 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
 .hero-section{background:linear-gradient(135deg,#0d2257 0%,#1a56db 100%);padding:28px 0 20px;color:#fff;text-align:center}
 .hero-h1{font-size:1.5rem;font-weight:900;line-height:1.25;margin-bottom:5px}
 .hero-h1 span{color:#fbbf24}
-  </style>
+  
+    /* TSJ Section Cards v9 */
+    .sr-sk { animation: srPulse 1.4s ease-in-out infinite; background:#f1f5f9; min-height:180px; }
+    @keyframes srPulse { 0%,100%{opacity:.6} 50%{opacity:1} }
+    .sr-section-title { color:#fff; font-size:.82rem; font-weight:700; line-height:1.3; }
+    .sr-card-head .left { flex:1; min-width:0; }
+    .sr-card-footer { border-top:1px solid var(--border); padding:6px 8px; }
+    .sr-sub-link { font-size:.72rem; color:var(--primary); font-weight:600; text-decoration:none; }
+    .sr-sub-link:hover { text-decoration:underline; }
+    .sr-job-list { list-style:none; margin:0; padding:0; }
+    .sr-job-link { display:flex; align-items:flex-start; gap:6px; padding:6px 8px; text-decoration:none;
+                   color:#1a202c; border-bottom:1px solid #f0f4f8; transition:background .15s; }
+    .sr-job-link:hover { background:#f8fafc; }
+    .sr-num { min-width:16px; height:16px; border-radius:50%; background:#e2e8f0;
+              font-size:9px; font-weight:700; color:#475569; display:flex; align-items:center;
+              justify-content:center; margin-top:2px; flex-shrink:0; }
+    .sr-job-title { font-size:.75rem; font-weight:600; line-height:1.4; flex:1; color:#1a202c; }
+    .sr-job-date { font-size:.65rem; color:#64748b; white-space:nowrap; margin-top:2px; }
+    </style>
 
   <title>Top Sarkari Jobs 2026 – Latest Government Jobs, Results, Admit Cards | India No.1</title>
   <meta name="description" content="Top Sarkari Jobs 2026: Latest government job notifications, admit cards, results, answer keys, online forms. SSC, Railway, IBPS Banking, Police, Defence, UPSC & State PSC jobs updated daily. 10th, 12th, ITI, Graduation pass jobs."/>
@@ -2580,20 +2598,112 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
         <!-- ============================================================
              SARKARI RESULT DYNAMIC SECTION (from Complete_Jobs_Full_Data.json sarkari_data)
         ============================================================ -->
+                <!-- ALL 32 SECTION CARDS - TSJSections v9 -->
         <div id="sr-dynamic-wrap">
           <div id="sr-sections-grid" class="sr-sections-grid">
-            <!-- Cards rendered by inline script below -->
-            <div class="sr-card"><div class="sr-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div></div>
-            <div class="sr-card"><div class="sr-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div></div>
-            <div class="sr-card"><div class="sr-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div></div>
-            <div class="sr-card"><div class="sr-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div></div>
-            <div class="sr-card"><div class="sr-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div></div>
-            <div class="sr-card"><div class="sr-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div></div>
+            <div class="sr-card sr-sk" style="min-height:200px"></div>
+            <div class="sr-card sr-sk" style="min-height:200px"></div>
+            <div class="sr-card sr-sk" style="min-height:200px"></div>
+            <div class="sr-card sr-sk" style="min-height:200px"></div>
           </div>
         </div>
-
-        <!-- DYNAMIC SECTIONS: script.js renders section cards here in 2-col grid -->
-        <div id="dynamic-sections" class="dynamic-sections-row"></div>
+        <div id="dynamic-sections" class="dynamic-sections-row" style="display:none"></div>
+        <script>
+        (function TSJ9(){
+          var MAX=10,grid=document.getElementById('sr-sections-grid');
+          if(!grid)return;
+          var SECS=[
+            {l:'Latest Jobs',          s:'k',k:'SR_Latest_Jobs',      u:'/section/latest-jobs/',           c:'#1a56db'},
+            {l:'Result',               s:'k',k:'SR_Result',            u:'/section/results/',               c:'#9b1c1c'},
+            {l:'Admit Card',           s:'k',k:'SR_Admit_Card',        u:'/section/admit-card/',            c:'#1e3a5f'},
+            {l:'Admission',            s:'k',k:'SR_Admission',         u:'/section/admission/',             c:'#14532d'},
+            {l:'Answer Key',           s:'k',k:'SR_Answer_Key',        u:'/section/answer-key/',            c:'#713f12'},
+            {l:'Offline Form',         s:'k',k:'OFFLINE_FORM',         u:'/section/offline-form/',          c:'#1e3a5f'},
+            {l:'Upcoming Jobs',        s:'k',k:'UPCOMING_JOBS',        u:'/section/upcoming-jobs/',         c:'#14532d'},
+            {l:'Latest Jobs New',      s:'k',k:'LATEST_JOBS NEW',     u:'/section/latest-jobs-new/',       c:'#1a56db'},
+            {l:'State Jobs',           s:'k',k:'STATE_JOBS',           u:'/section/state-jobs/',            c:'#713f12'},
+            {l:'Central Jobs',         s:'k',k:'CENTRAL_JOBS',         u:'/section/central-jobs/',          c:'#1e3a5f'},
+            {l:'Admissions',           s:'k',k:'ADMISSIONS',           u:'/section/admissions/',            c:'#14532d'},
+            {l:'Latest Notifications', s:'i',k:'Latest_Notifications', u:'/section/latest-notifications/', c:'#1a56db'},
+            {l:'10th Pass Jobs',       s:'i',k:'10TH_Pass',            u:'/section/10th-pass-jobs/',       c:'#9b1c1c'},
+            {l:'8th Pass Jobs',        s:'i',k:'8TH_Pass',             u:'/section/8th-pass-jobs/',        c:'#1e3a5f'},
+            {l:'12th Pass Jobs',       s:'i',k:'12TH_Pass',            u:'/section/12th-pass-jobs/',       c:'#14532d'},
+            {l:'Diploma Jobs',         s:'i',k:'Diploma',              u:'/section/diploma-jobs/',         c:'#713f12'},
+            {l:'ITI Jobs',             s:'i',k:'ITI',                  u:'/section/iti-jobs/',             c:'#1e3a5f'},
+            {l:'B.Tech / B.E. Jobs',   s:'i',k:'B_Tech_BE',            u:'/section/btech-jobs/',           c:'#14532d'},
+            {l:'B.Com Jobs',           s:'i',k:'B_Com',                u:'/section/b-com/',                c:'#713f12'},
+            {l:'Any Graduate Jobs',    s:'i',k:'Any_Graduate',         u:'/section/graduation-jobs/',      c:'#1a56db'},
+            {l:'Post Graduate Jobs',   s:'i',k:'Any_Post_Graduate',    u:'/section/post-graduation-jobs/', c:'#9b1c1c'},
+            {l:'Railway Jobs',         s:'i',k:'Railway_Jobs',         u:'/section/railway-jobs/',         c:'#1e3a5f'},
+            {l:'Police / Defence',     s:'i',k:'Police_Defence',        u:'/section/police-jobs/',          c:'#14532d'},
+            {l:'Teaching / Faculty',   s:'i',k:'Teaching_Faculty',      u:'/section/teaching-jobs/',        c:'#713f12'},
+            {l:'Bank Jobs',            s:'i',k:'Bank_Jobs',             u:'/section/bank-jobs/',            c:'#1e3a5f'},
+            {l:'Medical / Hospital',   s:'i',k:'Medical_Hospital',      u:'/section/healthcare-jobs/',      c:'#9b1c1c'},
+            {l:'Last Date Reminder',   s:'i',k:'Last_Date_Reminder',    u:'/section/last-date-reminder/',   c:'#14532d'},
+            {l:'Govt Scheme & Yojna',  s:'d',k:'Govt Scheme & Yojna',   u:'/section/latest-jobs/',          c:'#1a56db'},
+            {l:'ImportantCSC PDF',     s:'d',k:'ImportantCSC PDF',      u:'/section/latest-jobs/',          c:'#713f12'},
+            {l:'ImportantCSC link',    s:'d',k:'ImportantCSC link',     u:'/section/latest-jobs/',          c:'#9b1c1c'},
+            {l:'Top 20 Jobs',          s:'d',k:'Top 20 Jobs',            u:'/section/top-20-jobs/',          c:'#1e3a5f'},
+            {l:'Today Updates',        s:'d',k:'Today Updates',          u:'/section/today-updates/',        c:'#14532d'}
+          ];
+          function x(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+          function mkCard(sec,items){
+            var h='<div class="sr-card-head" style="background:'+sec.c+'">'
+              +'<div class="left"><span class="sr-section-title">'+x(sec.l)+'</span></div>'
+              +'<a href="'+x(sec.u)+'" style="color:#fff;font-size:.68rem;background:rgba(255,255,255,.2);padding:2px 7px;border-radius:4px;text-decoration:none;white-space:nowrap;">View All</a>'
+              +'</div>';
+            var li='',n=0;
+            for(var i=0;i<items.length&&n<MAX;i++){
+              var it=items[i],nm=it.name||it.title||it.post_name||'';if(!nm)continue;
+              var href=it.url||(it.slug?'/jobs/'+it.slug+'/':sec.u);
+              var dt=String(it.date||it.lastDate||it.last_date||'');
+              li+='<li><a href="'+x(href)+'" class="sr-job-link"><span class="sr-num">'+(n+1)+'</span>'
+                +'<span class="sr-job-title">'+x(nm.slice(0,80))+'</span>'
+                +(dt?'<span class="sr-job-date">'+x(dt.slice(0,10))+'</span>':'')
+                +'</a></li>';n++;
+            }
+            if(!li)li='<li><a href="'+x(sec.u)+'" class="sr-job-link"><span class="sr-job-title">View all '+x(sec.l)+' &rarr;</span></a></li>';
+            return h+'<ul class="sr-job-list">'+li+'</ul>'
+              +'<div class="sr-card-footer"><a href="'+x(sec.u)+'" class="sr-sub-link">View All '+x(sec.l)+' &rarr;</a></div>';
+          }
+          function render(cj,si,dl){
+            var sj=(cj&&cj.sarkari_data&&cj.sarkari_data.jobs)||[];
+            var s2=si||{},ds={};
+            if(dl&&dl.sections)dl.sections.forEach(function(sec){ds[sec.title]=sec.items||[];});
+            var bc={};
+            sj.forEach(function(j){var c=j.category||'';if(!bc[c])bc[c]=[];
+              bc[c].push({name:j.title||j.post_name||'',
+                date:(j.important_dates&&j.important_dates['Last Date'])||j.listing_date||'',
+                url:j.slug?'/jobs/'+j.slug+'/':(j.apply_online_link||j.official_website_link||'')});
+            });
+            grid.innerHTML='';
+            SECS.forEach(function(sec){
+              var items=[];
+              if(sec.s==='k')items=bc[sec.k]||[];
+              else if(sec.s==='i')items=(s2[sec.k]||[]).map(function(i){
+                return{name:i.name||i.title||'',date:i.date||'',url:i.slug?'/jobs/'+i.slug+'/':(i.url||'')};
+              });
+              else if(sec.s==='d')items=ds[sec.k]||[];
+              var div=document.createElement('div');div.className='sr-card';
+              div.innerHTML=mkCard(sec,items);grid.appendChild(div);
+            });
+          }
+          var CK='__tsj_v9',TL=15*60*1000;
+          try{var ca=JSON.parse(sessionStorage.getItem(CK)||'null');
+            if(ca&&ca.v===9&&(Date.now()-ca.ts)<TL){render(ca.a,ca.b,ca.c);return;}
+          }catch(ignore){}
+          function gj(u){return fetch(u,{cache:'default'}).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;});}
+          Promise.all([
+            gj('/data/Complete_Jobs_Full_Data.json').then(function(d){return d||gj('/Complete_Jobs_Full_Data.json');}),
+            gj('/sections-index.json'),gj('/dailyupdates.json')
+          ]).then(function(r){
+            render(r[0],r[1],r[2]);
+            try{sessionStorage.setItem(CK,JSON.stringify({ts:Date.now(),v:9,a:r[0],b:r[1],c:r[2]}));}catch(ignore){}
+          }).catch(function(){
+            grid.innerHTML='<div class="sr-card" style="grid-column:1/-1;padding:20px;text-align:center;">Failed. <a href="javascript:location.reload()">Retry</a></div>';
+          });
+        })();
+        </script>
 
 
 
