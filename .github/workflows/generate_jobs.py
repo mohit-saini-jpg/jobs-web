@@ -264,14 +264,25 @@ def build_html(slug, job):
         ]
     }
 
-    faq_items = [
-        (f'{title} last date kya hai?', f'Last date: {last_date}.'),
+    # FAQ: use JSON faq data if available, else auto-generate
+    _json_faq = job.get('faq', [])
+    if isinstance(_json_faq, list) and _json_faq:
+        faq_items = [(esc(str(f.get('question',''))), esc(str(f.get('answer','')))) for f in _json_faq if f.get('question') and f.get('answer')]
+        faq_items = faq_items[:6]  # max 6
+    else:
+        faq_items = []
+    # Always ensure minimum 4 auto-generated FAQs are present
+    auto_faq = [
+        (f'{title} last date kya hai?', f'Last date: {last_date}. Official notification zaroor dekhein.'),
         (f'{title} ke liye eligibility kya hai?', 'Qualification ke liye official notification dekhein.'),
         (f'{title} mein total vacancies kitni hain?', f'Total {posts} posts hain.'),
         (f'{title} apply kaise karein?', f'{mode} mode mein apply karein. Official website par jakar form fill karein.'),
         (f'{org} ki official website kya hai?', 'Important Links section mein official website ka link diya gaya hai.'),
         (f'{title} ka selection process kya hai?', 'Written Test / Interview / Document Verification. Official notification dekhein.'),
     ]
+    if len(faq_items) < 4:
+        faq_items = auto_faq[:6]
+
     faq_schema = {
         '@context': 'https://schema.org', '@type': 'FAQPage',
         'mainEntity': [{'@type': 'Question', 'name': q, 'acceptedAnswer': {'@type': 'Answer', 'text': a}} for q, a in faq_items]
@@ -283,61 +294,114 @@ def build_html(slug, job):
         'publisher': {'@type': 'Organization', 'name': 'Top Sarkari Jobs', 'url': BASE_URL}
     }
 
-    # Content sections
-    sections_html = ''
-    if job.get('important_dates'):
-        rows = ''.join(
-            f"<tr><td>{esc(str(k).replace('_',' ').title())}</td><td><strong>{esc(str(v))}</strong></td></tr>"
-            for k, v in job['important_dates'].items() if v
-        )
-        if rows:
-            sections_html += f'''
-    <section class="job-card" id="important-dates">
-      <div class="job-card-head" style="background:linear-gradient(135deg,#0f766e,#0d9488)">
-        <i class="fa-solid fa-calendar-days"></i><h2>Important Dates</h2>
+    # ── Helper: render one card section ─────────────────────────────────────────
+    def _card(sec_id, label, icon, color, body_html):
+        return f'''
+    <section class="job-card" id="{sec_id}">
+      <div class="job-card-head" style="background:{color}">
+        <i class="fa-solid {icon}"></i><h2>{label}</h2>
       </div>
-      <div class="job-card-body"><div class="table-scroll"><table class="info-table"><tbody>{rows}</tbody></table></div></div>
+      <div class="job-card-body">{body_html}</div>
     </section>'''
 
+    # ══════════════════════════════════════════════════════
+    # SECTION ORDER (matches your spec exactly):
+    # 1  Hero            → rendered separately in <header>
+    # 2  Short Info      → rendered inline below header
+    # 3  Highlights      → auto-generated from key fields
+    # 4  Important Dates
+    # 5  Application Fee
+    # 6  Age Limit
+    # 7  Qualification
+    # 8  Vacancy Details (SECTION_MAP + tables key)
+    # 9  Selection Process
+    # 10 Salary
+    # 11 Exam Pattern
+    # 12 Syllabus
+    # 13 Physical Eligibility
+    # 14 How To Apply
+    # 15 Important Instructions
+    # 16 Important Links  → rendered separately below
+    # 17 FAQ              → rendered separately below
+    # 18 SEO Content      → rendered separately below
+    # ══════════════════════════════════════════════════════
+
+    sections_html = ''
+
+    # ── 3. Highlights (auto-generated from key fields) ───────────────────────
+    _hi = []
+    if posts and str(posts) not in ('', 'Various', 'None'):
+        _hi.append(f'<li><i class="fa-solid fa-users" aria-hidden="true"></i> <strong>Total Posts:</strong> {esc(str(posts))}</li>')
+    if last_date:
+        _hi.append(f'<li><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> <strong>Last Date:</strong> {esc(last_date)}</li>')
+    if mode:
+        _hi.append(f'<li><i class="fa-solid fa-computer" aria-hidden="true"></i> <strong>Apply Mode:</strong> {esc(mode)}</li>')
+    _dept = job.get('post_name') or job.get('organization', '')
+    if _dept:
+        _hi.append(f'<li><i class="fa-solid fa-building" aria-hidden="true"></i> <strong>Department:</strong> {esc(str(_dept))}</li>')
+    _loc = job.get('job_location', '')
+    if _loc:
+        _hi.append(f'<li><i class="fa-solid fa-location-dot" aria-hidden="true"></i> <strong>Location:</strong> {esc(str(_loc))}</li>')
+    # Age from age_limit
+    _age = job.get('age_limit', {})
+    if isinstance(_age, dict):
+        _age_str = _age.get('age_details') or _age.get('minimum_age') or ''
+        if _age_str:
+            _hi.append(f'<li><i class="fa-solid fa-user-clock" aria-hidden="true"></i> <strong>Age Limit:</strong> {esc(str(_age_str))}</li>')
+    elif isinstance(_age, str) and _age.strip():
+        _hi.append(f'<li><i class="fa-solid fa-user-clock" aria-hidden="true"></i> <strong>Age Limit:</strong> {esc(_age)}</li>')
+    # Min/max age from sarkari_data format
+    _minage = job.get('minimum_age', '')
+    _maxage = job.get('maximum_age', '')
+    if _minage and _maxage and not any('Age' in h for h in _hi):
+        _hi.append(f'<li><i class="fa-solid fa-user-clock" aria-hidden="true"></i> <strong>Age:</strong> {esc(str(_minage))}–{esc(str(_maxage))} Years</li>')
+    if _hi:
+        sections_html += _card('highlights', 'Key Highlights', 'fa-star',
+            'linear-gradient(135deg,#0891b2,#0e7490)',
+            f'<ul class="highlights-list">{"".join(_hi)}</ul>')
+
+    # ── 4. Important Dates ───────────────────────────────────────────────────
+    _dates = job.get('important_dates', {})
+    if _dates and isinstance(_dates, dict):
+        _date_rows = ''.join(
+            f"<tr><td>{esc(str(k).replace('_',' ').title())}</td><td><strong>{esc(str(v))}</strong></td></tr>"
+            for k, v in _dates.items()
+            if v and k not in ('events',) and not isinstance(v, (dict, list))
+        )
+        if _date_rows:
+            sections_html += _card('important-dates', 'Important Dates', 'fa-calendar-days',
+                'linear-gradient(135deg,#0f766e,#0d9488)',
+                f'<div class="table-scroll"><table class="info-table"><tbody>{_date_rows}</tbody></table></div>')
+
+    # ── 5–15. SECTION_MAP (in correct spec order) ────────────────────────────
     SECTION_MAP = [
-        ('application_fee','Application Fee','fa-indian-rupee-sign','linear-gradient(135deg,#dc2626,#b91c1c)'),
-        ('age_limit','Age Limit','fa-user-clock','linear-gradient(135deg,#7c3aed,#6d28d9)'),
-        ('qualification','Qualification / Eligibility','fa-graduation-cap','linear-gradient(135deg,#0284c7,#0369a1)'),
-        ('vacancy_details','Vacancy Details','fa-users','linear-gradient(135deg,#059669,#047857)'),
-        ('category_wise_vacancy','Category Wise Vacancy','fa-table','linear-gradient(135deg,#047857,#065f46)'),
-        ('salary_details','Salary / Pay Scale','fa-money-bill-wave','linear-gradient(135deg,#ca8a04,#a16207)'),
-        ('selection_process','Selection Process','fa-list-check','linear-gradient(135deg,#4f46e5,#4338ca)'),
-        ('exam_pattern','Exam Pattern','fa-file-alt','linear-gradient(135deg,#0e7490,#0891b2)'),
-        ('syllabus','Syllabus','fa-book-open','linear-gradient(135deg,#16a34a,#15803d)'),
-        ('physical_eligibility','Physical Eligibility','fa-person-running','linear-gradient(135deg,#b45309,#92400e)'),
-        ('how_to_apply','How To Apply','fa-pen-to-square','linear-gradient(135deg,#1e40af,#1e3a8a)'),
-        ('important_instructions','Important Instructions','fa-triangle-exclamation','linear-gradient(135deg,#e11d48,#be123c)'),
+        ('application_fee',       'Application Fee',        'fa-indian-rupee-sign', 'linear-gradient(135deg,#dc2626,#b91c1c)'),
+        ('age_limit',             'Age Limit',              'fa-user-clock',        'linear-gradient(135deg,#7c3aed,#6d28d9)'),
+        ('qualification',         'Qualification / Eligibility','fa-graduation-cap','linear-gradient(135deg,#0284c7,#0369a1)'),
+        ('vacancy_details',       'Vacancy Details',        'fa-users',             'linear-gradient(135deg,#059669,#047857)'),
+        ('category_wise_vacancy', 'Category Wise Vacancy',  'fa-table',             'linear-gradient(135deg,#047857,#065f46)'),
+        ('selection_process',     'Selection Process',      'fa-list-check',        'linear-gradient(135deg,#4f46e5,#4338ca)'),
+        ('salary_details',        'Salary / Pay Scale',     'fa-money-bill-wave',   'linear-gradient(135deg,#ca8a04,#a16207)'),
+        ('exam_pattern',          'Exam Pattern',           'fa-file-alt',          'linear-gradient(135deg,#0e7490,#0891b2)'),
+        ('syllabus',              'Syllabus',               'fa-book-open',         'linear-gradient(135deg,#16a34a,#15803d)'),
+        ('physical_eligibility',  'Physical Eligibility',   'fa-person-running',    'linear-gradient(135deg,#b45309,#92400e)'),
+        ('how_to_apply',          'How To Apply',           'fa-pen-to-square',     'linear-gradient(135deg,#1e40af,#1e3a8a)'),
+        ('important_instructions','Important Instructions', 'fa-triangle-exclamation','linear-gradient(135deg,#e11d48,#be123c)'),
     ]
     for key, label, icon, color in SECTION_MAP:
         content = job.get(key)
         if not content: continue
         rendered = render_section(content)
         if not rendered: continue
-        sections_html += f'''
-    <section class="job-card" id="{key.replace('_','-')}">
-      <div class="job-card-head" style="background:{color}">
-        <i class="fa-solid {icon}"></i><h2>{label}</h2>
-      </div>
-      <div class="job-card-body">{rendered}</div>
-    </section>'''
+        sections_html += _card(key.replace('_','-'), label, icon, color, rendered)
 
-    # Render 'tables' key (array of {table_name, rows} objects)
+    # ── 8b. tables key (Vacancy & Eligibility — sarkari_data format) ─────────
     raw_tables = job.get('tables')
     if raw_tables:
         tables_rendered = render_tables(raw_tables)
         if tables_rendered:
-            sections_html += f'''
-    <section class="job-card" id="vacancy-eligibility">
-      <div class="job-card-head" style="background:linear-gradient(135deg,#059669,#047857)">
-        <i class="fa-solid fa-users"></i><h2>Vacancy &amp; Eligibility Details</h2>
-      </div>
-      <div class="job-card-body">{tables_rendered}</div>
-    </section>'''
+            sections_html += _card('vacancy-eligibility', 'Vacancy &amp; Eligibility Details',
+                'fa-users', 'linear-gradient(135deg,#059669,#047857)', tables_rendered)
 
     # Important links (filtered)
     links = job.get('important_links', {})
@@ -367,14 +431,30 @@ def build_html(slug, job):
         links_html = '<p>Official notification ke liye upar di gayi information dekhein.</p>'
 
     faq_html = '\n'.join(
-        f'<div class="faq-item"><h3 class="faq-q"><i class="fa-solid fa-circle-question"></i> {esc(q)}</h3>'
-        f'<div class="faq-a"><p>{esc(a)}</p></div></div>'
+        f'<div class="faq-item"><h3 class="faq-q"><i class="fa-solid fa-circle-question"></i> {q}</h3>'
+        f'<div class="faq-a"><p>{a}</p></div></div>'
         for q, a in faq_items
+        if q and a
     )
 
-    seo_p1 = f"{org} ne {title} ke liye official notification jari kiya hai. Is recruitment mein kul {posts} posts ke liye eligible candidates se applications mangi gayi hain. Last date {last_date} hai."
-    seo_p2 = f"Application {mode} mode mein ki ja sakti hai. Selection process mein written test aur/ya interview shamil ho sakta hai. Salary aur age limit ke liye upar di gayi table dekhein."
-    seo_p3 = f"{title} ek achi opportunity hai un candidates ke liye jo government jobs dhundh rahe hain. Kisi bhi query ke liye official website visit karein ya notification download karein."
+    # SEO Content — 200-300 words auto-generated
+    _sel = ''
+    _sp = job.get('selection_process', [])
+    if isinstance(_sp, list) and _sp:
+        _sel = str(_sp[0])[:120]
+    elif isinstance(_sp, str) and _sp:
+        _sel = _sp[:120]
+    _qual = ''
+    _qd = job.get('qualification', {})
+    if isinstance(_qd, dict):
+        _qual = (_qd.get('education_qualification') or _qd.get('details') or '')[:120]
+    elif isinstance(_qd, str):
+        _qual = _qd[:120]
+
+    seo_p1 = f"{org} ne {title} ke liye official notification jari kiya hai. Is recruitment drive mein kul {posts} posts ke liye eligible candidates se applications mangi gayi hain. Yeh ek sarkari naukri ka behad acha mauka hai. Interested candidates last date {last_date} se pehle apply karein."
+    seo_p2 = f"Application {mode} mode mein ki ja sakti hai. {'Qualification: ' + _qual + '. ' if _qual else ''}Age limit aur category-wise relaxation ke liye official notification zaroor padhen. Application fee aur payment process ke liye upar di gayi jankari dekhein."
+    seo_p3 = f"{'Selection process mein ' + _sel[:80] + ' shamil hai. ' if _sel else 'Selection process ke liye official notification dekhein. '}Salary, pay scale, aur job location ki puri jankari notification mein di gayi hai. Exam pattern aur syllabus ke liye official website visit karein."
+    seo_p4 = f"{title} ke liye apply karne se pehle sabhi eligibility criteria, age limit, aur qualification carefully check karein. Important dates miss mat karein — application begin date aur last date ke beech hi apply possible hai. Agar koi doubt ho toh official website par jaayein ya helpline se contact karein."
 
     return f'''<!DOCTYPE html>
 <html lang="en">
@@ -503,9 +583,30 @@ def build_html(slug, job):
       line-height: 1.55;
     }}
 
-    /* Mobile */
+    /* Highlights list */
+    .highlights-list {{
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 8px;
+    }}
+    .highlights-list li {{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13.5px;
+      padding: 7px 10px;
+      background: #f0fdf4;
+      border-radius: 6px;
+      border: 1px solid #d1fae5;
+      color: #1f2937;
+    }}
+    .highlights-list li i {{ color: #059669; font-size: 14px; flex-shrink: 0; }}
     @media (max-width: 640px) {{
-      /* Scroll shadow hint */
+      .highlights-list {{ grid-template-columns: 1fr; }}
+    }}
       .table-scroll {{
         box-shadow: inset -6px 0 10px -6px rgba(0,0,0,0.15);
       }}
@@ -581,6 +682,7 @@ def build_html(slug, job):
           <p>{esc(seo_p1)}</p>
           <p>{esc(seo_p2)}</p>
           <p>{esc(seo_p3)}</p>
+          <p>{esc(seo_p4)}</p>
         </div>
       </section>
     </article>
