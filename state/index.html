@@ -85,6 +85,14 @@
 
   function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
+  function slugify(text) {
+    var t = String(text||'').toLowerCase();
+    t = t.replace(/[–—]/g, '-').replace(/&/g, ' and ');
+    t = t.replace(/[^a-z0-9\s-]/g, '').trim();
+    t = t.replace(/\s+/g, '-').replace(/-+/g, '-');
+    return t.slice(0, 110) || 'job';
+  }
+
   function buildCard(sec, colorIdx) {
     var color = STATE_COLORS[colorIdx % STATE_COLORS.length];
     var items = sec.items || [];
@@ -97,7 +105,11 @@
       var item = items[i];
       var name = item.name || item.title || '';
       if (!name) continue;
-      var href = stateUrl; // All job clicks → state detail page which lists all jobs
+      var slug = (name || '').replace(/[–—]/g,'-').toLowerCase()
+        .normalize('NFKD').replace(/[̀-ͯ]/g,'')
+        .replace(/&/g,' and ').replace(/['']/g,'')
+        .replace(/[^\w\s-]/g,'').replace(/[\s-]+/g,'-').replace(/^-|-$/g,'');
+      var href = '/state-job-detail.html?state=' + encodeURIComponent(stateName) + '&slug=' + slug;
       var date = item.date || item.lastDate || '';
       li += '<li><a href="' + esc(href) + '" class="state-job-link" target="_self" rel="noopener">'
         + '<span class="sj-num">' + (i+1) + '</span>'
