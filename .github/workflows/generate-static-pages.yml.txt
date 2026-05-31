@@ -1,0 +1,122 @@
+# ══════════════════════════════════════════════════════════════════════
+# WORKFLOW 6: generate-static-pages.yml — Manual Full Regeneration
+# P6 FIX: workflow_dispatch ONLY — no path triggers (avoids duplicate work)
+# Path triggers are handled by auto-update-jobs.yml
+# ══════════════════════════════════════════════════════════════════════
+
+name: 🏗️ Generate Static Pages (Manual Full Regen)
+
+on:
+  workflow_dispatch:
+    inputs:
+      force_regenerate:
+        description: 'Force regenerate all pages (ignore existing)'
+        type: boolean
+        default: true
+      run_seo_fix:
+        description: 'Run SEO fix pass after generation'
+        type: boolean
+        default: true
+      run_validate:
+        description: 'Run validation after generation'
+        type: boolean
+        default: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 1
+
+      - name: 🐍 Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 🟢 Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 🔖 Version bump
+        run: node .github/workflows/generate_version.js
+
+      - name: ⏱️ Record start time
+        run: echo "START_TIME=$(date +%s)" >> $GITHUB_ENV
+
+      - name: 🏗️ Generate static pages
+        env:
+          FORCE_REGENERATE: ${{ inputs.force_regenerate }}
+        run: |
+          echo "FORCE_REGENERATE=${FORCE_REGENERATE}"
+          python3 .github/workflows/generate_jobs.py
+          echo "PAGES_GENERATED=$(find jobs -name 'index.html' 2>/dev/null | wc -l)" >> $GITHUB_ENV
+
+      - name: 🔍 Run SEO fixes
+        if: inputs.run_seo_fix
+        continue-on-error: true
+        run: python3 scripts/fix_seo.py && echo "✅ SEO fixes applied"
+
+      - name: ✅ Run validation
+        if: inputs.run_validate
+        continue-on-error: true
+        run: python3 scripts/validate.py && echo "✅ Validation passed"
+
+      - name: 🗺️ Rebuild sitemaps
+        run: node .github/workflows/generate_sitemap.js
+
+      - name: 📤 Commit & Push (conflict-safe)
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Stage all generated/updated files
+          git add jobs/ jobs-index.json sections-index.json version.json sw.js 2>/dev/null || true
+          git add sitemap-jobs.xml sitemap-index.xml sitemap.xml 2>/dev/null || true
+          git add data/ 2>/dev/null || true
+          git add -A 2>/dev/null || true
+
+          if git diff --staged --quiet; then
+            echo "✅ No changes to commit"
+            exit 0
+          fi
+
+          PAGES=$(find jobs -name 'index.html' 2>/dev/null | wc -l)
+          VERSION=$(node -e "console.log(require('./version.json').version)")
+          git commit -m "🏗️ Full regen v${VERSION}: ${PAGES} pages [skip ci]"
+
+          # Pull with merge strategy (never rebase — avoids unstaged-changes error)
+          git fetch origin main
+          git merge origin/main -X ours --no-edit --allow-unrelated-histories || true
+
+          git push origin main
+          echo "✅ Pushed — ${PAGES} pages"
+
+      - name: 📊 Rich Summary
+        run: |
+          END_TIME=$(date +%s)
+          ELAPSED=$(( END_TIME - START_TIME ))
+          PAGES=$(find jobs -name 'index.html' 2>/dev/null | wc -l)
+          VERSION=$(node -e "console.log(require('./version.json').version)" 2>/dev/null || echo "unknown")
+          ERRORS=0
+          echo "### 🏗️ Full Static Page Regen Complete" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| **Pages Generated** | ${PAGES} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Version** | \`${VERSION}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Time Taken** | ${ELAPSED}s |" >> $GITHUB_STEP_SUMMARY
+          echo "| **SEO Fix** | ${{ inputs.run_seo_fix }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Validate** | ${{ inputs.run_validate }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Force Regen** | ${{ inputs.force_regenerate }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **IST Time** | $(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M') |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Trigger:** Manual \`workflow_dispatch\`" >> $GITHUB_STEP_SUMMARY
+          echo "> Note: For auto page gen, push to \`data/Complete_Jobs_Full_Data.json\` — handled by \`auto-update-jobs.yml\`" >> $GITHUB_STEP_SUMMARY
