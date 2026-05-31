@@ -1070,7 +1070,15 @@
         if (external) { a.target = "_blank"; a.rel = "noopener"; }
         const rawDate = safe(it.date || "");
         const _db1 = formatDateBadge(rawDate);
-        const _dh1 = _db1 ? `<span class="d ${_db1.colorClass}"><i class="fa-regular fa-calendar-days"></i> ${_db1.display}</span>` : "";
+        const _dh1 = (() => {
+          if (!_db1) return "";
+          // Label prefix based on color
+          const _label = _db1.colorClass === 'd-expired' ? '⛔ Closed' :
+                         _db1.colorClass === 'd-red'     ? '🔴 ' + _db1.display :
+                         _db1.colorClass === 'd-orange'  ? '🟠 ' + _db1.display :
+                                                           '🟢 ' + _db1.display;
+          return `<span class="d ${_db1.colorClass}"><i class="fa-regular fa-calendar-days"></i> ${_db1.colorClass === 'd-expired' ? '⛔ Closed' : _db1.display}</span>`;
+        })();
         a.innerHTML = `<span class="sn-badge">${_idx+1}</span><span class="t">${name}${_dh1}</span>`;
         list.appendChild(a);
 
