@@ -147,9 +147,16 @@
     }
 
     const sections = [];
-    for (const [catKey, meta] of Object.entries(JOBS_CAT_META)) {
-      const resolvedKey = findRawKey(catKey);
-      if (!resolvedKey) continue;
+    // ── JSON insertion order preserve — rawData ke keys se iterate karo ──
+    for (const rawKey of Object.keys(rawData)) {
+      // Find matching JOBS_CAT_META entry
+      const catKey = Object.keys(JOBS_CAT_META).find(k =>
+        k === rawKey || k.toLowerCase() === rawKey.toLowerCase()
+      );
+      if (!catKey) continue;
+      const meta = JOBS_CAT_META[catKey];
+      if (!meta) continue;
+      const resolvedKey = rawKey;
       const jobs = rawData[resolvedKey];
       if (!Array.isArray(jobs) || !jobs.length) continue;
 
@@ -222,9 +229,12 @@
   function convertSectionsIndex(indexData) {
     if (!indexData || typeof indexData !== 'object') return { sections: [] };
     const sections = [];
-    for (const [catKey, meta] of Object.entries(JOBS_CAT_META)) {
+    // ── JSON insertion order preserve karo — JOBS_CAT_META order se NAHI ──
+    for (const catKey of Object.keys(indexData)) {
       const items = indexData[catKey];
       if (!Array.isArray(items) || !items.length) continue;
+      const meta = JOBS_CAT_META[catKey];
+      if (!meta) continue; // unknown category skip
       sections.push({
         id: meta.id, title: meta.title, color: meta.color, icon: meta.icon,
         viewMoreType: 'list',
@@ -317,13 +327,7 @@
             return true;
           });
 
-          // Sort by JOBS_CAT_META order
-          deduped.sort((a, b) => {
-            const ai = catOrder.findIndex(k => JOBS_CAT_META[k].id === a.id);
-            const bi = catOrder.findIndex(k => JOBS_CAT_META[k].id === b.id);
-            return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
-          });
-
+          // JSON insertion order preserve — sort hatayi
           return { sections: deduped };
         }
       }
