@@ -1671,14 +1671,14 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
   
     .section-link .d{display:inline-flex;align-items:center;gap:3px;margin-left:4px;font-size:.62rem;font-weight:800;color:#fff;background:#6b7280;border-radius:4px;padding:2px 7px;white-space:nowrap;vertical-align:middle;line-height:1.5;}
     .section-link .d i{font-size:.55rem;}
-    .section-link .d.d-green{background:#16a34a!important;}
-    .section-link .d.d-orange{background:#ea580c!important;}
-    .section-link .d.d-red{background:#dc2626!important;animation:tsj-pulse 1.2s ease-in-out infinite;}
-    .section-link .d.d-expired{background:#9ca3af!important;opacity:.8;}
-    .section-link .d.d-grey{background:#6b7280!important;}
+    .section-link .d/* .d-green: see styles.css */
+    .section-link .d/* .d-orange: see styles.css */
+    .section-link .d/* .d-red: see styles.css */
+    .section-link .d/* .d-expired: see styles.css */
+    .section-link .d/* .d-grey: see styles.css */
     @keyframes tsj-pulse{0%,100%{opacity:1}50%{opacity:.6}}
     @media (prefers-reduced-motion: reduce) {
-      .section-link .d.d-red { animation: none; }
+      .section-link .d/* .d-red: see styles.css */
       /* ticker-belt animation intentionally kept running */
     }
   </style>
@@ -1714,7 +1714,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
   <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
-  <script src="/tsj-menu.js?v=20260531162838" defer></script>
+  <script src="/tsj-menu.js?v=20260530184718" defer></script>
   <script src="/pwa-install.js?v=6.0" defer></script>
   <!-- ══ END PWA ════════════════════════════════════════════════════ -->
 
@@ -2665,19 +2665,29 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
               +'<div class="sr-card-footer"><a href="'+x(sec.u)+'" class="sr-sub-link">View All '+x(sec.l)+' &rarr;</a></div>';
           }
           function render(cj,si,dl){
-            var sj=(cj&&cj.sarkari_data&&cj.sarkari_data.jobs)||[];
             var s2=si||{},ds={};
             if(dl&&dl.sections)dl.sections.forEach(function(sec){ds[sec.title]=sec.items||[];});
+            // Build sarkari bucket from Complete_Jobs IF available (deferred)
             var bc={};
-            sj.forEach(function(j){var c=j.category||'';if(!bc[c])bc[c]=[];
-              bc[c].push({name:j.title||j.post_name||'',
-                date:(j.important_dates&&j.important_dates['Last Date'])||j.listing_date||'',
-                url:j.slug?'/jobs/'+j.slug+'/':(j.apply_online_link||j.official_website_link||'')});
-            });
+            if(cj&&cj.sarkari_data&&cj.sarkari_data.jobs){
+              cj.sarkari_data.jobs.forEach(function(j){
+                var c=j.category||'';if(!bc[c])bc[c]=[];
+                bc[c].push({name:j.title||j.post_name||'',
+                  date:(j.important_dates&&j.important_dates['Last Date'])||j.listing_date||'',
+                  url:j.slug?'/jobs/'+j.slug+'/':(j.apply_online_link||j.official_website_link||'')});
+              });
+            }
+            // Fallback: use sections-index.json for 'k' type sections when cj not loaded
+            // sections-index.json has SR_Latest_Jobs, OFFLINE_FORM, UPCOMING_JOBS etc.
             grid.innerHTML='';
             SECS.forEach(function(sec){
               var items=[];
-              if(sec.s==='k')items=bc[sec.k]||[];
+              if(sec.s==='k'){
+                // Prefer sarkari_data bucket, fallback to sections-index
+                items=bc[sec.k]||(s2[sec.k]||[]).map(function(i){
+                  return{name:i.name||i.title||'',date:i.date||'',url:i.slug?'/jobs/'+i.slug+'/':(i.url||'')};
+                });
+              }
               else if(sec.s==='i')items=(s2[sec.k]||[]).map(function(i){
                 return{name:i.name||i.title||'',date:i.date||'',url:i.slug?'/jobs/'+i.slug+'/':(i.url||'')};
               });
@@ -2691,12 +2701,18 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
             if(ca&&ca.v===9&&(Date.now()-ca.ts)<TL){render(ca.a,ca.b,ca.c);return;}
           }catch(ignore){}
           function gj(u){return fetch(u,{cache:'default'}).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;});}
+          // Phase 1: sections-index + dailyupdates se turant render karo (fast ~400KB)
           Promise.all([
-            window.__mergedDataPromise||gj('/data/Complete_Jobs_Full_Data.json'),
-            gj('/sections-index.json'),gj('/dailyupdates.json')
+            gj('/sections-index.json'),
+            gj('/dailyupdates.json')
           ]).then(function(r){
-            render(r[0],r[1],r[2]);
-            try{try{sessionStorage.setItem(CK,JSON.stringify({ts:Date.now(),v:9,b:r[1],c:r[2]}))}catch(e){};}catch(ignore){}
+            var si=r[0],dl=r[1];
+            render(null,si,dl);
+            try{sessionStorage.setItem(CK,JSON.stringify({ts:Date.now(),v:9,b:si,c:dl}));}catch(e){}
+            // Phase 2: jab Complete_Jobs load ho (scroll/idle) tab enrich karo
+            (window.__mergedDataPromise||Promise.resolve(null)).then(function(cj){
+              if(cj)render(cj,si,dl);
+            });
           }).catch(function(){
             grid.innerHTML='<div class="sr-card" style="grid-column:1/-1;padding:20px;text-align:center;">Failed. <a href="javascript:location.reload()">Retry</a></div>';
           });
@@ -3385,8 +3401,8 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
   })();
   </script>
 
-<script src="/tsj-push.js?v=20260531162838" defer></script>
-<script src="/tsj-version.js?v=20260531162838" defer></script>
+<script src="/tsj-push.js?v=20260530184718" defer></script>
+<script src="/tsj-version.js?v=20260530184718" defer></script>
 
 <script>
 /* Auto lazy-load all images not already marked */
