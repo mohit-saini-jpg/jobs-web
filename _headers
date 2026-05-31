@@ -233,3 +233,16 @@
   Access-Control-Allow-Origin: *
 
 # ── Cross-Origin-Resource-Policy (security header) ──
+
+# ── Large JSON files — cached 30 minutes (W04 audit fix) ─────────────
+/State_Wise_Jobs.json
+  Cache-Control: public, max-age=1800, stale-while-revalidate=3600
+  Vary: Accept-Encoding
+
+/Qualification_Wise_Jobs.json
+  Cache-Control: public, max-age=1800, stale-while-revalidate=3600
+  Vary: Accept-Encoding
+
+/jobs-index.json
+  Cache-Control: public, max-age=1800, stale-while-revalidate=3600
+  Vary: Accept-Encoding
