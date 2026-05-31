@@ -25,7 +25,7 @@ on:
 
 concurrency:
   group: deploy-version
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   version-bump:
@@ -49,7 +49,7 @@ jobs:
       - name: 🔖 Run version bump
         run: node .github/workflows/generate_version.js
 
-      - name: 📤 Commit & Push (rebase-safe)
+      - name: 📤 Commit & Push (conflict-safe)
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -66,7 +66,7 @@ jobs:
           git commit -m "🔖 Version bump v${VERSION}"
 
           git fetch origin main
-          git rebase origin/main || (git rebase --abort && git merge origin/main -X ours --no-edit)
+          git merge origin/main -X ours --no-edit --allow-unrelated-histories || true
           git push origin main
           echo "✅ Pushed v${VERSION}"
 
