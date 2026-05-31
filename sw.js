@@ -21,7 +21,7 @@
 // VERSION — Replaced by generate_version.js on every deploy
 // Do NOT manually edit — CI/CD replaces this line
 // ══════════════════════════════════════════════════════════════
-const SW_VERSION = '20260531155948'; // auto-updated by generate_version.js
+const SW_VERSION = '20260530184718'; // auto-updated by generate_version.js
 
 // ══════════════════════════════════════════════════════════════
 // CACHE NAMES — version-stamped, old ones auto-deleted
@@ -204,11 +204,9 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // ── 10. Images — Fetch only, no caching
+  // ── 10. Images — CacheFirst (W07 audit fix)
   if (path.match(/\.(png|jpg|jpeg|gif|webp|svg|ico|avif)$/i)) {
-    e.respondWith(
-      fetch(req).catch(() => new Response('', { status: 408, statusText: 'Offline' }))
-    );
+    e.respondWith(cacheFirstStatic(req));
     return;
   }
 
