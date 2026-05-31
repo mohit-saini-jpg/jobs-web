@@ -1277,3 +1277,37 @@ table td {
   color: #94a3b8;
   border-color: #e2e8f0;
 }
+
+/* ══ Homepage sidebar + content-visibility (moved from index.html inline) ══ */
+.home-sidebar {
+  position: sticky;
+  top: 86px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.home-sidebar .sec-card { margin-bottom: 0; }
+@media (max-width: 980px) {
+  .home-sidebar { position: static; }
+}
+/* content-visibility for below-fold elements */
+.section-card {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 420px;
+}
+.home-sidebar .sec-card {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 280px;
+}
+.seo-block-wrap {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 180px;
+}
+#faq-section {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 250px;
+}
+#educationCatWrap {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 150px;
+}
