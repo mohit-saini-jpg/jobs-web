@@ -465,6 +465,21 @@ def generate_html(job):
     seo_p2 = f"Application {mode} mode mein ki ja sakti hai. Selection process mein written test aur/ya interview shamil ho sakta hai. Salary aur age limit ki jankari ke liye upar di gayi table dekhein. Sahi jankari ke liye official notification zaroor padhein."
     seo_p3 = f"{title} ek achi opportunity hai un candidates ke liye jo government jobs dhundh rahe hain. Top Sarkari Jobs par aapko latest sarkari naukri updates milte rehte hain. Kisi bhi query ke liye official website visit karein ya official notification download karein."
 
+    # Extract primary apply URL for sidebar button
+    links_raw = job.get("important_links", {}) or {}
+    apply_url = ""
+    for k in ("apply_online", "apply_online_link", "official_website"):
+        v = links_raw.get(k)
+        if isinstance(v, str) and v.startswith("http"):
+            apply_url = v
+            break
+    if not apply_url:
+        v = links_raw.get("click_here")
+        if isinstance(v, list) and v:
+            apply_url = v[0]
+        elif isinstance(v, str) and v.startswith("http"):
+            apply_url = v
+
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -506,60 +521,125 @@ def generate_html(job):
   <meta name="theme-color" content="#0d2257"/>
   <script src="/analytics.js" defer></script>
   <!-- NO universal-renderer.js | NO job-renderer-patch.js | NO preferred-source-renderer.js -->
+  <style>
+    /* ══ Modern 3-Column Layout ══ */
+    .jp-wrap {{ max-width: 1200px; margin: 0 auto; padding: 24px 12px 40px; }}
+    .jp-three-col {{ display: grid; grid-template-columns: 1fr 300px; gap: 20px; align-items: start; }}
+    @media (max-width: 900px) {{ .jp-three-col {{ grid-template-columns: 1fr; }} }}
+    @media (max-width: 480px) {{ .jp-wrap {{ padding: 12px 8px max(32px, env(safe-area-inset-bottom, 32px)); }} }}
+    .jp-stats {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-top: 1px solid #e2e8f0; margin-top: 14px; }}
+    @media (max-width: 640px) {{ .jp-stats {{ grid-template-columns: repeat(2, 1fr); }} }}
+    .jp-stat {{ text-align: center; padding: 12px 8px; border-right: 1px solid #e2e8f0; }}
+    .jp-stat:last-child {{ border-right: none; }}
+    .jp-stat-label {{ font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }}
+    .jp-stat-value {{ font-size: 14px; font-weight: 700; color: #0f172a; }}
+    .jp-stat-value.green {{ color: #16a34a; }}
+    .jp-stat-value.blue {{ color: #2563eb; }}
+    .jp-sidebar {{ display: flex; flex-direction: column; gap: 14px; }}
+    .jp-sidebar-card {{ background: #fff; border-radius: 12px; border: 1.5px solid #e2e8f0; overflow: hidden; }}
+    .jp-sidebar-card-head {{ background: linear-gradient(135deg,#dc2626,#b91c1c); color: #fff; padding: 10px 14px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 7px; }}
+    .jp-sidebar-card-body {{ padding: 12px 14px; }}
+    .jp-hl-list {{ list-style: none; margin: 0; padding: 0; }}
+    .jp-hl-list li {{ display: flex; align-items: flex-start; gap: 8px; padding: 6px 0; border-bottom: 1px solid #f1f5f9; font-size: 12.5px; color: #374151; }}
+    .jp-hl-list li:last-child {{ border-bottom: none; }}
+    .jp-hl-list li i {{ color: #16a34a; margin-top: 2px; flex-shrink: 0; font-size: 12px; }}
+    .jp-share-card-head {{ background: linear-gradient(135deg,#7c3aed,#6d28d9); color: #fff; padding: 10px 14px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 7px; }}
+    .jp-share-btns {{ display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; }}
+    .jp-share-btn {{ display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 7px; font-size: 13px; font-weight: 600; text-decoration: none; color: #fff; cursor: pointer; border: none; transition: opacity .2s; }}
+    .jp-share-btn:hover {{ opacity: .88; }}
+    .jp-share-btn.wa {{ background: #25D366; }}
+    .jp-share-btn.tg {{ background: #229ED9; }}
+    .jp-share-btn.fb {{ background: #1877F2; }}
+    .jp-share-btn.cp {{ background: #475569; }}
+  </style>
 </head>
 <body>
 <div id="header-placeholder"></div>
 <main id="main-content">
-  <div class="container">
-    <nav class="breadcrumb" aria-label="breadcrumb">
+  <div class="jp-wrap">
+    <nav class="breadcrumb" aria-label="breadcrumb" style="margin-bottom:16px">
       <a href="/">Home</a> &rsaquo; <a href="/section/latest-jobs/">Latest Jobs</a> &rsaquo; <span>{esc(title)}</span>
     </nav>
-    <article itemscope itemtype="https://schema.org/JobPosting">
-      <header class="job-hero-card">
-        <h1 itemprop="title">{esc(title)}</h1>
-        <p class="job-org" itemprop="hiringOrganization" itemscope itemtype="https://schema.org/Organization">
-          <span itemprop="name">{esc(org)}</span>
-        </p>
-        <div class="job-badges">
-          <span class="badge badge-posts"><i class="fa-solid fa-users"></i> Posts: {esc(posts)}</span>
-          <span class="badge badge-date"><i class="fa-solid fa-calendar-days"></i> Last Date: {esc(last_date)}</span>
-          <span class="badge badge-mode"><i class="fa-solid fa-computer"></i> {esc(mode)}</span>
-        </div>
-      </header>
+    <div class="jp-three-col">
+      <!-- LEFT: main content -->
+      <div class="jp-main-col">
+        <article itemscope itemtype="https://schema.org/JobPosting">
+          <header class="job-hero-card">
+            <h1 itemprop="title">{esc(title)}</h1>
+            <p class="job-org" itemprop="hiringOrganization" itemscope itemtype="https://schema.org/Organization">
+              <span itemprop="name">{esc(org)}</span>
+            </p>
+            <div class="jp-stats">
+              <div class="jp-stat"><div class="jp-stat-label">Organisation</div><div class="jp-stat-value">{esc(org) if org else "—"}</div></div>
+              <div class="jp-stat"><div class="jp-stat-label">Total Posts</div><div class="jp-stat-value blue">{esc(posts) if posts else "Various"}</div></div>
+              <div class="jp-stat"><div class="jp-stat-label">Last Date</div><div class="jp-stat-value" style="color:#dc2626">{esc(last_date) if last_date else "See Notification"}</div></div>
+              <div class="jp-stat"><div class="jp-stat-label">Apply Mode</div><div class="jp-stat-value green">{esc(mode) if mode else "Online"}</div></div>
+            </div>
+          </header>
 
-      {"<section class='job-card' id='short-info'><div class='job-card-head' style='background:linear-gradient(135deg,#0369a1,#0284c7)'><i class='fa-solid fa-circle-info'></i><h2>Short Information</h2></div><div class='job-card-body'><p itemprop='description'>" + esc(short_info) + "</p></div></section>" if short_info else ""}
+          {"<section class='job-card' id='short-info'><div class='job-card-head' style='background:linear-gradient(135deg,#0369a1,#0284c7)'><i class='fa-solid fa-circle-info'></i><h2>Short Information</h2></div><div class='job-card-body'><p itemprop='description'>" + esc(short_info) + "</p></div></section>" if short_info else ""}
 
-      {sections_html}
+          {sections_html}
 
-      <section class="job-card" id="important-links">
-        <div class="job-card-head" style="background:linear-gradient(135deg,#1e40af,#1e3a8a)">
-          <i class="fa-solid fa-link"></i><h2>Important Links</h2>
-        </div>
-        <div class="job-card-body"><div class="links-grid">{links_html}</div></div>
-      </section>
+          <section class="job-card" id="important-links">
+            <div class="job-card-head" style="background:linear-gradient(135deg,#1e40af,#1e3a8a)">
+              <i class="fa-solid fa-link"></i><h2>Important Links</h2>
+            </div>
+            <div class="job-card-body"><div class="links-grid">{links_html}</div></div>
+          </section>
 
-      <section class="job-card" id="faq">
-        <div class="job-card-head" style="background:linear-gradient(135deg,#9333ea,#7e22ce)">
-          <i class="fa-solid fa-circle-question"></i><h2>Frequently Asked Questions</h2>
-        </div>
-        <div class="job-card-body"><div class="faq-list">{faq_qa_html}</div></div>
-      </section>
+          <section class="job-card" id="faq">
+            <div class="job-card-head" style="background:linear-gradient(135deg,#9333ea,#7e22ce)">
+              <i class="fa-solid fa-circle-question"></i><h2>Frequently Asked Questions</h2>
+            </div>
+            <div class="job-card-body"><div class="faq-list">{faq_qa_html}</div></div>
+          </section>
 
-      <section class="job-card" id="about-recruitment">
-        <div class="job-card-head" style="background:linear-gradient(135deg,#0f766e,#0d9488)">
-          <i class="fa-solid fa-circle-info"></i><h2>About {esc(org)} Recruitment {year}</h2>
+          <section class="job-card" id="about-recruitment">
+            <div class="job-card-head" style="background:linear-gradient(135deg,#0f766e,#0d9488)">
+              <i class="fa-solid fa-circle-info"></i><h2>About {esc(org)} Recruitment {year}</h2>
+            </div>
+            <div class="job-card-body">
+              <p>{esc(seo_p1)}</p>
+              <p>{esc(seo_p2)}</p>
+              <p>{esc(seo_p3)}</p>
+            </div>
+          </section>
+        </article>
+      </div>
+
+      <!-- RIGHT: sidebar -->
+      <aside class="jp-sidebar">
+        <div class="jp-sidebar-card">
+          <div class="jp-sidebar-card-head"><i class="fa-solid fa-star"></i> Quick Highlights</div>
+          <div class="jp-sidebar-card-body">
+            <ul class="jp-hl-list">
+              <li><i class="fa-solid fa-circle-check"></i> <div><strong>Organisation:</strong> {esc(org) if org else "See Notification"}</div></li>
+              <li><i class="fa-solid fa-circle-check"></i> <div><strong>Total Posts:</strong> {esc(posts) if posts else "Various"}</div></li>
+              <li><i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b"></i> <div><strong>Last Date:</strong> {esc(last_date) if last_date else "See Notification"}</div></li>
+              <li><i class="fa-solid fa-circle-check"></i> <div><strong>Apply Mode:</strong> {esc(mode) if mode else "Online"}</div></li>
+            </ul>
+          </div>
         </div>
-        <div class="job-card-body">
-          <p>{esc(seo_p1)}</p>
-          <p>{esc(seo_p2)}</p>
-          <p>{esc(seo_p3)}</p>
+        <div class="jp-sidebar-card">
+          <div class="jp-share-card-head"><i class="fa-solid fa-share-nodes"></i> Share This Job</div>
+          <div class="jp-share-btns">
+            <a class="jp-share-btn wa" href="https://wa.me/?text={esc(title)}%0A{canonical}" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+            <a class="jp-share-btn tg" href="https://t.me/share/url?url={canonical}&text={esc(title)}" target="_blank" rel="noopener"><i class="fa-brands fa-telegram"></i> Telegram</a>
+            <a class="jp-share-btn fb" href="https://www.facebook.com/sharer/sharer.php?u={canonical}" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i> Facebook</a>
+            <button class="jp-share-btn cp" onclick="navigator.clipboard.writeText('{canonical}').then(function(){{var t=this;this.textContent='✅ Copied!';setTimeout(function(){{t.textContent='🔗 Copy Link'}},2000)}}.bind(this))"><i class="fa-solid fa-link"></i> Copy Link</button>
+          </div>
         </div>
-      </section>
-    </article>
-  </div>
+        {"<div class='jp-sidebar-card'><div class='jp-sidebar-card-head' style='background:linear-gradient(135deg,#0369a1,#0284c7)'><i class='fa-solid fa-calendar-days'></i> Important Dates</div><div class='jp-sidebar-card-body'><ul class='jp-hl-list'><li><i class='fa-solid fa-calendar-check' style='color:#0369a1'></i><div><strong>Last Date:</strong> " + esc(last_date) + "</div></li></ul></div></div>" if last_date else ""}
+        {"<a href='" + esc(apply_url) + "' target='_blank' rel='noopener noreferrer' style='display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border-radius:10px;font-size:15px;font-weight:700;text-decoration:none;color:#fff;background:linear-gradient(135deg,#059669,#047857);'><i class='fa-solid fa-arrow-up-right-from-square'></i> Apply Online / Official Website</a>" if apply_url else ""}
+      </aside>
+    </div><!-- /jp-three-col -->
+  </div><!-- /jp-wrap -->
 </main>
 <div id="footer-placeholder"></div>
 <script src="/tsj-menu.js" defer></script>
+<script src="/pwa-install.js?v=6.0" defer></script>
+<script src="/tsj-push.js"></script>
 </body>
 </html>"""
 
