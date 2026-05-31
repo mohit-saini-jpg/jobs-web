@@ -232,12 +232,18 @@ a, button, [role="button"], input, select, textarea {
   overflow: hidden;
 }
 .section-link .d{
-  font-size: 11px;
-  color: var(--muted);
-  margin-top: 3px;
+  font-size: 10.5px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 6px;
+  border-radius: 20px;
+  margin-left: 4px;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  vertical-align: middle;
+  border: 1px solid transparent;
+  flex-shrink: 0;
 }
 .section-link[data-collapsed="1"]{ display: block; }
 .section-show-more{ display: none !important; }
@@ -591,12 +597,18 @@ a, button, [role="button"], input, select, textarea {
   overflow: hidden;
 }
 .section-link .d{
-  font-size: 11px;
-  color: var(--muted);
-  margin-top: 3px;
+  font-size: 10.5px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 6px;
+  border-radius: 20px;
+  margin-left: 4px;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  vertical-align: middle;
+  border: 1px solid transparent;
+  flex-shrink: 0;
 }
 .section-link[data-collapsed="1"]{ display: block; }
 .section-show-more{ display: none !important; }
