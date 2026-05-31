@@ -1275,27 +1275,43 @@ def extract_all_jobs(cj):
             'post_date':            job.get('post_date', ''),
         })
 
-    # 3. dailyupdates.json — Top 20 Jobs + Today Updates sections only
-    #    (dailyupdates.json UNTOUCHED — only reading Top20/Today for job pages)
-    DAILY_SECTIONS = {'Top 20 Jobs', 'Today Updates'}
+    # 3. dailyupdates.json — ALL sections ke SAARE items ke liye static pages
+    #    (Govt Scheme, Latest Jobs, CSC, Section cards — sab included)
     if DAILY.exists():
         try:
             with open(DAILY, encoding='utf-8') as f:
                 ddata = json.load(f)
             secs = ddata.get('sections', []) if isinstance(ddata, dict) else []
             for sec in secs:
-                if sec.get('title') not in DAILY_SECTIONS: continue
+                sec_title = (sec.get('title') or sec.get('id') or '').strip()
                 for item in sec.get('items', []):
                     name = (item.get('name') or item.get('title') or '').strip()
                     if not name: continue
+                    item_url = item.get('url') or item.get('link') or ''
+                    # Determine category from section title
+                    sec_lc = sec_title.lower()
+                    if 'scheme' in sec_lc or 'yojna' in sec_lc or 'yojana' in sec_lc:
+                        cat = 'Govt_Scheme'
+                    elif 'csc' in sec_lc or 'pdf' in sec_lc:
+                        cat = 'CSC_PDF'
+                    elif 'admit' in sec_lc:
+                        cat = 'Admit_Card'
+                    elif 'result' in sec_lc:
+                        cat = 'Result'
+                    elif 'answer' in sec_lc:
+                        cat = 'Answer_Key'
+                    elif 'khabar' in sec_lc or 'news' in sec_lc:
+                        cat = 'Khabar'
+                    else:
+                        cat = 'Latest_Notifications'
                     add_job({
                         'slug': slugify(name), 'title': name,
                         'organization': '', 'post_name': name,
                         'total_vacancies': '', 'application_mode': 'Online',
-                        'job_type': '', 'short_info': '',
+                        'job_type': sec_title, 'short_info': '',
                         'last_date': item.get('lastDate') or item.get('date') or '',
                         'last_updated': item.get('date', ''),
-                        'notification_date': '', 'category': 'Latest_Notifications',
+                        'notification_date': '', 'category': cat,
                         'source': 'daily',
                         'important_dates': {}, 'application_fee': {}, 'age_limit': {},
                         'qualification': {}, 'vacancy_details': {},
@@ -1303,7 +1319,11 @@ def extract_all_jobs(cj):
                         'selection_process': {}, 'exam_pattern': {}, 'syllabus': {},
                         'physical_eligibility': {}, 'how_to_apply': {},
                         'important_instructions': {},
-                        'important_links': {} if is_blocked(item.get('url','')) else ({'apply_online': item.get('url','')} if item.get('url','').startswith('http') else {}),
+                        'important_links': {} if is_blocked(item_url) else (
+                            {'apply_online': item_url, 'official_website': item_url}
+                            if item_url.startswith('http') else {}
+                        ),
+                        'useful_links': [{'title': 'Official Website', 'url': item_url}] if item_url.startswith('http') and not is_blocked(item_url) else [],
                         'faq': {}, 'seo_tags': {},
                     })
         except Exception as e:
