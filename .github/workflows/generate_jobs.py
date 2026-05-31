@@ -451,9 +451,21 @@ def build_html(slug, job):
     _org_name     = (org if org and org != 'Government of India' else '') or _extract_org(title)
     _state        = _extract_state(title)
     _desc         = _build_desc(job, title, _org_name, posts, last_date, short_info)
-    _raw_posted   = (job.get('notification_date') or job.get('last_updated') or job.get('listing_date') or '')
+    _dates_block  = job.get('important_dates', {}) or {}
+    _raw_posted   = (
+        job.get('notification_date') or
+        _dates_block.get('application_begin') or
+        _dates_block.get('Application Begin') or
+        _dates_block.get('notification_date') or
+        job.get('last_updated') or
+        job.get('listing_date') or ''
+    )
     _date_posted  = normalise_date(_raw_posted) or TODAY
-    _valid_through = normalise_date(last_date) if last_date and last_date != 'See Notification' else ''
+    _valid_through = ''
+    if last_date and last_date not in ('See Notification', 'see notification', '-', 'NA', 'N/A', ''):
+        _vt_iso = normalise_date(last_date)
+        if _vt_iso and re.match(r'^\d{4}-\d{2}-\d{2}$', _vt_iso):
+            _valid_through = _vt_iso
 
     job_schema = {
         '@context': 'https://schema.org', '@type': 'JobPosting',
@@ -467,7 +479,8 @@ def build_html(slug, job):
         'applicantLocationRequirements': {'@type': 'Country', 'name': 'India'},
         'jobLocation': {'@type': 'Place', 'address': {
             '@type': 'PostalAddress', 'addressCountry': 'IN',
-            'addressRegion': _state, 'addressLocality': (_state if _state != 'India' else 'India')
+            'addressRegion': (_state if _state != 'India' else 'India'),
+            'addressLocality': (_state if _state != 'India' else 'India')
         }},
         'author': {'@type': 'Organization', 'name': 'TopSarkariJobs Editorial Team', 'url': BASE_URL + '/about/'}
     }
@@ -516,12 +529,8 @@ def build_html(slug, job):
         '@context': 'https://schema.org', '@type': 'FAQPage',
         'mainEntity': [{'@type': 'Question', 'name': q, 'acceptedAnswer': {'@type': 'Answer', 'text': a}} for q, a in faq_items]
     }
-    art_schema = {
-        '@context': 'https://schema.org', '@type': 'Article',
-        'headline': title, 'url': canonical,
-        'author': {'@type': 'Organization', 'name': 'TopSarkariJobs Editorial Team'},
-        'publisher': {'@type': 'Organization', 'name': 'Top Sarkari Jobs', 'url': BASE_URL}
-    }
+    # Article schema removed — only JobPosting + BreadcrumbList + FAQPage kept
+    # (C05 audit fix: Article schema confuses Google Jobs crawler)
 
     # ── Helper: render one card section ─────────────────────────────────────────
     def _card(sec_id, label, icon, color, body_html):
@@ -806,7 +815,7 @@ def build_html(slug, job):
   <script type="application/ld+json">{json.dumps(job_schema, ensure_ascii=False)}</script>
   <script type="application/ld+json">{json.dumps(bc_schema, ensure_ascii=False)}</script>
   <script type="application/ld+json">{json.dumps(faq_schema, ensure_ascii=False)}</script>
-  <script type="application/ld+json">{json.dumps(art_schema, ensure_ascii=False)}</script>
+  
   <script>
     window.__TSJ_SLUG = "{slug}";
     window.__TSJ_CANONICAL = "{canonical}";
