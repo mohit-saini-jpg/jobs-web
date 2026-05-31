@@ -204,11 +204,9 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // ── 10. Images — Fetch only, no caching
+  // ── 10. Images — CacheFirst (W07 audit fix)
   if (path.match(/\.(png|jpg|jpeg|gif|webp|svg|ico|avif)$/i)) {
-    e.respondWith(
-      fetch(req).catch(() => new Response('', { status: 408, statusText: 'Offline' }))
-    );
+    e.respondWith(cacheFirstStatic(req));
     return;
   }
 
