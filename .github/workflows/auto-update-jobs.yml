@@ -132,7 +132,7 @@ jobs:
 
           for cat, filepath in FILE_MAP.items():
               items = cats.get(cat, [])
-              items.sort(key=lambda x: x.get('homepage_serial', x.get('sequence', 999)))
+              # JSON order preserve — no sort
               with open(filepath, 'w', encoding='utf-8') as f:
                   json.dump({'jobs': items}, f, ensure_ascii=False, separators=(',', ':'))
               top = items[0]['title'][:50] if items else '-'
@@ -141,8 +141,7 @@ jobs:
           # ── merged-summary.json (compat file — generated from CJ, NOT fetched by frontend) ──
           summary = []
           for cat, items in cats.items():
-              items.sort(key=lambda x: x.get('homepage_serial', x.get('sequence', 999)))
-              summary.extend(items[:8])
+              summary.extend(items[:8])  # JSON order preserve — no sort
           with open('data/merged-summary.json', 'w', encoding='utf-8') as f:
               json.dump({'jobs': summary}, f, ensure_ascii=False, separators=(',', ':'))
           print(f"  data/merged-summary.json: {len(summary)} jobs")
@@ -178,16 +177,18 @@ jobs:
                       'org': bd.get('organization_name', ''),
                       'vac': str(bd.get('total_vacancies', ''))
                   }))
-              items.sort(key=lambda x: x[0], reverse=True)
+              # JSON order preserve — no date sort
               if items:
                   sindex[cat] = [x[1] for x in items]
 
           for cat, items in cats.items():
               if cat in sindex: continue
               si_items = []
+              _GARBAGE = {'sarkarl result', 'sarkari result', 'about us', 'terms and conditions', 'contact us', 'privacy policy'}
               for j in items:
                   title = j.get('title', '').strip()
                   if not title: continue
+                  if any(g in title.lower() for g in _GARBAGE): continue
                   si_items.append({
                       'slug': slugify(title), 'name': title,
                       'date': j.get('important_dates', {}).get('Last Date', ''),
