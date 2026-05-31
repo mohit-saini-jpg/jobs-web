@@ -198,10 +198,14 @@ jobs:
               if si_items:
                   sindex[cat] = si_items
 
-          with open('sections-index.json', 'w', encoding='utf-8') as f:
-              json.dump(sindex, f, ensure_ascii=False, separators=(',', ':'))
-          total = sum(len(v) for v in sindex.values())
-          print(f"  sections-index.json: {len(sindex)} categories, {total} items")
+          # NEVER overwrite — preserve JSON insertion order
+          import os as _os
+          if not _os.path.exists('sections-index.json'):
+              with open('sections-index.json', 'w', encoding='utf-8') as f:
+                  json.dump(sindex, f, ensure_ascii=False, separators=(',', ':'))
+              print(f"  sections-index.json: CREATED {len(sindex)} categories")
+          else:
+              print("  sections-index.json: KEPT EXISTING (not overwritten)")
           print("✅ Section data rebuild complete")
           PYEOF
 
