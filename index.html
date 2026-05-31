@@ -2,11 +2,8 @@
 <html lang="en">
 <head>
   <!-- Zero-Stale Cache Engine: GitHub Pages cache control -->
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-  <meta http-equiv="Pragma" content="no-cache"/>
-  <meta http-equiv="Expires" content="0"/>
   <!-- GA4: Centralized Analytics -->
-  <script src="/analytics.js" defer></script>
+  
 
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -59,7 +56,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
   <link rel="alternate" hreflang="en-IN" href="https://www.topsarkarijobs.com/"/>
   <link rel="alternate" hreflang="x-default" href="https://www.topsarkarijobs.com/"/>
   <link rel="icon" type="image/x-icon" href="image.ico"/>
-  <link rel="dns-prefetch" href="//fonts.googleapis.com"/>
+  
   <link rel="dns-prefetch" href="//www.googletagmanager.com"/>
   <link rel="preconnect" href="https://cykkclkfimmqbahanidg.supabase.co" crossorigin>
   <link rel="dns-prefetch" href="//cykkclkfimmqbahanidg.supabase.co"/>
@@ -72,15 +69,25 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
   <!-- PERF: Complete_Jobs_Full_Data.json fetched once — powers all SR cards + ticker -->
   <script>
   // Complete_Jobs_Full_Data.json is the single source of truth
-  window.__mergedDataPromise = fetch('/data/Complete_Jobs_Full_Data.json')
-    .then(function(r){ return r.ok ? r.json() : null; })
-    .then(function(d){
-      if(!d) return null;
-      // Normalize: sarkari_data.jobs → jobs[] for SR cards compatibility
-      var sarJobs = (d.sarkari_data && d.sarkari_data.jobs) || [];
-      return { jobs: sarJobs, _cjData: d };
-    })
-    .catch(function(){ return null; });
+  window.__mergedDataPromise = new Promise(function(resolve) {
+    var loaded = false;
+    function loadNow() {
+      if (loaded) return; loaded = true;
+      fetch('/data/Complete_Jobs_Full_Data.json')
+        .then(function(r){ return r.ok ? r.json() : null; })
+        .then(function(d){
+          if(!d){ resolve(null); return; }
+          var sarJobs = (d.sarkari_data && d.sarkari_data.jobs) || [];
+          resolve({ jobs: sarJobs, _cjData: d });
+        })
+        .catch(function(){ resolve(null); });
+    }
+    // Load on scroll (most common trigger)
+    window.addEventListener('scroll', function h(){ window.removeEventListener('scroll',h); loadNow(); }, {once:true,passive:true});
+    // Or idle fallback (5 second)
+    if ('requestIdleCallback' in window) { requestIdleCallback(loadNow, {timeout:5000}); }
+    else { setTimeout(loadNow, 3000); }
+  });
   // PERF: sections-index.json — fetch starts immediately at page load (16KB vs 18MB)
   window.__sectionsIndexPromise = fetch('sections-index.json')
     .then(function(r){ return r.ok ? r.json() : null; })
@@ -232,15 +239,10 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
   </script>
 
   <!-- Google Font: preconnect + display=swap (prevents FOIT / CLS) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet"></noscript>
-
   <!-- Font Awesome: woff2 preload hints — browser fetches fonts early, icons appear sooner -->
-  <link rel="preload" href="fonts/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="fonts/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="fonts/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin>
+  
+  
+  
   <!-- Font Awesome: defer after DOMContentLoaded (saves ~58 KiB blocking, fixes CLS) -->
   <script>
   (function(){
@@ -1498,7 +1500,6 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
 
     
     /* Smart urgency colors — override background above */
-     50%{opacity:.65} }
 
     /* ── Mobile 2-col ── */
     @media (max-width: 600px) {
@@ -1666,10 +1667,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
     
     
     
-     50%{opacity:.6} }
-    @media (max-width:600px) {
-      
-    }
+
   
     .section-link .d{display:inline-flex;align-items:center;gap:3px;margin-left:4px;font-size:.62rem;font-weight:800;color:#fff;background:#6b7280;border-radius:4px;padding:2px 7px;white-space:nowrap;vertical-align:middle;line-height:1.5;}
     .section-link .d i{font-size:.55rem;}
@@ -1716,7 +1714,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
   <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
-  <script src="/tsj-menu.js?v=20260531155142" defer></script>
+  <script src="/tsj-menu.js?v=20260530184718" defer></script>
   <script src="/pwa-install.js?v=6.0" defer></script>
   <!-- ══ END PWA ════════════════════════════════════════════════════ -->
 
@@ -2694,11 +2692,11 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
           }catch(ignore){}
           function gj(u){return fetch(u,{cache:'default'}).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;});}
           Promise.all([
-            gj('/data/Complete_Jobs_Full_Data.json').then(function(d){return d||gj('/Complete_Jobs_Full_Data.json');}),
+            window.__mergedDataPromise||gj('/data/Complete_Jobs_Full_Data.json'),
             gj('/sections-index.json'),gj('/dailyupdates.json')
           ]).then(function(r){
             render(r[0],r[1],r[2]);
-            try{sessionStorage.setItem(CK,JSON.stringify({ts:Date.now(),v:9,a:r[0],b:r[1],c:r[2]}));}catch(ignore){}
+            try{try{sessionStorage.setItem(CK,JSON.stringify({ts:Date.now(),v:9,b:r[1],c:r[2]}))}catch(e){};}catch(ignore){}
           }).catch(function(){
             grid.innerHTML='<div class="sr-card" style="grid-column:1/-1;padding:20px;text-align:center;">Failed. <a href="javascript:location.reload()">Retry</a></div>';
           });
@@ -3387,8 +3385,8 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
   })();
   </script>
 
-<script src="/tsj-push.js?v=20260531155142" defer></script>
-<script src="/tsj-version.js?v=20260531155142" defer></script>
+<script src="/tsj-push.js?v=20260530184718" defer></script>
+<script src="/tsj-version.js?v=20260530184718" defer></script>
 
 <script>
 /* Auto lazy-load all images not already marked */
@@ -3397,4 +3395,5 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
   for(var i=0;i<imgs.length;i++){ imgs[i].loading='lazy'; imgs[i].decoding='async'; }
 })();
 </script>
+  <script src="/analytics.js" defer></script>
 </body>
