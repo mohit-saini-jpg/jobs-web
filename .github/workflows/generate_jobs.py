@@ -1394,13 +1394,22 @@ with open(MASTER, 'w', encoding='utf-8') as f:
     json.dump(all_jobs, f, ensure_ascii=False, indent=2)
 print(f"   ✅ Saved {MASTER}")
 
-# Build sections-index.json
-print("\n📊 Building sections-index.json...")
-sindex = build_sections_index(all_jobs)
-with open(SINDEX, 'w', encoding='utf-8') as f:
-    json.dump(sindex, f, ensure_ascii=False, separators=(',', ':'))
-total_si = sum(len(v) for v in sindex.values())
-print(f"   ✅ {len(sindex)} categories, {total_si} items")
+# Build sections-index.json — ONLY if it doesn't exist
+# sections-index.json is managed manually / by auto-update-jobs.yml
+# generate_jobs.py NEVER overwrites it to preserve JSON insertion order
+print("\n📊 sections-index.json check...")
+if SINDEX.exists():
+    with open(SINDEX, encoding='utf-8') as f:
+        sindex = json.load(f)
+    total_si = sum(len(v) for v in sindex.values())
+    print(f"   ✅ Using existing sections-index.json ({len(sindex)} categories, {total_si} items)")
+else:
+    print("   ⚠️  sections-index.json missing — generating from JSON order...")
+    sindex = build_sections_index(all_jobs)
+    with open(SINDEX, 'w', encoding='utf-8') as f:
+        json.dump(sindex, f, ensure_ascii=False, separators=(',', ':'))
+    total_si = sum(len(v) for v in sindex.values())
+    print(f"   ✅ Generated {len(sindex)} categories, {total_si} items")
 
 # Generate HTML pages + JSON data files
 print("\n🏗️  Generating static HTML pages...")
