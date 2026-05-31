@@ -86,15 +86,14 @@ jobs:
               cats[j.get('category', '?')].append(j)
 
           for cat, filepath in FILE_MAP.items():
-              items = sorted(cats.get(cat, []),
-                             key=lambda x: x.get('homepage_serial', x.get('sequence', 999)))
+              items = cats.get(cat, [])  # JSON order preserve — no sort
               with open(filepath, 'w', encoding='utf-8') as f:
                   json.dump({'jobs': items}, f, ensure_ascii=False, separators=(',', ':'))
               print(f"  {filepath}: {len(items)}")
 
           summary = []
           for cat, items in cats.items():
-              summary.extend(sorted(items, key=lambda x: x.get('sequence',999))[:8])
+              summary.extend(items[:8])  # JSON order preserve — no sort
           with open('data/merged-summary.json', 'w', encoding='utf-8') as f:
               json.dump({'jobs': summary}, f, ensure_ascii=False, separators=(',', ':'))
 
@@ -108,10 +107,20 @@ jobs:
           def norm_date(d):
               if not d: return ''
               d = str(d).strip()
-              m = re.match(r'^(\d{1,2})[-/](\d{1,2})[-/](\d{4})', d)
+              m = re.match(r'^(\d{1,2})[-/\.](\d{1,2})[-/\.](\d{4})', d)
               if m: return f"{m.group(3)}-{int(m.group(2)):02d}-{int(m.group(1)):02d}"
               m = re.match(r'^(\d{4})-(\d{2})-(\d{2})', d)
-              return d[:10] if m else ''
+              if m: return d[:10]
+              MONTHS={'jan':1,'feb':2,'mar':3,'apr':4,'may':5,'jun':6,'jul':7,'aug':8,'sep':9,'oct':10,'nov':11,'dec':12}
+              m = re.match(r'^(\d{1,2})\s+([A-Za-z]+)\.?\s+(\d{4})', d)
+              if m:
+                  mon=MONTHS.get(m.group(2).lower()[:3])
+                  if mon: return f"{m.group(3)}-{mon:02d}-{int(m.group(1)):02d}"
+              m = re.match(r'^([A-Za-z]+)\.?\s+(\d{1,2}),?\s+(\d{4})', d)
+              if m:
+                  mon=MONTHS.get(m.group(1).lower()[:3])
+                  if mon: return f"{m.group(3)}-{mon:02d}-{int(m.group(2)):02d}"
+              return ''
 
           sindex = {}
           for cat, jobs in fj_cats.items():
@@ -125,15 +134,19 @@ jobs:
                   items.append((norm_date(ld), {'slug':slugify(title),'name':title,'date':ld,
                                                 'org':bd.get('organization_name',''),
                                                 'vac':str(bd.get('total_vacancies',''))}))
-              items.sort(key=lambda x: x[0], reverse=True)
+              # JSON insertion order preserve — no date sort
               if items: sindex[cat] = [x[1] for x in items]
 
           for cat, items in cats.items():
               if cat in sindex: continue
+              # Filter garbage SR entries
+              GARBAGE = ['SARKARl RESULT', 'Sarkari Result', 'About Us',
+                         'Terms And Conditions', 'Contact Us', 'Privacy Policy']
               si = [{'slug':slugify(j.get('title','')), 'name':j.get('title',''),
-                     'date':j.get('important_dates',{}).get('Last Date',''),
+                     'date':norm_date((j.get('important_dates',{}) or {}).get('last_date','') or j.get('last_date','')),
                      'org':j.get('organization',''), 'vac':str(j.get('total_vacancy',''))}
-                    for j in items if j.get('title','').strip()]
+                    for j in items if j.get('title','').strip()
+                    and not any(g.lower() in j.get('title','').lower() for g in GARBAGE)]
               if si: sindex[cat] = si
 
           with open('sections-index.json', 'w', encoding='utf-8') as f:
