@@ -149,10 +149,14 @@ jobs:
                     and not any(g.lower() in j.get('title','').lower() for g in GARBAGE)]
               if si: sindex[cat] = si
 
-          with open('sections-index.json', 'w', encoding='utf-8') as f:
-              json.dump(sindex, f, ensure_ascii=False, separators=(',', ':'))
-          total = sum(len(v) for v in sindex.values())
-          print(f"  sections-index.json: {len(sindex)} cats, {total} items")
+          # NEVER overwrite — preserve JSON insertion order
+          import os as _os
+          if not _os.path.exists('sections-index.json'):
+              with open('sections-index.json', 'w', encoding='utf-8') as f:
+                  json.dump(sindex, f, ensure_ascii=False, separators=(',', ':'))
+              print(f"  sections-index.json: CREATED {len(sindex)} cats")
+          else:
+              print("  sections-index.json: KEPT EXISTING (not overwritten)")
           print("✅ Emergency section rebuild complete")
           PYEOF
 
