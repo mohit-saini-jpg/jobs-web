@@ -73,6 +73,17 @@ jobs:
       - name: 🗺️ Rebuild sitemaps
         run: node .github/workflows/generate_sitemap.js
 
+      - name: 🔖 Auto-bump script/asset versions
+        run: |
+          VERSION=$(date +%Y%m%d%H%M%S)
+          # Bump script.min.js version in index.html
+          sed -i "s/script\.min\.js?v=[0-9]*/script.min.js?v=${VERSION}/g" index.html
+          # Bump smart-search version
+          sed -i "s/smart-search\.min\.js?v=[0-9]*/smart-search.min.js?v=${VERSION}/g" index.html
+          # Bump seo-engine version
+          sed -i "s/seo-engine\.min\.js?v=[0-9]*/seo-engine.min.js?v=${VERSION}/g" index.html
+          echo "✅ Asset versions bumped to v${VERSION}"
+
       - name: 📤 Commit & Push (conflict-safe)
         run: |
           git config user.name  "github-actions[bot]"
