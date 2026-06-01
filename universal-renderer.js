@@ -174,7 +174,7 @@
 
   function renderVal(v) {
     if (v == null) return '—';
-    if (typeof v === 'object') return esc(JSON.stringify(v));
+    if (typeof v === 'object') return deepRender(v, 1);
     const s = String(v).trim();
     if (!s) return '—';
     if (isUrl(s)) return `<a href="${esc(s)}" target="_blank" rel="noopener" style="color:#1d4ed8;font-weight:600;word-break:break-all;">${esc(s)}</a>`;
@@ -241,7 +241,9 @@
     // ── Normalize important_dates keys ───────────────────────────────
     const id = job.important_dates || {};
     if (typeof id === 'object') {
-      id.application_begin = id.application_begin || id.application_start || id.start_date || id.starting_date || id.starting_date_online || '';
+      // Consolidate all "start" aliases → application_begin (canonical)
+      id.application_begin = id.application_begin || id.application_start || id.application_start_date || id.start_date || id.starting_date || id.starting_date_online || '';
+      // Consolidate all "last date" aliases → last_date (canonical)
       id.last_date = id.last_date || id.last_date_to_apply || id.application_last_date || id.closing_date || id.last_apply_date || '';
       id.exam_date = id.exam_date || job.exam_date || '';
       job.important_dates = id;
@@ -386,38 +388,61 @@
 
   function exDates(job) {
     const id = job.important_dates || {};
-    const DATE_MAP = {
-      application_begin:      'Application Start Date',
-      last_date:              'Last Date to Apply',
-      fee_payment_last_date:  'Fee Payment Last Date',
-      correction_last_date:   'Correction Window Last Date',
-      notification_date:      'Notification Released',
-      exam_date:              'Exam Date',
-      admit_card_date:        'Admit Card Available',
-      admit_card:             'Admit Card Date',
-      result_date:            'Result Date',
-      interview_date:         'Interview / DV Date',
-      document_verification:  'Document Verification',
-      dv_date:                'DV Date',
-      counselling_date:       'Counselling Date',
-      joining_date:           'Joining Date',
-    };
+    // Canonical key order with ALL known aliases merged to one label
+    const DATE_ALIAS = [
+      { keys: ['application_begin','application_start','application_start_date','starting_date','start_date',
+                'starting_date_online','आवेदन शुरू','date of commencement','opening of online registration of application'],
+        label: 'Application Start Date', highlight: false },
+      { keys: ['last_date','last_date_to_apply','application_last_date','closing_date','last_apply_date',
+                'अंतिम तिथि','last date to apply','closing date'],
+        label: 'Last Date to Apply', highlight: true },
+      { keys: ['fee_payment_last_date','fee_last_date','payment_last_date'],
+        label: 'Fee Payment Last Date', highlight: false },
+      { keys: ['correction_last_date','correction_date','correction_window'],
+        label: 'Correction Window Last Date', highlight: false },
+      { keys: ['notification_date','date of notification','date of advertisement','notification released'],
+        label: 'Notification / Advertisement Date', highlight: false },
+      { keys: ['exam_date','परीक्षा तिथि','written/omr/online examination date',
+                'tentative date for computer based test (cbt)','cbt_date','written_exam_date'],
+        label: 'Exam / CBT Date', highlight: false },
+      { keys: ['admit_card_date','admit_card','admit_card_release','hall_ticket'],
+        label: 'Admit Card Available', highlight: false },
+      { keys: ['result_date','result','merit_list_date'],
+        label: 'Result Date', highlight: false },
+      { keys: ['interview_date','interview','dv_date','document_verification','document verification date'],
+        label: 'Interview / DV Date', highlight: false },
+      { keys: ['cut‑off date for age, qualification & experience','cutoff_date','age_cutoff_date'],
+        label: 'Age / Qualification Cut-off Date', highlight: false },
+      { keys: ['counselling_date','counselling'],
+        label: 'Counselling Date', highlight: false },
+      { keys: ['joining_date','joining'],
+        label: 'Joining Date', highlight: false },
+    ];
     const rows = [];
-    const usedKeys = new Set(Object.keys(DATE_MAP));
-    for (const [k, label] of Object.entries(DATE_MAP)) {
-      const v = safe(id[k]);
-      if (v) rows.push({ label, val: fmtDate(v), highlight: /last date/i.test(label) });
+    const usedKeys = new Set();
+    for (const def of DATE_ALIAS) {
+      let found = '';
+      for (const k of def.keys) {
+        // case-insensitive key lookup
+        const matchKey = Object.keys(id).find(ik => ik.toLowerCase() === k.toLowerCase() || ik === k);
+        if (matchKey && hasContent(id[matchKey])) { found = safe(id[matchKey]); usedKeys.add(matchKey); break; }
+      }
+      if (found) rows.push({ label: def.label, val: fmtDate(found), highlight: def.highlight });
     }
+    // Render any remaining unmapped keys (handles future/unknown date keys)
     for (const [k, v] of Object.entries(id)) {
-      if (usedKeys.has(k) || k === 'raw' || !hasContent(v)) continue;
-      rows.push({ label: keyToLabel(k), val: fmtDate(safe(v)), highlight: /last/i.test(k) });
+      if (usedKeys.has(k) || k === 'raw' || k === 'rawDate' || k === 'event' || !hasContent(v)) continue;
+      const strVal = safe(typeof v === 'object' ? JSON.stringify(v) : String(v));
+      if (!strVal) continue;
+      rows.push({ label: keyToLabel(k), val: fmtDate(strVal), highlight: /last/i.test(k) });
     }
     const rawText = safe(id.raw || id.rawDate || '');
     return { rows, rawText };
   }
 
   function exFees(job) {
-    const fee = job.application_fee || {};
+    // Support both application_fee (freejobalert format) and application_fees (sarkari format)
+    const fee = job.application_fee || job.application_fees || {};
     const feeIsStr = typeof fee === 'string';
     const feeObj = (typeof fee === 'object' && !Array.isArray(fee)) ? fee : {};
     const FEE_MAP = [
@@ -473,14 +498,31 @@
     const vd = job.vacancy_details;
     if (Array.isArray(vd) && vd.length) {
       rows = vd.filter(r => typeof r === 'object' && r !== null);
+    } else if (typeof vd === 'object' && vd !== null && !Array.isArray(vd)) {
+      // Object-style vacancy_details — treat as single row array
+      if (Object.keys(vd).length > 0) rows = [vd];
     }
-    const cw = job.category_wise_vacancy || {};
-    return { rows, cw };
+    const cw = job.category_wise_vacancy;
+    // Normalize category_wise_vacancy — can be object, array, or null
+    let cwNorm = {};
+    if (Array.isArray(cw) && cw.length) {
+      // Array of objects — will be rendered as table separately in card
+      cwNorm = cw; // pass through as array
+    } else if (cw && typeof cw === 'object') {
+      cwNorm = cw;
+    }
+    return { rows, cw: cwNorm };
   }
 
   function exSalary(job) {
     const sd = job.salary_details || {};
-    const flat = safe(job.salary || job.salary_pay_scale || (job.basic_details && (job.basic_details.salary || job.basic_details.salary_pay_scale)) || '');
+    // Priority: salary_details > salary > salary_pay_scale (root or basic_details)
+    const flat = safe(
+      job.salary ||
+      job.salary_pay_scale ||
+      (job.basic_details && (job.basic_details.salary || job.basic_details.salary_pay_scale)) ||
+      ''
+    );
     return { structured: sd, flat };
   }
 
@@ -522,12 +564,21 @@
   function exQualification(job) {
     const q = job.qualification || {};
     const flat = safe(job.education_qualification || job.eligibility || '');
-    if (typeof q === 'string') return q;
+    if (typeof q === 'string') return q || flat || null;
     if (typeof q === 'object') {
-      const v = q.education_qualification || q.eligibility || q.qualification || '';
-      return safe(v) || flat;
+      // Full object — return the whole object for deep rendering
+      if (Object.keys(q).length > 0) {
+        // Flatten matched_qualifications array into readable form
+        const mq = q.matched_qualifications;
+        if (Array.isArray(mq) && mq.length > 0 && Object.keys(q).length === 1) {
+          // Only matched_qualifications present — show as tags with note
+          return { matched_qualifications: mq };
+        }
+        return q;
+      }
+      return flat || null;
     }
-    return flat;
+    return flat || null;
   }
 
   function exTables(job) { return job.tables || null; }
@@ -541,8 +592,8 @@
     'important_links','important_links_obj','faq','faqs','seo_tags','category',
     'slug','title','post_name','organization','board_name','department',
     'total_vacancy','total_vacancies','total_post','apply_mode','application_mode','mode',
-    'last_date','last_date_to_apply','application_begin','exam_date',
-    'salary','salary_pay_scale','minimum_age','maximum_age','age_relaxation',
+    'last_date','last_date_to_apply','application_begin','application_start','application_start_date',
+    'exam_date','salary','salary_pay_scale','minimum_age','maximum_age','age_relaxation',
     'education_qualification','eligibility','experience_required',
     'short_information','jobs_info','source_url','apply_online',
     'official_website','official_website_link','form_pdf_free_link',
@@ -551,7 +602,9 @@
     'post_date','status','useful_links','sequence','job_location','job_type',
     'homepage_serial','closing_date','application_last_date','instructions',
     'tables','sections','text_sections','id','name','url','date','lastDate','postDate',
-    'board','detail','_udyn_links','state','items',
+    'board','detail','_udyn_links','state','items','scraper_errors','sync_stats',
+    'generated_at','sources','total_records','freejobalert_categories','sarkari_data',
+    'education_jobs','state_jobs','notification_number','fee_payment_last_date',
   ]);
 
   function exUnknown(job) {
@@ -686,12 +739,20 @@
     let html = '';
     if (rows.length) {
       html = buildAoOTable(rows);
-    } else if (hasContent(cw)) {
-      const pairs = Object.entries(cw).filter(([, v]) => hasContent(v));
-      if (pairs.length) {
-        const tbody = pairs.map(([k, v]) => `<tr><td>${esc(keyToLabel(k))}</td><td>${esc(safe(v))}</td></tr>`).join('');
-        html = `<div class="udyn-table-scroll"><table class="udyn-vac-table"><thead><tr><th>Category</th><th>Vacancies</th></tr></thead><tbody>${tbody}</tbody></table></div>`;
+    }
+    // category_wise_vacancy — array: render as second table; object: render as KV table
+    if (hasContent(cw)) {
+      let cwHtml = '';
+      if (Array.isArray(cw) && cw.length) {
+        cwHtml = `<div style="padding:7px 14px 3px;font-size:.79rem;font-weight:700;color:#1d4ed8;background:#f0f7ff;border-top:${html ? '1px solid #dbeafe' : 'none'};border-bottom:1px solid #dbeafe;">Category Wise Vacancy</div>${buildAoOTable(cw)}`;
+      } else if (typeof cw === 'object') {
+        const pairs = Object.entries(cw).filter(([, v]) => hasContent(v));
+        if (pairs.length) {
+          const tbody = pairs.map(([k, v]) => `<tr><td>${esc(keyToLabel(k))}</td><td>${esc(safe(v))}</td></tr>`).join('');
+          cwHtml = `<div style="padding:7px 14px 3px;font-size:.79rem;font-weight:700;color:#1d4ed8;background:#f0f7ff;border-top:${html ? '1px solid #dbeafe' : 'none'};border-bottom:1px solid #dbeafe;">Category Wise Vacancy</div><div class="udyn-table-scroll"><table class="udyn-vac-table"><thead><tr><th>Category / Field</th><th>Value</th></tr></thead><tbody>${tbody}</tbody></table></div>`;
+        }
       }
+      if (cwHtml) html += cwHtml;
     }
     if (!html) return null;
     return makeCard('udyn-vacancy-extended','linear-gradient(135deg,#15803d,#16a34a)',
@@ -801,11 +862,31 @@
     if (!hasContent(sp)) return null;
     let html = '';
     if (Array.isArray(sp) && sp.length) {
-      html = `<div class="udyn-tag-list">${sp.map(s =>
-        `<div class="udyn-tag"><i class="fa-solid fa-arrow-right-long"></i>${esc(String(s))}</div>`
-      ).join('')}</div>`;
+      // Detect if items contain table-like entries (e.g., "1 Subject 50 marks") vs step descriptions
+      const knownSteps = ['Written Exam','CBT','Interview','Skill Test','Typing Test','Physical Test',
+        'Medical Test','Document Verification','Merit List','Trade Test','Viva','Shortlisting','Driving Test','Practical Test'];
+      const isStep = s => knownSteps.some(st => s.toLowerCase().includes(st.toLowerCase()));
+      const stepItems = sp.filter(s => typeof s === 'string' && s.trim().length > 0);
+      // Short step-name items → tags; longer descriptive items → numbered list
+      const avg = stepItems.reduce((a,s) => a + s.length, 0) / (stepItems.length || 1);
+      if (avg < 60 && stepItems.every(s => s.length < 120)) {
+        html = `<div class="udyn-tag-list">${stepItems.map(s =>
+          `<div class="udyn-tag"><i class="fa-solid fa-arrow-right-long"></i>${esc(s)}</div>`
+        ).join('')}</div>`;
+      } else {
+        html = `<ul class="udyn-steps-list">${stepItems.map((s, i) =>
+          `<li class="udyn-step"><span class="udyn-step-num">${i+1}</span><span>${esc(s)}</span></li>`
+        ).join('')}</ul>`;
+      }
     } else if (typeof sp === 'string' && sp.trim()) {
-      html = `<div class="udyn-detail">${textToHtml(sp)}</div>`;
+      const lines = sp.split(/\n+|\s*[,;]\s*(?=[A-Z])/).map(l => l.trim()).filter(Boolean);
+      if (lines.length > 1 && lines.every(l => l.length < 100)) {
+        html = `<div class="udyn-tag-list">${lines.map(s =>
+          `<div class="udyn-tag"><i class="fa-solid fa-arrow-right-long"></i>${esc(s)}</div>`
+        ).join('')}</div>`;
+      } else {
+        html = `<div class="udyn-detail" style="white-space:pre-line;">${esc(sp)}</div>`;
+      }
     } else if (typeof sp === 'object') {
       html = deepRender(sp, 0);
     }
@@ -868,11 +949,18 @@
     if (!arr.length) return null;
     const items = arr.map(f => {
       const q = safe(f.question || f.q || '');
-      const a = safe(f.answer || f.a || '');
+      const rawAns = f.answer || f.a || '';
+      // Render answer — preserve newlines, handle HTML
+      let aHtml;
+      if (isHtml(safe(rawAns))) {
+        aHtml = safe(rawAns);
+      } else {
+        aHtml = esc(safe(rawAns)).replace(/\n/g, '<br>');
+      }
       return `<div class="udyn-faq-item">` +
         `<div class="udyn-faq-q" onclick="(function(el){var a=el.nextElementSibling;el.classList.toggle('open');a.classList.toggle('open');})(this)">` +
           `<i class="fa-solid fa-chevron-right udyn-faq-icon"></i>${esc(q)}` +
-        `</div><div class="udyn-faq-a">${esc(a)}</div></div>`;
+        `</div><div class="udyn-faq-a" style="white-space:pre-line;">${aHtml}</div></div>`;
     }).join('');
     return makeCard('udyn-faq','linear-gradient(135deg,#7c3aed,#8b5cf6)',
       'fa-solid fa-circle-question','Frequently Asked Questions', items);
@@ -1044,23 +1132,40 @@
   /* ── 6p. Age Limit ── */
   function cardAgeLimit(job) {
     const age = job.age_limit || {};
-    const minAge = safe(job.minimum_age || age.minimum_age || '');
-    const maxAge = safe(job.maximum_age || age.maximum_age || age.age_limit || age.age_details || '');
-    const relax  = safe(job.age_relaxation || age.age_relaxation || age.details || '');
+    const minAge = safe(job.minimum_age || age.minimum_age || age.min_age || '');
+    const maxAge = safe(job.maximum_age || age.maximum_age || age.max_age || age.age_limit || '');
+    // age_details — may be a compact "18 to 45 years" or full paragraph
+    const ageDet = safe(age.age_details || age.details || age.info || '');
+    const relax  = safe(job.age_relaxation || age.age_relaxation || age.relaxation || '');
     const pairs  = [];
-    if (minAge) pairs.push(['Minimum Age', minAge]);
-    if (maxAge) pairs.push(['Maximum / Upper Age Limit', maxAge]);
-    if (relax)  pairs.push(['Age Relaxation', relax]);
-    const KNOWN_AGE = new Set(['minimum_age','maximum_age','age_limit','age_details','age_relaxation','details']);
+    if (minAge) pairs.push(['Minimum Age', minAge, false]);
+    if (maxAge) pairs.push(['Maximum / Upper Age Limit', maxAge, false]);
+    // If age_details is short (looks like "18 to 45 years"), show as row; if long, use detail block
+    const isLongDet = ageDet.length > 80;
+    if (ageDet && !isLongDet) pairs.push(['Age Limit', ageDet, false]);
+    if (relax && relax !== ageDet)  pairs.push(['Age Relaxation', relax, relax.length > 80]);
+    const KNOWN_AGE = new Set(['minimum_age','maximum_age','min_age','max_age','age_limit','age_details','age_relaxation','details','info','relaxation']);
     for (const [k, v] of Object.entries(age)) {
       if (KNOWN_AGE.has(k) || !hasContent(v)) continue;
-      pairs.push([keyToLabel(k), safe(v)]);
+      pairs.push([keyToLabel(k), safe(v), false]);
     }
-    if (!pairs.length) return null;
-    const rows = pairs.map(([k, v]) => `<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>`).join('');
+    if (!pairs.length && !ageDet) return null;
+    let rowsHtml = pairs.filter(([,,long]) => !long)
+      .map(([k, v]) => `<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>`).join('');
+    // Long text values rendered as detail block below table
+    let detailHtml = '';
+    if (isLongDet) detailHtml += `<div class="udyn-detail" style="font-size:.82rem;line-height:1.8;color:#374151;white-space:pre-line;">${esc(ageDet)}</div>`;
+    for (const [k, v, long] of pairs) {
+      if (!long || !v) continue;
+      detailHtml += `<div class="udyn-detail"><strong>${esc(k)}:</strong><br><span style="font-size:.82rem;line-height:1.8;color:#374151;white-space:pre-line;">${esc(v)}</span></div>`;
+    }
+    if (!rowsHtml && !detailHtml) return null;
+    const tableHtml = rowsHtml
+      ? `<div class="udyn-table-scroll"><table class="udyn-gen-table">${rowsHtml}</table></div>`
+      : '';
     return makeCard('udyn-age-limit','linear-gradient(135deg,#7c3aed,#8b5cf6)',
       'fa-solid fa-user-clock','Age Limit Details',
-      `<div class="udyn-table-scroll"><table class="udyn-gen-table">${rows}</table></div>`);
+      tableHtml + detailHtml);
   }
 
   /* ── 6q. Qualification ── */
@@ -1558,8 +1663,32 @@
       const r = await fetch('/Complete_Jobs_Full_Data.json');
       if (r.ok) {
         const d = await r.json();
-        const jobs = Array.isArray(d) ? d : Object.values(d).flatMap(v => Array.isArray(v) ? v : []);
+        // Collect ALL jobs from every source in the JSON
+        const jobs = [];
+        if (Array.isArray(d)) {
+          jobs.push(...d);
+        } else if (typeof d === 'object') {
+          // freejobalert_categories: { CAT_KEY: [job, job, ...], ... }
+          for (const [k, v] of Object.entries(d)) {
+            if (k === 'sarkari_data' && v && Array.isArray(v.jobs)) {
+              jobs.push(...v.jobs);
+            } else if (k === 'education_jobs' || k === 'state_jobs') {
+              const secs = (v && v.sections) || [];
+              for (const sec of secs) {
+                if (Array.isArray(sec.items)) jobs.push(...sec.items.filter(it => it && it.detail).map(it => it.detail));
+              }
+            } else if (typeof v === 'object' && !Array.isArray(v)) {
+              // Could be nested category
+              for (const [, cv] of Object.entries(v)) {
+                if (Array.isArray(cv)) jobs.push(...cv);
+              }
+            } else if (Array.isArray(v)) {
+              jobs.push(...v);
+            }
+          }
+        }
         for (const job of jobs) {
+          if (!job || typeof job !== 'object') continue;
           const t = safe(job.title || (job.basic_details && job.basic_details.job_title) || job.post_name || '');
           const sc = scoreMatch(t, tokens);
           if (sc > bestScore) { bestScore = sc; best = job; }
@@ -1567,7 +1696,7 @@
       }
     } catch (_) {}
 
-    if (best && bestScore >= 0.82) {
+    if (best && bestScore >= 0.75) {
       const normalized = normalizeJob(best);
       runBasePatches(normalized);
       injectAllSections(normalized);
