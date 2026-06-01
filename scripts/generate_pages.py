@@ -166,7 +166,7 @@ def extract_and_merge_jobs(data):
     # Source 1: freejobalert_categories (highest priority)
     for cat, jobs in data.get("freejobalert_categories", {}).items():
         if not isinstance(jobs, list): continue
-        for job in jobs:
+        for source_order, job in enumerate(jobs):
             bd = job.get("basic_details", {})
             title = bd.get("job_title", "")
             if not title: continue
@@ -194,6 +194,7 @@ def extract_and_merge_jobs(data):
                 "notification_date": notif_date,
                 "category": cat,  # keep for backward compat
                 "source": "freejobalert",
+                "source_order": source_order,  # preserve JSON list order
                 "important_dates": job.get("important_dates", {}),
                 "application_fee": job.get("application_fee", {}),
                 "age_limit": job.get("age_limit", {}),
@@ -228,12 +229,15 @@ def extract_and_merge_jobs(data):
             "total_vacancies": str(job.get("total_vacancy", "")),
             "application_mode": job.get("apply_mode", ""),
             "job_type": "",
-            "short_info": "",
-            "last_date": job.get("important_dates", {}).get("Last Date", ""),
-            "last_updated": job.get("listing_date", ""),
+            "short_info": job.get("short_information", ""),
+            "last_date": (job.get("last_date") or
+                          job.get("important_dates", {}).get("last_date") or
+                          job.get("important_dates", {}).get("Last Date") or ""),
+            "last_updated": job.get("listing_date", "") or job.get("post_date", ""),
             "notification_date": "",
             "category": cat,
             "source": "sarkari",
+            "sequence": job.get("homepage_serial") or job.get("sequence") or 9999,  # preserve display order
             "important_dates": job.get("important_dates", {}),
             "application_fee": {},
             "age_limit": {},

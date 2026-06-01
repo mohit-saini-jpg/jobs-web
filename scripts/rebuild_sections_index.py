@@ -2,6 +2,11 @@
 """
 Rebuild sections-index.json from master_clean_jobs.json
 Maps all categories that JOBS_CAT_META in script.js expects
+
+Sorting rules:
+  - Sarkari categories (SR_*): sort by 'sequence' ASC (as set in sarkari JSON)
+  - Freejobalert/education categories: sort by 'source_order' ASC (JSON list order)
+  - Fallback for all: sort by last_date DESC
 """
 import json, re, os
 from pathlib import Path
@@ -12,6 +17,13 @@ with open('data/master_clean_jobs.json', encoding='utf-8') as f:
     jobs = json.load(f)
 
 print(f'Loaded {len(jobs)} jobs')
+
+# Sarkari categories that should use 'sequence' field for ordering
+SARKARI_CATEGORIES = {
+    'SR_Latest_Jobs', 'SR_Result', 'SR_Admit_Card', 'SR_Admission',
+    'SR_Answer_Key', 'UPCOMING_JOBS', 'STATE_JOBS', 'CENTRAL_JOBS', 'ADMISSIONS',
+    'OFFLINE_FORM', 'LATEST_JOBS NEW',
+}
 
 def parse_date_for_sort(d):
     if not d: return '0000-00-00'
@@ -38,13 +50,25 @@ for job in jobs:
         'org':  job.get('organization', ''),
         'vac':  job.get('total_vacancies', ''),
     }
-    sections.setdefault(cat, []).append((parse_date_for_sort(job.get('last_date','')), item))
+    # Store sort keys alongside the item
+    sort_tuple = (
+        job.get('sequence', 9999),           # for sarkari: use sequence
+        job.get('source_order', 9999),       # for freejobalert: use source_order
+        parse_date_for_sort(job.get('last_date', '')),  # fallback: date
+        item,
+    )
+    sections.setdefault(cat, []).append(sort_tuple)
 
-# Sort each category descending by date
+# Sort each category by the appropriate key
 result = {}
 for cat, items in sections.items():
-    items.sort(key=lambda x: x[0], reverse=True)
-    result[cat] = [x[1] for x in items]
+    if cat in SARKARI_CATEGORIES:
+        # Sort by sequence ASC (sarkari display order)
+        items.sort(key=lambda x: (x[0], x[2]))
+    else:
+        # Sort by source_order ASC (freejobalert JSON list order)
+        items.sort(key=lambda x: (x[1], x[2]))
+    result[cat] = [x[3] for x in items]
 
 # Save compact JSON
 with open('sections-index.json', 'w', encoding='utf-8') as f:
