@@ -20,7 +20,7 @@ OUTPUT:
   - data/master_clean_jobs.json→ dedup'd clean list
 """
 
-import json, re, os, html as html_mod
+import json, re, os, html as html_mod, shutil
 from datetime import date
 from pathlib import Path
 from collections import defaultdict
@@ -819,6 +819,9 @@ def build_html(slug, job):
   <script>
     window.__TSJ_SLUG = "{slug}";
     window.__TSJ_CANONICAL = "{canonical}";
+    window.__TSJ_CATEGORIES = {json.dumps(job.get("categories", [job.get("category", "")]))};
+    window.__TSJ_ALL_QUALIFICATIONS = {json.dumps(job.get("all_qualifications", []))};
+    window.__TSJ_IS_LATEST = {str(job.get("is_latest", False)).lower()};
     window.__TSJ_PSR_DISABLED = true;
     window.__TSJ_STATIC_PAGE = true;
     window.__TSJ_RENDERER_DISABLED = true;
@@ -1100,25 +1103,69 @@ def fix_job_record(job):
         if job_rx.search(title): job['entry_type'] = 'JOB'
     return job
 
-# ─── Extract all jobs from Complete_Jobs_Full_Data.json ──────────────────────
+# ─── Extract and MERGE all jobs (categories array — not single category) ──────
+FLAG_CATEGORIES = {'Latest_Notifications', 'Last_Date_Reminder'}
+SOURCE_PRIORITY = {'freejobalert': 0, 'education': 1, 'state': 2, 'daily': 3, 'sarkari': 4}
+
 def extract_all_jobs(cj):
-    all_jobs = []
-    seen_slugs = set()
-    seen_keys  = set()
+    merged   = {}   # slug → job dict
+    merge_order = []  # preserve first-seen order
 
     def add_job(job):
-        slug = job.get('slug', '')
+        slug  = job.get('slug', '')
         title = job.get('title', '')
         if not slug or not title: return
-        title_norm = normalize_title(title)
-        date_norm  = normalise_date(job.get('last_date', ''))
-        key1 = slug
-        key2 = f"{title_norm}|{date_norm}"
-        if key1 in seen_slugs: return
-        if key2 in seen_keys and title_norm: return
-        seen_slugs.add(key1)
-        seen_keys.add(key2)
-        all_jobs.append(fix_job_record(job))
+
+        cat    = job.get('category', '')
+        source = job.get('source', 'freejobalert')
+
+        if slug not in merged:
+            # First time seeing this slug — store it
+            job = fix_job_record(job)
+            job['categories']       = []
+            job['all_qualifications'] = []
+            job['is_latest']        = False
+            job['is_reminder']      = False
+            merged[slug] = job
+            merge_order.append(slug)
+
+        existing = merged[slug]
+
+        # Handle flag-only categories
+        if cat == 'Latest_Notifications':
+            existing['is_latest'] = True
+            return
+        if cat == 'Last_Date_Reminder':
+            existing['is_reminder'] = True
+            return
+
+        # Regular qualification category — accumulate
+        if cat and cat not in existing['categories']:
+            existing['categories'].append(cat)
+        if cat and cat not in existing['all_qualifications']:
+            existing['all_qualifications'].append(cat)
+
+        # Union matched_qualifications from qualification field
+        qual = job.get('qualification', {})
+        if isinstance(qual, dict):
+            for q in qual.get('matched_qualifications', []):
+                if q and q not in existing['all_qualifications'] and q not in FLAG_CATEGORIES:
+                    existing['all_qualifications'].append(q)
+
+        # Prefer richer source (lower priority number wins)
+        existing_prio = SOURCE_PRIORITY.get(existing.get('source', 'sarkari'), 4)
+        new_prio      = SOURCE_PRIORITY.get(source, 4)
+        if new_prio < existing_prio:
+            cats    = existing['categories']
+            quals   = existing['all_qualifications']
+            latest  = existing['is_latest']
+            reminder= existing['is_reminder']
+            new_fixed = fix_job_record(job)
+            new_fixed['categories']        = cats
+            new_fixed['all_qualifications']= quals
+            new_fixed['is_latest']         = latest
+            new_fixed['is_reminder']       = reminder
+            merged[slug] = new_fixed
 
     # 1. freejobalert_categories — ALL fields extracted
     fj_cats = cj.get('freejobalert_categories')
@@ -1338,27 +1385,31 @@ def extract_all_jobs(cj):
         except Exception as e:
             print(f"  dailyupdates.json read error: {e}")
 
-    return all_jobs
+    return [merged[s] for s in merge_order]
 
 # ─── Build sections-index.json ───────────────────────────────────────────────
 def build_sections_index(all_jobs):
     buckets = defaultdict(list)
     for job in all_jobs:
-        cat = job.get('category', '')
-        if not cat: continue
-        # Include enough data so homepage JS renders cards WITHOUT extra fetches
-        buckets[cat].append((
-            normalise_date(job.get('last_date', '')),
-            {
-                'slug':  job['slug'],
-                'name':  job['title'],
-                'date':  job.get('last_date', ''),
-                'org':   job.get('organization', ''),
-                'vac':   str(job.get('total_vacancies', '') or ''),
-                'mode':  job.get('application_mode', 'Online'),
-                'status': job.get('status', 'active'),
-            }
-        ))
+        # Support both new `categories` array and legacy `category` string
+        cats = job.get('categories')
+        if not cats:
+            single = job.get('category', '')
+            cats = [single] if single else []
+        for cat in cats:
+            if not cat: continue
+            buckets[cat].append((
+                normalise_date(job.get('last_date', '')),
+                {
+                    'slug':  job['slug'],
+                    'name':  job['title'],
+                    'date':  job.get('last_date', ''),
+                    'org':   job.get('organization', ''),
+                    'vac':   str(job.get('total_vacancies', '') or ''),
+                    'mode':  job.get('application_mode', 'Online'),
+                    'status': job.get('status', 'active'),
+                }
+            ))
     result = {}
     for cat, items in buckets.items():
         # Preserve JSON insertion order — no date-based sorting
@@ -1455,13 +1506,25 @@ for job in all_jobs:
     with open(out_json, 'w', encoding='utf-8') as f:
         json.dump(job, f, ensure_ascii=False, separators=(',', ':'))
 
-    # Index entry
+    # Index entry — categories array save karo
     index[slug] = {
-        'cat':       job.get('category', ''),
-        'title':     job['title'][:120],
-        'last_date': job.get('last_date', '')[:30],
-        'org':       job.get('organization', '')[:60],
+        'cat':        job.get('category', ''),
+        'categories': job.get('categories', []),
+        'title':      job['title'][:120],
+        'last_date':  job.get('last_date', '')[:30],
+        'org':        job.get('organization', '')[:60],
     }
+
+# Orphan page cleanup — slugs jo current JSON mein nahi hain
+valid_slugs = {job['slug'] for job in all_jobs}
+deleted = 0
+if JOBS_DIR.exists():
+    for page_dir in JOBS_DIR.iterdir():
+        if page_dir.is_dir() and (page_dir / 'index.html').exists():
+            if page_dir.name not in valid_slugs:
+                shutil.rmtree(page_dir)
+                deleted += 1
+print(f"   Orphan pages deleted: {deleted}")
 
 # Write jobs-index.json
 with open(INDEX, 'w', encoding='utf-8') as f:
