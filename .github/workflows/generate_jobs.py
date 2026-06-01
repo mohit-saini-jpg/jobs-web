@@ -60,9 +60,7 @@ def slugify(text):
     return t[:120] or 'job'
 
 def clean_slug(s):
-    """Remove sr_*- prefix and trailing hex hash.
-    sr_latest_jobs-rpsc-school-lecturer-106b24 → rpsc-school-lecturer
-    """
+    """Remove sr_*- prefix and trailing hex hash."""
     s = str(s or '').strip()
     s = re.sub(r'^sr_[a-z_]+-', '', s)
     s = re.sub(r'-[0-9a-f]{6,8}$', '', s)
@@ -1549,153 +1547,157 @@ print(f"   Total in index:      {len(index)}")
 print(f"   sections-index:      {total_si} items")
 
 
-# ══════════════════════════════════════════════════════════
-# STATE JOBS — /state-name/job-slug/index.html
-# ══════════════════════════════════════════════════════════
 import html as _html_mod
+from pathlib import Path as _Path
 
 def _e(s): return _html_mod.escape(str(s or ''), quote=True)
 
-STATE_WISE_FILE = Path('State_Wise_Jobs.json')
+# ══════════════════════════════════════════════════════════
+# STATE JOBS: /haryana/job-slug/index.html
+# ══════════════════════════════════════════════════════════
+STATE_WISE_FILE = _Path('State_Wise_Jobs.json')
 if STATE_WISE_FILE.exists():
     print("\n🏛️  Generating state job pages...")
-    with open(STATE_WISE_FILE, encoding='utf-8') as f:
-        sw = json.load(f)
-    st_written = st_skipped = 0
-    for sec in sw.get('sections', []):
-        state_name = (sec.get('state') or sec.get('title') or '').strip()
-        if not state_name: continue
-        state_slug = slugify(state_name)
-        for item in sec.get('items', []):
-            name = (item.get('name') or '').strip()
-            if not name: continue
-            job_slug = clean_slug(item.get('slug') or '') or slugify(name)
-            if not job_slug: continue
-            page_dir = Path(state_slug) / job_slug
-            out_file = page_dir / 'index.html'
-            if out_file.exists() and not FORCE_REGEN:
-                st_skipped += 1; continue
-            canon_url = f"https://www.topsarkarijobs.com/{state_slug}/{job_slug}/"
-            detail = item.get('detail') or {}
-            if isinstance(detail, str):
-                try: detail = json.loads(detail)
-                except: detail = {}
-            bd    = detail.get('basic_details', {}) or {}
-            id_   = detail.get('important_dates', {}) or {}
-            il    = detail.get('important_links', {}) or {}
-            last_date  = (item.get('lastDate') or id_.get('last_date_to_apply') or '').strip()
-            total_vac  = str(bd.get('total_vacancies') or '').strip()
-            short_info = str(bd.get('short_information') or '')[:300].strip()
-            apply_url  = (il.get('apply_online') or il.get('official_website') or item.get('url') or '').strip()
-            notif_url  = (il.get('notification_pdf') or '').strip()
-            meta_title = f"{name} | {state_name} Govt Jobs 2026 | TopSarkariJobs"
-            meta_desc  = f"{name}. {state_name} government job. Last date: {last_date}."[:300]
-            links_html = ""
-            if apply_url: links_html += f'<a href="{_e(apply_url)}" target="_blank" rel="noopener" class="link-btn btn-green"><i class="fa-solid fa-paper-plane"></i> Apply Online</a>\n'
-            if notif_url: links_html += f'<a href="{_e(notif_url)}" target="_blank" rel="noopener" class="link-btn btn-blue"><i class="fa-solid fa-file-pdf"></i> Notification</a>\n'
-            html = f"""<!DOCTYPE html>
+    import json as _json2
+    with open(STATE_WISE_FILE, encoding='utf-8') as _f:
+        _sw = _json2.load(_f)
+    _st_written = _st_skipped = 0
+    for _sec in _sw.get('sections', []):
+        _state_name = (_sec.get('state') or _sec.get('title') or '').strip()
+        if not _state_name: continue
+        _state_slug = slugify(_state_name)
+        for _item in _sec.get('items', []):
+            _name = (_item.get('name') or '').strip()
+            if not _name: continue
+            _job_slug = clean_slug(_item.get('slug') or '') or slugify(_name)
+            if not _job_slug: continue
+            _page_dir = _Path(_state_slug) / _job_slug
+            _out_file = _page_dir / 'index.html'
+            if _out_file.exists() and not FORCE_REGEN:
+                _st_skipped += 1; continue
+            _canon = f"https://www.topsarkarijobs.com/{_state_slug}/{_job_slug}/"
+            _detail = _item.get('detail') or {}
+            if isinstance(_detail, str):
+                try: _detail = _json2.loads(_detail)
+                except: _detail = {}
+            _bd = _detail.get('basic_details', {}) or {}
+            _id = _detail.get('important_dates', {}) or {}
+            _il = _detail.get('important_links', {}) or {}
+            _last = (_item.get('lastDate') or _id.get('last_date_to_apply') or '').strip()
+            _vac  = str(_bd.get('total_vacancies') or '').strip()
+            _info = str(_bd.get('short_information') or '')[:300].strip()
+            _aurl = (_il.get('apply_online') or _il.get('official_website') or _item.get('url') or '').strip()
+            _nurl = (_il.get('notification_pdf') or '').strip()
+            _lnk = ''
+            if _aurl: _lnk += f'<a href="{_e(_aurl)}" target="_blank" rel="noopener" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:12px 8px;border-radius:10px;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;text-decoration:none;font-weight:700;font-size:.75rem;min-height:72px;"><i class="fa-solid fa-paper-plane" style="font-size:1.1rem;"></i>Apply Online</a>\n'
+            if _nurl: _lnk += f'<a href="{_e(_nurl)}" target="_blank" rel="noopener" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:12px 8px;border-radius:10px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;text-decoration:none;font-weight:700;font-size:.75rem;min-height:72px;"><i class="fa-solid fa-file-pdf" style="font-size:1.1rem;"></i>Notification</a>\n'
+            _meta_t = f"{_name} | {_state_name} Govt Jobs 2026 | TopSarkariJobs"
+            _meta_d = f"{_name}. {_state_name} government job. Last date: {_last}. {_info}"[:300]
+            _html = f"""<!DOCTYPE html>
 <html lang="en"><head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>{_e(meta_title)}</title>
-<meta name="description" content="{_e(meta_desc)}"/>
+<title>{_e(_meta_t)}</title>
+<meta name="description" content="{_e(_meta_d)}"/>
 <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large"/>
-<link rel="canonical" href="{canon_url}"/>
+<link rel="canonical" href="{_canon}"/>
 <link rel="icon" type="image/x-icon" href="/image.ico"/>
 <link rel="stylesheet" href="/styles.css"/>
 <link rel="preload" href="/fonts/fa/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"/>
 <noscript><link rel="stylesheet" href="/fonts/fa/all.min.css"/></noscript>
-<meta property="og:title" content="{_e(meta_title)}"/><meta property="og:url" content="{canon_url}"/>
+<meta property="og:title" content="{_e(_meta_t)}"/><meta property="og:url" content="{_canon}"/>
 <meta property="og:type" content="article"/><meta property="og:image" content="https://www.topsarkarijobs.com/image.png"/>
-<script type="application/ld+json">{{"@context":"https://schema.org","@type":"JobPosting","title":{json.dumps(name)},"description":{json.dumps(meta_desc)},"datePosted":"{TODAY}","employmentType":"FULL_TIME","url":{json.dumps(canon_url)},"hiringOrganization":{{"@type":"Organization","name":{json.dumps(state_name + " Government")}}},"jobLocation":{{"@type":"Place","address":{{"@type":"PostalAddress","addressRegion":{json.dumps(state_name)},"addressCountry":"IN"}}}}}}</script>
-<style>.jp{{max-width:900px;margin:24px auto;padding:0 14px 40px;}}.jh{{background:linear-gradient(125deg,#0c4a6e,#1a6b8a);border-radius:1.2rem;padding:1.8rem 2rem;color:#fff;margin-bottom:1.4rem;}}.jh h1{{font-size:1.4rem;font-weight:800;line-height:1.4;margin-bottom:.8rem;}}@media(max-width:600px){{.jh h1{{font-size:1.1rem;}}}}.pill{{background:rgba(255,255,255,.15);border-radius:60px;padding:.3rem .9rem;font-size:.78rem;display:inline-flex;align-items:center;gap:6px;margin:.2rem;}}.ic{{background:#fff;border:1px solid #e9f0f5;border-radius:1.2rem;overflow:hidden;margin-bottom:1.2rem;box-shadow:0 4px 12px -4px rgba(0,0,0,.06);}}.ich{{background:#1d4ed8;color:#fff;padding:.8rem 1.2rem;font-weight:700;font-size:.95rem;display:flex;align-items:center;gap:8px;}}.it{{width:100%;border-collapse:collapse;font-size:.85rem;}}.it tr{{border-bottom:1px solid #f1f5f9;}}.it tr:last-child{{border-bottom:none;}}.it th{{width:38%;background:#f8fafc;padding:.75rem 1rem;text-align:left;font-weight:600;color:#374151;vertical-align:top;}}.it td{{padding:.75rem 1rem;color:#1e293b;line-height:1.65;word-break:break-word;}}.lg{{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;padding:1rem;}}.lb{{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:12px 8px;border-radius:10px;text-decoration:none;font-weight:700;font-size:.75rem;text-align:center;transition:.18s;min-height:72px;border:1px solid transparent;}}.lb:hover{{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.12);}}.lb i{{font-size:1.1rem;}}.btn-green{{background:#f0fdf4;color:#15803d;border-color:#bbf7d0;}}.btn-blue{{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe;}}.bc{{font-size:.8rem;color:#64748b;margin-bottom:1rem;display:flex;flex-wrap:wrap;align-items:center;gap:5px;}}.bc a{{color:#1d4ed8;text-decoration:none;}}</style>
+<script type="application/ld+json">{{"@context":"https://schema.org","@type":"JobPosting","title":{_json2.dumps(_name)},"description":{_json2.dumps(_meta_d)},"datePosted":"{TODAY}","employmentType":"FULL_TIME","url":{_json2.dumps(_canon)},"hiringOrganization":{{"@type":"Organization","name":{_json2.dumps(_state_name + " Government")}}},"jobLocation":{{"@type":"Place","address":{{"@type":"PostalAddress","addressRegion":{_json2.dumps(_state_name)},"addressCountry":"IN"}}}}}}</script>
+<script type="application/ld+json">{{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{{"@type":"ListItem","position":1,"name":"Home","item":"https://www.topsarkarijobs.com/"}},{{"@type":"ListItem","position":2,"name":"State Jobs","item":"https://www.topsarkarijobs.com/state/"}},{{"@type":"ListItem","position":3,"name":{_json2.dumps(_state_name)},"item":"https://www.topsarkarijobs.com/state/{_state_slug}/"}},{{"@type":"ListItem","position":4,"name":{_json2.dumps(_name)},"item":{_json2.dumps(_canon)}}}]}}</script>
+<style>body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f0f4fb;margin:0;}}.jp{{max-width:900px;margin:24px auto;padding:0 14px 40px;}}.jh{{background:linear-gradient(125deg,#0c4a6e,#1a6b8a);border-radius:1.2rem;padding:1.8rem 2rem;color:#fff;margin-bottom:1.4rem;}}.jh h1{{font-size:1.4rem;font-weight:800;line-height:1.4;margin-bottom:.8rem;}}@media(max-width:600px){{.jh h1{{font-size:1.1rem;}}}}.pill{{background:rgba(255,255,255,.15);border-radius:60px;padding:.3rem .9rem;font-size:.78rem;display:inline-flex;align-items:center;gap:6px;margin:.2rem;}}.ic{{background:#fff;border:1px solid #e9f0f5;border-radius:1.2rem;overflow:hidden;margin-bottom:1.2rem;box-shadow:0 4px 12px -4px rgba(0,0,0,.06);}}.ich{{background:#1d4ed8;color:#fff;padding:.8rem 1.2rem;font-weight:700;font-size:.95rem;display:flex;align-items:center;gap:8px;}}.it{{width:100%;border-collapse:collapse;font-size:.85rem;}}.it tr{{border-bottom:1px solid #f1f5f9;}}.it tr:last-child{{border-bottom:none;}}.it th{{width:38%;background:#f8fafc;padding:.75rem 1rem;text-align:left;font-weight:600;color:#374151;vertical-align:top;}}.it td{{padding:.75rem 1rem;color:#1e293b;line-height:1.65;word-break:break-word;}}.lg{{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;padding:1rem;}}.bc{{font-size:.8rem;color:#64748b;margin-bottom:1rem;display:flex;flex-wrap:wrap;gap:5px;}}.bc a{{color:#1d4ed8;text-decoration:none;}}</style>
 <script src="/tsj-menu.js" defer></script></head>
 <body><div id="site-header"></div><main><div class="jp">
-<nav class="bc"><a href="/">Home</a> › <a href="/state/">State Jobs</a> › <a href="/state/{state_slug}/">{_e(state_name)}</a> › {_e(name[:55])}</nav>
-<div class="jh"><h1>{_e(name)}</h1><div>
-<span class="pill"><i class="fa-solid fa-map-marker-alt"></i> {_e(state_name)}</span>
-{f'<span class="pill"><i class="fa-solid fa-users"></i> {_e(total_vac)} Posts</span>' if total_vac else ''}
-{f'<span class="pill"><i class="fa-solid fa-hourglass-end"></i> Last Date: {_e(last_date)}</span>' if last_date else ''}
+<nav class="bc"><a href="/">Home</a> › <a href="/state/">State Jobs</a> › <a href="/state/{_state_slug}/">{_e(_state_name)}</a> › {_e(_name[:55])}</nav>
+<div class="jh"><h1>{_e(_name)}</h1><div>
+<span class="pill"><i class="fa-solid fa-map-marker-alt"></i> {_e(_state_name)}</span>
+{f'<span class="pill"><i class="fa-solid fa-users"></i> {_e(_vac)} Posts</span>' if _vac else ''}
+{f'<span class="pill"><i class="fa-solid fa-hourglass-end"></i> Last Date: {_e(_last)}</span>' if _last else ''}
 </div></div>
-{f'<div class="ic"><div class="ich"><i class="fa-solid fa-circle-info"></i> About</div><div style="padding:1rem 1.2rem;font-size:.85rem;line-height:1.75;color:#374151;">{_e(short_info)}</div></div>' if short_info else ''}
+{f'<div class="ic"><div class="ich"><i class="fa-solid fa-circle-info"></i> About</div><div style="padding:1rem 1.2rem;font-size:.85rem;line-height:1.75;color:#374151;">{_e(_info)}</div></div>' if _info else ''}
 <div class="ic"><div class="ich"><i class="fa-solid fa-table-list"></i> Job Details</div>
 <table class="it">
-<tr><th>Post Name</th><td>{_e(name)}</td></tr>
-<tr><th>State</th><td>{_e(state_name)}</td></tr>
-{f"<tr><th>Total Posts</th><td>{_e(total_vac)}</td></tr>" if total_vac else ""}
-{f"<tr><th>Last Date</th><td style='color:#dc2626;font-weight:700;'>{_e(last_date)}</td></tr>" if last_date else ""}
-<tr><th>Apply Mode</th><td>{_e(bd.get("application_mode") or "Online")}</td></tr>
+<tr><th>Post Name</th><td>{_e(_name)}</td></tr>
+<tr><th>State</th><td>{_e(_state_name)}</td></tr>
+{f"<tr><th>Total Posts</th><td>{_e(_vac)}</td></tr>" if _vac else ""}
+{f"<tr><th>Last Date</th><td style=\'color:#dc2626;font-weight:700;\'>{_e(_last)}</td></tr>" if _last else ""}
+<tr><th>Apply Mode</th><td>{_e(_bd.get("application_mode") or "Online")}</td></tr>
 </table></div>
 <div class="ic"><div class="ich"><i class="fa-solid fa-link"></i> Important Links</div>
-<div class="lg">{links_html or '<p style="padding:1rem;color:#64748b;font-size:.84rem;">Check official website.</p>'}</div></div>
+<div class="lg">{_lnk or '<p style="padding:1rem;color:#64748b;font-size:.84rem;">Check official website.</p>'}</div></div>
 </div></main><div id="site-footer"></div>
 <script>(function(){{var h=fetch("/header.html",{{cache:"no-store"}}).then(function(r){{return r.ok?r.text():null;}}).catch(function(){{return null;}});document.addEventListener("DOMContentLoaded",function(){{h.then(function(html){{if(html){{var el=document.getElementById("site-header");if(el)el.innerHTML=html;if(typeof window.__TSJ_INIT_HEADER==="function")window.__TSJ_INIT_HEADER();}}}}); fetch("/footer.html").then(function(r){{return r.ok?r.text():null;}}).then(function(fh){{if(fh){{var fe=document.getElementById("site-footer");if(fe)fe.innerHTML=fh;}}}});}});}})();</script>
 </body></html>"""
-            page_dir.mkdir(parents=True, exist_ok=True)
-            out_file.write_text(html, encoding='utf-8')
-            st_written += 1
-    print(f"   ✅ State pages: {st_written} generated, {st_skipped} skipped")
+            _page_dir.mkdir(parents=True, exist_ok=True)
+            _out_file.write_text(_html, encoding='utf-8')
+            _st_written += 1
+    print(f"   ✅ State pages: {_st_written} generated, {_st_skipped} skipped")
 
 # ══════════════════════════════════════════════════════════
-# EDUCATION — /education/state/job-slug/index.html
+# EDUCATION: /education/state/job-slug/index.html
 # ══════════════════════════════════════════════════════════
-EDU_FILE = Path('Complete_Jobs_Full_Data.json')
-if EDU_FILE.exists():
+if CJ_FILE.exists():
     print("\n🎓 Generating education pages...")
-    with open(EDU_FILE, encoding='utf-8') as f:
-        edu_data = json.load(f)
-    edu_secs = edu_data.get('education_jobs', {}).get('sections', [])
-    edu_written = edu_skipped = 0
-    for sec in edu_secs:
-        sec_id    = (sec.get('id') or '').strip()
-        sec_title = sec_id.replace('-', ' ').title() + ' Education 2026'
-        for item in sec.get('items', []):
-            name = (item.get('name') or item.get('examName') or '').strip()
-            if not name: continue
-            job_slug = slugify(name)
-            if not job_slug: continue
-            page_dir = Path('education') / sec_id / job_slug
-            out_file = page_dir / 'index.html'
-            if out_file.exists() and not FORCE_REGEN:
-                edu_skipped += 1; continue
-            canon_url = f"https://www.topsarkarijobs.com/education/{sec_id}/{job_slug}/"
-            ext_url  = str(item.get('url') or '').strip()
-            date_str = str(item.get('date') or item.get('postDate') or '').strip()
-            meta_title = f"{name} | {sec_title} | TopSarkariJobs"
-            meta_desc  = f"{name}. {sec_title}. {date_str}."[:300]
-            links_html = f'<a href="{_e(ext_url)}" target="_blank" rel="noopener" class="lb btn-green"><i class="fa-solid fa-external-link-alt"></i> View / Download</a>' if ext_url else ''
-            html = f"""<!DOCTYPE html>
+    import json as _json3
+    with open(CJ_FILE, encoding='utf-8') as _f2:
+        _edu_data = _json3.load(_f2)
+    _edu_secs = _edu_data.get('education_jobs', {}).get('sections', [])
+    _edu_written = _edu_skipped = 0
+    for _sec2 in _edu_secs:
+        _sec_id = (_sec2.get('id') or '').strip()
+        _sec_title = _sec_id.replace('-', ' ').title() + ' Education 2026'
+        for _item2 in _sec2.get('items', []):
+            _name2 = (_item2.get('name') or _item2.get('examName') or '').strip()
+            if not _name2: continue
+            _job_slug2 = slugify(_name2)
+            if not _job_slug2: continue
+            _page_dir2 = _Path('education') / _sec_id / _job_slug2
+            _out_file2 = _page_dir2 / 'index.html'
+            if _out_file2.exists() and not FORCE_REGEN:
+                _edu_skipped += 1; continue
+            _canon2 = f"https://www.topsarkarijobs.com/education/{_sec_id}/{_job_slug2}/"
+            _ext_url = str(_item2.get('url') or '').strip()
+            _date2   = str(_item2.get('date') or _item2.get('postDate') or '').strip()
+            _meta_t2 = f"{_name2} | {_sec_title} | TopSarkariJobs"
+            _meta_d2 = f"{_name2}. {_sec_title}. {_date2}."[:300]
+            _lnk2 = f'<a href="{_e(_ext_url)}" target="_blank" rel="noopener" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:12px 8px;border-radius:10px;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;text-decoration:none;font-weight:700;font-size:.75rem;min-height:72px;"><i class="fa-solid fa-external-link-alt" style="font-size:1.1rem;"></i>View Details</a>' if _ext_url else ''
+            _html2 = f"""<!DOCTYPE html>
 <html lang="en"><head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>{_e(meta_title)}</title>
-<meta name="description" content="{_e(meta_desc)}"/>
+<title>{_e(_meta_t2)}</title>
+<meta name="description" content="{_e(_meta_d2)}"/>
 <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large"/>
-<link rel="canonical" href="{canon_url}"/>
+<link rel="canonical" href="{_canon2}"/>
 <link rel="icon" type="image/x-icon" href="/image.ico"/>
 <link rel="stylesheet" href="/styles.css"/>
 <link rel="preload" href="/fonts/fa/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"/>
 <noscript><link rel="stylesheet" href="/fonts/fa/all.min.css"/></noscript>
-<meta property="og:title" content="{_e(meta_title)}"/><meta property="og:url" content="{canon_url}"/>
+<meta property="og:title" content="{_e(_meta_t2)}"/><meta property="og:url" content="{_canon2}"/>
 <meta property="og:type" content="article"/><meta property="og:image" content="https://www.topsarkarijobs.com/image.png"/>
-<script type="application/ld+json">{{"@context":"https://schema.org","@type":"Article","headline":{json.dumps(name)},"description":{json.dumps(meta_desc)},"url":{json.dumps(canon_url)},"datePublished":"{TODAY}","publisher":{{"@type":"Organization","name":"TopSarkariJobs","url":"https://www.topsarkarijobs.com"}}}}</script>
-<style>.ep{{max-width:900px;margin:24px auto;padding:0 14px 40px;}}.eh{{background:linear-gradient(125deg,#4338ca,#7c3aed);border-radius:1.2rem;padding:1.8rem 2rem;color:#fff;margin-bottom:1.4rem;}}.eh h1{{font-size:1.4rem;font-weight:800;line-height:1.4;margin-bottom:.8rem;}}@media(max-width:600px){{.eh h1{{font-size:1.1rem;}}}}.pill{{background:rgba(255,255,255,.15);border-radius:60px;padding:.3rem .9rem;font-size:.78rem;display:inline-flex;align-items:center;gap:6px;margin:.2rem;}}.ic{{background:#fff;border:1px solid #e9f0f5;border-radius:1.2rem;overflow:hidden;margin-bottom:1.2rem;box-shadow:0 4px 12px -4px rgba(0,0,0,.06);}}.ich{{background:#4338ca;color:#fff;padding:.8rem 1.2rem;font-weight:700;font-size:.95rem;display:flex;align-items:center;gap:8px;}}.it{{width:100%;border-collapse:collapse;font-size:.85rem;}}.it tr{{border-bottom:1px solid #f1f5f9;}}.it tr:last-child{{border-bottom:none;}}.it th{{width:38%;background:#f8fafc;padding:.75rem 1rem;text-align:left;font-weight:600;color:#374151;}}.it td{{padding:.75rem 1rem;color:#1e293b;line-height:1.65;word-break:break-word;}}.lg{{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;padding:1rem;}}.lb{{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:12px 8px;border-radius:10px;text-decoration:none;font-weight:700;font-size:.75rem;text-align:center;transition:.18s;min-height:72px;border:1px solid transparent;}}.lb:hover{{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.12);}}.lb i{{font-size:1.1rem;}}.btn-green{{background:#f0fdf4;color:#15803d;border-color:#bbf7d0;}}.bc{{font-size:.8rem;color:#64748b;margin-bottom:1rem;display:flex;flex-wrap:wrap;align-items:center;gap:5px;}}.bc a{{color:#1d4ed8;text-decoration:none;}}</style>
+<script type="application/ld+json">{{"@context":"https://schema.org","@type":"Article","headline":{_json3.dumps(_name2)},"description":{_json3.dumps(_meta_d2)},"url":{_json3.dumps(_canon2)},"datePublished":"{TODAY}","publisher":{{"@type":"Organization","name":"TopSarkariJobs","url":"https://www.topsarkarijobs.com"}}}}</script>
+<script type="application/ld+json">{{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{{"@type":"ListItem","position":1,"name":"Home","item":"https://www.topsarkarijobs.com/"}},{{"@type":"ListItem","position":2,"name":"Education","item":"https://www.topsarkarijobs.com/education/"}},{{"@type":"ListItem","position":3,"name":{_json3.dumps(_sec_title)},"item":"https://www.topsarkarijobs.com/education/{_sec_id}/"}},{{"@type":"ListItem","position":4,"name":{_json3.dumps(_name2)},"item":{_json3.dumps(_canon2)}}}]}}</script>
+<style>body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f0f4fb;margin:0;}}.ep{{max-width:900px;margin:24px auto;padding:0 14px 40px;}}.eh{{background:linear-gradient(125deg,#4338ca,#7c3aed);border-radius:1.2rem;padding:1.8rem 2rem;color:#fff;margin-bottom:1.4rem;}}.eh h1{{font-size:1.4rem;font-weight:800;line-height:1.4;margin-bottom:.8rem;}}@media(max-width:600px){{.eh h1{{font-size:1.1rem;}}}}.pill{{background:rgba(255,255,255,.15);border-radius:60px;padding:.3rem .9rem;font-size:.78rem;display:inline-flex;align-items:center;gap:6px;margin:.2rem;}}.ic{{background:#fff;border:1px solid #e9f0f5;border-radius:1.2rem;overflow:hidden;margin-bottom:1.2rem;box-shadow:0 4px 12px -4px rgba(0,0,0,.06);}}.ich{{background:#4338ca;color:#fff;padding:.8rem 1.2rem;font-weight:700;font-size:.95rem;display:flex;align-items:center;gap:8px;}}.it{{width:100%;border-collapse:collapse;font-size:.85rem;}}.it tr{{border-bottom:1px solid #f1f5f9;}}.it tr:last-child{{border-bottom:none;}}.it th{{width:38%;background:#f8fafc;padding:.75rem 1rem;text-align:left;font-weight:600;color:#374151;}}.it td{{padding:.75rem 1rem;color:#1e293b;line-height:1.65;word-break:break-word;}}.lg{{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;padding:1rem;}}.bc{{font-size:.8rem;color:#64748b;margin-bottom:1rem;display:flex;flex-wrap:wrap;gap:5px;}}.bc a{{color:#1d4ed8;text-decoration:none;}}</style>
 <script src="/tsj-menu.js" defer></script></head>
 <body><div id="site-header"></div><main><div class="ep">
-<nav class="bc"><a href="/">Home</a> › <a href="/education/">Education</a> › <a href="/education/{sec_id}/">{_e(sec_title)}</a> › {_e(name[:55])}</nav>
-<div class="eh"><h1>{_e(name)}</h1><div>
-<span class="pill"><i class="fa-solid fa-graduation-cap"></i> {_e(sec_title)}</span>
-{f'<span class="pill"><i class="fa-solid fa-calendar"></i> {_e(date_str)}</span>' if date_str else ''}
+<nav class="bc"><a href="/">Home</a> › <a href="/education/">Education</a> › <a href="/education/{_sec_id}/">{_e(_sec_title)}</a> › {_e(_name2[:55])}</nav>
+<div class="eh"><h1>{_e(_name2)}</h1><div>
+<span class="pill"><i class="fa-solid fa-graduation-cap"></i> {_e(_sec_title)}</span>
+{f'<span class="pill"><i class="fa-solid fa-calendar"></i> {_e(_date2)}</span>' if _date2 else ''}
 </div></div>
 <div class="ic"><div class="ich"><i class="fa-solid fa-table-list"></i> Details</div>
 <table class="it">
-<tr><th>Name</th><td>{_e(name)}</td></tr>
-<tr><th>Category</th><td>{_e(sec_title)}</td></tr>
-{f"<tr><th>Date</th><td>{_e(date_str)}</td></tr>" if date_str else ""}
+<tr><th>Name</th><td>{_e(_name2)}</td></tr>
+<tr><th>Category</th><td>{_e(_sec_title)}</td></tr>
+{f"<tr><th>Date</th><td>{_e(_date2)}</td></tr>" if _date2 else ""}
 </table></div>
-{f'<div class="ic"><div class="ich"><i class="fa-solid fa-link"></i> Links</div><div class="lg">{links_html}</div></div>' if links_html else ''}
+{f'<div class="ic"><div class="ich"><i class="fa-solid fa-link"></i> Links</div><div class="lg">{_lnk2}</div></div>' if _lnk2 else ''}
 </div></main><div id="site-footer"></div>
 <script>(function(){{var h=fetch("/header.html",{{cache:"no-store"}}).then(function(r){{return r.ok?r.text():null;}}).catch(function(){{return null;}});document.addEventListener("DOMContentLoaded",function(){{h.then(function(html){{if(html){{var el=document.getElementById("site-header");if(el)el.innerHTML=html;if(typeof window.__TSJ_INIT_HEADER==="function")window.__TSJ_INIT_HEADER();}}}}); fetch("/footer.html").then(function(r){{return r.ok?r.text():null;}}).then(function(fh){{if(fh){{var fe=document.getElementById("site-footer");if(fe)fe.innerHTML=fh;}}}});}});}})();</script>
 </body></html>"""
-            page_dir.mkdir(parents=True, exist_ok=True)
-            out_file.write_text(html, encoding='utf-8')
-            edu_written += 1
-    print(f"   ✅ Education pages: {edu_written} generated, {edu_skipped} skipped")
+            _page_dir2.mkdir(parents=True, exist_ok=True)
+            _out_file2.write_text(_html2, encoding='utf-8')
+            _edu_written += 1
+    print(f"   ✅ Education pages: {_edu_written} generated, {_edu_skipped} skipped")
