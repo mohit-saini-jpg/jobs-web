@@ -7,7 +7,7 @@ Output: jobs/{slug}/index.html (one per NEW job)
         data/master_clean_jobs.json
 """
 
-import json, os, re, unicodedata, html as htmllib
+import json, os, re, unicodedata, html as htmllib, shutil
 from pathlib import Path
 
 BASE_URL = "https://www.topsarkarijobs.com"
@@ -101,7 +101,256 @@ def render_section(data):
             return f'<div class="table-scroll"><table class="info-table"><tbody>{rows}</tbody></table></div>'
     return ""
 
-# ── Extract ALL Jobs from JSON (Task 1) ───────────────────────────────
+# ── Flag-only categories (not qualifications) ─────────────────────────
+FLAG_CATEGORIES = {"Latest_Notifications", "Last_Date_Reminder"}
+
+# ── Source priority for rich-data preference ──────────────────────────
+SOURCE_PRIORITY = {"freejobalert": 0, "education": 1, "state": 2, "sarkari": 3}
+
+# ── Extract and MERGE duplicate jobs across all categories ────────────
+def extract_and_merge_jobs(data):
+    """
+    Iterates all 4 sources; merges duplicate slugs into a single job object.
+    Each job gets a `categories` list (all qual categories it appears in)
+    and `is_latest` / `is_reminder` flags from flag-only categories.
+    """
+    # merged: slug → job dict
+    merged = {}
+
+    def _merge(slug, new_job, cat, source):
+        if slug not in merged:
+            merged[slug] = new_job
+            merged[slug]["categories"] = []
+            merged[slug]["all_qualifications"] = []
+            merged[slug]["is_latest"] = False
+            merged[slug]["is_reminder"] = False
+
+        existing = merged[slug]
+
+        # Handle flag-only categories
+        if cat == "Latest_Notifications":
+            existing["is_latest"] = True
+            return
+        if cat == "Last_Date_Reminder":
+            existing["is_reminder"] = True
+            return
+
+        # Regular qualification category
+        if cat and cat not in existing["categories"]:
+            existing["categories"].append(cat)
+        if cat and cat not in existing["all_qualifications"]:
+            existing["all_qualifications"].append(cat)
+
+        # Merge matched_qualifications from qualification field
+        new_quals = new_job.get("qualification", {})
+        if isinstance(new_quals, dict):
+            for q in new_quals.get("matched_qualifications", []):
+                if q and q not in existing["all_qualifications"] and q not in FLAG_CATEGORIES:
+                    existing["all_qualifications"].append(q)
+
+        # Prefer richer source data (lower priority number = better)
+        existing_prio = SOURCE_PRIORITY.get(existing.get("source", "sarkari"), 3)
+        new_prio = SOURCE_PRIORITY.get(source, 3)
+        if new_prio < existing_prio:
+            # Keep categories/flags accumulated so far, overwrite data fields
+            cats = existing["categories"]
+            all_quals = existing["all_qualifications"]
+            is_latest = existing["is_latest"]
+            is_reminder = existing["is_reminder"]
+            merged[slug] = new_job
+            merged[slug]["categories"] = cats
+            merged[slug]["all_qualifications"] = all_quals
+            merged[slug]["is_latest"] = is_latest
+            merged[slug]["is_reminder"] = is_reminder
+
+    # Source 1: freejobalert_categories (highest priority)
+    for cat, jobs in data.get("freejobalert_categories", {}).items():
+        if not isinstance(jobs, list): continue
+        for job in jobs:
+            bd = job.get("basic_details", {})
+            title = bd.get("job_title", "")
+            if not title: continue
+            dates = job.get("important_dates", {})
+            last_date = (dates.get("last_date_to_apply") or
+                         dates.get("last_date") or
+                         dates.get("Last Date to Apply") or
+                         dates.get("Last Date") or "")
+            notif_date = (dates.get("notification date") or
+                          dates.get("Notification Date") or
+                          bd.get("last_updated") or "")
+            slug = generate_slug(title)
+            if not slug: continue
+            new_job = {
+                "slug": slug,
+                "title": title,
+                "organization": bd.get("organization_name", ""),
+                "post_name": bd.get("post_name", ""),
+                "total_vacancies": str(bd.get("total_vacancies", "")),
+                "application_mode": bd.get("application_mode", ""),
+                "job_type": bd.get("job_type", ""),
+                "short_info": bd.get("short_information", ""),
+                "last_date": last_date,
+                "last_updated": bd.get("last_updated", ""),
+                "notification_date": notif_date,
+                "category": cat,  # keep for backward compat
+                "source": "freejobalert",
+                "important_dates": job.get("important_dates", {}),
+                "application_fee": job.get("application_fee", {}),
+                "age_limit": job.get("age_limit", {}),
+                "qualification": job.get("qualification", {}),
+                "vacancy_details": job.get("vacancy_details", {}),
+                "category_wise_vacancy": job.get("category_wise_vacancy", {}),
+                "salary_details": job.get("salary_details", {}),
+                "selection_process": job.get("selection_process", {}),
+                "exam_pattern": job.get("exam_pattern", {}),
+                "syllabus": job.get("syllabus", {}),
+                "physical_eligibility": job.get("physical_eligibility", {}),
+                "how_to_apply": job.get("how_to_apply", {}),
+                "important_instructions": job.get("important_instructions", {}),
+                "important_links": filter_links(job.get("important_links", {})),
+                "faq": job.get("faq", {}),
+                "seo_tags": job.get("seo_tags", {}),
+            }
+            _merge(slug, new_job, cat, "freejobalert")
+
+    # Source 2: sarkari_data
+    for job in data.get("sarkari_data", {}).get("jobs", []):
+        title = job.get("title", "")
+        if not title: continue
+        slug = generate_slug(title)
+        if not slug: continue
+        cat = job.get("category", "")
+        new_job = {
+            "slug": slug,
+            "title": title,
+            "organization": job.get("organization", ""),
+            "post_name": job.get("post_name", ""),
+            "total_vacancies": str(job.get("total_vacancy", "")),
+            "application_mode": job.get("apply_mode", ""),
+            "job_type": "",
+            "short_info": "",
+            "last_date": job.get("important_dates", {}).get("Last Date", ""),
+            "last_updated": job.get("listing_date", ""),
+            "notification_date": "",
+            "category": cat,
+            "source": "sarkari",
+            "important_dates": job.get("important_dates", {}),
+            "application_fee": {},
+            "age_limit": {},
+            "qualification": {},
+            "vacancy_details": {},
+            "category_wise_vacancy": {},
+            "salary_details": {"salary": job.get("salary_pay_scale", "")},
+            "selection_process": {},
+            "exam_pattern": {},
+            "syllabus": {},
+            "physical_eligibility": {},
+            "how_to_apply": {},
+            "important_instructions": {},
+            "important_links": filter_links(job.get("important_links", {})),
+            "faq": {},
+            "seo_tags": {},
+        }
+        _merge(slug, new_job, cat, "sarkari")
+
+    # Source 3: education_jobs
+    for section in data.get("education_jobs", {}).get("sections", []):
+        cat = section.get("category", section.get("title", "education"))
+        for item in section.get("items", []):
+            title = item.get("title", "")
+            if not title: continue
+            slug = generate_slug(title)
+            if not slug: continue
+            new_job = {
+                "slug": slug,
+                "title": title,
+                "organization": item.get("organization", item.get("org", "")),
+                "post_name": item.get("post_name", ""),
+                "total_vacancies": str(item.get("total_vacancies", item.get("vacancies", ""))),
+                "application_mode": item.get("application_mode", "Online"),
+                "job_type": "",
+                "short_info": item.get("short_info", item.get("description", "")),
+                "last_date": item.get("last_date", ""),
+                "last_updated": item.get("last_updated", ""),
+                "notification_date": "",
+                "category": cat,
+                "source": "education",
+                "important_dates": item.get("important_dates", {}),
+                "application_fee": item.get("application_fee", {}),
+                "age_limit": item.get("age_limit", {}),
+                "qualification": item.get("qualification", {}),
+                "vacancy_details": item.get("vacancy_details", {}),
+                "category_wise_vacancy": {},
+                "salary_details": item.get("salary_details", {}),
+                "selection_process": item.get("selection_process", {}),
+                "exam_pattern": {},
+                "syllabus": {},
+                "physical_eligibility": {},
+                "how_to_apply": {},
+                "important_instructions": {},
+                "important_links": filter_links(item.get("important_links", {})),
+                "faq": {},
+                "seo_tags": {},
+            }
+            _merge(slug, new_job, cat, "education")
+
+    # Source 4: state_jobs
+    for section in data.get("state_jobs", {}).get("sections", []):
+        cat = section.get("category", section.get("title", "state"))
+        for item in section.get("items", []):
+            title = item.get("title", "")
+            if not title: continue
+            slug = generate_slug(title)
+            if not slug: continue
+            new_job = {
+                "slug": slug,
+                "title": title,
+                "organization": item.get("organization", item.get("org", "")),
+                "post_name": item.get("post_name", ""),
+                "total_vacancies": str(item.get("total_vacancies", item.get("vacancies", ""))),
+                "application_mode": item.get("application_mode", "Online"),
+                "job_type": "",
+                "short_info": item.get("short_info", item.get("description", "")),
+                "last_date": item.get("last_date", ""),
+                "last_updated": item.get("last_updated", ""),
+                "notification_date": "",
+                "category": cat,
+                "source": "state",
+                "important_dates": item.get("important_dates", {}),
+                "application_fee": item.get("application_fee", {}),
+                "age_limit": item.get("age_limit", {}),
+                "qualification": item.get("qualification", {}),
+                "vacancy_details": item.get("vacancy_details", {}),
+                "category_wise_vacancy": {},
+                "salary_details": item.get("salary_details", {}),
+                "selection_process": item.get("selection_process", {}),
+                "exam_pattern": {},
+                "syllabus": {},
+                "physical_eligibility": {},
+                "how_to_apply": {},
+                "important_instructions": {},
+                "important_links": filter_links(item.get("important_links", {})),
+                "faq": {},
+                "seo_tags": {},
+            }
+            _merge(slug, new_job, cat, "state")
+
+    return list(merged.values())
+
+# ── Orphan page cleanup ───────────────────────────────────────────────
+def cleanup_orphan_pages(clean_jobs, output_dir):
+    valid_slugs = {job["slug"] for job in clean_jobs}
+    deleted = 0
+    if not output_dir.exists():
+        return
+    for page_dir in output_dir.iterdir():
+        if page_dir.is_dir() and (page_dir / "index.html").exists():
+            if page_dir.name not in valid_slugs:
+                shutil.rmtree(page_dir)
+                deleted += 1
+    print(f"   Deleted orphan pages: {deleted}")
+
+# ── LEGACY: kept for reference but no longer called ───────────────────
 def extract_all_jobs(data):
     all_jobs = []
 
@@ -495,6 +744,9 @@ def generate_html(job):
   <script>
     window.__TSJ_SLUG = "{slug}";
     window.__TSJ_CANONICAL = "{canonical}";
+    window.__TSJ_CATEGORIES = {json.dumps(job.get("categories", [job.get("category", "")]))};
+    window.__TSJ_ALL_QUALIFICATIONS = {json.dumps(job.get("all_qualifications", []))};
+    window.__TSJ_IS_LATEST = {str(job.get("is_latest", False)).lower()};
     window.__TSJ_PSR_DISABLED = true;
     window.__TSJ_STATIC_PAGE = true;
     window.__TSJ_RENDERER_DISABLED = true;
@@ -569,13 +821,9 @@ def main():
     with open(DATA_FILE, encoding="utf-8") as f:
         data = json.load(f)
 
-    print("🔄 Extracting all jobs from 4 sources...")
-    all_jobs = extract_all_jobs(data)
-    print(f"   Total extracted (raw): {len(all_jobs)}")
-
-    print("🧹 Deduplicating...")
-    clean_jobs = deduplicate(all_jobs)
-    print(f"   After dedup: {len(clean_jobs)} unique jobs")
+    print("🔄 Extracting and merging jobs from 4 sources...")
+    clean_jobs = extract_and_merge_jobs(data)
+    print(f"   After merge: {len(clean_jobs)} unique jobs")
 
     # Save master clean file
     Path("data").mkdir(exist_ok=True)
@@ -609,6 +857,9 @@ def main():
         except Exception as e:
             print(f"   ❌ Error: {slug} — {e}")
             errors += 1
+
+    print(f"\n🧹 Cleaning up orphan pages...")
+    cleanup_orphan_pages(clean_jobs, OUTPUT_DIR)
 
     print(f"\n✅ DONE!")
     print(f"   Generated new:  {generated}")
