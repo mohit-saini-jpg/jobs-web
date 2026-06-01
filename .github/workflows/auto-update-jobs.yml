@@ -230,6 +230,18 @@ jobs:
           git add data/ sitemap-jobs.xml sitemap-index.xml sitemap.xml 2>/dev/null || true
           git add sitemap-sections.xml sitemap-pages.xml 2>/dev/null || true
           git add -u '*.html' 2>/dev/null || true
+          # State job pages — /haryana/ /delhi/ /rajasthan/ etc.
+          git add haryana/ andhra-pradesh/ arunachal-pradesh/ assam/ bihar/ 2>/dev/null || true
+          git add chhattisgarh/ delhi/ goa/ gujarat/ himachal-pradesh/ 2>/dev/null || true
+          git add jammu-and-kashmir/ jharkhand/ karnataka/ kerala/ 2>/dev/null || true
+          git add madhya-pradesh/ maharashtra/ manipur/ meghalaya/ mizoram/ 2>/dev/null || true
+          git add nagaland/ odisha/ punjab/ rajasthan/ sikkim/ 2>/dev/null || true
+          git add tamil-nadu/ telangana/ tripura/ uttar-pradesh/ uttarakhand/ 2>/dev/null || true
+          git add west-bengal/ andaman-and-nicobar/ chandigarh/ ladakh/ 2>/dev/null || true
+          # Education pages — /education/haryana/ etc.
+          git add education/ 2>/dev/null || true
+          # Redirects
+          git add _redirects 2>/dev/null || true
 
           if git diff --staged --quiet; then
             echo "✅ No changes to commit"
