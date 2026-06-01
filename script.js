@@ -92,6 +92,14 @@
       .slice(0, 120) || "official-link";
   }
 
+  /* ── jobMatchesCategory: supports both `categories` array and legacy `category` string ── */
+  function jobMatchesCategory(job, catKey) {
+    if (Array.isArray(job.categories)) {
+      return job.categories.includes(catKey);
+    }
+    return (job.category || job.sr_category || job.cat || '').trim() === catKey;
+  }
+
   /*
    * ══════════════════════════════════════════════════════════════════════
    *  convertJobsDataToSections — MULTI-FORMAT FIX
@@ -116,13 +124,24 @@
 
     /* ── Format B: flat jobs[] array with category field ── */
     if (Array.isArray(rawData.jobs) && rawData.jobs.length > 0) {
-      /* Group flat jobs into per-category buckets */
+      /* Group flat jobs into per-category buckets using jobMatchesCategory */
       const buckets = {};
+      // Collect all known catKeys from JOBS_CAT_META
+      const allCatKeys = Object.keys(JOBS_CAT_META);
       rawData.jobs.forEach(job => {
-        const cat = (job.category || job.sr_category || job.cat || "").trim();
-        if (!cat) return;
-        if (!buckets[cat]) buckets[cat] = [];
-        buckets[cat].push(job);
+        // For merged format (categories array), add to every matching bucket
+        if (Array.isArray(job.categories)) {
+          job.categories.forEach(cat => {
+            if (!JOBS_CAT_META[cat]) return;
+            if (!buckets[cat]) buckets[cat] = [];
+            buckets[cat].push(job);
+          });
+        } else {
+          const cat = (job.category || job.sr_category || job.cat || '').trim();
+          if (!cat) return;
+          if (!buckets[cat]) buckets[cat] = [];
+          buckets[cat].push(job);
+        }
       });
       rawData = buckets;
     }
@@ -361,10 +380,19 @@
     if (!mergedData || !Array.isArray(mergedData.jobs)) return [];
     const buckets = {};
     mergedData.jobs.forEach(job => {
-      const cat = (job.category || '').trim();
-      if (!cat || !JOBS_CAT_META[cat]) return;
-      if (!buckets[cat]) buckets[cat] = [];
-      buckets[cat].push(job);
+      // Support both merged `categories` array and legacy `category` string
+      if (Array.isArray(job.categories)) {
+        job.categories.forEach(cat => {
+          if (!cat || !JOBS_CAT_META[cat]) return;
+          if (!buckets[cat]) buckets[cat] = [];
+          buckets[cat].push(job);
+        });
+      } else {
+        const cat = (job.category || '').trim();
+        if (!cat || !JOBS_CAT_META[cat]) return;
+        if (!buckets[cat]) buckets[cat] = [];
+        buckets[cat].push(job);
+      }
     });
     const sections = [];
     for (const [catKey, meta] of Object.entries(JOBS_CAT_META)) {
