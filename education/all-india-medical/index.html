@@ -316,7 +316,7 @@
 
       items.forEach((item, idx) => {
         const slug = makeSlug(item.name || item.examName || '');
-        const url  = `/education/${encodeURIComponent(sectionId)}/?slug=${encodeURIComponent(slug)}`;
+        const url  = `/education/${encodeURIComponent(sectionId)}/${encodeURIComponent(slug)}/`;
         const date = safe(item.date || item.postDate || '');
         const cat  = safe(item.category || '');
         html += `
