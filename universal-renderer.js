@@ -124,6 +124,124 @@
     /* ── Nav TOC ── */
     .jp-left-nav-item.udyn-toc-link{color:#374151}
     .jp-left-nav-item.udyn-toc-link:hover{color:#1d4ed8}
+
+    /* ══════════════════════════════════════════════
+       FSCD LAYOUT STYLES (v1.0)
+       Same design as FSCD.html — card grid layout
+    ══════════════════════════════════════════════ */
+    /* Hide old jp- cards when FSCD layout active */
+    .fscd-active #layoutJob > .jp-card:not(#shortInfoCard),
+    .fscd-active #layoutJob > .jp-main-cta,
+    .fscd-active #layoutJob > .jp-tips-card { display:none!important; }
+
+    /* Hero banner */
+    .fscd-hero{background:linear-gradient(125deg,#0c4a6e 0%,#1a6b8a 100%);border-radius:1.4rem;padding:2rem 2.2rem;margin-bottom:1.6rem;color:#fff;position:relative;overflow:hidden;}
+    .fscd-hero::after{content:"📢";font-size:10rem;opacity:.06;position:absolute;bottom:-20px;right:-10px;pointer-events:none;}
+    .fscd-hero-badge{background:rgba(255,255,255,.18);backdrop-filter:blur(6px);border-radius:60px;padding:.3rem 1rem;display:inline-block;font-size:.72rem;font-weight:600;margin-bottom:.9rem;letter-spacing:.04em;}
+    .fscd-hero-title{font-size:1.5rem;font-weight:800;letter-spacing:-.02em;line-height:1.35;margin-bottom:.8rem;}
+    .fscd-hero-stats{display:flex;flex-wrap:wrap;gap:.9rem;margin-top:1.2rem;}
+    .fscd-stat-pill{background:rgba(255,255,255,.12);border-radius:60px;padding:.4rem 1rem;display:flex;align-items:center;gap:7px;font-weight:500;font-size:.82rem;}
+
+    /* Short info block */
+    .fscd-short-info{background:#eef4fa;border-left:5px solid #1e7e9f;padding:1rem 1.4rem;border-radius:1rem;margin-bottom:1.6rem;font-weight:500;color:#165e7c;font-size:.88rem;line-height:1.7;}
+
+    /* Grid layouts */
+    .fscd-grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.4rem;margin-bottom:1.4rem;}
+    .fscd-grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.4rem;margin-bottom:1.4rem;}
+    @media(max-width:500px){.fscd-grid-2,.fscd-grid-3{grid-template-columns:1fr;}}
+
+    /* FSCD Card */
+    .fscd-card{background:#fff;border-radius:1.4rem;box-shadow:0 8px 24px -8px rgba(0,0,0,.07),0 1px 1px rgba(0,0,0,.02);border:1px solid #e9f0f5;overflow:hidden;transition:transform .18s,box-shadow .18s;margin-bottom:0;}
+    .fscd-card:hover{transform:translateY(-2px);box-shadow:0 18px 32px -10px rgba(0,0,0,.1);}
+    .fscd-card-full{margin-bottom:1.4rem;}
+    .fscd-card-head{padding:1rem 1.4rem .5rem;font-weight:700;font-size:1rem;display:flex;align-items:center;gap:9px;border-bottom:2px solid #eff3f8;color:#0f172a;}
+    .fscd-card-head i{color:#1a6d8a;font-size:1rem;}
+    .fscd-card-body{padding:.9rem 1.4rem 1.2rem;}
+
+    /* Info rows inside cards */
+    .fscd-info-row{display:flex;justify-content:space-between;align-items:baseline;padding:.62rem 0;border-bottom:1px dashed #e9edf2;gap:10px;}
+    .fscd-info-row:last-child{border-bottom:none;}
+    .fscd-lbl{font-weight:600;color:#2c4f6e;font-size:.82rem;flex-shrink:0;min-width:110px;}
+    .fscd-val{font-weight:500;font-size:.84rem;text-align:right;color:#1e293b;word-break:break-word;}
+    .fscd-val.red{color:#dc2626;font-weight:700;}
+    .fscd-val.green{color:#16a34a;font-weight:700;}
+
+    /* Soft badge */
+    .fscd-badge{background:#e1f0f7;color:#0c6b8f;border-radius:40px;padding:.18rem .8rem;font-size:.72rem;font-weight:600;display:inline-block;}
+    .fscd-badge.gr{background:#dcfce7;color:#15803d;}
+    .fscd-badge.or{background:#ffedd5;color:#ea580c;}
+
+    /* Vacancy table */
+    .fscd-tbl-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:.5rem 0;}
+    .fscd-vac-tbl{width:100%;border-collapse:collapse;font-size:.83rem;min-width:400px;}
+    .fscd-vac-tbl th{background:#f4fafe;padding:.82rem 1rem;font-weight:700;color:#1c5a78;border-bottom:2px solid #dee8f0;text-align:left;white-space:nowrap;}
+    .fscd-vac-tbl td{padding:.78rem 1rem;border-bottom:1px solid #eef2f8;vertical-align:top;word-break:break-word;line-height:1.6;}
+    .fscd-vac-tbl tbody tr:hover td{background:#fafdff;}
+    .fscd-vac-tbl tbody tr:last-child td{border-bottom:none;}
+    .fscd-scroll-hint{font-size:.68rem;color:#94a3b8;text-align:right;padding:3px 2px 0;display:flex;align-items:center;justify-content:flex-end;gap:4px;}
+
+    /* Tags */
+    .fscd-tags{display:flex;flex-wrap:wrap;gap:7px;}
+    .fscd-tag{display:inline-flex;align-items:center;gap:6px;background:#f0f7ff;border:1px solid #bfdbfe;border-radius:8px;padding:6px 11px;font-size:.79rem;font-weight:600;color:#1e40af;}
+    .fscd-tag i{font-size:.74rem;}
+
+    /* Numbered steps */
+    .fscd-steps{list-style:none;padding:0;margin:0;}
+    .fscd-step{display:flex;align-items:flex-start;gap:11px;padding:.62rem 0;border-bottom:1px solid #f1f5f9;font-size:.83rem;color:#1e293b;line-height:1.65;}
+    .fscd-step:last-child{border-bottom:none;}
+    .fscd-step-n{flex-shrink:0;width:23px;height:23px;background:#0f766e;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;margin-top:2px;}
+    .fscd-step i{color:#1d4ed8;flex-shrink:0;margin-top:3px;font-size:.78rem;}
+
+    /* Instructions */
+    .fscd-inst-list{list-style:none;padding:0;margin:0;}
+    .fscd-inst{display:flex;align-items:flex-start;gap:9px;padding:.6rem 0;border-bottom:1px solid #f1f5f9;font-size:.83rem;color:#374151;line-height:1.65;}
+    .fscd-inst:last-child{border-bottom:none;}
+    .fscd-inst i{color:#ea580c;flex-shrink:0;margin-top:3px;font-size:.78rem;}
+
+    /* FAQ */
+    .fscd-faq-item{border-bottom:1px solid #eef2f8;padding-bottom:.75rem;margin-bottom:.75rem;}
+    .fscd-faq-item:last-child{border-bottom:none;margin-bottom:0;}
+    .fscd-faq-q{font-weight:700;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;cursor:pointer;color:#134b66;font-size:.84rem;line-height:1.5;padding:.28rem 0;}
+    .fscd-faq-q:hover{color:#0c5670;}
+    .fscd-faq-q .fq-ico{flex-shrink:0;margin-top:3px;transition:transform .2s;font-size:.7rem;}
+    .fscd-faq-a{margin-top:.4rem;color:#4a627a;font-size:.83rem;padding-left:.72rem;border-left:3px solid #9ac2d9;line-height:1.7;display:none;}
+    .fscd-faq-a.open{display:block;}
+
+    /* Icon link buttons */
+    .fscd-icon-links{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:9px;}
+    .fscd-ib{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:11px 7px 9px;border-radius:11px;text-decoration:none;font-weight:700;font-size:.7rem;text-align:center;transition:.18s;min-height:74px;word-break:break-word;border:1px solid transparent;}
+    .fscd-ib:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.11);}
+    .fscd-ib-ico{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1rem;margin-bottom:2px;}
+    .fscd-ib-lbl{font-size:.7rem;font-weight:700;line-height:1.3;color:inherit;}
+    .fscd-ib-sub{font-size:.61rem;color:#64748b;font-weight:500;}
+    .ib-gr{background:#f0fdf4;border-color:#bbf7d0;color:#15803d;} .ib-gr .fscd-ib-ico{background:#dcfce7;color:#16a34a;}
+    .ib-bl{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8;} .ib-bl .fscd-ib-ico{background:#dbeafe;color:#1d4ed8;}
+    .ib-rd{background:#fff5f5;border-color:#fecaca;color:#dc2626;} .ib-rd .fscd-ib-ico{background:#fee2e2;color:#dc2626;}
+    .ib-or{background:#fff7ed;border-color:#fed7aa;color:#ea580c;} .ib-or .fscd-ib-ico{background:#ffedd5;color:#ea580c;}
+    .ib-pu{background:#faf5ff;border-color:#e9d5ff;color:#7c3aed;} .ib-pu .fscd-ib-ico{background:#ede9fe;color:#7c3aed;}
+    .ib-te{background:#f0fdfa;border-color:#99f6e4;color:#0f766e;} .ib-te .fscd-ib-ico{background:#ccfbf1;color:#0f766e;}
+
+    /* Links quick panel */
+    .fscd-links-panel{background:#f9fdfe;border-radius:1.3rem;padding:1rem 1.4rem;margin:1rem 0 1.4rem;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:11px;border:1px solid #e2edf5;box-shadow:0 2px 5px rgba(0,0,0,.02);}
+    .fscd-lpanel-lbl{font-size:.87rem;font-weight:700;color:#165e7c;display:flex;align-items:center;gap:7px;}
+    .fscd-lpanel-btns{display:flex;flex-wrap:wrap;gap:8px;}
+    .fscd-lbtn{display:inline-flex;align-items:center;gap:7px;padding:.48rem 1.1rem;border-radius:60px;font-weight:600;font-size:.79rem;text-decoration:none;transition:.2s;border:none;}
+    .fscd-lbtn.solid{background:#1a6d8a;color:#fff;} .fscd-lbtn.solid:hover{background:#0c5670;}
+    .fscd-lbtn.green{background:#16a34a;color:#fff;} .fscd-lbtn.green:hover{background:#15803d;}
+    .fscd-lbtn.outline{background:transparent;border:1px solid #cbdde9;color:#1a6d8a;} .fscd-lbtn.outline:hover{background:#eef4fa;}
+
+    /* Responsive */
+    @media(max-width:600px){
+      .fscd-hero{padding:1.3rem 1.2rem;}
+      .fscd-hero-title{font-size:1.1rem;}
+      .fscd-card-head{font-size:.9rem;padding:.85rem 1rem .4rem;}
+      .fscd-card-body{padding:.75rem 1rem 1rem;}
+      .fscd-vac-tbl{font-size:.76rem;}
+      .fscd-vac-tbl th,.fscd-vac-tbl td{padding:.65rem .7rem;}
+      .fscd-icon-links{grid-template-columns:repeat(auto-fill,minmax(100px,1fr));}
+      .fscd-ib{min-height:66px;padding:9px 5px 7px;}
+      .fscd-ib-ico{width:34px;height:34px;font-size:.88rem;}
+    }
     `;
     document.head.appendChild(el);
   }
@@ -1509,6 +1627,57 @@
 
   function defFor(id) { return SECTION_DEFS.find(d => d.id === id); }
 
+  /* ── FSCD link categorizer ── */
+  function fscdLinkCat(title) {
+    const t = title.toLowerCase();
+    if (/apply\s*online|apply\s*link|apply\s*form|apply.*otr|registration\s*link|apply.*mains|apply.*re\s*open/i.test(t))
+      return { icon:'fa-paper-plane', cls:'ib-gr', sub:'Apply Now' };
+    if (/candidate\s*login|login\s*portal/i.test(t))
+      return { icon:'fa-right-to-bracket', cls:'ib-gr', sub:'Login' };
+    if (/admit\s*card|hall\s*ticket|call\s*letter/i.test(t))
+      return { icon:'fa-id-card', cls:'ib-or', sub:'Download' };
+    if (/result|merit\s*list|score\s*card|cutoff/i.test(t))
+      return { icon:'fa-trophy', cls:'ib-or', sub:'View' };
+    if (/answer\s*key|final\s*answer/i.test(t))
+      return { icon:'fa-key', cls:'ib-bl', sub:'Download' };
+    if (/notification|download.*notif|download.*pdf|official.*notif|short.*notice/i.test(t))
+      return { icon:'fa-file-pdf', cls:'ib-bl', sub:'View PDF' };
+    if (/syllabus|exam.*pattern/i.test(t))
+      return { icon:'fa-book-open', cls:'ib-bl', sub:'Download' };
+    if (/official\s*website|official\s*portal|visit.*website/i.test(t))
+      return { icon:'fa-globe', cls:'ib-rd', sub:'Visit' };
+    if (/counselling|seat\s*allotment/i.test(t))
+      return { icon:'fa-graduation-cap', cls:'ib-pu', sub:'Counselling' };
+    if (/correction|edit\s*form/i.test(t))
+      return { icon:'fa-pen-to-square', cls:'ib-te', sub:'Edit' };
+    if (/exam\s*city|exam\s*centre/i.test(t))
+      return { icon:'fa-location-dot', cls:'ib-bl', sub:'Check' };
+    return { icon:'fa-link', cls:'ib-bl', sub:'Click Here' };
+  }
+
+  /* ── FSCD: render icon link grid from _udyn_links array ── */
+  function fscdIconLinks(links) {
+    if (!links || !links.length) return '';
+    const seen = new Set();
+    const filtered = links.filter(lk => {
+      const h = (lk.href || lk.url || '').trim();
+      if (!h || h === '#' || seen.has(h)) return false;
+      seen.add(h);
+      return true;
+    });
+    if (!filtered.length) return '';
+    return `<div class="fscd-icon-links">${filtered.map(lk => {
+      const href = lk.href || lk.url || '#';
+      const label = lk.label || lk.title || 'Link';
+      const cat = fscdLinkCat(label);
+      return `<a href="${esc(href)}" target="_blank" rel="noopener" class="fscd-ib ${cat.cls}">`
+        +`<div class="fscd-ib-ico"><i class="fa-solid ${cat.icon}"></i></div>`
+        +`<div class="fscd-ib-lbl">${esc(label.slice(0,26))}</div>`
+        +`<div class="fscd-ib-sub">${cat.sub}</div>`
+        +`</a>`;
+    }).join('')}</div>`;
+  }
+
   function injectAllSections(rawJob) {
     if (!rawJob || typeof rawJob !== 'object') return;
     const layout = document.getElementById('layoutJob');
@@ -1516,116 +1685,366 @@
 
     clearUniversalCards();
 
-    const toc = [];
-    const queue = [];
+    /* ── Mark layout as FSCD-active (hides old jp-cards via CSS) ── */
+    layout.classList.add('fscd-active');
 
-    function push(card, defId) {
-      if (!card) return;
-      const def = defFor(defId);
-      queue.push({ card, def });
-      if (def) toc.push(def);
-    }
-    function pushAppend(card, defId) {
-      if (!card) return;
-      const def = defFor(defId);
-      queue.push({ card, def, append: true });
-      if (def) toc.push(def);
-    }
+    /* ── Extract all data ── */
+    const bd  = rawJob.basic_details  || {};
+    const id  = rawJob.important_dates || {};
+    const fee = rawJob.application_fee || rawJob.application_fees || {};
+    const age = rawJob.age_limit       || {};
+    const qual= rawJob.qualification   || {};
+    const sd  = rawJob.salary_details  || {};
 
-    // ── 1. Jobs Info ──────────────────────────────────────────────────
-    const jobsInfo = exJobsInfo(rawJob);
-    if (jobsInfo) push(cardJobsInfo(jobsInfo), 'udyn-jobs-info');
+    const title    = safe(rawJob.title || rawJob.post_name || bd.job_title || bd.post_name || '');
+    const org      = safe(rawJob.organization || rawJob.board_name || bd.organization_name || '');
+    const location = safe(rawJob.basic_details?.job_location || rawJob.location || rawJob.state || 'India');
+    const totalVac = safe(rawJob.total_vacancy || rawJob.total_vacancies || bd.total_vacancies || '');
+    const applyMode= safe(rawJob.apply_mode || bd.application_mode || 'Online');
+    const salary   = safe(rawJob.salary || rawJob.salary_pay_scale || bd.salary || sd.pay_scale || '');
+    const shortInfo= safe(rawJob.short_information || rawJob.jobs_info || bd.short_information || '');
 
-    // ── 2. Important Dates ────────────────────────────────────────────
-    const datesData = exDates(rawJob);
-    if (datesData.rows.length || datesData.rawText) {
-      push(cardDates(datesData), 'udyn-dates-extended');
-    }
+    const lastDate  = fmtDate(safe(id.last_date || id.last_date_to_apply || id.application_last_date || rawJob.last_date || ''));
+    const appBegin  = fmtDate(safe(id.application_begin || id.application_start || id.start_date || ''));
+    const examDate  = fmtDate(safe(id.exam_date || rawJob.exam_date || ''));
+    const admitDate = fmtDate(safe(id.admit_card_date || id.admit_card || ''));
+    const resDate   = fmtDate(safe(id.result_date || ''));
+    const feeLDate  = fmtDate(safe(id.fee_payment_last_date || id.fee_last_date || ''));
+    const corrDate  = fmtDate(safe(id.correction_last_date || ''));
 
-    // ── 3. Application Fee ────────────────────────────────────────────
-    const feeData = exFees(rawJob);
-    if (feeData.items.length) push(cardFee(feeData), 'udyn-fee');
+    const minAge   = safe(rawJob.minimum_age  || age.minimum_age  || '');
+    const maxAge   = safe(rawJob.maximum_age  || age.maximum_age  || age.age_limit || age.age_details || '');
+    const ageRelax = safe(rawJob.age_relaxation || age.age_relaxation || age.details || '');
 
-    // ── 4. Age Limit ──────────────────────────────────────────────────
-    push(cardAgeLimit(rawJob), 'udyn-age-limit');
+    const eduQual   = safe(rawJob.education_qualification || rawJob.eligibility || qual.education_qualification || qual.eligibility || '');
+    const qualDet   = safe(qual.details || qual.details_text || '');
+    const selProc   = rawJob.selection_process || [];
+    const examPat   = safe((rawJob.exam_pattern && rawJob.exam_pattern.details) || rawJob.exam_pattern || '');
+    const syllabus  = safe((rawJob.syllabus && rawJob.syllabus.details) || rawJob.syllabus || '');
+    const docs      = Array.isArray(rawJob.documents) ? rawJob.documents : [];
+    const howTo     = Array.isArray(rawJob.how_to_apply) ? rawJob.how_to_apply : [];
+    const insts     = Array.isArray(rawJob.important_instructions) ? rawJob.important_instructions : [];
+    const faqs      = Array.isArray(rawJob.faq) ? rawJob.faq : [];
+    const vacRows   = Array.isArray(rawJob.vacancy_details) ? rawJob.vacancy_details : [];
+    const links     = rawJob._udyn_links || [];
 
-    // ── 5. Qualification ──────────────────────────────────────────────
-    const qual = exQualification(rawJob);
-    if (qual) push(cardQualification(qual), 'udyn-qualification');
-
-    // ── 6. Vacancy Details ────────────────────────────────────────────
-    const { rows: vacRows, cw: vacCW } = exVacancy(rawJob);
-    if (vacRows.length || hasContent(vacCW)) {
-      push(cardVacancy(vacRows, vacCW), 'udyn-vacancy-extended');
-    }
-
-    // ── 7. Physical Eligibility ───────────────────────────────────────
-    const pe = exPhysical(rawJob);
-    if (pe) push(cardPhysical(pe), 'udyn-physical');
-
-    // ── 8. Exam Pattern ───────────────────────────────────────────────
-    const ep = exExamPattern(rawJob);
-    if (ep) push(cardExamPattern(ep), 'udyn-exam-pattern');
-
-    // ── 9. Syllabus ───────────────────────────────────────────────────
-    const syl = exSyllabus(rawJob);
-    if (syl) push(cardSyllabus(syl), 'udyn-syllabus');
-
-    // ── 10. Salary ────────────────────────────────────────────────────
-    const { structured: sd, flat: salFlat } = exSalary(rawJob);
-    if ((hasContent(sd) || salFlat) && !sectionExists('dynSalaryDetails')) {
-      push(cardSalary(sd, salFlat), 'udyn-salary');
+    /* ── fee string ── */
+    let feeText = '';
+    if (typeof fee === 'string') feeText = fee;
+    else if (fee.details) feeText = safe(fee.details);
+    else {
+      const fmap = [['general','General'],['obc','OBC'],['ews','EWS'],['sc','SC'],['st','ST'],['all','All'],['ph','PH/PwD']];
+      const parts = fmap.map(([k,l]) => fee[k] ? `${l}: ${safe(fee[k])}` : '').filter(Boolean);
+      if (parts.length) feeText = parts.join(' | ');
     }
 
-    // ── 11. Selection Process ─────────────────────────────────────────
-    const sp = exSelection(rawJob);
-    if (hasContent(sp)) push(cardSelection(sp), 'udyn-selection');
+    /* ── Helper: infoRow ── */
+    const irow = (lbl, val, cls='') =>
+      val ? `<div class="fscd-info-row"><span class="fscd-lbl">${esc(lbl)}</span><span class="fscd-val ${cls}">${esc(val)}</span></div>` : '';
 
-    // ── 12. How To Apply ──────────────────────────────────────────────
-    const hta = exHowToApply(rawJob);
-    if (hasContent(hta)) push(cardHowToApply(hta), 'udyn-how-to-apply');
+    /* ── Helper: make FSCD wrapper div ── */
+    function fscdWrap(id, html) {
+      const d = document.createElement('div');
+      d.id = id;
+      d.className = 'udyn-anchor';
+      d.innerHTML = html;
+      return d;
+    }
 
-    // ── 13. Important Instructions ────────────────────────────────────
-    const insts = exInstructions(rawJob);
-    if (hasContent(insts)) push(cardInstructions(insts), 'udyn-instructions');
+    const tocSections = [];
 
-    // ── 14. FAQ ───────────────────────────────────────────────────────
-    const faqs = exFaq(rawJob);
-    if (hasContent(faqs)) pushAppend(cardFaq(faqs), 'udyn-faq');
+    /* ════════════════════════════════════════════════
+       1. HERO BANNER
+    ════════════════════════════════════════════════ */
+    const heroHtml = `
+      <div class="fscd-hero">
+        <div class="fscd-hero-badge"><i class="fas fa-star-of-life"></i> Govt Recruitment 2026 | TopSarkariJobs.com</div>
+        <div class="fscd-hero-title">${esc(title)}</div>
+        <div class="fscd-hero-stats">
+          ${org      ? `<div class="fscd-stat-pill"><i class="fas fa-building"></i> ${esc(org)}</div>` : ''}
+          ${location ? `<div class="fscd-stat-pill"><i class="fas fa-map-marker-alt"></i> ${esc(location)}</div>` : ''}
+          ${lastDate ? `<div class="fscd-stat-pill"><i class="fas fa-hourglass-end"></i> Last Date: ${esc(lastDate)}</div>` : ''}
+          ${totalVac ? `<div class="fscd-stat-pill"><i class="fas fa-users"></i> ${esc(totalVac)} Posts</div>` : ''}
+        </div>
+      </div>`;
 
-    // ── 15. SR Tables ─────────────────────────────────────────────────
-    const tables = exTables(rawJob);
-    if (tables) push(cardTables(tables), 'udyn-sr-tables');
+    /* ════════════════════════════════════════════════
+       2. SHORT INFO
+    ════════════════════════════════════════════════ */
+    const shortHtml = shortInfo
+      ? `<div class="fscd-short-info"><i class="fas fa-info-circle" style="margin-right:8px;"></i><strong>Short Information :</strong> ${esc(shortInfo)}</div>`
+      : '';
 
-    // ── 15b. Text Sections ────────────────────────────────────────────
-    const textSections = exTextSections(rawJob);
-    if (textSections) push(cardTextSections(textSections), 'udyn-text-sections');
+    /* ════════════════════════════════════════════════
+       3. JOB HIGHLIGHTS + SALARY  (2-col grid)
+    ════════════════════════════════════════════════ */
+    const hlCard = `<div class="fscd-card">
+      <div class="fscd-card-head"><i class="fas fa-bullhorn"></i> Job Highlights</div>
+      <div class="fscd-card-body">
+        ${irow('Organization', org)}
+        ${irow('Post Name', title.slice(0,80))}
+        ${irow('Total Vacancies', totalVac)}
+        ${irow('Job Location', location)}
+        ${irow('Apply Mode', applyMode)}
+      </div></div>`;
 
-    // ── 16. Unknown future fields (auto-rendered) ─────────────────────
-    const unknown = exUnknown(rawJob);
-    for (const [k, v] of Object.entries(unknown)) {
-      const c = cardGeneric(k, v);
-      if (c) {
-        const id = `udyn-generic-${k}`;
-        queue.push({ card: c, def: { id, icon: 'fa-info-circle', label: keyToLabel(k) } });
-        toc.push({ id, icon: 'fa-info-circle', label: keyToLabel(k) });
+    const salCard = salary ? `<div class="fscd-card">
+      <div class="fscd-card-head"><i class="fas fa-coins"></i> Salary &amp; Benefits</div>
+      <div class="fscd-card-body">
+        ${irow('Pay Scale', salary, 'green')}
+        <div class="fscd-info-row"><span class="fscd-lbl">Allowances</span><span class="fscd-val">DA, HRA, Medical as per rules</span></div>
+      </div></div>` : '';
+
+    const hlGrid = `<div class="fscd-grid-2">${hlCard}${salCard}</div>`;
+
+    /* ════════════════════════════════════════════════
+       4. DATES + FEE + AGE  (3-col grid)
+    ════════════════════════════════════════════════ */
+    const dateRows = [
+      ['Application Begin', appBegin, false],
+      ['Last Date to Apply', lastDate, true],
+      ['Fee Payment Last Date', feeLDate, false],
+      ['Correction Last Date', corrDate, false],
+      ['Exam Date', examDate, false],
+      ['Admit Card', admitDate, false],
+      ['Result Date', resDate, false],
+    ].filter(r => r[1]);
+
+    const datesCard = `<div class="fscd-card">
+      <div class="fscd-card-head"><i class="far fa-calendar-alt"></i> Important Dates</div>
+      <div class="fscd-card-body">
+        ${dateRows.length
+          ? dateRows.map(r => irow(r[0], r[1], r[2] ? 'red' : '')).join('')
+          : '<div class="fscd-info-row"><span class="fscd-val">See official notification</span></div>'}
+      </div></div>`;
+
+    const feeCard = `<div class="fscd-card">
+      <div class="fscd-card-head"><i class="fas fa-indian-rupee-sign"></i> Application Fee</div>
+      <div class="fscd-card-body">
+        <div class="fscd-info-row"><span class="fscd-lbl">Fee</span>
+        <span class="fscd-val">${feeText ? '✅ ' + esc(feeText) : '✅ No fee / See notification'}</span></div>
+      </div></div>`;
+
+    const ageRows = [
+      ['Minimum Age', minAge], ['Maximum Age', maxAge], ['Age Relaxation', ageRelax]
+    ].filter(r => r[1]);
+    const ageCard = `<div class="fscd-card">
+      <div class="fscd-card-head"><i class="fas fa-user-clock"></i> Age Limit</div>
+      <div class="fscd-card-body">
+        ${ageRows.length
+          ? ageRows.map(r => irow(r[0], r[1])).join('')
+          : '<div class="fscd-info-row"><span class="fscd-val">As per official notification</span></div>'}
+      </div></div>`;
+
+    const dfaGrid = `<div class="fscd-grid-3">${datesCard}${feeCard}${ageCard}</div>`;
+
+    /* ════════════════════════════════════════════════
+       5. QUALIFICATION + SELECTION PROCESS (2-col)
+    ════════════════════════════════════════════════ */
+    const qualCard = `<div class="fscd-card">
+      <div class="fscd-card-head"><i class="fas fa-graduation-cap"></i> Educational Qualification</div>
+      <div class="fscd-card-body">
+        ${eduQual ? `<p style="margin-bottom:10px;font-size:.84rem;"><span class="fscd-badge gr">Minimum</span> ${esc(eduQual)}</p>` : ''}
+        ${qualDet ? `<p style="font-size:.83rem;line-height:1.7;color:#374151;">${esc(qualDet)}</p>` : ''}
+        ${!eduQual && !qualDet ? '<p style="font-size:.83rem;color:#374151;">See official notification for eligibility details.</p>' : ''}
+      </div></div>`;
+
+    const selSteps = Array.isArray(selProc) ? selProc
+      : typeof selProc === 'string' ? selProc.split(/[,\n;\/]/).map(s => s.trim()).filter(Boolean)
+      : [];
+    const selCard = `<div class="fscd-card">
+      <div class="fscd-card-head"><i class="fas fa-tasks"></i> Selection Process</div>
+      <div class="fscd-card-body">
+        ${selSteps.length
+          ? `<div class="fscd-tags">${selSteps.map(s => `<span class="fscd-tag"><i class="fas fa-check-circle"></i>${esc(s.slice(0,70))}</span>`).join('')}</div>`
+          : '<p style="font-size:.83rem;color:#374151;">Written Test / Document Verification. See notification.</p>'}
+      </div></div>`;
+
+    const qualSelGrid = `<div class="fscd-grid-2">${qualCard}${selCard}</div>`;
+
+    /* ════════════════════════════════════════════════
+       6. VACANCY TABLE (full-width, horizontal scroll)
+    ════════════════════════════════════════════════ */
+    let vacTableHtml = '';
+    if (vacRows.length) {
+      const cols = Object.keys(vacRows[0]).filter(k => vacRows.some(r => safe(r[k])));
+      if (cols.length) {
+        const thead = `<thead><tr>${cols.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead>`;
+        const tbody = `<tbody>${vacRows.map(row =>
+          `<tr>${cols.map((c, ci) => `<td>${ci === 0 ? `<strong>${esc(safe(row[c]))}</strong>` : esc(safe(row[c]))}</td>`).join('')}</tr>`
+        ).join('')}</tbody>`;
+        vacTableHtml = `<div class="fscd-card fscd-card-full" id="udyn-vacancy-extended">
+          <div class="fscd-card-head"><i class="fas fa-table-list"></i> Detailed Vacancy &amp; Pay Matrix</div>
+          <div class="fscd-card-body" style="padding-bottom:.5rem;">
+            <div class="fscd-tbl-wrap"><table class="fscd-vac-tbl">${thead}${tbody}</table></div>
+            <div class="fscd-scroll-hint"><i class="fa-solid fa-left-right" style="font-size:.6rem;"></i> Scroll horizontally to see all columns</div>
+          </div></div>`;
+        tocSections.push({ id:'udyn-vacancy-extended', icon:'fa-chart-pie', label:'Vacancy Details' });
+      }
+    }
+    /* Also render vacancy from exVacancy (for structured data) */
+    if (!vacRows.length) {
+      const { rows: eVacRows, cw: eVacCW } = exVacancy(rawJob);
+      if (eVacRows.length || hasContent(eVacCW)) {
+        const vc = cardVacancy(eVacRows, eVacCW);
+        if (vc) {
+          vc.classList.add('fscd-card-full');
+          vc.style.borderRadius = '1.4rem';
+          vc.style.border = '1px solid #e9f0f5';
+          vc.style.boxShadow = '0 8px 24px -8px rgba(0,0,0,.07)';
+          appendAfterAll(vc);
+          tocSections.push({ id:'udyn-vacancy-extended', icon:'fa-chart-pie', label:'Vacancy Details' });
+        }
       }
     }
 
-    // ── 17. Important Links (ALWAYS LAST) ────────────────────────────
-    const links = rawJob._udyn_links || [];
-    if (links.length && !window.__TSJ_SUPPRESS_UDYN_LINKS) {
-      const c = cardLinks(links);
-      if (c) queue.push({ card: c, def: defFor('udyn-imp-links'), append: true });
+    /* ════════════════════════════════════════════════
+       7. EXAM PATTERN + SYLLABUS (2-col, if present)
+    ════════════════════════════════════════════════ */
+    let examSylHtml = '';
+    if (examPat || syllabus) {
+      const epCard = examPat ? `<div class="fscd-card">
+        <div class="fscd-card-head"><i class="fas fa-pen-ruler"></i> Exam Pattern</div>
+        <div class="fscd-card-body">
+          <p style="font-size:.84rem;line-height:1.7;color:#374151;">${esc(examPat)}</p>
+          <span class="fscd-badge or" style="margin-top:8px;display:inline-block;">Check official notice for marks</span>
+        </div></div>` : '';
+      const sylCard = syllabus ? `<div class="fscd-card">
+        <div class="fscd-card-head"><i class="fas fa-book-open"></i> Syllabus</div>
+        <div class="fscd-card-body">
+          <p style="font-size:.84rem;line-height:1.7;color:#374151;">${esc(syllabus)}</p>
+          <p style="margin-top:8px;font-size:.81rem;color:#64748b;">📖 GK, Reasoning, Technical/Domain knowledge</p>
+        </div></div>` : '';
+      examSylHtml = `<div class="fscd-grid-2">${epCard}${sylCard}</div>`;
     }
 
-    // ── Insert all cards ──────────────────────────────────────────────
-    for (const { card, append } of queue) {
-      if (append) appendAfterAll(card);
-      else insertBeforeLinks(card);
+    /* ════════════════════════════════════════════════
+       8. DOCUMENTS + HOW TO APPLY (2-col, if present)
+    ════════════════════════════════════════════════ */
+    let docsHtaHtml = '';
+    if (docs.length || howTo.length) {
+      const docsCard = docs.length ? `<div class="fscd-card">
+        <div class="fscd-card-head"><i class="fas fa-folder-open"></i> Required Documents</div>
+        <div class="fscd-card-body"><ul class="fscd-steps">
+          ${docs.map(d => `<li class="fscd-step"><i class="fas fa-file-check"></i>${esc(d)}</li>`).join('')}
+        </ul></div></div>` : '';
+      const htaCard = howTo.length ? `<div class="fscd-card">
+        <div class="fscd-card-head"><i class="fas fa-mouse-pointer"></i> How To Apply</div>
+        <div class="fscd-card-body"><ol class="fscd-steps">
+          ${howTo.map((step, i) => `<li class="fscd-step"><span class="fscd-step-n">${i+1}</span>${esc(step)}</li>`).join('')}
+        </ol></div></div>` : '';
+      docsHtaHtml = `<div class="fscd-grid-2">${docsCard}${htaCard}</div>`;
+      if (howTo.length) tocSections.push({ id:'fscd-docs-howto', icon:'fa-clipboard-list', label:'How To Apply' });
     }
 
-    updateTOC(toc.filter(d => d));
+    /* ════════════════════════════════════════════════
+       9. IMPORTANT LINKS PANEL + ICON GRID
+    ════════════════════════════════════════════════ */
+    const linkIconGrid = fscdIconLinks(links);
+    let linksHtml = '';
+    if (linkIconGrid) {
+      // Quick panel buttons
+      const applyLk = links.find(l => /apply\s*online|apply\s*link/i.test(l.label || ''));
+      const notifLk = links.find(l => /notification|download.*pdf|official.*notif/i.test(l.label || ''));
+      const webLk   = links.find(l => /official\s*website/i.test(l.label || ''));
+      const panelBtns = [
+        notifLk ? `<a href="${esc(notifLk.href || notifLk.url || '#')}" target="_blank" rel="noopener" class="fscd-lbtn solid"><i class="fas fa-download"></i> Notification PDF</a>` : '',
+        applyLk ? `<a href="${esc(applyLk.href || applyLk.url || '#')}" target="_blank" rel="noopener" class="fscd-lbtn green"><i class="fas fa-paper-plane"></i> Apply Online</a>` : '',
+        (!applyLk && !notifLk && webLk) ? `<a href="${esc(webLk.href || webLk.url || '#')}" target="_blank" rel="noopener" class="fscd-lbtn solid"><i class="fas fa-globe"></i> Official Website</a>` : ''
+      ].filter(Boolean).join('');
+
+      linksHtml = `
+        <div class="fscd-links-panel" id="fscd-links-panel">
+          <div class="fscd-lpanel-lbl"><i class="fas fa-link"></i> <strong>Important Links :</strong></div>
+          <div class="fscd-lpanel-btns">${panelBtns}</div>
+        </div>
+        <div class="fscd-card fscd-card-full" id="udyn-imp-links">
+          <div class="fscd-card-head"><i class="fas fa-link"></i> All Important Links</div>
+          <div class="fscd-card-body">${linkIconGrid}</div>
+        </div>`;
+      tocSections.push({ id:'udyn-imp-links', icon:'fa-link', label:'Important Links' });
+    }
+
+    /* ════════════════════════════════════════════════
+       10. INSTRUCTIONS + FAQ (2-col grid)
+    ════════════════════════════════════════════════ */
+    const instCard = insts.length ? `<div class="fscd-card">
+      <div class="fscd-card-head"><i class="fas fa-shield-alt"></i> Important Instructions</div>
+      <div class="fscd-card-body"><ul class="fscd-inst-list">
+        ${insts.map(ins => `<li class="fscd-inst"><i class="fas fa-exclamation-circle"></i>${esc(ins)}</li>`).join('')}
+      </ul></div></div>` : '';
+
+    const faqCard = faqs.length ? `<div class="fscd-card" id="udyn-faq">
+      <div class="fscd-card-head"><i class="fas fa-question-circle"></i> Frequently Asked Questions</div>
+      <div class="fscd-card-body">${faqs.map((f, fi) => `
+        <div class="fscd-faq-item">
+          <div class="fscd-faq-q" onclick="(function(btn){var a=btn.nextElementSibling;var ico=btn.querySelector('.fq-ico');var open=a.classList.contains('open');a.classList.toggle('open',!open);ico.style.transform=open?'':'rotate(180deg)';})(this)">
+            ${esc(f.question)} <i class="fas fa-chevron-down fq-ico"></i>
+          </div>
+          <div class="fscd-faq-a${fi===0?' open':''}">${esc(f.answer)}</div>
+        </div>`).join('')}
+      </div></div>` : '';
+
+    const instFaqGrid = (instCard || faqCard)
+      ? `<div class="fscd-grid-2">${instCard}${faqCard}</div>` : '';
+    if (faqs.length) tocSections.push({ id:'udyn-faq', icon:'fa-circle-question', label:'FAQ' });
+
+    /* ════════════════════════════════════════════════
+       11. INJECT ALL into layoutJob
+    ════════════════════════════════════════════════ */
+    const wrapper = fscdWrap('fscd-main-portal',
+      heroHtml + shortHtml + hlGrid + dfaGrid + qualSelGrid
+    );
+    layout.insertBefore(wrapper, layout.firstChild);
+
+    // Vacancy table (standalone div, inserted after wrapper)
+    if (vacTableHtml) {
+      const vd = document.createElement('div');
+      vd.innerHTML = vacTableHtml;
+      layout.insertBefore(vd.firstElementChild, wrapper.nextSibling);
+    }
+
+    // Exam/syllabus
+    if (examSylHtml) {
+      const es = fscdWrap('fscd-exam-syl', examSylHtml);
+      insertBeforeLinks(es);
+    }
+
+    // Docs + How To Apply
+    if (docsHtaHtml) {
+      const dh = fscdWrap('fscd-docs-howto', docsHtaHtml);
+      insertBeforeLinks(dh);
+    }
+
+    // Links panel + icon grid
+    if (linksHtml) {
+      const lp = fscdWrap('fscd-links-wrap', linksHtml);
+      appendAfterAll(lp);
+    }
+
+    // Instructions + FAQ
+    if (instFaqGrid) {
+      const ifg = fscdWrap('fscd-inst-faq', instFaqGrid);
+      appendAfterAll(ifg);
+    }
+
+    // Render any SR-style tables / unknown sections via existing card builders
+    const tables = exTables(rawJob);
+    if (tables) {
+      const tc = cardTables(tables);
+      if (tc) {
+        tc.style.borderRadius = '1.4rem';
+        tc.style.border = '1px solid #e9f0f5';
+        appendAfterAll(tc);
+      }
+    }
+    const textSections = exTextSections(rawJob);
+    if (textSections) {
+      const ts = cardTextSections(textSections);
+      if (ts) appendAfterAll(ts);
+    }
+
+    updateTOC(tocSections.filter(d => d));
   }
 
 
