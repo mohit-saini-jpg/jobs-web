@@ -1,34 +1,26 @@
 /**
  * ══════════════════════════════════════════════════════════════════════════
- *  TOP SARKARI JOBS — Ultra Advanced Universal Dynamic Rendering Engine
+ *  TOP SARKARI JOBS — Universal Dynamic Rendering Engine (MERGED)
  *  File:    universal-renderer.js
- *  Version: 2026-05-21 (v3.0 — Complete Rewrite)
+ *  Version: 2026-06-01 (v4.0 — Single Renderer, Zero Patch Dependency)
  * ══════════════════════════════════════════════════════════════════════════
  *
  *  ARCHITECTURE
  *  ─────────────
- *  1. DeepParser    — Recursively walks ANY JSON structure, classifies every
- *                     node by type (date, url, table, list, kv, html, text)
- *  2. FieldNormalizer — Collapses all 4 JSON source variations into ONE
- *                       canonical schema (e.g. application_fees = application_fee)
- *  3. LinkIntelligence — Auto-detects URLs anywhere in JSON, classifies them
- *                       (apply_online, notification_pdf, official_website, etc.)
- *  4. CardBuilders  — Typed renderers (table, tags, grid, html, steps, FAQ)
- *  5. MasterInjector — Ordered, dedup-safe section injection + TOC updater
- *  6. IntegrationHub — Race-condition-free 4-way callback system
+ *  1. normalizeJob()   — Single normalization entry point for ALL JSON sources
+ *  2. DeepParser       — Recursively walks ANY JSON structure
+ *  3. CardBuilders     — Typed renderers (table, tags, grid, html, steps, FAQ)
+ *  4. MasterInjector   — Ordered, dedup-safe section injection
+ *  5. IntegrationHub   — Race-condition-free callback system
  *
- *  FIXES IN v3.0
- *  ─────────────
- *  ✅ important_links: click_here array → intelligent link labeling
- *  ✅ Merged data flat links (apply_online_link, official_notification_pdf_link…)
- *  ✅ State-jobs nested detail.{important_dates, application_fee, …} unwrap
- *  ✅ important_dates: start_date / application_start / application_begin unify
- *  ✅ application_fees (plural) ↔ application_fee normalize
- *  ✅ Vacancy table with ANY column set (post_name/total/eligibility etc)
- *  ✅ Deep-nested unknown objects auto-rendered (recursive)
- *  ✅ Every URL in ANY key always surfaces in Important Links
- *  ✅ Zero missing content — every JSON value renders somewhere
- *  ✅ Duplicate injection permanently blocked
+ *  DESIGN PRINCIPLES (v4.0)
+ *  ─────────────────────────
+ *  ✅ ONE renderer — job-renderer-patch.js is fully merged and deleted
+ *  ✅ ONE CSS class prefix (.udyn-*) — no .dyn-card, no .jp-dyn-* conflicts
+ *  ✅ ONE normalizeJob() — all JSON source variations collapse here
+ *  ✅ ALWAYS render every section — no conditional layout based on missing fields
+ *  ✅ Data changes, NOT layout — same DOM structure for every job
+ *  ✅ All DOM patching (apply mode, last date, links) lives in runBasePatches()
  *
  * ══════════════════════════════════════════════════════════════════════════
  */
@@ -37,9 +29,9 @@
   'use strict';
 
   /* ═══════════════════════════════════════════════════════════════════════
-     § 1 — CSS (injected once, mirrors site design tokens)
+     § 1 — CSS (injected once, single .udyn-* namespace)
   ═══════════════════════════════════════════════════════════════════════ */
-  const _CSS_ID = 'tsj-univ-v3-styles';
+  const _CSS_ID = 'tsj-univ-v4-styles';
   if (!document.getElementById(_CSS_ID)) {
     const el = document.createElement('style');
     el.id = _CSS_ID;
@@ -80,7 +72,7 @@
     .udyn-detail:last-child{border-bottom:none}
     /* ── Notice block (pre-line) ── */
     .udyn-notice{padding:10px 14px;font-size:.81rem;color:#374151;line-height:1.7;background:#f8fafc;white-space:pre-line}
-    /* ── Grid (fee, salary, phy) ── */
+    /* ── Grid (fee, salary, physical) ── */
     .udyn-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
     .udyn-grid-item{padding:10px 14px;border-right:1px solid #e9eef4;border-bottom:1px solid #e9eef4}
     .udyn-grid-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#64748b;margin-bottom:3px}
@@ -150,11 +142,8 @@
   }
 
   function isHtml(s) { return /<[a-z][\s\S]*>/i.test(safe(s)); }
-
   function isUrl(s) { return /^https?:\/\//i.test(safe(s)); }
-
   function isPdf(url) { return /\.pdf(\?|$)/i.test(safe(url)); }
-
   function stripHtml(s) { return safe(s).replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim(); }
 
   function keyToLabel(k) {
@@ -183,7 +172,6 @@
       .map(l => `<p style="margin:0 0 6px;">${esc(l)}</p>`).join('');
   }
 
-  /** Render a value as safe HTML — auto-detects html/url/plain */
   function renderVal(v) {
     if (v == null) return '—';
     if (typeof v === 'object') return esc(JSON.stringify(v));
@@ -194,7 +182,6 @@
     return esc(s);
   }
 
-  /** Format date strings intelligently */
   function fmtDate(val) {
     const s = safe(val);
     let m = s.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
@@ -204,26 +191,33 @@
     return s;
   }
 
+  function normUrl(raw) {
+    const s = safe(raw);
+    if (!s) return '';
+    if (/^(https?:)?\/\//i.test(s) || /^(mailto:|tel:)/i.test(s)) return s;
+    if (s[0] === '#' || s[0] === '?' || s[0] === '/') return s;
+    if (s.indexOf('.html') !== -1 || s.slice(0,2) === './' || s.slice(0,3) === '../') return s;
+    return 'https://' + s.replace(/^\/+/, '');
+  }
+
 
   /* ═══════════════════════════════════════════════════════════════════════
      § 3 — FIELD NORMALIZER
-     Collapses ALL JSON source variations into ONE canonical structure.
-     Handles: Complete_Jobs, merged_sarkari, dailyupdates, state-jobs
+     Single entry point — collapses ALL JSON source variations into ONE
+     canonical structure. Handles: Complete_Jobs, merged_sarkari,
+     dailyupdates, state-jobs, upcoming_jobs.
   ═══════════════════════════════════════════════════════════════════════ */
 
-  function normalize(raw) {
+  function normalizeJob(raw) {
     if (!raw || typeof raw !== 'object') return raw;
     const job = Object.assign({}, raw);
 
     // ── Unwrap state-jobs nested 'detail' object ──────────────────────
-    // state-jobs items have: { name, url, date, detail: { basic_details, important_dates, … } }
     if (job.detail && typeof job.detail === 'object') {
       const d = job.detail;
-      // Promote all detail fields into top-level (non-destructively)
       for (const [k, v] of Object.entries(d)) {
         if (!hasContent(job[k]) && hasContent(v)) job[k] = v;
       }
-      // Also keep basic_details sub-fields
       if (d.basic_details) {
         const bd = d.basic_details;
         if (!job.title && (bd.job_title || bd.post_name)) job.title = bd.job_title || bd.post_name;
@@ -247,11 +241,8 @@
     // ── Normalize important_dates keys ───────────────────────────────
     const id = job.important_dates || {};
     if (typeof id === 'object') {
-      // Unify start date variants
       id.application_begin = id.application_begin || id.application_start || id.start_date || id.starting_date || id.starting_date_online || '';
-      // Unify last date variants
       id.last_date = id.last_date || id.last_date_to_apply || id.application_last_date || id.closing_date || id.last_apply_date || '';
-      // Unify exam date
       id.exam_date = id.exam_date || job.exam_date || '';
       job.important_dates = id;
     }
@@ -261,7 +252,7 @@
       job.application_fee = job.application_fees;
     }
 
-    // ── Collect ALL URLs from flat merged-sarkari link fields ─────────
+    // ── Collect ALL URLs from flat link fields ────────────────────────
     const MERGED_LINK_MAP = {
       apply_online_link:              { label: 'Apply Online',            type: 'apply'   },
       form_pdf_free_link:             { label: 'Application Form (Free)', type: 'pdf'     },
@@ -273,7 +264,6 @@
       source_url:                     { label: 'Source / Apply Link',     type: 'apply'   },
     };
 
-    // Build or augment important_links_obj (our canonical link store)
     if (!job._udyn_links) job._udyn_links = [];
 
     for (const [field, meta] of Object.entries(MERGED_LINK_MAP)) {
@@ -284,7 +274,6 @@
     }
 
     // ── Parse important_links dict ────────────────────────────────────
-    // Handles: { click_here: [url1, url2], notification_pdf: url, login: url, … }
     const il = job.important_links;
     if (il && typeof il === 'object' && !Array.isArray(il)) {
       for (const [k, v] of Object.entries(il)) {
@@ -311,30 +300,22 @@
       }
     }
 
-    // ── Also hunt URLs recursively in useful_links ────────────────────
-    // Format: [{title: "Apply Online", links: "https://..." OR ["url1","url2"]}, ...]
+    // ── Parse useful_links ────────────────────────────────────────────
     if (job.useful_links) {
       if (Array.isArray(job.useful_links)) {
         for (const item of job.useful_links) {
           if (!item) continue;
           const label = safe(item.title || item.name || item.label || '');
-          // links can be a string OR an array of strings
           const rawLinks = item.links || item.link || item.url || '';
           const urls = Array.isArray(rawLinks) ? rawLinks : [rawLinks];
           urls.forEach((u, idx) => {
             const url = safe(u);
             if (!isUrl(url)) return;
-            // Skip YouTube / video links
             if (/youtu\.?be|youtube\.com/i.test(url)) return;
-            // For arrays with multiple URLs, append index suffix to label
             const finalLabel = urls.length > 1
               ? (label ? `${label} (${idx + 1})` : smartLinkLabel('link', url, idx + 1))
               : (label || smartLinkLabel('link', url, 0));
-            job._udyn_links.push({
-              label: finalLabel,
-              url,
-              type: classifyLinkKey(label || 'link', url)
-            });
+            job._udyn_links.push({ label: finalLabel, url, type: classifyLinkKey(label || 'link', url) });
           });
         }
       } else {
@@ -353,7 +334,6 @@
     return job;
   }
 
-  /** Classify link type from key name + URL */
   function classifyLinkKey(key, url) {
     const k = safe(key).toLowerCase();
     const u = safe(url).toLowerCase();
@@ -362,20 +342,16 @@
     if (/notification|advt|advertisement|pdf|syllabus|admit|result/i.test(k)) return 'pdf';
     if (/official|website|home/i.test(k)) return 'website';
     if (/video|youtube|youtu\.be|watch/i.test(k) || /youtu\.?be|youtube/i.test(u)) return 'video';
-    // Guess from URL
     if (isPdf(u)) return 'pdf';
     if (/youtu\.?be|youtube/i.test(u)) return 'video';
-    if (/login|apply|register|form|candidate|exam\\.aspx|online/i.test(u)) return 'apply';
+    if (/login|apply|register|form|candidate|exam\.aspx|online/i.test(u)) return 'apply';
     return 'default';
   }
 
-  /** Generate a smart human-readable label for a link */
   function smartLinkLabel(key, url, index) {
-    const k = safe(key).toLowerCase().replace(/_/g,' ');
     if (/notification_pdf|official_notif/i.test(key)) return 'Official Notification PDF';
     if (/login/i.test(key)) return 'Candidate Login';
     if (/click_here/i.test(key)) {
-      // Guess from URL content
       if (/login|candidate/i.test(url)) return 'Candidate Login / Apply Online';
       if (isPdf(url)) return 'Download Notification PDF';
       if (/apply|register/i.test(url)) return 'Apply Online';
@@ -390,7 +366,6 @@
     return keyToLabel(key);
   }
 
-  /** Recursively collect URLs from any data structure */
   function collectUrlsDeep(data, store, label = '') {
     if (!data) return;
     if (typeof data === 'string' && isUrl(data)) {
@@ -429,17 +404,14 @@
     };
     const rows = [];
     const usedKeys = new Set(Object.keys(DATE_MAP));
-
     for (const [k, label] of Object.entries(DATE_MAP)) {
       const v = safe(id[k]);
       if (v) rows.push({ label, val: fmtDate(v), highlight: /last date/i.test(label) });
     }
-    // Remaining unknown date fields
     for (const [k, v] of Object.entries(id)) {
       if (usedKeys.has(k) || k === 'raw' || !hasContent(v)) continue;
       rows.push({ label: keyToLabel(k), val: fmtDate(safe(v)), highlight: /last/i.test(k) });
     }
-    // Raw text fallback
     const rawText = safe(id.raw || id.rawDate || '');
     return { rows, rawText };
   }
@@ -449,67 +421,41 @@
     const feeIsStr = typeof fee === 'string';
     const feeObj = (typeof fee === 'object' && !Array.isArray(fee)) ? fee : {};
     const FEE_MAP = [
-      ['general',         'General / UR'],
-      ['ur',              'UR'],
-      ['obc',             'OBC'],
-      ['ews',             'EWS'],
-      ['sc',              'SC'],
-      ['st',              'ST'],
-      ['sc_st',           'SC / ST'],
-      ['female',          'Female / Women'],
-      ['ph',              'PH / PwD'],
-      ['pwd',             'PwD'],
-      ['divyang',         'Divyang'],
-      ['general_obc',     'General / OBC'],
-      ['gen_obc',         'Gen / OBC'],
-      ['general_obc_ews', 'General / OBC / EWS'],
-      ['gen_obc_ews',     'Gen / OBC / EWS'],
-      ['ur_obc_ews',      'UR / OBC / EWS'],
-      ['all',             'All Candidates'],
-      ['all_candidates',  'All Candidates'],
+      ['general','General / UR'],['ur','UR'],['obc','OBC'],['ews','EWS'],
+      ['sc','SC'],['st','ST'],['sc_st','SC / ST'],['female','Female / Women'],
+      ['ph','PH / PwD'],['pwd','PwD'],['divyang','Divyang'],
+      ['general_obc','General / OBC'],['gen_obc','Gen / OBC'],
+      ['general_obc_ews','General / OBC / EWS'],['gen_obc_ews','Gen / OBC / EWS'],
+      ['ur_obc_ews','UR / OBC / EWS'],['all','All Candidates'],
+      ['all_candidates','All Candidates'],
     ];
     const usedKeys = new Set(FEE_MAP.map(([k]) => k).concat(['note','payment_note','payment_mode']));
     const items = [];
-
     for (const [k, label] of FEE_MAP) {
       const v = safe(feeObj[k]);
       if (v) items.push({ label, val: v });
     }
-
-    // ── String format: "General/OBC: 100/- SC/ST: 0/- Pay fee via..." ──
     if (!items.length && feeIsStr) {
       const feeStr = safe(fee);
       if (feeStr) {
-        // Smart parser: split by "label : amount" patterns
         const segRegex = /(.+?)\s*:\s*(?:Rs\.?\s*)?(\d[\d,]*\/-?|0\/-?|Nil|Free|Exempted|No Fee)/gi;
         let m;
         while ((m = segRegex.exec(feeStr)) !== null) {
-          let label = m[1]
-            .replace(/^\s*\([^)]*\)\s*/, '') // strip leading (Nil)/(Exempted) from prev
-            .trim();
-          // Skip if label is too long or looks like a payment-mode sentence
+          let label = m[1].replace(/^\s*\([^)]*\)\s*/, '').trim();
           if (label.length > 90) continue;
           if (/pay the|through|mode only|debit card|credit card|net banking|e.?challan/i.test(label)) continue;
           const val = m[2].trim();
           if (label && val) items.push({ label, val });
         }
-
-        // Fallback: push as single block if parser got nothing
-        if (!items.length) {
-          items.push({ label: 'Application Fee', val: feeStr });
-        }
+        if (!items.length) items.push({ label: 'Application Fee', val: feeStr });
       }
     }
-
-    // Remaining object keys
     if (!feeIsStr) {
       for (const [k, v] of Object.entries(feeObj)) {
         if (usedKeys.has(k) || !hasContent(v)) continue;
         items.push({ label: keyToLabel(k), val: safe(v) });
       }
     }
-
-    // Payment note: from object OR extracted from string
     let note = '';
     if (!feeIsStr) {
       note = safe(feeObj.note || feeObj.payment_note || feeObj.payment_mode || '');
@@ -519,21 +465,16 @@
                      || feeStr.match(/Pay[^.]+(?:Net Banking|Debit Card|E.?Challan)[^.]*\.?/i);
       if (noteMatch) note = noteMatch[0].trim();
     }
-
     return { items, note };
   }
 
   function exVacancy(job) {
-    // vacancy_details: array-of-objects (most common)
     let rows = [];
     const vd = job.vacancy_details;
     if (Array.isArray(vd) && vd.length) {
       rows = vd.filter(r => typeof r === 'object' && r !== null);
     }
-
-    // category_wise_vacancy: object
     const cw = job.category_wise_vacancy || {};
-
     return { rows, cw };
   }
 
@@ -559,8 +500,7 @@
   }
 
   function exSelection(job) {
-    const sp = job.selection_process || (job.basic_details && job.basic_details.selection_process) || [];
-    return sp;
+    return job.selection_process || (job.basic_details && job.basic_details.selection_process) || [];
   }
 
   function exHowToApply(job) {
@@ -579,18 +519,6 @@
     return safe(job.jobs_info || (job.basic_details && job.basic_details.jobs_info) || '');
   }
 
-  function exShortInfo(job) {
-    return safe(job.short_information || (job.basic_details && job.basic_details.short_information) || '');
-  }
-
-  function exTables(job) {
-    return job.tables || null;
-  }
-
-  function exTextSections(job) {
-    return job.text_sections || null;
-  }
-
   function exQualification(job) {
     const q = job.qualification || {};
     const flat = safe(job.education_qualification || job.eligibility || '');
@@ -602,10 +530,9 @@
     return flat;
   }
 
-  /**
-   * Extract all UNKNOWN top-level fields not handled by any extractor.
-   * These get auto-rendered as generic cards.
-   */
+  function exTables(job) { return job.tables || null; }
+  function exTextSections(job) { return job.text_sections || null; }
+
   const KNOWN_KEYS = new Set([
     'basic_details','important_dates','application_fee','application_fees',
     'age_limit','qualification','vacancy_details','category_wise_vacancy',
@@ -620,7 +547,7 @@
     'short_information','jobs_info','source_url','apply_online',
     'official_website','official_website_link','form_pdf_free_link',
     'official_notification_pdf_link','apply_online_link','application_form_pdf_link',
-    'form_pdf_link','form_pdf_link','listing_date','last_updated','apply_process',
+    'form_pdf_link','listing_date','last_updated','apply_process',
     'post_date','status','useful_links','sequence','job_location','job_type',
     'homepage_serial','closing_date','application_last_date','instructions',
     'tables','sections','text_sections','id','name','url','date','lastDate','postDate',
@@ -641,22 +568,13 @@
 
   /* ═══════════════════════════════════════════════════════════════════════
      § 5 — DEEP RECURSIVE RENDERER
-     Converts ANY nested JSON value into readable HTML intelligently.
   ═══════════════════════════════════════════════════════════════════════ */
 
-  /**
-   * Recursively render a value to HTML.
-   * Handles: string, number, bool, null, array-of-strings, array-of-objects,
-   *          nested objects, HTML strings, URLs, dates, tables.
-   */
   function deepRender(value, depth) {
     depth = depth || 0;
     if (value == null || value === '') return '<span style="color:#94a3b8;">—</span>';
-
     if (typeof value === 'boolean') return value ? '<span style="color:#16a34a;font-weight:700;">Yes</span>' : '<span style="color:#dc2626;font-weight:700;">No</span>';
-
     if (typeof value === 'number') return `<strong>${value}</strong>`;
-
     if (typeof value === 'string') {
       const s = value.trim();
       if (!s) return '<span style="color:#94a3b8;">—</span>';
@@ -668,35 +586,27 @@
       if (/\n/.test(s)) return textToHtml(s);
       return esc(s);
     }
-
     if (Array.isArray(value)) {
       if (!value.length) return '<span style="color:#94a3b8;">—</span>';
-      // All URLs → link buttons
       if (value.every(x => typeof x === 'string' && isUrl(x))) {
         return value.map(u => `<a href="${esc(u)}" target="_blank" rel="noopener" class="udyn-link-btn ${isPdf(u) ? 'udyn-link-pdf' : 'udyn-link-apply'}" style="font-size:.78rem;padding:3px 10px;margin:2px 4px 2px 0;display:inline-flex;">${isPdf(u) ? 'Download PDF' : 'Apply / Click Here'}</a>`).join('');
       }
-      // All strings → tag chips
       if (value.every(x => typeof x === 'string')) {
         return `<div class="udyn-tag-list" style="padding:0;">${value.map(s => `<div class="udyn-tag">${esc(s)}</div>`).join('')}</div>`;
       }
-      // Array of objects → table
       if (value.every(x => x && typeof x === 'object' && !Array.isArray(x))) {
         return buildAoOTable(value);
       }
-      // Mixed array
       return value.map(item => `<div style="margin-bottom:4px;">${deepRender(item, depth+1)}</div>`).join('');
     }
-
     if (typeof value === 'object') {
       const pairs = Object.entries(value).filter(([, v]) => hasContent(v));
       if (!pairs.length) return '<span style="color:#94a3b8;">—</span>';
-      /* Single "details"/"description" key with long text → plain paragraph */
       if (pairs.length === 1 && /^(details?|description|note|info|text|content)$/i.test(pairs[0][0])) {
         const txt = safe(String(pairs[0][1]));
         return `<div style="font-size:.88rem;color:#1e293b;line-height:1.85;">${esc(txt).replace(/\n/g,'<br>')}</div>`;
       }
       if (depth > 2) {
-        // Avoid extreme nesting — render flat
         return pairs.map(([k, v]) => `<strong>${esc(keyToLabel(k))}:</strong> ${deepRender(v, depth+1)}`).join('<br>');
       }
       const rows = pairs.map(([k, v]) =>
@@ -704,11 +614,9 @@
       ).join('');
       return `<div class="udyn-table-scroll"><table class="udyn-gen-table">${rows}</table></div>`;
     }
-
     return esc(String(value));
   }
 
-  /** Array-of-objects → styled multi-column table */
   function buildAoOTable(arr) {
     const cols = [...new Set(arr.flatMap(r => Object.keys(r)))];
     const thead = `<thead><tr>${cols.map(c => `<th>${esc(keyToLabel(c))}</th>`).join('')}</tr></thead>`;
@@ -720,7 +628,7 @@
 
 
   /* ═══════════════════════════════════════════════════════════════════════
-     § 6 — CARD DOM BUILDERS
+     § 6 — CARD DOM BUILDERS (all use .udyn-card / .udyn-* classes)
   ═══════════════════════════════════════════════════════════════════════ */
 
   function makeCard(id, headBg, iconCls, headText, bodyHtml) {
@@ -755,15 +663,12 @@
     const { items, note } = data;
     if (!items.length) return null;
     const isFree = v => /nil|^0\/?-?$|free|no fee|exempt/i.test(v.trim());
-
-    // Single item with long text → show as notice block, not grid
     if (items.length === 1 && items[0].val.length > 60) {
       const noteHtml = note ? `<div class="udyn-grid-note">${esc(note)}</div>` : '';
       return makeCard('udyn-fee','linear-gradient(135deg,#c2410c,#ea580c)',
         'fa-solid fa-indian-rupee-sign','Application Fee',
         `<div class="udyn-notice" style="padding:12px 14px;font-size:.83rem;color:#1e293b;line-height:1.75;white-space:pre-line;">${esc(items[0].val)}</div>${noteHtml}`);
     }
-
     const gridHtml = items.map(({ label, val }) =>
       `<div class="udyn-grid-item">` +
         `<div class="udyn-grid-label">${esc(label)}</div>` +
@@ -797,40 +702,26 @@
   function cardPhysical(pe) {
     if (!hasContent(pe)) return null;
     let html = '';
-
     if (typeof pe === 'object' && !Array.isArray(pe)) {
       const pairs = Object.entries(pe).filter(([, v]) => hasContent(v));
       if (!pairs.length) return null;
-
-      /* If only 1 key and it's "details" / "description" / "note" — show as full-width text */
       if (pairs.length === 1 && /^(details?|description|note|info|text|content)$/i.test(pairs[0][0])) {
         const val = safe(pairs[0][1]);
-        html = `
-          <div style="padding:16px 20px;">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #f0f0f0;">
-              <i class="fa-regular fa-file-lines" style="color:#1d4ed8;font-size:1.1rem;"></i>
-              <span style="font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#1d4ed8;">DETAILS</span>
-            </div>
-            <div style="font-size:.9rem;color:#1e293b;line-height:1.85;word-break:break-word;">${esc(val).replace(/\n/g,'<br>')}</div>
-          </div>`;
+        html = `<div style="padding:16px 20px;font-size:.9rem;color:#1e293b;line-height:1.85;word-break:break-word;">${esc(val).replace(/\n/g,'<br>')}</div>`;
       } else {
-        /* Multiple keys — try to detect if values are short (grid) or long (stacked rows) */
         const hasLongVal = pairs.some(([, v]) => safe(String(v)).length > 60);
         if (hasLongVal) {
-          /* Stacked two-col table layout for long values */
           html = `<div class="udyn-table-scroll"><table class="udyn-gen-table">${pairs.map(([k, v]) =>
             `<tr><th style="width:30%;vertical-align:top;">${esc(keyToLabel(k))}</th>` +
             `<td style="line-height:1.7;">${deepRender(v, 1)}</td></tr>`
           ).join('')}</table>`;
         } else {
-          /* Short values — compact grid */
           html = `<div class="udyn-grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr));">${pairs.map(([k, v]) =>
             `<div class="udyn-grid-item"><div class="udyn-grid-label">${esc(keyToLabel(k))}</div><div class="udyn-grid-val">${deepRender(v, 1)}</div></div>`
           ).join('')}</div>`;
         }
       }
     } else if (typeof pe === 'string') {
-      /* Plain string — full width paragraph */
       html = `<div style="padding:16px 20px;font-size:.9rem;color:#1e293b;line-height:1.85;">${esc(pe).replace(/\n/g,'<br>')}</div>`;
     } else {
       html = `<div class="udyn-detail">${deepRender(pe, 0)}</div>`;
@@ -847,7 +738,6 @@
       if (ep.length && typeof ep[0] === 'object') html = buildAoOTable(ep);
       else html = `<div class="udyn-tag-list">${ep.map(s => `<div class="udyn-tag"><i class="fa-solid fa-file-lines"></i>${esc(String(s))}</div>`).join('')}</div>`;
     } else if (ep && typeof ep === 'object') {
-      // subjects + notes sub-structure
       const { subjects, notes, ...rest } = ep;
       if (Array.isArray(subjects) && subjects.length) html += buildAoOTable(subjects);
       if (notes) html += `<div class="udyn-detail" style="font-size:.8rem;color:#64748b;">${textToHtml(notes)}</div>`;
@@ -976,7 +866,7 @@
       arr = Object.entries(faqs).map(([q, a]) => ({ question: q, answer: a }));
     }
     if (!arr.length) return null;
-    const items = arr.map((f, i) => {
+    const items = arr.map(f => {
       const q = safe(f.question || f.q || '');
       const a = safe(f.answer || f.a || '');
       return `<div class="udyn-faq-item">` +
@@ -988,7 +878,7 @@
       'fa-solid fa-circle-question','Frequently Asked Questions', items);
   }
 
-  /* ── 6l. Jobs Info HTML notice ── */
+  /* ── 6l. Jobs Info ── */
   function cardJobsInfo(htmlStr) {
     if (!htmlStr) return null;
     const text = stripHtml(htmlStr);
@@ -998,24 +888,9 @@
       'fa-solid fa-circle-info','About This Recruitment', content);
   }
 
-  /* ── 6m. SR Tables (merged_sarkari 'tables' field) ── */
-  /*
-   * renderTableRows — Smart renderer for mixed-column-count row arrays.
-   *
-   * Problem: A single 'rows' array often contains MULTIPLE logical sub-tables
-   * concatenated together (e.g. a 2-col eligibility table followed by a 4-col
-   * district-vacancy table). Naively treating the first row as header breaks
-   * layout when column counts change mid-array.
-   *
-   * Solution: Split rows into sub-groups wherever column count changes, then
-   * render each sub-group as its own table with its own header detection.
-   */
+  /* ── 6m. SR Tables ── */
   function renderTableRows(rows) {
     if (!Array.isArray(rows) || !rows.length) return '';
-
-    /* ── Pre-pass: detect the "normal" column count (most common among rows with ≥2 cols) ── */
-    /* Some scrapers produce a flattened "mega-row" that concatenates all data into one row  */
-    /* with 10x the normal column count. We detect and skip these anomalous rows.           */
     const colCounts = {};
     for (const row of rows) {
       if (!Array.isArray(row) || row.length < 2) continue;
@@ -1023,15 +898,12 @@
     }
     const colEntries = Object.entries(colCounts).sort((a, b) => b[1] - a[1]);
     const normalCols = colEntries.length ? parseInt(colEntries[0][0]) : 0;
-    /* A row is anomalous if it has >3x the normal column count AND there are other rows */
     const totalRows = rows.filter(r => Array.isArray(r) && r.length >= 2).length;
     const cleanRows = rows.filter(row => {
       if (!Array.isArray(row)) return false;
-      if (normalCols > 0 && totalRows > 1 && row.length > normalCols * 3) return false; // skip flattened mega-row
+      if (normalCols > 0 && totalRows > 1 && row.length > normalCols * 3) return false;
       return true;
     });
-
-    /* ── Step 1: Split into sub-tables by column-count boundary ── */
     const subTables = [];
     let cur = [], curCols = -1;
     for (const row of cleanRows) {
@@ -1039,35 +911,23 @@
       if (row.length !== curCols) {
         if (cur.length) subTables.push(cur);
         cur = [row]; curCols = row.length;
-      } else {
-        cur.push(row);
-      }
+      } else { cur.push(row); }
     }
     if (cur.length) subTables.push(cur);
-
-    /* ── Step 2: Render each sub-table ── */
     let html = '';
     for (const st of subTables) {
       if (!st.length) continue;
-
-      /* Header detection: first row all strings/no URLs, next row same col count */
       const firstRow = st[0];
-      const nextRow  = st[1];
+      const nextRow = st[1];
       const isHeader = nextRow &&
         firstRow.every(c => typeof c === 'string' && !isUrl(c) && c.length < 120) &&
         nextRow.length >= firstRow.length;
-
       const headerHtml = isHeader
         ? `<thead><tr>${firstRow.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead>`
         : '';
       const dataRows = isHeader ? st.slice(1) : st;
-
-      /* Single-row, single-col-count sub-table with no data rows after header → render as KV row */
       if (isHeader && dataRows.length === 0) continue;
-
-      /* Special case: 1 data row only + 2 cols → render as key-value pair in gen-table style */
       const isKV = !isHeader && st.length === 1 && st[0].length === 2;
-
       const bodyHtml = dataRows.map(row => {
         const cells = row.map(cell => {
           const s = safe(String(cell ?? ''));
@@ -1084,11 +944,8 @@
         }).join('');
         return `<tr>${cells}</tr>`;
       }).join('');
-
       if (!bodyHtml && !headerHtml) continue;
-
       if (isKV) {
-        /* Render as compact KV using gen-table style */
         html += `<div class="udyn-table-scroll"><table class="udyn-gen-table" style="margin-bottom:0;">
           <tbody><tr><th>${esc(st[0][0])}</th><td>${esc(st[0][1])}</td></tr></tbody>
         </table></div>`;
@@ -1104,80 +961,62 @@
   function cardTables(tables) {
     if (!Array.isArray(tables) || !tables.length) return null;
     let allHtml = '';
-
     for (const group of tables) {
-      /* ── Format A: Object { table_name, rows } (merged_sarkari format) ── */
       if (group && typeof group === 'object' && !Array.isArray(group)) {
         const tname = safe(group.table_name || '');
-        const rows  = group.rows;
+        const rows = group.rows;
         if (!Array.isArray(rows) || !rows.length) continue;
         const heading = tname
           ? `<div style="padding:9px 14px 5px;font-size:.8rem;font-weight:700;color:#1d4ed8;background:#f0f7ff;border-bottom:1px solid #dbeafe;line-height:1.4;">${esc(tname)}</div>`
           : '';
         const tableHtml = renderTableRows(rows);
         if (tableHtml) allHtml += `<div style="margin-bottom:2px;">${heading}${tableHtml}</div>`;
-      }
-      /* ── Format B: Direct array-of-arrays ── */
-      else if (Array.isArray(group) && group.length && Array.isArray(group[0])) {
+      } else if (Array.isArray(group) && group.length && Array.isArray(group[0])) {
         const tableHtml = renderTableRows(group);
         if (tableHtml) allHtml += tableHtml;
       }
     }
-
     if (!allHtml) return null;
     return makeCard('udyn-sr-tables','linear-gradient(135deg,#1d4ed8,#1d6dbc)',
       'fa-solid fa-table','Vacancy / Important Details', allHtml);
   }
 
-  /* ── 6m2. SR Text Sections (merged_sarkari 'text_sections' field) ── */
-  /* Format: [{ section: "How to Fill Form...", content: "Step1 | Step2 | ..." }] */
+  /* ── 6m2. Text Sections ── */
   function cardTextSections(textSections) {
     if (!Array.isArray(textSections) || !textSections.length) return null;
     let allHtml = '';
-
     for (const sec of textSections) {
       if (!sec || typeof sec !== 'object') continue;
       const heading = safe(sec.section || sec.title || '');
       const content = safe(sec.content || sec.text || sec.description || '');
       if (!content) continue;
-
       const headHtml = heading
         ? `<div style="padding:9px 14px 5px;font-size:.82rem;font-weight:700;color:#0f766e;background:#f0fdf4;border-bottom:1px solid #bbf7d0;">${esc(heading)}</div>`
         : '';
-
-      /* Split by pipe | or newlines → numbered steps */
       const steps = content.split(/\s*\|\s*|\n+/).map(s => s.trim()).filter(Boolean);
       let bodyHtml = '';
       if (steps.length > 1) {
         bodyHtml = `<ul class="udyn-steps-list">${steps.map((s, i) =>
-          `<li class="udyn-step">
-            <span class="udyn-step-num">${i+1}</span>
-            <span>${esc(s)}</span>
-          </li>`
+          `<li class="udyn-step"><span class="udyn-step-num">${i+1}</span><span>${esc(s)}</span></li>`
         ).join('')}</ul>`;
       } else {
         bodyHtml = `<div class="udyn-detail">${esc(content)}</div>`;
       }
       allHtml += headHtml + bodyHtml;
     }
-
     if (!allHtml) return null;
     return makeCard('udyn-text-sections','linear-gradient(135deg,#0f766e,#059669)',
       'fa-solid fa-clipboard-list','How To Apply / Instructions', allHtml);
   }
 
-  /* ── 6n. Important Links (FULLY REBUILT — zero missing links) ── */
+  /* ── 6n. Important Links ── */
   function cardLinks(links) {
     if (!links || !links.length) return null;
-
-    // Sort: apply first, then pdf, then website, then others
     const ORDER = { apply: 0, login: 1, pdf: 2, website: 3, default: 4 };
     const sorted = [...links].sort((a, b) => (ORDER[a.type] || 4) - (ORDER[b.type] || 4));
-
     const typeStyle = { apply: 'udyn-link-apply', login: 'udyn-link-login', pdf: 'udyn-link-pdf', website: 'udyn-link-website', video: 'udyn-link-video', default: 'udyn-link-default' };
     const typeLabel = { apply: 'Apply Now', login: 'Login', pdf: 'Download PDF', website: 'Visit Website', video: 'Watch Video', default: 'Click Here' };
     const typeIcon  = { apply: 'fa-solid fa-pen-to-square', login: 'fa-solid fa-right-to-bracket', pdf: 'fa-solid fa-file-pdf', website: 'fa-solid fa-globe', video: 'fa-brands fa-youtube', default: 'fa-solid fa-link' };
-
     const rows = sorted.map(({ label, url, type }) =>
       `<li class="udyn-link-row">` +
         `<span class="udyn-link-label"><i class="${typeIcon[type] || typeIcon.default}" style="margin-right:6px;color:#64748b;"></i>${esc(label)}</span>` +
@@ -1186,13 +1025,12 @@
         `</a>` +
       `</li>`
     ).join('');
-
     return makeCard('udyn-imp-links','linear-gradient(135deg,#1d4ed8,#1e40af)',
       'fa-solid fa-link','Important Links',
       `<ul class="udyn-links-list">${rows}</ul>`);
   }
 
-  /* ── 6o. Generic unknown field card (deep recursive) ── */
+  /* ── 6o. Generic unknown field card ── */
   function cardGeneric(key, value) {
     if (!hasContent(value)) return null;
     const label = keyToLabel(key);
@@ -1213,7 +1051,6 @@
     if (minAge) pairs.push(['Minimum Age', minAge]);
     if (maxAge) pairs.push(['Maximum / Upper Age Limit', maxAge]);
     if (relax)  pairs.push(['Age Relaxation', relax]);
-    // Extra keys in age_limit
     const KNOWN_AGE = new Set(['minimum_age','maximum_age','age_limit','age_details','age_relaxation','details']);
     for (const [k, v] of Object.entries(age)) {
       if (KNOWN_AGE.has(k) || !hasContent(v)) continue;
@@ -1245,7 +1082,6 @@
     if (!rawJob || !Array.isArray(rawJob.sections) || rawJob.sections.length === 0) return rawJob;
     if (rawJob.category !== 'UPCOMING_JOBS') return rawJob;
     const sections = rawJob.sections;
-
     function getItems(title) {
       const sec = sections.find(s => s.title && s.title.toLowerCase() === title.toLowerCase());
       if (!sec || !Array.isArray(sec.content)) return [];
@@ -1264,13 +1100,6 @@
       }
       return m;
     }
-    function getRows(title) {
-      const sec = sections.find(s => s.title && s.title.toLowerCase() === title.toLowerCase());
-      if (!sec || !Array.isArray(sec.content)) return [];
-      for (const blk of sec.content) if (blk.type === 'table' && Array.isArray(blk.rows)) return blk.rows;
-      return [];
-    }
-
     if (!rawJob.important_dates || !Object.keys(rawJob.important_dates).length) {
       const kv = parseKV(getItems('Important Dates'));
       rawJob.important_dates = {
@@ -1289,26 +1118,6 @@
       const items = getItems('Selection Process');
       if (items.length) rawJob.selection_process = items;
     }
-    // Exam pattern from table
-    const epSec = sections.find(s => /written\s*exam\s*pattern|exam\s*pattern/i.test(s.title || ''));
-    if (epSec && Array.isArray(epSec.content) && !hasContent(rawJob.exam_pattern)) {
-      const rows = [];
-      for (const blk of epSec.content) if (blk.type === 'table' && blk.rows) rows.push(...blk.rows);
-      if (rows.length) {
-        let header = null; const subjects = [];
-        for (const row of rows) {
-          const texts = row.map(c => (c.text||'').trim());
-          if (texts.some(t => /subject|questions|marks/i.test(t))) { header = texts; continue; }
-          if (header && row.length >= 2) {
-            const obj = {};
-            header.forEach((h, i) => { obj[h.toLowerCase()] = texts[i] || ''; });
-            subjects.push(obj);
-          }
-        }
-        const notes = epSec.content.filter(b => b.type==='paragraph' && b.text).map(b => b.text).join(' | ');
-        if (subjects.length) rawJob.exam_pattern = { subjects, notes };
-      }
-    }
     return rawJob;
   }
 
@@ -1320,17 +1129,13 @@
   function insertBeforeLinks(card) {
     const layout = document.getElementById('layoutJob');
     if (!layout) return;
-    // Find existing Important Links card
     let linksCard = null;
     for (const c of layout.querySelectorAll('.jp-card, .udyn-card')) {
       const head = c.querySelector('.jp-sec-head, .udyn-head');
       if (head && /important links/i.test(head.textContent)) { linksCard = c; break; }
     }
     if (linksCard) layout.insertBefore(card, linksCard);
-    else {
-      /* jp-tips-card removed — append at end of layout */
-      layout.appendChild(card);
-    }
+    else layout.appendChild(card);
   }
 
   function appendAfterAll(card) {
@@ -1344,14 +1149,6 @@
   }
 
   function sectionExists(id) { return !!document.getElementById(id); }
-  function baseSectionVisible(id) { const el = document.getElementById(id); return el && el.style.display !== 'none'; }
-  function datesBaseVisible() { return baseSectionVisible('datesDetailCard'); }
-  function feeBaseVisible() { return baseSectionVisible('feeCard'); }
-  function vacancyBaseVisible() {
-    const vc = document.getElementById('vacCard');
-    if (!vc || vc.style.display === 'none') return false;
-    return vc.querySelectorAll('#vacBody tr').length > 0;
-  }
 
 
   /* ═══════════════════════════════════════════════════════════════════════
@@ -1378,7 +1175,9 @@
 
 
   /* ═══════════════════════════════════════════════════════════════════════
-     § 10 — FIELD PATCHER (update base-renderer DOM elements)
+     § 10 — DOM PATCHER
+     Patches base-renderer DOM elements AND injects missing links.
+     Merged from job-renderer-patch.js Section 8 (runAllPatches).
   ═══════════════════════════════════════════════════════════════════════ */
 
   function patchField(id, value) {
@@ -1388,6 +1187,7 @@
       el.textContent = value;
     }
   }
+
   function patchTableRow(tbodyId, pattern, value) {
     if (!value) return;
     const tbody = document.getElementById(tbodyId);
@@ -1408,35 +1208,61 @@
     const id = rawJob.important_dates || {};
     const age = rawJob.age_limit || {};
 
-    // Org
+    // ── Organization ──────────────────────────────────────────────────
     const org = safe(rawJob.organization || rawJob.board_name || rawJob.department || bd.organization_name || bd.department || '');
-    patchField('statOrg', org); patchTableRow('jbTable', /organisation/i, org);
+    patchField('statOrg', org);
+    patchTableRow('jbTable', /organisation/i, org);
 
-    // Total vacancies
+    // ── Total vacancies ───────────────────────────────────────────────
     const tv = safe(rawJob.total_vacancy || rawJob.total_vacancies || bd.total_vacancies || rawJob.total_post || '');
     if (tv) { patchField('statPosts', tv); patchTableRow('jbTable', /total vacancies/i, tv); }
 
-    // Apply mode
-    const mode = safe(rawJob.apply_mode || rawJob.application_mode || bd.apply_mode || '');
+    // ── Apply Mode — ALWAYS overwrite from JSON ───────────────────────
+    const mode = safe(rawJob.apply_mode || rawJob.application_mode || bd.apply_mode || bd.application_mode || '');
     if (mode) {
       const el = document.getElementById('statApplyMode');
-      if (el) { el.textContent = mode; el.style.color = /offline/i.test(mode) ? '#ea580c' : '#16a34a'; }
+      if (el) {
+        el.textContent = mode;
+        el.style.color = /offline/i.test(mode) ? '#ea580c' : '#16a34a';
+      }
       patchTableRow('jbTable', /application mode/i, mode);
+      // Highlights bar
+      const hlItems = document.querySelectorAll('#hlList .jp-hl-item span');
+      for (const span of hlItems) {
+        if (/apply mode/i.test(span.textContent)) { span.textContent = 'Apply Mode: ' + mode; break; }
+      }
     }
 
-    // Last date
-    const lastDate = safe(id.last_date || id.application_last_date || rawJob.last_date || rawJob.last_date_to_apply || '');
-    if (lastDate && !/^see notification$/i.test(lastDate)) {
-      const fmt = fmtDate(lastDate);
-      patchField('statLastDate', fmt); patchField('dateLastVal', fmt);
+    // ── Last Date — ALWAYS overwrite from JSON ────────────────────────
+    const lastDateRaw = safe(id.last_date || id.application_last_date || rawJob.last_date || rawJob.last_date_to_apply || '');
+    if (lastDateRaw && !/^see notification$/i.test(lastDateRaw) && lastDateRaw !== '—') {
+      const fmt = fmtDate(lastDateRaw);
+      const statEl = document.getElementById('statLastDate');
+      if (statEl) statEl.textContent = fmt;
+      const sideVal = document.getElementById('dateLastVal');
+      if (sideVal) sideVal.textContent = fmt;
       const sideRow = document.getElementById('dateLastRow');
       if (sideRow) sideRow.style.display = '';
-      const metaEl = document.getElementById('metaLastDate');
       const metaWrap = document.getElementById('metaLastDateWrap');
-      if (metaWrap && metaEl) { metaEl.textContent = 'Last Date: '+fmt; metaWrap.style.display = ''; }
+      const metaEl = document.getElementById('metaLastDate');
+      if (metaWrap && metaEl) { metaEl.textContent = 'Last Date: ' + fmt; metaWrap.style.display = ''; }
+      // Overview table
+      for (const tr of document.querySelectorAll('#jbTable tbody tr')) {
+        const th = tr.querySelector('th');
+        if (th && /last date/i.test(th.textContent)) {
+          const td = tr.querySelector('td');
+          if (td) { td.textContent = fmt; td.style.color = '#dc2626'; td.style.fontWeight = '800'; }
+          break;
+        }
+      }
+      // Highlights bar
+      const hlItems = document.querySelectorAll('#hlList .jp-hl-item span');
+      for (const span of hlItems) {
+        if (/last date/i.test(span.textContent)) { span.textContent = '⚠ Last Date: ' + fmt; break; }
+      }
     }
 
-    // Salary in overview table
+    // ── Salary in overview table ──────────────────────────────────────
     const salary = safe(rawJob.salary || rawJob.salary_pay_scale || bd.salary || bd.salary_pay_scale || '');
     if (salary) {
       const rows = document.querySelectorAll('#jbTable tbody tr');
@@ -1453,7 +1279,7 @@
       }
     }
 
-    // Age card patch
+    // ── Age card patch ────────────────────────────────────────────────
     const minAge = safe(rawJob.minimum_age || age.minimum_age || '');
     const maxAge = safe(rawJob.maximum_age || age.maximum_age || age.age_limit || age.age_details || '');
     const ageRelax = safe(rawJob.age_relaxation || age.age_relaxation || age.details || '');
@@ -1470,7 +1296,7 @@
       }
     }
 
-    // Qualification card patch
+    // ── Qualification card patch ──────────────────────────────────────
     const eduQual = safe(rawJob.education_qualification || rawJob.eligibility || (rawJob.qualification && (rawJob.qualification.education_qualification || rawJob.qualification.eligibility)) || '');
     const qualCard = document.getElementById('qualCard');
     if (eduQual && qualCard && qualCard.style.display === 'none') {
@@ -1479,7 +1305,7 @@
       if (qualContent) qualContent.innerHTML = `<div class="jp-detail-text"><strong>Education Qualification:</strong> ${esc(eduQual)}</div>`;
     }
 
-    // Short info patch
+    // ── Short info patch ──────────────────────────────────────────────
     const shortInfo = safe(rawJob.short_information || rawJob.jobs_info || bd.short_information || '');
     const siCard = document.getElementById('shortInfoCard');
     const siText = document.getElementById('shortInfoText');
@@ -1487,12 +1313,73 @@
       siCard.style.display = '';
       if (isHtml(shortInfo)) siText.innerHTML = shortInfo; else siText.textContent = shortInfo;
     }
+
+    // ── Important Links — inject missing flat-field links ─────────────
+    // (Merged from job-renderer-patch.js patchImportantLinks)
+    const container = document.getElementById('linksActions');
+    if (container) {
+      const shown = new Set();
+      for (const a of container.querySelectorAll('a[href]')) {
+        const h = (a.getAttribute('href') || '').trim();
+        if (h && h !== '#') shown.add(h);
+      }
+      const flatDefs = [
+        { key: 'form_pdf_free_link',             label: 'Download Form (Free PDF)',  icon: 'fa-file-arrow-down', cls: 'jp-btn-orange', sub: 'Free PDF'     },
+        { key: 'official_notification_pdf_link', label: 'Official Notification PDF', icon: 'fa-file-pdf',        cls: 'jp-btn-blue',   sub: 'Download PDF' },
+        { key: 'official_website_link',          label: 'Official Website',          icon: 'fa-globe',           cls: 'jp-btn-red',    sub: 'Visit Now'    },
+      ];
+      let newHtml = '';
+      for (const def of flatDefs) {
+        const href = normUrl(safe(rawJob[def.key] || ''));
+        if (!href || shown.has(href)) continue;
+        shown.add(href);
+        newHtml +=
+          `<a href="${href}" target="_blank" rel="noopener" class="jp-btn ${def.cls}">` +
+            `<span><i class="fa-solid ${def.icon}"></i> ${def.label}</span>` +
+            `<span class="jp-btn-sub">${def.sub}</span>` +
+          `</a>`;
+      }
+      // important_links object
+      const ilRaw = rawJob.important_links || rawJob.important_links_obj || {};
+      const ilMap = [
+        { keys: ['apply_online','apply_link','click_here_to_apply'],        label: 'Apply Online',          icon: 'fa-paper-plane', cls: 'jp-btn-green',  sub: 'Apply Now'    },
+        { keys: ['notification_pdf','download_notification','download_pdf'], label: 'Official Notification', icon: 'fa-file-pdf',    cls: 'jp-btn-blue',   sub: 'Download PDF' },
+        { keys: ['official_website','visit_website'],                        label: 'Official Website',      icon: 'fa-globe',       cls: 'jp-btn-red',    sub: 'Visit Now'    },
+        { keys: ['result','result_link'],                                    label: 'Result',                icon: 'fa-trophy',      cls: 'jp-btn-orange', sub: 'View Now'     },
+        { keys: ['admit_card','admit_card_link'],                            label: 'Admit Card',            icon: 'fa-id-card',     cls: 'jp-btn-orange', sub: 'Download Now' },
+      ];
+      if (typeof ilRaw === 'object' && !Array.isArray(ilRaw)) {
+        for (const ilDef of ilMap) {
+          let ilUrl = '';
+          for (const k of ilDef.keys) {
+            const kval = ilRaw[k];
+            if (kval) { ilUrl = safe(Array.isArray(kval) ? kval[0] : kval); if (ilUrl) break; }
+          }
+          if (!ilUrl) continue;
+          const ilHref = normUrl(ilUrl);
+          if (!ilHref || shown.has(ilHref)) continue;
+          shown.add(ilHref);
+          newHtml +=
+            `<a href="${ilHref}" target="_blank" rel="noopener" class="jp-btn ${ilDef.cls}">` +
+              `<span><i class="fa-solid ${ilDef.icon}"></i> ${ilDef.label}</span>` +
+              `<span class="jp-btn-sub">${ilDef.sub}</span>` +
+            `</a>`;
+        }
+      }
+      if (newHtml) {
+        const placeholder = container.querySelector('p');
+        if (placeholder) placeholder.remove();
+        container.insertAdjacentHTML('beforeend', newHtml);
+      }
+    }
   }
 
 
   /* ═══════════════════════════════════════════════════════════════════════
      § 11 — MASTER INJECTOR
-     All cards in correct order, dedup-safe.
+     UNIFORM layout: same card sequence for EVERY job.
+     No conditional layout changes based on missing fields.
+     Data normalizes to "N/A" / fallback — layout never changes.
   ═══════════════════════════════════════════════════════════════════════ */
 
   const SECTION_DEFS = [
@@ -1522,11 +1409,10 @@
     const layout = document.getElementById('layoutJob');
     if (!layout || layout.style.display === 'none') return;
 
-    // Deduplicate — clear previous universal cards
     clearUniversalCards();
 
     const toc = [];
-    const queue = []; // { card, def, append? }
+    const queue = [];
 
     function push(card, defId) {
       if (!card) return;
@@ -1543,34 +1429,28 @@
 
     // ── 1. Jobs Info ──────────────────────────────────────────────────
     const jobsInfo = exJobsInfo(rawJob);
-    if (jobsInfo && !baseSectionVisible('shortInfoCard')) push(cardJobsInfo(jobsInfo), 'udyn-jobs-info');
+    if (jobsInfo) push(cardJobsInfo(jobsInfo), 'udyn-jobs-info');
 
     // ── 2. Important Dates ────────────────────────────────────────────
     const datesData = exDates(rawJob);
-    const allDateVals = datesData.rows.length + (datesData.rawText ? 1 : 0);
-    const baseDateRows = document.querySelectorAll('#datesDetailBody tr').length;
-    if (allDateVals > 0 && (allDateVals > baseDateRows || !datesBaseVisible() || datesData.rawText)) {
+    if (datesData.rows.length || datesData.rawText) {
       push(cardDates(datesData), 'udyn-dates-extended');
     }
 
     // ── 3. Application Fee ────────────────────────────────────────────
     const feeData = exFees(rawJob);
-    if (feeData.items.length && !feeBaseVisible()) push(cardFee(feeData), 'udyn-fee');
+    if (feeData.items.length) push(cardFee(feeData), 'udyn-fee');
 
     // ── 4. Age Limit ──────────────────────────────────────────────────
-    if (!baseSectionVisible('ageCard')) {
-      push(cardAgeLimit(rawJob), 'udyn-age-limit');
-    }
+    push(cardAgeLimit(rawJob), 'udyn-age-limit');
 
     // ── 5. Qualification ──────────────────────────────────────────────
-    if (!baseSectionVisible('qualCard')) {
-      const qual = exQualification(rawJob);
-      if (qual) push(cardQualification(qual), 'udyn-qualification');
-    }
+    const qual = exQualification(rawJob);
+    if (qual) push(cardQualification(qual), 'udyn-qualification');
 
     // ── 6. Vacancy Details ────────────────────────────────────────────
     const { rows: vacRows, cw: vacCW } = exVacancy(rawJob);
-    if (!vacancyBaseVisible() && (vacRows.length || hasContent(vacCW))) {
+    if (vacRows.length || hasContent(vacCW)) {
       push(cardVacancy(vacRows, vacCW), 'udyn-vacancy-extended');
     }
 
@@ -1594,29 +1474,29 @@
 
     // ── 11. Selection Process ─────────────────────────────────────────
     const sp = exSelection(rawJob);
-    if (hasContent(sp) && !sectionExists('dynSelection')) push(cardSelection(sp), 'udyn-selection');
+    if (hasContent(sp)) push(cardSelection(sp), 'udyn-selection');
 
     // ── 12. How To Apply ──────────────────────────────────────────────
     const hta = exHowToApply(rawJob);
-    if (hasContent(hta) && !sectionExists('dynHowToApply')) push(cardHowToApply(hta), 'udyn-how-to-apply');
+    if (hasContent(hta)) push(cardHowToApply(hta), 'udyn-how-to-apply');
 
     // ── 13. Important Instructions ────────────────────────────────────
     const insts = exInstructions(rawJob);
-    if (hasContent(insts) && !sectionExists('dynInstructions')) push(cardInstructions(insts), 'udyn-instructions');
+    if (hasContent(insts)) push(cardInstructions(insts), 'udyn-instructions');
 
     // ── 14. FAQ ───────────────────────────────────────────────────────
     const faqs = exFaq(rawJob);
-    if (hasContent(faqs) && !sectionExists('dynFaq')) pushAppend(cardFaq(faqs), 'udyn-faq');
+    if (hasContent(faqs)) pushAppend(cardFaq(faqs), 'udyn-faq');
 
-    // ── 15. SR Tables (merged_sarkari 'tables' field) ─────────────────
+    // ── 15. SR Tables ─────────────────────────────────────────────────
     const tables = exTables(rawJob);
-    if (tables && !sectionExists('udyn-sr-tables')) push(cardTables(tables), 'udyn-sr-tables');
+    if (tables) push(cardTables(tables), 'udyn-sr-tables');
 
-    // ── 15b. SR Text Sections (merged_sarkari 'text_sections' field) ──
+    // ── 15b. Text Sections ────────────────────────────────────────────
     const textSections = exTextSections(rawJob);
-    if (textSections && !sectionExists('udyn-text-sections')) push(cardTextSections(textSections), 'udyn-text-sections');
+    if (textSections) push(cardTextSections(textSections), 'udyn-text-sections');
 
-    // ── 16. Unknown future fields (auto-rendered recursively) ─────────
+    // ── 16. Unknown future fields (auto-rendered) ─────────────────────
     const unknown = exUnknown(rawJob);
     for (const [k, v] of Object.entries(unknown)) {
       const c = cardGeneric(k, v);
@@ -1627,8 +1507,7 @@
       }
     }
 
-    // ── 17. Important Links (ALWAYS LAST — aggregated from all sources) ──
-    // Skip if job.html mainLinksCard already handles Important Links natively
+    // ── 17. Important Links (ALWAYS LAST) ────────────────────────────
     const links = rawJob._udyn_links || [];
     if (links.length && !window.__TSJ_SUPPRESS_UDYN_LINKS) {
       const c = cardLinks(links);
@@ -1647,7 +1526,6 @@
 
   /* ═══════════════════════════════════════════════════════════════════════
      § 12 — FALLBACK: SEARCH FULL DATA FOR SLUG MATCH
-     Used when job page loaded from dailyupdates (no individual JSON).
   ═══════════════════════════════════════════════════════════════════════ */
 
   const STOP_WORDS = new Set(['the','and','for','are','was','were','has','have','had','will','can','may',
@@ -1677,35 +1555,20 @@
     let best = null, bestScore = 0;
 
     try {
-      // merged_sarkari_data.json removed — this renderer is disabled on static pages
-    const r = { ok: false }; // disabled
+      const r = await fetch('/Complete_Jobs_Full_Data.json');
       if (r.ok) {
         const d = await r.json();
-        const jobs = (d && d.jobs) ? d.jobs : (Array.isArray(d) ? d : []);
+        const jobs = Array.isArray(d) ? d : Object.values(d).flatMap(v => Array.isArray(v) ? v : []);
         for (const job of jobs) {
-          const sc = scoreMatch(safe(job.title || job.post_name || ''), tokens);
+          const t = safe(job.title || (job.basic_details && job.basic_details.job_title) || job.post_name || '');
+          const sc = scoreMatch(t, tokens);
           if (sc > bestScore) { bestScore = sc; best = job; }
         }
       }
     } catch (_) {}
 
-    if (!best || bestScore < 0.82) {
-      try {
-        const r = await fetch('/Complete_Jobs_Full_Data.json');
-        if (r.ok) {
-          const d = await r.json();
-          const jobs = Array.isArray(d) ? d : Object.values(d).flatMap(v => Array.isArray(v) ? v : []);
-          for (const job of jobs) {
-            const t = safe(job.title || (job.basic_details && job.basic_details.job_title) || job.post_name || '');
-            const sc = scoreMatch(t, tokens);
-            if (sc > bestScore) { bestScore = sc; best = job; }
-          }
-        }
-      } catch (_) {}
-    }
-
     if (best && bestScore >= 0.82) {
-      const normalized = normalize(best);
+      const normalized = normalizeJob(best);
       runBasePatches(normalized);
       injectAllSections(normalized);
     }
@@ -1714,37 +1577,37 @@
 
   /* ═══════════════════════════════════════════════════════════════════════
      § 13 — INTEGRATION HUB
-     Race-condition-free 4-way callback system.
+     Race-condition-free. Works whether this script loads before or after
+     job.html finishes rendering (no job-renderer-patch.js needed).
   ═══════════════════════════════════════════════════════════════════════ */
 
   function onJobRendered(rawJob) {
     let job = rawJob;
     if (job && typeof job === 'object') {
-      try { job = normalizeUpcomingJobsSections(job); } catch(e) {  }
-      job = normalize(job);
-      try { runBasePatches(job); } catch(e) {  }
-      try { injectAllSections(job); } catch(e) {  }
+      try { job = normalizeUpcomingJobsSections(job); } catch(e) {}
+      job = normalizeJob(job);
+      try { runBasePatches(job); } catch(e) {}
+      try { injectAllSections(job); } catch(e) {}
     } else {
       setTimeout(findAndEnrichFromFullData, 200);
     }
   }
 
   (function integrate() {
-    // Case 1: Already rendered
+    // Case 1: Already rendered (cached / fast network)
     if (window.__TSJ_RENDER_DONE) {
       setTimeout(() => onJobRendered(window.__TSJ_RAW_JOB), 0);
       return;
     }
 
-    // Case 2: Register callback
+    // Case 2: Register callback (job.html fires this in finally{})
     window.__TSJ_ON_RENDER_DONE = function(rawJob) {
       setTimeout(() => onJobRendered(rawJob), 0);
     };
 
     // Case 3: SEO Engine hook
     window.__SEO_ENGINE_JOB_READY = function(seoJob) {
-      // Merge SEO data into TSJ_RAW_JOB if available
-      if (window.__TSJ_RAW_JOB) return; // Already have full data
+      if (window.__TSJ_RAW_JOB) return;
       setTimeout(() => onJobRendered(seoJob), 0);
     };
 
@@ -1793,4 +1656,4 @@
   })();
 
 })();
-/* ══ END Universal Dynamic JSON-to-Page Rendering Engine v3.0 ══ */
+/* ══ END Universal Dynamic JSON-to-Page Rendering Engine v4.0 ══ */
