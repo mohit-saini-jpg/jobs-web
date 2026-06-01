@@ -49,6 +49,20 @@ def slugify(text):
     text = re.sub(r'[\s-]+', '-', text)
     return text[:120].strip('-') or 'job'
 
+def clean_slug(raw_slug):
+    """Remove sr_*- prefix and trailing hex hash from existing slugs.
+    sr_latest_jobs-rpsc-school-lecturer-106b24  →  rpsc-school-lecturer
+    sr_admit_card-bpsc-admit-card-2026-9934ae   →  bpsc-admit-card-2026
+    """
+    s = str(raw_slug or '').strip()
+    # Remove sr_category- prefix
+    s = re.sub(r'^sr_[a-z_]+-', '', s)
+    # Remove trailing 6 or 8 char hex hash
+    s = re.sub(r'-[0-9a-f]{6,8}$', '', s)
+    # Clean double dashes
+    s = re.sub(r'-+', '-', s).strip('-')
+    return s[:120] or slugify(str(raw_slug))
+
 def e(s):
     return html_mod.escape(str(s or ''), quote=True)
 
@@ -336,7 +350,7 @@ if os.path.exists(MERGED):
         if not title: continue
 
         if existing_slug:
-            slug = existing_slug
+            slug = clean_slug(existing_slug)
         else:
             slug = slugify(title)
         if not slug or slug in new_dirs: continue
@@ -397,7 +411,7 @@ if os.path.exists(STATE):
         for item in sec.get("items", []):
             name = (item.get("name") or item.get("title") or "").strip()
             if not name: continue
-            slug = item.get("slug") or slugify(name)
+            slug = clean_slug(item.get("slug") or '') or slugify(name)
             if not slug or slug in new_dirs: continue
 
             detail = item.get("detail") or {}
