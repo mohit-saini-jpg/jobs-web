@@ -1622,7 +1622,7 @@ if STATE_WISE_FILE.exists():
 <tr><th>Post Name</th><td>{_e(name)}</td></tr>
 <tr><th>State</th><td>{_e(state_name)}</td></tr>
 {f"<tr><th>Total Posts</th><td>{_e(total_vac)}</td></tr>" if total_vac else ""}
-{f"<tr><th>Last Date</th><td style=\'color:#dc2626;font-weight:700;\'>{_e(last_date)}</td></tr>" if last_date else ""}
+{f"<tr><th>Last Date</th><td style='color:#dc2626;font-weight:700;'>{_e(last_date)}</td></tr>" if last_date else ""}
 <tr><th>Apply Mode</th><td>{_e(bd.get("application_mode") or "Online")}</td></tr>
 </table></div>
 <div class="ic"><div class="ich"><i class="fa-solid fa-link"></i> Important Links</div>
