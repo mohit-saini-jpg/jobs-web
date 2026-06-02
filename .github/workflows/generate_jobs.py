@@ -1562,7 +1562,6 @@ def _e(s): return _html_mod.escape(str(s or ''), quote=True)
 # STATE JOBS: /haryana/job-slug/index.html
 # ══════════════════════════════════════════════════════════
 STATE_WISE_FILE = _Path('State_Wise_Jobs.json')
-if STATE_WISE_FILE.exists():
 
 def _build_state_detail_html(detail, item, esc_fn, json_mod):
     """Render A-to-Z detail fields for state job pages"""
