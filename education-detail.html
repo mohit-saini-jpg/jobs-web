@@ -257,21 +257,33 @@
       }
     })();
     const params  = new URLSearchParams(location.search);
-    /* Read section from clean URL path /education/{sectionId}/ or legacy ?section= param */
-    var _pathSec = (function(){ var m = location.pathname.match(/^\/education\/([^\/]+)\/?$/); return m ? decodeURIComponent(m[1]) : ''; })();
+    /* Read section + slug from clean URL path:
+       /education/<sectionId>/<slug>/  — 2 segments (item detail)
+       /education/<sectionId>/         — 1 segment  (section list)
+       Legacy: ?section=&slug=         — query params */
+    var _pathSec = (function(){
+      var m2 = location.pathname.match(/^\/education\/([^\/]+)\/([^\/]+)\/?$/);
+      if (m2) return decodeURIComponent(m2[1]);
+      var m1 = location.pathname.match(/^\/education\/([^\/]+)\/?$/);
+      return m1 ? decodeURIComponent(m1[1]) : '';
+    })();
+    var _pathSlug = (function(){
+      var m2 = location.pathname.match(/^\/education\/([^\/]+)\/([^\/]+)\/?$/);
+      return m2 ? decodeURIComponent(m2[2]) : '';
+    })();
     const sectionId = _pathSec || safe(params.get('section') || '');
     /* Update canonical to clean URL */
     (function(){
       var can = document.getElementById('canonicalTag') || document.querySelector('link[rel="canonical"]');
       if (can && sectionId) {
-        var slug = safe(params.get('slug') || '');
+        var slug = _pathSlug || safe(params.get('slug') || '');
         var cleanUrl = 'https://www.topsarkarijobs.com/education/' + encodeURIComponent(sectionId) + '/';
-        if (slug) cleanUrl += '?slug=' + encodeURIComponent(slug);
+        if (slug) cleanUrl += slug + '/';
         can.href = cleanUrl;
-        try { window.history.replaceState({}, '', '/education/' + encodeURIComponent(sectionId) + '/' + (slug ? '?slug=' + encodeURIComponent(slug) : '')); } catch(_){}
+        try { window.history.replaceState({}, '', cleanUrl); } catch(_){}
       }
     })();
-    const slugArg   = safe(params.get('slug') || '');
+    const slugArg = _pathSlug || safe(params.get('slug') || '');
 
     const loadingEl = document.getElementById('edLoading');
     const errorEl   = document.getElementById('edError');

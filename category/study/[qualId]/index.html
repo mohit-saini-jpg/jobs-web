@@ -684,13 +684,92 @@
           var matched = items.find(function(item){
             return makeSlug(item.name||'') === slugArg;
           });
-          if(matched){ renderDetail(matched, section); }
-          else { renderList(section); } // fallback to list
+          if(matched){
+            // ── If detail is empty, fetch full data from /jobs/data/<slug>.json ──
+            var hasDetail = matched.detail && Object.keys(matched.detail).length > 0;
+            if(!hasDetail){
+              var jobSlug = matched.slug || slugArg;
+              fetch('/jobs/data/' + encodeURIComponent(jobSlug) + '.json')
+                .then(function(r){ return r.ok ? r.json() : null; })
+                .then(function(jd){
+                  if(jd){
+                    // Convert flat jobs/data JSON → detail format renderDetail expects
+                    matched.detail = convertJobDataToDetail(jd);
+                  }
+                  renderDetail(matched, section);
+                })
+                .catch(function(){ renderDetail(matched, section); });
+            } else {
+              renderDetail(matched, section);
+            }
+          } else { renderList(section); }
         } else {
           renderList(section);
         }
       })
       .catch(function(err){ showError('Failed to load: ' + err.message); });
+
+    // ── Convert flat jobs/data/<slug>.json → detail object for renderDetail ──
+    function convertJobDataToDetail(jd){
+      if(!jd) return {};
+      var bd = jd.basic_details || {};
+      var merged_bd = {
+        job_title:        jd.title || jd.job_title || bd.job_title || '',
+        post_name:        jd.post_name || jd.organization || bd.post_name || '',
+        organization_name:jd.organization || jd.organization_name || bd.organization_name || '',
+        total_vacancies:  jd.total_vacancies || jd.total_vacancy || bd.total_vacancies || '',
+        application_mode: jd.application_mode || bd.application_mode || 'Offline',
+        job_location:     jd.job_location || bd.job_location || 'India',
+        short_information:jd.short_info || jd.jobs_info || bd.short_information || '',
+        last_updated:     jd.post_date || jd.last_updated || bd.last_updated || '',
+      };
+      var merged_dates = jd.important_dates || {};
+      if(!merged_dates.last_date_to_apply && jd.last_date){
+        merged_dates = Object.assign({}, merged_dates, {last_date_to_apply: jd.last_date});
+      }
+      var merged_fee = jd.application_fee || bd.application_fee || {};
+      var merged_age = jd.age_limit || bd.age_limit || {};
+      if(!merged_age.minimum_age && jd.minimum_age) merged_age = Object.assign({}, merged_age, {minimum_age: jd.minimum_age});
+      if(!merged_age.maximum_age && jd.maximum_age) merged_age = Object.assign({}, merged_age, {maximum_age: jd.maximum_age});
+      var merged_qual = jd.qualification || bd.qualification || {};
+      if(typeof merged_qual === 'string') merged_qual = {education_qualification: merged_qual};
+      var merged_sal = jd.salary_details || bd.salary_details || {};
+      if(!merged_sal.pay_scale && jd.salary_pay_scale) merged_sal = Object.assign({}, merged_sal, {pay_scale: jd.salary_pay_scale});
+      // important_links: combine all_links, useful_links, important_links
+      var merged_lnk = {};
+      if(jd.important_links && typeof jd.important_links === 'object'){
+        merged_lnk = Object.assign({}, jd.important_links);
+      }
+      if(Array.isArray(jd.all_links) && jd.all_links.length){
+        var clicks = jd.all_links.map(function(l){ return {text: l.label||l.title||'Link', url: l.url||l.href||''}; }).filter(function(l){return l.url;});
+        if(clicks.length) merged_lnk.click_here = (merged_lnk.click_here||[]).concat(clicks.map(function(c){return c.url;}));
+      }
+      if(Array.isArray(jd.useful_links) && jd.useful_links.length && !merged_lnk.click_here){
+        var uLinks = [];
+        jd.useful_links.forEach(function(ul){
+          var href = ul.url || ul.href || (Array.isArray(ul.links)?ul.links[0]:ul.links) || '';
+          if(href) uLinks.push(href);
+        });
+        if(uLinks.length) merged_lnk.click_here = uLinks;
+      }
+      if(!merged_lnk.apply_online && jd.official_website) merged_lnk.official_website = jd.official_website;
+      return {
+        basic_details:    merged_bd,
+        important_dates:  merged_dates,
+        application_fee:  merged_fee,
+        age_limit:        merged_age,
+        qualification:    merged_qual,
+        vacancy_details:  jd.vacancy_details || bd.vacancy_details || [],
+        category_wise_vacancy: jd.category_wise_vacancy || bd.category_wise_vacancy || {},
+        salary_details:   merged_sal,
+        selection_process:jd.selection_process || bd.selection_process || [],
+        how_to_apply:     jd.how_to_apply || bd.how_to_apply || [],
+        important_instructions: jd.important_instructions || bd.important_instructions || [],
+        faq:              jd.faq || bd.faq || [],
+        seo_tags:         jd.seo_tags || bd.seo_tags || [],
+        important_links:  merged_lnk,
+      };
+    }
 
   })();
   </script>

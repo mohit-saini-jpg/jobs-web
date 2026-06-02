@@ -534,6 +534,51 @@ if os.path.exists(SRC):
             cat_items.append({'slug': slug_s, 'name': title_s, 'date': normalise_date(last_dt) or ''})
         if cat_items:
             sections_index[cat] = cat_items
+
+# ── Add STATE_JOBS, CENTRAL_JOBS, ADMISSIONS from merged_sarkari_data.json ──
+# These categories come from merged_sarkari_data.json, NOT Complete_Jobs_Full_Data.json
+# JSON insertion order is preserved — no sort applied
+MERGED_SINDEX_CATS = ['STATE_JOBS', 'CENTRAL_JOBS', 'ADMISSIONS',
+                      'SR_Latest_Jobs', 'SR_Result', 'SR_Admit_Card',
+                      'SR_Admission', 'SR_Answer_Key', 'UPCOMING_JOBS',
+                      'LATEST_JOBS NEW', 'OFFLINE_FORM']
+if os.path.exists(MERGED):
+    with open(MERGED, encoding='utf-8') as f:
+        merged_data_si = json.load(f)
+    merged_jobs_si = merged_data_si.get('jobs', [])
+    from collections import defaultdict as _dd
+    merged_buckets = _dd(list)
+    for j in merged_jobs_si:
+        cat = (j.get('category') or '').strip()
+        if cat:
+            merged_buckets[cat].append(j)
+    for cat in MERGED_SINDEX_CATS:
+        jobs_m = merged_buckets.get(cat, [])
+        if not jobs_m:
+            continue
+        cat_items_m = []
+        for job in jobs_m:
+            title_m = (job.get('title') or job.get('post_name') or '').strip()
+            if not title_m:
+                continue
+            slug_m = job.get('slug') or slugify(title_m)
+            dates_m = job.get('important_dates') or {}
+            if isinstance(dates_m, str):
+                dates_m = {}
+            last_dt_m = (dates_m.get('last_date_to_apply') or dates_m.get('last_date') or job.get('last_date') or '')
+            org_m = (job.get('organization') or job.get('board_name') or '').strip()
+            cat_items_m.append({
+                'slug': slug_m,
+                'name': title_m,
+                'date': normalise_date(last_dt_m) or '',
+                'org': org_m,
+                'vac': str(job.get('total_post') or job.get('total_vacancy') or ''),
+            })
+        if cat_items_m:
+            sections_index[cat] = cat_items_m
+    print(f"  sections-index merged cats added: {[c for c in MERGED_SINDEX_CATS if c in sections_index]}")
+
+if sections_index:
     with open('sections-index.json', 'w', encoding='utf-8') as f:
         json.dump(sections_index, f, ensure_ascii=False, separators=(',',':'))
     print(f"  sections-index.json: {sum(len(v) for v in sections_index.values())} jobs across {len(sections_index)} categories")

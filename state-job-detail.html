@@ -562,8 +562,25 @@ window.__TSJ_PSR_DISABLED = true;
       return m2 ? decodeURIComponent(m2[1]) : '';
     }
 
-    const stateArg = safe(params.get('state') || '');
-    const slugArg  = safe(getSlugFromPath() || params.get('slug') || '');
+    // Extract state + slug from clean path: /state/<state>/<slug>/
+    function getStateFromPath() {
+      const m = location.pathname.match(/\/state\/([^/]+)\/([^/]+)\/?$/i);
+      if (m) return decodeURIComponent(m[1]);
+      const fallback = params.get('_path') || '';
+      const m2 = fallback.match(/\/state\/([^/]+)\/([^/]+)\/?$/i);
+      if (m2) return decodeURIComponent(m2[1]);
+      return '';
+    }
+    function getSlugFromStatePath() {
+      const m = location.pathname.match(/\/state\/([^/]+)\/([^/]+)\/?$/i);
+      if (m) return decodeURIComponent(m[2]);
+      const fallback = params.get('_path') || '';
+      const m2 = fallback.match(/\/state\/([^/]+)\/([^/]+)\/?$/i);
+      if (m2) return decodeURIComponent(m2[2]);
+      return '';
+    }
+    const stateArg = safe(params.get('state') || getStateFromPath() || '');
+    const slugArg  = safe(getSlugFromStatePath() || getSlugFromPath() || params.get('slug') || '');
 
     /* ── DOM Refs ── */
     const loadingEl = document.getElementById('sjdLoading');
