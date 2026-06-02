@@ -1563,6 +1563,199 @@ def _e(s): return _html_mod.escape(str(s or ''), quote=True)
 # ══════════════════════════════════════════════════════════
 STATE_WISE_FILE = _Path('State_Wise_Jobs.json')
 if STATE_WISE_FILE.exists():
+
+def _build_state_detail_html(detail, item, esc_fn, json_mod):
+    """Render A-to-Z detail fields for state job pages"""
+    import html as _hm
+    def _e(s): return _hm.escape(str(s or ''), quote=True)
+    def safe(v):
+        if not v: return ''
+        if isinstance(v, str): return v.strip()
+        if isinstance(v, (int, float)): return str(v)
+        if isinstance(v, list): return ', '.join(safe(x) for x in v if x)
+        if isinstance(v, dict):
+            for k in ['text','value','name','details','description','qualification','eligibility','pay_scale','salary']:
+                if v.get(k) and isinstance(v[k], str): return v[k].strip()
+            return ' | '.join(safe(vv) for vv in v.values() if vv)
+        return str(v)
+
+    def card(heading, icon, color, body):
+        return (f'<div class="ic"><div class="ich" style="background:{color};">'
+                f'<i class="fa-solid fa-{icon}"></i> {_e(heading)}</div>{body}</div>\n')
+
+    def kv_table(pairs):
+        rows = ''.join(f'<tr><th>{_e(l)}</th><td>{_e(v)}</td></tr>'
+                       for l,v in pairs if safe(v))
+        return f'<table class="it"><tbody>{rows}</tbody></table>' if rows else ''
+
+    html = ''
+
+    # ── Application Fee ──
+    fee = detail.get('application_fee') or {}
+    fee_pairs = [
+        ('General / OBC / EWS', safe(fee.get('general_fee') or fee.get('general') or fee.get('ur') or '')),
+        ('SC / ST', safe(fee.get('sc_fee') or fee.get('sc') or fee.get('st') or '')),
+        ('EWS', safe(fee.get('ews') or '')),
+        ('PwD / PH', safe(fee.get('ph') or fee.get('pwd') or '')),
+        ('Female', safe(fee.get('female') or '')),
+        ('All Category', safe(fee.get('all') or fee.get('all_category') or '')),
+        ('Fee Details', safe(fee.get('general_fee') or fee.get('details') or '')),
+    ]
+    fee_body = kv_table([(l,v) for l,v in fee_pairs if v])
+    if not fee_body:
+        fee_body = '<div style="padding:.8rem 1rem;font-size:.85rem;color:#15803d;"><i class="fa-solid fa-check-circle"></i> No fee / See notification</div>'
+    html += card('Application Fee', 'indian-rupee-sign', 'linear-gradient(135deg,#be185d,#db2777)', fee_body)
+
+    # ── Age Limit ──
+    age = detail.get('age_limit') or {}
+    age_pairs = [
+        ('Minimum Age', safe(age.get('minimum_age') or '')),
+        ('Maximum Age', safe(age.get('maximum_age') or age.get('age_limit') or '')),
+        ('Age Relaxation', safe(age.get('age_relaxation') or '')),
+        ('Age Details', safe(age.get('age_details') or age.get('details') or '')),
+    ]
+    age_body = kv_table([(l,v) for l,v in age_pairs if v])
+    if age_body:
+        html += card('Age Limit', 'user-clock', 'linear-gradient(135deg,#0f766e,#0891b2)', age_body)
+
+    # ── Qualification ──
+    qual = detail.get('qualification') or {}
+    eq = safe(qual.get('education_qualification') or qual.get('eligibility') or qual.get('details') or '')
+    if not eq and item.get('qualification'):
+        eq = safe(item.get('qualification'))
+    if eq:
+        body = f'<div style="padding:.85rem 1rem;font-size:.85rem;line-height:1.75;color:#1e293b;">{_e(eq)}</div>'
+        html += card('Qualification / Eligibility', 'graduation-cap', 'linear-gradient(135deg,#0284c7,#0369a1)', body)
+
+    # ── Vacancy Details ──
+    vd = detail.get('vacancy_details') or []
+    if isinstance(vd, list) and vd:
+        cols = list(vd[0].keys())
+        thead = ''.join(f'<th style="background:#1d4ed8;color:#fff;padding:8px 10px;text-align:left;">{_e(c)}</th>' for c in cols)
+        tbody = ''.join('<tr>' + ''.join(f'<td style="padding:7px 10px;border-bottom:1px solid #f1f5f9;">{_e(safe(r.get(c,"")))}</td>' for c in cols) + '</tr>' for r in vd)
+        body = f'<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:.84rem;"><thead><tr>{thead}</tr></thead><tbody>{tbody}</tbody></table></div>'
+        html += card('Vacancy Details', 'chart-pie', 'linear-gradient(135deg,#15803d,#16a34a)', body)
+    elif isinstance(vd, dict) and vd:
+        pairs = [(k, safe(v)) for k,v in vd.items() if safe(v)]
+        body = kv_table(pairs)
+        if body: html += card('Vacancy Details', 'chart-pie', 'linear-gradient(135deg,#15803d,#16a34a)', body)
+
+    # ── Salary ──
+    sal = detail.get('salary_details') or {}
+    sal_str = safe(sal.get('pay_scale') or sal.get('salary') or sal.get('details') or '')
+    if sal_str:
+        body = f'<div style="padding:.85rem 1rem;font-size:.95rem;font-weight:800;color:#15803d;">{_e(sal_str)}</div>'
+        if sal.get('details') and sal.get('details') != sal.get('pay_scale'):
+            body += f'<div style="padding:0 1rem .85rem;font-size:.82rem;color:#374151;">{_e(safe(sal.get("details","")))}</div>'
+        html += card('Salary & Pay Scale', 'sack-dollar', 'linear-gradient(135deg,#15803d,#16a34a)', body)
+
+    # ── Selection Process ──
+    sp = detail.get('selection_process') or []
+    if isinstance(sp, list) and sp:
+        steps = ''.join(
+            f'<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:.84rem;">'
+            f'<span style="background:#1d4ed8;color:#fff;border-radius:50%;width:22px;height:22px;min-width:22px;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;">{i+1}</span>'
+            f'{_e(safe(s))}</div>'
+            for i, s in enumerate(sp) if safe(s)
+        )
+        if steps:
+            html += card('Selection Process', 'list-check', 'linear-gradient(135deg,#5b21b6,#7c3aed)',
+                         f'<div style="padding:.85rem 1rem;">{steps}</div>')
+    elif isinstance(sp, str) and sp.strip():
+        html += card('Selection Process', 'list-check', 'linear-gradient(135deg,#5b21b6,#7c3aed)',
+                     f'<div style="padding:.85rem 1rem;font-size:.84rem;">{_e(sp)}</div>')
+
+    # ── How To Apply ──
+    hta = detail.get('how_to_apply') or []
+    if isinstance(hta, list) and hta:
+        steps = ''.join(
+            f'<div style="display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid #f1f5f9;font-size:.84rem;line-height:1.65;">'
+            f'<span style="background:#0f766e;color:#fff;border-radius:50%;width:22px;height:22px;min-width:22px;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;margin-top:1px;">{i+1}</span>'
+            f'<span>{_e(safe(s))}</span></div>'
+            for i, s in enumerate(hta) if safe(s)
+        )
+        if steps:
+            html += card('How To Apply', 'clipboard-list', 'linear-gradient(135deg,#0f766e,#0891b2)',
+                         f'<div style="padding:.5rem 1rem;">{steps}</div>')
+    elif isinstance(hta, str) and hta.strip():
+        html += card('How To Apply', 'clipboard-list', 'linear-gradient(135deg,#0f766e,#0891b2)',
+                     f'<div style="padding:.85rem 1rem;font-size:.84rem;">{_e(hta)}</div>')
+
+    # ── Important Instructions ──
+    ii = detail.get('important_instructions') or []
+    if isinstance(ii, list) and ii:
+        items_html = ''.join(
+            f'<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:.82rem;color:#374151;line-height:1.6;">'
+            f'<i class="fa-solid fa-triangle-exclamation" style="color:#ea580c;flex-shrink:0;margin-top:2px;"></i>'
+            f'<span>{_e(safe(s))}</span></div>'
+            for s in ii if safe(s)
+        )
+        if items_html:
+            html += card('Important Instructions', 'circle-exclamation', 'linear-gradient(135deg,#b45309,#ca8a04)',
+                         f'<div style="padding:.5rem 1rem;">{items_html}</div>')
+
+    # ── Important Links — all sources ──
+    il = detail.get('important_links') or {}
+    all_lnks = []
+    seen_u = set()
+    def _add_lnk(lbl, url):
+        u = str(url or '').strip()
+        if u and u.startswith('http') and u not in seen_u:
+            seen_u.add(u); all_lnks.append((str(lbl), u))
+    # structured_links first
+    for sl2 in (il.get('structured_links') or []):
+        _add_lnk(sl2.get('label') or sl2.get('title') or 'Link', sl2.get('url') or sl2.get('href') or '')
+    # apply_online
+    _add_lnk('Apply Online', il.get('apply_online') or '')
+    # notification_pdf
+    _add_lnk('Notification PDF', il.get('notification_pdf') or '')
+    # click_here
+    chs = il.get('click_here') or []
+    for i2, c2 in enumerate((chs if isinstance(chs, list) else [chs])):
+        _add_lnk(f'Click Here {i2+1}' if i2 else 'Click Here', str(c2 or ''))
+    # official_website
+    _add_lnk('Official Website', il.get('official_website') or il.get('visit_website') or '')
+    # item url fallback
+    _add_lnk('Official Portal', item.get('url') or '')
+
+    if all_lnks:
+        btns = ''
+        for lbl2, url2 in all_lnks:
+            is_apply = any(w in lbl2.lower() for w in ['apply','register','login'])
+            is_pdf = 'pdf' in url2.lower() or 'pdf' in lbl2.lower()
+            is_notif = any(w in lbl2.lower() for w in ['notification','advt','advertisement'])
+            if is_apply: cls2,ico2 = 'lbtn-gr','paper-plane'
+            elif is_pdf or is_notif: cls2,ico2 = 'lbtn-bl','file-pdf'
+            else: cls2,ico2 = 'lbtn-bl','link'
+            btns += (f'<a href="{_e(url2)}" target="_blank" rel="noopener" class="lbtn {cls2}">'
+                     f'<i class="fa-solid fa-{ico2}"></i>{_e(lbl2[:40])}</a>')
+        html += card('All Important Links', 'link', '#1d6dbc',
+                     f'<div class="lg">{btns}</div>')
+
+    # ── FAQ ──
+    faqs = detail.get('faq') or []
+    if isinstance(faqs, list) and faqs:
+        # Deduplicate
+        seen_q = set(); unique_faqs = []
+        for fq in faqs:
+            q = safe(fq.get('question') or fq.get('q') or '')
+            if q and q not in seen_q: seen_q.add(q); unique_faqs.append(fq)
+        if unique_faqs:
+            faq_html = ''.join(
+                f'<div style="border-bottom:1px solid #f1f5f9;">'
+                f'<div onclick="var a=this.nextElementSibling;a.style.display=a.style.display===\'block\'?\'none\':\'block\';" '
+                f'style="cursor:pointer;padding:.65rem 1rem;font-size:.84rem;font-weight:700;color:#0f172a;display:flex;justify-content:space-between;align-items:center;">'
+                f'<span>{_e(safe(fq.get("question") or fq.get("q") or ""))}</span>'
+                f'<i class="fa-solid fa-chevron-down" style="font-size:.75rem;color:#94a3b8;flex-shrink:0;margin-left:8px;"></i></div>'
+                f'<div style="display:none;padding:.4rem 1rem .85rem;font-size:.82rem;color:#374151;line-height:1.7;">'
+                f'{_e(safe(fq.get("answer") or fq.get("a") or ""))}</div></div>'
+                for fq in unique_faqs[:15]
+            )
+            html += card('Frequently Asked Questions (FAQ)', 'circle-question',
+                         'linear-gradient(135deg,#b45309,#d97706)', faq_html)
+
+    return html
+
     print("\n🏛️  Generating state job pages...")
     import json as _json2
     with open(STATE_WISE_FILE, encoding='utf-8') as _f:
@@ -1699,7 +1892,8 @@ if STATE_WISE_FILE.exists():
                 '</table></div>\n'
                 '<div class="ic"><div class="ich"><i class="fa-solid fa-link"></i> Important Links</div>\n'
                 f'<div class="lg">{_lnk}</div></div>\n'
-                '</div></main><div id="site-footer"></div>\n'
+                + _build_state_detail_html(_detail, _item, _e, _json2)
+                + '</div></main><div id="site-footer"></div>\n'
                 '<script>(function(){var h=fetch("/header.html",{cache:"no-store"}).then(function(r){return r.ok?r.text():null;}).catch(function(){return null;});'
                 'document.addEventListener("DOMContentLoaded",function(){h.then(function(html){if(html){var el=document.getElementById("site-header");'
                 'if(el)el.innerHTML=html;if(typeof window.__TSJ_INIT_HEADER==="function")window.__TSJ_INIT_HEADER();}});'
