@@ -1755,6 +1755,7 @@ def _build_state_detail_html(detail, item, esc_fn, json_mod):
 
     return html
 
+if STATE_WISE_FILE.exists():
     print("\n🏛️  Generating state job pages...")
     import json as _json2
     with open(STATE_WISE_FILE, encoding='utf-8') as _f:
@@ -1906,6 +1907,106 @@ def _build_state_detail_html(detail, item, esc_fn, json_mod):
             _st_written += 1
 
     print(f"   State pages: {_st_written} generated, {_st_skipped} skipped")
+
+# ── Also generate from Complete_Jobs_Full_Data.json state_jobs sections ──
+_cj_state_secs = cj.get('state_jobs', {}).get('sections', []) if isinstance(cj.get('state_jobs'), dict) else []
+if _cj_state_secs:
+    import json as _json2c
+    _cj_st_written = _cj_st_skipped = 0
+    for _sec in _cj_state_secs:
+        _state_name = (_sec.get('state') or _sec.get('title') or '').strip()
+        if not _state_name: continue
+        _state_slug = slugify(_state_name)
+        for _item in _sec.get('items', []):
+            _name = (_item.get('name') or '').strip()
+            if not _name: continue
+            _job_slug = clean_slug(_item.get('slug') or '') or slugify(_name)
+            if not _job_slug: continue
+            _page_dir = _Path('state') / _state_slug / _job_slug
+            _out_file  = _page_dir / 'index.html'
+            if _out_file.exists() and not FORCE_REGEN:
+                _cj_st_skipped += 1
+                continue
+            _detail = _item.get('detail') or {}
+            if isinstance(_detail, str):
+                try:    _detail = _json2c.loads(_detail)
+                except: _detail = {}
+            _bd   = _detail.get('basic_details', {}) or {}
+            _id   = _detail.get('important_dates', {}) or {}
+            _il   = _detail.get('important_links', {}) or {}
+            _last = (_item.get('lastDate') or _id.get('last_date_to_apply') or '').strip()
+            _vac  = str(_bd.get('total_vacancies') or '').strip()
+            _info = str(_bd.get('short_information') or _bd.get('short_info') or '')[:300].strip()
+            _aurl = (_il.get('apply_online') or _il.get('official_website') or _item.get('url') or '').strip()
+            _nurl = (_il.get('notification_pdf') or '').strip()
+            _mode = _e(_bd.get('application_mode') or 'Online')
+            _lnk = ''
+            if _aurl:
+                _lnk += '<a href="' + _e(_aurl) + '" target="_blank" rel="noopener" class="lbtn lbtn-gr"><i class="fa-solid fa-paper-plane"></i>Apply Online</a>\n'
+            if _nurl:
+                _lnk += '<a href="' + _e(_nurl) + '" target="_blank" rel="noopener" class="lbtn lbtn-bl"><i class="fa-solid fa-file-pdf"></i>Notification</a>\n'
+            if not _lnk:
+                _lnk = '<p style="padding:1rem;color:#64748b;font-size:.84rem;">Check official website.</p>'
+            _vac_row  = f'<tr><th>Total Posts</th><td>{_e(_vac)}</td></tr>' if _vac else ''
+            _last_row = f'<tr><th>Last Date</th><td style="color:#dc2626;font-weight:700;">{_e(_last)}</td></tr>' if _last else ''
+            _info_box = f'<div class="ic"><div class="ich"><i class="fa-solid fa-circle-info"></i> About</div><div style="padding:1rem 1.2rem;font-size:.85rem;line-height:1.75;color:#374151;">{_e(_info)}</div></div>' if _info else ''
+            _vac_pill = f'<span class="pill"><i class="fa-solid fa-users"></i> {_e(_vac)} Posts</span>' if _vac else ''
+            _last_pill= f'<span class="pill"><i class="fa-solid fa-hourglass-end"></i> Last Date: {_e(_last)}</span>' if _last else ''
+            _canon    = f'https://www.topsarkarijobs.com/state/{_state_slug}/{_job_slug}/'
+            _meta_t = _e(f"{_name} | {_state_name} Govt Jobs 2026 | TopSarkariJobs")
+            _meta_d = _e(f"{_name}. {_state_name} government job. Last date: {_last}. {_info}"[:300])
+            _ld_name  = _json2c.dumps(_name)
+            _ld_desc  = _json2c.dumps(f"{_name}. {_state_name} government job.")
+            _ld_canon = _json2c.dumps(_canon)
+            _ld_state = _json2c.dumps(_state_name + " Government")
+            _ld_reg   = _json2c.dumps(_state_name)
+            _bc_state = _json2c.dumps(_state_name)
+            _html = (
+                '<!DOCTYPE html>\n'
+                '<html lang="en"><head>\n'
+                '<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>\n'
+                f'<title>{_meta_t}</title>\n'
+                f'<meta name="description" content="{_meta_d}"/>\n'
+                '<meta name="robots" content="index, follow"/>\n'
+                f'<link rel="canonical" href="{_e(_canon)}"/>\n'
+                f'<script type="application/ld+json">{{"@context":"https://schema.org","@type":"JobPosting","title":{_ld_name},"description":{_ld_desc},"url":{_ld_canon},"hiringOrganization":{{"@type":"Organization","name":{_ld_state}}},"jobLocation":{{"@type":"Place","address":{{"@type":"PostalAddress","addressRegion":{_ld_reg},"addressCountry":"IN"}}}}}}</script>\n'
+                f'<script type="application/ld+json">{{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{{"@type":"ListItem","position":1,"name":"Home","item":"https://www.topsarkarijobs.com/"}},{{"@type":"ListItem","position":2,"name":"State Jobs","item":"https://www.topsarkarijobs.com/state/"}},{{"@type":"ListItem","position":3,"name":{_bc_state},"item":"https://www.topsarkarijobs.com/state/{_state_slug}/"}},{{"@type":"ListItem","position":4,"name":{_ld_name},"item":{_ld_canon}}}]}}</script>\n'
+                '<link rel="icon" type="image/x-icon" href="/image.ico"/>\n'
+                '<link rel="stylesheet" href="/styles.css"/>\n'
+                '<link rel="stylesheet" href="/fonts/fa/all.min.css"/>\n'
+                '<script src="/analytics.js" defer></script>\n'
+                '<script src="/tsj-menu.js" defer></script></head>\n'
+                '<body><div id="site-header"></div><main><div class="pg">\n'
+                f'<nav class="bc"><a href="/">Home</a> › <a href="/state/">State Jobs</a> › <a href="/state/{_state_slug}/">{_e(_state_name)}</a> › {_e(_name[:55])}</nav>\n'
+                f'<div class="jh"><h1>{_e(_name)}</h1><div>\n'
+                f'<span class="pill"><i class="fa-solid fa-map-marker-alt"></i> {_e(_state_name)}</span>\n'
+                f'{_vac_pill}\n'
+                f'{_last_pill}\n'
+                '</div></div>\n'
+                f'{_info_box}\n'
+                '<div class="ic"><div class="ich"><i class="fa-solid fa-table-list"></i> Job Details</div>\n'
+                '<table class="it">\n'
+                f'<tr><th>Post Name</th><td>{_e(_name)}</td></tr>\n'
+                f'<tr><th>State</th><td>{_e(_state_name)}</td></tr>\n'
+                f'{_vac_row}\n'
+                f'{_last_row}\n'
+                f'<tr><th>Apply Mode</th><td>{_mode}</td></tr>\n'
+                '</table></div>\n'
+                '<div class="ic"><div class="ich"><i class="fa-solid fa-link"></i> Important Links</div>\n'
+                f'<div class="lg">{_lnk}</div></div>\n'
+                + _build_state_detail_html(_detail, _item, _e, _json2c)
+                + '</div></main><div id="site-footer"></div>\n'
+                '<script>(function(){var h=fetch("/header.html",{cache:"no-store"}).then(function(r){return r.ok?r.text():null;}).catch(function(){return null;});'
+                'document.addEventListener("DOMContentLoaded",function(){h.then(function(html){if(html){var el=document.getElementById("site-header");'
+                'if(el)el.innerHTML=html;if(typeof window.__TSJ_INIT_HEADER==="function")window.__TSJ_INIT_HEADER();}});'
+                'fetch("/footer.html").then(function(r){return r.ok?r.text():null;}).then(function(fh){if(fh){var fe=document.getElementById("site-footer");'
+                'if(fe)fe.innerHTML=fh;}});});})();</script>\n'
+                '</body></html>'
+            )
+            _page_dir.mkdir(parents=True, exist_ok=True)
+            _out_file.write_text(_html, encoding='utf-8')
+            _cj_st_written += 1
+    print(f"   Complete_Jobs state pages: {_cj_st_written} generated, {_cj_st_skipped} skipped")
 
 # ══════════════════════════════════════════════════════════
 # EDUCATION: /education/state/job-slug/index.html
