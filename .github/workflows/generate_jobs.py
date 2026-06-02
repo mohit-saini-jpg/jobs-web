@@ -1675,7 +1675,7 @@ if STATE_WISE_FILE.exists():
                 '.lbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:12px 8px;border-radius:10px;text-decoration:none;font-weight:700;font-size:.75rem;text-align:center;transition:.18s;min-height:72px;border:1px solid transparent;}'
                 '.lbtn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.12);}'
                 '.lbtn i{font-size:1.1rem;}'
-                '.lbtn-gr{background:#f0fdf4;color:#15803d;border-color:#bbf7d0;}'
+                '.lbtn-gr{background:#f0fdf4;color:#15803d;border-color:#bbf7d0;}.lbtn-bl{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe;}'
                 '.lbtn-bl{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe;}'
                 '.bc{font-size:.8rem;color:#64748b;margin-bottom:1rem;display:flex;flex-wrap:wrap;gap:5px;}'
                 '.bc a{color:#1d4ed8;text-decoration:none;}'
@@ -1717,6 +1717,128 @@ if STATE_WISE_FILE.exists():
 # ══════════════════════════════════════════════════════════
 # EDUCATION: /education/state/job-slug/index.html
 # ══════════════════════════════════════════════════════════
+# ── Education detail HTML builder (used by education page generator) ──
+def _build_edu_detail_html(item, esc_fn):
+    """Render full detail sections + all important links from item.detail"""
+    import html as _html_mod
+    def _e(s): return _html_mod.escape(str(s or ''), quote=True)
+    det = item.get('detail') or {}
+    if not det:
+        return ''
+    html = ''
+    short_info = str(det.get('short_info') or '').strip()
+    if short_info:
+        html += ('<div class="ic">'
+                 '<div class="ich" style="background:linear-gradient(135deg,#0f766e,#0891b2);">'
+                 '<i class="fa-solid fa-circle-info"></i> About</div>'
+                 f'<div style="padding:10px 14px;font-size:.84rem;color:#1e293b;line-height:1.7;background:#f0f9ff;border-left:4px solid #0891b2;">{_e(short_info[:600])}</div>'
+                 '</div>\n')
+    # Render each section
+    for sec in det.get('sections') or []:
+        heading = str(sec.get('heading') or '').strip()
+        contents = sec.get('content') or []
+        body = ''
+        for blk in contents:
+            btype = str(blk.get('type') or '').lower()
+            if btype == 'paragraph':
+                txt = str(blk.get('text') or '').strip()
+                if txt:
+                    body += f'<p style="font-size:.83rem;color:#374151;line-height:1.7;padding:8px 14px;margin:0;border-bottom:1px solid #f1f5f9;">{_e(txt)}</p>'
+            elif btype == 'table':
+                rows = blk.get('rows') or []
+                headers = blk.get('headers') or []
+                if not headers and rows:
+                    headers = rows[0]
+                    rows = rows[1:]
+                if not rows:
+                    continue
+                if len(headers) == 2 or (rows and len(rows[0]) == 2):
+                    body += '<div style="overflow-x:auto;"><table class="it" style="font-size:.82rem;">'
+                    for r in rows:
+                        if len(r) >= 2:
+                            body += f'<tr><th style="width:40%;">{_e(r[0])}</th><td>{_e(r[1])}</td></tr>'
+                    body += '</table></div>'
+                else:
+                    body += '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:.82rem;">'
+                    if headers:
+                        ths = ''.join(f'<th style="background:#4338ca;color:#fff;padding:8px 10px;text-align:left;">{_e(h)}</th>' for h in headers)
+                        body += f'<thead><tr>{ths}</tr></thead>'
+                    body += '<tbody>'
+                    for r in rows:
+                        tds = ''.join(f'<td style="padding:7px 10px;border-bottom:1px solid #f1f5f9;">{_e(c)}</td>' for c in r)
+                        body += f'<tr>{tds}</tr>'
+                    body += '</tbody></table></div>'
+            elif btype == 'list':
+                items2 = blk.get('items') or []
+                if not items2:
+                    continue
+                tag = 'ol' if (blk.get('style') or '') == 'ordered' else 'ul'
+                lis = ''.join(f'<li style="font-size:.82rem;color:#374151;padding:3px 0;line-height:1.6;">{_e(i)}</li>' for i in items2)
+                body += f'<{tag} style="padding:10px 14px 10px 30px;margin:0;">{lis}</{tag}>'
+            elif btype == 'merged_info':
+                for mi in blk.get('items') or []:
+                    lbl = str(mi.get('label') or '').strip()
+                    txt = str(mi.get('text') or '').strip()
+                    if lbl or txt:
+                        body += f'<div style="padding:8px 14px;border-bottom:1px solid #f1f5f9;">'
+                        if lbl:
+                            body += f'<div style="font-size:.72rem;font-weight:700;color:#4338ca;text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px;">{_e(lbl)}</div>'
+                        if txt:
+                            body += f'<div style="font-size:.81rem;color:#374151;line-height:1.6;">{_e(txt)}</div>'
+                        body += '</div>'
+            elif btype == 'important_links':
+                links = blk.get('links') or []
+                if links:
+                    btns = ''
+                    for lnk in links:
+                        href = str(lnk.get('url') or lnk.get('href') or '').strip()
+                        lbl = str(lnk.get('label') or lnk.get('title') or lnk.get('text') or 'Link').strip()
+                        if href:
+                            btns += (f'<a href="{_e(href)}" target="_blank" rel="noopener" class="lbtn lbtn-gr">'
+                                     f'<i class="fa-solid fa-arrow-up-right-from-square"></i>{_e(lbl[:40])}</a>')
+                    if btns:
+                        body += f'<div class="lg">{btns}</div>'
+        if not body:
+            continue
+        ic_color = 'linear-gradient(135deg,#4338ca,#6366f1)'
+        html += f'<div class="ic"><div class="ich" style="background:{ic_color};">'
+        if heading:
+            html += f'<i class="fa-solid fa-circle-dot"></i> {_e(heading)}'
+        else:
+            html += '<i class="fa-solid fa-file-lines"></i> Details'
+        html += f'</div>{body}</div>\n'
+    # Important links from det.important_links
+    il = det.get('important_links') or {}
+    sl = il.get('structured_links') or []
+    ch = il.get('click_here') or []
+    npdf = il.get('notification_pdf') or ''
+    all_lnks = []
+    seen_urls = set()
+    def _add(lbl, url):
+        u = str(url or '').strip()
+        if u and u not in seen_urls:
+            seen_urls.add(u)
+            all_lnks.append((lbl, u))
+    for s in sl:
+        _add(str(s.get('label') or 'Link'), str(s.get('url') or ''))
+    if npdf: _add('Notification PDF', npdf)
+    for c in (ch if isinstance(ch, list) else [ch]):
+        _add('Click Here', str(c or ''))
+    if all_lnks:
+        btns2 = ''
+        for lbl2, url2 in all_lnks:
+            is_pdf = 'pdf' in url2.lower() or 'pdf' in lbl2.lower()
+            is_apply = any(w in lbl2.lower() for w in ['apply','register','login'])
+            cls2 = 'lbtn-bl' if is_pdf else ('lbtn-gr' if is_apply else 'lbtn-gr')
+            btns2 += (f'<a href="{_e(url2)}" target="_blank" rel="noopener" class="lbtn {cls2}" style="min-width:120px;">'
+                      f'<i class="fa-solid fa-{"file-pdf" if is_pdf else "arrow-up-right-from-square"}"></i>'
+                      f'{_e(lbl2[:45])}</a>')
+        html += ('<div class="ic">'
+                 '<div class="ich" style="background:#1d6dbc;"><i class="fa-solid fa-link"></i> Important Links</div>'
+                 f'<div class="lg">{btns2}</div>'
+                 '</div>\n')
+    return html
+
 if CJ_FILE.exists():
     print("\n🎓 Generating education pages...")
     import json as _json3
@@ -1820,8 +1942,9 @@ if CJ_FILE.exists():
                 f'<tr><th>Category</th><td>{_e(_sec_title)}</td></tr>\n'
                 f'{_date_row}\n'
                 '</table></div>\n'
-                f'{_links_box}\n'
-                '</div></main><div id="site-footer"></div>\n'
+                + _build_edu_detail_html(_item2, _e)
+                + f'{_links_box}\n'
+                + '</div></main><div id="site-footer"></div>\n'
                 '<script>(function(){var h=fetch("/header.html",{cache:"no-store"}).then(function(r){return r.ok?r.text():null;}).catch(function(){return null;});'
                 'document.addEventListener("DOMContentLoaded",function(){h.then(function(html){if(html){var el=document.getElementById("site-header");'
                 'if(el)el.innerHTML=html;if(typeof window.__TSJ_INIT_HEADER==="function")window.__TSJ_INIT_HEADER();}});'
