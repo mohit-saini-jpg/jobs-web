@@ -1427,6 +1427,8 @@
 
   function runBasePatches(rawJob) {
     if (!rawJob) return;
+    /* ── Skip jp-card DOM shows if FSCD layout is active ── */
+    const _fscdActive = !!(document.getElementById('fscd-main-portal'));
     const bd = rawJob.basic_details || {};
     const id = rawJob.important_dates || {};
     const age = rawJob.age_limit || {};
@@ -1507,7 +1509,7 @@
     const maxAge = safe(rawJob.maximum_age || age.maximum_age || age.age_limit || age.age_details || '');
     const ageRelax = safe(rawJob.age_relaxation || age.age_relaxation || age.details || '');
     const ageCard = document.getElementById('ageCard');
-    if ((minAge || maxAge || ageRelax) && ageCard && ageCard.style.display === 'none') {
+    if (!_fscdActive && (minAge || maxAge || ageRelax) && ageCard && ageCard.style.display === 'none') {
       ageCard.style.display = '';
       const ageBody = document.getElementById('ageTableBody');
       if (ageBody) {
@@ -1522,7 +1524,7 @@
     // ── Qualification card patch ──────────────────────────────────────
     const eduQual = safe(rawJob.education_qualification || rawJob.eligibility || (rawJob.qualification && (rawJob.qualification.education_qualification || rawJob.qualification.eligibility)) || '');
     const qualCard = document.getElementById('qualCard');
-    if (eduQual && qualCard && qualCard.style.display === 'none') {
+    if (!_fscdActive && eduQual && qualCard && qualCard.style.display === 'none') {
       qualCard.style.display = '';
       const qualContent = document.getElementById('qualContent');
       if (qualContent) qualContent.innerHTML = `<div class="jp-detail-text"><strong>Education Qualification:</strong> ${esc(eduQual)}</div>`;
@@ -1532,7 +1534,7 @@
     const shortInfo = safe(rawJob.short_information || rawJob.jobs_info || bd.short_information || '');
     const siCard = document.getElementById('shortInfoCard');
     const siText = document.getElementById('shortInfoText');
-    if (shortInfo && siCard && siCard.style.display === 'none' && siText) {
+    if (!_fscdActive && shortInfo && siCard && siCard.style.display === 'none' && siText) {
       siCard.style.display = '';
       if (isHtml(shortInfo)) siText.innerHTML = shortInfo; else siText.textContent = shortInfo;
     }
@@ -2117,8 +2119,8 @@
 
     if (best && bestScore >= 0.75) {
       const normalized = normalizeJob(best);
-      runBasePatches(normalized);
       injectAllSections(normalized);
+      runBasePatches(normalized);
     }
   }
 
@@ -2134,8 +2136,8 @@
     if (job && typeof job === 'object') {
       try { job = normalizeUpcomingJobsSections(job); } catch(e) {}
       job = normalizeJob(job);
-      try { runBasePatches(job); } catch(e) {}
       try { injectAllSections(job); } catch(e) {}
+      try { runBasePatches(job); } catch(e) {}
     } else {
       setTimeout(findAndEnrichFromFullData, 200);
     }

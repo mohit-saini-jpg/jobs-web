@@ -1401,7 +1401,7 @@
       const board    = item.board || '';
       const applyUrl = (item.url || '').trim();
       // Always link to detail page (full job info)
-      const detailUrl = '/' + stateName.toLowerCase().replace(/ /g,'-').replace(/[^a-z0-9-]/g,'') + '/' + makeSlug(title) + '/';
+      const detailUrl = '/state/' + stateName.toLowerCase().replace(/ /g,'-').replace(/[^a-z0-9-]/g,'') + '/' + makeSlug(title) + '/';
       let isUrgent = false;
       if (item.lastDate) {
         try {
