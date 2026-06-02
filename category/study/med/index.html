@@ -217,7 +217,7 @@
 
       items.forEach(function(item, idx){
         var slug = makeSlug(item.name || '');
-        var url  = '/category/study/' + encodeURIComponent(qualId) + '/?slug=' + encodeURIComponent(slug);
+        var url  = '/category/study/' + encodeURIComponent(qualId) + '/' + encodeURIComponent(slug) + '/';
         var date = safe(item.date || item.lastDate || item.postDate || '');
         var qual = safe(item.qualification || section.qualification || '');
         html += '<a class="qs-list-item" href="' + url + '">';
@@ -253,11 +253,67 @@
       var shortInfo = safe(bd.short_information || '');
       var applyUrl  = safe(lnk.apply_online || lnk.official_website || item.url || '');
       var sectionQual = safe(section.qualification || '');
+      var sal_pay    = safe(sal.pay_scale || sal.salary || bd.salary || bd.salary_pay_scale || '');
+      var minAge     = safe(age.minimum_age || '');
+      var maxAge     = safe(age.maximum_age || age.age_limit || age.age_details || '');
+      var ageRelax   = safe(age.age_relaxation || age.details || '');
+      var eduQual    = safe(qual.education_qualification || qual.eligibility || item.qualification || '');
+      var qualDet    = safe(qual.details || '');
+      var selProc    = d.selection_process || [];
+      var vacRows    = d.vacancy_details || [];
+      var howTo      = d.how_to_apply || [];
+      var insts      = d.important_instructions || [];
+      var faqs       = d.faq || [];
+      var appBegin   = safe(imp.application_begin || imp.start_date || '');
+      var examDate   = safe(imp.exam_date || '');
+      var admitDate  = safe(imp.admit_card_date || imp.admit_card || '');
+      var feeLastDt  = safe(imp.fee_payment_last_date || imp.fee_last_date || '');
+      var resultDt   = safe(imp.result_date || '');
+      var feeText    = '';
+      if(typeof fee === 'string') feeText = fee;
+      else if(fee.details) feeText = safe(fee.details);
+      else if(fee.all) feeText = safe(fee.all);
+      else {
+        var feeParts = [];
+        if(fee.general) feeParts.push('General: ' + safe(fee.general));
+        if(fee.obc)     feeParts.push('OBC: '     + safe(fee.obc));
+        if(fee.sc)      feeParts.push('SC/ST: '   + safe(fee.sc));
+        if(fee.ph)      feeParts.push('PH: '      + safe(fee.ph));
+        feeText = feeParts.join(' | ');
+      }
+      // All links
+      var allLinks = [];
+      var _seen = new Set();
+      function addLink(href, label, icon, cls){
+        href = safe(href);
+        if(!href || href==='#' || _seen.has(href)) return;
+        _seen.add(href);
+        allLinks.push({href:href, label:label, icon:icon, cls:cls});
+      }
+      var IL_MAP = [
+        ['apply_online','Apply Online','fa-paper-plane','ib-gr'],
+        ['apply_link','Apply Online','fa-paper-plane','ib-gr'],
+        ['notification_pdf','Notification PDF','fa-file-pdf','ib-bl'],
+        ['download_pdf','Download PDF','fa-file-pdf','ib-bl'],
+        ['official_website','Official Website','fa-globe','ib-rd'],
+        ['result','Result','fa-trophy','ib-or'],
+        ['admit_card','Admit Card','fa-id-card','ib-or'],
+        ['answer_key','Answer Key','fa-key','ib-bl'],
+        ['syllabus','Syllabus','fa-book-open','ib-bl'],
+        ['click_here','Click Here','fa-link','ib-bl'],
+      ];
+      IL_MAP.forEach(function(km){
+        var val = lnk[km[0]];
+        if(!val) return;
+        var arr = Array.isArray(val) ? val : [val];
+        arr.forEach(function(u,i){ addLink(u, i===0?km[1]:km[1]+' '+(i+1), km[2], km[3]); });
+      });
+      if(applyUrl) addLink(applyUrl,'Official Website','fa-globe','ib-rd');
 
       // Page meta
       document.title = title + ' | Top Sarkari Jobs';
       document.getElementById('metaDesc').content = 'Apply for ' + title + '. Last Date: ' + lastDate + '. Qualification: ' + sectionQual + '. Full details, eligibility and apply link on Top Sarkari Jobs.';
-      var cleanUrl = 'https://www.topsarkarijobs.com/category/study/' + encodeURIComponent(qualId) + '/?slug=' + encodeURIComponent(makeSlug(item.name||''));
+      var cleanUrl = 'https://www.topsarkarijobs.com/category/study/' + encodeURIComponent(qualId) + '/' + encodeURIComponent(makeSlug(item.name||'')) + '/';
       document.getElementById('canonicalTag').href = cleanUrl;
       document.getElementById('ogTitle').content   = title + ' | Top Sarkari Jobs';
       document.getElementById('ogDesc').content    = shortInfo.slice(0,155);
@@ -270,6 +326,127 @@
 
       // ── Back button ──
       html += '<a href="/category/study/' + encodeURIComponent(qualId) + '/" class="qs-back"><i class="fa-solid fa-arrow-left"></i> Back to ' + esc(sectionQual||qualId) + ' Jobs</a>';
+
+      // ── Hero ──
+      html += '<div style="background:linear-gradient(125deg,#0c4a6e,#1a6b8a);border-radius:1.2rem;padding:1.5rem 1.6rem;color:#fff;margin-bottom:1.2rem;">'
+            + '<div style="display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.7rem;">'
+            + (sectionQual ? '<span style="background:rgba(255,255,255,.18);border-radius:60px;padding:.25rem .8rem;font-size:.72rem;font-weight:600;">'+esc(sectionQual)+'</span>' : '')
+            + (appMode ? '<span style="background:rgba(255,255,255,.18);border-radius:60px;padding:.25rem .8rem;font-size:.72rem;font-weight:600;">'+esc(appMode)+'</span>' : '')
+            + '</div>'
+            + '<h1 style="font-size:1.25rem;font-weight:800;line-height:1.4;margin-bottom:.5rem;">'+esc(title)+'</h1>'
+            + '<div style="display:flex;flex-wrap:wrap;gap:.5rem;">'
+            + (org       ? '<span style="background:rgba(255,255,255,.12);border-radius:60px;padding:.28rem .8rem;font-size:.75rem;display:inline-flex;align-items:center;gap:5px;"><i class=\"fa-solid fa-building\"></i>'+esc(org)+'</span>' : '')
+            + (totalVac  ? '<span style="background:rgba(255,255,255,.12);border-radius:60px;padding:.28rem .8rem;font-size:.75rem;display:inline-flex;align-items:center;gap:5px;"><i class=\"fa-solid fa-users\"></i>'+esc(totalVac)+' Posts</span>' : '')
+            + (lastDate  ? '<span style="background:rgba(255,255,255,.12);border-radius:60px;padding:.28rem .8rem;font-size:.75rem;display:inline-flex;align-items:center;gap:5px;"><i class=\"fa-solid fa-hourglass-end\"></i>Last Date: '+esc(lastDate)+'</span>' : '')
+            + '</div></div>';
+
+      // ── Short info ──
+      if(shortInfo) html += '<div style="background:#eef4fa;border-left:4px solid #1e7e9f;padding:.85rem 1.1rem;border-radius:.8rem;font-size:.84rem;line-height:1.75;color:#165e7c;margin-bottom:1.1rem;"><i class=\"fa-solid fa-info-circle\" style=\"margin-right:7px;\"></i>'+esc(shortInfo)+'</div>';
+
+      // ── Dates + Fee + Age grid ──
+      html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1.1rem;">';
+
+      // Dates card
+      html += '<div class="qs-card" style="margin:0;">'
+            + '<div style="background:#1d4ed8;color:#fff;padding:.7rem 1rem;font-weight:700;font-size:.88rem;display:flex;align-items:center;gap:7px;"><i class=\"fa-regular fa-calendar-alt\"></i> Important Dates</div>'
+            + '<div style="padding:.8rem 1rem;">';
+      var dateRows = [['App Begin',appBegin],['Last Date to Apply',lastDate],['Fee Last Date',feeLastDt],['Exam Date',examDate],['Admit Card',admitDate],['Result',resultDt]];
+      var hasDate = false;
+      dateRows.forEach(function(r){ if(r[1]){ hasDate=true; html += '<div style="display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px dashed #e9edf2;font-size:.82rem;gap:8px;"><span style="font-weight:600;color:#2c4f6e;flex-shrink:0;">'+esc(r[0])+'</span><span style="color:'+(r[0]==='Last Date to Apply'?'#dc2626':'#1e293b')+';font-weight:'+(r[0]==='Last Date to Apply'?'700':'400')+';text-align:right;">'+esc(r[1])+'</span></div>'; } });
+      if(!hasDate) html += '<div style="font-size:.82rem;color:#64748b;">See official notification</div>';
+      html += '</div></div>';
+
+      // Fee card
+      html += '<div class="qs-card" style="margin:0;">'
+            + '<div style="background:#15803d;color:#fff;padding:.7rem 1rem;font-weight:700;font-size:.88rem;display:flex;align-items:center;gap:7px;"><i class=\"fa-solid fa-indian-rupee-sign\"></i> Application Fee</div>'
+            + '<div style="padding:.8rem 1rem;font-size:.83rem;">'
+            + '<div style="display:flex;justify-content:space-between;padding:.5rem 0;gap:8px;"><span style="font-weight:600;color:#2c4f6e;">Fee</span><span>'+(feeText?'✅ '+esc(feeText):'✅ No fee / See notification')+'</span></div>'
+            + '</div></div>';
+
+      // Age card
+      html += '<div class="qs-card" style="margin:0;">'
+            + '<div style="background:#ea580c;color:#fff;padding:.7rem 1rem;font-weight:700;font-size:.88rem;display:flex;align-items:center;gap:7px;"><i class=\"fa-solid fa-user-clock\"></i> Age Limit</div>'
+            + '<div style="padding:.8rem 1rem;">';
+      var ageRows = [['Min Age',minAge],['Max Age',maxAge],['Relaxation',ageRelax]];
+      var hasAge = false;
+      ageRows.forEach(function(r){ if(r[1]){ hasAge=true; html += '<div style="display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px dashed #e9edf2;font-size:.82rem;gap:8px;"><span style="font-weight:600;color:#2c4f6e;flex-shrink:0;">'+esc(r[0])+'</span><span style="text-align:right;">'+esc(r[1])+'</span></div>'; } });
+      if(!hasAge) html += '<div style="font-size:.82rem;color:#64748b;">As per notification</div>';
+      html += '</div></div>';
+
+      html += '</div>'; // end grid
+
+      // ── Highlights + Qualification ──
+      html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-bottom:1.1rem;">';
+
+      // Highlights
+      html += '<div class="qs-card" style="margin:0;">'
+            + '<div style="background:#f8fafc;color:#0f172a;padding:.7rem 1rem;font-weight:700;font-size:.88rem;display:flex;align-items:center;gap:7px;border-bottom:2px solid #e2e8f0;"><i class=\"fa-solid fa-bullhorn\" style=\"color:#1d4ed8;\"></i> Job Highlights</div>'
+            + '<div style="padding:.8rem 1rem;">';
+      var hlRows = [['Post Name',title],['Organization',org],['Total Posts',totalVac],['Salary',sal_pay],['Apply Mode',appMode]];
+      hlRows.forEach(function(r){ if(r[1]) html += '<div style="display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px dashed #e9edf2;font-size:.82rem;gap:8px;"><span style="font-weight:600;color:#2c4f6e;flex-shrink:0;min-width:90px;">'+esc(r[0])+'</span><span style="text-align:right;word-break:break-word;color:'+(r[0]==='Salary'?'#16a34a':'#1e293b')+';">'+esc(r[1])+'</span></div>'; });
+      html += '</div></div>';
+
+      // Qualification
+      html += '<div class="qs-card" style="margin:0;">'
+            + '<div style="background:#4338ca;color:#fff;padding:.7rem 1rem;font-weight:700;font-size:.88rem;display:flex;align-items:center;gap:7px;"><i class=\"fa-solid fa-graduation-cap\"></i> Qualification</div>'
+            + '<div style="padding:.8rem 1rem;font-size:.84rem;line-height:1.75;color:#374151;">'
+            + (eduQual ? esc(eduQual) : 'See official notification.')
+            + (qualDet ? '<p style=\"margin-top:.5rem;color:#64748b;font-size:.82rem;\">'+esc(qualDet)+'</p>' : '')
+            + '</div></div>';
+
+      html += '</div>'; // end grid
+
+      // ── Vacancy Table ──
+      if(vacRows && vacRows.length > 0){
+        var cols = Object.keys(vacRows[0]).filter(function(k){ return vacRows.some(function(r){ return String(r[k]||'').trim(); }); });
+        if(cols.length){
+          html += '<div class="qs-card" style="margin-bottom:1.1rem;">'
+                + '<div style="background:#0f766e;color:#fff;padding:.7rem 1rem;font-weight:700;font-size:.88rem;display:flex;align-items:center;gap:7px;"><i class=\"fa-solid fa-table-list\"></i> Vacancy Details</div>'
+                + '<div style="padding:.6rem .8rem;overflow-x:auto;-webkit-overflow-scrolling:touch;">'
+                + '<table style="width:100%;border-collapse:collapse;font-size:.82rem;min-width:360px;">'
+                + '<thead><tr>'+cols.map(function(c){ return '<th style=\"background:#f4fafe;padding:.7rem .9rem;font-weight:700;color:#1c5a78;border-bottom:2px solid #dee8f0;text-align:left;white-space:nowrap;\">'+esc(c)+'</th>'; }).join('')+'</tr></thead>'
+                + '<tbody>'+vacRows.map(function(row){ return '<tr>'+cols.map(function(c,ci){ return '<td style=\"padding:.7rem .9rem;border-bottom:1px solid #eef2f8;word-break:break-word;\">'+(ci===0?'<strong>':'')+esc(String(row[c]||''))+(ci===0?'</strong>':'')+'</td>'; }).join('')+'</tr>'; }).join('')+'</tbody>'
+                + '</table>'
+                + '<p style=\"font-size:.68rem;color:#94a3b8;text-align:right;padding:3px 0;\">← Scroll to see all columns →</p>'
+                + '</div></div>';
+        }
+      }
+
+      // ── Selection Process ──
+      if(selProc && selProc.length){
+        var selArr = Array.isArray(selProc) ? selProc : String(selProc).split(/[,\/;\n]/).map(function(s){ return s.trim(); }).filter(Boolean);
+        if(selArr.length){
+          html += '<div class="qs-card" style="margin-bottom:1.1rem;">'
+                + '<div style="background:#f8fafc;color:#0f172a;padding:.7rem 1rem;font-weight:700;font-size:.88rem;display:flex;align-items:center;gap:7px;border-bottom:2px solid #e2e8f0;"><i class=\"fa-solid fa-tasks\" style=\"color:#1d4ed8;\"></i> Selection Process</div>'
+                + '<div style="padding:.8rem 1rem;display:flex;flex-wrap:wrap;gap:7px;">'
+                + selArr.map(function(s){ return '<span style=\"background:#f0f7ff;border:1px solid #bfdbfe;border-radius:8px;padding:5px 11px;font-size:.79rem;font-weight:600;color:#1e40af;display:inline-flex;align-items:center;gap:5px;\"><i class=\"fa-solid fa-check-circle\"></i>'+esc(String(s).slice(0,60))+'</span>'; }).join('')
+                + '</div></div>';
+        }
+      }
+
+      // ── How To Apply ──
+      if(howTo && howTo.length){
+        html += '<div class="qs-card" style="margin-bottom:1.1rem;">'
+              + '<div style="background:#0f766e;color:#fff;padding:.7rem 1rem;font-weight:700;font-size:.88rem;display:flex;align-items:center;gap:7px;"><i class=\"fa-solid fa-mouse-pointer\"></i> How To Apply</div>'
+              + '<div style="padding:.8rem 1rem;"><ol style=\"list-style:none;padding:0;margin:0;\">'
+              + howTo.map(function(s,i){ return '<li style=\"display:flex;align-items:flex-start;gap:10px;padding:.55rem 0;border-bottom:1px solid #f1f5f9;font-size:.83rem;line-height:1.65;\"><span style=\"flex-shrink:0;width:22px;height:22px;background:#0f766e;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;margin-top:2px;\">'+(i+1)+'</span>'+esc(String(s))+'</li>'; }).join('')
+              + '</ol></div></div>';
+      }
+
+      // ── Important Links ──
+      if(allLinks.length){
+        var COLORS = {
+          'ib-gr':'background:#f0fdf4;color:#15803d;border-color:#bbf7d0;',
+          'ib-bl':'background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe;',
+          'ib-rd':'background:#fff5f5;color:#dc2626;border-color:#fecaca;',
+          'ib-or':'background:#fff7ed;color:#ea580c;border-color:#fed7aa;'
+        };
+        html += '<div class="qs-card" style="margin-bottom:1.1rem;">'
+              + '<div style="background:#1d4ed8;color:#fff;padding:.7rem 1rem;font-weight:700;font-size:.88rem;display:flex;align-items:center;gap:7px;"><i class=\"fa-solid fa-link\"></i> Important Links</div>'
+              + '<div style="padding:.8rem 1rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:9px;">'
+              + allLinks.map(function(lk){ var cs = COLORS[lk.cls]||COLORS['ib-bl']; return '<a href=\"'+esc(lk.href)+'\" target=\"_blank\" rel=\"noopener\" style=\"display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:10px 7px;border-radius:10px;'+cs+'text-decoration:none;font-weight:700;font-size:.72rem;text-align:center;min-height:68px;border:1px solid;transition:.18s;\"><i class=\"fa-solid '+esc(lk.icon)+'\" style=\"font-size:1rem;\"></i>'+esc(lk.label.slice(0,24))+'</a>'; }).join('')
+              + '</div></div>';
+      }
 
       // ── Job Header ──
       html += '<div class="qs-card">';
