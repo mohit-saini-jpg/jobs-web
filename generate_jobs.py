@@ -575,7 +575,7 @@ if os.path.exists(MERGED):
 
     for cat, filepath in FILE_MAP.items():
         items = cats_map.get(cat, [])
-        items.sort(key=lambda x: x.get('homepage_serial', x.get('sequence', 999)))
+        # Preserve original JSON order — no sort
         out = {'jobs': items}
         with open(filepath, 'w', encoding='utf-8') as f:
             json.dump(out, f, ensure_ascii=False, separators=(',', ':'))
@@ -585,7 +585,7 @@ if os.path.exists(MERGED):
     # Also rebuild merged-summary.json (top 8 per category for homepage cards)
     summary_jobs = []
     for cat, items in cats_map.items():
-        items.sort(key=lambda x: x.get('homepage_serial', x.get('sequence', 999)))
+        # Preserve original JSON order — no sort
         summary_jobs.extend(items[:8])
 
     summary = {'scraped_at': merged_data.get('scraped_at', ''), 'jobs': summary_jobs}

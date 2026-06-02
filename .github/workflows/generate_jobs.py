@@ -1583,13 +1583,13 @@ if STATE_WISE_FILE.exists():
             if not _job_slug:
                 continue
 
-            _page_dir = _Path(_state_slug) / _job_slug
+            _page_dir = _Path('state') / _state_slug / _job_slug
             _out_file  = _page_dir / 'index.html'
             if _out_file.exists() and not FORCE_REGEN:
                 _st_skipped += 1
                 continue
 
-            _canon = f"https://www.topsarkarijobs.com/{_state_slug}/{_job_slug}/"
+            _canon = f"https://www.topsarkarijobs.com/state/{_state_slug}/{_job_slug}/"
             _detail = _item.get('detail') or {}
             if isinstance(_detail, str):
                 try:    _detail = _json2.loads(_detail)
