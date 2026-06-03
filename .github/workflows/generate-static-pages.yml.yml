@@ -52,13 +52,15 @@ jobs:
       - name: ⏱️ Record start time
         run: echo "START_TIME=$(date +%s)" >> $GITHUB_ENV
 
-      - name: 🏗️ Generate static pages
+      - name: 🏗️ Generate ALL static pages (jobs + state + education + category)
         env:
           FORCE_REGENERATE: ${{ inputs.force_regenerate }}
         run: |
           echo "FORCE_REGENERATE=${FORCE_REGENERATE}"
           python3 .github/workflows/generate_jobs.py
-          echo "PAGES_GENERATED=$(find jobs -name 'index.html' 2>/dev/null | wc -l)" >> $GITHUB_ENV
+          TOTAL_PAGES=$(find jobs state education category -name 'index.html' 2>/dev/null | wc -l)
+          echo "PAGES_GENERATED=${TOTAL_PAGES}" >> $GITHUB_ENV
+          echo "Total pages generated: ${TOTAL_PAGES}"
 
       - name: 🔍 Run SEO fixes
         if: inputs.run_seo_fix
@@ -90,9 +92,11 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           # Stage all generated/updated files
+          # Add ALL generated page directories
           git add jobs/ jobs-index.json sections-index.json version.json sw.js 2>/dev/null || true
-          git add sitemap-jobs.xml sitemap-index.xml sitemap.xml 2>/dev/null || true
-          git add data/ 2>/dev/null || true
+          git add state/ education/ category/ 2>/dev/null || true
+          git add sitemap-jobs.xml sitemap-states.xml sitemap-education.xml sitemap-categories.xml 2>/dev/null || true
+          git add sitemap-index.xml sitemap.xml data/ 2>/dev/null || true
           git add -A 2>/dev/null || true
 
           if git diff --staged --quiet; then
@@ -100,7 +104,7 @@ jobs:
             exit 0
           fi
 
-          PAGES=$(find jobs -name 'index.html' 2>/dev/null | wc -l)
+          PAGES=$(find jobs state education category -name 'index.html' 2>/dev/null | wc -l)
           VERSION=$(node -e "console.log(require('./version.json').version)")
           git commit -m "🏗️ Full regen v${VERSION}: ${PAGES} pages [skip ci]"
 
@@ -115,7 +119,7 @@ jobs:
         run: |
           END_TIME=$(date +%s)
           ELAPSED=$(( END_TIME - START_TIME ))
-          PAGES=$(find jobs -name 'index.html' 2>/dev/null | wc -l)
+          PAGES=$(find jobs state education category -name 'index.html' 2>/dev/null | wc -l)
           VERSION=$(node -e "console.log(require('./version.json').version)" 2>/dev/null || echo "unknown")
           ERRORS=0
           echo "### 🏗️ Full Static Page Regen Complete" >> $GITHUB_STEP_SUMMARY

@@ -69,7 +69,9 @@ jobs:
         run: node .github/workflows/generate_version.js
 
       # ── STEP 5: Generate static job HTML pages ───────────────────
-      - name: 🏗️ Generate static job pages
+      - name: 🏗️ Generate ALL static pages (jobs + state + education + category)
+        env:
+          FORCE_REGENERATE: 'true'
         run: python3 .github/workflows/generate_jobs.py
 
       # ── STEP 6: Rebuild sitemaps ──────────────────────────────────
@@ -226,7 +228,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           git add version.json sw.js
-          git add jobs/ jobs-index.json sections-index.json 2>/dev/null || true
+          git add jobs/ state/ education/ category/ jobs-index.json sections-index.json 2>/dev/null || true
           git add data/ sitemap-jobs.xml sitemap-index.xml sitemap.xml 2>/dev/null || true
           git add sitemap-sections.xml sitemap-pages.xml 2>/dev/null || true
           git add -u '*.html' 2>/dev/null || true
