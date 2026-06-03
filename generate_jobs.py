@@ -41,7 +41,7 @@ def slugify(text):
     text = str(text).lower()
     text = re.sub(r'[^a-z0-9\s-]', '', text)
     text = re.sub(r'[\s-]+', '-', text)
-    return text[:120].strip('-') or 'job'
+    return text[:80].strip('-') or 'job'
 
 def clean_slug(s):
     """Strip sr_ prefixes and trailing hex hashes from slugs"""
@@ -49,7 +49,7 @@ def clean_slug(s):
     s = re.sub(r'^sr_[a-z_]+-', '', s)
     s = re.sub(r'-[0-9a-f]{6,8}$', '', s)
     s = re.sub(r'-+', '-', s).strip('-')
-    return s[:120] or ''
+    return s[:80] or ''
 
 def e(s):
     """HTML escape"""
