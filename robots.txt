@@ -1,12 +1,25 @@
 # robots.txt — Top Sarkari Jobs
-# ==============================
-# Last updated: 2026-05-27
-# SEO Clean URL Architecture implemented
+# Updated: 2026-06-03
 
 User-agent: *
 Allow: /
 
-# Block internal utility pages
+# Block old template files (clean URLs are indexed instead)
+Disallow: /job.html
+Disallow: /job.html?
+Disallow: /view.html
+Disallow: /view.html?
+Disallow: /state-jobs.html
+Disallow: /state-jobs.html?
+Disallow: /education-detail.html
+Disallow: /education-detail.html?
+Disallow: /category.html
+Disallow: /category.html?
+Disallow: /state-job-detail.html
+Disallow: /state-job-detail.html?
+Disallow: /search.html?
+
+# Block utility/internal pages
 Disallow: /404.html
 Disallow: /cache-dashboard.html
 Disallow: /seo-audit-report.html
@@ -14,29 +27,13 @@ Disallow: /JOB_HTML_PATCH_INSTRUCTIONS.html
 Disallow: /.github/
 Disallow: /node_modules/
 
-# Block raw template files (clean URL versions are indexed instead)
-Disallow: /view.html
-Disallow: /job.html
-Disallow: /state-jobs.html
-Disallow: /education-detail.html
-Disallow: /category.html
-Disallow: /search.html
-
-# Block query parameter URLs (clean /section/, /state/, /education/ are indexed)
-Disallow: /view.html?
-Disallow: /state-jobs.html?
-Disallow: /education-detail.html?
-Disallow: /category.html?
-Disallow: /job.html?
-Disallow: /search.html?q=
-
-# Allow all clean-URL hierarchies
-Allow: /section/
-Allow: /data/
+# Allow all clean SEO URLs
 Allow: /jobs/
 Allow: /state/
 Allow: /education/
 Allow: /category/
+Allow: /section/
+Allow: /data/
 Allow: /search/
 Allow: /about/
 Allow: /contact/
@@ -44,15 +41,16 @@ Allow: /terms/
 Allow: /privacy/
 Allow: /helpdesk/
 Allow: /sitemap/
-Allow: /resume-maker/
 Allow: /tools/
 Allow: /govt-services/
 
-# Sitemap
+# Sitemaps
 Sitemap: https://www.topsarkarijobs.com/sitemap.xml
 Sitemap: https://www.topsarkarijobs.com/sitemap-jobs.xml
+Sitemap: https://www.topsarkarijobs.com/sitemap-states.xml
+Sitemap: https://www.topsarkarijobs.com/sitemap-education.xml
+Sitemap: https://www.topsarkarijobs.com/sitemap-categories.xml
 
-# Bot crawl rate limits
 User-agent: Googlebot
 Allow: /
 

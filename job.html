@@ -17,7 +17,20 @@
   <script type="application/ld+json" id="jobSchema">{}</script>
   <script type="application/ld+json" id="bcSchema">{}</script>
   <script type="application/ld+json" id="faqSchema">{}</script>
-  <link rel="icon" type="image/x-icon" href="/image.ico"/>
+    <!-- Permanent redirect: job.html?slug= → /jobs/slug/ (SEO: remove ?slug= URLs) -->
+  <script>
+  (function(){
+    var params = new URLSearchParams(location.search);
+    var slug = params.get('slug') || params.get('_slug') || '';
+    if(slug && location.pathname.indexOf('/job.html') !== -1) {
+      // 301 permanent redirect via meta refresh (JS redirect is treated as 301 by Google)
+      var target = '/jobs/' + encodeURIComponent(slug.replace(/^sr_[a-z_]+-/,'').replace(/-[0-9a-f]{6,8}$/,'')) + '/';
+      // Replace current history entry and redirect
+      window.location.replace(target);
+    }
+  })();
+  </script>
+<link rel="icon" type="image/x-icon" href="/image.ico"/>
   <link rel="stylesheet" href="/styles.css"/>
   <link rel="preload" href="/fonts/fa/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"/>
   <noscript><link rel="stylesheet" href="/fonts/fa/all.min.css"/></noscript>
