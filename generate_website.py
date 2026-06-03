@@ -1168,7 +1168,12 @@ for sec in STATE:
         canon = f"{BASE_URL}/state-jobs/{state_slug}/{job_slug}/"
         bc    = [('State Jobs', '/state-jobs/'), (state_name, state_url)]
         path  = str(ROOT / 'state' / state_slug / job_slug / 'index.html')
-        write(path, build_job_detail_page(detail, job_slug, canon, bc))
+        html_content = build_job_detail_page(detail, job_slug, canon, bc)
+        write(path, html_content)
+        # ALSO write to /jobs/{slug}/ so site URL /jobs/{slug}/ works
+        jobs_path = str(ROOT / 'jobs' / job_slug / 'index.html')
+        if not os.path.exists(jobs_path):
+            write(jobs_path, build_job_detail_page(detail, job_slug, canon, bc))
 
     # State listing page
     all_state_jobs = [{'basic_details':{'job_title':safe(it.get('name','')),
@@ -1235,7 +1240,12 @@ for sec in EDU:
         canon = f"{BASE_URL}/education/{sec_id}/{item_slug}/"
         bc    = [('Education', '/education/'), (sec_title, f"/education/{sec_id}/")]
         path  = str(ROOT / 'education' / sec_id / item_slug / 'index.html')
-        write(path, build_job_detail_page(full_d, item_slug, canon, bc))
+        html_content = build_job_detail_page(full_d, item_slug, canon, bc)
+        write(path, html_content)
+        # ALSO write to /jobs/{slug}/ so site URL /jobs/{slug}/ works
+        jobs_path = str(ROOT / 'jobs' / item_slug / 'index.html')
+        if not os.path.exists(jobs_path):
+            write(jobs_path, build_job_detail_page(full_d, item_slug, f"{BASE_URL}/jobs/{item_slug}/", bc))
 
     # Section listing page
     edu_jobs = [{'basic_details':{'job_title':safe(it.get('name') or it.get('examName','')),

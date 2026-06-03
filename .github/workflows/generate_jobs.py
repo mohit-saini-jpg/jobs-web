@@ -36,19 +36,41 @@ BLOCKED = {'sarkariresult.com','freejobalert.com','sarkarinetwork.com','sarkarir
 
 QUAL_SLUG = {
     '10TH_Pass':'10th-pass','8TH_Pass':'8th-pass','12TH_Pass':'12th-pass',
+    '4th_Pass':'4th-pass','5th_Pass':'5th-pass','6th_Pass':'6th-pass',
+    '7th_Pass':'7th-pass','9th_Pass':'9th-pass',
     'Diploma':'diploma','ITI':'iti','B_Tech_BE':'b-tech-be','B_Com':'b-com',
     'Any_Graduate':'any-graduate','Any_Post_Graduate':'any-post-graduate',
     'Railway_Jobs':'railway-jobs','Police_Defence':'police-defence',
     'Teaching_Faculty':'teaching-faculty','Bank_Jobs':'bank-jobs',
     'Medical_Hospital':'medical-hospital','Latest_Notifications':'latest-jobs',
+    'Last_Date_Reminder':'last-date-reminder','Intermediate':'intermediate',
+    'GNM':'gnm','ANM':'anm','D_Pharm':'d-pharm','DMLT':'dmlt',
+    'D_El_Ed':'d-el-ed','D_P_Ed':'d-p-ed','B_Sc':'b-sc','BCA':'bca',
+    'MA':'ma','BBA':'bba','LLB':'llb','B_Ed':'b-ed','MBBS':'mbbs',
+    'B_Pharma':'b-pharma','BAMS':'bams','BDS':'bds','M_Sc':'m-sc',
+    'M_Com':'m-com','M_Ed':'m-ed','M_A':'m-a','M_E_MTech':'me-mtech',
+    'MCA':'mca','MBA_PGDM':'mba-pgdm','MS_MD':'ms-md','M_Pharma':'m-pharma',
+    'CA':'ca','CS':'cs','ICWA':'icwa','MPhil_PhD':'mphil-phd',
+    'VHSE':'vhse','DLT':'dlt',
 }
 QUAL_LABEL = {
     '10TH_Pass':'10th Pass','8TH_Pass':'8th Pass','12TH_Pass':'12th Pass',
+    '4th_Pass':'4th Pass','5th_Pass':'5th Pass','6th_Pass':'6th Pass',
+    '7th_Pass':'7th Pass','9th_Pass':'9th Pass',
     'Diploma':'Diploma','ITI':'ITI','B_Tech_BE':'B.Tech / BE','B_Com':'B.Com',
     'Any_Graduate':'Any Graduate','Any_Post_Graduate':'Any PG',
     'Railway_Jobs':'Railway Jobs','Police_Defence':'Police / Defence',
     'Teaching_Faculty':'Teaching / Faculty','Bank_Jobs':'Bank Jobs',
     'Medical_Hospital':'Medical / Hospital','Latest_Notifications':'Latest Jobs',
+    'Last_Date_Reminder':'Last Date Reminder','Intermediate':'Intermediate',
+    'GNM':'GNM','ANM':'ANM','D_Pharm':'D.Pharm','DMLT':'DMLT',
+    'D_El_Ed':'D.El.Ed','D_P_Ed':'D.P.Ed','B_Sc':'B.Sc','BCA':'BCA',
+    'MA':'MA','BBA':'BBA','LLB':'LLB','B_Ed':'B.Ed','MBBS':'MBBS',
+    'B_Pharma':'B.Pharma','BAMS':'BAMS','BDS':'BDS','M_Sc':'M.Sc',
+    'M_Com':'M.Com','M_Ed':'M.Ed','M_A':'M.A','M_E_MTech':'M.E / M.Tech',
+    'MCA':'MCA','MBA_PGDM':'MBA / PGDM','MS_MD':'MS / MD','M_Pharma':'M.Pharma',
+    'CA':'CA','CS':'CS','ICWA':'ICWA','MPhil_PhD':'M.Phil / Ph.D',
+    'VHSE':'VHSE','DLT':'DLT',
 }
 
 # ── Helpers ────────────────────────────────────────────────────────
@@ -985,11 +1007,18 @@ for sec in (sj.get('sections', []) if isinstance(sj, dict) else []):
         out_file = out_dir / 'index.html'
         # Always regenerate (no skip — ensures layout stays consistent)
 
-        canon = f"{BASE_URL}/state/{state_slug}/{item_slug}/"
-        bc = [('State Jobs', f"{BASE_URL}/state/"), (f'{state_name} Jobs', f"{BASE_URL}/state/{state_slug}/")]
+        canon = f"{BASE_URL}/jobs/{item_slug}/"
+        bc = [('State Jobs', f"{BASE_URL}/state-jobs/{state_slug}/"), (f'{state_name} Jobs', f"{BASE_URL}/state-jobs/{state_slug}/")]
         out_dir.mkdir(parents=True, exist_ok=True)
+        html_out = build_page(name, detail, canon, bc, 'state', f'{state_name} Govt Job')
         with open(out_file, 'w', encoding='utf-8') as f2:
-            f2.write(build_page(name, detail, canon, bc, 'state', f'{state_name} Govt Job'))
+            f2.write(html_out)
+        # ALSO write to /jobs/{slug}/ — canonical URL for the site
+        jobs_dir = JOBS_DIR / item_slug
+        if not (jobs_dir / 'index.html').exists():
+            jobs_dir.mkdir(parents=True, exist_ok=True)
+            with open(jobs_dir / 'index.html', 'w', encoding='utf-8') as f2:
+                f2.write(html_out)
         s_count += 1
 
 print(f"   /state/ pages: {s_count}")
@@ -1029,11 +1058,18 @@ for sec in (ej.get('sections', []) if isinstance(ej, dict) else []):
         out_file = out_dir / 'index.html'
         # Always regenerate (no skip — ensures layout stays consistent)
 
-        canon = f"{BASE_URL}/education/{sec_id}/{item_slug}/"
+        canon = f"{BASE_URL}/jobs/{item_slug}/"
         bc = [('Education', f"{BASE_URL}/education/"), (sec_title, f"{BASE_URL}/education/{sec_id}/")]
         out_dir.mkdir(parents=True, exist_ok=True)
+        html_out = build_page(name, full_detail, canon, bc, 'education', sec_title)
         with open(out_file, 'w', encoding='utf-8') as f2:
-            f2.write(build_page(name, full_detail, canon, bc, 'education', sec_title))
+            f2.write(html_out)
+        # ALSO write to /jobs/{slug}/ — canonical URL for the site
+        jobs_dir = JOBS_DIR / item_slug
+        if not (jobs_dir / 'index.html').exists():
+            jobs_dir.mkdir(parents=True, exist_ok=True)
+            with open(jobs_dir / 'index.html', 'w', encoding='utf-8') as f2:
+                f2.write(html_out)
         e_count += 1
 
 print(f"   /education/ pages: {e_count}")
