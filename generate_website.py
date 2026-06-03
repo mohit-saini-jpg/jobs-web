@@ -374,7 +374,7 @@ def render_faq(faq_list):
     return items
 
 def render_edu_sections(sections_list):
-    """Render education raw scraper sections"""
+    """Render education raw scraper sections — handles all content block types"""
     if not sections_list: return ''
     html = ''
     for sec in sections_list:
@@ -403,6 +403,26 @@ def render_edu_sections(sections_list):
                     lbl = safe(mi.get('label','')); txt = safe(mi.get('text',''))
                     if lbl or txt:
                         body += f'<div class="mi-item">{f"<b>{e(lbl)}</b>: " if lbl else ""}{e(txt) if txt else ""}</div>'
+            elif btype == 'important_links':
+                # Handle {type: 'important_links', links: [{label, url}, ...]}
+                links_data = block.get('links', [])
+                if isinstance(links_data, list) and links_data:
+                    btns = ''
+                    for lnk in links_data:
+                        if not isinstance(lnk, dict): continue
+                        url = str(lnk.get('url','') or '').strip()
+                        lbl = str(lnk.get('label','') or 'View').strip() or 'View'
+                        if not url.startswith('http') or is_blocked(url): continue
+                        ul = url.lower()
+                        ic = 'fa-file-pdf' if ul.endswith('.pdf') else 'fa-external-link-alt'
+                        cl = 'btn-pdf' if ul.endswith('.pdf') else 'btn-default'
+                        dl = ' download' if ul.endswith('.pdf') else ''
+                        btns += f'<a href="{e(url)}" class="lnk-btn {cl}" target="_blank" rel="noopener noreferrer"{dl}><i class="fa-solid {ic}"></i> {e(lbl[:60])}</a>\n'
+                    if btns:
+                        body += f'<div class="links-grid">{btns}</div>'
+                elif isinstance(links_data, dict):
+                    # structured_links dict format
+                    body += render_links(links_data)
         if body.strip():
             if heading:
                 html += f'<div class="edu-sec"><h3 class="edu-sec-h">{e(heading)}</h3>{body}</div>'
@@ -1216,45 +1236,88 @@ for sec in EDU:
     sec_id    = safe(sec.get('id','') or sec.get('title',''))
     sec_title = safe(sec.get('title','') or sec_id)
     if not sec_id: continue
-    # Detail pages
+
+    # MERGE duplicate items with same slug — combine sections + links
+    slug_map = {}  # slug → merged full_d
     for item in sec.get('items', []):
         name = safe(item.get('name','') or item.get('examName',''))
         if not name: continue
         item_slug = slugify(name)[:80]
-        detail    = item.get('detail') or {}
-        full_d = {
-            'basic_details': {
-                'job_title': detail.get('title') or name,
-                'organization_name': sec_title,
-                'job_location': sec_title,
-                'short_information': detail.get('short_info',''),
-                'last_updated': safe(item.get('postDate') or item.get('date','')),
-            },
-            'important_dates': {'notification_date': safe(item.get('date') or item.get('postDate',''))},
-            'important_links': detail.get('important_links') or {},
-            'sections': detail.get('sections') or [],
-            'faq': detail.get('faq') or [],
-            'source_url': safe(item.get('url','')),
-            'category': sec_title,
-        }
-        canon = f"{BASE_URL}/education/{sec_id}/{item_slug}/"
+        detail = item.get('detail') or {}
+
+        if item_slug not in slug_map:
+            slug_map[item_slug] = {
+                'basic_details': {
+                    'job_title': detail.get('title') or name,
+                    'organization_name': sec_title,
+                    'job_location': sec_title,
+                    'short_information': detail.get('short_info',''),
+                    'last_updated': safe(item.get('postDate') or item.get('date','')),
+                },
+                'important_dates': {'notification_date': safe(item.get('date') or item.get('postDate',''))},
+                'important_links': {},
+                'sections': [],
+                'faq': [],
+                'source_url': safe(item.get('url','')),
+                'category': sec_title,
+            }
+
+        fd = slug_map[item_slug]
+        # Merge important_links — combine all URLs
+        new_il = detail.get('important_links') or {}
+        if isinstance(new_il, dict):
+            for k, v in new_il.items():
+                if k == 'structured_links':
+                    existing = fd['important_links'].get('structured_links', [])
+                    new_items = v if isinstance(v, list) else []
+                    fd['important_links']['structured_links'] = existing + new_items
+                else:
+                    if k not in fd['important_links']:
+                        fd['important_links'][k] = v
+                    else:
+                        existing = fd['important_links'][k]
+                        new_urls = v if isinstance(v, list) else [v]
+                        if isinstance(existing, list):
+                            fd['important_links'][k] = existing + [u for u in new_urls if u not in existing]
+                        else:
+                            fd['important_links'][k] = [existing] + [u for u in new_urls if u != existing]
+        # Merge sections (add all, no dedup — each item may have different content)
+        new_secs = detail.get('sections') or []
+        if new_secs and len(new_secs) > len(fd['sections']):
+            fd['sections'] = new_secs
+        # Update short_info if empty
+        if not fd['basic_details']['short_information'] and detail.get('short_info'):
+            fd['basic_details']['short_information'] = detail.get('short_info','')
+
+    # Write each merged page
+    for item_slug, full_d in slug_map.items():
+        canon = f"{BASE_URL}/jobs/{item_slug}/"
         bc    = [('Education', '/education/'), (sec_title, f"/education/{sec_id}/")]
-        path  = str(ROOT / 'education' / sec_id / item_slug / 'index.html')
+        # Write to /education/ path
+        edu_path = str(ROOT / 'education' / sec_id / item_slug / 'index.html')
         html_content = build_job_detail_page(full_d, item_slug, canon, bc)
-        write(path, html_content)
-        # ALSO write to /jobs/{slug}/ so site URL /jobs/{slug}/ works
+        write(edu_path, html_content)
+        # ALWAYS write to /jobs/{slug}/ — canonical URL (overwrite if exists with better data)
         jobs_path = str(ROOT / 'jobs' / item_slug / 'index.html')
-        if not os.path.exists(jobs_path):
-            write(jobs_path, build_job_detail_page(full_d, item_slug, f"{BASE_URL}/jobs/{item_slug}/", bc))
+        write(jobs_path, html_content)
 
     # Section listing page
-    edu_jobs = [{'basic_details':{'job_title':safe(it.get('name') or it.get('examName','')),
-        'organization_name':sec_title,'application_mode':'Online','job_location':sec_title,
-        'last_updated':safe(it.get('postDate') or it.get('date',''))},
-        'important_dates':{'notification_date':safe(it.get('date') or it.get('postDate',''))},
-        'important_links':(it.get('detail') or {}).get('important_links') or {},
-        'category':sec_title}
-        for it in sec.get('items',[]) if it.get('name') or it.get('examName')]
+    edu_jobs = []
+    seen_names = set()
+    for it in sec.get('items', []):
+        nm = safe(it.get('name') or it.get('examName',''))
+        if not nm or nm in seen_names: continue
+        seen_names.add(nm)
+        sl = slugify(nm)[:80]
+        det = it.get('detail') or {}
+        edu_jobs.append({
+            'basic_details': {'job_title': nm, 'organization_name': sec_title,
+                'application_mode': 'Online', 'job_location': sec_title,
+                'last_updated': safe(it.get('postDate') or it.get('date',''))},
+            'important_dates': {'notification_date': safe(it.get('date') or it.get('postDate',''))},
+            'important_links': det.get('important_links') or {},
+            'category': sec_title, 'slug': sl,
+        })
     if edu_jobs:
         canon2 = f"{BASE_URL}/education/{sec_id}/"
         bc2    = [('Education', '/education/')]

@@ -1106,8 +1106,10 @@ print(f"   /category/study/ pages: {c_count}")
 with open(INDEX, 'w', encoding='utf-8') as f:
     json.dump(index, f, ensure_ascii=False, separators=(',',':'))
 
-# Sections index for homepage
+# Sections index for homepage — include ALL categories (FJA + Sarkari SR_*)
 sindex = {}
+
+# FJA categories
 for cat, jobs in fja.items():
     if not isinstance(jobs, list): continue
     items = []
@@ -1120,6 +1122,21 @@ for cat, jobs in fja.items():
         ld = safe(dt.get('last_date_to_apply',''))
         items.append({'slug':sl,'name':t,'date':norm_date(ld) or ''})
     if items: sindex[cat] = items
+
+# Sarkari data SR_* categories — also add to sections-index
+_sd_jobs = (json.loads(open(CJ_FILE, encoding='utf-8').read())).get('sarkari_data',{}).get('jobs',[])
+_sark_by_cat = {}
+for _sj in _sd_jobs:
+    _cat = _sj.get('category','')
+    if not _cat: continue
+    if _cat not in _sark_by_cat: _sark_by_cat[_cat] = []
+    _t = safe(_sj.get('title',''))
+    if not _t: continue
+    _sl = slugify(_t)
+    _ld = safe((_sj.get('important_dates') or {}).get('last_date_to_apply','') or _sj.get('last_date',''))
+    _sark_by_cat[_cat].append({'slug':_sl,'name':_t,'date':_ld[:20]})
+for _cat, _items in _sark_by_cat.items():
+    if _items: sindex[_cat] = _items
 
 with open(SINDEX, 'w', encoding='utf-8') as f:
     json.dump(sindex, f, ensure_ascii=False, separators=(',',':'))
