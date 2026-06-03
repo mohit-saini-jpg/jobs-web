@@ -884,9 +884,12 @@ window.__TSJ_PSR_DISABLED = true;
       const allLinks = [];
       const seenHrefs = new Set();
 
+      const BLOCKED_DOMS = new Set(['sarkariresult.com','freejobalert.com','sarkariresultshine.com','sarkarinetwork.com']);
+      function isBlockedDomain(url) { return [...BLOCKED_DOMS].some(d => url.toLowerCase().includes(d)); }
+
       function addLink(href, title) {
         const h = normalizeUrl(href);
-        if (!h || h==='#' || seenHrefs.has(h)) return;
+        if (!h || h==='#' || seenHrefs.has(h) || isBlockedDomain(h)) return;
         seenHrefs.add(h);
         const {cls, icon} = categorize(title);
         allLinks.push({href:h, title:title.slice(0,55), cls, icon});

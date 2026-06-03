@@ -246,21 +246,19 @@
     const safe = v => (v ?? '').toString().trim();
     const esc  = s => safe(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
-    /* ── URL normalisation: /education/section-id/ → read section from path ── */
+    const BLOCKED = new Set(['sarkariresult.com','freejobalert.com','sarkariresultshine.com','sarkarinetwork.com']);
+    const isBlocked = url => [...BLOCKED].some(d => url.toLowerCase().includes(d));
+
+    /* ── URL normalisation ── */
     (function normalizeEduUrl() {
       var pathM = location.pathname.match(/^\/education\/([^\/]+)\/?$/);
-      if (pathM && !location.search) {
-        /* Clean path — nothing to do, section extracted from path below */
-      } else if (pathM && location.search) {
-        /* Has both path and query — normalize to just path */
-        try { window.history.replaceState({},'', '/education/' + pathM[1] + '/' + location.search); } catch(_){}
+      if (pathM && !location.search) { /* clean path */ }
+      else if (pathM && location.search) {
+        try { window.history.replaceState({}, '', '/education/' + pathM[1] + '/' + location.search); } catch(_){}
       }
     })();
-    const params  = new URLSearchParams(location.search);
-    /* Read section + slug from clean URL path:
-       /education/<sectionId>/<slug>/  — 2 segments (item detail)
-       /education/<sectionId>/         — 1 segment  (section list)
-       Legacy: ?section=&slug=         — query params */
+
+    const params   = new URLSearchParams(location.search);
     var _pathSec = (function(){
       var m2 = location.pathname.match(/^\/education\/([^\/]+)\/([^\/]+)\/?$/);
       if (m2) return decodeURIComponent(m2[1]);
@@ -272,7 +270,8 @@
       return m2 ? decodeURIComponent(m2[2]) : '';
     })();
     const sectionId = _pathSec || safe(params.get('section') || '');
-    /* Update canonical to clean URL */
+
+    /* Update canonical */
     (function(){
       var can = document.getElementById('canonicalTag') || document.querySelector('link[rel="canonical"]');
       if (can && sectionId) {
@@ -299,424 +298,590 @@
     function makeSlug(title) {
       return safe(title).toLowerCase()
         .replace(/[^\w\s-]/g,'')
-        .replace(/\s+/g,'-')
-        .replace(/-+/g,'-')
-        .replace(/^-|-$/g,'')
-        .slice(0,120);
+        .replace(/\s+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'').slice(0,120);
     }
 
-    /* ── Render Section List (no slug) ── */
+    /* ════════════════════════════════════════════════
+       UNIVERSAL SECTION RENDERERS (same as job pages)
+    ════════════════════════════════════════════════ */
+
+    function makeCard(grad, icon, heading, bodyHtml) {
+      if (!bodyHtml || !bodyHtml.trim()) return '';
+      return `<div class="edu-card">
+  <div class="edu-card-head" style="background:${grad}">
+    <i class="fa-solid ${icon}"></i> <strong>${esc(heading)}</strong>
+  </div>
+  <div class="edu-card-body">${bodyHtml}</div>
+</div>`;
+    }
+
+    function renderKVTable(pairs) {
+      const rows = pairs.filter(([,v]) => safe(v)).map(([l,v]) =>
+        `<tr><th>${esc(l)}</th><td>${esc(safe(v))}</td></tr>`).join('');
+      if (!rows) return '';
+      return `<table class="edu-table"><tbody>${rows}</tbody></table>`;
+    }
+
+    /* Important Dates */
+    function renderDates(obj) {
+      if (!obj || typeof obj !== 'object') return '';
+      const DATE_FIELDS = [
+        ['application_start_date','Application Start'],['application_begin','Application Begin'],
+        ['last_date_to_apply','Last Date to Apply'],['last_date','Last Date'],
+        ['fee_payment_last_date','Fee Payment Last Date'],['exam_date','Exam Date'],
+        ['written_exam_date','Written Exam Date'],['admit_card_date','Admit Card Date'],
+        ['result_date','Result Date'],['notification_date','Notification Date'],['event','Event'],
+      ];
+      const seen = new Set(); let rows = '';
+      for (const [k, lbl] of DATE_FIELDS) {
+        const v = safe(obj[k]); if (!v || seen.has(lbl)) continue; seen.add(lbl);
+        const isLast = /last|closing/i.test(k);
+        rows += `<tr><th>${esc(lbl)}</th><td${isLast ? ' style="color:#dc2626;font-weight:700"' : ''}>${esc(v)}</td></tr>`;
+      }
+      for (const [k, v] of Object.entries(obj)) {
+        const sv = safe(v); if (!sv) continue;
+        const lbl = k.replace(/_/g,' ').replace(/\b[a-z]/g,c=>c.toUpperCase());
+        if (seen.has(lbl)) continue; seen.add(lbl);
+        rows += `<tr><th>${esc(lbl)}</th><td>${esc(sv)}</td></tr>`;
+      }
+      if (!rows) return '';
+      return makeCard('linear-gradient(135deg,#b91c1c,#dc2626)','fa-calendar-check','Important Dates',
+        `<table class="edu-table"><tbody>${rows}</tbody></table>`);
+    }
+
+    /* Application Fee */
+    function renderFee(obj) {
+      if (!obj || typeof obj !== 'object' || !Object.keys(obj).length) return '';
+      const pairs = [
+        ['General / UR', obj.general || obj.general_fee || obj.ur],
+        ['OBC', obj.obc || obj.obc_fee], ['SC', obj.sc || obj.sc_fee],
+        ['ST', obj.st], ['EWS', obj.ews], ['Female', obj.female],
+        ['PH / Divyang', obj.ph || obj.pwd], ['All Categories', obj.all || obj.all_category],
+      ];
+      const items = pairs.filter(([,v]) => safe(v)).map(([l,v]) => {
+        const sv = safe(v); const free = /nil|0|free/i.test(sv);
+        return `<div class="fee-item"><div class="fee-label">${esc(l)}</div><div class="fee-val ${free?'free':'paid'}">${esc(sv)}</div></div>`;
+      }).join('');
+      const note = safe(obj.details || obj.fee_mode || obj.payment_mode || '');
+      if (!items && !note) return '';
+      const body = (items ? `<div class="fee-grid">${items}</div>` : '') +
+                   (note  ? `<div class="fee-note"><i class="fa-solid fa-circle-info"></i> ${esc(note)}</div>` : '');
+      return makeCard('linear-gradient(135deg,#c2410c,#ea580c)','fa-indian-rupee-sign','Application Fee', body);
+    }
+
+    /* Age Limit */
+    function renderAge(obj) {
+      if (!obj || typeof obj !== 'object') return '';
+      const pairs = [
+        ['Minimum Age', obj.minimum_age || obj.min_age],['Maximum Age', obj.maximum_age || obj.max_age || obj.age_limit],
+        ['Age Relaxation', obj.age_relaxation || obj.details],['Age Details', obj.age_details],
+      ];
+      const tbl = renderKVTable(pairs);
+      return tbl ? makeCard('linear-gradient(135deg,#0f766e,#0891b2)','fa-user-clock','Age Limit', tbl) : '';
+    }
+
+    /* Qualification */
+    function renderQual(obj) {
+      if (!obj) return '';
+      if (typeof obj === 'string') {
+        return obj.trim() ? makeCard('linear-gradient(135deg,#4338ca,#6366f1)','fa-graduation-cap','Qualification',
+          `<div style="padding:10px 14px;font-size:.83rem;color:#1e293b">${esc(obj)}</div>`) : '';
+      }
+      const pairs = [
+        ['Education Qualification', obj.education_qualification || obj.qualification || obj.eligibility],
+        ['Required Degree', obj.required_degree],['Experience', obj.experience_required],['Details', obj.details],
+      ];
+      const tbl = renderKVTable(pairs);
+      return tbl ? makeCard('linear-gradient(135deg,#4338ca,#6366f1)','fa-graduation-cap','Qualification', tbl) : '';
+    }
+
+    /* Vacancy table */
+    function renderVacancyList(arr) {
+      if (!Array.isArray(arr) || !arr.length) return '';
+      const COL_MAP = {
+        post_name:['post_name','post','name','Post Name'],total:['total','total_vacancies','Total Posts'],
+        ur:['ur','general','UR'],obc:['obc','OBC'],sc:['sc','SC'],st:['st','ST'],ews:['ews','EWS'],
+        salary:['salary','pay_scale'],qualification:['eligibility','qualification','Educational Qualification'],
+      };
+      const ORDER = ['post_name','total','ur','obc','sc','st','ews','salary','qualification'];
+      const LABELS = {post_name:'Post Name',total:'Total Posts',ur:'UR/General',obc:'OBC',sc:'SC',st:'ST',ews:'EWS',salary:'Salary',qualification:'Qualification'};
+      const norm = []; const avail = new Set();
+      for (const row of arr) {
+        if (typeof row !== 'object') continue;
+        const n = {};
+        for (const [col, aliases] of Object.entries(COL_MAP))
+          for (const a of aliases) if (row[a] != null && row[a] !== '') { n[col] = safe(row[a]); avail.add(col); break; }
+        if (Object.keys(n).length) norm.push(n);
+      }
+      if (!norm.length) return '';
+      const cols = ORDER.filter(c => avail.has(c));
+      if (!cols.length) return '';
+      const head = '<th>Sr.</th>' + cols.map(c => `<th>${esc(LABELS[c])}</th>`).join('');
+      const rows = norm.map((r,i) => `<tr><td>${i+1}</td>${cols.map(c=>`<td>${esc(r[c]||'')}</td>`).join('')}</tr>`).join('');
+      return makeCard('linear-gradient(135deg,#15803d,#16a34a)','fa-chart-pie','Vacancy Details',
+        `<div class="edu-table-scroll"><table class="edu-table-full"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table></div>`);
+    }
+
+    /* Salary */
+    function renderSalary(obj) {
+      if (!obj) return '';
+      if (typeof obj === 'string' && obj.trim())
+        return makeCard('linear-gradient(135deg,#15803d,#16a34a)','fa-indian-rupee-sign','Salary',
+          `<div style="padding:10px 14px;font-size:.83rem;">${esc(obj)}</div>`);
+      if (typeof obj !== 'object') return '';
+      const pairs = [['Pay Scale',obj.pay_scale],['Basic Pay',obj.basic_pay],['Grade Pay',obj.grade_pay],['Salary',obj.salary],['Details',obj.details]];
+      const tbl = renderKVTable(pairs);
+      return tbl ? makeCard('linear-gradient(135deg,#15803d,#16a34a)','fa-indian-rupee-sign','Salary', tbl) : '';
+    }
+
+    /* Selection Process */
+    function renderSelection(sp) {
+      if (!sp) return '';
+      let steps = Array.isArray(sp) ? sp.map(s=>safe(s)).filter(Boolean)
+                : typeof sp === 'string' ? sp.split(/[,\n;\/]/).map(s=>s.trim()).filter(Boolean) : [];
+      if (!steps.length) return '';
+      const items = steps.map((s,i) =>
+        `<div class="sel-step"><span class="sel-num">${i+1}</span>${esc(s.slice(0,80))}</div>`).join('');
+      return makeCard('linear-gradient(135deg,#5b21b6,#7c3aed)','fa-list-check','Selection Process',
+        `<div class="sel-steps">${items}</div>`);
+    }
+
+    /* How to Apply */
+    function renderHTA(steps) {
+      if (!Array.isArray(steps) || !steps.length) return '';
+      const filtered = steps.map(s=>safe(s)).filter(Boolean);
+      if (!filtered.length) return '';
+      const items = filtered.map((s,i) => `<li class="hta-item"><span class="hta-num">${i+1}</span><span>${esc(s)}</span></li>`).join('');
+      return makeCard('linear-gradient(135deg,#0f766e,#0891b2)','fa-clipboard-list','How to Apply',
+        `<ul class="hta-list">${items}</ul>`);
+    }
+
+    /* Important Links — universal button grid */
+    const LINK_CFG = {
+      apply_online:         ['Apply Online',          'btn-blue','fa-paper-plane'],
+      official_website:     ['Official Website',      'btn-green','fa-globe'],
+      notification_pdf:     ['Download Notification', 'btn-red','fa-file-pdf'],
+      download_notification:['Download Notification', 'btn-red','fa-file-pdf'],
+      registration_link:    ['Register Now',          'btn-orange','fa-user-plus'],
+      login_link:           ['Login',                 'btn-purple','fa-right-to-bracket'],
+      admit_card:           ['Admit Card',            'btn-teal','fa-id-card'],
+      answer_key:           ['Answer Key',            'btn-indigo','fa-key'],
+      syllabus_pdf:         ['Syllabus PDF',          'btn-gray','fa-book'],
+      result_link:          ['Result',                'btn-green','fa-trophy'],
+      click_here:           ['Click Here',            'btn-blue','fa-link'],
+    };
+
+    function renderImportantLinks(ilObj) {
+      if (!ilObj || typeof ilObj !== 'object') return '';
+      let buttons = ''; const seen = new Set();
+      for (const [key, val] of Object.entries(ilObj)) {
+        if (key === 'structured_links' || key === 'seo_tags') continue;
+        const urls = Array.isArray(val) ? val : [val];
+        const [label, css, icon] = LINK_CFG[key] || ['View', 'btn-gray', 'fa-link'];
+        for (const url of urls) {
+          const u = safe(url);
+          if (!u.startsWith('http') || isBlocked(u) || seen.has(u)) continue;
+          seen.add(u);
+          const ic = u.toLowerCase().endsWith('.pdf') ? 'fa-file-pdf' : icon;
+          const cl = u.toLowerCase().endsWith('.pdf') ? 'btn-red' : css;
+          buttons += `<a href="${esc(u)}" class="link-btn ${cl}" target="_blank" rel="noopener noreferrer"><i class="fa-solid ${ic}"></i> ${esc(label)}</a>\n`;
+        }
+      }
+      /* structured_links */
+      const sl = ilObj.structured_links || [];
+      if (Array.isArray(sl)) {
+        for (const item of sl) {
+          if (typeof item !== 'object') continue;
+          const u = safe(item.url || item.href || '');
+          const lbl = safe(item.label || item.title || 'View') || 'View';
+          if (!u.startsWith('http') || isBlocked(u) || seen.has(u)) continue;
+          seen.add(u);
+          const ll = lbl.toLowerCase();
+          const [ic, cl] = /apply/i.test(ll) ? ['fa-paper-plane','btn-blue']
+            : /result/i.test(ll) ? ['fa-trophy','btn-green']
+            : /admit/i.test(ll) ? ['fa-id-card','btn-teal']
+            : u.endsWith('.pdf') ? ['fa-file-pdf','btn-red']
+            : ['fa-link','btn-blue'];
+          buttons += `<a href="${esc(u)}" class="link-btn ${cl}" target="_blank" rel="noopener noreferrer"><i class="fa-solid ${ic}"></i> ${esc(lbl.slice(0,50))}</a>\n`;
+        }
+      }
+      if (!buttons) return '';
+      return makeCard('linear-gradient(135deg,#1e40af,#1e3a8a)','fa-link','Important Links',
+        `<div class="links-grid">${buttons}</div>`);
+    }
+
+    /* FAQ */
+    function renderFAQ(list) {
+      if (!Array.isArray(list) || !list.length) return '';
+      const items = list.filter(f => f.question && f.answer).map(f =>
+        `<div class="faq-item">
+  <div class="faq-q" onclick="this.classList.toggle('open');this.nextElementSibling.style.display=this.classList.contains('open')?'block':'none'">
+    ${esc(f.question)} <i class="fa-solid fa-chevron-down" style="font-size:.7rem;color:#94a3b8;margin-left:auto"></i>
+  </div>
+  <div class="faq-a">${esc(f.answer)}</div>
+</div>`).join('');
+      return items ? makeCard('linear-gradient(135deg,#4338ca,#6366f1)','fa-circle-question','FAQs', items) : '';
+    }
+
+    /* ── renderSection: handles raw scraper format from education_jobs ── */
+    function renderSection(sec) {
+      if (!sec) return '';
+      // New format: { heading, content: [{type, text/rows/items}] }
+      if (sec.content && Array.isArray(sec.content)) {
+        return renderContentBlocks(sec.content, sec.heading || '');
+      }
+      // Old format: { type, title, rows }
+      const type = (sec.type || 'auto').toLowerCase();
+      const rows = sec.rows || [];
+      const title = sec.title || '';
+
+      if (type === 'paragraph' || (type === 'auto' && typeof rows[0] === 'string')) {
+        if (!rows.length) return '';
+        return rows.map(r => `<div class="edu-para">${esc(safe(r))}</div>`).join('');
+      }
+      if (type === 'table' || (type === 'auto' && Array.isArray(rows[0]))) {
+        if (!rows.length) return '';
+        const head = rows[0]; const dataRows = rows.slice(1);
+        const headHtml = head.map(h => `<th>${esc(h)}</th>`).join('');
+        const bodyHtml = dataRows.map(r => `<tr>${r.map(c=>`<td>${esc(c)}</td>`).join('')}</tr>`).join('');
+        return `<div class="edu-table-scroll"><table class="edu-table-full"><thead><tr>${headHtml}</tr></thead><tbody>${bodyHtml}</tbody></table></div>`;
+      }
+      if (type === 'list') {
+        return `<ul class="edu-ul">${rows.map(r=>`<li>${esc(safe(r))}</li>`).join('')}</ul>`;
+      }
+      if (type === 'merged_info') {
+        return rows.filter(r=>r&&(r.label||r.text)).map(r =>
+          `<div class="edu-mi-item">${r.label?`<div class="edu-mi-label">${esc(r.label)}</div>`:''}${r.text?`<div class="edu-mi-text">${esc(r.text)}</div>`:''}</div>`).join('');
+      }
+      if (type === 'important_links') {
+        return renderImportantLinks(sec.links || {});
+      }
+      // Fallback: rows of objects
+      if (rows.length > 0 && typeof rows[0] === 'object') {
+        const pairs = rows.flatMap(r => Object.entries(r).map(([k,v]) => [k.replace(/_/g,' ').replace(/\b[a-z]/g,c=>c.toUpperCase()), v]));
+        return renderKVTable(pairs);
+      }
+      return '';
+    }
+
+    /* renderContentBlocks: new edu format with {type, text/rows/items} */
+    function renderContentBlocks(blocks, heading) {
+      if (!blocks || !blocks.length) return '';
+      let html = '';
+      for (const block of blocks) {
+        const type = (block.type || '').toLowerCase();
+        if (type === 'paragraph') {
+          const text = safe(block.text || '');
+          if (text) html += `<div class="edu-para">${esc(text)}</div>`;
+        } else if (type === 'table') {
+          const rows = block.rows || [];
+          if (!rows.length) continue;
+          let headers = block.headers || [];
+          let dataRows = rows;
+          if (!headers.length && rows.length && rows[0].length) { headers = rows[0]; dataRows = rows.slice(1); }
+          if (headers.length === 2 || (dataRows.length && dataRows[0] && dataRows[0].length === 2)) {
+            html += `<div class="edu-table-scroll"><table class="edu-table"><tbody>` +
+              dataRows.filter(r=>r.length>=2).map(r=>`<tr><th>${esc(r[0])}</th><td>${esc(r[1])}</td></tr>`).join('') +
+              `</tbody></table></div>`;
+          } else {
+            html += `<div class="edu-table-scroll"><table class="edu-table-full"><thead><tr>${headers.map(h=>`<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>` +
+              dataRows.map(r=>`<tr>${(Array.isArray(r)?r:[]).map(c=>`<td>${esc(c)}</td>`).join('')}</tr>`).join('') +
+              `</tbody></table></div>`;
+          }
+        } else if (type === 'list') {
+          const items = block.items || [];
+          if (!items.length) continue;
+          const tag = (block.style || 'unordered') === 'ordered' ? 'ol' : 'ul';
+          html += `<${tag} class="edu-${tag === 'ol' ? 'ol' : 'ul'}">${items.map(li=>`<li>${esc(li)}</li>`).join('')}</${tag}>`;
+        } else if (type === 'merged_info') {
+          const items = block.items || [];
+          html += items.filter(mi=>mi.label||mi.text).map(mi =>
+            `<div class="edu-mi-item">${mi.label?`<div class="edu-mi-label">${esc(mi.label)}</div>`:''}${mi.text?`<div class="edu-mi-text">${esc(mi.text)}</div>`:''}</div>`).join('');
+        } else if (type === 'important_links') {
+          html += renderImportantLinks(block.links || {});
+        }
+      }
+      return html;
+    }
+
+    /* ── Full detail renderer: uses SAME 16-section order as job pages ── */
+    function renderDetail(item, sectionTitle) {
+      const detail     = item.detail || {};
+      const title      = safe(detail.title || item.name || item.examName || 'Education Detail');
+      const shortInfo  = safe(detail.short_info || '');
+
+      /* Structured job fields (if present — state job items can have these) */
+      const bd    = detail.basic_details || {};
+      const dates = detail.important_dates || detail.dates || {};
+      const fee   = detail.application_fee || {};
+      const age   = detail.age_limit || {};
+      const qual  = detail.qualification || null;
+      const vac   = detail.vacancy_details || [];
+      const cwv   = detail.category_wise_vacancy || {};
+      const sal   = detail.salary_details || {};
+      const sel   = detail.selection_process || [];
+      const ep    = detail.exam_pattern || null;
+      const syl   = detail.syllabus || null;
+      const pe    = detail.physical_eligibility || {};
+      const hta   = detail.how_to_apply || [];
+      const insts = detail.important_instructions || [];
+      const il    = detail.important_links || {};
+      const faq   = detail.faq || [];
+
+      /* Raw scraper sections (education_jobs format) */
+      const rawSections = detail.sections || [];
+
+      document.title = title + ' | Top Sarkari Jobs';
+      bcSection.textContent = title.slice(0,50) + (title.length > 50 ? '…' : '');
+
+      const metaEl = document.getElementById('metaDesc');
+      if (metaEl) metaEl.setAttribute('content', shortInfo.slice(0,160) || title);
+      const ogT = document.getElementById('ogTitle');
+      if (ogT) ogT.setAttribute('content', title + ' | Top Sarkari Jobs');
+
+      let html = '';
+
+      /* Header */
+      const postDate = safe(item.postDate || item.date || '');
+      const category = safe(item.category || sectionTitle || '');
+      html += `<div class="edu-hdr">
+  <div class="edu-hdr-title">${esc(title)}</div>
+  <div class="edu-hdr-meta">
+    ${category ? `<span><i class="fa-solid fa-tag"></i> ${esc(category)}</span>` : ''}
+    ${postDate  ? `<span><i class="fa-regular fa-calendar"></i> ${esc(postDate)}</span>` : ''}
+  </div>
+</div>`;
+
+      /* Short info */
+      if (shortInfo) html += `<div class="edu-short-info"><i class="fa-solid fa-circle-info" style="color:#0891b2;margin-right:6px"></i>${esc(shortInfo)}</div>`;
+
+      /* Notice */
+      html += `<div class="edu-notice"><i class="fa-solid fa-triangle-exclamation" style="flex-shrink:0;margin-top:1px"></i>
+<span><strong>Important:</strong> Always verify details on the official website before applying. Dates &amp; eligibility may change without notice.</span></div>`;
+
+      /* === UNIVERSAL 16-SECTION ORDER === */
+
+      /* 2. Important Dates — from structured field OR raw sections */
+      if (dates && Object.keys(dates).length) html += renderDates(dates);
+
+      /* 3. Application Fee */
+      if (fee && Object.keys(fee).length) html += renderFee(fee);
+
+      /* 4. Age Limit */
+      if (age && Object.keys(age).length) html += renderAge(age);
+
+      /* 5. Qualification */
+      if (qual) html += renderQual(qual);
+
+      /* 6-7. Vacancy */
+      if (Array.isArray(vac) && vac.length) html += renderVacancyList(vac);
+      if (cwv && Object.keys(cwv).length) {
+        const cwvPairs = Object.entries(cwv).filter(([,v])=>safe(v)).map(([k,v])=>`<tr><td>${esc(k.replace(/_/g,' ').replace(/\b[a-z]/g,c=>c.toUpperCase()))}</td><td>${esc(safe(v))}</td></tr>`).join('');
+        if (cwvPairs) html += makeCard('linear-gradient(135deg,#15803d,#16a34a)','fa-chart-bar','Category-wise Vacancy',
+          `<div class="edu-table-scroll"><table class="edu-table-full"><thead><tr><th>Category</th><th>Posts</th></tr></thead><tbody>${cwvPairs}</tbody></table></div>`);
+      }
+
+      /* 8. Salary */
+      if (sal && (typeof sal === 'string' ? sal.trim() : Object.keys(sal).length)) html += renderSalary(sal);
+
+      /* 9. Selection Process */
+      if (sel && (Array.isArray(sel) ? sel.length : sel)) html += renderSelection(sel);
+
+      /* 10. Exam Pattern */
+      if (ep) html += (() => {
+        if (Array.isArray(ep) && ep.length) {
+          const cols = Object.keys(ep[0]).filter(k=>typeof ep[0][k]!=='object');
+          const head = '<th>Sr.</th>' + cols.map(c=>`<th>${esc(c.replace(/_/g,' ').replace(/\b[a-z]/g,ch=>ch.toUpperCase()))}</th>`).join('');
+          const rows = ep.map((r,i)=>`<tr><td>${i+1}</td>${cols.map(c=>`<td>${esc(safe(r[c]))}</td>`).join('')}</tr>`).join('');
+          return makeCard('linear-gradient(135deg,#0369a1,#0284c7)','fa-file-lines','Exam Pattern',
+            `<div class="edu-table-scroll"><table class="edu-table-full"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table></div>`);
+        }
+        return '';
+      })();
+
+      /* 11. Syllabus */
+      if (syl) html += (() => {
+        if (Array.isArray(syl) && syl.length) {
+          const items = syl.map(s=>`<div class="sel-step"><i class="fa-solid fa-book-open"></i>${esc(safe(s).slice(0,100))}</div>`).join('');
+          return makeCard('linear-gradient(135deg,#4338ca,#6366f1)','fa-book','Syllabus',`<div class="sel-steps">${items}</div>`);
+        }
+        return '';
+      })();
+
+      /* 12. Physical Eligibility */
+      if (pe && Object.keys(pe).length) {
+        const pairs = Object.entries(pe).filter(([,v])=>safe(v)).map(([k,v])=>[k.replace(/_/g,' ').replace(/\b[a-z]/g,c=>c.toUpperCase()),v]);
+        const tbl = renderKVTable(pairs);
+        if (tbl) html += makeCard('linear-gradient(135deg,#be123c,#e11d48)','fa-dumbbell','Physical Eligibility', tbl);
+      }
+
+      /* 13. How to Apply */
+      if (Array.isArray(hta) && hta.length) html += renderHTA(hta);
+
+      /* 14. Important Instructions */
+      if (Array.isArray(insts) && insts.length) {
+        const items = insts.map(s=>safe(s)).filter(Boolean).map(s =>
+          `<li class="inst-item"><i class="fa-solid fa-triangle-exclamation"></i><span>${esc(s)}</span></li>`).join('');
+        if (items) html += makeCard('linear-gradient(135deg,#b45309,#ca8a04)','fa-circle-exclamation','Important Instructions',`<ul class="inst-list">${items}</ul>`);
+      }
+
+      /* Raw edu scraper sections — render in-between or here */
+      let rawHtml = '';
+      for (const sec of rawSections) {
+        const heading = safe(sec.heading || '');
+        const secBody = renderSection(sec);
+        if (!secBody || !secBody.trim()) continue;
+        if (heading) {
+          rawHtml += `<div class="edu-card"><div class="edu-sec-title"><i class="fa-solid fa-circle-dot"></i> ${esc(heading)}</div><div class="edu-card-body">${secBody}</div></div>`;
+        } else {
+          rawHtml += `<div class="edu-card"><div class="edu-card-body">${secBody}</div></div>`;
+        }
+      }
+      html += rawHtml;
+
+      /* 15. Important Links */
+      html += renderImportantLinks(il);
+
+      /* 16. FAQ */
+      if (Array.isArray(faq) && faq.length) html += renderFAQ(faq);
+
+      /* Fallback: if nothing meaningful rendered, show helpful empty state */
+      const hasContent = rawHtml || renderImportantLinks(il) || shortInfo;
+      if (!hasContent && !rawSections.length) {
+        html += `<div class="edu-card"><div class="edu-card-body" style="padding:20px;text-align:center;color:#94a3b8">
+  <i class="fa-solid fa-clock" style="font-size:1.5rem;margin-bottom:8px;display:block"></i>
+  Detailed information will be available soon. Check the Important Links below.
+</div></div>`;
+        /* Show official link if available */
+        const offUrl = safe(item.url || '');
+        if (offUrl && offUrl.startsWith('http') && !isBlocked(offUrl)) {
+          html += makeCard('linear-gradient(135deg,#1e40af,#1e3a8a)','fa-link','Important Links',
+            `<div class="links-grid"><a href="${esc(offUrl)}" class="link-btn btn-green" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-globe"></i> Official Website</a></div>`);
+        }
+      }
+
+      /* Back link */
+      html += `<div style="margin-top:16px;text-align:center">
+  <a href="/education/${encodeURIComponent(sectionId)}/" class="edu-back-btn"><i class="fa-solid fa-arrow-left"></i> Back to ${esc(sectionTitle)} List</a>
+</div>`;
+
+      return html;
+    }
+
+    /* ── Section list view (unchanged) ── */
     function renderSectionList(section) {
       const title = section.title || section.id || 'Education';
       const items = section.items || [];
-
       document.title = title + ' Education | Top Sarkari Jobs';
       bcSection.textContent = title;
-
-      let html = `
-        <h1 style="font-size:1rem;font-weight:800;color:#1e293b;margin-bottom:14px;padding-left:2px;">
-          <i class="fa-solid fa-graduation-cap" style="color:var(--blue);"></i> ${esc(title)} – Education Updates
-        </h1>
-        <div class="edu-notice">
-          <i class="fa-solid fa-circle-info" style="flex-shrink:0;margin-top:1px;"></i>
-          <span>Click on any item below to view full details including important dates, links and more.</span>
-        </div>
-        <div class="edu-list-card">
-          <div class="edu-list-head">
-            <i class="fa-solid fa-list"></i> ${esc(title)} Education (${items.length} Items)
-          </div>`;
-
+      let html = `<h1 style="font-size:1rem;font-weight:800;color:#1e293b;margin-bottom:14px">
+  <i class="fa-solid fa-graduation-cap" style="color:#1d4ed8"></i> ${esc(title)} – Education Updates
+</h1>
+<div class="edu-notice"><i class="fa-solid fa-circle-info" style="flex-shrink:0;margin-top:1px"></i>
+  <span>Click on any item below to view full details including important dates, links and more.</span>
+</div>
+<div class="edu-list-card">
+  <div class="edu-list-head"><i class="fa-solid fa-list"></i> ${esc(title)} (${items.length} Items)</div>`;
       items.forEach((item, idx) => {
         const slug = makeSlug(item.name || item.examName || '');
-        const url  = `/education/${encodeURIComponent(sectionId)}/?slug=${encodeURIComponent(slug)}`;
+        const url  = `/education/${encodeURIComponent(sectionId)}/${encodeURIComponent(slug)}/`;
         const date = safe(item.date || item.postDate || '');
         const cat  = safe(item.category || '');
-        html += `
-          <a href="${url}" class="edu-list-item">
-            <span class="edu-list-num">${idx+1}</span>
-            <div>
-              <div class="edu-list-title">${esc(item.name || item.examName || 'Untitled')}</div>
-              ${date ? `<div class="edu-list-date"><i class="fa-regular fa-calendar" style="color:var(--blue);"></i> ${esc(date)}</div>` : ''}
-              ${cat  ? `<span class="edu-list-badge">${esc(cat)}</span>` : ''}
-            </div>
-          </a>`;
+        html += `<a href="${url}" class="edu-list-item">
+  <span class="edu-list-num">${idx+1}</span>
+  <div>
+    <div class="edu-list-title">${esc(item.name || item.examName || 'Untitled')}</div>
+    ${date ? `<div class="edu-list-date"><i class="fa-regular fa-calendar" style="color:#1d4ed8"></i> ${esc(date)}</div>` : ''}
+    ${cat  ? `<span class="edu-list-badge">${esc(cat)}</span>` : ''}
+  </div>
+</a>`;
       });
-
       html += `</div>`;
       return html;
     }
 
-    /* ── Render Content Blocks ── */
-    function renderContent(blocks) {
-      let html = '';
-      blocks.forEach(block => {
-        const type = (block.type || '').toLowerCase();
-
-        if (type === 'paragraph') {
-          const text = safe(block.text || '');
-          if (text) html += `<div class="edu-para">${esc(text)}</div>`;
-
-        } else if (type === 'table') {
-          const rows = block.rows || [];
-          if (!rows.length) return;
-
-          // First row might be headers if block.headers is empty
-          let headers = block.headers || [];
-          let dataRows = rows;
-          if (!headers.length && rows.length > 0 && rows[0].length) {
-            // Check if first row looks like header (no numbers/dates)
-            headers = rows[0];
-            dataRows = rows.slice(1);
-          }
-
-          // 2-col table (key-value): use th/td layout
-          if (headers.length === 2 || (dataRows.length && dataRows[0].length === 2)) {
-            html += `<div class="edu-table-scroll"><table class="edu-table"><tbody>`;
-            dataRows.forEach(row => {
-              if (row.length >= 2) {
-                html += `<tr><th>${esc(row[0])}</th><td>${esc(row[1])}</td></tr>`;
-              }
-            });
-            html += `</tbody></table></div>`;
-          } else {
-            // Multi-col table
-            html += `<div class="edu-table-scroll"><table class="edu-table-full"><thead><tr>`;
-            headers.forEach(h => { html += `<th>${esc(h)}</th>`; });
-            html += `</tr></thead><tbody>`;
-            dataRows.forEach(row => {
-              html += `<tr>`;
-              row.forEach(cell => { html += `<td>${esc(cell)}</td>`; });
-              html += `</tr>`;
-            });
-            html += `</tbody></table></div>`;
-          }
-
-        } else if (type === 'list') {
-          const listItems = block.items || [];
-          if (!listItems.length) return;
-          const tag = (block.style || 'unordered') === 'ordered' ? 'ol' : 'ul';
-          const cls = tag === 'ol' ? 'edu-ol' : 'edu-ul';
-          html += `<${tag} class="${cls}">`;
-          listItems.forEach(li => { html += `<li>${esc(li)}</li>`; });
-          html += `</${tag}>`;
-
-        } else if (type === 'merged_info') {
-          const items = block.items || [];
-          items.forEach(mi => {
-            const label = safe(mi.label || '');
-            const text  = safe(mi.text  || '');
-            if (!label && !text) return;
-            html += `<div class="edu-mi-item">`;
-            if (label) html += `<div class="edu-mi-label">${esc(label)}</div>`;
-            if (text)  html += `<div class="edu-mi-text">${esc(text)}</div>`;
-            html += `</div>`;
-          });
-
-        } else if (type === 'important_links') {
-          const links = block.links || [];
-          if (!links.length) return;
-
-          function categorizeLinkBtn(label) {
-            const l = label.toLowerCase();
-            if (/apply|register|form/i.test(l)) return 'edu-link-btn-green';
-            if (/result|merit|score/i.test(l))  return 'edu-link-btn-orange';
-            if (/admit|hall|call/i.test(l))      return 'edu-link-btn-orange';
-            if (/notif|pdf|download/i.test(l))   return 'edu-link-btn-blue';
-            if (/website|portal|official/i.test(l)) return 'edu-link-btn-red';
-            return 'edu-link-btn-blue';
-          }
-
-          // Render as proper table with S.No, Name, Link columns
-          html += `<div class="edu-links-table-wrap">
-            <table class="edu-links-tbl">
-              <thead>
-                <tr>
-                  <th style="width:50px;">S.No</th>
-                  <th>Name / Description</th>
-                  <th style="width:130px;">Link</th>
-                </tr>
-              </thead>
-              <tbody>`;
-          let sno = 1;
-          links.forEach(lnk => {
-            const href  = safe(lnk.url || lnk.href || '#');
-            const label = safe(lnk.label || lnk.title || lnk.text || 'Official Link');
-            const cls   = categorizeLinkBtn(label);
-            if (!href || href === '#') return;
-            html += `<tr>
-              <td style="text-align:center;font-weight:700;color:#1a56db;">${sno++}</td>
-              <td>${esc(label)}</td>
-              <td><a href="${esc(href)}" class="edu-link-btn ${cls}" target="_blank" rel="noopener noreferrer">
-                <i class="fa-solid fa-arrow-up-right-from-square"></i> Open
-              </a></td>
-            </tr>`;
-          });
-          html += `</tbody></table></div>`;
-        }
-      });
-      return html;
-    }
-
-    /* ── Render Detail View ── */
-    function renderDetail(item, sectionTitle) {
-      const detail = item.detail || {};
-      const title  = safe(detail.title || item.name || item.examName || 'Education Detail');
-      const shortInfo = safe(detail.short_info || '');
-      const sections  = detail.sections || [];
-
-      document.title = title + ' | Top Sarkari Jobs';
-      bcSection.textContent = title.slice(0, 50) + (title.length > 50 ? '…' : '');
-
-      // Update meta
-      const metaDesc = document.getElementById('metaDesc');
-      if (metaDesc) metaDesc.setAttribute('content', shortInfo.slice(0, 160) || title);
-      const ogTitle = document.getElementById('ogTitle');
-      if (ogTitle) ogTitle.setAttribute('content', title + ' | Top Sarkari Jobs');
-
-      let html = '';
-
-      // Header
-      const postDate = safe(item.postDate || item.date || '');
-      const category = safe(item.category || sectionTitle || '');
-      html += `
-        <div class="edu-hdr">
-          <div class="edu-hdr-title">${esc(title)}</div>
-          <div class="edu-hdr-meta">
-            ${category ? `<span><i class="fa-solid fa-tag"></i> ${esc(category)}</span>` : ''}
-            ${postDate ? `<span><i class="fa-regular fa-calendar"></i> ${esc(postDate)}</span>` : ''}
-          </div>
-        </div>`;
-
-      // Short Info
-      if (shortInfo) {
-        html += `<div class="edu-short-info">${esc(shortInfo)}</div>`;
-      }
-
-      // Notice
-      html += `
-        <div class="edu-notice">
-          <i class="fa-solid fa-triangle-exclamation" style="flex-shrink:0;margin-top:1px;"></i>
-          <span><strong>Important:</strong> Always verify details on the official website before applying. Dates &amp; eligibility may change without notice.</span>
-        </div>`;
-
-      // Official link (top)
-      const officialUrl = safe(item.url || '');
-      if (officialUrl && officialUrl.startsWith('http')) {
-        html += `
-          <div class="edu-card" style="margin-bottom:12px;">
-            <div class="edu-links-wrap">
-              <a href="${esc(officialUrl)}" class="edu-btn edu-btn-green" target="_blank" rel="noopener noreferrer">
-                <i class="fa-solid fa-globe"></i> Official Website / Portal
-              </a>
-            </div>
-          </div>`;
-      }
-
-      // Render each section from detail.sections (in sequence order)
-      sections.forEach(sec => {
-        const heading  = safe(sec.heading || '');
-        const contents = sec.content || [];
-        if (!contents.length) return;
-
-        const bodyHtml = renderContent(contents);
-        if (!bodyHtml.trim()) return;
-
-        html += `<div class="edu-card">`;
-        if (heading) {
-          html += `<div class="edu-sec-title"><i class="fa-solid fa-circle-dot"></i> ${esc(heading)}</div>`;
-        }
-        html += `<div class="edu-card-body">${bodyHtml}</div></div>`;
-      });
-
-      // Render top-level important_links from item.detail.important_links
-      const topLinks = detail.important_links || {};
-      const structLinks = topLinks.structured_links || [];
-      const clickHereLinks = topLinks.click_here || [];
-
-      // Build unified links array - prefer structured_links, else fallback to click_here
-      let allLinks = [];
-      if (structLinks.length) {
-        allLinks = structLinks.map((l, i) => ({
-          label: l.label || ('Link ' + (i+1)),
-          url: l.url || l.href || ''
-        }));
-      } else if (clickHereLinks.length) {
-        allLinks = clickHereLinks.map((u, i) => ({
-          label: 'Official Link ' + (i+1),
-          url: u
-        }));
-      }
-
-      if (allLinks.length) {
-        function categorizeLinkBtnTop(label) {
-          const l = label.toLowerCase();
-          if (/apply|register|form/i.test(l)) return 'edu-link-btn-green';
-          if (/result|merit|score/i.test(l))  return 'edu-link-btn-orange';
-          if (/admit|hall|call/i.test(l))      return 'edu-link-btn-orange';
-          if (/notif|pdf|download/i.test(l))   return 'edu-link-btn-blue';
-          if (/website|portal|official/i.test(l)) return 'edu-link-btn-red';
-          return 'edu-link-btn-blue';
-        }
-        let linksHtml = `<div class="edu-card">
-          <div class="edu-card-head" style="background:linear-gradient(135deg,#1a56db,#1e40af);">
-            <i class="fa-solid fa-link"></i> Important Links
-          </div>
-          <div class="edu-card-body">
-            <div class="edu-links-table-wrap">
-              <table class="edu-links-tbl">
-                <thead><tr>
-                  <th style="width:50px;">S.No</th>
-                  <th>Name / Description</th>
-                  <th style="width:130px;">Link</th>
-                </tr></thead>
-                <tbody>`;
-        allLinks.forEach((lnk, idx) => {
-          if (!lnk.url || lnk.url === '#') return;
-          const cls = categorizeLinkBtnTop(lnk.label);
-          linksHtml += `<tr>
-            <td style="text-align:center;font-weight:700;color:#1a56db;">${idx+1}</td>
-            <td>${esc(lnk.label)}</td>
-            <td><a href="${esc(lnk.url)}" class="edu-link-btn ${cls}" target="_blank" rel="noopener noreferrer">
-              <i class="fa-solid fa-arrow-up-right-from-square"></i> Open
-            </a></td>
-          </tr>`;
-        });
-        linksHtml += `</tbody></table></div></div></div>`;
-        html += linksHtml;
-      }
-
-      return html;
+    /* ── PSR (Set as Preferred Source) block ── */
+    function buildPSR(item, section) {
+      const sTitle   = (section && section.title) || sectionId || 'Education';
+      const isItem   = !!(slugArg && item);
+      const iName    = isItem ? (item.name || item.examName || sTitle) : '';
+      const iDate    = isItem ? (item.date || item.postDate || '2026') : '2026';
+      const iCat     = isItem ? (item.category || 'Board / University') : 'Board / University';
+      const desc     = isItem
+        ? `${esc(iName)} — ${esc(sTitle)} Education 2026. Get complete details, important dates, result, admit card and more at Top Sarkari Jobs.`
+        : `${esc(sTitle)} Education 2026 — Official notifications, results, admit cards and exam dates at Top Sarkari Jobs.`;
+      const row = isItem
+        ? `<tr><td><span class="edu-ps-badge">Education</span></td><td>${esc(iName.length>35?iName.slice(0,35)+'…':iName)}</td><td>${esc(iDate)}</td><td>${esc(iCat)}</td></tr>`
+        : `<tr><td><span class="edu-ps-badge">Education</span></td><td>${esc(sTitle)}</td><td>2026</td><td>State / Board Results</td></tr>`;
+      return `<div class="edu-ps-card">
+<div class="edu-ps-head"><i class="fa-solid fa-google"></i>&nbsp; Set as Preferred Source on Google</div>
+<p class="edu-ps-desc">${desc}</p>
+<div class="edu-ps-table-wrap"><table class="edu-ps-table">
+<thead><tr><th>Page Type</th><th>${isItem?'Exam / Notification':'State / Board'}</th><th>Date / Year</th><th>Category</th></tr></thead>
+<tbody>${row}</tbody></table></div>
+<p class="edu-ps-org">Top Sarkari Jobs — India No.1 Sarkari Jobs Portal</p>
+</div>`;
     }
 
     /* ── Main Load ── */
     fetch('/data/Complete_Jobs_Full_Data.json')
-      .then(function(r) { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
-      .then(function(cj) { return { sections: (cj.education_jobs||{}).sections||[] }; })
+      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(cj => ({ sections: (cj.education_jobs || {}).sections || [] }))
       .then(data => {
         const allSections = data.sections || [];
-
-        // Find the section matching sectionId
         const section = allSections.find(s => s.id === sectionId || s.title === sectionId);
 
         if (!section) {
           if (!sectionId) {
-            // No section param: show all sections list
             bcSection.textContent = 'All Education';
-            let html = `<h1 style="font-size:1rem;font-weight:800;color:#1e293b;margin-bottom:14px;padding-left:2px;">
-              <i class="fa-solid fa-graduation-cap" style="color:var(--blue);"></i> Education State Wise – All Sections
-            </h1>`;
+            let html = `<h1 style="font-size:1rem;font-weight:800;color:#1e293b;margin-bottom:14px">
+  <i class="fa-solid fa-graduation-cap" style="color:#1d4ed8"></i> Education State Wise – All Sections
+</h1>`;
             allSections.forEach(sec => {
               html += `<a href="/education/${encodeURIComponent(sec.id)}/" class="edu-list-item" style="display:flex;background:#fff;border-radius:10px;box-shadow:var(--shadow);margin-bottom:8px;padding:12px 14px;text-decoration:none;color:inherit;align-items:center;gap:10px;">
-                <i class="fa-solid fa-graduation-cap" style="color:var(--blue);font-size:1.1rem;"></i>
-                <div>
-                  <div class="edu-list-title">${esc(sec.title)}</div>
-                  <div class="edu-list-date">${sec.items ? sec.items.length + ' items' : ''}</div>
-                </div>
-                <i class="fa-solid fa-chevron-right" style="margin-left:auto;color:#d1d5db;font-size:.7rem;"></i>
-              </a>`;
+  <i class="fa-solid fa-graduation-cap" style="color:#1d4ed8;font-size:1.1rem"></i>
+  <div><div class="edu-list-title">${esc(sec.title)}</div>${sec.items?`<div class="edu-list-date">${sec.items.length} items</div>`:''}</div>
+  <i class="fa-solid fa-chevron-right" style="margin-left:auto;color:#d1d5db;font-size:.7rem"></i>
+</a>`;
             });
             loadingEl.style.display = 'none';
             contentEl.innerHTML = html;
             contentEl.style.display = '';
             return;
           }
-          showError('Section "' + sectionId + '" not found in Complete_Jobs_Full_Data.json (education_jobs).');
+          showError('Section "' + sectionId + '" not found.');
           return;
         }
 
         let html = '';
-
-        /* ── Hoist item to outer scope so injectEduPS() can access it ── */
-        var item = null;
+        let item = null;
 
         if (slugArg) {
-          // Find item by slug
           const items = section.items || [];
-          item = items.find(it => {
-            const itSlug = makeSlug(it.name || it.examName || '');
-            return itSlug === slugArg;
-          });
-
+          item = items.find(it => makeSlug(it.name || it.examName || '') === slugArg);
           if (!item) {
-            // Try partial match
             const partial = items.find(it => {
-              const itSlug = makeSlug(it.name || it.examName || '');
-              return itSlug.includes(slugArg) || slugArg.includes(itSlug.slice(0,20));
+              const s = makeSlug(it.name || it.examName || '');
+              return s.includes(slugArg) || slugArg.includes(s.slice(0,20));
             });
-            if (!partial) {
-              showError('Item not found. Please go back and try again.');
-              return;
-            }
-            item = partial; // assign so injectEduPS() sees it
-            html = renderDetail(partial, section.title);
-          } else {
-            html = renderDetail(item, section.title);
+            if (!partial) { showError('Item not found. Please go back and try again.'); return; }
+            item = partial;
           }
-
-          // Add "Back to section" link at bottom
-          html += `
-            <div style="margin-top:16px;text-align:center;">
-              <a href="/education/${encodeURIComponent(sectionId)}/" class="edu-back-btn">
-                <i class="fa-solid fa-arrow-left"></i> Back to ${esc(section.title)} List
-              </a>
-            </div>`;
+          html = buildPSR(item, section) + renderDetail(item, section.title);
         } else {
-          // Show section item list
           html = renderSectionList(section);
         }
 
-
-        /* ── Set as Preferred Source on Google ── */
-        (function injectEduPS() {
-          var _secTitle = (section && section.title) || sectionId || 'Education';
-          var _isItem = !!(slugArg && item);
-          var _itemName = _isItem ? (item.name || item.examName || _secTitle) : '';
-          var _itemDate = _isItem ? (item.date || item.postDate || '2026') : '2026';
-          var _itemCat  = _isItem ? (item.category || 'Board / University') : 'Board / University';
-
-          /* Description */
-          var _desc = _isItem
-            ? esc(_itemName) + ' — ' + esc(_secTitle) + ' Education 2026. Get complete details, important dates, result, admit card and more at Top Sarkari Jobs.'
-            : esc(_secTitle) + ' Education 2026 — Get complete details, official notifications, results, admit cards and exam dates at Top Sarkari Jobs.';
-
-          /* Table rows */
-          var _tableRows = _isItem
-            ? '<tr>' +
-              '<td><span class="edu-ps-badge">Education</span></td>' +
-              '<td>' + esc(_itemName.length > 35 ? _itemName.substring(0,35)+'...' : _itemName) + '</td>' +
-              '<td>' + esc(_itemDate) + '</td>' +
-              '<td>' + esc(_itemCat) + '</td>' +
-              '</tr>'
-            : '<tr>' +
-              '<td><span class="edu-ps-badge">Education</span></td>' +
-              '<td>' + esc(_secTitle) + '</td>' +
-              '<td>2026</td>' +
-              '<td>State / Board Results</td>' +
-              '</tr>';
-
-          var psHtml = '<div class="edu-ps-card">' +
-            '<div class="edu-ps-head"><i class="fa-solid fa-google"></i>&nbsp; Set as Preferred Source on Google</div>' +
-            '<p class="edu-ps-desc">' + _desc + '</p>' +
-            '<div class="edu-ps-table-wrap"><table class="edu-ps-table">' +
-            '<thead><tr><th>Page Type</th><th>' + (_isItem ? 'Exam / Notification' : 'State / Board') + '</th><th>Date / Year</th><th>Category</th></tr></thead>' +
-            '<tbody>' + _tableRows + '</tbody>' +
-            '</table></div>' +
-            '<p class="edu-ps-org">Top Sarkari Jobs — India No.1 Sarkari Jobs Portal</p>' +
-            '</div>';
-          html = psHtml + html;
-        })();
         loadingEl.style.display = 'none';
         contentEl.innerHTML = html;
         contentEl.style.display = '';
       })
-      .catch(err => {
-        showError('Failed to load education data from Complete_Jobs_Full_Data.json: ' + err.message);
-      });
+      .catch(err => showError('Failed to load data: ' + err.message));
 
   })();
   </script>
 
   <!-- External scripts -->
-  <script src="/tsj-menu.js"?v=20260530023112 defer></script>
+  <script src="/tsj-menu.js" defer></script>
 </body>
 </html>

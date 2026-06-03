@@ -1311,3 +1311,114 @@ table td {
   content-visibility: auto;
   contain-intrinsic-size: 0 150px;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   TOP SARKARI JOBS — Universal Job Page Static CSS (2026-06)
+   Used by generate_jobs.py pre-rendered job pages
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Job page wrapper ── */
+.jd-wrap{max-width:860px;margin:0 auto;padding:12px 10px 40px}
+.jd-bc{font-size:.75rem;color:#64748b;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.jd-bc a{color:#1d4ed8;text-decoration:none}
+.jd-bc a:hover{text-decoration:underline}
+
+/* ── Notice bar ── */
+.notice-bar{background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 14px;font-size:.8rem;color:#78350f;margin-bottom:12px;display:flex;gap:8px;align-items:flex-start}
+.notice-bar i{flex-shrink:0;margin-top:2px}
+
+/* ── Job header card ── */
+.jd-header{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px 18px 0;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.jd-title{font-size:1.15rem;font-weight:800;color:#0f172a;line-height:1.4;margin:0 0 8px}
+.jd-badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.jd-badge{display:inline-flex;align-items:center;gap:4px;background:#dbeafe;color:#1e40af;font-size:.71rem;font-weight:700;text-transform:uppercase;padding:3px 8px;border-radius:12px}
+.jd-stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid #e2e8f0;width:100%}
+.jd-stat{padding:11px 6px;text-align:center;border-right:1px solid #e2e8f0}
+.jd-stat:last-child{border-right:none}
+.jd-stat-val{font-size:.95rem;font-weight:800;color:#0f172a}
+.jd-stat-lbl{font-size:.67rem;color:#64748b;text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+@media(max-width:600px){.jd-stats{grid-template-columns:repeat(2,1fr)}.jd-stat:nth-child(2){border-right:none}.jd-stat:nth-child(3){border-top:1px solid #e2e8f0}.jd-stat:nth-child(4){border-top:1px solid #e2e8f0;border-right:none}}
+
+/* ── Short info card ── */
+.short-info-card{background:#eff6ff;border-left:4px solid #1d4ed8;padding:12px 14px;font-size:.84rem;color:#1e293b;line-height:1.7;margin-bottom:12px;border-radius:0 8px 8px 0}
+
+/* ── Generic job card ── */
+.job-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.job-card-head{display:flex;align-items:center;gap:8px;padding:9px 14px;color:#fff;font-size:.86rem;font-weight:700}
+.job-card-head i{opacity:.85}
+.job-card-head h2{margin:0;font-size:.86rem;font-weight:700}
+
+/* ── KV table (jd-table) ── */
+.jd-table{width:100%;border-collapse:collapse;font-size:.82rem}
+.jd-table th{width:38%;background:#f8fafc;color:#374151;font-weight:700;padding:8px 12px;text-align:left;border-bottom:1px solid #e9eef4;vertical-align:top;word-break:break-word}
+.jd-table td{padding:8px 12px;color:#1e293b;border-bottom:1px solid #e9eef4;vertical-align:top;word-break:break-word;overflow-wrap:break-word}
+.jd-table tr:last-child th,.jd-table tr:last-child td{border-bottom:none}
+.jd-table a{color:#1d4ed8;word-break:break-all}
+
+/* ── Vacancy table ── */
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%}
+.vacancy-table{width:100%;border-collapse:collapse;font-size:.82rem;min-width:400px}
+.vacancy-table th{background:#1d4ed8;color:#fff;padding:8px 12px;font-weight:700;white-space:nowrap;text-align:left}
+.vacancy-table td{padding:8px 12px;border-bottom:1px solid #e9eef4;color:#1e293b;word-break:break-word;vertical-align:top}
+.vacancy-table .vac-total td{border-bottom:none;font-weight:700;background:#f0f9ff}
+
+/* ── Link buttons (new palette) ── */
+.links-grid{display:flex;flex-wrap:wrap;gap:8px;padding:12px 14px}
+.link-btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:8px;font-size:.8rem;font-weight:700;text-decoration:none;white-space:nowrap;transition:all .15s}
+.btn-blue{background:#dbeafe;color:#1e40af;border:1px solid #93c5fd}
+.btn-blue:hover{background:#1e40af;color:#fff}
+.btn-green{background:#d1fae5;color:#065f46;border:1px solid #6ee7b7}
+.btn-green:hover{background:#059669;color:#fff}
+.btn-red{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+.btn-red:hover{background:#dc2626;color:#fff}
+.btn-orange{background:#fef3c7;color:#92400e;border:1px solid #fcd34d}
+.btn-orange:hover{background:#d97706;color:#fff}
+.btn-purple{background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd}
+.btn-purple:hover{background:#6d28d9;color:#fff}
+.btn-teal{background:#ccfbf1;color:#0f766e;border:1px solid #5eead4}
+.btn-teal:hover{background:#0f766e;color:#fff}
+.btn-indigo{background:#e0e7ff;color:#3730a3;border:1px solid #a5b4fc}
+.btn-indigo:hover{background:#3730a3;color:#fff}
+.btn-gray{background:#f1f5f9;color:#475569;border:1px solid #cbd5e1}
+.btn-gray:hover{background:#475569;color:#fff}
+
+/* ── Selection steps ── */
+.sel-steps{display:flex;flex-wrap:wrap;gap:8px;padding:12px 14px}
+.sel-step{display:inline-flex;align-items:center;gap:6px;background:#f0f7ff;border:1px solid #bfdbfe;border-radius:8px;padding:6px 12px;font-size:.8rem;font-weight:600;color:#1e40af}
+.sel-num{background:#1e40af;color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;flex-shrink:0}
+
+/* ── How to Apply list ── */
+.hta-list{list-style:none;margin:0;padding:0}
+.hta-item{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;border-bottom:1px solid #f1f5f9;font-size:.83rem;color:#1e293b;line-height:1.65}
+.hta-item:last-child{border-bottom:none}
+.hta-num{flex-shrink:0;min-width:24px;height:24px;background:#0f766e;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800}
+
+/* ── Instructions list ── */
+.inst-list{list-style:none;margin:0;padding:0}
+.inst-item{display:flex;align-items:flex-start;gap:10px;padding:9px 14px;border-bottom:1px solid #f1f5f9;font-size:.82rem;color:#78350f;line-height:1.6}
+.inst-item:last-child{border-bottom:none}
+.inst-item i{color:#ca8a04;flex-shrink:0;margin-top:2px}
+
+/* ── Fee grid ── */
+.fee-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+.fee-item{padding:10px 14px;border-right:1px solid #e9eef4;border-bottom:1px solid #e9eef4}
+.fee-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#64748b;margin-bottom:3px}
+.fee-val{font-size:.9rem;font-weight:700;color:#1e293b}
+.fee-val.free{color:#16a34a}
+.fee-val.paid{color:#dc2626}
+.fee-note{padding:9px 14px;font-size:.81rem;color:#78350f;background:#fffbeb;border-top:1px solid #fde68a}
+
+/* ── Static FAQ (job pages) ── */
+.faq-item{border-bottom:1px solid #f1f5f9;font-size:.83rem}
+.faq-item:last-child{border-bottom:none}
+.faq-q{padding:10px 14px;font-weight:700;color:#1e293b;cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none}
+.faq-a{padding:0 14px 10px;color:#475569;line-height:1.65;display:none}
+.faq-q.open+.faq-a{display:block}
+
+/* ── Education page reuse classes ── */
+.edu-ul,.edu-ol{padding:10px 14px 10px 30px;margin:0}
+.edu-ul li,.edu-ol li{font-size:.8rem;color:#374151;padding:4px 0;line-height:1.55}
+.edu-mi-item{padding:10px 14px;border-bottom:1px solid #f1f5f9}
+.edu-mi-item:last-child{border-bottom:none}
+.edu-mi-label{font-size:.72rem;font-weight:700;color:#1a56db;text-transform:uppercase;letter-spacing:.03em;margin-bottom:4px}
+.edu-mi-text{font-size:.8rem;color:#374151;line-height:1.6}

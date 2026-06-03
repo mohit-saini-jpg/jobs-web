@@ -28,6 +28,9 @@
 (function () {
   'use strict';
 
+  // Static pages are fully pre-rendered — skip JS renderer entirely
+  if (window.__TSJ_RENDERER_DISABLED || window.__TSJ_STATIC_PAGE) return;
+
   /* ═══════════════════════════════════════════════════════════════════════
      § 1 — CSS (injected once, single .udyn-* namespace)
   ═══════════════════════════════════════════════════════════════════════ */
