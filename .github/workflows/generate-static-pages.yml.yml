@@ -52,13 +52,16 @@ jobs:
       - name: ⏱️ Record start time
         run: echo "START_TIME=$(date +%s)" >> $GITHUB_ENV
 
-      - name: 🏗️ Generate ALL static pages (jobs + state + education + category)
+      - name: 🏗️ Generate ALL static pages (JSON-driven, zero hardcoded content)
         env:
           FORCE_REGENERATE: ${{ inputs.force_regenerate }}
         run: |
           echo "FORCE_REGENERATE=${FORCE_REGENERATE}"
-          python3 .github/workflows/generate_jobs.py
-          TOTAL_PAGES=$(find jobs state education category -name 'index.html' 2>/dev/null | wc -l)
+          # Master generator: jobs + state + education + category + qualification + daily
+          python3 generate_website.py
+          # Also run workflow generator for sections-index and jobs-index
+          python3 .github/workflows/generate_jobs.py 2>/dev/null || true
+          TOTAL_PAGES=$(find jobs state education category qualification section -name 'index.html' 2>/dev/null | wc -l)
           echo "PAGES_GENERATED=${TOTAL_PAGES}" >> $GITHUB_ENV
           echo "Total pages generated: ${TOTAL_PAGES}"
 
