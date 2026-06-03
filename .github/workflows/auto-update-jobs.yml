@@ -68,8 +68,24 @@ jobs:
       - name: 🔖 Bump version.json + sw.js + HTML ?v= params
         run: node .github/workflows/generate_version.js
 
-      # ── STEP 5: Generate static job HTML pages ───────────────────
-      - name: 🏗️ Generate ALL static pages (jobs + state + education + category)
+      # ── STEP 5: Generate static pages (PRIMARY: generate_website.py, SECONDARY: generate_jobs.py)
+      - name: Clear old pages before regen
+        run: |
+          find jobs -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
+          find state -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
+          find education -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
+          find category/study -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
+          find section -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
+          find qualification -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
+          mkdir -p jobs/data state education category/study section qualification
+          echo "Old pages cleared"
+
+      - name: PRIMARY generator - generate_website.py
+        env:
+          FORCE_REGENERATE: 'true'
+        run: python3 generate_website.py
+
+      - name: SECONDARY generator - indexes and additional pages
         env:
           FORCE_REGENERATE: 'true'
         run: python3 .github/workflows/generate_jobs.py

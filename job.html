@@ -120,10 +120,25 @@ a{text-decoration:none}
   </main>
   <div id="footerPlaceholder"></div>
   <script>fetch('/footer.html',{cache:'no-store'}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{if(h){var d=document.getElementById('footerPlaceholder');if(d)d.outerHTML=h;}})</script>
-  <script src="/tsj-menu.js?v=20260603194203" defer></script>
+  <script src="/tsj-menu.js" defer></script>
 <script>
 (function(){
 'use strict';
+
+// ── Handle ?ref= external redirect (dailyupdates.json items) ──
+(function(){
+  var ref = new URLSearchParams(location.search).get('ref') || '';
+  if(ref && ref.startsWith('http')){
+    document.getElementById('loader').innerHTML='<div style="text-align:center;padding:40px 20px">'
+      +'<div style="font-size:2rem;margin-bottom:12px">&#128279;</div>'
+      +'<p style="color:#374151;font-size:.9rem">Redirecting to official source...</p>'
+      +'<a href="'+ref+'" style="display:inline-block;margin-top:12px;background:#1d4ed8;color:#fff;padding:8px 20px;border-radius:8px;text-decoration:none;font-weight:700" target="_blank" rel="noopener noreferrer">Open Link &#8594;</a>'
+      +'</div>';
+    setTimeout(function(){window.location.replace(ref);},1200);
+    return;
+  }
+})();
+
 
 const BASE = 'https://www.topsarkarijobs.com';
 const BLOCKED = new Set(['sarkariresult.com','freejobalert.com','sarkariresultshine.com','sarkarinetwork.com']);
