@@ -373,12 +373,60 @@ def render_faq(faq_list):
 </div>'''
     return items
 
+def extract_cell(cell):
+    """Extract text+links from a cell that may be:
+    - plain string
+    - {text: str, links: [{text, url}]}
+    Returns (display_html, has_links)
+    """
+    if cell is None: return '', False
+    if isinstance(cell, str): return e(cell), False
+    if isinstance(cell, (int, float)): return e(str(cell)), False
+    if isinstance(cell, dict):
+        text = str(cell.get('text','') or cell.get('value','') or '').strip()
+        links = cell.get('links', []) or []
+        if isinstance(links, list) and links:
+            btns = ''
+            for lnk in links:
+                if not isinstance(lnk, dict): continue
+                url = str(lnk.get('url','') or '').strip()
+                lbl = str(lnk.get('text','') or lnk.get('label','') or text or 'View').strip()
+                if not url or not url.startswith('http') or is_blocked(url): continue
+                ul = url.lower()
+                ic = 'fa-file-pdf' if ul.endswith('.pdf') else 'fa-external-link-alt'
+                cl = 'btn-pdf' if ul.endswith('.pdf') else 'btn-default'
+                btns += f'<a href="{e(url)}" class="lnk-btn {cl}" style="font-size:.75rem;padding:4px 10px" target="_blank" rel="noopener noreferrer"><i class="fa-solid {ic}"></i> {e(lbl[:40])}</a> '
+            if btns:
+                return (f'{e(text)}<br>{btns}' if text else btns), True
+        return e(text), False
+    if isinstance(cell, list):
+        parts = [extract_cell(c)[0] for c in cell if c is not None]
+        return '<br>'.join(p for p in parts if p), False
+    return e(str(cell)), False
+
+def render_table_rows_smart(rows):
+    """Render table rows that may contain {text, links} cells"""
+    if not rows: return ''
+    result = ''
+    for row in rows:
+        if not isinstance(row, (list, tuple)): continue
+        cells = ''.join(f'<td>{extract_cell(c)[0]}</td>' for c in row)
+        if cells: result += f'<tr>{cells}</tr>'
+    return result
+
 def render_edu_sections(sections_list):
-    """Render education raw scraper sections — handles all content block types"""
+    """Render education raw scraper sections — handles all content block types
+    including sarkari_data format with {text, links} cells"""
     if not sections_list: return ''
     html = ''
     for sec in sections_list:
-        heading = safe(sec.get('heading',''))
+        # Handle BOTH formats:
+        # Format A (education_jobs): {heading, content: [{type, text/rows/items}]}
+        # Format B (sarkari_data): {title, content: [{type, text/rows/items}]}
+        heading = safe(sec.get('heading','') or sec.get('title',''))
+        # Skip "Set as Preferred Source" section
+        if 'preferred source' in heading.lower() or 'set as preferred' in heading.lower():
+            continue
         contents = sec.get('content', [])
         if not contents: continue
         body = ''
@@ -391,27 +439,59 @@ def render_edu_sections(sections_list):
                 rows = block.get('rows', [])
                 headers = block.get('headers', [])
                 if not rows: continue
-                if not headers and rows: headers = rows[0]; rows = rows[1:]
-                head = ''.join(f'<th>{e(h)}</th>' for h in headers)
-                body_rows = ''.join(f'<tr>' + ''.join(f'<td>{e(str(c))}</td>' for c in r) + '</tr>' for r in rows)
-                body += f'<div class="tbl-scroll"><table class="data-table"><thead><tr>{head}</tr></thead><tbody>{body_rows}</tbody></table></div>'
+                # Detect if rows contain {text, links} objects or plain strings
+                first_row = rows[0] if rows else []
+                is_obj_format = (isinstance(first_row, list) and first_row and
+                                 isinstance(first_row[0], dict) and 'text' in first_row[0])
+                if is_obj_format:
+                    # sarkari format: rows = [[{text,links}, ...], ...]
+                    # First row is usually header
+                    hdr_cells = [extract_cell(c)[0] for c in first_row]
+                    # Check if it's a single-cell header (section title row)
+                    if len(hdr_cells) == 1:
+                        # Skip single-cell title rows — they repeat the heading
+                        data_rows = rows[1:]
+                        if data_rows:
+                            hdr_cells = [extract_cell(c)[0] for c in data_rows[0]]
+                            data_rows = data_rows[1:]
+                        else:
+                            continue
+                    else:
+                        data_rows = rows[1:]
+                    head = ''.join(f'<th>{h}</th>' for h in hdr_cells)
+                    body_rows = render_table_rows_smart(data_rows)
+                    if body_rows:
+                        body += f'<div class="tbl-scroll"><table class="data-table"><thead><tr>{head}</tr></thead><tbody>{body_rows}</tbody></table></div>'
+                else:
+                    # Plain format: rows = [["col1","col2",...], ...]
+                    if not headers and rows:
+                        headers = rows[0]; rows = rows[1:]
+                    head = ''.join(f'<th>{e(str(h))}</th>' for h in (headers or []))
+                    body_rows = ''.join(
+                        f'<tr>' + ''.join(f'<td>{extract_cell(c)[0]}</td>' for c in r) + '</tr>'
+                        for r in rows if isinstance(r, (list, tuple))
+                    )
+                    if body_rows:
+                        body += f'<div class="tbl-scroll"><table class="data-table">{f"<thead><tr>{head}</tr></thead>" if head else ""}<tbody>{body_rows}</tbody></table></div>'
             elif btype == 'list':
                 items = block.get('items', [])
-                body += '<ul class="val-list">' + ''.join(f'<li>{e(li)}</li>' for li in items) + '</ul>'
+                if items:
+                    lis = ''.join(f'<li>{e(str(li)) if isinstance(li,str) else extract_cell(li)[0]}</li>' for li in items if li)
+                    body += f'<ul class="val-list">{lis}</ul>'
             elif btype == 'merged_info':
                 for mi in block.get('items', []):
+                    if not isinstance(mi, dict): continue
                     lbl = safe(mi.get('label','')); txt = safe(mi.get('text',''))
                     if lbl or txt:
                         body += f'<div class="mi-item">{f"<b>{e(lbl)}</b>: " if lbl else ""}{e(txt) if txt else ""}</div>'
             elif btype == 'important_links':
-                # Handle {type: 'important_links', links: [{label, url}, ...]}
                 links_data = block.get('links', [])
                 if isinstance(links_data, list) and links_data:
                     btns = ''
                     for lnk in links_data:
                         if not isinstance(lnk, dict): continue
                         url = str(lnk.get('url','') or '').strip()
-                        lbl = str(lnk.get('label','') or 'View').strip() or 'View'
+                        lbl = str(lnk.get('label','') or lnk.get('text','') or 'View').strip() or 'View'
                         if not url.startswith('http') or is_blocked(url): continue
                         ul = url.lower()
                         ic = 'fa-file-pdf' if ul.endswith('.pdf') else 'fa-external-link-alt'
@@ -421,8 +501,11 @@ def render_edu_sections(sections_list):
                     if btns:
                         body += f'<div class="links-grid">{btns}</div>'
                 elif isinstance(links_data, dict):
-                    # structured_links dict format
                     body += render_links(links_data)
+            else:
+                # Unknown block type — try to extract any text/content
+                text = safe(block.get('text','') or block.get('content',''))
+                if text: body += f'<p class="edu-para">{e(text)}</p>'
         if body.strip():
             if heading:
                 html += f'<div class="edu-sec"><h3 class="edu-sec-h">{e(heading)}</h3>{body}</div>'
@@ -999,37 +1082,131 @@ for cat, jobs_list in FJA.items():
 for job in SARK:
     title = safe(job.get('title',''))
     if not title: continue
-    slug = slugify(title)
+    slug = job.get('slug','') or slugify(title)
+    if not slug: continue
+    slug = slug[:80]
     if slug in seen_job_slugs: continue
     seen_job_slugs[slug] = job.get('category','')
     canon = f"{BASE_URL}/jobs/{slug}/"
-    # Normalise structure
-    bd = {'job_title':title,'organization_name':safe(job.get('organization','')),
-          'total_vacancies':safe(job.get('total_post','')),
-          'application_mode':safe(job.get('apply_mode','Online')),
-          'job_location':safe(job.get('job_location','India')),
-          'short_information':safe(job.get('short_information','')),
-          'last_updated':safe(job.get('post_date','')),}
-    imp_dates = job.get('important_dates') or {}
+
+    # Build important_links from multiple possible sources
+    il = {}
+    # 1. Direct important_links
+    raw_il = job.get('important_links') or {}
+    if isinstance(raw_il, dict):
+        for k, v in raw_il.items():
+            if v and not is_blocked(str(v)): il[k] = v
+
+    # 2. all_links array
+    all_links = job.get('all_links') or []
+    if isinstance(all_links, list) and all_links:
+        for lnk in all_links:
+            if not isinstance(lnk, dict): continue
+            url = str(lnk.get('url','') or '').strip()
+            lbl = (lnk.get('label','') or lnk.get('title','')).lower()
+            if not url.startswith('http') or is_blocked(url): continue
+            k = ('apply_online' if 'apply' in lbl else
+                 'notification_pdf' if any(x in lbl for x in ['notif','pdf','download']) else
+                 'result_link' if 'result' in lbl else
+                 'admit_card' if 'admit' in lbl else
+                 'answer_key' if 'answer' in lbl else
+                 'official_website' if 'official' in lbl else 'click_here')
+            if k not in il: il[k] = url
+
+    # 3. Specific link fields
+    for field, key in [
+        ('apply_online_link', 'apply_online'),
+        ('official_notification_pdf_link', 'notification_pdf'),
+        ('official_website_link', 'official_website'),
+        ('form_pdf_link', 'notification_pdf'),
+    ]:
+        v = str(job.get(field,'') or '').strip()
+        if v and v.startswith('http') and not is_blocked(v) and key not in il:
+            il[key] = v
+
+    # Build basic_details from all available fields
+    bd = {
+        'job_title': title,
+        'organization_name': safe(job.get('organization','') or job.get('board_name','')),
+        'post_name': safe(job.get('post_name','') or job.get('total_post','')),
+        'total_vacancies': safe(job.get('total_vacancy','') or job.get('total_post','')),
+        'application_mode': safe(job.get('apply_mode','') or 'Online'),
+        'job_location': safe(job.get('job_location','') or job.get('state','') or 'India'),
+        'short_information': safe(job.get('short_information','') or job.get('jobs_info','')),
+        'last_updated': safe(job.get('post_date','') or job.get('listing_date','')),
+        'job_type': safe(job.get('entry_type','') or job.get('sub_type','')),
+    }
+
+    # Build important_dates
+    imp_dates = {}
+    raw_dates = job.get('important_dates') or {}
+    if isinstance(raw_dates, dict):
+        imp_dates.update({k: v for k, v in raw_dates.items() if v})
+    # Also check individual date fields
+    for field, key in [
+        ('last_date','last_date_to_apply'),
+        ('exam_date','exam_date'),
+    ]:
+        v = str(job.get(field,'') or '').strip()
+        if v and key not in imp_dates: imp_dates[key] = v
+
+    # Build vacancy_details
+    vac = job.get('vacancy_details') or []
+    if not isinstance(vac, list): vac = []
+
+    # Build useful_links → additional links
     useful = job.get('useful_links') or []
-    il = job.get('important_links') or {}
-    if isinstance(useful, list) and useful and not il:
-        il_built = {}
+    if isinstance(useful, list) and useful:
         for lnk in useful:
             if not isinstance(lnk, dict): continue
             href = lnk.get('links') or lnk.get('url') or ''
             if isinstance(href, list): href = href[0] if href else ''
             href = str(href or '').strip()
-            t = (lnk.get('title') or '').lower()
-            if not href.startswith('http'): continue
-            key = ('apply_online' if 'apply' in t else 'notification_pdf' if any(x in t for x in ['notif','pdf']) else
-                   'result_link' if 'result' in t else 'admit_card' if 'admit' in t else
-                   'answer_key' if 'answer' in t else 'official_website' if 'official' in t else 'click_here')
-            if key in il_built:
-                ex = il_built[key]; il_built[key] = (ex if isinstance(ex,list) else [ex]) + [href]
-            else: il_built[key] = href
-        il = il_built
-    full = dict(job); full['basic_details']=bd; full['important_dates']=imp_dates; full['important_links']=il
+            lbl = (lnk.get('title') or '').lower()
+            if not href.startswith('http') or is_blocked(href): continue
+            k = ('apply_online' if 'apply' in lbl else 'notification_pdf' if any(x in lbl for x in ['notif','pdf']) else
+                 'result_link' if 'result' in lbl else 'admit_card' if 'admit' in lbl else
+                 'answer_key' if 'answer' in lbl else 'official_website' if 'official' in lbl else 'click_here')
+            if k not in il: il[k] = href
+
+    # Build sections from details_page_content or sections
+    sections_out = job.get('sections') or []
+    dpc = job.get('details_page_content') or {}
+    if isinstance(dpc, dict) and not sections_out:
+        # Convert details_page_content format to sections
+        paragraphs = dpc.get('paragraphs', [])
+        tables = dpc.get('tables', [])
+        if paragraphs or tables:
+            content_blocks = []
+            for p in paragraphs:
+                if p: content_blocks.append({'type': 'paragraph', 'text': str(p)})
+            for tbl in tables:
+                if isinstance(tbl, list) and tbl:
+                    content_blocks.append({'type': 'table', 'rows': tbl})
+            if content_blocks:
+                sections_out = [{'title': '', 'content': content_blocks}]
+
+    # Build age_limit
+    age = {}
+    if job.get('minimum_age'): age['minimum_age'] = safe(job['minimum_age'])
+    if job.get('maximum_age'): age['maximum_age'] = safe(job['maximum_age'])
+
+    full = {
+        'basic_details': bd,
+        'important_dates': imp_dates,
+        'application_fee': job.get('application_fees') or {},
+        'age_limit': age or (job.get('age_limit') or {}),
+        'qualification': job.get('eligibility') or job.get('qualification') or {},
+        'vacancy_details': vac,
+        'salary_details': {'pay_scale': safe(job.get('salary_pay_scale',''))} if job.get('salary_pay_scale') else {},
+        'how_to_apply': [job['how_to_apply']] if isinstance(job.get('how_to_apply'), str) and job.get('how_to_apply') else (job.get('how_to_apply') or []),
+        'important_links': il,
+        'sections': sections_out,
+        'faq': job.get('faq') or [],
+        'category': job.get('category',''),
+        'slug': slug,
+    }
+
     bc = [('Latest Jobs', '/section/latest-jobs/')]
     path = str(ROOT / 'jobs' / slug / 'index.html')
     write(path, build_job_detail_page(full, slug, canon, bc))
