@@ -76,9 +76,24 @@ QUAL_LABEL = {
 # ── Helpers ────────────────────────────────────────────────────────
 def e(s): return html_mod.escape(str(s or ''), quote=True)
 
+def strip_html(text):
+    """Strip HTML tags from text"""
+    if not text: return ''
+    t = str(text)
+    t = re.sub(r'<[^>]+>', ' ', t)
+    for ent, ch in [('&amp;','&'),('&lt;','<'),('&gt;','>'),('&nbsp;',' '),('&quot;','"'),('&#39;',"'")]:
+        t = t.replace(ent, ch)
+    return ' '.join(t.split())
+
+
+
 def safe(v):
     if v is None: return ''
-    if isinstance(v, str): return v.strip()
+    if isinstance(v, str):
+        s = v.strip()
+        if '<' in s and '>' in s:
+            s = strip_html(s)
+        return s
     if isinstance(v, (int, float, bool)): return str(v).strip()
     if isinstance(v, list):
         parts = [safe(x) for x in v if x is not None]
@@ -601,12 +616,62 @@ def render_faq(faq_list):
                   f'<div class="faq-a">{e(a)}</div></div>')
     return card('linear-gradient(135deg,#4338ca,#6366f1)', 'fa-circle-question', 'FAQs', items) if items else ''
 
+def extract_cell(cell):
+    """Extract text+links from a cell that may be:
+    - plain string
+    - {text: str, links: [{text, url}]}
+    Returns (display_html, has_links)
+    """
+    if cell is None: return '', False
+    if isinstance(cell, str): return e(cell), False
+    if isinstance(cell, (int, float)): return e(str(cell)), False
+    if isinstance(cell, dict):
+        text = str(cell.get('text','') or cell.get('value','') or '').strip()
+        links = cell.get('links', []) or []
+        if isinstance(links, list) and links:
+            btns = ''
+            for lnk in links:
+                if not isinstance(lnk, dict): continue
+                url = str(lnk.get('url','') or '').strip()
+                lbl = str(lnk.get('text','') or lnk.get('label','') or text or 'View').strip()
+                if not url or not url.startswith('http') or is_blocked(url): continue
+                ul = url.lower()
+                ic = 'fa-file-pdf' if ul.endswith('.pdf') else 'fa-external-link-alt'
+                cl = 'btn-pdf' if ul.endswith('.pdf') else 'btn-default'
+                btns += f'<a href="{e(url)}" class="lnk-btn {cl}" style="font-size:.75rem;padding:4px 10px" target="_blank" rel="noopener noreferrer"><i class="fa-solid {ic}"></i> {e(lbl[:40])}</a> '
+            if btns:
+                return (f'{e(text)}<br>{btns}' if text else btns), True
+        return e(text), False
+    if isinstance(cell, list):
+        parts = [extract_cell(c)[0] for c in cell if c is not None]
+        return '<br>'.join(p for p in parts if p), False
+    return e(str(cell)), False
+
+
+def render_table_rows_smart(rows):
+    """Render table rows that may contain {text, links} cells"""
+    if not rows: return ''
+    result = ''
+    for row in rows:
+        if not isinstance(row, (list, tuple)): continue
+        cells = ''.join(f'<td>{extract_cell(c)[0]}</td>' for c in row)
+        if cells: result += f'<tr>{cells}</tr>'
+    return result
+
+
 def render_edu_sections(sections_list):
-    """Render raw education scraper sections"""
+    """Render education raw scraper sections — handles all content block types
+    including sarkari_data format with {text, links} cells"""
     if not sections_list: return ''
     html = ''
     for sec in sections_list:
-        heading = safe(sec.get('heading',''))
+        # Handle BOTH formats:
+        # Format A (education_jobs): {heading, content: [{type, text/rows/items}]}
+        # Format B (sarkari_data): {title, content: [{type, text/rows/items}]}
+        heading = safe(sec.get('heading','') or sec.get('title',''))
+        # Skip "Set as Preferred Source" section
+        if 'preferred source' in heading.lower() or 'set as preferred' in heading.lower():
+            continue
         contents = sec.get('content', [])
         if not contents: continue
         body = ''
@@ -614,42 +679,85 @@ def render_edu_sections(sections_list):
             btype = (block.get('type','') or '').lower()
             if btype == 'paragraph':
                 text = safe(block.get('text',''))
-                if text: body += f'<div class="edu-para">{e(text)}</div>'
+                if text: body += f'<p class="edu-para">{e(text)}</p>'
             elif btype == 'table':
                 rows = block.get('rows', [])
-                if not rows: continue
                 headers = block.get('headers', [])
-                data_rows = rows
-                if not headers and rows and rows[0]:
-                    headers = rows[0]; data_rows = rows[1:]
-                if headers and (len(headers) == 2 or (data_rows and data_rows[0] and len(data_rows[0]) == 2)):
-                    body += f'<div class="tbl-scroll"><table class="jd-table"><tbody>'
-                    for r in data_rows:
-                        if len(r) >= 2: body += f'<tr><th>{e(r[0])}</th><td>{e(r[1])}</td></tr>'
-                    body += '</tbody></table></div>'
+                if not rows: continue
+                # Detect if rows contain {text, links} objects or plain strings
+                first_row = rows[0] if rows else []
+                is_obj_format = (isinstance(first_row, list) and first_row and
+                                 isinstance(first_row[0], dict) and 'text' in first_row[0])
+                if is_obj_format:
+                    # sarkari format: rows = [[{text,links}, ...], ...]
+                    # First row is usually header
+                    hdr_cells = [extract_cell(c)[0] for c in first_row]
+                    # Check if it's a single-cell header (section title row)
+                    if len(hdr_cells) == 1:
+                        # Skip single-cell title rows — they repeat the heading
+                        data_rows = rows[1:]
+                        if data_rows:
+                            hdr_cells = [extract_cell(c)[0] for c in data_rows[0]]
+                            data_rows = data_rows[1:]
+                        else:
+                            continue
+                    else:
+                        data_rows = rows[1:]
+                    head = ''.join(f'<th>{h}</th>' for h in hdr_cells)
+                    body_rows = render_table_rows_smart(data_rows)
+                    if body_rows:
+                        body += f'<div class="tbl-scroll"><table class="data-table"><thead><tr>{head}</tr></thead><tbody>{body_rows}</tbody></table></div>'
                 else:
-                    head = ''.join(f'<th>{e(h)}</th>' for h in headers)
-                    rows_html = ''.join(f'<tr>' + ''.join(f'<td>{e(c)}</td>' for c in r) + '</tr>'
-                                        for r in data_rows)
-                    body += f'<div class="tbl-scroll"><table class="vac-table"><thead><tr>{head}</tr></thead><tbody>{rows_html}</tbody></table></div>'
+                    # Plain format: rows = [["col1","col2",...], ...]
+                    if not headers and rows:
+                        headers = rows[0]; rows = rows[1:]
+                    head = ''.join(f'<th>{e(str(h))}</th>' for h in (headers or []))
+                    body_rows = ''.join(
+                        f'<tr>' + ''.join(f'<td>{extract_cell(c)[0]}</td>' for c in r) + '</tr>'
+                        for r in rows if isinstance(r, (list, tuple))
+                    )
+                    if body_rows:
+                        body += f'<div class="tbl-scroll"><table class="data-table">{f"<thead><tr>{head}</tr></thead>" if head else ""}<tbody>{body_rows}</tbody></table></div>'
             elif btype == 'list':
                 items = block.get('items', [])
-                tag = 'ol' if block.get('style') == 'ordered' else 'ul'
-                body += f'<{tag} class="edu-{tag}">' + ''.join(f'<li>{e(li)}</li>' for li in items) + f'</{tag}>'
+                if items:
+                    lis = ''.join(f'<li>{e(str(li)) if isinstance(li,str) else extract_cell(li)[0]}</li>' for li in items if li)
+                    body += f'<ul class="val-list">{lis}</ul>'
             elif btype == 'merged_info':
                 for mi in block.get('items', []):
+                    if not isinstance(mi, dict): continue
                     lbl = safe(mi.get('label','')); txt = safe(mi.get('text',''))
-                    if not lbl and not txt: continue
-                    body += f'<div class="edu-mi-item">'
-                    if lbl: body += f'<div class="edu-mi-label">{e(lbl)}</div>'
-                    if txt: body += f'<div class="edu-mi-text">{e(txt)}</div>'
-                    body += '</div>'
-        if not body.strip(): continue
-        if heading:
-            html += card('linear-gradient(135deg,#475569,#334155)', 'fa-circle-dot', heading, body)
-        else:
-            html += f'<div class="job-card"><div class="job-card-body">{body}</div></div>\n'
+                    if lbl or txt:
+                        body += f'<div class="mi-item">{f"<b>{e(lbl)}</b>: " if lbl else ""}{e(txt) if txt else ""}</div>'
+            elif btype == 'important_links':
+                links_data = block.get('links', [])
+                if isinstance(links_data, list) and links_data:
+                    btns = ''
+                    for lnk in links_data:
+                        if not isinstance(lnk, dict): continue
+                        url = str(lnk.get('url','') or '').strip()
+                        lbl = str(lnk.get('label','') or lnk.get('text','') or 'View').strip() or 'View'
+                        if not url.startswith('http') or is_blocked(url): continue
+                        ul = url.lower()
+                        ic = 'fa-file-pdf' if ul.endswith('.pdf') else 'fa-external-link-alt'
+                        cl = 'btn-pdf' if ul.endswith('.pdf') else 'btn-default'
+                        dl = ' download' if ul.endswith('.pdf') else ''
+                        btns += f'<a href="{e(url)}" class="lnk-btn {cl}" target="_blank" rel="noopener noreferrer"{dl}><i class="fa-solid {ic}"></i> {e(lbl[:60])}</a>\n'
+                    if btns:
+                        body += f'<div class="links-grid">{btns}</div>'
+                elif isinstance(links_data, dict):
+                    body += render_links(links_data)
+            else:
+                # Unknown block type — try to extract any text/content
+                text = safe(block.get('text','') or block.get('content',''))
+                if text: body += f'<p class="edu-para">{e(text)}</p>'
+        if body.strip():
+            if heading:
+                html += f'<div class="edu-sec"><h3 class="edu-sec-h">{e(heading)}</h3>{body}</div>'
+            else:
+                html += f'<div class="edu-sec">{body}</div>'
     return html
+
 
 # ── Build complete page HTML ────────────────────────────────────────
 

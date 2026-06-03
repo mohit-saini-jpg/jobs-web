@@ -23,9 +23,24 @@ YEAR     = date.today().year
 # ── Helpers ─────────────────────────────────────────────────────────
 def e(s): return html_mod.escape(str(s or ''), quote=True)
 
+def strip_html(text):
+    """Strip HTML tags from text"""
+    if not text: return ''
+    t = str(text)
+    t = re.sub(r'<[^>]+>', ' ', t)
+    for ent, ch in [('&amp;','&'),('&lt;','<'),('&gt;','>'),('&nbsp;',' '),('&quot;','"'),('&#39;',"'")]:
+        t = t.replace(ent, ch)
+    return ' '.join(t.split())
+
+
 def safe(v):
     if v is None: return ''
-    if isinstance(v, str): return v.strip()
+    if isinstance(v, str):
+        s = v.strip()
+        # Strip HTML tags if present
+        if '<' in s and '>' in s:
+            s = strip_html(s)
+        return s
     if isinstance(v, (int, float, bool)): return str(v).strip()
     if isinstance(v, list):
         parts = [safe(x) for x in v if x is not None]
