@@ -120,7 +120,7 @@ a{text-decoration:none}
   </main>
   <div id="footerPlaceholder"></div>
   <script>fetch('/footer.html',{cache:'no-store'}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{if(h){var d=document.getElementById('footerPlaceholder');if(d)d.outerHTML=h;}})</script>
-  <script src="/tsj-menu.js?v=20260603181839" defer></script>
+  <script src="/tsj-menu.js" defer></script>
 <script>
 (function(){
 'use strict';
@@ -573,7 +573,20 @@ if(!slug){
     .then(data=>{
       var job=findJob(data,slug)||findJob(data,cleanSlug(slug));
       if(!job){
-        document.getElementById('loader').innerHTML=`<p>Job "<strong>${esc(slug)}</strong>" not found. <a href="/">Go Home</a></p>`;
+        // Redirect to home if job not found (handles deleted/old URLs)
+        document.getElementById('loader').innerHTML='';
+        document.getElementById('content').innerHTML=`
+          <div style="text-align:center;padding:60px 20px;max-width:600px;margin:0 auto">
+            <div style="font-size:4rem;margin-bottom:16px">📋</div>
+            <h1 style="font-size:1.4rem;color:#0f172a;margin-bottom:8px">Page Not Available</h1>
+            <p style="color:#64748b;margin-bottom:20px">This job/notification may have been removed or the URL may have changed.</p>
+            <a href="/" style="display:inline-block;background:#1d4ed8;color:#fff;padding:10px 24px;border-radius:8px;text-decoration:none;font-weight:700">← Go to Homepage</a>
+            <span style="margin:0 12px;color:#e2e8f0">|</span>
+            <a href="/section/latest-jobs/" style="display:inline-block;background:#f1f5f9;color:#374151;padding:10px 24px;border-radius:8px;text-decoration:none;font-weight:700">Latest Jobs</a>
+          </div>`;
+        document.getElementById('content').style.display='';
+        document.getElementById('loader').style.display='none';
+        document.title='Page Not Found | Top Sarkari Jobs';
         return;
       }
       buildPage(cleanSlug(slug)||slug,job);

@@ -429,18 +429,403 @@ def render_table_rows_smart(rows):
         if cells: result += f'<tr>{cells}</tr>'
     return result
 
+def process_section_content_to_data(sections_list):
+    """
+    Convert sarkari_data sections format to our standard detail dict.
+    Maps section titles → proper data fields.
+    """
+    if not sections_list:
+        return {}
+
+    TITLE_MAP = {
+        'important dates': 'important_dates',
+        'application fees': 'application_fee',
+        'application fee': 'application_fee',
+        'age limit': 'age_limit',
+        'age limit details': 'age_limit',
+        'selection process': 'selection_process',
+        'total post & qualification': 'vacancy_details',
+        'total post and qualification': 'vacancy_details',
+        'vacancy details': 'vacancy_details',
+        'pay scale details': 'salary_details',
+        'salary details': 'salary_details',
+        'salary / pay scale': 'salary_details',
+        'how to apply': 'how_to_apply',
+        'gender wise vacancies': 'category_wise_vacancy',
+        'category wise vacancy': 'category_wise_vacancy',
+        'exam pattern': 'exam_pattern',
+        'syllabus': 'syllabus',
+        'physical eligibility': 'physical_eligibility',
+        'physical standards': 'physical_eligibility',
+        'also read :': 'important_links_extra',
+        'also read': 'important_links_extra',
+        'important related links': 'important_links_extra',
+        'important instructions': 'important_instructions',
+    }
+
+    SKIP_TITLES = {'set as preferred source on google', 'set as preferred source',
+                   'about this recruitment', 'about', ''}
+
+    result = {
+        '_raw_sections': [],  # unmatched sections for generic rendering
+        '_important_dates_list': [],
+        '_fee_list': [],
+        '_age_list': [],
+        '_selection_list': [],
+        '_hta_list': [],
+        '_instructions_list': [],
+        '_vacancy_tables': [],
+        '_cat_vacancy_tables': [],
+        '_salary_list': [],
+        '_exam_list': [],
+        '_syllabus_list': [],
+        '_physical_list': [],
+        '_also_read_table': None,
+    }
+
+    def extract_list_items(content_blocks):
+        items = []
+        for block in content_blocks:
+            if block.get('type') == 'list':
+                items.extend(block.get('items', []))
+            elif block.get('type') == 'paragraph':
+                text = safe(block.get('text', ''))
+                if text:
+                    items.append(text)
+        return items
+
+    def extract_tables(content_blocks):
+        tables = []
+        for block in content_blocks:
+            if block.get('type') == 'table':
+                rows = block.get('rows', [])
+                if rows:
+                    tables.append(rows)
+        return tables
+
+    for sec in sections_list:
+        title = safe(sec.get('title', '') or sec.get('heading', ''))
+        title_lower = title.lower().strip()
+        if title_lower in SKIP_TITLES:
+            continue
+
+        mapped = TITLE_MAP.get(title_lower)
+        content = sec.get('content', [])
+
+        if mapped == 'important_dates':
+            result['_important_dates_list'].extend(extract_list_items(content))
+        elif mapped == 'application_fee':
+            result['_fee_list'].extend(extract_list_items(content))
+        elif mapped == 'age_limit':
+            result['_age_list'].extend(extract_list_items(content))
+        elif mapped == 'selection_process':
+            items = extract_list_items(content)
+            tables = extract_tables(content)
+            result['_selection_list'].extend(items)
+            result['_vacancy_tables'].extend(tables)  # post qualification table often here
+        elif mapped in ('vacancy_details',):
+            items = extract_list_items(content)
+            tables = extract_tables(content)
+            if items: result['_vacancy_tables'].append({'type':'list','items':items})
+            result['_vacancy_tables'].extend(tables)
+        elif mapped == 'category_wise_vacancy':
+            tables = extract_tables(content)
+            result['_cat_vacancy_tables'].extend(tables)
+            items = extract_list_items(content)
+            if items: result['_cat_vacancy_tables'].append({'type':'list','items':items})
+        elif mapped == 'salary_details':
+            result['_salary_list'].extend(extract_list_items(content))
+        elif mapped == 'how_to_apply':
+            result['_hta_list'].extend(extract_list_items(content))
+        elif mapped == 'important_instructions':
+            result['_instructions_list'].extend(extract_list_items(content))
+        elif mapped == 'exam_pattern':
+            result['_exam_list'].extend(extract_list_items(content))
+            result['_exam_list'].extend(extract_tables(content))
+        elif mapped == 'syllabus':
+            result['_syllabus_list'].extend(extract_list_items(content))
+        elif mapped == 'physical_eligibility':
+            result['_physical_list'].extend(extract_list_items(content))
+        elif mapped == 'important_links_extra':
+            # "Also Read" section with links table
+            for block in content:
+                if block.get('type') == 'table':
+                    result['_also_read_table'] = block.get('rows', [])
+                    break
+        else:
+            # Unmatched - render as generic section
+            if content:
+                result['_raw_sections'].append({'title': title, 'content': content})
+
+    return result
+
+
+def render_sections_from_sarkari(sections_list, existing_il=None):
+    """
+    Convert sarkari_data sections into proper HTML using our standard renderers.
+    Returns HTML string with all sections properly rendered.
+    """
+    if not sections_list:
+        return ''
+
+    data = process_section_content_to_data(sections_list)
+    html = ''
+
+    # Important Dates
+    if data['_important_dates_list']:
+        items = data['_important_dates_list']
+        lis = ''.join(f'<li class="date-item">{e(item)}</li>' for item in items if item)
+        if lis:
+            html += section_card('Important Dates', 'fa-calendar-check',
+                                  'linear-gradient(135deg,#b91c1c,#dc2626)',
+                                  f'<ul class="val-list">{lis}</ul>')
+
+    # Application Fee
+    if data['_fee_list']:
+        items = data['_fee_list']
+        fee_body = '<div class="fee-list">'
+        for item in items:
+            if not item: continue
+            # Parse "Category : Amount" format
+            if ':' in item or '–' in item or '-' in item:
+                parts = re.split(r'[:–-]', item, 1)
+                if len(parts) == 2:
+                    lbl, val = parts[0].strip(), parts[1].strip()
+                    is_free = bool(re.search(r'nil|0|free|no fee', val, re.I))
+                    cls = 'fee-free' if is_free else 'fee-paid'
+                    fee_body += f'<div class="fee-cell"><span class="fee-cat">{e(lbl)}</span><span class="fee-amt {cls}">{e(val)}</span></div>'
+                else:
+                    fee_body += f'<div class="fee-cell"><span class="fee-amt">{e(item)}</span></div>'
+            else:
+                fee_body += f'<div class="fee-note">{e(item)}</div>'
+        fee_body += '</div>'
+        html += section_card('Application Fee', 'fa-indian-rupee-sign',
+                              'linear-gradient(135deg,#c2410c,#ea580c)', fee_body)
+
+    # Age Limit
+    if data['_age_list']:
+        items = data['_age_list']
+        lis = ''.join(f'<li>{e(item)}</li>' for item in items if item)
+        if lis:
+            html += section_card('Age Limit', 'fa-user-clock',
+                                  'linear-gradient(135deg,#0f766e,#0891b2)',
+                                  f'<ul class="val-list">{lis}</ul>')
+
+    # Selection Process
+    if data['_selection_list']:
+        steps = [s for s in data['_selection_list'] if s]
+        items_html = ''.join(f'<div class="sel-step"><span class="sel-num">{i+1}</span>{e(s[:100])}</div>'
+                              for i, s in enumerate(steps))
+        if items_html:
+            html += section_card('Selection Process', 'fa-list-check',
+                                  'linear-gradient(135deg,#5b21b6,#7c3aed)',
+                                  f'<div class="sel-steps">{items_html}</div>')
+
+    # Vacancy / Post & Qualification tables
+    if data['_vacancy_tables']:
+        for tbl_data in data['_vacancy_tables']:
+            if isinstance(tbl_data, list) and tbl_data:
+                # Raw rows array
+                rendered = render_smart_table(tbl_data)
+                if rendered:
+                    html += section_card('Vacancy Details', 'fa-chart-pie',
+                                          'linear-gradient(135deg,#15803d,#16a34a)', rendered)
+            elif isinstance(tbl_data, dict):
+                if tbl_data.get('type') == 'list':
+                    items = tbl_data.get('items',[])
+                    lis = ''.join(f'<li>{e(i)}</li>' for i in items if i)
+                    if lis:
+                        html += section_card('Qualification', 'fa-graduation-cap',
+                                              'linear-gradient(135deg,#4338ca,#6366f1)',
+                                              f'<ul class="val-list">{lis}</ul>')
+
+    # Category Wise Vacancy
+    if data['_cat_vacancy_tables']:
+        for tbl_data in data['_cat_vacancy_tables']:
+            if isinstance(tbl_data, list):
+                rendered = render_smart_table(tbl_data)
+                if rendered:
+                    html += section_card('Category-wise Vacancy', 'fa-chart-bar',
+                                          'linear-gradient(135deg,#15803d,#16a34a)', rendered)
+            elif isinstance(tbl_data, dict) and tbl_data.get('type') == 'list':
+                items = tbl_data.get('items',[])
+                lis = ''.join(f'<li>{e(i)}</li>' for i in items if i)
+                if lis: html += section_card('Vacancy Info', 'fa-chart-bar',
+                                              'linear-gradient(135deg,#15803d,#16a34a)',
+                                              f'<ul class="val-list">{lis}</ul>')
+
+    # Salary
+    if data['_salary_list']:
+        items = data['_salary_list']
+        lis = ''.join(f'<li>{e(i)}</li>' for i in items if i)
+        if lis:
+            html += section_card('Salary & Pay Scale', 'fa-indian-rupee-sign',
+                                  'linear-gradient(135deg,#15803d,#16a34a)',
+                                  f'<ul class="val-list">{lis}</ul>')
+
+    # Exam Pattern
+    if data['_exam_list']:
+        items = [x for x in data['_exam_list'] if isinstance(x, str)]
+        tables = [x for x in data['_exam_list'] if isinstance(x, list)]
+        body = ''
+        if items:
+            lis = ''.join(f'<li>{e(i)}</li>' for i in items if i)
+            body += f'<ul class="val-list">{lis}</ul>'
+        for tbl in tables:
+            body += render_smart_table(tbl)
+        if body:
+            html += section_card('Exam Pattern', 'fa-file-lines',
+                                  'linear-gradient(135deg,#0369a1,#0284c7)', body)
+
+    # Syllabus
+    if data['_syllabus_list']:
+        items = data['_syllabus_list']
+        chips = ''.join(f'<div class="sel-step"><i class="fa-solid fa-book-open" style="font-size:.7rem"></i>{e(s[:100])}</div>'
+                        for s in items if s)
+        if chips:
+            html += section_card('Syllabus', 'fa-book',
+                                  'linear-gradient(135deg,#4338ca,#6366f1)',
+                                  f'<div class="sel-steps">{chips}</div>')
+
+    # Physical Eligibility
+    if data['_physical_list']:
+        items = data['_physical_list']
+        lis = ''.join(f'<li>{e(i)}</li>' for i in items if i)
+        if lis:
+            html += section_card('Physical Eligibility', 'fa-dumbbell',
+                                  'linear-gradient(135deg,#be123c,#e11d48)',
+                                  f'<ul class="val-list">{lis}</ul>')
+
+    # How to Apply
+    if data['_hta_list']:
+        filtered = [s for s in data['_hta_list'] if s]
+        if filtered:
+            items = ''.join(f'<li class="hta-item"><span class="hta-num">{i+1}</span><span>{e(s)}</span></li>'
+                            for i, s in enumerate(filtered))
+            html += section_card('How to Apply', 'fa-clipboard-list',
+                                  'linear-gradient(135deg,#0f766e,#0891b2)',
+                                  f'<ul class="hta-list">{items}</ul>')
+
+    # Important Instructions
+    if data['_instructions_list']:
+        items = ''.join(f'<div class="inst-box"><i class="fa-solid fa-triangle-exclamation"></i><span>{e(s)}</span></div>'
+                        for s in data['_instructions_list'] if s)
+        if items:
+            html += section_card('Important Instructions', 'fa-circle-exclamation',
+                                  'linear-gradient(135deg,#b45309,#ca8a04)', items)
+
+    # Also Read / Important Related Links → merge into Important Links
+    if data['_also_read_table']:
+        rows = data['_also_read_table']
+        btns = ''
+        for row in rows:
+            if not isinstance(row, list) or len(row) < 2: continue
+            # Row format: [Source Title, Issue Date, Source Link]
+            # Source Link cell may have {text, links}
+            title_cell = row[0]
+            link_cell = row[-1]  # Last column is the link
+            title_text = extract_cell(title_cell)[0]
+
+            # Check if link_cell has actual URL
+            if isinstance(link_cell, dict) and link_cell.get('links'):
+                for lnk in link_cell.get('links', []):
+                    if isinstance(lnk, dict):
+                        url = str(lnk.get('url','') or '').strip()
+                        lbl = str(lnk.get('text','') or title_text or 'View').strip()
+                        if url.startswith('http') and not is_blocked(url):
+                            ul = url.lower()
+                            ic = 'fa-file-pdf' if ul.endswith('.pdf') else 'fa-external-link-alt'
+                            cl = 'btn-pdf' if ul.endswith('.pdf') or 'download' in lbl.lower() else 'btn-default'
+                            if 'apply' in lbl.lower() or 'apply' in title_text.lower(): ic,cl = 'fa-paper-plane','btn-apply'
+                            elif 'official' in lbl.lower(): ic,cl = 'fa-globe','btn-official'
+                            btns += f'<a href="{e(url)}" class="lnk-btn {cl}" target="_blank" rel="noopener noreferrer"><i class="fa-solid {ic}"></i> {e(lbl[:50])}</a>\n'
+            elif isinstance(link_cell, str) and link_cell.startswith('http') and not is_blocked(link_cell):
+                lbl = extract_cell(title_cell)[0] or 'View'
+                ic = 'fa-file-pdf' if link_cell.lower().endswith('.pdf') else 'fa-external-link-alt'
+                btns += f'<a href="{e(link_cell)}" class="lnk-btn btn-default" target="_blank" rel="noopener noreferrer"><i class="fa-solid {ic}"></i> {e(lbl[:50])}</a>\n'
+
+        if btns and not (existing_il and any(existing_il.values())):
+            html += section_card('Important Links', 'fa-link',
+                                  'linear-gradient(135deg,#1e40af,#1e3a8a)',
+                                  f'<div class="links-grid">{btns}</div>')
+
+    # Raw (unmatched) sections
+    html += render_edu_sections_raw(data['_raw_sections'])
+
+    return html
+
+
+def render_smart_table(rows):
+    """Smart table renderer for {text,links} or plain string rows"""
+    if not rows: return ''
+    # Filter rows
+    valid_rows = [r for r in rows if isinstance(r, (list, tuple)) and r]
+    if not valid_rows: return ''
+
+    # Detect format
+    first = valid_rows[0][0] if valid_rows[0] else None
+    is_obj = isinstance(first, dict) and 'text' in first
+
+    def cell_html(cell):
+        return extract_cell(cell)[0]
+
+    # Skip single-cell header rows (section title rows)
+    while valid_rows and len(valid_rows[0]) == 1:
+        valid_rows = valid_rows[1:]
+    if not valid_rows: return ''
+
+    # Header row
+    headers = valid_rows[0]
+    data_rows = valid_rows[1:]
+
+    # If looks like KV (2 cols, header is label), render as KV table
+    if len(headers) == 2 and data_rows:
+        # Check if first row is header or data
+        h0 = cell_html(headers[0])
+        # Check if it looks like a real header
+        looks_header = h0.isupper() or ':' in h0 or h0 in ['Name Of Post :', 'Post Name', 'Stream']
+        if not looks_header:
+            # It's a data row, no headers
+            body = ''.join(f'<tr><th>{cell_html(r[0])}</th><td>{cell_html(r[1]) if len(r)>1 else ""}</td></tr>'
+                          for r in valid_rows if r)
+            return f'<div class="tbl-scroll"><table class="jd-table"><tbody>{body}</tbody></table></div>'
+
+        head = ''.join(f'<th>{cell_html(h)}</th>' for h in headers)
+        body = ''.join(
+            f'<tr>' + ''.join(f'<td>{cell_html(c)}</td>' for c in r) + '</tr>'
+            for r in data_rows if r
+        )
+        return f'<div class="tbl-scroll"><table class="data-table"><thead><tr>{head}</tr></thead><tbody>{body}</tbody></table></div>'
+
+    # Multi-column table
+    head = ''.join(f'<th>{cell_html(h)}</th>' for h in headers)
+    body = ''.join(
+        f'<tr>' + ''.join(f'<td>{cell_html(c)}</td>' for c in r) + '</tr>'
+        for r in data_rows if r
+    )
+    return f'<div class="tbl-scroll"><table class="data-table"><thead><tr>{head}</tr></thead><tbody>{body}</tbody></table></div>'
+
+
+def render_edu_sections_raw(raw_sections):
+    """Render unmatched sections as generic content cards"""
+    if not raw_sections: return ''
+    html = ''
+    for sec in raw_sections:
+        heading = sec.get('title', '')
+        content = sec.get('content', [])
+        if not content: continue
+        body = render_edu_sections([{'heading': heading, 'content': content}])
+        if body: html += body
+    return html
+
+
 def render_edu_sections(sections_list):
-    """Render education raw scraper sections — handles all content block types
-    including sarkari_data format with {text, links} cells"""
+    """Render education raw scraper sections — handles all content block types"""
     if not sections_list: return ''
     html = ''
     for sec in sections_list:
-        # Handle BOTH formats:
-        # Format A (education_jobs): {heading, content: [{type, text/rows/items}]}
-        # Format B (sarkari_data): {title, content: [{type, text/rows/items}]}
         heading = safe(sec.get('heading','') or sec.get('title',''))
-        # Skip "Set as Preferred Source" section
-        if 'preferred source' in heading.lower() or 'set as preferred' in heading.lower():
+        if heading and heading.lower() in ('set as preferred source on google', 'set as preferred source'):
             continue
         contents = sec.get('content', [])
         if not contents: continue
@@ -452,39 +837,20 @@ def render_edu_sections(sections_list):
                 if text: body += f'<p class="edu-para">{e(text)}</p>'
             elif btype == 'table':
                 rows = block.get('rows', [])
-                headers = block.get('headers', [])
                 if not rows: continue
-                # Detect if rows contain {text, links} objects or plain strings
-                first_row = rows[0] if rows else []
-                is_obj_format = (isinstance(first_row, list) and first_row and
-                                 isinstance(first_row[0], dict) and 'text' in first_row[0])
+                is_obj_format = (isinstance(rows[0], list) and rows[0] and
+                                 isinstance(rows[0][0], dict) and 'text' in rows[0][0])
                 if is_obj_format:
-                    # sarkari format: rows = [[{text,links}, ...], ...]
-                    # First row is usually header
-                    hdr_cells = [extract_cell(c)[0] for c in first_row]
-                    # Check if it's a single-cell header (section title row)
-                    if len(hdr_cells) == 1:
-                        # Skip single-cell title rows — they repeat the heading
-                        data_rows = rows[1:]
-                        if data_rows:
-                            hdr_cells = [extract_cell(c)[0] for c in data_rows[0]]
-                            data_rows = data_rows[1:]
-                        else:
-                            continue
-                    else:
-                        data_rows = rows[1:]
-                    head = ''.join(f'<th>{h}</th>' for h in hdr_cells)
-                    body_rows = render_table_rows_smart(data_rows)
-                    if body_rows:
-                        body += f'<div class="tbl-scroll"><table class="data-table"><thead><tr>{head}</tr></thead><tbody>{body_rows}</tbody></table></div>'
+                    rendered = render_smart_table(rows)
+                    if rendered: body += rendered
                 else:
-                    # Plain format: rows = [["col1","col2",...], ...]
-                    if not headers and rows:
-                        headers = rows[0]; rows = rows[1:]
+                    headers = block.get('headers', [])
+                    data_rows = rows
+                    if not headers and rows: headers = rows[0]; data_rows = rows[1:]
                     head = ''.join(f'<th>{e(str(h))}</th>' for h in (headers or []))
                     body_rows = ''.join(
                         f'<tr>' + ''.join(f'<td>{extract_cell(c)[0]}</td>' for c in r) + '</tr>'
-                        for r in rows if isinstance(r, (list, tuple))
+                        for r in data_rows if isinstance(r, (list, tuple))
                     )
                     if body_rows:
                         body += f'<div class="tbl-scroll"><table class="data-table">{f"<thead><tr>{head}</tr></thead>" if head else ""}<tbody>{body_rows}</tbody></table></div>'
@@ -513,12 +879,9 @@ def render_edu_sections(sections_list):
                         cl = 'btn-pdf' if ul.endswith('.pdf') else 'btn-default'
                         dl = ' download' if ul.endswith('.pdf') else ''
                         btns += f'<a href="{e(url)}" class="lnk-btn {cl}" target="_blank" rel="noopener noreferrer"{dl}><i class="fa-solid {ic}"></i> {e(lbl[:60])}</a>\n'
-                    if btns:
-                        body += f'<div class="links-grid">{btns}</div>'
-                elif isinstance(links_data, dict):
-                    body += render_links(links_data)
+                    if btns: body += f'<div class="links-grid">{btns}</div>'
+                elif isinstance(links_data, dict): body += render_links(links_data)
             else:
-                # Unknown block type — try to extract any text/content
                 text = safe(block.get('text','') or block.get('content',''))
                 if text: body += f'<p class="edu-para">{e(text)}</p>'
         if body.strip():
@@ -527,6 +890,7 @@ def render_edu_sections(sections_list):
             else:
                 html += f'<div class="edu-sec">{body}</div>'
     return html
+
 
 def render_unknown_section(key, val):
     """Future-proof: render any unknown JSON key"""
@@ -569,8 +933,22 @@ def build_all_sections(job_obj):
     """Build HTML for all 16+ sections in fixed order, then unknown keys"""
     html = ''
     rendered_keys = set()
-    # Fixed order first
+
+    # Check for sarkari_data sections format (has titled sections = Important Dates, Fee etc.)
+    sections_list = job_obj.get('sections') or []
+    has_sarkari_sections = (sections_list and
+                            any(sec.get('title') for sec in sections_list if isinstance(sec, dict)))
+
+    if has_sarkari_sections:
+        # Use smart section processor that maps titles to proper renderers
+        il = job_obj.get('important_links') or {}
+        html += render_sections_from_sarkari(sections_list, il)
+        rendered_keys.add('sections')
+
+    # Render standard structured fields (from FJA / normalised data)
     for key in SECTION_ORDER:
+        if key == 'sections' and has_sarkari_sections:
+            continue  # already handled above
         if key not in job_obj: continue
         rendered_keys.add(key)
         val = job_obj[key]
@@ -580,9 +958,18 @@ def build_all_sections(job_obj):
         meta = SECTION_META.get(key, (key_label(key), 'fa-circle', 'linear-gradient(135deg,#475569,#334155)'))
         title, icon, grad = meta
         html += section_card(title, icon, grad, body)
+
     # Unknown/future keys auto-rendered
+    EXTRA_SKIP = SKIP_KEYS | {'_has_sarkari_sections', 'sequence', 'homepage_serial',
+                               'entry_type', 'sub_type', 'listing_date', 'source_url',
+                               'form_pdf_free_link', 'application_form_pdf_link', 'form_pdf_link',
+                               'apply_online_link', 'official_notification_pdf_link',
+                               'official_website_link', 'all_links', 'jobs_info',
+                               'details_page_content', 'status', 'post_date', 'last_date',
+                               'total_post', 'text_sections', 'tables', 'useful_links',
+                               'application_fees', 'minimum_age', 'maximum_age', 'salary_pay_scale'}
     for key, val in job_obj.items():
-        if key in rendered_keys or key in SKIP_KEYS: continue
+        if key in rendered_keys or key in EXTRA_SKIP: continue
         if val is None or val == '' or val == [] or val == {}: continue
         body = render_unknown_section(key, val)
         if not body or not body.strip(): continue
@@ -1194,10 +1581,24 @@ for job in SARK:
         if paragraphs or tables:
             content_blocks = []
             for p in paragraphs:
-                if p: content_blocks.append({'type': 'paragraph', 'text': str(p)})
+                if p:
+                    p_str = str(p)
+                    # Strip HTML if present
+                    if '<' in p_str:
+                        import re as _re
+                        p_str = _re.sub(r'<[^>]+>', ' ', p_str).strip()
+                    if p_str: content_blocks.append({'type': 'paragraph', 'text': p_str})
             for tbl in tables:
                 if isinstance(tbl, list) and tbl:
                     content_blocks.append({'type': 'table', 'rows': tbl})
+            # Also add named_sections
+            named = dpc.get('named_sections', []) or []
+            for ns in named:
+                if isinstance(ns, dict):
+                    ns_title = ns.get('title','')
+                    ns_items = ns.get('items',[]) or []
+                    if ns_title or ns_items:
+                        content_blocks.append({'type':'merged_info','items':[{'label':ns_title,'text':item} for item in ns_items if item]})
             if content_blocks:
                 sections_out = [{'title': '', 'content': content_blocks}]
 
@@ -1205,6 +1606,26 @@ for job in SARK:
     age = {}
     if job.get('minimum_age'): age['minimum_age'] = safe(job['minimum_age'])
     if job.get('maximum_age'): age['maximum_age'] = safe(job['maximum_age'])
+
+    # Handle SR_Latest_Jobs/SR_Result 'tables' format
+    raw_tables = job.get('tables') or []
+    text_secs = job.get('text_sections') or []
+    tables_sections = []
+    if raw_tables and not sections_out:
+        for tbl in raw_tables:
+            tname = tbl.get('table_name','') or ''
+            rows = tbl.get('rows',[]) or []
+            if 'gb headline' in tname.lower(): continue  # Skip PSR tables
+            if rows:
+                tables_sections.append({'title': tname, 'content': [{'type':'table','rows':rows}]})
+        for ts in text_secs:
+            if not isinstance(ts, dict): continue
+            ts_text = ts.get('text','') or ''
+            ts_title = ts.get('title','') or ''
+            if ts_text:
+                tables_sections.append({'title': ts_title, 'content': [{'type':'paragraph','text':ts_text}]})
+    if tables_sections and not sections_out:
+        sections_out = tables_sections
 
     full = {
         'basic_details': bd,
