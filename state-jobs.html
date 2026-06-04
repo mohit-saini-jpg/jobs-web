@@ -1238,8 +1238,9 @@
   function jobDetailUrl(item, section) {
     const title = item.name || item.detail?.basic_details?.job_title || '';
     const slug  = makeSlug(title);
-    // Clean URL: /jobs/<slug>/ — state-job-detail.html handles via _redirects rewrite
-    return `/jobs/${slug}/`;
+    // Pass state as query param so detail page can match the correct section
+    const stateParam = encodeURIComponent(section.state || section.id || '');
+    return `/jobs/${slug}/?state=${stateParam}`;
   }
 
   // ═══ PARSE postDate (DD/MM/YYYY or YYYY-MM-DD) ═══
@@ -1320,6 +1321,18 @@
   function loadJobs() {
     const jobsList = document.getElementById('jobsList');
 
+    // ── No state selected: show prompt to pick a state ──
+    if (!stateName) {
+      jobsList.innerHTML = `
+        <div style="padding:24px 14px;text-align:center;color:var(--muted);font-size:.84rem;">
+          <i class="fa-solid fa-map-location-dot" style="font-size:2rem;color:var(--blue);display:block;margin-bottom:10px;"></i>
+          <strong style="color:var(--text);font-size:.95rem;">Apna State Select Karein</strong><br>
+          <span style="display:block;margin-top:6px;">Neeche diye gaye state list mein se apna state chunein.</span>
+        </div>`;
+      document.getElementById('statJobs').textContent = '0';
+      return;
+    }
+
     // ── Step 1: Use INLINE data (always available, instant) ──
     let matchedSection = findStateSection(INLINE_JOBS_DATA.sections, stateName);
     let matchedItems   = matchedSection ? (matchedSection.items || []) : [];
@@ -1331,9 +1344,9 @@
 
     if (!matchedItems.length) {
       jobsList.innerHTML = `
-        <div style="padding:20px 14px;text-align:center;color:var(--muted);font-size:.82rem;">
+        <div style="padding:24px 14px;text-align:center;color:var(--muted);font-size:.82rem;">
           <i class="fa-solid fa-circle-info" style="font-size:1.5rem;color:var(--blue);display:block;margin-bottom:8px;"></i>
-          <strong style="color:var(--text);">${stateName} ke liye koi job nahi mili.</strong><br>
+          <strong style="color:var(--text);">${stateName} ke liye abhi koi job nahi mili.</strong><br>
           <a href="/section/latest-jobs/" style="color:var(--blue);font-weight:700;margin-top:8px;display:inline-block;">
             ← Check All Latest Govt Jobs
           </a>
@@ -1388,6 +1401,6 @@
   </script>
 
   <script src="/script.min.js?v=20260527" defer></script>
-<script src="/tsj-version.js"?v=20260530023112 defer></script>
+<script src="/tsj-version.js?v=20260530023112" defer></script>
 </body>
 </html>
