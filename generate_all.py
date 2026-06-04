@@ -1201,17 +1201,10 @@ with open(CJ_FILE, encoding='utf-8') as f: CJ = json.load(f)
 with open(DU_FILE, encoding='utf-8') as f: DU = json.load(f)
 
 FJA_RAW = CJ.get('freejobalert_categories', {})
-FJA     = {cat: sorted(
-               [j for j in jobs if not is_garbage_title(
-                   (j.get('basic_details') or {}).get('job_title','') or j.get('title',''))],
-               key=_job_sort_key, reverse=True
-           )
+FJA     = {cat: [j for j in jobs if not is_garbage_title(
+               (j.get('basic_details') or {}).get('job_title','') or j.get('title',''))]
            for cat, jobs in FJA_RAW.items() if isinstance(jobs, list)}
-SARK    = sorted(
-    [j for j in (CJ.get('sarkari_data',{}) or {}).get('jobs', []) if not is_garbage_title(j.get('title',''))],
-    key=lambda j: _parse_date_str((j.get('important_dates',{}) or {}).get('last_date_to_apply','')),
-    reverse=True
-)
+SARK    = [j for j in (CJ.get('sarkari_data',{}) or {}).get('jobs', []) if not is_garbage_title(j.get('title',''))]
 EDU_SEC = (CJ.get('education_jobs',{}) or {}).get('sections', [])
 SJ_SEC  = (CJ.get('state_jobs',{}) or {}).get('sections', [])
 DU_SECS = DU.get('sections', [])
