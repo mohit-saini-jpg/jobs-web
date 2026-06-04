@@ -1053,7 +1053,8 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
 
 # ── Listing page builder ───────────────────────────────────────
 def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
-    title_tag  = f"{title} {YEAR} — Apply Online | Top Sarkari Jobs"
+    _yr_str = str(YEAR)
+    title_tag  = (f"{title} — Apply Online | Top Sarkari Jobs" if _yr_str in title else f"{title} {YEAR} — Apply Online | Top Sarkari Jobs")
     meta_desc  = (desc[:130] or f"{title}: Latest notifications, apply online, check dates. {YEAR}")[:155]
     bc_html    = '<nav class="bc" aria-label="Breadcrumb"><a href="/">Home</a>'
     for lbl, url in breadcrumbs:
@@ -1370,10 +1371,13 @@ print(f"  Education pages: {e_count}")
 
 # 5. CATEGORY/STUDY PAGES
 print("Generating /category/study/ pages...")
+_cat_listing_jobs = {}  # cat_slug → list of jobs (for listing page)
 for cat, jobs_list in FJA.items():
     if not isinstance(jobs_list, list): continue
     cat_slug  = QUAL_SLUG.get(cat, slugify(cat))
     cat_label = QUAL_LABEL.get(cat, cat.replace('_',' ').title())
+    if cat_slug not in _cat_listing_jobs:
+        _cat_listing_jobs[cat_slug] = {'label': cat_label, 'jobs': []}
     for job in jobs_list:
         bd = job.get('basic_details',{}) or {}
         title = safe(bd.get('job_title',''))
@@ -1383,9 +1387,30 @@ for cat, jobs_list in FJA.items():
         bc    = [('Study Wise Jobs', f"{BASE_URL}/category/study/"), (f'{cat_label} Jobs', f"{BASE_URL}/category/study/{cat_slug}/")]
         _canon_j = f"{BASE_URL}/jobs/{item_slug}/"  # canonical always points to /jobs/
         write(str(ROOT/'category'/'study'/cat_slug/item_slug/'index.html'), build_detail_page(job, item_slug, _canon_j, bc, f'{cat_label} Jobs', noindex_dup=True))
+        _cat_listing_jobs[cat_slug]['jobs'].append(job)
         c_count += 1
 
-print(f"  Category/study pages: {c_count}")
+# Generate category LISTING pages (index.html for each category)
+print("Generating /category/study/{slug}/ listing pages...")
+_listing_count = 0
+for cat_slug, cat_data in _cat_listing_jobs.items():
+    cat_label = cat_data['label']
+    jobs = cat_data['jobs']
+    if not jobs: continue
+    cat_canon = f"{BASE_URL}/category/study/{cat_slug}/"
+    bc_listing = [('Home', '/'), ('Study Wise Jobs', '/category/study/')]
+    listing_html = build_listing_page(
+        f"{cat_label} Government Jobs {YEAR}",
+        jobs,
+        cat_canon,
+        bc_listing,
+        f"Latest {cat_label} government job notifications {YEAR}. Find all sarkari naukri for {cat_label} candidates updated daily."
+    )
+    write(str(ROOT/'category'/'study'/cat_slug/'index.html'), listing_html)
+    _listing_count += 1
+
+print(f"  Category/study detail pages: {c_count}")
+print(f"  Category/study listing pages: {_listing_count}")
 
 # 6. SECTION LISTING PAGES
 print("Generating /section/ pages...")
