@@ -878,11 +878,52 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     apply_m   = safe(bd.get('application_mode','') or job_obj.get('apply_mode','') or 'Online')
     location  = safe(bd.get('job_location','') or job_obj.get('job_location','') or 'India')
 
-    title_tag = (build_seo_title(title, vacancies, org) + ' | Top Sarkari Jobs')[:60]
-    title_tag = (_job_part + _BRAND)[:60]
+    _BRAND = ' | Top Sarkari Jobs'
+    _vt = vacancies if vacancies and vacancies not in ('\u2014','') else ''
+    _vs = ', ' + _vt + ' Posts' if _vt else ''
+    _OM = {
+        'Delhi Subordinate Services Selection Board':'DSSSB',
+        'Staff Selection Commission':'SSC',
+        'Union Public Service Commission':'UPSC',
+        'Railway Recruitment Board':'RRB',
+        'State Bank of India':'SBI',
+        'Reserve Bank of India':'RBI',
+        'Employees Provident Fund Organisation':'EPFO',
+        'Institute of Banking Personnel Selection':'IBPS',
+        'All India Institute of Medical Sciences':'AIIMS',
+        'National Testing Agency':'NTA',
+        'Bharat Sanchar Nigam Limited':'BSNL',
+    }
+    _os = next((s for f, s in _OM.items() if f.lower() in org.lower()), None)
+    if not _os:
+        _w = org.split()
+        _os = org if len(_w) <= 3 else ' '.join(_w[:3])
+    _MAX = 60 - len(_BRAND)
+    import re as _re2
+    _yr_m = _re2.search(r'20\d\d', title)
+    _yr = _yr_m.group() if _yr_m else str(2026)
+    _tl = title.lower()
+    if _re2.search(r'\b(result|declared|merit list)\b', _tl):
+        _jp = _os + ' ' + _yr + ' Result'
+    elif _re2.search(r'\b(admit card|hall ticket|call letter)\b', _tl):
+        _jp = _os + ' ' + _yr + ' Admit Card'
+    elif _re2.search(r'\b(answer key)\b', _tl):
+        _jp = _os + ' ' + _yr + ' Answer Key'
+    else:
+        _jp = _os + ' ' + _yr + ' Recruitment' + _vs
+    if len(_jp) > _MAX:
+        _jp = _jp[:_MAX - 1].rsplit(' ', 1)[0].rstrip(',-') + '\u2026'
+    title_tag = (_jp + _BRAND)[:60]
     keywords   = ', '.join(str(k) for k in (seo if isinstance(seo,list) else []) + [org, location, 'sarkari job'])[:200]
     short_info = safe(bd.get('short_information','') or job_obj.get('jobs_info','') or job_obj.get('short_information',''))
-    meta_desc = build_meta_desc(title, org, vacancies, last_d, apply_m, short_info)[:155]
+    _si2 = short_info.rstrip('., ').strip()[:100] if short_info else ''
+    _base2 = _si2 if _si2 else title[:60].rstrip() + ' Recruitment'
+    _parts2 = [_base2]
+    if vacancies and vacancies not in ('\u2014', ''):
+        _parts2.append(vacancies + ' Posts')
+    if last_d and last_d not in ('\u2014', ''):
+        _parts2.append('Last Date: ' + last_d)
+    meta_desc = ('. '.join(p.rstrip('.') for p in _parts2) + '. Apply at Top Sarkari Jobs.')[:155]
 
     schemas_html = build_schemas(job_obj, canon_url, breadcrumbs)
 
