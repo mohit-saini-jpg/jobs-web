@@ -498,7 +498,7 @@ TITLE_MAP = {
     'important related links':'important_links_extra',
     'important instructions':'important_instructions',
 }
-SKIP_TITLES = {'set as preferred source on google','set as preferred source','about',''}
+SKIP_TITLES = {'set as preferred source on google','set as preferred source','about'}
 
 def render_sarkari_sections(sections_list, existing_il=None):
     """Map titled sections to proper renderers"""
@@ -622,6 +622,8 @@ def render_sarkari_sections(sections_list, existing_il=None):
     html += render_edu_sections(data['raw'])
     return html
 
+
+
 def render_edu_sections(sections_list):
     """Render education-format sections with heading+content"""
     if not sections_list: return ''
@@ -710,10 +712,14 @@ def build_all_sections(job_obj):
     # Check for sarkari titled sections
     sections = job_obj.get('sections') or []
     has_sarkari = bool(sections and any(sec.get('title') for sec in sections if isinstance(sec,dict)))
+    has_edu_secs = bool(sections and any(sec.get('heading') is not None for sec in sections if isinstance(sec,dict)) and not has_sarkari)
     il = job_obj.get('important_links') or {}
 
     if has_sarkari:
         html += render_sarkari_sections(sections, il)
+        rendered.add('sections')
+    elif has_edu_secs:
+        html += render_edu_sections(sections)
         rendered.add('sections')
 
     for key in SECTION_ORDER:

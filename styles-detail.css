@@ -103,3 +103,8 @@
 /* N7 FIX: apply-cta moved from inline style to external CSS */
 .apply-cta{display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#059669,#047857);color:#fff;padding:12px 20px;border-radius:10px;font-size:.9rem;font-weight:800;text-decoration:none;transition:background .15s}
 .apply-cta:hover{background:linear-gradient(135deg,#047857,#065f46)}
+
+/* Education section styles */
+.edu-para{font-size:.88rem;line-height:1.7;color:#374151;margin:0 0 10px}
+.edu-list{font-size:.86rem;line-height:1.8;color:#374151;margin:0 0 10px;padding-left:22px}
+.edu-list li{margin-bottom:4px}
