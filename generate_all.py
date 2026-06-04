@@ -1611,87 +1611,115 @@ def _du_slug(name, url=''):
     return f"{dom}-{h}" if dom else f"item-{h}"
 
 def _du_page(name, url, sec_title, other_items):
-    meta  = _DU_SEC_META.get(sec_title, {'color':'#1d4ed8','icon':'📋','badge':sec_title})
-    is_pdf = 'drive.google.com' in url or url.endswith('.pdf')
-    btn_txt = '📄 Download PDF' if is_pdf else '🔗 Open Official Link'
-    if sec_title == 'ImportantCSC PDF':
-        info = 'Yeh ek official PDF document hai. Download karne ke liye button click karo.'
-    elif sec_title == 'ImportantCSC link':
-        info = 'Yeh ek important official website link hai.'
-    elif sec_title == 'Govt Scheme & Yojna':
-        info = 'Government scheme ya yojana ki official information.'
-    else:
-        info = 'Latest update — official link pe click karke full details dekho.'
-    sec_slug = slugify(sec_title)
-    bc_html = ('<nav class="bc"><a href="/">Home</a><span class="bc-sep">›</span>'
-               f'<a href="/section/{sec_slug}/">{e(sec_title)}</a>'
-               '<span class="bc-sep">›</span>'
-               f'<span>{e(name[:50])}</span></nav>')
-    other_html = ''
-    if other_items:
-        other_html = f'<div class="sec-list"><div class="sec-list-head">More from {e(sec_title)}</div>'
-        for oi in other_items[:4]:
-            on  = (oi.get('name') or '').strip()[:60]
-            ou  = (oi.get('url') or '').strip()
-            osl = _du_slug(on, ou)
-            other_html += f'<a href="/jobs/{osl}/" class="other-item"><span>{meta["icon"]}</span><span>{e(on)}</span></a>'
-        other_html += '</div>'
-    css = ('*,*::before,*::after{box-sizing:border-box}'
-           'body{font-family:-apple-system,sans-serif;background:#f0f4f8;margin:0;color:#1e293b;min-height:100vh}'
-           '.pg{max-width:680px;margin:0 auto;padding:16px 12px 60px}'
-           '.bc{font-size:.73rem;color:#64748b;display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px;padding:6px 0}'
-           '.bc a{color:#1d4ed8;text-decoration:none}'
-           '.bc-sep{color:#d1d5db}'
-           '.card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.07)}'
-           '.ch{padding:20px;color:#fff}'
-           '.ch .badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.2);padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:600;margin-bottom:10px}'
-           '.ch h1{font-size:1.05rem;font-weight:900;margin:0 0 6px;line-height:1.4}'
-           '.ch .mt{font-size:.76rem;opacity:.85;display:flex;gap:10px}'
-           '.cb{padding:20px}'
-           '.notice{background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 14px;font-size:.8rem;color:#78350f;margin-bottom:16px;display:flex;gap:8px}'
-           '.btn-p{display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#1d4ed8,#1e3a8a);color:#fff;padding:13px 20px;border-radius:10px;font-size:.9rem;font-weight:800;text-decoration:none;margin-bottom:10px;transition:.15s;width:100%}'
-           '.btn-p:hover{opacity:.9}'
-           '.btn-s{display:flex;align-items:center;justify-content:center;gap:8px;background:#f1f5f9;color:#374151;padding:10px 20px;border-radius:10px;font-size:.82rem;font-weight:600;text-decoration:none;border:1px solid #e2e8f0}'
-           '.ib{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:.81rem;color:#374151;line-height:1.6}'
-           '.sec-list{margin-top:18px}'
-           '.sec-list-head{font-size:.76rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px}'
-           '.other-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;text-decoration:none;color:#374151;font-size:.8rem;font-weight:500;border:1px solid #e2e8f0;margin-bottom:5px;background:#fff}'
-           '.other-item:hover{background:#f1f5f9}')
-    return ('<!DOCTYPE html>\n<html lang="hi-IN">\n<head>\n'
-            '<meta charset="UTF-8"/>\n'
-            '<meta name="viewport" content="width=device-width,initial-scale=1.0"/>\n'
-            f'<title>{e(name[:70])} | Top Sarkari Jobs</title>\n'
-            f'<meta name="description" content="{e((name[:100]+" - "+sec_title+". Top Sarkari Jobs.")[:155])}"/>\n'
-            '<meta name="robots" content="noindex,follow"/>\n'
-            f'<link rel="canonical" href="{e(url)}"/>\n'
-            '<link rel="icon" href="/image.ico"/>\n'
-            '<link rel="stylesheet" href="/styles.css"/>\n'
-            '<script src="/tsj-config.js"></script>\n'
-            f'<style>{css}</style>\n'
-            f'<script>setTimeout(function(){{window.location.replace("{e(url)}");}},2500);</script>\n'
-            '</head>\n<body>\n'
-            '<div id="headerPlaceholder"></div>\n'
-            '<script src="/tsj-init.js" defer></script>\n'
-            '<main id="main"><div class="pg">\n'
-            + bc_html +
-            '<div class="card">\n'
-            f'<div class="ch" style="background:linear-gradient(135deg,{meta["color"]},#1e3a8a)">\n'
-            f'<div class="badge">{meta["icon"]} {e(meta["badge"])}</div>\n'
-            f'<h1>{e(name)}</h1>\n'
-            f'<div class="mt"><span>📂 {e(sec_title)}</span><span>🔄 Redirecting...</span></div>\n'
-            '</div>\n<div class="cb">\n'
-            '<div class="notice">⚠️ <span>2-3 seconds mein official link pe redirect ho jayega. Agar na ho to button click karo.</span></div>\n'
-            f'<div class="ib"><strong>About:</strong> {e(info)}</div>\n'
-            f'<a href="{e(url)}" class="btn-p" target="_blank" rel="noopener noreferrer">{btn_txt}</a>\n'
-            '<a href="/" class="btn-s">← Back to Home</a>\n'
-            + other_html +
-            '</div></div>\n'
-            '</div></main>\n'
-            '<div id="footerPlaceholder"></div>\n'
-            '<script src="/tsj-footer-init.js" defer></script>\n'
-            '<script src="/tsj-menu.js" defer></script>\n'
-            '</body></html>')
+    """Proper detail page for dailyupdates — NO redirect, same site layout."""
+    meta   = _DU_SEC_META.get(sec_title, {'color':'#1d4ed8','icon':'\U0001f4cb','badge':sec_title})
+    is_pdf = 'drive.google.com' in url or url.lower().endswith('.pdf')
+    btn_ic = 'fa-file-pdf' if is_pdf else 'fa-arrow-up-right-from-square'
+    btn_cl = 'btn-pdf' if is_pdf else 'btn-default'
+    btn_tx = 'Download PDF' if is_pdf else 'Open Official Link'
+    sec_sl = slugify(sec_title)
+    slug   = _du_slug(name, url)
+    canon  = BASE_URL + '/jobs/' + slug + '/'
 
+    bc = (
+        '<nav class="bc" aria-label="Breadcrumb">'
+        '<a href="/">Home</a><span class="bc-sep">\u203a</span>'
+        '<a href="/section/' + e(sec_sl) + '/">' + e(sec_title) + '</a>'
+        '<span class="bc-sep">\u203a</span>'
+        '<span aria-current="page">' + e(name[:60]) + '</span>'
+        '</nav>'
+    )
+    tags = (
+        '<div class="badge-row">'
+        '<span class="badge badge-cat">' + e(meta['icon']) + ' ' + e(meta['badge']) + '</span>'
+        '</div>'
+    )
+    stats = (
+        '<div class="stat-row">'
+        '<div class="stat"><div class="stat-val">\u2014</div><div class="stat-lbl">Vacancies</div></div>'
+        '<div class="stat"><div class="stat-val" style="color:#dc2626">\u2014</div><div class="stat-lbl">Last Date</div></div>'
+        '<div class="stat"><div class="stat-val">Online</div><div class="stat-lbl">Apply Mode</div></div>'
+        '<div class="stat"><div class="stat-val">India</div><div class="stat-lbl">Location</div></div>'
+        '</div>'
+    )
+    cta = (
+        '<a href="' + e(url) + '" class="apply-cta" target="_blank" rel="noopener noreferrer">'
+        '<i class="fa-solid ' + btn_ic + '"></i> ' + e(btn_tx) + ' \u2197'
+        '</a>'
+    )
+    il_sec = (
+        '<section class="sec-card">'
+        '<div class="sec-head"><h2><i class="fa-solid fa-link"></i> Important Links</h2></div>'
+        '<div class="sec-body"><div class="links-grid">'
+        '<a href="' + e(url) + '" class="lnk-btn ' + btn_cl + '" target="_blank" rel="noopener noreferrer">'
+        '<i class="fa-solid ' + btn_ic + '"></i> ' + e(btn_tx) + '</a>'
+        '</div></div>'
+        '</section>'
+    )
+    rel = (
+        '<div class="related-cats">'
+        '<span class="rel-label">Related Categories</span>'
+        '<a href="/section/' + e(sec_sl) + '/" class="rel-tag">' + e(sec_title) + '</a>'
+        '</div>'
+    )
+    others = ''
+    for oi in [i for i in (other_items or []) if (i.get('name') or '').strip()][:6]:
+        on  = (oi.get('name') or '').strip()[:80]
+        ou  = (oi.get('url') or '').strip()
+        osl = _du_slug(on, ou)
+        others += '<li class="sec-item"><a href="/jobs/' + osl + '/">' + e(on) + '</a></li>'
+    if others:
+        others = (
+            '<section class="sec-card">'
+            '<div class="sec-head"><div class="left">More from ' + e(sec_title) + '</div></div>'
+            '<div class="sec-body"><ul class="sec-list">' + others + '</ul></div>'
+            '</section>'
+        )
+
+    title_tag = e(name[:60]) + ' | Top Sarkari Jobs'
+    meta_desc = e((name[:130] + ' - ' + sec_title + '. Top Sarkari Jobs.')[:155])
+
+    p  = '<!DOCTYPE html>\n<html lang="en-IN">\n<head>\n'
+    p += '<meta charset="UTF-8"/>\n'
+    p += '<meta name="viewport" content="width=device-width,initial-scale=1.0"/>\n'
+    p += '<title>' + title_tag + '</title>\n'
+    p += '<meta name="description" content="' + meta_desc + '"/>\n'
+    p += '<meta name="robots" content="noindex,follow"/>\n'
+    p += '<link rel="canonical" href="' + e(canon) + '"/>\n'
+    p += '<meta property="og:title" content="' + title_tag + '"/>\n'
+    p += '<meta property="og:url" content="' + e(canon) + '"/>\n'
+    p += '<meta property="og:image" content="' + BASE_URL + '/og-jobs.png"/>\n'
+    p += '<link rel="icon" href="/image.ico"/>\n'
+    p += '<link rel="stylesheet" href="/styles.css"/>\n'
+    p += '<link rel="preload" href="/fonts/fa/all.min.css" as="style" onload="this.onload=null;this.rel=\'stylesheet\'"/>\n'
+    p += '<noscript><link rel="stylesheet" href="/fonts/fa/all.min.css"/></noscript>\n'
+    p += '<link rel="stylesheet" href="/styles-detail.css" media="print" onload="this.media=\'all\'"/>\n'
+    p += '<noscript><link rel="stylesheet" href="/styles-detail.css"/></noscript>\n'
+    p += '<script src="/tsj-config.js"></script>\n'
+    p += '</head>\n<body>\n'
+    p += '<div id="headerPlaceholder"></div>\n'
+    p += '<script src="/tsj-init.js" defer></script>\n'
+    p += '<main id="main">\n<div class="detail-wrap">\n'
+    p += bc
+    p += '<div class="important-notice"><i class="fa-solid fa-circle-exclamation"></i>'
+    p += '<span><strong>Important:</strong> Always verify details on official website. Dates &amp; eligibility may change.</span></div>\n'
+    p += '<article class="detail-header">\n'
+    p += tags
+    p += '<h1 class="detail-title">' + e(name) + '</h1>\n'
+    p += stats
+    p += cta + '\n'
+    p += '</article>\n'
+    p += il_sec + '\n'
+    p += rel + '\n'
+    p += others + '\n'
+    p += '</div>\n</main>\n'
+    p += '<div id="footerPlaceholder"></div>\n'
+    p += '<script src="/tsj-footer-init.js" defer></script>\n'
+    p += '<script src="/tsj-menu.js" defer></script>\n'
+    p += '</body>\n</html>'
+    return p
+
+# ── DU loop ─────────────────────────────────────────────────────
 for _du_sec in DU_SECS:
     _du_st   = _du_sec.get('title','')
     _du_items = _du_sec.get('items', [])
@@ -1716,83 +1744,95 @@ for _du_sec in DU_SECS:
 
 print(f"  Dailyupdates detail pages: {_du_count}")
 
-# dailyupdates sections
-DU_SLUG_MAP = {'Govt Scheme Yojna':'govt-scheme-yojna','ImportantCSC PDF':'important-csc-pdf','ImportantCSC link':'important-csc-link','Today Updates':'today-updates'}
+# ─────────────────────────────────────────────────────────────────
+# 7. SECTION LISTING PAGES
+# ─────────────────────────────────────────────────────────────────
+print("Generating /section/ pages...")
+SARK_CAT_MAP = {
+    'SR_Latest_Jobs':'latest-jobs','SR_Result':'result','SR_Admit_Card':'admit-card',
+    'SR_Admission':'admission','SR_Answer_Key':'answer-key','OFFLINE_FORM':'offline-form',
+    'LATEST_JOBS NEW':'latest-jobs-new','UPCOMING_JOBS':'upcoming-jobs',
+    'STATE_JOBS':'state-jobs-central','CENTRAL_JOBS':'central-jobs',
+    'ADMISSIONS':'admissions',
+}
+sec_count2 = 0
+# Sarkari sections
+for cat_key, url_slug in SARK_CAT_MAP.items():
+    jobs_in_cat = [j for j in SARK if j.get('category') == cat_key]
+    if not jobs_in_cat: continue
+    lbl = SECTION_META.get('important_links',('Important Links','',''))[0]
+    lbl = {'SR_Latest_Jobs':'Latest Jobs','SR_Result':'Results','SR_Admit_Card':'Admit Cards',
+           'SR_Admission':'Admissions','SR_Answer_Key':'Answer Keys','OFFLINE_FORM':'Offline Forms',
+           'LATEST_JOBS NEW':'Latest Jobs New','UPCOMING_JOBS':'Upcoming Jobs',
+           'STATE_JOBS':'State Jobs','CENTRAL_JOBS':'Central Govt Jobs','ADMISSIONS':'Admissions'}.get(cat_key, cat_key.replace('_',' ').title())
+    norm = [{'basic_details':{'job_title':j.get('title',''),'organization_name':j.get('organization',''),'total_vacancies':j.get('total_post','')}} for j in jobs_in_cat if j.get('title')]
+    write(str(ROOT/'section'/url_slug/'index.html'), build_listing_page(lbl, norm, f"{BASE_URL}/section/{url_slug}/", []))
+    sec_count2 += 1
+
+# DU sections
 for sec in DU_SECS:
-    sec_title = sec.get('title','') or sec.get('id','')
-    slug_key  = DU_SLUG_MAP.get(sec_title, slugify(sec_title))
-    items     = sec.get('items', [])
-    cards_html = ''.join(f'<article class="job-card"><div class="job-card-title"><a href="{e(str(item.get("url","#")))}" target="_blank" rel="noopener noreferrer">{e(safe(item.get("name","")))}</a></div></article>' for item in items if item.get('name'))
-    body_html = f'<div class="cat-wrap"><h1 class="cat-h1" style="margin:12px 10px 4px">{e(sec_title)}</h1><p class="cat-count" style="margin:0 10px 12px;color:#64748b;font-size:.78rem">{len(items)} items</p><div id="jobList" style="padding:0 10px">{cards_html}</div></div>'
-    bc_s = {'@context':'https://schema.org','@type':'BreadcrumbList','itemListElement':[{'@type':'ListItem','position':1,'name':'Home','item':BASE_URL+'/'},{'@type':'ListItem','position':2,'name':sec_title,'item':f"{BASE_URL}/section/{slug_key}/"}]}
-    schema_tag = f'<script type="application/ld+json">{json.dumps(bc_s,ensure_ascii=False)}</script>'
-    bc_html = f'<nav class="bc"><a href="/">Home</a><span class="bc-sep">›</span><span>{e(sec_title)}</span></nav>'
-    page = f'''<!DOCTYPE html><html lang="en-IN"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>{e(sec_title)} {YEAR} | Top Sarkari Jobs</title><meta name="description" content="Latest {e(sec_title)} updates {YEAR}."/><meta name="robots" content="index,follow"/><link rel="canonical" href="{BASE_URL}/section/{slug_key}/"/>{schema_tag}<script src="/tsj-config.js"></script><link rel="icon" href="/image.ico"/><link rel="stylesheet" href="/styles.css"/><link rel="preload" href="/fonts/fa/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"/><noscript><link rel="stylesheet" href="/fonts/fa/all.min.css"/></noscript><link rel="stylesheet" href="/styles-detail.css" media="print" onload="this.media='all'"/><noscript><link rel="stylesheet" href="/styles-detail.css"/></noscript></head><body><div id="headerPlaceholder"></div><script src="/tsj-init.js" defer></script><main>{bc_html}{body_html}</main><div id="footerPlaceholder"></div><script src="/tsj-footer-init.js" defer></script></body></html>'''
-    write(str(ROOT/'section'/slug_key/'index.html'), page)
-    sec_count += 1
+    sec_title = sec.get('title','')
+    url_slug  = slugify(sec_title)
+    items     = sec.get('items',[])
+    if not url_slug or not items: continue
+    norm = [{'basic_details':{'job_title':it.get('name','') or it.get('title','')}} for it in items if it.get('name') or it.get('title')]
+    write(str(ROOT/'section'/url_slug/'index.html'), build_listing_page(sec_title, norm, f"{BASE_URL}/section/{url_slug}/", []))
+    sec_count2 += 1
 
-print(f"  Section pages: {sec_count}")
+print(f"  Section pages: {sec_count2}")
 
-# 7. QUALIFICATION LISTING PAGES
+# ─────────────────────────────────────────────────────────────────
+# 8. QUALIFICATION LISTING PAGES
+# ─────────────────────────────────────────────────────────────────
 print("Generating /qualification/ pages...")
-for cat_key, jobs_list in FJA.items():
-    if not isinstance(jobs_list, list) or not jobs_list: continue
-    q_slug  = QUAL_SLUG.get(cat_key, cat_key.lower().replace('_','-'))
+q_count = 0
+for cat_key, q_slug in QUAL_SLUG.items():
     q_label = QUAL_LABEL.get(cat_key, cat_key.replace('_',' ').title())
-    write(str(ROOT/'qualification'/q_slug/'index.html'), build_listing_page(f"{q_label} Jobs", jobs_list, f"{BASE_URL}/qualification/{q_slug}/", [], f"Government job notifications for {q_label} candidates."))
-    qual_count += 1
+    jobs_q  = FJA.get(cat_key, [])
+    if not jobs_q: continue
+    norm = [{'basic_details':{'job_title':safe((j.get('basic_details',{}) or {}).get('job_title','')),'organization_name':safe((j.get('basic_details',{}) or {}).get('organization_name','')),'total_vacancies':safe((j.get('basic_details',{}) or {}).get('total_vacancies',''))}} for j in jobs_q]
+    write(str(ROOT/'qualification'/q_slug/'index.html'), build_listing_page(f"{q_label} Government Jobs {YEAR}", norm, f"{BASE_URL}/qualification/{q_slug}/", [('Qualification Wise Jobs','/category/study/')]))
+    q_count += 1
 
-print(f"  Qualification pages: {qual_count}")
+print(f"  Qualification pages: {q_count}")
 
-# ─────────────────────────────────────────────────────────────
-# WRITE INDEXES (sections-index.json + jobs-index.json)
-# ─────────────────────────────────────────────────────────────
-INDEX  = ROOT / 'jobs-index.json'
-SINDEX = ROOT / 'sections-index.json'
+# ─────────────────────────────────────────────────────────────────
+# UPDATE JSON INDEXES
+# ─────────────────────────────────────────────────────────────────
+write(str(ROOT/'jobs-index.json'),   json.dumps(jobs_index, ensure_ascii=False, separators=(',',':')))
+# Build sections_index from FJA categories for fast homepage rendering
+sections_index = {}
+for _si_cat, _si_jobs in FJA.items():
+    if not isinstance(_si_jobs, list): continue
+    _si_items = []
+    for _j in _si_jobs[:50]:  # top 50 per category
+        _bd = (_j.get('basic_details') or {})
+        _t  = safe(_bd.get('job_title',''))
+        if not _t: continue
+        _sl = slugify(_t)[:80]
+        _imp = (_j.get('important_dates') or {})
+        _ld  = safe(_imp.get('last_date_to_apply','') or _imp.get('last_date',''))
+        _si_items.append({'slug':_sl,'name':_t,'date':_ld})
+    if _si_items:
+        sections_index[_si_cat] = _si_items
+write(str(ROOT/'sections-index.json'), json.dumps(sections_index, ensure_ascii=False, separators=(',',':')))
 
-with open(INDEX, 'w', encoding='utf-8') as f:
-    json.dump(jobs_index, f, ensure_ascii=False, separators=(',',':'))
+import time as _time
+_end = _time.time()
+VERSION = datetime.now().strftime('%Y%m%d%H%M%S')
+PAGES_GENERATED = j_count + sec_count2 + q_count + _du_count
+write(str(ROOT/'version.json'), json.dumps({'version':VERSION,'generated':TODAY,'pages':PAGES_GENERATED}, ensure_ascii=False))
 
-# Sections index — FJA + Sarkari SR_* categories
-for cat, jobs_list in FJA.items():
-    if not isinstance(jobs_list, list): continue
-    items = []
-    for job in jobs_list:
-        bd4 = job.get('basic_details',{}) or {}
-        t = safe(bd4.get('job_title',''))
-        if not t: continue
-        sl = slugify(t)
-        dt = job.get('important_dates',{}) or {}
-        ld = safe(dt.get('last_date_to_apply',''))
-        items.append({'slug':sl,'name':t,'date':norm_date(ld) or ''})
-    if items: sindex[cat] = items
-
-sark_by_cat = {}
-for sj in SARK:
-    cat = sj.get('category','')
-    if not cat: continue
-    t = safe(sj.get('title',''))
-    if not t: continue
-    sl = clean_slug(sj.get('slug','')) or slugify(t)
-    ld = safe((sj.get('important_dates') or {}).get('last_date_to_apply','') or sj.get('last_date',''))
-    sark_by_cat.setdefault(cat,[]).append({'slug':sl,'name':t,'date':ld[:20]})
-for cat, items in sark_by_cat.items():
-    if items: sindex[cat] = items
-
-with open(SINDEX, 'w', encoding='utf-8') as f:
-    json.dump(sindex, f, ensure_ascii=False, separators=(',',':'))
-
-total = j_count + s_count + e_count + c_count + sec_count + qual_count
-print(f"""
-╔══════════════════════════════════════════════════════╗
-║  ✅ UNIFIED GENERATOR COMPLETE                       ║
-╠══════════════════════════════════════════════════════╣
-║  Jobs (FJA + Sarkari)  : {j_count:<8}                    ║
-║  State detail          : {s_count:<8}                    ║
-║  Education detail      : {e_count:<8}                    ║
-║  Category/study        : {c_count:<8}                    ║
-║  Section listing       : {sec_count:<8}                    ║
-║  Qualification listing : {qual_count:<8}                    ║
-║  TOTAL PAGES           : {total:<8}                    ║
-╚══════════════════════════════════════════════════════╝
-""")
+print()
+print("\u2554" + "\u2550"*54 + "\u2557")
+print("\u2551  \u2705 UNIFIED GENERATOR COMPLETE" + " "*23 + "\u2551")
+print("\u2560" + "\u2550"*54 + "\u2563")
+print(f"\u2551  Jobs (FJA + Sarkari)  : {j_count:<27}\u2551")
+print(f"\u2551  State detail          : {s_count:<27}\u2551")
+print(f"\u2551  Education detail      : {e_count:<27}\u2551")
+print(f"\u2551  Category/study        : {c_count:<27}\u2551")
+print(f"\u2551  Section listing       : {sec_count2:<27}\u2551")
+print(f"\u2551  Qualification listing : {q_count:<27}\u2551")
+print(f"\u2551  TOTAL PAGES           : {PAGES_GENERATED:<27}\u2551")
+print("\u255a" + "\u2550"*54 + "\u255d")
+print()
