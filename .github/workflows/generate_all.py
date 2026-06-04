@@ -1404,6 +1404,56 @@ for cat_key, url_slug in SARK_CAT_MAP.items():
     write(str(ROOT/'section'/url_slug/'index.html'), build_listing_page(lbl, norm, f"{BASE_URL}/section/{url_slug}/", []))
     sec_count += 1
 
+# DAILYUPDATES INDIVIDUAL ITEM REDIRECT PAGES → /jobs/{slug}/
+print("Generating dailyupdates redirect pages...")
+_du_redir_count = 0
+for _du_sec in DU_SECS:
+    for _du_item in _du_sec.get('items', []):
+        _du_name = (_du_item.get('name') or '').strip()
+        _du_url  = (_du_item.get('url') or '').strip()
+        if not _du_name or not _du_url or not _du_url.startswith('http'):
+            continue
+        _du_slug = slugify(_du_name)
+        if not _du_slug:
+            continue
+        _du_path = ROOT/'jobs'/_du_slug/'index.html'
+        # Don't overwrite real FJA/Sarkari job pages
+        if _du_path.exists():
+            _ex = _du_path.read_text(encoding='utf-8')
+            if 'sec-card' in _ex or 'detail-header' in _ex or 'important_dates' in _ex:
+                continue
+        _du_path.parent.mkdir(parents=True, exist_ok=True)
+        _du_page = (
+            '<!DOCTYPE html>\n'
+            '<html lang="en-IN">\n'
+            '<head>\n'
+            '<meta charset="UTF-8"/>\n'
+            f'<meta http-equiv="refresh" content="0;url={e(_du_url)}"/>\n'
+            f'<link rel="canonical" href="{e(_du_url)}"/>\n'
+            '<meta name="robots" content="noindex,follow"/>\n'
+            f'<title>{e(_du_name[:70])} | Top Sarkari Jobs</title>\n'
+            '<style>'
+            'body{font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f0f4f8}'
+            '.box{text-align:center;background:#fff;padding:28px 22px;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.08);max-width:460px;width:90%}'
+            '.box h2{font-size:.95rem;color:#0f172a;margin:0 0 8px;line-height:1.4}'
+            '.box p{font-size:.82rem;color:#64748b;margin:0 0 16px}'
+            '.btn{display:inline-flex;align-items:center;gap:6px;background:#1d4ed8;color:#fff;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:700;font-size:.84rem}'
+            '</style>\n'
+            '</head>\n'
+            '<body>\n'
+            '<div class="box">\n'
+            f'<h2>{e(_du_name[:80])}</h2>\n'
+            '<p>Redirecting to official source...</p>\n'
+            f'<a href="{e(_du_url)}" class="btn">&#128279; Open Link &#8594;</a>\n'
+            '</div>\n'
+            f'<script>window.location.replace("{e(_du_url)}");</script>\n'
+            '</body>\n'
+            '</html>'
+        )
+        write(str(_du_path), _du_page)
+        _du_redir_count += 1
+print(f"  Dailyupdates redirect pages: {_du_redir_count}")
+
 # dailyupdates sections
 DU_SLUG_MAP = {'Govt Scheme Yojna':'govt-scheme-yojna','ImportantCSC PDF':'important-csc-pdf','ImportantCSC link':'important-csc-link','Today Updates':'today-updates'}
 for sec in DU_SECS:
