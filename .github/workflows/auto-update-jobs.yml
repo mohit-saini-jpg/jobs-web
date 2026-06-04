@@ -81,6 +81,13 @@ jobs:
           echo "Old pages cleared"
 
 
+      - name: Patch generate_all.py if needed
+        run: |
+          if grep -q "build_seo_title" generate_all.py 2>/dev/null; then
+            echo "Applying patch..."
+            python3 .github/workflows/patch_generator.py
+          fi
+
       - name: UNIFIED generator - generate_all.py (one item = one URL = one layout)
         run: python3 generate_all.py
 

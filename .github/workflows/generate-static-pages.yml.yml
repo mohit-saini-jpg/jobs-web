@@ -62,6 +62,17 @@ jobs:
           mkdir -p jobs/data state education category/study section qualification
           echo "All old pages cleared successfully"
 
+      - name: Patch generate_all.py if needed
+        run: |
+          # Remove broken build_seo_title call if present (NameError fix)
+          if grep -q "build_seo_title" generate_all.py 2>/dev/null; then
+            echo "Applying permanent fix to generate_all.py..."
+            python3 .github/workflows/patch_generator.py
+            echo "Patch applied"
+          else
+            echo "generate_all.py is up to date, no patch needed"
+          fi
+
       - name: UNIFIED generator - generate_all.py
         run: |
           echo "Running unified generator..."
