@@ -1209,7 +1209,7 @@ window.__TSJ_PSR_DISABLED = true;
        DATA LOADING & MATCHING
     ════════════════════════════════════════════ */
     (async function run() {
-      if (!slugArg) {
+      if (!slugArg || !stateArg) {
         loadingEl.style.display='none';
         errorEl.style.display='block';
         return;
@@ -1223,22 +1223,26 @@ window.__TSJ_PSR_DISABLED = true;
         if (!r.ok) throw new Error('fetch failed');
         const data = await r.json();
 
+        const stateKey = stateArg.toLowerCase();
         const sections = data.sections || (Array.isArray(data) ? data : []);
 
-        /* Find matching state section(s) — if stateArg given, filter; else search all */
-        const sectionsToSearch = stateArg
-          ? sections.filter(sec => {
-              const sk = stateArg.toLowerCase();
-              const secState = safe(sec.state||'').toLowerCase();
-              const secId    = safe(sec.id||'').toLowerCase();
-              return secState === sk || secId === sk || secId === sk.replace(/ /g,'-') ||
-                     secState.includes(sk.split(' ')[0]) || sk.includes(secState.split(' ')[0]);
-            })
-          : sections;
-
         /* Find matching state section */
-        for (const sec of sectionsToSearch) {
+        for (const sec of sections) {
+          const secState = safe(sec.state||'').toLowerCase();
+          const secId    = safe(sec.id||'').toLowerCase();
+          const secTitle = safe(sec.title||'').toLowerCase();
           const stateKey = stateArg.toLowerCase();
+
+          // Match: by state name (exact), by id (exact or slug), or fuzzy first-word
+          const matched =
+            secState === stateKey ||
+            secId === stateKey ||
+            secId === stateKey.replace(/ /g,'-') ||
+            secState.includes(stateKey.split(' ')[0]) ||
+            stateKey.includes(secState.split(' ')[0]) ||
+            stateKey.includes(secId.split('-')[0]);
+
+          if (!matched) continue;
 
           matchedSectionId = safe(sec.state || sec.id || sec.title || stateArg);
 

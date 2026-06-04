@@ -1,3 +1,85 @@
+
+# ── STATE-JOBS SEO URLs (/state-jobs/{slug}/) ────────────────────
+# These serve the newly generated static pages directly
+/state-jobs/  /section/state-jobs/  301
+
+# ── state-jobs.html?state= → /state-jobs/{slug}/ (permanent SEO redirect) ──
+/state-jobs.html?state=Andhra+Pradesh        /state-jobs/andhra-pradesh/   301
+/state-jobs.html?state=Andhra%20Pradesh      /state-jobs/andhra-pradesh/   301
+/state-jobs.html?state=Arunachal+Pradesh     /state-jobs/arunachal-pradesh/ 301
+/state-jobs.html?state=Arunachal%20Pradesh   /state-jobs/arunachal-pradesh/ 301
+/state-jobs.html?state=Assam                 /state-jobs/assam/            301
+/state-jobs.html?state=Bihar                 /state-jobs/bihar/            301
+/state-jobs.html?state=Chandigarh            /state-jobs/chandigarh/       301
+/state-jobs.html?state=Chhattisgarh          /state-jobs/chhattisgarh/     301
+/state-jobs.html?state=Delhi                 /state-jobs/delhi/            301
+/state-jobs.html?state=Goa                   /state-jobs/goa/              301
+/state-jobs.html?state=Gujarat               /state-jobs/gujarat/          301
+/state-jobs.html?state=Haryana               /state-jobs/haryana/          301
+/state-jobs.html?state=Himachal+Pradesh      /state-jobs/himachal-pradesh/ 301
+/state-jobs.html?state=Himachal%20Pradesh    /state-jobs/himachal-pradesh/ 301
+/state-jobs.html?state=Jammu+and+Kashmir     /state-jobs/jammu-and-kashmir/ 301
+/state-jobs.html?state=Jammu%20and%20Kashmir /state-jobs/jammu-and-kashmir/ 301
+/state-jobs.html?state=Jharkhand             /state-jobs/jharkhand/        301
+/state-jobs.html?state=Karnataka             /state-jobs/karnataka/        301
+/state-jobs.html?state=Kerala                /state-jobs/kerala/           301
+/state-jobs.html?state=Madhya+Pradesh        /state-jobs/madhya-pradesh/   301
+/state-jobs.html?state=Madhya%20Pradesh      /state-jobs/madhya-pradesh/   301
+/state-jobs.html?state=Maharashtra           /state-jobs/maharashtra/      301
+/state-jobs.html?state=Meghalaya             /state-jobs/meghalaya/        301
+/state-jobs.html?state=Mizoram               /state-jobs/mizoram/          301
+/state-jobs.html?state=Nagaland              /state-jobs/nagaland/         301
+/state-jobs.html?state=Odisha                /state-jobs/odisha/           301
+/state-jobs.html?state=Punjab                /state-jobs/punjab/           301
+/state-jobs.html?state=Rajasthan             /state-jobs/rajasthan/        301
+/state-jobs.html?state=Sikkim                /state-jobs/sikkim/           301
+/state-jobs.html?state=Tamil+Nadu            /state-jobs/tamil-nadu/       301
+/state-jobs.html?state=Tamil%20Nadu          /state-jobs/tamil-nadu/       301
+/state-jobs.html?state=Telangana             /state-jobs/telangana/        301
+/state-jobs.html?state=Tripura               /state-jobs/tripura/          301
+/state-jobs.html?state=Uttar+Pradesh         /state-jobs/uttar-pradesh/    301
+/state-jobs.html?state=Uttar%20Pradesh       /state-jobs/uttar-pradesh/    301
+/state-jobs.html?state=Uttarakhand           /state-jobs/uttarakhand/      301
+/state-jobs.html?state=West+Bengal           /state-jobs/west-bengal/      301
+/state-jobs.html?state=West%20Bengal         /state-jobs/west-bengal/      301
+
+# Also redirect old /state/{slug}/ → /state-jobs/{slug}/ (SEO consolidation)
+/state/uttar-pradesh/          /state-jobs/uttar-pradesh/     301
+/state/maharashtra/            /state-jobs/maharashtra/       301
+/state/delhi/                  /state-jobs/delhi/             301
+/state/karnataka/              /state-jobs/karnataka/         301
+/state/tamil-nadu/             /state-jobs/tamil-nadu/        301
+/state/rajasthan/              /state-jobs/rajasthan/         301
+/state/gujarat/                /state-jobs/gujarat/           301
+/state/madhya-pradesh/         /state-jobs/madhya-pradesh/    301
+/state/haryana/                /state-jobs/haryana/           301
+/state/punjab/                 /state-jobs/punjab/            301
+/state/west-bengal/            /state-jobs/west-bengal/       301
+/state/bihar/                  /state-jobs/bihar/             301
+/state/andhra-pradesh/         /state-jobs/andhra-pradesh/    301
+/state/telangana/              /state-jobs/telangana/         301
+/state/kerala/                 /state-jobs/kerala/            301
+/state/odisha/                 /state-jobs/odisha/            301
+/state/jharkhand/              /state-jobs/jharkhand/         301
+/state/assam/                  /state-jobs/assam/             301
+/state/chhattisgarh/           /state-jobs/chhattisgarh/      301
+/state/uttarakhand/            /state-jobs/uttarakhand/       301
+/state/himachal-pradesh/       /state-jobs/himachal-pradesh/  301
+/state/jammu-and-kashmir/      /state-jobs/jammu-and-kashmir/ 301
+/state/goa/                    /state-jobs/goa/               301
+/state/tripura/                /state-jobs/tripura/           301
+/state/meghalaya/              /state-jobs/meghalaya/         301
+/state/chandigarh/             /state-jobs/chandigarh/        301
+/state/puducherry/             /state-jobs/puducherry/        301
+/state/andaman-nicobar/        /state-jobs/andaman-nicobar/   301
+/state/sikkim/                 /state-jobs/sikkim/            301
+/state/mizoram/                /state-jobs/mizoram/           301
+/state/nagaland/               /state-jobs/nagaland/          301
+/state/arunachal-pradesh/      /state-jobs/arunachal-pradesh/ 301
+/state/jk/                     /state-jobs/jammu-and-kashmir/ 301
+/state/dadra-nh/               /state-jobs/dadra-nh/          301
+/state/daman-diu/              /state-jobs/daman-diu/         301
+
 # ═══════════════════════════════════════════════════════════════
 # Top Sarkari Jobs — Complete SEO URL Redirects
 # Generated: 2026-05-26
