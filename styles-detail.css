@@ -108,3 +108,13 @@
 .edu-para{font-size:.88rem;line-height:1.7;color:#374151;margin:0 0 10px}
 .edu-list{font-size:.86rem;line-height:1.8;color:#374151;margin:0 0 10px;padding-left:22px}
 .edu-list li{margin-bottom:4px}
+
+.tbl-name{font-size:.82rem;font-weight:700;color:#1d4ed8;margin:10px 0 5px;padding:5px 8px;background:#eff6ff;border-left:3px solid #1d4ed8;border-radius:0 4px 4px 0}
+.ts-title{font-size:.84rem;font-weight:700;color:#1e293b;margin:8px 0 5px}
+
+/* Useful links table */
+.ul-table td{padding:6px 10px;vertical-align:middle;border-bottom:1px solid #f1f5f9}
+.ul-table tr:last-child td{border-bottom:none}
+.ul-title{font-size:.8rem;font-weight:600;color:#374151;max-width:200px;line-height:1.4}
+.ul-links{display:flex;flex-wrap:wrap;gap:5px}
+.lnk-sm{padding:4px 10px!important;font-size:.75rem!important}
