@@ -31,6 +31,41 @@ GARBAGE_PATTERNS = [
     'telegram channel','youtube channel','facebook page','google news',
 ]
 
+# ── Date parsing for sort ────────────────────────────────────────────────────
+_MONTH_MAP = {'jan':1,'feb':2,'mar':3,'apr':4,'may':5,'jun':6,
+              'jul':7,'aug':8,'sep':9,'oct':10,'nov':11,'dec':12}
+
+def _parse_date_str(d):
+    """Parse various date formats → comparable string YYYY-MM-DD for sort."""
+    if not d: return '2000-01-01'
+    d = str(d).strip().lower().split('(')[0].strip()  # remove trailing notes
+    # DD-MM-YYYY or DD/MM/YYYY
+    m = re.match(r'(\d{1,2})[-/](\d{1,2})[-/](\d{4})', d)
+    if m:
+        try: return f"{m.group(3)}-{int(m.group(2)):02d}-{int(m.group(1)):02d}"
+        except: pass
+    # DD Mon/Month YYYY
+    m = re.match(r'(\d{1,2})\s+([a-z]+)\s+(\d{4})', d)
+    if m:
+        mon = _MONTH_MAP.get(m.group(2)[:3], 0)
+        if mon: 
+            try: return f"{m.group(3)}-{mon:02d}-{int(m.group(1)):02d}"
+            except: pass
+    # YYYY-MM-DD
+    m = re.match(r'(\d{4})-(\d{1,2})-(\d{1,2})', d)
+    if m:
+        try: return f"{m.group(1)}-{int(m.group(2)):02d}-{int(m.group(3)):02d}"
+        except: pass
+    return '2000-01-01'
+
+def _job_sort_key(job):
+    """Sort key: last_date_to_apply DESC, then last_updated DESC."""
+    imp = job.get('important_dates', {}) or {}
+    bd  = job.get('basic_details', {}) or {}
+    ld  = (imp.get('last_date_to_apply') or imp.get('last_date') or '').strip()
+    lu  = (bd.get('last_updated') or '').strip()
+    return (_parse_date_str(ld), _parse_date_str(lu))
+
 def is_garbage_title(title):
     if not title or not title.strip(): return True
     tl = title.lower().strip()
@@ -1166,10 +1201,17 @@ with open(CJ_FILE, encoding='utf-8') as f: CJ = json.load(f)
 with open(DU_FILE, encoding='utf-8') as f: DU = json.load(f)
 
 FJA_RAW = CJ.get('freejobalert_categories', {})
-FJA     = {cat: [j for j in jobs if not is_garbage_title(
-               (j.get('basic_details') or {}).get('job_title','') or j.get('title',''))]
+FJA     = {cat: sorted(
+               [j for j in jobs if not is_garbage_title(
+                   (j.get('basic_details') or {}).get('job_title','') or j.get('title',''))],
+               key=_job_sort_key, reverse=True
+           )
            for cat, jobs in FJA_RAW.items() if isinstance(jobs, list)}
-SARK    = [j for j in (CJ.get('sarkari_data',{}) or {}).get('jobs', []) if not is_garbage_title(j.get('title',''))]
+SARK    = sorted(
+    [j for j in (CJ.get('sarkari_data',{}) or {}).get('jobs', []) if not is_garbage_title(j.get('title',''))],
+    key=lambda j: _parse_date_str((j.get('important_dates',{}) or {}).get('last_date_to_apply','')),
+    reverse=True
+)
 EDU_SEC = (CJ.get('education_jobs',{}) or {}).get('sections', [])
 SJ_SEC  = (CJ.get('state_jobs',{}) or {}).get('sections', [])
 DU_SECS = DU.get('sections', [])
