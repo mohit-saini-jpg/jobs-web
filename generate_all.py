@@ -1517,7 +1517,7 @@ def _du_page(name, url, sec_title, other_items):
             '<meta charset="UTF-8"/>\n'
             '<meta name="viewport" content="width=device-width,initial-scale=1.0"/>\n'
             f'<title>{e(name[:70])} | Top Sarkari Jobs</title>\n'
-            f'<meta name="description" content="{e((name[:100]+' — '+sec_title+'. Top Sarkari Jobs.')[:155])}"/>\n'
+            f'<meta name="description" content="{e((name[:100]+" - "+sec_title+". Top Sarkari Jobs.")[:155])}"/>\n'
             '<meta name="robots" content="noindex,follow"/>\n'
             f'<link rel="canonical" href="{e(url)}"/>\n'
             '<link rel="icon" href="/image.ico"/>\n'
