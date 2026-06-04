@@ -79,11 +79,14 @@
         e.stopPropagation();
         var isOpen = menu.style.display === 'block';
         document.querySelectorAll('.nav-dd-menu').forEach(function (m) { m.style.display = ''; });
+        // R3: Reset all other buttons
+        document.querySelectorAll('.nav-dd-btn').forEach(function(b){if(b!==btn)b.setAttribute('aria-expanded','false');});
         if (!isOpen) menu.style.display = 'block';
       });
     });
     document.addEventListener('click', function () {
       document.querySelectorAll('.nav-dd-menu').forEach(function (m) { m.style.display = ''; });
+    document.querySelectorAll('.nav-dd-btn').forEach(function(b){b.setAttribute('aria-expanded','false');});
     });
 
     // Mobile search button → scroll to search
@@ -154,3 +157,11 @@
   }
 
 })();
+
+// R3 FIX: ESC key closes dropdowns
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    document.querySelectorAll('.nav-dd-menu').forEach(function(m){m.style.display='';});
+    document.querySelectorAll('.nav-dd-btn').forEach(function(b){b.setAttribute('aria-expanded','false');});
+  }
+});

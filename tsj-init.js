@@ -1,0 +1,15 @@
+// tsj-init.js — Header injection
+// Audit Fix R6: Extracted from inline scripts to enable CSP without unsafe-inline
+(function(){
+  var h=document.getElementById('headerPlaceholder');
+  if(!h) return;
+  fetch('/header.html',{cache:'force-cache'})
+    .then(function(r){return r.ok?r.text():null})
+    .catch(function(){return null})
+    .then(function(t){
+      if(t&&h){
+        h.outerHTML=t;
+        if(window.__TSJ_INIT_HEADER) window.__TSJ_INIT_HEADER();
+      }
+    });
+})();

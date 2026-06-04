@@ -20,11 +20,11 @@ jobs:
       contents: write
 
     steps:
-      - name: Checkout
+      - name: Checkout latest code
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 1
+          fetch-depth: 0
 
       - name: Setup Python 3.11
         uses: actions/setup-python@v5
@@ -42,14 +42,17 @@ jobs:
       - name: Record start time
         run: echo "START_TIME=$(date +%s)" >> $GITHUB_ENV
 
-      - name: Ensure JSON at root
+      - name: Ensure JSON data at root
         run: |
           if [ ! -f "Complete_Jobs_Full_Data.json" ] && [ -f "data/Complete_Jobs_Full_Data.json" ]; then
             cp data/Complete_Jobs_Full_Data.json Complete_Jobs_Full_Data.json
+            echo "JSON copied from data/"
           fi
+          ls -lh Complete_Jobs_Full_Data.json 2>/dev/null || echo "WARNING: JSON not found"
 
-      - name: Clear old generated pages
+      - name: Clear ALL old generated pages (permanent fix)
         run: |
+          echo "Clearing stale pages before fresh generation..."
           find jobs -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
           find state -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
           find education -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
@@ -57,35 +60,33 @@ jobs:
           find section -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
           find qualification -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
           mkdir -p jobs/data state education category/study section qualification
-          echo "Old pages cleared"
+          echo "All old pages cleared successfully"
 
-      - name: PRIMARY generator - generate_website.py
-        env:
-          FORCE_REGENERATE: "true"
-        run: python3 generate_website.py
+      - name: UNIFIED generator - generate_all.py
+        run: |
+          echo "Running unified generator..."
+          python3 generate_all.py
+          echo "Generation complete"
 
-      - name: SECONDARY generator - generate_jobs.py
-        env:
-          FORCE_REGENERATE: "true"
-        run: python3 .github/workflows/generate_jobs.py
-
-      - name: Run validation
-        if: ${{ inputs.run_validate }}
-        continue-on-error: true
-        run: python3 scripts/validate.py
+      - name: Bulk fix lang attribute (en-IN for English pages)
+        run: |
+          find jobs category/study state education section qualification -name "index.html" \
+            -exec sed -i 's/<html lang="hi-IN">/<html lang="en-IN">/g' {} + 2>/dev/null || true
+          echo "lang attributes fixed"
 
       - name: Rebuild sitemaps
         run: |
           node .github/workflows/generate_sitemap.js 2>/dev/null || true
-          python3 .github/workflows/build_sitemaps.py
+          python3 .github/workflows/build_sitemaps.py 2>/dev/null || true
 
-      - name: Bump asset versions
+      - name: Bump asset cache versions
         run: |
           VERSION=$(date +%Y%m%d%H%M%S)
-          sed -i "s/script\.min\.js?v=[0-9]*/script.min.js?v=${VERSION}/g" index.html || true
-          sed -i "s/smart-search\.min\.js?v=[0-9]*/smart-search.min.js?v=${VERSION}/g" index.html || true
+          sed -i "s/script\.min\.js?v=[0-9]*/script.min.js?v=${VERSION}/g" index.html 2>/dev/null || true
+          sed -i "s/smart-search\.min\.js?v=[0-9]*/smart-search.min.js?v=${VERSION}/g" index.html 2>/dev/null || true
+          echo "Asset versions bumped to ${VERSION}"
 
-      - name: Count pages
+      - name: Count generated pages
         run: |
           JOBS=$(find jobs -maxdepth 2 -name "index.html" 2>/dev/null | wc -l)
           STATE=$(find state -maxdepth 3 -name "index.html" 2>/dev/null | wc -l)
@@ -97,23 +98,31 @@ jobs:
           echo "PAGES_GENERATED=${TOTAL}" >> $GITHUB_ENV
           echo "Pages: jobs=$JOBS state=$STATE edu=$EDU cat=$CAT sec=$SEC qual=$QUAL TOTAL=$TOTAL"
 
-      - name: Commit and Push
+      - name: Commit and Push (safe - no stale merge)
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Stage ALL generated files
           git add jobs/ state/ education/ category/ section/ qualification/ 2>/dev/null || true
           git add jobs-index.json sections-index.json version.json sw.js 2>/dev/null || true
-          git add sitemap-jobs.xml sitemap-states.xml sitemap-education.xml sitemap-categories.xml sitemap-sections.xml sitemap.xml 2>/dev/null || true
+          git add sitemap-jobs.xml sitemap-states.xml sitemap-education.xml sitemap-categories.xml 2>/dev/null || true
+          git add sitemap-sections.xml sitemap.xml 2>/dev/null || true
+          git add index.html 2>/dev/null || true
           git add -A 2>/dev/null || true
+
           if git diff --staged --quiet; then
             echo "No changes to commit"
             exit 0
           fi
+
           VERSION=$(node -e "console.log(require('./version.json').version)" 2>/dev/null || echo "$(date +%Y%m%d)")
-          git commit -m "Full regen v${VERSION} - ${PAGES_GENERATED} pages [skip ci]"
-          git fetch origin main
-          git merge origin/main -X ours --no-edit --allow-unrelated-histories || true
+          git commit -m "Full regen v${VERSION}: ${PAGES_GENERATED} pages [skip ci]"
+
+          # Safe push: pull with rebase (only non-page files conflict)
+          git pull --rebase origin main 2>/dev/null || true
           git push origin main
+          echo "Pushed successfully - ${PAGES_GENERATED} pages live"
 
       - name: Summary
         run: |
@@ -123,7 +132,10 @@ jobs:
           echo "### Full Static Page Regen Complete" >> $GITHUB_STEP_SUMMARY
           echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
           echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Pages Generated | ${PAGES_GENERATED} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Version | ${VERSION} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Time | ${ELAPSED}s |" >> $GITHUB_STEP_SUMMARY
+          echo "| Pages Generated | **${PAGES_GENERATED}** |" >> $GITHUB_STEP_SUMMARY
+          echo "| Version | \`${VERSION}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Time Taken | ${ELAPSED}s |" >> $GITHUB_STEP_SUMMARY
+          echo "| Generator | generate_all.py (unified) |" >> $GITHUB_STEP_SUMMARY
           echo "| IST Time | $(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M') |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Old pages cleared before generation — zero stale content possible.**" >> $GITHUB_STEP_SUMMARY

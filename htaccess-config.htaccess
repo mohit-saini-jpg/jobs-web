@@ -160,3 +160,69 @@ RewriteCond %{REQUEST_URI} ^(.*)//(.*)$
 RewriteRule . %1/%2 [R=301,L]
 
 ErrorDocument 404 /404.html
+
+# ═══════════════════════════════════════════════════════════════
+# SECURITY HEADERS — topsarkarijobs.com
+# Audit Fix: Issue 4.1 (Critical) — All security headers added
+# ═══════════════════════════════════════════════════════════════
+<IfModule mod_headers.c>
+  # Force HTTPS for 1 year (HSTS)
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+  # Prevent MIME type sniffing
+  Header always set X-Content-Type-Options "nosniff"
+
+  # Prevent clickjacking — site has no embeds itself
+  Header always set X-Frame-Options "SAMEORIGIN"
+
+  # Legacy XSS protection for old browsers
+  Header always set X-XSS-Protection "1; mode=block"
+
+  # Send referrer to same origin only; no-referrer for cross-origin
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # Disable unused browser APIs
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=()"
+
+  # R6 FIX: CSP without unsafe-inline (scripts extracted to external files)
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'sha256-nkI0POX35b3d+4+70a1SRSo1EZR4USt04OM3GXFQccQ='; font-src 'self' data:; img-src 'self' data: https: blob:; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://firebaseinstallations.googleapis.com https://fcmregistrations.googleapis.com https://api.indexnow.org; frame-ancestors 'none'; form-action 'self'; base-uri 'self'; upgrade-insecure-requests; worker-src 'self'"
+
+  # Remove server fingerprinting
+  Header always unset X-Powered-By
+  Header always unset Server
+</IfModule>
+
+# ═══════════════════════════════════════════════════════════════
+# COMPRESSION — Gzip
+# ═══════════════════════════════════════════════════════════════
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml text/xml application/xml
+</IfModule>
+
+# ═══════════════════════════════════════════════════════════════
+# CACHING — Static Assets (Audit Fix: Issue 2.4)
+# ═══════════════════════════════════════════════════════════════
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css                  "access plus 1 year"
+  ExpiresByType application/javascript    "access plus 1 year"
+  ExpiresByType image/webp                "access plus 1 year"
+  ExpiresByType image/png                 "access plus 6 months"
+  ExpiresByType image/x-icon              "access plus 1 year"
+  ExpiresByType image/svg+xml             "access plus 1 year"
+  ExpiresByType font/woff2                "access plus 1 year"
+  ExpiresByType font/woff                 "access plus 1 year"
+  ExpiresByType text/html                 "access plus 1 hour"
+  ExpiresByType application/json          "access plus 15 minutes"
+</IfModule>
+
+# ═══════════════════════════════════════════════════════════════
+# WELL-KNOWN FILES — Correct headers (Audit Fix: Issue 4.3)
+# ═══════════════════════════════════════════════════════════════
+<IfModule mod_headers.c>
+  <FilesMatch "assetlinks\.json|apple-app-site-association">
+    Header always set Content-Type "application/json"
+    Header always set Cache-Control "no-cache, must-revalidate"
+    Header always set Access-Control-Allow-Origin "*"
+  </FilesMatch>
+</IfModule>

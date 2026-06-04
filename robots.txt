@@ -1,23 +1,37 @@
-# robots.txt — Top Sarkari Jobs
-# Updated: 2026-06-03
+# robots.txt — topsarkarijobs.com
+# Audit Fix: Issue 6.2 — Block JSON data files, optimized crawl rules
+# Updated: 2026-06-04
 
 User-agent: *
 Allow: /
 
-# Block old template files (clean URLs are indexed instead)
+# Block template/utility HTML files (clean URLs are indexed)
 Disallow: /job.html
 Disallow: /job.html?
 Disallow: /view.html
 Disallow: /view.html?
 Disallow: /state-jobs.html
-Disallow: /state-jobs.html?
 Disallow: /education-detail.html
-Disallow: /education-detail.html?
-Disallow: /category.html
-Disallow: /category.html?
 Disallow: /state-job-detail.html
-Disallow: /state-job-detail.html?
+Disallow: /category.html
 Disallow: /search.html?
+
+# Block raw JSON data files (Audit Fix: Issue 6.2)
+Disallow: /data/
+Disallow: /jobs/data/
+Disallow: /Complete_Jobs_Full_Data.json
+Disallow: /dailyupdates.json
+Disallow: /sections-index.json
+Disallow: /jobs-index.json
+Disallow: /jobs-search-index.json
+Disallow: /homepage-mini.json
+Disallow: /services.json
+Disallow: /header_links.json
+
+# Block service worker and internal JS (not meant to be indexed)
+Disallow: /sw.js
+Disallow: /analytics.js
+Disallow: /manifest.json
 
 # Block utility/internal pages
 Disallow: /404.html
@@ -27,13 +41,16 @@ Disallow: /JOB_HTML_PATCH_INSTRUCTIONS.html
 Disallow: /.github/
 Disallow: /node_modules/
 
-# Allow all clean SEO URLs
+# Block .well-known from indexing (security files)
+Disallow: /.well-known/
+
+# Allow all SEO-indexed clean URLs
 Allow: /jobs/
 Allow: /state/
 Allow: /education/
 Allow: /category/
 Allow: /section/
-Allow: /data/
+Allow: /qualification/
 Allow: /search/
 Allow: /about/
 Allow: /contact/
@@ -43,6 +60,8 @@ Allow: /helpdesk/
 Allow: /sitemap/
 Allow: /tools/
 Allow: /govt-services/
+Allow: /resume-maker/
+Allow: /81ee32a562315ef5f3b03a8cf23bb1e2.txt
 
 # Sitemaps
 Sitemap: https://www.topsarkarijobs.com/sitemap.xml
@@ -50,9 +69,16 @@ Sitemap: https://www.topsarkarijobs.com/sitemap-jobs.xml
 Sitemap: https://www.topsarkarijobs.com/sitemap-states.xml
 Sitemap: https://www.topsarkarijobs.com/sitemap-education.xml
 Sitemap: https://www.topsarkarijobs.com/sitemap-categories.xml
+Sitemap: https://www.topsarkarijobs.com/sitemap-sections.xml
+Sitemap: https://www.topsarkarijobs.com/sitemap-pages.xml
 
 User-agent: Googlebot
 Allow: /
+# No crawl-delay for Googlebot — Google ignores it and it hurts indexing
+
+User-agent: Googlebot-News
+Allow: /section/
+Allow: /jobs/
 
 User-agent: Googlebot-Image
 Allow: /image.png
@@ -61,6 +87,9 @@ Allow: /*.png
 Allow: /*.jpg
 Allow: /*.webp
 Allow: /*.ico
+
+User-agent: Bingbot
+Allow: /
 
 User-agent: AhrefsBot
 Crawl-delay: 10

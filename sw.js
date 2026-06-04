@@ -21,7 +21,7 @@
 // VERSION — Replaced by generate_version.js on every deploy
 // Do NOT manually edit — CI/CD replaces this line
 // ══════════════════════════════════════════════════════════════
-const SW_VERSION = '20260603220448'; // auto-updated by generate_version.js
+const SW_VERSION = '20260603202042'; // auto-updated by generate_version.js
 
 // ══════════════════════════════════════════════════════════════
 // CACHE NAMES — version-stamped, old ones auto-deleted
@@ -40,18 +40,35 @@ const ALL_CACHES = Object.values(CACHE);
 const SITE               = 'https://www.topsarkarijobs.com';
 const NOTIF_ICON         = '/icons/icon-192x192.png';
 const NOTIF_BADGE        = '/icons/icon-96x96.png';
-const DATA_CACHE_MAX     = 30;                    // max JSON entries cached (was 25)
+const DATA_CACHE_MAX     = 50;                    // max JSON entries cached (was 25)
 const DATA_MAX_AGE_MS    = 30 * 60 * 1000;        // 30 min for /data/*.json (was 1hr)
 const JSON_MAX_AGE_MS    = 15 * 60 * 1000;        // 15 min for other JSON
 const SECTIONS_MAX_AGE_MS = 10 * 60 * 1000;       // 10 min for sections-index.json
 
 // Critical files to precache on install
 const PRECACHE_STATIC = [
+  // Core styles — always cached
   '/styles.css',
+  '/styles-detail.css',  // R11: New detail page CSS
+  '/critical.css',
+  // Core scripts
   '/script.min.js',
+  '/tsj-menu.js',
+  '/tsj-config.js',     // R6/R11: Config flags
+  '/tsj-init.js',       // R6/R11: Header init
+  '/tsj-footer-init.js',// R6/R11: Footer init
+  // Header/footer — fetched on EVERY page
+  '/header.html',       // R11: Critical - pre-cache to prevent CLS
+  '/footer.html',       // R11: Critical
+  // Data files
   '/manifest.json',
   '/sections-index.json',
   '/dailyupdates.json',
+  // Assets
+  '/image.png',
+  '/image-40x40.webp',
+  '/offline.html',
+  '/og-jobs.svg',       // R4/R11: OG images
 ];
 
 // ══════════════════════════════════════════════════════════════

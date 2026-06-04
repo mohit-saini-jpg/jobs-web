@@ -80,21 +80,14 @@ jobs:
           mkdir -p jobs/data state education category/study section qualification
           echo "Old pages cleared"
 
-      - name: PRIMARY generator - generate_website.py
-        env:
-          FORCE_REGENERATE: 'true'
-        run: python3 generate_website.py
 
-      - name: SECONDARY generator - indexes and additional pages
-        env:
-          FORCE_REGENERATE: 'true'
-        run: python3 .github/workflows/generate_jobs.py
+      - name: UNIFIED generator - generate_all.py (one item = one URL = one layout)
+        run: python3 generate_all.py
 
-      # ── STEP 6: Rebuild sitemaps ──────────────────────────────────
-      - name: 🗺️ Rebuild sitemap-jobs.xml
-        run: node .github/workflows/generate_sitemap.js
+      - name: Fix lang attributes for English pages
+        run: |
+          find jobs category/study state education section qualification -name "index.html"             -exec sed -i 's/<html lang="hi-IN">/<html lang="en-IN">/g' {} + 2>/dev/null || true
 
-      # ── STEP 7: Rebuild all section data (INLINE — no separate workflow) ──
       - name: 🔁 Rebuild section data from Complete_Jobs_Full_Data.json
         run: |
           python3 << 'PYEOF'
