@@ -73,7 +73,7 @@
     "SR_Admission":         { id: "SR Admission",             title: "Admission",         color: "linear-gradient(135deg,#0e7490,#0891b2)", icon: "fa-solid fa-graduation-cap" },
     "SR_Answer_Key":        { id: "SR Answer Key",            title: "Answer Key",        color: "linear-gradient(135deg,#b45309,#d97706)", icon: "fa-solid fa-key" },
     "UPCOMING_JOBS":        { id: "Upcoming Jobs",            title: "Upcoming Jobs",          color: "linear-gradient(135deg,#15803d,#16a34a)", icon: "fa-solid fa-calendar-plus" },
-    "STATE_JOBS":           { id: "State Jobs",               title: "State Jobs",        color: "linear-gradient(135deg,#9333ea,#a855f7)", icon: "fa-solid fa-map-location-dot" },
+    "STATE_JOBS":           { id: "State Jobs",               title: "State Jobs",        color: "linear-gradient(135deg,#9333ea,#a855f7)", icon: "fa-solid fa-map-location-dot", viewMoreUrl: "/state-jobs/" },
     "CENTRAL_JOBS":         { id: "Central Jobs",             title: "Central Jobs",      color: "linear-gradient(135deg,#0f766e,#0d9488)", icon: "fa-solid fa-landmark" },
     "ADMISSIONS":           { id: "Admissions",               title: "Admissions",        color: "linear-gradient(135deg,#be123c,#e11d48)", icon: "fa-solid fa-school" },
     "LATEST_JOBS NEW":      { id: "Latest Jobs New",          title: "Latest Jobs New",        color: "linear-gradient(135deg,#dc2626,#b91c1c)", icon: "fa-solid fa-fire" },
@@ -1757,7 +1757,7 @@
       const a = document.createElement("a");
       a.className = "section-link";
 
-      // ✅ FIX: State wise jobs → state-jobs.html?state=StateName (not view.html?section=...)
+      // ✅ FIX: State wise jobs → /state-jobs/{slug}/ (SEO-friendly static pages)
       let href = safe(it.url);
       if (group === "state") {
         // Extract state name from the item name or url
@@ -1779,7 +1779,7 @@
           extractedState = nameClean;
         }
         if (extractedState) {
-          href = `/state/${extractedState.toLowerCase().replace(/ /g, '-')}/`;
+          href = `/state-jobs/${extractedState.toLowerCase().replace(/ /g, '-')}/`;
         }
       }
 
