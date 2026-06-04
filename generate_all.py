@@ -1445,55 +1445,132 @@ for cat_key, url_slug in SARK_CAT_MAP.items():
     write(str(ROOT/'section'/url_slug/'index.html'), build_listing_page(lbl, norm, f"{BASE_URL}/section/{url_slug}/", []))
     sec_count += 1
 
-# DAILYUPDATES INDIVIDUAL ITEM REDIRECT PAGES → /jobs/{slug}/
-print("Generating dailyupdates redirect pages...")
-_du_redir_count = 0
+# DAILYUPDATES INDIVIDUAL ITEM PAGES → /jobs/{slug}/
+# Proper pages with header/footer + auto-redirect to external URL
+import hashlib as _hlib
+print("Generating dailyupdates detail pages...")
+_DU_SEC_META = {
+    'Govt Scheme & Yojna':{'color':'#065f46','icon':'🏛️','badge':'Govt Scheme'},
+    'ImportantCSC PDF':   {'color':'#7c3aed','icon':'📄','badge':'PDF Download'},
+    'ImportantCSC link':  {'color':'#1d4ed8','icon':'🔗','badge':'Useful Link'},
+    'Today Updates':      {'color':'#b45309','icon':'📰','badge':'Today Update'},
+}
+_du_count = 0
+_du_seen  = set()
+
+def _du_slug(name, url=''):
+    s = slugify(name)
+    if s: return s
+    # Hindi or empty: use url domain + md5 hash
+    dom = re.sub(r'https?://(www\.)?','',url).split('/')[0].replace('.','-')[:20]
+    h   = _hlib.md5(name.encode()).hexdigest()[:8]
+    return f"{dom}-{h}" if dom else f"item-{h}"
+
+def _du_page(name, url, sec_title, other_items):
+    meta  = _DU_SEC_META.get(sec_title, {'color':'#1d4ed8','icon':'📋','badge':sec_title})
+    is_pdf = 'drive.google.com' in url or url.endswith('.pdf')
+    btn_txt = '📄 Download PDF' if is_pdf else '🔗 Open Official Link'
+    if sec_title == 'ImportantCSC PDF':
+        info = 'Yeh ek official PDF document hai. Download karne ke liye button click karo.'
+    elif sec_title == 'ImportantCSC link':
+        info = 'Yeh ek important official website link hai.'
+    elif sec_title == 'Govt Scheme & Yojna':
+        info = 'Government scheme ya yojana ki official information.'
+    else:
+        info = 'Latest update — official link pe click karke full details dekho.'
+    sec_slug = slugify(sec_title)
+    bc_html = ('<nav class="bc"><a href="/">Home</a><span class="bc-sep">›</span>'
+               f'<a href="/section/{sec_slug}/">{e(sec_title)}</a>'
+               '<span class="bc-sep">›</span>'
+               f'<span>{e(name[:50])}</span></nav>')
+    other_html = ''
+    if other_items:
+        other_html = f'<div class="sec-list"><div class="sec-list-head">More from {e(sec_title)}</div>'
+        for oi in other_items[:4]:
+            on  = (oi.get('name') or '').strip()[:60]
+            ou  = (oi.get('url') or '').strip()
+            osl = _du_slug(on, ou)
+            other_html += f'<a href="/jobs/{osl}/" class="other-item"><span>{meta["icon"]}</span><span>{e(on)}</span></a>'
+        other_html += '</div>'
+    css = ('*,*::before,*::after{box-sizing:border-box}'
+           'body{font-family:-apple-system,sans-serif;background:#f0f4f8;margin:0;color:#1e293b;min-height:100vh}'
+           '.pg{max-width:680px;margin:0 auto;padding:16px 12px 60px}'
+           '.bc{font-size:.73rem;color:#64748b;display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px;padding:6px 0}'
+           '.bc a{color:#1d4ed8;text-decoration:none}'
+           '.bc-sep{color:#d1d5db}'
+           '.card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.07)}'
+           '.ch{padding:20px;color:#fff}'
+           '.ch .badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.2);padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:600;margin-bottom:10px}'
+           '.ch h1{font-size:1.05rem;font-weight:900;margin:0 0 6px;line-height:1.4}'
+           '.ch .mt{font-size:.76rem;opacity:.85;display:flex;gap:10px}'
+           '.cb{padding:20px}'
+           '.notice{background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 14px;font-size:.8rem;color:#78350f;margin-bottom:16px;display:flex;gap:8px}'
+           '.btn-p{display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#1d4ed8,#1e3a8a);color:#fff;padding:13px 20px;border-radius:10px;font-size:.9rem;font-weight:800;text-decoration:none;margin-bottom:10px;transition:.15s;width:100%}'
+           '.btn-p:hover{opacity:.9}'
+           '.btn-s{display:flex;align-items:center;justify-content:center;gap:8px;background:#f1f5f9;color:#374151;padding:10px 20px;border-radius:10px;font-size:.82rem;font-weight:600;text-decoration:none;border:1px solid #e2e8f0}'
+           '.ib{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:.81rem;color:#374151;line-height:1.6}'
+           '.sec-list{margin-top:18px}'
+           '.sec-list-head{font-size:.76rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px}'
+           '.other-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;text-decoration:none;color:#374151;font-size:.8rem;font-weight:500;border:1px solid #e2e8f0;margin-bottom:5px;background:#fff}'
+           '.other-item:hover{background:#f1f5f9}')
+    return ('<!DOCTYPE html>\n<html lang="hi-IN">\n<head>\n'
+            '<meta charset="UTF-8"/>\n'
+            '<meta name="viewport" content="width=device-width,initial-scale=1.0"/>\n'
+            f'<title>{e(name[:70])} | Top Sarkari Jobs</title>\n'
+            f'<meta name="description" content="{e((name[:100]+' — '+sec_title+'. Top Sarkari Jobs.')[:155])}"/>\n'
+            '<meta name="robots" content="noindex,follow"/>\n'
+            f'<link rel="canonical" href="{e(url)}"/>\n'
+            '<link rel="icon" href="/image.ico"/>\n'
+            '<link rel="stylesheet" href="/styles.css"/>\n'
+            '<script src="/tsj-config.js"></script>\n'
+            f'<style>{css}</style>\n'
+            f'<script>setTimeout(function(){{window.location.replace("{e(url)}");}},2500);</script>\n'
+            '</head>\n<body>\n'
+            '<div id="headerPlaceholder"></div>\n'
+            '<script src="/tsj-init.js" defer></script>\n'
+            '<main id="main"><div class="pg">\n'
+            + bc_html +
+            '<div class="card">\n'
+            f'<div class="ch" style="background:linear-gradient(135deg,{meta["color"]},#1e3a8a)">\n'
+            f'<div class="badge">{meta["icon"]} {e(meta["badge"])}</div>\n'
+            f'<h1>{e(name)}</h1>\n'
+            f'<div class="mt"><span>📂 {e(sec_title)}</span><span>🔄 Redirecting...</span></div>\n'
+            '</div>\n<div class="cb">\n'
+            '<div class="notice">⚠️ <span>2-3 seconds mein official link pe redirect ho jayega. Agar na ho to button click karo.</span></div>\n'
+            f'<div class="ib"><strong>About:</strong> {e(info)}</div>\n'
+            f'<a href="{e(url)}" class="btn-p" target="_blank" rel="noopener noreferrer">{btn_txt}</a>\n'
+            '<a href="/" class="btn-s">← Back to Home</a>\n'
+            + other_html +
+            '</div></div>\n'
+            '</div></main>\n'
+            '<div id="footerPlaceholder"></div>\n'
+            '<script src="/tsj-footer-init.js" defer></script>\n'
+            '<script src="/tsj-menu.js" defer></script>\n'
+            '</body></html>')
+
 for _du_sec in DU_SECS:
-    for _du_item in _du_sec.get('items', []):
+    _du_st   = _du_sec.get('title','')
+    _du_items = _du_sec.get('items', [])
+    for _du_item in _du_items:
         _du_name = (_du_item.get('name') or '').strip()
         _du_url  = (_du_item.get('url') or '').strip()
         if not _du_name or not _du_url or not _du_url.startswith('http'):
             continue
-        _du_slug = slugify(_du_name)
-        if not _du_slug:
+        _du_sl = _du_slug(_du_name, _du_url)
+        if not _du_sl or _du_sl in _du_seen:
             continue
-        _du_path = ROOT/'jobs'/_du_slug/'index.html'
-        # Don't overwrite real FJA/Sarkari job pages
+        _du_seen.add(_du_sl)
+        _du_path = ROOT/'jobs'/_du_sl/'index.html'
         if _du_path.exists():
             _ex = _du_path.read_text(encoding='utf-8')
             if 'sec-card' in _ex or 'detail-header' in _ex or 'important_dates' in _ex:
                 continue
         _du_path.parent.mkdir(parents=True, exist_ok=True)
-        _du_page = (
-            '<!DOCTYPE html>\n'
-            '<html lang="en-IN">\n'
-            '<head>\n'
-            '<meta charset="UTF-8"/>\n'
-            f'<meta http-equiv="refresh" content="0;url={e(_du_url)}"/>\n'
-            f'<link rel="canonical" href="{e(_du_url)}"/>\n'
-            '<meta name="robots" content="noindex,follow"/>\n'
-            f'<title>{e(_du_name[:70])} | Top Sarkari Jobs</title>\n'
-            '<style>'
-            'body{font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f0f4f8}'
-            '.box{text-align:center;background:#fff;padding:28px 22px;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.08);max-width:460px;width:90%}'
-            '.box h2{font-size:.95rem;color:#0f172a;margin:0 0 8px;line-height:1.4}'
-            '.box p{font-size:.82rem;color:#64748b;margin:0 0 16px}'
-            '.btn{display:inline-flex;align-items:center;gap:6px;background:#1d4ed8;color:#fff;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:700;font-size:.84rem}'
-            '</style>\n'
-            '</head>\n'
-            '<body>\n'
-            '<div class="box">\n'
-            f'<h2>{e(_du_name[:80])}</h2>\n'
-            '<p>Redirecting to official source...</p>\n'
-            f'<a href="{e(_du_url)}" class="btn">&#128279; Open Link &#8594;</a>\n'
-            '</div>\n'
-            f'<script>window.location.replace("{e(_du_url)}");</script>\n'
-            '</body>\n'
-            '</html>'
-        )
-        write(str(_du_path), _du_page)
-        _du_redir_count += 1
-print(f"  Dailyupdates redirect pages: {_du_redir_count}")
+        _others = [i for i in _du_items if i != _du_item]
+        write(str(_du_path), _du_page(_du_name, _du_url, _du_st, _others))
+        _du_count += 1
+
+print(f"  Dailyupdates detail pages: {_du_count}")
 
 # dailyupdates sections
 DU_SLUG_MAP = {'Govt Scheme Yojna':'govt-scheme-yojna','ImportantCSC PDF':'important-csc-pdf','ImportantCSC link':'important-csc-link','Today Updates':'today-updates'}
