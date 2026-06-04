@@ -1347,14 +1347,33 @@ for sec in SJ_SEC:
         canon = f"{BASE_URL}/jobs/{item_slug}/"
         bc    = [('State Jobs', f"{BASE_URL}/state-jobs/{state_slug}/"), (state_name, f"{BASE_URL}/state-jobs/{state_slug}/")]
         # State detail pages: noindex (canonical → /jobs/) to avoid duplicate indexing
-        state_html = build_detail_page(detail, item_slug, canon, bc, f'{state_name} Govt Job', noindex_dup=True)
-        write(str(ROOT/'state'/state_slug/item_slug/'index.html'), state_html)
+        # Single URL rule: only /jobs/{slug}/ — no /state/{state}/{slug}/
         if item_slug not in seen_jobs:
             seen_jobs[item_slug] = state_name
-            # /jobs/ page: index,follow (primary canonical)
             jobs_html = build_detail_page(detail, item_slug, canon, bc, f'{state_name} Govt Job', noindex_dup=False)
             write(str(ROOT/'jobs'/item_slug/'index.html'), jobs_html)
         s_count += 1
+
+# Generate /state/{state-slug}/index.html listing pages
+for sec in SJ_SEC:
+    state_name = safe(sec.get('state') or sec.get('title',''))
+    raw_state_slug = slugify(state_name)
+    state_slug = STATE_SLUG_FIX.get(raw_state_slug, raw_state_slug)
+    if not state_name or not state_slug: continue
+    state_jobs_list = sec.get('items', [])
+    if not state_jobs_list: continue
+    canon_listing = f"{BASE_URL}/state/{state_slug}/"
+    # Build simple listing page for /state/{slug}/
+    state_listing = build_listing_page(
+        f"{state_name} Government Jobs {YEAR}",
+        [{'basic_details':{'job_title':safe(it.get('name') or it.get('title','')),'organization_name':state_name,
+          'total_vacancies':safe(it.get('total_vacancy',''))}}
+         for it in state_jobs_list if (it.get('name') or it.get('title',''))],
+        canon_listing,
+        [('Home','/'),('State Jobs','/state-jobs/')],
+        f"Latest {state_name} government jobs {YEAR}. All sarkari naukri for {state_name} state."
+    )
+    write(str(ROOT/'state'/state_slug/'index.html'), state_listing)
 
 print(f"  State pages: {s_count}")
 
@@ -1389,8 +1408,7 @@ for sec in EDU_SEC:
         bc    = [('Education', f"{BASE_URL}/education/"), (sec_title, f"{BASE_URL}/education/{sec_id}/")]
         html  = build_detail_page(full_d, item_slug, canon, bc, sec_title)
         # Education pages: noindex (canonical → /jobs/) 
-        edu_html = build_detail_page(full_d, item_slug, canon, bc, sec_title, noindex_dup=True)
-        write(str(ROOT/'education'/sec_id/item_slug/'index.html'), edu_html)
+        # Single URL rule: only /jobs/{slug}/ — no /education/{state}/{slug}/
         if item_slug not in seen_jobs:
             seen_jobs[item_slug] = sec_title
             jobs_html = build_detail_page(full_d, item_slug, canon, bc, sec_title, noindex_dup=False)
@@ -1421,7 +1439,7 @@ for cat, jobs_list in FJA.items():
         canon = f"{BASE_URL}/category/study/{cat_slug}/{item_slug}/"
         bc    = [('Study Wise Jobs', f"{BASE_URL}/category/study/"), (f'{cat_label} Jobs', f"{BASE_URL}/category/study/{cat_slug}/")]
         _canon_j = f"{BASE_URL}/jobs/{item_slug}/"  # canonical always points to /jobs/
-        write(str(ROOT/'category'/'study'/cat_slug/item_slug/'index.html'), build_detail_page(job, item_slug, _canon_j, bc, f'{cat_label} Jobs', noindex_dup=True))
+        # Category detail pages removed — /jobs/{slug}/ is the canonical URL
         _cat_listing_jobs[cat_slug]['jobs'].append(job)
         c_count += 1
 
