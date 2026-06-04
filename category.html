@@ -94,6 +94,21 @@
   <link id="hreflangEnIN" rel="alternate" hreflang="en-IN" href="https://www.topsarkarijobs.com/category.html" />
   <link id="hreflangDef" rel="alternate" hreflang="x-default" href="https://www.topsarkarijobs.com/category.html" />
   <script>
+  // If URL is /category/study/{slug}/, try to serve the static listing page
+  (function(){
+    var _p = location.pathname;
+    var _m = _p.match(/^\/category\/study\/([a-z0-9-]+)\/?$/);
+    if (_m) {
+      // Static page should be at same URL - if we're here it means static file not found
+      // Try fetching it as a direct resource
+      var _slug = _m[1];
+      var _staticUrl = '/category/study/' + _slug + '/index.html';
+      // Redirect to ensure we hit the static file directly
+      if (_p.slice(-1) !== '/') { location.replace('/category/study/' + _slug + '/'); return; }
+    }
+  })();
+  </script>
+  <script>
   // Set canonical + hreflang to clean URL when served as /state/ hub
   (function(){
     var p = location.pathname, q = location.search;
@@ -236,7 +251,7 @@ html, body { overflow-x: hidden; max-width: 100%; }
   <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
-  <script src="/tsj-menu.js?v=20260604153344" defer></script>
+  <script src="/tsj-menu.js?v=20260603202042" defer></script>
   <script src="/pwa-install.js?v=6.0" defer></script>
   <!-- ══ END PWA ════════════════════════════════════════════════════ -->
 </head>
@@ -329,7 +344,7 @@ html, body { overflow-x: hidden; max-width: 100%; }
     if (seg && CATEGORY_MAP[seg]) document.title = data.h1 + ' | Top Sarkari Jobs';
   })();
   </script>
-<script src="/tsj-push.js?v=20260604153344" defer></script>
+<script src="/tsj-push.js?v=20260603202042" defer></script>
 <script src="/tsj-version.js"?v=20260530023112 defer></script>
 </body>
 </html>

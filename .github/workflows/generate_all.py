@@ -22,19 +22,6 @@ CJ_FILE  = ROOT / 'data' / 'Complete_Jobs_Full_Data.json'
 if not CJ_FILE.exists(): CJ_FILE = ROOT / 'Complete_Jobs_Full_Data.json'
 DU_FILE  = ROOT / 'dailyupdates.json'
 BASE_URL = 'https://www.topsarkarijobs.com'
-
-# ── Garbage title filter (scraper navigation links) ──────────────────────────
-GARBAGE_PATTERNS = [
-    'about us','terms and conditions','contact us','privacy policy',
-    'disclaimer','sitemap','advertise with us','sarkari result®','sarkarl result',
-    'copyright','follow us','home page','back to top','whatsapp group',
-    'telegram channel','youtube channel','facebook page','google news',
-]
-
-def is_garbage_title(title):
-    if not title or not title.strip(): return True
-    tl = title.lower().strip()
-    return any(p in tl for p in GARBAGE_PATTERNS)
 TODAY    = date.today().isoformat()
 YEAR     = date.today().year
 BLOCKED  = {'sarkariresult.com','freejobalert.com','sarkarinetwork.com','sarkariresultshine.com'}
@@ -71,41 +58,6 @@ QUAL_LABEL = {
     'MCA':'MCA','MBA_PGDM':'MBA / PGDM','LLB':'LLB','CA':'CA','CS':'CS',
     'VHSE':'VHSE','DLT':'DLT',
 }
-# N6: Qualification priority for breadcrumb selection
-QUAL_PRIORITY_MAP = {
-    'mphil-phd':1,'any-post-graduate':2,'m-sc':2,'m-com':2,'m-ed':2,'m-a':2,
-    'me-mtech':2,'ms-md':2,'mca':2,'mba-pgdm':2,'m-pharma':2,
-    'mbbs':3,'bds':3,'bams':3,'b-pharma':3,'b-sc':3,'b-tech-be':3,
-    'b-com':3,'bca':3,'bba':3,'llb':3,'b-ed':3,'ca':3,'cs':3,
-    'any-graduate':4,'intermediate':5,'diploma':6,'iti':7,
-    '12th-pass':8,'10th-pass':9,'8th-pass':10,
-    'latest-jobs':50,'latest-notifications':50,'bank-jobs':50,
-    'railway-jobs':50,'police-defence':50,'teaching-faculty':50,
-    'medical-hospital':50,'last-date-reminder':50,
-}
-
-def get_best_bc_category(cat, job_obj=None):
-    """Return (label, url) for breadcrumb — highest qualification wins."""
-    cat_slug = QUAL_SLUG.get(cat, cat.lower().replace('_','-'))
-    cat_label = QUAL_LABEL.get(cat, cat.replace('_',' ').title())
-    best_priority = QUAL_PRIORITY_MAP.get(cat_slug, 99)
-    best_slug = cat_slug
-    best_label = cat_label
-
-    # Check if job is in multiple categories — use highest qualification
-    if job_obj:
-        job_cats = job_obj.get('categories') or []
-        for jc in job_cats:
-            jc_slug = QUAL_SLUG.get(jc, jc.lower().replace('_','-'))
-            jc_priority = QUAL_PRIORITY_MAP.get(jc_slug, 99)
-            if jc_priority < best_priority:
-                best_priority = jc_priority
-                best_slug = jc_slug
-                best_label = QUAL_LABEL.get(jc, jc.replace('_',' ').title())
-
-    return (f"{best_label} Jobs", f"/category/study/{best_slug}/")
-
-
 
 # ── Helpers ───────────────────────────────────────────────────
 def e(s): return _html.escape(str(s or ''), quote=True)
@@ -226,22 +178,22 @@ def render_smart_table(rows):
 
 # ── Section card builder ──────────────────────────────────────
 SECTION_META = {
-    'basic_details':        ('Job Overview',              'fa-circle-info',        '1e40af,#3b82f6'),
-    'important_dates':      ('Important Dates',           'fa-calendar-check',     'b91c1c,#dc2626'),
-    'application_fee':      ('Application Fee',           'fa-indian-rupee-sign',  'c2410c,#ea580c'),
-    'age_limit':            ('Age Limit',                 'fa-user-clock',         '0f766e,#0891b2'),
-    'qualification':        ('Qualification / Eligibility','fa-graduation-cap',    '4338ca,#6366f1'),
-    'vacancy_details':      ('Vacancy Details',           'fa-chart-pie',          '15803d,#16a34a'),
-    'category_wise_vacancy':('Category-wise Vacancy',     'fa-chart-bar',          '15803d,#16a34a'),
-    'salary_details':       ('Salary & Pay Scale',        'fa-indian-rupee-sign',  '15803d,#16a34a'),
-    'selection_process':    ('Selection Process',         'fa-list-check',         '5b21b6,#7c3aed'),
-    'exam_pattern':         ('Exam Pattern',              'fa-file-lines',         '0369a1,#0284c7'),
-    'syllabus':             ('Syllabus',                  'fa-book',               '4338ca,#6366f1'),
-    'physical_eligibility': ('Physical Eligibility',      'fa-dumbbell',           'be123c,#e11d48'),
-    'how_to_apply':         ('How to Apply',              'fa-clipboard-list',     '0f766e,#0891b2'),
-    'important_instructions':('Important Instructions',   'fa-circle-exclamation', 'b45309,#ca8a04'),
-    'important_links':      ('Important Links',           'fa-link',               '1e40af,#1e3a8a'),
-    'faq':                  ('FAQs',                      'fa-circle-question',    '4338ca,#6366f1'),
+    'basic_details':        ('Job Overview',              'fa-circle-info',        '#1e40af,#3b82f6'),
+    'important_dates':      ('Important Dates',           'fa-calendar-check',     '#b91c1c,#dc2626'),
+    'application_fee':      ('Application Fee',           'fa-indian-rupee-sign',  '#c2410c,#ea580c'),
+    'age_limit':            ('Age Limit',                 'fa-user-clock',         '#0f766e,#0891b2'),
+    'qualification':        ('Qualification / Eligibility','fa-graduation-cap',    '#4338ca,#6366f1'),
+    'vacancy_details':      ('Vacancy Details',           'fa-chart-pie',          '#15803d,#16a34a'),
+    'category_wise_vacancy':('Category-wise Vacancy',     'fa-chart-bar',          '#15803d,#16a34a'),
+    'salary_details':       ('Salary & Pay Scale',        'fa-indian-rupee-sign',  '#15803d,#16a34a'),
+    'selection_process':    ('Selection Process',         'fa-list-check',         '#5b21b6,#7c3aed'),
+    'exam_pattern':         ('Exam Pattern',              'fa-file-lines',         '#0369a1,#0284c7'),
+    'syllabus':             ('Syllabus',                  'fa-book',               '#4338ca,#6366f1'),
+    'physical_eligibility': ('Physical Eligibility',      'fa-dumbbell',           '#be123c,#e11d48'),
+    'how_to_apply':         ('How to Apply',              'fa-clipboard-list',     '#0f766e,#0891b2'),
+    'important_instructions':('Important Instructions',   'fa-circle-exclamation', '#b45309,#ca8a04'),
+    'important_links':      ('Important Links',           'fa-link',               '#1e40af,#1e3a8a'),
+    'faq':                  ('FAQs',                      'fa-circle-question',    '#4338ca,#6366f1'),
 }
 
 def sec_card(key_or_title, icon, grad, body):
@@ -292,12 +244,12 @@ def render_dates(obj):
         seen.add(lbl)
         is_last = bool(re.search(r'last|closing|अंतिम', k, re.I))
         cls = ' class="date-last"' if is_last else ''
-        rows += f'<tr><th scope="row"><i class="fa-regular fa-calendar"></i> {e(lbl)}</th><td{cls}>{e(v)}</td></tr>'
+        rows += f'<tr><th><i class="fa-regular fa-calendar"></i> {e(lbl)}</th><td{cls}>{e(v)}</td></tr>'
     for k, v in obj.items():
         lbl = key_label(k); sv = safe(v)
         if not sv or lbl in seen: continue
         seen.add(lbl)
-        rows += f'<tr><th scope="row"><i class="fa-regular fa-calendar"></i> {e(lbl)}</th><td>{e(sv)}</td></tr>'
+        rows += f'<tr><th><i class="fa-regular fa-calendar"></i> {e(lbl)}</th><td>{e(sv)}</td></tr>'
     return f'<table class="kv-table"><tbody>{rows}</tbody></table>' if rows else ''
 
 def render_fee(obj):
@@ -720,25 +672,6 @@ def build_all_sections(job_obj):
     return html
 
 # ── Schema builder ─────────────────────────────────────────────
-
-# N9: Parse salary from pay_scale string for accurate JobPosting schema
-_LEVEL_PAY = {1:18000,2:19900,3:21700,4:25500,5:29200,6:35400,
-              7:44900,8:47600,9:53100,10:56100,11:67700,12:78800,
-              13:123100,14:144200,15:182200,16:205400,17:225000,18:250000}
-
-def parse_salary(pay_str):
-    if not pay_str: return (18000, 92300)
-    lm = re.search(r'level[- ]?(\d+)', str(pay_str).lower())
-    if lm:
-        lvl = int(lm.group(1))
-        base = _LEVEL_PAY.get(lvl, 25000)
-        return (base, min(int(base * 2.5), 250000))
-    nums = [int(n.replace(',','')) for n in re.findall(r'[\d,]{4,}', str(pay_str))
-            if 5000 <= int(n.replace(',','')) <= 500000]
-    if len(nums) >= 2: return (min(nums), max(nums))
-    if len(nums) == 1: return (nums[0], min(int(nums[0]*2), 250000))
-    return (18000, 92300)
-
 def build_schemas(job_obj, canon_url, breadcrumbs):
     bd    = job_obj.get('basic_details', {}) or {}
     dates = job_obj.get('important_dates', {}) or {}
@@ -749,15 +682,11 @@ def build_schemas(job_obj, canon_url, breadcrumbs):
     desc  = safe(bd.get('short_information',''))[:500] or title
     last_d = safe(dates.get('last_date_to_apply','') or dates.get('last_date',''))
 
-    _pay_str = safe((job_obj.get('basic_details') or {}).get('pay_scale','') or
-                    (job_obj.get('salary_details') or {}).get('pay_scale','') or '')
-    _sal_min, _sal_max = parse_salary(_pay_str)
     jp = {'@context':'https://schema.org','@type':'JobPosting','title':title,
           'description':desc,'datePosted':TODAY,'url':canon_url,
           'employmentType':'FULL_TIME',
           'hiringOrganization':{'@type':'Organization','name':org},
-          'jobLocation':{'@type':'Place','address':{'@type':'PostalAddress','addressCountry':'IN','addressLocality':loc}},
-          'baseSalary':{'@type':'MonetaryAmount','currency':'INR','value':{'@type':'QuantitativeValue','minValue':_sal_min,'maxValue':_sal_max,'unitText':'MONTH'}}}
+          'jobLocation':{'@type':'Place','address':{'@type':'PostalAddress','addressCountry':'IN','addressLocality':loc}}}
     if last_d:
         nd = norm_date(last_d)
         if nd: jp['validThrough'] = nd + 'T00:00:00'
@@ -783,7 +712,7 @@ PAGE_CSS = """
 *,*::before,*::after{box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f4f8;margin:0;color:#1e293b}
 a{text-decoration:none}.skip-link{position:absolute;left:-9999px}.skip-link:focus{left:8px;top:8px;z-index:999;background:#1d4ed8;color:#fff;padding:8px 16px;border-radius:6px}
-.pg-wrap{max-width:880px;margin:0 auto;padding:12px 10px max(80px,calc(60px + env(safe-area-inset-bottom,0px)))}
+.pg-wrap{max-width:880px;margin:0 auto;padding:12px 10px 48px}
 .bc{font-size:.74rem;color:#64748b;padding:8px 10px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;background:#fff;border-bottom:1px solid #e2e8f0}
 .bc a{color:#1d4ed8}.bc a:hover{text-decoration:underline}.bc-sep{color:#d1d5db;font-size:.6rem}
 .notice{background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:9px 14px;font-size:.8rem;color:#78350f;margin-bottom:12px;display:flex;gap:8px;align-items:flex-start}
@@ -877,7 +806,7 @@ a{text-decoration:none}.skip-link{position:absolute;left:-9999px}.skip-link:focu
 """
 
 # ── Page builder ───────────────────────────────────────────────
-def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt Job', noindex_dup=False):
+def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt Job'):
     bd    = job_obj.get('basic_details', {}) or {}
     dates = job_obj.get('important_dates', {}) or {}
     il    = job_obj.get('important_links', {}) or {}
@@ -891,62 +820,11 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     apply_m   = safe(bd.get('application_mode','') or job_obj.get('apply_mode','') or 'Online')
     location  = safe(bd.get('job_location','') or job_obj.get('job_location','') or 'India')
 
-    # Build SEO title inline (50-60 chars)
-    _BRAND = ' | Top Sarkari Jobs'
-    _vac_n = vacancies if vacancies and vacancies not in ('—','') else ''
-    _vac_s = f', {_vac_n} Posts' if _vac_n else ''
-    # Shorten org name for title
-    _ORG_MAP = {
-        'Delhi Subordinate Services Selection Board':'DSSSB',
-        'Staff Selection Commission':'SSC','Union Public Service Commission':'UPSC',
-        'Railway Recruitment Board':'RRB','State Bank of India':'SBI',
-        'Reserve Bank of India':'RBI','Employees Provident Fund Organisation':'EPFO',
-        'Institute of Banking Personnel Selection':'IBPS',
-        'All India Institute of Medical Sciences':'AIIMS',
-        'National Testing Agency':'NTA','Bharat Sanchar Nigam Limited':'BSNL',
-    }
-    _org_s = next((s for f,s in _ORG_MAP.items() if f.lower() in org.lower()), None)
-    if not _org_s:
-        _w = org.split()
-        _org_s = org if len(_w)<=3 else ' '.join(_w[:3])
-    _MAX = 60 - len(_BRAND)
-    # Content type detection
-    import re as _re
-    _tl = title.lower()
-    _ctype_map = {
-        'result': r'\b(result|declared|scorecard|merit list)\b',
-        'admit':  r'\b(admit card|hall ticket|call letter)\b',
-        'answer': r'\b(answer key|answer sheet)\b',
-    }
-    _ct = next((c for c,p in _ctype_map.items() if _re.search(p, _tl)), 'default')
-    _yr_m = _re.search(r'20\d\d', title)
-    _yr = _yr_m.group() if _yr_m else str(YEAR)
-    if _ct != 'default':
-        _fmt = {'result':'{o} {y} Result','admit':'{o} {y} Admit Card','answer':'{o} {y} Answer Key'}
-        _jp = _fmt[_ct].format(o=_org_s, y=_yr)
-    else:
-        _jp = f'{_org_s} {_yr} Recruitment{_vac_s}'
-        if len(_jp) > _MAX:
-            _jp = f'{_org_s} {_yr}{_vac_s}'
-        if len(_jp) < 15:
-            _jp = title[:_MAX]
-    if len(_jp) > _MAX:
-        _jp = _jp[:_MAX-1].rsplit(' ',1)[0].rstrip(',-–(') + '…'
-    title_tag = (_jp + _BRAND)[:60]
+    title_tag  = f"{title[:45]} {YEAR} | Top Sarkari Jobs"
     keywords   = ', '.join(str(k) for k in (seo if isinstance(seo,list) else []) + [org, location, 'sarkari job'])[:200]
     short_info = safe(bd.get('short_information','') or job_obj.get('jobs_info','') or job_obj.get('short_information',''))
-    # Build meta description inline
-    _si = short_info.rstrip('.,; ').strip() if short_info else ''
-    _vd = vacancies if vacancies and vacancies not in ('—','') else ''
-    _ld_s = last_d.strip() if last_d and last_d not in ('—','') else ''
-    _base_md = _si[:100] if _si else f'{title[:60].rstrip()} Recruitment {YEAR}'
-    if _si and len(_si) > 100:
-        _base_md = _si[:_si.rfind(' ', 80, 100)] if ' ' in _si[80:100] else _si[:100]
-    _parts = [_base_md]
-    if _vd: _parts.append(f'{_vd} Posts')
-    if _ld_s: _parts.append(f'Last Date: {_ld_s}')
-    _cta_md = f'Apply {apply_m.lower() if apply_m else "online"} at Top Sarkari Jobs.'
-    meta_desc = ('. '.join(p.rstrip('.') for p in _parts) + '. ' + _cta_md)[:155]
+    meta_desc  = (short_info[:130] or f"{title}: Apply online, vacancy details, important dates.") + f" {YEAR}"
+    meta_desc  = meta_desc[:155]
 
     schemas_html = build_schemas(job_obj, canon_url, breadcrumbs)
 
@@ -1002,30 +880,26 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
 </div>'''
 
     return f'''<!DOCTYPE html>
-<html lang="en-IN">
+<html lang="hi-IN">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>{e(title_tag[:60])}</title>
 <meta name="description" content="{e(meta_desc)}"/>
 <meta name="keywords" content="{e(keywords)}"/>
-<meta name="robots" content="{'noindex,follow' if noindex_dup else 'index,follow,max-snippet:-1,max-image-preview:large'}"/>
+<meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large"/>
 <link rel="canonical" href="{e(canon_url)}"/>
 <meta property="og:type" content="article"/>
 <meta property="og:site_name" content="Top Sarkari Jobs"/>
 <meta property="og:title" content="{e(title_tag[:60])}"/>
 <meta property="og:description" content="{e(meta_desc)}"/>
 <meta property="og:url" content="{e(canon_url)}"/>
-<meta property="og:image" content="{BASE_URL}/{'og-results.png' if any(x in canon_url for x in ['/result','/result']) else 'og-admit.png' if 'admit' in canon_url else 'og-jobs.png'}"/>
+<meta property="og:image" content="{BASE_URL}/image.png"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="{e(title_tag[:60])}"/>
 <meta name="twitter:description" content="{e(meta_desc)}"/>
 {schemas_html}
-<script src="/tsj-config.js"></script>
-<link rel="preconnect" href="https://www.google-analytics.com" crossorigin/>
-<link rel="dns-prefetch" href="https://www.googletagmanager.com"/>
-<meta name="author" content="Top Sarkari Jobs"/>
-<meta name="geo.region" content="IN"/>
+<script>window.__TSJ_STATIC_PAGE=true;window.__TSJ_PSR_DISABLED=true;window.__TSJ_RENDERER_DISABLED=true;</script>
 <link rel="icon" href="/image.ico"/>
 <link rel="stylesheet" href="/styles.css"/>
 <link rel="preload" href="/fonts/fa/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"/>
@@ -1033,9 +907,7 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
 <link rel="manifest" href="/manifest.json"/>
 <meta name="theme-color" content="#0d2257"/>
 <script src="/analytics.js" defer></script>
-<link rel="stylesheet" href="/styles-detail.css" media="print" onload="this.media='all'"/>
-<noscript><link rel="stylesheet" href="/styles-detail.css"/></noscript>
-<style>
+<style>{PAGE_CSS}
 .apply-cta{{display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#059669,#047857);color:#fff;padding:12px 20px;border-radius:10px;font-size:.9rem;font-weight:800;text-decoration:none}}
 .apply-cta:hover{{background:linear-gradient(135deg,#047857,#065f46)}}
 </style>
@@ -1043,18 +915,17 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 <div id="headerPlaceholder"></div>
-<script src="/tsj-init.js" defer></script>
+<script>fetch('/header.html',{{cache:'no-store'}}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{{if(h){{var d=document.getElementById('headerPlaceholder');if(d)d.outerHTML=h;}}}})</script>
 <main id="main">{body}</main>
 <div id="footerPlaceholder"></div>
-<script src="/tsj-footer-init.js" defer></script>
+<script>fetch('/footer.html',{{cache:'no-store'}}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{{if(h){{var d=document.getElementById('footerPlaceholder');if(d)d.outerHTML=h;}}}})</script>
 <script src="/tsj-menu.js" defer></script>
 </body>
 </html>'''
 
 # ── Listing page builder ───────────────────────────────────────
 def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
-    _yr_str = str(YEAR)
-    title_tag  = (f"{title} — Apply Online | Top Sarkari Jobs" if _yr_str in title else f"{title} {YEAR} — Apply Online | Top Sarkari Jobs")
+    title_tag  = f"{title} {YEAR} — Apply Online | Top Sarkari Jobs"
     meta_desc  = (desc[:130] or f"{title}: Latest notifications, apply online, check dates. {YEAR}")[:155]
     bc_html    = '<nav class="bc" aria-label="Breadcrumb"><a href="/">Home</a>'
     for lbl, url in breadcrumbs:
@@ -1127,7 +998,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
             f'{filter_js}')
 
     return f'''<!DOCTYPE html>
-<html lang="en-IN">
+<html lang="hi-IN">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -1138,7 +1009,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
 <meta property="og:title" content="{e(title_tag[:60])}"/>
 <meta property="og:url" content="{e(canon_url)}"/>
 {schemas_tag}
-<script src="/tsj-config.js"></script>
+<script>window.__TSJ_STATIC_PAGE=true;window.__TSJ_RENDERER_DISABLED=true;</script>
 <link rel="icon" href="/image.ico"/>
 <link rel="stylesheet" href="/styles.css"/>
 <link rel="preload" href="/fonts/fa/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"/>
@@ -1146,14 +1017,14 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
 <link rel="manifest" href="/manifest.json"/>
 <meta name="theme-color" content="#0d2257"/>
 <script src="/analytics.js" defer></script>
-<link rel="stylesheet" href="/styles-detail.css" media="print" onload="this.media='all'"/><noscript><link rel="stylesheet" href="/styles-detail.css"/></noscript>
+<style>{PAGE_CSS}</style>
 </head>
 <body>
 <div id="headerPlaceholder"></div>
-<script src="/tsj-init.js" defer></script>
+<script>fetch('/header.html',{{cache:'no-store'}}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{{if(h){{var d=document.getElementById('headerPlaceholder');if(d)d.outerHTML=h;}}}})</script>
 <main id="main">{bc_html}{body}</main>
 <div id="footerPlaceholder"></div>
-<script src="/tsj-footer-init.js" defer></script>
+<script>fetch('/footer.html',{{cache:'no-store'}}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{{if(h){{var d=document.getElementById('footerPlaceholder');if(d)d.outerHTML=h;}}}})</script>
 <script src="/tsj-menu.js" defer></script>
 </body>
 </html>'''
@@ -1165,11 +1036,8 @@ print("Loading JSON data...")
 with open(CJ_FILE, encoding='utf-8') as f: CJ = json.load(f)
 with open(DU_FILE, encoding='utf-8') as f: DU = json.load(f)
 
-FJA_RAW = CJ.get('freejobalert_categories', {})
-FJA     = {cat: [j for j in jobs if not is_garbage_title(
-               (j.get('basic_details') or {}).get('job_title','') or j.get('title',''))]
-           for cat, jobs in FJA_RAW.items() if isinstance(jobs, list)}
-SARK    = [j for j in (CJ.get('sarkari_data',{}) or {}).get('jobs', []) if not is_garbage_title(j.get('title',''))]
+FJA     = CJ.get('freejobalert_categories', {})
+SARK    = (CJ.get('sarkari_data',{}) or {}).get('jobs', [])
 EDU_SEC = (CJ.get('education_jobs',{}) or {}).get('sections', [])
 SJ_SEC  = (CJ.get('state_jobs',{}) or {}).get('sections', [])
 DU_SECS = DU.get('sections', [])
@@ -1202,10 +1070,7 @@ for cat, jobs_list in FJA.items():
         if slug in seen_jobs: slug = f"{slug}-{cat_slug}"[:80]
         seen_jobs[slug] = cat; job['category'] = cat
         canon = f"{BASE_URL}/jobs/{slug}/"
-        # R9 FIX: Breadcrumb uses correct qualification hierarchy
-        _bc_lbl, _bc_url = get_best_bc_category(cat, job)
-        bc    = [('Study Wise', f"{BASE_URL}/category/study/"),
-                 (_bc_lbl, f"{BASE_URL}{_bc_url}")]
+        bc    = [(cat_label, f"{BASE_URL}/category/study/{cat_slug}/")]
         write(str(ROOT/'jobs'/slug/'index.html'), build_detail_page(job, slug, canon, bc, cat_label))
         # Save data JSON
         (ROOT/'jobs'/'data').mkdir(exist_ok=True)
@@ -1311,14 +1176,11 @@ for sec in SJ_SEC:
 
         canon = f"{BASE_URL}/jobs/{item_slug}/"
         bc    = [('State Jobs', f"{BASE_URL}/state-jobs/{state_slug}/"), (state_name, f"{BASE_URL}/state-jobs/{state_slug}/")]
-        # State detail pages: noindex (canonical → /jobs/) to avoid duplicate indexing
-        state_html = build_detail_page(detail, item_slug, canon, bc, f'{state_name} Govt Job', noindex_dup=True)
-        write(str(ROOT/'state'/state_slug/item_slug/'index.html'), state_html)
+        html  = build_detail_page(detail, item_slug, canon, bc, f'{state_name} Govt Job')
+        write(str(ROOT/'state'/state_slug/item_slug/'index.html'), html)
         if item_slug not in seen_jobs:
             seen_jobs[item_slug] = state_name
-            # /jobs/ page: index,follow (primary canonical)
-            jobs_html = build_detail_page(detail, item_slug, canon, bc, f'{state_name} Govt Job', noindex_dup=False)
-            write(str(ROOT/'jobs'/item_slug/'index.html'), jobs_html)
+            write(str(ROOT/'jobs'/item_slug/'index.html'), html)
         s_count += 1
 
 print(f"  State pages: {s_count}")
@@ -1353,13 +1215,10 @@ for sec in EDU_SEC:
         canon = f"{BASE_URL}/jobs/{item_slug}/"
         bc    = [('Education', f"{BASE_URL}/education/"), (sec_title, f"{BASE_URL}/education/{sec_id}/")]
         html  = build_detail_page(full_d, item_slug, canon, bc, sec_title)
-        # Education pages: noindex (canonical → /jobs/) 
-        edu_html = build_detail_page(full_d, item_slug, canon, bc, sec_title, noindex_dup=True)
-        write(str(ROOT/'education'/sec_id/item_slug/'index.html'), edu_html)
+        write(str(ROOT/'education'/sec_id/item_slug/'index.html'), html)
         if item_slug not in seen_jobs:
             seen_jobs[item_slug] = sec_title
-            jobs_html = build_detail_page(full_d, item_slug, canon, bc, sec_title, noindex_dup=False)
-            write(str(ROOT/'jobs'/item_slug/'index.html'), jobs_html)
+            write(str(ROOT/'jobs'/item_slug/'index.html'), html)
         e_count += 1
 
     # Listing page
@@ -1371,13 +1230,10 @@ print(f"  Education pages: {e_count}")
 
 # 5. CATEGORY/STUDY PAGES
 print("Generating /category/study/ pages...")
-_cat_listing_jobs = {}  # cat_slug → list of jobs (for listing page)
 for cat, jobs_list in FJA.items():
     if not isinstance(jobs_list, list): continue
     cat_slug  = QUAL_SLUG.get(cat, slugify(cat))
     cat_label = QUAL_LABEL.get(cat, cat.replace('_',' ').title())
-    if cat_slug not in _cat_listing_jobs:
-        _cat_listing_jobs[cat_slug] = {'label': cat_label, 'jobs': []}
     for job in jobs_list:
         bd = job.get('basic_details',{}) or {}
         title = safe(bd.get('job_title',''))
@@ -1385,32 +1241,10 @@ for cat, jobs_list in FJA.items():
         item_slug = slugify(title)[:80]
         canon = f"{BASE_URL}/category/study/{cat_slug}/{item_slug}/"
         bc    = [('Study Wise Jobs', f"{BASE_URL}/category/study/"), (f'{cat_label} Jobs', f"{BASE_URL}/category/study/{cat_slug}/")]
-        _canon_j = f"{BASE_URL}/jobs/{item_slug}/"  # canonical always points to /jobs/
-        write(str(ROOT/'category'/'study'/cat_slug/item_slug/'index.html'), build_detail_page(job, item_slug, _canon_j, bc, f'{cat_label} Jobs', noindex_dup=True))
-        _cat_listing_jobs[cat_slug]['jobs'].append(job)
+        write(str(ROOT/'category'/'study'/cat_slug/item_slug/'index.html'), build_detail_page(job, item_slug, canon, bc, f'{cat_label} Jobs'))
         c_count += 1
 
-# Generate category LISTING pages (index.html for each category)
-print("Generating /category/study/{slug}/ listing pages...")
-_listing_count = 0
-for cat_slug, cat_data in _cat_listing_jobs.items():
-    cat_label = cat_data['label']
-    jobs = cat_data['jobs']
-    if not jobs: continue
-    cat_canon = f"{BASE_URL}/category/study/{cat_slug}/"
-    bc_listing = [('Home', '/'), ('Study Wise Jobs', '/category/study/')]
-    listing_html = build_listing_page(
-        f"{cat_label} Government Jobs {YEAR}",
-        jobs,
-        cat_canon,
-        bc_listing,
-        f"Latest {cat_label} government job notifications {YEAR}. Find all sarkari naukri for {cat_label} candidates updated daily."
-    )
-    write(str(ROOT/'category'/'study'/cat_slug/'index.html'), listing_html)
-    _listing_count += 1
-
-print(f"  Category/study detail pages: {c_count}")
-print(f"  Category/study listing pages: {_listing_count}")
+print(f"  Category/study pages: {c_count}")
 
 # 6. SECTION LISTING PAGES
 print("Generating /section/ pages...")
@@ -1445,56 +1279,6 @@ for cat_key, url_slug in SARK_CAT_MAP.items():
     write(str(ROOT/'section'/url_slug/'index.html'), build_listing_page(lbl, norm, f"{BASE_URL}/section/{url_slug}/", []))
     sec_count += 1
 
-# DAILYUPDATES INDIVIDUAL ITEM REDIRECT PAGES → /jobs/{slug}/
-print("Generating dailyupdates redirect pages...")
-_du_redir_count = 0
-for _du_sec in DU_SECS:
-    for _du_item in _du_sec.get('items', []):
-        _du_name = (_du_item.get('name') or '').strip()
-        _du_url  = (_du_item.get('url') or '').strip()
-        if not _du_name or not _du_url or not _du_url.startswith('http'):
-            continue
-        _du_slug = slugify(_du_name)
-        if not _du_slug:
-            continue
-        _du_path = ROOT/'jobs'/_du_slug/'index.html'
-        # Don't overwrite real FJA/Sarkari job pages
-        if _du_path.exists():
-            _ex = _du_path.read_text(encoding='utf-8')
-            if 'sec-card' in _ex or 'detail-header' in _ex or 'important_dates' in _ex:
-                continue
-        _du_path.parent.mkdir(parents=True, exist_ok=True)
-        _du_page = (
-            '<!DOCTYPE html>\n'
-            '<html lang="en-IN">\n'
-            '<head>\n'
-            '<meta charset="UTF-8"/>\n'
-            f'<meta http-equiv="refresh" content="0;url={e(_du_url)}"/>\n'
-            f'<link rel="canonical" href="{e(_du_url)}"/>\n'
-            '<meta name="robots" content="noindex,follow"/>\n'
-            f'<title>{e(_du_name[:70])} | Top Sarkari Jobs</title>\n'
-            '<style>'
-            'body{font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f0f4f8}'
-            '.box{text-align:center;background:#fff;padding:28px 22px;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.08);max-width:460px;width:90%}'
-            '.box h2{font-size:.95rem;color:#0f172a;margin:0 0 8px;line-height:1.4}'
-            '.box p{font-size:.82rem;color:#64748b;margin:0 0 16px}'
-            '.btn{display:inline-flex;align-items:center;gap:6px;background:#1d4ed8;color:#fff;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:700;font-size:.84rem}'
-            '</style>\n'
-            '</head>\n'
-            '<body>\n'
-            '<div class="box">\n'
-            f'<h2>{e(_du_name[:80])}</h2>\n'
-            '<p>Redirecting to official source...</p>\n'
-            f'<a href="{e(_du_url)}" class="btn">&#128279; Open Link &#8594;</a>\n'
-            '</div>\n'
-            f'<script>window.location.replace("{e(_du_url)}");</script>\n'
-            '</body>\n'
-            '</html>'
-        )
-        write(str(_du_path), _du_page)
-        _du_redir_count += 1
-print(f"  Dailyupdates redirect pages: {_du_redir_count}")
-
 # dailyupdates sections
 DU_SLUG_MAP = {'Govt Scheme Yojna':'govt-scheme-yojna','ImportantCSC PDF':'important-csc-pdf','ImportantCSC link':'important-csc-link','Today Updates':'today-updates'}
 for sec in DU_SECS:
@@ -1506,7 +1290,7 @@ for sec in DU_SECS:
     bc_s = {'@context':'https://schema.org','@type':'BreadcrumbList','itemListElement':[{'@type':'ListItem','position':1,'name':'Home','item':BASE_URL+'/'},{'@type':'ListItem','position':2,'name':sec_title,'item':f"{BASE_URL}/section/{slug_key}/"}]}
     schema_tag = f'<script type="application/ld+json">{json.dumps(bc_s,ensure_ascii=False)}</script>'
     bc_html = f'<nav class="bc"><a href="/">Home</a><span class="bc-sep">›</span><span>{e(sec_title)}</span></nav>'
-    page = f'''<!DOCTYPE html><html lang="en-IN"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>{e(sec_title)} {YEAR} | Top Sarkari Jobs</title><meta name="description" content="Latest {e(sec_title)} updates {YEAR}."/><meta name="robots" content="index,follow"/><link rel="canonical" href="{BASE_URL}/section/{slug_key}/"/>{schema_tag}<script src="/tsj-config.js"></script><link rel="icon" href="/image.ico"/><link rel="stylesheet" href="/styles.css"/><link rel="preload" href="/fonts/fa/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"/><noscript><link rel="stylesheet" href="/fonts/fa/all.min.css"/></noscript><link rel="stylesheet" href="/styles-detail.css" media="print" onload="this.media='all'"/><noscript><link rel="stylesheet" href="/styles-detail.css"/></noscript></head><body><div id="headerPlaceholder"></div><script src="/tsj-init.js" defer></script><main>{bc_html}{body_html}</main><div id="footerPlaceholder"></div><script src="/tsj-footer-init.js" defer></script></body></html>'''
+    page = f'''<!DOCTYPE html><html lang="hi-IN"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>{e(sec_title)} {YEAR} | Top Sarkari Jobs</title><meta name="description" content="Latest {e(sec_title)} updates {YEAR}."/><meta name="robots" content="index,follow"/><link rel="canonical" href="{BASE_URL}/section/{slug_key}/"/>{schema_tag}<script>window.__TSJ_STATIC_PAGE=true;</script><link rel="icon" href="/image.ico"/><link rel="stylesheet" href="/styles.css"/><link rel="preload" href="/fonts/fa/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"/><noscript><link rel="stylesheet" href="/fonts/fa/all.min.css"/></noscript><style>{PAGE_CSS}</style></head><body><div id="headerPlaceholder"></div><script>fetch('/header.html',{{cache:'no-store'}}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{{if(h){{var d=document.getElementById('headerPlaceholder');if(d)d.outerHTML=h;}}}})</script><main>{bc_html}{body_html}</main><div id="footerPlaceholder"></div><script>fetch('/footer.html',{{cache:'no-store'}}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{{if(h){{var d=document.getElementById('footerPlaceholder');if(d)d.outerHTML=h;}}}})</script></body></html>'''
     write(str(ROOT/'section'/slug_key/'index.html'), page)
     sec_count += 1
 

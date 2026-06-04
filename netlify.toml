@@ -161,7 +161,14 @@
   status = 200
   force  = false
 
-# /category/* — category hub pages
+# /category/study/{slug}/ — qualification listing pages (static files, force=false)
+[[redirects]]
+  from   = "/category/study/:slug/"
+  to     = "/category/study/:slug/index.html"
+  status = 200
+  force  = false
+
+# /category/* — category hub pages (fallback to category.html)
 [[redirects]]
   from   = "/category/*"
   to     = "/category.html"

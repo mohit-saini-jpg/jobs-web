@@ -22,6 +22,19 @@ CJ_FILE  = ROOT / 'data' / 'Complete_Jobs_Full_Data.json'
 if not CJ_FILE.exists(): CJ_FILE = ROOT / 'Complete_Jobs_Full_Data.json'
 DU_FILE  = ROOT / 'dailyupdates.json'
 BASE_URL = 'https://www.topsarkarijobs.com'
+
+# ── Garbage title filter (scraper navigation links) ──────────────────────────
+GARBAGE_PATTERNS = [
+    'about us','terms and conditions','contact us','privacy policy',
+    'disclaimer','sitemap','advertise with us','sarkari result®','sarkarl result',
+    'copyright','follow us','home page','back to top','whatsapp group',
+    'telegram channel','youtube channel','facebook page','google news',
+]
+
+def is_garbage_title(title):
+    if not title or not title.strip(): return True
+    tl = title.lower().strip()
+    return any(p in tl for p in GARBAGE_PATTERNS)
 TODAY    = date.today().isoformat()
 YEAR     = date.today().year
 BLOCKED  = {'sarkariresult.com','freejobalert.com','sarkarinetwork.com','sarkariresultshine.com'}
@@ -878,52 +891,62 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     apply_m   = safe(bd.get('application_mode','') or job_obj.get('apply_mode','') or 'Online')
     location  = safe(bd.get('job_location','') or job_obj.get('job_location','') or 'India')
 
+    # Build SEO title inline (50-60 chars)
     _BRAND = ' | Top Sarkari Jobs'
-    _vt = vacancies if vacancies and vacancies not in ('\u2014','') else ''
-    _vs = ', ' + _vt + ' Posts' if _vt else ''
-    _OM = {
+    _vac_n = vacancies if vacancies and vacancies not in ('—','') else ''
+    _vac_s = f', {_vac_n} Posts' if _vac_n else ''
+    # Shorten org name for title
+    _ORG_MAP = {
         'Delhi Subordinate Services Selection Board':'DSSSB',
-        'Staff Selection Commission':'SSC',
-        'Union Public Service Commission':'UPSC',
-        'Railway Recruitment Board':'RRB',
-        'State Bank of India':'SBI',
-        'Reserve Bank of India':'RBI',
-        'Employees Provident Fund Organisation':'EPFO',
+        'Staff Selection Commission':'SSC','Union Public Service Commission':'UPSC',
+        'Railway Recruitment Board':'RRB','State Bank of India':'SBI',
+        'Reserve Bank of India':'RBI','Employees Provident Fund Organisation':'EPFO',
         'Institute of Banking Personnel Selection':'IBPS',
         'All India Institute of Medical Sciences':'AIIMS',
-        'National Testing Agency':'NTA',
-        'Bharat Sanchar Nigam Limited':'BSNL',
+        'National Testing Agency':'NTA','Bharat Sanchar Nigam Limited':'BSNL',
     }
-    _os = next((s for f, s in _OM.items() if f.lower() in org.lower()), None)
-    if not _os:
+    _org_s = next((s for f,s in _ORG_MAP.items() if f.lower() in org.lower()), None)
+    if not _org_s:
         _w = org.split()
-        _os = org if len(_w) <= 3 else ' '.join(_w[:3])
+        _org_s = org if len(_w)<=3 else ' '.join(_w[:3])
     _MAX = 60 - len(_BRAND)
-    import re as _re2
-    _yr_m = _re2.search(r'20\d\d', title)
-    _yr = _yr_m.group() if _yr_m else str(2026)
+    # Content type detection
+    import re as _re
     _tl = title.lower()
-    if _re2.search(r'\b(result|declared|merit list)\b', _tl):
-        _jp = _os + ' ' + _yr + ' Result'
-    elif _re2.search(r'\b(admit card|hall ticket|call letter)\b', _tl):
-        _jp = _os + ' ' + _yr + ' Admit Card'
-    elif _re2.search(r'\b(answer key)\b', _tl):
-        _jp = _os + ' ' + _yr + ' Answer Key'
+    _ctype_map = {
+        'result': r'\b(result|declared|scorecard|merit list)\b',
+        'admit':  r'\b(admit card|hall ticket|call letter)\b',
+        'answer': r'\b(answer key|answer sheet)\b',
+    }
+    _ct = next((c for c,p in _ctype_map.items() if _re.search(p, _tl)), 'default')
+    _yr_m = _re.search(r'20\d\d', title)
+    _yr = _yr_m.group() if _yr_m else str(YEAR)
+    if _ct != 'default':
+        _fmt = {'result':'{o} {y} Result','admit':'{o} {y} Admit Card','answer':'{o} {y} Answer Key'}
+        _jp = _fmt[_ct].format(o=_org_s, y=_yr)
     else:
-        _jp = _os + ' ' + _yr + ' Recruitment' + _vs
+        _jp = f'{_org_s} {_yr} Recruitment{_vac_s}'
+        if len(_jp) > _MAX:
+            _jp = f'{_org_s} {_yr}{_vac_s}'
+        if len(_jp) < 15:
+            _jp = title[:_MAX]
     if len(_jp) > _MAX:
-        _jp = _jp[:_MAX - 1].rsplit(' ', 1)[0].rstrip(',-') + '\u2026'
+        _jp = _jp[:_MAX-1].rsplit(' ',1)[0].rstrip(',-–(') + '…'
     title_tag = (_jp + _BRAND)[:60]
     keywords   = ', '.join(str(k) for k in (seo if isinstance(seo,list) else []) + [org, location, 'sarkari job'])[:200]
     short_info = safe(bd.get('short_information','') or job_obj.get('jobs_info','') or job_obj.get('short_information',''))
-    _si2 = short_info.rstrip('., ').strip()[:100] if short_info else ''
-    _base2 = _si2 if _si2 else title[:60].rstrip() + ' Recruitment'
-    _parts2 = [_base2]
-    if vacancies and vacancies not in ('\u2014', ''):
-        _parts2.append(vacancies + ' Posts')
-    if last_d and last_d not in ('\u2014', ''):
-        _parts2.append('Last Date: ' + last_d)
-    meta_desc = ('. '.join(p.rstrip('.') for p in _parts2) + '. Apply at Top Sarkari Jobs.')[:155]
+    # Build meta description inline
+    _si = short_info.rstrip('.,; ').strip() if short_info else ''
+    _vd = vacancies if vacancies and vacancies not in ('—','') else ''
+    _ld_s = last_d.strip() if last_d and last_d not in ('—','') else ''
+    _base_md = _si[:100] if _si else f'{title[:60].rstrip()} Recruitment {YEAR}'
+    if _si and len(_si) > 100:
+        _base_md = _si[:_si.rfind(' ', 80, 100)] if ' ' in _si[80:100] else _si[:100]
+    _parts = [_base_md]
+    if _vd: _parts.append(f'{_vd} Posts')
+    if _ld_s: _parts.append(f'Last Date: {_ld_s}')
+    _cta_md = f'Apply {apply_m.lower() if apply_m else "online"} at Top Sarkari Jobs.'
+    meta_desc = ('. '.join(p.rstrip('.') for p in _parts) + '. ' + _cta_md)[:155]
 
     schemas_html = build_schemas(job_obj, canon_url, breadcrumbs)
 
@@ -1030,7 +1053,8 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
 
 # ── Listing page builder ───────────────────────────────────────
 def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
-    title_tag  = f"{title} {YEAR} — Apply Online | Top Sarkari Jobs"
+    _yr_str = str(YEAR)
+    title_tag  = (f"{title} — Apply Online | Top Sarkari Jobs" if _yr_str in title else f"{title} {YEAR} — Apply Online | Top Sarkari Jobs")
     meta_desc  = (desc[:130] or f"{title}: Latest notifications, apply online, check dates. {YEAR}")[:155]
     bc_html    = '<nav class="bc" aria-label="Breadcrumb"><a href="/">Home</a>'
     for lbl, url in breadcrumbs:
@@ -1141,8 +1165,11 @@ print("Loading JSON data...")
 with open(CJ_FILE, encoding='utf-8') as f: CJ = json.load(f)
 with open(DU_FILE, encoding='utf-8') as f: DU = json.load(f)
 
-FJA     = CJ.get('freejobalert_categories', {})
-SARK    = (CJ.get('sarkari_data',{}) or {}).get('jobs', [])
+FJA_RAW = CJ.get('freejobalert_categories', {})
+FJA     = {cat: [j for j in jobs if not is_garbage_title(
+               (j.get('basic_details') or {}).get('job_title','') or j.get('title',''))]
+           for cat, jobs in FJA_RAW.items() if isinstance(jobs, list)}
+SARK    = [j for j in (CJ.get('sarkari_data',{}) or {}).get('jobs', []) if not is_garbage_title(j.get('title',''))]
 EDU_SEC = (CJ.get('education_jobs',{}) or {}).get('sections', [])
 SJ_SEC  = (CJ.get('state_jobs',{}) or {}).get('sections', [])
 DU_SECS = DU.get('sections', [])
@@ -1344,10 +1371,13 @@ print(f"  Education pages: {e_count}")
 
 # 5. CATEGORY/STUDY PAGES
 print("Generating /category/study/ pages...")
+_cat_listing_jobs = {}  # cat_slug → list of jobs (for listing page)
 for cat, jobs_list in FJA.items():
     if not isinstance(jobs_list, list): continue
     cat_slug  = QUAL_SLUG.get(cat, slugify(cat))
     cat_label = QUAL_LABEL.get(cat, cat.replace('_',' ').title())
+    if cat_slug not in _cat_listing_jobs:
+        _cat_listing_jobs[cat_slug] = {'label': cat_label, 'jobs': []}
     for job in jobs_list:
         bd = job.get('basic_details',{}) or {}
         title = safe(bd.get('job_title',''))
@@ -1357,9 +1387,30 @@ for cat, jobs_list in FJA.items():
         bc    = [('Study Wise Jobs', f"{BASE_URL}/category/study/"), (f'{cat_label} Jobs', f"{BASE_URL}/category/study/{cat_slug}/")]
         _canon_j = f"{BASE_URL}/jobs/{item_slug}/"  # canonical always points to /jobs/
         write(str(ROOT/'category'/'study'/cat_slug/item_slug/'index.html'), build_detail_page(job, item_slug, _canon_j, bc, f'{cat_label} Jobs', noindex_dup=True))
+        _cat_listing_jobs[cat_slug]['jobs'].append(job)
         c_count += 1
 
-print(f"  Category/study pages: {c_count}")
+# Generate category LISTING pages (index.html for each category)
+print("Generating /category/study/{slug}/ listing pages...")
+_listing_count = 0
+for cat_slug, cat_data in _cat_listing_jobs.items():
+    cat_label = cat_data['label']
+    jobs = cat_data['jobs']
+    if not jobs: continue
+    cat_canon = f"{BASE_URL}/category/study/{cat_slug}/"
+    bc_listing = [('Home', '/'), ('Study Wise Jobs', '/category/study/')]
+    listing_html = build_listing_page(
+        f"{cat_label} Government Jobs {YEAR}",
+        jobs,
+        cat_canon,
+        bc_listing,
+        f"Latest {cat_label} government job notifications {YEAR}. Find all sarkari naukri for {cat_label} candidates updated daily."
+    )
+    write(str(ROOT/'category'/'study'/cat_slug/'index.html'), listing_html)
+    _listing_count += 1
+
+print(f"  Category/study detail pages: {c_count}")
+print(f"  Category/study listing pages: {_listing_count}")
 
 # 6. SECTION LISTING PAGES
 print("Generating /section/ pages...")
@@ -1393,6 +1444,56 @@ for cat_key, url_slug in SARK_CAT_MAP.items():
     lbl = cat_key.replace('_',' ').replace('SR ','').title()
     write(str(ROOT/'section'/url_slug/'index.html'), build_listing_page(lbl, norm, f"{BASE_URL}/section/{url_slug}/", []))
     sec_count += 1
+
+# DAILYUPDATES INDIVIDUAL ITEM REDIRECT PAGES → /jobs/{slug}/
+print("Generating dailyupdates redirect pages...")
+_du_redir_count = 0
+for _du_sec in DU_SECS:
+    for _du_item in _du_sec.get('items', []):
+        _du_name = (_du_item.get('name') or '').strip()
+        _du_url  = (_du_item.get('url') or '').strip()
+        if not _du_name or not _du_url or not _du_url.startswith('http'):
+            continue
+        _du_slug = slugify(_du_name)
+        if not _du_slug:
+            continue
+        _du_path = ROOT/'jobs'/_du_slug/'index.html'
+        # Don't overwrite real FJA/Sarkari job pages
+        if _du_path.exists():
+            _ex = _du_path.read_text(encoding='utf-8')
+            if 'sec-card' in _ex or 'detail-header' in _ex or 'important_dates' in _ex:
+                continue
+        _du_path.parent.mkdir(parents=True, exist_ok=True)
+        _du_page = (
+            '<!DOCTYPE html>\n'
+            '<html lang="en-IN">\n'
+            '<head>\n'
+            '<meta charset="UTF-8"/>\n'
+            f'<meta http-equiv="refresh" content="0;url={e(_du_url)}"/>\n'
+            f'<link rel="canonical" href="{e(_du_url)}"/>\n'
+            '<meta name="robots" content="noindex,follow"/>\n'
+            f'<title>{e(_du_name[:70])} | Top Sarkari Jobs</title>\n'
+            '<style>'
+            'body{font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f0f4f8}'
+            '.box{text-align:center;background:#fff;padding:28px 22px;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.08);max-width:460px;width:90%}'
+            '.box h2{font-size:.95rem;color:#0f172a;margin:0 0 8px;line-height:1.4}'
+            '.box p{font-size:.82rem;color:#64748b;margin:0 0 16px}'
+            '.btn{display:inline-flex;align-items:center;gap:6px;background:#1d4ed8;color:#fff;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:700;font-size:.84rem}'
+            '</style>\n'
+            '</head>\n'
+            '<body>\n'
+            '<div class="box">\n'
+            f'<h2>{e(_du_name[:80])}</h2>\n'
+            '<p>Redirecting to official source...</p>\n'
+            f'<a href="{e(_du_url)}" class="btn">&#128279; Open Link &#8594;</a>\n'
+            '</div>\n'
+            f'<script>window.location.replace("{e(_du_url)}");</script>\n'
+            '</body>\n'
+            '</html>'
+        )
+        write(str(_du_path), _du_page)
+        _du_redir_count += 1
+print(f"  Dailyupdates redirect pages: {_du_redir_count}")
 
 # dailyupdates sections
 DU_SLUG_MAP = {'Govt Scheme Yojna':'govt-scheme-yojna','ImportantCSC PDF':'important-csc-pdf','ImportantCSC link':'important-csc-link','Today Updates':'today-updates'}
