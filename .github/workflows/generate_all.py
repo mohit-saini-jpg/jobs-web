@@ -22,6 +22,19 @@ CJ_FILE  = ROOT / 'data' / 'Complete_Jobs_Full_Data.json'
 if not CJ_FILE.exists(): CJ_FILE = ROOT / 'Complete_Jobs_Full_Data.json'
 DU_FILE  = ROOT / 'dailyupdates.json'
 BASE_URL = 'https://www.topsarkarijobs.com'
+
+# ── Garbage title filter (scraper navigation links) ──────────────────────────
+GARBAGE_PATTERNS = [
+    'about us','terms and conditions','contact us','privacy policy',
+    'disclaimer','sitemap','advertise with us','sarkari result®','sarkarl result',
+    'copyright','follow us','home page','back to top','whatsapp group',
+    'telegram channel','youtube channel','facebook page','google news',
+]
+
+def is_garbage_title(title):
+    if not title or not title.strip(): return True
+    tl = title.lower().strip()
+    return any(p in tl for p in GARBAGE_PATTERNS)
 TODAY    = date.today().isoformat()
 YEAR     = date.today().year
 BLOCKED  = {'sarkariresult.com','freejobalert.com','sarkarinetwork.com','sarkariresultshine.com'}
@@ -1151,8 +1164,11 @@ print("Loading JSON data...")
 with open(CJ_FILE, encoding='utf-8') as f: CJ = json.load(f)
 with open(DU_FILE, encoding='utf-8') as f: DU = json.load(f)
 
-FJA     = CJ.get('freejobalert_categories', {})
-SARK    = (CJ.get('sarkari_data',{}) or {}).get('jobs', [])
+FJA_RAW = CJ.get('freejobalert_categories', {})
+FJA     = {cat: [j for j in jobs if not is_garbage_title(
+               (j.get('basic_details') or {}).get('job_title','') or j.get('title',''))]
+           for cat, jobs in FJA_RAW.items() if isinstance(jobs, list)}
+SARK    = [j for j in (CJ.get('sarkari_data',{}) or {}).get('jobs', []) if not is_garbage_title(j.get('title',''))]
 EDU_SEC = (CJ.get('education_jobs',{}) or {}).get('sections', [])
 SJ_SEC  = (CJ.get('state_jobs',{}) or {}).get('sections', [])
 DU_SECS = DU.get('sections', [])
