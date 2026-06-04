@@ -278,6 +278,8 @@ SECTION_META = {
     'important_links':      ('Important Links',           'fa-link',               '1e40af,#1e3a8a'),
     'faq':                  ('FAQs',                      'fa-circle-question',    '4338ca,#6366f1'),
     'tables':               ('Details',                   'fa-table',              '0f766e,#0891b2'),
+    'all_links':            ('Useful Links',              'fa-link',               '1d4ed8,#1e3a8a'),
+    'details_page_content': ('Scholarship Details',       'fa-circle-info',        '1e40af,#3b82f6'),
     'text_sections':        ('How to Apply',              'fa-clipboard-list',     '0f766e,#0891b2'),
     'useful_links':         ('Useful Links',              'fa-link',               '1d4ed8,#1e3a8a'),
     'sections':             ('Details',                   'fa-circle-info',        '1e40af,#3b82f6'),
@@ -699,7 +701,7 @@ SKIP_KEYS = {'seo_tags','category','slug','source_url','url','_slug',
              'sequence','entry_type','sub_type','listing_date','post_date',
              'form_pdf_free_link','application_form_pdf_link','form_pdf_link',
              'apply_online_link','official_notification_pdf_link','official_website_link',
-             'all_links','jobs_info','details_page_content','status','last_date',
+             'jobs_info','status','last_date',
              'application_fees',
              'minimum_age','maximum_age','salary_pay_scale','homepage_serial',
              'organization','post_name','total_vacancy','apply_mode','job_location',
@@ -707,7 +709,7 @@ SKIP_KEYS = {'seo_tags','category','slug','source_url','url','_slug',
 
 SECTION_ORDER = ['basic_details','important_dates','application_fee','age_limit',
                  'qualification','vacancy_details','category_wise_vacancy','salary_details',
-                 'tables','text_sections','useful_links',
+                 'tables','text_sections','useful_links','all_links','details_page_content',
                  'selection_process','exam_pattern','syllabus','physical_eligibility',
                  'how_to_apply','important_instructions','important_links','faq']
 
@@ -821,6 +823,58 @@ def build_all_sections(job_obj):
                 if rows_html:
                     body = (f'<div class="tbl-scroll"><table class="data-table ul-table"><tbody>'
                             f'{rows_html}</tbody></table></div>')
+        elif key == 'all_links':
+            # all_links: [{label, title, url}] — render as labeled link buttons table
+            if isinstance(val, list):
+                valid = [lnk for lnk in val if isinstance(lnk,dict) and str(lnk.get('url','')).startswith('http') and not is_blocked(str(lnk.get('url','')))]
+                if valid:
+                    rows_html = ''
+                    for lnk in valid:
+                        lbl   = safe(lnk.get('label') or lnk.get('title') or 'Click Here').strip()[:80]
+                        title = safe(lnk.get('title') or 'Click Here').strip()[:30]
+                        url_l = str(lnk.get('url','')).strip()
+                        if not lbl: lbl = title
+                        ul_lower = url_l.lower()
+                        ic = 'fa-file-pdf' if ul_lower.endswith('.pdf') else 'fa-arrow-up-right-from-square'
+                        cl = 'btn-pdf' if ul_lower.endswith('.pdf') else 'btn-default'
+                        rows_html += (f'<tr><td class="ul-title">{e(lbl)}</td>'
+                                      f'<td><a href="{e(url_l)}" class="lnk-btn {cl}" target="_blank" rel="noopener noreferrer">'
+                                      f'<i class="fa-solid {ic}"></i> {e(title)}</a></td></tr>\n')
+                    body = (f'<div class="tbl-scroll"><table class="data-table ul-table"><tbody>'
+                            f'{rows_html}</tbody></table></div>')
+        elif key == 'details_page_content':
+            # LATEST_JOBS NEW format: {paragraphs:[str], tables:[{headers,rows,table_heading}], lists:[]}
+            if isinstance(val, dict):
+                parts = []
+                # Paragraphs
+                for para in (val.get('paragraphs') or []):
+                    para = safe(para).strip()
+                    if para and len(para) > 10:
+                        parts.append(f'<p class="edu-para">{e(para)}</p>')
+                # Tables
+                for tbl in (val.get('tables') or []):
+                    if not isinstance(tbl, dict): continue
+                    heading = safe(tbl.get('table_heading') or tbl.get('heading') or '').strip()
+                    headers = tbl.get('headers') or []
+                    rows    = tbl.get('rows') or []
+                    if not rows: continue
+                    t_html = ''
+                    if heading:
+                        t_html += f'<div class="tbl-name">{e(heading)}</div>'
+                    t_html += '<div class="tbl-scroll"><table class="data-table"><thead><tr>'
+                    t_html += ''.join(f'<th>{e(str(h))}</th>' for h in headers)
+                    t_html += '</tr></thead><tbody>'
+                    for row in rows:
+                        if not isinstance(row, (list,tuple)): continue
+                        t_html += '<tr>' + ''.join(f'<td>{e(str(c))}</td>' for c in row) + '</tr>'
+                    t_html += '</tbody></table></div>'
+                    parts.append(t_html)
+                # Lists
+                for lst in (val.get('lists') or []):
+                    items_l = lst.get('items',[]) if isinstance(lst,dict) else (lst if isinstance(lst,list) else [])
+                    if items_l:
+                        parts.append('<ul class="val-list">' + ''.join(f'<li>{e(str(it))}</li>' for it in items_l if it) + '</ul>')
+                body = ''.join(parts) if parts else ''
         elif key == 'syllabus':         body = (render_list_items(val) if isinstance(val,list) else f'<div class="edu-sec">{e(safe(val))}</div>')
         elif key == 'physical_eligibility': body = (f'<table class="kv-table"><tbody>' + ''.join(f'<tr><th>{e(key_label(k))}</th><td>{e(safe(v))}</td></tr>' for k,v in val.items() if safe(v)) + '</tbody></table>' if isinstance(val,dict) else render_list_items(val) if isinstance(val,list) else f'<div class="edu-sec">{e(safe(val))}</div>')
         elif key == 'how_to_apply':     body = render_hta(val)
@@ -1400,7 +1454,7 @@ for job in SARK:
     if job.get('minimum_age'): age['minimum_age'] = safe(job['minimum_age'])
     if job.get('maximum_age'): age['maximum_age'] = safe(job['maximum_age'])
     full = {'basic_details':bd,'important_dates':imp_dates,'application_fee':job.get('application_fees') or {},'age_limit':age or (job.get('age_limit') or {}),'qualification':job.get('eligibility') or job.get('qualification') or {},'vacancy_details':job.get('vacancy_details') or [],'salary_details':{'pay_scale':safe(job.get('salary_pay_scale',''))} if job.get('salary_pay_scale') else {},'how_to_apply':[job['how_to_apply']] if isinstance(job.get('how_to_apply'),str) and job.get('how_to_apply') else (job.get('how_to_apply') or []),'important_links':il,'sections':sections_out,'faq':job.get('faq') or [],'category':job.get('category',''),'slug':slug,
-             'tables':job.get('tables') or [],'text_sections':job.get('text_sections') or [],'useful_links':job.get('useful_links') or []}
+             'tables':job.get('tables') or [],'text_sections':job.get('text_sections') or [],'useful_links':job.get('useful_links') or [],'all_links':job.get('all_links') or [],'details_page_content':job.get('details_page_content') or {}}
     canon = f"{BASE_URL}/jobs/{slug}/"
     bc    = [('Latest Jobs', f"{BASE_URL}/section/latest-jobs/")]
     write(str(ROOT/'jobs'/slug/'index.html'), build_detail_page(full, slug, canon, bc))
