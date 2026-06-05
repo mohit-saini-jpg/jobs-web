@@ -153,8 +153,9 @@ a:hover{ text-decoration:underline; }
 
 /* Cards */
 .section-card{ background:var(--card); border:1px solid var(--line); border-radius: var(--radius); overflow:hidden; box-shadow: var(--shadow); }
-.section-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 14px; color:#fff; font-weight:950; }
-.section-head .left{ display:flex; align-items:center; gap:10px; }
+.section-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 14px; color:#fff; font-weight:900; font-size:.82rem; }
+.section-head .left{ display:flex; align-items:center; gap:8px; }
+.section-head .left i { font-size:.95rem; flex-shrink:0; }
 .section-body{ padding:10px 12px 14px; }
 
 /* ── SCROLLABLE JOB LIST ── */
@@ -523,8 +524,9 @@ a, button, [role="button"], input, select, textarea {
 
 /* Cards */
 .section-card{ background:var(--card); border:1px solid var(--line); border-radius: var(--radius); overflow:hidden; box-shadow: var(--shadow); }
-.section-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 14px; color:#fff; font-weight:950; }
-.section-head .left{ display:flex; align-items:center; gap:10px; }
+.section-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 14px; color:#fff; font-weight:900; font-size:.82rem; }
+.section-head .left{ display:flex; align-items:center; gap:8px; }
+.section-head .left i { font-size:.95rem; flex-shrink:0; }
 .section-body{ padding:10px 12px 14px; }
 
 /* ── SCROLLABLE JOB LIST ── */

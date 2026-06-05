@@ -709,17 +709,18 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
     /* Arrow buttons */
     .cbg-arrow {
       position: absolute; top: 50%; transform: translateY(-50%);
-      width: 28px; height: 28px; border-radius: 50%;
+      width: 30px; height: 30px; border-radius: 50%;
       background: #fff; border: 1px solid var(--border);
-      box-shadow: 0 2px 8px rgba(0,0,0,.12);
+      box-shadow: 0 2px 8px rgba(0,0,0,.18);
       display: flex; align-items: center; justify-content: center;
-      cursor: pointer; z-index: 10; font-size: .7rem; color: var(--navy);
+      cursor: pointer; z-index: 20; font-size: .75rem; color: var(--navy);
       transition: background .15s, box-shadow .15s;
     }
     .cbg-arrow:hover { background: var(--blue); color: #fff; border-color: var(--blue); }
-    .cbg-arrow.prev { left: 4px; }
-    .cbg-arrow.next { right: 4px; }
+    .cbg-arrow.prev { left: 2px; }
+    .cbg-arrow.next { right: 2px; }
     .cbg-arrow.hidden { opacity: 0; pointer-events: none; }
+    @media (max-width:600px) { .cbg-arrow { display: none; } }
 
     .cbi {
       display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -736,6 +737,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
       width: 38px; height: 38px; border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
       font-size: 1.15rem; flex-shrink: 0;
+      line-height: 1;
     }
     .cbi-count {
       font-size: .58rem; font-weight: 800; color: var(--blue);
@@ -1714,7 +1716,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
   <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
-  <script src="/tsj-menu.js?v=20260605100407" defer></script>
+  <script src="/tsj-menu.js?v=20260603202042" defer></script>
   <script src="/pwa-install.js?v=6.0" defer></script>
   <!-- ══ END PWA ════════════════════════════════════════════════════ -->
 
@@ -1932,7 +1934,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
   ============================================================ -->
   <div class="cat-bar-wrap" id="browseCatWrap">
     <div class="cat-bar-hd">
-      <span><i class="fa-solid fa-th-large"></i> &nbsp;BROWSE JOBS BY CATEGORY</span>
+      <span>📂 BROWSE JOBS BY CATEGORY</span>
       <a href="/category/popular/">View All</a>
     </div>
     <div class="cat-bar-carousel-wrap">
@@ -1940,45 +1942,45 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
       <button class="cbg-arrow next" id="browseNext" aria-label="Scroll right"><i class="fa-solid fa-chevron-right"></i></button>
       <div class="cat-bar-grid" id="browseCatGrid">
         <a href="/section/railway-jobs/" class="cbi">
-          <div class="cbi-icon" style="background:#fff0e6;color:#c2410c;"><i class="fa-solid fa-train"></i></div>
+          <div class="cbi-icon" style="background:#fff0e6;font-size:1.3rem;">🚂</div>
           <span>Railway Jobs</span>
           <small class="cbi-count">125+ Jobs</small>
         </a>
         <a href="/section/bank-jobs/" class="cbi">
-          <div class="cbi-icon" style="background:#eff6ff;color:#1d4ed8;"><i class="fa-solid fa-building-columns"></i></div>
+          <div class="cbi-icon" style="background:#eff6ff;font-size:1.3rem;">🏦</div>
           <span>Bank Jobs</span>
           <small class="cbi-count">180+ Jobs</small>
         </a>
         <a href="/section/police-jobs/" class="cbi">
-          <div class="cbi-icon" style="background:#fff1f2;color:#be123c;"><i class="fa-solid fa-shield-halved"></i></div>
+          <div class="cbi-icon" style="background:#fff1f2;font-size:1.3rem;">🛡️</div>
           <span>Police Jobs</span>
           <small class="cbi-count">95+ Jobs</small>
         </a>
 
         <a href="/section/army-jobs/" class="cbi">
-          <div class="cbi-icon" style="background:#f5f3ff;color:#7c3aed;"><i class="fa-solid fa-star"></i></div>
+          <div class="cbi-icon" style="background:#f5f3ff;font-size:1.3rem;">⭐</div>
           <span>Army Jobs</span>
           <small class="cbi-count">90+ Jobs</small>
         </a>
         <a href="/section/teaching-jobs/" class="cbi">
-          <div class="cbi-icon" style="background:#fef3c7;color:#d97706;"><i class="fa-solid fa-chalkboard-user"></i></div>
+          <div class="cbi-icon" style="background:#fef3c7;font-size:1.3rem;">📚</div>
           <span>Teaching Jobs</span>
           <small class="cbi-count">120+ Jobs</small>
         </a>
         <a href="/section/healthcare-jobs/" class="cbi">
-          <div class="cbi-icon" style="background:#fff0f0;color:#dc2626;"><i class="fa-solid fa-stethoscope"></i></div>
+          <div class="cbi-icon" style="background:#fff0f0;font-size:1.3rem;">🏥</div>
           <span>Medical Jobs</span>
           <small class="cbi-count">80+ Jobs</small>
         </a>
 
         <a href="/section/iti-jobs/" class="cbi">
-          <div class="cbi-icon" style="background:#fff7ed;color:#ea580c;"><i class="fa-solid fa-tools"></i></div>
+          <div class="cbi-icon" style="background:#fff7ed;font-size:1.3rem;">🔧</div>
           <span>ITI Jobs</span>
           <small class="cbi-count">55+ Jobs</small>
         </a>
 
         <a href="/category/popular/" class="cbi" style="color:var(--blue);font-weight:800;">
-          <div class="cbi-icon" style="background:#eff6ff;color:#1a56db;"><i class="fa-solid fa-grid-2-plus"></i></div>
+          <div class="cbi-icon" style="background:#eff6ff;font-size:1.3rem;">📋</div>
           <span>View All</span>
           <small class="cbi-count">500+ Jobs</small>
         </a>
@@ -1991,7 +1993,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
   ============================================================ -->
   <div class="cat-bar-wrap">
     <div class="cat-bar-hd">
-      <span><i class="fa-solid fa-th-large"></i> &nbsp;Jobs by Qualification</span>
+      <span>🎓 JOBS BY QUALIFICATION</span>
       <a href="/category/study/">View All</a>
     </div>
     <div class="cat-bar-carousel-wrap">
@@ -2043,7 +2045,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
 
     <!-- Special Sections row -->
     <div class="cat-bar-hd" style="border-top:1px solid rgba(255,255,255,.12);">
-      <span><i class="fa-solid fa-star"></i> &nbsp;Special Sections</span>
+      <span>⭐ SPECIAL SECTIONS</span>
       <a href="/category/popular/">View All</a>
     </div>
     <div class="cat-bar-carousel-wrap">
@@ -2059,7 +2061,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
         <span>Admit cards &amp; Exams Date</span>
       </a>
       <a href="/section/admit-card/" class="cbi">
-        <div class="cbi-icon" style="background:#f5f3ff;color:#7c3aed;"><i class="fa-solid fa-graduation-cap"></i></div>
+        <div class="cbi-icon" style="background:#f5f3ff;font-size:1.3rem;">🎓</div>
         <span>Admission / Education</span>
       </a>
       <a href="/section/important-csc-pdf/" class="cbi">
@@ -2080,7 +2082,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
         <span>Latest Khabar</span>
       </a>
       <a href="/category/study-material/" class="cbi">
-        <div class="cbi-icon" style="background:#f0fdfa;color:#0d9488;"><i class="fa-solid fa-book-open"></i></div>
+        <div class="cbi-icon" style="background:#f0fdfa;font-size:1.3rem;">📚</div>
         <span>Study Material &amp; Top Courses</span>
       </a>
     </div>
@@ -2088,7 +2090,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
 
     <!-- State Wise Jobs row -->
     <div class="cat-bar-hd" style="border-top:1px solid rgba(255,255,255,.12);">
-      <span><i class="fa-solid fa-map-location-dot"></i> &nbsp;State Wise Jobs</span>
+      <span>🗺️ STATE WISE JOBS</span>
       <a href="/state-jobs/">View All</a>
     </div>
     <div class="cat-bar-carousel-wrap">
@@ -2231,7 +2233,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
         <span class="cbi-count">SK Jobs</span>
       </a>
       <a href="/state/" class="cbi" style="color:var(--blue);font-weight:800;">
-        <div class="cbi-icon" style="background:#eff6ff;color:#1a56db;"><i class="fa-solid fa-map-location-dot"></i></div>
+        <div class="cbi-icon" style="background:#eff6ff;font-size:1.3rem;">🗺️</div>
         <span>All States</span>
         <span class="cbi-count">View All</span>
       </a>
@@ -2245,7 +2247,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
   ============================================================ -->
   <div class="cat-bar-wrap" id="educationCatWrap">
     <div class="cat-bar-hd">
-      <span><i class="fa-solid fa-graduation-cap"></i> &nbsp;Education State Wise</span>
+      <span>📖 EDUCATION STATE WISE</span>
       <a href="/education/">View All</a>
     </div>
     <div class="cat-bar-carousel-wrap">
@@ -3401,8 +3403,8 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
   })();
   </script>
 
-<script src="/tsj-push.js?v=20260605100407" defer></script>
-<script src="/tsj-version.js?v=20260605100407" defer></script>
+<script src="/tsj-push.js?v=20260603202042" defer></script>
+<script src="/tsj-version.js?v=20260603202042" defer></script>
 
 <script>
 /* Auto lazy-load all images not already marked */

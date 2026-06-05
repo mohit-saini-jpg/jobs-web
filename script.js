@@ -1055,10 +1055,10 @@
       const card = document.createElement("article");
       card.className = "section-card";
       card.innerHTML = `
-        <div class="section-head" style="${bgStyle} text-shadow: 0 1px 2px rgba(0,0,0,0.15); border-bottom: 1px solid rgba(0,0,0,0.05);">
+        <div class="section-head" style="${bgStyle} text-shadow: 0 1px 3px rgba(0,0,0,0.35); border-bottom: 2px solid rgba(255,255,255,0.15);">
           <div class="left">
             <i class="${icon}"></i>
-            <span>${title}</span>
+            <span style="font-size:.82rem;letter-spacing:.03em;text-transform:uppercase;font-weight:900;">${title}</span>
           </div>
           ${moreHref ? `<a class="view-all-head" href="${moreHref}">View All</a>` : ""}
         </div>
@@ -1203,10 +1203,10 @@
     const card = document.createElement("article");
     card.className = "section-card";
     card.innerHTML = `
-      <div class="section-head" style="${bgStyle} text-shadow: 0 1px 2px rgba(0,0,0,0.15); border-bottom: 1px solid rgba(0,0,0,0.05);">
+      <div class="section-head" style="${bgStyle} text-shadow: 0 1px 3px rgba(0,0,0,0.35); border-bottom: 2px solid rgba(255,255,255,0.15);">
         <div class="left">
           <i class="${icon}"></i>
-          <span>${title}</span>
+          <span style="font-size:.82rem;letter-spacing:.03em;text-transform:uppercase;font-weight:900;">${title}</span>
         </div>
         ${moreHref ? `<a class="view-all-head" href="${moreHref}">View All</a>` : ""}
       </div>
