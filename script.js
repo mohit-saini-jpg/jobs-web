@@ -1057,8 +1057,8 @@
       card.innerHTML = `
         <div class="section-head" style="${bgStyle} text-shadow: 0 1px 3px rgba(0,0,0,0.35); border-bottom: 2px solid rgba(255,255,255,0.15);">
           <div class="left">
-            <i class="${icon}"></i>
-            <span style="font-size:.82rem;letter-spacing:.03em;text-transform:uppercase;font-weight:900;">${title}</span>
+            <i class="${icon}" style="color:#fff;opacity:.9;font-size:1rem;"></i>
+            <span style="font-size:.84rem;letter-spacing:.04em;text-transform:uppercase;font-weight:900;color:#fff;">${title}</span>
           </div>
           ${moreHref ? `<a class="view-all-head" href="${moreHref}">View All</a>` : ""}
         </div>
@@ -1205,8 +1205,8 @@
     card.innerHTML = `
       <div class="section-head" style="${bgStyle} text-shadow: 0 1px 3px rgba(0,0,0,0.35); border-bottom: 2px solid rgba(255,255,255,0.15);">
         <div class="left">
-          <i class="${icon}"></i>
-          <span style="font-size:.82rem;letter-spacing:.03em;text-transform:uppercase;font-weight:900;">${title}</span>
+          <i class="${icon}" style="color:#fff;opacity:.9;font-size:1rem;"></i>
+          <span style="font-size:.84rem;letter-spacing:.04em;text-transform:uppercase;font-weight:900;color:#fff;">${title}</span>
         </div>
         ${moreHref ? `<a class="view-all-head" href="${moreHref}">View All</a>` : ""}
       </div>
@@ -1638,7 +1638,7 @@
         }
         
         const icon = safe(l.icon);
-        if (icon) a.innerHTML = `<i class="${icon}"></i><span>${l.name}</span>`;
+        if (icon) a.innerHTML = `<i class="${icon}" style="color:#fff;opacity:.9;font-size:1rem;"></i><span>${l.name}</span>`;
         else a.textContent = l.name;
         host.appendChild(a);
       });
