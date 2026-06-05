@@ -894,7 +894,6 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>{e(title_tag[:60])}</title>
 <meta name="description" content="{e(meta_desc)}"/>
-<meta name="keywords" content="{e(keywords)}"/>
 <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large"/>
 <link rel="canonical" href="{e(canon_url)}"/>
 <meta property="og:type" content="article"/>

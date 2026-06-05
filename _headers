@@ -102,6 +102,10 @@
 /*.js
   Cache-Control: public, max-age=31536000, immutable
 
+# C-01: perf-ultra has no version string — short cache
+/perf-ultra.js
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
 # Key renderer files — short cache so critical fixes reach users fast
 /universal-renderer.js
   Cache-Control: public, max-age=3600, stale-while-revalidate=86400
@@ -221,6 +225,11 @@
   Cache-Control: public, max-age=86400
 
 # ── Data chunks (category-specific, split from merged_sarkari_data.json) ──
+# C-03: Mini JSON — freshest (used for job fallback)
+/data/sarkari-mini.json
+  Cache-Control: public, max-age=300, stale-while-revalidate=600
+  Access-Control-Allow-Origin: *
+
 /data/*.json
   Cache-Control: public, max-age=600, stale-while-revalidate=3600
   Access-Control-Allow-Origin: *

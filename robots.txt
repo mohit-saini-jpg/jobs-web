@@ -30,8 +30,6 @@ Disallow: /header_links.json
 
 # Block service worker and internal JS (not meant to be indexed)
 Disallow: /sw.js
-Disallow: /analytics.js
-Disallow: /manifest.json
 
 # Block utility/internal pages
 Disallow: /404.html
@@ -66,6 +64,8 @@ Allow: /resume-maker/
 Allow: /81ee32a562315ef5f3b03a8cf23bb1e2.txt
 
 # Sitemaps
+# SEO-06: sitemap-index.xml is primary — submit THIS to Google Search Console
+Sitemap: https://www.topsarkarijobs.com/sitemap-index.xml
 Sitemap: https://www.topsarkarijobs.com/sitemap.xml
 Sitemap: https://www.topsarkarijobs.com/sitemap-jobs.xml
 Sitemap: https://www.topsarkarijobs.com/sitemap-states.xml

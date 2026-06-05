@@ -1424,3 +1424,6 @@ table td {
 .edu-mi-item:last-child{border-bottom:none}
 .edu-mi-label{font-size:.72rem;font-weight:700;color:#1a56db;text-transform:uppercase;letter-spacing:.03em;margin-bottom:4px}
 .edu-mi-text{font-size:.8rem;color:#374151;line-height:1.6}
+
+/* M-01: Touch target minimum size (44px) */
+.sr-job-link { min-height: 44px; display: flex; align-items: center; }
