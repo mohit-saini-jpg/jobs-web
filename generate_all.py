@@ -1222,10 +1222,10 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 <div id="headerPlaceholder"></div>
-<script src="/tsj-init.js" defer></script>
+<script src="/tsj-init.js"></script>
 <main id="main">{body}</main>
 <div id="footerPlaceholder"></div>
-<script src="/tsj-footer-init.js" defer></script>
+<script src="/tsj-footer-init.js"></script>
 <script src="/tsj-menu.js" defer></script>
 </body>
 </html>'''
@@ -1329,10 +1329,10 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
 </head>
 <body>
 <div id="headerPlaceholder"></div>
-<script src="/tsj-init.js" defer></script>
+<script src="/tsj-init.js"></script>
 <main id="main">{bc_html}{body}</main>
 <div id="footerPlaceholder"></div>
-<script src="/tsj-footer-init.js" defer></script>
+<script src="/tsj-footer-init.js"></script>
 <script src="/tsj-menu.js" defer></script>
 </body>
 </html>'''
@@ -1776,7 +1776,7 @@ def _du_page(name, url, sec_title, other_items):
         '<script src="/tsj-config.js"></script>',
         '</head>', '<body>',
         '<div id="headerPlaceholder"></div>',
-        '<script src="/tsj-init.js" defer></script>',
+        '<script src="/tsj-init.js"></script>',
         '<main id="main">',
         '<div style="max-width:680px;margin:0 auto;padding:12px 10px 60px;">',
         bc,
@@ -1789,7 +1789,7 @@ def _du_page(name, url, sec_title, other_items):
         others,
         '</div>', '</main>',
         '<div id="footerPlaceholder"></div>',
-        '<script src="/tsj-footer-init.js" defer></script>',
+        '<script src="/tsj-footer-init.js"></script>',
         '<script src="/tsj-menu.js" defer></script>',
         '</body>', '</html>',
     ]
@@ -1933,12 +1933,13 @@ for _eslug, (_elbl, _efja, _esark) in _EXTRA_SEC.items():
         f'<meta name="description" content="Latest {e(_elbl)} {YEAR}. Updated daily."/>\n'
         f'<meta name="robots" content="index,follow"/>\n'
         f'<link rel="canonical" href="{BASE_URL}/section/{_eslug}/"/>\n'
-        f'<link rel="icon" href="/image.ico"/>\n'
+        f'<link rel="preload" href="/header.html" as="fetch" crossorigin/>\n'
+        '<link rel="icon" href="/image.ico"/>\n'
         f'<link rel="stylesheet" href="/styles.css"/>\n'
         f'<script src="/tsj-config.js"></script>\n'
         f'</head>\n<body>\n'
         f'<div id="headerPlaceholder"></div>\n'
-        f'<script src="/tsj-init.js" defer></script>\n'
+        f'<script src="/tsj-init.js"></script>\n'
         f'<main id="main">\n'
         f'<div style="max-width:900px;margin:0 auto;padding:14px 12px 60px;">\n'
         f'<nav class="bc"><a href="/">Home</a><span class="bc-sep">›</span><span>{e(_elbl)}</span></nav>\n'
@@ -1948,7 +1949,7 @@ for _eslug, (_elbl, _efja, _esark) in _EXTRA_SEC.items():
         f'</div>\n<div class="sec-body">{_esl_html}</div>\n</div>\n'
         f'</div>\n</main>\n'
         f'<div id="footerPlaceholder"></div>\n'
-        f'<script src="/tsj-footer-init.js" defer></script>\n'
+        f'<script src="/tsj-footer-init.js"></script>\n'
         f'<script src="/tsj-menu.js" defer></script>\n'
         f'</body>\n</html>'
     ))
