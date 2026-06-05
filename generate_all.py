@@ -1925,33 +1925,22 @@ for _eslug, (_elbl, _efja, _esark) in _EXTRA_SEC.items():
     _esl_html += '</ul>' if _ejobs else '<p style="text-align:center;color:#94a3b8;padding:30px">No jobs found. Check back soon!</p>'
     _edir = ROOT/'section'/_eslug
     _edir.mkdir(parents=True, exist_ok=True)
-    write(str(_edir/'index.html'), (
-        f'<!DOCTYPE html>\n<html lang="en-IN">\n<head>\n'
-        f'<meta charset="UTF-8"/>\n'
-        f'<meta name="viewport" content="width=device-width,initial-scale=1.0"/>\n'
-        f'<title>{e(_elbl)} {YEAR} | Top Sarkari Jobs</title>\n'
-        f'<meta name="description" content="Latest {e(_elbl)} {YEAR}. Updated daily."/>\n'
-        f'<meta name="robots" content="index,follow"/>\n'
-        f'<link rel="canonical" href="{BASE_URL}/section/{_eslug}/"/>\n'
-        f'<link rel="preload" href="/header.html" as="fetch" crossorigin/>\n'
-        '<link rel="icon" href="/image.ico"/>\n'
-        f'<link rel="stylesheet" href="/styles.css"/>\n'
-        f'<script src="/tsj-config.js"></script>\n'
-        f'</head>\n<body>\n'
-        f'<div id="headerPlaceholder"></div>\n'
-        f'<script src="/tsj-init.js"></script>\n'
-        f'<main id="main">\n'
-        f'<div style="max-width:900px;margin:0 auto;padding:14px 12px 60px;">\n'
-        f'<nav class="bc"><a href="/">Home</a><span class="bc-sep">›</span><span>{e(_elbl)}</span></nav>\n'
-        f'<div class="sec-card">\n'
-        f'<div class="sec-head" style="background:linear-gradient(135deg,#1d4ed8,#1e3a8a);">\n'
-        f'<div class="left"><span style="font-size:.84rem;text-transform:uppercase;font-weight:900;color:#fff;">{e(_elbl)} {YEAR}</span></div>\n'
-        f'</div>\n<div class="sec-body">{_esl_html}</div>\n</div>\n'
-        f'</div>\n</main>\n'
-        f'<div id="footerPlaceholder"></div>\n'
-        f'<script src="/tsj-footer-init.js"></script>\n'
-        f'<script src="/tsj-menu.js" defer></script>\n'
-        f'</body>\n</html>'
+    # Use build_listing_page for Image 2 style layout (cards with search)
+    _enorm = []
+    for _ej in _ejobs:
+        _ebd = (_ej.get('basic_details') or {})
+        _et  = safe(_ebd.get('job_title') or _ej.get('title',''))
+        if not _et: continue
+        _enorm.append({'basic_details':{
+            'job_title':       _et,
+            'organization_name':safe(_ebd.get('organization_name') or _ej.get('organization','')),
+            'total_vacancies': safe(_ebd.get('total_vacancies') or _ej.get('total_post','')),
+            'application_mode':safe(_ebd.get('application_mode') or _ej.get('apply_mode','Online')),
+        },'important_dates': _ej.get('important_dates') or {}})
+    write(str(_edir/'index.html'), build_listing_page(
+        _elbl, _enorm,
+        f'{BASE_URL}/section/{_eslug}/',
+        [('Home','/')]
     ))
 
 # ─────────────────────────────────────────────────────────────────
