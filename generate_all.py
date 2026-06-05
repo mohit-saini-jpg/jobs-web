@@ -1972,6 +1972,20 @@ print(f"  Qualification pages: {q_count}")
 # UPDATE JSON INDEXES
 # ─────────────────────────────────────────────────────────────────
 write(str(ROOT/'jobs-index.json'),   json.dumps(jobs_index, ensure_ascii=False, separators=(',',':')))
+
+# Generate lightweight sarkari-mini.json for homepage (42KB vs 53MB)
+_mini_jobs = []
+for _mj in SARK:
+    _mt = safe(_mj.get('title',''))
+    if not _mt: continue
+    _mini_jobs.append({
+        'title': _mt,
+        'slug':  slugify(_mt)[:80],
+        'cat':   _mj.get('category',''),
+        'date':  safe((_mj.get('important_dates') or {}).get('last_date','') or _mj.get('post_date',''))
+    })
+write(str(ROOT/'data'/'sarkari-mini.json'), json.dumps({'jobs':_mini_jobs}, ensure_ascii=False, separators=(',',':')))
+print(f"  sarkari-mini.json: {len(_mini_jobs)} jobs")
 # Build sections_index: FJA categories + SARK categories
 sections_index = {}
 
@@ -1979,7 +1993,7 @@ sections_index = {}
 for _si_cat, _si_jobs in FJA.items():
     if not isinstance(_si_jobs, list): continue
     _si_items = []
-    for _j in _si_jobs[:100]:  # top 100 per category
+    for _j in _si_jobs[:10]:  # top 10 per category (homepage shows max 10)
         _bd = (_j.get('basic_details') or {})
         _t  = safe(_bd.get('job_title',''))
         if not _t: continue
@@ -2000,10 +2014,19 @@ for _sj in SARK:
     _ld = safe((_sj.get('important_dates') or {}).get('last_date','') or _sj.get('last_date',''))
     if _scat not in sections_index:
         sections_index[_scat] = []
-    if len(sections_index[_scat]) < 100:
+    if len(sections_index[_scat]) < 10:
         sections_index[_scat].append({'slug':_sl,'name':_st,'date':_ld})
 
 write(str(ROOT/'sections-index.json'), json.dumps(sections_index, ensure_ascii=False, separators=(',',':')))
+# Update version string in index.html to bust cache
+_ver = __import__('datetime').datetime.now().strftime('%Y%m%d%H%M')
+_idx_path = str(ROOT/'index.html')
+if __import__('os').path.exists(_idx_path):
+    _idx = open(_idx_path, encoding='utf-8').read()
+    import re as _re
+    _idx_new = _re.sub(r'sections-index\.json\?v=\d+', f'sections-index.json?v={_ver}', _idx)
+    if _idx_new != _idx:
+        open(_idx_path, 'w', encoding='utf-8').write(_idx_new)
 
 import time as _time
 _end = _time.time()
