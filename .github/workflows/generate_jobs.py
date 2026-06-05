@@ -782,7 +782,12 @@ def build_page(title, detail, canon_url, breadcrumbs, page_type='job', type_labe
     edu_s = detail.get('sections') or []  # education raw sections
     src   = safe(detail.get('source_url') or detail.get('url') or '')
 
-    org        = safe(bd.get('organization_name') or bd.get('post_name') or bd.get('board') or 'Government of India')
+    # FIX-008: Use organization field, avoid post_name as org fallback
+    _raw_org = (detail.get('organization') or
+                bd.get('organization_name') or
+                bd.get('board') or
+                bd.get('department') or '')
+    org = safe(_raw_org) or 'Government of India'
     vacancies  = safe(bd.get('total_vacancies') or bd.get('total_vacancy') or detail.get('total_post') or '')
     last_date  = safe(dates.get('last_date_to_apply') or dates.get('last_date') or detail.get('lastDate') or '')
     apply_mode = safe(bd.get('application_mode') or detail.get('apply_mode') or 'Online')
@@ -794,20 +799,51 @@ def build_page(title, detail, canon_url, breadcrumbs, page_type='job', type_labe
     # SEO
     meta_desc = f"{title}: {vacancies+' vacancies, ' if vacancies else ''}{('last date '+last_date+'. ') if last_date else ''}Apply online – Top Sarkari Jobs."
     if len(meta_desc) > 155: meta_desc = meta_desc[:152].rsplit(' ',1)[0].rstrip('.,–') + '…'
-    title_tag = title if len(title)+19 <= 60 else title[:40].rstrip()
+    # FIX-001: Smart title truncation (was aggressive [:40])
+    if len(title) + 19 <= 60:
+        title_tag = title
+    else:
+        _yr  = re.search(r'20\d\d', title)
+        _yr  = (' ' + _yr.group()) if _yr else ''
+        _vac = re.search(r'(\d[\d,]+)\s*[Pp]osts?', title)
+        _vac = (', ' + _vac.group(1) + ' Posts') if _vac else ''
+        _short = re.split(r'\s+(?:–|-|Notification|Recruitment|Bharti|Vacancy)\s+', title)[0].strip()
+        if len(_short) > 41:
+            _short = _short[:41].rstrip()
+        title_tag = (_short + _yr + _vac).strip()
+        if len(title_tag) + 19 > 60:
+            title_tag = title[:41].rstrip()
 
     # Schemas
     job_schema = {
         '@context':'https://schema.org','@type':'JobPosting',
         'title':job_title_full,'description':short_info or meta_desc,
         'datePosted':posted,'url':canon_url,
-        'hiringOrganization':{'@type':'Organization','name':org,'sameAs':'https://www.india.gov.in'},
+        # FIX-008: Only add sameAs for actual Government of India
+        'hiringOrganization': ({'@type':'Organization','name':org,'sameAs':'https://www.india.gov.in'}
+                                if org == 'Government of India' else
+                                {'@type':'Organization','name':org}),
         'jobLocation':{'@type':'Place','address':{'@type':'PostalAddress','addressCountry':'IN','addressLocality':location}},
-        'baseSalary':{'@type':'MonetaryAmount','currency':'INR',
-                      'value':{'@type':'QuantitativeValue','minValue':15000,'maxValue':80000,'unitText':'MONTH'}},
+        # FIX-004: Dynamic salary from actual data (was hardcoded 15000-80000)
+        # baseSalary added below after schema dict
     }
     iso = norm_date(last_date)
     if iso: job_schema['validThrough'] = iso
+    # FIX-004: Build baseSalary from actual salary data
+    _sal_raw = safe(bd.get('salary_pay_scale') or sal.get('pay_scale') or sal.get('salary') or sal.get('details') or '')
+    _sal_nums = re.findall(r'\d+', _sal_raw.replace(',',''))
+    _sal_nums = [int(x) for x in _sal_nums if 10000 <= int(x) <= 500000]
+    if _sal_nums:
+        job_schema['baseSalary'] = {
+            '@type': 'MonetaryAmount', 'currency': 'INR',
+            'value': {
+                '@type': 'QuantitativeValue',
+                'minValue': min(_sal_nums),
+                'maxValue': max(_sal_nums) if len(_sal_nums) > 1 else min(_sal_nums),
+                'unitText': 'MONTH'
+            }
+        }
+    # If no salary data — omit (better than wrong hardcoded value)
     vn = re.search(r'\d+', str(vacancies or ''))
     if vn: job_schema['totalJobOpenings'] = int(vn.group())
 

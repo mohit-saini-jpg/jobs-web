@@ -583,30 +583,48 @@ var slug=getSlug();
 if(!slug){
   document.getElementById('loader').innerHTML='<p>Job not found. <a href="/">Go Home</a></p>';
 } else {
-  fetch('/data/Complete_Jobs_Full_Data.json')
-    .then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
-    .then(data=>{
-      var job=findJob(data,slug)||findJob(data,cleanSlug(slug));
-      if(!job){
-        // Redirect to home if job not found (handles deleted/old URLs)
-        document.getElementById('loader').innerHTML='';
-        document.getElementById('content').innerHTML=`
-          <div style="text-align:center;padding:60px 20px;max-width:600px;margin:0 auto">
-            <div style="font-size:4rem;margin-bottom:16px">📋</div>
-            <h1 style="font-size:1.4rem;color:#0f172a;margin-bottom:8px">Page Not Available</h1>
-            <p style="color:#64748b;margin-bottom:20px">This job/notification may have been removed or the URL may have changed.</p>
-            <a href="/" style="display:inline-block;background:#1d4ed8;color:#fff;padding:10px 24px;border-radius:8px;text-decoration:none;font-weight:700">← Go to Homepage</a>
-            <span style="margin:0 12px;color:#e2e8f0">|</span>
-            <a href="/section/latest-jobs/" style="display:inline-block;background:#f1f5f9;color:#374151;padding:10px 24px;border-radius:8px;text-decoration:none;font-weight:700">Latest Jobs</a>
-          </div>`;
-        document.getElementById('content').style.display='';
-        document.getElementById('loader').style.display='none';
-        document.title='Page Not Found | Top Sarkari Jobs';
-        return;
+  // FIX-003: Try lightweight mini JSON first (42KB vs 53MB)
+  var MINI_URL = '/data/sarkari-mini.json';
+  var FULL_URL = '/data/Complete_Jobs_Full_Data.json';
+
+  function tryFindJob(data, s) {
+    return findJob(data, s) || findJob(data, cleanSlug(s));
+  }
+
+  function showNotFound() {
+    document.getElementById('loader').innerHTML='';
+    document.getElementById('content').innerHTML=`
+      <div style="text-align:center;padding:60px 20px;max-width:600px;margin:0 auto">
+        <div style="font-size:4rem;margin-bottom:16px">📋</div>
+        <h1 style="font-size:1.4rem;color:#0f172a;margin-bottom:8px">Page Not Available</h1>
+        <p style="color:#64748b;margin-bottom:20px">This job/notification may have been removed or the URL may have changed.</p>
+        <a href="/" style="display:inline-block;background:#1d4ed8;color:#fff;padding:10px 24px;border-radius:8px;text-decoration:none;font-weight:700">← Go to Homepage</a>
+        <span style="margin:0 12px;color:#e2e8f0">|</span>
+        <a href="/section/latest-jobs/" style="display:inline-block;background:#f1f5f9;color:#374151;padding:10px 24px;border-radius:8px;text-decoration:none;font-weight:700">Latest Jobs</a>
+      </div>`;
+    document.getElementById('content').style.display='';
+    document.getElementById('loader').style.display='none';
+    document.title='Page Not Found | Top Sarkari Jobs';
+  }
+
+  fetch(MINI_URL)
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .catch(function(){ return null; })
+    .then(function(miniData) {
+      if (miniData) {
+        var job = tryFindJob(miniData, slug);
+        if (job) { buildPage(cleanSlug(slug)||slug, job); return; }
       }
-      buildPage(cleanSlug(slug)||slug,job);
+      // Mini not found or unavailable — fallback to full file
+      return fetch(FULL_URL)
+        .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+        .then(function(data){
+          var job = tryFindJob(data, slug);
+          if (!job) { showNotFound(); return; }
+          buildPage(cleanSlug(slug)||slug, job);
+        });
     })
-    .catch(err=>{
+    .catch(function(err){
       document.getElementById('loader').innerHTML=`<p>Failed to load: ${esc(err.message)}. <a href="/">Go Home</a></p>`;
     });
 }

@@ -69,6 +69,10 @@ const PRECACHE_STATIC = [
   '/image-40x40.webp',
   '/offline.html',
   '/og-jobs.svg',       // R4/R11: OG images
+  // FIX-006: FontAwesome + search/seo engines
+  '/fonts/fa/all.min.css',
+  '/smart-search.min.js',
+  '/seo-engine.min.js',
 ];
 
 // ══════════════════════════════════════════════════════════════

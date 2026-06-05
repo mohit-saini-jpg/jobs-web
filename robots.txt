@@ -41,8 +41,10 @@ Disallow: /JOB_HTML_PATCH_INSTRUCTIONS.html
 Disallow: /.github/
 Disallow: /node_modules/
 
-# Block .well-known from indexing (security files)
-Disallow: /.well-known/
+# Allow verification files, block only security-specific assets (FIX-013)
+Allow: /.well-known/
+Disallow: /.well-known/apple-app-site-association
+Disallow: /.well-known/assetlinks.json
 
 # Allow all SEO-indexed clean URLs
 Allow: /jobs/

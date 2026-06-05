@@ -812,7 +812,7 @@
         function loadHeavy() {
           if (heavyLoaded) return;
           heavyLoaded = true;
-          fetchAndIndex('Complete_Jobs_Full_Data.json').then(function() {
+          fetchAndIndex('/data/Complete_Jobs_Full_Data.json').then(function() {
             refreshOpenDropdown();
             
           });

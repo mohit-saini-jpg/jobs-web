@@ -528,7 +528,12 @@ def build_static_html(slug, title, full_job_obj, cat):
 
     canon_url  = f"{BASE_URL}/jobs/{slug}/"
     cat_label  = CAT_LABELS.get(cat, 'Government Jobs')
-    org        = safe(bd.get('organization_name') or bd.get('post_name') or bd.get('job_title') or 'Government of India')
+    # FIX-008: Use organization field, avoid post_name/job_title as org fallback
+    _raw_org = (full_job_obj.get('organization') or
+                bd.get('organization_name') or
+                bd.get('board') or
+                bd.get('department') or '')
+    org = safe(_raw_org) or 'Government of India'
     vacancies  = safe(bd.get('total_vacancies') or bd.get('total_vacancy') or '')
     last_date_r= safe(dates.get('last_date_to_apply') or dates.get('last_date') or '')
     apply_mode = safe(bd.get('application_mode') or 'Online')
@@ -547,7 +552,7 @@ def build_static_html(slug, title, full_job_obj, cat):
         _vac_tag = f' – {_vac_n.group()} Posts' if _vac_n else ''
         title_tag = f"{_short}{' ' + _yr if _yr and _yr not in _short else ''}{_vac_tag}"
         if len(title_tag) + len(' | Top Sarkari Jobs') > 60:
-            title_tag = title[:40].rstrip()
+            title_tag = title[:41].rstrip()  # FIX-001: was [:40]
     else:
         title_tag = title
 
@@ -559,21 +564,36 @@ def build_static_html(slug, title, full_job_obj, cat):
         meta_desc = meta_desc[:152].rsplit(' ', 1)[0].rstrip('.,–') + '…'
 
     # Schema
-    org_schema = bd.get('organization_name') or 'Government of India'
+    org_schema = org  # FIX-008: use already-resolved org
     job_schema = {
         '@context':'https://schema.org','@type':'JobPosting',
         'title':title,'description':short_info or meta_desc,
         'datePosted':posted_date,'employmentType':'FULL_TIME','url':canon_url,
         'identifier':{'@type':'PropertyValue','name':org_schema,'value':slug},
         'applicantLocationRequirements':{'@type':'Country','name':'India'},
-        'hiringOrganization':{'@type':'Organization','name':org_schema,'sameAs':'https://www.india.gov.in'},
+        # FIX-008: sameAs only for actual Government of India
+        'hiringOrganization': ({'@type':'Organization','name':org_schema,'sameAs':'https://www.india.gov.in'}
+                                if org_schema == 'Government of India' else
+                                {'@type':'Organization','name':org_schema}),
         'jobLocation':{'@type':'Place','address':{'@type':'PostalAddress','addressCountry':'IN','addressLocality':location}},
         'author':{'@type':'Organization','name':'TopSarkariJobs Editorial Team','url':'https://www.topsarkarijobs.com/about.html'},
-        'baseSalary':{'@type':'MonetaryAmount','currency':'INR','value':{'@type':'QuantitativeValue','minValue':15000,'maxValue':80000,'unitText':'MONTH'}},
+        # FIX-004: baseSalary added dynamically below
     }
     if last_date_r:
         iso = normalise_date(last_date_r)
         if iso: job_schema['validThrough'] = iso
+    # FIX-004: Dynamic baseSalary
+    _sal_raw = safe(bd.get('salary_pay_scale') or sal.get('pay_scale') or sal.get('salary') or sal.get('details') or full_job_obj.get('salary_pay_scale') or '')
+    _sal_nums = re.findall(r'\d+', _sal_raw.replace(',',''))
+    _sal_nums = [int(x) for x in _sal_nums if 10000 <= int(x) <= 500000]
+    if _sal_nums:
+        job_schema['baseSalary'] = {
+            '@type': 'MonetaryAmount', 'currency': 'INR',
+            'value': {'@type': 'QuantitativeValue',
+                      'minValue': min(_sal_nums),
+                      'maxValue': max(_sal_nums) if len(_sal_nums) > 1 else min(_sal_nums),
+                      'unitText': 'MONTH'}
+        }
     if vacancies:
         vn = re.search(r'\d+', str(vacancies))
         if vn: job_schema['totalJobOpenings'] = int(vn.group())

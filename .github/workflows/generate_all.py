@@ -86,10 +86,18 @@ def safe(v):
     return str(v).strip()
 
 def slugify(text):
+    # FIX-005: Smart truncation — cut at word boundary, not mid-word
     text = str(text).lower()
     text = re.sub(r'[^a-z0-9\s-]', '', text)
     text = re.sub(r'[\s-]+', '-', text)
-    return text[:80].strip('-') or 'page'
+    slug = text.strip('-') or 'page'
+    if len(slug) <= 80:
+        return slug
+    truncated = slug[:80].rstrip('-')
+    last_dash = truncated.rfind('-', 60, 80)
+    if last_dash > 60:
+        truncated = truncated[:last_dash]
+    return truncated
 
 def clean_slug(s):
     s = str(s or '').strip()
