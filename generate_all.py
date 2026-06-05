@@ -1665,7 +1665,6 @@ def _du_slug(name, url=''):
     return f"{dom}-{h}" if dom else f"item-{h}"
 
 def _du_page(name, url, sec_title, other_items):
-    """Proper detail page for dailyupdates — NO redirect, same site layout."""
     meta   = _DU_SEC_META.get(sec_title, {'color':'#1d4ed8','icon':'\U0001f4cb','badge':sec_title})
     is_pdf = 'drive.google.com' in url or url.lower().endswith('.pdf')
     btn_ic = 'fa-file-pdf' if is_pdf else 'fa-arrow-up-right-from-square'
@@ -1674,47 +1673,42 @@ def _du_page(name, url, sec_title, other_items):
     sec_sl = slugify(sec_title)
     slug   = _du_slug(name, url)
     canon  = BASE_URL + '/jobs/' + slug + '/'
+    clr    = meta['color']
 
     bc = (
         '<nav class="bc" aria-label="Breadcrumb">'
-        '<a href="/">Home</a><span class="bc-sep">\u203a</span>'
-        '<a href="/section/' + e(sec_sl) + '/">' + e(sec_title) + '</a>'
-        '<span class="bc-sep">\u203a</span>'
-        '<span aria-current="page">' + e(name[:60]) + '</span>'
-        '</nav>'
+        + '<a href="/">Home</a><span class="bc-sep">\u203a</span>'
+        + '<a href="/section/' + e(sec_sl) + '/">' + e(sec_title) + '</a>'
+        + '<span class="bc-sep">\u203a</span>'
+        + '<span aria-current="page">' + e(name[:60]) + '</span>'
+        + '</nav>'
     )
-    tags = (
-        '<div class="badge-row">'
-        '<span class="badge badge-cat">' + e(meta['icon']) + ' ' + e(meta['badge']) + '</span>'
-        '</div>'
+    card_hd = (
+        '<div style="background:linear-gradient(135deg,' + clr + ',#1e3a8a);'
+        + 'border-radius:12px 12px 0 0;padding:18px 20px 16px;color:#fff;">'
+        + '<div style="margin-bottom:10px;">'
+        + '<span style="background:rgba(255,255,255,.18);padding:3px 10px;border-radius:20px;'
+        + 'font-size:.75rem;font-weight:700;">'
+        + e(meta['icon']) + ' ' + e(meta['badge']) + '</span>'
+        + '</div>'
+        + '<h1 style="font-size:1.05rem;font-weight:900;margin:0 0 10px;line-height:1.4;">'
+        + e(name) + '</h1>'
+        + '<div style="font-size:.76rem;opacity:.88;">\U0001f4c2 ' + e(sec_title) + '</div>'
+        + '</div>'
     )
-    stats = (
-        '<div class="stat-row">'
-        '<div class="stat"><div class="stat-val">\u2014</div><div class="stat-lbl">Vacancies</div></div>'
-        '<div class="stat"><div class="stat-val" style="color:#dc2626">\u2014</div><div class="stat-lbl">Last Date</div></div>'
-        '<div class="stat"><div class="stat-val">Online</div><div class="stat-lbl">Apply Mode</div></div>'
-        '<div class="stat"><div class="stat-val">India</div><div class="stat-lbl">Location</div></div>'
-        '</div>'
-    )
-    cta = (
-        '<a href="' + e(url) + '" class="apply-cta" target="_blank" rel="noopener noreferrer">'
-        '<i class="fa-solid ' + btn_ic + '"></i> ' + e(btn_tx) + ' \u2197'
-        '</a>'
-    )
-    il_sec = (
-        '<section class="sec-card">'
-        '<div class="sec-head"><h2><i class="fa-solid fa-link"></i> Important Links</h2></div>'
-        '<div class="sec-body"><div class="links-grid">'
-        '<a href="' + e(url) + '" class="lnk-btn ' + btn_cl + '" target="_blank" rel="noopener noreferrer">'
-        '<i class="fa-solid ' + btn_ic + '"></i> ' + e(btn_tx) + '</a>'
-        '</div></div>'
-        '</section>'
-    )
-    rel = (
-        '<div class="related-cats">'
-        '<span class="rel-label">Related Categories</span>'
-        '<a href="/section/' + e(sec_sl) + '/" class="rel-tag">' + e(sec_title) + '</a>'
-        '</div>'
+    card_bd = (
+        '<div style="background:#fff;border-radius:0 0 12px 12px;'
+        + 'border:1px solid #e2e8f0;border-top:none;padding:16px 18px;">'
+        + '<a href="' + e(url) + '" class="lnk-btn ' + btn_cl + '" target="_blank" rel="noopener noreferrer" '
+        + 'style="display:flex;align-items:center;justify-content:center;gap:8px;'
+        + 'width:100%;padding:12px 18px;font-size:.9rem;font-weight:800;margin-bottom:10px;">'
+        + '<i class="fa-solid ' + btn_ic + '"></i> ' + e(btn_tx) + ' \u2197'
+        + '</a>'
+        + '<a href="/" style="display:flex;align-items:center;justify-content:center;'
+        + 'background:#f1f5f9;color:#374151;padding:9px 18px;border-radius:8px;'
+        + 'font-size:.82rem;font-weight:600;text-decoration:none;border:1px solid #e2e8f0;">'
+        + '\u2190 Back to Home</a>'
+        + '</div>'
     )
     others = ''
     for oi in [i for i in (other_items or []) if (i.get('name') or '').strip()][:6]:
@@ -1724,54 +1718,51 @@ def _du_page(name, url, sec_title, other_items):
         others += '<li class="sec-item"><a href="/jobs/' + osl + '/">' + e(on) + '</a></li>'
     if others:
         others = (
-            '<section class="sec-card">'
-            '<div class="sec-head"><div class="left">More from ' + e(sec_title) + '</div></div>'
-            '<div class="sec-body"><ul class="sec-list">' + others + '</ul></div>'
-            '</section>'
+            '<section class="sec-card" style="margin-top:16px;">'
+            + '<div class="sec-head"><div class="left">MORE FROM ' + e(sec_title).upper() + '</div></div>'
+            + '<div class="sec-body"><ul class="sec-list">' + others + '</ul></div>'
+            + '</section>'
         )
 
-    title_tag = e(name[:60]) + ' | Top Sarkari Jobs'
-    meta_desc = e((name[:130] + ' - ' + sec_title + '. Top Sarkari Jobs.')[:155])
+    tl = e(name[:60]) + ' | Top Sarkari Jobs'
+    md = e((name[:130] + ' - ' + sec_title + '. Top Sarkari Jobs.')[:155])
 
-    p  = '<!DOCTYPE html>\n<html lang="en-IN">\n<head>\n'
-    p += '<meta charset="UTF-8"/>\n'
-    p += '<meta name="viewport" content="width=device-width,initial-scale=1.0"/>\n'
-    p += '<title>' + title_tag + '</title>\n'
-    p += '<meta name="description" content="' + meta_desc + '"/>\n'
-    p += '<meta name="robots" content="noindex,follow"/>\n'
-    p += '<link rel="canonical" href="' + e(canon) + '"/>\n'
-    p += '<meta property="og:title" content="' + title_tag + '"/>\n'
-    p += '<meta property="og:url" content="' + e(canon) + '"/>\n'
-    p += '<meta property="og:image" content="' + BASE_URL + '/og-jobs.png"/>\n'
-    p += '<link rel="icon" href="/image.ico"/>\n'
-    p += '<link rel="stylesheet" href="/styles.css"/>\n'
-    p += '<link rel="preload" href="/fonts/fa/all.min.css" as="style" onload="this.onload=null;this.rel=\'stylesheet\'"/>\n'
-    p += '<noscript><link rel="stylesheet" href="/fonts/fa/all.min.css"/></noscript>\n'
-    p += '<link rel="stylesheet" href="/styles-detail.css" media="print" onload="this.media=\'all\'"/>\n'
-    p += '<noscript><link rel="stylesheet" href="/styles-detail.css"/></noscript>\n'
-    p += '<script src="/tsj-config.js"></script>\n'
-    p += '</head>\n<body>\n'
-    p += '<div id="headerPlaceholder"></div>\n'
-    p += '<script src="/tsj-init.js" defer></script>\n'
-    p += '<main id="main">\n<div class="detail-wrap">\n'
-    p += bc
-    p += '<div class="important-notice"><i class="fa-solid fa-circle-exclamation"></i>'
-    p += '<span><strong>Important:</strong> Always verify details on official website. Dates &amp; eligibility may change.</span></div>\n'
-    p += '<article class="detail-header">\n'
-    p += tags
-    p += '<h1 class="detail-title">' + e(name) + '</h1>\n'
-    p += stats
-    p += cta + '\n'
-    p += '</article>\n'
-    p += il_sec + '\n'
-    p += rel + '\n'
-    p += others + '\n'
-    p += '</div>\n</main>\n'
-    p += '<div id="footerPlaceholder"></div>\n'
-    p += '<script src="/tsj-footer-init.js" defer></script>\n'
-    p += '<script src="/tsj-menu.js" defer></script>\n'
-    p += '</body>\n</html>'
-    return p
+    lines = [
+        '<!DOCTYPE html>', '<html lang="en-IN">', '<head>',
+        '<meta charset="UTF-8"/>',
+        '<meta name="viewport" content="width=device-width,initial-scale=1.0"/>',
+        '<title>' + tl + '</title>',
+        '<meta name="description" content="' + md + '"/>',
+        '<meta name="robots" content="noindex,follow"/>',
+        '<link rel="canonical" href="' + e(canon) + '"/>',
+        '<link rel="icon" href="/image.ico"/>',
+        '<link rel="stylesheet" href="/styles.css"/>',
+        '<link rel="preload" href="/fonts/fa/all.min.css" as="style" onload="this.onload=null;this.rel=\'stylesheet\'"/>',
+        '<noscript><link rel="stylesheet" href="/fonts/fa/all.min.css"/></noscript>',
+        '<link rel="stylesheet" href="/styles-detail.css" media="print" onload="this.media=\'all\'"/>',
+        '<noscript><link rel="stylesheet" href="/styles-detail.css"/></noscript>',
+        '<script src="/tsj-config.js"></script>',
+        '</head>', '<body>',
+        '<div id="headerPlaceholder"></div>',
+        '<script src="/tsj-init.js" defer></script>',
+        '<main id="main">',
+        '<div style="max-width:680px;margin:0 auto;padding:12px 10px 60px;">',
+        bc,
+        '<div class="important-notice"><i class="fa-solid fa-circle-exclamation"></i>'
+        + '<span><strong>Important:</strong> Always verify details on official website. '
+        + 'Dates &amp; eligibility may change.</span></div>',
+        '<div style="border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.07);margin-bottom:14px;">',
+        card_hd, card_bd,
+        '</div>',
+        others,
+        '</div>', '</main>',
+        '<div id="footerPlaceholder"></div>',
+        '<script src="/tsj-footer-init.js" defer></script>',
+        '<script src="/tsj-menu.js" defer></script>',
+        '</body>', '</html>',
+    ]
+    return '\n'.join(lines)
+
 
 # ── DU loop ─────────────────────────────────────────────────────
 for _du_sec in DU_SECS:
