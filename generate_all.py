@@ -1629,19 +1629,34 @@ print(f"  Category/study listing pages: {_listing_count}")
 # 6. SECTION LISTING PAGES
 print("Generating /section/ pages...")
 SARK_CAT_MAP = {
-    'SR_Latest_Jobs':'latest-jobs','SR_Result':'result','SR_Admit_Card':'admit-card',
-    'SR_Admission':'admission','SR_Answer_Key':'answer-key','OFFLINE_FORM':'offline-form',
-    'LATEST_JOBS NEW':'latest-jobs-new','UPCOMING_JOBS':'upcoming-jobs',
-    'STATE_JOBS':'state-jobs-central','CENTRAL_JOBS':'central-jobs',
-    'ADMISSIONS':'admissions',
+    'SR_Latest_Jobs':  'latest-jobs',
+    'SR_Result':       'results',
+    'SR_Admit_Card':   'admit-card',
+    'SR_Admission':    'admission',
+    'SR_Answer_Key':   'answer-key',
+    'OFFLINE_FORM':    'offline-form',
+    'LATEST_JOBS NEW': 'latest-jobs',
+    'UPCOMING_JOBS':   'upcoming-jobs',
+    'STATE_JOBS':      'latest-jobs',
+    'CENTRAL_JOBS':    'latest-jobs',
+    'ADMISSIONS':      'admission',
 }
 FJA_CAT_MAP = {
-    '10TH_Pass':'10th-pass-jobs','8TH_Pass':'8th-pass-jobs','12TH_Pass':'12th-pass-jobs',
-    'Diploma':'diploma-jobs','ITI':'iti-jobs','B_Tech_BE':'btech-be-jobs','B_Com':'bcom-jobs',
-    'Any_Graduate':'any-graduate-jobs','Any_Post_Graduate':'post-graduate-jobs',
-    'Railway_Jobs':'railway-jobs','Police_Defence':'police-defence-jobs',
-    'Teaching_Faculty':'teaching-faculty-jobs','Bank_Jobs':'bank-jobs',
-    'Medical_Hospital':'medical-hospital-jobs','Last_Date_Reminder':'last-date-reminder',
+    '10TH_Pass':           '10th-pass-jobs',
+    '8TH_Pass':            '8th-pass',
+    '12TH_Pass':           '12th-pass-jobs',
+    'Diploma':             'diploma-jobs',
+    'ITI':                 'iti-jobs',
+    'B_Tech_BE':           'btech-jobs',
+    'B_Com':               'ba-pass',
+    'Any_Graduate':        'graduation-jobs',
+    'Any_Post_Graduate':   'post-graduation-jobs',
+    'Railway_Jobs':        'railway-jobs',
+    'Police_Defence':      'police-jobs',
+    'Teaching_Faculty':    'teaching-jobs',
+    'Bank_Jobs':           'bank-jobs',
+    'Medical_Hospital':    'healthcare-jobs',
+    'Last_Date_Reminder':  'last-date-reminder',
     'Latest_Notifications':'latest-notifications',
 }
 for cat_key, url_slug in FJA_CAT_MAP.items():
@@ -1871,6 +1886,72 @@ for sec in DU_SECS:
     sec_count2 += 1
 
 print(f"  Section pages: {sec_count2}")
+
+# EXTRA section pages (matching cat-bar URLs in index.html)
+_EXTRA_SEC = {
+    'army-jobs':           ('Army & Defence Jobs',       ['Police_Defence'], []),
+    'btech-jobs':          ('B.Tech / B.E. Jobs',        ['B_Tech_BE'],      []),
+    'graduation-jobs':     ('Any Graduate Jobs',         ['Any_Graduate'],   []),
+    'post-graduation-jobs':('Post Graduate Jobs',        ['Any_Post_Graduate'],[]),
+    'healthcare-jobs':     ('Medical / Healthcare Jobs', ['Medical_Hospital'],[]),
+    'results':             ('Results 2026',              [],         ['SR_Result']),
+    '8th-pass':            ('8th Pass Jobs',             ['8TH_Pass'],       []),
+    'ba-pass':             ('BA Pass / B.Com Jobs',      ['B_Com'],          []),
+    'jobs-with-last-date': ('Jobs with Last Date',       ['Last_Date_Reminder'],[]),
+    'latest-govt-jobs':    ('Latest Govt Jobs',          ['Latest_Notifications'],[]),
+    'top-20-jobs':         ('Top 20 Jobs',               ['Latest_Notifications'],[]),
+    'govt-scheme-yojna':   ('Govt Scheme & Yojna',       [],                 []),
+    'important-csc-pdf':   ('ImportantCSC PDF',          [],                 []),
+    'today-updates':       ('Today Updates',             [],                 []),
+    'syllabus':            ('Syllabus & Study Material', [],                 []),
+}
+for _eslug, (_elbl, _efja, _esark) in _EXTRA_SEC.items():
+    _ejobs = []
+    for _ec in _efja:
+        _items = FJA.get(_ec, [])
+        if isinstance(_items, list): _ejobs.extend(_items)
+    for _ec in _esark:
+        _ejobs.extend([j for j in SARK if j.get('category') == _ec])
+    _esl_html = '<ul class="sec-list">'
+    for _ej in _ejobs[:50]:
+        _ebd  = (_ej.get('basic_details') or {})
+        _et   = safe(_ebd.get('job_title') or _ej.get('title',''))
+        if not _et: continue
+        _esl  = slugify(_et)[:80]
+        _eld  = safe(_ebd.get('last_updated') or _ej.get('post_date',''))
+        _esl_html += (f'<li class="sec-item"><a href="/jobs/{_esl}/">{e(_et[:90])}</a>'
+                      + (f'<span class="sec-date">{e(_eld)}</span>' if _eld else '')
+                      + '</li>')
+    _esl_html += '</ul>' if _ejobs else '<p style="text-align:center;color:#94a3b8;padding:30px">No jobs found. Check back soon!</p>'
+    _edir = ROOT/'section'/_eslug
+    _edir.mkdir(parents=True, exist_ok=True)
+    write(str(_edir/'index.html'), (
+        f'<!DOCTYPE html>\n<html lang="en-IN">\n<head>\n'
+        f'<meta charset="UTF-8"/>\n'
+        f'<meta name="viewport" content="width=device-width,initial-scale=1.0"/>\n'
+        f'<title>{e(_elbl)} {YEAR} | Top Sarkari Jobs</title>\n'
+        f'<meta name="description" content="Latest {e(_elbl)} {YEAR}. Updated daily."/>\n'
+        f'<meta name="robots" content="index,follow"/>\n'
+        f'<link rel="canonical" href="{BASE_URL}/section/{_eslug}/"/>\n'
+        f'<link rel="icon" href="/image.ico"/>\n'
+        f'<link rel="stylesheet" href="/styles.css"/>\n'
+        f'<script src="/tsj-config.js"></script>\n'
+        f'</head>\n<body>\n'
+        f'<div id="headerPlaceholder"></div>\n'
+        f'<script src="/tsj-init.js" defer></script>\n'
+        f'<main id="main">\n'
+        f'<div style="max-width:900px;margin:0 auto;padding:14px 12px 60px;">\n'
+        f'<nav class="bc"><a href="/">Home</a><span class="bc-sep">›</span><span>{e(_elbl)}</span></nav>\n'
+        f'<div class="sec-card">\n'
+        f'<div class="sec-head" style="background:linear-gradient(135deg,#1d4ed8,#1e3a8a);">\n'
+        f'<div class="left"><span style="font-size:.84rem;text-transform:uppercase;font-weight:900;color:#fff;">{e(_elbl)} {YEAR}</span></div>\n'
+        f'</div>\n<div class="sec-body">{_esl_html}</div>\n</div>\n'
+        f'</div>\n</main>\n'
+        f'<div id="footerPlaceholder"></div>\n'
+        f'<script src="/tsj-footer-init.js" defer></script>\n'
+        f'<script src="/tsj-menu.js" defer></script>\n'
+        f'</body>\n</html>'
+    ))
 
 # ─────────────────────────────────────────────────────────────────
 # 8. QUALIFICATION LISTING PAGES
