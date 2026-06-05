@@ -615,20 +615,23 @@ if(!slug){
         var job = tryFindJob(miniData, slug);
         if (job) { buildPage(cleanSlug(slug)||slug, job); return; }
       }
-      // Mini not found — fallback to full JSON with 12s timeout
-      var _ctrl = new AbortController();
-      var _timer = setTimeout(function(){ _ctrl.abort(); showNotFound(); }, 12000);
-      return fetch(FULL_URL, { signal: _ctrl.signal })
+      // Mini not found or unavailable — fallback to full file
+      return fetch(FULL_URL)
         .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
         .then(function(data){
-          clearTimeout(_timer);
           var job = tryFindJob(data, slug);
           if (!job) { showNotFound(); return; }
           buildPage(cleanSlug(slug)||slug, job);
         });
     })
     .catch(function(err){
-      document.getElementById('loader').innerHTML=`<p>Failed to load: ${esc(err.message)}. <a href="/">Go Home</a></p>`;
+      // If full JSON fails to load, show not found (not a raw error)
+      if(typeof showNotFound === 'function') {
+        showNotFound();
+      } else {
+        document.getElementById('loader').innerHTML=`<p style="text-align:center;padding:40px">Job not found. <a href="/" style="color:#1d4ed8">← Go Home</a></p>`;
+        document.getElementById('loader').style.display='';
+      }
     });
 }
 
