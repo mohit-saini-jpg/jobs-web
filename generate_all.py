@@ -1343,6 +1343,22 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
 print("Loading JSON data...")
 with open(CJ_FILE, encoding='utf-8') as f: CJ = json.load(f)
 with open(DU_FILE, encoding='utf-8') as f: DU = json.load(f)
+# Inject slug field into DU items (for script.js buildSectionCard)
+import hashlib as _hlib2
+for _dsec in DU.get('sections', []):
+    for _dit in _dsec.get('items', []):
+        _dn = (_dit.get('name') or '').strip()
+        _du = (_dit.get('url') or '').strip()
+        if _dn and 'slug' not in _dit:
+            _ds = slugify(_dn)
+            if not _ds:
+                _dom = re.sub(r'https?://(www\.)?','',_du).split('/')[0].replace('.','-')[:20]
+                _h = _hlib2.md5(_dn.encode()).hexdigest()[:8]
+                _ds = f"{_dom}-{_h}" if _dom else f"item-{_h}"
+            _dit['slug'] = _ds[:80]
+# Save updated dailyupdates.json with slugs
+with open(DU_FILE, 'w', encoding='utf-8') as _f:
+    json.dump(DU, _f, ensure_ascii=False, separators=(',',':'))
 
 FJA_RAW = CJ.get('freejobalert_categories', {})
 FJA     = {cat: [j for j in jobs if not is_garbage_title(
@@ -1647,6 +1663,7 @@ for cat_key, url_slug in SARK_CAT_MAP.items():
 # Proper pages with header/footer + auto-redirect to external URL
 import hashlib as _hlib
 print("Generating dailyupdates detail pages...")
+print(f"  DU_SECS: {len(DU_SECS)} sections, items: {sum(len(s.get(chr(105)+chr(116)+chr(101)+chr(109)+chr(115),[])) for s in DU_SECS)}")
 _DU_SEC_META = {
     'Govt Scheme & Yojna':{'color':'#065f46','icon':'🏛️','badge':'Govt Scheme'},
     'ImportantCSC PDF':   {'color':'#7c3aed','icon':'📄','badge':'PDF Download'},
@@ -1774,20 +1791,49 @@ for _du_sec in DU_SECS:
         if not _du_name or not _du_url or not _du_url.startswith('http'):
             continue
         _du_sl = _du_slug(_du_name, _du_url)
+        if _du_sl in {'drive-google-com-dca2e21e','drive-google-com-97ed3afd','indiapost-gov-in-f03ec018'}:
+            print(f'  DEBUG: found target {_du_sl}, in_seen={_du_sl in _du_seen}, sl_bool={bool(_du_sl)}')
         if not _du_sl or _du_sl in _du_seen:
             continue
         _du_seen.add(_du_sl)
         _du_path = ROOT/'jobs'/_du_sl/'index.html'
         if _du_path.exists():
             _ex = _du_path.read_text(encoding='utf-8')
-            if 'sec-card' in _ex or 'detail-header' in _ex or 'important_dates' in _ex:
+            # Only skip if it's a real job page (has both important_dates AND application_fee)
+            if 'important_dates' in _ex and 'application_fee' in _ex:
                 continue
         _du_path.parent.mkdir(parents=True, exist_ok=True)
         _others = [i for i in _du_items if i != _du_item]
-        write(str(_du_path), _du_page(_du_name, _du_url, _du_st, _others))
+        _page_content = _du_page(_du_name, _du_url, _du_st, _others)
+        write(str(_du_path), _page_content)
+        if _du_sl in {"drive-google-com-dca2e21e","drive-google-com-97ed3afd","indiapost-gov-in-f03ec018"}: print(f"  TARGET written: {_du_path}")
         _du_count += 1
 
 print(f"  Dailyupdates detail pages: {_du_count}")
+
+# Explicit pass for items with non-Latin (Hindi/Unicode) names that hash-slug
+for _du_sec2 in DU_SECS:
+    _st2 = _du_sec2.get('title','')
+    for _di2 in _du_sec2.get('items', []):
+        _dn2 = (_di2.get('name') or '').strip()
+        _du2 = (_di2.get('url') or '').strip()
+        if not _dn2 or not _du2 or not _du2.startswith('http'): continue
+        # Only process items with non-ASCII names (pure Hindi etc.)
+        if all(ord(c) < 128 for c in _dn2): continue
+        _sl2 = _du_slug(_dn2, _du2)
+        if not _sl2: continue
+        _dp2 = ROOT/'jobs'/_sl2/'index.html'
+        if _dp2.exists():
+            _ex2 = _dp2.read_text(encoding='utf-8')
+            if 'important_dates' in _ex2 and 'application_fee' in _ex2:
+                continue
+        _dp2.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            _others2 = [i for i in _du_sec2.get('items',[]) if i != _di2]
+            write(str(_dp2), _du_page(_dn2, _du2, _st2, _others2))
+            print(f"  Unicode page: {_sl2}")
+        except Exception as _ue:
+            print(f"  Unicode ERROR {_sl2}: {_ue}")
 
 # ─────────────────────────────────────────────────────────────────
 # 7. SECTION LISTING PAGES

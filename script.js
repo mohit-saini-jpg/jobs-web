@@ -1080,7 +1080,9 @@
         const name = safe(it.name) || "Open";
         // Build URL: prefer explicit url/link, fallback to slug-based job.html
         let url = it.url || it.link || "";
-        if (!url && it.slug) {
+        // If item has an internal slug, ALWAYS use /jobs/{slug}/ as the link
+        // This ensures DU items and all items with slugs open detail pages
+        if (it.slug) {
           url = "/jobs/" + it.slug + "/";
         }
         if (!url) return;
