@@ -1845,12 +1845,14 @@ print(f"  Qualification pages: {q_count}")
 # UPDATE JSON INDEXES
 # ─────────────────────────────────────────────────────────────────
 write(str(ROOT/'jobs-index.json'),   json.dumps(jobs_index, ensure_ascii=False, separators=(',',':')))
-# Build sections_index from FJA categories for fast homepage rendering
+# Build sections_index: FJA categories + SARK categories
 sections_index = {}
+
+# FJA categories
 for _si_cat, _si_jobs in FJA.items():
     if not isinstance(_si_jobs, list): continue
     _si_items = []
-    for _j in _si_jobs[:50]:  # top 50 per category
+    for _j in _si_jobs[:100]:  # top 100 per category
         _bd = (_j.get('basic_details') or {})
         _t  = safe(_bd.get('job_title',''))
         if not _t: continue
@@ -1860,6 +1862,20 @@ for _si_cat, _si_jobs in FJA.items():
         _si_items.append({'slug':_sl,'name':_t,'date':_ld})
     if _si_items:
         sections_index[_si_cat] = _si_items
+
+# SARK categories (SR_Result, LATEST_JOBS NEW, OFFLINE_FORM, etc.)
+for _sj in SARK:
+    _scat = _sj.get('category','')
+    if not _scat: continue
+    _st = safe(_sj.get('title',''))
+    if not _st: continue
+    _sl = slugify(_st)[:80]
+    _ld = safe((_sj.get('important_dates') or {}).get('last_date','') or _sj.get('last_date',''))
+    if _scat not in sections_index:
+        sections_index[_scat] = []
+    if len(sections_index[_scat]) < 100:
+        sections_index[_scat].append({'slug':_sl,'name':_st,'date':_ld})
+
 write(str(ROOT/'sections-index.json'), json.dumps(sections_index, ensure_ascii=False, separators=(',',':')))
 
 import time as _time
