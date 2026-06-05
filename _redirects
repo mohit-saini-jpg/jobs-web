@@ -3240,3 +3240,10 @@
 /jobs/college-of-defence-management-recruitment-2026-apply-offline-for-mts-steno-and-more-posts/  /jobs/college-of-defence-management-recruitment-2026-apply-offline-for-mts-steno-and-m/  301
 /jobs/echs-hisar-vacancy-2026-free-application-form-for-clerk-data-entry-operator-dental-hygienist-medical-officer-posts/  /jobs/echs-hisar-vacancy-2026-free-application-form-for-clerk-data-entry-operator-dent/  301
 /jobs/govt-multi-specialty-hospital-chandigarh-recruitment-2026-notification-out-apply-for-37-posts/  /jobs/govt-multi-specialty-hospital-chandigarh-house-surgeon-recruitment-2026-apply-of/  301
+
+# BMC Registration Assistant — broken slug redirect
+/jobs/bmc-registration-assistant-recruitment-2026-apply-offline/  /jobs/bmc-recruitment-2026-apply-offline-for-intensivist-medical-officer-and-more-post/  301
+/job.html?slug=bmc-registration-assistant-recruitment-2026-apply-offline  /jobs/bmc-recruitment-2026-apply-offline-for-intensivist-medical-officer-and-more-post/  301
+
+# Hindi slug — missing static page redirect to homepage
+/jobs/up-%E0%A4%AE%E0%A4%96%E0%A4%AF-%E0%A4%A8%E0%A4%B0%E0%A4%B5%E0%A4%9A%E0%A4%A8-%E0%A4%85%E0%A4%A7%E0%A4%95%E0%A4%B0-computer-assistant-online-form-2026/  /section/latest-jobs/  301
