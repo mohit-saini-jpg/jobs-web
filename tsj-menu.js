@@ -6,6 +6,38 @@
 (function () {
   'use strict';
 
+  // ── Desktop nav dropdowns via DOCUMENT DELEGATION ────────────────
+  // Bound once on document, so it works on every page regardless of
+  // whether the header is static or injected later via fetch.
+  if (!document.body || !document.body._tsjDDDelegated) {
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest ? e.target.closest('.nav-dd-btn') : null;
+      if (btn) {
+        // a dropdown toggle button was clicked
+        e.preventDefault();
+        e.stopPropagation();
+        var dd   = btn.closest('[data-dd]') || btn.parentNode;
+        var menu = dd ? dd.querySelector('.nav-dd-menu') : null;
+        if (!menu) return;
+        var isOpen = menu.style.display === 'block';
+        // close all menus + reset all buttons
+        document.querySelectorAll('.nav-dd-menu').forEach(function (m) { m.style.display = ''; });
+        document.querySelectorAll('.nav-dd-btn').forEach(function (b) { b.setAttribute('aria-expanded', 'false'); });
+        if (!isOpen) {
+          menu.style.display = 'block';
+          btn.setAttribute('aria-expanded', 'true');
+        }
+        return;
+      }
+      // click outside any open dropdown → close all
+      if (!(e.target.closest && e.target.closest('.nav-dd-menu'))) {
+        document.querySelectorAll('.nav-dd-menu').forEach(function (m) { m.style.display = ''; });
+        document.querySelectorAll('.nav-dd-btn').forEach(function (b) { b.setAttribute('aria-expanded', 'false'); });
+      }
+    });
+    if (document.body) document.body._tsjDDDelegated = true;
+  }
+
   function initMenu() {
     var menuBtn    = document.getElementById('menuBtn');
     var closeBtn   = document.getElementById('closeMenuBtn');
@@ -70,24 +102,9 @@
       });
     }
 
-    // Desktop nav dropdowns
-    document.querySelectorAll('[data-dd]').forEach(function (dd) {
-      var btn  = dd.querySelector('.nav-dd-btn');
-      var menu = dd.querySelector('.nav-dd-menu');
-      if (!btn || !menu) return;
-      btn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        var isOpen = menu.style.display === 'block';
-        document.querySelectorAll('.nav-dd-menu').forEach(function (m) { m.style.display = ''; });
-        // R3: Reset all other buttons
-        document.querySelectorAll('.nav-dd-btn').forEach(function(b){if(b!==btn)b.setAttribute('aria-expanded','false');});
-        if (!isOpen) menu.style.display = 'block';
-      });
-    });
-    document.addEventListener('click', function () {
-      document.querySelectorAll('.nav-dd-menu').forEach(function (m) { m.style.display = ''; });
-    document.querySelectorAll('.nav-dd-btn').forEach(function(b){b.setAttribute('aria-expanded','false');});
-    });
+    // Desktop nav dropdowns — handled by a single delegated listener below
+    // (see initDropdownDelegation). Nothing to bind per-element here, so the
+    // dropdowns work even when the header is injected dynamically after load.
 
     // Mobile search button → scroll to search
     var mobileSearchBtn = document.getElementById('mobileSearchBtn');
@@ -144,16 +161,22 @@
     tryInit();
   }
 
-  // ── MutationObserver as final fallback (for dynamic header injection) ──
-  var headerEl = document.getElementById('site-header');
-  if (headerEl && !document.getElementById('menuBtn')) {
+  // ── MutationObserver fallback (for dynamic header injection) ──
+  // Watch the body for the menuBtn appearing, regardless of current header state.
+  if (!document.getElementById('menuBtn')) {
     var obs = new MutationObserver(function () {
       if (document.getElementById('menuBtn')) {
         obs.disconnect();
         setTimeout(initMenu, 30);
       }
     });
-    obs.observe(document.body, { childList: true, subtree: true });
+    if (document.body) {
+      obs.observe(document.body, { childList: true, subtree: true });
+    } else {
+      document.addEventListener('DOMContentLoaded', function () {
+        obs.observe(document.body, { childList: true, subtree: true });
+      });
+    }
   }
 
 })();

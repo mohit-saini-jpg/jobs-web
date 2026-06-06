@@ -72,6 +72,8 @@ def is_garbage_title(title):
     return any(p in tl for p in GARBAGE_PATTERNS)
 TODAY    = date.today().isoformat()
 YEAR     = date.today().year
+from datetime import datetime as _dt_assetver
+ASSET_VER = _dt_assetver.now().strftime('%Y%m%d%H%M%S')  # cache-bust query for shared JS
 BLOCKED  = {'sarkariresult.com','freejobalert.com','sarkarinetwork.com','sarkariresultshine.com'}
 
 # ── C1 FIX: Stable per-slug first-seen dates (datePosted must NOT be build-date) ──
@@ -1475,11 +1477,11 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 <div id="headerPlaceholder"></div>
-<script src="/tsj-init.js"></script>
+<script src="/tsj-init.js?v={ASSET_VER}"></script>
 <main id="main">{body}</main>
 <div id="footerPlaceholder"></div>
-<script src="/tsj-footer-init.js"></script>
-<script src="/tsj-menu.js" defer></script>
+<script src="/tsj-footer-init.js?v={ASSET_VER}"></script>
+<script src="/tsj-menu.js?v={ASSET_VER}" defer></script>
 </body>
 </html>'''
 
@@ -1582,11 +1584,11 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
 </head>
 <body>
 <div id="headerPlaceholder"></div>
-<script src="/tsj-init.js"></script>
+<script src="/tsj-init.js?v={ASSET_VER}"></script>
 <main id="main">{bc_html}{body}</main>
 <div id="footerPlaceholder"></div>
-<script src="/tsj-footer-init.js"></script>
-<script src="/tsj-menu.js" defer></script>
+<script src="/tsj-footer-init.js?v={ASSET_VER}"></script>
+<script src="/tsj-menu.js?v={ASSET_VER}" defer></script>
 </body>
 </html>'''
 
@@ -2056,7 +2058,7 @@ def _du_page(name, url, sec_title, other_items):
         '<script src="/tsj-config.js"></script>',
         '</head>', '<body>',
         '<div id="headerPlaceholder"></div>',
-        '<script src="/tsj-init.js"></script>',
+        '<script src="/tsj-init.js?v=' + ASSET_VER + '"></script>',
         '<main id="main">',
         '<div style="max-width:680px;margin:0 auto;padding:12px 10px 60px;">',
         bc,
@@ -2069,8 +2071,8 @@ def _du_page(name, url, sec_title, other_items):
         others,
         '</div>', '</main>',
         '<div id="footerPlaceholder"></div>',
-        '<script src="/tsj-footer-init.js"></script>',
-        '<script src="/tsj-menu.js" defer></script>',
+        '<script src="/tsj-footer-init.js?v=' + ASSET_VER + '"></script>',
+        '<script src="/tsj-menu.js?v=' + ASSET_VER + '" defer></script>',
         '</body>', '</html>',
     ]
     return '\n'.join(lines)
