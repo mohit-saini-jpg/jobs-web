@@ -22,9 +22,132 @@ CJ_FILE  = ROOT / 'data' / 'Complete_Jobs_Full_Data.json'
 if not CJ_FILE.exists(): CJ_FILE = ROOT / 'Complete_Jobs_Full_Data.json'
 DU_FILE  = ROOT / 'dailyupdates.json'
 BASE_URL = 'https://www.topsarkarijobs.com'
+
+# ── Garbage title filter (scraper navigation links) ──────────────────────────
+GARBAGE_PATTERNS = [
+    'about us','terms and conditions','contact us','privacy policy',
+    'disclaimer','sitemap','advertise with us','sarkari result®','sarkarl result',
+    'copyright','follow us','home page','back to top','whatsapp group',
+    'telegram channel','youtube channel','facebook page','google news',
+]
+
+# ── Date parsing for sort ────────────────────────────────────────────────────
+_MONTH_MAP = {'jan':1,'feb':2,'mar':3,'apr':4,'may':5,'jun':6,
+              'jul':7,'aug':8,'sep':9,'oct':10,'nov':11,'dec':12}
+
+def _parse_date_str(d):
+    """Parse various date formats → comparable string YYYY-MM-DD for sort."""
+    if not d: return '2000-01-01'
+    d = str(d).strip().lower().split('(')[0].strip()  # remove trailing notes
+    # DD-MM-YYYY or DD/MM/YYYY
+    m = re.match(r'(\d{1,2})[-/](\d{1,2})[-/](\d{4})', d)
+    if m:
+        try: return f"{m.group(3)}-{int(m.group(2)):02d}-{int(m.group(1)):02d}"
+        except: pass
+    # DD Mon/Month YYYY
+    m = re.match(r'(\d{1,2})\s+([a-z]+)\s+(\d{4})', d)
+    if m:
+        mon = _MONTH_MAP.get(m.group(2)[:3], 0)
+        if mon: 
+            try: return f"{m.group(3)}-{mon:02d}-{int(m.group(1)):02d}"
+            except: pass
+    # YYYY-MM-DD
+    m = re.match(r'(\d{4})-(\d{1,2})-(\d{1,2})', d)
+    if m:
+        try: return f"{m.group(1)}-{int(m.group(2)):02d}-{int(m.group(3)):02d}"
+        except: pass
+    return '2000-01-01'
+
+def _job_sort_key(job):
+    """Sort key: last_date_to_apply DESC, then last_updated DESC."""
+    imp = job.get('important_dates', {}) or {}
+    bd  = job.get('basic_details', {}) or {}
+    ld  = (imp.get('last_date_to_apply') or imp.get('last_date') or '').strip()
+    lu  = (bd.get('last_updated') or '').strip()
+    return (_parse_date_str(ld), _parse_date_str(lu))
+
+def is_garbage_title(title):
+    if not title or not title.strip(): return True
+    tl = title.lower().strip()
+    return any(p in tl for p in GARBAGE_PATTERNS)
 TODAY    = date.today().isoformat()
 YEAR     = date.today().year
 BLOCKED  = {'sarkariresult.com','freejobalert.com','sarkarinetwork.com','sarkariresultshine.com'}
+
+# ── C1 FIX: Stable per-slug first-seen dates (datePosted must NOT be build-date) ──
+_FIRST_SEEN_PATH = None  # set after ROOT is defined
+_FIRST_SEEN = {}
+_FIRST_SEEN_DIRTY = False
+
+def _load_first_seen(root_path):
+    global _FIRST_SEEN, _FIRST_SEEN_PATH
+    import os as _os
+    _FIRST_SEEN_PATH = _os.path.join(str(root_path), 'data', 'job-first-seen.json')
+    try:
+        with open(_FIRST_SEEN_PATH, encoding='utf-8') as f:
+            _FIRST_SEEN = json.load(f)
+    except Exception:
+        _FIRST_SEEN = {}
+
+def _save_first_seen():
+    if not _FIRST_SEEN_DIRTY or not _FIRST_SEEN_PATH: return
+    try:
+        import os as _os
+        _os.makedirs(_os.path.dirname(_FIRST_SEEN_PATH), exist_ok=True)
+        with open(_FIRST_SEEN_PATH, 'w', encoding='utf-8') as f:
+            json.dump(_FIRST_SEEN, f, ensure_ascii=False, separators=(',', ':'))
+    except Exception:
+        pass
+
+def get_date_posted(slug, job_obj):
+    """C1: Stable datePosted. Priority: real job date -> persisted first-seen -> today (saved)."""
+    global _FIRST_SEEN_DIRTY
+    dts = job_obj.get('important_dates', {}) or {}
+    bd  = job_obj.get('basic_details', {}) or {}
+    # normalize keys (handle 'date of advertisement' vs 'date_of_advertisement')
+    def _norm_key(k): return re.sub(r'[^a-z0-9]+', '_', str(k).lower()).strip('_')
+    merged = {}
+    for src in (dts, bd):
+        if isinstance(src, dict):
+            for k, v in src.items():
+                merged.setdefault(_norm_key(k), v)
+    for k in ('post_date', 'date_of_advertisement', 'opening_of_online_registration_of_application',
+              'start_date', 'application_begin', 'notification_date', 'date'):
+        raw = merged.get(k)
+        if raw:
+            nd = norm_date(raw)
+            if nd:
+                return nd
+    if slug in _FIRST_SEEN and _FIRST_SEEN[slug]:
+        return _FIRST_SEEN[slug]
+    _FIRST_SEEN[slug] = TODAY
+    _FIRST_SEEN_DIRTY = True
+    return TODAY
+
+# ── C2 FIX: Page intent classifier (job vs result vs admit vs article/scheme) ──
+import re as _re_intent
+_RX_RESULT  = _re_intent.compile(r'\b(result|results|scorecard|score card|merit list|cut[\s-]?off|rank card|declared|revaluation|answer key|answer sheet)\b', _re_intent.I)
+_RX_ADMIT   = _re_intent.compile(r'\b(admit card|hall ticket|call letter|exam date|date sheet|time table|exam city|slot booking)\b', _re_intent.I)
+_RX_SCHEME  = _re_intent.compile(r'\b(yojana|yojna|scheme|pension|scholarship|card download|registration|kyc|certificate download|status check|apply link|e-?shram|pm[\s-]?kisan|samman|loan)\b', _re_intent.I)
+_RX_JOB     = _re_intent.compile(r'\b(recruitment|vacancy|vacancies|online form|apply online|posts|notification|bharti|engagement|walk[\s-]?in|hiring|appointment)\b', _re_intent.I)
+
+def page_intent(job_obj):
+    """Return one of: job | result | admitcard | scheme | article"""
+    bd = job_obj.get('basic_details', {}) or {}
+    title = str(bd.get('job_title','') or job_obj.get('title','') or '')
+    cat   = str(job_obj.get('category','') or '')
+    blob  = (title + ' ' + cat).lower()
+    # vacancy_details / salary presence strongly indicates a real job
+    has_vacancy = bool(job_obj.get('vacancy_details') or job_obj.get('category_wise_vacancy'))
+    if _RX_RESULT.search(blob) and not _RX_JOB.search(blob):
+        return 'result'
+    if _RX_ADMIT.search(blob) and not _RX_JOB.search(blob):
+        return 'admitcard'
+    if _RX_JOB.search(blob) or has_vacancy:
+        return 'job'
+    if _RX_SCHEME.search(blob):
+        return 'scheme'
+    return 'article'
 
 # ── Qualification maps ────────────────────────────────────────
 QUAL_SLUG = {
@@ -58,6 +181,41 @@ QUAL_LABEL = {
     'MCA':'MCA','MBA_PGDM':'MBA / PGDM','LLB':'LLB','CA':'CA','CS':'CS',
     'VHSE':'VHSE','DLT':'DLT',
 }
+# N6: Qualification priority for breadcrumb selection
+QUAL_PRIORITY_MAP = {
+    'mphil-phd':1,'any-post-graduate':2,'m-sc':2,'m-com':2,'m-ed':2,'m-a':2,
+    'me-mtech':2,'ms-md':2,'mca':2,'mba-pgdm':2,'m-pharma':2,
+    'mbbs':3,'bds':3,'bams':3,'b-pharma':3,'b-sc':3,'b-tech-be':3,
+    'b-com':3,'bca':3,'bba':3,'llb':3,'b-ed':3,'ca':3,'cs':3,
+    'any-graduate':4,'intermediate':5,'diploma':6,'iti':7,
+    '12th-pass':8,'10th-pass':9,'8th-pass':10,
+    'latest-jobs':50,'latest-notifications':50,'bank-jobs':50,
+    'railway-jobs':50,'police-defence':50,'teaching-faculty':50,
+    'medical-hospital':50,'last-date-reminder':50,
+}
+
+def get_best_bc_category(cat, job_obj=None):
+    """Return (label, url) for breadcrumb — highest qualification wins."""
+    cat_slug = QUAL_SLUG.get(cat, cat.lower().replace('_','-'))
+    cat_label = QUAL_LABEL.get(cat, cat.replace('_',' ').title())
+    best_priority = QUAL_PRIORITY_MAP.get(cat_slug, 99)
+    best_slug = cat_slug
+    best_label = cat_label
+
+    # Check if job is in multiple categories — use highest qualification
+    if job_obj:
+        job_cats = job_obj.get('categories') or []
+        for jc in job_cats:
+            jc_slug = QUAL_SLUG.get(jc, jc.lower().replace('_','-'))
+            jc_priority = QUAL_PRIORITY_MAP.get(jc_slug, 99)
+            if jc_priority < best_priority:
+                best_priority = jc_priority
+                best_slug = jc_slug
+                best_label = QUAL_LABEL.get(jc, jc.replace('_',' ').title())
+
+    return (f"{best_label} Jobs", f"/category/study/{best_slug}/")
+
+
 
 # ── Helpers ───────────────────────────────────────────────────
 def e(s): return _html.escape(str(s or ''), quote=True)
@@ -86,18 +244,10 @@ def safe(v):
     return str(v).strip()
 
 def slugify(text):
-    # FIX-005: Smart truncation — cut at word boundary, not mid-word
     text = str(text).lower()
     text = re.sub(r'[^a-z0-9\s-]', '', text)
     text = re.sub(r'[\s-]+', '-', text)
-    slug = text.strip('-') or 'page'
-    if len(slug) <= 80:
-        return slug
-    truncated = slug[:80].rstrip('-')
-    last_dash = truncated.rfind('-', 60, 80)
-    if last_dash > 60:
-        truncated = truncated[:last_dash]
-    return truncated
+    return text[:80].strip('-') or 'page'
 
 def clean_slug(s):
     s = str(s or '').strip()
@@ -186,22 +336,28 @@ def render_smart_table(rows):
 
 # ── Section card builder ──────────────────────────────────────
 SECTION_META = {
-    'basic_details':        ('Job Overview',              'fa-circle-info',        '#1e40af,#3b82f6'),
-    'important_dates':      ('Important Dates',           'fa-calendar-check',     '#b91c1c,#dc2626'),
-    'application_fee':      ('Application Fee',           'fa-indian-rupee-sign',  '#c2410c,#ea580c'),
-    'age_limit':            ('Age Limit',                 'fa-user-clock',         '#0f766e,#0891b2'),
-    'qualification':        ('Qualification / Eligibility','fa-graduation-cap',    '#4338ca,#6366f1'),
-    'vacancy_details':      ('Vacancy Details',           'fa-chart-pie',          '#15803d,#16a34a'),
-    'category_wise_vacancy':('Category-wise Vacancy',     'fa-chart-bar',          '#15803d,#16a34a'),
-    'salary_details':       ('Salary & Pay Scale',        'fa-indian-rupee-sign',  '#15803d,#16a34a'),
-    'selection_process':    ('Selection Process',         'fa-list-check',         '#5b21b6,#7c3aed'),
-    'exam_pattern':         ('Exam Pattern',              'fa-file-lines',         '#0369a1,#0284c7'),
-    'syllabus':             ('Syllabus',                  'fa-book',               '#4338ca,#6366f1'),
-    'physical_eligibility': ('Physical Eligibility',      'fa-dumbbell',           '#be123c,#e11d48'),
-    'how_to_apply':         ('How to Apply',              'fa-clipboard-list',     '#0f766e,#0891b2'),
-    'important_instructions':('Important Instructions',   'fa-circle-exclamation', '#b45309,#ca8a04'),
-    'important_links':      ('Important Links',           'fa-link',               '#1e40af,#1e3a8a'),
-    'faq':                  ('FAQs',                      'fa-circle-question',    '#4338ca,#6366f1'),
+    'basic_details':        ('Job Overview',              'fa-circle-info',        '1e40af,#3b82f6'),
+    'important_dates':      ('Important Dates',           'fa-calendar-check',     'b91c1c,#dc2626'),
+    'application_fee':      ('Application Fee',           'fa-indian-rupee-sign',  'c2410c,#ea580c'),
+    'age_limit':            ('Age Limit',                 'fa-user-clock',         '0f766e,#0891b2'),
+    'qualification':        ('Qualification / Eligibility','fa-graduation-cap',    '4338ca,#6366f1'),
+    'vacancy_details':      ('Vacancy Details',           'fa-chart-pie',          '15803d,#16a34a'),
+    'category_wise_vacancy':('Category-wise Vacancy',     'fa-chart-bar',          '15803d,#16a34a'),
+    'salary_details':       ('Salary & Pay Scale',        'fa-indian-rupee-sign',  '15803d,#16a34a'),
+    'selection_process':    ('Selection Process',         'fa-list-check',         '5b21b6,#7c3aed'),
+    'exam_pattern':         ('Exam Pattern',              'fa-file-lines',         '0369a1,#0284c7'),
+    'syllabus':             ('Syllabus',                  'fa-book',               '4338ca,#6366f1'),
+    'physical_eligibility': ('Physical Eligibility',      'fa-dumbbell',           'be123c,#e11d48'),
+    'how_to_apply':         ('How to Apply',              'fa-clipboard-list',     '0f766e,#0891b2'),
+    'important_instructions':('Important Instructions',   'fa-circle-exclamation', 'b45309,#ca8a04'),
+    'important_links':      ('Important Links',           'fa-link',               '1e40af,#1e3a8a'),
+    'faq':                  ('FAQs',                      'fa-circle-question',    '4338ca,#6366f1'),
+    'tables':               ('Details',                   'fa-table',              '0f766e,#0891b2'),
+    'all_links':            ('Useful Links',              'fa-link',               '1d4ed8,#1e3a8a'),
+    'details_page_content': ('Scholarship Details',       'fa-circle-info',        '1e40af,#3b82f6'),
+    'text_sections':        ('How to Apply',              'fa-clipboard-list',     '0f766e,#0891b2'),
+    'useful_links':         ('Useful Links',              'fa-link',               '1d4ed8,#1e3a8a'),
+    'sections':             ('Details',                   'fa-circle-info',        '1e40af,#3b82f6'),
 }
 
 def sec_card(key_or_title, icon, grad, body):
@@ -252,12 +408,12 @@ def render_dates(obj):
         seen.add(lbl)
         is_last = bool(re.search(r'last|closing|अंतिम', k, re.I))
         cls = ' class="date-last"' if is_last else ''
-        rows += f'<tr><th><i class="fa-regular fa-calendar"></i> {e(lbl)}</th><td{cls}>{e(v)}</td></tr>'
+        rows += f'<tr><th scope="row"><i class="fa-regular fa-calendar"></i> {e(lbl)}</th><td{cls}>{e(v)}</td></tr>'
     for k, v in obj.items():
         lbl = key_label(k); sv = safe(v)
         if not sv or lbl in seen: continue
         seen.add(lbl)
-        rows += f'<tr><th><i class="fa-regular fa-calendar"></i> {e(lbl)}</th><td>{e(sv)}</td></tr>'
+        rows += f'<tr><th scope="row"><i class="fa-regular fa-calendar"></i> {e(lbl)}</th><td>{e(sv)}</td></tr>'
     return f'<table class="kv-table"><tbody>{rows}</tbody></table>' if rows else ''
 
 def render_fee(obj):
@@ -286,8 +442,53 @@ def render_fee(obj):
            (f'<div class="fee-note"><i class="fa-solid fa-circle-info"></i> {e(note)}</div>' if note else '')
     return body
 
+# ── C4 FIX: strip navigation/footer/tool/city-jobs pollution from section lists ──
+_POLLUTION_RX = [
+    re.compile(r'\bjobs?\s*\(\d+\)', re.I),                       # "Hyderabad Jobs (435)"
+    re.compile(r'\b(pdf|word|image)\s+to\s+(word|pdf|image)\b', re.I),
+    re.compile(r'\b(image\s+resizer|free\s+mock\s+test|free\s+ai|ai\s+interview|games?)\b', re.I),
+    re.compile(r'\b(online\s+form\s+2026|admit\s+card\s+2026\s*-\s*out|result\s+2026\s*-\s*out)\b', re.I),
+    re.compile(r'\b(privacy\s+policy|terms|disclaimer|contact\s+us|about\s+us|sitemap|advertise)\b', re.I),
+    re.compile(r'\b(follow\s+us|whatsapp|telegram\s+channel|youtube\s+channel|facebook\s+page|google\s+news)\b', re.I),
+]
+_POLLUTION_EXACT = {
+    'education','games','sarkari job','sarkari naukri','sarkari result','admit card',
+    'exam results','answer key','cutoff marks','written marks','interview results',
+    'last date reminder','eligibility','syllabus','exam pattern','selection process',
+    'previous papers','image resizer','free mock test','anganwadi recruitment',
+    'forest jobs','search jobs','employment news','latest notifications',
+    '10th jobs','8th jobs','12th jobs','diploma jobs','iti jobs','ba jobs','ma jobs',
+    'b.com jobs','mba jobs','msw jobs','b.sc jobs','m.sc jobs','b.tech/b.e jobs',
+    'any graduate jobs','any post graduate jobs','pdf to word converter',
+    'image to pdf converter','word to pdf converter','free ai interview tool',
+}
+
+def _clean_section_items(items):
+    """Remove menu/footer/tool/city/other-job pollution that bled into section arrays."""
+    out = []
+    for s in items:
+        if not s: continue
+        t = str(s).strip()
+        tl = t.lower().strip(' .:')
+        if tl in _POLLUTION_EXACT:
+            continue
+        if any(rx.search(t) for rx in _POLLUTION_RX):
+            continue
+        # very short menu-like single tokens (no sentence) are likely nav labels
+        if len(t) <= 3:
+            continue
+        out.append(t)
+    # de-dup preserving order
+    seen = set(); ded = []
+    for x in out:
+        k = x.lower()
+        if k in seen: continue
+        seen.add(k); ded.append(x)
+    return ded
+
 def render_list_items(items, ordered=False):
     filtered = [safe(s) for s in (items if isinstance(items, list) else [str(items)]) if safe(s)]
+    filtered = _clean_section_items(filtered)
     if not filtered: return ''
     tag = 'ol' if ordered else 'ul'
     return f'<{tag} class="val-list">' + ''.join(f'<li>{e(s)}</li>' for s in filtered) + f'</{tag}>'
@@ -296,9 +497,10 @@ def render_selection(sp):
     if not sp: return ''
     if isinstance(sp, str): sp = [s.strip() for s in re.split(r'[,\n;/→]', sp) if s.strip()]
     steps = [safe(s) for s in sp if safe(s)]
+    steps = _clean_section_items(steps)[:25]   # C4: cap + clean
     if not steps: return ''
     return '<div class="sel-steps">' + ''.join(
-        f'<div class="sel-step"><span class="sel-num">{i+1}</span>{e(s[:100])}</div>'
+        f'<div class="sel-step"><span class="sel-num">{i+1}</span>{e(s[:140])}</div>'
         for i, s in enumerate(steps)
     ) + '</div>'
 
@@ -306,6 +508,7 @@ def render_hta(steps):
     if not steps: return ''
     if isinstance(steps, str): steps = [s.strip() for s in steps.split('\n') if s.strip()]
     filtered = [safe(s) for s in steps if safe(s)]
+    filtered = _clean_section_items(filtered)[:25]   # C4: cap + clean
     if not filtered: return ''
     items = ''.join(f'<li class="hta-item"><span class="hta-num">{i+1}</span><span>{e(s)}</span></li>'
                     for i, s in enumerate(filtered))
@@ -365,12 +568,22 @@ def render_links(il_obj):
 def render_faq(faq_list):
     if not isinstance(faq_list, list) or not faq_list: return ''
     items = ''
-    for i, f in enumerate(faq_list):
+    seen = set()
+    idx = 0
+    for f in faq_list:
         if not isinstance(f, dict): continue
         q = safe(f.get('question','')); a = safe(f.get('answer',''))
         if not q or not a: continue
-        items += (f'<div class="faq-item" id="faq-{i+1}">'
-                  f'<div class="faq-q"><span class="faq-icon">Q{i+1}</span><span>{e(q)}</span></div>'
+        # strip any pre-existing "Q1." / "Q12)" / "1." numbering from the question text
+        # (renderer adds its own Q{n} badge, so leaving it causes "Q1 Q1." double numbering)
+        q = re.sub(r'^\s*Q?\s*\d{1,3}\s*[\.\):\-]\s*', '', q, flags=re.I).strip()
+        # de-duplicate by normalized question text
+        key = re.sub(r'\s+', ' ', q.lower()).strip()
+        if not key or key in seen: continue
+        seen.add(key)
+        idx += 1
+        items += (f'<div class="faq-item" id="faq-{idx}">'
+                  f'<div class="faq-q"><span class="faq-icon">Q{idx}</span><span>{e(q)}</span></div>'
                   f'<div class="faq-a"><span class="faq-icon" style="background:#15803d">A</span><div>{e(a)}</div></div></div>')
     return items
 
@@ -378,6 +591,8 @@ def render_vacancy_table(vac_list):
     if not vac_list or not isinstance(vac_list, list): return ''
     ALL_COLS = [
         ('post_name',['post_name','post','name','Post Name','Name Of Post','Post']),
+        ('state',['State / UT','State/UT','state','State','State / Ut']),
+        ('language',['Language','language','Medium','medium']),
         ('total',['total','total_vacancies','total_posts','vacancies','Total Posts','Total','Vacancy']),
         ('ur',['ur','general','UR','General (UR)','General']),
         ('obc',['obc','OBC']),('sc',['sc','SC']),('st',['st','ST']),('ews',['ews','EWS']),
@@ -386,12 +601,17 @@ def render_vacancy_table(vac_list):
         ('qualification',['eligibility','qualification','Educational Qualification']),
         ('department',['department','Department']),
     ]
-    LABELS = {'post_name':'Post Name','total':'Total','ur':'UR/General','obc':'OBC',
+    LABELS = {'post_name':'Post Name','state':'State / UT','language':'Language',
+              'total':'Total','ur':'UR/General','obc':'OBC',
               'sc':'SC','st':'ST','ews':'EWS','women':'Women','salary':'Salary',
               'qualification':'Qualification','department':'Department'}
     norm = []; avail = set()
     for row in vac_list:
         if not isinstance(row, dict): continue
+        # skip rows that clearly belong to a different table (e.g. disability Category/Description
+        # rows leaked into vacancy_details) — they carry none of our known columns
+        if not any(a in row for _c, al in ALL_COLS for a in al):
+            continue
         n = {}
         for col, aliases in ALL_COLS:
             for a in aliases:
@@ -401,9 +621,69 @@ def render_vacancy_table(vac_list):
     if not norm: return ''
     cols = [c for c,_ in ALL_COLS if c in avail]
     if not cols: return ''
+
+    # ── C3 FIX: clean rows + compute the real grand total ──
+    def _to_int(v):
+        m = re.search(r'\d[\d,]*', str(v or ''))
+        return int(m.group().replace(',', '')) if m else None
+    def _is_total_label(v):
+        return bool(re.search(r'\b(total|grand\s*total|sum)\b', str(v or ''), re.I))
+
+    has_name = 'post_name' in cols
+    # label column = first non-total descriptive column (post_name/state/language)
+    _label_cols = [c for c in cols if c in ('post_name','state','language','department')]
+    clean = []
+    explicit_total = None
+    for r in norm:
+        name = r.get('post_name', '') or r.get('state','') or r.get('language','')
+        # capture an explicitly-labelled total row, don't render it as a data line
+        if _is_total_label(r.get('post_name','') or r.get('state','') or r.get('language','')):
+            t = _to_int(r.get('total'))
+            if t: explicit_total = t
+            continue
+        # capture an UNLABELLED total row: has a Total value but no descriptive label at all
+        if _label_cols and not any(str(r.get(lc,'')).strip() for lc in _label_cols) and str(r.get('total','')).strip():
+            t = _to_int(r.get('total'))
+            if t: explicit_total = t
+            continue
+        # drop rows completely empty of label AND total
+        if _label_cols and not any(str(r.get(lc,'')).strip() for lc in _label_cols) and not str(r.get('total','')).strip():
+            continue
+        clean.append(r)
+    if not clean and not explicit_total:
+        clean = norm
+
+    # If post-name column is entirely blank, render without it (keep state/language)
+    if has_name and all(not str(r.get('post_name','')).strip() for r in clean):
+        cols = [c for c in cols if c != 'post_name'] or ['total']
+        has_name = False
+
+    grand_total = explicit_total
+    # sanity: a real grand total can't be smaller than the largest single data row
+    if 'total' in cols:
+        data_nums = [x for x in (_to_int(r.get('total')) for r in clean) if x]
+        data_sum = sum(data_nums) if data_nums else 0
+        data_max = max(data_nums) if data_nums else 0
+        if grand_total is not None and grand_total < data_max:
+            grand_total = data_sum or None      # captured "total" was bogus -> use real sum
+        if grand_total is None and data_nums:
+            grand_total = data_sum
+
     head = '<th>Sr.</th>' + ''.join(f'<th>{LABELS[c]}</th>' for c in cols)
     rows = ''.join(f'<tr><td>{i+1}</td>' + ''.join(f'<td>{e(r.get(c,""))}</td>' for c in cols) + '</tr>'
-                   for i, r in enumerate(norm))
+                   for i, r in enumerate(clean))
+    # append a correct, clearly-labelled total row (only when meaningful and >1 data row)
+    if grand_total and 'total' in cols and len(clean) > 1:
+        tot_cells = ''
+        first_done = False
+        for c in cols:
+            if not first_done:
+                tot_cells += '<td><strong>Total</strong></td>'; first_done = True
+            elif c == 'total':
+                tot_cells += f'<td><strong>{grand_total}</strong></td>'
+            else:
+                tot_cells += '<td></td>'
+        rows += f'<tr class="vac-tot">{tot_cells}</tr>'
     return f'<div class="tbl-scroll"><table class="data-table"><thead><tr>{head}</tr></thead><tbody>{rows}</tbody></table></div>'
 
 # ── Sarkari sections processor ────────────────────────────────
@@ -423,7 +703,7 @@ TITLE_MAP = {
     'important related links':'important_links_extra',
     'important instructions':'important_instructions',
 }
-SKIP_TITLES = {'set as preferred source on google','set as preferred source','about',''}
+SKIP_TITLES = {'set as preferred source on google','set as preferred source','about'}
 
 def render_sarkari_sections(sections_list, existing_il=None):
     """Map titled sections to proper renderers"""
@@ -547,6 +827,8 @@ def render_sarkari_sections(sections_list, existing_il=None):
     html += render_edu_sections(data['raw'])
     return html
 
+
+
 def render_edu_sections(sections_list):
     """Render education-format sections with heading+content"""
     if not sections_list: return ''
@@ -618,14 +900,15 @@ SKIP_KEYS = {'seo_tags','category','slug','source_url','url','_slug',
              'sequence','entry_type','sub_type','listing_date','post_date',
              'form_pdf_free_link','application_form_pdf_link','form_pdf_link',
              'apply_online_link','official_notification_pdf_link','official_website_link',
-             'all_links','jobs_info','details_page_content','status','last_date',
-             'total_post','text_sections','tables','useful_links','application_fees',
+             'jobs_info','status','last_date',
+             'application_fees',
              'minimum_age','maximum_age','salary_pay_scale','homepage_serial',
              'organization','post_name','total_vacancy','apply_mode','job_location',
              'short_information','board_name','listing_date','title'}
 
 SECTION_ORDER = ['basic_details','important_dates','application_fee','age_limit',
                  'qualification','vacancy_details','category_wise_vacancy','salary_details',
+                 'tables','text_sections','useful_links','all_links','details_page_content',
                  'selection_process','exam_pattern','syllabus','physical_eligibility',
                  'how_to_apply','important_instructions','important_links','faq']
 
@@ -635,10 +918,14 @@ def build_all_sections(job_obj):
     # Check for sarkari titled sections
     sections = job_obj.get('sections') or []
     has_sarkari = bool(sections and any(sec.get('title') for sec in sections if isinstance(sec,dict)))
+    has_edu_secs = bool(sections and any(sec.get('heading') is not None for sec in sections if isinstance(sec,dict)) and not has_sarkari)
     il = job_obj.get('important_links') or {}
 
     if has_sarkari:
         html += render_sarkari_sections(sections, il)
+        rendered.add('sections')
+    elif has_edu_secs:
+        html += render_edu_sections(sections)
         rendered.add('sections')
 
     for key in SECTION_ORDER:
@@ -656,6 +943,137 @@ def build_all_sections(job_obj):
         elif key == 'salary_details':   body = render_list_items(val) if isinstance(val,list) else (f'<table class="kv-table"><tbody>' + ''.join(f'<tr><th>{e(key_label(k))}</th><td>{e(safe(v))}</td></tr>' for k,v in val.items() if safe(v)) + '</tbody></table>' if isinstance(val,dict) else f'<div class="edu-sec">{e(safe(val))}</div>')
         elif key == 'selection_process': body = render_selection(val)
         elif key == 'exam_pattern':     body = (render_smart_table(val) if isinstance(val,list) and val and isinstance(val[0],dict) else render_list_items(val) if isinstance(val,list) else f'<div class="edu-sec">{e(safe(val))}</div>')
+        elif key == 'tables':
+            # sarkari_data tables: [{table_name, rows:[[]]}]
+            if isinstance(val, list):
+                body_parts = []
+                for tbl in val:
+                    if not isinstance(tbl, dict): continue
+                    tname = (tbl.get('table_name') or '').strip()
+                    rows  = tbl.get('rows') or []
+                    if not rows: continue
+                    # Skip garbage table names
+                    if any(x in tname.lower() for x in ['gb headline','headline text','60ccea']): tname = ''
+                    t_html = ''
+                    if tname:
+                        t_html += f'<div class="tbl-name">{e(tname[:200])}</div>'
+                    t_html += '<div class="tbl-scroll"><table class="data-table"><tbody>'
+                    for row in rows:
+                        if not isinstance(row, (list, tuple)): continue
+                        t_html += '<tr>' + ''.join(f'<td>{e(str(cell))}</td>' for cell in row) + '</tr>'
+                    t_html += '</tbody></table></div>'
+                    body_parts.append(t_html)
+                body = ''.join(body_parts) if body_parts else ''
+        elif key == 'text_sections':
+            # sarkari_data text_sections: [{section, content}]
+            if isinstance(val, list):
+                body_parts = []
+                for ts in val:
+                    if not isinstance(ts, dict): continue
+                    sec_title = safe(ts.get('section') or ts.get('heading') or '')
+                    sec_text  = safe(ts.get('content') or ts.get('text') or '')
+                    if not sec_text: continue
+                    ts_html = ''
+                    if sec_title:
+                        ts_html += f'<div class="ts-title">{e(sec_title)}</div>'
+                    # Split pipe-separated content into bullet list
+                    items_list = [s.strip() for s in sec_text.split('|') if s.strip()]
+                    if len(items_list) > 1:
+                        ts_html += '<ul class="val-list">' + ''.join(f'<li>{e(it)}</li>' for it in items_list) + '</ul>'
+                    else:
+                        ts_html += f'<p class="edu-para">{e(sec_text)}</p>'
+                    body_parts.append(ts_html)
+                body = ''.join(body_parts) if body_parts else ''
+        elif key == 'useful_links':
+            # sarkari_data useful_links: [{title, links: str|[str]}]
+            if isinstance(val, list):
+                rows_html = ''
+                for ul_item in val:
+                    if not isinstance(ul_item, dict): continue
+                    title = safe(ul_item.get('title') or ul_item.get('name') or 'Link')
+                    links = ul_item.get('links') or ul_item.get('url') or ''
+                    if isinstance(links, str): links = [links]
+                    valid = [str(l).strip() for l in (links if isinstance(links,list) else [])
+                             if str(l).strip().startswith('http') and not is_blocked(str(l).strip())]
+                    if not valid: continue
+                    if len(valid) == 1:
+                        lnk = valid[0]
+                        ul_lower = lnk.lower()
+                        ic = 'fa-file-pdf' if ul_lower.endswith('.pdf') else 'fa-arrow-up-right-from-square'
+                        cl = 'btn-pdf' if ul_lower.endswith('.pdf') else 'btn-default'
+                        rows_html += (f'<tr><td class="ul-title">{e(title)}</td>'
+                                      f'<td><a href="{e(lnk)}" class="lnk-btn {cl}" target="_blank" rel="noopener noreferrer">'
+                                      f'<i class="fa-solid {ic}"></i> Open</a></td></tr>\n')
+                    else:
+                        # Multiple links: show as "Link 1 | Link 2" row
+                        link_btns = ''
+                        LINK_LABELS = ['Result', 'Cutoff', 'Hindi', 'English', 'Part 1', 'Part 2',
+                                       'Technician I', 'Technician III', 'Grade I', 'Grade III',
+                                       'CBT 1', 'CBT 2', 'Link 1', 'Link 2']
+                        for idx_l, lnk in enumerate(valid):
+                            ul_lower = lnk.lower()
+                            lbl = LINK_LABELS[idx_l] if idx_l < len(LINK_LABELS) else f'Link {idx_l+1}'
+                            ic = 'fa-file-pdf' if ul_lower.endswith('.pdf') else 'fa-arrow-up-right-from-square'
+                            cl = 'btn-pdf' if ul_lower.endswith('.pdf') else 'btn-default'
+                            link_btns += (f'<a href="{e(lnk)}" class="lnk-btn {cl} lnk-sm" target="_blank" rel="noopener noreferrer">'
+                                          f'<i class="fa-solid {ic}"></i> {e(lbl)}</a>\n')
+                        rows_html += (f'<tr><td class="ul-title">{e(title)}</td>'
+                                      f'<td><div class="ul-links">{link_btns}</div></td></tr>\n')
+                if rows_html:
+                    body = (f'<div class="tbl-scroll"><table class="data-table ul-table"><tbody>'
+                            f'{rows_html}</tbody></table></div>')
+        elif key == 'all_links':
+            # all_links: [{label, title, url}] — render as labeled link buttons table
+            if isinstance(val, list):
+                valid = [lnk for lnk in val if isinstance(lnk,dict) and str(lnk.get('url','')).startswith('http') and not is_blocked(str(lnk.get('url','')))]
+                if valid:
+                    rows_html = ''
+                    for lnk in valid:
+                        lbl   = safe(lnk.get('label') or lnk.get('title') or 'Click Here').strip()[:80]
+                        title = safe(lnk.get('title') or 'Click Here').strip()[:30]
+                        url_l = str(lnk.get('url','')).strip()
+                        if not lbl: lbl = title
+                        ul_lower = url_l.lower()
+                        ic = 'fa-file-pdf' if ul_lower.endswith('.pdf') else 'fa-arrow-up-right-from-square'
+                        cl = 'btn-pdf' if ul_lower.endswith('.pdf') else 'btn-default'
+                        rows_html += (f'<tr><td class="ul-title">{e(lbl)}</td>'
+                                      f'<td><a href="{e(url_l)}" class="lnk-btn {cl}" target="_blank" rel="noopener noreferrer">'
+                                      f'<i class="fa-solid {ic}"></i> {e(title)}</a></td></tr>\n')
+                    body = (f'<div class="tbl-scroll"><table class="data-table ul-table"><tbody>'
+                            f'{rows_html}</tbody></table></div>')
+        elif key == 'details_page_content':
+            # LATEST_JOBS NEW format: {paragraphs:[str], tables:[{headers,rows,table_heading}], lists:[]}
+            if isinstance(val, dict):
+                parts = []
+                # Paragraphs
+                for para in (val.get('paragraphs') or []):
+                    para = safe(para).strip()
+                    if para and len(para) > 10:
+                        parts.append(f'<p class="edu-para">{e(para)}</p>')
+                # Tables
+                for tbl in (val.get('tables') or []):
+                    if not isinstance(tbl, dict): continue
+                    heading = safe(tbl.get('table_heading') or tbl.get('heading') or '').strip()
+                    headers = tbl.get('headers') or []
+                    rows    = tbl.get('rows') or []
+                    if not rows: continue
+                    t_html = ''
+                    if heading:
+                        t_html += f'<div class="tbl-name">{e(heading)}</div>'
+                    t_html += '<div class="tbl-scroll"><table class="data-table"><thead><tr>'
+                    t_html += ''.join(f'<th>{e(str(h))}</th>' for h in headers)
+                    t_html += '</tr></thead><tbody>'
+                    for row in rows:
+                        if not isinstance(row, (list,tuple)): continue
+                        t_html += '<tr>' + ''.join(f'<td>{e(str(c))}</td>' for c in row) + '</tr>'
+                    t_html += '</tbody></table></div>'
+                    parts.append(t_html)
+                # Lists
+                for lst in (val.get('lists') or []):
+                    items_l = lst.get('items',[]) if isinstance(lst,dict) else (lst if isinstance(lst,list) else [])
+                    if items_l:
+                        parts.append('<ul class="val-list">' + ''.join(f'<li>{e(str(it))}</li>' for it in items_l if it) + '</ul>')
+                body = ''.join(parts) if parts else ''
         elif key == 'syllabus':         body = (render_list_items(val) if isinstance(val,list) else f'<div class="edu-sec">{e(safe(val))}</div>')
         elif key == 'physical_eligibility': body = (f'<table class="kv-table"><tbody>' + ''.join(f'<tr><th>{e(key_label(k))}</th><td>{e(safe(v))}</td></tr>' for k,v in val.items() if safe(v)) + '</tbody></table>' if isinstance(val,dict) else render_list_items(val) if isinstance(val,list) else f'<div class="edu-sec">{e(safe(val))}</div>')
         elif key == 'how_to_apply':     body = render_hta(val)
@@ -680,7 +1098,26 @@ def build_all_sections(job_obj):
     return html
 
 # ── Schema builder ─────────────────────────────────────────────
-def build_schemas(job_obj, canon_url, breadcrumbs):
+
+# N9: Parse salary from pay_scale string for accurate JobPosting schema
+_LEVEL_PAY = {1:18000,2:19900,3:21700,4:25500,5:29200,6:35400,
+              7:44900,8:47600,9:53100,10:56100,11:67700,12:78800,
+              13:123100,14:144200,15:182200,16:205400,17:225000,18:250000}
+
+def parse_salary(pay_str):
+    if not pay_str: return (18000, 92300)
+    lm = re.search(r'level[- ]?(\d+)', str(pay_str).lower())
+    if lm:
+        lvl = int(lm.group(1))
+        base = _LEVEL_PAY.get(lvl, 25000)
+        return (base, min(int(base * 2.5), 250000))
+    nums = [int(n.replace(',','')) for n in re.findall(r'[\d,]{4,}', str(pay_str))
+            if 5000 <= int(n.replace(',','')) <= 500000]
+    if len(nums) >= 2: return (min(nums), max(nums))
+    if len(nums) == 1: return (nums[0], min(int(nums[0]*2), 250000))
+    return (18000, 92300)
+
+def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
     bd    = job_obj.get('basic_details', {}) or {}
     dates = job_obj.get('important_dates', {}) or {}
     faq   = job_obj.get('faq', []) or []
@@ -690,25 +1127,68 @@ def build_schemas(job_obj, canon_url, breadcrumbs):
     desc  = safe(bd.get('short_information',''))[:500] or title
     last_d = safe(dates.get('last_date_to_apply','') or dates.get('last_date',''))
 
-    jp = {'@context':'https://schema.org','@type':'JobPosting','title':title,
-          'description':desc,'datePosted':TODAY,'url':canon_url,
-          'employmentType':'FULL_TIME',
-          'hiringOrganization':{'@type':'Organization','name':org},
-          'jobLocation':{'@type':'Place','address':{'@type':'PostalAddress','addressCountry':'IN','addressLocality':loc}}}
-    if last_d:
-        nd = norm_date(last_d)
-        if nd: jp['validThrough'] = nd + 'T00:00:00'
+    if slug is None:
+        slug = slugify(title)[:80]
+    intent = page_intent(job_obj)
+    # C1: stable datePosted (never build-date for the same job across rebuilds)
+    date_posted = get_date_posted(slug, job_obj)
 
+    # ── Breadcrumb schema (always) ──
     bc_items = [{'@type':'ListItem','position':1,'name':'Home','item':BASE_URL+'/'}]
     for i,(lbl,url) in enumerate(breadcrumbs, 2):
         bc_items.append({'@type':'ListItem','position':i,'name':lbl,'item':url})
     bc_items.append({'@type':'ListItem','position':len(bc_items)+1,'name':title,'item':canon_url})
     bc_schema = {'@context':'https://schema.org','@type':'BreadcrumbList','itemListElement':bc_items}
 
-    out = (f'<script type="application/ld+json">{json.dumps(jp, ensure_ascii=False)}</script>\n'
+    if intent == 'job':
+        # ── H1: proper JobPosting only for real jobs ──
+        jp = {'@context':'https://schema.org','@type':'JobPosting','title':title,
+              'description':desc,'datePosted':date_posted,'url':canon_url,
+              'employmentType':'FULL_TIME','directApply':False,
+              'identifier':{'@type':'PropertyValue','name':org,
+                            'value':safe(bd.get('advt_no','') or bd.get('notification_no','') or slug)},
+              'hiringOrganization':{'@type':'Organization','name':org,'sameAs':BASE_URL},
+              'jobLocation':{'@type':'Place','address':{'@type':'PostalAddress','addressCountry':'IN','addressLocality':loc}},
+              'applicantLocationRequirements':{'@type':'Country','name':'India'}}
+        # H1: only emit baseSalary when we actually have a salary string (no min:0 spam)
+        _pay_str = safe((job_obj.get('basic_details') or {}).get('pay_scale','') or
+                        (job_obj.get('salary_details') or {}).get('pay_scale','') or '')
+        if _pay_str:
+            _sal_min, _sal_max = parse_salary(_pay_str)
+            if _sal_min and _sal_min > 0:
+                jp['baseSalary'] = {'@type':'MonetaryAmount','currency':'INR',
+                    'value':{'@type':'QuantitativeValue','minValue':_sal_min,'maxValue':_sal_max,'unitText':'MONTH'}}
+        if last_d:
+            nd = norm_date(last_d)
+            if nd: jp['validThrough'] = nd + 'T00:00:00'
+        primary = jp
+    else:
+        # C2: result / admitcard / scheme / article -> Article (NOT JobPosting)
+        primary = {'@context':'https://schema.org','@type':'Article',
+                   'headline':title[:110],'description':desc,'url':canon_url,
+                   'datePublished':date_posted,'dateModified':TODAY,
+                   'author':{'@type':'Organization','name':'Top Sarkari Jobs','url':BASE_URL},
+                   'publisher':{'@type':'Organization','name':'Top Sarkari Jobs',
+                                'logo':{'@type':'ImageObject','url':BASE_URL+'/image.png'}},
+                   'mainEntityOfPage':{'@type':'WebPage','@id':canon_url},
+                   'image':BASE_URL+'/og-jobs.png'}
+
+    out = (f'<script type="application/ld+json">{json.dumps(primary, ensure_ascii=False)}</script>\n'
            f'<script type="application/ld+json">{json.dumps(bc_schema, ensure_ascii=False)}</script>\n')
 
-    valid_faqs = [f for f in faq if isinstance(f,dict) and f.get('question') and f.get('answer')][:10]
+    # de-dup FAQs + strip pre-existing Q-number prefix for clean structured data
+    _seen_q = set(); valid_faqs = []
+    for f in faq:
+        if not isinstance(f, dict): continue
+        q = str(f.get('question','') or '').strip()
+        a = str(f.get('answer','') or '').strip()
+        if not q or not a: continue
+        q = re.sub(r'^\s*Q?\s*\d{1,3}\s*[\.\):\-]\s*', '', q, flags=re.I).strip()
+        k = re.sub(r'\s+', ' ', q.lower()).strip()
+        if not k or k in _seen_q: continue
+        _seen_q.add(k)
+        valid_faqs.append({'question': q, 'answer': a})
+        if len(valid_faqs) >= 10: break
     if valid_faqs:
         faq_schema = {'@context':'https://schema.org','@type':'FAQPage',
             'mainEntity':[{'@type':'Question','name':f['question'],'acceptedAnswer':{'@type':'Answer','text':f['answer']}} for f in valid_faqs]}
@@ -720,7 +1200,7 @@ PAGE_CSS = """
 *,*::before,*::after{box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f4f8;margin:0;color:#1e293b}
 a{text-decoration:none}.skip-link{position:absolute;left:-9999px}.skip-link:focus{left:8px;top:8px;z-index:999;background:#1d4ed8;color:#fff;padding:8px 16px;border-radius:6px}
-.pg-wrap{max-width:880px;margin:0 auto;padding:12px 10px 48px}
+.pg-wrap{max-width:880px;margin:0 auto;padding:12px 10px max(80px,calc(60px + env(safe-area-inset-bottom,0px)))}
 .bc{font-size:.74rem;color:#64748b;padding:8px 10px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;background:#fff;border-bottom:1px solid #e2e8f0}
 .bc a{color:#1d4ed8}.bc a:hover{text-decoration:underline}.bc-sep{color:#d1d5db;font-size:.6rem}
 .notice{background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:9px 14px;font-size:.8rem;color:#78350f;margin-bottom:12px;display:flex;gap:8px;align-items:flex-start}
@@ -814,7 +1294,7 @@ a{text-decoration:none}.skip-link{position:absolute;left:-9999px}.skip-link:focu
 """
 
 # ── Page builder ───────────────────────────────────────────────
-def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt Job'):
+def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt Job', noindex_dup=False):
     bd    = job_obj.get('basic_details', {}) or {}
     dates = job_obj.get('important_dates', {}) or {}
     il    = job_obj.get('important_links', {}) or {}
@@ -828,13 +1308,79 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     apply_m   = safe(bd.get('application_mode','') or job_obj.get('apply_mode','') or 'Online')
     location  = safe(bd.get('job_location','') or job_obj.get('job_location','') or 'India')
 
-    title_tag  = f"{title[:45]} {YEAR} | Top Sarkari Jobs"
+    # Build SEO title inline (50-60 chars)
+    _BRAND = ' | Top Sarkari Jobs'
+    _vac_n = vacancies if vacancies and vacancies not in ('—','') else ''
+    _vac_s = f', {_vac_n} Posts' if _vac_n else ''
+    # Shorten org name for title
+    _ORG_MAP = {
+        'Delhi Subordinate Services Selection Board':'DSSSB',
+        'Staff Selection Commission':'SSC','Union Public Service Commission':'UPSC',
+        'Railway Recruitment Board':'RRB','State Bank of India':'SBI',
+        'Reserve Bank of India':'RBI','Employees Provident Fund Organisation':'EPFO',
+        'Institute of Banking Personnel Selection':'IBPS',
+        'All India Institute of Medical Sciences':'AIIMS',
+        'National Testing Agency':'NTA','Bharat Sanchar Nigam Limited':'BSNL',
+    }
+    _org_s = next((s for f,s in _ORG_MAP.items() if f.lower() in org.lower()), None)
+    if not _org_s:
+        _w = org.split()
+        _org_s = org if len(_w)<=3 else ' '.join(_w[:3])
+    _MAX = 60 - len(_BRAND)
+    # Content type detection
+    import re as _re
+    _tl = title.lower()
+    _ctype_map = {
+        'result': r'\b(result|declared|scorecard|merit list)\b',
+        'admit':  r'\b(admit card|hall ticket|call letter)\b',
+        'answer': r'\b(answer key|answer sheet)\b',
+    }
+    _ct = next((c for c,p in _ctype_map.items() if _re.search(p, _tl)), 'default')
+    _yr_m = _re.search(r'20\d\d', title)
+    _yr = _yr_m.group() if _yr_m else str(YEAR)
+    if _ct != 'default':
+        _fmt = {'result':'{o} {y} Result','admit':'{o} {y} Admit Card','answer':'{o} {y} Answer Key'}
+        _jp = _fmt[_ct].format(o=_org_s, y=_yr)
+    else:
+        # H2: prefer the real, intent-rich title (post name + Recruitment/Vacancy/Form),
+        # trimmed to fit; fall back to org-based only if title is unusable.
+        _clean_title = re.sub(r'\s*-\s*(latest jobs|big update|notification out).*$', '', title, flags=re.I).strip()
+        _has_intent = bool(re.search(r'\b(recruitment|vacancy|vacancies|online form|apply online|posts|notification|admit card|result)\b', _clean_title, re.I))
+        if _has_intent and 15 <= len(_clean_title):
+            _jp = _clean_title
+        else:
+            _jp = f'{_org_s} {_yr} Recruitment{_vac_s}'
+            if len(_jp) > _MAX:
+                _jp = f'{_org_s} {_yr}{_vac_s}'
+            if len(_jp) < 15:
+                _jp = title[:_MAX]
+    if len(_jp) > _MAX:
+        _jp = _jp[:_MAX-1].rsplit(' ',1)[0].rstrip(',-–(') + '…'
+    title_tag = (_jp + _BRAND)[:60]
     keywords   = ', '.join(str(k) for k in (seo if isinstance(seo,list) else []) + [org, location, 'sarkari job'])[:200]
     short_info = safe(bd.get('short_information','') or job_obj.get('jobs_info','') or job_obj.get('short_information',''))
-    meta_desc  = (short_info[:130] or f"{title}: Apply online, vacancy details, important dates.") + f" {YEAR}"
-    meta_desc  = meta_desc[:155]
+    # Build meta description inline
+    _si = short_info.rstrip('.,; ').strip() if short_info else ''
+    _vd = vacancies if vacancies and vacancies not in ('—','') else ''
+    _ld_s = last_d.strip() if last_d and last_d not in ('—','') else ''
+    _base_md = _si[:100] if _si else f'{title[:60].rstrip()} Recruitment {YEAR}'
+    if _si and len(_si) > 100:
+        _base_md = _si[:_si.rfind(' ', 80, 100)] if ' ' in _si[80:100] else _si[:100]
+    _parts = [_base_md]
+    if _vd: _parts.append(f'{_vd} Posts')
+    if _ld_s: _parts.append(f'Last Date: {_ld_s}')
+    _cta_md = f'Apply {apply_m.lower() if apply_m else "online"} at Top Sarkari Jobs.'
+    _md_full = '. '.join(p.rstrip('.') for p in _parts) + '. ' + _cta_md
+    if len(_md_full) > 155:
+        _cut = _md_full[:155]
+        # back off to last full word; avoid mid-word cut
+        if ' ' in _cut:
+            _cut = _cut[:_cut.rfind(' ')]
+        meta_desc = _cut.rstrip(' ,;:-') + '…'
+    else:
+        meta_desc = _md_full
 
-    schemas_html = build_schemas(job_obj, canon_url, breadcrumbs)
+    schemas_html = build_schemas(job_obj, canon_url, breadcrumbs, slug)
 
     # Breadcrumb HTML
     bc_html = '<nav class="bc" aria-label="Breadcrumb"><a href="/">Home</a>'
@@ -888,25 +1434,30 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
 </div>'''
 
     return f'''<!DOCTYPE html>
-<html lang="hi-IN">
+<html lang="en-IN">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>{e(title_tag[:60])}</title>
 <meta name="description" content="{e(meta_desc)}"/>
-<meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large"/>
+<meta name="keywords" content="{e(keywords)}"/>
+<meta name="robots" content="{'noindex,follow' if noindex_dup else 'index,follow,max-snippet:-1,max-image-preview:large'}"/>
 <link rel="canonical" href="{e(canon_url)}"/>
 <meta property="og:type" content="article"/>
 <meta property="og:site_name" content="Top Sarkari Jobs"/>
 <meta property="og:title" content="{e(title_tag[:60])}"/>
 <meta property="og:description" content="{e(meta_desc)}"/>
 <meta property="og:url" content="{e(canon_url)}"/>
-<meta property="og:image" content="{BASE_URL}/image.png"/>
+<meta property="og:image" content="{BASE_URL}/{'og-results.png' if any(x in canon_url for x in ['/result','/result']) else 'og-admit.png' if 'admit' in canon_url else 'og-jobs.png'}"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="{e(title_tag[:60])}"/>
 <meta name="twitter:description" content="{e(meta_desc)}"/>
 {schemas_html}
-<script>window.__TSJ_STATIC_PAGE=true;window.__TSJ_PSR_DISABLED=true;window.__TSJ_RENDERER_DISABLED=true;</script>
+<script src="/tsj-config.js"></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin/>
+<link rel="dns-prefetch" href="https://www.googletagmanager.com"/>
+<meta name="author" content="Top Sarkari Jobs"/>
+<meta name="geo.region" content="IN"/>
 <link rel="icon" href="/image.ico"/>
 <link rel="stylesheet" href="/styles.css"/>
 <link rel="preload" href="/fonts/fa/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"/>
@@ -914,7 +1465,9 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
 <link rel="manifest" href="/manifest.json"/>
 <meta name="theme-color" content="#0d2257"/>
 <script src="/analytics.js" defer></script>
-<style>{PAGE_CSS}
+<link rel="stylesheet" href="/styles-detail.css" media="print" onload="this.media='all'"/>
+<noscript><link rel="stylesheet" href="/styles-detail.css"/></noscript>
+<style>
 .apply-cta{{display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#059669,#047857);color:#fff;padding:12px 20px;border-radius:10px;font-size:.9rem;font-weight:800;text-decoration:none}}
 .apply-cta:hover{{background:linear-gradient(135deg,#047857,#065f46)}}
 </style>
@@ -922,17 +1475,18 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 <div id="headerPlaceholder"></div>
-<script>fetch('/header.html',{{cache:'no-store'}}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{{if(h){{var d=document.getElementById('headerPlaceholder');if(d)d.outerHTML=h;}}}})</script>
+<script src="/tsj-init.js"></script>
 <main id="main">{body}</main>
 <div id="footerPlaceholder"></div>
-<script>fetch('/footer.html',{{cache:'no-store'}}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{{if(h){{var d=document.getElementById('footerPlaceholder');if(d)d.outerHTML=h;}}}})</script>
+<script src="/tsj-footer-init.js"></script>
 <script src="/tsj-menu.js" defer></script>
 </body>
 </html>'''
 
 # ── Listing page builder ───────────────────────────────────────
 def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
-    title_tag  = f"{title} {YEAR} — Apply Online | Top Sarkari Jobs"
+    _yr_str = str(YEAR)
+    title_tag  = (f"{title} — Apply Online | Top Sarkari Jobs" if _yr_str in title else f"{title} {YEAR} — Apply Online | Top Sarkari Jobs")
     meta_desc  = (desc[:130] or f"{title}: Latest notifications, apply online, check dates. {YEAR}")[:155]
     bc_html    = '<nav class="bc" aria-label="Breadcrumb"><a href="/">Home</a>'
     for lbl, url in breadcrumbs:
@@ -1005,7 +1559,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
             f'{filter_js}')
 
     return f'''<!DOCTYPE html>
-<html lang="hi-IN">
+<html lang="en-IN">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -1016,7 +1570,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
 <meta property="og:title" content="{e(title_tag[:60])}"/>
 <meta property="og:url" content="{e(canon_url)}"/>
 {schemas_tag}
-<script>window.__TSJ_STATIC_PAGE=true;window.__TSJ_RENDERER_DISABLED=true;</script>
+<script src="/tsj-config.js"></script>
 <link rel="icon" href="/image.ico"/>
 <link rel="stylesheet" href="/styles.css"/>
 <link rel="preload" href="/fonts/fa/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"/>
@@ -1024,14 +1578,14 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
 <link rel="manifest" href="/manifest.json"/>
 <meta name="theme-color" content="#0d2257"/>
 <script src="/analytics.js" defer></script>
-<style>{PAGE_CSS}</style>
+<link rel="stylesheet" href="/styles-detail.css" media="print" onload="this.media='all'"/><noscript><link rel="stylesheet" href="/styles-detail.css"/></noscript>
 </head>
 <body>
 <div id="headerPlaceholder"></div>
-<script>fetch('/header.html',{{cache:'no-store'}}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{{if(h){{var d=document.getElementById('headerPlaceholder');if(d)d.outerHTML=h;}}}})</script>
+<script src="/tsj-init.js"></script>
 <main id="main">{bc_html}{body}</main>
 <div id="footerPlaceholder"></div>
-<script>fetch('/footer.html',{{cache:'no-store'}}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{{if(h){{var d=document.getElementById('footerPlaceholder');if(d)d.outerHTML=h;}}}})</script>
+<script src="/tsj-footer-init.js"></script>
 <script src="/tsj-menu.js" defer></script>
 </body>
 </html>'''
@@ -1040,11 +1594,31 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
 # LOAD JSON DATA
 # ═══════════════════════════════════════════════════════════════
 print("Loading JSON data...")
+_load_first_seen(ROOT)   # C1: load persisted datePosted map
 with open(CJ_FILE, encoding='utf-8') as f: CJ = json.load(f)
 with open(DU_FILE, encoding='utf-8') as f: DU = json.load(f)
+# Inject slug field into DU items (for script.js buildSectionCard)
+import hashlib as _hlib2
+for _dsec in DU.get('sections', []):
+    for _dit in _dsec.get('items', []):
+        _dn = (_dit.get('name') or '').strip()
+        _du = (_dit.get('url') or '').strip()
+        if _dn and 'slug' not in _dit:
+            _ds = slugify(_dn)
+            if not _ds:
+                _dom = re.sub(r'https?://(www\.)?','',_du).split('/')[0].replace('.','-')[:20]
+                _h = _hlib2.md5(_dn.encode()).hexdigest()[:8]
+                _ds = f"{_dom}-{_h}" if _dom else f"item-{_h}"
+            _dit['slug'] = _ds[:80]
+# Save updated dailyupdates.json with slugs
+with open(DU_FILE, 'w', encoding='utf-8') as _f:
+    json.dump(DU, _f, ensure_ascii=False, separators=(',',':'))
 
-FJA     = CJ.get('freejobalert_categories', {})
-SARK    = (CJ.get('sarkari_data',{}) or {}).get('jobs', [])
+FJA_RAW = CJ.get('freejobalert_categories', {})
+FJA     = {cat: [j for j in jobs if not is_garbage_title(
+               (j.get('basic_details') or {}).get('job_title','') or j.get('title',''))]
+           for cat, jobs in FJA_RAW.items() if isinstance(jobs, list)}
+SARK    = [j for j in (CJ.get('sarkari_data',{}) or {}).get('jobs', []) if not is_garbage_title(j.get('title',''))]
 EDU_SEC = (CJ.get('education_jobs',{}) or {}).get('sections', [])
 SJ_SEC  = (CJ.get('state_jobs',{}) or {}).get('sections', [])
 DU_SECS = DU.get('sections', [])
@@ -1077,7 +1651,10 @@ for cat, jobs_list in FJA.items():
         if slug in seen_jobs: slug = f"{slug}-{cat_slug}"[:80]
         seen_jobs[slug] = cat; job['category'] = cat
         canon = f"{BASE_URL}/jobs/{slug}/"
-        bc    = [(cat_label, f"{BASE_URL}/category/study/{cat_slug}/")]
+        # R9 FIX: Breadcrumb uses correct qualification hierarchy
+        _bc_lbl, _bc_url = get_best_bc_category(cat, job)
+        bc    = [('Study Wise', f"{BASE_URL}/category/study/"),
+                 (_bc_lbl, f"{BASE_URL}{_bc_url}")]
         write(str(ROOT/'jobs'/slug/'index.html'), build_detail_page(job, slug, canon, bc, cat_label))
         # Save data JSON
         (ROOT/'jobs'/'data').mkdir(exist_ok=True)
@@ -1146,7 +1723,8 @@ for job in SARK:
     age = {}
     if job.get('minimum_age'): age['minimum_age'] = safe(job['minimum_age'])
     if job.get('maximum_age'): age['maximum_age'] = safe(job['maximum_age'])
-    full = {'basic_details':bd,'important_dates':imp_dates,'application_fee':job.get('application_fees') or {},'age_limit':age or (job.get('age_limit') or {}),'qualification':job.get('eligibility') or job.get('qualification') or {},'vacancy_details':job.get('vacancy_details') or [],'salary_details':{'pay_scale':safe(job.get('salary_pay_scale',''))} if job.get('salary_pay_scale') else {},'how_to_apply':[job['how_to_apply']] if isinstance(job.get('how_to_apply'),str) and job.get('how_to_apply') else (job.get('how_to_apply') or []),'important_links':il,'sections':sections_out,'faq':job.get('faq') or [],'category':job.get('category',''),'slug':slug}
+    full = {'basic_details':bd,'important_dates':imp_dates,'application_fee':job.get('application_fees') or {},'age_limit':age or (job.get('age_limit') or {}),'qualification':job.get('eligibility') or job.get('qualification') or {},'vacancy_details':job.get('vacancy_details') or [],'salary_details':{'pay_scale':safe(job.get('salary_pay_scale',''))} if job.get('salary_pay_scale') else {},'how_to_apply':[job['how_to_apply']] if isinstance(job.get('how_to_apply'),str) and job.get('how_to_apply') else (job.get('how_to_apply') or []),'important_links':il,'sections':sections_out,'faq':job.get('faq') or [],'category':job.get('category',''),'slug':slug,
+             'tables':job.get('tables') or [],'text_sections':job.get('text_sections') or [],'useful_links':job.get('useful_links') or [],'all_links':job.get('all_links') or [],'details_page_content':job.get('details_page_content') or {}}
     canon = f"{BASE_URL}/jobs/{slug}/"
     bc    = [('Latest Jobs', f"{BASE_URL}/section/latest-jobs/")]
     write(str(ROOT/'jobs'/slug/'index.html'), build_detail_page(full, slug, canon, bc))
@@ -1183,12 +1761,34 @@ for sec in SJ_SEC:
 
         canon = f"{BASE_URL}/jobs/{item_slug}/"
         bc    = [('State Jobs', f"{BASE_URL}/state-jobs/{state_slug}/"), (state_name, f"{BASE_URL}/state-jobs/{state_slug}/")]
-        html  = build_detail_page(detail, item_slug, canon, bc, f'{state_name} Govt Job')
-        write(str(ROOT/'state'/state_slug/item_slug/'index.html'), html)
+        # State detail pages: noindex (canonical → /jobs/) to avoid duplicate indexing
+        # Single URL rule: only /jobs/{slug}/ — no /state/{state}/{slug}/
         if item_slug not in seen_jobs:
             seen_jobs[item_slug] = state_name
-            write(str(ROOT/'jobs'/item_slug/'index.html'), html)
+            jobs_html = build_detail_page(detail, item_slug, canon, bc, f'{state_name} Govt Job', noindex_dup=False)
+            write(str(ROOT/'jobs'/item_slug/'index.html'), jobs_html)
         s_count += 1
+
+# Generate /state/{state-slug}/index.html listing pages
+for sec in SJ_SEC:
+    state_name = safe(sec.get('state') or sec.get('title',''))
+    raw_state_slug = slugify(state_name)
+    state_slug = STATE_SLUG_FIX.get(raw_state_slug, raw_state_slug)
+    if not state_name or not state_slug: continue
+    state_jobs_list = sec.get('items', [])
+    if not state_jobs_list: continue
+    canon_listing = f"{BASE_URL}/state/{state_slug}/"
+    # Build simple listing page for /state/{slug}/
+    state_listing = build_listing_page(
+        f"{state_name} Government Jobs {YEAR}",
+        [{'basic_details':{'job_title':safe(it.get('name') or it.get('title','')),'organization_name':state_name,
+          'total_vacancies':safe(it.get('total_vacancy',''))}}
+         for it in state_jobs_list if (it.get('name') or it.get('title',''))],
+        canon_listing,
+        [('Home','/'),('State Jobs','/state-jobs/')],
+        f"Latest {state_name} government jobs {YEAR}. All sarkari naukri for {state_name} state."
+    )
+    write(str(ROOT/'state'/state_slug/'index.html'), state_listing)
 
 print(f"  State pages: {s_count}")
 
@@ -1222,10 +1822,12 @@ for sec in EDU_SEC:
         canon = f"{BASE_URL}/jobs/{item_slug}/"
         bc    = [('Education', f"{BASE_URL}/education/"), (sec_title, f"{BASE_URL}/education/{sec_id}/")]
         html  = build_detail_page(full_d, item_slug, canon, bc, sec_title)
-        write(str(ROOT/'education'/sec_id/item_slug/'index.html'), html)
+        # Education pages: noindex (canonical → /jobs/) 
+        # Single URL rule: only /jobs/{slug}/ — no /education/{state}/{slug}/
         if item_slug not in seen_jobs:
             seen_jobs[item_slug] = sec_title
-            write(str(ROOT/'jobs'/item_slug/'index.html'), html)
+            jobs_html = build_detail_page(full_d, item_slug, canon, bc, sec_title, noindex_dup=False)
+            write(str(ROOT/'jobs'/item_slug/'index.html'), jobs_html)
         e_count += 1
 
     # Listing page
@@ -1237,10 +1839,13 @@ print(f"  Education pages: {e_count}")
 
 # 5. CATEGORY/STUDY PAGES
 print("Generating /category/study/ pages...")
+_cat_listing_jobs = {}  # cat_slug → list of jobs (for listing page)
 for cat, jobs_list in FJA.items():
     if not isinstance(jobs_list, list): continue
     cat_slug  = QUAL_SLUG.get(cat, slugify(cat))
     cat_label = QUAL_LABEL.get(cat, cat.replace('_',' ').title())
+    if cat_slug not in _cat_listing_jobs:
+        _cat_listing_jobs[cat_slug] = {'label': cat_label, 'jobs': []}
     for job in jobs_list:
         bd = job.get('basic_details',{}) or {}
         title = safe(bd.get('job_title',''))
@@ -1248,27 +1853,64 @@ for cat, jobs_list in FJA.items():
         item_slug = slugify(title)[:80]
         canon = f"{BASE_URL}/category/study/{cat_slug}/{item_slug}/"
         bc    = [('Study Wise Jobs', f"{BASE_URL}/category/study/"), (f'{cat_label} Jobs', f"{BASE_URL}/category/study/{cat_slug}/")]
-        write(str(ROOT/'category'/'study'/cat_slug/item_slug/'index.html'), build_detail_page(job, item_slug, canon, bc, f'{cat_label} Jobs'))
+        _canon_j = f"{BASE_URL}/jobs/{item_slug}/"  # canonical always points to /jobs/
+        # Category detail pages removed — /jobs/{slug}/ is the canonical URL
+        _cat_listing_jobs[cat_slug]['jobs'].append(job)
         c_count += 1
 
-print(f"  Category/study pages: {c_count}")
+# Generate category LISTING pages (index.html for each category)
+print("Generating /category/study/{slug}/ listing pages...")
+_listing_count = 0
+for cat_slug, cat_data in _cat_listing_jobs.items():
+    cat_label = cat_data['label']
+    jobs = cat_data['jobs']
+    if not jobs: continue
+    cat_canon = f"{BASE_URL}/category/study/{cat_slug}/"
+    bc_listing = [('Home', '/'), ('Study Wise Jobs', '/category/study/')]
+    listing_html = build_listing_page(
+        f"{cat_label} Government Jobs {YEAR}",
+        jobs,
+        cat_canon,
+        bc_listing,
+        f"Latest {cat_label} government job notifications {YEAR}. Find all sarkari naukri for {cat_label} candidates updated daily."
+    )
+    write(str(ROOT/'category'/'study'/cat_slug/'index.html'), listing_html)
+    _listing_count += 1
+
+print(f"  Category/study detail pages: {c_count}")
+print(f"  Category/study listing pages: {_listing_count}")
 
 # 6. SECTION LISTING PAGES
 print("Generating /section/ pages...")
 SARK_CAT_MAP = {
-    'SR_Latest_Jobs':'latest-jobs','SR_Result':'result','SR_Admit_Card':'admit-card',
-    'SR_Admission':'admission','SR_Answer_Key':'answer-key','OFFLINE_FORM':'offline-form',
-    'LATEST_JOBS NEW':'latest-jobs-new','UPCOMING_JOBS':'upcoming-jobs',
-    'STATE_JOBS':'state-jobs-central','CENTRAL_JOBS':'central-jobs',
-    'ADMISSIONS':'admissions',
+    'SR_Latest_Jobs':  'latest-jobs',
+    'SR_Result':       'results',
+    'SR_Admit_Card':   'admit-card',
+    'SR_Admission':    'admission',
+    'SR_Answer_Key':   'answer-key',
+    'OFFLINE_FORM':    'offline-form',
+    'LATEST_JOBS NEW': 'latest-jobs',
+    'UPCOMING_JOBS':   'upcoming-jobs',
+    'STATE_JOBS':      'latest-jobs',
+    'CENTRAL_JOBS':    'latest-jobs',
+    'ADMISSIONS':      'admission',
 }
 FJA_CAT_MAP = {
-    '10TH_Pass':'10th-pass-jobs','8TH_Pass':'8th-pass-jobs','12TH_Pass':'12th-pass-jobs',
-    'Diploma':'diploma-jobs','ITI':'iti-jobs','B_Tech_BE':'btech-be-jobs','B_Com':'bcom-jobs',
-    'Any_Graduate':'any-graduate-jobs','Any_Post_Graduate':'post-graduate-jobs',
-    'Railway_Jobs':'railway-jobs','Police_Defence':'police-defence-jobs',
-    'Teaching_Faculty':'teaching-faculty-jobs','Bank_Jobs':'bank-jobs',
-    'Medical_Hospital':'medical-hospital-jobs','Last_Date_Reminder':'last-date-reminder',
+    '10TH_Pass':           '10th-pass-jobs',
+    '8TH_Pass':            '8th-pass',
+    '12TH_Pass':           '12th-pass-jobs',
+    'Diploma':             'diploma-jobs',
+    'ITI':                 'iti-jobs',
+    'B_Tech_BE':           'btech-jobs',
+    'B_Com':               'ba-pass',
+    'Any_Graduate':        'graduation-jobs',
+    'Any_Post_Graduate':   'post-graduation-jobs',
+    'Railway_Jobs':        'railway-jobs',
+    'Police_Defence':      'police-jobs',
+    'Teaching_Faculty':    'teaching-jobs',
+    'Bank_Jobs':           'bank-jobs',
+    'Medical_Hospital':    'healthcare-jobs',
+    'Last_Date_Reminder':  'last-date-reminder',
     'Latest_Notifications':'latest-notifications',
 }
 for cat_key, url_slug in FJA_CAT_MAP.items():
@@ -1286,83 +1928,367 @@ for cat_key, url_slug in SARK_CAT_MAP.items():
     write(str(ROOT/'section'/url_slug/'index.html'), build_listing_page(lbl, norm, f"{BASE_URL}/section/{url_slug}/", []))
     sec_count += 1
 
-# dailyupdates sections
-DU_SLUG_MAP = {'Govt Scheme Yojna':'govt-scheme-yojna','ImportantCSC PDF':'important-csc-pdf','ImportantCSC link':'important-csc-link','Today Updates':'today-updates'}
+# DAILYUPDATES INDIVIDUAL ITEM PAGES → /jobs/{slug}/
+# Proper pages with header/footer + auto-redirect to external URL
+import hashlib as _hlib
+print("Generating dailyupdates detail pages...")
+print(f"  DU_SECS: {len(DU_SECS)} sections, items: {sum(len(s.get(chr(105)+chr(116)+chr(101)+chr(109)+chr(115),[])) for s in DU_SECS)}")
+_DU_SEC_META = {
+    'Govt Scheme & Yojna':{'color':'#065f46','icon':'🏛️','badge':'Govt Scheme'},
+    'ImportantCSC PDF':   {'color':'#7c3aed','icon':'📄','badge':'PDF Download'},
+    'ImportantCSC link':  {'color':'#1d4ed8','icon':'🔗','badge':'Useful Link'},
+    'Today Updates':      {'color':'#b45309','icon':'📰','badge':'Today Update'},
+}
+_du_count = 0
+_du_seen  = set()
+
+def _du_slug(name, url=''):
+    s = slugify(name)
+    if s: return s
+    # Hindi or empty: use url domain + md5 hash
+    dom = re.sub(r'https?://(www\.)?','',url).split('/')[0].replace('.','-')[:20]
+    h   = _hlib.md5(name.encode()).hexdigest()[:8]
+    return f"{dom}-{h}" if dom else f"item-{h}"
+
+def _du_page(name, url, sec_title, other_items):
+    meta   = _DU_SEC_META.get(sec_title, {'color':'#1d4ed8','icon':'\U0001f4cb','badge':sec_title})
+    is_pdf = 'drive.google.com' in url or url.lower().endswith('.pdf')
+    btn_ic = 'fa-file-pdf' if is_pdf else 'fa-arrow-up-right-from-square'
+    btn_cl = 'btn-pdf' if is_pdf else 'btn-default'
+    btn_tx = 'Download PDF' if is_pdf else 'Open Official Link'
+    sec_sl = slugify(sec_title)
+    slug   = _du_slug(name, url)
+    canon  = BASE_URL + '/jobs/' + slug + '/'
+    clr    = meta['color']
+
+    bc = (
+        '<nav class="bc" aria-label="Breadcrumb">'
+        + '<a href="/">Home</a><span class="bc-sep">\u203a</span>'
+        + '<a href="/section/' + e(sec_sl) + '/">' + e(sec_title) + '</a>'
+        + '<span class="bc-sep">\u203a</span>'
+        + '<span aria-current="page">' + e(name[:60]) + '</span>'
+        + '</nav>'
+    )
+    card_hd = (
+        '<div style="background:linear-gradient(135deg,' + clr + ',#1e3a8a);'
+        + 'border-radius:12px 12px 0 0;padding:18px 20px 16px;color:#fff;">'
+        + '<div style="margin-bottom:10px;">'
+        + '<span style="background:rgba(255,255,255,.18);padding:3px 10px;border-radius:20px;'
+        + 'font-size:.75rem;font-weight:700;">'
+        + e(meta['icon']) + ' ' + e(meta['badge']) + '</span>'
+        + '</div>'
+        + '<h1 style="font-size:1.05rem;font-weight:900;margin:0 0 10px;line-height:1.4;">'
+        + e(name) + '</h1>'
+        + '<div style="font-size:.76rem;opacity:.88;">\U0001f4c2 ' + e(sec_title) + '</div>'
+        + '</div>'
+    )
+    card_bd = (
+        '<div style="background:#fff;border-radius:0 0 12px 12px;'
+        + 'border:1px solid #e2e8f0;border-top:none;padding:16px 18px;">'
+        + '<a href="' + e(url) + '" class="lnk-btn ' + btn_cl + '" target="_blank" rel="noopener noreferrer" '
+        + 'style="display:flex;align-items:center;justify-content:center;gap:8px;'
+        + 'width:100%;padding:12px 18px;font-size:.9rem;font-weight:800;margin-bottom:10px;">'
+        + '<i class="fa-solid ' + btn_ic + '"></i> ' + e(btn_tx) + ' \u2197'
+        + '</a>'
+        + '<a href="/" style="display:flex;align-items:center;justify-content:center;'
+        + 'background:#f1f5f9;color:#374151;padding:9px 18px;border-radius:8px;'
+        + 'font-size:.82rem;font-weight:600;text-decoration:none;border:1px solid #e2e8f0;">'
+        + '\u2190 Back to Home</a>'
+        + '</div>'
+    )
+    others = ''
+    for oi in [i for i in (other_items or []) if (i.get('name') or '').strip()][:6]:
+        on  = (oi.get('name') or '').strip()[:80]
+        ou  = (oi.get('url') or '').strip()
+        osl = _du_slug(on, ou)
+        others += '<li class="sec-item"><a href="/jobs/' + osl + '/">' + e(on) + '</a></li>'
+    if others:
+        others = (
+            '<section class="sec-card" style="margin-top:16px;">'
+            + '<div class="sec-head"><div class="left">MORE FROM ' + e(sec_title).upper() + '</div></div>'
+            + '<div class="sec-body"><ul class="sec-list">' + others + '</ul></div>'
+            + '</section>'
+        )
+
+    tl = e(name[:60]) + ' | Top Sarkari Jobs'
+    md = e((name[:130] + ' - ' + sec_title + '. Top Sarkari Jobs.')[:155])
+
+    lines = [
+        '<!DOCTYPE html>', '<html lang="en-IN">', '<head>',
+        '<meta charset="UTF-8"/>',
+        '<meta name="viewport" content="width=device-width,initial-scale=1.0"/>',
+        '<title>' + tl + '</title>',
+        '<meta name="description" content="' + md + '"/>',
+        '<meta name="robots" content="noindex,follow"/>',
+        '<link rel="canonical" href="' + e(canon) + '"/>',
+        '<link rel="icon" href="/image.ico"/>',
+        '<link rel="stylesheet" href="/styles.css"/>',
+        '<link rel="preload" href="/fonts/fa/all.min.css" as="style" onload="this.onload=null;this.rel=\'stylesheet\'"/>',
+        '<noscript><link rel="stylesheet" href="/fonts/fa/all.min.css"/></noscript>',
+        '<link rel="stylesheet" href="/styles-detail.css" media="print" onload="this.media=\'all\'"/>',
+        '<noscript><link rel="stylesheet" href="/styles-detail.css"/></noscript>',
+        '<script src="/tsj-config.js"></script>',
+        '</head>', '<body>',
+        '<div id="headerPlaceholder"></div>',
+        '<script src="/tsj-init.js"></script>',
+        '<main id="main">',
+        '<div style="max-width:680px;margin:0 auto;padding:12px 10px 60px;">',
+        bc,
+        '<div class="important-notice"><i class="fa-solid fa-circle-exclamation"></i>'
+        + '<span><strong>Important:</strong> Always verify details on official website. '
+        + 'Dates &amp; eligibility may change.</span></div>',
+        '<div style="border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.07);margin-bottom:14px;">',
+        card_hd, card_bd,
+        '</div>',
+        others,
+        '</div>', '</main>',
+        '<div id="footerPlaceholder"></div>',
+        '<script src="/tsj-footer-init.js"></script>',
+        '<script src="/tsj-menu.js" defer></script>',
+        '</body>', '</html>',
+    ]
+    return '\n'.join(lines)
+
+
+# ── DU loop ─────────────────────────────────────────────────────
+for _du_sec in DU_SECS:
+    _du_st   = _du_sec.get('title','')
+    _du_items = _du_sec.get('items', [])
+    for _du_item in _du_items:
+        _du_name = (_du_item.get('name') or '').strip()
+        _du_url  = (_du_item.get('url') or '').strip()
+        if not _du_name or not _du_url or not _du_url.startswith('http'):
+            continue
+        _du_sl = _du_slug(_du_name, _du_url)
+        if _du_sl in {'drive-google-com-dca2e21e','drive-google-com-97ed3afd','indiapost-gov-in-f03ec018'}:
+            print(f'  DEBUG: found target {_du_sl}, in_seen={_du_sl in _du_seen}, sl_bool={bool(_du_sl)}')
+        if not _du_sl or _du_sl in _du_seen:
+            continue
+        _du_seen.add(_du_sl)
+        _du_path = ROOT/'jobs'/_du_sl/'index.html'
+        if _du_path.exists():
+            _ex = _du_path.read_text(encoding='utf-8')
+            # Only skip if it's a real job page (has both important_dates AND application_fee)
+            if 'important_dates' in _ex and 'application_fee' in _ex:
+                continue
+        _du_path.parent.mkdir(parents=True, exist_ok=True)
+        _others = [i for i in _du_items if i != _du_item]
+        _page_content = _du_page(_du_name, _du_url, _du_st, _others)
+        write(str(_du_path), _page_content)
+        if _du_sl in {"drive-google-com-dca2e21e","drive-google-com-97ed3afd","indiapost-gov-in-f03ec018"}: print(f"  TARGET written: {_du_path}")
+        _du_count += 1
+
+print(f"  Dailyupdates detail pages: {_du_count}")
+
+# Explicit pass for items with non-Latin (Hindi/Unicode) names that hash-slug
+for _du_sec2 in DU_SECS:
+    _st2 = _du_sec2.get('title','')
+    for _di2 in _du_sec2.get('items', []):
+        _dn2 = (_di2.get('name') or '').strip()
+        _du2 = (_di2.get('url') or '').strip()
+        if not _dn2 or not _du2 or not _du2.startswith('http'): continue
+        # Only process items with non-ASCII names (pure Hindi etc.)
+        if all(ord(c) < 128 for c in _dn2): continue
+        _sl2 = _du_slug(_dn2, _du2)
+        if not _sl2: continue
+        _dp2 = ROOT/'jobs'/_sl2/'index.html'
+        if _dp2.exists():
+            _ex2 = _dp2.read_text(encoding='utf-8')
+            if 'important_dates' in _ex2 and 'application_fee' in _ex2:
+                continue
+        _dp2.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            _others2 = [i for i in _du_sec2.get('items',[]) if i != _di2]
+            write(str(_dp2), _du_page(_dn2, _du2, _st2, _others2))
+            print(f"  Unicode page: {_sl2}")
+        except Exception as _ue:
+            print(f"  Unicode ERROR {_sl2}: {_ue}")
+
+# ─────────────────────────────────────────────────────────────────
+# 7. SECTION LISTING PAGES
+# ─────────────────────────────────────────────────────────────────
+print("Generating /section/ pages...")
+SARK_CAT_MAP = {
+    'SR_Latest_Jobs':'latest-jobs','SR_Result':'result','SR_Admit_Card':'admit-card',
+    'SR_Admission':'admission','SR_Answer_Key':'answer-key','OFFLINE_FORM':'offline-form',
+    'LATEST_JOBS NEW':'latest-jobs-new','UPCOMING_JOBS':'upcoming-jobs',
+    'STATE_JOBS':'state-jobs-central','CENTRAL_JOBS':'central-jobs',
+    'ADMISSIONS':'admissions',
+}
+sec_count2 = 0
+# Sarkari sections
+for cat_key, url_slug in SARK_CAT_MAP.items():
+    jobs_in_cat = [j for j in SARK if j.get('category') == cat_key]
+    if not jobs_in_cat: continue
+    lbl = SECTION_META.get('important_links',('Important Links','',''))[0]
+    lbl = {'SR_Latest_Jobs':'Latest Jobs','SR_Result':'Results','SR_Admit_Card':'Admit Cards',
+           'SR_Admission':'Admissions','SR_Answer_Key':'Answer Keys','OFFLINE_FORM':'Offline Forms',
+           'LATEST_JOBS NEW':'Latest Jobs New','UPCOMING_JOBS':'Upcoming Jobs',
+           'STATE_JOBS':'State Jobs','CENTRAL_JOBS':'Central Govt Jobs','ADMISSIONS':'Admissions'}.get(cat_key, cat_key.replace('_',' ').title())
+    norm = [{'basic_details':{'job_title':j.get('title',''),'organization_name':j.get('organization',''),'total_vacancies':j.get('total_post','')}} for j in jobs_in_cat if j.get('title')]
+    write(str(ROOT/'section'/url_slug/'index.html'), build_listing_page(lbl, norm, f"{BASE_URL}/section/{url_slug}/", []))
+    sec_count2 += 1
+
+# DU sections
 for sec in DU_SECS:
-    sec_title = sec.get('title','') or sec.get('id','')
-    slug_key  = DU_SLUG_MAP.get(sec_title, slugify(sec_title))
-    items     = sec.get('items', [])
-    cards_html = ''.join(f'<article class="job-card"><div class="job-card-title"><a href="{e(str(item.get("url","#")))}" target="_blank" rel="noopener noreferrer">{e(safe(item.get("name","")))}</a></div></article>' for item in items if item.get('name'))
-    body_html = f'<div class="cat-wrap"><h1 class="cat-h1" style="margin:12px 10px 4px">{e(sec_title)}</h1><p class="cat-count" style="margin:0 10px 12px;color:#64748b;font-size:.78rem">{len(items)} items</p><div id="jobList" style="padding:0 10px">{cards_html}</div></div>'
-    bc_s = {'@context':'https://schema.org','@type':'BreadcrumbList','itemListElement':[{'@type':'ListItem','position':1,'name':'Home','item':BASE_URL+'/'},{'@type':'ListItem','position':2,'name':sec_title,'item':f"{BASE_URL}/section/{slug_key}/"}]}
-    schema_tag = f'<script type="application/ld+json">{json.dumps(bc_s,ensure_ascii=False)}</script>'
-    bc_html = f'<nav class="bc"><a href="/">Home</a><span class="bc-sep">›</span><span>{e(sec_title)}</span></nav>'
-    page = f'''<!DOCTYPE html><html lang="hi-IN"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>{e(sec_title)} {YEAR} | Top Sarkari Jobs</title><meta name="description" content="Latest {e(sec_title)} updates {YEAR}."/><meta name="robots" content="index,follow"/><link rel="canonical" href="{BASE_URL}/section/{slug_key}/"/>{schema_tag}<script>window.__TSJ_STATIC_PAGE=true;</script><link rel="icon" href="/image.ico"/><link rel="stylesheet" href="/styles.css"/><link rel="preload" href="/fonts/fa/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"/><noscript><link rel="stylesheet" href="/fonts/fa/all.min.css"/></noscript><style>{PAGE_CSS}</style></head><body><div id="headerPlaceholder"></div><script>fetch('/header.html',{{cache:'no-store'}}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{{if(h){{var d=document.getElementById('headerPlaceholder');if(d)d.outerHTML=h;}}}})</script><main>{bc_html}{body_html}</main><div id="footerPlaceholder"></div><script>fetch('/footer.html',{{cache:'no-store'}}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{{if(h){{var d=document.getElementById('footerPlaceholder');if(d)d.outerHTML=h;}}}})</script></body></html>'''
-    write(str(ROOT/'section'/slug_key/'index.html'), page)
-    sec_count += 1
+    sec_title = sec.get('title','')
+    url_slug  = slugify(sec_title)
+    items     = sec.get('items',[])
+    if not url_slug or not items: continue
+    norm = [{'basic_details':{'job_title':it.get('name','') or it.get('title','')}} for it in items if it.get('name') or it.get('title')]
+    write(str(ROOT/'section'/url_slug/'index.html'), build_listing_page(sec_title, norm, f"{BASE_URL}/section/{url_slug}/", []))
+    sec_count2 += 1
 
-print(f"  Section pages: {sec_count}")
+print(f"  Section pages: {sec_count2}")
 
-# 7. QUALIFICATION LISTING PAGES
+# EXTRA section pages (matching cat-bar URLs in index.html)
+_EXTRA_SEC = {
+    'army-jobs':           ('Army & Defence Jobs',       ['Police_Defence'], []),
+    'btech-jobs':          ('B.Tech / B.E. Jobs',        ['B_Tech_BE'],      []),
+    'graduation-jobs':     ('Any Graduate Jobs',         ['Any_Graduate'],   []),
+    'post-graduation-jobs':('Post Graduate Jobs',        ['Any_Post_Graduate'],[]),
+    'healthcare-jobs':     ('Medical / Healthcare Jobs', ['Medical_Hospital'],[]),
+    'results':             ('Results 2026',              [],         ['SR_Result']),
+    '8th-pass':            ('8th Pass Jobs',             ['8TH_Pass'],       []),
+    'ba-pass':             ('BA Pass / B.Com Jobs',      ['B_Com'],          []),
+    'jobs-with-last-date': ('Jobs with Last Date',       ['Last_Date_Reminder'],[]),
+    'latest-govt-jobs':    ('Latest Govt Jobs',          ['Latest_Notifications'],[]),
+    'top-20-jobs':         ('Top 20 Jobs',               ['Latest_Notifications'],[]),
+    'govt-scheme-yojna':   ('Govt Scheme & Yojna',       [],                 []),
+    'important-csc-pdf':   ('ImportantCSC PDF',          [],                 []),
+    'today-updates':       ('Today Updates',             [],                 []),
+    'syllabus':            ('Syllabus & Study Material', [],                 []),
+}
+for _eslug, (_elbl, _efja, _esark) in _EXTRA_SEC.items():
+    _ejobs = []
+    for _ec in _efja:
+        _items = FJA.get(_ec, [])
+        if isinstance(_items, list): _ejobs.extend(_items)
+    for _ec in _esark:
+        _ejobs.extend([j for j in SARK if j.get('category') == _ec])
+    _esl_html = '<ul class="sec-list">'
+    for _ej in _ejobs[:50]:
+        _ebd  = (_ej.get('basic_details') or {})
+        _et   = safe(_ebd.get('job_title') or _ej.get('title',''))
+        if not _et: continue
+        _esl  = slugify(_et)[:80]
+        _eld  = safe(_ebd.get('last_updated') or _ej.get('post_date',''))
+        _esl_html += (f'<li class="sec-item"><a href="/jobs/{_esl}/">{e(_et[:90])}</a>'
+                      + (f'<span class="sec-date">{e(_eld)}</span>' if _eld else '')
+                      + '</li>')
+    _esl_html += '</ul>' if _ejobs else '<p style="text-align:center;color:#94a3b8;padding:30px">No jobs found. Check back soon!</p>'
+    _edir = ROOT/'section'/_eslug
+    _edir.mkdir(parents=True, exist_ok=True)
+    # Use build_listing_page for Image 2 style layout (cards with search)
+    _enorm = []
+    for _ej in _ejobs:
+        _ebd = (_ej.get('basic_details') or {})
+        _et  = safe(_ebd.get('job_title') or _ej.get('title',''))
+        if not _et: continue
+        _enorm.append({'basic_details':{
+            'job_title':       _et,
+            'organization_name':safe(_ebd.get('organization_name') or _ej.get('organization','')),
+            'total_vacancies': safe(_ebd.get('total_vacancies') or _ej.get('total_post','')),
+            'application_mode':safe(_ebd.get('application_mode') or _ej.get('apply_mode','Online')),
+        },'important_dates': _ej.get('important_dates') or {}})
+    write(str(_edir/'index.html'), build_listing_page(
+        _elbl, _enorm,
+        f'{BASE_URL}/section/{_eslug}/',
+        [('Home','/')]
+    ))
+
+# ─────────────────────────────────────────────────────────────────
+# 8. QUALIFICATION LISTING PAGES
+# ─────────────────────────────────────────────────────────────────
 print("Generating /qualification/ pages...")
-for cat_key, jobs_list in FJA.items():
-    if not isinstance(jobs_list, list) or not jobs_list: continue
-    q_slug  = QUAL_SLUG.get(cat_key, cat_key.lower().replace('_','-'))
+q_count = 0
+for cat_key, q_slug in QUAL_SLUG.items():
     q_label = QUAL_LABEL.get(cat_key, cat_key.replace('_',' ').title())
-    write(str(ROOT/'qualification'/q_slug/'index.html'), build_listing_page(f"{q_label} Jobs", jobs_list, f"{BASE_URL}/qualification/{q_slug}/", [], f"Government job notifications for {q_label} candidates."))
-    qual_count += 1
+    jobs_q  = FJA.get(cat_key, [])
+    if not jobs_q: continue
+    norm = [{'basic_details':{'job_title':safe((j.get('basic_details',{}) or {}).get('job_title','')),'organization_name':safe((j.get('basic_details',{}) or {}).get('organization_name','')),'total_vacancies':safe((j.get('basic_details',{}) or {}).get('total_vacancies',''))}} for j in jobs_q]
+    write(str(ROOT/'qualification'/q_slug/'index.html'), build_listing_page(f"{q_label} Government Jobs {YEAR}", norm, f"{BASE_URL}/qualification/{q_slug}/", [('Qualification Wise Jobs','/category/study/')]))
+    q_count += 1
 
-print(f"  Qualification pages: {qual_count}")
+print(f"  Qualification pages: {q_count}")
 
-# ─────────────────────────────────────────────────────────────
-# WRITE INDEXES (sections-index.json + jobs-index.json)
-# ─────────────────────────────────────────────────────────────
-INDEX  = ROOT / 'jobs-index.json'
-SINDEX = ROOT / 'sections-index.json'
+# ─────────────────────────────────────────────────────────────────
+# UPDATE JSON INDEXES
+# ─────────────────────────────────────────────────────────────────
+write(str(ROOT/'jobs-index.json'),   json.dumps(jobs_index, ensure_ascii=False, separators=(',',':')))
 
-with open(INDEX, 'w', encoding='utf-8') as f:
-    json.dump(jobs_index, f, ensure_ascii=False, separators=(',',':'))
+# Generate lightweight sarkari-mini.json for homepage (42KB vs 53MB)
+_mini_jobs = []
+for _mj in SARK:
+    _mt = safe(_mj.get('title',''))
+    if not _mt: continue
+    _mini_jobs.append({
+        'title': _mt,
+        'slug':  slugify(_mt)[:80],
+        'cat':   _mj.get('category',''),
+        'date':  safe((_mj.get('important_dates') or {}).get('last_date','') or _mj.get('post_date',''))
+    })
+write(str(ROOT/'data'/'sarkari-mini.json'), json.dumps({'jobs':_mini_jobs}, ensure_ascii=False, separators=(',',':')))
+print(f"  sarkari-mini.json: {len(_mini_jobs)} jobs")
+# Build sections_index: FJA categories + SARK categories
+sections_index = {}
 
-# Sections index — FJA + Sarkari SR_* categories
-for cat, jobs_list in FJA.items():
-    if not isinstance(jobs_list, list): continue
-    items = []
-    for job in jobs_list:
-        bd4 = job.get('basic_details',{}) or {}
-        t = safe(bd4.get('job_title',''))
-        if not t: continue
-        sl = slugify(t)
-        dt = job.get('important_dates',{}) or {}
-        ld = safe(dt.get('last_date_to_apply',''))
-        items.append({'slug':sl,'name':t,'date':norm_date(ld) or ''})
-    if items: sindex[cat] = items
+# FJA categories
+for _si_cat, _si_jobs in FJA.items():
+    if not isinstance(_si_jobs, list): continue
+    _si_items = []
+    for _j in _si_jobs[:10]:  # top 10 per category (homepage shows max 10)
+        _bd = (_j.get('basic_details') or {})
+        _t  = safe(_bd.get('job_title',''))
+        if not _t: continue
+        _sl = slugify(_t)[:80]
+        _imp = (_j.get('important_dates') or {})
+        _ld  = safe(_imp.get('last_date_to_apply','') or _imp.get('last_date',''))
+        _si_items.append({'slug':_sl,'name':_t,'date':_ld})
+    if _si_items:
+        sections_index[_si_cat] = _si_items
 
-sark_by_cat = {}
-for sj in SARK:
-    cat = sj.get('category','')
-    if not cat: continue
-    t = safe(sj.get('title',''))
-    if not t: continue
-    sl = clean_slug(sj.get('slug','')) or slugify(t)
-    ld = safe((sj.get('important_dates') or {}).get('last_date_to_apply','') or sj.get('last_date',''))
-    sark_by_cat.setdefault(cat,[]).append({'slug':sl,'name':t,'date':ld[:20]})
-for cat, items in sark_by_cat.items():
-    if items: sindex[cat] = items
+# SARK categories (SR_Result, LATEST_JOBS NEW, OFFLINE_FORM, etc.)
+for _sj in SARK:
+    _scat = _sj.get('category','')
+    if not _scat: continue
+    _st = safe(_sj.get('title',''))
+    if not _st: continue
+    _sl = slugify(_st)[:80]
+    _ld = safe((_sj.get('important_dates') or {}).get('last_date','') or _sj.get('last_date',''))
+    if _scat not in sections_index:
+        sections_index[_scat] = []
+    if len(sections_index[_scat]) < 10:
+        sections_index[_scat].append({'slug':_sl,'name':_st,'date':_ld})
 
-with open(SINDEX, 'w', encoding='utf-8') as f:
-    json.dump(sindex, f, ensure_ascii=False, separators=(',',':'))
+write(str(ROOT/'sections-index.json'), json.dumps(sections_index, ensure_ascii=False, separators=(',',':')))
+# Update version string in index.html to bust cache
+_ver = __import__('datetime').datetime.now().strftime('%Y%m%d%H%M')
+_idx_path = str(ROOT/'index.html')
+if __import__('os').path.exists(_idx_path):
+    _idx = open(_idx_path, encoding='utf-8').read()
+    import re as _re
+    _idx_new = _re.sub(r'sections-index\.json\?v=\d+', f'sections-index.json?v={_ver}', _idx)
+    if _idx_new != _idx:
+        open(_idx_path, 'w', encoding='utf-8').write(_idx_new)
 
-total = j_count + s_count + e_count + c_count + sec_count + qual_count
-print(f"""
-╔══════════════════════════════════════════════════════╗
-║  ✅ UNIFIED GENERATOR COMPLETE                       ║
-╠══════════════════════════════════════════════════════╣
-║  Jobs (FJA + Sarkari)  : {j_count:<8}                    ║
-║  State detail          : {s_count:<8}                    ║
-║  Education detail      : {e_count:<8}                    ║
-║  Category/study        : {c_count:<8}                    ║
-║  Section listing       : {sec_count:<8}                    ║
-║  Qualification listing : {qual_count:<8}                    ║
-║  TOTAL PAGES           : {total:<8}                    ║
-╚══════════════════════════════════════════════════════╝
-""")
+import time as _time
+_save_first_seen()   # C1: persist datePosted map for stable rebuilds
+_end = _time.time()
+VERSION = datetime.now().strftime('%Y%m%d%H%M%S')
+PAGES_GENERATED = j_count + sec_count2 + q_count + _du_count
+write(str(ROOT/'version.json'), json.dumps({'version':VERSION,'generated':TODAY,'pages':PAGES_GENERATED}, ensure_ascii=False))
+
+print()
+print("\u2554" + "\u2550"*54 + "\u2557")
+print("\u2551  \u2705 UNIFIED GENERATOR COMPLETE" + " "*23 + "\u2551")
+print("\u2560" + "\u2550"*54 + "\u2563")
+print(f"\u2551  Jobs (FJA + Sarkari)  : {j_count:<27}\u2551")
+print(f"\u2551  State detail          : {s_count:<27}\u2551")
+print(f"\u2551  Education detail      : {e_count:<27}\u2551")
+print(f"\u2551  Category/study        : {c_count:<27}\u2551")
+print(f"\u2551  Section listing       : {sec_count2:<27}\u2551")
+print(f"\u2551  Qualification listing : {q_count:<27}\u2551")
+print(f"\u2551  TOTAL PAGES           : {PAGES_GENERATED:<27}\u2551")
+print("\u255a" + "\u2550"*54 + "\u255d")
+print()

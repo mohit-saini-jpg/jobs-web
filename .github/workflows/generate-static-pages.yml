@@ -90,12 +90,32 @@ jobs:
           node .github/workflows/generate_sitemap.js 2>/dev/null || true
           python3 .github/workflows/build_sitemaps.py 2>/dev/null || true
 
+      - name: Rebuild minified JS from source (permanent freshness fix)
+        run: |
+          # If source JS changed, the minified file must be rebuilt — otherwise
+          # the live site keeps running stale code even though the source updated.
+          npm install -g terser >/dev/null 2>&1 || true
+          if command -v terser >/dev/null 2>&1; then
+            [ -f script.js ] && terser script.js --compress --mangle -o script.min.js 2>/dev/null && echo "rebuilt script.min.js" || true
+            [ -f smart-search.js ] && terser smart-search.js --compress --mangle -o smart-search.min.js 2>/dev/null && echo "rebuilt smart-search.min.js" || true
+            [ -f seo-engine.js ] && terser seo-engine.js --compress --mangle -o seo-engine.min.js 2>/dev/null && echo "rebuilt seo-engine.min.js" || true
+          else
+            echo "terser unavailable — skipping minify rebuild"
+          fi
+
       - name: Bump asset cache versions
         run: |
           VERSION=$(date +%Y%m%d%H%M%S)
-          sed -i "s/script\.min\.js?v=[0-9]*/script.min.js?v=${VERSION}/g" index.html 2>/dev/null || true
-          sed -i "s/smart-search\.min\.js?v=[0-9]*/smart-search.min.js?v=${VERSION}/g" index.html 2>/dev/null || true
-          echo "Asset versions bumped to ${VERSION}"
+          # Bump ?v= on ALL html (not just index) so every page busts cache when files change.
+          # Limit to known versioned asset names to stay safe.
+          find . -name "*.html" -not -path "./.git/*" -print0 | xargs -0 sed -i -E \
+            "s/(script\.min\.js\?v=)[0-9]+/\1${VERSION}/g; \
+             s/(smart-search\.min\.js\?v=)[0-9]+/\1${VERSION}/g; \
+             s/(seo-engine\.min\.js\?v=)[0-9]+/\1${VERSION}/g; \
+             s/(sections-index\.json\?v=)[0-9]+/\1${VERSION}/g; \
+             s/(dailyupdates\.json\?v=)[0-9]+/\1${VERSION}/g; \
+             s/(styles\.css\?v=)[0-9]+/\1${VERSION}/g" 2>/dev/null || true
+          echo "Asset versions bumped to ${VERSION} across all HTML"
 
       - name: Count generated pages
         run: |

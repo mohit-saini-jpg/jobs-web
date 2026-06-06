@@ -10,7 +10,16 @@ Run from repo root:  python3 scripts/build_sitemaps.py
 import os
 from datetime import date
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# ROOT = repo root. Works whether this script lives in scripts/ or .github/workflows/
+# because the workflow always runs it from the repo root (CWD).
+ROOT = os.environ.get("GITHUB_WORKSPACE") or os.getcwd()
+# Safety: if jobs/ isn't here, walk up from the file location to find it.
+if not os.path.isdir(os.path.join(ROOT, "jobs")):
+    _p = os.path.dirname(os.path.abspath(__file__))
+    for _ in range(4):
+        if os.path.isdir(os.path.join(_p, "jobs")):
+            ROOT = _p; break
+        _p = os.path.dirname(_p)
 BASE = "https://www.topsarkarijobs.com"
 TODAY = date.today().isoformat()
 

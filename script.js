@@ -1000,6 +1000,10 @@
   }
 
   async function renderHomepageSections() {
+    // DUPLICATE FIX: if the TSJ9 grid (#sr-sections-grid) is present, it is the
+    // single source of truth for homepage section cards. Skip the legacy renderer
+    // to avoid rendering every section twice.
+    if (document.getElementById("sr-sections-grid")) return;
     const wrap = $("#dynamic-sections");
     if (!wrap) return;
 
@@ -1311,6 +1315,9 @@
   async function renderDailyUpdatesSections() {
     // Only run on homepage
     if (!(page === "index.html" || page === "")) return;
+    // DUPLICATE FIX: TSJ9 grid already renders the daily-update sections
+    // (Govt Scheme, ImportantCSC PDF/link, Top 20, Today Updates). Skip to avoid dupes.
+    if (document.getElementById("sr-sections-grid")) return;
 
     // Find or create the daily-updates container (placed right after #dynamic-sections)
     let dailyWrap = document.getElementById("daily-updates-sections");
