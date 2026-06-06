@@ -217,8 +217,11 @@ CARD_STYLE = """
   .fee-note{padding:9px 14px;font-size:.81rem;color:#78350f;background:#fffbeb;border-top:1px solid #fde68a}
   .faq-item{border-bottom:1px solid #f1f5f9;font-size:.83rem}
   .faq-item:last-child{border-bottom:none}
-  .faq-q{padding:10px 14px;font-weight:700;color:#1e293b;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
-  .faq-a{padding:0 14px 10px;color:#475569;line-height:1.65;display:none}
+  .faq-q{padding:10px 14px;font-weight:600;color:#1e293b;cursor:pointer;display:flex;align-items:center;gap:10px;user-select:none;text-align:left}
+  .faq-q:hover{background:#f8fafc}
+  .faq-icon{flex-shrink:0;min-width:26px;height:26px;background:#4f46e5;color:#fff;border-radius:6px;padding:0;font-size:.72rem;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .faq-q span[style]{flex:1;text-align:left}
+  .faq-a{padding:0 14px 12px 50px;color:#475569;line-height:1.7;display:none}
   .faq-q.open+.faq-a{display:block}
   .short-info-card{background:#eff6ff;border-left:4px solid #1d4ed8;padding:12px 14px;font-size:.84rem;color:#1e293b;line-height:1.7;margin-bottom:12px;border-radius:0 8px 8px 0}
   .jd-header{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px 18px 0;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
@@ -567,21 +570,46 @@ def render_important_links(il_obj):
 
 def render_faq(faq_list):
     if not isinstance(faq_list, list) or not faq_list: return ''
-    items = ''
+    import re as _re
+
+    def is_label(s):
+        s = s.strip()
+        return bool(_re.search(r':\s*$', s)) or bool(_re.match(
+            r'^(application|last date|exam date|admit card|fee|age|minimum|maximum|eligibility|vacancy|result|notification|start|end|begin|close)', s, _re.I))
+
+    def is_value(s):
+        s = s.strip()
+        return bool(_re.match(r'^\d{1,2}/\d{1,2}/\d{4}|^\d{2,4}$|^\d+\s*(years?|posts?|vacancies|rs\.?|rupees?|/-)', s, _re.I))
+
+    # Dedup by normalized question (strip Q1. prefix)
+    seen = {}
+    deduped = []
     for item in faq_list:
         if not isinstance(item, dict): continue
         q = safe(item.get('question',''))
         a = safe(item.get('answer',''))
         if not q or not a: continue
+        # Q/A swap fix
+        if is_label(a) and is_value(q):
+            q, a = _re.sub(r':\s*$', '', a).strip(), q
+        # Normalize key: strip "Q1. " prefix
+        key = _re.sub(r'^q\d+[\.\)]\s*', '', q.lower().strip())
+        if key in seen: continue
+        seen[key] = True
+        deduped.append((q, a))
+
+    items = ''
+    for idx, (q, a) in enumerate(deduped, 1):
         items += f'''<div class="faq-item">
-  <div class="faq-q" onclick="this.classList.toggle(\'open\');this.nextElementSibling.style.display=this.classList.contains(\'open\')?\'block\':\'none\'">
-    {e(q)} <i class="fa-solid fa-chevron-down" style="font-size:.7rem;color:#94a3b8"></i>
+  <div class="faq-q" onclick="this.classList.toggle('open');this.nextElementSibling.style.display=this.classList.contains('open')?'block':'none'">
+    <span class="faq-icon">{idx}</span>
+    <span style="flex:1;text-align:left;line-height:1.5">{e(q)}</span>
+    <i class="fa-solid fa-chevron-down" style="font-size:.72rem;color:#94a3b8;margin-left:auto;flex-shrink:0;transition:transform .22s"></i>
   </div>
   <div class="faq-a">{e(a)}</div>
 </div>'''
     if not items: return ''
-    return render_card('linear-gradient(135deg,#4338ca,#6366f1)', 'fa-circle-question', 'FAQs',
-                       items)
+    return render_card('linear-gradient(135deg,#4338ca,#6366f1)', 'fa-circle-question', 'FAQs', items)
 
 # ── Main static HTML builder ──────────────────────────────────────────────────
 
