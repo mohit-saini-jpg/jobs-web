@@ -1880,6 +1880,32 @@ for cat_slug, cat_data in _cat_listing_jobs.items():
 print(f"  Category/study detail pages: {c_count}")
 print(f"  Category/study listing pages: {_listing_count}")
 
+# Rebuild Qualification_Wise_Jobs.json (the /category/study/ index page fetches this).
+# ids MUST equal the generated /category/study/<slug>/ folder slugs so links resolve.
+# Exclude non-qualification buckets (these belong to /section/, not study-wise).
+_NON_STUDY = {'railway-jobs','bank-jobs','police-defence','medical-hospital',
+              'teaching-faculty','latest-jobs','last-date-reminder'}
+_qual_sections = []
+for cat_slug, cat_data in _cat_listing_jobs.items():
+    if cat_slug in _NON_STUDY: continue
+    jobs = cat_data.get('jobs', [])
+    if not jobs: continue
+    _items = []
+    for j in jobs:
+        bd = j.get('basic_details', {}) or {}
+        t = safe(bd.get('job_title', '') or j.get('title', ''))
+        if not t: continue
+        _items.append({'name': t, 'slug': slugify(t)[:80]})
+    if not _items: continue
+    _qual_sections.append({
+        'id': cat_slug,
+        'qualification': cat_data.get('label', cat_slug.replace('-', ' ').title()),
+        'items': _items,
+    })
+with open(ROOT / 'Qualification_Wise_Jobs.json', 'w', encoding='utf-8') as _qf:
+    json.dump({'sections': _qual_sections}, _qf, ensure_ascii=False, separators=(',', ':'))
+print(f"  Qualification_Wise_Jobs.json: {len(_qual_sections)} sections")
+
 # 6. SECTION LISTING PAGES
 print("Generating /section/ pages...")
 SARK_CAT_MAP = {

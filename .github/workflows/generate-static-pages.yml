@@ -137,6 +137,7 @@ jobs:
           # Stage ALL generated files
           git add jobs/ state/ education/ category/ section/ qualification/ 2>/dev/null || true
           git add jobs-index.json sections-index.json version.json sw.js 2>/dev/null || true
+          git add Qualification_Wise_Jobs.json 2>/dev/null || true
           git add sitemap-jobs.xml sitemap-states.xml sitemap-education.xml sitemap-categories.xml 2>/dev/null || true
           git add sitemap-sections.xml sitemap.xml 2>/dev/null || true
           git add index.html 2>/dev/null || true
