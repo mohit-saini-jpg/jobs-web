@@ -1505,7 +1505,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
         il    = job.get('important_links',{}) or {}
         jtitle = safe(bd.get('job_title','') or job.get('title','') or job.get('name',''))
         if not jtitle: continue
-        jslug  = slugify(jtitle)
+        jslug  = safe(job.get('_slug','')) or slugify(jtitle)
         jorg   = safe(bd.get('organization_name','') or 'Government')
         jvac   = safe(bd.get('total_vacancies','') or job.get('total_post',''))
         jld    = safe(dates.get('last_date_to_apply','') or dates.get('last_date','') or job.get('last_date',''))
@@ -2129,14 +2129,33 @@ for cat_key, url_slug in SARK_CAT_MAP.items():
     write(str(ROOT/'section'/url_slug/'index.html'), build_listing_page(lbl, norm, f"{BASE_URL}/section/{url_slug}/", []))
     sec_count2 += 1
 
-# DU sections
+# DU sections (Govt Scheme, ImportantCSC PDF, ImportantCSC link, Today Updates …)
 for sec in DU_SECS:
     sec_title = sec.get('title','')
     url_slug  = slugify(sec_title)
     items     = sec.get('items',[])
     if not url_slug or not items: continue
-    norm = [{'basic_details':{'job_title':it.get('name','') or it.get('title','')}} for it in items if it.get('name') or it.get('title')]
+    norm = []
+    for it in items:
+        nm = it.get('name','') or it.get('title','')
+        if not nm: continue
+        # slugify(title) resolves to the generated /jobs/<slug>/ page more reliably
+        # than the raw dailyupdates 'slug' field, so we let build_listing_page slugify.
+        norm.append({'basic_details':{'job_title':nm}})
     write(str(ROOT/'section'/url_slug/'index.html'), build_listing_page(sec_title, norm, f"{BASE_URL}/section/{url_slug}/", []))
+    sec_count2 += 1
+
+# Top 20 Jobs — deliberate data source: the 20 most-recent latest jobs
+# (no "Top 20" section exists in dailyupdates.json, so build it from latest jobs)
+_top_src = [j for j in SARK if j.get('category') == 'SR_Latest_Jobs' and j.get('title')]
+if not _top_src:
+    _top_src = [j for j in SARK if j.get('title')]
+_top20 = [{'basic_details':{'job_title':j.get('title',''),
+           'organization_name':j.get('organization',''),
+           'total_vacancies':j.get('total_post','')}} for j in _top_src[:20]]
+if _top20:
+    write(str(ROOT/'section'/'top-20-jobs'/'index.html'),
+          build_listing_page('Top 20 Jobs', _top20, f"{BASE_URL}/section/top-20-jobs/", []))
     sec_count2 += 1
 
 print(f"  Section pages: {sec_count2}")
@@ -2153,10 +2172,10 @@ _EXTRA_SEC = {
     'ba-pass':             ('BA Pass / B.Com Jobs',      ['B_Com'],          []),
     'jobs-with-last-date': ('Jobs with Last Date',       ['Last_Date_Reminder'],[]),
     'latest-govt-jobs':    ('Latest Govt Jobs',          ['Latest_Notifications'],[]),
-    'top-20-jobs':         ('Top 20 Jobs',               ['Latest_Notifications'],[]),
-    'govt-scheme-yojna':   ('Govt Scheme & Yojna',       [],                 []),
-    'important-csc-pdf':   ('ImportantCSC PDF',          [],                 []),
-    'today-updates':       ('Today Updates',             [],                 []),
+    # NOTE: top-20-jobs, govt-scheme-yojna, important-csc-pdf, importantcsc-link and
+    # today-updates are built from dailyupdates.json in the "DU sections" loop above
+    # with REAL data. Do NOT recreate them here with empty lists — that would
+    # overwrite the populated pages with "0 records".
     'syllabus':            ('Syllabus & Study Material', [],                 []),
 }
 for _eslug, (_elbl, _efja, _esark) in _EXTRA_SEC.items():
