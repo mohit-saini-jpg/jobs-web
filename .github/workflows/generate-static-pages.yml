@@ -130,8 +130,11 @@ jobs:
           VERSION=$(node -e "console.log(require('./version.json').version)" 2>/dev/null || echo "$(date +%Y%m%d)")
           git commit -m "Full regen v${VERSION}: ${PAGES_GENERATED} pages [skip ci]"
 
-          # Safe push: pull with rebase (only non-page files conflict)
-          git pull --rebase origin main 2>/dev/null || true
+          # Safe push: stash → fetch → merge (no rebase to avoid unstaged changes error)
+          git stash --include-untracked 2>/dev/null || true
+          git fetch origin main
+          git merge origin/main -X ours --no-edit --allow-unrelated-histories 2>/dev/null || true
+          git stash pop 2>/dev/null || true
           git push origin main
           echo "Pushed successfully - ${PAGES_GENERATED} pages live"
 

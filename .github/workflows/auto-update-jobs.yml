@@ -275,12 +275,21 @@ jobs:
           echo "PAGES=${PAGES}" >> $GITHUB_ENV
           echo "SECS=${SECS}" >> $GITHUB_ENV
 
-      # ── STEP 10: Push (rebase-safe) ──────────────────────────────
-      - name: 🚀 Push to main (rebase-safe)
+      # ── STEP 10: Push (merge-safe, no rebase) ────────────────────
+      - name: 🚀 Push to main (merge-safe)
         if: env.COMMITTED == 'true'
         run: |
+          # Stash any leftover unstaged changes before fetch (safety net)
+          git stash --include-untracked 2>/dev/null || true
+
           git fetch origin main
-          git rebase origin/main || (git rebase --abort && git merge origin/main -X ours --no-edit)
+
+          # Use merge -X ours (never rebase — avoids "unstaged changes" error)
+          git merge origin/main -X ours --no-edit --allow-unrelated-histories 2>/dev/null || true
+
+          # Restore stash if any
+          git stash pop 2>/dev/null || true
+
           git push origin main
           echo "✅ Pushed successfully"
 
