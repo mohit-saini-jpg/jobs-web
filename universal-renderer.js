@@ -1793,386 +1793,317 @@
     if (!layout || layout.style.display === 'none') return;
 
     clearUniversalCards();
-
-    /* ── Mark layout as FSCD-active (hides old jp-cards via CSS) ── */
     layout.classList.add('fscd-active');
 
     /* ── Extract all data ── */
-    const bd  = rawJob.basic_details  || {};
-    const id  = rawJob.important_dates || {};
-    const fee = rawJob.application_fee || rawJob.application_fees || {};
-    const age = rawJob.age_limit       || {};
-    const qual= rawJob.qualification   || {};
-    const sd  = rawJob.salary_details  || {};
+    const bd      = rawJob.basic_details   || {};
+    const id      = rawJob.important_dates || {};
+    const fee     = rawJob.application_fee || rawJob.application_fees || {};
+    const age     = rawJob.age_limit       || {};
+    const sd      = rawJob.salary_details  || {};
 
-    const title    = safe(rawJob.title || rawJob.post_name || bd.job_title || bd.post_name || '');
-    const org      = safe(rawJob.organization || rawJob.board_name || bd.organization_name || '');
-    const location = safe(rawJob.basic_details?.job_location || rawJob.location || rawJob.state || 'India');
-    const totalVac = safe(rawJob.total_vacancy || rawJob.total_vacancies || bd.total_vacancies || '');
-    const applyMode= safe(rawJob.apply_mode || bd.application_mode || 'Online');
-    const salary   = safe(rawJob.salary || rawJob.salary_pay_scale || bd.salary || sd.pay_scale || '');
-    const shortInfo= safe(rawJob.short_information || rawJob.jobs_info || bd.short_information || '');
+    const title     = safe(rawJob.title || rawJob.name_of_post || rawJob.post_name || bd.job_title || bd.post_name || '');
+    const org       = safe(rawJob.organization || rawJob.board_name || bd.organization_name || '');
+    const location  = safe(bd.job_location || rawJob.location || rawJob.state || 'Pan-India');
+    const totalVac  = safe(rawJob.total_vacancy || rawJob.total_vacancies || bd.total_vacancies || bd.total_post || '');
+    const applyMode = safe(rawJob.apply_mode || rawJob.application_mode || bd.application_mode || 'Online');
+    const shortInfo = safe(rawJob.short_information || rawJob.jobs_info || bd.short_information || '');
+    const category  = safe(rawJob.category || '');
 
+    /* ── Clean shortInfo of junk ── */
+    function cleanShort(s) {
+      return s
+        .replace(/telegram\s+join\s+us\s+whatsapp\s+join\s+us\s+instagram\s+follow\s+(x|twitter)\s+follow/gi, '')
+        .replace(/sarkari\s*result[®@]?\s*[:–-]?\s*sarkariresult\.com\s+official\s+since\s*:\s*\d*/gi, '')
+        .replace(/\s*(sbi|crpd)\s+advt\s+no\.\s*:\s*[A-Z0-9\/\-]+\s*:/gi, ' ')
+        .replace(/short\s+details\s+of\s+notification\s*$/gi, '')
+        .replace(/\s{2,}/g, ' ').trim();
+    }
+    const shortInfoClean = cleanShort(shortInfo);
+
+    /* ── Dates ── */
     const lastDate  = fmtDate(safe(id.last_date || id.last_date_to_apply || id.application_last_date || rawJob.last_date || ''));
     const appBegin  = fmtDate(safe(id.application_begin || id.application_start || id.start_date || ''));
     const examDate  = fmtDate(safe(id.exam_date || rawJob.exam_date || ''));
     const admitDate = fmtDate(safe(id.admit_card_date || id.admit_card || ''));
-    const resDate   = fmtDate(safe(id.result_date || ''));
-    const feeLDate  = fmtDate(safe(id.fee_payment_last_date || id.fee_last_date || ''));
-    const corrDate  = fmtDate(safe(id.correction_last_date || ''));
+    const feeLastDate = fmtDate(safe(id.last_date_fee_payment || id.fee_payment_last_date || ''));
+    const corrDate  = fmtDate(safe(id.correction_date || id.last_date_correction || ''));
+    const resultDate= fmtDate(safe(id.result_date || ''));
+    const notifDate = fmtDate(safe(id.notification_date || id.date_of_notification || rawJob.post_date || ''));
 
-    const minAge   = safe(rawJob.minimum_age  || age.minimum_age  || '');
-    const maxAge   = safe(rawJob.maximum_age  || age.maximum_age  || age.age_limit || age.age_details || '');
-    const ageRelax = safe(rawJob.age_relaxation || age.age_relaxation || age.details || '');
-
-    const eduQual   = safe(rawJob.education_qualification || rawJob.eligibility || qual.education_qualification || qual.eligibility || '');
-    const qualDet   = safe(qual.details || qual.details_text || '');
-    const selProc   = rawJob.selection_process || [];
-    const examPat   = safe((rawJob.exam_pattern && rawJob.exam_pattern.details) || rawJob.exam_pattern || '');
-    const syllabus  = safe((rawJob.syllabus && rawJob.syllabus.details) || rawJob.syllabus || '');
-    const docs      = Array.isArray(rawJob.documents) ? rawJob.documents : [];
-    const howTo     = Array.isArray(rawJob.how_to_apply) ? rawJob.how_to_apply : [];
-    const insts     = Array.isArray(rawJob.important_instructions) ? rawJob.important_instructions : [];
-    const faqs      = Array.isArray(rawJob.faq) ? rawJob.faq : [];
-    const vacRows   = Array.isArray(rawJob.vacancy_details) ? rawJob.vacancy_details : [];
-    const links     = rawJob._udyn_links || [];
-
-    /* ── fee string ── */
-    let feeText = '';
-    if (typeof fee === 'string') feeText = fee;
-    else if (fee.details) feeText = safe(fee.details);
-    else {
-      const fmap = [['general','General'],['obc','OBC'],['ews','EWS'],['sc','SC'],['st','ST'],['all','All'],['ph','PH/PwD']];
-      const parts = fmap.map(([k,l]) => fee[k] ? `${l}: ${safe(fee[k])}` : '').filter(Boolean);
-      if (parts.length) feeText = parts.join(' | ');
+    /* ── Age ── */
+    function isJunk(s) {
+      if (!s) return true;
+      return /telegram|whatsapp|instagram|follow|sarkari result|freejobalert|click here|advt no\.|short details/i.test(s);
     }
+    const minAge  = safe(rawJob.minimum_age || age.minimum_age || age.min_age || '');
+    const maxAge  = safe(rawJob.maximum_age || age.maximum_age || age.max_age || '');
+    const ageRaw  = safe(age.raw || '');
+    const ageDet  = safe(age.age_details || age.details || '');
+    const ageRelax= safe(rawJob.age_relaxation || age.age_relaxation || age.relaxation || '');
+    // Also try to pull from FAQ (SBI pattern)
+    let faqMin = '', faqMax = '';
+    const faqArr = Array.isArray(rawJob.faq) ? rawJob.faq : [];
+    for (const f of faqArr) {
+      const ans = safe(f.answer || f.a || '').toLowerCase();
+      const q   = safe(f.question || f.q || '');
+      if (/minimum age/i.test(ans) && /^\d+/.test(q)) faqMin = q;
+      if (/maximum age/i.test(ans) && /^\d+/.test(q)) faqMax = q;
+    }
+    const finalMinAge = (!isJunk(minAge) && minAge) ? minAge : faqMin;
+    const finalMaxAge = (!isJunk(maxAge) && maxAge) ? maxAge : faqMax;
+    const finalAgeRelax = (!isJunk(ageRelax)) ? ageRelax : '';
+    const finalAgeDet = (!isJunk(ageDet) && !isJunk(ageRaw))
+      ? (ageDet || '')
+      : (!isJunk(ageRaw) ? ageRaw : '');
 
-    /* ── Helper: infoRow ── */
-    const irow = (lbl, val, cls='') =>
-      val ? `<div class="fscd-info-row"><span class="fscd-lbl">${esc(lbl)}</span><span class="fscd-val ${cls}">${esc(val)}</span></div>` : '';
+    /* ── Salary ── */
+    const salaryPay = safe(rawJob.salary || rawJob.salary_pay_scale || bd.salary || sd.pay_scale || '');
+    const salaryDet = safe(sd.details || sd.salary_details || '');
 
-    /* ── Helper: make FSCD wrapper div ── */
-    function fscdWrap(id, html) {
+    /* ── Vacancy rows (filtered) ── */
+    const { rows: vacRows, cw: vacCW } = exVacancy(rawJob);
+
+    /* ── Links ── */
+    const links = (rawJob._udyn_links || []).filter(l => l && l.url && l.label);
+
+    /* ── Qual / Eligibility ── */
+    const qual = rawJob.qualification || rawJob.eligibility || {};
+
+    /* ── Selection / How-to / Instructions / FAQ ── */
+    const selProc = rawJob.selection_process || [];
+    const howTo   = Array.isArray(rawJob.how_to_apply) ? rawJob.how_to_apply : [];
+    const insts   = Array.isArray(rawJob.important_instructions || rawJob.instructions) ? (rawJob.important_instructions || rawJob.instructions) : [];
+    const faqs    = Array.isArray(rawJob.faq) ? rawJob.faq : [];
+
+    /* ── Helper: section card builder (Image 2 style) ── */
+    function sec(id, bgColor, iconCls, headText, bodyHtml) {
+      if (!bodyHtml || bodyHtml.trim() === '') return null;
       const d = document.createElement('div');
+      d.className = 'udyn-card udyn-anchor';
       d.id = id;
-      d.className = 'udyn-anchor';
-      d.innerHTML = html;
+      d.innerHTML =
+        `<div class="udyn-head" style="background:${bgColor}">` +
+          `<i class="${iconCls}"></i> ${esc(headText)}` +
+        `</div><div class="udyn-body">${bodyHtml}</div>`;
       return d;
     }
 
-    const tocSections = [];
+    /* ── Helper: key-value table row ── */
+    function kvRow(label, val, redVal) {
+      if (!val) return '';
+      return `<tr><th>${esc(label)}</th><td style="${redVal ? 'color:#dc2626;font-weight:700;' : ''}">${esc(val)}</td></tr>`;
+    }
 
-    /* ════════════════════════════════════════════════
-       1. HERO BANNER
-    ════════════════════════════════════════════════ */
-    const heroHtml = `
-      <div class="fscd-hero">
-        <div class="fscd-hero-badge"><i class="fas fa-star-of-life"></i> Govt Recruitment 2026 | TopSarkariJobs.com</div>
-        <div class="fscd-hero-title">${esc(title)}</div>
-        <div class="fscd-hero-stats">
-          ${org      ? `<div class="fscd-stat-pill"><i class="fas fa-building"></i> ${esc(org)}</div>` : ''}
-          ${location ? `<div class="fscd-stat-pill"><i class="fas fa-map-marker-alt"></i> ${esc(location)}</div>` : ''}
-          ${lastDate ? `<div class="fscd-stat-pill"><i class="fas fa-hourglass-end"></i> Last Date: ${esc(lastDate)}</div>` : ''}
-          ${totalVac ? `<div class="fscd-stat-pill"><i class="fas fa-users"></i> ${esc(totalVac)} Posts</div>` : ''}
-        </div>
-      </div>`;
+    /* ── Helper: append card ── */
+    function appendCard(card) {
+      if (card) layout.appendChild(card);
+    }
 
-    /* ════════════════════════════════════════════════
-       2. SHORT INFO
-    ════════════════════════════════════════════════ */
-    const shortHtml = shortInfo
-      ? `<div class="fscd-short-info"><i class="fas fa-info-circle" style="margin-right:8px;"></i><strong>Short Information :</strong> ${esc(shortInfo)}</div>`
+    /* ═══════════════════════════════════════════
+       SECTION 1: JOB OVERVIEW (Image 2 style)
+    ═══════════════════════════════════════════ */
+    const overviewRows = [
+      org           ? `<tr><th>Organization Name</th><td>${esc(org)}</td></tr>` : '',
+      bd.post_name||rawJob.post_name  ? `<tr><th>Post Name</th><td>${esc(safe(bd.post_name||rawJob.post_name||rawJob.name_of_post||''))}</td></tr>` : '',
+      totalVac      ? `<tr><th>Total Vacancies</th><td><strong style="color:#16a34a">${esc(totalVac)}</strong></td></tr>` : '',
+      applyMode     ? `<tr><th>Application Mode</th><td>${esc(applyMode)}</td></tr>` : '',
+      location      ? `<tr><th>Job Location</th><td>${esc(location)}</td></tr>` : '',
+      (rawJob.job_type||bd.job_type)  ? `<tr><th>Job Type</th><td>${esc(safe(rawJob.job_type||bd.job_type||''))}</td></tr>` : '',
+      (rawJob.notification_number||bd.notification_number) ? `<tr><th>Notification Number</th><td>${esc(safe(rawJob.notification_number||bd.notification_number||''))}</td></tr>` : '',
+      (rawJob.last_updated||bd.last_updated||rawJob.post_date) ? `<tr><th>Last Updated</th><td>${esc(safe(rawJob.last_updated||bd.last_updated||rawJob.post_date||''))}</td></tr>` : '',
+    ].filter(Boolean).join('');
+
+    /* Short info block below overview table */
+    const shortInfoBlock = shortInfoClean
+      ? `<div style="background:#eef4fa;border-left:4px solid #1e7e9f;padding:10px 14px;font-size:.83rem;color:#165e7c;line-height:1.75;margin:0;">${esc(shortInfoClean)}</div>`
       : '';
 
-    /* ════════════════════════════════════════════════
-       3. JOB HIGHLIGHTS + SALARY  (2-col grid)
-    ════════════════════════════════════════════════ */
-    const hlCard = `<div class="fscd-card">
-      <div class="fscd-card-head"><i class="fas fa-bullhorn"></i> Job Highlights</div>
-      <div class="fscd-card-body">
-        ${irow('Organization', org)}
-        ${irow('Post Name', title.slice(0,80))}
-        ${irow('Total Vacancies', totalVac)}
-        ${irow('Job Location', location)}
-        ${irow('Apply Mode', applyMode)}
-      </div></div>`;
-
-    const salCard = salary ? `<div class="fscd-card">
-      <div class="fscd-card-head"><i class="fas fa-coins"></i> Salary &amp; Benefits</div>
-      <div class="fscd-card-body">
-        ${irow('Pay Scale', salary, 'green')}
-        <div class="fscd-info-row"><span class="fscd-lbl">Allowances</span><span class="fscd-val">DA, HRA, Medical as per rules</span></div>
-      </div></div>` : '';
-
-    const hlGrid = `<div class="fscd-grid-2">${hlCard}${salCard}</div>`;
-
-    /* ════════════════════════════════════════════════
-       4. DATES + FEE + AGE  (3-col grid)
-    ════════════════════════════════════════════════ */
-    const dateRows = [
-      ['Application Begin', appBegin, false],
-      ['Last Date to Apply', lastDate, true],
-      ['Fee Payment Last Date', feeLDate, false],
-      ['Correction Last Date', corrDate, false],
-      ['Exam Date', examDate, false],
-      ['Admit Card', admitDate, false],
-      ['Result Date', resDate, false],
-    ].filter(r => r[1]);
-
-    const datesCard = `<div class="fscd-card">
-      <div class="fscd-card-head"><i class="far fa-calendar-alt"></i> Important Dates</div>
-      <div class="fscd-card-body">
-        ${dateRows.length
-          ? dateRows.map(r => irow(r[0], r[1], r[2] ? 'red' : '')).join('')
-          : '<div class="fscd-info-row"><span class="fscd-val">See official notification</span></div>'}
-      </div></div>`;
-
-    const feeCard = `<div class="fscd-card">
-      <div class="fscd-card-head"><i class="fas fa-indian-rupee-sign"></i> Application Fee</div>
-      <div class="fscd-card-body">
-        <div class="fscd-info-row"><span class="fscd-lbl">Fee</span>
-        <span class="fscd-val">${feeText ? '✅ ' + esc(feeText) : '✅ No fee / See notification'}</span></div>
-      </div></div>`;
-
-    const ageRows = [
-      ['Minimum Age', minAge], ['Maximum Age', maxAge], ['Age Relaxation', ageRelax]
-    ].filter(r => r[1]);
-    const ageCard = `<div class="fscd-card">
-      <div class="fscd-card-head"><i class="fas fa-user-clock"></i> Age Limit</div>
-      <div class="fscd-card-body">
-        ${ageRows.length
-          ? ageRows.map(r => irow(r[0], r[1])).join('')
-          : '<div class="fscd-info-row"><span class="fscd-val">As per official notification</span></div>'}
-      </div></div>`;
-
-    const dfaGrid = `<div class="fscd-grid-3">${datesCard}${feeCard}${ageCard}</div>`;
-
-    /* ════════════════════════════════════════════════
-       5. QUALIFICATION + SELECTION PROCESS (2-col)
-    ════════════════════════════════════════════════ */
-    const qualCard = `<div class="fscd-card">
-      <div class="fscd-card-head"><i class="fas fa-graduation-cap"></i> Educational Qualification</div>
-      <div class="fscd-card-body">
-        ${eduQual ? `<p style="margin-bottom:10px;font-size:.84rem;"><span class="fscd-badge gr">Minimum</span> ${esc(eduQual)}</p>` : ''}
-        ${qualDet ? `<p style="font-size:.83rem;line-height:1.7;color:#374151;">${esc(qualDet)}</p>` : ''}
-        ${!eduQual && !qualDet ? '<p style="font-size:.83rem;color:#374151;">See official notification for eligibility details.</p>' : ''}
-      </div></div>`;
-
-    const selSteps = Array.isArray(selProc) ? selProc
-      : typeof selProc === 'string' ? selProc.split(/[,\n;\/]/).map(s => s.trim()).filter(Boolean)
-      : [];
-    const selCard = `<div class="fscd-card">
-      <div class="fscd-card-head"><i class="fas fa-tasks"></i> Selection Process</div>
-      <div class="fscd-card-body">
-        ${selSteps.length
-          ? `<div class="fscd-tags">${selSteps.map(s => `<span class="fscd-tag"><i class="fas fa-check-circle"></i>${esc(s.slice(0,70))}</span>`).join('')}</div>`
-          : '<p style="font-size:.83rem;color:#374151;">Written Test / Document Verification. See notification.</p>'}
-      </div></div>`;
-
-    const qualSelGrid = `<div class="fscd-grid-2">${qualCard}${selCard}</div>`;
-
-    /* ════════════════════════════════════════════════
-       6. VACANCY TABLE (full-width, horizontal scroll)
-    ════════════════════════════════════════════════ */
-    let vacTableHtml = '';
-    if (vacRows.length) {
-      const cols = Object.keys(vacRows[0]).filter(k => vacRows.some(r => safe(r[k])));
-      if (cols.length) {
-        const thead = `<thead><tr>${cols.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead>`;
-        const tbody = `<tbody>${vacRows.map(row =>
-          `<tr>${cols.map((c, ci) => `<td>${ci === 0 ? `<strong>${esc(safe(row[c]))}</strong>` : esc(safe(row[c]))}</td>`).join('')}</tr>`
-        ).join('')}</tbody>`;
-        vacTableHtml = `<div class="fscd-card fscd-card-full" id="udyn-vacancy-extended">
-          <div class="fscd-card-head"><i class="fas fa-table-list"></i> Detailed Vacancy &amp; Pay Matrix</div>
-          <div class="fscd-card-body" style="padding-bottom:.5rem;">
-            <div class="fscd-tbl-wrap"><table class="fscd-vac-tbl">${thead}${tbody}</table></div>
-            <div class="fscd-scroll-hint"><i class="fa-solid fa-left-right" style="font-size:.6rem;"></i> Scroll horizontally to see all columns</div>
-          </div></div>`;
-        tocSections.push({ id:'udyn-vacancy-extended', icon:'fa-chart-pie', label:'Vacancy Details' });
-      }
-    }
-    /* Also render vacancy from exVacancy (for structured data) */
-    if (!vacRows.length) {
-      const { rows: eVacRows, cw: eVacCW } = exVacancy(rawJob);
-      if (eVacRows.length || hasContent(eVacCW)) {
-        const vc = cardVacancy(eVacRows, eVacCW);
-        if (vc) {
-          vc.classList.add('fscd-card-full');
-          vc.style.borderRadius = '1.4rem';
-          vc.style.border = '1px solid #e9f0f5';
-          vc.style.boxShadow = '0 8px 24px -8px rgba(0,0,0,.07)';
-          appendAfterAll(vc);
-          tocSections.push({ id:'udyn-vacancy-extended', icon:'fa-chart-pie', label:'Vacancy Details' });
-        }
-      }
-    }
-
-    /* ════════════════════════════════════════════════
-       7. EXAM PATTERN + SYLLABUS (2-col, if present)
-    ════════════════════════════════════════════════ */
-    let examSylHtml = '';
-    if (examPat || syllabus) {
-      const epCard = examPat ? `<div class="fscd-card">
-        <div class="fscd-card-head"><i class="fas fa-pen-ruler"></i> Exam Pattern</div>
-        <div class="fscd-card-body">
-          <p style="font-size:.84rem;line-height:1.7;color:#374151;">${esc(examPat)}</p>
-          <span class="fscd-badge or" style="margin-top:8px;display:inline-block;">Check official notice for marks</span>
-        </div></div>` : '';
-      const sylCard = syllabus ? `<div class="fscd-card">
-        <div class="fscd-card-head"><i class="fas fa-book-open"></i> Syllabus</div>
-        <div class="fscd-card-body">
-          <p style="font-size:.84rem;line-height:1.7;color:#374151;">${esc(syllabus)}</p>
-          <p style="margin-top:8px;font-size:.81rem;color:#64748b;">📖 GK, Reasoning, Technical/Domain knowledge</p>
-        </div></div>` : '';
-      examSylHtml = `<div class="fscd-grid-2">${epCard}${sylCard}</div>`;
-    }
-
-    /* ════════════════════════════════════════════════
-       8. DOCUMENTS + HOW TO APPLY (2-col, if present)
-    ════════════════════════════════════════════════ */
-    let docsHtaHtml = '';
-    if (docs.length || howTo.length) {
-      const docsCard = docs.length ? `<div class="fscd-card">
-        <div class="fscd-card-head"><i class="fas fa-folder-open"></i> Required Documents</div>
-        <div class="fscd-card-body"><ul class="fscd-steps">
-          ${docs.map(d => `<li class="fscd-step"><i class="fas fa-file-check"></i>${esc(d)}</li>`).join('')}
-        </ul></div></div>` : '';
-      const htaCard = howTo.length ? `<div class="fscd-card">
-        <div class="fscd-card-head"><i class="fas fa-mouse-pointer"></i> How To Apply</div>
-        <div class="fscd-card-body"><ol class="fscd-steps">
-          ${howTo.map((step, i) => `<li class="fscd-step"><span class="fscd-step-n">${i+1}</span>${esc(step)}</li>`).join('')}
-        </ol></div></div>` : '';
-      docsHtaHtml = `<div class="fscd-grid-2">${docsCard}${htaCard}</div>`;
-      if (howTo.length) tocSections.push({ id:'fscd-docs-howto', icon:'fa-clipboard-list', label:'How To Apply' });
-    }
-
-    /* ════════════════════════════════════════════════
-       9. IMPORTANT LINKS PANEL + ICON GRID
-    ════════════════════════════════════════════════ */
-    const linkIconGrid = fscdIconLinks(links);
-    let linksHtml = '';
-    if (linkIconGrid) {
-      // Quick panel buttons
-      const applyLk = links.find(l => /apply\s*online|apply\s*link/i.test(l.label || ''));
-      const notifLk = links.find(l => /notification|download.*pdf|official.*notif/i.test(l.label || ''));
-      const webLk   = links.find(l => /official\s*website/i.test(l.label || ''));
-      const panelBtns = [
-        notifLk ? `<a href="${esc(notifLk.href || notifLk.url || '#')}" target="_blank" rel="noopener" class="fscd-lbtn solid"><i class="fas fa-download"></i> Notification PDF</a>` : '',
-        applyLk ? `<a href="${esc(applyLk.href || applyLk.url || '#')}" target="_blank" rel="noopener" class="fscd-lbtn green"><i class="fas fa-paper-plane"></i> Apply Online</a>` : '',
-        (!applyLk && !notifLk && webLk) ? `<a href="${esc(webLk.href || webLk.url || '#')}" target="_blank" rel="noopener" class="fscd-lbtn solid"><i class="fas fa-globe"></i> Official Website</a>` : ''
-      ].filter(Boolean).join('');
-
-      linksHtml = `
-        <div class="fscd-links-panel" id="fscd-links-panel">
-          <div class="fscd-lpanel-lbl"><i class="fas fa-link"></i> <strong>Important Links :</strong></div>
-          <div class="fscd-lpanel-btns">${panelBtns}</div>
-        </div>
-        <div class="fscd-card fscd-card-full" id="udyn-imp-links">
-          <div class="fscd-card-head"><i class="fas fa-link"></i> All Important Links</div>
-          <div class="fscd-card-body">${linkIconGrid}</div>
-        </div>`;
-      tocSections.push({ id:'udyn-imp-links', icon:'fa-link', label:'Important Links' });
-    }
-
-    /* ════════════════════════════════════════════════
-       10. INSTRUCTIONS + FAQ (2-col grid)
-    ════════════════════════════════════════════════ */
-    const instCard = insts.length ? `<div class="fscd-card">
-      <div class="fscd-card-head"><i class="fas fa-shield-alt"></i> Important Instructions</div>
-      <div class="fscd-card-body"><ul class="fscd-inst-list">
-        ${insts.map(ins => `<li class="fscd-inst"><i class="fas fa-exclamation-circle"></i>${esc(ins)}</li>`).join('')}
-      </ul></div></div>` : '';
-
-    const faqCard = faqs.length ? `<div class="fscd-card" id="udyn-faq">
-      <div class="fscd-card-head"><i class="fas fa-question-circle"></i> Frequently Asked Questions</div>
-      <div class="fscd-card-body">${faqs.map((f, fi) => `
-        <div class="fscd-faq-item">
-          <div class="fscd-faq-q" onclick="(function(btn){var a=btn.nextElementSibling;var ico=btn.querySelector('.fq-ico');var open=a.classList.contains('open');a.classList.toggle('open',!open);ico.style.transform=open?'':'rotate(180deg)';})(this)">
-            ${esc(f.question)} <i class="fas fa-chevron-down fq-ico"></i>
-          </div>
-          <div class="fscd-faq-a${fi===0?' open':''}">${esc(f.answer)}</div>
-        </div>`).join('')}
-      </div></div>` : '';
-
-    const instFaqGrid = (instCard || faqCard)
-      ? `<div class="fscd-grid-2">${instCard}${faqCard}</div>` : '';
-    if (faqs.length) tocSections.push({ id:'udyn-faq', icon:'fa-circle-question', label:'FAQ' });
-
-    /* ════════════════════════════════════════════════
-       11. INJECT ALL into layoutJob
-    ════════════════════════════════════════════════ */
-    const wrapper = fscdWrap('fscd-main-portal',
-      heroHtml + shortHtml + hlGrid + dfaGrid + qualSelGrid
+    const overviewCard = sec('udyn-overview','linear-gradient(135deg,#0369a1,#0284c7)',
+      'fa-solid fa-circle-info','Job Overview',
+      (overviewRows ? `<div class="udyn-table-scroll"><table class="udyn-gen-table">${overviewRows}</table></div>` : '') + shortInfoBlock
     );
-    layout.insertBefore(wrapper, layout.firstChild);
+    appendCard(overviewCard);
 
-    // Vacancy table (standalone div, inserted after wrapper)
-    if (vacTableHtml) {
-      const vd = document.createElement('div');
-      vd.innerHTML = vacTableHtml;
-      layout.insertBefore(vd.firstElementChild, wrapper.nextSibling);
+    /* ═══════════════════════════════════════════
+       SECTION 2: IMPORTANT DATES
+    ═══════════════════════════════════════════ */
+    const dateRows = [
+      appBegin    ? kvRow('Application Begin', appBegin) : '',
+      lastDate    ? `<tr><th>Last Date To Apply</th><td style="color:#dc2626;font-weight:700;">${esc(lastDate)}</td></tr>` : '',
+      feeLastDate ? kvRow('Last Date Fee Payment', feeLastDate) : '',
+      corrDate    ? kvRow('Correction Date', corrDate) : '',
+      examDate    ? kvRow('Exam Date', examDate) : '',
+      admitDate   ? kvRow('Admit Card Available', admitDate) : '',
+      resultDate  ? kvRow('Result Date', resultDate) : '',
+      notifDate   ? kvRow('Notification Date', notifDate) : '',
+    ].filter(Boolean).join('');
+
+    // Also add any extra date fields from important_dates
+    const knownDateKeys = new Set(['application_begin','application_start','start_date','last_date','last_date_to_apply','application_last_date','exam_date','admit_card_date','admit_card','result_date','notification_date','date_of_notification','last_date_fee_payment','fee_payment_last_date','correction_date','last_date_correction','raw','rawDate']);
+    let extraDateRows = '';
+    for (const [k, v] of Object.entries(id)) {
+      if (knownDateKeys.has(k) || !hasContent(v) || k.startsWith('_')) continue;
+      const fv = fmtDate(safe(v));
+      if (fv) extraDateRows += kvRow(keyToLabel(k), fv);
     }
 
-    // Exam/syllabus
-    if (examSylHtml) {
-      const es = fscdWrap('fscd-exam-syl', examSylHtml);
-      insertBeforeLinks(es);
+    if (dateRows || extraDateRows) {
+      appendCard(sec('udyn-dates','linear-gradient(135deg,#b91c1c,#dc2626)',
+        'fa-regular fa-calendar-check','Important Dates',
+        `<div class="udyn-table-scroll"><table class="udyn-gen-table">${dateRows}${extraDateRows}</table></div>`
+      ));
     }
 
-    // Docs + How To Apply
-    if (docsHtaHtml) {
-      const dh = fscdWrap('fscd-docs-howto', docsHtaHtml);
-      insertBeforeLinks(dh);
+    /* ═══════════════════════════════════════════
+       SECTION 3: APPLICATION FEE
+    ═══════════════════════════════════════════ */
+    const feeData = exFees(rawJob);
+    if (feeData.items.length) {
+      const isFree = v => /nil|^0\/?-?$|free|no fee|exempt/i.test(String(v).trim());
+      const feeGridHtml = feeData.items.map(({ label, val }) =>
+        `<div class="udyn-grid-item">` +
+          `<div class="udyn-grid-label">${esc(label)}</div>` +
+          `<div class="udyn-grid-val" style="${isFree(val) ? 'color:#16a34a;' : 'color:#1d4ed8;'}">${esc(val)}</div>` +
+        `</div>`
+      ).join('');
+      const feeNoteHtml = feeData.note
+        ? `<div class="udyn-grid-note"><i class="fa-solid fa-circle-info" style="margin-right:5px;"></i>${esc(feeData.note)}</div>`
+        : '';
+      appendCard(sec('udyn-fee','linear-gradient(135deg,#c2410c,#ea580c)',
+        'fa-solid fa-indian-rupee-sign','Application Fee',
+        `<div class="udyn-grid" style="grid-template-columns:repeat(auto-fill,minmax(170px,1fr));">${feeGridHtml}</div>${feeNoteHtml}`
+      ));
     }
 
-    // Links panel + icon grid
-    if (linksHtml) {
-      const lp = fscdWrap('fscd-links-wrap', linksHtml);
-      appendAfterAll(lp);
+    /* ═══════════════════════════════════════════
+       SECTION 4: AGE LIMIT
+    ═══════════════════════════════════════════ */
+    const ageRows = [
+      finalMinAge  ? kvRow('Minimum Age', finalMinAge) : '',
+      finalMaxAge  ? kvRow('Maximum Age', finalMaxAge) : '',
+      finalAgeRelax? kvRow('Age Relaxation', finalAgeRelax) : '',
+    ].filter(Boolean).join('');
+    const ageDetLong = finalAgeDet && finalAgeDet.length > 80 && !isJunk(finalAgeDet);
+    const ageDetShort = finalAgeDet && finalAgeDet.length <= 80 && !isJunk(finalAgeDet);
+    const ageDetHtml = ageDetShort ? kvRow('Age Details', finalAgeDet) : '';
+    const ageDetBlock = ageDetLong
+      ? `<div class="udyn-detail" style="font-size:.82rem;line-height:1.8;color:#374151;white-space:pre-line;">${esc(finalAgeDet)}</div>`
+      : '';
+
+    if (ageRows || ageDetHtml || ageDetBlock) {
+      appendCard(sec('udyn-age','linear-gradient(135deg,#7c3aed,#8b5cf6)',
+        'fa-solid fa-user-clock','Age Limit',
+        `<div class="udyn-table-scroll"><table class="udyn-gen-table">${ageRows}${ageDetHtml}</table></div>${ageDetBlock}`
+      ));
     }
 
-    // Instructions + FAQ
-    if (instFaqGrid) {
-      const ifg = fscdWrap('fscd-inst-faq', instFaqGrid);
-      appendAfterAll(ifg);
+    /* ═══════════════════════════════════════════
+       SECTION 5: QUALIFICATION / ELIGIBILITY
+    ═══════════════════════════════════════════ */
+    const qualContent = deepRender(qual, 0);
+    const eligText = safe(rawJob.eligibility || '');
+    if (qualContent || eligText) {
+      const qHtml = qualContent
+        ? `<div class="udyn-detail" style="line-height:1.8;">${qualContent}</div>`
+        : `<div class="udyn-detail" style="font-size:.83rem;line-height:1.8;">${esc(eligText)}</div>`;
+      appendCard(sec('udyn-qual','linear-gradient(135deg,#0369a1,#0284c7)',
+        'fa-solid fa-graduation-cap','Qualification / Eligibility', qHtml));
     }
 
-    // Render any SR-style tables / unknown sections via existing card builders
-    // FIX: Skip tables that are clearly duplicating vacancy_details data already shown above
+    /* ═══════════════════════════════════════════
+       SECTION 6: VACANCY DETAILS
+    ═══════════════════════════════════════════ */
+    const vacCard = cardVacancy(vacRows, vacCW);
+    if (vacCard) appendCard(vacCard);
+
+    /* ═══════════════════════════════════════════
+       SECTION 7: CATEGORY-WISE VACANCY (standalone if large)
+    ═══════════════════════════════════════════ */
+    // Already merged into vacCard above via cardVacancy
+
+    /* ═══════════════════════════════════════════
+       SECTION 8: SALARY / PAY SCALE
+    ═══════════════════════════════════════════ */
+    const salData = exSalary(rawJob); const salCard = cardSalary(salData.structured, salData.flat);
+    if (salCard) appendCard(salCard);
+
+    /* ═══════════════════════════════════════════
+       SECTION 9: SELECTION PROCESS
+    ═══════════════════════════════════════════ */
+    const selCard = cardSelection(selProc);
+    if (selCard) appendCard(selCard);
+
+    /* ═══════════════════════════════════════════
+       SECTION 10: EXAM PATTERN / SYLLABUS
+    ═══════════════════════════════════════════ */
+    const ep = rawJob.exam_pattern;
+    const syl = rawJob.syllabus;
+    if (ep) appendCard(cardExamPattern(ep));
+    if (syl) appendCard(cardSyllabus(syl));
+
+    /* ═══════════════════════════════════════════
+       SECTION 11: PHYSICAL ELIGIBILITY
+    ═══════════════════════════════════════════ */
+    const pe = rawJob.physical_eligibility || rawJob.physical_standards;
+    if (pe) appendCard(cardPhysical(pe));
+
+    /* ═══════════════════════════════════════════
+       SECTION 12: HOW TO APPLY
+    ═══════════════════════════════════════════ */
+    const htaCard = cardHowToApply(howTo);
+    if (htaCard) appendCard(htaCard);
+
+    /* ═══════════════════════════════════════════
+       SECTION 13: IMPORTANT LINKS
+    ═══════════════════════════════════════════ */
+    if (links.length) appendCard(cardLinks(links));
+
+    /* ═══════════════════════════════════════════
+       SECTION 14: INSTRUCTIONS
+    ═══════════════════════════════════════════ */
+    if (insts.length) appendCard(cardInstructions(insts));
+
+    /* ═══════════════════════════════════════════
+       SECTION 15: SR-STYLE TABLES (deduplicated)
+    ═══════════════════════════════════════════ */
     const tables = exTables(rawJob);
     if (tables && Array.isArray(tables)) {
-      // Check if vacancy_details was already rendered (has rows with same total_post / post_name)
-      const vacAlreadyRendered = vacRows && vacRows.length > 0;
-      // Filter out table groups that duplicate vacancy content
       const filteredTables = tables.filter(group => {
         if (!group || !Array.isArray(group.rows)) return true;
         const tname = safe(group.table_name || '').toLowerCase();
-        // Skip vacancy/post tables if we already rendered vacancy_details
-        if (vacAlreadyRendered && /post name|total post|vacancy|sbi apprent|post wise/i.test(tname)) return false;
-        // Skip tables that are just the header/notification info block (already in hero)
-        if (/gb headline|short details of notification|name of post.*post date/i.test(tname)) return false;
-        // Skip tables where all rows are already shown in hero/basic_details
+        // Skip tables that just duplicate vacancy/overview data already shown
+        if (/post name|total post|sbi apprent|post wise|gb headline|short details of notification|name of post/i.test(tname)) return false;
+        // Skip tables where every row is overview info (Name Of Post, Short Information)
         const rowTexts = group.rows.map(r => Array.isArray(r) ? r.join(' ') : '').join(' ').toLowerCase();
-        if (/short information|name of post|post date.*update/i.test(rowTexts) && group.rows.length <= 3) return false;
+        if (/name of post|short information|post date.*update/i.test(rowTexts) && group.rows.length <= 3) return false;
+        // Skip if vacancy already rendered and table has vacancy structure
+        if (vacRows.length > 0 && /vacancy|ur.*general|ews.*obc/i.test(rowTexts)) return false;
         return true;
       });
       if (filteredTables.length > 0) {
         const tc = cardTables(filteredTables);
-        if (tc) {
-          tc.style.borderRadius = '1.4rem';
-          tc.style.border = '1px solid #e9f0f5';
-          appendAfterAll(tc);
-        }
+        if (tc) appendCard(tc);
       }
     }
+
+    /* ═══════════════════════════════════════════
+       SECTION 16: TEXT SECTIONS
+    ═══════════════════════════════════════════ */
     const textSections = exTextSections(rawJob);
     if (textSections) {
       const ts = cardTextSections(textSections);
-      if (ts) appendAfterAll(ts);
+      if (ts) appendCard(ts);
     }
 
-    updateTOC(tocSections.filter(d => d));
+    /* ═══════════════════════════════════════════
+       SECTION 17: FAQs (deduped + Q/A fixed)
+    ═══════════════════════════════════════════ */
+    if (faqs.length) appendCard(cardFaq(faqs));
+
+    updateTOC(document.querySelectorAll('.udyn-card.udyn-anchor'));
   }
+
 
 
   /* ═══════════════════════════════════════════════════════════════════════
