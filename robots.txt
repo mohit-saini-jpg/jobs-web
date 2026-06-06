@@ -64,15 +64,8 @@ Allow: /resume-maker/
 Allow: /81ee32a562315ef5f3b03a8cf23bb1e2.txt
 
 # Sitemaps
-# SEO-06: sitemap-index.xml is primary — submit THIS to Google Search Console
+# SEO-06: sitemap-index.xml is the ONLY index — submit THIS to Google Search Console
 Sitemap: https://www.topsarkarijobs.com/sitemap-index.xml
-Sitemap: https://www.topsarkarijobs.com/sitemap.xml
-Sitemap: https://www.topsarkarijobs.com/sitemap-jobs.xml
-Sitemap: https://www.topsarkarijobs.com/sitemap-states.xml
-Sitemap: https://www.topsarkarijobs.com/sitemap-education.xml
-Sitemap: https://www.topsarkarijobs.com/sitemap-categories.xml
-Sitemap: https://www.topsarkarijobs.com/sitemap-sections.xml
-Sitemap: https://www.topsarkarijobs.com/sitemap-pages.xml
 
 User-agent: Googlebot
 Allow: /

@@ -74,6 +74,81 @@ TODAY    = date.today().isoformat()
 YEAR     = date.today().year
 BLOCKED  = {'sarkariresult.com','freejobalert.com','sarkarinetwork.com','sarkariresultshine.com'}
 
+# ── C1 FIX: Stable per-slug first-seen dates (datePosted must NOT be build-date) ──
+_FIRST_SEEN_PATH = None  # set after ROOT is defined
+_FIRST_SEEN = {}
+_FIRST_SEEN_DIRTY = False
+
+def _load_first_seen(root_path):
+    global _FIRST_SEEN, _FIRST_SEEN_PATH
+    import os as _os
+    _FIRST_SEEN_PATH = _os.path.join(str(root_path), 'data', 'job-first-seen.json')
+    try:
+        with open(_FIRST_SEEN_PATH, encoding='utf-8') as f:
+            _FIRST_SEEN = json.load(f)
+    except Exception:
+        _FIRST_SEEN = {}
+
+def _save_first_seen():
+    if not _FIRST_SEEN_DIRTY or not _FIRST_SEEN_PATH: return
+    try:
+        import os as _os
+        _os.makedirs(_os.path.dirname(_FIRST_SEEN_PATH), exist_ok=True)
+        with open(_FIRST_SEEN_PATH, 'w', encoding='utf-8') as f:
+            json.dump(_FIRST_SEEN, f, ensure_ascii=False, separators=(',', ':'))
+    except Exception:
+        pass
+
+def get_date_posted(slug, job_obj):
+    """C1: Stable datePosted. Priority: real job date -> persisted first-seen -> today (saved)."""
+    global _FIRST_SEEN_DIRTY
+    dts = job_obj.get('important_dates', {}) or {}
+    bd  = job_obj.get('basic_details', {}) or {}
+    # normalize keys (handle 'date of advertisement' vs 'date_of_advertisement')
+    def _norm_key(k): return re.sub(r'[^a-z0-9]+', '_', str(k).lower()).strip('_')
+    merged = {}
+    for src in (dts, bd):
+        if isinstance(src, dict):
+            for k, v in src.items():
+                merged.setdefault(_norm_key(k), v)
+    for k in ('post_date', 'date_of_advertisement', 'opening_of_online_registration_of_application',
+              'start_date', 'application_begin', 'notification_date', 'date'):
+        raw = merged.get(k)
+        if raw:
+            nd = norm_date(raw)
+            if nd:
+                return nd
+    if slug in _FIRST_SEEN and _FIRST_SEEN[slug]:
+        return _FIRST_SEEN[slug]
+    _FIRST_SEEN[slug] = TODAY
+    _FIRST_SEEN_DIRTY = True
+    return TODAY
+
+# ── C2 FIX: Page intent classifier (job vs result vs admit vs article/scheme) ──
+import re as _re_intent
+_RX_RESULT  = _re_intent.compile(r'\b(result|results|scorecard|score card|merit list|cut[\s-]?off|rank card|declared|revaluation|answer key|answer sheet)\b', _re_intent.I)
+_RX_ADMIT   = _re_intent.compile(r'\b(admit card|hall ticket|call letter|exam date|date sheet|time table|exam city|slot booking)\b', _re_intent.I)
+_RX_SCHEME  = _re_intent.compile(r'\b(yojana|yojna|scheme|pension|scholarship|card download|registration|kyc|certificate download|status check|apply link|e-?shram|pm[\s-]?kisan|samman|loan)\b', _re_intent.I)
+_RX_JOB     = _re_intent.compile(r'\b(recruitment|vacancy|vacancies|online form|apply online|posts|notification|bharti|engagement|walk[\s-]?in|hiring|appointment)\b', _re_intent.I)
+
+def page_intent(job_obj):
+    """Return one of: job | result | admitcard | scheme | article"""
+    bd = job_obj.get('basic_details', {}) or {}
+    title = str(bd.get('job_title','') or job_obj.get('title','') or '')
+    cat   = str(job_obj.get('category','') or '')
+    blob  = (title + ' ' + cat).lower()
+    # vacancy_details / salary presence strongly indicates a real job
+    has_vacancy = bool(job_obj.get('vacancy_details') or job_obj.get('category_wise_vacancy'))
+    if _RX_RESULT.search(blob) and not _RX_JOB.search(blob):
+        return 'result'
+    if _RX_ADMIT.search(blob) and not _RX_JOB.search(blob):
+        return 'admitcard'
+    if _RX_JOB.search(blob) or has_vacancy:
+        return 'job'
+    if _RX_SCHEME.search(blob):
+        return 'scheme'
+    return 'article'
+
 # ── Qualification maps ────────────────────────────────────────
 QUAL_SLUG = {
     '10TH_Pass':'10th-pass','8TH_Pass':'8th-pass','12TH_Pass':'12th-pass',
@@ -367,8 +442,53 @@ def render_fee(obj):
            (f'<div class="fee-note"><i class="fa-solid fa-circle-info"></i> {e(note)}</div>' if note else '')
     return body
 
+# ── C4 FIX: strip navigation/footer/tool/city-jobs pollution from section lists ──
+_POLLUTION_RX = [
+    re.compile(r'\bjobs?\s*\(\d+\)', re.I),                       # "Hyderabad Jobs (435)"
+    re.compile(r'\b(pdf|word|image)\s+to\s+(word|pdf|image)\b', re.I),
+    re.compile(r'\b(image\s+resizer|free\s+mock\s+test|free\s+ai|ai\s+interview|games?)\b', re.I),
+    re.compile(r'\b(online\s+form\s+2026|admit\s+card\s+2026\s*-\s*out|result\s+2026\s*-\s*out)\b', re.I),
+    re.compile(r'\b(privacy\s+policy|terms|disclaimer|contact\s+us|about\s+us|sitemap|advertise)\b', re.I),
+    re.compile(r'\b(follow\s+us|whatsapp|telegram\s+channel|youtube\s+channel|facebook\s+page|google\s+news)\b', re.I),
+]
+_POLLUTION_EXACT = {
+    'education','games','sarkari job','sarkari naukri','sarkari result','admit card',
+    'exam results','answer key','cutoff marks','written marks','interview results',
+    'last date reminder','eligibility','syllabus','exam pattern','selection process',
+    'previous papers','image resizer','free mock test','anganwadi recruitment',
+    'forest jobs','search jobs','employment news','latest notifications',
+    '10th jobs','8th jobs','12th jobs','diploma jobs','iti jobs','ba jobs','ma jobs',
+    'b.com jobs','mba jobs','msw jobs','b.sc jobs','m.sc jobs','b.tech/b.e jobs',
+    'any graduate jobs','any post graduate jobs','pdf to word converter',
+    'image to pdf converter','word to pdf converter','free ai interview tool',
+}
+
+def _clean_section_items(items):
+    """Remove menu/footer/tool/city/other-job pollution that bled into section arrays."""
+    out = []
+    for s in items:
+        if not s: continue
+        t = str(s).strip()
+        tl = t.lower().strip(' .:')
+        if tl in _POLLUTION_EXACT:
+            continue
+        if any(rx.search(t) for rx in _POLLUTION_RX):
+            continue
+        # very short menu-like single tokens (no sentence) are likely nav labels
+        if len(t) <= 3:
+            continue
+        out.append(t)
+    # de-dup preserving order
+    seen = set(); ded = []
+    for x in out:
+        k = x.lower()
+        if k in seen: continue
+        seen.add(k); ded.append(x)
+    return ded
+
 def render_list_items(items, ordered=False):
     filtered = [safe(s) for s in (items if isinstance(items, list) else [str(items)]) if safe(s)]
+    filtered = _clean_section_items(filtered)
     if not filtered: return ''
     tag = 'ol' if ordered else 'ul'
     return f'<{tag} class="val-list">' + ''.join(f'<li>{e(s)}</li>' for s in filtered) + f'</{tag}>'
@@ -377,9 +497,10 @@ def render_selection(sp):
     if not sp: return ''
     if isinstance(sp, str): sp = [s.strip() for s in re.split(r'[,\n;/→]', sp) if s.strip()]
     steps = [safe(s) for s in sp if safe(s)]
+    steps = _clean_section_items(steps)[:25]   # C4: cap + clean
     if not steps: return ''
     return '<div class="sel-steps">' + ''.join(
-        f'<div class="sel-step"><span class="sel-num">{i+1}</span>{e(s[:100])}</div>'
+        f'<div class="sel-step"><span class="sel-num">{i+1}</span>{e(s[:140])}</div>'
         for i, s in enumerate(steps)
     ) + '</div>'
 
@@ -387,6 +508,7 @@ def render_hta(steps):
     if not steps: return ''
     if isinstance(steps, str): steps = [s.strip() for s in steps.split('\n') if s.strip()]
     filtered = [safe(s) for s in steps if safe(s)]
+    filtered = _clean_section_items(filtered)[:25]   # C4: cap + clean
     if not filtered: return ''
     items = ''.join(f'<li class="hta-item"><span class="hta-num">{i+1}</span><span>{e(s)}</span></li>'
                     for i, s in enumerate(filtered))
@@ -459,6 +581,8 @@ def render_vacancy_table(vac_list):
     if not vac_list or not isinstance(vac_list, list): return ''
     ALL_COLS = [
         ('post_name',['post_name','post','name','Post Name','Name Of Post','Post']),
+        ('state',['State / UT','State/UT','state','State','State / Ut']),
+        ('language',['Language','language','Medium','medium']),
         ('total',['total','total_vacancies','total_posts','vacancies','Total Posts','Total','Vacancy']),
         ('ur',['ur','general','UR','General (UR)','General']),
         ('obc',['obc','OBC']),('sc',['sc','SC']),('st',['st','ST']),('ews',['ews','EWS']),
@@ -467,12 +591,17 @@ def render_vacancy_table(vac_list):
         ('qualification',['eligibility','qualification','Educational Qualification']),
         ('department',['department','Department']),
     ]
-    LABELS = {'post_name':'Post Name','total':'Total','ur':'UR/General','obc':'OBC',
+    LABELS = {'post_name':'Post Name','state':'State / UT','language':'Language',
+              'total':'Total','ur':'UR/General','obc':'OBC',
               'sc':'SC','st':'ST','ews':'EWS','women':'Women','salary':'Salary',
               'qualification':'Qualification','department':'Department'}
     norm = []; avail = set()
     for row in vac_list:
         if not isinstance(row, dict): continue
+        # skip rows that clearly belong to a different table (e.g. disability Category/Description
+        # rows leaked into vacancy_details) — they carry none of our known columns
+        if not any(a in row for _c, al in ALL_COLS for a in al):
+            continue
         n = {}
         for col, aliases in ALL_COLS:
             for a in aliases:
@@ -482,9 +611,69 @@ def render_vacancy_table(vac_list):
     if not norm: return ''
     cols = [c for c,_ in ALL_COLS if c in avail]
     if not cols: return ''
+
+    # ── C3 FIX: clean rows + compute the real grand total ──
+    def _to_int(v):
+        m = re.search(r'\d[\d,]*', str(v or ''))
+        return int(m.group().replace(',', '')) if m else None
+    def _is_total_label(v):
+        return bool(re.search(r'\b(total|grand\s*total|sum)\b', str(v or ''), re.I))
+
+    has_name = 'post_name' in cols
+    # label column = first non-total descriptive column (post_name/state/language)
+    _label_cols = [c for c in cols if c in ('post_name','state','language','department')]
+    clean = []
+    explicit_total = None
+    for r in norm:
+        name = r.get('post_name', '') or r.get('state','') or r.get('language','')
+        # capture an explicitly-labelled total row, don't render it as a data line
+        if _is_total_label(r.get('post_name','') or r.get('state','') or r.get('language','')):
+            t = _to_int(r.get('total'))
+            if t: explicit_total = t
+            continue
+        # capture an UNLABELLED total row: has a Total value but no descriptive label at all
+        if _label_cols and not any(str(r.get(lc,'')).strip() for lc in _label_cols) and str(r.get('total','')).strip():
+            t = _to_int(r.get('total'))
+            if t: explicit_total = t
+            continue
+        # drop rows completely empty of label AND total
+        if _label_cols and not any(str(r.get(lc,'')).strip() for lc in _label_cols) and not str(r.get('total','')).strip():
+            continue
+        clean.append(r)
+    if not clean and not explicit_total:
+        clean = norm
+
+    # If post-name column is entirely blank, render without it (keep state/language)
+    if has_name and all(not str(r.get('post_name','')).strip() for r in clean):
+        cols = [c for c in cols if c != 'post_name'] or ['total']
+        has_name = False
+
+    grand_total = explicit_total
+    # sanity: a real grand total can't be smaller than the largest single data row
+    if 'total' in cols:
+        data_nums = [x for x in (_to_int(r.get('total')) for r in clean) if x]
+        data_sum = sum(data_nums) if data_nums else 0
+        data_max = max(data_nums) if data_nums else 0
+        if grand_total is not None and grand_total < data_max:
+            grand_total = data_sum or None      # captured "total" was bogus -> use real sum
+        if grand_total is None and data_nums:
+            grand_total = data_sum
+
     head = '<th>Sr.</th>' + ''.join(f'<th>{LABELS[c]}</th>' for c in cols)
     rows = ''.join(f'<tr><td>{i+1}</td>' + ''.join(f'<td>{e(r.get(c,""))}</td>' for c in cols) + '</tr>'
-                   for i, r in enumerate(norm))
+                   for i, r in enumerate(clean))
+    # append a correct, clearly-labelled total row (only when meaningful and >1 data row)
+    if grand_total and 'total' in cols and len(clean) > 1:
+        tot_cells = ''
+        first_done = False
+        for c in cols:
+            if not first_done:
+                tot_cells += '<td><strong>Total</strong></td>'; first_done = True
+            elif c == 'total':
+                tot_cells += f'<td><strong>{grand_total}</strong></td>'
+            else:
+                tot_cells += '<td></td>'
+        rows += f'<tr class="vac-tot">{tot_cells}</tr>'
     return f'<div class="tbl-scroll"><table class="data-table"><thead><tr>{head}</tr></thead><tbody>{rows}</tbody></table></div>'
 
 # ── Sarkari sections processor ────────────────────────────────
@@ -918,7 +1107,7 @@ def parse_salary(pay_str):
     if len(nums) == 1: return (nums[0], min(int(nums[0]*2), 250000))
     return (18000, 92300)
 
-def build_schemas(job_obj, canon_url, breadcrumbs):
+def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
     bd    = job_obj.get('basic_details', {}) or {}
     dates = job_obj.get('important_dates', {}) or {}
     faq   = job_obj.get('faq', []) or []
@@ -928,26 +1117,53 @@ def build_schemas(job_obj, canon_url, breadcrumbs):
     desc  = safe(bd.get('short_information',''))[:500] or title
     last_d = safe(dates.get('last_date_to_apply','') or dates.get('last_date',''))
 
-    _pay_str = safe((job_obj.get('basic_details') or {}).get('pay_scale','') or
-                    (job_obj.get('salary_details') or {}).get('pay_scale','') or '')
-    _sal_min, _sal_max = parse_salary(_pay_str)
-    jp = {'@context':'https://schema.org','@type':'JobPosting','title':title,
-          'description':desc,'datePosted':TODAY,'url':canon_url,
-          'employmentType':'FULL_TIME',
-          'hiringOrganization':{'@type':'Organization','name':org},
-          'jobLocation':{'@type':'Place','address':{'@type':'PostalAddress','addressCountry':'IN','addressLocality':loc}},
-          'baseSalary':{'@type':'MonetaryAmount','currency':'INR','value':{'@type':'QuantitativeValue','minValue':_sal_min,'maxValue':_sal_max,'unitText':'MONTH'}}}
-    if last_d:
-        nd = norm_date(last_d)
-        if nd: jp['validThrough'] = nd + 'T00:00:00'
+    if slug is None:
+        slug = slugify(title)[:80]
+    intent = page_intent(job_obj)
+    # C1: stable datePosted (never build-date for the same job across rebuilds)
+    date_posted = get_date_posted(slug, job_obj)
 
+    # ── Breadcrumb schema (always) ──
     bc_items = [{'@type':'ListItem','position':1,'name':'Home','item':BASE_URL+'/'}]
     for i,(lbl,url) in enumerate(breadcrumbs, 2):
         bc_items.append({'@type':'ListItem','position':i,'name':lbl,'item':url})
     bc_items.append({'@type':'ListItem','position':len(bc_items)+1,'name':title,'item':canon_url})
     bc_schema = {'@context':'https://schema.org','@type':'BreadcrumbList','itemListElement':bc_items}
 
-    out = (f'<script type="application/ld+json">{json.dumps(jp, ensure_ascii=False)}</script>\n'
+    if intent == 'job':
+        # ── H1: proper JobPosting only for real jobs ──
+        jp = {'@context':'https://schema.org','@type':'JobPosting','title':title,
+              'description':desc,'datePosted':date_posted,'url':canon_url,
+              'employmentType':'FULL_TIME','directApply':False,
+              'identifier':{'@type':'PropertyValue','name':org,
+                            'value':safe(bd.get('advt_no','') or bd.get('notification_no','') or slug)},
+              'hiringOrganization':{'@type':'Organization','name':org,'sameAs':BASE_URL},
+              'jobLocation':{'@type':'Place','address':{'@type':'PostalAddress','addressCountry':'IN','addressLocality':loc}},
+              'applicantLocationRequirements':{'@type':'Country','name':'India'}}
+        # H1: only emit baseSalary when we actually have a salary string (no min:0 spam)
+        _pay_str = safe((job_obj.get('basic_details') or {}).get('pay_scale','') or
+                        (job_obj.get('salary_details') or {}).get('pay_scale','') or '')
+        if _pay_str:
+            _sal_min, _sal_max = parse_salary(_pay_str)
+            if _sal_min and _sal_min > 0:
+                jp['baseSalary'] = {'@type':'MonetaryAmount','currency':'INR',
+                    'value':{'@type':'QuantitativeValue','minValue':_sal_min,'maxValue':_sal_max,'unitText':'MONTH'}}
+        if last_d:
+            nd = norm_date(last_d)
+            if nd: jp['validThrough'] = nd + 'T00:00:00'
+        primary = jp
+    else:
+        # C2: result / admitcard / scheme / article -> Article (NOT JobPosting)
+        primary = {'@context':'https://schema.org','@type':'Article',
+                   'headline':title[:110],'description':desc,'url':canon_url,
+                   'datePublished':date_posted,'dateModified':TODAY,
+                   'author':{'@type':'Organization','name':'Top Sarkari Jobs','url':BASE_URL},
+                   'publisher':{'@type':'Organization','name':'Top Sarkari Jobs',
+                                'logo':{'@type':'ImageObject','url':BASE_URL+'/image.png'}},
+                   'mainEntityOfPage':{'@type':'WebPage','@id':canon_url},
+                   'image':BASE_URL+'/og-jobs.png'}
+
+    out = (f'<script type="application/ld+json">{json.dumps(primary, ensure_ascii=False)}</script>\n'
            f'<script type="application/ld+json">{json.dumps(bc_schema, ensure_ascii=False)}</script>\n')
 
     valid_faqs = [f for f in faq if isinstance(f,dict) and f.get('question') and f.get('answer')][:10]
@@ -1104,11 +1320,18 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
         _fmt = {'result':'{o} {y} Result','admit':'{o} {y} Admit Card','answer':'{o} {y} Answer Key'}
         _jp = _fmt[_ct].format(o=_org_s, y=_yr)
     else:
-        _jp = f'{_org_s} {_yr} Recruitment{_vac_s}'
-        if len(_jp) > _MAX:
-            _jp = f'{_org_s} {_yr}{_vac_s}'
-        if len(_jp) < 15:
-            _jp = title[:_MAX]
+        # H2: prefer the real, intent-rich title (post name + Recruitment/Vacancy/Form),
+        # trimmed to fit; fall back to org-based only if title is unusable.
+        _clean_title = re.sub(r'\s*-\s*(latest jobs|big update|notification out).*$', '', title, flags=re.I).strip()
+        _has_intent = bool(re.search(r'\b(recruitment|vacancy|vacancies|online form|apply online|posts|notification|admit card|result)\b', _clean_title, re.I))
+        if _has_intent and 15 <= len(_clean_title):
+            _jp = _clean_title
+        else:
+            _jp = f'{_org_s} {_yr} Recruitment{_vac_s}'
+            if len(_jp) > _MAX:
+                _jp = f'{_org_s} {_yr}{_vac_s}'
+            if len(_jp) < 15:
+                _jp = title[:_MAX]
     if len(_jp) > _MAX:
         _jp = _jp[:_MAX-1].rsplit(' ',1)[0].rstrip(',-–(') + '…'
     title_tag = (_jp + _BRAND)[:60]
@@ -1125,9 +1348,17 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     if _vd: _parts.append(f'{_vd} Posts')
     if _ld_s: _parts.append(f'Last Date: {_ld_s}')
     _cta_md = f'Apply {apply_m.lower() if apply_m else "online"} at Top Sarkari Jobs.'
-    meta_desc = ('. '.join(p.rstrip('.') for p in _parts) + '. ' + _cta_md)[:155]
+    _md_full = '. '.join(p.rstrip('.') for p in _parts) + '. ' + _cta_md
+    if len(_md_full) > 155:
+        _cut = _md_full[:155]
+        # back off to last full word; avoid mid-word cut
+        if ' ' in _cut:
+            _cut = _cut[:_cut.rfind(' ')]
+        meta_desc = _cut.rstrip(' ,;:-') + '…'
+    else:
+        meta_desc = _md_full
 
-    schemas_html = build_schemas(job_obj, canon_url, breadcrumbs)
+    schemas_html = build_schemas(job_obj, canon_url, breadcrumbs, slug)
 
     # Breadcrumb HTML
     bc_html = '<nav class="bc" aria-label="Breadcrumb"><a href="/">Home</a>'
@@ -1341,6 +1572,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
 # LOAD JSON DATA
 # ═══════════════════════════════════════════════════════════════
 print("Loading JSON data...")
+_load_first_seen(ROOT)   # C1: load persisted datePosted map
 with open(CJ_FILE, encoding='utf-8') as f: CJ = json.load(f)
 with open(DU_FILE, encoding='utf-8') as f: DU = json.load(f)
 # Inject slug field into DU items (for script.js buildSectionCard)
@@ -2019,6 +2251,7 @@ if __import__('os').path.exists(_idx_path):
         open(_idx_path, 'w', encoding='utf-8').write(_idx_new)
 
 import time as _time
+_save_first_seen()   # C1: persist datePosted map for stable rebuilds
 _end = _time.time()
 VERSION = datetime.now().strftime('%Y%m%d%H%M%S')
 PAGES_GENERATED = j_count + sec_count2 + q_count + _du_count
