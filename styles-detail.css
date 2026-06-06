@@ -70,10 +70,14 @@
 .btn-syllabus{background:#f0fdf4;color:#15803d;border-color:#86efac}.btn-syllabus:hover{background:#15803d;color:#fff}
 .btn-merit{background:#f0f9ff;color:#0369a1;border-color:#7dd3fc}.btn-merit:hover{background:#0369a1;color:#fff}
 .btn-default{background:#dbeafe;color:#1e40af;border-color:#93c5fd}.btn-default:hover{background:#1e40af;color:#fff}
-.faq-item{border-bottom:1px solid #f1f5f9;padding:12px 14px}
+.faq-item{border-bottom:1px solid #f1f5f9;padding:0}
 .faq-item:last-child{border-bottom:none}
-.faq-q{display:flex;gap:9px;align-items:flex-start;font-weight:700;color:#0f172a;font-size:.84rem;line-height:1.5;margin-bottom:7px}
-.faq-icon{background:#1d4ed8;color:#fff;border-radius:5px;padding:2px 7px;font-size:.71rem;font-weight:800;flex-shrink:0;margin-top:1px}
+.faq-q{display:flex;align-items:center;gap:10px;padding:11px 14px;font-weight:600;color:#1e293b;cursor:pointer;user-select:none;text-align:left;font-size:.84rem;line-height:1.5}
+.faq-q:hover{background:#f8fafc}
+.faq-icon{flex-shrink:0;min-width:26px;height:26px;background:#4f46e5;color:#fff;border-radius:6px;padding:0;font-size:.72rem;font-weight:800;display:flex;align-items:center;justify-content:center}
+.faq-q>span:not(.faq-icon){flex:1;text-align:left;color:#1e293b;line-height:1.5}
+.faq-q .fa-chevron-down,.faq-q [class*="chevron"]{margin-left:auto;flex-shrink:0;font-size:.72rem;color:#94a3b8;transition:transform .22s}
+.faq-a{display:none;padding:0 14px 12px 50px;font-size:.83rem;color:#475569;line-height:1.7}
 .faq-.edu-sec{padding:11px 14px;border-bottom:1px solid #f1f5f9}.edu-sec:last-child{border-bottom:none}
 .edu-sec-h{font-size:.85rem;font-weight:700;color:#1e293b;margin:0 0 8px}
 .edu-par.mi-item{font-size:.82rem;color:#374151;line-height:1.6;padding:3px 0}
