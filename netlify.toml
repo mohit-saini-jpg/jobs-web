@@ -42,6 +42,15 @@
     Access-Control-Allow-Origin = "*"
 
 # ═══════════════════════════════════════════════════════════════
+# ISSUE-FIX: job.html?slug=xxx → /jobs/xxx/ (query-string redirect)
+# ═══════════════════════════════════════════════════════════════
+[[redirects]]
+  from   = "/job.html"
+  to     = "/jobs/:slug/"
+  status = 301
+  [redirects.query]
+    slug = ":slug"
+
 # ═══════════════════════════════════════════════════════════════
 # ISSUE-005 FIX: Force canonical www — must be FIRST (highest priority)
 # ═══════════════════════════════════════════════════════════════

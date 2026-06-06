@@ -128,7 +128,7 @@ a{text-decoration:none}
   </main>
   <div id="footerPlaceholder"></div>
   <script>fetch('/footer.html',{cache:'no-store'}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{if(h){var d=document.getElementById('footerPlaceholder');if(d)d.outerHTML=h;}})</script>
-  <script src="/tsj-menu.js?v=20260606111914" defer></script>
+  <script src="/tsj-menu.js?v=20260605220612" defer></script>
 <script>
 (function(){
 'use strict';
@@ -648,9 +648,26 @@ if(!slug){
         if (job) { buildPage(cleanSlug(slug)||slug, job); return; }
       }
       // Mini not found or unavailable — fallback to full file
+      // FIX: Add timeout so page doesn't spin forever for state-wise items with no internal data
+      var fetchTimeout = setTimeout(function() {
+        // Check sessionStorage for external fallback URL (set by script.js for state-wise items)
+        var extUrl = '';
+        try { extUrl = sessionStorage.getItem('__tsj_ext_' + slug) || ''; } catch(e) {}
+        if (extUrl && extUrl.startsWith('http')) {
+          document.getElementById('loader').innerHTML='<div style="text-align:center;padding:40px 20px">'
+            +'<div style="font-size:2rem;margin-bottom:12px">&#128279;</div>'
+            +'<p style="color:#374151;font-size:.9rem">Redirecting to official source...</p>'
+            +'<a href="'+extUrl+'" style="display:inline-block;margin-top:12px;background:#1d4ed8;color:#fff;padding:8px 20px;border-radius:8px;text-decoration:none;font-weight:700" target="_blank" rel="noopener noreferrer">Open Official Link &#8594;</a>'
+            +'</div>';
+          setTimeout(function(){window.location.replace(extUrl);},1500);
+        } else {
+          showNotFound();
+        }
+      }, 8000);
       return fetch(FULL_URL)
         .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
         .then(function(data){
+          clearTimeout(fetchTimeout);
           var job = tryFindJob(data, slug);
           if (!job) { showNotFound(); return; }
           buildPage(cleanSlug(slug)||slug, job);

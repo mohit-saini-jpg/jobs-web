@@ -1081,9 +1081,20 @@
         // Build URL: prefer explicit url/link, fallback to slug-based job.html
         let url = it.url || it.link || "";
         // If item has an internal slug, ALWAYS use /jobs/{slug}/ as the link
-        // This ensures DU items and all items with slugs open detail pages
         if (it.slug) {
           url = "/jobs/" + it.slug + "/";
+        } else if (name && name.length > 3) {
+          // FIX: Generate slug from title for state-wise items that only have external URL
+          const genSlug = name.toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/[\s-]+/g, '-')
+            .replace(/^-+|-+$/g, '')
+            .slice(0, 60);
+          if (genSlug) {
+            url = "/jobs/" + genSlug + "/";
+            it._genSlug = genSlug;
+            it._externalFallback = it.url || it.link || "";
+          }
         }
         if (!url) return;
 
@@ -1227,8 +1238,22 @@
     items.forEach((it, _idx) => {
       const name = safe(it.name) || "Open";
       let url = it.url || it.link || "";
-      if (!url && it.slug) {
+      // FIX: Generate internal /jobs/slug/ URL from title when no slug exists
+      // This ensures state-wise items open a detail page instead of redirecting externally
+      if (it.slug) {
         url = "/jobs/" + it.slug + "/";
+      } else if (name && name.length > 3) {
+        // Generate slug from title — same logic as slugify in data pipeline
+        const genSlug = name.toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, '')
+          .replace(/[\s-]+/g, '-')
+          .replace(/^-+|-+$/g, '')
+          .slice(0, 60);
+        if (genSlug) {
+          url = "/jobs/" + genSlug + "/";
+          it._genSlug = genSlug;
+          it._externalFallback = it.url || it.link || "";
+        }
       }
       if (!url) return;
 
