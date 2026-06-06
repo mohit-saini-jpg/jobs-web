@@ -436,6 +436,10 @@
   function processJsonFile(data, fileName) {
     var extra = [];
     var now   = new Date().toISOString();
+    // BUGFIX: the loader fetches '/data/Complete_Jobs_Full_Data.json' (with a path
+    // prefix), but the branches below match on the bare filename. Strip any path so
+    // the Complete_Jobs parser actually runs and jobs get indexed.
+    fileName = String(fileName || '').split('?')[0].split('/').pop();
 
     /* ── merged_sarkari_data.json ── */
     if (false && fileName === 'merged_sarkari_data_REMOVED') {
@@ -647,6 +651,39 @@
             lastUpdated:   job.listing_date || now,
             sectionSource: 'Latest Jobs',
             isJobDetail:   true,
+          });
+        });
+
+        // Also index education_jobs and state_jobs (sections[].items[])
+        ['education_jobs', 'state_jobs'].forEach(function(blockKey) {
+          var block = data[blockKey];
+          var secs  = block && Array.isArray(block.sections) ? block.sections : [];
+          var srcLabel = blockKey === 'education_jobs' ? 'Education' : 'State Jobs';
+          secs.forEach(function(sec) {
+            var secCat   = sec.category || sec.title || srcLabel;
+            var secState = sec.state || sec.title || 'All India';
+            (Array.isArray(sec.items) ? sec.items : []).forEach(function(item) {
+              var title = (item.name || item.title || '').trim();
+              if (!title) return;
+              var slug = slugifyTitle(title);
+              var href = slug && slug !== 'official-link' ? '/jobs/' + slug + '/' : '';
+              if (!href) return;
+              extra.push({
+                title:         title,
+                slug:          href,
+                dept:          item.examName || secCat || '',
+                postName:      '',
+                qual:          '',
+                state:         secState,
+                cat:           secCat,
+                tags:          [title, item.examName||'', secCat, secState, 'sarkari job 2026'].join(' '),
+                lastDate:      String(item.postDate || item.date || '').trim(),
+                icon:          blockKey === 'education_jobs' ? 'fa-graduation-cap' : 'fa-location-dot',
+                lastUpdated:   item.postDate || now,
+                sectionSource: srcLabel,
+                isJobDetail:   true,
+              });
+            });
           });
         });
       }
