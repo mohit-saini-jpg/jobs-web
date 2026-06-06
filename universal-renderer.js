@@ -84,12 +84,21 @@
     /* ── FAQ accordion ── */
     .udyn-faq-item{border-bottom:1px solid #f1f5f9}
     .udyn-faq-item:last-child{border-bottom:none}
-    .udyn-faq-q{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;font-size:.84rem;font-weight:700;color:#0f172a;cursor:pointer;background:#f8fafc;user-select:none;line-height:1.5}
+    /* FAQ */
+    .udyn-faq-item{border-bottom:1px solid #e9edf4}
+    .udyn-faq-item:last-child{border-bottom:none}
+    .udyn-faq-q{display:flex;align-items:center;gap:10px;padding:12px 14px;font-size:.84rem;font-weight:600;color:#0f172a;cursor:pointer;background:#f8fafc;user-select:none;line-height:1.5;text-align:left}
     .udyn-faq-q:hover{background:#f0f7ff}
-    .udyn-faq-icon{color:#1d4ed8;font-size:.8rem;margin-top:3px;flex-shrink:0;transition:transform .2s}
-    .udyn-faq-q.open .udyn-faq-icon{transform:rotate(90deg)}
-    .udyn-faq-a{display:none;padding:0 14px 12px 40px;font-size:.82rem;color:#374151;line-height:1.7}
+    .udyn-faq-num{flex-shrink:0;min-width:26px;height:26px;background:#4f46e5;color:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800}
+    .udyn-faq-qtext{flex:1;text-align:left;color:#1e293b;line-height:1.5}
+    .udyn-faq-icon{color:#64748b;font-size:.75rem;flex-shrink:0;transition:transform .25s;margin-left:auto}
+    .udyn-faq-q.open .udyn-faq-icon{transform:rotate(180deg);color:#4f46e5}
+    .udyn-faq-a{display:none;padding:10px 14px 14px 50px;font-size:.83rem;color:#374151;line-height:1.75;background:#fff;border-top:1px solid #f1f5f9}
     .udyn-faq-a.open{display:block}
+    @media(max-width:600px){
+      .udyn-faq-q{padding:10px 10px;font-size:.8rem}
+      .udyn-faq-a{padding:8px 10px 12px 10px;font-size:.8rem}
+    }
     /* ── Instructions list ── */
     .udyn-inst-list{list-style:none;margin:0;padding:0}
     .udyn-inst-item{display:flex;align-items:flex-start;gap:9px;padding:8px 14px;border-bottom:1px solid #f1f5f9;font-size:.82rem;color:#374151;line-height:1.65}
@@ -1113,49 +1122,74 @@
     let arr = [];
     if (Array.isArray(faqs)) {
       arr = faqs.filter(f => f && (f.question || f.q) && (f.answer || f.a));
-    } else if (typeof faqs === 'object') {
-      arr = Object.entries(faqs).map(([q, a]) => ({ question: q, answer: a }));
+    } else if (faqs && typeof faqs === 'object') {
+      arr = Object.entries(faqs).map(function(e) { return { question: e[0], answer: e[1] }; });
     }
     if (!arr.length) return null;
 
-    // FIX: Detect swapped Q/A pattern from SarkariResult scraper:
-    // question: "19/05/2026" (a value), answer: "Application Begin :" (a label) -> swap them
-    arr = arr.map(f => {
-      const q = safe(f.question || f.q || '');
-      const a = safe(f.answer || f.a || '');
-      const ansIsLabel = /:\s*$/.test(a.trim()) ||
+    // FIX: Detect swapped Q/A (SarkariResult pattern — date in question, label in answer)
+    arr = arr.map(function(f) {
+      var q = safe(f.question || f.q || '');
+      var a = safe(f.answer   || f.a || '');
+      var ansIsLabel = /:\s*$/.test(a.trim()) ||
         /^(application|last date|exam date|admit card|fee|age|minimum|maximum|eligibility|vacancy|result|notification|start|end|begin|close)/i.test(a.trim());
-      const qIsValue = /^\d{1,2}\/\d{1,2}\/\d{4}|^\d{2,4}$|^\d+\s*(years?|posts?|vacancies|rs\.?|rupees?|\/-)/i.test(q.trim());
+      var qIsValue = /^\d{1,2}\/\d{1,2}\/\d{4}|^\d{2,4}$|^\d+\s*(years?|posts?|vacancies|rs\.?|rupees?|\/-)/i.test(q.trim());
       if (ansIsLabel && qIsValue) return { question: a.replace(/:\s*$/, '').trim(), answer: q };
       return f;
     });
 
-    // Deduplicate by question text
-    const seenQ = new Set();
-    arr = arr.filter(f => {
-      const q = safe(f.question || f.q || '').toLowerCase().trim();
-      if (seenQ.has(q)) return false;
-      seenQ.add(q);
+    // Deduplicate — strip "Q1. " prefix before comparing
+    var seenQ = {};
+    arr = arr.filter(function(f) {
+      var q = safe(f.question || f.q || '').toLowerCase().trim()
+               .replace(/^q\d+[\.\)]\s*/i, '');  // strip "Q1. " prefix
+      if (seenQ[q]) return false;
+      seenQ[q] = true;
       return true;
     });
 
-    const items = arr.map(f => {
-      const q = safe(f.question || f.q || '');
-      const rawAns = f.answer || f.a || '';
-      let aHtml;
-      if (isHtml(safe(rawAns))) {
-        aHtml = safe(rawAns);
-      } else {
-        aHtml = esc(safe(rawAns)).replace(/\n/g, '<br>');
-      }
+    // Build items — NO inline onclick (broken by HTML escaping)
+    // Use data-faq-idx attribute + delegated event listener added after insert
+    var html = arr.map(function(f, idx) {
+      var q = safe(f.question || f.q || '');
+      var rawAns = safe(f.answer || f.a || '');
+      var aHtml = isHtml(rawAns) ? rawAns : esc(rawAns).replace(/\n/g, '<br>');
       return '<div class="udyn-faq-item">' +
-        '<div class="udyn-faq-q" onclick="(function(el){var a=el.nextElementSibling;el.classList.toggle(\'open\');a.classList.toggle(\'open\');})(this)">' +
-          '<i class="fa-solid fa-chevron-right udyn-faq-icon"></i>' + esc(q) +
-        '</div><div class="udyn-faq-a" style="white-space:pre-line;">' + aHtml + '</div></div>';
+        '<div class="udyn-faq-q" data-faq-idx="' + idx + '" role="button" tabindex="0">' +
+          '<span class="udyn-faq-num">' + (idx + 1) + '</span>' +
+          '<span class="udyn-faq-qtext">' + esc(q) + '</span>' +
+          '<i class="fa-solid fa-chevron-down udyn-faq-icon"></i>' +
+        '</div>' +
+        '<div class="udyn-faq-a" id="faq-ans-' + idx + '">' + aHtml + '</div>' +
+      '</div>';
     }).join('');
-    return makeCard('udyn-faq','linear-gradient(135deg,#7c3aed,#8b5cf6)',
-      'fa-solid fa-circle-question','Frequently Asked Questions', items);
+
+    var card = makeCard('udyn-faq', 'linear-gradient(135deg,#3730a3,#4f46e5)',
+      'fa-solid fa-circle-question', 'FAQs', html);
+
+    // Attach delegated click listener once card is created
+    card.addEventListener('click', function(e) {
+      var btn = e.target.closest('.udyn-faq-q');
+      if (!btn) return;
+      var ans = btn.nextElementSibling;
+      if (!ans) return;
+      var isOpen = ans.classList.contains('open');
+      // Close all others in this card
+      card.querySelectorAll('.udyn-faq-a.open').forEach(function(el) {
+        el.classList.remove('open');
+        var prevBtn = el.previousElementSibling;
+        if (prevBtn) prevBtn.classList.remove('open');
+      });
+      // Toggle current
+      if (!isOpen) {
+        ans.classList.add('open');
+        btn.classList.add('open');
+      }
+    });
+
+    return card;
   }
+
 
   /* ── 6l. Jobs Info ── */
   function cardJobsInfo(htmlStr) {
