@@ -568,12 +568,22 @@ def render_links(il_obj):
 def render_faq(faq_list):
     if not isinstance(faq_list, list) or not faq_list: return ''
     items = ''
-    for i, f in enumerate(faq_list):
+    seen = set()
+    idx = 0
+    for f in faq_list:
         if not isinstance(f, dict): continue
         q = safe(f.get('question','')); a = safe(f.get('answer',''))
         if not q or not a: continue
-        items += (f'<div class="faq-item" id="faq-{i+1}">'
-                  f'<div class="faq-q"><span class="faq-icon">Q{i+1}</span><span>{e(q)}</span></div>'
+        # strip any pre-existing "Q1." / "Q12)" / "1." numbering from the question text
+        # (renderer adds its own Q{n} badge, so leaving it causes "Q1 Q1." double numbering)
+        q = re.sub(r'^\s*Q?\s*\d{1,3}\s*[\.\):\-]\s*', '', q, flags=re.I).strip()
+        # de-duplicate by normalized question text
+        key = re.sub(r'\s+', ' ', q.lower()).strip()
+        if not key or key in seen: continue
+        seen.add(key)
+        idx += 1
+        items += (f'<div class="faq-item" id="faq-{idx}">'
+                  f'<div class="faq-q"><span class="faq-icon">Q{idx}</span><span>{e(q)}</span></div>'
                   f'<div class="faq-a"><span class="faq-icon" style="background:#15803d">A</span><div>{e(a)}</div></div></div>')
     return items
 
@@ -1166,7 +1176,19 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
     out = (f'<script type="application/ld+json">{json.dumps(primary, ensure_ascii=False)}</script>\n'
            f'<script type="application/ld+json">{json.dumps(bc_schema, ensure_ascii=False)}</script>\n')
 
-    valid_faqs = [f for f in faq if isinstance(f,dict) and f.get('question') and f.get('answer')][:10]
+    # de-dup FAQs + strip pre-existing Q-number prefix for clean structured data
+    _seen_q = set(); valid_faqs = []
+    for f in faq:
+        if not isinstance(f, dict): continue
+        q = str(f.get('question','') or '').strip()
+        a = str(f.get('answer','') or '').strip()
+        if not q or not a: continue
+        q = re.sub(r'^\s*Q?\s*\d{1,3}\s*[\.\):\-]\s*', '', q, flags=re.I).strip()
+        k = re.sub(r'\s+', ' ', q.lower()).strip()
+        if not k or k in _seen_q: continue
+        _seen_q.add(k)
+        valid_faqs.append({'question': q, 'answer': a})
+        if len(valid_faqs) >= 10: break
     if valid_faqs:
         faq_schema = {'@context':'https://schema.org','@type':'FAQPage',
             'mainEntity':[{'@type':'Question','name':f['question'],'acceptedAnswer':{'@type':'Answer','text':f['answer']}} for f in valid_faqs]}

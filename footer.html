@@ -98,36 +98,49 @@ a, button { -webkit-tap-highlight-color: transparent; touch-action: manipulation
   </div>
 </footer>
 <script>
-/* FAQ Accordion v3 — CSS-independent, works regardless of stylesheet load order */
+/* FAQ Accordion v4 — conflict-proof, shows answer for either toggle class */
 (function(){
-  // Inject critical FAQ CSS directly — no dependency on styles-detail.css loading
+  // Inject critical FAQ CSS — answer shows for BOTH .faq-open and .open (covers all scripts)
   var st=document.createElement('style');
-  st.textContent='.faq-a{display:none!important}.faq-a.faq-open{display:flex!important;gap:10px;align-items:flex-start;padding:10px 14px 14px;font-size:.83rem;color:#475569;line-height:1.75;border-top:1px solid #f1f5f9;background:#fafbff}.faq-a-icon{flex-shrink:0;min-width:26px;height:26px;background:#15803d;color:#fff;border-radius:6px;font-size:.72rem;font-weight:800;display:flex!important;align-items:center;justify-content:center;margin-top:1px}';
+  st.textContent='.faq-a{display:none!important}'
+    +'.faq-a.faq-open,.faq-a.open{display:flex!important;gap:10px;align-items:flex-start;padding:10px 14px 14px;font-size:.83rem;color:#475569;line-height:1.75;border-top:1px solid #f1f5f9;background:#fafbff}'
+    +'.faq-q{cursor:pointer}'
+    +'.faq-a-icon{flex-shrink:0;min-width:26px;height:26px;background:#15803d;color:#fff;border-radius:6px;font-size:.72rem;font-weight:800;display:flex!important;align-items:center;justify-content:center;margin-top:1px}';
   document.head.appendChild(st);
 
+  function toggleItem(item){
+    var btn=item.querySelector('.faq-q');
+    var ans=item.querySelector('.faq-a');
+    if(!btn||!ans) return;
+    var isOpen=ans.classList.contains('faq-open')||ans.classList.contains('open');
+    // Close all in same card
+    var card=btn.closest('.sec-body')||btn.closest('.sec-card')||document.body;
+    card.querySelectorAll('.faq-a.faq-open,.faq-a.open').forEach(function(oa){
+      oa.classList.remove('faq-open','open');
+      var oitem=oa.closest('.faq-item');
+      var ob=oitem&&oitem.querySelector('.faq-q');
+      if(ob){ob.classList.remove('open');var oc=ob.querySelector('.fa-chevron-down,[class*="chevron"]');if(oc)oc.style.transform='';}
+    });
+    if(!isOpen){
+      ans.classList.add('faq-open');   // single canonical open class
+      btn.classList.add('open');
+      var chev=btn.querySelector('.fa-chevron-down,[class*="chevron"]');
+      if(chev) chev.style.transform='rotate(180deg)';
+    }
+  }
+
   function initFAQ(){
-    document.querySelectorAll('.faq-item').forEach(function(item){
-      var btn=item.querySelector('.faq-q');
-      var ans=item.querySelector('.faq-a');
-      if(!btn||!ans||btn._faqDone) return;
-      btn._faqDone=true;
-      btn.style.cursor='pointer';
-      btn.addEventListener('click',function(){
-        var isOpen=ans.classList.contains('faq-open');
-        // Close all in same card
-        var card=btn.closest('.sec-body')||btn.closest('.sec-card')||document.body;
-        card.querySelectorAll('.faq-a.faq-open').forEach(function(oa){
-          oa.classList.remove('faq-open');
-          var ob=oa.previousElementSibling;
-          if(ob){ob.classList.remove('open');var oc=ob.querySelector('.fa-chevron-down');if(oc)oc.style.transform='';}
-        });
-        if(!isOpen){
-          ans.classList.add('faq-open');
-          btn.classList.add('open');
-          var chev=btn.querySelector('.fa-chevron-down');
-          if(chev) chev.style.transform='rotate(180deg)';
-        }
-      });
+    // single delegated listener on body — avoids double-binding with faq-init.js
+    if(document.body._tsjFaqV4) return;
+    document.body._tsjFaqV4=true;
+    document.body.addEventListener('click',function(e){
+      var btn=e.target.closest('.faq-q');
+      if(!btn) return;
+      var item=btn.closest('.faq-item');
+      if(!item) return;
+      e.preventDefault();
+      e.stopPropagation();
+      toggleItem(item);
     });
   }
   if(document.readyState==='loading'){
