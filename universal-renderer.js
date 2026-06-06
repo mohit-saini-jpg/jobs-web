@@ -359,6 +359,23 @@
     if (!job.jobs_info) job.jobs_info = bd.jobs_info || '';
     if (!job.salary) job.salary = bd.salary || bd.salary_pay_scale || job.salary_pay_scale || '';
 
+    // FIX-6: Clean short_information — remove social media nav junk injected by scraper
+    if (job.short_information) {
+      job.short_information = job.short_information
+        // Remove "Telegram Join Us WhatsApp Join Us Instagram Follow X Follow" nav text
+        .replace(/telegram\s+join\s+us\s+whatsapp\s+join\s+us\s+instagram\s+follow\s+(x|twitter)\s+follow/gi, '')
+        // Remove "SarkariResult® : SarkariResult.Com Official Since : 201..." branding
+        .replace(/sarkari\s*result[®@]?\s*[:–-]?\s*sarkariresult\.com\s+official\s+since\s*:\s*\d*/gi, '')
+        // Remove "Download the SarkariResult® Mobile App..." promo text
+        .replace(/download\s+the\s+sarkari\s*result[®]?\s+mobile\s+app[^.]*\./gi, '')
+        // Remove "Advt No.: CRPD/APPR/..." reference numbers at end (already in title)
+        .replace(/\s*sbi\s+advt\s+no\.\s*:\s*[A-Z0-9\/\-]+\s*:/gi, ' ')
+        // Remove trailing "Short Details of Notification" (always in title)
+        .replace(/\s*short\s+details\s+of\s+notification\s*$/gi, '')
+        .replace(/\s{2,}/g, ' ')
+        .trim();
+    }
+
     // ── Normalize important_dates keys ───────────────────────────────
     const id = job.important_dates || {};
     if (typeof id === 'object') {
@@ -441,8 +458,25 @@
             job._udyn_links.push({ label: finalLabel, url, type: classifyLinkKey(label || 'link', url) });
           });
         }
-      } else {
-        collectUrlsDeep(job.useful_links, job._udyn_links);
+      } else if (typeof job.useful_links === 'object') {
+        // FIX-5: useful_links is dict — skip '_all' key (it duplicates top-level links already collected)
+        // Process only flat key→url pairs
+        for (const [k, v] of Object.entries(job.useful_links)) {
+          if (k === '_all' || k.startsWith('_')) continue; // _all causes duplicate links
+          if (typeof v === 'string' && isUrl(v)) {
+            const type = classifyLinkKey(k, v);
+            const label = smartLinkLabel(k, v, 0);
+            job._udyn_links.push({ label, url: v, type });
+          } else if (Array.isArray(v)) {
+            v.forEach((item, idx) => {
+              if (item && typeof item === 'object') {
+                const url = safe(item.links || item.url || item.link || '');
+                const lbl = safe(item.title || item.name || label || '');
+                if (isUrl(url)) job._udyn_links.push({ label: lbl || smartLinkLabel(k, url, idx), url, type: classifyLinkKey(lbl || k, url) });
+              }
+            });
+          }
+        }
       }
     }
 
@@ -618,7 +652,22 @@
     let rows = [];
     const vd = job.vacancy_details;
     if (Array.isArray(vd) && vd.length) {
-      rows = vd.filter(r => typeof r === 'object' && r !== null);
+      rows = vd.filter(r => {
+        if (!r || typeof r !== 'object') return false;
+        // FIX-7: Skip junk rows injected by SarkariResult scraper:
+        const pn = safe(r.post_name || '');
+        // Skip rows that are just a timestamp like "04 June 2026 | 07:17 PM"
+        if (/^\d{1,2}\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\s+\d{4}\s*\|/i.test(pn)) return false;
+        // Skip rows that are just a number (total post only row with no post name)
+        if (/^\d{3,5}$/.test(pn.trim()) && Object.keys(r).length <= 2) return false;
+        // Skip "How to Fill Form (Video Hindi): Version I | Version II" rows
+        if (/how.to.fill.form|version\s+(i|ii|1|2)/i.test(pn)) return false;
+        // Skip header-only rows (post_name + col headers only — no actual vacancy numbers)
+        const hasVacancyData = r.total_post || r.eligibility || r.col_1 || r.ur || r.sc || r.st || r.obc || r.ews;
+        // A pure header row has col_1,col_2... but no total_post or eligibility
+        if (r.col_1 && !r.total_post && !r.eligibility && !r.ur) return false;
+        return true;
+      });
     } else if (typeof vd === 'object' && vd !== null && !Array.isArray(vd)) {
       // Object-style vacancy_details — treat as single row array
       if (Object.keys(vd).length > 0) rows = [vd];
@@ -1068,20 +1117,41 @@
       arr = Object.entries(faqs).map(([q, a]) => ({ question: q, answer: a }));
     }
     if (!arr.length) return null;
+
+    // FIX: Detect swapped Q/A pattern from SarkariResult scraper:
+    // question: "19/05/2026" (a value), answer: "Application Begin :" (a label) -> swap them
+    arr = arr.map(f => {
+      const q = safe(f.question || f.q || '');
+      const a = safe(f.answer || f.a || '');
+      const ansIsLabel = /:\s*$/.test(a.trim()) ||
+        /^(application|last date|exam date|admit card|fee|age|minimum|maximum|eligibility|vacancy|result|notification|start|end|begin|close)/i.test(a.trim());
+      const qIsValue = /^\d{1,2}\/\d{1,2}\/\d{4}|^\d{2,4}$|^\d+\s*(years?|posts?|vacancies|rs\.?|rupees?|\/-)/i.test(q.trim());
+      if (ansIsLabel && qIsValue) return { question: a.replace(/:\s*$/, '').trim(), answer: q };
+      return f;
+    });
+
+    // Deduplicate by question text
+    const seenQ = new Set();
+    arr = arr.filter(f => {
+      const q = safe(f.question || f.q || '').toLowerCase().trim();
+      if (seenQ.has(q)) return false;
+      seenQ.add(q);
+      return true;
+    });
+
     const items = arr.map(f => {
       const q = safe(f.question || f.q || '');
       const rawAns = f.answer || f.a || '';
-      // Render answer — preserve newlines, handle HTML
       let aHtml;
       if (isHtml(safe(rawAns))) {
         aHtml = safe(rawAns);
       } else {
         aHtml = esc(safe(rawAns)).replace(/\n/g, '<br>');
       }
-      return `<div class="udyn-faq-item">` +
-        `<div class="udyn-faq-q" onclick="(function(el){var a=el.nextElementSibling;el.classList.toggle('open');a.classList.toggle('open');})(this)">` +
-          `<i class="fa-solid fa-chevron-right udyn-faq-icon"></i>${esc(q)}` +
-        `</div><div class="udyn-faq-a" style="white-space:pre-line;">${aHtml}</div></div>`;
+      return '<div class="udyn-faq-item">' +
+        '<div class="udyn-faq-q" onclick="(function(el){var a=el.nextElementSibling;el.classList.toggle(\'open\');a.classList.toggle(\'open\');})(this)">' +
+          '<i class="fa-solid fa-chevron-right udyn-faq-icon"></i>' + esc(q) +
+        '</div><div class="udyn-faq-a" style="white-space:pre-line;">' + aHtml + '</div></div>';
     }).join('');
     return makeCard('udyn-faq','linear-gradient(135deg,#7c3aed,#8b5cf6)',
       'fa-solid fa-circle-question','Frequently Asked Questions', items);
@@ -1253,29 +1323,63 @@
   /* ── 6p. Age Limit ── */
   function cardAgeLimit(job) {
     const age = job.age_limit || {};
+
+    // FIX: isJunkAgeText — scraper sometimes puts navigation/social text in age_limit.raw
+    function isJunkAgeText(s) {
+      if (!s || s.length < 5) return true;
+      // If it contains social media keywords or is clearly not age data
+      if (/telegram|whatsapp|instagram|twitter|follow|join us|sarkari result|freejobalert|click here|official site|advt no\.|short details/i.test(s)) return true;
+      // Raw field that has no digits at all — definitely junk
+      if (!/\d/.test(s) && s.length > 30) return true;
+      return false;
+    }
+
     const minAge = safe(job.minimum_age || age.minimum_age || age.min_age || '');
     const maxAge = safe(job.maximum_age || age.maximum_age || age.max_age || age.age_limit || '');
     // age_details — may be a compact "18 to 45 years" or full paragraph
     const ageDet = safe(age.age_details || age.details || age.info || '');
+    // FIX: age.raw is often junk scraped text — skip it unless it looks like real age data
+    const rawAge = safe(age.raw || '');
     const relax  = safe(job.age_relaxation || age.age_relaxation || age.relaxation || '');
     const pairs  = [];
-    if (minAge) pairs.push(['Minimum Age', minAge, false]);
-    if (maxAge) pairs.push(['Maximum / Upper Age Limit', maxAge, false]);
+    if (minAge && !isJunkAgeText(minAge)) pairs.push(['Minimum Age', minAge, false]);
+    if (maxAge && !isJunkAgeText(maxAge)) pairs.push(['Maximum / Upper Age Limit', maxAge, false]);
     // If age_details is short (looks like "18 to 45 years"), show as row; if long, use detail block
     const isLongDet = ageDet.length > 80;
-    if (ageDet && !isLongDet) pairs.push(['Age Limit', ageDet, false]);
-    if (relax && relax !== ageDet)  pairs.push(['Age Relaxation', relax, relax.length > 80]);
-    const KNOWN_AGE = new Set(['minimum_age','maximum_age','min_age','max_age','age_limit','age_details','age_relaxation','details','info','relaxation']);
+    if (ageDet && !isJunkAgeText(ageDet) && !isLongDet) pairs.push(['Age Limit', ageDet, false]);
+    if (relax && !isJunkAgeText(relax) && relax !== ageDet) pairs.push(['Age Relaxation', relax, relax.length > 80]);
+    // FIX: Only show raw if it has useful age data and not junk
+    if (rawAge && !isJunkAgeText(rawAge) && !minAge && !maxAge && !ageDet) {
+      pairs.push(['Age Limit', rawAge, rawAge.length > 80]);
+    }
+    const KNOWN_AGE = new Set(['minimum_age','maximum_age','min_age','max_age','age_limit','age_details','age_relaxation','details','info','relaxation','raw']);
     for (const [k, v] of Object.entries(age)) {
       if (KNOWN_AGE.has(k) || !hasContent(v)) continue;
-      pairs.push([keyToLabel(k), safe(v), false]);
+      const sv = safe(v);
+      if (!isJunkAgeText(sv)) pairs.push([keyToLabel(k), sv, false]);
     }
-    if (!pairs.length && !ageDet) return null;
+    // If no real data found, show note from FAQ if available
+    if (!pairs.length && !ageDet) {
+      // Try to pull min/max from faq (SBI pattern: faq has Minimum Age / Maximum Age)
+      const faqArr = job.faq || job.faqs || [];
+      let faqMin = '', faqMax = '', faqRelax = '';
+      for (const f of (Array.isArray(faqArr) ? faqArr : [])) {
+        const ans = safe(f.answer || f.a || '').toLowerCase();
+        const q   = safe(f.question || f.q || '');
+        if (/minimum age/i.test(ans) && /^\d+/.test(q)) faqMin = q;
+        if (/maximum age/i.test(ans) && /^\d+/.test(q)) faqMax = q;
+        if (/age relaxation/i.test(ans)) faqRelax = q;
+      }
+      if (faqMin) pairs.push(['Minimum Age', faqMin, false]);
+      if (faqMax) pairs.push(['Maximum Age', faqMax, false]);
+      if (faqRelax) pairs.push(['Age Relaxation', faqRelax, false]);
+    }
+    if (!pairs.length) return null;
     let rowsHtml = pairs.filter(([,,long]) => !long)
       .map(([k, v]) => `<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>`).join('');
     // Long text values rendered as detail block below table
     let detailHtml = '';
-    if (isLongDet) detailHtml += `<div class="udyn-detail" style="font-size:.82rem;line-height:1.8;color:#374151;white-space:pre-line;">${esc(ageDet)}</div>`;
+    if (isLongDet && !isJunkAgeText(ageDet)) detailHtml += `<div class="udyn-detail" style="font-size:.82rem;line-height:1.8;color:#374151;white-space:pre-line;">${esc(ageDet)}</div>`;
     for (const [k, v, long] of pairs) {
       if (!long || !v) continue;
       detailHtml += `<div class="udyn-detail"><strong>${esc(k)}:</strong><br><span style="font-size:.82rem;line-height:1.8;color:#374151;white-space:pre-line;">${esc(v)}</span></div>`;
@@ -2034,13 +2138,31 @@
     }
 
     // Render any SR-style tables / unknown sections via existing card builders
+    // FIX: Skip tables that are clearly duplicating vacancy_details data already shown above
     const tables = exTables(rawJob);
-    if (tables) {
-      const tc = cardTables(tables);
-      if (tc) {
-        tc.style.borderRadius = '1.4rem';
-        tc.style.border = '1px solid #e9f0f5';
-        appendAfterAll(tc);
+    if (tables && Array.isArray(tables)) {
+      // Check if vacancy_details was already rendered (has rows with same total_post / post_name)
+      const vacAlreadyRendered = vacRows && vacRows.length > 0;
+      // Filter out table groups that duplicate vacancy content
+      const filteredTables = tables.filter(group => {
+        if (!group || !Array.isArray(group.rows)) return true;
+        const tname = safe(group.table_name || '').toLowerCase();
+        // Skip vacancy/post tables if we already rendered vacancy_details
+        if (vacAlreadyRendered && /post name|total post|vacancy|sbi apprent|post wise/i.test(tname)) return false;
+        // Skip tables that are just the header/notification info block (already in hero)
+        if (/gb headline|short details of notification|name of post.*post date/i.test(tname)) return false;
+        // Skip tables where all rows are already shown in hero/basic_details
+        const rowTexts = group.rows.map(r => Array.isArray(r) ? r.join(' ') : '').join(' ').toLowerCase();
+        if (/short information|name of post|post date.*update/i.test(rowTexts) && group.rows.length <= 3) return false;
+        return true;
+      });
+      if (filteredTables.length > 0) {
+        const tc = cardTables(filteredTables);
+        if (tc) {
+          tc.style.borderRadius = '1.4rem';
+          tc.style.border = '1px solid #e9f0f5';
+          appendAfterAll(tc);
+        }
       }
     }
     const textSections = exTextSections(rawJob);
@@ -2084,7 +2206,7 @@
     let best = null, bestScore = 0;
 
     try {
-      const r = await fetch('/Complete_Jobs_Full_Data.json');
+      const r = await fetch('/data/Complete_Jobs_Full_Data.json');
       if (r.ok) {
         const d = await r.json();
         // Collect ALL jobs from every source in the JSON
