@@ -80,7 +80,7 @@
 .faq-q.open .fa-chevron-down,.faq-q.open [class*="chevron"]{transform:rotate(180deg);color:#4f46e5}
 /* .faq-a hidden by default — faq-init.js handles toggle */
 .faq-a{display:none;padding:10px 14px 14px;font-size:.83rem;color:#475569;line-height:1.75;border-top:1px solid #f1f5f9;background:#fafbff}
-.faq-a.open,.faq-a[style*="block"]{display:flex!important;gap:10px;align-items:flex-start}
+.faq-a.open,.faq-a[style*="block"],.faq-a[style*="flex"]{display:flex!important;gap:10px;align-items:flex-start}
 .faq-a-icon{flex-shrink:0;min-width:26px;height:26px;background:#15803d;color:#fff;border-radius:6px;font-size:.72rem;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px}
 @media(max-width:600px){
   .faq-q{padding:10px;font-size:.8rem}
