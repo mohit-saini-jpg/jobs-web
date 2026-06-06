@@ -21,8 +21,8 @@ Disallow: /data/
 Disallow: /jobs/data/
 Disallow: /Complete_Jobs_Full_Data.json
 Disallow: /dailyupdates.json
-Disallow: /sections-index.json
-Disallow: /jobs-index.json
+# ISSUE-025 FIX: sections-index.json unblocked — X-Robots-Tag header is sufficient
+# ISSUE-025 FIX: jobs-index.json unblocked — X-Robots-Tag header is sufficient
 Disallow: /jobs-search-index.json
 Disallow: /homepage-mini.json
 Disallow: /services.json

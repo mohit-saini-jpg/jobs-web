@@ -6,7 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Top Sarkari Jobs | Latest Government Jobs, Results &amp; Admit Cards</title>
   <meta name="description" content="Browse latest Sarkari Jobs, Results, Admit Cards, Answer Keys, Admissions and Online Forms by category — updated daily on Top Sarkari Jobs." />
-  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"/>
+  <!-- ISSUE-011 FIX: view.html must not be indexed; redirect ?section= and ?url= params -->
+  <meta name="robots" content="noindex, nofollow"/>
+  <script>(function(){var p=new URLSearchParams(location.search);var sec=p.get('section');var url=p.get('url');if(sec){var sl=sec.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');location.replace('/section/'+sl+'/');}else if(url){location.replace('/');}})();</script>
   <link rel="canonical" id="canonicalTag" href="https://www.topsarkarijobs.com/section/latest-jobs/"/>
   <link rel="icon" type="image/x-icon" href="/image.ico">
   <!-- Open Graph -->

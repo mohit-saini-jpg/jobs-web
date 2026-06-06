@@ -102,9 +102,10 @@
 /*.js
   Cache-Control: public, max-age=31536000, immutable
 
-# C-01: perf-ultra has no version string — short cache
+# ISSUE-030 FIX: perf-ultra.js — versioned via ?v= query param in HTML, use longer cache
+# Version is controlled via ?v=20260605 query string in index.html script tag
 /perf-ultra.js
-  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
 
 # Key renderer files — short cache so critical fixes reach users fast
 /universal-renderer.js
@@ -179,9 +180,11 @@
 
 # Complete Jobs (~22MB) — Only needed for full search. Cache 1 hour.
 # stale-while-revalidate allows serving cached version while fetching new
+# ISSUE-033 FIX: X-Robots-Tag so Googlebot doesn't index raw JSON
 /Complete_Jobs_Full_Data.json
   Cache-Control: public, max-age=3600, stale-while-revalidate=7200
   Access-Control-Allow-Origin: *
+  X-Robots-Tag: noindex, nofollow
 
 # Daily updates — most time-sensitive. 5-min cache + 15-min stale.
 /dailyupdates.json
@@ -235,6 +238,7 @@
   Access-Control-Allow-Origin: *
   Access-Control-Allow-Methods: GET
   Vary: Accept-Encoding
+  X-Robots-Tag: noindex
 
 # ── Education Jobs JSON — previously missing specific rule ──
 /Education_Jobs.json

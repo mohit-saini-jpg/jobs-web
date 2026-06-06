@@ -1101,7 +1101,8 @@ def page_shell(title_tag, meta_desc, canon_url, keywords, schemas_html,
   <div id="footerPlaceholder"></div>
   <script>fetch('/footer.html',{{cache:'no-store'}}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{{if(h){{var d=document.getElementById('footerPlaceholder');if(d)d.outerHTML=h;}}}})</script>
   <script src="/tsj-menu.js" defer></script>
-  <script src="/analytics.js" defer></script>
+  <!-- ISSUE-016 FIX: analytics.js lazy-loaded after interaction -->
+  <script>(function(){{var _l=false;function la(){{if(_l)return;_l=true;var s=document.createElement('script');s.src='/analytics.js?v=20260605';s.async=true;document.head.appendChild(s);}}window.addEventListener('scroll',la,{{once:true,passive:true}});window.addEventListener('click',la,{{once:true}});setTimeout(la,4000);}})();</script>
 </body>
 </html>'''
 
@@ -1397,8 +1398,34 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, description=''):
         bc_list.append({'@type':'ListItem','position':i,'name':lbl,'item':BASE_URL+url if url.startswith('/') else url})
     bc_list.append({'@type':'ListItem','position':len(bc_list)+1,'name':title,'item':canon_url})
     bc_schema_obj = {'@context':'https://schema.org','@type':'BreadcrumbList','itemListElement':bc_list}
+
+    # ISSUE-010 FIX: ItemList schema for rich results on listing pages
+    item_list_elements = []
+    for i, job in enumerate(jobs[:10], 1):
+        job_title = safe(job.get('title','') or job.get('basic_details',{}).get('job_title',''))
+        job_slug  = safe(job.get('slug',''))
+        if job_title and job_slug:
+            item_list_elements.append({
+                '@type': 'ListItem',
+                'position': i,
+                'name': job_title,
+                'url': f"{BASE_URL}/jobs/{job_slug}/"
+            })
+    itemlist_schema = {
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        'name': title,
+        'url': canon_url,
+        'mainEntity': {
+            '@type': 'ItemList',
+            'itemListElement': item_list_elements,
+            'numberOfItems': len(item_list_elements)
+        }
+    } if item_list_elements else None
+
     schemas_tag = (f'<script type="application/ld+json">{json.dumps(collection_schema,ensure_ascii=False)}</script>'
-                  +f'<script type="application/ld+json">{json.dumps(bc_schema_obj,ensure_ascii=False)}</script>')
+                  +f'<script type="application/ld+json">{json.dumps(bc_schema_obj,ensure_ascii=False)}</script>'
+                  +(f'<script type="application/ld+json">{json.dumps(itemlist_schema,ensure_ascii=False)}</script>' if itemlist_schema else ''))
     
     bc_items = [('Home', '/')]
     bc_items += breadcrumbs
@@ -1820,8 +1847,14 @@ for sec in STATE:
         canon2 = f"{BASE_URL}/state-jobs/{state_slug}/"
         bc2    = [('State Jobs', '/state-jobs/')]
         path2  = str(ROOT / 'state' / state_slug / 'index.html')
-        write(path2, build_listing_page(f"{state_name} Government Jobs", all_state_jobs, canon2, bc2,
-                                        f"All government job notifications from {state_name}."))
+        # ISSUE-022 FIX: Keyword-rich state meta description
+        job_count = len(all_state_jobs)
+        top_titles = ', '.join([safe(j.get('basic_details',{}).get('job_title',''))[:40] for j in all_state_jobs[:3] if j.get('basic_details',{}).get('job_title')])
+        state_meta = (f"Latest {state_name} government job notifications {YEAR}. "
+                      f"{job_count}+ sarkari naukri vacancies"
+                      + (f" including {top_titles}" if top_titles else '') + ". "
+                      + "Check eligibility, apply online, admit card & results.")[:155]
+        write(path2, build_listing_page(f"{state_name} Government Jobs", all_state_jobs, canon2, bc2, state_meta))
 
 print(f"  State pages (total so far): {written}")
 

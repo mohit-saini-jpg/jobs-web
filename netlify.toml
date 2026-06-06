@@ -42,6 +42,36 @@
     Access-Control-Allow-Origin = "*"
 
 # ═══════════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════════
+# ISSUE-005 FIX: Force canonical www — must be FIRST (highest priority)
+# ═══════════════════════════════════════════════════════════════
+[[redirects]]
+  from   = "https://topsarkarijobs.com/*"
+  to     = "https://www.topsarkarijobs.com/:splat"
+  status = 301
+  force  = true
+
+[[redirects]]
+  from   = "http://topsarkarijobs.com/*"
+  to     = "https://www.topsarkarijobs.com/:splat"
+  status = 301
+  force  = true
+
+[[redirects]]
+  from   = "http://www.topsarkarijobs.com/*"
+  to     = "https://www.topsarkarijobs.com/:splat"
+  status = 301
+  force  = true
+
+# ═══════════════════════════════════════════════════════════════
+# ISSUE-011 FIX: view.html → homepage (query params handled by inline JS)
+# ═══════════════════════════════════════════════════════════════
+[[redirects]]
+  from   = "/view.html"
+  to     = "/"
+  status = 301
+
+# ═══════════════════════════════════════════════════════════════
 # 301 PERMANENT REDIRECTS — Old .html URLs → Clean URLs
 # These run BEFORE the 200 rewrites below
 # ═══════════════════════════════════════════════════════════════
@@ -239,3 +269,27 @@
   to     = "/state-jobs.html"
   status = 200
   force  = false
+
+# ═══════════════════════════════════════════════════════════════
+# ISSUE-019 FIX: Vary: Accept-Encoding for JS/CSS + JSON data files
+# ═══════════════════════════════════════════════════════════════
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Vary = "Accept-Encoding"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Vary = "Accept-Encoding"
+
+[[headers]]
+  for = "/Complete_Jobs_Full_Data.json"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Vary = "Accept-Encoding"
+
+[[headers]]
+  for = "/data/*.json"
+  [headers.values]
+    Vary = "Accept-Encoding"

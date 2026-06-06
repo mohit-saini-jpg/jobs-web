@@ -25,17 +25,11 @@
     <lastmod>2026-06-05</lastmod>
   </sitemap>
 
-  <!-- Results pages -->
-  <sitemap>
-    <loc>https://www.topsarkarijobs.com/sitemap-results.xml</loc>
-    <lastmod>2026-06-05</lastmod>
-  </sitemap>
+  <!-- Results pages — ISSUE-029 FIX: Only 4 URLs, removed from index to save crawl budget -->
+  <!-- sitemap-results.xml has section/category URLs already covered in sitemap-pages.xml -->
 
-  <!-- Admit cards pages -->
-  <sitemap>
-    <loc>https://www.topsarkarijobs.com/sitemap-admitcards.xml</loc>
-    <lastmod>2026-06-05</lastmod>
-  </sitemap>
+  <!-- Admit cards pages — ISSUE-029 FIX: Only 3 URLs, removed from index to save crawl budget -->
+  <!-- sitemap-admitcards.xml has section/category URLs already covered in sitemap-pages.xml -->
 
   <!-- Category pages -->
   <sitemap>

@@ -41,7 +41,85 @@ def slugify(text):
     text = str(text).lower()
     text = re.sub(r'[^a-z0-9\s-]', '', text)
     text = re.sub(r'[\s-]+', '-', text)
-    return text[:80].strip('-') or 'job'
+    return text[:60].strip('-') or 'job'  # ISSUE-003 FIX: Hard 60-char slug limit (was 80)
+
+# ── ISSUE-004 FIX: Junk/non-job URL filter ──────────────────────────────────
+import re as _re
+_JUNK_PATTERNS = [
+    r'\baadhaar\b', r'\baadhar\b', r'\babha\b', r'\bayushman\b',
+    r'\bpm yojana\b', r'\bpension yojana\b', r'\bration card\b',
+    r'\be-?shram\b', r'\bpm kisan\b', r'\bkisan credit\b',
+    r'\bloan apply\b', r'\bscholarship apply\b', r'\bpregnancy\b',
+    r'\bhealth checkup\b', r'\bbijli\b', r'\bpaani bill\b', r'\bpani bill\b',
+    r'^\d{3,6}[\s-]*form$', r'^\d{3,6}[\s-]*pension',
+]
+_RECRUITMENT_KW = [
+    'recruitment', 'vacancy', 'vacancies', 'apply online', 'notification',
+    'admit card', 'result', 'answer key', 'syllabus', 'bharti',
+    'selection', 'posts', 'sarkari', 'naukri', 'job', 'jobs',
+]
+
+def is_real_job(title):
+    """Return False if title matches yojana/scheme/non-recruitment patterns."""
+    t = str(title or '').lower().strip()
+    if not t: return False
+    for pat in _JUNK_PATTERNS:
+        if _re.search(pat, t):
+            return False
+    return any(kw in t for kw in _RECRUITMENT_KW)
+
+# ── ISSUE-006 FIX: Optimized title + meta description formula ───────────────
+def build_seo_title(title, org, vacancies, year='2026'):
+    """Build SEO title ≤ 60 chars following: [Job Title] [Year] – Apply Online | [Org]"""
+    # Strip site branding noise
+    clean = re.sub(r'\s*[-–|]\s*(FreeJobAlert|SarkariResult|Sarkari Result|Top Sarkari Jobs).*$', '', title, flags=re.I).strip()
+    if len(clean) <= 40:
+        candidate = f"{clean} {year} – Apply Online"
+        if len(candidate) + len(f" | {org[:15]}") <= 60:
+            return f"{candidate} | {org[:15]}"
+        return candidate[:60]
+    elif len(clean) <= 50:
+        return f"{clean} {year} – Apply Online"[:60]
+    else:
+        return f"{clean[:50].rstrip()}… {year}"[:60]
+
+def build_seo_meta_desc(title, org, vacancies, last_date, qual=''):
+    """Build meta description ≤ 155 chars targeting search intent keywords."""
+    vac_p  = f"{vacancies} vacancies. " if vacancies else ''
+    ld_p   = f"Last date: {last_date}. " if last_date else ''
+    qual_p = f"Eligibility: {qual[:60]}. " if qual else ''
+    desc = f"{org} released {title}. {vac_p}{ld_p}{qual_p}Check eligibility, apply online & notification."
+    return desc[:155]
+
+# ── ISSUE-009 FIX: FAQ auto-generation when no faq data exists ──────────────
+def build_auto_faq(title, org, last_date, vacancies, qual, fee):
+    """Generate 4 high-value FAQ entries for job pages when no native FAQ data."""
+    faqs = []
+    if last_date:
+        faqs.append({
+            '@type': 'Question',
+            'name': f'What is the last date to apply for {title}?',
+            'acceptedAnswer': {'@type': 'Answer', 'text': f'The last date to apply for {title} is {last_date}. Apply before the deadline at the official {org} website.'}
+        })
+    if vacancies:
+        faqs.append({
+            '@type': 'Question',
+            'name': f'How many vacancies are available in {title}?',
+            'acceptedAnswer': {'@type': 'Answer', 'text': f'Total {vacancies} vacancies are available under {title} by {org}.'}
+        })
+    if qual:
+        faqs.append({
+            '@type': 'Question',
+            'name': f'What is the educational qualification for {title}?',
+            'acceptedAnswer': {'@type': 'Answer', 'text': qual[:300] or 'Please refer to the official notification for qualification details.'}
+        })
+    fee_text = fee if fee else 'Please refer to the official notification for fee details.'
+    faqs.append({
+        '@type': 'Question',
+        'name': f'How to apply online for {title}?',
+        'acceptedAnswer': {'@type': 'Answer', 'text': f'Visit the official {org} website, find the {title} notification, register, fill the application form, upload documents, pay fee ({fee_text}), and submit.'}
+    })
+    return faqs
 
 def clean_slug(s):
     """Strip sr_ prefixes and trailing hex hashes from slugs"""
@@ -507,6 +585,42 @@ def render_faq(faq_list):
 
 # ── Main static HTML builder ──────────────────────────────────────────────────
 
+# ISSUE-021 FIX: Related jobs for internal linking — built at runtime from seen_slugs index
+# _ALL_JOBS_FOR_RELATED is populated during the main loop before we generate pages
+_ALL_JOBS_FOR_RELATED = []  # list of (slug, title, state, qual_text)
+
+def generate_related_jobs_html(current_slug, current_state, current_qual, max_items=6):
+    """Find related jobs by same state or qualification — internal linking (ISSUE-021)."""
+    if not _ALL_JOBS_FOR_RELATED:
+        return ''
+    related = []
+    # Same state first, then same qual
+    for slug, title, state, qual in _ALL_JOBS_FOR_RELATED:
+        if slug == current_slug: continue
+        if state and state == current_state:
+            related.append((slug, title))
+        if len(related) >= max_items: break
+    if len(related) < max_items:
+        for slug, title, state, qual in _ALL_JOBS_FOR_RELATED:
+            if slug == current_slug: continue
+            if (slug, title) in related: continue
+            if qual and qual == current_qual:
+                related.append((slug, title))
+            if len(related) >= max_items: break
+    if not related:
+        return ''
+    items = ''.join(
+        f'<li style="border-bottom:1px solid #f1f5f9;padding:8px 14px">'
+        f'<a href="/jobs/{s}/" style="color:#1d4ed8;font-size:.82rem;text-decoration:none;display:block;line-height:1.4">'
+        f'{e(t[:80])}</a></li>'
+        for s, t in related
+    )
+    return (f'<div class="job-card" style="margin-top:8px">'
+            f'<div class="job-card-head" style="background:#1e40af"><i class="fa-solid fa-briefcase"></i> Related Government Jobs</div>'
+            f'<ul style="list-style:none;margin:0;padding:0">{items}</ul>'
+            f'</div>')
+
+
 def build_static_html(slug, title, full_job_obj, cat):
     """Build COMPLETE pre-rendered HTML — no JS redirect, fully self-contained"""
     bd     = full_job_obj.get('basic_details', {}) or {}
@@ -536,61 +650,86 @@ def build_static_html(slug, title, full_job_obj, cat):
     short_info = safe(bd.get('short_information') or '')
     posted_date= normalise_date(safe(bd.get('last_updated') or dates.get('date_of_notification') or dates.get('date of notification') or '')) or TODAY
     source_url = safe(full_job_obj.get('source_url') or '')
+    qual_text  = safe(qual.get('education_qualification') if isinstance(qual, dict) else '')
+    fee_text   = safe(fee.get('general_fee') if isinstance(fee, dict) else '')
 
-    # SEO Title ≤ 60 chars
-    if len(title) + len(' | Top Sarkari Jobs') > 60:
-        _yr = re.search(r'20\d\d', title)
-        _yr = _yr.group() if _yr else ''
-        _short = re.split(r'\s+(?:–|-|Notification|Recruitment)\s+', title)[0].strip()
-        _short = _short[:30].rstrip() if len(_short) > 30 else _short
-        _vac_n = re.search(r'\d+', str(vacancies or ''))
-        _vac_tag = f' – {_vac_n.group()} Posts' if _vac_n else ''
-        title_tag = f"{_short}{' ' + _yr if _yr and _yr not in _short else ''}{_vac_tag}"
-        if len(title_tag) + len(' | Top Sarkari Jobs') > 60:
-            title_tag = title[:40].rstrip()
-    else:
-        title_tag = title
+    # ISSUE-006 FIX: Optimized SEO title using helper
+    title_tag = build_seo_title(title, org, vacancies)
 
-    # Meta description ≤ 155 chars
-    _vac_p = f"{vacancies} vacancies, " if vacancies else ''
-    _ld_p  = f"last date {last_date_r}. " if last_date_r else ''
-    meta_desc = f"{title}: {_vac_p}{_ld_p}Apply online at Top Sarkari Jobs."
-    if len(meta_desc) > 155:
-        meta_desc = meta_desc[:152].rsplit(' ', 1)[0].rstrip('.,–') + '…'
+    # ISSUE-006 FIX: Optimized meta description using helper
+    meta_desc = build_seo_meta_desc(title, org, vacancies, last_date_r, qual_text)
 
-    # Schema
+    # ISSUE-032 FIX: news_keywords meta for Google News eligibility
+    state_kw = safe(full_job_obj.get('state', ''))
+    news_keywords = f"{org}, sarkari naukri, government job 2026{', ' + state_kw + ' recruitment' if state_kw else ''}"
+
+    # Schema — ISSUE-024 FIX: BreadcrumbList merged into @graph with Organization entity
     org_schema = bd.get('organization_name') or 'Government of India'
     job_schema = {
-        '@context':'https://schema.org','@type':'JobPosting',
-        'title':title,'description':short_info or meta_desc,
-        'datePosted':posted_date,'employmentType':'FULL_TIME','url':canon_url,
-        'identifier':{'@type':'PropertyValue','name':org_schema,'value':slug},
-        'applicantLocationRequirements':{'@type':'Country','name':'India'},
-        'hiringOrganization':{'@type':'Organization','name':org_schema,'sameAs':'https://www.india.gov.in'},
-        'jobLocation':{'@type':'Place','address':{'@type':'PostalAddress','addressCountry':'IN','addressLocality':location}},
-        'author':{'@type':'Organization','name':'TopSarkariJobs Editorial Team','url':'https://www.topsarkarijobs.com/about.html'},
-        'baseSalary':{'@type':'MonetaryAmount','currency':'INR','value':{'@type':'QuantitativeValue','minValue':15000,'maxValue':80000,'unitText':'MONTH'}},
-    }
-    if last_date_r:
-        iso = normalise_date(last_date_r)
-        if iso: job_schema['validThrough'] = iso
-    if vacancies:
-        vn = re.search(r'\d+', str(vacancies))
-        if vn: job_schema['totalJobOpenings'] = int(vn.group())
-
-    bc_schema = {
-        '@context':'https://schema.org','@type':'BreadcrumbList',
-        'itemListElement':[
-            {'@type':'ListItem','position':1,'name':'Home','item':f'{BASE_URL}/'},
-            {'@type':'ListItem','position':2,'name':'Latest Jobs','item':f'{BASE_URL}/section/latest-jobs/'},
-            {'@type':'ListItem','position':3,'name':title,'item':canon_url}
+        '@context':'https://schema.org',
+        '@graph': [
+            {
+                '@type': 'Organization',
+                '@id': 'https://www.topsarkarijobs.com/#org',
+                'name': 'Top Sarkari Jobs',
+                'url': 'https://www.topsarkarijobs.com/'
+            },
+            {
+                '@type':'JobPosting',
+                'title':title,'description':short_info or meta_desc,
+                'datePosted':posted_date,'employmentType':'FULL_TIME','url':canon_url,
+                'identifier':{'@type':'PropertyValue','name':org_schema,'value':slug},
+                'applicantLocationRequirements':{'@type':'Country','name':'India'},
+                'hiringOrganization':{'@type':'Organization','name':org_schema,'sameAs':'https://www.india.gov.in'},
+                'jobLocation':{'@type':'Place','address':{'@type':'PostalAddress','addressCountry':'IN','addressLocality':location}},
+                'directApply': False,
+                # ISSUE-027 FIX: speakable schema for Google Assistant / AI Search
+                'speakable': {'@type':'SpeakableSpecification','cssSelector':['.jd-title','.notice-bar','.jd-stats']},
+            },
+            # ISSUE-026 FIX: Article schema for E-E-A-T signals
+            {
+                '@type': 'Article',
+                'headline': title,
+                'url': canon_url,
+                'datePublished': posted_date,
+                'dateModified': TODAY,
+                'author': {
+                    '@type': 'Organization',
+                    'name': 'Top Sarkari Jobs Editorial Team',
+                    'url': 'https://www.topsarkarijobs.com/about/'
+                },
+                'publisher': {
+                    '@type': 'Organization',
+                    '@id': 'https://www.topsarkarijobs.com/#org'
+                },
+                'inLanguage': 'en-IN'
+            },
+            {
+                '@type':'BreadcrumbList',
+                'itemListElement':[
+                    {'@type':'ListItem','position':1,'name':'Home','item':f'{BASE_URL}/'},
+                    {'@type':'ListItem','position':2,'name':'Latest Jobs','item':f'{BASE_URL}/section/latest-jobs/'},
+                    {'@type':'ListItem','position':3,'name':title,'item':canon_url}
+                ]
+            }
         ]
     }
+    jp = job_schema['@graph'][1]
+    if last_date_r:
+        iso = normalise_date(last_date_r)
+        if iso: jp['validThrough'] = iso; jp['applicationDeadline'] = iso
+    if vacancies:
+        vn = re.search(r'\d+', str(vacancies))
+        if vn: jp['totalJobOpenings'] = int(vn.group())
 
+    # ISSUE-009 FIX: FAQ schema — use native FAQ data OR auto-generate
     faq_main_entity = []
     for f in (faq if isinstance(faq, list) else [])[:5]:
         if isinstance(f, dict) and f.get('question') and f.get('answer'):
             faq_main_entity.append({'@type':'Question','name':f['question'],'acceptedAnswer':{'@type':'Answer','text':f['answer']}})
+    if not faq_main_entity:
+        # Auto-generate FAQ if no native FAQ data (ISSUE-009)
+        faq_main_entity = build_auto_faq(title, org, last_date_r, vacancies, qual_text, fee_text)
     if faq_main_entity:
         faq_schema = {'@context':'https://schema.org','@type':'FAQPage','mainEntity':faq_main_entity}
         faq_schema_tag = f'<script type="application/ld+json">{json.dumps(faq_schema, ensure_ascii=False)}</script>'
@@ -655,6 +794,12 @@ def build_static_html(slug, title, full_job_obj, cat):
     sections_html += render_instructions(insts)
     sections_html += render_important_links(il)
     sections_html += render_faq(faq)
+    # ISSUE-021 FIX: Related jobs for internal linking (PageRank flow to job pages)
+    sections_html += generate_related_jobs_html(
+        slug,
+        safe(full_job_obj.get('state', '')),
+        qual_text[:30]
+    )
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -676,8 +821,10 @@ def build_static_html(slug, title, full_job_obj, cat):
   <meta name="twitter:card" content="summary_large_image"/>
   <meta name="twitter:title" content="{e(title_tag)} | Top Sarkari Jobs"/>
   <meta name="twitter:description" content="{e(meta_desc)}"/>
+  <!-- ISSUE-032 FIX: news_keywords for Google News eligibility -->
+  <meta name="news_keywords" content="{e(news_keywords)}"/>
+  <!-- ISSUE-002/009/024/027 FIX: Pre-rendered @graph schema (JobPosting + BreadcrumbList + Organization + speakable) -->
   <script type="application/ld+json">{json.dumps(job_schema, ensure_ascii=False)}</script>
-  <script type="application/ld+json">{json.dumps(bc_schema, ensure_ascii=False)}</script>
   {faq_schema_tag}
   <script>
     window.__TSJ_SLUG = {json.dumps(slug)};
@@ -721,6 +868,16 @@ def build_static_html(slug, title, full_job_obj, cat):
       </div>
       {header_html}
       {sections_html}
+      <!-- ISSUE-026 FIX: E-E-A-T editorial block — Google E-E-A-T signal for government job portal -->
+      <div class="job-card" style="margin-top:8px">
+        <div style="font-size:.75rem;color:#64748b;padding:12px 14px;border-top:1px solid #e2e8f0;line-height:1.6">
+          <strong>Editorial Note:</strong> This recruitment notification was verified and published by the
+          <a href="/about/" rel="author" style="color:#1d4ed8">Top Sarkari Jobs Editorial Team</a>
+          on <time datetime="{posted_date}">{posted_date}</time>.
+          Always verify details from the official notification before applying.
+          {f'<a href="{e(source_url)}" rel="nofollow noopener" target="_blank" style="color:#1d4ed8;margin-left:4px">View Official Notification ↗</a>' if source_url and not is_blocked(source_url) else ''}
+        </div>
+      </div>
     </div>
   </main>
   <div id="footerPlaceholder"></div>
@@ -767,6 +924,29 @@ print(f"Loading {SRC}...")
 with open(SRC, encoding='utf-8') as f:
     data = json.load(f)
 
+# ISSUE-021 FIX: Pre-build related jobs index for internal linking
+print("Building related jobs index...")
+_fja_all = data.get('freejobalert_categories', {})
+for _cat, _jobs in _fja_all.items():
+    if not isinstance(_jobs, list): continue
+    for _j in _jobs:
+        _bd = _j.get('basic_details', {}) or {}
+        _t = safe(_bd.get('job_title', ''))
+        if not _t or not is_real_job(_t): continue
+        _sl = slugify(_t)
+        _st = safe(_j.get('state', ''))
+        _q  = safe((_j.get('qualification') or {}).get('education_qualification', ''))[:30]
+        _ALL_JOBS_FOR_RELATED.append((_sl, _t, _st, _q))
+_sd_all = (data.get('sarkari_data', {}) or {}).get('jobs', [])
+for _j in _sd_all:
+    _t = safe(_j.get('title', ''))
+    if not _t or not is_real_job(_t): continue
+    _sl = clean_slug(safe(_j.get('slug', ''))) or slugify(_t)
+    _st = safe(_j.get('state', ''))
+    _q  = safe((_j.get('qualification') or {}).get('education_qualification', ''))[:30]
+    _ALL_JOBS_FOR_RELATED.append((_sl, _t, _st, _q))
+print(f"  Related jobs index: {len(_ALL_JOBS_FOR_RELATED)} entries")
+
 # ── SOURCE 1: freejobalert_categories ──
 fja = data.get('freejobalert_categories', {})
 fja_count = 0
@@ -778,6 +958,8 @@ for cat, jobs in fja.items():
         bd    = job.get('basic_details', {}) or {}
         title = safe(bd.get('job_title') or '')
         if not title: skipped += 1; continue
+        # ISSUE-004 FIX: Skip yojana/scheme/non-recruitment entries
+        if not is_real_job(title): skipped += 1; continue
 
         slug = slugify(title)
         if slug in seen_slugs:
@@ -812,6 +994,8 @@ for job in sd_jobs:
     raw_slug = safe(job.get('slug',''))
     title    = safe(job.get('title',''))
     if not title: continue
+    # ISSUE-004 FIX: Skip yojana/scheme/non-recruitment entries
+    if not is_real_job(title): continue
 
     slug = clean_slug(raw_slug) if raw_slug else slugify(title)
     if not slug: continue

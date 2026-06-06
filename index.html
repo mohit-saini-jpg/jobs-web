@@ -65,12 +65,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
   <link rel="icon" type="image/x-icon" href="image.ico"/>
   
   <link rel="dns-prefetch" href="//www.googletagmanager.com"/>
-  <link rel="preconnect" href="https://cykkclkfimmqbahanidg.supabase.co" crossorigin>
-  <link rel="dns-prefetch" href="//cykkclkfimmqbahanidg.supabase.co"/>
+  <!-- ISSUE-020 FIX: Supabase preconnect removed from homepage — only used by tsj-push.js which lazy-loads after interaction. Saves 200-400ms wasted RTT. -->
   <!-- Preload critical JSON data for faster card rendering -->
   <!-- Data served from /data/Complete_Jobs_Full_Data.json -->
   <link rel="preload" href="script.min.js?v=20260605163619" as="script"/>
-  <link rel="preload" href="dailyupdates.json" as="fetch" crossorigin="anonymous"/>
+  <!-- ISSUE-015 FIX: dailyupdates.json versioned to prevent cache-bust on every deploy -->
+  <link rel="preload" href="dailyupdates.json?v=20260605" as="fetch" crossorigin="anonymous"/>
   <!-- PERF: sections-index.json — 16KB lightweight index for instant card rendering (instead of 18MB Complete_Jobs_Full_Data.json) -->
   <link rel="preload" href="sections-index.json?v=202606051636" as="fetch" crossorigin="anonymous"/>
   <!-- PERF: Complete_Jobs_Full_Data.json fetched once — powers all SR cards + ticker -->
@@ -230,18 +230,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
 }
 </script>
   
+  <!-- ISSUE-028 FIX: Correct WebSite + SearchAction schema (replaces wrong SiteLinksSearchBox type) -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "SiteLinksSearchBox",
+    "@type": "WebSite",
+    "@id": "https://www.topsarkarijobs.com/#website",
+    "name": "Top Sarkari Jobs",
+    "alternateName": ["Sarkari Naukri", "Top Sarkari Naukri", "TSJ"],
     "url": "https://www.topsarkarijobs.com/",
+    "description": "India's leading government job portal for latest Sarkari Naukri notifications, results, admit cards updated daily.",
+    "inLanguage": "en-IN",
     "potentialAction": {
       "@type": "SearchAction",
       "target": {
         "@type": "EntryPoint",
-        "urlTemplate": "https://www.topsarkarijobs.com/search.html?q={search_term_string}"
+        "urlTemplate": "https://www.topsarkarijobs.com/search/?q={search_term_string}"
       },
       "query-input": "required name=search_term_string"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "@id": "https://www.topsarkarijobs.com/#org"
     }
   }
   </script>
@@ -3163,12 +3173,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
     </nav>
   </aside>
 
-  <!-- Load existing script.js (handles dynamic sections from JSON) -->
+  <!-- ISSUE-017 FIX: Correct script loading priority order -->
+  <!-- Priority 1: Critical — preloaded in <head>, defer keeps it non-blocking -->
   <script src="script.min.js?v=20260605163619" defer></script>
 
-  <!-- SEO Engine: Push Notifications, Recently Viewed, Share, Breadcrumb, Trending -->
+  <!-- Priority 2: SEO Engine — defer (needed for push notif, breadcrumb, trending) -->
   <script src="seo-engine.min.js?v=20260602134931" defer></script>
-
 
 
   <!-- Quick Search helper: Popular search tags use this to fill hero search -->
@@ -3215,9 +3225,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
   })();
   </script>
 
-  <!-- Smart Search System v2.0 -->
-  <script src="smart-search.min.js?v=20260605163619" defer></script>
-  <script src="perf-ultra.js?v=20260605" defer></script>
+  <!-- ISSUE-017 FIX: Priority 3 — Non-critical scripts lazy-loaded after window.load -->
+  <script>
+  window.addEventListener('load', function() {
+    // smart-search: load after main content is painted
+    var ss = document.createElement('script');
+    ss.src = '/smart-search.min.js?v=20260605163619';
+    ss.async = true;
+    document.head.appendChild(ss);
+  });
+  </script>
+  <!-- ISSUE-017 FIX: Priority 4 — perf-ultra: lowest priority, async -->
+  <script src="perf-ultra.js?v=20260605" async></script>
 
   <script>
   (function () {
@@ -3441,5 +3460,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
   for(var i=0;i<imgs.length;i++){ imgs[i].loading='lazy'; imgs[i].decoding='async'; }
 })();
 </script>
-  <script src="/analytics.js" defer></script>
+  <!-- ISSUE-016 FIX: analytics.js (16.5KB) lazy-loaded after first user interaction, not on page load -->
+  <script>
+  (function(){
+    var _loaded=false;
+    function loadAnalytics(){
+      if(_loaded)return; _loaded=true;
+      var s=document.createElement('script');
+      s.src='/analytics.js?v=20260605';
+      s.async=true;
+      document.head.appendChild(s);
+    }
+    // Load on first scroll, click, or after 4s fallback — whichever comes first
+    window.addEventListener('scroll',loadAnalytics,{once:true,passive:true});
+    window.addEventListener('click',loadAnalytics,{once:true});
+    window.addEventListener('keydown',loadAnalytics,{once:true});
+    setTimeout(loadAnalytics,4000);
+  })();
+  </script>
 </body>

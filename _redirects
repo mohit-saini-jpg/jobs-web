@@ -1,3 +1,11 @@
+# ══ ISSUE-005 FIX: Force canonical www — non-www → www (highest priority, must be first) ══
+https://topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
+http://topsarkarijobs.com/*   https://www.topsarkarijobs.com/:splat  301!
+http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
+
+# ══ ISSUE-011 FIX: view.html catch-all → homepage (query params handled by inline JS) ══
+/view.html  /  301
+
 
 # ── CATEGORY/STUDY LISTING PAGES (/category/study/{slug}/) ──────────────────
 /category/study/10th-pass/  /category/study/10th-pass/index.html  200
