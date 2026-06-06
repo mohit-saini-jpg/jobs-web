@@ -72,12 +72,20 @@
 .btn-default{background:#dbeafe;color:#1e40af;border-color:#93c5fd}.btn-default:hover{background:#1e40af;color:#fff}
 .faq-item{border-bottom:1px solid #f1f5f9;padding:0}
 .faq-item:last-child{border-bottom:none}
-.faq-q{display:flex;align-items:center;gap:10px;padding:11px 14px;font-weight:600;color:#1e293b;cursor:pointer;user-select:none;text-align:left;font-size:.84rem;line-height:1.5}
+.faq-q{display:flex;align-items:center;gap:10px;padding:11px 14px;font-weight:600;color:#1e293b;cursor:pointer;user-select:none;text-align:left;font-size:.84rem;line-height:1.5;background:#fff}
 .faq-q:hover{background:#f8fafc}
 .faq-icon{flex-shrink:0;min-width:26px;height:26px;background:#4f46e5;color:#fff;border-radius:6px;padding:0;font-size:.72rem;font-weight:800;display:flex;align-items:center;justify-content:center}
 .faq-q>span:not(.faq-icon){flex:1;text-align:left;color:#1e293b;line-height:1.5}
 .faq-q .fa-chevron-down,.faq-q [class*="chevron"]{margin-left:auto;flex-shrink:0;font-size:.72rem;color:#94a3b8;transition:transform .22s}
-.faq-a{display:none;padding:0 14px 12px 50px;font-size:.83rem;color:#475569;line-height:1.7}
+.faq-q.open .fa-chevron-down,.faq-q.open [class*="chevron"]{transform:rotate(180deg);color:#4f46e5}
+/* .faq-a hidden by default — faq-init.js handles toggle */
+.faq-a{display:none;padding:10px 14px 14px;font-size:.83rem;color:#475569;line-height:1.75;border-top:1px solid #f1f5f9;background:#fafbff}
+.faq-a.open,.faq-a[style*="block"]{display:flex!important;gap:10px;align-items:flex-start}
+.faq-a-icon{flex-shrink:0;min-width:26px;height:26px;background:#15803d;color:#fff;border-radius:6px;font-size:.72rem;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px}
+@media(max-width:600px){
+  .faq-q{padding:10px;font-size:.8rem}
+  .faq-a{padding:8px 10px 12px}
+}
 .faq-.edu-sec{padding:11px 14px;border-bottom:1px solid #f1f5f9}.edu-sec:last-child{border-bottom:none}
 .edu-sec-h{font-size:.85rem;font-weight:700;color:#1e293b;margin:0 0 8px}
 .edu-par.mi-item{font-size:.82rem;color:#374151;line-height:1.6;padding:3px 0}

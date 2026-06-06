@@ -392,16 +392,40 @@ def render_links(il_obj):
 
 def render_faq(faq_list):
     if not isinstance(faq_list, list) or not faq_list: return ''
-    items = ''
-    for i, f in enumerate(faq_list):
+    import re as _re
+
+    def is_label(s):
+        return bool(_re.search(r':\s*$', s.strip())) or bool(_re.match(
+            r'^(application|last date|exam date|admit card|fee|age|minimum|maximum|eligibility|vacancy|result|notification|start|end|begin|close)', s.strip(), _re.I))
+
+    def is_value(s):
+        return bool(_re.match(r'^\d{1,2}/\d{1,2}/\d{4}|^\d{2,4}$|^\d+\s*(years?|posts?|vacancies|rs\.?|rupees?|/-)', s.strip(), _re.I))
+
+    # Dedup + Q/A swap
+    seen = {}
+    deduped = []
+    for f in faq_list:
         if not isinstance(f, dict): continue
         q = safe(f.get('question','')); a = safe(f.get('answer',''))
         if not q or not a: continue
-        items += f'''<div class="faq-item" id="faq-{i+1}">
-  <div class="faq-q"><span class="faq-icon">Q{i+1}</span><span>{e(q)}</span></div>
-  <div class="faq-a"><span class="faq-a-icon">A</span><div>{e(a)}</div></div>
+        if is_label(a) and is_value(q): q, a = _re.sub(r':\s*$','',a).strip(), q
+        key = _re.sub(r'^q\d+[\.\)]\s*','',q.lower().strip())
+        if key in seen: continue
+        seen[key] = True
+        deduped.append((q, a))
+
+    items = ''
+    for idx, (q, a) in enumerate(deduped, 1):
+        items += f'''<div class="faq-item" id="faq-{idx}">
+  <div class="faq-q">
+    <span class="faq-icon">Q{idx}</span>
+    <span style="flex:1;text-align:left;line-height:1.5">{e(q)}</span>
+    <i class="fa-solid fa-chevron-down" style="font-size:.72rem;color:#94a3b8;margin-left:auto;flex-shrink:0;transition:transform .22s"></i>
+  </div>
+  <div class="faq-a" style="display:none"><span class="faq-a-icon">A</span><div>{e(a)}</div></div>
 </div>'''
     return items
+
 
 def extract_cell(cell):
     """Extract text+links from a cell that may be:
@@ -1162,6 +1186,8 @@ def page_shell(title_tag, meta_desc, canon_url, keywords, schemas_html,
   <div id="footerPlaceholder"></div>
   <script>fetch('/footer.html',{{cache:'no-store'}}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{{if(h){{var d=document.getElementById('footerPlaceholder');if(d)d.outerHTML=h;}}}})</script>
   <script src="/tsj-menu.js" defer></script>
+  <!-- FAQ accordion init — makes .faq-a toggle on click for all static pages -->
+  <script src="/faq-init.js" defer></script>
   <!-- ISSUE-016 FIX: analytics.js lazy-loaded after interaction -->
   <script>(function(){{var _l=false;function la(){{if(_l)return;_l=true;var s=document.createElement('script');s.src='/analytics.js?v=20260605';s.async=true;document.head.appendChild(s);}}window.addEventListener('scroll',la,{{once:true,passive:true}});window.addEventListener('click',la,{{once:true}});setTimeout(la,4000);}})();</script>
 </body>

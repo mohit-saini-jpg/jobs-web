@@ -914,6 +914,8 @@ def build_static_html(slug, title, full_job_obj, cat):
       .then(function(h){{if(h){{var d=document.getElementById('footerPlaceholder');if(d)d.outerHTML=h;}}}});
   </script>
   <script src="/tsj-menu.js" defer></script>
+  <!-- FAQ accordion init -->
+  <script src="/faq-init.js" defer></script>
   <noscript>
     <div style="font-family:sans-serif;max-width:800px;margin:40px auto;padding:20px">
       <h1>{e(title)}</h1>
