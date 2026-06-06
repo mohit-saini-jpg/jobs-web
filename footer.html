@@ -98,42 +98,33 @@ a, button { -webkit-tap-highlight-color: transparent; touch-action: manipulation
   </div>
 </footer>
 <script>
-/* FAQ Accordion — runs on ALL pages via footer.html */
+/* FAQ Accordion v3 — CSS-independent, works regardless of stylesheet load order */
 (function(){
+  // Inject critical FAQ CSS directly — no dependency on styles-detail.css loading
+  var st=document.createElement('style');
+  st.textContent='.faq-a{display:none!important}.faq-a.faq-open{display:flex!important;gap:10px;align-items:flex-start;padding:10px 14px 14px;font-size:.83rem;color:#475569;line-height:1.75;border-top:1px solid #f1f5f9;background:#fafbff}.faq-a-icon{flex-shrink:0;min-width:26px;height:26px;background:#15803d;color:#fff;border-radius:6px;font-size:.72rem;font-weight:800;display:flex!important;align-items:center;justify-content:center;margin-top:1px}';
+  document.head.appendChild(st);
+
   function initFAQ(){
     document.querySelectorAll('.faq-item').forEach(function(item){
       var btn=item.querySelector('.faq-q');
       var ans=item.querySelector('.faq-a');
       if(!btn||!ans||btn._faqDone) return;
       btn._faqDone=true;
-      // Make sure answer is hidden initially
-      ans.style.display='none';
       btn.style.cursor='pointer';
       btn.addEventListener('click',function(){
-        var isOpen=btn.classList.contains('open');
-        // Close all siblings
-        var card=btn.closest('.sec-body,.sec-card,body');
-        if(card){
-          card.querySelectorAll('.faq-q.open').forEach(function(ob){
-            if(ob===btn) return;
-            ob.classList.remove('open');
-            var oa=ob.closest('.faq-item') && ob.closest('.faq-item').querySelector('.faq-a');
-            if(oa){oa.classList.remove('open');oa.style.display='none';}
-            var oc=ob.querySelector('.fa-chevron-down,[class*="chevron"]');
-            if(oc) oc.style.transform='';
-          });
-        }
-        if(isOpen){
-          btn.classList.remove('open');
-          ans.classList.remove('open');
-          ans.style.display='none';
-          var chev=btn.querySelector('.fa-chevron-down,[class*="chevron"]');
-          if(chev) chev.style.transform='';
-        } else {
+        var isOpen=ans.classList.contains('faq-open');
+        // Close all in same card
+        var card=btn.closest('.sec-body')||btn.closest('.sec-card')||document.body;
+        card.querySelectorAll('.faq-a.faq-open').forEach(function(oa){
+          oa.classList.remove('faq-open');
+          var ob=oa.previousElementSibling;
+          if(ob){ob.classList.remove('open');var oc=ob.querySelector('.fa-chevron-down');if(oc)oc.style.transform='';}
+        });
+        if(!isOpen){
+          ans.classList.add('faq-open');
           btn.classList.add('open');
-          ans.classList.add('open');
-          ans.style.display='block';
-          var chev=btn.querySelector('.fa-chevron-down,[class*="chevron"]');
+          var chev=btn.querySelector('.fa-chevron-down');
           if(chev) chev.style.transform='rotate(180deg)';
         }
       });
