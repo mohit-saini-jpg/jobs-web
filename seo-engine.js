@@ -282,6 +282,24 @@
     };
   }
 
+  /* DUPLICATE-FAQ FIX: never inject a 2nd FAQPage.
+     If the page already ships a FAQPage (static in HTML, or injected earlier),
+     skip — Google flags "Duplicate field 'FAQPage'" and marks the page invalid. */
+  function pageHasFAQPage(exceptId) {
+    var nodes = d.querySelectorAll('script[type="application/ld+json"]');
+    for (var i = 0; i < nodes.length; i++) {
+      if (exceptId && nodes[i].id === exceptId) continue;
+      var txt = nodes[i].textContent || '';
+      if (txt.indexOf('"FAQPage"') !== -1 || txt.indexOf("'FAQPage'") !== -1) return true;
+    }
+    return false;
+  }
+  function injectFAQSchema(id, faqs) {
+    if (!faqs || !faqs.length) return;
+    if (pageHasFAQPage(id)) return;       // a FAQPage already exists → do not duplicate
+    injectSchema(id, buildFAQSchema(faqs));
+  }
+
   function buildJobPostingSchema(job) {
     var schema = {
       '@context': 'https://schema.org',
@@ -353,13 +371,18 @@
   ══════════════════════════════════════════════════════ */
   function injectFAQBlock(faqs, container) {
     if (!container || !faqs || !faqs.length) return;
+    // DUPLICATE-FAQ FIX: if the page already declares a FAQPage (JSON-LD or microdata),
+    // don't add a 2nd FAQPage via this visible block — emit it WITHOUT FAQPage markup.
+    var faqExists = pageHasFAQPage() || !!d.querySelector('[itemtype$="schema.org/FAQPage"]');
     var existing = d.getElementById('seo-faq-block');
     if (existing) existing.remove();
 
     var wrap = d.createElement('section');
     wrap.id = 'seo-faq-block';
-    wrap.setAttribute('itemscope', '');
-    wrap.setAttribute('itemtype', 'https://schema.org/FAQPage');
+    if (!faqExists) {
+      wrap.setAttribute('itemscope', '');
+      wrap.setAttribute('itemtype', 'https://schema.org/FAQPage');
+    }
     wrap.style.cssText = 'background:#f8fafc;border-radius:12px;padding:20px 24px;margin:24px 0;border:1px solid #e2e8f0;';
 
     var h2 = d.createElement('h2');
@@ -369,22 +392,26 @@
 
     faqs.forEach(function(f) {
       var div = d.createElement('div');
-      div.setAttribute('itemscope', '');
-      div.setAttribute('itemprop', 'mainEntity');
-      div.setAttribute('itemtype', 'https://schema.org/Question');
+      if (!faqExists) {
+        div.setAttribute('itemscope', '');
+        div.setAttribute('itemprop', 'mainEntity');
+        div.setAttribute('itemtype', 'https://schema.org/Question');
+      }
       div.style.cssText = 'border-top:1px solid #e2e8f0;padding:10px 0;';
 
       var q = d.createElement('h3');
-      q.setAttribute('itemprop', 'name');
+      if (!faqExists) q.setAttribute('itemprop', 'name');
       q.style.cssText = 'font-size:.9rem;font-weight:600;color:#1e293b;margin:0 0 6px;cursor:pointer;';
       q.textContent = f.q;
 
       var ans = d.createElement('div');
-      ans.setAttribute('itemscope', '');
-      ans.setAttribute('itemprop', 'acceptedAnswer');
-      ans.setAttribute('itemtype', 'https://schema.org/Answer');
+      if (!faqExists) {
+        ans.setAttribute('itemscope', '');
+        ans.setAttribute('itemprop', 'acceptedAnswer');
+        ans.setAttribute('itemtype', 'https://schema.org/Answer');
+      }
       var p = d.createElement('p');
-      p.setAttribute('itemprop', 'text');
+      if (!faqExists) p.setAttribute('itemprop', 'text');
       p.style.cssText = 'font-size:.85rem;color:#475569;margin:0;';
       p.textContent = f.a;
       ans.appendChild(p);
@@ -610,7 +637,7 @@
           { q: 'What is the eligibility for ' + jTitle + '?', a: 'Educational qualification, age limit and other eligibility criteria are mentioned in the notification. Refer to the "Eligibility" section above.' },
           { q: 'How to apply for ' + jTitle + '?', a: 'Click the "Apply Online" or "Official Notification" button above. You will be redirected to the official recruitment portal.' },
         ];
-        injectSchema('schema-faq', buildFAQSchema(jFaqs));
+        injectFAQSchema('schema-faq', jFaqs);
         injectFAQBlock(jFaqs, qs('main') || d.body);
         enforceImageAlts({ jobName: jTitle });
         ensureH1(jTitle);
@@ -679,7 +706,7 @@
     }
 
     if (faqs && faqs.length) {
-      injectSchema('schema-faq', buildFAQSchema(faqs));
+      injectFAQSchema('schema-faq', faqs);
     }
 
     enforceImageAlts();
@@ -714,7 +741,7 @@
       { name: 'Home', url: SITE + '/' },
       { name: (meta && meta.label) || titleCase(sectionName), url: cleanUrl }
     ]));
-    injectSchema('schema-faq', buildFAQSchema(faqs));
+    injectFAQSchema('schema-faq', faqs);
 
     if (items && items.length) {
       injectSchema('schema-itemlist', buildItemListSchema(
