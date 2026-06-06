@@ -97,3 +97,52 @@ a, button { -webkit-tap-highlight-color: transparent; touch-action: manipulation
     </div>
   </div>
 </footer>
+<script>
+/* FAQ Accordion — runs on ALL pages via footer.html */
+(function(){
+  function initFAQ(){
+    document.querySelectorAll('.faq-item').forEach(function(item){
+      var btn=item.querySelector('.faq-q');
+      var ans=item.querySelector('.faq-a');
+      if(!btn||!ans||btn._faqDone) return;
+      btn._faqDone=true;
+      // Make sure answer is hidden initially
+      ans.style.display='none';
+      btn.style.cursor='pointer';
+      btn.addEventListener('click',function(){
+        var isOpen=btn.classList.contains('open');
+        // Close all siblings
+        var card=btn.closest('.sec-body,.sec-card,body');
+        if(card){
+          card.querySelectorAll('.faq-q.open').forEach(function(ob){
+            if(ob===btn) return;
+            ob.classList.remove('open');
+            var oa=ob.closest('.faq-item') && ob.closest('.faq-item').querySelector('.faq-a');
+            if(oa){oa.classList.remove('open');oa.style.display='none';}
+            var oc=ob.querySelector('.fa-chevron-down,[class*="chevron"]');
+            if(oc) oc.style.transform='';
+          });
+        }
+        if(isOpen){
+          btn.classList.remove('open');
+          ans.classList.remove('open');
+          ans.style.display='none';
+          var chev=btn.querySelector('.fa-chevron-down,[class*="chevron"]');
+          if(chev) chev.style.transform='';
+        } else {
+          btn.classList.add('open');
+          ans.classList.add('open');
+          ans.style.display='flex';
+          var chev=btn.querySelector('.fa-chevron-down,[class*="chevron"]');
+          if(chev) chev.style.transform='rotate(180deg)';
+        }
+      });
+    });
+  }
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',initFAQ);
+  } else {
+    initFAQ();
+  }
+})();
+</script>
