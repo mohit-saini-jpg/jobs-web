@@ -973,25 +973,56 @@ def build_all_sections(job_obj):
         elif key == 'exam_pattern':     body = (render_smart_table(val) if isinstance(val,list) and val and isinstance(val[0],dict) else render_list_items(val) if isinstance(val,list) else f'<div class="edu-sec">{e(safe(val))}</div>')
         elif key == 'tables':
             # sarkari_data tables: [{table_name, rows:[[]]}]
+            # gb headline tables = junk (short_info repeat), skip entirely
+            # Link rows ("Apply Online", "Official Website" etc) = extract to useful_links pool
+            LINK_ROW_RE = re.compile(r'^(apply\s+online|official\s+website|notification|admit\s+card|result|answer\s+key|syllabus|login|register|click\s+here|download)', re.I)
+            LINK_KEY_MAP = {
+                'apply online': 'apply_online', 'official website': 'official_website',
+                'notification': 'notification_pdf', 'admit card': 'admit_card',
+                'result': 'result_link', 'answer key': 'answer_key',
+                'login': 'login_link', 'download': 'notification_pdf',
+            }
             if isinstance(val, list):
                 body_parts = []
+                # Collect link rows to inject into useful_links if not already set
+                _extracted_links = {}
                 for tbl in val:
                     if not isinstance(tbl, dict): continue
                     tname = (tbl.get('table_name') or '').strip()
                     rows  = tbl.get('rows') or []
                     if not rows: continue
-                    # Skip garbage table names
-                    if any(x in tname.lower() for x in ['gb headline','headline text','60ccea']): tname = ''
+                    # Skip gb headline / short-info tables entirely
+                    if any(x in tname.lower() for x in ['gb headline','headline text','60ccea','gb headline gb']):
+                        continue
+                    # Filter rows: extract link rows, keep data rows
+                    data_rows = []
+                    for row in rows:
+                        if not isinstance(row, (list, tuple)) or not row: continue
+                        c0 = str(row[0]).strip()
+                        c1 = str(row[1]).strip() if len(row) > 1 else ''
+                        # Timestamp-only rows — skip
+                        if re.match(r'^\d{1,2}\s+\w+\s+\d{4}', c0) and len(row) == 1: continue
+                        # Link rows — extract URL if present
+                        if LINK_ROW_RE.match(c0):
+                            if c1.startswith('http') and not is_blocked(c1):
+                                map_key = next((v for k,v in LINK_KEY_MAP.items() if c0.lower().startswith(k)), 'apply_online')
+                                if map_key not in _extracted_links:
+                                    _extracted_links[map_key] = {'title': c0, 'url': c1}
+                            continue  # Don't render link rows in table
+                        data_rows.append(row)
+                    if not data_rows: continue
                     t_html = ''
                     if tname:
                         t_html += f'<div class="tbl-name">{e(tname[:200])}</div>'
                     t_html += '<div class="tbl-scroll"><table class="data-table"><tbody>'
-                    for row in rows:
-                        if not isinstance(row, (list, tuple)): continue
+                    for row in data_rows:
                         t_html += '<tr>' + ''.join(f'<td>{e(str(cell))}</td>' for cell in row) + '</tr>'
                     t_html += '</tbody></table></div>'
                     body_parts.append(t_html)
                 body = ''.join(body_parts) if body_parts else ''
+                # Store extracted links for useful_links section (if job has no useful_links)
+                if _extracted_links and not job_obj.get('useful_links'):
+                    job_obj['_table_links'] = _extracted_links
         elif key == 'text_sections':
             # sarkari_data text_sections: [{section, content}]
             if isinstance(val, list):
@@ -1013,40 +1044,96 @@ def build_all_sections(job_obj):
                     body_parts.append(ts_html)
                 body = ''.join(body_parts) if body_parts else ''
         elif key == 'useful_links':
-            # sarkari_data useful_links: [{title, links: str|[str]}]
+            # sarkari_data useful_links:
+            #   FORMAT A (list): [{title, links: str|[str]}]
+            #   FORMAT B (dict): {apply_online: url, official_website: url, _all: [{title, links}], ...}
+            ul_items = []  # normalize to list of {title, url}
+
             if isinstance(val, list):
-                rows_html = ''
+                # Format A — direct list
                 for ul_item in val:
                     if not isinstance(ul_item, dict): continue
                     title = safe(ul_item.get('title') or ul_item.get('name') or 'Link')
                     links = ul_item.get('links') or ul_item.get('url') or ''
-                    if isinstance(links, str): links = [links]
-                    valid = [str(l).strip() for l in (links if isinstance(links,list) else [])
-                             if str(l).strip().startswith('http') and not is_blocked(str(l).strip())]
-                    if not valid: continue
-                    if len(valid) == 1:
-                        lnk = valid[0]
-                        ul_lower = lnk.lower()
-                        ic = 'fa-file-pdf' if ul_lower.endswith('.pdf') else 'fa-arrow-up-right-from-square'
-                        cl = 'btn-pdf' if ul_lower.endswith('.pdf') else 'btn-default'
-                        rows_html += (f'<tr><td class="ul-title">{e(title)}</td>'
-                                      f'<td><a href="{e(lnk)}" class="lnk-btn {cl}" target="_blank" rel="noopener noreferrer">'
-                                      f'<i class="fa-solid {ic}"></i> Open</a></td></tr>\n')
-                    else:
-                        # Multiple links: show as "Link 1 | Link 2" row
-                        link_btns = ''
-                        LINK_LABELS = ['Result', 'Cutoff', 'Hindi', 'English', 'Part 1', 'Part 2',
-                                       'Technician I', 'Technician III', 'Grade I', 'Grade III',
-                                       'CBT 1', 'CBT 2', 'Link 1', 'Link 2']
-                        for idx_l, lnk in enumerate(valid):
-                            ul_lower = lnk.lower()
-                            lbl = LINK_LABELS[idx_l] if idx_l < len(LINK_LABELS) else f'Link {idx_l+1}'
-                            ic = 'fa-file-pdf' if ul_lower.endswith('.pdf') else 'fa-arrow-up-right-from-square'
-                            cl = 'btn-pdf' if ul_lower.endswith('.pdf') else 'btn-default'
-                            link_btns += (f'<a href="{e(lnk)}" class="lnk-btn {cl} lnk-sm" target="_blank" rel="noopener noreferrer">'
-                                          f'<i class="fa-solid {ic}"></i> {e(lbl)}</a>\n')
-                        rows_html += (f'<tr><td class="ul-title">{e(title)}</td>'
-                                      f'<td><div class="ul-links">{link_btns}</div></td></tr>\n')
+                    if isinstance(links, list):
+                        for lnk in links:
+                            lnk = str(lnk).strip()
+                            if lnk.startswith('http') and not is_blocked(lnk):
+                                ul_items.append({'title': title, 'url': lnk})
+                    elif isinstance(links, str) and links.startswith('http') and not is_blocked(links):
+                        ul_items.append({'title': title, 'url': links})
+
+            elif isinstance(val, dict):
+                # Format B — dict with known keys + optional _all array
+                # Prefer _all array (has explicit titles), fall back to known keys
+                all_arr = val.get('_all') or []
+                if isinstance(all_arr, list) and all_arr:
+                    for ul_item in all_arr:
+                        if not isinstance(ul_item, dict): continue
+                        title = safe(ul_item.get('title') or ul_item.get('name') or 'Link')
+                        links = ul_item.get('links') or ul_item.get('url') or ''
+                        if isinstance(links, list): links = links[0] if links else ''
+                        lnk = str(links).strip()
+                        if lnk.startswith('http') and not is_blocked(lnk):
+                            ul_items.append({'title': title, 'url': lnk})
+                else:
+                    # No _all — use known keys
+                    KEY_TITLES = {
+                        'apply_online': 'Apply Online',
+                        'notification_pdf': 'Download Notification',
+                        'notification': 'Download Notification',
+                        'document': 'Download Document',
+                        'official_website': 'Official Website',
+                        'result_link': 'Result',
+                        'admit_card': 'Admit Card',
+                        'answer_key': 'Answer Key',
+                        'login_link': 'Login',
+                        'registration_link': 'Register Now',
+                    }
+                    for k, title in KEY_TITLES.items():
+                        lnk = str(val.get(k) or '').strip()
+                        if lnk.startswith('http') and not is_blocked(lnk):
+                            ul_items.append({'title': title, 'url': lnk})
+
+            # Also check _table_links extracted from tables section
+            tbl_links = job_obj.get('_table_links') or {}
+            TBL_KEY_TITLES = {'apply_online':'Apply Online','notification_pdf':'Download Notification',
+                              'official_website':'Official Website','admit_card':'Admit Card',
+                              'result_link':'Result','answer_key':'Answer Key'}
+            seen_urls = {it['url'] for it in ul_items}
+            for k, title in TBL_KEY_TITLES.items():
+                info = tbl_links.get(k)
+                if info and isinstance(info, dict):
+                    lnk = info.get('url','')
+                    if lnk and lnk not in seen_urls:
+                        ul_items.append({'title': info.get('title', title), 'url': lnk})
+                        seen_urls.add(lnk)
+
+            # Render ul_items as smart link buttons
+            if ul_items:
+                def _smart_link(title, url):
+                    ul = url.lower()
+                    t  = title.lower()
+                    if ul.endswith('.pdf') or 'pdf' in ul or 'notice' in ul or 'advertisement' in ul:
+                        return ('fa-file-pdf', 'btn-pdf')
+                    if 'result' in t or 'merit' in t: return ('fa-trophy', 'btn-result')
+                    if 'admit' in t: return ('fa-id-card', 'btn-admit')
+                    if 'answer' in t or 'key' in t: return ('fa-key', 'btn-pdf')
+                    if 'official' in t or 'website' in t: return ('fa-globe', 'btn-default')
+                    if 'apply' in t or 'register' in t or 'ibpsreg' in ul or 'career' in ul:
+                        return ('fa-paper-plane', 'btn-apply')
+                    return ('fa-arrow-up-right-from-square', 'btn-default')
+
+                rows_html = ''
+                seen_render = set()
+                for item in ul_items:
+                    lnk = item['url']
+                    if lnk in seen_render: continue
+                    seen_render.add(lnk)
+                    ic, cl = _smart_link(item['title'], lnk)
+                    rows_html += (f'<tr><td class="ul-title">{e(item["title"])}</td>'
+                                  f'<td><a href="{e(lnk)}" class="lnk-btn {cl}" target="_blank" rel="noopener noreferrer">'
+                                  f'<i class="fa-solid {ic}"></i> Open</a></td></tr>\n')
                 if rows_html:
                     body = (f'<div class="tbl-scroll"><table class="data-table ul-table"><tbody>'
                             f'{rows_html}</tbody></table></div>')
