@@ -1,0 +1,324 @@
+# ══════════════════════════════════════════════════════════════════════
+# WORKFLOW 2: auto-update-jobs.yml — Full Data Pipeline (MASTER)
+# ALL steps run in ONE job → NO race condition → ONE commit
+# Triggers: Complete_Jobs_Full_Data.json push OR daily cron
+# ══════════════════════════════════════════════════════════════════════
+
+name: 🔄 Auto Update Jobs + Sitemap + Cache Bust
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Complete_Jobs_Full_Data.json'
+      - 'data/Complete_Jobs_Full_Data.json'
+      - 'dailyupdates.json'
+
+  schedule:
+    - cron: '30 1 * * *'   # Daily 7:00 AM IST
+
+  workflow_dispatch:
+
+concurrency:
+  group: data-pipeline
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: write
+
+    steps:
+      # ── STEP 1: Checkout ─────────────────────────────────────────
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      # ── STEP 2: Setup runtimes ───────────────────────────────────
+      - name: 🟢 Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 🐍 Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # ── STEP 3: Ensure CJ file at root ───────────────────────────
+      - name: 📋 Ensure Complete_Jobs_Full_Data.json at root
+        run: |
+          if [ ! -f "Complete_Jobs_Full_Data.json" ] && [ -f "data/Complete_Jobs_Full_Data.json" ]; then
+            cp data/Complete_Jobs_Full_Data.json Complete_Jobs_Full_Data.json
+            echo "Copied data/ → root"
+          fi
+          if [ -f "Complete_Jobs_Full_Data.json" ]; then
+            SIZE=$(wc -c < Complete_Jobs_Full_Data.json)
+            echo "✅ Complete_Jobs_Full_Data.json: ${SIZE} bytes"
+          else
+            echo "❌ Complete_Jobs_Full_Data.json not found!"
+            exit 1
+          fi
+
+      # ── STEP 4: Version bump FIRST ───────────────────────────────
+      - name: 🔖 Bump version.json + sw.js + HTML ?v= params
+        run: node .github/workflows/generate_version.js
+
+      # ── STEP 5: Generate static pages (PRIMARY: generate_website.py, SECONDARY: generate_jobs.py)
+      - name: Clear old pages before regen
+        run: |
+          find jobs -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
+          find state -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
+          find education -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
+          find category/study -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
+          find section -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
+          find qualification -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
+          mkdir -p jobs/data state education category/study section qualification
+          echo "Old pages cleared"
+
+
+      - name: Patch generate_all.py if needed
+        run: |
+          if grep -q "build_seo_title" generate_all.py 2>/dev/null; then
+            echo "Applying patch..."
+            python3 .github/workflows/patch_generator.py
+          fi
+
+      - name: UNIFIED generator - generate_all.py (one item = one URL = one layout)
+        run: python3 generate_all.py
+
+      - name: Fix lang attributes for English pages
+        run: |
+          find jobs category/study state education section qualification -name "index.html"             -exec sed -i 's/<html lang="hi-IN">/<html lang="en-IN">/g' {} + 2>/dev/null || true
+
+      - name: 🔁 Rebuild section data from Complete_Jobs_Full_Data.json
+        run: |
+          python3 << 'PYEOF'
+          import json, re, os
+          from collections import defaultdict
+          from pathlib import Path
+
+          # Read CJ — try data/ first, fallback to root
+          CJ_PATH = 'data/Complete_Jobs_Full_Data.json'
+          if not os.path.exists(CJ_PATH):
+              CJ_PATH = 'Complete_Jobs_Full_Data.json'
+          if not os.path.exists(CJ_PATH):
+              print("❌ Complete_Jobs_Full_Data.json not found!")
+              exit(1)
+
+          print(f"📖 Reading {CJ_PATH}...")
+          with open(CJ_PATH, encoding='utf-8') as f:
+              cj = json.load(f)
+
+          sarkari_jobs = cj.get('sarkari_data', {}).get('jobs', [])
+          fj_cats = cj.get('freejobalert_categories', {})
+          # Handle old flat format
+          if not fj_cats:
+              OLD_CATS = {'10TH_Pass','8TH_Pass','12TH_Pass','Diploma','ITI','B_Tech_BE',
+                          'B_Com','Any_Graduate','Any_Post_Graduate','Railway_Jobs',
+                          'Police_Defence','Teaching_Faculty','Bank_Jobs','Medical_Hospital',
+                          'Last_Date_Reminder','Latest_Notifications'}
+              fj_cats = {k: v for k, v in cj.items() if k in OLD_CATS and isinstance(v, list)}
+
+          print(f"   sarkari_data jobs: {len(sarkari_jobs)}")
+          print(f"   freejobalert categories: {len(fj_cats)}")
+
+          os.makedirs('data', exist_ok=True)
+
+          # ── Split sarkari_data.jobs by category ──
+          FILE_MAP = {
+              'SR_Latest_Jobs':  'data/sr-latest-jobs.json',
+              'SR_Result':       'data/sr-result.json',
+              'SR_Admit_Card':   'data/sr-admit-card.json',
+              'SR_Admission':    'data/sr-admission.json',
+              'SR_Answer_Key':   'data/sr-answer-key.json',
+              'UPCOMING_JOBS':   'data/upcoming-jobs.json',
+              'STATE_JOBS':      'data/state-jobs.json',
+              'CENTRAL_JOBS':    'data/central-jobs.json',
+              'ADMISSIONS':      'data/admissions.json',
+              'LATEST_JOBS NEW': 'data/latest-jobs-new.json',
+              'OFFLINE_FORM':    'data/offline-form.json',
+          }
+
+          cats = defaultdict(list)
+          for j in sarkari_jobs:
+              cats[j.get('category', '?')].append(j)
+
+          for cat, filepath in FILE_MAP.items():
+              items = cats.get(cat, [])
+              # JSON order preserve — no sort
+              with open(filepath, 'w', encoding='utf-8') as f:
+                  json.dump({'jobs': items}, f, ensure_ascii=False, separators=(',', ':'))
+              top = items[0]['title'][:50] if items else '-'
+              print(f"  {filepath}: {len(items)} | #1={top}")
+
+          # ── merged-summary.json (compat file — generated from CJ, NOT fetched by frontend) ──
+          summary = []
+          for cat, items in cats.items():
+              summary.extend(items[:8])  # JSON order preserve — no sort
+          with open('data/merged-summary.json', 'w', encoding='utf-8') as f:
+              json.dump({'jobs': summary}, f, ensure_ascii=False, separators=(',', ':'))
+          print(f"  data/merged-summary.json: {len(summary)} jobs")
+
+          # ── sections-index.json ──
+          def slugify(t):
+              import unicodedata
+              t = unicodedata.normalize('NFKD', str(t)).encode('ascii', 'ignore').decode()
+              t = t.replace('&', ' and ').lower()
+              t = re.sub(r'[^a-z0-9]+', '-', t).strip('-')
+              return t[:120] or 'job'
+
+          def norm_date(d):
+              if not d: return ''
+              d = str(d).strip()
+              m = re.match(r'^(\d{1,2})[-/](\d{1,2})[-/](\d{4})', d)
+              if m: return f"{m.group(3)}-{int(m.group(2)):02d}-{int(m.group(1)):02d}"
+              m = re.match(r'^(\d{4})-(\d{2})-(\d{2})', d)
+              return d[:10] if m else ''
+
+          sindex = {}
+          for cat, jobs in fj_cats.items():
+              items = []
+              for job in jobs:
+                  bd = job.get('basic_details', {})
+                  title = bd.get('job_title', '').strip()
+                  if not title: continue
+                  dates = job.get('important_dates', {})
+                  last_date = dates.get('last_date_to_apply') or dates.get('last_date') or ''
+                  items.append((norm_date(last_date), {
+                      'slug': slugify(title), 'name': title,
+                      'date': last_date,
+                      'org': bd.get('organization_name', ''),
+                      'vac': str(bd.get('total_vacancies', ''))
+                  }))
+              # JSON order preserve — no date sort
+              if items:
+                  sindex[cat] = [x[1] for x in items]
+
+          for cat, items in cats.items():
+              if cat in sindex: continue
+              si_items = []
+              _GARBAGE = {'sarkarl result', 'sarkari result', 'about us', 'terms and conditions', 'contact us', 'privacy policy'}
+              for j in items:
+                  title = j.get('title', '').strip()
+                  if not title: continue
+                  if any(g in title.lower() for g in _GARBAGE): continue
+                  si_items.append({
+                      'slug': slugify(title), 'name': title,
+                      'date': j.get('important_dates', {}).get('Last Date', ''),
+                      'org': j.get('organization', ''),
+                      'vac': str(j.get('total_vacancy', ''))
+                  })
+              if si_items:
+                  sindex[cat] = si_items
+
+          # NEVER overwrite — preserve JSON insertion order
+          import os as _os
+          if not _os.path.exists('sections-index.json'):
+              with open('sections-index.json', 'w', encoding='utf-8') as f:
+                  json.dump(sindex, f, ensure_ascii=False, separators=(',', ':'))
+              print(f"  sections-index.json: CREATED {len(sindex)} categories")
+          else:
+              print("  sections-index.json: KEPT EXISTING (not overwritten)")
+          print("✅ Section data rebuild complete")
+          PYEOF
+
+      # ── STEP 8: SEO fixes (non-critical) ─────────────────────────
+      - name: 🔍 Run SEO fixes
+        continue-on-error: true
+        run: |
+          if [ -f "scripts/fix_seo.py" ]; then
+            python3 scripts/fix_seo.py && echo "✅ SEO fixes applied"
+          else
+            echo "ℹ️ scripts/fix_seo.py not found — skipping"
+          fi
+
+      # ── STEP 9: ONE commit for everything ────────────────────────
+      - name: 📤 Commit ALL changes (one atomic commit)
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add version.json sw.js
+          git add jobs/ state/ education/ category/ jobs-index.json sections-index.json 2>/dev/null || true
+          git add data/ sitemap-jobs.xml sitemap-index.xml sitemap.xml 2>/dev/null || true
+          git add sitemap-sections.xml sitemap-pages.xml 2>/dev/null || true
+          git add -u '*.html' 2>/dev/null || true
+          git add _redirects 2>/dev/null || true
+          git add education/ 2>/dev/null || true
+          git add haryana/ andhra-pradesh/ arunachal-pradesh/ assam/ bihar/ 2>/dev/null || true
+          git add chhattisgarh/ delhi/ goa/ gujarat/ himachal-pradesh/ 2>/dev/null || true
+          git add jammu-and-kashmir/ jharkhand/ karnataka/ kerala/ 2>/dev/null || true
+          git add madhya-pradesh/ maharashtra/ manipur/ meghalaya/ mizoram/ 2>/dev/null || true
+          git add nagaland/ odisha/ punjab/ rajasthan/ sikkim/ 2>/dev/null || true
+          git add tamil-nadu/ telangana/ tripura/ uttar-pradesh/ uttarakhand/ 2>/dev/null || true
+          git add west-bengal/ andaman-and-nicobar/ chandigarh/ ladakh/ 2>/dev/null || true
+
+          if git diff --staged --quiet; then
+            echo "✅ No changes to commit"
+            echo "COMMITTED=false" >> $GITHUB_ENV
+            exit 0
+          fi
+
+          PAGES=$(find jobs -name 'index.html' 2>/dev/null | wc -l)
+          SECS=$(python3 -c "import json; d=json.load(open('sections-index.json')); print(sum(len(v) for v in d.values()))" 2>/dev/null || echo '?')
+          VERSION=$(node -e "console.log(require('./version.json').version)")
+          DATE_IST=$(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M')
+
+          git commit -m "🤖 Auto v${VERSION}: ${PAGES} pages, ${SECS} sections — ${DATE_IST} IST [skip ci]"
+          echo "COMMITTED=true" >> $GITHUB_ENV
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          echo "PAGES=${PAGES}" >> $GITHUB_ENV
+          echo "SECS=${SECS}" >> $GITHUB_ENV
+
+      # ── STEP 10: Push (merge-safe, no rebase) ────────────────────
+      - name: 🚀 Push to main (merge-safe)
+        if: env.COMMITTED == 'true'
+        run: |
+          # Stash any leftover unstaged changes before fetch (safety net)
+          git stash --include-untracked 2>/dev/null || true
+
+          git fetch origin main
+
+          # Use merge -X ours (never rebase — avoids "unstaged changes" error)
+          git merge origin/main -X ours --no-edit --allow-unrelated-histories 2>/dev/null || true
+
+          # Restore stash if any
+          git stash pop 2>/dev/null || true
+
+          git push origin main
+          echo "✅ Pushed successfully"
+
+      # ── STEP 11: Ping Google + Bing sitemaps ─────────────────────
+      - name: 📡 Ping Google & Bing sitemaps
+        continue-on-error: true
+        run: |
+          curl -s "https://www.google.com/ping?sitemap=https://www.topsarkarijobs.com/sitemap.xml" \
+            -o /dev/null -w "Google: %{http_code}\n" || true
+          curl -s "https://www.bing.com/ping?sitemap=https://www.topsarkarijobs.com/sitemap.xml" \
+            -o /dev/null -w "Bing:   %{http_code}\n" || true
+
+      # ── STEP 12: IndexNow ping ────────────────────────────────────
+      - name: 📡 IndexNow ping
+        continue-on-error: true
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+        run: node .github/workflows/indexnow-ping.js
+
+      # ── STEP 13: Summary ─────────────────────────────────────────
+      - name: 📊 Summary
+        run: |
+          VERSION=$(node -e "console.log(require('./version.json').version)" 2>/dev/null || echo "unknown")
+          PAGES=$(find jobs -name 'index.html' 2>/dev/null | wc -l)
+          echo "### ✅ Auto Update Complete" >> $GITHUB_STEP_SUMMARY
+          echo "- **Trigger:** \`${{ github.event_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version:** \`${VERSION}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Job Pages:** ${PAGES}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Sections:** ${{ env.SECS || '?' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Time (IST):** $(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M')" >> $GITHUB_STEP_SUMMARY
+          echo "- **Source:** Complete_Jobs_Full_Data.json (single source)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Race condition:** None (all steps in one job, one commit)" >> $GITHUB_STEP_SUMMARY
