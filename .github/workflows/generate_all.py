@@ -328,11 +328,26 @@ def render_smart_table(rows):
     if not valid: return ''
     head_row = valid[0]
     data_rows = valid[1:]
+    ncol = len(head_row)
     head = ''.join(f'<th>{extract_cell(h)[0]}</th>' for h in head_row)
-    body = ''.join(
-        f'<tr>' + ''.join(f'<td>{extract_cell(c)[0]}</td>' for c in r) + '</tr>'
-        for r in data_rows if r
-    )
+    # Normalize ragged rows: a row with fewer cells than the header (very common in
+    # scraped notification tables where section-title / long-text rows have a single
+    # cell) would otherwise collapse the whole table's column widths. Make a short row
+    # span all columns with colspan, and pad rows that are only slightly short.
+    body_parts = []
+    for r in data_rows:
+        if not r: continue
+        cells = list(r)
+        if len(cells) == 1 and ncol > 1:
+            # full-width separator / long-text row
+            body_parts.append(f'<tr><td colspan="{ncol}">{extract_cell(cells[0])[0]}</td></tr>')
+        else:
+            tds = ''.join(f'<td>{extract_cell(c)[0]}</td>' for c in cells[:ncol])
+            # pad if this row is shorter than the header (keeps columns aligned)
+            if len(cells) < ncol:
+                tds += '<td></td>' * (ncol - len(cells))
+            body_parts.append(f'<tr>{tds}</tr>')
+    body = ''.join(body_parts)
     if not body: return ''
     return f'<div class="tbl-scroll"><table class="data-table"><thead><tr>{head}</tr></thead><tbody>{body}</tbody></table></div>'
 
@@ -858,8 +873,19 @@ def render_edu_sections(sections_list):
                     data_rows = rows
                     if not headers and rows: headers = rows[0]; data_rows = rows[1:]
                     head = ''.join(f'<th>{e(str(h))}</th>' for h in (headers or []))
-                    body_rows = ''.join(f'<tr>' + ''.join(f'<td>{extract_cell(c)[0]}</td>' for c in r) + '</tr>'
-                                        for r in data_rows if isinstance(r,(list,tuple)))
+                    ncol = len(headers or [])
+                    _rparts = []
+                    for r in data_rows:
+                        if not isinstance(r,(list,tuple)) or not r: continue
+                        cells = list(r)
+                        if ncol > 1 and len(cells) == 1:
+                            _rparts.append(f'<tr><td colspan="{ncol}">{extract_cell(cells[0])[0]}</td></tr>')
+                        else:
+                            tds = ''.join(f'<td>{extract_cell(c)[0]}</td>' for c in (cells[:ncol] if ncol else cells))
+                            if ncol and len(cells) < ncol:
+                                tds += '<td></td>' * (ncol - len(cells))
+                            _rparts.append(f'<tr>{tds}</tr>')
+                    body_rows = ''.join(_rparts)
                     if body_rows:
                         body += f'<div class="tbl-scroll"><table class="data-table">{f"<thead><tr>{head}</tr></thead>" if head else ""}<tbody>{body_rows}</tbody></table></div>'
             elif btype == 'list':
