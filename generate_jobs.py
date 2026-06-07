@@ -913,7 +913,7 @@ def build_static_html(slug, title, full_job_obj, cat):
     fetch('/footer.html',{{cache:'no-store'}}).then(function(r){{return r.ok?r.text():null;}}).catch(function(){{return null;}})
       .then(function(h){{if(h){{var d=document.getElementById('footerPlaceholder');if(d)d.outerHTML=h;}}}});
   </script>
-  <script src="/tsj-menu.js" defer></script>
+  
   <!-- FAQ accordion init -->
   <script src="/faq-init.js" defer></script>
   <noscript>

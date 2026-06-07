@@ -1185,7 +1185,7 @@ def page_shell(title_tag, meta_desc, canon_url, keywords, schemas_html,
   </main>
   <div id="footerPlaceholder"></div>
   <script>fetch('/footer.html',{{cache:'no-store'}}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{{if(h){{var d=document.getElementById('footerPlaceholder');if(d)d.outerHTML=h;}}}})</script>
-  <script src="/tsj-menu.js" defer></script>
+  
   <!-- FAQ accordion init — makes .faq-a toggle on click for all static pages -->
   <script src="/faq-init.js" defer></script>
   <!-- ISSUE-016 FIX: analytics.js lazy-loaded after interaction -->

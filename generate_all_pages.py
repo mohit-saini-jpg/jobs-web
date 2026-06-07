@@ -665,7 +665,7 @@ def build_page_html(title, detail, canon_url, breadcrumbs, page_type='job', sour
   </main>
   <div id="footerPlaceholder"></div>
   <script>fetch('/footer.html',{{cache:'no-store'}}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{{if(h){{var d=document.getElementById('footerPlaceholder');if(d)d.outerHTML=h;}}}})</script>
-  <script src="/tsj-menu.js" defer></script>
+  
 </body>
 </html>"""
 
