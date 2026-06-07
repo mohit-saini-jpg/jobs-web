@@ -128,7 +128,7 @@ a{text-decoration:none}
   </main>
   <div id="footerPlaceholder"></div>
   <script>fetch('/footer.html',{cache:'no-store'}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{if(h){var d=document.getElementById('footerPlaceholder');if(d)d.outerHTML=h;}})</script>
-  <script src="/tsj-menu.js?v=20260607124124" defer></script>
+  <script src="/tsj-menu.js?v=20260607115537" defer></script>
 <script>
 (function(){
 'use strict';
@@ -347,19 +347,86 @@ function renderInstructions(insts){
   return card('linear-gradient(135deg,#b45309,#ca8a04)','fa-circle-exclamation','Important Instructions',`<ul class="inst-list">${items}</ul>`);
 }
 
-var LINK_CFG={apply_online:['Apply Online','btn-blue','fa-paper-plane'],official_website:['Official Website','btn-green','fa-globe'],notification_pdf:['Download Notification','btn-red','fa-file-pdf'],download_notification:['Download Notification','btn-red','fa-file-pdf'],official_notification:['Official Notification','btn-red','fa-file-pdf'],registration_link:['Register Now','btn-orange','fa-user-plus'],login_link:['Login','btn-purple','fa-right-to-bracket'],admit_card:['Admit Card','btn-teal','fa-id-card'],answer_key:['Answer Key','btn-indigo','fa-key'],syllabus_pdf:['Syllabus PDF','btn-gray','fa-book'],result_link:['Result','btn-green','fa-trophy'],click_here:['Click Here','btn-blue','fa-link'],merit_list:['Merit List','btn-teal','fa-list']};
+// Render raw tables from Complete_Jobs_Full_Data.json format
+// Skip tables whose content is already rendered by structured fields
+function renderRawTables(tables, already){
+  if(!Array.isArray(tables)||!tables.length) return '';
+  // Keywords that indicate a table is already covered by structured sections
+  var SKIP_PAT=/important.?date|application.?begin|application.?fee|age.?limit|vacancy|post.?wise|eligibility|qualification|how.?to.?apply|selection.?process|exam.?pattern|salary|pay.?scale|faq|short.?info|name.?of.?post|official.?website/i;
+  var result='';
+  for(var t of tables){
+    if(typeof t!=='object') continue;
+    var tname=safe(t.table_name||'');
+    if(SKIP_PAT.test(tname)) continue;
+    var rows=t.rows||[];
+    if(!Array.isArray(rows)||!rows.length) continue;
+    // Filter out single-cell rows and timestamp-only rows
+    var validRows=rows.filter(function(r){
+      if(!Array.isArray(r)||!r.length) return false;
+      var joined=r.map(safe).join('').trim();
+      if(!joined) return false;
+      // Skip pure timestamp rows like "06 June 2026 | 07:55 PM"
+      if(r.length===1&&/^\d{1,2}\s+\w+\s+\d{4}/.test(joined)) return false;
+      return true;
+    });
+    if(!validRows.length) continue;
+    // Determine if it looks like a key-value table (2 cols) or multi-col
+    var isKV=validRows.every(function(r){return r.length<=2;});
+    var tableHtml;
+    if(isKV){
+      var trows=validRows.map(function(r){
+        var k=esc(safe(r[0])),v=esc(safe(r[1]||''));
+        if(!k&&!v) return '';
+        if(!v) return `<tr><td colspan="2" style="font-weight:700;color:#0f172a">${k}</td></tr>`;
+        return `<tr><th>${k}</th><td>${v}</td></tr>`;
+      }).filter(Boolean).join('');
+      tableHtml=`<table class="jd-table"><tbody>${trows}</tbody></table>`;
+    } else {
+      var thead=validRows[0].map(function(c){return `<th>${esc(safe(c))}</th>`;}).join('');
+      var tbody=validRows.slice(1).map(function(r){
+        return '<tr>'+r.map(function(c){return `<td>${esc(safe(c))}</td>`;}).join('')+'</tr>';
+      }).join('');
+      tableHtml=`<div class="tbl-scroll"><table class="vac-table"><thead><tr>${thead}</tr></thead><tbody>${tbody}</tbody></table></div>`;
+    }
+    // Clean table_name for heading (remove CSS class junk)
+    var heading=tname.replace(/\b(gb\s+\w+|[a-f0-9]{6,8})\b/gi,'').replace(/\s{2,}/g,' ').trim().slice(0,80)||'Details';
+    result+=card('linear-gradient(135deg,#1e40af,#3b82f6)','fa-table','Additional Details',tableHtml);
+  }
+  return result;
+}
+
+var LINK_CFG={apply_online:['Apply Online','btn-blue','fa-paper-plane'],official_website:['Official Website','btn-green','fa-globe'],notification_pdf:['Download Notification','btn-red','fa-file-pdf'],download_notification:['Download Notification','btn-red','fa-file-pdf'],official_notification:['Official Notification','btn-red','fa-file-pdf'],registration_link:['Register Now','btn-orange','fa-user-plus'],login_link:['Login','btn-purple','fa-right-to-bracket'],admit_card:['Admit Card','btn-teal','fa-id-card'],answer_key:['Answer Key','btn-indigo','fa-key'],syllabus_pdf:['Syllabus PDF','btn-gray','fa-book'],result_link:['Result','btn-green','fa-trophy'],click_here:['Apply Online','btn-blue','fa-paper-plane'],merit_list:['Merit List','btn-teal','fa-list']};
+
+// Smart label from URL context
+function smartLabel(u, fallbackLabel, fallbackCss, fallbackIcon){
+  var ul=u.toLowerCase();
+  if(ul.endsWith('.pdf')||ul.includes('/pdf')||ul.includes('notice')||ul.includes('advertisement')||ul.includes('notification'))
+    return [fallbackLabel.match(/notif|pdf|advert/i)?fallbackLabel:'Download Notification','btn-red','fa-file-pdf'];
+  if(ul.includes('result')||ul.includes('merit')) return ['Result / Merit List','btn-green','fa-trophy'];
+  if(ul.includes('admit')||ul.includes('hallticket')) return ['Admit Card','btn-teal','fa-id-card'];
+  if(ul.includes('answer')||ul.includes('anskey')) return ['Answer Key','btn-indigo','fa-key'];
+  if(ul.includes('syllabus')) return ['Syllabus','btn-gray','fa-book'];
+  if(ul.includes('register')||ul.includes('signup')||ul.includes('sign-up')||ul.includes('create')) return ['Register Now','btn-orange','fa-user-plus'];
+  if(ul.includes('login')||ul.includes('signin')) return ['Login / Status','btn-purple','fa-right-to-bracket'];
+  if(ul.includes('apprentice')||ul.includes('ibpsreg')||ul.includes('apply')||ul.includes('career')||ul.includes('recruit')||ul.includes('applic')) return ['Apply Online','btn-blue','fa-paper-plane'];
+  if(ul.includes('apprenticeshipindia')||ul.includes('nats.edu')||ul.includes('nats.')) return ['Apprenticeship Portal','btn-teal','fa-link'];
+  return [fallbackLabel, fallbackCss, fallbackIcon];
+}
 
 function renderLinks(il){
   if(!il||typeof il!=='object') return '';
   var btns='',seen=new Set();
   for(var [key,val] of Object.entries(il)){
-    if(key==='structured_links'||key==='seo_tags') continue;
+    if(key==='structured_links'||key==='seo_tags'||key==='_useful_links') continue;
     var urls=Array.isArray(val)?val:[val];
-    var [label,css,icon]=LINK_CFG[key]||['View','btn-gray','fa-link'];
+    var [defLabel,defCss,defIcon]=LINK_CFG[key]||['View','btn-gray','fa-link'];
+    var urlCount=urls.filter(u=>safe(u).startsWith('http')).length;
     for(var url of urls){
       var u=safe(url);if(!u.startsWith('http')||isBlocked(u)||seen.has(u))continue;seen.add(u);
-      var ic=u.toLowerCase().endsWith('.pdf')?'fa-file-pdf':icon;
-      var cl=u.toLowerCase().endsWith('.pdf')?'btn-red':css;
+      // For click_here arrays or single-url keys, use smart labels
+      var [label,cl,ic]=(key==='click_here'&&urlCount>1)||urlCount>1
+        ? smartLabel(u, defLabel, defCss, defIcon)
+        : smartLabel(u, defLabel, defCss, defIcon);
       btns+=`<a href="${esc(u)}" class="link-btn ${cl}" target="_blank" rel="noopener noreferrer"><i class="fa-solid ${ic}"></i> ${esc(label)}</a>\n`;
     }
   }
@@ -367,9 +434,10 @@ function renderLinks(il){
     if(typeof item!=='object') continue;
     var u=safe(item.url||item.href||'');var lbl=safe(item.label||item.title||'View')||'View';
     if(!u.startsWith('http')||isBlocked(u)||seen.has(u))continue;seen.add(u);
-    var ll=lbl.toLowerCase();
-    var [ic,cl]=/apply/i.test(ll)?['fa-paper-plane','btn-blue']:/result/i.test(ll)?['fa-trophy','btn-green']:/admit/i.test(ll)?['fa-id-card','btn-teal']:u.endsWith('.pdf')?['fa-file-pdf','btn-red']:['fa-link','btn-blue'];
-    btns+=`<a href="${esc(u)}" class="link-btn ${cl}" target="_blank" rel="noopener noreferrer"><i class="fa-solid ${ic}"></i> ${esc(lbl.slice(0,50))}</a>\n`;
+    var [slbl,scl,sic]=smartLabel(u, lbl, 'btn-blue', 'fa-link');
+    // If title is meaningful (not generic), prefer it
+    if(!/^(click here|view|link|here)$/i.test(lbl.trim())) slbl=lbl;
+    btns+=`<a href="${esc(u)}" class="link-btn ${scl}" target="_blank" rel="noopener noreferrer"><i class="fa-solid ${sic}"></i> ${esc(slbl.slice(0,50))}</a>\n`;
   }
   // useful_links fallback
   var useful=il._useful_links||[];
@@ -377,9 +445,11 @@ function renderLinks(il){
     if(typeof ul!=='object') continue;
     var href=safe(ul.links||ul.url||'');if(Array.isArray(ul.links)) href=safe(ul.links[0]||'');
     if(!href.startsWith('http')||isBlocked(href)||seen.has(href))continue;seen.add(href);
-    var t=safe(ul.title||ul.name||'Link').toLowerCase();
-    var [ic,cl]=/apply/i.test(t)?['fa-paper-plane','btn-blue']:/notif|pdf/i.test(t)?['fa-file-pdf','btn-red']:/result/i.test(t)?['fa-trophy','btn-green']:/admit/i.test(t)?['fa-id-card','btn-teal']:/official|website/i.test(t)?['fa-globe','btn-green']:['fa-link','btn-blue'];
-    btns+=`<a href="${esc(href)}" class="link-btn ${cl}" target="_blank" rel="noopener noreferrer"><i class="fa-solid ${ic}"></i> ${esc(safe(ul.title||ul.name||'View').slice(0,50))}</a>\n`;
+    var ulTitle=safe(ul.title||ul.name||'Link');
+    var [ulLbl,ulCl,ulIc]=smartLabel(href, ulTitle, 'btn-blue', 'fa-link');
+    // Prefer explicit title if it's meaningful
+    if(ulTitle&&!/^(click here|view|link|here)$/i.test(ulTitle.trim())) ulLbl=ulTitle;
+    btns+=`<a href="${esc(href)}" class="link-btn ${ulCl}" target="_blank" rel="noopener noreferrer"><i class="fa-solid ${ulIc}"></i> ${esc(ulLbl.slice(0,50))}</a>\n`;
   }
   return btns?card('linear-gradient(135deg,#1e40af,#1e3a8a)','fa-link','Important Links',`<div class="links-grid">${btns}</div>`):'';
 }
@@ -474,11 +544,22 @@ function buildPage(slug, job){
   var hta=job.how_to_apply||[];
   var insts=job.important_instructions||[];
   var faq=job.faq||[];
+  var rawTables=job.tables||[];
   var sourceUrl=safe(job.source_url||job.url||'');
 
   // Build important_links — merge all sources
   var il=Object.assign({},job.important_links||{});
+  // Array format: [{title, links}]
   if(Array.isArray(job.useful_links)&&job.useful_links.length) il._useful_links=job.useful_links;
+  // Object format with _all array: {apply_online:..., _all:[{title,links}]}
+  var ulObj=job.useful_links;
+  if(ulObj&&typeof ulObj==='object'&&!Array.isArray(ulObj)){
+    // Merge known keys
+    for(var k of ['apply_online','notification','notification_pdf','official_website','admit_card','result_link','answer_key','login_link']){
+      if(ulObj[k]&&!il[k]) il[k]=ulObj[k];
+    }
+    if(Array.isArray(ulObj._all)&&ulObj._all.length) il._useful_links=ulObj._all;
+  }
 
   var title=safe(bd.job_title||job.title||'Government Job');
   var org=safe(bd.organization_name||bd.post_name||job.organization||'Government of India');
@@ -573,6 +654,7 @@ function buildPage(slug, job){
   sections+=renderExamPattern(ep);
   sections+=renderSyllabus(syl);
   sections+=renderPhysical(pe);
+  sections+=renderRawTables(rawTables,{dates,fee,age,qual,vac,cwv,sal,sel,ep,syl,hta,faq});
   sections+=renderHTA(hta);
   sections+=renderInstructions(insts);
   sections+=renderLinks(il);
