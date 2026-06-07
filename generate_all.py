@@ -18,8 +18,11 @@ from pathlib import Path
 
 # ── Config ────────────────────────────────────────────────────
 ROOT     = Path('.')
-CJ_FILE  = ROOT / 'data' / 'Complete_Jobs_Full_Data.json'
-if not CJ_FILE.exists(): CJ_FILE = ROOT / 'Complete_Jobs_Full_Data.json'
+# Prefer root Complete_Jobs_Full_Data.json (scraper output = source of truth for ordering)
+# Fall back to data/ subdirectory if root not found
+_root_cj = ROOT / 'Complete_Jobs_Full_Data.json'
+_data_cj  = ROOT / 'data' / 'Complete_Jobs_Full_Data.json'
+CJ_FILE   = _root_cj if _root_cj.exists() else _data_cj
 DU_FILE  = ROOT / 'dailyupdates.json'
 BASE_URL = 'https://www.topsarkarijobs.com'
 
