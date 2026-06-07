@@ -128,7 +128,7 @@ a{text-decoration:none}
   </main>
   <div id="footerPlaceholder"></div>
   <script>fetch('/footer.html',{cache:'no-store'}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{if(h){var d=document.getElementById('footerPlaceholder');if(d)d.outerHTML=h;}})</script>
-  <script src="/tsj-menu.js?v=20260607124834" defer></script>
+  <script src="/tsj-menu.js?v=20260607115537" defer></script>
 <script>
 (function(){
 'use strict';
@@ -206,7 +206,7 @@ function card(grad,icon,heading,body){
 
 function renderDates(obj){
   if(!obj||typeof obj!=='object') return '';
-  var FIELDS=[['application_start_date','Application Start'],['application_begin','Application Begin'],['date_of_notification','Notification Date'],['notification_date','Notification Date'],['last_date_to_apply','Last Date to Apply'],['last_date','Last Date'],['fee_payment_last_date','Fee Payment Last Date'],['exam_date','Exam Date'],['written_exam_date','Written Exam Date'],['online_exam_date','Online Exam Date'],['interview_date','Interview Date'],['admit_card_date','Admit Card Available'],['admit_card','Admit Card'],['result_date','Result Date'],['event','Event']];
+  var FIELDS=[['application_start_date','Application Start'],['application_begin','Application Begin'],['date_of_notification','Notification Date'],['notification_date','Notification Date'],['last_date_to_apply','Last Date to Apply'],['last_date_apply_online','Last Date Apply Online'],['last_date','Last Date'],['fee_payment_last_date','Fee Payment Last Date'],['exam_date','Exam Date'],['written_exam_date','Written Exam Date'],['online_exam_date','Online Exam Date'],['interview_date','Interview Date'],['admit_card_date','Admit Card Available'],['admit_card','Admit Card'],['result_date','Result Date'],['event','Event']];
   var seen=new Set(),rows='';
   for(var [k,lbl] of FIELDS){var v=safe(obj[k]);if(!v||seen.has(lbl))continue;seen.add(lbl);var red=/last|closing/i.test(k);rows+=`<tr><th>${esc(lbl)}</th><td${red?' style="color:#dc2626;font-weight:700"':''}>${esc(v)}</td></tr>`;}
   for(var [k,v] of Object.entries(obj)){var sv=safe(v);if(!sv)continue;var lbl=k.replace(/_/g,' ').replace(/\b[a-z]/g,c=>c.toUpperCase());if(seen.has(lbl))continue;seen.add(lbl);rows+=`<tr><th>${esc(lbl)}</th><td>${esc(sv)}</td></tr>`;}
@@ -243,12 +243,17 @@ function renderQual(obj){
 
 function renderVacancy(arr){
   if(!Array.isArray(arr)||!arr.length) return '';
-  var COL_MAP={post_name:['post_name','post','name','Post Name'],total:['total','total_vacancies','total_posts','Total Posts'],ur:['ur','general','UR'],obc:['obc','OBC'],sc:['sc','SC'],st:['st','ST'],ews:['ews','EWS'],women:['women','Women'],salary:['salary','pay_scale','Salary'],qualification:['eligibility','qualification','Educational Qualification']};
+  var COL_MAP={post_name:['post_name','post','name','Post Name'],total:['total','total_vacancies','total_posts','Total Posts','Total'],ur:['ur','general','UR'],obc:['obc','OBC'],sc:['sc','SC'],st:['st','ST'],ews:['ews','EWS'],women:['women','Women'],salary:['salary','pay_scale','Salary'],qualification:['eligibility','qualification','Educational Qualification']};
   var ORDER=['post_name','total','ur','obc','sc','st','ews','women','salary','qualification'];
   var LABELS={post_name:'Post Name',total:'Total Posts',ur:'UR/General',obc:'OBC',sc:'SC',st:'ST',ews:'EWS',women:'Women',salary:'Salary',qualification:'Qualification'};
   var norm=[],avail=new Set();
+  // GARBAGE FILTER: skip rows that are clearly not vacancy data
+  var GARBAGE_POST=/^\d{1,2}\s+\w+\s+\d{4}|^\d{4}$|^(apply\s+online|official\s+website|notification|download|click\s+here|login)/i;
   for(var row of arr){
     if(typeof row!=='object') continue;
+    // For post_wise format: {post_name, eligibility}
+    var postVal=safe(row.post_name||row.post||row.name||'');
+    if(postVal && GARBAGE_POST.test(postVal.trim())) continue; // skip garbage rows
     var n={};
     for(var [col,aliases] of Object.entries(COL_MAP))
       for(var a of aliases) if(row[a]!=null&&row[a]!==''){n[col]=safe(row[a]);avail.add(col);break;}
@@ -263,7 +268,7 @@ function renderVacancy(arr){
     rows+=`<tr><td>${i+1}</td>${cols.map(c=>`<td>${esc(r[c]||'')}</td>`).join('')}</tr>`;
     ['total','ur','obc','sc','st','ews','women'].forEach(c=>{if(cols.includes(c)){try{tots[c]=(tots[c]||0)+parseInt(String(r[c]||'0').replace(/\D/g,'')||'0');}catch(e){}}});
   });
-  if(Object.keys(tots).length){
+  if(Object.keys(tots).length>0&&norm.length>1){
     var tc='<td><strong>Total</strong></td>'+cols.map(c=>`<td>${c in tots?'<strong>'+tots[c]+'</strong>':''}</td>`).join('');
     rows+=`<tr class="vac-tot">${tc}</tr>`;
   }
@@ -347,50 +352,103 @@ function renderInstructions(insts){
   return card('linear-gradient(135deg,#b45309,#ca8a04)','fa-circle-exclamation','Important Instructions',`<ul class="inst-list">${items}</ul>`);
 }
 
+// Detect if a row is a link row (e.g. ["Apply Online", "http..."] or ["Official Website", "UPSSSC Official Website"])
+var LINK_ROW_PAT=/^(apply\s+online|official\s+website|notification|admit\s+card|result|answer\s+key|syllabus|login|register|click\s+here|download)/i;
+var KNOWN_URLS={
+  'apply online':'apply_online','official website':'official_website',
+  'notification':'notification_pdf','admit card':'admit_card',
+  'result':'result_link','answer key':'answer_key','syllabus':'syllabus_pdf',
+  'login':'login_link','register':'registration_link'
+};
+function extractTableLinks(rows, ilRef){
+  // Pull out link-like rows and inject into ilRef, return remaining rows
+  var remaining=[];
+  for(var r of rows){
+    if(!Array.isArray(r)||r.length<1) continue;
+    var c0=safe(r[0]).trim(), c1=safe(r[1]||'').trim();
+    if(LINK_ROW_PAT.test(c0)){
+      // c1 might be a URL or a text label (like "UPSSSC Official Website")
+      var url='';
+      if(c1.startsWith('http')) url=c1;
+      // If c1 is a label, try to get URL from known map or skip (no URL to render)
+      // We still skip this row from the table display
+      if(url){
+        var mapKey=c0.toLowerCase().replace(/\s+/g,' ');
+        var ilKey=KNOWN_URLS[mapKey]||'click_here';
+        if(!ilRef[ilKey]) ilRef[ilKey]=url;
+      }
+      continue; // Don't show link rows in table
+    }
+    remaining.push(r);
+  }
+  return remaining;
+}
+
 // Render raw tables from Complete_Jobs_Full_Data.json format
-// Skip tables whose content is already rendered by structured fields
-function renderRawTables(tables, already){
+// Extracts links from table rows into ilRef, skips header/gb/short-info tables
+function renderRawTables(tables, ilRef){
   if(!Array.isArray(tables)||!tables.length) return '';
-  // Keywords that indicate a table is already covered by structured sections
-  var SKIP_PAT=/important.?date|application.?begin|application.?fee|age.?limit|vacancy|post.?wise|eligibility|qualification|how.?to.?apply|selection.?process|exam.?pattern|salary|pay.?scale|faq|short.?info|name.?of.?post|official.?website/i;
+
+  // Tables to ALWAYS skip (header, short-info, gb-headline junk)
+  var SKIP_TBL=/^(gb\s+headline|gb\s+\w+\s+\w+|name\s+of\s+post|short\s+info)/i;
+  // Table names that are already covered by structured sections
+  var SKIP_COVERED=/age.?limit|application.?fee|how.?to.?apply|selection.?process|exam.?pattern|salary|pay.?scale|faq/i;
+
   var result='';
   for(var t of tables){
     if(typeof t!=='object') continue;
     var tname=safe(t.table_name||'');
-    if(SKIP_PAT.test(tname)) continue;
+
+    // Skip gb/headline junk tables entirely
+    if(SKIP_TBL.test(tname)) continue;
+    if(SKIP_COVERED.test(tname)) continue;
+
     var rows=t.rows||[];
     if(!Array.isArray(rows)||!rows.length) continue;
-    // Filter out single-cell rows and timestamp-only rows
-    var validRows=rows.filter(function(r){
+
+    // Extract link rows into ilRef, get remaining data rows
+    var dataRows=extractTableLinks(rows, ilRef);
+
+    // Filter garbage rows: timestamps, empty, single-cell non-data
+    dataRows=dataRows.filter(function(r){
       if(!Array.isArray(r)||!r.length) return false;
       var joined=r.map(safe).join('').trim();
       if(!joined) return false;
-      // Skip pure timestamp rows like "06 June 2026 | 07:55 PM"
-      if(r.length===1&&/^\d{1,2}\s+\w+\s+\d{4}/.test(joined)) return false;
+      if(r.length===1){
+        // Skip timestamp rows
+        if(/^\d{1,2}\s+\w+\s+\d{4}/.test(joined)) return false;
+        // Skip rows that are just the post title repeated
+        if(joined.length>120) return false;
+      }
       return true;
     });
-    if(!validRows.length) continue;
-    // Determine if it looks like a key-value table (2 cols) or multi-col
-    var isKV=validRows.every(function(r){return r.length<=2;});
+
+    if(!dataRows.length) continue;
+
+    // Decide: KV table (≤2 cols) or multi-col
+    var isKV=dataRows.every(function(r){return r.length<=2;});
     var tableHtml;
+
     if(isKV){
-      var trows=validRows.map(function(r){
-        var k=esc(safe(r[0])),v=esc(safe(r[1]||''));
+      var trows=dataRows.map(function(r){
+        var k=esc(safe(r[0])), v=esc(safe(r[1]||''));
         if(!k&&!v) return '';
-        if(!v) return `<tr><td colspan="2" style="font-weight:700;color:#0f172a">${k}</td></tr>`;
+        if(!v) return `<tr><td colspan="2" style="font-weight:700;color:#0f172a;padding:10px 12px">${k}</td></tr>`;
         return `<tr><th>${k}</th><td>${v}</td></tr>`;
       }).filter(Boolean).join('');
+      if(!trows) continue;
       tableHtml=`<table class="jd-table"><tbody>${trows}</tbody></table>`;
     } else {
-      var thead=validRows[0].map(function(c){return `<th>${esc(safe(c))}</th>`;}).join('');
-      var tbody=validRows.slice(1).map(function(r){
+      // First row = header
+      var thead=dataRows[0].map(function(c){return `<th>${esc(safe(c))}</th>`;}).join('');
+      var tbody=dataRows.slice(1).map(function(r){
         return '<tr>'+r.map(function(c){return `<td>${esc(safe(c))}</td>`;}).join('')+'</tr>';
       }).join('');
+      if(!tbody) continue;
       tableHtml=`<div class="tbl-scroll"><table class="vac-table"><thead><tr>${thead}</tr></thead><tbody>${tbody}</tbody></table></div>`;
     }
-    // Clean table_name for heading (remove CSS class junk)
-    var heading=tname.replace(/\b(gb\s+\w+|[a-f0-9]{6,8})\b/gi,'').replace(/\s{2,}/g,' ').trim().slice(0,80)||'Details';
-    result+=card('linear-gradient(135deg,#1e40af,#3b82f6)','fa-table','Additional Details',tableHtml);
+
+    result+=card('linear-gradient(135deg,#0369a1,#0ea5e9)','fa-table-list','Vacancy Details / Eligibility',tableHtml);
   }
   return result;
 }
@@ -534,7 +592,15 @@ function buildPage(slug, job){
   var fee=job.application_fee||{};
   var age=job.age_limit||{};
   var qual=job.qualification||null;
-  var vac=job.vacancy_details||[];
+  // Normalize vacancy_details: handle both array format and {total_post, post_wise:[]} format
+  var _vacRaw=job.vacancy_details||[];
+  var vac=Array.isArray(_vacRaw)?_vacRaw:
+    (Array.isArray(_vacRaw.post_wise)?_vacRaw.post_wise:
+    (typeof _vacRaw==='object'&&Object.keys(_vacRaw).length?[_vacRaw]:[]));
+  // If vacancy_details is object with total_post only (no array), wrap it
+  if(!Array.isArray(job.vacancy_details)&&job.vacancy_details&&job.vacancy_details.total_post&&!Array.isArray(job.vacancy_details.post_wise)){
+    vac=[{post_name:safe(job.vacancy_details.post_name||'Total'),total:safe(job.vacancy_details.total_post)}];
+  }
   var cwv=job.category_wise_vacancy||{};
   var sal=job.salary_details||{};
   var sel=job.selection_process||[];
@@ -564,7 +630,7 @@ function buildPage(slug, job){
   var title=safe(bd.job_title||job.title||'Government Job');
   var org=safe(bd.organization_name||bd.post_name||job.organization||'Government of India');
   var vacancies=safe(bd.total_vacancies||bd.total_vacancy||job.total_post||'');
-  var lastDate=safe(dates.last_date_to_apply||dates.last_date||job.last_date||'');
+  var lastDate=safe(dates.last_date_to_apply||dates.last_date_apply_online||dates.last_date||job.last_date||'');
   var applyMode=safe(bd.application_mode||job.apply_mode||'Online');
   var location=safe(bd.job_location||job.state||'India');
   var shortInfo=safe(bd.short_information||job.short_information||job.jobs_info||'');
@@ -654,7 +720,8 @@ function buildPage(slug, job){
   sections+=renderExamPattern(ep);
   sections+=renderSyllabus(syl);
   sections+=renderPhysical(pe);
-  sections+=renderRawTables(rawTables,{dates,fee,age,qual,vac,cwv,sal,sel,ep,syl,hta,faq});
+  // Extract table links into il FIRST, then render remaining table data
+  sections+=renderRawTables(rawTables, il);
   sections+=renderHTA(hta);
   sections+=renderInstructions(insts);
   sections+=renderLinks(il);
