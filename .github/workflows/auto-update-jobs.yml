@@ -216,16 +216,18 @@ jobs:
               if si_items:
                   sindex[cat] = si_items
 
-          # NEVER overwrite — preserve JSON insertion order
-          import os as _os
-          if not _os.path.exists('sections-index.json'):
-              with open('sections-index.json', 'w', encoding='utf-8') as f:
-                  json.dump(sindex, f, ensure_ascii=False, separators=(',', ':'))
-              print(f"  sections-index.json: CREATED {len(sindex)} categories")
-          else:
-              print("  sections-index.json: KEPT EXISTING (not overwritten)")
+          # ALWAYS overwrite sections-index.json from root JSON (source of truth)
+          # This ensures JSON insertion order = display order on site for ALL 53+ categories
+          with open('sections-index.json', 'w', encoding='utf-8') as f:
+              json.dump(sindex, f, ensure_ascii=False, separators=(',', ':'))
+          print(f"  sections-index.json: UPDATED {len(sindex)} categories")
           print("✅ Section data rebuild complete")
           PYEOF
+
+      # ── STEP 7b: sections-index.json final order fix ─────────────
+      # Ensures ALL 53+ categories (FJA + Sarkari) follow root JSON order
+      - name: 🔃 Fix sections-index.json order (all 53+ categories)
+        run: python3 update_sections_index.py
 
       # ── STEP 8: SEO fixes (non-critical) ─────────────────────────
       - name: 🔍 Run SEO fixes
