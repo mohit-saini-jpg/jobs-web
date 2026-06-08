@@ -2037,10 +2037,38 @@
     ═══════════════════════════════════════════ */
     const qualContent = deepRender(qual, 0);
     const eligText = safe(rawJob.eligibility || '');
-    if (qualContent || eligText) {
-      const qHtml = qualContent
-        ? `<div class="udyn-detail" style="line-height:1.8;">${qualContent}</div>`
-        : `<div class="udyn-detail" style="font-size:.83rem;line-height:1.8;">${esc(eligText)}</div>`;
+    // Try to extract eligibility table from SR tables (3-col: Post Name | Total Post | Eligibility)
+    let eligTableHtml = '';
+    if (rawJob.tables && Array.isArray(rawJob.tables)) {
+      for (const grp of rawJob.tables) {
+        if (!grp || !Array.isArray(grp.rows)) continue;
+        const eligRows = grp.rows.filter(r => Array.isArray(r) && r.length === 3 &&
+          /eligibility|pharmacist|x-ray|lab technician|diploma|intermediate|pharmacy|radiography/i.test(r.join(' ')));
+        if (eligRows.length > 0) {
+          // Find header row
+          const headerRow = grp.rows.find(r => Array.isArray(r) && r.length === 3 &&
+            /post.*name|eligib/i.test(r.join(' ')) &&
+            eligRows.indexOf(r) === -1);
+          const thead = headerRow
+            ? `<thead><tr>${headerRow.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead>`
+            : `<thead><tr><th>Post Name</th><th>Total Post</th><th>Eligibility</th></tr></thead>`;
+          const tbody = eligRows.map(r =>
+            `<tr>${r.map(c => `<td>${esc(safe(c))}</td>`).join('')}</tr>`
+          ).join('');
+          eligTableHtml = `<div class="udyn-table-scroll"><table class="udyn-vac-table">${thead}<tbody>${tbody}</tbody></table></div>`;
+          break;
+        }
+      }
+    }
+    if (qualContent || eligText || eligTableHtml) {
+      let qHtml = '';
+      if (eligTableHtml) {
+        qHtml = eligTableHtml;
+      } else if (qualContent) {
+        qHtml = `<div class="udyn-detail" style="line-height:1.8;">${qualContent}</div>`;
+      } else {
+        qHtml = `<div class="udyn-detail" style="font-size:.83rem;line-height:1.8;">${esc(eligText)}</div>`;
+      }
       appendCard(sec('udyn-qual','linear-gradient(135deg,#0369a1,#0284c7)',
         'fa-solid fa-graduation-cap','Qualification / Eligibility', qHtml));
     }
@@ -2111,7 +2139,22 @@
         // Skip tables where every row is overview info (Name Of Post, Short Information)
         const rowTexts = group.rows.map(r => Array.isArray(r) ? r.join(' ') : '').join(' ').toLowerCase();
         if (/name of post|short information|post date.*update/i.test(rowTexts) && group.rows.length <= 3) return false;
-        // Skip if vacancy already rendered and table has vacancy structure
+        // For tables with long age-limit heading: strip heading, filter out eligibility rows (already in Qual section)
+        // keep only vacancy category rows + links; check BEFORE vacancy dedup filter
+        if (/age limit|age relaxation|minimum age|maximum age/i.test(tname)) {
+          const filteredRows = group.rows.filter(r => {
+            if (!Array.isArray(r)) return false;
+            const joined = r.join(' ').toLowerCase();
+            // Remove eligibility rows (3-col with eligibility/post qualification text)
+            if (r.length === 3 && /eligibility|pharmacist|x-ray|lab technician|diploma|intermediate|pharmacy|radiography/i.test(joined)) return false;
+            return true;
+          });
+          if (!filteredRows.length) return false;
+          group.rows = filteredRows;
+          group.table_name = '';
+          return true;
+        }
+        // Skip if vacancy already rendered and table has vacancy structure (only pure vacancy tables)
         if (vacRows.length > 0 && /vacancy|ur.*general|ews.*obc/i.test(rowTexts)) return false;
         return true;
       });
