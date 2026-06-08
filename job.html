@@ -228,9 +228,16 @@ function renderFee(obj){
 
 function renderAge(obj){
   if(!obj||typeof obj!=='object') return '';
-  var pairs=[['Minimum Age',obj.minimum_age||obj.min_age],['Maximum Age',obj.maximum_age||obj.max_age||obj.age_limit],['Age Relaxation',obj.age_relaxation||obj.details],['Age Details',obj.age_details]];
+  var asOn=safe(obj.as_on_date||obj.as_on||'');
+  var heading='Age Limit'+(asOn?' (as on '+asOn+')':'');
+  var pairs=[
+    ['Minimum Age',obj.minimum_age||obj.min_age],
+    ['Maximum Age',obj.maximum_age||obj.max_age||obj.age_limit],
+    ['Age Relaxation',obj.age_relaxation||obj.age_relax||obj.details],
+    ['Age Details',obj.age_details]
+  ];
   var rows=pairs.filter(([,v])=>safe(v)).map(([l,v])=>`<tr><th>${esc(l)}</th><td>${esc(safe(v))}</td></tr>`).join('');
-  return rows?card('linear-gradient(135deg,#0f766e,#0891b2)','fa-user-clock','Age Limit',`<table class="jd-table"><tbody>${rows}</tbody></table>`):'';
+  return rows?card('linear-gradient(135deg,#0f766e,#0891b2)','fa-user-clock',heading,`<table class="jd-table"><tbody>${rows}</tbody></table>`):'';
 }
 
 function renderQual(obj){
@@ -275,15 +282,32 @@ function renderVacancy(arr){
     var tc='<td><strong>Total</strong></td>'+cols.map(c=>`<td>${c in tots?'<strong>'+tots[c]+'</strong>':''}</td>`).join('');
     rows+=`<tr class="vac-tot">${tc}</tr>`;
   }
-  return card('linear-gradient(135deg,#15803d,#16a34a)','fa-chart-pie','Vacancy Details',`<div class="tbl-scroll"><table class="vac-table"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table></div>`);
+  return card('linear-gradient(135deg,#15803d,#16a34a)','fa-chart-pie','Vacancy Details Total',`<div class="tbl-scroll"><table class="vac-table"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table></div>`);
 }
 
 function renderCatVacancy(cwv){
   if(!cwv) return '';
-  if(Array.isArray(cwv)) return renderVacancy(cwv);
+  // Array format (from SR col_1..col_N extraction or direct array)
+  if(Array.isArray(cwv)&&cwv.length){
+    // Check if rows have category columns (general/ews/obc/sc/st/total)
+    var CAT_KEYS=['post_name','general','ews','obc','sc','st','total'];
+    var hasCatCols=cwv.some(function(r){return r.general!==undefined||r.ews!==undefined||r.obc!==undefined;});
+    if(hasCatCols){
+      // Render as category-wise table
+      var activeCols=CAT_KEYS.filter(function(k){return cwv.some(function(r){return safe(r[k]);});});
+      var COL_LABELS={post_name:'Post Name',general:'General',ews:'EWS',obc:'OBC',sc:'SC',st:'ST',total:'Total'};
+      var thead=activeCols.map(function(c){return '<th>'+esc(COL_LABELS[c]||c)+'</th>';}).join('');
+      var tbody=cwv.map(function(r,i){
+        return '<tr>'+activeCols.map(function(c){return '<td>'+esc(safe(r[c]||''))+'</td>';}).join('')+'</tr>';
+      }).join('');
+      if(tbody) return card('linear-gradient(135deg,#15803d,#16a34a)','fa-chart-bar','Category Wise Vacancy Details',`<div class="tbl-scroll"><table class="vac-table"><thead><tr>${thead}</tr></thead><tbody>${tbody}</tbody></table></div>`);
+    }
+    return renderVacancy(cwv);
+  }
+  // Object format {General:198, EWS:39, ...}
   if(typeof cwv==='object'&&Object.keys(cwv).length){
     var rows=Object.entries(cwv).filter(([,v])=>safe(v)).map(([k,v])=>`<tr><td>${esc(k.replace(/_/g,' ').replace(/\b[a-z]/g,c=>c.toUpperCase()))}</td><td>${esc(safe(v))}</td></tr>`).join('');
-    return rows?card('linear-gradient(135deg,#15803d,#16a34a)','fa-chart-bar','Category-wise Vacancy',`<div class="tbl-scroll"><table class="vac-table"><thead><tr><th>Category</th><th>Posts</th></tr></thead><tbody>${rows}</tbody></table></div>`):'';
+    return rows?card('linear-gradient(135deg,#15803d,#16a34a)','fa-chart-bar','Category Wise Vacancy Details',`<div class="tbl-scroll"><table class="vac-table"><thead><tr><th>Category</th><th>Posts</th></tr></thead><tbody>${rows}</tbody></table></div>`):'';
   }
   return '';
 }
@@ -394,6 +418,8 @@ function renderRawTables(tables, ilRef){
 
   // Tables to ALWAYS skip (header, short-info, gb-headline junk)
   var SKIP_TBL=/^(gb\s+headline|gb\s+\w+\s+\w+|name\s+of\s+post|short\s+info)/i;
+  // Also skip tables whose NAME contains age limit / recruitment rules (SR pattern)
+  var SKIP_NAME_CONTAINS=/age\s+limit|recruitment\s+rules|minimum\s+age|maximum\s+age/i;
   // Table names that are already covered by structured sections
   var SKIP_COVERED=/age.?limit|application.?fee|how.?to.?apply|selection.?process|exam.?pattern|salary|pay.?scale|faq|vacancy|category.?wise|important.?date|post.?wise|overview/i;
 
@@ -405,6 +431,7 @@ function renderRawTables(tables, ilRef){
     // Skip gb/headline junk tables entirely
     if(SKIP_TBL.test(tname)) continue;
     if(SKIP_COVERED.test(tname)) continue;
+    if(SKIP_NAME_CONTAINS.test(tname)) continue;
 
     var rows=t.rows||[];
     if(!Array.isArray(rows)||!rows.length) continue;
@@ -590,11 +617,115 @@ function findJob(data, slug){
 
 // ── Build page ───────────────────────────────────────────────────
 function buildPage(slug, job){
+
+  // ── DATA NORMALIZATION (handles SR/FJA scraper quirks) ───────────────────
+
+  // 1. Extract Important Dates from reversed FAQ (SR pattern: q=date, a=label ending with ':')
+  if(Array.isArray(job.faq)&&job.faq.length&&(!job.important_dates||!Object.keys(job.important_dates).length)){
+    var faqDates={};
+    var reversedCount=job.faq.filter(f=>/:\s*$/.test(safe(f.answer).trim())).length;
+    if(reversedCount>job.faq.length/2){
+      // Most FAQs are reversed label:value pairs - extract as dates
+      var DATE_LABELS={
+        'application begin':'application_begin',
+        'application start':'application_start_date',
+        'last date for apply online':'last_date_apply_online',
+        'last date to apply':'last_date_to_apply',
+        'last date pay exam fee':'fee_payment_last_date',
+        'correction window':'correction_window',
+        'exam date':'exam_date',
+        'exam city available':'exam_city_available',
+        'admit card available':'admit_card_date',
+        'answer key available':'answer_key_date',
+        'result':'result_date',
+        'result / score card available':'result_date',
+        'result score card available':'result_date',
+      };
+      job.faq.forEach(function(f){
+        var lbl=safe(f.answer).replace(/:\s*$/,'').trim().toLowerCase();
+        var val=safe(f.question).trim();
+        if(!val) return;
+        var mapKey=Object.keys(DATE_LABELS).find(k=>lbl.includes(k));
+        if(mapKey) faqDates[DATE_LABELS[mapKey]]=val;
+        // Also store fee/age info from FAQ into fee/age objects
+        var FEE_MAP={'general / obc / ews':'general_obc_ews','sc / st':'sc_st','ph / divyang':'ph_divyang','ur/obc/ews fee refund':'after_appear_the_stage_i_exam_ur_obc_ews'};
+        var feeKey=Object.keys(FEE_MAP).find(k=>lbl.includes(k));
+        if(feeKey&&!job.application_fee) job.application_fee={};
+        if(feeKey&&job.application_fee&&!job.application_fee[FEE_MAP[feeKey]]) job.application_fee[FEE_MAP[feeKey]]=val;
+      });
+      if(Object.keys(faqDates).length) job.important_dates=faqDates;
+      // Clear faq so it doesn't render as actual FAQ accordion
+      job.faq=[];
+    }
+  }
+
+  // 2. Clean vacancy_details.post_wise - remove garbage rows (post date, short info etc.)
+  if(job.vacancy_details&&Array.isArray(job.vacancy_details.post_wise)){
+    var GARBAGE_PW=/^(post\s+date|short\s+info|post\s+name\s*$|name\s+of\s+post)/i;
+    var TEXT_HEAVY=/^.{100,}$/; // rows with very long text (short_information dumped in)
+    job.vacancy_details.post_wise=job.vacancy_details.post_wise.filter(function(r){
+      var pn=safe(r.post_name||'');
+      if(GARBAGE_PW.test(pn.trim())) return false;
+      // If all values are long text blobs, skip
+      var vals=Object.values(r).map(safe).join(' ');
+      if(vals.length>200&&!r.total&&!r.total_post) return false;
+      return true;
+    });
+  }
+
+  // 3. Normalize age_limit - handle both nested {minimum_age,maximum_age} and flat {age_limit,as_on_date}
+  if(job.age_limit&&typeof job.age_limit==='object'){
+    if(!job.age_limit.minimum_age&&job.age_limit.min_age) job.age_limit.minimum_age=job.age_limit.min_age;
+    if(!job.age_limit.maximum_age&&job.age_limit.max_age) job.age_limit.maximum_age=job.age_limit.max_age;
+  }
+
+  // 4. Build how_to_apply from text_sections if empty
+  if((!job.how_to_apply||!job.how_to_apply.length)&&Array.isArray(job.text_sections)){
+    job.text_sections.forEach(function(ts){
+      if(!ts||!ts.content) return;
+      var steps=ts.content.split('|').map(function(s){return s.trim();}).filter(Boolean);
+      if(steps.length) job.how_to_apply=(job.how_to_apply||[]).concat(steps);
+    });
+  }
+
+  // ── END NORMALIZATION ─────────────────────────────────────────────────────
+
   var bd=job.basic_details||{};
   var dates=job.important_dates||{};
   var fee=job.application_fee||{};
   var age=job.age_limit||{};
   var qual=job.qualification||null;
+  // Extract category-wise vacancy from post_wise rows that have col_1..col_N pattern (SR scraper)
+  if(job.vacancy_details&&Array.isArray(job.vacancy_details.post_wise)&&!job.category_wise_vacancy){
+    var headerRow=null, dataRows=[];
+    job.vacancy_details.post_wise.forEach(function(r){
+      if(r.col_1!==undefined||r.col_2!==undefined){
+        if(!headerRow){ headerRow=r; } // first col_N row = header
+        else dataRows.push(r); // subsequent = data
+      }
+    });
+    if(headerRow&&dataRows.length){
+      // Build category_wise_vacancy as array for renderVacancy
+      var hkeys=Object.keys(headerRow);
+      var cwvArr=dataRows.map(function(r){
+        var row={post_name:safe(r.post_name||'')};
+        hkeys.forEach(function(hk){
+          var label=safe(headerRow[hk]);
+          var val=safe(r[hk]||r.total_post||'');
+          if(label&&val) row[label.toLowerCase().replace(/\/.*$/,'').trim()]=val;
+        });
+        // Also map total_post 
+        if(r.total_post) row['total']=safe(r.total_post);
+        return row;
+      });
+      if(cwvArr.length) job.category_wise_vacancy=cwvArr;
+      // Remove header+data rows from post_wise so they don't duplicate
+      job.vacancy_details.post_wise=job.vacancy_details.post_wise.filter(function(r){
+        return r!==headerRow&&dataRows.indexOf(r)===-1;
+      });
+    }
+  }
+
   // Normalize vacancy_details: handle both array format and {total_post, post_wise:[]} format
   var _vacRaw=job.vacancy_details||[];
   var vac=Array.isArray(_vacRaw)?_vacRaw:
