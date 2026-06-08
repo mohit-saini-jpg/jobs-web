@@ -942,8 +942,8 @@ SKIP_KEYS = {'seo_tags','category','slug','source_url','url','_slug',
 
 SECTION_ORDER = ['basic_details','important_dates','application_fee','age_limit',
                  'qualification','vacancy_details','category_wise_vacancy','salary_details',
-                 'tables','text_sections','useful_links','all_links','details_page_content',
                  'selection_process','exam_pattern','syllabus','physical_eligibility',
+                 'tables','text_sections','useful_links','all_links','details_page_content',
                  'how_to_apply','important_instructions','important_links','faq']
 
 def build_all_sections(job_obj):
@@ -1017,13 +1017,9 @@ def build_all_sections(job_obj):
                             continue  # Don't render link rows in table
                         data_rows.append(row)
                     if not data_rows: continue
-                    # Skip tables whose name is about age-limit / recruitment rules (already in Age Limit section)
-                    SKIP_TNAME = re.compile(r'age\s+limit|recruitment\s+rules|minimum\s+age|maximum\s+age', re.I)
-                    if SKIP_TNAME.search(tname): continue
                     t_html = ''
                     if tname:
-                        # Build smart heading: prefer "Vacancy Details Total : N Post" over raw table_name
-                        # Look for a total number in the data rows
+                        # Smart heading: extract total from data, prefer structured label
                         _total = ''
                         for _row in data_rows:
                             for _cell in _row:
@@ -1031,14 +1027,25 @@ def build_all_sections(job_obj):
                                 if _m and 10 <= int(_m.group(1)) <= 99999:
                                     _total = _m.group(1); break
                             if _total: break
+                        # Use total-based label if we found vacancies and tname hints at vacancy/recruit
                         if _total and re.search(r'(vacancy|post|recruit|eligib)', tname, re.I):
                             smart_name = f"Vacancy Details Total : {_total} Post"
                         else:
-                            smart_name = tname[:80]
+                            # Trim long age-limit headings to just the job title portion
+                            smart_name = re.sub(r'\s*:\s*Age Limit.*$', '', tname, flags=re.I).strip()[:80] or tname[:80]
                         t_html += f'<div class="tbl-name">{e(smart_name)}</div>'
-                    t_html += '<div class="tbl-scroll"><table class="data-table"><tbody>'
-                    for row in data_rows:
-                        t_html += '<tr>' + ''.join(f'<td>{e(str(cell))}</td>' for cell in row) + '</tr>'
+                    # Detect if first row is header (all text, no numbers)
+                    first_row = data_rows[0] if data_rows else []
+                    is_header = first_row and all(not re.search(r'^\d+$', str(c).strip()) for c in first_row)
+                    if is_header and len(data_rows) > 1:
+                        head = ''.join(f'<th>{e(str(c))}</th>' for c in first_row)
+                        t_html += f'<div class="tbl-scroll"><table class="data-table"><thead><tr>{head}</tr></thead><tbody>'
+                        for row in data_rows[1:]:
+                            t_html += '<tr>' + ''.join(f'<td>{e(str(cell))}</td>' for cell in row) + '</tr>'
+                    else:
+                        t_html += '<div class="tbl-scroll"><table class="data-table"><tbody>'
+                        for row in data_rows:
+                            t_html += '<tr>' + ''.join(f'<td>{e(str(cell))}</td>' for cell in row) + '</tr>'
                     t_html += '</tbody></table></div>'
                     body_parts.append(t_html)
                 body = ''.join(body_parts) if body_parts else ''
@@ -1896,22 +1903,33 @@ for job in SARK:
                   [{'type':'table','rows':t} for t in tables])
         if blocks: sections_out = [{'title':'','content':blocks}]
     # Handle tables field (SR_Latest_Jobs/SR_Result format)
-    raw_tables = job.get('tables') or []
-    if raw_tables and not sections_out:
-        for tbl in raw_tables:
-            name = tbl.get('table_name','') or ''
-            if 'gb headline' in name.lower(): continue
-            rows = tbl.get('rows',[]) or []
-            if rows: sections_out.append({'title':name,'content':[{'type':'table','rows':rows}]})
+    # NOTE: raw_tables are NOT pushed into sections_out — they go via 'tables' key
+    # in SECTION_ORDER so their position (after qualification, before useful_links) is controlled
 
-    bd = {'job_title':title,'organization_name':safe(job.get('organization','') or job.get('board_name','')),'post_name':safe(job.get('post_name','')),'total_vacancies':safe(job.get('total_vacancy','') or job.get('total_post','')),'application_mode':safe(job.get('apply_mode','') or 'Online'),'job_location':safe(job.get('job_location','') or job.get('state','') or 'India'),'short_information':strip_html(safe(job.get('short_information','') or job.get('jobs_info',''))),'last_updated':safe(job.get('post_date','') or job.get('listing_date','')),'job_type':safe(job.get('entry_type',''))}
+    _vac_d = job.get('vacancy_details') or {}
+    _total_vac = safe(job.get('total_vacancy','') or job.get('total_post','') or
+                      (_vac_d.get('total_post','') if isinstance(_vac_d, dict) else ''))
+    bd = {'job_title':title,'organization_name':safe(job.get('organization','') or job.get('board_name','')),'post_name':safe(job.get('post_name','')),'total_vacancies':_total_vac,'application_mode':safe(job.get('apply_mode','') or 'Online'),'job_location':safe(job.get('job_location','') or job.get('state','') or 'India'),'short_information':strip_html(safe(job.get('short_information','') or job.get('jobs_info',''))),'last_updated':safe(job.get('post_date','') or job.get('listing_date','')),'job_type':safe(job.get('entry_type',''))}
     imp_dates = {}
     raw_d = job.get('important_dates') or {}
     if isinstance(raw_d, dict): imp_dates.update({k:v for k,v in raw_d.items() if v})
     age = {}
     if job.get('minimum_age'): age['minimum_age'] = safe(job['minimum_age'])
     if job.get('maximum_age'): age['maximum_age'] = safe(job['maximum_age'])
-    full = {'basic_details':bd,'important_dates':imp_dates,'application_fee':job.get('application_fees') or {},'age_limit':age or (job.get('age_limit') or {}),'qualification':job.get('eligibility') or job.get('qualification') or {},'vacancy_details':job.get('vacancy_details') or [],'salary_details':{'pay_scale':safe(job.get('salary_pay_scale',''))} if job.get('salary_pay_scale') else {},'how_to_apply':[job['how_to_apply']] if isinstance(job.get('how_to_apply'),str) and job.get('how_to_apply') else (job.get('how_to_apply') or []),'important_links':il,'sections':sections_out,'faq':job.get('faq') or [],'category':job.get('category',''),'slug':slug,
+    # Merge age_limit dict (has minimum_age, maximum_age, as_on_date)
+    age_obj = job.get('age_limit') or {}
+    if isinstance(age_obj, dict):
+        for k,v in age_obj.items():
+            if v and k not in age: age[k] = safe(v)
+    # Extract as_on_date hint from table_name (e.g. "Age Limit as on 01/01/2026 ...")
+    if not age.get('as_on_date'):
+        for tbl in (job.get('tables') or []):
+            tname = safe(tbl.get('table_name',''))
+            m = re.search(r'as\s+on\s+(\d{1,2}/\d{1,2}/\d{4})', tname, re.I)
+            if m:
+                age['as_on_date'] = m.group(1)
+                break
+    full = {'basic_details':bd,'important_dates':imp_dates,'application_fee':job.get('application_fees') or {},'age_limit':age,'qualification':job.get('eligibility') or job.get('qualification') or {},'vacancy_details':job.get('vacancy_details') or [],'salary_details':{'pay_scale':safe(job.get('salary_pay_scale',''))} if job.get('salary_pay_scale') else {},'how_to_apply':[job['how_to_apply']] if isinstance(job.get('how_to_apply'),str) and job.get('how_to_apply') else (job.get('how_to_apply') or []),'important_links':il,'sections':sections_out,'faq':job.get('faq') or [],'category':job.get('category',''),'slug':slug,
              'tables':job.get('tables') or [],'text_sections':job.get('text_sections') or [],'useful_links':job.get('useful_links') or [],'all_links':job.get('all_links') or [],'details_page_content':job.get('details_page_content') or {}}
     canon = f"{BASE_URL}/jobs/{slug}/"
     bc    = [('Latest Jobs', f"{BASE_URL}/section/latest-jobs/")]
