@@ -1019,7 +1019,6 @@ def build_all_sections(job_obj):
                     if not data_rows: continue
                     t_html = ''
                     if tname:
-                        # Smart heading: extract total from data, prefer structured label
                         _total = ''
                         for _row in data_rows:
                             for _cell in _row:
@@ -1027,26 +1026,42 @@ def build_all_sections(job_obj):
                                 if _m and 10 <= int(_m.group(1)) <= 99999:
                                     _total = _m.group(1); break
                             if _total: break
-                        # Use total-based label if we found vacancies and tname hints at vacancy/recruit
                         if _total and re.search(r'(vacancy|post|recruit|eligib)', tname, re.I):
                             smart_name = f"Vacancy Details Total : {_total} Post"
                         else:
-                            # Trim long age-limit headings to just the job title portion
                             smart_name = re.sub(r'\s*:\s*Age Limit.*$', '', tname, flags=re.I).strip()[:80] or tname[:80]
                         t_html += f'<div class="tbl-name">{e(smart_name)}</div>'
-                    # Detect if first row is header (all text, no numbers)
-                    first_row = data_rows[0] if data_rows else []
-                    is_header = first_row and all(not re.search(r'^\d+$', str(c).strip()) for c in first_row)
-                    if is_header and len(data_rows) > 1:
-                        head = ''.join(f'<th>{e(str(c))}</th>' for c in first_row)
-                        t_html += f'<div class="tbl-scroll"><table class="data-table"><thead><tr>{head}</tr></thead><tbody>'
-                        for row in data_rows[1:]:
-                            t_html += '<tr>' + ''.join(f'<td>{e(str(cell))}</td>' for cell in row) + '</tr>'
-                    else:
-                        t_html += '<div class="tbl-scroll"><table class="data-table"><tbody>'
-                        for row in data_rows:
-                            t_html += '<tr>' + ''.join(f'<td>{e(str(cell))}</td>' for cell in row) + '</tr>'
-                    t_html += '</tbody></table></div>'
+                    # Split rows into groups by column count — each group rendered as its own table
+                    # This handles SR tables where header row has 3 cols but data rows have 7 cols
+                    def is_text_row(r): return bool(r) and all(not re.search(r'^\d+$', str(c).strip()) for c in r)
+                    groups = []
+                    i = 0
+                    while i < len(data_rows):
+                        row = data_rows[i]
+                        ncols = len(row)
+                        # Start a new group: collect header (if text row) + following rows with same col count
+                        header = None
+                        if is_text_row(row):
+                            header = row; i += 1
+                        body_rows = []
+                        while i < len(data_rows):
+                            r = data_rows[i]
+                            if is_text_row(r) and len(r) != ncols:
+                                break  # next group starts
+                            body_rows.append(r); i += 1
+                        groups.append((header, body_rows, ncols))
+                    for (hdr, brows, ncols) in groups:
+                        if not hdr and not brows: continue
+                        t_html += '<div class="tbl-scroll"><table class="data-table">'
+                        if hdr:
+                            t_html += '<thead><tr>' + ''.join(f'<th>{e(str(c))}</th>' for c in hdr) + '</tr></thead>'
+                        if brows:
+                            t_html += '<tbody>'
+                            for row in brows:
+                                cells = list(row) + [''] * max(0, ncols - len(row))
+                                t_html += '<tr>' + ''.join(f'<td>{e(str(cell))}</td>' for cell in cells) + '</tr>'
+                            t_html += '</tbody>'
+                        t_html += '</table></div>'
                     body_parts.append(t_html)
                 body = ''.join(body_parts) if body_parts else ''
                 # Store extracted links for useful_links section (if job has no useful_links)
@@ -1452,7 +1467,7 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     title     = safe(bd.get('job_title','') or job_obj.get('title','') or 'Government Job')
     org       = safe(bd.get('organization_name','') or 'Government of India')
     vacancies = safe(bd.get('total_vacancies','') or job_obj.get('total_post','') or job_obj.get('total_vacancy',''))
-    last_d    = safe(dates.get('last_date_to_apply','') or dates.get('last_date','') or job_obj.get('last_date',''))
+    last_d    = safe(dates.get('last_date_to_apply','') or dates.get('last_date_apply_online','') or dates.get('last_date','') or job_obj.get('last_date',''))
     apply_m   = safe(bd.get('application_mode','') or job_obj.get('apply_mode','') or 'Online')
     location  = safe(bd.get('job_location','') or job_obj.get('job_location','') or 'India')
 
