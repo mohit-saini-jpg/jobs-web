@@ -1409,6 +1409,7 @@ a{text-decoration:none}.skip-link{position:absolute;left:-9999px}.skip-link:focu
 .job-card-date{font-size:.76rem;font-weight:700}.job-card-date.urgent{color:#dc2626}
 .job-card-links{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
 .jl-btn{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:700;text-decoration:none;transition:all .12s;border:1px solid transparent;min-height:28px}
+.btn-answer{background:#fef9c3;color:#854d0e;border-color:#fde68a}.btn-answer:hover{background:#b45309;color:#fff}
 """
 
 # ── Page builder ───────────────────────────────────────────────
@@ -1623,10 +1624,16 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
         il    = job.get('important_links',{}) or {}
         jtitle = safe(bd.get('job_title','') or job.get('title','') or job.get('name',''))
         if not jtitle: continue
-        jslug  = safe(job.get('_slug','')) or slugify(jtitle)
+        _raw_slug = safe(job.get('_slug','') or job.get('slug',''))
+        # Clean SR prefix (sr_result-, sr_admit_card-, etc.) for URL
+        import re as _re2
+        jslug = _re2.sub(r'^sr_[a-z_]+-','', _raw_slug) if _raw_slug else ''
+        # Also strip trailing hash suffix (-xxxxxx)
+        jslug = _re2.sub(r'-[0-9a-f]{6,8}$','', jslug) if jslug else ''
+        jslug = jslug or slugify(jtitle)
         jorg   = safe(bd.get('organization_name','') or 'Government')
         jvac   = safe(bd.get('total_vacancies','') or job.get('total_post',''))
-        jld    = safe(dates.get('last_date_to_apply','') or dates.get('last_date','') or job.get('last_date',''))
+        jld    = safe(dates.get('last_date_to_apply','') or dates.get('last_date_apply_online','') or dates.get('last_date','') or job.get('last_date',''))
         jmode  = safe(bd.get('application_mode','') or job.get('apply_mode','') or 'Online')
         # Quick links — with fallbacks for non-standard key names
         ql = ''
@@ -1648,13 +1655,15 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
                     if cu.startswith('http') and not is_blocked(cu):
                         apply_url = cu; break
         notif_url = _get_link('notification_pdf') or _get_link('download_notification') or _get_link('official_notification')
-        result_url = _get_link('result_link')
-        admit_url = _get_link('admit_card')
+        result_url = _get_link('result_link') or _get_link('result')
+        admit_url = _get_link('admit_card') or _get_link('admit')
+        answer_url = _get_link('answer_key') or _get_link('answerkey')
         for url, lbl, css, ic in [
             (apply_url,'Apply','btn-apply jl-btn','fa-paper-plane'),
             (notif_url,'Notification','btn-pdf jl-btn','fa-file-pdf'),
             (result_url,'Result','btn-result jl-btn','fa-trophy'),
             (admit_url,'Admit Card','btn-admit jl-btn','fa-id-card'),
+            (answer_url,'Answer Key','btn-answer jl-btn','fa-key'),
         ]:
             if url and not is_blocked(url):
                 ql += f'<a href="{e(url)}" class="{css}" target="_blank" rel="noopener noreferrer"><i class="fa-solid {ic}"></i> {lbl}</a>'
@@ -1669,14 +1678,30 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
                         break
                     except: pass
             except: pass
+        # Status badge
+        jstatus = safe(job.get('status',''))
+        status_badge = ''
+        if jstatus:
+            _smap = {
+                'result_declared': ('#d1fae5','#065f46','Result Declared'),
+                'admit_card_out':  ('#cffafe','#0e7490','Admit Card Out'),
+                'answer_key_out':  ('#fef9c3','#854d0e','Answer Key Out'),
+                'application_open':('#dbeafe','#1e40af','Apply Now'),
+                'notification_out':('#ede9fe','#5b21b6','Notification Out'),
+                'admission_open':  ('#fce7f3','#9d174d','Admission Open'),
+            }
+            if jstatus in _smap:
+                _bg, _cl, _lb = _smap[jstatus]
+                status_badge = f'<span class="jm-badge" style="background:{_bg};color:{_cl}">{_lb}</span>'
         cards_html += f'''<article class="job-card" data-title="{e(jtitle.lower())}" data-org="{e(jorg.lower())}">
   <div class="job-card-title"><a href="/jobs/{e(jslug)}/">{e(jtitle)}</a></div>
   <div class="job-card-org"><i class="fa-regular fa-building"></i> {e(jorg[:60])}</div>
   <div class="job-card-meta">
     {f'<span class="jm-badge" style="background:#dcfce7;color:#15803d">{e(jvac)} Posts</span>' if jvac else ''}
     <span class="jm-badge" style="background:#ede9fe;color:#5b21b6">{e(jmode)}</span>
+    {status_badge}
   </div>
-  {f'<div class="job-card-date{urgent_cls}"><i class="fa-regular fa-clock"></i> Last Date: {e(jld)}</div>' if jld else ''}
+  {f'<div class="job-card-date{urgent_cls}"><i class="fa-regular fa-clock"></i> Last Date: <strong>{e(jld)}</strong></div>' if jld else ''}
   {f'<div class="job-card-links">{ql}</div>' if ql else ''}
 </article>'''
 
@@ -2090,7 +2115,51 @@ for cat_key, url_slug in FJA_CAT_MAP.items():
 for cat_key, url_slug in SARK_CAT_MAP.items():
     sark_jobs = [j for j in SARK if j.get('category') == cat_key]
     if not sark_jobs: continue
-    norm = [{'basic_details':{'job_title':safe(j.get('title','')),'organization_name':safe(j.get('organization','')),'total_vacancies':safe(j.get('total_post','') or j.get('total_vacancy','')),'application_mode':safe(j.get('apply_mode','') or 'Online'),'job_location':'India'},'important_dates':j.get('important_dates') or {},'important_links':j.get('important_links') or {},'category':cat_key} for j in sark_jobs if j.get('title')]
+    norm = []
+    for j in sark_jobs:
+        if not j.get('title'): continue
+        _imp = j.get('important_dates') or {}
+        _last_d = safe(_imp.get('last_date_to_apply','') or _imp.get('last_date','') or j.get('last_date',''))
+        _il = j.get('important_links') or {}
+        _ul = j.get('useful_links') or {}
+        # Merge useful_links keys into important_links for quick buttons
+        if isinstance(_ul, dict):
+            for _k in ['apply_online','result','result_link','admit_card','notification','notification_pdf','official_website','answer_key','admit']:
+                if _ul.get(_k) and not _il.get(_k): _il[_k] = _ul[_k]
+            # map 'result' → 'result_link' for uniform access
+            if _ul.get('result') and not _il.get('result_link'): _il['result_link'] = _ul['result']
+            if _ul.get('answer_key') and not _il.get('answer_key'): _il['answer_key'] = _ul['answer_key']
+            # _all array → extract known keys
+            for _item in (_ul.get('_all') or []):
+                _t = safe(_item.get('title','')).lower()
+                _lnk = _item.get('links','')
+                if isinstance(_lnk, list): _lnk = _lnk[0] if _lnk else ''
+                _lnk = safe(_lnk)
+                if not _lnk: continue
+                if 'result' in _t or 'score card' in _t:
+                    if not _il.get('result_link'): _il['result_link'] = _lnk
+                elif 'admit' in _t or 'hall ticket' in _t:
+                    if not _il.get('admit_card'): _il['admit_card'] = _lnk
+                elif 'apply' in _t:
+                    if not _il.get('apply_online'): _il['apply_online'] = _lnk
+                elif 'notification' in _t:
+                    if not _il.get('notification_pdf'): _il['notification_pdf'] = _lnk
+        norm.append({
+            'basic_details': {
+                'job_title': safe(j.get('title','')),
+                'organization_name': safe(j.get('organization','')),
+                'total_vacancies': safe(j.get('total_post','') or j.get('total_vacancy','')),
+                'application_mode': safe(j.get('apply_mode','') or 'Online'),
+                'job_location': 'India',
+            },
+            'important_dates': _imp,
+            'last_date': _last_d,
+            'important_links': _il,
+            'useful_links': j.get('useful_links') or {},
+            '_slug': safe(j.get('slug','')),
+            'category': cat_key,
+            'status': safe(j.get('status','')),
+        })
     lbl = cat_key.replace('_',' ').replace('SR ','').title()
     write(str(ROOT/'section'/url_slug/'index.html'), build_listing_page(lbl, norm, f"{BASE_URL}/section/{url_slug}/", []))
     sec_count += 1
@@ -2292,8 +2361,36 @@ for cat_key, url_slug in SARK_CAT_MAP.items():
            'SR_Admission':'Admissions','SR_Answer_Key':'Answer Keys','OFFLINE_FORM':'Offline Forms',
            'LATEST_JOBS NEW':'Latest Jobs New','UPCOMING_JOBS':'Upcoming Jobs',
            'STATE_JOBS':'State Jobs','CENTRAL_JOBS':'Central Govt Jobs','ADMISSIONS':'Admissions'}.get(cat_key, cat_key.replace('_',' ').title())
-    norm = [{'basic_details':{'job_title':j.get('title',''),'organization_name':j.get('organization',''),'total_vacancies':j.get('total_post','')}} for j in jobs_in_cat if j.get('title')]
-    write(str(ROOT/'section'/url_slug/'index.html'), build_listing_page(lbl, norm, f"{BASE_URL}/section/{url_slug}/", []))
+    norm2 = []
+    for j in jobs_in_cat:
+        if not j.get('title'): continue
+        _imp2 = j.get('important_dates') or {}
+        _last2 = (j.get('important_dates') or {}).get('last_date_apply_online','') or                  (j.get('important_dates') or {}).get('last_date_to_apply','') or                  (j.get('important_dates') or {}).get('last_date','') or                  j.get('last_date','')
+        _il2 = {}
+        _ul2 = j.get('useful_links') or {}
+        if isinstance(_ul2, dict):
+            for _k2 in ['apply_online','result','result_link','admit_card','notification','notification_pdf','answer_key']:
+                if _ul2.get(_k2): _il2[_k2] = _ul2[_k2]
+            if _ul2.get('result') and not _il2.get('result_link'): _il2['result_link'] = _ul2['result']
+        _raw_slug2 = j.get('slug','')
+        import re as _re3
+        _clean_slug2 = _re3.sub(r'^sr_[a-z_]+-','', _raw_slug2) if _raw_slug2 else ''
+        _clean_slug2 = _re3.sub(r'-[0-9a-f]{6,8}$','', _clean_slug2) if _clean_slug2 else ''
+        norm2.append({
+            'basic_details': {
+                'job_title': j.get('title',''),
+                'organization_name': j.get('organization',''),
+                'total_vacancies': j.get('total_post','') or j.get('total_vacancy',''),
+                'application_mode': j.get('apply_mode','') or 'Online',
+                'job_location': 'India',
+            },
+            'important_dates': _imp2,
+            'last_date': str(_last2),
+            'important_links': _il2,
+            '_slug': _clean_slug2 or j.get('slug',''),
+            'status': j.get('status',''),
+        })
+    write(str(ROOT/'section'/url_slug/'index.html'), build_listing_page(lbl, norm2, f"{BASE_URL}/section/{url_slug}/", []))
     sec_count2 += 1
 
 # DU sections (Govt Scheme, ImportantCSC PDF, ImportantCSC link, Today Updates …)
