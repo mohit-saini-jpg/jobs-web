@@ -844,7 +844,10 @@ def render_sarkari_sections(sections_list, existing_il=None):
                              ('fa-arrow-up-right-from-square','btn-default'))
                     btns += f'<a href="{e(url)}" class="lnk-btn {cl}" target="_blank" rel="noopener noreferrer"><i class="fa-solid {ic}"></i> {e(lbl[:50])}</a>\n'
         if btns: html += sec_card('important_links','fa-link','1e40af,#1e3a8a', f'<div class="links-grid">{btns}</div>')
-    html += render_edu_sections(data['raw'])
+    # Wrap raw sections in proper sec-card — prevents orphan edu-sec blocks floating outside cards
+    raw_html = render_edu_sections(data['raw'])
+    if raw_html.strip():
+        html += sec_card('Details', 'fa-circle-info', '0369a1,#0284c7', raw_html)
     return html
 
 
@@ -1014,9 +1017,25 @@ def build_all_sections(job_obj):
                             continue  # Don't render link rows in table
                         data_rows.append(row)
                     if not data_rows: continue
+                    # Skip tables whose name is about age-limit / recruitment rules (already in Age Limit section)
+                    SKIP_TNAME = re.compile(r'age\s+limit|recruitment\s+rules|minimum\s+age|maximum\s+age', re.I)
+                    if SKIP_TNAME.search(tname): continue
                     t_html = ''
                     if tname:
-                        t_html += f'<div class="tbl-name">{e(tname[:200])}</div>'
+                        # Build smart heading: prefer "Vacancy Details Total : N Post" over raw table_name
+                        # Look for a total number in the data rows
+                        _total = ''
+                        for _row in data_rows:
+                            for _cell in _row:
+                                _m = re.search(r'\b(\d{2,6})\b', str(_cell))
+                                if _m and 10 <= int(_m.group(1)) <= 99999:
+                                    _total = _m.group(1); break
+                            if _total: break
+                        if _total and re.search(r'(vacancy|post|recruit|eligib)', tname, re.I):
+                            smart_name = f"Vacancy Details Total : {_total} Post"
+                        else:
+                            smart_name = tname[:80]
+                        t_html += f'<div class="tbl-name">{e(smart_name)}</div>'
                     t_html += '<div class="tbl-scroll"><table class="data-table"><tbody>'
                     for row in data_rows:
                         t_html += '<tr>' + ''.join(f'<td>{e(str(cell))}</td>' for cell in row) + '</tr>'
@@ -1028,7 +1047,10 @@ def build_all_sections(job_obj):
                     job_obj['_table_links'] = _extracted_links
         elif key == 'text_sections':
             # sarkari_data text_sections: [{section, content}]
-            if isinstance(val, list):
+            # Skip entirely if how_to_apply is already populated — prevents duplicate "How to Apply"
+            if job_obj.get('how_to_apply') and (isinstance(job_obj['how_to_apply'], list) and len(job_obj['how_to_apply']) > 0):
+                body = ''
+            elif isinstance(val, list):
                 body_parts = []
                 for ts in val:
                     if not isinstance(ts, dict): continue
@@ -1349,9 +1371,9 @@ a{text-decoration:none}.skip-link{position:absolute;left:-9999px}.skip-link:focu
 .fee-amt{font-size:.93rem;font-weight:800;color:#1e293b}.fee-free{color:#16a34a}.fee-paid{color:#dc2626}
 .fee-note{padding:9px 14px;font-size:.8rem;color:#78350f;background:#fffbeb;border-top:1px solid #fde68a;display:flex;gap:6px}
 .tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%}
-.data-table{width:100%;border-collapse:collapse;font-size:.81rem;min-width:320px}
-.data-table th{background:#1d4ed8;color:#fff;padding:8px 12px;font-weight:700;text-align:left;white-space:nowrap}
-.data-table td{padding:8px 12px;border-bottom:1px solid #e9eef4;color:#1e293b;word-break:break-word;vertical-align:top;line-height:1.5}
+.data-table{width:100%;border-collapse:collapse;font-size:.81rem;min-width:420px;table-layout:auto}
+.data-table th{background:#1d4ed8;color:#fff;padding:8px 10px;font-weight:700;text-align:left;white-space:nowrap;min-width:70px}
+.data-table td{padding:8px 10px;border-bottom:1px solid #e9eef4;color:#1e293b;word-break:break-word;vertical-align:top;line-height:1.5;min-width:60px}
 .data-table tr:last-child td{border-bottom:none}
 .data-table tr:nth-child(even) td{background:#f8fafc}
 .sel-steps{display:flex;flex-wrap:wrap;gap:8px;padding:12px 14px}
@@ -1390,7 +1412,7 @@ a{text-decoration:none}.skip-link{position:absolute;left:-9999px}.skip-link:focu
 .rel-section{background:#fff;border:1px solid #e2e8f0;border-radius:12px;margin-top:10px;overflow:hidden}
 .rel-head{padding:10px 14px;background:#f8fafc;border-bottom:1px solid #e2e8f0;font-size:.82rem;font-weight:700;color:#374151}
 .rel-grid{display:flex;flex-wrap:wrap;gap:7px;padding:11px 14px}
-.rel-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;font-size:.77rem;font-weight:600;text-decoration:none;background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;transition:all .15s}
+.rel-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;font-size:.77rem;font-weight:600;text-decoration:none;background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;transition:all .15s;white-space:nowrap}
 .rel-btn:hover{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
 .cat-wrap{max-width:880px;margin:0 auto;padding:12px 10px 48px}
 .cat-header{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:15px 18px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
