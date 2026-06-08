@@ -73,6 +73,9 @@ a{text-decoration:none}
 .vac-table td{padding:8px 12px;border-bottom:1px solid #e9eef4;color:#1e293b;word-break:break-word;vertical-align:top}
 .vac-table .vac-tot td{border-bottom:none;font-weight:700;background:#f0f9ff}
 .fee-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+.two-col-sections{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:start}
+.two-col-sections>.job-card{margin-bottom:0}
+@media(max-width:640px){.two-col-sections{grid-template-columns:1fr}}
 .fee-item{padding:10px 14px;border-right:1px solid #e9eef4;border-bottom:1px solid #e9eef4}
 .fee-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#64748b;margin-bottom:3px}
 .fee-val{font-size:.9rem;font-weight:700;color:#1e293b}
@@ -392,7 +395,7 @@ function renderRawTables(tables, ilRef){
   // Tables to ALWAYS skip (header, short-info, gb-headline junk)
   var SKIP_TBL=/^(gb\s+headline|gb\s+\w+\s+\w+|name\s+of\s+post|short\s+info)/i;
   // Table names that are already covered by structured sections
-  var SKIP_COVERED=/age.?limit|application.?fee|how.?to.?apply|selection.?process|exam.?pattern|salary|pay.?scale|faq/i;
+  var SKIP_COVERED=/age.?limit|application.?fee|how.?to.?apply|selection.?process|exam.?pattern|salary|pay.?scale|faq|vacancy|category.?wise|important.?date|post.?wise|overview/i;
 
   var result='';
   for(var t of tables){
@@ -708,23 +711,40 @@ function buildPage(slug, job){
 </div>`;
 
   var sections='';
+  // 1. Job Overview (short info)
   if(shortInfo) sections+=`<div class="short-info-card"><i class="fa-solid fa-circle-info" style="color:#1d4ed8;margin-right:6px"></i>${esc(shortInfo)}</div>`;
-  sections+=renderDates(dates);
-  sections+=renderFee(fee);
-  sections+=renderAge(age);
-  sections+=renderQual(qual);
+  // 2. Vacancy Details
   sections+=renderVacancy(vac);
+  // 3. Important Dates + Application Fee side-by-side (like image layout)
+  var datesHtml=renderDates(dates);
+  var feeHtml=renderFee(fee);
+  if(datesHtml && feeHtml){
+    sections+=`<div class="two-col-sections">${datesHtml}${feeHtml}</div>`;
+  } else {
+    sections+=datesHtml;
+    sections+=feeHtml;
+  }
+  // 4. Age Limit
+  sections+=renderAge(age);
+  // 6. Category-wise Vacancy
   sections+=renderCatVacancy(cwv);
+  // 7. Qualification / Eligibility
+  sections+=renderQual(qual);
+  // 8. Salary
   sections+=renderSalary(sal);
+  // 9. Selection Process
   sections+=renderSelection(sel);
   sections+=renderExamPattern(ep);
   sections+=renderSyllabus(syl);
   sections+=renderPhysical(pe);
-  // Extract table links into il FIRST, then render remaining table data
+  // Extract table links into il FIRST, then render remaining table data (no duplicates)
   sections+=renderRawTables(rawTables, il);
+  // 10. How to Apply
   sections+=renderHTA(hta);
   sections+=renderInstructions(insts);
+  // 11. Useful Links
   sections+=renderLinks(il);
+  // 12. FAQs
   sections+=renderFAQ(faq);
 
   if(!sections.trim()&&sourceUrl&&!isBlocked(sourceUrl)){
