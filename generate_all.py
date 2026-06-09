@@ -2019,8 +2019,11 @@ for job in SARK:
     _total_vac = safe(job.get('total_vacancy','') or job.get('total_post','') or
                       (_vac_d.get('total_post','') if isinstance(_vac_d, dict) else ''))
     _apply_mode = safe(job.get('apply_mode',''))
-    if not _apply_mode:
-        _apply_mode = 'Offline' if cat in ('OFFLINE_FORM',) else 'Online'
+    # OFFLINE_FORM category = always Offline, even if apply_mode field says otherwise
+    if job.get('category') == 'OFFLINE_FORM':
+        _apply_mode = 'Offline'
+    elif not _apply_mode:
+        _apply_mode = 'Online'
     bd = {'job_title':title,'organization_name':safe(job.get('organization','') or job.get('board_name','')),'post_name':safe(job.get('post_name','')),'total_vacancies':_total_vac,'application_mode':_apply_mode,'job_location':safe(job.get('job_location','') or job.get('state','') or 'India'),'short_information':strip_html(safe(job.get('short_information','') or job.get('jobs_info',''))),'last_updated':safe(job.get('post_date','') or job.get('listing_date','')),'job_type':safe(job.get('entry_type',''))}
     imp_dates = {}
     raw_d = job.get('important_dates') or {}
