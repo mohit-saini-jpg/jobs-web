@@ -1272,21 +1272,36 @@ def build_all_sections(job_obj):
                     body = (f'<div class="tbl-scroll"><table class="data-table ul-table"><tbody>'
                             f'{rows_html}</tbody></table></div>')
         elif key == 'details_page_content':
-            # LATEST_JOBS NEW format: {paragraphs:[str], tables:[{headers,rows,table_heading}], lists:[]}
+            # LATEST_JOBS NEW format: {headings:[str], paragraphs:[str], tables:[{headers,rows,table_heading}], lists:[]}
             if isinstance(val, dict):
+                # Determine section title from headings[0], else 'Details'
+                _dpc_headings = val.get('headings') or []
+                _dpc_title = safe(_dpc_headings[0]).strip() if _dpc_headings else 'Details'
+                if not _dpc_title or len(_dpc_title) < 3: _dpc_title = 'Details'
                 parts = []
-                # Paragraphs
+                # Paragraphs — skip junk/noise lines
+                _JUNK_RX = re.compile(r'read also|google पर|sarkari result shine|disclaimer|take me to google|preferred source|save the payment|payment receipt|latest updates check here', re.I)
+                _LINK_LIKE = re.compile(r'^(apply online|official notification|official website|visit|download|apply now|click here)$', re.I)
                 for para in (val.get('paragraphs') or []):
                     para = safe(para).strip()
-                    if para and len(para) > 10:
-                        parts.append(f'<p class="edu-para">{e(para)}</p>')
-                # Tables
+                    if not para or len(para) < 15: continue
+                    if _JUNK_RX.search(para): continue
+                    if _LINK_LIKE.match(para): continue
+                    parts.append(f'<p class="edu-para">{e(para)}</p>')
+                # Tables — skip link-only tables
                 for tbl in (val.get('tables') or []):
                     if not isinstance(tbl, dict): continue
                     heading = safe(tbl.get('table_heading') or tbl.get('heading') or '').strip()
                     headers = tbl.get('headers') or []
                     rows    = tbl.get('rows') or []
                     if not rows: continue
+                    # Skip tables that are just Apply Online / Official Website link rows
+                    all_link_rows = all(
+                        len(r) >= 1 and re.match(r'^(apply online|official notification|official website|visit|download|apply now|click here)$', str(r[0]).strip(), re.I)
+                        for r in rows if isinstance(r,(list,tuple)) and r
+                    )
+                    if all_link_rows: continue
+                    if _JUNK_RX.search(heading): heading = ''
                     t_html = ''
                     if heading:
                         t_html += f'<div class="tbl-name">{e(heading)}</div>'
@@ -1304,6 +1319,10 @@ def build_all_sections(job_obj):
                     if items_l:
                         parts.append('<ul class="val-list">' + ''.join(f'<li>{e(str(it))}</li>' for it in items_l if it) + '</ul>')
                 body = ''.join(parts) if parts else ''
+                # Use dynamic title instead of hardcoded SECTION_META label
+                if body and body.strip():
+                    html += sec_card(_dpc_title, 'fa-circle-info', '1e40af,#3b82f6', body)
+                body = ''  # mark as already rendered
         elif key == 'syllabus':         body = (render_list_items(val) if isinstance(val,list) else f'<div class="edu-sec">{e(safe(val))}</div>')
         elif key == 'physical_eligibility': body = (f'<table class="kv-table"><tbody>' + ''.join(f'<tr><th>{e(key_label(k))}</th><td>{e(safe(v))}</td></tr>' for k,v in val.items() if safe(v)) + '</tbody></table>' if isinstance(val,dict) else render_list_items(val) if isinstance(val,list) else f'<div class="edu-sec">{e(safe(val))}</div>')
         elif key == 'how_to_apply':     body = render_hta(val)
@@ -1536,7 +1555,7 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     org       = safe(bd.get('organization_name','') or 'Government of India')
     vacancies = safe(bd.get('total_vacancies','') or job_obj.get('total_post','') or job_obj.get('total_vacancy',''))
     last_d    = safe(dates.get('last_date_to_apply','') or dates.get('last_date_apply_online','') or dates.get('last_date','') or job_obj.get('last_date',''))
-    apply_m   = safe(bd.get('application_mode','') or job_obj.get('apply_mode','') or 'Online')
+    apply_m   = safe(bd.get('application_mode','') or job_obj.get('apply_mode','') or ('Offline' if job_obj.get('category') == 'OFFLINE_FORM' else 'Online'))
     location  = safe(bd.get('job_location','') or job_obj.get('job_location','') or 'India')
 
     # Build SEO title inline (50-60 chars)
@@ -1999,7 +2018,10 @@ for job in SARK:
     _vac_d = job.get('vacancy_details') or {}
     _total_vac = safe(job.get('total_vacancy','') or job.get('total_post','') or
                       (_vac_d.get('total_post','') if isinstance(_vac_d, dict) else ''))
-    bd = {'job_title':title,'organization_name':safe(job.get('organization','') or job.get('board_name','')),'post_name':safe(job.get('post_name','')),'total_vacancies':_total_vac,'application_mode':safe(job.get('apply_mode','') or 'Online'),'job_location':safe(job.get('job_location','') or job.get('state','') or 'India'),'short_information':strip_html(safe(job.get('short_information','') or job.get('jobs_info',''))),'last_updated':safe(job.get('post_date','') or job.get('listing_date','')),'job_type':safe(job.get('entry_type',''))}
+    _apply_mode = safe(job.get('apply_mode',''))
+    if not _apply_mode:
+        _apply_mode = 'Offline' if cat in ('OFFLINE_FORM',) else 'Online'
+    bd = {'job_title':title,'organization_name':safe(job.get('organization','') or job.get('board_name','')),'post_name':safe(job.get('post_name','')),'total_vacancies':_total_vac,'application_mode':_apply_mode,'job_location':safe(job.get('job_location','') or job.get('state','') or 'India'),'short_information':strip_html(safe(job.get('short_information','') or job.get('jobs_info',''))),'last_updated':safe(job.get('post_date','') or job.get('listing_date','')),'job_type':safe(job.get('entry_type',''))}
     imp_dates = {}
     raw_d = job.get('important_dates') or {}
     if isinstance(raw_d, dict): imp_dates.update({k:v for k,v in raw_d.items() if v})
@@ -2279,7 +2301,7 @@ for cat_key, url_slug in SARK_CAT_MAP.items():
                 'job_title': safe(j.get('title','')),
                 'organization_name': safe(j.get('organization','')),
                 'total_vacancies': safe(j.get('total_post','') or j.get('total_vacancy','')),
-                'application_mode': safe(j.get('apply_mode','') or 'Online'),
+                'application_mode': safe(j.get('apply_mode','')) or ('Offline' if j.get('entry_type') == 'OFFLINE' else 'Online'),
                 'job_location': 'India',
             },
             'important_dates': _imp,
@@ -2511,7 +2533,7 @@ for cat_key, url_slug in SARK_CAT_MAP.items():
                 'job_title': j.get('title',''),
                 'organization_name': j.get('organization',''),
                 'total_vacancies': j.get('total_post','') or j.get('total_vacancy',''),
-                'application_mode': j.get('apply_mode','') or 'Online',
+                'application_mode': j.get('apply_mode','') or ('Offline' if j.get('entry_type') == 'OFFLINE' else 'Online'),
                 'job_location': 'India',
             },
             'important_dates': _imp2,
