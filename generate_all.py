@@ -720,7 +720,7 @@ TITLE_MAP = {
     'salary & pay scale':'salary_details', 'pay scale':'salary_details',
     'how to apply':'how_to_apply', 'gender wise vacancies':'category_wise_vacancy',
     'category wise vacancy':'category_wise_vacancy',
-    'exam pattern':'exam_pattern', 'stage-ii exam pattern':'exam_pattern',
+    'exam pattern':'exam_pattern', 'stage-ii exam pattern':'physical_eligibility',
     'stage-i exam pattern':'exam_pattern', 'written exam pattern':'exam_pattern',
     'syllabus':'syllabus',
     'physical eligibility':'physical_eligibility',
@@ -742,7 +742,7 @@ def render_sarkari_sections(sections_list, existing_il=None):
     data = {
         'dates':[],'fee':[],'age':[],'sel':[],'vac_tables':[],'cat_vac':[],
         'salary':[],'hta':[],'inst':[],'exam':[],'syllabus':[],'physical':[],
-        'also_read':None,'raw':[]
+        'also_read':None,'raw':[],'_has_phys_table':False
     }
 
     def get_list(content_blocks):
@@ -785,14 +785,15 @@ def render_sarkari_sections(sections_list, existing_il=None):
             data['exam'].extend(get_list(content)); data['exam'].extend(get_tables(content))
         elif mapped == 'syllabus': data['syllabus'].extend(get_list(content))
         elif mapped == 'physical_eligibility':
-            # Physical eligibility may come as paragraphs (table rows dumped as text) or lists
-            items = get_list(content)
             tables = get_tables(content)
+            items = get_list(content)
             if tables:
-                data['physical'].extend(['__table__'] * 0)  # mark tables separately
-                for t in tables:
-                    data['vac_tables'].append({'_phys_table': t})
-            data['physical'].extend(items)
+                # Table is authoritative — add to vac_tables, mark that phys table exists
+                for t in tables: data['vac_tables'].append({'_phys_table': t})
+                data['_has_phys_table'] = True
+            elif not data.get('_has_phys_table'):
+                # Only add text items if no table has been seen yet for physical
+                data['physical'].extend(items)
         elif mapped == 'qualification_section':
             items = get_list(content); tables = get_tables(content)
             if tables:
