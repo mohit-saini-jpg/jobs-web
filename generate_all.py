@@ -542,6 +542,7 @@ def render_links(il_obj):
         'notification_pdf':     ('Download Notification', 'btn-pdf',     'fa-file-pdf'),
         'download_notification':('Download Notification', 'btn-pdf',     'fa-file-pdf'),
         'official_notification':('Official Notification', 'btn-pdf',     'fa-file-pdf'),
+        'application_form':     ('Download Application Form', 'btn-pdf', 'fa-file-pdf'),
         'registration_link':    ('Register Now',          'btn-register','fa-user-plus'),
         'login_link':           ('Login',                 'btn-login',   'fa-right-to-bracket'),
         'admit_card':           ('Admit Card',            'btn-admit',   'fa-id-card'),
@@ -779,6 +780,20 @@ def render_sarkari_sections(sections_list, existing_il=None):
         else:
             if content: data['raw'].append({'title':title,'content':content})
 
+    # Post-process: if structured data was extracted (dates/fee/age/sel),
+    # strip tables from empty-title raw sections — they're summary duplicates
+    if data['dates'] or data['fee'] or data['age'] or data['sel']:
+        cleaned_raw = []
+        for raw_sec in data['raw']:
+            if not raw_sec.get('title','').strip():
+                # Keep only non-table blocks (paragraphs, lists)
+                clean_content = [b for b in raw_sec.get('content',[]) if b.get('type') != 'table']
+                if clean_content:
+                    cleaned_raw.append({'title': raw_sec['title'], 'content': clean_content})
+            else:
+                cleaned_raw.append(raw_sec)
+        data['raw'] = cleaned_raw
+
     html = ''
     if data['dates']:
         lis = render_list_items(data['dates'])
@@ -959,6 +974,19 @@ def build_all_sections(job_obj):
         html += render_sarkari_sections(sections, il)
         rendered.add('sections')
     elif has_edu_secs:
+        # For education/state pages: render Job Overview + Important Dates FIRST (above edu content)
+        for _pre_key in ('basic_details', 'important_dates', 'application_fee'):
+            _pre_val = job_obj.get(_pre_key)
+            if not _pre_val or _pre_val == {} or _pre_val == []: continue
+            rendered.add(_pre_key)
+            if _pre_key == 'basic_details':   _pre_body = render_basic_details(_pre_val)
+            elif _pre_key == 'important_dates': _pre_body = render_dates(_pre_val)
+            elif _pre_key == 'application_fee': _pre_body = render_fee(_pre_val)
+            else: continue
+            if _pre_body and _pre_body.strip():
+                _pre_meta = SECTION_META.get(_pre_key, (_pre_key.replace('_',' ').title(), 'fa-circle-info', '1d4ed8,#2563eb'))
+                html += sec_card(_pre_meta[0], _pre_meta[1], _pre_meta[2], _pre_body)
+        # Now render the edu content sections
         html += render_edu_sections(sections)
         rendered.add('sections')
 
@@ -1893,7 +1921,14 @@ for job in SARK:
     if isinstance(raw_il, dict):
         for k, v in raw_il.items():
             if v and not is_blocked(str(v)): il[k] = v
-    for field, key in [('apply_online_link','apply_online'),('official_notification_pdf_link','notification_pdf'),('official_website_link','official_website'),('form_pdf_link','notification_pdf')]:
+    for field, key in [
+        ('apply_online_link',            'apply_online'),
+        ('official_notification_pdf_link','notification_pdf'),
+        ('official_website_link',        'official_website'),
+        ('form_pdf_link',                'notification_pdf'),
+        ('form_pdf_free_link',           'application_form'),   # OFFLINE_FORM free application PDF
+        ('application_form_pdf_link',    'application_form'),   # OFFLINE_FORM application form
+    ]:
         v = str(job.get(field,'') or '').strip()
         if v and v.startswith('http') and not is_blocked(v) and key not in il: il[key] = v
     useful = job.get('useful_links') or []
@@ -2598,6 +2633,46 @@ for _sj in SARK:
         sections_index[_scat] = []
     if len(sections_index[_scat]) < 10:
         sections_index[_scat].append({'slug':_sl,'name':_st,'date':_ld})
+
+# UPCOMING_JOBS: populate from jobs with future exam_date or application_begin
+import datetime as _dt
+_today_str = _dt.date.today().strftime('%d/%m/%Y')
+_today = _dt.date.today()
+
+def _parse_date(s):
+    """Try common date formats, return date or None."""
+    if not s: return None
+    s = str(s).strip()
+    for fmt in ('%d/%m/%Y','%Y-%m-%d','%d-%m-%Y','%d %B %Y','%B %d, %Y'):
+        try: return _dt.datetime.strptime(s[:len(fmt)+2].strip(), fmt).date()
+        except: pass
+    # Try extracting first date-like pattern
+    _m = re.search(r'(\d{1,2})[/\-](\d{1,2})[/\-](\d{4})', s)
+    if _m:
+        try: return _dt.date(int(_m.group(3)), int(_m.group(2)), int(_m.group(1)))
+        except: pass
+    return None
+
+if 'UPCOMING_JOBS' not in sections_index or len(sections_index.get('UPCOMING_JOBS',[])) < 3:
+    _upcoming_candidates = []
+    for _sj in SARK:
+        _st = safe(_sj.get('title',''))
+        if not _st: continue
+        _imp = _sj.get('important_dates') or {}
+        # Check exam_date or application_begin is in the future
+        _exam_d = _parse_date(_imp.get('exam_date','') or _imp.get('written_exam_date',''))
+        _begin_d = _parse_date(_imp.get('application_begin','') or _imp.get('start_date',''))
+        _future_d = None
+        if _exam_d and _exam_d > _today: _future_d = _exam_d
+        elif _begin_d and _begin_d > _today: _future_d = _begin_d
+        if _future_d:
+            _sl = slugify(_st)[:80]
+            _ld = safe(_imp.get('last_date_apply_online','') or _imp.get('last_date_to_apply','') or _imp.get('last_date',''))
+            _upcoming_candidates.append((_future_d, {'slug':_sl,'name':_st,'date':_ld}))
+    # Sort by nearest future date first
+    _upcoming_candidates.sort(key=lambda x: x[0])
+    if _upcoming_candidates:
+        sections_index['UPCOMING_JOBS'] = [item for _, item in _upcoming_candidates[:10]]
 
 write(str(ROOT/'sections-index.json'), json.dumps(sections_index, ensure_ascii=False, separators=(',',':')))
 # Update version string in index.html to bust cache
