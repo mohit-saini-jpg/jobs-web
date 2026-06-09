@@ -62,9 +62,9 @@ a{text-decoration:none}
 .job-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
 .job-card-head{display:flex;align-items:center;gap:8px;padding:9px 14px;color:#fff;font-size:.86rem;font-weight:700}
 .job-card-head h2{margin:0;font-size:.86rem;font-weight:700}
-.jd-table{width:100%;border-collapse:collapse;font-size:.82rem}
-.jd-table th{width:38%;background:#f8fafc;color:#374151;font-weight:700;padding:8px 12px;text-align:left;border-bottom:1px solid #e9eef4;vertical-align:top;word-break:break-word}
-.jd-table td{padding:8px 12px;color:#1e293b;border-bottom:1px solid #e9eef4;vertical-align:top;word-break:break-word;overflow-wrap:break-word}
+.jd-table{width:100%;border-collapse:collapse;font-size:.82rem;table-layout:fixed}
+.jd-table th{width:38%;background:#f8fafc;color:#374151;font-weight:700;padding:8px 12px;text-align:left;border-bottom:1px solid #e9eef4;vertical-align:top;word-break:break-word;white-space:normal;overflow-wrap:break-word}
+.jd-table td{padding:8px 12px;color:#1e293b;border-bottom:1px solid #e9eef4;vertical-align:top;word-break:break-word;overflow-wrap:break-word;white-space:normal}
 .jd-table tr:last-child th,.jd-table tr:last-child td{border-bottom:none}
 .jd-table a{color:#1d4ed8;word-break:break-all}
 .tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%}
@@ -436,7 +436,7 @@ function renderRawTables(tables, ilRef){
   if(!Array.isArray(tables)||!tables.length) return '';
 
   // Tables to ALWAYS skip (header, short-info, gb-headline junk)
-  var SKIP_TBL=/^(gb\s+headline|gb\s+\w+\s+\w+|name\s+of\s+post|short\s+info)/i;
+  var SKIP_TBL=/^(gb\s+headline|gb\s+\w+\s+\w+|name\s+of\s+post|short\s+info|job\s+overview|post\s+overview|job\s+details\s+overview)/i;
   // Also skip tables whose NAME contains age limit / recruitment rules (SR pattern)
   var SKIP_NAME_CONTAINS=/age\s+limit|recruitment\s+rules|minimum\s+age|maximum\s+age/i;
   // Table names that are already covered by structured sections
@@ -458,11 +458,15 @@ function renderRawTables(tables, ilRef){
     // Extract link rows into ilRef, get remaining data rows
     var dataRows=extractTableLinks(rows, ilRef);
 
-    // Filter garbage rows: timestamps, empty, single-cell non-data
+    // Filter garbage rows: timestamps, empty, single-cell non-data, header-type rows
+    var ROW_GARBAGE_KEY=/^(name\s+of\s+post|post\s+date|post\s+update|short\s+information|short\s+info|advertisement\s+no|advt\s+no)\s*[:/]?\s*$/i;
     dataRows=dataRows.filter(function(r){
       if(!Array.isArray(r)||!r.length) return false;
       var joined=r.map(safe).join('').trim();
       if(!joined) return false;
+      // Skip rows where first cell is a header-type label (Name Of Post, Post Date, Short Information)
+      var firstCell=safe(r[0]).trim();
+      if(ROW_GARBAGE_KEY.test(firstCell)) return false;
       if(r.length===1){
         // Skip timestamp rows
         if(/^\d{1,2}\s+\w+\s+\d{4}/.test(joined)) return false;
@@ -480,10 +484,27 @@ function renderRawTables(tables, ilRef){
 
     if(isKV){
       var trows=dataRows.map(function(r){
-        var k=esc(safe(r[0])), v=esc(safe(r[1]||''));
+        var k=esc(safe(r[0])), v=safe(r[1]||'');
         if(!k&&!v) return '';
         if(!v) return `<tr><td colspan="2" style="font-weight:700;color:#0f172a;padding:10px 12px">${k}</td></tr>`;
-        return `<tr><th>${k}</th><td>${v}</td></tr>`;
+        // Long value: split into bullet points for readability (like eligibility tables)
+        var vHtml;
+        if(v.length>120){
+          // Split on numbered patterns, newlines, or sentence boundaries (period followed by capital)
+          var parts=v.split(/\n+|\r\n+/).map(function(s){return s.trim();}).filter(Boolean);
+          if(parts.length<=1){
+            // Try splitting on common delimiters in concatenated eligibility text
+            parts=v.split(/(?<=\.\s)(?=[A-Z0-9])|(?<=\)\.?\s)(?=[A-Z0-9])|(?<=\d{4}\.?\s)(?=[A-Z])/).map(function(s){return s.trim();}).filter(Boolean);
+          }
+          if(parts.length>1){
+            vHtml='<ul style="margin:0;padding-left:18px;font-size:.82rem;line-height:1.6">'+parts.map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ul>';
+          } else {
+            vHtml='<span style="word-break:break-word;overflow-wrap:break-word">'+esc(v)+'</span>';
+          }
+        } else {
+          vHtml=esc(v);
+        }
+        return `<tr><th style="white-space:normal;word-break:break-word">${k}</th><td style="word-break:break-word;overflow-wrap:break-word">${vHtml}</td></tr>`;
       }).filter(Boolean).join('');
       if(!trows) continue;
       tableHtml=`<table class="jd-table"><tbody>${trows}</tbody></table>`;
@@ -688,6 +709,10 @@ function buildPage(slug, job){
       // If all values are long text blobs, skip
       var vals=Object.values(r).map(safe).join(' ');
       if(vals.length>200&&!r.total&&!r.total_post) return false;
+      // Skip rows that only have post_name+eligibility and no actual vacancy numbers
+      var hasVacancyNum=!!(r.total||r.total_post||r.ur||r.obc||r.sc||r.st||r.ews||r.general);
+      var onlyEligibility=Object.keys(r).every(function(k){return ['post_name','name','post','eligibility','qualification'].includes(k);});
+      if(onlyEligibility&&!hasVacancyNum&&!pn) return false;
       return true;
     });
   }
