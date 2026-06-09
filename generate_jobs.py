@@ -169,9 +169,9 @@ CARD_STYLE = """
   .job-card-head{display:flex;align-items:center;gap:8px;padding:9px 14px;color:#fff;font-size:.86rem;font-weight:700}
   .job-card-head i{opacity:.85}
   .job-card-body{}
-  .jd-table{width:100%;border-collapse:collapse;font-size:.82rem}
-  .jd-table th{width:38%;background:#f8fafc;color:#374151;font-weight:700;padding:8px 12px;text-align:left;border-bottom:1px solid #e9eef4;vertical-align:top;word-break:break-word}
-  .jd-table td{padding:8px 12px;color:#1e293b;border-bottom:1px solid #e9eef4;vertical-align:top;word-break:break-word;overflow-wrap:break-word}
+  .jd-table{width:100%;border-collapse:collapse;font-size:.82rem;table-layout:fixed}
+  .jd-table th{width:38%;background:#f8fafc;color:#374151;font-weight:700;padding:8px 12px;text-align:left;border-bottom:1px solid #e9eef4;vertical-align:top;word-break:break-word;white-space:normal;overflow-wrap:break-word}
+  .jd-table td{padding:8px 12px;color:#1e293b;border-bottom:1px solid #e9eef4;vertical-align:top;word-break:break-word;overflow-wrap:break-word;white-space:normal}
   .jd-table tr:last-child th,.jd-table tr:last-child td{border-bottom:none}
   .jd-table a{color:#1d4ed8;word-break:break-all}
   .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%}
@@ -383,9 +383,23 @@ def render_vacancy_details(vac_list):
     COL_LABELS = {'post_name':'Post Name','total':'Total Posts','ur':'UR/General','obc':'OBC','sc':'SC',
                   'st':'ST','ews':'EWS','women':'Women','salary':'Salary / Pay Scale',
                   'qualification':'Qualification','department':'Department'}
+    GARBAGE_POST = re.compile(
+        r'^(post\s+date|short\s+info|name\s+of\s+post|post\s+name\s*$|'
+        r'apply\s+online|official\s+website|notification|download|click\s+here|login|\d{4}$)',
+        re.I
+    )
     normalized = []; available = set()
     for row in vac_list:
         if not isinstance(row, dict): continue
+        post_val = safe(row.get('post_name') or row.get('post') or row.get('name') or '')
+        # Skip garbage rows (scraper artifacts)
+        if post_val and GARBAGE_POST.match(post_val.strip()):
+            continue
+        # Skip rows that only have post_name+eligibility (no vacancy numbers)
+        has_vac_num = any(row.get(k) for k in ['total','total_post','total_vacancies','ur','obc','sc','st','ews','general'])
+        only_text_fields = all(k in ['post_name','name','post','eligibility','qualification'] for k in row.keys())
+        if only_text_fields and not has_vac_num and not post_val:
+            continue
         norm = {}
         for col, aliases in COLUMN_MAP.items():
             for alias in aliases:
@@ -568,6 +582,136 @@ def render_important_links(il_obj):
     return render_card('linear-gradient(135deg,#1e40af,#1e3a8a)', 'fa-link', 'Important Links',
                        f'<div class="links-grid">{buttons}</div>')
 
+def render_raw_tables(tables, il_ref=None):
+    """Render job.tables[] — skips header/overview tables, filters garbage rows,
+    renders long-text KV tables as bullet lists for readability."""
+    if not isinstance(tables, list) or not tables:
+        return ''
+    # Table names to always skip (already rendered via structured fields)
+    SKIP_TABLE = re.compile(
+        r'^(gb\s+headline|gb\s+\w+|name\s+of\s+post|short\s+info|job\s+overview|'
+        r'post\s+overview|job\s+details?\s+overview|vacancy\s+detail|'
+        r'important\s+date|application\s+fee|age\s+limit|how\s+to\s+apply|'
+        r'selection\s+process|exam\s+pattern|salary|pay\s+scale|faq|'
+        r'category.?wise)',
+        re.I
+    )
+    # Row first-cell labels that are header garbage (not real data)
+    SKIP_ROW_KEY = re.compile(
+        r'^(name\s+of\s+post|post\s+date|post\s+update|short\s+information|'
+        r'short\s+info|advertisement\s+no|advt\s+no|total\s+post)\s*[:/]?\s*$',
+        re.I
+    )
+    # Link row labels
+    LINK_ROW = re.compile(
+        r'^(apply\s+online|official\s+website|notification|admit\s+card|result|'
+        r'answer\s+key|syllabus|login|register|click\s+here|download)',
+        re.I
+    )
+    LINK_MAP = {
+        'apply online': 'apply_online', 'official website': 'official_website',
+        'notification': 'notification_pdf', 'admit card': 'admit_card',
+        'result': 'result_link', 'answer key': 'answer_key',
+        'syllabus': 'syllabus_pdf', 'login': 'login_link',
+        'register': 'registration_link',
+    }
+
+    result = ''
+    for tbl in tables:
+        if not isinstance(tbl, dict):
+            continue
+        tname = safe(tbl.get('table_name') or tbl.get('name') or '')
+        if SKIP_TABLE.match(tname):
+            continue
+        rows = tbl.get('rows') or []
+        if not isinstance(rows, list) or not rows:
+            continue
+
+        # Filter rows
+        data_rows = []
+        for r in rows:
+            if not isinstance(r, list) or not r:
+                continue
+            first = safe(r[0]).strip()
+            # Skip header/garbage key rows
+            if SKIP_ROW_KEY.match(first):
+                continue
+            # Extract link rows into il_ref
+            if LINK_ROW.match(first):
+                if il_ref is not None and len(r) > 1:
+                    url = safe(r[1]).strip()
+                    if url.startswith('http'):
+                        map_key = next((k for k in LINK_MAP if first.lower().startswith(k)), None)
+                        if map_key:
+                            il_key = LINK_MAP[map_key]
+                            if il_key not in il_ref:
+                                il_ref[il_key] = url
+                continue
+            # Skip empty rows
+            joined = ''.join(safe(c) for c in r).strip()
+            if not joined:
+                continue
+            # Skip single-cell timestamp rows
+            if len(r) == 1 and re.match(r'^\d{1,2}\s+\w+\s+\d{4}', joined):
+                continue
+            data_rows.append(r)
+
+        if not data_rows:
+            continue
+
+        is_kv = all(len(r) <= 2 for r in data_rows)
+
+        if is_kv:
+            # KV table — long values get bullet-list treatment
+            trows = ''
+            for r in data_rows:
+                k = e(safe(r[0]))
+                v = safe(r[1]) if len(r) > 1 else ''
+                if not k and not v:
+                    continue
+                if not v:
+                    trows += f'<tr><td colspan="2" style="font-weight:700;color:#0f172a;padding:10px 12px">{k}</td></tr>'
+                    continue
+                # Long value → bullet list
+                if len(v) > 120:
+                    # Split on newlines or sentence boundaries
+                    parts = [p.strip() for p in re.split(r'\n+|\r\n+', v) if p.strip()]
+                    if len(parts) <= 1:
+                        parts = [p.strip() for p in re.split(
+                            r'(?<=[.)]\s)(?=[A-Z0-9])|(?<=\)\s)(?=[A-Z0-9])', v
+                        ) if p.strip()]
+                    if len(parts) > 1:
+                        bullets = ''.join(f'<li style="margin-bottom:4px">{e(p)}</li>' for p in parts)
+                        v_html = f'<ul style="margin:4px 0;padding-left:18px;font-size:.82rem;line-height:1.65">{bullets}</ul>'
+                    else:
+                        v_html = f'<span style="word-break:break-word">{e(v)}</span>'
+                else:
+                    v_html = e(v)
+                trows += (f'<tr><th style="white-space:normal;word-break:break-word;vertical-align:top">{k}</th>'
+                          f'<td style="word-break:break-word;overflow-wrap:break-word;vertical-align:top">{v_html}</td></tr>')
+            if not trows:
+                continue
+            table_html = f'<table class="jd-table" style="table-layout:fixed"><tbody>{trows}</tbody></table>'
+        else:
+            # Multi-column table — use tbl-scroll
+            head_row = data_rows[0]
+            body_rows = data_rows[1:]
+            if not body_rows:
+                continue
+            thead = ''.join(f'<th>{e(safe(c))}</th>' for c in head_row)
+            tbody = ''.join(
+                '<tr>' + ''.join(f'<td style="word-break:break-word;white-space:normal">{e(safe(c))}</td>' for c in r) + '</tr>'
+                for r in body_rows
+            )
+            table_html = (f'<div class="table-scroll"><table class="vacancy-table" style="table-layout:auto">'
+                          f'<thead><tr>{thead}</tr></thead><tbody>{tbody}</tbody></table></div>')
+
+        heading = tname if tname else 'Additional Details'
+        result += render_card('linear-gradient(135deg,#0369a1,#0ea5e9)', 'fa-table-list',
+                              heading, table_html)
+    return result
+
+
 def render_faq(faq_list):
     if not isinstance(faq_list, list) or not faq_list: return ''
     import re as _re
@@ -666,7 +810,9 @@ def build_static_html(slug, title, full_job_obj, cat):
     hta    = full_job_obj.get('how_to_apply') or []
     insts  = full_job_obj.get('important_instructions') or []
     il     = full_job_obj.get('important_links') or {}
+    if not isinstance(il, dict): il = {}
     faq    = full_job_obj.get('faq') or []
+    raw_tables = full_job_obj.get('tables') or []
 
     canon_url  = f"{BASE_URL}/jobs/{slug}/"
     cat_label  = CAT_LABELS.get(cat, 'Government Jobs')
@@ -820,6 +966,7 @@ def build_static_html(slug, title, full_job_obj, cat):
     sections_html += render_physical_eligibility(pe)
     sections_html += render_how_to_apply(hta)
     sections_html += render_instructions(insts)
+    sections_html += render_raw_tables(raw_tables, il)
     sections_html += render_important_links(il)
     sections_html += render_faq(faq)
     # ISSUE-021 FIX: Related jobs for internal linking (PageRank flow to job pages)
