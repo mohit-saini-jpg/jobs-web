@@ -716,13 +716,23 @@ TITLE_MAP = {
     'total post and qualification':'vacancy_details',
     'vacancy details':'vacancy_details', 'pay scale details':'salary_details',
     'salary details':'salary_details', 'salary / pay scale':'salary_details',
+    'monthly salary details':'salary_details', 'monthly salary':'salary_details',
+    'salary & pay scale':'salary_details', 'pay scale':'salary_details',
     'how to apply':'how_to_apply', 'gender wise vacancies':'category_wise_vacancy',
-    'category wise vacancy':'category_wise_vacancy', 'exam pattern':'exam_pattern',
-    'syllabus':'syllabus', 'physical eligibility':'physical_eligibility',
+    'category wise vacancy':'category_wise_vacancy',
+    'exam pattern':'exam_pattern', 'stage-ii exam pattern':'exam_pattern',
+    'stage-i exam pattern':'exam_pattern', 'written exam pattern':'exam_pattern',
+    'syllabus':'syllabus',
+    'physical eligibility':'physical_eligibility',
+    'physical eligibility details':'physical_eligibility',
     'physical standards':'physical_eligibility',
+    'physical fitness test':'physical_eligibility',
+    'physical measurement':'physical_eligibility',
     'also read :':'important_links_extra', 'also read':'important_links_extra',
     'important related links':'important_links_extra',
     'important instructions':'important_instructions',
+    'qualification details':'qualification_section',
+    'post wise vacancies':'vacancy_details',
 }
 SKIP_TITLES = {'set as preferred source on google','set as preferred source','about'}
 
@@ -766,13 +776,30 @@ def render_sarkari_sections(sections_list, existing_il=None):
             tables = get_tables(content); items = get_list(content)
             data['cat_vac'].extend(tables)
             if items: data['cat_vac'].append({'_list': items})
-        elif mapped == 'salary_details': data['salary'].extend(get_list(content))
+        elif mapped == 'salary_details':
+            data['salary'].extend(get_list(content))
+            data['salary'].extend(get_tables(content))  # capture salary tables too
         elif mapped == 'how_to_apply': data['hta'].extend(get_list(content))
         elif mapped == 'important_instructions': data['inst'].extend(get_list(content))
         elif mapped == 'exam_pattern':
             data['exam'].extend(get_list(content)); data['exam'].extend(get_tables(content))
         elif mapped == 'syllabus': data['syllabus'].extend(get_list(content))
-        elif mapped == 'physical_eligibility': data['physical'].extend(get_list(content))
+        elif mapped == 'physical_eligibility':
+            # Physical eligibility may come as paragraphs (table rows dumped as text) or lists
+            items = get_list(content)
+            tables = get_tables(content)
+            if tables:
+                data['physical'].extend(['__table__'] * 0)  # mark tables separately
+                for t in tables:
+                    data['vac_tables'].append({'_phys_table': t})
+            data['physical'].extend(items)
+        elif mapped == 'qualification_section':
+            items = get_list(content); tables = get_tables(content)
+            if tables:
+                for t in tables: data['vac_tables'].append({'_qual_table': t})
+            # Items only go to raw if no table — avoid double render
+            if items and not tables:
+                data['raw'].append({'title': 'Qualification Details', 'content': [{'type':'list','items':items}]})
         elif mapped == 'important_links_extra':
             for b in content:
                 if b.get('type')=='table' and b.get('rows'):
@@ -810,9 +837,16 @@ def render_sarkari_sections(sections_list, existing_il=None):
         if isinstance(tbl, list):
             rendered = render_smart_table(tbl)
             if rendered: html += sec_card('vacancy_details','fa-chart-pie','15803d,#16a34a', rendered)
+        elif isinstance(tbl, dict) and tbl.get('_phys_table'):
+            # Physical eligibility table — render in physical section
+            rendered = render_smart_table(tbl['_phys_table'])
+            if rendered: html += sec_card('physical_eligibility','fa-dumbbell','be123c,#e11d48', rendered)
+        elif isinstance(tbl, dict) and tbl.get('_qual_table'):
+            rendered = render_smart_table(tbl['_qual_table'])
+            if rendered: html += sec_card('qualification','fa-graduation-cap','4338ca,#6366f1', rendered)
         elif isinstance(tbl, dict) and tbl.get('_list'):
             lis = render_list_items(tbl['_list'])
-            if lis: html += sec_card('qualification','fa-graduation-cap','4338ca,#6366f1', lis)
+            if lis: html += sec_card('vacancy_details','fa-chart-pie','15803d,#16a34a', lis)
     for tbl in data['cat_vac']:
         if isinstance(tbl, list):
             rendered = render_smart_table(tbl)
@@ -821,8 +855,10 @@ def render_sarkari_sections(sections_list, existing_il=None):
             lis = render_list_items(tbl['_list'])
             if lis: html += sec_card('vacancy_details','fa-chart-pie','15803d,#16a34a', lis)
     if data['salary']:
-        lis = render_list_items(data['salary'])
-        if lis: html += sec_card('salary_details','fa-indian-rupee-sign','15803d,#16a34a', lis)
+        salary_items = [x for x in data['salary'] if isinstance(x, str)]
+        salary_tables = [x for x in data['salary'] if isinstance(x, list)]
+        sal_body = render_list_items(salary_items) + ''.join(render_smart_table(t) for t in salary_tables)
+        if sal_body: html += sec_card('salary_details','fa-indian-rupee-sign','15803d,#16a34a', sal_body)
     if data['exam']:
         items = [x for x in data['exam'] if isinstance(x,str)]
         tables = [x for x in data['exam'] if isinstance(x,list)]
