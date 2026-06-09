@@ -131,7 +131,7 @@ a{text-decoration:none}
   </main>
   <div id="footerPlaceholder"></div>
   <script>fetch('/footer.html',{cache:'no-store'}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{if(h){var d=document.getElementById('footerPlaceholder');if(d)d.outerHTML=h;}})</script>
-  <script src="/tsj-menu.js?v=20260608195622" defer></script>
+  <script src="/tsj-menu.js?v=20260608142507" defer></script>
 <script>
 (function(){
 'use strict';
@@ -209,6 +209,11 @@ function card(grad,icon,heading,body){
 
 function renderDates(obj){
   if(!obj||typeof obj!=='object') return '';
+  // _raw_list: extracted from job.sections as plain text items
+  if(Array.isArray(obj._raw_list)&&obj._raw_list.length){
+    var lis=obj._raw_list.map(s=>`<li class="val-item"><i class="fa-solid fa-calendar-day"></i><span>${esc(s)}</span></li>`).join('');
+    return card('linear-gradient(135deg,#b91c1c,#dc2626)','fa-calendar-check','Important Dates',`<ul class="val-list">${lis}</ul>`);
+  }
   var FIELDS=[['application_start_date','Application Start'],['application_begin','Application Begin'],['date_of_notification','Notification Date'],['notification_date','Notification Date'],['last_date_to_apply','Last Date to Apply'],['last_date_apply_online','Last Date Apply Online'],['last_date','Last Date'],['fee_payment_last_date','Fee Payment Last Date'],['exam_date','Exam Date'],['written_exam_date','Written Exam Date'],['online_exam_date','Online Exam Date'],['interview_date','Interview Date'],['admit_card_date','Admit Card Available'],['admit_card','Admit Card'],['result_date','Result Date'],['event','Event']];
   var seen=new Set(),rows='';
   for(var [k,lbl] of FIELDS){var v=safe(obj[k]);if(!v||seen.has(lbl))continue;seen.add(lbl);var red=/last|closing/i.test(k);rows+=`<tr><th>${esc(lbl)}</th><td${red?' style="color:#dc2626;font-weight:700"':''}>${esc(v)}</td></tr>`;}
@@ -218,6 +223,11 @@ function renderDates(obj){
 
 function renderFee(obj){
   if(!obj||typeof obj!=='object') return '';
+  // _raw_list: extracted from job.sections
+  if(Array.isArray(obj._raw_list)&&obj._raw_list.length){
+    var lis=obj._raw_list.map(s=>`<li class="val-item"><i class="fa-solid fa-indian-rupee-sign"></i><span>${esc(s)}</span></li>`).join('');
+    return card('linear-gradient(135deg,#c2410c,#ea580c)','fa-indian-rupee-sign','Application Fee',`<ul class="val-list">${lis}</ul>`);
+  }
   var FIELDS=[['General / UR','general'],['General / UR','general_fee'],['OBC','obc'],['OBC','obc_fee'],['SC','sc'],['SC','sc_fee'],['ST','st'],['EWS','ews'],['Female','female'],['PH / Divyang','ph'],['PH / Divyang','pwd'],['Ex-Serviceman','ex_serviceman_fee'],['All Categories','all'],['All Categories','all_category']];
   var seen=new Set(),items='';
   for(var [lbl,key] of FIELDS){var v=safe(obj[key]);if(!v||seen.has(lbl))continue;seen.add(lbl);var free=/nil|^0$|free|no fee/i.test(v);items+=`<div class="fee-item"><div class="fee-label">${esc(lbl)}</div><div class="fee-val ${free?'free':'paid'}">${esc(v)}</div></div>`;}
@@ -228,6 +238,11 @@ function renderFee(obj){
 
 function renderAge(obj){
   if(!obj||typeof obj!=='object') return '';
+  // _raw_list: extracted from job.sections
+  if(Array.isArray(obj._raw_list)&&obj._raw_list.length){
+    var lis=obj._raw_list.map(s=>`<li class="val-item"><i class="fa-solid fa-user-clock"></i><span>${esc(s)}</span></li>`).join('');
+    return card('linear-gradient(135deg,#0f766e,#0891b2)','fa-user-clock','Age Limit',`<ul class="val-list">${lis}</ul>`);
+  }
   var asOn=safe(obj.as_on_date||obj.as_on||'');
   var heading='Age Limit'+(asOn?' (as on '+asOn+')':'');
   var pairs=[
@@ -316,6 +331,10 @@ function renderSalary(obj){
   if(!obj) return '';
   if(typeof obj==='string'&&obj.trim()) return card('linear-gradient(135deg,#15803d,#16a34a)','fa-indian-rupee-sign','Salary & Pay Scale',`<div style="padding:10px 14px;font-size:.83rem">${esc(obj)}</div>`);
   if(typeof obj==='object'){
+    if(Array.isArray(obj._raw_list)&&obj._raw_list.length){
+      var lis=obj._raw_list.map(s=>`<li class="val-item"><i class="fa-solid fa-indian-rupee-sign"></i><span>${esc(s)}</span></li>`).join('');
+      return card('linear-gradient(135deg,#15803d,#16a34a)','fa-indian-rupee-sign','Salary & Pay Scale',`<ul class="val-list">${lis}</ul>`);
+    }
     var pairs=[['Pay Scale',obj.pay_scale],['Basic Pay',obj.basic_pay],['Grade Pay',obj.grade_pay],['Salary',obj.salary],['Details',obj.details]];
     var rows=pairs.filter(([,v])=>safe(v)).map(([l,v])=>`<tr><th>${esc(l)}</th><td>${esc(safe(v))}</td></tr>`).join('');
     return rows?card('linear-gradient(135deg,#15803d,#16a34a)','fa-indian-rupee-sign','Salary & Pay Scale',`<table class="jd-table"><tbody>${rows}</tbody></table>`):'';
@@ -483,7 +502,7 @@ function renderRawTables(tables, ilRef){
   return result;
 }
 
-var LINK_CFG={apply_online:['Apply Online','btn-blue','fa-paper-plane'],official_website:['Official Website','btn-green','fa-globe'],notification_pdf:['Download Notification','btn-red','fa-file-pdf'],download_notification:['Download Notification','btn-red','fa-file-pdf'],official_notification:['Official Notification','btn-red','fa-file-pdf'],registration_link:['Register Now','btn-orange','fa-user-plus'],login_link:['Login','btn-purple','fa-right-to-bracket'],admit_card:['Admit Card','btn-teal','fa-id-card'],answer_key:['Answer Key','btn-indigo','fa-key'],syllabus_pdf:['Syllabus PDF','btn-gray','fa-book'],result_link:['Result','btn-green','fa-trophy'],click_here:['Apply Online','btn-blue','fa-paper-plane'],merit_list:['Merit List','btn-teal','fa-list']};
+var LINK_CFG={apply_online:['Apply Online','btn-blue','fa-paper-plane'],official_website:['Official Website','btn-green','fa-globe'],notification_pdf:['Download Notification','btn-red','fa-file-pdf'],download_notification:['Download Notification','btn-red','fa-file-pdf'],official_notification:['Official Notification','btn-red','fa-file-pdf'],application_form:['Download Application Form','btn-red','fa-file-pdf'],registration_link:['Register Now','btn-orange','fa-user-plus'],login_link:['Login','btn-purple','fa-right-to-bracket'],admit_card:['Admit Card','btn-teal','fa-id-card'],answer_key:['Answer Key','btn-indigo','fa-key'],syllabus_pdf:['Syllabus PDF','btn-gray','fa-book'],result_link:['Result','btn-green','fa-trophy'],click_here:['Apply Online','btn-blue','fa-paper-plane'],merit_list:['Merit List','btn-teal','fa-list']};
 
 // Smart label from URL context
 function smartLabel(u, fallbackLabel, fallbackCss, fallbackIcon){
@@ -690,6 +709,44 @@ function buildPage(slug, job){
 
   // ── END NORMALIZATION ─────────────────────────────────────────────────────
 
+  // 5. For STATE_JOBS/CENTRAL_JOBS/ADMISSIONS: extract structured data from job.sections
+  //    when top-level important_dates/application_fee/age_limit are null/empty
+  if(Array.isArray(job.sections)&&job.sections.length){
+    var _TMAP={
+      'important dates':'dates','application fees':'fee','application fee':'fee',
+      'age limit':'age','age limit details':'age',
+      'selection process':'sel','pay scale details':'sal','salary details':'sal',
+      'how to apply':'hta','qualification details':'qual_items',
+    };
+    var _extracted={dates:[],fee:[],age:[],sel:[],sal:[],hta:[],qual_items:[]};
+    var _structuredFound=false;
+    job.sections.forEach(function(sec){
+      var t=(sec.title||sec.heading||'').trim().toLowerCase();
+      var bucket=_TMAP[t];
+      if(!bucket) return;
+      _structuredFound=true;
+      (sec.content||[]).forEach(function(b){
+        if(b.type==='list') _extracted[bucket]=_extracted[bucket].concat(b.items||[]);
+        else if(b.type==='paragraph'&&b.text) _extracted[bucket].push(b.text);
+      });
+    });
+    if(_structuredFound){
+      // Inject into job object only if top-level fields are empty
+      if(!Object.keys(job.important_dates||{}).length&&_extracted.dates.length)
+        job.important_dates={'_raw_list':_extracted.dates};
+      if(!Object.keys(job.application_fee||{}).length&&_extracted.fee.length)
+        job.application_fee={'_raw_list':_extracted.fee};
+      if(!Object.keys(job.age_limit||{}).length&&_extracted.age.length)
+        job.age_limit={'_raw_list':_extracted.age};
+      if(!(job.selection_process||[]).length&&_extracted.sel.length)
+        job.selection_process=_extracted.sel;
+      if(!Object.keys(job.salary_details||{}).length&&_extracted.sal.length)
+        job.salary_details={'_raw_list':_extracted.sal};
+      if(!(job.how_to_apply||[]).length&&_extracted.hta.length)
+        job.how_to_apply=_extracted.hta;
+    }
+  }
+
   var bd=job.basic_details||{};
   var dates=job.important_dates||{};
   var fee=job.application_fee||{};
@@ -759,6 +816,19 @@ function buildPage(slug, job){
       if(ulObj[k]&&!il[k]) il[k]=ulObj[k];
     }
     if(Array.isArray(ulObj._all)&&ulObj._all.length) il._useful_links=ulObj._all;
+  }
+  // OFFLINE_FORM: pick up dedicated link fields from raw job object
+  var _offlineMap=[
+    ['form_pdf_free_link','application_form'],
+    ['application_form_pdf_link','application_form'],
+    ['form_pdf_link','notification_pdf'],
+    ['official_notification_pdf_link','notification_pdf'],
+    ['apply_online_link','apply_online'],
+    ['official_website_link','official_website'],
+  ];
+  for(var _om of _offlineMap){
+    var _v=safe(job[_om[0]]||'');
+    if(_v&&_v.startsWith('http')&&!il[_om[1]]) il[_om[1]]=_v;
   }
 
   var title=safe(bd.job_title||job.title||'Government Job');
