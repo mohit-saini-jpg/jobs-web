@@ -1085,34 +1085,37 @@ def build_all_sections(job_obj):
                     t_html = ''
                     if tname:
                         _total = ''
-                        for _row in data_rows:
-                            for _cell in _row:
-                                _m = re.search(r'\b(\d{2,6})\b', str(_cell))
-                                if _m and 10 <= int(_m.group(1)) <= 99999:
-                                    _total = _m.group(1); break
-                            if _total: break
-                        if _total and re.search(r'(vacancy|post|recruit|eligib)', tname, re.I):
+                        # Only extract total if tname explicitly mentions vacancy/post/recruit
+                        if re.search(r'(vacancy|recruit)', tname, re.I):
+                            for _row in data_rows:
+                                for _cell in _row:
+                                    _cell_str = re.sub(r'\d+\+\d+|\d+th|\d+rd|\d+nd|\d+st', '', str(_cell))
+                                    _m = re.search(r'\b(\d{3,6})\b', _cell_str)
+                                    if _m and 100 <= int(_m.group(1)) <= 99999:
+                                        _total = _m.group(1); break
+                                if _total: break
+                        if _total:
                             smart_name = f"Vacancy Details Total : {_total} Post"
                         else:
                             smart_name = re.sub(r'\s*:\s*Age Limit.*$', '', tname, flags=re.I).strip()[:80] or tname[:80]
                         t_html += f'<div class="tbl-name">{e(smart_name)}</div>'
-                    # Split rows into groups by column count — each group rendered as its own table
-                    # This handles SR tables where header row has 3 cols but data rows have 7 cols
+                    # Split rows into groups by column count
+                    # Header detection: text row AND all cells short (< 120 chars) — long cells = data, not headers
                     def is_text_row(r): return bool(r) and all(not re.search(r'^\d+$', str(c).strip()) for c in r)
+                    def is_header_row(r): return is_text_row(r) and all(len(str(c).strip()) < 120 for c in r)
                     groups = []
                     i = 0
                     while i < len(data_rows):
                         row = data_rows[i]
                         ncols = len(row)
-                        # Start a new group: collect header (if text row) + following rows with same col count
                         header = None
-                        if is_text_row(row):
+                        if is_header_row(row):
                             header = row; i += 1
                         body_rows = []
                         while i < len(data_rows):
                             r = data_rows[i]
-                            if is_text_row(r) and len(r) != ncols:
-                                break  # next group starts
+                            if is_header_row(r) and len(r) != ncols:
+                                break
                             body_rows.append(r); i += 1
                         groups.append((header, body_rows, ncols))
                     for (hdr, brows, ncols) in groups:
@@ -2016,7 +2019,7 @@ for job in SARK:
             if m:
                 age['as_on_date'] = m.group(1)
                 break
-    full = {'basic_details':bd,'important_dates':imp_dates,'application_fee':job.get('application_fees') or {},'age_limit':age,'qualification':job.get('eligibility') or job.get('qualification') or {},'vacancy_details':job.get('vacancy_details') or [],'salary_details':{'pay_scale':safe(job.get('salary_pay_scale',''))} if job.get('salary_pay_scale') else {},'how_to_apply':[job['how_to_apply']] if isinstance(job.get('how_to_apply'),str) and job.get('how_to_apply') else (job.get('how_to_apply') or []),'important_links':il,'sections':sections_out,'faq':job.get('faq') or [],'category':job.get('category',''),'slug':slug,
+    full = {'basic_details':bd,'important_dates':imp_dates,'application_fee':job.get('application_fees') or job.get('application_fee') or {},'age_limit':age,'qualification':job.get('eligibility') or job.get('qualification') or {},'vacancy_details':job.get('vacancy_details') or [],'salary_details':{'pay_scale':safe(job.get('salary_pay_scale',''))} if job.get('salary_pay_scale') else {},'how_to_apply':[job['how_to_apply']] if isinstance(job.get('how_to_apply'),str) and job.get('how_to_apply') else (job.get('how_to_apply') or []),'important_links':il,'sections':sections_out,'faq':job.get('faq') or [],'category':job.get('category',''),'slug':slug,
              'tables':job.get('tables') or [],'text_sections':job.get('text_sections') or [],'useful_links':job.get('useful_links') or [],'all_links':job.get('all_links') or [],'details_page_content':job.get('details_page_content') or {}}
     canon = f"{BASE_URL}/jobs/{slug}/"
     bc    = [('Latest Jobs', f"{BASE_URL}/section/latest-jobs/")]
