@@ -80,6 +80,13 @@
   to     = "/"
   status = 301
 
+# SEO FIX: /index.html → / (single canonical homepage)
+[[redirects]]
+  from   = "/index.html"
+  to     = "/"
+  status = 301
+  force  = true
+
 # ═══════════════════════════════════════════════════════════════
 # 301 PERMANENT REDIRECTS — Old .html URLs → Clean URLs
 # These run BEFORE the 200 rewrites below

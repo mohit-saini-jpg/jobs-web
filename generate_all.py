@@ -2080,7 +2080,17 @@ for cat, jobs_list in FJA.items():
         title = safe(bd.get('job_title',''))
         if not title: continue
         slug = slugify(title)
-        if slug in seen_jobs: slug = f"{slug}-{cat_slug}"[:80]
+        # SEO FIX (One Job = One URL): the same recruitment is listed under
+        # multiple qualification categories. The old line appended "-{cat_slug}"
+        # which minted a SEPARATE duplicate HTML page per category
+        # (e.g. ...-bba, ...-bca, ...-mba-pgdm) -> 10-19 dup URLs per job and
+        # "Discovered - currently not indexed" in Google. We now skip duplicates
+        # so the first-seen category owns the single canonical /jobs/{slug}/ page.
+        # IMPORTANT: this only affects DETAIL-PAGE creation. Category LISTING
+        # pages are built separately and still show the job under every relevant
+        # category, all linking to this one canonical URL. JSON order preserved.
+        if slug in seen_jobs:
+            continue
         seen_jobs[slug] = cat; job['category'] = cat
         canon = f"{BASE_URL}/jobs/{slug}/"
         # R9 FIX: Breadcrumb uses correct qualification hierarchy
