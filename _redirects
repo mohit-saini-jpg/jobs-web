@@ -3923,3 +3923,31 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 
 # ══ FIX: orphan scheme link (no detail page) → scheme section ══
 /jobs/haryana-lpg-apply/  /section/govt-scheme-yojna/  301
+
+# ══ SEO FIX: state-page job slugs → canonical /jobs/ page or state listing (no 404) ══
+/jobs/aad-iit-roorkee-audiologist-and-speech-language-pathologist-aslp-assistant-1-pos/  /state/uttarakhand/  301
+/jobs/akola-urban-cooperative-bank-sr-bank-officer-and-relationship-manager-and-market/  /jobs/akola-urban-cooperative-bank-sr-bank-officer-and-relationship-manager-marketing/  301
+/jobs/andaman-and-nicobar-police-group-b-ng-and-group-c-495-posts/  /state/andaman-and-nicobar/  301
+/jobs/bsnl-general-manager-in-finance-and-accounts-15-posts/  /jobs/bsnl-general-manager-in-finance-accounts-15-posts/  301
+/jobs/cdm-and-pho-balangir-physicianconsultant-medicine-nphce-and-mo-mbbs-3-posts/  /state/odisha/  301
+/jobs/dcil-fleet-personnel-and-trainees-45-posts/  /state/andhra-pradesh/  301
+/jobs/delhi-university-research-assistant-and-field-investigator-2-posts/  /jobs/delhi-university-research-assistant-field-investigator-2-posts/  301
+/jobs/district-and-sessions-judge-angul-junior-clerk-cum-copyist-stenographer-and-more/  /state/odisha/  301
+/jobs/district-and-sessions-judge-west-jaintia-hills-record-keeper-steno-and-more-8-po/  /state/meghalaya/  301
+/jobs/district-and-sessions-judge-yamuna-nagar-peon-10-posts/  /state/haryana/  301
+/jobs/district-court-rayagada-junior-clerk-cum-copyist-junior-typist-and-stenographer-/  /jobs/district-court-rayagada-junior-clerkcopyist-2-posts/  301
+/jobs/echs-meerut-medical-para-medical-and-non-medical-staff-45-posts/  /jobs/echs-meerut-medical-para-medical-non-medical-staff-45-posts/  301
+/jobs/fssai-group-b-and-c-11-posts/  /state/delhi/  301
+/jobs/government-polytechnic-narpala-junior-assistant-lab-attender-office-subordinate-/  /jobs/government-polytechnic-narpala-junior-assistant-lab-attender-office-subordinate/  301
+/jobs/icar-iari-junior-research-fellow-and-scientific-and-administrative-assistant-or-/  /jobs/icar-iari-junior-research-fellow-and-scientific-administrative-assistant-or-fiel/  301
+/jobs/manit-bhopal-research-associate-and-junior-research-fellow-2-posts/  /jobs/manit-bhopal-research-associate-and-research-assistant-2-posts/  301
+/jobs/moef-and-cc-research-associate-4-posts/  /state/delhi/  301
+/jobs/msetcl-chief-engineer-and-superintending-engineer-4-posts/  /state/maharashtra/  301
+/jobs/nia-jaipur-and-panchkula-professor-accountant-and-more-49-posts/  /state/rajasthan/  301
+/jobs/rcfl-honorary-doctors-and-panel-doctors-46-posts/  /state/maharashtra/  301
+/jobs/rssb-senior-computer-instructor-and-basic-computer-instructor-3951-posts/  /jobs/rssb-senior-computer-instructor-basic-computer-instructor-3951-posts/  301
+/jobs/secl-tele-comradio-mechanic-t-and-s-65-posts/  /jobs/secl-tele-comradio-mechanic-ts-65-posts/  301
+/jobs/ssc-group-b-and-group-c-12256-posts/  /state/delhi/  301
+/jobs/ucsl-assistant-general-manager-and-deputy-manager-5-posts/  /state/karnataka/  301
+/jobs/vmmc-and-safdarjung-hospital-junior-residents-151-posts/  /state/delhi/  301
+/jobs/vmmc-and-safdarjung-hospital-senior-resident-179-posts/  /state/delhi/  301

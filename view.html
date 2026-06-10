@@ -394,7 +394,7 @@
   <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
-  <script src="/tsj-menu.js?v=20260610112245" defer></script>
+  <script src="/tsj-menu.js?v=20260610083552" defer></script>
   <script src="/pwa-install.js?v=6.0" defer></script>
   <!-- ══ END PWA ════════════════════════════════════════════════════ -->
 </head>
@@ -602,9 +602,26 @@
 
     var PAGE_SIZE=30, allItems=[], shownCount=0;
 
+    // SEO slug generator — mirrors generate_all.py slugify() so the URL
+    // matches the actual /jobs/{slug}/ page (One Job = One URL).
+    function tsjSlug(name){
+      return String(name||'').toLowerCase()
+        .replace(/[\u2013\u2014]/g,'-')   // – — → -
+        .replace(/&/g,' and ')
+        .normalize('NFKD').replace(/[\u0300-\u036f]/g,'')
+        .replace(/['']/g,'')
+        .replace(/[^a-z0-9\s-]/g,'')
+        .replace(/[\s-]+/g,'-')
+        .replace(/^-|-$/g,'')
+        .slice(0,80);
+    }
     function buildCard(item, idx){
       var a=document.createElement('a');
-      if(item.slug){a.href='/jobs/'+item.slug+'/';}
+      // Prefer the internal clean URL. Use explicit slug if present, else
+      // derive it from the job name so state/section cards point to the
+      // single canonical /jobs/{slug}/ page (SEO-friendly, no query string).
+      var _slug = item.slug || (item.name ? tsjSlug(item.name) : '');
+      if(_slug){a.href='/jobs/'+_slug+'/';}
       else if(item.url&&item.url!=='#'&&!/^view\.html/.test(item.url)){
         a.href=item.url;
         if(!/topsarkarijobs\.com/.test(item.url)){a.target='_blank';a.rel='noopener noreferrer';}
@@ -677,7 +694,8 @@
         } else {
           hits.forEach(function(item){
             var a=document.createElement('a');a.className='sv-drop-item';
-            a.href=item.slug?'/jobs/'+item.slug+'/':(item.url||'#');
+            var _ds=item.slug||(item.name?tsjSlug(item.name):'');
+            a.href=_ds?'/jobs/'+_ds+'/':(item.url||'#');
             var n=document.createElement('span');n.className='sv-drop-name';n.textContent=item.name;
             var m=document.createElement('span');m.className='sv-drop-meta';
             m.textContent=[item.date&&'Last Date: '+fmtDate(item.date),item.vac&&item.vac+' posts'].filter(Boolean).join(' · ');
@@ -997,7 +1015,7 @@
 
   <script src="/script.min.js?v=20260610030605" defer></script>
   <script src="/seo-engine.min.js?v=20260610030605" defer></script>
-<script src="/tsj-push.js?v=20260610112245" defer></script>
+<script src="/tsj-push.js?v=20260610083552" defer></script>
 <script src="/tsj-version.js"?v=20260530023112 defer></script>
 </body>
 </html>
