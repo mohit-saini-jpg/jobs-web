@@ -1,51 +1,30 @@
-# WHERE TO PUT FILES — Complete Site (Final) 2026-06-10
+# WHERE TO PUT FILES — Complete Clean Site 2026-06-10
 
 Repo: `mohit-saini-jpg/jobs-web` | Branch: `main`
 
-Yeh **complete site ZIP** hai. Extract karke poora content repo me replace
-karke push kar do. Netlify auto-deploy. UI/design/layout/CSS kuch nahi badla.
+Extract karke poora content repo me replace karke push kar do. Netlify auto-deploy.
+UI/design/layout/CSS kuch nahi badla.
 
----
+## Final state (sab verified)
+- **0 duplicate pages** — 656 true-duplicate HTML pages (`-bba`, `-bca`, `-latest-jobs`
+  etc., jinka content master jaisa hi tha) delete kar diye. Har deleted URL ka **301
+  redirect** master page pe (koi 404 nahi).
+- **One page = One URL** — 3,200 unique job pages, har ek ka apna sahi self-canonical.
+  Google ab ek recruitment ka ek hi page index karega.
+- **Ek item, alag categories, same URL** — ek job apni saari qualifications ki list me
+  dikhta hai (jaise IIM Bodh Gaya 15 categories me), par sab ek hi `/jobs/{slug}/` URL
+  pe. Listing pehle jaisa intact (10th Pass = 62, etc.).
+- **JSON order preserved** — JSON me jo pehle, listing me upar.
+- **0 broken internal links** — 3 truncation-broken + 1 orphan link bhi theek kar diye.
+- **Homepage single URL** — `/index.html` → `/` 301 (neeche detail).
+- **Generator fixed (dono copies)** — aage naye duplicate nahi banenge.
+- **Sitemap cleaned** — 656 dup URLs hate, 3,200 valid URLs, valid XML.
 
-## Is build me kya hai
-
-### ✅ Listing pages — pehle jaise (kuch nahi toda)
-- Ek job apni **saari relevant categories** ki list me dikhta hai
-  (10th Pass = 62, Latest Jobs, B.Tech, state-wise, education — sab intact).
-- **JSON order preserved**: jo item JSON me pehle, woh listing me upar; purane
-  neeche.
-- Listing ka har job link uske **single canonical `/jobs/{slug}/` page** pe
-  jaata hai.
-- **0 broken internal links** (verified).
-- Detail page complete data ke saath (Dates, Vacancy, Eligibility, Fee,
-  How to Apply, Links, Age Limit, FAQ) — pehle jaisa.
-
-### ✅ One Job = One URL = One HTML page
-Generator ab ek recruitment ke liye **sirf ek** detail page banata hai. Pehle
-har qualification category ke liye alag duplicate page (`-bba`, `-bca`,
-`-mba-pgdm`...) banta tha — woh band. Aage naye duplicate **nahi** banenge.
-Dono generator copies fixed + synced:
-- `/generate_all.py`
-- `/.github/workflows/generate_all.py`
-
-### ✅ Homepage single URL
-`/index.html` → `/` 301 redirect. Sirf `https://www.topsarkarijobs.com/`.
-
-### ✅ www canonical (already tha — verified)
-non-www / http sab `https://www.` pe 301.
-
----
-
-## NOTE — purane duplicate pages
-Aapke pehle live site pe jo `-bba`/`-bca`/`-latest-jobs` type purane duplicate
-pages the, woh is build me **delete nahi** kiye gaye (taaki koi 404 na aaye aur
-listing kuch na tute). Generator unhe dobara nahi banata, par delete bhi nahi
-karta. Jab aap ready ho, in purane duplicates ko canonical-redirect se master
-page pe consolidate karwa sakte ho — woh alag se safe step me kar dunga.
-
----
+## NON-duplicate purane pages
+Sirf TRUE duplicates (same content) delete hue. Jo purane pages unique content
+rakhte the, woh sab safe hain — kuch nahi hata.
 
 ## Deploy ke baad (GSC)
-1. `https://www.topsarkarijobs.com/index.html` kholo → `/` pe redirect ho.
-2. GSC → Sitemaps → `sitemap-index.xml` dobara submit (refresh).
+1. `https://www.topsarkarijobs.com/index.html` → `/` redirect verify karo.
+2. GSC → Sitemaps → `sitemap-index.xml` dobara submit.
 3. Indexing kuch hafton me improve hoga.
