@@ -18,8 +18,11 @@ from pathlib import Path
 
 # ── Config ────────────────────────────────────────────────────
 ROOT     = Path('.')
-CJ_FILE  = ROOT / 'data' / 'Complete_Jobs_Full_Data.json'
-if not CJ_FILE.exists(): CJ_FILE = ROOT / 'Complete_Jobs_Full_Data.json'
+# Prefer root Complete_Jobs_Full_Data.json (scraper output = source of truth for ordering)
+# Fall back to data/ subdirectory if root not found
+_root_cj = ROOT / 'Complete_Jobs_Full_Data.json'
+_data_cj  = ROOT / 'data' / 'Complete_Jobs_Full_Data.json'
+CJ_FILE   = _root_cj if _root_cj.exists() else _data_cj
 DU_FILE  = ROOT / 'dailyupdates.json'
 BASE_URL = 'https://www.topsarkarijobs.com'
 
@@ -539,6 +542,7 @@ def render_links(il_obj):
         'notification_pdf':     ('Download Notification', 'btn-pdf',     'fa-file-pdf'),
         'download_notification':('Download Notification', 'btn-pdf',     'fa-file-pdf'),
         'official_notification':('Official Notification', 'btn-pdf',     'fa-file-pdf'),
+        'application_form':     ('Download Application Form', 'btn-pdf', 'fa-file-pdf'),
         'registration_link':    ('Register Now',          'btn-register','fa-user-plus'),
         'login_link':           ('Login',                 'btn-login',   'fa-right-to-bracket'),
         'admit_card':           ('Admit Card',            'btn-admit',   'fa-id-card'),
@@ -712,13 +716,23 @@ TITLE_MAP = {
     'total post and qualification':'vacancy_details',
     'vacancy details':'vacancy_details', 'pay scale details':'salary_details',
     'salary details':'salary_details', 'salary / pay scale':'salary_details',
+    'monthly salary details':'salary_details', 'monthly salary':'salary_details',
+    'salary & pay scale':'salary_details', 'pay scale':'salary_details',
     'how to apply':'how_to_apply', 'gender wise vacancies':'category_wise_vacancy',
-    'category wise vacancy':'category_wise_vacancy', 'exam pattern':'exam_pattern',
-    'syllabus':'syllabus', 'physical eligibility':'physical_eligibility',
+    'category wise vacancy':'category_wise_vacancy',
+    'exam pattern':'exam_pattern', 'stage-ii exam pattern':'physical_eligibility',
+    'stage-i exam pattern':'exam_pattern', 'written exam pattern':'exam_pattern',
+    'syllabus':'syllabus',
+    'physical eligibility':'physical_eligibility',
+    'physical eligibility details':'physical_eligibility',
     'physical standards':'physical_eligibility',
+    'physical fitness test':'physical_eligibility',
+    'physical measurement':'physical_eligibility',
     'also read :':'important_links_extra', 'also read':'important_links_extra',
     'important related links':'important_links_extra',
     'important instructions':'important_instructions',
+    'qualification details':'qualification_section',
+    'post wise vacancies':'vacancy_details',
 }
 SKIP_TITLES = {'set as preferred source on google','set as preferred source','about'}
 
@@ -728,7 +742,7 @@ def render_sarkari_sections(sections_list, existing_il=None):
     data = {
         'dates':[],'fee':[],'age':[],'sel':[],'vac_tables':[],'cat_vac':[],
         'salary':[],'hta':[],'inst':[],'exam':[],'syllabus':[],'physical':[],
-        'also_read':None,'raw':[]
+        'also_read':None,'raw':[],'_has_phys_table':False
     }
 
     def get_list(content_blocks):
@@ -762,19 +776,51 @@ def render_sarkari_sections(sections_list, existing_il=None):
             tables = get_tables(content); items = get_list(content)
             data['cat_vac'].extend(tables)
             if items: data['cat_vac'].append({'_list': items})
-        elif mapped == 'salary_details': data['salary'].extend(get_list(content))
+        elif mapped == 'salary_details':
+            data['salary'].extend(get_list(content))
+            data['salary'].extend(get_tables(content))  # capture salary tables too
         elif mapped == 'how_to_apply': data['hta'].extend(get_list(content))
         elif mapped == 'important_instructions': data['inst'].extend(get_list(content))
         elif mapped == 'exam_pattern':
             data['exam'].extend(get_list(content)); data['exam'].extend(get_tables(content))
         elif mapped == 'syllabus': data['syllabus'].extend(get_list(content))
-        elif mapped == 'physical_eligibility': data['physical'].extend(get_list(content))
+        elif mapped == 'physical_eligibility':
+            tables = get_tables(content)
+            items = get_list(content)
+            if tables:
+                # Table is authoritative — add to vac_tables, mark that phys table exists
+                for t in tables: data['vac_tables'].append({'_phys_table': t})
+                data['_has_phys_table'] = True
+            elif not data.get('_has_phys_table'):
+                # Only add text items if no table has been seen yet for physical
+                data['physical'].extend(items)
+        elif mapped == 'qualification_section':
+            items = get_list(content); tables = get_tables(content)
+            if tables:
+                for t in tables: data['vac_tables'].append({'_qual_table': t})
+            # Items only go to raw if no table — avoid double render
+            if items and not tables:
+                data['raw'].append({'title': 'Qualification Details', 'content': [{'type':'list','items':items}]})
         elif mapped == 'important_links_extra':
             for b in content:
                 if b.get('type')=='table' and b.get('rows'):
                     data['also_read'] = b['rows']; break
         else:
             if content: data['raw'].append({'title':title,'content':content})
+
+    # Post-process: if structured data was extracted (dates/fee/age/sel),
+    # strip tables from empty-title raw sections — they're summary duplicates
+    if data['dates'] or data['fee'] or data['age'] or data['sel']:
+        cleaned_raw = []
+        for raw_sec in data['raw']:
+            if not raw_sec.get('title','').strip():
+                # Keep only non-table blocks (paragraphs, lists)
+                clean_content = [b for b in raw_sec.get('content',[]) if b.get('type') != 'table']
+                if clean_content:
+                    cleaned_raw.append({'title': raw_sec['title'], 'content': clean_content})
+            else:
+                cleaned_raw.append(raw_sec)
+        data['raw'] = cleaned_raw
 
     html = ''
     if data['dates']:
@@ -792,9 +838,16 @@ def render_sarkari_sections(sections_list, existing_il=None):
         if isinstance(tbl, list):
             rendered = render_smart_table(tbl)
             if rendered: html += sec_card('vacancy_details','fa-chart-pie','15803d,#16a34a', rendered)
+        elif isinstance(tbl, dict) and tbl.get('_phys_table'):
+            # Physical eligibility table — render in physical section
+            rendered = render_smart_table(tbl['_phys_table'])
+            if rendered: html += sec_card('physical_eligibility','fa-dumbbell','be123c,#e11d48', rendered)
+        elif isinstance(tbl, dict) and tbl.get('_qual_table'):
+            rendered = render_smart_table(tbl['_qual_table'])
+            if rendered: html += sec_card('qualification','fa-graduation-cap','4338ca,#6366f1', rendered)
         elif isinstance(tbl, dict) and tbl.get('_list'):
             lis = render_list_items(tbl['_list'])
-            if lis: html += sec_card('qualification','fa-graduation-cap','4338ca,#6366f1', lis)
+            if lis: html += sec_card('vacancy_details','fa-chart-pie','15803d,#16a34a', lis)
     for tbl in data['cat_vac']:
         if isinstance(tbl, list):
             rendered = render_smart_table(tbl)
@@ -803,8 +856,10 @@ def render_sarkari_sections(sections_list, existing_il=None):
             lis = render_list_items(tbl['_list'])
             if lis: html += sec_card('vacancy_details','fa-chart-pie','15803d,#16a34a', lis)
     if data['salary']:
-        lis = render_list_items(data['salary'])
-        if lis: html += sec_card('salary_details','fa-indian-rupee-sign','15803d,#16a34a', lis)
+        salary_items = [x for x in data['salary'] if isinstance(x, str)]
+        salary_tables = [x for x in data['salary'] if isinstance(x, list)]
+        sal_body = render_list_items(salary_items) + ''.join(render_smart_table(t) for t in salary_tables)
+        if sal_body: html += sec_card('salary_details','fa-indian-rupee-sign','15803d,#16a34a', sal_body)
     if data['exam']:
         items = [x for x in data['exam'] if isinstance(x,str)]
         tables = [x for x in data['exam'] if isinstance(x,list)]
@@ -841,7 +896,10 @@ def render_sarkari_sections(sections_list, existing_il=None):
                              ('fa-arrow-up-right-from-square','btn-default'))
                     btns += f'<a href="{e(url)}" class="lnk-btn {cl}" target="_blank" rel="noopener noreferrer"><i class="fa-solid {ic}"></i> {e(lbl[:50])}</a>\n'
         if btns: html += sec_card('important_links','fa-link','1e40af,#1e3a8a', f'<div class="links-grid">{btns}</div>')
-    html += render_edu_sections(data['raw'])
+    # Wrap raw sections in proper sec-card — prevents orphan edu-sec blocks floating outside cards
+    raw_html = render_edu_sections(data['raw'])
+    if raw_html.strip():
+        html += sec_card('Details', 'fa-circle-info', '0369a1,#0284c7', raw_html)
     return html
 
 
@@ -936,8 +994,8 @@ SKIP_KEYS = {'seo_tags','category','slug','source_url','url','_slug',
 
 SECTION_ORDER = ['basic_details','important_dates','application_fee','age_limit',
                  'qualification','vacancy_details','category_wise_vacancy','salary_details',
-                 'tables','text_sections','useful_links','all_links','details_page_content',
                  'selection_process','exam_pattern','syllabus','physical_eligibility',
+                 'tables','text_sections','useful_links','all_links','details_page_content',
                  'how_to_apply','important_instructions','important_links','faq']
 
 def build_all_sections(job_obj):
@@ -953,6 +1011,19 @@ def build_all_sections(job_obj):
         html += render_sarkari_sections(sections, il)
         rendered.add('sections')
     elif has_edu_secs:
+        # For education/state pages: render Job Overview + Important Dates FIRST (above edu content)
+        for _pre_key in ('basic_details', 'important_dates', 'application_fee'):
+            _pre_val = job_obj.get(_pre_key)
+            if not _pre_val or _pre_val == {} or _pre_val == []: continue
+            rendered.add(_pre_key)
+            if _pre_key == 'basic_details':   _pre_body = render_basic_details(_pre_val)
+            elif _pre_key == 'important_dates': _pre_body = render_dates(_pre_val)
+            elif _pre_key == 'application_fee': _pre_body = render_fee(_pre_val)
+            else: continue
+            if _pre_body and _pre_body.strip():
+                _pre_meta = SECTION_META.get(_pre_key, (_pre_key.replace('_',' ').title(), 'fa-circle-info', '1d4ed8,#2563eb'))
+                html += sec_card(_pre_meta[0], _pre_meta[1], _pre_meta[2], _pre_body)
+        # Now render the edu content sections
         html += render_edu_sections(sections)
         rendered.add('sections')
 
@@ -973,28 +1044,103 @@ def build_all_sections(job_obj):
         elif key == 'exam_pattern':     body = (render_smart_table(val) if isinstance(val,list) and val and isinstance(val[0],dict) else render_list_items(val) if isinstance(val,list) else f'<div class="edu-sec">{e(safe(val))}</div>')
         elif key == 'tables':
             # sarkari_data tables: [{table_name, rows:[[]]}]
+            # gb headline tables = junk (short_info repeat), skip entirely
+            # Link rows ("Apply Online", "Official Website" etc) = extract to useful_links pool
+            LINK_ROW_RE = re.compile(r'^(apply\s+online|official\s+website|notification|admit\s+card|result|answer\s+key|syllabus|login|register|click\s+here|download)', re.I)
+            LINK_KEY_MAP = {
+                'apply online': 'apply_online', 'official website': 'official_website',
+                'notification': 'notification_pdf', 'admit card': 'admit_card',
+                'result': 'result_link', 'answer key': 'answer_key',
+                'login': 'login_link', 'download': 'notification_pdf',
+            }
             if isinstance(val, list):
                 body_parts = []
+                # Collect link rows to inject into useful_links if not already set
+                _extracted_links = {}
                 for tbl in val:
                     if not isinstance(tbl, dict): continue
                     tname = (tbl.get('table_name') or '').strip()
                     rows  = tbl.get('rows') or []
                     if not rows: continue
-                    # Skip garbage table names
-                    if any(x in tname.lower() for x in ['gb headline','headline text','60ccea']): tname = ''
+                    # Skip gb headline / short-info tables entirely
+                    if any(x in tname.lower() for x in ['gb headline','headline text','60ccea','gb headline gb']):
+                        continue
+                    # Filter rows: extract link rows, keep data rows
+                    data_rows = []
+                    for row in rows:
+                        if not isinstance(row, (list, tuple)) or not row: continue
+                        c0 = str(row[0]).strip()
+                        c1 = str(row[1]).strip() if len(row) > 1 else ''
+                        # Timestamp-only rows — skip
+                        if re.match(r'^\d{1,2}\s+\w+\s+\d{4}', c0) and len(row) == 1: continue
+                        # Link rows — extract URL if present
+                        if LINK_ROW_RE.match(c0):
+                            if c1.startswith('http') and not is_blocked(c1):
+                                map_key = next((v for k,v in LINK_KEY_MAP.items() if c0.lower().startswith(k)), 'apply_online')
+                                if map_key not in _extracted_links:
+                                    _extracted_links[map_key] = {'title': c0, 'url': c1}
+                            continue  # Don't render link rows in table
+                        data_rows.append(row)
+                    if not data_rows: continue
                     t_html = ''
                     if tname:
-                        t_html += f'<div class="tbl-name">{e(tname[:200])}</div>'
-                    t_html += '<div class="tbl-scroll"><table class="data-table"><tbody>'
-                    for row in rows:
-                        if not isinstance(row, (list, tuple)): continue
-                        t_html += '<tr>' + ''.join(f'<td>{e(str(cell))}</td>' for cell in row) + '</tr>'
-                    t_html += '</tbody></table></div>'
+                        _total = ''
+                        # Only extract total if tname explicitly mentions vacancy/post/recruit
+                        if re.search(r'(vacancy|recruit)', tname, re.I):
+                            for _row in data_rows:
+                                for _cell in _row:
+                                    _cell_str = re.sub(r'\d+\+\d+|\d+th|\d+rd|\d+nd|\d+st', '', str(_cell))
+                                    _m = re.search(r'\b(\d{3,6})\b', _cell_str)
+                                    if _m and 100 <= int(_m.group(1)) <= 99999:
+                                        _total = _m.group(1); break
+                                if _total: break
+                        if _total:
+                            smart_name = f"Vacancy Details Total : {_total} Post"
+                        else:
+                            smart_name = re.sub(r'\s*:\s*Age Limit.*$', '', tname, flags=re.I).strip()[:80] or tname[:80]
+                        t_html += f'<div class="tbl-name">{e(smart_name)}</div>'
+                    # Split rows into groups by column count
+                    # Header detection: text row AND all cells short (< 120 chars) — long cells = data, not headers
+                    def is_text_row(r): return bool(r) and all(not re.search(r'^\d+$', str(c).strip()) for c in r)
+                    def is_header_row(r): return is_text_row(r) and all(len(str(c).strip()) < 120 for c in r)
+                    groups = []
+                    i = 0
+                    while i < len(data_rows):
+                        row = data_rows[i]
+                        ncols = len(row)
+                        header = None
+                        if is_header_row(row):
+                            header = row; i += 1
+                        body_rows = []
+                        while i < len(data_rows):
+                            r = data_rows[i]
+                            if is_header_row(r) and len(r) != ncols:
+                                break
+                            body_rows.append(r); i += 1
+                        groups.append((header, body_rows, ncols))
+                    for (hdr, brows, ncols) in groups:
+                        if not hdr and not brows: continue
+                        t_html += '<div class="tbl-scroll"><table class="data-table">'
+                        if hdr:
+                            t_html += '<thead><tr>' + ''.join(f'<th>{e(str(c))}</th>' for c in hdr) + '</tr></thead>'
+                        if brows:
+                            t_html += '<tbody>'
+                            for row in brows:
+                                cells = list(row) + [''] * max(0, ncols - len(row))
+                                t_html += '<tr>' + ''.join(f'<td>{e(str(cell))}</td>' for cell in cells) + '</tr>'
+                            t_html += '</tbody>'
+                        t_html += '</table></div>'
                     body_parts.append(t_html)
                 body = ''.join(body_parts) if body_parts else ''
+                # Store extracted links for useful_links section (if job has no useful_links)
+                if _extracted_links and not job_obj.get('useful_links'):
+                    job_obj['_table_links'] = _extracted_links
         elif key == 'text_sections':
             # sarkari_data text_sections: [{section, content}]
-            if isinstance(val, list):
+            # Skip entirely if how_to_apply is already populated — prevents duplicate "How to Apply"
+            if job_obj.get('how_to_apply') and (isinstance(job_obj['how_to_apply'], list) and len(job_obj['how_to_apply']) > 0):
+                body = ''
+            elif isinstance(val, list):
                 body_parts = []
                 for ts in val:
                     if not isinstance(ts, dict): continue
@@ -1013,40 +1159,96 @@ def build_all_sections(job_obj):
                     body_parts.append(ts_html)
                 body = ''.join(body_parts) if body_parts else ''
         elif key == 'useful_links':
-            # sarkari_data useful_links: [{title, links: str|[str]}]
+            # sarkari_data useful_links:
+            #   FORMAT A (list): [{title, links: str|[str]}]
+            #   FORMAT B (dict): {apply_online: url, official_website: url, _all: [{title, links}], ...}
+            ul_items = []  # normalize to list of {title, url}
+
             if isinstance(val, list):
-                rows_html = ''
+                # Format A — direct list
                 for ul_item in val:
                     if not isinstance(ul_item, dict): continue
                     title = safe(ul_item.get('title') or ul_item.get('name') or 'Link')
                     links = ul_item.get('links') or ul_item.get('url') or ''
-                    if isinstance(links, str): links = [links]
-                    valid = [str(l).strip() for l in (links if isinstance(links,list) else [])
-                             if str(l).strip().startswith('http') and not is_blocked(str(l).strip())]
-                    if not valid: continue
-                    if len(valid) == 1:
-                        lnk = valid[0]
-                        ul_lower = lnk.lower()
-                        ic = 'fa-file-pdf' if ul_lower.endswith('.pdf') else 'fa-arrow-up-right-from-square'
-                        cl = 'btn-pdf' if ul_lower.endswith('.pdf') else 'btn-default'
-                        rows_html += (f'<tr><td class="ul-title">{e(title)}</td>'
-                                      f'<td><a href="{e(lnk)}" class="lnk-btn {cl}" target="_blank" rel="noopener noreferrer">'
-                                      f'<i class="fa-solid {ic}"></i> Open</a></td></tr>\n')
-                    else:
-                        # Multiple links: show as "Link 1 | Link 2" row
-                        link_btns = ''
-                        LINK_LABELS = ['Result', 'Cutoff', 'Hindi', 'English', 'Part 1', 'Part 2',
-                                       'Technician I', 'Technician III', 'Grade I', 'Grade III',
-                                       'CBT 1', 'CBT 2', 'Link 1', 'Link 2']
-                        for idx_l, lnk in enumerate(valid):
-                            ul_lower = lnk.lower()
-                            lbl = LINK_LABELS[idx_l] if idx_l < len(LINK_LABELS) else f'Link {idx_l+1}'
-                            ic = 'fa-file-pdf' if ul_lower.endswith('.pdf') else 'fa-arrow-up-right-from-square'
-                            cl = 'btn-pdf' if ul_lower.endswith('.pdf') else 'btn-default'
-                            link_btns += (f'<a href="{e(lnk)}" class="lnk-btn {cl} lnk-sm" target="_blank" rel="noopener noreferrer">'
-                                          f'<i class="fa-solid {ic}"></i> {e(lbl)}</a>\n')
-                        rows_html += (f'<tr><td class="ul-title">{e(title)}</td>'
-                                      f'<td><div class="ul-links">{link_btns}</div></td></tr>\n')
+                    if isinstance(links, list):
+                        for lnk in links:
+                            lnk = str(lnk).strip()
+                            if lnk.startswith('http') and not is_blocked(lnk):
+                                ul_items.append({'title': title, 'url': lnk})
+                    elif isinstance(links, str) and links.startswith('http') and not is_blocked(links):
+                        ul_items.append({'title': title, 'url': links})
+
+            elif isinstance(val, dict):
+                # Format B — dict with known keys + optional _all array
+                # Prefer _all array (has explicit titles), fall back to known keys
+                all_arr = val.get('_all') or []
+                if isinstance(all_arr, list) and all_arr:
+                    for ul_item in all_arr:
+                        if not isinstance(ul_item, dict): continue
+                        title = safe(ul_item.get('title') or ul_item.get('name') or 'Link')
+                        links = ul_item.get('links') or ul_item.get('url') or ''
+                        if isinstance(links, list): links = links[0] if links else ''
+                        lnk = str(links).strip()
+                        if lnk.startswith('http') and not is_blocked(lnk):
+                            ul_items.append({'title': title, 'url': lnk})
+                else:
+                    # No _all — use known keys
+                    KEY_TITLES = {
+                        'apply_online': 'Apply Online',
+                        'notification_pdf': 'Download Notification',
+                        'notification': 'Download Notification',
+                        'document': 'Download Document',
+                        'official_website': 'Official Website',
+                        'result_link': 'Result',
+                        'admit_card': 'Admit Card',
+                        'answer_key': 'Answer Key',
+                        'login_link': 'Login',
+                        'registration_link': 'Register Now',
+                    }
+                    for k, title in KEY_TITLES.items():
+                        lnk = str(val.get(k) or '').strip()
+                        if lnk.startswith('http') and not is_blocked(lnk):
+                            ul_items.append({'title': title, 'url': lnk})
+
+            # Also check _table_links extracted from tables section
+            tbl_links = job_obj.get('_table_links') or {}
+            TBL_KEY_TITLES = {'apply_online':'Apply Online','notification_pdf':'Download Notification',
+                              'official_website':'Official Website','admit_card':'Admit Card',
+                              'result_link':'Result','answer_key':'Answer Key'}
+            seen_urls = {it['url'] for it in ul_items}
+            for k, title in TBL_KEY_TITLES.items():
+                info = tbl_links.get(k)
+                if info and isinstance(info, dict):
+                    lnk = info.get('url','')
+                    if lnk and lnk not in seen_urls:
+                        ul_items.append({'title': info.get('title', title), 'url': lnk})
+                        seen_urls.add(lnk)
+
+            # Render ul_items as smart link buttons
+            if ul_items:
+                def _smart_link(title, url):
+                    ul = url.lower()
+                    t  = title.lower()
+                    if ul.endswith('.pdf') or 'pdf' in ul or 'notice' in ul or 'advertisement' in ul:
+                        return ('fa-file-pdf', 'btn-pdf')
+                    if 'result' in t or 'merit' in t: return ('fa-trophy', 'btn-result')
+                    if 'admit' in t: return ('fa-id-card', 'btn-admit')
+                    if 'answer' in t or 'key' in t: return ('fa-key', 'btn-pdf')
+                    if 'official' in t or 'website' in t: return ('fa-globe', 'btn-default')
+                    if 'apply' in t or 'register' in t or 'ibpsreg' in ul or 'career' in ul:
+                        return ('fa-paper-plane', 'btn-apply')
+                    return ('fa-arrow-up-right-from-square', 'btn-default')
+
+                rows_html = ''
+                seen_render = set()
+                for item in ul_items:
+                    lnk = item['url']
+                    if lnk in seen_render: continue
+                    seen_render.add(lnk)
+                    ic, cl = _smart_link(item['title'], lnk)
+                    rows_html += (f'<tr><td class="ul-title">{e(item["title"])}</td>'
+                                  f'<td><a href="{e(lnk)}" class="lnk-btn {cl}" target="_blank" rel="noopener noreferrer">'
+                                  f'<i class="fa-solid {ic}"></i> Open</a></td></tr>\n')
                 if rows_html:
                     body = (f'<div class="tbl-scroll"><table class="data-table ul-table"><tbody>'
                             f'{rows_html}</tbody></table></div>')
@@ -1070,21 +1272,36 @@ def build_all_sections(job_obj):
                     body = (f'<div class="tbl-scroll"><table class="data-table ul-table"><tbody>'
                             f'{rows_html}</tbody></table></div>')
         elif key == 'details_page_content':
-            # LATEST_JOBS NEW format: {paragraphs:[str], tables:[{headers,rows,table_heading}], lists:[]}
+            # LATEST_JOBS NEW format: {headings:[str], paragraphs:[str], tables:[{headers,rows,table_heading}], lists:[]}
             if isinstance(val, dict):
+                # Determine section title from headings[0], else 'Details'
+                _dpc_headings = val.get('headings') or []
+                _dpc_title = safe(_dpc_headings[0]).strip() if _dpc_headings else 'Details'
+                if not _dpc_title or len(_dpc_title) < 3: _dpc_title = 'Details'
                 parts = []
-                # Paragraphs
+                # Paragraphs — skip junk/noise lines
+                _JUNK_RX = re.compile(r'read also|google पर|sarkari result shine|disclaimer|take me to google|preferred source|save the payment|payment receipt|latest updates check here', re.I)
+                _LINK_LIKE = re.compile(r'^(apply online|official notification|official website|visit|download|apply now|click here)$', re.I)
                 for para in (val.get('paragraphs') or []):
                     para = safe(para).strip()
-                    if para and len(para) > 10:
-                        parts.append(f'<p class="edu-para">{e(para)}</p>')
-                # Tables
+                    if not para or len(para) < 15: continue
+                    if _JUNK_RX.search(para): continue
+                    if _LINK_LIKE.match(para): continue
+                    parts.append(f'<p class="edu-para">{e(para)}</p>')
+                # Tables — skip link-only tables
                 for tbl in (val.get('tables') or []):
                     if not isinstance(tbl, dict): continue
                     heading = safe(tbl.get('table_heading') or tbl.get('heading') or '').strip()
                     headers = tbl.get('headers') or []
                     rows    = tbl.get('rows') or []
                     if not rows: continue
+                    # Skip tables that are just Apply Online / Official Website link rows
+                    all_link_rows = all(
+                        len(r) >= 1 and re.match(r'^(apply online|official notification|official website|visit|download|apply now|click here)$', str(r[0]).strip(), re.I)
+                        for r in rows if isinstance(r,(list,tuple)) and r
+                    )
+                    if all_link_rows: continue
+                    if _JUNK_RX.search(heading): heading = ''
                     t_html = ''
                     if heading:
                         t_html += f'<div class="tbl-name">{e(heading)}</div>'
@@ -1102,6 +1319,10 @@ def build_all_sections(job_obj):
                     if items_l:
                         parts.append('<ul class="val-list">' + ''.join(f'<li>{e(str(it))}</li>' for it in items_l if it) + '</ul>')
                 body = ''.join(parts) if parts else ''
+                # Use dynamic title instead of hardcoded SECTION_META label
+                if body and body.strip():
+                    html += sec_card(_dpc_title, 'fa-circle-info', '1e40af,#3b82f6', body)
+                body = ''  # mark as already rendered
         elif key == 'syllabus':         body = (render_list_items(val) if isinstance(val,list) else f'<div class="edu-sec">{e(safe(val))}</div>')
         elif key == 'physical_eligibility': body = (f'<table class="kv-table"><tbody>' + ''.join(f'<tr><th>{e(key_label(k))}</th><td>{e(safe(v))}</td></tr>' for k,v in val.items() if safe(v)) + '</tbody></table>' if isinstance(val,dict) else render_list_items(val) if isinstance(val,list) else f'<div class="edu-sec">{e(safe(val))}</div>')
         elif key == 'how_to_apply':     body = render_hta(val)
@@ -1237,6 +1458,13 @@ a{text-decoration:none}.skip-link{position:absolute;left:-9999px}.skip-link:focu
 .badges{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px}
 .badge{display:inline-flex;align-items:center;gap:4px;font-size:.7rem;font-weight:700;text-transform:uppercase;padding:3px 9px;border-radius:20px;letter-spacing:.04em}
 .badge-cat{background:#dbeafe;color:#1e40af}.badge-loc{background:#dcfce7;color:#15803d}.badge-mode{background:#ede9fe;color:#5b21b6}
+.dh-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:9px}
+.dh-share{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.dh-share-lbl{font-size:.7rem;font-weight:800;color:#fff;background:linear-gradient(135deg,#7c3aed,#6d28d9);padding:4px 10px;border-radius:20px;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.dh-share-btns{display:flex;gap:5px;flex-wrap:wrap}
+.dh-sh{width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:.82rem;text-decoration:none;border:none;cursor:pointer;transition:transform .12s,opacity .12s}
+.dh-sh:hover{transform:translateY(-2px);opacity:.9}
+.dh-sh.wa{background:#25d366}.dh-sh.tg{background:#0088cc}.dh-sh.fb{background:#1877f2}.dh-sh.tw{background:#000}.dh-sh.li{background:#0a66c2}.dh-sh.cp{background:#64748b}
 .stats-bar{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid #e2e8f0;margin-top:10px}
 .stat{text-align:center;padding:10px 4px;border-right:1px solid #e2e8f0}
 .stat:last-child{border-right:none}
@@ -1259,9 +1487,9 @@ a{text-decoration:none}.skip-link{position:absolute;left:-9999px}.skip-link:focu
 .fee-amt{font-size:.93rem;font-weight:800;color:#1e293b}.fee-free{color:#16a34a}.fee-paid{color:#dc2626}
 .fee-note{padding:9px 14px;font-size:.8rem;color:#78350f;background:#fffbeb;border-top:1px solid #fde68a;display:flex;gap:6px}
 .tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%}
-.data-table{width:100%;border-collapse:collapse;font-size:.81rem;min-width:320px}
-.data-table th{background:#1d4ed8;color:#fff;padding:8px 12px;font-weight:700;text-align:left;white-space:nowrap}
-.data-table td{padding:8px 12px;border-bottom:1px solid #e9eef4;color:#1e293b;word-break:break-word;vertical-align:top;line-height:1.5}
+.data-table{width:100%;border-collapse:collapse;font-size:.81rem;min-width:420px;table-layout:auto}
+.data-table th{background:#1d4ed8;color:#fff;padding:8px 10px;font-weight:700;text-align:left;white-space:nowrap;min-width:70px}
+.data-table td{padding:8px 10px;border-bottom:1px solid #e9eef4;color:#1e293b;word-break:break-word;vertical-align:top;line-height:1.5;min-width:60px}
 .data-table tr:last-child td{border-bottom:none}
 .data-table tr:nth-child(even) td{background:#f8fafc}
 .sel-steps{display:flex;flex-wrap:wrap;gap:8px;padding:12px 14px}
@@ -1300,8 +1528,20 @@ a{text-decoration:none}.skip-link{position:absolute;left:-9999px}.skip-link:focu
 .rel-section{background:#fff;border:1px solid #e2e8f0;border-radius:12px;margin-top:10px;overflow:hidden}
 .rel-head{padding:10px 14px;background:#f8fafc;border-bottom:1px solid #e2e8f0;font-size:.82rem;font-weight:700;color:#374151}
 .rel-grid{display:flex;flex-wrap:wrap;gap:7px;padding:11px 14px}
-.rel-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;font-size:.77rem;font-weight:600;text-decoration:none;background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;transition:all .15s}
+.rel-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;font-size:.77rem;font-weight:600;text-decoration:none;background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;transition:all .15s;white-space:nowrap}
 .rel-btn:hover{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
+.rel-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;margin-top:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.rel-card-head{padding:10px 14px;font-size:.82rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:7px}
+.rel-card-head.c-state{background:linear-gradient(135deg,#1e40af,#2563eb)}
+.rel-card-head.c-cat{background:linear-gradient(135deg,#059669,#047857)}
+.rel-card-head.c-edu{background:linear-gradient(135deg,#7c3aed,#6d28d9)}
+.rel-card-head.c-qual{background:linear-gradient(135deg,#b45309,#d97706)}
+.rel-card-head.c-social{background:linear-gradient(135deg,#dc2626,#ea580c)}
+.rel-card-body{display:flex;flex-wrap:wrap;gap:7px;padding:12px 14px}
+.rel-social-body{display:flex;flex-direction:column;gap:8px;padding:12px 14px}
+.rel-social{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border-radius:8px;font-size:.82rem;font-weight:800;color:#fff;text-decoration:none;transition:opacity .12s}
+.rel-social:hover{opacity:.9}
+.rel-social.wa{background:#25d366}.rel-social.yt{background:#ff0000}.rel-social.ig{background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)}.rel-social.tg{background:#0088cc}.rel-social.fb{background:#1877f2}.rel-social.sc{background:#fffc00;color:#1a1a1a}
 .cat-wrap{max-width:880px;margin:0 auto;padding:12px 10px 48px}
 .cat-header{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:15px 18px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
 .cat-h1{font-size:1.1rem;font-weight:900;color:#0f172a;margin:0 0 4px}
@@ -1319,9 +1559,171 @@ a{text-decoration:none}.skip-link{position:absolute;left:-9999px}.skip-link:focu
 .job-card-date{font-size:.76rem;font-weight:700}.job-card-date.urgent{color:#dc2626}
 .job-card-links{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
 .jl-btn{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:700;text-decoration:none;transition:all .12s;border:1px solid transparent;min-height:28px}
+.btn-answer{background:#fef9c3;color:#854d0e;border-color:#fde68a}.btn-answer:hover{background:#b45309;color:#fff}
 """
 
 # ── Page builder ───────────────────────────────────────────────
+REL_CATS_HTML = '''<div class="rel-section">
+<div class="rel-head"><i class="fa-solid fa-grip"></i> Related Categories</div>
+<div style="padding:0 14px 14px">
+
+<div class="rel-cats-grid">
+
+  <!-- State Wise Jobs CARD -->
+  <div class="rel-card">
+    <div class="rel-card-head c-state"><i class="fa-solid fa-map-location-dot"></i> State Wise Jobs</div>
+    <div class="rel-card-body">
+      <a href="/state-jobs/andhra-pradesh/" class="rel-btn">Andhra Pradesh</a>
+      <a href="/state-jobs/arunachal-pradesh/" class="rel-btn">Arunachal Pradesh</a>
+      <a href="/state-jobs/assam/" class="rel-btn">Assam</a>
+      <a href="/state-jobs/bihar/" class="rel-btn">Bihar</a>
+      <a href="/state-jobs/chandigarh/" class="rel-btn">Chandigarh</a>
+      <a href="/state-jobs/chhattisgarh/" class="rel-btn">Chhattisgarh</a>
+      <a href="/state-jobs/delhi/" class="rel-btn">Delhi</a>
+      <a href="/state-jobs/goa/" class="rel-btn">Goa</a>
+      <a href="/state-jobs/gujarat/" class="rel-btn">Gujarat</a>
+      <a href="/state-jobs/haryana/" class="rel-btn">Haryana</a>
+      <a href="/state-jobs/himachal-pradesh/" class="rel-btn">Himachal Pradesh</a>
+      <a href="/state-jobs/jammu-and-kashmir/" class="rel-btn">Jammu &amp; Kashmir</a>
+      <a href="/state-jobs/jharkhand/" class="rel-btn">Jharkhand</a>
+      <a href="/state-jobs/karnataka/" class="rel-btn">Karnataka</a>
+      <a href="/state-jobs/kerala/" class="rel-btn">Kerala</a>
+      <a href="/state-jobs/madhya-pradesh/" class="rel-btn">Madhya Pradesh</a>
+      <a href="/state-jobs/maharashtra/" class="rel-btn">Maharashtra</a>
+      <a href="/state-jobs/meghalaya/" class="rel-btn">Meghalaya</a>
+      <a href="/state-jobs/mizoram/" class="rel-btn">Mizoram</a>
+      <a href="/state-jobs/nagaland/" class="rel-btn">Nagaland</a>
+      <a href="/state-jobs/odisha/" class="rel-btn">Odisha</a>
+      <a href="/state-jobs/puducherry/" class="rel-btn">Puducherry</a>
+      <a href="/state-jobs/punjab/" class="rel-btn">Punjab</a>
+      <a href="/state-jobs/rajasthan/" class="rel-btn">Rajasthan</a>
+      <a href="/state-jobs/sikkim/" class="rel-btn">Sikkim</a>
+      <a href="/state-jobs/tamil-nadu/" class="rel-btn">Tamil Nadu</a>
+      <a href="/state-jobs/telangana/" class="rel-btn">Telangana</a>
+      <a href="/state-jobs/tripura/" class="rel-btn">Tripura</a>
+      <a href="/state-jobs/uttar-pradesh/" class="rel-btn">Uttar Pradesh</a>
+      <a href="/state-jobs/uttarakhand/" class="rel-btn">Uttarakhand</a>
+      <a href="/state-jobs/west-bengal/" class="rel-btn">West Bengal</a>
+      <a href="/state-jobs/andaman-and-nicobar/" class="rel-btn">Andaman &amp; Nicobar</a>
+      <a href="/state-jobs/dadra-and-nagar-haveli/" class="rel-btn">Dadra &amp; Nagar Haveli</a>
+      <a href="/state-jobs/" class="rel-btn rel-btn-all"><i class="fa-solid fa-list"></i> All State Jobs</a>
+    </div>
+  </div>
+
+  <!-- Job Categories CARD -->
+  <div class="rel-card">
+    <div class="rel-card-head c-cat"><i class="fa-solid fa-layer-group"></i> Job Categories</div>
+    <div class="rel-card-body">
+      <a href="/section/latest-jobs/" class="rel-btn"><i class="fa-solid fa-bolt"></i> Latest Jobs</a>
+      <a href="/section/results/" class="rel-btn"><i class="fa-solid fa-trophy"></i> Results</a>
+      <a href="/section/admit-card/" class="rel-btn"><i class="fa-solid fa-id-card"></i> Admit Cards</a>
+      <a href="/section/answer-key/" class="rel-btn"><i class="fa-solid fa-key"></i> Answer Key</a>
+      <a href="/section/upcoming-jobs/" class="rel-btn"><i class="fa-solid fa-calendar-plus"></i> Upcoming Jobs</a>
+      <a href="/section/offline-form/" class="rel-btn"><i class="fa-solid fa-file-pen"></i> Offline Form</a>
+      <a href="/section/railway-jobs/" class="rel-btn"><i class="fa-solid fa-train"></i> Railway Jobs</a>
+      <a href="/section/police-jobs/" class="rel-btn"><i class="fa-solid fa-shield-halved"></i> Police / Defence</a>
+      <a href="/section/bank-jobs/" class="rel-btn"><i class="fa-solid fa-building-columns"></i> Bank Jobs</a>
+      <a href="/section/teaching-jobs/" class="rel-btn"><i class="fa-solid fa-chalkboard-user"></i> Teaching Jobs</a>
+      <a href="/section/army-jobs/" class="rel-btn"><i class="fa-solid fa-shield-halved"></i> Army / Navy / AF</a>
+      <a href="/section/healthcare-jobs/" class="rel-btn"><i class="fa-solid fa-stethoscope"></i> Medical / Health</a>
+      <a href="/section/engineering-jobs/" class="rel-btn"><i class="fa-solid fa-gear"></i> Engineering Jobs</a>
+      <a href="/section/central-jobs/" class="rel-btn"><i class="fa-solid fa-landmark"></i> Central Govt Jobs</a>
+      <a href="/section/admissions/" class="rel-btn"><i class="fa-solid fa-graduation-cap"></i> Admissions</a>
+      <a href="/section/govt-scheme-yojna/" class="rel-btn"><i class="fa-solid fa-hand-holding-heart"></i> Govt Schemes</a>
+      <a href="/section/top-20-jobs/" class="rel-btn"><i class="fa-solid fa-medal"></i> Top 20 Jobs</a>
+      <a href="/section/jobs-with-last-date/" class="rel-btn"><i class="fa-solid fa-clock"></i> Last Date Near</a>
+      <a href="/category/popular/" class="rel-btn"><i class="fa-solid fa-star"></i> Popular Categories</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- Education State Wise CARD -->
+<div class="rel-card">
+<div class="rel-card-head c-edu"><i class="fa-solid fa-graduation-cap"></i> Education State Wise Jobs</div>
+<div class="rel-card-body">
+  <a href="/education/andhra-pradesh/" class="rel-btn">AP Education</a>
+  <a href="/education/assam/" class="rel-btn">Assam Education</a>
+  <a href="/education/bihar/" class="rel-btn">Bihar Education</a>
+  <a href="/education/chhattisgarh/" class="rel-btn">Chhattisgarh Education</a>
+  <a href="/education/delhi/" class="rel-btn">Delhi Education</a>
+  <a href="/education/gujarat/" class="rel-btn">Gujarat Education</a>
+  <a href="/education/haryana/" class="rel-btn">Haryana Education</a>
+  <a href="/education/himachal-pradesh/" class="rel-btn">HP Education</a>
+  <a href="/education/jharkhand/" class="rel-btn">Jharkhand Education</a>
+  <a href="/education/karnataka/" class="rel-btn">Karnataka Education</a>
+  <a href="/education/kerala/" class="rel-btn">Kerala Education</a>
+  <a href="/education/madhya-pradesh/" class="rel-btn">MP Education</a>
+  <a href="/education/maharashtra/" class="rel-btn">Maharashtra Education</a>
+  <a href="/education/odisha/" class="rel-btn">Odisha Education</a>
+  <a href="/education/punjab/" class="rel-btn">Punjab Education</a>
+  <a href="/education/rajasthan/" class="rel-btn">Rajasthan Education</a>
+  <a href="/education/tamil-nadu/" class="rel-btn">Tamil Nadu Education</a>
+  <a href="/education/telangana/" class="rel-btn">Telangana Education</a>
+  <a href="/education/uttar-pradesh/" class="rel-btn">UP Education</a>
+  <a href="/education/uttarakhand/" class="rel-btn">Uttarakhand Education</a>
+  <a href="/education/west-bengal/" class="rel-btn">West Bengal Education</a>
+  <a href="/education/" class="rel-btn rel-btn-all"><i class="fa-solid fa-list"></i> All Education Jobs</a>
+</div>
+</div>
+
+<!-- Qualification Wise CARD -->
+<div class="rel-card">
+<div class="rel-card-head c-qual"><i class="fa-solid fa-book-open"></i> Qualification Wise Government Jobs</div>
+<div class="rel-card-body">
+  <a href="/qualification/8th-pass/" class="rel-btn">8th Pass</a>
+  <a href="/qualification/10th-pass/" class="rel-btn">10th Pass</a>
+  <a href="/qualification/12th-pass/" class="rel-btn">12th Pass</a>
+  <a href="/qualification/intermediate/" class="rel-btn">Intermediate</a>
+  <a href="/qualification/iti/" class="rel-btn">ITI</a>
+  <a href="/qualification/diploma/" class="rel-btn">Diploma</a>
+  <a href="/qualification/b-tech-be/" class="rel-btn">B.Tech / BE</a>
+  <a href="/qualification/b-com/" class="rel-btn">B.Com</a>
+  <a href="/qualification/b-sc/" class="rel-btn">B.Sc</a>
+  <a href="/qualification/bca/" class="rel-btn">BCA</a>
+  <a href="/qualification/bba/" class="rel-btn">BBA</a>
+  <a href="/qualification/b-ed/" class="rel-btn">B.Ed</a>
+  <a href="/qualification/llb/" class="rel-btn">LLB</a>
+  <a href="/qualification/mbbs/" class="rel-btn">MBBS</a>
+  <a href="/qualification/bds/" class="rel-btn">BDS</a>
+  <a href="/qualification/bams/" class="rel-btn">BAMS</a>
+  <a href="/qualification/b-pharma/" class="rel-btn">B.Pharma</a>
+  <a href="/qualification/gnm/" class="rel-btn">GNM</a>
+  <a href="/qualification/anm/" class="rel-btn">ANM</a>
+  <a href="/qualification/dmlt/" class="rel-btn">DMLT</a>
+  <a href="/qualification/d-pharm/" class="rel-btn">D.Pharm</a>
+  <a href="/qualification/d-el-ed/" class="rel-btn">D.El.Ed</a>
+  <a href="/qualification/any-graduate/" class="rel-btn">Any Graduate</a>
+  <a href="/qualification/mba-pgdm/" class="rel-btn">MBA / PGDM</a>
+  <a href="/qualification/m-sc/" class="rel-btn">M.Sc</a>
+  <a href="/qualification/m-com/" class="rel-btn">M.Com</a>
+  <a href="/qualification/mca/" class="rel-btn">MCA</a>
+  <a href="/qualification/m-ed/" class="rel-btn">M.Ed</a>
+  <a href="/qualification/ms-md/" class="rel-btn">MS / MD</a>
+  <a href="/qualification/m-pharma/" class="rel-btn">M.Pharma</a>
+  <a href="/qualification/ca/" class="rel-btn">CA</a>
+  <a href="/qualification/cs/" class="rel-btn">CS</a>
+  <a href="/qualification/mphil-phd/" class="rel-btn">MPhil / PhD</a>
+  <a href="/qualification/any-post-graduate/" class="rel-btn">Any PG</a>
+  <a href="/category/study/" class="rel-btn rel-btn-all"><i class="fa-solid fa-list"></i> All Qualification Jobs</a>
+</div>
+</div>
+
+<!-- Social Media CARD -->
+<div class="rel-card">
+<div class="rel-card-head c-social"><i class="fa-solid fa-bell"></i> Join &amp; Follow Us</div>
+<div class="rel-social-body">
+  <a href="https://whatsapp.com/channel/0029Vb6OQ8L0G0Xme6X3wM3t" target="_blank" rel="noopener" class="rel-social wa"><i class="fa-brands fa-whatsapp"></i> Join WhatsApp Channel</a>
+  <a href="https://www.youtube.com/@topsarkarijobs" target="_blank" rel="noopener" class="rel-social yt"><i class="fa-brands fa-youtube"></i> YouTube Channel Join Now</a>
+  <a href="https://www.instagram.com/topsarkarijobs" target="_blank" rel="noopener" class="rel-social ig"><i class="fa-brands fa-instagram"></i> Instagram</a>
+  <a href="https://t.me/topsarkarijobs" target="_blank" rel="noopener" class="rel-social tg"><i class="fa-brands fa-telegram"></i> Telegram</a>
+  <a href="https://www.facebook.com/topsarkarijobs" target="_blank" rel="noopener" class="rel-social fb"><i class="fa-brands fa-facebook-f"></i> Facebook</a>
+</div>
+</div>
+
+</div>
+</div>'''
+
 def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt Job', noindex_dup=False):
     bd    = job_obj.get('basic_details', {}) or {}
     dates = job_obj.get('important_dates', {}) or {}
@@ -1332,8 +1734,8 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     title     = safe(bd.get('job_title','') or job_obj.get('title','') or 'Government Job')
     org       = safe(bd.get('organization_name','') or 'Government of India')
     vacancies = safe(bd.get('total_vacancies','') or job_obj.get('total_post','') or job_obj.get('total_vacancy',''))
-    last_d    = safe(dates.get('last_date_to_apply','') or dates.get('last_date','') or job_obj.get('last_date',''))
-    apply_m   = safe(bd.get('application_mode','') or job_obj.get('apply_mode','') or 'Online')
+    last_d    = safe(dates.get('last_date_to_apply','') or dates.get('last_date_apply_online','') or dates.get('last_date','') or job_obj.get('last_date',''))
+    apply_m   = safe(bd.get('application_mode','') or job_obj.get('apply_mode','') or ('Offline' if job_obj.get('category') == 'OFFLINE_FORM' else 'Online'))
     location  = safe(bd.get('job_location','') or job_obj.get('job_location','') or 'India')
 
     # Build SEO title inline (50-60 chars)
@@ -1423,20 +1825,36 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
         apply_banner = (f'<a href="{e(apply_url)}" target="_blank" rel="noopener noreferrer" class="apply-cta">'
                        f'<i class="fa-solid fa-paper-plane"></i> Apply Online / Official Website ↗</a>')
 
-    # Header
+    # Header (with share buttons)
     cat_badge = safe(job_obj.get('category','') or badge_label).replace('_',' ')
+    _share_u = e(canon_url)
+    _share_t = e(title)
+    share_row = f'''<div class="dh-share">
+    <span class="dh-share-lbl"><i class="fa-solid fa-share-nodes"></i> Share This Job</span>
+    <div class="dh-share-btns">
+      <a href="https://api.whatsapp.com/send?text={_share_t}%20{_share_u}" target="_blank" rel="noopener" class="dh-sh wa" aria-label="Share on WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+      <a href="https://t.me/share/url?url={_share_u}&text={_share_t}" target="_blank" rel="noopener" class="dh-sh tg" aria-label="Share on Telegram"><i class="fa-brands fa-telegram"></i></a>
+      <a href="https://www.facebook.com/sharer/sharer.php?u={_share_u}" target="_blank" rel="noopener" class="dh-sh fb" aria-label="Share on Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+      <a href="https://twitter.com/intent/tweet?url={_share_u}&text={_share_t}" target="_blank" rel="noopener" class="dh-sh tw" aria-label="Share on X"><i class="fa-brands fa-x-twitter"></i></a>
+      <a href="https://www.linkedin.com/sharing/share-offsite/?url={_share_u}" target="_blank" rel="noopener" class="dh-sh li" aria-label="Share on LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+      <button type="button" class="dh-sh cp" data-share-url="{_share_u}" aria-label="Copy link"><i class="fa-solid fa-link"></i></button>
+    </div>
+  </div>'''
     header_html = f'''<div class="detail-header">
-  <div class="badges">
-    <span class="badge badge-cat"><i class="fa-solid fa-briefcase"></i> {e(cat_badge or badge_label)}</span>
-    <span class="badge badge-loc"><i class="fa-solid fa-map-pin"></i> {e(location[:25])}</span>
-    <span class="badge badge-mode"><i class="fa-solid fa-laptop"></i> {e(apply_m)}</span>
+  <div class="dh-top">
+    <div class="badges">
+      <span class="badge badge-cat"><i class="fa-solid fa-briefcase"></i> {e(cat_badge or badge_label)}</span>
+      <span class="badge badge-loc"><i class="fa-solid fa-map-pin"></i> {e(location[:25])}</span>
+      <span class="badge badge-mode"><i class="fa-solid fa-laptop"></i> {e(apply_m)}</span>
+    </div>
+    {share_row}
   </div>
   <h1 class="detail-h1">{e(title)}</h1>
   <div class="stats-bar">
     <div class="stat"><div class="stat-val">{e(vacancies or "—")}</div><div class="stat-lbl">Vacancies</div></div>
     <div class="stat"><div class="stat-val" style="color:#dc2626">{e(last_d or "—")}</div><div class="stat-lbl">Last Date</div></div>
     <div class="stat"><div class="stat-val">{e(apply_m or "Online")}</div><div class="stat-lbl">Apply Mode</div></div>
-    <div class="stat"><div class="stat-val">{e(location[:15] or "India")}</div><div class="stat-lbl">Location</div></div>
+    <div class="stat"><div class="stat-val">{e(location or "India")}</div><div class="stat-lbl">Location</div></div>
   </div>
 </div>'''
 
@@ -1444,13 +1862,7 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     if not sections_html.strip():
         sections_html = '<div class="sec-card"><div class="sec-body" style="padding:24px;text-align:center;color:#94a3b8"><i class="fa-solid fa-clock" style="font-size:1.5rem;display:block;margin-bottom:8px"></i>Detailed information will be updated soon. Please visit the official website.</div></div>'
 
-    rel_links = '''<div class="rel-section"><div class="rel-head">Related Categories</div><div class="rel-grid">
-  <a href="/section/latest-jobs/" class="rel-btn"><i class="fa-solid fa-briefcase"></i> Latest Jobs</a>
-  <a href="/section/admit-card/" class="rel-btn"><i class="fa-solid fa-id-card"></i> Admit Cards</a>
-  <a href="/section/results/" class="rel-btn"><i class="fa-solid fa-trophy"></i> Results</a>
-  <a href="/state-jobs/" class="rel-btn"><i class="fa-solid fa-map-location-dot"></i> State Jobs</a>
-  <a href="/education/" class="rel-btn"><i class="fa-solid fa-graduation-cap"></i> Education</a>
-</div></div>'''
+    rel_links = REL_CATS_HTML
 
     body = f'''<div class="pg-wrap">
   {bc_html}
@@ -1508,6 +1920,18 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
 <div id="footerPlaceholder"></div>
 <script src="/tsj-footer-init.js?v={ASSET_VER}"></script>
 <script src="/tsj-menu.js?v={ASSET_VER}" defer></script>
+<script>
+(function(){{
+  document.addEventListener('click',function(ev){{
+    var b=ev.target.closest('.dh-sh.cp');
+    if(!b)return;
+    var u=b.getAttribute('data-share-url')||location.href;
+    if(navigator.clipboard){{navigator.clipboard.writeText(u).then(function(){{
+      var i=b.querySelector('i');if(i){{var o=i.className;i.className='fa-solid fa-check';setTimeout(function(){{i.className=o;}},1400);}}
+    }});}}
+  }});
+}})();
+</script>
 </body>
 </html>'''
 
@@ -1533,17 +1957,48 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
         il    = job.get('important_links',{}) or {}
         jtitle = safe(bd.get('job_title','') or job.get('title','') or job.get('name',''))
         if not jtitle: continue
-        jslug  = safe(job.get('_slug','')) or slugify(jtitle)
+        _raw_slug = safe(job.get('_slug','') or job.get('slug',''))
+        # Clean SR prefix (sr_result-, sr_admit_card-, etc.) for URL
+        import re as _re2
+        jslug = _re2.sub(r'^sr_[a-z_]+-','', _raw_slug) if _raw_slug else ''
+        # Also strip trailing hash suffix (-xxxxxx)
+        jslug = _re2.sub(r'-[0-9a-f]{6,8}$','', jslug) if jslug else ''
+        jslug = jslug or slugify(jtitle)
         jorg   = safe(bd.get('organization_name','') or 'Government')
         jvac   = safe(bd.get('total_vacancies','') or job.get('total_post',''))
-        jld    = safe(dates.get('last_date_to_apply','') or dates.get('last_date','') or job.get('last_date',''))
+        jld    = safe(dates.get('last_date_to_apply','') or dates.get('last_date_apply_online','') or dates.get('last_date','') or job.get('last_date',''))
         jmode  = safe(bd.get('application_mode','') or job.get('apply_mode','') or 'Online')
-        # Quick links
+        # Quick links — with fallbacks for non-standard key names
         ql = ''
-        for key, lbl, css in [('apply_online','Apply','btn-apply jl-btn'),('notification_pdf','Notification','btn-pdf jl-btn'),('result_link','Result','btn-result jl-btn'),('admit_card','Admit Card','btn-admit jl-btn')]:
-            url = safe(il.get(key,''))
+        # apply_online: try direct key, then click_here[0] as fallback
+        _il = job.get('important_links') or {}
+        _ul = job.get('useful_links') or {}
+        def _get_link(key):
+            v = safe(_il.get(key,'') or _ul.get(key,''))
+            if v and not v.startswith('[') and not v.startswith('{'):
+                return v
+            return ''
+        apply_url = _get_link('apply_online') or _get_link('registration_link') or _get_link('login_link')
+        if not apply_url:
+            ch = _il.get('click_here') or _ul.get('click_here') or []
+            if isinstance(ch, str): ch = [ch]
+            if isinstance(ch, list):
+                for cu in ch:
+                    cu = safe(cu)
+                    if cu.startswith('http') and not is_blocked(cu):
+                        apply_url = cu; break
+        notif_url = _get_link('notification_pdf') or _get_link('download_notification') or _get_link('official_notification')
+        result_url = _get_link('result_link') or _get_link('result')
+        admit_url = _get_link('admit_card') or _get_link('admit')
+        answer_url = _get_link('answer_key') or _get_link('answerkey')
+        for url, lbl, css, ic in [
+            (apply_url,'Apply','btn-apply jl-btn','fa-paper-plane'),
+            (notif_url,'Notification','btn-pdf jl-btn','fa-file-pdf'),
+            (result_url,'Result','btn-result jl-btn','fa-trophy'),
+            (admit_url,'Admit Card','btn-admit jl-btn','fa-id-card'),
+            (answer_url,'Answer Key','btn-answer jl-btn','fa-key'),
+        ]:
             if url and not is_blocked(url):
-                ic = {'apply_online':'fa-paper-plane','notification_pdf':'fa-file-pdf','result_link':'fa-trophy','admit_card':'fa-id-card'}.get(key,'fa-link')
                 ql += f'<a href="{e(url)}" class="{css}" target="_blank" rel="noopener noreferrer"><i class="fa-solid {ic}"></i> {lbl}</a>'
         urgent_cls = ''
         if jld:
@@ -1556,14 +2011,30 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
                         break
                     except: pass
             except: pass
+        # Status badge
+        jstatus = safe(job.get('status',''))
+        status_badge = ''
+        if jstatus:
+            _smap = {
+                'result_declared': ('#d1fae5','#065f46','Result Declared'),
+                'admit_card_out':  ('#cffafe','#0e7490','Admit Card Out'),
+                'answer_key_out':  ('#fef9c3','#854d0e','Answer Key Out'),
+                'application_open':('#dbeafe','#1e40af','Apply Now'),
+                'notification_out':('#ede9fe','#5b21b6','Notification Out'),
+                'admission_open':  ('#fce7f3','#9d174d','Admission Open'),
+            }
+            if jstatus in _smap:
+                _bg, _cl, _lb = _smap[jstatus]
+                status_badge = f'<span class="jm-badge" style="background:{_bg};color:{_cl}">{_lb}</span>'
         cards_html += f'''<article class="job-card" data-title="{e(jtitle.lower())}" data-org="{e(jorg.lower())}">
   <div class="job-card-title"><a href="/jobs/{e(jslug)}/">{e(jtitle)}</a></div>
   <div class="job-card-org"><i class="fa-regular fa-building"></i> {e(jorg[:60])}</div>
   <div class="job-card-meta">
     {f'<span class="jm-badge" style="background:#dcfce7;color:#15803d">{e(jvac)} Posts</span>' if jvac else ''}
     <span class="jm-badge" style="background:#ede9fe;color:#5b21b6">{e(jmode)}</span>
+    {status_badge}
   </div>
-  {f'<div class="job-card-date{urgent_cls}"><i class="fa-regular fa-clock"></i> Last Date: {e(jld)}</div>' if jld else ''}
+  {f'<div class="job-card-date{urgent_cls}"><i class="fa-regular fa-clock"></i> Last Date: <strong>{e(jld)}</strong></div>' if jld else ''}
   {f'<div class="job-card-links">{ql}</div>' if ql else ''}
 </article>'''
 
@@ -1583,7 +2054,8 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
             f'<p class="cat-count" style="margin:0 10px 12px;color:#64748b;font-size:.78rem">{len(jobs)} records</p>'
             f'<div class="search-bar" style="margin:0 10px 12px">'
             f'<input type="search" placeholder="Search..." aria-label="Search" onkeyup="filterJobs(this.value)" autocomplete="off"/>'
-            f'</div><div id="jobList" style="padding:0 10px">{cards_html}</div></div>'
+            f'</div><div id="jobList" style="padding:0 10px">{cards_html}</div>'
+            f'<div style="padding:0 10px">{REL_CATS_HTML}</div></div>'
             f'{filter_js}')
 
     return f'''<!DOCTYPE html>
@@ -1721,7 +2193,14 @@ for job in SARK:
     if isinstance(raw_il, dict):
         for k, v in raw_il.items():
             if v and not is_blocked(str(v)): il[k] = v
-    for field, key in [('apply_online_link','apply_online'),('official_notification_pdf_link','notification_pdf'),('official_website_link','official_website'),('form_pdf_link','notification_pdf')]:
+    for field, key in [
+        ('apply_online_link',            'apply_online'),
+        ('official_notification_pdf_link','notification_pdf'),
+        ('official_website_link',        'official_website'),
+        ('form_pdf_link',                'notification_pdf'),
+        ('form_pdf_free_link',           'application_form'),   # OFFLINE_FORM free application PDF
+        ('application_form_pdf_link',    'application_form'),   # OFFLINE_FORM application form
+    ]:
         v = str(job.get(field,'') or '').strip()
         if v and v.startswith('http') and not is_blocked(v) and key not in il: il[key] = v
     useful = job.get('useful_links') or []
@@ -1746,22 +2225,39 @@ for job in SARK:
                   [{'type':'table','rows':t} for t in tables])
         if blocks: sections_out = [{'title':'','content':blocks}]
     # Handle tables field (SR_Latest_Jobs/SR_Result format)
-    raw_tables = job.get('tables') or []
-    if raw_tables and not sections_out:
-        for tbl in raw_tables:
-            name = tbl.get('table_name','') or ''
-            if 'gb headline' in name.lower(): continue
-            rows = tbl.get('rows',[]) or []
-            if rows: sections_out.append({'title':name,'content':[{'type':'table','rows':rows}]})
+    # NOTE: raw_tables are NOT pushed into sections_out — they go via 'tables' key
+    # in SECTION_ORDER so their position (after qualification, before useful_links) is controlled
 
-    bd = {'job_title':title,'organization_name':safe(job.get('organization','') or job.get('board_name','')),'post_name':safe(job.get('post_name','')),'total_vacancies':safe(job.get('total_vacancy','') or job.get('total_post','')),'application_mode':safe(job.get('apply_mode','') or 'Online'),'job_location':safe(job.get('job_location','') or job.get('state','') or 'India'),'short_information':strip_html(safe(job.get('short_information','') or job.get('jobs_info',''))),'last_updated':safe(job.get('post_date','') or job.get('listing_date','')),'job_type':safe(job.get('entry_type',''))}
+    _vac_d = job.get('vacancy_details') or {}
+    _total_vac = safe(job.get('total_vacancy','') or job.get('total_post','') or
+                      (_vac_d.get('total_post','') if isinstance(_vac_d, dict) else ''))
+    _apply_mode = safe(job.get('apply_mode',''))
+    # OFFLINE_FORM category = always Offline, even if apply_mode field says otherwise
+    if job.get('category') == 'OFFLINE_FORM':
+        _apply_mode = 'Offline'
+    elif not _apply_mode:
+        _apply_mode = 'Online'
+    bd = {'job_title':title,'organization_name':safe(job.get('organization','') or job.get('board_name','')),'post_name':safe(job.get('post_name','')),'total_vacancies':_total_vac,'application_mode':_apply_mode,'job_location':safe(job.get('job_location','') or job.get('state','') or 'India'),'short_information':strip_html(safe(job.get('short_information','') or job.get('jobs_info',''))),'last_updated':safe(job.get('post_date','') or job.get('listing_date','')),'job_type':safe(job.get('entry_type',''))}
     imp_dates = {}
     raw_d = job.get('important_dates') or {}
     if isinstance(raw_d, dict): imp_dates.update({k:v for k,v in raw_d.items() if v})
     age = {}
     if job.get('minimum_age'): age['minimum_age'] = safe(job['minimum_age'])
     if job.get('maximum_age'): age['maximum_age'] = safe(job['maximum_age'])
-    full = {'basic_details':bd,'important_dates':imp_dates,'application_fee':job.get('application_fees') or {},'age_limit':age or (job.get('age_limit') or {}),'qualification':job.get('eligibility') or job.get('qualification') or {},'vacancy_details':job.get('vacancy_details') or [],'salary_details':{'pay_scale':safe(job.get('salary_pay_scale',''))} if job.get('salary_pay_scale') else {},'how_to_apply':[job['how_to_apply']] if isinstance(job.get('how_to_apply'),str) and job.get('how_to_apply') else (job.get('how_to_apply') or []),'important_links':il,'sections':sections_out,'faq':job.get('faq') or [],'category':job.get('category',''),'slug':slug,
+    # Merge age_limit dict (has minimum_age, maximum_age, as_on_date)
+    age_obj = job.get('age_limit') or {}
+    if isinstance(age_obj, dict):
+        for k,v in age_obj.items():
+            if v and k not in age: age[k] = safe(v)
+    # Extract as_on_date hint from table_name (e.g. "Age Limit as on 01/01/2026 ...")
+    if not age.get('as_on_date'):
+        for tbl in (job.get('tables') or []):
+            tname = safe(tbl.get('table_name',''))
+            m = re.search(r'as\s+on\s+(\d{1,2}/\d{1,2}/\d{4})', tname, re.I)
+            if m:
+                age['as_on_date'] = m.group(1)
+                break
+    full = {'basic_details':bd,'important_dates':imp_dates,'application_fee':job.get('application_fees') or job.get('application_fee') or {},'age_limit':age,'qualification':job.get('eligibility') or job.get('qualification') or {},'vacancy_details':job.get('vacancy_details') or [],'salary_details':{'pay_scale':safe(job.get('salary_pay_scale',''))} if job.get('salary_pay_scale') else {},'how_to_apply':[job['how_to_apply']] if isinstance(job.get('how_to_apply'),str) and job.get('how_to_apply') else (job.get('how_to_apply') or []),'important_links':il,'sections':sections_out,'faq':job.get('faq') or [],'category':job.get('category',''),'slug':slug,
              'tables':job.get('tables') or [],'text_sections':job.get('text_sections') or [],'useful_links':job.get('useful_links') or [],'all_links':job.get('all_links') or [],'details_page_content':job.get('details_page_content') or {}}
     canon = f"{BASE_URL}/jobs/{slug}/"
     bc    = [('Latest Jobs', f"{BASE_URL}/section/latest-jobs/")]
@@ -1987,7 +2483,51 @@ for cat_key, url_slug in FJA_CAT_MAP.items():
 for cat_key, url_slug in SARK_CAT_MAP.items():
     sark_jobs = [j for j in SARK if j.get('category') == cat_key]
     if not sark_jobs: continue
-    norm = [{'basic_details':{'job_title':safe(j.get('title','')),'organization_name':safe(j.get('organization','')),'total_vacancies':safe(j.get('total_post','') or j.get('total_vacancy','')),'application_mode':safe(j.get('apply_mode','') or 'Online'),'job_location':'India'},'important_dates':j.get('important_dates') or {},'important_links':j.get('important_links') or {},'category':cat_key} for j in sark_jobs if j.get('title')]
+    norm = []
+    for j in sark_jobs:
+        if not j.get('title'): continue
+        _imp = j.get('important_dates') or {}
+        _last_d = safe(_imp.get('last_date_to_apply','') or _imp.get('last_date','') or j.get('last_date',''))
+        _il = j.get('important_links') or {}
+        _ul = j.get('useful_links') or {}
+        # Merge useful_links keys into important_links for quick buttons
+        if isinstance(_ul, dict):
+            for _k in ['apply_online','result','result_link','admit_card','notification','notification_pdf','official_website','answer_key','admit']:
+                if _ul.get(_k) and not _il.get(_k): _il[_k] = _ul[_k]
+            # map 'result' → 'result_link' for uniform access
+            if _ul.get('result') and not _il.get('result_link'): _il['result_link'] = _ul['result']
+            if _ul.get('answer_key') and not _il.get('answer_key'): _il['answer_key'] = _ul['answer_key']
+            # _all array → extract known keys
+            for _item in (_ul.get('_all') or []):
+                _t = safe(_item.get('title','')).lower()
+                _lnk = _item.get('links','')
+                if isinstance(_lnk, list): _lnk = _lnk[0] if _lnk else ''
+                _lnk = safe(_lnk)
+                if not _lnk: continue
+                if 'result' in _t or 'score card' in _t:
+                    if not _il.get('result_link'): _il['result_link'] = _lnk
+                elif 'admit' in _t or 'hall ticket' in _t:
+                    if not _il.get('admit_card'): _il['admit_card'] = _lnk
+                elif 'apply' in _t:
+                    if not _il.get('apply_online'): _il['apply_online'] = _lnk
+                elif 'notification' in _t:
+                    if not _il.get('notification_pdf'): _il['notification_pdf'] = _lnk
+        norm.append({
+            'basic_details': {
+                'job_title': safe(j.get('title','')),
+                'organization_name': safe(j.get('organization','')),
+                'total_vacancies': safe(j.get('total_post','') or j.get('total_vacancy','')),
+                'application_mode': safe(j.get('apply_mode','')) or ('Offline' if j.get('entry_type') == 'OFFLINE' else 'Online'),
+                'job_location': 'India',
+            },
+            'important_dates': _imp,
+            'last_date': _last_d,
+            'important_links': _il,
+            'useful_links': j.get('useful_links') or {},
+            '_slug': safe(j.get('slug','')),
+            'category': cat_key,
+            'status': safe(j.get('status','')),
+        })
     lbl = cat_key.replace('_',' ').replace('SR ','').title()
     write(str(ROOT/'section'/url_slug/'index.html'), build_listing_page(lbl, norm, f"{BASE_URL}/section/{url_slug}/", []))
     sec_count += 1
@@ -2062,10 +2602,11 @@ def _du_page(name, url, sec_title, other_items):
     )
     others = ''
     for oi in [i for i in (other_items or []) if (i.get('name') or '').strip()][:6]:
-        on  = (oi.get('name') or '').strip()[:80]
+        on_full = (oi.get('name') or '').strip()   # full name for correct slug
+        on_disp = on_full[:80]                      # truncated for display only
         ou  = (oi.get('url') or '').strip()
-        osl = _du_slug(on, ou)
-        others += '<li class="sec-item"><a href="/jobs/' + osl + '/">' + e(on) + '</a></li>'
+        osl = _du_slug(on_full, ou)                 # slug from FULL name — matches generated page
+        others += '<li class="sec-item"><a href="/jobs/' + osl + '/">' + e(on_disp) + '</a></li>'
     if others:
         others = (
             '<section class="sec-card" style="margin-top:16px;">'
@@ -2189,8 +2730,36 @@ for cat_key, url_slug in SARK_CAT_MAP.items():
            'SR_Admission':'Admissions','SR_Answer_Key':'Answer Keys','OFFLINE_FORM':'Offline Forms',
            'LATEST_JOBS NEW':'Latest Jobs New','UPCOMING_JOBS':'Upcoming Jobs',
            'STATE_JOBS':'State Jobs','CENTRAL_JOBS':'Central Govt Jobs','ADMISSIONS':'Admissions'}.get(cat_key, cat_key.replace('_',' ').title())
-    norm = [{'basic_details':{'job_title':j.get('title',''),'organization_name':j.get('organization',''),'total_vacancies':j.get('total_post','')}} for j in jobs_in_cat if j.get('title')]
-    write(str(ROOT/'section'/url_slug/'index.html'), build_listing_page(lbl, norm, f"{BASE_URL}/section/{url_slug}/", []))
+    norm2 = []
+    for j in jobs_in_cat:
+        if not j.get('title'): continue
+        _imp2 = j.get('important_dates') or {}
+        _last2 = (j.get('important_dates') or {}).get('last_date_apply_online','') or                  (j.get('important_dates') or {}).get('last_date_to_apply','') or                  (j.get('important_dates') or {}).get('last_date','') or                  j.get('last_date','')
+        _il2 = {}
+        _ul2 = j.get('useful_links') or {}
+        if isinstance(_ul2, dict):
+            for _k2 in ['apply_online','result','result_link','admit_card','notification','notification_pdf','answer_key']:
+                if _ul2.get(_k2): _il2[_k2] = _ul2[_k2]
+            if _ul2.get('result') and not _il2.get('result_link'): _il2['result_link'] = _ul2['result']
+        _raw_slug2 = j.get('slug','')
+        import re as _re3
+        _clean_slug2 = _re3.sub(r'^sr_[a-z_]+-','', _raw_slug2) if _raw_slug2 else ''
+        _clean_slug2 = _re3.sub(r'-[0-9a-f]{6,8}$','', _clean_slug2) if _clean_slug2 else ''
+        norm2.append({
+            'basic_details': {
+                'job_title': j.get('title',''),
+                'organization_name': j.get('organization',''),
+                'total_vacancies': j.get('total_post','') or j.get('total_vacancy',''),
+                'application_mode': j.get('apply_mode','') or ('Offline' if j.get('entry_type') == 'OFFLINE' else 'Online'),
+                'job_location': 'India',
+            },
+            'important_dates': _imp2,
+            'last_date': str(_last2),
+            'important_links': _il2,
+            '_slug': _clean_slug2 or j.get('slug',''),
+            'status': j.get('status',''),
+        })
+    write(str(ROOT/'section'/url_slug/'index.html'), build_listing_page(lbl, norm2, f"{BASE_URL}/section/{url_slug}/", []))
     sec_count2 += 1
 
 # DU sections (Govt Scheme, ImportantCSC PDF, ImportantCSC link, Today Updates …)
@@ -2343,6 +2912,46 @@ for _sj in SARK:
         sections_index[_scat] = []
     if len(sections_index[_scat]) < 10:
         sections_index[_scat].append({'slug':_sl,'name':_st,'date':_ld})
+
+# UPCOMING_JOBS: populate from jobs with future exam_date or application_begin
+import datetime as _dt
+_today_str = _dt.date.today().strftime('%d/%m/%Y')
+_today = _dt.date.today()
+
+def _parse_date(s):
+    """Try common date formats, return date or None."""
+    if not s: return None
+    s = str(s).strip()
+    for fmt in ('%d/%m/%Y','%Y-%m-%d','%d-%m-%Y','%d %B %Y','%B %d, %Y'):
+        try: return _dt.datetime.strptime(s[:len(fmt)+2].strip(), fmt).date()
+        except: pass
+    # Try extracting first date-like pattern
+    _m = re.search(r'(\d{1,2})[/\-](\d{1,2})[/\-](\d{4})', s)
+    if _m:
+        try: return _dt.date(int(_m.group(3)), int(_m.group(2)), int(_m.group(1)))
+        except: pass
+    return None
+
+if 'UPCOMING_JOBS' not in sections_index or len(sections_index.get('UPCOMING_JOBS',[])) < 3:
+    _upcoming_candidates = []
+    for _sj in SARK:
+        _st = safe(_sj.get('title',''))
+        if not _st: continue
+        _imp = _sj.get('important_dates') or {}
+        # Check exam_date or application_begin is in the future
+        _exam_d = _parse_date(_imp.get('exam_date','') or _imp.get('written_exam_date',''))
+        _begin_d = _parse_date(_imp.get('application_begin','') or _imp.get('start_date',''))
+        _future_d = None
+        if _exam_d and _exam_d > _today: _future_d = _exam_d
+        elif _begin_d and _begin_d > _today: _future_d = _begin_d
+        if _future_d:
+            _sl = slugify(_st)[:80]
+            _ld = safe(_imp.get('last_date_apply_online','') or _imp.get('last_date_to_apply','') or _imp.get('last_date',''))
+            _upcoming_candidates.append((_future_d, {'slug':_sl,'name':_st,'date':_ld}))
+    # Sort by nearest future date first
+    _upcoming_candidates.sort(key=lambda x: x[0])
+    if _upcoming_candidates:
+        sections_index['UPCOMING_JOBS'] = [item for _, item in _upcoming_candidates[:10]]
 
 write(str(ROOT/'sections-index.json'), json.dumps(sections_index, ensure_ascii=False, separators=(',',':')))
 # Update version string in index.html to bust cache

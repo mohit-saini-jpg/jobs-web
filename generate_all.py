@@ -1458,6 +1458,13 @@ a{text-decoration:none}.skip-link{position:absolute;left:-9999px}.skip-link:focu
 .badges{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px}
 .badge{display:inline-flex;align-items:center;gap:4px;font-size:.7rem;font-weight:700;text-transform:uppercase;padding:3px 9px;border-radius:20px;letter-spacing:.04em}
 .badge-cat{background:#dbeafe;color:#1e40af}.badge-loc{background:#dcfce7;color:#15803d}.badge-mode{background:#ede9fe;color:#5b21b6}
+.dh-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:9px}
+.dh-share{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.dh-share-lbl{font-size:.7rem;font-weight:800;color:#fff;background:linear-gradient(135deg,#7c3aed,#6d28d9);padding:4px 10px;border-radius:20px;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.dh-share-btns{display:flex;gap:5px;flex-wrap:wrap}
+.dh-sh{width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:.82rem;text-decoration:none;border:none;cursor:pointer;transition:transform .12s,opacity .12s}
+.dh-sh:hover{transform:translateY(-2px);opacity:.9}
+.dh-sh.wa{background:#25d366}.dh-sh.tg{background:#0088cc}.dh-sh.fb{background:#1877f2}.dh-sh.tw{background:#000}.dh-sh.li{background:#0a66c2}.dh-sh.cp{background:#64748b}
 .stats-bar{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid #e2e8f0;margin-top:10px}
 .stat{text-align:center;padding:10px 4px;border-right:1px solid #e2e8f0}
 .stat:last-child{border-right:none}
@@ -1523,6 +1530,18 @@ a{text-decoration:none}.skip-link{position:absolute;left:-9999px}.skip-link:focu
 .rel-grid{display:flex;flex-wrap:wrap;gap:7px;padding:11px 14px}
 .rel-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;font-size:.77rem;font-weight:600;text-decoration:none;background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;transition:all .15s;white-space:nowrap}
 .rel-btn:hover{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
+.rel-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;margin-top:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.rel-card-head{padding:10px 14px;font-size:.82rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:7px}
+.rel-card-head.c-state{background:linear-gradient(135deg,#1e40af,#2563eb)}
+.rel-card-head.c-cat{background:linear-gradient(135deg,#059669,#047857)}
+.rel-card-head.c-edu{background:linear-gradient(135deg,#7c3aed,#6d28d9)}
+.rel-card-head.c-qual{background:linear-gradient(135deg,#b45309,#d97706)}
+.rel-card-head.c-social{background:linear-gradient(135deg,#dc2626,#ea580c)}
+.rel-card-body{display:flex;flex-wrap:wrap;gap:7px;padding:12px 14px}
+.rel-social-body{display:flex;flex-direction:column;gap:8px;padding:12px 14px}
+.rel-social{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border-radius:8px;font-size:.82rem;font-weight:800;color:#fff;text-decoration:none;transition:opacity .12s}
+.rel-social:hover{opacity:.9}
+.rel-social.wa{background:#25d366}.rel-social.yt{background:#ff0000}.rel-social.ig{background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)}.rel-social.tg{background:#0088cc}.rel-social.fb{background:#1877f2}.rel-social.sc{background:#fffc00;color:#1a1a1a}
 .cat-wrap{max-width:880px;margin:0 auto;padding:12px 10px 48px}
 .cat-header{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:15px 18px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
 .cat-h1{font-size:1.1rem;font-weight:900;color:#0f172a;margin:0 0 4px}
@@ -1544,6 +1563,167 @@ a{text-decoration:none}.skip-link{position:absolute;left:-9999px}.skip-link:focu
 """
 
 # ── Page builder ───────────────────────────────────────────────
+REL_CATS_HTML = '''<div class="rel-section">
+<div class="rel-head"><i class="fa-solid fa-grip"></i> Related Categories</div>
+<div style="padding:0 14px 14px">
+
+<div class="rel-cats-grid">
+
+  <!-- State Wise Jobs CARD -->
+  <div class="rel-card">
+    <div class="rel-card-head c-state"><i class="fa-solid fa-map-location-dot"></i> State Wise Jobs</div>
+    <div class="rel-card-body">
+      <a href="/state-jobs/andhra-pradesh/" class="rel-btn">Andhra Pradesh</a>
+      <a href="/state-jobs/arunachal-pradesh/" class="rel-btn">Arunachal Pradesh</a>
+      <a href="/state-jobs/assam/" class="rel-btn">Assam</a>
+      <a href="/state-jobs/bihar/" class="rel-btn">Bihar</a>
+      <a href="/state-jobs/chandigarh/" class="rel-btn">Chandigarh</a>
+      <a href="/state-jobs/chhattisgarh/" class="rel-btn">Chhattisgarh</a>
+      <a href="/state-jobs/delhi/" class="rel-btn">Delhi</a>
+      <a href="/state-jobs/goa/" class="rel-btn">Goa</a>
+      <a href="/state-jobs/gujarat/" class="rel-btn">Gujarat</a>
+      <a href="/state-jobs/haryana/" class="rel-btn">Haryana</a>
+      <a href="/state-jobs/himachal-pradesh/" class="rel-btn">Himachal Pradesh</a>
+      <a href="/state-jobs/jammu-and-kashmir/" class="rel-btn">Jammu &amp; Kashmir</a>
+      <a href="/state-jobs/jharkhand/" class="rel-btn">Jharkhand</a>
+      <a href="/state-jobs/karnataka/" class="rel-btn">Karnataka</a>
+      <a href="/state-jobs/kerala/" class="rel-btn">Kerala</a>
+      <a href="/state-jobs/madhya-pradesh/" class="rel-btn">Madhya Pradesh</a>
+      <a href="/state-jobs/maharashtra/" class="rel-btn">Maharashtra</a>
+      <a href="/state-jobs/meghalaya/" class="rel-btn">Meghalaya</a>
+      <a href="/state-jobs/mizoram/" class="rel-btn">Mizoram</a>
+      <a href="/state-jobs/nagaland/" class="rel-btn">Nagaland</a>
+      <a href="/state-jobs/odisha/" class="rel-btn">Odisha</a>
+      <a href="/state-jobs/puducherry/" class="rel-btn">Puducherry</a>
+      <a href="/state-jobs/punjab/" class="rel-btn">Punjab</a>
+      <a href="/state-jobs/rajasthan/" class="rel-btn">Rajasthan</a>
+      <a href="/state-jobs/sikkim/" class="rel-btn">Sikkim</a>
+      <a href="/state-jobs/tamil-nadu/" class="rel-btn">Tamil Nadu</a>
+      <a href="/state-jobs/telangana/" class="rel-btn">Telangana</a>
+      <a href="/state-jobs/tripura/" class="rel-btn">Tripura</a>
+      <a href="/state-jobs/uttar-pradesh/" class="rel-btn">Uttar Pradesh</a>
+      <a href="/state-jobs/uttarakhand/" class="rel-btn">Uttarakhand</a>
+      <a href="/state-jobs/west-bengal/" class="rel-btn">West Bengal</a>
+      <a href="/state-jobs/andaman-and-nicobar/" class="rel-btn">Andaman &amp; Nicobar</a>
+      <a href="/state-jobs/dadra-and-nagar-haveli/" class="rel-btn">Dadra &amp; Nagar Haveli</a>
+      <a href="/state-jobs/" class="rel-btn rel-btn-all"><i class="fa-solid fa-list"></i> All State Jobs</a>
+    </div>
+  </div>
+
+  <!-- Job Categories CARD -->
+  <div class="rel-card">
+    <div class="rel-card-head c-cat"><i class="fa-solid fa-layer-group"></i> Job Categories</div>
+    <div class="rel-card-body">
+      <a href="/section/latest-jobs/" class="rel-btn"><i class="fa-solid fa-bolt"></i> Latest Jobs</a>
+      <a href="/section/results/" class="rel-btn"><i class="fa-solid fa-trophy"></i> Results</a>
+      <a href="/section/admit-card/" class="rel-btn"><i class="fa-solid fa-id-card"></i> Admit Cards</a>
+      <a href="/section/answer-key/" class="rel-btn"><i class="fa-solid fa-key"></i> Answer Key</a>
+      <a href="/section/upcoming-jobs/" class="rel-btn"><i class="fa-solid fa-calendar-plus"></i> Upcoming Jobs</a>
+      <a href="/section/offline-form/" class="rel-btn"><i class="fa-solid fa-file-pen"></i> Offline Form</a>
+      <a href="/section/railway-jobs/" class="rel-btn"><i class="fa-solid fa-train"></i> Railway Jobs</a>
+      <a href="/section/police-jobs/" class="rel-btn"><i class="fa-solid fa-shield-halved"></i> Police / Defence</a>
+      <a href="/section/bank-jobs/" class="rel-btn"><i class="fa-solid fa-building-columns"></i> Bank Jobs</a>
+      <a href="/section/teaching-jobs/" class="rel-btn"><i class="fa-solid fa-chalkboard-user"></i> Teaching Jobs</a>
+      <a href="/section/army-jobs/" class="rel-btn"><i class="fa-solid fa-shield-halved"></i> Army / Navy / AF</a>
+      <a href="/section/healthcare-jobs/" class="rel-btn"><i class="fa-solid fa-stethoscope"></i> Medical / Health</a>
+      <a href="/section/engineering-jobs/" class="rel-btn"><i class="fa-solid fa-gear"></i> Engineering Jobs</a>
+      <a href="/section/central-jobs/" class="rel-btn"><i class="fa-solid fa-landmark"></i> Central Govt Jobs</a>
+      <a href="/section/admissions/" class="rel-btn"><i class="fa-solid fa-graduation-cap"></i> Admissions</a>
+      <a href="/section/govt-scheme-yojna/" class="rel-btn"><i class="fa-solid fa-hand-holding-heart"></i> Govt Schemes</a>
+      <a href="/section/top-20-jobs/" class="rel-btn"><i class="fa-solid fa-medal"></i> Top 20 Jobs</a>
+      <a href="/section/jobs-with-last-date/" class="rel-btn"><i class="fa-solid fa-clock"></i> Last Date Near</a>
+      <a href="/category/popular/" class="rel-btn"><i class="fa-solid fa-star"></i> Popular Categories</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- Education State Wise CARD -->
+<div class="rel-card">
+<div class="rel-card-head c-edu"><i class="fa-solid fa-graduation-cap"></i> Education State Wise Jobs</div>
+<div class="rel-card-body">
+  <a href="/education/andhra-pradesh/" class="rel-btn">AP Education</a>
+  <a href="/education/assam/" class="rel-btn">Assam Education</a>
+  <a href="/education/bihar/" class="rel-btn">Bihar Education</a>
+  <a href="/education/chhattisgarh/" class="rel-btn">Chhattisgarh Education</a>
+  <a href="/education/delhi/" class="rel-btn">Delhi Education</a>
+  <a href="/education/gujarat/" class="rel-btn">Gujarat Education</a>
+  <a href="/education/haryana/" class="rel-btn">Haryana Education</a>
+  <a href="/education/himachal-pradesh/" class="rel-btn">HP Education</a>
+  <a href="/education/jharkhand/" class="rel-btn">Jharkhand Education</a>
+  <a href="/education/karnataka/" class="rel-btn">Karnataka Education</a>
+  <a href="/education/kerala/" class="rel-btn">Kerala Education</a>
+  <a href="/education/madhya-pradesh/" class="rel-btn">MP Education</a>
+  <a href="/education/maharashtra/" class="rel-btn">Maharashtra Education</a>
+  <a href="/education/odisha/" class="rel-btn">Odisha Education</a>
+  <a href="/education/punjab/" class="rel-btn">Punjab Education</a>
+  <a href="/education/rajasthan/" class="rel-btn">Rajasthan Education</a>
+  <a href="/education/tamil-nadu/" class="rel-btn">Tamil Nadu Education</a>
+  <a href="/education/telangana/" class="rel-btn">Telangana Education</a>
+  <a href="/education/uttar-pradesh/" class="rel-btn">UP Education</a>
+  <a href="/education/uttarakhand/" class="rel-btn">Uttarakhand Education</a>
+  <a href="/education/west-bengal/" class="rel-btn">West Bengal Education</a>
+  <a href="/education/" class="rel-btn rel-btn-all"><i class="fa-solid fa-list"></i> All Education Jobs</a>
+</div>
+</div>
+
+<!-- Qualification Wise CARD -->
+<div class="rel-card">
+<div class="rel-card-head c-qual"><i class="fa-solid fa-book-open"></i> Qualification Wise Government Jobs</div>
+<div class="rel-card-body">
+  <a href="/qualification/8th-pass/" class="rel-btn">8th Pass</a>
+  <a href="/qualification/10th-pass/" class="rel-btn">10th Pass</a>
+  <a href="/qualification/12th-pass/" class="rel-btn">12th Pass</a>
+  <a href="/qualification/intermediate/" class="rel-btn">Intermediate</a>
+  <a href="/qualification/iti/" class="rel-btn">ITI</a>
+  <a href="/qualification/diploma/" class="rel-btn">Diploma</a>
+  <a href="/qualification/b-tech-be/" class="rel-btn">B.Tech / BE</a>
+  <a href="/qualification/b-com/" class="rel-btn">B.Com</a>
+  <a href="/qualification/b-sc/" class="rel-btn">B.Sc</a>
+  <a href="/qualification/bca/" class="rel-btn">BCA</a>
+  <a href="/qualification/bba/" class="rel-btn">BBA</a>
+  <a href="/qualification/b-ed/" class="rel-btn">B.Ed</a>
+  <a href="/qualification/llb/" class="rel-btn">LLB</a>
+  <a href="/qualification/mbbs/" class="rel-btn">MBBS</a>
+  <a href="/qualification/bds/" class="rel-btn">BDS</a>
+  <a href="/qualification/bams/" class="rel-btn">BAMS</a>
+  <a href="/qualification/b-pharma/" class="rel-btn">B.Pharma</a>
+  <a href="/qualification/gnm/" class="rel-btn">GNM</a>
+  <a href="/qualification/anm/" class="rel-btn">ANM</a>
+  <a href="/qualification/dmlt/" class="rel-btn">DMLT</a>
+  <a href="/qualification/d-pharm/" class="rel-btn">D.Pharm</a>
+  <a href="/qualification/d-el-ed/" class="rel-btn">D.El.Ed</a>
+  <a href="/qualification/any-graduate/" class="rel-btn">Any Graduate</a>
+  <a href="/qualification/mba-pgdm/" class="rel-btn">MBA / PGDM</a>
+  <a href="/qualification/m-sc/" class="rel-btn">M.Sc</a>
+  <a href="/qualification/m-com/" class="rel-btn">M.Com</a>
+  <a href="/qualification/mca/" class="rel-btn">MCA</a>
+  <a href="/qualification/m-ed/" class="rel-btn">M.Ed</a>
+  <a href="/qualification/ms-md/" class="rel-btn">MS / MD</a>
+  <a href="/qualification/m-pharma/" class="rel-btn">M.Pharma</a>
+  <a href="/qualification/ca/" class="rel-btn">CA</a>
+  <a href="/qualification/cs/" class="rel-btn">CS</a>
+  <a href="/qualification/mphil-phd/" class="rel-btn">MPhil / PhD</a>
+  <a href="/qualification/any-post-graduate/" class="rel-btn">Any PG</a>
+  <a href="/category/study/" class="rel-btn rel-btn-all"><i class="fa-solid fa-list"></i> All Qualification Jobs</a>
+</div>
+</div>
+
+<!-- Social Media CARD -->
+<div class="rel-card">
+<div class="rel-card-head c-social"><i class="fa-solid fa-bell"></i> Join &amp; Follow Us</div>
+<div class="rel-social-body">
+  <a href="https://whatsapp.com/channel/0029Vb6OQ8L0G0Xme6X3wM3t" target="_blank" rel="noopener" class="rel-social wa"><i class="fa-brands fa-whatsapp"></i> Join WhatsApp Channel</a>
+  <a href="https://www.youtube.com/@topsarkarijobs" target="_blank" rel="noopener" class="rel-social yt"><i class="fa-brands fa-youtube"></i> YouTube Channel Join Now</a>
+  <a href="https://www.instagram.com/topsarkarijobs" target="_blank" rel="noopener" class="rel-social ig"><i class="fa-brands fa-instagram"></i> Instagram</a>
+  <a href="https://t.me/topsarkarijobs" target="_blank" rel="noopener" class="rel-social tg"><i class="fa-brands fa-telegram"></i> Telegram</a>
+  <a href="https://www.facebook.com/topsarkarijobs" target="_blank" rel="noopener" class="rel-social fb"><i class="fa-brands fa-facebook-f"></i> Facebook</a>
+</div>
+</div>
+
+</div>
+</div>'''
+
 def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt Job', noindex_dup=False):
     bd    = job_obj.get('basic_details', {}) or {}
     dates = job_obj.get('important_dates', {}) or {}
@@ -1645,20 +1825,36 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
         apply_banner = (f'<a href="{e(apply_url)}" target="_blank" rel="noopener noreferrer" class="apply-cta">'
                        f'<i class="fa-solid fa-paper-plane"></i> Apply Online / Official Website ↗</a>')
 
-    # Header
+    # Header (with share buttons)
     cat_badge = safe(job_obj.get('category','') or badge_label).replace('_',' ')
+    _share_u = e(canon_url)
+    _share_t = e(title)
+    share_row = f'''<div class="dh-share">
+    <span class="dh-share-lbl"><i class="fa-solid fa-share-nodes"></i> Share This Job</span>
+    <div class="dh-share-btns">
+      <a href="https://api.whatsapp.com/send?text={_share_t}%20{_share_u}" target="_blank" rel="noopener" class="dh-sh wa" aria-label="Share on WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+      <a href="https://t.me/share/url?url={_share_u}&text={_share_t}" target="_blank" rel="noopener" class="dh-sh tg" aria-label="Share on Telegram"><i class="fa-brands fa-telegram"></i></a>
+      <a href="https://www.facebook.com/sharer/sharer.php?u={_share_u}" target="_blank" rel="noopener" class="dh-sh fb" aria-label="Share on Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+      <a href="https://twitter.com/intent/tweet?url={_share_u}&text={_share_t}" target="_blank" rel="noopener" class="dh-sh tw" aria-label="Share on X"><i class="fa-brands fa-x-twitter"></i></a>
+      <a href="https://www.linkedin.com/sharing/share-offsite/?url={_share_u}" target="_blank" rel="noopener" class="dh-sh li" aria-label="Share on LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+      <button type="button" class="dh-sh cp" data-share-url="{_share_u}" aria-label="Copy link"><i class="fa-solid fa-link"></i></button>
+    </div>
+  </div>'''
     header_html = f'''<div class="detail-header">
-  <div class="badges">
-    <span class="badge badge-cat"><i class="fa-solid fa-briefcase"></i> {e(cat_badge or badge_label)}</span>
-    <span class="badge badge-loc"><i class="fa-solid fa-map-pin"></i> {e(location[:25])}</span>
-    <span class="badge badge-mode"><i class="fa-solid fa-laptop"></i> {e(apply_m)}</span>
+  <div class="dh-top">
+    <div class="badges">
+      <span class="badge badge-cat"><i class="fa-solid fa-briefcase"></i> {e(cat_badge or badge_label)}</span>
+      <span class="badge badge-loc"><i class="fa-solid fa-map-pin"></i> {e(location[:25])}</span>
+      <span class="badge badge-mode"><i class="fa-solid fa-laptop"></i> {e(apply_m)}</span>
+    </div>
+    {share_row}
   </div>
   <h1 class="detail-h1">{e(title)}</h1>
   <div class="stats-bar">
     <div class="stat"><div class="stat-val">{e(vacancies or "—")}</div><div class="stat-lbl">Vacancies</div></div>
     <div class="stat"><div class="stat-val" style="color:#dc2626">{e(last_d or "—")}</div><div class="stat-lbl">Last Date</div></div>
     <div class="stat"><div class="stat-val">{e(apply_m or "Online")}</div><div class="stat-lbl">Apply Mode</div></div>
-    <div class="stat"><div class="stat-val">{e(location[:15] or "India")}</div><div class="stat-lbl">Location</div></div>
+    <div class="stat"><div class="stat-val">{e(location or "India")}</div><div class="stat-lbl">Location</div></div>
   </div>
 </div>'''
 
@@ -1666,148 +1862,7 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     if not sections_html.strip():
         sections_html = '<div class="sec-card"><div class="sec-body" style="padding:24px;text-align:center;color:#94a3b8"><i class="fa-solid fa-clock" style="font-size:1.5rem;display:block;margin-bottom:8px"></i>Detailed information will be updated soon. Please visit the official website.</div></div>'
 
-    rel_links = '''<div class="rel-section">
-<div class="rel-head">Related Categories</div>
-
-<div class="rel-cats-grid">
-
-  <!-- LEFT: State Wise Jobs -->
-  <div class="rel-col">
-    <div class="rel-col-head"><i class="fa-solid fa-map-location-dot"></i> State Wise Jobs</div>
-    <div class="rel-col-links">
-      <a href="/state-jobs/andhra-pradesh/" class="rel-btn">Andhra Pradesh</a>
-      <a href="/state-jobs/arunachal-pradesh/" class="rel-btn">Arunachal Pradesh</a>
-      <a href="/state-jobs/assam/" class="rel-btn">Assam</a>
-      <a href="/state-jobs/bihar/" class="rel-btn">Bihar</a>
-      <a href="/state-jobs/chandigarh/" class="rel-btn">Chandigarh</a>
-      <a href="/state-jobs/chhattisgarh/" class="rel-btn">Chhattisgarh</a>
-      <a href="/state-jobs/delhi/" class="rel-btn">Delhi</a>
-      <a href="/state-jobs/goa/" class="rel-btn">Goa</a>
-      <a href="/state-jobs/gujarat/" class="rel-btn">Gujarat</a>
-      <a href="/state-jobs/haryana/" class="rel-btn">Haryana</a>
-      <a href="/state-jobs/himachal-pradesh/" class="rel-btn">Himachal Pradesh</a>
-      <a href="/state-jobs/jammu-and-kashmir/" class="rel-btn">Jammu &amp; Kashmir</a>
-      <a href="/state-jobs/jharkhand/" class="rel-btn">Jharkhand</a>
-      <a href="/state-jobs/karnataka/" class="rel-btn">Karnataka</a>
-      <a href="/state-jobs/kerala/" class="rel-btn">Kerala</a>
-      <a href="/state-jobs/madhya-pradesh/" class="rel-btn">Madhya Pradesh</a>
-      <a href="/state-jobs/maharashtra/" class="rel-btn">Maharashtra</a>
-      <a href="/state-jobs/meghalaya/" class="rel-btn">Meghalaya</a>
-      <a href="/state-jobs/mizoram/" class="rel-btn">Mizoram</a>
-      <a href="/state-jobs/nagaland/" class="rel-btn">Nagaland</a>
-      <a href="/state-jobs/odisha/" class="rel-btn">Odisha</a>
-      <a href="/state-jobs/puducherry/" class="rel-btn">Puducherry</a>
-      <a href="/state-jobs/punjab/" class="rel-btn">Punjab</a>
-      <a href="/state-jobs/rajasthan/" class="rel-btn">Rajasthan</a>
-      <a href="/state-jobs/sikkim/" class="rel-btn">Sikkim</a>
-      <a href="/state-jobs/tamil-nadu/" class="rel-btn">Tamil Nadu</a>
-      <a href="/state-jobs/telangana/" class="rel-btn">Telangana</a>
-      <a href="/state-jobs/tripura/" class="rel-btn">Tripura</a>
-      <a href="/state-jobs/uttar-pradesh/" class="rel-btn">Uttar Pradesh</a>
-      <a href="/state-jobs/uttarakhand/" class="rel-btn">Uttarakhand</a>
-      <a href="/state-jobs/west-bengal/" class="rel-btn">West Bengal</a>
-      <a href="/state-jobs/andaman-and-nicobar/" class="rel-btn">Andaman &amp; Nicobar</a>
-      <a href="/state-jobs/dadra-and-nagar-haveli/" class="rel-btn">Dadra &amp; Nagar Haveli</a>
-      <a href="/state-jobs/" class="rel-btn rel-btn-all"><i class="fa-solid fa-list"></i> All State Jobs</a>
-    </div>
-  </div>
-
-  <!-- RIGHT: Section Categories -->
-  <div class="rel-col">
-    <div class="rel-col-head"><i class="fa-solid fa-layer-group"></i> Job Categories</div>
-    <div class="rel-col-links">
-      <a href="/section/latest-jobs/" class="rel-btn"><i class="fa-solid fa-bolt"></i> Latest Jobs</a>
-      <a href="/section/results/" class="rel-btn"><i class="fa-solid fa-trophy"></i> Results</a>
-      <a href="/section/admit-card/" class="rel-btn"><i class="fa-solid fa-id-card"></i> Admit Cards</a>
-      <a href="/section/answer-key/" class="rel-btn"><i class="fa-solid fa-key"></i> Answer Key</a>
-      <a href="/section/upcoming-jobs/" class="rel-btn"><i class="fa-solid fa-calendar-plus"></i> Upcoming Jobs</a>
-      <a href="/section/offline-form/" class="rel-btn"><i class="fa-solid fa-file-pen"></i> Offline Form</a>
-      <a href="/section/railway-jobs/" class="rel-btn"><i class="fa-solid fa-train"></i> Railway Jobs</a>
-      <a href="/section/police-jobs/" class="rel-btn"><i class="fa-solid fa-shield-halved"></i> Police / Defence</a>
-      <a href="/section/bank-jobs/" class="rel-btn"><i class="fa-solid fa-building-columns"></i> Bank Jobs</a>
-      <a href="/section/teaching-jobs/" class="rel-btn"><i class="fa-solid fa-chalkboard-user"></i> Teaching Jobs</a>
-      <a href="/section/army-jobs/" class="rel-btn"><i class="fa-solid fa-shield-halved"></i> Army / Navy / AF</a>
-      <a href="/section/healthcare-jobs/" class="rel-btn"><i class="fa-solid fa-stethoscope"></i> Medical / Health</a>
-      <a href="/section/engineering-jobs/" class="rel-btn"><i class="fa-solid fa-gear"></i> Engineering Jobs</a>
-      <a href="/section/central-jobs/" class="rel-btn"><i class="fa-solid fa-landmark"></i> Central Govt Jobs</a>
-      <a href="/section/admissions/" class="rel-btn"><i class="fa-solid fa-graduation-cap"></i> Admissions</a>
-      <a href="/section/govt-scheme-yojna/" class="rel-btn"><i class="fa-solid fa-hand-holding-heart"></i> Govt Schemes</a>
-      <a href="/section/top-20-jobs/" class="rel-btn"><i class="fa-solid fa-medal"></i> Top 20 Jobs</a>
-      <a href="/section/jobs-with-last-date/" class="rel-btn"><i class="fa-solid fa-clock"></i> Last Date Near</a>
-      <a href="/category/popular/" class="rel-btn"><i class="fa-solid fa-star"></i> Popular Categories</a>
-    </div>
-  </div>
-
-</div>
-
-<!-- Education State Wise -->
-<div class="rel-col-head" style="margin:14px 0 8px"><i class="fa-solid fa-graduation-cap"></i> Education State Wise Jobs</div>
-<div class="rel-col-links">
-  <a href="/education/andhra-pradesh/" class="rel-btn">AP Education</a>
-  <a href="/education/assam/" class="rel-btn">Assam Education</a>
-  <a href="/education/bihar/" class="rel-btn">Bihar Education</a>
-  <a href="/education/chhattisgarh/" class="rel-btn">Chhattisgarh Education</a>
-  <a href="/education/delhi/" class="rel-btn">Delhi Education</a>
-  <a href="/education/gujarat/" class="rel-btn">Gujarat Education</a>
-  <a href="/education/haryana/" class="rel-btn">Haryana Education</a>
-  <a href="/education/himachal-pradesh/" class="rel-btn">HP Education</a>
-  <a href="/education/jharkhand/" class="rel-btn">Jharkhand Education</a>
-  <a href="/education/karnataka/" class="rel-btn">Karnataka Education</a>
-  <a href="/education/kerala/" class="rel-btn">Kerala Education</a>
-  <a href="/education/madhya-pradesh/" class="rel-btn">MP Education</a>
-  <a href="/education/maharashtra/" class="rel-btn">Maharashtra Education</a>
-  <a href="/education/odisha/" class="rel-btn">Odisha Education</a>
-  <a href="/education/punjab/" class="rel-btn">Punjab Education</a>
-  <a href="/education/rajasthan/" class="rel-btn">Rajasthan Education</a>
-  <a href="/education/tamil-nadu/" class="rel-btn">Tamil Nadu Education</a>
-  <a href="/education/telangana/" class="rel-btn">Telangana Education</a>
-  <a href="/education/uttar-pradesh/" class="rel-btn">UP Education</a>
-  <a href="/education/uttarakhand/" class="rel-btn">Uttarakhand Education</a>
-  <a href="/education/west-bengal/" class="rel-btn">West Bengal Education</a>
-  <a href="/education/" class="rel-btn rel-btn-all"><i class="fa-solid fa-list"></i> All Education Jobs</a>
-</div>
-
-<!-- Study / Qualification Wise -->
-<div class="rel-col-head" style="margin:14px 0 8px"><i class="fa-solid fa-book-open"></i> Qualification Wise Government Jobs</div>
-<div class="rel-col-links">
-  <a href="/qualification/8th-pass/" class="rel-btn">8th Pass</a>
-  <a href="/qualification/10th-pass/" class="rel-btn">10th Pass</a>
-  <a href="/qualification/12th-pass/" class="rel-btn">12th Pass</a>
-  <a href="/qualification/intermediate/" class="rel-btn">Intermediate</a>
-  <a href="/qualification/iti/" class="rel-btn">ITI</a>
-  <a href="/qualification/diploma/" class="rel-btn">Diploma</a>
-  <a href="/qualification/b-tech-be/" class="rel-btn">B.Tech / BE</a>
-  <a href="/qualification/b-com/" class="rel-btn">B.Com</a>
-  <a href="/qualification/b-sc/" class="rel-btn">B.Sc</a>
-  <a href="/qualification/bca/" class="rel-btn">BCA</a>
-  <a href="/qualification/bba/" class="rel-btn">BBA</a>
-  <a href="/qualification/b-ed/" class="rel-btn">B.Ed</a>
-  <a href="/qualification/llb/" class="rel-btn">LLB</a>
-  <a href="/qualification/mbbs/" class="rel-btn">MBBS</a>
-  <a href="/qualification/bds/" class="rel-btn">BDS</a>
-  <a href="/qualification/bams/" class="rel-btn">BAMS</a>
-  <a href="/qualification/b-pharma/" class="rel-btn">B.Pharma</a>
-  <a href="/qualification/gnm/" class="rel-btn">GNM</a>
-  <a href="/qualification/anm/" class="rel-btn">ANM</a>
-  <a href="/qualification/dmlt/" class="rel-btn">DMLT</a>
-  <a href="/qualification/d-pharm/" class="rel-btn">D.Pharm</a>
-  <a href="/qualification/d-el-ed/" class="rel-btn">D.El.Ed</a>
-  <a href="/qualification/any-graduate/" class="rel-btn">Any Graduate</a>
-  <a href="/qualification/mba-pgdm/" class="rel-btn">MBA / PGDM</a>
-  <a href="/qualification/m-sc/" class="rel-btn">M.Sc</a>
-  <a href="/qualification/m-com/" class="rel-btn">M.Com</a>
-  <a href="/qualification/mca/" class="rel-btn">MCA</a>
-  <a href="/qualification/m-ed/" class="rel-btn">M.Ed</a>
-  <a href="/qualification/ms-md/" class="rel-btn">MS / MD</a>
-  <a href="/qualification/m-pharma/" class="rel-btn">M.Pharma</a>
-  <a href="/qualification/ca/" class="rel-btn">CA</a>
-  <a href="/qualification/cs/" class="rel-btn">CS</a>
-  <a href="/qualification/mphil-phd/" class="rel-btn">MPhil / PhD</a>
-  <a href="/qualification/any-post-graduate/" class="rel-btn">Any PG</a>
-  <a href="/category/study/" class="rel-btn rel-btn-all"><i class="fa-solid fa-list"></i> All Qualification Jobs</a>
-</div>
-
-</div>'''
+    rel_links = REL_CATS_HTML
 
     body = f'''<div class="pg-wrap">
   {bc_html}
@@ -1865,6 +1920,18 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
 <div id="footerPlaceholder"></div>
 <script src="/tsj-footer-init.js?v={ASSET_VER}"></script>
 <script src="/tsj-menu.js?v={ASSET_VER}" defer></script>
+<script>
+(function(){{
+  document.addEventListener('click',function(ev){{
+    var b=ev.target.closest('.dh-sh.cp');
+    if(!b)return;
+    var u=b.getAttribute('data-share-url')||location.href;
+    if(navigator.clipboard){{navigator.clipboard.writeText(u).then(function(){{
+      var i=b.querySelector('i');if(i){{var o=i.className;i.className='fa-solid fa-check';setTimeout(function(){{i.className=o;}},1400);}}
+    }});}}
+  }});
+}})();
+</script>
 </body>
 </html>'''
 
@@ -1987,7 +2054,8 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
             f'<p class="cat-count" style="margin:0 10px 12px;color:#64748b;font-size:.78rem">{len(jobs)} records</p>'
             f'<div class="search-bar" style="margin:0 10px 12px">'
             f'<input type="search" placeholder="Search..." aria-label="Search" onkeyup="filterJobs(this.value)" autocomplete="off"/>'
-            f'</div><div id="jobList" style="padding:0 10px">{cards_html}</div></div>'
+            f'</div><div id="jobList" style="padding:0 10px">{cards_html}</div>'
+            f'<div style="padding:0 10px">{REL_CATS_HTML}</div></div>'
             f'{filter_js}')
 
     return f'''<!DOCTYPE html>

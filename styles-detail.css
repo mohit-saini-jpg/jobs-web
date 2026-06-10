@@ -142,3 +142,28 @@
 .rel-btn:hover{background:#dbeafe;color:#1e40af;border-color:#bfdbfe}
 .rel-btn-all{background:#1e40af;color:#fff;border-color:#1e40af;font-weight:700}
 .rel-btn-all:hover{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
+
+/* ── Detail header share buttons (added 2026-06-10) ── */
+.dh-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:9px}
+.dh-share{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.dh-share-lbl{font-size:.7rem;font-weight:800;color:#fff;background:linear-gradient(135deg,#7c3aed,#6d28d9);padding:4px 10px;border-radius:20px;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.dh-share-btns{display:flex;gap:5px;flex-wrap:wrap}
+.dh-sh{width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:.82rem;text-decoration:none;border:none;cursor:pointer;transition:transform .12s,opacity .12s}
+.dh-sh:hover{transform:translateY(-2px);opacity:.9}
+.dh-sh.wa{background:#25d366}.dh-sh.tg{background:#0088cc}.dh-sh.fb{background:#1877f2}.dh-sh.tw{background:#000}.dh-sh.li{background:#0a66c2}.dh-sh.cp{background:#64748b}
+@media(max-width:600px){.dh-top{flex-direction:column;align-items:flex-start}}
+
+/* ── Related Categories as section cards (added 2026-06-10) ── */
+.rel-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;margin-top:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.rel-card-head{padding:10px 14px;font-size:.82rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:7px}
+.rel-card-head.c-state{background:linear-gradient(135deg,#1e40af,#2563eb)}
+.rel-card-head.c-cat{background:linear-gradient(135deg,#059669,#047857)}
+.rel-card-head.c-edu{background:linear-gradient(135deg,#7c3aed,#6d28d9)}
+.rel-card-head.c-qual{background:linear-gradient(135deg,#b45309,#d97706)}
+.rel-card-head.c-social{background:linear-gradient(135deg,#dc2626,#ea580c)}
+.rel-card-body{display:flex;flex-wrap:wrap;gap:7px;padding:12px 14px}
+.rel-social-body{display:flex;flex-direction:column;gap:8px;padding:12px 14px}
+.rel-social{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border-radius:8px;font-size:.82rem;font-weight:800;color:#fff;text-decoration:none;transition:opacity .12s}
+.rel-social:hover{opacity:.9}
+.rel-social.wa{background:#25d366}.rel-social.yt{background:#ff0000}.rel-social.ig{background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)}.rel-social.tg{background:#0088cc}.rel-social.fb{background:#1877f2}.rel-social.sc{background:#fffc00;color:#1a1a1a}
+.rel-btn-all{background:#1e40af!important;color:#fff!important;border-color:#1e40af!important}
