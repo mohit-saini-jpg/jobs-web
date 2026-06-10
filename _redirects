@@ -73,6 +73,34 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 # These serve the newly generated static pages directly
 /state-jobs/  /section/state-jobs/  301
 
+# ── STATE /state/ card links: missing /jobs/ pages → state listing (no 404) ──
+# These state_jobs entries have no individual /jobs/{slug}/ page yet, so the
+# /state/ card link falls back to that state's listing instead of 404ing.
+/jobs/cuap-assistant-professor-60-posts/  https://www.topsarkarijobs.com/state/andhra-pradesh/  301
+/jobs/cau-mts-1-posts/  https://www.topsarkarijobs.com/state/arunachal-pradesh/  301
+/jobs/neiafmr-professor-senior-assistant-and-more-35-posts/  https://www.topsarkarijobs.com/state/arunachal-pradesh/  301
+/jobs/oil-india-junior-technician-junior-office-assistant-junior-engineer-49-posts/  https://www.topsarkarijobs.com/state/arunachal-pradesh/  301
+/jobs/iim-guwahati-stores-purchase-officer-1-posts/  https://www.topsarkarijobs.com/state/assam/  301
+/jobs/iit-guwahati-office-assistant-1-posts/  https://www.topsarkarijobs.com/state/assam/  301
+/jobs/tmc-technician-biomedical-scientific-assistant-2-posts/  https://www.topsarkarijobs.com/state/bihar/  301
+/jobs/dlsa-bhojpur-para-legal-volunteer-40-posts/  https://www.topsarkarijobs.com/state/bihar/  301
+/jobs/panjab-university-field-investigator-1-posts/  https://www.topsarkarijobs.com/state/chandigarh/  301
+/jobs/nio-project-associate-i-1-posts/  https://www.topsarkarijobs.com/state/goa/  301
+/jobs/bits-pilani-project-associate-1-posts/  https://www.topsarkarijobs.com/state/goa/  301
+/jobs/csir-nio-project-associate-i-1-posts/  https://www.topsarkarijobs.com/state/goa/  301
+/jobs/esic-teaching-faculty-36-posts/  https://www.topsarkarijobs.com/state/haryana/  301
+/jobs/juvnl-medical-consultant-1-posts/  https://www.topsarkarijobs.com/state/jharkhand/  301
+/jobs/iit-ism-dhanbad-junior-research-fellow-jrf-1-posts/  https://www.topsarkarijobs.com/state/jharkhand/  301
+/jobs/karnataka-panchayat-raj-commissionerate-subject-expert-and-young-professionals-3/  https://www.topsarkarijobs.com/state/karnataka/  301
+/jobs/hll-td-trainees/  https://www.topsarkarijobs.com/state/kerala/  301
+/jobs/iit-indore-junior-research-fellow-1-posts/  https://www.topsarkarijobs.com/state/madhya-pradesh/  301
+/jobs/nkgsb-bank-branch-managers-head-ibd-and-more/  https://www.topsarkarijobs.com/state/maharashtra/  301
+/jobs/assam-rifles-general-duty-medical-officer-12-posts/  https://www.topsarkarijobs.com/state/meghalaya/  301
+/jobs/rites-individual-consultants-23-posts/  https://www.topsarkarijobs.com/state/mizoram/  301
+/jobs/air-force-school-avadi-teaching-and-non-teaching-staff-10-posts/  https://www.topsarkarijobs.com/state/tamil-nadu/  301
+/jobs/sainik-school-ghorakhal-pgt-tgt-nursing-assistant-and-more-10-posts/  https://www.topsarkarijobs.com/state/uttarakhand/  301
+/jobs/csu-office-assistant-project-fellow-and-more-15-posts/  https://www.topsarkarijobs.com/state/uttarakhand/  301
+
 # ── state-jobs.html?state= → /state-jobs/{slug}/ (permanent SEO redirect) ──
 /state-jobs.html?state=Andhra+Pradesh        /state-jobs/andhra-pradesh/   301
 /state-jobs.html?state=Andhra%20Pradesh      /state-jobs/andhra-pradesh/   301
