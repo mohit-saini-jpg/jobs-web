@@ -586,6 +586,133 @@ def render_links(il_obj):
         buttons += f'<a href="{e(u)}" class="lnk-btn {cl}" target="_blank" rel="noopener noreferrer"{dl}><i class="fa-solid {ic}"></i> {e(lbl[:55])}</a>\n'
     return f'<div class="links-grid">{buttons}</div>' if buttons else ''
 
+def auto_generate_faqs(job_obj):
+    """Generate 5-10 FAQs from ACTUAL page data when JSON has no FAQ.
+       Only uses fields that exist — never invents data. Category-aware.
+       Handles BOTH structured (basic_details) and flat sarkari-format jobs."""
+    if not isinstance(job_obj, dict): return []
+    bd    = job_obj.get('basic_details', {}) or {}
+    dates = job_obj.get('important_dates', {}) or {}
+    # title/org/posts: try basic_details first, then flat sarkari keys
+    title = safe(bd.get('job_title','') or job_obj.get('title','') or job_obj.get('post_name','') or 'this recruitment')
+    org   = safe(bd.get('organization_name','') or job_obj.get('organization','') or job_obj.get('organisation',''))
+    posts = safe(bd.get('total_vacancies','') or job_obj.get('total_post','') or job_obj.get('total_vacancy','') or job_obj.get('vacancies',''))
+    mode  = safe(bd.get('application_mode','') or job_obj.get('apply_mode','') or job_obj.get('application_mode',''))
+    site  = safe(bd.get('official_website','') or job_obj.get('official_website',''))
+    cat   = (job_obj.get('category','') or '').upper()
+
+    def _val(d, keys):
+        if isinstance(d, dict):
+            for k in keys:
+                v = d.get(k)
+                if isinstance(v, str) and v.strip(): return safe(v.strip())
+        elif isinstance(d, str): return safe(d.strip())
+        return ''
+    # qualification / age / fee: structured dict OR flat string keys
+    qual = (_val(job_obj.get('qualification'), ['education_qualification','qualification','eligibility'])
+            or safe(job_obj.get('qualification','') if isinstance(job_obj.get('qualification'),str) else '')
+            or safe(job_obj.get('eligibility','') if isinstance(job_obj.get('eligibility'),str) else ''))
+    age  = (_val(job_obj.get('age_limit'), ['age_details','age_limit','age','details'])
+            or safe(job_obj.get('minimum_age','') or job_obj.get('age_limit','') if isinstance(job_obj.get('age_limit'),str) else job_obj.get('minimum_age','')))
+    fee  = (_val(job_obj.get('application_fee'), ['general_fee','general','ur_fee','fee'])
+            or _val(job_obj.get('application_fees'), ['general_fee','general','ur_fee','fee'])
+            or safe(job_obj.get('application_fees','') if isinstance(job_obj.get('application_fees'),str) else ''))
+    last = safe(dates.get('last_date_to_apply','') or dates.get('last_date_apply_online','') or dates.get('last_date','') or job_obj.get('last_date',''))
+    start= safe(dates.get('application_start_date','') or dates.get('application_start','') or dates.get('start_date',''))
+    exam = safe(dates.get('exam_date','') or dates.get('examination_date',''))
+    sal  = (_val(job_obj.get('salary_details'), ['pay_scale','salary','pay'])
+            or safe(job_obj.get('salary_pay_scale','') or job_obj.get('salary','') or job_obj.get('pay_scale','')))
+    # selection process (list or dict)
+    sp = job_obj.get('selection_process')
+    sel = ''
+    if isinstance(sp, list) and sp:
+        sel = safe('; '.join(str(x) for x in sp[:2]))[:300]
+    elif isinstance(sp, dict):
+        sel = _val(sp, ['details','process'])[:300]
+    elif isinstance(sp, str):
+        sel = safe(sp)[:300]
+
+    faqs = []
+    def add(q, a):
+        if a and str(a).strip():
+            faqs.append({'question': q, 'answer': a})
+
+    # Category-specific lead questions
+    if 'RESULT' in cat:
+        if org: add(f"Who has released the result for {title}?", f"The result for {title} has been released by {org}.")
+        if site: add(f"How can candidates check the {title} result?", f"Candidates can check and download the result from the official website {site}.")
+        add(f"What details are needed to download the {title} result?", "Candidates typically need their registration/roll number and date of birth or password to access the result.")
+    elif 'ADMIT' in cat:
+        if org: add(f"Who issues the admit card for {title}?", f"The admit card for {title} is issued by {org}.")
+        if site: add(f"How can candidates download the {title} admit card?", f"Candidates can download the admit card by logging in with their credentials on the official website {site}.")
+        add(f"What details are required to download the {title} admit card?", "Candidates usually need their registration number/application number along with their date of birth or password.")
+        if exam: add(f"When is the examination for {title}?", f"As per the notification, the examination date is {exam}.")
+    elif 'ANSWER' in cat:
+        if org: add(f"Who released the answer key for {title}?", f"The answer key for {title} has been released by {org}.")
+        if site: add(f"How can candidates download the {title} answer key?", f"The answer key can be downloaded from the official website {site}.")
+    elif 'ADMISSION' in cat or 'ADMISSIONS' in cat:
+        if last: add(f"What is the last date to apply for {title}?", f"The last date to apply for {title} is {last}.")
+        if qual: add(f"What is the eligibility for {title}?", f"The required eligibility is: {qual}")
+        if fee: add(f"What is the application fee for {title}?", f"The application fee is {fee}.")
+
+    # Generic job FAQs (apply to most categories) — only if data present
+    if last: add(f"What is the last date to apply for {title}?", f"The last date to submit the online application for {title} is {last}.")
+    if start: add(f"When does the application for {title} start?", f"The online application process for {title} starts from {start}.")
+    if posts: add(f"How many vacancies are available in {title}?", f"A total of {posts} vacancies are available under {title}.")
+    if qual: add(f"What qualification is required for {title}?", f"Candidates must have: {qual}")
+    if age: add(f"What is the age limit for {title}?", f"{age}")
+    if fee: add(f"What is the application fee for {title}?", f"The application fee for {title} is {fee}.")
+    if sel: add(f"What is the selection process for {title}?", f"The selection process includes: {sel}")
+    if sal: add(f"What is the salary / pay scale for {title}?", f"The pay scale for {title} is {sal}.")
+    if mode: add(f"How can candidates apply for {title}?", f"Candidates can apply in {mode} mode" + (f" through the official website {site}." if site else "."))
+    if exam and not any('examination' in f['question'].lower() or 'exam' in f['question'].lower() for f in faqs):
+        add(f"When is the exam for {title}?", f"As per the notification, the exam is scheduled for {exam}.")
+    if org: add(f"Which organization has released {title}?", f"{title} has been released by {org}.")
+    if site: add(f"What is the official website for {title}?", f"The official website to apply and check details for {title} is {site}.")
+    if posts and not any('vacanc' in f['question'].lower() for f in faqs):
+        add(f"What is the total number of posts in {title}?", f"There are a total of {posts} posts available under {title}.")
+
+    # ── Content-based fallback for notice/date-sheet/result/admit pages that
+    #    have a title + short info + links but no structured job fields.
+    #    Derive FAQs from ACTUAL page content (title, short_info, links). ──
+    short = safe(job_obj.get('short_info','') or job_obj.get('short_information','') or bd.get('short_information',''))
+    il = job_obj.get('important_links') or {}
+    pdf_link = ''
+    if isinstance(il, dict):
+        pdf_link = safe(il.get('notification_pdf','') or il.get('official_website','') or il.get('admit_card','') or il.get('result_link','') or il.get('apply_online',''))
+    tl = title.lower()
+    if len(faqs) < 3:
+        # Detect content type from title for a relevant Q
+        if 'date sheet' in tl or 'time table' in tl or 'timetable' in tl or 'datesheet' in tl:
+            add(f"What is {title} about?", short or f"{title} provides the official examination schedule. Candidates can check the dates and download the PDF from the official website.")
+            add(f"How can candidates download the {('date sheet' if 'date sheet' in tl or 'datesheet' in tl else 'time table')}?", f"Candidates can download it" + (f" from {pdf_link}." if pdf_link else " from the official website by logging in or visiting the notice section."))
+        elif 'result' in tl:
+            add(f"What is {title} about?", short or f"{title} announces the official result. Candidates can check and download it from the official website.")
+            add("How can candidates check the result?", f"Candidates can check the result" + (f" at {pdf_link}." if pdf_link else " on the official website using their roll number/registration details."))
+        elif 'admit card' in tl or 'hall ticket' in tl:
+            add(f"What is {title} about?", short or f"{title} provides the official admit card. Candidates can download it from the official website.")
+            add("How can candidates download the admit card?", f"Candidates can download the admit card" + (f" from {pdf_link}." if pdf_link else " from the official website by logging in with their credentials."))
+        elif 'answer key' in tl:
+            add(f"What is {title} about?", short or f"{title} provides the official answer key for the examination.")
+            add("How can candidates download the answer key?", f"Candidates can download the answer key" + (f" from {pdf_link}." if pdf_link else " from the official website."))
+        elif 'admission' in tl or 'counselling' in tl or 'counseling' in tl:
+            add(f"What is {title} about?", short or f"{title} provides official admission/counselling details. Candidates can check eligibility and process on the official website.")
+        else:
+            # generic notice/update — only if we have real short_info to back it
+            if short:
+                add(f"What is {title} about?", short)
+                if pdf_link:
+                    add("Where can candidates find the official notification?", f"The official notification/PDF is available at {pdf_link}.")
+
+    # De-dup by question, cap 5-10
+    seen=set(); out=[]
+    for f in faqs:
+        k = re.sub(r'\s+',' ',f['question'].lower()).strip()
+        if k in seen: continue
+        seen.add(k); out.append(f)
+        if len(out) >= 10: break
+    return out
+
 def render_faq(faq_list):
     if not isinstance(faq_list, list) or not faq_list: return ''
     items = ''
@@ -603,9 +730,14 @@ def render_faq(faq_list):
         if not key or key in seen: continue
         seen.add(key)
         idx += 1
+        # First FAQ open by default; accordion toggle via faq-init.js.
+        _op = ' open' if idx == 1 else ''
         items += (f'<div class="faq-item" id="faq-{idx}">'
-                  f'<div class="faq-q"><span class="faq-icon">Q{idx}</span><span>{e(q)}</span></div>'
-                  f'<div class="faq-a"><span class="faq-icon" style="background:#15803d">A</span><div>{e(a)}</div></div></div>')
+                  f'<div class="faq-q{_op}"><span class="faq-icon">Q{idx}</span>'
+                  f'<span class="faq-q-text">{e(q)}</span>'
+                  f'<i class="fa-solid fa-chevron-down faq-chev" aria-hidden="true"></i></div>'
+                  f'<div class="faq-a{_op}"><span class="faq-a-icon faq-icon" style="background:#15803d">A</span>'
+                  f'<div>{e(a)}</div></div></div>')
     return items
 
 def render_vacancy_table(vac_list):
@@ -1344,6 +1476,17 @@ def build_all_sections(job_obj):
         if sv:
             body = f'<div class="edu-sec">{e(sv)}</div>'
             html += sec_card(key_label(key), 'fa-circle-dot', '475569,#334155', body)
+
+    # ── Auto-FAQ: if no JSON FAQ was rendered, generate from page data ──
+    if 'faq' not in rendered:
+        _auto = auto_generate_faqs(job_obj)
+        if len(_auto) >= 2:  # show if we have at least a couple real FAQs
+            _auto_body = render_faq(_auto)
+            if _auto_body and _auto_body.strip():
+                _m = SECTION_META.get('faq', ('FAQs','fa-circle-question','4338ca,#6366f1'))
+                html += sec_card('faq', _m[1], _m[2], _auto_body)
+                rendered.add('faq')
+
     return html
 
 # ── Schema builder ─────────────────────────────────────────────
@@ -1438,6 +1581,12 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
         _seen_q.add(k)
         valid_faqs.append({'question': q, 'answer': a})
         if len(valid_faqs) >= 10: break
+    # If JSON had no usable FAQ, fall back to auto-generated FAQs (schema must
+    # match the visible auto-FAQ section rendered by build_all_sections).
+    if not valid_faqs:
+        _auto = auto_generate_faqs(job_obj)
+        if len(_auto) >= 2:
+            valid_faqs = _auto
     if valid_faqs:
         faq_schema = {'@context':'https://schema.org','@type':'FAQPage',
             'mainEntity':[{'@type':'Question','name':f['question'],'acceptedAnswer':{'@type':'Answer','text':f['answer']}} for f in valid_faqs]}
@@ -1960,6 +2109,7 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
 <div id="footerPlaceholder"></div>
 <script src="/tsj-footer-init.js?v={ASSET_VER}"></script>
 <script src="/tsj-menu.js?v={ASSET_VER}" defer></script>
+<script src="/faq-init.js?v={ASSET_VER}" defer></script>
 <script>
 (function(){{
   document.addEventListener('click',function(ev){{
