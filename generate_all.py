@@ -1713,11 +1713,12 @@ REL_CATS_HTML = '''<div class="rel-section">
 <div class="rel-card">
 <div class="rel-card-head c-social"><i class="fa-solid fa-bell"></i> Join &amp; Follow Us</div>
 <div class="rel-social-body">
-  <a href="https://whatsapp.com/channel/0029Vb6OQ8L0G0Xme6X3wM3t" target="_blank" rel="noopener" class="rel-social wa"><i class="fa-brands fa-whatsapp"></i> Join WhatsApp Channel</a>
-  <a href="https://www.youtube.com/@topsarkarijobs" target="_blank" rel="noopener" class="rel-social yt"><i class="fa-brands fa-youtube"></i> YouTube Channel Join Now</a>
+  <a href="https://whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" class="rel-social wa"><i class="fa-brands fa-whatsapp"></i> Join WhatsApp Channel</a>
+  <a href="https://www.youtube.com/@Topsarkarijobs" target="_blank" rel="noopener" class="rel-social yt"><i class="fa-brands fa-youtube"></i> YouTube Channel Join Now</a>
   <a href="https://www.instagram.com/topsarkarijobs" target="_blank" rel="noopener" class="rel-social ig"><i class="fa-brands fa-instagram"></i> Instagram</a>
-  <a href="https://t.me/topsarkarijobs" target="_blank" rel="noopener" class="rel-social tg"><i class="fa-brands fa-telegram"></i> Telegram</a>
-  <a href="https://www.facebook.com/topsarkarijobs" target="_blank" rel="noopener" class="rel-social fb"><i class="fa-brands fa-facebook-f"></i> Facebook</a>
+  <a href="https://x.com/TopSarkariJobs" target="_blank" rel="noopener" class="rel-social tw"><i class="fa-brands fa-x-twitter"></i> X (Twitter)</a>
+  <a href="https://www.snapchat.com/add/topsarkarijobss" target="_blank" rel="noopener" class="rel-social sc"><i class="fa-brands fa-snapchat"></i> Snapchat</a>
+  <a href="https://www.facebook.com/profile.php?id=61587033757932" target="_blank" rel="noopener" class="rel-social fb"><i class="fa-brands fa-facebook-f"></i> Facebook</a>
 </div>
 </div>
 
@@ -1737,6 +1738,28 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     last_d    = safe(dates.get('last_date_to_apply','') or dates.get('last_date_apply_online','') or dates.get('last_date','') or job_obj.get('last_date',''))
     apply_m   = safe(bd.get('application_mode','') or job_obj.get('apply_mode','') or ('Offline' if job_obj.get('category') == 'OFFLINE_FORM' else 'Online'))
     location  = safe(bd.get('job_location','') or job_obj.get('job_location','') or 'India')
+
+    # ── Extra fields for rich WhatsApp/social share message ──
+    def _first_str(d, keys, allow_fallback=True):
+        if isinstance(d, dict):
+            for k in keys:
+                v = d.get(k)
+                if isinstance(v, str) and v.strip():
+                    return safe(v.strip())
+            if allow_fallback:
+                # fallback: first non-empty string value that isn't a long 'details' note
+                for kk, v in d.items():
+                    if kk == 'details': continue
+                    if isinstance(v, str) and v.strip():
+                        return safe(v.strip())
+        elif isinstance(d, list) and d:
+            return safe('; '.join(str(x) for x in d if x)[:200])
+        elif isinstance(d, str):
+            return safe(d.strip())
+        return ''
+    _qual = _first_str(job_obj.get('qualification'), ['education_qualification','qualification','eligibility'])
+    _age  = _first_str(job_obj.get('age_limit'), ['age_details','age_limit','age'])
+    _fee  = _first_str(job_obj.get('application_fee'), ['general_fee','general','ur_fee','fee','application_fee'], allow_fallback=False)
 
     # Build SEO title inline (50-60 chars)
     _BRAND = ' | Top Sarkari Jobs'
@@ -1827,17 +1850,34 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
 
     # Header (with share buttons)
     cat_badge = safe(job_obj.get('category','') or badge_label).replace('_',' ')
+    import urllib.parse as _uparse
+    _raw_url = canon_url
+    # Build rich share message (WhatsApp / Telegram). Skip empty fields.
+    _msg_lines = [f'📢 {title}']
+    if vacancies and vacancies not in ('—',''): _msg_lines.append(f'📋 Posts: {vacancies}')
+    if _qual: _msg_lines.append(f'🎓 Qualification: {_qual[:120]}')
+    if _age:  _msg_lines.append(f'🎂 Age Limit: {_age[:100]}')
+    if _fee:  _msg_lines.append(f'💰 Application Fee: {_fee[:100]}')
+    if last_d and last_d not in ('—',''): _msg_lines.append(f'📅 Last Date: {last_d}')
+    _msg_lines.append('👉 Apply Online:')
+    _msg_lines.append(_raw_url)
+    _msg_lines.append('🔔 Complete Details Available Here')
+    _msg_lines.append('#SarkariJob #GovernmentJobs #LatestJobs')
+    _share_msg = '\n'.join(_msg_lines)
+    # URL-encoded versions for share links
+    _enc_msg = _uparse.quote(_share_msg, safe='')
+    _enc_url = _uparse.quote(_raw_url, safe='')
+    _enc_title = _uparse.quote(title, safe='')
     _share_u = e(canon_url)
-    _share_t = e(title)
     share_row = f'''<div class="dh-share">
     <span class="dh-share-lbl"><i class="fa-solid fa-share-nodes"></i> Share This Job</span>
     <div class="dh-share-btns">
-      <a href="https://api.whatsapp.com/send?text={_share_t}%20{_share_u}" target="_blank" rel="noopener" class="dh-sh wa" aria-label="Share on WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
-      <a href="https://t.me/share/url?url={_share_u}&text={_share_t}" target="_blank" rel="noopener" class="dh-sh tg" aria-label="Share on Telegram"><i class="fa-brands fa-telegram"></i></a>
-      <a href="https://www.facebook.com/sharer/sharer.php?u={_share_u}" target="_blank" rel="noopener" class="dh-sh fb" aria-label="Share on Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-      <a href="https://twitter.com/intent/tweet?url={_share_u}&text={_share_t}" target="_blank" rel="noopener" class="dh-sh tw" aria-label="Share on X"><i class="fa-brands fa-x-twitter"></i></a>
-      <a href="https://www.linkedin.com/sharing/share-offsite/?url={_share_u}" target="_blank" rel="noopener" class="dh-sh li" aria-label="Share on LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
-      <button type="button" class="dh-sh cp" data-share-url="{_share_u}" aria-label="Copy link"><i class="fa-solid fa-link"></i></button>
+      <a href="https://api.whatsapp.com/send?text={_enc_msg}" target="_blank" rel="noopener" class="dh-sh wa" aria-label="Share on WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+      <a href="https://t.me/share/url?url={_enc_url}&text={_enc_msg}" target="_blank" rel="noopener" class="dh-sh tg" aria-label="Share on Telegram"><i class="fa-brands fa-telegram"></i></a>
+      <a href="https://www.facebook.com/sharer/sharer.php?u={_enc_url}" target="_blank" rel="noopener" class="dh-sh fb" aria-label="Share on Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+      <a href="https://twitter.com/intent/tweet?text={_enc_msg}" target="_blank" rel="noopener" class="dh-sh tw" aria-label="Share on X"><i class="fa-brands fa-x-twitter"></i></a>
+      <a href="https://www.linkedin.com/sharing/share-offsite/?url={_enc_url}" target="_blank" rel="noopener" class="dh-sh li" aria-label="Share on LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+      <button type="button" class="dh-sh cp" data-share-text="{e(_share_msg)}" data-share-url="{_share_u}" aria-label="Copy details"><i class="fa-solid fa-link"></i></button>
     </div>
   </div>'''
     header_html = f'''<div class="detail-header">
@@ -1925,8 +1965,8 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
   document.addEventListener('click',function(ev){{
     var b=ev.target.closest('.dh-sh.cp');
     if(!b)return;
-    var u=b.getAttribute('data-share-url')||location.href;
-    if(navigator.clipboard){{navigator.clipboard.writeText(u).then(function(){{
+    var txt=b.getAttribute('data-share-text')||b.getAttribute('data-share-url')||location.href;
+    if(navigator.clipboard){{navigator.clipboard.writeText(txt).then(function(){{
       var i=b.querySelector('i');if(i){{var o=i.className;i.className='fa-solid fa-check';setTimeout(function(){{i.className=o;}},1400);}}
     }});}}
   }});

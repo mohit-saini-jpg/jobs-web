@@ -1,50 +1,51 @@
-# 📁 DETAIL + CATEGORY PAGES UPGRADE (2026-06-10)
+# 📁 RICH SHARE + STATS + SOCIAL LINKS (2026-06-10)
 
-Ye ek **FULL SITE rebuild** hai (3,200+ job pages + category/section/qualification listing pages).
-Sab kuch regenerate ho gaya hai naye changes ke saath.
+FULL SITE rebuild. 3,200+ job pages + listing pages — sab regenerate ho gaye.
 
-## ✅ Kya-kya change hua
+## ✅ Kya change hua
 
-### 1) Detail header (har details page) me Share button + 4 stats pakka
-- Har detail page ke header me ab **Share This Job** buttons hain: WhatsApp, Telegram, Facebook, X (Twitter), LinkedIn, aur Copy-link.
-- Header me **Vacancies, Last Date, Apply Mode, Location** — chaaron stats har page pe guaranteed dikhte hain.
-- Location ab **poora** dikhता hai (pehle "Uttar Pradesh," pe cut ho jaata tha — ab "Uttar Pradesh, India" pura).
+### 1) WhatsApp/Social Share ab RICH message bhejta hai (sirf title nahi)
+Har detail page ke share button (WhatsApp, Telegram, X, Facebook, LinkedIn, Copy) ab poora format bhejte hain:
+```
+📢 {Job Title}
+📋 Posts: {Total Posts}
+🎓 Qualification: {Qualification}
+🎂 Age Limit: {Age Limit}
+💰 Application Fee: {Fee}
+📅 Last Date: {Last Date}
+👉 Apply Online:
+{Job URL}
+🔔 Complete Details Available Here
+#SarkariJob #GovernmentJobs #LatestJobs
+```
+- Jo field JSON me available hai wahi aata hai; khaali field apne aap skip ho jaata hai (taaki "—" jaisa kachra na dikhe).
+- Copy button bhi ab poora rich text copy karta hai (sirf link nahi).
 
-### 2) Related Categories — ab SEC-CARD layout (Image 2 jaisa) + Social links
-- Related Categories ab 4 alag **section cards** me hai (rang-birange headers ke saath):
-  - 🗺️ State Wise Jobs (33 states)
-  - 📚 Job Categories (19)
-  - 🎓 Education State Wise Jobs (22)
-  - 📖 Qualification Wise Jobs (34)
-  - **Total 58+ categories har details page pe.**
-- Ek naya **"Join & Follow Us"** social card add kiya — WhatsApp Channel, YouTube, Instagram, Telegram, Facebook links. Har page pe.
+### 2) Header stats — har category ke detail page pe pakka
+Vacancies / Last Date / Apply Mode / Location — chaaron stats site ke HAR detail page pe dikhte hain (FJA jobs, Sarkari, State, Education — sab ek hi `build_detail_page` se bante hain, to uniform hai). Location ab poora dikhta hai.
 
-### 3) Category / Section listing pages bhi SEO + user-friendly
-- `/section/...`, `/qualification/...` jaise listing pages pe bhi ab wahi Related Categories cards + Social links card add ho gaye — har category page pe 58+ internal links (SEO ke liye behtar) + social.
+### 3) Sahi social media links lag gaye (aapke diye hue)
+"Join & Follow Us" card me ab ye links hain (har detail + listing page pe):
+- WhatsApp Channel: whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T
+- YouTube: youtube.com/@Topsarkarijobs
+- Instagram: instagram.com/topsarkarijobs
+- X (Twitter): x.com/TopSarkariJobs
+- Snapchat: snapchat.com/add/topsarkarijobss
+- Facebook: facebook.com/profile.php?id=61587033757932
 
-## 📂 Files kahan rakhni hain
-
-Ye **poora site** hai. Sabse aasaan: pura content deploy karo (ya jo files badli wo replace karo).
-Mukhya changed/important files:
-
+## 📂 Files kahan rakhni hain (poora folder deploy karo)
 | File | Kahan |
 |------|-------|
-| **Saari `jobs/*/index.html`** (3,200) | yathaasthaan (root ke `jobs/` folder me) |
-| **Saari `section/*/`, `qualification/*/`** listing pages | yathaasthaan |
-| `styles-detail.css` | **Root** (ISME naya share + card CSS hai — zaroor replace karo) |
-| `generate_all.py` | **Root** (permanent fix — future generation me ye changes rahenge) |
-| `.github/workflows/generate_all.py` | workflow folder (root copy ka sync) |
+| Saari `jobs/*/`, `section/*/`, `qualification/*/`, `education/*/`, `state/*/` pages | yathaasthaan |
+| `generate_all.py` | Root (permanent fix) |
+| `.github/workflows/generate_all.py` | sync copy |
+| `styles-detail.css` (+ workflow copy) | Root |
 
-## ⚠️ Important
+## ⚠️ Note
+- Fee/Age/Qualification sirf un pages pe share me dikhega jahan JSON me wo data hai — baaki pe wo line skip ho jaati hai (yahi sahi hai).
+- Sab fix generator me hai → future workflow runs pe automatically aate rahenge.
+- Pichhle fixes intact: 0 duplicate canonical, 3,200 job pages, clean URLs, state cards.
 
-- **`styles-detail.css` zaroor replace karo** — naye share buttons aur card layout ka CSS isi me hai. Ye replace na kiya to layout tuta dikhega.
-- **Generator (generate_all.py) me changes permanent hain** — agli baar workflow chalega tab bhi share buttons, card layout, social links automatically aayenge. Source me hi fix hai.
-- Layout ka baaki design same hai — sirf header me share add hua aur Related Categories card-style ho gaya.
-- Pichhle saare fixes intact: 0 duplicate canonical, 3,200 unique job pages, clean URLs.
-- Social media links me apne ASLI channel URLs daal lena agar abhi placeholder hain (WhatsApp/YouTube/Instagram/Telegram/Facebook ke links generate_all.py me `Social Media CARD` section me hain — wahan edit kar sakte ho).
-
-## 🚀 Deploy ke baad check
-
-1. Koi bhi job detail page kholo → header me Share buttons + 4 stats dikhne chahiye.
-2. Page ke niche Related Categories — 4 rang-birange cards + "Join & Follow Us" social card.
-3. `/section/latest-jobs/` jaisa category page kholo → wahan bhi yahi cards niche dikhne chahiye.
+## 🚀 Deploy ke baad
+1. Koi job page → WhatsApp share → poora rich message aana chahiye.
+2. Header me 4 stats + niche social links card sahi URLs ke saath.
