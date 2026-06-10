@@ -130,3 +130,15 @@
 .ul-title{font-size:.8rem;font-weight:600;color:#374151;max-width:200px;line-height:1.4}
 .ul-links{display:flex;flex-wrap:wrap;gap:5px}
 .lnk-sm{padding:4px 10px!important;font-size:.75rem!important}
+
+/* ── Related Categories — Expanded Layout ── */
+.rel-section{margin-top:18px;padding:14px 14px 18px;background:#fff;border-radius:10px;border:1px solid #e2e8f0}
+.rel-head{font-size:.88rem;font-weight:800;color:#1e293b;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #e2e8f0}
+.rel-cats-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:4px}
+@media(max-width:600px){.rel-cats-grid{grid-template-columns:1fr}}
+.rel-col-head{font-size:.76rem;font-weight:800;color:#fff;background:linear-gradient(135deg,#1e40af,#2563eb);padding:6px 10px;border-radius:6px;display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.rel-col-links{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}
+.rel-btn{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;font-size:.73rem;font-weight:600;text-decoration:none;background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;transition:all .15s;white-space:nowrap}
+.rel-btn:hover{background:#dbeafe;color:#1e40af;border-color:#bfdbfe}
+.rel-btn-all{background:#1e40af;color:#fff;border-color:#1e40af;font-weight:700}
+.rel-btn-all:hover{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
