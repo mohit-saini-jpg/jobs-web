@@ -362,6 +362,25 @@
       transition:box-shadow .2s;
     }
     .sec-card:hover { box-shadow:var(--shadow-hover); }
+    /* STATE WISE JOBS section cards */
+    .state-wise-grid {
+      display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+      gap:10px; padding:14px;
+    }
+    .sw-card {
+      display:flex; align-items:center; gap:10px; padding:10px 12px;
+      border:1px solid var(--border); border-radius:10px; background:var(--white);
+      text-decoration:none; color:var(--text); transition:box-shadow .15s,border-color .15s;
+    }
+    .sw-card:hover { box-shadow:var(--shadow-hover); border-color:var(--blue); }
+    .sw-code {
+      width:38px; height:38px; flex-shrink:0; border-radius:8px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:.8rem; font-weight:800; letter-spacing:.5px;
+    }
+    .sw-info { min-width:0; }
+    .sw-name { font-size:.82rem; font-weight:700; line-height:1.2; }
+    .sw-sub { font-size:.68rem; color:var(--muted); margin-top:2px; }
     .sec-head {
       display:flex; align-items:center; justify-content:space-between;
       padding:11px 14px; color:#fff; font-size:.83rem; font-weight:900;
@@ -612,7 +631,7 @@
   <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
-  <script src="/tsj-menu.js?v=20260610120733" defer></script>
+  <script src="/tsj-menu.js?v=20260610083552" defer></script>
   <script src="/pwa-install.js?v=6.0" defer></script>
   <!-- ══ END PWA ════════════════════════════════════════════════════ -->
 </head>
@@ -837,6 +856,15 @@
             <div class="skel-row"><div class="skeleton skel-dot"></div><div class="skel-lines"><div class="skeleton skel-line" style="width:88%"></div><div class="skeleton skel-line" style="width:45%"></div></div></div>
           </div>
 
+        </div>
+
+        <!-- STATE WISE JOBS — section cards (all states), shown on /state/ overview -->
+        <div class="sec-card" id="stateWiseSection" style="display:none;">
+          <div class="sec-head blue">
+            <div class="left"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i> State Wise Jobs</div>
+            <a href="/state-jobs/" class="view-all-btn">View All</a>
+          </div>
+          <div class="state-wise-grid" id="stateWiseGrid"></div>
         </div>
 
         <!-- ADMIT CARDS + RESULTS two-col -->
@@ -1221,7 +1249,7 @@
     document.getElementById('faq2A').textContent = `Eligibility varies by post. Most ${name} govt jobs require 10th/12th pass, graduation or post-graduation. Domicile/Residence certificate of ${name} is usually required. Age: 18–40 years (relaxation for reserved categories).`;
   }
 
-  // ═══ SLUG GENERATOR (matches state-job-detail.html exactly) ═══
+  // ═══ SLUG GENERATOR (matches /jobs/{slug}/ canonical pages) ═══
   function makeSlug(title) {
     return (title || '').toLowerCase()
       .normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
@@ -1238,7 +1266,7 @@
   function jobDetailUrl(item, section) {
     const title = item.name || item.detail?.basic_details?.job_title || '';
     const slug  = makeSlug(title);
-    // Clean URL: /jobs/<slug>/ — state-job-detail.html handles via _redirects rewrite
+    // Clean URL: /jobs/<slug>/ — single canonical job page (One Job = One URL)
     return `/jobs/${slug}/`;
   }
 
@@ -1322,12 +1350,21 @@
   function loadJobs() {
     const jobsList = document.getElementById('jobsList');
 
+    // On the /state/ overview (no specific state), the State Wise Jobs cards
+    // are the main content — hide the per-state jobs list to avoid an empty
+    // "no jobs found" message.
+    if (!stateName) {
+      const js = document.getElementById('jobsSection');
+      if (js) js.style.display = 'none';
+      return;
+    }
+
     // ── Step 1: Use INLINE data (always available, instant) ──
     let matchedSection = findStateSection(INLINE_JOBS_DATA.sections, stateName);
     let matchedItems   = matchedSection ? (matchedSection.items || []) : [];
 
     // For inline data, hasDetailData = false (slim — no detail object)
-    // Link goes to state-job-detail.html which fetches full JSON itself
+    // Link goes to the clean /jobs/{slug}/ canonical page
     // We pass the section so jobDetailUrl can generate the slug URL
     const hasDetailData = !!matchedSection; // always true if section found
 
@@ -1345,6 +1382,33 @@
     }
 
     renderJobList(matchedItems, matchedSection, hasDetailData);
+  }
+
+  // ═══ STATE WISE JOBS — section cards (only on /state/ overview) ═══
+  function renderStateWiseCards() {
+    var sec = document.getElementById('stateWiseSection');
+    var grid = document.getElementById('stateWiseGrid');
+    if (!sec || !grid) return;
+    // Only show on the overview page (no specific state selected)
+    if (stateName) { sec.style.display = 'none'; return; }
+    var palette = [
+      ['#eff6ff','#1d4ed8'],['#fef3c7','#d97706'],['#fff0e6','#c2410c'],
+      ['#f0fdf4','#16a34a'],['#f5f3ff','#7c3aed'],['#ecfdf5','#059669'],
+      ['#fff1f2','#be123c'],['#fdf4ff','#a21caf'],['#f0fdfa','#0d9488']
+    ];
+    var i = 0, html = '';
+    for (var name in STATE_DATA) {
+      var d = STATE_DATA[name];
+      var slug = name.toLowerCase().replace(/ /g, '-');
+      var c = palette[i % palette.length]; i++;
+      html += '<a href="/state-jobs/' + slug + '/" class="sw-card">'
+        + '<span class="sw-code" style="background:' + c[0] + ';color:' + c[1] + ';">' + (d.code || '') + '</span>'
+        + '<span class="sw-info"><span class="sw-name">' + name + '</span>'
+        + '<span class="sw-sub">' + name + ' Jobs</span></span>'
+        + '</a>';
+    }
+    grid.innerHTML = html;
+    sec.style.display = '';
   }
 
   // ═══ FILL ALL STATES SIDEBAR ═══
@@ -1386,10 +1450,11 @@
   // ═══ INIT ═══
   setupPage();
   fillStatesSidebar();
+  renderStateWiseCards();
   loadJobs();
   </script>
 
-  <script src="/script.min.js?v=20260610063742" defer></script>
+  <script src="/script.min.js?v=20260610030605" defer></script>
 <script src="/tsj-version.js"?v=20260530023112 defer></script>
 </body>
 </html>
