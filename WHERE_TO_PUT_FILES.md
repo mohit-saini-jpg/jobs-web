@@ -1,45 +1,40 @@
-# 📁 FAQ FIX + AUTO-FAQ SYSTEM (2026-06-10)
+# 📁 DETAIL PAGE SPEC — PERMANENT FIXES (2026-06-10)
 
-FULL SITE rebuild. Do 2 cheezein theek/add ki:
+FULL SITE rebuild. Aapke detail-page generation spec ke saare gaps generator me permanently fix kiye.
 
-## ✅ 1) FAQ answer-not-showing BUG — FIXED
-Problem: details page pe FAQ ka sirf Question dikhta tha, Answer nahi (collapsed/hidden).
-Asli wajah: `styles-detail.css` me `.faq-a{display:none}` tha, par accordion toggle wali
-`faq-init.js` detail pages pe load hi nahi ho rahi thi — to answer hamesha chhupa rehta tha.
+## ✅ Kya-kya fix hua (spec ke against)
 
-Fix (3 cheezein):
-- `faq-init.js` ab har detail page pe load hoti hai (accordion: question pe click → answer khulta hai)
-- CSS ab "progressive enhancement" — answer **default visible** hai; JS load hoke accordion banata hai.
-  Agar JS fail ho to bhi answer dikhta rahega (kabhi chhupega nahi). SEO + user dono ke liye behtar.
-- Pehla FAQ default open + chevron icon (▼) add kiya.
-- JSON me duplicate FAQ (Q1. prefix wale + bina prefix) the — wo de-dup hoke clean 10 ho jaate hain.
+1. **JobPosting schema complete** — ab in fields ke saath:
+   - `applicationDeadline` (last date)
+   - `totalJobOpenings` (numeric vacancies, e.g. 3991)
+   - `speakable` (voice-search SEO: .detail-h1, .notice, .stats-bar)
+   - (pehle se: datePosted, validThrough, baseSalary, hiringOrganization, jobLocation, etc.)
 
-## ✅ 2) AUTO-FAQ Generation System (SEO) — ADDED
-Jin pages pe JSON me FAQ nahi hai, wahan ab **page ke ASLI data se** 5-10 FAQ apne aap ban jaate hain
-(last date, vacancies, qualification, age, fee, selection, salary, org, website, apply mode).
-- Sirf jo field maujood hai usi se FAQ banta hai — **kabhi fake/galat data nahi** (spec ka rule).
-- Category-aware: Result / Admit Card / Answer Key / Admission / Date Sheet pages ko unke hisaab se relevant FAQ milte hain.
-- Matching FAQPage JSON-LD schema bhi banta hai (visible FAQ = schema FAQ, 100% match — verified).
-- Jahan JSON me FAQ pehle se hai, wahan wahi use hote hain (auto-FAQ nahi banta, duplicate nahi).
+2. **TSJ window variables** — har detail page me ab ye set hote hain (page fully pre-rendered, JS renderer band):
+   - `__TSJ_SLUG`, `__TSJ_CANONICAL`, `__TSJ_STATIC_PAGE`
+   - `__TSJ_PSR_DISABLED = true`, `__TSJ_RENDERER_DISABLED = true`
+   - URL normalize (replaceState to /jobs/{slug}/)
 
-**Coverage: 91% job pages pe ab FAQ hai (pehle bahut kam tha).** Baaki ~9% (govt scheme/info pages
-jaise ₹3000 Pension Yojana, Aadhaar forms) me koi structured data nahi — unme fake FAQ banane ki bajaye
-(spec ke "never invent" rule ke mutabik) FAQ skip kiya. Ye sahi behavior hai.
+3. **FAQ Q/A swap fix** — agar JSON me question/answer ulte ho (answer me sawaal, question me jawab) to apne aap swap ho jaate hain.
+
+4. **Qualification section proper** — ab dedicated render:
+   - KV table: education_qualification, qualification, eligibility, required_degree, technical_qualification, experience_required, details, nationality
+   - `matched_qualifications` array → badges ke roop me ("Matched Qualifications")
+
+5. **Pehle se sahi (verified)**: blocked domains (sarkariresult/freejobalert/etc.), structured_links render-last, useful_links _all skip, text_sections/tables merge, FAQ accordion + chevron + first-open, auto-FAQ system.
 
 ## 📂 Files kahan rakhni hain (poora folder deploy karo)
 | File | Kahan |
 |------|-------|
 | Saari `jobs/*/`, `section/*/`, etc. pages | yathaasthaan |
 | `generate_all.py` (+ `.github/workflows/` copy) | Root |
-| `styles-detail.css` (+ workflow copy) | Root — ISME FAQ visible-by-default CSS hai, zaroor replace karo |
-| `faq-init.js` (+ workflow copy) | Root — accordion toggle, zaroor replace karo |
+| `styles-detail.css`, `faq-init.js` (+ workflow copies) | Root |
 
 ## ⚠️ Note
-- `styles-detail.css` aur `faq-init.js` dono zaroor replace karo — inke bina FAQ answer phir se chhup sakta hai.
-- Sab fix generator + assets me permanent hai → future workflow runs pe automatically rahega.
-- Pichhle saare fixes intact: 0 duplicate canonical, rich share, social links, state cards.
+- Design/UI/layout bilkul same — sirf schema, window-vars, qualification rendering aur FAQ logic improve hua.
+- Sab fix generator me permanent hai → future workflow runs pe automatically rahega.
+- Verified: JobPosting/BreadcrumbList/FAQPage teeno JSON-LD valid, 0 duplicate canonical, 3,200 job pages, FAQ 91% coverage, JS valid.
 
 ## 🚀 Deploy ke baad
-1. Koi bhi detail page (jaise KSP Police) kholo → FAQ me Question + Answer dono dikhne chahiye.
-2. Question pe click karo → accordion toggle (answer khule/band ho).
-3. Jis page pe JSON FAQ nahi tha (jaise koi recruitment) → auto-generated FAQ + schema dikhega.
+1. Koi job page ka source dekho → `__TSJ_PSR_DISABLED` + JobPosting me `totalJobOpenings`/`applicationDeadline`/`speakable` hone chahiye.
+2. Qualification section me agar matched_qualifications hai to badges dikhne chahiye.

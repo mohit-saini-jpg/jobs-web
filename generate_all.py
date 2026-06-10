@@ -713,6 +713,42 @@ def auto_generate_faqs(job_obj):
         if len(out) >= 10: break
     return out
 
+def render_qualification(val):
+    """Qualification section per spec: string -> div; dict -> KV table with
+       known fields + matched_qualifications as badges; list -> items."""
+    if isinstance(val, str):
+        return f'<div class="edu-sec">{e(safe(val))}</div>' if safe(val) else ''
+    if isinstance(val, list):
+        return render_list_items(val)
+    if not isinstance(val, dict):
+        return ''
+    ORDER = ['education_qualification','qualification','eligibility','required_degree',
+             'technical_qualification','experience_required','details','nationality']
+    rows = ''
+    seen_labels = set()
+    for k in ORDER:
+        v = safe(val.get(k))
+        lbl = key_label(k)
+        if v and lbl not in seen_labels:
+            seen_labels.add(lbl)
+            rows += f'<tr><th>{e(lbl)}</th><td>{e(v)}</td></tr>'
+    # any extra unknown keys (except matched_qualifications, handled below)
+    for k, v in val.items():
+        if k in ORDER or k == 'matched_qualifications': continue
+        sv = safe(v); lbl = key_label(k)
+        if sv and lbl not in seen_labels:
+            seen_labels.add(lbl)
+            rows += f'<tr><th>{e(lbl)}</th><td>{e(sv)}</td></tr>'
+    out = f'<table class="kv-table"><tbody>{rows}</tbody></table>' if rows else ''
+    # matched_qualifications -> badges
+    mq = val.get('matched_qualifications')
+    if isinstance(mq, list) and mq:
+        badges = ''.join(f'<span class="rel-btn" style="cursor:default">{e(safe(x))}</span>' for x in mq if safe(x))
+        if badges:
+            out += ('<div style="margin-top:10px"><div style="font-size:.78rem;font-weight:700;color:#374151;margin-bottom:6px">Matched Qualifications</div>'
+                    f'<div style="display:flex;flex-wrap:wrap;gap:6px">{badges}</div></div>')
+    return out
+
 def render_faq(faq_list):
     if not isinstance(faq_list, list) or not faq_list: return ''
     items = ''
@@ -722,6 +758,13 @@ def render_faq(faq_list):
         if not isinstance(f, dict): continue
         q = safe(f.get('question','')); a = safe(f.get('answer',''))
         if not q or not a: continue
+        # Q/A swap fix (spec): if the "answer" looks like a question and the
+        # "question" doesn't, they are swapped in the source data — fix it.
+        def _looks_q(s):
+            sl = s.strip().lower()
+            return sl.endswith('?') or bool(re.match(r'^(what|when|how|who|where|which|is|are|can|will|does|do|whom|whose|why)\b', sl))
+        if _looks_q(a) and not _looks_q(q):
+            q, a = a, q
         # strip any pre-existing "Q1." / "Q12)" / "1." numbering from the question text
         # (renderer adds its own Q{n} badge, so leaving it causes "Q1 Q1." double numbering)
         q = re.sub(r'^\s*Q?\s*\d{1,3}\s*[\.\):\-]\s*', '', q, flags=re.I).strip()
@@ -1168,7 +1211,7 @@ def build_all_sections(job_obj):
         elif key == 'important_dates':  body = render_dates(val)
         elif key == 'application_fee':  body = render_fee(val)
         elif key == 'age_limit':        body = render_list_items(val) if isinstance(val,list) else (f'<table class="kv-table"><tbody>' + ''.join(f'<tr><th>{e(key_label(k))}</th><td>{e(safe(v))}</td></tr>' for k,v in val.items() if safe(v)) + '</tbody></table>' if isinstance(val,dict) else e(safe(val)))
-        elif key == 'qualification':    body = (render_list_items(val) if isinstance(val,list) else (render_edu_sections(val) if isinstance(val,list) else f'<div class="edu-sec">{e(safe(val))}</div>'))
+        elif key == 'qualification':    body = render_qualification(val)
         elif key == 'vacancy_details':  body = render_vacancy_table(val)
         elif key == 'category_wise_vacancy': body = (render_vacancy_table(val) if isinstance(val,list) else f'<table class="kv-table"><tbody>' + ''.join(f'<tr><td>{e(key_label(k))}</td><td>{e(safe(v))}</td></tr>' for k,v in val.items() if safe(v)) + '</tbody></table>' if isinstance(val,dict) else '')
         elif key == 'salary_details':   body = render_list_items(val) if isinstance(val,list) else (f'<table class="kv-table"><tbody>' + ''.join(f'<tr><th>{e(key_label(k))}</th><td>{e(safe(v))}</td></tr>' for k,v in val.items() if safe(v)) + '</tbody></table>' if isinstance(val,dict) else f'<div class="edu-sec">{e(safe(val))}</div>')
@@ -1518,6 +1561,7 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
     loc   = safe(bd.get('job_location','') or 'India')
     desc  = safe(bd.get('short_information',''))[:500] or title
     last_d = safe(dates.get('last_date_to_apply','') or dates.get('last_date',''))
+    vacancies = safe(bd.get('total_vacancies','') or job_obj.get('total_post','') or job_obj.get('total_vacancy',''))
 
     if slug is None:
         slug = slugify(title)[:80]
@@ -1552,7 +1596,19 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
                     'value':{'@type':'QuantitativeValue','minValue':_sal_min,'maxValue':_sal_max,'unitText':'MONTH'}}
         if last_d:
             nd = norm_date(last_d)
-            if nd: jp['validThrough'] = nd + 'T00:00:00'
+            if nd:
+                jp['validThrough'] = nd + 'T00:00:00'
+                jp['applicationDeadline'] = nd
+        # totalJobOpenings (numeric, from vacancies) per spec
+        _vac_num = re.search(r'\d[\d,]*', str(vacancies or ''))
+        if _vac_num:
+            try:
+                jp['totalJobOpenings'] = int(_vac_num.group().replace(',', ''))
+            except ValueError:
+                pass
+        # speakable for voice-search SEO per spec
+        jp['speakable'] = {'@type':'SpeakableSpecification',
+                           'cssSelector':['.detail-h1', '.notice', '.stats-bar']}
         primary = jp
     else:
         # C2: result / admitcard / scheme / article -> Article (NOT JobPosting)
@@ -2082,8 +2138,15 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
 <meta name="twitter:title" content="{e(title_tag[:60])}"/>
 <meta name="twitter:description" content="{e(meta_desc)}"/>
 {schemas_html}
+<script>
+window.__TSJ_SLUG = "{slug}";
+window.__TSJ_CANONICAL = "{e(canon_url)}";
+window.__TSJ_STATIC_PAGE = true;
+window.__TSJ_PSR_DISABLED = true;
+window.__TSJ_RENDERER_DISABLED = true;
+try {{ if (window.location.pathname !== '/jobs/{slug}/') {{ window.history.replaceState(null, '', '/jobs/{slug}/'); }} }} catch(_e) {{}}
+</script>
 <script src="/tsj-config.js"></script>
-<link rel="preconnect" href="https://www.google-analytics.com" crossorigin/>
 <link rel="dns-prefetch" href="https://www.googletagmanager.com"/>
 <meta name="author" content="Top Sarkari Jobs"/>
 <meta name="geo.region" content="IN"/>
