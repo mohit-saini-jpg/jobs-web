@@ -1,40 +1,39 @@
-# 📁 DETAIL PAGE SPEC — PERMANENT FIXES (2026-06-10)
+# 📁 IMPORTANT LINKS — ROW LAYOUT (Name + Open button) 2026-06-10
 
-FULL SITE rebuild. Aapke detail-page generation spec ke saare gaps generator me permanently fix kiye.
+FULL SITE rebuild. Saare detail pages ke link section ka layout Image jaisa kar diya.
 
-## ✅ Kya-kya fix hua (spec ke against)
+## ✅ Kya change hua
 
-1. **JobPosting schema complete** — ab in fields ke saath:
-   - `applicationDeadline` (last date)
-   - `totalJobOpenings` (numeric vacancies, e.g. 3991)
-   - `speakable` (voice-search SEO: .detail-h1, .notice, .stats-bar)
-   - (pehle se: datePosted, validThrough, baseSalary, hiringOrganization, jobLocation, etc.)
+Important Links / Useful Links section ab **row layout** me hai (jaisa aapne Image me dikhaya):
+- **Left side:** link ka naam/label (jaise "Apply Online", "Official Website", "Download Notification")
+- **Right side:** colored **"Open"** button with icon
 
-2. **TSJ window variables** — har detail page me ab ye set hote hain (page fully pre-rendered, JS renderer band):
-   - `__TSJ_SLUG`, `__TSJ_CANONICAL`, `__TSJ_STATIC_PAGE`
-   - `__TSJ_PSR_DISABLED = true`, `__TSJ_RENDERER_DISABLED = true`
-   - URL normalize (replaceState to /jobs/{slug}/)
+Har link type ka apna rang (Image jaisa):
+- Apply Online → green
+- Official Website → blue
+- Download Notification / PDF → red
+- Admit Card → teal
+- Answer Key / Result → yellow
+- Register → orange
+- Login → purple
 
-3. **FAQ Q/A swap fix** — agar JSON me question/answer ulte ho (answer me sawaal, question me jawab) to apne aap swap ho jaate hain.
-
-4. **Qualification section proper** — ab dedicated render:
-   - KV table: education_qualification, qualification, eligibility, required_degree, technical_qualification, experience_required, details, nationality
-   - `matched_qualifications` array → badges ke roop me ("Matched Qualifications")
-
-5. **Pehle se sahi (verified)**: blocked domains (sarkariresult/freejobalert/etc.), structured_links render-last, useful_links _all skip, text_sections/tables merge, FAQ accordion + chevron + first-open, auto-FAQ system.
+Ye layout site ke **saare 2,600+ detail pages** pe lag gaya — chahe link `important_links`, `useful_links` (SarkariResult), `all_links`, ya tables se aaye. Sab jagah same consistent "Name + Open" row design.
 
 ## 📂 Files kahan rakhni hain (poora folder deploy karo)
 | File | Kahan |
 |------|-------|
 | Saari `jobs/*/`, `section/*/`, etc. pages | yathaasthaan |
 | `generate_all.py` (+ `.github/workflows/` copy) | Root |
-| `styles-detail.css`, `faq-init.js` (+ workflow copies) | Root |
+| `styles-detail.css` (+ workflow copy) | Root — ISME naya .lk-row / .lk-open CSS hai, zaroor replace karo |
+| `faq-init.js` (+ workflow copy) | Root |
 
 ## ⚠️ Note
-- Design/UI/layout bilkul same — sirf schema, window-vars, qualification rendering aur FAQ logic improve hua.
-- Sab fix generator me permanent hai → future workflow runs pe automatically rahega.
-- Verified: JobPosting/BreadcrumbList/FAQPage teeno JSON-LD valid, 0 duplicate canonical, 3,200 job pages, FAQ 91% coverage, JS valid.
+- `styles-detail.css` zaroor replace karo — naye link row layout ka CSS isi me hai. Iske bina links tute dikhenge.
+- Baaki design/UI same — sirf link section ka layout Image jaisa hua.
+- Fix generator me permanent hai → future workflow runs pe automatically rahega.
+- Blocked domains (sarkariresult/freejobalert/etc.) ab bhi skip hote hain.
+- Verified: 2,604 pages new row layout, 0 duplicate canonical, 3,200 job pages, FAQ 91%, JS valid.
 
 ## 🚀 Deploy ke baad
-1. Koi job page ka source dekho → `__TSJ_PSR_DISABLED` + JobPosting me `totalJobOpenings`/`applicationDeadline`/`speakable` hone chahiye.
-2. Qualification section me agar matched_qualifications hai to badges dikhne chahiye.
+Koi bhi detail page kholo → "Important Links" / "Useful Links" section me har link ek row me dikhna chahiye:
+left me naam, right me colored "Open" button (bilkul Image jaisa).

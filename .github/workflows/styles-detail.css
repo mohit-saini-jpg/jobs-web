@@ -170,3 +170,26 @@ html.js-faq .faq-a.open,.faq-a.open,.faq-a[style*="block"],.faq-a[style*="flex"]
 .rel-social:hover{opacity:.9}
 .rel-social.wa{background:#25d366}.rel-social.yt{background:#ff0000}.rel-social.ig{background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)}.rel-social.tg{background:#0088cc}.rel-social.fb{background:#1877f2}.rel-social.sc{background:#fffc00;color:#1a1a1a}
 .rel-btn-all{background:#1e40af!important;color:#fff!important;border-color:#1e40af!important}
+
+/* ── Important Links: row layout (label left + Open button right) 2026-06-10 ── */
+.links-rows{display:flex;flex-direction:column}
+.lk-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 14px;border-bottom:1px solid #eef2f7}
+.lk-row:nth-child(even){background:#fafbfc}
+.lk-row:last-child{border-bottom:none}
+.lk-label{font-size:.84rem;color:#1f2937;font-weight:600;line-height:1.35}
+.lk-open{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:8px;font-size:.8rem;font-weight:800;text-decoration:none;border:1px solid transparent;white-space:nowrap;transition:all .15s}
+.lk-open i{font-size:.82rem}
+/* color variants — soft bg + colored text/icon, like the reference UI */
+.lk-apply{background:#dcfce7;color:#15803d;border-color:#86efac}.lk-apply:hover{background:#15803d;color:#fff}
+.lk-official{background:#dbeafe;color:#1e40af;border-color:#93c5fd}.lk-official:hover{background:#1d4ed8;color:#fff}
+.lk-pdf{background:#fee2e2;color:#b91c1c;border-color:#fca5a5}.lk-pdf:hover{background:#dc2626;color:#fff}
+.lk-register{background:#ffedd5;color:#c2410c;border-color:#fdba74}.lk-register:hover{background:#ea580c;color:#fff}
+.lk-login{background:#ede9fe;color:#6d28d9;border-color:#c4b5fd}.lk-login:hover{background:#7c3aed;color:#fff}
+.lk-admit{background:#ccfbf1;color:#0f766e;border-color:#5eead4}.lk-admit:hover{background:#0d9488;color:#fff}
+.lk-answer{background:#fef9c3;color:#a16207;border-color:#fde047}.lk-answer:hover{background:#ca8a04;color:#fff}
+.lk-syllabus{background:#e0e7ff;color:#4338ca;border-color:#a5b4fc}.lk-syllabus:hover{background:#4f46e5;color:#fff}
+.lk-result{background:#fef9c3;color:#a16207;border-color:#fde047}.lk-result:hover{background:#ca8a04;color:#fff}
+.lk-merit{background:#ccfbf1;color:#0f766e;border-color:#5eead4}.lk-merit:hover{background:#0d9488;color:#fff}
+.lk-orange{background:#dbeafe;color:#1e40af;border-color:#93c5fd}.lk-orange:hover{background:#1d4ed8;color:#fff}
+.lk-default{background:#dbeafe;color:#1e40af;border-color:#93c5fd}.lk-default:hover{background:#1d4ed8;color:#fff}
+@media(max-width:480px){.lk-label{font-size:.8rem}.lk-open{padding:6px 13px;font-size:.76rem}}

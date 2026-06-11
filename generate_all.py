@@ -537,38 +537,45 @@ def render_hta(steps):
 def render_links(il_obj):
     if not il_obj or not isinstance(il_obj, dict): return ''
     LINK_CFG = {
-        'apply_online':         ('Apply Online',          'btn-apply',   'fa-paper-plane'),
-        'official_website':     ('Official Website',      'btn-official','fa-globe'),
-        'notification_pdf':     ('Download Notification', 'btn-pdf',     'fa-file-pdf'),
-        'download_notification':('Download Notification', 'btn-pdf',     'fa-file-pdf'),
-        'official_notification':('Official Notification', 'btn-pdf',     'fa-file-pdf'),
-        'application_form':     ('Download Application Form', 'btn-pdf', 'fa-file-pdf'),
-        'registration_link':    ('Register Now',          'btn-register','fa-user-plus'),
-        'login_link':           ('Login',                 'btn-login',   'fa-right-to-bracket'),
-        'admit_card':           ('Admit Card',            'btn-admit',   'fa-id-card'),
-        'answer_key':           ('Answer Key',            'btn-answer',  'fa-key'),
-        'syllabus_pdf':         ('Syllabus PDF',          'btn-syllabus','fa-book'),
-        'result_link':          ('Result',                'btn-result',  'fa-trophy'),
-        'click_here':           ('Click Here',            'btn-default', 'fa-link'),
-        'merit_list':           ('Merit List',            'btn-merit',   'fa-list'),
+        'apply_online':         ('Apply Online',          'lk-apply',   'fa-paper-plane'),
+        'official_website':     ('Official Website',      'lk-official','fa-globe'),
+        'notification_pdf':     ('Download Notification', 'lk-pdf',     'fa-file-pdf'),
+        'download_notification':('Download Notification', 'lk-pdf',     'fa-file-pdf'),
+        'official_notification':('Official Notification', 'lk-pdf',     'fa-file-pdf'),
+        'application_form':     ('Download Application Form', 'lk-pdf', 'fa-file-pdf'),
+        'registration_link':    ('Register Now',          'lk-register','fa-user-plus'),
+        'login_link':           ('Login',                 'lk-login',   'fa-right-to-bracket'),
+        'admit_card':           ('Admit Card',            'lk-admit',   'fa-id-card'),
+        'answer_key':           ('Answer Key',            'lk-answer',  'fa-key'),
+        'syllabus_pdf':         ('Syllabus PDF',          'lk-syllabus','fa-book'),
+        'result_link':          ('Result',                'lk-result',  'fa-trophy'),
+        'click_here':           ('Click Here',            'lk-default', 'fa-link'),
+        'merit_list':           ('Merit List',            'lk-merit',   'fa-list'),
+        'score_card':           ('Score Card',            'lk-orange',  'fa-file'),
     }
-    buttons = ''; seen = set()
+    def _row(label, url, css, icon):
+        # row: label on the left, colored "Open" button on the right
+        dl = ' download' if str(url).lower().endswith('.pdf') else ''
+        return (f'<div class="lk-row">'
+                f'<span class="lk-label">{e(label)}</span>'
+                f'<a href="{e(url)}" class="lk-open {css}" target="_blank" rel="noopener noreferrer"{dl}>'
+                f'<i class="fa-solid {icon}"></i> Open</a></div>\n')
+    rows = ''; seen = set()
     for key, val in il_obj.items():
         if key in ('structured_links','seo_tags'): continue
         urls = val if isinstance(val, list) else [val]
-        label, css, icon = LINK_CFG.get(key, (key_label(key), 'btn-default', 'fa-link'))
+        label, css, icon = LINK_CFG.get(key, (key_label(key), 'lk-default', 'fa-link'))
         for url in urls:
             u = str(url or '').strip()
             if not u.startswith('http') or is_blocked(u) or u in seen: continue
             seen.add(u)
             ul = u.lower()
-            if ul.endswith('.pdf'): icon, css = 'fa-file-pdf', 'btn-pdf'
-            elif 'apply' in key: icon, css = 'fa-paper-plane', 'btn-apply'
-            elif 'result' in key: icon, css = 'fa-trophy', 'btn-result'
-            elif 'admit' in key: icon, css = 'fa-id-card', 'btn-admit'
-            elif 'answer' in key: icon, css = 'fa-key', 'btn-answer'
-            dl = ' download' if ul.endswith('.pdf') else ''
-            buttons += f'<a href="{e(u)}" class="lnk-btn {css}" target="_blank" rel="noopener noreferrer"{dl}><i class="fa-solid {icon}"></i> {e(label)}</a>\n'
+            if ul.endswith('.pdf'): icon, css = 'fa-file-pdf', 'lk-pdf'
+            elif 'apply' in key: icon, css = 'fa-paper-plane', 'lk-apply'
+            elif 'result' in key: icon, css = 'fa-trophy', 'lk-result'
+            elif 'admit' in key: icon, css = 'fa-id-card', 'lk-admit'
+            elif 'answer' in key: icon, css = 'fa-key', 'lk-answer'
+            rows += _row(label, u, css, icon)
     for item in (il_obj.get('structured_links') or []):
         if not isinstance(item, dict): continue
         u = str(item.get('url','') or item.get('href','')).strip()
@@ -576,15 +583,19 @@ def render_links(il_obj):
         if not u.startswith('http') or is_blocked(u) or u in seen: continue
         seen.add(u)
         ll = lbl.lower()
-        ic,cl = ('fa-paper-plane','btn-apply') if 'apply' in ll else \
-                ('fa-trophy','btn-result') if 'result' in ll else \
-                ('fa-id-card','btn-admit') if 'admit' in ll else \
-                ('fa-key','btn-answer') if 'answer' in ll else \
-                ('fa-file-pdf','btn-pdf') if u.endswith('.pdf') else \
-                ('fa-globe','btn-official') if 'official' in ll else ('fa-link','btn-default')
-        dl = ' download' if u.lower().endswith('.pdf') else ''
-        buttons += f'<a href="{e(u)}" class="lnk-btn {cl}" target="_blank" rel="noopener noreferrer"{dl}><i class="fa-solid {ic}"></i> {e(lbl[:55])}</a>\n'
-    return f'<div class="links-grid">{buttons}</div>' if buttons else ''
+        ic,cl = ('fa-paper-plane','lk-apply') if 'apply' in ll else \
+                ('fa-trophy','lk-result') if 'result' in ll else \
+                ('fa-id-card','lk-admit') if 'admit' in ll else \
+                ('fa-key','lk-answer') if 'answer' in ll else \
+                ('fa-file-pdf','lk-pdf') if u.lower().endswith('.pdf') else \
+                ('fa-globe','lk-official') if 'official' in ll else \
+                ('fa-right-to-bracket','lk-login') if 'login' in ll else \
+                ('fa-user-plus','lk-register') if ('register' in ll or 'registration' in ll) else \
+                ('fa-file','lk-orange') if ('upload' in ll or 'fee' in ll or 'pay' in ll) else \
+                ('fa-list','lk-merit') if ('list' in ll or 'merit' in ll) else \
+                ('fa-link','lk-default')
+        rows += _row(lbl[:60], u, cl, ic)
+    return f'<div class="links-rows">{rows}</div>' if rows else ''
 
 def auto_generate_faqs(job_obj):
     """Generate 5-10 FAQs from ACTUAL page data when JSON has no FAQ.
@@ -1065,12 +1076,18 @@ def render_sarkari_sections(sections_list, existing_il=None):
                     lbl = str(lnk.get('text','') or title_text or 'View').strip()
                     if not url.startswith('http') or is_blocked(url): continue
                     ul = url.lower()
-                    ic,cl = (('fa-paper-plane','btn-apply') if 'apply' in lbl.lower() else
-                             ('fa-globe','btn-official') if 'official' in lbl.lower() else
-                             ('fa-file-pdf','btn-pdf') if ul.endswith('.pdf') else
-                             ('fa-arrow-up-right-from-square','btn-default'))
-                    btns += f'<a href="{e(url)}" class="lnk-btn {cl}" target="_blank" rel="noopener noreferrer"><i class="fa-solid {ic}"></i> {e(lbl[:50])}</a>\n'
-        if btns: html += sec_card('important_links','fa-link','1e40af,#1e3a8a', f'<div class="links-grid">{btns}</div>')
+                    ic,cl = (('fa-paper-plane','lk-apply') if 'apply' in lbl.lower() else
+                             ('fa-globe','lk-official') if 'official' in lbl.lower() else
+                             ('fa-id-card','lk-admit') if 'admit' in lbl.lower() else
+                             ('fa-key','lk-answer') if 'answer' in lbl.lower() else
+                             ('fa-trophy','lk-result') if 'result' in lbl.lower() else
+                             ('fa-file-pdf','lk-pdf') if ul.endswith('.pdf') else
+                             ('fa-arrow-up-right-from-square','lk-default'))
+                    _dl = ' download' if ul.endswith('.pdf') else ''
+                    btns += (f'<div class="lk-row"><span class="lk-label">{e(lbl[:60])}</span>'
+                             f'<a href="{e(url)}" class="lk-open {cl}" target="_blank" rel="noopener noreferrer"{_dl}>'
+                             f'<i class="fa-solid {ic}"></i> Open</a></div>\n')
+        if btns: html += sec_card('important_links','fa-link','1e40af,#1e3a8a', f'<div class="links-rows">{btns}</div>')
     # Wrap raw sections in proper sec-card — prevents orphan edu-sec blocks floating outside cards
     raw_html = render_edu_sections(data['raw'])
     if raw_html.strip():
@@ -1141,11 +1158,19 @@ def render_edu_sections(sections_list):
                         url = str(lnk.get('url','') or '').strip()
                         lbl = str(lnk.get('label','') or lnk.get('text','') or 'View').strip() or 'View'
                         if not url.startswith('http') or is_blocked(url): continue
-                        ul = url.lower()
-                        ic = 'fa-file-pdf' if ul.endswith('.pdf') else 'fa-arrow-up-right-from-square'
-                        cl = 'btn-pdf' if ul.endswith('.pdf') else 'btn-default'
-                        btns += f'<a href="{e(url)}" class="lnk-btn {cl}" target="_blank" rel="noopener noreferrer"><i class="fa-solid {ic}"></i> {e(lbl[:60])}</a>\n'
-                    if btns: body += f'<div class="links-grid">{btns}</div>'
+                        ul = url.lower(); ll = lbl.lower()
+                        ic,cl = ('fa-file-pdf','lk-pdf') if ul.endswith('.pdf') else \
+                                ('fa-paper-plane','lk-apply') if 'apply' in ll else \
+                                ('fa-globe','lk-official') if 'official' in ll else \
+                                ('fa-id-card','lk-admit') if 'admit' in ll else \
+                                ('fa-key','lk-answer') if 'answer' in ll else \
+                                ('fa-trophy','lk-result') if 'result' in ll else \
+                                ('fa-arrow-up-right-from-square','lk-default')
+                        _dl = ' download' if ul.endswith('.pdf') else ''
+                        btns += (f'<div class="lk-row"><span class="lk-label">{e(lbl[:60])}</span>'
+                                 f'<a href="{e(url)}" class="lk-open {cl}" target="_blank" rel="noopener noreferrer"{_dl}>'
+                                 f'<i class="fa-solid {ic}"></i> Open</a></div>\n')
+                    if btns: body += f'<div class="links-rows">{btns}</div>'
             else:
                 text = safe(block.get('text','') or block.get('content',''))
                 if text: body += f'<p class="edu-para">{e(text)}</p>'
@@ -1405,14 +1430,17 @@ def build_all_sections(job_obj):
                     ul = url.lower()
                     t  = title.lower()
                     if ul.endswith('.pdf') or 'pdf' in ul or 'notice' in ul or 'advertisement' in ul:
-                        return ('fa-file-pdf', 'btn-pdf')
-                    if 'result' in t or 'merit' in t: return ('fa-trophy', 'btn-result')
-                    if 'admit' in t: return ('fa-id-card', 'btn-admit')
-                    if 'answer' in t or 'key' in t: return ('fa-key', 'btn-pdf')
-                    if 'official' in t or 'website' in t: return ('fa-globe', 'btn-default')
-                    if 'apply' in t or 'register' in t or 'ibpsreg' in ul or 'career' in ul:
-                        return ('fa-paper-plane', 'btn-apply')
-                    return ('fa-arrow-up-right-from-square', 'btn-default')
+                        return ('fa-file-pdf', 'lk-pdf')
+                    if 'result' in t or 'merit' in t: return ('fa-trophy', 'lk-result')
+                    if 'admit' in t: return ('fa-id-card', 'lk-admit')
+                    if 'answer' in t or 'key' in t: return ('fa-key', 'lk-answer')
+                    if 'login' in t: return ('fa-right-to-bracket', 'lk-login')
+                    if 'register' in t or 'registration' in t: return ('fa-user-plus', 'lk-register')
+                    if 'upload' in t or 'fee' in t or 'pay' in t: return ('fa-file', 'lk-orange')
+                    if 'official' in t or 'website' in t: return ('fa-globe', 'lk-official')
+                    if 'apply' in t or 'ibpsreg' in ul or 'career' in ul:
+                        return ('fa-paper-plane', 'lk-apply')
+                    return ('fa-arrow-up-right-from-square', 'lk-default')
 
                 rows_html = ''
                 seen_render = set()
@@ -1421,31 +1449,39 @@ def build_all_sections(job_obj):
                     if lnk in seen_render: continue
                     seen_render.add(lnk)
                     ic, cl = _smart_link(item['title'], lnk)
-                    rows_html += (f'<tr><td class="ul-title">{e(item["title"])}</td>'
-                                  f'<td><a href="{e(lnk)}" class="lnk-btn {cl}" target="_blank" rel="noopener noreferrer">'
-                                  f'<i class="fa-solid {ic}"></i> Open</a></td></tr>\n')
+                    _dl = ' download' if lnk.lower().endswith('.pdf') else ''
+                    rows_html += (f'<div class="lk-row"><span class="lk-label">{e(item["title"])}</span>'
+                                  f'<a href="{e(lnk)}" class="lk-open {cl}" target="_blank" rel="noopener noreferrer"{_dl}>'
+                                  f'<i class="fa-solid {ic}"></i> Open</a></div>\n')
                 if rows_html:
-                    body = (f'<div class="tbl-scroll"><table class="data-table ul-table"><tbody>'
-                            f'{rows_html}</tbody></table></div>')
+                    body = f'<div class="links-rows">{rows_html}</div>'
         elif key == 'all_links':
-            # all_links: [{label, title, url}] — render as labeled link buttons table
+            # all_links: [{label, title, url}] — render as row layout (label + Open)
             if isinstance(val, list):
                 valid = [lnk for lnk in val if isinstance(lnk,dict) and str(lnk.get('url','')).startswith('http') and not is_blocked(str(lnk.get('url','')))]
                 if valid:
-                    rows_html = ''
+                    rows_html = ''; _seen_al = set()
                     for lnk in valid:
                         lbl   = safe(lnk.get('label') or lnk.get('title') or 'Click Here').strip()[:80]
-                        title = safe(lnk.get('title') or 'Click Here').strip()[:30]
                         url_l = str(lnk.get('url','')).strip()
-                        if not lbl: lbl = title
-                        ul_lower = url_l.lower()
-                        ic = 'fa-file-pdf' if ul_lower.endswith('.pdf') else 'fa-arrow-up-right-from-square'
-                        cl = 'btn-pdf' if ul_lower.endswith('.pdf') else 'btn-default'
-                        rows_html += (f'<tr><td class="ul-title">{e(lbl)}</td>'
-                                      f'<td><a href="{e(url_l)}" class="lnk-btn {cl}" target="_blank" rel="noopener noreferrer">'
-                                      f'<i class="fa-solid {ic}"></i> {e(title)}</a></td></tr>\n')
-                    body = (f'<div class="tbl-scroll"><table class="data-table ul-table"><tbody>'
-                            f'{rows_html}</tbody></table></div>')
+                        if not lbl: lbl = 'Click Here'
+                        if url_l in _seen_al: continue
+                        _seen_al.add(url_l)
+                        ul_lower = url_l.lower(); ll = lbl.lower()
+                        ic,cl = ('fa-file-pdf','lk-pdf') if ul_lower.endswith('.pdf') else \
+                                ('fa-paper-plane','lk-apply') if 'apply' in ll else \
+                                ('fa-trophy','lk-result') if 'result' in ll else \
+                                ('fa-id-card','lk-admit') if 'admit' in ll else \
+                                ('fa-key','lk-answer') if 'answer' in ll else \
+                                ('fa-globe','lk-official') if ('official' in ll or 'website' in ll) else \
+                                ('fa-right-to-bracket','lk-login') if 'login' in ll else \
+                                ('fa-user-plus','lk-register') if 'regist' in ll else \
+                                ('fa-arrow-up-right-from-square','lk-default')
+                        _dl = ' download' if ul_lower.endswith('.pdf') else ''
+                        rows_html += (f'<div class="lk-row"><span class="lk-label">{e(lbl)}</span>'
+                                      f'<a href="{e(url_l)}" class="lk-open {cl}" target="_blank" rel="noopener noreferrer"{_dl}>'
+                                      f'<i class="fa-solid {ic}"></i> Open</a></div>\n')
+                    body = f'<div class="links-rows">{rows_html}</div>'
         elif key == 'details_page_content':
             # LATEST_JOBS NEW format: {headings:[str], paragraphs:[str], tables:[{headers,rows,table_heading}], lists:[]}
             if isinstance(val, dict):
