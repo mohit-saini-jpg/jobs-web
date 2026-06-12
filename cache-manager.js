@@ -21,7 +21,7 @@ const CacheManager = (() => {
     swPath:               '/sw.js',
     swScope:              '/',
     // How often to attempt a background data refresh (ms)
-    dataRefreshInterval:  10 * 60 * 1000,   // 10 min idle-on-return threshold
+    dataRefreshInterval:  6 * 60 * 60 * 1000,   // 6 hours (reduced edge requests)
     // Show "update ready" toast after SW update found
     showUpdateToast:      true,
     // Auto-trim caches every N minutes
@@ -189,10 +189,9 @@ const CacheManager = (() => {
   function scheduleDataRefresh() {
     if (refreshTimer) clearInterval(refreshTimer);
 
-    // Data is re-fetched automatically when version.json changes (handled by
-    // tsj-version.js, polled every 90s). No blind interval polling needed —
-    // that was re-downloading the 62MB master JSON unnecessarily.
-    // Still refresh when user returns to a tab that's been idle a while.
+    // Edge-request optimization: background polling DISABLED.
+    // Fresh data is guaranteed by SW + version.json check (6h) and on hard reload.
+    // Only refresh when user returns AND data is older than the refresh interval.
     var _lastRefresh = Date.now();
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible' &&

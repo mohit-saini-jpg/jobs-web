@@ -19,7 +19,7 @@
 
   // ── Config ──────────────────────────────────────────────────────────
   var VERSION_URL      = '/version.json';
-  var CHECK_INTERVAL   = 90 * 1000;  // 90s — tiny file, keeps updates near-instant
+  var CHECK_INTERVAL   = 6 * 60 * 60 * 1000;  // 6 hours (reduced edge requests)
   var LS_VER_KEY       = 'tsj_site_version';
   var LS_DATA_VER_KEY  = 'tsj_data_version';
   var DATA_SCHEMA_VER  = '8';             // RC-4 FIX: bumped from 7 → clears all v7 stale data
@@ -123,8 +123,7 @@
   // SW matches by pathname '/version.json' so ?_t= variant is also caught
   function fetchVersion() {
     return fetch(VERSION_URL, {
-      cache  : 'no-store',
-      headers: { 'Cache-Control': 'no-cache' }
+      cache  : 'no-cache'
     })
     .then(function(r) { return r.ok ? r.json() : null; })
     .catch(function() { return null; });

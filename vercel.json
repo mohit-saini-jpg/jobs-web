@@ -4,7 +4,7 @@
     {
       "source": "/version.json",
       "headers": [
-        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate, max-age=0" }
+        { "key": "Cache-Control", "value": "public, max-age=0, s-maxage=600, stale-while-revalidate=3600" }
       ]
     },
     {
@@ -29,13 +29,13 @@
     {
       "source": "/(Complete_Jobs_Full_Data|jobs-index|jobs|dailyupdates|sections-index|services|tools|Qualification_Wise_Jobs|homepage-mini).json",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=60, s-maxage=300, stale-while-revalidate=86400" }
+        { "key": "Cache-Control", "value": "public, max-age=600, s-maxage=3600, stale-while-revalidate=86400" }
       ]
     },
     {
       "source": "/data/(.*).json",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=60, s-maxage=300, stale-while-revalidate=86400" }
+        { "key": "Cache-Control", "value": "public, max-age=600, s-maxage=3600, stale-while-revalidate=86400" }
       ]
     },
     {
@@ -53,7 +53,7 @@
     {
       "source": "/jobs/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=300, s-maxage=86400, stale-while-revalidate=604800" }
+        { "key": "Cache-Control", "value": "public, max-age=600, s-maxage=86400, stale-while-revalidate=604800" }
       ]
     },
     {

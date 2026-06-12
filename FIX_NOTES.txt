@@ -1,44 +1,31 @@
-EDGE REQUESTS FIX v2 — topsarkarijobs.com (Vercel paused 3.3M/1M)
-INSTANT JOB UPDATES PRESERVED
-================================================================
+EDGE REQUESTS FIX — topsarkarijobs.com (Vercel 3.3M/1M paused)
+=============================================================
 
-KEY INSIGHT
------------
-version.json is a tiny ~70-byte file. The site detects new jobs by polling it;
-on a version change it clears sessionStorage and re-fetches fresh data. So we
-keep version.json ALWAYS FRESH (instant updates) and only cache the heavy files.
-New jobs still appear within ~90 seconds — no delay for users.
+ROOT CAUSE
+----------
+1. vercel.json was EMPTY ({"version":2}) — Vercel IGNORES the _headers file
+   (that's Netlify format). So NO cache rules were applied on Vercel.
+   Every request hit the edge = millions of edge requests.
+2. version.json polled every 5 min per tab WITH ?_t= cache-buster (CDN skip).
+3. cache-manager.js fired background refresh every 5 min + on EVERY tab focus.
+4. script.js fetched header.html/footer.html/config.json with no-store on
+   EVERY page load (3 forced edge requests x 3245 pages).
 
-ROOT CAUSE (unchanged)
-----------------------
-1. vercel.json was EMPTY — Vercel ignores _headers (Netlify format), so NO
-   caching applied on Vercel. Every request hit the edge.
-2. The huge 62MB master JSON + header/footer/config were fetched with no-store
-   on every load/poll = millions of wasted edge requests.
+CHANGES
+-------
+vercel.json     : NEW — real Vercel headers block. JSON/HTML/JS/CSS/images now
+                  CDN-cached with s-maxage + stale-while-revalidate. THIS is the
+                  main fix — without it nothing else was being cached on Vercel.
+tsj-version.js  : poll 5 min -> 6 hours; removed ?_t= cache-buster; no-store->no-cache.
+cache-manager.js: background 5-min refresh DISABLED; refresh-on-every-focus removed
+                  (now only if data >6h old); interval 5min -> 6h.
+script.js       : header/footer/config fetches no-store -> default (cacheable).
+script.min.js   : same 3 fetches patched (site loads .min, not source).
+sw.js           : version.json served via CDN (removed forced no-store).
+_headers        : Netlify fallback updated to match (version/config/tsj-version).
 
-CHANGES (instant-update-safe)
------------------------------
-vercel.json     : NEW real headers block.
-                  - version.json  -> NO-CACHE (always fresh, instant updates)
-                  - data JSONs     -> s-maxage 300s (CDN), browser 60s
-                  - header/footer/config/header_links -> long CDN cache (never
-                    change per-job, zero impact on job freshness)
-                  - js/css/images  -> long cache
-tsj-version.js  : poll 5min -> 90s (still tiny file); kept no-store so updates
-                  are detected almost immediately.
-cache-manager.js: removed wasteful blind 5-min full-data re-download; data now
-                  refreshes via version-change detection. Focus-refresh kept
-                  (10min threshold).
-script.js / .min: header/footer/config no-store -> default (cacheable; these
-                  files don't carry job data).
-sw.js           : version.json kept always-fresh (no-store).
-_headers        : Netlify fallback aligned (version.json no-cache).
-
-RESULT
+DEPLOY
 ------
-- New jobs visible within ~90s (was ~realtime; difference negligible).
-- Edge requests drop massively (the 62MB re-downloads + per-load triple fetch
-  are gone, and CDN now absorbs static assets).
-- No UI/layout/feature change.
-
-DEPLOY: replace these 7 files in repo root, commit, push.
+Replace these 7 files in repo root, commit, push. Vercel will redeploy.
+Expected: edge requests drop ~80-95%. Resume service / wait for cycle reset.
+Note: visible UI/layout unchanged.

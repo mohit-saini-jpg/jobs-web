@@ -21,7 +21,7 @@
 // VERSION — Replaced by generate_version.js on every deploy
 // Do NOT manually edit — CI/CD replaces this line
 // ══════════════════════════════════════════════════════════════
-const SW_VERSION = '20260612113552'; // auto-updated by generate_version.js
+const SW_VERSION = '20260612090300'; // auto-updated by generate_version.js
 
 // ══════════════════════════════════════════════════════════════
 // CACHE NAMES — version-stamped, old ones auto-deleted
@@ -160,11 +160,11 @@ self.addEventListener('fetch', e => {
 
   const path = url.pathname;
 
-  // ── 1. version.json — ALWAYS fresh from network (instant new-job detection)
-  //    Tiny file (~70 bytes), so no-store is cheap and keeps updates instant.
+  // ── 1. version.json — network, CDN-cacheable (edge-request optimized)
+  //    Lets Vercel CDN absorb checks (s-maxage) instead of hitting origin each time
   if (url.pathname === '/version.json') {
     e.respondWith(
-      fetch(req, { cache: 'no-store' })
+      fetch(req)
         .catch(() => new Response('{}', {
           headers: { 'Content-Type': 'application/json' }
         }))
