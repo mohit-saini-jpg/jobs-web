@@ -1,0 +1,44 @@
+EDGE REQUESTS FIX v2 — topsarkarijobs.com (Vercel paused 3.3M/1M)
+INSTANT JOB UPDATES PRESERVED
+================================================================
+
+KEY INSIGHT
+-----------
+version.json is a tiny ~70-byte file. The site detects new jobs by polling it;
+on a version change it clears sessionStorage and re-fetches fresh data. So we
+keep version.json ALWAYS FRESH (instant updates) and only cache the heavy files.
+New jobs still appear within ~90 seconds — no delay for users.
+
+ROOT CAUSE (unchanged)
+----------------------
+1. vercel.json was EMPTY — Vercel ignores _headers (Netlify format), so NO
+   caching applied on Vercel. Every request hit the edge.
+2. The huge 62MB master JSON + header/footer/config were fetched with no-store
+   on every load/poll = millions of wasted edge requests.
+
+CHANGES (instant-update-safe)
+-----------------------------
+vercel.json     : NEW real headers block.
+                  - version.json  -> NO-CACHE (always fresh, instant updates)
+                  - data JSONs     -> s-maxage 300s (CDN), browser 60s
+                  - header/footer/config/header_links -> long CDN cache (never
+                    change per-job, zero impact on job freshness)
+                  - js/css/images  -> long cache
+tsj-version.js  : poll 5min -> 90s (still tiny file); kept no-store so updates
+                  are detected almost immediately.
+cache-manager.js: removed wasteful blind 5-min full-data re-download; data now
+                  refreshes via version-change detection. Focus-refresh kept
+                  (10min threshold).
+script.js / .min: header/footer/config no-store -> default (cacheable; these
+                  files don't carry job data).
+sw.js           : version.json kept always-fresh (no-store).
+_headers        : Netlify fallback aligned (version.json no-cache).
+
+RESULT
+------
+- New jobs visible within ~90s (was ~realtime; difference negligible).
+- Edge requests drop massively (the 62MB re-downloads + per-load triple fetch
+  are gone, and CDN now absorbs static assets).
+- No UI/layout/feature change.
+
+DEPLOY: replace these 7 files in repo root, commit, push.

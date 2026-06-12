@@ -648,7 +648,7 @@
             for (let attempt = 0; attempt < 3; attempt++) {
               try {
                 if (attempt > 0) await new Promise(r => setTimeout(r, attempt * 600));
-                const r = await fetch("/header.html", { cache: "no-store" });
+                const r = await fetch("/header.html", { cache: "default" });
                 if (r.ok) { html = await r.text(); break; }
               } catch (e) {}
             }
@@ -678,7 +678,7 @@
 
     if (footerHost && footerHost.innerHTML.trim() === "") {
         try {
-          const r = await fetch("/footer.html", { cache: "no-store" });
+          const r = await fetch("/footer.html", { cache: "default" });
           if (r.ok) {
               footerHost.innerHTML = await r.text();
               if (!footerHost.classList.contains("site-footer")) footerHost.classList.add("site-footer");
@@ -2163,7 +2163,7 @@
     if (!window.supabase) return null;
 
     try {
-      const r = await fetch("/config.json", { cache: "no-store" });
+      const r = await fetch("/config.json", { cache: "default" });
       if (!r.ok) return null;
       const config = await r.json();
       if (!config?.supabase?.url || !config?.supabase?.anonKey) return null;

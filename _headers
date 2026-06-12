@@ -40,7 +40,7 @@
 
 # ── tsj-version.js — short cache (update detection script) ────────────
 /tsj-version.js
-  Cache-Control: no-cache, no-store, must-revalidate
+  Cache-Control: public, max-age=3600, s-maxage=86400
 # ── PWA Install JS — short cache ──────────────────────────────────────
 /pwa-install.js
   Cache-Control: no-cache, no-store, must-revalidate
@@ -172,7 +172,7 @@
 # ── Config (block direct access) ──────────────────────────────────────
 /config.json
   X-Robots-Tag: noindex, nofollow
-  Cache-Control: no-store
+  Cache-Control: public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800
 
 # ── AUDIT FIX: Data JSONs — Proper caching strategy ──────────────────
 # BEFORE: All large JSONs were no-cache = 22MB+ re-downloaded every visit

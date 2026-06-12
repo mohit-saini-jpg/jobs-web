@@ -160,8 +160,8 @@ self.addEventListener('fetch', e => {
 
   const path = url.pathname;
 
-  // ── 1. version.json (ANY variant incl ?nc=*, ?_t=*) — ALWAYS network
-  //    RC-3 FIX: match by pathname, not full URL
+  // ── 1. version.json — ALWAYS fresh from network (instant new-job detection)
+  //    Tiny file (~70 bytes), so no-store is cheap and keeps updates instant.
   if (url.pathname === '/version.json') {
     e.respondWith(
       fetch(req, { cache: 'no-store' })

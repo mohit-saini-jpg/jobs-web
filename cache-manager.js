@@ -21,7 +21,7 @@ const CacheManager = (() => {
     swPath:               '/sw.js',
     swScope:              '/',
     // How often to attempt a background data refresh (ms)
-    dataRefreshInterval:  5 * 60 * 1000,   // 5 minutes
+    dataRefreshInterval:  10 * 60 * 1000,   // 10 min idle-on-return threshold
     // Show "update ready" toast after SW update found
     showUpdateToast:      true,
     // Auto-trim caches every N minutes
@@ -189,17 +189,15 @@ const CacheManager = (() => {
   function scheduleDataRefresh() {
     if (refreshTimer) clearInterval(refreshTimer);
 
-    refreshTimer = setInterval(async () => {
-      // Only refresh when page is visible to save mobile data
-      if (document.visibilityState !== 'visible') return;
-
-      log('verbose', 'Background data refresh triggered');
-      document.dispatchEvent(new CustomEvent('cache:refresh'));
-    }, CONFIG.dataRefreshInterval);
-
-    // Also refresh when user returns to tab after being away
+    // Data is re-fetched automatically when version.json changes (handled by
+    // tsj-version.js, polled every 90s). No blind interval polling needed —
+    // that was re-downloading the 62MB master JSON unnecessarily.
+    // Still refresh when user returns to a tab that's been idle a while.
+    var _lastRefresh = Date.now();
     document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') {
+      if (document.visibilityState === 'visible' &&
+          (Date.now() - _lastRefresh) > CONFIG.dataRefreshInterval) {
+        _lastRefresh = Date.now();
         document.dispatchEvent(new CustomEvent('cache:refresh'));
       }
     });
