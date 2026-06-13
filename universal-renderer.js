@@ -297,21 +297,6 @@
     return false;
   }
 
-  /* ── Global content-dedup registry (reset per render) ────────────── */
-  let _udyn_seen = new Set();
-  function resetDedup() { _udyn_seen = new Set(); }
-  function fingerprint(s) {
-    return safe(s).toLowerCase().replace(/<[^>]+>/g,' ').replace(/[^a-z0-9]+/g,' ').trim().slice(0, 160);
-  }
-  // Returns true if this fingerprint was already rendered (and marks it seen)
-  function isDup(s) {
-    const fp = fingerprint(s);
-    if (fp.length < 12) return false; // too short to reliably dedupe
-    if (_udyn_seen.has(fp)) return true;
-    _udyn_seen.add(fp);
-    return false;
-  }
-
   function textToHtml(str) {
     return safe(str).split(/\n+/).map(l => l.trim()).filter(Boolean)
       .map(l => `<p style="margin:0 0 6px;">${esc(l)}</p>`).join('');
@@ -353,101 +338,97 @@
      dailyupdates, state-jobs, upcoming_jobs.
   ═══════════════════════════════════════════════════════════════════════ */
 
-  // ── Adapter: education_jobs-style "detail.sections[].content[]" schema ──
-  // Converts typed content blocks (paragraph/table/list/important_links/merged_info)
-  // into the canonical fields the rest of the pipeline already understands:
-  // text_sections, tables, _udyn_links, faq, important_dates (merged_info kv pairs)
-  function normalizeSectionedJob(job) {
-    const d = job.detail;
-    if (!d || !Array.isArray(d.sections)) return job;
-
-    if (!job.title) job.title = d.title || job.title || '';
-    if (!job.short_information) job.short_information = d.short_info || '';
-    if (!job._udyn_links) job._udyn_links = [];
-    if (!Array.isArray(job.text_sections)) job.text_sections = [];
-    if (!Array.isArray(job.tables)) job.tables = [];
-    if (!job.important_dates || typeof job.important_dates !== 'object') job.important_dates = {};
-    if (!Array.isArray(job.how_to_apply)) job.how_to_apply = [];
-
-    for (const s of d.sections) {
-      const heading = safe(s.heading || '');
-      for (const blk of (s.content || [])) {
-        if (!blk || typeof blk !== 'object') continue;
-        switch (blk.type) {
-          case 'paragraph': {
-            const text = safe(blk.text);
-            if (text) job.text_sections.push({ section: heading, content: text });
-            break;
-          }
-          case 'list': {
-            const items = Array.isArray(blk.items) ? blk.items.filter(Boolean) : [];
-            if (!items.length) break;
-            if (blk.style === 'ordered' && /how to|step|apply|download|check/i.test(heading)) {
-              job.how_to_apply.push(...items.map(safe));
-            } else {
-              job.text_sections.push({ section: heading, content: items.join(' | ') });
-            }
-            break;
-          }
-          case 'table': {
-            const headers = Array.isArray(blk.headers) ? blk.headers : [];
-            const rows = Array.isArray(blk.rows) ? blk.rows : [];
-            if (!rows.length) break;
-            const allRows = headers.length ? [headers, ...rows] : rows;
-            job.tables.push({ table_name: heading, rows: allRows });
-            // Also surface key→value pairs from 2-col tables into important_dates if date-like
-            if (headers.length === 2 || (rows[0] && rows[0].length === 2)) {
-              for (const r of rows) {
-                if (!Array.isArray(r) || r.length !== 2) continue;
-                const [k, v] = r;
-                if (/date|exam|result/i.test(safe(k)) && safe(v)) {
-                  const key = safe(k).toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
-                  if (key && !job.important_dates[key]) job.important_dates[key] = safe(v);
-                }
-              }
-            }
-            break;
-          }
-          case 'important_links': {
-            const links = Array.isArray(blk.links) ? blk.links : [];
-            for (const lk of links) {
-              const url = safe(lk && (lk.url || lk.href || lk.link));
-              if (!isUrl(url)) continue;
-              const label = safe(lk.label || lk.title || lk.text || '') || smartLinkLabel('link', url, 0);
-              job._udyn_links.push({ label, url, type: classifyLinkKey(label, url) });
-            }
-            break;
-          }
-          case 'merged_info': {
-            const items = Array.isArray(blk.items) ? blk.items : [];
-            for (const it of items) {
-              const label = safe(it && it.label);
-              const text = safe(it && it.text);
-              if (!label || !text || /^(--|click here)$/i.test(text)) continue;
-              job.text_sections.push({ section: label, content: text });
-            }
-            break;
-          }
-          default: {
-            // Unknown block type — keep as generic text section so nothing is lost
-            const fallbackText = safe(blk.text || blk.content || JSON.stringify(blk));
-            if (fallbackText && fallbackText !== '{}') {
-              job.text_sections.push({ section: heading || keyToLabel(blk.type || 'info'), content: fallbackText });
-            }
-          }
-        }
-      }
-    }
-    return job;
-  }
-
   function normalizeJob(raw) {
     if (!raw || typeof raw !== 'object') return raw;
     const job = Object.assign({}, raw);
 
-    // ── Adapt education_jobs-style sectioned schema first ─────────────
-    if (job.detail && Array.isArray(job.detail.sections)) {
-      normalizeSectionedJob(job);
+    // ── FIX: Map sarkari_data camelCase keys → snake_case canonical ───
+    // Master Complete_Jobs_Full_Data.json (SR_* / OFFLINE_FORM / *_JOBS /
+    // ADMISSIONS records) uses camelCase. The rest of normalizeJob expects
+    // snake_case. Alias them here so NO field is silently dropped.
+    const _CAMEL_MAP = {
+      importantDates:   'important_dates',
+      applicationFee:   'application_fee',
+      applicationFees:  'application_fees',
+      importantLinks:   'important_links',
+      shortInfo:        'short_information',
+      shortInformation: 'short_information',
+      postDate:         'post_date',
+      lastDate:         'last_date',
+      ageLimit:         'age_limit',
+      vacancyDetails:   'vacancy_details',
+      howToApply:       'how_to_apply',
+      usefulLinks:      'useful_links',
+      textSections:     'text_sections',
+      nameOfPost:       'name_of_post',
+      postName:         'post_name',
+      organizationName: 'organization',
+      totalVacancy:     'total_vacancy',
+      totalVacancies:   'total_vacancy',
+      salaryPayScale:   'salary',
+    };
+    for (const [cam, snk] of Object.entries(_CAMEL_MAP)) {
+      if (hasContent(job[cam]) && !hasContent(job[snk])) job[snk] = job[cam];
+    }
+    // additionalData.howToApply → how_to_apply (master nests it)
+    if (job.additionalData && typeof job.additionalData === 'object') {
+      const adx = job.additionalData;
+      if (!hasContent(job.how_to_apply) && hasContent(adx.howToApply)) job.how_to_apply = adx.howToApply;
+      for (const [k, v] of Object.entries(adx)) {
+        const sk = k.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase();
+        if (!hasContent(job[sk]) && hasContent(v)) job[sk] = v;
+      }
+    }
+    // important_dates inner camelCase keys → snake_case (applicationBegin etc.)
+    if (job.important_dates && typeof job.important_dates === 'object' && !Array.isArray(job.important_dates)) {
+      const _id = job.important_dates, _out = {};
+      for (const [k, v] of Object.entries(_id)) {
+        const sk = k.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase();
+        _out[sk] = v;
+        if (sk !== k && !(k in _out)) _out[k] = v;
+      }
+      job.important_dates = _out;
+    }
+    // application_fee inner camelCase keys → snake_case
+    if (job.application_fee && typeof job.application_fee === 'object' && !Array.isArray(job.application_fee)) {
+      const _fe = job.application_fee, _fout = {};
+      for (const [k, v] of Object.entries(_fe)) {
+        const sk = k.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase();
+        _fout[sk] = v;
+        if (sk !== k && !(k in _fout)) _fout[k] = v;
+      }
+      job.application_fee = _fout;
+    }
+
+    // ── FIX: Build important_dates from FLAT fields ──────────────────
+    // STATE_JOBS / UPCOMING_JOBS / CENTRAL_JOBS / ADMISSIONS records keep
+    // dates as top-level fields (last_date, application_start, exam_date…)
+    // with NO important_dates object. Assemble one so exDates() renders them.
+    if (!hasContent(job.important_dates)) {
+      const _FLAT_DATES = ['application_start','application_begin','notification_date',
+        'last_date','fee_payment_last_date','exam_date','written_exam_date',
+        'admit_card_date','interview_date','result_date','counselling_date','joining_date'];
+      const _idAsm = {};
+      for (const f of _FLAT_DATES) {
+        if (hasContent(job[f])) _idAsm[f] = job[f];
+      }
+      if (Object.keys(_idAsm).length) job.important_dates = _idAsm;
+    }
+
+    // ── FIX: Build application_fee from FLAT fee_* fields ────────────
+    if (!hasContent(job.application_fee)) {
+      const _FEE_FLAT = {
+        fee_general: 'general', fee_ur: 'ur', fee_obc: 'obc', fee_ews: 'ews',
+        fee_sc: 'sc', fee_st: 'st', fee_sc_st: 'sc_st', fee_female: 'female',
+        fee_ph: 'ph', fee_pwd: 'pwd', fee_general_obc: 'general_obc',
+        fee_all: 'all',
+      };
+      const _feeAsm = {};
+      for (const [flat, canon] of Object.entries(_FEE_FLAT)) {
+        if (hasContent(job[flat])) _feeAsm[canon] = job[flat];
+      }
+      if (hasContent(job.fee_payment_mode)) _feeAsm.payment_mode = job.fee_payment_mode;
+      if (Object.keys(_feeAsm).length) job.application_fee = _feeAsm;
     }
 
     // ── Unwrap state-jobs nested 'detail' object ──────────────────────
@@ -977,7 +958,7 @@
     if (id) d.id = id;
     d.innerHTML =
       `<div class="udyn-head" style="background:${headBg}">` +
-        `<i class="${iconCls}"></i><h2 style="margin:0;font-size:inherit;font-weight:inherit;color:inherit;">${esc(headText)}</h2>` +
+        `<i class="${iconCls}"></i>${esc(headText)}` +
       `</div><div class="udyn-body">${bodyHtml}</div>`;
     return d;
   }
@@ -1256,13 +1237,6 @@
       return true;
     });
 
-    // Global cross-section dedup (skip Q&A whose answer already appeared elsewhere)
-    arr = arr.filter(function(f) {
-      var a = safe(f.answer || f.a || '');
-      return !isDup(a);
-    });
-    if (!arr.length) return null;
-
     // Build items — NO inline onclick (broken by HTML escaping)
     // Use data-faq-idx attribute + delegated event listener added after insert
     var html = arr.map(function(f, idx) {
@@ -1272,7 +1246,7 @@
       return '<div class="udyn-faq-item">' +
         '<div class="udyn-faq-q" data-faq-idx="' + idx + '" role="button" tabindex="0">' +
           '<span class="udyn-faq-num">' + (idx + 1) + '</span>' +
-          '<span class="udyn-faq-qtext"><h3 style="margin:0;font-size:inherit;font-weight:inherit;color:inherit;display:inline;">' + esc(q) + '</h3></span>' +
+          '<span class="udyn-faq-qtext">' + esc(q) + '</span>' +
           '<i class="fa-solid fa-chevron-down udyn-faq-icon"></i>' +
         '</div>' +
         '<div class="udyn-faq-a" id="faq-ans-' + idx + '">' + aHtml + '</div>' +
@@ -1394,8 +1368,6 @@
         const tname = safe(group.table_name || '');
         const rows = group.rows;
         if (!Array.isArray(rows) || !rows.length) continue;
-        const sig = tname + '|' + rows.map(r => Array.isArray(r) ? r.join('~') : safe(r)).join('|');
-        if (isDup(sig)) continue; // identical table already rendered
         const heading = tname
           ? `<div style="padding:9px 14px 5px;font-size:.8rem;font-weight:700;color:#1d4ed8;background:#f0f7ff;border-bottom:1px solid #dbeafe;line-height:1.4;">${esc(tname)}</div>`
           : '';
@@ -1420,7 +1392,6 @@
       const heading = safe(sec.section || sec.title || '');
       const content = safe(sec.content || sec.text || sec.description || '');
       if (!content) continue;
-      if (isDup(content)) continue; // already rendered elsewhere on the page
       const headHtml = heading
         ? `<div style="padding:9px 14px 5px;font-size:.82rem;font-weight:700;color:#0f766e;background:#f0fdf4;border-bottom:1px solid #bbf7d0;">${esc(heading)}</div>`
         : '';
@@ -1562,7 +1533,10 @@
 
   function normalizeUpcomingJobsSections(rawJob) {
     if (!rawJob || !Array.isArray(rawJob.sections) || rawJob.sections.length === 0) return rawJob;
-    if (rawJob.category !== 'UPCOMING_JOBS') return rawJob;
+    // Applies to all flat-schema categories that carry sections[]:
+    // UPCOMING_JOBS / STATE_JOBS / CENTRAL_JOBS / ADMISSIONS
+    const FLAT_CATS = ['UPCOMING_JOBS','STATE_JOBS','CENTRAL_JOBS','ADMISSIONS'];
+    if (FLAT_CATS.indexOf(rawJob.category) === -1) return rawJob;
     const sections = rawJob.sections;
     function getItems(title) {
       const sec = sections.find(s => s.title && s.title.toLowerCase() === title.toLowerCase());
@@ -1599,6 +1573,24 @@
     if (!rawJob.selection_process || (Array.isArray(rawJob.selection_process) && !rawJob.selection_process.length)) {
       const items = getItems('Selection Process');
       if (items.length) rawJob.selection_process = items;
+    }
+    // Capture any remaining section content (eligibility, notes, short details,
+    // qualification text etc.) as text_sections so nothing is missed on the page.
+    if (!rawJob.text_sections || !rawJob.text_sections.length) {
+      const KNOWN = ['important dates','application fees','application fee','selection process'];
+      const extra = [];
+      for (const sec of sections) {
+        const t = (sec.title || '').trim();
+        if (t && KNOWN.indexOf(t.toLowerCase()) !== -1) continue;
+        const lines = [];
+        for (const blk of (sec.content || [])) {
+          if (blk.type === 'paragraph' && blk.text) lines.push(blk.text);
+          else if (blk.type === 'list' && Array.isArray(blk.items)) lines.push(...blk.items);
+        }
+        const content = lines.filter(Boolean).join('\n').trim();
+        if (content) extra.push({ section: t || 'Details', content });
+      }
+      if (extra.length) rawJob.text_sections = extra;
     }
     return rawJob;
   }
@@ -1946,7 +1938,6 @@
 
     clearUniversalCards();
     layout.classList.add('fscd-active');
-    resetDedup();
 
     /* ── Extract all data ── */
     const bd      = rawJob.basic_details   || {};
@@ -1973,7 +1964,6 @@
         .replace(/\s{2,}/g, ' ').trim();
     }
     const shortInfoClean = cleanShort(shortInfo);
-    if (shortInfoClean) isDup(shortInfoClean); // register so identical text_sections/tables don't repeat it
 
     /* ── Dates ── */
     const lastDate  = fmtDate(safe(id.last_date || id.last_date_to_apply || id.application_last_date || rawJob.last_date || ''));
@@ -2038,7 +2028,7 @@
       d.id = id;
       d.innerHTML =
         `<div class="udyn-head" style="background:${bgColor}">` +
-          `<i class="${iconCls}"></i> <h2 style="margin:0;font-size:inherit;font-weight:inherit;color:inherit;">${esc(headText)}</h2>` +
+          `<i class="${iconCls}"></i> ${esc(headText)}` +
         `</div><div class="udyn-body">${bodyHtml}</div>`;
       return d;
     }
@@ -2298,41 +2288,6 @@
     ═══════════════════════════════════════════ */
     if (faqs.length) appendCard(cardFaq(faqs));
 
-    /* ═══════════════════════════════════════════
-       SECTION 18: ADDITIONAL INFORMATION (catch-all)
-       Renders any top-level key not consumed by sections 1-17,
-       so no JSON field is ever silently dropped (data-driven req).
-    ═══════════════════════════════════════════ */
-    const CONSUMED_KEYS = new Set([
-      'basic_details','important_dates','application_fee','application_fees','age_limit',
-      'salary_details','title','name_of_post','post_name','organization','board_name',
-      'location','state','total_vacancy','total_vacancies','apply_mode','application_mode',
-      'short_information','jobs_info','category','qualification','eligibility',
-      'vacancy_details','category_wise_vacancy','salary','salary_pay_scale',
-      'selection_process','exam_pattern','syllabus','physical_eligibility','physical_standards',
-      'how_to_apply','important_links','important_instructions','instructions',
-      'tables','text_sections','faq','useful_links','_udyn_links','detail',
-      'slug','post_date','last_date','status','homepage_serial','seo_tags',
-      'sequence','minimum_age','maximum_age','age_relaxation','exam_date',
-      'job_type','notification_number','last_updated','matched_qualifications',
-      // links already flattened into _udyn_links
-      'apply_online_link','form_pdf_free_link','application_form_pdf_link','form_pdf_link',
-      'official_notification_pdf_link','official_website_link','apply_online','source_url',
-    ]);
-
-    let extraHtml = '';
-    for (const [key, val] of Object.entries(rawJob)) {
-      if (CONSUMED_KEYS.has(key) || key.startsWith('_')) continue;
-      if (!hasContent(val)) continue;
-      const rendered = deepRender(val, 0);
-      if (!rendered || isDup(typeof val === 'string' ? val : JSON.stringify(val))) continue;
-      extraHtml += `<div style="padding:10px 14px;border-bottom:1px solid #f1f5f9;"><h3 style="margin:0 0 6px;font-size:.86rem;color:#475569;">${esc(keyToLabel(key))}</h3>${rendered}</div>`;
-    }
-    if (extraHtml) {
-      appendCard(sec('udyn-extra','linear-gradient(135deg,#475569,#64748b)',
-        'fa-solid fa-circle-info','Additional Information', extraHtml));
-    }
-
     updateTOC(document.querySelectorAll('.udyn-card.udyn-anchor'));
   }
 
@@ -2406,7 +2361,9 @@
     } catch (_) {}
 
     if (best && bestScore >= 0.75) {
-      const normalized = normalizeJob(best);
+      let pre = best;
+      try { pre = normalizeUpcomingJobsSections(best); } catch (_) {}
+      const normalized = normalizeJob(pre);
       injectAllSections(normalized);
       runBasePatches(normalized);
     }

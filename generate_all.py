@@ -2468,7 +2468,76 @@ print(f"  FJA jobs: {j_count}")
 
 # 2. JOB DETAIL PAGES — sarkari_data
 print("Generating /jobs/ pages (sarkari_data)...")
+
+# ── FIX: Normalize sarkari_data records before page generation ───────────────
+# Master Complete_Jobs_Full_Data.json uses camelCase keys for SR_*/OFFLINE_FORM/
+# LATEST_JOBS NEW records (importantDates, applicationFee, importantLinks,
+# shortInfo, additionalData.howToApply) and FLAT fields for STATE/UPCOMING/
+# CENTRAL/ADMISSIONS (last_date, fee_general...). build_detail_page expects
+# snake_case objects. This maps everything so NO table/text/key is missed.
+def _camel_to_snake(s):
+    return re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', str(s)).lower()
+
+def _normalize_sarkari_job(job):
+    if not isinstance(job, dict):
+        return job
+    j = dict(job)
+    CAMEL = {
+        'importantDates':'important_dates', 'applicationFee':'application_fee',
+        'applicationFees':'application_fees', 'importantLinks':'important_links',
+        'shortInfo':'short_information', 'shortInformation':'short_information',
+        'postDate':'post_date', 'lastDate':'last_date', 'ageLimit':'age_limit',
+        'vacancyDetails':'vacancy_details', 'howToApply':'how_to_apply',
+        'usefulLinks':'useful_links', 'textSections':'text_sections',
+        'nameOfPost':'name_of_post', 'postName':'post_name',
+    }
+    for cam, snk in CAMEL.items():
+        if j.get(cam) and not j.get(snk):
+            j[snk] = j[cam]
+    # additionalData.howToApply → how_to_apply
+    ad = j.get('additionalData') or {}
+    if isinstance(ad, dict):
+        if ad.get('howToApply') and not j.get('how_to_apply'):
+            j['how_to_apply'] = ad['howToApply']
+        for k, v in ad.items():
+            sk = _camel_to_snake(k)
+            if v and not j.get(sk):
+                j[sk] = v
+    # snake-ify inner keys of important_dates / application_fee dicts
+    for key in ('important_dates', 'application_fee', 'application_fees'):
+        o = j.get(key)
+        if isinstance(o, dict):
+            out = {}
+            for k, v in o.items():
+                sk = _camel_to_snake(k)
+                out[sk] = v
+                if sk != k and k not in out:
+                    out[k] = v
+            j[key] = out
+    # Build important_dates from FLAT fields (STATE/UPCOMING/CENTRAL/ADMISSIONS)
+    if not (isinstance(j.get('important_dates'), dict) and j['important_dates']):
+        FD = ['application_start','application_begin','notification_date','last_date',
+              'fee_payment_last_date','exam_date','written_exam_date','admit_card_date',
+              'interview_date','result_date','counselling_date','joining_date']
+        asm = {f: j[f] for f in FD if j.get(f)}
+        if asm:
+            j['important_dates'] = asm
+    # Build application_fee from FLAT fee_* fields
+    has_fee = (isinstance(j.get('application_fee'), dict) and j['application_fee']) or \
+              (isinstance(j.get('application_fees'), dict) and j['application_fees'])
+    if not has_fee:
+        FF = {'fee_general':'general','fee_ur':'ur','fee_obc':'obc','fee_ews':'ews',
+              'fee_sc':'sc','fee_st':'st','fee_sc_st':'sc_st','fee_female':'female',
+              'fee_ph':'ph','fee_pwd':'pwd','fee_general_obc':'general_obc','fee_all':'all'}
+        asm = {canon: j[flat] for flat, canon in FF.items() if j.get(flat)}
+        if j.get('fee_payment_mode'):
+            asm['payment_mode'] = j['fee_payment_mode']
+        if asm:
+            j['application_fee'] = asm
+    return j
+
 for job in SARK:
+    job = _normalize_sarkari_job(job)
     title = safe(job.get('title',''))
     if not title: continue
     raw_slug = job.get('slug','') or ''

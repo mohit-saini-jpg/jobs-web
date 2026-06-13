@@ -131,7 +131,7 @@ a{text-decoration:none}
   </main>
   <div id="footerPlaceholder"></div>
   <script>fetch('/footer.html',{cache:'no-store'}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{if(h){var d=document.getElementById('footerPlaceholder');if(d)d.outerHTML=h;}})</script>
-  <script src="/tsj-menu.js?v=20260613112711" defer></script>
+  <script src="/tsj-menu.js?v=20260613100553" defer></script>
 <script>
 (function(){
 'use strict';
@@ -636,6 +636,51 @@ function findJob(data, slug){
 
 // ── Build page ───────────────────────────────────────────────────
 function buildPage(slug, job){
+
+  // ── FIX: map sarkari_data camelCase master keys → snake_case ─────────────
+  // Complete_Jobs_Full_Data.json SR_*/OFFLINE_FORM/*_JOBS/ADMISSIONS records
+  // use camelCase. The renderer below expects snake_case. Alias so no field
+  // (dates, fee, links, tables, text) is silently missed.
+  (function(){
+    function _hc(v){ if(v==null)return false; if(typeof v==='string')return v.trim()!==''; if(Array.isArray(v))return v.length>0; if(typeof v==='object')return Object.keys(v).length>0; return !!v; }
+    var MAP={importantDates:'important_dates',applicationFee:'application_fee',applicationFees:'application_fees',
+      importantLinks:'important_links',shortInfo:'short_information',shortInformation:'short_information',
+      postDate:'post_date',lastDate:'last_date',ageLimit:'age_limit',vacancyDetails:'vacancy_details',
+      howToApply:'how_to_apply',usefulLinks:'useful_links',textSections:'text_sections',
+      nameOfPost:'name_of_post',postName:'post_name',totalVacancy:'total_vacancy'};
+    for(var c in MAP){ if(_hc(job[c])&&!_hc(job[MAP[c]])) job[MAP[c]]=job[c]; }
+    if(job.additionalData&&typeof job.additionalData==='object'){
+      if(!_hc(job.how_to_apply)&&_hc(job.additionalData.howToApply)) job.how_to_apply=job.additionalData.howToApply;
+    }
+    // snake-ify inner keys of important_dates / application_fee
+    ['important_dates','application_fee'].forEach(function(key){
+      var o=job[key];
+      if(o&&typeof o==='object'&&!Array.isArray(o)){
+        var out={};
+        for(var k in o){ var sk=k.replace(/([a-z0-9])([A-Z])/g,'$1_$2').toLowerCase(); out[sk]=o[k]; if(sk!==k&&!(k in out)) out[k]=o[k]; }
+        job[key]=out;
+      }
+    });
+    // Build important_dates from FLAT fields (STATE/UPCOMING/CENTRAL/ADMISSIONS)
+    if(!_hc(job.important_dates)){
+      var FD=['application_start','application_begin','notification_date','last_date',
+        'fee_payment_last_date','exam_date','written_exam_date','admit_card_date',
+        'interview_date','result_date','counselling_date','joining_date'];
+      var idA={};
+      FD.forEach(function(f){ if(_hc(job[f])) idA[f]=job[f]; });
+      if(Object.keys(idA).length) job.important_dates=idA;
+    }
+    // Build application_fee from FLAT fee_* fields
+    if(!_hc(job.application_fee)){
+      var FF={fee_general:'general',fee_ur:'ur',fee_obc:'obc',fee_ews:'ews',fee_sc:'sc',
+        fee_st:'st',fee_sc_st:'sc_st',fee_female:'female',fee_ph:'ph',fee_pwd:'pwd',
+        fee_general_obc:'general_obc',fee_all:'all'};
+      var feA={};
+      for(var ff in FF){ if(_hc(job[ff])) feA[FF[ff]]=job[ff]; }
+      if(_hc(job.fee_payment_mode)) feA.payment_mode=job.fee_payment_mode;
+      if(Object.keys(feA).length) job.application_fee=feA;
+    }
+  })();
 
   // ── DATA NORMALIZATION (handles SR/FJA scraper quirks) ───────────────────
 
