@@ -133,6 +133,90 @@ def e(s):
     """HTML escape"""
     return html_mod.escape(str(s or ''), quote=True)
 
+_CAMEL_DATE_MAP = {
+    'applicationBegin': 'application_begin',
+    'lastDateApplyOnline': 'last_date_to_apply',
+    'lastDatePayFee': 'last_date_fee_payment',
+    'examDate': 'exam_date',
+    'admitCardDate': 'admit_card_date',
+    'correctionDate': 'correction_date',
+    'resultDate': 'result_date',
+    'notificationDate': 'notification_date',
+}
+_CAMEL_FEE_MAP = {
+    'general': 'general_obc_ews',
+    'sGeneralOtherState': 'general_other_state',
+    'ewsSbcObc': 'ews_sbc_obc',
+    'obc': 'obc',
+    'sc': 'sc',
+    'st': 'st',
+    'scStPh': 'sc_st_ph',
+    'paymentMode': 'payment_mode',
+}
+
+def normalize_camel_record(job):
+    """Normalize newer camelCase scraper output (importantDates, applicationFee,
+    importantLinks, shortInfo, postDate, additionalData.howToApply, etc.) into the
+    snake_case shape (important_dates, application_fee, important_links, ...)
+    that the rest of generate_jobs.py and the frontend renderer expect.
+    No-op for records already in snake_case."""
+    if not isinstance(job, dict):
+        return job
+
+    # important_dates
+    if 'importantDates' in job and not job.get('important_dates'):
+        src = job.get('importantDates') or {}
+        out = {}
+        for k, v in src.items():
+            out[_CAMEL_DATE_MAP.get(k, k)] = v
+        job['important_dates'] = out
+
+    # application_fee
+    if 'applicationFee' in job and not job.get('application_fee'):
+        src = job.get('applicationFee') or {}
+        out = {}
+        for k, v in src.items():
+            out[_CAMEL_FEE_MAP.get(k, k)] = v
+        job['application_fee'] = out
+
+    # important_links: list[{label,url}] -> dict
+    if 'importantLinks' in job and not job.get('important_links'):
+        src = job.get('importantLinks') or []
+        out = {}
+        for lk in src:
+            if not isinstance(lk, dict):
+                continue
+            label = (lk.get('label') or lk.get('title') or '').strip()
+            url = (lk.get('url') or lk.get('link') or '').strip()
+            if not url:
+                continue
+            key = label.lower().replace(' ', '_').replace('/', '_') or 'link'
+            if key in out:
+                existing = out[key]
+                out[key] = (existing if isinstance(existing, list) else [existing]) + [url]
+            else:
+                out[key] = url
+        job['important_links'] = out
+
+    # short_information / post_date
+    if 'shortInfo' in job and not job.get('short_information'):
+        job['short_information'] = job.get('shortInfo') or ''
+    if 'postDate' in job and not job.get('post_date'):
+        job['post_date'] = job.get('postDate') or ''
+
+    # additionalData.howToApply -> how_to_apply
+    add = job.get('additionalData')
+    if isinstance(add, dict):
+        if 'howToApply' in add and not job.get('how_to_apply'):
+            job['how_to_apply'] = add.get('howToApply') or []
+        for k, v in add.items():
+            snake = ''.join(['_' + c.lower() if c.isupper() else c for c in k]).lstrip('_')
+            if snake not in job or not job.get(snake):
+                job[snake] = v
+
+    return job
+
+
 def safe(v):
     """Convert any value to a clean string"""
     if v is None: return ''
@@ -1021,6 +1105,7 @@ sd = data.get('sarkari_data', {})
 sd_jobs = sd.get('jobs', []) if isinstance(sd, dict) else []
 sd_count = 0
 for job in sd_jobs:
+    job = normalize_camel_record(job)
     raw_slug = safe(job.get('slug',''))
     title    = safe(job.get('title',''))
     if not title: continue
