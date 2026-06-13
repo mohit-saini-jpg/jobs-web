@@ -652,12 +652,12 @@ function buildPage(slug, job){
     if(job.additionalData&&typeof job.additionalData==='object'){
       if(!_hc(job.how_to_apply)&&_hc(job.additionalData.howToApply)) job.how_to_apply=job.additionalData.howToApply;
     }
-    // snake-ify inner keys of important_dates / application_fee
+    // snake-ify inner keys of important_dates / application_fee (replace, no dup)
     ['important_dates','application_fee'].forEach(function(key){
       var o=job[key];
       if(o&&typeof o==='object'&&!Array.isArray(o)){
         var out={};
-        for(var k in o){ var sk=k.replace(/([a-z0-9])([A-Z])/g,'$1_$2').toLowerCase(); out[sk]=o[k]; if(sk!==k&&!(k in out)) out[k]=o[k]; }
+        for(var k in o){ var sk=k.replace(/([a-z0-9])([A-Z])/g,'$1_$2').toLowerCase(); if(!(sk in out)) out[sk]=o[k]; }
         job[key]=out;
       }
     });

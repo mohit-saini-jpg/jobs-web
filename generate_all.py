@@ -265,9 +265,13 @@ def is_blocked(url):
     return any(d in str(url).lower() for d in BLOCKED)
 
 def key_label(key):
-    label = str(key).replace('_',' ').replace('-',' ')
+    label = str(key)
+    # split camelCase / PascalCase → spaced words (applicationBegin → application Begin)
+    label = re.sub(r'([a-z0-9])([A-Z])', r'\1 \2', label)
+    label = label.replace('_',' ').replace('-',' ')
+    label = re.sub(r'\s+', ' ', label).strip()
     label = re.sub(r'\b([a-z])', lambda m: m.group(1).upper(), label)
-    for k,v in {'Url':'URL','Pdf':'PDF','Obc':'OBC','Sc':'SC','St':'ST','Ur':'UR','Ews':'EWS','Pwd':'PwD','Cbt':'CBT'}.items():
+    for k,v in {'Url':'URL','Pdf':'PDF','Obc':'OBC','Sc':'SC','St':'ST','Ur':'UR','Ews':'EWS','Pwd':'PwD','Cbt':'CBT','Ph':'PH','Ews Sbc Obc':'EWS / SBC / OBC','Sc St Ph':'SC / ST / PH','Sc St':'SC / ST'}.items():
         label = re.sub(r'\b'+k+r'\b', v, label)
     return label
 
@@ -552,6 +556,9 @@ def render_links(il_obj):
         'click_here':           ('Click Here',            'lk-default', 'fa-link'),
         'merit_list':           ('Merit List',            'lk-merit',   'fa-list'),
         'score_card':           ('Score Card',            'lk-orange',  'fa-file'),
+        'short_notification':   ('Download Short Notification', 'lk-pdf', 'fa-file-pdf'),
+        'date_extended_notice': ('Date Extended Notice',  'lk-pdf',     'fa-file-pdf'),
+        'syllabus':             ('Syllabus',              'lk-syllabus','fa-book'),
     }
     def _row(label, url, css, icon):
         # row: label on the left, colored "Open" button on the right
@@ -797,21 +804,23 @@ def render_faq(faq_list):
 def render_vacancy_table(vac_list):
     if not vac_list or not isinstance(vac_list, list): return ''
     ALL_COLS = [
-        ('post_name',['post_name','post','name','Post Name','Name Of Post','Post']),
+        ('post_name',['post_name','post','name','Post Name','Name Of Post','Post','subject','Subject']),
+        ('advt_no',['advt_no','Advt No','advertisement_no','Advertisement No']),
         ('state',['State / UT','State/UT','state','State','State / Ut']),
         ('language',['Language','language','Medium','medium']),
-        ('total',['total','total_vacancies','total_posts','vacancies','Total Posts','Total','Vacancy']),
+        ('total',['total','total_post','total_vacancies','total_posts','vacancies','Total Posts','Total','Vacancy']),
         ('ur',['ur','general','UR','General (UR)','General']),
         ('obc',['obc','OBC']),('sc',['sc','SC']),('st',['st','ST']),('ews',['ews','EWS']),
         ('women',['women','Women','female','Female']),
         ('salary',['salary','pay_scale','Scale of Pay','Salary']),
         ('qualification',['eligibility','qualification','Educational Qualification']),
         ('department',['department','Department']),
+        ('notification_pdf',['notification_pdf','notification_link','pdf','Notification PDF']),
     ]
-    LABELS = {'post_name':'Post Name','state':'State / UT','language':'Language',
+    LABELS = {'post_name':'Post Name','advt_no':'Advt No','state':'State / UT','language':'Language',
               'total':'Total','ur':'UR/General','obc':'OBC',
               'sc':'SC','st':'ST','ews':'EWS','women':'Women','salary':'Salary',
-              'qualification':'Qualification','department':'Department'}
+              'qualification':'Qualification','department':'Department','notification_pdf':'Notification'}
     norm = []; avail = set()
     for row in vac_list:
         if not isinstance(row, dict): continue
@@ -876,8 +885,13 @@ def render_vacancy_table(vac_list):
         if grand_total is None and data_nums:
             grand_total = data_sum
 
+    def _vac_cell(c, val):
+        sval = safe(val)
+        if c == 'notification_pdf' and sval.startswith('http'):
+            return '<td><a href="%s" target="_blank" rel="noopener nofollow"><i class="fa-solid fa-file-pdf"></i> PDF</a></td>' % e(sval)
+        return '<td>%s</td>' % e(sval)
     head = '<th>Sr.</th>' + ''.join(f'<th>{LABELS[c]}</th>' for c in cols)
-    rows = ''.join(f'<tr><td>{i+1}</td>' + ''.join(f'<td>{e(r.get(c,""))}</td>' for c in cols) + '</tr>'
+    rows = ''.join(f'<tr><td>{i+1}</td>' + ''.join(_vac_cell(c, r.get(c,"")) for c in cols) + '</tr>'
                    for i, r in enumerate(clean))
     # append a correct, clearly-labelled total row (only when meaningful and >1 data row)
     if grand_total and 'total' in cols and len(clean) > 1:
@@ -2504,16 +2518,43 @@ def _normalize_sarkari_job(job):
             if v and not j.get(sk):
                 j[sk] = v
     # snake-ify inner keys of important_dates / application_fee dicts
+    # REPLACE camel keys (do NOT keep both — that caused duplicate rows)
     for key in ('important_dates', 'application_fee', 'application_fees'):
         o = j.get(key)
         if isinstance(o, dict):
             out = {}
             for k, v in o.items():
                 sk = _camel_to_snake(k)
-                out[sk] = v
-                if sk != k and k not in out:
-                    out[k] = v
+                # first writer wins; if snake form already set from a true
+                # snake key, don't overwrite with camel duplicate
+                if sk not in out:
+                    out[sk] = v
             j[key] = out
+
+    # snake-ify keys INSIDE list-of-dict fields (vacancy rows, subject rows)
+    # so render_vacancy_table sees post_name / total_post / notification_pdf etc.
+    def _snake_rows(rows):
+        out = []
+        for row in rows:
+            if isinstance(row, dict):
+                nr = {}
+                for k, v in row.items():
+                    sk = _camel_to_snake(k)
+                    if sk not in nr:
+                        nr[sk] = v
+                out.append(nr)
+            else:
+                out.append(row)
+        return out
+    for lk in ('vacancy_details', 'vacancyDetails', 'subjectWiseVacancy',
+               'subject_wise_vacancy', 'category_wise_vacancy', 'categoryWiseVacancy'):
+        if isinstance(j.get(lk), list):
+            j[lk] = _snake_rows(j[lk])
+    # canonical aliases for the subject-wise list
+    if isinstance(j.get('subjectWiseVacancy'), list) and not j.get('subject_wise_vacancy'):
+        j['subject_wise_vacancy'] = j['subjectWiseVacancy']
+    if isinstance(j.get('categoryWiseVacancy'), list) and not j.get('category_wise_vacancy'):
+        j['category_wise_vacancy'] = j['categoryWiseVacancy']
     # Build important_dates from FLAT fields (STATE/UPCOMING/CENTRAL/ADMISSIONS)
     if not (isinstance(j.get('important_dates'), dict) and j['important_dates']):
         FD = ['application_start','application_begin','notification_date','last_date',
@@ -2551,6 +2592,30 @@ for job in SARK:
     if isinstance(raw_il, dict):
         for k, v in raw_il.items():
             if v and not is_blocked(str(v)): il[k] = v
+    elif isinstance(raw_il, list):
+        # master format: [{label, url}, ...] — preserve EVERY link with a unique key
+        for itm in raw_il:
+            if not isinstance(itm, dict): continue
+            url = str(itm.get('url') or itm.get('link') or itm.get('links') or '').strip()
+            lbl = str(itm.get('label') or itm.get('title') or itm.get('name') or '').strip()
+            if not url.startswith('http') or is_blocked(url): continue
+            ll = lbl.lower()
+            # choose a stable key; fall back to a slugified label so duplicates don't collide
+            if 'apply' in ll:                       base = 'apply_online'
+            elif any(x in ll for x in ['short notif']): base = 'short_notification'
+            elif 'date extend' in ll or 'extended' in ll: base = 'date_extended_notice'
+            elif any(x in ll for x in ['notif','notice','advt','advertisement']): base = 'notification_pdf'
+            elif 'result' in ll:                    base = 'result_link'
+            elif 'admit' in ll:                     base = 'admit_card'
+            elif 'answer' in ll:                    base = 'answer_key'
+            elif 'syllabus' in ll:                  base = 'syllabus'
+            elif 'official' in ll or 'website' in ll: base = 'official_website'
+            else:
+                base = re.sub(r'[^a-z0-9]+','_', ll).strip('_')[:40] or 'click_here'
+            key = base; n = 2
+            while key in il:
+                key = f'{base}_{n}'; n += 1
+            il[key] = url
     for field, key in [
         ('apply_online_link',            'apply_online'),
         ('official_notification_pdf_link','notification_pdf'),
@@ -2615,7 +2680,14 @@ for job in SARK:
             if m:
                 age['as_on_date'] = m.group(1)
                 break
-    full = {'basic_details':bd,'important_dates':imp_dates,'application_fee':job.get('application_fees') or job.get('application_fee') or {},'age_limit':age,'qualification':job.get('eligibility') or job.get('qualification') or {},'vacancy_details':job.get('vacancy_details') or [],'salary_details':{'pay_scale':safe(job.get('salary_pay_scale',''))} if job.get('salary_pay_scale') else {},'how_to_apply':[job['how_to_apply']] if isinstance(job.get('how_to_apply'),str) and job.get('how_to_apply') else (job.get('how_to_apply') or []),'important_links':il,'sections':sections_out,'faq':job.get('faq') or [],'category':job.get('category',''),'slug':slug,
+    # Merge all vacancy lists (post-wise + subject-wise + category-wise) so the
+    # vacancy table renders subject rows and notification-PDF links too.
+    _vac_all = []
+    for _vk in ('vacancy_details', 'subject_wise_vacancy', 'category_wise_vacancy'):
+        _vv = job.get(_vk)
+        if isinstance(_vv, list):
+            _vac_all.extend([r for r in _vv if isinstance(r, dict)])
+    full = {'basic_details':bd,'important_dates':imp_dates,'application_fee':job.get('application_fees') or job.get('application_fee') or {},'age_limit':age,'qualification':job.get('eligibility') or job.get('qualification') or {},'vacancy_details':_vac_all or (job.get('vacancy_details') or []),'salary_details':{'pay_scale':safe(job.get('salary_pay_scale',''))} if job.get('salary_pay_scale') else {},'how_to_apply':[job['how_to_apply']] if isinstance(job.get('how_to_apply'),str) and job.get('how_to_apply') else (job.get('how_to_apply') or []),'important_links':il,'sections':sections_out,'faq':job.get('faq') or [],'category':job.get('category',''),'slug':slug,
              'tables':job.get('tables') or [],'text_sections':job.get('text_sections') or [],'useful_links':job.get('useful_links') or [],'all_links':job.get('all_links') or [],'details_page_content':job.get('details_page_content') or {}}
     canon = f"{BASE_URL}/jobs/{slug}/"
     bc    = [('Latest Jobs', f"{BASE_URL}/section/latest-jobs/")]

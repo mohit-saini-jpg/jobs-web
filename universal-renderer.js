@@ -278,7 +278,9 @@
 
   function keyToLabel(k) {
     return safe(k)
+      .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
       .replace(/_+/g,' ')
+      .replace(/\s+/g,' ')
       .replace(/\b[a-z]/g, c => c.toUpperCase())
       .replace(/\bObc\b/g,'OBC').replace(/\bEws\b/g,'EWS')
       .replace(/\bSc\b/g,'SC').replace(/\bSt\b/g,'ST')
@@ -384,8 +386,7 @@
       const _id = job.important_dates, _out = {};
       for (const [k, v] of Object.entries(_id)) {
         const sk = k.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase();
-        _out[sk] = v;
-        if (sk !== k && !(k in _out)) _out[k] = v;
+        if (!(sk in _out)) _out[sk] = v;   // replace camel key; first writer wins
       }
       job.important_dates = _out;
     }
@@ -394,8 +395,7 @@
       const _fe = job.application_fee, _fout = {};
       for (const [k, v] of Object.entries(_fe)) {
         const sk = k.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase();
-        _fout[sk] = v;
-        if (sk !== k && !(k in _fout)) _fout[k] = v;
+        if (!(sk in _fout)) _fout[sk] = v;
       }
       job.application_fee = _fout;
     }
