@@ -1888,8 +1888,7 @@ a{text-decoration:none}.skip-link{position:absolute;left:-9999px}.skip-link:focu
 .jm-badge{font-size:.67rem;font-weight:700;padding:2px 8px;border-radius:12px}
 .job-card-date{font-size:.76rem;font-weight:700}.job-card-date.urgent{color:#dc2626}
 .job-card-links{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
-.job-card-hit{position:absolute;inset:0;z-index:1;border-radius:12px;text-indent:-9999px;overflow:hidden}
-.job-card>*:not(.job-card-hit){position:relative;z-index:2}
+.job-card:active{transform:scale(.997)}
 .job-card-title a{pointer-events:none}
 .jl-btn{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:700;text-decoration:none;transition:all .12s;border:1px solid transparent;min-height:28px}
 .btn-answer{background:#fef9c3;color:#854d0e;border-color:#fde68a}.btn-answer:hover{background:#b45309;color:#fff}
@@ -2426,8 +2425,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
             if jstatus in _smap:
                 _bg, _cl, _lb = _smap[jstatus]
                 status_badge = f'<span class="jm-badge" style="background:{_bg};color:{_cl}">{_lb}</span>'
-        cards_html += f'''<article class="job-card" data-title="{e(jtitle.lower())}" data-org="{e(jorg.lower())}" onclick="location.href='/jobs/{e(jslug)}/'">
-  <a class="job-card-hit" href="/jobs/{e(jslug)}/" aria-label="{e(jtitle)}"></a>
+        cards_html += f'''<article class="job-card" data-title="{e(jtitle.lower())}" data-org="{e(jorg.lower())}" onclick="if(!getSelection().toString()){{location.href='/jobs/{e(jslug)}/'}}">
   <div class="job-card-title"><a href="/jobs/{e(jslug)}/">{e(jtitle)}</a></div>
   <div class="job-card-org"><i class="fa-regular fa-building"></i> {e(jorg[:60])}</div>
   <div class="job-card-meta">
