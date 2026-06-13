@@ -173,12 +173,12 @@ html.js-faq .faq-a.open,.faq-a.open,.faq-a[style*="block"],.faq-a[style*="flex"]
 
 /* ── Important Links: row layout (label left + Open button right) 2026-06-10 ── */
 .links-rows{display:flex;flex-direction:column}
-.lk-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 14px;border-bottom:1px solid #eef2f7}
+.lk-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 16px;border-bottom:1px solid #e5eaf2}
 .lk-row:nth-child(even){background:#fafbfc}
 .lk-row:last-child{border-bottom:none}
-.lk-label{font-size:.84rem;color:#1f2937;font-weight:600;line-height:1.35}
-.lk-open{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:8px;font-size:.8rem;font-weight:800;text-decoration:none;border:1px solid transparent;white-space:nowrap;transition:all .15s}
-.lk-open i{font-size:.82rem}
+.lk-label{font-size:1rem;color:#0f172a;font-weight:800;line-height:1.4;letter-spacing:.01em}
+.lk-open{flex-shrink:0;display:inline-flex;align-items:center;gap:7px;padding:11px 24px;border-radius:9px;font-size:.92rem;font-weight:800;text-decoration:none;border:1px solid transparent;white-space:nowrap;transition:all .15s;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.lk-open i{font-size:.92rem}
 /* color variants — soft bg + colored text/icon, like the reference UI */
 .lk-apply{background:#dcfce7;color:#15803d;border-color:#86efac}.lk-apply:hover{background:#15803d;color:#fff}
 .lk-official{background:#dbeafe;color:#1e40af;border-color:#93c5fd}.lk-official:hover{background:#1d4ed8;color:#fff}
@@ -192,4 +192,4 @@ html.js-faq .faq-a.open,.faq-a.open,.faq-a[style*="block"],.faq-a[style*="flex"]
 .lk-merit{background:#ccfbf1;color:#0f766e;border-color:#5eead4}.lk-merit:hover{background:#0d9488;color:#fff}
 .lk-orange{background:#dbeafe;color:#1e40af;border-color:#93c5fd}.lk-orange:hover{background:#1d4ed8;color:#fff}
 .lk-default{background:#dbeafe;color:#1e40af;border-color:#93c5fd}.lk-default:hover{background:#1d4ed8;color:#fff}
-@media(max-width:480px){.lk-label{font-size:.8rem}.lk-open{padding:6px 13px;font-size:.76rem}}
+@media(max-width:480px){.lk-label{font-size:.9rem}.lk-open{padding:9px 18px;font-size:.85rem}}

@@ -530,6 +530,61 @@ def render_list_items(items, ordered=False):
     tag = 'ol' if ordered else 'ul'
     return f'<{tag} class="val-list">' + ''.join(f'<li>{e(s)}</li>' for s in filtered) + f'</{tag}>'
 
+def _split_long_value(text):
+    """Split a long qualification/eligibility-style value into clean chunks.
+    Primary split on ' | ' (post-wise separator), fallback to ', '. Returns a
+    list of trimmed pieces (each may still contain commas, which is fine)."""
+    t = safe(text)
+    if not t: return []
+    # Prefer pipe split (used as 'Post | Qualification' separators)
+    if '|' in t:
+        parts = [p.strip(' .;') for p in t.split('|')]
+    else:
+        # split on comma but keep it readable; only split if many commas
+        parts = [p.strip(' .;') for p in re.split(r',\s+', t)] if t.count(',') >= 2 else [t]
+    return [p for p in parts if p]
+
+def kv_rows(pairs, long_threshold=90):
+    """Build kv-table rows. pairs = list of (label, value).
+    Short value  -> normal 2-column row (<th>label</th><td>value</td>).
+    Long value   -> stacked: a full-width label heading row, then a full-width
+                    row containing a NUMBERED list of the split chunks.
+    This matches the requested layout: name on top, text below in small
+    numbered pieces."""
+    rows = ''
+    for lbl, val in pairs:
+        v = safe(val)
+        if not v:
+            continue
+        if len(v) > long_threshold:
+            chunks = _split_long_value(v)
+            if len(chunks) > 1:
+                lis = ''.join(f'<li>{e(c)}</li>' for c in chunks)
+                rows += (f'<tr><th colspan="2" class="kv-stack-head">{e(lbl)}</th></tr>'
+                         f'<tr><td colspan="2" class="kv-stack-body"><ol class="kv-numlist">{lis}</ol></td></tr>')
+            else:
+                # single long chunk — still stack so it reads top-to-bottom
+                rows += (f'<tr><th colspan="2" class="kv-stack-head">{e(lbl)}</th></tr>'
+                         f'<tr><td colspan="2" class="kv-stack-body">{e(v)}</td></tr>')
+        else:
+            rows += f'<tr><th>{e(lbl)}</th><td>{e(v)}</td></tr>'
+    return rows
+
+def render_kv_dict(d, order=None, threshold=90):
+    """Render a dict as a smart kv-table (stacking long values)."""
+    if not isinstance(d, dict): return ''
+    pairs = []
+    seen = set()
+    keys = (order or []) + [k for k in d.keys() if k not in (order or [])]
+    for k in keys:
+        if k in seen: continue
+        seen.add(k)
+        v = safe(d.get(k))
+        if v:
+            pairs.append((key_label(k), v))
+    rows = kv_rows(pairs, threshold)
+    return f'<table class="kv-table"><tbody>{rows}</tbody></table>' if rows else ''
+
 def render_selection(sp):
     if not sp: return ''
     if isinstance(sp, str): sp = [s.strip() for s in re.split(r'[,\n;/→]', sp) if s.strip()]
@@ -755,21 +810,22 @@ def render_qualification(val):
         return ''
     ORDER = ['education_qualification','qualification','eligibility','required_degree',
              'technical_qualification','experience_required','details','nationality']
-    rows = ''
+    pairs = []
     seen_labels = set()
     for k in ORDER:
         v = safe(val.get(k))
         lbl = key_label(k)
         if v and lbl not in seen_labels:
             seen_labels.add(lbl)
-            rows += f'<tr><th>{e(lbl)}</th><td>{e(v)}</td></tr>'
+            pairs.append((lbl, v))
     # any extra unknown keys (except matched_qualifications, handled below)
     for k, v in val.items():
         if k in ORDER or k == 'matched_qualifications': continue
         sv = safe(v); lbl = key_label(k)
         if sv and lbl not in seen_labels:
             seen_labels.add(lbl)
-            rows += f'<tr><th>{e(lbl)}</th><td>{e(sv)}</td></tr>'
+            pairs.append((lbl, sv))
+    rows = kv_rows(pairs)
     out = f'<table class="kv-table"><tbody>{rows}</tbody></table>' if rows else ''
     # matched_qualifications -> badges
     mq = val.get('matched_qualifications')
@@ -1262,11 +1318,11 @@ def build_all_sections(job_obj):
         if key == 'basic_details':      body = render_basic_details(val)
         elif key == 'important_dates':  body = render_dates(val)
         elif key == 'application_fee':  body = render_fee(val)
-        elif key == 'age_limit':        body = render_list_items(val) if isinstance(val,list) else (f'<table class="kv-table"><tbody>' + ''.join(f'<tr><th>{e(key_label(k))}</th><td>{e(safe(v))}</td></tr>' for k,v in val.items() if safe(v)) + '</tbody></table>' if isinstance(val,dict) else e(safe(val)))
+        elif key == 'age_limit':        body = render_list_items(val) if isinstance(val,list) else (render_kv_dict(val) if isinstance(val,dict) else e(safe(val)))
         elif key == 'qualification':    body = render_qualification(val)
         elif key == 'vacancy_details':  body = render_vacancy_table(val)
-        elif key == 'category_wise_vacancy': body = (render_vacancy_table(val) if isinstance(val,list) else f'<table class="kv-table"><tbody>' + ''.join(f'<tr><td>{e(key_label(k))}</td><td>{e(safe(v))}</td></tr>' for k,v in val.items() if safe(v)) + '</tbody></table>' if isinstance(val,dict) else '')
-        elif key == 'salary_details':   body = render_list_items(val) if isinstance(val,list) else (f'<table class="kv-table"><tbody>' + ''.join(f'<tr><th>{e(key_label(k))}</th><td>{e(safe(v))}</td></tr>' for k,v in val.items() if safe(v)) + '</tbody></table>' if isinstance(val,dict) else f'<div class="edu-sec">{e(safe(val))}</div>')
+        elif key == 'category_wise_vacancy': body = (render_vacancy_table(val) if isinstance(val,list) else render_kv_dict(val) if isinstance(val,dict) else '')
+        elif key == 'salary_details':   body = render_list_items(val) if isinstance(val,list) else (render_kv_dict(val) if isinstance(val,dict) else f'<div class="edu-sec">{e(safe(val))}</div>')
         elif key == 'selection_process': body = render_selection(val)
         elif key == 'exam_pattern':     body = (render_smart_table(val) if isinstance(val,list) and val and isinstance(val[0],dict) else render_list_items(val) if isinstance(val,list) else f'<div class="edu-sec">{e(safe(val))}</div>')
         elif key == 'tables':
@@ -1562,7 +1618,7 @@ def build_all_sections(job_obj):
                     html += sec_card(_dpc_title, 'fa-circle-info', '1e40af,#3b82f6', body)
                 body = ''  # mark as already rendered
         elif key == 'syllabus':         body = (render_list_items(val) if isinstance(val,list) else f'<div class="edu-sec">{e(safe(val))}</div>')
-        elif key == 'physical_eligibility': body = (f'<table class="kv-table"><tbody>' + ''.join(f'<tr><th>{e(key_label(k))}</th><td>{e(safe(v))}</td></tr>' for k,v in val.items() if safe(v)) + '</tbody></table>' if isinstance(val,dict) else render_list_items(val) if isinstance(val,list) else f'<div class="edu-sec">{e(safe(val))}</div>')
+        elif key == 'physical_eligibility': body = (render_kv_dict(val) if isinstance(val,dict) else render_list_items(val) if isinstance(val,list) else f'<div class="edu-sec">{e(safe(val))}</div>')
         elif key == 'how_to_apply':     body = render_hta(val)
         elif key == 'important_instructions': body = ''.join(f'<div class="inst-box"><i class="fa-solid fa-triangle-exclamation"></i><span>{e(safe(s))}</span></div>' for s in (val if isinstance(val,list) else [val]) if safe(s))
         elif key == 'important_links':  body = render_links(val)
@@ -1748,6 +1804,12 @@ a{text-decoration:none}.skip-link{position:absolute;left:-9999px}.skip-link:focu
 .kv-table th{background:#f8fafc;color:#374151;font-weight:700;padding:9px 13px;text-align:left;border-bottom:1px solid #e9eef4;width:38%;vertical-align:top;word-break:break-word}
 .kv-table td{padding:9px 13px;color:#1e293b;border-bottom:1px solid #e9eef4;vertical-align:top;word-break:break-word;overflow-wrap:break-word;line-height:1.6}
 .kv-table tr:last-child th,.kv-table tr:last-child td{border-bottom:none}
+.kv-stack-head{background:#eef2ff;color:#3730a3;font-weight:800;padding:9px 13px;text-align:left;border-bottom:1px solid #e0e7ff;font-size:.84rem}
+.kv-stack-body{padding:10px 13px 12px;border-bottom:1px solid #e9eef4}
+.kv-numlist{margin:0;padding-left:0;list-style:none;counter-reset:kvn}
+.kv-numlist li{counter-increment:kvn;position:relative;padding:7px 8px 7px 34px;margin-bottom:6px;background:#f8fafc;border:1px solid #eef0f4;border-radius:7px;font-size:.8rem;line-height:1.55;color:#1e293b}
+.kv-numlist li:last-child{margin-bottom:0}
+.kv-numlist li::before{content:counter(kvn);position:absolute;left:8px;top:7px;width:19px;height:19px;background:#4338ca;color:#fff;border-radius:50%;font-size:.68rem;font-weight:700;display:flex;align-items:center;justify-content:center}
 .date-last{color:#dc2626;font-weight:700}
 .fee-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
 .fee-cell{padding:9px 13px;border-right:1px solid #f1f5f9;border-bottom:1px solid #f1f5f9}
@@ -1817,7 +1879,7 @@ a{text-decoration:none}.skip-link{position:absolute;left:-9999px}.skip-link:focu
 .search-bar{display:flex;gap:8px;margin-bottom:12px}
 .search-bar input{flex:1;min-width:200px;padding:9px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:.84rem;outline:none}
 .search-bar input:focus{border-color:#1d4ed8;box-shadow:0 0 0 2px #dbeafe}
-.job-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px;margin-bottom:9px;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:box-shadow .15s}
+.job-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px;margin-bottom:9px;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:box-shadow .15s;position:relative;cursor:pointer}
 .job-card:hover{box-shadow:0 4px 12px rgba(0,0,0,.1)}
 .job-card-title{font-size:.9rem;font-weight:800;color:#0f172a;line-height:1.4;margin-bottom:5px}
 .job-card-title a{color:inherit}.job-card-title a:hover{color:#1d4ed8;text-decoration:underline}
@@ -1826,6 +1888,9 @@ a{text-decoration:none}.skip-link{position:absolute;left:-9999px}.skip-link:focu
 .jm-badge{font-size:.67rem;font-weight:700;padding:2px 8px;border-radius:12px}
 .job-card-date{font-size:.76rem;font-weight:700}.job-card-date.urgent{color:#dc2626}
 .job-card-links{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.job-card-hit{position:absolute;inset:0;z-index:1;border-radius:12px;text-indent:-9999px;overflow:hidden}
+.job-card>*:not(.job-card-hit){position:relative;z-index:2}
+.job-card-title a{pointer-events:none}
 .jl-btn{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:700;text-decoration:none;transition:all .12s;border:1px solid transparent;min-height:28px}
 .btn-answer{background:#fef9c3;color:#854d0e;border-color:#fde68a}.btn-answer:hover{background:#b45309;color:#fff}
 """
@@ -2001,11 +2066,30 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     faq   = job_obj.get('faq', []) or []
 
     title     = safe(bd.get('job_title','') or job_obj.get('title','') or 'Government Job')
-    org       = safe(bd.get('organization_name','') or 'Government of India')
-    vacancies = safe(bd.get('total_vacancies','') or job_obj.get('total_post','') or job_obj.get('total_vacancy',''))
-    last_d    = safe(dates.get('last_date_to_apply','') or dates.get('last_date_apply_online','') or dates.get('last_date','') or job_obj.get('last_date',''))
-    apply_m   = safe(bd.get('application_mode','') or job_obj.get('apply_mode','') or ('Offline' if job_obj.get('category') == 'OFFLINE_FORM' else 'Online'))
-    location  = safe(bd.get('job_location','') or job_obj.get('job_location','') or 'India')
+    org       = safe(bd.get('organization_name','') or job_obj.get('organization','') or job_obj.get('board','') or 'Government of India')
+    vacancies = safe(bd.get('total_vacancies','') or bd.get('total_posts','') or bd.get('total_post','')
+                     or job_obj.get('total_post','') or job_obj.get('total_vacancy','') or job_obj.get('total_posts','')
+                     or job_obj.get('totalPost','') or job_obj.get('vacancies',''))
+    # Fallback: pull "<n> Posts" / "<n> Vacancies" out of the title if no explicit field
+    if not vacancies:
+        _vm = re.search(r'([\d,]+)\s*(?:posts?|vacanc)', title, re.I)
+        if _vm: vacancies = _vm.group(1)
+    last_d    = safe(dates.get('last_date_to_apply','') or dates.get('last_date_apply_online','')
+                     or dates.get('last_date','') or dates.get('last_date_pay_fee','')
+                     or job_obj.get('last_date','') or job_obj.get('lastDate',''))
+    # If no explicit last date, fall back to the most relevant date present
+    # (exam/result/admit/interview) so the header never shows a bare "—".
+    _dh_lbl = 'Last Date'
+    if not last_d and isinstance(dates, dict):
+        for _dk, _dlbl in [('exam_date','Exam Date'),('result_date','Result Date'),
+                           ('admit_card_date','Admit Card'),('interview_date','Interview'),
+                           ('counselling_date','Counselling'),('application_begin','Starts')]:
+            if safe(dates.get(_dk)):
+                last_d = safe(dates.get(_dk)); _dh_lbl = _dlbl; break
+    apply_m   = safe(bd.get('application_mode','') or job_obj.get('apply_mode','') or job_obj.get('application_mode','')
+                     or ('Offline' if job_obj.get('category') == 'OFFLINE_FORM' else 'Online'))
+    location  = safe(bd.get('job_location','') or job_obj.get('job_location','') or job_obj.get('state','')
+                     or job_obj.get('location','') or 'India')
 
     # ── Extra fields for rich WhatsApp/social share message ──
     def _first_str(d, keys, allow_fallback=True):
@@ -2160,7 +2244,7 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
   <h1 class="detail-h1">{e(title)}</h1>
   <div class="stats-bar">
     <div class="stat"><div class="stat-val">{e(vacancies or "—")}</div><div class="stat-lbl">Vacancies</div></div>
-    <div class="stat"><div class="stat-val" style="color:#dc2626">{e(last_d or "—")}</div><div class="stat-lbl">Last Date</div></div>
+    <div class="stat"><div class="stat-val" style="color:#dc2626">{e(last_d or "—")}</div><div class="stat-lbl">{e(_dh_lbl)}</div></div>
     <div class="stat"><div class="stat-val">{e(apply_m or "Online")}</div><div class="stat-lbl">Apply Mode</div></div>
     <div class="stat"><div class="stat-val">{e(location or "India")}</div><div class="stat-lbl">Location</div></div>
   </div>
@@ -2342,7 +2426,8 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
             if jstatus in _smap:
                 _bg, _cl, _lb = _smap[jstatus]
                 status_badge = f'<span class="jm-badge" style="background:{_bg};color:{_cl}">{_lb}</span>'
-        cards_html += f'''<article class="job-card" data-title="{e(jtitle.lower())}" data-org="{e(jorg.lower())}">
+        cards_html += f'''<article class="job-card" data-title="{e(jtitle.lower())}" data-org="{e(jorg.lower())}" onclick="location.href='/jobs/{e(jslug)}/'">
+  <a class="job-card-hit" href="/jobs/{e(jslug)}/" aria-label="{e(jtitle)}"></a>
   <div class="job-card-title"><a href="/jobs/{e(jslug)}/">{e(jtitle)}</a></div>
   <div class="job-card-org"><i class="fa-regular fa-building"></i> {e(jorg[:60])}</div>
   <div class="job-card-meta">
@@ -2351,7 +2436,6 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
     {status_badge}
   </div>
   {f'<div class="job-card-date{urgent_cls}"><i class="fa-regular fa-clock"></i> Last Date: <strong>{e(jld)}</strong></div>' if jld else ''}
-  {f'<div class="job-card-links">{ql}</div>' if ql else ''}
 </article>'''
 
     if not cards_html:
