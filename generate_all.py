@@ -26,6 +26,19 @@ CJ_FILE   = _root_cj if _root_cj.exists() else _data_cj
 DU_FILE  = ROOT / 'dailyupdates.json'
 BASE_URL = 'https://www.topsarkarijobs.com'
 
+# ── Wide tablet-style viewport for mobile (Mid View 600-899px), zoom enabled ──
+# Forced ~820px logical width on phones so more content shows without hiding,
+# and pinch zoom stays available. Stored as a plain string (NOT inside any
+# f-string) so its JS braces don't clash with f-string formatting.
+VP_SNIPPET = ('<script>/*TSJ-WIDE-VIEWPORT*/(function(){var W=820,'
+    'm=document.querySelector(\'meta[name="viewport"]\');'
+    'if(!m){m=document.createElement(\'meta\');m.name=\'viewport\';'
+    '(document.head||document.documentElement).appendChild(m);}'
+    'var sw=(window.screen&&screen.width)||window.innerWidth||W;'
+    'if(sw<W){m.setAttribute(\'content\',\'width=\'+W+\', user-scalable=yes, maximum-scale=5.0\');}'
+    'else{m.setAttribute(\'content\',\'width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5.0\');}'
+    '})();</script>')
+
 # ── Garbage title filter (scraper navigation links) ──────────────────────────
 GARBAGE_PATTERNS = [
     'about us','terms and conditions','contact us','privacy policy',
@@ -2172,7 +2185,7 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
 <html lang="en-IN">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>{VP_SNIPPET}
 <title>{e(title_tag[:60])}</title>
 <meta name="description" content="{e(meta_desc)}"/>
 <meta name="keywords" content="{e(keywords)}"/>
@@ -2365,7 +2378,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
 <html lang="en-IN">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>{VP_SNIPPET}
 <title>{e(title_tag[:60])}</title>
 <meta name="description" content="{e(meta_desc)}"/>
 <meta name="robots" content="index,follow"/>
@@ -3051,7 +3064,7 @@ def _du_page(name, url, sec_title, other_items):
     lines = [
         '<!DOCTYPE html>', '<html lang="en-IN">', '<head>',
         '<meta charset="UTF-8"/>',
-        '<meta name="viewport" content="width=device-width,initial-scale=1.0"/>',
+        '<meta name="viewport" content="width=device-width,initial-scale=1.0"/>' + VP_SNIPPET,
         '<title>' + tl + '</title>',
         '<meta name="description" content="' + md + '"/>',
         '<meta name="robots" content="noindex,follow"/>',

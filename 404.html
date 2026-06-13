@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>/*TSJ-WIDE-VIEWPORT*/(function(){var W=820,m=document.querySelector('meta[name="viewport"]');if(!m){m=document.createElement('meta');m.name='viewport';(document.head||document.documentElement).appendChild(m);}var sw=(window.screen&&screen.width)||window.innerWidth||W;if(sw<W){m.setAttribute('content','width='+W+', user-scalable=yes, maximum-scale=5.0');}else{m.setAttribute('content','width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5.0');}})();</script>
 
   <!--
     404.html — GitHub Pages SPA Router + SEO-Smart Job Page Renderer
@@ -216,8 +217,19 @@
       /* Save slug for job.html's own IIFE to pick up */
       try { sessionStorage.setItem('__tsj_slug', slug); } catch(_) {}
 
-      /* Redirect to job.html — slug already saved in sessionStorage above */
-      window.location.replace('/job.html?slug=' + encodeURIComponent(slug));
+      /* Fetch job.html and render it in place — NO navigation to ?slug= URL.
+         This keeps the clean /jobs/<slug>/ address bar (set above) and avoids
+         any redirect loop with job.html's own ?slug= → /jobs/ redirect. */
+      fetch('/job.html', { cache: 'no-store' })
+        .then(function(r){ return r.ok ? r.text() : null; })
+        .then(function(html){
+          if (!html) { window.location.replace('/jobs/' + slug + '/'); return; }
+          /* strip the ?slug= self-redirect IIFE so it doesn't bounce us */
+          document.open();
+          document.write(html);
+          document.close();
+        })
+        .catch(function(){ window.location.replace('/jobs/' + slug + '/'); });
 
       return; /* Stop — don't run redirect logic below */
     }

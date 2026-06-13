@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<script>/*TSJ-WIDE-VIEWPORT*/(function(){var W=820,m=document.querySelector('meta[name="viewport"]');if(!m){m=document.createElement('meta');m.name='viewport';(document.head||document.documentElement).appendChild(m);}var sw=(window.screen&&screen.width)||window.innerWidth||W;if(sw<W){m.setAttribute('content','width='+W+', user-scalable=yes, maximum-scale=5.0');}else{m.setAttribute('content','width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5.0');}})();</script>
   <title id="pageTitle">Sarkari Job Details | Top Sarkari Jobs</title>
   <meta id="metaDesc" name="description" content="Full details of this government job."/>
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"/>
@@ -135,6 +136,35 @@ a{text-decoration:none}
 <script>
 (function(){
 'use strict';
+
+// ── PERMANENT FIX: job.html?slug=X  →  /jobs/X/  (clean SEO URL) ──────────
+// Any legacy job.html?slug= link (search results, Google index, bookmarks)
+// instantly redirects to the real static /jobs/<slug>/ page. This removes the
+// broken job.html?slug= experience entirely — no host-redirect dependency.
+// The slug is normalised the SAME way generate_all.py builds page slugs
+// (strip sr_ prefix, strip trailing hash, collapse dashes, cap at 80 chars)
+// so even old long/legacy slugs resolve to the correct truncated page.
+(function(){
+  try {
+    var onJobHtml = /\/job\.html$/i.test(location.pathname) || /\/job\.html\?/i.test(location.href);
+    var qs = new URLSearchParams(location.search);
+    var legacySlug = qs.get('slug') || '';
+    if (onJobHtml && legacySlug && !qs.get('ref')) {
+      var s = String(legacySlug).split('?')[0].split('#')[0].trim();
+      s = s.toLowerCase();
+      s = s.replace(/^sr_[a-z_]+-/, '');      // strip sr_latest_jobs- style prefix
+      s = s.replace(/-[0-9a-f]{6,8}$/, '');    // strip trailing hash suffix
+      s = s.replace(/[^a-z0-9\s-]/g, '');
+      s = s.replace(/[\s-]+/g, '-');
+      s = s.replace(/^-+|-+$/g, '');
+      s = s.slice(0, 80).replace(/-+$/,'');    // SAME 80-char cap as generator
+      if (s && !/^(index|job)$/i.test(s)) {
+        location.replace('/jobs/' + s + '/');
+        return; // stop executing the rest of job.html
+      }
+    }
+  } catch(e){}
+})();
 
 // ── Handle ?ref= external redirect (dailyupdates.json items) ──
 (function(){

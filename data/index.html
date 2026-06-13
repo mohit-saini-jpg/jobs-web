@@ -10,6 +10,7 @@
 
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<script>/*TSJ-WIDE-VIEWPORT*/(function(){var W=820,m=document.querySelector('meta[name="viewport"]');if(!m){m=document.createElement('meta');m.name='viewport';(document.head||document.documentElement).appendChild(m);}var sw=(window.screen&&screen.width)||window.innerWidth||W;if(sw<W){m.setAttribute('content','width='+W+', user-scalable=yes, maximum-scale=5.0');}else{m.setAttribute('content','width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5.0');}})();</script>
   <style id="tsj-critical-inline">
 /* Critical CSS — Above the fold only — Top Sarkari Jobs */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -3358,7 +3359,7 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
         return base;
       }
 
-      /* ALL items → job.html?slug= for internal detail page */
+      /* ALL items → clean /jobs/{slug}/ SEO URL for internal detail page */
       var href;
       var applyModeVal = (job.apply_mode || '').toLowerCase();
       var officialWebUrl = job.official_website_link || job.official_website || '';
@@ -3370,25 +3371,23 @@ body{font-family:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
         var genSlug = (title || '').toLowerCase()
           .replace(/[^a-z0-9\s-]/g, '')
           .replace(/[\s-]+/g, '-')
-          .slice(0, 100)
+          .slice(0, 80)
           .replace(/^-+|-+$/g, '');
         href = genSlug ? '/jobs/' + genSlug + '/' : (officialWebUrl || '#');
       } else if (slug) {
-        href = 'job.html?slug=' + encodeURIComponent(slug);
+        href = '/jobs/' + String(slug).replace(/^sr_[a-z_]+-/,'').replace(/-[0-9a-f]{6,8}$/,'').replace(/^-+|-+$/g,'').slice(0,80).replace(/-+$/,'') + '/';
       } else if (job.source && job.source === 'sarkariresultshine.com') {
         /* Legacy sarkariresultshine source — clean slug, no 'offline-' prefix */
-        href = 'job.html?slug=' + encodeURIComponent(makeSlug(title, ''));
+        href = '/jobs/' + makeSlug(title, '').slice(0,80).replace(/-+$/,'') + '/';
       } else if (applyModeVal === 'offline') {
-        /* FIX: Offline/merged_sarkari jobs — clean slug, NO &ref= param.
-           ?ref= causes job.html to skip loadAllItems(), leaving last_date,
-           apply_mode, important_links empty on first page load. */
+        /* Offline/merged_sarkari jobs — clean /jobs/{slug}/ URL */
         var offlineSlug = makeSlug(title, '');
-        href = offlineSlug ? 'job.html?slug=' + encodeURIComponent(offlineSlug) : url;
+        href = offlineSlug ? '/jobs/' + offlineSlug.slice(0,80).replace(/-+$/,'') + '/' : url;
       } else {
         /* sarkariresult_categories items (SR_Latest_Jobs, SR_Admit_Card, etc.) */
         var generatedSlug = makeSlug(title, '');
         if (generatedSlug) {
-          href = 'job.html?slug=' + encodeURIComponent(generatedSlug) + '&ref=' + encodeURIComponent(url);
+          href = '/jobs/' + generatedSlug.slice(0,80).replace(/-+$/,'') + '/';
         } else {
           href = url;
         }
