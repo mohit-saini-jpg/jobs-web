@@ -1612,7 +1612,49 @@ def build_all_sections(job_obj):
                     items_l = lst.get('items',[]) if isinstance(lst,dict) else (lst if isinstance(lst,list) else [])
                     if items_l:
                         parts.append('<ul class="val-list">' + ''.join(f'<li>{e(str(it))}</li>' for it in items_l if it) + '</ul>')
+                # content_sections — {heading: [lines...]} used by NON_JOB / news
+                # entries (e.g. Haryana E-Kshatipurti). Render each heading as a
+                # sub-heading and its lines as a numbered list / paragraphs.
+                _cs = val.get('content_sections')
+                if isinstance(_cs, dict) and _cs:
+                    # Skip the heading already used as the card title
+                    for _h in (_dpc_headings or list(_cs.keys())):
+                        _h = safe(_h).strip()
+                        lines = _cs.get(_h) or _cs.get(_h.strip()) or []
+                        if not lines: continue
+                        clean_lines = []
+                        for ln in lines:
+                            ln = safe(ln).strip()
+                            if not ln or len(ln) < 3: continue
+                            if _JUNK_RX.search(ln): continue
+                            # drop "... says: <date> [...]" comment-spam lines
+                            if re.search(r'\bsays:\s', ln, re.I): continue
+                            if re.match(r'^\[.*\]$', ln): continue
+                            clean_lines.append(ln)
+                        if not clean_lines: continue
+                        # sub-heading (skip if it's the card title itself)
+                        if _h and _h != _dpc_title:
+                            parts.append(f'<div class="kv-stack-head" style="margin-top:10px">{e(_h)}</div>')
+                        # single line → paragraph; multiple → numbered list
+                        if len(clean_lines) == 1:
+                            parts.append(f'<p class="edu-para">{e(clean_lines[0])}</p>')
+                        else:
+                            parts.append('<ol class="kv-numlist">' + ''.join(f'<li>{e(c)}</li>' for c in clean_lines) + '</ol>')
                 body = ''.join(parts) if parts else ''
+                # FALLBACK: if no structured content was found but a full_text
+                # blob exists, render it as readable paragraphs (split on blank
+                # lines) so the detail page is never empty.
+                if not body.strip():
+                    _ft = safe(val.get('full_text'))
+                    if _ft and len(_ft) > 40:
+                        _ft_parts = []
+                        for _seg in re.split(r'\n{2,}|\r\n\r\n', _ft):
+                            _seg = _seg.strip()
+                            if not _seg or len(_seg) < 15: continue
+                            if _JUNK_RX.search(_seg): continue
+                            _ft_parts.append(f'<p class="edu-para">{e(_seg[:1200])}</p>')
+                            if len(_ft_parts) >= 30: break
+                        body = ''.join(_ft_parts)
                 # Use dynamic title instead of hardcoded SECTION_META label
                 if body and body.strip():
                     html += sec_card(_dpc_title, 'fa-circle-info', '1e40af,#3b82f6', body)

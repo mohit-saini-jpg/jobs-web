@@ -280,7 +280,7 @@
       .replace(/[^a-z0-9\s-]/g, '')
       .replace(/[\s-]+/g, '-')
       .replace(/^-+|-+$/g, '')
-      .slice(0, 100);
+      .slice(0,80).replace(/-+$/,"");
   }
 
   function getRecent() {
