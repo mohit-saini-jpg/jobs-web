@@ -1,0 +1,128 @@
+name: 🗑️ Manual — Delete Old Pages
+
+# ──────────────────────────────────────────────────────────────────────────
+# RUNS ONLY WHEN YOU CLICK "Run workflow" IN THE ACTIONS TAB.
+# It never runs automatically. You choose how old a page must be before it's
+# deleted, and you can PREVIEW first (dry-run) before anything is removed.
+#
+# How to use:
+#   1. GitHub repo → Actions tab → "Manual — Delete Old Pages" (left side)
+#   2. Click "Run workflow"
+#   3. Pick "age" from the dropdown (e.g. 1 year, 2 years)
+#   4. Leave "dry_run" = true the FIRST time → it only shows what WOULD delete
+#   5. Check the run log. Happy? Run again with dry_run = false to delete.
+# ──────────────────────────────────────────────────────────────────────────
+
+on:
+  workflow_dispatch:
+    inputs:
+      age:
+        description: "Delete pages OLDER than:"
+        required: true
+        default: "1 year (365 days)"
+        type: choice
+        options:
+          - "6 months (180 days)"
+          - "9 months (270 days)"
+          - "1 year (365 days)"
+          - "1.5 years (545 days)"
+          - "2 years (730 days)"
+          - "3 years (1095 days)"
+      dry_run:
+        description: "Preview only? (true = just show, delete nothing)"
+        required: true
+        default: true
+        type: boolean
+      custom_days:
+        description: "(Optional) Exact days — overrides the dropdown if > 0"
+        required: false
+        default: "0"
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  delete-old-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Resolve age threshold (days)
+        id: resolve
+        run: |
+          CHOICE="${{ github.event.inputs.age }}"
+          CUSTOM="${{ github.event.inputs.custom_days }}"
+          # custom_days wins if it's a positive number
+          if [ -n "$CUSTOM" ] && [ "$CUSTOM" -gt 0 ] 2>/dev/null; then
+            DAYS="$CUSTOM"
+          else
+            case "$CHOICE" in
+              "6 months"*)  DAYS=180  ;;
+              "9 months"*)  DAYS=270  ;;
+              "1 year"*)    DAYS=365  ;;
+              "1.5 years"*) DAYS=545  ;;
+              "2 years"*)   DAYS=730  ;;
+              "3 years"*)   DAYS=1095 ;;
+              *)            DAYS=365  ;;
+            esac
+          fi
+          echo "days=$DAYS" >> "$GITHUB_OUTPUT"
+          echo "Resolved threshold: $DAYS days"
+
+      - name: Run cleanup (preview or delete)
+        env:
+          OLDER_THAN_DAYS: ${{ steps.resolve.outputs.days }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+          KEEP_INDEXED: "true"
+        run: python3 scripts/delete_old_pages.py | tee cleanup-report.txt
+
+      - name: Upload cleanup report
+        uses: actions/upload-artifact@v4
+        with:
+          name: cleanup-report
+          path: cleanup-report.txt
+          retention-days: 14
+
+      # ── Regenerate sitemaps + commit ONLY when something was actually deleted ──
+      - name: Regenerate sitemaps (only on live delete)
+        if: ${{ github.event.inputs.dry_run == 'false' }}
+        run: |
+          if [ -f scripts/build_sitemaps.py ]; then
+            python3 scripts/build_sitemaps.py || echo "sitemap build skipped"
+          elif [ -f sitemap-generator.js ]; then
+            node sitemap-generator.js || echo "sitemap build skipped"
+          else
+            echo "No sitemap generator found — skipping"
+          fi
+
+      - name: Commit changes (only on live delete)
+        if: ${{ github.event.inputs.dry_run == 'false' }}
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A jobs/ 2>/dev/null || true
+          git add data/job-first-seen.json 2>/dev/null || true
+          git add sitemap*.xml 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "🗑️ Manual cleanup: removed pages older than ${{ steps.resolve.outputs.days }} days"
+            git push
+            echo "Committed and pushed."
+          fi
+
+      - name: Summary
+        run: |
+          echo "### 🗑️ Old Page Cleanup" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Threshold:** ${{ steps.resolve.outputs.days }} days" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Mode:** ${{ github.event.inputs.dry_run == 'true' && 'DRY-RUN (preview only)' || 'LIVE DELETE' }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "See the **cleanup-report** artifact for the full list." >> "$GITHUB_STEP_SUMMARY"

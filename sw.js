@@ -21,7 +21,7 @@
 // VERSION — Replaced by generate_version.js on every deploy
 // Do NOT manually edit — CI/CD replaces this line
 // ══════════════════════════════════════════════════════════════
-const SW_VERSION = '20260613100553'; // auto-updated by generate_version.js
+const SW_VERSION = '20260614-edgefix'; // auto-updated by generate_version.js
 
 // ══════════════════════════════════════════════════════════════
 // CACHE NAMES — version-stamped, old ones auto-deleted
@@ -201,7 +201,17 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // ── 6. /data/*.json — SWR with 30-min TTL
+  // ── 6a. Complete_Jobs_Full_Data.json (HEAVY ~9MB gzip) — long TTL.
+  //    This big master file only changes when you update jobs (version.json
+  //    bumps + SW cache name changes force-refresh it on deploy). Revalidating
+  //    it every 30 min wasted huge bandwidth on Vercel. Cache it for 12h; the
+  //    daily deploy/version bump already busts it when data actually changes.
+  if (path.startsWith('/data/') && path.indexOf('Complete_Jobs_Full_Data') !== -1) {
+    e.respondWith(staleWhileRevalidate(req, CACHE.data, 12 * 60 * 60 * 1000));
+    return;
+  }
+
+  // ── 6b. Other /data/*.json (small: sarkari-mini, sr-*, etc.) — SWR 30-min
   if (path.startsWith('/data/') && path.endsWith('.json')) {
     e.respondWith(staleWhileRevalidate(req, CACHE.data, DATA_MAX_AGE_MS));
     return;

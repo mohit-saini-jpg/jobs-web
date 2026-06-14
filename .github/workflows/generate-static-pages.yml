@@ -50,17 +50,13 @@ jobs:
           fi
           ls -lh Complete_Jobs_Full_Data.json 2>/dev/null || echo "WARNING: JSON not found"
 
-      - name: Clear ALL old generated pages (permanent fix)
+      - name: Ensure output dirs exist (preserve old pages for SEO)
         run: |
-          echo "Clearing stale pages before fresh generation..."
-          find jobs -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
-          find state -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
-          find education -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
-          find category/study -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
-          find section -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
-          find qualification -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
+          # DO NOT delete old pages. Wiping jobs/ on every run made expired-job
+          # URLs 404 and hurt Google rankings. generate_all.py overwrites current
+          # jobs; old pages stay live and indexed.
           mkdir -p jobs/data state education category/study section qualification
-          echo "All old pages cleared successfully"
+          echo "Output dirs ready (old pages preserved)"
 
       - name: Patch generate_all.py if needed
         run: |

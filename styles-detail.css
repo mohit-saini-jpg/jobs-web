@@ -109,7 +109,7 @@ html.js-faq .faq-a.open,.faq-a.open,.faq-a[style*="block"],.faq-a[style*="flex"]
 .job-card:active{transform:scale(.997)}
 .job-card-title a{pointer-events:none}
 .job-card:hover{box-shadow:0 4px 12px rgba(0,0,0,.1)}
-.job-card-title{font-size:.9rem;font-weight:800;color:#0f172a;line-height:1.4;margin-bottom:5px}
+.job-card-title{font-size:.9rem;font-weight:800;color:#0f172a;line-height:1.4;margin-bottom:5px;display:flex;gap:8px;align-items:flex-start}.jc-sn{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;background:#1e3a8a;color:#fff;border-radius:6px;font-size:.74rem;font-weight:700;margin-top:1px}
 .job-card-title .job-card-title a:hover{color:#1d4ed8;text-decoration:underline}
 .job-card-org{color:#64748b;font-size:.79rem;margin-bottom:5px;display:flex;gap:5px;align-items:center}
 .job-card-met.jm-badge{font-size:.67rem;font-weight:700;padding:2px 8px;border-radius:12px}

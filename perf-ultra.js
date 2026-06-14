@@ -28,27 +28,12 @@
     });
   }
 
-  // ── 2. Idle prefetch — only files that DEFINITELY exist ──────────────
-  // RC-8 FIX: removed jobs-index.json + jobs-search-index.json (may be missing)
-  // Use { cache: 'reload' } so the SW/browser always fetches fresh copies
-  if ('requestIdleCallback' in window) {
-    requestIdleCallback(function() {
-      // Respect data saver and offline state
-      if (!navigator.onLine) return;
-      if (navigator.connection && navigator.connection.saveData) return;
-
-      var files = [
-        '/sections-index.json',   // ~16KB — homepage cards (changes on every deploy)
-        '/dailyupdates.json',     // ~5KB  — today's sidebar (changes daily)
-      ];
-
-      files.forEach(function(f) {
-        try {
-          fetch(f, { cache: 'reload', priority: 'low' }).catch(function() {});
-        } catch(e) {}
-      });
-    }, { timeout: 5000 });
-  }
+  // ── 2. Idle prefetch — REMOVED to cut Vercel edge requests ──────────────
+  // Previously this re-fetched sections-index.json + dailyupdates.json with
+  // { cache: 'reload' } on EVERY page view, bypassing browser + CDN cache and
+  // doubling edge requests for files the homepage already loaded. The service
+  // worker (stale-while-revalidate) and CDN s-maxage already keep these fresh,
+  // so the extra forced prefetch only wasted bandwidth. Intentionally disabled.
 
   // ── 3. Passive scroll listener ───────────────────────────────────────
   var passiveSupported = false;

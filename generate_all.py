@@ -2350,7 +2350,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
     schemas_tag = f'<script type="application/ld+json">{json.dumps(bc_schema,ensure_ascii=False)}</script>'
 
     cards_html = ''
-    for job in jobs:
+    for _idx, job in enumerate(jobs, 1):
         bd    = job.get('basic_details',{}) or {}
         dates = job.get('important_dates',{}) or {}
         il    = job.get('important_links',{}) or {}
@@ -2426,7 +2426,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
                 _bg, _cl, _lb = _smap[jstatus]
                 status_badge = f'<span class="jm-badge" style="background:{_bg};color:{_cl}">{_lb}</span>'
         cards_html += f'''<article class="job-card" data-title="{e(jtitle.lower())}" data-org="{e(jorg.lower())}" onclick="if(!getSelection().toString()){{location.href='/jobs/{e(jslug)}/'}}">
-  <div class="job-card-title"><a href="/jobs/{e(jslug)}/">{e(jtitle)}</a></div>
+  <div class="job-card-title"><span class="jc-sn">{_idx}</span><a href="/jobs/{e(jslug)}/">{e(jtitle)}</a></div>
   <div class="job-card-org"><i class="fa-regular fa-building"></i> {e(jorg[:60])}</div>
   <div class="job-card-meta">
     {f'<span class="jm-badge" style="background:#dcfce7;color:#15803d">{e(jvac)} Posts</span>' if jvac else ''}
@@ -2517,6 +2517,29 @@ FJA     = {cat: [j for j in jobs if not is_garbage_title(
                (j.get('basic_details') or {}).get('job_title','') or j.get('title',''))]
            for cat, jobs in FJA_RAW.items() if isinstance(jobs, list)}
 SARK    = [j for j in (CJ.get('sarkari_data',{}) or {}).get('jobs', []) if not is_garbage_title(j.get('title',''))]
+
+# ── FIX: Correct scraper mis-categorisation of SR_Admission ──────────────────
+# The scraper sometimes tags recruitment/exam items (UPSSSC, NTA, TET, RO/ARO…)
+# as SR_Admission. Real admissions say "admission", "counselling", "entrance",
+# "pravesh", "UG/PG", etc. Re-classify the obvious recruitment ones to
+# SR_Latest_Jobs so the Admission section shows only genuine admissions and
+# every category lists the right items (JSON order preserved within each).
+def _correct_admission_category(jobs):
+    ADM_HINTS = re.compile(r'\b(admission|counsel+ing|entrance|pravesh|ug |pg |under ?graduate|post ?graduate|b\.?ed admission|phd admission|diploma admission)\b', re.I)
+    RECRUIT_HINTS = re.compile(r'\b(recruitment|vacanc|online form|apply online|posts?|bharti|eligibility test|ro ?/ ?aro|computer assistant|fireman|guard|auditor|accountant|constable|clerk|officer)\b', re.I)
+    moved = 0
+    for j in jobs:
+        if j.get('category') != 'SR_Admission':
+            continue
+        t = safe(j.get('title',''))
+        # if it looks like recruitment AND has no admission hint → move out
+        if RECRUIT_HINTS.search(t) and not ADM_HINTS.search(t):
+            j['category'] = 'SR_Latest_Jobs'
+            moved += 1
+    if moved:
+        print(f"  [fix] re-classified {moved} mis-tagged SR_Admission item(s) -> SR_Latest_Jobs")
+    return jobs
+SARK = _correct_admission_category(SARK)
 EDU_SEC = (CJ.get('education_jobs',{}) or {}).get('sections', [])
 SJ_SEC  = (CJ.get('state_jobs',{}) or {}).get('sections', [])
 DU_SECS = DU.get('sections', [])
@@ -2528,8 +2551,41 @@ STATE_SLUG_FIX = {
 
 # Track slugs to avoid duplicates
 seen_jobs    = {}  # slug → source
+seen_fp      = {}  # content fingerprint (normalized title) → canonical slug
 jobs_index   = {}  # for jobs-index.json
 sindex       = {}  # for sections-index.json
+
+# ── One Job = One URL: content fingerprint ───────────────────────────────────
+# The same recruitment appears in multiple sources (sarkari + state + education)
+# with DIFFERENT slugs (e.g. "gsssb-granthpal-recruitment-2026-apply-online" vs
+# "gsssb-granthpal-1-posts"). Slug-only dedup misses these. A normalized-title
+# fingerprint catches the same job regardless of slug so only ONE /jobs/ page is
+# ever written. Listing pages still link every duplicate to this one canonical URL.
+_FP_STOP = {'the','and','for','of','in','to','a','an','with','on','at','by','top','sarkari','jobs'}
+def _fingerprint(title):
+    import re as _re
+    t = _re.sub(r'[^a-z0-9\s]', ' ', safe(title).lower())
+    toks = [w for w in t.split() if w and w not in _FP_STOP and len(w) > 1]
+    # FULL normalized title — only TRULY identical job names collapse.
+    # Cross-source dupes with different titles are caught by the post-generation
+    # H1 de-duplication pass (see prune_duplicate_pages at end of this script),
+    # which is precise (identical rendered H1) and won't merge distinct jobs.
+    return ' '.join(toks)
+
+def _is_dup_job(slug, title):
+    """True if this job (by slug OR content fingerprint) was already written."""
+    if slug in seen_jobs:
+        return True
+    fp = _fingerprint(title)
+    if fp and fp in seen_fp:
+        return True
+    return False
+
+def _mark_job(slug, title, source):
+    seen_jobs[slug] = source
+    fp = _fingerprint(title)
+    if fp and fp not in seen_fp:
+        seen_fp[fp] = slug
 
 j_count = s_count = e_count = c_count = sec_count = qual_count = 0
 
@@ -2555,9 +2611,9 @@ for cat, jobs_list in FJA.items():
         # IMPORTANT: this only affects DETAIL-PAGE creation. Category LISTING
         # pages are built separately and still show the job under every relevant
         # category, all linking to this one canonical URL. JSON order preserved.
-        if slug in seen_jobs:
+        if _is_dup_job(slug, title):
             continue
-        seen_jobs[slug] = cat; job['category'] = cat
+        _mark_job(slug, title, cat); job['category'] = cat
         canon = f"{BASE_URL}/jobs/{slug}/"
         # R9 FIX: Breadcrumb uses correct qualification hierarchy
         _bc_lbl, _bc_url = get_best_bc_category(cat, job)
@@ -2678,8 +2734,8 @@ for job in SARK:
     if not title: continue
     raw_slug = job.get('slug','') or ''
     slug = clean_slug(raw_slug) if raw_slug.strip() else slugify(title)
-    if not slug or slug in seen_jobs: continue
-    seen_jobs[slug] = job.get('category','')
+    if not slug or _is_dup_job(slug, title): continue
+    _mark_job(slug, title, job.get('category',''))
 
     # Build important_links from all sources
     il = {}
@@ -2822,8 +2878,8 @@ for sec in SJ_SEC:
         bc    = [('State Jobs', f"{BASE_URL}/state-jobs/{state_slug}/"), (state_name, f"{BASE_URL}/state-jobs/{state_slug}/")]
         # State detail pages: noindex (canonical → /jobs/) to avoid duplicate indexing
         # Single URL rule: only /jobs/{slug}/ — no /state/{state}/{slug}/
-        if item_slug not in seen_jobs:
-            seen_jobs[item_slug] = state_name
+        if not _is_dup_job(item_slug, name):
+            _mark_job(item_slug, name, state_name)
             jobs_html = build_detail_page(detail, item_slug, canon, bc, f'{state_name} Govt Job', noindex_dup=False)
             write(str(ROOT/'jobs'/item_slug/'index.html'), jobs_html)
         s_count += 1
@@ -2848,6 +2904,25 @@ for sec in SJ_SEC:
         f"Latest {state_name} government jobs {YEAR}. All sarkari naukri for {state_name} state."
     )
     write(str(ROOT/'state'/state_slug/'index.html'), state_listing)
+
+    # Also write to /state-jobs/{slug}/ — this is the URL the site nav + cards
+    # actually link to. Generating it here keeps it FRESH with ALL items from
+    # JSON (the old static /state-jobs/ pages were stale and missing items).
+    # IMPORTANT: site nav links use the FULL state slug (e.g. jammu-and-kashmir),
+    # not the abbreviated detail-page slug (jk), so write to BOTH so whichever
+    # the nav points at is always complete.
+    for _sj_slug in {state_slug, raw_state_slug}:
+        canon_statejobs = f"{BASE_URL}/state-jobs/{_sj_slug}/"
+        statejobs_listing = build_listing_page(
+            f"{state_name} Government Jobs {YEAR}",
+            [{'basic_details':{'job_title':safe(it.get('name') or it.get('title','')),'organization_name':state_name,
+              'total_vacancies':safe(it.get('total_vacancy',''))}}
+             for it in state_jobs_list if (it.get('name') or it.get('title',''))],
+            canon_statejobs,
+            [('Home','/'),('State Jobs','/state-jobs/')],
+            f"Latest {state_name} government jobs {YEAR}. All sarkari naukri for {state_name} state."
+        )
+        write(str(ROOT/'state-jobs'/_sj_slug/'index.html'), statejobs_listing)
 
 print(f"  State pages: {s_count}")
 
@@ -2883,8 +2958,9 @@ for sec in EDU_SEC:
         html  = build_detail_page(full_d, item_slug, canon, bc, sec_title)
         # Education pages: noindex (canonical → /jobs/) 
         # Single URL rule: only /jobs/{slug}/ — no /education/{state}/{slug}/
-        if item_slug not in seen_jobs:
-            seen_jobs[item_slug] = sec_title
+        _edu_title = safe((full_d.get('basic_details') or {}).get('job_title','')) or item_slug
+        if not _is_dup_job(item_slug, _edu_title):
+            _mark_job(item_slug, _edu_title, sec_title)
             jobs_html = build_detail_page(full_d, item_slug, canon, bc, sec_title, noindex_dup=False)
             write(str(ROOT/'jobs'/item_slug/'index.html'), jobs_html)
         e_count += 1
@@ -3491,6 +3567,80 @@ if __import__('os').path.exists(_idx_path):
 
 import time as _time
 _save_first_seen()   # C1: persist datePosted map for stable rebuilds
+
+# ── One HTML = One URL: prune any cross-source duplicate pages ────────────────
+# Same recruitment can come from sarkari + state + education with DIFFERENT
+# slugs (e.g. "...-recruitment-2026-apply-online" and "...-1-posts"). They
+# produce IDENTICAL rendered <h1>, which we use as a precise fingerprint. We
+# keep the most canonical slug, delete the rest, and append 301 redirects to
+# _redirects so deleted URLs forward to the survivor (zero SEO loss).
+def prune_duplicate_pages():
+    import glob as _glob
+    from collections import defaultdict as _dd
+    H1_RE = re.compile(r'<h1 class="detail-h1">([^<]+)</h1>')
+    STOP = {'the','and','for','of','in','to','a','an','with','on','at','by','top','sarkari','jobs'}
+    def _h1fp(h1):
+        t = re.sub(r'[^a-z0-9\s]', ' ', (h1 or '').lower())
+        return ' '.join(w for w in t.split() if w and w not in STOP and len(w) > 1)
+    def _score(slug):
+        s = 0.0
+        if 'recruitment' in slug: s += 3
+        if 'apply' in slug: s += 2
+        if re.search(r'202\d', slug): s += 2
+        if re.search(r'-\d+-posts$', slug) or slug.endswith('-1-posts'): s -= 2
+        return s + len(slug) / 100.0
+    groups = _dd(list)
+    for f in _glob.glob(str(ROOT/'jobs'/'*'/'index.html')):
+        slug = os.path.basename(os.path.dirname(f))
+        try:
+            h = open(f, encoding='utf-8', errors='ignore').read()
+        except Exception:
+            continue
+        m = H1_RE.search(h)
+        if not m:
+            continue
+        fp = _h1fp(m.group(1).strip())
+        if fp:
+            groups[fp].append(slug)
+    redirects = []
+    removed = 0
+    for fp, slugs in groups.items():
+        if len(slugs) < 2:
+            continue
+        keep = max(slugs, key=_score)
+        for s in slugs:
+            if s == keep:
+                continue
+            d = str(ROOT/'jobs'/s)
+            try:
+                shutil.rmtree(d)
+                pj = str(ROOT/'jobs'/'data'/(s + '.json'))
+                if os.path.exists(pj):
+                    os.remove(pj)
+                redirects.append((s, keep))
+                removed += 1
+            except Exception:
+                pass
+    # Append 301 redirects (dedupe against existing lines)
+    if redirects:
+        rpath = str(ROOT/'_redirects')
+        existing = ''
+        if os.path.exists(rpath):
+            existing = open(rpath, encoding='utf-8').read()
+        new_lines = []
+        for old, new in redirects:
+            rule = f"/jobs/{old}/  /jobs/{new}/  301"
+            if rule not in existing:
+                new_lines.append(rule)
+        if new_lines:
+            block = "\n# ══ auto: duplicate job pages → canonical (One-HTML-One-URL) ══\n" + "\n".join(new_lines) + "\n"
+            with open(rpath, 'a', encoding='utf-8') as f:
+                f.write(block)
+    print(f"  [dedup] removed {removed} duplicate page(s); {len(redirects)} redirect(s) added")
+    return removed
+
+_dup_removed = prune_duplicate_pages()
+
 _end = _time.time()
 VERSION = datetime.now().strftime('%Y%m%d%H%M%S')
 PAGES_GENERATED = j_count + sec_count2 + q_count + _du_count

@@ -69,16 +69,15 @@ jobs:
         run: node .github/workflows/generate_version.js
 
       # ── STEP 5: Generate static pages (PRIMARY: generate_website.py, SECONDARY: generate_jobs.py)
-      - name: Clear old pages before regen
+      - name: Ensure output dirs exist (DO NOT delete old pages — SEO!)
         run: |
-          find jobs -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
-          find state -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
-          find education -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
-          find category/study -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
-          find section -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
-          find qualification -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
+          # IMPORTANT: We NO LONGER wipe jobs/state/education/section dirs.
+          # Deleting pages when a job's last-date passes caused Google-indexed
+          # URLs to 404 and the site to lose search visibility. generate_all.py
+          # OVERWRITES current jobs in place; expired-job pages are kept live so
+          # they remain indexed and keep earning organic traffic.
           mkdir -p jobs/data state education category/study section qualification
-          echo "Old pages cleared"
+          echo "Output dirs ready (old pages preserved for SEO)"
 
 
       - name: Patch generate_all.py if needed

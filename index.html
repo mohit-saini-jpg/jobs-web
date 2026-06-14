@@ -73,7 +73,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
   <!-- ISSUE-015 FIX: dailyupdates.json versioned to prevent cache-bust on every deploy -->
   <link rel="preload" href="dailyupdates.json?v=20260610030605" as="fetch" crossorigin="anonymous"/>
   <!-- PERF: sections-index.json — 16KB lightweight index for instant card rendering (instead of 18MB Complete_Jobs_Full_Data.json) -->
-  <link rel="preload" href="sections-index.json?v=202606131342" as="fetch" crossorigin="anonymous"/>
+  <link rel="preload" href="sections-index.json?v=202606140428" as="fetch" crossorigin="anonymous"/>
   <!-- PERF: Complete_Jobs_Full_Data.json fetched once — powers all SR cards + ticker -->
   <script>
   // Complete_Jobs_Full_Data.json is the single source of truth
@@ -98,7 +98,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
     else { setTimeout(loadNow, 8000); }
   });
   // PERF: sections-index.json — fetch starts immediately at page load (16KB vs 18MB)
-  window.__sectionsIndexPromise = fetch('sections-index.json?v=202606131342')
+  window.__sectionsIndexPromise = fetch('sections-index.json?v=202606140428')
     .then(function(r){ return r.ok ? r.json() : null; })
     .catch(function(){ return null; });
   </script>
@@ -2520,7 +2520,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
         if (cached && (Date.now() - cached.ts) < CACHE_TTL) return Promise.resolve(cached.data);
       } catch(e) {}
 
-      return fetch('/sections-index.json?v=202606131342')
+      return fetch('/sections-index.json?v=202606140428')
         .then(function(r){ return r.ok ? r.json() : null; })
         .then(function(json) {
           try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: json })); } catch(e) {}
@@ -2637,14 +2637,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
             {l:'Latest Jobs',          s:'k',k:'SR_Latest_Jobs',      u:'/section/latest-jobs/',           c:'#1a56db'},
             {l:'Result',               s:'k',k:'SR_Result',            u:'/section/results/',               c:'#9b1c1c'},
             {l:'Admit Card',           s:'k',k:'SR_Admit_Card',        u:'/section/admit-card/',            c:'#1e3a5f'},
-            {l:'Admission',            s:'k',k:'SR_Admission',         u:'/section/admission/',             c:'#14532d'},
+            {l:'Admission',            s:'k',k:'ADMISSIONS',           u:'/section/admissions/',            c:'#14532d'},
             {l:'Answer Key',           s:'k',k:'SR_Answer_Key',        u:'/section/answer-key/',            c:'#713f12'},
             {l:'Offline Form',         s:'k',k:'OFFLINE_FORM',         u:'/section/offline-form/',          c:'#1e3a5f'},
             {l:'Upcoming Jobs',        s:'k',k:'UPCOMING_JOBS',        u:'/section/upcoming-jobs/',         c:'#14532d'},
             {l:'Latest Jobs New',      s:'k',k:'LATEST_JOBS NEW',     u:'/section/latest-jobs-new/',       c:'#1a56db'},
             {l:'State Jobs',           s:'k',k:'STATE_JOBS',           u:'/section/state-jobs/',            c:'#713f12'},
             {l:'Central Jobs',         s:'k',k:'CENTRAL_JOBS',         u:'/section/central-jobs/',          c:'#1e3a5f'},
-            {l:'Admissions',           s:'k',k:'ADMISSIONS',           u:'/section/admissions/',            c:'#14532d'},
             {l:'Latest Notifications', s:'i',k:'Latest_Notifications', u:'/section/latest-notifications/', c:'#1a56db'},
             {l:'10th Pass Jobs',       s:'i',k:'10TH_Pass',            u:'/section/10th-pass-jobs/',       c:'#9b1c1c'},
             {l:'8th Pass Jobs',        s:'i',k:'8TH_Pass',             u:'/section/8th-pass-jobs/',        c:'#1e3a5f'},
@@ -2726,7 +2725,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
           function gj(u){return fetch(u,{cache:'default'}).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;});}
           // Phase 1: sections-index + dailyupdates se turant render karo (fast ~400KB)
           Promise.all([
-            gj('/sections-index.json?v=202606131342'),
+            gj('/sections-index.json?v=202606140428'),
             gj('/dailyupdates.json')
           ]).then(function(r){
             var si=r[0],dl=r[1];
