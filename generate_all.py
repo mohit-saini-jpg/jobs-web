@@ -267,6 +267,14 @@ def slugify(text):
     text = re.sub(r'[\s-]+', '-', text)
     return text[:80].strip('-') or 'page'
 
+def smart_title_cut(text, limit=60):
+    """Cut a <title> at a word boundary so there's no mid-word truncation."""
+    text = str(text or '')
+    if len(text) <= limit:
+        return text
+    cut = text[:limit].rsplit(' ', 1)[0]
+    return cut.rstrip(' ,;:-–(')
+
 def clean_slug(s):
     s = str(s or '').strip()
     s = re.sub(r'^sr_[a-z_]+-', '', s)
@@ -1738,13 +1746,24 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
     bc_schema = {'@context':'https://schema.org','@type':'BreadcrumbList','itemListElement':bc_items}
 
     if intent == 'job':
+        # FIX #3: hiringOrganization.sameAs must be the EMPLOYER's official site,
+        # not our own domain (self-referencing sameAs causes GSC schema errors).
+        _official_site = safe(
+            (job_obj.get('important_links') or {}).get('official_website', '') or
+            (job_obj.get('useful_links') or {}).get('official_website', '') or
+            (job_obj.get('basic_details') or {}).get('official_website', '') or '')
+        _BLOCKED_SITES = {'topsarkarijobs.com', 'sarkariresult.com', 'freejobalert.com',
+                          'sarkarinetwork.com', 'sarkariresultshine.com'}
+        _hiring_org = {'@type': 'Organization', 'name': org}
+        if _official_site and not any(b in _official_site for b in _BLOCKED_SITES):
+            _hiring_org['sameAs'] = _official_site
         # ── H1: proper JobPosting only for real jobs ──
         jp = {'@context':'https://schema.org','@type':'JobPosting','title':title,
               'description':desc,'datePosted':date_posted,'url':canon_url,
               'employmentType':'FULL_TIME','directApply':False,
               'identifier':{'@type':'PropertyValue','name':org,
                             'value':safe(bd.get('advt_no','') or bd.get('notification_no','') or slug)},
-              'hiringOrganization':{'@type':'Organization','name':org,'sameAs':BASE_URL},
+              'hiringOrganization':_hiring_org,
               'jobLocation':{'@type':'Place','address':{'@type':'PostalAddress','addressCountry':'IN','addressLocality':loc}},
               'applicantLocationRequirements':{'@type':'Country','name':'India'}}
         # H1: only emit baseSalary when we actually have a salary string (no min:0 spam)
@@ -1760,6 +1779,18 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
             if nd:
                 jp['validThrough'] = nd + 'T00:00:00'
                 jp['applicationDeadline'] = nd
+        # FIX #4: if no last_date, fall back to datePosted + 60 days so every
+        # JobPosting has validThrough (Google requires it for rich results).
+        if 'validThrough' not in jp:
+            try:
+                from datetime import datetime as _dt_vt, timedelta as _td_vt
+                _dp_str = jp.get('datePosted', '')
+                if _dp_str and len(_dp_str) >= 10:
+                    _fallback = _dt_vt.strptime(_dp_str[:10], '%Y-%m-%d') + _td_vt(days=60)
+                    jp['validThrough'] = _fallback.strftime('%Y-%m-%dT00:00:00')
+                    jp['applicationDeadline'] = _fallback.strftime('%Y-%m-%d')
+            except Exception:
+                pass
         # totalJobOpenings (numeric, from vacancies) per spec
         _vac_num = re.search(r'\d[\d,]*', str(vacancies or ''))
         if _vac_num:
@@ -2202,8 +2233,7 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
                 _jp = title[:_MAX]
     if len(_jp) > _MAX:
         _jp = _jp[:_MAX-1].rsplit(' ',1)[0].rstrip(',-–(') + '…'
-    title_tag = (_jp + _BRAND)[:60]
-    keywords   = ', '.join(str(k) for k in (seo if isinstance(seo,list) else []) + [org, location, 'sarkari job'])[:200]
+    title_tag = smart_title_cut(_jp + _BRAND, 60)
     short_info = safe(bd.get('short_information','') or job_obj.get('jobs_info','') or job_obj.get('short_information',''))
     # Build meta description inline
     _si = short_info.rstrip('.,; ').strip() if short_info else ''
@@ -2306,24 +2336,36 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
   {rel_links}
 </div>'''
 
+    # FIX #9: context-aware OG image (fixes the ['/result','/result'] dup bug)
+    _intent_img = page_intent(job_obj)
+    if _intent_img == 'result' or '/result' in canon_url:
+        _og_img_job = f"{BASE_URL}/og-results.png"
+    elif _intent_img == 'admit_card' or 'admit' in canon_url:
+        _og_img_job = f"{BASE_URL}/og-admit.png"
+    elif _intent_img in ('scheme', 'article'):
+        _og_img_job = f"{BASE_URL}/og-scheme.png"
+    elif any(x in canon_url for x in ['study', 'pass', 'graduate', 'iti', 'diploma']):
+        _og_img_job = f"{BASE_URL}/og-study.png"
+    else:
+        _og_img_job = f"{BASE_URL}/og-jobs.png"
+
     return f'''<!DOCTYPE html>
 <html lang="en-IN">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>{VP_SNIPPET}
-<title>{e(title_tag[:60])}</title>
+<title>{e(title_tag)}</title>
 <meta name="description" content="{e(meta_desc)}"/>
-<meta name="keywords" content="{e(keywords)}"/>
 <meta name="robots" content="{'noindex,follow' if noindex_dup else 'index,follow,max-snippet:-1,max-image-preview:large'}"/>
 <link rel="canonical" href="{e(canon_url)}"/>
 <meta property="og:type" content="article"/>
 <meta property="og:site_name" content="Top Sarkari Jobs"/>
-<meta property="og:title" content="{e(title_tag[:60])}"/>
+<meta property="og:title" content="{e(title_tag)}"/>
 <meta property="og:description" content="{e(meta_desc)}"/>
 <meta property="og:url" content="{e(canon_url)}"/>
-<meta property="og:image" content="{BASE_URL}/{'og-results.png' if any(x in canon_url for x in ['/result','/result']) else 'og-admit.png' if 'admit' in canon_url else 'og-jobs.png'}"/>
+<meta property="og:image" content="{_og_img_job}"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="{e(title_tag[:60])}"/>
+<meta name="twitter:title" content="{e(title_tag)}"/>
 <meta name="twitter:description" content="{e(meta_desc)}"/>
 {schemas_html}
 <script>
@@ -2344,7 +2386,7 @@ try {{ if (window.location.pathname !== '/jobs/{slug}/') {{ window.history.repla
 <noscript><link rel="stylesheet" href="/fonts/fa/all.min.css"/></noscript>
 <link rel="manifest" href="/manifest.json"/>
 <meta name="theme-color" content="#0d2257"/>
-<script src="/analytics.js" defer></script>
+<script>(function(){{var _l=false;function la(){{if(_l)return;_l=true;var s=document.createElement('script');s.src='/analytics.js';s.async=true;document.head.appendChild(s);}}window.addEventListener('scroll',la,{{once:true,passive:true}});window.addEventListener('click',la,{{once:true}});setTimeout(la,4000);}})();</script>
 <link rel="stylesheet" href="/styles-detail.css" media="print" onload="this.media='all'"/>
 <noscript><link rel="stylesheet" href="/styles-detail.css"/></noscript>
 <style>
@@ -2377,10 +2419,73 @@ try {{ if (window.location.pathname !== '/jobs/{slug}/') {{ window.history.repla
 </html>'''
 
 # ── Listing page builder ───────────────────────────────────────
+# ── Section-specific meta descriptions (SEO optimized) ──────────────────────
+SECTION_META_DESC = {
+    'latest-jobs-new':     "Latest government job notifications 2026 from Sarkari Result. Apply online for new central & state vacancies — SSC, Railway, UPSC, Bank, Police jobs updated daily.",
+    'latest-jobs':         "Latest Sarkari Naukri 2026: New government job alerts from all central and state departments. Check eligibility, last date and apply online.",
+    'sr-latest-jobs':      "Latest Sarkari Jobs 2026 from SarkariResult: Central & state government recruitment notifications. Check vacancies, eligibility and apply online.",
+    'admit-card':          "Download Sarkari Admit Card 2026: Hall tickets for SSC, Railway, IBPS, UPSC, Police, teaching exams. Get your call letter with registration number.",
+    'results':             "Sarkari Result 2026: Check latest government exam results, merit lists and scorecards for SSC, Railway, UPSC, Bank and State PSC exams.",
+    'result':              "Sarkari Result 2026: Check latest government exam results, merit lists and scorecards for SSC, Railway, UPSC, Bank and State PSC exams.",
+    'answer-key':          "Download official answer keys 2026 for SSC, Railway, UPSC, Police and Bank exams. Raise objections and check your score before final result.",
+    'upcoming-jobs':       "Upcoming Government Jobs 2026: Advance notification of new Sarkari Naukri — SSC, Railway, Bank, Defence, UPSC and State PSC recruitments coming soon.",
+    'offline-form':        "Government jobs with offline application 2026: Download application forms, check last date and address. Apply by post for Sarkari Naukri vacancies.",
+    '10th-pass-jobs':      "10th Pass Government Jobs 2026: Latest Sarkari Naukri for matriculation pass candidates — Police, Railway, SSC MTS, Postal, Army, Defence vacancies.",
+    '12th-pass-jobs':      "12th Pass Sarkari Jobs 2026: Government job notifications for intermediate pass — SSC CHSL, Railway, Constable, Clerk, LDC, Defence vacancies.",
+    '8th-pass':            "8th Pass Government Jobs 2026: Sarkari Naukri for class 8 pass candidates — Peon, Chowkidar, Helper, Sweeper, Group D vacancies updated daily.",
+    'graduation-jobs':     "Graduate Sarkari Jobs 2026: Government vacancies for any graduate — SSC CGL, Bank PO, Railway NTPC, UPSC, Officer level posts apply online.",
+    'post-graduation-jobs':"Post Graduate Government Jobs 2026: PG level Sarkari Naukri — Lecturer, Manager, Officer, Research vacancies for MA/MSc/MBA/MTech candidates.",
+    'bank-jobs':           "Bank Jobs 2026: IBPS PO, Clerk, RRB, SBI recruitment notifications. Latest banking sector government job vacancies with online application links.",
+    'railway-jobs':        "Railway Jobs 2026: RRB NTPC, Group D, ALP, JE, RPF, Station Master vacancies. Apply online for Indian Railways Sarkari Naukri.",
+    'police-jobs':         "Police & Defence Jobs 2026: Constable, SI, ASI, Army, CRPF, BSF, CISF, SSB recruitment. Government security force vacancies for 10th/12th/graduate.",
+    'teaching-jobs':       "Teaching Jobs 2026: TGT, PGT, PRT, Lecturer government vacancies. School and college teaching recruitment — KVS, NVS, state education boards.",
+    'healthcare-jobs':     "Medical & Healthcare Government Jobs 2026: Staff Nurse, Doctor, AYUSH, Paramedical vacancies. AIIMS, ESIC, state health department recruitment.",
+    'diploma-jobs':        "Diploma Pass Government Jobs 2026: Sarkari Naukri for ITI/Diploma holders — JE, Technician, Electrician, Mechanic, Fitter vacancies in PSUs and Railways.",
+    'iti-jobs':            "ITI Pass Government Jobs 2026: Sarkari Naukri for ITI certificate holders — Trade Apprentice, Technician, Fitter, Electrician, Mechanic vacancies.",
+    'btech-jobs':          "B.Tech/BE Government Jobs 2026: Engineering graduate Sarkari Naukri — JE, AE, Officer, Manager posts in PSUs, Railways, Defence, UPSC.",
+    'army-jobs':           "Indian Army & Defence Jobs 2026: Soldier, Officer, Technical, Tradesman recruitment. Apply online for Army, Navy, Air Force, Paramilitary vacancies.",
+    'state-jobs-central':  "State Government Jobs 2026: Latest state PSC, PPSC, RPSC, MPSC, BPSC recruitment notifications. Apply for Sarkari Naukri in your state.",
+    'central-jobs':        "Central Government Jobs 2026: Ministries, PSUs, central departments recruitment. UPSC, SSC, Railway, Defence — apply online for central sarkari naukri.",
+    'admissions':          "Government College Admissions 2026: University entrance exams, merit list, counselling schedule. Apply for admission to central and state universities.",
+    'admission':           "Sarkari Admission 2026: Government college and university admissions — entrance exams, merit lists, counselling dates and application forms.",
+    'last-date-reminder':  "Government Jobs Last Date 2026: Jobs expiring soon — apply before deadline. Last date reminders for SSC, Railway, Bank, UPSC and state PSC jobs.",
+    'latest-notifications':"Latest Government Job Notifications 2026: New Sarkari recruitment notifications from all departments. Check eligibility and apply before last date.",
+    'ba-pass':             "BA/Arts Graduate Government Jobs 2026: Sarkari Naukri for BA pass candidates — Clerk, Patwari, Teacher, Officer level vacancies in state and central departments.",
+    'jobs-with-last-date': "Government Jobs With Last Date 2026: Sarkari Naukri with upcoming deadlines. Filter by qualification and apply online before last date.",
+    'top-20-jobs':         "Top 20 Government Jobs 2026: Most popular Sarkari Naukri this week — highest vacancy count, best pay scale, easy eligibility. Apply online now.",
+    'today-updates':       "Today's Government Job Updates 2026: Fresh Sarkari Naukri notifications added today — new vacancies, admit cards, results and answer keys.",
+    'govt-scheme-yojna':   "Government Schemes & Yojana 2026: Central and state government welfare schemes — PM Kisan, PMAY, Ujjwala, scholarship, subsidy yojana information.",
+    'importantcsc-link':   "CSC Important Links 2026: Common Service Centre useful government portals, online services, certificate download links for CSC operators.",
+    'importantcsc-pdf':    "CSC Important PDF Forms 2026: Download government forms, certificates, application PDFs for Common Service Centre services.",
+    'syllabus':            "Government Exam Syllabus 2026: Download latest syllabus PDF for SSC, Railway, UPSC, Bank, Police, Teaching and state PSC exams.",
+}
+
 def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
     _yr_str = str(YEAR)
-    title_tag  = (f"{title} — Apply Online | Top Sarkari Jobs" if _yr_str in title else f"{title} {YEAR} — Apply Online | Top Sarkari Jobs")
-    meta_desc  = (desc[:130] or f"{title}: Latest notifications, apply online, check dates. {YEAR}")[:155]
+    _t = title if _yr_str in title else f"{title} {YEAR}"
+    title_tag = f"{_t} — Apply Online | Top Sarkari Jobs"
+
+    # FIX #12: section-specific meta description > passed desc > generic fallback
+    _url_key = canon_url.rstrip('/').split('/')[-1]
+    meta_desc = (
+        SECTION_META_DESC.get(_url_key) or
+        (desc[:155] if desc else None) or
+        f"{title} {YEAR}: Latest government job notifications — check eligibility, important dates and apply online."
+    )
+    meta_desc = meta_desc[:160]
+
+    # FIX #5: context-aware OG image for section pages
+    if any(x in canon_url for x in ['/result', '/results']):
+        _og_img = f"{BASE_URL}/og-results.png"
+    elif 'admit' in canon_url:
+        _og_img = f"{BASE_URL}/og-admit.png"
+    elif any(x in canon_url for x in ['/study', 'pass-jobs', 'graduate', 'iti', 'diploma', 'btech']):
+        _og_img = f"{BASE_URL}/og-study.png"
+    elif any(x in canon_url for x in ['scheme', 'yojna', 'csc']):
+        _og_img = f"{BASE_URL}/og-scheme.png"
+    else:
+        _og_img = f"{BASE_URL}/og-jobs.png"
+
     bc_html    = '<nav class="bc" aria-label="Breadcrumb"><a href="/">Home</a>'
     for lbl, url in breadcrumbs:
         bc_html += f'<span class="bc-sep">›</span><a href="{e(url)}">{e(lbl)}</a>'
@@ -2389,7 +2494,27 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
         [{'@type':'ListItem','position':1,'name':'Home','item':BASE_URL+'/'}] +
         [{'@type':'ListItem','position':i+2,'name':b[0],'item':BASE_URL+b[1]} for i,b in enumerate(breadcrumbs)] +
         [{'@type':'ListItem','position':len(breadcrumbs)+2,'name':title,'item':canon_url}]}
-    schemas_tag = f'<script type="application/ld+json">{json.dumps(bc_schema,ensure_ascii=False)}</script>'
+
+    # FIX #5: ItemList schema for top 10 jobs (rich results)
+    _il_elements = []
+    for _ili, _jb in enumerate(jobs[:10], 1):
+        _bd2 = _jb.get('basic_details', {}) or {}
+        _jt2 = safe(_bd2.get('job_title', '') or _jb.get('title', '') or _jb.get('name', ''))
+        _rs2 = safe(_jb.get('_slug', '') or _jb.get('slug', ''))
+        _js2 = re.sub(r'^sr_[a-z_]+-', '', _rs2) if _rs2 else ''
+        _js2 = re.sub(r'-[0-9a-f]{6,8}$', '', _js2) if _js2 else ''
+        _js2 = (_js2[:80].rstrip('-')) if _js2 else slugify(_jt2)
+        if _jt2 and _js2:
+            _il_elements.append({'@type':'ListItem','position':_ili,'name':_jt2,
+                                 'url':f"{BASE_URL}/jobs/{_js2}/"})
+    _schemas_list = [bc_schema]
+    if _il_elements:
+        _schemas_list.append({'@context':'https://schema.org','@type':'ItemList',
+            'name':title_tag,'description':meta_desc,'url':canon_url,
+            'numberOfItems':len(jobs),'itemListElement':_il_elements})
+    schemas_tag = '\n'.join(
+        f'<script type="application/ld+json">{json.dumps(s, ensure_ascii=False)}</script>'
+        for s in _schemas_list)
 
     cards_html = ''
     for _idx, job in enumerate(jobs, 1):
@@ -2503,12 +2628,26 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>{VP_SNIPPET}
-<title>{e(title_tag[:60])}</title>
+<title>{e(title_tag)}</title>
 <meta name="description" content="{e(meta_desc)}"/>
-<meta name="robots" content="index,follow"/>
+<meta name="author" content="Top Sarkari Jobs"/>
+<meta name="geo.region" content="IN"/>
+<meta name="language" content="en-IN"/>
+<meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large"/>
 <link rel="canonical" href="{e(canon_url)}"/>
-<meta property="og:title" content="{e(title_tag[:60])}"/>
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="Top Sarkari Jobs"/>
+<meta property="og:title" content="{e(title_tag)}"/>
+<meta property="og:description" content="{e(meta_desc)}"/>
 <meta property="og:url" content="{e(canon_url)}"/>
+<meta property="og:image" content="{_og_img}"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:site" content="@topsarkarijobs"/>
+<meta name="twitter:title" content="{e(title_tag)}"/>
+<meta name="twitter:description" content="{e(meta_desc)}"/>
+<meta name="twitter:image" content="{_og_img}"/>
 {schemas_tag}
 <script src="/tsj-config.js"></script>
 <link rel="icon" href="/image.ico"/>
@@ -2517,7 +2656,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
 <noscript><link rel="stylesheet" href="/fonts/fa/all.min.css"/></noscript>
 <link rel="manifest" href="/manifest.json"/>
 <meta name="theme-color" content="#0d2257"/>
-<script src="/analytics.js" defer></script>
+<script>(function(){{var _l=false;function la(){{if(_l)return;_l=true;var s=document.createElement('script');s.src='/analytics.js';s.async=true;document.head.appendChild(s);}}window.addEventListener('scroll',la,{{once:true,passive:true}});window.addEventListener('click',la,{{once:true}});setTimeout(la,4000);}})();</script>
 <link rel="stylesheet" href="/styles-detail.css" media="print" onload="this.media='all'"/><noscript><link rel="stylesheet" href="/styles-detail.css"/></noscript>
 </head>
 <body>

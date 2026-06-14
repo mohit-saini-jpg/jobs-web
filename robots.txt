@@ -51,7 +51,7 @@ Allow: /education/
 Allow: /category/
 Allow: /section/
 Allow: /qualification/
-Allow: /search/
+Disallow: /search/
 Allow: /about/
 Allow: /contact/
 Allow: /terms/

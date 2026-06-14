@@ -170,7 +170,7 @@
   <meta name="msapplication-tap-highlight" content="no"/>
   <link rel="apple-touch-icon" href="/icons/icon-180x180.png"/>
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
-  <script src="/tsj-menu.js?v=20260614132440" defer></script>
+  <script src="/tsj-menu.js?v=20260613100553" defer></script>
   <script src="/pwa-install.js?v=6.0" defer></script>
 </head>
 <body>
@@ -205,6 +205,19 @@
     ════════════════════════════════════════════════════ */
     var slug = window.__TSJ_SLUG_FROM_404;
     if (slug) {
+
+      /* ── SELF-HEAL old long slugs ──────────────────────────────────────
+         Older search/builds produced 100-120 char slugs, but pages are
+         generated with an 80-char cap. If the requested slug is longer than
+         80 chars, redirect to the 80-char version (the real page) so old
+         search links / Google-indexed long URLs never dead-end. */
+      try {
+        var capped = slug.slice(0, 80).replace(/-+$/, '');
+        if (capped && capped !== slug) {
+          window.location.replace('/jobs/' + capped + '/');
+          return;
+        }
+      } catch(_) {}
 
       /* Restore the clean URL in browser address bar */
       var cleanPath = '/jobs/' + slug + '/';

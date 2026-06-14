@@ -23,6 +23,31 @@ if not os.path.isdir(os.path.join(ROOT, "jobs")):
 BASE = "https://www.topsarkarijobs.com"
 TODAY = date.today().isoformat()
 
+# FIX #11: per-job lastmod — load first-seen dates so /jobs/ URLs get a real
+# lastmod (the date the job was first published) instead of the deploy date.
+# Google ignores sitemaps where every lastmod is identical to "today".
+import json as _json
+_JOB_LASTMOD = {}
+try:
+    _fs_path = os.path.join(ROOT, "data", "job-first-seen.json")
+    if os.path.isfile(_fs_path):
+        with open(_fs_path, encoding="utf-8") as _f:
+            _JOB_LASTMOD = _json.load(_f)
+except Exception:
+    _JOB_LASTMOD = {}
+
+def _lastmod_for(url):
+    """Return a real lastmod for /jobs/<slug>/ URLs from first-seen data."""
+    try:
+        if "/jobs/" in url:
+            slug = url.rstrip("/").rsplit("/", 1)[-1]
+            d = _JOB_LASTMOD.get(slug)
+            if d and len(str(d)) >= 10:
+                return str(d)[:10]
+    except Exception:
+        pass
+    return TODAY
+
 def has_index(p):
     return os.path.isfile(os.path.join(p, "index.html"))
 
@@ -47,14 +72,17 @@ def urls_from_dir(rel_root, changefreq="weekly", priority="0.7", recursive=False
     return out
 
 def write_urlset(path, urls, changefreq="weekly", priority="0.7"):
+    # FIX #11: normalize trailing slash before dedup so /jobs/x and /jobs/x/
+    # don't both appear; use per-job lastmod from first-seen data.
     seen, uniq = set(), []
     for u in urls:
-        if u not in seen:
-            seen.add(u); uniq.append(u)
+        nu = u.rstrip("/") + "/"
+        if nu not in seen:
+            seen.add(nu); uniq.append(nu)
     lines = ['<?xml version="1.0" encoding="UTF-8"?>',
              '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for u in uniq:
-        lines.append(f'  <url><loc>{u}</loc><lastmod>{TODAY}</lastmod>'
+        lines.append(f'  <url><loc>{u}</loc><lastmod>{_lastmod_for(u)}</lastmod>'
                      f'<changefreq>{changefreq}</changefreq><priority>{priority}</priority></url>')
     lines.append('</urlset>')
     with open(os.path.join(ROOT, path), "w", encoding="utf-8") as f:
