@@ -2566,20 +2566,130 @@ def _fingerprint(title):
     import re as _re
     t = _re.sub(r'[^a-z0-9\s]', ' ', safe(title).lower())
     toks = [w for w in t.split() if w and w not in _FP_STOP and len(w) > 1]
-    # FULL normalized title — only TRULY identical job names collapse.
-    # Cross-source dupes with different titles are caught by the post-generation
-    # H1 de-duplication pass (see prune_duplicate_pages at end of this script),
-    # which is precise (identical rendered H1) and won't merge distinct jobs.
     return ' '.join(toks)
 
+# ── VERSION-AWARE DUPLICATE LOGIC ────────────────────────────────────────────
+# Duplicate check is NOT URL-only. The SAME recruitment can return with the same
+# title but a NEW notification — changed dates, post count, advt no, year, PDF.
+# Those must become a NEW version: a NEW record, NEW HTML, NEW unique URL/slug.
+# We detect this by building a content "version signature" and only treat two
+# jobs as identical when BOTH the title-core AND the signature match.
+
+import hashlib as _vh_hash
+
+def _extract_year(job):
+    """Best-effort recruitment year (advt year / article section / from title)."""
+    import re as _re
+    for src in (safe((job.get('meta') or {}).get('articleSection')),
+                safe(job.get('year')),
+                safe(job.get('title'))):
+        m = _re.search(r'\b(20\d{2})\b', src)
+        if m:
+            return m.group(1)
+    return ''
+
+def _extract_advt_no(job):
+    """Advertisement / notification number if present (normalized like 02-2026)."""
+    import re as _re
+    # explicit fields first
+    for k in ('advt_no','advtNo','advertisement_no','advertisementNo','notification_no','notificationNo'):
+        v = safe(job.get(k))
+        if v:
+            return _re.sub(r'[^0-9a-z]+', '-', v.lower()).strip('-')
+    # subject/category-wise rows sometimes carry it
+    for lk in ('subjectWiseVacancy','subject_wise_vacancy','categoryWiseVacancy'):
+        rows = job.get(lk)
+        if isinstance(rows, list):
+            for r in rows:
+                if isinstance(r, dict):
+                    v = safe(r.get('advtNo') or r.get('advt_no'))
+                    if v:
+                        return _re.sub(r'[^0-9a-z]+', '-', v.lower()).strip('-')
+    # finally, pull "Advt No 14/2026" style out of the title
+    m = _re.search(r'advt[.\s-]*no[.\s-]*([0-9]+[/\-][0-9]{2,4})', safe(job.get('title')), _re.I)
+    if m:
+        return _re.sub(r'[^0-9a-z]+', '-', m.group(1).lower()).strip('-')
+    return ''
+
+def _version_signature(job):
+    """Hash of the fields that define a *version* of a recruitment. If any of
+    these change, it's a new notification → new page. Kept deliberately small &
+    stable so cosmetic edits don't spawn pages, but real changes do."""
+    d = job.get('importantDates') or job.get('important_dates') or {}
+    if isinstance(d, dict):
+        dates = '|'.join(safe(d.get(k)) for k in
+                         ('applicationBegin','application_begin','lastDateApplyOnline',
+                          'last_date_apply_online','last_date','examDate','exam_date'))
+    else:
+        dates = safe(d)
+    parts = [
+        _extract_year(job),
+        _extract_advt_no(job),
+        dates,
+        safe(job.get('totalPost') or job.get('total_post') or job.get('total_vacancy')),
+        # notification PDF filename (not full URL — host can vary)
+        safe(_pdf_name(job)),
+    ]
+    raw = '::'.join(parts)
+    return _vh_hash.md5(raw.encode('utf-8')).hexdigest()[:10]
+
+def _pdf_name(job):
+    """Notification PDF file name, if any (used in the version signature)."""
+    import re as _re
+    links = job.get('importantLinks') or job.get('important_links') or []
+    cand = []
+    if isinstance(links, list):
+        for it in links:
+            if isinstance(it, dict):
+                u = safe(it.get('url'))
+                if u.lower().endswith('.pdf'):
+                    cand.append(u)
+    if not cand:
+        return ''
+    # last path segment of the first PDF
+    return _re.sub(r'[^a-z0-9._-]', '', cand[0].rsplit('/', 1)[-1].lower())
+
+# slug (base, no version) → set of version signatures already written
+seen_versions = {}
+versioned_variant_slugs = set()  # slugs that are intentional NEW VERSIONS (protect from prune)
+
+def _versioned_slug(base_slug, job):
+    """Return the final unique slug for this job.
+    - First time we see a base_slug: use it as-is.
+    - Same base_slug but DIFFERENT version signature (new notification): append
+      a version suffix so it gets its OWN url/html:
+         annual reissue      → -<year>      (ssc-gd-recruitment-2026)
+         multiple in a year  → -<advtno>    (ssc-gd-recruitment-02-2026)
+    - Same base_slug AND same signature: it's a true duplicate → return None."""
+    sig = _version_signature(job)
+    known = seen_versions.get(base_slug)
+    if known is None:
+        seen_versions[base_slug] = {sig: base_slug}
+        return base_slug
+    if sig in known:
+        return None                      # exact same version already written
+    # New version of an existing recruitment → build a distinct slug
+    year = _extract_year(job)
+    advt = _extract_advt_no(job)
+    if advt:
+        suffix = advt if year and year in advt else (f'{advt}-{year}' if year else advt)
+    elif year and year not in base_slug:
+        suffix = year
+    else:
+        suffix = sig                     # fallback: short hash keeps it unique
+    cand = clean_slug(f'{base_slug}-{suffix}')[:80].strip('-')
+    n = 2
+    while cand in seen_jobs:
+        cand = clean_slug(f'{base_slug}-{suffix}-{n}')[:80].strip('-')
+        n += 1
+    known[sig] = cand
+    versioned_variant_slugs.add(cand)   # protect this new-version page from H1 prune
+    return cand
+
 def _is_dup_job(slug, title):
-    """True if this job (by slug OR content fingerprint) was already written."""
-    if slug in seen_jobs:
-        return True
-    fp = _fingerprint(title)
-    if fp and fp in seen_fp:
-        return True
-    return False
+    """True only if this exact slug was already written (version-aware slugging
+    above already separates different versions into different slugs)."""
+    return slug in seen_jobs
 
 def _mark_job(slug, title, source):
     seen_jobs[slug] = source
@@ -2733,8 +2843,13 @@ for job in SARK:
     title = safe(job.get('title',''))
     if not title: continue
     raw_slug = job.get('slug','') or ''
-    slug = clean_slug(raw_slug) if raw_slug.strip() else slugify(title)
-    if not slug or _is_dup_job(slug, title): continue
+    base_slug = clean_slug(raw_slug) if raw_slug.strip() else slugify(title)
+    if not base_slug: continue
+    # Version-aware: same recruitment + changed dates/posts/advt/year/pdf → new
+    # version → new unique slug. Same content → None (true duplicate, skip).
+    slug = _versioned_slug(base_slug, job)
+    if slug is None or slug in seen_jobs:
+        continue
     _mark_job(slug, title, job.get('category',''))
 
     # Build important_links from all sources
@@ -3606,6 +3721,10 @@ def prune_duplicate_pages():
     removed = 0
     for fp, slugs in groups.items():
         if len(slugs) < 2:
+            continue
+        # If any page in this group is an intentional NEW VERSION (different
+        # year/advt/dates), do NOT merge — these are legitimately separate pages.
+        if any(s in versioned_variant_slugs for s in slugs):
             continue
         keep = max(slugs, key=_score)
         for s in slugs:
