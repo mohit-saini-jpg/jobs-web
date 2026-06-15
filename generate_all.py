@@ -398,6 +398,7 @@ SECTION_META = {
     'important_links':      ('Important Links',           'fa-link',               '1e40af,#1e3a8a'),
     'faq':                  ('FAQs',                      'fa-circle-question',    '4338ca,#6366f1'),
     'tables':               ('Details',                   'fa-table',              '0f766e,#0891b2'),
+    'data_tables':          ('Additional Details',        'fa-table-list',         '0f766e,#0891b2'),
     'all_links':            ('Useful Links',              'fa-link',               '1d4ed8,#1e3a8a'),
     'details_page_content': ('Scholarship Details',       'fa-circle-info',        '1e40af,#3b82f6'),
     'text_sections':        ('How to Apply',              'fa-clipboard-list',     '0f766e,#0891b2'),
@@ -899,8 +900,14 @@ def render_vacancy_table(vac_list):
               'sc':'SC','st':'ST','ews':'EWS','women':'Women','salary':'Salary',
               'qualification':'Qualification','department':'Department','notification_pdf':'Notification'}
     norm = []; avail = set()
+    _tbl_heading = ''
     for row in vac_list:
         if not isinstance(row, dict): continue
+        # capture an optional section heading from the scraper (tableHeading)
+        if not _tbl_heading:
+            _th = safe(row.get('table_heading') or row.get('tableHeading') or '').strip()
+            if _th and len(_th) > 5:
+                _tbl_heading = _th
         # skip rows that clearly belong to a different table (e.g. disability Category/Description
         # rows leaked into vacancy_details) — they carry none of our known columns
         if not any(a in row for _c, al in ALL_COLS for a in al):
@@ -982,7 +989,13 @@ def render_vacancy_table(vac_list):
             else:
                 tot_cells += '<td></td>'
         rows += f'<tr class="vac-tot">{tot_cells}</tr>'
-    return f'<div class="tbl-scroll"><table class="data-table"><thead><tr>{head}</tr></thead><tbody>{rows}</tbody></table></div>'
+    _head_html = ''
+    if _tbl_heading:
+        # strip a trailing "Total : N Post" tail for a cleaner sub-heading
+        _clean_h = re.sub(r'\s*total\s*:?\s*\d[\d,]*\s*post.*$', '', _tbl_heading, flags=re.I).strip()
+        _clean_h = _clean_h or _tbl_heading
+        _head_html = f'<div class="kv-stack-head" style="margin-top:4px">{e(_clean_h)}</div>'
+    return _head_html + f'<div class="tbl-scroll"><table class="data-table"><thead><tr>{head}</tr></thead><tbody>{rows}</tbody></table></div>'
 
 # ── Sarkari sections processor ────────────────────────────────
 TITLE_MAP = {
@@ -1286,7 +1299,7 @@ SKIP_KEYS = {'seo_tags','category','slug','source_url','url','_slug',
 SECTION_ORDER = ['basic_details','important_dates','application_fee','age_limit',
                  'qualification','vacancy_details','category_wise_vacancy','salary_details',
                  'selection_process','exam_pattern','syllabus','physical_eligibility',
-                 'tables','text_sections','useful_links','all_links','details_page_content',
+                 'tables','data_tables','text_sections','useful_links','all_links','details_page_content',
                  'how_to_apply','important_instructions','important_links','faq']
 
 def build_all_sections(job_obj):
@@ -1426,6 +1439,32 @@ def build_all_sections(job_obj):
                 # Store extracted links for useful_links section (if job has no useful_links)
                 if _extracted_links and not job_obj.get('useful_links'):
                     job_obj['_table_links'] = _extracted_links
+        elif key == 'data_tables':
+            # SR scraper dataTables: [{heading|table_name, rows:[[col,...]]}]
+            _dt = val if isinstance(val, list) else []
+            _dt_parts = []
+            for _t in _dt:
+                if not isinstance(_t, dict):
+                    continue
+                _hd = safe(_t.get('heading') or _t.get('table_name') or '')
+                _rows = _t.get('rows') or []
+                if not _rows:
+                    continue
+                # skip pure link tables / tiny noise
+                _clean_rows = [r for r in _rows if isinstance(r, list) and any(safe(c) for c in r)]
+                if not _clean_rows:
+                    continue
+                _tbl = '<table class="kv-table"><tbody>'
+                for _ri, _r in enumerate(_clean_rows):
+                    _cells = [safe(c) for c in _r]
+                    _tag = 'th' if _ri == 0 and len(_cells) > 1 else 'td'
+                    _tbl += '<tr>' + ''.join(f'<{_tag}>{e(c)}</{_tag}>' for c in _cells) + '</tr>'
+                _tbl += '</tbody></table>'
+                if _hd:
+                    _dt_parts.append(f'<div class="kv-stack-head" style="margin-top:10px">{e(_hd)}</div>{_tbl}')
+                else:
+                    _dt_parts.append(_tbl)
+            body = ''.join(_dt_parts)
         elif key == 'text_sections':
             # sarkari_data text_sections: [{section, content}]
             # Skip entirely if how_to_apply is already populated — prevents duplicate "How to Apply"
@@ -1813,7 +1852,23 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
                    'mainEntityOfPage':{'@type':'WebPage','@id':canon_url},
                    'image':BASE_URL+'/og-jobs.png'}
 
-    out = (f'<script type="application/ld+json">{json.dumps(primary, ensure_ascii=False)}</script>\n'
+    # Part C: sitewide WebSite (SearchAction) + Organization schema so AI/answer
+    # engines and Google sitelinks-search-box can parse the brand on every page.
+    _site_schema = {'@context':'https://schema.org','@type':'WebSite',
+        'name':'Top Sarkari Jobs','url':BASE_URL+'/',
+        'potentialAction':{'@type':'SearchAction',
+            'target':{'@type':'EntryPoint','urlTemplate':BASE_URL+'/search/?q={search_term_string}'},
+            'query-input':'required name=search_term_string'}}
+    _org_schema = {'@context':'https://schema.org','@type':'Organization',
+        'name':'Top Sarkari Jobs','url':BASE_URL+'/',
+        'logo':BASE_URL+'/image.png',
+        'sameAs':['https://www.youtube.com/@topsarkarijobs',
+                  'https://www.instagram.com/topsarkarijobs',
+                  'https://whatsapp.com/channel/topsarkarijobs']}
+
+    out = (f'<script type="application/ld+json">{json.dumps(_site_schema, ensure_ascii=False)}</script>\n'
+           f'<script type="application/ld+json">{json.dumps(_org_schema, ensure_ascii=False)}</script>\n'
+           f'<script type="application/ld+json">{json.dumps(primary, ensure_ascii=False)}</script>\n'
            f'<script type="application/ld+json">{json.dumps(bc_schema, ensure_ascii=False)}</script>\n')
 
     # de-dup FAQs + strip pre-existing Q-number prefix for clean structured data
@@ -2215,33 +2270,77 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     _ct = next((c for c,p in _ctype_map.items() if _re.search(p, _tl)), 'default')
     _yr_m = _re.search(r'20\d\d', title)
     _yr = _yr_m.group() if _yr_m else str(YEAR)
-    if _ct != 'default':
+    # Indian states/UTs — a bare state name must NEVER stand in for the exam body
+    _STATE_NAMES = {
+        'andhra pradesh','arunachal pradesh','assam','bihar','chhattisgarh','goa',
+        'gujarat','haryana','himachal pradesh','jharkhand','karnataka','kerala',
+        'madhya pradesh','maharashtra','manipur','meghalaya','mizoram','nagaland',
+        'odisha','punjab','rajasthan','sikkim','tamil nadu','telangana','tripura',
+        'uttar pradesh','uttarakhand','west bengal','delhi','jammu','kashmir',
+        'ladakh','puducherry','chandigarh','andaman','lakshadweep','dadra','daman',
+    }
+    # ❶ FIX: real job title is the single source of truth for <title>, for ALL
+    # content types — not just recruitment. Bare-state org names are rejected.
+    _clean_title = re.sub(r'\s*-\s*(latest jobs|big update|notification out).*$', '', title, flags=re.I).strip()
+    _has_intent = bool(re.search(r'\b(recruitment|vacancy|vacancies|online form|apply online|posts|notification|admit card|result|answer key|hall ticket|scorecard|merit list)\b', _clean_title, re.I))
+    _org_is_state = _org_s.strip().lower() in _STATE_NAMES
+    if _has_intent and len(_clean_title) >= 12:
+        # Prefer the intent-rich real title (matches <h1>)
+        _jp = _clean_title
+    elif _ct != 'default':
+        # Fallback for result/admit/answer: org-based — but only if org is a real
+        # exam body, never a bare state. If org is a state, use the raw title.
         _fmt = {'result':'{o} {y} Result','admit':'{o} {y} Admit Card','answer':'{o} {y} Answer Key'}
-        _jp = _fmt[_ct].format(o=_org_s, y=_yr)
+        if _org_is_state or len(_org_s.strip()) < 3:
+            _jp = _clean_title or title
+        else:
+            _jp = _fmt[_ct].format(o=_org_s, y=_yr)
     else:
-        # H2: prefer the real, intent-rich title (post name + Recruitment/Vacancy/Form),
-        # trimmed to fit; fall back to org-based only if title is unusable.
-        _clean_title = re.sub(r'\s*-\s*(latest jobs|big update|notification out).*$', '', title, flags=re.I).strip()
-        _has_intent = bool(re.search(r'\b(recruitment|vacancy|vacancies|online form|apply online|posts|notification|admit card|result)\b', _clean_title, re.I))
-        if _has_intent and 15 <= len(_clean_title):
-            _jp = _clean_title
+        if _org_is_state or len(_org_s.strip()) < 3:
+            _jp = _clean_title or title
         else:
             _jp = f'{_org_s} {_yr} Recruitment{_vac_s}'
             if len(_jp) > _MAX:
                 _jp = f'{_org_s} {_yr}{_vac_s}'
             if len(_jp) < 15:
-                _jp = title[:_MAX]
+                _jp = _clean_title or title[:_MAX]
     if len(_jp) > _MAX:
-        _jp = _jp[:_MAX-1].rsplit(' ',1)[0].rstrip(',-–(') + '…'
+        _jp = smart_title_cut(_jp, _MAX)
     title_tag = smart_title_cut(_jp + _BRAND, 60)
     short_info = safe(bd.get('short_information','') or job_obj.get('jobs_info','') or job_obj.get('short_information',''))
     # Build meta description inline
     _si = short_info.rstrip('.,; ').strip() if short_info else ''
     _vd = vacancies if vacancies and vacancies not in ('—','') else ''
     _ld_s = last_d.strip() if last_d and last_d not in ('—','') else ''
-    _base_md = _si[:100] if _si else f'{title[:60].rstrip()} Recruitment {YEAR}'
-    if _si and len(_si) > 100:
-        _base_md = _si[:_si.rfind(' ', 80, 100)] if ' ' in _si[80:100] else _si[:100]
+    # ❸ FIX: build description that ends on a clean word/sentence boundary
+    # (never a dangling preposition like "for." / "by." / "on the.")
+    _DANGLING = re.compile(r'\s*\b(for|by|on|the|of|to|in|at|with|and|or|a|an|as|from)\s*$', re.I)
+    def _strip_dangling(s):
+        # repeatedly drop trailing stop-words ("...on the" → "...on" → "...")
+        s = s.rstrip(' .,;:-')
+        prev = None
+        while s and s != prev:
+            prev = s
+            s = _DANGLING.sub('', s).rstrip(' .,;:-')
+        return s
+    if _si:
+        # Prefer the FIRST complete sentence if it fits in ~160 chars
+        _first_sent = re.match(r'^(.{40,160}?[.!?])(\s|$)', _si)
+        if _first_sent:
+            _base_md = _first_sent.group(1)
+        elif len(_si) <= 150:
+            _base_md = _si
+        else:
+            # back off to last sentence terminator, else last full word, within 150
+            _slice = _si[:150].rstrip()
+            _sent = max(_slice.rfind('.'), _slice.rfind('!'), _slice.rfind('?'))
+            if _sent >= 80:
+                _base_md = _slice[:_sent+1]
+            else:
+                _base_md = _slice[:_slice.rfind(' ')] if ' ' in _slice else _slice
+        _base_md = _strip_dangling(_base_md)
+    else:
+        _base_md = f'{(_clean_title or title)[:60].rstrip()} {YEAR}'
     _parts = [_base_md]
     if _vd: _parts.append(f'{_vd} Posts')
     if _ld_s: _parts.append(f'Last Date: {_ld_s}')
@@ -2252,7 +2351,7 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
         # back off to last full word; avoid mid-word cut
         if ' ' in _cut:
             _cut = _cut[:_cut.rfind(' ')]
-        meta_desc = _cut.rstrip(' ,;:-') + '…'
+        meta_desc = _strip_dangling(_cut) + '…'
     else:
         meta_desc = _md_full
 
@@ -2325,7 +2424,15 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     if not sections_html.strip():
         sections_html = '<div class="sec-card"><div class="sec-body" style="padding:24px;text-align:center;color:#94a3b8"><i class="fa-solid fa-clock" style="font-size:1.5rem;display:block;margin-bottom:8px"></i>Detailed information will be updated soon. Please visit the official website.</div></div>'
 
-    rel_links = REL_CATS_HTML
+    # ❹ Related Jobs — internal links to other /jobs/ pages (same cat/org/qual/state)
+    _rj_org = safe(bd.get('organization','') or bd.get('department','') or job_obj.get('organization',''))
+    _rj_state = safe(bd.get('state','') or job_obj.get('state','') or job_obj.get('board',''))
+    _rj_html = _related_jobs_html(slug,
+                                  cat=safe(job_obj.get('category','')),
+                                  org=_rj_org,
+                                  qual=safe(badge_label),
+                                  state=_rj_state, limit=8)
+    rel_links = _rj_html + REL_CATS_HTML
 
     body = f'''<div class="pg-wrap">
   {bc_html}
@@ -2721,6 +2828,17 @@ def _correct_admission_category(jobs):
         print(f"  [fix] re-classified {moved} mis-tagged SR_Admission item(s) -> SR_Latest_Jobs")
     return jobs
 SARK = _correct_admission_category(SARK)
+
+# ── REMOVE deprecated categories permanently ────────────────────────────────
+# State Jobs, Central Jobs and SR Admission have been retired from the site.
+# (The admission corrector above first rescues any real RECRUITMENT items that
+#  were mis-tagged as SR_Admission, moving them to SR_Latest_Jobs, so genuine
+#  jobs are kept; only the leftover admission/state/central entries are dropped.)
+_REMOVED_CATS = {'STATE_JOBS', 'CENTRAL_JOBS', 'SR_Admission'}
+_before_rm = len(SARK)
+SARK = [j for j in SARK if j.get('category') not in _REMOVED_CATS]
+if _before_rm != len(SARK):
+    print(f"  [remove] dropped {_before_rm - len(SARK)} item(s) from retired categories {sorted(_REMOVED_CATS)}")
 EDU_SEC = (CJ.get('education_jobs',{}) or {}).get('sections', [])
 SJ_SEC  = (CJ.get('state_jobs',{}) or {}).get('sections', [])
 DU_SECS = DU.get('sections', [])
@@ -2748,6 +2866,53 @@ def _fingerprint(title):
     t = _re.sub(r'[^a-z0-9\s]', ' ', safe(title).lower())
     toks = [w for w in t.split() if w and w not in _FP_STOP and len(w) > 1]
     return ' '.join(toks)
+
+# ── ❹ Related Jobs index — internal-link equity between /jobs/ pages ─────────
+# Pre-build a lightweight index of every canonical job so each detail page can
+# link to 6-10 contextually-related job pages (same category → org → qualification
+# → state). This deepens crawl paths and spreads link equity (was 0 job-to-job
+# links before). Uses the site's EXISTING .rel-btn / card classes — no new CSS.
+_REL_INDEX = []          # [{slug,title,cat,org,qual,state}]
+_REL_SEEN = set()
+def _rel_state_of(job, bd):
+    return safe(bd.get('state','') or job.get('state','') or job.get('board','')).strip().lower()
+def _rel_register(slug, title, cat='', org='', qual='', state=''):
+    if not slug or slug in _REL_SEEN:
+        return
+    _REL_SEEN.add(slug)
+    _REL_INDEX.append({'slug': slug, 'title': safe(title),
+                       'cat': safe(cat).lower().strip(),
+                       'org': safe(org).lower().strip(),
+                       'qual': safe(qual).lower().strip(),
+                       'state': safe(state).lower().strip()})
+
+def _related_jobs_html(slug, cat='', org='', qual='', state='', limit=8):
+    """Pick up to `limit` related /jobs/ links by category→org→qual→state."""
+    cat=safe(cat).lower().strip(); org=safe(org).lower().strip()
+    qual=safe(qual).lower().strip(); state=safe(state).lower().strip()
+    picked, used = [], {slug}
+    def _take(pred):
+        for it in _REL_INDEX:
+            if len(picked) >= limit: break
+            if it['slug'] in used: continue
+            if pred(it):
+                picked.append(it); used.add(it['slug'])
+    if org:   _take(lambda it: org and it['org'] == org)
+    if cat:   _take(lambda it: cat and it['cat'] == cat)
+    if qual:  _take(lambda it: qual and it['qual'] == qual)
+    if state: _take(lambda it: state and it['state'] == state)
+    # top-up with any recent jobs so every page has >=6 internal links
+    _take(lambda it: True)
+    if len(picked) < 3:
+        return ''
+    items = ''.join(
+        f'<li class="sec-item"><a href="/jobs/{e(it["slug"])}/">{e(it["title"][:90])}</a></li>'
+        for it in picked[:limit])
+    return ('<section class="sec-card" style="margin-top:16px">'
+            '<div class="sec-head"><div class="left">'
+            '<i class="fa-solid fa-link"></i> Related Jobs</div></div>'
+            f'<div class="sec-body"><ul class="sec-list">{items}</ul></div></section>')
+
 
 # ── VERSION-AWARE DUPLICATE LOGIC ────────────────────────────────────────────
 # Duplicate check is NOT URL-only. The SAME recruitment can return with the same
@@ -2883,6 +3048,40 @@ j_count = s_count = e_count = c_count = sec_count = qual_count = 0
 # ─────────────────────────────────────────────────────────────
 # 1. JOB DETAIL PAGES — freejobalert_categories
 # ─────────────────────────────────────────────────────────────
+# ❹ Pre-pass: register every canonical job in the related-jobs index FIRST so
+# that each detail page (built below) can link to other already-known jobs.
+def _rel_prepass():
+    _seen_fp_pre = set()
+    for cat, jobs_list in FJA.items():
+        if not isinstance(jobs_list, list): continue
+        cat_label = QUAL_LABEL.get(cat, cat.replace('_',' ').title())
+        for job in jobs_list:
+            bd = job.get('basic_details', {}) or {}
+            title = safe(bd.get('job_title',''))
+            if not title: continue
+            slug = slugify(title)
+            fp = _fingerprint(title)
+            if fp in _seen_fp_pre: continue
+            _seen_fp_pre.add(fp)
+            _rel_register(slug, title, cat=safe(job.get('category','') or cat),
+                          org=safe(bd.get('organization','') or bd.get('department','')),
+                          qual=cat_label, state=_rel_state_of(job, bd))
+    for job in SARK:
+        bd = job.get('basic_details', {}) or {}
+        title = safe(bd.get('job_title','') or job.get('title','') or
+                     bd.get('jobTitle','') or job.get('name',''))
+        if not title: continue
+        slug = slugify(title)
+        fp = _fingerprint(title)
+        if fp in _seen_fp_pre: continue
+        _seen_fp_pre.add(fp)
+        _rel_register(slug, title, cat=safe(job.get('category','')),
+                      org=safe(bd.get('organization','') or job.get('organization','') or
+                               bd.get('department','')),
+                      qual='', state=_rel_state_of(job, bd))
+_rel_prepass()
+print(f"  [related] indexed {len(_REL_INDEX)} jobs for internal linking")
+
 print("Generating /jobs/ pages (FJA categories)...")
 for cat, jobs_list in FJA.items():
     if not isinstance(jobs_list, list): continue
@@ -2946,6 +3145,8 @@ def _normalize_sarkari_job(job):
         'vacancyDetails':'vacancy_details', 'howToApply':'how_to_apply',
         'usefulLinks':'useful_links', 'textSections':'text_sections',
         'nameOfPost':'name_of_post', 'postName':'post_name',
+        'selectionProcess':'selection_process', 'dataTables':'data_tables',
+        'subjectWiseVacancy':'subject_wise_vacancy', 'courseDetails':'course_details',
     }
     for cam, snk in CAMEL.items():
         if j.get(cam) and not j.get(snk):
@@ -2984,6 +3185,18 @@ def _normalize_sarkari_job(job):
                     sk = _camel_to_snake(k)
                     if sk not in nr:
                         nr[sk] = v
+                # Flatten nested categoryWise {General,OBC,SC,ST,EWS,...} into
+                # flat columns so render_vacancy_table shows the category split.
+                _cw = nr.pop('category_wise', None) or row.get('categoryWise')
+                if isinstance(_cw, dict):
+                    for _ck, _cv in _cw.items():
+                        _ckl = str(_ck).strip().lower()
+                        _map = {'general':'ur','ur':'ur','unreserved':'ur',
+                                'obc':'obc','sc':'sc','st':'st','ews':'ews',
+                                'female':'women','women':'women','total':'total'}
+                        _col = _map.get(_ckl)
+                        if _col and not nr.get(_col):
+                            nr[_col] = _cv
                 out.append(nr)
             else:
                 out.append(row)
@@ -3343,14 +3556,11 @@ SARK_CAT_MAP = {
     'SR_Latest_Jobs':  'latest-jobs',
     'SR_Result':       'results',
     'SR_Admit_Card':   'admit-card',
-    'SR_Admission':    'admission',
     'SR_Answer_Key':   'answer-key',
     'OFFLINE_FORM':    'offline-form',
     'LATEST_JOBS NEW': 'latest-jobs',
     'UPCOMING_JOBS':   'upcoming-jobs',
-    'STATE_JOBS':      'latest-jobs',
-    'CENTRAL_JOBS':    'latest-jobs',
-    'ADMISSIONS':      'admission',
+    'ADMISSIONS':      'admissions',
 }
 FJA_CAT_MAP = {
     '10TH_Pass':           '10th-pass-jobs',
@@ -3612,9 +3822,8 @@ for _du_sec2 in DU_SECS:
 print("Generating /section/ pages...")
 SARK_CAT_MAP = {
     'SR_Latest_Jobs':'latest-jobs','SR_Result':'result','SR_Admit_Card':'admit-card',
-    'SR_Admission':'admission','SR_Answer_Key':'answer-key','OFFLINE_FORM':'offline-form',
+    'SR_Answer_Key':'answer-key','OFFLINE_FORM':'offline-form',
     'LATEST_JOBS NEW':'latest-jobs-new','UPCOMING_JOBS':'upcoming-jobs',
-    'STATE_JOBS':'state-jobs-central','CENTRAL_JOBS':'central-jobs',
     'ADMISSIONS':'admissions',
 }
 sec_count2 = 0
