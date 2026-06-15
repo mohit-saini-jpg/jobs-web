@@ -386,6 +386,7 @@ SECTION_META = {
     'application_fee':      ('Application Fee',           'fa-indian-rupee-sign',  'c2410c,#ea580c'),
     'age_limit':            ('Age Limit',                 'fa-user-clock',         '0f766e,#0891b2'),
     'qualification':        ('Qualification / Eligibility','fa-graduation-cap',    '4338ca,#6366f1'),
+    'course_details':       ('Course-wise Eligibility',    'fa-list-check',         '4338ca,#6366f1'),
     'vacancy_details':      ('Vacancy Details',           'fa-chart-pie',          '15803d,#16a34a'),
     'category_wise_vacancy':('Category-wise Vacancy',     'fa-chart-bar',          '15803d,#16a34a'),
     'salary_details':       ('Salary & Pay Scale',        'fa-indian-rupee-sign',  '15803d,#16a34a'),
@@ -1299,10 +1300,36 @@ SKIP_KEYS = {'seo_tags','category','slug','source_url','url','_slug',
              'short_information','board_name','listing_date','title'}
 
 SECTION_ORDER = ['basic_details','important_dates','application_fee','age_limit',
-                 'qualification','vacancy_details','category_wise_vacancy','salary_details',
+                 'qualification','course_details','vacancy_details','category_wise_vacancy','salary_details',
                  'selection_process','exam_pattern','syllabus','physical_eligibility',
                  'tables','data_tables','text_sections','useful_links','all_links','details_page_content',
                  'how_to_apply','important_instructions','important_links','faq']
+
+def _render_unknown_list(val):
+    """Generic renderer for an unknown list field so its data is never dropped.
+    Handles list-of-strings (→ bullet list) and list-of-dicts (→ table)."""
+    if not isinstance(val, list) or not val:
+        return ''
+    # list of dicts → table using union of keys (insertion order preserved)
+    if all(isinstance(x, dict) for x in val):
+        cols = []
+        for row in val:
+            for k in row.keys():
+                if k not in cols:
+                    cols.append(k)
+        if not cols:
+            return ''
+        head = ''.join(f'<th>{e(key_label(c))}</th>' for c in cols)
+        body_rows = ''
+        for row in val:
+            body_rows += '<tr>' + ''.join(
+                f'<td>{e(safe(row.get(c, "")))}</td>' for c in cols) + '</tr>'
+        return f'<table class="kv-table"><tbody><tr>{head}</tr>{body_rows}</tbody></table>'
+    # list of scalars → bullet list
+    items = [safe(x) for x in val if safe(x)]
+    if not items:
+        return ''
+    return '<ul class="val-list">' + ''.join(f'<li>{e(it)}</li>' for it in items) + '</ul>'
 
 def build_all_sections(job_obj):
     html = ''
@@ -1343,6 +1370,22 @@ def build_all_sections(job_obj):
         elif key == 'application_fee':  body = render_fee(val)
         elif key == 'age_limit':        body = render_list_items(val) if isinstance(val,list) else (render_kv_dict(val) if isinstance(val,dict) else e(safe(val)))
         elif key == 'qualification':    body = render_qualification(val)
+        elif key == 'course_details':
+            # SR courseDetails: [{courseName, eligibility}] — render as clean 2-col table
+            _cd = val if isinstance(val, list) else []
+            _cd_rows = []
+            for _c in _cd:
+                if not isinstance(_c, dict): continue
+                _cn = safe(_c.get('courseName') or _c.get('course_name') or _c.get('course') or '')
+                _el = safe(_c.get('eligibility') or _c.get('eligiblity') or _c.get('qualification') or '')
+                if not (_cn or _el): continue
+                _cd_rows.append(f'<tr><td>{e(_cn)}</td><td>{e(_el)}</td></tr>')
+            if _cd_rows:
+                body = ('<table class="kv-table"><tbody>'
+                        '<tr><th>Course Name</th><th>Eligibility</th></tr>'
+                        + ''.join(_cd_rows) + '</tbody></table>')
+            else:
+                body = ''
         elif key == 'vacancy_details':  body = render_vacancy_table(val)
         elif key == 'category_wise_vacancy': body = (render_vacancy_table(val) if isinstance(val,list) else render_kv_dict(val) if isinstance(val,dict) else '')
         elif key == 'salary_details':   body = render_list_items(val) if isinstance(val,list) else (render_kv_dict(val) if isinstance(val,dict) else f'<div class="edu-sec">{e(safe(val))}</div>')
@@ -1442,27 +1485,42 @@ def build_all_sections(job_obj):
                 if _extracted_links and not job_obj.get('useful_links'):
                     job_obj['_table_links'] = _extracted_links
         elif key == 'data_tables':
-            # SR scraper dataTables: [{heading|table_name, rows:[[col,...]]}]
+            # SR scraper dataTables: [{heading, headers:[...], rows:[[col,...]]}]
             _dt = val if isinstance(val, list) else []
             _dt_parts = []
+            # if structured important_dates / application_fee already rendered,
+            # skip raw table blobs that merely repeat that same info as text
+            _have_struct = bool(job_obj.get('important_dates') or job_obj.get('application_fee'))
             for _t in _dt:
                 if not isinstance(_t, dict):
                     continue
                 _hd = safe(_t.get('heading') or _t.get('table_name') or '')
+                _hdrs = _t.get('headers') or []
                 _rows = _t.get('rows') or []
-                if not _rows:
+                if not _rows and not _hdrs:
                     continue
+                # detect blob tables that just repeat dates/fee/short-details text
+                _blob = ' '.join(
+                    safe(c) for r in _rows if isinstance(r, list) for c in r
+                ) + ' ' + ' '.join(safe(h) for h in _hdrs)
+                if _have_struct and re.search(r'(important dates|short details|application begin|application fee.*pay)', _blob, re.I) and len(_blob) > 200:
+                    continue  # skip messy duplicate-of-structured blob
                 # skip pure link tables / tiny noise
                 _clean_rows = [r for r in _rows if isinstance(r, list) and any(safe(c) for c in r)]
-                if not _clean_rows:
+                if not _clean_rows and not _hdrs:
                     continue
                 _tbl = '<table class="kv-table"><tbody>'
+                if isinstance(_hdrs, list) and any(safe(h) for h in _hdrs):
+                    _tbl += '<tr>' + ''.join(f'<th>{e(safe(h))}</th>' for h in _hdrs if safe(h)) + '</tr>'
+                    _first_is_header = False
+                else:
+                    _first_is_header = True
                 for _ri, _r in enumerate(_clean_rows):
                     _cells = [safe(c) for c in _r]
-                    _tag = 'th' if _ri == 0 and len(_cells) > 1 else 'td'
+                    _tag = 'th' if (_first_is_header and _ri == 0 and len(_cells) > 1) else 'td'
                     _tbl += '<tr>' + ''.join(f'<{_tag}>{e(c)}</{_tag}>' for c in _cells) + '</tr>'
                 _tbl += '</tbody></table>'
-                if _hd:
+                if _hd and _hd.lower() not in ('table', 'data table'):
                     _dt_parts.append(f'<div class="kv-stack-head" style="margin-top:10px">{e(_hd)}</div>{_tbl}')
                 else:
                     _dt_parts.append(_tbl)
@@ -1721,14 +1779,62 @@ def build_all_sections(job_obj):
         if meta and body and body.strip():
             html += sec_card(key, meta[1], meta[2], body)
 
-    # Unknown/future keys
+    # Unknown/future keys — render EVERYTHING so no JSON data is ever dropped.
+    # Dynamic additionalData course-eligibility keys (b_tech_..., bca, mca, ...) get
+    # grouped into ONE clean table instead of 30+ ugly individual cards.
+    _dyn_elig = {}            # machine_key -> eligibility text (grouped)
+    _leftover_scalars = []    # (label, value) for other simple scalars
+    _has_course_details = bool(job_obj.get('course_details'))
+    _ad_keys = set(job_obj.get('_ad_derived_keys') or [])
+    # known structural keys we never want to re-render as "unknown"
+    _NEVER_AS_UNKNOWN = set(SKIP_KEYS) | set(SECTION_ORDER) | {
+        'meta', 'sections', 'short_information', 'organization', 'total_post',
+        'totalpost', 'post_date', 'name', 'breadcrumbs', 'course_name',
+        'how_to_apply', 'physical_eligibility', 'result_url', 'answer_key_url',
+        'resulturl', 'answerkeyurl', '_ad_derived_keys',
+    }
     for key, val in job_obj.items():
-        if key in rendered or key in SKIP_KEYS: continue
-        if not val or val == {} or val == []: continue
-        sv = safe(val) if not isinstance(val,(list,dict)) else None
-        if sv:
-            body = f'<div class="edu-sec">{e(sv)}</div>'
-            html += sec_card(key_label(key), 'fa-circle-dot', '475569,#334155', body)
+        if key in rendered or key in _NEVER_AS_UNKNOWN:
+            continue
+        if not val or val == {} or val == []:
+            continue
+        # additionalData-derived course/eligibility blob
+        if key in _ad_keys and isinstance(val, str):
+            if _has_course_details:
+                continue            # clean course_details table already covers it
+            _dyn_elig[key] = val
+            continue
+        if isinstance(val, str):
+            _looks_elig = bool(re.search(r'(\d+%|\bmarks\b|\bpass(ed)?\b|10\+2|graduation|bachelor|degree|diploma)', val, re.I))
+            if _looks_elig and _has_course_details:
+                continue
+            if _looks_elig and len(val) < 400:
+                _dyn_elig[key] = val
+            else:
+                _leftover_scalars.append((key_label(key), val))
+        elif isinstance(val, list):
+            _lb = _render_unknown_list(val)
+            if _lb:
+                html += sec_card(key_label(key), 'fa-circle-dot', '475569,#334155', _lb)
+        elif isinstance(val, dict):
+            _db = render_kv_dict(val)
+            if _db and _db.strip():
+                html += sec_card(key_label(key), 'fa-circle-dot', '475569,#334155', _db)
+
+    # grouped dynamic eligibility table (only if course_details didn't already cover it)
+    if _dyn_elig:
+        _rows = ''.join(
+            f'<tr><td>{e(key_label(_k))}</td><td>{e(safe(_v))}</td></tr>'
+            for _k, _v in _dyn_elig.items())
+        _body = ('<table class="kv-table"><tbody>'
+                 '<tr><th>Course / Category</th><th>Eligibility</th></tr>'
+                 + _rows + '</tbody></table>')
+        html += sec_card('Course-wise Eligibility', 'fa-list-check', '4338ca,#6366f1', _body)
+
+    # leftover simple scalars (result_url etc. are handled separately above)
+    for _lbl, _val in _leftover_scalars:
+        html += sec_card(_lbl, 'fa-circle-dot', '475569,#334155',
+                         f'<div class="edu-sec">{e(safe(_val))}</div>')
 
     # ── Auto-FAQ: if no JSON FAQ was rendered, generate from page data ──
     if 'faq' not in rendered:
@@ -1740,9 +1846,31 @@ def build_all_sections(job_obj):
                 html += sec_card('faq', _m[1], _m[2], _auto_body)
                 rendered.add('faq')
 
+    # ── Safety net: drop any sec-card whose heading already appeared earlier ──
+    # (guards against a field rendering both inside `sections` and as a top-level
+    # SECTION_ORDER key — e.g. Important Dates / Application Fee on some edu jobs.)
+    html = _dedup_section_cards(html)
+
     return html
 
-# ── Schema builder ─────────────────────────────────────────────
+def _dedup_section_cards(html):
+    """Remove duplicate sec-card blocks that share the same <h2> heading,
+    keeping the first occurrence. Handles both <div class="sec-card"> and
+    <section class="sec-card"> wrappers. Non-card html is left untouched."""
+    if not html or 'sec-card' not in html:
+        return html
+    parts = re.split(r'(?=<(?:div|section) class="sec-card")', html)
+    seen = set()
+    out = []
+    for p in parts:
+        m = re.search(r'<h2>([^<]+)</h2>', p)
+        if m:
+            key = re.sub(r'\s+', ' ', m.group(1)).strip().lower()
+            if key in seen and key not in ('additional details',):
+                continue
+            seen.add(key)
+        out.append(p)
+    return ''.join(out)
 
 # N9: Parse salary from pay_scale string for accurate JobPosting schema
 _LEVEL_PAY = {1:18000,2:19900,3:21700,4:25500,5:29200,6:35400,
@@ -2444,6 +2572,10 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
   {sections_html}
   {rel_links}
 </div>'''
+    # Final safety net: collapse any duplicate section cards that slipped through
+    # from different render paths (sarkari sections + structured fields, etc.).
+    # Related-Jobs block has no <h2>, so it is never affected.
+    body = _dedup_section_cards(body)
 
     # FIX #9: context-aware OG image (fixes the ['/result','/result'] dup bug)
     _intent_img = page_intent(job_obj)
@@ -3155,6 +3287,7 @@ def _normalize_sarkari_job(job):
             j[snk] = j[cam]
     # additionalData.howToApply → how_to_apply
     ad = j.get('additionalData') or {}
+    _ad_derived = set()
     if isinstance(ad, dict):
         if ad.get('howToApply') and not j.get('how_to_apply'):
             j['how_to_apply'] = ad['howToApply']
@@ -3162,6 +3295,28 @@ def _normalize_sarkari_job(job):
             sk = _camel_to_snake(k)
             if v and not j.get(sk):
                 j[sk] = v
+                _ad_derived.add(sk)
+    # remember which top-level keys came from additionalData (course-eligibility
+    # blobs) so the detail builder can fold them into one table / drop dups.
+    if _ad_derived:
+        j['_ad_derived_keys'] = sorted(_ad_derived)
+    # Merge top-level resultUrl / answerKeyUrl into important_links so the
+    # detail page shows them as Result / Answer Key buttons (was dropped before).
+    _url_map = {'resultUrl': 'result_link', 'result_url': 'result_link',
+                'answerKeyUrl': 'answer_key', 'answer_key_url': 'answer_key',
+                'admitCardUrl': 'admit_card', 'admit_card_url': 'admit_card'}
+    _il = j.get('important_links')
+    for _src, _dst in _url_map.items():
+        _u = j.get(_src)
+        if isinstance(_u, str) and _u.strip().startswith('http'):
+            if isinstance(_il, dict):
+                _il.setdefault(_dst, _u)
+            elif isinstance(_il, list):
+                if not any(isinstance(x, dict) and x.get('url') == _u for x in _il):
+                    _il.append({'title': _dst.replace('_', ' ').title(), 'url': _u})
+            else:
+                j['important_links'] = {_dst: _u}
+                _il = j['important_links']
     # snake-ify inner keys of important_dates / application_fee dicts
     # REPLACE camel keys (do NOT keep both — that caused duplicate rows)
     for key in ('important_dates', 'application_fee', 'application_fees'):
@@ -3363,6 +3518,44 @@ for job in SARK:
             _vac_all.extend([r for r in _vv if isinstance(r, dict)])
     full = {'basic_details':bd,'important_dates':imp_dates,'application_fee':job.get('application_fees') or job.get('application_fee') or {},'age_limit':age,'qualification':job.get('eligibility') or job.get('qualification') or {},'vacancy_details':_vac_all or (job.get('vacancy_details') or []),'salary_details':{'pay_scale':safe(job.get('salary_pay_scale',''))} if job.get('salary_pay_scale') else {},'how_to_apply':[job['how_to_apply']] if isinstance(job.get('how_to_apply'),str) and job.get('how_to_apply') else (job.get('how_to_apply') or []),'important_links':il,'sections':sections_out,'faq':job.get('faq') or [],'category':job.get('category',''),'slug':slug,
              'tables':job.get('tables') or [],'text_sections':job.get('text_sections') or [],'useful_links':job.get('useful_links') or [],'all_links':job.get('all_links') or [],'details_page_content':job.get('details_page_content') or {}}
+    # A-to-Z COMPLETENESS: carry over EVERY other key from the normalized job
+    # (course_details, data_tables, dynamic additionalData eligibility keys,
+    # result_url, answer_key_url, exam_pattern, syllabus, selection_process, ...)
+    # so build_all_sections can render the full JSON — nothing silently dropped.
+    # SKIP the camelCase originals (their snake_case forms are already in `full`)
+    # plus scalar meta fields that are shown in the header/overview already.
+    _FULL_SKIP = {
+        # already placed into `full` above (snake_case)
+        'basic_details','important_dates','application_fee','application_fees',
+        'age_limit','qualification','eligibility','vacancy_details',
+        'subject_wise_vacancy','salary_pay_scale','salary_details','how_to_apply',
+        'important_links','sections','faq','category','slug','tables',
+        'text_sections','useful_links','all_links','details_page_content',
+        # camelCase duplicates of the above (would re-render as dup cards)
+        'importantDates','applicationFee','applicationFees','ageLimit',
+        'vacancyDetails','subjectWiseVacancy','categoryWiseVacancy',
+        'category_wise_vacancy','howToApply','importantLinks','usefulLinks',
+        'textSections','dataTables','courseDetails','selectionProcess',
+        # scalar/meta fields shown in header or not meaningful as a card
+        'title','meta','additionalData','additional_data','postDate','post_date',
+        'totalPost','total_post','shortInfo','short_information','short_info',
+        'organization','name','source_url','url','resultUrl','answerKeyUrl',
+        'admitCardUrl','result_url','answer_key_url','admit_card_url',
+        'seo_tags','status',
+    }
+    # keys we DO want as cards even though dynamic: course_details, data_tables,
+    # exam_pattern, syllabus, selection_process, physical_eligibility (snake forms)
+    for _jk, _jv in job.items():
+        if _jk in _FULL_SKIP or _jk in full:
+            continue
+        if _jv in (None, '', [], {}):
+            continue
+        full[_jk] = _jv
+    # ensure the clean course_details / data_tables snake forms reach the renderer
+    if job.get('course_details') and 'course_details' not in full:
+        full['course_details'] = job['course_details']
+    if job.get('data_tables') and 'data_tables' not in full:
+        full['data_tables'] = job['data_tables']
     canon = f"{BASE_URL}/jobs/{slug}/"
     bc    = [('Latest Jobs', f"{BASE_URL}/section/latest-jobs/")]
     write(str(ROOT/'jobs'/slug/'index.html'), build_detail_page(full, slug, canon, bc))
