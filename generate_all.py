@@ -890,6 +890,8 @@ def render_vacancy_table(vac_list):
         ('ur',['ur','general','UR','General (UR)','General']),
         ('obc',['obc','OBC']),('sc',['sc','SC']),('st',['st','ST']),('ews',['ews','EWS']),
         ('women',['women','Women','female','Female']),
+        ('male',['male','Male','men','Men']),
+        ('transgender',['transgender','Transgender']),
         ('salary',['salary','pay_scale','Scale of Pay','Salary']),
         ('qualification',['eligibility','qualification','Educational Qualification']),
         ('department',['department','Department']),
@@ -897,7 +899,7 @@ def render_vacancy_table(vac_list):
     ]
     LABELS = {'post_name':'Post Name','advt_no':'Advt No','state':'State / UT','language':'Language',
               'total':'Total','ur':'UR/General','obc':'OBC',
-              'sc':'SC','st':'ST','ews':'EWS','women':'Women','salary':'Salary',
+              'sc':'SC','st':'ST','ews':'EWS','women':'Women/Female','male':'Male','transgender':'Transgender','salary':'Salary',
               'qualification':'Qualification','department':'Department','notification_pdf':'Notification'}
     norm = []; avail = set()
     _tbl_heading = ''
@@ -3197,6 +3199,18 @@ def _normalize_sarkari_job(job):
                         _col = _map.get(_ckl)
                         if _col and not nr.get(_col):
                             nr[_col] = _cv
+                # Flatten nested genderWise {male, female} into Male/Female columns
+                # (NDA-type Service | Male | Female | Total tables).
+                _gw = nr.pop('gender_wise', None) or row.get('genderWise')
+                if isinstance(_gw, dict):
+                    for _gk, _gv in _gw.items():
+                        _gkl = str(_gk).strip().lower()
+                        if _gkl in ('male', 'men', 'man') and not nr.get('male'):
+                            nr['male'] = _gv
+                        elif _gkl in ('female', 'women', 'lady') and not nr.get('women'):
+                            nr['women'] = _gv
+                        elif _gkl == 'transgender' and not nr.get('transgender'):
+                            nr['transgender'] = _gv
                 out.append(nr)
             else:
                 out.append(row)
