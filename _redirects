@@ -3639,3 +3639,8 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /jobs/icssr-consultant-3-posts/  /jobs/icssr-consultant-recruitment-2026-apply-offline/  301
 /jobs/netra-chief-executive-officer-1-posts/  /jobs/netra-chief-executive-officer-recruitment-2026-apply-online/  301
 /jobs/derc-consultant-10-posts/  /jobs/derc-consultant-recruitment-2026-apply-online/  301
+
+# ══ auto: duplicate job pages → canonical (One-HTML-One-URL) ══
+/jobs/dmsrde-junior-research-fellow-1-posts/  /jobs/dmsrde-junior-research-fellow-recruitment-2026-walkin/  301
+/jobs/wcd-odisha-anganwadi-worker-5-posts/  /jobs/wcd-odisha-anganwadi-worker-recruitment-2026-apply-online/  301
+/jobs/rri-research-assistant-ra-2-posts/  /jobs/rri-research-assistant-recruitment-2026-apply-online/  301
