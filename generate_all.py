@@ -881,40 +881,102 @@ def render_faq(faq_list):
     return items
 
 def render_vacancy_table(vac_list):
+    """Render vacancy rows. SR pages cram a Vacancy-Details table (Post Name |
+    Total | Qualification) AND a Category-Wise table (Post Name | UR | OBC | SC |
+    ST | EWS | Total) into one vacancy_details list. These must render as TWO
+    SEPARATE tables (matching the original site), not one mixed table with empty
+    cells. We split rows by their tableHeading / column signature and render each
+    group on its own."""
     if not vac_list or not isinstance(vac_list, list): return ''
-    ALL_COLS = [
-        ('post_name',['post_name','post','name','Post Name','Name Of Post','Post','subject','Subject']),
-        ('subjects',['subjects','Subjects','subject_details','Subjects Details']),
-        ('advt_no',['advt_no','Advt No','advertisement_no','Advertisement No']),
-        ('state',['State / UT','State/UT','state','State','State / Ut']),
-        ('language',['Language','language','Medium','medium']),
-        ('total',['total','total_post','total_vacancies','total_posts','vacancies','Total Posts','Total','Vacancy']),
-        ('age',['age','ageLimit','age_limit','Age Limit','Age','age_details']),
-        ('ur',['ur','general','UR','General (UR)','General']),
-        ('obc',['obc','OBC']),('sc',['sc','SC']),('st',['st','ST']),('ews',['ews','EWS']),
-        ('women',['women','Women','female','Female']),
-        ('male',['male','Male','men','Men']),
-        ('transgender',['transgender','Transgender']),
-        ('salary',['salary','pay_scale','Scale of Pay','Salary']),
-        ('qualification',['eligibility','qualification','Educational Qualification']),
-        ('department',['department','Department']),
-        ('notification_pdf',['notification_pdf','notification_link','pdf','Notification PDF']),
-    ]
+
+    _CW_KEYS = ('ur','obc','sc','st','ews','general','unreserved','bc','ebc')
+    def _row_is_catwise(r):
+        if not isinstance(r, dict): return False
+        # explicit nested categoryWise OR flat UR/OBC/SC/ST keys present
+        if r.get('categoryWise') or r.get('category_wise'): return True
+        present = sum(1 for k in r
+                      if str(k).strip().lower() in _CW_KEYS and str(r[k]).strip())
+        return present >= 2
+    def _heading_is_catwise(r):
+        h = safe(r.get('table_heading') or r.get('tableHeading') or '').lower()
+        return 'category wise' in h or 'community wise' in h or 'cat wise' in h
+
+    # split into two ordered groups
+    vac_rows, cat_rows = [], []
+    for r in vac_list:
+        if not isinstance(r, dict): continue
+        if _row_is_catwise(r) or _heading_is_catwise(r):
+            cat_rows.append(r)
+        else:
+            vac_rows.append(r)
+
+    # if there's a genuine split (both groups non-trivial), render separately
+    if cat_rows and (vac_rows or len(cat_rows) >= 1):
+        parts = []
+        if vac_rows:
+            parts.append(_render_vac_group(vac_rows, mode='vacancy'))
+        if cat_rows:
+            parts.append(_render_vac_group(cat_rows, mode='catwise'))
+        return ''.join(p for p in parts if p)
+    # otherwise single table (no category-wise data)
+    return _render_vac_group(vac_list, mode='vacancy')
+
+
+def _render_vac_group(vac_list, mode='vacancy'):
+    if not vac_list or not isinstance(vac_list, list): return ''
+    # column sets differ per table type so each renders clean (no empty columns)
+    if mode == 'catwise':
+        ALL_COLS = [
+            ('post_name',['post_name','post','name','Post Name','Name Of Post','Post','subject','Subject']),
+            ('ur',['ur','general','UR','General (UR)','General']),
+            ('obc',['obc','OBC']),('sc',['sc','SC']),('st',['st','ST']),('ews',['ews','EWS']),
+            ('bc',['bc','BC']),('ebc',['ebc','EBC']),
+            ('women',['women','Women','female','Female']),
+            ('male',['male','Male','men','Men']),
+            ('total',['total','total_post','total_vacancies','total_posts','vacancies','Total Posts','Total','Vacancy']),
+        ]
+    else:
+        ALL_COLS = [
+            ('post_name',['post_name','post','name','Post Name','Name Of Post','Post','subject','Subject']),
+            ('subjects',['subjects','Subjects','subject_details','Subjects Details']),
+            ('advt_no',['advt_no','Advt No','advertisement_no','Advertisement No']),
+            ('state',['State / UT','State/UT','state','State','State / Ut']),
+            ('language',['Language','language','Medium','medium']),
+            ('total',['total','total_post','total_vacancies','total_posts','vacancies','Total Posts','Total','Vacancy']),
+            ('age',['age','ageLimit','age_limit','Age Limit','Age','age_details']),
+            ('male',['male','Male','men','Men']),
+            ('women',['women','Women','female','Female']),
+            ('transgender',['transgender','Transgender']),
+            ('salary',['salary','pay_scale','Scale of Pay','Salary']),
+            ('qualification',['eligibility','qualification','Educational Qualification']),
+            ('department',['department','Department']),
+            ('notification_pdf',['notification_pdf','notification_link','pdf','Notification PDF']),
+        ]
     LABELS = {'post_name':'Post Name','subjects':'Subjects Details','advt_no':'Advt No','state':'State / UT','language':'Language',
               'total':'Total','age':'Age Limit','ur':'UR/General','obc':'OBC',
-              'sc':'SC','st':'ST','ews':'EWS','women':'Women/Female','male':'Male','transgender':'Transgender','salary':'Salary',
+              'sc':'SC','st':'ST','ews':'EWS','bc':'BC','ebc':'EBC','women':'Women/Female','male':'Male','transgender':'Transgender','salary':'Salary',
               'qualification':'Qualification','department':'Department','notification_pdf':'Notification'}
+    # flatten nested categoryWise dict into flat keys so columns line up
+    _flat_list = []
+    for row in vac_list:
+        if not isinstance(row, dict): continue
+        row = dict(row)
+        _cw = row.get('categoryWise') or row.get('category_wise')
+        if isinstance(_cw, dict):
+            for k, v in _cw.items():
+                kl = str(k).strip().lower()
+                if kl and kl not in row:
+                    row[kl] = v
+        _flat_list.append(row)
+    vac_list = _flat_list
     norm = []; avail = set()
     _tbl_heading = ''
     for row in vac_list:
         if not isinstance(row, dict): continue
-        # capture an optional section heading from the scraper (tableHeading)
         if not _tbl_heading:
             _th = safe(row.get('table_heading') or row.get('tableHeading') or '').strip()
             if _th and len(_th) > 5:
                 _tbl_heading = _th
-        # skip rows that clearly belong to a different table (e.g. disability Category/Description
-        # rows leaked into vacancy_details) — they carry none of our known columns
         if not any(a in row for _c, al in ALL_COLS for a in al):
             continue
         n = {}
