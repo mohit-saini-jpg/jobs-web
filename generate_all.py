@@ -884,6 +884,7 @@ def render_vacancy_table(vac_list):
     if not vac_list or not isinstance(vac_list, list): return ''
     ALL_COLS = [
         ('post_name',['post_name','post','name','Post Name','Name Of Post','Post','subject','Subject']),
+        ('subjects',['subjects','Subjects','subject_details','Subjects Details']),
         ('advt_no',['advt_no','Advt No','advertisement_no','Advertisement No']),
         ('state',['State / UT','State/UT','state','State','State / Ut']),
         ('language',['Language','language','Medium','medium']),
@@ -899,7 +900,7 @@ def render_vacancy_table(vac_list):
         ('department',['department','Department']),
         ('notification_pdf',['notification_pdf','notification_link','pdf','Notification PDF']),
     ]
-    LABELS = {'post_name':'Post Name','advt_no':'Advt No','state':'State / UT','language':'Language',
+    LABELS = {'post_name':'Post Name','subjects':'Subjects Details','advt_no':'Advt No','state':'State / UT','language':'Language',
               'total':'Total','age':'Age Limit','ur':'UR/General','obc':'OBC',
               'sc':'SC','st':'ST','ews':'EWS','women':'Women/Female','male':'Male','transgender':'Transgender','salary':'Salary',
               'qualification':'Qualification','department':'Department','notification_pdf':'Notification'}
@@ -1388,6 +1389,7 @@ def build_all_sections(job_obj):
             else:
                 body = ''
         elif key == 'vacancy_details':  body = render_vacancy_table(val)
+        elif key == 'subject_wise_vacancy': body = render_vacancy_table(val) if isinstance(val,list) else ''
         elif key == 'category_wise_vacancy': body = (render_vacancy_table(val) if isinstance(val,list) else render_kv_dict(val) if isinstance(val,dict) else '')
         elif key == 'salary_details':   body = render_list_items(val) if isinstance(val,list) else (render_kv_dict(val) if isinstance(val,dict) else f'<div class="edu-sec">{e(safe(val))}</div>')
         elif key == 'selection_process': body = render_selection(val)
