@@ -1489,22 +1489,36 @@ def build_all_sections(job_obj):
                     job_obj['_table_links'] = _extracted_links
         elif key == 'data_tables':
             # SR scraper dataTables: [{heading, headers:[...], rows:[[col,...]]}]
+            # BULLETPROOF SAFETY NET: even if junk slips into data_tables (old data
+            # or scraper miss), NEVER render duplicate/junk table rows. All real
+            # structured data already lives in vacancy_details / important_dates /
+            # application_fee / age_limit / important_links. So data_tables ko sirf
+            # genuinely-extra clean rows ke liye render karo.
             _dt = val if isinstance(val, list) else []
             _dt_parts = []
-            # if structured important_dates / application_fee already rendered,
-            # drop only the ROWS that merely repeat that same info as text — but
-            # KEEP the rest of the table (eligibility, subjects, post details, etc.)
-            _have_struct = bool(job_obj.get('important_dates') or job_obj.get('application_fee'))
-            # patterns for rows that just duplicate already-structured data or are branding/app noise
-            _DUP_ROW = re.compile(
-                r'(important dates\b.*application begin'
-                r'|application fees?\b.*(general|pay the exam fee)'
-                r'|short details of notification'
-                r'|for the latest updates on'
-                r'|official website of .* for the latest'
-                r'|some useful important links'
-                r'|^\s*app\s*$'
-                r'|click here)', re.I)
+            # text already captured in vacancy_details (eligibility/subjects) →
+            # never re-render it as a junk table row
+            _vac_captured = set()
+            _vd = job_obj.get('vacancy_details') or []
+            if isinstance(_vd, list):
+                for _v in _vd:
+                    if isinstance(_v, dict):
+                        for _f in ('eligibility', 'subjects', 'post_name'):
+                            _tv = safe(_v.get(_f) or '').strip().lower()
+                            if len(_tv) > 15:
+                                _vac_captured.add(_tv[:60])
+            # aggressive junk-row matcher
+            _JUNK_ROW = re.compile(
+                r'important\s*dates?\b|application\s*fees?\b|how\s*to\s*(fill|apply)|'
+                r'some\s*useful|interested\s*candidate|download\s*the\s*sarkari|'
+                r'sarkari\s*result\s*(android|apple|mobile|channel|tools?)|'
+                r'join\s*sarkari|join\s*channel|telegram|whatsapp|'
+                r'signature\s*resizer|pdf\s*compress|age\s*calculat|'
+                r'for\s*the\s*latest\s*updates|short\s*details\s*of\s*notification|'
+                r'official\s*website\s*of|result®|since\s*20\d\d|'
+                r'^\s*app\s*$|^\s*click\s*here\s*$|^\s*download\b|'
+                r'notification\s*20\d\d\s*:|recruitment\s*20\d\d\s*:|'
+                r'exam\s*20\d\d\s*:.*eligibility|:\s*age\s*limit\s*details', re.I)
             for _t in _dt:
                 if not isinstance(_t, dict):
                     continue
@@ -1513,7 +1527,6 @@ def build_all_sections(job_obj):
                 _rows = _t.get('rows') or []
                 if not _rows and not _hdrs:
                     continue
-                # filter rows: keep a row unless it's a date/fee/branding/link duplicate
                 _clean_rows = []
                 for _r in _rows:
                     if not isinstance(_r, list):
@@ -1521,23 +1534,39 @@ def build_all_sections(job_obj):
                     _rtext = ' '.join(safe(c) for c in _r).strip()
                     if not _rtext:
                         continue
-                    # drop only rows that duplicate structured data or are pure noise
-                    if _have_struct and _DUP_ROW.search(_rtext):
+                    # drop junk rows
+                    if _JUNK_ROW.search(_rtext):
                         continue
-                    # drop pure link rows like ["Apply Online","Click Here"] (already in Important Links)
-                    if len(_r) == 2 and re.fullmatch(r'\s*click here\s*', safe(_r[1]), re.I):
+                    # drop pure link rows ["Apply Online","Click Here"]
+                    if len(_r) == 2 and re.fullmatch(
+                            r'\s*(click here|official website|telegram\s*\|?\s*whatsapp'
+                            r'|english\s*\|?\s*hindi)\s*', safe(_r[1]), re.I):
+                        continue
+                    # drop column-header rows (Post Name | ... Eligibility/Total/Subjects)
+                    _rl = _rtext.lower()
+                    if 'post name' in _rl and any(
+                            k in _rl for k in ['eligib', 'total', 'subject', 'qualif']):
+                        continue
+                    # drop single-cell section-heading rows
+                    _nonempty = [c for c in _r if safe(c).strip()]
+                    if len(_nonempty) == 1 and re.search(
+                            r':\s*(eligibility|age limit|vacancy|physical|category|'
+                            r'subject|selection)\b', _rtext, re.I):
+                        continue
+                    # drop rows already captured in vacancy_details
+                    if any(safe(c).strip().lower()[:60] in _vac_captured for c in _r):
                         continue
                     _clean_rows.append(_r)
-                if not _clean_rows and not _hdrs:
+                # require at least one multi-column data row to render at all
+                _multi = [r for r in _clean_rows
+                          if len([c for c in r if safe(c).strip()]) >= 2]
+                if not _multi:
                     continue
-                # also drop a headers list that's just the branding/short-details line
                 _hdrs_clean = _hdrs
                 if isinstance(_hdrs, list):
                     _h_join = ' '.join(safe(h) for h in _hdrs)
-                    if _DUP_ROW.search(_h_join) or 'Short Details of Notification' in _h_join:
+                    if _JUNK_ROW.search(_h_join) or 'Short Details' in _h_join:
                         _hdrs_clean = []
-                if not _clean_rows:
-                    continue
                 _tbl = '<table class="kv-table"><tbody>'
                 if isinstance(_hdrs_clean, list) and any(safe(h) for h in _hdrs_clean):
                     _tbl += '<tr>' + ''.join(f'<th>{e(safe(h))}</th>' for h in _hdrs_clean if safe(h)) + '</tr>'
