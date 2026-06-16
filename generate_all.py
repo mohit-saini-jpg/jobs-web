@@ -888,6 +888,7 @@ def render_vacancy_table(vac_list):
         ('state',['State / UT','State/UT','state','State','State / Ut']),
         ('language',['Language','language','Medium','medium']),
         ('total',['total','total_post','total_vacancies','total_posts','vacancies','Total Posts','Total','Vacancy']),
+        ('age',['age','ageLimit','age_limit','Age Limit','Age','age_details']),
         ('ur',['ur','general','UR','General (UR)','General']),
         ('obc',['obc','OBC']),('sc',['sc','SC']),('st',['st','ST']),('ews',['ews','EWS']),
         ('women',['women','Women','female','Female']),
@@ -899,7 +900,7 @@ def render_vacancy_table(vac_list):
         ('notification_pdf',['notification_pdf','notification_link','pdf','Notification PDF']),
     ]
     LABELS = {'post_name':'Post Name','advt_no':'Advt No','state':'State / UT','language':'Language',
-              'total':'Total','ur':'UR/General','obc':'OBC',
+              'total':'Total','age':'Age Limit','ur':'UR/General','obc':'OBC',
               'sc':'SC','st':'ST','ews':'EWS','women':'Women/Female','male':'Male','transgender':'Transgender','salary':'Salary',
               'qualification':'Qualification','department':'Department','notification_pdf':'Notification'}
     norm = []; avail = set()
@@ -1489,8 +1490,19 @@ def build_all_sections(job_obj):
             _dt = val if isinstance(val, list) else []
             _dt_parts = []
             # if structured important_dates / application_fee already rendered,
-            # skip raw table blobs that merely repeat that same info as text
+            # drop only the ROWS that merely repeat that same info as text — but
+            # KEEP the rest of the table (eligibility, subjects, post details, etc.)
             _have_struct = bool(job_obj.get('important_dates') or job_obj.get('application_fee'))
+            # patterns for rows that just duplicate already-structured data or are branding/app noise
+            _DUP_ROW = re.compile(
+                r'(important dates\b.*application begin'
+                r'|application fees?\b.*(general|pay the exam fee)'
+                r'|short details of notification'
+                r'|for the latest updates on'
+                r'|official website of .* for the latest'
+                r'|some useful important links'
+                r'|^\s*app\s*$'
+                r'|click here)', re.I)
             for _t in _dt:
                 if not isinstance(_t, dict):
                     continue
@@ -1499,19 +1511,34 @@ def build_all_sections(job_obj):
                 _rows = _t.get('rows') or []
                 if not _rows and not _hdrs:
                     continue
-                # detect blob tables that just repeat dates/fee/short-details text
-                _blob = ' '.join(
-                    safe(c) for r in _rows if isinstance(r, list) for c in r
-                ) + ' ' + ' '.join(safe(h) for h in _hdrs)
-                if _have_struct and re.search(r'(important dates|short details|application begin|application fee.*pay)', _blob, re.I) and len(_blob) > 200:
-                    continue  # skip messy duplicate-of-structured blob
-                # skip pure link tables / tiny noise
-                _clean_rows = [r for r in _rows if isinstance(r, list) and any(safe(c) for c in r)]
+                # filter rows: keep a row unless it's a date/fee/branding/link duplicate
+                _clean_rows = []
+                for _r in _rows:
+                    if not isinstance(_r, list):
+                        continue
+                    _rtext = ' '.join(safe(c) for c in _r).strip()
+                    if not _rtext:
+                        continue
+                    # drop only rows that duplicate structured data or are pure noise
+                    if _have_struct and _DUP_ROW.search(_rtext):
+                        continue
+                    # drop pure link rows like ["Apply Online","Click Here"] (already in Important Links)
+                    if len(_r) == 2 and re.fullmatch(r'\s*click here\s*', safe(_r[1]), re.I):
+                        continue
+                    _clean_rows.append(_r)
                 if not _clean_rows and not _hdrs:
                     continue
+                # also drop a headers list that's just the branding/short-details line
+                _hdrs_clean = _hdrs
+                if isinstance(_hdrs, list):
+                    _h_join = ' '.join(safe(h) for h in _hdrs)
+                    if _DUP_ROW.search(_h_join) or 'Short Details of Notification' in _h_join:
+                        _hdrs_clean = []
+                if not _clean_rows:
+                    continue
                 _tbl = '<table class="kv-table"><tbody>'
-                if isinstance(_hdrs, list) and any(safe(h) for h in _hdrs):
-                    _tbl += '<tr>' + ''.join(f'<th>{e(safe(h))}</th>' for h in _hdrs if safe(h)) + '</tr>'
+                if isinstance(_hdrs_clean, list) and any(safe(h) for h in _hdrs_clean):
+                    _tbl += '<tr>' + ''.join(f'<th>{e(safe(h))}</th>' for h in _hdrs_clean if safe(h)) + '</tr>'
                     _first_is_header = False
                 else:
                     _first_is_header = True
@@ -2771,6 +2798,9 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
         # Also strip trailing hash suffix (-xxxxxx)
         jslug = _re2.sub(r'-[0-9a-f]{6,8}$','', jslug) if jslug else ''
         jslug = jslug or slugify(jtitle)
+        # Landing/index pages can override the per-row link target (e.g. /state/{slug}/
+        # instead of /jobs/{slug}/) via the optional _listing_url field.
+        _row_url = safe(job.get('_listing_url','')) or f"/jobs/{e(jslug)}/"
         jorg   = safe(bd.get('organization_name','') or 'Government')
         jvac   = safe(bd.get('total_vacancies','') or job.get('total_post',''))
         jld    = safe(dates.get('last_date_to_apply','') or dates.get('last_date_apply_online','') or dates.get('last_date','') or job.get('last_date',''))
@@ -2833,8 +2863,8 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
             if jstatus in _smap:
                 _bg, _cl, _lb = _smap[jstatus]
                 status_badge = f'<span class="jm-badge" style="background:{_bg};color:{_cl}">{_lb}</span>'
-        cards_html += f'''<article class="job-card" data-title="{e(jtitle.lower())}" data-org="{e(jorg.lower())}" onclick="if(!getSelection().toString()){{location.href='/jobs/{e(jslug)}/'}}">
-  <div class="job-card-title"><span class="jc-sn">{_idx}</span><a href="/jobs/{e(jslug)}/">{e(jtitle)}</a></div>
+        cards_html += f'''<article class="job-card" data-title="{e(jtitle.lower())}" data-org="{e(jorg.lower())}" onclick="if(!getSelection().toString()){{location.href='{_row_url}'}}">
+  <div class="job-card-title"><span class="jc-sn">{_idx}</span><a href="{_row_url}">{e(jtitle)}</a></div>
   <div class="job-card-org"><i class="fa-regular fa-building"></i> {e(jorg[:60])}</div>
   <div class="job-card-meta">
     {f'<span class="jm-badge" style="background:#dcfce7;color:#15803d">{e(jvac)} Posts</span>' if jvac else ''}
@@ -3567,10 +3597,12 @@ print(f"  All /jobs/: {j_count}")
 
 # 3. STATE PAGES
 print("Generating /state/ pages...")
+_state_landing_items = []   # (state_name, slug, job_count) for /state/ landing index
 for sec in SJ_SEC:
     state_name = safe(sec.get('state') or sec.get('title',''))
     raw_state_slug = slugify(state_name)
     state_slug = STATE_SLUG_FIX.get(raw_state_slug, raw_state_slug)
+    _state_landing_items.append((state_name, state_slug, len(sec.get('items', []))))
     for item in sec.get('items', []):
         name = safe(item.get('name','') or item.get('title',''))
         if not name: continue
@@ -3642,6 +3674,24 @@ for sec in SJ_SEC:
 
 print(f"  State pages: {s_count}")
 
+# 3b. /state/ LANDING INDEX — links to every /state/{slug}/ page.
+# Reuse build_listing_page: feed each state as a "job" whose title links out.
+_state_landing_jobs = [
+    {'basic_details': {'job_title': f"{n} Government Jobs {YEAR}",
+                       'organization_name': n,
+                       'total_vacancies': str(c) if c else ''},
+     'source_url': f"/state/{s}/",
+     '_listing_url': f"/state/{s}/"}
+    for (n, s, c) in sorted(_state_landing_items)
+]
+write(str(ROOT/'state'/'index.html'), build_listing_page(
+    f"State Wise Government Jobs {YEAR}",
+    _state_landing_jobs,
+    f"{BASE_URL}/state/",
+    [('Home','/'),('State Jobs','/state/')],
+    f"Browse latest state government jobs {YEAR}. Select your state for all current sarkari naukri openings."))
+print(f"  /state/ landing: {len(_state_landing_jobs)} states")
+
 # 4. EDUCATION PAGES
 print("Generating /education/ pages...")
 for sec in EDU_SEC:
@@ -3687,6 +3737,27 @@ for sec in EDU_SEC:
         write(str(ROOT/'education'/sec_id/'index.html'), build_listing_page(f"{sec_title} Education Updates", edu_jobs, f"{BASE_URL}/education/{sec_id}/", [('Education','/education/')]))
 
 print(f"  Education pages: {e_count}")
+
+# 4b. /education/ LANDING INDEX — links to every /education/{id}/ page
+_edu_landing_jobs = []
+for sec in EDU_SEC:
+    _eid   = safe(sec.get('id','') or sec.get('title',''))
+    _etit  = safe(sec.get('title','') or _eid)
+    if not _eid:
+        continue
+    _edu_landing_jobs.append({
+        'basic_details': {'job_title': f"{_etit} Education Jobs {YEAR}",
+                          'organization_name': _etit,
+                          'total_vacancies': str(len(sec.get('items', []))) if sec.get('items') else ''},
+        '_listing_url': f"/education/{_eid}/"})
+if _edu_landing_jobs:
+    write(str(ROOT/'education'/'index.html'), build_listing_page(
+        f"State Wise Education Jobs {YEAR}",
+        _edu_landing_jobs,
+        f"{BASE_URL}/education/",
+        [('Home','/'),('Education','/education/')],
+        f"Browse latest education department jobs {YEAR} state-wise. Teaching and non-teaching sarkari naukri updated daily."))
+    print(f"  /education/ landing: {len(_edu_landing_jobs)} states")
 
 # 5. CATEGORY/STUDY PAGES
 print("Generating /category/study/ pages...")
@@ -3756,6 +3827,29 @@ for cat_slug, cat_data in _cat_listing_jobs.items():
 with open(ROOT / 'Qualification_Wise_Jobs.json', 'w', encoding='utf-8') as _qf:
     json.dump({'sections': _qual_sections}, _qf, ensure_ascii=False, separators=(',', ':'))
 print(f"  Qualification_Wise_Jobs.json: {len(_qual_sections)} sections")
+
+# 5b. /category/study/ LANDING INDEX — links to every /category/study/{slug}/ page
+_study_landing_jobs = []
+for cat_slug, cat_data in _cat_listing_jobs.items():
+    if cat_slug in _NON_STUDY:
+        continue
+    _cjobs = cat_data.get('jobs', [])
+    if not _cjobs:
+        continue
+    _clabel = cat_data.get('label', cat_slug.replace('-', ' ').title())
+    _study_landing_jobs.append({
+        'basic_details': {'job_title': f"{_clabel} Government Jobs {YEAR}",
+                          'organization_name': _clabel,
+                          'total_vacancies': str(len(_cjobs))},
+        '_listing_url': f"/category/study/{cat_slug}/"})
+if _study_landing_jobs:
+    write(str(ROOT/'category'/'study'/'index.html'), build_listing_page(
+        f"Qualification Wise Government Jobs {YEAR}",
+        _study_landing_jobs,
+        f"{BASE_URL}/category/study/",
+        [('Home','/'),('Study Wise Jobs','/category/study/')],
+        f"Find government jobs by qualification {YEAR}: 8th, 10th, 12th, ITI, Diploma, Graduate, Post Graduate and more. Updated daily."))
+    print(f"  /category/study/ landing: {len(_study_landing_jobs)} qualifications")
 
 # 6. SECTION LISTING PAGES
 print("Generating /section/ pages...")
