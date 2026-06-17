@@ -914,6 +914,8 @@ def build_static_html(slug, title, full_job_obj, cat):
       .then(function(h){{if(h){{var d=document.getElementById('footerPlaceholder');if(d)d.outerHTML=h;}}}});
   </script>
   <script src="/tsj-menu.js" defer></script>
+  <!-- FAQ accordion init -->
+  <script src="/faq-init.js" defer></script>
   <noscript>
     <div style="font-family:sans-serif;max-width:800px;margin:40px auto;padding:20px">
       <h1>{e(title)}</h1>
@@ -936,12 +938,27 @@ existing_json = set(os.listdir(DEST))
 existing_dirs = set(d for d in os.listdir(JOBS_DIR)
                     if os.path.isdir(os.path.join(JOBS_DIR, d)) and d != 'data')
 
-index      = {}
+# Load existing index so it's cumulative — never lose old entries
+if os.path.exists(INDEX):
+    try:
+        with open(INDEX, encoding='utf-8') as _f:
+            index = json.load(_f)
+        if not isinstance(index, dict):
+            index = {}
+    except Exception:
+        index = {}
+else:
+    index = {}
+
 new_files  = set()
 new_dirs   = set()
 written    = 0
 skipped    = 0
 seen_slugs = {}
+# Pre-populate seen_slugs from existing index to prevent cross-run duplicates
+for _existing_slug in index:
+    seen_slugs[_existing_slug] = index[_existing_slug].get('cat', 'existing') \
+        if isinstance(index[_existing_slug], dict) else 'existing'
 redirects_new = []  # (from_path, to_path) for sr_ variants
 
 if not os.path.exists(SRC):
@@ -1003,8 +1020,10 @@ for cat, jobs in fja.items():
 
         slug_dir = os.path.join(JOBS_DIR, slug)
         os.makedirs(slug_dir, exist_ok=True)
-        with open(os.path.join(slug_dir, 'index.html'), 'w', encoding='utf-8') as f2:
-            f2.write(build_static_html(slug, title, job, cat))
+        html_path = os.path.join(slug_dir, 'index.html')
+        if not os.path.exists(html_path):
+            with open(html_path, 'w', encoding='utf-8') as f2:
+                f2.write(build_static_html(slug, title, job, cat))
         new_dirs.add(slug)
 
         dates = job.get('important_dates', {}) or {}
@@ -1093,8 +1112,10 @@ for job in sd_jobs:
 
     slug_dir = os.path.join(JOBS_DIR, slug)
     os.makedirs(slug_dir, exist_ok=True)
-    with open(os.path.join(slug_dir, 'index.html'), 'w', encoding='utf-8') as f2:
-        f2.write(build_static_html(slug, title, full, 'Latest_Notifications'))
+    html_path = os.path.join(slug_dir, 'index.html')
+    if not os.path.exists(html_path):
+        with open(html_path, 'w', encoding='utf-8') as f2:
+            f2.write(build_static_html(slug, title, full, 'Latest_Notifications'))
     new_dirs.add(slug)
 
     last_date = safe(imp_dates.get('last_date_to_apply') or imp_dates.get('last_date') or '')
@@ -1158,8 +1179,10 @@ for sec in sj_sections:
 
         slug_dir = os.path.join(JOBS_DIR, slug)
         os.makedirs(slug_dir, exist_ok=True)
-        with open(os.path.join(slug_dir, 'index.html'), 'w', encoding='utf-8') as f2:
-            f2.write(build_static_html(slug, name, full, 'Latest_Notifications'))
+        html_path = os.path.join(slug_dir, 'index.html')
+        if not os.path.exists(html_path):
+            with open(html_path, 'w', encoding='utf-8') as f2:
+                f2.write(build_static_html(slug, name, full, 'Latest_Notifications'))
         new_dirs.add(slug)
 
         last_date = safe(dates_raw.get('last_date_to_apply') or '')
@@ -1168,17 +1191,13 @@ for sec in sj_sections:
 
 print(f"  state_jobs: {sj_count} jobs")
 
-# ── Cleanup stale files ──
-stale_json = existing_json - new_files
-for f in stale_json:
-    try: os.remove(os.path.join(DEST, f))
-    except: pass
+# ── Cleanup stale files — DISABLED ──
+# JSON data files are NEVER auto-deleted — they back the permanent HTML pages.
+preserved_json = existing_json - new_files
 
-import shutil
-stale_dirs = existing_dirs - new_dirs
-for d in stale_dirs:
-    try: shutil.rmtree(os.path.join(JOBS_DIR, d))
-    except: pass
+# HTML dirs are NEVER auto-deleted — pages accumulate permanently for SEO.
+# Use the manual "delete-old-pages.yml" workflow if cleanup is ever needed.
+preserved_dirs = existing_dirs - new_dirs
 
 # ── Write jobs-index.json ──
 with open(INDEX, 'w', encoding='utf-8') as f:
@@ -1197,6 +1216,6 @@ if redirects_new:
 
 print(f"\n✅ DONE!")
 print(f"  Total jobs written : {written}")
-print(f"  JSON files deleted : {len(stale_json)}")
-print(f"  HTML dirs deleted  : {len(stale_dirs)}")
+print(f"  JSON files preserved (not deleted) : {len(preserved_json)}")
+print(f"  HTML dirs preserved (not deleted)  : {len(preserved_dirs)}")
 print(f"  Index entries      : {len(index)}")
