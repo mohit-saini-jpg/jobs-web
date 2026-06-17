@@ -386,8 +386,10 @@ SECTION_META = {
     'application_fee':      ('Application Fee',           'fa-indian-rupee-sign',  'c2410c,#ea580c'),
     'age_limit':            ('Age Limit',                 'fa-user-clock',         '0f766e,#0891b2'),
     'qualification':        ('Qualification / Eligibility','fa-graduation-cap',    '4338ca,#6366f1'),
+    'eligibility_section':  ('Eligibility Details',        'fa-graduation-cap',    '4338ca,#6366f1'),
     'course_details':       ('Course-wise Eligibility',    'fa-list-check',         '4338ca,#6366f1'),
     'vacancy_details':      ('Vacancy Details',           'fa-chart-pie',          '15803d,#16a34a'),
+    'subject_wise_vacancy': ('Subject-wise Vacancy',      'fa-chart-bar',          '15803d,#16a34a'),
     'category_wise_vacancy':('Category-wise Vacancy',     'fa-chart-bar',          '15803d,#16a34a'),
     'salary_details':       ('Salary & Pay Scale',        'fa-indian-rupee-sign',  '15803d,#16a34a'),
     'selection_process':    ('Selection Process',         'fa-list-check',         '5b21b6,#7c3aed'),
@@ -900,6 +902,39 @@ def render_vacancy_table(vac_list):
     def _heading_is_catwise(r):
         h = safe(r.get('table_heading') or r.get('tableHeading') or '').lower()
         return 'category wise' in h or 'community wise' in h or 'cat wise' in h
+    def _row_has_qual(r):
+        return bool(isinstance(r, dict) and (
+            safe(r.get('qualification') or r.get('eligibility')).strip()))
+
+    # OLD-DATA / merged-row handling: a single row may carry BOTH qualification
+    # AND category-wise columns (older scraper merged them). Split such a row into
+    # TWO logical rows so the renderer can show separate Vacancy + Category-Wise
+    # tables (matching the source site).
+    _expanded = []
+    for r in vac_list:
+        if not isinstance(r, dict):
+            continue
+        _has_cw = _row_is_catwise(r)
+        _has_q = _row_has_qual(r)
+        if _has_cw and _has_q:
+            # vacancy part (drop category cols)
+            _vpart = {k: v for k, v in r.items()
+                      if str(k).strip().lower() not in _CW_KEYS
+                      and k not in ('categoryWise', 'category_wise')}
+            # catwise part (drop qualification/eligibility/subjects)
+            _cpart = {k: v for k, v in r.items()
+                      if k not in ('qualification', 'eligibility', 'subjects',
+                                   'age', 'department')}
+            # mark catwise heading so it groups correctly
+            _cpart['table_heading'] = (safe(r.get('table_heading') or r.get('tableHeading'))
+                                       or 'Category Wise Vacancy Details')
+            if 'category wise' not in _cpart['table_heading'].lower():
+                _cpart['table_heading'] = 'Category Wise Vacancy Details'
+            _expanded.append(_vpart)
+            _expanded.append(_cpart)
+        else:
+            _expanded.append(r)
+    vac_list = _expanded
 
     # split into two ordered groups
     vac_rows, cat_rows = [], []
@@ -977,13 +1012,27 @@ def _render_vac_group(vac_list, mode='vacancy'):
             _th = safe(row.get('table_heading') or row.get('tableHeading') or '').strip()
             if _th and len(_th) > 5:
                 _tbl_heading = _th
-        if not any(a in row for _c, al in ALL_COLS for a in al):
+        # case-insensitive key lookup: SR/edu scrapers use varying key casing
+        # ("Name of Post" vs "Name Of Post" vs "name_of_post"). Build a
+        # lowercased-key view so aliases match regardless of case/spacing.
+        _row_ci = {}
+        for _k, _v in row.items():
+            _row_ci[str(_k).strip().lower()] = _v
+        def _lookup(alias):
+            if alias in row and row[alias] not in (None, '', {}, []):
+                return row[alias]
+            _al = str(alias).strip().lower()
+            if _al in _row_ci and _row_ci[_al] not in (None, '', {}, []):
+                return _row_ci[_al]
+            return None
+        if not any(_lookup(a) is not None for _c, al in ALL_COLS for a in al):
             continue
         n = {}
         for col, aliases in ALL_COLS:
             for a in aliases:
-                if a in row and row[a] not in (None,'',{},[]):
-                    n[col] = safe(row[a]); avail.add(col); break
+                _val = _lookup(a)
+                if _val is not None:
+                    n[col] = safe(_val); avail.add(col); break
         if n: norm.append(n)
     if not norm: return ''
     cols = [c for c,_ in ALL_COLS if c in avail]
@@ -1041,6 +1090,40 @@ def _render_vac_group(vac_list, mode='vacancy'):
         if c == 'notification_pdf' and sval.startswith('http'):
             return '<td><a href="%s" target="_blank" rel="noopener nofollow"><i class="fa-solid fa-file-pdf"></i> PDF</a></td>' % e(sval)
         return '<td>%s</td>' % e(sval)
+
+    # ── ELIGIBILITY SPLIT ──────────────────────────────────────────────
+    # User rule: Vacancy Details table me eligibility/qualification NAHI aani
+    # chahiye — wo ek ALAG table me honi chahiye. Agar vacancy rows me
+    # qualification column hai to use vacancy cols se hata kar ek alag
+    # "Eligibility" sub-table banao (sirf un posts ke liye jinke paas hai).
+    _elig_block = ''
+    if (mode == 'vacancy' and 'qualification' in cols and has_name
+            and 'total' in cols):
+        # only split when there's a real Vacancy table (Post + Total) to stand on
+        # its own; if it's eligibility-only (no total), keep one combined table.
+        _elig_rows = [r for r in clean if str(r.get('qualification', '')).strip()]
+        if _elig_rows:
+            # Many SR pages put ONE shared eligibility on the first post that
+            # applies to all — render Post | Eligibility for the rows that have it.
+            _er_html = ''.join(
+                f'<tr><td>{_i+1}</td><td>{e(safe(_r.get("post_name","")))}</td>'
+                f'<td>{e(safe(_r.get("qualification","")))}</td></tr>'
+                for _i, _r in enumerate(_elig_rows))
+            _eh = ''
+            if _tbl_heading:
+                _ehc = re.sub(r'\s*total\s*:?\s*\d[\d,]*\s*post.*$', '', _tbl_heading, flags=re.I).strip()
+                _ehc = re.sub(r'vacancy\s*details?', 'Eligibility', _ehc, flags=re.I).strip() or 'Eligibility'
+                # if heading already mentions eligibility keep it, else append
+                if 'eligib' not in _ehc.lower():
+                    _ehc = _ehc + ' : Eligibility'
+                _eh = f'<div class="kv-stack-head" style="margin-top:10px">{e(_ehc)}</div>'
+            _elig_block = (_eh + '<div class="tbl-scroll"><table class="data-table">'
+                           '<thead><tr><th>Sr.</th><th>Post Name</th>'
+                           '<th>Eligibility</th></tr></thead><tbody>'
+                           + _er_html + '</tbody></table></div>')
+        # remove qualification from the vacancy table columns
+        cols = [c for c in cols if c != 'qualification']
+
     head = '<th>Sr.</th>' + ''.join(f'<th>{LABELS[c]}</th>' for c in cols)
     rows = ''.join(f'<tr><td>{i+1}</td>' + ''.join(_vac_cell(c, r.get(c,"")) for c in cols) + '</tr>'
                    for i, r in enumerate(clean))
@@ -1062,7 +1145,7 @@ def _render_vac_group(vac_list, mode='vacancy'):
         _clean_h = re.sub(r'\s*total\s*:?\s*\d[\d,]*\s*post.*$', '', _tbl_heading, flags=re.I).strip()
         _clean_h = _clean_h or _tbl_heading
         _head_html = f'<div class="kv-stack-head" style="margin-top:4px">{e(_clean_h)}</div>'
-    return _head_html + f'<div class="tbl-scroll"><table class="data-table"><thead><tr>{head}</tr></thead><tbody>{rows}</tbody></table></div>'
+    return _head_html + f'<div class="tbl-scroll"><table class="data-table"><thead><tr>{head}</tr></thead><tbody>{rows}</tbody></table></div>' + _elig_block
 
 # ── Sarkari sections processor ────────────────────────────────
 TITLE_MAP = {
@@ -1364,7 +1447,7 @@ SKIP_KEYS = {'seo_tags','category','slug','source_url','url','_slug',
              'short_information','board_name','listing_date','title'}
 
 SECTION_ORDER = ['basic_details','important_dates','application_fee','age_limit',
-                 'qualification','course_details','vacancy_details','category_wise_vacancy','salary_details',
+                 'qualification','eligibility_section','course_details','vacancy_details','subject_wise_vacancy','category_wise_vacancy','salary_details',
                  'selection_process','exam_pattern','syllabus','physical_eligibility',
                  'tables','data_tables','text_sections','useful_links','all_links','details_page_content',
                  'how_to_apply','important_instructions','important_links','faq']
@@ -1436,13 +1519,28 @@ def build_all_sections(job_obj):
         elif key == 'qualification':    body = render_qualification(val)
         elif key == 'course_details':
             # SR courseDetails: [{courseName, eligibility}] — render as clean 2-col table
+            # SAFETY NET: older scraper sometimes mis-captured a VACANCY table as
+            # course_details, putting the Total-Post NUMBER (e.g. "178") as
+            # courseName. Skip rows whose courseName is purely numeric/empty, and
+            # skip the whole table if vacancy_details already covers this data.
             _cd = val if isinstance(val, list) else []
+            _vac_posts = set()
+            for _vp in (job_obj.get('vacancy_details') or []):
+                if isinstance(_vp, dict):
+                    _pn = safe(_vp.get('post_name') or _vp.get('postName')).strip().lower()
+                    if _pn: _vac_posts.add(_pn)
             _cd_rows = []
             for _c in _cd:
                 if not isinstance(_c, dict): continue
                 _cn = safe(_c.get('courseName') or _c.get('course_name') or _c.get('course') or '')
                 _el = safe(_c.get('eligibility') or _c.get('eligiblity') or _c.get('qualification') or '')
+                # bad row: courseName missing OR purely a number (it's a post count)
+                if not _cn.strip() or re.fullmatch(r'\d[\d,]*', _cn.strip()):
+                    continue
                 if not (_cn or _el): continue
+                # skip if this course name is already a vacancy post (duplicate)
+                if _cn.strip().lower() in _vac_posts and not _el:
+                    continue
                 _cd_rows.append(f'<tr><td>{e(_cn)}</td><td>{e(_el)}</td></tr>')
             if _cd_rows:
                 body = ('<table class="kv-table"><tbody>'
@@ -1452,6 +1550,18 @@ def build_all_sections(job_obj):
                 body = ''
         elif key == 'vacancy_details':  body = render_vacancy_table(val)
         elif key == 'subject_wise_vacancy': body = render_vacancy_table(val) if isinstance(val,list) else ''
+        elif key == 'eligibility_section':
+            # NDA-type "Army Wing : ...", "For Airforce & Naval Wing : ..."
+            # eligibility blocks. Render each block's heading + bullet items.
+            _es_parts = []
+            for _blk in (val if isinstance(val, list) else []):
+                if not isinstance(_blk, dict): continue
+                _items = _blk.get('items') or []
+                if not _items: continue
+                _lis = ''.join(f'<li>{e(safe(_it))}</li>' for _it in _items if safe(_it).strip())
+                if _lis:
+                    _es_parts.append(f'<ul class="edu-list">{_lis}</ul>')
+            body = ''.join(_es_parts)
         elif key == 'category_wise_vacancy': body = (render_vacancy_table(val) if isinstance(val,list) else render_kv_dict(val) if isinstance(val,dict) else '')
         elif key == 'salary_details':   body = render_list_items(val) if isinstance(val,list) else (render_kv_dict(val) if isinstance(val,dict) else f'<div class="edu-sec">{e(safe(val))}</div>')
         elif key == 'selection_process': body = render_selection(val)
@@ -3404,6 +3514,7 @@ def _normalize_sarkari_job(job):
         'nameOfPost':'name_of_post', 'postName':'post_name',
         'selectionProcess':'selection_process', 'dataTables':'data_tables',
         'subjectWiseVacancy':'subject_wise_vacancy', 'courseDetails':'course_details',
+        'eligibilitySection':'eligibility_section',
     }
     for cam, snk in CAMEL.items():
         if j.get(cam) and not j.get(snk):
@@ -3632,14 +3743,16 @@ for job in SARK:
             if m:
                 age['as_on_date'] = m.group(1)
                 break
-    # Merge all vacancy lists (post-wise + subject-wise + category-wise) so the
-    # vacancy table renders subject rows and notification-PDF links too.
-    _vac_all = []
-    for _vk in ('vacancy_details', 'subject_wise_vacancy', 'category_wise_vacancy'):
-        _vv = job.get(_vk)
-        if isinstance(_vv, list):
-            _vac_all.extend([r for r in _vv if isinstance(r, dict)])
-    full = {'basic_details':bd,'important_dates':imp_dates,'application_fee':job.get('application_fees') or job.get('application_fee') or {},'age_limit':age,'qualification':job.get('eligibility') or job.get('qualification') or {},'vacancy_details':_vac_all or (job.get('vacancy_details') or []),'salary_details':{'pay_scale':safe(job.get('salary_pay_scale',''))} if job.get('salary_pay_scale') else {},'how_to_apply':[job['how_to_apply']] if isinstance(job.get('how_to_apply'),str) and job.get('how_to_apply') else (job.get('how_to_apply') or []),'important_links':il,'sections':sections_out,'faq':job.get('faq') or [],'category':job.get('category',''),'slug':slug,
+    # Keep vacancy_details / subject_wise_vacancy / category_wise_vacancy as
+    # SEPARATE sections — they are DIFFERENT tables on the source site and must
+    # render separately (e.g. MPPSC: vacancy table + subject-wise table; CBI:
+    # vacancy table + category-wise table). vacancy_details may itself contain
+    # both plain-vacancy rows and category-wise rows; render_vacancy_table splits
+    # those internally.
+    _vac_main = [r for r in (job.get('vacancy_details') or job.get('vacancyDetails') or []) if isinstance(r, dict)]
+    _subj_wise = [r for r in (job.get('subject_wise_vacancy') or job.get('subjectWiseVacancy') or []) if isinstance(r, dict)]
+    _cat_wise = [r for r in (job.get('category_wise_vacancy') or job.get('categoryWiseVacancy') or []) if isinstance(r, dict)]
+    full = {'basic_details':bd,'important_dates':imp_dates,'application_fee':job.get('application_fees') or job.get('application_fee') or {},'age_limit':age,'qualification':job.get('eligibility') or job.get('qualification') or {},'eligibility_section':job.get('eligibility_section') or [],'vacancy_details':_vac_main or [],'subject_wise_vacancy':_subj_wise,'category_wise_vacancy':_cat_wise,'salary_details':{'pay_scale':safe(job.get('salary_pay_scale',''))} if job.get('salary_pay_scale') else {},'how_to_apply':[job['how_to_apply']] if isinstance(job.get('how_to_apply'),str) and job.get('how_to_apply') else (job.get('how_to_apply') or []),'important_links':il,'sections':sections_out,'faq':job.get('faq') or [],'category':job.get('category',''),'slug':slug,
              'tables':job.get('tables') or [],'text_sections':job.get('text_sections') or [],'useful_links':job.get('useful_links') or [],'all_links':job.get('all_links') or [],'details_page_content':job.get('details_page_content') or {}}
     # A-to-Z COMPLETENESS: carry over EVERY other key from the normalized job
     # (course_details, data_tables, dynamic additionalData eligibility keys,
