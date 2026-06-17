@@ -545,8 +545,13 @@
 
     /* ── HOME ── */
     if (pageInfo.type === 'home') {
-      title = generateTitle({ type: 'home' });
-      desc  = generateDescription({ type: 'home' });
+      // SEO STABILITY: do NOT override the homepage <title>/description here.
+      // The homepage title & meta are hard-coded static in index.html and must
+      // stay 100% stable from the initial server render (a JS rewrite after load
+      // is what made Google distrust and auto-rewrite the declared title).
+      // We still inject the WebPage schema, but leave title/desc untouched.
+      title = '';   // empty => the "APPLY ALL" block below will skip overriding
+      desc  = '';
       breadcrumbs = [{ name: 'Home', url: SITE + '/' }];
       faqs  = getFAQ('latest jobs');
 
@@ -554,8 +559,8 @@
         '@context': 'https://schema.org',
         '@type': 'WebPage',
         'url': SITE + '/',
-        'name': title,
-        'description': desc,
+        'name': (d.title || SITE_NAME),
+        'description': (qs('meta[name="description"]') ? qs('meta[name="description"]').getAttribute('content') : ''),
         'inLanguage': 'en-IN',
         'dateModified': new Date().toISOString().split('T')[0],
         'isPartOf': { '@type': 'WebSite', 'url': SITE + '/', 'name': SITE_NAME }

@@ -329,7 +329,7 @@ function generateHTMLSitemap(jobData, seen) {
         <a href="/10th-pass-jobs/">10th Pass Jobs</a>
         <a href="/12th-pass-jobs/">12th Pass Jobs</a>
         <a href="/teaching-jobs/">Teaching Jobs</a>
-        <a href="/search.html">Search</a>
+        <a href="/search/">Search</a>
       </div>
     </div>
 
@@ -351,10 +351,10 @@ function generateHTMLSitemap(jobData, seen) {
     <div class="sitemap-section">
       <h2>📄 Pages</h2>
       <div class="sitemap-links">
-        <a href="/about.html">About Us</a>
-        <a href="/contact.html">Contact</a>
-        <a href="/privacy.html">Privacy Policy</a>
-        <a href="/terms.html">Terms of Use</a>
+        <a href="/about/">About Us</a>
+        <a href="/contact/">Contact</a>
+        <a href="/privacy/">Privacy Policy</a>
+        <a href="/terms/">Terms of Use</a>
         <a href="/sitemap.html">HTML Sitemap</a>
       </div>
     </div>

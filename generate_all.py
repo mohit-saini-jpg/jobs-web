@@ -882,6 +882,50 @@ def render_faq(faq_list):
                   f'<div>{e(a)}</div></div></div>')
     return items
 
+def _render_generic_rows(rows, heading=''):
+    """Fallback renderer: when vacancy rows use arbitrary/non-standard column
+    names (common in freejobalert scrapes, e.g. 'Name of the ICDS Project',
+    'Notifying at Present'), render them as a clean table using the rows' OWN
+    keys so NO data is ever dropped. Skips obviously-broken numeric-only keys."""
+    if not isinstance(rows, list) or not rows:
+        return ''
+    dict_rows = [r for r in rows if isinstance(r, dict) and r]
+    if not dict_rows:
+        return ''
+    # union of keys in insertion order across rows
+    cols = []
+    for r in dict_rows:
+        for k in r.keys():
+            ks = str(k).strip()
+            if ks and ks not in cols:
+                cols.append(ks)
+    # drop columns whose HEADER is purely numeric (mangled header like "18")
+    # but keep them if they actually hold data under a real label elsewhere
+    good_cols = [c for c in cols if not re.fullmatch(r'\d[\d,]*', c.strip())]
+    if not good_cols:
+        good_cols = cols  # nothing better; keep all so data shows
+    # require at least one row with real content
+    def _has_content(r):
+        return any(str(r.get(c, '')).strip() for c in good_cols)
+    data_rows = [r for r in dict_rows if _has_content(r)]
+    if not data_rows:
+        return ''
+    # nice header labels (Title Case, keep as-is if already labeled)
+    def _lbl(c):
+        return c if any(ch.isupper() for ch in c) else c.replace('_', ' ').title()
+    head = ''.join(f'<th>{e(_lbl(c))}</th>' for c in good_cols)
+    body = ''
+    for r in data_rows:
+        cells = ''.join(f'<td>{e(safe(r.get(c, "")))}</td>' for c in good_cols)
+        body += f'<tr>{cells}</tr>'
+    _hh = ''
+    if heading:
+        _clean = re.sub(r'\s*total\s*:?\s*\d[\d,]*\s*post.*$', '', heading, flags=re.I).strip() or heading
+        _hh = f'<div class="kv-stack-head" style="margin-top:4px">{e(_clean)}</div>'
+    return _hh + (f'<div class="tbl-scroll"><table class="data-table">'
+                  f'<thead><tr>{head}</tr></thead><tbody>{body}</tbody></table></div>')
+
+
 def render_vacancy_table(vac_list):
     """Render vacancy rows. SR pages cram a Vacancy-Details table (Post Name |
     Total | Qualification) AND a Category-Wise table (Post Name | UR | OBC | SC |
@@ -1034,9 +1078,9 @@ def _render_vac_group(vac_list, mode='vacancy'):
                 if _val is not None:
                     n[col] = safe(_val); avail.add(col); break
         if n: norm.append(n)
-    if not norm: return ''
+    if not norm: return _render_generic_rows(vac_list, _tbl_heading)
     cols = [c for c,_ in ALL_COLS if c in avail]
-    if not cols: return ''
+    if not cols: return _render_generic_rows(vac_list, _tbl_heading)
 
     # ── C3 FIX: clean rows + compute the real grand total ──
     def _to_int(v):
@@ -1045,13 +1089,53 @@ def _render_vac_group(vac_list, mode='vacancy'):
     def _is_total_label(v):
         return bool(re.search(r'\b(total|grand\s*total|sum)\b', str(v or ''), re.I))
 
+    # Physical-eligibility rows sometimes leak into vacancyDetails (SSC GD:
+    # "Gender", "Male (General/OBC/SC)", "Male ST", "Female ...", with
+    # Height/Chest/Race values). These are NOT vacancy posts — drop them from the
+    # vacancy table so they don't pollute it. A row is "physical" when its
+    # post_name is a bare gender/standard label OR its values look like body
+    # measurements (cm / chest / km / minute / running).
+    _PHYS_LABEL_RX = re.compile(
+        r'^(gender|male|female|transgender|height|chest|weight|running|race|'
+        r'physical|pet|pst)\b', re.I)
+    _PHYS_VAL_RX = re.compile(
+        r'\b(\d+\s*(cm|cms|kg|kgs|km|metre|meter|mtr|min|minute|sec|feet|ft)\b'
+        r'|\d{2,3}\s*[-/]\s*\d{2,3}|chest|expansion)\b', re.I)
+    def _is_physical_row(r):
+        nm = safe(r.get('post_name', '')).strip()
+        if not nm:
+            return False
+        # bare gender/standard label with no real total => physical pollution
+        if _PHYS_LABEL_RX.match(nm):
+            # genuine vacancy "Male"/"Female" rows usually carry a numeric total;
+            # physical rows carry measurements or nothing
+            tot = safe(r.get('total', '')).strip()
+            if not tot or not re.search(r'\d', tot):
+                return True
+            # has a measurement-looking value anywhere => physical
+        # any cell value looks like a body measurement
+        for _k, _v in r.items():
+            if _k == 'post_name':
+                continue
+            if _PHYS_VAL_RX.search(safe(_v)):
+                return True
+        return False
+
     has_name = 'post_name' in cols
     # label column = first non-total descriptive column (post_name/state/language)
     _label_cols = [c for c in cols if c in ('post_name','state','language','department')]
+    # count how many rows look physical vs how many are genuine posts
+    _phys_ct = sum(1 for r in norm if _is_physical_row(r))
+    _genuine_ct = len(norm) - _phys_ct
     clean = []
     explicit_total = None
     for r in norm:
         name = r.get('post_name', '') or r.get('state','') or r.get('language','')
+        # drop physical-eligibility pollution rows (only when there ARE genuine
+        # vacancy rows too — otherwise this might be a genuine physical table that
+        # the section router will handle elsewhere)
+        if _genuine_ct >= 1 and _is_physical_row(r):
+            continue
         # capture an explicitly-labelled total row, don't render it as a data line
         if _is_total_label(r.get('post_name','') or r.get('state','') or r.get('language','')):
             t = _to_int(r.get('total'))
@@ -1521,15 +1605,24 @@ def build_all_sections(job_obj):
             # SR courseDetails: [{courseName, eligibility}] — render as clean 2-col table
             # SAFETY NET: older scraper sometimes mis-captured a VACANCY table as
             # course_details, putting the Total-Post NUMBER (e.g. "178") as
-            # courseName. Skip rows whose courseName is purely numeric/empty, and
-            # skip the whole table if vacancy_details already covers this data.
+            # courseName, OR duplicating the vacancy eligibility text here. Drop:
+            #  - numeric/empty courseName
+            #  - rows whose courseName is already a vacancy post name
+            #  - rows whose eligibility text duplicates a vacancy eligibility
+            #    (SGPGI: same "Bachelor Degree..." text in both tables)
             _cd = val if isinstance(val, list) else []
             _vac_posts = set()
+            _vac_eligs = set()
+            def _norm(t):
+                return re.sub(r'[^a-z0-9]+', ' ', safe(t).lower()).strip()
             for _vp in (job_obj.get('vacancy_details') or []):
                 if isinstance(_vp, dict):
-                    _pn = safe(_vp.get('post_name') or _vp.get('postName')).strip().lower()
+                    _pn = _norm(_vp.get('post_name') or _vp.get('postName'))
                     if _pn: _vac_posts.add(_pn)
+                    _ve = _norm(_vp.get('qualification') or _vp.get('eligibility'))
+                    if _ve and len(_ve) > 15: _vac_eligs.add(_ve)
             _cd_rows = []
+            _cd_seen = set()
             for _c in _cd:
                 if not isinstance(_c, dict): continue
                 _cn = safe(_c.get('courseName') or _c.get('course_name') or _c.get('course') or '')
@@ -1538,9 +1631,20 @@ def build_all_sections(job_obj):
                 if not _cn.strip() or re.fullmatch(r'\d[\d,]*', _cn.strip()):
                     continue
                 if not (_cn or _el): continue
-                # skip if this course name is already a vacancy post (duplicate)
-                if _cn.strip().lower() in _vac_posts and not _el:
+                # skip if courseName is actually a vacancy post (duplicate listing)
+                if _norm(_cn) in _vac_posts:
                     continue
+                # skip if the eligibility text duplicates a vacancy eligibility
+                if _el and _norm(_el) in _vac_eligs:
+                    continue
+                # skip if courseName itself is just an eligibility sentence already
+                # shown under vacancy (SGPGI: courseName holds the elig text)
+                if _norm(_cn) in _vac_eligs:
+                    continue
+                _sig = _norm(_cn) + '|' + _norm(_el)
+                if _sig in _cd_seen:      # internal duplicate
+                    continue
+                _cd_seen.add(_sig)
                 _cd_rows.append(f'<tr><td>{e(_cn)}</td><td>{e(_el)}</td></tr>')
             if _cd_rows:
                 body = ('<table class="kv-table"><tbody>'
@@ -2100,7 +2204,22 @@ def _dedup_section_cards(html):
                 continue
             seen.add(key)
         out.append(p)
-    return ''.join(out)
+    html = ''.join(out)
+    # Also drop EXACT-duplicate <table> blocks anywhere on the page (same content
+    # rendered twice via two different fields/paths — e.g. an info page that has
+    # the same "Particulars | Details" table from two JSON keys).
+    _seen_tbl = set()
+    def _dedup_tbl(mt):
+        block = mt.group(0)
+        sig = re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', '', block)).strip().lower()
+        if len(sig) < 20:           # tiny tables: leave alone
+            return block
+        if sig in _seen_tbl:
+            return ''               # remove duplicate table
+        _seen_tbl.add(sig)
+        return block
+    html = re.sub(r'<table\b.*?</table>', _dedup_tbl, html, flags=re.S)
+    return html
 
 # N9: Parse salary from pay_scale string for accurate JobPosting schema
 _LEVEL_PAY = {1:18000,2:19900,3:21700,4:25500,5:29200,6:35400,
