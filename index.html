@@ -73,7 +73,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
   <!-- dailyupdates.json is fetched with an hourly cache-bust in the cards script,
        so a static preload would just cache a stale copy — intentionally removed. -->
   <!-- PERF: sections-index.json — 16KB lightweight index for instant card rendering (instead of 18MB Complete_Jobs_Full_Data.json) -->
-  <link rel="preload" href="sections-index.json?v=202606171011" as="fetch" crossorigin="anonymous"/>
+  <link rel="preload" href="sections-index.json?v=202606170851" as="fetch" crossorigin="anonymous"/>
   <!-- PERF: Complete_Jobs_Full_Data.json fetched once — powers all SR cards + ticker -->
   <script>
   // Complete_Jobs_Full_Data.json is the single source of truth
@@ -98,7 +98,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
     else { setTimeout(loadNow, 8000); }
   });
   // PERF: sections-index.json — fetch starts immediately at page load (16KB vs 18MB)
-  window.__sectionsIndexPromise = fetch('sections-index.json?v=202606171011')
+  window.__sectionsIndexPromise = fetch('sections-index.json?v=202606170851')
     .then(function(r){ return r.ok ? r.json() : null; })
     .catch(function(){ return null; });
   </script>
@@ -933,6 +933,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
     .sb-ig { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
     .sb-sc { background: #fffc00; color: #000; }
     .sb-sc i { color: #000; }
+    .sb-fb { background: #1877f2; }
 
     /* ============================================================
        STATE GRID
@@ -992,6 +993,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
     }
     .faq-card h2 { font-size: .92rem; font-weight: 800; margin-bottom: 4px; }
     .faq-sub { font-size: .79rem; color: var(--muted); margin-bottom: 12px; }
+    .trust-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px; margin-bottom: 14px;
+      box-shadow: var(--shadow);
+    }
+    .trust-card h2 { font-size: .95rem; font-weight: 800; margin: 0 0 8px; color: var(--ink, #0d2257); }
+    .trust-card h3 { font-size: .85rem; font-weight: 800; margin: 14px 0 6px; color: var(--ink, #0d2257); }
+    .trust-card p { font-size: .82rem; line-height: 1.7; color: #374151; margin: 0 0 8px; }
+    .trust-soc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .trust-soc .soc-btn { flex: 0 0 auto; }
     .faq-item { border-bottom: 1px solid var(--border); }
     .faq-item:last-child { border-bottom: none; }
     .faq-btn {
@@ -1712,7 +1723,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
   <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
-  <script src="/tsj-menu.js?v=20260617154058" defer></script>
+  <script src="/tsj-menu.js?v=20260613100553" defer></script>
   <script src="/pwa-install.js?v=6.0" defer></script>
   <!-- ══ END PWA ════════════════════════════════════════════════════ -->
 
@@ -2495,7 +2506,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
         if (cached && (Date.now() - cached.ts) < CACHE_TTL) return Promise.resolve(cached.data);
       } catch(e) {}
 
-      return fetch('/sections-index.json?v=202606171011')
+      return fetch('/sections-index.json?v=202606170851')
         .then(function(r){ return r.ok ? r.json() : null; })
         .then(function(json) {
           try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: json })); } catch(e) {}
@@ -2701,7 +2712,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
           var _duBust=Math.floor(Date.now()/3600000);
           // Phase 1: sections-index + dailyupdates se turant render karo (fast ~400KB)
           Promise.all([
-            gj('/sections-index.json?v=202606171011'),
+            gj('/sections-index.json?v=202606170851'),
             gj('/dailyupdates.json?v='+_duBust)
           ]).then(function(r){
             var si=r[0],dl=r[1];
@@ -2796,6 +2807,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
             <div class="faq-panel" hidden>Yes! Railway, Police, Defence and various departments regularly release vacancies for 10th and 12th pass candidates. Check our dedicated qualification-wise sections.</div>
           </div>
         </div>
+
+      <!-- ===== ABOUT / TRUST BLOCK (main-column content for crawlers) ===== -->
+      <section class="trust-card" aria-labelledby="trust-about-h">
+        <h2 id="trust-about-h">About Top Sarkari Jobs</h2>
+        <p>Top Sarkari Jobs is an independent government-job information portal that brings together recruitment notifications, results, admit cards, answer keys and online application forms published by official departments and recruitment boards across India. Operating since 2020, the site organises these updates so that aspirants can find what is relevant to them without scanning dozens of separate official websites.</p>
+        <p>The portal is built for Sarkari exam aspirants nationwide — from 8th, 10th and 12th pass candidates to graduates, diploma holders and postgraduates. Listings can be browsed qualification-wise and state-wise, and new notifications are added every day so that time-sensitive last dates are not missed.</p>
+
+        <h3>Why Use Top Sarkari Jobs</h3>
+        <p>Every listing on this site points back to the official notification it is based on, and details are cross-checked against those official sources before publishing. The portal is free to use, updated daily, and presents information in a clean, mobile-friendly format. Top Sarkari Jobs is an information aggregator only — it is not a government website and has no affiliation with any government body. Candidates should always confirm details on the relevant official portal before applying or paying any fee.</p>
+
+        <h3>Connect With Us</h3>
+        <div class="trust-soc">
+          <a class="soc-btn sb-wa" href="https://whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" aria-label="WhatsApp Channel"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+          <a class="soc-btn sb-yt" href="https://www.youtube.com/@Topsarkarijobs/shorts" target="_blank" rel="noopener" aria-label="YouTube"><i class="fab fa-youtube"></i> YouTube</a>
+          <a class="soc-btn sb-ig" href="https://www.instagram.com/topsarkarijobs?igsh=bTBsdjVpaTU3M2hn" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i> Instagram</a>
+          <a class="soc-btn sb-fb" href="https://www.facebook.com/profile.php?id=61587033757932" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i> Facebook</a>
+          <a class="soc-btn sb-sc" href="https://www.snapchat.com/add/topsarkarijobss?share_id=accGq-qWC1g&locale=en-IN" target="_blank" rel="noopener" aria-label="Snapchat"><i class="fab fa-snapchat-ghost"></i> Snapchat</a>
+        </div>
+      </section>
 
       </div><!-- /main col -->
 
@@ -2992,7 +3022,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
           <div class="footer-title">Top Sarkari Jobs</div>
           <div class="footer-sub">Top Sarkari Jobs is India's trusted source for latest Sarkari Naukri, Results, Admit Card, Yojana and Education updates.</div>
           <div class="footer-social">
-            <a href="https://www.facebook.com/topsarkarijobs" target="_blank" rel="noopener" style="color:#1877f2;" aria-label="Top Sarkari Jobs on Facebook"><i class="fa-brands fa-facebook"></i></a>
+            <a href="https://www.facebook.com/profile.php?id=61587033757932" target="_blank" rel="noopener" style="color:#1877f2;" aria-label="Top Sarkari Jobs on Facebook"><i class="fa-brands fa-facebook"></i></a>
             <a href="https://x.com/TopSarkariJobs" target="_blank" rel="noopener" style="color:#1da1f2;" aria-label="Top Sarkari Jobs on Twitter (X)"><i class="fa-brands fa-twitter"></i></a>
             <a href="https://www.instagram.com/topsarkarijobs?igsh=bTBsdjVpaTU3M2hn" target="_blank" rel="noopener" style="color:#e1306c;" aria-label="Top Sarkari Jobs on Instagram"><i class="fa-brands fa-instagram"></i></a>
             <a href="https://www.youtube.com/@Topsarkarijobs" target="_blank" rel="noopener" style="color:#ff0000;" aria-label="Top Sarkari Jobs on YouTube"><i class="fa-brands fa-youtube"></i></a>
@@ -3428,7 +3458,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
     setTimeout(loadPush,10000);
   })();
 </script>
-<script src="/tsj-version.js?v=20260617154058" defer></script>
+<script src="/tsj-version.js?v=20260613100553" defer></script>
 
 <script>
 /* Auto lazy-load all images not already marked */
