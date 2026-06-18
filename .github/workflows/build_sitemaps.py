@@ -134,9 +134,10 @@ def main():
 
     # Core static pages -> sitemap.xml is now a REAL urlset (no longer a 2nd index)
     core = [f"{BASE}/"]
-    for p in ["about","contact","terms","privacy","helpdesk","sitemap",
+    for p in ["about","contact","terms","privacy","disclaimer","helpdesk","sitemap",
               "tools","govt-services","resume-maker","search","education",
-              "state","state-jobs"]:
+              "state","state-jobs",
+              "editorial-policy","fact-check-policy","correction-policy"]:
         d = os.path.join(ROOT, p)
         if os.path.isdir(d) and has_index(d):
             core.append(f"{BASE}/{p}/")

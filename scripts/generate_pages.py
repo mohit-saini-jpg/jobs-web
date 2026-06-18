@@ -574,7 +574,7 @@ def generate_html(job):
         },
         "applicantLocationRequirements": {"@type": "Country", "name": "India"},
         "jobLocation": {"@type": "Place", "address": {"@type": "PostalAddress", "addressCountry": "IN"}},
-        "author": {"@type": "Organization", "name": "TopSarkariJobs Editorial Team", "url": f"{BASE_URL}/about.html"}
+        "author": {"@type": "Organization", "name": "TopSarkariJobs Editorial Team", "url": f"{BASE_URL}/about/"}
     }
     vac_str = str(posts)
     if vac_str.isdigit():

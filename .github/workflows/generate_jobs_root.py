@@ -576,7 +576,7 @@ def build_static_html(slug, title, full_job_obj, cat):
                                 if org_schema == 'Government of India' else
                                 {'@type':'Organization','name':org_schema}),
         'jobLocation':{'@type':'Place','address':{'@type':'PostalAddress','addressCountry':'IN','addressLocality':location}},
-        'author':{'@type':'Organization','name':'TopSarkariJobs Editorial Team','url':'https://www.topsarkarijobs.com/about.html'},
+        'author':{'@type':'Organization','name':'TopSarkariJobs Editorial Team','url':'https://www.topsarkarijobs.com/about/'},
         # FIX-004: baseSalary added dynamically below
     }
     if last_date_r:

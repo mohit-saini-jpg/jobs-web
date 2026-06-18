@@ -46,13 +46,29 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
     </style>
 
   <title>Top Sarkari Jobs 2026 – Latest Govt Jobs, Results & Admit Cards</title>
-  <!-- S-02: GA4 — direct tag for accurate pageview tracking -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-C4VRD1C9QS"></script>
+  <!-- S-02: GA4 — loaded on first user interaction (or after 3.5s) to keep the
+       main thread free during initial paint. Improves TBT/INP without losing
+       analytics: real engaged users trigger an interaction, and a timeout
+       fallback still captures quick bounces. -->
   <script>
     window.dataLayer=window.dataLayer||[];
     function gtag(){dataLayer.push(arguments);}
-    gtag('js',new Date());
-    gtag('config','G-C4VRD1C9QS',{send_page_view:true});
+    (function(){
+      var loaded=false;
+      function loadGA(){
+        if(loaded)return; loaded=true;
+        var s=document.createElement('script');
+        s.async=true;
+        s.src='https://www.googletagmanager.com/gtag/js?id=G-C4VRD1C9QS';
+        document.head.appendChild(s);
+        gtag('js',new Date());
+        gtag('config','G-C4VRD1C9QS',{send_page_view:true});
+      }
+      var evts=['scroll','mousemove','touchstart','click','keydown'];
+      function trigger(){evts.forEach(function(e){window.removeEventListener(e,trigger);});loadGA();}
+      evts.forEach(function(e){window.addEventListener(e,trigger,{passive:true});});
+      setTimeout(loadGA,3500);
+    })();
   </script>
 
   <meta name="description" content="Latest government job notifications, admit cards, results & answer keys for SSC, Railway, Banking, Police, UPSC & State PSC. Updated daily."/>
@@ -73,7 +89,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
   <!-- dailyupdates.json is fetched with an hourly cache-bust in the cards script,
        so a static preload would just cache a stale copy — intentionally removed. -->
   <!-- PERF: sections-index.json — 16KB lightweight index for instant card rendering (instead of 18MB Complete_Jobs_Full_Data.json) -->
-  <link rel="preload" href="sections-index.json?v=202606170851" as="fetch" crossorigin="anonymous"/>
+  <link rel="preload" href="sections-index.json?v=202606171850" as="fetch" crossorigin="anonymous"/>
   <!-- PERF: Complete_Jobs_Full_Data.json fetched once — powers all SR cards + ticker -->
   <script>
   // Complete_Jobs_Full_Data.json is the single source of truth
@@ -98,7 +114,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
     else { setTimeout(loadNow, 8000); }
   });
   // PERF: sections-index.json — fetch starts immediately at page load (16KB vs 18MB)
-  window.__sectionsIndexPromise = fetch('sections-index.json?v=202606170851')
+  window.__sectionsIndexPromise = fetch('sections-index.json?v=202606171850')
     .then(function(r){ return r.ok ? r.json() : null; })
     .catch(function(){ return null; });
   </script>
@@ -160,6 +176,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
         }
       ],
       "sameAs": [
+        "https://www.facebook.com/profile.php?id=61587033757932",
         "https://www.instagram.com/topsarkarijobs",
         "https://x.com/TopSarkariJobs",
         "https://www.youtube.com/@Topsarkarijobs",
@@ -2486,8 +2503,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
   <!-- Dynamic Live Ticker — data pulled from dynamic-sections.json (latest jobs section) -->
   <div class="ticker-wrap" id="tickerWrap" aria-label="Latest job updates" role="marquee" aria-live="off">
     <span class="ticker-label" aria-hidden="true"><i class="fa-solid fa-bolt"></i></span>
-    <div class="ticker-track" id="tickerTrack">
-      <span class="ticker-loading" aria-live="polite">Loading latest jobs…</span>
+    <div class="ticker-track" id="tickerTrack"><!-- SSR-TICKER-START --><a class="ticker-item" href="/jobs/kmf-shimul-recruitment-2026-apply-online-for-194-junior-technician-assistant-man/"><i class="fa-solid fa-bolt" aria-hidden="true"></i> KMF SHIMUL Recruitment 2026 - Apply Online for 194 Junior Technician, Assistant Manager and More Posts</a><a class="ticker-item" href="/jobs/icar-iari-recruitment-2026-apply-online-for-young-professional-and-field-assista/"><i class="fa-solid fa-bolt" aria-hidden="true"></i> ICAR-IARI Recruitment 2026 - Apply Online for Young Professional and Field Assistant Posts</a><a class="ticker-item" href="/jobs/bbmb-apprentice-recruitment-2026-apply-online/"><i class="fa-solid fa-bolt" aria-hidden="true"></i> BBMB Apprentice Recruitment 2026 - Apply Online</a><a class="ticker-item" href="/jobs/lakshmibai-college-delhi-non-teaching-staff-recruitment-2026-apply-online-for-24/"><i class="fa-solid fa-bolt" aria-hidden="true"></i> Lakshmibai College Delhi Non-Teaching Staff Recruitment 2026 - Apply Online for 24 Assistant, Junior Assistant and More Posts</a><a class="ticker-item" href="/jobs/rcf-kapurthala-sports-quota-recruitment-2026-notification-out-apply-offline-for/"><i class="fa-solid fa-bolt" aria-hidden="true"></i> RCF Kapurthala Sports Quota Recruitment 2026 Notification Out - Apply Offline for 23 Posts</a><a class="ticker-item" href="/jobs/ksp-recruitment-2026-karnataka-police-constable-notification-out-for-3991-vacanc/"><i class="fa-solid fa-bolt" aria-hidden="true"></i> KSP Recruitment 2026 – Karnataka Police Constable Notification Out for 3991 Vacancies | Apply Online by 3rd July</a><a class="ticker-item" href="/jobs/lnipe-nerc-guwahati-walk-in-interview-2026-30-contractual-posts-apply-online-by/"><i class="fa-solid fa-bolt" aria-hidden="true"></i> LNIPE NERC Guwahati Walk-in Interview 2026 - 30 Contractual Posts, Apply Online by 20 June 2026</a><a class="ticker-item" href="/jobs/aiims-cre-5-recruitment-2026-apply-online-for-1484-group-b-c-posts-across-28-cen/"><i class="fa-solid fa-bolt" aria-hidden="true"></i> AIIMS CRE-5 Recruitment 2026: Apply Online for 1484 Group B &amp; C Posts Across 28 Central Govt Institutes</a><a class="ticker-item" href="/jobs/ammb-recruitment-2026-apply-online-for-peon-and-watchman-posts/"><i class="fa-solid fa-bolt" aria-hidden="true"></i> AMMB Recruitment 2026 - Apply Online for Peon and Watchman Posts</a><a class="ticker-item" href="/jobs/korea-district-nhm-recruitment-2026-notification-out-100-vacancies-apply-offline/"><i class="fa-solid fa-bolt" aria-hidden="true"></i> Korea District NHM Recruitment 2026 Notification Out, 100+ Vacancies, Apply Offline</a><a class="ticker-item" href="/jobs/mdl-trade-apprentice-recruitment-2026-495-seats-across-18-trades-apply-online-by/"><i class="fa-solid fa-bolt" aria-hidden="true"></i> MDL Trade Apprentice Recruitment 2026 – 495 Seats Across 18 Trades, Apply Online by 1 July</a><a class="ticker-item" href="/jobs/dhs-vellore-recruitment-2026-apply-offline-for-43-medical-officer-driver-and-mor/"><i class="fa-solid fa-bolt" aria-hidden="true"></i> DHS Vellore Recruitment 2026 - Apply Offline for 43 Medical Officer, Driver and More Posts</a><a class="ticker-item" href="/jobs/dhs-tiruvallur-recruitment-2026-apply-offline-for-38-medical-officer-data-manage/"><i class="fa-solid fa-bolt" aria-hidden="true"></i> DHS Tiruvallur Recruitment 2026 - Apply Offline for 38 Medical Officer, Data Manager and More Posts</a><a class="ticker-item" href="/jobs/himachal-pradesh-jal-shakti-vibhag-recruitment-2026-apply-offline-for-32-para-pu/"><i class="fa-solid fa-bolt" aria-hidden="true"></i> Himachal Pradesh Jal Shakti Vibhag Recruitment 2026 - Apply Offline for 32 Para Pump Operator, Multipurpose Worker and More Posts</a><a class="ticker-item" href="/jobs/echs-ranchi-recruitment-2026-apply-offline-for-21-lab-tech-deo-and-more-posts/"><i class="fa-solid fa-bolt" aria-hidden="true"></i> ECHS Ranchi Recruitment 2026 - Apply Offline for 21 Lab Tech, DEO and More Posts</a><!-- SSR-TICKER-END -->
+      
     </div>
   </div>
   <script>
@@ -2506,7 +2523,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
         if (cached && (Date.now() - cached.ts) < CACHE_TTL) return Promise.resolve(cached.data);
       } catch(e) {}
 
-      return fetch('/sections-index.json?v=202606170851')
+      return fetch('/sections-index.json?v=202606171850')
         .then(function(r){ return r.ok ? r.json() : null; })
         .then(function(json) {
           try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: json })); } catch(e) {}
@@ -2712,7 +2729,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
           var _duBust=Math.floor(Date.now()/3600000);
           // Phase 1: sections-index + dailyupdates se turant render karo (fast ~400KB)
           Promise.all([
-            gj('/sections-index.json?v=202606170851'),
+            gj('/sections-index.json?v=202606171850'),
             gj('/dailyupdates.json?v='+_duBust)
           ]).then(function(r){
             var si=r[0],dl=r[1];
@@ -2838,8 +2855,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
             <div class="left"><i class="fa-solid fa-calendar-day"></i> TODAY'S UPDATES</div>
             <a href="/section/today-updates/" class="view-all-btn">View All</a>
           </div>
-          <div class="sec-list" id="today-sidebar-list">
-            <a href="/section/today-updates/"><i class="fa-solid fa-bolt" style="color:var(--red);"></i><span>Loading latest updates...</span><i class="fa-solid fa-chevron-right arrow"></i></a>
+          <div class="sec-list" id="today-sidebar-list"><!-- SSR-TODAY-START --><a href="https://bsehexam2017.in/compimp2026/login.aspx"><i class="fa-solid fa-bolt" style="color:var(--red);"></i><span>HBSE Online Registration for Secondary/Sr. Secondary (Compartment/Additional.) Exam July - 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a><a href=" https://hssc.gov.in/file/ac1f23cd-9d9c-1328-819e-50aabec10022/result"><i class="fa-solid fa-bolt" style="color:var(--red);"></i><span>additional shortlist of 5 times more candidates for the Police Constable PMT has been released</span><i class="fa-solid fa-chevron-right arrow"></i></a><a href="https://ignou.samarth.edu.in/index.php/site/login"><i class="fa-solid fa-bolt" style="color:var(--red);"></i><span>IGNOU June Exam Admit Card Hall Ticket 2026 Download Last date 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a><a href="http://cbseacadit.nic.in/pvr/auth/register_new"><i class="fa-solid fa-bolt" style="color:var(--red);"></i><span>CBSE launches Photocopy, Verification and Re-Evaluation forms Last date 22/05/2026</span><i class="fa-solid fa-chevron-right arrow"></i></a><a href="https://admissions.highereduhry.ac.in/StudentRegistration"><i class="fa-solid fa-bolt" style="color:var(--red);"></i><span>Haryana UG College Admission 2026-27 शुरू last date -31 May 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a><a href="https://saralharyana.gov.in/"><i class="fa-solid fa-bolt" style="color:var(--red);"></i><span>Scheme for Conservation and Development of Indigenous Cows and Murrah Development</span><i class="fa-solid fa-chevron-right arrow"></i></a><a href="https://mduadmission.samarth.edu.in/"><i class="fa-solid fa-bolt" style="color:var(--red);"></i><span>MDU UG &amp; Integrated Course Admission Form 2026  Rohtak</span><i class="fa-solid fa-chevron-right arrow"></i></a><a href="https://techadmissionshry.gov.in/"><i class="fa-solid fa-bolt" style="color:var(--red);"></i><span>Haryana Polytechnic Admission START हो गये ह 10th or 12th pass</span><i class="fa-solid fa-chevron-right arrow"></i></a><!-- SSR-TODAY-END -->
+            
           </div>
           <a href="/section/today-updates/" class="sec-more">View All Today Updates →</a>
         </div>
@@ -3052,7 +3069,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
           <div class="footer-title">Contact Us</div>
           <div class="footer-contact">
             <p><i class="fa-solid fa-envelope"></i> Topsarkarijobs.com@gmail.com</p>
-            <p><i class="fa-solid fa-phone"></i> +91 1234567890</p>
             <p><i class="fa-solid fa-location-dot"></i> Location: India</p>
           </div>
           <div style="margin-top:10px;">

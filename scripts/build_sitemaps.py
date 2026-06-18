@@ -8,6 +8,7 @@ Rebuilds all sitemaps from the real folder tree so they are never empty/circular
 Run from repo root:  python3 scripts/build_sitemaps.py
 """
 import os
+import re
 from datetime import date
 
 # ROOT = repo root. Works whether this script lives in scripts/ or .github/workflows/
@@ -74,8 +75,13 @@ def urls_from_dir(rel_root, changefreq="weekly", priority="0.7", recursive=False
 def write_urlset(path, urls, changefreq="weekly", priority="0.7"):
     # FIX #11: normalize trailing slash before dedup so /jobs/x and /jobs/x/
     # don't both appear; use per-job lastmod from first-seen data.
+    # SEO FIX: NEVER emit a legacy ".html" path into any sitemap — only clean,
+    # extension-less canonical URLs are allowed (legacy .html are redirect stubs).
     seen, uniq = set(), []
     for u in urls:
+        # drop any legacy .html filename (e.g. /about.html, /result.html)
+        if re.search(r'\.html/?$', u, re.I):
+            continue
         nu = u.rstrip("/") + "/"
         if nu not in seen:
             seen.add(nu); uniq.append(nu)
@@ -128,18 +134,19 @@ def main():
 
     # Core static pages -> sitemap.xml is now a REAL urlset (no longer a 2nd index)
     core = [f"{BASE}/"]
-    for p in ["about","contact","terms","privacy","helpdesk","sitemap",
+    for p in ["about","contact","terms","privacy","disclaimer","helpdesk","sitemap",
               "tools","govt-services","resume-maker","search","education",
-              "state","state-jobs"]:
+              "state","state-jobs",
+              "editorial-policy","fact-check-policy","correction-policy"]:
         d = os.path.join(ROOT, p)
         if os.path.isdir(d) and has_index(d):
             core.append(f"{BASE}/{p}/")
     core += qual_urls
     counts["sitemap.xml"] = write_urlset("sitemap.xml", core, "daily", "0.9")
 
-    # sitemap-pages.xml (keep if exists; ensure it's a urlset, otherwise regenerate as core)
-    if not os.path.isfile(os.path.join(ROOT, "sitemap-pages.xml")):
-        write_urlset("sitemap-pages.xml", core, "monthly", "0.5")
+    # sitemap-pages.xml — ALWAYS regenerate from clean core URLs so it can never
+    # go stale and reintroduce legacy .html paths.
+    write_urlset("sitemap-pages.xml", core, "monthly", "0.5")
 
     # THE ONLY INDEX — references child urlsets ONLY (never another index)
     children = ["sitemap.xml", "sitemap-pages.xml", "sitemap-sections.xml",

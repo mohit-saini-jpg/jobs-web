@@ -392,16 +392,40 @@ def render_links(il_obj):
 
 def render_faq(faq_list):
     if not isinstance(faq_list, list) or not faq_list: return ''
-    items = ''
-    for i, f in enumerate(faq_list):
+    import re as _re
+
+    def is_label(s):
+        return bool(_re.search(r':\s*$', s.strip())) or bool(_re.match(
+            r'^(application|last date|exam date|admit card|fee|age|minimum|maximum|eligibility|vacancy|result|notification|start|end|begin|close)', s.strip(), _re.I))
+
+    def is_value(s):
+        return bool(_re.match(r'^\d{1,2}/\d{1,2}/\d{4}|^\d{2,4}$|^\d+\s*(years?|posts?|vacancies|rs\.?|rupees?|/-)', s.strip(), _re.I))
+
+    # Dedup + Q/A swap
+    seen = {}
+    deduped = []
+    for f in faq_list:
         if not isinstance(f, dict): continue
         q = safe(f.get('question','')); a = safe(f.get('answer',''))
         if not q or not a: continue
-        items += f'''<div class="faq-item" id="faq-{i+1}">
-  <div class="faq-q"><span class="faq-icon">Q{i+1}</span><span>{e(q)}</span></div>
-  <div class="faq-a"><span class="faq-a-icon">A</span><div>{e(a)}</div></div>
+        if is_label(a) and is_value(q): q, a = _re.sub(r':\s*$','',a).strip(), q
+        key = _re.sub(r'^q\d+[\.\)]\s*','',q.lower().strip())
+        if key in seen: continue
+        seen[key] = True
+        deduped.append((q, a))
+
+    items = ''
+    for idx, (q, a) in enumerate(deduped, 1):
+        items += f'''<div class="faq-item" id="faq-{idx}">
+  <div class="faq-q">
+    <span class="faq-icon">Q{idx}</span>
+    <span style="flex:1;text-align:left;line-height:1.5">{e(q)}</span>
+    <i class="fa-solid fa-chevron-down" style="font-size:.72rem;color:#94a3b8;margin-left:auto;flex-shrink:0;transition:transform .22s"></i>
+  </div>
+  <div class="faq-a" style="display:none"><span class="faq-a-icon">A</span><div>{e(a)}</div></div>
 </div>'''
     return items
+
 
 def extract_cell(cell):
     """Extract text+links from a cell that may be:
@@ -1162,6 +1186,8 @@ def page_shell(title_tag, meta_desc, canon_url, keywords, schemas_html,
   <div id="footerPlaceholder"></div>
   <script>fetch('/footer.html',{{cache:'no-store'}}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{{if(h){{var d=document.getElementById('footerPlaceholder');if(d)d.outerHTML=h;}}}})</script>
   <script src="/tsj-menu.js" defer></script>
+  <!-- FAQ accordion init — makes .faq-a toggle on click for all static pages -->
+  <script src="/faq-init.js" defer></script>
   <!-- ISSUE-016 FIX: analytics.js lazy-loaded after interaction -->
   <script>(function(){{var _l=false;function la(){{if(_l)return;_l=true;var s=document.createElement('script');s.src='/analytics.js?v=20260605';s.async=true;document.head.appendChild(s);}}window.addEventListener('scroll',la,{{once:true,passive:true}});window.addEventListener('click',la,{{once:true}});setTimeout(la,4000);}})();</script>
 </body>
@@ -1449,9 +1475,71 @@ def build_job_card_html(job_obj, page_type='job'):
   {f'<div class="jci-links">{ql}</div>' if ql else ''}
 </article>'''
 
+def _listing_intro(slug, title):
+    """M5: return a genuinely category-specific 2-3 sentence intro paragraph for a
+    listing page, so qualification/section/state/education pages aren't just an H1
+    above a job list. Falls back to a title-derived sentence (still unique per
+    page) when no hand-written intro exists — never the same boilerplate verbatim."""
+    s = (slug or '').lower().rstrip('/').rsplit('/', 1)[-1].replace('_', '-')
+    intros = {
+        '10th-pass': "Class 10th (matriculation) pass candidates can find government jobs here across departments like Railways, SSC, Police, Defence, and Postal services. These roles include Group D, Multi-Tasking Staff, Constable, and apprentice posts. Check each notification for exact eligibility and apply before the last date.",
+        '12th-pass': "This section lists central and state government jobs open to 12th (intermediate) pass candidates, including SSC CHSL, Railway, Police Constable, LDC and clerk-level roles. Vacancies are updated as new notifications are released. Always confirm age limit and qualification on the official notification.",
+        '8th-pass': "Government jobs requiring a minimum of 8th-class pass are listed here — typically support roles such as Peon, Helper, Chowkidar, and Group D posts. These openings suit candidates with basic schooling looking to enter government service. Review each post's eligibility before applying.",
+        'iti': "ITI-certificate holders can browse technical government vacancies here, including Trade Apprentice, Technician, Fitter, Electrician, and Mechanic posts across PSUs and Railways. Notifications specify the relevant trade and experience needed. Apply online before the closing date listed on each post.",
+        'diploma': "Diploma holders (engineering and non-engineering) will find Junior Engineer, Technician, and supervisor-level government vacancies in this section. Many are in Railways, PSUs, and state technical departments. Check the discipline-specific eligibility on each notification.",
+        'graduation': "This section covers government jobs open to graduates of any stream — from SSC CGL and Bank PO to Railway NTPC and officer-level posts. Both central and state recruitments are included. Confirm whether a specific degree is required before applying.",
+        'post-graduation': "Postgraduate-level government vacancies are listed here, including Lecturer, Manager, Research Associate, and specialist officer roles for MA, MSc, MBA, and MTech candidates. Notifications detail the required specialisation. Apply online before the last date.",
+        'bank': "Banking-sector government jobs — IBPS PO and Clerk, SBI, RRB, and RBI vacancies — are collected in this section. Posts span clerical, probationary officer, and specialist officer cadres. Check each notification for eligibility and exam pattern.",
+        'railway': "Indian Railways recruitment notifications including RRB NTPC, Group D, ALP, JE, and RPF posts appear here. These are among the most sought-after government jobs in India. Confirm the qualification and zone details on each official notification.",
+        'police': "Police and defence recruitment — Constable, Sub-Inspector, and paramilitary (CAPF) vacancies across central and state forces — are listed in this section. Most posts include physical eligibility standards. Review height, age, and physical criteria before applying.",
+        'teaching': "Teaching and faculty government jobs — from primary teacher (TET/CTET-based) to Assistant Professor and lecturer roles — are gathered here. Notifications come from school boards, universities, and education departments. Check subject and qualification requirements per post.",
+        'admissions': "This section lists government and university admission notifications, including entrance exams, counselling schedules, and application windows. It is intended for students seeking admission rather than employment. Verify dates and eligibility on the official institute portal.",
+        'upcoming-jobs': "Advance notifications for government recruitments expected soon are listed here, so candidates can prepare ahead of the official release. Details may be provisional until the formal notification is published. Check back for confirmed dates and vacancy counts.",
+        'offline-form': "Government jobs that require an offline (postal) application are listed in this section, along with the form, address, and last date. These posts cannot be applied to online. Read the notification carefully for document and submission requirements.",
+        'results': "Latest government exam results, merit lists, and scorecards are published here for SSC, Railway, Bank, UPSC, and State PSC examinations. Each entry links to the official result portal. Keep your roll number and date of birth ready to check.",
+        'result': "Latest government exam results, merit lists, and scorecards are published here for SSC, Railway, Bank, UPSC, and State PSC examinations. Each entry links to the official result portal. Keep your roll number and date of birth ready to check.",
+        'admit-card': "Admit cards and hall tickets for upcoming government exams are listed in this section as they are released. Each entry links to the official download page. You will usually need your registration number and date of birth to download.",
+        'answer-key': "Official and provisional answer keys for government exams are collected here, along with objection windows where applicable. Candidates can estimate their scores before the final result. Each entry links to the official answer-key page.",
+    }
+    if s in intros:
+        return intros[s]
+    # try without a trailing "-jobs"/"-job" suffix (bank-jobs -> bank)
+    s2 = re.sub(r'-jobs?$', '', s)
+    if s2 in intros:
+        return intros[s2]
+    # unique, non-boilerplate fallback derived from the page title
+    return (f"This page lists the latest {title} with their notifications, "
+            f"eligibility, important dates, and official apply links. New openings are "
+            f"added as they are announced. Always verify the details on the official "
+            f"notification before applying.")
+
+
 def build_listing_page(title, jobs, canon_url, breadcrumbs, description=''):
-    title_tag = f"{title} {YEAR} — Notification, Apply Online | Top Sarkari Jobs"
-    meta_desc = description[:155] if description else f"{title}: View all latest job notifications, apply online, check dates. {YEAR}"
+    # M5: if no explicit description passed, use a category-specific intro so the
+    # page has unique descriptive text above the job list (not just an H1).
+    if not description:
+        description = _listing_intro(canon_url, title)
+    # L2 FIX: some titles already end with the year (e.g. "10th Pass Government
+    # Jobs 2026"); appending YEAR again produced "...2026 2026". Strip a trailing
+    # year from the title before composing the tag/description.
+    _title_noyr = re.sub(r'\s*\b' + re.escape(str(YEAR)) + r'\b\s*$', '', str(title)).strip()
+    _has_year = bool(re.search(r'\b' + re.escape(str(YEAR)) + r'\b', str(title)))
+    title_tag = f"{_title_noyr} {YEAR} — Notification, Apply Online | Top Sarkari Jobs"
+    if description:
+        # meta description: prefer the first full sentence; else trim on a word
+        # boundary (never mid-word) and add an ellipsis.
+        _first = re.split(r'(?<=[.!?])\s+', description.strip())[0]
+        if 80 <= len(_first) <= 160:
+            meta_desc = _first
+        elif len(description) <= 158:
+            meta_desc = description
+        else:
+            _cut = description[:155].rsplit(' ', 1)[0].rstrip(' ,;:')
+            meta_desc = _cut + '…'
+    elif _has_year:
+        meta_desc = f"{title}: View all latest job notifications, apply online, check dates."
+    else:
+        meta_desc = f"{title}: View all latest job notifications, apply online, check dates. {YEAR}"
     collection_schema = {'@context':'https://schema.org','@type':'CollectionPage',
         'name':title,'description':meta_desc,'url':canon_url}
     bc_list = [{'@type':'ListItem','position':1,'name':'Home','item':BASE_URL+'/'}]

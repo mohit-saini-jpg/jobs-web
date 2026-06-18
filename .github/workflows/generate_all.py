@@ -285,6 +285,48 @@ def clean_slug(s):
 def is_blocked(url):
     return any(d in str(url).lower() for d in BLOCKED)
 
+def _smart_truncate(text, limit):
+    """H3 FIX: truncate on a word boundary with an ellipsis, never mid-word.
+    If the text already fits, return it unchanged (no ellipsis)."""
+    t = str(text or '').strip()
+    if len(t) <= limit:
+        return t
+    cut = t[:limit]
+    # back up to the last whitespace so we don't slice a word in half
+    sp = cut.rfind(' ')
+    if sp > limit * 0.5:        # only if it doesn't chop too much
+        cut = cut[:sp]
+    return cut.rstrip(' ,;:.') + '…'
+
+
+def _is_garbled_field(label, value):
+    """H4: detect garbled scrape residue not worth rendering in the fallback dump.
+    Signals: label begins with a broken ordinal fragment ("ST Week", "Nd Week",
+    "Rd ", "Th ") from a mangled "1st/2nd/3rd" split; label/value is a lone
+    fragment like "E Soon"; or the value is cut mid-word (ends in a long
+    lowercase run with no terminal punctuation and no spaces near the end)."""
+    lbl = str(label or '').strip()
+    val = str(value or '').strip()
+    # broken ordinal fragments at start of label
+    if re.match(r'^(st|nd|rd|th)\b', lbl, re.I):
+        return True
+    # single-letter-prefix garble — only flag the specific known-broken shapes:
+    # a lone letter that is NOT a real word ("A"/"I"), followed by a Capitalized
+    # word, where the lone letter is a leftover from a cut prefix (e.g. "E Soon"
+    # from "AvailablE Soon"). Require the next token to be a real word, and the
+    # lone letter to be an unusual sentence-starter (not A/I).
+    _m = re.match(r'^([B-HJ-Z])\s+[A-Z][a-z]', lbl)
+    if _m:
+        return True
+    # value truncated mid-word: only flag an obvious cut CONTINUATION fragment —
+    # starts lowercase AND contains a space (e.g. "ailable So"), which a real
+    # value never does. Single lowercase words ("declared") are valid.
+    if val and len(val) < 16 and val[0].islower() and ' ' in val \
+            and not re.search(r'[.!?)\]]$', val):
+        return True
+    return False
+
+
 def key_label(key):
     label = str(key)
     # split camelCase / PascalCase → spaced words (applicationBegin → application Begin)
@@ -487,9 +529,50 @@ def render_fee(obj):
         seen.add(lbl)
         items += f'<div class="fee-cell"><span class="fee-cat">{e(lbl)}</span><span class="fee-amt">{e(sv)}</span></div>'
     note = ' | '.join(safe(obj.get(k,'')) for k in ['details','fee_mode','payment_mode'] if safe(obj.get(k,'')))
+    note = _strip_contamination(note)
+    note = _separate_runon_fee(note)
     body = (f'<div class="fee-grid">{items}</div>' if items else '') + \
            (f'<div class="fee-note"><i class="fa-solid fa-circle-info"></i> {e(note)}</div>' if note else '')
     return body
+
+
+# ── M2 FIX: some sources store fee text as run-on category+amount with no
+# separators, e.g. "General OBC EWS00" / "SC ST00" (categories then the amount
+# "0" stuck on). Insert readable separators: "General / OBC / EWS: ₹0". ──
+_FEE_CAT_WORDS = r'(?:General|UR|OBC|EWS|SC|ST|PwD|PH|Female|Male|All|Gen)'
+def _separate_runon_fee(text):
+    if not text:
+        return text
+    t = str(text)
+    # split a trailing amount glued to a category word: "EWS00" -> "EWS 00"
+    t = re.sub(r'(' + _FEE_CAT_WORDS + r')(\d)', r'\1 \2', t)
+    # join consecutive category words with " / " when followed by an amount:
+    #   "General OBC EWS 00" -> "General / OBC / EWS: ₹0"
+    def _fix(m):
+        seg = m.group(0)
+        amt = m.group('amt')
+        cats = re.findall(_FEE_CAT_WORDS, seg)
+        cats = ' / '.join(dict.fromkeys(cats))   # dedupe preserve order
+        amt_clean = str(int(amt)) if amt.isdigit() else amt
+        return f"{cats}: \u20b9{amt_clean}"
+    t = re.sub(r'(?:' + _FEE_CAT_WORDS + r'\s+){1,5}(?P<amt>\d+)', _fix, t)
+    return t.strip()
+
+
+# ── H2 FIX: cross-job "Also read / Read also" link fragments leak into scraped
+# text fields (e.g. SHIMUL applicationFee ends with "...| Also read: UKSSSC
+# Recruitment 2026..."). Strip any trailing "also read"/"read also" clause and
+# the separator before it, since it belongs to a different job record. ──
+_CONTAM_RX = re.compile(
+    r'\s*[|•·\-–—]*\s*(also\s*read|read\s*also|you\s*may\s*also\s*like|'
+    r'related\s*(article|post|job)s?)\s*[:\-–—]?.*$', re.I | re.S)
+def _strip_contamination(text):
+    if not text:
+        return text
+    cleaned = _CONTAM_RX.sub('', str(text)).strip()
+    # also drop a dangling trailing separator left behind
+    cleaned = re.sub(r'\s*[|•·]\s*$', '', cleaned).strip()
+    return cleaned or str(text)
 
 # ── C4 FIX: strip navigation/footer/tool/city-jobs pollution from section lists ──
 _POLLUTION_RX = [
@@ -604,7 +687,7 @@ def render_selection(sp):
     steps = _clean_section_items(steps)[:25]   # C4: cap + clean
     if not steps: return ''
     return '<div class="sel-steps">' + ''.join(
-        f'<div class="sel-step"><span class="sel-num">{i+1}</span>{e(s[:140])}</div>'
+        f'<div class="sel-step"><span class="sel-num">{i+1}</span>{e(_smart_truncate(s,140))}</div>'
         for i, s in enumerate(steps)
     ) + '</div>'
 
@@ -724,11 +807,11 @@ def auto_generate_faqs(job_obj):
     sp = job_obj.get('selection_process')
     sel = ''
     if isinstance(sp, list) and sp:
-        sel = safe('; '.join(str(x) for x in sp[:2]))[:300]
+        sel = _smart_truncate(safe('; '.join(str(x) for x in sp[:2])),300)
     elif isinstance(sp, dict):
-        sel = _val(sp, ['details','process'])[:300]
+        sel = _smart_truncate(_val(sp, ['details','process']),300)
     elif isinstance(sp, str):
-        sel = safe(sp)[:300]
+        sel = _smart_truncate(safe(sp),300)
 
     faqs = []
     def add(q, a):
@@ -758,7 +841,20 @@ def auto_generate_faqs(job_obj):
     if start: add(f"When does the application for {title} start?", f"The online application process for {title} starts from {start}.")
     if posts: add(f"How many vacancies are available in {title}?", f"A total of {posts} vacancies are available under {title}.")
     if qual: add(f"What qualification is required for {title}?", f"Candidates must have: {qual}")
-    if age: add(f"What is the age limit for {title}?", f"{age}")
+    if age:
+        _amin = safe(job_obj.get('minimum_age','') or job_obj.get('min_age',''))
+        _amax = safe(job_obj.get('maximum_age','') or job_obj.get('max_age',''))
+        # if `age` is just a bare number (e.g. "25") build a fuller sentence
+        if re.fullmatch(r'\d{1,2}', age.strip()):
+            if _amin and _amax:
+                _ans = f"The minimum age is {_amin} years and the maximum age is {_amax} years. Age relaxation applies as per government rules."
+            elif _amax:
+                _ans = f"The maximum age limit is {_amax} years, with relaxation as per government rules."
+            else:
+                _ans = f"The minimum age is {age} years. Refer to the official notification for the maximum age and category-wise relaxation."
+        else:
+            _ans = age if re.search(r'[.!]$', age.strip()) else f"The age limit for {title} is: {age}."
+        add(f"What is the age limit for {title}?", _ans)
     if fee: add(f"What is the application fee for {title}?", f"The application fee for {title} is {fee}.")
     if sel: add(f"What is the selection process for {title}?", f"The selection process includes: {sel}")
     if sal: add(f"What is the salary / pay scale for {title}?", f"The pay scale for {title} is {sal}.")
@@ -881,6 +977,76 @@ def render_faq(faq_list):
                   f'<div class="faq-a{_op}"><span class="faq-a-icon faq-icon" style="background:#15803d">A</span>'
                   f'<div>{e(a)}</div></div></div>')
     return items
+
+def _render_catwise_dict(d):
+    """H1 FIX: a category-wise-vacancy dict normally maps a label -> value. The
+    SHIMUL bug produced a DEGENERATE dict where the source table's HEADER cells
+    became keys AND the values are bare numbers that don't correspond, e.g.
+    {"Name of Post": "194", "Total Posts": "50"} — i.e. a header label "Name of
+    Post" paired with a count "194" (nonsensical). Only reject when EVERY key is a
+    header-label AND its value is purely numeric (the swapped-header signature).
+    A legitimate {"Post Name": "Junior Assistant", "Total Posts": "45"} (real post
+    name as value) still renders."""
+    if not isinstance(d, dict) or not d:
+        return ''
+    _HEADER_KEYS = {'name of post', 'post name', 'total posts', 'total post',
+                    'total', 'sl. no.', 'sl no', 's.no.', 'sr', 'sr.', 'post',
+                    'name of the post', 'designation', 'no. of posts', 'posts',
+                    'no of posts'}
+    keys_l = {str(k).strip().lower() for k in d.keys()}
+    if keys_l and keys_l.issubset(_HEADER_KEYS):
+        # all keys are header labels — malformed ONLY if every value is numeric
+        # (a real row would have a textual post name as the value)
+        all_numeric = all(re.fullmatch(r'\s*\d[\d,]*\s*', str(v) or '')
+                          for v in d.values())
+        if all_numeric:
+            return ''
+    return render_kv_dict(d)
+
+
+def _render_generic_rows(rows, heading=''):
+    """Fallback renderer: when vacancy rows use arbitrary/non-standard column
+    names (common in freejobalert scrapes, e.g. 'Name of the ICDS Project',
+    'Notifying at Present'), render them as a clean table using the rows' OWN
+    keys so NO data is ever dropped. Skips obviously-broken numeric-only keys."""
+    if not isinstance(rows, list) or not rows:
+        return ''
+    dict_rows = [r for r in rows if isinstance(r, dict) and r]
+    if not dict_rows:
+        return ''
+    # union of keys in insertion order across rows
+    cols = []
+    for r in dict_rows:
+        for k in r.keys():
+            ks = str(k).strip()
+            if ks and ks not in cols:
+                cols.append(ks)
+    # drop columns whose HEADER is purely numeric (mangled header like "18")
+    # but keep them if they actually hold data under a real label elsewhere
+    good_cols = [c for c in cols if not re.fullmatch(r'\d[\d,]*', c.strip())]
+    if not good_cols:
+        good_cols = cols  # nothing better; keep all so data shows
+    # require at least one row with real content
+    def _has_content(r):
+        return any(str(r.get(c, '')).strip() for c in good_cols)
+    data_rows = [r for r in dict_rows if _has_content(r)]
+    if not data_rows:
+        return ''
+    # nice header labels (Title Case, keep as-is if already labeled)
+    def _lbl(c):
+        return c if any(ch.isupper() for ch in c) else c.replace('_', ' ').title()
+    head = ''.join(f'<th>{e(_lbl(c))}</th>' for c in good_cols)
+    body = ''
+    for r in data_rows:
+        cells = ''.join(f'<td>{e(safe(r.get(c, "")))}</td>' for c in good_cols)
+        body += f'<tr>{cells}</tr>'
+    _hh = ''
+    if heading:
+        _clean = re.sub(r'\s*total\s*:?\s*\d[\d,]*\s*post.*$', '', heading, flags=re.I).strip() or heading
+        _hh = f'<div class="kv-stack-head" style="margin-top:4px">{e(_clean)}</div>'
+    return _hh + (f'<div class="tbl-scroll"><table class="data-table">'
+                  f'<thead><tr>{head}</tr></thead><tbody>{body}</tbody></table></div>')
+
 
 def render_vacancy_table(vac_list):
     """Render vacancy rows. SR pages cram a Vacancy-Details table (Post Name |
@@ -1012,17 +1178,31 @@ def _render_vac_group(vac_list, mode='vacancy'):
             _th = safe(row.get('table_heading') or row.get('tableHeading') or '').strip()
             if _th and len(_th) > 5:
                 _tbl_heading = _th
-        if not any(a in row for _c, al in ALL_COLS for a in al):
+        # case-insensitive key lookup: SR/edu scrapers use varying key casing
+        # ("Name of Post" vs "Name Of Post" vs "name_of_post"). Build a
+        # lowercased-key view so aliases match regardless of case/spacing.
+        _row_ci = {}
+        for _k, _v in row.items():
+            _row_ci[str(_k).strip().lower()] = _v
+        def _lookup(alias):
+            if alias in row and row[alias] not in (None, '', {}, []):
+                return row[alias]
+            _al = str(alias).strip().lower()
+            if _al in _row_ci and _row_ci[_al] not in (None, '', {}, []):
+                return _row_ci[_al]
+            return None
+        if not any(_lookup(a) is not None for _c, al in ALL_COLS for a in al):
             continue
         n = {}
         for col, aliases in ALL_COLS:
             for a in aliases:
-                if a in row and row[a] not in (None,'',{},[]):
-                    n[col] = safe(row[a]); avail.add(col); break
+                _val = _lookup(a)
+                if _val is not None:
+                    n[col] = safe(_val); avail.add(col); break
         if n: norm.append(n)
-    if not norm: return ''
+    if not norm: return _render_generic_rows(vac_list, _tbl_heading)
     cols = [c for c,_ in ALL_COLS if c in avail]
-    if not cols: return ''
+    if not cols: return _render_generic_rows(vac_list, _tbl_heading)
 
     # ── C3 FIX: clean rows + compute the real grand total ──
     def _to_int(v):
@@ -1031,13 +1211,53 @@ def _render_vac_group(vac_list, mode='vacancy'):
     def _is_total_label(v):
         return bool(re.search(r'\b(total|grand\s*total|sum)\b', str(v or ''), re.I))
 
+    # Physical-eligibility rows sometimes leak into vacancyDetails (SSC GD:
+    # "Gender", "Male (General/OBC/SC)", "Male ST", "Female ...", with
+    # Height/Chest/Race values). These are NOT vacancy posts — drop them from the
+    # vacancy table so they don't pollute it. A row is "physical" when its
+    # post_name is a bare gender/standard label OR its values look like body
+    # measurements (cm / chest / km / minute / running).
+    _PHYS_LABEL_RX = re.compile(
+        r'^(gender|male|female|transgender|height|chest|weight|running|race|'
+        r'physical|pet|pst)\b', re.I)
+    _PHYS_VAL_RX = re.compile(
+        r'\b(\d+\s*(cm|cms|kg|kgs|km|metre|meter|mtr|min|minute|sec|feet|ft)\b'
+        r'|\d{2,3}\s*[-/]\s*\d{2,3}|chest|expansion)\b', re.I)
+    def _is_physical_row(r):
+        nm = safe(r.get('post_name', '')).strip()
+        if not nm:
+            return False
+        # bare gender/standard label with no real total => physical pollution
+        if _PHYS_LABEL_RX.match(nm):
+            # genuine vacancy "Male"/"Female" rows usually carry a numeric total;
+            # physical rows carry measurements or nothing
+            tot = safe(r.get('total', '')).strip()
+            if not tot or not re.search(r'\d', tot):
+                return True
+            # has a measurement-looking value anywhere => physical
+        # any cell value looks like a body measurement
+        for _k, _v in r.items():
+            if _k == 'post_name':
+                continue
+            if _PHYS_VAL_RX.search(safe(_v)):
+                return True
+        return False
+
     has_name = 'post_name' in cols
     # label column = first non-total descriptive column (post_name/state/language)
     _label_cols = [c for c in cols if c in ('post_name','state','language','department')]
+    # count how many rows look physical vs how many are genuine posts
+    _phys_ct = sum(1 for r in norm if _is_physical_row(r))
+    _genuine_ct = len(norm) - _phys_ct
     clean = []
     explicit_total = None
     for r in norm:
         name = r.get('post_name', '') or r.get('state','') or r.get('language','')
+        # drop physical-eligibility pollution rows (only when there ARE genuine
+        # vacancy rows too — otherwise this might be a genuine physical table that
+        # the section router will handle elsewhere)
+        if _genuine_ct >= 1 and _is_physical_row(r):
+            continue
         # capture an explicitly-labelled total row, don't render it as a data line
         if _is_total_label(r.get('post_name','') or r.get('state','') or r.get('language','')):
             t = _to_int(r.get('total'))
@@ -1076,6 +1296,40 @@ def _render_vac_group(vac_list, mode='vacancy'):
         if c == 'notification_pdf' and sval.startswith('http'):
             return '<td><a href="%s" target="_blank" rel="noopener nofollow"><i class="fa-solid fa-file-pdf"></i> PDF</a></td>' % e(sval)
         return '<td>%s</td>' % e(sval)
+
+    # ── ELIGIBILITY SPLIT ──────────────────────────────────────────────
+    # User rule: Vacancy Details table me eligibility/qualification NAHI aani
+    # chahiye — wo ek ALAG table me honi chahiye. Agar vacancy rows me
+    # qualification column hai to use vacancy cols se hata kar ek alag
+    # "Eligibility" sub-table banao (sirf un posts ke liye jinke paas hai).
+    _elig_block = ''
+    if (mode == 'vacancy' and 'qualification' in cols and has_name
+            and 'total' in cols):
+        # only split when there's a real Vacancy table (Post + Total) to stand on
+        # its own; if it's eligibility-only (no total), keep one combined table.
+        _elig_rows = [r for r in clean if str(r.get('qualification', '')).strip()]
+        if _elig_rows:
+            # Many SR pages put ONE shared eligibility on the first post that
+            # applies to all — render Post | Eligibility for the rows that have it.
+            _er_html = ''.join(
+                f'<tr><td>{_i+1}</td><td>{e(safe(_r.get("post_name","")))}</td>'
+                f'<td>{e(safe(_r.get("qualification","")))}</td></tr>'
+                for _i, _r in enumerate(_elig_rows))
+            _eh = ''
+            if _tbl_heading:
+                _ehc = re.sub(r'\s*total\s*:?\s*\d[\d,]*\s*post.*$', '', _tbl_heading, flags=re.I).strip()
+                _ehc = re.sub(r'vacancy\s*details?', 'Eligibility', _ehc, flags=re.I).strip() or 'Eligibility'
+                # if heading already mentions eligibility keep it, else append
+                if 'eligib' not in _ehc.lower():
+                    _ehc = _ehc + ' : Eligibility'
+                _eh = f'<div class="kv-stack-head" style="margin-top:10px">{e(_ehc)}</div>'
+            _elig_block = (_eh + '<div class="tbl-scroll"><table class="data-table">'
+                           '<thead><tr><th>Sr.</th><th>Post Name</th>'
+                           '<th>Eligibility</th></tr></thead><tbody>'
+                           + _er_html + '</tbody></table></div>')
+        # remove qualification from the vacancy table columns
+        cols = [c for c in cols if c != 'qualification']
+
     head = '<th>Sr.</th>' + ''.join(f'<th>{LABELS[c]}</th>' for c in cols)
     rows = ''.join(f'<tr><td>{i+1}</td>' + ''.join(_vac_cell(c, r.get(c,"")) for c in cols) + '</tr>'
                    for i, r in enumerate(clean))
@@ -1097,7 +1351,7 @@ def _render_vac_group(vac_list, mode='vacancy'):
         _clean_h = re.sub(r'\s*total\s*:?\s*\d[\d,]*\s*post.*$', '', _tbl_heading, flags=re.I).strip()
         _clean_h = _clean_h or _tbl_heading
         _head_html = f'<div class="kv-stack-head" style="margin-top:4px">{e(_clean_h)}</div>'
-    return _head_html + f'<div class="tbl-scroll"><table class="data-table"><thead><tr>{head}</tr></thead><tbody>{rows}</tbody></table></div>'
+    return _head_html + f'<div class="tbl-scroll"><table class="data-table"><thead><tr>{head}</tr></thead><tbody>{rows}</tbody></table></div>' + _elig_block
 
 # ── Sarkari sections processor ────────────────────────────────
 TITLE_MAP = {
@@ -1471,13 +1725,48 @@ def build_all_sections(job_obj):
         elif key == 'qualification':    body = render_qualification(val)
         elif key == 'course_details':
             # SR courseDetails: [{courseName, eligibility}] — render as clean 2-col table
+            # SAFETY NET: older scraper sometimes mis-captured a VACANCY table as
+            # course_details, putting the Total-Post NUMBER (e.g. "178") as
+            # courseName, OR duplicating the vacancy eligibility text here. Drop:
+            #  - numeric/empty courseName
+            #  - rows whose courseName is already a vacancy post name
+            #  - rows whose eligibility text duplicates a vacancy eligibility
+            #    (SGPGI: same "Bachelor Degree..." text in both tables)
             _cd = val if isinstance(val, list) else []
+            _vac_posts = set()
+            _vac_eligs = set()
+            def _norm(t):
+                return re.sub(r'[^a-z0-9]+', ' ', safe(t).lower()).strip()
+            for _vp in (job_obj.get('vacancy_details') or []):
+                if isinstance(_vp, dict):
+                    _pn = _norm(_vp.get('post_name') or _vp.get('postName'))
+                    if _pn: _vac_posts.add(_pn)
+                    _ve = _norm(_vp.get('qualification') or _vp.get('eligibility'))
+                    if _ve and len(_ve) > 15: _vac_eligs.add(_ve)
             _cd_rows = []
+            _cd_seen = set()
             for _c in _cd:
                 if not isinstance(_c, dict): continue
                 _cn = safe(_c.get('courseName') or _c.get('course_name') or _c.get('course') or '')
                 _el = safe(_c.get('eligibility') or _c.get('eligiblity') or _c.get('qualification') or '')
+                # bad row: courseName missing OR purely a number (it's a post count)
+                if not _cn.strip() or re.fullmatch(r'\d[\d,]*', _cn.strip()):
+                    continue
                 if not (_cn or _el): continue
+                # skip if courseName is actually a vacancy post (duplicate listing)
+                if _norm(_cn) in _vac_posts:
+                    continue
+                # skip if the eligibility text duplicates a vacancy eligibility
+                if _el and _norm(_el) in _vac_eligs:
+                    continue
+                # skip if courseName itself is just an eligibility sentence already
+                # shown under vacancy (SGPGI: courseName holds the elig text)
+                if _norm(_cn) in _vac_eligs:
+                    continue
+                _sig = _norm(_cn) + '|' + _norm(_el)
+                if _sig in _cd_seen:      # internal duplicate
+                    continue
+                _cd_seen.add(_sig)
                 _cd_rows.append(f'<tr><td>{e(_cn)}</td><td>{e(_el)}</td></tr>')
             if _cd_rows:
                 body = ('<table class="kv-table"><tbody>'
@@ -1499,7 +1788,7 @@ def build_all_sections(job_obj):
                 if _lis:
                     _es_parts.append(f'<ul class="edu-list">{_lis}</ul>')
             body = ''.join(_es_parts)
-        elif key == 'category_wise_vacancy': body = (render_vacancy_table(val) if isinstance(val,list) else render_kv_dict(val) if isinstance(val,dict) else '')
+        elif key == 'category_wise_vacancy': body = (render_vacancy_table(val) if isinstance(val,list) else _render_catwise_dict(val) if isinstance(val,dict) else '')
         elif key == 'salary_details':   body = render_list_items(val) if isinstance(val,list) else (render_kv_dict(val) if isinstance(val,dict) else f'<div class="edu-sec">{e(safe(val))}</div>')
         elif key == 'selection_process': body = render_selection(val)
         elif key == 'exam_pattern':     body = (render_smart_table(val) if isinstance(val,list) and val and isinstance(val[0],dict) else render_list_items(val) if isinstance(val,list) else f'<div class="edu-sec">{e(safe(val))}</div>')
@@ -1999,7 +2288,12 @@ def build_all_sections(job_obj):
         html += sec_card('Course-wise Eligibility', 'fa-list-check', '4338ca,#6366f1', _body)
 
     # leftover simple scalars (result_url etc. are handled separately above)
+    # H4 FIX: skip rows whose LABEL or VALUE is garbled scrape residue — broken
+    # ordinals ("ST Week", "Nd Week", "E Soon..."), or values truncated mid-word
+    # ("Availabl", "Available So"). These add no value and look broken to crawlers.
     for _lbl, _val in _leftover_scalars:
+        if _is_garbled_field(_lbl, safe(_val)):
+            continue
         html += sec_card(_lbl, 'fa-circle-dot', '475569,#334155',
                          f'<div class="edu-sec">{e(safe(_val))}</div>')
 
@@ -2037,7 +2331,22 @@ def _dedup_section_cards(html):
                 continue
             seen.add(key)
         out.append(p)
-    return ''.join(out)
+    html = ''.join(out)
+    # Also drop EXACT-duplicate <table> blocks anywhere on the page (same content
+    # rendered twice via two different fields/paths — e.g. an info page that has
+    # the same "Particulars | Details" table from two JSON keys).
+    _seen_tbl = set()
+    def _dedup_tbl(mt):
+        block = mt.group(0)
+        sig = re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', '', block)).strip().lower()
+        if len(sig) < 20:           # tiny tables: leave alone
+            return block
+        if sig in _seen_tbl:
+            return ''               # remove duplicate table
+        _seen_tbl.add(sig)
+        return block
+    html = re.sub(r'<table\b.*?</table>', _dedup_tbl, html, flags=re.S)
+    return html
 
 # N9: Parse salary from pay_scale string for accurate JobPosting schema
 _LEVEL_PAY = {1:18000,2:19900,3:21700,4:25500,5:29200,6:35400,
@@ -2143,8 +2452,8 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
         primary = {'@context':'https://schema.org','@type':'Article',
                    'headline':title[:110],'description':desc,'url':canon_url,
                    'datePublished':date_posted,'dateModified':TODAY,
-                   'author':{'@type':'Organization','name':'Top Sarkari Jobs','url':BASE_URL},
-                   'publisher':{'@type':'Organization','name':'Top Sarkari Jobs',
+                   'author':{'@type':'Organization','name':'Top Sarkari Jobs Editorial Team','url':BASE_URL+'/about/'},
+                   'publisher':{'@type':'Organization','@id':BASE_URL+'/#organization','name':'Top Sarkari Jobs',
                                 'logo':{'@type':'ImageObject','url':BASE_URL+'/image.png'}},
                    'mainEntityOfPage':{'@type':'WebPage','@id':canon_url},
                    'image':BASE_URL+'/og-jobs.png'}
@@ -2669,6 +2978,11 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
 
     # Header (with share buttons)
     cat_badge = safe(job_obj.get('category','') or badge_label).replace('_',' ')
+    # human-readable "Updated" date for the editorial byline (E-E-A-T signal)
+    try:
+        _byline_date = date.fromisoformat(TODAY).strftime('%d %B %Y').lstrip('0')
+    except Exception:
+        _byline_date = TODAY
     import urllib.parse as _uparse
     _raw_url = canon_url
     # Build rich share message (WhatsApp / Telegram). Skip empty fields.
@@ -2709,6 +3023,14 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     {share_row}
   </div>
   <h1 class="detail-h1">{e(title)}</h1>
+  <div class="editorial-byline" style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:.74rem;color:#64748b;margin:2px 0 8px;">
+    <i class="fa-solid fa-circle-check" style="color:#16a34a;"></i>
+    <span>Reviewed by the <a href="/about/" style="color:#1a56db;text-decoration:none;font-weight:600;">Top Sarkari Jobs Editorial Team</a></span>
+    <span aria-hidden="true">·</span>
+    <span>Updated {e(_byline_date)}</span>
+    <span aria-hidden="true">·</span>
+    <span>Sourced from the official notification — <a href="/editorial-policy/" style="color:#1a56db;text-decoration:none;">how we verify</a></span>
+  </div>
   <div class="stats-bar">
     <div class="stat"><div class="stat-val">{e(vacancies or "—")}</div><div class="stat-lbl">Vacancies</div></div>
     <div class="stat"><div class="stat-val" style="color:#dc2626">{e(last_d or "—")}</div><div class="stat-lbl">{e(_dh_lbl)}</div></div>
@@ -3730,7 +4052,22 @@ for job in SARK:
     if job.get('data_tables') and 'data_tables' not in full:
         full['data_tables'] = job['data_tables']
     canon = f"{BASE_URL}/jobs/{slug}/"
-    bc    = [('Latest Jobs', f"{BASE_URL}/section/latest-jobs/")]
+    # M4 FIX: breadcrumb must reflect the job's ACTUAL category (badge uses
+    # job['category']), not a hardcoded "Latest Jobs". Map each sarkari_data
+    # category to its real section breadcrumb so badge and breadcrumb agree.
+    _SARK_BC = {
+        'SR_Latest_Jobs':  ('Latest Jobs',  '/section/latest-jobs/'),
+        'LATEST_JOBS NEW': ('Latest Jobs',  '/section/latest-jobs/'),
+        'SR_Result':       ('Results',      '/section/results/'),
+        'SR_Admit_Card':   ('Admit Card',   '/section/admit-card/'),
+        'SR_Answer_Key':   ('Answer Key',   '/section/answer-key/'),
+        'ADMISSIONS':      ('Admissions',   '/section/admissions/'),
+        'UPCOMING_JOBS':   ('Upcoming Jobs','/section/upcoming-jobs/'),
+        'OFFLINE_FORM':    ('Offline Form', '/section/offline-form/'),
+    }
+    _jcat = safe(job.get('category', ''))
+    _bc_lbl, _bc_url = _SARK_BC.get(_jcat, ('Latest Jobs', '/section/latest-jobs/'))
+    bc = [(_bc_lbl, f"{BASE_URL}{_bc_url}")]
     write(str(ROOT/'jobs'/slug/'index.html'), build_detail_page(full, slug, canon, bc))
     ld = safe(imp_dates.get('last_date_to_apply','') or imp_dates.get('last_date',''))
     jobs_index[slug] = {'cat':job.get('category',''),'title':title[:120],'last_date':ld[:30]}
