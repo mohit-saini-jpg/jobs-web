@@ -1,0 +1,35 @@
+# Backup files created by scripts (e.g. FA subset revert backup)
+*.bak
+*.tmp
+*.swp
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor/IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Python cache (if any build scripts run locally)
+__pycache__/
+*.pyc
+
+# Scraper checkpoint/cache files (local-only bookkeeping, not site content,
+# resets cleanly each run — no need to version-control these)
+scraper/scraper_checkpoint.json
+scraper/scrape_seen_urls.json
+scraper/ai_usage_tracker.json
+
+# Node (if any tooling uses it)
+node_modules/
+
+# Do NOT ignore: jobs/, state/, education/, section/, qualification/,
+# category/, data/ — these are the LIVE SITE CONTENT that GitHub Pages
+# serves directly. They must stay committed.
+#
+# Do NOT ignore: ai_daily_usage_history.json — kept intentionally so
+# quota usage can be tracked/reviewed over time (small file, append-only).

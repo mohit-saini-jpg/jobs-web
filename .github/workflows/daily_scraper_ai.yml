@@ -1,8 +1,27 @@
 name: Daily Scraper + AI Content Layer
 
+# ──────────────────────────────────────────────────────────────────────
+# SCOPE: This workflow ONLY scrapes fresh data + fills the AI content
+# fields (ai_overview, ai_title, etc.) into Complete_Jobs_Full_Data.json,
+# then commits that JSON.
+#
+# IT DELIBERATELY DOES NOT run generate_all.py or build the static site.
+# That is already handled by the existing auto-update-jobs.yml workflow,
+# which runs daily at 7 AM IST and reads whatever Complete_Jobs_Full_Data.json
+# is in the repo at that time. Running generate_all.py here too would mean
+# TWO workflows generating + pushing the site on different schedules —
+# a real risk of git conflicts and duplicate/wasted regenerations.
+#
+# Pipeline as it actually runs, end to end:
+#   2:00 AM IST  → THIS workflow: scrape (new jobs) + AI-fill + commit JSON
+#   7:00 AM IST  → auto-update-jobs.yml: reads that JSON, runs generate_all.py,
+#                  rebuilds sitemap, pushes the live site
+# ──────────────────────────────────────────────────────────────────────
+
 on:
   schedule:
-    # 2 AM IST (8:30 PM UTC) - daily run
+    # 2 AM IST (8:30 PM UTC) — runs BEFORE auto-update-jobs.yml (7 AM IST),
+    # so the 7 AM run always picks up today's freshly-scraped + AI-filled data.
     - cron: '30 20 * * *'
   workflow_dispatch:   # manual trigger bhi kar sakta hai
 
@@ -13,6 +32,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # needed for a safe rebase before push (handles same-day concurrent edits)
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -74,11 +95,16 @@ jobs:
           QUOTA_EOF
 
       # ── STEP 5: AI content layer — only spends quota if some remains ────
+      # AI_DATA_FILE is explicit here because scraper_merge.py writes
+      # Complete_Jobs_Full_Data.json directly into scraper/ (not scraper/data/)
+      # — ai_content_layer.py's own default assumes a data/ subfolder, so we
+      # override it to match what scraper_merge.py actually produces.
       - name: AI Content Layer (fills ai_* fields, rate-limited)
         if: steps.quota_check.outputs.should_run == 'true'
         working-directory: scraper
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          AI_DATA_FILE: Complete_Jobs_Full_Data.json
         run: python ai_content_layer.py
         continue-on-error: true   # AI failure should never block site generation
 
@@ -86,11 +112,23 @@ jobs:
         if: steps.quota_check.outputs.should_run == 'false'
         run: echo "::notice title=AI Quota::Daily limit already used — skipping AI calls, site will use existing/_backup_ content."
 
-      # ── STEP 6: Generate static site (with whatever AI content exists) ──
-      - name: Generate static pages
-        working-directory: site/jobs-web-main
-        run: python generate_all.py
-        continue-on-error: false
+      # ── STEP 6: Sync the AI-filled JSON to repo root (same convention used
+      # by auto-update-jobs.yml's "Ensure Complete_Jobs_Full_Data.json at
+      # root" step). We do NOT run generate_all.py here — auto-update-jobs.yml
+      # does that at 7 AM IST and will pick up this file automatically.
+      # NOTE: in this repo, generate_all.py and scraper/ are BOTH at repo
+      # root (jobs-web-main IS the repo root) — so this is a same-level copy,
+      # not a cross-folder one. ──
+      - name: Sync updated JSON to repo root (for auto-update-jobs.yml to pick up)
+        run: |
+          if [ -f "scraper/Complete_Jobs_Full_Data.json" ]; then
+            cp scraper/Complete_Jobs_Full_Data.json Complete_Jobs_Full_Data.json
+            mkdir -p data
+            cp scraper/Complete_Jobs_Full_Data.json data/Complete_Jobs_Full_Data.json
+            echo "Synced AI-filled JSON → repo root + data/"
+          else
+            echo "::warning::scraper/Complete_Jobs_Full_Data.json not found — check scraper_merge.py FINAL_OUTPUT path"
+          fi
 
       # ── STEP 7: Append today's usage to history log ────────────────────
       - name: Update usage history
@@ -128,13 +166,16 @@ jobs:
           json.dump(hist, open(history_file, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
           REPORT_EOF
 
-      # ── STEP 8: Commit + push everything (data, generated site, logs) ───
+      # ── STEP 8: Commit + push (rebase-safe — avoids clobbering a same-day
+      # manual push or the 7 AM auto-update-jobs.yml run if schedules ever
+      # drift close together) ───────────────────────────────────────────
       - name: Commit and push changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
           git commit -m "Daily scrape + AI content layer — $(date -u +'%Y-%m-%d %H:%M UTC')" || echo "No changes to commit"
+          git pull --rebase --autostash origin main || echo "Nothing to rebase"
           git push
 
       - name: Completion notice

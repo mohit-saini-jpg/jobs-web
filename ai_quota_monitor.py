@@ -39,7 +39,7 @@ def load_history():
 
 def count_jobs_with_ai():
     """Count how many jobs already have AI content (have content_hash set)."""
-    data_file = Path("scraper/data/Complete_Jobs_Full_Data.json")
+    data_file = Path("scraper/Complete_Jobs_Full_Data.json")
     if not data_file.exists():
         data_file = Path("Complete_Jobs_Full_Data.json")
     
