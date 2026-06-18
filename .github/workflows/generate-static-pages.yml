@@ -169,4 +169,4 @@ jobs:
           echo "| Generator | generate_all.py (unified) |" >> $GITHUB_STEP_SUMMARY
           echo "| IST Time | $(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M') |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Old pages cleared before generation — zero stale content possible.**" >> $GITHUB_STEP_SUMMARY
+          echo "**Old pages are preserved (never deleted) — only current jobs are added/updated. No stale-content wipe.**" >> $GITHUB_STEP_SUMMARY
