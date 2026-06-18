@@ -217,16 +217,16 @@ def ensure_ai_placeholders(job):
 # ──────────────────────────────────────────────────────────────────────────
 # GEMINI PROMPT + CALL
 # ──────────────────────────────────────────────────────────────────────────
-PROMPT_TEMPLATE = """You are a Sarkari Naukri content editor. Using ONLY the facts in INPUT_FACTS below, write original Hinglish content for a government-jobs listing page.
+PROMPT_TEMPLATE = """You are a Sarkari Naukri content editor. Using ONLY the facts provided below, write original Hinglish content for a government-jobs listing page.
 
 STRICT RULES:
 1. Do not invent or alter any date, number, fee amount, or URL.
-2. If a fact is missing from INPUT_FACTS, do not guess it — omit that detail rather than fabricate it.
+2. If a fact is missing from the provided data, do not guess it — omit that detail or write a natural generic sentence pointing the reader to the official notification. Never reference variable names, field names, or internal terms like "facts", "data", "JSON", "undefined", "null", "missing fields", etc. Write as a human editor would.
 3. Write in natural Hinglish (Hindi-English mix), the way a human editor writing for Indian job-seekers would.
 4. Vary sentence structure and phrasing — do not reuse the same opening template.
 5. Output ONLY valid JSON, no markdown fences, no preamble.
 
-INPUT_FACTS:
+JOB POSTING DATA:
 {facts_json}
 
 OUTPUT — exactly these keys:
@@ -238,7 +238,7 @@ OUTPUT — exactly these keys:
   "ai_expert_analysis": "(150-200 words)",
   "ai_who_should_apply": "(100-150 words)",
   "ai_preparation_tips": "(100-150 words, concrete)",
-  "ai_salary_insights": "(100-150 words; say 'as per official notification' if figures absent)",
+  "ai_salary_insights": "(100-150 words; say 'salary details are available in the official notification' if specific figures absent)",
   "ai_job_profile_analysis": "(100-150 words)",
   "ai_selection_strategy": "(100-150 words)",
   "ai_how_to_apply_rewrite": "(150-200 words, natural paragraph)",
@@ -288,6 +288,17 @@ def call_gemini(prompt):
                     continue          # retry with next backoff
                 print("      [429] daily/rate quota — stopping AI for this run.")
                 return "QUOTA_STOP"
+            if e.code == 503:
+                # Confirmed via Gemini API docs/community reports: 503 means the
+                # model is temporarily overloaded (shared free-tier capacity) —
+                # NOT a quota or code problem. It is transient and resolves with
+                # a short retry, same backoff ladder as 429.
+                if attempt < len(BACKOFFS):
+                    print(f"      [503] model overloaded (attempt {attempt+1}) — retrying...")
+                    continue
+                print("      [503] still overloaded after retries — skipping this job "
+                      "(it stays on _backup_* content, will retry next run).")
+                return None
             print(f"      [HTTP {e.code}] {e.reason} — skipping this job.")
             return None
         except Exception as e:
@@ -296,10 +307,57 @@ def call_gemini(prompt):
     return None
 
 
+def validate_ai_content_for_leaks(result):
+    """POST-GENERATION VALIDATOR: scan AI output for template variable leaks.
+    Returns (is_valid, field_with_leak) where is_valid=False if any leak detected."""
+    import re
+    
+    if not isinstance(result, dict):
+        return True, None
+    
+    # Patterns that indicate internal variable/template leaks
+    leak_patterns = [
+        r'input.?facts',      # INPUT_FACTS, input_facts, input facts
+        r'\{\{.*?\}\}',       # {{ template }}
+        r'\b(undefined|null|None|NaN)\b',  # explicit null values
+        r'`[A-Z_]+`',         # backtick-wrapped constants
+        r'\bin\s+\.',         # "in ." (dangling space before period)
+        r'\bon\s+\.',         # "on ." (dangling space)
+    ]
+    
+    for field_name in AI_TEXT_KEYS:
+        text = result.get(field_name, "")
+        if isinstance(text, str):
+            for pattern in leak_patterns:
+                if re.search(pattern, text, re.IGNORECASE):
+                    return False, field_name
+    
+    # Also check FAQ content
+    for faq in result.get("ai_expanded_faqs", []):
+        for field in ["question", "answer"]:
+            text = faq.get(field, "")
+            if isinstance(text, str):
+                for pattern in leak_patterns:
+                    if re.search(pattern, text, re.IGNORECASE):
+                        return False, f"ai_expanded_faqs[{field}]"
+    
+    return True, None
+
+
 def apply_ai_result(job, result):
-    """Merge AI output into the job, ONLY into ai_* keys. Never touches facts."""
+    """Merge AI output into the job, ONLY into ai_* keys. Never touches facts.
+    ADDED: validate for template leaks before publishing."""
     if not isinstance(result, dict):
         return False
+    
+    # VALIDATE: check for leaked template variables
+    is_clean, leak_field = validate_ai_content_for_leaks(result)
+    if not is_clean:
+        # Log the leak but don't crash — graceful degradation
+        # (job keeps its _backup_* content, this field just skipped)
+        print(f"      ⚠️ [leak detected in {leak_field}] — skipping AI for this job, keeping _backup_ content")
+        return False
+    
     for k in AI_TEXT_KEYS:
         if result.get(k):
             job[k] = result[k]
@@ -368,16 +426,15 @@ def main():
     quota_stop = False
 
     for job, source in iter_jobs(m, only_category=args.category):
-        ensure_ai_placeholders(job)
-        migrate_backups(job, source)
-
         facts = normalize_facts(job, source)
         if not facts.get("title"):
             continue   # nothing to work with
 
         new_hash = compute_content_hash(facts)
 
-        # CACHE HIT: facts unchanged AND we already have AI content
+        # CACHE HIT: facts unchanged AND we already have AI content.
+        # IMPORTANT: untouched here — a cache-hit job is left exactly as it
+        # was in the JSON, no placeholder keys added, no size bloat.
         if job.get("content_hash") == new_hash and job.get("ai_overview"):
             cache_hits += 1
             continue
@@ -403,6 +460,14 @@ def main():
             continue
         # slow down at 80%
         delay = MIN_DELAY_SECONDS * (2 if usage["requests_today"] >= 0.8 * DAILY_LIMIT else 1)
+
+        # Only NOW — right before the actual AI call — set up the ai_* schema
+        # and migrate backup fields. This is the fix for the size-bloat bug:
+        # a job that never gets this far (cache-hit, or quota ran out before
+        # reaching it) is left completely untouched in the JSON, no null
+        # placeholder keys added "just in case".
+        ensure_ai_placeholders(job)
+        migrate_backups(job, source)
 
         prompt = build_prompt(facts)
         result = call_gemini(prompt)
