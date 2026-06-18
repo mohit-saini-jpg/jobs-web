@@ -1684,9 +1684,41 @@ def _render_unknown_list(val):
         return ''
     return '<ul class="val-list">' + ''.join(f'<li>{e(it)}</li>' for it in items) + '</ul>'
 
+def _render_ai_sections(job_obj):
+    """Phase 5: render the AI-generated content sections (overview, expert
+    analysis, etc.) as section cards — ONLY when the AI field is present.
+    Additive: a job with no AI content renders nothing here, exactly as before.
+    Facts (tables/dates/fees) are never produced here — those stay fact-sourced."""
+    out = ''
+    # (key, heading, icon, color)
+    ai_cards = [
+        ('ai_overview',            'Overview',              'fa-circle-info',       '1d4ed8,#3b82f6'),
+        ('ai_expert_analysis',     'Expert Analysis',       'fa-lightbulb',         '7c3aed,#a855f7'),
+        ('ai_who_should_apply',    'Who Should Apply',      'fa-user-check',        '0f766e,#0891b2'),
+        ('ai_preparation_tips',    'Preparation Tips',      'fa-list-check',        '047857,#10b981'),
+        ('ai_salary_insights',     'Salary Insights',       'fa-indian-rupee-sign', 'b45309,#f59e0b'),
+        ('ai_job_profile_analysis','Job Profile',           'fa-briefcase',         '475569,#334155'),
+        ('ai_selection_strategy',  'Selection Strategy',    'fa-bullseye',          'be123c,#f43f5e'),
+    ]
+    for key, heading, icon, color in ai_cards:
+        val = safe(job_obj.get(key, '') or '')
+        if val and len(val) > 20:
+            body = f'<div class="edu-sec" style="line-height:1.7">{e(val)}</div>'
+            out += sec_card(heading, icon, color, body)
+    return out
+
+
 def build_all_sections(job_obj):
     html = ''
     rendered = set()
+    # ── AI LAYER (Phase 5): AI content sections render FIRST (prominent), only
+    # when present. Pure addition — no effect on jobs without AI content. ──
+    html += _render_ai_sections(job_obj)
+    # AI overview replaces the old short-info card: if ai_overview exists, mark
+    # short_information as "already handled" so we don't show both (no dup).
+    if safe(job_obj.get('ai_overview', '') or ''):
+        rendered.add('short_information')
+        rendered.add('shortInfo')
     # Check for sarkari titled sections
     sections = job_obj.get('sections') or []
     has_sarkari = bool(sections and any(sec.get('title') for sec in sections if isinstance(sec,dict)))
@@ -2224,10 +2256,17 @@ def build_all_sections(job_obj):
                 body = ''  # mark as already rendered
         elif key == 'syllabus':         body = (render_list_items(val) if isinstance(val,list) else f'<div class="edu-sec">{e(safe(val))}</div>')
         elif key == 'physical_eligibility': body = (render_kv_dict(val) if isinstance(val,dict) else render_list_items(val) if isinstance(val,list) else f'<div class="edu-sec">{e(safe(val))}</div>')
-        elif key == 'how_to_apply':     body = render_hta(val)
+        elif key == 'how_to_apply':
+            # AI LAYER: prefer the AI rewrite if present, else the scraped steps.
+            _ai_hta = safe(job_obj.get('ai_how_to_apply_rewrite', '') or '')
+            body = (f'<div class="edu-sec" style="line-height:1.7">{e(_ai_hta)}</div>'
+                    if _ai_hta else render_hta(val))
         elif key == 'important_instructions': body = ''.join(f'<div class="inst-box"><i class="fa-solid fa-triangle-exclamation"></i><span>{e(safe(s))}</span></div>' for s in (val if isinstance(val,list) else [val]) if safe(s))
         elif key == 'important_links':  body = render_links(val)
-        elif key == 'faq':              body = render_faq(val)
+        elif key == 'faq':
+            # AI LAYER: prefer AI-expanded FAQs if present, else scraped FAQ.
+            _ai_faqs = job_obj.get('ai_expanded_faqs') or []
+            body = render_faq(_ai_faqs if _ai_faqs else val)
         elif key == 'sections':
             body = render_edu_sections(val) if isinstance(val,list) else ''
         else:                           body = ''
@@ -2250,6 +2289,19 @@ def build_all_sections(job_obj):
         'resulturl', 'answerkeyurl', '_ad_derived_keys',
     }
     for key, val in job_obj.items():
+        # INTERNAL FIELDS GUARD: any key starting with "_" (e.g. "_scraped_from",
+        # "_ad_derived_keys") is scraper/build bookkeeping only — never eligible
+        # for the public "Extra Fields" fallback dump, regardless of its value.
+        if isinstance(key, str) and key.startswith('_'):
+            continue
+        # AI LAYER GUARD: ai_* fields (and AI metadata) are rendered explicitly
+        # by the AI-aware code paths above (_render_ai_sections, faq/hta/title/
+        # meta overrides). They must NOT also appear in this generic fallback,
+        # or every page would show an ugly duplicate "Ai Overview" etc. card.
+        if isinstance(key, str) and (key.startswith('ai_') or
+                key in ('content_hash', 'ai_schema_faq', 'ai_expanded_faqs',
+                        'ai_extracted_structured_data')):
+            continue
         if key in rendered or key in _NEVER_AS_UNKNOWN:
             continue
         if not val or val == {} or val == []:
@@ -2299,7 +2351,9 @@ def build_all_sections(job_obj):
 
     # ── Auto-FAQ: if no JSON FAQ was rendered, generate from page data ──
     if 'faq' not in rendered:
-        _auto = auto_generate_faqs(job_obj)
+        # AI LAYER: if AI-expanded FAQs exist, use those; else auto-generate.
+        _ai_faqs = job_obj.get('ai_expanded_faqs') or []
+        _auto = _ai_faqs if _ai_faqs else auto_generate_faqs(job_obj)
         if len(_auto) >= 2:  # show if we have at least a couple real FAQs
             _auto_body = render_faq(_auto)
             if _auto_body and _auto_body.strip():
@@ -2369,7 +2423,7 @@ def parse_salary(pay_str):
 def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
     bd    = job_obj.get('basic_details', {}) or {}
     dates = job_obj.get('important_dates', {}) or {}
-    faq   = job_obj.get('faq', []) or []
+    faq   = (job_obj.get('ai_expanded_faqs') or job_obj.get('faq', []) or [])
     title = safe(bd.get('job_title','') or job_obj.get('title',''))
     org   = safe(bd.get('organization_name','') or 'Government of India')
     loc   = safe(bd.get('job_location','') or 'India')
@@ -2913,6 +2967,11 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     if len(_jp) > _MAX:
         _jp = smart_title_cut(_jp, _MAX)
     title_tag = smart_title_cut(_jp + _BRAND, 60)
+    # ── AI LAYER (Phase 5): prefer ai_title if present, else the fact-built title.
+    # Additive + safe: if the AI field is null/missing, behaviour is exactly as before.
+    _ai_title = safe(job_obj.get('ai_title', '') or '')
+    if _ai_title:
+        title_tag = smart_title_cut(_ai_title, 65)
     short_info = safe(bd.get('short_information','') or job_obj.get('jobs_info','') or job_obj.get('short_information',''))
     # Build meta description inline
     _si = short_info.rstrip('.,; ').strip() if short_info else ''
@@ -2960,6 +3019,11 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
         meta_desc = _strip_dangling(_cut) + '…'
     else:
         meta_desc = _md_full
+
+    # ── AI LAYER (Phase 5): prefer ai_meta_description if present.
+    _ai_meta = safe(job_obj.get('ai_meta_description', '') or '')
+    if _ai_meta:
+        meta_desc = _ai_meta[:160].rstrip()
 
     schemas_html = build_schemas(job_obj, canon_url, breadcrumbs, slug)
 
