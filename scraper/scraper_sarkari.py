@@ -228,13 +228,21 @@ TODAY        = datetime.today()
 MSS_OUTPUT_FILE  = "merged_sarkari_data.json"  # standalone ref only
 
 SR_HEADERS = {
-    "User-Agent":      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-    "Accept":          "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-    "Accept-Language": "en-US,en;q=0.5",
+    "User-Agent":      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+    "Accept":          "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+    "Accept-Language": "en-IN,en;q=0.9,hi;q=0.8",
     "Accept-Encoding": "gzip, deflate",
     "Connection":      "keep-alive",
-    "Referer":         "https://www.google.com/",
+    "Referer":         "https://www.google.com/search?q=sarkari+result",
     "Upgrade-Insecure-Requests": "1",
+    "Sec-Fetch-Dest":  "document",
+    "Sec-Fetch-Mode":  "navigate",
+    "Sec-Fetch-Site":  "cross-site",
+    "Sec-Fetch-User":  "?1",
+    "sec-ch-ua":       '"Google Chrome";v="125", "Chromium";v="125", "Not.A/Brand";v="24"',
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": '"Windows"',
+    "Cache-Control":   "max-age=0",
 }
 
 # =========================================================
@@ -2843,14 +2851,30 @@ def sort_jobs_latest(jobs):
 # =========================================================
 
 def sr_load_page(url):
-    try:
-        r = requests.get(url, headers=SR_HEADERS, timeout=20)
-        if r.status_code != 200:
+    """Load a sarkariresult.com page with retry on transient failures.
+    Returns BeautifulSoup or None.
+    """
+    import time as _time
+    RETRIES = 3
+    DELAYS  = [0, 5, 15]   # wait before each attempt (0 = first try immediate)
+    for attempt, delay in enumerate(DELAYS):
+        if delay:
+            _time.sleep(delay)
+        try:
+            r = requests.get(url, headers=SR_HEADERS, timeout=25)
+            if r.status_code == 200:
+                return BeautifulSoup(r.text, "lxml")
+            # 429/503 → transient, retry. 403 → likely bot block, also retry with delay.
+            print(f"  SR LOAD [{r.status_code}] {url[:60]} (attempt {attempt+1}/{RETRIES})")
+            if r.status_code in (403, 429, 503) and attempt < RETRIES - 1:
+                continue   # retry after delay
+            return None    # final attempt or non-retriable status
+        except Exception as e:
+            print(f"  SR LOAD ERROR (attempt {attempt+1}): {e}")
+            if attempt < RETRIES - 1:
+                continue
             return None
-        return BeautifulSoup(r.text, "lxml")
-    except Exception as e:
-        print("  SR LOAD ERROR:", e)
-        return None
+    return None
 
 
 def sr_get_homepage_sections():
