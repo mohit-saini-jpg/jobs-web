@@ -3723,15 +3723,33 @@ def _versioned_slug(base_slug, job):
     return cand
 
 def _is_dup_job(slug, title):
-    """True only if this exact slug was already written (version-aware slugging
-    above already separates different versions into different slugs)."""
-    return slug in seen_jobs
+    """True if this job was already rendered — checks BOTH slug AND content
+    fingerprint so cross-source duplicates are caught even when titles differ.
+    (e.g. FJA 'BEL Security Recruitment 2026 - Apply Offline for 14 Jr Supervisor'
+    vs SARK 'BEL Security Recruitment 2026, Apply For Jr. Supervisor, Havildar'
+    → same fingerprint 'bel security supervisor havildar' → one canonical page.)
+    Returns (is_dup: bool, canon_slug: str | None)
+    """
+    if slug in seen_jobs:
+        return True, slug
+    fp = _fingerprint(title)
+    if fp and fp in seen_fp:
+        return True, seen_fp[fp]   # caller can use this as canonical slug
+    return False, None
 
 def _mark_job(slug, title, source):
     seen_jobs[slug] = source
     fp = _fingerprint(title)
     if fp and fp not in seen_fp:
         seen_fp[fp] = slug
+
+def _canonical_slug_for(slug, title):
+    """Return the canonical slug for a job — existing slug if already seen,
+    else the fingerprint-matched slug if a cross-source dup was already rendered."""
+    if slug in seen_jobs:
+        return slug
+    fp = _fingerprint(title)
+    return seen_fp.get(fp, slug)
 
 j_count = s_count = e_count = c_count = sec_count = qual_count = 0
 
@@ -4864,6 +4882,35 @@ for _sj in SARK:
     if len(sections_index[_scat]) < 10:
         sections_index[_scat].append({'slug':_sl,'name':_st,'date':_ld})
 
+# ── DEDUP CATEGORY CROSS-LISTING (Phase 7: Category Union) ────────────────────
+# After dedup_engine.py runs, master records have _all_categories = union of
+# all source categories. A merged record (e.g. TIFR job in 10TH_Pass, Diploma,
+# ITI, B_Tech_BE, Any_Graduate) must appear in ALL 5 category sections.
+# Without this, merged records only show in their primary FJA category bucket.
+_dedup_map = {}   # slug → item dict (for cross-listing)
+for _si_cat, _si_jobs in FJA.items():
+    if not isinstance(_si_jobs, list): continue
+    for _j in _si_jobs:
+        _bd = (_j.get('basic_details') or {})
+        _t  = safe(_bd.get('job_title',''))
+        if not _t: continue
+        _all_cats = _j.get('_all_categories', [])
+        if not _all_cats: continue
+        _sl = slugify(_t)[:80]
+        _imp = (_j.get('important_dates') or {})
+        _ld  = safe(_imp.get('last_date_to_apply','') or _imp.get('last_date',''))
+        _item = {'slug': _sl, 'name': _t, 'date': _ld}
+        # Register in each category from _all_categories
+        for _extra_cat in _all_cats:
+            if _extra_cat == _si_cat: continue   # already added above
+            if not _extra_cat: continue
+            if _extra_cat not in sections_index:
+                sections_index[_extra_cat] = []
+            # Avoid duplicate slug in same category
+            if not any(x.get('slug') == _sl for x in sections_index[_extra_cat]):
+                if len(sections_index[_extra_cat]) < 10:
+                    sections_index[_extra_cat].append(_item)
+
 # UPCOMING_JOBS: populate from jobs with future exam_date or application_begin
 import datetime as _dt
 _today_str = _dt.date.today().strftime('%d/%m/%Y')
@@ -4994,6 +5041,31 @@ def prune_duplicate_pages():
     return removed
 
 _dup_removed = prune_duplicate_pages()
+
+# ── DEDUP REDIRECT MAP (from dedup_engine.py) ─────────────────────────────────
+# If dedup_engine.py produced a redirect map, inject those 301s into _redirects
+# so old URLs (e.g. hssc-cet-group-d-exam-online-form-2026) forward to canonical.
+_dedup_rmap_path = str(ROOT.parent / 'scraper' / 'dedup_redirect_map.json')
+if not os.path.exists(_dedup_rmap_path):
+    _dedup_rmap_path = str(ROOT / 'dedup_redirect_map.json')   # fallback
+if os.path.exists(_dedup_rmap_path):
+    try:
+        _rmap = json.load(open(_dedup_rmap_path, encoding='utf-8'))
+        _rpath = str(ROOT / '_redirects')
+        _existing_r = open(_rpath, encoding='utf-8').read() if os.path.exists(_rpath) else ''
+        _new_lines = []
+        for _old_s, _new_s in _rmap.items():
+            _rule = f"/jobs/{_old_s}/  /jobs/{_new_s}/  301"
+            if _rule not in _existing_r:
+                _new_lines.append(_rule)
+        if _new_lines:
+            _block = "\n# ══ dedup_engine: cross-source duplicate → canonical URL ══\n" + "\n".join(_new_lines) + "\n"
+            with open(_rpath, 'a', encoding='utf-8') as _rf:
+                _rf.write(_block)
+        print(f"  [dedup_redirects] {len(_rmap)} redirect rules from dedup_engine "
+              f"({len(_new_lines)} new)")
+    except Exception as _e:
+        print(f"  [dedup_redirects] could not load redirect map: {_e}")
 
 _end = _time.time()
 VERSION = datetime.now().strftime('%Y%m%d%H%M%S')

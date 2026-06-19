@@ -57,6 +57,20 @@ jobs:
         working-directory: scraper
         run: python scraper_merge.py
 
+      # ── STEP 3b: Deduplication — One Recruitment = One URL ─────────────
+      # Detects cross-source duplicate recruitments, merges them into one
+      # master record with union of all categories, and writes a redirect map
+      # for 301s. Safe to skip if dedup_engine.py not present.
+      - name: Deduplicate recruitments (one URL per exam)
+        working-directory: scraper
+        run: |
+          if [ -f dedup_engine.py ]; then
+            python dedup_engine.py --input Complete_Jobs_Full_Data.json
+            echo "Dedup done"
+          else
+            echo "dedup_engine.py not found — skipping dedup"
+          fi
+
       # ── STEP 4: Check today's AI quota before spending it ───────────────
       - name: Check AI quota status
         id: quota_check
