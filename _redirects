@@ -5110,3 +5110,26 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /jobs/bpsc-professor-13-posts/  /jobs/bpsc-professor-recruitment-2026-apply-online-for-13-posts/  301
 /jobs/bel-sr-asst-engineer-17-posts/  /jobs/bel-sr-asst-engineer-recruitment-2026-apply-offline/  301
 /jobs/iit-kanpur-assistant-project-manager-3-posts/  /jobs/iit-kanpur-assistant-project-manager-recruitment-2026-apply-online/  301
+
+# ══ auto: duplicate job pages → canonical (One-HTML-One-URL) ══
+/jobs/iim-kozhikode-admin-associate-3-posts/  /jobs/iim-kozhikode-admin-associate-recruitment-2026-apply-online/  301
+/jobs/dswo-sivaganga-case-worker-2-posts/  /jobs/dswo-sivaganga-case-worker-recruitment-2026-apply-offline/  301
+/jobs/iim-lucknow-programme-attendant-1-posts/  /jobs/iim-lucknow-programme-attendant-recruitment-2026-apply-online/  301
+/jobs/sbi-specialist-cadre-officer-5-posts/  /jobs/sbi-specialist-cadre-officer-recruitment-2026-apply-online/  301
+/jobs/zss-boudh-medical-officer-counsellor-and-more-20-posts/  /jobs/zss-boudh-recruitment-2026-apply-offline-for-20-medical-officer-counsellor-and-m/  301
+/jobs/niper-hajipur-junior-research-fellow-2-posts/  /jobs/niper-hajipur-junior-research-fellow-recruitment-2026-apply-online/  301
+/jobs/iit-jammu-technical-assistant-1-posts/  /jobs/iit-jammu-technical-assistant-recruitment-2026-apply-online/  301
+/jobs/esic-medical-college-hospital-surat-teaching-faculty-senior-residents-and-tutord/  /jobs/esic-medical-college-hospital-surat-recruitment-2026-walk-in-for-85-teaching-fac/  301
+/jobs/tnsrlm-ariyalur-state-project-manager-block-project-manager-and-more-8-posts/  /jobs/tnsrlm-ariyalur-recruitment-2026-apply-offline-for-state-project-manager-block-p/  301
+/jobs/nit-trichy-temporary-faculty-1-posts/  /jobs/nit-trichy-temporary-faculty-recruitment-2026-apply-offline/  301
+/jobs/tgpsc-lecturers-and-senior-lecturer-86-posts/  /jobs/tgpsc-recruitment-2026-notification-out-apply-online-for-86-lecturers-and-senior/  301
+/jobs/svnit-teaching-assistant/  /jobs/svnit-surat-teaching-assistant-recruitment-2026-walkin/  301
+/jobs/dhs-virudhunagar-medical-officer-security-guard-and-more-14-posts/  /jobs/dhs-virudhunagar-recruitment-2026-apply-offline-for-14-medical-officer-security/  301
+/jobs/pm-shri-school-jawahar-navodaya-vidyalaya-lab-attendant-caretaker-and-more-15-po/  /jobs/pm-shri-school-jawahar-navodaya-vidyalaya-recruitment-2026-walkin-for-15-lab-att/  301
+/jobs/bel-havildar-security-4-posts/  /jobs/bel-havildar-recruitment-2026-apply-offline/  301
+/jobs/cersai-chief-manager-agm-and-more-16-posts/  /jobs/cersai-recruitment-2026-apply-online-for-16-chief-manager-agm-and-more-posts/  301
+/jobs/hssc-group-d/  /jobs/haryana-hssc-cet-2026-group-d-notification-out-apply-online/  301
+/jobs/rari-ahmedabad-senior-research-fellow-1-posts/  /jobs/rari-ahmedabad-senior-research-fellow-recruitment-2026-walkin-latest-notificatio/  301
+/jobs/csir-nio-project-associate-i-1-posts/  /jobs/csir-nio-project-associate-i-recruitment-2026-apply-online/  301
+/jobs/aiims-delhi-project-research-scientist-ii-1-posts/  /jobs/aiims-delhi-project-research-scientist-ii-recruitment-2026-apply-online/  301
+/jobs/niper-ahmedabad-junior-research-fellow-1-posts/  /jobs/niper-ahmedabad-junior-research-fellow-recruitment-2026-apply-online/  301
