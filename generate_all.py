@@ -4951,6 +4951,31 @@ if 'UPCOMING_JOBS' not in sections_index or len(sections_index.get('UPCOMING_JOB
     if _upcoming_candidates:
         sections_index['UPCOMING_JOBS'] = [item for _, item in _upcoming_candidates[:10]]
 
+# ── Add DU sections to sections-index.json (Phase: slug-based internal links) ──
+# Govt Scheme & Yojna, ImportantCSC PDF, ImportantCSC link, Today Updates
+# These come from dailyupdates.json and have slug fields — add them so
+# mkCard on homepage uses /jobs/slug/ internal pages instead of external URLs.
+for _du_si_sec in DU_SECS:
+    _du_si_title = _du_si_sec.get('title', '')
+    if not _du_si_title:
+        continue
+    _du_si_items = []
+    for _du_si_item in _du_si_sec.get('items', [])[:10]:
+        _name = (_du_si_item.get('name') or '').strip()
+        _slug = (_du_si_item.get('slug') or '').strip()
+        _url  = (_du_si_item.get('url') or '').strip()
+        if not _name:
+            continue
+        # Use slug if present (links to /jobs/slug/), else fall back to url
+        _du_si_items.append({
+            'slug': _slug,
+            'name': _name,
+            'url':  _url,
+            'date': (_du_si_item.get('date') or ''),
+        })
+    if _du_si_items:
+        sections_index[_du_si_title] = _du_si_items
+
 write(str(ROOT/'sections-index.json'), json.dumps(sections_index, ensure_ascii=False, separators=(',',':')))
 # Update version string in index.html to bust cache
 _ver = __import__('datetime').datetime.now().strftime('%Y%m%d%H%M')
