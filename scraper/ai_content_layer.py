@@ -264,7 +264,13 @@ def build_prompt(facts):
 
 def call_gemini(prompt):
     """Single sequential Gemini call. Returns parsed dict or None on failure.
-    Uses the REST endpoint so no SDK dependency is required."""
+    Uses the REST endpoint so no SDK dependency is required.
+
+    QUOTA PHILOSOPHY: This function NEVER returns 'QUOTA_STOP'. Every failure
+    returns None so that the CALLER (main loop) skips that one job and moves on.
+    The run is stopped by the main loop's consecutive-failure counter, NOT by a
+    single 429 here. This prevents one API hiccup from killing thousands of jobs.
+    """
     import urllib.request
     import urllib.error
 
@@ -293,44 +299,32 @@ def call_gemini(prompt):
             return json.loads(text)
         except urllib.error.HTTPError as e:
             if e.code == 429:
-                # CRITICAL: A 429 can mean either the per-MINUTE bucket (RPM) is
-                # full — transient, clears in ~60s — OR the per-DAY quota (RPD) is
-                # exhausted — terminal for today. Treating an RPM hiccup as a
-                # daily stop was killing the whole run after ~5 jobs. Parse the
-                # error body to tell them apart.
+                # 429 = either RPM (per-minute bucket full, clears in ~60s)
+                # or RPD (daily quota exhausted). We treat BOTH the same:
+                # retry with backoff. If still failing after all retries → skip
+                # THIS job only (return None). Main loop's consecutive-failure
+                # counter decides when to stop the entire run.
                 err_body = ""
                 try:
                     err_body = e.read().decode("utf-8", "ignore").lower()
                 except Exception:
                     pass
-                is_daily = ("perday" in err_body or "per day" in err_body
-                            or "requests per day" in err_body
-                            or "daily" in err_body
-                            or "generativelanguage.googleapis.com/quota_metric" in err_body
-                            and "perday" in err_body)
-                if is_daily:
-                    print("      [429-RPD] daily quota exhausted — stopping AI for today.")
-                    return "QUOTA_STOP"
-                # RPM bucket full → wait for the minute window to roll over, retry.
+                # Log what kind of limit we hit for visibility
+                is_per_minute = ("per_minute" in err_body or "perminute" in err_body
+                                 or "per minute" in err_body)
+                limit_type = "RPM" if is_per_minute else "RPD/unknown"
                 if attempt < len(BACKOFFS):
-                    print(f"      [429-RPM] rate limit (attempt {attempt+1}) — "
-                          f"waiting for minute window to reset...")
+                    print(f"      [429-{limit_type}] rate limit (attempt {attempt+1})"
+                          f" — waiting {BACKOFFS[attempt]}s for quota window to reset...")
                     continue
-                # Still rate-limited after all backoffs — skip THIS job only, keep
-                # the run alive. Job stays on _backup_* content, retried next run.
-                print("      [429-RPM] still rate-limited after retries — skipping "
-                      "this job (run continues).")
-                return None
+                print(f"      [429-{limit_type}] still rate-limited after all retries"
+                      f" — skipping this job (run continues, quota may be exhausted).")
+                return None   # skip job, main loop decides whether to stop
             if e.code == 503:
-                # Confirmed via Gemini API docs/community reports: 503 means the
-                # model is temporarily overloaded (shared free-tier capacity) —
-                # NOT a quota or code problem. It is transient and resolves with
-                # a short retry, same backoff ladder as 429.
                 if attempt < len(BACKOFFS):
                     print(f"      [503] model overloaded (attempt {attempt+1}) — retrying...")
                     continue
-                print("      [503] still overloaded after retries — skipping this job "
-                      "(it stays on _backup_* content, will retry next run).")
+                print("      [503] still overloaded after retries — skipping this job.")
                 return None
             print(f"      [HTTP {e.code}] {e.reason} — skipping this job.")
             return None
@@ -457,6 +451,11 @@ def main():
     cache_hits = cache_miss = generated = skipped_quota = 0
     processed = 0
     quota_stop = False
+    # Consecutive-failure counter: if this many jobs in a row ALL fail after
+    # retries, we conclude quota is truly exhausted and stop the run.
+    # A single 429 → skip job → counter+1. A success → counter resets to 0.
+    consecutive_failures = 0
+    MAX_CONSECUTIVE_FAILURES = 8   # ~8 jobs × 155s backoff ≈ 20min before stopping
 
     for job, source in iter_jobs(m, only_category=args.category):
         facts = normalize_facts(job, source)
@@ -470,6 +469,7 @@ def main():
         # was in the JSON, no placeholder keys added, no size bloat.
         if job.get("content_hash") == new_hash and job.get("ai_overview"):
             cache_hits += 1
+            consecutive_failures = 0   # a cache hit = we're still alive
             continue
 
         cache_miss += 1
@@ -485,7 +485,7 @@ def main():
             skipped_quota += 1
             continue
 
-        # daily-cap guard
+        # daily-cap guard (our internal tracker, as a soft ceiling)
         if usage["requests_today"] >= DAILY_LIMIT:
             print("  [DAILY LIMIT REACHED] — keeping _backup_* content for the rest.")
             quota_stop = True
@@ -503,20 +503,28 @@ def main():
         migrate_backups(job, source)
 
         prompt = build_prompt(facts)
-        result = call_gemini(prompt)
+        result = call_gemini(prompt)   # returns dict | None (never QUOTA_STOP)
 
-        if result == "QUOTA_STOP":
-            # Daily quota hit — this request was rejected, don't count it.
-            quota_stop = True
+        if result is None:
+            # API call failed (429 / 503 / error) after all retries — skip job.
+            # Increment consecutive-failure counter. If too many in a row, the
+            # quota is truly exhausted: stop gracefully.
+            consecutive_failures += 1
             skipped_quota += 1
+            if consecutive_failures >= MAX_CONSECUTIVE_FAILURES:
+                print(f"  [QUOTA EXHAUSTED] {consecutive_failures} consecutive failures"
+                      f" — quota truly exhausted, stopping run gracefully.")
+                quota_stop = True
             continue
 
-        # A request was actually consumed (success OR a non-quota failure that
-        # still hit the API). Count it now, after we know it wasn't a daily stop.
+        # Successful result → reset failure streak
+        consecutive_failures = 0
+
+        # Count request now (after successful/billed call)
         usage["requests_today"] += 1
         _save_usage(usage)
 
-        if result and apply_ai_result(job, result):
+        if apply_ai_result(job, result):
             job["content_hash"] = new_hash
             generated += 1
             print(f"      ✓ generated ({generated})")
