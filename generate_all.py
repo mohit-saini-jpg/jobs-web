@@ -3323,8 +3323,11 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
         # Clean SR prefix (sr_result-, sr_admit_card-, etc.) for URL
         import re as _re2
         jslug = _re2.sub(r'^sr_[a-z_]+-','', _raw_slug) if _raw_slug else ''
-        # Also strip trailing hash suffix (-xxxxxx)
-        jslug = _re2.sub(r'-[0-9a-f]{6,8}$','', jslug) if jslug else ''
+        # Strip trailing hex hash suffix only (NOT FJA numeric IDs like -3054836)
+        # Hex hash: letters a-f present. Pure numeric = FJA article ID, keep it.
+        _tail = _re2.search(r'-([0-9a-f]{6,8})$', jslug)
+        if _tail and not _tail.group(1).isdigit():
+            jslug = jslug[:-len(_tail.group(0))]
         jslug = jslug or slugify(jtitle)
         # Landing/index pages can override the per-row link target (e.g. /state/{slug}/
         # instead of /jobs/{slug}/) via the optional _listing_url field.
@@ -4426,18 +4429,18 @@ def _collect_district_jobs():
                             if _fj not in _district_jobs[_dn]:
                                 _district_jobs[_dn].append(_fj)
                             break
-_collect_district_jobs()
 
-# ── UNIFIED JOBS: SLUG DERIVE KARO ────────────────────────────────────────────
-# Unified scraper jobs mein 'slug' field nahi hota — sirf '_scraped_from' URL.
-# District page cards ke liye /jobs/slug/ link chahiye. FJA article URL se
-# slug nikaal lo: /articles/job-slug-here → job-slug-here
+# ── UNIFIED JOBS: SLUG DERIVE KARO (collect se PEHLE) ────────────────────────
+# CRITICAL ORDER: slug derivation _collect_district_jobs() se PEHLE hona chahiye.
+# Warna jobs collect hoti hain bina slug ke, aur district page cards kaam nahi
+# karte. JSON mein ab slugs hain (scraper_unified_fja.py se), par agar nahi hain
+# to yahan se derive ho jayenge — dono cases cover hain.
 _uni_data = CJ.get('freejobalert_unified', {}) or {}
 _uni_jobs_list = _uni_data.get('deduped_jobs', []) or []
 _slug_derived = 0
 for _uj in _uni_jobs_list:
     if _uj.get('slug'):
-        continue
+        continue   # already has slug (from updated scraper)
     _src = _uj.get('_scraped_from', '')
     if not _src:
         continue
@@ -4449,6 +4452,8 @@ for _uj in _uni_jobs_list:
             _slug_derived += 1
 if _slug_derived:
     print(f"  [unified] {_slug_derived} job slugs derived from _scraped_from URL")
+
+_collect_district_jobs()
 
 _district_landing_items = []   # (state_name, district_name, slug, count)
 _dist_count = 0
