@@ -5197,3 +5197,6 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /jobs/panjab-university-date-sheet-2025-download-ba-bsc-and-bed-exam-schedule-pdf/  /jobs/panjab-university-date-sheet-2025-download-panjab-university-ba-bsc-and-bed-exam/  301
 /jobs/iiitdm-jabalpur-junior-research-fellow-recruitment-2026-apply-online/  /jobs/iiitdm-jabalpur-junior-research-fellow-recruitment-2026-apply-offline-latest-not/  301
 /jobs/himachal-pradesh-jal-shakti-vibhag-recruitment-2026-apply-offline-for-40-para-pu/  /jobs/himachal-pradesh-jal-shakti-vibhag-recruitment-2026-apply-offline-for-32-para-pu/  301
+
+# ══ broken/empty job pages → homepage ══
+/jobs/data/  /  301
