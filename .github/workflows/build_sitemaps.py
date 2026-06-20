@@ -117,6 +117,12 @@ def main():
     counts["sitemap-states.xml"] = write_urlset(
         "sitemap-states.xml", state_urls, "weekly", "0.7")
 
+    # Districts (/district/ — 697 district pages + landing)
+    district_urls = urls_from_dir("district")
+    district_urls = [u for u in district_urls if not u.endswith("/index.html/")]
+    counts["sitemap-districts.xml"] = write_urlset(
+        "sitemap-districts.xml", district_urls, "weekly", "0.6")
+
     # Education (recursive: state -> topic)
     counts["sitemap-education.xml"] = write_urlset(
         "sitemap-education.xml", urls_from_dir("education", recursive=True), "weekly", "0.6")
@@ -136,7 +142,7 @@ def main():
     core = [f"{BASE}/"]
     for p in ["about","contact","terms","privacy","disclaimer","helpdesk","sitemap",
               "tools","govt-services","resume-maker","search","education",
-              "state","state-jobs",
+              "state","state-jobs","district",
               "editorial-policy","fact-check-policy","correction-policy"]:
         d = os.path.join(ROOT, p)
         if os.path.isdir(d) and has_index(d):
@@ -151,7 +157,7 @@ def main():
     # THE ONLY INDEX — references child urlsets ONLY (never another index)
     children = ["sitemap.xml", "sitemap-pages.xml", "sitemap-sections.xml",
                 "sitemap-jobs.xml", "sitemap-categories.xml",
-                "sitemap-states.xml", "sitemap-education.xml"]
+                "sitemap-states.xml", "sitemap-districts.xml", "sitemap-education.xml"]
     write_index("sitemap-index.xml", children)
 
     print("Sitemap rebuild complete:")

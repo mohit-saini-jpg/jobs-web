@@ -24,6 +24,15 @@ on:
     # so the 7 AM run always picks up today's freshly-scraped + AI-filled data.
     - cron: '30 20 * * *'
   workflow_dispatch:   # manual trigger bhi kar sakta hai
+    inputs:
+      skip_ai:
+        description: 'AI content layer skip karein? (quota khatam ho to "true")'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
 
 jobs:
   scrape-and-ai:
@@ -124,6 +133,13 @@ jobs:
           GEMINI_MODEL: gemini-2.5-flash-lite
           GEMINI_DAILY_LIMIT: "1000"
           GEMINI_RPM: "15"
+          # Conservative effective rate so the per-minute bucket never fills.
+          GEMINI_SAFE_RPM: "4"
+          # Save + exit gracefully after this many minutes (GitHub cancels at
+          # timeout-minutes: 150 WITHOUT saving — this prevents losing progress).
+          AI_MAX_MINUTES: "110"
+          # Manual run pe "true" choose karne par AI poora skip ho jayega.
+          AI_SKIP: ${{ github.event.inputs.skip_ai || 'false' }}
         run: python ai_content_layer.py
         continue-on-error: true   # AI failure should never block site generation
 

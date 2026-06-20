@@ -3254,7 +3254,7 @@ SECTION_META_DESC = {
     'syllabus':            "Government Exam Syllabus 2026: Download latest syllabus PDF for SSC, Railway, UPSC, Bank, Police, Teaching and state PSC exams.",
 }
 
-def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
+def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''):
     _yr_str = str(YEAR)
     _t = title if _yr_str in title else f"{title} {YEAR}"
     title_tag = f"{_t} — Apply Online | Top Sarkari Jobs"
@@ -3414,6 +3414,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc=''):
     body = (f'<div class="cat-wrap">'
             f'<h1 class="cat-h1" style="margin:12px 10px 4px">{e(title)}</h1>'
             f'<p class="cat-count" style="margin:0 10px 12px;color:#64748b;font-size:.78rem">{len(jobs)} records</p>'
+            f'{top_html}'
             f'<div class="search-bar" style="margin:0 10px 12px">'
             f'<input type="search" placeholder="Search..." aria-label="Search" onkeyup="filterJobs(this.value)" autocomplete="off"/>'
             f'</div><div id="jobList" style="padding:0 10px">{cards_html}</div>'
@@ -3491,6 +3492,33 @@ with open(DU_FILE, 'w', encoding='utf-8') as _f:
     json.dump(DU, _f, ensure_ascii=False, separators=(',',':'))
 
 FJA_RAW = CJ.get('freejobalert_categories', {})
+
+# ── UNIFIED FALLBACK ────────────────────────────────────────────────────────
+# scraper_fja.py ki jagah ab scraper_unified_fja.py chalta hai jo data
+# 'freejobalert_unified' key mein dalta hai. Agar legacy key empty ho to
+# unified data se FJA_RAW build karo taaki site mein jobs dikhein.
+if not FJA_RAW:
+    _uni = (CJ.get('freejobalert_unified') or {})
+    _uni_jobs = _uni.get('deduped_jobs', []) or []
+    if _uni_jobs:
+        # by_fja_category index use karo — har category ke liye job list banao
+        _by_fja = _uni.get('by_fja_category', {}) or {}
+        _url_to_job = {j.get('_scraped_from', ''): j for j in _uni_jobs}
+        FJA_RAW = {}
+        for _cat, _urls in _by_fja.items():
+            _cat_jobs = [_url_to_job[u] for u in _urls if u in _url_to_job]
+            if _cat_jobs:
+                FJA_RAW[_cat] = _cat_jobs
+        # Agar by_fja_category empty ho to direct fja_categories tags se build karo
+        if not FJA_RAW:
+            from collections import defaultdict as _dd
+            _tmp = _dd(list)
+            for _j in _uni_jobs:
+                for _c in (_j.get('fja_categories') or []):
+                    _tmp[_c].append(_j)
+            FJA_RAW = dict(_tmp)
+        print(f"  [unified→FJA] {len(_uni_jobs)} unified jobs → {len(FJA_RAW)} FJA categories")
+
 FJA     = {cat: [j for j in jobs if not is_garbage_title(
                (j.get('basic_details') or {}).get('job_title','') or j.get('title',''))]
            for cat, jobs in FJA_RAW.items() if isinstance(jobs, list)}
@@ -3531,6 +3559,35 @@ if _before_rm != len(SARK):
     print(f"  [remove] dropped {_before_rm - len(SARK)} item(s) from retired categories {sorted(_REMOVED_CATS)}")
 EDU_SEC = (CJ.get('education_jobs',{}) or {}).get('sections', [])
 SJ_SEC  = (CJ.get('state_jobs',{}) or {}).get('sections', [])
+
+# ── STATE JOBS UNIFIED FALLBACK ─────────────────────────────────────────────
+# scraper_state.py ki jagah unified scraper state_tags dalta hai. Agar legacy
+# state_jobs empty ho to unified ke by_state index se sections build karo.
+if not SJ_SEC:
+    _uni2 = (CJ.get('freejobalert_unified') or {})
+    _uni_jobs2 = _uni2.get('deduped_jobs', []) or []
+    _by_state = _uni2.get('by_state', {}) or {}
+    if _uni_jobs2 and _by_state:
+        _url_map2 = {j.get('_scraped_from', ''): j for j in _uni_jobs2}
+        _sj_sections = []
+        for _st, _urls in sorted(_by_state.items()):
+            _st_jobs = []
+            for _u in _urls:
+                _j2 = _url_map2.get(_u)
+                if not _j2: continue
+                _bd = _j2.get('basic_details', {}) or {}
+                _title = _bd.get('job_title','') or _j2.get('title','')
+                if _title:
+                    _st_jobs.append({'name': _title,
+                                     'slug': _j2.get('slug',''),
+                                     'total_vacancy': _bd.get('total_vacancies',''),
+                                     '_scraped_from': _u})
+            if _st_jobs:
+                _sj_sections.append({'state': _st, 'title': _st + ' Govt Jobs',
+                                     'category': 'STATE WISE JOBS - ' + _st,
+                                     'items': _st_jobs})
+        SJ_SEC = _sj_sections
+        print(f"  [unified→state] {len(SJ_SEC)} state sections from unified data")
 DU_SECS = DU.get('sections', [])
 
 STATE_SLUG_FIX = {
@@ -4159,6 +4216,53 @@ print(f"  All /jobs/: {j_count}")
 
 # 3. STATE PAGES
 print("Generating /state/ pages...")
+
+# ── District mapping (loaded early so state pages can show district cards) ────
+# 697 districts across 30 states, grouped by state. Built from
+# scraper_district.DISTRICT_META → district_meta_by_state.json.
+_DIST_BY_STATE = {}
+for _dmp in (str(ROOT/'district_meta_by_state.json'),
+             str(ROOT.parent/'scraper'/'district_meta_by_state.json')):
+    if os.path.exists(_dmp):
+        try:
+            _DIST_BY_STATE = json.load(open(_dmp, encoding='utf-8'))
+            break
+        except Exception as _e:
+            print(f"  [district] could not load {_dmp}: {_e}")
+
+def _district_slug(state_name, district_name):
+    return slugify(f"{district_name}-{state_name}")[:80]
+
+# District-card HTML for a given state — shown at TOP of each state page.
+# Mirrors the "District Wise Jobs" card grid from the reference design.
+def _district_cards_html(state_name):
+    _ds = _DIST_BY_STATE.get(state_name, [])
+    if not _ds:
+        return ''
+    _cards = ''
+    for _d in _ds:
+        _dn = _d.get('district', '')
+        if not _dn:
+            continue
+        _sl = _district_slug(state_name, _dn)
+        _cards += f'<a class="dwj-card" href="/district/{e(_sl)}/">{e(_dn)}</a>'
+    return (
+        '<style>'
+        '.dwj-wrap{margin:4px 10px 22px}'
+        '.dwj-head{background:#2f7fc1;color:#fff;font-weight:700;text-align:center;'
+        'padding:11px 16px;border-radius:10px 10px 0 0;font-size:1rem}'
+        '.dwj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));'
+        'gap:8px;padding:13px;background:#f8fafc;border:1px solid #e5e7eb;'
+        'border-top:none;border-radius:0 0 10px 10px}'
+        '.dwj-card{display:block;text-align:center;padding:9px 10px;border-radius:6px;'
+        'background:#2f7fc1;color:#fff;text-decoration:none;font-size:.84rem;'
+        'font-weight:600;transition:filter .15s}'
+        '.dwj-card:hover{filter:brightness(1.1)}'
+        '</style>'
+        f'<div class="dwj-wrap"><div class="dwj-head">{e(state_name)} — District Wise Jobs</div>'
+        f'<div class="dwj-grid">{_cards}</div></div>'
+    )
+
 _state_landing_items = []   # (state_name, slug, job_count) for /state/ landing index
 for sec in SJ_SEC:
     state_name = safe(sec.get('state') or sec.get('title',''))
@@ -4203,7 +4307,8 @@ for sec in SJ_SEC:
     state_jobs_list = sec.get('items', [])
     if not state_jobs_list: continue
     canon_listing = f"{BASE_URL}/state/{state_slug}/"
-    # Build simple listing page for /state/{slug}/
+    # Build simple listing page for /state/{slug}/ — with district cards on top
+    _dist_cards = _district_cards_html(state_name)
     state_listing = build_listing_page(
         f"{state_name} Government Jobs {YEAR}",
         [{'basic_details':{'job_title':safe(it.get('name') or it.get('title','')),'organization_name':state_name,
@@ -4211,7 +4316,8 @@ for sec in SJ_SEC:
          for it in state_jobs_list if (it.get('name') or it.get('title',''))],
         canon_listing,
         [('Home','/'),('State Jobs','/state-jobs/')],
-        f"Latest {state_name} government jobs {YEAR}. All sarkari naukri for {state_name} state."
+        f"Latest {state_name} government jobs {YEAR}. All sarkari naukri for {state_name} state.",
+        top_html=_dist_cards,
     )
     write(str(ROOT/'state'/state_slug/'index.html'), state_listing)
 
@@ -4230,7 +4336,8 @@ for sec in SJ_SEC:
              for it in state_jobs_list if (it.get('name') or it.get('title',''))],
             canon_statejobs,
             [('Home','/'),('State Jobs','/state-jobs/')],
-            f"Latest {state_name} government jobs {YEAR}. All sarkari naukri for {state_name} state."
+            f"Latest {state_name} government jobs {YEAR}. All sarkari naukri for {state_name} state.",
+            top_html=_district_cards_html(state_name),
         )
         write(str(ROOT/'state-jobs'/_sj_slug/'index.html'), statejobs_listing)
 
@@ -4254,7 +4361,118 @@ write(str(ROOT/'state'/'index.html'), build_listing_page(
     f"Browse latest state government jobs {YEAR}. Select your state for all current sarkari naukri openings."))
 print(f"  /state/ landing: {len(_state_landing_jobs)} states")
 
-# 4. EDUCATION PAGES
+# ═══════════════════════════════════════════════════════════════════════════
+# 3c. DISTRICT-WISE PAGES  (/district/ landing + /district/{slug}/ per district)
+# ───────────────────────────────────────────────────────────────────────────
+# 697 districts across 30 states (from district_meta_by_state.json, built from
+# scraper_district.DISTRICT_META). Each district gets a listing page; the
+# /district/ landing groups them by state. State pages get a district-card
+# section injected at the TOP (see _district_cards_html used in section 3).
+#
+# Job data: if Complete_Jobs_Full_Data.json has district-tagged jobs (from the
+# unified FJA scraper's `freejobalert_unified.by_district`, or legacy
+# `freejobalert_district`), those jobs populate each district page. If not, the
+# page still renders as a stub that fills in once district data is scraped.
+# ═══════════════════════════════════════════════════════════════════════════
+print("Generating /district/ pages...")
+
+# Build a lookup: district name → [job items], from whatever district data exists
+_district_jobs = {}   # district_name → list of job dicts
+def _collect_district_jobs():
+    # Source A: unified scraper's by_district index + deduped_jobs
+    uni = CJ.get('freejobalert_unified', {}) or {}
+    deduped = uni.get('deduped_jobs', []) or []
+    by_url = {j.get('_scraped_from'): j for j in deduped if j.get('_scraped_from')}
+    by_dist_idx = uni.get('by_district', {}) or {}
+    for _dname, _urls in by_dist_idx.items():
+        for _u in _urls:
+            _job = by_url.get(_u)
+            if _job:
+                _district_jobs.setdefault(_dname, []).append(_job)
+    # Also walk deduped jobs' district_tags directly (covers any missed by index)
+    for _job in deduped:
+        for _dname in (_job.get('district_tags', []) or []):
+            _lst = _district_jobs.setdefault(_dname, [])
+            if _job not in _lst:
+                _lst.append(_job)
+    # Source B: legacy freejobalert_district dict (district → [jobs])
+    legacy = CJ.get('freejobalert_district', {}) or {}
+    if isinstance(legacy, dict):
+        for _dname, _items in legacy.items():
+            if isinstance(_items, list):
+                _district_jobs.setdefault(_dname, []).extend(_items)
+_collect_district_jobs()
+
+_district_landing_items = []   # (state_name, district_name, slug, count)
+_dist_count = 0
+for _state_name, _districts in _DIST_BY_STATE.items():
+    for _d in _districts:
+        _dname = _d.get('district', '')
+        if not _dname:
+            continue
+        _dslug = _district_slug(_state_name, _dname)
+        _djobs_raw = _district_jobs.get(_dname, [])
+        # Normalize district jobs into listing-card shape
+        _djobs = []
+        for _j in _djobs_raw:
+            _bd = _j.get('basic_details', {}) or {}
+            _title = safe(_bd.get('job_title', '') or _j.get('title', '') or _j.get('name', ''))
+            if not _title:
+                continue
+            _djobs.append({
+                'basic_details': {
+                    'job_title': _title,
+                    'organization_name': safe(_bd.get('organization_name', '') or _dname),
+                    'total_vacancies': safe(_bd.get('total_vacancies', '') or _j.get('total_post', '')),
+                },
+                '_slug': safe(_j.get('_slug', '') or _j.get('slug', '')),
+            })
+        _district_landing_items.append((_state_name, _dname, _dslug, len(_djobs)))
+        # Build the district listing page
+        _dcanon = f"{BASE_URL}/district/{_dslug}/"
+        _ddesc = (f"Latest government jobs in {_dname}, {_state_name} {YEAR}. "
+                  f"All sarkari naukri vacancies for {_dname} district — "
+                  f"check eligibility, dates and apply online.")
+        _dlisting = build_listing_page(
+            f"{_dname} Govt Jobs ({_state_name})",
+            _djobs,
+            _dcanon,
+            [('Home', '/'), ('State Jobs', '/state/'),
+             (_state_name, f"/state/{STATE_SLUG_FIX.get(slugify(_state_name), slugify(_state_name))}/"),
+             (f"{_dname} District", f"/district/{_dslug}/")],
+            _ddesc,
+        )
+        write(str(ROOT/'district'/_dslug/'index.html'), _dlisting)
+        _dist_count += 1
+
+print(f"  District pages: {_dist_count}")
+
+# /district/ LANDING INDEX — grouped by state
+_district_landing_html_parts = []
+for _state_name in sorted(_DIST_BY_STATE.keys()):
+    _district_landing_html_parts.append(_district_cards_html(_state_name))
+_district_landing_body = ''.join(_district_landing_html_parts)
+# Reuse build_listing_page shell but inject our grouped grid via a single
+# pseudo-job whose title carries the heading; simplest path is a dedicated write
+# using build_listing_page with an empty job list + the grid appended is not
+# supported, so we emit district landing as its own listing of state links.
+_district_landing_jobs = [
+    {'basic_details': {'job_title': f"{_n} District Wise Jobs {YEAR}",
+                       'organization_name': _n,
+                       'total_vacancies': str(sum(1 for x in _district_landing_items if x[0]==_n))},
+     'source_url': f"/state/{STATE_SLUG_FIX.get(slugify(_n), slugify(_n))}/",
+     '_listing_url': f"/state/{STATE_SLUG_FIX.get(slugify(_n), slugify(_n))}/"}
+    for _n in sorted(_DIST_BY_STATE.keys())
+]
+write(str(ROOT/'district'/'index.html'), build_listing_page(
+    f"District Wise Government Jobs {YEAR}",
+    _district_landing_jobs,
+    f"{BASE_URL}/district/",
+    [('Home', '/'), ('District Jobs', '/district/')],
+    f"Browse district wise government jobs {YEAR} across India. Select your district for local sarkari naukri vacancies."))
+print(f"  /district/ landing: {len(_district_landing_jobs)} states, {_dist_count} districts")
+
+
 print("Generating /education/ pages...")
 for sec in EDU_SEC:
     sec_id    = safe(sec.get('id','') or sec.get('title',''))

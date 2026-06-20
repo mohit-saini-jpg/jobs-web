@@ -9783,7 +9783,41 @@ def sarkari_main():
     sr_total = sum(len(v) for v in sr_data.values())
     print(f"\nSARKARIRESULT.COM TOTAL: {sr_total}")
 
-    # ── Source 3: sarkarinetwork.com — Upcoming Jobs ──────
+    # ── SR CACHE FALLBACK (Cloudflare IP-block workaround) ─────────────────────
+    # sarkariresult.com Cloudflare GitHub-Actions ke datacenter IP ko 403 deta
+    # hai (TLS perfect ho tab bhi — IP reputation block). Solution: SR data
+    # apne PC (residential IP) se scrape karke `sr_cache.json` repo mein commit
+    # karo. Yahan logic:
+    #   - Agar fresh SR scrape se kuch mila (sr_total > 0) → cache update kar do
+    #     (ye tab hoga jab scraper residential IP/PC pe chale).
+    #   - Agar fresh scrape se 0 mila (GitHub pe 403) → cache se load kar lo,
+    #     taaki SR data site se gayab na ho.
+    SR_CACHE_FILE = "sr_cache.json"
+    if sr_total > 0:
+        # Fresh data mila — cache refresh karo (PC run pe useful)
+        try:
+            with open(SR_CACHE_FILE, "w", encoding="utf-8") as _cf:
+                json.dump({"saved_at": datetime.today().strftime("%Y-%m-%d %H:%M:%S"),
+                           "sr_data": sr_data}, _cf, ensure_ascii=False, indent=2)
+            print(f"  [SR CACHE] Updated {SR_CACHE_FILE} with {sr_total} fresh records.")
+        except Exception as _e:
+            print(f"  [SR CACHE] Could not write cache: {_e}")
+    else:
+        # Fresh scrape blocked/empty — cache se load karo
+        if os.path.exists(SR_CACHE_FILE):
+            try:
+                with open(SR_CACHE_FILE, encoding="utf-8") as _cf:
+                    _cached = json.load(_cf)
+                sr_data = _cached.get("sr_data", {}) or {}
+                sr_total = sum(len(v) for v in sr_data.values())
+                _saved_at = _cached.get("saved_at", "unknown")
+                print(f"  [SR CACHE] Fresh scrape blocked — loaded {sr_total} cached "
+                      f"records from {SR_CACHE_FILE} (saved {_saved_at}).")
+            except Exception as _e:
+                print(f"  [SR CACHE] Could not read cache: {_e}")
+        else:
+            print(f"  [SR CACHE] No {SR_CACHE_FILE} found — SR data will be empty "
+                  f"this run. Apne PC pe scrape_sr_only.py chalakar cache banao.")
     print("\n[SOURCE 3] sarkarinetwork.com — Upcoming Jobs (top 50)")
     print("-" * 60)
     sn_jobs = sn_scrape_listing(SN_UPCOMING_URL, "UPCOMING_JOBS", limit=50, existing_items=_existing_by_cat.get("UPCOMING_JOBS", []))

@@ -286,9 +286,9 @@ def call_gemini(prompt):
     data = json.dumps(body).encode("utf-8")
 
     for attempt, wait in enumerate([0] + BACKOFFS):
-        if wait:
-            print(f"      [backoff] waiting {wait}s before retry...")
-            time.sleep(wait)
+        # NOTE: 429 retries now wait INSIDE the handler (honoring Gemini's
+        # suggested retryDelay), so we don't pre-wait here. The 503 path still
+        # uses its own waits below.
         try:
             req = urllib.request.Request(url, data=data,
                                          headers={"Content-Type": "application/json"})
@@ -302,30 +302,59 @@ def call_gemini(prompt):
             return json.loads(text)
         except urllib.error.HTTPError as e:
             if e.code == 429:
-                # 429 = either RPM (per-minute bucket full, clears in ~60s)
-                # or RPD (daily quota exhausted). We treat BOTH the same:
-                # retry with backoff. If still failing after all retries → skip
-                # THIS job only (return None). Main loop's consecutive-failure
-                # counter decides when to stop the entire run.
+                # 429 ka ASAL reason error body mein hota hai. Pehle code ise
+                # parse to karta tha par print nahi karta tha — isliye hamesha
+                # "RPD/unknown" dikhta tha. Ab full reason + Gemini ka suggested
+                # retryDelay dono extract karte hain.
                 err_body = ""
                 try:
-                    err_body = e.read().decode("utf-8", "ignore").lower()
+                    err_body = e.read().decode("utf-8", "ignore")
                 except Exception:
                     pass
-                # Log what kind of limit we hit for visibility
-                is_per_minute = ("per_minute" in err_body or "perminute" in err_body
-                                 or "per minute" in err_body)
-                limit_type = "RPM" if is_per_minute else "RPD/unknown"
+                low = err_body.lower()
+
+                # Classify the limit type from the error body
+                if "per_minute" in low or "perminute" in low or "per minute" in low:
+                    limit_type = "RPM (per-minute)"
+                elif "per_day" in low or "perday" in low or "per day" in low or "daily" in low:
+                    limit_type = "RPD (per-day)"
+                elif "free_tier" in low or "free tier" in low:
+                    limit_type = "FREE-TIER quota"
+                else:
+                    limit_type = "RATE-LIMIT"
+
+                # Gemini suggests an exact retry delay — honor it instead of a
+                # fixed guess. Body has: "retryDelay": "42s"
+                suggested = None
+                _m = re.search(r'"?retry[_ ]?delay"?\s*[:=]\s*"?(\d+)s', low)
+                if _m:
+                    suggested = int(_m.group(1))
+
+                # On the FIRST 429 only, print a one-line excerpt of the real
+                # reason so logs show what's actually happening (quota name etc).
+                if attempt == 0:
+                    _reason = ""
+                    _rm = re.search(r'"message"\s*:\s*"([^"]{0,160})"', err_body)
+                    if _rm:
+                        _reason = _rm.group(1)
+                    print(f"      [429 detail] {limit_type}"
+                          + (f" | retryDelay={suggested}s" if suggested else "")
+                          + (f" | {_reason}" if _reason else ""))
+
                 if attempt < len(BACKOFFS):
-                    print(f"      [429-{limit_type}] rate limit (attempt {attempt+1})"
-                          f" — waiting {BACKOFFS[attempt]}s for quota window to reset...")
+                    wait_s = suggested if suggested else BACKOFFS[attempt]
+                    print(f"      [429-{limit_type}] attempt {attempt+1}"
+                          f" — waiting {wait_s}s...")
+                    time.sleep(wait_s)
                     continue
-                print(f"      [429-{limit_type}] still rate-limited after all retries"
-                      f" — skipping this job (run continues, quota may be exhausted).")
+                print(f"      [429-{limit_type}] still limited after all retries"
+                      f" — skipping this job.")
                 return None   # skip job, main loop decides whether to stop
             if e.code == 503:
                 if attempt < len(BACKOFFS):
-                    print(f"      [503] model overloaded (attempt {attempt+1}) — retrying...")
+                    print(f"      [503] model overloaded (attempt {attempt+1}) — "
+                          f"waiting {BACKOFFS[attempt]}s before retry...")
+                    time.sleep(BACKOFFS[attempt])
                     continue
                 print("      [503] still overloaded after retries — skipping this job.")
                 return None
@@ -434,7 +463,17 @@ def main():
                     help="process at most N cache-miss jobs (0 = no limit)")
     ap.add_argument("--category", default=None,
                     help="only process this category (staged rollout)")
+    ap.add_argument("--skip", action="store_true",
+                    help="skip the AI layer entirely (no API calls, JSON untouched)")
     args = ap.parse_args()
+
+    # AI skip toggle — via --skip flag OR AI_SKIP=1 env var. Jab tum AI nahi
+    # chahte (quota khatam, ya jaldi deploy karna ho), ye set kar do — script
+    # turant exit kar jayegi, jobs apne purane content ke saath rahenge.
+    if args.skip or os.environ.get("AI_SKIP", "").strip() in ("1", "true", "yes"):
+        print("AI Content Layer — SKIPPED (--skip ya AI_SKIP set hai). "
+              "Koi API call nahi, JSON untouched.")
+        return
 
     if not os.path.exists(DATA_FILE):
         print(f"ERROR: {DATA_FILE} not found.")
@@ -468,7 +507,23 @@ def main():
     # failure streak early on is an RPM problem that clears on its own.
     QUOTA_STOP_MIN_USAGE = int(DAILY_LIMIT * 0.85)
 
+    # TIME BUDGET — workflow ko 2.5 ghante baad GitHub cancel kar deta hai (jisse
+    # JSON save NAHI hoti aur sab progress waste). Isliye apne aap ek soft limit
+    # rakhte hain: itne minutes ke baad gracefully ruk jao + jo bana wo SAVE
+    # karo. Default 90 min (safe). Env var AI_MAX_MINUTES se badal sakte ho.
+    _t_start = time.time()
+    MAX_MINUTES = int(os.environ.get("AI_MAX_MINUTES", "90"))
+    _time_budget_hit = False
+
     for job, source in iter_jobs(m, only_category=args.category):
+        # Time budget check — har job se pehle
+        if not _time_budget_hit and (time.time() - _t_start) > MAX_MINUTES * 60:
+            print(f"\n  [TIME BUDGET] {MAX_MINUTES} min ho gaye — gracefully ruk "
+                  f"rahe hain aur ab tak ka kaam SAVE kar rahe hain. "
+                  f"Baaki jobs agle run mein (cache se resume).")
+            _time_budget_hit = True
+        if _time_budget_hit:
+            break
         facts = normalize_facts(job, source)
         if not facts.get("title"):
             continue   # nothing to work with
