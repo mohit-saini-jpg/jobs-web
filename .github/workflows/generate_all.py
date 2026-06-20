@@ -4389,15 +4389,33 @@ def _collect_district_jobs():
     deduped = uni.get('deduped_jobs', []) or []
     by_url = {j.get('_scraped_from'): j for j in deduped if j.get('_scraped_from')}
     by_dist_idx = uni.get('by_district', {}) or {}
-    for _dname, _urls in by_dist_idx.items():
+
+    # KEY MISMATCH FIX: by_district uses 'New_Delhi' (underscore from scraper),
+    # DIST_BY_STATE uses 'New Delhi' (space from district_meta_by_state.json).
+    # Build normalized lookup → canonical district name from meta.
+    _dist_norm = {}   # normalized_key → canonical_name_from_meta
+    for _st, _dlist in _DIST_BY_STATE.items():
+        for _dd in _dlist:
+            _dn = _dd.get('district', '')
+            # Both space→underscore and underscore→space normalized to same key
+            _norm = _dn.lower().replace(' ', '_').replace('-', '_')
+            _dist_norm[_norm] = _dn   # canonical = meta name (with spaces)
+
+    for _dkey, _urls in by_dist_idx.items():
+        # Normalize scraper key to find canonical meta name
+        _norm_key = _dkey.lower().replace(' ', '_').replace('-', '_')
+        _canonical = _dist_norm.get(_norm_key, _dkey)  # fallback to original
         for _u in _urls:
             _job = by_url.get(_u)
             if _job:
-                _district_jobs.setdefault(_dname, []).append(_job)
-    # Also walk deduped jobs' district_tags directly (covers any missed by index)
+                _district_jobs.setdefault(_canonical, []).append(_job)
+
+    # Also walk deduped jobs' district_tags directly
     for _job in deduped:
-        for _dname in (_job.get('district_tags', []) or []):
-            _lst = _district_jobs.setdefault(_dname, [])
+        for _dtag in (_job.get('district_tags', []) or []):
+            _norm_tag = _dtag.lower().replace(' ', '_').replace('-', '_')
+            _canonical = _dist_norm.get(_norm_tag, _dtag)
+            _lst = _district_jobs.setdefault(_canonical, [])
             if _job not in _lst:
                 _lst.append(_job)
     # Source B: legacy freejobalert_district dict (district → [jobs])
