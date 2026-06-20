@@ -39,6 +39,18 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import requests
 from bs4 import BeautifulSoup
 
+# curl_cffi impersonates a real Chrome browser's TLS/JA3 fingerprint, which is
+# what gets past Cloudflare's bot detection on sarkariresult.com. Plain
+# `requests` always returns 403 from datacenter IPs (GitHub Actions) because its
+# TLS fingerprint screams "Python script" even with perfect headers. We import
+# it lazily/optionally so the scraper still runs if the package isn't installed.
+try:
+    from curl_cffi import requests as cffi_requests
+    HAS_CURL_CFFI = True
+except Exception:
+    cffi_requests = None
+    HAS_CURL_CFFI = False
+
 
 # =========================================================
 # SETTINGS — Source 1: sarkariresultshine.com
@@ -2853,24 +2865,58 @@ def sort_jobs_latest(jobs):
 def sr_load_page(url):
     """Load a sarkariresult.com page with retry on transient failures.
     Returns BeautifulSoup or None.
+
+    sarkariresult.com sits behind Cloudflare, which blocks plain `requests`
+    (and any datacenter IP) with a 403 because of TLS/JA3 fingerprinting — the
+    headers can be perfect but the fingerprint gives away that it's a script.
+    Strategy:
+      1. Try curl_cffi impersonating Chrome (real browser TLS) — this is the
+         layer that actually clears Cloudflare. Rotate through a couple of
+         impersonation targets if the first is challenged.
+      2. Fall back to plain requests (works if Cloudflare isn't challenging,
+         e.g. when run from a residential IP locally).
     """
     import time as _time
     RETRIES = 3
-    DELAYS  = [0, 5, 15]   # wait before each attempt (0 = first try immediate)
+    DELAYS  = [0, 6, 18]   # wait before each attempt (0 = first try immediate)
+    # Chrome versions to impersonate; newer first. curl_cffi ships these JA3s.
+    IMPERSONATE_TARGETS = ["chrome131", "chrome124", "chrome120"]
+
     for attempt, delay in enumerate(DELAYS):
         if delay:
             _time.sleep(delay)
+
+        # ── Attempt 1: curl_cffi with Chrome TLS impersonation (Cloudflare bypass)
+        if HAS_CURL_CFFI:
+            target = IMPERSONATE_TARGETS[attempt % len(IMPERSONATE_TARGETS)]
+            try:
+                r = cffi_requests.get(
+                    url, headers=SR_HEADERS, timeout=30, impersonate=target
+                )
+                if r.status_code == 200:
+                    return BeautifulSoup(r.text, "lxml")
+                print(f"  SR LOAD [{r.status_code}] (cffi:{target}) {url[:55]}"
+                      f" (attempt {attempt+1}/{RETRIES})")
+                # 403/429/503 → retry with next impersonation target + delay
+                if r.status_code in (403, 429, 503) and attempt < RETRIES - 1:
+                    continue
+                # On final cffi attempt, fall through to plain requests below
+            except Exception as e:
+                print(f"  SR LOAD ERROR (cffi attempt {attempt+1}): {e}")
+                # fall through to plain requests as a backup
+
+        # ── Attempt 2: plain requests (backup; works on non-challenged IPs)
         try:
             r = requests.get(url, headers=SR_HEADERS, timeout=25)
             if r.status_code == 200:
                 return BeautifulSoup(r.text, "lxml")
-            # 429/503 → transient, retry. 403 → likely bot block, also retry with delay.
-            print(f"  SR LOAD [{r.status_code}] {url[:60]} (attempt {attempt+1}/{RETRIES})")
+            print(f"  SR LOAD [{r.status_code}] (requests) {url[:55]}"
+                  f" (attempt {attempt+1}/{RETRIES})")
             if r.status_code in (403, 429, 503) and attempt < RETRIES - 1:
-                continue   # retry after delay
-            return None    # final attempt or non-retriable status
+                continue
+            return None
         except Exception as e:
-            print(f"  SR LOAD ERROR (attempt {attempt+1}): {e}")
+            print(f"  SR LOAD ERROR (requests attempt {attempt+1}): {e}")
             if attempt < RETRIES - 1:
                 continue
             return None

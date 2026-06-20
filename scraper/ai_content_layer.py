@@ -54,15 +54,18 @@ MODEL       = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash-lite")
 API_KEY     = os.environ.get("GEMINI_API_KEY", "")
 
 # Free-tier limits (verified June 2026 — Google cut these 50-80% in Dec 2025).
-# flash-lite: 15 RPM / 1000 RPD. We run at 70% of RPM to stay safely under.
+# flash-lite: 15 RPM / 1000 RPD. We run conservatively under the RPM ceiling so
+# the per-minute bucket never fills. 5 effective RPM (12s gap) leaves big margin
+# and is what actually lets a full 1000-job run complete without RPM stalls.
 GEMINI_RPM_LIMIT  = int(os.environ.get("GEMINI_RPM", "15"))
-SAFE_RPM          = max(1, int(GEMINI_RPM_LIMIT * 0.7))          # ~10 effective RPM
-MIN_DELAY_SECONDS = 60.0 / SAFE_RPM                              # ~6s between calls
+SAFE_RPM          = max(1, int(os.environ.get("GEMINI_SAFE_RPM", "5")))  # ~5 effective RPM
+MIN_DELAY_SECONDS = 60.0 / SAFE_RPM                              # ~12s between calls
 DAILY_LIMIT       = int(os.environ.get("GEMINI_DAILY_LIMIT", "1000"))
-# Backoffs tuned for RPM recovery: a 429 from the per-minute bucket clears in
-# ~60s, so we wait long enough for the minute window to roll over before giving
-# up. Final 90s wait ensures a full minute-bucket reset on the last attempt.
-BACKOFFS          = [20, 45, 90]                                 # 429 retry waits, then stop
+# Backoffs tuned for RPM recovery: a 429 from the per-minute bucket only clears
+# when a fresh 60s window rolls over. Each wait MUST exceed 60s so the bucket is
+# guaranteed empty on retry. Anything shorter (20/45s) retries into the SAME
+# full minute-bucket and fails again — which is exactly what stalled the run.
+BACKOFFS          = [65, 65, 75]                                 # 429 retry waits (all > 60s)
 
 
 # ──────────────────────────────────────────────────────────────────────────
@@ -451,11 +454,19 @@ def main():
     cache_hits = cache_miss = generated = skipped_quota = 0
     processed = 0
     quota_stop = False
-    # Consecutive-failure counter: if this many jobs in a row ALL fail after
-    # retries, we conclude quota is truly exhausted and stop the run.
-    # A single 429 → skip job → counter+1. A success → counter resets to 0.
+    # Consecutive-failure counter. A burst of 429s usually means the per-minute
+    # (RPM) bucket is full, NOT that the daily (RPD) quota is gone. We only
+    # conclude "daily quota truly exhausted" when BOTH conditions hold:
+    #   (a) many jobs failed in a row, AND
+    #   (b) we've actually billed a meaningful number of requests today.
+    # Without (b), a temporary RPM stall at the very start of a run would have
+    # wrongly stopped everything after ~8 jobs (the bug we just hit at 23/1000).
     consecutive_failures = 0
-    MAX_CONSECUTIVE_FAILURES = 8   # ~8 jobs × 155s backoff ≈ 20min before stopping
+    MAX_CONSECUTIVE_FAILURES = 12  # higher threshold since each retry now waits >60s
+    # Only allow the consecutive-failure rule to STOP the run once we've used at
+    # least this fraction of the daily budget. Below it, we keep going — a long
+    # failure streak early on is an RPM problem that clears on its own.
+    QUOTA_STOP_MIN_USAGE = int(DAILY_LIMIT * 0.85)
 
     for job, source in iter_jobs(m, only_category=args.category):
         facts = normalize_facts(job, source)
@@ -507,14 +518,26 @@ def main():
 
         if result is None:
             # API call failed (429 / 503 / error) after all retries — skip job.
-            # Increment consecutive-failure counter. If too many in a row, the
-            # quota is truly exhausted: stop gracefully.
+            # Increment consecutive-failure counter. We only STOP the whole run
+            # if we've ALSO already billed most of the daily budget; otherwise a
+            # long streak is just an RPM (per-minute) stall and we keep going.
             consecutive_failures += 1
             skipped_quota += 1
-            if consecutive_failures >= MAX_CONSECUTIVE_FAILURES:
+            if (consecutive_failures >= MAX_CONSECUTIVE_FAILURES
+                    and usage["requests_today"] >= QUOTA_STOP_MIN_USAGE):
                 print(f"  [QUOTA EXHAUSTED] {consecutive_failures} consecutive failures"
-                      f" — quota truly exhausted, stopping run gracefully.")
+                      f" at {usage['requests_today']}/{DAILY_LIMIT} requests"
+                      f" — daily quota truly exhausted, stopping run gracefully.")
                 quota_stop = True
+            elif consecutive_failures >= MAX_CONSECUTIVE_FAILURES:
+                # Long streak but daily budget NOT used up → RPM stall. Pause for
+                # a full minute window to let the per-minute bucket reset, then
+                # reset the counter and keep processing the rest of the jobs.
+                print(f"  [RPM STALL] {consecutive_failures} failures but only"
+                      f" {usage['requests_today']}/{DAILY_LIMIT} used today"
+                      f" — pausing 65s for per-minute quota to reset, then continuing.")
+                time.sleep(65)
+                consecutive_failures = 0
             continue
 
         # Successful result → reset failure streak

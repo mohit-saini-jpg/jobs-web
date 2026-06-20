@@ -4,33 +4,29 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <script>/*TSJ-WIDE-VIEWPORT*/(function(){var W=820,m=document.querySelector('meta[name="viewport"]');if(!m){m=document.createElement('meta');m.name='viewport';(document.head||document.documentElement).appendChild(m);}var sw=(window.screen&&screen.width)||window.innerWidth||W;if(sw<W){m.setAttribute('content','width='+W+', user-scalable=yes, maximum-scale=5.0');}else{m.setAttribute('content','width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5.0');}})();</script>
-<title>Passport Photo Maker Free Online – Crop, Edit, Print | Top Sarkari Jobs</title>
-<meta name="description" content="Free online passport photo maker. Upload photo, crop face, change background color, adjust brightness/contrast, download single or print sheet (4/8 photos on A4). No API, 100% browser-based.">
-<meta name="keywords" content="passport photo maker, passport size photo, online passport photo, passport photo india, passport photo 35x45mm, free passport photo maker">
-<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<title>Passport Photo Maker – Crop, BG Remove, Print Ready | Top Sarkari Jobs</title>
+<meta name="description" content="Free passport photo maker: crop, remove background, change BG color, adjust brightness/contrast, compress to custom KB, download single or A4 print sheet. 100% browser-based.">
+<meta name="keywords" content="passport photo maker, passport size photo, online passport photo india, background remove passport photo, passport photo 35x45mm">
+<meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large">
 <link rel="canonical" href="https://www.topsarkarijobs.com/tools/image/passport-photo.html">
-<meta property="og:title" content="Passport Photo Maker Free Online | Top Sarkari Jobs">
-<meta property="og:description" content="Crop, edit background, adjust brightness — download print-ready passport photos free. 100% browser-based.">
+<meta property="og:title" content="Passport Photo Maker Free | Top Sarkari Jobs">
+<meta property="og:description" content="Crop, BG remove, color change, KB compress — print-ready passport photos free.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://www.topsarkarijobs.com/image.png">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" hreflang="en" href="https://www.topsarkarijobs.com/tools/image/passport-photo.html">
 <link rel="alternate" hreflang="en-IN" href="https://www.topsarkarijobs.com/tools/image/passport-photo.html">
 <link rel="alternate" hreflang="x-default" href="https://www.topsarkarijobs.com/tools/image/passport-photo.html">
 <link rel="manifest" href="/manifest.json">
-<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Passport Photo Maker","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","url":"https://www.topsarkarijobs.com/tools/image/passport-photo.html","description":"Free online passport photo maker — crop, adjust, print-ready download.","offers":{"@type":"Offer","price":"0","priceCurrency":"INR"},"provider":{"@type":"Organization","name":"Top Sarkari Jobs","url":"https://www.topsarkarijobs.com"}}</script>
+<link rel="icon" type="image/png" href="/icons/icon-96x96.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Passport Photo Maker","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","url":"https://www.topsarkarijobs.com/tools/image/passport-photo.html","description":"Free passport photo maker with background removal, crop, color change, KB compress.","offers":{"@type":"Offer","price":"0","priceCurrency":"INR"},"provider":{"@type":"Organization","name":"Top Sarkari Jobs","url":"https://www.topsarkarijobs.com"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.topsarkarijobs.com/"},{"@type":"ListItem","position":2,"name":"Image Tools","item":"https://www.topsarkarijobs.com/tools/tools-image.html"},{"@type":"ListItem","position":3,"name":"Passport Photo Maker","item":"https://www.topsarkarijobs.com/tools/image/passport-photo.html"}]}</script>
 
-<!-- Cropper.js via CDN -->
+<!-- Cropper.js -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
 
 <!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-
-<!-- Font Awesome async -->
 <script>(function(){var l=document.createElement("link");l.rel="preload";l.as="style";l.href="/fonts/fa/all.min.css";l.onload=function(){this.onload=null;this.rel="stylesheet"};document.head.appendChild(l);})();</script>
 <noscript><link rel="stylesheet" href="/fonts/fa/all.min.css"></noscript>
 
@@ -45,7 +41,6 @@
 body{font-family:'Noto Sans',sans-serif;color:var(--ink);background:var(--mist);min-height:100vh}
 h1,h2,h3{font-family:'Space Grotesk',sans-serif}
 
-/* NAV */
 .navbar{background:var(--white);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:200}
 .nav-inner{max-width:1100px;margin:0 auto;padding:0 20px;height:58px;display:flex;align-items:center;gap:8px}
 .nav-brand{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;color:var(--brand);text-decoration:none}
@@ -55,312 +50,359 @@ h1,h2,h3{font-family:'Space Grotesk',sans-serif}
 .nav-tools-link{margin-left:auto;padding:6px 14px;border-radius:8px;background:var(--brand-light);color:var(--brand);font-size:.8rem;font-weight:600;text-decoration:none}
 .nav-tools-link:hover{background:var(--brand);color:#fff}
 
-/* HERO */
 .tool-hero{background:linear-gradient(135deg,#0f0c29 0%,#302b63 50%,#24243e 100%);color:#fff;padding:46px 20px 36px;text-align:center;position:relative;overflow:hidden}
 .tool-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 25% 50%,rgba(52,93,230,.35) 0%,transparent 55%),radial-gradient(ellipse at 75% 50%,rgba(79,123,255,.2) 0%,transparent 55%)}
 .hero-icon{width:72px;height:72px;border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:2rem;background:linear-gradient(135deg,#667eea,#764ba2);position:relative;z-index:1}
-.tool-hero h1{font-size:clamp(1.5rem,3.5vw,2.1rem);font-weight:700;margin-bottom:10px;position:relative;z-index:1}
-.tool-hero p{font-size:.93rem;color:rgba(255,255,255,.82);max-width:520px;margin:0 auto 18px;line-height:1.7;position:relative;z-index:1}
+.tool-hero h1{font-size:clamp(1.4rem,3.5vw,2.1rem);font-weight:700;margin-bottom:10px;position:relative;z-index:1}
+.tool-hero p{font-size:.93rem;color:rgba(255,255,255,.82);max-width:540px;margin:0 auto 18px;line-height:1.7;position:relative;z-index:1}
 .badges{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;position:relative;z-index:1}
 .badge{padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:600;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);color:rgba(255,255,255,.9)}
 
 /* STEP TABS */
 .step-tabs{display:flex;background:var(--white);border-bottom:2px solid var(--line);position:sticky;top:58px;z-index:100;overflow-x:auto;scrollbar-width:none}
 .step-tabs::-webkit-scrollbar{display:none}
-.stab{flex:1;min-width:80px;padding:14px 10px;text-align:center;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;font-size:.78rem;font-weight:600;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:4px;user-select:none;position:relative;white-space:nowrap}
-.stab .stab-n{width:24px;height:24px;border-radius:50%;background:var(--line);color:var(--muted);font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all .2s}
-.stab.done .stab-n{background:var(--success);color:#fff}
+.stab{flex:1;min-width:72px;padding:12px 8px;text-align:center;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;font-size:.75rem;font-weight:600;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px;user-select:none;white-space:nowrap}
+.stab .sn{width:22px;height:22px;border-radius:50%;background:var(--line);color:var(--muted);font-size:.68rem;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.stab.done .sn{background:var(--success);color:#fff}
 .stab.active{color:var(--brand);border-bottom-color:var(--brand)}
-.stab.active .stab-n{background:var(--brand);color:#fff}
-.stab.locked{opacity:.45;cursor:not-allowed}
+.stab.active .sn{background:var(--brand);color:#fff}
+.stab.locked{opacity:.4;cursor:not-allowed}
 
-/* MAIN */
-.main-container{max-width:860px;margin:0 auto;padding:24px 16px 60px}
-.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;margin-bottom:18px}
-.card-title{font-size:1rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;color:#0d2257}
-
-/* UPLOAD ZONE */
-.upload-zone{border:2px dashed var(--line);border-radius:10px;padding:48px 24px;text-align:center;cursor:pointer;transition:all .2s;background:var(--mist)}
-.upload-zone:hover,.upload-zone.drag{border-color:var(--brand);background:var(--brand-light)}
-.upload-zone input{display:none}
-.upload-icon{font-size:2.8rem;margin-bottom:10px;display:block}
-.upload-title{font-size:1rem;font-weight:700;margin-bottom:5px}
-.upload-sub{font-size:.82rem;color:var(--muted)}
-.upload-sub b{color:var(--brand)}
-.btn-choose{margin-top:14px;display:inline-flex;align-items:center;gap:7px;padding:10px 22px;background:var(--brand);color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s}
-.btn-choose:hover{background:var(--brand-dark)}
-
-/* STEP PANELS */
+/* LAYOUT */
+.main-container{max-width:860px;margin:0 auto;padding:22px 15px 60px}
+.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;margin-bottom:16px}
+.card-title{font-size:.98rem;font-weight:700;margin-bottom:15px;display:flex;align-items:center;gap:8px;color:#0d2257}
 .step-panel{display:none}
 .step-panel.active{display:block}
 
-/* SIZE SELECTION */
-.size-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:16px}
-.size-card{border:2px solid var(--line);border-radius:10px;padding:14px 12px;cursor:pointer;transition:all .2s;text-align:center;background:var(--white)}
+/* UPLOAD */
+.upload-zone{border:2px dashed var(--line);border-radius:10px;padding:44px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--mist)}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--brand);background:var(--brand-light)}
+.upload-zone input{display:none}
+.upload-icon{font-size:2.6rem;margin-bottom:10px;display:block}
+.upload-title{font-size:.96rem;font-weight:700;margin-bottom:4px}
+.upload-sub{font-size:.8rem;color:var(--muted)}
+.upload-sub b{color:var(--brand)}
+.btn-choose{margin-top:13px;display:inline-flex;align-items:center;gap:7px;padding:10px 22px;background:var(--brand);color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s}
+.btn-choose:hover{background:var(--brand-dark)}
+
+/* SIZE */
+.size-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;margin-bottom:14px}
+.size-card{border:2px solid var(--line);border-radius:10px;padding:13px 11px;cursor:pointer;transition:all .2s;text-align:center;background:var(--white)}
 .size-card:hover{border-color:var(--brand);background:var(--brand-light)}
 .size-card.active{border-color:var(--brand);background:var(--brand-light)}
-.size-card .sc-title{font-size:.88rem;font-weight:700;margin-bottom:4px}
-.size-card .sc-mm{font-size:.72rem;color:var(--muted)}
-.size-card .sc-country{font-size:.68rem;color:var(--brand);margin-top:4px;font-weight:600}
-.size-demo{margin:0 auto 8px;background:#dbeafe;border:2px solid #3b82f6;display:block}
-
-/* CUSTOM SIZE */
-.custom-size-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding:12px 14px;background:var(--mist);border-radius:8px;border:1px solid var(--line)}
-.custom-size-row label{font-size:.78rem;font-weight:700;color:var(--muted)}
-.custom-size-row input{width:72px;padding:7px 8px;border:1.5px solid var(--line);border-radius:6px;font-size:.86rem;text-align:center}
-.custom-size-row select{padding:7px 10px;border:1.5px solid var(--line);border-radius:6px;font-size:.84rem;background:#fff}
-.dpi-row{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
-.dpi-row label{font-size:.78rem;font-weight:700;color:var(--muted)}
-.dpi-row input{width:80px;padding:7px 8px;border:1.5px solid var(--line);border-radius:6px;font-size:.86rem;text-align:center}
+.size-card .sc-title{font-size:.86rem;font-weight:700;margin-bottom:4px}
+.size-card .sc-mm{font-size:.7rem;color:var(--muted)}
+.size-card .sc-country{font-size:.66rem;color:var(--brand);margin-top:4px;font-weight:600}
+.size-demo{margin:0 auto 7px;background:#dbeafe;border:2px solid #3b82f6;display:block}
+.custom-size-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;padding:11px 13px;background:var(--mist);border-radius:8px;border:1px solid var(--line)}
+.custom-size-row label{font-size:.76rem;font-weight:700;color:var(--muted)}
+.custom-size-row input[type=number]{width:68px;padding:6px 7px;border:1.5px solid var(--line);border-radius:6px;font-size:.84rem;text-align:center}
+.custom-size-row select{padding:6px 9px;border:1.5px solid var(--line);border-radius:6px;font-size:.82rem;background:#fff}
+.dpi-row{display:flex;align-items:center;gap:8px;margin-top:9px;flex-wrap:wrap}
+.dpi-row label{font-size:.76rem;font-weight:700;color:var(--muted)}
 
 /* CROPPER */
 .cropper-wrap{width:100%;max-height:400px;overflow:hidden;border-radius:10px;border:1px solid var(--line);background:#111;position:relative}
 .cropper-wrap img{display:block;max-width:100%;max-height:400px;margin:0 auto}
-.crop-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
-.btn-icon{display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border:1.5px solid var(--line);border-radius:8px;background:#fff;font-size:.82rem;font-weight:600;cursor:pointer;color:var(--ink);transition:all .2s}
+.crop-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px;align-items:center}
+.btn-icon{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border:1.5px solid var(--line);border-radius:8px;background:#fff;font-size:.8rem;font-weight:600;cursor:pointer;color:var(--ink);transition:all .2s}
 .btn-icon:hover{border-color:var(--brand);color:var(--brand)}
-.btn-icon.active{border-color:var(--brand);color:var(--brand);background:var(--brand-light)}
-.ratio-hint{font-size:.72rem;color:var(--muted);margin-left:auto}
+.ratio-hint{font-size:.7rem;color:var(--muted);margin-left:auto}
+
+/* BACKGROUND REMOVE */
+.bg-remove-area{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#f1f5f9;margin-bottom:14px}
+.bg-remove-header{background:var(--mist);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+.bg-remove-header span{font-size:.82rem;font-weight:700;color:var(--ink)}
+.bg-toggle{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--muted);cursor:pointer}
+.bg-toggle input[type=checkbox]{width:16px;height:16px;accent-color:var(--brand);cursor:pointer}
+.bg-preview-container{display:flex;gap:0;overflow:hidden}
+.bg-preview-box{flex:1;padding:12px;text-align:center;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;position:relative}
+.bg-preview-box:first-child{border-right:1px solid var(--line)}
+.bg-preview-box .preview-label{font-size:.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.bg-preview-box canvas,.bg-preview-box img{max-width:100%;max-height:160px;border-radius:6px;object-fit:contain}
+/* Checkerboard for transparency */
+.transparent-bg{background-image:linear-gradient(45deg,#ccc 25%,transparent 25%),linear-gradient(-45deg,#ccc 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#ccc 75%),linear-gradient(-45deg,transparent 75%,#ccc 75%);background-size:12px 12px;background-position:0 0,0 6px,6px -6px,-6px 0}
+
+/* BG LOADER */
+.bg-loader{display:none;position:absolute;inset:0;background:rgba(255,255,255,.9);border-radius:10px;align-items:center;justify-content:center;flex-direction:column;gap:10px;z-index:10}
+.bg-loader.show{display:flex}
+.spin{width:32px;height:32px;border:3px solid var(--line);border-top-color:var(--brand);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loader-text{font-size:.78rem;font-weight:600;color:var(--muted)}
+
+/* BG COLOR OPTIONS */
+.bg-options{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+.bg-opt{width:40px;height:40px;border-radius:8px;cursor:pointer;border:3px solid transparent;transition:all .2s;position:relative;flex-shrink:0}
+.bg-opt.active{border-color:var(--brand)}
+.bg-opt.active::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:900;color:var(--brand);text-shadow:0 0 3px #fff}
+.bg-custom-row{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap}
+.bg-custom-row label{font-size:.8rem;font-weight:600;color:var(--muted)}
+.bg-final-preview{border-radius:10px;overflow:hidden;border:1px solid var(--line);text-align:center;padding:12px;background:var(--mist);margin-top:12px}
+.bg-final-preview canvas{max-width:180px;max-height:240px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.12)}
 
 /* ADJUSTMENTS */
-.adj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.adj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:15px}
 .adj-group{}
-.adj-label{display:flex;justify-content:space-between;align-items:center;font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
-.adj-label span{color:var(--brand);font-size:.85rem;font-weight:700}
-input[type=range]{width:100%;accent-color:var(--brand);height:4px}
-.adj-presets{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
-.preset-btn{padding:4px 10px;border:1px solid var(--line);border-radius:20px;font-size:.7rem;font-weight:600;cursor:pointer;background:#fff;color:var(--muted);transition:all .15s}
+.adj-label{display:flex;justify-content:space-between;align-items:center;font-size:.76rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.adj-label span{color:var(--brand);font-size:.82rem;font-weight:700}
+input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer}
+.adj-presets{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap}
+.preset-btn{padding:3px 9px;border:1px solid var(--line);border-radius:20px;font-size:.68rem;font-weight:600;cursor:pointer;background:#fff;color:var(--muted);transition:all .15s}
 .preset-btn:hover{border-color:var(--brand);color:var(--brand)}
+.live-preview-wrap{border-radius:10px;overflow:hidden;border:1px solid var(--line);text-align:center;padding:12px;background:var(--mist);margin-top:14px}
+.live-preview-wrap canvas{max-width:180px;max-height:240px;border-radius:6px}
 
-/* BACKGROUND */
-.bg-options{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-.bg-opt{width:46px;height:46px;border-radius:8px;cursor:pointer;border:3px solid transparent;transition:all .2s;position:relative}
-.bg-opt.active{border-color:var(--brand)}
-.bg-opt.active::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;color:var(--brand)}
-.bg-custom-row{display:flex;align-items:center;gap:10px;margin-top:8px}
-.bg-custom-row label{font-size:.82rem;font-weight:600;color:var(--muted)}
-.bg-preview-wrap{border-radius:10px;overflow:hidden;border:1px solid var(--line);text-align:center;padding:12px;background:var(--mist);margin-top:14px}
-.bg-preview-wrap canvas{max-width:200px;max-height:260px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+/* KB SIZE */
+.kb-section{margin-top:18px;padding-top:16px;border-top:2px dashed var(--line)}
+.kb-toggle-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.kb-toggle-row label{font-size:.84rem;font-weight:700;color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:7px}
+.kb-toggle-row input[type=checkbox]{width:18px;height:18px;accent-color:var(--brand);cursor:pointer}
+.kb-controls{display:none;flex-direction:column;gap:10px}
+.kb-controls.show{display:flex}
+.kb-input-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.kb-input-row label{font-size:.8rem;font-weight:700;color:var(--muted)}
+.kb-input-row input[type=number]{width:90px;padding:8px 10px;border:2px solid var(--brand);border-radius:8px;font-size:.92rem;font-weight:700;text-align:center;color:var(--brand)}
+.kb-input-row span{font-size:.82rem;color:var(--muted)}
+.kb-slider-row{display:flex;align-items:center;gap:10px}
+.kb-slider-row input[type=range]{flex:1}
+.kb-presets{display:flex;gap:7px;flex-wrap:wrap}
+.kb-preset-btn{padding:5px 13px;border:1.5px solid var(--line);border-radius:20px;font-size:.76rem;font-weight:700;cursor:pointer;background:#fff;color:var(--muted);transition:all .15s}
+.kb-preset-btn:hover,.kb-preset-btn.active{border-color:var(--brand);color:var(--brand);background:var(--brand-light)}
+.kb-status{font-size:.8rem;color:var(--muted);padding:8px 10px;background:var(--mist);border-radius:6px;margin-top:8px;display:none}
+.kb-status.show{display:block}
 
-/* DOWNLOAD SECTION */
-.download-wrap{}
-.print-options{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
-.print-opt{padding:8px 16px;border:2px solid var(--line);border-radius:8px;cursor:pointer;font-size:.82rem;font-weight:600;color:var(--muted);transition:all .2s;background:#fff}
+/* DOWNLOAD */
+.print-options{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px}
+.print-opt{padding:7px 15px;border:2px solid var(--line);border-radius:8px;cursor:pointer;font-size:.8rem;font-weight:700;color:var(--muted);transition:all .2s;background:#fff}
 .print-opt.active{border-color:var(--brand);color:var(--brand);background:var(--brand-light)}
-.print-preview{border:1px solid var(--line);border-radius:10px;background:var(--mist);padding:16px;text-align:center;overflow:hidden;margin-bottom:16px}
-.print-preview canvas{max-width:100%;border-radius:4px;box-shadow:0 2px 12px rgba(0,0,0,.1)}
+.print-preview{border:1px solid var(--line);border-radius:10px;background:#e5e7eb;padding:14px;text-align:center;overflow:auto;margin-bottom:14px;max-height:400px}
+.print-preview canvas{max-width:100%;border-radius:4px;box-shadow:0 2px 12px rgba(0,0,0,.12)}
 .dl-btns{display:flex;gap:10px;flex-wrap:wrap}
-.btn-dl{padding:12px 24px;border:none;border-radius:10px;font-size:.92rem;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;display:inline-flex;align-items:center;gap:8px;transition:all .2s}
+.btn-dl{padding:12px 22px;border:none;border-radius:10px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;display:inline-flex;align-items:center;gap:8px;transition:all .2s}
 .btn-dl-single{background:var(--brand);color:#fff}
 .btn-dl-single:hover{background:var(--brand-dark);transform:translateY(-1px)}
 .btn-dl-print{background:var(--success);color:#fff}
 .btn-dl-print:hover{filter:brightness(1.08);transform:translateY(-1px)}
 
-/* NAV BUTTONS */
-.nav-btns{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
-.btn-next{padding:12px 28px;background:var(--brand);color:#fff;border:none;border-radius:10px;font-size:.92rem;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;display:inline-flex;align-items:center;gap:8px;transition:all .2s}
-.btn-next:hover{background:var(--brand-dark);transform:translateY(-1px);box-shadow:0 6px 18px rgba(52,93,230,.3)}
-.btn-back{padding:12px 22px;background:var(--mist);color:var(--ink);border:1.5px solid var(--line);border-radius:10px;font-size:.88rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+/* MISC */
+.nav-btns{display:flex;gap:9px;margin-top:16px;flex-wrap:wrap}
+.btn-next{padding:11px 26px;background:var(--brand);color:#fff;border:none;border-radius:10px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;display:inline-flex;align-items:center;gap:8px;transition:all .2s}
+.btn-next:hover{background:var(--brand-dark);transform:translateY(-1px);box-shadow:0 5px 16px rgba(52,93,230,.28)}
+.btn-next:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-back{padding:11px 20px;background:var(--mist);color:var(--ink);border:1.5px solid var(--line);border-radius:10px;font-size:.86rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
 .btn-back:hover{border-color:var(--brand);color:var(--brand)}
+.info-notice{background:#FFF7ED;border:1px solid #FED7AA;border-radius:8px;padding:9px 12px;font-size:.76rem;color:#92400E;display:flex;align-items:flex-start;gap:7px;margin-top:10px}
+.info-notice i{flex-shrink:0;margin-top:1px}
+.success-notice{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:9px 12px;font-size:.76rem;color:#065f46;display:flex;align-items:flex-start;gap:7px;margin-top:8px}
+.secure-note{background:var(--brand-light);border-radius:10px;padding:13px 15px;text-align:center;margin-bottom:16px}
+.secure-note p{font-size:.78rem;color:var(--brand);font-weight:600}
 
-/* NOTICE */
-.secure-note{background:var(--brand-light);border-radius:10px;padding:14px 16px;text-align:center;margin-bottom:18px}
-.secure-note p{font-size:.8rem;color:var(--brand);font-weight:600}
-.info-notice{background:#FFF7ED;border:1px solid #FED7AA;border-radius:8px;padding:10px 14px;font-size:.78rem;color:#92400E;margin-top:10px;display:flex;align-items:flex-start;gap:8px}
-
-/* HOW TO / FAQ */
-.how-steps{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:6px}
-.step{text-align:center;padding:16px 10px}
-.step-n{width:36px;height:36px;background:var(--brand-light);color:var(--brand);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;margin:0 auto 9px}
-.step h4{font-size:.84rem;font-weight:700;margin-bottom:3px}
-.step p{font-size:.76rem;color:var(--muted);line-height:1.5}
+/* HOW-TO / FAQ / RELATED */
+.how-steps{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px;margin-top:6px}
+.step{text-align:center;padding:14px 8px}
+.step-n{width:34px;height:34px;background:var(--brand-light);color:var(--brand);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;margin:0 auto 8px}
+.step h4{font-size:.82rem;font-weight:700;margin-bottom:3px}
+.step p{font-size:.74rem;color:var(--muted);line-height:1.5}
 .faq-item{border-bottom:1px solid var(--line)}
 .faq-item:last-child{border-bottom:none}
-.faq-q{width:100%;text-align:left;background:none;border:none;padding:12px 0;font-size:.86rem;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--ink);font-family:inherit}
-.faq-q .fa{color:var(--brand);font-size:1rem;transition:transform .2s}
+.faq-q{width:100%;text-align:left;background:none;border:none;padding:11px 0;font-size:.85rem;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--ink);font-family:inherit}
+.faq-q .fa{color:var(--brand);transition:transform .2s}
 .faq-q.open .fa{transform:rotate(45deg)}
-.faq-a{font-size:.82rem;color:var(--muted);line-height:1.7;max-height:0;overflow:hidden;transition:max-height .3s,padding .2s}
+.faq-a{font-size:.8rem;color:var(--muted);line-height:1.7;max-height:0;overflow:hidden;transition:max-height .3s,padding .2s}
 .faq-a.open{max-height:200px;padding-bottom:10px}
-.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
-.rel-item{display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px 10px;border-radius:10px;border:1.5px solid var(--line);text-decoration:none;color:var(--ink);transition:all .2s;text-align:center}
+.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:9px}
+.rel-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:10px;border:1.5px solid var(--line);text-decoration:none;color:var(--ink);transition:all .2s;text-align:center}
 .rel-item:hover{border-color:var(--brand);background:var(--brand-light);color:var(--brand);transform:translateY(-2px)}
-.rel-item .ri{font-size:1.4rem}
-.rel-item span{font-size:.76rem;font-weight:600}
-
-/* TOOL FOOTER */
-.tool-footer{background:#0f0c29;color:rgba(255,255,255,.65);text-align:center;padding:22px 20px;font-size:.8rem}
-.tool-footer a{color:rgba(255,255,255,.5);text-decoration:none;margin:0 7px}
+.rel-item .ri{font-size:1.35rem}
+.rel-item span{font-size:.74rem;font-weight:600}
+.tool-footer{background:#0f0c29;color:rgba(255,255,255,.65);text-align:center;padding:20px;font-size:.78rem}
+.tool-footer a{color:rgba(255,255,255,.5);text-decoration:none;margin:0 6px}
 .tool-footer a:hover{color:#fff}
 
-/* PWA */
-#pwa-install-bar{display:none;position:fixed;bottom:16px;right:16px;z-index:9999;background:#fff;border:1.5px solid var(--brand);border-radius:12px;padding:12px 16px;box-shadow:0 8px 24px rgba(52,93,230,.15);max-width:300px}
-
-@media(max-width:600px){
+@media(max-width:580px){
   .size-grid{grid-template-columns:1fr 1fr}
   .adj-grid{grid-template-columns:1fr}
   .how-steps{grid-template-columns:1fr 1fr}
   .related-grid{grid-template-columns:repeat(3,1fr)}
-  .card{padding:16px 13px}
+  .card{padding:14px 12px}
   .btn-next{width:100%;justify-content:center}
   .dl-btns{flex-direction:column}
   .btn-dl{width:100%;justify-content:center}
+  .bg-preview-container{flex-direction:column}
+  .bg-preview-box:first-child{border-right:none;border-bottom:1px solid var(--line)}
 }
 </style>
 </head>
 <body>
 
-<!-- NAVBAR -->
 <nav class="navbar"><div class="nav-inner">
   <a class="nav-brand" href="/">TopSarkariJobs</a>
   <span class="nav-sep">›</span><a class="nav-crumb" href="/tools/">Tools</a>
-  <span class="nav-sep">›</span><a class="nav-crumb" href="/tools/tools-image.html">Image Tools</a>
+  <span class="nav-sep">›</span><a class="nav-crumb" href="/tools/tools-image.html">Image</a>
   <a class="nav-tools-link" href="/tools/">All Tools</a>
 </div></nav>
 
-<!-- HERO -->
 <section class="tool-hero">
   <div class="hero-icon">🆔</div>
   <h1>Passport Photo Maker</h1>
-  <p>Crop, adjust, background change — print-ready passport photos banayein ghar baithe. Koi API nahi, 100% browser mein.</p>
+  <p>Crop → Background Remove → Color Change → Adjust → Compress to KB → Download. 100% browser-based, koi server nahi.</p>
   <div class="badges">
     <span class="badge">Free</span>
-    <span class="badge">No Upload to Server</span>
+    <span class="badge">BG Remove</span>
     <span class="badge">Crop + Edit</span>
+    <span class="badge">KB Compress</span>
     <span class="badge">Print Sheet</span>
-    <span class="badge">A4 Print Ready</span>
   </div>
 </section>
 
 <!-- STEP TABS -->
 <div class="step-tabs" id="stepTabs">
-  <div class="stab active" data-step="0" onclick="goStep(0)"><div class="stab-n">1</div><span>Size</span></div>
-  <div class="stab locked" data-step="1" onclick="goStep(1)"><div class="stab-n">2</div><span>Crop</span></div>
-  <div class="stab locked" data-step="2" onclick="goStep(2)"><div class="stab-n">3</div><span>Background</span></div>
-  <div class="stab locked" data-step="3" onclick="goStep(3)"><div class="stab-n">4</div><span>Adjust</span></div>
-  <div class="stab locked" data-step="4" onclick="goStep(4)"><div class="stab-n">5</div><span>Download</span></div>
+  <div class="stab active"  data-step="0" onclick="goStep(0)"><div class="sn">1</div><span>Size</span></div>
+  <div class="stab locked" data-step="1" onclick="goStep(1)"><div class="sn">2</div><span>Crop</span></div>
+  <div class="stab locked" data-step="2" onclick="goStep(2)"><div class="sn">3</div><span>BG</span></div>
+  <div class="stab locked" data-step="3" onclick="goStep(3)"><div class="sn">4</div><span>Adjust</span></div>
+  <div class="stab locked" data-step="4" onclick="goStep(4)"><div class="sn">5</div><span>Download</span></div>
 </div>
 
 <div class="main-container">
 
-  <!-- ═══════════ STEP 0: SIZE + UPLOAD ═══════════ -->
-  <div class="step-panel active" id="panel-0">
-    <div class="card">
-      <div class="card-title">📐 Passport Photo Size Chunein</div>
-      <div class="size-grid" id="sizeGrid">
-        <div class="size-card active" data-w="413" data-h="531" data-label="India / Europe Passport" onclick="selectSize(this)">
-          <canvas class="size-demo" width="35" height="45" style="height:45px;width:35px;" id="demo0"></canvas>
-          <div class="sc-title">35 × 45 mm</div>
-          <div class="sc-mm">413 × 531 px @ 300 DPI</div>
-          <div class="sc-country">India, UK, Australia, Europe</div>
-        </div>
-        <div class="size-card" data-w="600" data-h="600" data-label="USA / Philippines Visa" onclick="selectSize(this)">
-          <canvas class="size-demo" width="45" height="45" style="height:45px;width:45px;" id="demo1"></canvas>
-          <div class="sc-title">2 × 2 Inch</div>
-          <div class="sc-mm">600 × 600 px @ 300 DPI</div>
-          <div class="sc-country">USA, Philippines</div>
-        </div>
-        <div class="size-card" data-w="590" data-h="826" data-label="Canada Passport" onclick="selectSize(this)">
-          <canvas class="size-demo" width="36" height="50" style="height:50px;width:36px;" id="demo2"></canvas>
-          <div class="sc-title">50 × 70 mm</div>
-          <div class="sc-mm">590 × 826 px @ 300 DPI</div>
-          <div class="sc-country">Canada</div>
-        </div>
-        <div class="size-card" data-w="295" data-h="413" data-label="PAN Card / Aadhaar" onclick="selectSize(this)">
-          <canvas class="size-demo" width="25" height="35" style="height:35px;width:25px;" id="demo3"></canvas>
-          <div class="sc-title">25 × 35 mm</div>
-          <div class="sc-mm">295 × 413 px @ 300 DPI</div>
-          <div class="sc-country">PAN Card / Aadhaar</div>
-        </div>
-        <div class="size-card" data-w="200" data-h="230" data-label="SSC / IBPS Forms" onclick="selectSize(this)">
-          <canvas class="size-demo" width="35" height="40" style="height:40px;width:35px;" id="demo4"></canvas>
-          <div class="sc-title">200 × 230 px</div>
-          <div class="sc-mm">SSC / IBPS Standard</div>
-          <div class="sc-country">Sarkari Form Upload</div>
-        </div>
-        <div class="size-card" data-w="0" data-h="0" data-label="Custom Size" onclick="selectSize(this)" id="customCard">
-          <canvas class="size-demo" width="40" height="40" style="height:40px;width:40px;background:#fde68a;border-color:#f59e0b" id="demo5"></canvas>
-          <div class="sc-title">Custom</div>
-          <div class="sc-mm">Apna size daalo</div>
-          <div class="sc-country" style="color:var(--warn)">Width × Height</div>
-        </div>
+<!-- ══════════ STEP 0: SIZE + UPLOAD ══════════ -->
+<div class="step-panel active" id="panel-0">
+  <div class="card">
+    <div class="card-title">📐 Photo Size Chunein</div>
+    <div class="size-grid" id="sizeGrid">
+      <div class="size-card active" data-w="413" data-h="531" data-label="India Passport (35×45mm)" onclick="selectSize(this)">
+        <canvas class="size-demo" width="35" height="45" style="width:35px;height:45px"></canvas>
+        <div class="sc-title">35 × 45 mm</div><div class="sc-mm">413 × 531 px @ 300 DPI</div>
+        <div class="sc-country">India, UK, Australia, Europe</div>
       </div>
-
-      <!-- Custom size row -->
-      <div class="custom-size-row" id="customRow" style="display:none">
-        <label>Width</label>
-        <input type="number" id="customW" value="400" min="50" max="3000">
-        <label>×</label>
-        <label>Height</label>
-        <input type="number" id="customH" value="500" min="50" max="3000">
-        <label>Unit</label>
-        <select id="customUnit" onchange="updateCustomPx()">
-          <option value="px">px</option>
-          <option value="mm">mm</option>
-          <option value="cm">cm</option>
-          <option value="in">inch</option>
-        </select>
+      <div class="size-card" data-w="600" data-h="600" data-label="USA Visa (2×2 inch)" onclick="selectSize(this)">
+        <canvas class="size-demo" width="45" height="45" style="width:45px;height:45px"></canvas>
+        <div class="sc-title">2 × 2 Inch</div><div class="sc-mm">600 × 600 px @ 300 DPI</div>
+        <div class="sc-country">USA, Philippines</div>
       </div>
-      <div class="dpi-row">
-        <label>DPI:</label>
-        <input type="number" id="dpiVal" value="300" min="72" max="1200">
-        <span style="font-size:.76rem;color:var(--muted)">(Print = 300 DPI, Digital = 96 DPI)</span>
+      <div class="size-card" data-w="590" data-h="826" data-label="Canada Passport" onclick="selectSize(this)">
+        <canvas class="size-demo" width="36" height="50" style="width:36px;height:50px"></canvas>
+        <div class="sc-title">50 × 70 mm</div><div class="sc-mm">590 × 826 px @ 300 DPI</div>
+        <div class="sc-country">Canada</div>
+      </div>
+      <div class="size-card" data-w="295" data-h="413" data-label="PAN / Aadhaar" onclick="selectSize(this)">
+        <canvas class="size-demo" width="25" height="35" style="width:25px;height:35px"></canvas>
+        <div class="sc-title">25 × 35 mm</div><div class="sc-mm">295 × 413 px @ 300 DPI</div>
+        <div class="sc-country">PAN Card / Aadhaar</div>
+      </div>
+      <div class="size-card" data-w="200" data-h="230" data-label="SSC / IBPS Form" onclick="selectSize(this)">
+        <canvas class="size-demo" width="35" height="40" style="width:35px;height:40px"></canvas>
+        <div class="sc-title">200 × 230 px</div><div class="sc-mm">SSC / IBPS Standard</div>
+        <div class="sc-country">Sarkari Form Upload</div>
+      </div>
+      <div class="size-card" data-w="0" data-h="0" data-label="Custom" onclick="selectSize(this)">
+        <canvas class="size-demo" width="40" height="40" style="width:40px;height:40px;background:#fde68a;border-color:#f59e0b"></canvas>
+        <div class="sc-title">Custom</div><div class="sc-mm">Apna size daalo</div>
+        <div class="sc-country" style="color:var(--warn)">Width × Height</div>
       </div>
     </div>
-
-    <div class="card">
-      <div class="card-title">📤 Photo Upload Karein</div>
-      <div class="upload-zone" id="uploadZone">
-        <input type="file" id="fileInput" accept="image/*">
-        <span class="upload-icon">📷</span>
-        <div class="upload-title">Yahan Drop Karein ya Browse Karein</div>
-        <div class="upload-sub">JPG, PNG, WEBP, HEIC — <b>koi bhi photo</b></div>
-        <button class="btn-choose" onclick="document.getElementById('fileInput').click();event.stopPropagation()">
-          <i class="fa-solid fa-folder-open"></i> Photo Choose Karein
-        </button>
-      </div>
-      <div class="info-notice">
-        <i class="fa-solid fa-circle-info"></i>
-        <span>Aapki photo sirf aapke browser mein process hoti hai. Koi server par upload nahi hoti. 100% private.</span>
-      </div>
+    <div class="custom-size-row" id="customRow" style="display:none">
+      <label>Width</label>
+      <input type="number" id="customW" value="400" min="50" max="5000">
+      <label>×</label><label>Height</label>
+      <input type="number" id="customH" value="500" min="50" max="5000">
+      <label>Unit</label>
+      <select id="customUnit" onchange="updateCustomPx()">
+        <option value="px">px</option><option value="mm">mm</option>
+        <option value="cm">cm</option><option value="in">inch</option>
+      </select>
+      <label>DPI</label>
+      <input type="number" id="dpiVal" value="300" min="72" max="1200" style="width:68px">
     </div>
+  </div>
 
-    <div class="nav-btns">
-      <button class="btn-next" id="step0Next" onclick="goStep(1)" disabled style="opacity:.5;cursor:not-allowed">
-        <i class="fa-solid fa-arrow-right"></i> Next: Crop Karein
+  <div class="card">
+    <div class="card-title">📤 Photo Upload Karein</div>
+    <div class="upload-zone" id="uploadZone">
+      <input type="file" id="fileInput" accept="image/*">
+      <span class="upload-icon">📷</span>
+      <div class="upload-title">Yahan Drop Karein ya Browse Karein</div>
+      <div class="upload-sub">JPG, PNG, WEBP — <b>koi bhi photo</b></div>
+      <button class="btn-choose" onclick="document.getElementById('fileInput').click();event.stopPropagation()">
+        <i class="fa-solid fa-folder-open"></i> Photo Choose Karein
       </button>
     </div>
-  </div>
-
-  <!-- ═══════════ STEP 1: CROP ═══════════ -->
-  <div class="step-panel" id="panel-1">
-    <div class="card">
-      <div class="card-title">✂️ Face Crop Karein</div>
-      <div class="cropper-wrap" id="cropperWrap">
-        <img id="cropperImg" src="" alt="Upload image">
-      </div>
-      <div class="crop-actions">
-        <button class="btn-icon" onclick="cropperInst.zoom(0.1)" title="Zoom In"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
-        <button class="btn-icon" onclick="cropperInst.zoom(-0.1)" title="Zoom Out"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
-        <button class="btn-icon" onclick="cropperInst.rotate(-90)" title="Rotate Left"><i class="fa-solid fa-rotate-left"></i></button>
-        <button class="btn-icon" onclick="cropperInst.rotate(90)" title="Rotate Right"><i class="fa-solid fa-rotate-right"></i></button>
-        <button class="btn-icon" onclick="cropperInst.reset()" title="Reset"><i class="fa-solid fa-arrow-rotate-right"></i> Reset</button>
-        <span class="ratio-hint" id="ratioHint">Ratio: 7:9 (35×45mm)</span>
-      </div>
-      <div class="info-notice" style="margin-top:12px">
-        <i class="fa-solid fa-lightbulb"></i>
-        <span>Blue box ko drag karke aur resize karke apna chehra center mein rakho. Sar ke upar thoda space jaroor rakho.</span>
-      </div>
-    </div>
-    <div class="nav-btns">
-      <button class="btn-back" onclick="goStep(0)"><i class="fa-solid fa-arrow-left"></i> Back</button>
-      <button class="btn-next" onclick="cropAndNext()"><i class="fa-solid fa-scissors"></i> Crop & Next</button>
+    <div class="info-notice">
+      <i class="fa-solid fa-circle-info"></i>
+      <span>Aapki photo sirf browser mein process hoti hai. Koi server upload nahi. 100% private.</span>
     </div>
   </div>
+  <div class="nav-btns">
+    <button class="btn-next" id="step0Next" disabled>
+      <i class="fa-solid fa-arrow-right"></i> Next: Crop
+    </button>
+  </div>
+</div>
 
-  <!-- ═══════════ STEP 2: BACKGROUND ═══════════ -->
-  <div class="step-panel" id="panel-2">
-    <div class="card">
-      <div class="card-title">🎨 Background Color Chunein</div>
+<!-- ══════════ STEP 1: CROP ══════════ -->
+<div class="step-panel" id="panel-1">
+  <div class="card">
+    <div class="card-title">✂️ Face Crop Karein</div>
+    <div class="cropper-wrap" id="cropperWrap">
+      <img id="cropperImg" src="" alt="Upload photo">
+    </div>
+    <div class="crop-actions">
+      <button class="btn-icon" onclick="cropperInst&&cropperInst.zoom(0.1)"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+      <button class="btn-icon" onclick="cropperInst&&cropperInst.zoom(-0.1)"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+      <button class="btn-icon" onclick="cropperInst&&cropperInst.rotate(-90)"><i class="fa-solid fa-rotate-left"></i></button>
+      <button class="btn-icon" onclick="cropperInst&&cropperInst.rotate(90)"><i class="fa-solid fa-rotate-right"></i></button>
+      <button class="btn-icon" onclick="cropperInst&&cropperInst.reset()"><i class="fa-solid fa-arrow-rotate-right"></i> Reset</button>
+      <span class="ratio-hint" id="ratioHint">35×45mm</span>
+    </div>
+    <div class="info-notice" style="margin-top:11px">
+      <i class="fa-solid fa-lightbulb"></i>
+      <span>Blue crop box se chehra center mein rakho. Sar ke upar thoda space do. Zoom karke adjust karo.</span>
+    </div>
+  </div>
+  <div class="nav-btns">
+    <button class="btn-back" onclick="goStep(0)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+    <button class="btn-next" onclick="cropAndNext()"><i class="fa-solid fa-scissors"></i> Crop & Next</button>
+  </div>
+</div>
+
+<!-- ══════════ STEP 2: BACKGROUND ══════════ -->
+<div class="step-panel" id="panel-2">
+  <div class="card">
+    <div class="card-title">🎨 Background</div>
+
+    <!-- BG REMOVE TOGGLE + PREVIEW -->
+    <div class="bg-remove-area">
+      <div class="bg-remove-header">
+        <span>Background Remove (Optional)</span>
+        <label class="bg-toggle">
+          <input type="checkbox" id="bgRemoveToggle" onchange="onBgRemoveToggle()">
+          <span>Background hatao</span>
+        </label>
+      </div>
+      <div class="bg-preview-container">
+        <div class="bg-preview-box">
+          <div class="preview-label">Original (Cropped)</div>
+          <canvas id="origPreviewCanvas"></canvas>
+        </div>
+        <div class="bg-preview-box transparent-bg" id="removedPreviewBox">
+          <div class="preview-label">BG Removed</div>
+          <canvas id="removedCanvas" style="display:none"></canvas>
+          <span id="bgPlaceholder" style="font-size:.76rem;color:var(--muted);text-align:center">Background remove enable karo</span>
+        </div>
+      </div>
+      <!-- LOADER -->
+      <div class="bg-loader" id="bgLoader">
+        <div class="spin"></div>
+        <div class="loader-text">Background remove ho raha hai...</div>
+        <div class="loader-text" id="bgLoaderMsg" style="font-size:.68rem;color:#999">AI model load ho raha hai (first time ~5-10 sec)</div>
+      </div>
+    </div>
+
+    <!-- BG COLOR -->
+    <div id="bgColorSection">
+      <div class="card-title" style="margin-top:16px;margin-bottom:10px">Background Color</div>
       <div class="bg-options" id="bgOptions">
         <div class="bg-opt active" style="background:#fff;border:1px solid #ddd" data-color="#ffffff" onclick="selectBg(this)" title="White"></div>
         <div class="bg-opt" style="background:#f5f5f0;border:1px solid #ddd" data-color="#f5f5f0" onclick="selectBg(this)" title="Off-White"></div>
@@ -369,189 +411,216 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px}
         <div class="bg-opt" style="background:#d5e8d4" data-color="#d5e8d4" onclick="selectBg(this)" title="Light Green"></div>
         <div class="bg-opt" style="background:#e8daef" data-color="#e8daef" onclick="selectBg(this)" title="Light Purple"></div>
         <div class="bg-opt" style="background:#fdebd0" data-color="#fdebd0" onclick="selectBg(this)" title="Cream"></div>
-        <div class="bg-opt" style="background:#f9ebea" data-color="#f9ebea" onclick="selectBg(this)" title="Light Pink"></div>
+        <div class="bg-opt" style="background:#fef9e7" data-color="#fef9e7" onclick="selectBg(this)" title="Yellow"></div>
         <div class="bg-opt" style="background:#eafaf1" data-color="#eafaf1" onclick="selectBg(this)" title="Mint"></div>
-        <div class="bg-opt" style="background:#e8f8f5" data-color="#e8f8f5" onclick="selectBg(this)" title="Teal"></div>
-        <div class="bg-opt" style="background:#fef9e7" data-color="#fef9e7" onclick="selectBg(this)" title="Light Yellow"></div>
         <div class="bg-opt" style="background:#000000" data-color="#000000" onclick="selectBg(this)" title="Black"></div>
       </div>
       <div class="bg-custom-row">
-        <label>Custom Color:</label>
-        <input type="color" id="customBgColor" value="#ffffff" style="width:40px;height:32px;border:none;cursor:pointer;border-radius:6px" oninput="applyCustomBg(this.value)">
-        <span style="font-size:.78rem;color:var(--muted)">Koi bhi rang chunein</span>
+        <label>Custom:</label>
+        <input type="color" id="customBgColor" value="#ffffff" style="width:38px;height:32px;border:none;cursor:pointer;border-radius:6px" oninput="applyCustomBg(this.value)">
+        <span style="font-size:.76rem;color:var(--muted)">Koi bhi rang</span>
       </div>
-      <div class="bg-preview-wrap">
-        <canvas id="bgCanvas"></canvas>
-        <p style="font-size:.72rem;color:var(--muted);margin-top:8px">Preview</p>
-      </div>
-      <div class="info-notice" style="margin-top:10px">
-        <i class="fa-solid fa-circle-info"></i>
-        <span>India passport: White background required. USA Visa: White background. UK/Europe: Light grey/white.</span>
+      <div class="bg-final-preview">
+        <canvas id="bgFinalCanvas"></canvas>
+        <p style="font-size:.7rem;color:var(--muted);margin-top:7px">Final Preview</p>
       </div>
     </div>
-    <div class="nav-btns">
-      <button class="btn-back" onclick="goStep(1)"><i class="fa-solid fa-arrow-left"></i> Back</button>
-      <button class="btn-next" onclick="goStep(3)"><i class="fa-solid fa-sliders"></i> Next: Adjust</button>
+
+    <div class="info-notice" style="margin-top:10px">
+      <i class="fa-solid fa-circle-info"></i>
+      <span>India/UK Passport: White background. USA Visa: White. Background remove karke koi bhi color lagao.</span>
     </div>
   </div>
+  <div class="nav-btns">
+    <button class="btn-back" onclick="goStep(1)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+    <button class="btn-next" onclick="goStep(3)"><i class="fa-solid fa-sliders"></i> Next: Adjust</button>
+  </div>
+</div>
 
-  <!-- ═══════════ STEP 3: ADJUSTMENTS ═══════════ -->
-  <div class="step-panel" id="panel-3">
-    <div class="card">
-      <div class="card-title">🌟 Photo Adjust Karein</div>
-      <div class="adj-grid">
-        <div class="adj-group">
-          <div class="adj-label">Brightness <span id="brightVal">100%</span></div>
-          <input type="range" id="brightRange" min="0" max="200" value="100" step="1" oninput="updateAdj()">
-          <div class="adj-presets">
-            <button class="preset-btn" onclick="setAdj('brightRange',80,'brightVal')">Dark</button>
-            <button class="preset-btn" onclick="setAdj('brightRange',100,'brightVal')">Normal</button>
-            <button class="preset-btn" onclick="setAdj('brightRange',120,'brightVal')">Bright</button>
-          </div>
-        </div>
-        <div class="adj-group">
-          <div class="adj-label">Contrast <span id="contrastVal">100%</span></div>
-          <input type="range" id="contrastRange" min="0" max="200" value="100" step="1" oninput="updateAdj()">
-          <div class="adj-presets">
-            <button class="preset-btn" onclick="setAdj('contrastRange',80,'contrastVal')">Low</button>
-            <button class="preset-btn" onclick="setAdj('contrastRange',100,'contrastVal')">Normal</button>
-            <button class="preset-btn" onclick="setAdj('contrastRange',130,'contrastVal')">High</button>
-          </div>
-        </div>
-        <div class="adj-group">
-          <div class="adj-label">Saturation <span id="saturateVal">100%</span></div>
-          <input type="range" id="saturateRange" min="0" max="200" value="100" step="1" oninput="updateAdj()">
-          <div class="adj-presets">
-            <button class="preset-btn" onclick="setAdj('saturateRange',0,'saturateVal')">Grayscale</button>
-            <button class="preset-btn" onclick="setAdj('saturateRange',100,'saturateVal')">Normal</button>
-            <button class="preset-btn" onclick="setAdj('saturateRange',150,'saturateVal')">Vivid</button>
-          </div>
-        </div>
-        <div class="adj-group">
-          <div class="adj-label">Sharpness <span id="sharpVal">0px</span></div>
-          <input type="range" id="sharpRange" min="0" max="5" value="0" step="0.5" oninput="updateAdj()">
-          <div class="adj-presets">
-            <button class="preset-btn" onclick="setAdj('sharpRange',0,'sharpVal','px')">None</button>
-            <button class="preset-btn" onclick="setAdj('sharpRange',1,'sharpVal','px')">Light</button>
-            <button class="preset-btn" onclick="setAdj('sharpRange',2,'sharpVal','px')">Sharp</button>
-          </div>
+<!-- ══════════ STEP 3: ADJUST + KB SIZE ══════════ -->
+<div class="step-panel" id="panel-3">
+  <div class="card">
+    <div class="card-title">🌟 Photo Adjust Karein</div>
+    <div class="adj-grid">
+      <div class="adj-group">
+        <div class="adj-label">Brightness <span id="brightVal">100%</span></div>
+        <input type="range" id="brightRange" min="0" max="200" value="100" oninput="updateAdj()">
+        <div class="adj-presets">
+          <button class="preset-btn" onclick="setAdj('brightRange',80,'brightVal','%')">Dark</button>
+          <button class="preset-btn" onclick="setAdj('brightRange',100,'brightVal','%')">Normal</button>
+          <button class="preset-btn" onclick="setAdj('brightRange',120,'brightVal','%')">Bright</button>
         </div>
       </div>
-      <!-- Live Preview -->
-      <div class="bg-preview-wrap" style="margin-top:16px">
-        <canvas id="adjCanvas"></canvas>
-        <p style="font-size:.72rem;color:var(--muted);margin-top:8px">Live Preview</p>
+      <div class="adj-group">
+        <div class="adj-label">Contrast <span id="contrastVal">100%</span></div>
+        <input type="range" id="contrastRange" min="0" max="200" value="100" oninput="updateAdj()">
+        <div class="adj-presets">
+          <button class="preset-btn" onclick="setAdj('contrastRange',80,'contrastVal','%')">Low</button>
+          <button class="preset-btn" onclick="setAdj('contrastRange',100,'contrastVal','%')">Normal</button>
+          <button class="preset-btn" onclick="setAdj('contrastRange',130,'contrastVal','%')">High</button>
+        </div>
       </div>
-      <button class="btn-icon" style="margin-top:12px" onclick="resetAdj()"><i class="fa-solid fa-rotate-right"></i> Sab Reset Karein</button>
+      <div class="adj-group">
+        <div class="adj-label">Saturation <span id="saturateVal">100%</span></div>
+        <input type="range" id="saturateRange" min="0" max="200" value="100" oninput="updateAdj()">
+        <div class="adj-presets">
+          <button class="preset-btn" onclick="setAdj('saturateRange',0,'saturateVal','%')">B&amp;W</button>
+          <button class="preset-btn" onclick="setAdj('saturateRange',100,'saturateVal','%')">Normal</button>
+          <button class="preset-btn" onclick="setAdj('saturateRange',150,'saturateVal','%')">Vivid</button>
+        </div>
+      </div>
+      <div class="adj-group">
+        <div class="adj-label">Sharpness <span id="sharpVal">0</span></div>
+        <input type="range" id="sharpRange" min="0" max="5" value="0" step="0.5" oninput="updateAdj()">
+        <div class="adj-presets">
+          <button class="preset-btn" onclick="setAdj('sharpRange',0,'sharpVal','')">None</button>
+          <button class="preset-btn" onclick="setAdj('sharpRange',1,'sharpVal','')">Light</button>
+          <button class="preset-btn" onclick="setAdj('sharpRange',2,'sharpVal','')">Sharp</button>
+        </div>
+      </div>
     </div>
-    <div class="nav-btns">
-      <button class="btn-back" onclick="goStep(2)"><i class="fa-solid fa-arrow-left"></i> Back</button>
-      <button class="btn-next" onclick="renderFinal();goStep(4)"><i class="fa-solid fa-download"></i> Next: Download</button>
+    <div class="live-preview-wrap">
+      <canvas id="adjCanvas"></canvas>
+      <p style="font-size:.7rem;color:var(--muted);margin-top:7px">Live Preview</p>
+    </div>
+    <button class="btn-icon" style="margin-top:11px" onclick="resetAdj()"><i class="fa-solid fa-rotate-right"></i> Reset Adjustments</button>
+
+    <!-- KB SIZE SECTION -->
+    <div class="kb-section">
+      <div class="card-title" style="margin-bottom:10px">📦 File Size (KB) — Optional</div>
+      <div class="kb-toggle-row">
+        <label>
+          <input type="checkbox" id="kbSizeToggle" onchange="onKbToggle()">
+          Custom KB size mein download karna hai
+        </label>
+      </div>
+      <div class="kb-controls" id="kbControls">
+        <div class="kb-input-row">
+          <label>Target Size:</label>
+          <input type="number" id="kbInput" value="50" min="5" max="5000" oninput="onKbInput()">
+          <span>KB</span>
+        </div>
+        <div class="kb-slider-row">
+          <span style="font-size:.74rem;color:var(--muted)">5 KB</span>
+          <input type="range" id="kbSlider" min="5" max="2000" value="50" oninput="onKbSlider()">
+          <span style="font-size:.74rem;color:var(--muted)">2000 KB</span>
+        </div>
+        <div class="kb-presets">
+          <button class="kb-preset-btn" onclick="setKb(20)">20 KB</button>
+          <button class="kb-preset-btn" onclick="setKb(50)">50 KB</button>
+          <button class="kb-preset-btn" onclick="setKb(100)">100 KB</button>
+          <button class="kb-preset-btn" onclick="setKb(200)">200 KB</button>
+          <button class="kb-preset-btn" onclick="setKb(500)">500 KB</button>
+        </div>
+        <div class="kb-status" id="kbStatus"></div>
+      </div>
     </div>
   </div>
+  <div class="nav-btns">
+    <button class="btn-back" onclick="goStep(2)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+    <button class="btn-next" onclick="renderFinal();goStep(4)"><i class="fa-solid fa-download"></i> Next: Download</button>
+  </div>
+</div>
 
-  <!-- ═══════════ STEP 4: DOWNLOAD ═══════════ -->
-  <div class="step-panel" id="panel-4">
-    <div class="card">
-      <div class="card-title">⬇️ Download Karein</div>
-
-      <!-- Print options -->
-      <div style="margin-bottom:14px">
-        <div style="font-size:.82rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Print Sheet Type</div>
-        <div class="print-options">
-          <div class="print-opt active" data-sheet="single" onclick="selectSheet(this)">Single Photo</div>
-          <div class="print-opt" data-sheet="4on4" onclick="selectSheet(this)">4 Photos (2×2)</div>
-          <div class="print-opt" data-sheet="8on4" onclick="selectSheet(this)">8 Photos (2×4)</div>
-          <div class="print-opt" data-sheet="a4" onclick="selectSheet(this)">A4 Full Sheet</div>
-        </div>
-      </div>
-
-      <div class="print-preview">
-        <canvas id="printCanvas"></canvas>
-        <p style="font-size:.72rem;color:var(--muted);margin-top:8px" id="printInfo">Single photo — print ke liye ready</p>
-      </div>
-
-      <div class="dl-btns">
-        <button class="btn-dl btn-dl-single" id="dlSingle" onclick="downloadPhoto('single')">
-          <i class="fa-solid fa-image"></i> Single Photo Download
-        </button>
-        <button class="btn-dl btn-dl-print" id="dlSheet" onclick="downloadPhoto('sheet')">
-          <i class="fa-solid fa-print"></i> Print Sheet Download
-        </button>
-      </div>
-
-      <div style="margin-top:16px;padding:12px 14px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;font-size:.78rem;color:#065f46">
-        <strong>💡 Tips:</strong> Print sheet ko A4 paper pe print karein. Printer settings mein "Fit to page" disable karein aur actual size select karein for accurate dimensions.
+<!-- ══════════ STEP 4: DOWNLOAD ══════════ -->
+<div class="step-panel" id="panel-4">
+  <div class="card">
+    <div class="card-title">⬇️ Download Karein</div>
+    <div style="margin-bottom:12px">
+      <div style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px">Print Sheet</div>
+      <div class="print-options">
+        <div class="print-opt active" data-sheet="single" onclick="selectSheet(this)">Single</div>
+        <div class="print-opt" data-sheet="4on4" onclick="selectSheet(this)">4 Photos (2×2)</div>
+        <div class="print-opt" data-sheet="8on4" onclick="selectSheet(this)">8 Photos (2×4)</div>
+        <div class="print-opt" data-sheet="a4" onclick="selectSheet(this)">A4 Full Sheet</div>
       </div>
     </div>
-
-    <div class="nav-btns">
-      <button class="btn-back" onclick="goStep(3)"><i class="fa-solid fa-arrow-left"></i> Back: Adjust</button>
-      <button class="btn-next" onclick="location.reload()" style="background:var(--success)">
-        <i class="fa-solid fa-plus"></i> New Photo Banayein
+    <div class="print-preview">
+      <canvas id="printCanvas"></canvas>
+    </div>
+    <p style="font-size:.72rem;color:var(--muted);margin-bottom:14px;text-align:center" id="printInfo">Single photo ready</p>
+    <div class="dl-btns">
+      <button class="btn-dl btn-dl-single" onclick="downloadPhoto('single')">
+        <i class="fa-solid fa-image"></i> Single Photo Download
+      </button>
+      <button class="btn-dl btn-dl-print" onclick="downloadPhoto('sheet')">
+        <i class="fa-solid fa-print"></i> Print Sheet Download
       </button>
     </div>
-  </div>
-
-  <!-- INFO CARDS -->
-  <div class="card" style="margin-top:28px">
-    <div class="card-title">📖 Kaise Use Karein</div>
-    <div class="how-steps">
-      <div class="step"><div class="step-n">1</div><h4>Size Chunein</h4><p>India, USA, Canada ya custom size select karein</p></div>
-      <div class="step"><div class="step-n">2</div><h4>Photo Upload</h4><p>Koi bhi photo drag-drop ya browse se upload karein</p></div>
-      <div class="step"><div class="step-n">3</div><h4>Crop Karein</h4><p>Chehra crop box mein center karein, zoom karein</p></div>
-      <div class="step"><div class="step-n">4</div><h4>BG Change</h4><p>White, blue ya koi bhi background color chunein</p></div>
-      <div class="step"><div class="step-n">5</div><h4>Adjust Karein</h4><p>Brightness, contrast, saturation fine-tune karein</p></div>
-      <div class="step"><div class="step-n">6</div><h4>Download</h4><p>Single ya A4 print sheet download karein</p></div>
+    <div class="success-notice" id="dlKbNote" style="display:none">
+      <i class="fa-solid fa-circle-check"></i>
+      <span id="dlKbText">File size compressed hai.</span>
+    </div>
+    <div style="margin-top:14px;padding:10px 12px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;font-size:.76rem;color:#065f46">
+      <strong>💡 Tip:</strong> Print ke liye A4 sheet chunein aur printer mein "Actual Size" ya "No Scaling" select karein.
     </div>
   </div>
-
-  <div class="card">
-    <div class="card-title">❓ Aksar Puche Jane Wale Sawaal</div>
-    <div class="faq-item"><button class="faq-q">India passport photo ka sahi size kya hai?<span class="fa">+</span></button><div class="faq-a">India passport ke liye 35mm × 45mm (3.5cm × 4.5cm) size hona chahiye. Background white hona chahiye. 300 DPI pe 413×531 pixels banta hai.</div></div>
-    <div class="faq-item"><button class="faq-q">Kya photo server par upload hoti hai?<span class="fa">+</span></button><div class="faq-a">Bilkul nahi. Sab kuch aapke browser mein hota hai. Aapki photo kabhi bhi server par nahi jaati. 100% private aur secure.</div></div>
-    <div class="faq-item"><button class="faq-q">Print sheet mein kitni photos aati hain?<span class="fa">+</span></button><div class="faq-a">Aap 4 photos (2×2), 8 photos (2×4), ya full A4 sheet choose kar sakte hain. A4 sheet mein 35×45mm size par lagbhag 16-32 photos aa sakti hain.</div></div>
-    <div class="faq-item"><button class="faq-q">USA visa ke liye kya size chahiye?<span class="fa">+</span></button><div class="faq-a">USA visa ke liye 2×2 inch (51×51mm) square photo chahiye. White background, chehra 50-69% frame mein hona chahiye.</div></div>
-    <div class="faq-item"><button class="faq-q">SSC aur IBPS forms ke liye kya size use karein?<span class="fa">+</span></button><div class="faq-a">SSC aur IBPS ke liye "SSC/IBPS Standard" option select karein — 200×230 pixels. Most sarkari forms yahi size accept karte hain.</div></div>
+  <div class="nav-btns">
+    <button class="btn-back" onclick="goStep(3)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+    <button class="btn-next" onclick="location.reload()" style="background:var(--success)">
+      <i class="fa-solid fa-plus"></i> Naya Photo
+    </button>
   </div>
+</div>
 
-  <div class="card">
-    <div class="card-title">🔗 Related Tools</div>
-    <div class="related-grid">
-      <a href="/tools/image/image-resizer.html" class="rel-item"><span class="ri">↔️</span><span>Image Resizer</span></a>
-      <a href="/tools/image/background-remove.html" class="rel-item"><span class="ri">🌊</span><span>BG Remover</span></a>
-      <a href="/tools/image/compress-image.html" class="rel-item"><span class="ri">🗜️</span><span>Compress</span></a>
-      <a href="/tools/image/resize-to-kb.html" class="rel-item"><span class="ri">📏</span><span>Resize to KB</span></a>
-      <a href="/tools/image/signature-resizer.html" class="rel-item"><span class="ri">✍️</span><span>Signature</span></a>
-      <a href="/tools/image/crop-image.html" class="rel-item"><span class="ri">✂️</span><span>Crop Image</span></a>
-      <a href="/tools/image/photo-editor.html" class="rel-item"><span class="ri">🎨</span><span>Photo Editor</span></a>
-      <a href="/tools/image/convert-any-format.html" class="rel-item"><span class="ri">🔄</span><span>Convert Format</span></a>
-    </div>
+<!-- INFO -->
+<div class="card" style="margin-top:26px">
+  <div class="card-title">📖 Kaise Use Karein</div>
+  <div class="how-steps">
+    <div class="step"><div class="step-n">1</div><h4>Size Chunein</h4><p>India, USA, Canada ya custom</p></div>
+    <div class="step"><div class="step-n">2</div><h4>Upload Karein</h4><p>Koi bhi photo drag/browse</p></div>
+    <div class="step"><div class="step-n">3</div><h4>Crop Karein</h4><p>Chehra center mein karo</p></div>
+    <div class="step"><div class="step-n">4</div><h4>BG Remove</h4><p>AI se background hatao</p></div>
+    <div class="step"><div class="step-n">5</div><h4>Color Lagao</h4><p>White, blue ya koi bhi color</p></div>
+    <div class="step"><div class="step-n">6</div><h4>KB Set Karo</h4><p>Exact KB mein compress karo</p></div>
   </div>
+</div>
 
-  <div class="secure-note">
-    <p>🔒 100% Secure — Aapki files sirf aapke browser mein process hoti hain. Koi server par upload nahi hoti. Zero data collection.</p>
+<div class="card">
+  <div class="card-title">❓ FAQ</div>
+  <div class="faq-item"><button class="faq-q">India passport photo ka sahi size?<span class="fa">+</span></button><div class="faq-a">35mm × 45mm (3.5cm × 4.5cm). Background white. 300 DPI pe 413×531 pixels.</div></div>
+  <div class="faq-item"><button class="faq-q">Background remove kaise hota hai?<span class="fa">+</span></button><div class="faq-a">AI model (WASM-based) seedha browser mein run hota hai. Koi photo server par nahi jaati. Pehli baar model load hone mein 5-10 seconds lagte hain, phir fast ho jaata hai.</div></div>
+  <div class="faq-item"><button class="faq-q">Custom KB mein download kaise karein?<span class="fa">+</span></button><div class="faq-a">Step 4 (Adjust) mein "Custom KB size" enable karo. Target KB daalo (jaise 50 KB, 100 KB). Tool automatically quality adjust karke exact size mein compress kar dega.</div></div>
+  <div class="faq-item"><button class="faq-q">SSC/IBPS ke liye kya size use karein?<span class="fa">+</span></button><div class="faq-a">SSC/IBPS Standard option choose karo (200×230 px). Phir 50 KB mein compress karo — most sarkari portals yehi accept karte hain.</div></div>
+  <div class="faq-item"><button class="faq-q">Photo server par upload hoti hai?<span class="fa">+</span></button><div class="faq-a">Bilkul nahi. Sab processing browser mein hoti hai. Aapki photo kabhi bhi internet par nahi jaati.</div></div>
+</div>
+
+<div class="card">
+  <div class="card-title">🔗 Related Tools</div>
+  <div class="related-grid">
+    <a href="/tools/image/image-resizer.html" class="rel-item"><span class="ri">↔️</span><span>Image Resizer</span></a>
+    <a href="/tools/image/background-remove.html" class="rel-item"><span class="ri">🌊</span><span>BG Remover</span></a>
+    <a href="/tools/image/compress-image.html" class="rel-item"><span class="ri">🗜️</span><span>Compress</span></a>
+    <a href="/tools/image/resize-to-kb.html" class="rel-item"><span class="ri">📏</span><span>Resize to KB</span></a>
+    <a href="/tools/image/signature-resizer.html" class="rel-item"><span class="ri">✍️</span><span>Signature</span></a>
+    <a href="/tools/image/crop-image.html" class="rel-item"><span class="ri">✂️</span><span>Crop Image</span></a>
+    <a href="/tools/image/photo-editor.html" class="rel-item"><span class="ri">🎨</span><span>Editor</span></a>
+    <a href="/tools/image/convert-any-format.html" class="rel-item"><span class="ri">🔄</span><span>Convert</span></a>
   </div>
+</div>
+
+<div class="secure-note">
+  <p>🔒 100% Secure — Files sirf browser mein process hoti hain. Zero server upload. Zero data collection.</p>
+</div>
 
 </div><!-- /.main-container -->
 
 <footer class="tool-footer">
   <div>© 2026 <strong style="color:#fff">TopSarkariJobs.com</strong> — Sabhi Tools Bilkul Free</div>
-  <div style="margin-top:6px"><a href="/tools/">All Tools</a><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="/contact/">Contact</a></div>
+  <div style="margin-top:5px"><a href="/tools/">All Tools</a><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="/contact/">Contact</a></div>
 </footer>
 
-<script src="/pwa-install.js?v=6.0" defer></script>
-
+<!-- ═══════════════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════════ -->
 <script>
-// ═══════════════════════════════════════════════
-// GLOBAL STATE
-// ═══════════════════════════════════════════════
+// ── STATE ──────────────────────────────────────────────
 var S = {
   step: 0,
   maxUnlocked: 0,
-  file: null,
-  rawDataUrl: null,       // original uploaded image
-  croppedDataUrl: null,   // after crop
+  rawDataUrl: null,
+  croppedCanvas: null,      // raw crop (no bg applied)
+  removedBgCanvas: null,    // after bg removal (RGBA with transparency)
   bgColor: '#ffffff',
   brightness: 100,
   contrast: 100,
@@ -559,340 +628,484 @@ var S = {
   sharpness: 0,
   targetW: 413,
   targetH: 531,
-  label: 'India / Europe Passport',
+  label: 'India Passport',
   sheet: 'single',
-  finalCanvas: null       // final processed canvas
+  finalCanvas: null,
+  kbEnabled: false,
+  targetKb: 50,
+  bgRemoveEnabled: false,
+  bgModelLoaded: false
 };
-
 var cropperInst = null;
 
-// ═══════════════════════════════════════════════
-// STEP NAVIGATION
-// ═══════════════════════════════════════════════
-function goStep(n) {
-  if (n > S.maxUnlocked) return;
-  S.step = n;
-  document.querySelectorAll('.step-panel').forEach(function(p,i){ p.classList.toggle('active', i===n); });
+// ── STEP NAV ───────────────────────────────────────────
+function goStep(n){
+  if(n>S.maxUnlocked) return;
+  S.step=n;
+  document.querySelectorAll('.step-panel').forEach(function(p,i){p.classList.toggle('active',i===n);});
   document.querySelectorAll('.stab').forEach(function(t,i){
     t.classList.remove('active','locked','done');
-    if (i < n) t.classList.add('done');
-    else if (i === n) t.classList.add('active');
-    else if (i > S.maxUnlocked) t.classList.add('locked');
+    if(i<n)t.classList.add('done');
+    else if(i===n)t.classList.add('active');
+    else if(i>S.maxUnlocked)t.classList.add('locked');
   });
   window.scrollTo({top:0,behavior:'smooth'});
-  if (n===1 && cropperInst) { setTimeout(function(){ cropperInst.reset(); }, 100); }
-  if (n===2) { renderBgPreview(); }
-  if (n===3) { renderAdjPreview(); }
-  if (n===4) { renderFinal(); renderPrintSheet(); }
+  if(n===2){renderOrigPreview();renderBgFinalPreview();}
+  if(n===3){renderAdjPreview();}
+  if(n===4){renderFinal();renderPrintSheet();}
 }
+function unlock(n){if(n>S.maxUnlocked)S.maxUnlocked=n;}
 
-function unlock(n) {
-  if (n > S.maxUnlocked) S.maxUnlocked = n;
-}
-
-// ═══════════════════════════════════════════════
-// STEP 0: SIZE SELECTION
-// ═══════════════════════════════════════════════
-function selectSize(el) {
-  document.querySelectorAll('.size-card').forEach(function(c){ c.classList.remove('active'); });
+// ── SIZE ───────────────────────────────────────────────
+function selectSize(el){
+  document.querySelectorAll('.size-card').forEach(function(c){c.classList.remove('active');});
   el.classList.add('active');
-  var w = parseInt(el.dataset.w), h = parseInt(el.dataset.h);
-  var isCustom = (w===0 && h===0);
-  document.getElementById('customRow').style.display = isCustom ? 'flex' : 'none';
-  if (!isCustom) {
-    S.targetW = w;
-    S.targetH = h;
-    S.label = el.dataset.label;
-    document.getElementById('ratioHint').textContent = 'Ratio: '+w+':'+h+' ('+el.querySelector('.sc-title').textContent+')';
-  } else {
-    updateCustomPx();
-  }
-  if (cropperInst && S.rawDataUrl) {
-    cropperInst.setAspectRatio(S.targetW / S.targetH);
-  }
+  var w=parseInt(el.dataset.w),h=parseInt(el.dataset.h),isC=(w===0&&h===0);
+  document.getElementById('customRow').style.display=isC?'flex':'none';
+  if(!isC){S.targetW=w;S.targetH=h;S.label=el.dataset.label;}
+  else updateCustomPx();
+  document.getElementById('ratioHint').textContent=S.label;
+  if(cropperInst)cropperInst.setAspectRatio(S.targetW/S.targetH);
+}
+function updateCustomPx(){
+  var w=parseFloat(document.getElementById('customW').value)||400;
+  var h=parseFloat(document.getElementById('customH').value)||500;
+  var u=document.getElementById('customUnit').value;
+  var dpi=parseInt(document.getElementById('dpiVal').value)||300;
+  if(u==='mm'){S.targetW=Math.round(w*dpi/25.4);S.targetH=Math.round(h*dpi/25.4);}
+  else if(u==='cm'){S.targetW=Math.round(w*dpi/2.54);S.targetH=Math.round(h*dpi/2.54);}
+  else if(u==='in'){S.targetW=Math.round(w*dpi);S.targetH=Math.round(h*dpi);}
+  else{S.targetW=Math.round(w);S.targetH=Math.round(h);}
+  S.label='Custom '+S.targetW+'×'+S.targetH+'px';
+  if(cropperInst)cropperInst.setAspectRatio(S.targetW/S.targetH);
 }
 
-function updateCustomPx() {
-  var w = parseFloat(document.getElementById('customW').value)||400;
-  var h = parseFloat(document.getElementById('customH').value)||500;
-  var unit = document.getElementById('customUnit').value;
-  var dpi = parseInt(document.getElementById('dpiVal').value)||300;
-  var mmToPx = dpi/25.4, cmToPx = dpi/2.54, inToPx = dpi;
-  if (unit==='mm') { S.targetW=Math.round(w*mmToPx); S.targetH=Math.round(h*mmToPx); }
-  else if (unit==='cm') { S.targetW=Math.round(w*cmToPx); S.targetH=Math.round(h*cmToPx); }
-  else if (unit==='in') { S.targetW=Math.round(w*inToPx); S.targetH=Math.round(h*inToPx); }
-  else { S.targetW=Math.round(w); S.targetH=Math.round(h); }
-  S.label = 'Custom '+S.targetW+'×'+S.targetH+'px';
-  if (cropperInst) cropperInst.setAspectRatio(S.targetW/S.targetH);
-}
+// ── UPLOAD ────────────────────────────────────────────
+var fileInput=document.getElementById('fileInput');
+var uploadZone=document.getElementById('uploadZone');
+uploadZone.addEventListener('click',function(e){
+  if(e.target===uploadZone||e.target.classList.contains('upload-icon')||e.target.classList.contains('upload-title')||e.target.classList.contains('upload-sub'))
+    fileInput.click();
+});
+uploadZone.addEventListener('dragover',function(e){e.preventDefault();uploadZone.classList.add('drag');});
+uploadZone.addEventListener('dragleave',function(){uploadZone.classList.remove('drag');});
+uploadZone.addEventListener('drop',function(e){
+  e.preventDefault();uploadZone.classList.remove('drag');
+  var f=e.dataTransfer.files[0];
+  if(f&&f.type.startsWith('image/'))handleFile(f);
+});
+fileInput.addEventListener('change',function(){if(fileInput.files[0])handleFile(fileInput.files[0]);});
 
-// ═══════════════════════════════════════════════
-// FILE UPLOAD
-// ═══════════════════════════════════════════════
-var fileInput = document.getElementById('fileInput');
-var uploadZone = document.getElementById('uploadZone');
-
-uploadZone.addEventListener('click', function(e){ if(e.target!==uploadZone&&!e.target.classList.contains('upload-zone'))return; fileInput.click(); });
-uploadZone.addEventListener('dragover', function(e){ e.preventDefault(); uploadZone.classList.add('drag'); });
-uploadZone.addEventListener('dragleave', function(){ uploadZone.classList.remove('drag'); });
-uploadZone.addEventListener('drop', function(e){ e.preventDefault(); uploadZone.classList.remove('drag'); var f=e.dataTransfer.files[0]; if(f&&f.type.startsWith('image/')){ handleFile(f); } });
-fileInput.addEventListener('change', function(){ if(fileInput.files[0]) handleFile(fileInput.files[0]); });
-
-function handleFile(f) {
-  S.file = f;
-  var reader = new FileReader();
-  reader.onload = function(ev){
-    S.rawDataUrl = ev.target.result;
-    // Enable next button
-    var btn = document.getElementById('step0Next');
-    btn.disabled = false;
-    btn.style.opacity = '1';
-    btn.style.cursor = 'pointer';
-    // Init cropper on step 1
+function handleFile(f){
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    S.rawDataUrl=ev.target.result;
+    S.removedBgCanvas=null;
+    S.bgRemoveEnabled=false;
+    document.getElementById('bgRemoveToggle').checked=false;
     initCropper(ev.target.result);
     unlock(1);
-    // Auto-advance to crop
+    var btn=document.getElementById('step0Next');
+    btn.disabled=false;
+    btn.onclick=function(){goStep(1);};
     goStep(1);
   };
   reader.readAsDataURL(f);
 }
 
-// ═══════════════════════════════════════════════
-// STEP 1: CROPPER
-// ═══════════════════════════════════════════════
-function initCropper(src) {
-  var img = document.getElementById('cropperImg');
-  img.src = src;
-  if (cropperInst) { cropperInst.destroy(); cropperInst = null; }
-  img.onload = function() {
-    cropperInst = new Cropper(img, {
-      aspectRatio: S.targetW / S.targetH,
-      viewMode: 1,
-      autoCropArea: 0.9,
-      movable: true,
-      zoomable: true,
-      rotatable: true,
-      scalable: true,
-      cropBoxMovable: true,
-      cropBoxResizable: true,
-      guides: true,
-      center: true,
-      highlight: true,
-      background: true,
-      responsive: true,
-      restore: false
+// ── CROPPER ───────────────────────────────────────────
+function initCropper(src){
+  var img=document.getElementById('cropperImg');
+  img.src=src;
+  if(cropperInst){cropperInst.destroy();cropperInst=null;}
+  img.onload=function(){
+    cropperInst=new Cropper(img,{
+      aspectRatio:S.targetW/S.targetH,
+      viewMode:1,autoCropArea:.88,
+      movable:true,zoomable:true,rotatable:true,scalable:true,
+      cropBoxMovable:true,cropBoxResizable:true,
+      guides:true,center:true,highlight:true,
+      background:true,responsive:true,restore:false
     });
   };
-  if (img.complete) img.onload();
+  if(img.complete&&img.naturalWidth>0)img.onload();
 }
 
-function cropAndNext() {
-  if (!cropperInst) return;
-  var canvas = cropperInst.getCroppedCanvas({ width: S.targetW, height: S.targetH, imageSmoothingEnabled: true, imageSmoothingQuality: 'high' });
-  S.croppedDataUrl = canvas.toDataURL('image/png');
-  unlock(2); unlock(3); unlock(4);
+function cropAndNext(){
+  if(!cropperInst)return;
+  S.croppedCanvas=cropperInst.getCroppedCanvas({
+    width:S.targetW,height:S.targetH,
+    imageSmoothingEnabled:true,imageSmoothingQuality:'high'
+  });
+  // Reset bg removal when re-cropping
+  S.removedBgCanvas=null;
+  document.getElementById('bgRemoveToggle').checked=false;
+  document.getElementById('removedCanvas').style.display='none';
+  document.getElementById('bgPlaceholder').style.display='';
+  document.getElementById('bgLoader').classList.remove('show');
+  unlock(2);unlock(3);unlock(4);
   goStep(2);
 }
 
-// ═══════════════════════════════════════════════
-// STEP 2: BACKGROUND
-// ═══════════════════════════════════════════════
-function selectBg(el) {
-  document.querySelectorAll('.bg-opt').forEach(function(o){ o.classList.remove('active'); });
+// ══════════════════════════════════════════════════════
+// BACKGROUND REMOVAL — using @imgly/background-removal (CDN ESM)
+// Pure WASM, runs 100% in browser, no API key
+// ══════════════════════════════════════════════════════
+var bgRemoveLib=null;
+var bgLibLoading=false;
+var bgLibCallbacks=[];
+
+function loadBgLib(cb){
+  if(bgRemoveLib){cb(null,bgRemoveLib);return;}
+  if(bgLibLoading){bgLibCallbacks.push(cb);return;}
+  bgLibLoading=true;
+  bgLibCallbacks.push(cb);
+  // Load from CDN
+  import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/background-removal.mjs')
+    .then(function(mod){
+      bgRemoveLib=mod;
+      bgLibLoading=false;
+      bgLibCallbacks.forEach(function(fn){fn(null,mod);});
+      bgLibCallbacks=[];
+    })
+    .catch(function(err){
+      bgLibLoading=false;
+      bgLibCallbacks.forEach(function(fn){fn(err,null);});
+      bgLibCallbacks=[];
+    });
+}
+
+function onBgRemoveToggle(){
+  var checked=document.getElementById('bgRemoveToggle').checked;
+  S.bgRemoveEnabled=checked;
+  if(!checked){
+    // Restore original
+    S.removedBgCanvas=null;
+    document.getElementById('removedCanvas').style.display='none';
+    document.getElementById('bgPlaceholder').textContent='Background remove enable karo';
+    document.getElementById('bgPlaceholder').style.display='';
+    renderBgFinalPreview();
+    return;
+  }
+  // Start removal
+  if(S.removedBgCanvas){
+    // Already done, just show
+    showRemovedPreview(S.removedBgCanvas);
+    renderBgFinalPreview();
+    return;
+  }
+  doBgRemove();
+}
+
+function doBgRemove(){
+  if(!S.croppedCanvas)return;
+  var loader=document.getElementById('bgLoader');
+  loader.classList.add('show');
+  document.getElementById('bgLoaderMsg').textContent='AI model load ho raha hai (first time ~10-15 sec)...';
+
+  loadBgLib(function(err,lib){
+    if(err){
+      loader.classList.remove('show');
+      alert('Background removal load nahi hua. Internet connection check karein aur dobara try karein.\n\nError: '+err.message);
+      document.getElementById('bgRemoveToggle').checked=false;
+      S.bgRemoveEnabled=false;
+      return;
+    }
+    document.getElementById('bgLoaderMsg').textContent='Background remove ho raha hai...';
+    // Convert canvas to blob
+    S.croppedCanvas.toBlob(function(blob){
+      lib.removeBackground(blob,{
+        publicPath:'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/',
+        progress:function(key,current,total){
+          var pct=total>0?Math.round(current/total*100):0;
+          document.getElementById('bgLoaderMsg').textContent='Processing: '+pct+'%';
+        }
+      }).then(function(resultBlob){
+        // Convert result blob → canvas with transparency
+        var url=URL.createObjectURL(resultBlob);
+        var img=new Image();
+        img.onload=function(){
+          var c=document.createElement('canvas');
+          c.width=S.targetW;c.height=S.targetH;
+          var ctx=c.getContext('2d');
+          ctx.clearRect(0,0,c.width,c.height);
+          ctx.drawImage(img,0,0,c.width,c.height);
+          URL.revokeObjectURL(url);
+          S.removedBgCanvas=c;
+          loader.classList.remove('show');
+          showRemovedPreview(c);
+          renderBgFinalPreview();
+        };
+        img.src=url;
+      }).catch(function(e){
+        loader.classList.remove('show');
+        alert('Background remove karne mein error aaya: '+e.message);
+        document.getElementById('bgRemoveToggle').checked=false;
+        S.bgRemoveEnabled=false;
+      });
+    },'image/png');
+  });
+}
+
+function showRemovedPreview(removedCanvas){
+  var previewC=document.getElementById('removedCanvas');
+  var ph=document.getElementById('bgPlaceholder');
+  var maxH=160;
+  var ratio=removedCanvas.width/removedCanvas.height;
+  var pH=Math.min(maxH,removedCanvas.height);
+  var pW=Math.round(pH*ratio);
+  previewC.width=pW;previewC.height=pH;
+  previewC.getContext('2d').drawImage(removedCanvas,0,0,pW,pH);
+  previewC.style.display='block';
+  ph.style.display='none';
+}
+
+// ── ORIG PREVIEW ──────────────────────────────────────
+function renderOrigPreview(){
+  if(!S.croppedCanvas)return;
+  var c=document.getElementById('origPreviewCanvas');
+  var maxH=160;
+  var pH=Math.min(maxH,S.croppedCanvas.height);
+  var pW=Math.round(S.croppedCanvas.width*pH/S.croppedCanvas.height);
+  c.width=pW;c.height=pH;
+  c.getContext('2d').drawImage(S.croppedCanvas,0,0,pW,pH);
+}
+
+// ── BG COLOR ─────────────────────────────────────────
+function selectBg(el){
+  document.querySelectorAll('.bg-opt').forEach(function(o){o.classList.remove('active');});
   el.classList.add('active');
-  S.bgColor = el.dataset.color;
-  document.getElementById('customBgColor').value = S.bgColor;
-  renderBgPreview();
+  S.bgColor=el.dataset.color;
+  document.getElementById('customBgColor').value=S.bgColor;
+  renderBgFinalPreview();
+}
+function applyCustomBg(color){
+  document.querySelectorAll('.bg-opt').forEach(function(o){o.classList.remove('active');});
+  S.bgColor=color;
+  renderBgFinalPreview();
 }
 
-function applyCustomBg(color) {
-  document.querySelectorAll('.bg-opt').forEach(function(o){ o.classList.remove('active'); });
-  S.bgColor = color;
-  renderBgPreview();
+// ── BG COMPOSITE (background ke upar image draw karo) ─
+function compositeBgColor(srcCanvas, bgColor, w, h){
+  // srcCanvas: either croppedCanvas (opaque) or removedBgCanvas (RGBA transparent)
+  var c=document.createElement('canvas');
+  c.width=w;c.height=h;
+  var ctx=c.getContext('2d');
+  // Fill background color first
+  ctx.fillStyle=bgColor;
+  ctx.fillRect(0,0,w,h);
+  // Draw image on top — transparent pixels will show bg color through
+  ctx.drawImage(srcCanvas,0,0,w,h);
+  return c;
 }
 
-function renderBgPreview() {
-  if (!S.croppedDataUrl) return;
-  var canvas = document.getElementById('bgCanvas');
-  var img = new Image();
-  img.onload = function() {
-    var previewH = Math.min(260, img.naturalHeight);
-    var previewW = Math.round(img.naturalWidth * previewH / img.naturalHeight);
-    canvas.width = previewW; canvas.height = previewH;
-    var ctx = canvas.getContext('2d');
-    ctx.fillStyle = S.bgColor;
-    ctx.fillRect(0,0,previewW,previewH);
-    ctx.drawImage(img,0,0,previewW,previewH);
-  };
-  img.src = S.croppedDataUrl;
+function renderBgFinalPreview(){
+  var src=S.bgRemoveEnabled&&S.removedBgCanvas ? S.removedBgCanvas : S.croppedCanvas;
+  if(!src)return;
+  var c=document.getElementById('bgFinalCanvas');
+  var maxH=200;
+  var pH=Math.min(maxH,src.height);
+  var pW=Math.round(src.width*pH/src.height);
+  var result=compositeBgColor(src,S.bgColor,pW,pH);
+  c.width=pW;c.height=pH;
+  c.getContext('2d').drawImage(result,0,0);
 }
 
-// ═══════════════════════════════════════════════
-// STEP 3: ADJUSTMENTS
-// ═══════════════════════════════════════════════
-function updateAdj() {
-  S.brightness = parseInt(document.getElementById('brightRange').value);
-  S.contrast   = parseInt(document.getElementById('contrastRange').value);
-  S.saturate   = parseInt(document.getElementById('saturateRange').value);
-  S.sharpness  = parseFloat(document.getElementById('sharpRange').value);
-  document.getElementById('brightVal').textContent   = S.brightness+'%';
-  document.getElementById('contrastVal').textContent = S.contrast+'%';
-  document.getElementById('saturateVal').textContent = S.saturate+'%';
-  document.getElementById('sharpVal').textContent    = S.sharpness+'px';
+// ── ADJUSTMENTS ───────────────────────────────────────
+function updateAdj(){
+  S.brightness=parseInt(document.getElementById('brightRange').value);
+  S.contrast=parseInt(document.getElementById('contrastRange').value);
+  S.saturate=parseInt(document.getElementById('saturateRange').value);
+  S.sharpness=parseFloat(document.getElementById('sharpRange').value);
+  document.getElementById('brightVal').textContent=S.brightness+'%';
+  document.getElementById('contrastVal').textContent=S.contrast+'%';
+  document.getElementById('saturateVal').textContent=S.saturate+'%';
+  document.getElementById('sharpVal').textContent=S.sharpness;
   renderAdjPreview();
 }
-
-function setAdj(rangeId, val, lblId, unit) {
-  document.getElementById(rangeId).value = val;
-  document.getElementById(lblId).textContent = val+(unit||'%');
+function setAdj(rid,val,lid,unit){
+  document.getElementById(rid).value=val;
+  document.getElementById(lid).textContent=val+(unit||'');
   updateAdj();
 }
+function resetAdj(){setAdj('brightRange',100,'brightVal','%');setAdj('contrastRange',100,'contrastVal','%');setAdj('saturateRange',100,'saturateVal','%');setAdj('sharpRange',0,'sharpVal','');}
 
-function resetAdj() {
-  setAdj('brightRange',100,'brightVal');
-  setAdj('contrastRange',100,'contrastVal');
-  setAdj('saturateRange',100,'saturateVal');
-  setAdj('sharpRange',0,'sharpVal','px');
+// Apply CSS filters + bg composite
+function buildProcessedCanvas(w,h){
+  var src=S.bgRemoveEnabled&&S.removedBgCanvas ? S.removedBgCanvas : S.croppedCanvas;
+  if(!src)return null;
+  // Step 1: composite bg
+  var bgApplied=compositeBgColor(src,S.bgColor,w,h);
+  // Step 2: apply filters
+  var c=document.createElement('canvas');
+  c.width=w;c.height=h;
+  var ctx=c.getContext('2d');
+  ctx.filter='brightness('+S.brightness+'%) contrast('+S.contrast+'%) saturate('+S.saturate+'%)';
+  ctx.drawImage(bgApplied,0,0,w,h);
+  ctx.filter='none';
+  return c;
 }
 
-function applyFiltersToCanvas(srcImg, w, h, bgColor) {
-  var canvas = document.createElement('canvas');
-  canvas.width = w; canvas.height = h;
-  var ctx = canvas.getContext('2d');
-  // Background
-  ctx.fillStyle = bgColor || S.bgColor;
-  ctx.fillRect(0,0,w,h);
-  // Apply CSS-like filters via canvas compositing
-  ctx.filter = 'brightness('+S.brightness+'%) contrast('+S.contrast+'%) saturate('+S.saturate+'%)';
-  if (S.sharpness > 0) {
-    // Sharpen: draw slightly blurred first, then subtract
-    ctx.filter += ' blur(0px)';
-  }
-  ctx.drawImage(srcImg,0,0,w,h);
-  ctx.filter = 'none';
-  // Unsharp mask simulation for sharpness
-  if (S.sharpness > 0) {
-    var temp = document.createElement('canvas');
-    temp.width=w; temp.height=h;
-    var tc = temp.getContext('2d');
-    tc.filter = 'blur('+S.sharpness+'px)';
-    tc.drawImage(canvas,0,0);
-    tc.filter = 'none';
-    ctx.globalCompositeOperation = 'hard-light';
-    ctx.globalAlpha = 0.3;
-    ctx.drawImage(canvas,0,0);
-    ctx.globalAlpha = 1;
-    ctx.globalCompositeOperation = 'source-over';
-  }
-  return canvas;
+function renderAdjPreview(){
+  var src=S.bgRemoveEnabled&&S.removedBgCanvas ? S.removedBgCanvas : S.croppedCanvas;
+  if(!src)return;
+  var maxH=200;
+  var pH=Math.min(maxH,src.height);
+  var pW=Math.round(src.width*pH/src.height);
+  var result=buildProcessedCanvas(pW,pH);
+  if(!result)return;
+  var c=document.getElementById('adjCanvas');
+  c.width=pW;c.height=pH;
+  c.getContext('2d').drawImage(result,0,0);
 }
 
-function renderAdjPreview() {
-  if (!S.croppedDataUrl) return;
-  var prevCanvas = document.getElementById('adjCanvas');
-  var img = new Image();
-  img.onload = function() {
-    var pH = Math.min(260, img.naturalHeight);
-    var pW = Math.round(img.naturalWidth * pH / img.naturalHeight);
-    var result = applyFiltersToCanvas(img, pW, pH, S.bgColor);
-    prevCanvas.width = pW; prevCanvas.height = pH;
-    prevCanvas.getContext('2d').drawImage(result,0,0);
-  };
-  img.src = S.croppedDataUrl;
+// ── KB COMPRESS ───────────────────────────────────────
+function onKbToggle(){
+  S.kbEnabled=document.getElementById('kbSizeToggle').checked;
+  var ctrl=document.getElementById('kbControls');
+  ctrl.classList.toggle('show',S.kbEnabled);
+}
+function onKbInput(){
+  var v=parseInt(document.getElementById('kbInput').value)||50;
+  S.targetKb=v;
+  document.getElementById('kbSlider').value=Math.min(v,2000);
+  updateKbStatus();
+}
+function onKbSlider(){
+  var v=parseInt(document.getElementById('kbSlider').value)||50;
+  S.targetKb=v;
+  document.getElementById('kbInput').value=v;
+  updateKbStatus();
+}
+function setKb(v){
+  S.targetKb=v;
+  document.getElementById('kbInput').value=v;
+  document.getElementById('kbSlider').value=Math.min(v,2000);
+  // Clear active preset
+  document.querySelectorAll('.kb-preset-btn').forEach(function(b){b.classList.remove('active');});
+  event.target.classList.add('active');
+  updateKbStatus();
+}
+function updateKbStatus(){
+  var st=document.getElementById('kbStatus');
+  st.classList.add('show');
+  st.textContent='Target: '+S.targetKb+' KB — Download pe apply hoga.';
 }
 
-// ═══════════════════════════════════════════════
-// STEP 4: RENDER FINAL + DOWNLOAD
-// ═══════════════════════════════════════════════
-function renderFinal() {
-  if (!S.croppedDataUrl) return;
-  var img = new Image();
-  img.onload = function() {
-    S.finalCanvas = applyFiltersToCanvas(img, S.targetW, S.targetH, S.bgColor);
-    renderPrintSheet();
-  };
-  img.src = S.croppedDataUrl;
+// Binary search compression to hit target KB
+function compressToKb(canvas, targetKb){
+  return new Promise(function(resolve){
+    var targetBytes=targetKb*1024;
+    // Try PNG first if very large target
+    var pngData=canvas.toDataURL('image/png');
+    var pngBytes=Math.round((pngData.length-22)*3/4);
+    if(pngBytes<=targetBytes){resolve({dataUrl:pngData,ext:'png',actualKb:Math.round(pngBytes/1024)});return;}
+    // Binary search JPEG quality
+    var lo=0.01,hi=1.0,best=null,bestKb=0;
+    var maxIter=18;
+    for(var i=0;i<maxIter;i++){
+      var mid=(lo+hi)/2;
+      var data=canvas.toDataURL('image/jpeg',mid);
+      var bytes=Math.round((data.length-22)*3/4);
+      if(bytes<=targetBytes){lo=mid;best=data;bestKb=Math.round(bytes/1024);}
+      else hi=mid;
+      if(hi-lo<0.005)break;
+    }
+    if(!best){
+      // Smallest possible
+      best=canvas.toDataURL('image/jpeg',0.01);
+      bestKb=Math.round((best.length-22)*3/4/1024);
+    }
+    resolve({dataUrl:best,ext:'jpeg',actualKb:bestKb});
+  });
 }
 
-function selectSheet(el) {
-  document.querySelectorAll('.print-opt').forEach(function(o){ o.classList.remove('active'); });
-  el.classList.add('active');
-  S.sheet = el.dataset.sheet;
+// ── FINAL RENDER ─────────────────────────────────────
+function renderFinal(){
+  var c=buildProcessedCanvas(S.targetW,S.targetH);
+  if(!c)return;
+  S.finalCanvas=c;
   renderPrintSheet();
 }
 
-function renderPrintSheet() {
-  if (!S.finalCanvas) { renderFinal(); return; }
-  var printCanvas = document.getElementById('printCanvas');
-  var infoEl = document.getElementById('printInfo');
-  var ctx = printCanvas.getContext('2d');
-  var ph = S.finalCanvas;
-  var pw = ph.width, phe = ph.height;
+// ── PRINT SHEET ──────────────────────────────────────
+function selectSheet(el){
+  document.querySelectorAll('.print-opt').forEach(function(o){o.classList.remove('active');});
+  el.classList.add('active');
+  S.sheet=el.dataset.sheet;
+  renderPrintSheet();
+}
 
-  if (S.sheet==='single') {
-    printCanvas.width=pw; printCanvas.height=phe;
+function renderPrintSheet(){
+  if(!S.finalCanvas){renderFinal();return;}
+  var pc=document.getElementById('printCanvas');
+  var ctx=pc.getContext('2d');
+  var ph=S.finalCanvas,pw=ph.width,phe=ph.height;
+  var info='';
+
+  if(S.sheet==='single'){
+    pc.width=pw;pc.height=phe;
     ctx.drawImage(ph,0,0);
-    infoEl.textContent='Single photo — print ke liye ready ('+pw+'×'+phe+'px)';
-  } else if (S.sheet==='4on4') {
-    var gap=20, cols=2, rows=2;
-    printCanvas.width=cols*pw+gap*(cols+1);
-    printCanvas.height=rows*phe+gap*(rows+1);
-    ctx.fillStyle='#fff'; ctx.fillRect(0,0,printCanvas.width,printCanvas.height);
-    for(var r=0;r<rows;r++) for(var c=0;c<cols;c++) ctx.drawImage(ph,gap+c*(pw+gap),gap+r*(phe+gap),pw,phe);
-    infoEl.textContent='4 photos (2×2) — A4 pe print karein';
-  } else if (S.sheet==='8on4') {
-    var gap=14, cols=2, rows=4;
-    printCanvas.width=cols*pw+gap*(cols+1);
-    printCanvas.height=rows*phe+gap*(rows+1);
-    ctx.fillStyle='#fff'; ctx.fillRect(0,0,printCanvas.width,printCanvas.height);
-    for(var r=0;r<rows;r++) for(var c=0;c<cols;c++) ctx.drawImage(ph,gap+c*(pw+gap),gap+r*(phe+gap),pw,phe);
-    infoEl.textContent='8 photos (2×4) — A4 pe print karein';
-  } else if (S.sheet==='a4') {
-    // A4 at 300 DPI = 2480×3508 px
-    var A4W=2480, A4H=3508, margin=80, gap=16;
-    printCanvas.width=A4W; printCanvas.height=A4H;
-    ctx.fillStyle='#fff'; ctx.fillRect(0,0,A4W,A4H);
-    var cols=Math.floor((A4W-2*margin+gap)/(pw+gap));
-    var rows=Math.floor((A4H-2*margin+gap)/(phe+gap));
-    if(cols<1)cols=1; if(rows<1)rows=1;
-    for(var r=0;r<rows;r++) for(var c=0;c<cols;c++) {
-      ctx.drawImage(ph,margin+c*(pw+gap),margin+r*(phe+gap),pw,phe);
-    }
-    infoEl.textContent='A4 full sheet — '+cols+'×'+rows+'='+(cols*rows)+' photos';
+    info='Single photo ('+pw+'×'+phe+'px)';
+  }else if(S.sheet==='4on4'){
+    var gap=20,cols=2,rows=2;
+    pc.width=cols*pw+gap*(cols+1);pc.height=rows*phe+gap*(rows+1);
+    ctx.fillStyle='#fff';ctx.fillRect(0,0,pc.width,pc.height);
+    for(var r=0;r<rows;r++)for(var c=0;c<cols;c++)ctx.drawImage(ph,gap+c*(pw+gap),gap+r*(phe+gap),pw,phe);
+    info='4 photos (2×2) — A4 print ready';
+  }else if(S.sheet==='8on4'){
+    var gap=14,cols=2,rows=4;
+    pc.width=cols*pw+gap*(cols+1);pc.height=rows*phe+gap*(rows+1);
+    ctx.fillStyle='#fff';ctx.fillRect(0,0,pc.width,pc.height);
+    for(var r=0;r<rows;r++)for(var c=0;c<cols;c++)ctx.drawImage(ph,gap+c*(pw+gap),gap+r*(phe+gap),pw,phe);
+    info='8 photos (2×4) — A4 print ready';
+  }else if(S.sheet==='a4'){
+    var A4W=2480,A4H=3508,margin=80,gap=16;
+    pc.width=A4W;pc.height=A4H;
+    ctx.fillStyle='#fff';ctx.fillRect(0,0,A4W,A4H);
+    var cols=Math.max(1,Math.floor((A4W-2*margin+gap)/(pw+gap)));
+    var rows=Math.max(1,Math.floor((A4H-2*margin+gap)/(phe+gap)));
+    for(var r=0;r<rows;r++)for(var c=0;c<cols;c++)ctx.drawImage(ph,margin+c*(pw+gap),margin+r*(phe+gap),pw,phe);
+    info='A4 sheet — '+cols+'×'+rows+'='+(cols*rows)+' photos';
+  }
+  document.getElementById('printInfo').textContent=info;
+}
+
+// ── DOWNLOAD ─────────────────────────────────────────
+function downloadPhoto(type){
+  if(!S.finalCanvas){alert('Pehle process karein!');return;}
+  var canvas=(type==='sheet')?document.getElementById('printCanvas'):S.finalCanvas;
+  var fname=(type==='sheet'?'passport_sheet_':'passport_photo_')+S.targetW+'x'+S.targetH;
+
+  if(S.kbEnabled&&type==='single'){
+    compressToKb(canvas,S.targetKb).then(function(result){
+      var a=document.createElement('a');
+      a.download=fname+'.'+result.ext;
+      a.href=result.dataUrl;
+      a.click();
+      var note=document.getElementById('dlKbNote');
+      document.getElementById('dlKbText').textContent='Compressed: ~'+result.actualKb+' KB (target: '+S.targetKb+' KB)';
+      note.style.display='flex';
+    });
+  }else{
+    var a=document.createElement('a');
+    a.download=fname+'.jpg';
+    a.href=canvas.toDataURL('image/jpeg',0.95);
+    a.click();
+    document.getElementById('dlKbNote').style.display='none';
   }
 }
 
-function downloadPhoto(type) {
-  if (!S.finalCanvas) { alert('Pehle photo process karein!'); return; }
-  var canvas = type==='sheet' ? document.getElementById('printCanvas') : S.finalCanvas;
-  var link = document.createElement('a');
-  link.download = (type==='sheet' ? 'passport_sheet_' : 'passport_photo_') + S.targetW+'x'+S.targetH+'.jpg';
-  link.href = canvas.toDataURL('image/jpeg', 0.95);
-  link.click();
-}
-
-// ═══════════════════════════════════════════════
-// FAQ
-// ═══════════════════════════════════════════════
+// ── FAQ ──────────────────────────────────────────────
 document.querySelectorAll('.faq-q').forEach(function(b){
-  b.addEventListener('click',function(){
-    b.classList.toggle('open');
-    b.nextElementSibling.classList.toggle('open');
-  });
+  b.addEventListener('click',function(){b.classList.toggle('open');b.nextElementSibling.classList.toggle('open');});
 });
 
-// ═══════════════════════════════════════════════
-// CANVAS FILTER FIX for older browsers
-// ═══════════════════════════════════════════════
-(function checkFilterSupport(){
-  var c=document.createElement('canvas');
-  var ctx=c.getContext('2d');
-  if(typeof ctx.filter==='undefined'){
-    // Polyfill via CSS filter on temp image - fallback: skip filter
-    console.warn('Canvas filter not supported, using fallback');
-  }
-})();
+// ── Custom input listeners ─────────────────────────
+['customW','customH'].forEach(function(id){
+  var el=document.getElementById(id);
+  if(el)el.addEventListener('input',updateCustomPx);
+});
 </script>
-
 </body>
 </html>
