@@ -87,9 +87,17 @@ def run_all():
     base = os.path.dirname(os.path.abspath(__file__))
 
     scrapers = [
-        ("FreeJobAlert Categories", os.path.join(base, "scraper_fja.py")),
+        # ── UNIFIED FJA (replaces separate qual + state + district scrapers) ──
+        # One pass collects listing URLs from all three FJA category sources,
+        # dedups by detail-page URL, and scrapes each unique job exactly once.
+        # Output → "freejobalert_unified" key (deduped_jobs + index).
+        ("Unified FJA (qual+state+district)", os.path.join(base, "scraper_unified_fja.py")),
         ("Sarkari (Shine+SR+SN)",   os.path.join(base, "scraper_sarkari.py")),
         ("Education",               os.path.join(base, "scraper_education.py")),
+        # ── LEGACY (kept for backward-compat; data still populated for the live
+        # site until generate_all.py is migrated to read freejobalert_unified).
+        # Once migrated, these three can be removed safely.
+        ("FreeJobAlert Categories", os.path.join(base, "scraper_fja.py")),
         ("State Govt Jobs",         os.path.join(base, "scraper_state.py")),
     ]
 

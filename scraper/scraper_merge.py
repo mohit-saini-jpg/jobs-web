@@ -39,6 +39,7 @@ SOURCE_KEYS = {
     "sarkari_data":            "sarkari_data",
     "education_jobs":          "education_jobs",
     "state_jobs":              "state_jobs",
+    "freejobalert_unified":    "freejobalert_unified",   # NEW: deduped FJA (qual+state+district)
 }
 
 # ================================================================
@@ -209,6 +210,53 @@ def _sync_fja_categories(old_data, new_data):
             print(f"    [{cat}] Category site se hat gayi — removing from JSON")
 
     return synced, total_stats
+
+
+def _sync_unified_fja(old_data, new_data):
+    """Sync the deduped unified FJA payload.
+
+    Payload shape:
+      { "deduped_jobs": [...], "meta": {...},
+        "by_fja_category": {...}, "by_state": {...}, "by_district": {...} }
+
+    Dedup key = job["_scraped_from"] (normalized detail URL). Fresh scrape wins
+    for any URL it covers; old jobs whose URL is absent from the fresh run are
+    dropped (they're no longer live). The index blocks are taken from the fresh
+    payload as-is (the scraper rebuilds them from the merged job set).
+    """
+    stats = {"added": 0, "removed": 0, "unchanged": 0}
+    old_jobs = old_data.get("deduped_jobs", []) if isinstance(old_data, dict) else []
+    new_jobs = new_data.get("deduped_jobs", []) if isinstance(new_data, dict) else []
+
+    # If the fresh run produced nothing, keep old data untouched (safety).
+    if not new_jobs:
+        print("    [unified] fresh run empty — keeping existing unified data")
+        return (old_data or {}), stats
+
+    old_by_url = {j.get("_scraped_from"): j for j in old_jobs if j.get("_scraped_from")}
+    new_by_url = {j.get("_scraped_from"): j for j in new_jobs if j.get("_scraped_from")}
+
+    for url in new_by_url:
+        if url in old_by_url:
+            stats["unchanged"] += 1
+        else:
+            stats["added"] += 1
+    for url in old_by_url:
+        if url not in new_by_url:
+            stats["removed"] += 1
+
+    print(f"    [unified] +{stats['added']} new | -{stats['removed']} removed "
+          f"| {stats['unchanged']} unchanged")
+
+    # Fresh payload is authoritative (it already merged resume data internally).
+    synced = {
+        "deduped_jobs":    new_jobs,
+        "meta":            new_data.get("meta", {}),
+        "by_fja_category": new_data.get("by_fja_category", {}),
+        "by_state":        new_data.get("by_state", {}),
+        "by_district":     new_data.get("by_district", {}),
+    }
+    return synced, stats
 
 
 def _sync_sections(old_data, new_data, label):
@@ -390,11 +438,17 @@ def merge_into_json(source: str, fresh_data: dict, scraper_error: str = ""):
     old_sarkari = existing.get("sarkari_data", {})
     old_edu     = existing.get("education_jobs", {})
     old_state   = existing.get("state_jobs", {})
+    old_unified = existing.get("freejobalert_unified", {})   # NEW: deduped FJA
     old_errors  = existing.get("scraper_errors", {})
     old_sync    = existing.get("sync_stats", {})
 
     # ── Step 3: Sirf is source ka data sync karo ──────────────
     stats = {"added": 0, "removed": 0, "unchanged": 0}
+
+    # Default: every source preserves the unified payload untouched. Only the
+    # "freejobalert_unified" branch below overwrites it. This keeps the new key
+    # safe no matter which scraper triggers the merge.
+    synced_unified = old_unified
 
     if source == "freejobalert_categories":
         if is_first:
@@ -437,11 +491,24 @@ def merge_into_json(source: str, fresh_data: dict, scraper_error: str = ""):
         synced_sarkari = old_sarkari
         synced_edu     = old_edu
 
+    elif source == "freejobalert_unified":
+        if is_first:
+            synced_unified = fresh_data
+        else:
+            print(f"  [SYNC] Unified FJA (deduped) syncing...")
+            synced_unified, stats = _sync_unified_fja(old_unified, fresh_data)
+        # All legacy sources untouched
+        synced_fja     = old_fja
+        synced_sarkari = old_sarkari
+        synced_edu     = old_edu
+        synced_state   = old_state
+
     # ── Step 4: Counts ────────────────────────────────────────
     cnt_fja     = _count_fja(synced_fja)
     cnt_sarkari = _count_sarkari(synced_sarkari)
     cnt_edu     = _count_sections(synced_edu)
     cnt_state   = _count_sections(synced_state)
+    cnt_unified = len(synced_unified.get("deduped_jobs", [])) if isinstance(synced_unified, dict) else 0
 
     # ── Step 5: Errors update ─────────────────────────────────
     new_errors = dict(old_errors)
@@ -462,12 +529,14 @@ def merge_into_json(source: str, fresh_data: dict, scraper_error: str = ""):
             "sarkari_data":            cnt_sarkari,
             "education_jobs":          cnt_edu,
             "state_jobs":              cnt_state,
+            "freejobalert_unified":    cnt_unified,
         },
         "total_records":           cnt_fja + cnt_sarkari + cnt_edu + cnt_state,
         "freejobalert_categories": synced_fja,
         "sarkari_data":            synced_sarkari,
         "education_jobs":          synced_edu,
         "state_jobs":              synced_state,
+        "freejobalert_unified":    synced_unified,
         "scraper_errors":          new_errors,
         "sync_stats": {
             "run_type":       "first_run" if is_first else "incremental",
