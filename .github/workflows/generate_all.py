@@ -4403,7 +4403,52 @@ def _collect_district_jobs():
         for _dname, _items in legacy.items():
             if isinstance(_items, list):
                 _district_jobs.setdefault(_dname, []).extend(_items)
+    # Source C: freejobalert_categories se district match karo (job_location field)
+    # Unified scraper ka data nahi hai to FJA categories se fill karo.
+    # har job ka basic_details.job_location → district ya state name se match karo.
+    if not any(_district_jobs.values()):
+        _all_dist_names = set()
+        for _st, _dlist in _DIST_BY_STATE.items():
+            for _dd in _dlist:
+                _all_dist_names.add(_dd.get('district','').lower())
+        for _cat, _cat_jobs in FJA.items():
+            if not isinstance(_cat_jobs, list): continue
+            for _fj in _cat_jobs:
+                _bd = (_fj.get('basic_details') or {})
+                _loc = safe(_bd.get('job_location','') or _bd.get('organization_name','')).lower()
+                if not _loc: continue
+                # Match job_location to any known district name
+                for _st, _dlist in _DIST_BY_STATE.items():
+                    for _dd in _dlist:
+                        _dn = _dd.get('district','')
+                        if _dn.lower() in _loc or _loc in _dn.lower():
+                            _district_jobs.setdefault(_dn, [])
+                            if _fj not in _district_jobs[_dn]:
+                                _district_jobs[_dn].append(_fj)
+                            break
 _collect_district_jobs()
+
+# ── UNIFIED JOBS: SLUG DERIVE KARO ────────────────────────────────────────────
+# Unified scraper jobs mein 'slug' field nahi hota — sirf '_scraped_from' URL.
+# District page cards ke liye /jobs/slug/ link chahiye. FJA article URL se
+# slug nikaal lo: /articles/job-slug-here → job-slug-here
+_uni_data = CJ.get('freejobalert_unified', {}) or {}
+_uni_jobs_list = _uni_data.get('deduped_jobs', []) or []
+_slug_derived = 0
+for _uj in _uni_jobs_list:
+    if _uj.get('slug'):
+        continue
+    _src = _uj.get('_scraped_from', '')
+    if not _src:
+        continue
+    _m_slug = re.search(r'/articles/([^/?#]+)/?$', _src)
+    if _m_slug:
+        _derived = slugify(_m_slug.group(1))[:80]
+        if _derived:
+            _uj['slug'] = _derived
+            _slug_derived += 1
+if _slug_derived:
+    print(f"  [unified] {_slug_derived} job slugs derived from _scraped_from URL")
 
 _district_landing_items = []   # (state_name, district_name, slug, count)
 _dist_count = 0
@@ -4689,6 +4734,52 @@ for cat_key, url_slug in FJA_CAT_MAP.items():
 
 for cat_key, url_slug in SARK_CAT_MAP.items():
     sark_jobs = [j for j in SARK if j.get('category') == cat_key]
+
+    # ── FALLBACK: OFFLINE_FORM + LATEST_JOBS NEW + UPCOMING_JOBS + ADMISSIONS ─
+    # SARK mein ye categories empty hain (SR block). Data 2 sources se lo:
+    # 1. merged_sarkari_data.json (already scraped on PC)
+    # 2. freejobalert_unified (offline title wale jobs)
+    if not sark_jobs and cat_key in ('OFFLINE_FORM','LATEST_JOBS NEW','UPCOMING_JOBS','ADMISSIONS'):
+        # Source 1: merged_sarkari_data
+        _msd_path = str(ROOT.parent/'scraper'/'merged_sarkari_data.json')
+        if not os.path.exists(_msd_path):
+            _msd_path = str(ROOT/'scraper'/'merged_sarkari_data.json')
+        if os.path.exists(_msd_path):
+            try:
+                _msd = json.load(open(_msd_path, encoding='utf-8'))
+                sark_jobs = [j for j in _msd.get('jobs',[]) if j.get('category') == cat_key]
+            except Exception:
+                pass
+        # Source 2: unified jobs (for OFFLINE_FORM + LATEST_JOBS NEW)
+        if not sark_jobs and cat_key in ('OFFLINE_FORM', 'LATEST_JOBS NEW'):
+            _uni2 = (CJ.get('freejobalert_unified') or {})
+            _uni_jobs2 = _uni2.get('deduped_jobs', []) or []
+            _by_fja2 = _uni2.get('by_fja_category', {}) or {}
+            _url_to_j2 = {j.get('_scraped_from',''): j for j in _uni_jobs2}
+            for _uj2 in _uni_jobs2:
+                _bd2 = (_uj2.get('basic_details') or {})
+                _t2 = safe(_bd2.get('job_title',''))
+                if not _t2: continue
+                _is_offline = 'offline' in _t2.lower()
+                if cat_key == 'OFFLINE_FORM' and not _is_offline: continue
+                # Convert to sark-like format
+                _sl2 = _uj2.get('slug','') or slugify(
+                    re.search(r'/articles/([^/?#]+)/?$', _uj2.get('_scraped_from','')).group(1)
+                    if re.search(r'/articles/([^/?#]+)/?$', _uj2.get('_scraped_from','')) else _t2)
+                _imp2 = (_uj2.get('important_dates') or {})
+                sark_jobs.append({
+                    'category': cat_key,
+                    'title': _t2,
+                    'slug': _sl2,
+                    'organization': safe((_uj2.get('basic_details') or {}).get('organization_name','')),
+                    'total_post': safe((_uj2.get('basic_details') or {}).get('total_vacancies','')),
+                    'apply_mode': 'Offline' if _is_offline else 'Online',
+                    'important_dates': _imp2,
+                    'important_links': (_uj2.get('important_links') or {}),
+                    'useful_links': {},
+                    'status': '',
+                })
+
     if not sark_jobs: continue
     norm = []
     for j in sark_jobs:
@@ -5187,6 +5278,39 @@ if 'UPCOMING_JOBS' not in sections_index or len(sections_index.get('UPCOMING_JOB
     _upcoming_candidates.sort(key=lambda x: x[0])
     if _upcoming_candidates:
         sections_index['UPCOMING_JOBS'] = [item for _, item in _upcoming_candidates[:10]]
+
+# ── OFFLINE_FORM: FJA Latest_Notifications se offline jobs fill karo ──────────
+# SARK mein OFFLINE_FORM category retire ho gayi. FJA ke Latest_Notifications
+# mein bahut saare offline jobs hain — inse fill karo taaki section empty na rahe.
+if not sections_index.get('OFFLINE_FORM'):
+    _offline_items = []
+    for _fj in FJA.get('Latest_Notifications', []) + FJA.get('Any_Graduate', []) + FJA.get('10TH_Pass', []):
+        _bd2 = (_fj.get('basic_details') or {})
+        _ft = safe(_bd2.get('job_title',''))
+        if not _ft: continue
+        if 'offline' not in _ft.lower(): continue
+        _sl2 = slugify(_ft)[:80]
+        _imp2 = (_fj.get('important_dates') or {})
+        _ld2 = safe(_imp2.get('last_date_to_apply','') or _imp2.get('last_date',''))
+        _offline_items.append({'slug':_sl2,'name':_ft,'date':_ld2})
+        if len(_offline_items) >= 10: break
+    if _offline_items:
+        sections_index['OFFLINE_FORM'] = _offline_items
+
+# ── LATEST_JOBS NEW: FJA Latest_Notifications se fill karo ───────────────────
+if not sections_index.get('LATEST_JOBS NEW'):
+    _ln_items = []
+    for _fj in FJA.get('Latest_Notifications', []):
+        _bd3 = (_fj.get('basic_details') or {})
+        _ft3 = safe(_bd3.get('job_title',''))
+        if not _ft3: continue
+        _sl3 = slugify(_ft3)[:80]
+        _imp3 = (_fj.get('important_dates') or {})
+        _ld3 = safe(_imp3.get('last_date_to_apply','') or _imp3.get('last_date',''))
+        _ln_items.append({'slug':_sl3,'name':_ft3,'date':_ld3})
+        if len(_ln_items) >= 10: break
+    if _ln_items:
+        sections_index['LATEST_JOBS NEW'] = _ln_items
 
 # ── Add DU sections to sections-index.json (Phase: slug-based internal links) ──
 # Govt Scheme & Yojna, ImportantCSC PDF, ImportantCSC link, Today Updates
