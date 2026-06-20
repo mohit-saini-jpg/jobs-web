@@ -30,7 +30,7 @@ BASE_URL = 'https://www.topsarkarijobs.com'
 # Forced ~820px logical width on phones so more content shows without hiding,
 # and pinch zoom stays available. Stored as a plain string (NOT inside any
 # f-string) so its JS braces don't clash with f-string formatting.
-VP_SNIPPET = ('<script>/*TSJ-WIDE-VIEWPORT*/(function(){var W=820,'
+VP_SNIPPET = ('<script>/*TSJ-WIDE-VIEWPORT*/(function(){var W=640,'
     'm=document.querySelector(\'meta[name="viewport"]\');'
     'if(!m){m=document.createElement(\'meta\');m.name=\'viewport\';'
     '(document.head||document.documentElement).appendChild(m);}'
@@ -451,13 +451,14 @@ SECTION_META = {
     'sections':             ('Details',                   'fa-circle-info',        '1e40af,#3b82f6'),
 }
 
-def sec_card(key_or_title, icon, grad, body):
+def sec_card(key_or_title, icon, grad, body, total_count=None):
     if not body or not str(body).strip(): return ''
     meta = SECTION_META.get(key_or_title)
     title = meta[0] if meta else (key_or_title if isinstance(key_or_title, str) else key_label(key_or_title))
+    count_html = f'<span class="sec-count">{total_count}</span>' if total_count else ''
     return (f'<section class="sec-card">'
             f'<div class="sec-head" style="background:linear-gradient(135deg,#{grad})">'
-            f'<i class="fa-solid {icon}"></i><h2>{e(title)}</h2></div>'
+            f'<i class="fa-solid {icon}"></i><h2>{e(title)}</h2>{count_html}</div>'
             f'<div class="sec-body">{body}</div></section>\n')
 
 # ── Renderers ─────────────────────────────────────────────────
@@ -2586,7 +2587,8 @@ a{text-decoration:none}.skip-link{position:absolute;left:-9999px}.skip-link:focu
 .short-info{background:#eff6ff;border-left:4px solid #1d4ed8;padding:10px 14px;font-size:.84rem;color:#1e293b;line-height:1.7;margin-bottom:10px;border-radius:0 8px 8px 0;display:flex;gap:8px;align-items:flex-start}
 .sec-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
 .sec-head{display:flex;align-items:center;gap:8px;padding:10px 14px;color:#fff;font-size:.86rem;font-weight:700}
-.sec-head h2{margin:0;font-size:.86rem;font-weight:700;color:#fff}
+.sec-head h2{margin:0;font-size:1.05rem;font-weight:800;color:#fff;letter-spacing:.01em}
+.sec-head .sec-count{margin-left:auto;font-size:.75rem;font-weight:600;background:rgba(255,255,255,.25);padding:2px 8px;border-radius:20px;white-space:nowrap}
 .sec-body{padding:0}
 .kv-table{width:100%;border-collapse:collapse;font-size:.82rem}
 .kv-table th{background:#f8fafc;color:#374151;font-weight:700;padding:9px 13px;text-align:left;border-bottom:1px solid #e9eef4;width:38%;vertical-align:top;word-break:break-word}
@@ -2669,7 +2671,7 @@ a{text-decoration:none}.skip-link{position:absolute;left:-9999px}.skip-link:focu
 .search-bar input:focus{border-color:#1d4ed8;box-shadow:0 0 0 2px #dbeafe}
 .job-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px;margin-bottom:9px;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:box-shadow .15s;position:relative;cursor:pointer}
 .job-card:hover{box-shadow:0 4px 12px rgba(0,0,0,.1)}
-.job-card-title{font-size:.9rem;font-weight:800;color:#0f172a;line-height:1.4;margin-bottom:5px}
+.job-card-title{font-size:1.1rem;font-weight:800;color:#0f172a;line-height:1.4;margin-bottom:5px}
 .job-card-title a{color:inherit}.job-card-title a:hover{color:#1d4ed8;text-decoration:underline}
 .job-card-org{color:#64748b;font-size:.79rem;margin-bottom:5px;display:flex;gap:5px;align-items:center}
 .job-card-meta{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}
@@ -3393,7 +3395,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
   <div class="job-card-title"><span class="jc-sn">{_idx}</span><a href="{_row_url}">{e(jtitle)}</a></div>
   <div class="job-card-org"><i class="fa-regular fa-building"></i> {e(jorg[:60])}</div>
   <div class="job-card-meta">
-    {f'<span class="jm-badge" style="background:#dcfce7;color:#15803d">{e(jvac)} Posts</span>' if jvac else ''}
+    {f'<span class="jm-badge" style="background:#dcfce7;color:#15803d">{e(jvac)} Jobs</span>' if jvac else ''}
     <span class="jm-badge" style="background:#ede9fe;color:#5b21b6">{e(jmode)}</span>
     {status_badge}
   </div>
@@ -4433,14 +4435,31 @@ for _state_name, _districts in _DIST_BY_STATE.items():
         _ddesc = (f"Latest government jobs in {_dname}, {_state_name} {YEAR}. "
                   f"All sarkari naukri vacancies for {_dname} district — "
                   f"check eligibility, dates and apply online.")
+        _state_slug_d = STATE_SLUG_FIX.get(slugify(_state_name), slugify(_state_name))
+        _state_url_d = f"/state/{_state_slug_d}/"
+        # SEO: empty district pages should still be useful.
+        # When no jobs exist, inject a friendly "no current jobs" message so
+        # Google doesn't see a thin/blank page. Include state link for nav.
+        _empty_top = '' if _djobs else (
+            f'<div style="margin:4px 10px 16px;padding:16px;background:#f0f9ff;border:1px solid #bae6fd;'
+            f'border-radius:10px;text-align:center">'
+            f'<p style="font-size:.9rem;color:#0369a1;font-weight:600;margin:0 0 8px">'
+            f'<i class="fa-solid fa-circle-info" style="margin-right:6px"></i>'
+            f'Abhi {e(_dname)} district ke liye koi active government job nahi hai.</p>'
+            f'<p style="font-size:.82rem;color:#0284c7;margin:0">'
+            f'{e(_state_name)} ke saare jobs dekhne ke liye: '
+            f'<a href="{_state_url_d}" style="color:#0369a1;font-weight:700;text-decoration:underline">'
+            f'{e(_state_name)} State Jobs →</a></p></div>'
+        )
         _dlisting = build_listing_page(
             f"{_dname} Govt Jobs ({_state_name})",
             _djobs,
             _dcanon,
             [('Home', '/'), ('State Jobs', '/state/'),
-             (_state_name, f"/state/{STATE_SLUG_FIX.get(slugify(_state_name), slugify(_state_name))}/"),
+             (_state_name, f"/state/{_state_slug_d}/"),
              (f"{_dname} District", f"/district/{_dslug}/")],
             _ddesc,
+            top_html=_empty_top,
         )
         write(str(ROOT/'district'/_dslug/'index.html'), _dlisting)
         _dist_count += 1
@@ -4526,7 +4545,7 @@ for sec in EDU_SEC:
     if not _eid:
         continue
     _edu_landing_jobs.append({
-        'basic_details': {'job_title': f"{_etit} Education Jobs {YEAR}",
+        'basic_details': {'job_title': f"{_etit} {YEAR}",
                           'organization_name': _etit,
                           'total_vacancies': str(len(sec.get('items', []))) if sec.get('items') else ''},
         '_listing_url': f"/education/{_eid}/"})
@@ -5345,7 +5364,50 @@ def prune_duplicate_pages():
 
 _dup_removed = prune_duplicate_pages()
 
-# ── DEDUP REDIRECT MAP (from dedup_engine.py) ─────────────────────────────────
+# ── REMOVE BROKEN JOB PAGES (Issue 3) ────────────────────────────────────────
+# Agar kisi /jobs/{slug}/ page pe "Page Not Available" aa raha hai to wo page
+# actually generate hi nahi hua (data missing tha). Google aise thin pages ko
+# crawl karta hai aur SEO kharab hoti hai. Fix:
+# - /jobs/ ke andar jo folders hain par jinme index.html EMPTY ya missing hai,
+#   unhe DELETE karo aur /  (homepage) pe 301 redirect karo.
+_broken_removed = 0
+_broken_redirects = []
+_jobs_dir = ROOT / 'jobs'
+if _jobs_dir.exists():
+    for _jdir in _jobs_dir.iterdir():
+        if not _jdir.is_dir():
+            continue
+        _ihtml = _jdir / 'index.html'
+        if not _ihtml.exists():
+            # folder hai par index.html nahi — delete folder, redirect to /
+            try:
+                shutil.rmtree(str(_jdir))
+                _broken_redirects.append(f"/jobs/{_jdir.name}/  /  301")
+                _broken_removed += 1
+            except Exception:
+                pass
+        else:
+            # index.html hai par check karo content valid hai ya nahi
+            try:
+                _content = _ihtml.read_text(encoding='utf-8', errors='ignore')
+                # Agar page mein meaningful content nahi (sirf error page ya <500 bytes)
+                if len(_content) < 500 or 'Page Not Available' in _content:
+                    _broken_redirects.append(f"/jobs/{_jdir.name}/  /  301")
+                    shutil.rmtree(str(_jdir))
+                    _broken_removed += 1
+            except Exception:
+                pass
+
+if _broken_redirects:
+    _rpath = str(ROOT / '_redirects')
+    _existing_r = open(_rpath, encoding='utf-8').read() if os.path.exists(_rpath) else ''
+    _block = "\n# ══ broken/empty job pages → homepage ══\n" + "\n".join(
+        r for r in _broken_redirects if r not in _existing_r) + "\n"
+    with open(_rpath, 'a', encoding='utf-8') as _rf:
+        _rf.write(_block)
+    print(f"  [broken-pages] {_broken_removed} empty/broken job pages removed → 301 to /")
+
+
 # If dedup_engine.py produced a redirect map, inject those 301s into _redirects
 # so old URLs (e.g. hssc-cet-group-d-exam-online-form-2026) forward to canonical.
 _dedup_rmap_path = str(ROOT.parent / 'scraper' / 'dedup_redirect_map.json')
