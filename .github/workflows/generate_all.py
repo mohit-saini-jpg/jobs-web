@@ -3395,8 +3395,8 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
   <div class="job-card-title"><span class="jc-sn">{_idx}</span><a href="{_row_url}">{e(jtitle)}</a></div>
   <div class="job-card-org"><i class="fa-regular fa-building"></i> {e(jorg[:60])}</div>
   <div class="job-card-meta">
-    {f'<span class="jm-badge" style="background:#dcfce7;color:#15803d">{e(jvac)} Jobs</span>' if jvac else ''}
-    <span class="jm-badge" style="background:#ede9fe;color:#5b21b6">{e(jmode)}</span>
+    {f'<span class="jm-badge" style="background:#dcfce7;color:#15803d">{e(jvac)} {"Posts" if _row_url.startswith("/jobs/") else "Jobs"}</span>' if jvac else ''}
+    {f'<span class="jm-badge" style="background:#ede9fe;color:#5b21b6">{e(jmode)}</span>' if _row_url.startswith("/jobs/") else ''}
     {status_badge}
   </div>
   {f'<div class="job-card-date{urgent_cls}"><i class="fa-regular fa-clock"></i> Last Date: <strong>{e(jld)}</strong></div>' if jld else ''}
