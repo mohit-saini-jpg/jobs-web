@@ -4999,11 +4999,18 @@ _save_first_seen()   # C1: persist datePosted map for stable rebuilds
 def prune_duplicate_pages():
     import glob as _glob
     from collections import defaultdict as _dd
+    from itertools import combinations as _comb
     H1_RE = re.compile(r'<h1 class="detail-h1">([^<]+)</h1>')
-    STOP = {'the','and','for','of','in','to','a','an','with','on','at','by','top','sarkari','jobs'}
-    def _h1fp(h1):
+    # Pull vacancy count + last date from the page so we can corroborate fuzzy
+    # title matches (same number of posts / same closing date = same job).
+    VAC_RE = re.compile(r'(\d{1,6})\s*(?:posts?|vacanc)', re.I)
+    DATE_RE = re.compile(r'(\d{1,2}[-/][\d]{1,2}[-/]20\d{2}|20\d{2}-\d{1,2}-\d{1,2})')
+    STOP = {'the','and','for','of','in','to','a','an','with','on','at','by','top','sarkari','jobs',
+            'recruitment','apply','online','offline','notification','out','check','details','post','posts',
+            'vacancy','form','registration','last','date','here','now','download','pdf','2024','2025','2026','2027'}
+    def _tokens(h1):
         t = re.sub(r'[^a-z0-9\s]', ' ', (h1 or '').lower())
-        return ' '.join(w for w in t.split() if w and w not in STOP and len(w) > 1)
+        return set(w for w in t.split() if w and w not in STOP and len(w) > 1)
     def _score(slug):
         s = 0.0
         if 'recruitment' in slug: s += 3
@@ -5011,7 +5018,10 @@ def prune_duplicate_pages():
         if re.search(r'202\d', slug): s += 2
         if re.search(r'-\d+-posts$', slug) or slug.endswith('-1-posts'): s -= 2
         return s + len(slug) / 100.0
-    groups = _dd(list)
+
+    # Gather every job page's slug + token-set + vacancy + date + raw-fp
+    pages = []   # (slug, tokenset, vacancy, date)
+    exact_groups = _dd(list)
     for f in _glob.glob(str(ROOT/'jobs'/'*'/'index.html')):
         slug = os.path.basename(os.path.dirname(f))
         try:
@@ -5021,12 +5031,62 @@ def prune_duplicate_pages():
         m = H1_RE.search(h)
         if not m:
             continue
-        fp = _h1fp(m.group(1).strip())
-        if fp:
-            groups[fp].append(slug)
+        h1 = m.group(1).strip()
+        toks = _tokens(h1)
+        if not toks:
+            continue
+        vm = VAC_RE.search(h1) or VAC_RE.search(h[:4000])
+        vac = vm.group(1) if vm else ''
+        dm = DATE_RE.search(h[:6000])
+        date = dm.group(1) if dm else ''
+        pages.append((slug, toks, vac, date))
+        # exact fingerprint key (sorted tokens) for the fast obvious-dup path
+        exact_groups[' '.join(sorted(toks))].append(slug)
+
+    # Build merge groups via union-find over fuzzy token similarity
+    parent = {}
+    def _find(x):
+        parent.setdefault(x, x)
+        if parent[x] != x:
+            parent[x] = _find(parent[x])
+        return parent[x]
+    def _union(a, b):
+        parent[_find(a)] = _find(b)
+
+    # 1) exact-token duplicates always union
+    for _fp, slugs in exact_groups.items():
+        for s in slugs[1:]:
+            _union(slugs[0], s)
+
+    # 2) fuzzy: same vacancy or same date + high token overlap → union.
+    # Group by vacancy/date first to keep comparisons cheap and precise.
+    JACCARD = 0.72
+    by_key = _dd(list)
+    for idx, (slug, toks, vac, date) in enumerate(pages):
+        if vac:
+            by_key['v'+vac].append(idx)
+        if date:
+            by_key['d'+date].append(idx)
+    for _key, idxs in by_key.items():
+        if len(idxs) < 2:
+            continue
+        for a, b in _comb(idxs, 2):
+            sa, ta, _, _ = pages[a]
+            sb, tb, _, _ = pages[b]
+            if _find(sa) == _find(sb):
+                continue
+            uni = ta | tb
+            if uni and len(ta & tb) / len(uni) >= JACCARD:
+                _union(sa, sb)
+
+    # Collect final clusters
+    clusters = _dd(list)
+    for slug, toks, vac, date in pages:
+        clusters[_find(slug)].append(slug)
+
     redirects = []
     removed = 0
-    for fp, slugs in groups.items():
+    for _root, slugs in clusters.items():
         if len(slugs) < 2:
             continue
         # If any page in this group is an intentional NEW VERSION (different

@@ -207,9 +207,13 @@ def fingerprint(job_rec):
     primary = f"{org}|{title_norm}"
     primary_hash = hashlib.md5(primary.encode()).hexdigest()[:8]
 
-    # Secondary key: org + last_date + fee (catches same exam with different titles)
-    if org and last_date and fee:
-        secondary = f"{org}|{last_date}|{fee}"
+    # Secondary key: org + last_date + (fee OR vacancy). Catches the same exam
+    # posted with different titles. Originally required fee, but many records
+    # (esp. offline/state jobs) have no fee — so the safety net never formed and
+    # duplicates slipped through. Vacancy count is an equally strong corroborator.
+    if org and last_date and (fee or vacancy):
+        corroborator = fee if fee else f"v{vacancy}"
+        secondary = f"{org}|{last_date}|{corroborator}"
         secondary_hash = hashlib.md5(secondary.encode()).hexdigest()[:8]
     else:
         secondary_hash = None
@@ -551,6 +555,63 @@ def run_dedup(data, dry_run=False):
 
         # Tertiary hash (apply domain) DISABLED - too broad
         # (e.g. all BEL jobs share bel-india.com but are different recruitments)
+
+    # ── Phase 1.5: FUZZY TOKEN-SIMILARITY PASS ────────────────────────────────
+    # The exact-hash logic above misses duplicates where the SAME job is titled
+    # differently, e.g.:
+    #   "CMO Kushinagar Recruitment 2026 Apply Offline for 17 Medical Officer..."
+    #   "CMO Kushinagar Medical Officer Female Doctor 17 Posts"
+    # Same org, same vacancy, same last date, ~88% token overlap — but different
+    # word order/extra words give different primary hashes, and fee is empty so
+    # the secondary key never forms. This pass catches them by grouping records
+    # under the same org and union-ing any pair with high title-token overlap
+    # AND a corroborating signal (same vacancy count OR same last date).
+    by_org = defaultdict(list)
+    for i, (src, rec) in enumerate(all_records):
+        org = extract_org(rec)
+        if org:
+            by_org[org].append(i)
+
+    JACCARD_THRESHOLD = 0.72   # 72%+ token overlap = very likely same job
+    for org, idxs in by_org.items():
+        if len(idxs) < 2:
+            continue
+        # Precompute token sets, vacancy, date for each record in this org group
+        meta = {}
+        for i in idxs:
+            _, rec = all_records[i]
+            toks = set(norm_text(extract_title(rec)).split())
+            meta[i] = (
+                toks,
+                extract_vacancy_count(rec),
+                extract_last_date(rec),
+            )
+        # Pairwise compare within the same org (org groups are small, this is cheap)
+        for a_pos in range(len(idxs)):
+            i = idxs[a_pos]
+            ti, vi, di = meta[i]
+            if not ti:
+                continue
+            for b_pos in range(a_pos + 1, len(idxs)):
+                j = idxs[b_pos]
+                tj, vj, dj = meta[j]
+                if not tj:
+                    continue
+                if uf.find(i) == uf.find(j):
+                    continue   # already in same cluster
+                union = ti | tj
+                if not union:
+                    continue
+                jaccard = len(ti & tj) / len(union)
+                if jaccard < JACCARD_THRESHOLD:
+                    continue
+                # Corroborating guard: require same vacancy OR same last date so
+                # two genuinely different posts under one org don't merge just
+                # because their titles share many generic words.
+                same_vac = bool(vi) and bool(vj) and vi == vj
+                same_date = bool(di) and bool(dj) and di == dj
+                if same_vac or same_date:
+                    uf.union(i, j)
 
     # Phase 2: Group clusters
     clusters = defaultdict(list)
