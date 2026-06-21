@@ -3461,6 +3461,48 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
                  'cards[i].style.display=(!q||t.includes(q)||o.includes(q))?"":"none";}}'
                  '</script>')
 
+    # ── INTERNAL LINKING: Add 12 related job links at bottom of listing pages ──
+    # Picks jobs from same category context (boosts crawler discovery + SEO link equity).
+    _related_links_html = ''
+    try:
+        _seed_cat = ''
+        _cu = (canon_url or '').lower()
+        if '/state/' in _cu or '/state-jobs/' in _cu: _seed_cat = 'state'
+        elif '/category/' in _cu: _seed_cat = 'cat'
+        elif '/qualification/' in _cu: _seed_cat = 'qual'
+        elif '/section/' in _cu: _seed_cat = 'sec'
+        # Pick first 12 jobs from this listing as internal links; if listing < 12,
+        # supplement from _REL_INDEX (global related-jobs pool).
+        _pick = []
+        _seen = set()
+        for _j in (jobs or [])[:30]:
+            _js = _j.get('slug', '') or slugify(_j.get('title','') or _j.get('name',''))[:80]
+            _jn = _j.get('title','') or _j.get('name','') or ''
+            if _js and _js not in _seen and _jn:
+                _pick.append((_js, _jn[:65]))
+                _seen.add(_js)
+            if len(_pick) >= 12: break
+        # Fallback from global related index
+        if len(_pick) < 12:
+            for _rs, _rinfo in list(_REL_INDEX.items())[:50]:
+                if _rs in _seen: continue
+                _rn = (_rinfo.get('title') if isinstance(_rinfo, dict) else '') or ''
+                if _rs and _rn:
+                    _pick.append((_rs, _rn[:65]))
+                    _seen.add(_rs)
+                if len(_pick) >= 12: break
+        if _pick:
+            _links = ''.join(
+                f'<a href="/jobs/{e(_s)}/" style="display:block;padding:8px 12px;margin:4px 0;background:#fff;border:1px solid #e5e7eb;border-radius:8px;color:#0d2257;font-size:.88rem;font-weight:600;text-decoration:none">→ {e(_n)}</a>'
+                for _s, _n in _pick
+            )
+            _related_links_html = (
+                '<div class="rel-jobs" style="margin:24px 10px 8px;padding:18px 18px 14px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px">'
+                '<h2 style="font-size:1.05rem;font-weight:800;color:#0d2257;margin:0 0 12px">Related Government Jobs You May Like</h2>'
+                f'{_links}</div>'
+            )
+    except Exception: pass
+
     body = (f'<div class="cat-wrap">'
             f'<h1 class="cat-h1" style="margin:12px 10px 4px">{e(title)}</h1>'
             f'<p class="cat-count" style="margin:0 10px 12px;color:#64748b;font-size:.78rem">{len(jobs)} records</p>'
@@ -3469,6 +3511,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
             f'<input type="search" placeholder="Search..." aria-label="Search" onkeyup="filterJobs(this.value)" autocomplete="off"/>'
             f'</div><div id="jobList" style="padding:0 10px">{cards_html}</div>'
             f'{_seo_listing_content(title, jobs, canon_url)}'
+            f'{_related_links_html}'
             f'<div style="padding:0 10px">{REL_CATS_HTML}</div></div>'
             f'{filter_js}')
 
@@ -5405,28 +5448,34 @@ def _parse_date(s):
         except: pass
     return None
 
-# ── UPCOMING_JOBS + ADMISSIONS: merged_sarkari_data se HAMESHA rebuild ─────────
-# PERMANENT FIX: if-not condition hata diya. Har generate run pe fresh data aayega.
-_msd_path2 = str(ROOT.parent/'scraper'/'merged_sarkari_data.json')
-if not os.path.exists(_msd_path2):
-    _msd_path2 = str(ROOT/'scraper'/'merged_sarkari_data.json')
-_msd2 = {}
-if os.path.exists(_msd_path2):
-    try: _msd2 = json.load(open(_msd_path2, encoding='utf-8'))
+# ── UPCOMING_JOBS + ADMISSIONS: data/ JSON files se HAMESHA rebuild ───────────
+# PERMANENT FIX: scraper/ folder delete kar diya. Ab data/upcoming-jobs.json
+# aur data/admissions.json se padhte hain (PC scrape ke baad ye files update hoti hain).
+_up_path = str(ROOT/'data'/'upcoming-jobs.json')
+_adm_path = str(ROOT/'data'/'admissions.json')
+
+def _read_jobs_file(_path):
+    if not os.path.exists(_path): return []
+    try:
+        _d = json.load(open(_path, encoding='utf-8'))
+        if isinstance(_d, dict): return _d.get('jobs', []) or []
+        if isinstance(_d, list): return _d
     except Exception: pass
+    return []
 
 # UPCOMING_JOBS
 _up_items = []
-for _sj in _msd2.get('jobs', []):
-    if _sj.get('category') != 'UPCOMING_JOBS': continue
-    _st = safe(_sj.get('title',''))
+for _sj in _read_jobs_file(_up_path):
+    _st = safe(_sj.get('title','') or _sj.get('name',''))
     if not _st: continue
     _sl = _sj.get('slug','') or slugify(_st)[:80]
-    _imp = _sj.get('important_dates') or {}
-    _ld = safe(_imp.get('last_date_apply_online','') or _imp.get('last_date_to_apply','') or _imp.get('last_date',''))
+    _ld = safe(_sj.get('last_date','') or
+               (_sj.get('important_dates') or {}).get('last_date_apply_online','') or
+               (_sj.get('important_dates') or {}).get('last_date_to_apply','') or
+               (_sj.get('important_dates') or {}).get('last_date',''))
     _up_items.append({'slug':_sl,'name':_st,'date':_ld})
+# Fallback: SARK from current JSON
 if not _up_items:
-    # Fallback: SARK from current JSON
     for _sj in SARK:
         if _sj.get('category') != 'UPCOMING_JOBS': continue
         _st = safe(_sj.get('title',''))
@@ -5437,16 +5486,18 @@ if not _up_items:
         _up_items.append({'slug':_sl,'name':_st,'date':_ld})
 if _up_items:
     sections_index['UPCOMING_JOBS'] = _up_items[:10]
+    print(f"  [UPCOMING_JOBS] {len(_up_items[:10])} items loaded")
 
 # ADMISSIONS
 _adm_items = []
-for _sj in _msd2.get('jobs', []):
-    if _sj.get('category') != 'ADMISSIONS': continue
-    _st = safe(_sj.get('title',''))
+for _sj in _read_jobs_file(_adm_path):
+    _st = safe(_sj.get('title','') or _sj.get('name',''))
     if not _st: continue
     _sl = _sj.get('slug','') or slugify(_st)[:80]
-    _imp = _sj.get('important_dates') or {}
-    _ld = safe(_imp.get('last_date_apply_online','') or _imp.get('last_date_to_apply','') or _imp.get('last_date',''))
+    _ld = safe(_sj.get('last_date','') or
+               (_sj.get('important_dates') or {}).get('last_date_apply_online','') or
+               (_sj.get('important_dates') or {}).get('last_date_to_apply','') or
+               (_sj.get('important_dates') or {}).get('last_date',''))
     _adm_items.append({'slug':_sl,'name':_st,'date':_ld})
 if not _adm_items:
     for _sj in SARK:
@@ -5459,6 +5510,7 @@ if not _adm_items:
         _adm_items.append({'slug':_sl,'name':_st,'date':_ld})
 if _adm_items:
     sections_index['ADMISSIONS'] = _adm_items[:10]
+    print(f"  [ADMISSIONS] {len(_adm_items[:10])} items loaded")
 
 # ── OFFLINE_FORM: FJA jobs se HAMESHA rebuild (permanent fix) ────────────────
 _offline_items = []; _offline_seen = set()
@@ -5517,6 +5569,84 @@ for _du_si_sec in DU_SECS:
         })
     if _du_si_items:
         sections_index[_du_si_title] = _du_si_items
+
+# ── RECONCILE sections-index slugs to ACTUAL disk pages ─────────────────────
+# Issue: sections-index items reference /jobs/{slug}/ but page hi nahi exist karta
+# Result: User clicks → "Page Not Available" → SEO disaster
+# Fix: For each section item, verify slug exists. If not, find closest match by title
+# OR remove the item entirely (better than dead link).
+import glob as _glob_fix
+_disk_slugs = set()
+for _f in _glob_fix.glob(str(ROOT/'jobs'/'*'/'index.html')):
+    _disk_slugs.add(os.path.basename(os.path.dirname(_f)))
+
+# Build title→slug index from disk pages (for fuzzy match)
+def _disk_h1(_slug):
+    _p = ROOT/'jobs'/_slug/'index.html'
+    if not _p.exists(): return ''
+    try:
+        _html = _p.read_text(encoding='utf-8', errors='ignore')[:5000]
+        _m = re.search(r'<h1[^>]*>([^<]+)</h1>', _html)
+        return (_m.group(1) if _m else '').strip().lower()
+    except Exception: return ''
+
+# Stop words for fuzzy match
+_STOP_RECON = {'recruitment','for','apply','online','offline','notification','out',
+               '2026','2025','posts','post','more','the','and','a','to','of','in','on',
+               'at','an','is','are','-',',','for','last','date','short'}
+
+def _name_tokens(_name):
+    _t = re.sub(r'[^a-z0-9\s]', ' ', (_name or '').lower())
+    return frozenset(w for w in _t.split() if w and w not in _STOP_RECON and len(w) > 2)
+
+# Build disk page tokens once
+_disk_tokens = {}
+for _ds in _disk_slugs:
+    _h1 = _disk_h1(_ds)
+    if _h1:
+        _disk_tokens[_ds] = _name_tokens(_h1)
+
+# Reconcile each sections_index item
+_recon_fixed = 0
+_recon_removed = 0
+for _sec_key, _sec_items in list(sections_index.items()):
+    if not isinstance(_sec_items, list): continue
+    _kept = []
+    for _it in _sec_items:
+        if not isinstance(_it, dict):
+            _kept.append(_it); continue
+        _it_slug = _it.get('slug', '')
+        _it_url = (_it.get('url', '') or '')
+        # External URLs: keep as-is
+        if _it_url.startswith('http') and 'topsarkarijobs.com' not in _it_url:
+            _kept.append(_it); continue
+        # No slug: keep (no detail page expected)
+        if not _it_slug:
+            _kept.append(_it); continue
+        # Slug has disk page: OK
+        if _it_slug in _disk_slugs:
+            _kept.append(_it); continue
+        # Slug NOT on disk: try fuzzy match
+        _it_tokens = _name_tokens(_it.get('name', ''))
+        if len(_it_tokens) < 2:
+            _recon_removed += 1; continue
+        _best_slug = None; _best_score = 0
+        for _ds, _dt in _disk_tokens.items():
+            _common = _it_tokens & _dt
+            if len(_common) >= max(3, int(len(_it_tokens) * 0.55)):
+                _score = len(_common)
+                if _score > _best_score:
+                    _best_score = _score; _best_slug = _ds
+        if _best_slug:
+            _it['slug'] = _best_slug
+            _kept.append(_it)
+            _recon_fixed += 1
+        else:
+            _recon_removed += 1   # no matching page; drop item
+    sections_index[_sec_key] = _kept
+
+if _recon_fixed or _recon_removed:
+    print(f"  [reconcile] sections-index fixed {_recon_fixed} slugs, removed {_recon_removed} dead items")
 
 write(str(ROOT/'sections-index.json'), json.dumps(sections_index, ensure_ascii=False, separators=(',',':')))
 # Update version string in index.html to bust cache
@@ -5783,6 +5913,13 @@ def verify_one_job_one_url():
             for _it in _cat_items:
                 if isinstance(_it, dict) and _it.get('slug'):
                     _valid.add(_it['slug'])
+    # Also include DU items (govt schemes, csc pdf etc — same as orphan check)
+    for _du_sec in (DU_SECS or []):
+        for _du_it in (_du_sec.get('items', []) or []):
+            _du_name = _du_it.get('name', '') or _du_it.get('title', '')
+            if _du_name:
+                _du_slug = slugify(_du_name)[:80]
+                if _du_slug: _valid.add(_du_slug)
 
     # STEP 1: Clean stale redirects (slug now valid but redirect blocks it)
     rpath = str(ROOT/'_redirects')

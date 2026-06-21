@@ -4,63 +4,163 @@
     {
       "source": "/version.json",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=0, s-maxage=600, stale-while-revalidate=3600" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, s-maxage=600, stale-while-revalidate=3600"
+        }
       ]
     },
     {
       "source": "/(header|footer).html",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800"
+        }
       ]
     },
     {
       "source": "/header_links.json",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800"
+        }
       ]
     },
     {
       "source": "/config.json",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800" },
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
       ]
     },
     {
       "source": "/(Complete_Jobs_Full_Data|jobs-index|jobs|dailyupdates|sections-index|services|tools|Qualification_Wise_Jobs|homepage-mini).json",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=600, s-maxage=3600, stale-while-revalidate=86400" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=600, s-maxage=3600, stale-while-revalidate=86400"
+        }
       ]
     },
     {
       "source": "/data/(.*).json",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=600, s-maxage=3600, stale-while-revalidate=86400" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=600, s-maxage=3600, stale-while-revalidate=86400"
+        }
       ]
     },
     {
       "source": "/(.*).(js|css)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=86400, s-maxage=604800, stale-while-revalidate=604800" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, s-maxage=604800, stale-while-revalidate=604800"
+        }
       ]
     },
     {
       "source": "/(.*).(png|jpg|jpeg|webp|gif|svg|ico|woff|woff2|ttf)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=2592000, s-maxage=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=2592000, s-maxage=31536000, immutable"
+        }
       ]
     },
     {
       "source": "/jobs/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=600, s-maxage=86400, stale-while-revalidate=604800" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=600, s-maxage=86400, stale-while-revalidate=604800"
+        }
       ]
     },
     {
       "source": "/sw.js",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
       ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/about.html",
+      "destination": "/about/",
+      "permanent": true
+    },
+    {
+      "source": "/helpdesk.html",
+      "destination": "/helpdesk/",
+      "permanent": true
+    },
+    {
+      "source": "/terms.html",
+      "destination": "/terms/",
+      "permanent": true
+    },
+    {
+      "source": "/privacy.html",
+      "destination": "/privacy/",
+      "permanent": true
+    },
+    {
+      "source": "/disclaimer.html",
+      "destination": "/disclaimer/",
+      "permanent": true
+    },
+    {
+      "source": "/result.html",
+      "destination": "/section/results/",
+      "permanent": true
+    },
+    {
+      "source": "/tools.html",
+      "destination": "/tools/",
+      "permanent": true
+    },
+    {
+      "source": "/govt-services.html",
+      "destination": "/govt-services/",
+      "permanent": true
+    },
+    {
+      "source": "/resume-maker.html",
+      "destination": "/resume-maker/",
+      "permanent": true
+    },
+    {
+      "source": "/tools-audio-video.html",
+      "destination": "/tools/audio-video/",
+      "permanent": true
+    },
+    {
+      "source": "/view.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/category.html",
+      "destination": "/category/popular/",
+      "permanent": true
     }
   ]
 }
