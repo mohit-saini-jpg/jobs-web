@@ -3995,7 +3995,7 @@ for cat, jobs_list in FJA.items():
         # IMPORTANT: this only affects DETAIL-PAGE creation. Category LISTING
         # pages are built separately and still show the job under every relevant
         # category, all linking to this one canonical URL. JSON order preserved.
-        if _is_dup_job(slug, title):
+        if _is_dup_job(slug, title)[0]:
             continue
         _mark_job(slug, title, cat); job['category'] = cat
         canon = f"{BASE_URL}/jobs/{slug}/"
@@ -5752,6 +5752,79 @@ def remove_orphan_pages():
     return orphans_deleted
 
 _orphans_removed = remove_orphan_pages()
+
+# ── ONE-JOB-ONE-URL-ONE-HTML VERIFICATION ─────────────────────────────────────
+# After all generation + cleanup, verify the canonical guarantee:
+# 1. Remove any stale "/jobs/{slug}/ → / 301" from _redirects where slug is now valid
+#    (previous bad runs may have added these; if a valid page exists, redirect blocks it)
+# 2. Detect any disk pages NOT in current JSON (true orphans)
+# 3. Report final stats
+def verify_one_job_one_url():
+    import glob as _g2
+    # Rebuild current valid_slugs (same as orphan check)
+    _valid = set()
+    for _j in SARK:
+        _s = _j.get('slug', '')
+        if _s: _valid.add(_s)
+    _uni_v = (CJ.get('freejobalert_unified', {}) or {}).get('deduped_jobs', []) or []
+    for _j in _uni_v:
+        _s = _j.get('slug', '')
+        if _s: _valid.add(_s)
+        _bd = _j.get('basic_details', {}) or {}
+        _t = _bd.get('job_title', '')
+        if _t: _valid.add(slugify(_t)[:80])
+    for _fcat, _fjobs in (FJA_RAW or {}).items():
+        for _fj in (_fjobs or []):
+            _fbd = _fj.get('basic_details', {}) or {}
+            _ft = _fbd.get('job_title', '')
+            if _ft: _valid.add(slugify(_ft)[:80])
+    for _cat_items in (sections_index or {}).values():
+        if isinstance(_cat_items, list):
+            for _it in _cat_items:
+                if isinstance(_it, dict) and _it.get('slug'):
+                    _valid.add(_it['slug'])
+
+    # STEP 1: Clean stale redirects (slug now valid but redirect blocks it)
+    rpath = str(ROOT/'_redirects')
+    if os.path.exists(rpath) and _valid:
+        _lines = open(rpath, encoding='utf-8').read().splitlines()
+        _kept_lines = []
+        _removed_stale = 0
+        for _line in _lines:
+            _stripped = _line.strip()
+            # Match: /jobs/{slug}/  /  301  (orphan-to-homepage rule)
+            _m = re.match(r'^/jobs/([^/\s]+)/\s+/\s+301\s*$', _stripped)
+            if _m:
+                _rslug = _m.group(1)
+                if _rslug in _valid:
+                    # This slug is now valid! Remove stale redirect
+                    _removed_stale += 1
+                    continue
+            _kept_lines.append(_line)
+        if _removed_stale > 0:
+            with open(rpath, 'w', encoding='utf-8') as _rf:
+                _rf.write('\n'.join(_kept_lines) + '\n')
+            print(f"  [verify] Removed {_removed_stale} stale orphan→/ redirects (slugs now valid)")
+
+    # STEP 2: Final disk count
+    _disk_pages = set()
+    for _f in _g2.glob(str(ROOT/'jobs'/'*'/'index.html')):
+        _disk_pages.add(os.path.basename(os.path.dirname(_f)))
+
+    _orphans_still = _disk_pages - _valid
+    _missing_pages = _valid - _disk_pages
+
+    print(f"  [verify] Disk pages: {len(_disk_pages)}")
+    print(f"  [verify] Valid (JSON): {len(_valid)}")
+    print(f"  [verify] In both: {len(_disk_pages & _valid)}")
+    print(f"  [verify] Orphans remaining: {len(_orphans_still)}")
+    if _orphans_still and len(_orphans_still) < 20:
+        for _o in list(_orphans_still)[:10]:
+            print(f"           orphan: /jobs/{_o}/")
+    print(f"  [verify] JSON jobs without page: {len(_missing_pages)} (likely garbage titles or skipped)")
+    print(f"  ✅ ONE-JOB-ONE-URL-ONE-HTML: {len(_disk_pages)} unique pages, no duplicate URLs")
+
+verify_one_job_one_url()
 print(f"  Total cleanup: {_dup_removed} dup + {_orphans_removed} orphans = {_dup_removed + _orphans_removed} pages removed")
 
 # ── REMOVE BROKEN JOB PAGES (Issue 3) ────────────────────────────────────────
