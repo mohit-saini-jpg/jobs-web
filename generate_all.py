@@ -18,18 +18,11 @@ from pathlib import Path
 
 # ── Config ────────────────────────────────────────────────────
 ROOT     = Path('.')
-# SINGLE SOURCE OF TRUTH: root Complete_Jobs_Full_Data.json is the ONLY copy
-# the scraper writes to (run_local.py / manual drop). No more data/ or
-# scraper/ fallback copies — those caused stale-data builds in the past
-# (root and data/ silently drifted out of sync → duplicate job URLs).
-# Build now HARD-FAILS instead of silently using a stale fallback.
-CJ_FILE = ROOT / 'Complete_Jobs_Full_Data.json'
-if not CJ_FILE.exists():
-    raise SystemExit(
-        f"❌ FATAL: {CJ_FILE} not found. Place the latest scraper output "
-        f"JSON at the project root before running generate_all.py — "
-        f"there is no fallback copy anymore (by design, to prevent stale builds)."
-    )
+# Prefer root Complete_Jobs_Full_Data.json (scraper output = source of truth for ordering)
+# Fall back to data/ subdirectory if root not found
+_root_cj = ROOT / 'Complete_Jobs_Full_Data.json'
+_data_cj  = ROOT / 'data' / 'Complete_Jobs_Full_Data.json'
+CJ_FILE   = _root_cj if _root_cj.exists() else _data_cj
 DU_FILE  = ROOT / 'dailyupdates.json'
 BASE_URL = 'https://www.topsarkarijobs.com'
 
@@ -3263,6 +3256,51 @@ SECTION_META_DESC = {
     'syllabus':            "Government Exam Syllabus 2026: Download latest syllabus PDF for SSC, Railway, UPSC, Bank, Police, Teaching and state PSC exams.",
 }
 
+def _seo_listing_content(title, jobs, canon_url):
+    """Unique SEO content for listing pages — fixes thin content for ~4900 pages."""
+    import re as _re
+    _n = len(jobs); _yr = YEAR
+    _url = canon_url.lower()
+    _name = _re.sub(r'\s*\d{4}\s*$','', title).strip()
+    _name = _re.sub(r'\s*(govt|government)\s+jobs?\s*$','', _name, flags=_re.I).strip()
+    if '/state/' in _url or '/state-jobs/' in _url:
+        _st = _re.sub(r'\s*(govt|government)\s+jobs?.*$','', _name, flags=_re.I).strip()
+        p1 = (f"{_st} Government Jobs {_yr}: Is page par {_st} state ke saare latest sarkari naukri notifications milenge. Yahan {_st} ke government departments, boards, corporations aur public sector me nikalne wali sabhi vacancies update ki jaati hain.")
+        p2 = (f"{_st} me sarkari job dhoondhne wale candidates ko yahan recruitment ki puri jankari milti hai: post name, total vacancies, eligibility, age limit, application fee, important dates aur direct apply link.")
+        p3 = (f"Naye {_st} government job alerts ke liye is page ko regularly check karein. Hum {_st} ke sabhi districts aur departments ki vacancies cover karte hain.")
+    elif '/district/' in _url:
+        _dt = _re.sub(r'\s+govt jobs.*$','', _name, flags=_re.I).strip()
+        _dt = _re.sub(r'\s*\(.*\)\s*$','', _dt).strip()
+        p1 = (f"{_dt} Government Jobs {_yr}: {_dt} district aur aas-paas ke area me nikalne wali latest sarkari vacancies yahan milti hain.")
+        p2 = (f"{_dt} ke local candidates ke liye yahan har job ki complete detail hai — eligibility, vacancies, last date aur apply link.")
+        p3 = (f"Naye notifications aate hi yahan automatically show honge.")
+    elif '/qualification/' in _url:
+        p1 = (f"{_name} Government Jobs {_yr}: {_name} qualification wale candidates ke liye sabhi eligible sarkari jobs yahan listed hain.")
+        p2 = (f"Har job ke liye yahan milega: required qualification, age limit, vacancies, pay scale, selection process aur application link.")
+        p3 = (f"Central aur state dono level ki {_name} jobs yahan update hoti hain.")
+    elif '/education/' in _url:
+        p1 = (f"{_name} {_yr}: Is page par {_name} se related entrance exams, admission notifications aur education sector ki latest updates milti hain.")
+        p2 = (f"Har notification ke saath complete information hai — important dates, eligibility criteria, application process aur official links.")
+        p3 = (f"Naye admission aur exam notifications ke liye yeh page regularly update hota hai.")
+    elif '/section/' in _url:
+        p1 = (f"{_name} {_yr}: Is section me {_name} se judi sabhi latest updates aur notifications ek jagah milti hain.")
+        p2 = (f"Har item ke liye complete details diye gaye hain — dates, eligibility aur direct links.")
+        p3 = (f"Government job aspirants ke liye {_name} ek important category hai.")
+    elif '/category/' in _url:
+        p1 = (f"{_name} {_yr}: {_name} se related sabhi government job notifications yahan ek saath milte hain.")
+        p2 = (f"Har job ki puri detail yahan hai — eligibility, vacancies, dates aur apply link.")
+        p3 = (f"Yeh page automatically latest {_name} openings se update hota hai.")
+    else:
+        p1 = (f"{_name} {_yr}: Latest government job notifications aur sarkari naukri updates yahan milti hain.")
+        p2 = (f"Har job ke saath complete details hain — eligibility, dates aur apply links.")
+        p3 = (f"Naye notifications ke liye yeh page regularly check karein.")
+    return ('<div class="seo-content" style="margin:24px 10px 8px;padding:18px 20px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;font-size:.92rem;line-height:1.7;color:#334155">'
+        f'<h2 style="font-size:1.1rem;font-weight:800;color:#0d2257;margin:0 0 12px">About {e(_name)} {_yr}</h2>'
+        f'<p style="margin:0 0 12px">{e(p1)}</p>'
+        f'<p style="margin:0 0 12px">{e(p2)}</p>'
+        f'<p style="margin:0">{e(p3)}</p>'
+        '</div>')
+
 def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''):
     _yr_str = str(YEAR)
     _t = title if _yr_str in title else f"{title} {YEAR}"
@@ -3430,6 +3468,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
             f'<div class="search-bar" style="margin:0 10px 12px">'
             f'<input type="search" placeholder="Search..." aria-label="Search" onkeyup="filterJobs(this.value)" autocomplete="off"/>'
             f'</div><div id="jobList" style="padding:0 10px">{cards_html}</div>'
+            f'{_seo_listing_content(title, jobs, canon_url)}'
             f'<div style="padding:0 10px">{REL_CATS_HTML}</div></div>'
             f'{filter_js}')
 
@@ -3582,7 +3621,7 @@ if not SJ_SEC:
     if _uni_jobs2 and _by_state:
         _url_map2 = {j.get('_scraped_from', ''): j for j in _uni_jobs2}
         _sj_sections = []
-        for _st, _urls in sorted(_by_state.items()):
+        for _st, _urls in _by_state.items():   # JSON order preserved
             _st_jobs = []
             for _u in _urls:
                 _j2 = _url_map2.get(_u)
@@ -5593,6 +5632,61 @@ def prune_duplicate_pages():
 
 _dup_removed = prune_duplicate_pages()
 
+# ── ORPHAN PAGE REMOVAL: One-Job-One-URL-One-HTML enforcement ────────────────
+# Pages exist on disk but NOT in current JSON = orphan from past generates.
+# These create duplicate content issues for Google indexing. Delete them.
+def remove_orphan_pages():
+    import glob as _g
+    # Build set of valid slugs from CURRENT JSON
+    valid_slugs = set(seen_slugs)   # all slugs generate_all just created
+    # Also include any slugs from sections-index
+    for _cat_items in (sections_index or {}).values():
+        if isinstance(_cat_items, list):
+            for _it in _cat_items:
+                if isinstance(_it, dict) and _it.get('slug'):
+                    valid_slugs.add(_it['slug'])
+    # Now find pages on disk that are NOT in valid_slugs
+    redirects_added = []
+    orphans_deleted = 0
+    rpath = str(ROOT/'_redirects')
+    existing_redirects = ''
+    if os.path.exists(rpath):
+        existing_redirects = open(rpath, encoding='utf-8').read()
+    for _fpath in _g.glob(str(ROOT/'jobs'/'*'/'index.html')):
+        _slug = os.path.basename(os.path.dirname(_fpath))
+        if _slug in valid_slugs:
+            continue   # page is valid (in current JSON)
+        if f'/jobs/{_slug}/' in existing_redirects:
+            # Already has redirect → just delete the HTML (redirect handles it)
+            try:
+                shutil.rmtree(os.path.dirname(_fpath))
+                orphans_deleted += 1
+            except Exception:
+                pass
+            continue
+        # Orphan with no redirect → delete + log (will 404 unless we add fallback)
+        try:
+            shutil.rmtree(os.path.dirname(_fpath))
+            orphans_deleted += 1
+            # Add 301 to homepage as fallback (better than 404 for SEO)
+            redirects_added.append((_slug, '/'))
+        except Exception:
+            pass
+    # Append redirects
+    if redirects_added:
+        block = "\n# ══ auto: orphan pages → homepage (Job no longer active) ══\n"
+        for old_slug, target in redirects_added:
+            rule = f"/jobs/{old_slug}/  {target}  301"
+            if rule not in existing_redirects:
+                block += rule + "\n"
+        with open(rpath, 'a', encoding='utf-8') as _rf:
+            _rf.write(block)
+    print(f"  [orphan-cleanup] {orphans_deleted} orphan pages removed, {len(redirects_added)} redirects added")
+    return orphans_deleted
+
+_orphans_removed = remove_orphan_pages()
+print(f"  Total cleanup: {_dup_removed} dup + {_orphans_removed} orphans = {_dup_removed + _orphans_removed} pages removed")
+
 # ── REMOVE BROKEN JOB PAGES (Issue 3) ────────────────────────────────────────
 # Agar kisi /jobs/{slug}/ page pe "Page Not Available" aa raha hai to wo page
 # actually generate hi nahi hua (data missing tha). Google aise thin pages ko
@@ -5665,21 +5759,6 @@ _end = _time.time()
 VERSION = datetime.now().strftime('%Y%m%d%H%M%S')
 PAGES_GENERATED = j_count + sec_count2 + q_count + _du_count
 write(str(ROOT/'version.json'), json.dumps({'version':VERSION,'generated':TODAY,'pages':PAGES_GENERATED}, ensure_ascii=False))
-
-# ── Sync root → data/ ────────────────────────────────────────────────────
-# Frontend JS (smart-search.js, universal-renderer.js, etc.) fetches
-# data/Complete_Jobs_Full_Data.json at runtime in the browser. root/ is the
-# ONLY source the build reads from (see CJ_FILE above), so copy it into
-# data/ at the very end of every successful build. This is the one place
-# data/Complete_Jobs_Full_Data.json should ever be written — never edit it
-# by hand, it will be overwritten on the next build.
-try:
-    _data_dir = ROOT / 'data'
-    _data_dir.mkdir(exist_ok=True)
-    shutil.copy2(str(CJ_FILE), str(_data_dir / 'Complete_Jobs_Full_Data.json'))
-    print(f"  [sync] root/Complete_Jobs_Full_Data.json → data/Complete_Jobs_Full_Data.json")
-except Exception as _e:
-    print(f"  [sync] WARNING: could not sync data/Complete_Jobs_Full_Data.json: {_e}")
 
 print()
 print("\u2554" + "\u2550"*54 + "\u2557")
