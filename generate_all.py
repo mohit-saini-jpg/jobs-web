@@ -18,11 +18,18 @@ from pathlib import Path
 
 # ── Config ────────────────────────────────────────────────────
 ROOT     = Path('.')
-# Prefer root Complete_Jobs_Full_Data.json (scraper output = source of truth for ordering)
-# Fall back to data/ subdirectory if root not found
-_root_cj = ROOT / 'Complete_Jobs_Full_Data.json'
-_data_cj  = ROOT / 'data' / 'Complete_Jobs_Full_Data.json'
-CJ_FILE   = _root_cj if _root_cj.exists() else _data_cj
+# SINGLE SOURCE OF TRUTH: root Complete_Jobs_Full_Data.json is the ONLY copy
+# the scraper writes to (run_local.py / manual drop). No more data/ or
+# scraper/ fallback copies — those caused stale-data builds in the past
+# (root and data/ silently drifted out of sync → duplicate job URLs).
+# Build now HARD-FAILS instead of silently using a stale fallback.
+CJ_FILE = ROOT / 'Complete_Jobs_Full_Data.json'
+if not CJ_FILE.exists():
+    raise SystemExit(
+        f"❌ FATAL: {CJ_FILE} not found. Place the latest scraper output "
+        f"JSON at the project root before running generate_all.py — "
+        f"there is no fallback copy anymore (by design, to prevent stale builds)."
+    )
 DU_FILE  = ROOT / 'dailyupdates.json'
 BASE_URL = 'https://www.topsarkarijobs.com'
 
@@ -5658,6 +5665,21 @@ _end = _time.time()
 VERSION = datetime.now().strftime('%Y%m%d%H%M%S')
 PAGES_GENERATED = j_count + sec_count2 + q_count + _du_count
 write(str(ROOT/'version.json'), json.dumps({'version':VERSION,'generated':TODAY,'pages':PAGES_GENERATED}, ensure_ascii=False))
+
+# ── Sync root → data/ ────────────────────────────────────────────────────
+# Frontend JS (smart-search.js, universal-renderer.js, etc.) fetches
+# data/Complete_Jobs_Full_Data.json at runtime in the browser. root/ is the
+# ONLY source the build reads from (see CJ_FILE above), so copy it into
+# data/ at the very end of every successful build. This is the one place
+# data/Complete_Jobs_Full_Data.json should ever be written — never edit it
+# by hand, it will be overwritten on the next build.
+try:
+    _data_dir = ROOT / 'data'
+    _data_dir.mkdir(exist_ok=True)
+    shutil.copy2(str(CJ_FILE), str(_data_dir / 'Complete_Jobs_Full_Data.json'))
+    print(f"  [sync] root/Complete_Jobs_Full_Data.json → data/Complete_Jobs_Full_Data.json")
+except Exception as _e:
+    print(f"  [sync] WARNING: could not sync data/Complete_Jobs_Full_Data.json: {_e}")
 
 print()
 print("\u2554" + "\u2550"*54 + "\u2557")
