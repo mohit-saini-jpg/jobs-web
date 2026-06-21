@@ -6340,3 +6340,18 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 
 # ══ broken/empty job pages → homepage ══
 
+
+# ══ auto: duplicate job pages → canonical (One-HTML-One-URL) ══
+/jobs/ari-pune-project-assistant-recruitment-2026-apply-online/  /jobs/ari-pune-project-administrative-assistant-recruitment-2026-apply-online/  301
+/jobs/ministry-of-civil-aviation-young-professional-recruitment-2026-apply-online/  /jobs/ministry-of-civil-aviation-young-professional-recruitment-2026-apply-offline/  301
+/jobs/deendayal-port-authority-assistant-manager-recruitment-2026-apply-online/  /jobs/deendayal-port-authority-assistant-manager-recruitment-2026-apply-offline/  301
+/jobs/svnit-teaching-assistant-recruitment-2026-walkin/  /jobs/svnit-surat-teaching-assistant-recruitment-2026-walkin/  301
+/jobs/tiss-senior-research-officer-recruitment-2026-apply-online/  /jobs/tiss-recruitment-2026-apply-online-for-junior-research-officer-senior-research-o/  301
+/jobs/hll-associate-manager-junior-manager-recruitment-2026-apply-online/  /jobs/hll-recruitment-2026-apply-online-for-associate-manager-junior-manager-posts/  301
+/jobs/csir-cftri-project-associate-i-recruitment-2026-apply-online/  /jobs/csir-cftri-recruitment-2026-apply-online-for-project-associate-project-assistant/  301
+/jobs/iiitdm-jabalpur-junior-research-fellow-recruitment-2026-apply-online/  /jobs/iiitdm-jabalpur-junior-research-fellow-recruitment-2026-apply-offline/  301
+/jobs/iit-guwahati-project-associate-1-recruitment-2026-apply-online/  /jobs/iit-guwahati-senior-project-associate-recruitment-2026-apply-online/  301
+/jobs/iit-kanpur-project-assistant-recruitment-2026-apply-online/  /jobs/iit-kanpur-assistant-project-manager-recruitment-2026-apply-online/  301
+
+# ══ broken/empty job pages → homepage ══
+
