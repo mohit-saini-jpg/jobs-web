@@ -3525,6 +3525,43 @@ print("Loading JSON data...")
 _load_first_seen(ROOT)   # C1: load persisted datePosted map
 with open(CJ_FILE, encoding='utf-8') as f: CJ = json.load(f)
 with open(DU_FILE, encoding='utf-8') as f: DU = json.load(f)
+
+# ── BACKWARD COMPAT: Smart-search reads `freejobalert_categories` (old format).
+# New scraper puts everything in `freejobalert_unified`. Rebuild categories
+# from unified so search works. Also write back to data/ JSON file.
+_uni_for_search = CJ.get('freejobalert_unified', {}) or {}
+_uni_jobs_search = _uni_for_search.get('deduped_jobs', []) or []
+_fja_cats_existing = CJ.get('freejobalert_categories', {}) or {}
+_fja_cats_empty = sum(len(v) for v in _fja_cats_existing.values() if isinstance(v, list)) == 0
+
+if _uni_jobs_search and _fja_cats_empty:
+    print(f"  [search-compat] Rebuilding freejobalert_categories from {len(_uni_jobs_search)} unified jobs...")
+    _rebuilt_cats = {}
+    _by_fja = _uni_for_search.get('by_fja_category', {}) or {}
+    _url_to_uj = {j.get('_scraped_from',''): j for j in _uni_jobs_search}
+    for _cat_name, _urls in _by_fja.items():
+        _cat_jobs = []
+        for _u in _urls:
+            _uj = _url_to_uj.get(_u)
+            if _uj:
+                _cat_jobs.append(_uj)
+        if _cat_jobs:
+            _rebuilt_cats[_cat_name] = _cat_jobs
+    # Also create Latest_Notifications combining all unified jobs
+    if 'Latest_Notifications' not in _rebuilt_cats:
+        _rebuilt_cats['Latest_Notifications'] = _uni_jobs_search
+    CJ['freejobalert_categories'] = _rebuilt_cats
+    print(f"  [search-compat] Rebuilt {len(_rebuilt_cats)} FJA categories")
+    # Write back to data/ JSON so smart-search.js reads updated data
+    _data_path_search = ROOT / 'data' / 'Complete_Jobs_Full_Data.json'
+    if _data_path_search.parent.exists():
+        try:
+            with open(_data_path_search, 'w', encoding='utf-8') as _f:
+                json.dump(CJ, _f, ensure_ascii=False, separators=(',', ':'))
+            print(f"  [search-compat] data/Complete_Jobs_Full_Data.json updated")
+        except Exception as _e:
+            print(f"  [search-compat] data/ write failed: {_e}")
+
 # Inject slug field into DU items (for script.js buildSectionCard)
 import hashlib as _hlib2
 for _dsec in DU.get('sections', []):
@@ -5637,48 +5674,78 @@ _dup_removed = prune_duplicate_pages()
 # These create duplicate content issues for Google indexing. Delete them.
 def remove_orphan_pages():
     import glob as _g
-    # Build set of valid slugs from CURRENT JSON
-    valid_slugs = set(seen_slugs)   # all slugs generate_all just created
-    # Also include any slugs from sections-index
+    # Build set of valid slugs from CURRENT JSON data sources
+    valid_slugs = set()
+    # 1. Sarkari jobs
+    for _j in SARK:
+        _s = _j.get('slug', '')
+        if _s: valid_slugs.add(_s)
+    # 2. FJA unified jobs (with both title-based AND URL-based slugs for safety)
+    _uni_jobs_v = (CJ.get('freejobalert_unified', {}) or {}).get('deduped_jobs', []) or []
+    for _j in _uni_jobs_v:
+        _s = _j.get('slug', '')
+        if _s: valid_slugs.add(_s)
+        # Also title-based slug (in case scraper uses URL-based and generate uses title-based)
+        _bd = _j.get('basic_details', {}) or {}
+        _t = _bd.get('job_title', '')
+        if _t:
+            _title_slug = slugify(_t)[:80]
+            if _title_slug: valid_slugs.add(_title_slug)
+    # 3. FJA category jobs
+    for _fcat, _fjobs in (FJA_RAW or {}).items():
+        for _fj in (_fjobs or []):
+            _fbd = _fj.get('basic_details', {}) or {}
+            _ft = _fbd.get('job_title', '')
+            if _ft:
+                _fs = slugify(_ft)[:80]
+                if _fs: valid_slugs.add(_fs)
+    # 4. sections-index slugs
     for _cat_items in (sections_index or {}).values():
         if isinstance(_cat_items, list):
             for _it in _cat_items:
                 if isinstance(_it, dict) and _it.get('slug'):
                     valid_slugs.add(_it['slug'])
-    # Now find pages on disk that are NOT in valid_slugs
+    # 5. DU items (govt schemes, csc pdf, etc)
+    for _du_sec in (DU_SECS or []):
+        for _du_it in (_du_sec.get('items', []) or []):
+            _du_name = _du_it.get('name', '') or _du_it.get('title', '')
+            if _du_name:
+                _du_slug = slugify(_du_name)[:80]
+                if _du_slug: valid_slugs.add(_du_slug)
+
+    print(f"  [orphan-check] {len(valid_slugs)} valid slugs from current JSON")
+
+    # SAFETY: if valid_slugs is suspiciously small, ABORT (don't delete everything!)
+    if len(valid_slugs) < 100:
+        print(f"  [orphan-check] SAFETY ABORT — valid_slugs too small, skipping cleanup")
+        return 0
+
+    # Find orphan pages on disk
     redirects_added = []
     orphans_deleted = 0
     rpath = str(ROOT/'_redirects')
     existing_redirects = ''
     if os.path.exists(rpath):
         existing_redirects = open(rpath, encoding='utf-8').read()
+
     for _fpath in _g.glob(str(ROOT/'jobs'/'*'/'index.html')):
         _slug = os.path.basename(os.path.dirname(_fpath))
         if _slug in valid_slugs:
-            continue   # page is valid (in current JSON)
-        if f'/jobs/{_slug}/' in existing_redirects:
-            # Already has redirect → just delete the HTML (redirect handles it)
-            try:
-                shutil.rmtree(os.path.dirname(_fpath))
-                orphans_deleted += 1
-            except Exception:
-                pass
-            continue
-        # Orphan with no redirect → delete + log (will 404 unless we add fallback)
+            continue   # page is valid
+        # Orphan → delete HTML + add 301 to homepage
         try:
             shutil.rmtree(os.path.dirname(_fpath))
             orphans_deleted += 1
-            # Add 301 to homepage as fallback (better than 404 for SEO)
-            redirects_added.append((_slug, '/'))
+            if f'/jobs/{_slug}/' not in existing_redirects:
+                redirects_added.append((_slug, '/'))
         except Exception:
             pass
+
     # Append redirects
     if redirects_added:
         block = "\n# ══ auto: orphan pages → homepage (Job no longer active) ══\n"
         for old_slug, target in redirects_added:
-            rule = f"/jobs/{old_slug}/  {target}  301"
-            if rule not in existing_redirects:
-                block += rule + "\n"
+            block += f"/jobs/{old_slug}/  {target}  301\n"
         with open(rpath, 'a', encoding='utf-8') as _rf:
             _rf.write(block)
     print(f"  [orphan-cleanup] {orphans_deleted} orphan pages removed, {len(redirects_added)} redirects added")
