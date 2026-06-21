@@ -1205,6 +1205,24 @@ def _render_vac_group(vac_list, mode='vacancy'):
     cols = [c for c,_ in ALL_COLS if c in avail]
     if not cols: return _render_generic_rows(vac_list, _tbl_heading)
 
+    # ── FIX: If row has many unique keys but renderer matched very few standard cols,
+    # the table will look broken (only Sr+Total shows). Detect this case and use
+    # the GENERIC renderer instead, which preserves all original JSON keys as columns.
+    # E.g., JSON {"Sr. No.","Category","Posts as on 31.12.2025","Anticipated","Total"}
+    # → only "Total" matches → 5 real columns but rendering 1-2. Fallback fixes this.
+    _all_input_keys = set()
+    for _r in vac_list:
+        if isinstance(_r, dict):
+            for _k in _r.keys():
+                _ks = str(_k).strip()
+                # Skip meta keys
+                if _ks and _ks.lower() not in ('table_heading','tableheading','categorywise','category_wise'):
+                    _all_input_keys.add(_ks)
+    # If we matched fewer than 60% of unique input keys → input has rich data
+    # that we're losing. Use generic renderer to preserve everything.
+    if len(_all_input_keys) >= 3 and len(cols) < max(2, int(len(_all_input_keys) * 0.6)):
+        return _render_generic_rows(vac_list, _tbl_heading)
+
     # ── C3 FIX: clean rows + compute the real grand total ──
     def _to_int(v):
         m = re.search(r'\d[\d,]*', str(v or ''))
