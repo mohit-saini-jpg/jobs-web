@@ -5145,14 +5145,3 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /jobs/bmc-mpw-deo-and-more/  /jobs/bmc-recruitment-2026-apply-online-for-mpw-deo-and-more-posts/  301
 /jobs/mizoram-psc-junior-accounts-officer-1-posts/  /jobs/mizoram-psc-junior-accounts-officer-recruitment-2026-apply-online/  301
 /jobs/acms-recruitment-2026-apply-online-for-lower-division-clerk-and-dissection-hall/  /jobs/acms-recruitment-2026-apply-online-for-lower-division-clerk-and-dissection-hall-/  301
-
-# ══ auto: duplicate job pages → canonical (One-HTML-One-URL) ══
-/jobs/rajasthan-state-eligibility-test-set-2026/  /jobs/rajasthan-state-eligibility-test-set-2026-apply-online/  301
-/jobs/bihar-police-csbc-constable-special-branch-recruitment-2026-admit-card-for-83-po/  /jobs/bihar-police-csbc-constable-special-branch-recruitment-2026-exam-city-admit-card/  301
-/jobs/bihar-2-year-bed-admission-test-cet-bed-admissions-2026-download-result/  /jobs/bihar-2-year-bed-admission-test-cet-bed-admissions-2026-download-answer-key/  301
-
-# ══ broken/empty job pages → homepage ══
-/jobs/data/  /  301
-
-# ══ broken/empty job pages → homepage ══
-
