@@ -4386,6 +4386,106 @@ for job in SARK:
 
 print(f"  All /jobs/: {j_count}")
 
+# ── UPCOMING_JOBS + ADMISSIONS DETAIL PAGES ───────────────────────────────────
+# In sources: data/upcoming-jobs.json + data/admissions.json + sarkari_data raw
+# Section pages /section/upcoming-jobs/ + /section/admissions/ se click karne pe
+# pehle "Page Not Available" aata tha kyunki detail page hi nahi banti thi.
+# Permanent fix: yahan inke detail pages create karte hain SAME build_detail_page se.
+print("Generating /jobs/ pages (UPCOMING_JOBS + ADMISSIONS)...")
+_up_adm_jobs = []
+_seen_extra_slugs = set()
+
+def _read_jobs_file(_path):
+    if not os.path.exists(_path): return []
+    try:
+        _d = json.load(open(_path, encoding='utf-8'))
+        if isinstance(_d, dict): return _d.get('jobs', []) or []
+        if isinstance(_d, list): return _d
+    except Exception: pass
+    return []
+
+# Source 1: sarkari_data RAW (no garbage filter) - includes UPCOMING/ADMISSIONS
+for _j in (CJ.get('sarkari_data', {}) or {}).get('jobs', []) or []:
+    if _j.get('category') in ('UPCOMING_JOBS', 'ADMISSIONS'):
+        _t = _j.get('title','')
+        _s = _j.get('slug','') or slugify(_t)[:80]
+        if _s and _s not in _seen_extra_slugs:
+            _up_adm_jobs.append(_j); _seen_extra_slugs.add(_s)
+
+# Source 2: data/upcoming-jobs.json
+for _j in _read_jobs_file(str(ROOT/'data'/'upcoming-jobs.json')):
+    _j.setdefault('category', 'UPCOMING_JOBS')
+    _t = _j.get('title','') or _j.get('name','')
+    _s = _j.get('slug','') or slugify(_t)[:80]
+    if _s and _s not in _seen_extra_slugs:
+        _up_adm_jobs.append(_j); _seen_extra_slugs.add(_s)
+
+# Source 3: data/admissions.json
+for _j in _read_jobs_file(str(ROOT/'data'/'admissions.json')):
+    _j.setdefault('category', 'ADMISSIONS')
+    _t = _j.get('title','') or _j.get('name','')
+    _s = _j.get('slug','') or slugify(_t)[:80]
+    if _s and _s not in _seen_extra_slugs:
+        _up_adm_jobs.append(_j); _seen_extra_slugs.add(_s)
+
+# Generate pages
+_extra_created = 0
+_extra_skipped = 0
+for _j in _up_adm_jobs:
+    _t = _j.get('title','') or _j.get('name','')
+    if not _t: _extra_skipped += 1; continue
+    _slug = _j.get('slug','') or slugify(_t)[:80]
+    if not _slug: _extra_skipped += 1; continue
+    # Skip if already created (cross-source dedup)
+    if _is_dup_job(_slug, _t)[0]:
+        _extra_skipped += 1; continue
+    # Normalize through same pipeline as SARK
+    try:
+        _full = _normalize_sarkari_job(_j)
+    except Exception:
+        _full = dict(_j)
+    # Ensure required fields exist
+    _full.setdefault('title', _t)
+    _full.setdefault('post_name', _full.get('post_name','') or _full.get('postName','') or '')
+    # Important dates from flat fields (UPCOMING uses flat: last_date, application_start...)
+    if not _full.get('important_dates'):
+        _imp = {}
+        for _f in ('last_date','application_start','exam_date','result_date','admit_card_date'):
+            _v = _full.get(_f)
+            if _v: _imp[_f] = _v
+        if _imp: _full['important_dates'] = _imp
+    # Important links from flat
+    if not _full.get('important_links'):
+        _il = {}
+        for _ln in (_full.get('important_links') or []) if isinstance(_full.get('important_links'), list) else []:
+            if isinstance(_ln, dict):
+                _u = _ln.get('url') or _ln.get('link')
+                _l = _ln.get('label') or _ln.get('name')
+                if _u and _l: _il[slugify(_l)[:30] or 'link'] = _u
+        if _il: _full['important_links'] = _il
+    _cat = _full.get('category','')
+    _cat_label = 'Upcoming Job' if _cat == 'UPCOMING_JOBS' else 'Admission'
+    _bc_url = '/section/upcoming-jobs/' if _cat == 'UPCOMING_JOBS' else '/section/admissions/'
+    _bc_lbl = 'Upcoming Jobs' if _cat == 'UPCOMING_JOBS' else 'Admissions'
+    _canon = f"{BASE_URL}/jobs/{_slug}/"
+    _bc = [(_bc_lbl, f"{BASE_URL}{_bc_url}")]
+    try:
+        _page_html = build_detail_page(_full, _slug, _canon, _bc, _cat_label)
+        write(str(ROOT/'jobs'/_slug/'index.html'), _page_html)
+        _mark_job(_slug, _t, _cat)
+        # Register in jobs_index for sitemap
+        _ld = ''
+        _imp = _full.get('important_dates') or {}
+        if isinstance(_imp, dict):
+            _ld = _imp.get('last_date','') or _imp.get('last_date_apply_online','') or _imp.get('last_date_to_apply','')
+        jobs_index[_slug] = {'cat': _cat, 'title': _t[:120], 'last_date': str(_ld)[:30]}
+        _extra_created += 1
+    except Exception as _e:
+        print(f"  [extra] failed {_slug}: {_e}")
+        _extra_skipped += 1
+
+print(f"  UPCOMING/ADMISSIONS pages: {_extra_created} created, {_extra_skipped} skipped (total source: {len(_up_adm_jobs)})")
+
 # 3. STATE PAGES
 print("Generating /state/ pages...")
 
