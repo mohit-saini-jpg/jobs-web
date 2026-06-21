@@ -3593,6 +3593,47 @@ if not SJ_SEC:
                                      'items': _st_jobs})
         SJ_SEC = _sj_sections
         print(f"  [unified→state] {len(SJ_SEC)} state sections from unified data")
+# ── STATE JOBS: Add correct slug to prevent search duplicates ────────────────
+# Smart search uses slugify(item.name) for state_jobs items → wrong slug
+# (e.g. 'BEL – Havildar – 4 Posts' → 'bel-havildar-security-4-posts' which is wrong).
+# Fix: Build FJA title→slug lookup, cross-match state_jobs items to correct FJA slug.
+# If no match, use _scraped_from URL as fallback.
+_fja_title_slug = {}
+for _fcat, _fjobs in (FJA_RAW or {}).items():
+    for _fj in (_fjobs or []):
+        _fbd = (_fj.get('basic_details') or {})
+        _ftit = _fbd.get('job_title','').strip().lower()
+        if _ftit:
+            _fja_title_slug[_ftit] = slugify(_fbd.get('job_title',''))[:80]
+
+def _state_item_slug(item):
+    # Try: cross-match to FJA slug by keywords in name
+    _name = (item.get('name','') or '').strip()
+    _name_low = _name.lower()
+    # Extract key words (org + post keywords)
+    _words = set(re.sub(r'[^a-z0-9\s]','',_name_low).split()) - {'posts','post','and','for','of','the','in','a'}
+    # Find best FJA match
+    best_match = None; best_score = 0
+    for _ftit, _fslug in _fja_title_slug.items():
+        _ft_words = set(re.sub(r'[^a-z0-9\s]','',_ftit).split()) - {'recruitment','2026','apply','online','offline','notification','jobs','vacancy'}
+        _common = _words & _ft_words
+        if len(_common) >= 2:
+            score = len(_common)
+            if score > best_score:
+                best_score = score; best_match = _fslug
+    if best_match: return best_match
+    # Fallback: _scraped_from URL
+    _src = item.get('_scraped_from','')
+    if _src:
+        _m = re.search(r'/articles/([^/?#]+)/?$', _src)
+        if _m: return slugify(_m.group(1))[:80]
+    return slugify(_name)[:80]
+
+for _sjsec in SJ_SEC:
+    for _sjit in _sjsec.get('items', []):
+        if not _sjit.get('slug'):
+            _sjit['slug'] = _state_item_slug(_sjit)
+
 DU_SECS = DU.get('sections', [])
 
 STATE_SLUG_FIX = {
@@ -5281,26 +5322,60 @@ def _parse_date(s):
         except: pass
     return None
 
-if 'UPCOMING_JOBS' not in sections_index or len(sections_index.get('UPCOMING_JOBS',[])) < 3:
-    _upcoming_candidates = []
+# ── UPCOMING_JOBS + ADMISSIONS: merged_sarkari_data se HAMESHA rebuild ─────────
+# PERMANENT FIX: if-not condition hata diya. Har generate run pe fresh data aayega.
+_msd_path2 = str(ROOT.parent/'scraper'/'merged_sarkari_data.json')
+if not os.path.exists(_msd_path2):
+    _msd_path2 = str(ROOT/'scraper'/'merged_sarkari_data.json')
+_msd2 = {}
+if os.path.exists(_msd_path2):
+    try: _msd2 = json.load(open(_msd_path2, encoding='utf-8'))
+    except Exception: pass
+
+# UPCOMING_JOBS
+_up_items = []
+for _sj in _msd2.get('jobs', []):
+    if _sj.get('category') != 'UPCOMING_JOBS': continue
+    _st = safe(_sj.get('title',''))
+    if not _st: continue
+    _sl = _sj.get('slug','') or slugify(_st)[:80]
+    _imp = _sj.get('important_dates') or {}
+    _ld = safe(_imp.get('last_date_apply_online','') or _imp.get('last_date_to_apply','') or _imp.get('last_date',''))
+    _up_items.append({'slug':_sl,'name':_st,'date':_ld})
+if not _up_items:
+    # Fallback: SARK from current JSON
     for _sj in SARK:
+        if _sj.get('category') != 'UPCOMING_JOBS': continue
         _st = safe(_sj.get('title',''))
         if not _st: continue
+        _sl = slugify(_st)[:80]
         _imp = _sj.get('important_dates') or {}
-        # Check exam_date or application_begin is in the future
-        _exam_d = _parse_date(_imp.get('exam_date','') or _imp.get('written_exam_date',''))
-        _begin_d = _parse_date(_imp.get('application_begin','') or _imp.get('start_date',''))
-        _future_d = None
-        if _exam_d and _exam_d > _today: _future_d = _exam_d
-        elif _begin_d and _begin_d > _today: _future_d = _begin_d
-        if _future_d:
-            _sl = slugify(_st)[:80]
-            _ld = safe(_imp.get('last_date_apply_online','') or _imp.get('last_date_to_apply','') or _imp.get('last_date',''))
-            _upcoming_candidates.append((_future_d, {'slug':_sl,'name':_st,'date':_ld}))
-    # Sort by nearest future date first
-    _upcoming_candidates.sort(key=lambda x: x[0])
-    if _upcoming_candidates:
-        sections_index['UPCOMING_JOBS'] = [item for _, item in _upcoming_candidates[:10]]
+        _ld = safe(_imp.get('last_date_apply_online','') or _imp.get('last_date_to_apply','') or _imp.get('last_date',''))
+        _up_items.append({'slug':_sl,'name':_st,'date':_ld})
+if _up_items:
+    sections_index['UPCOMING_JOBS'] = _up_items[:10]
+
+# ADMISSIONS
+_adm_items = []
+for _sj in _msd2.get('jobs', []):
+    if _sj.get('category') != 'ADMISSIONS': continue
+    _st = safe(_sj.get('title',''))
+    if not _st: continue
+    _sl = _sj.get('slug','') or slugify(_st)[:80]
+    _imp = _sj.get('important_dates') or {}
+    _ld = safe(_imp.get('last_date_apply_online','') or _imp.get('last_date_to_apply','') or _imp.get('last_date',''))
+    _adm_items.append({'slug':_sl,'name':_st,'date':_ld})
+if not _adm_items:
+    for _sj in SARK:
+        if _sj.get('category') != 'ADMISSIONS': continue
+        _st = safe(_sj.get('title',''))
+        if not _st: continue
+        _sl = slugify(_st)[:80]
+        _imp = _sj.get('important_dates') or {}
+        _ld = safe(_imp.get('last_date_apply_online','') or _imp.get('last_date_to_apply','') or _imp.get('last_date',''))
+        _adm_items.append({'slug':_sl,'name':_st,'date':_ld})
+if _adm_items:
+    sections_index['ADMISSIONS'] = _adm_items[:10]
 
 # ── OFFLINE_FORM: FJA jobs se HAMESHA rebuild (permanent fix) ────────────────
 _offline_items = []; _offline_seen = set()
