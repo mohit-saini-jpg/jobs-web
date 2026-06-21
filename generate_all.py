@@ -3256,6 +3256,123 @@ SECTION_META_DESC = {
     'syllabus':            "Government Exam Syllabus 2026: Download latest syllabus PDF for SSC, Railway, UPSC, Bank, Police, Teaching and state PSC exams.",
 }
 
+def _seo_listing_content(title, jobs, canon_url):
+    """Generate unique, human-like SEO content for listing pages to fix thin
+    content. Content adapts to page type (state/district/qualification/section)
+    based on the canonical URL. This appears AFTER the job list."""
+    import re as _re
+    _n = len(jobs)
+    _yr = YEAR
+    _url = canon_url.lower()
+    # Clean page name from title (remove year + suffixes)
+    _name = _re.sub(r'\s*\d{4}\s*$','', title).strip()
+    _name = _re.sub(r'\s*(govt|government)\s+jobs?\s*$','', _name, flags=_re.I).strip()
+
+    # Determine page type from URL
+    if '/state/' in _url or '/state-jobs/' in _url:
+        _ptype = 'state'
+    elif '/district/' in _url:
+        _ptype = 'district'
+    elif '/qualification/' in _url:
+        _ptype = 'qualification'
+    elif '/education/' in _url:
+        _ptype = 'education'
+    elif '/section/' in _url:
+        _ptype = 'section'
+    elif '/category/' in _url:
+        _ptype = 'category'
+    else:
+        _ptype = 'generic'
+
+    # Build type-specific intro paragraphs (human-like, helpful, unique)
+    if _ptype == 'state':
+        _st = _re.sub(r'\s*(govt|government)\s+jobs?.*$','', _name, flags=_re.I).strip()
+        p1 = (f"{_st} Government Jobs {_yr}: Is page par {_st} state ke saare latest "
+              f"sarkari naukri notifications milenge. Yahan {_st} ke government "
+              f"departments, boards, corporations aur public sector me nikalne wali "
+              f"sabhi vacancies update ki jaati hain — daily basis par.")
+        p2 = (f"{_st} me sarkari job dhoondhne wale candidates ko yahan recruitment "
+              f"ki puri jankari milti hai: post name, total vacancies, eligibility, "
+              f"age limit, application fee, important dates aur direct apply link. "
+              f"Har notification ke liye alag detail page hai jahan se aap official "
+              f"website par apply kar sakte hain.")
+        p3 = (f"Naye {_st} government job alerts ke liye is page ko regularly check "
+              f"karein. Hum {_st} ke sabhi districts aur departments ki vacancies "
+              f"cover karte hain — clerk, police, teaching, health, engineering aur "
+              f"aur bhi kai categories me.")
+    elif _ptype == 'district':
+        _dt = _re.sub(r'\s+govt jobs.*$','', _name, flags=_re.I).strip()
+        _dt = _re.sub(r'\s*\(.*\)\s*$','', _dt).strip()
+        p1 = (f"{_dt} Government Jobs {_yr}: {_dt} district aur aas-paas ke area me "
+              f"nikalne wali latest sarkari vacancies yahan milti hain. District-level "
+              f"recruitment, local government offices, courts aur departments ki jobs "
+              f"is page par update hoti hain.")
+        p2 = (f"{_dt} ke local candidates ke liye yahan har job ki complete detail "
+              f"hai — eligibility, vacancies, last date aur apply link. Apne district "
+              f"me ghar ke paas sarkari naukri pane ke liye yeh page bookmark karein.")
+        p3 = (f"Agar abhi {_dt} me koi active vacancy nahi hai, to aap apne state ke "
+              f"saare jobs bhi dekh sakte hain. Naye notifications aate hi yahan "
+              f"automatically show honge.")
+    elif _ptype == 'qualification':
+        p1 = (f"{_name} Government Jobs {_yr}: {_name} qualification wale candidates "
+              f"ke liye sabhi eligible sarkari jobs yahan listed hain. Yeh page un "
+              f"sabhi recruitments ko cover karta hai jahan {_name} minimum education "
+              f"requirement hai.")
+        p2 = (f"Har job ke liye yahan milega: required qualification, age limit, "
+              f"vacancies, pay scale, selection process aur application link. {_name} "
+              f"pass students apni eligibility ke hisaab se directly apply kar sakte hain.")
+        p3 = (f"Central aur state dono level ki {_name} jobs yahan update hoti hain — "
+              f"SSC, Railway, Bank, Police, Defence aur state PSC notifications "
+              f"included. Regularly check karein naye openings ke liye.")
+    elif _ptype == 'education':
+        p1 = (f"{_name} {_yr}: Is page par {_name} se related entrance exams, admission "
+              f"notifications aur education sector ki latest updates milti hain. "
+              f"Students ke liye exam dates, eligibility aur application details "
+              f"yahan available hain.")
+        p2 = (f"Har notification ke saath complete information hai — important dates, "
+              f"eligibility criteria, application process aur official links. Apni "
+              f"education ya entrance exam ke hisaab se relevant updates yahan se "
+              f"track karein.")
+        p3 = (f"Naye admission aur exam notifications ke liye yeh page regularly "
+              f"update hota hai. Bookmark karein taaki koi important deadline miss "
+              f"na ho.")
+    elif _ptype == 'section':
+        p1 = (f"{_name} {_yr}: Is section me {_name} se judi sabhi latest updates aur "
+              f"notifications ek jagah milti hain. Roz nayi entries add hoti hain "
+              f"taaki aapko sabse fresh information mile.")
+        p2 = (f"Har item ke liye complete details diye gaye hain — dates, eligibility "
+              f"aur direct links. {_name} se related kuch bhi miss na ho, iske liye "
+              f"yeh page time-time par check karte rahein.")
+        p3 = (f"Government job aspirants ke liye {_name} ek important category hai. "
+              f"Hum ise daily update karte hain official sources se.")
+    elif _ptype == 'category':
+        p1 = (f"{_name} {_yr}: {_name} se related sabhi government job notifications "
+              f"yahan ek saath milte hain. Is category me aane wali sabhi vacancies "
+              f"regularly update hoti hain.")
+        p2 = (f"Har job ki puri detail yahan hai — eligibility, vacancies, dates aur "
+              f"apply link. {_name} me interested candidates apni suitability check "
+              f"karke seedha apply kar sakte hain.")
+        p3 = (f"Yeh page automatically latest {_name} openings se update hota hai. "
+              f"Regular visit karein taaki naye opportunities miss na hon.")
+    else:
+        p1 = (f"{_name} {_yr}: Latest government job notifications aur sarkari naukri "
+              f"updates yahan milti hain. Sabhi vacancies daily update hoti hain.")
+        p2 = (f"Har job ke saath complete details hain — eligibility, dates aur apply "
+              f"links. Apni eligibility ke hisaab se directly apply karein.")
+        p3 = (f"Naye notifications ke liye yeh page regularly check karein.")
+
+    return (
+        '<div class="seo-content" style="margin:24px 10px 8px;padding:18px 20px;'
+        'background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;'
+        'font-size:.92rem;line-height:1.7;color:#334155">'
+        f'<h2 style="font-size:1.1rem;font-weight:800;color:#0d2257;margin:0 0 12px">'
+        f'About {e(_name)} {_yr}</h2>'
+        f'<p style="margin:0 0 12px">{e(p1)}</p>'
+        f'<p style="margin:0 0 12px">{e(p2)}</p>'
+        f'<p style="margin:0">{e(p3)}</p>'
+        '</div>'
+    )
+
 def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''):
     _yr_str = str(YEAR)
     _t = title if _yr_str in title else f"{title} {YEAR}"
@@ -3423,6 +3540,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
             f'<div class="search-bar" style="margin:0 10px 12px">'
             f'<input type="search" placeholder="Search..." aria-label="Search" onkeyup="filterJobs(this.value)" autocomplete="off"/>'
             f'</div><div id="jobList" style="padding:0 10px">{cards_html}</div>'
+            f'{_seo_listing_content(title, jobs, canon_url)}'
             f'<div style="padding:0 10px">{REL_CATS_HTML}</div></div>'
             f'{filter_js}')
 

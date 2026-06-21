@@ -35,7 +35,13 @@ Disallow: /sw.js
 Disallow: /404.html
 Disallow: /cache-dashboard.html
 Disallow: /seo-audit-report.html
+Disallow: /seo-optimization-code.html
+Disallow: /og-template.html
+Disallow: /integration-snippet.html
+Disallow: /preload_snippet.html
 Disallow: /JOB_HTML_PATCH_INSTRUCTIONS.html
+Disallow: /redirect.html
+Disallow: /view.html
 Disallow: /.github/
 Disallow: /node_modules/
 
