@@ -5033,7 +5033,8 @@ for sec in EDU_SEC:
         # Education pages: noindex (canonical → /jobs/) 
         # Single URL rule: only /jobs/{slug}/ — no /education/{state}/{slug}/
         _edu_title = safe((full_d.get('basic_details') or {}).get('job_title','')) or item_slug
-        if not _is_dup_job(item_slug, _edu_title):
+        _edu_is_dup, _ = _is_dup_job(item_slug, _edu_title)
+        if not _edu_is_dup:
             _mark_job(item_slug, _edu_title, sec_title)
             jobs_html = build_detail_page(full_d, item_slug, canon, bc, sec_title, noindex_dup=False)
             write(str(ROOT/'jobs'/item_slug/'index.html'), jobs_html)
@@ -6080,10 +6081,18 @@ def remove_orphan_pages():
     import glob as _g
     # Build set of valid slugs from CURRENT JSON data sources
     valid_slugs = set()
-    # 1. Sarkari jobs
+    # 1. Sarkari jobs — add BOTH raw slug AND title-based slug
+    # CRITICAL: SARK JSON has NO raw slug field (all 97 jobs use title-based slug)
+    # Without title-slug here, orphan cleanup DELETES all 97 SARK pages!
     for _j in SARK:
-        _s = _j.get('slug', '')
+        _s = _norm_slug(_j.get('slug', ''))
         if _s: valid_slugs.add(_s)
+        # Title-based slug (what the SARK loop actually uses when no raw slug)
+        _t = (_j.get('title','') or
+              (_j.get('basic_details',{}) or {}).get('job_title','') or '')
+        if _t:
+            _ts = slugify(_t)[:80]
+            if _ts: valid_slugs.add(_ts)
     # 2. FJA unified jobs (with both title-based AND URL-based slugs for safety)
     _uni_jobs_v = (CJ.get('freejobalert_unified', {}) or {}).get('deduped_jobs', []) or []
     for _j in _uni_jobs_v:
@@ -6116,6 +6125,15 @@ def remove_orphan_pages():
             if _du_name:
                 _du_slug = slugify(_du_name)[:80]
                 if _du_slug: valid_slugs.add(_du_slug)
+    # 6. EDUCATION items — CRITICAL: without this, all 883 edu pages get deleted!
+    _edu_r = CJ.get('education_jobs', {}) or {}
+    _edu_secs = _edu_r if isinstance(_edu_r, list) else _edu_r.get('sections', [])
+    for _esec in _edu_secs:
+        for _eitem in (_esec.get('items', []) if isinstance(_esec, dict) else []):
+            _ename = _eitem.get('name', '') or _eitem.get('examName', '')
+            if _ename:
+                _es = slugify(_ename)[:80]
+                if _es: valid_slugs.add(_es)
 
     print(f"  [orphan-check] {len(valid_slugs)} valid slugs from current JSON")
 
@@ -6194,6 +6212,15 @@ def verify_one_job_one_url():
             if _du_name:
                 _du_slug = slugify(_du_name)[:80]
                 if _du_slug: _valid.add(_du_slug)
+    # Education items — must match what's in valid_slugs in remove_orphan_pages
+    _edu_rv = CJ.get('education_jobs', {}) or {}
+    _edu_secsv = _edu_rv if isinstance(_edu_rv, list) else _edu_rv.get('sections', [])
+    for _esecv in _edu_secsv:
+        for _eitemv in (_esecv.get('items', []) if isinstance(_esecv, dict) else []):
+            _enamev = _eitemv.get('name', '') or _eitemv.get('examName', '')
+            if _enamev:
+                _esv = slugify(_enamev)[:80]
+                if _esv: _valid.add(_esv)
 
     # STEP 1: Clean stale redirects — for each /jobs/{slug}/ rule, if a real
     # HTML page exists on disk at that slug, the redirect is blocking it.
