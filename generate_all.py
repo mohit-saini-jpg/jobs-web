@@ -3852,7 +3852,17 @@ _before_rm = len(SARK)
 SARK = [j for j in SARK if j.get('category') not in _REMOVED_CATS]
 if _before_rm != len(SARK):
     print(f"  [remove] dropped {_before_rm - len(SARK)} item(s) from retired categories {sorted(_REMOVED_CATS)}")
-EDU_SEC = (CJ.get('education_jobs',{}) or {}).get('sections', [])
+# education_jobs can be either:
+# - dict with 'sections' key: {"sections": [...]}  (old format)
+# - list directly: [...]                            (new format from updated scraper)
+_edu_raw = CJ.get('education_jobs', {}) or {}
+if isinstance(_edu_raw, list):
+    # New format: list of items — wrap into sections structure
+    EDU_SEC = _edu_raw
+elif isinstance(_edu_raw, dict):
+    EDU_SEC = _edu_raw.get('sections', [])
+else:
+    EDU_SEC = []
 SJ_SEC  = (CJ.get('state_jobs',{}) or {}).get('sections', [])
 
 # ── STATE JOBS UNIFIED FALLBACK ─────────────────────────────────────────────
