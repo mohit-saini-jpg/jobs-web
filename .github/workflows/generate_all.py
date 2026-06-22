@@ -4235,7 +4235,38 @@ print(f"  FJA jobs: {j_count}")
 # 2. JOB DETAIL PAGES — sarkari_data
 print("Generating /jobs/ pages (sarkari_data)...")
 
-# ── FIX: Normalize sarkari_data records before page generation ───────────────
+# ── CROSS-SOURCE DEDUP: FJA canonical slug lookup ────────────────────────────
+# Build exam-code index from FJA (already written). When SARK has a job with
+# overlapping exam identifiers (e.g. "AIIMS CRE-5"), use FJA canonical slug
+# and add a redirect instead of creating a 2nd page.
+_fja_examcode_index = {}   # exam_code_key → canonical_fja_slug
+
+def _exam_codes(title):
+    """Extract exam/org codes from title for cross-source matching."""
+    t = str(title or '').lower()
+    codes = []
+    # Numbered exam codes: CRE-5, SET-2026, AFCAT-02, JRF-01
+    codes += re.findall(r'\b[a-z]{2,6}-?\d{1,2}\b', t)
+    # All-caps acronyms retained: aiims, upsc, rrb, ibps, ssc, cisf, crpf, bsf
+    codes += re.findall(r'\b(aiims|upsc|ssc|rrb|ibps|cisf|crpf|bsf|itbp|ndma|upsssc|rpsc|mppsc|jssc|dsssb|opsc|tnpsc|kpsc|bpsc)\b', t)
+    return tuple(sorted(set(codes)))
+
+for _fj in (CJ.get('freejobalert_unified',{}) or {}).get('deduped_jobs',[]):
+    _fbd = _fj.get('basic_details',{}) or {}
+    _ft = _fbd.get('job_title','')
+    if not _ft: continue
+    _fslug = slugify(_ft)[:80]
+    _codes = _exam_codes(_ft)
+    if len(_codes) >= 2:   # Only index if ≥2 identifiers (specific enough)
+        _fja_examcode_index[_codes] = _fslug
+
+def _find_fja_canonical(sark_title):
+    """If SARK job matches a FJA page by exam codes, return FJA slug."""
+    codes = _exam_codes(sark_title)
+    if len(codes) < 2: return None
+    return _fja_examcode_index.get(codes)
+
+
 # Master Complete_Jobs_Full_Data.json uses camelCase keys for SR_*/OFFLINE_FORM/
 # LATEST_JOBS NEW records (importantDates, applicationFee, importantLinks,
 # shortInfo, additionalData.howToApply) and FLAT fields for STATE/UPCOMING/
@@ -4391,6 +4422,20 @@ for job in SARK:
     slug = _versioned_slug(base_slug, job)
     if slug is None or slug in seen_jobs:
         continue
+
+    # ── CROSS-SOURCE DEDUP CHECK: before marking or writing ──────────────────
+    # If FJA already has a canonical page for same job (by exam codes),
+    # add redirect instead of creating duplicate page.
+    _fja_canon_now = _find_fja_canonical(title)
+    if _fja_canon_now and _fja_canon_now != slug:
+        _rpath_x = str(ROOT/'_redirects')
+        _existing_x = open(_rpath_x, encoding='utf-8').read() if os.path.exists(_rpath_x) else ''
+        _rline_x = f"/jobs/{slug}/  /jobs/{_fja_canon_now}/  301"
+        if _rline_x not in _existing_x:
+            with open(_rpath_x, 'a', encoding='utf-8') as _rf_x:
+                _rf_x.write(f"\n# SARK→FJA cross-source dedup\n{_rline_x}\n")
+        continue   # skip mark + write: FJA page is the canonical
+
     _mark_job(slug, title, job.get('category',''))
 
     # Build important_links from all sources
@@ -4553,6 +4598,7 @@ for job in SARK:
     _jcat = safe(job.get('category', ''))
     _bc_lbl, _bc_url = _SARK_BC.get(_jcat, ('Latest Jobs', '/section/latest-jobs/'))
     bc = [(_bc_lbl, f"{BASE_URL}{_bc_url}")]
+
     write(str(ROOT/'jobs'/slug/'index.html'), build_detail_page(full, slug, canon, bc))
     ld = safe(imp_dates.get('last_date_to_apply','') or imp_dates.get('last_date',''))
     jobs_index[slug] = {'cat':job.get('category',''),'title':title[:120],'last_date':ld[:30]}
