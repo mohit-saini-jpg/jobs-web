@@ -372,13 +372,16 @@ html, body { overflow-x: hidden; max-width: 100%; }
             "Authorization": `Bearer ${SUPABASE_ANON}`,
             "Prefer":        "return=minimal"
           },
-          body: JSON.stringify({ name, mobile: phone, email, message })
+          body: JSON.stringify({ name, mobile: phone, message })
         });
 
         if (!res.ok) {
-          const err = await res.text();
-          console.error("Supabase error:", err);
-          throw new Error("Insert failed");
+          const errText = await res.text();
+          console.error("Supabase error:", res.status, errText);
+          // Show actual error for debugging
+          status.innerHTML = `<span style="color:#ef4444;font-size:.78rem">Error ${res.status}: ${errText}</span>`;
+          if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Query'; }
+          return;
         }
 
         // Success
@@ -396,8 +399,7 @@ html, body { overflow-x: hidden; max-width: 100%; }
 
       } catch(err) {
         console.error("Submit error:", err);
-        status.textContent = "❌ Submit नहीं हो सका। Internet check करें और फिर try करें।";
-        status.style.color = "#ef4444";
+        status.innerHTML = `<span style="color:#ef4444;font-size:.82rem">❌ Error: ${err.message}. Please try again.</span>`;
         if (btn) {
           btn.disabled = false;
           btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Query';
