@@ -147,12 +147,12 @@
   }
 
   // ══════════════════════════════════════════════════════════════════
-  // LOCAL JOB ROTATION — auto notification every 5 min
+  // LOCAL JOB ROTATION — auto notification every 10 min
   // Rotates through real job pages from merged_sarkari_data.json
   // Works on: PC browser, Mobile browser, PWA installed app
   // ══════════════════════════════════════════════════════════════════
   var _rotateTimer = null;
-  var ROTATE_MS    = 5 * 60 * 1000; // 5 minutes
+  var ROTATE_MS    = 10 * 60 * 1000; // 10 minutes
 
   function startLocalRotation() {
     if (!sg(SK.SUB)) return;
@@ -163,7 +163,7 @@
       setTimeout(function() {
         if (sg(SK.SUB)) sendNextJobNotif();
       }, 30000);
-      // Then every 5 minutes
+      // Then every 10 minutes
       _rotateTimer = setInterval(function() {
         if (document.hidden) return; // Skip if tab/app not visible
         if (sg(SK.SUB)) sendNextJobNotif();
@@ -484,28 +484,27 @@
     testNotification: function(category) {
       var catKey = category || 'latest-jobs';
       var cat    = CATS[catKey] || CATS['latest-jobs'];
-      fetch('/data/Complete_Jobs_Full_Data.json', { cache:'default' })
-        .then(function(r){ return r.json(); })
-        .then(function(d){
-          var jobs = (d.jobs||[]).filter(function(j){ return j.category===cat.dataKey && j.slug && j.title; });
-          var job  = jobs[0];
-          // Always open individual job page, not section page
-          var url  = job ? (SITE+'/jobs/'+job.slug+'/') : cat.url;
-          var titl = job ? (job.title||'').slice(0,62) : cat.label+' Alert';
-          if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-            navigator.serviceWorker.controller.postMessage({
-              type:'SHOW_JOB_NOTIFICATION',
-              payload:{ title:cat.emoji+' '+titl, body:getBody(catKey,titl), url:url, category:catKey }
-            });
-          }
-        }).catch(function(){
-          if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-            navigator.serviceWorker.controller.postMessage({
-              type:'SHOW_JOB_NOTIFICATION',
-              payload:{ title:cat.emoji+' Test: '+cat.label, body:'Push working!', url:cat.url, category:catKey }
-            });
-          }
-        });
+      // Use loadJobData (already fixed to read correct JSON structure)
+      loadJobData().then(function(jobs) {
+        var catJobs = jobs.filter(function(j){ return j.category === (cat.dataKey || 'SR_Latest_Jobs'); });
+        if (!catJobs.length) catJobs = jobs; // fallback: any job
+        var job  = catJobs[Math.floor(Math.random() * Math.min(catJobs.length, 10))];
+        var url  = job ? (SITE + '/jobs/' + job.slug + '/') : cat.url;
+        var titl = job ? (job.title || '').slice(0, 62) : cat.label + ' Alert';
+        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+          navigator.serviceWorker.controller.postMessage({
+            type: 'SHOW_JOB_NOTIFICATION',
+            payload: { title: cat.emoji + ' ' + titl, body: getBody(catKey, titl), url: url, category: catKey }
+          });
+        }
+      }).catch(function() {
+        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+          navigator.serviceWorker.controller.postMessage({
+            type: 'SHOW_JOB_NOTIFICATION',
+            payload: { title: cat.emoji + ' Test: ' + cat.label, body: 'Push working!', url: cat.url, category: catKey }
+          });
+        }
+      });
     },
 
     init: function() {
