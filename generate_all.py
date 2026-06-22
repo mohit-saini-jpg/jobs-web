@@ -4239,32 +4239,72 @@ print("Generating /jobs/ pages (sarkari_data)...")
 # Build exam-code index from FJA (already written). When SARK has a job with
 # overlapping exam identifiers (e.g. "AIIMS CRE-5"), use FJA canonical slug
 # and add a redirect instead of creating a 2nd page.
-_fja_examcode_index = {}   # exam_code_key → canonical_fja_slug
+# ── CROSS-SOURCE DEDUP: FJA→SARK title similarity index ─────────────────────
+# Permanent fix: ek job ke ek se zyada pages kabhi nahi banenge.
+# FJA loop ke baad, har FJA job ka title-token index build karo.
+# SARK loop mein har job ke title se FJA index check karo via Jaccard similarity.
+# 55% overlap + ≥3 common tokens = same job → SARK redirects to FJA, no new page.
 
-def _exam_codes(title):
-    """Extract exam/org codes from title for cross-source matching."""
-    t = str(title or '').lower()
-    codes = []
-    # Numbered exam codes: CRE-5, SET-2026, AFCAT-02, JRF-01
-    codes += re.findall(r'\b[a-z]{2,6}-?\d{1,2}\b', t)
-    # All-caps acronyms retained: aiims, upsc, rrb, ibps, ssc, cisf, crpf, bsf
-    codes += re.findall(r'\b(aiims|upsc|ssc|rrb|ibps|cisf|crpf|bsf|itbp|ndma|upsssc|rpsc|mppsc|jssc|dsssb|opsc|tnpsc|kpsc|bpsc)\b', t)
-    return tuple(sorted(set(codes)))
+_DEDUP_SKIP = frozenset(('the and for with of in to a an at by on from up is are was '
+                        'were be been being apply online form recruitment vacancy post '
+                        'exam result admit card notification advertisement advt across '
+                        'central govt various latest notifications here more out noti '
+                        '2020 2021 2022 2023 2024 2025 2026 2027 2028').split())
+
+def _title_tokens(t):
+    """Content words from title — skip common/generic terms."""
+    t = re.sub(r'[^a-z0-9\s]', ' ', str(t or '').lower())
+    return frozenset(w for w in t.split() if w not in _DEDUP_SKIP and len(w) > 2)
+
+# Build FJA token index: list of (frozenset_of_tokens, fja_slug, raw_title_lower)
+_fja_token_index = []   # list of (frozenset_of_tokens, fja_slug, raw_title_lower)
 
 for _fj in (CJ.get('freejobalert_unified',{}) or {}).get('deduped_jobs',[]):
     _fbd = _fj.get('basic_details',{}) or {}
     _ft = _fbd.get('job_title','')
     if not _ft: continue
     _fslug = slugify(_ft)[:80]
-    _codes = _exam_codes(_ft)
-    if len(_codes) >= 2:   # Only index if ≥2 identifiers (specific enough)
-        _fja_examcode_index[_codes] = _fslug
+    _ftok = _title_tokens(_ft)
+    if len(_ftok) >= 3:   # only meaningful titles
+        _fja_token_index.append((_ftok, _fslug, _ft.lower()))
 
 def _find_fja_canonical(sark_title):
-    """If SARK job matches a FJA page by exam codes, return FJA slug."""
-    codes = _exam_codes(sark_title)
-    if len(codes) < 2: return None
-    return _fja_examcode_index.get(codes)
+    """Find FJA canonical slug for a SARK job using Jaccard title similarity.
+    Returns FJA slug if strong title overlap detected, else None.
+    Conservative thresholds prevent false positives (different posts same org).
+    """
+    stok = _title_tokens(sark_title)
+    if len(stok) < 3: return None
+
+    # SECONDARY: Exam-code based matching (e.g. "CRE-5", "JTO", "AFCAT-02")
+    # If SARK and FJA share org acronym + exam code → definite same job
+    _sark_raw = str(sark_title or '').lower()
+    for _ftok, _fslug, _fja_raw_t in _fja_token_index:
+        # Quick extract compound codes like "cre-5", "jto", "afcat-02" from SARK title
+        _sark_codes = re.findall(r'\b[a-z]{2,6}[\-]?\d{1,2}\b|\bjto\b|\bcgl\b|\bchsl\b|\bcpo\b|\bmts\b|\bcre-\d\b|\bafcat\b', _sark_raw)
+        if _sark_codes:
+            _shared_codes = [c for c in _sark_codes if c in _fja_raw_t]
+            if len(_shared_codes) >= 1 and len(_ftok & stok) >= 2:
+                return _fslug   # org + exam code match = same job
+
+    # PRIMARY: Jaccard similarity
+    best_score = 0.0
+    best_slug = None
+    best_inter_len = 0
+    for ftok, fslug, _ in _fja_token_index:
+        inter = stok & ftok
+        n_inter = len(inter)
+        if n_inter < 3: continue
+        jaccard = n_inter / len(stok | ftok)
+        if jaccard > best_score:
+            best_score = jaccard
+            best_slug = fslug
+            best_inter_len = n_inter
+
+    # Conservative thresholds to prevent false positives:
+    if best_inter_len >= 5 and best_score >= 0.50: return best_slug
+    if best_inter_len >= 4 and best_score >= 0.55: return best_slug
+    return None
 
 
 # Master Complete_Jobs_Full_Data.json uses camelCase keys for SR_*/OFFLINE_FORM/
@@ -4410,6 +4450,9 @@ def _normalize_sarkari_job(job):
             j['application_fee'] = asm
     return j
 
+# Dict of SARK duplicate slugs that should redirect to FJA canonical
+_dedup_sark_slugs = {}   # sark_slug → fja_canonical_slug
+
 for job in SARK:
     job = _normalize_sarkari_job(job)
     title = safe(job.get('title',''))
@@ -4428,12 +4471,12 @@ for job in SARK:
     # add redirect instead of creating duplicate page.
     _fja_canon_now = _find_fja_canonical(title)
     if _fja_canon_now and _fja_canon_now != slug:
-        _rpath_x = str(ROOT/'_redirects')
-        _existing_x = open(_rpath_x, encoding='utf-8').read() if os.path.exists(_rpath_x) else ''
-        _rline_x = f"/jobs/{slug}/  /jobs/{_fja_canon_now}/  301"
-        if _rline_x not in _existing_x:
-            with open(_rpath_x, 'a', encoding='utf-8') as _rf_x:
-                _rf_x.write(f"\n# SARK→FJA cross-source dedup\n{_rline_x}\n")
+        # SARK job = same job as FJA. Record redirect; delete SARK page if exists.
+        _dedup_sark_slugs[slug] = _fja_canon_now   # tracked for cleanup below
+        _p_sark_dup = ROOT/'jobs'/slug/'index.html'
+        if _p_sark_dup.exists():
+            import shutil as _sh_dup
+            _sh_dup.rmtree(str(_p_sark_dup.parent), ignore_errors=True)
         continue   # skip mark + write: FJA page is the canonical
 
     _mark_job(slug, title, job.get('category',''))
@@ -4605,6 +4648,21 @@ for job in SARK:
     j_count += 1
 
 print(f"  All /jobs/: {j_count}")
+
+# ── CROSS-SOURCE DEDUP REDIRECTS: write all SARK→FJA redirects ───────────────
+# _dedup_sark_slugs = {sark_slug: fja_slug} collected above
+if _dedup_sark_slugs:
+    _rrpath = str(ROOT/'_redirects')
+    _rr_existing = open(_rrpath, encoding='utf-8').read() if os.path.exists(_rrpath) else ''
+    _rr_block = ['', '# ══ SARK→FJA cross-source dedup (same job, different title) ══']
+    for _sark_s, _fja_s in _dedup_sark_slugs.items():
+        _rline = f"/jobs/{_sark_s}/  /jobs/{_fja_s}/  301"
+        if _rline not in _rr_existing:
+            _rr_block.append(_rline)
+    if len(_rr_block) > 2:
+        with open(_rrpath, 'a', encoding='utf-8') as _rrf:
+            _rrf.write('\n'.join(_rr_block) + '\n')
+    print(f"  [cross-dedup] {len(_dedup_sark_slugs)} SARK pages redirected to FJA canonical")
 
 # ── UPCOMING_JOBS + ADMISSIONS DETAIL PAGES ───────────────────────────────────
 # In sources: data/upcoming-jobs.json + data/admissions.json + sarkari_data raw
@@ -6289,7 +6347,9 @@ def verify_one_job_one_url():
             _m = re.match(r'^/jobs/([^/\s]+)/\s+\S+\s+301[!]?\s*$', _stripped)
             if _m:
                 _rslug = _m.group(1)
-                if _rslug in _disk_now:
+                # NEVER remove cross-source dedup redirects (sark→fja)
+                # even if disk has a stale page from a previous run
+                if _rslug in _disk_now and _rslug not in _dedup_sark_slugs:
                     # This slug has a real page on disk! Remove blocking redirect.
                     _removed_stale += 1
                     continue
