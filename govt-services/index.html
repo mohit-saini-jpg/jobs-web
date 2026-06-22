@@ -215,7 +215,7 @@
   <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
-  <script src="/tsj-menu.js?v=20260622142246" defer></script>
+  <script src="/tsj-menu.js?v=20260621225417" defer></script>
   <script src="/pwa-install.js?v=6.0" defer></script>
   <!-- ══ END PWA ════════════════════════════════════════════════════ -->
   <script>
@@ -238,34 +238,132 @@
   <div id="site-header"></div>
 
   <main id="main" class="container page">
-    <section class="seo-block">
-      <h1 style="margin:0;">CSC Services</h1>
-      <p>Apply for various government services and documents using trusted service links.</p>
-    </section>
 
-    <section class="seo-block">
-      <h2>Service Request</h2>
-      <div id="servicesList" class="section-list"></div>
-    </section>
+<style>
+/* ── CSC Services Page ── */
+.csc-page-wrap { max-width: 1100px; margin: 0 auto; padding: 20px 16px 60px; }
+.csc-page-title { font-size: 1.6rem; font-weight: 800; color: #0d2257; margin: 0 0 4px; }
+.csc-page-sub { color: #64748b; font-size: .93rem; margin: 0 0 28px; }
 
-    <section class="seo-block">
-      <h2>FAQs – CSC Services</h2>
-      <div class="faq-item">
-        <button type="button" class="faq-btn" aria-expanded="false">
-          <span>Are these service links official?</span>
-          <i class="fas fa-chevron-down"></i>
-        </button>
-        <div class="faq-panel" hidden>
-          We list service links from trusted sources. Please confirm details on the service portal before submitting any request.
+/* Service Grid */
+.csc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; margin-bottom: 40px; }
+
+.csc-card {
+  border-radius: 14px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.10);
+  background: #fff; cursor: pointer; transition: transform .18s, box-shadow .18s;
+  border: none; text-align: left; width: 100%; font-family: inherit;
+}
+.csc-card:hover { transform: translateY(-3px); box-shadow: 0 6px 24px rgba(0,0,0,.16); }
+
+.csc-card-head {
+  padding: 18px 16px 14px;
+  display: flex; align-items: center; gap: 12px;
+  color: #fff; min-height: 80px;
+}
+.csc-card-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: rgba(255,255,255,.22); display: flex; align-items: center; justify-content: center;
+  font-size: 1.15rem; flex-shrink: 0;
+}
+.csc-card-name { font-size: .95rem; font-weight: 700; line-height: 1.35; }
+
+.csc-card-body { padding: 12px 16px 16px; }
+.csc-card-docs { font-size: .78rem; color: #64748b; margin: 0 0 12px; line-height: 1.5; }
+.csc-card-docs strong { color: #334155; }
+
+.csc-req-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #1d4ed8; color: #fff; border: none; border-radius: 8px;
+  padding: 7px 16px; font-size: .82rem; font-weight: 700; cursor: pointer;
+  font-family: inherit; transition: background .15s;
+}
+.csc-req-btn:hover { background: #1e40af; }
+.csc-req-btn i { font-size: .78rem; }
+
+/* Color palette for cards (cycles) */
+.csc-col-0 { background: linear-gradient(135deg, #1d4ed8, #3b82f6); }
+.csc-col-1 { background: linear-gradient(135deg, #16a34a, #22c55e); }
+.csc-col-2 { background: linear-gradient(135deg, #7c3aed, #a78bfa); }
+.csc-col-3 { background: linear-gradient(135deg, #dc2626, #f87171); }
+.csc-col-4 { background: linear-gradient(135deg, #0d9488, #2dd4bf); }
+.csc-col-5 { background: linear-gradient(135deg, #d97706, #fbbf24); }
+.csc-col-6 { background: linear-gradient(135deg, #0369a1, #38bdf8); }
+.csc-col-7 { background: linear-gradient(135deg, #7c3aed, #ec4899); }
+
+/* Request Modal */
+.csc-modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.55);
+  z-index: 1000; display: none; align-items: center; justify-content: center; padding: 16px;
+}
+.csc-modal-overlay.open { display: flex; }
+.csc-modal-box {
+  background: #fff; border-radius: 18px; width: 100%; max-width: 440px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25); animation: cscSlideUp .22s ease;
+  overflow: hidden;
+}
+@keyframes cscSlideUp { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
+.csc-modal-head { padding: 18px 20px 14px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; }
+.csc-modal-title { font-size: 1.05rem; font-weight: 800; color: #0d2257; }
+.csc-modal-service-name { font-size: .82rem; color: #3b82f6; font-weight: 600; margin-top: 2px; }
+.csc-modal-close { background: none; border: none; cursor: pointer; color: #94a3b8; font-size: 1.1rem; padding: 4px; line-height:1; }
+.csc-modal-close:hover { color: #475569; }
+.csc-modal-body { padding: 20px; }
+.csc-form-row { margin-bottom: 14px; }
+.csc-form-row label { display: block; font-size: .8rem; font-weight: 700; color: #334155; margin-bottom: 5px; }
+.csc-form-row input,
+.csc-form-row textarea {
+  width: 100%; padding: 9px 12px; border: 1.5px solid #e2e8f0; border-radius: 8px;
+  font-size: .88rem; font-family: inherit; box-sizing: border-box; color: #1e293b;
+  transition: border-color .15s;
+}
+.csc-form-row input:focus,
+.csc-form-row textarea:focus { outline: none; border-color: #3b82f6; }
+.csc-form-row textarea { resize: vertical; min-height: 80px; }
+.csc-docs-hint { background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 10px 12px; margin-bottom: 16px; }
+.csc-docs-hint-title { font-size: .75rem; font-weight: 700; color: #0369a1; margin: 0 0 4px; }
+.csc-docs-hint-list { font-size: .75rem; color: #0c4a6e; margin: 0; padding-left: 16px; line-height: 1.7; }
+.csc-modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
+.csc-btn-cancel { background: #f1f5f9; color: #475569; border: none; border-radius: 8px; padding: 9px 18px; font-size: .85rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+.csc-btn-cancel:hover { background: #e2e8f0; }
+.csc-btn-submit { background: #1d4ed8; color: #fff; border: none; border-radius: 8px; padding: 9px 22px; font-size: .85rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: background .15s; }
+.csc-btn-submit:hover { background: #1e40af; }
+.csc-btn-submit:disabled { background: #93c5fd; cursor: not-allowed; }
+.csc-success-msg { text-align: center; padding: 30px 20px; }
+.csc-success-icon { font-size: 2.5rem; color: #16a34a; margin-bottom: 10px; }
+.csc-success-title { font-size: 1.1rem; font-weight: 800; color: #166534; margin: 0 0 6px; }
+.csc-success-sub { font-size: .86rem; color: #64748b; margin: 0; }
+@media (max-width: 600px) {
+  .csc-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .csc-card-name { font-size: .82rem; }
+  .csc-modal-box { max-width: 100%; }
+}
+@media (max-width: 380px) {
+  .csc-grid { grid-template-columns: 1fr; }
+}
+</style>
+
+</head>
+<body>
+<div id="header-placeholder"></div>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div id="site-header"></div>
+
+  <main id="main">
+    <div class="csc-page-wrap">
+      <h1 class="csc-page-title">CSC Government Services</h1>
+      <p class="csc-page-sub">सरकारी सेवाएं — service choose करें, request submit करें। हम जल्दी contact करेंगे।</p>
+      <div id="cscGrid" class="csc-grid">
+        <div style="grid-column:1/-1;text-align:center;padding:30px;color:#94a3b8">
+          <i class="fas fa-spinner fa-spin" style="font-size:1.5rem"></i>
+          <p>Loading services…</p>
         </div>
       </div>
-    </section>
+    </div>
   </main>
 
-  <!-- Injected homepage footer -->
   <div id="site-footer"></div>
 
-  <!-- Required for mobile menu (unchanged) -->
+  <!-- Mobile menu -->
   <div id="menuOverlay" class="overlay" hidden></div>
   <aside id="mobileMenu" class="offcanvas" aria-label="Mobile menu" hidden>
     <div class="offcanvas-head">
@@ -279,53 +377,202 @@
     </nav>
   </aside>
 
-  <!-- CSC modal (UNCHANGED) -->
-  <div id="cscModalOverlay" class="modal-overlay" hidden></div>
-
-  <section id="cscModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="cscModalTitle" hidden>
-    <div class="modal-card">
-      <div class="modal-head">
+  <!-- Request Modal -->
+  <div id="cscOverlay" class="csc-modal-overlay" onclick="closeCscModal()">
+    <div class="csc-modal-box" onclick="event.stopPropagation()">
+      <div class="csc-modal-head">
         <div>
-          <div id="cscModalTitle" class="modal-title">CSC Service Request</div>
-          <div class="modal-sub">Service: <strong id="cscServiceName">Service</strong></div>
+          <div class="csc-modal-title">Service Request</div>
+          <div class="csc-modal-service-name" id="modalServiceName"></div>
         </div>
-        <button id="cscModalClose" class="icon-btn" type="button" aria-label="Close">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
+        <button class="csc-modal-close" onclick="closeCscModal()"><i class="fas fa-times"></i></button>
       </div>
-
-      <div class="modal-body">
-        <form id="cscRequestForm" class="modal-form">
-          <div class="form-row">
-            <label>Full name</label>
-            <input id="cscFullName" type="text" placeholder="Your name" required />
-          </div>
-
-          <div class="form-row">
-            <label>Phone</label>
-            <input id="cscPhone" type="tel" placeholder="10-digit number" required />
-          </div>
-
-          <div class="form-row">
-            <label>State</label>
-            <input id="cscState" type="text" placeholder="Your state" />
-          </div>
-
-          <div class="form-row">
-            <label>Details</label>
-            <textarea id="cscMessage" rows="4" placeholder="What do you need? (optional)"></textarea>
-          </div>
-
-          <div class="modal-actions">
-            <button id="cscCloseBtn" type="button" class="btn-primary">Close</button>
-            <button type="submit" class="btn-primary">Submit request</button>
-          </div>
-        </form>
+      <div class="csc-modal-body" id="modalBody">
+        <!-- Filled by JS -->
       </div>
     </div>
-  </section>
+  </div>
 
-  <script src="script.js" defer></script>
+  <script src="/script.js" defer></script>
+  <script src="/tsj-menu.js?v=20260621225417" defer></script>
+  <script src="/pwa-install.js?v=6.0" defer></script>
+
+<script>
+// ── CSC Services: load JSON, render cards, handle form + Supabase ──
+(function() {
+  const SUPABASE_URL   = "https://cykkclkfimmqbahanidg.supabase.co";
+  const SUPABASE_ANON  = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5a2tjbGtmaW1tcWJhaGFuaWRnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwNzYxODAsImV4cCI6MjA4MTY1MjE4MH0.iZEnetgYn7j0ltJyjhxUGZ3nCT7YMxGP3_Qd-agI1C0";
+  const TABLE          = "csc_service_requests";
+  const COLORS         = ["csc-col-0","csc-col-1","csc-col-2","csc-col-3","csc-col-4","csc-col-5","csc-col-6","csc-col-7"];
+
+  let currentService = null;
+
+  // ── Render cards ──
+  async function renderGrid() {
+    const grid = document.getElementById("cscGrid");
+    let services = [];
+    try {
+      const r = await fetch("/services.json", { cache: "no-cache" });
+      const d = await r.json();
+      services = d.services || d || [];
+    } catch(_) {}
+
+    if (!services.length) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:30px;color:#94a3b8">No services found. Please check services.json.</div>';
+      return;
+    }
+
+    grid.innerHTML = services.map((s, i) => {
+      const name = (s.name || s.service || "").trim();
+      const icon = s.icon || "fas fa-file-alt";
+      const docs = Array.isArray(s.documents) ? s.documents : [];
+      const color = COLORS[i % COLORS.length];
+      return `
+        <div class="csc-card" onclick="openCscModal(${i})" role="button" tabindex="0"
+             onkeydown="if(event.key==='Enter'||event.key===' ')openCscModal(${i})">
+          <div class="csc-card-head ${color}">
+            <div class="csc-card-icon"><i class="${icon}"></i></div>
+            <div class="csc-card-name">${name}</div>
+          </div>
+          <div class="csc-card-body">
+            ${docs.length ? `<div class="csc-card-docs"><strong>Required docs:</strong> ${docs.join(", ")}</div>` : ""}
+            <button class="csc-req-btn" onclick="event.stopPropagation();openCscModal(${i})">
+              <i class="fas fa-paper-plane"></i> Request करें
+            </button>
+          </div>
+        </div>`;
+    }).join("");
+
+    // Store services globally for modal
+    window.__cscServices = services;
+  }
+
+  // ── Open modal ──
+  window.openCscModal = function(idx) {
+    const services = window.__cscServices || [];
+    const s = services[idx];
+    if (!s) return;
+    currentService = s;
+
+    document.getElementById("modalServiceName").textContent = s.name || s.service || "";
+
+    const docs = Array.isArray(s.documents) ? s.documents : [];
+    document.getElementById("modalBody").innerHTML = `
+      ${docs.length ? `
+        <div class="csc-docs-hint">
+          <div class="csc-docs-hint-title">📄 Required Documents:</div>
+          <ul class="csc-docs-hint-list">${docs.map(d => `<li>${d}</li>`).join("")}</ul>
+        </div>` : ""}
+      <form id="cscForm" onsubmit="submitCscRequest(event)">
+        <div class="csc-form-row">
+          <label>Full Name <span style="color:#ef4444">*</span></label>
+          <input type="text" id="cscName" placeholder="अपना पूरा नाम" required autocomplete="name" />
+        </div>
+        <div class="csc-form-row">
+          <label>Phone Number <span style="color:#ef4444">*</span></label>
+          <input type="tel" id="cscPhone" placeholder="10 अंकों का मोबाइल नंबर" required autocomplete="tel" maxlength="10" />
+        </div>
+        <div class="csc-form-row">
+          <label>Village / City</label>
+          <input type="text" id="cscCity" placeholder="गाँव / शहर का नाम" autocomplete="address-level2" />
+        </div>
+        <div class="csc-form-row">
+          <label>Additional Details</label>
+          <textarea id="cscDetails" placeholder="कोई जरूरी जानकारी (optional)"></textarea>
+        </div>
+        <div class="csc-modal-actions">
+          <button type="button" class="csc-btn-cancel" onclick="closeCscModal()">Cancel</button>
+          <button type="submit" class="csc-btn-submit" id="cscSubmitBtn">
+            <i class="fas fa-paper-plane"></i>&nbsp; Submit Request
+          </button>
+        </div>
+      </form>`;
+
+    document.getElementById("cscOverlay").classList.add("open");
+    document.body.style.overflow = "hidden";
+    setTimeout(() => { const el = document.getElementById("cscName"); if(el) el.focus(); }, 80);
+  };
+
+  window.closeCscModal = function() {
+    document.getElementById("cscOverlay").classList.remove("open");
+    document.body.style.overflow = "";
+    currentService = null;
+  };
+
+  // ── Submit to Supabase ──
+  window.submitCscRequest = async function(e) {
+    e.preventDefault();
+    const name    = (document.getElementById("cscName")?.value || "").trim();
+    const phone   = (document.getElementById("cscPhone")?.value || "").trim();
+    const city    = (document.getElementById("cscCity")?.value || "").trim();
+    const details = (document.getElementById("cscDetails")?.value || "").trim();
+
+    if (!name || !phone || phone.length < 8) {
+      alert("कृपया नाम और सही मोबाइल नंबर भरें।");
+      return;
+    }
+
+    const btn = document.getElementById("cscSubmitBtn");
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>&nbsp; Submitting…';
+
+    const serviceText = [
+      currentService?.name || currentService?.service || "Unknown",
+      city ? `City: ${city}` : "",
+      details ? `Details: ${details}` : ""
+    ].filter(Boolean).join(" | ");
+
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": SUPABASE_ANON,
+          "Authorization": `Bearer ${SUPABASE_ANON}`,
+          "Prefer": "return=minimal"
+        },
+        body: JSON.stringify({ name, phone, service: serviceText })
+      });
+
+      if (!res.ok) {
+        const err = await res.text();
+        console.error("Supabase error:", err);
+        throw new Error("Supabase insert failed");
+      }
+
+      // Success screen
+      document.getElementById("modalBody").innerHTML = `
+        <div class="csc-success-msg">
+          <div class="csc-success-icon"><i class="fas fa-check-circle"></i></div>
+          <div class="csc-success-title">Request Submitted! ✅</div>
+          <p class="csc-success-sub">
+            <strong>${name}</strong> जी, आपकी request मिल गई।<br/>
+            हम जल्द ही <strong>${phone}</strong> पर contact करेंगे।
+          </p>
+          <button class="csc-req-btn" style="margin:18px auto 0;display:flex" onclick="closeCscModal()">
+            <i class="fas fa-times"></i>&nbsp; Close
+          </button>
+        </div>`;
+
+    } catch(err) {
+      console.error("Submit error:", err);
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-paper-plane"></i>&nbsp; Submit Request';
+      alert("Request submit नहीं हो सकी। Internet check करें और फिर try करें।");
+    }
+  };
+
+  // ESC key close
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape") closeCscModal();
+  });
+
+  // Init
+  document.addEventListener("DOMContentLoaded", renderGrid);
+  if (document.readyState !== "loading") renderGrid();
+})();
+</script>
+
 <div id="footer-placeholder"></div>
 </body>
 </html>
