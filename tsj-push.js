@@ -177,39 +177,76 @@
 
   function loadJobData() {
     if (_jobCache && _jobCache.length) return Promise.resolve(_jobCache);
-    return fetch('/data/Complete_Jobs_Full_Data.json', { cache: 'default' })
-      .then(function(r) { return r.json(); })
-      .then(function(d) {
-        // Only jobs that have slug AND their /jobs/[slug]/ page exists
-        // Categories mapped to section pages:
-        // SR_Latest_Jobs  → /section/latest-jobs/
-        // SR_Result       → /section/results/
-        // SR_Admit_Card   → /section/admit-card/
-        // SR_Admission    → /section/admissions/
-        // SR_Answer_Key   → /section/answer-key/
-        var validCats = ['SR_Latest_Jobs','SR_Result','SR_Admit_Card','SR_Answer_Key','SR_Admission'];
-        var jobs = (d.jobs || []).filter(function(j) {
-          return j.slug && j.title && validCats.indexOf(j.category) !== -1;
-        });
-        // Interleave categories so rotation shows variety
-        // e.g. latest-job, result, admit-card, answer-key, latest-job, result...
-        var buckets = {};
-        validCats.forEach(function(cat) {
-          buckets[cat] = jobs.filter(function(j){ return j.category === cat; });
-        });
-        var interleaved = [];
-        var maxLen = Math.max.apply(null, validCats.map(function(c){ return (buckets[c]||[]).length; }));
-        for (var i = 0; i < maxLen; i++) {
-          validCats.forEach(function(cat) {
-            if (buckets[cat] && buckets[cat][i]) interleaved.push(buckets[cat][i]);
+
+    // Try FJA unified first (has slugs), fallback to sarkari_data
+    var sources = [
+      '/data/Complete_Jobs_Full_Data.json',
+      '/Complete_Jobs_Full_Data.json'
+    ];
+
+    function tryFetch(urls, idx) {
+      if (idx >= urls.length) return Promise.resolve([]);
+      return fetch(urls[idx], { cache: 'default' })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          var validCats = ['SR_Latest_Jobs','SR_Result','SR_Admit_Card','SR_Answer_Key','SR_Admission'];
+          var jobs = [];
+
+          // Source 1: FJA unified deduped_jobs (has slugs)
+          var uni = (d.freejobalert_unified || {});
+          var uniJobs = uni.deduped_jobs || [];
+          uniJobs.forEach(function(j) {
+            var bd = j.basic_details || {};
+            var title = bd.job_title || '';
+            var slug  = j.slug || '';
+            if (title && slug) {
+              jobs.push({ title: title, slug: slug, category: 'SR_Latest_Jobs' });
+            }
           });
-        }
-        _jobCache = interleaved.length ? interleaved : jobs;
-        var saved = sg(SK.IDX) || 0;
-        _jobIdx   = (saved < _jobCache.length) ? saved : 0;
-        return _jobCache;
-      })
-      .catch(function() { _jobCache = []; return []; });
+
+          // Source 2: sarkari_data.jobs — generate slug from title
+          var sark = d.sarkari_data || {};
+          var sarkJobs = sark.jobs || [];
+          sarkJobs.forEach(function(j) {
+            var title = j.title || '';
+            var cat   = j.category || '';
+            if (!title || validCats.indexOf(cat) === -1) return;
+            // Generate slug from title (same as generate_all.py)
+            var slug = title.toLowerCase()
+              .replace(/[^a-z0-9\s-]/g, '')
+              .replace(/[\s_-]+/g, '-')
+              .replace(/^-|-$/g, '')
+              .slice(0, 80)
+              .replace(/-$/g, '');
+            if (slug) jobs.push({ title: title, slug: slug, category: cat });
+          });
+
+          return jobs;
+        })
+        .catch(function() { return tryFetch(urls, idx + 1); });
+    }
+
+    return tryFetch(sources, 0).then(function(jobs) {
+      var validCats = ['SR_Latest_Jobs','SR_Result','SR_Admit_Card','SR_Answer_Key','SR_Admission'];
+
+      // Interleave categories so rotation shows variety
+      var buckets = {};
+      validCats.forEach(function(cat) {
+        buckets[cat] = jobs.filter(function(j){ return j.category === cat; });
+      });
+      var interleaved = [];
+      var maxLen = Math.max.apply(null, validCats.map(function(c){ return (buckets[c]||[]).length; }).concat([0]));
+      for (var i = 0; i < maxLen; i++) {
+        validCats.forEach(function(cat) {
+          if (buckets[cat] && buckets[cat][i]) interleaved.push(buckets[cat][i]);
+        });
+      }
+      _jobCache = interleaved.length ? interleaved : jobs;
+      var saved = sg(SK.IDX) || 0;
+      _jobIdx   = (saved < _jobCache.length) ? saved : 0;
+      console.log('[TSJPush] Loaded', _jobCache.length, 'jobs for rotation');
+      return _jobCache;
+    }).catch(function() { _jobCache = []; return []; });
   }
 
   function sendNextJobNotif() {
