@@ -4664,6 +4664,49 @@ if _dedup_sark_slugs:
             _rrf.write('\n'.join(_rr_block) + '\n')
     print(f"  [cross-dedup] {len(_dedup_sark_slugs)} SARK pages redirected to FJA canonical")
 
+# ── PERMANENT REDIRECT RULES — ensure on every run ───────────────────────────
+# Ye rules HAMESHA _redirects me hone chahiye (old versioned slugs from live site,
+# historical dups, etc.). generate_all run pe automatically ensure ho jaate hain.
+_PERMANENT_REDIRECTS = [
+    # AIIMS CRE-5 — old versioned slug from live site (had '-305' suffix from advt no)
+    ("/jobs/aiims-cre-5-recruitment-2026-apply-online-for-1484-group-b-and-group-c-posts-305/",
+     "/jobs/aiims-cre-5-recruitment-2026-apply-online-for-1484-group-b-c-posts-across-28-cen/"),
+    # AIIMS CRE-5 — short slug variant
+    ("/jobs/aiims-group-b-group-c-1484-posts/",
+     "/jobs/aiims-cre-5-recruitment-2026-apply-online-for-1484-group-b-c-posts-across-28-cen/"),
+]
+_pr_path = str(ROOT/'_redirects')
+_pr_existing = open(_pr_path, encoding='utf-8').read() if os.path.exists(_pr_path) else ''
+_pr_added = []
+for _pr_src, _pr_dst in _PERMANENT_REDIRECTS:
+    _pr_rule = f"{_pr_src}  {_pr_dst}  301"
+    if _pr_rule not in _pr_existing:
+        _pr_added.append(_pr_rule)
+        _pr_existing += _pr_rule  # update in-memory check
+# CRITICAL: Delete stale disk pages for PERMANENT REDIRECT sources.
+# Vercel: file at /jobs/X/index.html OVERRIDES redirect rule for /jobs/X/.
+# We must delete these pages so the 301 redirect can actually fire.
+for _pr_src2, _pr_dst2 in _PERMANENT_REDIRECTS:
+    import re as _re_pr
+    _pm = _re_pr.match(r'^/jobs/([^/]+)/', _pr_src2)
+    if _pm:
+        _ps = _pm.group(1)
+        _pp = ROOT/'jobs'/_ps/'index.html'
+        if _pp.exists():
+            import shutil as _sh2
+            _sh2.rmtree(str(_pp.parent), ignore_errors=True)
+            print(f"  [perm-redirect] Deleted stale page: /jobs/{_ps}/")
+
+if _pr_added:
+    # Prepend to TOP of _redirects (Vercel: first rule wins)
+    # Canonical redirects must appear BEFORE any fallback "→ /" orphan rules
+    _new_block = '# ══ Permanent historical redirects (always at top) ══\n'
+    _new_block += '\n'.join(_pr_added) + '\n\n'
+    _old_content = open(_pr_path, encoding='utf-8').read() if os.path.exists(_pr_path) else ''
+    with open(_pr_path, 'w', encoding='utf-8') as _prf:
+        _prf.write(_new_block + _old_content)
+    print(f"  [permanent-redirects] Prepended {len(_pr_added)} rules to top of _redirects")
+
 # ── UPCOMING_JOBS + ADMISSIONS DETAIL PAGES ───────────────────────────────────
 # In sources: data/upcoming-jobs.json + data/admissions.json + sarkari_data raw
 # Section pages /section/upcoming-jobs/ + /section/admissions/ se click karne pe
