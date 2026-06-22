@@ -178,75 +178,44 @@
   function loadJobData() {
     if (_jobCache && _jobCache.length) return Promise.resolve(_jobCache);
 
-    // Try FJA unified first (has slugs), fallback to sarkari_data
-    var sources = [
-      '/data/Complete_Jobs_Full_Data.json',
-      '/Complete_Jobs_Full_Data.json'
-    ];
+    // Use sections-index.json — small, always deployed, has slug+name for all categories
+    return fetch('/sections-index.json', { cache: 'no-cache' })
+      .then(function(r) { return r.json(); })
+      .then(function(si) {
+        var validCats = ['SR_Latest_Jobs','SR_Result','SR_Admit_Card','SR_Answer_Key'];
+        var jobs = [];
 
-    function tryFetch(urls, idx) {
-      if (idx >= urls.length) return Promise.resolve([]);
-      return fetch(urls[idx], { cache: 'default' })
-        .then(function(r) { return r.json(); })
-        .then(function(d) {
-          var validCats = ['SR_Latest_Jobs','SR_Result','SR_Admit_Card','SR_Answer_Key','SR_Admission'];
-          var jobs = [];
-
-          // Source 1: FJA unified deduped_jobs (has slugs)
-          var uni = (d.freejobalert_unified || {});
-          var uniJobs = uni.deduped_jobs || [];
-          uniJobs.forEach(function(j) {
-            var bd = j.basic_details || {};
-            var title = bd.job_title || '';
-            var slug  = j.slug || '';
-            if (title && slug) {
-              jobs.push({ title: title, slug: slug, category: 'SR_Latest_Jobs' });
+        validCats.forEach(function(cat) {
+          var items = si[cat] || [];
+          items.forEach(function(item) {
+            var slug  = item.slug || '';
+            var title = item.name || item.title || '';
+            if (slug && title) {
+              jobs.push({ title: title, slug: slug, category: cat });
             }
           });
-
-          // Source 2: sarkari_data.jobs — generate slug from title
-          var sark = d.sarkari_data || {};
-          var sarkJobs = sark.jobs || [];
-          sarkJobs.forEach(function(j) {
-            var title = j.title || '';
-            var cat   = j.category || '';
-            if (!title || validCats.indexOf(cat) === -1) return;
-            // Generate slug from title (same as generate_all.py)
-            var slug = title.toLowerCase()
-              .replace(/[^a-z0-9\s-]/g, '')
-              .replace(/[\s_-]+/g, '-')
-              .replace(/^-|-$/g, '')
-              .slice(0, 80)
-              .replace(/-$/g, '');
-            if (slug) jobs.push({ title: title, slug: slug, category: cat });
-          });
-
-          return jobs;
-        })
-        .catch(function() { return tryFetch(urls, idx + 1); });
-    }
-
-    return tryFetch(sources, 0).then(function(jobs) {
-      var validCats = ['SR_Latest_Jobs','SR_Result','SR_Admit_Card','SR_Answer_Key','SR_Admission'];
-
-      // Interleave categories so rotation shows variety
-      var buckets = {};
-      validCats.forEach(function(cat) {
-        buckets[cat] = jobs.filter(function(j){ return j.category === cat; });
-      });
-      var interleaved = [];
-      var maxLen = Math.max.apply(null, validCats.map(function(c){ return (buckets[c]||[]).length; }).concat([0]));
-      for (var i = 0; i < maxLen; i++) {
-        validCats.forEach(function(cat) {
-          if (buckets[cat] && buckets[cat][i]) interleaved.push(buckets[cat][i]);
         });
-      }
-      _jobCache = interleaved.length ? interleaved : jobs;
-      var saved = sg(SK.IDX) || 0;
-      _jobIdx   = (saved < _jobCache.length) ? saved : 0;
-      console.log('[TSJPush] Loaded', _jobCache.length, 'jobs for rotation');
-      return _jobCache;
-    }).catch(function() { _jobCache = []; return []; });
+
+        // Interleave: latest-job, result, admit-card, latest-job, result...
+        var buckets = {};
+        validCats.forEach(function(c) {
+          buckets[c] = jobs.filter(function(j){ return j.category === c; });
+        });
+        var interleaved = [];
+        var maxLen = Math.max.apply(null, validCats.map(function(c){ return (buckets[c]||[]).length; }).concat([0]));
+        for (var i = 0; i < maxLen; i++) {
+          validCats.forEach(function(cat) {
+            if (buckets[cat] && buckets[cat][i]) interleaved.push(buckets[cat][i]);
+          });
+        }
+
+        _jobCache = interleaved.length ? interleaved : jobs;
+        var saved = sg(SK.IDX) || 0;
+        _jobIdx   = (saved < _jobCache.length) ? saved : 0;
+        console.log('[TSJPush] Loaded', _jobCache.length, 'jobs from sections-index');
+        return _jobCache;
+      })
+      .catch(function() { _jobCache = []; return []; });
   }
 
   function sendNextJobNotif() {
@@ -484,11 +453,11 @@
     testNotification: function(category) {
       var catKey = category || 'latest-jobs';
       var cat    = CATS[catKey] || CATS['latest-jobs'];
-      // Use loadJobData (already fixed to read correct JSON structure)
+      // Load from sections-index.json → pick real job → show detail page URL
       loadJobData().then(function(jobs) {
         var catJobs = jobs.filter(function(j){ return j.category === (cat.dataKey || 'SR_Latest_Jobs'); });
         if (!catJobs.length) catJobs = jobs; // fallback: any job
-        var job  = catJobs[Math.floor(Math.random() * Math.min(catJobs.length, 10))];
+        var job  = catJobs[Math.floor(Math.random() * Math.min(catJobs.length, catJobs.length))];
         var url  = job ? (SITE + '/jobs/' + job.slug + '/') : cat.url;
         var titl = job ? (job.title || '').slice(0, 62) : cat.label + ' Alert';
         if (navigator.serviceWorker && navigator.serviceWorker.controller) {
