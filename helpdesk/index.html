@@ -246,7 +246,7 @@ html, body { overflow-x: hidden; max-width: 100%; }
   <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
-  <script src="/tsj-menu.js?v=20260622142246" defer></script>
+  <script src="/tsj-menu.js?v=20260621225417" defer></script>
   <script src="/pwa-install.js?v=6.0" defer></script>
   <!-- ══ END PWA ════════════════════════════════════════════════════ -->
   <script>
@@ -332,6 +332,85 @@ html, body { overflow-x: hidden; max-width: 100%; }
 
   <script src="script.js" defer></script>
 <script src="/tsj-version.js"?v=20260530023112 defer></script>
+
+<script>
+// ── Helpdesk Form → Supabase ──
+(function() {
+  const SUPABASE_URL  = "https://cykkclkfimmqbahanidg.supabase.co";
+  const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5a2tjbGtmaW1tcWJhaGFuaWRnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwNzYxODAsImV4cCI6MjA4MTY1MjE4MH0.iZEnetgYn7j0ltJyjhxUGZ3nCT7YMxGP3_Qd-agI1C0";
+  const TABLE         = "helpdesk_submissions";
+
+  function init() {
+    const form   = document.getElementById("helpdeskForm");
+    const status = document.getElementById("statusMsg");
+    if (!form) return;
+
+    form.addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const name    = (document.getElementById("name")?.value   || "").trim();
+      const phone   = (document.getElementById("phone")?.value  || "").trim();
+      const email   = (document.getElementById("email")?.value  || "").trim();
+      const message = (document.getElementById("query")?.value  || "").trim();
+
+      if (!name || !phone) {
+        status.textContent = "❌ Please fill Name and Phone.";
+        status.style.color = "#ef4444";
+        return;
+      }
+
+      const btn = form.querySelector("button[type=submit]");
+      if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting…'; }
+      status.textContent = "";
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "apikey":        SUPABASE_ANON,
+            "Authorization": `Bearer ${SUPABASE_ANON}`,
+            "Prefer":        "return=minimal"
+          },
+          body: JSON.stringify({ name, mobile: phone, email, message })
+        });
+
+        if (!res.ok) {
+          const err = await res.text();
+          console.error("Supabase error:", err);
+          throw new Error("Insert failed");
+        }
+
+        // Success
+        form.reset();
+        form.style.display = "none";
+        status.innerHTML = `
+          <div style="text-align:center;padding:30px 0">
+            <div style="font-size:2.5rem;color:#16a34a;margin-bottom:10px">✅</div>
+            <div style="font-size:1.1rem;font-weight:800;color:#166534;margin-bottom:6px">Query Submitted!</div>
+            <p style="color:#64748b;font-size:.88rem">
+              <strong>${name}</strong> जी, आपकी query मिल गई।<br/>
+              हम जल्द ही <strong>${phone}</strong> पर contact करेंगे।
+            </p>
+          </div>`;
+
+      } catch(err) {
+        console.error("Submit error:", err);
+        status.textContent = "❌ Submit नहीं हो सका। Internet check करें और फिर try करें।";
+        status.style.color = "#ef4444";
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Query';
+        }
+      }
+    });
+  }
+
+  document.readyState === "loading"
+    ? document.addEventListener("DOMContentLoaded", init)
+    : init();
+})();
+</script>
 <div id="footer-placeholder"></div>
 </body>
 </html>
