@@ -7,7 +7,20 @@
 
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
-  const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
+  // Fix: /govt-services/ → pathname.split("/").pop() = "" (empty) due to trailing slash.
+  // Use last NON-EMPTY segment, then map directory names to page identifiers.
+  const _pathParts = location.pathname.split("/").filter(Boolean);
+  const _lastSeg = (_pathParts[_pathParts.length - 1] || "").toLowerCase();
+  // Map directory-style slugs → page name
+  const _dirMap = {
+    "govt-services": "govt-services.html",
+    "helpdesk": "helpdesk.html",
+    "tools": "tools.html",
+    "about": "about.html",
+    "privacy": "privacy.html",
+    "terms": "terms.html",
+  };
+  const page = _dirMap[_lastSeg] || (_lastSeg ? _lastSeg : "index.html");
   const isToolsPage = location.pathname.includes("tools");
 
   const safe = (v) => (v ?? "").toString().trim();
