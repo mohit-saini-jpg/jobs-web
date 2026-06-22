@@ -4,38 +4,50 @@
 <meta charset="UTF-8">
 <meta name="robots" content="noindex, follow">
 <script>
-// ── AUTO REDIRECT: view.html (handles ?section= and ?url= params) ──
+// ── AUTO REDIRECT: view.html ──
 (function () {
   var params = new URLSearchParams(window.location.search);
   var section = params.get('section') || params.get('url');
-  if (!section) { window.location.replace('/'); return; }
+
+  if (!section) {
+    window.location.replace('/');
+    return;
+  }
+
   var map = {
-    'Diploma Jobs':           'diploma-jobs',
-    'Offline jobs':           'offline-form',
-    'results':                'results',
-    'Results':                'results',
-    'Graduation jobs':        'graduation-jobs',
-    'State jobs':             'latest-jobs',
-    'ITI/Diploma jobs':       'iti-jobs',
-    'upcoming-jobs':          'upcoming-jobs',
-    '8th Pass':               '8th-pass',
-    '10th Pass jobs':         '10th-pass-jobs',
-    'Admit cards Exams Date': 'admit-card',
-    'latest-jobs':            'latest-jobs',
-    'Latest Jobs':            'latest-jobs',
-    'admit-card':             'admit-card',
-    'answer-key':             'answer-key',
-    'Railway Jobs':           'railway-jobs',
-    'Bank Jobs':              'bank-jobs',
-    'Police Jobs':            'police-jobs',
-    'Army Jobs':              'army-jobs',
-    'Teaching Jobs':          'teaching-jobs',
-    '12th Pass jobs':         '12th-pass-jobs',
-    'Post Graduation jobs':   'post-graduation-jobs'
+    'Diploma Jobs':              'diploma-jobs',
+    'Offline jobs':              'offline-form',
+    'results':                   'results',
+    'Results':                   'results',
+    'Graduation jobs':           'graduation-jobs',
+    'State jobs':                'latest-jobs',
+    'ITI/Diploma jobs':         'iti-jobs',
+    'upcoming-jobs':             'upcoming-jobs',
+    '8th Pass':                  '8th-pass',
+    '10th Pass jobs':            '10th-pass-jobs',
+    'Admit cards Exams Date':    'admit-card',
+    'Syllabus':                  'syllabus',
+    'latest-jobs':               'latest-jobs',
+    'Latest Jobs':               'latest-jobs',
+    'admit-card':                'admit-card',
+    'answer-key':                'answer-key',
+    'Railway Jobs':              'railway-jobs',
+    'Bank Jobs':                 'bank-jobs',
+    'Police Jobs':               'police-jobs',
+    'Army Jobs':                 'army-jobs',
+    'Teaching Jobs':             'teaching-jobs',
+    '12th Pass jobs':            '12th-pass-jobs',
+    'Post Graduation jobs':      'post-graduation-jobs',
+    'offline-form':              'offline-form',
+    'diploma-jobs':              'diploma-jobs',
+    'graduation-jobs':           'graduation-jobs',
+    'iti-jobs':                  'iti-jobs'
   };
+
   var decoded = decodeURIComponent(section);
   var slug = map[decoded] || map[section] ||
              decoded.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+
   window.location.replace(slug ? ('/section/' + slug + '/') : '/');
 })();
 </script>

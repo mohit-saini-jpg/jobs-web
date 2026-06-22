@@ -2,12 +2,27 @@
 <html lang="en">
 <head>
 <script>
-// ── AUTO REDIRECT: category.html?group= → /category/slug/ ──
+// ── AUTO REDIRECT: category.html ──
 (function () {
   var params = new URLSearchParams(window.location.search);
   var group = params.get('group');
-  if (!group) { window.location.replace('/category/popular/'); return; }
-  window.location.replace('/category/' + group.toLowerCase().replace(/\s+/g, '-') + '/');
+
+  if (!group) {
+    window.location.replace('/category/popular/');
+    return;
+  }
+
+  var map = {
+    'khabar':         'khabar',
+    'admissions':     'admissions',
+    'study':          'study',
+    'popular':        'popular',
+    'admit-result':   'admit-result',
+    'study-material': 'study-material'
+  };
+
+  var slug = map[group] || group.toLowerCase().replace(/\s+/g, '-');
+  window.location.replace('/category/' + slug + '/');
 })();
 </script>
   <script type="application/ld+json">

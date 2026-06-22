@@ -100,67 +100,57 @@
     {
       "source": "/index.html",
       "destination": "/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/about.html",
       "destination": "/about/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/helpdesk.html",
       "destination": "/helpdesk/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/terms.html",
       "destination": "/terms/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/privacy.html",
       "destination": "/privacy/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/disclaimer.html",
       "destination": "/disclaimer/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/result.html",
       "destination": "/section/results/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/tools.html",
       "destination": "/tools/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/govt-services.html",
       "destination": "/govt-services/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/resume-maker.html",
       "destination": "/resume-maker/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/tools-audio-video.html",
       "destination": "/tools/audio-video/",
-      "permanent": true
-    },
-    {
-      "source": "/view.html",
-      "destination": "/",
-      "permanent": true
-    },
-    {
-      "source": "/category.html",
-      "destination": "/category/popular/",
-      "permanent": true
+      "statusCode": 301
     }
   ]
 }
