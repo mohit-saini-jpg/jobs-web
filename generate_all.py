@@ -5047,12 +5047,26 @@ _slug_derived = 0
 for _uj in _uni_jobs_list:
     if _uj.get('slug'):
         continue   # already has slug (from updated scraper)
+    # PERMANENT FIX: ALWAYS derive slug from job TITLE, not from URL.
+    # FJA article URLs have: "group-b-and-group-c" (wrong) vs title: "Group B & C" (right)
+    # URL also has numeric article ID suffix (-3053829) that causes partial slugs on truncation.
+    # Title-based slug is ALWAYS canonical and matches what FJA loop and _find_fja_canonical use.
+    _fja_bd = (_uj.get('basic_details') or {})
+    _fja_title = _fja_bd.get('job_title', '')
+    if _fja_title:
+        _derived = slugify(_fja_title)[:80]
+        if _derived:
+            _uj['slug'] = _derived
+            _slug_derived += 1
+        continue
+    # Fallback: URL-based slug (only if title missing)
     _src = _uj.get('_scraped_from', '')
     if not _src:
         continue
     _m_slug = re.search(r'/articles/([^/?#]+)/?$', _src)
     if _m_slug:
-        _derived = slugify(_m_slug.group(1))[:80]
+        _raw_article_slug = re.sub(r'-\d{5,10}$', '', _m_slug.group(1))
+        _derived = slugify(_raw_article_slug)[:80]
         if _derived:
             _uj['slug'] = _derived
             _slug_derived += 1
