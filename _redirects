@@ -1,3 +1,6 @@
+# ══ Permanent historical redirects (always at top) ══
+/jobs/aiims-cre-5-recruitment-2026-apply-online-for-1484-group-b-and-group-c-posts-305/  /jobs/aiims-cre-5-recruitment-2026-apply-online-for-1484-group-b-c-posts-across-28-cen/  301
+
 # ══ ISSUE-FIX: Bare slug URLs → /jobs/slug/ (state-wise cat-bar links) ══
 # Pattern: /andaman-and-nicobar-group-c-1535-posts → /jobs/andaman-and-nicobar-group-c-1535-posts/
 # Note: This catch-all must come BEFORE the 200 rewrites
@@ -5104,6 +5107,9 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /jobs/jal-shakti-vibhag-vacancy-2026-apply-for-para-fitter-para-pump-operator-and-mult/  /jobs/himachal-pradesh-jal-shakti-vibhag-recruitment-2026-apply-offline-for-32-para-pu/  301
 /jobs/central-bank-of-india-apprentice-vacancy-2026-apply-online-for-4500-posts/  /jobs/central-bank-of-india-apprentice-recruitment-2026-4500-vacancies-apply-online-by/  301
 /jobs/apssb-chsl-12th-level-207-posts-online-form/  /jobs/andaman-and-nicobar-administration-chsl-recruitment-2026-apply-online-for-716-de/  301
+
+# ══ broken/empty job pages → homepage ══
+
 
 # ══ broken/empty job pages → homepage ══
 
