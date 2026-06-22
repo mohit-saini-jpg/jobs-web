@@ -5086,3 +5086,24 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 
 # ══ broken/empty job pages → homepage ══
 
+
+# ══ SARK→FJA cross-source dedup (same job, different title) ══
+/jobs/indian-airforce-afcat-022026-batch-recruitment-2026-apply-online-form/  /jobs/indian-air-force-afcat-022026-recruitment-2026-notification-out-apply-online-for/  301
+/jobs/join-indian-air-force-airmen-group-y-medical-assistant-intake-022027-recruitment/  /jobs/indian-air-force-pharmacist-recruitment-2026-apply-online-for-airmen-group-y-med/  301
+/jobs/upsssc-platoon-commander-block-organizer-recruitment-2026-apply-online-form-for/  /jobs/upsssc-platoon-commander-recruitment-2026-for-295-posts-apply-online/  301
+/jobs/aiims-common-recruitment-exam-for-aiims-cre-5-group-b-c-various-post-2026/  /jobs/aiims-cre-5-recruitment-2026-apply-online-for-1484-group-b-c-posts-across-28-cen/  301
+/jobs/jipmer-group-a-non-faculty-recruitment-2026-online-form-for-34-posts/  /jobs/jipmer-recruitment-2026-apply-online-for-34-group-a-non-faculty-posts-gdmo-speci/  301
+/jobs/central-bank-of-india-cbi-apprentice-recruitment-2026-apply-online-for-4500-post/  /jobs/central-bank-of-india-apprentice-recruitment-2026-4500-vacancies-apply-online-by/  301
+/jobs/indian-navy-agniveer-apprentice-012027-022027-batch-online-form-2026/  /jobs/indian-navy-agniveer-apprentice-recruitment-2026-notification-out-apply-online/  301
+/jobs/bsnl-junior-telecom-officer-telecom-recruitment-2026-apply-online-for-100-post/  /jobs/bsnl-jto-recruitment-2026-notification-out-apply-online-link-activated-for-100-j/  301
+/jobs/nta-allahabad-high-court-ro-aro-computer-assistant-online-form-2026/  /jobs/allahabad-high-court-ro-aro-recruitment-2026-apply-online-for-543-review-officer/  301
+/jobs/upsssc-auditor-and-assistant-accountant-advt-no-14-exam2026-recruitment-2026-app/  /jobs/upsssc-recruitment-2026-notification-out-apply-online-for-1829-auditor-and-assis/  301
+/jobs/ssc-combined-graduate-level-cgl-recruitment-2025-download-tier-ii-answer-key-and/  /jobs/ssc-cgl-2026-notification-out-at-sscgovin-apply-online-for-12256-group-b-c-vacan/  301
+/jobs/jal-shakti-vibhag-baddi-vacancy-2026-apply-for-para-fitter-para-pump-operator-an/  /jobs/himachal-pradesh-jal-shakti-vibhag-recruitment-2026-apply-offline-for-32-para-pu/  301
+/jobs/aiims-5th-cre-group-b-c-posts-exam-form-2026-apply-online/  /jobs/aiims-cre-5-recruitment-2026-apply-online-for-1484-group-b-c-posts-across-28-cen/  301
+/jobs/jal-shakti-vibhag-vacancy-2026-apply-for-para-fitter-para-pump-operator-and-mult/  /jobs/himachal-pradesh-jal-shakti-vibhag-recruitment-2026-apply-offline-for-32-para-pu/  301
+/jobs/central-bank-of-india-apprentice-vacancy-2026-apply-online-for-4500-posts/  /jobs/central-bank-of-india-apprentice-recruitment-2026-4500-vacancies-apply-online-by/  301
+/jobs/apssb-chsl-12th-level-207-posts-online-form/  /jobs/andaman-and-nicobar-administration-chsl-recruitment-2026-apply-online-for-716-de/  301
+
+# ══ broken/empty job pages → homepage ══
+
