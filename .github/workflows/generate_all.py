@@ -264,8 +264,21 @@ def safe(v):
 def slugify(text):
     text = str(text).lower()
     text = re.sub(r'[^a-z0-9\s-]', '', text)
-    text = re.sub(r'[\s-]+', '-', text)
-    return text[:80].strip('-') or 'page'
+    text = re.sub(r'[\s_-]+', '-', text)
+    # Strip BEFORE truncation, then truncate, then strip AGAIN
+    # (in case 80-char cut lands on a dash boundary).
+    text = text.strip('-')[:80].strip('-')
+    return text or 'page'
+
+def _norm_slug(s):
+    """Normalize any slug (from JSON or wherever) - strip trailing dashes,
+    collapse repeated dashes. JSON slugs from PC scraper sometimes end with '-'
+    when title >=80 chars; this strips them so URL matches actual page on disk."""
+    if not s: return ''
+    s = str(s).strip().lower()
+    s = re.sub(r'[\s_]+', '-', s)
+    s = re.sub(r'-+', '-', s)
+    return s.strip('-')[:80].strip('-')
 
 def smart_title_cut(text, limit=60):
     """Cut a <title> at a word boundary so there's no mid-word truncation."""
@@ -1220,7 +1233,10 @@ def _render_vac_group(vac_list, mode='vacancy'):
                     _all_input_keys.add(_ks)
     # If we matched fewer than 60% of unique input keys → input has rich data
     # that we're losing. Use generic renderer to preserve everything.
-    if len(_all_input_keys) >= 3 and len(cols) < max(2, int(len(_all_input_keys) * 0.6)):
+    # If matched fewer than 60% of input keys → input has rich data we're losing.
+    # Threshold lowered to 2 so even simple {District,Vacancies} or {Post,Total}
+    # tables render with their actual column names instead of forced Sr+Total.
+    if len(_all_input_keys) >= 2 and len(cols) < max(2, int(len(_all_input_keys) * 0.6)):
         return _render_generic_rows(vac_list, _tbl_heading)
 
     # ── C3 FIX: clean rows + compute the real grand total ──
@@ -1676,6 +1692,114 @@ SECTION_ORDER = ['basic_details','important_dates','application_fee','age_limit'
                  'selection_process','exam_pattern','syllabus','physical_eligibility',
                  'tables','data_tables','text_sections','useful_links','all_links','details_page_content',
                  'how_to_apply','important_instructions','important_links','faq']
+
+def _smart_render(val, depth=0):
+    """UNIVERSAL SMART RENDERER — handles ANY JSON value type automatically.
+
+    Returns HTML for whatever is passed in. JSON insertion order preserved.
+
+    Type handling:
+      None / empty       → ''
+      bool / number      → text
+      string             → paragraph
+      list[str]          → bullet list
+      list[dict]         → table (union of keys = headers, JSON order)
+      list[mixed]        → fallback bullet list (each item rendered recursively)
+      dict (flat)        → key-value table
+      dict (nested)      → recursive sub-cards
+      dict-of-list       → table per sub-key
+    """
+    # Empty / null → nothing
+    if val is None or val == '' or val == [] or val == {}:
+        return ''
+
+    # Bool / number → text
+    if isinstance(val, (bool, int, float)):
+        return f'<div class="edu-sec">{e(safe(val))}</div>'
+
+    # String → paragraph (preserves line breaks)
+    if isinstance(val, str):
+        _txt = safe(val).strip()
+        if not _txt:
+            return ''
+        # If contains "|" separators → bullet list (common scraper pattern)
+        if '|' in _txt and _txt.count('|') >= 2:
+            _parts = [p.strip() for p in _txt.split('|') if p.strip() and len(p.strip()) > 2]
+            if len(_parts) >= 2:
+                return '<ul class="val-list">' + ''.join(f'<li>{e(p)}</li>' for p in _parts) + '</ul>'
+        # Multi-paragraph text
+        if '\n\n' in _txt or _txt.count('\n') >= 3:
+            _paras = [p.strip() for p in re.split(r'\n{2,}', _txt) if p.strip()]
+            if _paras:
+                return ''.join(f'<p class="edu-para">{e(p)}</p>' for p in _paras)
+        return f'<div class="edu-sec" style="line-height:1.7">{e(_txt)}</div>'
+
+    # List
+    if isinstance(val, list):
+        _items = [x for x in val if x is not None and x != '' and x != {} and x != []]
+        if not _items:
+            return ''
+        # All dicts → table with union of keys (JSON order preserved)
+        if all(isinstance(x, dict) for x in _items):
+            _cols = []
+            for _row in _items:
+                for _k in _row.keys():
+                    if _k not in _cols:
+                        _cols.append(_k)
+            if not _cols:
+                return ''
+            _head = ''.join(f'<th>{e(key_label(_c))}</th>' for _c in _cols)
+            _body = ''
+            for _row in _items:
+                _body += '<tr>' + ''.join(
+                    f'<td>{e(safe(_row.get(_c, "")))}</td>' for _c in _cols
+                ) + '</tr>'
+            return f'<table class="kv-table"><tbody><tr>{_head}</tr>{_body}</tbody></table>'
+        # All scalars → bullet list
+        if all(isinstance(x, (str, int, float, bool)) for x in _items):
+            _li = [safe(x) for x in _items if safe(x)]
+            return '<ul class="val-list">' + ''.join(f'<li>{e(s)}</li>' for s in _li) + '</ul>' if _li else ''
+        # Mixed → recursive render each item
+        _parts = []
+        for _i, _it in enumerate(_items):
+            _sub = _smart_render(_it, depth+1)
+            if _sub:
+                _parts.append(f'<div class="edu-sub-item" style="margin:8px 0">{_sub}</div>')
+        return ''.join(_parts)
+
+    # Dict
+    if isinstance(val, dict):
+        # Filter out internal/empty keys
+        _items = [(k, v) for k, v in val.items()
+                  if v is not None and v != '' and v != [] and v != {}
+                  and not (isinstance(k, str) and k.startswith('_'))]
+        if not _items:
+            return ''
+        # All values scalar → key-value table
+        if all(isinstance(v, (str, int, float, bool)) for _, v in _items):
+            _rows = ''.join(
+                f'<tr><td><strong>{e(key_label(k))}</strong></td><td>{e(safe(v))}</td></tr>'
+                for k, v in _items)
+            return f'<table class="kv-table"><tbody>{_rows}</tbody></table>'
+        # Mixed → render each key as a sub-block with its label
+        if depth >= 3:
+            # Avoid deep nesting — flatten
+            return ''.join(
+                f'<div class="edu-sub-item"><strong>{e(key_label(k))}:</strong> '
+                f'{_smart_render(v, depth+1)}</div>' for k, v in _items)
+        _parts = []
+        for _k, _v in _items:
+            _sub = _smart_render(_v, depth+1)
+            if _sub:
+                _parts.append(
+                    f'<div class="edu-sub" style="margin:10px 0 6px">'
+                    f'<div style="font-weight:700;color:#0d2257;font-size:.95rem;margin-bottom:4px">'
+                    f'{e(key_label(_k))}</div>{_sub}</div>')
+        return ''.join(_parts)
+
+    # Fallback for any other type
+    return f'<div class="edu-sec">{e(safe(val))}</div>'
+
 
 def _render_unknown_list(val):
     """Generic renderer for an unknown list field so its data is never dropped.
@@ -2293,14 +2417,13 @@ def build_all_sections(job_obj):
         if meta and body and body.strip():
             html += sec_card(key, meta[1], meta[2], body)
 
-    # Unknown/future keys — render EVERYTHING so no JSON data is ever dropped.
-    # Dynamic additionalData course-eligibility keys (b_tech_..., bca, mca, ...) get
-    # grouped into ONE clean table instead of 30+ ugly individual cards.
-    _dyn_elig = {}            # machine_key -> eligibility text (grouped)
-    _leftover_scalars = []    # (label, value) for other simple scalars
-    _has_course_details = bool(job_obj.get('course_details'))
+    # ── UNIVERSAL FALLBACK: ANY top-level JSON key not rendered above gets
+    # auto-rendered via _smart_render in JSON's natural order. New keys added
+    # to JSON later (by scraper updates) automatically appear in HTML without
+    # any code change — fully dynamic & order-preserving.
     _ad_keys = set(job_obj.get('_ad_derived_keys') or [])
-    # known structural keys we never want to re-render as "unknown"
+    _has_course_details = bool(job_obj.get('course_details'))
+    _dyn_elig = {}            # legacy course-eligibility grouping (preserved)
     _NEVER_AS_UNKNOWN = set(SKIP_KEYS) | set(SECTION_ORDER) | {
         'meta', 'sections', 'short_information', 'organization', 'total_post',
         'totalpost', 'post_date', 'name', 'breadcrumbs', 'course_name',
@@ -2308,15 +2431,9 @@ def build_all_sections(job_obj):
         'resulturl', 'answerkeyurl', '_ad_derived_keys',
     }
     for key, val in job_obj.items():
-        # INTERNAL FIELDS GUARD: any key starting with "_" (e.g. "_scraped_from",
-        # "_ad_derived_keys") is scraper/build bookkeeping only — never eligible
-        # for the public "Extra Fields" fallback dump, regardless of its value.
+        # Skip internal/AI/already-rendered keys
         if isinstance(key, str) and key.startswith('_'):
             continue
-        # AI LAYER GUARD: ai_* fields (and AI metadata) are rendered explicitly
-        # by the AI-aware code paths above (_render_ai_sections, faq/hta/title/
-        # meta overrides). They must NOT also appear in this generic fallback,
-        # or every page would show an ugly duplicate "Ai Overview" etc. card.
         if isinstance(key, str) and (key.startswith('ai_') or
                 key in ('content_hash', 'ai_schema_faq', 'ai_expanded_faqs',
                         'ai_extracted_structured_data')):
@@ -2325,10 +2442,11 @@ def build_all_sections(job_obj):
             continue
         if not val or val == {} or val == []:
             continue
-        # additionalData-derived course/eligibility blob
+
+        # additionalData-derived course-eligibility blob (legacy grouping)
         if key in _ad_keys and isinstance(val, str):
             if _has_course_details:
-                continue            # clean course_details table already covers it
+                continue
             _dyn_elig[key] = val
             continue
         if isinstance(val, str):
@@ -2337,16 +2455,16 @@ def build_all_sections(job_obj):
                 continue
             if _looks_elig and len(val) < 400:
                 _dyn_elig[key] = val
-            else:
-                _leftover_scalars.append((key_label(key), val))
-        elif isinstance(val, list):
-            _lb = _render_unknown_list(val)
-            if _lb:
-                html += sec_card(key_label(key), 'fa-circle-dot', '475569,#334155', _lb)
-        elif isinstance(val, dict):
-            _db = render_kv_dict(val)
-            if _db and _db.strip():
-                html += sec_card(key_label(key), 'fa-circle-dot', '475569,#334155', _db)
+                continue
+
+        # UNIVERSAL SMART RENDER — handles dicts, lists-of-dicts (tables),
+        # lists-of-strings (bullets), nested structures, anything else.
+        _body = _smart_render(val)
+        if _body and _body.strip():
+            # Skip garbled scalar values
+            if isinstance(val, str) and _is_garbled_field(key_label(key), safe(val)):
+                continue
+            html += sec_card(key_label(key), 'fa-circle-dot', '475569,#334155', _body)
 
     # grouped dynamic eligibility table (only if course_details didn't already cover it)
     if _dyn_elig:
@@ -2358,15 +2476,7 @@ def build_all_sections(job_obj):
                  + _rows + '</tbody></table>')
         html += sec_card('Course-wise Eligibility', 'fa-list-check', '4338ca,#6366f1', _body)
 
-    # leftover simple scalars (result_url etc. are handled separately above)
-    # H4 FIX: skip rows whose LABEL or VALUE is garbled scrape residue — broken
-    # ordinals ("ST Week", "Nd Week", "E Soon..."), or values truncated mid-word
-    # ("Availabl", "Available So"). These add no value and look broken to crawlers.
-    for _lbl, _val in _leftover_scalars:
-        if _is_garbled_field(_lbl, safe(_val)):
-            continue
-        html += sec_card(_lbl, 'fa-circle-dot', '475569,#334155',
-                         f'<div class="edu-sec">{e(safe(_val))}</div>')
+    # (leftover scalars now rendered inline above via _smart_render - no separate loop needed)
 
     # ── Auto-FAQ: if no JSON FAQ was rendered, generate from page data ──
     if 'faq' not in rendered:
@@ -3586,6 +3696,42 @@ print("Loading JSON data...")
 _load_first_seen(ROOT)   # C1: load persisted datePosted map
 with open(CJ_FILE, encoding='utf-8') as f: CJ = json.load(f)
 with open(DU_FILE, encoding='utf-8') as f: DU = json.load(f)
+
+# ── SLUG NORMALIZATION: PC scraper ke slugs me kabhi-kabhi trailing dash ──
+# rehti hai (jab title 80+ chars ho aur cut dash pe land kare). Saare slugs ko
+# load ke turant baad normalize karte hain so URL == disk page name.
+def _normalize_all_slugs():
+    _fixed_count = 0
+    # Unified deduped_jobs
+    _uni = (CJ.get('freejobalert_unified', {}) or {}).get('deduped_jobs', []) or []
+    for _j in _uni:
+        _s = _j.get('slug', '')
+        if _s:
+            _ns = _norm_slug(_s)
+            if _ns != _s:
+                _j['slug'] = _ns
+                _fixed_count += 1
+    # sarkari_data.jobs
+    for _j in (CJ.get('sarkari_data', {}) or {}).get('jobs', []) or []:
+        _s = _j.get('slug', '')
+        if _s:
+            _ns = _norm_slug(_s)
+            if _ns != _s:
+                _j['slug'] = _ns
+                _fixed_count += 1
+    # freejobalert_categories
+    for _cat, _jobs in (CJ.get('freejobalert_categories', {}) or {}).items():
+        if isinstance(_jobs, list):
+            for _j in _jobs:
+                _s = _j.get('slug', '') if isinstance(_j, dict) else ''
+                if _s:
+                    _ns = _norm_slug(_s)
+                    if _ns != _s:
+                        _j['slug'] = _ns
+                        _fixed_count += 1
+    if _fixed_count > 0:
+        print(f"  [slug-norm] Normalized {_fixed_count} slugs (stripped trailing dashes)")
+_normalize_all_slugs()
 
 # ── BACKWARD COMPAT: Smart-search reads `freejobalert_categories` (old format).
 # New scraper puts everything in `freejobalert_unified`. Rebuild categories
@@ -5985,7 +6131,7 @@ def remove_orphan_pages():
             shutil.rmtree(os.path.dirname(_fpath))
             orphans_deleted += 1
             if f'/jobs/{_slug}/' not in existing_redirects:
-                redirects_added.append((_slug, '/'))
+                redirects_added.append((_slug, '/section/latest-jobs/'))
         except Exception:
             pass
 
@@ -6039,27 +6185,36 @@ def verify_one_job_one_url():
                 _du_slug = slugify(_du_name)[:80]
                 if _du_slug: _valid.add(_du_slug)
 
-    # STEP 1: Clean stale redirects (slug now valid but redirect blocks it)
+    # STEP 1: Clean stale redirects — for each /jobs/{slug}/ rule, if a real
+    # HTML page exists on disk at that slug, the redirect is blocking it.
+    # Remove the rule so the page actually serves.
+    import glob as _g_verify
+    _disk_now = set()
+    for _f in _g_verify.glob(str(ROOT/'jobs'/'*'/'index.html')):
+        _disk_now.add(os.path.basename(os.path.dirname(_f)))
+
     rpath = str(ROOT/'_redirects')
-    if os.path.exists(rpath) and _valid:
+    if os.path.exists(rpath) and _disk_now:
         _lines = open(rpath, encoding='utf-8').read().splitlines()
         _kept_lines = []
         _removed_stale = 0
         for _line in _lines:
             _stripped = _line.strip()
             # Match: /jobs/{slug}/  /  301  (orphan-to-homepage rule)
-            _m = re.match(r'^/jobs/([^/\s]+)/\s+/\s+301\s*$', _stripped)
+            # Match: /jobs/{slug}/  TARGET  301  — ANY redirect from a slug
+            # that's now a valid page must be removed (page exists, redirect blocks it).
+            _m = re.match(r'^/jobs/([^/\s]+)/\s+\S+\s+301[!]?\s*$', _stripped)
             if _m:
                 _rslug = _m.group(1)
-                if _rslug in _valid:
-                    # This slug is now valid! Remove stale redirect
+                if _rslug in _disk_now:
+                    # This slug has a real page on disk! Remove blocking redirect.
                     _removed_stale += 1
                     continue
             _kept_lines.append(_line)
         if _removed_stale > 0:
             with open(rpath, 'w', encoding='utf-8') as _rf:
                 _rf.write('\n'.join(_kept_lines) + '\n')
-            print(f"  [verify] Removed {_removed_stale} stale orphan→/ redirects (slugs now valid)")
+            print(f"  [verify] Removed {_removed_stale} stale redirects (pages exist on disk)")
 
     # STEP 2: Final disk count
     _disk_pages = set()

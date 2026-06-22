@@ -108,8 +108,8 @@ a, button, [role="button"] {
 
 .icon-btn {
   background: none; border: none; color: #fff;
-  width: 44px; height: 44px; border-radius: 8px; cursor: pointer;
-  font-size: 1.1rem; display: flex; align-items: center; justify-content: center;
+  width: 52px; height: 52px; border-radius: 8px; cursor: pointer;
+  font-size: 1.4rem; display: flex; align-items: center; justify-content: center;
   font-family: inherit;
 }
 .icon-btn:hover { background: rgba(255,255,255,.15); }
@@ -123,8 +123,9 @@ a, button, [role="button"] {
 }
 @media (min-width: 901px) {
   .desktop-nav { display: flex; }
-  #menuBtn { display: none !important; }
-  #mobileSearchBtn { display: none !important; }
+  /* Menu + Search ab desktop pe BHI dikhenge (pehle hidden the) */
+  #menuBtn { display: flex !important; }
+  #mobileSearchBtn { display: flex !important; }
 }
 @media (max-width: 900px) {
   #menuBtn { display: flex !important; }
@@ -177,14 +178,14 @@ a, button, [role="button"] {
   }
   .mobile-bottom-bar a {
     flex: 1; display: flex; flex-direction: column; align-items: center;
-    gap: 2px; font-size: .72rem; font-weight: 800; color: #595959;
-    text-decoration: none; padding: 4px 0; min-height: 48px; justify-content: center;
+    gap: 3px; font-size: .85rem; font-weight: 800; color: #595959;
+    text-decoration: none; padding: 5px 0; min-height: 58px; justify-content: center;
   }
-  .mobile-bottom-bar a i { font-size: 1.15rem; }
-  .bnav-ic { font-size: 1.45rem; line-height: 1; display:block; }
+  .mobile-bottom-bar a i { font-size: 1.4rem; }
+  .bnav-ic { font-size: 1.75rem; line-height: 1; display:block; }
   .mobile-bottom-bar a.active,
   .mobile-bottom-bar a:hover { color: var(--blue); }
-  body { padding-bottom: max(60px, calc(60px + env(safe-area-inset-bottom, 0px))); }
+  body { padding-bottom: max(72px, calc(72px + env(safe-area-inset-bottom, 0px))); }
 }
 
 /* ── Mobile Overlay + Offcanvas ── */
