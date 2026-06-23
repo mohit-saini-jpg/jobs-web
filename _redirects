@@ -4822,7 +4822,6 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /jobs/bel-jr-supervisor-security-havildar-security-14-posts/  /jobs/bel-havildar-recruitment-2026-apply-offline/  301
 
 # ══ auto: duplicate job pages → canonical (One-HTML-One-URL) ══
-/jobs/sirsa-health-department-volunteer-vacancy-2026-free-application-form-apply-now/  /jobs/panchkula-health-department-volunteer-vacancy-2026-free-application-form-apply-n/  301
 /jobs/panipat-health-department-volunteer-vacancy-2026-free-application-form-apply-now/  /jobs/panchkula-health-department-volunteer-vacancy-2026-free-application-form-apply-n/  301
 /jobs/faridabad-health-department-volunteer-vacancy-2026-free-application-form-apply-n/  /jobs/panchkula-health-department-volunteer-vacancy-2026-free-application-form-apply-n/  301
 /jobs/sonipat-health-department-volunteer-vacancy-2026-free-application-form-apply-now/  /jobs/panchkula-health-department-volunteer-vacancy-2026-free-application-form-apply-n/  301
@@ -4870,7 +4869,6 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /jobs/lado-laxmi-yojana-2026-update-8th-kist-status/  /  301
 /jobs/upsssc-lekhpal-recruitment-2025-mains-download-answer-key-2026-for-7994-post/  /  301
 /jobs/voc-port-authority-recruitment-2026-check-details-apply-now/  /  301
-/jobs/haryana-anganwadi-recruitment-2026-for-worker-helper-supervisor-posts/  /  301
 /jobs/participating-institutes-in-jac-delhi-counselling-2026/  /  301
 /jobs/fatehabad-roadways-apprentice-online-form/  /  301
 /jobs/ccrum-vacancy-2026-apply-online-for-staff-nurse-mts-and-more-posts/  /  301
@@ -4977,7 +4975,6 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /jobs/sangeet-natak-akademi-recruitment-2026-check-vacancy-details-now/  /  301
 /jobs/nagindas-khandwala-merit-list-2026/  /  301
 /jobs/kelkar-college-merit-list-2026-important-dates/  /  301
-/jobs/mdu-mercy-special-chance-online-form-2026/  /  301
 /jobs/bihar-bihar-legislative-council-vidhan-parishad-recruitment-2023-security-guard/  /  301
 /jobs/rani-laxmibai-scooty-yojana-2026/  /  301
 /jobs/hssc-cet-group-d-registration-form-2026-apply-online/  /  301
@@ -5119,6 +5116,53 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 
 # ══ broken/empty job pages → homepage ══
 
+
+# ══ broken/empty job pages → homepage ══
+
+
+# ══ SARK→FJA cross-source dedup (same job, different title) ══
+/jobs/icsil-helpermts-recruitment-2026-notification-out-apply-online/  /jobs/icsil-dccws-helpermts-recruitment-2026-notification-out-apply-online-for-75-post/  301
+/jobs/aiims-delhi-project-nurse-project-technical-support-recruitment-2026/  /jobs/aiims-delhi-recruitment-2026-apply-online-for-project-nurse-project-technical-su/  301
+/jobs/income-tax-department-recruitment-2026-apply-for-mts-steno-and-tax-assistant/  /jobs/income-tax-department-sports-quota-recruitment-2026-apply-offline-for-12-mts-ste/  301
+
+# ══ auto: duplicate job pages → canonical (One-HTML-One-URL) ══
+/jobs/atal-bihari-vajpayee-medical-university-abvmu-up-gnm-entrance-test-upget-2026-ad/  /jobs/atal-bihari-vajpayee-medical-university-abvmu-up-gnm-entrance-test-upget-2026-re/  301
+
+# ══ auto: orphan pages → homepage (Job no longer active) ══
+/jobs/hptu-results-2025/  /section/latest-jobs/  301
+/jobs/rte-odisha-results-2026-key-highlights/  /section/latest-jobs/  301
+/jobs/mat-admit-card-2026-will-be-released-today-at-5-pm/  /section/latest-jobs/  301
+/jobs/bel-panchkula-recruitment-2026-check-notification-apply-online/  /section/latest-jobs/  301
+/jobs/alagappa-university-results-2026-key-highlights/  /section/latest-jobs/  301
+/jobs/atal-bihari-vajpayee-medical-university-abvmu-up-cnet-counselling-2026/  /section/latest-jobs/  301
+/jobs/allahabad-university-au-pravesh-pgat-i-and-pgat-ii-admissions-2026-admit-card/  /section/latest-jobs/  301
+/jobs/cfa-level-i-exam-pattern-2026/  /section/latest-jobs/  301
+/jobs/charkhi-dadri-volunteer-vacancy-2026-free-application-form-apply-now/  /section/latest-jobs/  301
+/jobs/mumbai-university-result-2026/  /section/latest-jobs/  301
+/jobs/tncmtse-exam-result-2026/  /section/latest-jobs/  301
+/jobs/upsssc-up-teacher-cadre-assistant-jtc-teacher-recruitment-2026-eligibility-resul/  /section/latest-jobs/  301
+/jobs/sashastra-seema-bal-ssb-head-constable-min-2020-cbt-exam-date-2026/  /section/latest-jobs/  301
+/jobs/central-sanskrit-university-delhi-recruitment-2026-apply-online/  /section/latest-jobs/  301
+/jobs/jmi-ba-llb-admit-card-2026-out-today/  /section/latest-jobs/  301
+/jobs/chandigarh-civil-hospital-recruitment-2026-notification-out-check-full-details/  /section/latest-jobs/  301
+/jobs/mithibai-college-merit-list-2026-important-dates/  /section/latest-jobs/  301
+/jobs/bitsat-session-2-registration-2026-overview/  /section/latest-jobs/  301
+/jobs/chaudhary-charan-singh-university-answer-key-2026-released-for-ba-bsc-bcom-ma-mc/  /section/latest-jobs/  301
+/jobs/important-dates-for-brabu-ug-admission-2026-30/  /section/latest-jobs/  301
+/jobs/cits-admit-card-2026-out/  /section/latest-jobs/  301
+/jobs/viva-college-merit-list-2026/  /section/latest-jobs/  301
+/jobs/tn-10th-result-2026-key-highlights/  /section/latest-jobs/  301
+/jobs/bihar-dcece-paramedical-entrance-exam-date-2026-key-highlights/  /section/latest-jobs/  301
+/jobs/railway-rrb-various-posts-of-non-technical-popular-categories-graduate-cen-06202/  /section/latest-jobs/  301
+/jobs/haryana-police-complaints-authority-recruitment-2026-apply-now/  /section/latest-jobs/  301
+/jobs/dtu-mtech-admission-2026/  /section/latest-jobs/  301
+/jobs/du-btech-admission-2026/  /section/latest-jobs/  301
+/jobs/upsc-central-armed-police-force-capf-ac-examination-2024-final-result-with-reser/  /section/latest-jobs/  301
+/jobs/uppsc-medical-officer-dental-surgeon-swastha-shiksha-adhikari-veterinary-officer/  /section/latest-jobs/  301
+/jobs/haryana-ntt-teacher-recruitment-2026-vacancy-notification-check-full-detail/  /section/latest-jobs/  301
+/jobs/upget-2026-quick-overview/  /section/latest-jobs/  301
+/jobs/aiims-nursing-officer-recruitment-2026-phase-10th-seat-allotment-result-2026/  /section/latest-jobs/  301
+/jobs/upsc-engineering-services-mains-examination-2026-admit-card/  /section/latest-jobs/  301
 
 # ══ broken/empty job pages → homepage ══
 
