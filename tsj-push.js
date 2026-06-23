@@ -157,15 +157,20 @@
   function startLocalRotation() {
     if (!sg(SK.SUB)) return;
     stopLocalRotation();
-    // Load job data first
-    loadJobData().then(function() {
-      // Send first notification after 30 seconds
+    // Ensure SW registration is ready, then load jobs and start timer
+    var swPromise = _swReg
+      ? Promise.resolve(_swReg)
+      : navigator.serviceWorker.ready.then(function(r){ _swReg = r; return r; }).catch(function(){ return null; });
+
+    swPromise.then(function() {
+      return loadJobData();
+    }).then(function() {
+      // First notification after 30 seconds
       setTimeout(function() {
         if (sg(SK.SUB)) sendNextJobNotif();
       }, 30000);
       // Then every 10 minutes
       _rotateTimer = setInterval(function() {
-        if (document.hidden) return; // Skip if tab/app not visible
         if (sg(SK.SUB)) sendNextJobNotif();
       }, ROTATE_MS);
     });
@@ -241,11 +246,35 @@
       _jobIdx = (_jobIdx + 1) % jobs.length;
       ss(SK.IDX, _jobIdx);
 
-      // Show via SW (works even when page not visible)
-      if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+      // Show via SW registration.showNotification — works in background too
+      var notifOptions = {
+        body   : notifBody,
+        icon   : '/icons/icon-192x192.png',
+        badge  : '/icons/icon-96x96.png',
+        tag    : 'tsj-job-' + catKey,
+        renotify: true,
+        vibrate: [150, 80, 150],
+        data   : { url: url, category: catKey },
+        actions: [
+          { action: 'view',    title: cat.emoji + ' Dekho' },
+          { action: 'dismiss', title: '✕' }
+        ]
+      };
+      // Use SW registration.showNotification (works when tab not focused)
+      if (_swReg) {
+        _swReg.showNotification(notifTitle, notifOptions).catch(function(){
+          // Fallback: postMessage to SW
+          if (navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+              type: 'SHOW_JOB_NOTIFICATION',
+              payload: { title: notifTitle, body: notifBody, url: url, category: catKey }
+            });
+          }
+        });
+      } else if (navigator.serviceWorker.controller) {
         navigator.serviceWorker.controller.postMessage({
           type: 'SHOW_JOB_NOTIFICATION',
-          payload: { title: notifTitle, body: notifBody, url: url, category: catKey, slug: slug }
+          payload: { title: notifTitle, body: notifBody, url: url, category: catKey }
         });
       }
     });
@@ -478,7 +507,11 @@
 
     init: function() {
       if (!sg(SK.SUB)) return;
-      regSW().then(function(){ return initFCM(); }).catch(function(){});
+      // Get SW registration first, then init FCM + start rotation
+      regSW().then(function(r) {
+        _swReg = r;
+        return initFCM();
+      }).catch(function(){});
       startLocalRotation();
     },
   };
