@@ -5237,12 +5237,20 @@ for cat, jobs_list in FJA.items():
     cat_slug  = QUAL_SLUG.get(cat, slugify(cat))
     cat_label = QUAL_LABEL.get(cat, cat.replace('_',' ').title())
     if cat_slug not in _cat_listing_jobs:
-        _cat_listing_jobs[cat_slug] = {'label': cat_label, 'jobs': []}
+        _cat_listing_jobs[cat_slug] = {'label': cat_label, 'jobs': [], 'seen_slugs': set()}
     for job in jobs_list:
         bd = job.get('basic_details',{}) or {}
         title = safe(bd.get('job_title',''))
         if not title: continue
         item_slug = slugify(title)[:80]
+        # DUPLICATE GUARD: FJA kabhi-kabhi same recruitment ko naye article-ID
+        # (naya URL) ke saath dobara publish kar deta hai. URL alag hone ki
+        # wajah se upstream dedup_engine isse same job nahi maanta, aur same
+        # title 2 baar listing me aa jaata tha ("purani list dobara dikhna").
+        # Slug-level guard yahan final safety-net hai — same slug 2nd baar skip.
+        if item_slug in _cat_listing_jobs[cat_slug]['seen_slugs']:
+            continue
+        _cat_listing_jobs[cat_slug]['seen_slugs'].add(item_slug)
         canon = f"{BASE_URL}/category/study/{cat_slug}/{item_slug}/"
         bc    = [('Study Wise Jobs', f"{BASE_URL}/category/study/"), (f'{cat_label} Jobs', f"{BASE_URL}/category/study/{cat_slug}/")]
         _canon_j = f"{BASE_URL}/jobs/{item_slug}/"  # canonical always points to /jobs/
