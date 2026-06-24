@@ -819,53 +819,227 @@ def check_15_schema_validation():
 # ---------------------------------------------------------------------------
 # CHECK 16: Auto-fix issues
 # ---------------------------------------------------------------------------
+
+def _autofix_check5_orphan_pages():
+    """CHECK 5 fix: Remove orphan pages from disk that aren't in any index/sitemap."""
+    known_slugs = set()
+
+    # Collect known slugs from all sitemaps
+    for sitemap_name in SITEMAP_FILES:
+        sitemap_path = os.path.join(ROOT_DIR, sitemap_name)
+        for url in _parse_sitemap_urls(sitemap_path):
+            slug = url_to_slug(url)
+            if slug:
+                known_slugs.add(slug)
+
+    # Collect from sections-index.json
+    sections_path = os.path.join(ROOT_DIR, 'sections-index.json')
+    if os.path.exists(sections_path):
+        try:
+            with open(sections_path, encoding='utf-8') as f:
+                sections = json.load(f)
+            for cat, items in sections.items():
+                for item in items:
+                    s = item.get('slug', '')
+                    if s:
+                        known_slugs.add(s)
+        except Exception:
+            pass
+
+    removed = []
+    import shutil
+    for folder in CONTENT_FOLDERS:
+        folder_path = os.path.join(ROOT_DIR, folder)
+        if not os.path.isdir(folder_path):
+            continue
+        for entry in os.scandir(folder_path):
+            if entry.is_dir() and entry.name not in known_slugs:
+                try:
+                    shutil.rmtree(entry.path)
+                    removed.append(f"{folder}/{entry.name}")
+                    validation_results['auto_fixes'].append({
+                        'type': 'orphan_removed',
+                        'path': f"{folder}/{entry.name}",
+                        'rule': f"Deleted orphan: {folder}/{entry.name}",
+                    })
+                except Exception as e:
+                    validation_results['warnings'].append(f"Could not remove orphan {entry.path}: {e}")
+
+    if removed:
+        print(f"  → CHECK 5 Auto-fix: Removed {len(removed)} orphan page folders")
+    return removed
+
+
+def _autofix_check10_duplicate_sitemaps():
+    """CHECK 10 fix: Remove duplicate URLs from sitemaps, keep canonical (with trailing slash)."""
+    fixed_count = 0
+
+    for sitemap_name in SITEMAP_FILES:
+        sitemap_path = os.path.join(ROOT_DIR, sitemap_name)
+        if not os.path.exists(sitemap_path):
+            continue
+
+        try:
+            content = read_file(sitemap_path)
+            # Find all <loc>...</loc> entries
+            locs = re.findall(r'<loc>([^<]+)</loc>', content)
+            seen_norm = {}
+            for loc in locs:
+                norm = loc.rstrip('/').replace('/index.html', '')
+                seen_norm.setdefault(norm, []).append(loc)
+
+            duplicates = {k: v for k, v in seen_norm.items() if len(v) > 1}
+            if not duplicates:
+                continue
+
+            # For each duplicate group: keep the one with trailing slash, remove others
+            new_content = content
+            for norm, urls in duplicates.items():
+                # Prefer trailing slash version
+                preferred = next((u for u in urls if u.endswith('/')), urls[0])
+                to_remove = [u for u in urls if u != preferred]
+                for bad_url in to_remove:
+                    # Remove entire <url>...</url> block containing this loc
+                    pattern = r'<url>\s*<loc>' + re.escape(bad_url) + r'</loc>.*?</url>'
+                    new_content, n = re.subn(pattern, '', new_content, flags=re.DOTALL)
+                    if n > 0:
+                        fixed_count += 1
+                        validation_results['auto_fixes'].append({
+                            'type': 'duplicate_sitemap_url_removed',
+                            'path': sitemap_name,
+                            'rule': f"Removed duplicate: {bad_url} (kept: {preferred})",
+                        })
+
+            if new_content != content:
+                with open(sitemap_path, 'w', encoding='utf-8') as f:
+                    f.write(new_content)
+        except Exception as e:
+            validation_results['warnings'].append(f"CHECK 10 auto-fix failed for {sitemap_name}: {e}")
+
+    if fixed_count:
+        print(f"  → CHECK 10 Auto-fix: Removed {fixed_count} duplicate sitemap URLs")
+    return fixed_count
+
+
+def _autofix_check15_schema():
+    """CHECK 15 fix: Add missing JobPosting JSON-LD schema to job pages that lack it."""
+    jobs_folder = os.path.join(ROOT_DIR, 'jobs')
+    if not os.path.isdir(jobs_folder):
+        return 0
+
+    all_job_indexes = find_index_files(jobs_folder)
+    fixed_count = 0
+
+    for filepath in all_job_indexes:
+        content = read_file(filepath)
+
+        # Skip if already has JobPosting schema
+        if '"JobPosting"' in content or "'JobPosting'" in content:
+            continue
+
+        # Extract basic info from page
+        title = get_page_title(content) or 'Government Job'
+        canonical = get_canonical_url(content) or ''
+        meta_desc = get_meta_description(content) or ''
+
+        # Build minimal valid JobPosting schema
+        schema = {
+            "@context": "https://schema.org",
+            "@type": "JobPosting",
+            "title": title,
+            "description": meta_desc or title,
+            "datePosted": datetime.datetime.now().strftime('%Y-%m-%d'),
+            "hiringOrganization": {
+                "@type": "Organization",
+                "name": "Government of India"
+            },
+            "jobLocation": {
+                "@type": "Place",
+                "address": {
+                    "@type": "PostalAddress",
+                    "addressCountry": "IN"
+                }
+            },
+            "employmentType": "FULL_TIME",
+            "url": canonical
+        }
+
+        schema_tag = f'\n<script type="application/ld+json">\n{json.dumps(schema, ensure_ascii=False, indent=2)}\n</script>'
+
+        # Inject before </head>
+        if '</head>' in content:
+            new_content = content.replace('</head>', schema_tag + '\n</head>', 1)
+            try:
+                with open(filepath, 'w', encoding='utf-8') as f:
+                    f.write(new_content)
+                fixed_count += 1
+                validation_results['auto_fixes'].append({
+                    'type': 'schema_added',
+                    'path': os.path.relpath(filepath, ROOT_DIR),
+                    'rule': f"Added JobPosting schema to {os.path.relpath(filepath, ROOT_DIR)}",
+                })
+            except Exception as e:
+                validation_results['warnings'].append(f"Schema fix failed for {filepath}: {e}")
+
+    if fixed_count:
+        print(f"  → CHECK 15 Auto-fix: Added JobPosting schema to {fixed_count} pages")
+    return fixed_count
+
+
 def auto_fix_issues():
-    """Fuzzy-match missing slugs to existing disk slugs and append 301 redirects."""
+    """Run all auto-fixes: slug mismatches, orphan pages, duplicate sitemaps, schema."""
     jobs_folder = os.path.join(ROOT_DIR, 'jobs')
     redirects_path = os.path.join(ROOT_DIR, '_redirects')
 
-    if not os.path.isdir(jobs_folder):
-        return
+    # --- FIX 1: Slug mismatch → _redirects (original logic) ---
+    if os.path.isdir(jobs_folder):
+        existing_slugs = [entry.name for entry in os.scandir(jobs_folder) if entry.is_dir()]
+        existing_norm_map = {normalize_slug(s): s for s in existing_slugs}
 
-    # Build set of existing slugs on disk
-    existing_slugs = [entry.name for entry in os.scandir(jobs_folder) if entry.is_dir()]
-    existing_norm_map = {normalize_slug(s): s for s in existing_slugs}
+        missing_slugs = []
+        for w in validation_results['warnings']:
+            if 'CHECK 13' in w:
+                for line in w.split('\n'):
+                    m = re.match(r'\s+-\s+jobs/([^/]+)/index\.html', line)
+                    if m:
+                        missing_slugs.append(m.group(1))
 
-    # Gather missing slugs from critical_errors (from check 13)
-    missing_slugs = []
-    for err in validation_results['critical_errors']:
-        if 'CHECK 13' in err:
-            for line in err.split('\n'):
-                m = re.match(r'\s+-\s+jobs/([^/]+)/index\.html', line)
-                if m:
-                    missing_slugs.append(m.group(1))
+        fix_lines = []
+        date_comment = f"\n# Auto-fix: SEO slug mismatches — {datetime.datetime.now().strftime('%Y-%m-%d %H:%M')}\n"
+        fix_lines.append(date_comment)
 
-    if not missing_slugs:
-        return
+        for missing_slug in missing_slugs:
+            norm = normalize_slug(missing_slug)
+            if norm in existing_norm_map:
+                found_slug = existing_norm_map[norm]
+                redirect_rule = f"/jobs/{missing_slug}/  /jobs/{found_slug}/  301"
+                fix_lines.append(redirect_rule)
+                validation_results['auto_fixes'].append({
+                    'type': 'slug_redirect',
+                    'missing': missing_slug,
+                    'found': found_slug,
+                    'rule': redirect_rule,
+                })
 
-    fix_lines = []
-    date_comment = f"\n# Auto-fix: SEO slug mismatches — {datetime.datetime.now().strftime('%Y-%m-%d %H:%M')}\n"
-    fix_lines.append(date_comment)
+        if len(fix_lines) > 1:
+            try:
+                with open(redirects_path, 'a', encoding='utf-8') as f:
+                    f.write('\n'.join(fix_lines) + '\n')
+                print(f"  → CHECK 13 Auto-fix: {len(fix_lines)-1} slug mismatches added to _redirects")
+            except Exception as e:
+                validation_results['warnings'].append(f"Auto-fix failed to write _redirects: {e}")
 
-    for missing_slug in missing_slugs:
-        norm = normalize_slug(missing_slug)
-        if norm in existing_norm_map:
-            found_slug = existing_norm_map[norm]
-            redirect_rule = f"/jobs/{missing_slug}/  /jobs/{found_slug}/  301"
-            fix_lines.append(redirect_rule)
-            validation_results['auto_fixes'].append({
-                'missing': missing_slug,
-                'found': found_slug,
-                'rule': redirect_rule,
-            })
+    # --- FIX 2: CHECK 5 — Remove orphan pages ---
+    _autofix_check5_orphan_pages()
 
-    if fix_lines:
-        try:
-            with open(redirects_path, 'a', encoding='utf-8') as f:
-                f.write('\n'.join(fix_lines) + '\n')
-            print(f"  → Auto-fixed {len(validation_results['auto_fixes'])} slug mismatches in _redirects")
-        except Exception as e:
-            validation_results['warnings'].append(f"Auto-fix failed to write _redirects: {e}")
+    # --- FIX 3: CHECK 10 — Remove duplicate sitemap URLs ---
+    _autofix_check10_duplicate_sitemaps()
+
+    # --- FIX 4: CHECK 15 — Add missing JobPosting schema ---
+    _autofix_check15_schema()
+
+    total = len(validation_results['auto_fixes'])
+    print(f"  → Total auto-fixes applied: {total}")
 
 
 # ---------------------------------------------------------------------------
