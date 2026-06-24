@@ -248,7 +248,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
   (function(){
     function loadFA(){
       var l=document.createElement('link');
-      l.rel='stylesheet'; l.href='fonts/fa/all.min.css';
+      l.rel='stylesheet'; l.href='/fonts/fa/all.min.css';
       l.media='print'; l.onload=function(){this.media='all';};
       document.head.appendChild(l);
     }
@@ -257,7 +257,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
     } else { setTimeout(loadFA,100); }
   })();
   </script>
-  <noscript><link rel="stylesheet" href="fonts/fa/all.min.css"></noscript>
+  <noscript><link rel="stylesheet" href="/fonts/fa/all.min.css"></noscript>
 
   <style>
     /* ============================================================
