@@ -1179,7 +1179,7 @@ def main():
     check_15_schema_validation()
     print("✓ CHECK 15: Schema markup validated")
 
-    if AUTO_FIX and validation_results['critical_errors']:
+    if AUTO_FIX:
         auto_fix_issues()
         print("✓ CHECK 16: Auto-fix applied")
 
