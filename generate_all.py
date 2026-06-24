@@ -3432,7 +3432,12 @@ def _seo_listing_content(title, jobs, canon_url):
 def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''):
     _yr_str = str(YEAR)
     _t = title if _yr_str in title else f"{title} {YEAR}"
-    title_tag = f"{_t} — Apply Online | Top Sarkari Jobs"
+    # SEO FIX: latest-jobs page ka title differentiate karo homepage se
+    _url_key_for_title = canon_url.rstrip('/').split('/')[-1]
+    if _url_key_for_title in ('latest-jobs', 'latest-jobs-new', 'latest-notifications', 'latest-govt-jobs'):
+        title_tag = f"Latest Sarkari Naukri {YEAR} — New Govt Job Alerts | Top Sarkari Jobs"
+    else:
+        title_tag = f"{_t} — Apply Online | Top Sarkari Jobs"
 
     # FIX #12: section-specific meta description > passed desc > generic fallback
     _url_key = canon_url.rstrip('/').split('/')[-1]
