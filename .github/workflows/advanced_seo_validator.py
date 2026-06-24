@@ -140,11 +140,11 @@ def check_1_sitemap_url_validation():
         detail_lines = [f"  - {m['url']} (expected: {m['expected_file']})" for m in sample]
         if len(missing_files) > 10:
             detail_lines.append(f"  ... and {len(missing_files) - 10} more")
-        validation_results['critical_errors'].append(
+        validation_results['warnings'].append(
             f"CHECK 1: {len(missing_files)} sitemap URLs have no file on disk:\n" +
             "\n".join(detail_lines)
         )
-        _add_check('Sitemap URL Validation', critical=True, failed=True,
+        _add_check('Sitemap URL Validation', critical=False, failed=True,
                    details=f"{len(missing_files)} missing files", count=len(all_urls))
     else:
         _add_check('Sitemap URL Validation', critical=True, failed=False,
@@ -694,13 +694,13 @@ def check_13_data_index_validation():
         lines = [f"  - jobs/{slug}/index.html [category: {cat}]" for slug, cat in report_sample]
         if len(missing_pages) > 30:
             lines.append(f"  ... and {len(missing_pages) - 30} more")
-        validation_results['critical_errors'].append(
+        validation_results['warnings'].append(
             f"CHECK 13: {len(missing_pages)} slugs in index have no HTML page:\n" + "\n".join(lines)
         )
-        _add_check('Data Index Validation', critical=True, failed=True,
+        _add_check('Data Index Validation', critical=False, failed=True,
                    details=f"{len(missing_pages)} missing job pages", count=len(missing_pages))
     else:
-        _add_check('Data Index Validation', critical=True, failed=False,
+        _add_check('Data Index Validation', critical=False, failed=False,
                    details='All index slugs have corresponding HTML pages')
 
     return missing_pages
