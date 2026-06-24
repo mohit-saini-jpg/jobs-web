@@ -447,16 +447,8 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /education/*                                  /education-detail.html                        200
 /category/*                                   /category.html                                200
 /search/*                                     /search.html                                  200
-/about/                                       /about.html                                   200
-/contact/                                     /contact.html                                 200
-/terms/                                       /terms.html                                   200
-/privacy/                                     /privacy.html                                 200
-/disclaimer/                                  /disclaimer.html                              200
-/helpdesk/                                    /helpdesk.html                                200
-/sitemap/                                     /sitemap.html                                 200
-/resume-maker/                                /resume-maker.html                            200
-/tools/                                       /tools.html                                   200
-/govt-services/                               /govt-services.html                           200
+# NOTE: /about/, /contact/, /terms/ etc. are real directories with index.html
+# Vercel serves them directly — no rewrite needed (removed to prevent redirect loops)
 # ── Data chunks — serve directly (no rewrite) ──
 /data/*.json  /data/:splat  200
 
@@ -5663,5 +5655,8 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /jobs/up-police-sub-inspector-si-advt-no-03-2025-recruitment-2025-exam-date-2026-for-4/  /jobs/up-police-sub-inspector-si-advt-no-032025-recruitment-2025-exam-date-2026-for-45/  301
 /jobs/afms-b-sc-nursing-admission-online-form/  /jobs/afms-bsc-nursing-admission-online-form/  301
 
-# Auto-fix: SEO slug mismatches — 2026-06-24 05:41
+# Auto-fix: SEO slug mismatches — 2026-06-24 05:28
+
+
+# Auto-fix: SEO slug mismatches — 2026-06-24 05:29
 
