@@ -45,7 +45,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
     .sr-job-date { font-size:.65rem; color:#64748b; white-space:nowrap; margin-top:2px; }
     </style>
 
-  <title>Top Sarkari Jobs 2026 – Latest Govt Jobs, Results & Admit Cards</title>
+  <title>Top Sarkari Jobs – Sarkari Naukri, Results & Admit Cards 2026</title>
   <!-- S-02: GA4 — loaded on first user interaction (or after 3.5s) to keep the
        main thread free during initial paint. Improves TBT/INP without losing
        analytics: real engaged users trigger an interaction, and a timeout
@@ -89,7 +89,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
   <!-- dailyupdates.json is fetched with an hourly cache-bust in the cards script,
        so a static preload would just cache a stale copy — intentionally removed. -->
   <!-- PERF: sections-index.json — 16KB lightweight index for instant card rendering (instead of 18MB Complete_Jobs_Full_Data.json) -->
-  <link rel="preload" href="sections-index.json?v=202606241510" as="fetch" crossorigin="anonymous"/>
+  <link rel="preload" href="sections-index.json?v=202606240831" as="fetch" crossorigin="anonymous"/>
   <!-- PERF: Complete_Jobs_Full_Data.json fetched once — powers all SR cards + ticker -->
   <script>
   // Complete_Jobs_Full_Data.json is the single source of truth
@@ -114,14 +114,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
     else { setTimeout(loadNow, 8000); }
   });
   // PERF: sections-index.json — fetch starts immediately at page load (16KB vs 18MB)
-  window.__sectionsIndexPromise = fetch('sections-index.json?v=202606241510')
+  window.__sectionsIndexPromise = fetch('sections-index.json?v=202606240831')
     .then(function(r){ return r.ok ? r.json() : null; })
     .catch(function(){ return null; });
   </script>
 
   <meta property="og:type" content="website"/>
   <meta property="og:url" content="https://www.topsarkarijobs.com/"/>
-  <meta property="og:title" content="Top Sarkari Jobs 2026 – Latest Govt Jobs, Results & Admit Cards"/>
+  <meta property="og:title" content="Top Sarkari Jobs – Sarkari Naukri, Results & Admit Cards 2026"/>
   <meta property="og:description" content="Latest government job notifications, admit cards, results & answer keys for SSC, Railway, Banking, Police, UPSC & State PSC. Updated daily."/>
   <meta property="og:image" content="https://www.topsarkarijobs.com/image.png"/>
   <meta property="og:image:width" content="512"/>
@@ -131,7 +131,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
   <meta property="og:site_name" content="Top Sarkari Jobs"/>
   <meta name="twitter:card" content="summary_large_image"/>
   <meta name="twitter:site" content="@topsarkarijobs"/>
-  <meta name="twitter:title" content="Top Sarkari Jobs 2026 – Latest Govt Jobs, Results & Admit Cards"/>
+  <meta name="twitter:title" content="Top Sarkari Jobs – Sarkari Naukri, Results & Admit Cards 2026"/>
   <meta name="twitter:description" content="Latest government job notifications, admit cards, results & answer keys for SSC, Railway, Banking, Police, UPSC & State PSC. Updated daily."/>
   <meta name="twitter:creator" content="@topsarkarijobs"/>
   <meta name="twitter:image" content="https://www.topsarkarijobs.com/image.png"/>
@@ -1752,7 +1752,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
   <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
-  <script src="/tsj-menu.js?v=20260624204037" defer></script>
+  <script src="/tsj-menu.js?v=20260624140058" defer></script>
   <script src="/pwa-install.js?v=6.0" defer></script>
   <!-- ══ END PWA ════════════════════════════════════════════════════ -->
 
@@ -1943,7 +1943,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
   <section class="hero-banner" aria-label="Search government jobs" id="hero-search-section">
     <div class="container hero-inner">
       <div class="hero-badge"><i class="fa-solid fa-flag"></i> 🇮🇳 India's No.1 Sarkari Jobs Portal</div>
-      <h1 class="hero-h1">Latest <span>Sarkari Jobs 2026</span><br>Government Jobs, Results &amp; Admit Cards</h1>
+      <h1 class="hero-h1"><span>Top Sarkari Jobs</span> — Sarkari Naukri<br>Govt Jobs, Results &amp; Admit Cards 2026</h1>
       <p class="hero-sub">Daily Updated Jobs, Admit Card, Results, Answer Key & More</p>
 
       <div class="hero-quick-btns">
@@ -2535,7 +2535,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
         if (cached && (Date.now() - cached.ts) < CACHE_TTL) return Promise.resolve(cached.data);
       } catch(e) {}
 
-      return (window.__sectionsIndexPromise || fetch('/sections-index.json?v=202606241510').then(function(r){return r.ok?r.json():null;}))
+      return (window.__sectionsIndexPromise || fetch('/sections-index.json?v=202606240831').then(function(r){return r.ok?r.json():null;}))
         .then(function(json) {
           try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: json })); } catch(e) {}
           return json;
@@ -2768,7 +2768,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
           // Phase 1: sections-index + dailyupdates se turant render karo (fast ~400KB)
           // Use preloaded promise if available (avoids duplicate network request)
           Promise.all([
-            window.__sectionsIndexPromise || gj('/sections-index.json?v=202606241510'),
+            window.__sectionsIndexPromise || gj('/sections-index.json?v=202606240831'),
             gj('/dailyupdates.json?v='+_duBust)
           ]).then(function(r){
             var si=r[0],dl=r[1];
@@ -3515,7 +3515,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
     setTimeout(loadPush,10000);
   })();
 </script>
-<script src="/tsj-version.js?v=20260624204037" defer></script>
+<script src="/tsj-version.js?v=20260624140058" defer></script>
 
 <script>
 /* Auto lazy-load all images not already marked */
