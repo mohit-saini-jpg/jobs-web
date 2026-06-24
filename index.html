@@ -1066,7 +1066,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
       display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
       padding: 20px 12px 16px;
     }
-    @media (min-width: 768px) { .footer-grid { grid-template-columns: 2fr 1fr 1fr 1.5fr; } }
+    @media (min-width: 768px) { .footer-grid { grid-template-columns: 2fr 1fr 1.5fr; } }
     .footer-title { font-size: .95rem; font-weight: 900; color: #fff; margin-bottom: 8px; }
     .footer-sub { font-size: .75rem; opacity: .75; margin-bottom: 10px; line-height: 1.6; }
     .footer-links-list { display: flex; flex-direction: column; gap: 5px; }
@@ -1743,6 +1743,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
+  "@id": "https://www.topsarkarijobs.com/#faq",
   "mainEntity": [
     {
       "@type": "Question",
@@ -1943,19 +1944,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
         <div id="searchSuggest" role="listbox" aria-label="Search suggestions"></div>
       </div>
       <div id="heroSearchResults"></div>
-    </div>
-  </section>
-
-  <!-- ============================================================
-       IMPORTANT NOTICE — E-E-A-T / YMYL TRUST DISCLOSURE
-  ============================================================ -->
-  <section class="container" aria-label="Important notice">
-    <div style="background:#fff8e1;border:1px solid #f5d061;border-left:4px solid #b45309;border-radius:8px;padding:12px 14px;margin:0 0 16px;font-size:.82rem;line-height:1.6;color:#3f2d0a;">
-      <strong style="display:flex;align-items:center;gap:6px;color:#92400e;font-size:.88rem;margin-bottom:6px;">
-        <i class="fa-solid fa-circle-info"></i> Important Notice
-      </strong>
-      <p style="margin:0 0 6px;"><strong>Top Sarkari Jobs is an independent job information portal.</strong> We are not affiliated with any Government department, ministry, commission, or recruitment agency.</p>
-      <p style="margin:0;">Candidates should always verify information from the official notification before applying. <a href="/about/" style="color:#1a56db;font-weight:700;">Read our full disclosure →</a></p>
     </div>
   </section>
 
@@ -2806,24 +2794,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
         </div>
 
         <!-- FAQ -->
-        <div class="faq-card">
+        <div class="faq-card" id="faq">
           <h2>Frequently Asked Questions – Sarkari Jobs 2026</h2>
           <p class="faq-sub">Common questions about government jobs, results and admit cards.</p>
           <div class="faq-item">
             <button type="button" class="faq-btn" aria-expanded="false"><span>How to find latest government jobs in 2026?</span><i class="fas fa-chevron-down"></i></button>
-            <div class="faq-panel" hidden>Visit Top Sarkari Jobs daily for the latest government job notifications. Use the search bar above to find jobs by qualification, department or state. Also join our WhatsApp channel for instant alerts.</div>
+            <div class="faq-panel" hidden>Visit Top Sarkari Jobs daily for the latest government job notifications. We update SSC, Railway, Bank, Police, UPSC and State PSC vacancies every day. Use our category filters to find jobs by qualification or state, or join our WhatsApp channel for instant alerts.</div>
           </div>
           <div class="faq-item">
             <button type="button" class="faq-btn" aria-expanded="false"><span>Are notifications on this site updated daily?</span><i class="fas fa-chevron-down"></i></button>
-            <div class="faq-panel" hidden>Yes. We update government job notifications, admit cards, and results daily. Join our WhatsApp channel for instant alerts.</div>
+            <div class="faq-panel" hidden>Yes, Top Sarkari Jobs is updated daily with new government job notifications, admit cards, results and answer keys from all central and state government organisations across India.</div>
           </div>
           <div class="faq-item">
             <button type="button" class="faq-btn" aria-expanded="false"><span>How to check Sarkari Result 2026?</span><i class="fas fa-chevron-down"></i></button>
-            <div class="faq-panel" hidden>Visit our <a href="/category/admissions/" style="color:var(--blue);">Results page</a> for the latest sarkari results including Railway, SSC, Police, Bank and State Govt results.</div>
+            <div class="faq-panel" hidden>Go to our <a href="/section/results/" style="color:var(--blue);">Results section</a> to find the latest Sarkari Results 2026 for SSC, Railway, Bank, UPSC and all state government exams.</div>
           </div>
           <div class="faq-item">
-            <button type="button" class="faq-btn" aria-expanded="false"><span>Are there jobs for 10th / 12th pass candidates?</span><i class="fas fa-chevron-down"></i></button>
-            <div class="faq-panel" hidden>Yes! Railway, Police, Defence and various departments regularly release vacancies for 10th and 12th pass candidates. Check our dedicated qualification-wise sections.</div>
+            <button type="button" class="faq-btn" aria-expanded="false"><span>Are there jobs for 10th pass and 12th pass candidates?</span><i class="fas fa-chevron-down"></i></button>
+            <div class="faq-panel" hidden>Yes! We have dedicated sections for <a href="/section/10th-pass-jobs/" style="color:var(--blue);">10th pass government jobs</a> and <a href="/section/12th-pass-jobs/" style="color:var(--blue);">12th pass jobs</a>, with hundreds of current vacancies updated daily.</div>
+          </div>
+          <div class="faq-item">
+            <button type="button" class="faq-btn" aria-expanded="false"><span>What is Sarkari Naukri and how to apply?</span><i class="fas fa-chevron-down"></i></button>
+            <div class="faq-panel" hidden>Sarkari Naukri means government job in India. To apply: check the job notification on Top Sarkari Jobs, verify your eligibility, click the Apply Online button, fill the official application form, pay the fee and submit before the last date.</div>
           </div>
         </div>
 
@@ -2910,6 +2902,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
   </main>
 
   <!-- ============================================================
+       IMPORTANT NOTICE — E-E-A-T / YMYL TRUST DISCLOSURE (end of page)
+  ============================================================ -->
+  <section class="container" aria-label="Important notice">
+    <div style="background:#fff8e1;border:1px solid #f5d061;border-left:4px solid #b45309;border-radius:8px;padding:12px 14px;margin:16px 0;font-size:.82rem;line-height:1.6;color:#3f2d0a;">
+      <strong style="display:flex;align-items:center;gap:6px;color:#92400e;font-size:.88rem;margin-bottom:6px;">
+        <i class="fa-solid fa-circle-info"></i> Important Notice
+      </strong>
+      <p style="margin:0 0 6px;"><strong>Top Sarkari Jobs is an independent job information portal.</strong> We are not affiliated with any Government department, ministry, commission, or recruitment agency.</p>
+      <p style="margin:0;">Candidates should always verify information from the official notification before applying. <a href="/about/" style="color:#1a56db;font-weight:700;">Read our full disclosure →</a></p>
+    </div>
+  </section>
+
+  <!-- ============================================================
        FOOTER
   ============================================================ -->
   <footer class="site-footer">
@@ -2933,16 +2938,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
             <a href="/privacy/">Privacy Policy</a>
             <a href="/disclaimer/">Disclaimer</a>
             <a href="/terms/">Terms & Conditions</a>
-          </div>
-        </div>
-        <div>
-          <div class="footer-title">Important Links</div>
-          <div class="footer-links-list">
-            <a href="/section/latest-jobs/">Latest Jobs</a>
-            <a href="/category/admit-result/">Admit Card Results</a>
-            <a href="/category/admissions/">Results</a>
-            <a href="/category/admit-result/">Answer Key</a>
-            <a href="/section/syllabus/">Syllabus</a>
           </div>
         </div>
         <div>
@@ -3145,18 +3140,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
     'use strict';
 
     // ---- OLD SEARCH SYSTEM REMOVED — smart-search.js handles all search ----
-    // Keeping only: FAQ, Mobile Menu, Desktop Nav Dropdowns
+    // Keeping only: Mobile Menu, Desktop Nav Dropdowns
+    // NOTE: FAQ accordion is initialised once by script.js (initFAQ()) — do not
+    // attach a second click handler here, it was double-binding and causing
+    // the FAQ answers to toggle open then immediately closed on the same click.
 
-    // ---- FAQ ----
     document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.faq-btn').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        const panel = this.nextElementSibling;
-        const open = this.getAttribute('aria-expanded') === 'true';
-        this.setAttribute('aria-expanded', !open);
-        panel.hidden = open;
-      });
-    });
 
     // ---- Mobile Menu (modern with accordion) ----
     const menuBtn = document.getElementById('menuBtn');
