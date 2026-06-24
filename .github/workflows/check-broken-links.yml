@@ -1,0 +1,37 @@
+name: "\U0001F50D Check & Fix Broken Job Links"
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 21 * * *'  # Daily 2:30 AM IST (UTC 21:00)
+
+jobs:
+  check-and-fix:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Check & Fix Broken Links
+        run: python3 .github/workflows/check_broken_links.py
+
+      - name: Commit fixes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet; then
+            echo "No changes to commit"
+          else
+            git add _redirects
+            git commit -m "fix: auto-fix broken job links [skip ci]"
+            git push
+            echo "Pushed redirect fixes"
+          fi
