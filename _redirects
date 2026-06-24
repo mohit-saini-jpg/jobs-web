@@ -4826,7 +4826,6 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /jobs/upsc-civil-services-services-forest-services-ias-ifs-result-2026/  /jobs/upsc-civil-services-services-forest-services-ias-ifs-pre-result-2026-mains-onlin/  301
 /jobs/bits-pilani-recruitment-2026-apply-online-for-junior-research-fellow-or-project/  /jobs/bits-pilani-recruitment-2026-apply-online-for-junior-research-fellow-project-ass/  301
 /jobs/bits-pilani-junior-research-fellowproject-associate-1-recruitment-2026-apply-onl/  /jobs/bits-pilani-recruitment-2026-apply-online-for-junior-research-fellow-project-ass/  301
-/jobs/hisar-hau-ug-pg-admission-2026/  /jobs/hisar-hau-ug-pg-admission-online-form-2026/  301
 /jobs/jammu-university-results-2026-key-highlights/  /jobs/university-of-jammu-results-2026-key-highlights/  301
 /jobs/mumbai-university-result-2026-latest-update/  /jobs/mumbai-university-result-2026-latest-update-at-a-glance/  301
 /jobs/hll-associate-manager-junior-manager-recruitment-2026-apply-online-mba-pgdm/  /jobs/hll-recruitment-2026-apply-online-for-associate-manager-junior-manager-posts-icw/  301
@@ -5190,7 +5189,6 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /jobs/hpu-date-sheet-2025-download-himachal-pradesh-university-btech-exam-schedule-pdf/  /section/latest-jobs/  301
 /jobs/bihar-bed-exam-date-2026-out/  /section/latest-jobs/  301
 /jobs/railway-rrb-updated-exam-calendar-2026/  /section/latest-jobs/  301
-/jobs/up-polytechnic-jeecup-admissions-2026-download-result-rank-card/  /section/latest-jobs/  301
 /jobs/nchmct-jee-counselling-2026/  /section/latest-jobs/  301
 /jobs/ap-icet-2026-result-highlights/  /section/latest-jobs/  301
 /jobs/wbjee-2026-provisional-answer-key-overview/  /section/latest-jobs/  301
@@ -5240,7 +5238,6 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /jobs/xat-admit-card-2026-expected-soon-xatonlinein-direct-download-link-here/  /section/latest-jobs/  301
 /jobs/upsc-iesiss-exam-date-2026-announced-download-time-table-pdf/  /section/latest-jobs/  301
 /jobs/iit-jam-2026-admission-list-out-check-round-1-seat-allotment-and-direct-link/  /section/latest-jobs/  301
-/jobs/nta-cuet-under-graduate-ug-admissions-2026-download-final-answer-key/  /section/latest-jobs/  301
 
 # ══ broken/empty job pages → homepage ══
 
@@ -5662,4 +5659,23 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 
 
 # Auto-fix: SEO slug mismatches — 2026-06-24 06:15
+
+
+# ══ SARK→FJA cross-source dedup (same job, different title) ══
+/jobs/jal-shakti-vibhag-baddi-vacancy-2026-apply-for-para-fitter-para-pump-operator-an/  /jobs/hp-jal-shakti-vibhag-recruitment-2026-apply-offline-for-10-para-pump-operator-pa/  301
+
+# ══ auto: orphan pages → homepage (Job no longer active) ══
+/jobs/nehu-exam-results-2026-key-highlights/  /section/latest-jobs/  301
+/jobs/haryana-college-ug-1st-merit-list-2026-date-out/  /section/latest-jobs/  301
+/jobs/india-post-gds-5th-merit-list-2026-date-out-download-pdf/  /section/latest-jobs/  301
+/jobs/icmai-cma-june-admit-card-2026-released/  /section/latest-jobs/  301
+/jobs/nta-jipmat-admit-card-2026-released/  /section/latest-jobs/  301
+/jobs/jagadguru-rambhadracharya-divyang-state-university-jrdsu-chitrakoot-admission-on/  /section/latest-jobs/  301
+/jobs/devi-ahilya-vishwavidyalaya-results-2026-key-highlights/  /section/latest-jobs/  301
+/jobs/join-indian-air-force-airmen-medical-assistant-intake-012027-batch-download-resu/  /section/latest-jobs/  301
+/jobs/jiwaji-university-exam-time-table-2026-out/  /section/latest-jobs/  301
+/jobs/ca-final-may-2026-result-key-dates-and-details/  /section/latest-jobs/  301
+/jobs/du-law-admissions-2026-key-highlights/  /section/latest-jobs/  301
+
+# ══ broken/empty job pages → homepage ══
 
