@@ -1,0 +1,59 @@
+name: "🔍 Advanced SEO & 404 Validation"
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 22 * * *'  # Daily at 3:30 AM IST
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install lxml beautifulsoup4
+
+      - name: Run Advanced SEO Validator
+        run: python3 .github/workflows/advanced_seo_validator.py
+        env:
+          VALIDATION_MODE: strict
+          AUTO_FIX: 'true'
+
+      - name: Commit auto-fixes if any
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet _redirects 2>/dev/null; then
+            echo "✅ No _redirects changes"
+          else
+            git add _redirects
+            git commit -m "fix: auto-fix SEO slug mismatches [skip ci]"
+            git push
+            echo "✅ Auto-fixes committed"
+          fi
+
+      - name: Upload validation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seo-validation-report
+          path: seo-validation-report.txt
+          if-no-files-found: ignore
+
+      - name: Fail if critical errors
+        if: env.CRITICAL_ERRORS == 'true'
+        run: |
+          echo "❌ Critical SEO/404 errors found. Deployment blocked."
+          exit 1
