@@ -3,20 +3,15 @@
 Auto-fix broken job links:
 - Checks all sections-index.json slugs vs actual disk pages
 - Adds 301 redirects for slugs that have fuzzy-match on disk
+- Inserts new rules at TOP of /jobs/ section (NOT bottom) so Netlify limit doesn't cut them
 - Reports truly missing pages
 """
-import json, os, re, sys
+import json, os, re, sys, datetime
 
 ROOT = '.'
 jobs_dir = os.path.join(ROOT, 'jobs')
 redirects_path = os.path.join(ROOT, '_redirects')
 summary_path = os.environ.get('GITHUB_STEP_SUMMARY', '/tmp/summary.md')
-
-def slugify(t):
-    t = str(t).lower()
-    t = re.sub(r'[^a-z0-9\s-]', '', t)
-    t = re.sub(r'[\s_-]+', '-', t)
-    return t.strip('-')[:80].strip('-') or 'page'
 
 def norm(s):
     """Normalize slug for fuzzy matching: remove all non-alphanumeric"""
@@ -79,7 +74,6 @@ for cat, items in si.items():
         prefix = n[:35]
         matches = [v for k, v in disk_norm.items() if k.startswith(prefix) and len(k) >= len(prefix)]
         if matches:
-            # Pick longest match
             best = max(matches, key=lambda x: len(os.path.commonprefix([norm(x), n])))
             broken.append((slug, best, 'prefix', cat))
         else:
@@ -102,19 +96,39 @@ for broken_slug, match, match_type, cat in broken:
     else:
         truly_missing.append((broken_slug, cat))
 
-# Write new redirects
+# ── KEY FIX: Insert new rules at TOP of /jobs/ section, NOT at bottom ──
 if new_rules:
-    block = f"\n# Auto-fixed broken links ({len(new_rules)}) — {__import__('datetime').date.today()}\n"
-    block += '\n'.join(new_rules) + '\n'
-    with open(redirects_path, 'a', encoding='utf-8') as f:
-        f.write(block)
-    print(f"\nAdded {len(new_rules)} redirect rules to _redirects")
+    lines = existing.split('\n')
+    
+    # Find the /jobs/ slug mismatch section header
+    insert_pos = None
+    for i, line in enumerate(lines):
+        if '# ── 4. /jobs/ slug mismatch' in line or '# ── PRIORITY FIX' in line:
+            insert_pos = i + 1
+            break
+    
+    # Fallback: insert after www/canonical section (first 15 lines)
+    if insert_pos is None:
+        for i, line in enumerate(lines):
+            if line.strip().startswith('/jobs/') and '301' in line:
+                insert_pos = i
+                break
+    
+    if insert_pos is None:
+        insert_pos = 10  # safe fallback
+
+    block_lines = [f"# Auto-fixed broken links ({len(new_rules)}) — {datetime.date.today()}"] + new_rules + ['']
+    new_content = '\n'.join(lines[:insert_pos] + block_lines + lines[insert_pos:])
+    
+    with open(redirects_path, 'w', encoding='utf-8') as f:
+        f.write(new_content)
+    print(f"\nAdded {len(new_rules)} redirect rules at TOP of /jobs/ section in _redirects")
 else:
     print("\nNo new redirects needed — all links OK")
 
 if truly_missing:
     print(f"\nTruly missing ({len(truly_missing)}) — need new scrape:")
-    for slug, cat in truly_missing[:15]:
+    for slug, cat in truly_missing[:20]:
         print(f"  [{cat}] {slug}")
 
 # GitHub Actions summary
@@ -130,8 +144,13 @@ summary = f"""## Broken Link Check Results
 
 if truly_missing:
     summary += "\n### Truly Missing Pages (no fuzzy match — need scraper re-run):\n"
-    for slug, cat in truly_missing[:15]:
+    for slug, cat in truly_missing:
         summary += f"- `[{cat}]` `{slug}`\n"
+
+if new_rules:
+    summary += f"\n### Auto-fixed Redirects Added ({len(new_rules)}):\n"
+    for rule in new_rules[:10]:
+        summary += f"- `{rule}`\n"
 
 with open(summary_path, 'w', encoding='utf-8') as f:
     f.write(summary)
