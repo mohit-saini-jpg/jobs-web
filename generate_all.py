@@ -117,6 +117,82 @@ def _save_first_seen():
     except Exception:
         pass
 
+# ── SLUG REGISTRY — permanent solution for title-change 404s ────────────────
+# Problem: Scraper ek job ka title update karta hai (e.g. "Answer Key" → "Result")
+# → slugify se naya slug banta hai → purana URL 404 ho jaata hai.
+# Solution: data/slug-registry.json mein  title_fingerprint → canonical_slug  store
+# karo. Ek baar registered slug KABHI nahi badlega — chahe title kuch bhi ho.
+#
+# slug_registry.json format:
+#   { "title_fingerprint": "canonical-slug-80chars", ... }
+#   title_fingerprint = normalized lowercase tokens (stop words hata ke)
+#
+# Flow:
+#   1. Load registry at start
+#   2. Job ke liye slug chahiye → pehle registry check karo
+#   3. Registry mein hai → wahi slug use karo (title change = same slug)
+#   4. Registry mein nahi → slugify se generate karo, registry mein save karo
+#   5. Save registry at end (only if dirty)
+
+_SLUG_REGISTRY_PATH = None
+_SLUG_REGISTRY = {}          # fingerprint → slug
+_SLUG_REGISTRY_DIRTY = False
+_SR_STOP = frozenset((
+    'the','and','for','of','in','to','a','an','with','on','at','by','top',
+    'sarkari','jobs','recruitment','apply','online','offline','notification',
+    'out','check','details','post','posts','vacancy','vacancies','form',
+    'registration','last','date','here','now','download','pdf','2024',
+    '2025','2026','2027','2028','latest','govt','government','result',
+    'admit','card','answer','key','syllabus','exam','new','all','various',
+))
+
+def _sr_fingerprint(title):
+    """Stable fingerprint: lowercase alphanum tokens minus stop words."""
+    t = re.sub(r'[^a-z0-9\s]', ' ', str(title or '').lower())
+    toks = [w for w in t.split() if w and w not in _SR_STOP and len(w) > 1]
+    return ' '.join(sorted(toks))   # sorted = order-independent
+
+def _load_slug_registry(root_path):
+    global _SLUG_REGISTRY, _SLUG_REGISTRY_PATH
+    _SLUG_REGISTRY_PATH = str(Path(root_path) / 'data' / 'slug-registry.json')
+    try:
+        with open(_SLUG_REGISTRY_PATH, encoding='utf-8') as f:
+            _SLUG_REGISTRY = json.load(f)
+    except Exception:
+        _SLUG_REGISTRY = {}
+
+def _save_slug_registry():
+    global _SLUG_REGISTRY_DIRTY
+    if not _SLUG_REGISTRY_DIRTY or not _SLUG_REGISTRY_PATH:
+        return
+    try:
+        import os as _osr
+        _osr.makedirs(_osr.path.dirname(_SLUG_REGISTRY_PATH), exist_ok=True)
+        with open(_SLUG_REGISTRY_PATH, 'w', encoding='utf-8') as f:
+            json.dump(_SLUG_REGISTRY, f, ensure_ascii=False,
+                      separators=(',', ':'), sort_keys=True)
+        _SLUG_REGISTRY_DIRTY = False
+    except Exception:
+        pass
+
+def registered_slug(title):
+    """Return the permanent slug for a job title.
+    - First call: generate via slugify(), store in registry, return it.
+    - Later calls (same job, different title): registry hit → same slug returned.
+    This means a job whose title changes on the source site keeps its original URL.
+    """
+    global _SLUG_REGISTRY_DIRTY
+    if not title:
+        return slugify(title)
+    fp = _sr_fingerprint(title)
+    if fp and fp in _SLUG_REGISTRY:
+        return _SLUG_REGISTRY[fp]   # cached — title-change proof
+    s = slugify(title)
+    if fp and s:
+        _SLUG_REGISTRY[fp] = s
+        _SLUG_REGISTRY_DIRTY = True
+    return s
+
 def get_date_posted(slug, job_obj):
     """C1: Stable datePosted. Priority: real job date -> persisted first-seen -> today (saved)."""
     global _FIRST_SEEN_DIRTY
@@ -263,6 +339,26 @@ def safe(v):
 
 def slugify(text):
     text = str(text).lower()
+    # ── Preserve key punctuation patterns BEFORE stripping all specials ──────
+    # 1. "10+2" / "12+2" → "10-2" / "12-2"  (standard class notation)
+    text = re.sub(r'\b(10|12)\+2\b', r'\1-2', text)
+    # 2. Degree abbreviations with dots: B.Ed. → b-ed, D.El.Ed → d-el-ed etc.
+    #    Must run before the general punctuation strip.
+    text = re.sub(r'\bb\.ed\.?', 'b-ed', text)
+    text = re.sub(r'\bd\.el\.ed\.?', 'd-el-ed', text)
+    text = re.sub(r'\bd\.p\.ed\.?', 'd-p-ed', text)
+    text = re.sub(r'\bb\.tech\.?', 'b-tech', text)
+    text = re.sub(r'\bm\.tech\.?', 'm-tech', text)
+    text = re.sub(r'\bb\.sc\.?', 'b-sc', text)
+    text = re.sub(r'\bm\.sc\.?', 'm-sc', text)
+    text = re.sub(r'\bb\.com\.?', 'b-com', text)
+    text = re.sub(r'\bm\.com\.?', 'm-com', text)
+    text = re.sub(r'\bm\.ed\.?', 'm-ed', text)
+    text = re.sub(r'\bph\.d\.?', 'phd', text)
+    # 3. Possessive 's → -s  (Bank's → bank-s, India's → india-s)
+    text = re.sub(r"\u2019s\b", '-s', text)   # curly apostrophe
+    text = re.sub(r"'s\b", '-s', text)         # straight apostrophe
+    # ── Standard strip ──────────────────────────────────────────────────────
     text = re.sub(r'[^a-z0-9\s-]', '', text)
     text = re.sub(r'[\s_-]+', '-', text)
     # Strip BEFORE truncation, then truncate, then strip AGAIN
@@ -2567,7 +2663,7 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
     vacancies = safe(bd.get('total_vacancies','') or job_obj.get('total_post','') or job_obj.get('total_vacancy',''))
 
     if slug is None:
-        slug = slugify(title)[:80]
+        slug = registered_slug(title)[:80]
     intent = page_intent(job_obj)
     # C1: stable datePosted (never build-date for the same job across rebuilds)
     date_posted = get_date_posted(slug, job_obj)
@@ -3705,6 +3801,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
 # ═══════════════════════════════════════════════════════════════
 print("Loading JSON data...")
 _load_first_seen(ROOT)   # C1: load persisted datePosted map
+_load_slug_registry(ROOT)  # Slug registry: title-change proof permanent slugs
 with open(CJ_FILE, encoding='utf-8') as f: CJ = json.load(f)
 with open(DU_FILE, encoding='utf-8') as f: DU = json.load(f)
 
@@ -4213,7 +4310,7 @@ def _rel_prepass():
             bd = job.get('basic_details', {}) or {}
             title = safe(bd.get('job_title',''))
             if not title: continue
-            slug = slugify(title)
+            slug = registered_slug(title)
             fp = _fingerprint(title)
             if fp in _seen_fp_pre: continue
             _seen_fp_pre.add(fp)
@@ -4225,7 +4322,7 @@ def _rel_prepass():
         title = safe(bd.get('job_title','') or job.get('title','') or
                      bd.get('jobTitle','') or job.get('name',''))
         if not title: continue
-        slug = slugify(title)
+        slug = registered_slug(title)
         fp = _fingerprint(title)
         if fp in _seen_fp_pre: continue
         _seen_fp_pre.add(fp)
@@ -4245,7 +4342,7 @@ for cat, jobs_list in FJA.items():
         bd = job.get('basic_details', {}) or {}
         title = safe(bd.get('job_title',''))
         if not title: continue
-        slug = slugify(title)
+        slug = registered_slug(title)
         # SEO FIX (One Job = One URL): the same recruitment is listed under
         # multiple qualification categories. The old line appended "-{cat_slug}"
         # which minted a SEPARATE duplicate HTML page per category
@@ -4501,7 +4598,7 @@ for job in SARK:
     title = safe(job.get('title',''))
     if not title: continue
     raw_slug = job.get('slug','') or ''
-    base_slug = clean_slug(raw_slug) if raw_slug.strip() else slugify(title)
+    base_slug = clean_slug(raw_slug) if raw_slug.strip() else registered_slug(title)
     if not base_slug: continue
     # Version-aware: same recruitment + changed dates/posts/advt/year/pdf → new
     # version → new unique slug. Same content → None (true duplicate, skip).
@@ -4919,7 +5016,7 @@ for sec in SJ_SEC:
     for item in sec.get('items', []):
         name = safe(item.get('name','') or item.get('title',''))
         if not name: continue
-        item_slug = slugify(name)[:80]
+        item_slug = registered_slug(name)[:80]
         detail = item.get('detail') or {}
         if isinstance(detail, str):
             try: detail = json.loads(detail)
@@ -5226,7 +5323,7 @@ for sec in EDU_SEC:
     for item in sec.get('items', []):
         name = safe(item.get('name','') or item.get('examName',''))
         if not name: continue
-        item_slug = slugify(name)[:80]
+        item_slug = registered_slug(name)[:80]
         detail = item.get('detail') or {}
         if item_slug not in slug_map:
             slug_map[item_slug] = {'basic_details':{'job_title':detail.get('title') or name,'organization_name':sec_title,'job_location':sec_title,'short_information':detail.get('short_info',''),'last_updated':safe(item.get('postDate') or item.get('date',''))},'important_dates':{'notification_date':safe(item.get('date') or item.get('postDate',''))},'important_links':{},'sections':[],'faq':[],'source_url':safe(item.get('url','')),'category':sec_title}
@@ -5296,7 +5393,7 @@ for cat, jobs_list in FJA.items():
         bd = job.get('basic_details',{}) or {}
         title = safe(bd.get('job_title',''))
         if not title: continue
-        item_slug = slugify(title)[:80]
+        item_slug = registered_slug(title)[:80]
         # DUPLICATE GUARD: FJA kabhi-kabhi same recruitment ko naye article-ID
         # (naya URL) ke saath dobara publish kar deta hai. URL alag hone ki
         # wajah se upstream dedup_engine isse same job nahi maanta, aur same
@@ -6168,6 +6265,7 @@ if __import__('os').path.exists(_idx_path):
 
 import time as _time
 _save_first_seen()   # C1: persist datePosted map for stable rebuilds
+_save_slug_registry()  # Persist slug registry (title-change proof)
 
 # ── One HTML = One URL: prune any cross-source duplicate pages ────────────────
 # Same recruitment can come from sarkari + state + education with DIFFERENT
