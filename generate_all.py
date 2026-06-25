@@ -365,9 +365,15 @@ def norm_date(raw):
     return None
 
 written = 0
-def write(path, html_content):
+def write(path, html_content, skip_if_exists=False):
+    """Write HTML to disk.
+    skip_if_exists=True  → job detail pages: ek baar bane to dobara overwrite nahi
+    skip_if_exists=False → listing/category/section pages: hamesha fresh likhte hain
+    """
     global written
     p = Path(path)
+    if skip_if_exists and p.exists():
+        return   # permanent page — kabhi overwrite/delete nahi
     p.parent.mkdir(parents=True, exist_ok=True)
     with open(p, 'w', encoding='utf-8') as f:
         f.write(html_content)
@@ -3952,6 +3958,38 @@ seen_fp      = {}  # content fingerprint (normalized title) → canonical slug
 jobs_index   = {}  # for jobs-index.json
 sindex       = {}  # for sections-index.json
 
+# ── PERMANENT PAGE SYSTEM: disk pe jo pages already exist hain unhe seen maano ──
+# Iska matlab: JSON se job remove ho jaye to bhi uska HTML page kabhi delete
+# nahi hoga. Sirf naye jobs ke pages banenge. Category listing har baar update
+# hogi (kyunki woh skip_if_exists=False se likhte hain).
+import glob as _glob_preload
+_H1_RE_PRELOAD = re.compile(r'<h1 class="detail-h1">([^<]+)</h1>')
+_existing_disk_pages = 0
+for _existing_html in _glob_preload.glob(str(ROOT / 'jobs' / '*' / 'index.html')):
+    _eslug = os.path.basename(os.path.dirname(_existing_html))
+    if not _eslug or _eslug in seen_jobs:
+        continue
+    # Title fingerprint bhi register karo — cross-source dedup ke liye
+    try:
+        _eh = open(_existing_html, encoding='utf-8', errors='ignore').read(30000)
+        _em = _H1_RE_PRELOAD.search(_eh)
+        if _em:
+            _etitle = _em.group(1).strip()
+            seen_jobs[_eslug] = '__disk__'
+            _efp = _fingerprint(_etitle) if '_fingerprint' in globals() else ''
+            if _efp and _efp not in seen_fp:
+                seen_fp[_efp] = _eslug
+            jobs_index[_eslug] = {'cat': '__disk__', 'title': _etitle[:120], 'last_date': ''}
+            _existing_disk_pages += 1
+        else:
+            # H1 nahi mila — phir bhi slug ko seen maano taaki overwrite na ho
+            seen_jobs[_eslug] = '__disk__'
+            _existing_disk_pages += 1
+    except Exception:
+        seen_jobs[_eslug] = '__disk__'
+        _existing_disk_pages += 1
+print(f"  [permanent-pages] {_existing_disk_pages} existing disk pages pre-loaded (will never be deleted or regenerated)")
+
 # ── One Job = One URL: content fingerprint ───────────────────────────────────
 # The same recruitment appears in multiple sources (sarkari + state + education)
 # with DIFFERENT slugs (e.g. "gsssb-granthpal-recruitment-2026-apply-online" vs
@@ -4225,7 +4263,7 @@ for cat, jobs_list in FJA.items():
         _bc_lbl, _bc_url = get_best_bc_category(cat, job)
         bc    = [('Study Wise', f"{BASE_URL}/category/study/"),
                  (_bc_lbl, f"{BASE_URL}{_bc_url}")]
-        write(str(ROOT/'jobs'/slug/'index.html'), build_detail_page(job, slug, canon, bc, cat_label))
+        write(str(ROOT/'jobs'/slug/'index.html'), build_detail_page(job, slug, canon, bc, cat_label), skip_if_exists=True)
         # Save data JSON
         (ROOT/'jobs'/'data').mkdir(exist_ok=True)
         with open(ROOT/'jobs'/'data'/f"{slug}.json",'w',encoding='utf-8') as f:
@@ -4647,7 +4685,7 @@ for job in SARK:
     _bc_lbl, _bc_url = _SARK_BC.get(_jcat, ('Latest Jobs', '/section/latest-jobs/'))
     bc = [(_bc_lbl, f"{BASE_URL}{_bc_url}")]
 
-    write(str(ROOT/'jobs'/slug/'index.html'), build_detail_page(full, slug, canon, bc))
+    write(str(ROOT/'jobs'/slug/'index.html'), build_detail_page(full, slug, canon, bc), skip_if_exists=True)
     ld = safe(imp_dates.get('last_date_to_apply','') or imp_dates.get('last_date',''))
     jobs_index[slug] = {'cat':job.get('category',''),'title':title[:120],'last_date':ld[:30]}
     j_count += 1
@@ -4808,7 +4846,7 @@ for _j in _up_adm_jobs:
     _bc = [(_bc_lbl, f"{BASE_URL}{_bc_url}")]
     try:
         _page_html = build_detail_page(_full, _slug, _canon, _bc, _cat_label)
-        write(str(ROOT/'jobs'/_slug/'index.html'), _page_html)
+        write(str(ROOT/'jobs'/_slug/'index.html'), _page_html, skip_if_exists=True)
         _mark_job(_slug, _t, _cat)
         # Register in jobs_index for sitemap
         _ld = ''
@@ -4904,7 +4942,7 @@ for sec in SJ_SEC:
         if not _is_dup_job(item_slug, name):
             _mark_job(item_slug, name, state_name)
             jobs_html = build_detail_page(detail, item_slug, canon, bc, f'{state_name} Govt Job', noindex_dup=False)
-            write(str(ROOT/'jobs'/item_slug/'index.html'), jobs_html)
+            write(str(ROOT/'jobs'/item_slug/'index.html'), jobs_html, skip_if_exists=True)
         s_count += 1
 
 # Generate /state/{state-slug}/index.html listing pages
@@ -5214,7 +5252,7 @@ for sec in EDU_SEC:
         if not _edu_is_dup:
             _mark_job(item_slug, _edu_title, sec_title)
             jobs_html = build_detail_page(full_d, item_slug, canon, bc, sec_title, noindex_dup=False)
-            write(str(ROOT/'jobs'/item_slug/'index.html'), jobs_html)
+            write(str(ROOT/'jobs'/item_slug/'index.html'), jobs_html, skip_if_exists=True)
         e_count += 1
 
     # Listing page
@@ -6266,7 +6304,11 @@ def prune_duplicate_pages():
     print(f"  [dedup] removed {removed} duplicate page(s); {len(redirects)} redirect(s) added")
     return removed
 
-_dup_removed = prune_duplicate_pages()
+# PERMANENT PAGE SYSTEM: prune_duplicate_pages() disabled.
+# Duplicate pages delete karna band — ek baar bana hua URL hamesha live rahega.
+# Disk preload (upar) already dedup handle karta hai — same slug dobara nahi likhega.
+_dup_removed = 0
+print("  [dedup] prune disabled — permanent page system active")
 
 # ── ORPHAN PAGE REMOVAL: One-Job-One-URL-One-HTML enforcement ────────────────
 # Pages exist on disk but NOT in current JSON = orphan from past generates.
@@ -6367,7 +6409,13 @@ def remove_orphan_pages():
     print(f"  [orphan-cleanup] {orphans_deleted} orphan pages removed, {len(redirects_added)} redirects added")
     return orphans_deleted
 
-_orphans_removed = remove_orphan_pages()
+# PERMANENT PAGE SYSTEM: remove_orphan_pages() disabled.
+# JSON se job remove ho jaye to bhi uska /jobs/{slug}/ page kabhi delete nahi hoga.
+# Woh page live rehta hai — Google index nahi todna, URL 404 nahi banana.
+# Listing pages (category/section) automatically update hote hain — wahan se
+# removed job dikhai nahi dega, lekin detail page accessible rahega.
+_orphans_removed = 0
+print("  [orphan-cleanup] disabled — all existing pages preserved permanently")
 
 # ── ONE-JOB-ONE-URL-ONE-HTML VERIFICATION ─────────────────────────────────────
 # After all generation + cleanup, verify the canonical guarantee:
@@ -6470,48 +6518,11 @@ def verify_one_job_one_url():
 verify_one_job_one_url()
 print(f"  Total cleanup: {_dup_removed} dup + {_orphans_removed} orphans = {_dup_removed + _orphans_removed} pages removed")
 
-# ── REMOVE BROKEN JOB PAGES (Issue 3) ────────────────────────────────────────
-# Agar kisi /jobs/{slug}/ page pe "Page Not Available" aa raha hai to wo page
-# actually generate hi nahi hua (data missing tha). Google aise thin pages ko
-# crawl karta hai aur SEO kharab hoti hai. Fix:
-# - /jobs/ ke andar jo folders hain par jinme index.html EMPTY ya missing hai,
-#   unhe DELETE karo aur /  (homepage) pe 301 redirect karo.
+# PERMANENT PAGE SYSTEM: broken-pages deletion disabled.
+# Page Not Available wale ya empty pages delete karna band.
+# Permanent page system mein koi bhi /jobs/ page delete nahi hoga.
 _broken_removed = 0
-_broken_redirects = []
-_jobs_dir = ROOT / 'jobs'
-if _jobs_dir.exists():
-    for _jdir in _jobs_dir.iterdir():
-        if not _jdir.is_dir():
-            continue
-        _ihtml = _jdir / 'index.html'
-        if not _ihtml.exists():
-            # folder hai par index.html nahi — delete folder, redirect to /
-            try:
-                shutil.rmtree(str(_jdir))
-                _broken_redirects.append(f"/jobs/{_jdir.name}/  /  301")
-                _broken_removed += 1
-            except Exception:
-                pass
-        else:
-            # index.html hai par check karo content valid hai ya nahi
-            try:
-                _content = _ihtml.read_text(encoding='utf-8', errors='ignore')
-                # Agar page mein meaningful content nahi (sirf error page ya <500 bytes)
-                if len(_content) < 500 or 'Page Not Available' in _content:
-                    _broken_redirects.append(f"/jobs/{_jdir.name}/  /  301")
-                    shutil.rmtree(str(_jdir))
-                    _broken_removed += 1
-            except Exception:
-                pass
-
-if _broken_redirects:
-    _rpath = str(ROOT / '_redirects')
-    _existing_r = open(_rpath, encoding='utf-8').read() if os.path.exists(_rpath) else ''
-    _block = "\n# ══ broken/empty job pages → homepage ══\n" + "\n".join(
-        r for r in _broken_redirects if r not in _existing_r) + "\n"
-    with open(_rpath, 'a', encoding='utf-8') as _rf:
-        _rf.write(_block)
-    print(f"  [broken-pages] {_broken_removed} empty/broken job pages removed → 301 to /")
+print("  [broken-pages] deletion disabled — permanent page system active")
 
 
 # If dedup_engine.py produced a redirect map, inject those 301s into _redirects
