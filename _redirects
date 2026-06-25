@@ -4847,6 +4847,7 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /jobs/haryana-high-court-clerk-vacancy-2026-apply-online-for-1265-posts/  /jobs/haryana-high-court-clerk-vacancy-2026-notification-out-apply-online-for-1265-pos/  301
 /jobs/repco-bank-manager-vacancy-2026-check-details-apply-now/  /jobs/repco-bank-manager-recruitment-2026-apply-offline-latest-notifications/  301
 /jobs/lansdowne-forest-division-working-plan-associate-vacancy-2026-apply-now/  /jobs/lansdowne-forest-division-working-plan-associate-recruitment-2026-apply-offline-/  301
+/jobs/rajasthan-state-eligibility-test-set-2026/  /jobs/rajasthan-state-eligibility-test-set-2026-apply-online/  301
 /jobs/bits-pilani-research-fellow-recruitment-2026-apply-online-latest-notifications/  /jobs/bits-pilani-junior-research-fellow-recruitment-2026-apply-online-latest-notifica/  301
 /jobs/bits-pilani-institute-research-fellow-recruitment-2026-apply-online-m-e-mtech/  /jobs/bits-pilani-junior-research-fellow-recruitment-2026-apply-online-latest-notifica/  301
 /jobs/punjabi-university-date-sheet-2026/  /jobs/punjabi-university-date-sheet-2026-out/  301
@@ -5720,5 +5721,8 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 # ══ broken/empty job pages → homepage ══
 
 
-# ══ broken/empty job pages → homepage ══
-
+# ══ 404 FIX: Slug mismatch redirects (user-reported + section card fixes) ══
+/jobs/rajasthan-staff-selection-board-rssb-common-eligibility-test-cet-10-2-senior-sec/  /jobs/rajasthan-staff-selection-board-rssb-common-eligibility-test-cet-102-senior-seco/  301
+/jobs/ssc-combined-graduate-level-cgl-recruitment-2026-apply-online-for-12256-post-re/  /jobs/ssc-cgl-2026-notification-out-at-sscgovin-apply-online-for-12256-group-b-c-vacan/  301
+/jobs/madhya-pradesh-mppsc-food-safety-officer-fso-advt-no-572024/  /jobs/madhya-pradesh-mppsc-food-safety-officer-fso-advt-no-572024-recruitment-2024-fin/  301
+/jobs/haryana-anganwadi-recruitment-2026-for-worker-helper-supervi/  /jobs/haryana-anganwadi-recruitment-2026-for-worker-helper-supervisor-posts/  301
