@@ -21,7 +21,7 @@
 // VERSION — Replaced by generate_version.js on every deploy
 // Do NOT manually edit — CI/CD replaces this line
 // ══════════════════════════════════════════════════════════════
-const SW_VERSION = '20260624204037'; // auto-updated by generate_version.js
+const SW_VERSION = '20260625071500'; // auto-updated by generate_version.js — bumped to bust stale precached /fonts/fa/all.min.css (was serving broken icon glyphs)
 
 // ══════════════════════════════════════════════════════════════
 // CACHE NAMES — version-stamped, old ones auto-deleted
