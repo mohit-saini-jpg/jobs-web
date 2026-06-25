@@ -971,15 +971,17 @@ with open(SRC, encoding='utf-8') as f:
 
 # ISSUE-021 FIX: Pre-build related jobs index for internal linking
 print("Building related jobs index...")
-_fja_unified = (data.get('freejobalert_unified') or {}).get('deduped_jobs', [])
-for _j in _fja_unified:
-    _bd = _j.get('basic_details', {}) or {}
-    _t = safe(_bd.get('job_title', '') or _j.get('title', ''))
-    if not _t or not is_real_job(_t): continue
-    _sl = slugify(_t)
-    _st = safe(_j.get('state', ''))
-    _q  = safe((_j.get('qualification') or {}).get('education_qualification', ''))[:30]
-    _ALL_JOBS_FOR_RELATED.append((_sl, _t, _st, _q))
+_fja_all = data.get('freejobalert_categories', {})
+for _cat, _jobs in _fja_all.items():
+    if not isinstance(_jobs, list): continue
+    for _j in _jobs:
+        _bd = _j.get('basic_details', {}) or {}
+        _t = safe(_bd.get('job_title', ''))
+        if not _t or not is_real_job(_t): continue
+        _sl = slugify(_t)
+        _st = safe(_j.get('state', ''))
+        _q  = safe((_j.get('qualification') or {}).get('education_qualification', ''))[:30]
+        _ALL_JOBS_FOR_RELATED.append((_sl, _t, _st, _q))
 _sd_all = (data.get('sarkari_data', {}) or {}).get('jobs', [])
 for _j in _sd_all:
     _t = safe(_j.get('title', ''))
@@ -990,45 +992,46 @@ for _j in _sd_all:
     _ALL_JOBS_FOR_RELATED.append((_sl, _t, _st, _q))
 print(f"  Related jobs index: {len(_ALL_JOBS_FOR_RELATED)} entries")
 
-# ── SOURCE 1: freejobalert_unified.deduped_jobs (replaces empty freejobalert_categories) ──
-fja_unified = (data.get('freejobalert_unified') or {}).get('deduped_jobs', [])
+# ── SOURCE 1: freejobalert_categories ──
+fja = data.get('freejobalert_categories', {})
 fja_count = 0
-for job in fja_unified:
-    bd    = job.get('basic_details', {}) or {}
-    title = safe(bd.get('job_title') or job.get('title') or '')
-    if not title: skipped += 1; continue
-    # ISSUE-004 FIX: Skip yojana/scheme/non-recruitment entries
-    if not is_real_job(title): skipped += 1; continue
+for cat, jobs in fja.items():
+    if not isinstance(jobs, list): continue
+    if cat not in VALID_CATS:
+        continue
+    for job in jobs:
+        bd    = job.get('basic_details', {}) or {}
+        title = safe(bd.get('job_title') or '')
+        if not title: skipped += 1; continue
+        # ISSUE-004 FIX: Skip yojana/scheme/non-recruitment entries
+        if not is_real_job(title): skipped += 1; continue
 
-    # Use first valid fja_category as primary cat
-    fja_cats = [c for c in (job.get('fja_categories') or []) if c in VALID_CATS]
-    cat = fja_cats[0] if fja_cats else 'Latest_Notifications'
+        slug = slugify(title)
+        if slug in seen_slugs:
+            # dedup
+            slug = f"{slug}-{cat.lower().replace('_','-')}"
+        seen_slugs[slug] = cat
+        job['category'] = cat
 
-    slug = slugify(title)
-    if slug in seen_slugs:
-        slug = f"{slug}-{cat.lower().replace('_','-')}"
-    seen_slugs[slug] = cat
-    job['category'] = cat
+        fname = f"{slug}.json"
+        with open(os.path.join(DEST, fname), 'w', encoding='utf-8') as f2:
+            json.dump(job, f2, ensure_ascii=False, separators=(',',':'))
+        new_files.add(fname)
 
-    fname = f"{slug}.json"
-    with open(os.path.join(DEST, fname), 'w', encoding='utf-8') as f2:
-        json.dump(job, f2, ensure_ascii=False, separators=(',',':'))
-    new_files.add(fname)
+        slug_dir = os.path.join(JOBS_DIR, slug)
+        os.makedirs(slug_dir, exist_ok=True)
+        html_path = os.path.join(slug_dir, 'index.html')
+        if not os.path.exists(html_path):
+            with open(html_path, 'w', encoding='utf-8') as f2:
+                f2.write(build_static_html(slug, title, job, cat))
+        new_dirs.add(slug)
 
-    slug_dir = os.path.join(JOBS_DIR, slug)
-    os.makedirs(slug_dir, exist_ok=True)
-    html_path = os.path.join(slug_dir, 'index.html')
-    if not os.path.exists(html_path):
-        with open(html_path, 'w', encoding='utf-8') as f2:
-            f2.write(build_static_html(slug, title, job, cat))
-    new_dirs.add(slug)
+        dates = job.get('important_dates', {}) or {}
+        last_date = safe(dates.get('last_date_to_apply') or '')
+        index[slug] = {'cat':cat,'title':title[:120],'last_date':last_date[:30]}
+        written += 1; fja_count += 1
 
-    dates = job.get('important_dates', {}) or {}
-    last_date = safe(dates.get('last_date_to_apply') or '')
-    index[slug] = {'cat':cat,'title':title[:120],'last_date':last_date[:30]}
-    written += 1; fja_count += 1
-
-print(f"  freejobalert_unified.deduped_jobs: {fja_count} jobs")
+print(f"  freejobalert_categories: {fja_count} jobs")
 
 # ── SOURCE 2: sarkari_data ──
 sd = data.get('sarkari_data', {})

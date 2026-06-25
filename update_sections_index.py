@@ -18,12 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).parent
 
 def slugify(text):
-    """Must match generate_jobs.py slugify exactly — 60-char limit."""
-    import re as _re
-    text = str(text).lower()
-    text = _re.sub(r'[^a-z0-9\s-]', '', text)
-    text = _re.sub(r'[\s-]+', '-', text)
-    return text[:60].strip('-') or 'job' 
+    return re.sub(r'[^a-z0-9]+', '-', (text or '').lower()).strip('-')
 
 # Load root Complete_Jobs_Full_Data.json (scraper output = source of truth)
 cj_path = ROOT / 'Complete_Jobs_Full_Data.json'
@@ -40,30 +35,24 @@ with open(si_path, encoding='utf-8') as f:
 
 fixed = 0
 
-# --- Fix ALL FJA categories from freejobalert_unified.deduped_jobs ---
-# Group deduped_jobs by their fja_categories, take top 10 per category
-fja_unified_jobs = (cj.get('freejobalert_unified') or {}).get('deduped_jobs', [])
-fja_by_cat = {}
-for j in fja_unified_jobs:
-    bd = (j.get('basic_details') or {})
-    title = (bd.get('job_title','') or j.get('title','')).strip()
-    if not title: continue
-    cats = j.get('fja_categories') or []
-    slug = slugify(title)
-    imp = (j.get('important_dates') or {})
-    ld = (imp.get('last_date_to_apply','') or imp.get('last_date','')).strip()
-    org = (bd.get('organization_name','') or '').strip()
-    vac = (bd.get('total_vacancies','') or '').strip()
-    for cat in cats:
-        if cat not in fja_by_cat:
-            fja_by_cat[cat] = []
-        if len(fja_by_cat[cat]) < 10:
-            fja_by_cat[cat].append({'slug': slug, 'name': title, 'date': ld, 'org': org, 'vac': vac})
-
-for cat, items in fja_by_cat.items():
-    si[cat] = items
-    fixed += 1
-    print(f"  FJA {cat}: {len(items)} items | first: {items[0]['name'][:55]}")
+# --- Fix ALL FJA categories (10TH_Pass, 12TH_Pass, ITI, Diploma, etc.) ---
+fja = cj.get('freejobalert_categories', {})
+for cat, jobs in fja.items():
+    if not isinstance(jobs, list) or not jobs: continue
+    items = []
+    for j in jobs:
+        bd = (j.get('basic_details') or {})
+        title = (bd.get('job_title','') or '').strip()
+        if not title: continue
+        slug = slugify(title)[:80]
+        imp = (j.get('important_dates') or {})
+        ld = (imp.get('last_date_to_apply','') or imp.get('last_date','')).strip()
+        items.append({'slug': slug, 'name': title, 'date': ld})
+        if len(items) >= 10: break
+    if items:
+        si[cat] = items
+        fixed += 1
+        print(f"  FJA {cat}: {len(items)} items | first: {items[0]['name'][:55]}")
 
 # --- Fix ALL Sarkari categories (SR_Latest_Jobs, SR_Result, OFFLINE_FORM, etc.) ---
 sark_jobs = (cj.get('sarkari_data') or {}).get('jobs', [])
@@ -77,7 +66,7 @@ for j in sark_jobs:
         new_sark[cat] = []
     if len(new_sark[cat]) >= 10:
         continue
-    slug = slugify(title)
+    slug = slugify(title)[:80]
     imp = (j.get('important_dates') or {})
     ld = (imp.get('last_date','') or imp.get('last_date_to_apply','')).strip()
     new_sark[cat].append({'slug': slug, 'name': title, 'date': ld})
