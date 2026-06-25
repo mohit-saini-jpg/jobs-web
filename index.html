@@ -446,11 +446,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
     @media (min-width: 1024px) { .wa-btn-header { display: flex; } }
 
     .icon-btn {
-      background: none; border: none; color: #fff;
+      background: none; border: none; color: var(--navy, #0d2257);
       width: 40px; height: 40px; border-radius: 8px; cursor: pointer;
       font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
     }
-    .icon-btn:hover { background: rgba(255,255,255,.15); }
+    .icon-btn:hover { background: rgba(13,34,87,.08); }
 
     /* Desktop nav */
     .desktop-nav {
@@ -2635,7 +2635,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
         <div id="dynamic-sections" class="dynamic-sections-row" style="display:none"></div>
         <script>
         (function TSJ9(){
-          var MAX=10,grid=document.getElementById('sr-sections-grid');
+          var MAX=5,grid=document.getElementById('sr-sections-grid');
           if(!grid)return;
           // PERF-FIX: Static HTML already pre-rendered (32 cards in HTML).
           // On first visit, skip DOM replacement — just warm the cache silently.
@@ -2659,12 +2659,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
             {l:'Latest Jobs New',      s:'k',k:'LATEST_JOBS NEW',     u:'/section/latest-jobs-new/',       c:'#1a56db'},
             {l:'Latest Notifications', s:'i',k:'Latest_Notifications', u:'/section/latest-notifications/', c:'#1a56db'},
             {l:'10th Pass Jobs',       s:'i',k:'10TH_Pass',            u:'/section/10th-pass-jobs/',       c:'#9b1c1c'},
-            {l:'8th Pass Jobs',        s:'i',k:'8TH_Pass',             u:'/section/8th-pass-jobs/',        c:'#1e3a5f'},
             {l:'12th Pass Jobs',       s:'i',k:'12TH_Pass',            u:'/section/12th-pass-jobs/',       c:'#14532d'},
             {l:'Diploma Jobs',         s:'i',k:'Diploma',              u:'/section/diploma-jobs/',         c:'#713f12'},
             {l:'ITI Jobs',             s:'i',k:'ITI',                  u:'/section/iti-jobs/',             c:'#1e3a5f'},
             {l:'B.Tech / B.E. Jobs',   s:'i',k:'B_Tech_BE',            u:'/section/btech-jobs/',           c:'#14532d'},
-            {l:'B.Com Jobs',           s:'i',k:'B_Com',                u:'/section/b-com/',                c:'#713f12'},
             {l:'Any Graduate Jobs',    s:'i',k:'Any_Graduate',         u:'/section/graduation-jobs/',      c:'#1a56db'},
             {l:'Post Graduate Jobs',   s:'i',k:'Any_Post_Graduate',    u:'/section/post-graduation-jobs/', c:'#9b1c1c'},
             {l:'Railway Jobs',         s:'i',k:'Railway_Jobs',         u:'/section/railway-jobs/',         c:'#1e3a5f'},
@@ -2675,8 +2673,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
             {l:'Last Date Reminder',   s:'i',k:'Last_Date_Reminder',    u:'/section/last-date-reminder/',   c:'#14532d'},
             {l:'Govt Scheme & Yojna',  s:'d',k:'Govt Scheme & Yojna',   u:'/section/govt-scheme-yojna/',    c:'#1a56db'},
             {l:'ImportantCSC PDF',     s:'d',k:'ImportantCSC PDF',      u:'/section/importantcsc-pdf/',     c:'#713f12'},
-            {l:'ImportantCSC link',    s:'d',k:'ImportantCSC link',     u:'/section/importantcsc-link/',    c:'#9b1c1c'},
-            {l:'Today Updates',        s:'d',k:'Today Updates',          u:'/section/today-updates/',        c:'#14532d'}
+            {l:'ImportantCSC link',    s:'d',k:'ImportantCSC link',     u:'/section/importantcsc-link/',    c:'#9b1c1c'}
           ];
           function x(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
           function mkCard(sec,items){
@@ -2843,18 +2840,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
       <!-- ===== SIDEBAR ===== -->
       <aside class="home-sidebar" aria-label="Quick links sidebar">
 
-        <!-- TODAY UPDATES SIDEBAR CARD -->
-        <div class="sec-card" id="today-updates-sidebar">
-          <div class="sec-head red">
-            <div class="left"><i class="fa-solid fa-calendar-day"></i> TODAY'S UPDATES</div>
-            <a href="/section/today-updates/" class="view-all-btn">View All</a>
-          </div>
-          <div class="sec-list" id="today-sidebar-list"><!-- SSR-TODAY-START --><a href="https://bsehexam2017.in/compimp2026/login.aspx"><i class="fa-solid fa-bolt" style="color:var(--red);"></i><span>HBSE Online Registration for Secondary/Sr. Secondary (Compartment/Additional.) Exam July - 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a><a href=" https://hssc.gov.in/file/ac1f23cd-9d9c-1328-819e-50aabec10022/result"><i class="fa-solid fa-bolt" style="color:var(--red);"></i><span>additional shortlist of 5 times more candidates for the Police Constable PMT has been released</span><i class="fa-solid fa-chevron-right arrow"></i></a><a href="https://ignou.samarth.edu.in/index.php/site/login"><i class="fa-solid fa-bolt" style="color:var(--red);"></i><span>IGNOU June Exam Admit Card Hall Ticket 2026 Download Last date 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a><a href="http://cbseacadit.nic.in/pvr/auth/register_new"><i class="fa-solid fa-bolt" style="color:var(--red);"></i><span>CBSE launches Photocopy, Verification and Re-Evaluation forms Last date 22/05/2026</span><i class="fa-solid fa-chevron-right arrow"></i></a><a href="https://admissions.highereduhry.ac.in/StudentRegistration"><i class="fa-solid fa-bolt" style="color:var(--red);"></i><span>Haryana UG College Admission 2026-27 शुरू last date -31 May 2026</span><i class="fa-solid fa-chevron-right arrow"></i></a><a href="https://saralharyana.gov.in/"><i class="fa-solid fa-bolt" style="color:var(--red);"></i><span>Scheme for Conservation and Development of Indigenous Cows and Murrah Development</span><i class="fa-solid fa-chevron-right arrow"></i></a><a href="https://mduadmission.samarth.edu.in/"><i class="fa-solid fa-bolt" style="color:var(--red);"></i><span>MDU UG &amp; Integrated Course Admission Form 2026  Rohtak</span><i class="fa-solid fa-chevron-right arrow"></i></a><a href="https://techadmissionshry.gov.in/"><i class="fa-solid fa-bolt" style="color:var(--red);"></i><span>Haryana Polytechnic Admission START हो गये ह 10th or 12th pass</span><i class="fa-solid fa-chevron-right arrow"></i></a><!-- SSR-TODAY-END -->
-            
-          </div>
-          <a href="/section/today-updates/" class="sec-more">View All Today Updates →</a>
-        </div>
-
         <!-- RECENTLY VIEWED JOBS -->
         <div class="sec-card" id="recently-viewed-card" style="display:none;">
           <div class="sec-head purple">
@@ -2880,20 +2865,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
             <button type="button" class="ps-tag" onclick="tsjQuickSearch('Army GD 2026')">Army GD 2026</button>
             <button type="button" class="ps-tag" onclick="tsjQuickSearch('UPSC 2026')">UPSC 2026</button>
           </div>
-        </div>
-
-        <!-- TOOLS & SERVICES SIDEBAR -->
-        <div class="sec-card">
-          <div class="sec-head teal">
-            <div class="left"><i class="fa-solid fa-screwdriver-wrench"></i> TOOLS & SERVICES</div>
-          </div>
-          <div class="sec-list">
-            <a href="/tools/"><i class="fa-solid fa-image"></i><span>Photo & PDF Tools</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="/section/important-csc-pdf/"><i class="fa-solid fa-id-card"></i><span>CSC Services</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="/resume-maker/"><i class="fa-solid fa-file-lines"></i><span>Resume Maker</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-            <a href="/helpdesk/"><i class="fa-solid fa-headset"></i><span>Helpdesk</span><i class="fa-solid fa-chevron-right arrow"></i></a>
-          </div>
-          <a href="/tools/" class="sec-more">View All Schemes →</a>
         </div>
 
       </aside>
@@ -3329,7 +3300,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
     function loadPush(){
       if(_pLoaded)return; _pLoaded=true;
       var s=document.createElement('script');
-      s.src='/tsj-push.js?v=20260603202042';
+      s.src='/tsj-push.js?v=20260625014500';
       s.defer=true;
       document.body.appendChild(s);
     }
