@@ -513,6 +513,8 @@
 
     // ── Parse important_links dict ────────────────────────────────────
     const il = job.important_links;
+    const _jobTitle = safe(job.title || (job.basic_details && (job.basic_details.job_title || job.basic_details.post_name)) || '');
+    const _orgName  = safe(job.organization || (job.basic_details && (job.basic_details.organization_name || job.basic_details.department)) || '');
     if (il && typeof il === 'object' && !Array.isArray(il)) {
       for (const [k, v] of Object.entries(il)) {
         const urls = Array.isArray(v) ? v : [v];
@@ -520,19 +522,25 @@
           const u = safe(url);
           if (!isUrl(u)) continue;
           const type = classifyLinkKey(k, u);
-          const label = smartLinkLabel(k, u, urls.length > 1 ? urls.indexOf(url) + 1 : 0);
+          const rawLabel = smartLinkLabel(k, u, urls.length > 1 ? urls.indexOf(url) + 1 : 0);
+          const label = isGenericLabel(rawLabel) ? generateSeoAnchor(u, type, _jobTitle, _orgName) : rawLabel;
           job._udyn_links.push({ label, url: u, type });
         }
       }
     } else if (Array.isArray(il)) {
       for (const item of il) {
         if (typeof item === 'string' && isUrl(item)) {
-          job._udyn_links.push({ label: smartLinkLabel('link', item, 0), url: item, type: classifyLinkKey('link', item) });
+          const type = classifyLinkKey('link', item);
+          const rawLabel = smartLinkLabel('link', item, 0);
+          const label = isGenericLabel(rawLabel) ? generateSeoAnchor(item, type, _jobTitle, _orgName) : rawLabel;
+          job._udyn_links.push({ label, url: item, type });
         } else if (item && typeof item === 'object') {
           const url = safe(item.url || item.link || item.href || '');
-          const label = safe(item.label || item.text || item.name || item.title || '');
+          const rawLabel = safe(item.label || item.text || item.name || item.title || '');
           if (isUrl(url)) {
-            job._udyn_links.push({ label: label || smartLinkLabel('link', url, 0), url, type: classifyLinkKey(label, url) });
+            const type = classifyLinkKey(rawLabel || 'link', url);
+            const label = isGenericLabel(rawLabel) ? generateSeoAnchor(url, type, _jobTitle, _orgName) : rawLabel;
+            job._udyn_links.push({ label, url, type });
           }
         }
       }
@@ -543,17 +551,21 @@
       if (Array.isArray(job.useful_links)) {
         for (const item of job.useful_links) {
           if (!item) continue;
-          const label = safe(item.title || item.name || item.label || '');
+          const rawLabel = safe(item.title || item.name || item.label || '');
           const rawLinks = item.links || item.link || item.url || '';
           const urls = Array.isArray(rawLinks) ? rawLinks : [rawLinks];
           urls.forEach((u, idx) => {
             const url = safe(u);
             if (!isUrl(url)) return;
             if (/youtu\.?be|youtube\.com/i.test(url)) return;
-            const finalLabel = urls.length > 1
-              ? (label ? `${label} (${idx + 1})` : smartLinkLabel('link', url, idx + 1))
-              : (label || smartLinkLabel('link', url, 0));
-            job._udyn_links.push({ label: finalLabel, url, type: classifyLinkKey(label || 'link', url) });
+            const type = classifyLinkKey(rawLabel || 'link', url);
+            let finalLabel;
+            if (urls.length > 1) {
+              finalLabel = isGenericLabel(rawLabel) ? generateSeoAnchor(url, type, _jobTitle, _orgName) : `${rawLabel} (${idx + 1})`;
+            } else {
+              finalLabel = isGenericLabel(rawLabel) ? generateSeoAnchor(url, type, _jobTitle, _orgName) : rawLabel;
+            }
+            job._udyn_links.push({ label: finalLabel, url, type });
           });
         }
       } else if (typeof job.useful_links === 'object') {
@@ -563,14 +575,19 @@
           if (k === '_all' || k.startsWith('_')) continue; // _all causes duplicate links
           if (typeof v === 'string' && isUrl(v)) {
             const type = classifyLinkKey(k, v);
-            const label = smartLinkLabel(k, v, 0);
+            const rawLabel = smartLinkLabel(k, v, 0);
+            const label = isGenericLabel(rawLabel) ? generateSeoAnchor(v, type, _jobTitle, _orgName) : rawLabel;
             job._udyn_links.push({ label, url: v, type });
           } else if (Array.isArray(v)) {
             v.forEach((item, idx) => {
               if (item && typeof item === 'object') {
                 const url = safe(item.links || item.url || item.link || '');
-                const lbl = safe(item.title || item.name || label || '');
-                if (isUrl(url)) job._udyn_links.push({ label: lbl || smartLinkLabel(k, url, idx), url, type: classifyLinkKey(lbl || k, url) });
+                const lbl = safe(item.title || item.name || '');
+                if (isUrl(url)) {
+                  const type = classifyLinkKey(lbl || k, url);
+                  const finalLbl = isGenericLabel(lbl) ? generateSeoAnchor(url, type, _jobTitle, _orgName) : (lbl || generateSeoAnchor(url, type, _jobTitle, _orgName));
+                  job._udyn_links.push({ label: finalLbl, url, type });
+                }
               }
             });
           }
@@ -584,6 +601,14 @@
       if (seen.has(l.url)) return false;
       seen.add(l.url);
       return true;
+    });
+
+    // ── Final SEO sanitization — replace any remaining generic labels ──
+    job._udyn_links = job._udyn_links.map(l => {
+      if (isGenericLabel(l.label)) {
+        return { ...l, label: generateSeoAnchor(l.url, l.type, _jobTitle, _orgName) };
+      }
+      return l;
     });
 
     return job;
@@ -619,6 +644,50 @@
     if (/pdf/i.test(key) || isPdf(url)) return 'Download PDF';
     if (/website|home/i.test(key)) return 'Official Website';
     return keyToLabel(key);
+  }
+
+  /* ── SEO Anchor Helpers ─────────────────────────────────────────────── */
+  const GENERIC_LABELS = /^(click\s*here|open|link|read\s*more|view|here|apply|visit|download|click|null|undefined|na|n\/a)$/i;
+
+  function isGenericLabel(label) {
+    if (!label || !label.trim()) return true;
+    return GENERIC_LABELS.test(label.trim());
+  }
+
+  function generateSeoAnchor(url, type, jobTitle, orgName) {
+    const u = safe(url).toLowerCase();
+    const title = safe(jobTitle);
+    const org   = safe(orgName);
+    const ctx   = title || org;
+
+    // Detect by URL patterns first (most reliable)
+    if (/admit.?card|hallticket|hall.?ticket/i.test(u))
+      return ctx ? `Download ${ctx} Admit Card` : 'Download Admit Card';
+    if (/answer.?key/i.test(u))
+      return ctx ? `${ctx} Answer Key` : 'Answer Key';
+    if (/syllabus/i.test(u))
+      return ctx ? `Download ${ctx} Syllabus` : 'Download Syllabus';
+    if (/result/i.test(u))
+      return ctx ? `${ctx} Result` : 'Check Result';
+    if (/notif|advt|advertisement|notification/i.test(u) || isPdf(u))
+      return org ? `Download ${org} Notification PDF` : (title ? `Download ${title} Notification PDF` : 'Download Notification PDF');
+    if (/apply|register|registration|form|candidate|online/i.test(u))
+      return title ? `Apply Online for ${title}` : (org ? `Apply Online – ${org}` : 'Apply Online');
+    if (/login/i.test(u))
+      return ctx ? `${ctx} Candidate Login` : 'Candidate Login';
+
+    // Fall back to type-based with context
+    if (type === 'apply')
+      return title ? `Apply Online for ${title}` : (org ? `Apply Online – ${org}` : 'Apply Online');
+    if (type === 'pdf')
+      return org ? `Download ${org} Notification PDF` : (title ? `Download ${title} Notification PDF` : 'Download PDF');
+    if (type === 'website')
+      return org ? `Visit ${org} Official Website` : 'Visit Official Website';
+    if (type === 'login')
+      return ctx ? `${ctx} Candidate Login` : 'Candidate Login';
+
+    // Generic fallback with context
+    return ctx ? `${ctx} – Official Link` : 'Official Link';
   }
 
   function collectUrlsDeep(data, store, label = '') {
@@ -900,7 +969,7 @@
       const s = value.trim();
       if (!s) return '<span style="color:#94a3b8;">—</span>';
       if (isUrl(s)) {
-        const t = isPdf(s) ? 'Download PDF' : (classifyLinkKey('link', s) === 'apply' ? 'Apply / Click Here' : 'Click Here');
+        const t = isPdf(s) ? 'Download PDF' : (classifyLinkKey('link', s) === 'apply' ? 'Apply Online' : 'Open Link');
         return `<a href="${esc(s)}" target="_blank" rel="noopener" class="udyn-link-btn ${isPdf(s) ? 'udyn-link-pdf' : 'udyn-link-website'}" style="font-size:.78rem;padding:3px 10px;">${t}</a>`;
       }
       if (isHtml(s)) return `<div class="udyn-html-body" style="padding:0;">${s}</div>`;
@@ -910,7 +979,7 @@
     if (Array.isArray(value)) {
       if (!value.length) return '<span style="color:#94a3b8;">—</span>';
       if (value.every(x => typeof x === 'string' && isUrl(x))) {
-        return value.map(u => `<a href="${esc(u)}" target="_blank" rel="noopener" class="udyn-link-btn ${isPdf(u) ? 'udyn-link-pdf' : 'udyn-link-apply'}" style="font-size:.78rem;padding:3px 10px;margin:2px 4px 2px 0;display:inline-flex;">${isPdf(u) ? 'Download PDF' : 'Apply / Click Here'}</a>`).join('');
+        return value.map(u => `<a href="${esc(u)}" target="_blank" rel="noopener" class="udyn-link-btn ${isPdf(u) ? 'udyn-link-pdf' : 'udyn-link-apply'}" style="font-size:.78rem;padding:3px 10px;margin:2px 4px 2px 0;display:inline-flex;">${isPdf(u) ? 'Download PDF' : 'Apply Online'}</a>`).join('');
       }
       if (value.every(x => typeof x === 'string')) {
         return `<div class="udyn-tag-list" style="padding:0;">${value.map(s => `<div class="udyn-tag">${esc(s)}</div>`).join('')}</div>`;
@@ -1417,7 +1486,7 @@
     const ORDER = { apply: 0, login: 1, pdf: 2, website: 3, default: 4 };
     const sorted = [...links].sort((a, b) => (ORDER[a.type] || 4) - (ORDER[b.type] || 4));
     const typeStyle = { apply: 'udyn-link-apply', login: 'udyn-link-login', pdf: 'udyn-link-pdf', website: 'udyn-link-website', video: 'udyn-link-video', default: 'udyn-link-default' };
-    const typeLabel = { apply: 'Apply Now', login: 'Login', pdf: 'Download PDF', website: 'Visit Website', video: 'Watch Video', default: 'Click Here' };
+    const typeLabel = { apply: 'Apply Now', login: 'Login', pdf: 'View PDF', website: 'Visit Website', video: 'Watch Video', default: 'Open Link' };
     const typeIcon  = { apply: 'fa-solid fa-pen-to-square', login: 'fa-solid fa-right-to-bracket', pdf: 'fa-solid fa-file-pdf', website: 'fa-solid fa-globe', video: 'fa-brands fa-youtube', default: 'fa-solid fa-link' };
     const rows = sorted.map(({ label, url, type }) =>
       `<li class="udyn-link-row">` +
@@ -1905,7 +1974,7 @@
       return { icon:'fa-pen-to-square', cls:'ib-te', sub:'Edit' };
     if (/exam\s*city|exam\s*centre/i.test(t))
       return { icon:'fa-location-dot', cls:'ib-bl', sub:'Check' };
-    return { icon:'fa-link', cls:'ib-bl', sub:'Click Here' };
+    return { icon:'fa-link', cls:'ib-bl', sub:'Open Link' };
   }
 
   /* ── FSCD: render icon link grid from _udyn_links array ── */
