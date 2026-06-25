@@ -46,23 +46,38 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
     </style>
 
   <title>Top Sarkari Jobs – Sarkari Naukri, Results & Admit Cards 2026</title>
-  <!-- S-02: GA4 — loaded on first user interaction (or after 3.5s) to keep the
-       main thread free during initial paint. Improves TBT/INP without losing
-       analytics: real engaged users trigger an interaction, and a timeout
+  <!-- S-02: GA4 — loaded on first user interaction (or after 3.5s) AND deferred to
+       requestIdleCallback so the actual script-injection work never competes with
+       in-progress rendering/layout on the main thread. Improves TBT/INP without
+       losing analytics: real engaged users trigger an interaction, and a timeout
        fallback still captures quick bounces. -->
   <script>
     window.dataLayer=window.dataLayer||[];
     function gtag(){dataLayer.push(arguments);}
     (function(){
       var loaded=false;
-      function loadGA(){
+      function injectGA(){
         if(loaded)return; loaded=true;
-        var s=document.createElement('script');
-        s.async=true;
-        s.src='https://www.googletagmanager.com/gtag/js?id=G-C4VRD1C9QS';
-        document.head.appendChild(s);
-        gtag('js',new Date());
-        gtag('config','G-C4VRD1C9QS',{send_page_view:true});
+        try{
+          var s=document.createElement('script');
+          s.async=true;
+          s.src='https://www.googletagmanager.com/gtag/js?id=G-C4VRD1C9QS';
+          s.onerror=function(){ if(window.console&&console.warn) console.warn('GA script failed to load'); };
+          document.head.appendChild(s);
+          gtag('js',new Date());
+          gtag('config','G-C4VRD1C9QS',{send_page_view:true});
+        }catch(err){
+          if(window.console&&console.warn) console.warn('GA init failed:', err);
+        }
+      }
+      function loadGA(){
+        // Defer the actual injection to an idle window so it never blocks a
+        // task that's already running (scroll handler, render, etc.)
+        if('requestIdleCallback' in window){
+          requestIdleCallback(injectGA,{timeout:2000});
+        }else{
+          setTimeout(injectGA,0);
+        }
       }
       var evts=['scroll','mousemove','touchstart','click','keydown'];
       function trigger(){evts.forEach(function(e){window.removeEventListener(e,trigger);});loadGA();}
@@ -89,34 +104,35 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
   <!-- dailyupdates.json is fetched with an hourly cache-bust in the cards script,
        so a static preload would just cache a stale copy — intentionally removed. -->
   <!-- PERF: sections-index.json — 16KB lightweight index for instant card rendering (instead of 18MB Complete_Jobs_Full_Data.json) -->
-  <link rel="preload" href="sections-index.json?v=202606250535" as="fetch" crossorigin="anonymous"/>
+  <link rel="preload" href="sections-index.json?v=202606240831" as="fetch" crossorigin="anonymous"/>
   <!-- PERF: Complete_Jobs_Full_Data.json fetched once — powers all SR cards + ticker -->
   <script>
-  // Complete_Jobs_Full_Data.json is the single source of truth
-  window.__mergedDataPromise = new Promise(function(resolve) {
-    var loaded = false;
-    function loadNow() {
-      if (loaded) return; loaded = true;
-      // Use lightweight mini JSON (42KB) instead of full 53MB file
-      fetch('/data/sarkari-mini.json')
-        .then(function(r){ return r.ok ? r.json() : null; })
-        .then(function(d){
-          if(!d){ resolve(null); return; }
-          var sarJobs = (d.jobs) || [];
-          resolve({ jobs: sarJobs, _cjData: {sarkari_data:{jobs:sarJobs}} });
-        })
-        .catch(function(){ resolve(null); });
-    }
-    // Load on scroll (most common trigger)
-    window.addEventListener('scroll', function h(){ window.removeEventListener('scroll',h); loadNow(); }, {once:true,passive:true});
-    // Or idle fallback (5 second)
-    if ('requestIdleCallback' in window) { requestIdleCallback(loadNow, {timeout:5000}); }
-    else { setTimeout(loadNow, 8000); }
-  });
+  // PERF-FIX (network dependency chain): sarkari-mini.json and sections-index.json
+  // now fire in TRUE PARALLEL via Promise.all at page-load time, instead of the
+  // old scroll/idle-gated trigger which made sarkari-mini.json start late and look
+  // like it was chained after dailyupdates.json in the critical request chain.
+  // fetchPriority:'low' keeps it from competing with LCP-critical resources for
+  // bandwidth on slow connections, achieving the same protective goal as the old
+  // delay — without the sequential-looking network waterfall.
+  window.__mergedDataPromise = fetch('/data/sarkari-mini.json', { priority: 'low' })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (d) {
+      if (!d) return null;
+      var sarJobs = d.jobs || [];
+      return { jobs: sarJobs, _cjData: { sarkari_data: { jobs: sarJobs } } };
+    })
+    .catch(function (err) {
+      if (window.console && console.warn) console.warn('sarkari-mini.json fetch failed:', err);
+      return null;
+    });
+
   // PERF: sections-index.json — fetch starts immediately at page load (16KB vs 18MB)
-  window.__sectionsIndexPromise = fetch('sections-index.json?v=202606250535')
-    .then(function(r){ return r.ok ? r.json() : null; })
-    .catch(function(){ return null; });
+  window.__sectionsIndexPromise = fetch('sections-index.json?v=202606240831')
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .catch(function (err) {
+      if (window.console && console.warn) console.warn('sections-index.json fetch failed:', err);
+      return null;
+    });
   </script>
 
   <meta property="og:type" content="website"/>
@@ -293,7 +309,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
   <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
-  <script src="/tsj-menu.js?v=20260625110532" defer></script>
+  <script src="/tsj-menu.js?v=20260624140058" defer></script>
   <script src="/pwa-install.js?v=6.0" defer></script>
   <!-- ══ END PWA ════════════════════════════════════════════════════ -->
 
@@ -773,7 +789,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
         if (cached && (Date.now() - cached.ts) < CACHE_TTL) return Promise.resolve(cached.data);
       } catch(e) {}
 
-      return (window.__sectionsIndexPromise || fetch('/sections-index.json?v=202606250535').then(function(r){return r.ok?r.json():null;}))
+      return (window.__sectionsIndexPromise || fetch('/sections-index.json?v=202606240831').then(function(r){return r.ok?r.json():null;}))
         .then(function(json) {
           try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: json })); } catch(e) {}
           return json;
@@ -1002,7 +1018,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
           // Phase 1: sections-index + dailyupdates se turant render karo (fast ~400KB)
           // Use preloaded promise if available (avoids duplicate network request)
           Promise.all([
-            window.__sectionsIndexPromise || gj('/sections-index.json?v=202606250535'),
+            window.__sectionsIndexPromise || gj('/sections-index.json?v=202606240831'),
             gj('/dailyupdates.json?v='+_duBust)
           ]).then(function(r){
             var si=r[0],dl=r[1];
@@ -1013,6 +1029,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
             // Only update DOM if truly needed (no static HTML)
             (window.__mergedDataPromise||Promise.resolve(null)).then(function(cj){
               if(cj&&!STATIC_RENDERED)render(cj,si,dl);
+            }).catch(function(err){
+              if(window.console && console.warn) console.warn('Phase 2 enrichment failed:', err);
             });
           }).catch(function(){
             if(!STATIC_RENDERED) grid.innerHTML='<div class="sr-card" style="grid-column:1/-1;padding:20px;text-align:center;">Failed. <a href="javascript:location.reload()">Retry</a></div>';
@@ -1496,42 +1514,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
 
 
 
-  <!-- ============================================================
-       TODAY UPDATES SIDEBAR — Loads from dailyupdates.json
-  ============================================================ -->
-  <script>
-  (function loadTodaySidebar() {
-    var list = document.getElementById('today-sidebar-list');
-    if (!list) return;
-
-    fetch('dailyupdates.json')
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        var items = [];
-        // Try multiple formats
-        if (Array.isArray(data)) {
-          items = data.slice(0, 6);
-        } else if (data.updates && Array.isArray(data.updates)) {
-          items = data.updates.slice(0, 6);
-        } else if (data.sections && Array.isArray(data.sections)) {
-          data.sections.forEach(function(s) {
-            if (s.items) items = items.concat(s.items.slice(0, 3));
-          });
-          items = items.slice(0, 6);
-        }
-        if (!items.length) return;
-        var html = items.map(function(item) {
-          var name = item.name || item.title || '';
-          var url  = item.url  || item.link || '/section/today-updates/';
-          if (!name) return '';
-          return '<a href="' + url + '"><i class="fa-solid fa-bolt" style="color:var(--red);"></i><span>' + name + '</span><i class="fa-solid fa-chevron-right arrow"></i></a>';
-        }).filter(Boolean).join('');
-        if (html) list.innerHTML = html;
-      })
-      .catch(function() {});
-  })();
-  </script>
-
 <script>
   /* S-09: tsj-push.js — load on interaction or after 10s idle (saves 29KB parse) */
   (function(){
@@ -1552,7 +1534,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
     setTimeout(loadPush,10000);
   })();
 </script>
-<script src="/tsj-version.js?v=20260625110532" defer></script>
+<script src="/tsj-version.js?v=20260624140058" defer></script>
 
 <script>
 /* Auto lazy-load all images not already marked */
