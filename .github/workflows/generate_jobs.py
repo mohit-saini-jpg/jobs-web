@@ -57,6 +57,12 @@ _RECRUITMENT_KW = [
     'recruitment', 'vacancy', 'vacancies', 'apply online', 'notification',
     'admit card', 'result', 'answer key', 'syllabus', 'bharti',
     'selection', 'posts', 'sarkari', 'naukri', 'job', 'jobs',
+    # extended — covers exam/test/form/admission/officer/instructor/helper entries
+    'online form', 'exam', 'test', 'admission', 'officer', 'instructor',
+    'technician', 'assistant', 'havaldar', 'helper', 'mts', 'constable',
+    'conductor', 'apprentice', 'trainee', 'counselling', 'merit list',
+    'exam city', 'certificate', 'eligibility test', 're-open',
+    'teacher', 'pgt', 'tgt', 'jbt', 'ntt', 'paramedical', 'nursing',
 ]
 
 def is_real_job(title):
