@@ -104,17 +104,18 @@
 # ISSUE-030 FIX: perf-ultra.js — versioned via ?v= query param in HTML, use longer cache
 # Version is controlled via ?v=20260605 query string in index.html script tag
 /perf-ultra.js
-  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+  Cache-Control: public, max-age=604800, stale-while-revalidate=2592000
 
-# Key renderer files — short cache so critical fixes reach users fast
+# Key renderer files — versioned via ?v= query string, safe to cache longer
+# (any deploy that changes content also bumps the ?v= param, busting cache automatically)
 /universal-renderer.js
-  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+  Cache-Control: public, max-age=604800, stale-while-revalidate=2592000
 /script.min.js
-  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+  Cache-Control: public, max-age=604800, stale-while-revalidate=2592000
 /seo-engine.min.js
-  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+  Cache-Control: public, max-age=604800, stale-while-revalidate=2592000
 /smart-search.min.js
-  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+  Cache-Control: public, max-age=604800, stale-while-revalidate=2592000
 
 # AUDIT FIX: analytics.js was no-cache — caused 17KB re-download every visit
 /analytics.js
