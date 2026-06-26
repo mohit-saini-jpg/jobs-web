@@ -193,57 +193,6 @@ def registered_slug(title):
         _SLUG_REGISTRY_DIRTY = True
     return s
 
-
-# ── CANONICAL SLUG RESOLVER ───────────────────────────────────────────────────
-# Rule: ONE job = ONE URL everywhere on the site.
-# Priority order (highest → lowest):
-#   1. job['_canonical_slug']  — scraper sets this; immutable; always wins
-#   2. job['slug']             — scraper-assigned raw slug (normalized)
-#   3. registered_slug(title)  — generated from title, stored in slug-registry
-#
-# This function is THE SINGLE SOURCE OF TRUTH for every <a href="/jobs/…/"> on
-# the site — listing cards, section pages, category feeds, sitemaps, schemas.
-# NEVER call slugify(title)[:N] directly inside any HTML rendering loop.
-# ─────────────────────────────────────────────────────────────────────────────
-def get_canonical_slug(job_obj):
-    """Return the one true canonical slug for a job record.
-
-    Reads _canonical_slug from the JSON first (scraper-set, permanent).
-    Falls back to normalized slug field, then to registered_slug(title).
-    Guarantees a clean, dash-normalized string with no trailing dashes,
-    no SR prefixes, and no hex hash suffixes — safe for /jobs/{slug}/ URLs.
-    """
-    # Priority 1: explicit _canonical_slug from scraper (most reliable)
-    cs = str(job_obj.get('_canonical_slug') or '').strip()
-    if cs:
-        return _norm_slug(cs)
-
-    # Priority 2: raw slug field (normalize it — strip SR prefix, hex suffix)
-    raw = str(job_obj.get('slug') or '').strip()
-    if raw:
-        # Strip SR category prefix (sr_result-, sr_admit_card-, etc.)
-        raw = re.sub(r'^sr_[a-z_]+-', '', raw)
-        # Strip trailing hex hash (6-8 hex chars, NOT pure numeric FJA IDs)
-        _tail = re.search(r'-([0-9a-f]{6,8})$', raw)
-        if _tail and not _tail.group(1).isdigit():
-            raw = raw[:-len(_tail.group(0))]
-        s = _norm_slug(raw)
-        if s:
-            return s
-
-    # Priority 3: derive from title via slug-registry (title-change proof)
-    bd = job_obj.get('basic_details') or {}
-    title = str(
-        bd.get('job_title') or
-        job_obj.get('title') or
-        job_obj.get('name') or ''
-    ).strip()
-    if title:
-        return registered_slug(title)
-
-    return 'page'
-
-
 def get_date_posted(slug, job_obj):
     """C1: Stable datePosted. Priority: real job date -> persisted first-seen -> today (saved)."""
     global _FIRST_SEEN_DIRTY
@@ -1980,13 +1929,112 @@ def _render_unknown_list(val):
         return ''
     return '<ul class="val-list">' + ''.join(f'<li>{e(it)}</li>' for it in items) + '</ul>'
 
+def _render_ai_text_block(text):
+    """Convert AI-generated plain text into rich HTML.
+
+    Handles (in order, mutually exclusive per line):
+      • Markdown-style **bold** inline spans
+      • Bullet lines starting with  -  /  *  /  •
+      • Numbered lines  1.  /  1)
+      • Hash headings  ## Heading
+      • Everything else becomes a <p> paragraph
+
+    Empty lines flush an open list; adjacent paragraphs are merged so
+    short AI snippets don't produce a wall of single-line <p> tags.
+    Always safe: result is assembled from e()-escaped fragments.
+    """
+    if not text or not text.strip():
+        return ''
+
+    def _inline(s):
+        """Apply **bold** markdown → <strong> inline, then HTML-escape."""
+        # Split on **…** pairs; odd indices are bold spans.
+        parts = re.split(r'\*\*(.+?)\*\*', s)
+        out_parts = []
+        for i, part in enumerate(parts):
+            if i % 2 == 1:  # bold span
+                out_parts.append(f'<strong>{_html.escape(part, quote=True)}</strong>')
+            else:
+                out_parts.append(_html.escape(part, quote=True))
+        return ''.join(out_parts)
+
+    lines = text.splitlines()
+    html_parts = []
+    list_items = []   # buffer for open <ul> or <ol>
+    list_type  = None  # 'ul' or 'ol'
+
+    def _flush_list():
+        nonlocal list_items, list_type
+        if list_items:
+            tag = list_type or 'ul'
+            items_html = ''.join(f'<li style="margin-bottom:4px">{li}</li>' for li in list_items)
+            html_parts.append(f'<{tag} style="margin:6px 0 10px;padding-left:20px;line-height:1.75">'
+                               f'{items_html}</{tag}>')
+        list_items = []
+        list_type  = None
+
+    _BULLET_RE   = re.compile(r'^[\-\*\•]\s+(.+)$')
+    _NUMBERED_RE = re.compile(r'^\d+[\.\)]\s+(.+)$')
+    _HEADING_RE  = re.compile(r'^#{1,3}\s+(.+)$')
+
+    for raw in lines:
+        line = raw.strip()
+
+        # Blank line → flush any open list; paragraph break handled implicitly
+        if not line:
+            _flush_list()
+            continue
+
+        bm = _BULLET_RE.match(line)
+        nm = _NUMBERED_RE.match(line)
+        hm = _HEADING_RE.match(line)
+
+        if bm:
+            # Bullet item — flush if we were in a numbered list
+            if list_type == 'ol':
+                _flush_list()
+            list_type = 'ul'
+            list_items.append(_inline(bm.group(1)))
+        elif nm:
+            # Numbered item — flush if we were in a bullet list
+            if list_type == 'ul':
+                _flush_list()
+            list_type = 'ol'
+            list_items.append(_inline(nm.group(1)))
+        elif hm:
+            _flush_list()
+            html_parts.append(
+                f'<p style="font-weight:700;font-size:.88rem;color:#1e293b;'
+                f'margin:10px 0 4px">{_inline(hm.group(1))}</p>'
+            )
+        else:
+            # Plain paragraph line — flush any open list first
+            _flush_list()
+            html_parts.append(
+                f'<p style="margin:0 0 8px;line-height:1.75;font-size:.84rem;'
+                f'color:#374151">{_inline(line)}</p>'
+            )
+
+    _flush_list()  # flush any trailing list
+
+    if not html_parts:
+        return ''
+    inner = ''.join(html_parts)
+    return f'<div class="edu-sec" style="padding:12px 14px">{inner}</div>'
+
+
 def _render_ai_sections(job_obj):
     """Phase 5: render the AI-generated content sections (overview, expert
-    analysis, etc.) as section cards — ONLY when the AI field is present.
+    analysis, etc.) as premium section cards — ONLY when the AI field is present.
     Additive: a job with no AI content renders nothing here, exactly as before.
-    Facts (tables/dates/fees) are never produced here — those stay fact-sourced."""
+    Facts (tables/dates/fees) are never produced here — those stay fact-sourced.
+
+    Each field is passed through _render_ai_text_block() which converts the
+    plain-text AI output into rich HTML (paragraphs, bullets, numbered steps,
+    inline bold) for a polished, readable result on the detail page.
+    """
     out = ''
-    # (key, heading, icon, color)
+    # (key, heading, FA icon, gradient-colors)
     ai_cards = [
         ('ai_overview',            'Overview',              'fa-circle-info',       '1d4ed8,#3b82f6'),
         ('ai_expert_analysis',     'Expert Analysis',       'fa-lightbulb',         '7c3aed,#a855f7'),
@@ -1999,8 +2047,9 @@ def _render_ai_sections(job_obj):
     for key, heading, icon, color in ai_cards:
         val = safe(job_obj.get(key, '') or '')
         if val and len(val) > 20:
-            body = f'<div class="edu-sec" style="line-height:1.7">{e(val)}</div>'
-            out += sec_card(heading, icon, color, body)
+            body = _render_ai_text_block(val)
+            if body:
+                out += sec_card(heading, icon, color, body)
     return out
 
 
@@ -3369,7 +3418,7 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     </div>
     {share_row}
   </div>
-  <h1 class="detail-h1">{e(title)}</h1>
+  <h1 class="detail-h1">{e(safe(job_obj.get('ai_h1', '') or '') or title)}</h1>
   <div class="editorial-byline" style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:.74rem;color:#64748b;margin:2px 0 8px;">
     <i class="fa-solid fa-circle-check" style="color:#16a34a;"></i>
     <span>Reviewed by the <a href="/about/" style="color:#1a56db;text-decoration:none;font-weight:600;">Top Sarkari Jobs Editorial Team</a></span>
@@ -3622,13 +3671,15 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
         [{'@type':'ListItem','position':i+2,'name':b[0],'item':BASE_URL+b[1]} for i,b in enumerate(breadcrumbs)] +
         [{'@type':'ListItem','position':len(breadcrumbs)+2,'name':title,'item':canon_url}]}
 
-    # ItemList schema for top 10 jobs (rich results)
-    # Uses get_canonical_slug() so schema URLs match the actual pages on disk.
+    # FIX #5: ItemList schema for top 10 jobs (rich results)
     _il_elements = []
     for _ili, _jb in enumerate(jobs[:10], 1):
         _bd2 = _jb.get('basic_details', {}) or {}
         _jt2 = safe(_bd2.get('job_title', '') or _jb.get('title', '') or _jb.get('name', ''))
-        _js2 = get_canonical_slug(_jb)
+        _rs2 = safe(_jb.get('_slug', '') or _jb.get('slug', ''))
+        _js2 = re.sub(r'^sr_[a-z_]+-', '', _rs2) if _rs2 else ''
+        _js2 = re.sub(r'-[0-9a-f]{6,8}$', '', _js2) if _js2 else ''
+        _js2 = (_js2[:80].rstrip('-')) if _js2 else slugify(_jt2)
         if _jt2 and _js2:
             _il_elements.append({'@type':'ListItem','position':_ili,'name':_jt2,
                                  'url':f"{BASE_URL}/jobs/{_js2}/"})
@@ -3648,10 +3699,16 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
         il    = job.get('important_links',{}) or {}
         jtitle = safe(bd.get('job_title','') or job.get('title','') or job.get('name',''))
         if not jtitle: continue
-        # ── CANONICAL SLUG: use get_canonical_slug() — never slugify() inline ──────
-        # Guarantees listing card href matches the actual /jobs/{slug}/index.html
-        # on disk. Prevents 404s from prefix / truncation / hash mismatches.
-        jslug = get_canonical_slug(job)
+        _raw_slug = safe(job.get('_slug','') or job.get('slug',''))
+        # Clean SR prefix (sr_result-, sr_admit_card-, etc.) for URL
+        import re as _re2
+        jslug = _re2.sub(r'^sr_[a-z_]+-','', _raw_slug) if _raw_slug else ''
+        # Strip trailing hex hash suffix only (NOT FJA numeric IDs like -3054836)
+        # Hex hash: letters a-f present. Pure numeric = FJA article ID, keep it.
+        _tail = _re2.search(r'-([0-9a-f]{6,8})$', jslug)
+        if _tail and not _tail.group(1).isdigit():
+            jslug = jslug[:-len(_tail.group(0))]
+        jslug = jslug or slugify(jtitle)
         # Landing/index pages can override the per-row link target (e.g. /state/{slug}/
         # instead of /jobs/{slug}/) via the optional _listing_url field.
         _row_url = safe(job.get('_listing_url','')) or f"/jobs/{e(jslug)}/"
@@ -3754,8 +3811,8 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
         _pick = []
         _seen = set()
         for _j in (jobs or [])[:30]:
-            _js = get_canonical_slug(_j)
-            _jn = _j.get('title','') or (_j.get('basic_details') or {}).get('job_title','') or _j.get('name','') or ''
+            _js = _j.get('slug', '') or slugify(_j.get('title','') or _j.get('name',''))[:80]
+            _jn = _j.get('title','') or _j.get('name','') or ''
             if _js and _js not in _seen and _jn:
                 _pick.append((_js, _jn[:65]))
                 _seen.add(_js)
@@ -4353,7 +4410,7 @@ def _rel_prepass():
             bd = job.get('basic_details', {}) or {}
             title = safe(bd.get('job_title',''))
             if not title: continue
-            slug = get_canonical_slug(job)
+            slug = registered_slug(title)
             fp = _fingerprint(title)
             if fp in _seen_fp_pre: continue
             _seen_fp_pre.add(fp)
@@ -4365,7 +4422,7 @@ def _rel_prepass():
         title = safe(bd.get('job_title','') or job.get('title','') or
                      bd.get('jobTitle','') or job.get('name',''))
         if not title: continue
-        slug = get_canonical_slug(job)
+        slug = registered_slug(title)
         fp = _fingerprint(title)
         if fp in _seen_fp_pre: continue
         _seen_fp_pre.add(fp)
@@ -4385,10 +4442,7 @@ for cat, jobs_list in FJA.items():
         bd = job.get('basic_details', {}) or {}
         title = safe(bd.get('job_title',''))
         if not title: continue
-        # Use get_canonical_slug() — respects _canonical_slug from scraper first,
-        # then slug field, then slug-registry. Detail page and listing card always
-        # resolve to the same path this way.
-        slug = get_canonical_slug(job)
+        slug = registered_slug(title)
         # SEO FIX (One Job = One URL): the same recruitment is listed under
         # multiple qualification categories. The old line appended "-{cat_slug}"
         # which minted a SEPARATE duplicate HTML page per category
@@ -4643,10 +4697,8 @@ for job in SARK:
     job = _normalize_sarkari_job(job)
     title = safe(job.get('title',''))
     if not title: continue
-    # get_canonical_slug() reads _canonical_slug first (scraper-set, immutable),
-    # then falls back to normalized slug field, then registered_slug(title).
-    # This is the ONLY place the SARK base slug is derived — no ad-hoc slugify().
-    base_slug = get_canonical_slug(job)
+    raw_slug = job.get('slug','') or ''
+    base_slug = clean_slug(raw_slug) if raw_slug.strip() else registered_slug(title)
     if not base_slug: continue
     # Version-aware: same recruitment + changed dates/posts/advt/year/pdf → new
     # version → new unique slug. Same content → None (true duplicate, skip).
@@ -5296,10 +5348,7 @@ for _state_name, _districts in _DIST_BY_STATE.items():
                     'organization_name': safe(_bd.get('organization_name', '') or _dname),
                     'total_vacancies': safe(_bd.get('total_vacancies', '') or _j.get('total_post', '')),
                 },
-                # Use get_canonical_slug to ensure district listing cards link
-                # to the same URL as the actual detail page on disk.
-                '_canonical_slug': get_canonical_slug(_j),
-                '_slug': get_canonical_slug(_j),
+                '_slug': safe(_j.get('_slug', '') or _j.get('slug', '')),
             })
         _district_landing_items.append((_state_name, _dname, _dslug, len(_djobs)))
         # Build the district listing page
@@ -5444,9 +5493,7 @@ for cat, jobs_list in FJA.items():
         bd = job.get('basic_details',{}) or {}
         title = safe(bd.get('job_title',''))
         if not title: continue
-        # Use get_canonical_slug — respects _canonical_slug from scraper so
-        # category listing cards link to same page as section listing cards.
-        item_slug = get_canonical_slug(job)
+        item_slug = registered_slug(title)[:80]
         # DUPLICATE GUARD: FJA kabhi-kabhi same recruitment ko naye article-ID
         # (naya URL) ke saath dobara publish kar deta hai. URL alag hone ki
         # wajah se upstream dedup_engine isse same job nahi maanta, aur same
@@ -5876,9 +5923,10 @@ for cat_key, url_slug in SARK_CAT_MAP.items():
             for _k2 in ['apply_online','result','result_link','admit_card','notification','notification_pdf','answer_key']:
                 if _ul2.get(_k2): _il2[_k2] = _ul2[_k2]
             if _ul2.get('result') and not _il2.get('result_link'): _il2['result_link'] = _ul2['result']
-        # CRITICAL FIX: use get_canonical_slug() so section listing card hrefs
-        # match the actual /jobs/{slug}/index.html files on disk.
-        _clean_slug2 = get_canonical_slug(j)
+        _raw_slug2 = j.get('slug','')
+        import re as _re3
+        _clean_slug2 = _re3.sub(r'^sr_[a-z_]+-','', _raw_slug2) if _raw_slug2 else ''
+        _clean_slug2 = _re3.sub(r'-[0-9a-f]{6,8}$','', _clean_slug2) if _clean_slug2 else ''
         norm2.append({
             'basic_details': {
                 'job_title': j.get('title',''),
@@ -5890,10 +5938,7 @@ for cat_key, url_slug in SARK_CAT_MAP.items():
             'important_dates': _imp2,
             'last_date': str(_last2),
             'important_links': _il2,
-            # Store canonical slug in BOTH _slug AND _canonical_slug so
-            # build_listing_page → get_canonical_slug() resolves correctly.
-            '_canonical_slug': _clean_slug2,
-            '_slug': _clean_slug2,
+            '_slug': _clean_slug2 or j.get('slug',''),
             'status': j.get('status',''),
         })
     write(str(ROOT/'section'/url_slug/'index.html'), build_listing_page(lbl, norm2, f"{BASE_URL}/section/{url_slug}/", []))
@@ -6030,9 +6075,16 @@ for _si_cat, _si_jobs in FJA.items():
         _bd = (_j.get('basic_details') or {})
         _t  = safe(_bd.get('job_title',''))
         if not _t: continue
-        # CRITICAL FIX: use get_canonical_slug() so sections-index slug
-        # is identical to the actual /jobs/{slug}/index.html path on disk.
-        _sl = get_canonical_slug(_j)
+        # CRITICAL: use SAME slug logic as build_listing_page (line ~3495)
+        # so sections-index links match actual disk page paths
+        _raw_sl = safe(_j.get('_slug','') or _j.get('slug',''))
+        import re as _re_si
+        _raw_sl = _re_si.sub(r'^sr_[a-z_]+-', '', _raw_sl) if _raw_sl else ''
+        _tail_si = _re_si.search(r'-([0-9a-f]{6,8})$', _raw_sl)
+        if _tail_si and not _tail_si.group(1).isdigit():
+            _raw_sl = _raw_sl[:-len(_tail_si.group(0))]
+        _sl = _raw_sl or slugify(_t)[:80]
+        _sl = _sl[:80]
         _imp = (_j.get('important_dates') or {})
         _ld  = safe(_imp.get('last_date_to_apply','') or _imp.get('last_date',''))
         _si_items.append({'slug':_sl,'name':_t,'date':_ld})
@@ -6045,8 +6097,7 @@ for _sj in SARK:
     if not _scat: continue
     _st = safe(_sj.get('title',''))
     if not _st: continue
-    # CRITICAL FIX: get_canonical_slug() so SARK section-index slugs match disk pages
-    _sl = get_canonical_slug(_sj)
+    _sl = slugify(_st)[:80]
     _ld = safe((_sj.get('important_dates') or {}).get('last_date','') or _sj.get('last_date',''))
     if _scat not in sections_index:
         sections_index[_scat] = []
@@ -6067,7 +6118,7 @@ for _si_cat, _si_jobs in FJA.items():
         if not _t: continue
         _all_cats = _j.get('_all_categories', [])
         if not _all_cats: continue
-        _sl = get_canonical_slug(_j)
+        _sl = slugify(_t)[:80]
         _imp = (_j.get('important_dates') or {})
         _ld  = safe(_imp.get('last_date_to_apply','') or _imp.get('last_date',''))
         _item = {'slug': _sl, 'name': _t, 'date': _ld}
@@ -6121,7 +6172,7 @@ _up_items = []
 for _sj in _read_jobs_file(_up_path):
     _st = safe(_sj.get('title','') or _sj.get('name',''))
     if not _st: continue
-    _sl = get_canonical_slug(_sj)
+    _sl = _sj.get('slug','') or slugify(_st)[:80]
     _ld = safe(_sj.get('last_date','') or
                (_sj.get('important_dates') or {}).get('last_date_apply_online','') or
                (_sj.get('important_dates') or {}).get('last_date_to_apply','') or
@@ -6133,7 +6184,7 @@ if not _up_items:
         if _sj.get('category') != 'UPCOMING_JOBS': continue
         _st = safe(_sj.get('title',''))
         if not _st: continue
-        _sl = get_canonical_slug(_sj)
+        _sl = slugify(_st)[:80]
         _imp = _sj.get('important_dates') or {}
         _ld = safe(_imp.get('last_date_apply_online','') or _imp.get('last_date_to_apply','') or _imp.get('last_date',''))
         _up_items.append({'slug':_sl,'name':_st,'date':_ld})
@@ -6146,7 +6197,7 @@ _adm_items = []
 for _sj in _read_jobs_file(_adm_path):
     _st = safe(_sj.get('title','') or _sj.get('name',''))
     if not _st: continue
-    _sl = get_canonical_slug(_sj)
+    _sl = _sj.get('slug','') or slugify(_st)[:80]
     _ld = safe(_sj.get('last_date','') or
                (_sj.get('important_dates') or {}).get('last_date_apply_online','') or
                (_sj.get('important_dates') or {}).get('last_date_to_apply','') or
@@ -6157,7 +6208,7 @@ if not _adm_items:
         if _sj.get('category') != 'ADMISSIONS': continue
         _st = safe(_sj.get('title',''))
         if not _st: continue
-        _sl = get_canonical_slug(_sj)
+        _sl = slugify(_st)[:80]
         _imp = _sj.get('important_dates') or {}
         _ld = safe(_imp.get('last_date_apply_online','') or _imp.get('last_date_to_apply','') or _imp.get('last_date',''))
         _adm_items.append({'slug':_sl,'name':_st,'date':_ld})
@@ -6174,7 +6225,7 @@ for _fj in (list(FJA.get('Latest_Notifications',[])) +
     _ft = safe(_bd2.get('job_title',''))
     if not _ft or _ft in _offline_seen: continue
     if 'offline' not in _ft.lower(): continue
-    _sl2 = get_canonical_slug(_fj)
+    _sl2 = slugify(_ft)[:80]
     _imp2 = (_fj.get('important_dates') or {})
     _ld2 = safe(_imp2.get('last_date_to_apply','') or _imp2.get('last_date',''))
     _offline_items.append({'slug':_sl2,'name':_ft,'date':_ld2})
@@ -6189,7 +6240,7 @@ for _fj in FJA.get('Latest_Notifications', []):
     _bd3 = (_fj.get('basic_details') or {})
     _ft3 = safe(_bd3.get('job_title',''))
     if not _ft3 or _ft3 in _ln_seen: continue
-    _sl3 = get_canonical_slug(_fj)
+    _sl3 = slugify(_ft3)[:80]
     _imp3 = (_fj.get('important_dates') or {})
     _ld3 = safe(_imp3.get('last_date_to_apply','') or _imp3.get('last_date',''))
     _ln_items.append({'slug':_sl3,'name':_ft3,'date':_ld3})
@@ -6464,34 +6515,37 @@ def remove_orphan_pages():
     import glob as _g
     # Build set of valid slugs from CURRENT JSON data sources
     valid_slugs = set()
-    # 1. Sarkari jobs — use get_canonical_slug() so valid_slugs exactly matches
-    # the slugs used when creating pages (no deletions due to slug mismatch).
+    # 1. Sarkari jobs — add BOTH raw slug AND title-based slug
+    # CRITICAL: SARK JSON has NO raw slug field (all 97 jobs use title-based slug)
+    # Without title-slug here, orphan cleanup DELETES all 97 SARK pages!
     for _j in SARK:
-        _vs = get_canonical_slug(_j)
-        if _vs: valid_slugs.add(_vs)
-        # Also add raw slug variants for backward compat with already-created pages
         _s = _norm_slug(_j.get('slug', ''))
         if _s: valid_slugs.add(_s)
-        _cs = _norm_slug(_j.get('_canonical_slug', ''))
-        if _cs: valid_slugs.add(_cs)
-    # 2. FJA unified jobs — use get_canonical_slug() for consistency
+        # Title-based slug (what the SARK loop actually uses when no raw slug)
+        _t = (_j.get('title','') or
+              (_j.get('basic_details',{}) or {}).get('job_title','') or '')
+        if _t:
+            _ts = slugify(_t)[:80]
+            if _ts: valid_slugs.add(_ts)
+    # 2. FJA unified jobs (with both title-based AND URL-based slugs for safety)
     _uni_jobs_v = (CJ.get('freejobalert_unified', {}) or {}).get('deduped_jobs', []) or []
     for _j in _uni_jobs_v:
-        _vs = get_canonical_slug(_j)
-        if _vs: valid_slugs.add(_vs)
-        # Also add raw slug and title-based slug for backward compat
         _s = _j.get('slug', '')
         if _s: valid_slugs.add(_s)
+        # Also title-based slug (in case scraper uses URL-based and generate uses title-based)
         _bd = _j.get('basic_details', {}) or {}
         _t = _bd.get('job_title', '')
         if _t:
-            _title_slug = registered_slug(_t)
+            _title_slug = slugify(_t)[:80]
             if _title_slug: valid_slugs.add(_title_slug)
     # 3. FJA category jobs
     for _fcat, _fjobs in (FJA_RAW or {}).items():
         for _fj in (_fjobs or []):
-            _fv = get_canonical_slug(_fj)
-            if _fv: valid_slugs.add(_fv)
+            _fbd = _fj.get('basic_details', {}) or {}
+            _ft = _fbd.get('job_title', '')
+            if _ft:
+                _fs = slugify(_ft)[:80]
+                if _fs: valid_slugs.add(_fs)
     # 4. sections-index slugs
     for _cat_items in (sections_index or {}).values():
         if isinstance(_cat_items, list):

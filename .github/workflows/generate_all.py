@@ -1929,13 +1929,112 @@ def _render_unknown_list(val):
         return ''
     return '<ul class="val-list">' + ''.join(f'<li>{e(it)}</li>' for it in items) + '</ul>'
 
+def _render_ai_text_block(text):
+    """Convert AI-generated plain text into rich HTML.
+
+    Handles (in order, mutually exclusive per line):
+      • Markdown-style **bold** inline spans
+      • Bullet lines starting with  -  /  *  /  •
+      • Numbered lines  1.  /  1)
+      • Hash headings  ## Heading
+      • Everything else becomes a <p> paragraph
+
+    Empty lines flush an open list; adjacent paragraphs are merged so
+    short AI snippets don't produce a wall of single-line <p> tags.
+    Always safe: result is assembled from e()-escaped fragments.
+    """
+    if not text or not text.strip():
+        return ''
+
+    def _inline(s):
+        """Apply **bold** markdown → <strong> inline, then HTML-escape."""
+        # Split on **…** pairs; odd indices are bold spans.
+        parts = re.split(r'\*\*(.+?)\*\*', s)
+        out_parts = []
+        for i, part in enumerate(parts):
+            if i % 2 == 1:  # bold span
+                out_parts.append(f'<strong>{_html.escape(part, quote=True)}</strong>')
+            else:
+                out_parts.append(_html.escape(part, quote=True))
+        return ''.join(out_parts)
+
+    lines = text.splitlines()
+    html_parts = []
+    list_items = []   # buffer for open <ul> or <ol>
+    list_type  = None  # 'ul' or 'ol'
+
+    def _flush_list():
+        nonlocal list_items, list_type
+        if list_items:
+            tag = list_type or 'ul'
+            items_html = ''.join(f'<li style="margin-bottom:4px">{li}</li>' for li in list_items)
+            html_parts.append(f'<{tag} style="margin:6px 0 10px;padding-left:20px;line-height:1.75">'
+                               f'{items_html}</{tag}>')
+        list_items = []
+        list_type  = None
+
+    _BULLET_RE   = re.compile(r'^[\-\*\•]\s+(.+)$')
+    _NUMBERED_RE = re.compile(r'^\d+[\.\)]\s+(.+)$')
+    _HEADING_RE  = re.compile(r'^#{1,3}\s+(.+)$')
+
+    for raw in lines:
+        line = raw.strip()
+
+        # Blank line → flush any open list; paragraph break handled implicitly
+        if not line:
+            _flush_list()
+            continue
+
+        bm = _BULLET_RE.match(line)
+        nm = _NUMBERED_RE.match(line)
+        hm = _HEADING_RE.match(line)
+
+        if bm:
+            # Bullet item — flush if we were in a numbered list
+            if list_type == 'ol':
+                _flush_list()
+            list_type = 'ul'
+            list_items.append(_inline(bm.group(1)))
+        elif nm:
+            # Numbered item — flush if we were in a bullet list
+            if list_type == 'ul':
+                _flush_list()
+            list_type = 'ol'
+            list_items.append(_inline(nm.group(1)))
+        elif hm:
+            _flush_list()
+            html_parts.append(
+                f'<p style="font-weight:700;font-size:.88rem;color:#1e293b;'
+                f'margin:10px 0 4px">{_inline(hm.group(1))}</p>'
+            )
+        else:
+            # Plain paragraph line — flush any open list first
+            _flush_list()
+            html_parts.append(
+                f'<p style="margin:0 0 8px;line-height:1.75;font-size:.84rem;'
+                f'color:#374151">{_inline(line)}</p>'
+            )
+
+    _flush_list()  # flush any trailing list
+
+    if not html_parts:
+        return ''
+    inner = ''.join(html_parts)
+    return f'<div class="edu-sec" style="padding:12px 14px">{inner}</div>'
+
+
 def _render_ai_sections(job_obj):
     """Phase 5: render the AI-generated content sections (overview, expert
-    analysis, etc.) as section cards — ONLY when the AI field is present.
+    analysis, etc.) as premium section cards — ONLY when the AI field is present.
     Additive: a job with no AI content renders nothing here, exactly as before.
-    Facts (tables/dates/fees) are never produced here — those stay fact-sourced."""
+    Facts (tables/dates/fees) are never produced here — those stay fact-sourced.
+
+    Each field is passed through _render_ai_text_block() which converts the
+    plain-text AI output into rich HTML (paragraphs, bullets, numbered steps,
+    inline bold) for a polished, readable result on the detail page.
+    """
     out = ''
-    # (key, heading, icon, color)
+    # (key, heading, FA icon, gradient-colors)
     ai_cards = [
         ('ai_overview',            'Overview',              'fa-circle-info',       '1d4ed8,#3b82f6'),
         ('ai_expert_analysis',     'Expert Analysis',       'fa-lightbulb',         '7c3aed,#a855f7'),
@@ -1948,8 +2047,9 @@ def _render_ai_sections(job_obj):
     for key, heading, icon, color in ai_cards:
         val = safe(job_obj.get(key, '') or '')
         if val and len(val) > 20:
-            body = f'<div class="edu-sec" style="line-height:1.7">{e(val)}</div>'
-            out += sec_card(heading, icon, color, body)
+            body = _render_ai_text_block(val)
+            if body:
+                out += sec_card(heading, icon, color, body)
     return out
 
 
@@ -3318,7 +3418,7 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     </div>
     {share_row}
   </div>
-  <h1 class="detail-h1">{e(title)}</h1>
+  <h1 class="detail-h1">{e(safe(job_obj.get('ai_h1', '') or '') or title)}</h1>
   <div class="editorial-byline" style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:.74rem;color:#64748b;margin:2px 0 8px;">
     <i class="fa-solid fa-circle-check" style="color:#16a34a;"></i>
     <span>Reviewed by the <a href="/about/" style="color:#1a56db;text-decoration:none;font-weight:600;">Top Sarkari Jobs Editorial Team</a></span>
