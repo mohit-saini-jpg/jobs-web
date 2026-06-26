@@ -461,27 +461,15 @@ def norm_date(raw):
     return None
 
 written = 0
-def write(path, html_content, skip_if_exists=False, content_hash=None):
+def write(path, html_content, skip_if_exists=False):
     """Write HTML to disk.
     skip_if_exists=True  → job detail pages: ek baar bane to dobara overwrite nahi
     skip_if_exists=False → listing/category/section pages: hamesha fresh likhte hain
-    content_hash         → agar diya gaya to: page exist kare + hash same ho → skip;
-                           hash alag ho (AI data updated) → overwrite karo
     """
     global written
     p = Path(path)
     if skip_if_exists and p.exists():
-        # content_hash diya gaya hai — check karo kya page already updated hai
-        if content_hash:
-            try:
-                existing = p.read_text(encoding='utf-8', errors='ignore')
-                if f'data-content-hash="{content_hash}"' in existing:
-                    return  # same hash — already up to date, skip
-                # hash alag hai — AI data updated, overwrite karo
-            except Exception:
-                return  # read fail → safe side pe skip
-        else:
-            return  # no hash, original skip_if_exists behavior
+        return   # permanent page — kabhi overwrite/delete nahi
     p.parent.mkdir(parents=True, exist_ok=True)
     with open(p, 'w', encoding='utf-8') as f:
         f.write(html_content)
@@ -3487,10 +3475,8 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     else:
         _og_img_job = f"{BASE_URL}/og-jobs.png"
 
-    _page_hash = safe(job_obj.get('content_hash', '') or '')
-    _hash_attr = f' data-content-hash="{_page_hash}"' if _page_hash else ''
     return f'''<!DOCTYPE html>
-<html lang="en-IN"{_hash_attr}>
+<html lang="en-IN">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>{VP_SNIPPET}
@@ -4474,7 +4460,7 @@ for cat, jobs_list in FJA.items():
         _bc_lbl, _bc_url = get_best_bc_category(cat, job)
         bc    = [('Study Wise', f"{BASE_URL}/category/study/"),
                  (_bc_lbl, f"{BASE_URL}{_bc_url}")]
-        write(str(ROOT/'jobs'/slug/'index.html'), build_detail_page(job, slug, canon, bc, cat_label), skip_if_exists=True, content_hash=safe(job.get('content_hash','') or ''))
+        write(str(ROOT/'jobs'/slug/'index.html'), build_detail_page(job, slug, canon, bc, cat_label), skip_if_exists=True)
         # Save data JSON
         (ROOT/'jobs'/'data').mkdir(exist_ok=True)
         with open(ROOT/'jobs'/'data'/f"{slug}.json",'w',encoding='utf-8') as f:

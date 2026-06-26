@@ -132,7 +132,7 @@ a{text-decoration:none}
   </main>
   <div id="footerPlaceholder"></div>
   <script>fetch('/footer.html',{cache:'no-store'}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{if(h){var d=document.getElementById('footerPlaceholder');if(d)d.outerHTML=h;}})</script>
-  <script src="/tsj-menu.js?v=20260626165326" defer></script>
+  <script src="/tsj-menu.js?v=20260626162455" defer></script>
 <script>
 (function(){
 'use strict';
@@ -875,26 +875,7 @@ function buildPage(slug, job){
   var pe=job.physical_eligibility||{};
   var hta=job.how_to_apply||[];
   var insts=job.important_instructions||[];
-  // AI fields (from scraper AI enrichment — prefer these over plain fields)
-  var aiH1=safe(job.ai_h1||'');
-  var aiTitle=safe(job.ai_title||'');
-  var aiMeta=safe(job.ai_meta_description||'');
-  var aiOverview=safe(job.ai_overview||'');
-  var aiExpertAnalysis=safe(job.ai_expert_analysis||'');
-  var aiWhoShouldApply=safe(job.ai_who_should_apply||'');
-  var aiPreparationTips=safe(job.ai_preparation_tips||'');
-  var aiSalaryInsights=safe(job.ai_salary_insights||'');
-  var aiJobProfile=safe(job.ai_job_profile_analysis||'');
-  var aiSelectionStrategy=safe(job.ai_selection_strategy||'');
-  var aiHTARewrite=safe(job.ai_how_to_apply_rewrite||'');
-  // FAQ: ai_expanded_faqs preferred; fallback to scraper faq
-  var faq=(Array.isArray(job.ai_expanded_faqs)&&job.ai_expanded_faqs.length)
-    ? job.ai_expanded_faqs
-    : (job.faq||[]);
-  // Schema FAQ: ai_schema_faq preferred; fallback to faq
-  var schemaFaq=(Array.isArray(job.ai_schema_faq)&&job.ai_schema_faq.length)
-    ? job.ai_schema_faq
-    : faq;
+  var faq=job.faq||[];
   var rawTables=job.tables||[];
   var sourceUrl=safe(job.source_url||job.url||'');
 
@@ -937,21 +918,13 @@ function buildPage(slug, job){
   var today=new Date().toISOString().split('T')[0];
 
   // ── SEO ─────────────────────────────────────────────────────────
-  // Prefer AI-generated title/meta if present, else build from facts
-  var pageTitle = aiTitle
-    ? (aiTitle.length>65 ? aiTitle.slice(0,62).replace(/\s\S+$/,'')+'…' : aiTitle)
-    : title+' | Top Sarkari Jobs';
-  var metaDesc = aiMeta
-    ? aiMeta.slice(0,160).trimEnd()
-    : (()=>{
-        var d=`${title}: ${vacancies?vacancies+' vacancies, ':''}${lastDate?'last date '+lastDate+'. ':''}Apply online – Top Sarkari Jobs.`;
-        return d.length>155 ? d.slice(0,152).replace(/\s\S+$/,'')+' …' : d;
-      })();
+  var metaDesc=`${title}: ${vacancies?vacancies+' vacancies, ':''}${lastDate?'last date '+lastDate+'. ':''}Apply online – Top Sarkari Jobs.`;
+  if(metaDesc.length>155) metaDesc=metaDesc.slice(0,152).replace(/\s\S+$/,'')+' …';
 
-  document.title=pageTitle;
+  document.title=title+' | Top Sarkari Jobs';
   document.getElementById('metaDesc').setAttribute('content',metaDesc);
   document.getElementById('canonicalTag').href=canonUrl;
-  document.getElementById('ogTitle').setAttribute('content',pageTitle);
+  document.getElementById('ogTitle').setAttribute('content',title+' | Top Sarkari Jobs');
   document.getElementById('ogDesc').setAttribute('content',metaDesc);
   document.getElementById('ogUrl').setAttribute('content',canonUrl);
   // robots: index since this is the canonical
@@ -981,8 +954,8 @@ function buildPage(slug, job){
     ]
   });
 
-  // FAQ schema — prefer ai_schema_faq, fallback to faq
-  var validFAQ=(Array.isArray(schemaFaq)?schemaFaq:[]).filter(f=>f.question&&f.answer).slice(0,8);
+  // FAQ schema
+  var validFAQ=(Array.isArray(faq)?faq:[]).filter(f=>f.question&&f.answer).slice(0,5);
   if(validFAQ.length){
     document.getElementById('faqSchema').textContent=JSON.stringify({
       '@context':'https://schema.org','@type':'FAQPage',
@@ -1003,7 +976,7 @@ function buildPage(slug, job){
     <span class="jd-badge"><i class="fa-solid fa-briefcase"></i> ${esc(catLabel)}</span>
     <span class="jd-badge" style="background:#dcfce7;color:#166534"><i class="fa-solid fa-map-pin"></i> ${esc(location.slice(0,30))}</span>
   </div>
-  <h1 class="jd-title">${esc(aiH1||title)}</h1>
+  <h1 class="jd-title">${esc(title)}</h1>
   ${hdrRows?`<table class="jd-table" style="margin-bottom:0"><tbody>${hdrRows}</tbody></table>`:''}
   <div class="jd-stats">
     <div class="jd-stat"><div class="jd-stat-val">${esc(vacancies||'—')}</div><div class="jd-stat-lbl">Vacancies</div></div>
@@ -1013,55 +986,12 @@ function buildPage(slug, job){
   </div>
 </div>`;
 
-  // ── AI text-block renderer (mirrors generate_all.py _render_ai_text_block) ──
-  function renderAIBlock(text){
-    if(!text||!text.trim()) return '';
-    var BULLET=/^[\-\*\•]\s+(.+)$/,NUMBERED=/^\d+[\.\)]\s+(.+)$/,HEADING=/^#{1,3}\s+(.+)$/;
-    function inline(s){
-      return s.replace(/\*\*(.+?)\*\*/g,function(_,t){return '<strong>'+esc(t)+'</strong>';}).replace(/\*\*(.+?)$/g,function(_,t){return '<strong>'+esc(t)+'</strong>';})
-        // escape remaining (non-bold) text
-        .split(/(<strong>[\s\S]*?<\/strong>)/g).map(function(p,i){return i%2===0?esc(p):p;}).join('');
-    }
-    // Actually, simpler: escape first then replace ** markers
-    function inlineEsc(s){
-      var e2=esc(s);
-      return e2.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
-    }
-    var lines=text.split('\n'), parts=[], listItems=[], listType=null;
-    function flushList(){
-      if(!listItems.length) return;
-      var tag=listType||'ul';
-      parts.push('<'+tag+' style="margin:6px 0 10px;padding-left:20px;line-height:1.75">'+listItems.map(function(li){return '<li style="margin-bottom:4px">'+li+'</li>';}).join('')+'</'+tag+'>');
-      listItems=[]; listType=null;
-    }
-    for(var _li=0;_li<lines.length;_li++){
-      var ln=lines[_li].trim();
-      if(!ln){flushList();continue;}
-      var bm=BULLET.exec(ln),nm=NUMBERED.exec(ln),hm=HEADING.exec(ln);
-      if(bm){if(listType==='ol')flushList();listType='ul';listItems.push(inlineEsc(bm[1]));}
-      else if(nm){if(listType==='ul')flushList();listType='ol';listItems.push(inlineEsc(nm[1]));}
-      else if(hm){flushList();parts.push('<p style="font-weight:700;font-size:.88rem;color:#1e293b;margin:10px 0 4px">'+inlineEsc(hm[1])+'</p>');}
-      else{flushList();parts.push('<p style="margin:0 0 8px;line-height:1.75;font-size:.84rem;color:#374151">'+inlineEsc(ln)+'</p>');}
-    }
-    flushList();
-    return parts.length?'<div style="padding:12px 14px">'+parts.join('')+'</div>':'';
-  }
-  // Render one AI section card
-  function renderAISection(text,heading,icon,grad){
-    var body=renderAIBlock(text);
-    return body?card('linear-gradient(135deg,#'+grad+')',icon,heading,body):'';
-  }
-
   var sections='';
-  // 1. Job Overview — ai_overview preferred; else shortInfo card
-  if(aiOverview){
-    sections+=renderAISection(aiOverview,'Overview','fa-circle-info','1d4ed8,#3b82f6');
-  } else if(shortInfo){
-    sections+=`<div class="short-info-card"><i class="fa-solid fa-circle-info" style="color:#1d4ed8;margin-right:6px"></i>${esc(shortInfo)}</div>`;
-  }
+  // 1. Job Overview (short info)
+  if(shortInfo) sections+=`<div class="short-info-card"><i class="fa-solid fa-circle-info" style="color:#1d4ed8;margin-right:6px"></i>${esc(shortInfo)}</div>`;
   // 2. Vacancy Details
   sections+=renderVacancy(vac);
-  // 3. Important Dates + Application Fee side-by-side
+  // 3. Important Dates + Application Fee side-by-side (like image layout)
   var datesHtml=renderDates(dates);
   var feeHtml=renderFee(fee);
   if(datesHtml && feeHtml){
@@ -1072,36 +1002,25 @@ function buildPage(slug, job){
   }
   // 4. Age Limit
   sections+=renderAge(age);
-  // 5. Category-wise Vacancy
+  // 6. Category-wise Vacancy
   sections+=renderCatVacancy(cwv);
-  // 6. Qualification / Eligibility
+  // 7. Qualification / Eligibility
   sections+=renderQual(qual);
-  // 7. Salary (fact) + AI Salary Insights
+  // 8. Salary
   sections+=renderSalary(sal);
-  if(aiSalaryInsights) sections+=renderAISection(aiSalaryInsights,'Salary Insights','fa-indian-rupee-sign','b45309,#f59e0b');
-  // 8. Selection Process (fact) + AI Selection Strategy
+  // 9. Selection Process
   sections+=renderSelection(sel);
   sections+=renderExamPattern(ep);
   sections+=renderSyllabus(syl);
   sections+=renderPhysical(pe);
-  if(aiSelectionStrategy) sections+=renderAISection(aiSelectionStrategy,'Selection Strategy','fa-bullseye','be123c,#f43f5e');
-  // 9. AI Content blocks — rendered after core fact sections
-  if(aiExpertAnalysis) sections+=renderAISection(aiExpertAnalysis,'Expert Analysis','fa-lightbulb','7c3aed,#a855f7');
-  if(aiWhoShouldApply) sections+=renderAISection(aiWhoShouldApply,'Who Should Apply','fa-user-check','0f766e,#0891b2');
-  if(aiPreparationTips) sections+=renderAISection(aiPreparationTips,'Preparation Tips','fa-list-check','047857,#10b981');
-  if(aiJobProfile) sections+=renderAISection(aiJobProfile,'Job Profile','fa-briefcase','475569,#334155');
-  // 10. Raw tables (no duplicates)
+  // Extract table links into il FIRST, then render remaining table data (no duplicates)
   sections+=renderRawTables(rawTables, il);
-  // 11. How to Apply — ai_how_to_apply_rewrite preferred; fallback to hta array
-  if(aiHTARewrite){
-    sections+=renderAISection(aiHTARewrite,'How to Apply','fa-pen-to-square','0f766e,#0d9488');
-  } else {
-    sections+=renderHTA(hta);
-  }
+  // 10. How to Apply
+  sections+=renderHTA(hta);
   sections+=renderInstructions(insts);
-  // 12. Useful Links
+  // 11. Useful Links
   sections+=renderLinks(il);
-  // 13. FAQs — ai_expanded_faqs preferred; fallback to scraper faq
+  // 12. FAQs
   sections+=renderFAQ(faq);
 
   if(!sections.trim()&&sourceUrl&&!isBlocked(sourceUrl)){
