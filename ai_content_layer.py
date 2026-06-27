@@ -11,7 +11,8 @@ DESIGN PHILOSOPHY:
   - HTML generate_all.py automatically AI data use karta hai
 
 GROQ FREE LIMITS (as of 2026):
-  llama-3.1-8b-instant   : 30 RPM, 14400 RPD, 6000 TPM  ← DEFAULT (fast+safe)
+  gemma2-9b-it           : 30 RPM, 14400 RPD, 15000 TPM ← DEFAULT (15k TPM = no rate limits!)
+  llama-3.1-8b-instant   : 30 RPM, 14400 RPD, 6000 TPM
   llama-3.3-70b-versatile: 30 RPM,  1000 RPD, 6000 TPM  (quality but very limited)
   gemma2-9b-it           : 30 RPM, 14400 RPD, 15000 TPM
 
@@ -29,14 +30,15 @@ from pathlib import Path
 # CONFIG — GitHub Actions Secrets / env vars se aata hai
 # ─────────────────────────────────────────────────────────────────────────────
 DATA_FILE    = os.environ.get("AI_DATA_FILE", "Complete_Jobs_Full_Data.json")
-MODEL        = os.environ.get("GROQ_MODEL", "llama-3.1-8b-instant")
+MODEL        = os.environ.get("GROQ_MODEL", "gemma2-9b-it")
 GROQ_KEY     = os.environ.get("GROQ_API_KEY", "").strip()
 
 # llama-3.1-8b-instant free limits: 30 RPM, 14400 RPD, 6000 TPM
-# TPM is the real bottleneck: ~1800 tokens/call → max ~3 calls/min safe
-# 8 RPM default = 7.5s delay — TPM-safe, 150 jobs ~20 min mein done
-SAFE_RPM     = max(1, int(os.environ.get("GROQ_SAFE_RPM", "8")))
-DELAY_SEC    = 60.0 / SAFE_RPM          # = 7.5 seconds
+# gemma2-9b-it: 15000 TPM limit
+# ~1800 tok/call × 5 RPM = 9000 TPM — comfortably under limit, no rate errors
+# 150 jobs / 5 RPM = 30 min ✅ within 35 min GitHub Actions timeout
+SAFE_RPM     = max(1, int(os.environ.get("GROQ_SAFE_RPM", "5")))
+DELAY_SEC    = 60.0 / SAFE_RPM          # = 12 seconds
 
 # Per-day limit — llama-3.1-8b: 14400 RPD, 12000 safe rakh
 DAILY_LIMIT  = int(os.environ.get("DAILY_LIMIT", "12000"))
@@ -350,7 +352,17 @@ def call_groq(facts):
                 print(f"    ⏳ Rate limit — waiting {wait}s...")
                 time.sleep(wait)
                 continue
-            elif e.code in (400, 401, 403):
+            elif e.code == 400:
+                # Groq sends 400 after rate-limit burst (TPM overflow) — body has "rate_limit"
+                if "rate_limit" in body_err.lower() or "tokens" in body_err.lower():
+                    wait = 60
+                    print(f"    ⏳ TPM overflow (400) — waiting {wait}s...")
+                    time.sleep(wait)
+                    continue
+                else:
+                    print(f"    ❌ Bad request 400: {body_err[:120]}")
+                    return None
+            elif e.code in (401, 403):
                 print(f"    ❌ Auth error {e.code} — check GROQ_API_KEY secret")
                 return None
             else:

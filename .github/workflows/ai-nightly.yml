@@ -59,8 +59,8 @@ jobs:
       - name: 🤖 Run AI Enrichment
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-          GROQ_MODEL: 'llama-3.1-8b-instant'
-          GROQ_SAFE_RPM: '8'
+          GROQ_MODEL: 'gemma2-9b-it'
+          GROQ_SAFE_RPM: '5'
           RUN_LIMIT: ${{ github.event.inputs.run_limit || '150' }}
           DAILY_LIMIT: ${{ github.event.inputs.daily_limit || '12000' }}
           FORCE_REGEN: ${{ github.event.inputs.force_regen || 'false' }}
@@ -104,7 +104,7 @@ jobs:
       - name: 📊 Summary
         run: |
           echo "### 🌙 AI Nightly Enrichment" >> $GITHUB_STEP_SUMMARY
-          echo "- **Model:** \`llama-3.1-8b-instant\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Model:** \`gemma2-9b-it\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Run Limit:** ${{ github.event.inputs.run_limit || '150' }} jobs" >> $GITHUB_STEP_SUMMARY
           echo "- **Time (IST):** $(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M')" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY

@@ -512,15 +512,55 @@ def norm_date(raw):
     return None
 
 written = 0
+_schema_patched = 0
+_JSONLD_RE = re.compile(
+    r'<script[^>]+application/ld\+json[^>]*>.*?</script>',
+    re.S | re.I
+)
+
+def _patch_jsonld(page_path, new_html):
+    """Replace JSON-LD <script> blocks in existing page with fresh ones.
+    All other page content is preserved. Fixes schema fields on permanent pages.
+    """
+    global _schema_patched
+    try:
+        old_html = page_path.read_text(encoding='utf-8')
+    except Exception:
+        return
+    new_blocks = _JSONLD_RE.findall(new_html)
+    if not new_blocks:
+        return
+    # Build one replacement string with all new JSON-LD blocks
+    replacement = '\n'.join(new_blocks)
+    # Strip all existing JSON-LD from old page
+    stripped = _JSONLD_RE.sub('', old_html)
+    # Re-insert before </head>
+    if '</head>' in stripped:
+        patched = stripped.replace('</head>', replacement + '\n</head>', 1)
+    elif '<body' in stripped:
+        patched = re.sub(r'(<body[^>]*>)', r'\1\n' + replacement, stripped, count=1)
+    else:
+        patched = replacement + stripped
+    if patched == old_html:
+        return  # no change needed
+    try:
+        page_path.write_text(patched, encoding='utf-8')
+        _schema_patched += 1
+    except Exception:
+        pass
+
 def write(path, html_content, skip_if_exists=False):
     """Write HTML to disk.
-    skip_if_exists=True  → job detail pages: ek baar bane to dobara overwrite nahi
-    skip_if_exists=False → listing/category/section pages: hamesha fresh likhte hain
+    skip_if_exists=True  -> job detail pages: preserve content but always patch JSON-LD
+    skip_if_exists=False -> listing/category/section pages: always fully rewrite
     """
     global written
     p = Path(path)
     if skip_if_exists and p.exists():
-        return   # permanent page — kabhi overwrite/delete nahi
+        # SCHEMA PATCH: even for permanent pages, always refresh JSON-LD blocks
+        # so baseSalary, addressRegion, postalCode, validThrough stay current.
+        _patch_jsonld(p, html_content)
+        return
     p.parent.mkdir(parents=True, exist_ok=True)
     with open(p, 'w', encoding='utf-8') as f:
         f.write(html_content)
@@ -6763,5 +6803,6 @@ print(f"\u2551  Category/study        : {c_count:<27}\u2551")
 print(f"\u2551  Section listing       : {sec_count2:<27}\u2551")
 print(f"\u2551  Qualification listing : {q_count:<27}\u2551")
 print(f"\u2551  TOTAL PAGES           : {PAGES_GENERATED:<27}\u2551")
+print(f"\u2551  Schema patches        : {_schema_patched:<27}\u2551")
 print("\u255a" + "\u2550"*54 + "\u255d")
 print()
