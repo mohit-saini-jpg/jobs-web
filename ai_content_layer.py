@@ -33,9 +33,10 @@ MODEL        = os.environ.get("GROQ_MODEL", "llama-3.1-8b-instant")
 GROQ_KEY     = os.environ.get("GROQ_API_KEY", "").strip()
 
 # llama-3.1-8b-instant free limits: 30 RPM, 14400 RPD, 6000 TPM
-# 25 RPM safe = 2.4s delay = 150 jobs ~6 min mein done
-SAFE_RPM     = max(1, int(os.environ.get("GROQ_SAFE_RPM", "25")))
-DELAY_SEC    = 60.0 / SAFE_RPM          # = 2.4 seconds
+# TPM is the real bottleneck: ~1800 tokens/call → max ~3 calls/min safe
+# 8 RPM default = 7.5s delay — TPM-safe, 150 jobs ~20 min mein done
+SAFE_RPM     = max(1, int(os.environ.get("GROQ_SAFE_RPM", "8")))
+DELAY_SEC    = 60.0 / SAFE_RPM          # = 7.5 seconds
 
 # Per-day limit — llama-3.1-8b: 14400 RPD, 12000 safe rakh
 DAILY_LIMIT  = int(os.environ.get("DAILY_LIMIT", "12000"))

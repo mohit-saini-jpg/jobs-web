@@ -60,7 +60,7 @@ jobs:
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           GROQ_MODEL: 'llama-3.1-8b-instant'
-          GROQ_SAFE_RPM: '25'
+          GROQ_SAFE_RPM: '8'
           RUN_LIMIT: ${{ github.event.inputs.run_limit || '150' }}
           DAILY_LIMIT: ${{ github.event.inputs.daily_limit || '12000' }}
           FORCE_REGEN: ${{ github.event.inputs.force_regen || 'false' }}
@@ -97,7 +97,7 @@ jobs:
           " 2>/dev/null || echo "?")
 
           DATE_IST=$(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M')
-          git commit -m "🤖 AI enriched: ${ENRICHED} jobs total | ${DATE_IST} IST [skip ci]"
+          git commit -m "🤖 AI enriched: ${ENRICHED} jobs total | ${DATE_IST} IST"
           git push origin main
           echo "✅ Enriched JSON pushed"
 
