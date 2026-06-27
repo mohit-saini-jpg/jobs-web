@@ -1,0 +1,90 @@
+# ══════════════════════════════════════════════════════════════════
+# FILE: .github/workflows/ai-nightly.yml
+# PURPOSE: HTML pages seedha read → Groq API → HTML mein AI write
+# JSON touch nahi karta
+# ══════════════════════════════════════════════════════════════════
+name: 🌙 AI Content Enrichment (Nightly)
+
+on:
+  schedule:
+    - cron: '0 20 * * *'   # Daily 1:30 AM IST
+
+  workflow_dispatch:
+    inputs:
+      run_limit:
+        description: 'Pages per run (default: 800)'
+        default: '800'
+        required: false
+      force:
+        description: 'Force re-enrich already done pages'
+        type: boolean
+        default: false
+      slug:
+        description: 'Single slug test (blank = all)'
+        required: false
+        default: ''
+
+concurrency:
+  group: ai-nightly
+  cancel-in-progress: false
+
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    permissions:
+      contents: write
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 1
+
+      - name: 🐍 Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 🤖 Run AI HTML Enricher
+        env:
+          GROQ_API_KEY:  ${{ secrets.GROQ_API_KEY }}
+          GROQ_MODEL:    'llama-3.1-8b-instant'
+          GROQ_SAFE_RPM: '3'
+          RUN_LIMIT:     ${{ github.event.inputs.run_limit || '800' }}
+          DAILY_LIMIT:   '800'
+          FORCE_REGEN:   ${{ github.event.inputs.force || 'false' }}
+          JOBS_DIR:      'jobs'
+        run: |
+          SLUG="${{ github.event.inputs.slug }}"
+          if [ -n "$SLUG" ]; then
+            python3 ai_html_enricher.py --slug "$SLUG"
+          else
+            python3 ai_html_enricher.py
+          fi
+
+      - name: 💾 Final commit
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add jobs/ .ai_progress_html.json 2>/dev/null || true
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          PATCHED=$(git diff --staged --name-only | grep "index.html" | wc -l || echo "0")
+          DATE_IST=$(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M')
+          git commit -m "🤖 AI enriched: ${PATCHED} HTML pages | ${DATE_IST} IST"
+          git push origin main
+          echo "✅ ${PATCHED} pages pushed — site will update automatically"
+
+      - name: 📊 Summary
+        run: |
+          echo "### 🌙 AI Nightly Enrichment" >> $GITHUB_STEP_SUMMARY
+          echo "- **Flow:** HTML read → Groq API → HTML write (no JSON)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Model:** \`llama-3.1-8b-instant\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Time (IST):** $(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M')" >> $GITHUB_STEP_SUMMARY
