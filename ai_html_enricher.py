@@ -23,8 +23,8 @@ GROQ_KEY     = os.environ.get("GROQ_API_KEY", "").strip()
 MODEL        = os.environ.get("GROQ_MODEL", "llama-3.1-8b-instant")
 SAFE_RPM     = max(1, int(os.environ.get("GROQ_SAFE_RPM", "3")))
 DELAY_SEC    = 60.0 / SAFE_RPM                    # 20s at 3 RPM
-DAILY_LIMIT  = int(os.environ.get("DAILY_LIMIT", "12000"))
-RUN_LIMIT    = int(os.environ.get("RUN_LIMIT", "100"))
+DAILY_LIMIT  = int(os.environ.get("DAILY_LIMIT", "800"))
+RUN_LIMIT    = int(os.environ.get("RUN_LIMIT", "800"))
 FORCE        = "--force" in sys.argv or os.environ.get("FORCE_REGEN","false").lower() == "true"
 DRY_RUN      = "--dry-run" in sys.argv
 JOBS_DIR     = Path(os.environ.get("JOBS_DIR", "jobs"))
