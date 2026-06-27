@@ -41,6 +41,7 @@
   <meta name="theme-color" content="#0d2257"/>
   <!-- ISSUE-016 FIX: analytics.js lazy-loaded after first interaction -->
   <script>(function(){var _l=false;function la(){if(_l)return;_l=true;var s=document.createElement('script');s.src='/analytics.js?v=20260605';s.async=true;document.head.appendChild(s);}window.addEventListener('scroll',la,{once:true,passive:true});window.addEventListener('click',la,{once:true});setTimeout(la,4000);})();</script>
+  <script src="/scripts/google-crawler-secure-schema.js"></script>
   <style>
 *,*::before,*::after{box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f4f8;margin:0;color:#1e293b}
@@ -132,7 +133,7 @@ a{text-decoration:none}
   </main>
   <div id="footerPlaceholder"></div>
   <script>fetch('/footer.html',{cache:'no-store'}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{if(h){var d=document.getElementById('footerPlaceholder');if(d)d.outerHTML=h;}})</script>
-  <script src="/tsj-menu.js?v=20260626182738" defer></script>
+  <script src="/tsj-menu.js?v=20260625195743" defer></script>
 <script>
 (function(){
 'use strict';
@@ -1053,6 +1054,23 @@ function buildPage(slug, job){
   document.getElementById('content').innerHTML=breadcrumb+noticeBar+header+sections+internalLinks;
   document.getElementById('content').style.display='';
   document.getElementById('loader').style.display='none';
+  
+  // SCHEMA FIX: Generate and inject JobPosting schema with fallback handling
+  if (typeof JobPostingSchemaGenerator !== 'undefined') {
+    try {
+      var schemaGenerator = new JobPostingSchemaGenerator({
+        siteUrl: 'https://www.topsarkarijobs.com',
+        defaultPostalCode: '110001',
+        defaultLocation: 'Delhi'
+      });
+      var schema = schemaGenerator.generateSchema(jobData);
+      if (schema && schemaGenerator.validateSchema(schema)) {
+        schemaGenerator.injectSchema(schema);
+      }
+    } catch (err) {
+      console.error('Schema generation error:', err);
+    }
+  }
 }
 
 // ── Main ─────────────────────────────────────────────────────────
