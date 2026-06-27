@@ -2710,7 +2710,14 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
     org   = safe(bd.get('organization_name','') or 'Government of India')
     loc   = safe(bd.get('job_location','') or 'India')
     desc  = safe(bd.get('short_information',''))[:500] or title
-    last_d = safe(dates.get('last_date_to_apply','') or dates.get('last_date_apply_online','') or dates.get('last_date',''))
+    # Smart last_d: for result/admitcard pages, application deadline is stale — prefer result_date/exam_date
+    _is_result_page = any(x in str(job_obj.get('category','')).lower() for x in ('result','admit'))
+    if _is_result_page:
+        last_d = safe(dates.get('result_date','') or dates.get('marks_available','')
+                      or dates.get('exam_date','') or dates.get('last_date_apply_online','')
+                      or dates.get('last_date_to_apply','') or dates.get('last_date',''))
+    else:
+        last_d = safe(dates.get('last_date_to_apply','') or dates.get('last_date_apply_online','') or dates.get('last_date',''))
     vacancies = safe(bd.get('total_vacancies','') or job_obj.get('total_post','') or job_obj.get('total_vacancy',''))
     # SECURE FALLBACK: ai_extracted_structured_data for missing fields
     ai_data = job_obj.get('ai_extracted_structured_data') or {}
