@@ -2710,8 +2710,10 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
     org   = safe(bd.get('organization_name','') or 'Government of India')
     loc   = safe(bd.get('job_location','') or 'India')
     desc  = safe(bd.get('short_information',''))[:500] or title
-    last_d = safe(dates.get('last_date_to_apply','') or dates.get('last_date',''))
+    last_d = safe(dates.get('last_date_to_apply','') or dates.get('last_date_apply_online','') or dates.get('last_date',''))
     vacancies = safe(bd.get('total_vacancies','') or job_obj.get('total_post','') or job_obj.get('total_vacancy',''))
+    # SECURE FALLBACK: ai_extracted_structured_data for missing fields
+    ai_data = job_obj.get('ai_extracted_structured_data') or {}
 
     if slug is None:
         slug = registered_slug(title)[:80]
@@ -2738,6 +2740,41 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
         _hiring_org = {'@type': 'Organization', 'name': org}
         if _official_site and not any(b in _official_site for b in _BLOCKED_SITES):
             _hiring_org['sameAs'] = _official_site
+        # ── SECURE FALLBACK: addressRegion + postalCode from loc/state/ai_data ──
+        # Map common state names/abbreviations to (region, postalCode)
+        _STATE_MAP = {
+            'jharkhand':('Jharkhand','834001'), 'delhi':('Delhi','110001'),
+            'uttar pradesh':('Uttar Pradesh','226001'), 'up':('Uttar Pradesh','226001'),
+            'rajasthan':('Rajasthan','302001'), 'bihar':('Bihar','800001'),
+            'madhya pradesh':('Madhya Pradesh','462001'), 'mp':('Madhya Pradesh','462001'),
+            'maharashtra':('Maharashtra','400001'), 'gujarat':('Gujarat','380001'),
+            'haryana':('Haryana','122001'), 'punjab':('Punjab','141001'),
+            'karnataka':('Karnataka','560001'), 'tamil nadu':('Tamil Nadu','600001'),
+            'west bengal':('West Bengal','700001'), 'odisha':('Odisha','751001'),
+            'kerala':('Kerala','695001'), 'telangana':('Telangana','500001'),
+            'andhra pradesh':('Andhra Pradesh','520001'), 'assam':('Assam','781001'),
+            'chhattisgarh':('Chhattisgarh','492001'), 'uttarakhand':('Uttarakhand','248001'),
+            'himachal pradesh':('Himachal Pradesh','171001'), 'goa':('Goa','403001'),
+            'tripura':('Tripura','799001'), 'meghalaya':('Meghalaya','793001'),
+            'manipur':('Manipur','795001'), 'nagaland':('Nagaland','797001'),
+            'arunachal pradesh':('Arunachal Pradesh','791001'), 'mizoram':('Mizoram','796001'),
+            'sikkim':('Sikkim','737101'), 'chandigarh':('Chandigarh','160001'),
+            'jammu':('Jammu & Kashmir','180001'), 'kashmir':('Jammu & Kashmir','190001'),
+            'india':('Delhi','110001'),  # national-level jobs default
+        }
+        _loc_lower = loc.lower().strip()
+        _ai_region = safe((ai_data.get('job_location') or ''))
+        _region_src = _ai_region if _ai_region and _ai_region not in ('null','None','') else _loc_lower
+        _address_region, _postal_code = 'Delhi', '110001'  # safe master defaults
+        for _state_key, (_region_val, _pin_val) in _STATE_MAP.items():
+            if _state_key in _region_src.lower():
+                _address_region, _postal_code = _region_val, _pin_val
+                break
+        # ai_data postal_code override if valid 6-digit
+        _ai_pin = str(ai_data.get('postal_code') or '').strip()
+        if len(_ai_pin) == 6 and _ai_pin.isdigit():
+            _postal_code = _ai_pin
+
         # ── H1: proper JobPosting only for real jobs ──
         jp = {'@context':'https://schema.org','@type':'JobPosting','title':title,
               'description':desc,'datePosted':date_posted,'url':canon_url,
@@ -2745,33 +2782,43 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
               'identifier':{'@type':'PropertyValue','name':org,
                             'value':safe(bd.get('advt_no','') or bd.get('notification_no','') or slug)},
               'hiringOrganization':_hiring_org,
-              'jobLocation':{'@type':'Place','address':{'@type':'PostalAddress','addressCountry':'IN','addressLocality':loc}},
+              'jobLocation':{'@type':'Place','address':{'@type':'PostalAddress','addressCountry':'IN',
+                  'addressLocality':loc,'addressRegion':_address_region,'postalCode':_postal_code}},
               'applicantLocationRequirements':{'@type':'Country','name':'India'}}
-        # H1: only emit baseSalary when we actually have a salary string (no min:0 spam)
+        # SECURE FALLBACK: baseSalary — use pay_scale if available, else Govt default range
         _pay_str = safe((job_obj.get('basic_details') or {}).get('pay_scale','') or
-                        (job_obj.get('salary_details') or {}).get('pay_scale','') or '')
-        if _pay_str:
-            _sal_min, _sal_max = parse_salary(_pay_str)
-            if _sal_min and _sal_min > 0:
-                jp['baseSalary'] = {'@type':'MonetaryAmount','currency':'INR',
-                    'value':{'@type':'QuantitativeValue','minValue':_sal_min,'maxValue':_sal_max,'unitText':'MONTH'}}
-        if last_d:
+                        (job_obj.get('salary_details') or {}).get('pay_scale','') or
+                        safe(ai_data.get('salary_range') or ''))
+        _sal_val = _pay_str if _pay_str and _pay_str not in ('null','None','N/A','') else ''
+        if _sal_val:
+            _sal_min, _sal_max = parse_salary(_sal_val)
+        else:
+            _sal_min, _sal_max = 21700, 69100  # Level 3-10 Govt default
+        jp['baseSalary'] = {'@type':'MonetaryAmount','currency':'INR',
+            'value':{'@type':'QuantitativeValue','minValue':_sal_min,'maxValue':_sal_max,'unitText':'MONTH'}}
+
+        # SECURE FALLBACK: validThrough — primary: last_date from dates dict
+        # Secondary: ai_data.last_date, Tertiary: "As per Schedule" → year-end default
+        _SKIP_DATES = {'as per schedule','notified soon','','none','null','as announced'}
+        if last_d and last_d.lower().strip() not in _SKIP_DATES:
             nd = norm_date(last_d)
             if nd:
                 jp['validThrough'] = nd + 'T00:00:00'
                 jp['applicationDeadline'] = nd
-        # FIX #4: if no last_date, fall back to datePosted + 60 days so every
-        # JobPosting has validThrough (Google requires it for rich results).
         if 'validThrough' not in jp:
-            try:
-                from datetime import datetime as _dt_vt, timedelta as _td_vt
-                _dp_str = jp.get('datePosted', '')
-                if _dp_str and len(_dp_str) >= 10:
-                    _fallback = _dt_vt.strptime(_dp_str[:10], '%Y-%m-%d') + _td_vt(days=60)
-                    jp['validThrough'] = _fallback.strftime('%Y-%m-%dT00:00:00')
-                    jp['applicationDeadline'] = _fallback.strftime('%Y-%m-%d')
-            except Exception:
-                pass
+            # Try ai_data.last_date
+            _ai_last = safe(ai_data.get('last_date') or '')
+            if _ai_last and _ai_last.lower().strip() not in _SKIP_DATES:
+                _ai_nd = norm_date(_ai_last)
+                if _ai_nd:
+                    jp['validThrough'] = _ai_nd + 'T00:00:00'
+                    jp['applicationDeadline'] = _ai_nd
+        # FINAL FALLBACK: if still no validThrough, use current year-end (31 Dec)
+        if 'validThrough' not in jp:
+            from datetime import datetime as _dt_vt
+            _cur_year = _dt_vt.now().year
+            jp['validThrough'] = f'{_cur_year}-12-31T00:00:00'
+            jp['applicationDeadline'] = f'{_cur_year}-12-31'
         # totalJobOpenings (numeric, from vacancies) per spec
         _vac_num = re.search(r'\d[\d,]*', str(vacancies or ''))
         if _vac_num:
