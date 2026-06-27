@@ -478,6 +478,30 @@ def iter_all_jobs(master):
                     if isinstance(j, dict): yield j, "education"
 
 # ─────────────────────────────────────────────────────────────────────────────
+# GIT AUTO-COMMIT — har 10 jobs pe push karo (timeout safe)
+# ─────────────────────────────────────────────────────────────────────────────
+def git_commit_progress(generated, calls_today):
+    """Intermediate git commit — timeout pe bhi data save rahega."""
+    import subprocess
+    try:
+        subprocess.run(["git", "config", "user.name", "github-actions[bot]"], check=False, capture_output=True)
+        subprocess.run(["git", "config", "user.email", "github-actions[bot]@users.noreply.github.com"], check=False, capture_output=True)
+        subprocess.run(["git", "add", DATA_FILE, PROGRESS_FILE], check=False, capture_output=True)
+        result = subprocess.run(
+            ["git", "diff", "--staged", "--quiet"],
+            capture_output=True
+        )
+        if result.returncode != 0:  # changes staged
+            date_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+            msg = f"🤖 AI mid-run: {generated} jobs done ({calls_today} calls) | {date_str} [skip ci]"
+            subprocess.run(["git", "commit", "-m", msg], check=False, capture_output=True)
+            subprocess.run(["git", "push", "origin", "main"], check=False, capture_output=True)
+            print(f"   💾 Mid-run git commit: {generated} jobs pushed")
+    except Exception as e:
+        print(f"   ⚠️  Git commit skip: {e}")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # MAIN
 # ─────────────────────────────────────────────────────────────────────────────
 def main():
@@ -575,6 +599,10 @@ def main():
             progress["calls_today"] = calls_today
             progress["processed_slugs"] = list(processed_today)
             save_progress(progress)
+
+            # Har 10 jobs pe mid-run git commit — timeout pe bhi data safe rahega
+            if generated % 10 == 0:
+                git_commit_progress(generated, calls_today)
 
         else:
             errors += 1
