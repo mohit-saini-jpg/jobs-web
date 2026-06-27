@@ -11,13 +11,13 @@ DESIGN PHILOSOPHY:
   - HTML generate_all.py automatically AI data use karta hai
 
 GROQ FREE LIMITS (as of 2026):
-  llama-3.1-8b-instant   : 30 RPM, 14400 RPD, 6000 TPM
-  llama-3.3-70b-versatile: 30 RPM,  1000 RPD, 6000 TPM  ← preferred quality
+  llama-3.1-8b-instant   : 30 RPM, 14400 RPD, 6000 TPM  ← DEFAULT (fast+safe)
+  llama-3.3-70b-versatile: 30 RPM,  1000 RPD, 6000 TPM  (quality but very limited)
   gemma2-9b-it           : 30 RPM, 14400 RPD, 15000 TPM
 
 RATE LIMIT STRATEGY:
-  - 5 RPM (safe) = 12s delay between calls
-  - 1000 RPD safe limit = stop at DAILY_LIMIT jobs per day
+  - 25 RPM (safe) = 2.4s delay = 150 jobs ~6 min mein done
+  - 12000 RPD safe limit (8b model ke liye)
   - Job ek baar process → content_hash set → KABHI dobara process nahi
 """
 import os, re, sys, json, time, hashlib
@@ -29,16 +29,16 @@ from pathlib import Path
 # CONFIG — GitHub Actions Secrets / env vars se aata hai
 # ─────────────────────────────────────────────────────────────────────────────
 DATA_FILE    = os.environ.get("AI_DATA_FILE", "Complete_Jobs_Full_Data.json")
-MODEL        = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile")
+MODEL        = os.environ.get("GROQ_MODEL", "llama-3.1-8b-instant")
 GROQ_KEY     = os.environ.get("GROQ_API_KEY", "").strip()
 
-# Raat ko safe rate: 5 calls/minute = 12s gap. Free tier handle hoga.
-SAFE_RPM     = max(1, int(os.environ.get("GROQ_SAFE_RPM", "5")))
-DELAY_SEC    = 60.0 / SAFE_RPM          # = 12.0 seconds
+# llama-3.1-8b-instant free limits: 30 RPM, 14400 RPD, 6000 TPM
+# 25 RPM safe = 2.4s delay = 150 jobs ~6 min mein done
+SAFE_RPM     = max(1, int(os.environ.get("GROQ_SAFE_RPM", "25")))
+DELAY_SEC    = 60.0 / SAFE_RPM          # = 2.4 seconds
 
-# Per-day limit — Groq RPD limit ke andar rahna
-# llama-3.3-70b: 1000 RPD, to 900 safe rakh
-DAILY_LIMIT  = int(os.environ.get("DAILY_LIMIT", "900"))
+# Per-day limit — llama-3.1-8b: 14400 RPD, 12000 safe rakh
+DAILY_LIMIT  = int(os.environ.get("DAILY_LIMIT", "12000"))
 
 # Ek GitHub Actions run me max kitna karo (timeout 40 min = ~180 calls safe)
 RUN_LIMIT    = int(os.environ.get("RUN_LIMIT", "150"))
