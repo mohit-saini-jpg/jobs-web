@@ -1,0 +1,278 @@
+#!/usr/bin/env python3
+"""
+patch_ai_html.py — TSJ AI HTML Patcher
+======================================
+Existing built HTML files mein AI sections directly inject karta hai.
+generate_all.py chalane ki zaroorat nahi.
+
+Usage:
+  python3 patch_ai_html.py
+  python3 patch_ai_html.py --dry-run   # sirf count, kuch likhega nahi
+  python3 patch_ai_html.py --slug bpssc-company-commander-...  # single page test
+
+What it does:
+  1. Complete_Jobs_Full_Data.json se AI data wale jobs load karta hai
+  2. Har job ka /jobs/<slug>/index.html find karta hai
+  3. Agar page mein AI sections nahi hain → inject karta hai
+  4. Title tag + meta description bhi update karta hai (ai_title/ai_meta_description)
+  5. FAQ section bhi update karta hai (ai_expanded_faqs)
+"""
+
+import json, re, os, sys, html as _html
+from pathlib import Path
+
+# ── Config ────────────────────────────────────────────────────────────────────
+DATA_FILE = Path(os.environ.get("AI_DATA_FILE", "Complete_Jobs_Full_Data.json"))
+JOBS_DIR  = Path("jobs")          # output /jobs/<slug>/index.html
+DRY_RUN   = "--dry-run" in sys.argv
+SINGLE    = None
+for i, a in enumerate(sys.argv):
+    if a == "--slug" and i+1 < len(sys.argv):
+        SINGLE = sys.argv[i+1]
+
+# ── Helpers ───────────────────────────────────────────────────────────────────
+def e(s):
+    return _html.escape(str(s or ""), quote=True)
+
+def safe(v, maxlen=0):
+    if v is None: return ""
+    s = str(v).strip()
+    return s[:maxlen] if maxlen else s
+
+def sec_card(heading, icon, grad, body):
+    """Exact same HTML as generate_all.py sec_card()"""
+    return (
+        f'<section class="sec-card">'
+        f'<div class="sec-head" style="background:linear-gradient(135deg,#{grad})">'
+        f'<i class="fa-solid {icon}"></i><h2>{e(heading)}</h2></div>'
+        f'<div class="sec-body">{body}</div></section>\n'
+    )
+
+def render_ai_sections(job):
+    """Same as generate_all._render_ai_sections()"""
+    out = ""
+    ai_cards = [
+        ("ai_overview",             "Overview",           "fa-circle-info",        "1d4ed8,#3b82f6"),
+        ("ai_expert_analysis",      "Expert Analysis",    "fa-lightbulb",          "7c3aed,#a855f7"),
+        ("ai_who_should_apply",     "Who Should Apply",   "fa-user-check",         "0f766e,#0891b2"),
+        ("ai_preparation_tips",     "Preparation Tips",   "fa-list-check",         "047857,#10b981"),
+        ("ai_salary_insights",      "Salary Insights",    "fa-indian-rupee-sign",  "b45309,#f59e0b"),
+        ("ai_job_profile_analysis", "Job Profile",        "fa-briefcase",          "475569,#334155"),
+        ("ai_selection_strategy",   "Selection Strategy", "fa-bullseye",           "be123c,#f43f5e"),
+    ]
+    for key, heading, icon, color in ai_cards:
+        val = safe(job.get(key) or "")
+        if val and len(val) > 20:
+            body = f'<div class="edu-sec" style="line-height:1.7">{e(val)}</div>'
+            out += sec_card(heading, icon, color, body)
+    return out
+
+def render_faq(faq_list):
+    """Same as generate_all.render_faq()"""
+    if not isinstance(faq_list, list) or not faq_list:
+        return ""
+    items = ""
+    seen  = set()
+    idx   = 0
+    for f in faq_list:
+        if not isinstance(f, dict): continue
+        q = safe(f.get("question", ""))
+        a = safe(f.get("answer", ""))
+        if not q or not a: continue
+        def _looks_q(s):
+            sl = s.strip().lower()
+            return sl.endswith("?") or bool(re.match(
+                r"^(what|when|how|who|where|which|is|are|can|will|does|do|whom|whose|why)\b", sl))
+        if _looks_q(a) and not _looks_q(q):
+            q, a = a, q
+        q = re.sub(r"^\s*Q?\s*\d{1,3}\s*[\.\):\-]\s*", "", q, flags=re.I).strip()
+        key = re.sub(r"\s+", " ", q.lower()).strip()
+        if not key or key in seen: continue
+        seen.add(key)
+        idx += 1
+        _op = " open" if idx == 1 else ""
+        items += (
+            f'<div class="faq-item" id="faq-{idx}">'
+            f'<div class="faq-q{_op}"><span class="faq-icon">Q{idx}</span>'
+            f'<span class="faq-q-text">{e(q)}</span>'
+            f'<i class="fa-solid fa-chevron-down faq-chev" aria-hidden="true"></i></div>'
+            f'<div class="faq-a{_op}"><span class="faq-a-icon faq-icon" style="background:#15803d">A</span>'
+            f'<div>{e(a)}</div></div></div>'
+        )
+    return items
+
+def get_slug(job):
+    return (job.get("_canonical_slug") or job.get("slug") or "").strip()
+
+# ── Main patcher ──────────────────────────────────────────────────────────────
+def patch_html(html: str, job: dict) -> tuple[str, list]:
+    """
+    Existing HTML mein AI data inject karo.
+    Returns (new_html, list_of_changes_made)
+    """
+    changes = []
+
+    # ── 1. AI sections inject (first sec-card ke pehle) ─────────────────────
+    ai_html = render_ai_sections(job)
+    if ai_html:
+        already_has_ai = ("fa-circle-info" in html and "edu-sec" in html and
+                          "Expert Analysis" in html)
+        if already_has_ai:
+            # Replace existing AI block (between AI sentinel markers if present,
+            # else remove all existing ai sec-cards and re-insert)
+            # Find first sec-card that has fa-circle-info (Overview card)
+            pat = re.compile(
+                r'<section class="sec-card">.*?<i class="fa-solid fa-circle-info"></i>.*?</section>\n?',
+                re.DOTALL)
+            if pat.search(html):
+                html = pat.sub("", html, count=1)
+                changes.append("replaced existing overview card")
+
+        # Insert BEFORE the first <section class="sec-card"> in the page body
+        insert_marker = '<section class="sec-card">'
+        pos = html.find(insert_marker)
+        if pos != -1:
+            html = html[:pos] + ai_html + html[pos:]
+            changes.append(f"injected {ai_html.count('sec-card')} AI section(s)")
+        else:
+            # Fallback: insert before </main> or </article> or </body>
+            for end_tag in ["</main>", "</article>", "</body>"]:
+                pos = html.rfind(end_tag)
+                if pos != -1:
+                    html = html[:pos] + ai_html + html[pos:]
+                    changes.append(f"injected {ai_html.count('sec-card')} AI section(s) (fallback)")
+                    break
+
+    # ── 2. Title tag update ──────────────────────────────────────────────────
+    ai_title = safe(job.get("ai_title") or "")
+    if ai_title:
+        new_title = ai_title[:65].rstrip()
+        # Match <title>...</title>
+        new_html, n = re.subn(
+            r'(<title>)(.*?)(</title>)',
+            lambda m: m.group(1) + e(new_title) + m.group(3),
+            html, count=1, flags=re.DOTALL
+        )
+        if n:
+            html = new_html
+            changes.append("updated <title>")
+
+    # ── 3. Meta description update ───────────────────────────────────────────
+    ai_meta = safe(job.get("ai_meta_description") or "")
+    if ai_meta:
+        new_meta = ai_meta[:160].rstrip()
+        new_html, n = re.subn(
+            r'(<meta\s+name=["\']description["\']\s+content=["\'])([^"\']*?)(["\'])',
+            lambda m: m.group(1) + e(new_meta) + m.group(3),
+            html, count=1, flags=re.IGNORECASE
+        )
+        if n:
+            html = new_html
+            changes.append("updated meta description")
+
+    # ── 4. H1 update ─────────────────────────────────────────────────────────
+    ai_h1 = safe(job.get("ai_h1") or "")
+    if ai_h1:
+        # Only update the main post-title H1 (inside .post-title or first h1)
+        new_html, n = re.subn(
+            r'(<h1[^>]*class="[^"]*post-title[^"]*"[^>]*>)(.*?)(</h1>)',
+            lambda m: m.group(1) + e(ai_h1) + m.group(3),
+            html, count=1, flags=re.DOTALL | re.IGNORECASE
+        )
+        if n:
+            html = new_html
+            changes.append("updated h1")
+
+    # ── 5. FAQ section update ─────────────────────────────────────────────────
+    ai_faqs = job.get("ai_expanded_faqs") or []
+    if isinstance(ai_faqs, list) and ai_faqs:
+        faq_html = render_faq(ai_faqs)
+        if faq_html:
+            # Replace existing FAQ items inside .faq-wrap / faq section
+            faq_pat = re.compile(
+                r'(<div[^>]+class="[^"]*faq-wrap[^"]*"[^>]*>)(.*?)(</div>\s*</section>)',
+                re.DOTALL | re.IGNORECASE
+            )
+            m = faq_pat.search(html)
+            if m:
+                html = html[:m.start()] + m.group(1) + faq_html + m.group(3) + html[m.end():]
+                changes.append("updated FAQ section")
+
+    return html, changes
+
+# ── Load data ─────────────────────────────────────────────────────────────────
+print("=" * 60)
+print("🔧 TSJ AI HTML Patcher")
+print("=" * 60)
+
+if not DATA_FILE.exists():
+    print(f"❌ {DATA_FILE} not found")
+    sys.exit(1)
+
+print(f"📂 Loading {DATA_FILE}...")
+with open(DATA_FILE, encoding="utf-8") as f:
+    master = json.load(f)
+
+# Collect all AI-enriched sarkari jobs
+sark_jobs = master.get("sarkari_data", {}).get("jobs", [])
+ai_jobs   = [j for j in sark_jobs if j.get("ai_overview") and get_slug(j)]
+print(f"✅ {len(ai_jobs)} sarkari jobs have AI data")
+
+if SINGLE:
+    ai_jobs = [j for j in ai_jobs if get_slug(j) == SINGLE]
+    print(f"🔍 Single mode: {SINGLE} → {len(ai_jobs)} match(es)")
+
+print(f"{'🔵 DRY RUN — no files written' if DRY_RUN else '✏️  Writing files...'}")
+print()
+
+# ── Process ───────────────────────────────────────────────────────────────────
+patched   = 0
+skipped   = 0
+not_found = 0
+errors    = 0
+
+for job in ai_jobs:
+    slug    = get_slug(job)
+    html_path = JOBS_DIR / slug / "index.html"
+
+    if not html_path.exists():
+        not_found += 1
+        if SINGLE:
+            print(f"  ❌ Not found: {html_path}")
+        continue
+
+    try:
+        original = html_path.read_text(encoding="utf-8")
+        new_html, changes = patch_html(original, job)
+
+        if not changes:
+            skipped += 1
+            continue
+
+        if DRY_RUN:
+            print(f"  🔵 Would patch [{slug[:55]}]: {', '.join(changes)}")
+            patched += 1
+        else:
+            # Atomic write
+            tmp = html_path.with_suffix(".tmp")
+            tmp.write_text(new_html, encoding="utf-8")
+            tmp.replace(html_path)
+            print(f"  ✅ Patched [{slug[:55]}]: {', '.join(changes)}")
+            patched += 1
+
+    except Exception as ex:
+        print(f"  ❌ Error [{slug[:50]}]: {ex}")
+        errors += 1
+
+print()
+print("=" * 60)
+print(f"  ✅ Patched   : {patched}")
+print(f"  ⏭️  Skipped   : {skipped} (already had AI data)")
+print(f"  ❓ Not found : {not_found} (HTML not built yet)")
+print(f"  ❌ Errors    : {errors}")
+print("=" * 60)
+if patched > 0 and not DRY_RUN:
+    print("\n✨ Done! Commit these changes:")
+    print("  git add jobs/")
+    print('  git commit -m "🤖 AI content patched into existing HTML pages"')
+    print("  git push")
