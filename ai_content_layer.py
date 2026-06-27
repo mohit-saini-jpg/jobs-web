@@ -265,7 +265,7 @@ HARD RULES — Breaking any = fail:
 5. Sound like a real coaching teacher talking to aspirants — not a bot
 
 STYLE EXAMPLES (copy this tone):
-- "Dosto, agar aap {org} me government job dhundh rahe hain toh yeh notification zaroor padhein."
+- "Dosto, agar aap {{org}} me government job dhundh rahe hain toh yeh notification zaroor padhein."
 - "Seedha baat karte hain — competition kaafi tough hoga kyunki..."
 - "Form bharte waqt ek galti mat karna: ..."
 - "Salary ki baat karein toh in-hand roughly..."
