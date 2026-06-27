@@ -1,30 +1,29 @@
 # ══════════════════════════════════════════════════════════════════
-# FILE 1: .github/workflows/ai-nightly.yml
-# PURPOSE: Raat ko AI enrichment — Groq free limit ke andar
-# TRIGGER: Daily cron 1:30 AM IST (8 PM UTC) + manual
+# FILE: .github/workflows/ai-nightly.yml
+# PURPOSE: HTML pages seedha read → Groq API → HTML mein AI write
+# JSON touch nahi karta
 # ══════════════════════════════════════════════════════════════════
 name: 🌙 AI Content Enrichment (Nightly)
 
 on:
   schedule:
-    - cron: '0 20 * * *'   # Daily 1:30 AM IST (UTC+5:30 = 20:00 UTC)
+    - cron: '0 20 * * *'   # Daily 1:30 AM IST
 
   workflow_dispatch:
     inputs:
       run_limit:
-        description: 'Jobs per run (default: 100)'
+        description: 'Pages per run (default: 100)'
         default: '100'
         required: false
-      daily_limit:
-        description: 'Max API calls today (default: 12000)'
-        default: '12000'
-        required: false
-      force_regen:
-        description: 'Force re-generate all (ignore cache)'
+      force:
+        description: 'Force re-enrich already done pages'
         type: boolean
         default: false
+      slug:
+        description: 'Single slug test (blank = all)'
+        required: false
+        default: ''
 
-# Only one AI run at a time — queue nahi, overlap nahi
 concurrency:
   group: ai-nightly
   cancel-in-progress: false
@@ -48,64 +47,44 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: 📋 Ensure JSON at root
-        run: |
-          if [ ! -f "Complete_Jobs_Full_Data.json" ] && [ -f "data/Complete_Jobs_Full_Data.json" ]; then
-            cp data/Complete_Jobs_Full_Data.json Complete_Jobs_Full_Data.json
-          fi
-          ls -lh Complete_Jobs_Full_Data.json
-          echo "Jobs JSON ready"
-
-      - name: 🤖 Run AI Enrichment
+      - name: 🤖 Run AI HTML Enricher
         env:
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-          GROQ_MODEL: 'llama-3.1-8b-instant'
+          GROQ_API_KEY:  ${{ secrets.GROQ_API_KEY }}
+          GROQ_MODEL:    'llama-3.1-8b-instant'
           GROQ_SAFE_RPM: '3'
-          RUN_LIMIT: ${{ github.event.inputs.run_limit || '100' }}
-          DAILY_LIMIT: ${{ github.event.inputs.daily_limit || '12000' }}
-          FORCE_REGEN: ${{ github.event.inputs.force_regen || 'false' }}
-        run: python3 ai_content_layer.py
+          RUN_LIMIT:     ${{ github.event.inputs.run_limit || '100' }}
+          DAILY_LIMIT:   '12000'
+          FORCE_REGEN:   ${{ github.event.inputs.force || 'false' }}
+          JOBS_DIR:      'jobs'
+        run: |
+          SLUG="${{ github.event.inputs.slug }}"
+          if [ -n "$SLUG" ]; then
+            python3 ai_html_enricher.py --slug "$SLUG"
+          else
+            python3 ai_html_enricher.py
+          fi
 
-      - name: 💾 Commit enriched JSON
+      - name: 💾 Final commit
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add Complete_Jobs_Full_Data.json .ai_progress.json 2>/dev/null || true
+          git add jobs/ .ai_progress_html.json 2>/dev/null || true
 
           if git diff --staged --quiet; then
-            echo "No changes (all jobs already enriched)"
+            echo "No changes to commit"
             exit 0
           fi
 
-          # Count enriched jobs
-          ENRICHED=$(python3 -c "
-          import json
-          m = json.load(open('Complete_Jobs_Full_Data.json', encoding='utf-8'))
-          n = 0
-          def count(jobs):
-              global n
-              if isinstance(jobs, list):
-                  for j in jobs:
-                      if isinstance(j, dict) and j.get('ai_overview'):
-                          n += 1
-          fja = m.get('freejobalert_categories', {})
-          if isinstance(fja, dict):
-              for v in fja.values(): count(v)
-          count(m.get('sarkari_data', {}).get('jobs', []))
-          print(n)
-          " 2>/dev/null || echo "?")
-
+          PATCHED=$(git diff --staged --name-only | grep "index.html" | wc -l || echo "0")
           DATE_IST=$(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M')
-          git commit -m "🤖 AI enriched: ${ENRICHED} jobs total | ${DATE_IST} IST"
+          git commit -m "🤖 AI enriched: ${PATCHED} HTML pages | ${DATE_IST} IST"
           git push origin main
-          echo "✅ Enriched JSON pushed"
+          echo "✅ ${PATCHED} pages pushed — site will update automatically"
 
       - name: 📊 Summary
         run: |
           echo "### 🌙 AI Nightly Enrichment" >> $GITHUB_STEP_SUMMARY
+          echo "- **Flow:** HTML read → Groq API → HTML write (no JSON)" >> $GITHUB_STEP_SUMMARY
           echo "- **Model:** \`llama-3.1-8b-instant\`" >> $GITHUB_STEP_SUMMARY
-          echo "- **Run Limit:** ${{ github.event.inputs.run_limit || '100' }} jobs" >> $GITHUB_STEP_SUMMARY
           echo "- **Time (IST):** $(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M')" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "💡 HTML rebuild triggers automatically after this commit via auto-update-jobs.yml" >> $GITHUB_STEP_SUMMARY
