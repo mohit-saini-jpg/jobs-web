@@ -9,11 +9,6 @@ on:
   schedule:
     - cron: '0 20 * * *'   # Daily 1:30 AM IST
 
-  # Auto-update ke baad automatically trigger hoga
-  workflow_run:
-    workflows: ["🔄 Auto Update Jobs + Sitemap + Cache Bust"]
-    types: [completed]
-
   workflow_dispatch:
     inputs:
       run_limit:
