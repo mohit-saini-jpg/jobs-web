@@ -551,16 +551,23 @@ def _patch_jsonld(page_path, new_html):
 
 def write(path, html_content, skip_if_exists=False):
     """Write HTML to disk.
-    skip_if_exists=True  -> job detail pages: preserve content but always patch JSON-LD
+    skip_if_exists=True  -> job detail pages: skip if exists UNLESS new AI content
     skip_if_exists=False -> listing/category/section pages: always fully rewrite
     """
     global written
     p = Path(path)
     if skip_if_exists and p.exists():
-        # SCHEMA PATCH: even for permanent pages, always refresh JSON-LD blocks
-        # so baseSalary, addressRegion, postalCode, validThrough stay current.
-        _patch_jsonld(p, html_content)
-        return
+        # AI UPGRADE CHECK: agar new HTML mein AI sections hain aur existing page mein
+        # nahi hain — force rewrite karo taaki AI content render ho.
+        existing_has_ai = b'ai_overview' in p.read_bytes() or b'fa-circle-info' in p.read_bytes()
+        new_has_ai = 'ai_overview' in html_content or 'Expert Analysis' in html_content
+        if new_has_ai and not existing_has_ai:
+            # Fall through to full rewrite below
+            pass
+        else:
+            # SCHEMA PATCH: refresh JSON-LD blocks only
+            _patch_jsonld(p, html_content)
+            return
     p.parent.mkdir(parents=True, exist_ok=True)
     with open(p, 'w', encoding='utf-8') as f:
         f.write(html_content)

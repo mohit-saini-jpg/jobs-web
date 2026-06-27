@@ -11,8 +11,8 @@ DESIGN PHILOSOPHY:
   - HTML generate_all.py automatically AI data use karta hai
 
 GROQ FREE LIMITS (as of 2026):
-  gemma2-9b-it           : 30 RPM, 14400 RPD, 15000 TPM ← DEFAULT (15k TPM = no rate limits!)
-  llama-3.1-8b-instant   : 30 RPM, 14400 RPD, 6000 TPM
+  llama-3.1-8b-instant   : 30 RPM, 14400 RPD, 6000 TPM  ← DEFAULT
+  gemma2-9b-it           : DECOMMISSIONED by Groq (June 2026)
   llama-3.3-70b-versatile: 30 RPM,  1000 RPD, 6000 TPM  (quality but very limited)
   gemma2-9b-it           : 30 RPM, 14400 RPD, 15000 TPM
 
@@ -30,15 +30,15 @@ from pathlib import Path
 # CONFIG — GitHub Actions Secrets / env vars se aata hai
 # ─────────────────────────────────────────────────────────────────────────────
 DATA_FILE    = os.environ.get("AI_DATA_FILE", "Complete_Jobs_Full_Data.json")
-MODEL        = os.environ.get("GROQ_MODEL", "gemma2-9b-it")
+MODEL        = os.environ.get("GROQ_MODEL", "llama-3.1-8b-instant")
 GROQ_KEY     = os.environ.get("GROQ_API_KEY", "").strip()
 
 # llama-3.1-8b-instant free limits: 30 RPM, 14400 RPD, 6000 TPM
-# gemma2-9b-it: 15000 TPM limit
-# ~1800 tok/call × 5 RPM = 9000 TPM — comfortably under limit, no rate errors
-# 150 jobs / 5 RPM = 30 min ✅ within 35 min GitHub Actions timeout
-SAFE_RPM     = max(1, int(os.environ.get("GROQ_SAFE_RPM", "5")))
-DELAY_SEC    = 60.0 / SAFE_RPM          # = 12 seconds
+# llama-3.1-8b-instant: 6000 TPM limit
+# (650 input + 900 output) * 3 RPM = 4650 TPM < 6000 ✅ — no rate errors
+# 100 jobs / 3 RPM = 33 min ✅ within 35 min GitHub Actions timeout
+SAFE_RPM     = max(1, int(os.environ.get("GROQ_SAFE_RPM", "3")))
+DELAY_SEC    = 60.0 / SAFE_RPM          # = 20 seconds
 
 # Per-day limit — llama-3.1-8b: 14400 RPD, 12000 safe rakh
 DAILY_LIMIT  = int(os.environ.get("DAILY_LIMIT", "12000"))
@@ -324,7 +324,7 @@ def call_groq(facts):
         "messages": [{"role": "user", "content": prompt}],
         "response_format": {"type": "json_object"},
         "temperature": 0.72,
-        "max_tokens": 2800,
+        "max_tokens": 900,
     }
 
     for attempt in range(3):

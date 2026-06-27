@@ -12,8 +12,8 @@ on:
   workflow_dispatch:
     inputs:
       run_limit:
-        description: 'Jobs per run (default: 150)'
-        default: '150'
+        description: 'Jobs per run (default: 100)'
+        default: '100'
         required: false
       daily_limit:
         description: 'Max API calls today (default: 12000)'
@@ -59,9 +59,9 @@ jobs:
       - name: 🤖 Run AI Enrichment
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-          GROQ_MODEL: 'gemma2-9b-it'
-          GROQ_SAFE_RPM: '5'
-          RUN_LIMIT: ${{ github.event.inputs.run_limit || '150' }}
+          GROQ_MODEL: 'llama-3.1-8b-instant'
+          GROQ_SAFE_RPM: '3'
+          RUN_LIMIT: ${{ github.event.inputs.run_limit || '100' }}
           DAILY_LIMIT: ${{ github.event.inputs.daily_limit || '12000' }}
           FORCE_REGEN: ${{ github.event.inputs.force_regen || 'false' }}
         run: python3 ai_content_layer.py
@@ -104,8 +104,8 @@ jobs:
       - name: 📊 Summary
         run: |
           echo "### 🌙 AI Nightly Enrichment" >> $GITHUB_STEP_SUMMARY
-          echo "- **Model:** \`gemma2-9b-it\`" >> $GITHUB_STEP_SUMMARY
-          echo "- **Run Limit:** ${{ github.event.inputs.run_limit || '150' }} jobs" >> $GITHUB_STEP_SUMMARY
+          echo "- **Model:** \`llama-3.1-8b-instant\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Run Limit:** ${{ github.event.inputs.run_limit || '100' }} jobs" >> $GITHUB_STEP_SUMMARY
           echo "- **Time (IST):** $(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M')" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "💡 HTML rebuild triggers automatically after this commit via auto-update-jobs.yml" >> $GITHUB_STEP_SUMMARY
