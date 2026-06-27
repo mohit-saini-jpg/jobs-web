@@ -2757,7 +2757,8 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
                       or dates.get('exam_date','') or dates.get('last_date_apply_online','')
                       or dates.get('last_date_to_apply','') or dates.get('last_date',''))
     else:
-        last_d = safe(dates.get('last_date_to_apply','') or dates.get('last_date_apply_online','') or dates.get('last_date',''))
+        last_d = safe(dates.get('last_date_to_apply','') or dates.get('last_date_apply_online','')
+                      or dates.get('last_date','') or dates.get('exam_date','') or dates.get('written_exam_date',''))
     vacancies = safe(bd.get('total_vacancies','') or job_obj.get('total_post','') or job_obj.get('total_vacancy',''))
     # SECURE FALLBACK: ai_extracted_structured_data for missing fields
     ai_data = job_obj.get('ai_extracted_structured_data') or {}
@@ -4215,6 +4216,20 @@ for _existing_html in _glob_preload.glob(str(ROOT / 'jobs' / '*' / 'index.html')
                 seen_fp[_efp] = _eslug
             jobs_index[_eslug] = {'cat': '__disk__', 'title': _etitle[:120], 'last_date': ''}
             _existing_disk_pages += 1
+            # ── SCHEMA PATCH: load saved job JSON and patch JSON-LD in-place ──
+            # This ensures pages NOT regenerated this deploy still get
+            # updated baseSalary, addressRegion, postalCode, validThrough.
+            try:
+                _data_json = ROOT / 'jobs' / 'data' / f'{_eslug}.json'
+                if _data_json.exists():
+                    with open(_data_json, encoding='utf-8') as _djf:
+                        _djob = json.load(_djf)
+                    _dcanon = f"{BASE_URL}/jobs/{_eslug}/"
+                    _dbc = []
+                    _dhtml = build_schemas(_djob, _dcanon, _dbc, _eslug)
+                    _patch_jsonld(Path(_existing_html), _dhtml)
+            except Exception:
+                pass
         else:
             # H1 nahi mila — phir bhi slug ko seen maano taaki overwrite na ho
             seen_jobs[_eslug] = '__disk__'
