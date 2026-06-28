@@ -742,6 +742,10 @@
             "color": "#6527F5",
             "viewMoreType": "list",
             "items": [
+                 {
+                    "name": "Passport Apply Link",
+                    "url": "https://services2.passportindia.gov.in/forms/registration?_gl=1%2A19n9ou8%2A_ga%2AMTIwNDQ2NjY4Ni4xNzc4OTA1NzU3%2A_ga_B4255W3J9F%2AczE3ODI2NTY4NTUkbzExJGcwJHQxNzgyNjU2ODU1JGo2MCRsMCRoMA..%2A_ga_JTJJBP5DNH%2AczE3ODI2NTY4NTUkbzExJGcwJHQxNzgyNjU2ODU1JGo2MCRsMCRoMA.."
+                },
                 {
                     "name": "2002 की पुरानी वोटर लिस्ट में अपना नाम ऑनलाइन सर्च करें",
                     "url": "https://voters.eci.gov.in/searchInSIR/S2UA4DPDF-JK4QWODSE"
