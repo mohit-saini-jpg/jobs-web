@@ -36,7 +36,7 @@ for i, a in enumerate(sys.argv):
         SINGLE_SLUG = sys.argv[i+1]
 
 # AI marker — HTML mein inject hone ke baad iska presence check karte hain
-AI_MARKER = "<!-- tsj-ai-enriched -->"
+AI_MARKER = ""
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 def e(s): return _html.escape(str(s or ""), quote=True)
@@ -194,5 +194,50 @@ def call_groq(facts: dict) -> dict | None:
             with urllib.request.urlopen(req, timeout=30) as resp:
                 raw = json.loads(resp.read().decode())
                 content = raw["choices"][0]["message"]["content"].strip()
-                content = re.sub(r"^```json\s*","", content, flags=re.I)
-                content = re.sub(r"
+                content = re.sub(r"^```json\s*", "", content, flags=re.I)
+                content = re.sub(r"```$", "", content).strip()
+                return json.loads(content)
+
+        except urllib.error.HTTPError as ex:
+            body_err = ex.read().decode(errors="replace")
+            if ex.code == 429:
+                wait = 60 + attempt*30
+                print(f"  ⏳ Rate limit 429 — waiting {wait}s...")
+                time.sleep(wait)
+            elif ex.code == 400:
+                if "rate_limit" in body_err.lower() or "tokens" in body_err.lower():
+                    wait = 60 + attempt*30
+                    print(f"  ⏳ TPM overflow 400 — waiting {wait}s...")
+                    time.sleep(wait)
+                else:
+                    print(f"  ❌ Bad request: {body_err[:120]}")
+                    return None
+            elif ex.code in (401, 403):
+                print(f"  ❌ Auth error {ex.code} — Groq response: {body_err[:300]}")
+                # Key invalid hai — aage sab fail honge, abort karo
+                print(f"  🛑 ABORTING — fix GROQ_API_KEY secret and retry")
+                sys.exit(1)
+            else:
+                print(f"  ❌ HTTP {ex.code}: {body_err[:80]}")
+                return None
+        except Exception as ex:
+            print(f"  ❌ Error attempt {attempt+1}: {ex}")
+            time.sleep(10)
+
+    return None
+
+# ── HTML Patcher ──────────────────────────────────────────────────────────────
+def patch_html(original: str, result: dict) -> str:
+    html = original
+
+    # Remove old AI block if present (full re-patch on --force)
+    if AI_MARKER in html:
+        html = re.sub(
+            re.escape(AI_MARKER) + r".*?" + re.escape(AI_MARKER),
+            "", html, flags=re.DOTALL)
+
+    # 1. Build AI sections HTML
+    ai_cards = [
+        ("ai_overview",             "Overview",           "fa-circle-info",        "1d4ed8,#3b82f6"),
+        ("ai_expert_analysis",      "Expert Analysis",    "fa-lightbulb",          "7c3aed,#a855f7"),
+        ("ai_who_should_apply",     "Who Should Apply",   "fa-user-check",         "0
