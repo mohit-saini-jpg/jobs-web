@@ -76,129 +76,6 @@ def render_faq(faq_list):
                   f'<div>{e(a)}</div></div></div>')
     return items
 
-# ── Microdata helpers (must be defined before main) ───────────────────────────
-MICRODATA_MARKER = "<!-- tsj-microdata -->"
-
-def extract_jsonld(html: str, type_name: str) -> dict:
-    """HTML se specific @type ka JSON-LD block extract karo."""
-    for block in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.DOTALL):
-        try:
-            jd = json.loads(block)
-            if jd.get("@type") == type_name:
-                return jd
-        except:
-            pass
-    return {}
-
-def build_microdata_block(jd: dict) -> str:
-    """
-    JobPosting JSON-LD → Google-crawlable microdata HTML block.
-    Hidden div — visually invisible, Google reads it.
-    """
-    if not jd:
-        return ""
-
-    title        = striptags(jd.get("title", ""))
-    description  = striptags(jd.get("description", ""))
-    date_posted  = jd.get("datePosted", "")
-    valid_through = (jd.get("validThrough") or jd.get("applicationDeadline") or "")
-    if valid_through and "T" in valid_through:
-        valid_through = valid_through.split("T")[0]
-    employment_type = jd.get("employmentType", "FULL_TIME")
-    direct_apply    = str(jd.get("directApply", "True")).lower()
-    direct_apply    = "True" if direct_apply in ("true", "1") else "False"
-
-    hiring_org  = jd.get("hiringOrganization", {})
-    org_name    = striptags(hiring_org.get("name", "") if isinstance(hiring_org, dict) else "")
-    org_url     = hiring_org.get("sameAs", "") if isinstance(hiring_org, dict) else ""
-
-    job_loc     = jd.get("jobLocation", {})
-    address     = job_loc.get("address", {}) if isinstance(job_loc, dict) else {}
-    city        = striptags(address.get("addressLocality", "India") if isinstance(address, dict) else "India")
-    region      = striptags(address.get("addressRegion", "") if isinstance(address, dict) else "")
-    country     = address.get("addressCountry", "IN") if isinstance(address, dict) else "IN"
-    postal      = address.get("postalCode", "") if isinstance(address, dict) else ""
-
-    base_sal    = jd.get("baseSalary", {})
-    sal_val     = base_sal.get("value", {}) if isinstance(base_sal, dict) else {}
-    min_sal     = str(sal_val.get("minValue", "")) if isinstance(sal_val, dict) else ""
-    max_sal     = str(sal_val.get("maxValue", "")) if isinstance(sal_val, dict) else ""
-    currency    = base_sal.get("currency", "INR") if isinstance(base_sal, dict) else "INR"
-    unit_text   = sal_val.get("unitText", "MONTH") if isinstance(sal_val, dict) else "MONTH"
-
-    html_out = f'\n{MICRODATA_MARKER}\n'
-    html_out += '<div itemscope itemtype="https://schema.org/JobPosting" style="display:none" aria-hidden="true">\n'
-
-    if title:
-        html_out += f'  <meta itemprop="title" content="{e(title)}">\n'
-    if description:
-        html_out += f'  <meta itemprop="description" content="{e(description[:5000])}">\n'
-    if date_posted:
-        html_out += f'  <meta itemprop="datePosted" content="{e(date_posted)}">\n'
-    if valid_through:
-        html_out += f'  <meta itemprop="validThrough" content="{e(valid_through)}">\n'
-    if employment_type:
-        html_out += f'  <meta itemprop="employmentType" content="{e(employment_type)}">\n'
-    html_out += f'  <meta itemprop="directApply" content="{direct_apply}">\n'
-
-    if org_name:
-        html_out += '  <div itemprop="hiringOrganization" itemscope itemtype="https://schema.org/Organization">\n'
-        html_out += f'    <meta itemprop="name" content="{e(org_name)}">\n'
-        if org_url:
-            html_out += f'    <meta itemprop="url" content="{e(org_url)}">\n'
-        html_out += '  </div>\n'
-
-    html_out += '  <div itemprop="jobLocation" itemscope itemtype="https://schema.org/Place">\n'
-    html_out += '    <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">\n'
-    if city:
-        html_out += f'      <meta itemprop="addressLocality" content="{e(city)}">\n'
-    if region:
-        html_out += f'      <meta itemprop="addressRegion" content="{e(region)}">\n'
-    html_out += f'      <meta itemprop="addressCountry" content="{e(country)}">\n'
-    if postal:
-        html_out += f'      <meta itemprop="postalCode" content="{e(postal)}">\n'
-    html_out += '    </div>\n  </div>\n'
-
-    if min_sal or max_sal:
-        html_out += '  <div itemprop="baseSalary" itemscope itemtype="https://schema.org/MonetaryAmount">\n'
-        html_out += f'    <meta itemprop="currency" content="{e(currency)}">\n'
-        html_out += '    <div itemprop="value" itemscope itemtype="https://schema.org/QuantitativeValue">\n'
-        if min_sal:
-            html_out += f'      <meta itemprop="minValue" content="{e(min_sal)}">\n'
-        if max_sal:
-            html_out += f'      <meta itemprop="maxValue" content="{e(max_sal)}">\n'
-        html_out += f'      <meta itemprop="unitText" content="{e(unit_text)}">\n'
-        html_out += '    </div>\n  </div>\n'
-
-    html_out += '  <div itemprop="applicantLocationRequirements" itemscope itemtype="https://schema.org/Country">\n'
-    html_out += '    <meta itemprop="name" content="India">\n'
-    html_out += '  </div>\n'
-
-    html_out += f'</div>\n{MICRODATA_MARKER}\n'
-    return html_out
-
-
-def inject_missing_microdata(html: str) -> tuple[str, bool]:
-    """
-    Agar page mein JobPosting JSON-LD hai aur microdata nahi →
-    microdata block inject karo </body> se pehle.
-    Returns (new_html, was_changed)
-    """
-    if MICRODATA_MARKER in html:
-        return html, False
-    jd = extract_jsonld(html, "JobPosting")
-    if not jd:
-        return html, False
-    microdata = build_microdata_block(jd)
-    if not microdata:
-        return html, False
-    pos = html.rfind("</body>")
-    if pos == -1:
-        return html, False
-    new_html = html[:pos] + microdata + html[pos:]
-    return new_html, True
-
-
 # ── Facts extractor from HTML ─────────────────────────────────────────────────
 def extract_facts(html: str, slug: str) -> dict:
     """HTML se job facts nikalo — JSON-LD + kv-table + heading"""
@@ -332,8 +209,10 @@ def call_groq(facts: dict) -> dict | None:
                     print(f"  ❌ Bad request: {body_err[:120]}")
                     return None
             elif ex.code in (401, 403):
-                print(f"  ❌ Auth error {ex.code} — check GROQ_API_KEY")
-                return None
+                print(f"  ❌ Auth error {ex.code} — Groq response: {body_err[:300]}")
+                # Key invalid hai — aage sab fail honge, abort karo
+                print(f"  🛑 ABORTING — fix GROQ_API_KEY secret and retry")
+                sys.exit(1)
             else:
                 print(f"  ❌ HTTP {ex.code}: {body_err[:80]}")
                 return None
@@ -590,3 +469,149 @@ if __name__ == "__main__":
     main()
 
 
+# ══════════════════════════════════════════════════════════════════
+# MICRODATA INJECTOR — Google crawl fields (no API needed)
+# JSON-LD se values extract → hidden microdata <div> inject
+# ══════════════════════════════════════════════════════════════════
+
+MICRODATA_MARKER = "<!-- tsj-microdata -->"
+
+def extract_jsonld(html: str, type_name: str) -> dict:
+    """HTML se specific @type ka JSON-LD block extract karo."""
+    for block in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.DOTALL):
+        try:
+            jd = json.loads(block)
+            if jd.get("@type") == type_name:
+                return jd
+        except:
+            pass
+    return {}
+
+def build_microdata_block(jd: dict) -> str:
+    """
+    JobPosting JSON-LD → Google-crawlable microdata HTML block.
+    Hidden div — visually invisible, Google reads it.
+    """
+    if not jd:
+        return ""
+
+    # ── Extract values from JSON-LD ───────────────────────────────
+    title        = striptags(jd.get("title", ""))
+    description  = striptags(jd.get("description", ""))
+    date_posted  = jd.get("datePosted", "")
+    valid_through = (jd.get("validThrough") or jd.get("applicationDeadline") or "")
+    # Normalize date: "2026-07-30T00:00:00" → "2026-07-30"
+    if valid_through and "T" in valid_through:
+        valid_through = valid_through.split("T")[0]
+    employment_type = jd.get("employmentType", "FULL_TIME")
+    direct_apply    = str(jd.get("directApply", "True")).lower()
+    direct_apply    = "True" if direct_apply in ("true", "1") else "False"
+
+    # hiringOrganization
+    hiring_org  = jd.get("hiringOrganization", {})
+    org_name    = striptags(hiring_org.get("name", "") if isinstance(hiring_org, dict) else "")
+    org_url     = hiring_org.get("sameAs", "") if isinstance(hiring_org, dict) else ""
+
+    # jobLocation
+    job_loc     = jd.get("jobLocation", {})
+    address     = job_loc.get("address", {}) if isinstance(job_loc, dict) else {}
+    city        = striptags(address.get("addressLocality", "India") if isinstance(address, dict) else "India")
+    region      = striptags(address.get("addressRegion", "") if isinstance(address, dict) else "")
+    country     = address.get("addressCountry", "IN") if isinstance(address, dict) else "IN"
+    postal      = address.get("postalCode", "") if isinstance(address, dict) else ""
+
+    # baseSalary
+    base_sal    = jd.get("baseSalary", {})
+    sal_val     = base_sal.get("value", {}) if isinstance(base_sal, dict) else {}
+    min_sal     = str(sal_val.get("minValue", "")) if isinstance(sal_val, dict) else ""
+    max_sal     = str(sal_val.get("maxValue", "")) if isinstance(sal_val, dict) else ""
+    currency    = base_sal.get("currency", "INR") if isinstance(base_sal, dict) else "INR"
+    unit_text   = sal_val.get("unitText", "MONTH") if isinstance(sal_val, dict) else "MONTH"
+
+    # ── Build microdata HTML ──────────────────────────────────────
+    html_out = f'\n{MICRODATA_MARKER}\n'
+    html_out += '<div itemscope itemtype="https://schema.org/JobPosting" style="display:none" aria-hidden="true">\n'
+
+    # Required fields
+    if title:
+        html_out += f'  <meta itemprop="title" content="{e(title)}">\n'
+    if description:
+        # Keep description under 5000 chars
+        desc_short = description[:5000]
+        html_out += f'  <meta itemprop="description" content="{e(desc_short)}">\n'
+    if date_posted:
+        html_out += f'  <meta itemprop="datePosted" content="{e(date_posted)}">\n'
+    if valid_through:
+        html_out += f'  <meta itemprop="validThrough" content="{e(valid_through)}">\n'
+    if employment_type:
+        html_out += f'  <meta itemprop="employmentType" content="{e(employment_type)}">\n'
+    html_out += f'  <meta itemprop="directApply" content="{direct_apply}">\n'
+
+    # hiringOrganization
+    if org_name:
+        html_out += '  <div itemprop="hiringOrganization" itemscope itemtype="https://schema.org/Organization">\n'
+        html_out += f'    <meta itemprop="name" content="{e(org_name)}">\n'
+        if org_url:
+            html_out += f'    <meta itemprop="url" content="{e(org_url)}">\n'
+        html_out += '  </div>\n'
+
+    # jobLocation
+    html_out += '  <div itemprop="jobLocation" itemscope itemtype="https://schema.org/Place">\n'
+    html_out += '    <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">\n'
+    if city:
+        html_out += f'      <meta itemprop="addressLocality" content="{e(city)}">\n'
+    if region:
+        html_out += f'      <meta itemprop="addressRegion" content="{e(region)}">\n'
+    html_out += f'      <meta itemprop="addressCountry" content="{e(country)}">\n'
+    if postal:
+        html_out += f'      <meta itemprop="postalCode" content="{e(postal)}">\n'
+    html_out += '    </div>\n  </div>\n'
+
+    # baseSalary
+    if min_sal or max_sal:
+        html_out += '  <div itemprop="baseSalary" itemscope itemtype="https://schema.org/MonetaryAmount">\n'
+        html_out += f'    <meta itemprop="currency" content="{e(currency)}">\n'
+        html_out += '    <div itemprop="value" itemscope itemtype="https://schema.org/QuantitativeValue">\n'
+        if min_sal:
+            html_out += f'      <meta itemprop="minValue" content="{e(min_sal)}">\n'
+        if max_sal:
+            html_out += f'      <meta itemprop="maxValue" content="{e(max_sal)}">\n'
+        html_out += f'      <meta itemprop="unitText" content="{e(unit_text)}">\n'
+        html_out += '    </div>\n  </div>\n'
+
+    # applicantLocationRequirements
+    html_out += '  <div itemprop="applicantLocationRequirements" itemscope itemtype="https://schema.org/Country">\n'
+    html_out += '    <meta itemprop="name" content="India">\n'
+    html_out += '  </div>\n'
+
+    html_out += f'</div>\n{MICRODATA_MARKER}\n'
+    return html_out
+
+
+def inject_missing_microdata(html: str) -> tuple[str, bool]:
+    """
+    Agar page mein JobPosting JSON-LD hai aur microdata nahi →
+    microdata block inject karo </body> se pehle.
+    Returns (new_html, was_changed)
+    """
+    # Already injected?
+    if MICRODATA_MARKER in html:
+        return html, False
+
+    # Page mein JobPosting JSON-LD hai?
+    jd = extract_jsonld(html, "JobPosting")
+    if not jd:
+        return html, False
+
+    # Build microdata block from JSON-LD values
+    microdata = build_microdata_block(jd)
+    if not microdata:
+        return html, False
+
+    # Inject before </body>
+    pos = html.rfind("</body>")
+    if pos == -1:
+        return html, False
+
+    new_html = html[:pos] + microdata + html[pos:]
+    return new_html, True
