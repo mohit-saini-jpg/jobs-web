@@ -180,7 +180,7 @@ def call_groq(facts: dict) -> dict | None:
         "messages": [{"role": "user", "content": prompt}]
     }
 
-    for attempt in range(4):
+    for attempt in range(2):   # max 2 attempts only
         try:
             req = urllib.request.Request(
                 "https://api.groq.com/openai/v1/chat/completions",
@@ -197,20 +197,22 @@ def call_groq(facts: dict) -> dict | None:
         except urllib.error.HTTPError as ex:
             body_err = ex.read().decode(errors="replace")
             if ex.code == 429:
-                wait = 60 + attempt*30
-                print(f"  ⏳ Rate limit 429 — waiting {wait}s...")
-                time.sleep(wait)
+                if attempt == 0:
+                    print(f"  ⏳ Rate limit 429 — waiting 30s...")
+                    time.sleep(30)
+                else:
+                    # Quota exhausted — stop wasting time, exit gracefully
+                    print(f"  🔴 Quota exhausted (429 x2) — stopping run, resume kal")
+                    sys.exit(0)
             elif ex.code == 400:
                 if "rate_limit" in body_err.lower() or "tokens" in body_err.lower():
-                    wait = 60 + attempt*30
-                    print(f"  ⏳ TPM overflow 400 — waiting {wait}s...")
-                    time.sleep(wait)
+                    print(f"  ⏳ TPM overflow — waiting 30s...")
+                    time.sleep(30)
                 else:
                     print(f"  ❌ Bad request: {body_err[:120]}")
                     return None
             elif ex.code in (401, 403):
                 print(f"  ❌ Auth error {ex.code} — Groq response: {body_err[:300]}")
-                # Key invalid hai — aage sab fail honge, abort karo
                 print(f"  🛑 ABORTING — fix GROQ_API_KEY secret and retry")
                 sys.exit(1)
             else:
@@ -447,9 +449,8 @@ def main():
         progress["calls_today"] = calls_today
         save_progress(progress)
 
-        # Git commit every 10 pages
-        if processed % 10 == 0:
-            git_commit(processed, calls_today)
+        # Har page ke baad turant commit — cancel hone par bhi loss nahi
+        git_commit(processed, calls_today)
 
         time.sleep(DELAY_SEC)
 
