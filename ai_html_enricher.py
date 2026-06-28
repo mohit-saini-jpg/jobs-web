@@ -465,10 +465,6 @@ def main():
     print(f"  ❌ Errors     : {errors}")
     print("=" * 60)
 
-if __name__ == "__main__":
-    main()
-
-
 # ══════════════════════════════════════════════════════════════════
 # MICRODATA INJECTOR — Google crawl fields (no API needed)
 # JSON-LD se values extract → hidden microdata <div> inject
@@ -615,3 +611,6 @@ def inject_missing_microdata(html: str) -> tuple[str, bool]:
 
     new_html = html[:pos] + microdata + html[pos:]
     return new_html, True
+
+if __name__ == "__main__":
+    main()
