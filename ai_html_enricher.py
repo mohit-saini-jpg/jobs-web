@@ -214,7 +214,6 @@ def call_groq(facts: dict) -> dict | None:
                     return None
             elif ex.code in (401, 403):
                 print(f"  ❌ Auth error {ex.code} — Groq response: {body_err[:300]}")
-                # Key invalid hai — aage sab fail honge, abort karo
                 print(f"  🛑 ABORTING — fix GROQ_API_KEY secret and retry")
                 sys.exit(1)
             else:
@@ -230,14 +229,167 @@ def call_groq(facts: dict) -> dict | None:
 def patch_html(original: str, result: dict) -> str:
     html = original
 
-    # Remove old AI block if present (full re-patch on --force)
     if AI_MARKER in html:
         html = re.sub(
             re.escape(AI_MARKER) + r".*?" + re.escape(AI_MARKER),
             "", html, flags=re.DOTALL)
 
-    # 1. Build AI sections HTML
+    # 1. Build AI sections HTML (Clean formatting to avoid any line wraps)
     ai_cards = [
-        ("ai_overview",             "Overview",           "fa-circle-info",        "1d4ed8,#3b82f6"),
-        ("ai_expert_analysis",      "Expert Analysis",    "fa-lightbulb",          "7c3aed,#a855f7"),
-        ("ai_who_should_apply",     "Who Should Apply",   "fa-user-check",         "0
+        ("ai_overview", "Overview", "fa-circle-info", "1d4ed8,#3b82f6"),
+        ("ai_expert_analysis", "Expert Analysis", "fa-lightbulb", "7c3aed,#a855f7"),
+        ("ai_who_should_apply", "Who Should Apply", "fa-user-check", "0f766e,#0891b2"),
+        ("ai_preparation_tips", "Preparation Tips", "fa-list-check", "047857,#10b981"),
+        ("ai_salary_insights", "Salary Insights", "fa-indian-rupee-sign", "b45309,#f59e0b"),
+        ("ai_job_profile_analysis", "Job Profile", "fa-briefcase", "475569,#334155"),
+        ("ai_selection_strategy", "Selection Strategy", "fa-bullseye", "be123c,#f43f5e")
+    ]
+    
+    ai_html = ""
+    for key, heading, icon, color in ai_cards:
+        val = striptags(result.get(key) or "").strip()
+        if val and len(val) > 20:
+            body = f'<div class="edu-sec" style="line-height:1.7">{e(val)}</div>'
+            ai_html += sec_card(heading, icon, color, body)
+
+    # FAQ
+    faqs = result.get("ai_expanded_faqs") or []
+    faq_html = render_faq(faqs) if faqs else ""
+    if faq_html:
+        ai_html += sec_card("FAQs", "fa-circle-question", "0f172a,#1e293b",
+                            f'<div class="faq-wrap">{faq_html}</div>')
+
+    if ai_html:
+        ai_block = f"\n{AI_MARKER}\n{ai_html}{AI_MARKER}\n"
+        pos = html.find('<section class="sec-card">')
+        if pos != -1:
+            html = html[:pos] + ai_block + html[pos:]
+        else:
+            for tag in ["</main>", "</article>", "</body>"]:
+                pos = html.rfind(tag)
+                if pos != -1:
+                    html = html[:pos] + ai_block + html[pos:]
+                    break
+
+    # 2. Title tag
+    ai_title = striptags(result.get("ai_title") or "").strip()
+    if ai_title:
+        site = " | Top Sarkari Jobs"
+        title_with_brand = (ai_title[:65-len(site)] + site) if len(ai_title) > 60 else (ai_title + site)
+        html = re.sub(
+            r'(<title>)(.*?)(</title>)',
+            lambda m: m.group(1) + e(title_with_brand) + m.group(3),
+            html, count=1, flags=re.DOTALL)
+
+    # 3. Meta description
+    ai_meta = striptags(result.get("ai_meta_description") or "").strip()
+    if ai_meta:
+        html = re.sub(
+            r'(<meta\s+name=["\']description["\']\s+content=["\'])([^"\']*?)(["\'])',
+            lambda m: m.group(1) + e(ai_meta[:155]) + m.group(3),
+            html, count=1, flags=re.IGNORECASE)
+
+    # 4. H1
+    ai_h1 = striptags(result.get("ai_h1") or "").strip()
+    if ai_h1:
+        html = re.sub(
+            r'(<h1[^>]*class="[^"]*post-title[^"]*"[^>]*>)(.*?)(</h1>)',
+            lambda m: m.group(1) + e(ai_h1) + m.group(3),
+            html, count=1, flags=re.DOTALL|re.IGNORECASE)
+
+    return html
+
+# ── Progress tracking ─────────────────────────────────────────────────────────
+def load_progress():
+    try:
+        return json.loads(PROGRESS_FILE.read_text(encoding="utf-8"))
+    except: return {"done_slugs": [], "calls_today": 0, "date": ""}
+
+def save_progress(p):
+    tmp = PROGRESS_FILE.with_suffix(".tmp")
+    tmp.write_text(json.dumps(p, ensure_ascii=False), encoding="utf-8")
+    tmp.replace(PROGRESS_FILE)
+
+# ── Git commit ────────────────────────────────────────────────────────────────
+def git_commit(count, calls):
+    import subprocess
+    try:
+        subprocess.run(["git","config","user.name","github-actions[bot]"],capture_output=True)
+        subprocess.run(["git","config","user.email","github-actions[bot]@users.noreply.github.com"],capture_output=True)
+        subprocess.run(["git","add","jobs/"],capture_output=True)
+        r = subprocess.run(["git","diff","--staged","--quiet"],capture_output=True)
+        if r.returncode != 0:
+            msg = f"🤖 AI HTML: {count} pages enriched ({calls} API calls) | {datetime.now().strftime('%Y-%m-%d %H:%M')} [skip ci]"
+            subprocess.run(["git","commit","-m",msg],capture_output=True)
+            subprocess.run(["git","push","origin","main"],capture_output=True)
+            print(f"  💾 Git commit: {count} pages pushed")
+    except Exception as ex:
+        print(f"  ⚠️  Git commit skip: {ex}")
+
+# ── Main ──────────────────────────────────────────────────────────────────────
+def main():
+    print("=" * 60)
+    print("🤖 TSJ AI HTML Enricher v1.0")
+    print("=" * 60)
+    print(f"   Model    : {MODEL}")
+    print(f"   Rate     : {SAFE_RPM} RPM = {DELAY_SEC:.0f}s delay")
+    print(f"   Run limit: {RUN_LIMIT} pages")
+    print(f"   Jobs dir : {JOBS_DIR}")
+    print(f"   Mode     : {'DRY RUN' if DRY_RUN else 'FORCE' if FORCE else 'NORMAL'}")
+    print()
+
+    if not JOBS_DIR.exists():
+        print(f"❌ {JOBS_DIR} not found — run from repo root")
+        sys.exit(1)
+
+    progress = load_progress()
+    today = datetime.now().strftime("%Y-%m-%d")
+    if progress.get("date") != today:
+        progress = {"done_slugs": [], "calls_today": 0, "date": today}
+    done_slugs = set(progress["done_slugs"])
+    calls_today = progress["calls_today"]
+
+    print(f"📊 Today: {calls_today} calls done, {len(done_slugs)} pages processed")
+    print()
+
+    if SINGLE_SLUG:
+        html_files = [JOBS_DIR / SINGLE_SLUG / "index.html"]
+    else:
+        html_files = sorted(JOBS_DIR.rglob("index.html"))
+
+    processed = 0
+    skipped_done = 0
+    skipped_ai = 0
+    errors = 0
+
+    for html_path in html_files:
+        if processed >= RUN_LIMIT:
+            print(f"\n🔴 RUN_LIMIT ({RUN_LIMIT}) reached")
+            break
+        if calls_today >= DAILY_LIMIT:
+            print(f"\n🔴 DAILY_LIMIT ({DAILY_LIMIT}) reached")
+            break
+
+        if not html_path.exists():
+            print(f"  ❌ Not found: {html_path}")
+            continue
+
+        slug = html_path.parent.name
+
+        if not FORCE and slug in done_slugs:
+            skipped_done += 1
+            continue
+
+        try:
+            original = html_path.read_text(encoding="utf-8")
+        except Exception as ex:
+            print(f"  ❌ Read error [{slug}]: {ex}")
+            errors += 1
+            continue
+
+        md_html, md_changed = inject_missing_microdata(original)
+        if md_changed and not DRY_RUN:
+            tmp = html_path.with_suffix(".tmp")
+            tmp.write_text(md_html, encoding="utf-8")
+            tmp.replace(html_path)
+            original =
