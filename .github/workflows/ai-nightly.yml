@@ -52,20 +52,24 @@ jobs:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
           if [ -z "$GROQ_API_KEY" ]; then
-            echo "❌ GROQ_API_KEY is EMPTY — secret not set"
+            echo "❌ GROQ_API_KEY is EMPTY"
             exit 1
           fi
-          KEY_LEN=${#GROQ_API_KEY}
-          KEY_PREFIX="${GROQ_API_KEY:0:8}"
-          echo "✅ Key present — length: ${KEY_LEN}, prefix: ${KEY_PREFIX}..."
-          # Quick live test
-          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}"             -H "Authorization: Bearer $GROQ_API_KEY"             -H "Content-Type: application/json"             -d '{"model":"llama-3.1-8b-instant","max_tokens":5,"messages":[{"role":"user","content":"hi"}]}'             https://api.groq.com/openai/v1/chat/completions)
-          echo "Groq API test HTTP code: $HTTP_CODE"
-          if [ "$HTTP_CODE" = "401" ] || [ "$HTTP_CODE" = "403" ]; then
-            echo "❌ Key REJECTED by Groq — update GROQ_API_KEY secret"
+          echo "Key length: ${#GROQ_API_KEY}"
+          echo "Key prefix: ${GROQ_API_KEY:0:10}..."
+          HTTP_CODE=$(curl -s -o /tmp/groq_resp.json -w "%{http_code}" \
+            -X POST \
+            -H "Authorization: Bearer $GROQ_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{"model":"llama-3.1-8b-instant","max_tokens":5,"messages":[{"role":"user","content":"hi"}]}' \
+            https://api.groq.com/openai/v1/chat/completions)
+          echo "HTTP Code: $HTTP_CODE"
+          cat /tmp/groq_resp.json
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "❌ Groq API rejected key (HTTP $HTTP_CODE) — update GROQ_API_KEY secret"
             exit 1
           fi
-          echo "✅ Groq API key valid (HTTP $HTTP_CODE)"
+          echo "✅ Groq API key valid"
 
       - name: 🤖 Run AI HTML Enricher
         env:
@@ -100,11 +104,10 @@ jobs:
           DATE_IST=$(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M')
           git commit -m "🤖 AI enriched: ${PATCHED} HTML pages | ${DATE_IST} IST"
           git push origin main
-          echo "✅ ${PATCHED} pages pushed — site will update automatically"
+          echo "✅ ${PATCHED} pages pushed"
 
       - name: 📊 Summary
         run: |
           echo "### 🌙 AI Nightly Enrichment" >> $GITHUB_STEP_SUMMARY
-          echo "- **Flow:** HTML read → Groq API → HTML write (no JSON)" >> $GITHUB_STEP_SUMMARY
           echo "- **Model:** \`llama-3.1-8b-instant\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Time (IST):** $(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M')" >> $GITHUB_STEP_SUMMARY
