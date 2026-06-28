@@ -36,7 +36,7 @@ for i, a in enumerate(sys.argv):
         SINGLE_SLUG = sys.argv[i+1]
 
 # AI marker — HTML mein inject hone ke baad iska presence check karte hain
-AI_MARKER = ""
+AI_MARKER = "<!-- tsj-ai-enriched -->"
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 def e(s): return _html.escape(str(s or ""), quote=True)
@@ -185,17 +185,13 @@ def call_groq(facts: dict) -> dict | None:
             req = urllib.request.Request(
                 "https://api.groq.com/openai/v1/chat/completions",
                 data=json.dumps(body).encode(),
-                headers={
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {GROQ_KEY}",
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-                }
+                headers={"Content-Type":"application/json","Authorization":f"Bearer {GROQ_KEY}","User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"}
             )
             with urllib.request.urlopen(req, timeout=30) as resp:
                 raw = json.loads(resp.read().decode())
                 content = raw["choices"][0]["message"]["content"].strip()
-                content = re.sub(r"^```json\s*", "", content, flags=re.I)
-                content = re.sub(r"```$", "", content).strip()
+                content = re.sub(r"^```json\s*","", content, flags=re.I)
+                content = re.sub(r"```$","", content).strip()
                 return json.loads(content)
 
         except urllib.error.HTTPError as ex:
@@ -214,6 +210,7 @@ def call_groq(facts: dict) -> dict | None:
                     return None
             elif ex.code in (401, 403):
                 print(f"  ❌ Auth error {ex.code} — Groq response: {body_err[:300]}")
+                # Key invalid hai — aage sab fail honge, abort karo
                 print(f"  🛑 ABORTING — fix GROQ_API_KEY secret and retry")
                 sys.exit(1)
             else:
@@ -229,22 +226,22 @@ def call_groq(facts: dict) -> dict | None:
 def patch_html(original: str, result: dict) -> str:
     html = original
 
+    # Remove old AI block if present (full re-patch on --force)
     if AI_MARKER in html:
         html = re.sub(
             re.escape(AI_MARKER) + r".*?" + re.escape(AI_MARKER),
             "", html, flags=re.DOTALL)
 
-    # 1. Build AI sections HTML (Clean formatting to avoid any line wraps)
+    # 1. Build AI sections HTML
     ai_cards = [
-        ("ai_overview", "Overview", "fa-circle-info", "1d4ed8,#3b82f6"),
-        ("ai_expert_analysis", "Expert Analysis", "fa-lightbulb", "7c3aed,#a855f7"),
-        ("ai_who_should_apply", "Who Should Apply", "fa-user-check", "0f766e,#0891b2"),
-        ("ai_preparation_tips", "Preparation Tips", "fa-list-check", "047857,#10b981"),
-        ("ai_salary_insights", "Salary Insights", "fa-indian-rupee-sign", "b45309,#f59e0b"),
-        ("ai_job_profile_analysis", "Job Profile", "fa-briefcase", "475569,#334155"),
-        ("ai_selection_strategy", "Selection Strategy", "fa-bullseye", "be123c,#f43f5e")
+        ("ai_overview",             "Overview",           "fa-circle-info",        "1d4ed8,#3b82f6"),
+        ("ai_expert_analysis",      "Expert Analysis",    "fa-lightbulb",          "7c3aed,#a855f7"),
+        ("ai_who_should_apply",     "Who Should Apply",   "fa-user-check",         "0f766e,#0891b2"),
+        ("ai_preparation_tips",     "Preparation Tips",   "fa-list-check",         "047857,#10b981"),
+        ("ai_salary_insights",      "Salary Insights",    "fa-indian-rupee-sign",  "b45309,#f59e0b"),
+        ("ai_job_profile_analysis", "Job Profile",        "fa-briefcase",          "475569,#334155"),
+        ("ai_selection_strategy",   "Selection Strategy", "fa-bullseye",           "be123c,#f43f5e"),
     ]
-    
     ai_html = ""
     for key, heading, icon, color in ai_cards:
         val = striptags(result.get(key) or "").strip()
@@ -260,7 +257,9 @@ def patch_html(original: str, result: dict) -> str:
                             f'<div class="faq-wrap">{faq_html}</div>')
 
     if ai_html:
+        # Wrap in markers so we can find/replace on next run
         ai_block = f"\n{AI_MARKER}\n{ai_html}{AI_MARKER}\n"
+        # Insert BEFORE first sec-card
         pos = html.find('<section class="sec-card">')
         if pos != -1:
             html = html[:pos] + ai_block + html[pos:]
@@ -342,6 +341,7 @@ def main():
         print(f"❌ {JOBS_DIR} not found — run from repo root")
         sys.exit(1)
 
+    # Load progress
     progress = load_progress()
     today = datetime.now().strftime("%Y-%m-%d")
     if progress.get("date") != today:
@@ -352,6 +352,7 @@ def main():
     print(f"📊 Today: {calls_today} calls done, {len(done_slugs)} pages processed")
     print()
 
+    # Collect HTML files to process
     if SINGLE_SLUG:
         html_files = [JOBS_DIR / SINGLE_SLUG / "index.html"]
     else:
@@ -376,10 +377,12 @@ def main():
 
         slug = html_path.parent.name
 
+        # Skip if already done today
         if not FORCE and slug in done_slugs:
             skipped_done += 1
             continue
 
+        # Read HTML
         try:
             original = html_path.read_text(encoding="utf-8")
         except Exception as ex:
@@ -387,9 +390,227 @@ def main():
             errors += 1
             continue
 
+        # ── Microdata inject (no API needed) ─────────────────────
         md_html, md_changed = inject_missing_microdata(original)
         if md_changed and not DRY_RUN:
             tmp = html_path.with_suffix(".tmp")
             tmp.write_text(md_html, encoding="utf-8")
             tmp.replace(html_path)
-            original =
+            original = md_html   # updated original for AI patch below
+            print(f"   📋 Microdata injected (JobPosting itemprop)")
+
+        # Skip if already has AI content (and not forcing)
+        if not FORCE and AI_MARKER in original:
+            skipped_ai += 1
+            done_slugs.add(slug)
+            continue
+
+        # Extract facts from HTML
+        facts = extract_facts(original, slug)
+        if not facts.get("title"):
+            skipped_done += 1
+            continue
+
+        print(f"\n⚡ [{processed+1}/{RUN_LIMIT}] [{calls_today+1}/{DAILY_LIMIT}]")
+        print(f"   {facts.get('title','')[:65]}")
+        print(f"   Org: {facts.get('organization','?')[:50]}")
+
+        if DRY_RUN:
+            print(f"   🔵 DRY RUN — would call API")
+            processed += 1
+            continue
+
+        # Call Groq
+        result = call_groq(facts)
+        if not result:
+            errors += 1
+            print(f"   ⚠️  API returned nothing — skipping")
+            time.sleep(DELAY_SEC)
+            continue
+
+        # Patch HTML
+        new_html = patch_html(original, result)
+
+        # Atomic write
+        tmp = html_path.with_suffix(".tmp")
+        tmp.write_text(new_html, encoding="utf-8")
+        tmp.replace(html_path)
+
+        print(f"   ✅ Done — HTML patched")
+
+        processed += 1
+        calls_today += 1
+        done_slugs.add(slug)
+
+        # Save progress
+        progress["done_slugs"] = list(done_slugs)
+        progress["calls_today"] = calls_today
+        save_progress(progress)
+
+        # Git commit every 10 pages
+        if processed % 10 == 0:
+            git_commit(processed, calls_today)
+
+        time.sleep(DELAY_SEC)
+
+    # Final git commit
+    if processed > 0 and not DRY_RUN:
+        git_commit(processed, calls_today)
+
+    print()
+    print("=" * 60)
+    print(f"  ✅ Patched    : {processed}")
+    print(f"  ⏭️  Already AI : {skipped_ai}")
+    print(f"  ⏭️  Done today : {skipped_done}")
+    print(f"  ❌ Errors     : {errors}")
+    print("=" * 60)
+
+# ══════════════════════════════════════════════════════════════════
+# MICRODATA INJECTOR — Google crawl fields (no API needed)
+# JSON-LD se values extract → hidden microdata <div> inject
+# ══════════════════════════════════════════════════════════════════
+
+MICRODATA_MARKER = "<!-- tsj-microdata -->"
+
+def extract_jsonld(html: str, type_name: str) -> dict:
+    """HTML se specific @type ka JSON-LD block extract karo."""
+    for block in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.DOTALL):
+        try:
+            jd = json.loads(block)
+            if jd.get("@type") == type_name:
+                return jd
+        except:
+            pass
+    return {}
+
+def build_microdata_block(jd: dict) -> str:
+    """
+    JobPosting JSON-LD → Google-crawlable microdata HTML block.
+    Hidden div — visually invisible, Google reads it.
+    """
+    if not jd:
+        return ""
+
+    # ── Extract values from JSON-LD ───────────────────────────────
+    title        = striptags(jd.get("title", ""))
+    description  = striptags(jd.get("description", ""))
+    date_posted  = jd.get("datePosted", "")
+    valid_through = (jd.get("validThrough") or jd.get("applicationDeadline") or "")
+    # Normalize date: "2026-07-30T00:00:00" → "2026-07-30"
+    if valid_through and "T" in valid_through:
+        valid_through = valid_through.split("T")[0]
+    employment_type = jd.get("employmentType", "FULL_TIME")
+    direct_apply    = str(jd.get("directApply", "True")).lower()
+    direct_apply    = "True" if direct_apply in ("true", "1") else "False"
+
+    # hiringOrganization
+    hiring_org  = jd.get("hiringOrganization", {})
+    org_name    = striptags(hiring_org.get("name", "") if isinstance(hiring_org, dict) else "")
+    org_url     = hiring_org.get("sameAs", "") if isinstance(hiring_org, dict) else ""
+
+    # jobLocation
+    job_loc     = jd.get("jobLocation", {})
+    address     = job_loc.get("address", {}) if isinstance(job_loc, dict) else {}
+    city        = striptags(address.get("addressLocality", "India") if isinstance(address, dict) else "India")
+    region      = striptags(address.get("addressRegion", "") if isinstance(address, dict) else "")
+    country     = address.get("addressCountry", "IN") if isinstance(address, dict) else "IN"
+    postal      = address.get("postalCode", "") if isinstance(address, dict) else ""
+
+    # baseSalary
+    base_sal    = jd.get("baseSalary", {})
+    sal_val     = base_sal.get("value", {}) if isinstance(base_sal, dict) else {}
+    min_sal     = str(sal_val.get("minValue", "")) if isinstance(sal_val, dict) else ""
+    max_sal     = str(sal_val.get("maxValue", "")) if isinstance(sal_val, dict) else ""
+    currency    = base_sal.get("currency", "INR") if isinstance(base_sal, dict) else "INR"
+    unit_text   = sal_val.get("unitText", "MONTH") if isinstance(sal_val, dict) else "MONTH"
+
+    # ── Build microdata HTML ──────────────────────────────────────
+    html_out = f'\n{MICRODATA_MARKER}\n'
+    html_out += '<div itemscope itemtype="https://schema.org/JobPosting" style="display:none" aria-hidden="true">\n'
+
+    # Required fields
+    if title:
+        html_out += f'  <meta itemprop="title" content="{e(title)}">\n'
+    if description:
+        # Keep description under 5000 chars
+        desc_short = description[:5000]
+        html_out += f'  <meta itemprop="description" content="{e(desc_short)}">\n'
+    if date_posted:
+        html_out += f'  <meta itemprop="datePosted" content="{e(date_posted)}">\n'
+    if valid_through:
+        html_out += f'  <meta itemprop="validThrough" content="{e(valid_through)}">\n'
+    if employment_type:
+        html_out += f'  <meta itemprop="employmentType" content="{e(employment_type)}">\n'
+    html_out += f'  <meta itemprop="directApply" content="{direct_apply}">\n'
+
+    # hiringOrganization
+    if org_name:
+        html_out += '  <div itemprop="hiringOrganization" itemscope itemtype="https://schema.org/Organization">\n'
+        html_out += f'    <meta itemprop="name" content="{e(org_name)}">\n'
+        if org_url:
+            html_out += f'    <meta itemprop="url" content="{e(org_url)}">\n'
+        html_out += '  </div>\n'
+
+    # jobLocation
+    html_out += '  <div itemprop="jobLocation" itemscope itemtype="https://schema.org/Place">\n'
+    html_out += '    <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">\n'
+    if city:
+        html_out += f'      <meta itemprop="addressLocality" content="{e(city)}">\n'
+    if region:
+        html_out += f'      <meta itemprop="addressRegion" content="{e(region)}">\n'
+    html_out += f'      <meta itemprop="addressCountry" content="{e(country)}">\n'
+    if postal:
+        html_out += f'      <meta itemprop="postalCode" content="{e(postal)}">\n'
+    html_out += '    </div>\n  </div>\n'
+
+    # baseSalary
+    if min_sal or max_sal:
+        html_out += '  <div itemprop="baseSalary" itemscope itemtype="https://schema.org/MonetaryAmount">\n'
+        html_out += f'    <meta itemprop="currency" content="{e(currency)}">\n'
+        html_out += '    <div itemprop="value" itemscope itemtype="https://schema.org/QuantitativeValue">\n'
+        if min_sal:
+            html_out += f'      <meta itemprop="minValue" content="{e(min_sal)}">\n'
+        if max_sal:
+            html_out += f'      <meta itemprop="maxValue" content="{e(max_sal)}">\n'
+        html_out += f'      <meta itemprop="unitText" content="{e(unit_text)}">\n'
+        html_out += '    </div>\n  </div>\n'
+
+    # applicantLocationRequirements
+    html_out += '  <div itemprop="applicantLocationRequirements" itemscope itemtype="https://schema.org/Country">\n'
+    html_out += '    <meta itemprop="name" content="India">\n'
+    html_out += '  </div>\n'
+
+    html_out += f'</div>\n{MICRODATA_MARKER}\n'
+    return html_out
+
+
+def inject_missing_microdata(html: str) -> tuple[str, bool]:
+    """
+    Agar page mein JobPosting JSON-LD hai aur microdata nahi →
+    microdata block inject karo </body> se pehle.
+    Returns (new_html, was_changed)
+    """
+    # Already injected?
+    if MICRODATA_MARKER in html:
+        return html, False
+
+    # Page mein JobPosting JSON-LD hai?
+    jd = extract_jsonld(html, "JobPosting")
+    if not jd:
+        return html, False
+
+    # Build microdata block from JSON-LD values
+    microdata = build_microdata_block(jd)
+    if not microdata:
+        return html, False
+
+    # Inject before </body>
+    pos = html.rfind("</body>")
+    if pos == -1:
+        return html, False
+
+    new_html = html[:pos] + microdata + html[pos:]
+    return new_html, True
+
+if __name__ == "__main__":
+    main()
