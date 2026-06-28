@@ -47,6 +47,26 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: 🔑 Verify GROQ_API_KEY
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          if [ -z "$GROQ_API_KEY" ]; then
+            echo "❌ GROQ_API_KEY is EMPTY — secret not set"
+            exit 1
+          fi
+          KEY_LEN=${#GROQ_API_KEY}
+          KEY_PREFIX="${GROQ_API_KEY:0:8}"
+          echo "✅ Key present — length: ${KEY_LEN}, prefix: ${KEY_PREFIX}..."
+          # Quick live test
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}"             -H "Authorization: Bearer $GROQ_API_KEY"             -H "Content-Type: application/json"             -d '{"model":"llama-3.1-8b-instant","max_tokens":5,"messages":[{"role":"user","content":"hi"}]}'             https://api.groq.com/openai/v1/chat/completions)
+          echo "Groq API test HTTP code: $HTTP_CODE"
+          if [ "$HTTP_CODE" = "401" ] || [ "$HTTP_CODE" = "403" ]; then
+            echo "❌ Key REJECTED by Groq — update GROQ_API_KEY secret"
+            exit 1
+          fi
+          echo "✅ Groq API key valid (HTTP $HTTP_CODE)"
+
       - name: 🤖 Run AI HTML Enricher
         env:
           GROQ_API_KEY:  ${{ secrets.GROQ_API_KEY }}
