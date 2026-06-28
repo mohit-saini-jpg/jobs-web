@@ -87,6 +87,7 @@ def is_garbage_title(title):
     tl = title.lower().strip()
     return any(p in tl for p in GARBAGE_PATTERNS)
 TODAY    = date.today().isoformat()
+TODAY_ISO = date.today().strftime('%Y-%m-%dT00:00:00+05:30')   # ISO 8601 with IST tz
 YEAR     = date.today().year
 from datetime import datetime as _dt_assetver
 ASSET_VER = _dt_assetver.now().strftime('%Y%m%d%H%M%S')  # cache-bust query for shared JS
@@ -269,102 +270,261 @@ def get_date_posted(slug, job_obj):
     _FIRST_SEEN_DIRTY = True
     return TODAY
 
-# ── PAGE INTENT CLASSIFIER ────────────────────────────────────────────────────
-# Returns one of: job | result | admitcard | answerkey | syllabus |
-#                 admission | scheme | education | article
+# ── DYNAMIC PAGE INTENT CLASSIFIER ─────────────────────────────────────────
+# Returns one of 9 intents:
+#   job | result | admitcard | answerkey | syllabus | admission | scheme |
+#   education | article
+# Logic: category prefix → data signals → title+slug keywords (priority order)
+# NEVER upgrades a non-job category to 'job' based on title alone.
 import re as _re_intent
 
-# ── Signals that CONFIRM it's a real recruitment job ─────────────────────────
+# ── Job confirmation signals ─────────────────────────────────────────────────
 _RX_JOB = _re_intent.compile(
-    r'\b(recruitment|vacancy|vacancies|online.?form|apply.?online|posts?|'
-    r'notification|bharti|engagement|walk.?in|hiring|appointment|advt|'
-    r'advtno|job.?alert)\b', _re_intent.I)
+    r'\b(recruitment|vacancy|vacancies|online\s*form|apply\s*online|'
+    r'notification|bharti|engagement|walk\s*in|hiring|appointment|advt|'
+    r'job\s*alert|sarkari\s*naukri\s*form)\b', _re_intent.I)
 
-# ── Non-job page signals ──────────────────────────────────────────────────────
+# ── Non-job signals (mutually exclusive, in priority order) ─────────────────
+_RX_ANSWERKEY = _re_intent.compile(
+    r'\b(answer\s*key|answer\s*sheet|objection|challenge\s*key|'
+    r'response\s*sheet|provisional\s*answer)\b', _re_intent.I)
+
 _RX_RESULT = _re_intent.compile(
-    r'\b(result|results|scorecard|score.?card|merit.?list|cut.?off|rank.?card|'
-    r'declared|revaluation|marks.?available|final.?answer.?key|provisional.?key)\b',
-    _re_intent.I)
+    r'\b(result|results|scorecard|score\s*card|merit\s*list|'
+    r'cut\s*off|rank\s*card|declared|revaluation|marks\s*available|'
+    r'final\s*answer\s*key|provisional\s*key)\b', _re_intent.I)
 
 _RX_ADMIT = _re_intent.compile(
-    r'\b(admit.?card|hall.?ticket|call.?letter|exam.?date|date.?sheet|'
-    r'time.?table|exam.?city|slot.?booking|exam.?schedule|exam.?centre)\b',
-    _re_intent.I)
-
-_RX_ANSWERKEY = _re_intent.compile(
-    r'\b(answer.?key|answer.?sheet|objection|challenge.?key|response.?sheet|'
-    r'provisional.?answer)\b', _re_intent.I)
+    r'\b(admit\s*card|hall\s*ticket|call\s*letter|exam\s*date|'
+    r'date\s*sheet|time\s*table|exam\s*city|slot\s*booking|'
+    r'exam\s*schedule|exam\s*centre|download\s*admit)\b', _re_intent.I)
 
 _RX_SYLLABUS = _re_intent.compile(
-    r'\b(syllabus|exam.?pattern|paper.?pattern|curriculum|study.?material|'
-    r'previous.?paper|old.?paper|model.?paper|sample.?paper|question.?paper)\b',
-    _re_intent.I)
+    r'\b(syllabus|exam\s*pattern|paper\s*pattern|study\s*material|'
+    r'previous\s*paper|old\s*paper|model\s*paper|sample\s*paper|'
+    r'question\s*paper|curriculum)\b', _re_intent.I)
 
 _RX_ADMISSION = _re_intent.compile(
-    r'\b(admission|counselling|counseling|allotment|seat.?allot|merit.?list.?admission|'
-    r'neet|jee|cuet|entrance|college.?admission|university.?admission)\b',
+    r'\b(admission|counselling|counseling|allotment|seat\s*allot|'
+    r'neet|jee|cuet|entrance|college\s*admission|merit\s*list\s*admission)\b',
     _re_intent.I)
 
 _RX_SCHEME = _re_intent.compile(
-    r'\b(yojana|yojna|scheme|pension|scholarship|pm.?kisan|samman.?nidhi|'
-    r'e.?shram|umang|digilocker|ration.?card|aadhar|loan|subsidy|stipend|'
-    r'pradhan.?mantri|mukhya.?mantri|awas|ujjwala|svamitva)\b',
+    r'\b(yojana|yojna|scheme|pension|pm\s*kisan|samman\s*nidhi|'
+    r'e\s*shram|umang|ration\s*card|aadhar|loan|subsidy|stipend|'
+    r'pradhan\s*mantri|mukhya\s*mantri|awas|ujjwala|svamitva|'
+    r'scholarship(?!.*exam)|card\s*download|kyc|status\s*check)\b',
     _re_intent.I)
 
 _RX_EDUCATION = _re_intent.compile(
-    r'\b(state.?wise|district.?wise|age.?limit|eligibility|qualification|'
-    r'education.?wise|category.?wise|education.?qualification|how.?to.?apply)\b',
-    _re_intent.I)
+    r'\b(state\s*wise|district\s*wise|education\s*wise|category\s*wise\s*job|'
+    r'age\s*limit\s*guide|eligibility\s*guide|qualification\s*wise|'
+    r'how\s*to\s*apply\s*guide|10th\s*pass\s*jobs|12th\s*pass\s*jobs|'
+    r'graduate\s*jobs|diploma\s*jobs)\b', _re_intent.I)
 
-# Category prefix → intent mapping (fastest path, no regex needed)
+# ── Category-prefix → intent (AUTHORITATIVE — never overridden by title) ────
 _CAT_INTENT = {
-    'SR_Result': 'result',        'SR_Admit_Card': 'admitcard',
-    'SR_Answer_Key': 'answerkey', 'SR_Syllabus': 'syllabus',
-    'SR_Admission': 'admission',  'SR_Latest_Jobs': 'job',
-    'FJA_Admission': 'admission', 'FJA_Result': 'result',
-    'FJA_Admit_Card': 'admitcard','Scheme': 'scheme',
-    'Yojana': 'scheme',           'Education': 'education',
-    'StateWise': 'education',
-    'Article': 'article',
-    'Guide': 'article',
-    'Info': 'article',
+    'SR_Latest_Jobs': 'job',      'SR_Upcoming_Jobs': 'job',
+    'SR_Result':      'result',   'FJA_Result':       'result',
+    'SR_Admit_Card':  'admitcard','FJA_Admit_Card':   'admitcard',
+    'SR_Answer_Key':  'answerkey','FJA_Answer_Key':   'answerkey',
+    'SR_Syllabus':    'syllabus', 'FJA_Syllabus':     'syllabus',
+    'SR_Admission':   'admission','FJA_Admission':    'admission',
+    'Scheme':         'scheme',   'Yojana':           'scheme',
+    'Education':      'education','StateWise':        'education',
+    'Article':        'article',  'Guide':            'article',
+    'Info':           'article',
 }
 
-def page_intent(job_obj):
-    """Return one of: job | result | admitcard | answerkey | syllabus |
-                      admission | scheme | education | article
-    Priority: category prefix > vacancy signal > title keywords.
+# ── SLUG-BASED STATE MAP (acronym-aware, order matters) ─────────────────────
+_SLUG_STATE_MAP = [
+    # West Bengal — BEFORE Bihar (wbpsc/wbssc contain 'bpsc'/'bssc')
+    ('west-bengal','West Bengal','700001'), ('wbpsc','West Bengal','700001'),
+    ('wbssc','West Bengal','700001'),
+    # Chhattisgarh
+    ('chhattisgarh','Chhattisgarh','492001'), ('cgpsc','Chhattisgarh','492001'),
+    ('cgvyapam','Chhattisgarh','492001'),
+    # Jharkhand
+    ('jharkhand','Jharkhand','834001'), ('jssc','Jharkhand','834001'),
+    ('jpsc','Jharkhand','834001'),
+    # Rajasthan
+    ('rajasthan','Rajasthan','302001'), ('rpsc','Rajasthan','302001'),
+    ('rsmssb','Rajasthan','302001'),    ('reet','Rajasthan','302001'),
+    # Uttar Pradesh
+    ('up-police','Uttar Pradesh','226001'), ('uppsc','Uttar Pradesh','226001'),
+    ('upsssc','Uttar Pradesh','226001'),    ('upsessb','Uttar Pradesh','226001'),
+    ('uttar-pradesh','Uttar Pradesh','226001'), ('uppcb','Uttar Pradesh','226001'),
+    # Bihar
+    ('bihar','Bihar','800001'),  ('bpsc','Bihar','800001'), ('bssc','Bihar','800001'),
+    # Madhya Pradesh
+    ('madhya-pradesh','Madhya Pradesh','462001'), ('mppsc','Madhya Pradesh','462001'),
+    ('mptet','Madhya Pradesh','462001'),
+    # Maharashtra
+    ('maharashtra','Maharashtra','400001'), ('mpsc','Maharashtra','400001'),
+    ('rbi','Maharashtra','400001'),         ('nabard','Maharashtra','400001'),
+    ('niacl','Maharashtra','400001'),
+    # Gujarat
+    ('gujarat','Gujarat','380001'), ('gpsc','Gujarat','380001'),
+    ('gsssb','Gujarat','380001'),   ('gsrtc','Gujarat','380001'),
+    # Haryana
+    ('haryana','Haryana','122001'), ('hpsc','Haryana','122001'),
+    ('hssc','Haryana','122001'),    ('hsssc','Haryana','122001'),
+    # Punjab
+    ('punjab','Punjab','141001'), ('ppsc','Punjab','141001'), ('psssb','Punjab','141001'),
+    # Karnataka
+    ('karnataka','Karnataka','560001'), ('kpsc','Karnataka','560001'),
+    ('ksp','Karnataka','560001'),
+    # Tamil Nadu
+    ('tamil-nadu','Tamil Nadu','600001'), ('tnpsc','Tamil Nadu','600001'),
+    ('tnusrb','Tamil Nadu','600001'),
+    # Odisha
+    ('odisha','Odisha','751001'), ('opsc','Odisha','751001'), ('osssc','Odisha','751001'),
+    # Telangana
+    ('telangana','Telangana','500001'), ('tspsc','Telangana','500001'),
+    # Andhra Pradesh
+    ('andhra-pradesh','Andhra Pradesh','520001'), ('appsc','Andhra Pradesh','520001'),
+    # Assam
+    ('assam','Assam','781001'), ('apsc','Assam','781001'), ('apdcl','Assam','781001'),
+    # Uttarakhand
+    ('uttarakhand','Uttarakhand','248001'), ('ukpsc','Uttarakhand','248001'),
+    ('uksssc','Uttarakhand','248001'),
+    # Himachal Pradesh
+    ('himachal-pradesh','Himachal Pradesh','171001'), ('hppsc','Himachal Pradesh','171001'),
+    ('himachal','Himachal Pradesh','171001'),
+    # Kerala
+    ('kerala','Kerala','695001'),
+    # Other states
+    ('goa','Goa','403001'),
+    ('tripura','Tripura','799001'),   ('tpsc','Tripura','799001'),
+    ('manipur','Manipur','795001'),
+    ('nagaland','Nagaland','797001'),
+    ('meghalaya','Meghalaya','793001'),
+    ('mizoram','Mizoram','796001'),
+    ('arunachal','Arunachal Pradesh','791001'),
+    ('sikkim','Sikkim','737101'),
+    ('chandigarh','Chandigarh','160001'),
+    ('jammu','Jammu & Kashmir','180001'), ('jkpsc','Jammu & Kashmir','180001'),
+    ('jkssb','Jammu & Kashmir','180001'),
+    # PSUs
+    ('northern-coalfield','Madhya Pradesh','486001'),
+    ('central-coalfields','Jharkhand','834001'),
+    ('coal-india','West Bengal','700001'),
+    ('bhel','Uttar Pradesh','208001'),
+    # Delhi & Central
+    ('delhi','Delhi','110001'),  ('dsssb','Delhi','110001'),
+    ('ndmc','Delhi','110001'),   ('upsc','Delhi','110001'),
+    ('ssc','Delhi','110001'),    ('nicl','Delhi','110001'),
+    ('ntpc','Delhi','110001'),   ('ongc','Delhi','110001'),
+    ('sail','Delhi','110001'),
+]
+
+def _detect_state_from_text(text):
+    """Return (region, pincode) from slug/title/org text, or (None, None)."""
+    t = str(text).lower().replace(' ', '-')
+    for kw, region, pin in _SLUG_STATE_MAP:
+        if kw in t:
+            return region, pin
+    return None, None
+
+def _reconstruct_job_from_html(html_content, title, slug):
+    """Rebuild minimal job dict from existing page HTML (no data JSON available).
+    Extracts org/location/dates from existing JSON-LD. Uses _detect_state_from_text
+    on slug+title+org for correct state detection on old orphan pages.
     """
-    bd  = job_obj.get('basic_details', {}) or {}
-    cat = str(job_obj.get('category') or '')
+    import json as _j
+    job = {
+        'title': title,
+        'basic_details': {'job_title': title, 'job_location': 'India',
+                          'organization_name': 'Government of India',
+                          'short_information': title},
+        'important_dates': {}, 'salary_details': {},
+        'ai_extracted_structured_data': None, 'category': '',
+    }
+    for _m in _JSONLD_RE.findall(html_content):
+        try:
+            _d = _j.loads(_m[_m.index('{'):_m.rindex('}')+1])
+            if _d.get('@type') == 'JobPosting':
+                _ho = _d.get('hiringOrganization', {})
+                if _ho.get('name'):
+                    job['basic_details']['organization_name'] = _ho['name']
+                _addr = (_d.get('jobLocation') or {}).get('address', {})
+                _loc  = _addr.get('addressLocality', '')
+                if _loc and _loc.lower() not in ('india', ''):
+                    job['basic_details']['job_location'] = _loc
+                if _d.get('validThrough', '')[:10]:
+                    job['important_dates']['last_date_to_apply'] = _d['validThrough'][:10]
+                _sal = (_d.get('baseSalary') or {}).get('value', {})
+                if _sal.get('minValue'):
+                    job['salary_details']['pay_scale'] =                         f"{_sal['minValue']}-{_sal.get('maxValue', _sal['minValue'])}"
+        except Exception:
+            pass
+    # Infer category from slug keywords
+    for _kw, _cat in [('admit', 'SR_Admit_Card'), ('result', 'SR_Result'),
+                       ('answer-key', 'SR_Answer_Key'), ('syllabus', 'SR_Syllabus'),
+                       ('admission', 'SR_Admission'), ('recruitment', 'SR_Latest_Jobs'),
+                       ('vacancy', 'SR_Latest_Jobs'), ('yojana', 'Scheme'),
+                       ('scheme', 'Scheme')]:
+        if _kw in slug.lower():
+            job['category'] = _cat; break
+    # State detection: slug + title + org (most reliable for old pages)
+    _r, _p = _detect_state_from_text(
+        f"{slug} {title} {job['basic_details']['organization_name']}")
+    if _r:
+        job['basic_details']['job_location'] = _r
+        job['_detected_region'] = _r
+        job['_detected_pin']    = _p
+    return job
 
-    # 1. Category prefix — ALWAYS wins (most reliable signal)
-    #    Never override with title keywords — category is set by scraper/admin
-    for prefix, intent in _CAT_INTENT.items():
-        if cat.startswith(prefix) or cat == prefix:
-            return intent
-
-    # 2. Build blob for regex matching
+def page_intent(job_obj):
+    """Dynamically classify page into one of 9 intents.
+    Priority: category prefix > data signals > title/slug keywords.
+    Category NEVER gets overridden by title — avoids false positives.
+    """
+    bd    = job_obj.get('basic_details', {}) or {}
+    cat   = str(job_obj.get('category') or '').strip()
     title = str(bd.get('job_title','') or job_obj.get('title','') or '')
     slug  = str(job_obj.get('_canonical_slug') or job_obj.get('slug') or '')
-    blob  = f"{title} {cat} {slug}".lower()
 
-    has_vacancy = bool(job_obj.get('vacancy_details') or
-                       job_obj.get('category_wise_vacancy') or
-                       bd.get('total_vacancies'))
+    # ── STEP 1: Category prefix (authoritative, fastest) ────────────────────
+    for prefix, intent in _CAT_INTENT.items():
+        if cat == prefix or cat.startswith(prefix + '_') or cat.startswith(prefix):
+            return intent
 
-    # 3. Job signal (strong) — check before non-job signals
-    if _RX_JOB.search(blob) or has_vacancy:
+    # ── STEP 2: Data signals (vacancy/salary = definite job) ────────────────
+    has_vacancy = bool(
+        job_obj.get('vacancy_details') or
+        job_obj.get('category_wise_vacancy') or
+        (bd.get('total_vacancies','') not in ('','0', None)))
+    if has_vacancy:
         return 'job'
 
-    # 4. Non-job signals (mutually exclusive, priority order)
-    if _RX_ANSWERKEY.search(blob):   return 'answerkey'
-    if _RX_RESULT.search(blob):      return 'result'
-    if _RX_ADMIT.search(blob):       return 'admitcard'
-    if _RX_SYLLABUS.search(blob):    return 'syllabus'
-    if _RX_ADMISSION.search(blob):   return 'admission'
-    if _RX_SCHEME.search(blob):      return 'scheme'
-    if _RX_EDUCATION.search(blob):   return 'education'
+    # ── STEP 3: Title + slug keyword matching (priority order) ──────────────
+    blob = f"{title} {slug}".lower()
+
+    # Answer key first (before result, as some AK pages have "result" word)
+    if _RX_ANSWERKEY.search(blob):
+        return 'answerkey'
+    # Syllabus (before result/admit to avoid "exam date" cross-match)
+    if _RX_SYLLABUS.search(blob) and not _RX_JOB.search(blob):
+        return 'syllabus'
+    # Result (only when no job signal)
+    if _RX_RESULT.search(blob) and not _RX_JOB.search(blob):
+        return 'result'
+    # Admit card (only when no job signal)
+    if _RX_ADMIT.search(blob) and not _RX_JOB.search(blob):
+        return 'admitcard'
+    # Admission counselling
+    if _RX_ADMISSION.search(blob) and not _RX_JOB.search(blob):
+        return 'admission'
+    # Job signal (after all non-job checks)
+    if _RX_JOB.search(blob):
+        return 'job'
+    # Scheme / Yojana
+    if _RX_SCHEME.search(blob):
+        return 'scheme'
+    # Education / listing pages
+    if _RX_EDUCATION.search(blob):
+        return 'education'
 
     return 'article'
 
@@ -2843,21 +3003,22 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
     vacancies = safe(bd.get('total_vacancies','') or job_obj.get('total_post','') or job_obj.get('total_vacancy',''))
     # SECURE FALLBACK: ai_extracted_structured_data for missing fields
     ai_data = job_obj.get('ai_extracted_structured_data') or {}
-    # Official website (used in both job and non-job schemas)
-    _BLOCKED = {'topsarkarijobs.com','sarkariresult.com','freejobalert.com',
-                'sarkarinetwork.com','sarkariresultshine.com'}
+    # Official website (used in job + non-job schemas)
+    _SITE_BLOCKED = {'topsarkarijobs.com','sarkariresult.com','freejobalert.com',
+                     'sarkarinetwork.com','sarkariresultshine.com'}
     _official_site_url = safe(
         (job_obj.get('important_links') or {}).get('official_website','') or
         (job_obj.get('useful_links') or {}).get('official_website','') or
         (job_obj.get('basic_details') or {}).get('official_website','') or '')
-    if any(b in _official_site_url for b in _BLOCKED):
+    if any(b in _official_site_url for b in _SITE_BLOCKED):
         _official_site_url = ''
 
     if slug is None:
         slug = registered_slug(title)[:80]
     intent = page_intent(job_obj)
     # C1: stable datePosted (never build-date for the same job across rebuilds)
-    date_posted = get_date_posted(slug, job_obj)
+    date_posted    = get_date_posted(slug, job_obj)           # YYYY-MM-DD
+    date_posted_iso = f"{date_posted}T00:00:00+05:30"         # ISO 8601 with IST
 
     # ── Breadcrumb schema (always) ──
     bc_items = [{'@type':'ListItem','position':1,'name':'Home','item':BASE_URL+'/'}]
@@ -2900,28 +3061,55 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
             'jammu':('Jammu & Kashmir','180001'), 'kashmir':('Jammu & Kashmir','190001'),
             'india':('Delhi','110001'),  # national-level jobs default
         }
-        _loc_lower = loc.lower().strip()
-        _ai_region = safe((ai_data.get('job_location') or ''))
-        _region_src = _ai_region if _ai_region and _ai_region not in ('null','None','') else _loc_lower
-        _address_region, _postal_code = 'Delhi', '110001'  # safe master defaults
-        for _state_key, (_region_val, _pin_val) in _STATE_MAP.items():
-            if _state_key in _region_src.lower():
-                _address_region, _postal_code = _region_val, _pin_val
-                break
-        # ai_data postal_code override if valid 6-digit
+        # ── 4-LEVEL STATE DETECTION ─────────────────────────────────────────────
+        # L1: ai_data.job_location  (AI-extracted, most reliable)
+        # L2: loc / job_location field  (from basic_details)
+        # L3: _SLUG_STATE_MAP on slug+title+org  (acronym-aware: UPPCB→UP, CGPSC→CG)
+        # L4: _detected_region from _reconstruct_job_from_html (HTML-only old pages)
+        _loc_lower  = loc.lower().strip()
+        _ai_region  = safe((ai_data.get('job_location') or ''))
+        _pre_region = safe(job_obj.get('_detected_region') or '')
+        _pre_pin    = safe(job_obj.get('_detected_pin') or '')
+        _address_region, _postal_code = 'Delhi', '110001'  # master default
+
+        # L1: ai_data
+        if _ai_region and _ai_region not in ('null','None',''):
+            for _sk, (_rv, _pv) in _STATE_MAP.items():
+                if _sk in _ai_region.lower():
+                    _address_region, _postal_code = _rv, _pv; break
+
+        # L2: loc field (only when not generic 'india')
+        if _address_region == 'Delhi' and _loc_lower not in ('india', ''):
+            for _sk, (_rv, _pv) in _STATE_MAP.items():
+                if _sk in _loc_lower:
+                    _address_region, _postal_code = _rv, _pv; break
+
+        # L3: _SLUG_STATE_MAP on slug+title+org
+        if _address_region == 'Delhi':
+            _s3r, _s3p = _detect_state_from_text(
+                f"{slug or ''} {title} {org}".lower().replace(' ', '-'))
+            if _s3r:
+                _address_region, _postal_code = _s3r, _s3p
+
+        # L4: pre-detected from HTML reconstruction
+        if _address_region == 'Delhi' and _pre_region:
+            _address_region, _postal_code = _pre_region, _pre_pin
+
+        # ai_data postal_code hard override (6-digit only)
         _ai_pin = str(ai_data.get('postal_code') or '').strip()
         if len(_ai_pin) == 6 and _ai_pin.isdigit():
             _postal_code = _ai_pin
 
         # ── H1: proper JobPosting only for real jobs ──
         jp = {'@context':'https://schema.org','@type':'JobPosting','title':title,
-              'description':desc,'datePosted':date_posted,'url':canon_url,
+              'description':desc,'datePosted':date_posted_iso,'url':canon_url,
               'employmentType':'FULL_TIME','directApply':False,
               'identifier':{'@type':'PropertyValue','name':org,
                             'value':safe(bd.get('advt_no','') or bd.get('notification_no','') or slug)},
               'hiringOrganization':_hiring_org,
               'jobLocation':{'@type':'Place','address':{'@type':'PostalAddress','addressCountry':'IN',
-                  'addressLocality':loc,'addressRegion':_address_region,'postalCode':_postal_code}},
+                  'addressLocality':loc,'addressRegion':_address_region,
+                  'postalCode':_postal_code,'streetAddress':f"{org} Head Office"}},
               'applicantLocationRequirements':{'@type':'Country','name':'India'}}
         # SECURE FALLBACK: baseSalary — use pay_scale if available, else Govt default range
         _pay_str = safe((job_obj.get('basic_details') or {}).get('pay_scale','') or
@@ -2941,7 +3129,7 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
         if last_d and last_d.lower().strip() not in _SKIP_DATES:
             nd = norm_date(last_d)
             if nd:
-                jp['validThrough'] = nd + 'T00:00:00'
+                jp['validThrough'] = nd + 'T00:00:00+05:30'
                 jp['applicationDeadline'] = nd
         if 'validThrough' not in jp:
             # Try ai_data.last_date
@@ -2949,13 +3137,13 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
             if _ai_last and _ai_last.lower().strip() not in _SKIP_DATES:
                 _ai_nd = norm_date(_ai_last)
                 if _ai_nd:
-                    jp['validThrough'] = _ai_nd + 'T00:00:00'
+                    jp['validThrough'] = _ai_nd + 'T00:00:00+05:30'
                     jp['applicationDeadline'] = _ai_nd
         # FINAL FALLBACK: if still no validThrough, use current year-end (31 Dec)
         if 'validThrough' not in jp:
             from datetime import datetime as _dt_vt
             _cur_year = _dt_vt.now().year
-            jp['validThrough'] = f'{_cur_year}-12-31T00:00:00'
+            jp['validThrough'] = f'{_cur_year}-12-31T00:00:00+05:30'
             jp['applicationDeadline'] = f'{_cur_year}-12-31'
         # totalJobOpenings (numeric, from vacancies) per spec
         _vac_num = re.search(r'\d[\d,]*', str(vacancies or ''))
@@ -2969,132 +3157,87 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
                            'cssSelector':['.detail-h1', '.notice', '.stats-bar']}
         primary = jp
     else:
-        # ── NON-JOB: intent-specific schema (result/admit/scheme/education/article) ──
-        # Common Article base (used by all non-job intents as wrapper)
+        # ── NON-JOB: intent-specific schema (9 types) ────────────────────────────
         _article_base = {
-            '@context': 'https://schema.org',
-            'headline': title[:110],
-            'description': desc,
-            'url': canon_url,
-            'datePublished': date_posted,
-            'dateModified': TODAY,
-            'author': {'@type': 'Organization', 'name': 'Top Sarkari Jobs Editorial Team',
-                       'url': BASE_URL + '/about/'},
-            'publisher': {'@type': 'Organization', '@id': BASE_URL + '/#organization',
-                          'name': 'Top Sarkari Jobs',
-                          'logo': {'@type': 'ImageObject', 'url': BASE_URL + '/image.png'}},
-            'mainEntityOfPage': {'@type': 'WebPage', '@id': canon_url},
-            'image': BASE_URL + '/og-jobs.png',
+            '@context':         'https://schema.org',
+            'headline':         title[:110],
+            'description':      desc,
+            'url':              canon_url,
+            'datePublished':    date_posted_iso,
+            'dateModified':     TODAY_ISO,
+            'author':           {'@type':'Organization',
+                                 'name':'Top Sarkari Jobs Editorial Team',
+                                 'url': BASE_URL + '/about/'},
+            'publisher':        {'@type':'Organization',
+                                 '@id':  BASE_URL + '/#organization',
+                                 'name': 'Top Sarkari Jobs',
+                                 'logo': {'@type':'ImageObject',
+                                          'url': BASE_URL + '/image.png'}},
+            'mainEntityOfPage': {'@type':'WebPage','@id': canon_url},
+            'image':            BASE_URL + '/og-jobs.png',
         }
-
         if intent == 'result':
-            # Result pages: SpecialAnnouncement (exam results, cut-off, merit list)
-            _event_date = safe(dates.get('result_date','') or dates.get('marks_available','') or TODAY)
-            _event_nd = norm_date(_event_date) or TODAY
+            _ev_nd = norm_date(safe(dates.get('result_date','') or dates.get('marks_available',''))) or date_posted
             primary = {
-                '@context': 'https://schema.org',
-                '@type': 'SpecialAnnouncement',
-                'name': title[:110],
-                'text': desc,
-                'datePosted': date_posted,
-                'expires': f"{_event_nd}T23:59:00",
-                'category': 'https://www.wikidata.org/wiki/Q82799',  # exam result
-                'announcementLocation': {
-                    '@type': 'Organization',
-                    'name': org,
-                    **({'url': _official_site_url} if (lambda u: u and 'topsarkarijobs' not in u)(safe((job_obj.get('important_links') or {}).get('official_website',''))) else {}),
-                },
-                'url': canon_url,
-                **{k: v for k,v in _article_base.items() if k in ('datePublished','dateModified','author','publisher','mainEntityOfPage','image')},
+                '@context':'https://schema.org','@type':'SpecialAnnouncement',
+                'name':title[:110],'text':desc,'datePosted':date_posted_iso,
+                'expires':f"{_ev_nd}T23:59:00+05:30",
+                'category':'https://www.wikidata.org/wiki/Q82799',
+                'announcementLocation':{'@type':'Organization','name':org,
+                    **({'url':_official_site_url} if _official_site_url else {})},
+                'url':canon_url,
+                **{k:v for k,v in _article_base.items()
+                   if k in ('datePublished','dateModified','author','publisher','mainEntityOfPage','image')},
             }
-
         elif intent == 'admitcard':
-            # Admit Card / Hall Ticket: Event schema
-            _exam_date = safe(dates.get('exam_date','') or dates.get('written_exam_date','') or '')
-            _exam_nd = norm_date(_exam_date) if _exam_date else ''
-            _ac_avail = safe(dates.get('admit_card_date','') or dates.get('admit_card_available','') or date_posted)
-            _ac_nd = norm_date(_ac_avail) or date_posted
+            _exam_nd = norm_date(safe(dates.get('exam_date','') or dates.get('written_exam_date','')))
+            _ac_nd   = norm_date(safe(dates.get('admit_card_date','') or dates.get('admit_card_available',''))) or date_posted
             primary = {
-                '@context': 'https://schema.org',
-                '@type': 'Event',
-                'name': title[:110],
-                'description': desc,
-                'startDate': f"{_exam_nd}T09:00:00" if _exam_nd else f"{_ac_nd}T00:00:00",
-                'endDate': f"{_exam_nd}T17:00:00" if _exam_nd else f"{_ac_nd}T23:59:00",
-                'eventStatus': 'https://schema.org/EventScheduled',
-                'eventAttendanceMode': 'https://schema.org/OfflineEventAttendanceMode',
-                'location': {
-                    '@type': 'Place',
-                    'name': loc if loc and loc != 'India' else 'India (Multiple Centres)',
-                    'address': {'@type': 'PostalAddress', 'addressCountry': 'IN',
-                                'addressLocality': loc},
-                },
-                'organizer': {'@type': 'Organization', 'name': org},
-                'url': canon_url,
-                'image': BASE_URL + '/og-jobs.png',
+                '@context':'https://schema.org','@type':'Event',
+                'name':title[:110],'description':desc,
+                'startDate':(f"{_exam_nd}T09:00:00+05:30" if _exam_nd else f"{_ac_nd}T00:00:00+05:30"),
+                'endDate':(f"{_exam_nd}T17:00:00+05:30" if _exam_nd else f"{_ac_nd}T23:59:00+05:30"),
+                'eventStatus':'https://schema.org/EventScheduled',
+                'eventAttendanceMode':'https://schema.org/OfflineEventAttendanceMode',
+                'location':{'@type':'Place',
+                    'name':loc if loc and loc!='India' else 'India (Multiple Centres)',
+                    'address':{'@type':'PostalAddress','addressCountry':'IN','addressLocality':loc}},
+                'organizer':{'@type':'Organization','name':org},
+                'url':canon_url,'image':BASE_URL+'/og-jobs.png',
             }
-
         elif intent == 'answerkey':
-            # Answer Key: Article with additionalType
-            primary = {**_article_base, '@type': 'Article',
-                       'about': {'@type': 'Thing', 'name': f'{org} Answer Key'},
-                       'keywords': f'answer key, {org}, {title[:60]}'}
-
+            primary = {**_article_base,'@type':'Article',
+                'about':{'@type':'Thing','name':f'{org} Answer Key'},
+                'keywords':f'answer key, {org}, {title[:60]}'}
         elif intent == 'syllabus':
-            # Syllabus / Exam Pattern: Course or Article
             primary = {
-                '@context': 'https://schema.org',
-                '@type': 'Course',
-                'name': title[:110],
-                'description': desc,
-                'url': canon_url,
-                'provider': {'@type': 'Organization', 'name': org},
-                'educationalLevel': 'Government Exam',
-                'inLanguage': 'hi-IN',
+                '@context':'https://schema.org','@type':'Course',
+                'name':title[:110],'description':desc,'url':canon_url,
+                'provider':{'@type':'Organization','name':org},
+                'educationalLevel':'Government Exam','inLanguage':'hi-IN',
             }
-
         elif intent == 'admission':
-            # College/University Admission: EducationalOccupationalProgram or Article
             primary = {
-                '@context': 'https://schema.org',
-                '@type': 'EducationalOccupationalProgram',
-                'name': title[:110],
-                'description': desc,
-                'url': canon_url,
-                'provider': {'@type': 'Organization', 'name': org},
-                'applicationStartDate': date_posted,
-                'applicationDeadline': norm_date(last_d) or TODAY,
-                'offers': {'@type': 'Offer', 'category': 'Admission'},
+                '@context':'https://schema.org','@type':'EducationalOccupationalProgram',
+                'name':title[:110],'description':desc,'url':canon_url,
+                'provider':{'@type':'Organization','name':org},
+                'applicationStartDate':date_posted,
+                'applicationDeadline':norm_date(last_d) if last_d else TODAY,
+                'offers':{'@type':'Offer','category':'Admission'},
             }
-
         elif intent == 'scheme':
-            # Govt Scheme / Yojana: GovernmentService
             primary = {
-                '@context': 'https://schema.org',
-                '@type': 'GovernmentService',
-                'name': title[:110],
-                'description': desc,
-                'url': canon_url,
-                'provider': {'@type': 'GovernmentOrganization', 'name': org},
-                'serviceType': 'Government Scheme',
-                'areaServed': {'@type': 'Country', 'name': 'India'},
-                'availableChannel': {
-                    '@type': 'ServiceChannel',
-                    'serviceUrl': canon_url,
-                    'serviceLocation': {'@type': 'Country', 'name': 'India'},
-                },
+                '@context':'https://schema.org','@type':'GovernmentService',
+                'name':title[:110],'description':desc,'url':canon_url,
+                'provider':{'@type':'GovernmentOrganization','name':org},
+                'serviceType':'Government Scheme',
+                'areaServed':{'@type':'Country','name':'India'},
+                'availableChannel':{'@type':'ServiceChannel','serviceUrl':canon_url,
+                    'serviceLocation':{'@type':'Country','name':'India'}},
             }
-
-        elif intent == 'education':
-            # State-wise / Education-wise listing: Dataset or Article
-            primary = {**_article_base, '@type': 'Article',
-                       'articleSection': 'Government Jobs by Category',
-                       'about': {'@type': 'Thing', 'name': title[:80]},
-                       'keywords': f'sarkari job, {title[:60]}, government jobs india'}
-
         else:
-            # Generic article (catch-all)
-            primary = {**_article_base, '@type': 'Article'}
+            # education / article / generic fallback
+            primary = {**_article_base,'@type':'Article'}
 
     # Part C: sitewide WebSite (SearchAction) + Organization schema so AI/answer
     # engines and Google sitelinks-search-box can parse the brand on every page.
@@ -4431,10 +4574,12 @@ for _existing_html in _glob_preload.glob(str(ROOT / 'jobs' / '*' / 'index.html')
                 if _data_json.exists():
                     with open(_data_json, encoding='utf-8') as _djf:
                         _djob = json.load(_djf)
-                    _dcanon = f"{BASE_URL}/jobs/{_eslug}/"
-                    _dbc = []
-                    _dhtml = build_schemas(_djob, _dcanon, _dbc, _eslug)
-                    _patch_jsonld(Path(_existing_html), _dhtml)
+                else:
+                    # No saved JSON (old/orphan page) — reconstruct from HTML
+                    _djob = _reconstruct_job_from_html(_eh, _etitle, _eslug)
+                _dcanon = f"{BASE_URL}/jobs/{_eslug}/"
+                _dhtml  = build_schemas(_djob, _dcanon, [], _eslug)
+                _patch_jsonld(Path(_existing_html), _dhtml)
             except Exception:
                 pass
         else:
@@ -7025,6 +7170,7 @@ print(f"\u2551  Category/study        : {c_count:<27}\u2551")
 print(f"\u2551  Section listing       : {sec_count2:<27}\u2551")
 print(f"\u2551  Qualification listing : {q_count:<27}\u2551")
 print(f"\u2551  TOTAL PAGES           : {PAGES_GENERATED:<27}\u2551")
+print(f"\u2551  Schema patches        : {_schema_patched:<27}\u2551")
 print(f"\u2551  Schema patches        : {_schema_patched:<27}\u2551")
 print("\u255a" + "\u2550"*54 + "\u255d")
 print()
